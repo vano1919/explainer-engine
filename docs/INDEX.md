@@ -1,0 +1,31 @@
+# Documentation index
+
+One canonical home per specification and per ID (D-23). Link to a document or an ID; never copy its content.
+
+| Document | Canonical for | ID prefix |
+|---|---|---|
+| [PROJECT_BRIEF](PROJECT_BRIEF.md) | mission, constraints, positioning, scope | |
+| [DECISIONS_AND_OPEN_QUESTIONS](DECISIONS_AND_OPEN_QUESTIONS.md) | every decision, open questions, approval gates | D- |
+| [MARKET_RESEARCH](MARKET_RESEARCH.md) | seed-evidence register, verification log, topic comparison, vidIQ ledger | SE-, V- |
+| [CREATIVE_STYLE_BIBLE](CREATIVE_STYLE_BIBLE.md) | tone, Kit, shape grammar, typography, hook framework | |
+| [TITLE_THUMBNAIL_SYSTEM](TITLE_THUMBNAIL_SYSTEM.md) | title patterns, thumbnail spec, packaging QA | |
+| [NARRATION_AND_LANGUAGE_GUIDE](NARRATION_AND_LANGUAGE_GUIDE.md) | voice, vocabulary, anti-patterns, pronunciation | |
+| [SCRIPTING_SPEC](SCRIPTING_SPEC.md) | research-to-script gate, format structures, script rubric | |
+| [VIDEO_PARAMETER_SPEC](VIDEO_PARAMETER_SPEC.md) | every parameter: default, range, evidence, validation | P- |
+| [STORYBOARD_SCHEMA](STORYBOARD_SCHEMA.md) | storyboard contract, animation vocabulary, timing rules | |
+| [ASSET_SYSTEM](ASSET_SYSTEM.md) | asset records, naming, licences, generation rules | |
+| [AUDIO_SYSTEM](AUDIO_SYSTEM.md) | narration, mix, audio-event contract, licences | |
+| [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) | renderer comparison, render and cache design | |
+| [PIPELINE_ARCHITECTURE](PIPELINE_ARCHITECTURE.md) | stages, failure classes, config, job record | |
+| [QA_SPECIFICATION](QA_SPECIFICATION.md) | technical and editorial QA, review bundle | Q- |
+| [PUBLISHING_AND_ANALYTICS](PUBLISHING_AND_ANALYTICS.md) | cadence, first cycle, candidates, metrics, learning loop | |
+| [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md) | budgets, estimates, spend ledger, hours | |
+| [RISK_REGISTER](RISK_REGISTER.md) | risks and mitigations | R- |
+| [IMPLEMENTATION_PLAN](IMPLEMENTATION_PLAN.md) | phases, tasks, acceptance, stop conditions | |
+| [CLAUDE_EXECUTION_GUIDE](CLAUDE_EXECUTION_GUIDE.md) | phase gates, recovery, never-do list | |
+| [REPO_REUSE_AUDIT](REPO_REUSE_AUDIT.md), [PROVENANCE](PROVENANCE.md) | what came from the TMR repository | |
+| [PROGRESS](PROGRESS.md) | resumable progress log | |
+| [PLAN_2026-10-15](PLAN_2026-10-15.md) | the approved plan, kept as history; the canonical documents above supersede it | |
+
+Machine-readable sources of truth: `explainer_engine/design/palette.json` (colours), `assets/characters/kit/kit_reference.svg`
+(character parts), `explainer_engine/schemas/` (contracts, from Phase 3).

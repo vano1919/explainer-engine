@@ -4,14 +4,16 @@ A solo creator's 2D cartoon/vector explainer channel ("the hidden machinery of e
 pipeline: topic → research dossier + claim map → script → **creator approval** → schema-validated storyboard →
 assets → Kokoro narration + timings → Remotion scene renders (muted) → Python mix → Shorts → thumbnail + metadata →
 technical + editorial QA → review bundle → **creator approval** → manual upload. Windows-first (i5-8400, RX 5700 8 GB,
-16 GB RAM). The approved plan is `docs/PLAN_2026-10-15.md` until Phase 2 splits it into canonical docs (see its G.3);
-each decision has ONE canonical home — link to it, never copy it.
+16 GB RAM). Start from `docs/INDEX.md`: every specification and every ID (D-, SE-, V-, P-, R-, Q-) has ONE canonical home —
+link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this). `docs/PLAN_2026-10-15.md` is history.
 
 ## Commands
 
 ```powershell
 .\setup.ps1                                   # once: .venv (Python 3.12/3.13) + packages
 .venv\Scripts\python -m pytest -q             # all tests
+.venv\Scripts\python -m explainer_engine.docs_lint        # docs: one home per ID, links, fixtures
+.venv\Scripts\python -m explainer_engine.design.palette   # palette contrast table + rule check
 ```
 
 ## Invariants (do not violate; stop and ask if a task seems to require it)
@@ -43,8 +45,11 @@ explainer_engine/core/    store.py (JobStore, atomic writes, stage registry), jo
                           errors.py (Contract/Config/Retryable/NeedsReview), labels.py (evidence labels)
 explainer_engine/audio/   timings.py (phoneme timings -> words), visemes.py (mouth opening/shape, blinks),
                           envelope.py (loudness mouth fallback)
+explainer_engine/design/  palette.json (the only place hex colours live), palette.py (contrast + rules)
+explainer_engine/docs_lint.py   documentation consistency (D-23)
+assets/characters/kit/    kit_reference.svg (character parts; poses and rig come in Phase 4)
 tests/unit/               fast tests; test_repo_hygiene.py guards media/keys, tmr_engine imports, provenance
-docs/                     PLAN_2026-10-15.md, PROGRESS.md, PROVENANCE.md, REPO_REUSE_AUDIT.md
+docs/                     INDEX.md and the canonical specifications; PROGRESS.md (read the last entry first)
 jobs/                     job output (gitignored): jobs/<slug>/job-NNN_<date>/{state.json, artifacts/...}
 ```
 
