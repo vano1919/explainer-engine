@@ -46,3 +46,16 @@ cost (estimate/actual), next step, recovery instructions.
 - Awaiting the creator: review of strategy, identity and Kit's look (approval gate 1 in the decision log; Q2: final name).
 - Next: Phase 3, contracts first (JSON Schemas for config, assets, storyboard, audio events, manifests, timing, job
   state, with valid and invalid fixtures).
+
+## 2026-10-15 — Creator feedback on Phase 2 and niche research
+- Creator feedback: Kit / the visual direction was disliked; asked why this topic and what it rested on.
+- Honest finding written to docs/MARKET_RESEARCH.md B.7: the original topic pick was a reasoned guess under the
+  creator's constraints, not measured demand; the supplied report covers Shorts, not 5-11 minute explainers.
+- vidIQ research (creator approved ~60 credits): 60 spent (6 outlier searches, 6 keyword researches; 5 credits wasted on
+  an unusable generic seed). Account 445 -> 385. Project cap 200: 60 used.
+- Result: finance (SE-34) and what-if/space (SE-35) have the widest small-channel breakout evidence; everyday mechanisms
+  (SE-29) has real breakouts at our length, mostly about vehicles; stories (SE-33) are kids / third-party IP.
+- Decisions: D-01 reopened and then resolved for now by **D-24** (creator: test both arms before choosing); D-04 Kit
+  draft v0 rejected, new direction hand-drawn / doodle style (creator, 2026-10-15).
+- Next: doodle style samples for the creator's reaction (`assets/style_samples/`), then redesign of the mascot and
+  palette (D-04) before Phase 4; Phase 3 (contracts) does not depend on the visual style.
