@@ -7,7 +7,7 @@ before any paid call the ledger below is updated with the estimate, and at 80 % 
 | Budget | Cap | Spent in this project | Notes |
 |---|---|---|---|
 | Gemini API / AI Studio | US$10 total | $0.00 | free-tier use is not assumed equal to paid cost; TMR's earlier spend (about $2.40) belongs to that project |
-| vidIQ credits | 200 | 60 (2026-10-15 niche research, see the spend log) | account balance read 2026-10-15: 395, later 445 (an add-on top-up of 50 that is not our spend), 385 after the research batch (65 renewable, resets 2026-11-08; 320 add-on); the balance call costs 0; a call's cost is read from its tool description first |
+| vidIQ credits | 200 | 130 (2026-10-15: 60 niche research + 70 worlds-collide research; see the spend log) | account balance read 2026-10-15: 395, later 445 (an add-on top-up of 50 that is not our spend), 385 after the research batch (65 renewable, resets 2026-11-08; 320 add-on); the balance call costs 0; a call's cost is read from its tool description first |
 | Subscriptions | none planned | $0/month | any paid voice or tool is an explicit approved line item |
 
 ### vidIQ spend log (written before each batch; actuals filled after)
@@ -15,7 +15,8 @@ before any paid call the ledger below is updated with the estimate, and at 80 % 
 |---|---|---|---|---|---|
 | 2026-10-15 | niche-demand research, outlier searches (6 x 5 credits, English long-form, small channels) | 30 | 30 | 445 -> 415 | which candidate niche (A-F in the creator conversation) has real small-channel breakouts |
 | 2026-10-15 | keyword demand and competition (6 calls; 5 credits each, read from the balance; 1 of the 6 used a too-generic seed and returned unusable troubleshooting questions) | about 30 | 30 | 415 -> 385 | search demand and competition per niche |
-Creator approved up to about 60 credits for this batch on 2026-10-15; cap for the project stays 200.
+| 2026-10-15 | "worlds collide" concept research: about 8 outlier searches + 5 keyword researches (5 credits each) | about 65, hard limit 100 (creator) | 70 (8 long-form outlier searches, 5 keyword researches, 1 Shorts outlier search whose results were off-topic) | 385 -> 315 | does the creator's cross-world idea have demand, which variants, and does it beat or extend D-24 |
+Creator approved up to about 60 credits for this batch on 2026-10-15; cap for the project stays 200. The creator set a 100-credit limit for the cross-world research batch (2026-10-15); project total stays under 200.
 
 Planned use: Gemini at most about $2 (Kit concept exploration, reusable props, thumbnail elements); vidIQ 0-60 credits,
 only for a question that would change a title or topic.

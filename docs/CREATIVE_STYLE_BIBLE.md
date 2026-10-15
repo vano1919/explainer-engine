@@ -1,6 +1,6 @@
 # Creative style bible
 
-Status: provisional (D-04); Kit's final name and look are a creator approval gate. Colours live only in
+**Status 2026-10-15: the Kit sections below are retired** (the creator rejected draft v0, D-04); the new direction is hand-drawn / doodle, explored in `assets/style_samples/`. Tone, shape grammar, hooks and accessibility still apply; the mascot and palette sections are rewritten once the creator picks a doodle style. Colours live only in
 `explainer_engine/design/palette.json` (D-22); the character parts only in `assets/characters/kit/kit_reference.svg`.
 
 ## Tone and humour

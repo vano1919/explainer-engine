@@ -46,7 +46,7 @@ short note on how the video was made (narration is synthetic; script drafted wit
 the listed sources); chapters from the real timeline; no keyword stuffing, no links to unrelated products. Disclosure
 decided by the checklist in [QA_SPECIFICATION](QA_SPECIFICATION.md) (D-16).
 
-## First video (the prototype topic: onions)
+## First video (the prototype topic: onions; reopened by D-20 and D-25, kept until the new prototype topic is approved)
 Candidate titles: "Why onions make you cry"; "What an onion does when you cut it"; "The onion's chemical alarm,
 explained"; "Why your eyes water when you chop onions". Recommended: **"Why onions make you cry"** (plain hidden
 reason, matches the first sentence, no promise beyond what the narration pays). Thumbnail concept: template T3, an onion with Kit's lid-open reveal showing two

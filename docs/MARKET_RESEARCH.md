@@ -115,6 +115,26 @@ scores, not a count of rivals; most results carry AI labels or are unlabelled, s
 observed but says nothing about audience loyalty; the keyword "why does it work" returned only technical-support
 questions and was discarded (5 credits wasted, logged in the cost ledger).
 
+## B.8 "Worlds collide" research, 2026-10-15 (70 credits; the creator's idea, the creator set a 100-credit limit)
+The creator proposed a channel built on collisions of worlds ("what would happen if this were here": one film or game
+world in another, one historical era in another). Same method as B.7 (English long-form, last 6 months, channels up to
+100k subscribers, at least 100k views, top 10 by breakout), eight variants, five keyword researches and one Shorts search.
+
+| ID | Variant | Observation [OBS] | Reading [INF] |
+|---|---|---|---|
+| SE-37 | you in another era (survival, daily life) | Flint (895 subs) "What Ancient Humans Had to Do to Survive the Ice Age" 253k; Bro Said So (1.4k) "What Did Ancient Humans Do For Pleasure?" 385k, 8 min; Through the Ages (2.2k) 195k and 440k; Do you mind? (3.1k) "Top 5 Worst Years to Be Alive in Human History" 1.55M, 8 min; Fossil (38k) "How Long You'd Last in Every Prehistoric Era" 11.5M | the broadest and strongest small-channel evidence seen in either research round |
+| SE-38 | era meets era, past meets present | Ten Minute Historian (1.4k) "What If Medieval Europe Fought The Roman Empire?" 184k, 11 min; Plot Twist Files (14.7k, tags "animated history", "Clash of Eras") "Could 50 Modern Soldiers Conquer the Roman Empire?" 319k, 10 min; many 1.5-2.5 hour AI "portal to ancient times" dramas with 100k-360k views | demand is real; an animated "clash of eras" channel already exists (competition); the drama form is a different product |
+| SE-39 | mechanism or money across eras | Runic (3.4k) "How Did Humans Survive -40 Nights Inside a Massive Medieval Castle?" 376k; Doodle Gulch (2.0k, a doodle-style channel) "What Cowboys REALLY Did With Their Money" 253k, 7.6 min; SPQR Chronicles (7.1k) "What Happened on a Roman Soldier's Last Day Before Retirement?" 1.14M; Rome Unscrolled (16k) "What Did People in Ancient Rome Actually Do All Day?" 2.17M; Lit With Rosie (1.3k) "How Rich Is Mr. Darcy... What Does 10,000 a Year Mean" 144k | the earlier arms (A how it works, E money) work inside the era frame, at our 7-12 minute length, and at least one is in doodle style |
+| SE-40 | nature and science meet today | Mystic Evidence (1.8k) "8 Extinct Animals That Could Still Be Alive" 973k; Evolution Explained (3.8k) 287k; Humanity World (736 subs) "What If Dinosaurs Never Went Extinct?" 134k | works; many results are AI-labelled list videos |
+| SE-41 | film-universe crossovers (third-party IP) | demand exists (RecapToon 4.2M MCU recap; Toasted Water "What If Marvel Had All the Rights" 1.05M; fan trailers 100k+) | every hit depends on someone else's characters; excluded by the creator's directive (section 3) and copyright/reused-content risk |
+| SE-42 | game-world crossovers (third-party IP) | fan trailers (Mario, Zelda), "What if Trevor died in GTA 5" 315k, AI Mario/Sonic fan stories 662k | same exclusion as SE-41 |
+| SE-43 | mythology meets today | Greek-myth "movies" (often AI), "Thor Norse Mythology: The Shocking Truth Marvel Hid From You" (1.6k subs) 139k; Lucky You (1.3k) animated "POV: Everyone Gets Superpowers Overnight" 105k at 1,317 views/hour | myths are public domain and usable; the franchise comparison works as commentary, not as a crossover |
+| SE-44 | keywords | "how long would you survive" 50k/month (+150 %, competition 60); "prehistoric survival" 62k (competition 40); "daily life in ancient rome" 59k (+305 %); "ancient rome" 472k (+65 %); "roman history" 153k (competition 45); "middle ages" 93k (+51 %); "medieval peasants" 30k (+49 %); "alternate history" 96k (competition 47; the related term is an established channel's name); "time traveler" 33k (-30 %) | strong, mostly rising demand for the era side; the 30-day jumps for Rome may be a temporary spike |
+| SE-45 | Shorts | one Shorts search (title-matched) returned unrelated films and edits | no Shorts conclusion from this batch |
+
+**Limits:** as in B.7 (one query per variant, ten results, breakout inflated for tiny channels, no view of the visuals,
+retention or revenue, many AI-labelled results). Competitors exist (Fossil, Plot Twist Files, Alternate History Hub).
+
 ## B.6 Data-quality flags (do not cite these rows)
 M rows with internally inconsistent numbers: FactMint AI (827K subs vs 105.8K lifetime views), Antra Movies (1.29M subs vs
 17,447 views), Bobby Viral (2.8M subs, index lists 1 video). Rows marked "name only" in M (most rows below rank 20) carry

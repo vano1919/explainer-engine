@@ -24,15 +24,15 @@ boundaries; payoff and conclusion; visual notes; on-screen text; SFX/transition 
 source list; disclosure notes; Shorts candidates; packaging direction.
 
 ## 4. Format structures (one per approved format; not a single formula)
-| Format | Beats |
+| Format (D-25) | Beats |
 |---|---|
-| why | observation -> puzzle -> first answer (<= 40 %) -> mechanism -> a surprising consequence -> what to do with the knowledge |
-| cutaway | the object -> lid opens -> parts and roles -> one process in order -> failure case -> why it is built that way |
+| you_in_era | the drop-in (you wake up in year X) -> first problem (food, money, work, danger) -> how people really solved it (sourced) -> the surprising part -> how long you would last, with the evidence and its limits |
+| past_meets_present | a person or object from era X arrives today -> what they recognise -> what baffles them -> the real history behind each reaction -> what today still owes to their time |
+| era_meets_era | two eras side by side -> the dimension that matters (tools, food, money, medicine) -> sourced differences -> where the comparison breaks down; conflicts shown without gore |
+| world_what_if | the premise (dinosaurs never died out) -> the science that bounds it -> step-by-step consequences -> where the model stops being reliable (amber) |
+| how_it_worked | a familiar need (heat, light, cleaning, counting) -> how era X met it -> the mechanism -> what changed and why |
+| money_across_eras | a price or wage in era X -> what it bought (primary sources) -> why a direct conversion is uncertain (ranges, amber) -> what it tells us about life then |
 | myth_vs_record | the claim as people say it -> where it comes from -> what the record shows -> why it persists -> an honest "still unclear" |
-| hidden_incentive | the everyday price or behaviour -> who benefits -> the mechanism -> a counterexample -> what is and is not proven |
-| bounded_what_if | the premise -> the physics or economics limits -> step-by-step consequences -> where the model stops being reliable |
-| comparison | two things -> the dimension that matters -> measured differences -> a case where the usual answer flips |
-
 Each section has a role (setup, context, mechanism, escalation, example, payoff); jokes sit where they relieve, not
 interrupt, an explanation; no fixed cut rate; a revisit of the promise before the end. Fact density is flagged when a
 section carries more than about five new claims per minute (REVIEW, topic-dependent).

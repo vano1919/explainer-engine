@@ -16,8 +16,8 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 |---|---|---|---|---|---|---|---|
 | P-01 | language | en, US-neutral spelling | en | audience and TTS support (D-09) | M/P | TTS voice | enum |
 | P-02 | audience_setting | not_made_for_kids | enum | official guidance (V-03, D-17) | H/F | packaging | upload checklist item |
-| P-03 | pillars | P1, P2, P3 | subset | topic supply (D-02) | M/P | topic intake | topic must name a pillar |
-| P-04 | formats | why, cutaway, myth_vs_record, hidden_incentive, bounded_what_if, comparison | subset; ranking only if natural | D-03 | H/C | script structure | enum; ranking needs a recorded reason |
+| P-03 | collision types | you_in_era, past_meets_present, era_meets_era, world_what_if, how_it_worked, money_across_eras, myth_vs_record | subset | the "worlds collide" positioning (D-25) | M/P | topic intake | topic must name a type and only public-domain or factual worlds |
+| P-04 | excluded worlds | film, TV, game and other third-party fictional universes | fixed list | IP rule (D-25, directive section 3) | H/F | topic intake | intake rejects a topic naming one |
 | P-05 | humour budget | <= 1 verbal joke / 60 s | 0-2 | tone, taste | L/C | script QA | flag only (review, never auto-edit) |
 | P-06 | editorial boundaries | no advice, no medical/legal claims, no real-person claims without a source | list | risk rules | H/F | claim map | claim reviewer + checklist |
 | P-07 | cadence (cycle 1) | 1 long-form / 2 weeks + 2 Shorts / week | measured later | own hours, not competitors (D-06, SE-26) | L/P | time log | reviewed after 3 long-forms |

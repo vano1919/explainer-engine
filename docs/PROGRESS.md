@@ -59,3 +59,13 @@ cost (estimate/actual), next step, recovery instructions.
   draft v0 rejected, new direction hand-drawn / doodle style (creator, 2026-10-15).
 - Next: doodle style samples for the creator's reaction (`assets/style_samples/`), then redesign of the mascot and
   palette (D-04) before Phase 4; Phase 3 (contracts) does not depend on the visual style.
+
+## 2026-10-15 — "Worlds collide" (creator's idea) researched and adopted as D-25
+- Creator proposed collisions of worlds and delegated the decision (100-credit limit). Spent 70 (385 -> 315; project 130
+  of 200). Findings in docs/MARKET_RESEARCH.md B.8 (SE-37..SE-45).
+- Decision D-25 (synthesis): keep the collision idea, restricted to public-domain or factual worlds (eras, prehistory,
+  nature, science, myths, technology, money); reject film/game crossovers (third-party IP). The earlier arms live inside
+  it. D-01, D-02, D-24 superseded; D-20 (prototype topic) reopened.
+- Updated: PROJECT_BRIEF positioning, SCRIPTING_SPEC formats, VIDEO_PARAMETER_SPEC P-03/P-04, PUBLISHING candidates,
+  CLAUDE.md summary; style bible marks the Kit sections retired.
+- Waiting on the creator: doodle style choice (1/2/3), the prototype topic.

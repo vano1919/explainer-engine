@@ -1,6 +1,7 @@
 # CLAUDE.md — explainer-engine
 
-A solo creator's 2D cartoon/vector explainer channel ("the hidden machinery of everyday things") and its production
+A solo creator's 2D hand-drawn explainer channel ("worlds collide": history, science and money meeting other
+eras, public-domain worlds only, D-25) and its production
 pipeline: topic → research dossier + claim map → script → **creator approval** → schema-validated storyboard →
 assets → Kokoro narration + timings → Remotion scene renders (muted) → Python mix → Shorts → thumbnail + metadata →
 technical + editorial QA → review bundle → **creator approval** → manual upload. Windows-first (i5-8400, RX 5700 8 GB,

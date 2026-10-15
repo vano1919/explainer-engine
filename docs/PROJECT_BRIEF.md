@@ -15,12 +15,14 @@ AI slideshow or an over-edited template. Ranking videos are optional and never f
 - Original characters and visuals only: no third-party IP, footage or protected styles as the core identity.
 - Facts must be sourced and checked; sensitive areas (politics, history, finance, health) get stricter review.
 
-## Positioning (D-01, D-02, D-09)
-"The hidden machinery of everyday things": each episode opens up one familiar thing and shows why it works, looks or
-costs what it does. English, general audience (teens and adults), set "not made for kids" (D-17).
-Viewer promise: one ordinary thing, opened up, the real reason checked against sources, told as a short cartoon.
-Pillars: P1 how it works; P2 why it is built or priced like that (incentives, never advice); P3 why it is like that
-(documented origins, myth against record). Allowed formats are in [SCRIPTING_SPEC](SCRIPTING_SPEC.md).
+## Positioning (D-25, D-09)
+**"Worlds collide"**: what happens when one world meets another. Only public-domain or factual worlds: historical eras,
+prehistory, nature, science, myths, everyday technology and money. Examples: how long you would last as a medieval
+peasant; what a Roman soldier's pay would buy; what a Victorian engineer would make of a phone; what if dinosaurs never
+went extinct. Each video explains the real history or science behind the collision, with sources, and labels what is
+speculation. English, general audience (teens and adults), set "not made for kids" (D-17). Film, TV and game universes
+are not used: they belong to other people (D-25, SE-41, SE-42). Allowed formats: [SCRIPTING_SPEC](SCRIPTING_SPEC.md).
+Visual direction: hand-drawn / doodle (D-04, being explored); the earlier box mascot is retired.
 
 ## Products
 - Long-form: 5-11 minutes (target 7), the core product.

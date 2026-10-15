@@ -16,13 +16,13 @@ Prototype passes -> batch research for three topics at once -> 3 long-forms and 
 Shorts on a fixed weekly rhythm -> review at the end of the cycle. Candidates below are hypotheses, not guarantees; each
 needs its dossier before it is chosen.
 
-| Topic | Pillar / format | Evidence available | Main uncertainty |
+| Topic (D-25) | Collision type / test arm | Evidence | Main uncertainty |
 |---|---|---|---|
-| Why airplane windows are round | P3 documented turning point (Comet accidents, metal fatigue) | inquiry reports exist | avoid sensationalising deaths |
-| Why printer ink costs so much | P2 hidden incentive (razor-and-blades model) | business literature, filings | claims about intent; figures date fast |
-| Why we have leap years | P3/P1 origins (Julian to Gregorian) | astronomy and calendar history | crowded topic |
-| Why the milk is at the back of the shop | P2 myth vs record | contested explanations | weak sources; myth-check framing |
-| Why ice is slippery | P1 how it works (still debated) | recent surface-physics papers | genuinely uncertain; amber framing |
+| How long would you last as a medieval peasant? | you_in_era / arm 1 | SE-37, SE-44 ("medieval peasants" +49 %) | well covered by others; needs a fresh angle |
+| What could a Roman soldier's pay buy? | money_across_eras / arm 1 | SE-39 (Roman soldier 1.14M; cowboy money 253k) | conversions are uncertain: ranges, amber framing |
+| A Roman engineer visits a modern city | past_meets_present / arm 2 | SE-38 | needs strong sourcing on Roman engineering to avoid caricature |
+| What if dinosaurs never went extinct? | world_what_if / arm 2 | SE-40 | speculative science: amber, sources on the K-Pg event |
+| How did people keep warm in a medieval castle? | how_it_worked / arm 1 | SE-39 (Runic 376k) | building-history sources vary |
 
 ## Metrics (current YouTube definitions; Shorts and long-form never mixed)
 Impressions, impressions CTR, traffic source, video age, average view duration, average percentage viewed, retention curve
