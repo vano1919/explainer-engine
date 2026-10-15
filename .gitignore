@@ -1,0 +1,30 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.idea/
+.vscode/
+node_modules/
+
+# jobs, renders and temporary files (never commit media)
+jobs/*
+!jobs/.gitkeep
+channel/
+tmp/
+*.tmp
+*.tmp-*
+*.mp4
+*.wav
+*.mp3
+*.flac
+
+# local models, binaries and keys (setup.ps1 downloads models; keys are created by hand)
+tools/
+*.onnx
+*.gguf
+.env
+*api_key*
+*token*.json
+*.pem
+id_ed25519*

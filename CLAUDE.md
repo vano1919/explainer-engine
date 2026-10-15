@@ -1,0 +1,60 @@
+# CLAUDE.md — explainer-engine
+
+A solo creator's 2D cartoon/vector explainer channel ("the hidden machinery of everyday things") and its production
+pipeline: topic → research dossier + claim map → script → **creator approval** → schema-validated storyboard →
+assets → Kokoro narration + timings → Remotion scene renders (muted) → Python mix → Shorts → thumbnail + metadata →
+technical + editorial QA → review bundle → **creator approval** → manual upload. Windows-first (i5-8400, RX 5700 8 GB,
+16 GB RAM). The approved plan is `docs/PLAN_2026-10-15.md` until Phase 2 splits it into canonical docs (see its G.3);
+each decision has ONE canonical home — link to it, never copy it.
+
+## Commands
+
+```powershell
+.\setup.ps1                                   # once: .venv (Python 3.12/3.13) + packages
+.venv\Scripts\python -m pytest -q             # all tests
+```
+
+## Invariants (do not violate; stop and ask if a task seems to require it)
+
+1. The creator's hardware is the baseline; no upgrade assumed.
+2. Budget caps are ceilings, not targets: Gemini ≤ $10 total, vidIQ ≤ 200 credits. Estimate and log before every paid
+   call (`docs/COST_AND_TIME_MODEL.md` ledger); at 80 % of a cap stop and ask. Leave nothing paid running.
+3. No long-form pipeline before the 60–90 s prototype passes its acceptance criteria (plan F).
+4. No public upload, ever, without a recorded creator approval. No upload code in Phases 1–8.
+5. No unsupported claims, fabricated research, invented metrics, or copied protected IP. Every factual sentence maps
+   to a claim with a source; say exactly what was and was not verified.
+6. The original character/visual identity stays stable (part-based rig, reference sheet; never redraw from scratch).
+7. Versioned schema contracts are authoritative; never bypass or weaken validation to make a render pass.
+8. No destructive command, broad deletion, credential exposure, or unrelated refactor without approval. Cleanup
+   deletes only job directories via `core/jobs.clean_jobs`.
+9. Do not change the approved strategy or architecture without new evidence and a minimal-change proposal.
+10. Never remove or weaken a test or acceptance criterion to make a phase pass.
+11. Every meaningful change: a focused test + an entry in `docs/PROGRESS.md` (and the decision log if a decision moved).
+12. A material conflict found during implementation: stop at the boundary, report evidence and options, ask.
+
+Also binding: Gemini only for reusable channel-identity assets (the mascot, thumbnail design elements), never for one
+topic's pictures (creator's rule, 2026-10-11). Disclosure is decided per video by the checklist (realistic content
+only, YouTube Help 14328491); channel audience "not made for kids".
+
+## Layout
+
+```
+explainer_engine/core/    store.py (JobStore, atomic writes, stage registry), jobs.py (job naming, cleanup),
+                          errors.py (Contract/Config/Retryable/NeedsReview), labels.py (evidence labels)
+explainer_engine/audio/   timings.py (phoneme timings -> words), visemes.py (mouth opening/shape, blinks),
+                          envelope.py (loudness mouth fallback)
+tests/unit/               fast tests; test_repo_hygiene.py guards media/keys, tmr_engine imports, provenance
+docs/                     PLAN_2026-10-15.md, PROGRESS.md, PROVENANCE.md, REPO_REUSE_AUDIT.md
+jobs/                     job output (gitignored): jobs/<slug>/job-NNN_<date>/{state.json, artifacts/...}
+```
+
+## Conventions and gotchas
+
+- Code copied from `vano1919/tmr-video-script-engine` carries a provenance header and a row in `docs/PROVENANCE.md`;
+  never import `tmr_engine`.
+- Write JSON/text through `core/store.write_json_atomic` / `write_text_atomic`: on Windows `os.replace` fails
+  ("Access is denied") while another process reads the target; `replace_file` retries.
+- Secrets live only in gitignored `tools/` or env vars; never log or commit them.
+- No linter/formatter/CI: match the existing style by hand; line length ~120.
+- Commit with `git -c user.name=vano1919 -c user.email=122537395+vano1919@users.noreply.github.com`.
+- The Bash tool collapses `\\` inside heredocs: write Python edit scripts with backslashes to a file first.
