@@ -91,6 +91,30 @@ Cap 200 credits (ceiling). Spent: **0**. Planned: **0** for planning. Optional i
 3 topics *if* a specific question (e.g. which of two phrasings people search) would change the title; each call's cost read from
 the tool description first and logged in `docs/COST_AND_TIME_MODEL.md` ledger before calling. Stop when the question is answered.
 
+## B.7 vidIQ niche research, 2026-10-15 (60 credits; the creator asked for real data on the topic choice)
+Method: six vidIQ outlier searches (English long-form videos from the last 6 months, channels up to 100,000 subscribers,
+at least 100,000 views, top 10 by breakout score = views relative to the channel's own average) and six keyword
+researches. Everything below is **[OBS]** from those calls; the limits are listed at the end. Raw results are in the
+tool output of the session, summarised here.
+
+| ID | Niche (creator-conversation letter) | Observation [OBS] | Reading [INF] |
+|---|---|---|---|
+| SE-29 | A everyday mechanisms | Small channels with 100k-1.4M views at 7-11 minutes: Logic Made Simple (5.8k subs) "What Actually Happens Inside a Garbage Truck?" 592k views, 10 min; The Ordinary Mystery (8.3k) "Why Do Planes Fly Across the Atlantic at Night?" 1.39M, 11 min; Logic Made Simple "Why Do Ships Say Port and Starboard..." 278k, 7 min; SIMPLE WHY (16.3k) "Why Semi-Trucks Have Spikes on Their Wheels" 151k, 8 min | real breakouts exist in exactly our target format and length; four of five are about vehicles and transport, so the proven sub-theme is "why do vehicles/infrastructure do this" more than kitchen objects |
+| SE-30 | A | keyword "how things work": about 143k searches a month, competition 46/100; "how everyday things work": 22k, growing 42 % | demand is real and competition is moderate; searches come mostly from Pakistan, the US, India and Vietnam |
+| SE-31 | B business incentives | breakouts are mostly 20-minute documentary-style videos (PowerChip mattress 155k, Ground Break makeup 161k, Global Status Costco 1.8M) plus many "tips/savings" lists; breakout multiples 20-63x except one grocery video (2,117x, 5.7 min) | works, but at roughly 20 minutes and in a documentary or listicle style, longer than our 7-minute target |
+| SE-32 | C myths | results are dominated by 1-2 hour compilations and "AI-labelled" list videos (Easy History Explained 69 min; Oddly Factual 111 min); one 5-minute example (TechXplainer, 1.7k subs, 277k views) | the myth niche exists but mostly as long listicles; short explainer evidence is thin; keyword "myths debunked" about 4,100 searches a month |
+| SE-33 | D original animated stories | almost all hits are children's 3D animation (farm and rescue stories) or fan stories using other people's characters (Paw Patrol, K-pop Demon Hunters); one original non-kids example: Three-Quarter Town, 28k subs, 202k views, 5 min, AI-animated | the demand is real but sits in kids and third-party-IP content, which our rules exclude; only a very narrow original, non-kids slice is visible |
+| SE-34 | E money/finance | the broadest set of breakouts: Estate Sense (1.8k subs) "Buying a New Car vs Used Car: The Math Nobody Shows You" 469k views, 9 min; Econ sketch (539 subs) "America's $40 Trillion Debt Explained Like You're 5" 176k, 6 min; Money Bureau (21.9k) bonds 1.12M, 19 min; Mark Invests rent vs buy 495k; MindCraft "Rule of 72" 213k, 10 min | strongest and widest evidence of small-channel breakouts, in 5-19 minute explainers; keyword "compound interest explained" 57k searches a month, competition 40/100 and falling (-10 %); the editorial risk (advice, ageing figures) is the cost |
+| SE-35 | F what-if / space | strong numbers on small channels: Astropyre (9.4k) "The Terrifying Truth Behind Deja Vu" 1.24M, 22 min; Fossil (38k) 11.5M, 16 min; CosmoMis (1.2k subs) two videos of 119k and 171k at 4.5 and 5.7 minutes; Timeline Runner (1.5k) 380k | very strong raw views; framing is dark and "terrifying"; keywords "what if earth" 65k a month (growing 64 %), "space" 1.98M but competition 59/100; many results carry an AI label |
+| SE-36 | all | "interesting facts" 1.79M searches a month (competition 52); top markets for these keywords are India, Pakistan, the US and Vietnam | demand is large but a large share of it is outside the US |
+
+**Limits of this evidence (do not over-read it):** one query per niche, ten results each; a breakout score divides by
+the channel's own average, so very small channels inflate it; a video's visual style (animated or not) is not visible in
+these results; retention, revenue and the creator's actual workload are not measured; competition values are vidIQ
+scores, not a count of rivals; most results carry AI labels or are unlabelled, so "AI-made videos can break out" is
+observed but says nothing about audience loyalty; the keyword "why does it work" returned only technical-support
+questions and was discarded (5 credits wasted, logged in the cost ledger).
+
 ## B.6 Data-quality flags (do not cite these rows)
 M rows with internally inconsistent numbers: FactMint AI (827K subs vs 105.8K lifetime views), Antra Movies (1.29M subs vs
 17,447 views), Bobby Viral (2.8M subs, index lists 1 video). Rows marked "name only" in M (most rows below rank 20) carry

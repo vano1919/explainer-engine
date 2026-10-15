@@ -14,10 +14,10 @@ a failing test, or an implementation proving it impractical; the smallest viable
 
 | ID | Decision | Alternatives | Evidence / counter | Conf. | Validation | Change trigger | Status |
 |---|---|---|---|---|---|---|---|
-| D-01 | Positioning "hidden machinery of everyday things", English, general audience | finance, history, geopolitics, psychology | SE-04/23, B.4 / crowded space | M | 3 long + 9 Shorts | Fallback trigger (A) | provisional |
+| D-01 | Positioning "hidden machinery of everyday things", English, general audience | finance, history, geopolitics, psychology | SE-04/23, B.4 / crowded space | M | 3 long + 9 Shorts | Fallback trigger (A) | **reopened 2026-10-15**: the creator doubted the topic basis; new data SE-29 to SE-36 shows stronger breakout evidence for finance (SE-34) and what-if/space (SE-35) than the original pick; decision pending the creator |
 | D-02 | Pillars P1–P3 | single pillar | breadth for topic supply / dilution risk | M | per-pillar analytics | a pillar < half the others after 6 videos | provisional |
 | D-03 | Formats list; rankings only when natural | countdown-first | directive §2, SE-24 | H | editorial QA | — | fixed |
-| D-04 | Original mascot Kit + cutaway motif | no mascot; duo | SE-05/06/07 | M | creator review, Shorts recognisability | creator rejects design | approval gate |
+| D-04 | Original mascot Kit + cutaway motif | no mascot; duo | SE-05/06/07 | M | creator review, Shorts recognisability | creator rejects design | **draft v0 rejected by the creator 2026-10-15**: new direction is hand-drawn / doodle style; Kit (a box mascot) and the palette are to be redesigned before Phase 4 |
 | D-05 | Long-form core + 2–3 standalone Shorts | Shorts-only | directive §9; SE-23 sample is Shorts | M | Shorts vs long metrics separately | Shorts drive > 80 % subs and long-forms stall → rebalance | provisional |
 | D-06 | Cadence 1 long / 2 wks + 2 Shorts / wk | weekly long | own time log | L | hours log | measured hours | hypothesis |
 | D-07 | Hook framework: first frame shows the object and Kit already acting; first sentence is a concrete observation, no greeting; premise clear within ~10 s long / ~3 s Short; the promise is answered at least briefly before 40 % of runtime | greeting intro; delayed payoff to the last seconds (SE-21) | SE-10, SE-13; no threshold is established, so all times are hypotheses | L | per-video hook spec + viewed-vs-swiped and first-30-s retention | 3 comparable videos show an early drop despite a clear hook | hypothesis |
