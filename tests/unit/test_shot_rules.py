@@ -196,7 +196,8 @@ def test_the_committed_day1_v2_edit_on_the_clyde_read_passes():
     assert abs(shots[-1]["end"] - _load(DAY1_V2 / "words.json", "duration")) < 1e-6
 
 
-STAKES_LOOK = {**LOOK, "rule_base": 2, "caricatures": ["newton", "nansen"], "archetypes": {"newton": "proud critic", "nansen": "pragmatist"},
+FIG = ", every person and hand drawn as an exaggerated storybook caricature, thick ink outline"
+STAKES_LOOK = {**LOOK, "rule_base": 2, "figure_style": FIG, "style_bridge": {"approved": "2026-10-16"}, "caricatures": ["newton", "nansen"], "archetypes": {"newton": "proud critic", "nansen": "pragmatist"},
                "pose_bank": {"newton": ["argue"], "nansen": ["point"]}}
 
 
@@ -258,4 +259,16 @@ def test_the_rule_base_2_switch_and_the_new_day1_plan():
     fails = [f for f in found if f["severity"] == "FAIL"]
     assert fails and all(("wallace" in f["detail"] or "snow" in f["detail"]) for f in fails), fails
     assert R.check_shots(shots, words, {**look, "rule_base": 1}) is not None
+
+
+def test_one_world_people_and_hands_must_carry_the_figure_style():
+    c = {"type": "C", "heroes": [], "face": "none", "plate": False}
+    ok = _stakes(**c, prompt="extreme close-up of a trembling hand in a cold wind" + FIG)
+    assert not rules_of(ok, "FAIL")
+    bad = _stakes(**c, prompt="extreme close-up of a trembling hand in a cold wind")
+    assert "UR-22" in rules_of(bad, "FAIL")
+    # "hand-painted" in the style suffix is not a hand
+    suffix_only = _stakes(**c, prompt="extreme close-up of a cold wind over a stone" + STAKES_LOOK["style_suffix"])
+    assert "UR-22" not in rules_of(suffix_only)
+    assert "UR-22" in rules_of(R.check_stakes([], {**STAKES_LOOK, "style_bridge": {}}), "REVIEW")
 

@@ -135,5 +135,10 @@
    "triumph"
   ]
  },
- "note_rule_base": "rule_base 2 = UR-16..UR-20 (D-40): stakes in every frame, named heroes with emotional poses in every B shot"
+ "note_rule_base": "rule_base 2 = UR-16..UR-20 (D-40): stakes in every frame, named heroes with emotional poses in every B shot",
+ "figure_style": ", every person and hand drawn as an exaggerated storybook caricature: head about 1.6x oversized, large expressive hands, thick brown ink outline, flat watercolour fill, simple cel shading",
+ "style_bridge": {
+  "approved": null,
+  "note": "a sheet with a sprite and a pod-painted person and hand in one frame; the creator approves it once per episode"
+ }
 }

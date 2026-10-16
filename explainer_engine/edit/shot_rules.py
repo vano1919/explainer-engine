@@ -345,6 +345,15 @@ def check_stakes(shots: list[dict], look: dict, stakes: dict | None = None) -> l
             if not has_word(prompt, cues):
                 add("UR-16", sid, "the pod prompt has no stakes cue (weather, fire, danger, hunger, conflict, strain, "
                                   "darkness, crowd, scale): it would paint a neutral picture")
+            # UR-22 one world: any person or body part painted by the pod uses the cast's design language
+            fig = str(look.get("figure_style", "")).strip().lower()
+            bare = prompt.replace(str(look.get("style_suffix", "")), "")  # "hand-painted" in the suffix is not a hand
+            if not s.get("plate") and has_word(bare, stakes["people_words"] + stakes["body_words"]):
+                if not fig:
+                    add("UR-22", sid, "the look has no `figure_style`: people and hands cannot match our cast sprites")
+                elif fig.strip(" ,.") not in prompt.lower():
+                    add("UR-22", sid, "people or hands in the pod prompt without the look's `figure_style`: they would be "
+                                      "painted in a different world than our sprites")
             if s.get("plate"):  # UR-20: a plate never names people (the model paints them, whatever "empty" says)
                 people = has_word(prompt, stakes["people_words"])
                 if people:
@@ -368,6 +377,8 @@ def check_stakes(shots: list[dict], look: dict, stakes: dict | None = None) -> l
                         "REVIEW")
                 if name and name not in archetypes:
                     add("UR-19", sid, f"hero {name!r} has no archetype line in the look", "REVIEW")
+    if not (look.get("style_bridge") or {}).get("approved"):
+        add("UR-22", "-", "the style-bridge sheet (sprite + pod-painted person and hand in one frame) is not approved yet", "REVIEW")
     # UR-18 friction: a beat with several B shots has at least one with friction or two heroes
     beats: dict[str, list[dict]] = {}
     for s in b_shots:

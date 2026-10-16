@@ -296,3 +296,12 @@ about $0.33 with boot, limit 30 min (lint passes). Cut times are provisional (th
 recomputed with the full v4 read. v4 test read (62 s, 155 words a minute) sent; the full v4 read is about $0.51.
 Not run, waiting for approval: the 19 sprites, the 41 pictures, the full v4 read.
 
+## 2026-10-16 — "One world" (UR-22): the man from behind vs the hero
+Creator: the man seen from behind and the main hero are different kinds of people; all visual parts must belong to one
+world. Cause (mine): UR-07 told the pod to paint people at natural proportions while the cast sprites are caricatures, and
+the two come from different generators. Fix: UR-22 (a pod-painted person, crowd or hand follows `look.figure_style`; plates
+carry no people; a style-bridge sheet is approved once per episode), `stakes.json` body words, `check_stakes` FAIL/REVIEW, a
+test, the `shot-visuals` section, UR-07 reworded. The Day 1 prompts now carry the figure style (46 shots, same 7 FAILs: the
+Wallace and Snow sprites). Prepared, not run: a 6-picture style-bridge test (TMR `stone_age_style_bridge.json`, about $0.15).
+The full 41-picture batch should wait for it: if pod people still do not match the sprites, the extras and hands become sprites.
+

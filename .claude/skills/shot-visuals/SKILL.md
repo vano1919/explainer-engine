@@ -35,6 +35,21 @@ Every shot is: **who is at risk of what, seen how**. Fill the `stakes` line firs
 - **Scale:** heroes are caricatures, plates and A shots are painted at natural proportions; sprites are graded to the plate
   (UR-07) and cast a contact shadow.
 
+## One world (UR-22): nothing may look like it came from another picture
+The creator, 2026-10-16: a man seen from behind and the main hero looked like different kinds of people; every visual part
+must belong to one world. The cause was our own rule (pod figures at natural proportions next to caricature sprites) and two
+different renderers. Now:
+- **Every person, crowd or hand painted by the pod follows the look's `figure_style`** (oversized head, large hands, thick
+  brown ink outline, flat watercolour fill); `build_shots.py` appends it, the lint FAILs a prompt that names people or body
+  parts without it. No realistic extras, no realistic hands, no "natural proportions".
+- **Plates carry no people at all** (UR-20); the hero is always our sprite, never a pod-painted man.
+- **Style bridge before any batch:** paint 6 test pictures (a hand, a crowd, a wide shot, plates), composite a sprite onto a
+  plate and put the pod-painted hand and crowd next to it; the creator approves the sheet once per episode
+  (`look.style_bridge.approved`). If pod people still look different, the extras become our sprites too (a crowd made from
+  keyed cut-outs, small, flipped, tinted) and close-up hands become sprite props.
+- Colour and line: sprites are graded to the plate (saturation, black level, tint, contact shadow); the same ink colour and
+  line weight in prompts and sprites; one palette per beat (UR-08).
+
 ## Heroes (named, real, in character)
 - Use the real figures of the topic by name in the plan and the narration; the *pod prompt never names them* (UR-06): the
   identity comes from our sprite. Each hero has an archetype line in the look; poses and jokes follow it (Newton the proud

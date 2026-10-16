@@ -38,5 +38,6 @@
 - REVIEW UR-17 d1-42: pose 'argue' of wallace is not in the sprite bank yet: generate it (reusable asset)
 - REVIEW UR-17 d1-43: pose 'lecture' of franklin is not in the sprite bank yet: generate it (reusable asset)
 - REVIEW UR-17 d1-43: pose 'exhausted' of nansen is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-22 -: the style-bridge sheet (sprite + pod-painted person and hand in one frame) is not approved yet
 
-46 shots, 7 FAIL, 31 REVIEW
+46 shots, 7 FAIL, 32 REVIEW

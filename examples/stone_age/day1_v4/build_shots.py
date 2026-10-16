@@ -271,7 +271,11 @@ def build() -> list[dict]:
         if r["friction"]:
             shot["friction"] = True
         if r["subject"]:
-            shot["prompt"] = R.compose_prompt(r["subject"], r["emotion"], LOOK)
+            subject = r["subject"]
+            stakes_words = R.load_stakes()
+            if not r["plate"] and R.has_word(subject, stakes_words["people_words"] + stakes_words["body_words"]):  # subject only
+                subject = subject.rstrip(" ,.") + LOOK["figure_style"]  # UR-22: one world with our sprites
+            shot["prompt"] = R.compose_prompt(subject, r["emotion"], LOOK)
         if r["sound"]:
             shot["sound"] = r["sound"]
             if k == 0:
