@@ -122,3 +122,5 @@ The first read was slow and monotone, with stress and question intonation on the
 - **Audio tags set the delivery per beat** (`[curious]`, `[mischievously]`, `[dramatically]`, `[excited]`,
   `[sarcastic]`, `[warmly]`, `[pause]`; ElevenLabs v4), placed where the delivery changes, in `narration_tts.txt`
   only; `narration.txt` is the same text without tags and capitals (captions, claims, alignment).
+- **The full rule set and procedure** live in the `narration-script` skill (`.claude/skills/narration-script/SKILL.md`),
+  checked by `python -m explainer_engine.scripting.narration_lint` before any paid read.

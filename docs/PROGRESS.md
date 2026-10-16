@@ -246,3 +246,17 @@ regenerated from the new shots: 35 pictures (18 C, 11 B, 6 A), about 30 s each. 
 permission check denied the paid pod action twice although the creator authorised it in chat; it needs a permission rule
 or a retry the creator allows. Money: ElevenLabs about $0.57 in total, RunPod $0, balance $5.07.
 
+## 2026-10-16 — Creator review of the v3 test; narration-script skill; Day 1 v4 text; picture run lost
+The creator: punctuation is not read (the hook question did not sound like a question), add natural "hmm/oh/well"
+where they belong, study similar videos, write a big rules skill so this never repeats. Research: vidIQ (1 search + 4
+transcripts, 25 credits; project total 155 of 200, stopped below 80 %): Bernard Films (8.5 M), Quantummysteries
+(outlier 417x), What If, Bright Side; ElevenLabs prompting guide; question-intonation literature (yes/no rises, wh
+falls: the v3 hook was a wh-question). Built `.claude/skills/narration-script/SKILL.md` (defects heard, patterns
+measured, rules N-01..N-10, procedure, sources) and `explainer_engine/scripting/narration_lint.py` with 6 tests
+(suite 114, docs_lint 0). `examples/stone_age/day1_v4/narration_tts.txt` + `narration.txt`: yes/no hook, stress word
+last, interjections (Right. Hmm. Uh-oh. Oh. Well,), a question in most beats, an open loop at every beat end; lint 0
+FAIL, 4 REVIEW (beats that end on a danger line starting with "And", kept on purpose). Facts unchanged.
+Picture pod (35 pictures, approved cap $0.50): the pictures stage kept the 15-minute limit of the 13-picture job and
+was killed near the end; the fatal stop skipped store and push, so the pictures were lost ($0.28 spent, my error).
+Fixed in TMR `stages_pictures_v2.json` (30 min, optional, so a timeout still pushes). A re-run needs a new approval.
+
