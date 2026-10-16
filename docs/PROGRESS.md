@@ -378,3 +378,6 @@ the timbre is darker and duller (tilt -4 dB, centroid -16 % off the median), a d
 read it flags 195-210 s, the place the creator heard, and the louder fire stretch), `assemble` refuses a FAIL timing, locks its
 folder and writes `video.part.mp4` first, the one-off `make_script.py` refuses to run. Every failure of the session is in the
 PRODUCTION_RULES feedback log with its guard. 182 tests pass. Day 1 next read: 5 chunks (648, 691, 667, 777, 256 characters).
+
+## 2026-10-16 — Week 1 (episode 1, part 2): script written, nothing paid
+`examples/stone_age/week1_v1/production_script.json` (made by `make_script.py`, which refuses to overwrite without `--force`): 6 segments, 73 lines, 550 words / 3,128 characters, 48 shots, 43 new pod_ref pictures (each from a Day 1 reference picture and an edit instruction, so the look stays the Day 1 look), 3 new sounds to buy (`wood_snap`, `stone_hiss_steam`, `cobble_crack`; PV-05 FAIL until bought). Creator brief: more action, and the line that scientists think of these things because they are scientists ("they don't guess, they TEST"). `narration_lint` 0 FAIL, `compile` shows only the missing sounds as FAIL. Six chunks (453-697 characters) for the read. Claim map and source check for the numbers (250,000 kcal, 2 kg/h, 75 kg/day, resin and sinew hafting, stone boiling, soap from fat and lye) are still open.
