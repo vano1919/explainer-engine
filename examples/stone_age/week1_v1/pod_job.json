@@ -41,7 +41,7 @@
         "v5_d1-06.png"
       ],
       "prompt": "Edit the picture: Isaac Newton holds a lump of flint upside down and turns it, frowning. Einstein beside him leans in and squints at it, baffled, one eyebrow raised. Both sit on the same rocks, no hands on heads.",
-      "first_use": "SH004"
+      "first_use": "SH005"
     },
     {
       "id": "w1_testing_crowd",
@@ -50,7 +50,7 @@
         "v5_d1-12.png"
       ],
       "prompt": "Edit the picture: many men and women in muddy 1700s to 1900s coats crouch around small separate heaps of sticks, stones, clay and grass, each one examining a single object very closely, curious rather than scared. No fires in the middle of the picture.",
-      "first_use": "SH005"
+      "first_use": "SH006"
     },
     {
       "id": "w1_darwin_grain",
@@ -59,7 +59,7 @@
         "v5_d1-04.png"
       ],
       "prompt": "Edit the picture: Charles Darwin holds up a small pinch of wild wheat grains between finger and thumb and studies them closely, curious. Behind him the camp of shelters, small fires, grey overcast sky.",
-      "first_use": "SH006"
+      "first_use": "SH007"
     },
     {
       "id": "w1_grain_palms",
@@ -68,7 +68,7 @@
         "v5_d1-17.png"
       ],
       "prompt": "Edit the picture: two hands in muddy sleeves held cupped and open, holding a small heap of golden wheat grains. Blurred golden hillside behind them.",
-      "first_use": "SH007"
+      "first_use": "SH009"
     },
     {
       "id": "w1_grain_hill",
@@ -77,29 +77,20 @@
         "v5_d1-21.png"
       ],
       "prompt": "Edit the picture: a golden hillside covered with wild wheat. A long line of tiny bent figures in muddy coats cuts the grain with small stone sickles, heading across the slope. Grey overcast sky, river far below.",
-      "first_use": "SH008"
-    },
-    {
-      "id": "w1_grain_ears",
-      "seed": 688,
-      "refs": [
-        "v5_d1-07.png"
-      ],
-      "prompt": "Edit the picture: remove the round stone; show a bundle of golden wild wheat ears lying in the dirt next to a small flint sickle blade with a sharp edge. Grey daylight.",
-      "first_use": "SH009"
+      "first_use": "SH010"
     },
     {
       "id": "w1_wallace_sickle",
-      "seed": 699,
+      "seed": 688,
       "refs": [
         "v5_d1-22.png"
       ],
       "prompt": "Edit the picture: Alfred Russel Wallace, bearded in his field jacket, stands in tall golden wild wheat and cuts a fistful with a short flint-bladed sickle, sweating, pleased then puzzled. Remove the waterfall and the stream; a hillside of wheat behind him.",
-      "first_use": "SH010"
+      "first_use": "SH011"
     },
     {
       "id": "w1_nansen_sum",
-      "seed": 710,
+      "seed": 699,
       "refs": [
         "v5_d1-14.png"
       ],
@@ -108,7 +99,7 @@
     },
     {
       "id": "w1_quern_hand",
-      "seed": 721,
+      "seed": 710,
       "refs": [
         "v5_d1-24.png"
       ],
@@ -117,12 +108,21 @@
     },
     {
       "id": "w1_grinders_rows",
-      "seed": 732,
+      "seed": 721,
       "refs": [
         "v5_d1-19.png"
       ],
       "prompt": "Edit the picture: instead of a circle, many kneeling figures in muddy coats sit in long rows grinding grain on flat stones; fine pale dust rises, small cookfires between the rows. Grey overcast sky.",
       "first_use": "SH014"
+    },
+    {
+      "id": "w1_grain_ears",
+      "seed": 732,
+      "refs": [
+        "v5_d1-07.png"
+      ],
+      "prompt": "Edit the picture: remove the round stone; show a bundle of golden wild wheat ears lying in the dirt next to a small flint sickle blade with a sharp edge. Grey daylight.",
+      "first_use": "SH015"
     },
     {
       "id": "w1_limestone_climbers",
@@ -131,7 +131,7 @@
         "v5_d1-21.png"
       ],
       "prompt": "Edit the picture: a steep pale limestone outcrop above the valley, rows of white rounded flint nodules in the rock face, two tiny climbers in muddy coats working at it with sticks. Grey overcast sky.",
-      "first_use": "SH017"
+      "first_use": "SH016"
     },
     {
       "id": "w1_darwin_nodule",
@@ -140,259 +140,241 @@
         "v5_d1-04.png"
       ],
       "prompt": "Edit the picture: Charles Darwin stands at a pale limestone rock face and holds up a rounded white flint nodule, delighted, eyes bright. Remove the fire and the crowd; rocky hillside behind him.",
-      "first_use": "SH018"
-    },
-    {
-      "id": "w1_knap_hands",
-      "seed": 765,
-      "refs": [
-        "v5_d1-24.png"
-      ],
-      "prompt": "Edit the picture: two hands in muddy sleeves strike a flint core with a rounded hammerstone, sharp flakes flying off in the grey light, no stick and no puddle.",
-      "first_use": "SH019"
+      "first_use": "SH017"
     },
     {
       "id": "w1_newton_cut",
-      "seed": 776,
+      "seed": 765,
       "refs": [
         "v5_d1-06.png"
       ],
       "prompt": "Edit the picture: Isaac Newton sits alone on a rock, scowling at a sharp flint flake in one hand while he sucks the bleeding finger of the other. Remove the other man; the long grassland behind him.",
-      "first_use": "SH020"
+      "first_use": "SH018"
     },
     {
       "id": "w1_knap_floor",
-      "seed": 787,
+      "seed": 776,
       "refs": [
         "v5_d1-12.png"
       ],
       "prompt": "Edit the picture: many men and women in muddy coats sit on the ground knapping flint, heaps of sharp flakes, scrapers and crude hand axes beside them, many fingers wrapped in rag bandages. A few small fires.",
-      "first_use": "SH021"
+      "first_use": "SH019"
     },
     {
       "id": "w1_axe_head",
-      "seed": 798,
+      "seed": 787,
       "refs": [
         "v5_d1-07.png"
       ],
       "prompt": "Edit the picture: a flint axe head lashed to a wooden handle with thin dark strips of sinew, dark glossy resin around the joint, lying on the ground in grey light. Remove the wheat and the round stone.",
-      "first_use": "SH022"
+      "first_use": "SH020"
     },
     {
       "id": "w1_einstein_resin",
-      "seed": 809,
+      "seed": 798,
       "refs": [
         "v5_d1-20.png"
       ],
       "prompt": "Edit the picture: young Einstein sits and smears a black sticky paste of pine resin and charcoal onto a flint axe head with a small stick, tongue poking out in concentration. Remove the other man.",
-      "first_use": "SH023"
+      "first_use": "SH021"
     },
     {
       "id": "w1_sinew_hands",
-      "seed": 820,
+      "seed": 809,
       "refs": [
         "v5_d1-17.png"
       ],
       "prompt": "Edit the picture: two hands in muddy sleeves pull a wet strip of sinew tight around the joint of a stone axe head and a wooden handle, close view.",
-      "first_use": "SH024"
+      "first_use": "SH022"
     },
     {
       "id": "w1_log_yard",
-      "seed": 831,
+      "seed": 820,
       "refs": [
         "v5_d1-21.png"
       ],
       "prompt": "Edit the picture: a log yard at the edge of the camp, long poles and logs lying on round rollers, a simple wooden sledge, small teams of figures in muddy coats shifting loads. Grey overcast sky.",
-      "first_use": "SH026"
+      "first_use": "SH024"
     },
     {
       "id": "w1_franklin_newton_lever",
-      "seed": 842,
+      "seed": 831,
       "refs": [
         "v5_d1-18.png"
       ],
       "prompt": "Edit the picture: Benjamin Franklin and Isaac Newton heave on a long wooden pole used as a lever under a large stone, Franklin red in the face, Newton calm and pointing at the pivot. No fire.",
-      "first_use": "SH027"
+      "first_use": "SH025"
     },
     {
       "id": "w1_tesla_sketch",
-      "seed": 853,
+      "seed": 842,
       "refs": [
         "v5_d1-08.png"
       ],
       "prompt": "Edit the picture: the tall dark-haired man with a moustache crouches and sketches a huge machine in the dirt with a stick, eager and proud, while the woman in the dark dress stands over it with her arms folded, doubtful.",
-      "first_use": "SH028"
+      "first_use": "SH026"
     },
     {
       "id": "w1_peg_hand",
-      "seed": 864,
+      "seed": 853,
       "refs": [
         "v5_d1-17.png"
       ],
       "prompt": "Edit the picture: one hand in a muddy sleeve holds up a small roughly carved wooden peg; the other hand is out of frame. Blurred camp behind.",
-      "first_use": "SH029"
+      "first_use": "SH027"
     },
     {
       "id": "w1_haul_pull",
-      "seed": 875,
+      "seed": 864,
       "refs": [
         "v5_d1-21.png"
       ],
       "prompt": "Edit the picture: eight people in muddy coats haul on a rope that runs over a wooden pulley hanging from a tripod of poles, lifting a big log, everyone straining. Grey sky.",
-      "first_use": "SH030"
+      "first_use": "SH028"
     },
     {
       "id": "w1_pin_snap",
-      "seed": 886,
+      "seed": 875,
       "refs": [
         "v5_d1-24.png"
       ],
       "prompt": "Edit the picture: close view of a wooden pulley block with a grooved wheel where the wooden pin has snapped in two, splinters flying, a taut rope whipping away. Grey daylight.",
-      "first_use": "SH031"
-    },
-    {
-      "id": "w1_log_roll",
-      "seed": 897,
-      "refs": [
-        "v5_d1-10.png"
-      ],
-      "prompt": "Edit the picture: a big log rolls loose down the grassy slope and a crowd of scientists in muddy coats scatter and dive out of its way. Grey overcast sky.",
-      "first_use": "SH032"
+      "first_use": "SH029"
     },
     {
       "id": "w1_franklin_dust",
-      "seed": 908,
+      "seed": 886,
       "refs": [
         "v5_d1-02.png"
       ],
       "prompt": "Edit the picture: Benjamin Franklin lies flat on his back in the dust, spectacles crooked on his nose, a thick log lying right next to his feet, dazed. Camp behind him.",
-      "first_use": "SH033"
+      "first_use": "SH030"
     },
     {
       "id": "w1_sick_figure",
-      "seed": 919,
+      "seed": 897,
       "refs": [
         "v5_d1-12.png"
       ],
       "prompt": "Edit the picture: a pale sick man lies wrapped in an animal hide on the ground, a worried woman in a muddy dress kneels at his side holding a wooden cup of cloudy water, small fires and shelters behind them, grey daylight.",
-      "first_use": "SH034"
+      "first_use": "SH031"
     },
     {
       "id": "w1_snow_rule",
-      "seed": 930,
+      "seed": 908,
       "refs": [
         "v5_d1-36.png"
       ],
       "prompt": "Edit the picture: the pale physician with round spectacles points at the muddy river pool and shakes his head, the bearded man in the field jacket points back at the water, both arguing. No tents or crates.",
-      "first_use": "SH035"
+      "first_use": "SH032"
     },
     {
       "id": "w1_pit_steam",
-      "seed": 941,
+      "seed": 919,
       "refs": [
         "v5_d1-12.png"
       ],
       "prompt": "Edit the picture: a round pit in the ground lined with animal hide, filled with water, thick steam rising from it, tiny figures in muddy coats crouch round it with wooden tongs. A small fire at the side.",
-      "first_use": "SH036"
+      "first_use": "SH033"
     },
     {
       "id": "w1_stone_steam",
-      "seed": 952,
+      "seed": 930,
       "refs": [
         "v5_d1-24.png"
       ],
       "prompt": "Edit the picture: a glowing red-hot stone held in wooden tongs drops into water in a hide-lined pit, a big burst of white steam, no stick.",
-      "first_use": "SH037"
+      "first_use": "SH034"
     },
     {
       "id": "w1_cobble_crack",
-      "seed": 963,
+      "seed": 941,
       "refs": [
         "v5_d1-07.png"
       ],
       "prompt": "Edit the picture: a round river cobble lies in glowing embers and bursts apart, sharp fragments flying outward, sparks, grey daylight, remove the wheat.",
-      "first_use": "SH038"
+      "first_use": "SH035"
     },
     {
       "id": "w1_franklin_cuts",
-      "seed": 974,
+      "seed": 952,
       "refs": [
         "v5_d1-02.png"
       ],
       "prompt": "Edit the picture: Benjamin Franklin sits and picks tiny stone splinters out of his coat sleeve, small cuts on his cheek, wincing, one hand up near his face. Camp behind him.",
-      "first_use": "SH039"
+      "first_use": "SH036"
     },
     {
       "id": "w1_snow_filter",
-      "seed": 985,
+      "seed": 963,
       "refs": [
         "v5_d1-36.png"
       ],
       "prompt": "Edit the picture: the pale physician with round spectacles holds up a wooden cup of clear water and shakes his head slowly. Behind him a hide-lined pit and a pile of black charcoal. Remove the bearded man and the tents.",
-      "first_use": "SH040"
+      "first_use": "SH037"
     },
     {
       "id": "w1_curie_soap",
-      "seed": 996,
+      "seed": 974,
       "refs": [
         "v5_d1-08.png"
       ],
       "prompt": "Edit the picture: the woman in the dark dress stirs a bubbling pit of animal fat and grey wood ash with a long stick, pinching her nose, grimacing. Remove the man.",
-      "first_use": "SH041"
+      "first_use": "SH038"
     },
     {
       "id": "w1_wash_hands",
-      "seed": 1007,
+      "seed": 985,
       "refs": [
         "v5_d1-17.png"
       ],
       "prompt": "Edit the picture: two hands in rolled-up muddy sleeves wash in a wooden trough of water with grey soap suds, close view.",
-      "first_use": "SH042"
-    },
-    {
-      "id": "w1_camp_night",
-      "seed": 1018,
-      "refs": [
-        "v5_d1-19.png"
-      ],
-      "prompt": "Edit the picture: the camp at night under a starry sky, a row of crude shelters of poles and hides, small fires, a few figures sitting up awake. Remove the stone and the circle.",
-      "first_use": "SH043"
-    },
-    {
-      "id": "w1_wrist_hand",
-      "seed": 1029,
-      "refs": [
-        "v5_d1-17.png"
-      ],
-      "prompt": "Edit the picture: a single hand with a wrist wrapped in a rag bandage resting on a knee in warm firelight, close view.",
-      "first_use": "SH044"
-    },
-    {
-      "id": "w1_nansen_watch",
-      "seed": 1040,
-      "refs": [
-        "v5_d1-14.png"
-      ],
-      "prompt": "Edit the picture: Fridtjof Nansen stands at the edge of the camp at dusk, arms crossed, looking out toward the dark valley, worried. Remove the pointing and the group behind him; a row of shelters far behind.",
-      "first_use": "SH046"
+      "first_use": "SH039"
     },
     {
       "id": "w1_valley_dusk",
-      "seed": 1051,
+      "seed": 996,
       "refs": [
         "v5_d1-01.png"
       ],
       "prompt": "Edit the picture: the same valley at last light seen from the hill, the camp tiny and orange-lit in the distance, grey clouds rolling in from the north, no figures in the foreground.",
-      "first_use": "SH047"
+      "first_use": "SH040"
+    },
+    {
+      "id": "w1_camp_night",
+      "seed": 1007,
+      "refs": [
+        "v5_d1-19.png"
+      ],
+      "prompt": "Edit the picture: the camp at night under a starry sky, a row of crude shelters of poles and hides, small fires, a few figures sitting up awake. Remove the stone and the circle.",
+      "first_use": "SH041"
+    },
+    {
+      "id": "w1_wrist_hand",
+      "seed": 1018,
+      "refs": [
+        "v5_d1-17.png"
+      ],
+      "prompt": "Edit the picture: a single hand with a wrist wrapped in a rag bandage resting on a knee in warm firelight, close view.",
+      "first_use": "SH042"
+    },
+    {
+      "id": "w1_nansen_watch",
+      "seed": 1029,
+      "refs": [
+        "v5_d1-14.png"
+      ],
+      "prompt": "Edit the picture: Fridtjof Nansen stands at the edge of the camp at dusk, arms crossed, looking out toward the dark valley, worried. Remove the pointing and the group behind him; a row of shelters far behind.",
+      "first_use": "SH044"
     },
     {
       "id": "w1_frost_grass",
-      "seed": 1062,
+      "seed": 1040,
       "refs": [
         "v5_d1-07.png"
       ],
       "prompt": "Edit the picture: remove the wheat and the stones; a close view of dry grass blades at dawn, each rimmed with white frost, cold blue light, the first hard frost.",
-      "first_use": "SH048"
+      "first_use": "SH046"
     }
   ]
 }

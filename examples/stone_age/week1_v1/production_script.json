@@ -382,7 +382,8 @@
     },
     {
      "text": "Six names.",
-     "emotion": "wry"
+     "emotion": "wry",
+     "pause_after": 0.5
     },
     {
      "text": "Column two: who has ever chipped a flint?"
@@ -410,7 +411,8 @@
      "tags": [
       "thoughtful"
      ],
-     "emotion": "musing"
+     "emotion": "musing",
+     "pause_after": 0.6
     },
     {
      "text": "Ninety brilliant theories, and no calluses."
@@ -508,6 +510,17 @@
      "insert": true
     },
     {
+     "at": "Column two:",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_franklin_bark",
+     "heroes_ok": true
+    },
+    {
      "at": "Everybody else",
      "type": "B",
      "motion": {
@@ -577,28 +590,6 @@
       "prompt": "Edit the picture: Charles Darwin holds up a small pinch of wild wheat grains between finger and thumb and studies them closely, curious. Behind him the camp of shelters, small fires, grey overcast sky. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
      "heroes_ok": true
-    },
-    {
-     "at": "And the first",
-     "type": "C",
-     "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.06
-     },
-     "picture": {
-      "id": "w1_grain_palms",
-      "engine": "pod_ref",
-      "refs": [
-       "v5_d1-17"
-      ],
-      "heroes": [],
-      "shows": [],
-      "subject": "lunch: two cupped palms hold a small heap of golden grain",
-      "edit": "Edit the picture: two hands in muddy sleeves held cupped and open, holding a small heap of golden wheat grains. Blurred golden hillside behind them.",
-      "prompt": "Edit the picture: two hands in muddy sleeves held cupped and open, holding a small heap of golden wheat grains. Blurred golden hillside behind them. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
-     },
-     "insert": true
     }
    ],
    "audio": {
@@ -679,7 +670,8 @@
     },
     {
      "text": "It doesn't.",
-     "emotion": "deadpan"
+     "emotion": "deadpan",
+     "pause_after": 0.6
     },
     {
      "text": "And cutting grain needs sharp stone. So who knows stone?",
@@ -702,6 +694,39 @@
       "z1": 1.06,
       "dx": 0.05
      },
+     "picture": "w1_camp_wide"
+    },
+    {
+     "at": "Every.",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": {
+      "id": "w1_grain_palms",
+      "engine": "pod_ref",
+      "refs": [
+       "v5_d1-17"
+      ],
+      "heroes": [],
+      "shows": [],
+      "subject": "lunch: two cupped palms hold a small heap of golden grain",
+      "edit": "Edit the picture: two hands in muddy sleeves held cupped and open, holding a small heap of golden wheat grains. Blurred golden hillside behind them.",
+      "prompt": "Edit the picture: two hands in muddy sleeves held cupped and open, holding a small heap of golden wheat grains. Blurred golden hillside behind them. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "insert": true
+    },
+    {
+     "at": "Luckily, wild",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
      "picture": {
       "id": "w1_grain_hill",
       "engine": "pod_ref",
@@ -714,28 +739,6 @@
       "edit": "Edit the picture: a golden hillside covered with wild wheat. A long line of tiny bent figures in muddy coats cuts the grain with small stone sickles, heading across the slope. Grey overcast sky, river far below.",
       "prompt": "Edit the picture: a golden hillside covered with wild wheat. A long line of tiny bent figures in muddy coats cuts the grain with small stone sickles, heading across the slope. Grey overcast sky, river far below. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      }
-    },
-    {
-     "at": "Luckily, wild",
-     "type": "C",
-     "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.06
-     },
-     "picture": {
-      "id": "w1_grain_ears",
-      "engine": "pod_ref",
-      "refs": [
-       "v5_d1-07"
-      ],
-      "heroes": [],
-      "shows": [],
-      "subject": "ripe ears of wild einkorn, a flint sickle blade beside them",
-      "edit": "Edit the picture: remove the round stone; show a bundle of golden wild wheat ears lying in the dirt next to a small flint sickle blade with a sharp edge. Grey daylight.",
-      "prompt": "Edit the picture: remove the round stone; show a bundle of golden wild wheat ears lying in the dirt next to a small flint sickle blade with a sharp edge. Grey daylight. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
-     },
-     "insert": true
     },
     {
      "at": "So Wallace",
@@ -760,17 +763,6 @@
       "prompt": "Edit the picture: Alfred Russel Wallace, bearded in his field jacket, stands in tall golden wild wheat and cuts a fistful with a short flint-bladed sickle, sweating, pleased then puzzled. Remove the waterfall and the stream; a hillside of wheat behind him. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
      "heroes_ok": true
-    },
-    {
-     "at": "About two",
-     "type": "C",
-     "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.06
-     },
-     "picture": "w1_grain_palms",
-     "insert": true
     },
     {
      "at": "Nansen does",
@@ -841,25 +833,25 @@
      }
     },
     {
-     "at": "Nansen runs",
-     "type": "B",
-     "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.06
-     },
-     "picture": "w1_nansen_sum",
-     "heroes_ok": true
-    },
-    {
-     "at": "And cutting",
+     "at": "Hoping it",
      "type": "C",
      "motion": {
       "kind": "push",
       "z0": 1.0,
       "z1": 1.06
      },
-     "picture": "w1_grain_ears",
+     "picture": {
+      "id": "w1_grain_ears",
+      "engine": "pod_ref",
+      "refs": [
+       "v5_d1-07"
+      ],
+      "heroes": [],
+      "shows": [],
+      "subject": "ripe ears of wild einkorn, a flint sickle blade beside them",
+      "edit": "Edit the picture: remove the round stone; show a bundle of golden wild wheat ears lying in the dirt next to a small flint sickle blade with a sharp edge. Grey daylight.",
+      "prompt": "Edit the picture: remove the round stone; show a bundle of golden wild wheat ears lying in the dirt next to a small flint sickle blade with a sharp edge. Grey daylight. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
      "insert": true
     }
    ],
@@ -886,7 +878,8 @@
     },
     {
      "text": "Flint!",
-     "emotion": "delight"
+     "emotion": "delight",
+     "pause_after": 0.5
     },
     {
      "text": "Then comes the knapping."
@@ -933,7 +926,8 @@
      "tags": [
       "softly"
      ],
-     "emotion": "wonder"
+     "emotion": "wonder",
+     "pause_after": 0.7
     },
     {
      "text": "Now they have axes. Which means somebody can finally build something.",
@@ -992,28 +986,6 @@
       "prompt": "Edit the picture: Charles Darwin stands at a pale limestone rock face and holds up a rounded white flint nodule, delighted, eyes bright. Remove the fire and the crowd; rocky hillside behind him. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
      "heroes_ok": true
-    },
-    {
-     "at": "Then comes",
-     "type": "C",
-     "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.06
-     },
-     "picture": {
-      "id": "w1_knap_hands",
-      "engine": "pod_ref",
-      "refs": [
-       "v5_d1-24"
-      ],
-      "heroes": [],
-      "shows": [],
-      "subject": "hands strike a flint with a hammerstone, flakes flying",
-      "edit": "Edit the picture: two hands in muddy sleeves strike a flint core with a rounded hammerstone, sharp flakes flying off in the grey light, no stick and no puddle.",
-      "prompt": "Edit the picture: two hands in muddy sleeves strike a flint core with a rounded hammerstone, sharp flakes flying off in the grey light, no stick and no puddle. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
-     },
-     "insert": true
     },
     {
      "at": "Newton hits",
@@ -1217,7 +1189,8 @@
      "tags": [
       "deadpan"
      ],
-     "emotion": "dry humour"
+     "emotion": "dry humour",
+     "pause_after": 0.6
     },
     {
      "text": "Design is easy. Materials are HARD.",
@@ -1380,28 +1353,6 @@
      "insert": true
     },
     {
-     "at": "The log rolls.",
-     "type": "A",
-     "motion": {
-      "kind": "pan",
-      "z0": 1.06,
-      "z1": 1.06,
-      "dx": 0.05
-     },
-     "picture": {
-      "id": "w1_log_roll",
-      "engine": "pod_ref",
-      "refs": [
-       "v5_d1-10"
-      ],
-      "heroes": [],
-      "shows": [],
-      "subject": "a log rolls loose down the slope as people scatter",
-      "edit": "Edit the picture: a big log rolls loose down the grassy slope and a crowd of scientists in muddy coats scatter and dive out of its way. Grey overcast sky.",
-      "prompt": "Edit the picture: a big log rolls loose down the grassy slope and a crowd of scientists in muddy coats scatter and dive out of its way. Grey overcast sky. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
-     }
-    },
-    {
      "at": "Franklin is,",
      "type": "B",
      "motion": {
@@ -1426,7 +1377,7 @@
      "heroes_ok": true
     },
     {
-     "at": "And tonight",
+     "at": "Materials are",
      "type": "A",
      "motion": {
       "kind": "pan",
@@ -1486,7 +1437,8 @@
      "tags": [
       "softly"
      ],
-     "emotion": "relief"
+     "emotion": "relief",
+     "pause_after": 0.6
     },
     {
      "text": "Until a stone explodes.",
@@ -1733,6 +1685,28 @@
       "prompt": "Edit the picture: two hands in rolled-up muddy sleeves wash in a wooden trough of water with grey soap suds, close view. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
      "insert": true
+    },
+    {
+     "at": "But the sun",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": {
+      "id": "w1_valley_dusk",
+      "engine": "pod_ref",
+      "refs": [
+       "v5_d1-01"
+      ],
+      "heroes": [],
+      "shows": [],
+      "subject": "the valley at last light, the camp small in the distance, a cold wind coming",
+      "edit": "Edit the picture: the same valley at last light seen from the hill, the camp tiny and orange-lit in the distance, grey clouds rolling in from the north, no figures in the foreground.",
+      "prompt": "Edit the picture: the same valley at last light seen from the hill, the camp tiny and orange-lit in the distance, grey clouds rolling in from the north, no figures in the foreground. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     }
     }
    ],
    "audio": {
@@ -1780,7 +1754,8 @@
      "emphasis": [
       "ahead"
      ],
-     "emotion": "tension"
+     "emotion": "tension",
+     "pause_after": 0.7
     },
     {
      "text": "Nansen looks at the dark valley, and at the hills beyond.",
@@ -1900,18 +1875,7 @@
       "z1": 1.06,
       "dx": 0.05
      },
-     "picture": {
-      "id": "w1_valley_dusk",
-      "engine": "pod_ref",
-      "refs": [
-       "v5_d1-01"
-      ],
-      "heroes": [],
-      "shows": [],
-      "subject": "the valley at last light, the camp small in the distance, a cold wind coming",
-      "edit": "Edit the picture: the same valley at last light seen from the hill, the camp tiny and orange-lit in the distance, grey clouds rolling in from the north, no figures in the foreground.",
-      "prompt": "Edit the picture: the same valley at last light seen from the hill, the camp tiny and orange-lit in the distance, grey clouds rolling in from the north, no figures in the foreground. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
-     }
+     "picture": "w1_camp_night"
     },
     {
      "at": "And a winter",
@@ -1934,6 +1898,17 @@
       "prompt": "Edit the picture: remove the wheat and the stones; a close view of dry grass blades at dawn, each rimmed with white frost, cold blue light, the first hard frost. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
      "insert": true
+    },
+    {
+     "at": "Next:",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_pit_steam"
     }
    ],
    "audio": {
