@@ -1,23 +1,139 @@
 {
-  "version": 1,
-  "episode": "stone_age",
-  "note": "UR-08: the topic sets the palette range; colour names are words for prompts and grades, not hex (colours of the UI live in palette.json). The palette moves with progress: the colour itself tells the arc.",
-  "style_suffix": ", painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
-  "cast": ["newton", "einstein", "curie", "darwin", "tesla", "archimedes", "franklin", "nansen", "wallace", "john snow",
-           "humboldt", "mendel", "borlaug", "lavoisier", "watt", "maudslay", "faraday", "edison", "pasteur", "semmelweis"],
-  "caricatures": ["newton", "einstein", "curie", "darwin", "tesla", "archimedes", "franklin", "nansen"],
-  "phases": {
-    "day1": {"palette": ["ochre", "umber", "charcoal", "fire amber", "river teal", "dawn rose", "night blue"],
-             "story": "nothing but nature: earth, fire, water, sky"},
-    "week1": {"palette": ["ochre", "umber", "charcoal", "fire amber", "river teal", "flint grey", "bark brown"],
-              "story": "stone and wood become tools"},
-    "month1": {"palette": ["ochre", "umber", "terracotta", "fire amber", "river teal", "wheat gold", "copper green"],
-               "story": "clay, fields and the first green copper"},
-    "year1": {"palette": ["umber", "charcoal", "iron grey", "furnace orange", "river teal", "wheat gold", "smoke white"],
-              "story": "iron, furnaces and winter"},
-    "years2_10": {"palette": ["umber", "iron grey", "brass", "furnace orange", "glass green", "electric white", "night blue"],
-                  "story": "glass, wire and the first electric light"},
-    "year50": {"palette": ["iron grey", "brass", "brick red", "steam white", "electric white", "electric blue", "wheat gold"],
-               "story": "steam, rails and a lit village"}
+ "version": 1,
+ "episode": "stone_age",
+ "note": "UR-08: the topic sets the palette range; colour names are words for prompts and grades, not hex (colours of the UI live in palette.json). The palette moves with progress: the colour itself tells the arc.",
+ "style_suffix": ", painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+ "cast": [
+  "newton",
+  "einstein",
+  "curie",
+  "darwin",
+  "tesla",
+  "archimedes",
+  "franklin",
+  "nansen",
+  "wallace",
+  "john snow",
+  "humboldt",
+  "mendel",
+  "borlaug",
+  "lavoisier",
+  "watt",
+  "maudslay",
+  "faraday",
+  "edison",
+  "pasteur",
+  "semmelweis"
+ ],
+ "caricatures": [
+  "newton",
+  "einstein",
+  "curie",
+  "darwin",
+  "tesla",
+  "archimedes",
+  "franklin",
+  "nansen"
+ ],
+ "phases": {
+  "day1": {
+   "palette": [
+    "ochre",
+    "umber",
+    "charcoal",
+    "fire amber",
+    "river teal",
+    "dawn rose",
+    "night blue"
+   ],
+   "story": "nothing but nature: earth, fire, water, sky"
+  },
+  "week1": {
+   "palette": [
+    "ochre",
+    "umber",
+    "charcoal",
+    "fire amber",
+    "river teal",
+    "flint grey",
+    "bark brown"
+   ],
+   "story": "stone and wood become tools"
+  },
+  "month1": {
+   "palette": [
+    "ochre",
+    "umber",
+    "terracotta",
+    "fire amber",
+    "river teal",
+    "wheat gold",
+    "copper green"
+   ],
+   "story": "clay, fields and the first green copper"
+  },
+  "year1": {
+   "palette": [
+    "umber",
+    "charcoal",
+    "iron grey",
+    "furnace orange",
+    "river teal",
+    "wheat gold",
+    "smoke white"
+   ],
+   "story": "iron, furnaces and winter"
+  },
+  "years2_10": {
+   "palette": [
+    "umber",
+    "iron grey",
+    "brass",
+    "furnace orange",
+    "glass green",
+    "electric white",
+    "night blue"
+   ],
+   "story": "glass, wire and the first electric light"
+  },
+  "year50": {
+   "palette": [
+    "iron grey",
+    "brass",
+    "brick red",
+    "steam white",
+    "electric white",
+    "electric blue",
+    "wheat gold"
+   ],
+   "story": "steam, rails and a lit village"
   }
+ },
+ "rule_base": 2,
+ "archetypes": {
+  "newton": "the proud grump who disagrees with everyone, and the loudest critic of any plan",
+  "einstein": "the dreamy improviser, brilliant and absent-minded, solves the physics and forgets the socks",
+  "curie": "the exact and stubborn one, calm under pressure, trusts only what she can measure",
+  "darwin": "the careful observer who will not touch what he cannot name",
+  "tesla": "the anxious perfectionist who redesigns everything and trusts nobody's plan",
+  "franklin": "the organiser and schemer, a committee in one coat, always three steps ahead and enjoying it",
+  "nansen": "the tough pragmatist who has actually survived ice and hunger and has no patience for theory",
+  "wallace": "the quiet field naturalist who finds the useful thing while others argue",
+  "snow": "the methodical doctor obsessed with clean water who will say it again, louder",
+  "archimedes": "the eager tinkerer who tries to build a machine for everything"
+ },
+ "pose_bank": {
+  "einstein": [
+   "amazed",
+   "think"
+  ],
+  "franklin": [
+   "struggle"
+  ],
+  "nansen": [
+   "struggle",
+   "triumph"
+  ]
+ },
+ "note_rule_base": "rule_base 2 = UR-16..UR-20 (D-40): stakes in every frame, named heroes with emotional poses in every B shot"
 }

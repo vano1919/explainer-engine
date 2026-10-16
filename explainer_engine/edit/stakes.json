@@ -1,0 +1,25 @@
+{
+ "_note": "UR-16..UR-20 vocabulary (creator, 2026-10-16, D-40). `passive` words are banned in every pod prompt: they produce the neutral picnic/brochure picture. A prompt must contain at least one `cues` word: something that can go wrong, hurt, or be argued about in the frame. Add words when a new topic needs them; never delete one to make a prompt pass.",
+ "passive": ["peaceful", "serene", "tranquil", "idyllic", "picturesque", "lovely", "pleasant", "scenic", "charming",
+             "beautiful view", "relaxing", "cozy", "gentle breeze", "sunny meadow", "calm landscape", "quiet meadow",
+             "pastoral", "carefree", "sunbathed", "nature documentary"],
+ "cues": {
+  "weather": ["storm", "stormy", "wind", "windswept", "gale", "rain", "sleet", "frost", "frozen", "freezing", "shivering",
+              "damp", "soaked", "lightning", "thunder", "fog", "overcast", "bruised sky", "bending"],
+  "fire": ["smoke", "smoking", "ember", "embers", "sparks", "spark", "flame", "flames", "scorched", "ash", "burning"],
+  "danger": ["wolves", "wolf", "leopard", "predator", "predators", "aurochs", "boar", "bear", "eyes in the dark", "stalking",
+             "claw", "tracks of", "carcass", "bones", "snarling", "snake", "cliff edge", "drop"],
+  "hunger": ["empty", "hungry", "starving", "bare", "raw", "scraps", "famine", "gnawing", "thin", "rationed"],
+  "conflict": ["arguing", "argues", "shouting", "pointing", "clutching", "snatching", "glaring", "scowling", "quarrel",
+               "quarreling", "bickering", "refusing", "panicking", "panic", "alarmed", "shocked", "horrified", "stunned",
+               "appalled", "outraged", "scheming", "smirking", "exasperated"],
+  "strain": ["blistered", "blisters", "trembling", "shaking", "bleeding", "cracked", "raw knuckles", "sweat", "sweating",
+             "exhausted", "aching", "torn", "scraped", "numb", "splinters", "gripping", "straining", "failing", "fumbling"],
+  "dark": ["dusk", "twilight", "shadows", "long shadows", "night", "darkening", "gloom", "blackness", "dim"],
+  "crowd": ["a hundred", "huddled", "crowd", "mob", "scattered clusters", "stranded", "lost"],
+  "scale": ["vast", "endless", "towering", "unforgiving", "hostile", "desolate", "empty horizon", "tiny against"]
+ },
+ "people_words": ["person", "people", "man", "men", "woman", "women", "figure", "figures", "human", "humans", "crowd", "child"],
+ "poses": ["panic", "shock", "argue", "shiver", "exhausted", "triumph", "dismay", "scheme", "struggle", "point", "lecture",
+           "amazed", "think", "smug", "recoil", "plead"]
+}

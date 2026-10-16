@@ -1,0 +1,42 @@
+# Day 1 (rule base 2): Universal Rule Base check
+
+- REVIEW UR-10 d1-10: emotion changes humour -> tension inside a beat without a sound event
+- REVIEW UR-05 d1-11: beat 'meadow' opens on C, not A
+- REVIEW UR-10 d1-12: emotion changes tension -> humour inside a beat without a sound event
+- REVIEW UR-10 d1-16: emotion changes tension -> humour inside a beat without a sound event
+- REVIEW UR-10 d1-17: emotion changes humour -> fear inside a beat without a sound event
+- REVIEW UR-05 d1-22: beat 'water' opens on B, not A
+- FAIL UR-06 d1-22: no reusable caricature for ['wallace']: use the faceless branch
+- FAIL UR-06 d1-25: no reusable caricature for ['snow', 'wallace']: use the faceless branch
+- REVIEW UR-05 d1-31: beat 'fire' opens on B, not A
+- REVIEW UR-05 d1-40: beat 'night' opens on C, not A
+- FAIL UR-06 d1-42: no reusable caricature for ['wallace']: use the faceless branch
+- REVIEW UR-05 d1-43: beat 'end' opens on B, not A
+- REVIEW UR-10 d1-44: emotion changes tension -> fear inside a beat without a sound event
+- REVIEW UR-17 d1-02: pose 'dismay' of franklin is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-04: pose 'shock' of darwin is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-06: pose 'dismay' of newton is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-07: pose 'amazed' of curie is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-07: pose 'argue' of tesla is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-14: pose 'point' of nansen is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-15: pose 'point' of nansen is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-15: pose 'dismay' of franklin is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-18: pose 'scheme' of franklin is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-18: pose 'argue' of newton is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-20: pose 'smug' of newton is not in the sprite bank yet: generate it (reusable asset)
+- FAIL UR-17 d1-22: hero 'wallace' has no caricature sprite
+- REVIEW UR-17 d1-22: pose 'triumph' of wallace is not in the sprite bank yet: generate it (reusable asset)
+- FAIL UR-17 d1-25: hero 'snow' has no caricature sprite
+- REVIEW UR-17 d1-25: pose 'point' of snow is not in the sprite bank yet: generate it (reusable asset)
+- FAIL UR-17 d1-25: hero 'wallace' has no caricature sprite
+- REVIEW UR-17 d1-25: pose 'argue' of wallace is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-28: pose 'struggle' of einstein is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-28: pose 'argue' of tesla is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-33: pose 'plead' of franklin is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-42: pose 'recoil' of darwin is not in the sprite bank yet: generate it (reusable asset)
+- FAIL UR-17 d1-42: hero 'wallace' has no caricature sprite
+- REVIEW UR-17 d1-42: pose 'argue' of wallace is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-43: pose 'lecture' of franklin is not in the sprite bank yet: generate it (reusable asset)
+- REVIEW UR-17 d1-43: pose 'exhausted' of nansen is not in the sprite bank yet: generate it (reusable asset)
+
+46 shots, 7 FAIL, 31 REVIEW

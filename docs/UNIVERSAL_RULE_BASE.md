@@ -2,7 +2,7 @@
 
 The channel-wide rules every Crossworld Theories video follows: history, science, fantasy crossovers alike. The creator
 set them on 2026-10-16 (D-37). Rules marked **[code]** are checked by `explainer_engine/edit/shot_rules.py`
-(`python -m explainer_engine.edit.shot_rules <shots.json> <words.json> <look.json>`); **[editorial]** rules are
+(`python -m explainer_engine.edit.shot_rules <shots.json> <words.json> <look.json>`; UR-16..UR-21 in `edit/stakes.json`); **[editorial]** rules are
 checked by the editor and the creator. A FAIL blocks the edit; a REVIEW goes to the creator.
 
 The look stays the painted style of D-27 (the creator rejected the hyper-realistic modifier on 2026-10-16). Pictures come
@@ -55,6 +55,26 @@ The emotion table (the canonical values are in `moods.json`):
 | UR-13 | **Ken Burns.** Zoom stays within 1.00–1.15. A: a slow horizontal pan (≤ 6 % of the width per 5 s) at one zoom between 1.05 and 1.08. B: a slow push-in (1.00 → ≤ 1.10). C: static or a pull-out (≤ 1.08 → 1.00). No camera shake. | [code] |
 | UR-14 | **Transitions.** Hard cuts by default, at least 90 % of all transitions. A 1.0 s cross-dissolve only where the shot marks `time_jump` or `place_change` (Day 1 → Week 1, a new valley). | [code] |
 | UR-15 | **Sound at cuts.** A swish or foley on a cut comes from the sound library (D-34) and never masks a word; music sits under the narration with ducking (AUDIO_SYSTEM.md). | [code] the id is in the library manifest; [editorial] masking |
+
+## E. Stakes, heroes and tone (rule base 2; creator, 2026-10-16, D-40)
+
+The creator's review of the first Day 1 pictures: too generic, a "picnic" of meadows and hands, no recognisable heroes, no
+fear or nervousness, nothing a viewer imagines when they think of the Stone Age. These rules apply to every topic (history,
+science, fantasy crossovers); `look.json` switches them on with `"rule_base": 2`. The vocabulary lives in
+`explainer_engine/edit/stakes.json`.
+
+| ID | Rule | Check |
+|---|---|---|
+| UR-16 | **No passive scenery; stakes in every frame.** Every shot has a `stakes` line (at least 5 words: what is at risk in this frame) and its pod prompt shows it: at least one cue from the stakes vocabulary (weather, fire, danger, hunger, conflict, strain, darkness, crowd, scale). The passive words (peaceful, serene, idyllic, picturesque, lovely, scenic, sunny meadow, calm landscape...) are banned. A wide shot shows the hostility or scale of the world, a close-up the gritty detail (shaking hands, blisters, sparks, cracked skin), never a pretty view. | [code] |
+| UR-17 | **Named heroes in every B shot (amends UR-06).** A B shot shows 1-2 real, named heroes of the episode as our caricature sprites over a plate, each with an emotional pose (panic, shock, argue, shiver, exhausted, triumph, dismay, scheme, struggle, point, lecture, amazed, think, smug, recoil, plead); the standing-idle pose is not allowed. A faceless B shot needs a written `faceless_reason` and at most 15 % of the B shots may be faceless: anonymous backs are not a default. A pose that is not in `look.pose_bank` is a reusable sprite to make (Gemini is allowed for reusable cast art, D-36). | [code]; [editorial] the likeness and the pose read at a glance |
+| UR-18 | **Friction.** A beat with two or more B shots has at least one with friction: two heroes disagreeing, a hero failing at a basic task, a reaction to someone else's plan. The comedy is human friction, never invented science. | [code] REVIEW |
+| UR-19 | **Archetypes.** Every hero has one archetype line in `look.archetypes` (Newton the proud critic, Einstein the dreamy improviser, Franklin the organiser...); the pose, the dialogue and the humour stay in character. | [code] REVIEW for a missing line; [editorial] |
+| UR-20 | **Plates are empty ground.** A plate prompt (a picture that our sprites stand on) never contains a people word (person, man, figure, crowd...): the model paints people whatever "empty of people" says. Describe empty ground instead. | [code] |
+| UR-21 | **Tone.** Entertainment first, facts second: dry wit, irony and situational humour about brilliant people failing at basic survival; the physics, history and constraints are told straight and never invented for a joke. Scripts follow the `narration-script` skill, pictures the `shot-visuals` skill. | [editorial]; narration_lint for the script |
+
+Real people: the heroes are real historical figures drawn as caricatures in a commentary and parody format. The creator decided
+this on 2026-10-16; it is a risk to manage, not a guarantee: RIGHTS_AND_FAIR_USE.md records what is and is not covered, and
+a likeness the estate actively licenses (Einstein's is one) is checked before the episode is published.
 
 ## The shot record
 

@@ -175,7 +175,7 @@ def test_fire_animatic_v3_regression():
 def test_the_committed_day1_edit_passes():
     shots = _load(DAY1 / "shots.json", "shots")
     words = _load(DAY1 / "words.json", "words")
-    look = json.loads((ROOT / "examples/stone_age/look.json").read_text(encoding="utf-8"))
+    look = {**json.loads((ROOT / "examples/stone_age/look.json").read_text(encoding="utf-8")), "rule_base": 1}
     manifest = json.loads((ROOT / "assets/audio/library/manifest.json").read_text(encoding="utf-8"))
     found = R.check_shots(shots, words, look, sound_ids={x["id"] for x in manifest["items"]})
     assert [f for f in found if f["severity"] == "FAIL"] == []
@@ -188,9 +188,74 @@ def test_the_committed_day1_edit_passes():
 def test_the_committed_day1_v2_edit_on_the_clyde_read_passes():
     shots = _load(DAY1_V2 / "shots.json", "shots")
     words = _load(DAY1_V2 / "words.json", "words")
-    look = json.loads((ROOT / "examples/stone_age/look.json").read_text(encoding="utf-8"))
+    look = {**json.loads((ROOT / "examples/stone_age/look.json").read_text(encoding="utf-8")), "rule_base": 1}
     manifest = json.loads((ROOT / "assets/audio/library/manifest.json").read_text(encoding="utf-8"))
     found = R.check_shots(shots, words, look, sound_ids={x["id"] for x in manifest["items"]})
     assert [f for f in found if f["severity"] == "FAIL"] == []
     assert all(R.cut_ok(s["start"], words) for s in shots[1:])
     assert abs(shots[-1]["end"] - _load(DAY1_V2 / "words.json", "duration")) < 1e-6
+
+
+STAKES_LOOK = {**LOOK, "rule_base": 2, "caricatures": ["newton", "nansen"], "archetypes": {"newton": "proud critic", "nansen": "pragmatist"},
+               "pose_bank": {"newton": ["argue"], "nansen": ["point"]}}
+
+
+def _stakes(**kw):
+    shot = {"id": "x", "type": "B", "stakes": "the wind is rising and nobody has fire yet", "face": "caricature:newton",
+            "heroes": [{"name": "newton", "pose": "argue"}], "plate": True, "beat": "b",
+            "prompt": "medium shot of a bare ridge at dusk, a cold wind bending the grass, wide deserted open ground"}
+    shot.update(kw)
+    return R.check_stakes([shot], STAKES_LOOK)
+
+
+def rules_of(found, severity=None):
+    return {f["rule"] for f in found if severity is None or f["severity"] == severity}
+
+
+def test_a_stakes_shot_with_a_posed_hero_passes():
+    assert _stakes() == []
+
+
+def test_passive_scenery_and_missing_cues_fail():
+    assert "UR-16" in rules_of(_stakes(prompt="medium shot of a peaceful meadow at dusk, a cold wind"), "FAIL")
+    assert "UR-16" in rules_of(_stakes(prompt="medium shot of a grassy hill with a river"), "FAIL")
+    assert "UR-16" in rules_of(_stakes(stakes="windy"), "FAIL")
+
+
+def test_plates_never_name_people():
+    assert "UR-20" in rules_of(_stakes(prompt="medium shot of a ridge in a cold wind, empty of people"), "FAIL")
+
+
+def test_b_shots_need_named_heroes_with_emotional_poses():
+    assert "UR-17" in rules_of(_stakes(heroes=[]), "FAIL")
+    assert "UR-17" in rules_of(_stakes(heroes=[{"name": "newton", "pose": "idle"}]), "FAIL")
+    assert "UR-17" in rules_of(_stakes(heroes=[{"name": "wallace", "pose": "argue"}]), "FAIL")
+    missing = _stakes(heroes=[{"name": "newton", "pose": "smug"}])
+    assert rules_of(missing, "REVIEW") == {"UR-17"} and not rules_of(missing, "FAIL")
+
+
+def test_faceless_needs_a_reason_and_a_small_share():
+    assert "UR-17" in rules_of(_stakes(face="faceless", heroes=[]), "FAIL")  # no reason
+    shots = [{"id": f"s{i}", "type": "B", "face": "faceless", "faceless_reason": "from behind: the face is the joke later",
+              "stakes": "the wind is rising and nobody has fire", "beat": "b"} for i in range(3)]
+    assert "UR-17" in rules_of(R.check_stakes(shots, STAKES_LOOK), "FAIL")  # 100 % faceless
+
+
+def test_friction_per_beat_is_a_review():
+    a, b = ({"id": n, "type": "B", "stakes": "the wind is rising and nobody has fire", "face": "caricature:newton", "beat": "b",
+             "heroes": [{"name": "newton", "pose": "argue"}]} for n in "ab")
+    assert "UR-18" in rules_of(R.check_stakes([a, b], STAKES_LOOK), "REVIEW")
+    b["friction"] = True
+    assert "UR-18" not in rules_of(R.check_stakes([a, b], STAKES_LOOK))
+
+
+def test_the_rule_base_2_switch_and_the_new_day1_plan():
+    shots = _load(ROOT / "examples/stone_age/day1_v4/shots.json", "shots")
+    words = _load(ROOT / "examples/stone_age/day1_v4/words.json", "words")
+    look = json.loads((ROOT / "examples/stone_age/look.json").read_text(encoding="utf-8"))
+    found = R.check_shots(shots, words, look)
+    # the only open FAILs are the heroes whose sprites do not exist yet (Wallace, Snow)
+    fails = [f for f in found if f["severity"] == "FAIL"]
+    assert fails and all(("wallace" in f["detail"] or "snow" in f["detail"]) for f in fails), fails
+    assert R.check_shots(shots, words, {**look, "rule_base": 1}) is not None
+

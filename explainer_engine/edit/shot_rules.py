@@ -14,6 +14,7 @@ import math
 import re
 from pathlib import Path
 
+STAKES_FILE = Path(__file__).with_name("stakes.json")
 MOODS_FILE = Path(__file__).with_name("moods.json")
 DURATIONS = {"A": (5.0, 7.0), "B": (3.5, 5.0), "C": (2.5, 4.0)}  # UR-11
 FIRST_WINDOW = 30.0  # UR-02
@@ -36,6 +37,16 @@ FACE_WORDS = re.compile(r"\b(face|faces|portrait|eyes|smil(e|es|ing)|grin(s|ning
 FACE_NEGATIONS = re.compile(r"\b(no (visible )?faces?|faceless|faces? (hidden|not visible|turned away)|without faces?)\b",
                             re.I)
 GREETINGS = re.compile(r"\b(welcome|hello|hi|hey|today'?s video|in this video|subscribe)\b", re.I)
+
+
+def load_stakes(path: Path = STAKES_FILE) -> dict:
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def has_word(text: str, words: list[str]) -> list[str]:
+    """The listed words/phrases that occur in ``text`` as whole words (case-insensitive)."""
+    low = text.lower()
+    return [w for w in words if re.search(rf"(?<![a-z]){re.escape(w.lower())}(?![a-z])", low)]
 
 
 def load_moods(path: Path = MOODS_FILE) -> dict:
@@ -293,6 +304,78 @@ def check_shots(shots: list[dict], words: list[dict], look: dict, moods: dict | 
         prev = s
     if len(shots) > 1 and dissolves / (len(shots) - 1) > DISSOLVE_SHARE + 1e-9:
         add("UR-14", "-", f"{dissolves} of {len(shots) - 1} transitions are dissolves (max {DISSOLVE_SHARE:.0%})")
+    if int(look.get("rule_base", 1)) >= 2:
+        found += check_stakes(shots, look)
+    return found
+
+
+FACELESS_SHARE = 0.15  # UR-17: at most this share of the B shots may be faceless, each with a written reason
+MIN_STAKES_WORDS = 5
+
+
+def check_stakes(shots: list[dict], look: dict, stakes: dict | None = None) -> list[dict]:
+    """UR-16..UR-20 (D-40): no passive scenery, named heroes in every B shot, friction, archetypes, empty plates.
+    Enabled by ``look["rule_base"] >= 2``; ``look["pose_bank"]`` lists the sprite poses that exist per hero."""
+    stakes = stakes or load_stakes()
+    found: list[dict] = []
+
+    def add(rule: str, shot: str, detail: str, severity: str = "FAIL") -> None:
+        found.append({"rule": rule, "shot": shot, "severity": severity, "detail": detail})
+
+    cues = [w for group in stakes["cues"].values() for w in group]
+    bank = look.get("pose_bank", {})
+    archetypes = look.get("archetypes", {})
+    caricatures = look.get("caricatures", [])
+    b_shots = [s for s in shots if s.get("type") == "B"]
+    faceless = [s for s in b_shots if s.get("face") == "faceless"]
+    if b_shots and len(faceless) / len(b_shots) > FACELESS_SHARE + 1e-9:
+        add("UR-17", "-", f"{len(faceless)} of {len(b_shots)} B shots are faceless (max {FACELESS_SHARE:.0%}): the heroes "
+                          "must be seen, not hidden behind anonymous backs")
+    for s in shots:
+        sid = s["id"]
+        # UR-16 stakes in the plan and in the prompt
+        text = str(s.get("stakes", "")).strip()
+        if len(text.split()) < MIN_STAKES_WORDS:
+            add("UR-16", sid, f"no `stakes` line (>= {MIN_STAKES_WORDS} words): what is at risk in this frame?")
+        prompt = s.get("prompt")
+        if prompt:
+            passive = has_word(prompt, stakes["passive"])
+            if passive:
+                add("UR-16", sid, f"passive scenery words in the pod prompt: {passive}")
+            if not has_word(prompt, cues):
+                add("UR-16", sid, "the pod prompt has no stakes cue (weather, fire, danger, hunger, conflict, strain, "
+                                  "darkness, crowd, scale): it would paint a neutral picture")
+            if s.get("plate"):  # UR-20: a plate never names people (the model paints them, whatever "empty" says)
+                people = has_word(prompt, stakes["people_words"])
+                if people:
+                    add("UR-20", sid, f"plate prompt names people ({people}): describe empty ground, never 'empty of people'")
+        # UR-17 / UR-18 heroes
+        if s.get("type") == "B":
+            heroes = s.get("heroes") or []
+            if s.get("face") == "faceless":
+                if not str(s.get("faceless_reason", "")).strip():
+                    add("UR-17", sid, "faceless B shot without a `faceless_reason`")
+            elif not 1 <= len(heroes) <= 2:
+                add("UR-17", sid, "a B shot shows 1-2 named heroes (`heroes`: [{name, pose}])")
+            for h in heroes:
+                name, pose = h.get("name", ""), h.get("pose", "")
+                if name not in caricatures:
+                    add("UR-17", sid, f"hero {name!r} has no caricature sprite")
+                if pose not in stakes["poses"]:
+                    add("UR-17", sid, f"pose {pose!r} is not an emotional pose ({', '.join(stakes['poses'])}); no idle standing")
+                elif bank and pose not in bank.get(name, []):
+                    add("UR-17", sid, f"pose {pose!r} of {name} is not in the sprite bank yet: generate it (reusable asset)",
+                        "REVIEW")
+                if name and name not in archetypes:
+                    add("UR-19", sid, f"hero {name!r} has no archetype line in the look", "REVIEW")
+    # UR-18 friction: a beat with several B shots has at least one with friction or two heroes
+    beats: dict[str, list[dict]] = {}
+    for s in b_shots:
+        beats.setdefault(s.get("beat", ""), []).append(s)
+    for beat, items in beats.items():
+        if len(items) >= 2 and not any(s.get("friction") or len(s.get("heroes") or []) == 2 for s in items):
+            add("UR-18", items[0]["id"], f"beat {beat!r} has {len(items)} B shots and no friction (an argument, a failure, "
+                                          "two heroes disagreeing)", "REVIEW")
     return found
 
 

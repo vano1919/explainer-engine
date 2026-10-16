@@ -91,6 +91,14 @@ end of every section pointing at the next problem. None of them sounds like a le
   sentence. Match tags to the voice: Clyde takes `[mischievously]`, `[sarcastic]`, `[dramatically]` well.
 - v4 has no speed or stability control through the connector; pace comes from the text.
 
+### Named heroes and friction (D-40, UR-21)
+- Name the real people. The narration says "Franklin", "Newton", "Nansen", never "one of the scientists"; the pictures show
+  them (skill `shot-visuals`). Anonymous "someone" is for crowds only.
+- Give each hero a line that sounds like their archetype (`look.archetypes`): Newton objects, Einstein improvises, Franklin
+  organises, Nansen says what survival actually takes. Humour is their reaction to the situation, never a false fact.
+- Say what is at stake in each beat in plain words (cold, no fire, bad water, hunger, dusk): the picture will show it, so the
+  line must give it a reason.
+
 ### Cuts and timing (the edit depends on it)
 - Every place the picture should change needs a written mark (full stop, comma, dash, question mark) (UR-12).
   ElevenLabs reads commas and dashes in 0.05-0.1 s, so `audio/pause_pad.py` widens punctuated gaps to 0.26 s after

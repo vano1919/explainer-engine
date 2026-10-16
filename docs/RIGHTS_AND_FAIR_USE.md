@@ -41,3 +41,13 @@ lawyer.
 | RR-11 | Music and sound: own, CC0 or licensed with a record; never a franchise theme or a sound-alike of it. | licence register (Q-T16) |
 | RR-12 | The channel stays itself: the mascot, the "worlds collide" frame and the public-domain episodes remain; franchise episodes are a series inside it, not the identity (directive section 3). Share of franchise episodes is a parameter (P-121). | publishing plan |
 | RR-13 | When a claim or removal request arrives: do not dispute a Content ID claim without a real reason; record it in the incident log; for a strike, stop new franchise uploads, complete Copyright School, consider a retraction request or a counter notification only with a genuine fair use basis, and decide with the creator (and a lawyer if needed). | incident log in `channel/incidents.json` |
+
+## Real historical people as characters (creator's decision 2026-10-16, D-40)
+Episodes may use real historical figures (Einstein, Newton, Franklin, Darwin, Curie...) as named caricature heroes in a
+commentary and parody format, drawn by us (`assets/characters/scientists_v0`), never traced from a photograph. What this
+decision does not do: it does not make every use safe. Rules of work: (1) the narration says plainly that what the people say
+and do is invention (the Day 1 intro does); (2) no endorsement, no claim a person said a real quote unless it is one; (3) no
+merchandise or ads built on a likeness; (4) before publishing, check whether an estate licenses the name or likeness
+(Albert Einstein's rights are actively managed, to verify) and record the result in the rights manifest; (5) a takedown or
+claim follows RR-13. Nothing here is legal advice; the creator carries the decision.
+

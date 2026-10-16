@@ -279,3 +279,20 @@ reviewed by me: style and palettes hold, no faces; two pictures need a redo: `d1
 fingers: wrong object) and `d1_c_sore_hands` (white background, no firelight). Pictures stay out of git (media rule); the pull
 folder is `/tmp/pods_out/pictures/stone_age_day1_v2` in this session. Not yet done: the animatic (needs the GPU compositor, D-32).
 
+## 2026-10-16 — Creator review of the 35 pictures: rule base 2 (stakes, named heroes), v4 test read, new Day 1 plan
+Creator on the pictures: too generic, no named heroes, no fear or nervousness, clichés of the primitive; they want what a viewer
+imagines, conflict in every scenario, real historical figures by name (also stated as a universal rule for all future topics),
+entertainment first and facts second. Findings (mock-up: caricature sprites composited on the old plates, `scratchpad/mock`):
+the sprites work and look good; the plates were pretty meadows, one even held a stray person ("empty of people" paints
+people), and the only sprite poses are standing with a prop. Built: UNIVERSAL_RULE_BASE §E (UR-16..UR-21), D-40,
+`edit/stakes.json`, `shot_rules.check_stakes` (switched by `look.rule_base: 2`; older Day 1 plans keep rule base 1), the
+`shot-visuals` skill, the heroes/friction section of `narration-script`, the real-people note in RIGHTS_AND_FAIR_USE (a
+risk to manage; the "100 % safe" claim was not adopted; Einstein's likeness is estate-managed, to verify), hero archetypes and
+the pose bank in `look.json`. 121 tests pass, docs_lint 0.
+Day 1 plan under rule base 2: `day1_v4/build_shots.py` (46 shots, a `stakes` line each, heroes with poses in every B shot,
+friction, plates without people words): 0 FAIL except the heroes with no sprite yet (Wallace, Snow); `sprite_needs.md`: 2 new
+heroes + 17 poses = 19 images (about $1.27 at $0.067); pod job `stone_age_day1_v3.json`: 41 pictures (18 C, 15 B plates, 8 A),
+about $0.33 with boot, limit 30 min (lint passes). Cut times are provisional (they use the v2 read's timings) and are
+recomputed with the full v4 read. v4 test read (62 s, 155 words a minute) sent; the full v4 read is about $0.51.
+Not run, waiting for approval: the 19 sprites, the 41 pictures, the full v4 read.
+
