@@ -35,7 +35,9 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 11. Every meaningful change: a focused test + an entry in `docs/PROGRESS.md` (and the decision log if a decision moved).
 12. A material conflict found during implementation: stop at the boundary, report evidence and options, ask.
 
-Also binding: Gemini only for reusable channel-identity assets (the mascot, thumbnail design elements), never for one
+Also binding: crossover episodes of other people's fictional worlds follow docs/RIGHTS_AND_FAIR_USE.md (no third-party
+media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
+Gemini only for reusable channel-identity assets (the mascot, thumbnail design elements), never for one
 topic's pictures (creator's rule, 2026-10-11). Disclosure is decided per video by the checklist (realistic content
 only, YouTube Help 14328491); channel audience "not made for kids".
 
@@ -48,6 +50,10 @@ explainer_engine/audio/   timings.py (phoneme timings -> words), visemes.py (mou
                           envelope.py (loudness mouth fallback)
 explainer_engine/design/  palette.json (the only place hex colours live), palette.py (contrast + rules)
 explainer_engine/docs_lint.py   documentation consistency (D-23)
+explainer_engine/rights/  ip_check.py: rights check of an episode's rights manifest (RR rules, D-26); any FAIL blocks
+explainer_engine/research/ fan_brief.py: fan research brief, audience balance, template phrases (crossover episodes)
+explainer_engine/schemas/ versioned JSON Schemas (rights_manifest, fan_brief; the rest arrive in Phase 3)
+.claude/skills/crossover-episode/   procedure for crossover episodes (fan research -> scenario -> script -> rights)
 assets/characters/kit/    kit_reference.svg (character parts; poses and rig come in Phase 4)
 tests/unit/               fast tests; test_repo_hygiene.py guards media/keys, tmr_engine imports, provenance
 docs/                     INDEX.md and the canonical specifications; PROGRESS.md (read the last entry first)

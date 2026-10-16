@@ -21,6 +21,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [PUBLISHING_AND_ANALYTICS](PUBLISHING_AND_ANALYTICS.md) | cadence, first cycle, candidates, metrics, learning loop | |
 | [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md) | budgets, estimates, spend ledger, hours | |
 | [RISK_REGISTER](RISK_REGISTER.md) | risks and mitigations | R- |
+| [RIGHTS_AND_FAIR_USE](RIGHTS_AND_FAIR_USE.md) | rights rules for crossover episodes of fictional worlds | RR- |
 | [IMPLEMENTATION_PLAN](IMPLEMENTATION_PLAN.md) | phases, tasks, acceptance, stop conditions | |
 | [CLAUDE_EXECUTION_GUIDE](CLAUDE_EXECUTION_GUIDE.md) | phase gates, recovery, never-do list | |
 | [REPO_REUSE_AUDIT](REPO_REUSE_AUDIT.md), [PROVENANCE](PROVENANCE.md) | what came from the TMR repository | |

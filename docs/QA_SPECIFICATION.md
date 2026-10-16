@@ -39,6 +39,8 @@ defaults to pass. A deterministic FAIL cannot be overridden by an assertion.
 | Q-E10 | Are title, thumbnail and description honest and consistent with the style bible? |
 | Q-E11 | Is Kit on model (the sheet) and the world consistent? |
 | Q-E12 | Policy checklist (below) answered. |
+| Q-E13 | Franchise episodes: rights check (`rights/ip_check.py`) has no FAIL and every REVIEW is answered; the analysis purpose (RR-01, RR-06) is visible in every scene. |
+| Q-E14 | Franchise episodes: does it satisfy both a casual viewer (on-ramps, no unexplained names) and a fan (deep cuts, real theories credited, canon respected or bent on purpose)? |
 
 ## Policy checklist (answered for every video; sources V-01, V-02, V-03)
 Inauthentic-content: does the video add its own explanation, structure and visuals rather than a template swap (a distinct

@@ -17,7 +17,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | P-01 | language | en, US-neutral spelling | en | audience and TTS support (D-09) | M/P | TTS voice | enum |
 | P-02 | audience_setting | not_made_for_kids | enum | official guidance (V-03, D-17) | H/F | packaging | upload checklist item |
 | P-03 | collision types | you_in_era, past_meets_present, era_meets_era, world_what_if, how_it_worked, money_across_eras, myth_vs_record | subset | the "worlds collide" positioning (D-25) | M/P | topic intake | topic must name a type and only public-domain or factual worlds |
-| P-04 | excluded worlds | film, TV, game and other third-party fictional universes | fixed list | IP rule (D-25, directive section 3) | H/F | topic intake | intake rejects a topic naming one |
+| P-04 | third-party fictional worlds | allowed only as analysis episodes under RR-01..RR-13 (D-26) | rights check PASS | IP rules (V-07..V-12) | M/F | rights manifest | `rights/ip_check.py`: any FAIL blocks the package |
 | P-05 | humour budget | <= 1 verbal joke / 60 s | 0-2 | tone, taste | L/C | script QA | flag only (review, never auto-edit) |
 | P-06 | editorial boundaries | no advice, no medical/legal claims, no real-person claims without a source | list | risk rules | H/F | claim map | claim reviewer + checklist |
 | P-07 | cadence (cycle 1) | 1 long-form / 2 weeks + 2 Shorts / week | measured later | own hours, not competitors (D-06, SE-26) | L/P | time log | reviewed after 3 long-forms |
@@ -111,3 +111,13 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | P-111 | vidIQ cap | 200 credits; ledger before each call | | creator budget | H/F | | ledger entry first |
 | P-112 | retries | 2 for retryable failures, backoff 2 s, 4 s | | transient errors | M/C | | state.json counts |
 | P-113 | disk reserve | job refuses to start with < 10 GB free or < 1.5 x estimate | | constrained storage | M/C | | pre-flight |
+
+## 9. Crossover analysis episodes (fictional worlds, D-26)
+| ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
+|---|---|---|---|---|---|---|---|
+| P-120 | recap share | <= 20 % of narration words | REVIEW > 20 %, FAIL > 35 % | RR-05, V-12 | M/F | script | `ip_check` |
+| P-121 | franchise share of channel | <= 50 % of uploads in a rolling 10 | 0-50 % | RR-12 (identity stays original) | L/C | publishing plan | review at each cycle |
+| P-122 | quotes | <= 6 per episode, <= 2 sentences / 40 words each, analysed and attributed | | RR-04 | M/F | script | `ip_check` |
+| P-123 | audience balance | >= 30 % of beats tagged casual on-ramp, >= 30 % fan depth, rest both | 25-50 % each | creator rule 2026-10-16: satisfy casual viewers and hardcore fans | L/P | script beat tags | `fan_brief.check_balance` |
+| P-124 | fan research depth | >= 6 sources of >= 3 kinds, >= 5 sourced theories, >= 3 fan demands, >= 3 existing crossovers reviewed, >= 2 canon rules per world | | creator rule 2026-10-16 | M/F | fan brief | `fan_brief.check` |
+| P-125 | premise originality | token overlap with any reviewed existing crossover title <= 0.6 | | no copying of other creators' takes | L/C | fan brief | `fan_brief.check` (REVIEW) |

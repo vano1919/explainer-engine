@@ -69,3 +69,16 @@ cost (estimate/actual), next step, recovery instructions.
 - Updated: PROJECT_BRIEF positioning, SCRIPTING_SPEC formats, VIDEO_PARAMETER_SPEC P-03/P-04, PUBLISHING candidates,
   CLAUDE.md summary; style bible marks the Kit sections retired.
 - Waiting on the creator: doodle style choice (1/2/3), the prototype topic.
+
+## 2026-10-16 — Crossover analysis episodes (D-26), rights rules, fan research in code
+- Creator: analyse how two existing fictional worlds could meet (e.g. two fantasy franchises), simple doodle animation +
+  a few dramatic scenes, no copying; find where YouTube and the law draw the line and build it into the rules; every
+  crossover script starts from the fans' theories, demands and existing crossovers, balanced for casual viewers and
+  hardcore fans, imaginative, not templated.
+- Verified (official pages, 2026-10-16): YouTube fair use, copyright strikes, trademark policy; US Copyright Office fair
+  use; Warhol v. Goldsmith and the Harry Potter Lexicon case via summaries (V-07..V-12).
+- Added: docs/RIGHTS_AND_FAIR_USE.md (RR-01..RR-13); D-26 (amends D-25); P-120..P-125; Q-E13, Q-E14; R-28;
+  `rights/ip_check.py` + schema; `research/fan_brief.py` + schema; skill `.claude/skills/crossover-episode`;
+  SCRIPTING_SPEC section 7; docs lint knows the RR- prefix.
+- Tests: 50 passed (14 new); docs lint 0 findings. Not legal advice: the rules lower risk, they do not prove fair use.
+- Next: style sample (marker + pencil traveller over a dramatic scene) for the creator.

@@ -32,3 +32,4 @@ Owner = the stage or role responsible.
 | R-25 | Made-for-kids misclassification (V-03) | low-medium: cartoon style | M | Studio check | adult/teen tone, checklist | correct the setting | S15 |
 | R-26 | Kokoro timed path is untested (audit) | medium | M | Phase 5 test on the real model | real-model test, estimate fallback exists | use the loudness mouth | S09 |
 | R-27 | Remotion licence or performance changes (V-04) | low-medium | M | licence check at install and at 5.0 | benchmark, skia fallback | switch renderer | Phase 4 |
+| R-28 | Copyright claim, removal request or strike on a franchise episode | medium: fiction is creative work and our use is commercial (V-07, V-11) | H (3 strikes = termination, V-08) | medium: claims show in Studio | RR-01..RR-13 in code, no third-party media, short quotes, small recap | RR-13 incident procedure; pause franchise uploads | S15, creator |

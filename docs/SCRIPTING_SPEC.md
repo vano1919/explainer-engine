@@ -63,3 +63,19 @@ Per long-form: (a) adapt a strong section, (b) script a separate Short from the 
 related standalone angle, chosen by creative and production value. A Short stands alone (independent hook, arc, payoff,
 no need for the long video), is re-storyboarded for 9:16, and carries its own claims. No forced loop, runtime, caption on
 every word, or number of Shorts.
+
+## 7. Crossover episodes (two worlds meeting; D-26)
+Procedure: the `crossover-episode` skill (`.claude/skills/crossover-episode/SKILL.md`). Rules that every crossover
+script meets, on top of sections 1-6:
+- **Fan research first.** A validated fan brief (`research/fan_brief.py`, P-124) exists before any premise is chosen:
+  the fans' theories, what they ask for, the existing crossovers and their angles, each world's canon rules.
+- **Original premise.** At least 12 candidates scored on surprise, fan payoff, casual clarity, visual drama, honesty
+  and rights safety; the premise must not repeat an existing take (P-125). Systems, small people and second-order
+  effects beat the default army battle.
+- **Balance.** Every beat is tagged casual, fan or both; at least 30 % serve each audience (P-123). Casual viewers get
+  on-ramps inside the story; fans get credited theories, canon details and deep cuts.
+- **Analysis, not retelling.** The scenario is reasoned from canon rules, with speculation labelled and the best
+  counter-argument answered (RR-01, RR-06); recap and quotes stay inside P-120 and P-122.
+- **No templates.** Stock phrases (`fan_brief.TEMPLATE_PHRASES`) are flagged and removed unless they are truly the best
+  words; "who would win" is never the frame.
+- **Rights check passes** (`rights/ip_check.py`) before approval #1.

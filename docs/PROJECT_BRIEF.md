@@ -20,8 +20,9 @@ AI slideshow or an over-edited template. Ranking videos are optional and never f
 prehistory, nature, science, myths, everyday technology and money. Examples: how long you would last as a medieval
 peasant; what a Roman soldier's pay would buy; what a Victorian engineer would make of a phone; what if dinosaurs never
 went extinct. Each video explains the real history or science behind the collision, with sources, and labels what is
-speculation. English, general audience (teens and adults), set "not made for kids" (D-17). Film, TV and game universes
-are not used: they belong to other people (D-25, SE-41, SE-42). Allowed formats: [SCRIPTING_SPEC](SCRIPTING_SPEC.md).
+speculation. English, general audience (teens and adults), set "not made for kids" (D-17). Fictional worlds that
+belong to others (books, film, TV, games) appear only as **crossover analysis episodes** under the rights rules
+([RIGHTS_AND_FAIR_USE](RIGHTS_AND_FAIR_USE.md), D-26), researched from what their fans discuss. Allowed formats: [SCRIPTING_SPEC](SCRIPTING_SPEC.md).
 Visual direction: hand-drawn / doodle (D-04, being explored); the earlier box mascot is retired.
 
 ## Products
