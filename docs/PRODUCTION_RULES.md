@@ -66,6 +66,11 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-16 | (found) the visual judge failed 46 of 46 pictures, then 32, then 22 | visitor clothes counted as anachronisms, text answers noisy, temperature above 0 | judge prompt names the intended visitors; temperature 0; every "true" must say why; `one_light` is advisory | `visual_judge`, `GeminiClient.judge` |
 | 2026-10-16 | Why will the 35 lost pictures not be lost again? Make the rule flexible | stage limit copied from a smaller job; fatal stop skipped the push | limits from measured speeds; push before fatal | TMR lint, `job_speeds.json`, runbook R6, R-29 |
 | 2026-10-16 | How many words and pictures for 8-12 minutes? Is the animation used? | planning numbers were not written down; the compositor is not built | section 4 below; D-32 | this page |
+| 2026-10-16 | The voice should be more emotional; this voice actor does not fit (annoying); livelier, but not very young | Clyde is a vintage radio announcer; the read had few emotional turns | new narrator chosen from 3 middle-aged storytellers by the creator; more audio tags at turns (gasps, whispers, sighs) in `narration_tts.txt` | creator's ear; test read before the full read |
+| 2026-10-16 | Pictures and text often do not match and are illogical (the fire was already burning when the magnifier was taken); two causes: logic and too frequent picture changes | `not_yet` lifted for the whole fire beat; 44 pictures in 3 min; wrong hero and wrong prop in two pictures | UR-29, UR-30, UR-31 (D-42) | `edit/board.py` |
+| 2026-10-16 | Keep animation where it fits: imitate a conversation on one picture with speech bubbles, the other answers | one picture per sentence | UR-31 bubbles | `finish/bubbles.py`, `edit/board.py` |
+| 2026-10-16 | The pictures are good but too expensive; use local models: Gemini gives references, RunPod paints in its style | Gemini painted every picture ($3.6 for 67) | D-42 routing: Gemini references, Qwen-Image-Edit-2511 on a pod | `cloud/gen_ref_pictures.py` |
+| 2026-10-16 | Where there are world sounds (hits, friction) lower the music with millisecond fades so it is not noise; the dip must not sound like a cut | music only ducked under the voice | UR-32 | `audio/duck.py` |
 
 ## 4. Planning numbers for a video length (measured on Day 1, 2026-10-16)
 

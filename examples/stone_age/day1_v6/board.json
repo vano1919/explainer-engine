@@ -1,0 +1,652 @@
+{
+ "_note": "Day 1 v6 storyboard (D-42): pictures follow the story state, one picture may carry an exchange of speech bubbles, about 10 pictures a minute. Picture ids v5_* are the Gemini frames of v5 (reused, free); v6_* come from the RunPod reference painter (cloud/jobs/stone_age_day1_v6_refs.json); until they exist the 'stand_in' picture is used and the board says so. Mouth points (speakers) are picture coordinates 0..1, read by eye from the pictures.",
+ "heroes": {
+  "nansen": [
+   "nansen",
+   "fridtjof nansen"
+  ],
+  "franklin": [
+   "franklin",
+   "benjamin franklin"
+  ],
+  "newton": [
+   "newton"
+  ],
+  "einstein": [
+   "einstein"
+  ],
+  "darwin": [
+   "darwin"
+  ],
+  "wallace": [
+   "wallace",
+   "alfred russel wallace"
+  ],
+  "snow": [
+   "snow",
+   "john snow"
+  ]
+ },
+ "events": [
+  {
+   "thing": "fire",
+   "at": "and fire"
+  },
+  {
+   "thing": "windbreak",
+   "at": "so they build"
+  }
+ ],
+ "pictures": {
+  "v5_d1-01": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-05": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-09": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-07": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-16": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-10": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-11": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-14": {
+   "heroes": [
+    "nansen"
+   ],
+   "shows": [],
+   "speakers": {
+    "nansen": [
+     0.85,
+     0.37
+    ]
+   }
+  },
+  "v5_d1-13": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-18": {
+   "heroes": [
+    "franklin",
+    "newton"
+   ],
+   "shows": [],
+   "speakers": {
+    "franklin": [
+     0.3,
+     0.36
+    ],
+    "newton": [
+     0.68,
+     0.33
+    ]
+   }
+  },
+  "v5_d1-19": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-22": {
+   "heroes": [
+    "wallace"
+   ],
+   "shows": [],
+   "speakers": {
+    "wallace": [
+     0.28,
+     0.3
+    ]
+   }
+  },
+  "v5_d1-25": {
+   "heroes": [
+    "snow",
+    "wallace"
+   ],
+   "shows": [],
+   "speakers": {
+    "snow": [
+     0.25,
+     0.22
+    ],
+    "wallace": [
+     0.73,
+     0.23
+    ]
+   }
+  },
+  "v5_d1-21": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-28": {
+   "heroes": [],
+   "shows": [
+    "windbreak"
+   ]
+  },
+  "v5_d1-29": {
+   "heroes": [],
+   "shows": [
+    "windbreak"
+   ]
+  },
+  "v5_d1-31": {
+   "heroes": [
+    "nansen"
+   ],
+   "shows": [
+    "smoke"
+   ]
+  },
+  "v5_d1-32": {
+   "heroes": [],
+   "shows": [
+    "smoke"
+   ]
+  },
+  "v5_d1-30": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-36": {
+   "heroes": [
+    "franklin",
+    "einstein"
+   ],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-37": {
+   "heroes": [
+    "franklin"
+   ],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-43": {
+   "heroes": [
+    "franklin",
+    "nansen"
+   ],
+   "shows": [
+    "fire"
+   ],
+   "speakers": {
+    "franklin": [
+     0.33,
+     0.3
+    ]
+   }
+  },
+  "v5_d1-42": {
+   "heroes": [
+    "darwin",
+    "wallace"
+   ],
+   "shows": [
+    "fire"
+   ],
+   "speakers": {
+    "darwin": [
+     0.21,
+     0.33
+    ],
+    "wallace": [
+     0.66,
+     0.32
+    ]
+   }
+  },
+  "v5_d1-44": {
+   "heroes": [],
+   "shows": [
+    "fire",
+    "windbreak"
+   ]
+  },
+  "v5_d1-38": {
+   "heroes": [],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-39": {
+   "heroes": [],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v6_franklin_tinder": {
+   "heroes": [
+    "franklin"
+   ],
+   "shows": [],
+   "stand_in": "v5_d1-30"
+  },
+  "v6_einstein_glasses": {
+   "heroes": [
+    "einstein",
+    "franklin"
+   ],
+   "shows": [],
+   "speakers": {
+    "einstein": [
+     0.66,
+     0.27
+    ]
+   },
+   "stand_in": null
+  },
+  "v6_lens_point": {
+   "heroes": [],
+   "shows": [
+    "smoke"
+   ],
+   "stand_in": null
+  },
+  "v5_d1-27": {
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-08": {
+   "heroes": [],
+   "shows": []
+  }
+ },
+ "shots": [
+  {
+   "id": "v6-01",
+   "at": "Could",
+   "picture": "v5_d1-01",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.07
+   }
+  },
+  {
+   "id": "v6-02",
+   "at": "Right.",
+   "picture": "v5_d1-05",
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": 0.05
+   }
+  },
+  {
+   "id": "v6-03",
+   "at": "Each one arrives",
+   "picture": "v5_d1-09",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   }
+  },
+  {
+   "id": "v6-04",
+   "at": "They can all",
+   "picture": "v5_d1-08",
+   "motion": {
+    "kind": "pan",
+    "z0": 1.05,
+    "z1": 1.05,
+    "dx": -0.05
+   },
+   "heroes_ok": true
+  },
+  {
+   "id": "v6-05",
+   "at": "The rocks,",
+   "picture": "v5_d1-07",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   }
+  },
+  {
+   "id": "v6-06",
+   "at": "So who takes",
+   "picture": "v5_d1-16",
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": 0.05
+   }
+  },
+  {
+   "id": "v6-07",
+   "at": "Day one,",
+   "picture": "v5_d1-10",
+   "motion": {
+    "kind": "pull",
+    "z0": 1.08,
+    "z1": 1.0
+   }
+  },
+  {
+   "id": "v6-08",
+   "at": "For a whole hour",
+   "picture": "v5_d1-11",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   }
+  },
+  {
+   "id": "v6-09",
+   "at": "Then Fridtjof",
+   "picture": "v5_d1-14",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.03
+   },
+   "bubbles": [
+    {
+     "at": "Can anyone",
+     "who": "nansen",
+     "text": "Can anyone here make fire without matches?"
+    }
+   ]
+  },
+  {
+   "id": "v6-10",
+   "at": "Two hands",
+   "picture": "v5_d1-13",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   }
+  },
+  {
+   "id": "v6-11",
+   "at": "Hmm.",
+   "picture": "v5_d1-18",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.03
+   },
+   "bubbles": [
+    {
+     "at": "One rule",
+     "who": "franklin",
+     "text": "One rule. Every group reports. Every night.",
+     "until": "Even Newton"
+    },
+    {
+     "at": "Even Newton",
+     "who": "newton",
+     "text": "...Fine. Agreed."
+    }
+   ]
+  },
+  {
+   "id": "v6-12",
+   "at": "So, the order.",
+   "picture": "v5_d1-19",
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": -0.05
+   }
+  },
+  {
+   "id": "v6-13",
+   "at": "Alfred Russel Wallace",
+   "picture": "v5_d1-22",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.03
+   },
+   "bubbles": [
+    {
+     "at": "right where",
+     "who": "wallace",
+     "text": "Fresh water! Right here!"
+    }
+   ]
+  },
+  {
+   "id": "v6-14",
+   "at": "And John Snow,",
+   "picture": "v5_d1-25",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.03
+   },
+   "bubbles": [
+    {
+     "at": "Latrines go",
+     "who": "snow",
+     "text": "Latrines go DOWNSTREAM. Never near the spring!"
+    }
+   ]
+  },
+  {
+   "id": "v6-15",
+   "at": "Uh-oh.",
+   "picture": "v5_d1-21",
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": 0.05
+   }
+  },
+  {
+   "id": "v6-16",
+   "at": "It isn't freezing.",
+   "picture": "v5_d1-27",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.07
+   }
+  },
+  {
+   "id": "v6-17",
+   "at": "So they build",
+   "picture": "v5_d1-28",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.05
+   },
+   "heroes_ok": true
+  },
+  {
+   "id": "v6-18",
+   "at": "Why grass?",
+   "picture": "v5_d1-29",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   }
+  },
+  {
+   "id": "v6-19",
+   "at": "Now. Fire.",
+   "picture": "v5_d1-31",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.05
+   }
+  },
+  {
+   "id": "v6-20",
+   "at": "A dozen tries.",
+   "picture": "v5_d1-32",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.07
+   },
+   "insert": true
+  },
+  {
+   "id": "v6-21",
+   "at": "Franklin keeps",
+   "picture": "v6_franklin_tinder",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.05
+   }
+  },
+  {
+   "id": "v6-22",
+   "at": "Then Einstein takes",
+   "picture": "v6_einstein_glasses",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.03
+   },
+   "bubbles": [
+    {
+     "at": "Oh.",
+     "who": "einstein",
+     "text": "Oh. A convex lens!"
+    }
+   ]
+  },
+  {
+   "id": "v6-23",
+   "at": "The afternoon sun.",
+   "picture": "v6_lens_point",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.08
+   }
+  },
+  {
+   "id": "v6-24",
+   "at": "and fire",
+   "picture": "v5_d1-36",
+   "motion": {
+    "kind": "push",
+    "z0": 1.04,
+    "z1": 1.0
+   },
+   "reveal": "fire",
+   "heroes_ok": true
+  },
+  {
+   "id": "v6-25",
+   "at": "Well, the hard",
+   "picture": "v5_d1-37",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "heroes_ok": true
+  },
+  {
+   "id": "v6-26",
+   "at": "Franklin once founded",
+   "picture": "v5_d1-43",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.03
+   },
+   "bubbles": [
+    {
+     "at": "so he sets",
+     "who": "franklin",
+     "text": "Night watch. In shifts."
+    }
+   ],
+   "heroes_ok": true
+  },
+  {
+   "id": "v6-27",
+   "at": "Almost nothing.",
+   "picture": "v5_d1-42",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.03
+   },
+   "bubbles": [
+    {
+     "at": "refuse to",
+     "who": "darwin",
+     "text": "We don't know that plant.",
+     "until": "Wise."
+    },
+    {
+     "at": "Wise.",
+     "who": "wallace",
+     "text": "Then nobody eats it."
+    }
+   ]
+  },
+  {
+   "id": "v6-28",
+   "at": "One spring.",
+   "picture": "v5_d1-44",
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": -0.05
+   }
+  },
+  {
+   "id": "v6-29",
+   "at": "Nobody has",
+   "picture": "v5_d1-38",
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.05
+   }
+  },
+  {
+   "id": "v6-30",
+   "at": "And tomorrow?",
+   "picture": "v5_d1-39",
+   "motion": {
+    "kind": "pull",
+    "z0": 1.08,
+    "z1": 1.0
+   }
+  }
+ ]
+}

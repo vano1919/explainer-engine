@@ -13,7 +13,7 @@ passed + date), `reuse_rights`, `fallback` (asset id), `tags`, `used_by`.
 ## Rules
 - Prefer SVG components for anything placed, recoloured, scaled, rigged or animated deterministically; raster only when
   its benefit outweighs the lost editability (then record why).
-- Colours only from `explainer_engine/design/palette.json`; fonts only the two OFL faces; a lint rejects other colours.
+- Colours only from `explainer_engine/design/palette.json`; fonts only OFL faces (Fredoka and Inter for titles and captions; Comic Neue Bold and Bangers for speech bubbles, D-42, in `assets/fonts/` with their OFL texts); a lint rejects other colours.
 - Characters: fixed silhouette, proportions, facial geometry, line weight, palette and expression/pose conventions
   (the Kit sheet). Never regenerate "an approximate Kit" per scene; poses are assembled from the parts (D-04).
 - Reuse search before creation: tags and kind are matched against the manifest (the TMR `picture_library` tag-overlap
