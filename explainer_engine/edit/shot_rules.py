@@ -31,8 +31,8 @@ DISSOLVE_SECONDS = 1.0  # UR-14
 DISSOLVE_SHARE = 0.10
 EDGE = 0.05  # UR-12: a cut keeps this far from both words
 CUT_MARKS = ",.:;?!—…"
-BANNED = re.compile(r"\b(hyper-?realistic|photo-?realistic|photo(graph|graphy)?|unreal( engine)?|octane|3d render|"
-                    r"cinematic photography)\b", re.I)
+BANNED = re.compile(r"\b(hyper-?realistic|photo-?realistic|realistic|lifelike|natural proportions|photo(graph|graphy)?|"
+                    r"unreal( engine)?|octane|3d render|cinematic photography|documentary|film still)\b", re.I)
 FACE_WORDS = re.compile(r"\b(face|faces|portrait|eyes|smil(e|es|ing)|grin(s|ning)?|looking at (the )?camera)\b", re.I)
 FACE_NEGATIONS = re.compile(r"\b(no (visible )?faces?|faceless|faces? (hidden|not visible|turned away)|without faces?)\b",
                             re.I)
@@ -63,7 +63,7 @@ def grade_for(emotion: str, moods: dict | None = None) -> dict:
 
 def compose_prompt(subject: str, emotion: str, look: dict, moods: dict | None = None) -> str:
     """subject (with its composition) + the mood clause + the episode's style suffix (UR-07, UR-09)."""
-    return f"{subject.rstrip(' ,.')}, {mood_clause(emotion, moods)}{look['style_suffix']}"
+    return f"{subject.rstrip(' ,.')}, {mood_clause(emotion, moods)}{look.get('universe_thread', '')}{look['style_suffix']}"
 
 
 def pauses_from_words(words: list[dict], edge: float = EDGE) -> list[tuple[float, float, str]]:
@@ -345,9 +345,15 @@ def check_stakes(shots: list[dict], look: dict, stakes: dict | None = None) -> l
             if not has_word(prompt, cues):
                 add("UR-16", sid, "the pod prompt has no stakes cue (weather, fire, danger, hunger, conflict, strain, "
                                   "darkness, crowd, scale): it would paint a neutral picture")
+            # UR-22 primary rule: every prompt carries the universe thread (the same drawing rules, any era or place)
+            thread = str(look.get("universe_thread", "")).strip(" ,.").lower()
+            if not thread:
+                add("UR-22", sid, "the look has no `universe_thread`: nothing ties this picture to one drawn universe")
+            elif thread not in prompt.lower():
+                add("UR-22", sid, "the pod prompt lacks the universe thread: the picture could be drawn in another style")
             # UR-22 one world: any person or body part painted by the pod uses the cast's design language
             fig = str(look.get("figure_style", "")).strip().lower()
-            bare = prompt.replace(str(look.get("style_suffix", "")), "")  # "hand-painted" in the suffix is not a hand
+            bare = prompt.replace(str(look.get("style_suffix", "")), "").replace(str(look.get("universe_thread", "")), "")
             if not s.get("plate") and has_word(bare, stakes["people_words"] + stakes["body_words"]):
                 if not fig:
                     add("UR-22", sid, "the look has no `figure_style`: people and hands cannot match our cast sprites")
@@ -377,6 +383,10 @@ def check_stakes(shots: list[dict], look: dict, stakes: dict | None = None) -> l
                         "REVIEW")
                 if name and name not in archetypes:
                     add("UR-19", sid, f"hero {name!r} has no archetype line in the look", "REVIEW")
+    for name, phase in (look.get("phases") or {}).items():  # time travel never breaks the style
+        changed = [k for k in ("universe_thread", "style_suffix", "figure_style", "style") if k in (phase or {})]
+        if changed:
+            add("UR-22", "-", f"phase {name!r} overrides {changed}: the era changes props and clothes, never the style")
     if not (look.get("style_bridge") or {}).get("approved"):
         add("UR-22", "-", "the style-bridge sheet (sprite + pod-painted person and hand in one frame) is not approved yet", "REVIEW")
     # UR-18 friction: a beat with several B shots has at least one with friction or two heroes

@@ -314,3 +314,14 @@ BLOCKED / WAIT with the next action; 3 tests). Day 1 v4 today: script PASS; timi
 match); shot plan BLOCKED only by the missing Wallace and Snow sprites; style bridge, sprites, pictures WAIT. Nothing paid
 was run for this.
 
+## 2026-10-16 — Primary visual rule: one universe (UR-22 elevated)
+Creator: all visuals, characters and backgrounds in one universe, environment and inhabitants sharing one design language,
+the style unbroken across eras and dimensions, as the primary rule that overrides conflicting prompts and goes into every image
+prompt. Done: UNIVERSAL_RULE_BASE now opens with "Primary rule: one universe" (four points + UR-22); the look has
+`universe_thread`; `compose_prompt` appends it before the style suffix; `check_stakes` FAILs a prompt without it, a phase that
+overrides the style, and (UR-07) the words realistic, lifelike, natural proportions, documentary, film still; new
+`edit/universe.py` (`sprite_prompt`, `assert_thread`: Gemini cast-sprite prompts must carry the thread, refused otherwise);
+shot-visuals and PRODUCTION_RULES updated; Day 1 plan, pod job v3 and the style-bridge job rebuilt with the thread. 129 tests
+pass, docs_lint 0. Nothing paid was run. The old sprite generator script (`scientists_v0/gen_prompts.py`) predates the thread;
+new sprites go through `universe.sprite_prompt`.
+

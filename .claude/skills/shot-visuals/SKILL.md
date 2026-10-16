@@ -5,6 +5,11 @@ description: Plan the pictures of a Crossworld Theories video so they carry stak
 
 # Shot visuals: stakes in every frame, heroes you can recognise
 
+> **Primary rule, above everything below (UR-22, one universe):** every picture, sprite, prop and background is drawn in the same
+> universe, as if by one artist for one scene. Characters and environment share one design language (quirky, gently exaggerated
+> shapes), one line, one fill, one palette; an era or a place changes props, clothes and architecture, never the style. The
+> look's `universe_thread` is appended to every image prompt (pod and Gemini); nothing may override it.
+
 Read first: `docs/UNIVERSAL_RULE_BASE.md` (§E, UR-16..UR-21), `explainer_engine/edit/stakes.json`, the episode's `look.json`
 (`rule_base: 2`, `caricatures`, `archetypes`, `pose_bank`). Entertainment first, facts second: the picture must make a viewer
 feel what the line says (fear, panic, shock, a joke landing), and must show *who* is in trouble.

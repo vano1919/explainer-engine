@@ -9,6 +9,28 @@ The look stays the painted style of D-27 (the creator rejected the hyper-realist
 from the local pod (D-36); Gemini only for reusable assets (D-19, D-28). Narration is Kokoro (AUDIO_SYSTEM.md), which
 also gives the word timings the cuts depend on.
 
+## Primary rule: one universe (UR-22; overrides every other instruction, creator 2026-10-16)
+
+Every visual, character, background and generated image exists inside the **same drawn universe**. Where any other rule, prompt
+or tool instruction conflicts with this one, this one wins. It applies to every image prompt from now on (pod pictures, Gemini
+cast sprites, props, thumbnails).
+
+1. **Absolute cohesion.** Characters, props, buildings, rocks, plants and sky match down to the smallest detail: they look drawn
+   by the same artist for the same scene. A realistic person next to a caricature hero, realistic hands, or a photographic
+   background is a defect, never a style variation.
+2. **Shape and tone synchronisation.** The environment and its inhabitants share one design language: if the hills and rocks
+   are rounded and quirky, the characters have quirky, exaggerated shapes too; the same colour palette, shading, line work and
+   texture everywhere (the episode's `universe_thread` in `look.json`).
+3. **Time-travel continuity.** When a character travels to another era, place or dimension, the era changes the props, clothes,
+   architecture and palette within UR-08, but the specific style (texture, line work, rendering rules) stays one continuous,
+   unbroken thread. No phase, scene or shot may define its own style.
+4. **Placement.** This is the primary rule for all asset and character creation; the thread text is appended to every image
+   prompt, and the generators refuse a prompt without it.
+
+| ID | Rule | Check |
+|---|---|---|
+| UR-22 | **One universe.** Every pod prompt carries the look's `universe_thread` (exaggerated shapes everywhere, thick warm-brown ink outline, flat watercolour fill, simple cel shading, one limited warm palette); any person, crowd or hand painted by the pod also carries `figure_style`; plates carry no people (UR-20); no phase overrides the style; realistic, photographic and "natural proportions" words are banned (UR-07); cast sprites are made with `edit/universe.sprite_prompt` and graded to their plate. Before a batch is accepted, a style-bridge sheet (a sprite and a pod-painted person and hand in one frame) is approved once per episode (`look.style_bridge`). | [code] thread in every prompt, `figure_style` for bodies, no per-phase style, REVIEW without `style_bridge`; [editorial] the sheet |
+
 ## A. Narrative
 
 | ID | Rule | Check |
@@ -24,7 +46,7 @@ also gives the word timings the cuts depend on.
 | UR-04 | **Three shot types.** **A** wide/establishing: a huge world, figures tiny or absent. **B** medium/action: at most 1–2 characters doing one action. **C** extreme close-up: objects and hands only, no faces, no environment. | [code] type is A, B or C; [editorial] the picture matches its type |
 | UR-05 | **ABC sequencing.** A beat runs A → B → C; B → C → B inside one action and C → A after a revelation are fine. Never three shots of one type in a row. A beat after the first 30 s should open on A (UR-02 keeps long A shots out of the opening). | [code] three in a row = FAIL; a later beat not opening on A = REVIEW |
 | UR-06 | **Faces: recognisable first, else faceless.** If the character has a reusable caricature (`look.caricatures`), the face is shown in B as our sprite over a pod plate. Else (no caricature, or the pose, action or object breaks UR-04 or UR-07) the figure is faceless: from behind, in silhouette, in profile in shadow, or hands with a signature prop (Einstein's spectacles, Curie's glass vials, Tesla's coil sketch). A pod prompt never names a cast member and never asks for a face. | [code] every B has `caricature:<name>` (the name must be in the look) or `faceless`; cast names and face words in prompts (a negated "no faces" is allowed) |
-| UR-07 | **Painted style, one suffix.** Every pod prompt ends with the episode's style suffix (`look.style_suffix`) after its mood clause. Banned: hyper-realistic, photo-realistic, photo/photography, Unreal Engine, Octane, 3D render. Every person or hand a pod prompt paints follows the look's `figure_style` (UR-22: one world; the earlier "natural proportions for pod figures" made a realistic man and a caricature hero look like two different worlds, creator 2026-10-16); our cast sprites are graded to their plate (saturation, black level, warm/cool tint, contact shadow). | [code] suffix and banned words; [editorial] the sprite grade |
+| UR-07 | **Painted style, one suffix.** Every pod prompt ends with the episode's style suffix (`look.style_suffix`) after its mood clause. Banned: hyper-realistic, photo-realistic, photo/photography, Unreal Engine, Octane, 3D render. Every person or hand a pod prompt paints follows the look's `figure_style` (UR-22: one universe; the earlier "natural proportions for pod figures" made a realistic man and a caricature hero look like two different worlds, creator 2026-10-16); our cast sprites are graded to their plate (saturation, black level, warm/cool tint, contact shadow). | [code] suffix and banned words; [editorial] the sprite grade |
 
 ## C. Mood: emotion → light → colour
 
@@ -70,7 +92,6 @@ science, fantasy crossovers); `look.json` switches them on with `"rule_base": 2`
 | UR-18 | **Friction.** A beat with two or more B shots has at least one with friction: two heroes disagreeing, a hero failing at a basic task, a reaction to someone else's plan. The comedy is human friction, never invented science. | [code] REVIEW |
 | UR-19 | **Archetypes.** Every hero has one archetype line in `look.archetypes` (Newton the proud critic, Einstein the dreamy improviser, Franklin the organiser...); the pose, the dialogue and the humour stay in character. | [code] REVIEW for a missing line; [editorial] |
 | UR-20 | **Plates are empty ground.** A plate prompt (a picture that our sprites stand on) never contains a people word (person, man, figure, crowd...): the model paints people whatever "empty of people" says. Describe empty ground instead. | [code] |
-| UR-22 | **One world.** Every visual component belongs to the same drawn world as our cast: a person, a hand or a crowd painted by the pod uses the cast's design language (the look's `figure_style`: oversized head, large hands, thick brown ink outline, flat watercolour fill), never natural proportions next to a caricature. A hero and an extra in one frame are never two different kinds of person; plates carry no people (UR-20); sprites are graded to the plate. Before a batch is accepted, a style-bridge sheet (a sprite and a pod-painted person or hand in one frame) is looked at and approved once per episode (`look.style_bridge`). | [code] `figure_style` present in every prompt that names people or body parts; REVIEW without `style_bridge`; [editorial] the sheet |
 | UR-21 | **Tone.** Entertainment first, facts second: dry wit, irony and situational humour about brilliant people failing at basic survival; the physics, history and constraints are told straight and never invented for a joke. Scripts follow the `narration-script` skill, pictures the `shot-visuals` skill. | [editorial]; narration_lint for the script |
 
 Real people: the heroes are real historical figures drawn as caricatures in a commentary and parody format. The creator decided

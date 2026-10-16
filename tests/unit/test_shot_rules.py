@@ -197,14 +197,15 @@ def test_the_committed_day1_v2_edit_on_the_clyde_read_passes():
 
 
 FIG = ", every person and hand drawn as an exaggerated storybook caricature, thick ink outline"
-STAKES_LOOK = {**LOOK, "rule_base": 2, "figure_style": FIG, "style_bridge": {"approved": "2026-10-16"}, "caricatures": ["newton", "nansen"], "archetypes": {"newton": "proud critic", "nansen": "pragmatist"},
+THREAD = ", one single drawn universe: exaggerated shapes everywhere, thick ink outline, flat watercolour fill"
+STAKES_LOOK = {**LOOK, "rule_base": 2, "figure_style": FIG, "universe_thread": THREAD, "style_bridge": {"approved": "2026-10-16"}, "caricatures": ["newton", "nansen"], "archetypes": {"newton": "proud critic", "nansen": "pragmatist"},
                "pose_bank": {"newton": ["argue"], "nansen": ["point"]}}
 
 
 def _stakes(**kw):
     shot = {"id": "x", "type": "B", "stakes": "the wind is rising and nobody has fire yet", "face": "caricature:newton",
             "heroes": [{"name": "newton", "pose": "argue"}], "plate": True, "beat": "b",
-            "prompt": "medium shot of a bare ridge at dusk, a cold wind bending the grass, wide deserted open ground"}
+            "prompt": "medium shot of a bare ridge at dusk, a cold wind bending the grass, wide deserted open ground" + THREAD}
     shot.update(kw)
     return R.check_stakes([shot], STAKES_LOOK)
 
@@ -263,12 +264,28 @@ def test_the_rule_base_2_switch_and_the_new_day1_plan():
 
 def test_one_world_people_and_hands_must_carry_the_figure_style():
     c = {"type": "C", "heroes": [], "face": "none", "plate": False}
-    ok = _stakes(**c, prompt="extreme close-up of a trembling hand in a cold wind" + FIG)
+    ok = _stakes(**c, prompt="extreme close-up of a trembling hand in a cold wind" + FIG + THREAD)
     assert not rules_of(ok, "FAIL")
-    bad = _stakes(**c, prompt="extreme close-up of a trembling hand in a cold wind")
+    bad = _stakes(**c, prompt="extreme close-up of a trembling hand in a cold wind" + THREAD)
     assert "UR-22" in rules_of(bad, "FAIL")
     # "hand-painted" in the style suffix is not a hand
-    suffix_only = _stakes(**c, prompt="extreme close-up of a cold wind over a stone" + STAKES_LOOK["style_suffix"])
+    suffix_only = _stakes(**c, prompt="extreme close-up of a cold wind over a stone" + THREAD + STAKES_LOOK["style_suffix"])
     assert "UR-22" not in rules_of(suffix_only)
     assert "UR-22" in rules_of(R.check_stakes([], {**STAKES_LOOK, "style_bridge": {}}), "REVIEW")
+
+
+def test_the_universe_thread_is_in_every_prompt_and_no_phase_may_change_the_style():
+    no_thread = _stakes(prompt="medium shot of a bare ridge at dusk, a cold wind, wide deserted open ground")
+    assert "UR-22" in rules_of(no_thread, "FAIL")
+    assert not rules_of(R.check_stakes([], {**STAKES_LOOK, "universe_thread": ""}), "FAIL")  # nothing to check without shots
+    phased = {**STAKES_LOOK, "phases": {"year1": {"palette": ["umber"], "style_suffix": ", photographic"}}}
+    assert "UR-22" in rules_of(R.check_stakes([], phased), "FAIL")
+    banned = R.BANNED.search("realistic hands with natural proportions")
+    assert banned
+
+
+def test_compose_prompt_appends_the_thread_before_the_suffix():
+    look = {**STAKES_LOOK, "style_suffix": ", painted"}
+    out = R.compose_prompt("a ridge", "fear", look)
+    assert THREAD in out and out.endswith(", painted") and out.index(THREAD) < out.index(", painted")
 

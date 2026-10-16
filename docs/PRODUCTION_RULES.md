@@ -11,7 +11,7 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    straight and never invented for a joke ([SCRIPTING_SPEC](SCRIPTING_SPEC.md) §8.1, UR-21).
 2. **No generic, neutral or "safe" output.** Never a nature documentary, a picnic, anonymous "scientists", a closed ending or a
    flat read. Real, named people and real stakes ([UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) §E, D-40).
-3. **One world.** Every visual component (heroes, extras, hands, plates, props) looks drawn by the same hand (UR-22).
+3. **One universe, the primary visual rule.** Every visual component (heroes, extras, hands, plates, props, every era and place) looks drawn by the same hand with the same thread of style; it overrides any conflicting instruction, and the `universe_thread` is in every image prompt (UR-22).
 4. **Money is never a surprise.** Estimate before every paid call, state units, price and caps in the request, wait for a yes,
    stop at 80 % of any cap, finish with nothing running and the balance reported ([TOOL_STRATEGY](TOOL_STRATEGY.md),
    [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md), CLAUDE.md invariants 1-2).
@@ -56,6 +56,7 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-16 | Humour must never touch the facts; credible science | joke-driven rewrites risk false statements | SCRIPTING_SPEC §8.1, UR-21 | skill, editorial review |
 | 2026-10-16 | Pictures too generic: no named heroes, no fear, clichés of the primitive; real figures by name in every topic | prompts described places; B shots faceless; idle sprite poses; empty plates | UR-16..UR-21 (D-40) | `check_stakes`, `stakes.json`, skill `shot-visuals` |
 | 2026-10-16 | The man seen from behind and the main hero are different kinds of people; everything must be one world | UR-07 asked for natural proportions next to caricatures; two generators | UR-22; style bridge | `check_stakes`, `look.figure_style` |
+| 2026-10-16 | Primary rule: one universe. Environment and inhabitants share one design language, one palette and shading; a time-travelling character never breaks the style; it overrides any conflicting prompt and goes into every image prompt | the look held a style suffix but no thread tying characters, props and places together | UR-22 (primary section of the rule base) | `check_stakes`, `compose_prompt`, `universe.sprite_prompt` / `assert_thread`, `shot-visuals` |
 | 2026-10-16 | Why will the 35 lost pictures not be lost again? Make the rule flexible | stage limit copied from a smaller job; fatal stop skipped the push | limits from measured speeds; push before fatal | TMR lint, `job_speeds.json`, runbook R6, R-29 |
 | 2026-10-16 | How many words and pictures for 8-12 minutes? Is the animation used? | planning numbers were not written down; the compositor is not built | section 4 below; D-32 | this page |
 
