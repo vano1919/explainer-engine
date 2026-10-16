@@ -11,6 +11,32 @@ bus -> loudness measurement (ebur128) -> gate -> final audio muxed once into the
 Narration: 24 kHz mono from Kokoro, resampled to 48 kHz; stereo output with centred voice; mixes stream in blocks (no
 full-length float buffers; 16 GB RAM).
 
+## Voice alteration layer (D-38)
+Kokoro-82M stays the only TTS: its word timings and pauses are what the edit's cuts stand on (UR-12). The narrator's own
+sound is made on top of it, cheapest step first, each step optional after the one before. The voice is data:
+`assets/audio/voices/<id>.json` (schema `voice_spec.schema.json`, P-98).
+1. **Blend.** Kokoro voices are style vectors; the narrator is the weighted mean of a base voice and up to three others
+   (the others together weigh at most 0.5, so the base keeps the larger share). `voice_layer.narrator_style` builds the
+   style array, `kokoro.create_timed(voice=<array>)` speaks it. No Kokoro voice id corresponds to a person.
+2. **Pitch and tone.** ffmpeg `rubberband` at tempo 1.0, pitch -2..+2 semitones, formants preserved (deeper, same size of
+   voice) or shifted (older, larger voice); then a low shelf (warmth), a high shelf, and de-essing (copied from TMR
+   `mix.shape_voice`). Not a replacement for the mix's own voice shaping (P-92): this is the voice, that is the level.
+3. **RVC voice conversion: specified, not built.** It needs a target voice model whose licence allows commercial use and
+   whose speaker consented (`rvc.licence` in the spec, `speaker_consent: true`); the only audio we own is Kokoro
+   output, so there is nothing legitimate to train a "gritty" model on today. When a model exists it runs on a pod under
+   an approved cap or on CPU, and must pass the same timing checks plus an ASR word-error rate within 2 points of the
+   base render and a listening check for sibilant and breath artefacts. `narrate.py` refuses a spec with `rvc` set.
+
+**Timing contract (P-99, Q-T18).** `words.json` is measured on the *base render* (the blended voice, before steps 2-3).
+Blending changes durations (measured: up to -7.5 % against `am_michael` alone), so the words file is regenerated after
+the voice is chosen and the edit re-solved. Every later step keeps the length within one frame and the word onsets within
+20 ms (loudness-envelope cross-correlation); audio that fails is not used, the base audio is returned and the report says
+`used: base`. Only the final WAV is mixed; `words.json` stays the cut reference.
+
+`python -m explainer_engine.audio.narrate --spec <voice.json> --text <narration.txt> --out <dir>` is the one path:
+spec -> timed render -> `base.wav` + `words.json` -> alteration -> `narration.wav` + `voice_report.json` (pitch, pitch
+spread, pace, level of both, the timing check). WAVs are not committed.
+
 ## Music, ambience, silence
 One music state per scene group, ducked to at least 10 dB under speech (attack 50 ms, release 400 ms); procedural
 (TMR `music_synth` approach, new energetic palettes) or CC0/licensed beds with per-file records; no commercial tracks and

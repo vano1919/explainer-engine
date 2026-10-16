@@ -98,6 +98,8 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | P-95 | silence | no unintended silence > 1.5 s (long-form), > 0.8 s (Shorts) | | pacing | M/C | | audio scan |
 | P-96 | fades | 20 ms edge fades on clips; music 1 s in, 2 s out | | no clicks | M/C | | click check |
 | P-97 | missing audio | job stops at QA, never a silent video | | | H/F | | QA FAIL |
+| P-98 | narrator voice | a Kokoro base voice + up to 3 blended voices (together <= 0.5), pitch -2..+2 semitones, tone shelves, `rvc: null` | blend sum <= 0.5; pitch +/-2 st | one narrator sound for the channel; no real person is imitated (D-38) | M/P | voice spec (`explainer_engine/schemas/voice_spec.schema.json`) | schema + `voice_layer.validate_voice_spec` |
+| P-99 | timing contract of the alteration | length change <= 1 frame (33 ms); word-onset lag <= 20 ms | | the cuts are placed on the base render's pauses (UR-12) | M/F | base render | `voice_layer.timing_preserved`; failing audio is not used |
 
 ## 8. Shorts, publishing and cost
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |

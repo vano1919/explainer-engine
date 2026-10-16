@@ -2,4 +2,5 @@ numpy>=2.0
 jsonschema>=4.18  # the versioned contracts (explainer_engine/schemas, Phase 3)
 pyyaml>=6.0       # episode.yaml intake (Phase 6)
 pytest>=7.0
-# added in their phases: kokoro-onnx + soundfile (Phase 5, narration); Node 20 LTS + Remotion (Phase 4, render/)
+kokoro-onnx>=0.4  # narration (audio/narrate.py); the timed model goes in tools/kokoro (docs/AUDIO_SYSTEM.md)
+# added in their phases: Node 20 LTS + Remotion (Phase 4, render/)

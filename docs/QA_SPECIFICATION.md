@@ -24,6 +24,7 @@ defaults to pass. A deterministic FAIL cannot be overridden by an assertion.
 | Q-T15 | job completeness | no stage RUNNING or FAILED |
 | Q-T16 | licence register covers every font, SFX and music file | no unknown |
 | Q-T17 | the edit follows the [Universal Rule Base](UNIVERSAL_RULE_BASE.md) | `edit/shot_rules.check_shots`: 0 FAIL; REVIEWs answered |
+| Q-T18 | the narration WAV keeps the base render's timings (D-38) | P-99: length delta <= 33 ms, lag <= 20 ms; `voice_report.json` says `used: altered` |
 
 ## Editorial QA (a human or a reviewing Claude session; an LLM cannot establish truth by assertion)
 | ID | Question |

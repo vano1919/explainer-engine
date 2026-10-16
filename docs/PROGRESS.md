@@ -204,3 +204,17 @@ their first sentences are shorter than 5 s). `examples/stone_age/look.json` (pal
 episode, ≈ 1,800 words ≈ 12 min, beats + shot outlines; claims still unverified). Pod job for the 30 new pictures:
 TMR `cloud/jobs/stone_age_day1_v2.json` (not run: needs an approved pod cap). Money: $0 this step; RunPod balance $5.50
 when read at 09:38 UTC, the foreign pod `xjbkftngkcqb7y` still running and untouched.
+
+## 2026-10-16 — Voice alteration layer (D-38), 7-take voice panel
+The creator found `am_michael` too generic but wants Kokoro's timings kept. Plan approved (plan mode), then built:
+`audio/voice_layer.py` (style blend, ffmpeg rubberband pitch/formant at tempo 1, warmth/brightness/de-ess shaping copied from
+TMR, `timing_preserved`: length ≤ 33 ms and envelope lag ≤ 20 ms, `alter` falls back to the base audio on failure,
+`measure`), `audio/narrate.py` (the reproducible path that replaces the hand-run scratch script), schema
+`voice_spec.schema.json`, `assets/audio/voices/baseline_michael.json`, 11 tests (suite 97 passed). RVC is specified in
+AUDIO_SYSTEM.md but not built: no model with a commercial licence and a consenting speaker exists, and `narrate.py` refuses
+an `rvc` spec. Docs: AUDIO_SYSTEM "Voice alteration layer", D-38 (voice choice pending), P-98, P-99, Q-T18, PROVENANCE row.
+Measured on the first two paragraphs (33 s), `examples/stone_age/voice_panel/p*.json`: median pitch baseline 113.7 Hz;
+michael+george 40 % 123.1; +onyx 40 % 100.0; +lewis 40 % 107.1; george 25 % + onyx 25 % 109.6. Blends change the length by
+-3 % to -7.5 % (so `words.json` must be re-measured after the voice is chosen). Pitch −1 st gave 116.5 Hz, −2 st shifted
+formants 110.1 Hz, length delta 0 ms, lag 2–3 ms. Sent the creator a 7-take MP3 (20 s each); the choice is theirs by ear.
+Day 1 `words.json`/`shots.json` are regenerated once the voice is chosen. Money $0.

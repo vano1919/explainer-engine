@@ -1,0 +1,22 @@
+{
+ "version": 1,
+ "id": "p6_george40_down2_shifted",
+ "base": "am_michael",
+ "blend": [
+  {
+   "voice": "bm_george",
+   "weight": 0.4
+  }
+ ],
+ "speed": 1.05,
+ "pitch": {
+  "semitones": -2.0,
+  "formant": "shifted"
+ },
+ "tone": {
+  "warmth_db": 2.0,
+  "brightness_db": -1.0,
+  "deess": 0.3
+ },
+ "rvc": null
+}
