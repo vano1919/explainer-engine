@@ -1449,16 +1449,34 @@
       "max_s": 0.8
      },
      {
+      "at": "Franklin keeps",
+      "sound": "grass_rustle_dry",
+      "gain_db": -20,
+      "max_s": 1.6
+     },
+     {
       "at": "Then Einstein takes",
       "sound": "cloth_rustle__v2",
       "gain_db": -20,
       "max_s": 0.7
      },
      {
+      "at": "A convex lens",
+      "sound": "glass_glint",
+      "gain_db": -19,
+      "max_s": 1.0
+     },
+     {
+      "at": "A thread of",
+      "sound": "ember_crackle",
+      "gain_db": -22,
+      "max_s": 2.0
+     },
+     {
       "at": "One careful breath",
-      "sound": "gasp_inhale__v1",
-      "gain_db": -24,
-      "max_s": 0.9
+      "sound": "breath_ember",
+      "gain_db": -23,
+      "max_s": 2.2
      },
      {
       "at": "and fire",
