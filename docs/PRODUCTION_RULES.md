@@ -79,6 +79,7 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-16 | (found) a re-run of the one-off `make_script.py` overwrote compiled prompts and the manual shots | the one-off was still runnable | the script is edited directly; one-off builders refuse to run without `--force` | `day1_v7/make_script.py` |
 | 2026-10-16 | (found) a shell chain started a 2K render on a timing with 3 FAIL, and a second render wrote into the same folder | `assemble` trusted its caller; no lock; the video file was written in place | `assemble` refuses a timing with FAIL, locks its folder, writes `video.part.mp4` and renames it when done | `production/assemble.py`, test |
 | 2026-10-16 | (found) RunPod had no 48 GB card five times in a row | capacity | never widen the price on our own; ask; the creator allowed Gemini for the three Day 1 pictures once ($0.16) | RUNBOOK R-rules; PROGRESS |
+| 2026-10-16 | When a run fails, find the cause, document it and push the fix to the repo so it cannot repeat | the Week 1 pod stopped on a guessed model size (58.0 GB against a real 57.7 GB) and a 60 GB volume | a failure is closed only when its cause is read from evidence (ntfy history, listing), fixed in the repo, covered by a test and written in the incident log | TMR `docs/INCIDENTS_RUNPOD.md`, `tests/unit/test_conductor.py::test_models_manifest_sizes_and_dry_run` |
 
 ## 4. Planning numbers for a video length (measured on Day 1, 2026-10-16)
 
