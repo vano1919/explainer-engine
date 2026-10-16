@@ -50,7 +50,8 @@ def resolve(spec: dict, codex: dict | None = None) -> dict:
         if step["light"] not in lights:
             raise ValueError(f"beat {step.get('beat')}: light {step['light']!r} is not in the codex for the light owner "
                              f"(known: {sorted(lights)})")
-        arc.append({"beat": step["beat"], "light": step["light"], "clause": lights[step["light"]]})
+        arc.append({"beat": step["beat"], "light": step["light"], "clause": lights[step["light"]],
+                    "not_yet": list(step.get("not_yet", []))})
     absent = list(host_era["absent"])
     return {"version": 1, "topic": spec["topic"], "host": {**host, "palette_words": host_era["palette_words"],
             "atmosphere": host_era["atmosphere"], "material_culture": host_era["production_design"],
@@ -59,19 +60,28 @@ def resolve(spec: dict, codex: dict | None = None) -> dict:
             "absent": absent, "cliches": host_era["cliches"], "evidence": host_era["status"]}
 
 
-def clause_for_beat(world: dict, beat: int) -> str:
-    """The one light clause of a beat (the last arc step at or before ``beat``)."""
+def _step(world: dict, beat: int) -> dict:
     chosen = None
     for step in world["day_arc"]:
         if step["beat"] <= beat:
             chosen = step
     if chosen is None:
         raise ValueError(f"no light for beat {beat}")
-    return chosen["clause"]
+    return chosen
+
+
+def clause_for_beat(world: dict, beat: int) -> str:
+    """The one light clause of a beat (the last arc step at or before ``beat``)."""
+    return _step(world, beat)["clause"]
+
+
+def not_yet(world: dict, beat: int) -> list[str]:
+    """Things the story has not made yet at this beat (UR-27 story state), e.g. fire before the fire beat."""
+    return _step(world, beat).get("not_yet", [])
 
 
 def check_text(text: str, world: dict, look: dict | None = None, *, plate: bool = False, people: bool = False,
-               visitors_named: list[str] | None = None) -> list[dict]:
+               visitors_named: list[str] | None = None, beat: int | None = None) -> list[dict]:
     """Findings for one prompt: [{rule, severity, detail}]. UR-23 absent objects, UR-24 child cues and costume, UR-26 light keys."""
     look = look or load_look()
     found = []
@@ -86,6 +96,11 @@ def check_text(text: str, world: dict, look: dict | None = None, *, plate: bool 
     elif bad:
         add("UR-23", f"objects absent from the host world (allowed only on the named visitors {visitors_named}): {bad}",
             "REVIEW")
+    if beat is not None:  # UR-27: the picture may not show what the story has not made yet (a "no X" phrase is allowed)
+        stripped = re.sub(r"\bno [a-z ,]+? anywhere in the frame", "", text.lower())
+        early = words_in(stripped, not_yet(world, beat))
+        if early:
+            add("UR-27", f"shows what does not exist yet at beat {beat}: {early}")
     cues = words_in(text, look["child_cues"])
     if cues:
         add("UR-24", f"child cues in the prompt: {cues}")

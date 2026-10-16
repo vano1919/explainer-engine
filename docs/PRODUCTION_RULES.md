@@ -39,7 +39,7 @@ action. Gates 3-7 spend money and need the creator's yes first.
 | 6 | **Pictures (pod)** | limit = units x measured seconds x margin; approval with price and caps; pushed even on failure; contact sheet reviewed by eye, bad pictures repainted | TMR `cloud/lint_manifest.py` (`picture_budget`, `fatal_before_push`), `cloud/job_speeds.json`, runbook R6 |
 | 7 | **Full read and timings** | one paid read of the final text; Scribe words, coverage >= 97 %, pauses padded, `words.json` on the audio the mix uses; shot cuts recomputed | D-39, UR-12, `build_shots.py` 0 FAIL |
 | 8 | **Animatic and render** | GPU compositor (D-32), motion per UR-13, transitions UR-14, sound UR-15 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) |
-| 9 | **QA and approval #2** | technical and editorial QA, review bundle, the creator's recorded approval before any upload | [QA_SPECIFICATION](QA_SPECIFICATION.md) |
+| 9 | **Seven-point test, QA and approval #2** | every video passes all seven checks of section 6 (`qa/scorecard.py`), then technical and editorial QA, the review bundle and the creator's recorded approval before any upload | section 6, [QA_SPECIFICATION](QA_SPECIFICATION.md) |
 
 Order matters: a script is not paid-read before gate 1 is clean; pictures are not painted before the style bridge (gate 4) and
 the sprite plan (gate 5); the full read waits for the creator's yes on the test read.
@@ -74,6 +74,12 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 
 These are estimates for planning; the estimate before each paid call is the number that counts.
 
+## 4a. Cost is counted in credits
+The creator has the ElevenLabs Pro plan and counts credits, not dollars: every request for approval states credits first (read
+with `estimate_only`; 1 credit is about $0.00018) and the dollar equivalent second. Gemini pictures are dollars from the Gemini
+key (cap $10 in total, stop at 80 %); RunPod is dollars. Estimates and charges can differ (Scribe was estimated at 61 credits
+and charged 998 on 2026-10-16; sound effects were estimated at 55 and charged 17 or 67): the ledger records the charge.
+
 ## 5. What is per topic and what is universal
 
 - **Per topic (the episode folder):** research and claim map, narration text, `look.json` (palette per phase, heroes,
@@ -81,3 +87,22 @@ These are estimates for planning; the estimate before each paid call is the numb
 - **Universal (this repository):** the gates above, UR-01..UR-22, N-01..N-10, the stakes vocabulary, the sound library, the
   voice (Clyde), the pod procedure and its money rules, the cost ledger. A new topic starts from a copy of an episode `look.json`
   with `rule_base: 2` and fills in its own heroes, palette and claims.
+
+## 6. The seven-point test (creator, 2026-10-16: every video passes all seven; a failure is investigated, never waved through)
+
+`explainer_engine/qa/scorecard.py` gathers the evidence; the creator decides the rows marked "creator decides".
+
+| # | Check | What is measured or looked at |
+|---|---|---|
+| 1 | Narration tone and its sync with the video | words per minute (155-175), every cut inside a punctuated pause (UR-12), questions per minute; the creator listens for tone, stress and question intonation |
+| 2 | Sound effects and their sync | no sound event on a spoken word, voice at least 14 dB above bed + music, loudness -16 to -12 LUFS; the creator listens: natural and helpful, not cartoon placeholders |
+| 3 | Pictures fit the topic and its world | the visual judge (adults, no object from the world's `absent` list, no people in plates, one light, mood), 0 FAIL |
+| 4 | Pictures fit the topic's cliché expectations | the era codex `cliches` and screen codes; the creator looks: does it read as the genre the audience knows |
+| 5 | Pictures fit each other | luma, saturation and warmth outliers across the episode, one engine, one look thread, one grade; side-by-side sheet |
+| 6 | Editing against general standards | UR-01..UR-15 0 FAIL, durations A/B/C, hard cuts at least 90 %, first 30 s rhythm, motion limits |
+| 7 | The whole video: fun, interesting, easy to follow, sticky | open loop at each beat end, question rhythm, shots per minute; the creator watches it once without pausing |
+
+**Failure loop.** A FAIL (or a "no" from the creator) on any row: (1) find the cause with evidence (the prompt, the timing, the
+sound file, the rule that allowed it), not a guess; (2) fix the **general** rule, check or tool so no video can repeat it, and
+log the creator's note in section 3; (3) run the failed step again, then the checks again; (4) three failures on the same row
+stop the run and the creator is asked. Cost of the reruns is counted against the approved caps.

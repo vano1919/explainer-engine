@@ -16,9 +16,10 @@ QUESTIONS = {
     "text": "Is any text, letter, number or logo visible?",
     "one_light": "Does the picture have one clear light direction and one light source type?",
     "hero_match": "If a named hero is meant to appear, is that figure recognisable from the description (glasses, hair, coat)?",
+    "too_early": "Does the picture show anything from the 'must NOT appear yet' list?",
     "mood": "Does the picture show the stated danger or emotion (not a calm postcard)?",
 }
-GOOD = {"adults": True, "era_objects": False, "text": False, "one_light": True, "mood": True}
+GOOD = {"adults": True, "era_objects": False, "text": False, "one_light": True, "mood": True, "too_early": False}
 
 
 def build_prompt(world: dict, meta: dict) -> str:
@@ -28,6 +29,8 @@ def build_prompt(world: dict, meta: dict) -> str:
              f"Things that do NOT exist there: {', '.join(world['absent'])}.",
              f"What the picture should show: {meta.get('stakes', '')}.",
              "Answer ONLY a JSON object with a boolean for every key and a short 'note':"]
+    if meta.get("not_yet"):
+        lines.insert(3, f"Must NOT appear yet at this point of the story (it has not been made): {', '.join(meta['not_yet'])}.")
     for key, q in QUESTIONS.items():
         lines.append(f'  "{key}": {q}')
     if meta.get("hero"):

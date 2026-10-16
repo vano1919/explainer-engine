@@ -14,7 +14,9 @@
     "storm_dusk": "hard side light under a bruised storm sky at dusk, long shadows, dust in the air",
     "night_fire": "a single low campfire as the only light, warm amber on faces, deep cold blue darkness around it",
     "cold_dawn": "cold blue-grey dawn light with low mist and a thin warm line on the horizon",
-    "harsh_noon": "flat hard noon sun, short shadows, dry glare"
+    "harsh_noon": "flat hard noon sun, short shadows, dry glare",
+    "overcast_day": "flat grey overcast daylight with wind-driven clouds, cold soft shadows",
+    "last_sun": "low last sun breaking through, long amber shadows and cold blue shade"
    },
    "palette_words": [
     "ochre",

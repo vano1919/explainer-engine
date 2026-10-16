@@ -22,6 +22,7 @@ PRICES_CHECKED = "2026-10-16"
 # USD per output picture (Google's standard-tier list prices, ai.google.dev/gemini-api/docs/pricing, 2026-10-16)
 PRICES = {
     "gemini-3-pro-image": {"1K": 0.134, "2K": 0.134, "4K": 0.24},
+    "gemini-nano-banana-2.1": {"1K": 0.0336, "2K": 0.0504, "4K": 0.113},
     "gemini-3.1-flash-image": {"0.5K": 0.045, "1K": 0.067, "2K": 0.101, "4K": 0.151},
     "gemini-3.1-flash-lite-image": {"1K": 0.0336},
 }
@@ -128,13 +129,13 @@ class GeminiClient:
         self._log({"name": name, "model": model, "usd": 0.0, "failed": reason})
         raise GeminiError(f"{model}: {reason}")
 
-    def judge(self, image: bytes, question: str, *, model: str = "gemini-2.5-flash") -> str:
-        """A vision answer as text (input price about $0.0004 per picture at $0.30 per million tokens)."""
+    def judge(self, image: bytes, question: str, *, model: str = "gemini-3.8-flash") -> str:
+        """A vision answer as text (input price about $0.0015 per picture at $0.75 per million input tokens)."""
         parts = [{"text": question}, {"inlineData": {"mimeType": "image/png", "data": base64.b64encode(image).decode()}}]
         data = self.post(model, {"contents": [{"parts": parts}]})
         for cand in data.get("candidates") or []:
             for part in (cand.get("content") or {}).get("parts") or []:
                 if "text" in part:
-                    self.spent += 0.0006
+                    self.spent += 0.0015
                     return part["text"]
         raise GeminiError(f"{model}: no text answer")

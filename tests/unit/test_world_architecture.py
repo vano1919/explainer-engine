@@ -73,7 +73,7 @@ def test_grade_is_deterministic_and_bounded():
 
 def test_judge_verdicts():
     meta = {"plate": True, "hero": None, "stakes": "storm"}
-    ok = {"adults": True, "era_objects": False, "text": False, "one_light": True, "mood": True, "people_in_plate": False}
+    ok = {"adults": True, "era_objects": False, "text": False, "one_light": True, "mood": True, "people_in_plate": False, "too_early": False}
     assert vj.verdict(ok, meta)["status"] == "PASS"
     assert vj.verdict({**ok, "adults": False}, meta)["status"] == "FAIL"
     assert vj.verdict({**ok, "people_in_plate": True}, meta)["status"] == "FAIL"
@@ -99,3 +99,15 @@ def test_gemini_client_cache_cap_and_log(tmp_path):
         small.generate("x", "q", model="gemini-3-pro-image", size="2K")  # 0.134 > 80 % of 0.10
     with pytest.raises(GeminiError):
         estimate("gemini-3-pro-image", "9K", 1)
+
+
+def test_story_state_not_yet():
+    spec = {**SPEC, "day_arc": [{"beat": 1, "light": "storm_dusk", "not_yet": ["fire", "campfire"]},
+                                {"beat": 3, "light": "night_fire"}]}
+    w = resolver.resolve(spec)
+    p = prompt_v2.compose("A", "a cold ridge with a long shadow", w, 1)
+    assert "no fire, no campfire anywhere in the frame" in p and "woodsmoke" not in p
+    assert prompt_v2.lint(p, w, beat=1) == []
+    bad = prompt_v2.lint(p + ", a small campfire burns", w, beat=1)
+    assert any(f["rule"] == "UR-27" for f in bad)
+    assert prompt_v2.lint(prompt_v2.compose("A", "a camp", w, 3), w, beat=3) == []

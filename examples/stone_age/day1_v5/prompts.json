@@ -1,0 +1,516 @@
+[
+ {
+  "id": "v5_d1-01",
+  "shot": "d1-01",
+  "type": "A",
+  "prompt": "wide cinematic establishing shot, a vast windswept river valley at dusk under a bruised storm sky, long shadows over the bare grass, a huddled cluster of a hundred distant strangers in old coats on the open ground, no shelter anywhere, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, hard side light under a bruised storm sky at dusk, long shadows, dust in the air, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "a hundred strangers stand exposed with no shelter as a storm and the night close in",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-02",
+  "shot": "d1-02",
+  "type": "B",
+  "prompt": "medium cinematic shot, one named hero in the foreground: Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat, stricken, hands on head. night is coming and nobody has fire or shelter. Setting: a bare windswept ridge at dusk, a darkening storm sky, cold grass bending in the wind, long shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, hard side light under a bruised storm sky at dusk, long shadows, dust in the air, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "franklin"
+  ],
+  "stakes": "night is coming and nobody has fire or shelter",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-03",
+  "shot": "d1-03",
+  "type": "C",
+  "prompt": "tight cinematic insert, many pairs of muddy buckled boots and polished city shoes of different centuries sinking into cold wet clay, frost on the grass blades, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": false,
+  "heroes": [],
+  "stakes": "city shoes were never made for this ground and every foot is already soaked",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-04",
+  "shot": "d1-04",
+  "type": "B",
+  "prompt": "medium cinematic shot, one named hero in the foreground: Charles Darwin: heavy brow, long white beard, dark frock coat, frozen in shock, mouth open. an unknown valley in an unknown age and no way home. Setting: a wide shallow river under an overcast sky, wind bending the wild grain, dark limestone cliffs and long shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "darwin"
+  ],
+  "stakes": "an unknown valley in an unknown age and no way home",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-05",
+  "shot": "d1-05",
+  "type": "A",
+  "prompt": "wide cinematic establishing shot, scattered strangers in top hats and long coats stumbling out of a swirl of pale light on a windswept hillside, long shadows, an empty hostile horizon, dark storm clouds gathering, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "they arrive confused, dressed for a different century, in the open",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-06",
+  "shot": "d1-06",
+  "type": "B",
+  "prompt": "medium cinematic shot, two named heroes in the foreground: Isaac Newton: long wavy shoulder-length wig, long pale stern face, dark coat with a white cravat, stricken, hands on head; young Albert Einstein of 1905: dark untidy hair, moustache, rumpled suit, round reading glasses, thoughtful, chin on hand. all they own is what happens to be in their pockets. Setting: a stony hillside in a cold wind, dust blowing, long shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "newton",
+   "einstein"
+  ],
+  "stakes": "all they own is what happens to be in their pockets",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-07",
+  "shot": "d1-07",
+  "type": "C",
+  "prompt": "tight cinematic insert, a cracked flint nodule with a razor edge beside a few ears of raw wild einkorn wheat and a pebble on cold dark earth, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": false,
+  "heroes": [],
+  "stakes": "a sharp edge and raw grain are the whole toolbox",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-08",
+  "shot": "d1-08",
+  "type": "B",
+  "prompt": "medium cinematic shot, two named heroes in the foreground: Marie Curie: dark hair in a bun, serious intense face, dark dress, wide-eyed, amazed; Nikola Tesla: tall thin man, slicked-back dark hair, narrow moustache, dark suit, arguing, pointing a finger. they can talk to each other, and that is the only help they get. Setting: a stony clearing under a threatening grey sky, wind whipping the dust, long shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "curie",
+   "tesla"
+  ],
+  "stakes": "they can talk to each other, and that is the only help they get",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-09",
+  "shot": "d1-09",
+  "type": "C",
+  "prompt": "tight cinematic insert, a trembling hand turning out a coat pocket onto cold grass: round spectacles, a pencil stub, a folded handkerchief and two old coins, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "four small things against a whole prehistoric world",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-10",
+  "shot": "d1-10",
+  "type": "A",
+  "prompt": "wide cinematic establishing shot, a hundred people in old coats standing lost in an enormous empty river valley under a vast overcast sky, wind bending the wild grain, no shelter anywhere, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "a hundred geniuses and not one roof",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-11",
+  "shot": "d1-11",
+  "type": "C",
+  "prompt": "tight cinematic insert, cold trembling fingers over an old pocket watch whose hands are stopped, frost on the glass, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "time as they knew it has stopped, and the cold has not",
+  "findings": [
+   {
+    "rule": "UR-23",
+    "severity": "REVIEW",
+    "detail": "objects absent from the host world (allowed only on the named visitors ['curie', 'darwin', 'einstein', 'franklin', 'nansen', 'newton', 'snow', 'tesla', 'wallace']): ['glass']"
+   }
+  ]
+ },
+ {
+  "id": "v5_d1-12",
+  "shot": "d1-12",
+  "type": "A",
+  "prompt": "wide cinematic establishing shot, a windswept highland meadow where a hundred people stand in scattered arguing clusters, pointing in different directions, limestone cliffs and long shadows, a bruised sky, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "a hundred leaders, no plan and the light is already moving",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-13",
+  "shot": "d1-13",
+  "type": "C",
+  "prompt": "tight cinematic insert, a fist clenching and unclenching in frustration, cracked dry knuckles, cold reddened skin, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "an hour passes and nothing is done",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-14",
+  "shot": "d1-14",
+  "type": "B",
+  "prompt": "medium cinematic shot, one named hero in the foreground: Fridtjof Nansen: tall rugged Norwegian explorer, strong jaw, fair moustache, weathered face, heavy wool jacket, pointing sharply. someone has to break the deadlock before dark. Setting: trampled meadow grass bending in a cold wind, scattered boulders, long shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "nansen"
+  ],
+  "stakes": "someone has to break the deadlock before dark",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-15",
+  "shot": "d1-15",
+  "type": "B",
+  "prompt": "medium cinematic shot, two named heroes in the foreground: Fridtjof Nansen: tall rugged Norwegian explorer, strong jaw, fair moustache, weathered face, heavy wool jacket, pointing sharply; Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat, stricken, hands on head. one question exposes that nobody can make fire. Setting: the edge of a windswept meadow with dry trampled grass, dark clouds and long shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "nansen",
+   "franklin"
+  ],
+  "stakes": "one question exposes that nobody can make fire",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-16",
+  "shot": "d1-16",
+  "type": "C",
+  "prompt": "tight cinematic insert, two hands rising only halfway above a row of shoulders, fingers hesitant and half curled, shaking slightly against a stormy sky, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "two hands, and neither is sure",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-17",
+  "shot": "d1-17",
+  "type": "C",
+  "prompt": "tight cinematic insert, two open empty palms held up, cold reddened trembling fingers, nothing in them, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "empty hands against the coming dark",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-18",
+  "shot": "d1-18",
+  "type": "B",
+  "prompt": "medium cinematic shot, two named heroes in the foreground: Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat, scheming, rubbing chin; Isaac Newton: long wavy shoulder-length wig, long pale stern face, dark coat with a white cravat, arguing, pointing a finger. someone must take control before panic does. Setting: a flat rock like a table in a meadow where the wind bends the grass, walking sticks leaning on it, dark clouds, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "franklin",
+   "newton"
+  ],
+  "stakes": "someone must take control before panic does",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-19",
+  "shot": "d1-19",
+  "type": "A",
+  "prompt": "wide cinematic establishing shot, a hundred people sitting in a wide ring on a hillside around a flat rock as the sky darkens, wind pulling at their coats, a long cold valley below, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "a hundred people agree on one rule because the dark is coming",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-20",
+  "shot": "d1-20",
+  "type": "B",
+  "prompt": "medium cinematic shot, two named heroes in the foreground: Isaac Newton: long wavy shoulder-length wig, long pale stern face, dark coat with a white cravat, smug, arms folded; young Albert Einstein of 1905: dark untidy hair, moustache, rumpled suit, round reading glasses, thoughtful, chin on hand. even the loudest critic has to give in. Setting: trampled meadow grass bending in a cold wind, scattered boulders, long shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "newton",
+   "einstein"
+  ],
+  "stakes": "even the loudest critic has to give in",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-21",
+  "shot": "d1-21",
+  "type": "A",
+  "prompt": "wide cinematic establishing shot, three groups scattering across an unforgiving valley, one toward the river, one gathering wood on a stony slope, one scanning bare ground for food, a storm building overhead, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": false,
+  "heroes": [],
+  "stakes": "warmth, water, food: three jobs and one evening",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-22",
+  "shot": "d1-22",
+  "type": "B",
+  "prompt": "medium cinematic shot, one named hero in the foreground: Alfred Russel Wallace: high forehead, full brown beard, field jacket, raising a fist, triumphant. clean water is the difference between life and a bad week. Setting: mossy rocks where clear cold water seeps out of the ground, wet stones, long shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "wallace"
+  ],
+  "stakes": "clean water is the difference between life and a bad week",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-23",
+  "shot": "d1-23",
+  "type": "C",
+  "prompt": "tight cinematic insert, an ink-stained shaking hand drawing a map of a stream with a stick in wet mud, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "a wrong guess about where the water goes will make everyone sick",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-24",
+  "shot": "d1-24",
+  "type": "C",
+  "prompt": "tight cinematic insert, a sharpened stick drawing an arrow in wet mud pointing downhill, away from a small pool, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": false,
+  "heroes": [],
+  "stakes": "one arrow in the mud decides who stays healthy",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-25",
+  "shot": "d1-25",
+  "type": "B",
+  "prompt": "medium cinematic shot, two named heroes in the foreground: John Snow: pale thoughtful clean-shaven physician, dark coat of the 1850s, pointing sharply; Alfred Russel Wallace: high forehead, full brown beard, field jacket, arguing, pointing a finger. the wrong place for the latrine ends the expedition. Setting: a cold clear stream with damp stones, a flat marker stone and a stuck twig far downstream, dim grey light, long shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, flat grey overcast daylight with wind-driven clouds, cold soft shadows, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "snow",
+   "wallace"
+  ],
+  "stakes": "the wrong place for the latrine ends the expedition",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-26",
+  "shot": "d1-26",
+  "type": "A",
+  "prompt": "wide cinematic establishing shot, the river valley at dusk, wind bending the tall grass in long waves, storm grey clouds rolling over the hills, one cluster of distant figures with no fire, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, hard side light under a bruised storm sky at dusk, long shadows, dust in the air, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "the wind rises and they have no fire",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-27",
+  "shot": "d1-27",
+  "type": "C",
+  "prompt": "tight cinematic insert, a damp wool coat sleeve beaded with water and a clenched shivering hand, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hard side light under a bruised storm sky at dusk, long shadows, dust in the air, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "cold, wind and wet clothes are the real killers",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-28",
+  "shot": "d1-28",
+  "type": "B",
+  "prompt": "medium cinematic shot, two named heroes in the foreground: young Albert Einstein of 1905: dark untidy hair, moustache, rumpled suit, round reading glasses, straining with effort; Nikola Tesla: tall thin man, slicked-back dark hair, narrow moustache, dark suit, arguing, pointing a finger. a windbreak must stand before the temperature drops. Setting: a big boulder at dusk with armfuls of long branches and dry grass scattered on the cold ground, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, hard side light under a bruised storm sky at dusk, long shadows, dust in the air, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "einstein",
+   "tesla"
+  ],
+  "stakes": "a windbreak must stand before the temperature drops",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-29",
+  "shot": "d1-29",
+  "type": "C",
+  "prompt": "tight cinematic insert, two scraped arms pushing an armful of dry grass and thin branches against a slanting windbreak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hard side light under a bruised storm sky at dusk, long shadows, dust in the air, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "every gap in the wall lets the wind in",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-30",
+  "shot": "d1-30",
+  "type": "C",
+  "prompt": "tight cinematic insert, two hands pressing a thick loose bundle of dry grass and dead leaves, gripping it against the wind, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hard side light under a bruised storm sky at dusk, long shadows, dust in the air, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "trapped air is the only insulation they have",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-31",
+  "shot": "d1-31",
+  "type": "B",
+  "prompt": "medium cinematic shot, one named hero in the foreground: Fridtjof Nansen: tall rugged Norwegian explorer, strong jaw, fair moustache, weathered face, heavy wool jacket, straining with effort. no fire means no night. Setting: a shallow fire pit scraped in dry ground at dusk, a ring of stones, thin smoke, cold wind, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "nansen"
+  ],
+  "stakes": "no fire means no night",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-32",
+  "shot": "d1-32",
+  "type": "C",
+  "prompt": "tight cinematic insert, two raw hands working a wooden bow drill against a block of wood, a thin thread of smoke, ash on the wrists, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "a dozen tries, sore hands and only smoke",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-33",
+  "shot": "d1-33",
+  "type": "B",
+  "prompt": "medium cinematic shot, one named hero in the foreground: Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat, pleading, hands cupped. one gust and the tinder is gone. Setting: a flat stone with a nest of dry bark shreds and grass sheltered from a cold wind behind a boulder, thin smoke, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "franklin"
+  ],
+  "stakes": "one gust and the tinder is gone",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-34",
+  "shot": "d1-34",
+  "type": "C",
+  "prompt": "tight cinematic insert, a hand lifting a pair of small round reading spectacles, last sunlight glinting on the lens, cold fingers trembling, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "the only tool in the valley sits on a nose",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-35",
+  "shot": "d1-35",
+  "type": "C",
+  "prompt": "tight cinematic insert, a glass lens held above dry grass, a bright point of sunlight focused on one blade, a thread of smoke starting, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": false,
+  "heroes": [],
+  "stakes": "the sun is setting and this is the last chance",
+  "findings": [
+   {
+    "rule": "UR-23",
+    "severity": "REVIEW",
+    "detail": "objects absent from the host world (allowed only on the named visitors ['curie', 'darwin', 'einstein', 'franklin', 'nansen', 'newton', 'snow', 'tesla', 'wallace']): ['glass']"
+   }
+  ]
+ },
+ {
+  "id": "v5_d1-36",
+  "shot": "d1-36",
+  "type": "B",
+  "prompt": "medium cinematic shot, two named heroes in the foreground: young Albert Einstein of 1905: dark untidy hair, moustache, rumpled suit, round reading glasses, wide-eyed, amazed; Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat, straining with effort. one bright point stands between them and a freezing night. Setting: a bare patch of dry grass at dusk with a thin thread of smoke rising, long shadows, wind dropping, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "einstein",
+   "franklin"
+  ],
+  "stakes": "one bright point stands between them and a freezing night",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-37",
+  "shot": "d1-37",
+  "type": "C",
+  "prompt": "tight cinematic insert, cupped cold hands shielding one glowing ember in dry grass, a held breath, sparks, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "a single spark must survive one careful breath",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-38",
+  "shot": "d1-38",
+  "type": "C",
+  "prompt": "tight cinematic insert, cupped hands around a small new flame growing from tinder, the wind pulling at it, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "a new flame is fragile and the wind is rising",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-39",
+  "shot": "d1-39",
+  "type": "A",
+  "prompt": "wide cinematic establishing shot, a hundred people sitting in the dark around one small campfire in a vast black valley, stars above, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "one small fire in an endless dark valley",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-40",
+  "shot": "d1-40",
+  "type": "C",
+  "prompt": "tight cinematic insert, a thin cupped trembling hand holding a few hazelnuts and a small speckled egg, hungry, fire shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, a single low campfire as the only light, warm amber on faces, deep cold blue darkness around it, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "a hundred people and a handful of food",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-41",
+  "shot": "d1-41",
+  "type": "C",
+  "prompt": "tight cinematic insert, two hands holding a few hazelnuts, two small speckled eggs and some ears of raw wild grain, bare scraps in firelight, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, a single low campfire as the only light, warm amber on faces, deep cold blue darkness around it, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "raw wild grain is not dinner, it is a gamble",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-42",
+  "shot": "d1-42",
+  "type": "B",
+  "prompt": "medium cinematic shot, two named heroes in the foreground: Charles Darwin: heavy brow, long white beard, dark frock coat, recoiling in alarm; Alfred Russel Wallace: high forehead, full brown beard, field jacket, arguing, pointing a finger. one wrong berry could poison someone tonight. Setting: a firelit patch of ground with unfamiliar wild plants and berries laid out on a flat stone, deep shadows, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, a single low campfire as the only light, warm amber on faces, deep cold blue darkness around it, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "darwin",
+   "wallace"
+  ],
+  "stakes": "one wrong berry could poison someone tonight",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-43",
+  "shot": "d1-43",
+  "type": "B",
+  "prompt": "medium cinematic shot, two named heroes in the foreground: Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat, lecturing with a raised finger; Fridtjof Nansen: tall rugged Norwegian explorer, strong jaw, fair moustache, weathered face, heavy wool jacket, slumped, exhausted. the fire must not die before dawn. Setting: a rock overhang lit by a small new fire, firewood stacked by the wall, long flickering shadows, cold night behind, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, hides, flint, bone, a single low campfire as the only light, warm amber on faces, deep cold blue darkness around it, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [
+   "franklin",
+   "nansen"
+  ],
+  "stakes": "the fire must not die before dawn",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-44",
+  "shot": "d1-44",
+  "type": "A",
+  "prompt": "wide cinematic establishing shot, the whole river valley at night under a sky full of stars, one fire glowing beside a slanting windbreak, and far away on the dark treeline a pack of wolves watching from the shadows, hides, flint, bone, a single low campfire as the only light, warm amber on faces, deep cold blue darkness around it, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": false,
+  "heroes": [],
+  "stakes": "a tiny fire and a hundred people in an unforgiving valley",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-45",
+  "shot": "d1-45",
+  "type": "C",
+  "prompt": "tight cinematic insert, two raw blistered palms held open to a small fire, cracked skin, flickering amber light, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, a single low campfire as the only light, warm amber on faces, deep cold blue darkness around it, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "the first day cost everyone their hands",
+  "findings": []
+ },
+ {
+  "id": "v5_d1-46",
+  "shot": "d1-46",
+  "type": "C",
+  "prompt": "tight cinematic insert, two hands holding a lump of wet grey river clay with thumbprints pressed into it, cold river mud dripping, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, a single low campfire as the only light, warm amber on faces, deep cold blue darkness around it, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+  "people": true,
+  "heroes": [],
+  "stakes": "the next problem has a shape: a pot",
+  "findings": []
+ }
+]
