@@ -30,6 +30,20 @@ Rules: SFX only where they clarify an action, reinforce a joke or aid comprehens
 decorative ones, and a skip is logged in the QA report. Sync check: rendered SFX start within one frame of the
 anchor word.
 
+## Reusable sound library (D-34)
+`assets/audio/library/manifest.json` (schema `explainer_engine/schemas/sfx_manifest.schema.json`) lists every sound: id
+(`name__vN`), file, category (vocal, foley, music), tags, length, peak and RMS, SHA-256, source (procedural seed, Gemini TTS
+model and prompt, Lyria prompt), estimated cost, licence status and review. Rules:
+- Sounds are stored once, normalised to a -3 dBFS peak (peak above -1 fails validation); the mixer sets the level per event
+  from the audio-event contract. Find sounds with `sfx_library.find(root, tags=[...])`.
+- A model's description of a sound is a machine review only; `review.human` stays `not_listened` until the creator listens.
+  Rejected sounds are hidden from `find`.
+- Generated sounds carry `generated_terms_unverified` until Google's output terms for commercial use are checked.
+- Gemini TTS must be called with an output-token cap (25 tokens per second of audio): one uncapped call produced 458 s.
+  Plain instructions are spoken aloud; use bracketed tags (`[sighs heavily]`) for non-verbal sounds.
+- Procedural foley is a placeholder level of quality; replacing a sound means adding take `v2` and rejecting `v1`.
+- The analyst (Dirkus) is silent: his vocal sounds are reactions, never speech. The companion (Tick) makes mechanical sounds.
+
 ## Checks run on every mix
 Peak and true peak; integrated loudness; clipping; silence map; voice-to-music gap while speaking; click detection at
 clip joins; speech does not overlap itself; measured pace against the target; ASR word error where available; level

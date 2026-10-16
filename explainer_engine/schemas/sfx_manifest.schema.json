@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sfx_manifest.schema.json",
+  "title": "Reusable sound library manifest (version 1)",
+  "type": "object",
+  "required": ["version", "items"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {"const": 1},
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "file", "category", "tags", "seconds", "sample_rate", "sha256", "peak_dbfs", "rms_dbfs",
+                     "source", "licence", "review"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9_]+__v[0-9]+$"},
+          "file": {"type": "string", "pattern": "^[a-z]+/[a-z0-9_]+__v[0-9]+\\.wav$"},
+          "category": {"enum": ["vocal", "foley", "music"]},
+          "tags": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z0-9_]+$"}},
+          "seconds": {"type": "number", "exclusiveMinimum": 0},
+          "sample_rate": {"type": "integer", "minimum": 8000},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "peak_dbfs": {"type": "number", "maximum": 0},
+          "rms_dbfs": {"type": "number", "maximum": 0},
+          "source": {
+            "type": "object",
+            "required": ["kind"],
+            "additionalProperties": false,
+            "properties": {
+              "kind": {"enum": ["procedural", "gemini_tts", "lyria", "recorded", "third_party"]},
+              "model": {"type": "string"},
+              "prompt": {"type": "string"},
+              "seed": {"type": "integer"},
+              "generated": {"type": "string"},
+              "cost_usd_estimate": {"type": "number", "minimum": 0}
+            }
+          },
+          "licence": {
+            "type": "object",
+            "required": ["status", "note"],
+            "additionalProperties": false,
+            "properties": {
+              "status": {"enum": ["own_procedural", "generated_terms_unverified", "generated_terms_verified", "licensed", "cc0"]},
+              "note": {"type": "string", "minLength": 1}
+            }
+          },
+          "review": {
+            "type": "object",
+            "required": ["machine", "human"],
+            "additionalProperties": false,
+            "properties": {
+              "machine": {"type": "string"},
+              "human": {"enum": ["not_listened", "approved", "rejected"]}
+            }
+          }
+        }
+      }
+    }
+  }
+}

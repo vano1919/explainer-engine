@@ -72,3 +72,15 @@ sheet, test frames, the generation ledger with all prompts).
   pop, looks to the horizon, ends with a wry smile; the companion floats beside, changes eye state and opens its wings at the end.
   The walk is still a two-pose swap. Limbs do not move between poses; this is the ceiling of the pose-bank method.
 
+## Sound result (2026-10-16): what Gemini can and cannot make
+- Gemini has **no sound-effect model** (pricing page, 2026-10-16). Gemini TTS (`gemini-3.8-flash-tts`, $9 per 1M audio tokens
+  until the end of 2026, 25 tokens per second) can make vocal reactions; Lyria (`lyria-3-clip-preview`, $0.04) makes 30 s
+  music clips only (the request "about 4 seconds" returned 30.8 s, MP3 data in a .wav-named field).
+- **Measured**: plain instructions ("Make only a short gasp") were read aloud by the voice (8 of 11 clips contained speech of the
+  instruction, per a model listener). Bracketed tags worked: 15 of 24 tried sounds matched their intent, 5 were mislabelled by
+  the listener (gasp heard as snicker, chuckle as gasp, sniff as groan, gulp as sigh), 4 failed on rate limits (HTTP 429 with 4 parallel
+  calls). One uncapped call ran 458 s and cost about $0.10; every later call carries `maxOutputTokens`.
+- **The model listener is weak** (it disagreed with itself between runs); only the creator's ears count (`review.human`).
+- Result: 63 sounds in the library: 21 foley types x 1-3 takes (45 files, procedural, free), 15 vocal reactions, 3 music clips.
+  Audio spend about $0.26 (estimate).
+

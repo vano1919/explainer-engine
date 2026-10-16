@@ -141,3 +141,12 @@ cost (estimate/actual), next step, recovery instructions.
 - Next: names for the two characters and the channel spelling (D-29), the compositor port and Phase 3 contracts, then the
   one approved pod for the Phase 4 benchmark.
 
+## 2026-10-16 — Names, first topic, reusable sound library (D-29, D-34, D-35)
+- Creator: names Dirkus (analyst) and Tick (watch); channel name confirmed; first topic = "100 greatest scientists dropped
+  into the Stone Age" (D-20 resolved); asked for Gemini-made movement/reaction sounds in a reusable library.
+- Built `audio/foley.py`, `audio/sfx_library.py`, `audio/build_library.py`, schema `sfx_manifest`, tests (60 passed, lint 0).
+  Library: 63 sounds (45 procedural foley, 15 Gemini TTS vocal reactions, 3 Lyria clips). Findings in TOOL_STRATEGY
+  ("Sound result"). No sound has been heard by a person. Gemini about $3.28 of $10 (estimate), RunPod $0, vidIQ 130/200.
+- Next: the creator listens to the audition packs; then the script for the Stone Age episode (research dossier, claim map,
+  script) with approval gate #1.
+
