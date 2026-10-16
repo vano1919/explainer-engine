@@ -185,6 +185,16 @@ together. `explainer_engine/finish/grade.py` (numpy, tested on fixtures).
 
 ## 9. Money (estimates; the estimate before each call is the number that counts)
 
+**Credits first (creator, 2026-10-16: ElevenLabs Pro plan, the creator counts credits, not dollars).** The ElevenLabs workspace
+runs the same image models (Nano Banana Pro, 2.1, 2, GPT Image, FLUX, Seedream, Recraft) and video models. Estimates read with
+`estimate_only` on 2026-10-16 (1K, default quality; nothing was generated): Nano Banana Pro 1,218 credits ($0.22),
+FLUX 3 291, Nano Banana 2.1 204 ($0.037), GPT Image 2.5 190. One credit is about $0.00018. Pro through ElevenLabs costs about 1.6x
+Google's direct price, Nano Banana 2.1 about the same: use 2.1 by default and Pro only where it is needed. Per 10-minute episode
+(hybrid): voice about 9,500 credits, 45 B shots on 2.1 about 9,200, repaints about 2,000: **about 20,700 credits plus about
+$0.65 of RunPod**. One engine only (all pictures on 2.1, no pod): about 36,000 credits for pictures plus 9,500 voice. One-time
+set on 2.1: look test 6 pictures about 1,220 credits, 20 anchors about 4,100, 10 hero sheets about 2,040 (Pro: 12,200) plus the
+LoRA run on the pod (about $0.7-1.4). The dollar tables below are the direct-Google equivalent.
+
 One-time, reusable across all topics:
 
 | Item | Units | Price | Estimate |

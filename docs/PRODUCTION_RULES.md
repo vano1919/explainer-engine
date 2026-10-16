@@ -69,7 +69,7 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | unique pictures at 0.85 per shot | about 115 | about 140 | about 170 | Day 1: 42 pictures for 46 shots |
 | pod time at 22.7 s per picture | about 45 min | about 55 min | about 65 min | 35 pictures in 793 s on an RTX 4090 |
 | pod cost at $0.89/h | about $0.7-0.9 | about $0.9-1.1 | about $1.1-1.4 | add about $0.1 boot; limit = pictures x 30 s x 1.25 |
-| ElevenLabs read | about $2.5-3 | about $3-3.5 | about $3.5-4.5 | 2,337 credits for 2,550 characters (Day 1) |
+| ElevenLabs read (credits; the creator has the Pro plan and counts credits, 1 credit about $0.00018) | about 6,800 credits | about 8,500 credits | about 10,200 credits | 2,337 credits for 2,550 characters (Day 1); add about 1,000 for the test read. The earlier dollar rows were about twice too high |
 | hero sprites | the poses the plan names | | | about $0.067 each, reusable across videos |
 
 These are estimates for planning; the estimate before each paid call is the number that counts.

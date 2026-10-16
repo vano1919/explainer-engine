@@ -343,3 +343,9 @@ UR-22/23/24/26); `edit/prompt_v2.py` (slots, one light key, costume); `finish/gr
 cache, spend log, vision judge call); rules UR-23..UR-26; Stone Age `world_spec.json` and `look_test/build.py` (6 prompts, 0 FAIL,
 estimate $0.804 for 6 Gemini Pro pictures at 2K). The paid look test was not run: the permission layer asked for the creator's
 explicit confirmation of the $0.804 spend.
+
+## 2026-10-16 — Costs counted in credits (creator has the ElevenLabs Pro plan)
+The ElevenLabs workspace also runs image and video models. `estimate_only` (free) gave: Nano Banana Pro 1,218 credits, FLUX 3
+291, Nano Banana 2.1 204, GPT Image 2.5 190 per 1K picture. Corrected the voice row of the planning numbers (it was about twice
+too high: 8,500 credits for 10 minutes, not $3-3.5). The look test can run on Nano Banana 2.1 for about 1,220 credits instead
+of 6 Pro pictures. Four empty flows were created by the estimate calls (no charge).
