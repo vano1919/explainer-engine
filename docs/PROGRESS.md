@@ -325,3 +325,12 @@ shot-visuals and PRODUCTION_RULES updated; Day 1 plan, pod job v3 and the style-
 pass, docs_lint 0. Nothing paid was run. The old sprite generator script (`scientists_v0/gen_prompts.py`) predates the thread;
 new sprites go through `universe.sprite_prompt`.
 
+## 2026-10-16 — Style-bridge test run; rejected; visual world architecture proposed (D-41)
+Ran the 6-picture style-bridge test (pod RTX 4090, guard $0.25 / 0.3 h; guard's last reading $0.072; 21-27 s a picture, 0
+defective; pod gone, sweep clean; balance $3.64, the drop from the earlier $4.17 reading is larger than the guard's figure and
+is to be checked in RunPod billing). The creator rejected all six ("children on an excursion"). Causes found in the prompts:
+1.6x heads and storybook words read as children, a phase mood "bright even daylight" added to storm and firelight prompts, no
+costumes for extras, style held by words only. Researched Gemini image prices and reference limits (official pages), Z-Image
+LoRA training reports, open edit models, style-similarity metrics and the screen language of eras. Wrote
+`docs/VISUAL_WORLD_ARCHITECTURE.md` (world resolver, era codex, look v2, anchored hybrid generation with a routing table, grade
+pass, visual judge, money, engine changes, rollout) and D-41 (proposed). Nothing built or paid beyond the bridge test.
