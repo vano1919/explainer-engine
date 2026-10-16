@@ -486,9 +486,10 @@
       "id": "y10_malachite",
       "seed": 1161,
       "refs": [
+        "v5_d1-08.png",
         "v5_d1-17.png"
       ],
-      "prompt": "Edit the picture: a hand in a muddy sleeve holds up a bright green lump of malachite ore, a heap of crushed green rock beside it on a flat stone, harsh noon sun, close view.",
+      "prompt": "Edit the picture: Marie Curie in her dark high-collared dress, dark hair in a bun, holds up a bright green lump of malachite ore with a delighted, intent face; beside her on a flat stone lies a heap of crushed bright green rock. Remove the man. Harsh noon sun.",
       "first_use": "SH105"
     },
     {

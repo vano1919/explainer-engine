@@ -16,7 +16,7 @@ from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
 
 MAX_GAP = 8.0   # below the board's 9 s so a read a little slower than measured still passes
-MIN_PART = 2.8  # each side of a cut stays above MIN_SHOT
+MIN_PART = 2.5  # each side of a cut stays at or above MIN_SHOT (2.5 s)
 
 
 def alt_motion(prev: dict) -> dict:
@@ -34,13 +34,41 @@ def _phrase(toks: list[dict], t_new: int, lo: int, hi: int) -> str | None:
     return None
 
 
+def drop_short_shots(doc: dict, words_doc: dict, min_s: float = B.MIN_SHOT) -> tuple[dict, list[dict]]:
+    """Remove shots shorter than the board allows (RHYTHM-2): the shot before it holds on instead (a segment's first shot, which
+    must start on the segment's first word, loses the shot after it). ``fill_holds`` then cuts any hold this makes too long."""
+    doc = copy.deepcopy(doc)
+    dropped = []
+    for _ in range(200):
+        timed = T.time_script(doc, words_doc)
+        shots = timed["shots"]
+        bad = next((k for k, s in enumerate(shots) if s["duration"] < (B.MIN_INSERT if s.get("insert") else min_s) - 1e-9), None)
+        if bad is None:
+            break
+        s = shots[bad]
+        seg = next(x for x in doc["segments"] if x["id"] == s["segment"])
+        first_of_segment = seg["shots"] and seg["shots"][0]["at"] == s["at"]
+        victim = bad + 1 if first_of_segment else bad
+        if victim >= len(shots):
+            break
+        v = shots[victim]
+        vseg = next(x for x in doc["segments"] if x["id"] == v["segment"])
+        if vseg["shots"][0]["at"] == v["at"] and victim != bad:
+            break  # would remove another segment's opening picture: leave for a human
+        vseg["shots"] = [x for x in vseg["shots"] if x["at"] != v["at"]]
+        dropped.append({"segment": v["segment"], "at": v["at"], "picture": v["picture"], "duration": v["duration"]})
+    return doc, dropped
+
+
 def fill_holds(doc: dict, words_doc: dict, max_gap: float = MAX_GAP, min_part: float = MIN_PART) -> tuple[dict, list[dict], list[dict]]:
     """(new doc, inserted shots, gaps that could not be filled)."""
     doc = copy.deepcopy(doc)
     toks = S.tokens(doc)
     spans = S.segment_spans(toks, len(doc["segments"]))
     words = words_doc["words"]
-    starts = [i for i in range(len(toks)) if i == 0 or (toks[i]["seg"], toks[i]["line"]) != (toks[i - 1]["seg"], toks[i - 1]["line"])]
+    # a cut may go after any punctuated word (a line end, a full stop inside a line, a comma); the board checks it is legal
+    starts = [i for i in range(len(toks)) if i == 0 or (toks[i]["seg"], toks[i]["line"]) != (toks[i - 1]["seg"], toks[i - 1]["line"])
+              or toks[i - 1]["w"].rstrip("\"'”’)")[-1:] in ".?!…,;:—"]
     inserted, stuck = [], []
     skip: set[tuple[float, float]] = set()
     for _ in range(400):
@@ -62,6 +90,12 @@ def fill_holds(doc: dict, words_doc: dict, max_gap: float = MAX_GAP, min_part: f
             if legal and a + min_part <= cut <= b - min_part:
                 cands.append((abs(cut - mid), t, cut))
         prev = max((s for s in shots if s["start"] <= a + 1e-6), key=lambda s: s["start"])
+        # a cut never separates a shot from its own speech bubbles: it goes after the last bubble phrase of the shot
+        seg_i = toks[prev["token"]]["seg"]
+        spec = next((x for x in doc["segments"][seg_i]["shots"] if x["at"] == prev["at"]), {})
+        anchors = [S.find_phrase(toks, b[k], prev["token"], spans[seg_i][1]) for b in spec.get("bubbles", []) for k in ("at", "until") if b.get(k)]
+        floor = max([x for x in anchors if x is not None], default=-1) + 4
+        cands = [c for c in cands if c[1] > floor]
         done = False
         for _, t, cut in sorted(cands):
             si = toks[t]["seg"]
@@ -82,5 +116,5 @@ def fill_holds(doc: dict, words_doc: dict, max_gap: float = MAX_GAP, min_part: f
             break
         if not done:
             skip.add(gap)
-            stuck.append({"from": a, "to": b, "why": "no legal line start leaves 2.8 s on each side"})
+            stuck.append({"from": a, "to": b, "why": "no legal cut leaves 2.5 s on each side"})
     return doc, inserted, stuck

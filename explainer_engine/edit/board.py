@@ -138,7 +138,10 @@ def check(board: dict, timed: dict) -> list[dict]:
     for f in check_bubbles([b for s in shots for b in s["bubbles"]]):
         out.append(dict(f, shot="-"))
     dur = timed["duration"]
-    rate = len(shots) / (max(dur, 60.0) / 60.0) if dur else 0.0  # a clip under a minute is measured as a minute
+    # a re-frame of the picture already on screen (reuse "reframe") is not a new picture: it counts half (creator 2026-10-16:
+    # "too many picture changes" was the complaint; a different move on the same picture is the zoom he asked for)
+    weight = sum(0.5 if s.get("reuse") == "reframe" else 1.0 for s in shots)
+    rate = weight / (max(dur, 60.0) / 60.0) if dur else 0.0  # a clip under a minute is measured as a minute
     if rate > MAX_PER_MIN:
         add("RHYTHM-1", "-", f"{rate:.1f} pictures a minute > {MAX_PER_MIN}")
     changes = sorted({s["start"] for s in shots} | {b["start"] for s in shots for b in s["bubbles"]} | {dur})

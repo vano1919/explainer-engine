@@ -134,6 +134,9 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "fill":
         from explainer_engine.production import fill_holds as F
         words_doc = json.loads(Path(a.words).read_text(encoding="utf-8")) if a.words else V.estimated_words(doc)
+        doc, dropped = F.drop_short_shots(doc, words_doc)
+        for row in dropped:
+            print("dropped", row["segment"], repr(row["at"]), row["picture"], f"{row['duration']:.2f}s")
         new, ins, stuck = F.fill_holds(doc, words_doc)
         S.save(new, path)
         for row in ins:

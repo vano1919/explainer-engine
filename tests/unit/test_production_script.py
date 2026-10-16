@@ -353,3 +353,22 @@ def test_pv28_shorts_hook_must_be_a_question_and_use_video_pictures():
     d["shorts"][0]["hook"] = "They failed."
     d["shorts"][0]["shots"][0]["picture"] = "missing"
     assert len([f for f in V.check_script(d, None) if f["rule"] == "PV-28" and f["severity"] == "FAIL"]) >= 2
+
+
+def test_reframe_counts_half_in_rhythm_and_fill_holds_closes_dead_holds():
+    from explainer_engine.edit import board as B
+    from explainer_engine.production import fill_holds as F
+    d = json.loads((ROOT / "examples" / "stone_age" / "week1_v1" / "production_script.json").read_text(encoding="utf-8"))
+    words = V.estimated_words(d)
+    timed = T.time_script(d, words)
+    shots = [dict(s) for s in timed["shots"]]
+    base = [f for f in B.check({"pictures": timed["pictures"], "heroes": S.hero_names(d), "_event_times": timed["events"]},
+                               {"shots": shots, "duration": timed["duration"]}) if f["rule"] == "RHYTHM-1"]
+    for s in shots:
+        s["reuse"] = "reframe"
+    half = [f for f in B.check({"pictures": timed["pictures"], "heroes": S.hero_names(d), "_event_times": timed["events"]},
+                               {"shots": shots, "duration": timed["duration"]}) if f["rule"] == "RHYTHM-1"]
+    assert len(half) <= len(base)
+    new, inserted, stuck = F.fill_holds(d, words)
+    assert all(x["reuse"] == "reframe" for seg in new["segments"] for x in seg["shots"] if x.get("reuse"))
+    assert len(new["segments"][0]["shots"]) >= len(d["segments"][0]["shots"])

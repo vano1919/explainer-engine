@@ -93,7 +93,7 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             out_shots.append({"seq": n, "id": where, "segment": seg["id"], "picture": pid, "type": s["type"],
                               "at": s["at"], "token": i, "word": w, "start": start, "cut_legal": legal,
                               "motion": s["motion"], "transition": s.get("transition", "cut"),
-                              "insert": s.get("insert", False), "reveal": s.get("reveal"), "heroes_ok": s.get("heroes_ok", False),
+                              "insert": s.get("insert", False), "reuse": s.get("reuse"), "reveal": s.get("reveal"), "heroes_ok": s.get("heroes_ok", False),
                               "_bubbles": s.get("bubbles", []), "_seg_hi": hi})
     total_frames = _frames(duration, fps)
     for k, s in enumerate(out_shots):

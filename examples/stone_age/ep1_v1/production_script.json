@@ -1409,7 +1409,13 @@
    "shows": [],
    "subject": "Darwin scatters seed on cleared ground, bearded and hopeful",
    "edit": "Edit the picture: Charles Darwin, white-bearded in his dark frock coat, walks across a patch of cleared brown ground and scatters seed from his hand, hopeful. Remove the other man. Harsh noon sun, short shadows.",
-   "prompt": "Edit the picture: Charles Darwin, white-bearded in his dark frock coat, walks across a patch of cleared brown ground and scatters seed from his hand, hopeful. Remove the other man. Harsh noon sun, short shadows. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+   "prompt": "Edit the picture: Charles Darwin, white-bearded in his dark frock coat, walks across a patch of cleared brown ground and scatters seed from his hand, hopeful. Remove the other man. Harsh noon sun, short shadows. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles.",
+   "speakers": {
+    "darwin": [
+     0.46,
+     0.3
+    ]
+   }
   },
   "y1_hill_bare": {
    "id": "y1_hill_bare",
@@ -1535,13 +1541,16 @@
    "id": "y10_malachite",
    "engine": "pod_ref",
    "refs": [
+    "v5_d1-08",
     "v5_d1-17"
    ],
-   "heroes": [],
+   "heroes": [
+    "curie"
+   ],
    "shows": [],
-   "subject": "a hand holds a green lump of malachite ore, a heap of crushed green rock beside it",
-   "edit": "Edit the picture: a hand in a muddy sleeve holds up a bright green lump of malachite ore, a heap of crushed green rock beside it on a flat stone, harsh noon sun, close view.",
-   "prompt": "Edit the picture: a hand in a muddy sleeve holds up a bright green lump of malachite ore, a heap of crushed green rock beside it on a flat stone, harsh noon sun, close view. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+   "subject": "Curie holds up a bright green lump of malachite ore, a heap of crushed green rock beside it on a flat stone, delighted",
+   "edit": "Edit the picture: Marie Curie in her dark high-collared dress, dark hair in a bun, holds up a bright green lump of malachite ore with a delighted, intent face; beside her on a flat stone lies a heap of crushed bright green rock. Remove the man. Harsh noon sun.",
+   "prompt": "Edit the picture: Marie Curie in her dark high-collared dress, dark hair in a bun, holds up a bright green lump of malachite ore with a delighted, intent face; beside her on a flat stone lies a heap of crushed bright green rock. Remove the man. Harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
   },
   "y10_furnace": {
    "id": "y10_furnace",
@@ -2003,14 +2012,26 @@
      "picture": "v5_d1-05"
     },
     {
-     "at": "A hundred scientists.",
-     "type": "B",
+     "at": "A river",
+     "type": "A",
      "motion": {
       "kind": "push",
       "z0": 1.0,
-      "z1": 1.06
+      "z1": 1.07
      },
-     "picture": "v5_d1-04"
+     "picture": "v5_d1-05",
+     "reuse": "reframe"
+    },
+    {
+     "at": "twelve thousand",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v5_d1-04",
+     "reuse": "reframe"
     },
     {
      "at": "Each one arrives",
@@ -2152,6 +2173,17 @@
      "picture": "v5_d1-10"
     },
     {
+     "at": "A hundred different",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "v5_d1-10",
+     "reuse": "reframe"
+    },
+    {
      "at": "For a whole hour",
      "type": "B",
      "motion": {
@@ -2187,6 +2219,17 @@
       "z1": 1.06
      },
      "picture": "v5_d1-13"
+    },
+    {
+     "at": "Out of",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v5_d1-13",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -2380,6 +2423,17 @@
       }
      ],
      "picture": "v5_d1-25"
+    },
+    {
+     "at": "Uh-oh. Then",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v5_d1-25",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -2716,6 +2770,17 @@
      }
     },
     {
+     "at": "A thread",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v6_lens_point",
+     "reuse": "reframe"
+    },
+    {
      "at": "and fire",
      "type": "B",
      "motion": {
@@ -2985,6 +3050,17 @@
      "heroes_ok": true
     },
     {
+     "at": "Slower. And",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v5_d1-41",
+     "reuse": "reframe"
+    },
+    {
      "at": "And tomorrow?",
      "type": "A",
      "motion": {
@@ -3147,6 +3223,17 @@
       "dx": 0.05
      },
      "picture": "w1_testing_crowd"
+    },
+    {
+     "at": "They don't",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w1_testing_crowd",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -3231,6 +3318,17 @@
      "picture": "w1_camp_wide"
     },
     {
+     "at": "Every. Day.",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w1_camp_wide",
+     "reuse": "reframe"
+    },
+    {
      "at": "Luckily, wild",
      "type": "A",
      "motion": {
@@ -3264,6 +3362,17 @@
      "heroes_ok": true
     },
     {
+     "at": "that's seventy-five",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "w1_nansen_sum",
+     "reuse": "reframe"
+    },
+    {
      "at": "By the end",
      "type": "A",
      "motion": {
@@ -3273,6 +3382,17 @@
       "dx": 0.05
      },
      "picture": "w1_grinders_rows"
+    },
+    {
+     "at": "And cutting",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w1_grinders_rows",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -3359,6 +3479,17 @@
      "picture": "w1_darwin_nodule"
     },
     {
+     "at": "and he",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w1_darwin_nodule",
+     "reuse": "reframe"
+    },
+    {
      "at": "Newton hits",
      "type": "B",
      "motion": {
@@ -3401,6 +3532,39 @@
      },
      "picture": "w1_einstein_resin",
      "heroes_ok": true
+    },
+    {
+     "at": "Then wet",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "w1_einstein_resin",
+     "reuse": "reframe"
+    },
+    {
+     "at": "it SHRINKS,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "w1_einstein_resin",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Which means",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w1_einstein_resin",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -3522,15 +3686,26 @@
      "heroes_ok": true
     },
     {
-     "at": "They try",
-     "type": "A",
+     "at": "The problem?",
+     "type": "B",
      "motion": {
-      "kind": "pan",
-      "z0": 1.06,
-      "z1": 1.06,
-      "dx": 0.05
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
      },
-     "picture": "w1_haul_pull"
+     "picture": "w1_tesla_sketch",
+     "reuse": "reframe"
+    },
+    {
+     "at": "not for an",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w1_tesla_sketch",
+     "reuse": "reframe"
     },
     {
      "at": "SNAP.",
@@ -3553,6 +3728,17 @@
      },
      "picture": "w1_franklin_dust",
      "heroes_ok": true
+    },
+    {
+     "at": "And tonight",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "w1_franklin_dust",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -3659,6 +3845,17 @@
      "heroes_ok": true
     },
     {
+     "at": "Day one",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "w1_snow_rule",
+     "reuse": "reframe"
+    },
+    {
      "at": "So they dig",
      "type": "A",
      "motion": {
@@ -3670,6 +3867,17 @@
      "picture": "w1_pit_steam"
     },
     {
+     "at": "Hiss. Steam.",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w1_pit_steam",
+     "reuse": "reframe"
+    },
+    {
      "at": "Until a stone",
      "type": "C",
      "motion": {
@@ -3679,6 +3887,17 @@
      },
      "picture": "w1_cobble_crack",
      "insert": true
+    },
+    {
+     "at": "Heat them,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "w1_cobble_crack",
+     "reuse": "reframe"
     },
     {
      "at": "Shrapnel.",
@@ -3701,6 +3920,17 @@
      },
      "picture": "w1_curie_soap",
      "heroes_ok": true
+    },
+    {
+     "at": "It smells",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "w1_curie_soap",
+     "reuse": "reframe"
     },
     {
      "at": "But the sun",
@@ -3803,6 +4033,28 @@
       "dx": 0.05
      },
      "picture": "w1_camp_night"
+    },
+    {
+     "at": "A stock",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w1_camp_night",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Two people",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w1_camp_night",
+     "reuse": "reframe"
     },
     {
      "at": "Nansen looks",
@@ -3960,6 +4212,17 @@
      "picture": "m1_curie_clay"
     },
     {
+     "at": "Not here.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m1_curie_clay",
+     "reuse": "reframe"
+    },
+    {
      "at": "So Marie Curie",
      "type": "B",
      "motion": {
@@ -3978,6 +4241,17 @@
       "z1": 1.06
      },
      "picture": "m1_straw_clay"
+    },
+    {
+     "at": "Why the",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m1_straw_clay",
+     "reuse": "reframe"
     },
     {
      "at": "Seven pots.",
@@ -4009,6 +4283,28 @@
       "dx": 0.05
      },
      "picture": "m1_pit_kiln"
+    },
+    {
+     "at": "and cover",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "m1_pit_kiln",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Eleven days",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m1_pit_kiln",
+     "reuse": "reframe"
     },
     {
      "at": "And then, at last,",
@@ -4118,6 +4414,28 @@
      "picture": "m1_hunters_ridge"
     },
     {
+     "at": "Hunters have",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m1_hunters_ridge",
+     "reuse": "reframe"
+    },
+    {
+     "at": "people like",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m1_hunters_ridge",
+     "reuse": "reframe"
+    },
+    {
      "at": "There's one small",
      "type": "B",
      "motion": {
@@ -4138,6 +4456,17 @@
      "picture": "m1_franklin_offer"
     },
     {
+     "at": "The hunters",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m1_franklin_offer",
+     "reuse": "reframe"
+    },
+    {
      "at": "Then one of",
      "type": "B",
      "motion": {
@@ -4146,6 +4475,28 @@
       "z1": 1.06
      },
      "picture": "m1_hunter_knock"
+    },
+    {
+     "at": "in any",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m1_hunter_knock",
+     "reuse": "reframe"
+    },
+    {
+     "at": "The first",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m1_hunter_knock",
+     "reuse": "reframe"
     },
     {
      "at": "And that changes",
@@ -4232,6 +4583,39 @@
      "picture": "y1_cairns"
     },
     {
+     "at": "The first",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y1_cairns",
+     "reuse": "reframe"
+    },
+    {
+     "at": "a fall",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y1_cairns",
+     "reuse": "reframe"
+    },
+    {
+     "at": "hunter-gatherers lose",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y1_cairns",
+     "reuse": "reframe"
+    },
+    {
      "at": "John Snow writes",
      "type": "B",
      "motion": {
@@ -4301,7 +4685,26 @@
       "z0": 1.0,
       "z1": 1.06
      },
-     "picture": "y1_darwin_sow"
+     "picture": "y1_darwin_sow",
+     "bubbles": [
+      {
+       "at": "sows wild",
+       "who": "darwin",
+       "text": "Wild einkorn. Let's see.",
+       "hold": 2.6
+      }
+     ]
+    },
+    {
+     "at": "And here's",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y1_darwin_sow",
+     "reuse": "reframe"
     },
     {
      "at": "In the nineteen-sixties,",
@@ -4315,14 +4718,26 @@
      "picture": "w1_grain_hill"
     },
     {
-     "at": "So why farm",
-     "type": "B",
+     "at": "with a",
+     "type": "A",
      "motion": {
       "kind": "push",
       "z0": 1.0,
-      "z1": 1.06
+      "z1": 1.07
      },
-     "picture": "y1_darwin_sow"
+     "picture": "w1_grain_hill",
+     "reuse": "reframe"
+    },
+    {
+     "at": "a family",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "w1_grain_hill",
+     "reuse": "reframe"
     },
     {
      "at": "Darwin has",
@@ -4334,6 +4749,17 @@
       "dx": 0.05
      },
      "picture": "y1_hill_bare"
+    },
+    {
+     "at": "They'd strip",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y1_hill_bare",
+     "reuse": "reframe"
     }
    ]
   },
@@ -4398,6 +4824,17 @@
      "picture": "y1_ears_shatter"
     },
     {
+     "at": "and the",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y1_ears_shatter",
+     "reuse": "reframe"
+    },
+    {
      "at": "Darwin saves only",
      "type": "B",
      "motion": {
@@ -4417,6 +4854,28 @@
       "dx": 0.05
      },
      "picture": "y1_field_edge"
+    },
+    {
+     "at": "Some computer",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y1_field_edge",
+     "reuse": "reframe"
+    },
+    {
+     "at": "if you",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y1_field_edge",
+     "reuse": "reframe"
     }
    ]
   },
@@ -4488,6 +4947,17 @@
      "picture": "y1_school"
     },
     {
+     "at": "A hundred",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y1_school",
+     "reuse": "reframe"
+    },
+    {
      "at": "One famous study",
      "type": "A",
      "motion": {
@@ -4497,6 +4967,39 @@
       "dx": 0.05
      },
      "picture": "c_tiny_crowd"
+    },
+    {
+     "at": "its four",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c_tiny_crowd",
+     "reuse": "reframe"
+    },
+    {
+     "at": "warm clothing,",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c_tiny_crowd",
+     "reuse": "reframe"
+    },
+    {
+     "at": "A hundred",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c_tiny_crowd",
+     "reuse": "reframe"
     },
     {
      "at": "So Franklin calls",
@@ -4562,6 +5065,39 @@
       "dx": 0.05
      },
      "picture": "y1_kiln_tablets"
+    },
+    {
+     "at": "Not for",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y1_kiln_tablets",
+     "reuse": "reframe"
+    },
+    {
+     "at": "They press",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y1_kiln_tablets",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Fire doesn't",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y1_kiln_tablets",
+     "reuse": "reframe"
     },
     {
      "at": "The colony's first",
@@ -4644,6 +5180,17 @@
      "picture": "y10_children"
     },
     {
+     "at": "Which makes",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y10_children",
+     "reuse": "reframe"
+    },
+    {
      "at": "The colony is bigger",
      "type": "A",
      "motion": {
@@ -4653,6 +5200,17 @@
       "dx": 0.05
      },
      "picture": "y100_road"
+    },
+    {
+     "at": "That's our",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y100_road",
+     "reuse": "reframe"
     },
     {
      "at": "Metal doesn't.",
@@ -4752,6 +5310,39 @@
      "picture": "y10_bead"
     },
     {
+     "at": "a small",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y10_bead",
+     "reuse": "reframe"
+    },
+    {
+     "at": "people will",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y10_bead",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Real smelting?",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y10_bead",
+     "reuse": "reframe"
+    },
+    {
      "at": "Then Tesla asks",
      "type": "B",
      "motion": {
@@ -4760,6 +5351,17 @@
       "z1": 1.06
      },
      "picture": "y10_tesla_curie"
+    },
+    {
+     "at": "So where",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y10_tesla_curie",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -4814,6 +5416,17 @@
      "picture": "y10_axe_bend"
     },
     {
+     "at": "Bronze is",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y10_axe_bend",
+     "reuse": "reframe"
+    },
+    {
      "at": "And tin is",
      "type": "B",
      "motion": {
@@ -4824,6 +5437,17 @@
      "picture": "y10_nansen_map"
     },
     {
+     "at": "Archaeologists still",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y10_nansen_map",
+     "reuse": "reframe"
+    },
+    {
      "at": "A hundred of the",
      "type": "B",
      "motion": {
@@ -4832,6 +5456,17 @@
       "z1": 1.06
      },
      "picture": "y10_nansen_map"
+    },
+    {
+     "at": "defeated by",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y10_nansen_map",
+     "reuse": "reframe"
     }
    ]
   },
@@ -4888,6 +5523,17 @@
      "picture": "y10_iron_hills"
     },
     {
+     "at": "Iron ore",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y10_iron_hills",
+     "reuse": "reframe"
+    },
+    {
      "at": "But iron needs",
      "type": "A",
      "motion": {
@@ -4899,6 +5545,17 @@
      "picture": "y10_charcoal"
     },
     {
+     "at": "In modern",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y10_charcoal",
+     "reuse": "reframe"
+    },
+    {
      "at": "A single knife",
      "type": "A",
      "motion": {
@@ -4908,6 +5565,28 @@
       "dx": 0.05
      },
      "picture": "y10_charcoal"
+    },
+    {
+     "at": "Real humans",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y10_charcoal",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Can the",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y10_charcoal",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -4990,6 +5669,28 @@
       "dx": 0.05
      },
      "picture": "y100_village"
+    },
+    {
+     "at": "it's about",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y100_village",
+     "reuse": "reframe"
+    },
+    {
+     "at": "So what",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y100_village",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -5093,6 +5794,17 @@
      "picture": "y100_boil"
     },
     {
+     "at": "and nobody",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y100_boil",
+     "reuse": "reframe"
+    },
+    {
      "at": "Franklin is now",
      "type": "B",
      "motion": {
@@ -5112,6 +5824,28 @@
       "dx": 0.05
      },
      "picture": "y100_road"
+    },
+    {
+     "at": "Because ideas",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y100_road",
+     "reuse": "reframe"
+    },
+    {
+     "at": "They travel",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y100_road",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -5182,6 +5916,17 @@
      "picture": "c_road"
     },
     {
+     "at": "Wheat that",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c_road",
+     "reuse": "reframe"
+    },
+    {
      "at": "Writing:",
      "type": "A",
      "motion": {
@@ -5193,6 +5938,17 @@
      "picture": "c_road"
     },
     {
+     "at": "Copper smelting:",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c_road",
+     "reuse": "reframe"
+    },
+    {
      "at": "The hundred did",
      "type": "B",
      "motion": {
@@ -5201,6 +5957,17 @@
       "z1": 1.06
      },
      "picture": "y10_tesla_curie"
+    },
+    {
+     "at": "So yes,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y10_tesla_curie",
+     "reuse": "reframe"
     },
     {
      "at": "But discovery",
@@ -5285,15 +6052,37 @@
      "picture": "c_tiny_crowd"
     },
     {
-     "at": "In ten thousand",
+     "at": "By eighteen",
      "type": "A",
      "motion": {
-      "kind": "pan",
-      "z0": 1.06,
-      "z1": 1.06,
-      "dx": 0.05
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
      },
-     "picture": "c_tiny_crowd"
+     "picture": "c_tiny_crowd",
+     "reuse": "reframe"
+    },
+    {
+     "at": "the economist",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c_tiny_crowd",
+     "reuse": "reframe"
+    },
+    {
+     "at": "No tin.",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c_tiny_crowd",
+     "reuse": "reframe"
     },
     {
      "at": "And tools that",
@@ -5307,6 +6096,28 @@
      "picture": "c_boring_mill"
     },
     {
+     "at": "James Watt",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c_boring_mill",
+     "reuse": "reframe"
+    },
+    {
+     "at": "John Wilkinson",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c_boring_mill",
+     "reuse": "reframe"
+    },
+    {
      "at": "Then there's trade.",
      "type": "C",
      "motion": {
@@ -5315,6 +6126,28 @@
       "z1": 1.06
      },
      "picture": "c_pencil"
+    },
+    {
+     "at": "Pencil points",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c_pencil",
+     "reuse": "reframe"
+    },
+    {
+     "at": "The wood,",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c_pencil",
+     "reuse": "reframe"
     },
     {
      "at": "A hundred geniuses",
@@ -5374,6 +6207,17 @@
      "picture": "c_road"
     },
     {
+     "at": "metal: in",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c_road",
+     "reuse": "reframe"
+    },
+    {
      "at": "They could fail",
      "type": "B",
      "motion": {
@@ -5382,6 +6226,17 @@
       "z1": 1.06
      },
      "picture": "c_winter_fail"
+    },
+    {
+     "at": "Or the",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c_winter_fail",
+     "reuse": "reframe"
     },
     {
      "at": "Or they could win",
@@ -5395,6 +6250,17 @@
      "picture": "c_steam"
     },
     {
+     "at": "and the",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c_steam",
+     "reuse": "reframe"
+    },
+    {
      "at": "Real history took",
      "type": "C",
      "motion": {
@@ -5403,6 +6269,17 @@
       "z1": 1.06
      },
      "picture": "c_penicillin"
+    },
+    {
+     "at": "and nearly",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c_penicillin",
+     "reuse": "reframe"
     }
    ]
   },
@@ -5450,6 +6327,17 @@
       "z1": 1.06
      },
      "picture": "c_shrug"
+    },
+    {
+     "at": "Tell me",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c_shrug",
+     "reuse": "reframe"
     }
    ]
   }

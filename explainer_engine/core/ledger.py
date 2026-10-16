@@ -11,6 +11,7 @@ as they are made so a stop loses nothing. One JSON file per run (``run.json``), 
 from __future__ import annotations
 
 import json
+import threading
 import time
 from pathlib import Path
 
@@ -28,6 +29,7 @@ class Run:
     def __init__(self, path: Path, data: dict):
         self.path = Path(path)
         self.data = data
+        self.lock = threading.RLock()  # paint workers share one ledger
 
     @classmethod
     def open(cls, path: Path | str, caps: dict[str, float] | None = None, **meta) -> "Run":
@@ -48,7 +50,8 @@ class Run:
         return run
 
     def save(self) -> None:
-        write_json_atomic(self.path, self.data)
+        with self.lock:
+            write_json_atomic(self.path, self.data)
 
     # --- money -------------------------------------------------------------------------------------------------------
     def spent(self, service: str) -> float:
@@ -56,6 +59,10 @@ class Run:
 
     def reserve(self, service: str, amount: float, item: str = "") -> None:
         """Record the charge BEFORE the paid call. Refuses past 80 % of the cap, and when the service has no cap."""
+        with self.lock:
+            self._reserve(service, amount, item)
+
+    def _reserve(self, service: str, amount: float, item: str) -> None:
         cap = self.data["caps"].get(service)
         if cap is None:
             raise CapReached(f"{service} has no cap in this run; set it before spending")
@@ -70,11 +77,16 @@ class Run:
 
     def refund(self, service: str, amount: float) -> None:
         """A charge that provably did not happen (the provider refused before generating)."""
-        self.data["spent"][service] = max(0.0, self.spent(service) - amount)
-        self.save()
+        with self.lock:
+            self.data["spent"][service] = max(0.0, self.spent(service) - amount)
+            self.save()
 
     # --- items and phases --------------------------------------------------------------------------------------------
     def done(self, kind: str, item: str, **info) -> None:
+        with self.lock:
+            self._done(kind, item, info)
+
+    def _done(self, kind: str, item: str, info: dict) -> None:
         self.data["items"].setdefault(kind, {})[item] = info
         self.save()
 
@@ -84,6 +96,10 @@ class Run:
 
     def fail(self, key: str, cause: str) -> bool:
         """Count a failure; True while another try is allowed (OR-04: three failures stop the item)."""
+        with self.lock:
+            return self._fail(key, cause)
+
+    def _fail(self, key: str, cause: str) -> bool:
         rows = self.data["failures"].setdefault(key, [])
         rows.append({"at": time.strftime("%H:%M:%S"), "cause": cause[:400]})
         self.save()
