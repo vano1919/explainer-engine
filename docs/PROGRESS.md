@@ -110,3 +110,5 @@ cost (estimate/actual), next step, recovery instructions.
   animation rendered. Assets in `assets/characters/traveller/test_v0/` (the mp4 is not committed: media stay out of git).
 - Gemini $1.01 of $10 (estimate). RunPod $0 (no cap set). vidIQ 130 of 200. Name D-29 and the RunPod cap still open.
 
+## 2026-10-16 — Resolution question (D-30)
+- Creator doubts 1080p on big televisions. Proposed D-30: 1440p master, 2K backgrounds, 1080p fallback; decided after the Phase 4 benchmark. No spend.
