@@ -271,3 +271,11 @@ manifests lint clean; 19 lint tests pass. Re-run started with the creator's appr
 $0.50 and 45 min, guard running). What the lint cannot see: a card slower than its measured speed by more than the margin; that
 case now ends with the finished pictures pushed instead of lost.
 
+## 2026-10-16 — Picture re-run done: 35 pictures, $0.26, pod gone
+Pod `w6fmpd3yodbf4k` (RTX 4090, $0.89/h, caps $0.50 / 45 min, guard on): all 10 stages passed, 35 pictures in 793 s (21.2-25.0 s each,
+mean 22.7 s), none retried or flagged defective, pushed to the store (`pictures/stone_age_day1_v2`, 37 files with the report and
+contact sheet), pod gone, sweep clean, RunPod balance $4.17. Measured speed written to TMR `cloud/job_speeds.json`. Contact sheet
+reviewed by me: style and palettes hold, no faces; two pictures need a redo: `d1_c_idle_hands` (a djembe drum, not impatient
+fingers: wrong object) and `d1_c_sore_hands` (white background, no firelight). Pictures stay out of git (media rule); the pull
+folder is `/tmp/pods_out/pictures/stone_age_day1_v2` in this session. Not yet done: the animatic (needs the GPU compositor, D-32).
+
