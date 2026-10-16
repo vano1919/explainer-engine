@@ -160,3 +160,14 @@ image model, Dirkus' pose as the style guide only: 8 calls ≈ $0.54 at list pri
 `key_green`; sheet: `assets/characters/scientists_v0/contact_sheet.png`. Identity is recognisable from description alone
 (no photos used). Open: 20th-century likenesses (Einstein, Curie, Tesla) need the rights note in RIGHTS_AND_FAIR_USE.md;
 more poses per scientist are only made when a scene needs them.
+
+## 2026-10-16 — Fire test stopped; rule D-36 (scenes only from the local pod)
+First 28 s test (Nansen, Franklin, Einstein light a fire; narration by Gemini TTS ≈ $0.03; sound library SFX) was composed over
+Gemini-made backgrounds and kept the characters ~30 % of the frame height. The creator rejected the look twice (first the
+background, then characters too small) and then restated the binding rule: **Gemini is only for assets reused in future videos;
+scene pictures are made on the pod**, and shots must alternate WIDE → MEDIUM → CLOSE-UP (one-frame mixes of epic scenery and
+close characters give wrong scale). **My error:** I generated 7 episode-specific backgrounds with Gemini (≈ $0.70, two of them
+unused variants) against the 2026-10-11 rule. The pictures stay only as *style targets* for the pod
+(`assets/style_samples/stone_age_look_v0/`); they are not used in the episode. Gemini total ≈ $5.0 / $10 (list prices).
+Kept as reusable: the 8 scientist caricatures + 6 poses (`assets/characters/scientists_v0/`), the sound library.
+Next: shot plan `examples/stone_age/shot_plan_v0.md` for creator review; one pod preflight needs an explicit approved price and time cap.
