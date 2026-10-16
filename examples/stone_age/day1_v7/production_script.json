@@ -1334,7 +1334,7 @@
      },
      "picture": {
       "id": "v6_franklin_tinder",
-      "engine": "pod_ref",
+      "engine": "gemini",
       "refs": [
        "v5_d1-33"
       ],
@@ -1345,7 +1345,8 @@
       "subject": "Benjamin Franklin kneels and shields a dry, unlit nest of grass with his coat against the cold dusk wind",
       "edit": "Edit the picture: remove every fire, flame, ember and glow, including the small fires in the background; the people behind him sit in the cold with nothing burning. Benjamin Franklin kneels and shields a dry, unlit nest of grass on the flat stone with the flap of his coat against the wind, looking up anxiously at the sky. Cold dusk light only.",
       "stand_in": "v5_d1-30",
-      "prompt": "Edit the picture: remove every fire, flame, ember and glow, including the small fires in the background; the people behind him sit in the cold with nothing burning. Benjamin Franklin kneels and shields a dry, unlit nest of grass on the flat stone with the flap of his coat against the wind, looking up anxiously at the sky. Cold dusk light only. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+      "prompt": "medium cinematic shot, Benjamin Franklin kneels and shields a dry, unlit nest of grass with his coat against the cold dusk wind. One named hero: Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+      "file": "v6_franklin_tinder.png"
      }
     },
     {
@@ -1365,7 +1366,7 @@
      ],
      "picture": {
       "id": "v6_einstein_glasses",
-      "engine": "pod_ref",
+      "engine": "gemini",
       "refs": [
        "v5_d1-36"
       ],
@@ -1388,7 +1389,8 @@
       },
       "subject": "young Einstein takes off his round reading glasses and lifts them toward the low sun while Franklin cups a dry unlit grass nest",
       "edit": "Edit the picture: remove the small flame and all smoke, the dry grass nest on the ground in front of the two men is cold and unlit, nothing burns or glows anywhere. The dark-haired man on the right (young Albert Einstein, moustache, rumpled suit) has taken off his small round wire reading glasses and holds them up in one hand toward the low sun, eyes wide with a sudden idea. The bald man on the left (Benjamin Franklin, round spectacles still on his nose) cups the dry grass nest with both hands and looks at the glasses, surprised.",
-      "prompt": "Edit the picture: remove the small flame and all smoke, the dry grass nest on the ground in front of the two men is cold and unlit, nothing burns or glows anywhere. The dark-haired man on the right (young Albert Einstein, moustache, rumpled suit) has taken off his small round wire reading glasses and holds them up in one hand toward the low sun, eyes wide with a sudden idea. The bald man on the left (Benjamin Franklin, round spectacles still on his nose) cups the dry grass nest with both hands and looks at the glasses, surprised. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+      "prompt": "medium cinematic shot, young Einstein takes off his round reading glasses and lifts them toward the low sun while Franklin cups a dry unlit grass nest. Two named heroes: young Albert Einstein of 1905: dark untidy hair, moustache, rumpled suit, round reading glasses; Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+      "file": "v6_einstein_glasses.png"
      }
     },
     {
@@ -1401,7 +1403,7 @@
      },
      "picture": {
       "id": "v6_lens_point",
-      "engine": "pod_ref",
+      "engine": "gemini",
       "refs": [
        "v5_d1-35",
        "v5_d1-34"
@@ -1418,7 +1420,8 @@
       ],
       "subject": "one round lens of the reading glasses focuses the afternoon sun into a single bright point on dry grass, a thread of smoke",
       "edit": "Edit picture 1: replace the large round magnifying glass with the small pair of round wire-rimmed reading spectacles from picture 2, held by one arm between finger and thumb. One lens focuses the low sun into a single tiny bright point on one blade of dry grass, a thin thread of smoke rises from it. No flame, no fire, no glow except the one bright point.",
-      "prompt": "Edit picture 1: replace the large round magnifying glass with the small pair of round wire-rimmed reading spectacles from picture 2, held by one arm between finger and thumb. One lens focuses the low sun into a single tiny bright point on one blade of dry grass, a thin thread of smoke rises from it. No flame, no fire, no glow except the one bright point. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+      "prompt": "medium cinematic shot, one round lens of the reading glasses focuses the afternoon sun into a single bright point on dry grass, a thread of smoke, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+      "file": "v6_lens_point.png"
      }
     },
     {
