@@ -134,3 +134,10 @@ cost (estimate/actual), next step, recovery instructions.
 - Next after the pick: pose bank for the chosen design (silent mascot: poses and reactions, no mouth states), 2K worlds,
   then Phase 3 contracts and the Phase 4 compositor benchmark on one approved pod.
 
+## 2026-10-16 — Cast chosen (D-33): the analyst (A2) and the companion (B); first 1440p duo test
+- Creator picked A2 and B together. Generated 12 analyst + 8 companion pictures and two true-2K worlds; keyed and stored;
+  10 s 1440p test scene rendered in code (152 s on the cloud CPU). Spend: Gemini about $3.02 of $10 (estimate); RunPod $0.
+- Findings in docs/TOOL_STRATEGY.md ("Cast bank result"): identity held, 2K needs `imageSize`, border defect persists.
+- Next: names for the two characters and the channel spelling (D-29), the compositor port and Phase 3 contracts, then the
+  one approved pod for the Phase 4 benchmark.
+

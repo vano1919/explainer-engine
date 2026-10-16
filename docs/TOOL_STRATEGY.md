@@ -58,3 +58,17 @@ Spend: 15 pictures, about $1.01 (estimate at list price; no retries were needed)
 - **Not tested**: Z-Image backgrounds (no RunPod cap yet), so the style match between Gemini mascot and Z-Image worlds
   is still a hypothesis; mouth patches; a second world pair; consistency over many more poses.
 
+## Cast bank result (2026-10-16): the analyst and the companion
+Files: `assets/characters/crossworld_cast_v0/` (12 analyst poses and expressions, 8 companion poses, two 2K worlds, a contact
+sheet, test frames, the generation ledger with all prompts).
+- **Identity held** across 12 analyst and 8 companion pictures generated from one reference each, judged by eye: hat, monocle,
+  neckerchief, satchel, proportions and line style repeat. Small variations: which hand holds the notebook, the monocle
+  hanging in the startled pose. The companion is the easier design (no face, no limbs).
+- **2K needs an explicit parameter**: asking for "2K" in the prompt text returned 1376x768; `imageConfig.imageSize: "2K"` returned
+  2752x1536 (list price $0.101). Two 1K worlds ($0.13) were wasted.
+- **Border defect persists**: the cold world still arrives with a painted paper edge on the top and left despite the prompt;
+  crop 2-3 % of each edge in the asset step (a measured crop, to be built into the picture gate).
+- **Test scene** (10 s, 2560x1440, 30 fps, code only, CPU in the cloud session: 152 s): analyst walks across the seam, startled
+  pop, looks to the horizon, ends with a wry smile; the companion floats beside, changes eye state and opens its wings at the end.
+  The walk is still a two-pose swap. Limbs do not move between poses; this is the ceiling of the pose-bank method.
+
