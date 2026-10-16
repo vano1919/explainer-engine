@@ -334,3 +334,12 @@ costumes for extras, style held by words only. Researched Gemini image prices an
 LoRA training reports, open edit models, style-similarity metrics and the screen language of eras. Wrote
 `docs/VISUAL_WORLD_ARCHITECTURE.md` (world resolver, era codex, look v2, anchored hybrid generation with a routing table, grade
 pass, visual judge, money, engine changes, rollout) and D-41 (proposed). Nothing built or paid beyond the bridge test.
+
+## 2026-10-16 — D-41 free parts built (creator: "start, execute all steps")
+Built and tested (138 tests, docs_lint 0): `world/eras.json` (12 eras, working hypotheses, 7 grades) and `world/look_v2.json`
+(adult-proportion thread, child cues, banned words); `world/resolver.py` (host/visitors/light owner, day arc, `check_text`:
+UR-22/23/24/26); `edit/prompt_v2.py` (slots, one light key, costume); `finish/grade.py` (era grade, grain, black level);
+`qa/visual_judge.py` (questions, JSON parse, verdict); `imagegen/gemini.py` (price table 2026-10-16, references, 80 % cap stop,
+cache, spend log, vision judge call); rules UR-23..UR-26; Stone Age `world_spec.json` and `look_test/build.py` (6 prompts, 0 FAIL,
+estimate $0.804 for 6 Gemini Pro pictures at 2K). The paid look test was not run: the permission layer asked for the creator's
+explicit confirmation of the $0.804 spend.

@@ -1,6 +1,6 @@
 # Visual world architecture: era-true worlds, one look, hybrid generation
 
-Status: **proposal, awaiting the creator's decision (D-41).** Nothing here is built or paid for yet. Written 2026-10-16 after
+Status: **decided (D-41, creator 2026-10-16); free parts built, paid steps one by one with the creator's approval.** Rules UR-23..UR-26. Written 2026-10-16 after
 the creator rejected the six style-bridge pictures ("they look like children on a school excursion") and asked for a
 system that, for every topic, works out which period and world belong in the picture and shows it the way cinema and mass
 culture show that period, while keeping every rule already agreed (UR-01..UR-22, PRODUCTION_RULES).
