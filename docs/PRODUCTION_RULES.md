@@ -72,6 +72,14 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-16 | The pictures are good but too expensive; use local models: Gemini gives references, RunPod paints in its style | Gemini painted every picture ($3.6 for 67) | D-42 routing: Gemini references, Qwen-Image-Edit-2511 on a pod | `cloud/gen_ref_pictures.py` |
 | 2026-10-16 | Where there are world sounds (hits, friction) lower the music with millisecond fades so it is not noise; the dip must not sound like a cut | music only ducked under the voice | UR-32 | `audio/duck.py` |
 
+| 2026-10-16 | From 3:17 almost to the end another voice actor seems to read | one ElevenLabs v4 generation of the whole read (2,917 characters, 223 s) drifted: darker, duller timbre from ~190 s (tilt -4 dB, centroid -16 % off the read's median) | reads in chunks of whole segments, at most 900 characters, same voice and settings, with the text before and after; every read is checked for timbre drift before use | `script.tts_chunks`, `compile` writes `tts_chunks.json`, `production words` joins chunk reads, `audio/voice_check.py` (VOICE-1 REVIEW) |
+| 2026-10-16 | The voice sounds somewhat unstable | per-sentence loudness swung 9 dB (std 2.1 dB) | a slow gain rider (+4/-5 dB, pauses untouched) | `audio/level.py` in `production/assemble.py` |
+| 2026-10-16 | (found) a voice test cost 501 credits, quoted as 349 | the price was guessed from an earlier, shorter text | `estimate_only` before every paid ElevenLabs call, the estimate is what is quoted | this rule; spend log in PROGRESS |
+| 2026-10-16 | (found) the slower voice left six stretches over 9 s with nothing new on screen | the shot plan was timed at 140-158 wpm, the read ran slower with its pauses | after every new read, `production time` again; dead holds are fixed with shots, never by speeding the voice | PV-24 RHYTHM-3 |
+| 2026-10-16 | (found) a re-run of the one-off `make_script.py` overwrote compiled prompts and the manual shots | the one-off was still runnable | the script is edited directly; one-off builders refuse to run without `--force` | `day1_v7/make_script.py` |
+| 2026-10-16 | (found) a shell chain started a 2K render on a timing with 3 FAIL, and a second render wrote into the same folder | `assemble` trusted its caller; no lock; the video file was written in place | `assemble` refuses a timing with FAIL, locks its folder, writes `video.part.mp4` and renames it when done | `production/assemble.py`, test |
+| 2026-10-16 | (found) RunPod had no 48 GB card five times in a row | capacity | never widen the price on our own; ask; the creator allowed Gemini for the three Day 1 pictures once ($0.16) | RUNBOOK R-rules; PROGRESS |
+
 ## 4. Planning numbers for a video length (measured on Day 1, 2026-10-16)
 
 | | 8 min | 10 min | 12 min | Source |

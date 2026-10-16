@@ -66,6 +66,29 @@ def tts_text(doc: dict) -> str:
     return "\n".join(" ".join(tts_line(line) for line in seg["lines"]) for seg in doc["segments"]) + "\n"
 
 
+def tts_chunks(doc: dict, max_chars: int = 900) -> list[dict]:
+    """The read in chunks of whole segments, at most ``max_chars`` each (one segment longer than that is its own chunk).
+    One v4 generation of the whole Day 1 read (2,917 characters) drifted to another-sounding voice after ~3 minutes
+    (``audio/voice_check.py``); each chunk is one generation with the same voice and settings, and carries the text
+    before and after it so the delivery joins up. The chunks are joined by ``production words`` (several files)."""
+    segs = [(seg["id"], " ".join(tts_line(line) for line in seg["lines"])) for seg in doc["segments"]]
+    groups, cur = [], []
+    for sid, text in segs:
+        if cur and sum(len(t) + 1 for _, t in cur) + len(text) > max_chars:
+            groups.append(cur)
+            cur = []
+        cur.append((sid, text))
+    if cur:
+        groups.append(cur)
+    out = []
+    for k, g in enumerate(groups):
+        out.append({"id": f"T{k + 1:02d}", "segments": [s for s, _ in g], "text": "\n".join(t for _, t in g),
+                    "chars": sum(len(t) for _, t in g),
+                    "previous_text": groups[k - 1][-1][1] if k else "",
+                    "next_text": groups[k + 1][0][1] if k + 1 < len(groups) else ""})
+    return out
+
+
 # --- tokens and phrases ----------------------------------------------------------------------------------------------
 
 def tokens(doc: dict) -> list[dict]:

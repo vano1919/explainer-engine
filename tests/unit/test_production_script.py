@@ -11,6 +11,7 @@ import pytest
 
 from explainer_engine.audio.pause_pad import pad_pauses
 from explainer_engine.production import __main__ as CLI
+from explainer_engine.production import assemble as A
 from explainer_engine.production import compile as C
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
@@ -275,3 +276,32 @@ def test_end_to_end_script_to_video(tmp_path):
     assert int(probe) == timed["frames"]
     rep = json.loads((out / "assemble_report.json").read_text())
     assert rep["frames_written"] == timed["frames"] and rep["audio"]["music_dip_max_step_db_per_ms"] < 1.0
+
+
+# --- 2026-10-16 fixes: chunked reads, voice drift, render guards ------------------------------------------------------
+
+def test_tts_chunks_cover_every_segment_once_and_stay_short():
+    doc = S.load(DAY1)
+    chunks = S.tts_chunks(doc, max_chars=900)
+    assert [s for c in chunks for s in c["segments"]] == [seg["id"] for seg in doc["segments"]]
+    assert all(c["chars"] <= 900 or len(c["segments"]) == 1 for c in chunks) and len(chunks) >= 3
+    assert chunks[1]["previous_text"] and chunks[0]["next_text"]
+
+
+def test_voice_check_flags_a_darker_stretch():
+    from explainer_engine.audio import voice_check
+    sr = 16000
+    rng = np.random.default_rng(1)
+    def voice(n, bright):
+        t = np.arange(n) / sr
+        x = sum(np.sin(2 * np.pi * 110 * k * t) / k ** (1.2 if bright else 2.4) for k in range(1, 40))
+        return 0.1 * x / np.abs(x).max() + 0.001 * rng.standard_normal(n)
+    x = np.concatenate([voice(60 * sr, True), voice(30 * sr, False)])
+    _, found = voice_check.check(x, sr)
+    assert found and all(f["severity"] == "REVIEW" for f in found)
+    assert float(found[-1]["where"].split("-")[0]) >= 45
+
+
+def test_assemble_refuses_a_timing_with_fail(tmp_path):
+    with pytest.raises(SystemExit):
+        A.assemble({"findings": [{"severity": "FAIL", "rule": "PV-25", "detail": "x"}]}, tmp_path / "n.wav", tmp_path, [], [])

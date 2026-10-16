@@ -13,6 +13,7 @@ CPU only (numpy, PIL, ffmpeg). Helpers come from ``examples/stone_age/day1_v5/as
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import wave
 from pathlib import Path
@@ -230,6 +231,26 @@ def assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pat
              size: tuple[int, int] = (1920, 1080), final: bool = False, grade_key: str | None = None,
              audio_only: bool = False, crf: int = 18) -> dict:
     out.mkdir(parents=True, exist_ok=True)
+    fails = [x for x in timed.get("findings", []) if x.get("severity") == "FAIL"]
+    if fails:  # 2026-10-16: a shell chain started a render on a timing with 3 FAIL
+        raise SystemExit(f"refused: the timing has {len(fails)} FAIL ({fails[0]['rule']}: {fails[0]['detail']}); fix and re-time")
+    lock = out / ".assemble.lock"
+    if lock.exists():
+        try:
+            os.kill(int(lock.read_text()), 0)
+            raise SystemExit(f"refused: another assemble (pid {lock.read_text()}) writes {out}")
+        except (ProcessLookupError, ValueError):
+            pass  # a stale lock from a run that died
+    lock.write_text(str(os.getpid()))
+    try:
+        return _assemble(timed, narration_wav, out, picture_dirs, sound_dirs, size=size, final=final, grade_key=grade_key,
+                         audio_only=audio_only, crf=crf)
+    finally:
+        lock.unlink(missing_ok=True)
+
+
+def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Path], sound_dirs: list[Path], *,
+              size: tuple[int, int], final: bool, grade_key: str | None, audio_only: bool, crf: int) -> dict:
     OW, OH = size
     fps = timed["fps"]
     sounds = Sounds(sound_dirs)
@@ -259,7 +280,7 @@ def assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pat
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{OW}x{OH}", "-r", str(fps),
                            "-i", "-", "-i", str(out / "audio.wav"), "-c:v", "libx264", "-crf", str(crf), "-preset", "medium",
                            "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-frames:v", str(timed["frames"]),
-                           str(out / "video.mp4")], stdin=subprocess.PIPE)
+                           str(out / "video.part.mp4")], stdin=subprocess.PIPE)
     pics, cache = timed["pictures"], {}
     written = 0
     for k, s in enumerate(timed["shots"]):
@@ -290,7 +311,9 @@ def assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pat
             ff.stdin.write(frame.tobytes())
             written += 1
     ff.stdin.close()
-    ff.wait()
+    if ff.wait() != 0:
+        raise SystemExit("ffmpeg failed; video.part.mp4 kept for a look")
+    os.replace(out / "video.part.mp4", out / "video.mp4")  # a video.mp4 on disk is always a finished one
     result["video"] = str(out / "video.mp4")
     result["frames_written"] = written
     result["frames_planned"] = timed["frames"]

@@ -114,6 +114,7 @@ def write_outputs(doc: dict, out_dir: Path) -> list[Path]:
     gemini, pod_job = jobs(doc)
     paths = [write_text_atomic(out_dir / "narration.txt", S.narration_text(doc)),
              write_text_atomic(out_dir / "narration_tts.txt", S.tts_text(doc)),
+             write_json_atomic(out_dir / "tts_chunks.json", S.tts_chunks(doc)),
              write_json_atomic(out_dir / "pictures_gemini.json", gemini),
              write_json_atomic(out_dir / "pod_job.json", pod_job)]
     return paths

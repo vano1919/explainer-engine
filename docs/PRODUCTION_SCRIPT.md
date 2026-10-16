@@ -61,3 +61,9 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 The voice block states how the narrator sounds in descriptive words (soft, deep, calm, warm, mature; emotion carried quietly). It is
 a description of a sound, never "like <person>": no imitation and no cloning (PV-10, rights layer). The creator picks the actual voice
 from the candidates after a short test read; the full read follows only then.
+
+The read is made in chunks (`tts_chunks.json`, written by `compile`): whole segments, at most 900 characters each, one generation
+per chunk with the same voice, model and settings, each given the text before and after it. One generation of a whole 3-minute
+read drifted to another-sounding voice after about three minutes (Day 1, 2026-10-16). `production words <script> T01.mp3 T02.mp3 ...`
+joins the chunks in order, and `audio/voice_check.py` lists every 15 s window whose timbre is far from the read's own median
+(VOICE-1, REVIEW: listen there; a chunk that sounds like another voice is read again, only that chunk).

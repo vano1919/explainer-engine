@@ -20,6 +20,8 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
+
 from explainer_engine.production import assemble as A
 from explainer_engine.production import compile as C
 from explainer_engine.production import script as S
@@ -40,12 +42,26 @@ def _dirs(doc_path: Path, extra: list[str] | None, key: str) -> list[Path]:
     return [Path(p) for p in (extra or [])] + [base / p for p in doc.get(key, [])]
 
 
-def cmd_words(doc: dict, audio: Path, out: Path, transcript: Path | None) -> dict:
-    from explainer_engine.audio import local_words, pause_pad, scribe_words, voice_layer
+def join_reads(audio: list[Path], wav: Path, gap_s: float = 0.3) -> None:
+    """One read, or the chunk reads joined in order with a short silence (pause_pad widens it where the script wants)."""
+    import subprocess
+    if len(audio) == 1:
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(audio[0]), "-ac", "1", "-ar", "48000", str(wav)], check=True)
+        return
+    ins, parts = [], []
+    for k, p in enumerate(audio):
+        ins += ["-i", str(p)]
+        parts.append(f"[{k}:a]aresample=48000,aformat=channel_layouts=mono,apad=pad_dur={gap_s}[a{k}]")
+    graph = ";".join(parts) + ";" + "".join(f"[a{k}]" for k in range(len(audio))) + f"concat=n={len(audio)}:v=0:a=1[out]"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", graph, "-map", "[out]", "-ar", "48000", str(wav)],
+                   check=True)
+
+
+def cmd_words(doc: dict, audio: list[Path], out: Path, transcript: Path | None) -> dict:
+    from explainer_engine.audio import local_words, pause_pad, scribe_words, voice_check, voice_layer
     out.mkdir(parents=True, exist_ok=True)
     wav = out / "read.wav"
-    import subprocess
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(audio), "-ac", "1", "-ar", "48000", str(wav)], check=True)
+    join_reads(audio, wav)
     if transcript:
         heard = scribe_words.transcript_words(json.loads(transcript.read_text(encoding="utf-8")))
         source = f"transcript {transcript.name}"
@@ -54,6 +70,7 @@ def cmd_words(doc: dict, audio: Path, out: Path, transcript: Path | None) -> dic
         (out / "heard.json").write_text(json.dumps(res, indent=0), encoding="utf-8")
         heard, source = res["words"], res["source"]
     pcm, sr = voice_layer.read_wav(wav)
+    _, drift = voice_check.check(np.asarray(pcm, dtype=float), sr)
     aligned = scribe_words.align(S.narration_text(doc), heard, len(pcm) / sr)
     toks = S.tokens(doc)
     targets, k = {}, -1
@@ -66,7 +83,7 @@ def cmd_words(doc: dict, audio: Path, out: Path, transcript: Path | None) -> dic
     voice_layer.write_wav(out / "narration.wav", padded, sr)
     doc_w = {"source": f"{source}; aligned by scribe_words (coverage {aligned['coverage']}, {aligned['status']}); "
                        f"pause_pad +{rep['added_seconds']} s", "duration": round(len(padded) / sr, 3),
-             "coverage": aligned["coverage"], "unmatched": aligned["unmatched"], "words": words}
+             "coverage": aligned["coverage"], "unmatched": aligned["unmatched"], "voice_check": drift, "words": words}
     (out / "words.json").write_text(json.dumps(doc_w, indent=0), encoding="utf-8")
     return doc_w
 
@@ -78,7 +95,7 @@ def main(argv: list[str] | None = None) -> int:
         q = sub.add_parser(name)
         q.add_argument("script")
         if name == "words":
-            q.add_argument("audio")
+            q.add_argument("audio", nargs="+", help="one read, or the chunk reads in order (tts_chunks.json)")
             q.add_argument("--transcript")
         if name == "time":
             q.add_argument("words")
@@ -112,7 +129,8 @@ def main(argv: list[str] | None = None) -> int:
                 print("wrote", f)
         return _print(V.check_script(new, pics, sounds.exists), "script after compile")
     if a.cmd == "words":
-        w = cmd_words(doc, Path(a.audio), Path(a.out), Path(a.transcript) if a.transcript else None)
+        w = cmd_words(doc, [Path(x) for x in a.audio], Path(a.out), Path(a.transcript) if a.transcript else None)
+        _print(w["voice_check"], "voice check")
         print(json.dumps({k: w[k] for k in ("duration", "coverage")}))
         return 0 if w["coverage"] >= 0.97 else 1
     if a.cmd in ("time", "run"):

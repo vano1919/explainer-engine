@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 from explainer_engine.scripting.narration_lint import sentences  # noqa: E402
 
+if "--force" not in sys.argv:  # 2026-10-16: a re-run overwrote compiled prompts, the six extra shots and the sounds
+    raise SystemExit("refused: production_script.json is edited directly now; this one-off would overwrite it (--force)")
 HERE = Path(__file__).parent
 V6 = HERE.parent / "day1_v6"
 board = json.loads((V6 / "board.json").read_text())
