@@ -22,9 +22,10 @@ HOMES = {
     "R": "RISK_REGISTER.md",
     "Q": "QA_SPECIFICATION.md",
     "RR": "RIGHTS_AND_FAIR_USE.md",
+    "UR": "UNIVERSAL_RULE_BASE.md",
 }
-ID = re.compile(r"\b(D|SE|V|P|RR|R|Q)-([TE]?\d{2,3})\b")
-ROW = re.compile(r"^\|\s*(D|SE|V|P|RR|R|Q)-([TE]?\d{2,3})\s*\|")
+ID = re.compile(r"\b(D|SE|V|P|RR|R|Q|UR)-([TE]?\d{2,3})\b")
+ROW = re.compile(r"^\|\s*(D|SE|V|P|RR|R|Q|UR)-([TE]?\d{2,3})\s*\|")
 LINK = re.compile(r"\[[^\]]+\]\(([^)#\s]+)(?:#[^)]*)?\)")
 HEX = re.compile(r"#[0-9A-Fa-f]{6}\b")
 

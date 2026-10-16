@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "note": "UR-09: one emotion per shot. The clause goes into the pod prompt; the grade drives the compositor. Values are engineering defaults (docs/UNIVERSAL_RULE_BASE.md).",
+  "moods": {
+    "discovery": {
+      "label": "discovery / wonder",
+      "light": "one warm source, rim light, light shafts",
+      "clause": "a single warm light source revealing the subject, glowing rim light, amber highlights against cool teal shadows",
+      "grade": {"lift": 0.0, "saturation": 1.08, "warmth": 0.06, "contrast": 1.08, "vignette": 0.30}
+    },
+    "fear": {
+      "label": "fear / danger",
+      "light": "low, hard, from below or behind",
+      "clause": "low-key lighting, cold blue-green shadows, harsh single light from below, most of the frame in darkness",
+      "grade": {"lift": -0.03, "saturation": 0.80, "warmth": -0.08, "contrast": 1.15, "vignette": 0.45}
+    },
+    "tension": {
+      "label": "tension / struggle",
+      "light": "side light, dust, haze",
+      "clause": "hard side light through dust haze, dusty orange and brown tones, strong contrast",
+      "grade": {"lift": -0.01, "saturation": 0.95, "warmth": 0.04, "contrast": 1.14, "vignette": 0.35}
+    },
+    "joy": {
+      "label": "joy / triumph",
+      "light": "high warm light, golden hour",
+      "clause": "golden hour light, warm saturated colours, bright open sky, soft glow",
+      "grade": {"lift": 0.02, "saturation": 1.12, "warmth": 0.08, "contrast": 1.02, "vignette": 0.15}
+    },
+    "humour": {
+      "label": "humour / surprise",
+      "light": "bright even light",
+      "clause": "bright even daylight, clean light colours",
+      "grade": {"lift": 0.02, "saturation": 1.05, "warmth": 0.02, "contrast": 1.0, "vignette": 0.10}
+    },
+    "calm": {
+      "label": "calm / rest",
+      "light": "soft blue hour or embers",
+      "clause": "soft blue-hour light, small warm ember glow, gentle low contrast",
+      "grade": {"lift": 0.01, "saturation": 0.92, "warmth": -0.03, "contrast": 0.94, "vignette": 0.25}
+    },
+    "sorrow": {
+      "label": "loss / sorrow",
+      "light": "overcast, flat",
+      "clause": "overcast flat light, muted grey-blue tones, desaturated",
+      "grade": {"lift": 0.01, "saturation": 0.70, "warmth": -0.05, "contrast": 0.92, "vignette": 0.30}
+    }
+  }
+}

@@ -23,6 +23,7 @@ defaults to pass. A deterministic FAIL cannot be overridden by an assertion.
 | Q-T14 | disk and memory log | peak RAM < 10 GB; disk reserve kept |
 | Q-T15 | job completeness | no stage RUNNING or FAILED |
 | Q-T16 | licence register covers every font, SFX and music file | no unknown |
+| Q-T17 | the edit follows the [Universal Rule Base](UNIVERSAL_RULE_BASE.md) | `edit/shot_rules.check_shots`: 0 FAIL; REVIEWs answered |
 
 ## Editorial QA (a human or a reviewing Claude session; an LLM cannot establish truth by assertion)
 | ID | Question |

@@ -42,6 +42,8 @@ Warm paper background by default; `night` for dark topics. One place per scene; 
 scenes of an episode. Diagrams use `mechanism_teal` flows over simple shapes; real numbers are written, never implied.
 
 ## Hooks (D-07)
+Since 2026-10-16 the hook, the shot grammar and the mood system (emotion, light, palette) are binding in
+[UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) (UR-01, UR-04 to UR-10); the notes below are the earlier spec.
 First frame shows the object and Kit already acting; the first sentence is a concrete observation, not a greeting. Each
 hook spec records: first frame, first visible action, first sentence, on-screen text, sound event, the question the viewer
 perceives, time until subject and relevance are clear, the transition, the main failure risk, and where the promise is

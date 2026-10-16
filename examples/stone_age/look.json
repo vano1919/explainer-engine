@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "episode": "stone_age",
+  "note": "UR-08: the topic sets the palette range; colour names are words for prompts and grades, not hex (colours of the UI live in palette.json). The palette moves with progress: the colour itself tells the arc.",
+  "style_suffix": ", painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+  "cast": ["newton", "einstein", "curie", "darwin", "tesla", "archimedes", "franklin", "nansen", "wallace", "john snow",
+           "humboldt", "mendel", "borlaug", "lavoisier", "watt", "maudslay", "faraday", "edison", "pasteur", "semmelweis"],
+  "caricatures": ["newton", "einstein", "curie", "darwin", "tesla", "archimedes", "franklin", "nansen"],
+  "phases": {
+    "day1": {"palette": ["ochre", "umber", "charcoal", "fire amber", "river teal", "dawn rose", "night blue"],
+             "story": "nothing but nature: earth, fire, water, sky"},
+    "week1": {"palette": ["ochre", "umber", "charcoal", "fire amber", "river teal", "flint grey", "bark brown"],
+              "story": "stone and wood become tools"},
+    "month1": {"palette": ["ochre", "umber", "terracotta", "fire amber", "river teal", "wheat gold", "copper green"],
+               "story": "clay, fields and the first green copper"},
+    "year1": {"palette": ["umber", "charcoal", "iron grey", "furnace orange", "river teal", "wheat gold", "smoke white"],
+              "story": "iron, furnaces and winter"},
+    "years2_10": {"palette": ["umber", "iron grey", "brass", "furnace orange", "glass green", "electric white", "night blue"],
+                  "story": "glass, wire and the first electric light"},
+    "year50": {"palette": ["iron grey", "brass", "brick red", "steam white", "electric white", "electric blue", "wheat gold"],
+               "story": "steam, rails and a lit village"}
+  }
+}

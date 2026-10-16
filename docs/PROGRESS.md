@@ -183,3 +183,24 @@ JPEG in `examples/stone_age/pictures_v0/`. Balance read before the run $6.61, af
 my pod's $0.20 because **another pod, `xjbkftngkcqb7y` (tmr-lab-until-1792154663, created 07:44 UTC, $0.89/h, approved lifetime
 to 12:44 UTC), was running and is not mine** — I did not touch it. Closeups (hands, lens, spark, flame) and plates came out
 clean; wide shot 1 and the night shots read as the right scale. Next: animatic with the keyed caricatures on the plates.
+
+## 2026-10-16 — Universal Rule Base (D-37), review of the fire animatic, Stone Age script v1, Day 1 timed
+The creator sent a channel-wide rule base (hook, ABC shots, cuts on TTS pauses, durations, Ken Burns, transitions) with a
+hyper-realistic style modifier. Asked first, because it overturned D-27: the creator **kept the painted look** and added
+two rules: the topic sets the palette range, and every shot names an emotion delivered by light and colour. Faces: our
+caricature when one exists, else faceless. New canonical doc `docs/UNIVERSAL_RULE_BASE.md` (ID family UR-, added to
+docs_lint), D-37, P-60/P-70 superseded, Q-T17. Code: `explainer_engine/edit/shot_rules.py` (check_shots for every [code]
+rule, cut placement in pauses by dynamic programming, mood clauses and grades from `edit/moods.json`), 26 tests, including
+a regression on the measured fire_scene_v3 edit (`tests/fixtures/fire_v3`, pauses from silencedetect on its narration):
+8 of 11 shots out of range, 9 of 10 cuts inside speech, 8 of 11 moves wrong for their type (I first wrote 6 in the plan:
+the code count is right), 10 short dissolves without a time jump, no hook question, no emotion or palette.
+Changed while building: the first-30-s rule became "every shot stays within its minimum + 1 s" (the plan's "no A over
+5.0 s" plus the 5.0 s A minimum left no room for an A shot).
+Narration moved to **Kokoro** (am_michael, speed 1.05, ≈ 150 wpm; free, local, with phoneme timings); the Gemini TTS
+narration of v3 was topic content and broke D-19 (≈ $0.03, already logged). `examples/stone_age/day1_v1/`: narration
+(384 words, 2:34), measured `words.json`, `build_shots.py` → `shots.json` (39 shots: 30 new pod pictures, 9 reused from
+pictures_v0), `timing.md`, `check_report.md`: **0 FAIL**, 2 REVIEW (the water and fire beats open on B/C, not A, because
+their first sentences are shorter than 5 s). `examples/stone_age/look.json` (palette per phase) and `script_v1.md` (whole
+episode, ≈ 1,800 words ≈ 12 min, beats + shot outlines; claims still unverified). Pod job for the 30 new pictures:
+TMR `cloud/jobs/stone_age_day1_v2.json` (not run: needs an approved pod cap). Money: $0 this step; RunPod balance $5.50
+when read at 09:38 UTC, the foreign pod `xjbkftngkcqb7y` still running and untouched.

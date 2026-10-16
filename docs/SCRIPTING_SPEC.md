@@ -19,6 +19,8 @@ unverified), uncertainty wording, used_in [script sentence ids], reviewer, statu
 factual content survives without a claim; no claim is "verified" without a recorded passage.
 
 ## 3. Required script contents
+The narration is written for the edit: the question by 5 s (UR-01), a comma or full stop wherever a cut must fall
+(UR-12), see [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md).
 Working title, audience, promise, central question; hook spec; outline; full narration with sentence ids and section
 boundaries; payoff and conclusion; visual notes; on-screen text; SFX/transition cues; claim references; uncertainty notes;
 source list; disclosure notes; Shorts candidates; packaging direction.

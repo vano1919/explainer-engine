@@ -65,7 +65,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 ## 5. Visual and assets
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
-| P-60 | medium | 2D vector (SVG parts) | | editable, deterministic (D-10) | H/F | renderer | asset check |
+| P-60 | medium | painted pictures (pod) + keyed sprites; the SVG plan is superseded (D-27, D-36) | | the creator's look (D-27) | H/F | renderer | asset check |
 | P-61 | stroke | 6 px characters, 4 px props at 1080p; round caps | | style (STYLE_BIBLE) | M/F | rig | SVG lint |
 | P-62 | palette | palette.json tokens only | | identity, contrast (D-22) | H/F | all art | colour lint + palette test |
 | P-63 | typography | Fredoka titles, Inter labels | OFL fonts | licence, legibility | H/F | renderer | font check |
@@ -77,7 +77,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 ## 6. Animation
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
-| P-70 | shot length | 2-10 s; no fixed cut rate | >= 1.0 s | comprehension (SE-20 rejected) | L/P | narration | validator |
+| P-70 | shot length | superseded by UR-11 (A 5-7 s, B 3.5-5 s, C 2.5-4 s) and UR-12 (cuts in pauses) | | creator's style, D-37 (SE-20 rejected a universal rate) | M/F | narration | `edit/shot_rules.py` |
 | P-71 | label hold | >= 1.5 s + 0.3 s per word | | reading | M/C | | validator |
 | P-72 | simultaneous movers | <= 3 | 1-5 | clutter ceiling | M/C | | REVIEW above |
 | P-73 | easing | in-out cubic; entrances out-back, overshoot about 1.1, 12-18 frames | enum | natural motion | M/C | vocabulary | enum |
