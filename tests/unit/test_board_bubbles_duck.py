@@ -69,7 +69,7 @@ def test_bubbles_are_timed_from_their_phrase_and_need_a_speaker():
 
 
 def test_rhythm_flags_too_many_pictures_and_dead_holds():
-    words = _words(TEXT)
+    words = _words(" ".join([TEXT] * 6))  # about 70 s: a rate is measured over at least a minute
     many = [{"at": w["w"], "picture": "drill", "heroes_ok": True} for w in words if w["w"][0].isupper()]
     _, f = B.build(_board(many), {"words": words, "duration": words[-1]["e"]})
     assert [x for x in f if x["rule"] == "RHYTHM-1"]
@@ -153,3 +153,12 @@ def test_quiet_sidechain_does_not_duck():
     n = 2 * SR
     g = duck.duck_gain(_hit(0.5, 0.5, n) * 0.01, SR, threshold=0.02)
     assert np.allclose(g, 1.0)
+
+
+def test_bubble_keeps_the_speakers_face_clear():
+    from explainer_engine.finish import bubbles as BB
+    sx, sy = 1630, 400  # a speaker near the right edge, mouth at 37 % height (Nansen, Day 1)
+    b = BB.Bubble("Can anyone here make fire without matches?", (sx, sy), 0, 3, (1920, 1080))
+    x0, y0, x1, y1 = b.box
+    face = (sx - 0.075 * 1920, sy - 0.24 * 1080, sx + 0.075 * 1920, sy + 0.04 * 1080)
+    assert x1 <= face[0] or x0 >= face[2] or y1 <= face[1] or y0 >= face[3]

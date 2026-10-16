@@ -69,6 +69,14 @@ different renderers. Now:
 Stakes come from real constraints (cold, wet clothes, no fire, dirty water, unknown plants, hunger, predators that lived there
 then). Never invent an animal, tool or technology for drama; the claim map decides what may be shown.
 
+## Pictures are written with the line (D-43)
+Do not plan pictures in a separate pass. In `production_script.json` each segment carries its shots: the phrase `at` where the picture
+appears, the picture's `subject` (who does what, with which feeling), its `heroes`, `props` (with the owner), `shows` (story things
+visible) and, for dialogue, `speakers` and `bubbles`. `compile` turns the subject into the D-41 prompt; `validate` checks that the
+picture appears on its words (PV-04), does not show a thing before the story makes it (UR-29), shows the hero the line names (UR-30),
+never shows a forbidden prop (PV-07), and that no prompt repeats (PV-06). One held picture may carry a whole exchange through speech
+bubbles instead of a new picture per sentence (UR-31).
+
 ## Procedure
 1. Beat by beat, from the narration: who does what, what can go wrong, which emotion. Write `stakes` first.
 2. Types and order by UR-04/05; durations and cuts by the solver (UR-11/12) on the real `words.json`.

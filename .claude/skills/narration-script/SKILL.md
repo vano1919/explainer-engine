@@ -1,6 +1,6 @@
 ---
 name: narration-script
-description: Write or fix the spoken narration of a Crossworld Theories video so the AI narrator (ElevenLabs v4, voice Clyde) sounds curious, intriguing and lightly funny instead of slow, monotone and documentary. Use for every new script, every rewrite of a beat, and whenever a read comes back flat, slow, with stress or question intonation on the wrong word, or with no conversational colour.
+description: Write or fix the spoken narration of a Crossworld Theories video so the AI narrator (ElevenLabs v4; the voice is chosen per episode in `production_script.json`, D-43) sounds curious, intriguing and lightly funny instead of slow, monotone and documentary. Use for every new script, every rewrite of a beat, and whenever a read comes back flat, slow, with stress or question intonation on the wrong word, or with no conversational colour.
 ---
 
 # Narration script: write for the ear, then for the voice
@@ -105,6 +105,13 @@ end of every section pointing at the next problem. None of them sounds like a le
   the read; never rely on a comma alone for a cut in the first 30 s.
 - A long sentence with no marks (more than about 4 s) leaves the first 30 s with no legal shot layout (UR-02):
   split it.
+
+## Voice direction lives in the production script (D-43)
+Write each segment's lines in `production_script.json` (`docs/PRODUCTION_SCRIPT.md`), not in loose text files: per line the text, the
+tags where delivery changes, the one capitalised `emphasis` word, `tone`, `emotion` and `pause_after`; `compile` derives `narration.txt`
+and `narration_tts.txt`. The narrator is described in `voice.style` in words only (soft, deep, calm, warm, mature, quietly emotional);
+never "like <a real person>": no imitation, no cloning (PV-10). The creator picks the voice from `voice.candidates` after a short test
+read; with a soft deep voice, carry emotion with short lines, a held `pause_after`, `[softly]`, `[whispers]`, `[sighs]`, not with volume.
 
 ## Procedure
 

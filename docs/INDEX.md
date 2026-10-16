@@ -14,6 +14,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [VIDEO_PARAMETER_SPEC](VIDEO_PARAMETER_SPEC.md) | every parameter: default, range, evidence, validation | P- |
 | [PRODUCTION_RULES](PRODUCTION_RULES.md) | the gates every video passes in order, the creator's standing orders, the feedback log, planning numbers by length | |
 | [VISUAL_WORLD_ARCHITECTURE](VISUAL_WORLD_ARCHITECTURE.md) | how a topic's world and era are resolved and shown (era codex, look v2, anchored hybrid generation, grade, visual QA); proposal D-41 | |
+| [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md) | the one JSON per video (narration, voice, pictures and prompts, sounds, edit), its validation rules PV-01..PV-25 and the command line; D-43 | |
 | [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) | hook, arc, ABC shots, faces, mood (emotion, light, palette), durations, cuts, motion, transitions | UR- |
 | [STORYBOARD_SCHEMA](STORYBOARD_SCHEMA.md) | storyboard contract, animation vocabulary, timing rules | |
 | [ASSET_SYSTEM](ASSET_SYSTEM.md) | asset records, naming, licences, generation rules | |

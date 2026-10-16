@@ -88,7 +88,7 @@ def time_board(board: dict, words: list[dict], duration: float) -> dict:
 def event_times(board: dict, words: list[dict]) -> dict[str, float]:
     out = {}
     for e in board.get("events", []):
-        out[e["thing"]] = words[find_phrase(words, e["at"])]["s"]
+        out[e["thing"]] = cut_before(words, find_phrase(words, e["at"]))[0]  # exists from the cut before its words
     return out
 
 
@@ -113,7 +113,7 @@ def check(board: dict, timed: dict) -> list[dict]:
         if not s["cut_legal"]:
             add("CUT-1", sid, f"cut at {s['start']:.2f} s is not in a punctuated pause before {s['at']!r}")
         if dur < (MIN_INSERT if s.get("insert") else MIN_SHOT):
-            add("RHYTHM-2", sid, f"{dur:.1f} s is shorter than {MIN_INSERT if s.get('insert') else MIN_SHOT} s")
+            add("RHYTHM-2", sid, f"{dur:.2f} s is shorter than {MIN_INSERT if s.get('insert') else MIN_SHOT} s")
         for thing in p.get("shows", []):
             if thing in events and events[thing] > s["start"] + STATE_GRACE:
                 add("STATE-1", sid, f"{s['picture']} shows {thing!r} at {s['start']:.1f} s; it first exists at "
@@ -138,7 +138,7 @@ def check(board: dict, timed: dict) -> list[dict]:
     for f in check_bubbles([b for s in shots for b in s["bubbles"]]):
         out.append(dict(f, shot="-"))
     dur = timed["duration"]
-    rate = len(shots) / (dur / 60.0) if dur else 0.0
+    rate = len(shots) / (max(dur, 60.0) / 60.0) if dur else 0.0  # a clip under a minute is measured as a minute
     if rate > MAX_PER_MIN:
         add("RHYTHM-1", "-", f"{rate:.1f} pictures a minute > {MAX_PER_MIN}")
     changes = sorted({s["start"] for s in shots} | {b["start"] for s in shots for b in s["bubbles"]} | {dur})

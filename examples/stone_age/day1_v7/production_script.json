@@ -1,0 +1,1657 @@
+{
+ "schema": "production_script/1",
+ "episode": {
+  "id": "stone_age_day1",
+  "title": "100 greatest scientists dropped into the Stone Age, Day 1",
+  "fps": 30,
+  "size": [
+   1920,
+   1080
+  ],
+  "grade": "prehistory"
+ },
+ "voice": {
+  "provider": "elevenlabs",
+  "model": "eleven_v4",
+  "voice_id": null,
+  "name": null,
+  "style": "soft, deep, calm, warm and mature baritone storyteller; unhurried, intimate, gently amused; emotion carried quietly (a held breath, a dry smile), never shouted",
+  "pace_wpm": [
+   140,
+   158
+  ],
+  "default_tags": [
+   "warmly"
+  ],
+  "candidates": [
+   {
+    "voice_id": "HSBWXljo3oivWhybh3YX",
+    "name": "Mr Wellington",
+    "why": "rich older baritone, warmth, gravitas"
+   },
+   {
+    "voice_id": "xkDz8dF9GIt1kG06c9Of",
+    "name": "Ron 2",
+    "why": "deep and soothing"
+   },
+   {
+    "voice_id": "Ovio1nb5Thj5cZeW3MPS",
+    "name": "Alec",
+    "why": "calm, warm, cinematic documentary"
+   },
+   {
+    "voice_id": "8wePOEVMsHVU2qfSJbtC",
+    "name": "Lawrence",
+    "why": "deep, subtly emotional, warm"
+   }
+  ]
+ },
+ "world": {
+  "topic": "100 greatest scientists dropped into the Stone Age, day one",
+  "host": {
+   "era": "prehistory",
+   "place": "limestone uplands of south-east Anatolia",
+   "when": "about 10,000 BCE (12,000 years ago)"
+  },
+  "visitors": [
+   {
+    "era": "industrial_victorian",
+    "people": [
+     "nansen",
+     "franklin",
+     "newton",
+     "einstein",
+     "darwin",
+     "wallace",
+     "snow",
+     "curie",
+     "tesla"
+    ]
+   }
+  ],
+  "light_owner": "host",
+  "day_arc": [
+   {
+    "beat": 1,
+    "light": "storm_dusk",
+    "not_yet": [
+     "fire",
+     "campfire",
+     "flames",
+     "embers"
+    ]
+   },
+   {
+    "beat": 2,
+    "light": "overcast_day",
+    "not_yet": [
+     "fire",
+     "campfire",
+     "flames",
+     "embers"
+    ]
+   },
+   {
+    "beat": 3,
+    "light": "overcast_day",
+    "not_yet": [
+     "fire",
+     "campfire",
+     "flames",
+     "embers"
+    ]
+   },
+   {
+    "beat": 4,
+    "light": "overcast_day",
+    "not_yet": [
+     "fire",
+     "campfire",
+     "flames",
+     "embers"
+    ]
+   },
+   {
+    "beat": 5,
+    "light": "storm_dusk",
+    "not_yet": [
+     "fire",
+     "campfire",
+     "flames",
+     "embers"
+    ]
+   },
+   {
+    "beat": 6,
+    "light": "last_sun"
+   },
+   {
+    "beat": 7,
+    "light": "night_fire"
+   },
+   {
+    "beat": 8,
+    "light": "night_fire"
+   }
+  ]
+ },
+ "look": {
+  "style_refs": [
+   "v5_d1-36",
+   "v5_d1-18",
+   "v5_d1-42"
+  ],
+  "default_engine": "pod_ref"
+ },
+ "cast": {
+  "nansen": {
+   "names": [
+    "nansen",
+    "fridtjof nansen"
+   ],
+   "card": "Fridtjof Nansen: tall rugged Norwegian explorer, strong jaw, fair moustache, weathered face, heavy wool jacket"
+  },
+  "franklin": {
+   "names": [
+    "franklin",
+    "benjamin franklin"
+   ],
+   "card": "Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat"
+  },
+  "newton": {
+   "names": [
+    "newton"
+   ],
+   "card": "Isaac Newton: long wavy shoulder-length wig, long pale stern face, dark coat with a white cravat"
+  },
+  "einstein": {
+   "names": [
+    "einstein"
+   ],
+   "card": "young Albert Einstein of 1905: dark untidy hair, moustache, rumpled suit, round reading glasses",
+   "props": [
+    "reading glasses"
+   ]
+  },
+  "darwin": {
+   "names": [
+    "darwin"
+   ],
+   "card": "Charles Darwin: heavy brow, long white beard, dark frock coat"
+  },
+  "wallace": {
+   "names": [
+    "wallace",
+    "alfred russel wallace"
+   ],
+   "card": "Alfred Russel Wallace: high forehead, full brown beard, field jacket"
+  },
+  "snow": {
+   "names": [
+    "snow",
+    "john snow"
+   ],
+   "card": "John Snow: pale thoughtful clean-shaven physician, dark coat of the 1850s"
+  }
+ },
+ "story": {
+  "events": [
+   {
+    "thing": "smoke",
+    "at": "Now. Fire."
+   },
+   {
+    "thing": "windbreak",
+    "at": "So they build"
+   },
+   {
+    "thing": "fire",
+    "at": "and fire"
+   }
+  ],
+  "forbidden_props": [
+   "magnifying glass",
+   "magnifier",
+   "matches",
+   "lighter"
+  ]
+ },
+ "picture_dirs": [
+  "pictures"
+ ],
+ "sound_dirs": [
+  "sounds"
+ ],
+ "library": {
+  "v5_d1-01": {
+   "file": "v5_d1-01.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-03": {
+   "file": "v5_d1-03.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-05": {
+   "file": "v5_d1-05.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-06": {
+   "file": "v5_d1-06.png",
+   "engine": "existing",
+   "heroes": [
+    "newton",
+    "einstein"
+   ],
+   "shows": []
+  },
+  "v5_d1-07": {
+   "file": "v5_d1-07.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-08": {
+   "file": "v5_d1-08.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-09": {
+   "file": "v5_d1-09.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-10": {
+   "file": "v5_d1-10.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-11": {
+   "file": "v5_d1-11.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-13": {
+   "file": "v5_d1-13.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-14": {
+   "file": "v5_d1-14.png",
+   "engine": "existing",
+   "heroes": [
+    "nansen"
+   ],
+   "shows": [],
+   "speakers": {
+    "nansen": [
+     0.85,
+     0.37
+    ]
+   }
+  },
+  "v5_d1-16": {
+   "file": "v5_d1-16.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-18": {
+   "file": "v5_d1-18.png",
+   "engine": "existing",
+   "heroes": [
+    "franklin",
+    "newton"
+   ],
+   "shows": [],
+   "speakers": {
+    "franklin": [
+     0.3,
+     0.36
+    ],
+    "newton": [
+     0.68,
+     0.33
+    ]
+   }
+  },
+  "v5_d1-19": {
+   "file": "v5_d1-19.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-21": {
+   "file": "v5_d1-21.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-22": {
+   "file": "v5_d1-22.png",
+   "engine": "existing",
+   "heroes": [
+    "wallace"
+   ],
+   "shows": [],
+   "speakers": {
+    "wallace": [
+     0.28,
+     0.3
+    ]
+   }
+  },
+  "v5_d1-25": {
+   "file": "v5_d1-25.png",
+   "engine": "existing",
+   "heroes": [
+    "snow",
+    "wallace"
+   ],
+   "shows": [],
+   "speakers": {
+    "snow": [
+     0.25,
+     0.22
+    ],
+    "wallace": [
+     0.73,
+     0.23
+    ]
+   }
+  },
+  "v5_d1-26": {
+   "file": "v5_d1-26.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-27": {
+   "file": "v5_d1-27.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-28": {
+   "file": "v5_d1-28.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "windbreak"
+   ]
+  },
+  "v5_d1-29": {
+   "file": "v5_d1-29.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "windbreak"
+   ]
+  },
+  "v5_d1-30": {
+   "file": "v5_d1-30.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-31": {
+   "file": "v5_d1-31.png",
+   "engine": "existing",
+   "heroes": [
+    "nansen"
+   ],
+   "shows": [
+    "smoke"
+   ]
+  },
+  "v5_d1-32": {
+   "file": "v5_d1-32.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "smoke"
+   ]
+  },
+  "v5_d1-33": {
+   "file": "v5_d1-33.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-34": {
+   "file": "v5_d1-34.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [],
+   "props": [
+    {
+     "thing": "reading glasses",
+     "held_by": "franklin"
+    }
+   ]
+  },
+  "v5_d1-35": {
+   "file": "v5_d1-35.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [],
+   "props": [
+    {
+     "thing": "magnifying glass",
+     "held_by": null
+    }
+   ]
+  },
+  "v5_d1-36": {
+   "file": "v5_d1-36.png",
+   "engine": "existing",
+   "heroes": [
+    "franklin",
+    "einstein"
+   ],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-37": {
+   "file": "v5_d1-37.png",
+   "engine": "existing",
+   "heroes": [
+    "franklin"
+   ],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-38": {
+   "file": "v5_d1-38.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-39": {
+   "file": "v5_d1-39.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-42": {
+   "file": "v5_d1-42.png",
+   "engine": "existing",
+   "heroes": [
+    "darwin",
+    "wallace"
+   ],
+   "shows": [
+    "fire"
+   ],
+   "speakers": {
+    "darwin": [
+     0.21,
+     0.33
+    ],
+    "wallace": [
+     0.66,
+     0.32
+    ]
+   }
+  },
+  "v5_d1-43": {
+   "file": "v5_d1-43.png",
+   "engine": "existing",
+   "heroes": [
+    "franklin",
+    "nansen"
+   ],
+   "shows": [
+    "fire"
+   ],
+   "speakers": {
+    "franklin": [
+     0.33,
+     0.3
+    ]
+   }
+  },
+  "v5_d1-44": {
+   "file": "v5_d1-44.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "fire",
+    "windbreak"
+   ]
+  }
+ },
+ "music": [
+  {
+   "track": "clockwork_loop__v1",
+   "from": "<start>",
+   "to": "So, the order.",
+   "gain_db": -20
+  },
+  {
+   "track": "sneaky_pizzicato__v1",
+   "from": "Day one,",
+   "to": "Now. Fire.",
+   "gain_db": -21
+  },
+  {
+   "track": "clockwork_loop__v1",
+   "from": "Now. Fire.",
+   "to": null,
+   "gain_db": -20
+  }
+ ],
+ "segments": [
+  {
+   "id": "S01",
+   "beat": "hook",
+   "light_beat": 1,
+   "lines": [
+    {
+     "text": "Could the greatest minds in history survive the Stone Age?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emphasis": [
+      "age"
+     ],
+     "tone": "hushed question",
+     "emotion": "intrigue"
+    },
+    {
+     "text": "No tools."
+    },
+    {
+     "text": "No matches."
+    },
+    {
+     "text": "And night is coming fast.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "unease",
+     "pause_after": 0.6
+    }
+   ],
+   "shots": [
+    {
+     "at": "Could",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "v5_d1-01"
+    },
+    {
+     "at": "No tools.",
+     "type": "C",
+     "picture": "v5_d1-03",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "insert": true
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Could",
+      "sound": "wind_storm"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S02",
+   "beat": "rules",
+   "light_beat": 2,
+   "lines": [
+    {
+     "text": "Right.",
+     "tags": [
+      "warmly"
+     ],
+     "tone": "storyteller settling in",
+     "emotion": "calm amusement"
+    },
+    {
+     "text": "Here are the rules."
+    },
+    {
+     "text": "A hundred scientists."
+    },
+    {
+     "text": "A river valley in southeastern Anatolia, twelve thousand years ago."
+    },
+    {
+     "text": "Each one arrives at the age of their most famous work."
+    },
+    {
+     "text": "Same clothes."
+    },
+    {
+     "text": "Only what's in their pockets."
+    },
+    {
+     "text": "They can all understand each other, and that's the only magic.",
+     "emphasis": [
+      "only"
+     ],
+     "emotion": "dry wit"
+    },
+    {
+     "text": "The rocks, the plants, the physics: all painfully real."
+    },
+    {
+     "text": "The scientists are real people.",
+     "tags": [
+      "thoughtful"
+     ],
+     "emotion": "sincere"
+    },
+    {
+     "text": "What they say and do here is our invention."
+    },
+    {
+     "text": "So who takes charge?",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "curiosity",
+     "pause_after": 0.5
+    },
+    {
+     "text": "And who panics first?"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Right.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "v5_d1-05"
+    },
+    {
+     "at": "A river valley",
+     "type": "A",
+     "picture": "v5_d1-26",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": -0.05
+     }
+    },
+    {
+     "at": "Each one arrives",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-09"
+    },
+    {
+     "at": "They can all",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.05,
+      "z1": 1.05,
+      "dx": -0.05
+     },
+     "heroes_ok": true,
+     "picture": "v5_d1-08"
+    },
+    {
+     "at": "The rocks,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-07"
+    },
+    {
+     "at": "The scientists are real",
+     "type": "B",
+     "picture": "v5_d1-06",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "heroes_ok": true
+    },
+    {
+     "at": "So who takes",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "v5_d1-16"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Right.",
+      "sound": "wind_day"
+     }
+    ],
+    "sfx": [
+     {
+      "at": "Right.",
+      "sound": "landing_thud__v1",
+      "gain_db": -16,
+      "max_s": 0.6
+     }
+    ]
+   }
+  },
+  {
+   "id": "S03",
+   "beat": "meadow",
+   "light_beat": 3,
+   "lines": [
+    {
+     "text": "Day one, late morning.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "gentle irony"
+    },
+    {
+     "text": "A hundred brilliant people."
+    },
+    {
+     "text": "A hundred different ideas of what to do first."
+    },
+    {
+     "text": "For a whole hour, nothing useful happens."
+    },
+    {
+     "text": "Then Fridtjof Nansen, the man who crossed Greenland on skis, asks the one question that matters."
+    },
+    {
+     "text": "Can anyone here make fire without matches?",
+     "emphasis": [
+      "matches"
+     ],
+     "emotion": "quiet urgency"
+    },
+    {
+     "text": "Two hands go up.",
+     "tags": [
+      "short pause"
+     ],
+     "emotion": "wry"
+    },
+    {
+     "text": "Halfway."
+    },
+    {
+     "text": "Two!",
+     "tags": [
+      "chuckles"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "Out of a hundred."
+    },
+    {
+     "text": "And both of them look unsure."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Day one,",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     },
+     "picture": "v5_d1-10"
+    },
+    {
+     "at": "For a whole hour",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-11"
+    },
+    {
+     "at": "Then Fridtjof",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "Can anyone",
+       "who": "nansen",
+       "text": "Can anyone here make fire without matches?"
+      }
+     ],
+     "picture": "v5_d1-14"
+    },
+    {
+     "at": "Two hands",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-13"
+    }
+   ],
+   "audio": {
+    "sfx": [
+     {
+      "at": "For a whole hour",
+      "sound": "tick_loop_4s__v1",
+      "gain_db": -22,
+      "max_s": 2.4
+     }
+    ]
+   }
+  },
+  {
+   "id": "S04",
+   "beat": "meadow",
+   "light_beat": 3,
+   "lines": [
+    {
+     "text": "Hmm.",
+     "tags": [
+      "thoughtful"
+     ],
+     "emotion": "musing"
+    },
+    {
+     "text": "Somebody has to take over."
+    },
+    {
+     "text": "Benjamin Franklin does, naturally."
+    },
+    {
+     "text": "One rule: every group reports at a nightly meeting, and anyone can stop work for safety."
+    },
+    {
+     "text": "Even Newton agrees."
+    },
+    {
+     "text": "Somebody write that down.",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "But a rule won't keep anyone warm.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "concern"
+    },
+    {
+     "text": "And the sun is already sinking."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Hmm.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "One rule",
+       "who": "franklin",
+       "text": "One rule. Every group reports. Every night.",
+       "until": "Even Newton"
+      },
+      {
+       "at": "Even Newton",
+       "who": "newton",
+       "text": "...Fine. Agreed."
+      }
+     ],
+     "picture": "v5_d1-18"
+    }
+   ],
+   "audio": {
+    "sfx": [
+     {
+      "at": "Somebody write that",
+      "sound": "pencil_scribble__v2",
+      "gain_db": -20,
+      "max_s": 1.0
+     }
+    ]
+   }
+  },
+  {
+   "id": "S05",
+   "beat": "water",
+   "light_beat": 4,
+   "lines": [
+    {
+     "text": "So, the order."
+    },
+    {
+     "text": "Warmth first."
+    },
+    {
+     "text": "Then water."
+    },
+    {
+     "text": "Then food."
+    },
+    {
+     "text": "Alfred Russel Wallace finds a spring, right where the water leaves the ground."
+    },
+    {
+     "text": "And John Snow, yes, that John Snow, adds the rule that will save lives for months.",
+     "emphasis": [
+      "that"
+     ],
+     "emotion": "admiration"
+    },
+    {
+     "text": "Latrines go downstream."
+    },
+    {
+     "text": "Never near the spring."
+    },
+    {
+     "text": "Uh-oh.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "foreboding",
+     "pause_after": 0.5
+    },
+    {
+     "text": "Then the wind changes."
+    }
+   ],
+   "shots": [
+    {
+     "at": "So, the order.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": -0.05
+     },
+     "picture": "v5_d1-19"
+    },
+    {
+     "at": "Alfred Russel Wallace",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "right where",
+       "who": "wallace",
+       "text": "Fresh water! Right here!"
+      }
+     ],
+     "picture": "v5_d1-22"
+    },
+    {
+     "at": "And John Snow,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "Latrines go",
+       "who": "snow",
+       "text": "Latrines go DOWNSTREAM. Never near the spring!"
+      }
+     ],
+     "picture": "v5_d1-25"
+    }
+   ],
+   "audio": {
+    "sfx": [
+     {
+      "at": "Right.",
+      "sound": "landing_thud__v1",
+      "gain_db": -16,
+      "max_s": 0.6
+     },
+     {
+      "at": "Latrines go",
+      "sound": "footstep_dirt__v2",
+      "gain_db": -20,
+      "max_s": 0.5
+     }
+    ]
+   }
+  },
+  {
+   "id": "S06",
+   "beat": "dusk",
+   "light_beat": 5,
+   "lines": [
+    {
+     "text": "The sun drops, the wind picks up, and the real danger arrives.",
+     "tags": [
+      "suspenseful"
+     ],
+     "emotion": "danger"
+    },
+    {
+     "text": "It isn't freezing."
+    },
+    {
+     "text": "It's cold, wind and damp clothes, all at once."
+    },
+    {
+     "text": "So they build a windbreak of branches and pile dry grass against it."
+    },
+    {
+     "text": "Why grass?"
+    },
+    {
+     "text": "Because trapped air is the oldest insulation there is."
+    },
+    {
+     "text": "It buys them time.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "tension",
+     "pause_after": 0.6
+    },
+    {
+     "text": "But only fire buys them the night."
+    }
+   ],
+   "shots": [
+    {
+     "at": "The sun drops,",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "v5_d1-21"
+    },
+    {
+     "at": "It isn't freezing.",
+     "type": "C",
+     "picture": "v5_d1-27",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "insert": true
+    },
+    {
+     "at": "So they build",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "heroes_ok": true,
+     "picture": "v5_d1-28"
+    },
+    {
+     "at": "Why grass?",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-29"
+    },
+    {
+     "at": "It buys them time.",
+     "type": "A",
+     "picture": "v5_d1-01",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     }
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "The sun drops,",
+      "sound": "wind_storm"
+     }
+    ],
+    "sfx": [
+     {
+      "at": "So they build",
+      "sound": "cloth_rustle__v2",
+      "gain_db": -17,
+      "max_s": 1.2
+     },
+     {
+      "at": "Why grass?",
+      "sound": "cloth_rustle__v3",
+      "gain_db": -18,
+      "max_s": 1.0
+     }
+    ]
+   }
+  },
+  {
+   "id": "S07",
+   "beat": "fire",
+   "light_beat": 6,
+   "lines": [
+    {
+     "text": "Now.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "focus"
+    },
+    {
+     "text": "Fire."
+    },
+    {
+     "text": "Nansen tries a bow drill."
+    },
+    {
+     "text": "A dozen tries."
+    },
+    {
+     "text": "Sore hands."
+    },
+    {
+     "text": "Nothing but smoke.",
+     "tags": [
+      "sighs"
+     ],
+     "emotion": "frustration"
+    },
+    {
+     "text": "Franklin keeps the tinder dry, and waits."
+    },
+    {
+     "text": "Then Einstein takes off his reading glasses.",
+     "tags": [
+      "intrigued"
+     ],
+     "emotion": "discovery"
+    },
+    {
+     "text": "Oh.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "wonder"
+    },
+    {
+     "text": "A convex lens."
+    },
+    {
+     "text": "The afternoon sun."
+    },
+    {
+     "text": "One bright point on the grass."
+    },
+    {
+     "text": "A thread of smoke.",
+     "tags": [
+      "whispers"
+     ],
+     "emotion": "held breath"
+    },
+    {
+     "text": "One careful breath... and fire!",
+     "emphasis": [
+      "fire"
+     ],
+     "emotion": "quiet triumph"
+    },
+    {
+     "text": "But can they keep it alive?"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Now. Fire.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "picture": "v5_d1-31"
+    },
+    {
+     "at": "A dozen tries.",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "insert": true,
+     "picture": "v5_d1-32"
+    },
+    {
+     "at": "Franklin keeps",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "picture": {
+      "id": "v6_franklin_tinder",
+      "engine": "pod_ref",
+      "refs": [
+       "v5_d1-33"
+      ],
+      "heroes": [
+       "franklin"
+      ],
+      "shows": [],
+      "subject": "Benjamin Franklin kneels and shields a dry, unlit nest of grass with his coat against the cold dusk wind",
+      "edit": "Edit the picture: remove every fire, flame, ember and glow, including the small fires in the background; the people behind him sit in the cold with nothing burning. Benjamin Franklin kneels and shields a dry, unlit nest of grass on the flat stone with the flap of his coat against the wind, looking up anxiously at the sky. Cold dusk light only.",
+      "stand_in": "v5_d1-30",
+      "prompt": "Edit the picture: remove every fire, flame, ember and glow, including the small fires in the background; the people behind him sit in the cold with nothing burning. Benjamin Franklin kneels and shields a dry, unlit nest of grass on the flat stone with the flap of his coat against the wind, looking up anxiously at the sky. Cold dusk light only. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     }
+    },
+    {
+     "at": "Then Einstein takes",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "Oh.",
+       "who": "einstein",
+       "text": "Oh. A convex lens!"
+      }
+     ],
+     "picture": {
+      "id": "v6_einstein_glasses",
+      "engine": "pod_ref",
+      "refs": [
+       "v5_d1-36"
+      ],
+      "heroes": [
+       "einstein",
+       "franklin"
+      ],
+      "shows": [],
+      "props": [
+       {
+        "thing": "reading glasses",
+        "held_by": "einstein"
+       }
+      ],
+      "speakers": {
+       "einstein": [
+        0.66,
+        0.27
+       ]
+      },
+      "subject": "young Einstein takes off his round reading glasses and lifts them toward the low sun while Franklin cups a dry unlit grass nest",
+      "edit": "Edit the picture: remove the small flame and all smoke, the dry grass nest on the ground in front of the two men is cold and unlit, nothing burns or glows anywhere. The dark-haired man on the right (young Albert Einstein, moustache, rumpled suit) has taken off his small round wire reading glasses and holds them up in one hand toward the low sun, eyes wide with a sudden idea. The bald man on the left (Benjamin Franklin, round spectacles still on his nose) cups the dry grass nest with both hands and looks at the glasses, surprised.",
+      "prompt": "Edit the picture: remove the small flame and all smoke, the dry grass nest on the ground in front of the two men is cold and unlit, nothing burns or glows anywhere. The dark-haired man on the right (young Albert Einstein, moustache, rumpled suit) has taken off his small round wire reading glasses and holds them up in one hand toward the low sun, eyes wide with a sudden idea. The bald man on the left (Benjamin Franklin, round spectacles still on his nose) cups the dry grass nest with both hands and looks at the glasses, surprised. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     }
+    },
+    {
+     "at": "The afternoon sun.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "picture": {
+      "id": "v6_lens_point",
+      "engine": "pod_ref",
+      "refs": [
+       "v5_d1-35",
+       "v5_d1-34"
+      ],
+      "heroes": [],
+      "shows": [
+       "smoke"
+      ],
+      "props": [
+       {
+        "thing": "reading glasses",
+        "held_by": "einstein"
+       }
+      ],
+      "subject": "one round lens of the reading glasses focuses the afternoon sun into a single bright point on dry grass, a thread of smoke",
+      "edit": "Edit picture 1: replace the large round magnifying glass with the small pair of round wire-rimmed reading spectacles from picture 2, held by one arm between finger and thumb. One lens focuses the low sun into a single tiny bright point on one blade of dry grass, a thin thread of smoke rises from it. No flame, no fire, no glow except the one bright point.",
+      "prompt": "Edit picture 1: replace the large round magnifying glass with the small pair of round wire-rimmed reading spectacles from picture 2, held by one arm between finger and thumb. One lens focuses the low sun into a single tiny bright point on one blade of dry grass, a thin thread of smoke rises from it. No flame, no fire, no glow except the one bright point. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     }
+    },
+    {
+     "at": "and fire",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.04,
+      "z1": 1.0
+     },
+     "reveal": "fire",
+     "heroes_ok": true,
+     "picture": "v5_d1-36"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "and fire",
+      "sound": "fire"
+     }
+    ],
+    "sfx": [
+     {
+      "at": "Now. Fire.",
+      "sound": "cloth_rustle__v1",
+      "gain_db": -18,
+      "max_s": 0.8
+     },
+     {
+      "at": "Then Einstein takes",
+      "sound": "cloth_rustle__v2",
+      "gain_db": -20,
+      "max_s": 0.7
+     },
+     {
+      "at": "One careful breath",
+      "sound": "gasp_inhale__v1",
+      "gain_db": -24,
+      "max_s": 0.9
+     },
+     {
+      "at": "and fire",
+      "sound": "whoosh",
+      "gain_db": -15,
+      "max_s": 0.9
+     }
+    ]
+   }
+  },
+  {
+   "id": "S08",
+   "beat": "fire",
+   "light_beat": 6,
+   "lines": [
+    {
+     "text": "Well, the hard part isn't making it.",
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "keeping"
+     ],
+     "emotion": "wisdom"
+    },
+    {
+     "text": "It's keeping it."
+    },
+    {
+     "text": "Franklin once founded a volunteer fire company, so he sets a night watch, in shifts."
+    },
+    {
+     "text": "Which leaves one question."
+    },
+    {
+     "text": "What's for dinner?"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Well, the hard",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "heroes_ok": true,
+     "picture": "v5_d1-37"
+    },
+    {
+     "at": "Franklin once founded",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "heroes_ok": true,
+     "bubbles": [
+      {
+       "at": "so he sets",
+       "who": "franklin",
+       "text": "Night watch. In shifts."
+      }
+     ],
+     "picture": "v5_d1-43"
+    }
+   ]
+  },
+  {
+   "id": "S09",
+   "beat": "night",
+   "light_beat": 7,
+   "lines": [
+    {
+     "text": "Almost nothing.",
+     "tags": [
+      "deadpan"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "A few nuts, some eggs, raw wild grain."
+    },
+    {
+     "text": "Darwin and Wallace refuse to gamble on plants they don't know."
+    },
+    {
+     "text": "Wise.",
+     "tags": [
+      "thoughtful"
+     ],
+     "emotion": "respect"
+    },
+    {
+     "text": "Out here, one wrong guess can poison you."
+    },
+    {
+     "text": "And they still have to sleep."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Almost nothing.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "refuse to",
+       "who": "darwin",
+       "text": "We don't know that plant.",
+       "until": "Wise."
+      },
+      {
+       "at": "Wise.",
+       "who": "wallace",
+       "text": "Then nobody eats it."
+      }
+     ],
+     "picture": "v5_d1-42"
+    }
+   ]
+  },
+  {
+   "id": "S10",
+   "beat": "end",
+   "light_beat": 8,
+   "lines": [
+    {
+     "text": "One spring.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "reflective"
+    },
+    {
+     "text": "One fire."
+    },
+    {
+     "text": "One windbreak."
+    },
+    {
+     "text": "One rule."
+    },
+    {
+     "text": "Nobody has invented anything.",
+     "emphasis": [
+      "anything"
+     ],
+     "emotion": "gentle irony"
+    },
+    {
+     "text": "They spent the whole day doing what a ten-year-old hunter-gatherer could do."
+    },
+    {
+     "text": "Slower."
+    },
+    {
+     "text": "And with more opinions."
+    },
+    {
+     "text": "And tomorrow?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emotion": "promise"
+    },
+    {
+     "text": "Tomorrow, they need a pot."
+    }
+   ],
+   "shots": [
+    {
+     "at": "One spring.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": -0.05
+     },
+     "picture": "v5_d1-44"
+    },
+    {
+     "at": "Nobody has",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "picture": "v5_d1-38"
+    },
+    {
+     "at": "Slower.",
+     "type": "B",
+     "picture": "v5_d1-42",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.04
+     },
+     "heroes_ok": true
+    },
+    {
+     "at": "And tomorrow?",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     },
+     "picture": "v5_d1-39"
+    }
+   ]
+  }
+ ]
+}

@@ -83,12 +83,18 @@ def layout(speaker: tuple[float, float], size: tuple[int, int], frame: tuple[int
         cx, cy = sx + sign * dx * FW, sy - dy * FH - h / 2
         return int(min(max(cx - w / 2, m), FW - m - w)), int(min(max(cy - h / 2, m), FH - m - h))
 
-    def hits(x: int, y: int) -> bool:
-        return any(x < b[2] + m and b[0] < x + w + m and y < b[3] + m / 2 and b[1] < y + h + m / 2 for b in avoid)
+    head = (sx - 0.075 * FW, sy - 0.24 * FH, sx + 0.075 * FW, sy + 0.04 * FH)  # the speaker's face stays visible
 
-    cands = [place(0.10, lift), place(0.22, lift), place(-0.10, lift), place(0.10, lift - 0.12), place(0.30, 0.0),
-             place(0.10, lift + 0.12)]
-    return next((c for c in cands if not hits(*c)), cands[0])
+    def hits(x: int, y: int, boxes) -> bool:
+        return any(x < b[2] + m and b[0] < x + w + m and y < b[3] + m / 2 and b[1] < y + h + m / 2 for b in boxes)
+
+    cands = [place(0.10, lift), place(0.22, lift), place(-0.10, lift), place(0.30, lift - 0.10), place(0.30, 0.0),
+             place(-0.30, 0.0), place(0.10, lift + 0.12), place(0.30, lift + 0.12)]
+    for boxes in ([head, *avoid], list(avoid)):  # clear of the face and other bubbles; else at least of the bubbles
+        free = next((c for c in cands if not hits(*c, boxes)), None)
+        if free:
+            return free
+    return cands[0]
 
 
 def tail_polygon(box: tuple[int, int, int, int], tip: tuple[float, float]) -> list[tuple[float, float]]:

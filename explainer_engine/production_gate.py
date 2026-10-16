@@ -43,6 +43,15 @@ def gates(day: Path, look_path: Path | None = None) -> list[dict]:
     def add(n, name, status, detail, nxt=""):
         out.append({"gate": n, "name": name, "status": status, "detail": detail, "next": nxt})
 
+    # 0 production script (D-43): when the episode has one, it is the source of everything below
+    ps = day / "production_script.json"
+    if ps.exists():
+        from .production import validate as _pv
+        from .production import script as _ps
+        found = _pv.check_script(_ps.load(ps))
+        fails = [f for f in found if f["severity"] == "FAIL"]
+        add(0, "production script", "BLOCKED" if fails else "PASS", f"{_pv.summary(found)} (PV rules)",
+            "fix the FAILs: python -m explainer_engine.production validate" if fails else "answer every REVIEW")
     # 1 script
     tts = day / "narration_tts.txt"
     if not tts.exists():

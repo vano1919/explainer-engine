@@ -24,14 +24,19 @@ from ..edit.shot_rules import CUT_MARKS
 MIN_GAP = 0.26  # seconds: a cut needs 2 x EDGE (0.1 s) of room plus a margin
 
 
-def pad_pauses(words: list[dict], audio: np.ndarray, sr: int, min_gap: float = MIN_GAP) -> tuple[np.ndarray, list[dict], dict]:
-    """(padded audio, words on the padded clock, report). ``words`` are ordered, times in seconds of ``audio``."""
+def pad_pauses(words: list[dict], audio: np.ndarray, sr: int, min_gap: float = MIN_GAP,
+               targets: dict[int, float] | None = None) -> tuple[np.ndarray, list[dict], dict]:
+    """(padded audio, words on the padded clock, report). ``words`` are ordered, times in seconds of ``audio``.
+    ``targets`` (word index -> seconds, D-43): a scripted pause after that word (a line's ``pause_after``) is at least
+    that long, whatever the voice did."""
+    targets = targets or {}
     inserts: list[tuple[float, float]] = []  # (position in the old clock, seconds of silence)
-    for a, b in zip(words, words[1:]):
+    for k, (a, b) in enumerate(zip(words, words[1:])):
         mark = a["w"].rstrip("\"'”’)")[-1:]
         gap = b["s"] - a["e"]
-        if mark and mark in CUT_MARKS and gap < min_gap:
-            inserts.append((a["e"] + gap / 2, min_gap - gap))
+        want = max(min_gap if mark and mark in CUT_MARKS else 0.0, targets.get(k, 0.0))
+        if gap < want:
+            inserts.append((a["e"] + gap / 2, want - gap))
     pieces, last = [], 0
     for pos, add in inserts:
         i = int(round(pos * sr))
