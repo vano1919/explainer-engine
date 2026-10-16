@@ -132,6 +132,23 @@ def solve_cuts(shots: list[dict], words: list[dict], end: float, edge: float = E
     return list(reversed(cuts))
 
 
+def anchor_spacing(rows: list[dict], slack: float = 0.5) -> list[dict]:
+    """UR-28: the plan fits the read. ``rows`` are ``{id, type, target}`` in order (target = the second the picture's phrase ends).
+    Each shot needs at least its type's minimum (UR-11), so a target closer than that to the previous one cannot be met: the
+    picture will land late and every picture after it drifts. Returns one finding per offender plus the drift they cause."""
+    found, prev, slip = [], 0.0, 0.0
+    for r in rows:
+        lo = DURATIONS[r["type"]][0]
+        gap = r["target"] - prev
+        if gap + slack < lo:
+            slip += lo - gap
+            found.append({"rule": "UR-28", "shot": r["id"], "severity": "REVIEW",
+                          "detail": f"{r['type']} shot needs {lo:.1f} s but its phrase ends {gap:.1f} s after the previous one "
+                                    f"(cumulative drift {slip:.1f} s): drop or merge a picture, or plan the shots from the real read"})
+        prev = max(prev, r["target"])
+    return found
+
+
 def apply_cuts(shots: list[dict], cuts: list[float], end: float) -> list[dict]:
     bounds = [0.0] + list(cuts) + [end]
     return [dict(s, start=round(bounds[i], 3), end=round(bounds[i + 1], 3)) for i, s in enumerate(shots)]

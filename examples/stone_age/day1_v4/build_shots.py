@@ -253,6 +253,12 @@ def build() -> list[dict]:
     cuts = R.solve_cuts([{"type": r["type"], "target": t} for r, t in zip(SHOTS, targets)], WORDS, END)
     if cuts is None:
         raise SystemExit("no cut layout fits this read: change a shot type, merge shots or add a clause pause (UR-12)")
+    return _build_with(cuts)
+
+
+def _build_with(cuts: list[float]) -> list[dict]:
+    """The shot records for ``SHOTS`` with the given cut times (the solver's output, or a caller's own)."""
+    sents = sentences()
     bounds = [0.0] + cuts + [END]
     shots = []
     for k, r in enumerate(SHOTS):

@@ -67,7 +67,8 @@ def score(shots, words, text, look, *, pic_stats=None, judge=None, audio=None, s
     if sound_events is None:
         rows.append(row(2, "sound effects and sync", "REVIEW", ["no sound events recorded"], human=True))
     else:
-        masked = [e for e in sound_events if any(w["s"] - 0.02 < e["at"] < w["e"] + 0.02 for w in words)]
+        masked = [e for e in sound_events
+                  if any(w["s"] < e["at"] + e.get("dur", 0.0) and e["at"] < w["e"] for w in words)]  # the sound overlaps a word
         ev.append(f"{len(sound_events)} sound events, {len(masked)} land on a spoken word")
         if masked:
             st = "FAIL"

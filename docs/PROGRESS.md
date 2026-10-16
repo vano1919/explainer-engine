@@ -349,3 +349,13 @@ The ElevenLabs workspace also runs image and video models. `estimate_only` (free
 291, Nano Banana 2.1 204, GPT Image 2.5 190 per 1K picture. Corrected the voice row of the planning numbers (it was about twice
 too high: 8,500 credits for 10 minutes, not $3-3.5). The look test can run on Nano Banana 2.1 for about 1,220 credits instead
 of 6 Pro pictures. Four empty flows were created by the estimate calls (no charge).
+
+## 2026-10-16 — Day 1 test video v5 (one engine, Gemini) and the seven-point test
+Built and ran the first end-to-end test video from the approved D-41 pipeline (creator: "generate a test video; every video passes
+seven checks; fix the general rules when something fails"). Cost: ElevenLabs 4,215 credits (read 2,917; Scribe 998, estimated 61;
+six short effects 100; three 20 s beds 200); Gemini $0.804 (look test, 6 Pro pictures) + $3.598 (67 Nano Banana 2.1 pictures) +
+about $0.3 judge calls = about $8.0, the 80 % stop line of the $10 cap. Result files (scratchpad, not committed): 46 painted pictures,
+`out/day1_test_video_720p.mp4` (184.5 s, 1080p master), scorecard. Failure loop run on its own findings (PRODUCTION_RULES section 3 and
+6): UR-27 story state, no material lists in prompts, UR-28 plan fits the read, loudness and cut-sound rules, visual judge fixes.
+Open: one picture (d1-12) still shows fire before the fire beat; shot-to-phrase lag measured (mean 3.2 s, worst 9.3 s); music is the
+procedural library loop (an ElevenLabs track is 1,650 credits, not bought); sound events for tinder/lens are not made; nothing uploaded.

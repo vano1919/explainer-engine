@@ -97,6 +97,17 @@ def _first_stuck(types: list[str]) -> int | None:
     return None if END in reach else len(types) - 1
 
 
+def _swap(a: int, b: int) -> None:
+    """Exchange two neighbouring shots' content (type, picture, heroes...) but not their anchors or beats: the slot stays tied
+    to the words it illustrates."""
+    keep = ("anchor", "beat")
+    A, B = V4.SHOTS[a], V4.SHOTS[b]
+    for k in set(A) | set(B):
+        if k in keep:
+            continue
+        A[k], B[k] = B.get(k), A.get(k)
+
+
 def fix_order() -> list[str]:
     """When no layout fits, swap neighbouring shots inside a beat (same picture list, other order) until one does. Returns notes."""
     notes = []
@@ -109,9 +120,9 @@ def fix_order() -> list[str]:
             b = a + 1
             if V4.SHOTS[a]["beat"] != V4.SHOTS[b]["beat"] or V4.SHOTS[a]["type"] == V4.SHOTS[b]["type"]:
                 continue
-            V4.SHOTS[a], V4.SHOTS[b] = V4.SHOTS[b], V4.SHOTS[a]
+            _swap(a, b)
             k2 = _first_stuck([r["type"] for r in V4.SHOTS])
-            V4.SHOTS[a], V4.SHOTS[b] = V4.SHOTS[b], V4.SHOTS[a]
+            _swap(a, b)
             if k2 is None or k2 > k:
                 if best is None or (k2 is None) or (best[0] is not None and k2 > best[0]):
                     best = (k2, a, b)
@@ -119,33 +130,50 @@ def fix_order() -> list[str]:
             raise SystemExit(f"no layout and no neighbour swap helps at shot {k + 1}: edit the text or add a clause pause (UR-12)")
         _, a, b = best
         notes.append(f"swapped shots {a + 1} and {b + 1} ({V4.SHOTS[a]['picture']} / {V4.SHOTS[b]['picture']}) so cuts fit pauses")
-        V4.SHOTS[a], V4.SHOTS[b] = V4.SHOTS[b], V4.SHOTS[a]
+        _swap(a, b)
     raise SystemExit("order search did not converge")
 
 
+def _tok(w: str) -> str:
+    return re.sub(r"[^a-z0-9']", "", w.lower())
+
+
 def plan_anchors() -> None:
-    """Spread each beat's shots over the beat's span (ideal lengths per type, scaled), snap to the nearest clause end."""
-    starts = _beat_times()
-    order = list(BEAT_START)
-    ends = [(w["e"], i) for i, w in enumerate(WORDS) if re.search(r"[.?!,:;—…][\"'”’)]*$", w["w"])
-            and i + 1 < len(WORDS) and WORDS[i + 1]["s"] - w["e"] >= 0.12]
-    for b, beat in enumerate(order):
-        lo = starts[beat]
-        hi = starts[order[b + 1]] if b + 1 < len(order) else END
-        rows = [r for r in V4.SHOTS if r["beat"] == beat]
-        scale = (hi - lo) / sum(IDEAL[r["type"]] for r in rows)
-        t = lo
-        for n, r in enumerate(rows):
-            t += IDEAL[r["type"]] * scale
-            if n == len(rows) - 1:
-                r["anchor"] = f"@{hi:.3f}"
-            else:
-                r["anchor"] = f"@{min(ends, key=lambda e: abs(e[0] - t))[0]:.3f}"
+    """Every shot ends where its anchor phrase ends in the REAL read (punctuation-tolerant match), so each picture lands on the
+    words it illustrates. Anchors are time-ordered; a miss is a hard error: fix the anchor, not the match."""
+    flat = [(_tok(t), i) for i, w in enumerate(WORDS) for t in w["w"].split() if _tok(t)]
+    prev = 0.0
+    for r in V4.SHOTS:
+        want = [_tok(t) for t in r["anchor"].lstrip("@").split() if _tok(t)] if not r["anchor"].startswith("@") else None
+        if want is None:
+            continue
+        for j in range(len(flat) - len(want) + 1):
+            if WORDS[flat[j][1]]["s"] + 1e-6 < prev:
+                continue
+            if [x for x, _ in flat[j:j + len(want)]] == want:
+                idx = flat[j + len(want) - 1][1]
+                prev = WORDS[idx]["e"]
+                r["anchor"] = f"@{prev:.3f}"
+                break
+        else:
+            raise SystemExit(f"anchor {r['anchor']!r} not found after {prev:.2f} s in the real read")
 
 
-# D-41: a hero is drawn inside the frame from its hero card (HERO + POSE below), not cut from a sprite bank, so UR-06/UR-17's
+# D-41: a hero is drawn inside the frame from its hero card (HERO + POSE above), not cut from a sprite bank, so UR-06/UR-17's
 # "sprite exists" checks are satisfied by the card; the card itself is checked by the visual judge (hero_match).
 LOOK = dict(LOOK, caricatures=sorted(HERO), pose_bank={h: sorted(POSE) for h in HERO})
+
+
+def sanitize(text: str, beat: int) -> str:
+    """UR-27: a not-yet word is never written into a prompt, not even as 'no fire' (the model paints what it reads)."""
+    for w in resolver.not_yet(WORLD, beat):
+        text = re.sub(rf"\b{w}s?\b", "warmth", text, flags=re.I)
+    return text
+
+
+OVERRIDE = {"d1_a_valley_eyes": "a hundred exhausted scientists in muddy frock coats and long skirts asleep in rows behind a low wall of dry branches "
+            "in an enormous dark river valley under a star-filled sky, and far away on the dark treeline a pack of wolves "
+            "watching from the shadows"}
 
 
 def clean(s: str) -> str:
@@ -158,6 +186,8 @@ def clean(s: str) -> str:
 def subject_of(k: int, r: dict) -> tuple[str, bool, bool, str]:
     """(subject, people, plate, costume hint) for the shot."""
     heroes = r["heroes"]
+    if r["picture"] in OVERRIDE:
+        return OVERRIDE[r["picture"]], True, False, VISITOR_COSTUME
     if heroes:
         setting = clean(r["subject"]) if r["subject"] else "a cold stony hillside"
         who = "; ".join(f"{HERO[h['name']]}, {POSE[h['pose']]}" for h in heroes)
@@ -183,14 +213,81 @@ def _phrase_end(phrase: str, after: float) -> int:
 V4.phrase_end = _phrase_end
 
 
+SKIP_COST = 12.0  # seconds squared: a dropped shot costs as much as ending about 3.5 s off its phrase
+CRITICAL = {"d1_c_spectacles", "d1_c_lens_sun", "s07_close_spark", "s09_close_flame", "d1_plate_grass_smoke", "d1_a_arrival_wind",
+            "d1_c_flint_cracked", "d1_plate_fire_pit", "s03_close_drill", "d1_a_hook_storm"}  # the story cannot lose these
+FILLER = {"d1_c_fist_clench", "d1_c_empty_palms", "d1_c_boots_mud", "d1_c_wet_sleeve", "d1_c_dry_grass", "d1_c_food_hands",
+          "d1_c_branch_armful", "d1_c_two_hands_half"}  # inserts that illustrate a mood, not a fact
+
+
+def skip_cost(row: dict) -> float:
+    return 120.0 if row["picture"] in CRITICAL else 5.0 if row["picture"] in FILLER else SKIP_COST
+
+
+def solve_with_skips(rows: list[dict]) -> tuple[list[int], list[float]]:
+    """Like ``shot_rules.solve_cuts`` (cuts only in punctuated pauses, UR-11 durations, UR-02 first 30 s) but a shot may be
+    DROPPED when keeping every picture would push the rest of the story off the words it illustrates. Returns (kept row indices,
+    cut times between the kept shots)."""
+    cands = set()
+    for a, b, _ in R.pauses_from_words(WORDS, R.EDGE):
+        lo, hi = math.ceil((a + R.EDGE) * 1000 + 1e-6) / 1000, math.floor((b - R.EDGE) * 1000 - 1e-6) / 1000
+        if hi >= lo:
+            cands.update(round(min(max(lo + (hi - lo) * f, lo), hi), 3) for f in (0.0, 0.25, 0.5, 0.75, 1.0))
+    pts = [0.0] + sorted(c for c in cands if 0 < c < END) + [END]
+    tgt = [float(r["anchor"][1:]) if r["anchor"].startswith("@") else None for r in rows]
+    n, m = len(rows), len(pts)
+    INF = float("inf")
+    best = [[(INF, None)] * m for _ in range(n + 1)]  # best[k][j]: rows[:k] decided, last kept shot ends at pts[j]
+    best[0][0] = (0.0, None)
+    for k in range(n):
+        for i in range(m):
+            cost, _ = best[k][i]
+            if cost == INF:
+                continue
+            if k < n - 1 and cost + skip_cost(rows[k]) < best[k + 1][i][0]:  # drop row k
+                best[k + 1][i] = (cost + skip_cost(rows[k]), ("skip", i))
+            lo, hi = R.DURATIONS[rows[k]["type"]]
+            if pts[i] < R.FIRST_WINDOW:
+                hi = lo + R.FIRST_SLACK
+            for j in range(i + 1, m):
+                d = pts[j] - pts[i]
+                if d > hi + 1e-9:
+                    break
+                if d < lo - 1e-9 or ((j == m - 1) != (k == n - 1)):
+                    continue
+                c = cost + ((pts[j] - tgt[k]) ** 2 if tgt[k] is not None else 0.0)
+                if c < best[k + 1][j][0]:
+                    best[k + 1][j] = (c, ("keep", i))
+    if best[n][m - 1][0] == INF:
+        raise SystemExit("no cut layout even with dropped shots: edit the text or add a clause pause (UR-12)")
+    kept, cuts, j = [], [], m - 1
+    for k in range(n, 0, -1):
+        kind, i = best[k][j][1]
+        if kind == "keep":
+            kept.append(k - 1)
+            cuts.append(pts[j])
+        j = i
+    kept.reverse()
+    return kept, sorted(cuts)[:-1]
+
+
+ALL_ROWS: list[dict] = []
+
+
 def build() -> list[dict]:
-    NOTES.extend(fix_order())
     plan_anchors()
-    shots = V4.build()
+    ALL_ROWS[:] = [dict(r) for r in V4.SHOTS]
+    kept, cuts = solve_with_skips(V4.SHOTS)
+    dropped = [r["picture"] for k, r in enumerate(V4.SHOTS) if k not in kept]
+    NOTES.extend(f"dropped shot {V4.SHOTS[k]['picture']} ({V4.SHOTS[k]['type']}): no legal cut layout kept it on its words"
+                 for k in range(len(V4.SHOTS)) if k not in kept)
+    V4.SHOTS[:] = [V4.SHOTS[k] for k in kept]
+    shots = V4._build_with(cuts)
     out, prompts = [], []
     for k, (s, r) in enumerate(zip(shots, V4.SHOTS)):
         sub, people, plate, hint = subject_of(k, r)
         beat = BEAT_NO[r["beat"]]
+        sub = sanitize(sub, beat)
         p = prompt_v2.compose(r["type"], sub, WORLD, beat, people=people, plate=plate, costume_hint=hint)
         s = {k2: v for k2, v in s.items() if k2 not in ("plate", "source", "prompt", "grade", "heroes")}
         names = [h["name"] for h in r["heroes"]]
@@ -215,7 +312,7 @@ if __name__ == "__main__":
     found = []
     for s in shots:  # the edit grammar (UR-01..UR-15) only: stakes/hero-sprite rules belong to the sprite pipeline (v4)
         pass
-    edit = R.check_shots([{k: v for k, v in s.items() if k not in ("prompt",)} for s in shots], WORDS, LOOK,
+    edit = R.anchor_spacing([{"id": r["picture"], "type": r["type"], "target": float(r["anchor"][1:])} for r in ALL_ROWS]) + R.check_shots([{k: v for k, v in s.items() if k not in ("prompt",)} for s in shots], WORDS, LOOK,
                          sound_ids=V4.sound_ids())
     fails = [f for f in edit if f["severity"] == "FAIL"]
     lint = [(p["id"], f) for p in prompts for f in p["findings"]]

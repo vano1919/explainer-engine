@@ -97,8 +97,7 @@ def check_text(text: str, world: dict, look: dict | None = None, *, plate: bool 
         add("UR-23", f"objects absent from the host world (allowed only on the named visitors {visitors_named}): {bad}",
             "REVIEW")
     if beat is not None:  # UR-27: the picture may not show what the story has not made yet (a "no X" phrase is allowed)
-        stripped = re.sub(r"\bno [a-z ,]+? anywhere in the frame", "", text.lower())
-        early = words_in(stripped, not_yet(world, beat))
+        early = words_in(text, not_yet(world, beat))
         if early:
             add("UR-27", f"shows what does not exist yet at beat {beat}: {early}")
     cues = words_in(text, look["child_cues"])

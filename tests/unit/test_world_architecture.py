@@ -106,7 +106,7 @@ def test_story_state_not_yet():
                                 {"beat": 3, "light": "night_fire"}]}
     w = resolver.resolve(spec)
     p = prompt_v2.compose("A", "a cold ridge with a long shadow", w, 1)
-    assert "no fire, no campfire anywhere in the frame" in p and "woodsmoke" not in p
+    assert "nothing burning or glowing anywhere" in p and "woodsmoke" not in p and "fire" not in p.lower().split("one drawn universe")[0]
     assert prompt_v2.lint(p, w, beat=1) == []
     bad = prompt_v2.lint(p + ", a small campfire burns", w, beat=1)
     assert any(f["rule"] == "UR-27" for f in bad)

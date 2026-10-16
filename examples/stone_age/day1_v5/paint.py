@@ -48,7 +48,8 @@ def main() -> None:
         if "--judge-only" in sys.argv:
             path = out / f"{p['id']}.png"
         else:
-            path = c.generate(p["id"], p["prompt"] + NOTE, model=MODEL, size=SIZE, refs=refs)
+            salt = f" Compose it differently from any earlier attempt (variation {sys.argv[sys.argv.index('--salt') + 1]})." if "--salt" in sys.argv else ""
+            path = c.generate(p["id"], p["prompt"] + NOTE + salt, model=MODEL, size=SIZE, refs=refs)
         meta = {"plate": False, "hero": ", ".join(p["heroes"]) or None, "stakes": p["stakes"], "not_yet": p.get("not_yet", [])}
         try:
             ans = c.judge(path.read_bytes(), vj.build_prompt(world, meta))

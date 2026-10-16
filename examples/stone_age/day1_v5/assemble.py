@@ -19,6 +19,7 @@ HERE = Path(__file__).parent
 FPS, OW, OH, SR = 30, 1920, 1080, 48000
 LIB = ROOT / "assets" / "audio" / "library"
 CODEX = resolver.load_codex()
+WORDS = json.loads((HERE / "words.json").read_text())["words"]
 WORLD = resolver.resolve(json.loads((HERE / "world_spec.json").read_text()))
 GRADE = CODEX["grades"][WORLD["grade"]]
 SOFT_CUT = {"swish__v1", "swish__v2", "pop_in__v1", "seam_shimmer__v1", "jump_whoosh__v1"}  # -> the soft whoosh
@@ -70,7 +71,11 @@ def envelope(voice: np.ndarray, win: float = 0.08) -> np.ndarray:
     return np.clip(rms / (rms.max() * 0.25 + 1e-9), 0, 1)
 
 
-def build_audio(shots, narration: np.ndarray, snd: Path) -> np.ndarray:
+def rms_db(a: np.ndarray) -> float:
+    return float(20 * np.log10(np.sqrt(np.mean(a ** 2)) + 1e-12))
+
+
+def build_audio(shots, narration: np.ndarray, snd: Path, stats: dict) -> np.ndarray:
     n = len(narration)
     t = lambda s: int(s * SR)  # noqa: E731
     voice = narration / (np.abs(narration).max() + 1e-9) * 0.9
@@ -85,7 +90,7 @@ def build_audio(shots, narration: np.ndarray, snd: Path) -> np.ndarray:
         seg[:f] *= np.linspace(0, 1, f)
         seg[-f:] *= np.linspace(1, 0, f)
         bed[a:b] += seg
-    bed = bed / (np.abs(bed).max() + 1e-9) * db(-27)
+    bed = bed / (np.abs(bed).max() + 1e-9) * db(-13)  # about 20 dB under the voice while it speaks
     music = np.zeros(n)
     plan = [("clockwork_loop__v1", 0.0, 100.0), ("sneaky_pizzicato__v1", 39.0, 120.0), ("clockwork_loop__v1", 120.0, 185.0)]
     for name, a, b in plan:
@@ -95,13 +100,15 @@ def build_audio(shots, narration: np.ndarray, snd: Path) -> np.ndarray:
         seg[:f] *= np.linspace(0, 1, f)
         seg[-f:] *= np.linspace(1, 0, f)
         music[t(a):t(a) + len(seg)] += seg[: n - t(a)]
-    music = music / (np.abs(music).max() + 1e-9) * db(-31)
+    music = music / (np.abs(music).max() + 1e-9) * db(-18)
     fx = np.zeros(n)
+    stats["events"] = []
     whoosh = load_audio(snd / "whoosh.mp3")[: t(0.9)]
     whoosh = whoosh / (np.abs(whoosh).max() + 1e-9) * db(-20)
+    starts = [w["s"] for w in WORDS]
     for i, s in enumerate(shots):
         sid = s.get("sound")
-        at = t(s["start"]) - t(0.05)
+        at = t(s["start"]) - t(0.04)
         if not sid or at < 0:
             continue
         if sid in SOFT_CUT and s["type"] in ("A", "B") and i % 2 == 0:
@@ -111,8 +118,17 @@ def build_audio(shots, narration: np.ndarray, snd: Path) -> np.ndarray:
             w = w[: t(0.8)] / (np.abs(w).max() + 1e-9) * db(-24)
         else:
             continue
+        nxt = next((x for x in starts if x > at / SR + 0.02), None)  # a cut sound ends before the next word (UR-15)
+        keep = len(w) if nxt is None else max(int((nxt - at / SR - 0.03) * SR), 0)
+        w = w[:keep].copy()
+        if len(w) > 480:
+            w[-480:] *= np.linspace(1, 0, 480)
         fx[at:at + len(w)] += w[: n - at]
+        stats["events"].append({"id": sid, "at": round(at / SR, 3), "dur": round(len(w) / SR, 3)})
     mix = voice * db(-3) + (bed + music) * duck + fx
+    speaking = envelope(voice) > 0.15
+    stats.update(voice_rms_db=rms_db((voice * db(-3))[speaking]), bed_rms_db=rms_db((bed * duck)[speaking]),
+                 music_rms_db=rms_db((music * duck)[speaking]))
     peak = np.abs(mix).max()
     return mix / peak * 0.89 if peak > 0.89 else mix
 
@@ -122,7 +138,7 @@ def motion_box(m, W, H, u):
     z = z0 + (z1 - z0) * u
     cw, ch = W / z, H / z
     dx = m.get("dx", 0.0) * W * (u - 0.5)
-    cx = W / 2 + dx
+    cx = min(max(W / 2 + dx, cw / 2), W - cw / 2)  # the crop never leaves the picture
     return (cx - cw / 2, H / 2 - ch / 2, cx + cw / 2, H / 2 + ch / 2)
 
 
@@ -131,11 +147,24 @@ def main(pics: Path, snd: Path, narr: Path, out: Path):
     doc = json.loads((HERE / "shots.json").read_text())
     shots, dur = doc["shots"], doc["duration"]
     nar, _ = read_wav(narr)
-    audio = build_audio(shots, nar, snd)
+    stats: dict = {}
+    audio = build_audio(shots, nar, snd, stats)
     pcm = (np.clip(audio, -1, 1) * 32767).astype("<i2")
     with wave.open(str(out / "audio.wav"), "wb") as w:
         w.setnchannels(1), w.setsampwidth(2), w.setframerate(SR)
         w.writeframes(pcm.tobytes())
+    raw = out / "audio_raw.wav"
+    (out / "audio.wav").replace(raw)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(raw), "-af", "loudnorm=I=-14:TP=-1.5:LRA=9", "-ar", str(SR), "-ac", "1",
+                    str(out / "audio.wav")], check=True)
+    meas = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(out / "audio.wav"), "-af", "ebur128", "-f", "null", "-"],
+                          capture_output=True, text=True).stderr
+    stats["lufs"] = float(meas.split("I:")[-1].split("LUFS")[0])
+    (out / "audio_stats.json").write_text(json.dumps(stats, indent=1))
+    if "--audio-only" in sys.argv:  # same pictures, new sound: remux the finished video stream
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(out / "video.mp4"), "-i", str(out / "audio.wav"), "-map", "0:v", "-map", "1:a",
+                        "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-shortest", str(out / "video_remux.mp4")], check=True)
+        return
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{OW}x{OH}", "-r", str(FPS),
                            "-i", "-", "-i", str(out / "audio.wav"), "-c:v", "libx264", "-crf", "18", "-preset", "medium",
                            "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-shortest", str(out / "video.mp4")],
@@ -158,4 +187,4 @@ def main(pics: Path, snd: Path, narr: Path, out: Path):
 
 
 if __name__ == "__main__":
-    main(*[Path(a) for a in sys.argv[1:5]])
+    main(*[Path(a) for a in sys.argv[1:5]])  # + optional --audio-only

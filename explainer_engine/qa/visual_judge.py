@@ -11,15 +11,16 @@ import re
 
 QUESTIONS = {
     "adults": "Do all people look like adults (not children, not toddlers, no school-trip look)?",
-    "era_objects": "Is any object, clothing or building visible that does not exist in the stated world?",
+    "era_objects": "Is any object or building visible that does not exist in the stated world AND is not worn or carried by the intended time-travelling visitors (their later-century clothes, spectacles, watches and pocket items are expected and are NOT a problem; flag only things like metal tools, pottery, tents, glass bottles, wheels or modern clothing on the hosts)?",
     "people_in_plate": "Does the picture show any person or animal figure? (answer true if any figure is visible)",
-    "text": "Is any text, letter, number or logo visible?",
+    "text": "Is any readable text, letters, numbers or logo visible (clock-face numerals on a pocket watch do not count)?",
     "one_light": "Does the picture have one clear light direction and one light source type?",
     "hero_match": "If a named hero is meant to appear, is that figure recognisable from the description (glasses, hair, coat)?",
     "too_early": "Does the picture show anything from the 'must NOT appear yet' list?",
     "mood": "Does the picture show the stated danger or emotion (not a calm postcard)?",
 }
-GOOD = {"adults": True, "era_objects": False, "text": False, "one_light": True, "mood": True, "too_early": False}
+GOOD = {"adults": True, "era_objects": False, "text": False, "mood": True}  # FAIL when the answer differs
+SOFT = {"one_light": True}  # REVIEW only: firelight against dusk is two lights on purpose in some beats
 
 
 def build_prompt(world: dict, meta: dict) -> str:
@@ -27,8 +28,10 @@ def build_prompt(world: dict, meta: dict) -> str:
     lines = [f"You review one painted picture for a video about: {world['topic']}.",
              f"The world is: {world['host'].get('place', '')}, {world['host'].get('when', '')}. "
              f"Things that do NOT exist there: {', '.join(world['absent'])}.",
+             f"The scene intentionally shows scientists from the 1700s to 1900s dropped into this world: they keep their own clothes.",
              f"What the picture should show: {meta.get('stakes', '')}.",
-             "Answer ONLY a JSON object with a boolean for every key and a short 'note':"]
+             "Answer ONLY a JSON object with a boolean for every key, plus a string 'why_<key>' for every key you answer true, "
+             "naming exactly what you see, and a short 'note':"]
     if meta.get("not_yet"):
         lines.insert(3, f"Must NOT appear yet at this point of the story (it has not been made): {', '.join(meta['not_yet'])}.")
     for key, q in QUESTIONS.items():
@@ -52,6 +55,11 @@ def verdict(result: dict, meta: dict) -> dict:
             review.append(f"{key}: no answer")
         elif bool(result[key]) != want:
             fails.append(f"{key}: expected {want}")
+    for key, want in SOFT.items():
+        if key in result and bool(result[key]) != want:
+            review.append(f"{key}: expected {want}")
+    if meta.get("not_yet") and result.get("too_early"):
+        fails.append(f"too_early: shows {', '.join(meta['not_yet'])} before the story makes it (UR-27)")
     if meta.get("plate") and result.get("people_in_plate"):
         fails.append("people_in_plate: a plate must show no figure (UR-20)")
     if meta.get("hero") and not result.get("hero_match", False):

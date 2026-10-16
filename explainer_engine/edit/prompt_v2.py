@@ -18,14 +18,13 @@ def compose(shot_type: str, subject: str, world: dict, beat: int, *, people: boo
     if people and not plate:
         parts.append(look["figure"])
         parts.append(costume_hint or "dressed in " + ", ".join(world["host"]["costume"][:2]))
-    if shot_type in ("A", "B"):  # materials belong in the scene shots; an insert shows what is in the hand
-        parts.append(", ".join(world["host"]["material_culture"][:3]))
+    # no flat list of materials: "hides, flint, bone" got painted as tents, daggers and bones on the ground (Day 1 v5)
     parts.append(clause_for_beat(world, beat))
     early = not_yet(world, beat)
     atmosphere = [a for a in world["host"]["atmosphere"][:3] if not (early and a in ("woodsmoke", "smoke"))][:2]
     parts.append(", ".join(atmosphere))
     if early:  # UR-27 story state: what the story has not made yet must not be in the frame
-        parts.append("no " + ", no ".join(early) + " anywhere in the frame")
+        parts.append("everything cold, dark and unlit, nothing burning or glowing anywhere in the frame")  # positive: naming it paints it
     return ", ".join(parts) + ", " + look["thread"] + look["suffix"]
 
 

@@ -132,7 +132,8 @@ class GeminiClient:
     def judge(self, image: bytes, question: str, *, model: str = "gemini-3.8-flash") -> str:
         """A vision answer as text (input price about $0.0015 per picture at $0.75 per million input tokens)."""
         parts = [{"text": question}, {"inlineData": {"mimeType": "image/png", "data": base64.b64encode(image).decode()}}]
-        data = self.post(model, {"contents": [{"parts": parts}]})
+        data = self.post(model, {"contents": [{"parts": parts}],
+                                 "generationConfig": {"temperature": 0, "responseMimeType": "application/json"}})
         for cand in data.get("candidates") or []:
             for part in (cand.get("content") or {}).get("parts") or []:
                 if "text" in part:

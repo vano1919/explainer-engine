@@ -289,3 +289,10 @@ def test_compose_prompt_appends_the_thread_before_the_suffix():
     out = R.compose_prompt("a ridge", "fear", look)
     assert THREAD in out and out.endswith(", painted") and out.index(THREAD) < out.index(", painted")
 
+
+
+def test_anchor_spacing_reports_drift():
+    rows = [{"id": "a", "type": "A", "target": 5.0}, {"id": "b", "type": "B", "target": 6.5}, {"id": "c", "type": "C", "target": 12.0}]
+    out = R.anchor_spacing(rows)
+    assert [f["shot"] for f in out] == ["b"] and "drift" in out[0]["detail"]
+    assert R.anchor_spacing([{"id": "a", "type": "A", "target": 5.2}, {"id": "b", "type": "B", "target": 9.0}]) == []
