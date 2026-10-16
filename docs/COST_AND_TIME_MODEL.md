@@ -6,8 +6,9 @@ before any paid call the ledger below is updated with the estimate, and at 80 % 
 ## Ledger
 | Budget | Cap | Spent in this project | Notes |
 |---|---|---|---|
-| Gemini API / AI Studio | US$10 total | about $1.01 (estimate at list price; 15 pictures; real billing not yet read) | free-tier use is not assumed equal to paid cost; TMR's earlier spend (about $2.40) belongs to that project |
+| Gemini API / AI Studio | US$10 total | about $1.34 (estimate at list price; 20 pictures: 13 kit, 2 worlds, 5 mascot options; real billing not yet read) | free-tier use is not assumed equal to paid cost; TMR's earlier spend (about $2.40) belongs to that project |
 | vidIQ credits | 200 | 130 (2026-10-15: 60 niche research + 70 worlds-collide research; see the spend log) | account balance read 2026-10-15: 395, later 445 (an add-on top-up of 50 that is not our spend), 385 after the research batch (65 renewable, resets 2026-11-08; 320 add-on); the balance call costs 0; a call's cost is read from its tool description first |
+| RunPod | US$3 hard cap (D-31) | $0.00 | balance read 2026-10-16: $7.37 (the account is shared with TMR); no pod running; every pod needs an approved price and time cap |
 | Subscriptions | none planned | $0/month | any paid voice or tool is an explicit approved line item |
 
 ### vidIQ spend log (written before each batch; actuals filled after)

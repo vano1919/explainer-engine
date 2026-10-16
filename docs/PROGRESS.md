@@ -125,3 +125,12 @@ cost (estimate/actual), next step, recovery instructions.
 - Proposed, waiting on the creator: hardware baseline = this sandbox + RunPod (replaces invariant 1's PC); renderer = a GPU
   compositor ported from TMR instead of Remotion (D-10), since the art is now painted raster layers; D-30 1440p; mascot
   aged up and silent (a separate narrator voice), see the chat answer of this date.
+
+## 2026-10-16 — Plan revised: cloud-first, GPU compositor, mature mascot (D-31, D-32, D-33)
+- Creator approved: take what is needed from TMR (and solve problems found), mascot aged up with other options, RunPod cap $3.
+- Docs: D-31/32/33; CLAUDE.md invariant 1; REPO_REUSE_AUDIT port list with problem -> solution; cost ledger (RunPod $3 cap,
+  Gemini about $1.34 for 20 pictures).
+- Mascot options generated (5 pictures, about $0.34): `assets/characters/mascot_options_v0/`. Waiting on the creator's pick.
+- Next after the pick: pose bank for the chosen design (silent mascot: poses and reactions, no mouth states), 2K worlds,
+  then Phase 3 contracts and the Phase 4 compositor benchmark on one approved pod.
+

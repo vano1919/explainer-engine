@@ -4,8 +4,7 @@ A solo creator's 2D hand-drawn explainer channel ("worlds collide": history, sci
 eras, public-domain worlds only, D-25) and its production
 pipeline: topic → research dossier + claim map → script → **creator approval** → schema-validated storyboard →
 assets → Kokoro narration + timings → Remotion scene renders (muted) → Python mix → Shorts → thumbnail + metadata →
-technical + editorial QA → review bundle → **creator approval** → manual upload. Windows-first (i5-8400, RX 5700 8 GB,
-16 GB RAM). Start from `docs/INDEX.md`: every specification and every ID (D-, SE-, V-, P-, R-, Q-) has ONE canonical home —
+technical + editorial QA → review bundle → **creator approval** → manual upload. Cloud-first (D-31). Start from `docs/INDEX.md`: every specification and every ID (D-, SE-, V-, P-, R-, Q-) has ONE canonical home —
 link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this). `docs/PLAN_2026-10-15.md` is history.
 
 ## Commands
@@ -19,7 +18,9 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 
 ## Invariants (do not violate; stop and ask if a task seems to require it)
 
-1. The creator's hardware is the baseline; no upgrade assumed.
+1. Production is cloud-first (D-31): the cloud session + RunPod pods, RunPod hard cap $3, TMR's money-control rules
+   (approved price and time cap per pod, `rp.py guard`, sweep at start and end, delete at the end). The creator's PC
+   only reviews and uploads.
 2. Budget caps are ceilings, not targets: Gemini ≤ $10 total, vidIQ ≤ 200 credits. Estimate and log before every paid
    call (`docs/COST_AND_TIME_MODEL.md` ledger); at 80 % of a cap stop and ask. Leave nothing paid running.
 3. No long-form pipeline before the 60–90 s prototype passes its acceptance criteria (plan F).
