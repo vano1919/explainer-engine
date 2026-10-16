@@ -260,3 +260,14 @@ Picture pod (35 pictures, approved cap $0.50): the pictures stage kept the 15-mi
 was killed near the end; the fatal stop skipped store and push, so the pictures were lost ($0.28 spent, my error).
 Fixed in TMR `stages_pictures_v2.json` (30 min, optional, so a timeout still pushes). A re-run needs a new approval.
 
+## 2026-10-16 — The lost picture run: cause, guards, and the re-run
+Cause (observed in the pod log and ntfy): 35 pictures at 25.9-26.1 s each need 15.2 min; the stage limit was 15 min, copied from
+the 13-picture job; the stage was `fatal`, so at the limit the conductor ended the run ("pictures failed fatally: command timed
+out") and `store`/`push` never ran; the pod deleted itself with the pictures ($0.28). Guards, all offline-testable: TMR
+`cloud/job_speeds.json` (measured speed, margin, per-stage override), lint `picture_budget` (limit >= units x seconds x margin;
+35 pictures need 22 min), lint `fatal_before_push` (a fatal stage writing a folder a later stage pushes), pictures stages are
+`optional`, runbook row 20 and rule R6, TMR CLAUDE.md money-control note, R-29 here, CLAUDE_EXECUTION_GUIDE "Pod runs". All TMR
+manifests lint clean; 19 lint tests pass. Re-run started with the creator's approval (pod `w6fmpd3yodbf4k`, $0.89/h, caps
+$0.50 and 45 min, guard running). What the lint cannot see: a card slower than its measured speed by more than the margin; that
+case now ends with the finished pictures pushed instead of lost.
+

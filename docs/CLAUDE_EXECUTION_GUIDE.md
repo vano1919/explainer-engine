@@ -29,6 +29,16 @@ finished jobs first and report.
 - Subagents: none standing. An isolated second fact-check read of a script is allowed; it reports, never edits, and cannot
   override an approved decision.
 
+## Pod runs: size the limits, keep the work (2026-10-16)
+- A stage limit never comes from a smaller job. Compute it: units x measured seconds per unit x margin (default 1.25), with the
+  speed from TMR `cloud/job_speeds.json` (update the row after each run: card, date, seconds) and a 3-unit preflight for a
+  job type that has no row. Quote units, limit, $/h and the money and time caps in the approval request.
+- Whatever a stage makes is pushed even when the stage fails or times out (`optional` stage or a push in the same command);
+  `lint_manifest.py` (rules `picture_budget`, `fatal_before_push`) runs before every pod start and must print nothing.
+- The rule is a method, not a constant: when a card, resolution or step count changes, re-measure and edit the row; do not
+  widen a limit by guesswork and do not shrink one without a measurement. Origin: the lost 35-picture run (R-29,
+  PROGRESS 2026-10-16).
+
 ## Never
 Skip the creator gates; publish or upload; exceed a budget cap or call a paid service without the ledger entry; invent
 sources, metrics, measurements, tests or tool capabilities; claim a task is complete from code changes alone; weaken or
