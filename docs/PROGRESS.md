@@ -305,3 +305,12 @@ test, the `shot-visuals` section, UR-07 reworded. The Day 1 prompts now carry th
 Wallace and Snow sprites). Prepared, not run: a 6-picture style-bridge test (TMR `stone_age_style_bridge.json`, about $0.15).
 The full 41-picture batch should wait for it: if pod people still do not match the sprites, the extras and hands become sprites.
 
+## 2026-10-16 — The creator's notes consolidated into the channel-wide production rules
+Before any new spend the creator asked that every recent note be written into the general rules, not only the episode's.
+Added `docs/PRODUCTION_RULES.md` (standing orders; the ten gates in order with their rules and tools; a feedback log of 10
+notes with cause, rule and enforcement; planning numbers for 8, 10 and 12 minutes; what is per topic and what is universal),
+linked from INDEX and from CLAUDE.md (binding block), and `explainer_engine/production_gate.py` (free: one line per gate, PASS /
+BLOCKED / WAIT with the next action; 3 tests). Day 1 v4 today: script PASS; timings WAIT (the words belong to the v2 read, 82 %
+match); shot plan BLOCKED only by the missing Wallace and Snow sprites; style bridge, sprites, pictures WAIT. Nothing paid
+was run for this.
+

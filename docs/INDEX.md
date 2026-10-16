@@ -12,6 +12,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [NARRATION_AND_LANGUAGE_GUIDE](NARRATION_AND_LANGUAGE_GUIDE.md) | voice, vocabulary, anti-patterns, pronunciation | |
 | [SCRIPTING_SPEC](SCRIPTING_SPEC.md) | research-to-script gate, format structures, script rubric | |
 | [VIDEO_PARAMETER_SPEC](VIDEO_PARAMETER_SPEC.md) | every parameter: default, range, evidence, validation | P- |
+| [PRODUCTION_RULES](PRODUCTION_RULES.md) | the gates every video passes in order, the creator's standing orders, the feedback log, planning numbers by length | |
 | [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) | hook, arc, ABC shots, faces, mood (emotion, light, palette), durations, cuts, motion, transitions | UR- |
 | [STORYBOARD_SCHEMA](STORYBOARD_SCHEMA.md) | storyboard contract, animation vocabulary, timing rules | |
 | [ASSET_SYSTEM](ASSET_SYSTEM.md) | asset records, naming, licences, generation rules | |

@@ -36,6 +36,12 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 11. Every meaningful change: a focused test + an entry in `docs/PROGRESS.md` (and the decision log if a decision moved).
 12. A material conflict found during implementation: stop at the boundary, report evidence and options, ask.
 
+**Production rules (binding for every video, creator 2026-10-16):** start from `docs/PRODUCTION_RULES.md` and run
+`python -m explainer_engine.production_gate <episode folder>` to see the gates (script, test read, shot plan, style bridge,
+sprites, pictures, full read, render, QA). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures
+show). Entertainment first, facts second; stakes and named heroes in every frame; one drawn world; limits computed from
+measured speeds; every paid step estimated and approved first; look at the output before reporting it; reply in Georgian.
+
 Also binding: crossover episodes of other people's fictional worlds follow docs/RIGHTS_AND_FAIR_USE.md (no third-party
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
 Gemini only for reusable channel-identity assets (the mascot, thumbnail design elements), never for one
