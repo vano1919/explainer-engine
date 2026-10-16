@@ -198,20 +198,27 @@
   "v5_d1-02": {
    "file": "v5_d1-02.png",
    "engine": "existing",
-   "heroes": [],
-   "shows": []
+   "shows": [],
+   "heroes": [
+    "franklin"
+   ]
   },
   "v5_d1-04": {
    "file": "v5_d1-04.png",
    "engine": "existing",
-   "heroes": [],
+   "heroes": [
+    "darwin"
+   ],
    "shows": []
   },
   "v5_d1-06": {
    "file": "v5_d1-06.png",
    "engine": "existing",
-   "heroes": [],
-   "shows": []
+   "shows": [],
+   "heroes": [
+    "newton",
+    "einstein"
+   ]
   },
   "v5_d1-07": {
    "file": "v5_d1-07.png",
@@ -222,7 +229,10 @@
   "v5_d1-08": {
    "file": "v5_d1-08.png",
    "engine": "existing",
-   "heroes": [],
+   "heroes": [
+    "curie",
+    "tesla"
+   ],
    "shows": []
   },
   "v5_d1-10": {
@@ -234,8 +244,8 @@
   "v5_d1-12": {
    "file": "v5_d1-12.png",
    "engine": "existing",
-   "heroes": [],
-   "shows": []
+   "shows": [],
+   "heroes": []
   },
   "v5_d1-14": {
    "file": "v5_d1-14.png",
@@ -285,8 +295,11 @@
   "v5_d1-20": {
    "file": "v5_d1-20.png",
    "engine": "existing",
-   "heroes": [],
-   "shows": []
+   "shows": [],
+   "heroes": [
+    "einstein",
+    "newton"
+   ]
   },
   "v5_d1-21": {
    "file": "v5_d1-21.png",
@@ -311,8 +324,8 @@
   "v5_d1-23": {
    "file": "v5_d1-23.png",
    "engine": "existing",
-   "heroes": [],
-   "shows": []
+   "shows": [],
+   "heroes": []
   },
   "v5_d1-24": {
    "file": "v5_d1-24.png",
@@ -320,16 +333,24 @@
    "heroes": [],
    "shows": []
   },
-  "v5_d1-36": {
-   "file": "v5_d1-36.png",
+  "v5_d1-25": {
+   "file": "v5_d1-25.png",
    "engine": "existing",
    "heroes": [
-    "franklin",
-    "einstein"
+    "snow",
+    "wallace"
    ],
-   "shows": [
-    "fire"
-   ]
+   "shows": [],
+   "speakers": {
+    "snow": [
+     0.25,
+     0.22
+    ],
+    "wallace": [
+     0.73,
+     0.23
+    ]
+   }
   }
  },
  "music": [
@@ -1513,7 +1534,7 @@
       "id": "w1_snow_rule",
       "engine": "pod_ref",
       "refs": [
-       "v5_d1-36"
+       "v5_d1-25"
       ],
       "heroes": [
        "snow",
@@ -1628,7 +1649,7 @@
       "id": "w1_snow_filter",
       "engine": "pod_ref",
       "refs": [
-       "v5_d1-36"
+       "v5_d1-25"
       ],
       "heroes": [
        "snow"

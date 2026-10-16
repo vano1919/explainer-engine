@@ -305,3 +305,20 @@ def test_voice_check_flags_a_darker_stretch():
 def test_assemble_refuses_a_timing_with_fail(tmp_path):
     with pytest.raises(SystemExit):
         A.assemble({"findings": [{"severity": "FAIL", "rule": "PV-25", "detail": "x"}]}, tmp_path / "n.wav", tmp_path, [], [])
+
+
+def test_pv26_hero_needs_a_reference_with_their_face():
+    """2026-10-16: two Snow pictures named a reference (d1-36) that shows Franklin and Einstein; the check now FAILs it."""
+    import json
+    from pathlib import Path
+    from explainer_engine.production import validate as V
+    path = Path(__file__).resolve().parents[2] / "examples" / "stone_age" / "week1_v1" / "production_script.json"
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    assert not [f for f in V.check_script(doc) if f["rule"] == "PV-26"]
+    bad = json.loads(json.dumps(doc))
+    for seg in bad["segments"]:
+        for sh in seg["shots"]:
+            if isinstance(sh["picture"], dict) and sh["picture"]["id"] == "w1_snow_rule":
+                sh["picture"]["refs"] = ["v5_d1-36"]
+    found = [f for f in V.check_script(bad) if f["rule"] == "PV-26"]
+    assert found and "snow" in found[0]["detail"] and found[0]["severity"] == "FAIL"

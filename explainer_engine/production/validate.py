@@ -134,6 +134,15 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         for b_who in p.get("speakers", {}):
             if b_who not in doc["cast"]:
                 _f(out, "PV-05", pid, f"speaker {b_who!r} is not in the cast")
+    # PV-26 likeness by reference: a painted-by-edit picture shows a named hero only when one of its references carries that
+    # hero's face (library `heroes` of the reference). 2026-10-16: two Snow pictures named a reference that is Franklin + Einstein.
+    for pid, p in used.items():
+        if C.engine_of(doc, p) != "pod_ref":
+            continue
+        for h in p.get("heroes", []):
+            if not any(h in pics.get(r, {}).get("heroes", []) for r in p.get("refs", [])):
+                _f(out, "PV-26", pid, f"hero {h!r} has no reference with their face (refs {p.get('refs')}); add a reference "
+                                      f"picture that shows {h} and list {h} in its library `heroes`")
     if sound_ok:
         for seg in doc["segments"]:
             au = seg.get("audio", {})

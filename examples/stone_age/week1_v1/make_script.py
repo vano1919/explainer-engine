@@ -80,7 +80,7 @@ pic("w1_log_roll", ["v5_d1-10"], [], "a log rolls loose down the slope as people
     "Edit the picture: a big log rolls loose down the grassy slope and a crowd of scientists in muddy coats scatter and dive out of its way. Grey overcast sky.")
 pic("w1_franklin_dust", ["v5_d1-02"], ["franklin"], "Franklin lies on his back in the dust, spectacles crooked, a log just past his feet",
     "Edit the picture: Benjamin Franklin lies flat on his back in the dust, spectacles crooked on his nose, a thick log lying right next to his feet, dazed. Camp behind him.")
-pic("w1_snow_rule", ["v5_d1-36"], ["snow", "wallace"], "Snow points at a muddy river pool: boil it; thirsty Wallace objects",
+pic("w1_snow_rule", ["v5_d1-25"], ["snow", "wallace"], "Snow points at a muddy river pool: boil it; thirsty Wallace objects",
     "Edit the picture: the pale physician with round spectacles points at the muddy river pool and shakes his head, the bearded man in the field jacket points back at the water, both arguing. No tents or crates.")
 pic("w1_pit_steam", ["v5_d1-12"], [], "a hide-lined pit in the ground with steam rising, tiny figures round it",
     "Edit the picture: a round pit in the ground lined with animal hide, filled with water, thick steam rising from it, tiny figures in muddy coats crouch round it with wooden tongs. A small fire at the side.")
@@ -108,7 +108,7 @@ pic("w1_peg_hand", ["v5_d1-17"], [], "a hand holds a small wooden peg, the only 
     "Edit the picture: one hand in a muddy sleeve holds up a small roughly carved wooden peg; the other hand is out of frame. Blurred camp behind.")
 pic("w1_sick_figure", ["v5_d1-12"], [], "a sick figure lies wrapped in hide while a worried friend kneels beside, a muddy water cup between them",
     "Edit the picture: a pale sick man lies wrapped in an animal hide on the ground, a worried woman in a muddy dress kneels at his side holding a wooden cup of cloudy water, small fires and shelters behind them, grey daylight.")
-pic("w1_snow_filter", ["v5_d1-36"], ["snow"], "Snow holds up a cup of charcoal-filtered water: clearer, not safer",
+pic("w1_snow_filter", ["v5_d1-25"], ["snow"], "Snow holds up a cup of charcoal-filtered water: clearer, not safer",
     "Edit the picture: the pale physician with round spectacles holds up a wooden cup of clear water and shakes his head slowly. Behind him a hide-lined pit and a pile of black charcoal. Remove the bearded man and the tents.")
 pic("w1_wash_hands", ["v5_d1-17"], [], "hands lather with grey soap suds in a wooden trough",
     "Edit the picture: two hands in rolled-up muddy sleeves wash in a wooden trough of water with grey soap suds, close view.")
@@ -268,7 +268,12 @@ doc["story"] = {"events": [], "forbidden_props": ["magnifying glass", "magnifier
 doc["picture_dirs"] = ["../day1_v7/pictures", "pictures"]
 doc["sound_dirs"] = ["../day1_v7/sounds", "sounds"]
 refs_used = sorted({r for p in P.values() for r in p["refs"]})
-doc["library"] = {r: day1["library"].get(r, {"file": f"{r}.png", "engine": "existing", "heroes": [], "shows": []}) for r in refs_used}
+# whose face each reference picture carries (looked at, 2026-10-16: the Day 1 library lists only some of them; d1-36 is Franklin + Einstein)
+FACES = {"v5_d1-02": ["franklin"], "v5_d1-04": ["darwin"], "v5_d1-06": ["newton", "einstein"], "v5_d1-08": ["curie", "tesla"],
+         "v5_d1-14": ["nansen"], "v5_d1-18": ["franklin", "newton"], "v5_d1-20": ["einstein", "newton"], "v5_d1-22": ["wallace"],
+         "v5_d1-25": ["snow", "wallace"], "v5_d1-36": ["franklin", "einstein"]}
+doc["library"] = {r: {**day1["library"].get(r, {"file": f"{r}.png", "engine": "existing", "shows": []}), "heroes": FACES.get(r, [])}
+                  for r in refs_used}
 doc["music"] = [{"track": "clockwork_loop__v1", "from": "<start>", "to": None, "gain_db": -21}]
 doc["segments"] = SEG
 for s in SEG:

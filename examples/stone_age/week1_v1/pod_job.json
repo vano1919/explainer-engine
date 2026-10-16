@@ -263,7 +263,7 @@
       "id": "w1_snow_rule",
       "seed": 908,
       "refs": [
-        "v5_d1-36.png"
+        "v5_d1-25.png"
       ],
       "prompt": "Edit the picture: the pale physician with round spectacles points at the muddy river pool and shakes his head, the bearded man in the field jacket points back at the water, both arguing. No tents or crates.",
       "first_use": "SH032"
@@ -308,7 +308,7 @@
       "id": "w1_snow_filter",
       "seed": 963,
       "refs": [
-        "v5_d1-36.png"
+        "v5_d1-25.png"
       ],
       "prompt": "Edit the picture: the pale physician with round spectacles holds up a wooden cup of clear water and shakes his head slowly. Behind him a hide-lined pit and a pile of black charcoal. Remove the bearded man and the tents.",
       "first_use": "SH037"

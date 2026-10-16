@@ -55,6 +55,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-23 | bubbles inside their shot, sounds inside the video, beds cover the video |
 | PV-24 | the board rules on the timed script: STATE-1/2 story state at the word, HERO-1/2 hero of the line, RHYTHM-1..3 (at most 10 pictures a minute, no shot under 2.5 s, a change at least every 9 s), BUBBLE-1..3, CUT-1 |
 | PV-25 | picture file present (REVIEW in a draft, FAIL with `--final`) |
+| PV-26 | likeness by reference: a picture painted by editing (`pod_ref`) that names a hero needs a reference picture whose library `heroes` lists that hero (the model copies the face from the reference) |
 
 ## Voice direction
 
