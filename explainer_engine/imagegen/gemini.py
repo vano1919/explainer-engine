@@ -56,7 +56,8 @@ def cache_key(prompt: str, model: str, size: str, aspect: str, refs: list[bytes]
 
 class GeminiClient:
     def __init__(self, root: Path, *, key: str | None = None, cap_usd: float, post=None, timeout: float = 180.0,
-                 retries: int = 3):
+                 retries: int = 3, run=None):
+        self.run = run  # core.ledger.Run: charges are reserved there before the call (OR-02)
         self.root = Path(root)
         self.key = key or os.environ.get("GEMINI_API_KEY", "")
         self.cap = cap_usd
@@ -112,7 +113,14 @@ class GeminiClient:
                                        for r in refs]
         cfg = {"aspectRatio": aspect, "imageSize": size}
         body = {"contents": [{"parts": parts}], "generationConfig": {"responseModalities": ["IMAGE"], "imageConfig": cfg}}
-        data = self.post(model, body)
+        if self.run is not None:
+            self.run.reserve("gemini_usd", cost, item=name)
+        try:
+            data = self.post(model, body)
+        except GeminiError:
+            if self.run is not None:
+                self.run.refund("gemini_usd", cost)
+            raise
         for cand in data.get("candidates") or []:
             for part in (cand.get("content") or {}).get("parts") or []:
                 inline = part.get("inlineData") or part.get("inline_data")

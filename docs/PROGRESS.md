@@ -384,3 +384,10 @@ PRODUCTION_RULES feedback log with its guard. 182 tests pass. Day 1 next read: 5
 
 ## 2026-10-16 — Week 1: read, sounds and timing done; pictures wait for the pod
 Read (creator's yes): voice `NOpBlnGInO9m6vDvFkFC`, 6 chunks, 3,625 credits (tags count as characters: the quoted 3,128 was the plain text length, an estimate error), 283-285 s, local Whisper coverage 98.0 %, `voice_check` 2 REVIEW in the last 30 s (to listen). Three sounds (`wood_snap`, `stone_hiss_steam`, `cobble_crack`) 3 x 16.7 = 50 credits. Timing on the real read: 47 shots, 0 FAIL (two RHYTHM FAILs fixed by removing four shots and re-anchoring two; pictures dropped: `w1_log_roll`). 41 REVIEW only because the pictures are not painted. Pictures: pod job `cloud/jobs/stone_age_week1_refs.json` (TMR), refs pushed to the private store `refs/week1_v1`; the pod is NOT started until the creator confirms price and caps.
+
+## 2026-10-16 (night): orchestration, series structure, hard caps
+Creator: Episode 1 is one video (day, week, month, year, 10 years, 100 years, comparison with the real record), science-grounded;
+Gemini allowed for its pictures (new cap US$6); run alone in gated phases. Done: `docs/ORCHESTRATION.md` (OR/SR/SH rules), agent
+`orchestrator`, skills `science-grounding`, `time-jump-episode`, `shorts-for-video`, D-44, feedback rows, PV-27 (periods) and PV-28
+(shorts), `core/ledger.py` (caps in code, reservations, resumable items), Gemini client reserves in the ledger. Tests 190 pass,
+docs_lint 0. RunPod: nothing running, balance US$2.07, no pod tonight. Next: research and claim map, the whole-episode script.

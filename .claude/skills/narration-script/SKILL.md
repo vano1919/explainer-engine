@@ -57,6 +57,9 @@ end of every section pointing at the next problem. None of them sounds like a le
   Keeping it was." is stronger than "Keeping it was the real problem."
 - **Contrast pairs carry melody**: "Not freezing. Damp." / "The hard part isn't making it. It's keeping it."
 
+### Tone of the what-if episodes (creator 2026-10-16)
+- Scientific what-if: about 40 % drama, 20 % humour, 40 % doubt and curious telling. Say what is established and what is argued ("the evidence says", "we can only reason"); doubt is part of the story, not a disclaimer. Each period ends on the question that opens the next (SR-03).
+
 ### Pace
 - **N-03 At most one ellipsis per beat.** Each `...` is a held pause; use it only before the one reveal of that beat.
   For speed use full stops, dashes and fragments.

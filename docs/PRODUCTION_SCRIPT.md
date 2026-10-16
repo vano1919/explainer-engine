@@ -56,6 +56,8 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-24 | the board rules on the timed script: STATE-1/2 story state at the word, HERO-1/2 hero of the line, RHYTHM-1..3 (at most 10 pictures a minute, no shot under 2.5 s, a change at least every 9 s), BUBBLE-1..3, CUT-1 |
 | PV-25 | picture file present (REVIEW in a draft, FAIL with `--final`) |
 | PV-26 | likeness by reference: a picture painted by editing (`pod_ref`) that names a hero needs a reference picture whose library `heroes` lists that hero (the model copies the face from the reference) |
+| PV-27 | time-jump `periods`: every segment names a known period, a period's segments are consecutive, tone shares sum to 1; REVIEW when a period does not end on the question that opens the next (SR-03) |
+| PV-28 | `shorts`: the hook is one question of at most 14 words and the first line; 40-130 words (REVIEW); pictures are the video's own (SH-01..SH-03) |
 
 ## Voice direction
 

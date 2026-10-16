@@ -223,6 +223,44 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     v = doc["voice"]
     if REAL_PERSON_VOICE.search(v["style"]) or NAME_LIKE.search(v["style"]):
         _f(out, "PV-10", "voice", "the voice style must describe the sound, never a real person to imitate or clone")
+    # PV-27 time-jump periods: each period's last spoken line opens the next question; tone mix sums to about 1
+    periods = {p["id"]: p for p in doc.get("periods", [])}
+    if periods:
+        order = []
+        for si, seg in enumerate(doc["segments"]):
+            pid = seg.get("period")
+            if pid is None or pid not in periods:
+                _f(out, "PV-27", seg["id"], f"segment period {pid!r} is not in the document's periods")
+            elif not order or order[-1][0] != pid:
+                order.append([pid, si])
+            if pid in periods:
+                order[-1].append(si) if order and order[-1][0] == pid else None
+        ids = [pid for pid, *_ in order]
+        if len(set(ids)) != len(ids):
+            _f(out, "PV-27", "segments", "a period's segments must be consecutive")
+        for k, (pid, *sis) in enumerate(order[:-1]):
+            last = doc["segments"][max(sis)]["lines"][-1]["text"].strip()
+            if "?" not in last:
+                _f(out, "PV-27", doc["segments"][max(sis)]["id"],
+                   f"period {pid} should end on the question that opens {order[k + 1][0]} (SR-03), got: {last[-60:]!r}", "REVIEW")
+        for pid, p in periods.items():
+            tone = p.get("tone")
+            if tone and abs(sum(tone.values()) - 1.0) > 0.05:
+                _f(out, "PV-27", pid, f"tone shares sum to {sum(tone.values()):.2f}, not 1 (SR-07)")
+    # PV-28 shorts: a question or "did you know" hook in 3 s, whole-picture references, own length
+    pic_ids = set(S.pictures(doc)[0])
+    for sh in doc.get("shorts", []):
+        hook = sh["hook"].strip()
+        if not (hook.endswith("?") and len(hook.split()) <= 14):
+            _f(out, "PV-28", sh["id"], "the hook must be one question of at most 14 words (SH-01)")
+        if sh["lines"][0]["text"].strip() != hook:
+            _f(out, "PV-28", sh["id"], "the first line must be the hook")
+        words = sum(len(l["text"].split()) for l in sh["lines"])
+        if not 40 <= words <= 130:
+            _f(out, "PV-28", sh["id"], f"{words} words: a Short is 40-130 words (about 20-55 s)", "REVIEW")
+        for x in sh["shots"]:
+            if x["picture"] not in pic_ids:
+                _f(out, "PV-28", sh["id"], f"picture {x['picture']!r} is not a picture of the video (SH-03)")
     # PV-12 narration lint on what the voice gets
     for f in narration_lint.lint(S.tts_text(doc)):
         if f["severity"] == "FAIL":

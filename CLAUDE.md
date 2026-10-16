@@ -36,6 +36,8 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 11. Every meaningful change: a focused test + an entry in `docs/PROGRESS.md` (and the decision log if a decision moved).
 12. A material conflict found during implementation: stop at the boundary, report evidence and options, ask.
 
+**Autonomous runs:** `docs/ORCHESTRATION.md` and the `orchestrator` agent (`.claude/agents/orchestrator.md`): gated phases, hard caps in `core/ledger.py`, nothing lost on a stop, nothing public. Skills `science-grounding`, `time-jump-episode`, `shorts-for-video`.
+
 **Production rules (binding for every video, creator 2026-10-16):** start from `docs/PRODUCTION_RULES.md` and run
 `python -m explainer_engine.production_gate <episode folder>` to see the gates (script, test read, shot plan, style bridge,
 sprites, pictures, full read, render, QA). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures
@@ -45,7 +47,7 @@ measured speeds; every paid step estimated and approved first; look at the outpu
 Also binding: crossover episodes of other people's fictional worlds follow docs/RIGHTS_AND_FAIR_USE.md (no third-party
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
 Gemini only for reusable channel-identity assets (the mascot, thumbnail design elements), never for one
-topic's pictures (creator's rule, 2026-10-11). Disclosure is decided per video by the checklist (realistic content
+topic's pictures (creator's rule, 2026-10-11), except where the creator records an exception for an episode (D-44: Episode 1, new spend cap US$6 in `core/ledger.py`). Disclosure is decided per video by the checklist (realistic content
 only, YouTube Help 14328491); channel audience "not made for kids".
 
 ## Layout

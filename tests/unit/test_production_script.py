@@ -322,3 +322,34 @@ def test_pv26_hero_needs_a_reference_with_their_face():
                 sh["picture"]["refs"] = ["v5_d1-36"]
     found = [f for f in V.check_script(bad) if f["rule"] == "PV-26"]
     assert found and "snow" in found[0]["detail"] and found[0]["severity"] == "FAIL"
+
+
+def _periodic() -> dict:
+    d = json.loads((ROOT / "examples" / "stone_age" / "week1_v1" / "production_script.json").read_text(encoding="utf-8"))
+    d["periods"] = [{"id": "week1", "question": "q", "bottleneck": "fire", "tone": {"drama": 0.4, "humour": 0.2, "doubt": 0.4}}]
+    for seg in d["segments"]:
+        seg["period"] = "week1"
+    return d
+
+
+def test_pv27_periods_and_tone():
+    d = _periodic()
+    found = V.check_script(d, None)
+    assert not [f for f in found if f["rule"] == "PV-27" and f["severity"] == "FAIL"]
+    d["periods"][0]["tone"] = {"drama": 0.9, "humour": 0.5}
+    assert [f for f in V.check_script(d, None) if f["rule"] == "PV-27" and f["severity"] == "FAIL"]
+    d = _periodic()
+    d["segments"][0]["period"] = "nope"
+    assert [f for f in V.check_script(d, None) if f["rule"] == "PV-27" and f["severity"] == "FAIL"]
+
+
+def test_pv28_shorts_hook_must_be_a_question_and_use_video_pictures():
+    d = _periodic()
+    pid = next(iter(S.pictures(d)[0]))
+    hook = "Could 100 geniuses light one fire in a day?"
+    d["shorts"] = [{"id": "SH01", "hook": hook, "lines": [{"text": hook}, {"text": " ".join(["Word"] * 60)}],
+                    "shots": [{"at": "Could", "picture": pid, "crop_x": 0.5}]}]
+    assert not [f for f in V.check_script(d, None) if f["rule"] == "PV-28" and f["severity"] == "FAIL"]
+    d["shorts"][0]["hook"] = "They failed."
+    d["shorts"][0]["shots"][0]["picture"] = "missing"
+    assert len([f for f in V.check_script(d, None) if f["rule"] == "PV-28" and f["severity"] == "FAIL"]) >= 2
