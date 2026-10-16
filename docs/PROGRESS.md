@@ -150,3 +150,13 @@ cost (estimate/actual), next step, recovery instructions.
 - Next: the creator listens to the audition packs; then the script for the Stone Age episode (research dossier, claim map,
   script) with approval gate #1.
 
+
+## 2026-10-16 — Scientist caricature cast, test v0 (Stone Age episode)
+Creator confirmed: Anatolia setting, "prime-age" arrival rule, start making instead of verifying first, fully animated snappy
+video with scientist caricatures acting in parallel with the narration. Story draft: `examples/stone_age/story_draft_v0.md`
+(claims still unverified; the creator chose to make first and verify later — the claim map is still required before approval #1).
+Made 8 caricatures on flat green (Newton, Einstein, Curie, Darwin, Tesla, Archimedes, Franklin, Nansen) with the Gemini
+image model, Dirkus' pose as the style guide only: 8 calls ≈ $0.54 at list price (Gemini total ≈ $3.82 / $10). Keyed with
+`key_green`; sheet: `assets/characters/scientists_v0/contact_sheet.png`. Identity is recognisable from description alone
+(no photos used). Open: 20th-century likenesses (Einstein, Curie, Tesla) need the rights note in RIGHTS_AND_FAIR_USE.md;
+more poses per scientist are only made when a scene needs them.
