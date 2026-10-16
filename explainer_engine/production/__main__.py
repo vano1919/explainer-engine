@@ -6,6 +6,7 @@
     python -m explainer_engine.production time     <script.json> <words.json> --out timed.json
     python -m explainer_engine.production assemble <script.json> <timed.json> <narration.wav> --out DIR --pics DIR ... --snd DIR ...
                                                    [--final] [--size 1920x1080] [--audio-only]
+    python -m explainer_engine.production fill     <script.json> [<words.json>]           # re-framed shots for dead holds (RHYTHM-3)
     python -m explainer_engine.production run      <script.json> <narration.wav> <words.json> --out DIR --pics ... --snd ...
 
 ``words`` is free: a local Whisper hears the read (or a Scribe JSON is given), ``scribe_words.align`` puts the times on the
@@ -91,14 +92,16 @@ def cmd_words(doc: dict, audio: list[Path], out: Path, transcript: Path | None) 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="python -m explainer_engine.production", description=__doc__.split("\n")[0])
     sub = p.add_subparsers(dest="cmd", required=True)
-    for name in ("validate", "compile", "words", "time", "assemble", "run"):
+    for name in ("validate", "compile", "words", "time", "assemble", "run", "fill"):
         q = sub.add_parser(name)
         q.add_argument("script")
         if name == "words":
             q.add_argument("audio", nargs="+", help="one read, or the chunk reads in order (tts_chunks.json)")
             q.add_argument("--transcript")
-        if name == "time":
+        if name in ("time",):
             q.add_argument("words")
+        if name == "fill":
+            q.add_argument("words", nargs="?")
         if name == "assemble":
             q.add_argument("timed")
             q.add_argument("narration")
@@ -128,6 +131,17 @@ def main(argv: list[str] | None = None) -> int:
             for f in C.write_outputs(new, Path(a.out)):
                 print("wrote", f)
         return _print(V.check_script(new, pics, sounds.exists), "script after compile")
+    if a.cmd == "fill":
+        from explainer_engine.production import fill_holds as F
+        words_doc = json.loads(Path(a.words).read_text(encoding="utf-8")) if a.words else V.estimated_words(doc)
+        new, ins, stuck = F.fill_holds(doc, words_doc)
+        S.save(new, path)
+        for row in ins:
+            print("added", row["segment"], repr(row["at"]), row["picture"], f"{row['start']:.1f}s")
+        for row in stuck:
+            print("stuck", row)
+        print(f"{len(ins)} re-framed shots added, {len(stuck)} gaps left", file=sys.stderr)
+        return 0
     if a.cmd == "words":
         w = cmd_words(doc, [Path(x) for x in a.audio], Path(a.out), Path(a.transcript) if a.transcript else None)
         _print(w["voice_check"], "voice check")

@@ -1,0 +1,5529 @@
+{
+ "schema": "production_script/1",
+ "episode": {
+  "id": "stone_age_ep1",
+  "title": "100 greatest scientists dropped into the Stone Age",
+  "fps": 30,
+  "size": [
+   1920,
+   1080
+  ],
+  "grade": "prehistory"
+ },
+ "voice": {
+  "provider": "elevenlabs",
+  "model": "eleven_v4",
+  "voice_id": "NOpBlnGInO9m6vDvFkFC",
+  "name": "Grandpa Spuds Oxley",
+  "style": "soft, deep, calm, warm and mature baritone storyteller; unhurried, intimate, gently amused; emotion carried quietly (a held breath, a dry smile), never shouted",
+  "pace_wpm": [
+   140,
+   158
+  ],
+  "default_tags": [
+   "warmly"
+  ],
+  "candidates": [
+   {
+    "voice_id": "HSBWXljo3oivWhybh3YX",
+    "name": "Mr Wellington",
+    "why": "rich older baritone, warmth, gravitas"
+   },
+   {
+    "voice_id": "xkDz8dF9GIt1kG06c9Of",
+    "name": "Ron 2",
+    "why": "deep and soothing"
+   },
+   {
+    "voice_id": "Ovio1nb5Thj5cZeW3MPS",
+    "name": "Alec",
+    "why": "calm, warm, cinematic documentary"
+   },
+   {
+    "voice_id": "8wePOEVMsHVU2qfSJbtC",
+    "name": "Lawrence",
+    "why": "deep, subtly emotional, warm"
+   }
+  ]
+ },
+ "world": {
+  "topic": "100 greatest scientists dropped into the Stone Age",
+  "host": {
+   "era": "prehistory",
+   "place": "limestone uplands of south-east Anatolia",
+   "when": "about 10,000 BCE (12,000 years ago)"
+  },
+  "visitors": [
+   {
+    "era": "industrial_victorian",
+    "people": [
+     "nansen",
+     "franklin",
+     "newton",
+     "einstein",
+     "darwin",
+     "wallace",
+     "snow",
+     "curie",
+     "tesla"
+    ]
+   }
+  ],
+  "light_owner": "host",
+  "day_arc": [
+   {
+    "beat": 1,
+    "light": "storm_dusk",
+    "not_yet": [
+     "fire",
+     "campfire",
+     "flames",
+     "embers"
+    ]
+   },
+   {
+    "beat": 2,
+    "light": "overcast_day",
+    "not_yet": [
+     "fire",
+     "campfire",
+     "flames",
+     "embers"
+    ]
+   },
+   {
+    "beat": 3,
+    "light": "overcast_day",
+    "not_yet": [
+     "fire",
+     "campfire",
+     "flames",
+     "embers"
+    ]
+   },
+   {
+    "beat": 4,
+    "light": "overcast_day",
+    "not_yet": [
+     "fire",
+     "campfire",
+     "flames",
+     "embers"
+    ]
+   },
+   {
+    "beat": 5,
+    "light": "storm_dusk",
+    "not_yet": [
+     "fire",
+     "campfire",
+     "flames",
+     "embers"
+    ]
+   },
+   {
+    "beat": 6,
+    "light": "last_sun"
+   },
+   {
+    "beat": 7,
+    "light": "night_fire"
+   },
+   {
+    "beat": 8,
+    "light": "night_fire"
+   },
+   {
+    "beat": 9,
+    "light": "overcast_day"
+   },
+   {
+    "beat": 10,
+    "light": "overcast_day"
+   },
+   {
+    "beat": 11,
+    "light": "overcast_day"
+   },
+   {
+    "beat": 12,
+    "light": "overcast_day"
+   },
+   {
+    "beat": 13,
+    "light": "last_sun"
+   },
+   {
+    "beat": 14,
+    "light": "night_fire"
+   },
+   {
+    "beat": 15,
+    "light": "overcast_day"
+   },
+   {
+    "beat": 16,
+    "light": "last_sun"
+   },
+   {
+    "beat": 17,
+    "light": "overcast_day"
+   },
+   {
+    "beat": 19,
+    "light": "cold_dawn"
+   },
+   {
+    "beat": 20,
+    "light": "harsh_noon"
+   },
+   {
+    "beat": 22,
+    "light": "last_sun"
+   },
+   {
+    "beat": 23,
+    "light": "storm_dusk"
+   },
+   {
+    "beat": 24,
+    "light": "harsh_noon"
+   },
+   {
+    "beat": 27,
+    "light": "storm_dusk"
+   },
+   {
+    "beat": 28,
+    "light": "last_sun"
+   },
+   {
+    "beat": 30,
+    "light": "harsh_noon"
+   }
+  ]
+ },
+ "look": {
+  "style_refs": [
+   "v5_d1-36",
+   "v5_d1-18",
+   "v5_d1-42"
+  ],
+  "default_engine": "pod_ref"
+ },
+ "cast": {
+  "nansen": {
+   "names": [
+    "nansen",
+    "fridtjof nansen"
+   ],
+   "card": "Fridtjof Nansen: tall rugged Norwegian explorer, strong jaw, fair moustache, weathered face, heavy wool jacket"
+  },
+  "franklin": {
+   "names": [
+    "franklin",
+    "benjamin franklin"
+   ],
+   "card": "Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat"
+  },
+  "newton": {
+   "names": [
+    "newton"
+   ],
+   "card": "Isaac Newton: long wavy shoulder-length wig, long pale stern face, dark coat with a white cravat"
+  },
+  "einstein": {
+   "names": [
+    "einstein"
+   ],
+   "card": "young Albert Einstein of 1905: dark untidy hair, moustache, rumpled suit, round reading glasses",
+   "props": [
+    "reading glasses"
+   ]
+  },
+  "darwin": {
+   "names": [
+    "darwin"
+   ],
+   "card": "Charles Darwin: heavy brow, long white beard, dark frock coat"
+  },
+  "wallace": {
+   "names": [
+    "wallace",
+    "alfred russel wallace"
+   ],
+   "card": "Alfred Russel Wallace: high forehead, full brown beard, field jacket"
+  },
+  "snow": {
+   "names": [
+    "snow",
+    "john snow"
+   ],
+   "card": "John Snow: pale thoughtful clean-shaven physician, dark coat of the 1850s"
+  },
+  "curie": {
+   "names": [
+    "curie",
+    "marie curie"
+   ],
+   "card": "Marie Curie: dark hair in a bun, serious pale face, long dark dress with a high collar"
+  },
+  "tesla": {
+   "names": [
+    "tesla",
+    "nikola tesla"
+   ],
+   "card": "Nikola Tesla: tall thin man, slicked dark hair, narrow moustache, long dark coat"
+  }
+ },
+ "story": {
+  "events": [
+   {
+    "thing": "smoke",
+    "at": "Now. Fire."
+   },
+   {
+    "thing": "windbreak",
+    "at": "So they build"
+   },
+   {
+    "thing": "fire",
+    "at": "and fire"
+   }
+  ],
+  "forbidden_props": [
+   "magnifying glass",
+   "magnifier",
+   "matches",
+   "lighter"
+  ]
+ },
+ "picture_dirs": [
+  "pictures",
+  "../day1_v7/pictures"
+ ],
+ "sound_dirs": [
+  "../day1_v7/sounds",
+  "../week1_v1/sounds",
+  "sounds"
+ ],
+ "library": {
+  "v5_d1-01": {
+   "file": "v5_d1-01.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-05": {
+   "file": "v5_d1-05.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-07": {
+   "file": "v5_d1-07.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-08": {
+   "file": "v5_d1-08.png",
+   "engine": "existing",
+   "heroes": [
+    "curie",
+    "tesla"
+   ],
+   "shows": []
+  },
+  "v5_d1-09": {
+   "file": "v5_d1-09.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-10": {
+   "file": "v5_d1-10.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-11": {
+   "file": "v5_d1-11.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-13": {
+   "file": "v5_d1-13.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-14": {
+   "file": "v5_d1-14.png",
+   "engine": "existing",
+   "heroes": [
+    "nansen"
+   ],
+   "shows": [],
+   "speakers": {
+    "nansen": [
+     0.85,
+     0.37
+    ]
+   }
+  },
+  "v5_d1-16": {
+   "file": "v5_d1-16.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-18": {
+   "file": "v5_d1-18.png",
+   "engine": "existing",
+   "heroes": [
+    "franklin",
+    "newton"
+   ],
+   "shows": [],
+   "speakers": {
+    "franklin": [
+     0.3,
+     0.36
+    ],
+    "newton": [
+     0.68,
+     0.33
+    ]
+   }
+  },
+  "v5_d1-19": {
+   "file": "v5_d1-19.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-21": {
+   "file": "v5_d1-21.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-22": {
+   "file": "v5_d1-22.png",
+   "engine": "existing",
+   "heroes": [
+    "wallace"
+   ],
+   "shows": [],
+   "speakers": {
+    "wallace": [
+     0.28,
+     0.3
+    ]
+   }
+  },
+  "v5_d1-25": {
+   "file": "v5_d1-25.png",
+   "engine": "existing",
+   "heroes": [
+    "snow",
+    "wallace"
+   ],
+   "shows": [],
+   "speakers": {
+    "snow": [
+     0.25,
+     0.22
+    ],
+    "wallace": [
+     0.73,
+     0.23
+    ]
+   }
+  },
+  "v5_d1-27": {
+   "file": "v5_d1-27.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-28": {
+   "file": "v5_d1-28.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "windbreak"
+   ]
+  },
+  "v5_d1-29": {
+   "file": "v5_d1-29.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "windbreak"
+   ]
+  },
+  "v5_d1-30": {
+   "file": "v5_d1-30.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-31": {
+   "file": "v5_d1-31.png",
+   "engine": "existing",
+   "heroes": [
+    "nansen"
+   ],
+   "shows": [
+    "smoke"
+   ]
+  },
+  "v5_d1-32": {
+   "file": "v5_d1-32.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "smoke"
+   ]
+  },
+  "v5_d1-33": {
+   "file": "v5_d1-33.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-34": {
+   "file": "v5_d1-34.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [],
+   "props": [
+    {
+     "thing": "reading glasses",
+     "held_by": "franklin"
+    }
+   ]
+  },
+  "v5_d1-35": {
+   "file": "v5_d1-35.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [],
+   "props": [
+    {
+     "thing": "magnifying glass",
+     "held_by": null
+    }
+   ]
+  },
+  "v5_d1-36": {
+   "file": "v5_d1-36.png",
+   "engine": "existing",
+   "heroes": [
+    "franklin",
+    "einstein"
+   ],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-37": {
+   "file": "v5_d1-37.png",
+   "engine": "existing",
+   "heroes": [
+    "franklin"
+   ],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-38": {
+   "file": "v5_d1-38.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-39": {
+   "file": "v5_d1-39.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "fire"
+   ]
+  },
+  "v5_d1-42": {
+   "file": "v5_d1-42.png",
+   "engine": "existing",
+   "heroes": [
+    "darwin",
+    "wallace"
+   ],
+   "shows": [
+    "fire"
+   ],
+   "speakers": {
+    "darwin": [
+     0.21,
+     0.33
+    ],
+    "wallace": [
+     0.66,
+     0.32
+    ]
+   }
+  },
+  "v5_d1-43": {
+   "file": "v5_d1-43.png",
+   "engine": "existing",
+   "heroes": [
+    "franklin",
+    "nansen"
+   ],
+   "shows": [
+    "fire"
+   ],
+   "speakers": {
+    "franklin": [
+     0.33,
+     0.3
+    ]
+   }
+  },
+  "v5_d1-44": {
+   "file": "v5_d1-44.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": [
+    "fire",
+    "windbreak"
+   ]
+  },
+  "v5_d1-04": {
+   "file": "v5_d1-04.png",
+   "engine": "existing",
+   "heroes": [
+    "darwin"
+   ],
+   "shows": []
+  },
+  "v5_d1-24": {
+   "file": "v5_d1-24.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-03": {
+   "file": "v5_d1-03.png",
+   "engine": "existing",
+   "heroes": [
+    "darwin"
+   ],
+   "shows": []
+  },
+  "v5_d1-17": {
+   "file": "v5_d1-17.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-15": {
+   "file": "v5_d1-15.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-41": {
+   "file": "v5_d1-41.png",
+   "engine": "existing",
+   "heroes": [
+    "franklin",
+    "nansen"
+   ],
+   "shows": []
+  },
+  "v5_d1-02": {
+   "file": "v5_d1-02.png",
+   "engine": "existing",
+   "shows": [],
+   "heroes": [
+    "franklin"
+   ]
+  },
+  "v5_d1-06": {
+   "file": "v5_d1-06.png",
+   "engine": "existing",
+   "shows": [],
+   "heroes": [
+    "newton",
+    "einstein"
+   ]
+  },
+  "v5_d1-12": {
+   "file": "v5_d1-12.png",
+   "engine": "existing",
+   "shows": [],
+   "heroes": []
+  },
+  "v5_d1-20": {
+   "file": "v5_d1-20.png",
+   "engine": "existing",
+   "shows": [],
+   "heroes": [
+    "einstein",
+    "newton"
+   ]
+  },
+  "v5_d1-23": {
+   "file": "v5_d1-23.png",
+   "engine": "existing",
+   "shows": [],
+   "heroes": []
+  },
+  "w1_camp_wide": {
+   "id": "w1_camp_wide",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "the same valley one week on: a row of crude pole-and-hide shelters, small cookfires, tiny figures at work",
+   "edit": "Edit the picture: the same valley one week later under flat grey overcast daylight. Along the slope stands a row of crude shelters of poles and hides, thin smoke from small cookfires, many tiny figures in muddy coats walking and working. No sunset glow.",
+   "prompt": "Edit the picture: the same valley one week later under flat grey overcast daylight. Along the slope stands a row of crude shelters of poles and hides, thin smoke from small cookfires, many tiny figures in muddy coats walking and working. No sunset glow. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_franklin_bark": {
+   "id": "w1_franklin_bark",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-02"
+   ],
+   "heroes": [
+    "franklin"
+   ],
+   "shows": [],
+   "subject": "Franklin crouches with a flat slab of bark and a charcoal stick, tallying, worried",
+   "edit": "Edit the picture: Benjamin Franklin crouches in the camp and counts on a flat slab of bark with a charcoal stick, mouth pursed, brow furrowed. His hands are busy, not on his head. The camp of shelters and small fires behind him.",
+   "prompt": "Edit the picture: Benjamin Franklin crouches in the camp and counts on a flat slab of bark with a charcoal stick, mouth pursed, brow furrowed. His hands are busy, not on his head. The camp of shelters and small fires behind him. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_tally_hand": {
+   "id": "w1_tally_hand",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-23"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a hand marks charcoal tallies on a bark slab: one column full, the other nearly empty",
+   "edit": "Edit the picture: close view of a hand in a muddy sleeve holding a charcoal stick over a flat slab of bark. On the bark two columns of charcoal tally marks: the left column long, the right column only four marks. Grey daylight.",
+   "prompt": "Edit the picture: close view of a hand in a muddy sleeve holding a charcoal stick over a flat slab of bark. On the bark two columns of charcoal tally marks: the left column long, the right column only four marks. Grey daylight. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_newton_flint": {
+   "id": "w1_newton_flint",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-06"
+   ],
+   "heroes": [
+    "newton",
+    "einstein"
+   ],
+   "shows": [],
+   "subject": "Newton holds a flint upside down while Einstein squints at it, both baffled",
+   "edit": "Edit the picture: Isaac Newton holds a lump of flint upside down and turns it, frowning. Einstein beside him leans in and squints at it, baffled, one eyebrow raised. Both sit on the same rocks, no hands on heads.",
+   "prompt": "Edit the picture: Isaac Newton holds a lump of flint upside down and turns it, frowning. Einstein beside him leans in and squints at it, baffled, one eyebrow raised. Both sit on the same rocks, no hands on heads. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_testing_crowd": {
+   "id": "w1_testing_crowd",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-12"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "scientists crouch around little heaps of sticks, stones and grass, each examining one intently",
+   "edit": "Edit the picture: many men and women in muddy 1700s to 1900s coats crouch around small separate heaps of sticks, stones, clay and grass, each one examining a single object very closely, curious rather than scared. No fires in the middle of the picture.",
+   "prompt": "Edit the picture: many men and women in muddy 1700s to 1900s coats crouch around small separate heaps of sticks, stones, clay and grass, each one examining a single object very closely, curious rather than scared. No fires in the middle of the picture. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_darwin_grain": {
+   "id": "w1_darwin_grain",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-04"
+   ],
+   "heroes": [
+    "darwin"
+   ],
+   "shows": [],
+   "subject": "Darwin holds a pinch of wild grain up to the light: scientists test, they do not guess",
+   "edit": "Edit the picture: Charles Darwin holds up a small pinch of wild wheat grains between finger and thumb and studies them closely, curious. Behind him the camp of shelters, small fires, grey overcast sky."
+  },
+  "w1_grain_palms": {
+   "id": "w1_grain_palms",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-17"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "lunch: two cupped palms hold a small heap of golden grain",
+   "edit": "Edit the picture: two hands in muddy sleeves held cupped and open, holding a small heap of golden wheat grains. Blurred golden hillside behind them."
+  },
+  "w1_grain_hill": {
+   "id": "w1_grain_hill",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-21"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "golden hillside of wild einkorn with a long line of tiny bent figures cutting it",
+   "edit": "Edit the picture: a golden hillside covered with wild wheat. A long line of tiny bent figures in muddy coats cuts the grain with small stone sickles, heading across the slope. Grey overcast sky, river far below.",
+   "prompt": "Edit the picture: a golden hillside covered with wild wheat. A long line of tiny bent figures in muddy coats cuts the grain with small stone sickles, heading across the slope. Grey overcast sky, river far below. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_wallace_sickle": {
+   "id": "w1_wallace_sickle",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-22"
+   ],
+   "heroes": [
+    "wallace"
+   ],
+   "shows": [],
+   "subject": "Wallace cuts a fistful of grain with a flint sickle, sweating, pleased then puzzled",
+   "edit": "Edit the picture: Alfred Russel Wallace, bearded in his field jacket, stands in tall golden wild wheat and cuts a fistful with a short flint-bladed sickle, sweating, pleased then puzzled. Remove the waterfall and the stream; a hillside of wheat behind him.",
+   "prompt": "Edit the picture: Alfred Russel Wallace, bearded in his field jacket, stands in tall golden wild wheat and cuts a fistful with a short flint-bladed sickle, sweating, pleased then puzzled. Remove the waterfall and the stream; a hillside of wheat behind him. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_nansen_sum": {
+   "id": "w1_nansen_sum",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-14"
+   ],
+   "heroes": [
+    "nansen"
+   ],
+   "shows": [],
+   "subject": "Nansen scratches big numbers in the dirt with a stick, then stares at them appalled",
+   "edit": "Edit the picture: Fridtjof Nansen crouches and scratches large numbers in the dirt with a stick, then stares at the sum, appalled, mouth open. Remove the pointing arm and the campfire group behind him; grassland and camp in the distance.",
+   "prompt": "Edit the picture: Fridtjof Nansen crouches and scratches large numbers in the dirt with a stick, then stares at the sum, appalled, mouth open. Remove the pointing arm and the campfire group behind him; grassland and camp in the distance. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_quern_hand": {
+   "id": "w1_quern_hand",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-24"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a hand pushes a round grinding stone along a flat saddle quern, a small heap of flour",
+   "edit": "Edit the picture: a hand in a muddy sleeve pushes a rounded stone back and forth over a flat stone slab, a small heap of pale flour beside it, grey daylight, no stick and no puddle."
+  },
+  "w1_grinders_rows": {
+   "id": "w1_grinders_rows",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-19"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "rows of kneeling figures grinding grain at flat stones, a third of the colony",
+   "edit": "Edit the picture: instead of a circle, many kneeling figures in muddy coats sit in long rows grinding grain on flat stones; fine pale dust rises, small cookfires between the rows. Grey overcast sky.",
+   "prompt": "Edit the picture: instead of a circle, many kneeling figures in muddy coats sit in long rows grinding grain on flat stones; fine pale dust rises, small cookfires between the rows. Grey overcast sky. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_grain_ears": {
+   "id": "w1_grain_ears",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-07"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "ripe ears of wild einkorn, a flint sickle blade beside them",
+   "edit": "Edit the picture: remove the round stone; show a bundle of golden wild wheat ears lying in the dirt next to a small flint sickle blade with a sharp edge. Grey daylight."
+  },
+  "w1_limestone_climbers": {
+   "id": "w1_limestone_climbers",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-21"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a limestone outcrop above the valley with white flint nodules in the rock face and two tiny climbers",
+   "edit": "Edit the picture: a steep pale limestone outcrop above the valley, rows of white rounded flint nodules in the rock face, two tiny climbers in muddy coats working at it with sticks. Grey overcast sky."
+  },
+  "w1_darwin_nodule": {
+   "id": "w1_darwin_nodule",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-04"
+   ],
+   "heroes": [
+    "darwin"
+   ],
+   "shows": [],
+   "subject": "Darwin holds a white flint nodule up at a limestone face, delighted",
+   "edit": "Edit the picture: Charles Darwin stands at a pale limestone rock face and holds up a rounded white flint nodule, delighted, eyes bright. Remove the fire and the crowd; rocky hillside behind him.",
+   "prompt": "Edit the picture: Charles Darwin stands at a pale limestone rock face and holds up a rounded white flint nodule, delighted, eyes bright. Remove the fire and the crowd; rocky hillside behind him. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_newton_cut": {
+   "id": "w1_newton_cut",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-06"
+   ],
+   "heroes": [
+    "newton"
+   ],
+   "shows": [],
+   "subject": "Newton sits on a rock sucking his bleeding finger, scowling at a flint flake",
+   "edit": "Edit the picture: Isaac Newton sits alone on a rock, scowling at a sharp flint flake in one hand while he sucks the bleeding finger of the other. Remove the other man; the long grassland behind him."
+  },
+  "w1_knap_floor": {
+   "id": "w1_knap_floor",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-12"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "many scientists knap flint on the ground among heaps of flakes, fingers bandaged",
+   "edit": "Edit the picture: many men and women in muddy coats sit on the ground knapping flint, heaps of sharp flakes, scrapers and crude hand axes beside them, many fingers wrapped in rag bandages. A few small fires.",
+   "prompt": "Edit the picture: many men and women in muddy coats sit on the ground knapping flint, heaps of sharp flakes, scrapers and crude hand axes beside them, many fingers wrapped in rag bandages. A few small fires. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_axe_head": {
+   "id": "w1_axe_head",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-07"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a flint axe head lashed to a wooden handle, resin glistening",
+   "edit": "Edit the picture: a flint axe head lashed to a wooden handle with thin dark strips of sinew, dark glossy resin around the joint, lying on the ground in grey light. Remove the wheat and the round stone.",
+   "prompt": "Edit the picture: a flint axe head lashed to a wooden handle with thin dark strips of sinew, dark glossy resin around the joint, lying on the ground in grey light. Remove the wheat and the round stone. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_einstein_resin": {
+   "id": "w1_einstein_resin",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-20"
+   ],
+   "heroes": [
+    "einstein"
+   ],
+   "shows": [],
+   "subject": "Einstein smears pine resin mixed with charcoal on a stone head, tongue out, concentrating",
+   "edit": "Edit the picture: young Einstein sits and smears a black sticky paste of pine resin and charcoal onto a flint axe head with a small stick, tongue poking out in concentration. Remove the other man.",
+   "prompt": "Edit the picture: young Einstein sits and smears a black sticky paste of pine resin and charcoal onto a flint axe head with a small stick, tongue poking out in concentration. Remove the other man. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_sinew_hands": {
+   "id": "w1_sinew_hands",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-17"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "hands pull wet sinew tight around the joint of a stone axe head and a handle",
+   "edit": "Edit the picture: two hands in muddy sleeves pull a wet strip of sinew tight around the joint of a stone axe head and a wooden handle, close view."
+  },
+  "w1_log_yard": {
+   "id": "w1_log_yard",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-21"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a log yard at the edge of camp: rollers, logs, a sledge, small teams",
+   "edit": "Edit the picture: a log yard at the edge of the camp, long poles and logs lying on round rollers, a simple wooden sledge, small teams of figures in muddy coats shifting loads. Grey overcast sky."
+  },
+  "w1_franklin_newton_lever": {
+   "id": "w1_franklin_newton_lever",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-18"
+   ],
+   "heroes": [
+    "franklin",
+    "newton"
+   ],
+   "shows": [],
+   "subject": "Franklin and Newton test a long lever under a big stone",
+   "edit": "Edit the picture: Benjamin Franklin and Isaac Newton heave on a long wooden pole used as a lever under a large stone, Franklin red in the face, Newton calm and pointing at the pivot. No fire.",
+   "prompt": "Edit the picture: Benjamin Franklin and Isaac Newton heave on a long wooden pole used as a lever under a large stone, Franklin red in the face, Newton calm and pointing at the pivot. No fire. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_tesla_sketch": {
+   "id": "w1_tesla_sketch",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-08"
+   ],
+   "heroes": [
+    "curie",
+    "tesla"
+   ],
+   "shows": [],
+   "subject": "Tesla sketches a grand machine in the dirt while Curie looks doubtful",
+   "edit": "Edit the picture: the tall dark-haired man with a moustache crouches and sketches a huge machine in the dirt with a stick, eager and proud, while the woman in the dark dress stands over it with her arms folded, doubtful.",
+   "prompt": "Edit the picture: the tall dark-haired man with a moustache crouches and sketches a huge machine in the dirt with a stick, eager and proud, while the woman in the dark dress stands over it with her arms folded, doubtful. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_peg_hand": {
+   "id": "w1_peg_hand",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-17"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a hand holds a small wooden peg, the only axle they can make",
+   "edit": "Edit the picture: one hand in a muddy sleeve holds up a small roughly carved wooden peg; the other hand is out of frame. Blurred camp behind."
+  },
+  "w1_haul_pull": {
+   "id": "w1_haul_pull",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-21"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "eight people haul on a rope over a wooden pulley lifting a log",
+   "edit": "Edit the picture: eight people in muddy coats haul on a rope that runs over a wooden pulley hanging from a tripod of poles, lifting a big log, everyone straining. Grey sky.",
+   "prompt": "Edit the picture: eight people in muddy coats haul on a rope that runs over a wooden pulley hanging from a tripod of poles, lifting a big log, everyone straining. Grey sky. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_pin_snap": {
+   "id": "w1_pin_snap",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-24"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a wooden pin snaps in a pulley block",
+   "edit": "Edit the picture: close view of a wooden pulley block with a grooved wheel where the wooden pin has snapped in two, splinters flying, a taut rope whipping away. Grey daylight."
+  },
+  "w1_franklin_dust": {
+   "id": "w1_franklin_dust",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-02"
+   ],
+   "heroes": [
+    "franklin"
+   ],
+   "shows": [],
+   "subject": "Franklin lies on his back in the dust, spectacles crooked, a log just past his feet",
+   "edit": "Edit the picture: Benjamin Franklin lies flat on his back in the dust, spectacles crooked on his nose, a thick log lying right next to his feet, dazed. Camp behind him.",
+   "prompt": "Edit the picture: Benjamin Franklin lies flat on his back in the dust, spectacles crooked on his nose, a thick log lying right next to his feet, dazed. Camp behind him. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_sick_figure": {
+   "id": "w1_sick_figure",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-12"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a sick figure lies wrapped in hide while a worried friend kneels beside, a muddy water cup between them",
+   "edit": "Edit the picture: a pale sick man lies wrapped in an animal hide on the ground, a worried woman in a muddy dress kneels at his side holding a wooden cup of cloudy water, small fires and shelters behind them, grey daylight."
+  },
+  "w1_snow_rule": {
+   "id": "w1_snow_rule",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-25"
+   ],
+   "heroes": [
+    "snow",
+    "wallace"
+   ],
+   "shows": [],
+   "subject": "Snow points at a muddy river pool: boil it; thirsty Wallace objects",
+   "edit": "Edit the picture: the pale physician with round spectacles points at the muddy river pool and shakes his head, the bearded man in the field jacket points back at the water, both arguing. No tents or crates.",
+   "prompt": "Edit the picture: the pale physician with round spectacles points at the muddy river pool and shakes his head, the bearded man in the field jacket points back at the water, both arguing. No tents or crates. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_pit_steam": {
+   "id": "w1_pit_steam",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-12"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a hide-lined pit in the ground with steam rising, tiny figures round it",
+   "edit": "Edit the picture: a round pit in the ground lined with animal hide, filled with water, thick steam rising from it, tiny figures in muddy coats crouch round it with wooden tongs. A small fire at the side.",
+   "prompt": "Edit the picture: a round pit in the ground lined with animal hide, filled with water, thick steam rising from it, tiny figures in muddy coats crouch round it with wooden tongs. A small fire at the side. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_stone_steam": {
+   "id": "w1_stone_steam",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-24"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a glowing stone dropped into water, a burst of steam",
+   "edit": "Edit the picture: a glowing red-hot stone held in wooden tongs drops into water in a hide-lined pit, a big burst of white steam, no stick."
+  },
+  "w1_cobble_crack": {
+   "id": "w1_cobble_crack",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-07"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a river cobble cracks apart in the fire, fragments flying",
+   "edit": "Edit the picture: a round river cobble lies in glowing embers and bursts apart, sharp fragments flying outward, sparks, grey daylight, remove the wheat.",
+   "prompt": "Edit the picture: a round river cobble lies in glowing embers and bursts apart, sharp fragments flying outward, sparks, grey daylight, remove the wheat. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_franklin_cuts": {
+   "id": "w1_franklin_cuts",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-02"
+   ],
+   "heroes": [
+    "franklin"
+   ],
+   "shows": [],
+   "subject": "Franklin picks stone splinters out of his coat and cheek, wincing",
+   "edit": "Edit the picture: Benjamin Franklin sits and picks tiny stone splinters out of his coat sleeve, small cuts on his cheek, wincing, one hand up near his face. Camp behind him.",
+   "prompt": "Edit the picture: Benjamin Franklin sits and picks tiny stone splinters out of his coat sleeve, small cuts on his cheek, wincing, one hand up near his face. Camp behind him. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_snow_filter": {
+   "id": "w1_snow_filter",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-25"
+   ],
+   "heroes": [
+    "snow"
+   ],
+   "shows": [],
+   "subject": "Snow holds up a cup of charcoal-filtered water: clearer, not safer",
+   "edit": "Edit the picture: the pale physician with round spectacles holds up a wooden cup of clear water and shakes his head slowly. Behind him a hide-lined pit and a pile of black charcoal. Remove the bearded man and the tents."
+  },
+  "w1_curie_soap": {
+   "id": "w1_curie_soap",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-08"
+   ],
+   "heroes": [
+    "curie"
+   ],
+   "shows": [],
+   "subject": "Curie stirs a pot of fat and wood-ash lye, pinching her nose",
+   "edit": "Edit the picture: the woman in the dark dress stirs a bubbling pit of animal fat and grey wood ash with a long stick, pinching her nose, grimacing. Remove the man.",
+   "prompt": "Edit the picture: the woman in the dark dress stirs a bubbling pit of animal fat and grey wood ash with a long stick, pinching her nose, grimacing. Remove the man. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_wash_hands": {
+   "id": "w1_wash_hands",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-17"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "hands lather with grey soap suds in a wooden trough",
+   "edit": "Edit the picture: two hands in rolled-up muddy sleeves wash in a wooden trough of water with grey soap suds, close view."
+  },
+  "w1_valley_dusk": {
+   "id": "w1_valley_dusk",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "the valley at last light, the camp small in the distance, a cold wind coming",
+   "edit": "Edit the picture: the same valley at last light seen from the hill, the camp tiny and orange-lit in the distance, grey clouds rolling in from the north, no figures in the foreground.",
+   "prompt": "Edit the picture: the same valley at last light seen from the hill, the camp tiny and orange-lit in the distance, grey clouds rolling in from the north, no figures in the foreground. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_camp_night": {
+   "id": "w1_camp_night",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-19"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "the camp at night: shelters in a row, small fires, a few figures sit up",
+   "edit": "Edit the picture: the camp at night under a starry sky, a row of crude shelters of poles and hides, small fires, a few figures sitting up awake. Remove the stone and the circle.",
+   "prompt": "Edit the picture: the camp at night under a starry sky, a row of crude shelters of poles and hides, small fires, a few figures sitting up awake. Remove the stone and the circle. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_wrist_hand": {
+   "id": "w1_wrist_hand",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-17"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a bandaged wrist rests on a knee in the firelight",
+   "edit": "Edit the picture: a single hand with a wrist wrapped in a rag bandage resting on a knee in warm firelight, close view."
+  },
+  "w1_nansen_watch": {
+   "id": "w1_nansen_watch",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-14"
+   ],
+   "heroes": [
+    "nansen"
+   ],
+   "shows": [],
+   "subject": "Nansen stands watch looking toward the dark valley, worried",
+   "edit": "Edit the picture: Fridtjof Nansen stands at the edge of the camp at dusk, arms crossed, looking out toward the dark valley, worried. Remove the pointing and the group behind him; a row of shelters far behind.",
+   "prompt": "Edit the picture: Fridtjof Nansen stands at the edge of the camp at dusk, arms crossed, looking out toward the dark valley, worried. Remove the pointing and the group behind him; a row of shelters far behind. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_frost_grass": {
+   "id": "w1_frost_grass",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-07"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a winter is coming: the first frost on blades of grass, a thin white rim on everything",
+   "edit": "Edit the picture: remove the wheat and the stones; a close view of dry grass blades at dawn, each rimmed with white frost, cold blue light, the first hard frost.",
+   "prompt": "Edit the picture: remove the wheat and the stones; a close view of dry grass blades at dawn, each rimmed with white frost, cold blue light, the first hard frost. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "w1_log_roll": {
+   "id": "w1_log_roll",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-10"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a log rolls loose down the slope as people scatter",
+   "edit": "Edit the picture: a big log rolls loose down the grassy slope and a crowd of scientists in muddy 1700s to 1900s coats scatter and dive out of its way. Grey overcast sky.",
+   "prompt": "Edit the picture: a big log rolls loose down the grassy slope and a crowd of scientists in muddy 1700s to 1900s coats scatter and dive out of its way. Grey overcast sky. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_valley_kiln": {
+   "id": "m1_valley_kiln",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "the valley a month on: the camp has grown, a pit kiln smokes at the river bank",
+   "edit": "Edit the picture: the same valley a month later under flat grey overcast daylight. Rows of crude shelters of poles and hides, tiny figures at work, and at the river bank a low mound with a thin plume of smoke, a pit kiln. No sunset glow.",
+   "prompt": "Edit the picture: the same valley a month later under flat grey overcast daylight. Rows of crude shelters of poles and hides, tiny figures at work, and at the river bank a low mound with a thin plume of smoke, a pit kiln. No sunset glow. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_curie_clay": {
+   "id": "m1_curie_clay",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-08",
+    "v5_d1-18"
+   ],
+   "heroes": [
+    "curie"
+   ],
+   "shows": [],
+   "subject": "Curie kneels at the river bank digging grey clay with her hands, mud to the elbows, intent",
+   "edit": "Edit the picture: the woman in the dark high-collared dress kneels on a river bank digging grey clay out of the bank with her bare hands, mud to her elbows, intent and pleased. Remove the man. Grey overcast daylight.",
+   "prompt": "Edit the picture: the woman in the dark high-collared dress kneels on a river bank digging grey clay out of the bank with her bare hands, mud to her elbows, intent and pleased. Remove the man. Grey overcast daylight. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_straw_clay": {
+   "id": "m1_straw_clay",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-17"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "hands knead grey clay mixed with chopped straw and sand on a flat stone",
+   "edit": "Edit the picture: two hands in muddy sleeves knead a lump of grey clay mixed with chopped straw and sand on a flat stone, close view, grey daylight.",
+   "prompt": "Edit the picture: two hands in muddy sleeves knead a lump of grey clay mixed with chopped straw and sand on a flat stone, close view, grey daylight. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_pots_cracked": {
+   "id": "m1_pots_cracked",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-07"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a row of clay pots on the ground, every one split by cracks, shards beside them",
+   "edit": "Edit the picture: remove the wheat and the round stone; a row of crude clay pots stands on flat ground and every one is split by long cracks, broken shards beside them, grey overcast daylight.",
+   "prompt": "Edit the picture: remove the wheat and the round stone; a row of crude clay pots stands on flat ground and every one is split by long cracks, broken shards beside them, grey overcast daylight. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_newton_pot": {
+   "id": "m1_newton_pot",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-06",
+    "v5_d1-36"
+   ],
+   "heroes": [
+    "newton"
+   ],
+   "shows": [],
+   "subject": "Newton measures a clay pot with a notched stick, frowning, Franklin shaking his head behind",
+   "edit": "Edit the picture: Isaac Newton in his dark coat and long wig frowns and measures a crude clay pot with a notched stick, absorbed. Remove the other man. Grey overcast daylight.",
+   "prompt": "Edit the picture: Isaac Newton in his dark coat and long wig frowns and measures a crude clay pot with a notched stick, absorbed. Remove the other man. Grey overcast daylight. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_pit_kiln": {
+   "id": "m1_pit_kiln",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-21",
+    "v5_d1-19"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a pit kiln: clay pots buried under glowing embers and turf, tiny figures standing round with wooden tongs",
+   "edit": "Edit the picture: a wide pit in the ground filled with clay pots under glowing orange embers and turf, thin smoke rising, tiny figures in muddy coats stand round it with long wooden poles. Grey overcast sky, cold light, the glow is small and low.",
+   "prompt": "Edit the picture: a wide pit in the ground filled with clay pots under glowing orange embers and turf, thin smoke rising, tiny figures in muddy coats stand round it with long wooden poles. Grey overcast sky, cold light, the glow is small and low. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_soup": {
+   "id": "m1_soup",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-25",
+    "v5_d1-36"
+   ],
+   "heroes": [
+    "snow"
+   ],
+   "shows": [],
+   "subject": "Snow ladles steaming soup from the first clay pot into a wooden bowl, moved almost to tears",
+   "edit": "Edit the picture: the pale physician with round spectacles ladles steaming soup out of a clay pot into a wooden bowl held by a grateful man, moved, eyes shining. Steam rising. Remove the bearded man.",
+   "prompt": "Edit the picture: the pale physician with round spectacles ladles steaming soup out of a clay pot into a wooden bowl held by a grateful man, moved, eyes shining. Steam rising. Remove the bearded man. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_smoke_ridge": {
+   "id": "m1_smoke_ridge",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a thin column of smoke rises from a distant ridge, far from the camp",
+   "edit": "Edit the picture: the same valley at last light, the camp small in the foreground, and on the far ridge a single thin column of smoke rising that is not theirs. Low last sun, long amber shadows.",
+   "prompt": "Edit the picture: the same valley at last light, the camp small in the foreground, and on the far ridge a single thin column of smoke rising that is not theirs. Low last sun, long amber shadows. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_hunters_ridge": {
+   "id": "m1_hunters_ridge",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-18",
+    "v5_d1-01"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "local hunter-gatherers of about 10,000 BCE: lean weathered adults in hide cloaks and fur, dark hair tied back, bone and shell ornaments, flint-tipped spears stand on the ridge and look down at the camp, wary and curious",
+   "edit": "Edit the picture: a group of six local hunter-gatherers of about 10,000 BCE: lean weathered adults in hide cloaks and fur, dark hair tied back, bone and shell ornaments, flint-tipped spears, stands on a rocky ridge and looks down at the valley camp far below, wary and curious. Low last sun, long amber shadows. Adult proportions.",
+   "prompt": "Edit the picture: a group of six local hunter-gatherers of about 10,000 BCE: lean weathered adults in hide cloaks and fur, dark hair tied back, bone and shell ornaments, flint-tipped spears, stands on a rocky ridge and looks down at the valley camp far below, wary and curious. Low last sun, long amber shadows. Adult proportions. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_franklin_offer": {
+   "id": "m1_franklin_offer",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-41",
+    "v5_d1-18"
+   ],
+   "heroes": [
+    "franklin"
+   ],
+   "shows": [],
+   "subject": "Franklin holds out a clay pot to wary local hunters with a hopeful smile",
+   "edit": "Edit the picture: Benjamin Franklin in his brown frock coat holds out a clay pot with both hands and a hopeful smile to three local hunter-gatherers of about 10,000 BCE: lean weathered adults in hide cloaks and fur, dark hair tied back, bone and shell ornaments, flint-tipped spears, who stand at a distance, wary. Low last sun, long amber shadows. Remove the other man.",
+   "prompt": "Edit the picture: Benjamin Franklin in his brown frock coat holds out a clay pot with both hands and a hopeful smile to three local hunter-gatherers of about 10,000 BCE: lean weathered adults in hide cloaks and fur, dark hair tied back, bone and shell ornaments, flint-tipped spears, who stand at a distance, wary. Low last sun, long amber shadows. Remove the other man. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_hunter_knock": {
+   "id": "m1_hunter_knock",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-14",
+    "v5_d1-18"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a local hunter knocks on the pot with one knuckle and listens, a half smile",
+   "edit": "Edit the picture: a tall local hunter-gatherers of about 10,000 BCE: lean weathered adults in hide cloaks and fur, dark hair tied back, bone and shell ornaments, flint-tipped spears, holds a clay pot up by his ear and knocks on it with one knuckle, listening, a half smile. Franklin's frock-coated shoulder at the edge of the picture. Low last sun.",
+   "prompt": "Edit the picture: a tall local hunter-gatherers of about 10,000 BCE: lean weathered adults in hide cloaks and fur, dark hair tied back, bone and shell ornaments, flint-tipped spears, holds a clay pot up by his ear and knocks on it with one knuckle, listening, a half smile. Franklin's frock-coated shoulder at the edge of the picture. Low last sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "m1_first_snow": {
+   "id": "m1_first_snow",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "the first snow falls on the camp's shelters and the pit kiln, smoke rising",
+   "edit": "Edit the picture: the same valley at dusk with the first snow falling, a thin white layer on the shelters and the pit kiln, smoke rising, cold blue light, no people in the foreground.",
+   "prompt": "Edit the picture: the same valley at dusk with the first snow falling, a thin white layer on the shelters and the pit kiln, smoke rising, cold blue light, no people in the foreground. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_cairns": {
+   "id": "y1_cairns",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01",
+    "v5_d1-18"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "spring meadow: five small stone cairns and a few figures standing with bowed heads",
+   "edit": "Edit the picture: a green spring meadow at cold dawn with five small stone cairns in a row and a few figures in muddy coats standing round them with bowed heads, melting snow patches, thin mist.",
+   "prompt": "Edit the picture: a green spring meadow at cold dawn with five small stone cairns in a row and a few figures in muddy coats standing round them with bowed heads, melting snow patches, thin mist. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_snow_ledger": {
+   "id": "y1_snow_ledger",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-25",
+    "v5_d1-36"
+   ],
+   "heroes": [
+    "snow"
+   ],
+   "shows": [],
+   "subject": "Snow writes in a charcoal ledger on a bark slab, grim and exact",
+   "edit": "Edit the picture: the pale physician with round spectacles sits and writes small columns on a slab of bark with a charcoal stick, grim and exact. Remove the bearded man. Cold dawn light.",
+   "prompt": "Edit the picture: the pale physician with round spectacles sits and writes small columns on a slab of bark with a charcoal stick, grim and exact. Remove the bearded man. Cold dawn light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_darwin_sow": {
+   "id": "y1_darwin_sow",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-03",
+    "v5_d1-42"
+   ],
+   "heroes": [
+    "darwin"
+   ],
+   "shows": [],
+   "subject": "Darwin scatters seed on cleared ground, bearded and hopeful",
+   "edit": "Edit the picture: Charles Darwin, white-bearded in his dark frock coat, walks across a patch of cleared brown ground and scatters seed from his hand, hopeful. Remove the other man. Harsh noon sun, short shadows.",
+   "prompt": "Edit the picture: Charles Darwin, white-bearded in his dark frock coat, walks across a patch of cleared brown ground and scatters seed from his hand, hopeful. Remove the other man. Harsh noon sun, short shadows. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_hill_bare": {
+   "id": "y1_hill_bare",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-21"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a golden hillside with a big bare stripped patch where the colony has been cutting",
+   "edit": "Edit the picture: a golden hillside of wild wheat with a huge bare stripped patch of brown stubble in the middle where the colony has been cutting, tiny figures at the edge. Harsh noon sun.",
+   "prompt": "Edit the picture: a golden hillside of wild wheat with a huge bare stripped patch of brown stubble in the middle where the colony has been cutting, tiny figures at the edge. Harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_field_edge": {
+   "id": "y1_field_edge",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-19",
+    "v5_d1-21"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a small neat field of green shoots beside the shelters",
+   "edit": "Edit the picture: beside a row of crude shelters lies a small neat field of bright green wheat shoots in rows, a few figures weeding it. Harsh noon sun, short shadows.",
+   "prompt": "Edit the picture: beside a row of crude shelters lies a small neat field of bright green wheat shoots in rows, a few figures weeding it. Harsh noon sun, short shadows. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_ears_shatter": {
+   "id": "y1_ears_shatter",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-07"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a ripe wheat ear bursts and its grains fall to the ground",
+   "edit": "Edit the picture: remove the stone; one ripe golden wheat ear in close view bursts apart and its grains scatter and fall to the ground, harsh noon sun.",
+   "prompt": "Edit the picture: remove the stone; one ripe golden wheat ear in close view bursts apart and its grains scatter and fall to the ground, harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_darwin_select": {
+   "id": "y1_darwin_select",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-03",
+    "v5_d1-42"
+   ],
+   "heroes": [
+    "darwin"
+   ],
+   "shows": [],
+   "subject": "Darwin holds up a single ear that has held on to its grain, delighted, and drops it in a sack",
+   "edit": "Edit the picture: Charles Darwin kneels in a wheat field and holds up one ear of wheat that has held on to all its grain, delighted, while an open sack waits beside him. Remove the other man. Harsh noon sun.",
+   "prompt": "Edit the picture: Charles Darwin kneels in a wheat field and holds up one ear of wheat that has held on to all its grain, delighted, while an open sack waits beside him. Remove the other man. Harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_baby": {
+   "id": "y1_baby",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-08",
+    "v5_d1-18"
+   ],
+   "heroes": [
+    "curie"
+   ],
+   "shows": [],
+   "subject": "Curie holds a newborn baby wrapped in hide, tender and astonished",
+   "edit": "Edit the picture: the woman in the dark high-collared dress holds a newborn baby wrapped in a soft hide, tender and astonished, the camp behind her in warm low light. Remove the man.",
+   "prompt": "Edit the picture: the woman in the dark high-collared dress holds a newborn baby wrapped in a soft hide, tender and astonished, the camp behind her in warm low light. Remove the man. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_school": {
+   "id": "y1_school",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-19",
+    "v5_d1-36"
+   ],
+   "heroes": [
+    "franklin"
+   ],
+   "shows": [],
+   "subject": "an open-air school: Franklin teaches a ring of small children, writing with a stick in the dust",
+   "edit": "Edit the picture: Benjamin Franklin in his brown frock coat kneels and writes numbers in the dust with a stick, a ring of small children in hide wraps watching, a few scientists also sitting in the ring. Harsh noon sun. Remove the other man.",
+   "prompt": "Edit the picture: Benjamin Franklin in his brown frock coat kneels and writes numbers in the dust with a stick, a ring of small children in hide wraps watching, a few scientists also sitting in the ring. Harsh noon sun. Remove the other man. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_kiln_tablets": {
+   "id": "y1_kiln_tablets",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-21",
+    "v5_d1-19"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a kiln glowing with flat clay tablets stacked inside, marked with tidy rows of signs",
+   "edit": "Edit the picture: a low clay kiln with its door open, glowing orange inside, and rows of small flat clay tablets stacked inside, each pressed with tidy rows of signs; two figures in muddy coats watch. Cold dusk light.",
+   "prompt": "Edit the picture: a low clay kiln with its door open, glowing orange inside, and rows of small flat clay tablets stacked inside, each pressed with tidy rows of signs; two figures in muddy coats watch. Cold dusk light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y1_library": {
+   "id": "y1_library",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-24"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a shelf of baked clay tablets, the colony's first library",
+   "edit": "Edit the picture: close view of a rough stone shelf holding rows of baked clay tablets with tidy marks, a little dust, soft warm light. Remove the stick and the puddle.",
+   "prompt": "Edit the picture: close view of a rough stone shelf holding rows of baked clay tablets with tidy marks, a little dust, soft warm light. Remove the stick and the puddle. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y10_children": {
+   "id": "y10_children",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-19",
+    "v5_d1-36"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "children aged ten sit reading clay tablets in a row, solemn and a little smug",
+   "edit": "Edit the picture: a row of ten-year-old children in hide tunics sit reading small clay tablets, solemn and a little smug, a few scientists in muddy coats laughing in the background. Harsh noon sun.",
+   "prompt": "Edit the picture: a row of ten-year-old children in hide tunics sit reading small clay tablets, solemn and a little smug, a few scientists in muddy coats laughing in the background. Harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y10_malachite": {
+   "id": "y10_malachite",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-17"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a hand holds a green lump of malachite ore, a heap of crushed green rock beside it",
+   "edit": "Edit the picture: a hand in a muddy sleeve holds up a bright green lump of malachite ore, a heap of crushed green rock beside it on a flat stone, harsh noon sun, close view.",
+   "prompt": "Edit the picture: a hand in a muddy sleeve holds up a bright green lump of malachite ore, a heap of crushed green rock beside it on a flat stone, harsh noon sun, close view. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y10_furnace": {
+   "id": "y10_furnace",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-21",
+    "v5_d1-19"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a clay furnace with a hide bellows pumped by two figures, white-hot glow at the mouth",
+   "edit": "Edit the picture: a squat clay furnace with a hide bellows pumped by two figures in muddy coats, a pipe leading air in, white-hot glow at the furnace mouth, sparks, charcoal heaps, cold dusk light.",
+   "prompt": "Edit the picture: a squat clay furnace with a hide bellows pumped by two figures in muddy coats, a pipe leading air in, white-hot glow at the furnace mouth, sparks, charcoal heaps, cold dusk light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y10_bead": {
+   "id": "y10_bead",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-24"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a small bright bead of copper in a pair of wooden tongs, held up",
+   "edit": "Edit the picture: wooden tongs hold up a small bright red-gold bead of copper beside a pile of dark slag, close view, warm light. Remove the stick and the puddle.",
+   "prompt": "Edit the picture: wooden tongs hold up a small bright red-gold bead of copper beside a pile of dark slag, close view, warm light. Remove the stick and the puddle. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y10_tesla_curie": {
+   "id": "y10_tesla_curie",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-08",
+    "v5_d1-18"
+   ],
+   "heroes": [
+    "curie",
+    "tesla"
+   ],
+   "shows": [],
+   "subject": "Tesla asks eagerly about electricity, Curie answers with a tired look",
+   "edit": "Edit the picture: the tall dark-haired man with a narrow moustache points eagerly at a coil of copper wire in his hand, the woman in the dark dress looks at him with a tired, patient stare, arms folded. Harsh noon sun.",
+   "prompt": "Edit the picture: the tall dark-haired man with a narrow moustache points eagerly at a coil of copper wire in his hand, the woman in the dark dress looks at him with a tired, patient stare, arms folded. Harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y10_axe_bend": {
+   "id": "y10_axe_bend",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-07"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a copper axe head bent like a banana next to a chipped stone axe",
+   "edit": "Edit the picture: remove the wheat and the round stone; a copper axe head bent like a banana lies next to a sharp chipped stone axe on bare ground, harsh noon sun.",
+   "prompt": "Edit the picture: remove the wheat and the round stone; a copper axe head bent like a banana lies next to a sharp chipped stone axe on bare ground, harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y10_nansen_map": {
+   "id": "y10_nansen_map",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-14",
+    "v5_d1-31"
+   ],
+   "heroes": [
+    "nansen"
+   ],
+   "shows": [],
+   "subject": "Nansen studies a scratched map of hills, scowling at a tiny empty mark where tin should be",
+   "edit": "Edit the picture: Fridtjof Nansen in his heavy wool jacket crouches over a map scratched into the dirt with hills and rivers, scowling and tapping an empty spot with his stick. Remove the pointing and the others. Harsh noon sun.",
+   "prompt": "Edit the picture: Fridtjof Nansen in his heavy wool jacket crouches over a map scratched into the dirt with hills and rivers, scowling and tapping an empty spot with his stick. Remove the pointing and the others. Harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y10_iron_hills": {
+   "id": "y10_iron_hills",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-21"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "rust-red and yellow hills of iron ore above the valley",
+   "edit": "Edit the picture: a hillside of rust-red and yellow rock above the valley, bare and striped, tiny figures with baskets collecting ore, harsh noon sun.",
+   "prompt": "Edit the picture: a hillside of rust-red and yellow rock above the valley, bare and striped, tiny figures with baskets collecting ore, harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y10_charcoal": {
+   "id": "y10_charcoal",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-19",
+    "v5_d1-21"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "giant stacks of charcoal and a hillside stripped of trees around a bloomery furnace",
+   "edit": "Edit the picture: a smoking clay bloomery furnace surrounded by giant stacks of dark charcoal, and behind it a hillside stripped of its trees, stumps everywhere, tiny figures carrying wood, cold dusk light.",
+   "prompt": "Edit the picture: a smoking clay bloomery furnace surrounded by giant stacks of dark charcoal, and behind it a hillside stripped of its trees, stumps everywhere, tiny figures carrying wood, cold dusk light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y100_village": {
+   "id": "y100_village",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01",
+    "v5_d1-19"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "the valley a hundred years on: a village of mud-brick houses, fields, smoke from many kilns",
+   "edit": "Edit the picture: the same valley a hundred years later in warm low light. A village of rounded mud-brick houses climbs the slope, green fields around it, thin smoke from many kilns, many people at work. Last sun.",
+   "prompt": "Edit the picture: the same valley a hundred years later in warm low light. A village of rounded mud-brick houses climbs the slope, green fields around it, thin smoke from many kilns, many people at work. Last sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y100_hill": {
+   "id": "y100_hill",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01",
+    "v5_d1-18"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a quiet hill with nine tall stone pillars carved with simple figures, villagers laying wheat sheaves",
+   "edit": "Edit the picture: a quiet green hill with a ring of nine tall stone pillars carved with simple figures, villagers in simple wool tunics laying wheat sheaves at their feet, last sun, long amber shadows.",
+   "prompt": "Edit the picture: a quiet green hill with a ring of nine tall stone pillars carved with simple figures, villagers in simple wool tunics laying wheat sheaves at their feet, last sun, long amber shadows. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y100_wheat": {
+   "id": "y100_wheat",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-21"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "tall golden wheat in rows whose ears stand full, women and children harvesting with sickles",
+   "edit": "Edit the picture: tall golden wheat in neat rows whose ears stand full and heavy, women and children harvesting with small copper-bladed sickles, harsh noon sun.",
+   "prompt": "Edit the picture: tall golden wheat in neat rows whose ears stand full and heavy, women and children harvesting with small copper-bladed sickles, harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y100_kilns": {
+   "id": "y100_kilns",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-19",
+    "v5_d1-21"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a street of mud-brick workshops with a kiln glowing at every door",
+   "edit": "Edit the picture: a street of mud-brick workshops with a kiln glowing at every door, potters carrying jars, children running, smoke, cold dusk light."
+  },
+  "y100_school": {
+   "id": "y100_school",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-24"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a room lined to the ceiling with shelves of clay tablets, a child reading by firelight",
+   "edit": "Edit the picture: a room lined to the ceiling with shelves of clay tablets, a child sitting on the floor reading one by warm firelight, an old teacher beside her.",
+   "prompt": "Edit the picture: a room lined to the ceiling with shelves of clay tablets, a child sitting on the floor reading one by warm firelight, an old teacher beside her. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y100_boil": {
+   "id": "y100_boil",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-12"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "children ritually boiling water in a clay pot while a carved figure of a bespectacled man watches",
+   "edit": "Edit the picture: a small ring of children kneeling round a clay pot of boiling water in a solemn ritual, and behind them a rough wooden carving of a pale thoughtful man with round spectacles. Cold dusk light.",
+   "prompt": "Edit the picture: a small ring of children kneeling round a clay pot of boiling water in a solemn ritual, and behind them a rough wooden carving of a pale thoughtful man with round spectacles. Cold dusk light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y100_pillar": {
+   "id": "y100_pillar",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-18",
+    "v5_d1-37"
+   ],
+   "heroes": [
+    "franklin"
+   ],
+   "shows": [],
+   "subject": "a stone pillar carved with a bald man with round spectacles, a kite, and a coin",
+   "edit": "Edit the picture: a tall carved stone pillar showing a balding man with round spectacles and a frock coat, a kite and a coin carved beside him, villagers kneeling at its foot. Last sun.",
+   "prompt": "Edit the picture: a tall carved stone pillar showing a balding man with round spectacles and a frock coat, a kite and a coin carved beside him, villagers kneeling at its foot. Last sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "y100_road": {
+   "id": "y100_road",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a trail of traders carrying clay pots and tablets over the hills to other villages",
+   "edit": "Edit the picture: a long trail of traders carrying clay pots and tablets on their backs winds over green hills toward distant smoke from other villages, harsh noon sun.",
+   "prompt": "Edit the picture: a long trail of traders carrying clay pots and tablets on their backs winds over green hills toward distant smoke from other villages, harsh noon sun. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "c_road": {
+   "id": "c_road",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a long road across the whole picture with stone milestones: pot, furnace, tablet, plough, iron, engine, flask",
+   "edit": "Edit the picture: a long road winding across the whole picture from the valley to the far horizon, lined with stone milestones carved with a pot, a furnace, a tablet, a plough, an iron blade, a steam engine and a flask. Warm low light.",
+   "prompt": "Edit the picture: a long road winding across the whole picture from the valley to the far horizon, lined with stone milestones carved with a pot, a furnace, a tablet, a plough, an iron blade, a steam engine and a flask. Warm low light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "c_tiny_crowd": {
+   "id": "c_tiny_crowd",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-01",
+    "v5_d1-18"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a tiny huddle of figures on a vast empty plain under a huge sky",
+   "edit": "Edit the picture: a tiny huddle of figures in muddy coats on a vast empty plain under a huge sky, the horizon far away, harsh noon sun, enormous sense of scale.",
+   "prompt": "Edit the picture: a tiny huddle of figures in muddy coats on a vast empty plain under a huge sky, the horizon far away, harsh noon sun, enormous sense of scale. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "c_boring_mill": {
+   "id": "c_boring_mill",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-19"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "an 18th-century ironworks interior where a huge iron cylinder is bored by a rotating bar, sparks and workers",
+   "edit": "Edit the picture: inside an 18th-century ironworks, a huge iron cylinder lies in a frame while a long rotating boring bar drives into it, sparks flying, sweating workers in waistcoats pulling levers, dark smoky light.",
+   "prompt": "Edit the picture: inside an 18th-century ironworks, a huge iron cylinder lies in a frame while a long rotating boring bar drives into it, sparks flying, sweating workers in waistcoats pulling levers, dark smoky light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "c_pencil": {
+   "id": "c_pencil",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-24"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a single pencil on a table with strands of wood, graphite and brass lines leading off the page",
+   "edit": "Edit the picture: a single pencil lies on a wooden table and from it thin drawn lines lead off to little scenes of a forest, a mine and a rubber tree, warm soft light.",
+   "prompt": "Edit the picture: a single pencil lies on a wooden table and from it thin drawn lines lead off to little scenes of a forest, a mine and a rubber tree, warm soft light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "c_winter_fail": {
+   "id": "c_winter_fail",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-43",
+    "v5_d1-14"
+   ],
+   "heroes": [
+    "nansen"
+   ],
+   "shows": [],
+   "subject": "Nansen alone at the grave cairns in a blizzard, grim",
+   "edit": "Edit the picture: Fridtjof Nansen in his heavy wool jacket stands alone in a blizzard beside a row of small stone cairns, snow driving sideways, grim and determined. Remove the other man. Cold dusk light.",
+   "prompt": "Edit the picture: Fridtjof Nansen in his heavy wool jacket stands alone in a blizzard beside a row of small stone cairns, snow driving sideways, grim and determined. Remove the other man. Cold dusk light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "c_steam": {
+   "id": "c_steam",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-19"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a first atmospheric steam engine pumping at a mine, beam rocking, steam rising",
+   "edit": "Edit the picture: an early atmospheric steam engine pumping at a mine head, the huge wooden beam rocking, white steam rising, miners watching in awe, grey overcast daylight.",
+   "prompt": "Edit the picture: an early atmospheric steam engine pumping at a mine head, the huge wooden beam rocking, white steam rising, miners watching in awe, grey overcast daylight. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "c_penicillin": {
+   "id": "c_penicillin",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-24"
+   ],
+   "heroes": [],
+   "shows": [],
+   "subject": "a petri dish with a ring of clear space around a green mould, a gloved hand holding it up",
+   "edit": "Edit the picture: close view of a glass petri dish where a green mould blooms and a clear ring surrounds it, a hand holds it up to a window, soft light.",
+   "prompt": "Edit the picture: close view of a glass petri dish where a green mould blooms and a clear ring surrounds it, a hand holds it up to a window, soft light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  },
+  "c_shrug": {
+   "id": "c_shrug",
+   "engine": "pod_ref",
+   "refs": [
+    "v5_d1-36",
+    "v5_d1-18"
+   ],
+   "heroes": [
+    "franklin",
+    "einstein"
+   ],
+   "shows": [],
+   "subject": "Franklin and Einstein look at the viewer with a shrug and a smile",
+   "edit": "Edit the picture: Benjamin Franklin and young Einstein face the viewer side by side with a shrug and a wry smile, Franklin raising one eyebrow, Einstein holding up his reading glasses, the camp behind them in warm low light.",
+   "prompt": "Edit the picture: Benjamin Franklin and young Einstein face the viewer side by side with a shrug and a wry smile, Franklin raising one eyebrow, Einstein holding up his reading glasses, the camp behind them in warm low light. Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+  }
+ },
+ "music": [
+  {
+   "track": "clockwork_loop__v1",
+   "from": "<start>",
+   "to": "So, the order.",
+   "gain_db": -20
+  },
+  {
+   "track": "sneaky_pizzicato__v1",
+   "from": "Day one,",
+   "to": "Now. Fire.",
+   "gain_db": -21
+  },
+  {
+   "track": "clockwork_loop__v1",
+   "from": "Now. Fire.",
+   "to": null,
+   "gain_db": -20
+  }
+ ],
+ "segments": [
+  {
+   "id": "S01",
+   "beat": "hook",
+   "light_beat": 1,
+   "lines": [
+    {
+     "text": "Could the greatest minds in history survive the Stone Age?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emphasis": [
+      "age"
+     ],
+     "tone": "hushed question",
+     "emotion": "intrigue"
+    },
+    {
+     "text": "No tools."
+    },
+    {
+     "text": "No matches."
+    },
+    {
+     "text": "And night is coming fast.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "unease",
+     "pause_after": 0.6
+    }
+   ],
+   "shots": [
+    {
+     "at": "Could",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "v5_d1-01"
+    },
+    {
+     "at": "No tools.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-24"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Could",
+      "sound": "wind_storm"
+     }
+    ]
+   },
+   "period": "day1"
+  },
+  {
+   "id": "S02",
+   "beat": "rules",
+   "light_beat": 2,
+   "lines": [
+    {
+     "text": "Right.",
+     "tags": [
+      "warmly"
+     ],
+     "tone": "storyteller settling in",
+     "emotion": "calm amusement"
+    },
+    {
+     "text": "Here are the rules."
+    },
+    {
+     "text": "A hundred scientists."
+    },
+    {
+     "text": "A river valley in southeastern Anatolia, twelve thousand years ago."
+    },
+    {
+     "text": "Each one arrives at the age of their most famous work."
+    },
+    {
+     "text": "Same clothes."
+    },
+    {
+     "text": "Only what's in their pockets."
+    },
+    {
+     "text": "They can all understand each other, and that's the only magic.",
+     "emphasis": [
+      "only"
+     ],
+     "emotion": "dry wit"
+    },
+    {
+     "text": "The rocks, the plants, the physics: all painfully real."
+    },
+    {
+     "text": "The scientists are real people.",
+     "tags": [
+      "thoughtful"
+     ],
+     "emotion": "sincere"
+    },
+    {
+     "text": "What they say and do here is our invention."
+    },
+    {
+     "text": "So who takes charge?",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "curiosity",
+     "pause_after": 0.5
+    },
+    {
+     "text": "And who panics first?"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Right.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "v5_d1-05"
+    },
+    {
+     "at": "A hundred scientists.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-04"
+    },
+    {
+     "at": "Each one arrives",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-09"
+    },
+    {
+     "at": "They can all",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.05,
+      "z1": 1.05,
+      "dx": -0.05
+     },
+     "heroes_ok": true,
+     "picture": "v5_d1-08"
+    },
+    {
+     "at": "The rocks,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-07"
+    },
+    {
+     "at": "The scientists are",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-03",
+     "heroes_ok": true
+    },
+    {
+     "at": "So who takes",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "v5_d1-16"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Right.",
+      "sound": "wind_day"
+     }
+    ],
+    "sfx": [
+     {
+      "at": "Right.",
+      "sound": "landing_thud__v1",
+      "gain_db": -16,
+      "max_s": 0.6
+     }
+    ]
+   },
+   "period": "day1"
+  },
+  {
+   "id": "S03",
+   "beat": "meadow",
+   "light_beat": 3,
+   "lines": [
+    {
+     "text": "Day one, late morning.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "gentle irony"
+    },
+    {
+     "text": "A hundred brilliant people."
+    },
+    {
+     "text": "A hundred different ideas of what to do first."
+    },
+    {
+     "text": "For a whole hour, nothing useful happens."
+    },
+    {
+     "text": "Then Fridtjof Nansen, the man who crossed Greenland on skis, asks the one question that matters."
+    },
+    {
+     "text": "Can anyone here make fire without matches?",
+     "emphasis": [
+      "matches"
+     ],
+     "emotion": "quiet urgency"
+    },
+    {
+     "text": "Two hands go up.",
+     "tags": [
+      "short pause"
+     ],
+     "emotion": "wry"
+    },
+    {
+     "text": "Halfway."
+    },
+    {
+     "text": "Two!",
+     "tags": [
+      "chuckles"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "Out of a hundred."
+    },
+    {
+     "text": "And both of them look unsure."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Day one,",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     },
+     "picture": "v5_d1-10"
+    },
+    {
+     "at": "For a whole hour",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-11"
+    },
+    {
+     "at": "Then Fridtjof",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "Can anyone",
+       "who": "nansen",
+       "text": "Can anyone here make fire without matches?"
+      }
+     ],
+     "picture": "v5_d1-14"
+    },
+    {
+     "at": "Two hands",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-13"
+    }
+   ],
+   "audio": {
+    "sfx": [
+     {
+      "at": "For a whole hour",
+      "sound": "tick_loop_4s__v1",
+      "gain_db": -22,
+      "max_s": 2.4
+     }
+    ]
+   },
+   "period": "day1"
+  },
+  {
+   "id": "S04",
+   "beat": "meadow",
+   "light_beat": 3,
+   "lines": [
+    {
+     "text": "Hmm.",
+     "tags": [
+      "thoughtful"
+     ],
+     "emotion": "musing"
+    },
+    {
+     "text": "Somebody has to take over."
+    },
+    {
+     "text": "Benjamin Franklin does, naturally."
+    },
+    {
+     "text": "One rule: every group reports at a nightly meeting, and anyone can stop work for safety."
+    },
+    {
+     "text": "Even Newton agrees."
+    },
+    {
+     "text": "Somebody write that down.",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "But a rule won't keep anyone warm.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "concern"
+    },
+    {
+     "text": "And the sun is already sinking."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Hmm.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "One rule",
+       "who": "franklin",
+       "text": "One rule. Every group reports. Every night.",
+       "until": "Even Newton"
+      },
+      {
+       "at": "Even Newton",
+       "who": "newton",
+       "text": "...Fine. Agreed."
+      }
+     ],
+     "picture": "v5_d1-18"
+    },
+    {
+     "at": "But a rule",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-17"
+    }
+   ],
+   "audio": {
+    "sfx": [
+     {
+      "at": "Somebody write that",
+      "sound": "pencil_scribble__v2",
+      "gain_db": -20,
+      "max_s": 1.0
+     }
+    ]
+   },
+   "period": "day1"
+  },
+  {
+   "id": "S05",
+   "beat": "water",
+   "light_beat": 4,
+   "lines": [
+    {
+     "text": "So, the order."
+    },
+    {
+     "text": "Warmth first."
+    },
+    {
+     "text": "Then water."
+    },
+    {
+     "text": "Then food."
+    },
+    {
+     "text": "Alfred Russel Wallace finds a spring, right where the water leaves the ground."
+    },
+    {
+     "text": "And John Snow, yes, that John Snow, adds the rule that will save lives for months.",
+     "emphasis": [
+      "that"
+     ],
+     "emotion": "admiration"
+    },
+    {
+     "text": "Latrines go downstream."
+    },
+    {
+     "text": "Never near the spring."
+    },
+    {
+     "text": "Uh-oh.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "foreboding",
+     "pause_after": 0.5
+    },
+    {
+     "text": "Then the wind changes."
+    }
+   ],
+   "shots": [
+    {
+     "at": "So, the order.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": -0.05
+     },
+     "picture": "v5_d1-19"
+    },
+    {
+     "at": "Alfred Russel Wallace",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "right where",
+       "who": "wallace",
+       "text": "Fresh water! Right here!"
+      }
+     ],
+     "picture": "v5_d1-22"
+    },
+    {
+     "at": "And John Snow,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "Latrines go",
+       "who": "snow",
+       "text": "Latrines go DOWNSTREAM. Never near the spring!"
+      }
+     ],
+     "picture": "v5_d1-25"
+    }
+   ],
+   "audio": {
+    "sfx": [
+     {
+      "at": "Right.",
+      "sound": "landing_thud__v1",
+      "gain_db": -16,
+      "max_s": 0.6
+     },
+     {
+      "at": "Latrines go",
+      "sound": "footstep_dirt__v2",
+      "gain_db": -20,
+      "max_s": 0.5
+     }
+    ]
+   },
+   "period": "day1"
+  },
+  {
+   "id": "S06",
+   "beat": "dusk",
+   "light_beat": 5,
+   "lines": [
+    {
+     "text": "The sun drops, the wind picks up, and the real danger arrives.",
+     "tags": [
+      "suspenseful"
+     ],
+     "emotion": "danger"
+    },
+    {
+     "text": "It isn't freezing."
+    },
+    {
+     "text": "It's cold, wind and damp clothes, all at once."
+    },
+    {
+     "text": "So they build a windbreak of branches and pile dry grass against it."
+    },
+    {
+     "text": "Why grass?"
+    },
+    {
+     "text": "Because trapped air is the oldest insulation there is."
+    },
+    {
+     "text": "It buys them time.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "tension",
+     "pause_after": 0.6
+    },
+    {
+     "text": "But only fire buys them the night."
+    }
+   ],
+   "shots": [
+    {
+     "at": "The sun drops,",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "v5_d1-21"
+    },
+    {
+     "at": "It isn't freezing.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "v5_d1-27"
+    },
+    {
+     "at": "So they build",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "heroes_ok": true,
+     "picture": "v5_d1-28"
+    },
+    {
+     "at": "Why grass?",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-29"
+    },
+    {
+     "at": "It buys them",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-15",
+     "insert": true
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "The sun drops,",
+      "sound": "wind_storm"
+     }
+    ],
+    "sfx": [
+     {
+      "at": "So they build",
+      "sound": "cloth_rustle__v2",
+      "gain_db": -17,
+      "max_s": 1.2
+     },
+     {
+      "at": "Why grass?",
+      "sound": "cloth_rustle__v3",
+      "gain_db": -18,
+      "max_s": 1.0
+     }
+    ]
+   },
+   "period": "day1"
+  },
+  {
+   "id": "S07",
+   "beat": "fire",
+   "light_beat": 6,
+   "lines": [
+    {
+     "text": "Now.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "focus"
+    },
+    {
+     "text": "Fire."
+    },
+    {
+     "text": "Nansen tries a bow drill."
+    },
+    {
+     "text": "A dozen tries."
+    },
+    {
+     "text": "Sore hands."
+    },
+    {
+     "text": "Nothing but smoke.",
+     "tags": [
+      "sighs"
+     ],
+     "emotion": "frustration"
+    },
+    {
+     "text": "Franklin keeps the tinder dry, and waits."
+    },
+    {
+     "text": "Then Einstein takes off his reading glasses.",
+     "tags": [
+      "intrigued"
+     ],
+     "emotion": "discovery"
+    },
+    {
+     "text": "Oh.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "wonder"
+    },
+    {
+     "text": "A convex lens."
+    },
+    {
+     "text": "The afternoon sun."
+    },
+    {
+     "text": "One bright point on the grass."
+    },
+    {
+     "text": "A thread of smoke.",
+     "tags": [
+      "whispers"
+     ],
+     "emotion": "held breath"
+    },
+    {
+     "text": "One careful breath... and fire!",
+     "emphasis": [
+      "fire"
+     ],
+     "emotion": "quiet triumph"
+    },
+    {
+     "text": "But can they keep it alive?"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Now. Fire.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "picture": "v5_d1-31"
+    },
+    {
+     "at": "A dozen tries.",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "insert": true,
+     "picture": "v5_d1-32"
+    },
+    {
+     "at": "Franklin keeps",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "picture": {
+      "id": "v6_franklin_tinder",
+      "engine": "gemini",
+      "refs": [
+       "v5_d1-33"
+      ],
+      "heroes": [
+       "franklin"
+      ],
+      "shows": [],
+      "subject": "Benjamin Franklin kneels and shields a dry, unlit nest of grass with his coat against the cold dusk wind",
+      "edit": "Edit the picture: remove every fire, flame, ember and glow, including the small fires in the background; the people behind him sit in the cold with nothing burning. Benjamin Franklin kneels and shields a dry, unlit nest of grass on the flat stone with the flap of his coat against the wind, looking up anxiously at the sky. Cold dusk light only.",
+      "stand_in": "v5_d1-30",
+      "prompt": "medium cinematic shot, Benjamin Franklin kneels and shields a dry, unlit nest of grass with his coat against the cold dusk wind. One named hero: Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+      "file": "v6_franklin_tinder.png"
+     }
+    },
+    {
+     "at": "Then Einstein takes",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "Oh.",
+       "who": "einstein",
+       "text": "Oh. A convex lens!"
+      }
+     ],
+     "picture": {
+      "id": "v6_einstein_glasses",
+      "engine": "gemini",
+      "refs": [
+       "v5_d1-36"
+      ],
+      "heroes": [
+       "einstein",
+       "franklin"
+      ],
+      "shows": [],
+      "props": [
+       {
+        "thing": "reading glasses",
+        "held_by": "einstein"
+       }
+      ],
+      "speakers": {
+       "einstein": [
+        0.66,
+        0.27
+       ]
+      },
+      "subject": "young Einstein takes off his round reading glasses and lifts them toward the low sun while Franklin cups a dry unlit grass nest",
+      "edit": "Edit the picture: remove the small flame and all smoke, the dry grass nest on the ground in front of the two men is cold and unlit, nothing burns or glows anywhere. The dark-haired man on the right (young Albert Einstein, moustache, rumpled suit) has taken off his small round wire reading glasses and holds them up in one hand toward the low sun, eyes wide with a sudden idea. The bald man on the left (Benjamin Franklin, round spectacles still on his nose) cups the dry grass nest with both hands and looks at the glasses, surprised.",
+      "prompt": "medium cinematic shot, young Einstein takes off his round reading glasses and lifts them toward the low sun while Franklin cups a dry unlit grass nest. Two named heroes: young Albert Einstein of 1905: dark untidy hair, moustache, rumpled suit, round reading glasses; Benjamin Franklin: balding crown with long grey hair, round spectacles, plump weathered face, brown frock coat, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+      "file": "v6_einstein_glasses.png"
+     }
+    },
+    {
+     "at": "The afternoon sun.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "picture": {
+      "id": "v6_lens_point",
+      "engine": "gemini",
+      "refs": [
+       "v5_d1-35",
+       "v5_d1-34"
+      ],
+      "heroes": [],
+      "shows": [
+       "smoke"
+      ],
+      "props": [
+       {
+        "thing": "reading glasses",
+        "held_by": "einstein"
+       }
+      ],
+      "subject": "one round lens of the reading glasses focuses the afternoon sun into a single bright point on dry grass, a thread of smoke",
+      "edit": "Edit picture 1: replace the large round magnifying glass with the small pair of round wire-rimmed reading spectacles from picture 2, held by one arm between finger and thumb. One lens focuses the low sun into a single tiny bright point on one blade of dry grass, a thin thread of smoke rises from it. No flame, no fire, no glow except the one bright point.",
+      "prompt": "medium cinematic shot, one round lens of the reading glasses focuses the afternoon sun into a single bright point on dry grass, a thread of smoke, low last sun breaking through, long amber shadows and cold blue shade, woodsmoke, dust, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+      "file": "v6_lens_point.png"
+     }
+    },
+    {
+     "at": "and fire",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.04,
+      "z1": 1.0
+     },
+     "reveal": "fire",
+     "heroes_ok": true,
+     "picture": "v5_d1-36"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "and fire",
+      "sound": "fire"
+     }
+    ],
+    "sfx": [
+     {
+      "at": "Now. Fire.",
+      "sound": "cloth_rustle__v1",
+      "gain_db": -18,
+      "max_s": 0.8
+     },
+     {
+      "at": "Franklin keeps",
+      "sound": "grass_rustle_dry",
+      "gain_db": -20,
+      "max_s": 1.6
+     },
+     {
+      "at": "Then Einstein takes",
+      "sound": "cloth_rustle__v2",
+      "gain_db": -20,
+      "max_s": 0.7
+     },
+     {
+      "at": "A convex lens",
+      "sound": "glass_glint",
+      "gain_db": -19,
+      "max_s": 1.0
+     },
+     {
+      "at": "A thread of",
+      "sound": "ember_crackle",
+      "gain_db": -22,
+      "max_s": 2.0
+     },
+     {
+      "at": "One careful breath",
+      "sound": "breath_ember",
+      "gain_db": -23,
+      "max_s": 2.2
+     },
+     {
+      "at": "and fire",
+      "sound": "whoosh",
+      "gain_db": -15,
+      "max_s": 0.9
+     }
+    ]
+   },
+   "period": "day1"
+  },
+  {
+   "id": "S08",
+   "beat": "fire",
+   "light_beat": 6,
+   "lines": [
+    {
+     "text": "Well, the hard part isn't making it.",
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "keeping"
+     ],
+     "emotion": "wisdom"
+    },
+    {
+     "text": "It's keeping it."
+    },
+    {
+     "text": "Franklin once founded a volunteer fire company, so he sets a night watch, in shifts."
+    },
+    {
+     "text": "Which leaves one question."
+    },
+    {
+     "text": "What's for dinner?"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Well, the hard",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "heroes_ok": true,
+     "picture": "v5_d1-37"
+    },
+    {
+     "at": "Franklin once founded",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "heroes_ok": true,
+     "bubbles": [
+      {
+       "at": "so he sets",
+       "who": "franklin",
+       "text": "Night watch. In shifts."
+      }
+     ],
+     "picture": "v5_d1-43"
+    }
+   ],
+   "period": "day1"
+  },
+  {
+   "id": "S09",
+   "beat": "night",
+   "light_beat": 7,
+   "lines": [
+    {
+     "text": "Almost nothing.",
+     "tags": [
+      "deadpan"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "A few nuts, some eggs, raw wild grain."
+    },
+    {
+     "text": "Darwin and Wallace refuse to gamble on plants they don't know."
+    },
+    {
+     "text": "Wise.",
+     "tags": [
+      "thoughtful"
+     ],
+     "emotion": "respect"
+    },
+    {
+     "text": "Out here, one wrong guess can poison you."
+    },
+    {
+     "text": "And they still have to sleep."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Almost nothing.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.03
+     },
+     "bubbles": [
+      {
+       "at": "refuse to",
+       "who": "darwin",
+       "text": "We don't know that plant.",
+       "until": "Wise."
+      },
+      {
+       "at": "Wise.",
+       "who": "wallace",
+       "text": "Then nobody eats it."
+      }
+     ],
+     "picture": "v5_d1-42"
+    }
+   ],
+   "period": "day1"
+  },
+  {
+   "id": "S10",
+   "beat": "end",
+   "light_beat": 8,
+   "lines": [
+    {
+     "text": "One spring.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "reflective"
+    },
+    {
+     "text": "One fire."
+    },
+    {
+     "text": "One windbreak."
+    },
+    {
+     "text": "One rule."
+    },
+    {
+     "text": "Nobody has invented anything.",
+     "emphasis": [
+      "anything"
+     ],
+     "emotion": "gentle irony"
+    },
+    {
+     "text": "They spent the whole day doing what a ten-year-old hunter-gatherer could do."
+    },
+    {
+     "text": "Slower."
+    },
+    {
+     "text": "And with more opinions."
+    },
+    {
+     "text": "And tomorrow?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emotion": "promise"
+    },
+    {
+     "text": "Tomorrow, they need a pot."
+    }
+   ],
+   "shots": [
+    {
+     "at": "One spring.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": -0.05
+     },
+     "picture": "v5_d1-44"
+    },
+    {
+     "at": "Nobody has",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "picture": "v5_d1-38"
+    },
+    {
+     "at": "They spent",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-41",
+     "heroes_ok": true
+    },
+    {
+     "at": "And tomorrow?",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     },
+     "picture": "v5_d1-39"
+    }
+   ],
+   "period": "day1"
+  },
+  {
+   "id": "S11",
+   "beat": "hook",
+   "light_beat": 9,
+   "lines": [
+    {
+     "text": "Could a hundred of history's greatest minds survive a week of this?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emphasis": [
+      "week"
+     ],
+     "emotion": "intrigue"
+    },
+    {
+     "text": "Day seven.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "gentle irony"
+    },
+    {
+     "text": "Franklin runs a census."
+    },
+    {
+     "text": "On bark. With charcoal."
+    },
+    {
+     "text": "Column one: who has done this before?"
+    },
+    {
+     "text": "Six names.",
+     "emotion": "wry",
+     "pause_after": 0.5
+    },
+    {
+     "text": "Column two: who has ever chipped a flint?"
+    },
+    {
+     "text": "Four.",
+     "tags": [
+      "short pause"
+     ],
+     "emotion": "deadpan",
+     "pause_after": 0.5
+    },
+    {
+     "text": "Everybody else knows exactly WHY things work.",
+     "emphasis": [
+      "why"
+     ],
+     "emotion": "dry wit"
+    },
+    {
+     "text": "They've just never done any of them."
+    },
+    {
+     "text": "Ninety brilliant theories, and no calluses."
+    },
+    {
+     "text": "But scientists have one superpower.",
+     "tags": [
+      "intrigued"
+     ],
+     "emotion": "curiosity"
+    },
+    {
+     "text": "They don't guess. They TEST.",
+     "emphasis": [
+      "test"
+     ],
+     "emotion": "conviction"
+    },
+    {
+     "text": "And the first test is lunch.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "foreboding",
+     "pause_after": 0.5
+    }
+   ],
+   "shots": [
+    {
+     "at": "Could a hundred",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_camp_wide"
+    },
+    {
+     "at": "Franklin runs",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_franklin_bark",
+     "heroes_ok": true
+    },
+    {
+     "at": "Column one:",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_tally_hand",
+     "insert": true
+    },
+    {
+     "at": "Column two:",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_franklin_bark",
+     "heroes_ok": true
+    },
+    {
+     "at": "Everybody else",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_newton_flint",
+     "heroes_ok": true
+    },
+    {
+     "at": "Ninety brilliant",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_testing_crowd"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Could a hundred",
+      "sound": "wind_day"
+     }
+    ]
+   },
+   "period": "week1"
+  },
+  {
+   "id": "S12",
+   "beat": "grain",
+   "light_beat": 10,
+   "lines": [
+    {
+     "text": "Because a hundred adults need about two hundred and fifty thousand calories.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "matter-of-fact"
+    },
+    {
+     "text": "Every. Day.",
+     "emphasis": [
+      "day"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "Luckily, wild einkorn grows right there on the hillside."
+    },
+    {
+     "text": "So Wallace picks up a flint sickle and starts cutting."
+    },
+    {
+     "text": "About two kilograms an hour.",
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "hour"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "Nansen does the sum.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "dread"
+    },
+    {
+     "text": "To feed everyone, that's seventy-five kilograms of grain. A day."
+    },
+    {
+     "text": "By the end of the week, a third of the colony does nothing but grain."
+    },
+    {
+     "text": "And cutting grain needs sharp stone. So who knows stone?",
+     "tags": [
+      "intrigued"
+     ],
+     "emphasis": [
+      "stone"
+     ],
+     "emotion": "open loop"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Because a hundred",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_camp_wide"
+    },
+    {
+     "at": "Luckily, wild",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_grain_hill"
+    },
+    {
+     "at": "So Wallace",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_wallace_sickle",
+     "heroes_ok": true
+    },
+    {
+     "at": "Nansen does",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_nansen_sum",
+     "heroes_ok": true
+    },
+    {
+     "at": "By the end",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_grinders_rows"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Because a hundred",
+      "sound": "wind_day"
+     }
+    ]
+   },
+   "period": "week1"
+  },
+  {
+   "id": "S13",
+   "beat": "stone",
+   "light_beat": 11,
+   "lines": [
+    {
+     "text": "Nobody, except Darwin. He started out as a geologist, and he spots white lumps in the limestone.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "discovery"
+    },
+    {
+     "text": "Flint!",
+     "emotion": "delight",
+     "pause_after": 0.5
+    },
+    {
+     "text": "Newton hits a flint. The flint wins.",
+     "tags": [
+      "amused"
+     ],
+     "emphasis": [
+      "wins"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "By day four, they have a heap of flakes, scrapers and crude axes."
+    },
+    {
+     "text": "But the real leap is hafting.",
+     "tags": [
+      "intrigued"
+     ],
+     "emphasis": [
+      "hafting"
+     ],
+     "emotion": "wonder"
+    },
+    {
+     "text": "Einstein mixes pine resin with charcoal, and it turns into glue."
+    },
+    {
+     "text": "Then wet sinew is wrapped around the joint. As it dries, it SHRINKS, and the head locks tight.",
+     "emphasis": [
+      "shrinks"
+     ],
+     "emotion": "quiet awe"
+    },
+    {
+     "text": "Now they have axes. Which means somebody can finally build something.",
+     "tags": [
+      "intrigued"
+     ],
+     "emphasis": [
+      "build"
+     ],
+     "emotion": "open loop"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Nobody, except",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_darwin_nodule"
+    },
+    {
+     "at": "Newton hits",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_newton_flint",
+     "heroes_ok": true
+    },
+    {
+     "at": "By day four,",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_knap_floor"
+    },
+    {
+     "at": "But the real",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_axe_head",
+     "insert": true
+    },
+    {
+     "at": "Einstein mixes",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_einstein_resin",
+     "heroes_ok": true
+    }
+   ],
+   "audio": {
+    "sfx": [
+     {
+      "at": "Flint!",
+      "sound": "glass_glint",
+      "gain_db": -20,
+      "max_s": 1.0
+     }
+    ]
+   },
+   "period": "week1"
+  },
+  {
+   "id": "S14",
+   "beat": "machines",
+   "light_beat": 12,
+   "lines": [
+    {
+     "text": "Newton and Franklin design only what wood and stone allow.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "gentle irony"
+    },
+    {
+     "text": "Tesla sketches something much grander.",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "Curie looks at it. Then at the pile of logs. Then at him."
+    },
+    {
+     "text": "The problem? There is no metal. Not for a pin, not for an axle. Only wood.",
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "wood"
+     ],
+     "emotion": "concern"
+    },
+    {
+     "text": "They try anyway.",
+     "tags": [
+      "suspenseful"
+     ],
+     "emotion": "tension"
+    },
+    {
+     "text": "SNAP.",
+     "emotion": "shock",
+     "pause_after": 0.4
+    },
+    {
+     "text": "The wooden pin breaks. The log rolls. Everybody dives.",
+     "tags": [
+      "short pause"
+     ],
+     "emphasis": [
+      "dives"
+     ],
+     "emotion": "chaos"
+    },
+    {
+     "text": "Franklin is, technically, still alive.",
+     "tags": [
+      "deadpan"
+     ],
+     "emotion": "dry humour",
+     "pause_after": 0.6
+    },
+    {
+     "text": "Design is easy. Materials are HARD.",
+     "emphasis": [
+      "hard"
+     ],
+     "tags": [
+      "thoughtful"
+     ],
+     "emotion": "wisdom"
+    },
+    {
+     "text": "And tonight there's an even bigger problem. The water is making people sick.",
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "sick"
+     ],
+     "emotion": "foreboding"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Newton and Franklin",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_franklin_newton_lever"
+    },
+    {
+     "at": "Tesla sketches",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_tesla_sketch",
+     "heroes_ok": true
+    },
+    {
+     "at": "They try",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_haul_pull"
+    },
+    {
+     "at": "SNAP.",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_log_roll",
+     "insert": true
+    },
+    {
+     "at": "Franklin is,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_franklin_dust",
+     "heroes_ok": true
+    }
+   ],
+   "audio": {
+    "sfx": [
+     {
+      "at": "SNAP.",
+      "sound": "wood_snap",
+      "gain_db": -14,
+      "max_s": 0.8
+     }
+    ]
+   },
+   "period": "week1"
+  },
+  {
+   "id": "S15",
+   "beat": "water",
+   "light_beat": 13,
+   "lines": [
+    {
+     "text": "John Snow has one rule: boil it.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "conviction"
+    },
+    {
+     "text": "But there's no pot.",
+     "tags": [
+      "deadpan"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "Day one promised one. Day one was optimistic.",
+     "tags": [
+      "deadpan"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "So they dig a pit, line it with hide, and drop in stones that have sat in the fire."
+    },
+    {
+     "text": "Hiss. Steam. It works.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "relief",
+     "pause_after": 0.6
+    },
+    {
+     "text": "Until a stone explodes.",
+     "tags": [
+      "suspenseful"
+     ],
+     "emphasis": [
+      "explodes"
+     ],
+     "emotion": "shock"
+    },
+    {
+     "text": "Wet river cobbles hold water inside. Heat them, and the rock bursts."
+    },
+    {
+     "text": "Shrapnel. Several small cuts. Everybody learns something, mostly about shrapnel.",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "Then Curie makes soap, from animal fat and wood ash.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "determination"
+    },
+    {
+     "text": "It smells awful. Nobody likes the smell. Everybody likes not dying.",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "But the sun is already going down.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "unease"
+    }
+   ],
+   "shots": [
+    {
+     "at": "John Snow",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_snow_rule",
+     "heroes_ok": true
+    },
+    {
+     "at": "So they dig",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_pit_steam"
+    },
+    {
+     "at": "Until a stone",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_cobble_crack",
+     "insert": true
+    },
+    {
+     "at": "Shrapnel.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_franklin_cuts",
+     "heroes_ok": true
+    },
+    {
+     "at": "Then Curie",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_curie_soap",
+     "heroes_ok": true
+    },
+    {
+     "at": "But the sun",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_valley_dusk"
+    }
+   ],
+   "audio": {
+    "sfx": [
+     {
+      "at": "Hiss.",
+      "sound": "stone_hiss_steam",
+      "gain_db": -16,
+      "max_s": 1.6
+     },
+     {
+      "at": "Until a stone",
+      "sound": "cobble_crack",
+      "gain_db": -13,
+      "max_s": 0.8
+     }
+    ]
+   },
+   "period": "week1"
+  },
+  {
+   "id": "S16",
+   "beat": "end",
+   "light_beat": 14,
+   "lines": [
+    {
+     "text": "And that's day seven.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "calm"
+    },
+    {
+     "text": "A secure camp. A stock of stone tools. A water routine."
+    },
+    {
+     "text": "Two people are sick. One cut is infected. One wrist is broken.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "gravity",
+     "pause_after": 0.6
+    },
+    {
+     "text": "Nansen looks at the dark valley, and at the hills beyond.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "dread"
+    },
+    {
+     "text": "Because the one thing they can't chop, grind or boil is time."
+    },
+    {
+     "text": "And a winter is coming.",
+     "tags": [
+      "whispers"
+     ],
+     "emotion": "foreboding",
+     "pause_after": 0.6
+    },
+    {
+     "text": "And a month from now?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emotion": "promise"
+    },
+    {
+     "text": "Somebody finally invents the POT.",
+     "tags": [
+      "amused"
+     ],
+     "emphasis": [
+      "POT"
+     ],
+     "emotion": "dry humour"
+    }
+   ],
+   "shots": [
+    {
+     "at": "And that's",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_camp_night"
+    },
+    {
+     "at": "Nansen looks",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_nansen_watch",
+     "heroes_ok": true
+    },
+    {
+     "at": "Because the one",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_camp_night"
+    },
+    {
+     "at": "And a winter",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "w1_frost_grass",
+     "insert": true
+    },
+    {
+     "at": "And a month",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_pit_steam"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "And that's",
+      "sound": "fire"
+     }
+    ]
+   },
+   "period": "week1"
+  },
+  {
+   "id": "S17",
+   "period": "month1",
+   "beat": "pot",
+   "light_beat": 15,
+   "lines": [
+    {
+     "text": "Day thirty.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "gentle irony"
+    },
+    {
+     "text": "The pot!",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "pride"
+    },
+    {
+     "text": "Which is awkward, because the oldest pottery we know of is already eight thousand years old.",
+     "emphasis": [
+      "already"
+     ],
+     "emotion": "dry wit"
+    },
+    {
+     "text": "In China. Not here. The people living nearby won't have a single pot for another three thousand years."
+    },
+    {
+     "text": "So Marie Curie goes looking for clay.",
+     "emotion": "curiosity"
+    },
+    {
+     "text": "River clay, chopped straw, a little sand."
+    },
+    {
+     "text": "Why the straw? Because plain clay shrinks as it dries, and then it cracks."
+    },
+    {
+     "text": "Seven pots. Seven explosions.",
+     "tags": [
+      "deadpan"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "Newton looks at the pieces. Then he does what Newton does."
+    },
+    {
+     "text": "He measures.",
+     "emphasis": [
+      "measures"
+     ]
+    },
+    {
+     "text": "Dry them slowly. Heat them slowly. Bury them in a pit, and cover the pit with glowing wood."
+    },
+    {
+     "text": "Eleven days later, one pot holds water.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "quiet triumph",
+     "pause_after": 0.5
+    },
+    {
+     "text": "And then, at last, there is soup."
+    },
+    {
+     "text": "Nobody has ever been so moved by soup.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "warm humour"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Day thirty.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "m1_valley_kiln"
+    },
+    {
+     "at": "Which is awkward",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "m1_curie_clay"
+    },
+    {
+     "at": "So Marie Curie",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "m1_curie_clay"
+    },
+    {
+     "at": "River clay,",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "m1_straw_clay"
+    },
+    {
+     "at": "Seven pots.",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "m1_pots_cracked"
+    },
+    {
+     "at": "Newton looks",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "m1_newton_pot"
+    },
+    {
+     "at": "Dry them slowly.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "m1_pit_kiln"
+    },
+    {
+     "at": "And then, at last,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "m1_soup"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Day thirty.",
+      "sound": "wind_day"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S18",
+   "period": "month1",
+   "beat": "neighbours",
+   "light_beat": 16,
+   "lines": [
+    {
+     "text": "Day thirty-three.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "unease"
+    },
+    {
+     "text": "A column of smoke rises from the next ridge."
+    },
+    {
+     "text": "Not theirs.",
+     "tags": [
+      "whispers"
+     ],
+     "emotion": "held breath",
+     "pause_after": 0.6
+    },
+    {
+     "text": "Somebody else lives here.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "realisation"
+    },
+    {
+     "text": "Hunters have lived in this country for thousands of years. Within a few hundred, people like these will raise the oldest stone temple we know: Göbekli Tepe, not far from here."
+    },
+    {
+     "text": "There's one small problem. The magic that lets the hundred understand each other doesn't work on anybody else."
+    },
+    {
+     "text": "So Franklin tries diplomacy. He holds out a pot.",
+     "emotion": "dry humour"
+    },
+    {
+     "text": "The hunters look at the pot. They look at Franklin. Then one of them knocks on it, listens, and says something that, in any language, means: how much?"
+    },
+    {
+     "text": "The first deal in the colony's history: one pot, for a haunch of gazelle.",
+     "tags": [
+      "chuckles"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "And that changes everything. A hundred adults are a camp. A people needs more."
+    },
+    {
+     "text": "But winter is nearly here. Will they have a village by spring, or a graveyard?",
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "graveyard"
+     ],
+     "emotion": "foreboding"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Day thirty-three.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "m1_smoke_ridge"
+    },
+    {
+     "at": "Somebody else",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "m1_hunters_ridge"
+    },
+    {
+     "at": "There's one small",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "m1_hunters_ridge"
+    },
+    {
+     "at": "So Franklin tries",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "m1_franklin_offer"
+    },
+    {
+     "at": "Then one of",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "m1_hunter_knock"
+    },
+    {
+     "at": "And that changes",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "m1_valley_kiln"
+    },
+    {
+     "at": "But winter is",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "m1_first_snow"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Day thirty-three.",
+      "sound": "wind_day"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S19",
+   "period": "year1",
+   "beat": "winter",
+   "light_beat": 19,
+   "lines": [
+    {
+     "text": "Spring.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "relief"
+    },
+    {
+     "text": "Not everybody sees it.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "grief"
+    },
+    {
+     "text": "The first winter takes five of the hundred. A fever, a bad tooth, a fall on the ice."
+    },
+    {
+     "text": "That number is our invention, but not a wild one: hunter-gatherers lose a few adults in every hundred each year."
+    },
+    {
+     "text": "John Snow writes down the causes in charcoal, on bark."
+    },
+    {
+     "text": "And one thing is different from the cave-man winters you've seen. Nobody died of the water.",
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "water"
+     ],
+     "emotion": "quiet pride"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Spring.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y1_cairns"
+    },
+    {
+     "at": "John Snow writes",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y1_snow_ledger"
+    },
+    {
+     "at": "And one thing",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y1_cairns"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Spring.",
+      "sound": "wind_day"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S20",
+   "period": "year1",
+   "beat": "wheat",
+   "light_beat": 20,
+   "lines": [
+    {
+     "text": "Now it's Darwin's turn.",
+     "emotion": "anticipation"
+    },
+    {
+     "text": "He clears a patch of ground beside the camp and sows wild einkorn from the seed they saved."
+    },
+    {
+     "text": "And here's the twist. Wild wheat is generous.",
+     "emotion": "dry wit"
+    },
+    {
+     "text": "In the nineteen-sixties, the botanist Jack Harlan cut wild wheat by hand in these same hills, with a stone-bladed sickle. His estimate: a family could gather a year's grain in about three weeks."
+    },
+    {
+     "text": "So why farm at all?",
+     "emphasis": [
+      "farm"
+     ]
+    },
+    {
+     "text": "Darwin has the answer. A hundred people can't live on wild wheat in one place. They'd strip the hillside bare in a single season."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Now it's Darwin's turn.",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y1_darwin_sow"
+    },
+    {
+     "at": "In the nineteen-sixties,",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "w1_grain_hill"
+    },
+    {
+     "at": "So why farm",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y1_darwin_sow"
+    },
+    {
+     "at": "Darwin has",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y1_hill_bare"
+    }
+   ]
+  },
+  {
+   "id": "S21",
+   "period": "year1",
+   "beat": "selection",
+   "light_beat": 21,
+   "lines": [
+    {
+     "text": "Then Darwin does the cleverest thing anyone does all year.",
+     "tags": [
+      "intrigued"
+     ],
+     "emotion": "intrigue"
+    },
+    {
+     "text": "Wild wheat has a flaw, from a farmer's point of view. When an ear is ripe, it shatters, and the grain falls to the ground."
+    },
+    {
+     "text": "But every so often, one plant holds on to its grain.",
+     "emphasis": [
+      "holds"
+     ]
+    },
+    {
+     "text": "Darwin saves only those. Every harvest. Year after year."
+    },
+    {
+     "text": "In the real world, say the archaeologists, wheat took a thousand to two thousand years to change like this."
+    },
+    {
+     "text": "Some computer models say it could happen in twenty to a hundred years, if you choose the seed on purpose."
+    },
+    {
+     "text": "Who's right? Nobody knows.",
+     "tags": [
+      "short pause"
+     ],
+     "emotion": "honest doubt"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Then Darwin does",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y1_darwin_select"
+    },
+    {
+     "at": "Wild wheat has",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y1_ears_shatter"
+    },
+    {
+     "at": "Darwin saves only",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y1_darwin_select"
+    },
+    {
+     "at": "In the real world,",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y1_field_edge"
+    }
+   ]
+  },
+  {
+   "id": "S22",
+   "period": "year1",
+   "beat": "baby",
+   "light_beat": 22,
+   "lines": [
+    {
+     "text": "But the biggest event of year one isn't wheat.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "warmth"
+    },
+    {
+     "text": "It's a baby.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "wonder",
+     "pause_after": 0.5
+    },
+    {
+     "text": "And with babies comes a problem nobody planned for.",
+     "tags": [
+      "slowly"
+     ],
+     "emotion": "unease"
+    },
+    {
+     "text": "A hundred adults can survive a winter. But can they keep every skill alive?"
+    },
+    {
+     "text": "One famous study argues that when rising seas cut off Tasmania, its four thousand people slowly lost bone tools, warm clothing, even fishing. Other researchers disagree."
+    },
+    {
+     "text": "A hundred people is a lot smaller than four thousand.",
+     "emphasis": [
+      "smaller"
+     ],
+     "emotion": "dry understatement"
+    },
+    {
+     "text": "So Franklin calls a meeting. Everyone teaches. Everyone writes."
+    }
+   ],
+   "shots": [
+    {
+     "at": "But the biggest event",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y1_baby"
+    },
+    {
+     "at": "And with babies",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y1_school"
+    },
+    {
+     "at": "One famous study",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "c_tiny_crowd"
+    },
+    {
+     "at": "So Franklin calls",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y1_school"
+    }
+   ]
+  },
+  {
+   "id": "S23",
+   "period": "year1",
+   "beat": "tablets",
+   "light_beat": 23,
+   "lines": [
+    {
+     "text": "Writing doesn't exist yet. Not for another sixty-seven hundred years.",
+     "emphasis": [
+      "yet"
+     ],
+     "emotion": "dry wit"
+    },
+    {
+     "text": "These people brought it with them."
+    },
+    {
+     "text": "They press signs into wet clay, then bake the tablets in the new kiln. Fire doesn't destroy them. It saves them."
+    },
+    {
+     "text": "The colony's first library. Knowledge, backed up.",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "But writing down a recipe isn't the same as cooking it."
+    },
+    {
+     "text": "So ten years from now, can they make metal?",
+     "tags": [
+      "intrigued"
+     ],
+     "emphasis": [
+      "metal"
+     ],
+     "emotion": "promise"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Writing doesn't",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y1_kiln_tablets"
+    },
+    {
+     "at": "The colony's first",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y1_library"
+    },
+    {
+     "at": "But writing down",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y1_school"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Writing doesn't",
+      "sound": "ember_crackle"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S24",
+   "period": "year10",
+   "beat": "children",
+   "light_beat": 24,
+   "lines": [
+    {
+     "text": "Year ten.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "gentle irony"
+    },
+    {
+     "text": "The first children are ten years old, and every one of them can read.",
+     "emotion": "pride"
+    },
+    {
+     "text": "Which makes them the best-educated ten-year-olds on Earth, and the rudest."
+    },
+    {
+     "text": "The colony is bigger now: about a hundred and thirty people, counting neighbours who married in. That's our estimate."
+    },
+    {
+     "text": "And everybody stares at the same problem. Stone tools break.",
+     "emphasis": [
+      "break"
+     ],
+     "emotion": "concern"
+    },
+    {
+     "text": "Metal doesn't.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "longing"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Year ten.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y10_children"
+    },
+    {
+     "at": "The colony is bigger",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y100_road"
+    },
+    {
+     "at": "Metal doesn't.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y10_children"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Year ten.",
+      "sound": "wind_day"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S25",
+   "period": "year10",
+   "beat": "copper",
+   "light_beat": 25,
+   "lines": [
+    {
+     "text": "Marie Curie has found a green rock in the next valley.",
+     "emotion": "excitement"
+    },
+    {
+     "text": "Malachite."
+    },
+    {
+     "text": "Crush it. Mix it with charcoal. Put it in the hottest kiln they own, and blow air through a hide bellows."
+    },
+    {
+     "text": "Hours later the ash breaks open, and there it is: a small red-gold bead of copper.",
+     "tags": [
+      "whispers"
+     ],
+     "emphasis": [
+      "copper"
+     ],
+     "emotion": "held breath"
+    },
+    {
+     "text": "Near here, people will begin hammering raw lumps of copper into beads within a thousand years or so. Real smelting? That's five thousand years away."
+    },
+    {
+     "text": "Then Tesla asks the question nobody wants to hear. So where does the electricity come in?",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "Not now, Nikola.",
+     "tags": [
+      "deadpan"
+     ],
+     "emotion": "tired patience"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Marie Curie has",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y10_malachite"
+    },
+    {
+     "at": "Crush it.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y10_furnace"
+    },
+    {
+     "at": "Hours later",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y10_bead"
+    },
+    {
+     "at": "Then Tesla asks",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y10_tesla_curie"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Crush it.",
+      "sound": "fire"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S26",
+   "period": "year10",
+   "beat": "tin",
+   "light_beat": 26,
+   "lines": [
+    {
+     "text": "But copper is soft. A copper axe bends where a stone axe would chip.",
+     "emotion": "concern"
+    },
+    {
+     "text": "Bronze is harder. Bronze is copper plus tin."
+    },
+    {
+     "text": "And tin is the problem. It's rare, and there's almost none of it near here.",
+     "emphasis": [
+      "rare"
+     ],
+     "emotion": "foreboding"
+    },
+    {
+     "text": "Archaeologists still argue about where the ancient Near East found its tin."
+    },
+    {
+     "text": "A hundred of the cleverest people in history, defeated by one silvery metal that isn't there.",
+     "tags": [
+      "sighs"
+     ],
+     "emotion": "dry humour"
+    }
+   ],
+   "shots": [
+    {
+     "at": "But copper is soft.",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y10_axe_bend"
+    },
+    {
+     "at": "And tin is",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y10_nansen_map"
+    },
+    {
+     "at": "A hundred of the",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y10_nansen_map"
+    }
+   ]
+  },
+  {
+   "id": "S27",
+   "period": "year10",
+   "beat": "iron",
+   "light_beat": 27,
+   "lines": [
+    {
+     "text": "So Curie suggests skipping bronze. Go straight to iron.",
+     "emotion": "resolve"
+    },
+    {
+     "text": "Iron ore is everywhere: whole hills the colour of rust."
+    },
+    {
+     "text": "But iron needs a furnace well over a thousand degrees, and a mountain of charcoal."
+    },
+    {
+     "text": "In modern experiments, a block of iron under two kilograms swallows about forty kilograms of charcoal."
+    },
+    {
+     "text": "A single knife costs a forest.",
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "forest"
+     ],
+     "emotion": "foreboding"
+    },
+    {
+     "text": "Real humans took until about twelve hundred BCE to make iron an everyday metal."
+    },
+    {
+     "text": "Can the hundred beat that? Let's see what a century does.",
+     "tags": [
+      "intrigued"
+     ],
+     "emotion": "promise"
+    }
+   ],
+   "shots": [
+    {
+     "at": "So Curie suggests",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y10_iron_hills"
+    },
+    {
+     "at": "But iron needs",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y10_charcoal"
+    },
+    {
+     "at": "A single knife",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y10_charcoal"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "But iron needs",
+      "sound": "fire"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S28",
+   "period": "year100",
+   "beat": "gone",
+   "light_beat": 28,
+   "lines": [
+    {
+     "text": "Year one hundred.",
+     "tags": [
+      "softly"
+     ],
+     "emotion": "solemn"
+    },
+    {
+     "text": "Nobody who arrived on Day One is alive.",
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "alive"
+     ],
+     "emotion": "solemn",
+     "pause_after": 0.6
+    },
+    {
+     "text": "Not Newton. Not Curie. Not even the stubborn ones."
+    },
+    {
+     "text": "How many people live here now? Probably between one and three thousand. If the colony grew three percent a year, it's about nineteen hundred. But growth like that never lasts."
+    },
+    {
+     "text": "So what did a hundred geniuses leave behind?",
+     "tags": [
+      "intrigued"
+     ],
+     "emotion": "intrigue"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Year one hundred.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y100_village"
+    },
+    {
+     "at": "Not Newton.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y100_hill"
+    },
+    {
+     "at": "How many people",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y100_village"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Year one hundred.",
+      "sound": "wind_day"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S29",
+   "period": "year100",
+   "beat": "remains",
+   "light_beat": 29,
+   "lines": [
+    {
+     "text": "Wheat that holds on to its grain. Almost.",
+     "emphasis": [
+      "almost"
+     ],
+     "emotion": "quiet pride"
+    },
+    {
+     "text": "Copper tools. A kiln at every door."
+    },
+    {
+     "text": "A school with a library of four thousand clay tablets."
+    },
+    {
+     "text": "And one strange custom. Every child boils their water, and nobody remembers why.",
+     "tags": [
+      "amused"
+     ],
+     "emphasis": [
+      "why"
+     ],
+     "emotion": "warm humour"
+    },
+    {
+     "text": "It's a rule from the old spirits."
+    },
+    {
+     "text": "Franklin is now the spirit of thrift. Newton is the grumpy ghost of levers."
+    },
+    {
+     "text": "And the neighbours? They learned pottery from the colony. The next valley learned it from them."
+    },
+    {
+     "text": "Because ideas don't spread by magic. They travel with people who meet.",
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "meet"
+     ],
+     "emotion": "wisdom"
+    },
+    {
+     "text": "So did the hundred beat history?",
+     "tags": [
+      "intrigued"
+     ],
+     "emphasis": [
+      "history"
+     ],
+     "emotion": "promise"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Wheat that holds",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y100_wheat"
+    },
+    {
+     "at": "A school with",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y100_school"
+    },
+    {
+     "at": "And one strange",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y100_boil"
+    },
+    {
+     "at": "Franklin is now",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y100_pillar"
+    },
+    {
+     "at": "And the neighbours?",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "y100_road"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Wheat that holds",
+      "sound": "wind_day"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S30",
+   "period": "compare",
+   "beat": "record",
+   "light_beat": 30,
+   "lines": [
+    {
+     "text": "Now let's check the real record.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "curiosity"
+    },
+    {
+     "text": "Wheat that no longer drops its grain: a thousand to two thousand years."
+    },
+    {
+     "text": "Writing: six thousand seven hundred years from this valley."
+    },
+    {
+     "text": "Copper smelting: five thousand."
+    },
+    {
+     "text": "Everyday iron: eight thousand eight hundred."
+    },
+    {
+     "text": "The hundred did writing on Day One. Smelting by year ten.",
+     "emphasis": [
+      "Day"
+     ],
+     "emotion": "dry wit"
+    },
+    {
+     "text": "So yes, knowledge is a time machine. For discoveries.",
+     "tags": [
+      "thoughtful"
+     ],
+     "emphasis": [
+      "discoveries"
+     ],
+     "emotion": "wisdom"
+    },
+    {
+     "text": "But discovery was never the only cost."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Now let's check",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "c_road"
+    },
+    {
+     "at": "Writing:",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "c_road"
+    },
+    {
+     "at": "The hundred did",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "y10_tesla_curie"
+    },
+    {
+     "at": "But discovery",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "c_road"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Now let's check",
+      "sound": "wind_day"
+     }
+    ]
+   }
+  },
+  {
+   "id": "S31",
+   "period": "compare",
+   "beat": "bottlenecks",
+   "light_beat": 31,
+   "lines": [
+    {
+     "text": "People.",
+     "emotion": "gravity"
+    },
+    {
+     "text": "In ten thousand BCE the whole planet holds about four million. By eighteen hundred, nearly a billion."
+    },
+    {
+     "text": "More people, more ideas: the economist Michael Kremer built a famous model of exactly that."
+    },
+    {
+     "text": "Materials. No tin.",
+     "emphasis": [
+      "tin"
+     ]
+    },
+    {
+     "text": "Fuel. Forty kilograms of charcoal for one small block of iron."
+    },
+    {
+     "text": "And tools that make tools. James Watt waited years for someone who could bore a steam cylinder true. John Wilkinson finally did it in seventeen seventy-four."
+    },
+    {
+     "text": "Then there's trade. A famous essay called I, Pencil points out that no single person on Earth knows how to make a pencil.",
+     "tags": [
+      "amused"
+     ],
+     "emotion": "dry humour"
+    },
+    {
+     "text": "The wood, the graphite, the rubber, the brass: all from people who never meet."
+    },
+    {
+     "text": "A hundred geniuses is not a civilization.",
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "not"
+     ],
+     "emotion": "gravity"
+    }
+   ],
+   "shots": [
+    {
+     "at": "People.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "c_tiny_crowd"
+    },
+    {
+     "at": "In ten thousand",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "c_tiny_crowd"
+    },
+    {
+     "at": "And tools that",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "c_boring_mill"
+    },
+    {
+     "at": "Then there's trade.",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "c_pencil"
+    },
+    {
+     "at": "A hundred geniuses",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "c_tiny_crowd"
+    }
+   ]
+  },
+  {
+   "id": "S32",
+   "period": "compare",
+   "beat": "verdict",
+   "light_beat": 32,
+   "lines": [
+    {
+     "text": "So here's our verdict.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "resolve"
+    },
+    {
+     "text": "Early on, the hundred beat history. Farming, writing, metal: in centuries, not millennia. We'd bet on that."
+    },
+    {
+     "text": "Then they hit the wall.",
+     "emphasis": [
+      "wall"
+     ]
+    },
+    {
+     "text": "They could fail three ways. A bad winter. A plague. Or the Tasmania problem, skills dying faster than children can learn them."
+    },
+    {
+     "text": "Or they could win in a quieter way. Shortcut the first ten thousand years, and the world reaches the steam engine in maybe half the time. That's a guess, not a fact."
+    },
+    {
+     "text": "Real history took eleven thousand seven hundred years to get from this valley to the first working steam engine, and nearly twelve thousand to penicillin."
+    }
+   ],
+   "shots": [
+    {
+     "at": "So here's our verdict.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "c_road"
+    },
+    {
+     "at": "They could fail",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "c_winter_fail"
+    },
+    {
+     "at": "Or they could win",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
+     },
+     "picture": "c_steam"
+    },
+    {
+     "at": "Real history took",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "c_penicillin"
+    }
+   ]
+  },
+  {
+   "id": "S33",
+   "period": "compare",
+   "beat": "end",
+   "light_beat": 33,
+   "lines": [
+    {
+     "text": "Which would you bet on? The hundred, or the winter?",
+     "tags": [
+      "intrigued"
+     ],
+     "emphasis": [
+      "winter"
+     ],
+     "emotion": "playful"
+    },
+    {
+     "text": "Tell me below.",
+     "tags": [
+      "warmly"
+     ],
+     "emotion": "warm"
+    },
+    {
+     "text": "And tell me which two worlds should collide next.",
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "next"
+     ],
+     "emotion": "promise"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Which would you",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "c_shrug"
+    }
+   ]
+  }
+ ],
+ "periods": [
+  {
+   "id": "day1",
+   "question": "Can they survive the first night?",
+   "bottleneck": "fire and warmth",
+   "tone": {
+    "drama": 0.35,
+    "humour": 0.25,
+    "doubt": 0.4
+   }
+  },
+  {
+   "id": "week1",
+   "question": "Can knowledge replace calluses?",
+   "bottleneck": "food, tools and clean water",
+   "tone": {
+    "drama": 0.35,
+    "humour": 0.25,
+    "doubt": 0.4
+   }
+  },
+  {
+   "id": "month1",
+   "question": "Will they have a village by spring?",
+   "bottleneck": "pots, neighbours and winter",
+   "tone": {
+    "drama": 0.4,
+    "humour": 0.25,
+    "doubt": 0.35
+   }
+  },
+  {
+   "id": "year1",
+   "question": "Can they keep their skills alive?",
+   "bottleneck": "people and teaching",
+   "tone": {
+    "drama": 0.4,
+    "humour": 0.15,
+    "doubt": 0.45
+   }
+  },
+  {
+   "id": "year10",
+   "question": "Can they make metal?",
+   "bottleneck": "tin, fuel and furnaces",
+   "tone": {
+    "drama": 0.35,
+    "humour": 0.2,
+    "doubt": 0.45
+   }
+  },
+  {
+   "id": "year100",
+   "question": "What did they leave behind?",
+   "bottleneck": "population and contact",
+   "tone": {
+    "drama": 0.45,
+    "humour": 0.15,
+    "doubt": 0.4
+   }
+  },
+  {
+   "id": "compare",
+   "question": "Did they beat real history?",
+   "bottleneck": "people, materials, tools and trade",
+   "tone": {
+    "drama": 0.3,
+    "humour": 0.15,
+    "doubt": 0.55
+   }
+  }
+ ]
+}
