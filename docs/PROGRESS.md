@@ -81,4 +81,6 @@ cost (estimate/actual), next step, recovery instructions.
   `rights/ip_check.py` + schema; `research/fan_brief.py` + schema; skill `.claude/skills/crossover-episode`;
   SCRIPTING_SPEC section 7; docs lint knows the RR- prefix.
 - Tests: 50 passed (14 new); docs lint 0 findings. Not legal advice: the rules lower risk, they do not prove fair use.
-- Next: style sample (marker + pencil traveller over a dramatic scene) for the creator.
+- Style sample `assets/style_samples/traveller_scene_v0.svg`: the traveller (marker line + pencil hatching) on the seam
+  between two original worlds, painted-look layers built in code (free), plus three doodle explanation panels. First
+  render hid fills (a CSS class overrode them); fixed and re-checked by eye. Waiting on the creator's reaction.

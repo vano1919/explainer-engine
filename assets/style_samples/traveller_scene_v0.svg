@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1330" width="1600" height="1330" font-family="Inter, DejaVu Sans, sans-serif">
+  <title>Style test v0: marker + pencil traveller over a dramatic painted-look scene (exploration, not approved)</title>
+  <defs>
+    <style>
+      .ink { stroke:#1B1B1F; stroke-width:6; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+      .ink4 { stroke:#1B1B1F; stroke-width:4; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+      .cap { fill:#1F2430; font-size:20px; }
+      .capb { fill:#1F2430; font-size:26px; font-weight:700; }
+      .hand { fill:#1B1B1F; font-size:26px; font-weight:700; }
+    </style>
+    <filter id="wob" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="paint" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="3" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="2.2"/></filter>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="3"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.35  0 0 0 0 0.28  0 0 0 0 0.2  0 0 0 0.4 0"/></filter>
+    <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#3B3F4A" stroke-width="1.6" opacity=".45"/></pattern>
+
+    <linearGradient id="skyCold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0E1530"/><stop offset=".55" stop-color="#2A3A6B"/><stop offset="1" stop-color="#8FA7C9"/></linearGradient>
+    <linearGradient id="skyWarm" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6FB6E0"/><stop offset=".6" stop-color="#FCD9A0"/><stop offset="1" stop-color="#FFF1D2"/></linearGradient>
+    <linearGradient id="aurora" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5CF2C2" stop-opacity="0"/><stop offset=".4" stop-color="#5CF2C2" stop-opacity=".55"/>
+      <stop offset=".8" stop-color="#8F7CFF" stop-opacity=".35"/><stop offset="1" stop-color="#8F7CFF" stop-opacity="0"/></linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFF6D8"/><stop offset=".35" stop-color="#FFE3A3" stop-opacity=".8"/><stop offset="1" stop-color="#FFE3A3" stop-opacity="0"/></radialGradient>
+    <linearGradient id="fog" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/><stop offset=".5" stop-color="#FFFFFF" stop-opacity=".35"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <linearGradient id="seam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7FE3FF" stop-opacity="0"/><stop offset=".45" stop-color="#C9F6FF"/><stop offset=".5" stop-color="#FFFFFF"/>
+      <stop offset=".55" stop-color="#FFE8A8"/><stop offset="1" stop-color="#FFC86B" stop-opacity="0"/></linearGradient>
+    <linearGradient id="vign" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".25"/><stop offset=".25" stop-color="#000" stop-opacity="0"/>
+      <stop offset=".8" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient>
+    <clipPath id="frameA"><rect x="0" y="0" width="1600" height="900"/></clipPath>
+    <clipPath id="leftHalf"><rect x="0" y="0" width="800" height="900"/></clipPath>
+    <clipPath id="rightHalf"><rect x="800" y="0" width="800" height="900"/></clipPath>
+
+    <!-- the traveller (working design): bean body, scarf, satchel, a glowing wrist compass -->
+    <g id="traveller">
+      <ellipse cx="0" cy="168" rx="92" ry="16" fill="#000" opacity=".28"/>
+      <path class="ink" d="M-26,106 v40 M26,106 v40 M-26,146 h-26 M26,146 h26"/>
+      <path class="ink" d="M-74,10 q-40,14 -50,52"/><circle class="ink4" cx="-124" cy="64" r="11" style="fill:#FFF7EA"/>
+      <path d="M0,-110 C62,-112 84,-46 76,24 C70,92 40,108 0,108 C-40,108 -70,92 -76,24 C-84,-46 -62,-112 0,-110 Z" fill="#FFD9A8"/>
+      <path d="M30,-100 C70,-80 84,-30 76,24 C70,92 40,108 0,108 C40,70 52,10 30,-100 Z" fill="url(#hatch)"/>
+      <path class="ink" d="M0,-110 C62,-112 84,-46 76,24 C70,92 40,108 0,108 C-40,108 -70,92 -76,24 C-84,-46 -62,-112 0,-110 Z"/>
+      <path class="ink" d="M-10,-110 q-8,-26 -22,-30 M0,-110 q2,-30 -4,-40 M12,-110 q12,-24 28,-24"/>
+      <path class="ink4" d="M-62,-36 L58,74" stroke="#7A4A2C" stroke-width="9"/>
+      <rect class="ink4" x="34" y="56" width="58" height="44" rx="9" style="fill:#9C6A43"/><path class="ink4" d="M36,70 h54"/>
+      <path class="ink" d="M-72,-4 C-30,16 30,16 74,-4 L76,20 C30,40 -30,40 -74,20 Z" style="fill:#E8553E"/>
+      <path class="ink" d="M48,18 C80,36 112,34 136,20 L132,46 C104,58 78,56 44,40 Z" style="fill:#E8553E"/>
+      <ellipse class="ink4" cx="-28" cy="-46" rx="15" ry="19" style="fill:#FFF7EA"/><circle cx="-34" cy="-44" r="6" fill="#1B1B1F"/>
+      <ellipse class="ink4" cx="26" cy="-46" rx="15" ry="19" style="fill:#FFF7EA"/><circle cx="20" cy="-44" r="6" fill="#1B1B1F"/>
+      <path class="ink4" d="M-46,-76 q18,-12 36,-4 M8,-80 q18,-8 36,2"/>
+      <path class="ink4" d="M-16,-10 q16,10 30,-2"/>
+      <path class="ink" d="M74,4 q46,-8 58,-56"/><circle class="ink4" cx="133" cy="-60" r="11" style="fill:#FFF7EA"/>
+      <circle cx="120" cy="-34" r="22" fill="#7FE3FF" filter="url(#glow)" opacity=".9"/>
+      <circle class="ink4" cx="120" cy="-34" r="11" style="fill:#BFF4FF"/><path class="ink4" d="M120,-41 v7 l5,4"/>
+    </g>
+  </defs>
+
+  <rect width="1600" height="1330" fill="#ECE8E0"/>
+
+  <!-- A: dramatic establishing scene -->
+  <g clip-path="url(#frameA)">
+    <g clip-path="url(#leftHalf)">
+      <rect x="0" y="0" width="820" height="900" fill="url(#skyCold)"/>
+      <path d="M-40,210 C140,120 300,260 480,170 C620,100 740,190 860,140 L860,230 C740,280 620,190 480,260 C300,350 140,210 -40,300 Z" fill="url(#aurora)" filter="url(#soft)"/>
+      <g fill="#FFFFFF"><circle cx="90" cy="70" r="1.8"/><circle cx="210" cy="130" r="1.4"/><circle cx="330" cy="60" r="2"/><circle cx="470" cy="110" r="1.5"/><circle cx="620" cy="50" r="1.8"/><circle cx="700" cy="120" r="1.3"/></g>
+      <g filter="url(#paint)">
+        <path d="M-20,560 L70,380 L130,450 L220,300 L300,420 L360,350 L450,470 L540,330 L640,450 L720,380 L840,500 L840,640 L-20,640 Z" fill="#5E6E99"/>
+        <path d="M220,300 L250,350 L235,345 L215,360 L195,340 Z M540,330 L575,380 L555,372 L538,390 L515,372 Z" fill="#DDE6F5"/>
+        <path d="M-20,640 C150,560 330,580 470,620 C620,660 730,630 840,600 L840,720 L-20,720 Z" fill="#2E3A5E"/>
+        <path d="M250,600 v-120 h26 v-30 h18 v30 h26 v120 Z M320,600 v-80 l22,-30 l22,30 v80 Z" fill="#1C2442"/>
+      </g>
+      <g fill="#FFC86B"><rect x="262" y="520" width="6" height="10"/><rect x="298" y="500" width="6" height="10"/><rect x="338" y="540" width="6" height="10"/></g>
+      <g filter="url(#glow)" fill="#FFC86B" opacity=".6"><circle cx="265" cy="525" r="8"/><circle cx="301" cy="505" r="8"/><circle cx="341" cy="545" r="8"/></g>
+      <rect x="0" y="560" width="820" height="140" fill="url(#fog)"/>
+      <path d="M-20,760 C200,700 450,700 820,740 L820,900 L-20,900 Z" fill="#E6EEF7"/>
+      <path d="M-20,760 C200,700 450,700 820,740" stroke="#B9C7DA" stroke-width="5" fill="none" opacity=".7"/>
+      <g fill="#1E2A40" filter="url(#paint)"><path d="M60,790 l30,-90 l30,90 Z M120,800 l24,-70 l24,70 Z M520,790 l26,-80 l26,80 Z"/></g>
+    </g>
+    <g clip-path="url(#rightHalf)">
+      <rect x="780" y="0" width="820" height="900" fill="url(#skyWarm)"/>
+      <circle cx="1380" cy="210" r="210" fill="url(#sun)"/>
+      <g opacity=".22" fill="#FFF6D8"><path d="M1380,210 L900,900 L1060,900 Z"/><path d="M1380,210 L1250,900 L1390,900 Z"/></g>
+      <g filter="url(#paint)">
+        <path d="M780,560 C900,470 1040,520 1160,470 C1280,420 1420,480 1620,430 L1620,640 L780,640 Z" fill="#A9C7A0"/>
+        <path d="M780,640 C930,580 1100,600 1250,580 C1400,560 1500,600 1620,580 L1620,720 L780,720 Z" fill="#6E9E63"/>
+        <path d="M1220,600 v-210 l26,-40 l26,40 v210 Z" fill="#E8D7B5"/><path d="M1212,352 l34,-60 l34,60 Z" fill="#B8573E"/>
+        <path d="M1120,600 v-120 h60 v120 Z" fill="#E3CFA8"/><path d="M1112,482 l38,-40 l38,40 Z" fill="#B8573E"/>
+      </g>
+      <rect x="780" y="560" width="820" height="140" fill="url(#fog)" opacity=".7"/>
+      <path d="M780,740 C1000,700 1300,690 1620,730 L1620,900 L780,900 Z" fill="#7FA35A"/>
+      <path d="M780,740 C1000,700 1300,690 1620,730" stroke="#5E7E43" stroke-width="5" fill="none" opacity=".7"/>
+      <g fill="#E85A8A" opacity=".8"><circle cx="1330" cy="800" r="5"/><circle cx="1360" cy="820" r="4"/><circle cx="1480" cy="790" r="5"/><circle cx="1010" cy="810" r="4"/></g>
+    </g>
+    <!-- the seam where the worlds meet -->
+    <path d="M790,0 L812,90 L790,180 L816,270 L792,380 L818,480 L794,590 L814,690 L796,800 L812,900 L788,900 L770,800 L790,690 L768,590 L792,480 L766,380 L790,270 L764,180 L788,90 L768,0 Z" fill="url(#seam)" filter="url(#glow)"/>
+    <path d="M789,0 L803,90 L789,180 L805,270 L790,380 L806,480 L791,590 L804,690 L792,800 L800,900" stroke="#FFFFFF" stroke-width="3" fill="none" opacity=".9"/>
+    <g fill="#FFFFFF" filter="url(#glow)"><circle cx="760" cy="300" r="6"/><circle cx="840" cy="520" r="5"/><circle cx="770" cy="660" r="4"/></g>
+    <g filter="url(#wob)"><use href="#traveller" transform="translate(800 640) scale(1.15)"/></g>
+    <rect width="1600" height="900" fill="url(#vign)"/>
+    <rect width="1600" height="900" filter="url(#grain)" opacity=".35"/>
+  </g>
+  <text class="capb" x="40" y="944">A  The dramatic scene: two original worlds meet; the traveller stands on the seam</text>
+  <text class="cap" x="40" y="972">Painted-look layers (sky, light, mountains, fog), the mascot in marker + pencil. Built in code, no paid images; reusable per world.</text>
+
+  <!-- B: three doodle explanation panels on paper -->
+  <g transform="translate(40 1000)">
+    <rect width="490" height="270" rx="16" fill="#FBF3DF"/><rect width="490" height="270" rx="16" filter="url(#grain)" opacity=".4"/>
+    <g filter="url(#wob)">
+      <use href="#traveller" transform="translate(130 120) scale(.62)"/>
+      <ellipse class="ink4" cx="345" cy="80" rx="105" ry="46" style="fill:#FFFDF6"/><path class="ink4" d="M280,110 l-30,28 l50,-14" style="fill:#FFFDF6"/>
+      <text class="hand" x="345" y="90" text-anchor="middle">wait... frost?</text>
+    </g>
+    <rect width="490" height="270" rx="16" fill="none" stroke="#1B1B1F" stroke-width="3"/>
+  </g>
+  <g transform="translate(555 1000)">
+    <rect width="490" height="270" rx="16" fill="#FDFCF7"/>
+    <g stroke="#A9C9E8" stroke-width="2"><path d="M0 45H490 M0 90H490 M0 135H490 M0 180H490 M0 225H490"/></g>
+    <g filter="url(#wob)">
+      <path class="ink4" d="M40,60 C80,30 160,40 190,80 C220,130 150,200 90,190 C40,180 20,110 40,60 Z" style="fill:#CFE5F5"/>
+      <path class="ink4" d="M300,70 C360,30 450,60 450,120 C450,190 360,220 310,190 C270,160 270,100 300,70 Z" style="fill:#FFE27A"/>
+      <path class="ink4" stroke-dasharray="10 10" d="M180,120 C220,100 260,100 300,120"/>
+      <path class="ink4" d="M290,112 l12,8 l-12,8"/>
+      <text class="hand" x="110" y="125" text-anchor="middle">cold</text><text class="hand" x="370" y="135" text-anchor="middle">warm</text>
+      <text class="hand" x="245" y="245" text-anchor="middle" font-size="22">how long is the road?</text>
+    </g>
+    <rect width="490" height="270" rx="16" fill="none" stroke="#3B3F4A" stroke-width="3"/>
+  </g>
+  <g transform="translate(1070 1000)">
+    <rect width="490" height="270" rx="16" fill="#FBF3DF"/><rect width="490" height="270" rx="16" filter="url(#grain)" opacity=".4"/>
+    <g filter="url(#wob)">
+      <rect class="ink4" x="40" y="150" width="120" height="70" rx="10" style="fill:#E3CFA8"/><text class="hand" x="100" y="195" text-anchor="middle">grain</text>
+      <path class="ink4" d="M170,185 h130" /><path class="ink4" d="M290,175 l14,10 l-14,10"/>
+      <circle class="ink4" cx="370" cy="185" r="44" style="fill:#FFD36B"/><text class="hand" x="370" y="196" text-anchor="middle" font-size="34">$</text>
+      <path class="ink4" stroke-dasharray="8 9" d="M100,140 C140,60 300,60 360,135"/>
+      <text class="hand" x="245" y="60" text-anchor="middle" font-size="22">who pays for winter?</text>
+    </g>
+    <rect width="490" height="270" rx="16" fill="none" stroke="#1B1B1F" stroke-width="3"/>
+  </g>
+  <text class="capb" x="40" y="1300">B  Simple doodle panels for the explaining parts</text>
+  <text class="cap" x="660" y="1300">marker line + pencil hatching, paper texture, hand-lettered labels</text>
+</svg>
