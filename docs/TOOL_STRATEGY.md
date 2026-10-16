@@ -41,3 +41,20 @@ cap stop and ask. This project has no RunPod budget yet: the creator sets one be
    test scene in code.
 3. Z-Image: 3 world backgrounds against the same style reference (one pod session, under $0.50).
 4. Creator judges; only then the full kit (about 40 pictures, about $3-4 at 1K).
+
+## Kit test result (2026-10-16, model gemini-3.1-flash-image, 1K, list price $0.067 per picture)
+Spend: 15 pictures, about $1.01 (estimate at list price; no retries were needed). Files: `assets/characters/traveller/test_v0/`
+(keyed pictures, two world backgrounds, contact sheet, walk-test frames, generation ledger with every prompt).
+- **Identity held** across 1 base + 8 poses + 4 expressions from one reference: face, cheeks, scarf, satchel, proportions
+  and line style look the same on the contact sheet. This was judged by eye only; no numeric drift measure was made.
+- **Keying works**: no green pixels left on the keyed edges (measured on 3 pictures); edges look clean on dark and light.
+- **Defects found**: the scarf tail and the satchel differ per picture (the frontal expressions show the scarf hanging in
+  front; the delighted picture has the satchel on the other side); a faint blue rim on shaded edges; one world
+  background came with a painted paper border that must be cropped; mouth states for lip-sync are NOT tested yet (only
+  four whole-face expressions).
+- **Animation test** (8 s, 1080p30, built in code, 84 s to render on this sandbox, not the creator's PC): two backgrounds
+  blended into one panorama, camera pan, two-frame walk cycle with bob, seam glow and particles, shadow, surprise pop,
+  delighted finish. It reads as a living storybook scene; the walk is a two-pose swap, not smooth limb animation.
+- **Not tested**: Z-Image backgrounds (no RunPod cap yet), so the style match between Gemini mascot and Z-Image worlds
+  is still a hypothesis; mouth patches; a second world pair; consistency over many more poses.
+

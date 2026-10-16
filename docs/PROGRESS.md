@@ -103,3 +103,10 @@ cost (estimate/actual), next step, recovery instructions.
   Crossworld proposed). No paid call (Gemini $0, RunPod $0, vidIQ 130 of 200).
 - Waiting on the creator: name spelling, RunPod cap, go for the kit test (about $1.20 Gemini + under $0.50 RunPod).
 
+## 2026-10-16 — Kit test run (D-27, D-28)
+- Creator approved the test. Gemini (key present in the session, list price re-checked on the pricing page: $0.067 per 1K
+  picture): 1 base from the creator's reference, 8 poses, 4 expressions, 2 world backgrounds = 15 pictures, about $1.01.
+- Result in docs/TOOL_STRATEGY.md ("Kit test result"): identity held by eye, keying clean, defects listed, 8 s code
+  animation rendered. Assets in `assets/characters/traveller/test_v0/` (the mp4 is not committed: media stay out of git).
+- Gemini $1.01 of $10 (estimate). RunPod $0 (no cap set). vidIQ 130 of 200. Name D-29 and the RunPod cap still open.
+
