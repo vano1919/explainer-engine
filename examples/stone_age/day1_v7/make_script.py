@@ -138,7 +138,7 @@ doc = {
     "schema": "production_script/1",
     "episode": {"id": "stone_age_day1", "title": "100 greatest scientists dropped into the Stone Age, Day 1", "fps": 30,
                 "size": [1920, 1080], "grade": "prehistory"},
-    "voice": {"provider": "elevenlabs", "model": "eleven_v4", "voice_id": None, "name": None,
+    "voice": {"provider": "elevenlabs", "model": "eleven_v4", "voice_id": "NOpBlnGInO9m6vDvFkFC", "name": "Grandpa Spuds Oxley",
               "style": "soft, deep, calm, warm and mature baritone storyteller; unhurried, intimate, gently amused; "
                        "emotion carried quietly (a held breath, a dry smile), never shouted",
               "pace_wpm": [140, 158], "default_tags": ["warmly"],

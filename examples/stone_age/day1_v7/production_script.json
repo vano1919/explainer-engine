@@ -13,8 +13,8 @@
  "voice": {
   "provider": "elevenlabs",
   "model": "eleven_v4",
-  "voice_id": null,
-  "name": null,
+  "voice_id": "NOpBlnGInO9m6vDvFkFC",
+  "name": "Grandpa Spuds Oxley",
   "style": "soft, deep, calm, warm and mature baritone storyteller; unhurried, intimate, gently amused; emotion carried quietly (a held breath, a dry smile), never shouted",
   "pace_wpm": [
    140,
@@ -229,25 +229,10 @@
    "heroes": [],
    "shows": []
   },
-  "v5_d1-03": {
-   "file": "v5_d1-03.png",
-   "engine": "existing",
-   "heroes": [],
-   "shows": []
-  },
   "v5_d1-05": {
    "file": "v5_d1-05.png",
    "engine": "existing",
    "heroes": [],
-   "shows": []
-  },
-  "v5_d1-06": {
-   "file": "v5_d1-06.png",
-   "engine": "existing",
-   "heroes": [
-    "newton",
-    "einstein"
-   ],
    "shows": []
   },
   "v5_d1-07": {
@@ -369,12 +354,6 @@
      0.23
     ]
    }
-  },
-  "v5_d1-26": {
-   "file": "v5_d1-26.png",
-   "engine": "existing",
-   "heroes": [],
-   "shows": []
   },
   "v5_d1-27": {
    "file": "v5_d1-27.png",
@@ -535,6 +514,47 @@
     "fire",
     "windbreak"
    ]
+  },
+  "v5_d1-04": {
+   "file": "v5_d1-04.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-24": {
+   "file": "v5_d1-24.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-03": {
+   "file": "v5_d1-03.png",
+   "engine": "existing",
+   "heroes": [
+    "darwin"
+   ],
+   "shows": []
+  },
+  "v5_d1-17": {
+   "file": "v5_d1-17.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-15": {
+   "file": "v5_d1-15.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "v5_d1-41": {
+   "file": "v5_d1-41.png",
+   "engine": "existing",
+   "heroes": [
+    "franklin",
+    "nansen"
+   ],
+   "shows": []
   }
  },
  "music": [
@@ -603,14 +623,13 @@
     },
     {
      "at": "No tools.",
-     "type": "C",
-     "picture": "v5_d1-03",
+     "type": "B",
      "motion": {
       "kind": "push",
       "z0": 1.0,
-      "z1": 1.07
+      "z1": 1.06
      },
-     "insert": true
+     "picture": "v5_d1-24"
     }
    ],
    "audio": {
@@ -698,15 +717,14 @@
      "picture": "v5_d1-05"
     },
     {
-     "at": "A river valley",
-     "type": "A",
-     "picture": "v5_d1-26",
+     "at": "A hundred scientists.",
+     "type": "B",
      "motion": {
-      "kind": "pan",
-      "z0": 1.06,
-      "z1": 1.06,
-      "dx": -0.05
-     }
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-04"
     },
     {
      "at": "Each one arrives",
@@ -741,14 +759,14 @@
      "picture": "v5_d1-07"
     },
     {
-     "at": "The scientists are real",
+     "at": "The scientists are",
      "type": "B",
-     "picture": "v5_d1-06",
      "motion": {
       "kind": "push",
       "z0": 1.0,
-      "z1": 1.05
+      "z1": 1.06
      },
+     "picture": "v5_d1-03",
      "heroes_ok": true
     },
     {
@@ -960,6 +978,16 @@
       }
      ],
      "picture": "v5_d1-18"
+    },
+    {
+     "at": "But a rule",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-17"
     }
    ],
    "audio": {
@@ -1135,14 +1163,13 @@
     },
     {
      "at": "It isn't freezing.",
-     "type": "C",
-     "picture": "v5_d1-27",
+     "type": "B",
      "motion": {
       "kind": "push",
       "z0": 1.0,
       "z1": 1.07
      },
-     "insert": true
+     "picture": "v5_d1-27"
     },
     {
      "at": "So they build",
@@ -1166,14 +1193,15 @@
      "picture": "v5_d1-29"
     },
     {
-     "at": "It buys them time.",
-     "type": "A",
-     "picture": "v5_d1-01",
+     "at": "It buys them",
+     "type": "C",
      "motion": {
-      "kind": "pull",
-      "z0": 1.08,
-      "z1": 1.0
-     }
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "picture": "v5_d1-15",
+     "insert": true
     }
    ],
    "audio": {
@@ -1631,14 +1659,14 @@
      "picture": "v5_d1-38"
     },
     {
-     "at": "Slower.",
+     "at": "They spent",
      "type": "B",
-     "picture": "v5_d1-42",
      "motion": {
       "kind": "push",
       "z0": 1.0,
-      "z1": 1.04
+      "z1": 1.06
      },
+     "picture": "v5_d1-41",
      "heroes_ok": true
     },
     {

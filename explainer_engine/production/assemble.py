@@ -20,6 +20,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+from explainer_engine.audio.level import level_voice
 from explainer_engine.audio import duck
 from explainer_engine.finish import bubbles as BUB
 from explainer_engine.finish.grade import grade
@@ -127,6 +128,7 @@ class Sounds:
 def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict) -> np.ndarray:
     n = len(narration)
     t = lambda s: int(round(s * SR))  # noqa: E731
+    narration = level_voice(narration, SR)  # D-43: even out the read's loudness swings (audio/level.py)
     voice = narration / (np.abs(narration).max() + 1e-9) * 0.9
     env = envelope(voice)
     vduck = 1.0 - 0.55 * moving_mean(env, t(0.25))

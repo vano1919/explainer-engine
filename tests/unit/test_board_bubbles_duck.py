@@ -162,3 +162,20 @@ def test_bubble_keeps_the_speakers_face_clear():
     x0, y0, x1, y1 = b.box
     face = (sx - 0.075 * 1920, sy - 0.24 * 1080, sx + 0.075 * 1920, sy + 0.04 * 1080)
     assert x1 <= face[0] or x0 >= face[2] or y1 <= face[1] or y0 >= face[3]
+
+
+# --- voice leveler (creator 2026-10-16: the read sounded unstable) -------------------------------------------------------
+
+def test_leveler_narrows_loudness_swings_without_lifting_pauses():
+    from explainer_engine.audio import level
+    sr = 24000
+    t = np.arange(sr) / sr
+    tone = lambda db: 10 ** (db / 20) * np.sqrt(2) * np.sin(2 * np.pi * 180 * t)  # noqa: E731
+    pause = np.zeros(sr // 2)
+    x = np.concatenate([tone(-24), pause, tone(-33), pause, tone(-27)])
+    y = level.level_voice(x, sr)
+    rms = lambda a: 20 * np.log10(np.sqrt(np.mean(a ** 2)) + 1e-12)  # noqa: E731
+    before = rms(x[int(0.2 * sr):int(0.8 * sr)]) - rms(x[int(2.0 * sr):int(2.6 * sr)])
+    after = rms(y[int(0.2 * sr):int(0.8 * sr)]) - rms(y[int(2.0 * sr):int(2.6 * sr)])
+    assert 0 < after < before * 0.6  # the gap shrinks, the order stays (emphasis survives)
+    assert np.abs(y[int(1.1 * sr):int(1.4 * sr)]).max() < 1e-6  # silence stays silent
