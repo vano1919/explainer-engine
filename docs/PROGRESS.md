@@ -112,3 +112,16 @@ cost (estimate/actual), next step, recovery instructions.
 
 ## 2026-10-16 — Resolution question (D-30)
 - Creator doubts 1080p on big televisions. Proposed D-30: 1440p master, 2K backgrounds, 1080p fallback; decided after the Phase 4 benchmark. No spend.
+
+## 2026-10-16 — Review of the TMR cloud chain; plan revision proposed (not yet adopted)
+- Creator: production runs in the cloud, not on the i5-8400; review the other project's technical abilities and the plan;
+  will the Gemini pictures be reused; does a child-faced mascot suit a serious analysing voice ("100 greatest scientists
+  dropped into the Stone Age").
+- Read (TMR@d88ba8f): cloud/rp.py, Dockerfile, models.json, stages_*.json, RUNBOOK_pods.md, INCIDENTS_RUNPOD.md, handoffs.
+  Measured there: a 20-min 2560x1440 30 fps video rendered on a 4090 pod in ~8 min (GPU compositor, moderngl + EGL, NVENC);
+  the whole 29-stage chain cost $1.00 / 67 min; Kokoro on the pod CPU is slow (~45 min per 20 min of speech) but ~7-8 min
+  in this 4-vCPU cloud sandbox (free); Z-Image ~14 s per picture; a 27B text and vision model runs on the pod.
+- Read now (free calls): RunPod balance $7.37, no pod running.
+- Proposed, waiting on the creator: hardware baseline = this sandbox + RunPod (replaces invariant 1's PC); renderer = a GPU
+  compositor ported from TMR instead of Remotion (D-10), since the art is now painted raster layers; D-30 1440p; mascot
+  aged up and silent (a separate narrator voice), see the chat answer of this date.
