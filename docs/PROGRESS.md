@@ -95,3 +95,11 @@ cost (estimate/actual), next step, recovery instructions.
 - No paid call made (Gemini $0 of $10, vidIQ 130 of 200). Waiting on the creator: which tool made the references,
   who generates the kit, mascot/channel name.
 
+## 2026-10-16 — Tool strategy (D-28), channel name proposal (D-29)
+- Creator: references were made with Gemini; reuse the TMR project's tools (RunPod image model); generate the mascot's
+  moves on green with Gemini once and keep them; other pictures from the cloud model; channel name "Crossword Theories".
+- Read TMR evidence (key_green, patch_pose, Z-Image timings and incidents, prices). Z-Image-Turbo licence Apache-2.0
+  (official model page). Wrote docs/TOOL_STRATEGY.md with a kit test before any full kit; D-28, D-29 (spelling
+  Crossworld proposed). No paid call (Gemini $0, RunPod $0, vidIQ 130 of 200).
+- Waiting on the creator: name spelling, RunPod cap, go for the kit test (about $1.20 Gemini + under $0.50 RunPod).
+
