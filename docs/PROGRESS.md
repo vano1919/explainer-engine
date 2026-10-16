@@ -218,3 +218,16 @@ michael+george 40 % 123.1; +onyx 40 % 100.0; +lewis 40 % 107.1; george 25 % + on
 -3 % to -7.5 % (so `words.json` must be re-measured after the voice is chosen). Pitch −1 st gave 116.5 Hz, −2 st shifted
 formants 110.1 Hz, length delta 0 ms, lag 2–3 ms. Sent the creator a 7-take MP3 (20 s each); the choice is theirs by ear.
 Day 1 `words.json`/`shots.json` are regenerated once the voice is chosen. Money $0.
+
+## 2026-10-16 — ElevenLabs narrator (D-39), 3 samples, writing for an expressive read
+The creator rejected all 7 Kokoro takes ("too stable, flat") and moved the final narrator to ElevenLabs, keeping the
+`words.json` contract. No API key in the session, so the creator chose the connector for speech and **Scribe** for word
+times. Built `audio/scribe_words.py` (Scribe words + script → `words.json`: written words and punctuation kept, difflib
+match on normalised words, numbers spelled both ways, a lone `—`/`...` joins the word before it, unheard words
+interpolated and flagged `estimated`, coverage ≥ 97 % or REVIEW) and 5 tests (suite 102 passed, docs_lint 0). Docs: D-39
+(D-38 superseded), SCRIPTING_SPEC §8 (punctuation is the pacing and the cut points; emotion in the sentences; tags only in
+a separate TTS file; light edits, never a fact), ElevenLabs line in the cost ledger. `examples/stone_age/day1_v2/narration.txt`:
+Day 1 retuned for the read (ellipses, dashes, shorter reveal sentences; same facts). Samples (eleven_v4, one 283-character
+hook text, library voices): Kenneth 22.6 s, Clyde 24.1 s, Declan Sage 26.5 s; 849 credits ≈ $0.15. The 30-picture pod batch
+was approved by the creator but not started: this session's auto-mode permission check refused the pod action; it waits for
+the creator to allow it.

@@ -11,8 +11,16 @@ bus -> loudness measurement (ebur128) -> gate -> final audio muxed once into the
 Narration: 24 kHz mono from Kokoro, resampled to 48 kHz; stereo output with centred voice; mixes stream in blocks (no
 full-length float buffers; 16 GB RAM).
 
-## Voice alteration layer (D-38)
-Kokoro-82M stays the only TTS: its word timings and pauses are what the edit's cuts stand on (UR-12). The narrator's own
+## Final narrator: ElevenLabs (D-39)
+The final narration is an ElevenLabs library voice (never a clone, never a famous-person voice), generated through the
+connector from the plain narration text (SCRIPTING_SPEC §8). Word times come from ElevenLabs Scribe run on the exact
+audio the mix uses, aligned to the script by `audio/scribe_words.py`: the written words and punctuation stay (the cut
+marks of UR-12), unheard words are interpolated and flagged `estimated`, coverage below 97 % is REVIEW. No step after
+the read may move time; the alteration layer below is not used on ElevenLabs audio. Kokoro stays the free draft and
+the fallback when ElevenLabs is unavailable.
+
+## Voice alteration layer (D-38, Kokoro drafts only)
+Kokoro-82M was the only TTS when this was written (superseded for the final read by D-39): its word timings and pauses are what the edit's cuts stand on (UR-12). The narrator's own
 sound is made on top of it, cheapest step first, each step optional after the one before. The voice is data:
 `assets/audio/voices/<id>.json` (schema `voice_spec.schema.json`, P-98).
 1. **Blend.** Kokoro voices are style vectors; the narrator is the weighted mean of a base voice and up to three others

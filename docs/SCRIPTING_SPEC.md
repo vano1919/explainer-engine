@@ -81,3 +81,18 @@ script meets, on top of sections 1-6:
 - **No templates.** Stock phrases (`fan_brief.TEMPLATE_PHRASES`) are flagged and removed unless they are truly the best
   words; "who would win" is never the frame.
 - **Rights check passes** (`rights/ip_check.py`) before approval #1.
+
+## 8. Writing for an expressive narrator (ElevenLabs, D-39)
+The narrator reads the text as written, so the text carries the performance. Rules for the narration file:
+- **Punctuation is the pacing.** `...` holds a pause before a reveal ("Both of them... are unsure."); `—` is a
+  sudden turn ("And night — is coming."); commas make the voice breathe in long sentences; a full stop ends a beat.
+  These marks are also the edit's cut points (UR-12), so a pause the picture needs must be written into the text.
+- **Emotion lives in the sentences, not in labels.** Mystery: a question, then a short withheld answer. Suspense:
+  short sentences, one fact each, the danger last. Triumph: a longer sentence that rises to the result. Humour: a flat
+  understatement after a big moment. Each beat's emotion matches its shot's emotion (UR-14).
+- **No stage directions in the displayed script.** Audio tags (`[whispers]`, `[curious]`) are allowed only in a
+  separate `narration_tts.txt` and are removed before alignment; the captions and `words.json` use the plain text.
+- **Write what must be heard.** Numbers and years as words when the reading matters ("twelve thousand years ago"),
+  names spelled the way they are said; check unusual names in the first sample.
+- **Light edits only.** Rewriting for the read changes rhythm and punctuation, never a fact: every factual sentence
+  still maps to its claim (section 2).
