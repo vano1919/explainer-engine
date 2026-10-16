@@ -171,3 +171,15 @@ unused variants) against the 2026-10-11 rule. The pictures stay only as *style t
 (`assets/style_samples/stone_age_look_v0/`); they are not used in the episode. Gemini total ≈ $5.0 / $10 (list prices).
 Kept as reusable: the 8 scientist caricatures + 6 poses (`assets/characters/scientists_v0/`), the sound library.
 Next: shot plan `examples/stone_age/shot_plan_v0.md` for creator review; one pod preflight needs an explicit approved price and time cap.
+
+## 2026-10-16 — First pod run (creator approved: card ≤ $0.95/h, ≤ 45 min, ≈ $0.72 max)
+Pictures-only job added to TMR's cloud tooling (`cloud/stages_pictures.json`, `cloud/gen_pictures.py`,
+`cloud/jobs/stone_age_day1.json`; branch claude/master-directive-prompt-5rmv2y, commit 84956dd). Pod `9r4woj5fmrq1xj`
+(secure RTX 4090, $0.89/h, baked image) with `rp.py guard --max-usd 0.72`: stages podkey, gpu, disk, ntfy, link_env, cuda,
+fetch_zimage (33 GB), pictures, store, push all PASSED. 13 pictures 1920×1088, **25–30 s each** (Z-Image-Turbo, 9 steps, CPU
+offload; slower than TMR's earlier 14 s at 1536×864), no defective picture, attempts 1. Guard log: **spent ≈ $0.20 of $0.72**.
+The pod is gone (guard: "pod is gone"; GET returns 404); pictures are in the HF store `pictures/stone_age_day1`, copies as
+JPEG in `examples/stone_age/pictures_v0/`. Balance read before the run $6.61, after $6.07: the difference ($0.55) is larger than
+my pod's $0.20 because **another pod, `xjbkftngkcqb7y` (tmr-lab-until-1792154663, created 07:44 UTC, $0.89/h, approved lifetime
+to 12:44 UTC), was running and is not mine** — I did not touch it. Closeups (hands, lens, spark, flame) and plates came out
+clean; wide shot 1 and the night shots read as the right scale. Next: animatic with the keyed caricatures on the plates.

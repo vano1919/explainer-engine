@@ -1,0 +1,132 @@
+[
+ {
+  "id": "s01_wide_valley",
+  "seed": 11,
+  "seconds": 29.6,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.529,
+  "luma_std": 0.199,
+  "edge": 0.025
+ },
+ {
+  "id": "s02_plate_clearing",
+  "seed": 12,
+  "seconds": 26.8,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.656,
+  "luma_std": 0.174,
+  "edge": 0.024
+ },
+ {
+  "id": "s03_close_drill",
+  "seed": 13,
+  "seconds": 24.9,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.571,
+  "luma_std": 0.182,
+  "edge": 0.0113
+ },
+ {
+  "id": "s03_close_drill_b",
+  "seed": 23,
+  "seconds": 25.0,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.564,
+  "luma_std": 0.169,
+  "edge": 0.0082
+ },
+ {
+  "id": "s04_plate_cave",
+  "seed": 14,
+  "seconds": 26.0,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.543,
+  "luma_std": 0.197,
+  "edge": 0.0204
+ },
+ {
+  "id": "s05_close_lens",
+  "seed": 15,
+  "seconds": 25.8,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.661,
+  "luma_std": 0.161,
+  "edge": 0.0119
+ },
+ {
+  "id": "s05_close_lens_b",
+  "seed": 25,
+  "seconds": 25.9,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.7,
+  "luma_std": 0.159,
+  "edge": 0.0114
+ },
+ {
+  "id": "s06_wide_group",
+  "seed": 16,
+  "seconds": 25.1,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.76,
+  "luma_std": 0.173,
+  "edge": 0.0164
+ },
+ {
+  "id": "s07_close_spark",
+  "seed": 17,
+  "seconds": 25.4,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.322,
+  "luma_std": 0.153,
+  "edge": 0.0148
+ },
+ {
+  "id": "s07_close_spark_b",
+  "seed": 27,
+  "seconds": 25.4,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.318,
+  "luma_std": 0.161,
+  "edge": 0.0156
+ },
+ {
+  "id": "s09_close_flame",
+  "seed": 18,
+  "seconds": 25.2,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.341,
+  "luma_std": 0.199,
+  "edge": 0.0158
+ },
+ {
+  "id": "s10_wide_night",
+  "seed": 19,
+  "seconds": 25.8,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.284,
+  "luma_std": 0.128,
+  "edge": 0.0192
+ },
+ {
+  "id": "s10_wide_night_b",
+  "seed": 29,
+  "seconds": 25.2,
+  "attempts": 1,
+  "defective": false,
+  "mean_luma": 0.267,
+  "luma_std": 0.11,
+  "edge": 0.0196
+ }
+]

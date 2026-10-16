@@ -1,0 +1,74 @@
+{
+ "name": "stone_age_day1",
+ "width": 1920,
+ "height": 1088,
+ "steps": 9,
+ "suffix": ", painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+ "pictures": [
+  {
+   "id": "s01_wide_valley",
+   "prompt": "Wide epic shot, a massive limestone cliff with a giant cave mouth above a vast river valley at dawn, far mountains, drifting mist, extreme distance, a few tiny figures far away, huge sense of scale, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 11
+  },
+  {
+   "id": "s02_plate_clearing",
+   "prompt": "Empty rocky clearing at the foot of a limestone cliff, flat dry ground in the foreground, morning light, mid-distance view, hills behind, no people, no objects, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 12
+  },
+  {
+   "id": "s03_close_drill",
+   "prompt": "Extreme close-up, tight macro of rough weathered hands pushing a wooden bow across a spinning wooden spindle in a notched board, thin smoke curling up, shallow depth of field, blurred rock background, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 13
+  },
+  {
+   "id": "s03_close_drill_b",
+   "prompt": "Extreme close-up, tight macro of rough weathered hands pushing a wooden bow across a spinning wooden spindle in a notched board, thin smoke curling up, shallow depth of field, blurred rock background, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 23
+  },
+  {
+   "id": "s04_plate_cave",
+   "prompt": "Mouth of a large cave seen from inside the entrance, dry earth floor, soft warm light from the opening, mid-distance view, rock walls, no people, no objects, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 14
+  },
+  {
+   "id": "s05_close_lens",
+   "prompt": "Extreme close-up, a round glass lens held between fingers focusing a bright point of sunlight onto a nest of dry grass, visible light rays, blurred green meadow behind, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 15
+  },
+  {
+   "id": "s05_close_lens_b",
+   "prompt": "Extreme close-up, a round glass lens held between fingers focusing a bright point of sunlight onto a nest of dry grass, visible light rays, blurred green meadow behind, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 25
+  },
+  {
+   "id": "s06_wide_group",
+   "prompt": "Wide shot, a small group of tiny crouched figures at the foot of a huge cliff, a thin line of smoke rising, vast empty valley around them, extreme distance, tiny people only two percent of the picture height, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 16
+  },
+  {
+   "id": "s07_close_spark",
+   "prompt": "Extreme close-up macro, a single orange spark landing in a bundle of dry grass and bark fibres, glowing ember, dark background, warm glow, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 17
+  },
+  {
+   "id": "s07_close_spark_b",
+   "prompt": "Extreme close-up macro, a single orange spark landing in a bundle of dry grass and bark fibres, glowing ember, dark background, warm glow, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 27
+  },
+  {
+   "id": "s09_close_flame",
+   "prompt": "Extreme close-up, the first small yellow flame climbing through dry grass tinder, sparks flying, warm glow, dark background, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 18
+  },
+  {
+   "id": "s10_wide_night",
+   "prompt": "Wide night shot, a huge cliff and cave mouth glowing orange from one small campfire, deep blue starry sky, a few tiny figures with arms raised, extreme distance, vast valley with a river glinting under the moon, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 19
+  },
+  {
+   "id": "s10_wide_night_b",
+   "prompt": "Wide night shot, a huge cliff and cave mouth glowing orange from one small campfire, deep blue starry sky, a few tiny figures with arms raised, extreme distance, vast valley with a river glinting under the moon, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "seed": 29
+  }
+ ]
+}
