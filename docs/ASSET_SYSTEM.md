@@ -25,8 +25,10 @@ passed + date), `reuse_rights`, `fallback` (asset id), `tags`, `used_by`.
 Allowed only for assets that stay useful independent of any single topic: the mascot's concept exploration, props or
 backgrounds the library will reuse, thumbnail design elements (D-19; the producer's rule of 2026-10-11). Never for one
 topic's own pictures. Before any paid call: state what it is for, whether the result is reusable, the estimated cost and
-the remaining budget; if it is not reusable, stop and ask. Generated output is a reference or a layer source, not the
-final vector: it is traced or redrawn into the SVG parts, and tested for consistency, layer separation, animation
+the remaining budget; if it is not reusable, stop and ask. Under D-27 (painted look) generated output may also be used directly as a raster layer
+(mascot pose, world background, prop), provided it is part of a reusable kit with a recorded source image, prompt
+and cost; one-topic pictures stay forbidden. Otherwise it is a reference, not the final vector: it is traced or
+redrawn into the SVG parts, and tested for consistency, layer separation, animation
 usefulness, editability, time saved and cost. No-cost fallback when the budget is exhausted: hand-built SVG shapes and
 CC0 resources.
 

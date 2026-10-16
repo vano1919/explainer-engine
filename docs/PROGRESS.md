@@ -84,3 +84,14 @@ cost (estimate/actual), next step, recovery instructions.
 - Style sample `assets/style_samples/traveller_scene_v0.svg`: the traveller (marker line + pencil hatching) on the seam
   between two original worlds, painted-look layers built in code (free), plus three doodle explanation panels. First
   render hid fills (a CSS class overrode them); fixed and re-checked by eye. Waiting on the creator's reaction.
+
+## 2026-10-16 — Creator's visual references (D-27)
+- Creator reacted to `traveller_scene_v0` with two images and "I want visuals more like these": (1) our composition
+  repainted as a rich painted scene (glowing aurora and sun, volumes, textured paper, three notebook doodle panels);
+  (2) the same bean traveller (red scarf, brown satchel, pocket watch) with expressive eyes and hands, a time vortex
+  with clock numerals and a shopping cart of Roman props. Saved as `assets/style_samples/creator_reference_01/02`.
+- Finding: this quality cannot come from code-drawn SVG. D-27 records the look and a production proposal (reusable
+  raster kit, animation and doodle explanations in code); the method is not locked until a consistency test passes.
+- No paid call made (Gemini $0 of $10, vidIQ 130 of 200). Waiting on the creator: which tool made the references,
+  who generates the kit, mascot/channel name.
+
