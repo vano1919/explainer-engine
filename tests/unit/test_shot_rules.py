@@ -14,6 +14,7 @@ from explainer_engine.edit import shot_rules as R
 ROOT = Path(__file__).resolve().parents[2]
 V3 = ROOT / "tests/fixtures/fire_v3"
 DAY1 = ROOT / "examples/stone_age/day1_v1"
+DAY1_V2 = ROOT / "examples/stone_age/day1_v2"
 LOOK = {"style_suffix": ", painted", "cast": ["einstein", "john snow"], "caricatures": ["einstein"],
         "phases": {"day1": {"palette": ["ochre", "umber", "fire amber"]}}}
 
@@ -129,6 +130,20 @@ def test_solve_cuts_places_every_cut_in_a_pause_and_reports_impossible_edits():
     assert R.solve_cuts([{"type": "A", "start": 0, "end": 1}], words, end) is None  # one A cannot hold it all
 
 
+def test_solve_cuts_follows_the_target_times_of_the_phrases():
+    words = _words()
+    end = words[-1]["e"] + 0.8
+    plan = [{"type": t, "planned": p, "start": 0, "end": 0} for t, p in
+            [("C", 3.0), ("C", 3.0), ("B", 4.0), ("C", 3.0), ("B", 4.0)]]
+    base = R.solve_cuts(plan, words, end)
+    pauses = sorted((a + b) / 2 for a, b, _ in R.pauses_from_words(words))
+    for later in pauses[3:]:  # pull the first cut toward a later pause: the first shot ends no earlier than before
+        planned = [dict(s) for s in plan]
+        planned[0]["target"] = later
+        cuts = R.solve_cuts(planned, words, end)
+        assert cuts is None or (cuts[0] >= base[0] - 1e-6 and all(R.cut_ok(c, words) for c in cuts))
+
+
 def test_compose_prompt_and_moods_share_one_table():
     moods = R.load_moods()
     assert {"discovery", "fear", "tension", "joy", "humour", "calm", "sorrow"} == set(moods)
@@ -168,3 +183,14 @@ def test_the_committed_day1_edit_passes():
     cuts = [s["start"] for s in shots[1:]]
     assert all(R.cut_ok(c, words) for c in cuts)
     assert sum(s["transition"] == "dissolve" for s in shots) == 0
+
+
+def test_the_committed_day1_v2_edit_on_the_clyde_read_passes():
+    shots = _load(DAY1_V2 / "shots.json", "shots")
+    words = _load(DAY1_V2 / "words.json", "words")
+    look = json.loads((ROOT / "examples/stone_age/look.json").read_text(encoding="utf-8"))
+    manifest = json.loads((ROOT / "assets/audio/library/manifest.json").read_text(encoding="utf-8"))
+    found = R.check_shots(shots, words, look, sound_ids={x["id"] for x in manifest["items"]})
+    assert [f for f in found if f["severity"] == "FAIL"] == []
+    assert all(R.cut_ok(s["start"], words) for s in shots[1:])
+    assert abs(shots[-1]["end"] - _load(DAY1_V2 / "words.json", "duration")) < 1e-6

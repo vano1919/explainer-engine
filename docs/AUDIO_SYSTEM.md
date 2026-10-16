@@ -16,7 +16,12 @@ The final narration is an ElevenLabs library voice (never a clone, never a famou
 connector from the plain narration text (SCRIPTING_SPEC §8). Word times come from ElevenLabs Scribe run on the exact
 audio the mix uses, aligned to the script by `audio/scribe_words.py`: the written words and punctuation stay (the cut
 marks of UR-12), unheard words are interpolated and flagged `estimated`, coverage below 97 % is REVIEW. No step after
-the read may move time; the alteration layer below is not used on ElevenLabs audio. Kokoro stays the free draft and
+the read may move time; the alteration layer below is not used on ElevenLabs audio. Scribe returns the text with its
+punctuation and each dash as its own token, so `words.json` keeps the marks the cut rules read. **Pause padding**
+(`audio/pause_pad.py`): ElevenLabs reads a comma, dash or ellipsis in 0.05-0.1 s, too short to cut in (a cut needs
+0.05 s from both words), and then the first-30-seconds rule (UR-02) has no legal layout. A punctuated gap under 0.26 s
+gets silence inserted in its middle; no word is touched, later words move by the inserted time, and `words.json` is
+rewritten on the padded audio the mix uses (Day 1: 41 gaps, +6.7 s on 170.6 s). Kokoro stays the free draft and
 the fallback when ElevenLabs is unavailable.
 
 ## Voice alteration layer (D-38, Kokoro drafts only)

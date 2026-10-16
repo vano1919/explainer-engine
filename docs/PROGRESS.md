@@ -231,3 +231,18 @@ Day 1 retuned for the read (ellipses, dashes, shorter reveal sentences; same fac
 hook text, library voices): Kenneth 22.6 s, Clyde 24.1 s, Declan Sage 26.5 s; 849 credits ≈ $0.15. The 30-picture pod batch
 was approved by the creator but not started: this session's auto-mode permission check refused the pod action; it waits for
 the creator to allow it.
+
+## 2026-10-16 — Clyde chosen; tone calibrated; Day 1 read, Scribe timings, new edit (46 shots)
+The creator chose Clyde and set the tone: entertainment first, facts second, dry wit from the situation and the characters,
+science and history told straight (SCRIPTING_SPEC §8.1). `day1_v2/narration.txt` rewritten with light touches (all, painfully,
+real · halfway · naturally · Write that down · yes, that John Snow · Slower, and with more opinions); facts unchanged. Read with
+Clyde (eleven_v4) in one call, 170.6 s, 2,337 credits ≈ $0.42; Scribe words: 402 of 402 script words heard (coverage 100 %).
+Finding: with raw ElevenLabs gaps (commas and dashes 0.05-0.1 s) no shot layout exists past 17.6 s under UR-02, so
+`audio/pause_pad.py` pads punctuated gaps under 0.26 s (41 gaps, +6.7 s, words untouched; 3 tests). `solve_cuts` now offers
+five cut positions per pause (rounded inward so `cut_ok` holds) and can follow a shot's `target` time (test added).
+`day1_v2/build_shots.py` places 46 shots by solver: 0 FAIL, 11 REVIEW (beat openings and emotion changes inside a beat);
+`words_raw.json` keeps the unpadded Scribe times. Suite 107 passed, docs_lint 0. Pod job `stone_age_day1_v2.json` (TMR)
+regenerated from the new shots: 35 pictures (18 C, 11 B, 6 A), about 30 s each. The pod was NOT started: this session's
+permission check denied the paid pod action twice although the creator authorised it in chat; it needs a permission rule
+or a retry the creator allows. Money: ElevenLabs about $0.57 in total, RunPod $0, balance $5.07.
+

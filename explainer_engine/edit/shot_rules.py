@@ -10,6 +10,7 @@ goes to the creator. ``solve_cuts`` places cuts only inside narration pauses (UR
 from __future__ import annotations
 
 import json
+import math
 import re
 from pathlib import Path
 
@@ -79,11 +80,16 @@ def cut_ok(t: float, words: list[dict], edge: float = EDGE) -> bool:
 
 def solve_cuts(shots: list[dict], words: list[dict], end: float, edge: float = EDGE) -> list[float] | None:
     """Cut times (shot starts after the first) inside pauses, each shot inside its UR-11 range (UR-02 in the first
-    30 s), closest to the
-    planned lengths (``planned`` or ``end - start``). None when no placement exists: then hold, merge, or add a
+    30 s), closest to the planned lengths (``planned`` or ``end - start``), or, when a shot has ``target`` (the time
+    its picture's phrase ends), closest to that time. None when no placement exists: then hold, merge, or add a
     clause pause (UR-12); never cut mid-sentence."""
-    cands = sorted({round((a + b) / 2, 3) for a, b, _ in pauses_from_words(words, edge)})
-    planned = [float(s.get("planned", s["end"] - s["start"])) for s in shots]
+    cands = set()  # five cut positions inside each pause, rounded inward so cut_ok holds exactly
+    for a, b, _ in pauses_from_words(words, edge):
+        lo, hi = math.ceil((a + edge) * 1000 + 1e-6) / 1000, math.floor((b - edge) * 1000 - 1e-6) / 1000
+        if hi >= lo:
+            cands.update(round(min(max(lo + (hi - lo) * f, lo), hi), 3) for f in (0.0, 0.25, 0.5, 0.75, 1.0))
+    cands = sorted(cands)
+    planned = [float(s["planned"]) if "planned" in s else float(s.get("end", 0) - s.get("start", 0)) for s in shots]
     n = len(shots)
     points = [0.0] + [c for c in cands if 0 < c < end] + [end]
     # best[k][j] = (cost, previous j) for shot k ending at points[j]
@@ -102,7 +108,7 @@ def solve_cuts(shots: list[dict], words: list[dict], end: float, edge: float = E
                     break
                 if d < lo - 1e-9:
                     continue
-                c = cost + (d - planned[k]) ** 2
+                c = cost + ((points[j] - shots[k]["target"]) ** 2 if "target" in shots[k] else (d - planned[k]) ** 2)
                 if j not in best[k] or c < best[k][j][0]:
                     best[k][j] = (c, i)
     last = len(points) - 1

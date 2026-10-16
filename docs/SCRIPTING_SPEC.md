@@ -96,3 +96,16 @@ The narrator reads the text as written, so the text carries the performance. Rul
   names spelled the way they are said; check unusual names in the first sample.
 - **Light edits only.** Rewriting for the read changes rhythm and punctuation, never a fact: every factual sentence
   still maps to its claim (section 2).
+
+### 8.1 Tone: entertainment first, facts second (creator, 2026-10-16; narrator Clyde, D-39)
+The narrator is a witty historian telling an unbelievable true story over a campfire: curious, mysterious,
+conversational. Never a dry documentary, never a comedy sketch.
+- **Humour comes from the situation and the characters' reactions**, in small doses: dry understatement, an ironic
+  aside, a flat line after a big moment (brilliant scientists as confused tourists). About one light touch per beat,
+  never two in a row, none at moments of real danger or in the fire-making physics.
+- **The facts stay serious.** A joke never changes, softens or invents a fact, a number or a mechanism; the science,
+  physics and survival constraints are told straight. A joke that needs a false statement is cut.
+- **Written for the shot, not only the ear.** A joke adds words, and every shot has a duration range (UR-11): after
+  adding a line, re-check the beat's length against its shot before the read is paid for.
+- **Checked by ear.** The creator judges whether it is funny and whether it stays credible; a model's opinion of its
+  own humour is not evidence.
