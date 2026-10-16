@@ -24,6 +24,12 @@ _ONES = "zero one two three four five six seven eight nine ten eleven twelve thi
         "seventeen eighteen nineteen".split()
 _TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
 _LONE_MARK = re.compile(r"^[—–\-…\.]+$")
+_TAG = re.compile(r"\[[^\]\n]*\]\s*")
+
+
+def strip_tags(text: str) -> str:
+    """The text without ElevenLabs v3/v4 audio tags (``[curious]``, ``[pause]``): tags are directions, not words."""
+    return "\n".join(re.sub(r"  +", " ", _TAG.sub("", line)).strip() for line in text.splitlines())
 
 
 def number_words(n: int) -> list[str]:
@@ -55,7 +61,7 @@ def norm(token: str) -> list[str]:
 def script_tokens(text: str) -> list[dict]:
     """Written words with their paragraph; a lone dash/ellipsis joins the word before it."""
     out: list[dict] = []
-    paras = [p.strip() for p in text.splitlines() if p.strip()]
+    paras = [p.strip() for p in strip_tags(text).splitlines() if p.strip()]
     for i, p in enumerate(paras):
         for tok in p.split():
             if _LONE_MARK.match(tok) and out and out[-1]["para"] == i:

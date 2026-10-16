@@ -109,3 +109,16 @@ conversational. Never a dry documentary, never a comedy sketch.
   adding a line, re-check the beat's length against its shot before the read is paid for.
 - **Checked by ear.** The creator judges whether it is funny and whether it stays credible; a model's opinion of its
   own humour is not evidence.
+
+### 8.2 Intrigue and emphasis (creator's review of the first Clyde read, 2026-10-16)
+The first read was slow and monotone, with stress and question intonation on the wrong words. Rules:
+- **Every section ends on an open loop.** The last line of a beat raises the next beat's question or danger ("But a
+  rule won't keep anyone warm. And the sun is already sinking."). A beat that ends closed is rewritten.
+- **The stressed word is marked, sparingly.** One capitalised word per sentence at most, on the word that carries the
+  surprise ("That's the ONLY magic."); put that word at the end of a question so the rising pitch lands on it
+  ("...into the STONE AGE?").
+- **Ellipses are rare.** Each one slows the voice; keep them for one reveal per beat. Speed comes from short sentences,
+  contractions ("what's", "isn't") and dashes, not from fewer words.
+- **Audio tags set the delivery per beat** (`[curious]`, `[mischievously]`, `[dramatically]`, `[excited]`,
+  `[sarcastic]`, `[warmly]`, `[pause]`; ElevenLabs v4), placed where the delivery changes, in `narration_tts.txt`
+  only; `narration.txt` is the same text without tags and capitals (captions, claims, alignment).

@@ -60,3 +60,10 @@ def test_transcript_reader_skips_spacing_and_accepts_a_list():
                       {"text": "there", "start": 0.3, "end": 0.6}]}
     assert [w["text"] for w in S.transcript_words(data)] == ["Hi", "there"]
     assert len(S.transcript_words(data["words"])) == 2
+
+
+def test_audio_tags_are_not_words():
+    tagged = "[curious] Could they survive? [pause] [sarcastic] Both of them... unsure."
+    assert S.strip_tags(tagged) == "Could they survive? Both of them... unsure."
+    res = S.align(tagged, heard("Could they survive Both of them unsure".split()))
+    assert res["coverage"] == 1.0 and [w["w"] for w in res["words"]][0] == "Could"
