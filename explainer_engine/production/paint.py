@@ -150,6 +150,14 @@ def main(argv: list[str] | None = None) -> int:
                 run.done("pictures", item, file=f"{item}.png", batch=a.collect)
         print(res["state"], len(res["items"]), "pictures")
         return 0 if res["done"] else 1
+    from explainer_engine.production.editorial_gate import check as check_editorial
+    review_path = path.with_name("editorial_review.json")
+    editorial_findings = check_editorial(path, review_path)
+    for item in editorial_findings:
+        print(f"{item['severity']:6} {item['rule']:6} {item['where']}: {item['detail']}")
+    if editorial_findings:
+        print("EDITORIAL GATE BLOCKED: paid image generation requires a passing source/claim contract and a current independent review.")
+        return 2
     if a.batch:
         return run_batch(a, todo, doc, dirs, out, run, model, size)
     client = GeminiClient(out / "_gemini", cap_usd=1e9, run=run)
