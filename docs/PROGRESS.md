@@ -432,3 +432,14 @@ the gap (nearest the gap's middle among the quietest), must be at most -40 dB or
 on a 10 ms fade; word times follow the real quiet spot. Re-run: 131 -> 113 silences, 67 -> 2 cut into sound (both borderline -37 /
 -42 dB), 18 insertions skipped (no quiet spot). Three cuts that relied on a skipped pause were moved to legal pauses (S18, S31, S32)
 and one reframe added (S31 "Fuel."). Tests: 210 passed. Creator picked speed 1.15.
+
+## 2026-10-18 — ChatGPT repository governance and script editorial gate
+
+- Created isolated branch `chatgpt/repo-management` from `systemic/next-video` at source commit `a1821958c4195953e52261bfb42d9b3351d6aa45`. No write was made to the source branch.
+- Copied the complete contents of `CLAUDE.md` into `CHATGPT.md`, then appended ChatGPT-specific branch, evidence, QA and parallel-production rules. Mirrored all 10 files under `.claude/agents/` and `.claude/skills/` into `.chatgpt/agents/` and `.chatgpt/skills/`; the original Claude files remain unchanged.
+- Added `.chatgpt/rules/repo-maintenance.md`, `.chatgpt/rules/script-and-video-quality.md`, `.chatgpt/agents/chatgpt-orchestrator.md`, `.chatgpt/README.md`, and `docs/CHATGPT_WORKFLOW.md`.
+- Added optional `editorial.version=1` source/claim schema fields and narration-line `kind` while keeping legacy scripts schema-valid.
+- Added `explainer_engine/production/editorial_gate.py` and six focused regression tests. The gate validates source passages, claim references, source support for factual lines, rubric thresholds, review blockers and a SHA-256 binding between a script and its independent review.
+- Wired the new gate into `production_gate.py` and documented OR-10 plus the pre-spend script gate in `docs/ORCHESTRATION.md`, `docs/SCRIPTING_SPEC.md` and `docs/PRODUCTION_RULES.md`.
+- Tests added but **not executed**: this session has GitHub API access but no network-enabled local clone or test runner. Full pytest and docs lint remain required before using this gate for a paid production run.
+
