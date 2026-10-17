@@ -354,6 +354,16 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "kind": {
+                  "enum": [
+                    "fact",
+                    "analysis",
+                    "speculation",
+                    "joke",
+                    "transition"
+                  ],
+                  "description": "Narrative classification for the editorial gate; fact, analysis and speculation require claim references."
                 }
               }
             }
@@ -723,6 +733,134 @@
           }
         }
       }
+    },
+    "editorial": {
+      "type": "object",
+      "required": [
+        "version",
+        "sources",
+        "claims"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "url",
+              "title",
+              "publisher",
+              "accessed_at",
+              "grade",
+              "passage"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "publisher": {
+                "type": "string",
+                "minLength": 1
+              },
+              "published_at": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "accessed_at": {
+                "type": "string",
+                "minLength": 1
+              },
+              "grade": {
+                "enum": [
+                  "A",
+                  "B",
+                  "C",
+                  "D"
+                ]
+              },
+              "passage": {
+                "type": "string",
+                "minLength": 1
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "claims": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "text",
+              "type",
+              "source_ids",
+              "confidence",
+              "uncertainty"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "enum": [
+                  "fact",
+                  "estimate",
+                  "interpretation",
+                  "allegation",
+                  "speculation"
+                ]
+              },
+              "source_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "confidence": {
+                "enum": [
+                  "verified",
+                  "corroborated",
+                  "single-source",
+                  "unverified"
+                ]
+              },
+              "uncertainty": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {
@@ -745,12 +883,12 @@
         },
         "z0": {
           "type": "number",
-          "minimum": 1.0,
+          "minimum": 1,
           "maximum": 1.15
         },
         "z1": {
           "type": "number",
-          "minimum": 1.0,
+          "minimum": 1,
           "maximum": 1.15
         },
         "dx": {
