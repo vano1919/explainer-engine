@@ -1,0 +1,17 @@
+{
+ "version": 1,
+ "id": "p0_baseline",
+ "base": "am_michael",
+ "blend": [],
+ "speed": 1.05,
+ "pitch": {
+  "semitones": 0.0,
+  "formant": "preserved"
+ },
+ "tone": {
+  "warmth_db": 0.0,
+  "brightness_db": 0.0,
+  "deess": 0.0
+ },
+ "rvc": null
+}

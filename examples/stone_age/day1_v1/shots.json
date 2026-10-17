@@ -1,0 +1,1374 @@
+{
+ "version": 1,
+ "segment": "day1",
+ "duration": 154.347,
+ "shots": [
+  {
+   "id": "d1-01",
+   "beat": "hook",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "tension",
+   "start": 0.0,
+   "end": 3.492,
+   "sentences": [
+    0
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_mud_hand",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "umber",
+    "charcoal",
+    "ochre"
+   ],
+   "grade": {
+    "lift": -0.01,
+    "saturation": 0.95,
+    "warmth": 0.04,
+    "contrast": 1.14,
+    "vignette": 0.35
+   },
+   "prompt": "extreme close-up of a hand in a tweed coat sleeve pressing into cold wet mud beside a dark flint nodule, no faces, no background detail, hard side light through dust haze, dusty orange and brown tones, strong contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "seam_shimmer__v1",
+   "sound_at": 0.0
+  },
+  {
+   "id": "d1-02",
+   "beat": "hook",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "fear",
+   "start": 3.492,
+   "end": 7.31,
+   "sentences": [
+    1,
+    2,
+    3
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_b_ridge_dusk",
+   "source": "new",
+   "face": "faceless",
+   "palette": [
+    "night blue",
+    "dawn rose",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": -0.03,
+    "saturation": 0.8,
+    "warmth": -0.08,
+    "contrast": 1.15,
+    "vignette": 0.45
+   },
+   "prompt": "medium shot of a lone man in a nineteenth-century greatcoat seen from behind on a grassy ridge, the sun sinking behind distant hills, his long shadow on the grass, low-key lighting, cold blue-green shadows, harsh single light from below, most of the frame in darkness, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "swish__v1"
+  },
+  {
+   "id": "d1-03",
+   "beat": "rules",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "discovery",
+   "start": 7.31,
+   "end": 10.611,
+   "sentences": [
+    4,
+    5
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_boots",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "umber",
+    "ochre",
+    "river teal"
+   ],
+   "grade": {
+    "lift": 0.0,
+    "saturation": 1.08,
+    "warmth": 0.06,
+    "contrast": 1.08,
+    "vignette": 0.3
+   },
+   "prompt": "extreme close-up of many pairs of old leather boots and buckled shoes from different centuries standing in wet meadow grass, no faces, no background detail, a single warm light source revealing the subject, glowing rim light, amber highlights against cool teal shadows, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "footstep_grass__v1"
+  },
+  {
+   "id": "d1-04",
+   "beat": "rules",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "joy",
+   "start": 10.611,
+   "end": 14.899,
+   "sentences": [
+    6
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_plate_riverbank",
+   "source": "new",
+   "face": "caricature:darwin",
+   "palette": [
+    "ochre",
+    "river teal",
+    "dawn rose"
+   ],
+   "grade": {
+    "lift": 0.02,
+    "saturation": 1.12,
+    "warmth": 0.08,
+    "contrast": 1.02,
+    "vignette": 0.15
+   },
+   "prompt": "medium shot of a river bank with tall wild grasses and grain heads, a wide shallow river and limestone hills behind, empty of people, open space in the centre foreground for one standing figure, golden hour light, warm saturated colours, bright open sky, soft glow, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "pop_in__v1"
+  },
+  {
+   "id": "d1-05",
+   "beat": "rules",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "discovery",
+   "start": 14.899,
+   "end": 17.681,
+   "sentences": [
+    7
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_ink_hand",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "umber",
+    "charcoal",
+    "ochre"
+   ],
+   "grade": {
+    "lift": 0.0,
+    "saturation": 1.08,
+    "warmth": 0.06,
+    "contrast": 1.08,
+    "vignette": 0.3
+   },
+   "prompt": "extreme close-up of an ink-stained hand resting on a mossy stone, fingertips smudged with old ink, no faces, no background detail, a single warm light source revealing the subject, glowing rim light, amber highlights against cool teal shadows, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "page_flip__v1"
+  },
+  {
+   "id": "d1-06",
+   "beat": "rules",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "humour",
+   "start": 17.681,
+   "end": 21.106,
+   "sentences": [
+    7
+   ],
+   "motion": {
+    "kind": "static",
+    "z0": 1.0,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_pocket",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "ochre",
+    "umber",
+    "river teal"
+   ],
+   "grade": {
+    "lift": 0.02,
+    "saturation": 1.05,
+    "warmth": 0.02,
+    "contrast": 1.0,
+    "vignette": 0.1
+   },
+   "prompt": "extreme close-up of the contents of a coat pocket spilled on grass: round spectacles, a pencil stub, a folded handkerchief and two old coins, no faces, no background detail, bright even daylight, clean light colours, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "cloth_rustle__v1"
+  },
+  {
+   "id": "d1-07",
+   "beat": "rules",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "humour",
+   "start": 21.106,
+   "end": 24.681,
+   "sentences": [
+    8,
+    9
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "s02_plate_clearing",
+   "source": "reuse",
+   "face": "caricature:curie+tesla",
+   "palette": [
+    "ochre",
+    "dawn rose"
+   ],
+   "grade": {
+    "lift": 0.02,
+    "saturation": 1.05,
+    "warmth": 0.02,
+    "contrast": 1.0,
+    "vignette": 0.1
+   },
+   "sound": "pop_in__v1"
+  },
+  {
+   "id": "d1-08",
+   "beat": "rules",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "discovery",
+   "start": 24.681,
+   "end": 27.819,
+   "sentences": [
+    10
+   ],
+   "motion": {
+    "kind": "static",
+    "z0": 1.0,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_flint_grain",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "charcoal",
+    "ochre",
+    "umber"
+   ],
+   "grade": {
+    "lift": 0.0,
+    "saturation": 1.08,
+    "warmth": 0.06,
+    "contrast": 1.08,
+    "vignette": 0.3
+   },
+   "prompt": "extreme close-up of a flint nodule, a few ears of wild einkorn wheat and a smooth river pebble lying on dark earth, no faces, no background detail, a single warm light source revealing the subject, glowing rim light, amber highlights against cool teal shadows, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "glow_ping__v1"
+  },
+  {
+   "id": "d1-09",
+   "beat": "rules",
+   "phase": "day1",
+   "type": "A",
+   "emotion": "calm",
+   "start": 27.819,
+   "end": 33.023,
+   "sentences": [
+    11
+   ],
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": -0.052
+   },
+   "transition": "cut",
+   "picture": "s01_wide_valley",
+   "source": "reuse",
+   "face": "none",
+   "palette": [
+    "ochre",
+    "river teal",
+    "dawn rose"
+   ],
+   "grade": {
+    "lift": 0.01,
+    "saturation": 0.92,
+    "warmth": -0.03,
+    "contrast": 0.94,
+    "vignette": 0.25
+   },
+   "sound": "swish__v2"
+  },
+  {
+   "id": "d1-10",
+   "beat": "meadow",
+   "phase": "day1",
+   "type": "A",
+   "emotion": "humour",
+   "start": 33.023,
+   "end": 39.774,
+   "sentences": [
+    12,
+    13
+   ],
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": 0.0675
+   },
+   "transition": "cut",
+   "picture": "d1_a_meadow_crowd",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "ochre",
+    "river teal",
+    "dawn rose"
+   ],
+   "grade": {
+    "lift": 0.02,
+    "saturation": 1.05,
+    "warmth": 0.02,
+    "contrast": 1.0,
+    "vignette": 0.1
+   },
+   "prompt": "epic wide establishing shot of a sunny highland meadow in a river valley, a hundred tiny distant figures standing in scattered arguing clusters, limestone cliffs and a huge sky, late morning, bright even daylight, clean light colours, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters"
+  },
+  {
+   "id": "d1-11",
+   "beat": "meadow",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "humour",
+   "start": 39.774,
+   "end": 43.864,
+   "sentences": [
+    14,
+    15
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_plate_meadow",
+   "source": "new",
+   "face": "caricature:nansen",
+   "palette": [
+    "ochre",
+    "umber",
+    "river teal"
+   ],
+   "grade": {
+    "lift": 0.02,
+    "saturation": 1.05,
+    "warmth": 0.02,
+    "contrast": 1.0,
+    "vignette": 0.1
+   },
+   "prompt": "medium shot of a patch of trampled meadow grass with a few boulders, the meadow and hills behind, empty of people, open space in the centre foreground for one standing figure, bright even daylight, clean light colours, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "pop_in__v1"
+  },
+  {
+   "id": "d1-12",
+   "beat": "meadow",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "tension",
+   "start": 43.864,
+   "end": 47.364,
+   "sentences": [
+    15
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_b_raised_hand",
+   "source": "new",
+   "face": "faceless",
+   "palette": [
+    "umber",
+    "ochre",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": -0.01,
+    "saturation": 0.95,
+    "warmth": 0.04,
+    "contrast": 1.14,
+    "vignette": 0.35
+   },
+   "prompt": "medium shot of a weathered man in a heavy wool sweater seen from behind, raising one hand to quiet a crowd of people in old coats, hard side light through dust haze, dusty orange and brown tones, strong contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "throat_clear__v1"
+  },
+  {
+   "id": "d1-13",
+   "beat": "meadow",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "tension",
+   "start": 47.364,
+   "end": 50.397,
+   "sentences": [
+    16
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_empty_palms",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "umber",
+    "charcoal",
+    "night blue"
+   ],
+   "grade": {
+    "lift": -0.01,
+    "saturation": 0.95,
+    "warmth": 0.04,
+    "contrast": 1.14,
+    "vignette": 0.35
+   },
+   "prompt": "extreme close-up of two open empty palms held up, cold reddened fingers, nothing in them, no faces, no background detail, hard side light through dust haze, dusty orange and brown tones, strong contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters"
+  },
+  {
+   "id": "d1-14",
+   "beat": "meadow",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "humour",
+   "start": 50.397,
+   "end": 53.795,
+   "sentences": [
+    17,
+    18
+   ],
+   "motion": {
+    "kind": "static",
+    "z0": 1.0,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_two_hands",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "ochre",
+    "river teal",
+    "umber"
+   ],
+   "grade": {
+    "lift": 0.02,
+    "saturation": 1.05,
+    "warmth": 0.02,
+    "contrast": 1.0,
+    "vignette": 0.1
+   },
+   "prompt": "extreme close-up of two hands rising only halfway above a row of shoulders, fingers hesitant and half curled, against a bright sky, no faces, no background detail, bright even daylight, clean light colours, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "hmm_thinking__v1"
+  },
+  {
+   "id": "d1-15",
+   "beat": "meadow",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "joy",
+   "start": 53.795,
+   "end": 57.915,
+   "sentences": [
+    19
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_plate_table_rock",
+   "source": "new",
+   "face": "caricature:franklin",
+   "palette": [
+    "ochre",
+    "dawn rose",
+    "umber"
+   ],
+   "grade": {
+    "lift": 0.02,
+    "saturation": 1.12,
+    "warmth": 0.08,
+    "contrast": 1.02,
+    "vignette": 0.15
+   },
+   "prompt": "medium shot of a flat rock in the meadow like a table, a few walking sticks leaning on it, empty of people, open space in the centre foreground for one standing figure, golden hour light, warm saturated colours, bright open sky, soft glow, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "pop_in__v1"
+  },
+  {
+   "id": "d1-16",
+   "beat": "meadow",
+   "phase": "day1",
+   "type": "A",
+   "emotion": "calm",
+   "start": 57.915,
+   "end": 63.242,
+   "sentences": [
+    20
+   ],
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": 0.0533
+   },
+   "transition": "cut",
+   "picture": "d1_a_circle",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "ochre",
+    "river teal",
+    "umber"
+   ],
+   "grade": {
+    "lift": 0.01,
+    "saturation": 0.92,
+    "warmth": -0.03,
+    "contrast": 0.94,
+    "vignette": 0.25
+   },
+   "prompt": "epic wide establishing shot of a hundred tiny distant figures sitting in a wide circle on a hillside around a flat rock, a long valley and a river below, afternoon light, soft blue-hour light, small warm ember glow, gentle low contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "swish__v1"
+  },
+  {
+   "id": "d1-17",
+   "beat": "meadow",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "humour",
+   "start": 63.242,
+   "end": 66.899,
+   "sentences": [
+    21,
+    22
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_plate_meadow",
+   "source": "reuse",
+   "face": "caricature:newton",
+   "palette": [
+    "ochre",
+    "umber",
+    "river teal"
+   ],
+   "grade": {
+    "lift": 0.02,
+    "saturation": 1.05,
+    "warmth": 0.02,
+    "contrast": 1.0,
+    "vignette": 0.1
+   },
+   "sound": "pleased_mmhm__v1"
+  },
+  {
+   "id": "d1-18",
+   "beat": "meadow",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "tension",
+   "start": 66.899,
+   "end": 69.806,
+   "sentences": [
+    22
+   ],
+   "motion": {
+    "kind": "static",
+    "z0": 1.0,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_three_marks",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "umber",
+    "ochre",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": -0.01,
+    "saturation": 0.95,
+    "warmth": 0.04,
+    "contrast": 1.14,
+    "vignette": 0.35
+   },
+   "prompt": "extreme close-up of a hand scratching three short marks into bare earth with a pointed stick, no faces, no background detail, hard side light through dust haze, dusty orange and brown tones, strong contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "pencil_scribble__v1"
+  },
+  {
+   "id": "d1-19",
+   "beat": "water",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "discovery",
+   "start": 69.806,
+   "end": 74.256,
+   "sentences": [
+    23
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_b_spring",
+   "source": "new",
+   "face": "faceless",
+   "palette": [
+    "river teal",
+    "ochre",
+    "umber"
+   ],
+   "grade": {
+    "lift": 0.0,
+    "saturation": 1.08,
+    "warmth": 0.06,
+    "contrast": 1.08,
+    "vignette": 0.3
+   },
+   "prompt": "medium shot of a bearded man in a linen shirt seen from behind, kneeling between mossy rocks where clear water bubbles out of the ground, a single warm light source revealing the subject, glowing rim light, amber highlights against cool teal shadows, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters"
+  },
+  {
+   "id": "d1-20",
+   "beat": "water",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "tension",
+   "start": 74.256,
+   "end": 78.207,
+   "sentences": [
+    24
+   ],
+   "motion": {
+    "kind": "static",
+    "z0": 1.0,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_arrow_mud",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "umber",
+    "charcoal",
+    "river teal"
+   ],
+   "grade": {
+    "lift": -0.01,
+    "saturation": 0.95,
+    "warmth": 0.04,
+    "contrast": 1.14,
+    "vignette": 0.35
+   },
+   "prompt": "extreme close-up of a sharpened stick drawing an arrow in wet mud pointing downhill, away from a small pool, no faces, no background detail, hard side light through dust haze, dusty orange and brown tones, strong contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "pencil_scribble__v2"
+  },
+  {
+   "id": "d1-21",
+   "beat": "water",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "calm",
+   "start": 78.207,
+   "end": 81.737,
+   "sentences": [
+    25
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_spring_water",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "river teal",
+    "ochre"
+   ],
+   "grade": {
+    "lift": 0.01,
+    "saturation": 0.92,
+    "warmth": -0.03,
+    "contrast": 0.94,
+    "vignette": 0.25
+   },
+   "prompt": "extreme close-up of clear spring water trickling over smooth stones and green moss, no faces, no background detail, soft blue-hour light, small warm ember glow, gentle low contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "swish__v2"
+  },
+  {
+   "id": "d1-22",
+   "beat": "dusk",
+   "phase": "day1",
+   "type": "A",
+   "emotion": "fear",
+   "start": 81.737,
+   "end": 87.567,
+   "sentences": [
+    26,
+    27
+   ],
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": 0.0583
+   },
+   "transition": "cut",
+   "picture": "d1_a_dusk_wind",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "night blue",
+    "charcoal",
+    "dawn rose"
+   ],
+   "grade": {
+    "lift": -0.03,
+    "saturation": 0.8,
+    "warmth": -0.08,
+    "contrast": 1.15,
+    "vignette": 0.45
+   },
+   "prompt": "epic wide establishing shot of the river valley at dusk, wind bending the tall grass in long waves, storm grey clouds rolling over the hills, one tiny cluster of distant figures, low-key lighting, cold blue-green shadows, harsh single light from below, most of the frame in darkness, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters"
+  },
+  {
+   "id": "d1-23",
+   "beat": "dusk",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "fear",
+   "start": 87.567,
+   "end": 90.928,
+   "sentences": [
+    27
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_wet_sleeve",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "night blue",
+    "charcoal",
+    "umber"
+   ],
+   "grade": {
+    "lift": -0.03,
+    "saturation": 0.8,
+    "warmth": -0.08,
+    "contrast": 1.15,
+    "vignette": 0.45
+   },
+   "prompt": "extreme close-up of a damp wool coat sleeve beaded with water and a clenched shivering hand, no faces, no background detail, low-key lighting, cold blue-green shadows, harsh single light from below, most of the frame in darkness, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "shiver_brr__v1"
+  },
+  {
+   "id": "d1-24",
+   "beat": "dusk",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "tension",
+   "start": 90.928,
+   "end": 95.897,
+   "sentences": [
+    28
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_b_windbreak",
+   "source": "new",
+   "face": "faceless",
+   "palette": [
+    "umber",
+    "ochre",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": -0.01,
+    "saturation": 0.95,
+    "warmth": 0.04,
+    "contrast": 1.14,
+    "vignette": 0.35
+   },
+   "prompt": "medium shot of two people seen from behind stacking long branches into a slanting windbreak against a boulder, armfuls of dry grass at their feet, hard side light through dust haze, dusty orange and brown tones, strong contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "effort_hup__v1"
+  },
+  {
+   "id": "d1-25",
+   "beat": "dusk",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "calm",
+   "start": 95.897,
+   "end": 99.502,
+   "sentences": [
+    29
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_dry_grass",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "ochre",
+    "umber"
+   ],
+   "grade": {
+    "lift": 0.01,
+    "saturation": 0.92,
+    "warmth": -0.03,
+    "contrast": 0.94,
+    "vignette": 0.25
+   },
+   "prompt": "extreme close-up of two hands pressing a thick loose bundle of dry grass and dead leaves, no faces, no background detail, soft blue-hour light, small warm ember glow, gentle low contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "cloth_rustle__v2"
+  },
+  {
+   "id": "d1-26",
+   "beat": "fire",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "tension",
+   "start": 99.502,
+   "end": 102.892,
+   "sentences": [
+    30,
+    31
+   ],
+   "motion": {
+    "kind": "static",
+    "z0": 1.0,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "s03_close_drill",
+   "source": "reuse",
+   "face": "none",
+   "palette": [
+    "umber",
+    "ochre",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": -0.01,
+    "saturation": 0.95,
+    "warmth": 0.04,
+    "contrast": 1.14,
+    "vignette": 0.35
+   }
+  },
+  {
+   "id": "d1-27",
+   "beat": "fire",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "tension",
+   "start": 102.892,
+   "end": 106.485,
+   "sentences": [
+    32
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "s02_plate_clearing",
+   "source": "reuse",
+   "face": "caricature:nansen",
+   "palette": [
+    "umber",
+    "ochre",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": -0.01,
+    "saturation": 0.95,
+    "warmth": 0.04,
+    "contrast": 1.14,
+    "vignette": 0.35
+   },
+   "sound": "groan_ugh__v1"
+  },
+  {
+   "id": "d1-28",
+   "beat": "fire",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "calm",
+   "start": 106.485,
+   "end": 109.285,
+   "sentences": [
+    33
+   ],
+   "motion": {
+    "kind": "static",
+    "z0": 1.0,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_tinder_nest",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "ochre",
+    "umber"
+   ],
+   "grade": {
+    "lift": 0.01,
+    "saturation": 0.92,
+    "warmth": -0.03,
+    "contrast": 0.94,
+    "vignette": 0.25
+   },
+   "prompt": "extreme close-up of two cupped hands holding a nest of dry shredded bark and grass, sheltering it from the wind, no faces, no background detail, soft blue-hour light, small warm ember glow, gentle low contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "cloth_rustle__v3"
+  },
+  {
+   "id": "d1-29",
+   "beat": "fire",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "discovery",
+   "start": 109.285,
+   "end": 112.175,
+   "sentences": [
+    34
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_spectacles",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "fire amber",
+    "ochre"
+   ],
+   "grade": {
+    "lift": 0.0,
+    "saturation": 1.08,
+    "warmth": 0.06,
+    "contrast": 1.08,
+    "vignette": 0.3
+   },
+   "prompt": "extreme close-up of a hand lifting a pair of small round reading spectacles, sunlight glinting on the lens, no faces, no background detail, a single warm light source revealing the subject, glowing rim light, amber highlights against cool teal shadows, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "monocle_pop__v1"
+  },
+  {
+   "id": "d1-30",
+   "beat": "fire",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "discovery",
+   "start": 112.175,
+   "end": 116.678,
+   "sentences": [
+    35
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "s04_plate_cave",
+   "source": "reuse",
+   "face": "caricature:einstein",
+   "palette": [
+    "fire amber",
+    "umber"
+   ],
+   "grade": {
+    "lift": 0.0,
+    "saturation": 1.08,
+    "warmth": 0.06,
+    "contrast": 1.08,
+    "vignette": 0.3
+   },
+   "sound": "pop_in__v1"
+  },
+  {
+   "id": "d1-31",
+   "beat": "fire",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "tension",
+   "start": 116.678,
+   "end": 119.778,
+   "sentences": [
+    36,
+    37
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "s07_close_spark",
+   "source": "reuse",
+   "face": "none",
+   "palette": [
+    "fire amber",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": -0.01,
+    "saturation": 0.95,
+    "warmth": 0.04,
+    "contrast": 1.14,
+    "vignette": 0.35
+   },
+   "sound": "gasp_inhale__v1"
+  },
+  {
+   "id": "d1-32",
+   "beat": "fire",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "joy",
+   "start": 119.778,
+   "end": 123.275,
+   "sentences": [
+    38,
+    39
+   ],
+   "motion": {
+    "kind": "static",
+    "z0": 1.0,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "s09_close_flame",
+   "source": "reuse",
+   "face": "none",
+   "palette": [
+    "fire amber",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": 0.02,
+    "saturation": 1.12,
+    "warmth": 0.08,
+    "contrast": 1.02,
+    "vignette": 0.15
+   },
+   "sound": "reveal_sting__v1"
+  },
+  {
+   "id": "d1-33",
+   "beat": "fire",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "joy",
+   "start": 123.275,
+   "end": 128.127,
+   "sentences": [
+    40,
+    41
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_plate_overhang_fire",
+   "source": "new",
+   "face": "caricature:franklin",
+   "palette": [
+    "fire amber",
+    "umber",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": 0.02,
+    "saturation": 1.12,
+    "warmth": 0.08,
+    "contrast": 1.02,
+    "vignette": 0.15
+   },
+   "prompt": "medium shot of a rock overhang camp lit by a small new fire, firewood stacked by the wall, empty of people, open space in the centre foreground for one standing figure, golden hour light, warm saturated colours, bright open sky, soft glow, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "laugh_warm__v1"
+  },
+  {
+   "id": "d1-34",
+   "beat": "night",
+   "phase": "day1",
+   "type": "A",
+   "emotion": "calm",
+   "start": 128.127,
+   "end": 133.429,
+   "sentences": [
+    41,
+    42
+   ],
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": 0.053
+   },
+   "transition": "cut",
+   "picture": "s10_wide_night",
+   "source": "reuse",
+   "face": "none",
+   "palette": [
+    "night blue",
+    "fire amber",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": 0.01,
+    "saturation": 0.92,
+    "warmth": -0.03,
+    "contrast": 0.94,
+    "vignette": 0.25
+   },
+   "sound": "swish__v1"
+  },
+  {
+   "id": "d1-35",
+   "beat": "night",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "calm",
+   "start": 133.429,
+   "end": 136.306,
+   "sentences": [
+    42
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_food_hands",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "ochre",
+    "umber",
+    "fire amber"
+   ],
+   "grade": {
+    "lift": 0.01,
+    "saturation": 0.92,
+    "warmth": -0.03,
+    "contrast": 0.94,
+    "vignette": 0.25
+   },
+   "prompt": "extreme close-up of two hands holding a few hazelnuts, two small speckled eggs and some ears of wild grain, no faces, no background detail, soft blue-hour light, small warm ember glow, gentle low contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters"
+  },
+  {
+   "id": "d1-36",
+   "beat": "night",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "tension",
+   "start": 136.306,
+   "end": 140.478,
+   "sentences": [
+    43
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_plate_unknown_plants",
+   "source": "new",
+   "face": "caricature:darwin",
+   "palette": [
+    "fire amber",
+    "umber",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": -0.01,
+    "saturation": 0.95,
+    "warmth": 0.04,
+    "contrast": 1.14,
+    "vignette": 0.35
+   },
+   "prompt": "medium shot of a firelit patch of ground with unfamiliar wild plants and berries laid out on a flat stone, empty of people, open space in the centre foreground for one standing figure, hard side light through dust haze, dusty orange and brown tones, strong contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "hmm_thinking__v1"
+  },
+  {
+   "id": "d1-37",
+   "beat": "end",
+   "phase": "day1",
+   "type": "A",
+   "emotion": "calm",
+   "start": 140.478,
+   "end": 147.379,
+   "sentences": [
+    44,
+    45,
+    46,
+    47,
+    48
+   ],
+   "motion": {
+    "kind": "pan",
+    "z0": 1.06,
+    "z1": 1.06,
+    "dx": -0.069
+   },
+   "transition": "cut",
+   "picture": "d1_a_valley_stars",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "night blue",
+    "charcoal",
+    "fire amber"
+   ],
+   "grade": {
+    "lift": 0.01,
+    "saturation": 0.92,
+    "warmth": -0.03,
+    "contrast": 0.94,
+    "vignette": 0.25
+   },
+   "prompt": "epic wide establishing shot of the whole river valley at night under a sky full of stars, one tiny fire glowing beside a slanting windbreak far below, soft blue-hour light, small warm ember glow, gentle low contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters"
+  },
+  {
+   "id": "d1-38",
+   "beat": "end",
+   "phase": "day1",
+   "type": "B",
+   "emotion": "calm",
+   "start": 147.379,
+   "end": 151.704,
+   "sentences": [
+    49
+   ],
+   "motion": {
+    "kind": "push",
+    "z0": 1.0,
+    "z1": 1.06
+   },
+   "transition": "cut",
+   "picture": "d1_b_tired_pair",
+   "source": "new",
+   "face": "faceless",
+   "palette": [
+    "fire amber",
+    "charcoal",
+    "night blue"
+   ],
+   "grade": {
+    "lift": 0.01,
+    "saturation": 0.92,
+    "warmth": -0.03,
+    "contrast": 0.94,
+    "vignette": 0.25
+   },
+   "prompt": "medium shot of two tired people in old coats seen from behind, sitting slumped against a windbreak of branches, looking into a small fire, soft blue-hour light, small warm ember glow, gentle low contrast, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "sigh_tired__v1"
+  },
+  {
+   "id": "d1-39",
+   "beat": "end",
+   "phase": "day1",
+   "type": "C",
+   "emotion": "discovery",
+   "start": 151.704,
+   "end": 154.347,
+   "sentences": [
+    50
+   ],
+   "motion": {
+    "kind": "pull",
+    "z0": 1.06,
+    "z1": 1.0
+   },
+   "transition": "cut",
+   "picture": "d1_c_clay",
+   "source": "new",
+   "face": "none",
+   "palette": [
+    "umber",
+    "river teal",
+    "charcoal"
+   ],
+   "grade": {
+    "lift": 0.0,
+    "saturation": 1.08,
+    "warmth": 0.06,
+    "contrast": 1.08,
+    "vignette": 0.3
+   },
+   "prompt": "extreme close-up of two hands holding a lump of wet grey river clay with thumbprints pressed into it, no faces, no background detail, a single warm light source revealing the subject, glowing rim light, amber highlights against cool teal shadows, painterly storybook illustration, warm hand-painted colours, visible ink linework, soft watercolour texture, no text, no letters",
+   "sound": "glow_ping__v1",
+   "tail": true
+  }
+ ]
+}

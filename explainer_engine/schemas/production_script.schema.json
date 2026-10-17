@@ -1,0 +1,866 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "production_script.schema.json",
+  "title": "Production script (version 1, D-43): one file is the script, the voice direction, the picture plan, the sound plan and the edit",
+  "description": "Written segment by segment: a segment's lines, its shots (with their picture prompts) and its sounds are written together. Times are never written by hand: explainer_engine.production.timing fills them from the read (words.json) into a separate timed file.",
+  "type": "object",
+  "required": [
+    "schema",
+    "episode",
+    "voice",
+    "world",
+    "cast",
+    "segments"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "production_script/1"
+    },
+    "episode": {
+      "type": "object",
+      "required": [
+        "id",
+        "title"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3
+        },
+        "fps": {
+          "type": "integer",
+          "enum": [
+            24,
+            25,
+            30,
+            60
+          ],
+          "default": 30
+        },
+        "size": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 64
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "grade": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "voice": {
+      "type": "object",
+      "required": [
+        "provider",
+        "model",
+        "style",
+        "pace_wpm"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "enum": [
+            "elevenlabs",
+            "kokoro"
+          ]
+        },
+        "model": {
+          "type": "string"
+        },
+        "voice_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "style": {
+          "type": "string",
+          "minLength": 10,
+          "description": "how the narrator sounds, in descriptive words only (never a real person's name: no imitation, no cloning)"
+        },
+        "pace_wpm": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 90,
+            "maximum": 220
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "default_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "voice_id",
+              "name"
+            ],
+            "properties": {
+              "voice_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "why": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "world": {
+      "type": "object",
+      "description": "the world spec read by world.resolver.resolve (host, visitors, light owner, day_arc)"
+    },
+    "look": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "style_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "picture ids that carry the channel look (Gemini frames)"
+        },
+        "default_engine": {
+          "enum": [
+            "pod_ref",
+            "gemini",
+            "pod_text"
+          ]
+        }
+      }
+    },
+    "cast": {
+      "type": "object",
+      "description": "named heroes: how the narration names them, how a picture draws them, what they own",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "names",
+          "card"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "card": {
+            "type": "string",
+            "minLength": 10
+          },
+          "props": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "story": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "thing",
+              "at"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "thing": {
+                "type": "string"
+              },
+              "at": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "forbidden_props": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "objects that must never be shown (a magnifier when the story's lens is reading glasses)"
+        }
+      }
+    },
+    "library": {
+      "type": "object",
+      "description": "pictures that already exist (made in an earlier version): id -> picture",
+      "additionalProperties": {
+        "$ref": "#/$defs/picture"
+      }
+    },
+    "sound_dirs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "folders (relative to the script) with sounds by name"
+    },
+    "picture_dirs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "folders (relative to the script) with the pictures' files"
+    },
+    "music": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "track",
+          "from",
+          "to"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "track": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gain_db": {
+            "type": "number",
+            "minimum": -40,
+            "maximum": -6
+          },
+          "fade_s": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 6
+          }
+        }
+      }
+    },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "beat",
+          "light_beat",
+          "lines",
+          "shots"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^S[0-9]{2}$"
+          },
+          "beat": {
+            "type": "string"
+          },
+          "light_beat": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "exactly what is said, no tags"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "ElevenLabs delivery tags placed before the line"
+                },
+                "tone": {
+                  "type": "string"
+                },
+                "emotion": {
+                  "type": "string"
+                },
+                "emphasis": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 1,
+                  "description": "the one word that carries the surprise (spoken in capitals)"
+                },
+                "pause_after": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 2.5,
+                  "description": "a held pause after the line in seconds, written as [pause] / ... for the voice and enforced by pause_pad"
+                },
+                "claims": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "shots": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "at",
+                "type",
+                "picture",
+                "motion"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "at": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "the words of this segment where the picture appears; the cut goes in the pause before them"
+                },
+                "type": {
+                  "enum": [
+                    "A",
+                    "B",
+                    "C"
+                  ]
+                },
+                "picture": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$ref": "#/$defs/picture"
+                        },
+                        {
+                          "required": [
+                            "id"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "motion": {
+                  "$ref": "#/$defs/motion"
+                },
+                "transition": {
+                  "enum": [
+                    "cut",
+                    "dissolve"
+                  ],
+                  "default": "cut"
+                },
+                "insert": {
+                  "type": "boolean"
+                },
+                "reveal": {
+                  "type": "string"
+                },
+                "heroes_ok": {
+                  "type": "boolean"
+                },
+                "bubbles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "at",
+                      "who",
+                      "text"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "at": {
+                        "type": "string"
+                      },
+                      "who": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "until": {
+                        "type": "string"
+                      },
+                      "hold": {
+                        "type": "number"
+                      },
+                      "kind": {
+                        "enum": [
+                          "speech",
+                          "shout",
+                          "thought"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "reuse": {
+                  "type": "string",
+                  "description": "SR-08 plan: 'unique' or 'reuse' (the picture appeared before; a different crop, zoom or bubble)"
+                }
+              }
+            }
+          },
+          "audio": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "beds": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "at",
+                    "sound"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "at": {
+                      "type": "string"
+                    },
+                    "sound": {
+                      "type": "string"
+                    },
+                    "gain_db": {
+                      "type": "number",
+                      "minimum": -40,
+                      "maximum": -6
+                    }
+                  }
+                },
+                "description": "ambience changes inside the segment, each from its phrase until the next change (crossfaded); a story sound starts on its event's words"
+              },
+              "sfx": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "at",
+                    "sound"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "at": {
+                      "type": "string"
+                    },
+                    "sound": {
+                      "type": "string"
+                    },
+                    "gain_db": {
+                      "type": "number",
+                      "minimum": -40,
+                      "maximum": -6
+                    },
+                    "max_s": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 20
+                    },
+                    "offset_s": {
+                      "type": "number",
+                      "minimum": -1,
+                      "maximum": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "period": {
+            "type": "string",
+            "description": "the time-jump chapter this segment belongs to (day1, week1, month1, year1, year10, year100, compare)"
+          }
+        }
+      }
+    },
+    "periods": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "question",
+          "bottleneck"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "bottleneck": {
+            "type": "string"
+          },
+          "tone": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "card": {
+            "type": "object",
+            "required": [
+              "title"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "line": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "shorts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "hook",
+          "lines",
+          "shots"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^SH[0-9]{2}$"
+          },
+          "hook": {
+            "type": "string"
+          },
+          "source_period": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "emphasis": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 1
+                },
+                "pause_after": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 2.5
+                },
+                "claims": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "shots": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "at",
+                "picture",
+                "crop_x"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "at": {
+                  "type": "string"
+                },
+                "picture": {
+                  "type": "string"
+                },
+                "crop_x": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "zoom": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 1.6
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "graphics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "segment",
+          "at",
+          "kind",
+          "claim"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "segment": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "calc",
+              "bars",
+              "timeline"
+            ]
+          },
+          "claim": {
+            "type": "string"
+          },
+          "hold": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "side": {
+            "enum": [
+              "left",
+              "right",
+              "center"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "motion": {
+      "type": "object",
+      "required": [
+        "kind",
+        "z0",
+        "z1"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "push",
+            "pull",
+            "pan",
+            "hold"
+          ]
+        },
+        "z0": {
+          "type": "number",
+          "minimum": 1.0,
+          "maximum": 1.15
+        },
+        "z1": {
+          "type": "number",
+          "minimum": 1.0,
+          "maximum": 1.15
+        },
+        "dx": {
+          "type": "number",
+          "minimum": -0.1,
+          "maximum": 0.1
+        }
+      }
+    },
+    "picture": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$"
+        },
+        "file": {
+          "type": "string",
+          "description": "an existing picture (relative to the script's picture folders)"
+        },
+        "engine": {
+          "enum": [
+            "existing",
+            "gemini",
+            "pod_ref",
+            "pod_text"
+          ]
+        },
+        "subject": {
+          "type": "string",
+          "description": "who does what, with which feeling: written with the line it illustrates"
+        },
+        "refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "picture ids the reference painter starts from"
+        },
+        "edit": {
+          "type": "string",
+          "description": "pod_ref: what changes in refs[0]"
+        },
+        "heroes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "shows": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "story things visible (fire, smoke, windbreak)"
+        },
+        "props": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "thing"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "thing": {
+                "type": "string"
+              },
+              "held_by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "speakers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "people": {
+          "type": "boolean"
+        },
+        "costume": {
+          "type": "string",
+          "description": "clothing words when the default (the visitors' era) is wrong for this picture"
+        },
+        "prompt": {
+          "type": "string",
+          "description": "filled by compile (prompt_v2.compose); never hand-edited"
+        },
+        "stand_in": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "draft only: an existing picture shown until this one is painted"
+        }
+      }
+    }
+  }
+}

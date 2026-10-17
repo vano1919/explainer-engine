@@ -1,0 +1,646 @@
+{
+ "version": 1,
+ "note": "Era codex (D-41). Screen references are studied for codes only: never named in prompts, nothing copied. Every entry is a working hypothesis until a stills study confirms it. Colours are words; hex values live only in design/palette.json.",
+ "eras": {
+  "prehistory": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "Quest for Fire (1981)",
+    "Alpha (2018)",
+    "Primal (2019)",
+    "The Clan of the Cave Bear (1986)"
+   ],
+   "light_keys": {
+    "storm_dusk": "hard side light under a bruised storm sky at dusk, long shadows, dust in the air",
+    "night_fire": "a single low campfire as the only light, warm amber on faces, deep cold blue darkness around it",
+    "cold_dawn": "cold blue-grey dawn light with low mist and a thin warm line on the horizon",
+    "harsh_noon": "flat hard noon sun, short shadows, dry glare",
+    "overcast_day": "flat grey overcast daylight with wind-driven clouds, cold soft shadows",
+    "last_sun": "low last sun breaking through, long amber shadows and cold blue shade"
+   },
+   "palette_words": [
+    "ochre",
+    "umber",
+    "charcoal",
+    "fire amber",
+    "cold blue-grey",
+    "bone white"
+   ],
+   "atmosphere": [
+    "woodsmoke",
+    "dust",
+    "mist",
+    "wind"
+   ],
+   "production_design": [
+    "hides",
+    "flint",
+    "bone",
+    "wood",
+    "reed",
+    "limestone",
+    "open steppe and rock"
+   ],
+   "costume": [
+    "hides and furs tied with sinew",
+    "bare weathered arms",
+    "matted long hair",
+    "bone and shell ornaments"
+   ],
+   "absent": [
+    "pottery",
+    "metal",
+    "iron",
+    "bronze",
+    "wheel",
+    "glass",
+    "woven cloth",
+    "brick",
+    "sword",
+    "armour",
+    "helmet",
+    "tent",
+    "modern clothes",
+    "dinosaur",
+    "club"
+   ],
+   "cliches": [
+    "club-carrying brutes",
+    "dinosaurs",
+    "grunting caricatures"
+   ],
+   "grade": "prehistory"
+  },
+  "ancient_egypt": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "The Prince of Egypt (1998)",
+    "Assassin's Creed Origins"
+   ],
+   "light_keys": {
+    "white_sun": "hard white sun with deep shadow",
+    "torch_night": "torchlight on painted stone"
+   },
+   "palette_words": [
+    "sand",
+    "gold",
+    "lapis",
+    "terracotta"
+   ],
+   "atmosphere": [
+    "heat haze",
+    "dust"
+   ],
+   "production_design": [
+    "mudbrick",
+    "painted limestone",
+    "papyrus",
+    "linen"
+   ],
+   "costume": [
+    "white linen kilts and dresses",
+    "wigs",
+    "broad collars"
+   ],
+   "absent": [
+    "iron sword",
+    "glass window",
+    "stirrup",
+    "horse saddle",
+    "modern clothes"
+   ],
+   "cliches": [
+    "gold on everyone",
+    "pyramids in every frame"
+   ],
+   "grade": "warm_gold"
+  },
+  "classical_rome_greece": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "Gladiator (2000)",
+    "Rome (2005)"
+   ],
+   "light_keys": {
+    "gold_day": "warm gold dusty daylight",
+    "torch_night": "torchlight and oil lamps, orange on stone"
+   },
+   "palette_words": [
+    "gold",
+    "crimson",
+    "bronze",
+    "terracotta",
+    "dusty ochre"
+   ],
+   "atmosphere": [
+    "dust",
+    "smoke of sacrifice",
+    "crowds"
+   ],
+   "production_design": [
+    "painted marble",
+    "bronze",
+    "brick",
+    "timber",
+    "amphorae"
+   ],
+   "costume": [
+    "wool tunics",
+    "draped togas for the elite only",
+    "leather sandals",
+    "bronze armour for soldiers"
+   ],
+   "absent": [
+    "stirrup",
+    "paper",
+    "gunpowder",
+    "glass window",
+    "modern clothes"
+   ],
+   "cliches": [
+    "pure white marble",
+    "togas on everyone"
+   ],
+   "grade": "warm_gold"
+  },
+  "norse_viking": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "Vikings (2013)",
+    "The Northman (2022)"
+   ],
+   "light_keys": {
+    "grey_overcast": "flat grey-blue overcast light, wet surfaces",
+    "hall_fire": "longhouse hearth fire, smoke haze, orange against dark timber"
+   },
+   "palette_words": [
+    "slate",
+    "wool brown",
+    "iron grey",
+    "sea green"
+   ],
+   "atmosphere": [
+    "mist",
+    "sea spray",
+    "snow"
+   ],
+   "production_design": [
+    "timber longhouses",
+    "clinker boats",
+    "iron",
+    "wool"
+   ],
+   "costume": [
+    "wool tunics and trousers",
+    "fur cloaks",
+    "leather"
+   ],
+   "absent": [
+    "horned helmet",
+    "plate armour",
+    "gunpowder",
+    "modern clothes"
+   ],
+   "cliches": [
+    "horned helmets"
+   ],
+   "grade": "cold_grey"
+  },
+  "medieval_europe": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "The Last Duel (2021)",
+    "Kingdom of Heaven (2005)",
+    "Wolfwalkers (2020)"
+   ],
+   "light_keys": {
+    "overcast": "muted overcast daylight",
+    "candle_night": "candle and hearth light in a dark room"
+   },
+   "palette_words": [
+    "mud brown",
+    "wool grey",
+    "stone",
+    "faded red"
+   ],
+   "atmosphere": [
+    "rain",
+    "mud",
+    "smoke"
+   ],
+   "production_design": [
+    "stone",
+    "timber",
+    "thatch",
+    "wool",
+    "iron"
+   ],
+   "costume": [
+    "rough wool tunics",
+    "hoods",
+    "leather belts"
+   ],
+   "absent": [
+    "gunpowder",
+    "plate armour before 1400",
+    "glass bottle",
+    "modern clothes"
+   ],
+   "cliches": [
+    "spotless armour",
+    "everyone filthy"
+   ],
+   "grade": "cold_grey"
+  },
+  "feudal_japan": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "Seven Samurai (1954)",
+    "Blue Eye Samurai (2023)"
+   ],
+   "light_keys": {
+    "rain_mist": "rain and mist, strong silhouettes",
+    "lantern_night": "paper lantern light"
+   },
+   "palette_words": [
+    "ink black",
+    "paper white",
+    "one accent red",
+    "moss"
+   ],
+   "atmosphere": [
+    "rain",
+    "wind in grass"
+   ],
+   "production_design": [
+    "wood",
+    "paper",
+    "tile",
+    "lacquer"
+   ],
+   "costume": [
+    "kimono and hakama",
+    "straw hats",
+    "armour of laced plates for samurai"
+   ],
+   "absent": [
+    "gunpowder before 1543",
+    "modern clothes"
+   ],
+   "cliches": [
+    "ninjas everywhere"
+   ],
+   "grade": "ink_rain"
+  },
+  "age_of_sail": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "Master and Commander (2003)"
+   ],
+   "light_keys": {
+    "grey_sea": "grey sea light, spray in the air",
+    "lantern_below": "lantern light below decks"
+   },
+   "palette_words": [
+    "tar black",
+    "canvas",
+    "salt grey",
+    "brass"
+   ],
+   "atmosphere": [
+    "spray",
+    "fog"
+   ],
+   "production_design": [
+    "timber",
+    "rope",
+    "canvas",
+    "brass"
+   ],
+   "costume": [
+    "blue and white naval coats",
+    "loose shirts",
+    "tarred hats"
+   ],
+   "absent": [
+    "steam engine",
+    "modern clothes"
+   ],
+   "cliches": [
+    "pirates as default"
+   ],
+   "grade": "cold_grey"
+  },
+  "renaissance_baroque": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "Caravaggio and Rembrandt paintings",
+    "period dramas"
+   ],
+   "light_keys": {
+    "window": "a single window or candle key light, deep shadow",
+    "candle": "candlelight on a workshop table"
+   },
+   "palette_words": [
+    "umber",
+    "gold",
+    "velvet red",
+    "olive"
+   ],
+   "atmosphere": [
+    "dust in a beam of light"
+   ],
+   "production_design": [
+    "stone",
+    "wood",
+    "parchment",
+    "brass instruments"
+   ],
+   "costume": [
+    "doublets and gowns",
+    "caps",
+    "scholars' robes"
+   ],
+   "absent": [
+    "electricity",
+    "modern clothes"
+   ],
+   "cliches": [
+    "everyone a genius in a toga"
+   ],
+   "grade": "chiaroscuro"
+  },
+  "industrial_victorian": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "Sherlock Holmes (2009)",
+    "Peaky Blinders (2013)"
+   ],
+   "light_keys": {
+    "gaslight": "gaslight and soot haze, sickly green-brown",
+    "fog": "cold fog on wet cobbles"
+   },
+   "palette_words": [
+    "soot",
+    "brick red",
+    "iron",
+    "sickly green-brown"
+   ],
+   "atmosphere": [
+    "smoke",
+    "fog",
+    "steam"
+   ],
+   "production_design": [
+    "brick",
+    "iron",
+    "steam engines",
+    "gas lamps"
+   ],
+   "costume": [
+    "frock coats",
+    "top hats",
+    "shawls",
+    "flat caps"
+   ],
+   "absent": [
+    "electric light bulbs",
+    "modern clothes"
+   ],
+   "cliches": [
+    "gears on everything"
+   ],
+   "grade": "soot"
+  },
+  "wild_west": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "The Good, the Bad and the Ugly (1966)",
+    "True Grit (2010)"
+   ],
+   "light_keys": {
+    "golden_hour": "low golden hour sun",
+    "noon": "harsh noon sun"
+   },
+   "palette_words": [
+    "dust",
+    "leather",
+    "sky blue-white",
+    "sunburn red"
+   ],
+   "atmosphere": [
+    "heat",
+    "wind",
+    "dust"
+   ],
+   "production_design": [
+    "timber",
+    "canvas",
+    "leather",
+    "iron"
+   ],
+   "costume": [
+    "wide hats",
+    "dusters",
+    "denim and wool"
+   ],
+   "absent": [
+    "automobile",
+    "modern clothes"
+   ],
+   "cliches": [],
+   "grade": "warm_gold"
+  },
+  "world_wars": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "1917 (2019)",
+    "Saving Private Ryan (1998)"
+   ],
+   "light_keys": {
+    "flat_grey": "flat desaturated light, low contrast",
+    "fire_night": "fire and flares against dark mud"
+   },
+   "palette_words": [
+    "khaki",
+    "mud",
+    "grey",
+    "fire orange"
+   ],
+   "atmosphere": [
+    "smoke",
+    "rain",
+    "ruins"
+   ],
+   "production_design": [
+    "mud",
+    "barbed wire",
+    "steel",
+    "canvas"
+   ],
+   "costume": [
+    "period uniforms",
+    "greatcoats",
+    "helmets"
+   ],
+   "absent": [
+    "modern clothes"
+   ],
+   "cliches": [
+    "glory shots"
+   ],
+   "grade": "bleach"
+  },
+  "space_race_1960s": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [
+    "Apollo 13 (1995)",
+    "First Man (2018)"
+   ],
+   "light_keys": {
+    "control_room": "warm film-grain interior light",
+    "hard_space": "hard cold white light with black shadows"
+   },
+   "palette_words": [
+    "beige",
+    "orange",
+    "chrome",
+    "olive"
+   ],
+   "atmosphere": [
+    "cigarette smoke",
+    "launch smoke"
+   ],
+   "production_design": [
+    "steel",
+    "consoles",
+    "paper printouts",
+    "slide rules"
+   ],
+   "costume": [
+    "short-sleeve shirts and ties",
+    "flight suits"
+   ],
+   "absent": [
+    "touchscreen",
+    "modern clothes"
+   ],
+   "cliches": [],
+   "grade": "warm_gold"
+  }
+ },
+ "grades": {
+  "prehistory": {
+   "saturation": 0.82,
+   "contrast": 1.12,
+   "shadow_tint": [
+    0.02,
+    0.03,
+    0.07
+   ],
+   "high_tint": [
+    0.07,
+    0.04,
+    0.0
+   ],
+   "grain": 0.025,
+   "black": 0.03
+  },
+  "warm_gold": {
+   "saturation": 0.9,
+   "contrast": 1.08,
+   "shadow_tint": [
+    0.03,
+    0.02,
+    0.0
+   ],
+   "high_tint": [
+    0.08,
+    0.05,
+    0.0
+   ],
+   "grain": 0.02,
+   "black": 0.03
+  },
+  "cold_grey": {
+   "saturation": 0.7,
+   "contrast": 1.1,
+   "shadow_tint": [
+    0.0,
+    0.03,
+    0.06
+   ],
+   "high_tint": [
+    0.0,
+    0.02,
+    0.03
+   ],
+   "grain": 0.03,
+   "black": 0.04
+  },
+  "ink_rain": {
+   "saturation": 0.6,
+   "contrast": 1.2,
+   "shadow_tint": [
+    0.0,
+    0.02,
+    0.04
+   ],
+   "high_tint": [
+    0.03,
+    0.0,
+    0.0
+   ],
+   "grain": 0.02,
+   "black": 0.02
+  },
+  "chiaroscuro": {
+   "saturation": 0.8,
+   "contrast": 1.25,
+   "shadow_tint": [
+    0.02,
+    0.01,
+    0.0
+   ],
+   "high_tint": [
+    0.07,
+    0.05,
+    0.01
+   ],
+   "grain": 0.02,
+   "black": 0.02
+  },
+  "soot": {
+   "saturation": 0.65,
+   "contrast": 1.1,
+   "shadow_tint": [
+    0.0,
+    0.03,
+    0.02
+   ],
+   "high_tint": [
+    0.04,
+    0.04,
+    0.0
+   ],
+   "grain": 0.035,
+   "black": 0.05
+  },
+  "bleach": {
+   "saturation": 0.45,
+   "contrast": 1.25,
+   "shadow_tint": [
+    0.0,
+    0.01,
+    0.03
+   ],
+   "high_tint": [
+    0.02,
+    0.02,
+    0.02
+   ],
+   "grain": 0.04,
+   "black": 0.04
+  }
+ }
+}

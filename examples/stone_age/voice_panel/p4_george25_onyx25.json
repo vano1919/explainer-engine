@@ -1,0 +1,26 @@
+{
+ "version": 1,
+ "id": "p4_george25_onyx25",
+ "base": "am_michael",
+ "blend": [
+  {
+   "voice": "bm_george",
+   "weight": 0.25
+  },
+  {
+   "voice": "am_onyx",
+   "weight": 0.25
+  }
+ ],
+ "speed": 1.05,
+ "pitch": {
+  "semitones": 0.0,
+  "formant": "preserved"
+ },
+ "tone": {
+  "warmth_db": 0.0,
+  "brightness_db": 0.0,
+  "deess": 0.0
+ },
+ "rvc": null
+}

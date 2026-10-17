@@ -28,3 +28,5 @@ Tests adapted from `tests/unit/test_timings.py`, `test_celestial.py` (viseme par
 | 6 | `render/video_check.py`, `full_check.py`, `short_check.py`, `render/video.py` (`encode_args`, `probe`, `sync_checks`) | technical QA, encoding |
 | 7 | `render/subtitles.py`, `shorts.captions_ass` | burned-in Shorts captions |
 | later, optional | `llm/client.py`, `publish.py` (private-only upload), `render/picture_library.py`, `render/imagegen.py` budget pattern | drafts, private upload, asset library, paid-call budget |
+| `explainer_engine/audio/voice_layer.py` | `tmr_engine/render/voice_style.py` (`build_style` blend), `tmr_engine/render/mix.py` (`shape_voice`, `_deess`, `_moving_average`) | blend takes any number of voices; shaping reduced to warmth, brightness, de-essing; pitch, timing checks and measurements are new |
+| `explainer_engine/imagegen/gemini.py` | `tmr_engine/render/imagegen.py` (`GeminiImages`, `PRICES`) | stdlib client reshaped: reference list, 2026-10-16 price table, 80 % cap stop, cache by prompt + references, spend log, text `judge` call |

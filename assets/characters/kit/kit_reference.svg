@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 1180" width="1600" height="1180" font-family="Fredoka, Inter, sans-serif">
+  <title>Kit - canonical reference sheet (draft v0, working name)</title>
+  <desc>Parts and conventions for the mascot. Pose set and rig come in Phase 4; every pose is composed from these parts, never redrawn.</desc>
+  <defs>
+    <style>
+      .line { stroke:#1F2430; stroke-width:6; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+      .thin { stroke:#1F2430; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+      .label { fill:#1F2430; font-size:26px; }
+      .small { fill:#1F2430; font-size:20px; }
+    </style>
+
+    <!-- body: w 200 : h 230 (1 : 1.15), corner radius 24 (12 % of the width). Origin = centre of the face area. -->
+    <g id="kit_body">
+      <rect class="line" x="-100" y="-100" width="200" height="230" rx="24" fill="#E0A458"/>
+      <path class="thin" d="M-100 96 H100" />
+      <path d="M-94 100 H94 V106 H-94 Z" fill="#B97A35"/>
+      <rect class="thin" x="-100" y="-100" width="200" height="230" rx="24"/>
+    </g>
+
+    <g id="kit_limbs">
+      <path class="line" d="M-100 20 q-38 14 -52 52"/>
+      <path class="line" d="M100 20 q38 14 52 52"/>
+      <circle class="line" cx="-154" cy="78" r="15" fill="#FFF8EC"/>
+      <circle class="line" cx="154" cy="78" r="15" fill="#FFF8EC"/>
+      <path class="line" d="M-40 130 v34 M40 130 v34"/>
+      <rect class="line" x="-62" y="162" width="46" height="16" rx="8" fill="#B97A35"/>
+      <rect class="line" x="16" y="162" width="46" height="16" rx="8" fill="#B97A35"/>
+    </g>
+
+    <!-- lid states: the lid opening is Kit's signature action (the reveal) -->
+    <g id="lid_closed">
+      <rect class="line" x="-108" y="-128" width="216" height="30" rx="10" fill="#B97A35"/>
+    </g>
+    <g id="lid_open">
+      <rect x="-100" y="-104" width="200" height="22" fill="#2B2D42"/>
+      <g transform="rotate(-125 -100 -100)"><rect class="line" x="-100" y="-130" width="90" height="30" rx="8" fill="#B97A35"/></g>
+      <g transform="rotate(125 100 -100)"><rect class="line" x="10" y="-130" width="90" height="30" rx="8" fill="#B97A35"/></g>
+      <rect class="thin" x="-100" y="-104" width="200" height="22"/>
+    </g>
+
+    <!-- eyes + brows per expression (the face is two ovals and eyebrows; the brows carry the emotion) -->
+    <g id="eyes_open">
+      <ellipse class="line" cx="-38" cy="-26" rx="21" ry="25" fill="#FFF8EC"/><circle cx="-36" cy="-24" r="9" fill="#1F2430"/>
+      <ellipse class="line" cx="38" cy="-26" rx="21" ry="25" fill="#FFF8EC"/><circle cx="40" cy="-24" r="9" fill="#1F2430"/>
+    </g>
+    <g id="eyes_wide">
+      <ellipse class="line" cx="-38" cy="-26" rx="25" ry="30" fill="#FFF8EC"/><circle cx="-38" cy="-26" r="7" fill="#1F2430"/>
+      <ellipse class="line" cx="38" cy="-26" rx="25" ry="30" fill="#FFF8EC"/><circle cx="38" cy="-26" r="7" fill="#1F2430"/>
+    </g>
+    <g id="eyes_lidded">
+      <ellipse class="line" cx="-38" cy="-24" rx="21" ry="22" fill="#FFF8EC"/><circle cx="-34" cy="-18" r="9" fill="#1F2430"/>
+      <ellipse class="line" cx="38" cy="-24" rx="21" ry="22" fill="#FFF8EC"/><circle cx="42" cy="-18" r="9" fill="#1F2430"/>
+      <path d="M-59 -24 A21 22 0 0 1 -17 -24 Z M17 -24 A21 22 0 0 1 59 -24 Z" fill="#E0A458"/>
+      <path class="line" d="M-59 -24 H-17 M17 -24 H59"/>
+    </g>
+    <g id="eyes_happy">
+      <path class="line" d="M-60 -20 q22 -32 44 0 M16 -20 q22 -32 44 0"/>
+    </g>
+    <g id="eyes_side">
+      <ellipse class="line" cx="-38" cy="-26" rx="21" ry="25" fill="#FFF8EC"/><circle cx="-28" cy="-26" r="9" fill="#1F2430"/>
+      <ellipse class="line" cx="38" cy="-26" rx="21" ry="25" fill="#FFF8EC"/><circle cx="48" cy="-26" r="9" fill="#1F2430"/>
+    </g>
+
+    <g id="expr_neutral"><use href="#eyes_open"/><path class="line" d="M-62 -64 q22 -8 44 0 M18 -64 q22 -8 44 0"/><path class="line" d="M-20 42 q20 8 40 0"/></g>
+    <g id="expr_curious"><use href="#eyes_open"/><path class="line" d="M-62 -62 q22 -4 44 0 M18 -74 q22 -16 44 -2"/><path class="line" d="M-14 44 q14 -6 28 0"/></g>
+    <g id="expr_surprised"><use href="#eyes_wide"/><path class="line" d="M-64 -76 q24 -18 48 0 M16 -76 q24 -18 48 0"/><ellipse class="line" cx="0" cy="50" rx="12" ry="16" fill="#1F2430"/></g>
+    <g id="expr_smug"><use href="#eyes_lidded"/><path class="line" d="M-62 -58 q22 -6 44 4 M18 -70 q22 -12 44 -4"/><path class="line" d="M-24 46 q20 8 48 -8"/></g>
+    <g id="expr_confused"><use href="#eyes_side"/><path class="line" d="M-62 -58 q22 -14 44 -4 M18 -62 q22 -2 44 8"/><path class="line" d="M-26 46 q10 -10 18 0 t18 0 t18 0"/></g>
+    <g id="expr_delighted"><use href="#eyes_happy"/><path class="line" d="M-62 -66 q22 -14 44 0 M18 -66 q22 -14 44 0"/><path class="line" d="M-30 32 q30 40 60 0 Z" fill="#1F2430"/><path d="M-18 46 q18 12 36 0 q-18 -8 -36 0 Z" fill="#FF6B5B"/></g>
+    <g id="expr_worried"><use href="#eyes_open"/><path class="line" d="M-62 -52 L-20 -74 M62 -52 L20 -74"/><path class="line" d="M-18 52 q18 -14 36 0"/></g>
+    <g id="expr_deadpan"><use href="#eyes_lidded"/><path class="line" d="M-62 -58 h44 M18 -58 h44"/><path class="line" d="M-20 44 h40"/></g>
+
+    <!-- mouth shapes for speech (6): replace the resting mouth while Kit talks; centred at (0, 44) -->
+    <g id="mouth_rest"><path class="line" d="M-20 44 q20 8 40 0"/></g>
+    <g id="mouth_mbp"><path class="line" d="M-22 44 h44"/></g>
+    <g id="mouth_wide"><ellipse class="line" cx="0" cy="48" rx="26" ry="19" fill="#1F2430"/><ellipse cx="0" cy="58" rx="14" ry="7" fill="#FF6B5B"/></g>
+    <g id="mouth_mid"><ellipse class="line" cx="0" cy="46" rx="20" ry="11" fill="#1F2430"/></g>
+    <g id="mouth_round"><ellipse class="line" cx="0" cy="48" rx="11" ry="15" fill="#1F2430"/></g>
+    <g id="mouth_fv"><path class="line" d="M-22 40 h44 q0 14 -22 14 q-22 0 -22 -14 Z" fill="#1F2430"/><rect x="-14" y="41" width="28" height="8" fill="#FFF8EC"/></g>
+  </defs>
+
+  <rect width="1600" height="1180" fill="#FFF8EC"/>
+  <text class="label" x="40" y="52" font-size="34">Kit - reference sheet, draft v0 (working name; the creator approves the final name and look)</text>
+  <text class="small" x="40" y="84">Box 200 x 230 (1 : 1.15), radius 24. Stroke 6 px (characters) / 4 px (props) at 1080p, round caps. Flat fills + one shade. Palette: explainer_engine/design/palette.json.</text>
+
+  <!-- A: the character, lid closed and lid open -->
+  <g transform="translate(300 360)">
+    <use href="#kit_limbs"/><use href="#kit_body"/><use href="#lid_closed"/><use href="#expr_neutral"/>
+  </g>
+  <text class="label" x="190" y="590">A  lid closed, neutral</text>
+  <g transform="translate(760 360)">
+    <use href="#kit_limbs"/><use href="#kit_body"/><use href="#lid_open"/><use href="#expr_curious"/>
+  </g>
+  <text class="label" x="640" y="590">B  lid open (the reveal)</text>
+
+  <!-- C: construction notes -->
+  <g transform="translate(1110 140)">
+    <text class="label" y="0">Construction rules</text>
+    <text class="small" y="34">- Parts only: body, limbs, lid, eyes,</text>
+    <text class="small" y="58">  brows, mouth.</text>
+    <text class="small" y="86">- Brows carry the emotion; eyes stay</text>
+    <text class="small" y="110">  two ovals.</text>
+    <text class="small" y="138">- One mouth at a time: the resting mouth</text>
+    <text class="small" y="162">  of the expression, or a speech mouth.</text>
+    <text class="small" y="190">- Hands are mittens (paper, ink stroke).</text>
+    <text class="small" y="218">- Lid opening = the cutaway reveal; the</text>
+    <text class="small" y="242">  opening shows the scene, not Kit.</text>
+    <text class="small" y="270">- The answer object is coral; Kit never is.</text>
+    <text class="small" y="298">- Meaning never rests on colour alone.</text>
+    <text class="small" y="326">- Not drawn yet (Phase 4): 10 poses, rig</text>
+    <text class="small" y="350">  pivots, idle and walk loops.</text>
+  </g>
+
+  <!-- D: eight expressions -->
+  <text class="label" x="40" y="650">D  eight expressions (eyes + brows + resting mouth)</text>
+  <g transform="translate(40 670)">
+    <g transform="translate(100 120) scale(0.78)"><use href="#kit_body"/><use href="#expr_neutral"/></g><text class="small" text-anchor="middle" x="100" y="262">neutral</text>
+    <g transform="translate(290 120) scale(0.78)"><use href="#kit_body"/><use href="#expr_curious"/></g><text class="small" text-anchor="middle" x="290" y="262">curious</text>
+    <g transform="translate(480 120) scale(0.78)"><use href="#kit_body"/><use href="#expr_surprised"/></g><text class="small" text-anchor="middle" x="480" y="262">surprised</text>
+    <g transform="translate(670 120) scale(0.78)"><use href="#kit_body"/><use href="#expr_smug"/></g><text class="small" text-anchor="middle" x="670" y="262">smug</text>
+    <g transform="translate(860 120) scale(0.78)"><use href="#kit_body"/><use href="#expr_confused"/></g><text class="small" text-anchor="middle" x="860" y="262">confused</text>
+    <g transform="translate(1050 120) scale(0.78)"><use href="#kit_body"/><use href="#expr_delighted"/></g><text class="small" text-anchor="middle" x="1050" y="262">delighted</text>
+    <g transform="translate(1240 120) scale(0.78)"><use href="#kit_body"/><use href="#expr_worried"/></g><text class="small" text-anchor="middle" x="1240" y="262">worried</text>
+    <g transform="translate(1430 120) scale(0.78)"><use href="#kit_body"/><use href="#expr_deadpan"/></g><text class="small" text-anchor="middle" x="1430" y="262">deadpan</text>
+  </g>
+
+  <!-- E: six speech mouths -->
+  <text class="label" x="40" y="990">E  six speech mouths (driven by phonemes; rest = the expression's own mouth)</text>
+  <g transform="translate(40 1010)">
+    <g transform="translate(120 10) scale(1.25)"><use href="#mouth_rest"/></g><text class="small" text-anchor="middle" x="120" y="120">rest</text>
+    <g transform="translate(370 10) scale(1.25)"><use href="#mouth_mbp"/></g><text class="small" text-anchor="middle" x="370" y="120">m b p</text>
+    <g transform="translate(620 10) scale(1.25)"><use href="#mouth_wide"/></g><text class="small" text-anchor="middle" x="620" y="120">wide: a</text>
+    <g transform="translate(870 10) scale(1.25)"><use href="#mouth_mid"/></g><text class="small" text-anchor="middle" x="870" y="120">mid: e i</text>
+    <g transform="translate(1120 10) scale(1.25)"><use href="#mouth_round"/></g><text class="small" text-anchor="middle" x="1120" y="120">round: o u</text>
+    <g transform="translate(1370 10) scale(1.25)"><use href="#mouth_fv"/></g><text class="small" text-anchor="middle" x="1370" y="120">f v</text>
+  </g>
+</svg>

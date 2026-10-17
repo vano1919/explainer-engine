@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1180" width="1800" height="1180" font-family="Inter, DejaVu Sans, sans-serif">
+  <title>Doodle style options, draft v0 (exploration for the creator's reaction; not approved)</title>
+  <defs>
+    <style>
+      .ln { stroke: var(--line); stroke-width: var(--w); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .f1 { fill: var(--c1); } .f2 { fill: var(--c2); } .f3 { fill: var(--c3); } .fp { fill: var(--paper); }
+      .t  { fill: var(--line); font-weight: 700; text-anchor: middle; }
+    </style>
+
+    <!-- wobbly hand line, three strengths -->
+    <filter id="wobMarker" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="wobPencil" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="9" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="2" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.5" result="grain"/>
+      <feComposite in="d" in2="grain" operator="in"/>
+    </filter>
+    <filter id="wobBoard" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="paperGrain"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="3"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.4  0 0 0 0 0.33  0 0 0 0 0.25  0 0 0 0.35 0"/></filter>
+    <clipPath id="panel"><rect width="560" height="900" rx="22"/></clipPath>
+
+    <!-- shared drawing content, local coordinates 560 x 900 -->
+    <g id="bean">
+      <path class="ln f3" d="M0,-110 C62,-112 84,-46 76,24 C70,92 40,108 0,108 C-40,108 -70,92 -76,24 C-84,-46 -62,-112 0,-110 Z"/>
+      <path class="ln" d="M-10,-110 q-8,-26 -22,-30 M0,-110 q2,-30 -4,-40 M12,-110 q12,-24 28,-24"/>
+      <ellipse class="ln fp" cx="-27" cy="-44" rx="15" ry="19"/><circle class="t" cx="-23" cy="-42" r="6" style="fill:var(--line)"/>
+      <ellipse class="ln fp" cx="27" cy="-44" rx="15" ry="19"/><circle cx="31" cy="-42" r="6" style="fill:var(--line)"/>
+      <path class="ln" d="M-46,-72 q18,-10 36,-2 M10,-74 q18,-8 36,2"/>
+      <path class="ln" d="M-22,-6 q22,22 44,0"/>
+      <circle class="f1" cx="-50" cy="-8" r="9" opacity=".7"/><circle class="f1" cx="50" cy="-8" r="9" opacity=".7"/>
+      <path class="ln" d="M-74,10 q-40,10 -52,46"/><circle class="ln fp" cx="-126" cy="58" r="11"/>
+      <path class="ln" d="M74,10 q44,-6 56,-52"/><circle class="ln fp" cx="131" cy="-44" r="11"/>
+      <path class="ln" d="M-26,106 v38 M26,106 v38 M-26,144 h-24 M26,144 h24"/>
+    </g>
+    <g id="plane">
+      <path class="ln f3" d="M-10,6 L-36,42 L-16,42 L28,8 Z"/>
+      <path class="ln f1" d="M-60,0 C-60,-14 40,-18 70,-4 C84,2 84,8 70,12 C40,22 -60,14 -60,0 Z"/>
+      <path class="ln f3" d="M-56,-4 L-74,-32 L-56,-32 L-34,-8 Z"/>
+      <path class="ln f3" d="M-10,0 L-40,-48 L-20,-48 L30,-2 Z"/>
+      <circle class="ln fp" cx="20" cy="-3" r="4"/><circle class="ln fp" cx="36" cy="-3" r="4"/><circle class="ln fp" cx="52" cy="-1" r="4"/>
+    </g>
+    <path id="moon" class="ln f3" d="M0,-30 A30,30 0 1 0 28,16 A24,24 0 1 1 0,-30 Z"/>
+    <path id="star" class="ln" d="M0,-9 V9 M-9,0 H9"/>
+    <path id="cloud" class="ln fp" d="M-50,10 C-62,10 -66,-8 -50,-10 C-48,-28 -22,-30 -14,-16 C-4,-30 28,-26 28,-8 C46,-10 52,10 34,10 Z"/>
+
+    <g id="sceneA">
+      <rect class="ln" x="0" y="0" width="520" height="200" rx="16"/>
+      <rect class="f2" x="2" y="2" width="516" height="196" rx="15" opacity=".28"/>
+      <use href="#moon" x="450" y="56"/>
+      <use href="#star" x="395" y="34"/><use href="#star" x="330" y="70"/><use href="#star" x="478" y="128"/><use href="#star" x="96" y="42"/>
+      <path class="ln" stroke-dasharray="9 10" d="M30,176 C100,160 150,140 188,124"/>
+      <use href="#plane" transform="translate(262 112) rotate(-9) scale(1.1)"/>
+      <use href="#cloud" transform="translate(120 165) scale(.9)"/><use href="#cloud" transform="translate(405 168) scale(.8)"/>
+    </g>
+    <g id="sceneE">
+      <rect class="ln" x="0" y="0" width="520" height="200" rx="16"/>
+      <path class="f3" opacity=".6" d="M2,66 C150,76 300,126 518,176 V198 H2 Z"/>
+      <path class="ln" d="M14,66 C150,76 300,126 506,176"/>
+      <path class="ln" stroke-dasharray="9 10" d="M60,28 C150,10 280,40 330,70"/>
+      <circle class="ln f2" cx="86" cy="46" r="16"/><text class="t" x="86" y="53" font-size="19">$</text>
+      <circle class="ln f2" cx="235" cy="84" r="30"/><text class="t" x="235" y="96" font-size="34">$</text>
+      <circle class="ln f2" cx="410" cy="124" r="50"/><text class="t" x="410" y="144" font-size="58">$</text>
+    </g>
+    <g id="content">
+      <use href="#bean" transform="translate(160 230) scale(.95)"/>
+      <ellipse class="ln fp" cx="395" cy="140" rx="92" ry="52"/><path class="ln fp" d="M335,170 l-34,34 l60,-16"/>
+      <text class="t" x="395" y="165" font-size="68">?</text>
+      <use href="#sceneA" x="20" y="420"/>
+      <use href="#sceneE" x="20" y="660"/>
+    </g>
+  </defs>
+
+  <rect width="1800" height="1180" fill="#E9E6DF"/>
+  <text x="40" y="56" font-size="34" font-weight="700" fill="#1F2430">Doodle style options (draft v0) - same drawing in three looks</text>
+  <text x="40" y="84" font-size="20" fill="#3B4252">Character, a "why planes fly at night" scene (topic arm A+F) and a snowball "interest grows" scene (arm E).</text>
+  <text x="40" y="110" font-size="20" fill="#3B4252">Exploration only: you react, then the mascot and palette are redesigned. Nothing here is approved.</text>
+
+  <!-- 1 marker on paper -->
+  <g transform="translate(40 140)">
+    <g clip-path="url(#panel)">
+      <rect width="560" height="900" fill="#FBF3DF"/>
+      <rect width="560" height="900" filter="url(#paperGrain)" opacity=".45"/>
+      <g filter="url(#wobMarker)" style="--line:#1B1B1F; --w:6; --c1:#F4694F; --c2:#5BB8D9; --c3:#FFD36B; --paper:#FFFDF6"><use href="#content"/></g>
+    </g>
+    <rect width="560" height="900" rx="22" fill="none" stroke="#1B1B1F" stroke-width="3"/>
+  </g>
+  <text x="60" y="1090" font-size="26" font-weight="700" fill="#1F2430">1  Marker on paper</text>
+  <text x="60" y="1120" font-size="19" fill="#3B4252">thick black marker, flat bright fills, warm paper.</text>
+  <text x="60" y="1144" font-size="19" fill="#3B4252">The "boiling" wobble is cheap to animate.</text>
+
+  <!-- 2 pencil on notebook -->
+  <g transform="translate(620 140)">
+    <g clip-path="url(#panel)">
+      <rect width="560" height="900" fill="#FDFCF7"/>
+      <g stroke="#A9C9E8" stroke-width="2"><path d="M0 40H560 M0 80H560 M0 120H560 M0 160H560 M0 200H560 M0 240H560 M0 280H560 M0 320H560 M0 360H560 M0 400H560 M0 440H560 M0 480H560 M0 520H560 M0 560H560 M0 600H560 M0 640H560 M0 680H560 M0 720H560 M0 760H560 M0 800H560 M0 840H560 M0 880H560"/></g>
+      <path d="M62 0V900" stroke="#E58B8B" stroke-width="2.5"/>
+      <g filter="url(#wobPencil)" style="--line:#3B3F4A; --w:3.2; --c1:#FFE27A; --c2:#CFE5F5; --c3:#EDEAF3; --paper:#FDFCF7"><use href="#content"/></g>
+    </g>
+    <rect width="560" height="900" rx="22" fill="none" stroke="#3B3F4A" stroke-width="3"/>
+  </g>
+  <text x="640" y="1090" font-size="26" font-weight="700" fill="#1F2430">2  Pencil on notebook paper</text>
+  <text x="640" y="1120" font-size="19" fill="#3B4252">thin graphite line, highlighter touches, ruled page.</text>
+  <text x="640" y="1144" font-size="19" fill="#3B4252">Quiet, "study" feel.</text>
+
+  <!-- 3 whiteboard marker -->
+  <g transform="translate(1200 140)">
+    <g clip-path="url(#panel)">
+      <rect width="560" height="900" fill="#F6F8FA"/>
+      <path d="M0 0H560V900H0Z" fill="url(#glare)" opacity=".0"/>
+      <g stroke="#DDE3EA" stroke-width="10" stroke-linecap="round" opacity=".7"><path d="M30 520 q60 -8 120 2 M420 400 q60 -10 110 0"/></g>
+      <g filter="url(#wobBoard)" style="--line:#1F2A44; --w:5; --c1:#E2574C; --c2:#4C8DF0; --c3:#FFFFFF; --paper:#FFFFFF"><use href="#content"/></g>
+    </g>
+    <rect width="560" height="900" rx="22" fill="none" stroke="#9AA6B5" stroke-width="10"/>
+  </g>
+  <text x="1220" y="1090" font-size="26" font-weight="700" fill="#1F2430">3  Whiteboard marker</text>
+  <text x="1220" y="1120" font-size="19" fill="#3B4252">dark-blue marker, red and blue accents.</text>
+  <text x="1220" y="1144" font-size="19" fill="#3B4252">Natural "being drawn" write-on animation.</text>
+</svg>

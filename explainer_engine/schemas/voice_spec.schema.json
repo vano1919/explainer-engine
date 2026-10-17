@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "voice_spec.schema.json",
+  "title": "Narrator voice spec (version 1): Kokoro base + blend + duration-preserving alteration",
+  "type": "object",
+  "required": ["version", "id", "base", "blend", "speed", "pitch", "tone", "rvc"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {"const": 1},
+    "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "base": {"type": "string", "pattern": "^[abefhijpz][mf]_[a-z]+$", "description": "a Kokoro built-in voice"},
+    "blend": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["voice", "weight"],
+        "additionalProperties": false,
+        "properties": {
+          "voice": {"type": "string", "pattern": "^[abefhijpz][mf]_[a-z]+$"},
+          "weight": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.5}
+        }
+      }
+    },
+    "speed": {"type": "number", "minimum": 0.7, "maximum": 1.3},
+    "pitch": {
+      "type": "object",
+      "required": ["semitones", "formant"],
+      "additionalProperties": false,
+      "properties": {
+        "semitones": {"type": "number", "minimum": -2.0, "maximum": 2.0},
+        "formant": {"enum": ["preserved", "shifted"]}
+      }
+    },
+    "tone": {
+      "type": "object",
+      "required": ["warmth_db", "brightness_db", "deess"],
+      "additionalProperties": false,
+      "properties": {
+        "warmth_db": {"type": "number", "minimum": -6, "maximum": 6},
+        "brightness_db": {"type": "number", "minimum": -6, "maximum": 6},
+        "deess": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "rvc": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "required": ["model", "licence", "speaker_consent"],
+          "additionalProperties": false,
+          "properties": {
+            "model": {"type": "string", "minLength": 1},
+            "licence": {"enum": ["commercial_written", "own_training_data"]},
+            "speaker_consent": {"const": true}
+          }
+        }
+      ]
+    }
+  }
+}
