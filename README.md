@@ -6,3 +6,5 @@ storyboard → narration → animation → QA → review bundle. Nothing is ever
 - Setup (Windows): `.\setup.ps1`, then `.venv\Scripts\python -m pytest -q`.
 - Plan and status: `docs/PLAN_2026-10-15.md`, `docs/PROGRESS.md`.
 - Working rules for Claude Code: `CLAUDE.md`.
+- Working rules for ChatGPT: `CHATGPT.md` and `.chatgpt/`.
+- ChatGPT work branch: `chatgpt/repo-management`; no automatic merge.

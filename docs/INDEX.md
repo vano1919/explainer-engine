@@ -32,7 +32,8 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [IMPLEMENTATION_PLAN](IMPLEMENTATION_PLAN.md) | phases, tasks, acceptance, stop conditions | |
 | [CLAUDE_EXECUTION_GUIDE](CLAUDE_EXECUTION_GUIDE.md) | phase gates, recovery, never-do list | |
 | [REPO_REUSE_AUDIT](REPO_REUSE_AUDIT.md), [PROVENANCE](PROVENANCE.md) | what came from the TMR repository | |
-| [PROGRESS](PROGRESS.md) | resumable progress log | |
+| [PROGRESS](PROGRESS.md) | resumable progress log |
+| [CHATGPT_WORKFLOW](CHATGPT_WORKFLOW.md) | ChatGPT-specific repository governance, editorial gate and parallel production workflow | |
 | [PLAN_2026-10-15](PLAN_2026-10-15.md) | the approved plan, kept as history; the canonical documents above supersede it | |
 
 Machine-readable sources of truth: `explainer_engine/design/palette.json` (colours), `assets/characters/kit/kit_reference.svg`
