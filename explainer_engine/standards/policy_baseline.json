@@ -130,7 +130,7 @@
       "verified_in": "V-33",
       "verified": false,
       "url": "https://support.rockstargames.com/articles/200153756/Policy-on-posting-copyrighted-Rockstar-Games-material",
-      "statement": "Rockstar/Take-Two policy on posting copyrighted Rockstar material (per search-result summary, page itself returned 503 on 2026-10-17, last updated 2025-01-10 per the summary): non-commercial fan use that does not spoil the plot is tolerated and machinima is welcomed; 'non-commercial' means no money made through the posted game footage; film, TV, streaming, ads and similar exploitation are outside the policy and need a licence request; Take-Two may take material down at any time. NOT read first-hand: re-read before paid_assets."
+      "statement": "Rockstar/Take-Two policy on posting copyrighted Rockstar material (per search-result summary, page itself returned 503 on 2026-10-17, last updated 2025-01-10 per the summary): non-commercial fan use that does not spoil the plot is tolerated and machinima is welcomed; 'non-commercial' means no money made through the posted game footage; film, TV, streaming, ads and similar exploitation are outside the policy and need a licence request; Take-Two may take material down at any time. NOT read first-hand: re-read before paid_assets. Re-attempted 2026-10-17 on both support URLs (HTTP 503 each time): still NOT read first-hand, verified stays false."
     },
     {
       "id": "B-15",
@@ -167,7 +167,7 @@
       "verified_in": "V-37",
       "verified": true,
       "url": "https://www.rockstargames.com/VI",
-      "statement": "Rockstar's official GTA VI page (read 2026-10-17): 'Coming November 19, 2026' for PlayStation 5 and Xbox Series X|S; setting 'Vice City, USA' in the state of Leonida; protagonists Jason and Lucia; pre-order editions, in-game radio and 'GTAVI: The Album'. The page names no in-game social app, stock exchange or year. Release date reaffirmed in Take-Two's May 2026 report per secondary news (not first-hand). The game is not out on the date of this rulebook."
+      "statement": "Rockstar's official GTA VI page (read 2026-10-17): 'Coming November 19, 2026' for PlayStation 5 and Xbox Series X|S; setting 'Vice City, USA' in the state of Leonida; protagonists Jason and Lucia; pre-order editions, in-game radio and 'GTAVI: The Album'. The page names no in-game social app, stock exchange or year. Release date reaffirmed in Take-Two's May 2026 report per secondary news (not first-hand). The game is not out on the date of this rulebook. Re-read first-hand 2026-10-17 (a second time): only the year 2026 appears (release and three Newswire items dated Oct 8 and Oct 15, 2026); the page names no regions and no in-game apps; the Newswire release-date article itself was not found (index page returned no article text)."
     }
   ],
   "channel": {
