@@ -1,5 +1,13 @@
 # Rendering architecture
 
+## Current implementation status — checked 2026-10-18
+
+The current code path is `explainer_engine/production/assemble.py`: Python builds frames with NumPy/Pillow, streams them to FFmpeg, and muxes the mixed audio. The active command group is `python -m explainer_engine.production`. The current repository does not contain an active Remotion project or `render_bridge.py` matching the proposal below.
+
+The Remotion comparison and design text below is retained as historical planning context, not as an instruction to replace the working assembler. Do not switch renderers unless a new benchmark and creator-approved decision justify it. Rebenchmark the actual `production/assemble.py` path, including memory, wall time, output correctness and cache behavior, before making renderer decisions.
+
+## Historical renderer proposal (not the current runtime)
+
 Decision D-10 (provisional, gated by the Phase 4 benchmark). Hardware baseline: i5-8400 (6 cores), 16 GB RAM, RX 5700
 8 GB (not assumed useful), constrained disk.
 

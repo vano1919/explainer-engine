@@ -1,5 +1,13 @@
 # Pipeline architecture
 
+## Current implementation status — checked 2026-10-18
+
+The stage table below is a target architecture, not proof that every stage or a single-command DAG coordinator exists. The documented command `python -m explainer_engine run ...` is not present as a repository entry point on this branch. The current available CLI is `python -m explainer_engine.production`, with per-script validation/timing/assembly, plus `python -m explainer_engine.production_gate`. Paid image generation is exposed through `python -m explainer_engine.production.paint`.
+
+Do not invoke the target command as if it already existed, and do not claim the entire research-to-final-video workflow is end-to-end automated. A dependency-aware resumable coordinator that schedules voice, picture, sound and music tasks together remains future implementation work. The current stages must be orchestrated by the agent workflow and verified individually.
+
+## Target pipeline design (not yet fully wired end to end)
+
 Python orchestrates; each stage is a module with a versioned input and output, saved as an atomic checkpoint by
 `explainer_engine/core/store.JobStore` (stage list is declared, not hard-coded). The job never publishes (P-20).
 

@@ -21,8 +21,8 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [STORYBOARD_SCHEMA](STORYBOARD_SCHEMA.md) | storyboard contract, animation vocabulary, timing rules | |
 | [ASSET_SYSTEM](ASSET_SYSTEM.md) | asset records, naming, licences, generation rules | |
 | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) | narration, mix, audio-event contract, licences | |
-| [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) | renderer comparison, render and cache design | |
-| [PIPELINE_ARCHITECTURE](PIPELINE_ARCHITECTURE.md) | stages, failure classes, config, job record | |
+| [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) | current Python/FFmpeg assembler; historical Remotion proposal and renderer decision notes | |
+| [PIPELINE_ARCHITECTURE](PIPELINE_ARCHITECTURE.md) | target stages, failure classes, config and job record; current entry points and unimplemented coordinator are marked at the top | |
 | [QA_SPECIFICATION](QA_SPECIFICATION.md) | technical and editorial QA, review bundle | Q- |
 | [PUBLISHING_AND_ANALYTICS](PUBLISHING_AND_ANALYTICS.md) | cadence, first cycle, candidates, metrics, learning loop | |
 | [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md) | budgets, estimates, spend ledger, hours | |

@@ -1,5 +1,11 @@
 # Implementation plan
 
+## Status override — checked 2026-10-18
+
+The phase status below is the original implementation plan and is stale as a live status tracker. The branch has progressed through the D-43 production script, the Python/FFmpeg assembler, sound and visual checks, episode orchestration, the script source/claim gate, and ChatGPT branch tooling; see the end of `docs/PROGRESS.md` for measured events. Use `docs/INDEX.md` for current canonical specifications.
+
+Treat remaining rows below as a checklist to reconcile against the code, not as evidence that a phase is untouched or completed. Before claiming a capability, inspect its actual implementation and tests. A full dependency-aware end-to-end coordinator and a full test run after the new editorial gate are still outstanding.
+
 Dependency-aware phases. Every phase: inspect the relevant files, state the minimal change, implement it, run focused
 tests, then the full suite, inspect output artifacts, record failures, update [PROGRESS](PROGRESS.md) (and the decision
 log if a decision moved), and report each acceptance criterion as pass, fail or not tested. Phases are not merged unless a
