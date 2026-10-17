@@ -305,7 +305,9 @@
  "sound_dirs": [
   "../day1_v7/sounds",
   "../week1_v1/sounds",
-  "sounds"
+  "sounds",
+  "../../../assets/audio/library/foley",
+  "../../../assets/audio/library/vocal"
  ],
  "library": {
   "v5_d1-01": {
@@ -4527,6 +4529,14 @@
       "at": "Day thirty-three.",
       "sound": "wind_day"
      }
+    ],
+    "sfx": [
+     {
+      "at": "knocks on it",
+      "sound": "tock__v1",
+      "gain_db": -18,
+      "max_s": 0.6
+     }
     ]
    }
   },
@@ -5126,6 +5136,20 @@
       "at": "Writing doesn't",
       "sound": "ember_crackle"
      }
+    ],
+    "sfx": [
+     {
+      "at": "They press signs",
+      "sound": "pencil_scribble__v2",
+      "gain_db": -21,
+      "max_s": 1.0
+     },
+     {
+      "at": "The colony's first library",
+      "sound": "page_flip__v1",
+      "gain_db": -20,
+      "max_s": 1.0
+     }
     ]
    }
   },
@@ -5369,6 +5393,14 @@
      {
       "at": "Crush it.",
       "sound": "fire"
+     }
+    ],
+    "sfx": [
+     {
+      "at": "red-gold bead",
+      "sound": "glow_ping__v1",
+      "gain_db": -20,
+      "max_s": 1.2
      }
     ]
    }
@@ -6412,6 +6444,454 @@
     "humour": 0.15,
     "doubt": 0.55
    }
+  }
+ ],
+ "shorts": [
+  {
+   "id": "SH01",
+   "source_period": "day1",
+   "hook": "Could a hundred of history's smartest people light one fire before dark?",
+   "lines": [
+    {
+     "text": "Could a hundred of history's smartest people light one fire before dark?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emphasis": [
+      "dark"
+     ]
+    },
+    {
+     "text": "No matches. No lighter. Only what's in their pockets."
+    },
+    {
+     "text": "Nansen asks who can make fire. Two hands go up. Two. Out of a hundred.",
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "hundred"
+     ]
+    },
+    {
+     "text": "He tries a bow drill. A dozen tries. Nothing but smoke.",
+     "tags": [
+      "sighs"
+     ]
+    },
+    {
+     "text": "Then Einstein takes off his reading glasses.",
+     "tags": [
+      "intrigued"
+     ]
+    },
+    {
+     "text": "A convex lens. The afternoon sun. One bright point on the grass.",
+     "tags": [
+      "softly"
+     ]
+    },
+    {
+     "text": "A thread of smoke. One careful breath... and FIRE.",
+     "tags": [
+      "whispers"
+     ],
+     "emphasis": [
+      "fire"
+     ]
+    },
+    {
+     "text": "That was only day one. The full story is on the channel.",
+     "tags": [
+      "warmly"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Could a hundred",
+     "picture": "v5_d1-31",
+     "crop_x": 0.38,
+     "zoom": 1.0
+    },
+    {
+     "at": "Nansen asks",
+     "picture": "v5_d1-32",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Then Einstein",
+     "picture": "v6_einstein_glasses",
+     "crop_x": 0.62,
+     "zoom": 1.0
+    },
+    {
+     "at": "A convex lens.",
+     "picture": "v6_lens_point",
+     "crop_x": 0.7,
+     "zoom": 1.0
+    },
+    {
+     "at": "That was only",
+     "picture": "v5_d1-36",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH02",
+   "source_period": "week1",
+   "hook": "How much grain does a hundred-person camp need every single day?",
+   "lines": [
+    {
+     "text": "How much grain does a hundred-person camp need every single day?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emphasis": [
+      "day"
+     ]
+    },
+    {
+     "text": "Seventy-five kilograms. Every. Day.",
+     "tags": [
+      "deadpan"
+     ]
+    },
+    {
+     "text": "Wallace cuts about two kilograms an hour with a flint sickle.",
+     "tags": [
+      "amused"
+     ]
+    },
+    {
+     "text": "Nansen does the sum, and the sum does not care how clever he is.",
+     "emphasis": [
+      "sum"
+     ]
+    },
+    {
+     "text": "By the end of the week, a third of the colony does nothing but grain.",
+     "tags": [
+      "slowly"
+     ]
+    },
+    {
+     "text": "And Newton? Newton hits a flint. The flint wins.",
+     "tags": [
+      "amused"
+     ],
+     "emphasis": [
+      "wins"
+     ]
+    },
+    {
+     "text": "Week one of a hundred geniuses in the Stone Age. The full story is on the channel.",
+     "tags": [
+      "warmly"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "How much grain",
+     "picture": "w1_wallace_sickle",
+     "crop_x": 0.42,
+     "zoom": 1.0
+    },
+    {
+     "at": "Nansen does",
+     "picture": "w1_nansen_sum",
+     "crop_x": 0.7,
+     "zoom": 1.0
+    },
+    {
+     "at": "By the end",
+     "picture": "w1_grinders_rows",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "And Newton?",
+     "picture": "w1_newton_flint",
+     "crop_x": 0.4,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH03",
+   "source_period": "month1",
+   "hook": "Why did the smartest people in history explode seven pots in a row?",
+   "lines": [
+    {
+     "text": "Why did the smartest people in history explode seven pots in a row?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emphasis": [
+      "seven"
+     ]
+    },
+    {
+     "text": "Marie Curie digs river clay with her bare hands.",
+     "tags": [
+      "warmly"
+     ]
+    },
+    {
+     "text": "But plain clay shrinks as it dries, and then it cracks.",
+     "tags": [
+      "slowly"
+     ]
+    },
+    {
+     "text": "Seven pots. Seven explosions.",
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "explosions"
+     ]
+    },
+    {
+     "text": "So Newton does what Newton does. He measures.",
+     "tags": [
+      "amused"
+     ],
+     "emphasis": [
+      "measures"
+     ]
+    },
+    {
+     "text": "Eleven days later, one pot holds water. And then, at last, there is soup.",
+     "tags": [
+      "softly"
+     ]
+    },
+    {
+     "text": "A month into the Stone Age. The full story is on the channel.",
+     "tags": [
+      "warmly"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Why did the",
+     "picture": "m1_pots_cracked",
+     "crop_x": 0.75,
+     "zoom": 1.0
+    },
+    {
+     "at": "Marie Curie digs",
+     "picture": "m1_curie_clay",
+     "crop_x": 0.32,
+     "zoom": 1.0
+    },
+    {
+     "at": "So Newton",
+     "picture": "m1_newton_pot",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Eleven days",
+     "picture": "m1_soup",
+     "crop_x": 0.6,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH04",
+   "source_period": "year10",
+   "hook": "What stopped a hundred geniuses from making bronze?",
+   "lines": [
+    {
+     "text": "What stopped a hundred geniuses from making bronze?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emphasis": [
+      "bronze"
+     ]
+    },
+    {
+     "text": "Year ten. Marie Curie smelts a green rock into a bead of copper.",
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "copper"
+     ]
+    },
+    {
+     "text": "But copper is soft. A copper axe bends where a stone axe would chip.",
+     "tags": [
+      "slowly"
+     ]
+    },
+    {
+     "text": "Bronze needs tin, and there is almost no tin near here.",
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "tin"
+     ]
+    },
+    {
+     "text": "Archaeologists still argue about where the ancient Near East found its tin.",
+     "tags": [
+      "thoughtful"
+     ]
+    },
+    {
+     "text": "Iron instead? Under two kilograms of iron swallows about forty kilograms of charcoal. A single knife costs a forest.",
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "forest"
+     ]
+    },
+    {
+     "text": "Ten years into the Stone Age. The full story is on the channel.",
+     "tags": [
+      "warmly"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "What stopped",
+     "picture": "y10_axe_bend",
+     "crop_x": 0.62,
+     "zoom": 1.0
+    },
+    {
+     "at": "Year ten.",
+     "picture": "y10_malachite",
+     "crop_x": 0.4,
+     "zoom": 1.0
+    },
+    {
+     "at": "But copper is",
+     "picture": "y10_bead",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "Bronze needs",
+     "picture": "y10_nansen_map",
+     "crop_x": 0.72,
+     "zoom": 1.0
+    },
+    {
+     "at": "Iron instead?",
+     "picture": "y10_charcoal",
+     "crop_x": 0.62,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH05",
+   "source_period": "compare",
+   "hook": "Would a hundred geniuses beat real history by thousands of years?",
+   "lines": [
+    {
+     "text": "Would a hundred geniuses beat real history by thousands of years?",
+     "tags": [
+      "softly",
+      "intrigued"
+     ],
+     "emphasis": [
+      "thousands"
+     ]
+    },
+    {
+     "text": "In the real world, writing was still six thousand seven hundred years away.",
+     "tags": [
+      "slowly"
+     ]
+    },
+    {
+     "text": "They would bring it on day one.",
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "one"
+     ]
+    },
+    {
+     "text": "Copper smelting was five thousand years away. They would do it in ten.",
+     "tags": [
+      "amused"
+     ]
+    },
+    {
+     "text": "Knowledge is a time machine. For discoveries.",
+     "tags": [
+      "thoughtful"
+     ],
+     "emphasis": [
+      "discoveries"
+     ]
+    },
+    {
+     "text": "But a hundred geniuses is not a civilization.",
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "not"
+     ]
+    },
+    {
+     "text": "So who wins: the hundred, or the winter? The full video is on the channel.",
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "winter"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Would a hundred",
+     "picture": "c_road",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "Copper smelting",
+     "picture": "y10_tesla_curie",
+     "crop_x": 0.7,
+     "zoom": 1.0
+    },
+    {
+     "at": "But a hundred",
+     "picture": "c_tiny_crowd",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "So who wins",
+     "picture": "c_steam",
+     "crop_x": 0.35,
+     "zoom": 1.0
+    }
+   ]
   }
  ]
 }
