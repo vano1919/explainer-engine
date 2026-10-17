@@ -51,11 +51,14 @@ def contract_findings(doc: dict) -> list[dict]:
         if sid in source_by_id:
             out.append(finding("EG-04", where, f"duplicate source id {sid!r}"))
         source_by_id[sid] = source
-        for key in ("url", "title", "publisher", "published_at", "accessed_at", "grade", "passage"):
+        for key in ("url", "title", "publisher", "accessed_at", "grade", "passage"):
             if not isinstance(source.get(key), str) or not source[key].strip():
                 out.append(finding("EG-04", f"{where}.{key}", f"{key} must be a non-empty string"))
-        if source.get("published_at") is not None and not isinstance(source.get("published_at"), str):
-            out.append(finding("EG-04", f"{where}.published_at", "published_at must be a string or null"))
+        published = source.get("published_at", "__missing__")
+        if published == "__missing__":
+            out.append(finding("EG-04", f"{where}.published_at", "published_at is required; use null when unknown"))
+        elif published is not None and (not isinstance(published, str) or not published.strip()):
+            out.append(finding("EG-04", f"{where}.published_at", "published_at must be a non-empty string or null"))
         if not str(source.get("url", "")).startswith(("https://", "http://")):
             out.append(finding("EG-04", f"{where}.url", "source URL must use HTTP or HTTPS"))
         if source.get("grade") not in {"A", "B", "C", "D"}:
@@ -64,6 +67,7 @@ def contract_findings(doc: dict) -> list[dict]:
             out.append(finding("EG-05", where, "grade-D material is unverified; do not rely on it alone", "REVIEW"))
 
     claim_by_id = {}
+    claim_evidence_supported = {}
     for i, claim in enumerate(claims):
         where = f"editorial.claims[{i}]"
         if not isinstance(claim, dict):
@@ -100,7 +104,11 @@ def contract_findings(doc: dict) -> list[dict]:
             str(s.get("publisher", "")).strip().casefold()
             for s in used_sources if s.get("grade") in {"B", "C"} and str(s.get("publisher", "")).strip()
         }
-        claim["__evidence_supported"] = primary or len(secondary_publishers) >= 2
+        claim_evidence_supported[cid] = primary or len(secondary_publishers) >= 2
+        if claim.get("type") != "speculation" and not claim_evidence_supported[cid]:
+            out.append(finding("EG-10", where, f"claim {cid} needs one grade-A source or two independent grade-B/C publishers"))
+        if claim.get("type") == "fact" and claim.get("confidence") == "unverified":
+            out.append(finding("EG-10", where, f"claim {cid} cannot be classified as a fact while unverified"))
 
     used_claims = set()
     for si, segment in enumerate(doc.get("segments", [])):
@@ -133,10 +141,9 @@ def contract_findings(doc: dict) -> list[dict]:
                         out.append(finding("EG-10", where, f"fact line cannot rely on a {claim.get('type')} claim {cid}"))
                     if claim.get("confidence") == "unverified":
                         out.append(finding("EG-10", where, f"fact line cannot present unverified claim {cid} as fact"))
-                    if not claim.get("__evidence_supported", False):
+                    if not claim_evidence_supported.get(cid, False):
                         out.append(finding("EG-10", where, f"claim {cid} needs one grade-A source or two independent grade-B/C publishers"))
     for cid, claim in claim_by_id.items():
-        claim.pop("__evidence_supported", None)
         if cid not in used_claims:
             out.append(finding("EG-11", f"editorial.claims.{cid}", "claim is unused by every narration line", "REVIEW"))
     if not doc.get("segments"):
