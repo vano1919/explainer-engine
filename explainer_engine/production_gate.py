@@ -52,6 +52,32 @@ def gates(day: Path, look_path: Path | None = None) -> list[dict]:
         fails = [f for f in found if f["severity"] == "FAIL"]
         add(0, "production script", "BLOCKED" if fails else "PASS", f"{_pv.summary(found)} (PV rules)",
             "fix the FAILs: python -m explainer_engine.production validate" if fails else "answer every REVIEW")
+    # 0.5 evidence and independent editorial review for new scripts
+    if ps.exists():
+        doc = _ps.load(ps)
+        if not isinstance(doc.get("editorial"), dict):
+            add(0.5, "editorial quality", "WAIT", "legacy script has no structured source/claim contract",
+                "for new production add editorial v1 and an independent review before paid work")
+        else:
+            from .production.editorial_gate import contract_findings, review_findings
+            contract = contract_findings(doc)
+            contract_fails = [f for f in contract if f["severity"] == "FAIL"]
+            report_path = day / "editorial_review.json"
+            if contract_fails:
+                add(0.5, "editorial quality", "BLOCKED", f"{len(contract_fails)} source/claim contract FAILs",
+                    "fix claim/source mapping before paid work")
+            elif not report_path.exists():
+                add(0.5, "editorial quality", "WAIT", "no independent review bound to this script hash",
+                    "write editorial_review.json and run production.editorial_gate")
+            else:
+                review = review_findings(ps, report_path)
+                review_fails = [f for f in review if f["severity"] == "FAIL"]
+                review_reviews = [f for f in review if f["severity"] == "REVIEW"]
+                status = "BLOCKED" if review_fails else "WAIT" if review_reviews else "PASS"
+                add(0.5, "editorial quality", status,
+                    f"{len(review_fails)} FAIL, {len(review_reviews)} REVIEW",
+                    "revise and re-review the script" if review_fails or review_reviews else "approved for production")
+
     # 1 script
     tts = day / "narration_tts.txt"
     if not tts.exists():
