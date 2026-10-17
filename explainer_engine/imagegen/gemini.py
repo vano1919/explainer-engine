@@ -26,6 +26,15 @@ PRICES = {
     "gemini-3.1-flash-image": {"0.5K": 0.045, "1K": 0.067, "2K": 0.101, "4K": 0.151},
     "gemini-3.1-flash-lite-image": {"1K": 0.0336},
 }
+# Batch tier: half price, the answer comes back in minutes to hours (ai.google.dev/gemini-api/docs/pricing, 2026-10-17)
+BATCH_PRICES = {
+    "gemini-nano-banana-2.1": {"1K": 0.0168, "2K": 0.0252, "4K": 0.0567},
+    "gemini-3.1-flash-lite-image": {"1K": 0.0168},
+    "gemini-3.1-flash-image": {"0.5K": 0.022, "1K": 0.034, "2K": 0.050, "4K": 0.076},
+    "gemini-3-pro-image": {"1K": 0.067, "2K": 0.067, "4K": 0.12},
+}
+BATCH_URL = "https://generativelanguage.googleapis.com/v1beta/"
+BATCH_MAX_BYTES = 18_000_000  # inline requests must stay under 20 MB
 REFERENCE_USD = 0.0011  # one input picture at the Pro rate (the dearest listed)
 MAX_REFERENCES = 14
 
@@ -136,6 +145,114 @@ class GeminiClient:
         reason = (data.get("promptFeedback") or {}).get("blockReason") or "no picture in the answer"
         self._log({"name": name, "model": model, "usd": 0.0, "failed": reason})
         raise GeminiError(f"{model}: {reason}")
+
+    # --- batch tier (half price, asynchronous) ----------------------------------------------------------------------
+    def _batch_http(self, method: str, url: str, body: dict | None = None) -> dict:
+        if not self.key:
+            raise GeminiError("GEMINI_API_KEY is not set")
+        data = json.dumps(body).encode() if body is not None else None
+        request = urllib.request.Request(url, data=data, method=method,
+                                         headers={"x-goog-api-key": self.key, "Content-Type": "application/json"})
+        try:
+            with urllib.request.urlopen(request, timeout=self.timeout) as r:
+                return json.load(r)
+        except urllib.error.HTTPError as exc:
+            raise GeminiError(f"batch HTTP {exc.code}: {exc.read().decode('utf-8', 'replace')[:300]}") from None
+
+    def submit_batch(self, items: list[dict], *, model: str, size: str = "2K", aspect: str = "16:9") -> str:
+        """items: [{name, prompt, refs: [bytes]}]. Reserves the batch price, sends ONE batch, records it on disk at once
+        (so a stop loses nothing: ``collect_batch`` can be called later, even from another run). Returns the batch name."""
+        http = getattr(self, "batch_post", None) or self._batch_http
+        reqs, total = [], 0
+        for it in items:
+            refs = it.get("refs") or []
+            parts = [{"text": it["prompt"]}] + [
+                {"inlineData": {"mimeType": "image/jpeg" if r[:2] == b"\xff\xd8" else "image/png",
+                                "data": base64.b64encode(r).decode()}} for r in refs]
+            total += sum(len(r) for r in refs) * 4 // 3 + len(it["prompt"])
+            reqs.append({"request": {"contents": [{"parts": parts}],
+                                     "generationConfig": {"responseModalities": ["IMAGE"],
+                                                          "imageConfig": {"aspectRatio": aspect, "imageSize": size}}},
+                         "metadata": {"key": it["name"]}})
+        if total > BATCH_MAX_BYTES:
+            raise GeminiError(f"batch of {total} bytes passes the inline limit; split it")
+        cost = round(sum(BATCH_PRICES[model][size] + len(it.get("refs") or []) * REFERENCE_USD for it in items), 4)
+        if self.run is not None:
+            self.run.reserve("gemini_usd", cost, item=f"batch:{items[0]['name']}+{len(items)}")
+        elif self.spent + cost > self.cap * 0.8 + 1e-9:
+            raise GeminiError(f"stop: {self.spent + cost:.3f} USD would pass 80 % of the {self.cap} cap")
+        try:
+            res = http("POST", f"{BATCH_URL}models/{model}:batchGenerateContent",
+                       {"batch": {"display_name": f"ep-{items[0]['name']}-{len(items)}",
+                                  "input_config": {"requests": {"requests": reqs}}}})
+        except GeminiError:
+            if self.run is not None:
+                self.run.refund("gemini_usd", cost)
+            raise
+        name = res.get("name") or (res.get("batch") or {}).get("name")
+        if not name:
+            if self.run is not None:
+                self.run.refund("gemini_usd", cost)
+            raise GeminiError(f"batch not accepted: {str(res)[:200]}")
+        self.spent += cost
+        d = self.root / "batches"
+        d.mkdir(parents=True, exist_ok=True)
+        (d / (name.replace("/", "_") + ".json")).write_text(
+            json.dumps({"name": name, "model": model, "size": size, "cost": cost, "items": [i["name"] for i in items]}))
+        self._log({"batch": name, "model": model, "size": size, "usd": cost, "items": len(items)})
+        return name
+
+    def poll_batch(self, name: str) -> dict:
+        """{state, done, results: {item: bytes | error}} - the state field and the result place differ between pages of the
+        docs, so both known shapes are read."""
+        http = getattr(self, "batch_post", None) or self._batch_http
+        res = http("GET", BATCH_URL + name)
+        state = res.get("state") or (res.get("metadata") or {}).get("state") or ""
+        done = bool(res.get("done")) or state.endswith(("SUCCEEDED", "FAILED", "CANCELLED", "EXPIRED"))
+        inl = ((res.get("response") or {}).get("inlinedResponses") or (res.get("dest") or {}).get("inlinedResponses")
+               or (res.get("metadata") or {}).get("output", {}).get("inlinedResponses") or {})
+        rows = inl.get("inlinedResponses", inl) if isinstance(inl, dict) else inl
+        results: dict = {}
+        for row in rows or []:
+            key = (row.get("metadata") or {}).get("key")
+            if row.get("error"):
+                results[key] = str((row["error"] or {}).get("message", row["error"]))
+                continue
+            for cand in (row.get("response") or {}).get("candidates") or []:
+                for part in (cand.get("content") or {}).get("parts") or []:
+                    inline = part.get("inlineData") or part.get("inline_data")
+                    if inline and str(inline.get("mimeType") or inline.get("mime_type") or "").startswith("image/"):
+                        results[key] = base64.b64decode(inline["data"])
+            results.setdefault(key, "no picture in the answer")
+        return {"state": state, "done": done, "results": results}
+
+    def collect_batch(self, name: str, *, wait_s: float = 0.0, poll_s: float = 30.0) -> dict:
+        """Poll (up to wait_s), write every finished picture as ``<root>/<item>.png`` and return {item: Path | error text}.
+        A picture that failed gets its price back (the provider does not charge a failed batch request)."""
+        t0 = time.time()
+        while True:
+            st = self.poll_batch(name)
+            if st["done"] or time.time() - t0 >= wait_s:
+                break
+            time.sleep(poll_s)
+        meta_file = self.root / "batches" / (name.replace("/", "_") + ".json")
+        meta = json.loads(meta_file.read_text()) if meta_file.exists() else {}
+        out: dict = {}
+        for item, val in st["results"].items():
+            if isinstance(val, bytes):
+                p = self.root / f"{item}.png"
+                p.write_bytes(val)
+                out[item] = p
+            else:
+                out[item] = val
+        if st["done"] and meta and not meta.get("settled"):
+            bad = [i for i in meta["items"] if i not in out or not isinstance(out[i], Path)]
+            if bad and self.run is not None:
+                each = meta["cost"] / max(1, len(meta["items"]))
+                self.run.refund("gemini_usd", round(each * len(bad), 4))
+            meta["settled"] = True
+            meta_file.write_text(json.dumps(meta))
+        return {"state": st["state"], "done": st["done"], "items": out}
 
     def judge(self, image: bytes, question: str, *, model: str = "gemini-3.8-flash") -> str:
         """A vision answer as text (input price about $0.0015 per picture at $0.75 per million input tokens)."""

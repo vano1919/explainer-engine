@@ -41,6 +41,60 @@ def ref_bytes(dirs: list[Path], doc: dict, ref: str) -> bytes:
     raise FileNotFoundError(f"reference {ref!r} ({name}) not found in {[str(d) for d in dirs]}")
 
 
+def as_jpeg(png: bytes, quality: int = 90) -> bytes:
+    """A smaller reference for the batch tier (inline requests stay under 20 MB)."""
+    from PIL import Image
+    b = io.BytesIO()
+    Image.open(io.BytesIO(png)).convert("RGB").save(b, "JPEG", quality=quality)
+    return b.getvalue()
+
+
+def run_batch(a, todo, doc, dirs, out, run, model, size) -> int:
+    """Half-price tier: submit in groups under the inline size limit, then wait for the answers and record every picture."""
+    client = GeminiClient(out / "_gemini", cap_usd=1e9, run=run)
+    names, group, size_now = [], [], 0
+    groups = []
+    for j in todo:
+        try:
+            refs = [as_jpeg(ref_bytes(dirs, doc, r.removesuffix(".png"))) for r in j["refs"]]
+        except FileNotFoundError as exc:
+            print("skip", j["id"], exc)
+            continue
+        item = {"name": j["id"], "prompt": j["prompt"] + C.POD_SUFFIX, "refs": refs}
+        w = sum(len(r) for r in refs) * 4 // 3
+        if group and size_now + w > 14_000_000:
+            groups.append(group)
+            group, size_now = [], 0
+        group.append(item)
+        size_now += w
+    if group:
+        groups.append(group)
+    for g in groups:
+        try:
+            names.append(client.submit_batch(g, model=model, size=size))
+            print(f"submitted {names[-1]} with {len(g)} pictures", flush=True)
+        except (CapReached, GeminiError) as exc:
+            print("STOP:", exc, flush=True)
+            run.phase("5_pictures", "STOPPED", str(exc))
+            return 3
+    failed = 0
+    for n in names:
+        res = client.collect_batch(n, wait_s=a.wait, poll_s=30)
+        for item, val in res["items"].items():
+            if isinstance(val, Path):
+                (out / f"{item}.png").write_bytes(val.read_bytes())
+                run.done("pictures", item, file=f"{item}.png", batch=n)
+                print("painted", item, flush=True)
+            else:
+                failed += 1
+                run.fail(item, str(val))
+                print("failed", item, str(val)[:100], flush=True)
+        if not res["done"]:
+            print(f"{n} not finished ({res['state']}); collect later with --collect {n}", flush=True)
+            failed += 1
+    return 0 if not failed else 1
+
+
 def jobs_of(doc: dict) -> list[dict]:
     _, pod = C.jobs(doc)
     return pod["pictures"]
@@ -57,6 +111,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--first", action="store_true")
     ap.add_argument("--estimate", action="store_true")
     ap.add_argument("--workers", type=int, default=4, help="pictures painted at the same time (Gemini takes 1-2 min each)")
+    ap.add_argument("--batch", action="store_true", help="half-price batch tier (answers in minutes to hours)")
+    ap.add_argument("--model", default=MODEL)
+    ap.add_argument("--size", default=SIZE)
+    ap.add_argument("--wait", type=float, default=1500.0, help="seconds to wait for a batch before leaving it for --collect")
+    ap.add_argument("--collect", help="collect an earlier batch by name instead of submitting")
     a = ap.parse_args(argv)
     path = Path(a.script)
     doc = S.load(path)
@@ -72,11 +131,27 @@ def main(argv: list[str] | None = None) -> int:
         todo = todo[:1]
     if a.limit:
         todo = todo[:a.limit]
-    cost = sum(estimate(MODEL, SIZE, 1, len(j["refs"])) for j in todo)
+    model, size = a.model, a.size
+    if a.batch:
+        from explainer_engine.imagegen.gemini import BATCH_PRICES, REFERENCE_USD
+        cost = sum(BATCH_PRICES[model][size] + len(j["refs"]) * REFERENCE_USD for j in todo)
+    else:
+        cost = sum(estimate(model, size, 1, len(j["refs"])) for j in todo)
     print(f"{len(todo)} pictures to paint, estimate ${cost:.3f}; spent so far ${run.spent('gemini_usd'):.3f} of cap "
           f"{run.data['caps'].get('gemini_usd')} (stop at 80 %)")
     if a.estimate:
         return 0
+    if a.collect:
+        client = GeminiClient(out / "_gemini", cap_usd=1e9, run=run)
+        res = client.collect_batch(a.collect, wait_s=a.wait)
+        for item, val in res["items"].items():
+            if isinstance(val, Path):
+                (out / f"{item}.png").write_bytes(val.read_bytes())
+                run.done("pictures", item, file=f"{item}.png", batch=a.collect)
+        print(res["state"], len(res["items"]), "pictures")
+        return 0 if res["done"] else 1
+    if a.batch:
+        return run_batch(a, todo, doc, dirs, out, run, model, size)
     client = GeminiClient(out / "_gemini", cap_usd=1e9, run=run)
     stats = {"painted": 0, "failed": 0, "stop": None}
 
@@ -87,9 +162,9 @@ def main(argv: list[str] | None = None) -> int:
         prompt = j["prompt"] + C.POD_SUFFIX
         try:
             refs = [ref_bytes(dirs, doc, r.removesuffix(".png")) for r in j["refs"]]
-            p = client.generate(key, prompt, model=MODEL, size=SIZE, refs=refs)
+            p = client.generate(key, prompt, model=model, size=size, refs=refs)
             (out / f"{key}.png").write_bytes(Path(p).read_bytes())
-            run.done("pictures", key, file=f"{key}.png", usd=estimate(MODEL, SIZE, 1, len(refs)))
+            run.done("pictures", key, file=f"{key}.png", usd=estimate(model, size, 1, len(refs)))
             stats["painted"] += 1
             print("painted", key, f"${run.spent('gemini_usd'):.3f}", flush=True)
         except CapReached as exc:
