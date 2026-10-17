@@ -57,7 +57,7 @@ threshold, heuristic), risks as PASS/ADAPT/REVIEW/BLOCK, creative and anti-monot
 Also binding: crossover episodes of other people's fictional worlds follow docs/RIGHTS_AND_FAIR_USE.md (no third-party
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
 Pictures: Gemini batch tier only, tiers draft/standard/premium (`imagegen/routing.py`, D-46; supersedes the 2026-10-11 rule
-and D-36); audio: ElevenLabs only (narration, music, sound effects), guarded by the `.claude/settings.json` PreToolUse hook.
+and D-36); audio: ElevenLabs for narration and sound effects, music from ElevenLabs or a per-track verified free library (D-46), guarded by the `.claude/settings.json` PreToolUse hook.
 Main market: US (D-46). Disclosure is decided per video by the checklist (realistic content
 only, YouTube Help 14328491); channel audience "not made for kids".
 
