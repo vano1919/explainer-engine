@@ -432,3 +432,13 @@ the gap (nearest the gap's middle among the quietest), must be at most -40 dB or
 on a 10 ms fade; word times follow the real quiet spot. Re-run: 131 -> 113 silences, 67 -> 2 cut into sound (both borderline -37 /
 -42 dB), 18 insertions skipped (no quiet spot). Three cuts that relied on a skipped pause were moved to legal pauses (S18, S31, S32)
 and one reframe added (S31 "Fuel."). Tests: 210 passed. Creator picked speed 1.15.
+
+## 2026-10-17 — The 2K render died three times (10:11, 11:21, 12:04): the machine restarted
+
+Cause (measured, not guessed): after the third death `/proc/uptime` read 97 s and PID 1 had run 27 s - the whole container restarted, so
+the render, its ffmpeg and a watcher started with `setsid` all disappeared at once (the watcher's last line is 12:04:27). Memory was
+not the cause (cgroup 3 GB of 14.3 GB, no OOM kill, python peak 6.2 GB). No log shows an error because nothing got to write one.
+Fix: ED-13. The assembler now writes ~60 s chunks as finished files and resumes from them (`chunk_bounds`, `plan_stamp`, `mux`);
+the grading seed of a picture is the first shot of its run so a chunk edge inside one picture draws the same grain; a lock whose pid is
+reused by another program is stale (`lock_alive`). Tests: `tests/unit/test_chunked_render.py` (6, including a render that dies before
+the join and resumes with every chunk reused and the exact frame count). 219 tests pass, docs_lint 0. The 2K render was restarted with it.

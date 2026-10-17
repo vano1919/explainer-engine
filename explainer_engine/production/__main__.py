@@ -128,6 +128,8 @@ def main(argv: list[str] | None = None) -> int:
         q.add_argument("--snd", action="append")
         q.add_argument("--final", action="store_true")
         q.add_argument("--audio-only", action="store_true")
+        q.add_argument("--chunk-seconds", type=float, default=A.CHUNK_SECONDS,
+                       help="assemble: seconds per saved chunk (a restart of the machine loses at most one); 0 = one chunk")
         q.add_argument("--size", default="1920x1080")
         q.add_argument("--write", action="store_true", help="compile: write the prompts back into the script")
     a = p.parse_args(argv)
@@ -183,7 +185,8 @@ def main(argv: list[str] | None = None) -> int:
         timed = json.loads(Path(a.timed).read_text(encoding="utf-8"))
         W, H = (int(x) for x in a.size.lower().split("x"))
         res = A.assemble(timed, Path(a.narration), Path(a.out), pics or [], snd, size=(W, H), final=a.final,
-                         grade_key=doc["episode"].get("grade") or C.world_of(doc)["grade"], audio_only=a.audio_only)
+                         grade_key=doc["episode"].get("grade") or C.world_of(doc)["grade"], audio_only=a.audio_only,
+                         chunk_seconds=a.chunk_seconds)
         print(json.dumps({k: res[k] for k in ("video", "audio")}, indent=1))
         return 0
     return 2
