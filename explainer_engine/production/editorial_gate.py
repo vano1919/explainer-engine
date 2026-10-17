@@ -51,9 +51,11 @@ def contract_findings(doc: dict) -> list[dict]:
         if sid in source_by_id:
             out.append(finding("EG-04", where, f"duplicate source id {sid!r}"))
         source_by_id[sid] = source
-        for key in ("url", "title", "publisher", "accessed_at", "grade", "passage"):
+        for key in ("url", "title", "publisher", "published_at", "accessed_at", "grade", "passage"):
             if not isinstance(source.get(key), str) or not source[key].strip():
                 out.append(finding("EG-04", f"{where}.{key}", f"{key} must be a non-empty string"))
+        if source.get("published_at") is not None and not isinstance(source.get("published_at"), str):
+            out.append(finding("EG-04", f"{where}.published_at", "published_at must be a string or null"))
         if not str(source.get("url", "")).startswith(("https://", "http://")):
             out.append(finding("EG-04", f"{where}.url", "source URL must use HTTP or HTTPS"))
         if source.get("grade") not in {"A", "B", "C", "D"}:

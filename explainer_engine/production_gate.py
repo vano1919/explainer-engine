@@ -62,10 +62,14 @@ def gates(day: Path, look_path: Path | None = None) -> list[dict]:
             from .production.editorial_gate import contract_findings, review_findings
             contract = contract_findings(doc)
             contract_fails = [f for f in contract if f["severity"] == "FAIL"]
+            contract_reviews = [f for f in contract if f["severity"] == "REVIEW"]
             report_path = day / "editorial_review.json"
             if contract_fails:
                 add(0.5, "editorial quality", "BLOCKED", f"{len(contract_fails)} source/claim contract FAILs",
                     "fix claim/source mapping before paid work")
+            elif contract_reviews:
+                add(0.5, "editorial quality", "WAIT", f"{len(contract_reviews)} source/claim REVIEW items",
+                    "resolve the REVIEW items before paid work")
             elif not report_path.exists():
                 add(0.5, "editorial quality", "WAIT", "no independent review bound to this script hash",
                     "write editorial_review.json and run production.editorial_gate")

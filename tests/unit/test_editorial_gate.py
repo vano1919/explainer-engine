@@ -11,7 +11,7 @@ def valid_doc():
             "version": 1,
             "sources": [
                 {"id": "S1", "url": "https://example.com/primary", "title": "Primary record", "publisher": "Archive A",
-                 "accessed_at": "2026-10-18", "grade": "A", "passage": "The recorded passage supporting claim C1."}
+                 "published_at": "2026-01-01", "accessed_at": "2026-10-18", "grade": "A", "passage": "The recorded passage supporting claim C1."}
             ],
             "claims": [
                 {"id": "C1", "text": "A sourced factual claim.", "type": "fact", "source_ids": ["S1"],
