@@ -21,6 +21,15 @@ Chapters
 16:00 Year 100
 17:13 Did they beat real history?
 
+Chapters for the 1.15 final (`ep1_2k_speed115.mp4`, 17:08 long; the 1.0 list above ÷ 1.15, rounded to the second):
+0:00 Day 1
+3:40 Week 1
+7:13 Month 1
+9:07 Year 1
+11:52 Year 10
+13:55 Year 100
+14:58 Did they beat real history?
+
 ## Tags
 stone age, what if, scientists, einstein, newton, franklin, marie curie, darwin, tesla, survival, history what if, prehistory, science explained, thought experiment, göbekli tepe, bronze age, iron age
 
