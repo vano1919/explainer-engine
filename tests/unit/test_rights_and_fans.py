@@ -151,3 +151,10 @@ def test_template_phrases_are_flagged_not_removed():
 def test_overlap_ignores_stopwords():
     assert fan_brief.overlap("What if the bank met the winter", "the bank and the winter") == 1.0
     assert fan_brief.overlap("dragons", "") == 0.0
+
+
+def test_rr10_bans_leaked_material_but_allows_labelled_leaked_information():
+    from pathlib import Path
+    text = (Path(__file__).resolve().parents[2] / "docs" / "RIGHTS_AND_FAIR_USE.md").read_text(encoding="utf-8")
+    row = next(line for line in text.splitlines() if line.startswith("| RR-10"))
+    assert "material" in row and "information" in row and "reported leak" in row

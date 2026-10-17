@@ -107,7 +107,7 @@ def check(manifest: dict) -> list[dict]:
     if not manifest["description_has_unofficial_note"]:
         add("unofficial_note", "RR-08", "FAIL", f"description must carry: \"{UNOFFICIAL_NOTE}\"")
     if manifest["uses_leaks"]:
-        add("leaks", "RR-10", "FAIL", "leaked, unaired or pirated material used as a source")
+        add("leaks", "RR-10", "FAIL", "leaked, unaired or pirated material (not just leaked information) used as a source")
     return findings
 
 
