@@ -7,7 +7,7 @@ description: How to get a natural, consistent ElevenLabs read on the first try a
 
 Facts for this project: model `eleven_v4`, voice `NOpBlnGInO9m6vDvFkFC` (Grandpa Spuds Oxley), 1 credit per character **including
 tags**, concurrency 5, signed result links live 7200 s. Episode 1 used 17,353 credits: 14,778 for the 24 chunks and **2,575 for five
-Shorts that re-read text the main read already contained**. Rules below come from ElevenLabs' own model guide (read through
+Shorts whose lines were written new for the Short**. Rules below come from ElevenLabs' own model guide (read through
 `creative_get_model_guide`, 2026-10-17), the public v3 prompting docs, third-party guides (marked 3P, to be tested) and our own reads.
 
 ## What the connector lets you control (v4)
@@ -29,7 +29,7 @@ short, similar chunks and from keeping what was already good.
 | EL-06 | **Capitals sparingly**: one stressed word per sentence, last in the sentence (narration-script N-04). |
 | EL-07 | **Numbers, names, pronunciation.** On v4 keep numbers as written in the script's normal form; for a name the voice will misread, put IPA between slashes in the displayed text (`/ˈɡœbɛkli ˈtɛpɛ/`) and test that one sentence first. |
 | EL-08 | **Do not re-read to fix one word.** Fix a single bad word by re-reading only that sentence (or the chunk if the sentence is the chunk) and splice it in the pauses; never regenerate a 900-character chunk for one word. The splice needs the same loudness (ED-01). |
-| EL-09 | **Never re-read what exists.** A Short, a teaser or a trailer cuts its lines **out of the main read** (cut inside pauses, UR-12); `words.json` gives the times. Only text that does not exist in the main read is paid for. The Shorts' extra hook line is the only new text. |
+| EL-09 | **Do not pay twice for the same words.** A Short's script is written for the Short (SH-02), but any line that already exists in the main read is cut out of it (inside pauses, UR-12; `words.json` gives the times) instead of being read again. PV-28 reports a Short whose new text passes 400 characters (REVIEW). |
 | EL-10 | **Estimate, then call once.** `estimate_only` first, record it in the ledger, then one generation per chunk with `generations_count: 1`. Never repeat a call to "retry" (it charges again). Max 3 failures per chunk (OR-04). |
 | EL-11 | **Download immediately** (links expire, 7200 s) and re-poll the status for fresh links if they did; write each chunk to disk and into the ledger as soon as it is paid (OR-03). |
 | EL-12 | **Check every chunk when it arrives, before the next is paid.** Loudness within 1.5 dB of the others (ED-01), no clipped start/end, words match the script (coverage), timbre within the drift check (`audio/voice_check`), reading speed 140-175 wpm. A bad first chunk stops the batch. |
@@ -40,7 +40,7 @@ short, similar chunks and from keeping what was already good.
 2. Chunk plan from `tts_chunks` (900-character cap), characters counted with tags.
 3. Cost = characters x 1 credit; compare with the ledger cap (stop at 80%).
 4. Pronunciation list for names and places in this chunk (IPA), decided now, not after the read.
-5. For Shorts: confirm every line already exists in the main read; list the lines that do not (EL-09).
+5. For Shorts: list the lines that already exist in the main read (cut them out, do not pay) and the lines that are new (PV-28 counts them).
 
 ## After the read
 
@@ -49,7 +49,7 @@ is listened to by a human before any re-read is bought, because most are natural
 
 ## Common waste (do not repeat)
 
-- Reading the Shorts again (2,575 credits in Episode 1) instead of cutting them from the main read.
+- Reading whole Shorts as new text (2,575 credits in Episode 1) when part of their lines already existed in the main read.
 - Reading the whole Day 1 twice to replace a drifting voice without first testing one chunk with the new voice settings.
 - Reading before the script's last edit: change the text first, read once.
 - Heavy tag stacking and long ellipsis chains: slow, unstable, and charged per character.

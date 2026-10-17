@@ -85,11 +85,22 @@ def cmd_words(doc: dict, audio: list[Path], out: Path, transcript: Path | None) 
                 targets[k] = float(line["pause_after"])
     padded, words, rep = pause_pad.pad_pauses(aligned["words"], pcm, sr, targets=targets)
     voice_layer.write_wav(out / "narration.wav", padded, sr)
+    from explainer_engine.audio import dropouts
+    cuts = dropouts.scan(np.asarray(padded, dtype=float), sr)  # ED-12: no word may be cut by a padded pause
+    seam_spread = (getattr(join_reads, "report", None) or {}).get("spread_after_db", 0.0)
     doc_w = {"source": f"{source}; aligned by scribe_words (coverage {aligned['coverage']}, {aligned['status']}); "
                        f"pause_pad +{rep['added_seconds']} s", "duration": round(len(padded) / sr, 3),
              "coverage": aligned["coverage"], "unmatched": aligned["unmatched"], "voice_check": drift,
-             "seams": getattr(join_reads, "report", None), "words": words}
+             "seams": getattr(join_reads, "report", None), "dropouts": cuts, "words": words}
     (out / "words.json").write_text(json.dumps(doc_w, indent=0), encoding="utf-8")
+    n_cut = len(cuts["cut_into_sound"])
+    print(f"dropout scan: {cuts['silence_runs']} silence runs, {n_cut} cut into sound; chunk loudness spread {seam_spread} dB")
+    if seam_spread > 1.5:
+        print(f"REVIEW ED-01 chunk loudness spread {seam_spread} dB after levelling (limit 1.5)")
+    if n_cut:
+        print(f"{'FAIL' if n_cut >= 3 else 'REVIEW'} ED-12 {n_cut} padded pause(s) cut into sound: {cuts['cut_into_sound'][:5]}")
+        if n_cut >= 3:
+            raise SystemExit("words: stopped, the read has words cut by padded pauses (ED-12); words.json is written for a look")
     return doc_w
 
 

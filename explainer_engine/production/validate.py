@@ -276,6 +276,11 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         words = sum(len(l["text"].split()) for l in sh["lines"])
         if not 40 <= words <= 130:
             _f(out, "PV-28", sh["id"], f"{words} words: a Short is 40-130 words (about 20-55 s)", "REVIEW")
+        main = re.sub(r"\W+", " ", S.narration_text(doc).lower())
+        new = sum(len(l["text"]) for l in sh["lines"][1:] if re.sub(r"\W+", " ", l["text"].lower()).strip() not in main)
+        if new > 400:
+            _f(out, "PV-28", sh["id"], f"{new} characters are new text, not in the main read: each is paid again (EL-09); "
+               "cut lines from the main read where the story allows", "REVIEW")
         for x in sh["shots"]:
             if x["picture"] not in pic_ids:
                 _f(out, "PV-28", sh["id"], f"picture {x['picture']!r} is not a picture of the video (SH-03)")

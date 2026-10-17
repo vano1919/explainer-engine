@@ -109,3 +109,20 @@ def test_dropout_scan_finds_silence_inside_a_word():
     a[int(1.2 * sr):int(1.3 * sr)] = 0.0  # ... the silence
     res = dropouts.scan(a, sr)
     assert res["silence_runs"] == 2 and [b["at"] for b in res["cut_into_sound"]] == [0.5]
+
+
+def test_grain_stays_light_so_the_file_does_not_balloon():
+    import re
+    from explainer_engine.production import assemble
+    level = int(re.search(r"alls=(\d+)", assemble.look_filter(100.0)).group(1))
+    assert level <= 3  # level 5 made the 720p render 5x larger (Episode 1, 2026-10-17)
+
+
+def test_short_with_a_lot_of_new_text_is_reported():
+    import json
+    from pathlib import Path
+    from explainer_engine.production import validate
+    doc = json.loads((Path(__file__).parents[2] / "examples/stone_age/ep1_v1/production_script.json").read_text(encoding="utf-8"))
+    sh = doc["shorts"][0]
+    sh["lines"] = [sh["lines"][0]] + [{"text": "Entirely new sentence number %d that the main read never says." % i} for i in range(12)]
+    assert any(f["rule"] == "PV-28" and "paid again" in f["detail"] for f in validate.check_script(doc))
