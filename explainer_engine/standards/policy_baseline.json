@@ -130,7 +130,7 @@
       "verified_in": "V-33",
       "verified": false,
       "url": "https://support.rockstargames.com/articles/200153756/Policy-on-posting-copyrighted-Rockstar-Games-material",
-      "statement": "Rockstar/Take-Two policy on posting copyrighted Rockstar material (per search-result summary, page itself returned 503 on 2026-10-17, last updated 2025-01-10 per the summary): non-commercial fan use that does not spoil the plot is tolerated and machinima is welcomed; 'non-commercial' means no money made through the posted game footage; film, TV, streaming, ads and similar exploitation are outside the policy and need a licence request; Take-Two may take material down at any time. NOT read first-hand: re-read before paid_assets. Re-attempted 2026-10-17 on both support URLs (HTTP 503 each time): still NOT read first-hand, verified stays false."
+      "statement": "Rockstar/Take-Two policy on posting copyrighted Rockstar material. NOT read first-hand: HTTP 503 on every attempt on 2026-10-17 (three support URLs, incl. articles/7bNaeoMFTV0iUDGhStTXvz and the PC single-player mods article 5NVOAYjcTomO8v6SX2k76k). Second-hand only: a search summary and the creator's Gemini report agree that the page (updated 2025-01-10) allows non-commercial uses without spoilers, takes down leaked pre-release footage, isolated cinematics, spoiler edits, isolated in-game entertainment and cheat/mod-menu content, and does not mention custom monetised 2D animation. verified stays false; re-read before paid_assets."
     },
     {
       "id": "B-15",
@@ -167,7 +167,36 @@
       "verified_in": "V-37",
       "verified": true,
       "url": "https://www.rockstargames.com/VI",
-      "statement": "Rockstar's official GTA VI page (read 2026-10-17): 'Coming November 19, 2026' for PlayStation 5 and Xbox Series X|S; setting 'Vice City, USA' in the state of Leonida; protagonists Jason and Lucia; pre-order editions, in-game radio and 'GTAVI: The Album'. The page names no in-game social app, stock exchange or year. Release date reaffirmed in Take-Two's May 2026 report per secondary news (not first-hand). The game is not out on the date of this rulebook. Re-read first-hand 2026-10-17 (a second time): only the year 2026 appears (release and three Newswire items dated Oct 8 and Oct 15, 2026); the page names no regions and no in-game apps; the Newswire release-date article itself was not found (index page returned no article text)."
+      "statement": "Rockstar's official GTA VI page (read 2026-10-17): 'Coming November 19, 2026' for PlayStation 5 and Xbox Series X|S; setting 'Vice City, USA' in the state of Leonida; protagonists Jason and Lucia; pre-order editions, in-game radio and 'GTAVI: The Album'. The page names no in-game social app, stock exchange or year. Release date reaffirmed in Take-Two's May 2026 report per secondary news (not first-hand). The game is not out on the date of this rulebook. Re-read first-hand 2026-10-17 (a second time): only the year 2026 appears (release and three Newswire items dated Oct 8 and Oct 15, 2026); the page names no regions and no in-game apps; the Newswire release-date article itself was not found (index page returned no article text). Take-Two investor releases read first-hand 2026-10-17: ir.take2games.com/node/31186 (dated 2025-05-06, Trailer 2, gave 'May 26, 2026', superseded by later delays) and /node/32311 (dated 2026-06-24, pre-orders open 2026-06-25: release November 19, 2026, PS5 and Xbox Series X|S, standard edition $79.99, pre-load November 12). The video page rockstargames.com/videos/rkoCtr1r loaded as 'Grand Theft Auto VI - Trailer 1' with no description text: what the trailer shows (phones filming crimes) could not be confirmed from the page."
+    },
+    {
+      "id": "B-19",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-41",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.trademarkia.com/grand-theft-auto-85713489",
+      "statement": "USPTO record via a mirror (trademarkia, read 2026-10-17): GRAND THEFT AUTO, registration 4321159, serial 85713489, owner Take-Two Interactive Software, Inc., filed 2012-08-27, registered 2013-04-16, live, Sec. 8 & 9 renewal accepted 2023-10-06. A mirror, not the USPTO database; uspto.report/TM/98298472 (GRAND THEFT AUTO VI) and uspto.report/company/Al-Capone-Inc returned 403 and were not read."
+    },
+    {
+      "id": "B-20",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-42",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.rightofpublicityroadmap.com/state_page/illinois/",
+      "statement": "Right-of-publicity summaries (roadmap pages, secondary, read 2026-10-17). Illinois (765 ILCS 1075): post-mortem right 50 years, only for deaths after 1 Jan 1999; exemptions for original works of fine art, books, films and other audio-visual works that are not commercial advertisements, and noncommercial news and public-affairs uses. Florida (Stat. 540.08): 40 years post-mortem; exempt newspapers, magazines, books, news; Tyne v. Time Warner (Fla. 2005) limited 'commercial purpose' to uses that directly promote a product or service and found a motion picture use not commercial. Neither page reproduces the statute text: the statutes were not read. California 3344.1 stays in B-17."
+    },
+    {
+      "id": "B-21",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-43",
+      "verified": false,
+      "url": "https://group.banijay.com/wp-content/uploads/2024/06/BanijayUKacquiresCMPProductions.pdf",
+      "statement": "Banijay UK acquired Caryn Mandabach Productions (Peaky Blinders producer), announced 2024-06-06, with the back catalogue and future series, spin-offs and brand ventures including the Netflix film (company renamed Garrison Drama). Source: a search summary of the Banijay press release and trade outlets (Deadline, Advanced Television, IBC, Televisual). The Banijay pages returned 503 and were not opened: not verified first-hand."
     }
   ],
   "channel": {
