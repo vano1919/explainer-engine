@@ -116,7 +116,8 @@ class Sounds:
             for ext in (".mp3", ".wav"):
                 if (d / f"{name}{ext}").exists():
                     return d / f"{name}{ext}"
-        return self.lib.get(name)
+        path = self.lib.get(name)
+        return path if path is not None and path.is_file() else None
 
     def exists(self, name: str) -> bool:
         return self.path(name) is not None
