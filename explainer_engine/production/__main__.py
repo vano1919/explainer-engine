@@ -49,11 +49,13 @@ def join_reads(audio: list[Path], wav: Path, gap_s: float = 0.3) -> None:
     if len(audio) == 1:
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(audio[0]), "-ac", "1", "-ar", "48000", str(wav)], check=True)
         return
+    from explainer_engine.audio import seams
+    rep = seams.plan(audio)  # ED-01: every chunk to one loudness, edges faded inside the silence
     ins, parts = [], []
     for k, p in enumerate(audio):
         ins += ["-i", str(p)]
-        parts.append(f"[{k}:a]aresample=48000,aformat=channel_layouts=mono,apad=pad_dur={gap_s}[a{k}]")
-    graph = ";".join(parts) + ";" + "".join(f"[a{k}]" for k in range(len(audio))) + f"concat=n={len(audio)}:v=0:a=1[out]"
+        parts.append(seams.chain(k, p, rep["gains_db"][k], gap_s))
+    join_reads.report = rep
     subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", graph, "-map", "[out]", "-ar", "48000", str(wav)],
                    check=True)
 
@@ -84,7 +86,8 @@ def cmd_words(doc: dict, audio: list[Path], out: Path, transcript: Path | None) 
     voice_layer.write_wav(out / "narration.wav", padded, sr)
     doc_w = {"source": f"{source}; aligned by scribe_words (coverage {aligned['coverage']}, {aligned['status']}); "
                        f"pause_pad +{rep['added_seconds']} s", "duration": round(len(padded) / sr, 3),
-             "coverage": aligned["coverage"], "unmatched": aligned["unmatched"], "voice_check": drift, "words": words}
+             "coverage": aligned["coverage"], "unmatched": aligned["unmatched"], "voice_check": drift,
+             "seams": getattr(join_reads, "report", None), "words": words}
     (out / "words.json").write_text(json.dumps(doc_w, indent=0), encoding="utf-8")
     return doc_w
 

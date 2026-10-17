@@ -15,7 +15,7 @@ import difflib
 
 from explainer_engine.audio.scribe_words import norm
 from explainer_engine.edit import board as B
-from explainer_engine.production import script as S
+from explainer_engine.production import continuity, script as S
 
 MIN_TEXT_MATCH = 0.97
 BUBBLE_LEAD = B.BUBBLE_LEAD
@@ -95,6 +95,11 @@ def time_script(doc: dict, words_doc: dict) -> dict:
                               "motion": s["motion"], "transition": s.get("transition", "cut"),
                               "insert": s.get("insert", False), "reuse": s.get("reuse"), "reveal": s.get("reveal"), "heroes_ok": s.get("heroes_ok", False),
                               "_bubbles": s.get("bubbles", []), "_seg_hi": hi})
+    seg_period = {sg["id"]: sg.get("period") for sg in doc["segments"]}
+    for k, s in enumerate(out_shots):  # UR-14/ED-04: a period opens with a dissolve (a time jump), nothing else dissolves
+        if k and s.get("transition", "cut") == "cut" and seg_period.get(s["segment"]) != seg_period.get(out_shots[k - 1]["segment"]):
+            s["transition"], s["time_jump"], s["transition_seconds"] = "dissolve", True, 1.0
+    continuity.chain(out_shots)  # ED-02: render_motion continues across shots of one picture
     total_frames = _frames(duration, fps)
     for k, s in enumerate(out_shots):
         nxt = out_shots[k + 1] if k + 1 < len(out_shots) else None
@@ -159,6 +164,10 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             en = duration
         music.append({"track": m["track"], "start": round(st, 3), "end": round(min(en, duration), 3),
                       "gain_db": m.get("gain_db", -18), "fade_s": m.get("fade_s", 2.0)})
+    for k in range(len(music) - 1):  # ED-03: a track handing over to the next one crossfades (the earlier rings on while the later fades in)
+        a, b = music[k], music[k + 1]
+        if abs(a["end"] - b["start"]) < 0.05:
+            a["end"] = round(min(duration, b["start"] + float(b["fade_s"])), 3)
     events = {}
     for e in doc.get("story", {}).get("events", []):
         j = S.find_phrase(toks, e["at"], 0)

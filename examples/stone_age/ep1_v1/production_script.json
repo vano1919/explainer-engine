@@ -1857,20 +1857,23 @@
   {
    "track": "clockwork_loop__v1",
    "from": "<start>",
-   "to": "So, the order.",
-   "gain_db": -20
+   "to": "Day one,",
+   "gain_db": -26,
+   "fade_s": 2.5
   },
   {
    "track": "sneaky_pizzicato__v1",
    "from": "Day one,",
    "to": "Now. Fire.",
-   "gain_db": -21
+   "gain_db": -21,
+   "fade_s": 2.5
   },
   {
    "track": "clockwork_loop__v1",
    "from": "Now. Fire.",
    "to": null,
-   "gain_db": -20
+   "gain_db": -26,
+   "fade_s": 2.5
   }
  ],
  "segments": [

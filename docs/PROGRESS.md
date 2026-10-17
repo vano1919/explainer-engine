@@ -400,3 +400,13 @@ Read: 1,184.7 s (19:44), 120 wpm; real-read timing 0 FAIL (PV-24), 215 shots inc
 New code: `production/paint.py` (Gemini painter on the ledger, parallel), `production/fill_holds.py` (re-framed shots for dead holds, drop short shots), `production/shorts.py`
 (9:16 Short renderer), RHYTHM-1 counts a re-frame as half a picture (UR-31 note). Outputs live in the scratchpad and the private store `episode1/`; 720p preview and 5 Shorts pushed.
 Not verified: listening to the whole read (voice_check: 8 REVIEW windows, none progressive); Harlan's three-week figure against his 1967 paper; the likeness of every hero (looked at by eye on contact sheets only).
+
+## 2026-10-17 — Editing rules after the first full cut (creator notes)
+
+Cause found by measuring, not guessing: the 24 read chunks differ by 5.6 dB (-33.5 to -27.9 LUFS) and were joined as they came
+(the Day 1 jumps); a shot on the same picture restarted its zoom at 1.0 (the snap); `clockwork_loop` (the tick) ran at -20 dB under
+the whole video and overlapped `sneaky_pizzicato` (two music tracks + the wind bed + the voice). Added `docs/EDITING.md`
+(ED-01..ED-07), skill `editing-style` (research notes, styles by content, common mistakes), the "How we work" order in CLAUDE.md,
+`audio/seams.py` (levelled chunks, edge fades), `production/continuity.py` (ZOOM-1 chained zoom), PV-29 (one music, quiet tick),
+period dissolves + fade in/out + one film look in the assembler, `finish/speed.py` (1.05/1.10/1.15 excerpts, then a final file).
+Tests: 200 passed, docs_lint 0. Web research was thin on room tone and documentary pacing: numbers for those are our measurements.

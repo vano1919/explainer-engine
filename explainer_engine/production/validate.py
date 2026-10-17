@@ -18,6 +18,7 @@ from pathlib import Path
 
 from explainer_engine.edit import board as B
 from explainer_engine.production import compile as C
+from explainer_engine.production import continuity
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
 from explainer_engine.scripting import narration_lint
@@ -285,6 +286,25 @@ def board_findings(timed: dict, doc: dict) -> list[dict]:
     return [{"rule": "PV-24 " + f["rule"], "severity": f["severity"], "where": f["shot"], "detail": f["detail"]} for f in found]
 
 
+TICKS = ("clockwork_loop",)  # music beds that are a tick: they sit well under every other track (ED-03)
+TICK_MAX_DB = -25.0
+MAX_CROSSFADE = 3.0
+
+
+def music_findings(music: list[dict]) -> list[dict]:
+    """PV-29 / ED-03: one music at a time (a handover may overlap by a crossfade), and a tick stays quiet."""
+    out: list[dict] = []
+    ms = sorted(music, key=lambda m: m["start"])
+    for a, b in zip(ms, ms[1:]):
+        over = a["end"] - b["start"]
+        if over > MAX_CROSSFADE + 1e-6:
+            _f(out, "PV-29", b["track"], f"two music tracks together for {over:.1f} s ({a['track']} and {b['track']}); a crossfade is at most {MAX_CROSSFADE:.0f} s")
+    for m in ms:
+        if m["track"].startswith(TICKS) and m["gain_db"] > TICK_MAX_DB:
+            _f(out, "PV-29", m["track"], f"the tick is at {m['gain_db']} dB; it must be {TICK_MAX_DB} dB or lower")
+    return out
+
+
 def check_timed(timed: dict, doc: dict, *, final: bool = False, picture_dirs: list[Path] | None = None) -> list[dict]:
     out = [dict(p) for p in timed.get("problems", [])]
     if timed["text_match"] < T.MIN_TEXT_MATCH:
@@ -314,6 +334,8 @@ def check_timed(timed: dict, doc: dict, *, final: bool = False, picture_dirs: li
     if beds and (beds[0]["start"] > 0 or beds[-1]["end"] < timed["duration"] - 1e-6):
         _f(out, "PV-23", "beds", "the ambience does not cover the whole video")
     out += board_findings(timed, doc)
+    out += continuity.findings(shots)
+    out += music_findings(timed["audio"]["music"])
     for pid in {s["picture"] for s in shots}:
         p = timed["pictures"].get(pid, {})
         have = p.get("file") and (not picture_dirs or any((Path(d) / p["file"]).exists() for d in picture_dirs))

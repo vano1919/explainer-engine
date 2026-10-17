@@ -176,16 +176,30 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
     speaking = env > 0.15
     stats.update(voice_rms_db=round(rms_db((voice * db(-3))[speaking]), 2),
                  bed_rms_db=round(rms_db((bed * vduck)[speaking]), 2), music_rms_db=round(rms_db((music * vduck)[speaking]), 2))
+    ramp_in, ramp_out = t(0.5), t(FADE_OUT)  # the sound opens and closes with the picture
+    mix[:ramp_in] *= np.linspace(0, 1, ramp_in)
+    mix[-ramp_out:] *= np.linspace(1, 0, min(ramp_out, len(mix)))
     peak = np.abs(mix).max()
     return mix / peak * 0.89 if peak > 0.89 else mix
 
 
 # --- picture helpers -------------------------------------------------------------------------------------------------
 
+FADE_IN, FADE_OUT = 1.0, 1.5  # ED-04: the episode opens from black and closes to black
+LOOK = "vignette=PI/5,noise=alls=5:allf=t"  # ED-04: one constant film look over the whole episode (free, made by ffmpeg)
+
+
+def look_filter(duration: float) -> str:
+    return f"{LOOK},fade=t=in:st=0:d={FADE_IN},fade=t=out:st={max(0.0, duration - FADE_OUT):.3f}:d={FADE_OUT}"
+
+
 def motion_box(m: dict, W: int, H: int, u: float) -> tuple[float, float, float, float]:
     z = m["z0"] + (m["z1"] - m["z0"]) * u
     cw, ch = W / z, H / z
-    dx = m.get("dx", 0.0) * W * (u - 0.5)
+    if "x0" in m:  # a chained move (production/continuity.py): the centre offset runs from x0 to x1, shares of the width
+        dx = (m["x0"] + (m["x1"] - m["x0"]) * u) * W
+    else:
+        dx = m.get("dx", 0.0) * W * (u - 0.5)
     cx = min(max(W / 2 + dx, cw / 2), W - cw / 2)  # the crop never leaves the picture
     return (cx - cw / 2, H / 2 - ch / 2, cx + cw / 2, H / 2 + ch / 2)
 
@@ -278,11 +292,12 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
     codex = resolver.load_codex()
     params = codex["grades"].get(grade_key or "prehistory")
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{OW}x{OH}", "-r", str(fps),
-                           "-i", "-", "-i", str(out / "audio.wav"), "-c:v", "libx264", "-crf", str(crf), "-preset", "medium",
+                           "-i", "-", "-i", str(out / "audio.wav"), "-vf", look_filter(timed["duration"]), "-c:v", "libx264", "-crf", str(crf), "-preset", "medium",
                            "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-frames:v", str(timed["frames"]),
                            str(out / "video.part.mp4")], stdin=subprocess.PIPE)
     pics, cache = timed["pictures"], {}
     written = 0
+    last = None
     for k, s in enumerate(timed["shots"]):
         f0, f1 = s["start_frame"], s["end_frame"]
         pid = s["picture"]
@@ -299,15 +314,19 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         bubbles = []
         for b in s["bubbles"]:
             u = (b["start_frame"] - f0) / max(1, f1 - f0 - 1)
-            box = motion_box(s["motion"], W, H, min(max(u, 0.0), 1.0))
+            box = motion_box(s.get("render_motion", s["motion"]), W, H, min(max(u, 0.0), 1.0))
             sp = to_frame(speakers.get(b["who"], [0.5, 0.4]), box, W, H, OW, OH)
             bubbles.append(BUB.Bubble(b["text"], sp, b["start"], b["end"], (OW, OH), kind=b.get("kind", "speech"),
                                       avoid=[x.box for x in bubbles if x.end > b["start"]]))
+        dissolve = round(float(s.get("transition_seconds", 1.0)) * fps) if s.get("transition") == "dissolve" and last is not None else 0
         for f in range(f0, f1):
             u = (f - f0) / max(1, f1 - f0 - 1)
-            frame = im.resize((OW, OH), Image.BICUBIC, box=motion_box(s["motion"], W, H, u))
+            frame = im.resize((OW, OH), Image.BICUBIC, box=motion_box(s.get("render_motion", s["motion"]), W, H, u))
             if bubbles:
                 frame = BUB.composite(frame, bubbles, f / fps)
+            if f - f0 < dissolve:  # UR-14: the picture before melts into this one
+                frame = Image.blend(last, frame, (f - f0 + 1) / (dissolve + 1))
+            last = frame
             ff.stdin.write(frame.tobytes())
             written += 1
     ff.stdin.close()
