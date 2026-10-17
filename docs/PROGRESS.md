@@ -391,3 +391,12 @@ Gemini allowed for its pictures (new cap US$6); run alone in gated phases. Done:
 `orchestrator`, skills `science-grounding`, `time-jump-episode`, `shorts-for-video`, D-44, feedback rows, PV-27 (periods) and PV-28
 (shorts), `core/ledger.py` (caps in code, reservations, resumable items), Gemini client reserves in the ledger. Tests 190 pass,
 docs_lint 0. RunPod: nothing running, balance US$2.07, no pod tonight. Next: research and claim map, the whole-episode script.
+
+## 2026-10-17 (night run): Episode 1 produced as one video
+Done by the orchestrator procedure (docs/ORCHESTRATION.md): 7 periods, 33 segments, 2,384 words; 24 ElevenLabs chunks (narrator Grandpa Spuds Oxley, eleven_v4) 14,778 credits;
+74 Gemini pictures (nano-banana-2.1, 2K, reference edits) $3.94 incl. one repaint (cap $6, stop at $4.8); 5 Shorts reads 2,575 credits (total 17,353 of the 25,000 cap);
+vidIQ 5 credits (titles; cap 40); RunPod none (balance $1.92; a drop of $0.15 since the morning is unexplained, no pod of ours exists).
+Read: 1,184.7 s (19:44), 120 wpm; real-read timing 0 FAIL (PV-24), 215 shots incl. 79 re-frames, weighted 8.8 pictures a minute.
+New code: `production/paint.py` (Gemini painter on the ledger, parallel), `production/fill_holds.py` (re-framed shots for dead holds, drop short shots), `production/shorts.py`
+(9:16 Short renderer), RHYTHM-1 counts a re-frame as half a picture (UR-31 note). Outputs live in the scratchpad and the private store `episode1/`; 720p preview and 5 Shorts pushed.
+Not verified: listening to the whole read (voice_check: 8 REVIEW windows, none progressive); Harlan's three-week figure against his 1967 paper; the likeness of every hero (looked at by eye on contact sheets only).
