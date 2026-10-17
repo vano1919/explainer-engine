@@ -42,7 +42,23 @@ def chain(shots: list[dict], zmax: float = ZMAX) -> list[dict]:
                  "x0": round(max(-_limit(z), min(_limit(z), x)), 4), "x1": round(x1, 4), "chained": True}
         s["render_motion"] = m
         prev = s
+    for a, b in zip(shots, shots[1:] + [None]):  # ED-08: the camera is at rest at every cut to another picture
+        a["render_motion"]["ein"] = not a["render_motion"].get("chained", False)
+        a["render_motion"]["eout"] = b is None or b["picture"] != a["picture"]
     return shots
+
+
+def warp(u: float, ein: bool, eout: bool) -> float:
+    """Progress 0..1 of a move: eased (zero speed) at an end that meets a cut to another picture, linear where the move
+    must carry on into the next shot of the same picture."""
+    f = lambda v: v * v * (2 - v)  # noqa: E731  speed 0 at 0, speed 1 at 1
+    if ein and eout:
+        return u * u * (3 - 2 * u)
+    if ein:
+        return f(u)
+    if eout:
+        return 1 - f(1 - u)
+    return u
 
 
 def findings(shots: list[dict]) -> list[dict]:

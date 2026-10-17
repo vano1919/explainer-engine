@@ -23,6 +23,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from explainer_engine.audio.level import level_voice
 from explainer_engine.audio import duck
+from explainer_engine.production import continuity
 from explainer_engine.finish import bubbles as BUB
 from explainer_engine.finish.grade import grade
 from explainer_engine.world import resolver
@@ -194,6 +195,8 @@ def look_filter(duration: float) -> str:
 
 
 def motion_box(m: dict, W: int, H: int, u: float) -> tuple[float, float, float, float]:
+    if "ein" in m:  # ED-08: rest at a cut to another picture
+        u = continuity.warp(u, m["ein"], m["eout"])
     z = m["z0"] + (m["z1"] - m["z0"]) * u
     cw, ch = W / z, H / z
     if "x0" in m:  # a chained move (production/continuity.py): the centre offset runs from x0 to x1, shares of the width

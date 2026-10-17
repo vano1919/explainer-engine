@@ -60,3 +60,14 @@ def test_retime_shortens_by_the_rate(tmp_path):
     d = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=nw=1:nk=1", str(out)],
                              capture_output=True, text=True).stdout)
     assert d == pytest.approx(4 / 1.15, abs=0.15)
+
+
+def test_camera_rests_at_a_cut_to_another_picture_and_runs_on_inside_one():
+    shots = continuity.chain([shot(1, "a", 1.0, 1.07), shot(2, "a", 1.0, 1.06), shot(3, "b", 1.0, 1.05)])
+    m1, m2, m3 = (s["render_motion"] for s in shots)
+    assert (m1["ein"], m1["eout"]) == (True, False)
+    assert (m2["ein"], m2["eout"]) == (False, True)
+    assert m3["ein"] is True
+    assert continuity.warp(0.0, True, True) == 0.0 and continuity.warp(1.0, True, True) == 1.0
+    assert continuity.warp(0.01, True, True) < 0.001
+    assert continuity.warp(0.5, False, False) == 0.5
