@@ -180,6 +180,7 @@ Rules: a sound starts with the picture event it belongs to (within one frame); S
 - [ ] Integrated loudness -14 LUFS (sleep -20 to -23), true peak at or below -1 dBTP, no clipped samples.
 - [ ] Voice 14+ dB above music in the same moment; no music-over-voice in the three loudest sections.
 - [ ] Chunk joins: loudness spread under 1.5 dB, no click (listen to the three loudest joins with headphones).
+- [ ] Dropout scan (`audio/dropouts.py`): no silence run with speech level on either side; no word cut by a padded pause (ED-12).
 - [ ] One music at a time; the tick at least 6 dB below; no more than two background layers.
 - [ ] SFX never on a spoken word; each starts within one frame of its picture event.
 - [ ] Fade in 0.5 s and out 1.5 s at the ends; no silence over 1.5 s unless designed.

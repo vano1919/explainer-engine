@@ -97,3 +97,16 @@ def test_no_quiet_spot_means_no_insertion():
     words = [{"w": "dry,", "s": 0.0, "e": 0.45}, {"w": "and", "s": 0.50, "e": 0.9}]
     out, _, rep = pause_pad.pad_pauses(words, audio, sr)
     assert rep["inserted"] == 0 and rep["skipped_not_quiet"] == 1 and len(out) == len(audio)
+
+
+def test_dropout_scan_finds_silence_inside_a_word():
+    import numpy as np
+    from explainer_engine.audio import dropouts
+    sr = 16000
+    a = 0.3 * np.sin(2 * np.pi * 220 * np.arange(sr * 2) / sr)
+    a[int(0.5 * sr):int(0.6 * sr)] = 0.0  # cut into the tone
+    a[int(1.2 * sr):int(1.3 * sr)] = 0.0
+    a[int(1.18 * sr):int(1.2 * sr)] *= 0.0001
+    a[int(1.3 * sr):int(1.32 * sr)] *= 0.0001  # a real pause: quiet on both sides
+    res = dropouts.scan(a, sr)
+    assert res["silence_runs"] == 2 and [b["at"] for b in res["cut_into_sound"]] == [0.5]
