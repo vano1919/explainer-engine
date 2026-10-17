@@ -24,6 +24,7 @@ from PIL import Image, ImageDraw, ImageFont
 from explainer_engine.audio.level import level_voice
 from explainer_engine.audio import duck
 from explainer_engine.production import continuity
+from explainer_engine.production import graphics as GFX
 from explainer_engine.finish import bubbles as BUB
 from explainer_engine.finish.grade import grade
 from explainer_engine.world import resolver
@@ -187,11 +188,23 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
 # --- picture helpers -------------------------------------------------------------------------------------------------
 
 FADE_IN, FADE_OUT = 1.0, 1.5  # ED-04: the episode opens from black and closes to black
-LOOK = "vignette=PI/5,noise=alls=5:allf=t"  # ED-04: one constant film look over the whole episode (free, made by ffmpeg)
+LOOK = "vignette=PI/5,noise=alls=2:allf=t"  # ED-04: one constant film look over the whole episode (free, made by ffmpeg)
 
 
 def look_filter(duration: float) -> str:
     return f"{LOOK},fade=t=in:st=0:d={FADE_IN},fade=t=out:st={max(0.0, duration - FADE_OUT):.3f}:d={FADE_OUT}"
+
+
+def overlays(frame: Image.Image, f: int, fps: int, timed: dict) -> Image.Image:
+    """ED-09 period cards and ED-10 data visuals on one finished frame."""
+    for c in timed.get("cards", []):
+        t = (f - c["start_frame"]) / fps
+        if 0 <= t <= GFX.card_length():
+            frame = GFX.card(frame, c, t, c["of"], c["index"])
+    for g in timed.get("visuals", []):
+        if g["start_frame"] <= f < g["end_frame"]:
+            frame = GFX.visual(frame, g, (f - g["start_frame"]) / fps, g["hold"])
+    return frame
 
 
 def motion_box(m: dict, W: int, H: int, u: float) -> tuple[float, float, float, float]:
@@ -327,6 +340,7 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
             frame = im.resize((OW, OH), Image.BICUBIC, box=motion_box(s.get("render_motion", s["motion"]), W, H, u))
             if bubbles:
                 frame = BUB.composite(frame, bubbles, f / fps)
+            frame = overlays(frame, f, fps, timed)
             if f - f0 < dissolve:  # UR-14: the picture before melts into this one
                 frame = Image.blend(last, frame, (f - f0 + 1) / (dissolve + 1))
             last = frame

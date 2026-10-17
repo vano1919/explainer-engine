@@ -19,6 +19,7 @@ from pathlib import Path
 from explainer_engine.edit import board as B
 from explainer_engine.production import compile as C
 from explainer_engine.production import continuity
+from explainer_engine.production import graphics as GFX
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
 from explainer_engine.scripting import narration_lint
@@ -248,6 +249,22 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             tone = p.get("tone")
             if tone and abs(sum(tone.values()) - 1.0) > 0.05:
                 _f(out, "PV-27", pid, f"tone shares sum to {sum(tone.values()):.2f}, not 1 (SR-07)")
+    # PV-30/31 period cards and data visuals (ED-09, ED-10)
+    for per in doc.get("periods", []):
+        if not (per.get("card") or {}).get("title"):
+            _f(out, "PV-30", per["id"], "the period has no card title (ED-09)", "REVIEW")
+    seen = {}
+    for g in doc.get("graphics", []):
+        for why in GFX.check_visual(g):
+            _f(out, "PV-31", g["id"], why)
+        seg = next((s for s in doc["segments"] if s["id"] == g["segment"]), None)
+        if seg is None:
+            _f(out, "PV-31", g["id"], f"segment {g['segment']!r} does not exist")
+        else:
+            seen[seg.get("period")] = seen.get(seg.get("period"), 0) + 1
+    for per in doc.get("periods", []):
+        if doc.get("graphics") and not seen.get(per["id"]):
+            _f(out, "PV-31", per["id"], "no data visual in this period (ED-10)", "REVIEW")
     # PV-28 shorts: a question or "did you know" hook in 3 s, whole-picture references, own length
     pic_ids = set(S.pictures(doc)[0])
     for sh in doc.get("shorts", []):

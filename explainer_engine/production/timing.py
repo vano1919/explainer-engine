@@ -168,6 +168,25 @@ def time_script(doc: dict, words_doc: dict) -> dict:
         a, b = music[k], music[k + 1]
         if abs(a["end"] - b["start"]) < 0.05:
             a["end"] = round(min(duration, b["start"] + float(b["fade_s"])), 3)
+    visuals = []  # ED-10: data visuals start on the phrase they explain and hold 3-7 s
+    seg_index = {sg["id"]: i for i, sg in enumerate(doc["segments"])}
+    for g in doc.get("graphics", []):
+        si = seg_index.get(g["segment"])
+        j = at_word(g["at"], *spans[si], f"visual {g['id']}") if si is not None else None
+        if j is None:
+            continue
+        st = words[wi(j)]["s"]
+        hold = float(g.get("hold", 4.0))
+        visuals.append(dict(g, start=round(st, 3), end=round(min(duration, st + hold), 3), hold=hold,
+                            start_frame=_frames(st, fps), end_frame=_frames(min(duration, st + hold), fps)))
+    cards = []  # ED-09: the first seconds of every period carry its card
+    for pi, per in enumerate(doc.get("periods", [])):
+        first = next((s for s in out_shots if seg_period.get(s["segment"]) == per["id"]), None)
+        if first:
+            card = per.get("card") or {}
+            cards.append({"period": per["id"], "index": pi, "of": len(doc["periods"]), "title": card.get("title", per["id"].upper()),
+                          "line": card.get("line", per.get("question", "")), "start": first["start"],
+                          "start_frame": first["start_frame"] if "start_frame" in first else _frames(first["start"], fps)})
     events = {}
     for e in doc.get("story", {}).get("events", []):
         j = S.find_phrase(toks, e["at"], 0)
@@ -177,6 +196,6 @@ def time_script(doc: dict, words_doc: dict) -> dict:
         events[e["thing"]] = B.cut_before(words, wi(j))[0]  # a thing exists from the cut before its words
     return {"schema": "production_timed/1", "episode": doc["episode"]["id"], "fps": fps, "duration": round(duration, 3),
             "frames": total_frames, "text_match": share, "segments": segs, "lines": lines, "shots": out_shots,
-            "audio": {"beds": beds, "sfx": sfx, "music": music}, "events": events,
+            "audio": {"beds": beds, "sfx": sfx, "music": music}, "visuals": visuals, "cards": cards, "events": events,
             "pictures": {k: {kk: vv for kk, vv in v.items() if kk not in ("source",)} for k, v in pics.items()},
             "problems": problems}

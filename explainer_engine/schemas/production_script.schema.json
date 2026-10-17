@@ -561,6 +561,21 @@
             "additionalProperties": {
               "type": "number"
             }
+          },
+          "card": {
+            "type": "object",
+            "required": [
+              "title"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "line": {
+                "type": "string"
+              }
+            }
           }
         }
       }
@@ -657,6 +672,54 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "graphics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "segment",
+          "at",
+          "kind",
+          "claim"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "segment": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "calc",
+              "bars",
+              "timeline"
+            ]
+          },
+          "claim": {
+            "type": "string"
+          },
+          "hold": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "side": {
+            "enum": [
+              "left",
+              "right",
+              "center"
+            ]
           }
         }
       }
