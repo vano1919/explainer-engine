@@ -88,3 +88,10 @@ def test_required_scores_are_enforced(tmp_path):
     report["script_sha256"] = hashlib.sha256(script.read_bytes()).hexdigest()
     review.write_text(json.dumps(report), encoding="utf-8")
     assert any(row["rule"] == "EG-18" for row in review_findings(script, review))
+
+
+def test_malformed_claim_reference_is_blocked_without_crashing():
+    doc = valid_doc()
+    doc["editorial"]["claims"][0]["source_ids"] = [{"bad": "id"}]
+    findings = contract_findings(doc)
+    assert any(row["rule"] == "EG-07" for row in findings)

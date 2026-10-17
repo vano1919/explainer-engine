@@ -61,7 +61,7 @@ def contract_findings(doc: dict) -> list[dict]:
             out.append(finding("EG-04", f"{where}.published_at", "published_at must be a non-empty string or null"))
         if not str(source.get("url", "")).startswith(("https://", "http://")):
             out.append(finding("EG-04", f"{where}.url", "source URL must use HTTP or HTTPS"))
-        if source.get("grade") not in {"A", "B", "C", "D"}:
+        if not isinstance(source.get("grade"), str) or source.get("grade") not in {"A", "B", "C", "D"}:
             out.append(finding("EG-04", f"{where}.grade", "source grade must be A, B, C or D"))
         if source.get("grade") == "D":
             out.append(finding("EG-05", where, "grade-D material is unverified; do not rely on it alone", "REVIEW"))
@@ -83,9 +83,9 @@ def contract_findings(doc: dict) -> list[dict]:
         for key in ("text", "type", "source_ids", "confidence", "uncertainty"):
             if key not in claim:
                 out.append(finding("EG-06", f"{where}.{key}", f"{key} is required"))
-        if claim.get("type") not in CLAIM_TYPES:
+        if not isinstance(claim.get("type"), str) or claim.get("type") not in CLAIM_TYPES:
             out.append(finding("EG-06", f"{where}.type", f"type must be one of {sorted(CLAIM_TYPES)}"))
-        if claim.get("confidence") not in CONFIDENCE:
+        if not isinstance(claim.get("confidence"), str) or claim.get("confidence") not in CONFIDENCE:
             out.append(finding("EG-06", f"{where}.confidence", "invalid confidence label"))
         if not isinstance(claim.get("text"), str) or not claim.get("text", "").strip():
             out.append(finding("EG-06", f"{where}.text", "claim text is required"))
@@ -95,6 +95,10 @@ def contract_findings(doc: dict) -> list[dict]:
         if not isinstance(source_ids, list) or not source_ids:
             out.append(finding("EG-07", where, "claim must reference at least one source"))
             continue
+        invalid_source_ids = [sid for sid in source_ids if not isinstance(sid, str) or not sid.strip()]
+        if invalid_source_ids:
+            out.append(finding("EG-07", where, "source IDs must be non-empty strings"))
+        source_ids = [sid for sid in source_ids if isinstance(sid, str) and sid.strip()]
         missing = [sid for sid in source_ids if sid not in source_by_id]
         if missing:
             out.append(finding("EG-07", where, f"unknown source IDs: {missing}"))
@@ -121,7 +125,7 @@ def contract_findings(doc: dict) -> list[dict]:
                 out.append(finding("EG-08", where, "narration line must be an object"))
                 continue
             kind = line.get("kind")
-            if kind not in CONTENT_KINDS:
+            if not isinstance(kind, str) or kind not in CONTENT_KINDS:
                 out.append(finding("EG-08", where, f"line kind must be one of {sorted(CONTENT_KINDS)}"))
                 continue
             ids = line.get("claims", [])
@@ -131,6 +135,9 @@ def contract_findings(doc: dict) -> list[dict]:
             if kind in {"fact", "analysis", "speculation"} and not ids:
                 out.append(finding("EG-09", where, f"{kind} lines must reference claim IDs"))
             for cid in ids:
+                if not isinstance(cid, str) or not cid.strip():
+                    out.append(finding("EG-09", where, "claim IDs must be non-empty strings"))
+                    continue
                 if cid not in claim_by_id:
                     out.append(finding("EG-09", where, f"unknown claim ID {cid!r}"))
                     continue
