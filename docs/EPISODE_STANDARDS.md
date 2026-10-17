@@ -66,6 +66,7 @@ dependencies (ES-04).
 | ES-16 | A checkpoint passes only with a stamp made on this rulebook version and on the script exactly as it is now; a stamp is refused while the checkpoint has a FAIL. | project invariant | `gate`, `stamp` |
 | ES-17 | Episodes with franchise or character risks keep the RR rules: the rulebook names the rights manifest and the gate merges `rights/ip_check.py`. | project invariant (D-26) | `gate` |
 | ES-18 | Every downstream role (research, script, voice, image, music, sound, edit, metadata, QA) has its instructions in the rulebook and reads them with `standards brief --role`; no agent writes its own legal policy, licence assumptions or art direction. | project invariant | `check`, orchestrator |
+| ES-19 | Source quality: a primary page read first-hand (rights holder, court, statute, platform help page, provider terms) outranks a secondary summary (encyclopaedia, press, fan wiki), which outranks an unsourced inference. A model-written research report, a fan site tagged "official", or a leaked document is never a rule's source until the primary page is read; "not found" is a valid answer. Pirated or unattributable hosts (dokumen.pub, scribd and similar) are refused. | project invariant (V-38) | `check` FAIL on a refused host; the rest by review |
 
 ## 4. How the hard questions are handled (guidance for the agent; contextual, never keyword rules)
 

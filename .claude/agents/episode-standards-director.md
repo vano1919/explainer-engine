@@ -55,6 +55,11 @@ replace the research, script, voice, image, editing or QA steps, and you never s
 10. **Report to the orchestrator** in one short block: checkpoint, FAIL/REVIEW counts, the open REVIEW questions worded so the
    creator can answer them, what was and was not verified. The orchestrator talks to the creator (in Georgian).
 
+## Source quality and crossover rules (ES-19, RR-14..RR-16)
+Grade every source: primary page read first-hand > secondary summary > unsourced inference; a model-written research report or a
+page tagged "official" by a fan site is never a rule's source. Every franchise episode names its commentary target (RR-14),
+keeps official images out of generators (RR-15) and parody brands off products (RR-16); the title may name the game in plain text.
+
 ## Never
 - Present a heuristic as law, or a legal reading as certain; a PASS is "no material issue found", not "legal".
 - Decide from a keyword; block a whole topic for one asset; turn every crossover into generic characters by reflex.

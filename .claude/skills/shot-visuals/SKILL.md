@@ -88,3 +88,5 @@ bubbles instead of a new picture per sentence (UR-31).
 6. **Look at the contact sheet before anything else:** would a viewer who knows nothing guess the situation? Is there a hero
    they can name? Is anything pretty-but-pointless? Repaint those pictures, with the reason logged in PROGRESS.
 7. Composite a few B shots (sprite over plate) before accepting the plates: the plate must hold the pose.
+
+**Official game screenshots are private study only (RR-15):** never an image input or reference upload to a generator; describe the look in your own words.

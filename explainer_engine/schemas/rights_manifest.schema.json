@@ -40,6 +40,9 @@
                   "properties": {"own_art_only": {"type": "boolean"}, "has_logo": {"type": "boolean"},
                                  "has_actor_likeness": {"type": "boolean"}, "has_key_art": {"type": "boolean"}}},
     "description_has_unofficial_note": {"type": "boolean"},
-    "uses_leaks": {"type": "boolean"}
+    "uses_leaks": {"type": "boolean"},
+    "commentary_target": {"type": "string"},
+    "official_images_as_generator_input": {"type": "boolean"},
+    "merch_or_product_use": {"type": "boolean"}
   }
 }

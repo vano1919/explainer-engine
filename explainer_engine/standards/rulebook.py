@@ -24,6 +24,8 @@ SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "episode_rules.s
 BASELINE_PATH = Path(__file__).resolve().with_name("policy_baseline.json")
 CHECKPOINTS = ("provisional", "final", "script_lock", "paid_assets", "final_qa")
 ROLES = ("research", "script", "voice", "image", "music", "sound", "edit", "metadata", "qa")
+# ES-19: hosts that carry pirated or unattributable copies; a rule never cites them
+UNUSABLE_SOURCE_HOSTS = ("dokumen.pub", "scribd.com", "z-lib", "libgen", "pdfcoffee.com", "vdoc.pub")
 SOURCE_MAX_AGE_DAYS = 180    # ES-02: re-check a policy page older than this (TMR's registry_age rule)
 MIN_RATIONALE_WORDS = 8      # ES-04: a non-PASS decision says why in a sentence, not a keyword
 MIN_EXCEPTION_WORDS = 20     # ES-10: an exception (fair use, quotation, parody) is argued, not named
@@ -106,6 +108,9 @@ def check(rules: dict, checkpoint: str = "provisional", *, today: date | None = 
             if age > SOURCE_MAX_AGE_DAYS and s["kind"] in ("law", "platform_policy", "provider_terms"):
                 add("stale_source", "ES-02", "FAIL" if paid else "REVIEW", r["id"],
                     f"{s['url']} checked {age} days ago (> {SOURCE_MAX_AGE_DAYS}): re-read the page")
+            if any(h in s["url"].lower() for h in UNUSABLE_SOURCE_HOSTS):
+                add("unusable_source", "ES-19", "FAIL", r["id"], f"{s['url']} hosts pirated or unattributable copies: cite "
+                    "the original publication or a primary page")
             if s.get("verified") is False and r["strength"] == "mandatory":
                 add("unverified_source", "ES-02", "REVIEW", r["id"], f"{s['url']} is not verified; say so where it is used")
         if r.get("uncertainty"):

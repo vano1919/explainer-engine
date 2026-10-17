@@ -90,6 +90,7 @@ sample of video titles/views pulled earlier (method legend: "OBS" seen in sample
 | V-35 | YouTube advertiser-friendly guidelines | violence/crime: artistic or documentary context helps, glorification earns nothing, graphic game violence in thumbnail or first 7 s limits ads | support.google.com/youtube/answer/6162278 (accessed 2026-10-17; page shows no update date) | B-16 |
 | V-36 | California post-mortem publicity | Civ. Code 3344.1: 70 years after death, commercial use of name, voice, likeness; transferable; domicile limit per one court; **statute page not read**, secondary summaries only | leginfo.legislature.ca.gov (accessed 2026-10-17, partial) | B-17 (verified: false) |
 | V-37 | GTA VI official facts | Rockstar page: 'Coming November 19, 2026', PS5 and Xbox Series X\|S, 'Vice City, USA', state of Leonida, Jason and Lucia; no in-game social app, stock exchange or year named; not released at the check date | rockstargames.com/VI (accessed 2026-10-17) | B-18 |
+| V-38 | US doctrine behind RR-14..RR-16 and ES-19 (secondary: a model-written research report, 2026-10-17; case names and citations match the primary record, the full texts are not yet read) | nominative fair use: New Kids on the Block v. News America, 971 F.2d 302 (9th Cir. 1992), three prongs; parody is strongly transformative, Campbell v. Acuff-Rose (1994); commercial use with the same purpose as the original is weak, Andy Warhol Foundation v. Goldsmith, 598 U.S. 508 (2023); a parody mark used as a source identifier on a product gets ordinary infringement analysis, Jack Daniel's v. VIP Products, 599 U.S. 140 (2023), expressive works stay protected | secondary report only | verified: false until the opinions are read | 2026-10-17 |
 
 Still to verify at implementation (each blocks only its own step): Kokoro voice licence (already Apache-2.0 in repo, re-check),
 SFX library licence per pack, font licences (Fredoka, Inter: OFL), Gemini current image price (repo `imagegen.PRICES` dated
@@ -170,4 +171,3 @@ retention or revenue, many AI-labelled results). Competitors exist (Fossil, Plot
 M rows with internally inconsistent numbers: FactMint AI (827K subs vs 105.8K lifetime views), Antra Movies (1.29M subs vs
 17,447 views), Bobby Viral (2.8M subs, index lists 1 video). Rows marked "name only" in M (most rows below rank 20) carry
 no content evidence: their niche labels are guesses from the channel name.
-

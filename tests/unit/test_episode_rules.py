@@ -280,3 +280,9 @@ def test_channel_defaults_are_confirmed_and_match_the_default_jurisdictions():
     assert ch["jurisdictions"] == ["US", "GE"] and ch["audience_market"] == "US" and ch["elevenlabs_plan"] == "Creator"
     assert ch["content_language"] == "en" and ch["creator_chat_language"] == "ka"
     assert set(ch["jurisdictions"]) <= set(rules()["jurisdictions"]["relevant"])
+
+
+def test_pirated_hosts_are_refused_as_sources():
+    doc = rules()
+    doc["rules"][0]["sources"][0]["url"] = "https://dokumen.pub/some-book.html"
+    assert any(f["rule"] == "ES-19" and f["severity"] == "FAIL" for f in R.check(doc))

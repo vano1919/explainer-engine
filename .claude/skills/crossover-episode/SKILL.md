@@ -66,3 +66,5 @@ REVIEW in writing. Name the manifest in the episode rulebook (`execution.rights_
 ## 6. Stop for the creator (approval #1)
 Hand over: the fan brief summary, the chosen premise and the rejected ones, the script with beat tags, the balance and
 template reports, the rights report. Nothing goes to storyboard or render before the creator approves.
+
+**Rights rules added 2026-10-17 (RR-14..RR-16):** state the commentary target first (what the episode says about the source work), never feed official images to a generator, keep parody brands as props only. See `docs/RIGHTS_AND_FAIR_USE.md`.

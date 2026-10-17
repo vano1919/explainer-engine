@@ -22,6 +22,8 @@ def _manifest() -> dict:
                           "credited": True, "uses_their_text_or_art": False}],
         "thumbnail": {"own_art_only": True, "has_logo": False, "has_actor_likeness": False, "has_key_art": False},
         "description_has_unofficial_note": True, "uses_leaks": False,
+        "commentary_target": "Shows how the game's wanted and social systems punish old-school crime methods",
+        "official_images_as_generator_input": False, "merch_or_product_use": False,
     }
 
 
@@ -47,6 +49,9 @@ def test_each_rule_blocks():
         "RR-09": lambda m: m["thumbnail"].update(has_logo=True),
         "RR-08": lambda m: m.update(description_has_unofficial_note=False),
         "RR-10": lambda m: m.update(uses_leaks=True),
+        "RR-14": lambda m: m.update(commentary_target="Characters meet"),
+        "RR-15": lambda m: m.update(official_images_as_generator_input=True),
+        "RR-16": lambda m: m.update(merch_or_product_use=True),
     }
     for rule, mutate in cases.items():
         m = _manifest()
