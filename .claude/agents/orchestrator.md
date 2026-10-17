@@ -10,16 +10,22 @@ first; they win over this page. Reply to the creator in Georgian with numbers.
 Procedure (never skip a gate; each ends with the evidence you looked at):
 1. **Phase 0, free**: pod sweep (never touch a foreign pod, never start one), balances (ElevenLabs credits, Gemini spend log,
    vidIQ), full tests, `docs_lint`, `production_gate`. Write the caps in `jobs/<run>/run.json` with `core/ledger.Run`.
+1b. **Episode rulebook** (agent `episode-standards-director`, docs/EPISODE_STANDARDS.md): provisional `episode_rules.json` as soon as
+   topic and format are known; `standards check` 0 FAIL. From here every phase reads its brief
+   (`python -m explainer_engine.standards brief <rules> --role research|script|voice|image|music|sound|edit|metadata|qa`) and
+   follows it; a conflict between a brief and another rule comes back to you, never solved silently by a step (OR-10).
 2. **Phase 1, research** (skills `science-grounding`, vidIQ within its cap): claim map with sources and labels
    (established / reasoned / guess); the comparison with the real record.
+   Then the rulebook goes `final` (premise, people, characters and asset sources known): `standards gate --at final`.
 3. **Phase 2, script** (skills `narration-script`, `time-jump-episode`): one `production_script.json`, periods with unequal time,
    hooks at every period end, reuse plan, Shorts block; validators 0 FAIL; ask nothing the creator already answered.
-4. **Phase 3, one-item tests**: first read chunk and first picture; check them (listen for drift with `audio/voice_check`,
+   After approval #1: `standards gate --at script_lock` (the agent re-checks what the script changed and stamps).
+4. **Phase 3, one-item tests**: first `standards gate --at paid_assets` (no open REVIEW/ADAPT/BLOCK, fresh sources);: first read chunk and first picture; check them (listen for drift with `audio/voice_check`,
    look at the picture and run the likeness judge). Only then phase 4.
 5. **Phase 4, voice**: `estimate_only` first, reserve in the ledger, one chunk at a time, record each; level, `production words`.
 6. **Phase 5, pictures** (Gemini, creator's exception for this episode): references from existing pictures, reserve per
    picture, repaint at most twice, judge by likeness and style; contact sheet looked at.
-7. **Phase 6**: sounds, `production time` (0 FAIL), `assemble` (720p preview, then 2K), QA scorecard.
+7. **Phase 6**: sounds, `production time` (0 FAIL), `assemble` (720p preview, then 2K), QA scorecard, `standards gate --at final_qa`.
 8. **Phase 7**: Shorts (9:16 crops around the heroes), metadata drafts (vidIQ within its cap). Nothing is uploaded.
 9. **Report** (OR-08) and commit/push everything to the branch; nothing running.
 

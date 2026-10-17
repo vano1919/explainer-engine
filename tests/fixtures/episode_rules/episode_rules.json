@@ -1,0 +1,305 @@
+{
+ "schema": "explainer.episode_rules",
+ "version": 1,
+ "episode_id": "roman_pay_ep2",
+ "rulebook_version": 1,
+ "status": "final",
+ "identity": {
+  "topic": "What a Roman legionary's pay would buy across eras",
+  "format": "8-10 minute 2D explainer",
+  "audience": "general audience, teens and adults, English",
+  "central_question": "Was a Roman legionary rich, and in whose money?",
+  "unique_angle": "one soldier's purse carried through five eras, priced in bread, rent and days of work",
+  "tone": "dry wit, curious, numbers told straight",
+  "emotional_arc": "pride, doubt, surprise, a quiet verdict",
+  "stakes": "the soldier must decide whether to re-enlist",
+  "payoff": "the purse is worth most in the era nobody guesses",
+  "beyond_a_summary": "prices converted through wages and bread, not exchange rates, with the arithmetic shown",
+  "viewer_takeaway": {
+   "understand": "money is measured in work and food, not coins",
+   "feel": "sympathy for a man counting his pay",
+   "question": "what is my pay worth in bread?",
+   "remember": "the bread ladder"
+  }
+ },
+ "jurisdictions": {
+  "relevant": [
+   "US",
+   "GE"
+  ],
+  "basis": "platform in the US; creator assumed in Georgia",
+  "creator_location": "GE (assumed)",
+  "confirmed_by_creator": true
+ },
+ "rules": [
+  {
+   "id": "ER-01",
+   "requirement": "realistic altered or synthetic content is disclosed; fully animated content is not",
+   "applies_to": [
+    "video"
+   ],
+   "strength": "mandatory",
+   "roles": [
+    "metadata",
+    "qa"
+   ],
+   "sources": [
+    {
+     "url": "https://support.google.com/youtube/answer/14328491",
+     "checked": "2026-10-17",
+     "kind": "platform_policy",
+     "verified": true,
+     "baseline_id": "B-01"
+    }
+   ]
+  },
+  {
+   "id": "ER-02",
+   "requirement": "a real historical person is never shown endorsing, committing a crime or saying an invented quote as fact",
+   "applies_to": [
+    "script",
+    "pictures"
+   ],
+   "strength": "mandatory",
+   "roles": [
+    "script",
+    "image"
+   ],
+   "sources": [
+    {
+     "url": "https://support.google.com/youtube/answer/2801947",
+     "checked": "2026-10-17",
+     "kind": "platform_policy",
+     "verified": true,
+     "baseline_id": "B-04"
+    }
+   ]
+  },
+  {
+   "id": "ER-03",
+   "requirement": "no voice imitates a living person without consent",
+   "applies_to": [
+    "voice"
+   ],
+   "strength": "mandatory",
+   "roles": [
+    "voice"
+   ],
+   "sources": [
+    {
+     "url": "https://elevenlabs.io/use-policy",
+     "checked": "2026-10-17",
+     "kind": "provider_terms",
+     "verified": true,
+     "baseline_id": "B-10"
+    }
+   ]
+  },
+  {
+   "id": "ER-04",
+   "requirement": "music has a licence record and is never a score or a sound-alike",
+   "applies_to": [
+    "music"
+   ],
+   "strength": "mandatory",
+   "roles": [
+    "music"
+   ],
+   "sources": [
+    {
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/QA_SPECIFICATION.md",
+     "checked": "2026-10-17",
+     "kind": "project_invariant"
+    }
+   ]
+  },
+  {
+   "id": "ER-05",
+   "requirement": "a number appears on screen with its arithmetic at least once per era",
+   "applies_to": [
+    "edit"
+   ],
+   "strength": "internal_quality",
+   "roles": [
+    "edit"
+   ],
+   "sources": [
+    {
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/EDITING.md",
+     "checked": "2026-10-17",
+     "kind": "creative_heuristic"
+    }
+   ]
+  }
+ ],
+ "risks": [
+  {
+   "id": "RK-01",
+   "element": "Julius Caesar as a drawn caricature paying the soldier",
+   "category": "real_person",
+   "source_type": "original",
+   "status": "PASS",
+   "rules": [
+    "ER-02"
+   ],
+   "person": {
+    "name": "Julius Caesar",
+    "living": false,
+    "public_figure": true,
+    "realistic": false,
+    "obviously_fictional": true,
+    "implies_endorsement": false,
+    "criminal_or_sensitive_conduct": false,
+    "false_statement_of_fact": false,
+    "voice_imitated": false
+   }
+  },
+  {
+   "id": "RK-02",
+   "element": "march music track",
+   "category": "music",
+   "source_type": "licensed",
+   "status": "PASS",
+   "rules": [
+    "ER-04"
+   ],
+   "license": {
+    "asset_path": "assets/audio/music/march.wav",
+    "provider": "library",
+    "owner": "Example Composer",
+    "basis": "licence",
+    "scope": "online video, monetised",
+    "attribution": "none required",
+    "verified": "2026-10-17",
+    "evidence": "licence.pdf"
+   }
+  },
+  {
+   "id": "RK-03",
+   "element": "a coin photo from a museum website",
+   "category": "image",
+   "source_type": "third_party_unlicensed",
+   "status": "ADAPT",
+   "evidence": "museum page states all rights reserved",
+   "rationale": "the photograph itself is a protected work; the coin design is ancient but the photo is not",
+   "mitigation": "draw the coin ourselves from several references",
+   "dependencies": [
+    "image"
+   ],
+   "resolved": "drawn coin c01 replaces the photo"
+  }
+ ],
+ "platform": {
+  "original_contribution": [
+   "wage-to-bread conversion argued step by step",
+   "drawn proofs of every price"
+  ],
+  "reuse_risk": {
+   "third_party_footage_seconds": 0,
+   "reads_external_text": false,
+   "template_shared_with": []
+  },
+  "advertiser_suitability": [
+   "battle scenes without gore"
+  ],
+  "disclosure": {
+   "realistic_synthetic_content": false,
+   "required": false,
+   "reason": "fully animated, no realistic person"
+  },
+  "made_for_kids": false,
+  "metadata": {
+   "credits": [
+    {
+     "text": "Music: Example Composer, licensed",
+     "risk": "RK-02"
+    }
+   ],
+   "notices": []
+  }
+ },
+ "creative": {
+  "mechanism": "one purse travels through five eras and is re-priced in bread at each stop",
+  "visual_invariants": [
+   "one drawn universe (UR-22)",
+   "the purse looks the same in every era"
+  ],
+  "may_vary": [
+   "each era's palette",
+   "camera distance"
+  ],
+  "pacing": [
+   "a new era every 90-120 s",
+   "a surprise in every era"
+  ],
+  "memorable_moments": [
+   {
+    "kind": "visual_proof",
+    "what": "the bread ladder grows beside the coins"
+   }
+  ],
+  "avoid_patterns": [
+   {
+    "pattern": "a scientist explains in a cave",
+    "seen_in": "stone_age_ep1"
+   }
+  ],
+  "channel_identity": "worlds collide, the drawn universe, Dirkus and Tick"
+ },
+ "execution": {
+  "roles": {
+   "research": {
+    "must": [
+     "every number in the claim map with two sources and a label (established / reasoned / guess)"
+    ]
+   },
+   "script": {
+    "must": [
+     "Caesar's lines are invented and said to be invented; no real quote unless it is one (ER-02)"
+    ]
+   },
+   "voice": {
+    "must": [
+     "the narrator's library voice only; no character voice imitates a real person (ER-03)"
+    ]
+   },
+   "image": {
+    "must": [
+     "our drawn universe (UR-22); Caesar as our caricature, never from a photograph or a film actor's face"
+    ]
+   },
+   "music": {
+    "must": [
+     "own or licensed tracks with a licence record; never a film score or a sound-alike (ER-04)"
+    ]
+   },
+   "sound": {
+    "must": [
+     "library sounds with a licence record (Q-T16)"
+    ]
+   },
+   "edit": {
+    "must": [
+     "the coin-count proof stays on screen long enough to read (ED-10)"
+    ]
+   },
+   "metadata": {
+    "must": [
+     "no fair-use or 'no infringement intended' text; credits only from verified records (ES-11, ES-12)"
+    ]
+   },
+   "qa": {
+    "must": [
+     "final_qa gate 0 FAIL; disclosure decision matches the rulebook"
+    ]
+   }
+  },
+  "escalation": [
+   "any REVIEW item goes to the creator through the orchestrator"
+  ],
+  "reuse": [
+   "Episode 1 pictures are not reused"
+  ]
+ },
+ "checks": []
+}

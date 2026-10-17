@@ -1,7 +1,7 @@
 # CLAUDE.md — explainer-engine
 
 A solo creator's 2D hand-drawn explainer channel ("worlds collide": history, science and money meeting other
-eras, public-domain worlds only, D-25) and its production
+eras, D-25; analysis episodes of other people's fictional worlds under the RR rules, D-26) and its production
 pipeline: topic → research dossier + claim map → script → **creator approval** → schema-validated storyboard →
 assets → Kokoro narration + timings → Remotion scene renders (muted) → Python mix → Shorts → thumbnail + metadata →
 technical + editorial QA → review bundle → **creator approval** → manual upload. Cloud-first (D-31). Start from `docs/INDEX.md`: every specification and every ID (D-, SE-, V-, P-, R-, Q-) has ONE canonical home —
@@ -36,7 +36,8 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 11. Every meaningful change: a focused test + an entry in `docs/PROGRESS.md` (and the decision log if a decision moved).
 12. A material conflict found during implementation: stop at the boundary, report evidence and options, ask.
 
-**Autonomous runs:** `docs/ORCHESTRATION.md` and the `orchestrator` agent (`.claude/agents/orchestrator.md`): gated phases, hard caps in `core/ledger.py`, nothing lost on a stop, nothing public. Skills `science-grounding`, `time-jump-episode`, `shorts-for-video`, `editing-style` (rules `docs/EDITING.md`), `video-editing-architect` (general technique database and QA list), `elevenlabs-voice` (first-take reads, credit saving).
+**Autonomous runs:** `docs/ORCHESTRATION.md` and the `orchestrator` agent (`.claude/agents/orchestrator.md`), with the
+`episode-standards-director` agent for the rulebook (OR-10, OR-11): gated phases, hard caps in `core/ledger.py`, nothing lost on a stop, nothing public. Skills `science-grounding`, `time-jump-episode`, `shorts-for-video`, `editing-style` (rules `docs/EDITING.md`), `video-editing-architect` (general technique database and QA list), `elevenlabs-voice` (first-take reads, credit saving).
 
 **How we work (creator, 2026-10-17):** a change request goes in this order: (1) study the process and the real output (open files, measure, find the cause); (2) research when the topic needs it and write the findings into a skill; (3) ask the creator the questions that are truly his to answer; (4) update rules, skills, agents and tests; (5) only then produce. Never produce before steps 1-4. Creator notes become rules with a test (OR-09).
 
@@ -45,6 +46,12 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 sprites, pictures, full read, render, QA). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures
 show). Entertainment first, facts second; stakes and named heroes in every frame; one drawn world; limits computed from
 measured speeds; every paid step estimated and approved first; look at the output before reporting it; reply in Georgian.
+
+**Episode rulebook (D-45):** every new episode gets `episode_rules.json` from the `episode-standards-director` agent
+(`docs/EPISODE_STANDARDS.md`, ES-xx): rules with dated sources and their kind (law, platform policy, provider terms, invariant,
+threshold, heuristic), risks as PASS/ADAPT/REVIEW/BLOCK, creative and anti-monotony rules, per-role instructions
+(`python -m explainer_engine.standards brief <rules> --role image`). Gates `final`, `script_lock`, `paid_assets`, `final_qa`;
+`production/paint.py` refuses a paid run without a passing `paid_assets` gate. Constrain specific risks, never creativity.
 
 Also binding: crossover episodes of other people's fictional worlds follow docs/RIGHTS_AND_FAIR_USE.md (no third-party
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
@@ -62,8 +69,10 @@ explainer_engine/audio/   timings.py (phoneme timings -> words), visemes.py (mou
 explainer_engine/design/  palette.json (the only place hex colours live), palette.py (contrast + rules)
 explainer_engine/docs_lint.py   documentation consistency (D-23)
 explainer_engine/rights/  ip_check.py: rights check of an episode's rights manifest (RR rules, D-26); any FAIL blocks
+explainer_engine/standards/ rulebook.py (episode_rules.json: check, gate, stamp, brief, render), policy_baseline.json
+                          (verified law/policy/terms sources, MARKET_RESEARCH V-13..V-24); CLI python -m explainer_engine.standards
 explainer_engine/research/ fan_brief.py: fan research brief, audience balance, template phrases (crossover episodes)
-explainer_engine/schemas/ versioned JSON Schemas (rights_manifest, fan_brief; the rest arrive in Phase 3)
+explainer_engine/schemas/ versioned JSON Schemas (rights_manifest, fan_brief, episode_rules, production_script, ...)
 .claude/skills/crossover-episode/   procedure for crossover episodes (fan research -> scenario -> script -> rights)
 assets/characters/kit/    kit_reference.svg (character parts; poses and rig come in Phase 4)
 tests/unit/               fast tests; test_repo_hygiene.py guards media/keys, tmr_engine imports, provenance

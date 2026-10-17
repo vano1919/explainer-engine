@@ -11,6 +11,10 @@ taken, nothing that substitutes for the original. They lower the risk; they do n
 before monetising franchise episodes, and whenever a removal request arrives, the creator decides whether to ask a
 lawyer.
 
+**Scope.** These rules are the floor for franchise episodes; every episode's wider legal, platform and creative questions
+(people, likeness, voices, licences, jurisdictions, originality) are decided in its rulebook ([EPISODE_STANDARDS](EPISODE_STANDARDS.md),
+ES-17 links the two). The sources below are US law and YouTube policy; other jurisdictions (Georgia, UK) are in V-19, V-20.
+
 ## What the sources say (verified 2026-10-16, see MARKET_RESEARCH B.2)
 - YouTube: credit does not make a use fair, "no infringement intended" does not protect, "entertainment only" does not
   help; adding new expression or meaning is more likely fair; factual works are more likely fair than fiction; taking the

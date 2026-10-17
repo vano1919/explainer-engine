@@ -5,6 +5,8 @@ description: Plan the pictures of a Crossworld Theories video so they carry stak
 
 # Shot visuals: stakes in every frame, heroes you can recognise
 
+**Episode rulebook first (D-45, OR-10):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+
 > **Primary rule, above everything below (UR-22, one universe):** every picture, sprite, prop and background is drawn in the same
 > universe, as if by one artist for one scene. Characters and environment share one design language (quirky, gently exaggerated
 > shapes), one line, one fill, one palette; an era or a place changes props, clothes and architecture, never the style. The

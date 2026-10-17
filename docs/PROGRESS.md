@@ -432,3 +432,23 @@ the gap (nearest the gap's middle among the quietest), must be at most -40 dB or
 on a 10 ms fade; word times follow the real quiet spot. Re-run: 131 -> 113 silences, 67 -> 2 cut into sound (both borderline -37 /
 -42 dB), 18 insertions skipped (no quiet spot). Three cuts that relied on a skipped pause were moved to legal pauses (S18, S31, S32)
 and one reframe added (S31 "Fuel."). Tests: 210 passed. Creator picked speed 1.15.
+
+## 2026-10-17 — Episode standards: one rulebook per video (D-45)
+
+Creator's master prompt (director-controlled, copyright-aware, creative-first). Built on `systemic/next-video` (a182195); Episode 1
+untouched. Audit first: all four remote branches compared (`main` = Phase 1 scaffold, `phase-2-spec-pack` and `systemic/next-video`
+carry everything since; the latter is the newest). Gap matrix in [EPISODE_STANDARDS](EPISODE_STANDARDS.md) section 6: no
+per-episode rule layer, US-only legal sources, the real-people rules of D-40 unenforced, paid steps not gated on rights, no
+recheck after a script change, CLAUDE.md contradicting D-26.
+Research (V-13..V-24, read 2026-10-17): YouTube disclosure, YPP inauthentic/reused, privacy removal of synthetic likeness,
+impersonation; US fair use and duration; UK exceptions; Georgia's law (2023 text through a machine summary: partly verified);
+EU Art. 17(7) not loaded (not verified); ElevenLabs and Google generative-AI use policies; Claude Code subagent fields.
+Added: agent `episode-standards-director`; `schemas/episode_rules.schema.json` v1; `standards/rulebook.py` (ES-01..ES-18:
+check, gate per checkpoint provisional/final/script_lock/paid_assets/final_qa, stamp tied to the script's sha256, brief per
+role, generated markdown view) and `policy_baseline.json`; `production_gate` row R; `paint.py` refuses a paid run unless
+`paid_assets` passes (`--legacy-no-rulebook` for pre-D-45 episodes); OR-10/OR-11, Q-E15, R-30; skills read their brief.
+Tests: 26 new, 237 pass; 2 failures existed before this change (`test_committed_sound_library`, `test_end_to_end_script_to_video`:
+`assets/audio/library/foley/*.wav` are not in the repository on this branch). docs_lint 0.
+Not done / open: the creator's residence and target markets (ES-15, assumed GE + US); no rulebook yet for the next episode
+(its topic is not chosen); voice and music steps have no paid-call refusal in code yet (their paid calls go through the
+ElevenLabs connector, so the orchestrator runs the gate); the master prompt arrived cut off in section 4.8.

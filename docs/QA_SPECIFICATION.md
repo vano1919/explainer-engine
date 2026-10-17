@@ -42,9 +42,10 @@ defaults to pass. A deterministic FAIL cannot be overridden by an assertion.
 | Q-E11 | Is Kit on model (the sheet) and the world consistent? |
 | Q-E12 | Policy checklist (below) answered. |
 | Q-E13 | Franchise episodes: rights check (`rights/ip_check.py`) has no FAIL and every REVIEW is answered; the analysis purpose (RR-01, RR-06) is visible in every scene. |
+| Q-E15 | Every episode: the rulebook gate `final_qa` passes ([EPISODE_STANDARDS](EPISODE_STANDARDS.md)): no open BLOCK/REVIEW/ADAPT, licences verified, no placeholder credit, the disclosure decision recorded, and the last stamp matches the final script. |
 | Q-E14 | Franchise episodes: does it satisfy both a casual viewer (on-ramps, no unexplained names) and a fan (deep cuts, real theories credited, canon respected or bent on purpose)? |
 
-## Policy checklist (answered for every video; sources V-01, V-02, V-03)
+## Policy checklist (answered for every video; sources V-01, V-02, V-03, re-checked V-13, V-14; recorded in the episode rulebook)
 Inauthentic-content: does the video add its own explanation, structure and visuals rather than a template swap (a distinct
 storyline and concept per video)? Disclosure: does it contain realistic content (a real person made to say or do something,
 altered real footage, a realistic scene that did not occur) or AI music as its main focus? If yes, use the Studio altered

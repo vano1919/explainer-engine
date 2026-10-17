@@ -7,7 +7,8 @@ Every picture is one reference-edit request: the compiled ``pod_job`` prompt plu
 The price is reserved in the run ledger before the call (refused past 80 % of the cap), the PNG is written as soon as it
 arrives and recorded as an item, so a stop, a cap or a crash loses nothing and a re-run skips what exists (OR-02, OR-03). A
 failed picture counts a failure; the third failure stops that picture, never the whole batch. ``--first`` paints one picture
-only (the phase-3 test).
+only (the phase-3 test). Before any paid call the episode rulebook's ``paid_assets`` checkpoint must pass (OR-11, D-45);
+``--legacy-no-rulebook`` exists only for episodes made before it.
 """
 
 from __future__ import annotations
@@ -116,6 +117,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--size", default=SIZE)
     ap.add_argument("--wait", type=float, default=1500.0, help="seconds to wait for a batch before leaving it for --collect")
     ap.add_argument("--collect", help="collect an earlier batch by name instead of submitting")
+    ap.add_argument("--legacy-no-rulebook", action="store_true", help="episodes made before D-45 (Episode 1) only")
     a = ap.parse_args(argv)
     path = Path(a.script)
     doc = S.load(path)
@@ -150,6 +152,19 @@ def main(argv: list[str] | None = None) -> int:
                 run.done("pictures", item, file=f"{item}.png", batch=a.collect)
         print(res["state"], len(res["items"]), "pictures")
         return 0 if res["done"] else 1
+    if not a.legacy_no_rulebook:  # OR-11: no paid picture before the rulebook's paid_assets checkpoint passes
+        from explainer_engine.standards import rulebook as R
+        rules_path = path.with_name("episode_rules.json")
+        if not rules_path.exists():
+            print(f"STOP: no {rules_path.name} next to the script (OR-10); --legacy-no-rulebook only for episodes made "
+                  "before D-45")
+            return 4
+        fails = [f for f in R.gate(rules_path, "paid_assets", path) if f["severity"] == "FAIL"]
+        if fails:
+            for f in fails:
+                print("FAIL", f["rule"], f["where"], f["detail"])
+            print("STOP: the rulebook's paid_assets checkpoint does not pass (OR-11)")
+            return 4
     if a.batch:
         return run_batch(a, todo, doc, dirs, out, run, model, size)
     client = GeminiClient(out / "_gemini", cap_usd=1e9, run=run)

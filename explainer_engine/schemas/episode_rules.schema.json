@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "explainer.episode_rules.v1",
+  "title": "Episode rulebook of one video (docs/EPISODE_STANDARDS.md, D-45)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "version", "episode_id", "rulebook_version", "status", "identity", "jurisdictions", "rules",
+               "risks", "platform", "creative", "execution", "checks"],
+  "$defs": {
+    "text": {"type": "string", "minLength": 1},
+    "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "status": {"enum": ["PASS", "ADAPT", "REVIEW", "BLOCK"]},
+    "role": {"enum": ["research", "script", "voice", "image", "music", "sound", "edit", "metadata", "qa"]},
+    "source": {
+      "type": "object", "additionalProperties": false, "required": ["url", "checked", "kind"],
+      "properties": {
+        "url": {"type": "string", "pattern": "^https?://"},
+        "checked": {"$ref": "#/$defs/date"},
+        "kind": {"enum": ["law", "platform_policy", "provider_terms", "project_invariant", "measured_threshold",
+                          "creative_heuristic"]},
+        "verified": {"type": "boolean"},
+        "baseline_id": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+    "decision": {
+      "type": "object", "additionalProperties": false, "required": ["by", "date", "answer"],
+      "properties": {"by": {"enum": ["creator", "legal_counsel", "orchestrator"]}, "date": {"$ref": "#/$defs/date"},
+                     "answer": {"$ref": "#/$defs/text"}, "evidence": {"type": "string"}}
+    }
+  },
+  "properties": {
+    "schema": {"const": "explainer.episode_rules"},
+    "version": {"const": 1},
+    "episode_id": {"$ref": "#/$defs/text"},
+    "rulebook_version": {"type": "integer", "minimum": 1},
+    "status": {"enum": ["provisional", "final"]},
+    "supersedes": {"type": "integer", "minimum": 1},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["topic", "format", "audience", "central_question", "unique_angle", "tone", "emotional_arc", "stakes",
+                   "payoff", "beyond_a_summary", "viewer_takeaway"],
+      "properties": {
+        "topic": {"$ref": "#/$defs/text"}, "format": {"$ref": "#/$defs/text"}, "audience": {"$ref": "#/$defs/text"},
+        "audience_value": {"type": "string"},
+        "central_question": {"$ref": "#/$defs/text"}, "unique_angle": {"$ref": "#/$defs/text"},
+        "tone": {"$ref": "#/$defs/text"}, "emotional_arc": {"$ref": "#/$defs/text"}, "stakes": {"$ref": "#/$defs/text"},
+        "payoff": {"$ref": "#/$defs/text"}, "beyond_a_summary": {"$ref": "#/$defs/text"},
+        "viewer_takeaway": {
+          "type": "object", "additionalProperties": false, "required": ["understand", "feel", "question", "remember"],
+          "properties": {"understand": {"$ref": "#/$defs/text"}, "feel": {"$ref": "#/$defs/text"},
+                         "question": {"$ref": "#/$defs/text"}, "remember": {"$ref": "#/$defs/text"}}}
+      }
+    },
+    "jurisdictions": {
+      "type": "object", "additionalProperties": false, "required": ["relevant", "basis"],
+      "properties": {
+        "relevant": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[A-Z]{2}$"}},
+        "basis": {"$ref": "#/$defs/text"},
+        "creator_location": {"type": "string"},
+        "confirmed_by_creator": {"type": "boolean"}
+      }
+    },
+    "rules": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "additionalProperties": false, "required": ["id", "requirement", "applies_to", "strength", "sources"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^ER-\\d{2,3}$"},
+        "requirement": {"$ref": "#/$defs/text"},
+        "applies_to": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "strength": {"enum": ["mandatory", "recommended", "internal_quality"]},
+        "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
+        "uncertainty": {"type": "string"},
+        "machine_check": {"type": "string"},
+        "roles": {"type": "array", "items": {"$ref": "#/$defs/role"}}
+      }
+    }},
+    "risks": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["id", "element", "category", "source_type", "status"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^RK-\\d{2,3}$"},
+        "element": {"$ref": "#/$defs/text"},
+        "category": {"enum": ["character", "franchise", "visual_design", "trademark", "performance", "recording", "music",
+                              "sound", "footage", "image", "quotation", "reference", "real_person", "actor_likeness",
+                              "synthetic_voice", "endorsement", "privacy", "misleading_fact", "defamation", "affiliation",
+                              "synthetic_media", "originality", "other"]},
+        "source_type": {"enum": ["original", "licensed", "public_domain", "user_provided", "third_party_unlicensed",
+                                 "reference_only", "not_applicable"]},
+        "status": {"$ref": "#/$defs/status"},
+        "evidence": {"type": "string"},
+        "rationale": {"type": "string"},
+        "mitigation": {"type": "string"},
+        "dependencies": {"type": "array", "items": {"type": "string"}},
+        "rules": {"type": "array", "items": {"type": "string", "pattern": "^ER-\\d{2,3}$"}},
+        "jurisdictions": {"type": "array", "items": {"type": "string", "pattern": "^[A-Z]{2}$"}},
+        "resolved": {"type": "string"},
+        "removed": {"type": "boolean"},
+        "decision": {"$ref": "#/$defs/decision"},
+        "person": {
+          "type": "object", "additionalProperties": false, "required": ["name", "living", "realistic"],
+          "properties": {
+            "name": {"$ref": "#/$defs/text"}, "living": {"type": "boolean"}, "public_figure": {"type": "boolean"},
+            "realistic": {"type": "boolean", "description": "could be mistaken for real footage, photo or recording"},
+            "obviously_fictional": {"type": "boolean"},
+            "implies_endorsement": {"type": "boolean"}, "criminal_or_sensitive_conduct": {"type": "boolean"},
+            "false_statement_of_fact": {"type": "boolean"}, "voice_imitated": {"type": "boolean"},
+            "consent_evidence": {"type": "string"}, "estate_or_publicity_check": {"type": "string"}
+          }
+        },
+        "license": {
+          "type": "object", "additionalProperties": false,
+          "required": ["asset_path", "provider", "owner", "basis", "scope", "attribution", "verified"],
+          "properties": {
+            "asset_path": {"type": "string"}, "provider": {"type": "string"}, "owner": {"type": "string"},
+            "basis": {"enum": ["own_work", "generated_under_provider_terms", "licence", "public_domain", "cc0", "cc_by",
+                               "permission", "exception", "unknown"]},
+            "scope": {"type": "string"}, "restrictions": {"type": "string"}, "attribution": {"type": "string"},
+            "territories": {"type": "string"}, "term": {"type": "string"}, "monetization": {"type": "string"},
+            "modification": {"type": "string"}, "redistribution": {"type": "string"}, "evidence": {"type": "string"},
+            "verified": {"anyOf": [{"$ref": "#/$defs/date"}, {"const": "not_verified"}]}
+          }
+        },
+        "exception": {
+          "type": "object", "additionalProperties": false, "required": ["jurisdiction", "provision", "analysis"],
+          "properties": {"jurisdiction": {"type": "string", "pattern": "^[A-Z]{2}$"}, "provision": {"$ref": "#/$defs/text"},
+                         "analysis": {"$ref": "#/$defs/text"}}
+        }
+      }
+    }},
+    "platform": {
+      "type": "object", "additionalProperties": false,
+      "required": ["original_contribution", "reuse_risk", "advertiser_suitability", "disclosure", "metadata"],
+      "properties": {
+        "original_contribution": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
+        "reuse_risk": {
+          "type": "object", "additionalProperties": false,
+          "required": ["third_party_footage_seconds", "reads_external_text", "template_shared_with"],
+          "properties": {"third_party_footage_seconds": {"type": "number", "minimum": 0},
+                         "reads_external_text": {"type": "boolean"},
+                         "template_shared_with": {"type": "array", "items": {"type": "string"}},
+                         "note": {"type": "string"}}},
+        "advertiser_suitability": {"type": "array", "items": {"type": "string"}},
+        "community_guidelines": {"type": "array", "items": {"type": "string"}},
+        "disclosure": {
+          "type": "object", "additionalProperties": false, "required": ["realistic_synthetic_content", "required", "reason"],
+          "properties": {"realistic_synthetic_content": {"type": "boolean"}, "required": {"type": "boolean"},
+                         "reason": {"$ref": "#/$defs/text"}}},
+        "content_id": {"type": "string"},
+        "made_for_kids": {"type": "boolean"},
+        "metadata": {
+          "type": "object", "additionalProperties": false, "required": ["credits", "notices"],
+          "properties": {
+            "credits": {"type": "array", "items": {
+              "type": "object", "additionalProperties": false, "required": ["text"],
+              "properties": {"text": {"$ref": "#/$defs/text"}, "risk": {"type": "string"},
+                             "placeholder": {"type": "boolean"}}}},
+            "notices": {"type": "array", "items": {
+              "type": "object", "additionalProperties": false, "required": ["text", "purpose"],
+              "properties": {"text": {"$ref": "#/$defs/text"}, "purpose": {"$ref": "#/$defs/text"}}}}
+          }
+        }
+      }
+    },
+    "creative": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mechanism", "visual_invariants", "may_vary", "pacing", "memorable_moments", "avoid_patterns",
+                   "channel_identity"],
+      "properties": {
+        "mechanism": {"$ref": "#/$defs/text"},
+        "visual_invariants": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
+        "may_vary": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
+        "pacing": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
+        "memorable_moments": {"type": "array", "minItems": 1, "items": {
+          "type": "object", "additionalProperties": false, "required": ["kind", "what"],
+          "properties": {"kind": {"enum": ["visual_proof", "diagram", "comparison", "reveal", "humour", "contrast",
+                                           "callback", "other"]}, "what": {"$ref": "#/$defs/text"}}}},
+        "avoid_patterns": {"type": "array", "items": {
+          "type": "object", "additionalProperties": false, "required": ["pattern", "seen_in"],
+          "properties": {"pattern": {"$ref": "#/$defs/text"}, "seen_in": {"$ref": "#/$defs/text"}}}},
+        "channel_identity": {"$ref": "#/$defs/text"}
+      }
+    },
+    "execution": {
+      "type": "object", "additionalProperties": false, "required": ["roles", "escalation", "reuse"],
+      "properties": {
+        "roles": {"type": "object", "propertyNames": {"$ref": "#/$defs/role"},
+          "additionalProperties": {
+            "type": "object", "additionalProperties": false, "required": ["must"],
+            "properties": {"inputs": {"type": "array", "items": {"type": "string"}},
+                           "outputs": {"type": "array", "items": {"type": "string"}},
+                           "must": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
+                           "machine_checks": {"type": "array", "items": {"type": "string"}},
+                           "human_review": {"type": "array", "items": {"type": "string"}},
+                           "fallbacks": {"type": "array", "items": {"type": "string"}}}}},
+        "escalation": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
+        "reuse": {"type": "array", "items": {"$ref": "#/$defs/text"}},
+        "rights_manifest": {"type": "string"}
+      }
+    },
+    "checks": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["checkpoint", "date", "by", "script_sha256", "scope"],
+      "properties": {
+        "checkpoint": {"enum": ["provisional", "final", "script_lock", "paid_assets", "final_qa"]},
+        "date": {"$ref": "#/$defs/date"},
+        "by": {"type": "string"},
+        "script_sha256": {"type": "string", "pattern": "^([0-9a-f]{64}|none)$"},
+        "rulebook_version": {"type": "integer", "minimum": 1},
+        "scope": {"$ref": "#/$defs/text"}
+      }
+    }}
+  }
+}

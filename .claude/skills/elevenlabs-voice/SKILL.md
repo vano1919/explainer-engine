@@ -5,6 +5,8 @@ description: How to get a natural, consistent ElevenLabs read on the first try a
 
 # ElevenLabs: right on the first take, cheapest path
 
+**Episode rulebook first (D-45, OR-10):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role voice` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+
 Facts for this project: model `eleven_v4`, voice `NOpBlnGInO9m6vDvFkFC` (Grandpa Spuds Oxley), 1 credit per character **including
 tags**, concurrency 5, signed result links live 7200 s. Episode 1 used 17,353 credits: 14,778 for the 24 chunks and **2,575 for five
 Shorts whose lines were written new for the Short**. Rules below come from ElevenLabs' own model guide (read through
