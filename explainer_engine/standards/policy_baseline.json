@@ -175,7 +175,8 @@
     "creator_residence": "GE",
     "audience_market": "US",
     "platform": "YouTube",
-    "canva_terms_verified": false,
+    "canva_terms_verified": true,
+    "canva_terms_note": "Read and accepted by the creator on 2026-10-17 (Canva AI Product Terms, Content License); the text was not shown to Claude, so no clause is quoted here. Free plan, V-39.",
     "content_language": "en",
     "creator_chat_language": "ka",
     "jurisdictions": [

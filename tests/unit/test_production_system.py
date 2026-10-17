@@ -271,6 +271,7 @@ def test_importance_cannot_be_declared_by_the_script():
 
 def test_canva_is_refused_until_the_terms_are_verified_and_never_for_important_pictures(monkeypatch):
     doc, pid = _filler_doc()
+    monkeypatch.setattr(R, "baseline", lambda: {"channel": {"canva_terms_verified": False}})
     found = V.canva_findings(doc)
     assert any(f["rule"] == "PV-36" and "not verified" in f["detail"] for f in found)
     monkeypatch.setattr(R, "baseline", lambda: {"channel": {"canva_terms_verified": True}})
@@ -292,3 +293,8 @@ def test_paint_leaves_canva_pictures_out_of_the_gemini_jobs():
     from explainer_engine.production import compile as C
     doc, pid = _filler_doc()
     assert pid not in [j["id"] for j in paint.jobs_of(doc)] and pid in C.canva_pending(doc)
+
+
+def test_the_creator_has_confirmed_the_canva_terms_in_the_baseline():
+    ch = R.baseline()["channel"]
+    assert ch["canva_terms_verified"] is True and "creator" in ch["canva_terms_note"]
