@@ -1,0 +1,42 @@
+{
+ "schema": "explainer.rights_manifest",
+ "version": 1,
+ "episode_id": "syndicate_wars",
+ "uses_third_party_fiction": true,
+ "franchises": [
+  {
+   "name": "Grand Theft Auto VI (Vice City, Leonida; also GTA IV/V references)",
+   "owner": "Rockstar Games / Take-Two Interactive (to confirm)"
+  },
+  {
+   "name": "The Godfather (Vito Corleone)",
+   "owner": "Paramount Pictures (film) and the Puzo estate (disputed per press, not verified)"
+  },
+  {
+   "name": "Peaky Blinders (Tommy Shelby)",
+   "owner": "Banijay UK (acquired Caryn Mandabach Productions, June 2024, per trade press; not verified first-hand); distributed by Netflix"
+  }
+ ],
+ "purpose": "analysis",
+ "third_party_media": [],
+ "quotes": [],
+ "narration_words": 1289,
+ "recap_words": 170,
+ "art": {
+  "all_original": true,
+  "imitates_production_design": false,
+  "generator_prompts_name_franchise": false
+ },
+ "fan_theories": [],
+ "thumbnail": {
+  "own_art_only": true,
+  "has_logo": false,
+  "has_actor_likeness": false,
+  "has_key_art": false
+ },
+ "description_has_unofficial_note": true,
+ "uses_leaks": false,
+ "commentary_target": "This episode shows how GTA VI's reported and official wanted, phone-camera, social-media and money systems would punish four old-school crime methods (Capone's publicity, Corleone's family secrecy, a Yakuza boss's corporate cover, Shelby's information network), and argues which method survives and why.",
+ "official_images_as_generator_input": false,
+ "merch_or_product_use": false
+}

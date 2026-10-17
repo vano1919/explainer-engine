@@ -372,3 +372,15 @@ def test_reframe_counts_half_in_rhythm_and_fill_holds_closes_dead_holds():
     new, inserted, stuck = F.fill_holds(d, words)
     assert all(x["reuse"] == "reframe" for seg in new["segments"] for x in seg["shots"] if x.get("reuse"))
     assert len(new["segments"][0]["shots"]) >= len(d["segments"][0]["shots"])
+
+
+def test_dropping_a_shot_hands_its_inline_picture_definition_to_the_next_use():
+    """Syndicate Wars 2026-10-17: fill dropped the shot that defined 's03_cursor' and a later reference by id broke timing."""
+    from explainer_engine.production import fill_holds as F
+    pic = {"id": "p1", "subject": "a thing"}
+    doc = {"segments": [{"id": "S01", "shots": [{"at": "a", "picture": pic}]},
+                        {"id": "S02", "shots": [{"at": "b", "picture": "other"}, {"at": "c", "picture": "p1"}]}]}
+    doc["segments"][0]["shots"] = []  # the shot was dropped
+    F._move_definition(doc, pic)
+    assert doc["segments"][1]["shots"][1]["picture"] == pic
+    assert doc["segments"][1]["shots"][0]["picture"] == "other"

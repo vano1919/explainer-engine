@@ -1,0 +1,289 @@
+{
+  "created": "2026-10-17T14:40:34",
+  "caps": {
+    "gemini_usd": 10.0,
+    "elevenlabs_credits": 40000,
+    "vidiq_credits": 0,
+    "runpod_usd": 0
+  },
+  "spent": {
+    "gemini_usd": 1.8489
+  },
+  "reserved": {
+    "batch:s01_skyline+1": {
+      "service": "gemini_usd",
+      "amount": 0.0252
+    },
+    "batch:p_capone+4": {
+      "service": "gemini_usd",
+      "amount": 0.2724
+    },
+    "batch:s01_phones+12": {
+      "service": "gemini_usd",
+      "amount": 0.3189
+    },
+    "batch:c10_map+12": {
+      "service": "gemini_usd",
+      "amount": 0.3211
+    },
+    "batch:v15_driver+12": {
+      "service": "gemini_usd",
+      "amount": 0.32
+    },
+    "batch:m21_trend+10": {
+      "service": "gemini_usd",
+      "amount": 0.2696
+    },
+    "batch:s02_history+2": {
+      "service": "gemini_usd",
+      "amount": 0.0537
+    }
+  },
+  "phases": {
+    "0_free": {
+      "status": "PASSED",
+      "note": "tests 259 pass + 2 pre-existing fails; ElevenLabs connector not loaded in this session",
+      "at": "14:40:34"
+    },
+    "1_hypotheses": {
+      "status": "PASSED",
+      "note": "H1 selected, 0 FAIL",
+      "at": "15:31:08"
+    },
+    "2_script": {
+      "status": "PASSED",
+      "note": "31 segments, 1289 words, 0 FAIL, engagement 0 weak",
+      "at": "15:31:08"
+    },
+    "5_pictures": {
+      "status": "PASSED",
+      "note": "51 painted pictures + 9 code screens",
+      "at": "15:31:08"
+    },
+    "4_voice": {
+      "status": "STOPPED",
+      "note": "ElevenLabs connector tools not available in this session: no voice, music or sound could be made",
+      "at": "15:31:17"
+    },
+    "6_assemble": {
+      "status": "STOPPED",
+      "note": "needs the real read",
+      "at": "15:31:17"
+    },
+    "7_shorts_metadata": {
+      "status": "STOPPED",
+      "note": "scripts, crops, silent previews and drafts done; no voice",
+      "at": "15:31:17"
+    }
+  },
+  "items": {
+    "pictures": {
+      "s01_skyline": {
+        "file": "s01_skyline.png",
+        "batch": "batches/hmcz2t6gu0s1tnfegue4zbd5qqyz3f7ajr8y"
+      },
+      "p_capone": {
+        "file": "p_capone.png",
+        "batch": "batches/2ysijozjjjx5e555zwgefg6bd98oimhg4cmx"
+      },
+      "p_vito": {
+        "file": "p_vito.png",
+        "batch": "batches/2ysijozjjjx5e555zwgefg6bd98oimhg4cmx"
+      },
+      "p_mizuno": {
+        "file": "p_mizuno.png",
+        "batch": "batches/2ysijozjjjx5e555zwgefg6bd98oimhg4cmx"
+      },
+      "p_shelby": {
+        "file": "p_shelby.png",
+        "batch": "batches/2ysijozjjjx5e555zwgefg6bd98oimhg4cmx"
+      },
+      "s01_phones": {
+        "file": "s01_phones.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s01_boardwalk": {
+        "file": "s01_boardwalk.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s01_four": {
+        "file": "s01_four.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s02_chairs": {
+        "file": "s02_chairs.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s02_history": {
+        "file": "s02_history.png",
+        "batch": "batches/dq39ool22sg8rkbvvcdzcgyokfcuk03hc257"
+      },
+      "s03_cursor": {
+        "file": "s03_cursor.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s08_paths": {
+        "file": "s08_paths.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s08_eye": {
+        "file": "s08_eye.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "c09_press": {
+        "file": "c09_press.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "c09_soup": {
+        "file": "c09_soup.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "c10_viral": {
+        "file": "c10_viral.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "c10_plate": {
+        "file": "c10_plate.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "c10_map": {
+        "file": "c10_map.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "c11_ledger": {
+        "file": "c11_ledger.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "c11_agent": {
+        "file": "c11_agent.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "c11_verdict": {
+        "file": "c11_verdict.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "c12_palm": {
+        "file": "c12_palm.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "w13_stars": {
+        "file": "w13_stars.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v13_table": {
+        "file": "v13_table.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v13_window": {
+        "file": "v13_window.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v14_oil": {
+        "file": "v14_oil.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v14_judge": {
+        "file": "v14_judge.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v14_no": {
+        "file": "v14_no.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v15_dock": {
+        "file": "v15_dock.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v15_driver": {
+        "file": "v15_driver.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "v15_phone": {
+        "file": "v15_phone.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "v16_garden": {
+        "file": "v16_garden.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m17_tower": {
+        "file": "m17_tower.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m17_card": {
+        "file": "m17_card.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m18_board": {
+        "file": "m18_board.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m18_phone": {
+        "file": "m18_phone.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m18_two": {
+        "file": "m18_two.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m19_sign": {
+        "file": "m19_sign.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "f20_flamingo": {
+        "file": "f20_flamingo.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "f20_gator": {
+        "file": "f20_gator.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m21_lobby": {
+        "file": "m21_lobby.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m21_trend": {
+        "file": "m21_trend.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "m22_watch": {
+        "file": "m22_watch.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s23_street": {
+        "file": "s23_street.png",
+        "batch": "batches/dq39ool22sg8rkbvvcdzcgyokfcuk03hc257"
+      },
+      "s24_proxy": {
+        "file": "s24_proxy.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s24_hall": {
+        "file": "s24_hall.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s24_decoy": {
+        "file": "s24_decoy.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s24_ledger": {
+        "file": "s24_ledger.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s25_calm": {
+        "file": "s25_calm.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s26_behind": {
+        "file": "s26_behind.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s29_end": {
+        "file": "s29_end.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      }
+    }
+  },
+  "failures": {},
+  "meta": {}
+}

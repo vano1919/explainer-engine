@@ -1,13 +1,17 @@
-"""Paint an episode's pictures with Gemini from reference pictures (D-44: creator's exception for Episode 1), safely.
+"""Paint an episode's pictures with Gemini on the batch tier (D-46: every picture, half price), safely.
 
     python -m explainer_engine.production.paint <script.json> --run jobs/<run>/run.json --out <pictures dir> [--only id,id] [--estimate]
-                                                [--limit N] [--first]
+                                                [--limit N] [--first] [--tier draft|standard|premium] [--collect NAME]
+
+Each picture's tier (``draft``, ``standard``, ``premium``; ``imagegen/routing.py``) picks the model and size; ``--tier`` paints
+the selection on one tier (a draft pass). The standard tier (synchronous calls) is never used (D-46).
 
 Every picture is one reference-edit request: the compiled ``pod_job`` prompt plus its reference pictures (the library's files).
 The price is reserved in the run ledger before the call (refused past 80 % of the cap), the PNG is written as soon as it
 arrives and recorded as an item, so a stop, a cap or a crash loses nothing and a re-run skips what exists (OR-02, OR-03). A
 failed picture counts a failure; the third failure stops that picture, never the whole batch. ``--first`` paints one picture
-only (the phase-3 test).
+only (the phase-3 test). Before any paid call the episode rulebook's ``paid_assets`` checkpoint must pass (OR-11, D-45);
+``--legacy-no-rulebook`` exists only for episodes made before it.
 """
 
 from __future__ import annotations
@@ -16,15 +20,14 @@ import argparse
 import io
 import json
 import sys
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from explainer_engine.core.ledger import CapReached, Run
-from explainer_engine.imagegen.gemini import GeminiClient, GeminiError, estimate
+from explainer_engine.imagegen import routing
+from explainer_engine.imagegen.gemini import GeminiClient, GeminiError
 from explainer_engine.production import compile as C
 from explainer_engine.production import script as S
 
-MODEL, SIZE = "gemini-nano-banana-2.1", "2K"
 
 
 def ref_bytes(dirs: list[Path], doc: dict, ref: str) -> bytes:
@@ -96,8 +99,9 @@ def run_batch(a, todo, doc, dirs, out, run, model, size) -> int:
 
 
 def jobs_of(doc: dict) -> list[dict]:
-    _, pod = C.jobs(doc)
-    return pod["pictures"]
+    """Every picture still to paint: reference edits (``pod_ref``, painted by Gemini since D-44) and text pictures (``gemini``)."""
+    gemini, pod = C.jobs(doc)
+    return pod["pictures"] + [{**g, "refs": [f"{r}.png" for r in g["refs"]]} for g in gemini]
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -110,12 +114,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--limit", type=int)
     ap.add_argument("--first", action="store_true")
     ap.add_argument("--estimate", action="store_true")
-    ap.add_argument("--workers", type=int, default=4, help="pictures painted at the same time (Gemini takes 1-2 min each)")
-    ap.add_argument("--batch", action="store_true", help="half-price batch tier (answers in minutes to hours)")
-    ap.add_argument("--model", default=MODEL)
-    ap.add_argument("--size", default=SIZE)
+    ap.add_argument("--tier", choices=sorted(routing.TIERS), help="paint the selection on this tier (default: each picture's own)")
+    ap.add_argument("--batch", action="store_true", help="kept for old command lines: the batch tier is always used (D-46)")
     ap.add_argument("--wait", type=float, default=1500.0, help="seconds to wait for a batch before leaving it for --collect")
     ap.add_argument("--collect", help="collect an earlier batch by name instead of submitting")
+    ap.add_argument("--legacy-no-rulebook", action="store_true", help="episodes made before D-45 (Episode 1) only")
     a = ap.parse_args(argv)
     path = Path(a.script)
     doc = S.load(path)
@@ -131,14 +134,14 @@ def main(argv: list[str] | None = None) -> int:
         todo = todo[:1]
     if a.limit:
         todo = todo[:a.limit]
-    model, size = a.model, a.size
-    if a.batch:
-        from explainer_engine.imagegen.gemini import BATCH_PRICES, REFERENCE_USD
-        cost = sum(BATCH_PRICES[model][size] + len(j["refs"]) * REFERENCE_USD for j in todo)
-    else:
-        cost = sum(estimate(model, size, 1, len(j["refs"])) for j in todo)
-    print(f"{len(todo)} pictures to paint, estimate ${cost:.3f}; spent so far ${run.spent('gemini_usd'):.3f} of cap "
-          f"{run.data['caps'].get('gemini_usd')} (stop at 80 %)")
+    for j in todo:
+        j["tier"] = a.tier or routing.tier_of(j)
+    cost = sum(routing.batch_cost(j["tier"], len(j["refs"])) for j in todo)
+    print(f"{len(todo)} pictures to paint on the batch tier, estimate ${cost:.3f}; spent so far "
+          f"${run.spent('gemini_usd'):.3f} of cap {run.data['caps'].get('gemini_usd')} (stop at 80 %)")
+    pending = C.canva_pending(doc)
+    if pending:
+        print(f"{len(pending)} filler pictures are made by hand in Canva, not painted here (PV-36): {', '.join(pending)}")
     if a.estimate:
         return 0
     if a.collect:
@@ -150,40 +153,28 @@ def main(argv: list[str] | None = None) -> int:
                 run.done("pictures", item, file=f"{item}.png", batch=a.collect)
         print(res["state"], len(res["items"]), "pictures")
         return 0 if res["done"] else 1
-    if a.batch:
-        return run_batch(a, todo, doc, dirs, out, run, model, size)
-    client = GeminiClient(out / "_gemini", cap_usd=1e9, run=run)
-    stats = {"painted": 0, "failed": 0, "stop": None}
-
-    def one(j: dict) -> None:
-        key = j["id"]
-        if stats["stop"] or len(run.data["failures"].get(key, [])) >= 3:
-            return
-        prompt = j["prompt"] + C.POD_SUFFIX
-        try:
-            refs = [ref_bytes(dirs, doc, r.removesuffix(".png")) for r in j["refs"]]
-            p = client.generate(key, prompt, model=model, size=size, refs=refs)
-            (out / f"{key}.png").write_bytes(Path(p).read_bytes())
-            run.done("pictures", key, file=f"{key}.png", usd=estimate(model, size, 1, len(refs)))
-            stats["painted"] += 1
-            print("painted", key, f"${run.spent('gemini_usd'):.3f}", flush=True)
-        except CapReached as exc:
-            stats["stop"] = str(exc)
-            print("STOP:", exc, flush=True)
-        except (GeminiError, FileNotFoundError) as exc:
-            stats["failed"] += 1
-            more = run.fail(key, str(exc))
-            print("failed", key, "(will retry)" if more else "(stopped after 3)", str(exc)[:120], flush=True)
-
-    with ThreadPoolExecutor(max_workers=max(1, a.workers)) as pool:
-        list(pool.map(one, todo))
-    if stats["stop"]:
-        run.phase("5_pictures", "STOPPED", stats["stop"])
-        return 3
-    painted, failed = stats["painted"], stats["failed"]
-    print(f"painted {painted}, failed {failed}")
-    return 0 if not failed else 1
-
+    if not a.legacy_no_rulebook:  # OR-11: no paid picture before the rulebook's paid_assets checkpoint passes
+        from explainer_engine.standards import rulebook as R
+        rules_path = path.with_name("episode_rules.json")
+        if not rules_path.exists():
+            print(f"STOP: no {rules_path.name} next to the script (OR-10); --legacy-no-rulebook only for episodes made "
+                  "before D-45")
+            return 4
+        fails = [f for f in R.gate(rules_path, "paid_assets", path) if f["severity"] == "FAIL"]
+        if fails:
+            for f in fails:
+                print("FAIL", f["rule"], f["where"], f["detail"])
+            print("STOP: the rulebook's paid_assets checkpoint does not pass (OR-11)")
+            return 4
+    code = 0
+    for tier in routing.TIERS:  # one batch run per tier: a batch has one model and size
+        group = [j for j in todo if j["tier"] == tier]
+        if group:
+            model, size = routing.route(tier)
+            code = max(code, run_batch(a, group, doc, dirs, out, run, model, size))
+            if code == 3:
+                break
+    return code
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -432,3 +432,73 @@ the gap (nearest the gap's middle among the quietest), must be at most -40 dB or
 on a 10 ms fade; word times follow the real quiet spot. Re-run: 131 -> 113 silences, 67 -> 2 cut into sound (both borderline -37 /
 -42 dB), 18 insertions skipped (no quiet spot). Three cuts that relied on a skipped pause were moved to legal pauses (S18, S31, S32)
 and one reframe added (S31 "Fuel."). Tests: 210 passed. Creator picked speed 1.15.
+
+## 2026-10-17 — Episode standards: one rulebook per video (D-45)
+
+Creator's master prompt (director-controlled, copyright-aware, creative-first). Built on `systemic/next-video` (a182195); Episode 1
+untouched. Audit first: all four remote branches compared (`main` = Phase 1 scaffold, `phase-2-spec-pack` and `systemic/next-video`
+carry everything since; the latter is the newest). Gap matrix in [EPISODE_STANDARDS](EPISODE_STANDARDS.md) section 6: no
+per-episode rule layer, US-only legal sources, the real-people rules of D-40 unenforced, paid steps not gated on rights, no
+recheck after a script change, CLAUDE.md contradicting D-26.
+Research (V-13..V-24, read 2026-10-17): YouTube disclosure, YPP inauthentic/reused, privacy removal of synthetic likeness,
+impersonation; US fair use and duration; UK exceptions; Georgia's law (2023 text through a machine summary: partly verified);
+EU Art. 17(7) not loaded (not verified); ElevenLabs and Google generative-AI use policies; Claude Code subagent fields.
+Added: agent `episode-standards-director`; `schemas/episode_rules.schema.json` v1; `standards/rulebook.py` (ES-01..ES-18:
+check, gate per checkpoint provisional/final/script_lock/paid_assets/final_qa, stamp tied to the script's sha256, brief per
+role, generated markdown view) and `policy_baseline.json`; `production_gate` row R; `paint.py` refuses a paid run unless
+`paid_assets` passes (`--legacy-no-rulebook` for pre-D-45 episodes); OR-10/OR-11, Q-E15, R-30; skills read their brief.
+Tests: 26 new, 237 pass; 2 failures existed before this change (`test_committed_sound_library`, `test_end_to_end_script_to_video`:
+`assets/audio/library/foley/*.wav` are not in the repository on this branch). docs_lint 0.
+Not done / open: the creator's residence and target markets (ES-15, assumed GE + US); no rulebook yet for the next episode
+(its topic is not chosen); voice and music steps have no paid-call refusal in code yet (their paid calls go through the
+ElevenLabs connector, so the orchestrator runs the gate); the master prompt arrived cut off in section 4.8.
+
+## 2026-10-17 — The rest of the master prompt; the creator's answers (D-46)
+
+Creator's answers: main market US; ElevenLabs is the only audio provider; pictures by Gemini on the batch tier only, cheap and
+dear versions chosen by Claude after building the system. Decided (D-46, `imagegen/routing.py`): `draft` Nano Banana 2.1 1K
+$0.0168, `standard` Nano Banana 2.1 2K $0.0252 (every scene picture; Episode 1's 74 accepted), `premium` Gemini 3 Pro Image 2K
+$0.067 (reused identity assets, multi-reference reveals; reason required, at most 10 %). Flash-Lite rejected (failed the palette in
+the Episode 1 test), Flash 3.1 2K ($0.050) not routed (no measured gain). `paint.py` sends one batch per tier and has no synchronous
+path left. Research V-25..V-32 (Shorts up to 3 minutes; YouTube upload settings name no loudness; `status.containsSyntheticMedia`;
+ElevenLabs terms, Music Terms and the connector's real parameters, `generations_count` defaults to 4; Gemini batch prices; Claude
+Code hooks; AES TD1008 only through secondary sources).
+Built: PreToolUse hook on the ElevenLabs connector (`.claude/settings.json`, `standards/hook.py`: pictures/video refused, one take,
+rulebook `paid_assets` gate, logged creator overrides); production-script fields `job`, `feel`, `rules`, shot `purpose`/`cut`, picture
+`tier`, sound `purpose`/`yields_to` and PV-32..PV-35 for rulebook-era scripts (Episode 1 unchanged); `qa/engagement.py` (ENG-1..6 and
+the seven gate questions); `research/hypotheses.py` + schema (HY-0..4); `qa/targets.py` (one loudness/true-peak/gap definition for
+mixer, Shorts and scorecard; stricter value kept where documents disagreed); rulebook disclosure `ai_uses`, `upload_action`;
+executor contracts (OR-12), OR-13; QA map of the nine final areas, Q-T19, Q-E16, Q-E17. Tests: 13 new (250 pass); the 2 failures that
+existed before remain (sound-library WAVs not in the repository). docs_lint 0.
+Not done: no new episode produced (the topic is not chosen); the Shorts renderer's export settings and BT.709 tagging are not yet
+measured against Q-T19; the creator's ElevenLabs plan (music media rights, V-28) and country of residence are still to confirm.
+Update (same day): the creator confirmed ElevenLabs plan Creator, residence Georgia, target audience US: recorded in `policy_baseline.json` `channel`, EPISODE_STANDARDS section 5, AUDIO_SYSTEM, D-46.
+Update (same day): content language fixed by the creator: everything the audience sees or hears is English; Georgian only for chat with the creator (`channel.content_language`, CLAUDE.md). Likeness: recognisable archetype allowed, no real actor's face. Crossover topic received (four bosses in GTA 6 Leonida): rulebook started by `episode-standards-director`, nothing produced.
+Update (same day): D-46 music wording widened by the creator (free library allowed per verified licence); Syndicate Wars rulebook v2 (Vito film-era, Shelby 1930s, leaks only as labelled press reports, never leaked files). Open: RR-10 wording on press-reported leaks.
+Update (same day): RR-10 rewritten by the creator's decision: leaked material stays banned; labelled leaked information from a named outlet is allowed unless it directly and unambiguously harms a person. Official GTA VI images: studied for the look, not yet fed to the picture generator; the dose of signs and logos waits for the Gemini research.
+Update (same day): the Gemini legal report became rules: RR-14 (commentary target), RR-15 (no official image as generator input), RR-16 (no merchandise use of parody brands), ES-19 (source quality; pirated hosts refused), V-38 (cases, unverified until read). The second report (GTA VI world, four bosses) was triaged: wrong 'official' tags, leaked-document rows dropped, LCN and BAWSAQ are two exchanges.
+Update (same day): Canva tested: one test image generated from a neutral prompt (media id MAHYRlcFvKM, private, not published; looked at by the creator and us: palette fits, no franchise). Free plan recorded from the creator's browser (V-39): about 20 AI uses, 4.7M stock assets, 1 brand kit. The Canva terms are still unverified (403); no Canva asset goes into a production episode until the creator reads its AI Product Terms and stock licence.
+Update (same day): Canva Privacy Policy (V-40, creator-supplied): content in the account may train Canva's AI unless the creator switches it off in privacy settings. Rule for our work: no unpublished scripts, claim maps, rights manifests or personal data in Canva; test images only.
+Update (same day): D-47 filler pictures via Canva: `imagegen/importance.py` computes importance from shot type, heroes, reuse, tier and beat job; PV-36 refuses non-filler Canva pictures, more than 30 %, and any use while `canva_terms_verified` is false; `paint.py` lists the Canva pictures it does not paint. Shot length is not known at script stage: the 4 s limit is still to be checked after timing.
+Update (same day): the creator read the Canva terms himself and accepted D-47: `channel.canva_terms_verified` is now true (note: text not seen by Claude). PV-36 still limits Canva to computed filler, at most 30 %.
+
+## 2026-10-17 — Syndicate Wars (episode run up to the voice; ElevenLabs not available)
+
+Orchestrated run of "Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida" (rulebook v5, premise H1 "Who Leaves a Footprint?", H2/H3
+compared, `story_hypotheses.json` 0 FAIL). Done: claim map C-01..C-50 (C-44..C-50 added: our star ratings as labelled opinion, scenario
+assumption, invented gags, GTA V wanted level); rulebook final (BLOCK RK-07 removed, REVIEW RK-10/RK-14 decided from the creator's statements, ADAPT
+items resolved) and stamped final, script_lock and paid_assets (re-stamped four times as the script changed: scopes in `episode_rules.json`);
+script `production_script.json` (31 segments, 1,289 words, estimated 9.4 min, 84 shots, 8 date graphics, 2 Shorts), engagement gate 0 weak beats,
+narration lint 0 FAIL, ip_check 0 FAIL. Pictures: Gemini batch, 51 pictures (4 premium portraits painted twice: the first set read as actor
+likenesses (Shelby, Vito) and had garbled street signs, rejected and repainted once), US$1.795 of the US$10 cap; 9 character-select screens and the
+thumbnail drawn by `production/select_screen.py`. Silent animatic and two silent Short previews on ESTIMATED timing (not deliverables).
+Repo fixes with tests: era `modern_neon_florida` in the codex; acronyms GTA/IRS/LCN/BAWSAQ/MP are not stress marks (narration lint); Gemini batch GET
+retries when the proxy cuts a 57 MB answer (never a POST); `fill_holds.drop_short_shots` hands an inline picture definition to its next use.
+Stopped: the ElevenLabs connector tools were not loaded in this session (ToolSearch found none), so no voice, music or sound effect exists and no
+real timing, mix, assemble, scorecard or `final_qa` stamp is possible. Not done: Canva fillers (connector absent; all pictures are Gemini), the
+Rockstar fan-content policy page (HTTP 503 on every attempt, not read first-hand), the trailer-1 watch (C-30).
+Update (same day): reviewer notes fixed: s02_history repainted without readable headlines, s23_street repainted with exactly one period-dressed man (one repaint each, US$0.054; total Gemini US$1.849). The ElevenLabs and Canva tools were still not loadable when the run was resumed (ToolSearch: no match), so voice, music, sound effects and everything after them stay open.
+
+## 2026-10-17 Syndicate Wars: voice read done, saved state (resume here)
+Voice: all 11 chunks (T01..T11) read once each with the channel voice NOpBlnGInO9m6vDvFkFC (eleven_v4, generations_count 1), 8,135 of 40,000 credits (ledger `jobs/syndicate_wars/run.json`). Total 646.9 s, 1,289 words, 120 wpm (below the 140-175 target: REVIEW for the creator's ear; T02 stat cards 87 wpm on purpose). Files in `jobs/syndicate_wars/voice/T01..T11.mp3` (gitignored, media never committed). If the container is lost, the takes live in ElevenLabs flow SURzIcvIRz6PhKvjGmT4 (generation ids: T05 kt60K5rvnGLSWP7n5Lqz, T01 jETidz7qheySWREvmc1N, T02 HuggDn28jnXVCYpeRw4c, T03 inV2ikbIIjmhxXk9mrCh, T04 T5DirUEGVSxPxytrjWVd, T06 4ebWheO9sCm99XdlwpiL, T07 iyb3UdIRyVrCkwbgj8XA, T08 sEMlkmJBboJcriLFuKYF, T09 WBEqGa9RjOCsrw1jOrK9, T10 fESEAg3Y1YdNfrACYYdo, T11 FB5YQ3mfJCI1YVJdi589): re-download through creative_get_flow_run_status, never regenerate (that charges again).
+Next, in order: (1) `pip install faster-whisper` is done in this container; `python -m explainer_engine.production words jobs/syndicate_wars/production_script.json jobs/syndicate_wars/voice/T01.mp3 ... T11.mp3 --out jobs/syndicate_wars/read` (local, free; needs the Whisper model download); (2) `production fill`, `production time` (0 FAIL); (3) music and sound effects with ElevenLabs (estimate_only, one take, ledger), RK-14 stays a creator REVIEW item; (4) `production assemble` 720p then 2K, Shorts to 45-60 s, scorecard, engagement gate, `standards gate --at final_qa`; (5) nothing is uploaded. ElevenLabs tools are loadable only in the main session (the orchestrator subagent cannot load them): run phases 4-6 there.

@@ -35,6 +35,22 @@ def _words_of(text: str) -> list[str]:
     return out
 
 
+def rulebook_state(rules_path: Path, script: Path) -> tuple[str, str, str]:
+    """How far the episode rulebook's checkpoints pass (docs/EPISODE_STANDARDS.md section 1)."""
+    from .standards import rulebook as R
+    reached = None
+    for cp in R.CHECKPOINTS:
+        fails = [f for f in R.gate(rules_path, cp, script) if f["severity"] == "FAIL"]
+        if fails:
+            rules = sorted({f["rule"] for f in fails})
+            if reached is None:
+                return "BLOCKED", f"provisional: {len(fails)} FAIL ({', '.join(rules)})", "standards check, fix the FAILs"
+            return "PASS", f"passes up to {reached}; {cp}: {len(fails)} FAIL ({', '.join(rules)})", \
+                f"before {cp}: re-check, then standards stamp --at {cp}"
+        reached = cp
+    return "PASS", "passes every checkpoint up to final_qa", ""
+
+
 def gates(day: Path, look_path: Path | None = None) -> list[dict]:
     look_path = look_path or day.parent / "look.json"
     look = _json(look_path) or {}
@@ -43,8 +59,15 @@ def gates(day: Path, look_path: Path | None = None) -> list[dict]:
     def add(n, name, status, detail, nxt=""):
         out.append({"gate": n, "name": name, "status": status, "detail": detail, "next": nxt})
 
-    # 0 production script (D-43): when the episode has one, it is the source of everything below
+    # R episode rulebook (D-45): new-style episodes (a production script or a rulebook in the folder) need one
     ps = day / "production_script.json"
+    rules_path = day / "episode_rules.json"
+    if rules_path.exists():
+        st, detail, nxt = rulebook_state(rules_path, ps)
+        add("R", "episode rulebook", st, detail, nxt)
+    elif ps.exists():
+        add("R", "episode rulebook", "WAIT", "no episode_rules.json", "agent episode-standards-director (OR-10)")
+    # 0 production script (D-43): when the episode has one, it is the source of everything below
     if ps.exists():
         from .production import validate as _pv
         from .production import script as _ps

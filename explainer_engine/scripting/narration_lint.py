@@ -32,7 +32,7 @@ DELIVERY_TAGS = {"curious", "excited", "happy", "sad", "angry", "nervous", "sarc
                  "conspiratorially", "matter of fact", "impressed", "amused", "thoughtful", "suspenseful",
                  "intrigued", "deadpan", "hesitant", "triumphant"}
 STAGE = re.compile(r"\b(standing|pacing|walking|grinning|smiling|music|sound effect|sfx|camera|cut to)\b", re.I)
-ACRONYMS = {"TV", "UK", "US", "USA", "DNA", "NASA", "OK", "BC", "BCE", "AD", "CE"}
+ACRONYMS = {"TV", "UK", "US", "USA", "DNA", "NASA", "OK", "BC", "BCE", "AD", "CE", "GTA", "IRS", "LCN", "BAWSAQ", "MP"}
 MAX_SENTENCE_WORDS = 22
 WORDS_PER_QUESTION = 150
 WORDS_PER_INTERJECTION = 60

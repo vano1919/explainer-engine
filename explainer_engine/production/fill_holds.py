@@ -34,6 +34,15 @@ def _phrase(toks: list[dict], t_new: int, lo: int, hi: int) -> str | None:
     return None
 
 
+def _move_definition(doc: dict, pic: dict) -> None:
+    """A picture defined inline in a removed shot is defined at its next use instead (a later reference by id would break)."""
+    for seg in doc["segments"]:
+        for shot in seg["shots"]:
+            if shot["picture"] == pic["id"]:
+                shot["picture"] = pic
+                return
+
+
 def drop_short_shots(doc: dict, words_doc: dict, min_s: float = B.MIN_SHOT) -> tuple[dict, list[dict]]:
     """Remove shots shorter than the board allows (RHYTHM-2): the shot before it holds on instead (a segment's first shot, which
     must start on the segment's first word, loses the shot after it). ``fill_holds`` then cuts any hold this makes too long."""
@@ -55,7 +64,10 @@ def drop_short_shots(doc: dict, words_doc: dict, min_s: float = B.MIN_SHOT) -> t
         vseg = next(x for x in doc["segments"] if x["id"] == v["segment"])
         if vseg["shots"][0]["at"] == v["at"] and victim != bad:
             break  # would remove another segment's opening picture: leave for a human
+        spec = next(x for x in vseg["shots"] if x["at"] == v["at"])
         vseg["shots"] = [x for x in vseg["shots"] if x["at"] != v["at"]]
+        if isinstance(spec["picture"], dict):  # the definition lives in the dropped shot: hand it to the next shot that uses it
+            _move_definition(doc, spec["picture"])
         dropped.append({"segment": v["segment"], "at": v["at"], "picture": v["picture"], "duration": v["duration"]})
     return doc, dropped
 

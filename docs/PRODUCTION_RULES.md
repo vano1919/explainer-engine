@@ -15,8 +15,8 @@ Read it before starting any video; update the feedback log (section 3) whenever 
 4. **Money is never a surprise.** Estimate before every paid call, state units, price and caps in the request, wait for a yes,
    stop at 80 % of any cap, finish with nothing running and the balance reported ([TOOL_STRATEGY](TOOL_STRATEGY.md),
    [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md), CLAUDE.md invariants 1-2).
-5. **Pictures of one episode come from the local pod; Gemini only for reusable assets** (cast sprites, props, thumbnail
-   elements) (D-36).
+5. **Pictures are painted by Gemini on the batch tier, on the tier the picture needs** (draft, standard, premium; D-46,
+   which supersedes the pod routing of D-36). Audio comes from ElevenLabs only.
 6. **Look at the output before reporting it.** Open the contact sheet, listen to the test read, composite a sample; a green test
    is not acceptance (CLAUDE_EXECUTION_GUIDE step 5).
 7. **Say what was and was not verified.** No legal or factual guarantee the sources do not give; a creator decision is recorded
@@ -30,7 +30,7 @@ action. Gates 3-7 spend money and need the creator's yes first.
 
 | # | Gate | What must be true | Rules and tools |
 |---|---|---|---|
-| 0 | **Topic and claims** | research dossier, claim map, rights check; the creator approves the script (approval #1) | [SCRIPTING_SPEC](SCRIPTING_SPEC.md) §1-5, crossover skill, `rights/ip_check.py` |
+| 0 | **Topic and claims** | research dossier, claim map, the episode rulebook (provisional, then final before the script; gate row `R`), rights check; the creator approves the script (approval #1) | [SCRIPTING_SPEC](SCRIPTING_SPEC.md) §1-5, [EPISODE_STANDARDS](EPISODE_STANDARDS.md), crossover skill, `rights/ip_check.py` |
 | 1 | **Script for the ear** | hook is a yes/no question by 5 s; short sentences; one stress word; open loop at every beat end; interjections where a person would say them; named heroes with archetype lines; humour from the situation; `narration_tts.txt` + plain `narration.txt` | skill `narration-script`, `scripting/narration_lint.py` 0 FAIL |
 | 2 | **Voice test read** | first 45-60 s only (estimate first), the creator listens; then the full read, pace 155-175 wpm | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) (D-39), `audio/scribe_words.py`, `audio/pause_pad.py` |
 | 3 | **Shot plan** | every shot has `stakes`, type A/B/C in rhythm, named heroes with emotional poses in every B, friction per beat, palette and one emotion per shot, figure style on every person/hand prompt, plates without people; cuts placed by the solver inside punctuated pauses | skill `shot-visuals`, [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) UR-01..UR-22, `edit/shot_rules.check_shots` 0 FAIL |
@@ -41,7 +41,7 @@ action. Gates 3-7 spend money and need the creator's yes first.
 | 8 | **Animatic and render** | GPU compositor (D-32), motion per UR-13, transitions UR-14, sound UR-15 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) |
 | 9 | **Seven-point test, QA and approval #2** | every video passes all seven checks of section 6 (`qa/scorecard.py`), then technical and editorial QA, the review bundle and the creator's recorded approval before any upload | section 6, [QA_SPECIFICATION](QA_SPECIFICATION.md) |
 
-Order matters: a script is not paid-read before gate 1 is clean; pictures are not painted before the style bridge (gate 4) and
+Order matters: no paid read, picture or music before the rulebook's `paid_assets` checkpoint passes (OR-11); a script is not paid-read before gate 1 is clean; pictures are not painted before the style bridge (gate 4) and
 the sprite plan (gate 5); the full read waits for the creator's yes on the test read.
 
 ## 3. Feedback log (every creator note, its cause, its rule, what enforces it)

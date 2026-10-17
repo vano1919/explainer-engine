@@ -1,0 +1,85 @@
+{
+ "schema": "explainer.story_hypotheses",
+ "version": 1,
+ "episode_id": "syndicate_wars",
+ "hypotheses": [
+  {
+   "id": "H1",
+   "premise": "Who Leaves a Footprint? In a world where everyone films everything, the boss who first realises that attention is both power and danger survives; the loud one falls first, the quiet one wins mostly.",
+   "question": "Which old way of ruling survives when every phone is a witness?",
+   "audience_reason": "Crime-story and GTA fans get a four-way matchup with a character-select screen; casual viewers get one clear idea (attention is power and danger) that they recognise from their own feeds.",
+   "stakes": "Each boss loses the thing his method depends on: Capone his publicity, Vito his control over people outside his circle, the invented Yakuza boss the street he cannot predict, Shelby his certainty that he is always ahead.",
+   "conflict": "Each boss meets the same pressure (cameras, virality, money tech, chaos) and the elimination order is the story.",
+   "surprise": "The one who falls first is the best-known and loudest (Capone), and in real history it was ledgers, not bullets, that did it; the winner is the quiet planner, and even he has a flaw.",
+   "payoff": "The stat screen returns with changed stars and one debatable question: is winning quietly a victory or a different kind of loss?",
+   "evidence_for": ["C-16", "C-18", "C-19", "C-20", "C-21", "C-23", "C-24", "C-28", "C-39", "C-27"],
+   "evidence_against": ["C-22", "C-30", "C-12"],
+   "uncertainties": [
+    "Whether GTA VI itself shows civilians filming crimes is official only after a person watches trailer 1 (C-30); until then the line is worded 'appears to show' or 'GTA V-style'.",
+    "The year of the story is our assumption; Rockstar gives none (C-04).",
+    "Stats are the channel's own opinion, argued from history and canon, not facts."
+   ],
+   "counterarguments": [
+    "A fan will say Vito would never retreat: answered by his own refusal of the heroin deal because his judges and politicians would turn (C-24).",
+    "A fan will say Shelby is violent: the script says so and uses it (C-28)."
+   ],
+   "visual_opportunities": [
+    "character-select screen with four portraits and star bars of our own layout",
+    "neon sunset causeway, phone-camera frames as picture-in-picture insets, ledger close-ups",
+    "invented comic Florida-style insets in a different, flatter drawing"
+   ],
+   "audio_opportunities": ["a camera shutter and notification chirps as the pressure, a ledger page turn for the tax case"],
+   "rights_risks": ["GTA VI names and unreleased features (RK-10)", "actor likeness of Vito and Shelby (RK-07)", "Capone as a real person (RK-08)"],
+   "scores": {"evidence": 4, "narrative": 4, "why": "Real-history spine (Capone's ledgers, Vito's refusal, Shelby's information) is sourced; the GTA VI side is labelled; the thesis gives every act one job."}
+  },
+  {
+   "id": "H2",
+   "premise": "The Accountant Always Wins: in any era the boss with the best books and the quietest paperwork beats everyone, so the Yakuza boss wins and the film is a lesson in compliance.",
+   "question": "Does the most boring boss always win?",
+   "audience_reason": "A contrarian, money-focused take for viewers who like finance explainers.",
+   "stakes": "Four methods are ranked by how well they survive an audit; the loser is whoever keeps the worst records.",
+   "conflict": "Violence and charisma against spreadsheets.",
+   "surprise": "Capone, the most famous gangster in history, was undone by exactly this: books.",
+   "payoff": "The accountant wins, but the real Capone case shows the same tool also catches the accountants of crime.",
+   "evidence_for": ["C-16", "C-21", "C-11"],
+   "evidence_against": ["C-28", "C-24", "C-42"],
+   "uncertainties": ["Every real claim about Japanese organised crime in finance is unverified (C-42), so the Yakuza win would rest on our own invention.", "GTA VI money systems are unknown; GTA V's exchanges are community-described (C-12)."],
+   "counterarguments": ["It ignores Vito's and Shelby's strength, which is people and information, not books."],
+   "visual_opportunities": ["ledger pages, tax forms in neon, an auditor chasing a limousine"],
+   "rights_risks": ["unverified Yakuza claims (RK-09)", "GTA V exchange names (RK-04)"],
+   "scores": {"evidence": 3, "narrative": 3, "why": "Strong on Capone's ledgers, weak on the other three; the Yakuza claims are unverified and the story is a lecture."}
+  },
+  {
+   "id": "H3",
+   "premise": "Nobody Beats Florida: whatever the method, chaos wins; all four bosses are eaten by absurdity, and the only survivor is the one who accepts he is a character in a Florida headline.",
+   "question": "Can any boss out-plan a state that produces its own weather of nonsense?",
+   "audience_reason": "Pure comedy for fans of absurd news-style humour and open-world chaos.",
+   "stakes": "Each boss's plan is defeated by an invented absurd incident.",
+   "conflict": "Planning against chaos.",
+   "surprise": "Capone's real retirement and death were in Florida (C-18), a quiet end for a loud man.",
+   "payoff": "Chaos wins, nobody learns anything.",
+   "evidence_for": ["C-18", "C-06"],
+   "evidence_against": ["C-28", "C-24", "C-16"],
+   "uncertainties": ["Almost no sourced claims: the comedy would be invented, which weakens the analysis requirement of RR-14.", "Risk of reading as a retelling or sketch with no commentary on the game's systems."],
+   "counterarguments": ["It says nothing about GTA VI's systems, the weak case under RR-14."],
+   "visual_opportunities": ["invented Florida-style gags", "flamingo-coloured sunsets"],
+   "rights_risks": ["invented incidents must stay fully invented (ER-15)", "commentary target is thin (RK-16)"],
+   "scores": {"evidence": 2, "narrative": 4, "why": "Funny, but there is almost nothing to source and it fails the commentary-target test."}
+  }
+ ],
+ "selected": {
+  "id": "H1",
+  "why": "Best balance of evidence and story (4 and 4); it is the creator's chosen thesis, it gives every act a job and a testable GTA system (phone cameras, social media, money), and H2/H3 score lower on evidence while not beating it on narrative. The Florida chaos of H3 survives as clearly invented comic inserts inside H1.",
+  "beats": [
+   {"job": "hook", "what": "Could a 1930s gangster survive a world where everyone has a camera? Four bosses drop into Vice City."},
+   {"job": "explanation", "what": "Character select: four bosses, five stats each, our rating, and the thesis in one line.", "claims": ["C-44", "C-45", "C-46", "C-47", "C-48"]},
+   {"job": "question", "what": "Who realises first that attention is both power and danger?"},
+   {"job": "evidence", "what": "Capone: press fame as the 1930s version of going viral, then the ledger case. He falls first.", "claims": ["C-16", "C-19", "C-20", "C-21", "C-27"]},
+   {"job": "complication", "what": "Vito: favours, judges, a legal oil import front, no heroin; his authority does not reach the people his network depends on.", "claims": ["C-23", "C-24"]},
+   {"job": "humor", "what": "Invented Florida-style chaos insert: no plan survives it."},
+   {"job": "reveal", "what": "The invented Yakuza boss wins the boardroom and loses the street.", "claims": ["C-11", "C-12", "C-46"]},
+   {"job": "complication", "what": "Shelby: information, politics, ledgers, proxies, but overconfidence.", "claims": ["C-28"]},
+   {"job": "payoff", "what": "Stat screen returns with changed stars; who left a footprint; the debatable question left open.", "claims": ["C-47", "C-48"]}
+  ]
+ }
+}

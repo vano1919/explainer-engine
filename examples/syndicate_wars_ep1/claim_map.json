@@ -1,0 +1,647 @@
+{
+ "episode_id": "syndicate_wars",
+ "date": "2026-10-17",
+ "commentary_target": "This episode shows how GTA VI's reported and official wanted, phone-camera, social-media and money systems would punish four old-school crime methods (Capone's publicity, Corleone's family secrecy, a Yakuza boss's corporate cover, Shelby's information network), and argues which method survives and why.",
+ "tiers": [
+  "primary_read",
+  "secondary",
+  "community",
+  "inference"
+ ],
+ "labels": [
+  "official",
+  "reported_leak",
+  "community",
+  "speculation"
+ ],
+ "note": "The creator's second research report was available only as a summary (pasted text cut at Shelby); its tags are untrusted. Every claim below was checked against a page opened by the standards director on the date given, or is marked verified:false.",
+ "claims": [
+  {
+   "id": "C-01",
+   "text": "GTA VI release: Rockstar's page says 'Coming November 19, 2026' (PS5, Xbox Series X|S); Take-Two's 2026-06-24 release gives the same date, $79.99 standard edition, pre-load Nov 12. Unreleased at the research date.",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "first-hand: rockstargames.com/VI and ir.take2games.com/node/32311, 2026-10-17"
+  },
+  {
+   "id": "C-02",
+   "text": "Rockstar's page sets the game in 'Vice City, USA' within the state of Leonida ('criminal conspiracy stretching across the state of Leonida').",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": ""
+  },
+  {
+   "id": "C-03",
+   "text": "Rockstar's page names Jason and Lucia as the pair in the story ('Jason and Lucia's story').",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "surnames and backstory are not on that page"
+  },
+  {
+   "id": "C-04",
+   "text": "Rockstar's page shows only the year 2026 (release and Newswire dates) and gives no in-story year.",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "the brief's '2025 setting' is therefore not established"
+  },
+  {
+   "id": "C-05",
+   "text": "Rockstar's page names no regions of Leonida and no in-game social app, stock exchange or cryptocurrency.",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "absence on one page, not a denial"
+  },
+  {
+   "id": "C-06",
+   "text": "Leonida is a fictional state based on Florida; reported regions include Vice City, Grassrivers, the Leonida Keys, Ambrosia, Mount Kalaga National Park and Port Gellhorn.",
+   "tier": "secondary",
+   "label": "community",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Grand_Theft_Auto_VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "regions (Grassrivers, Leonida Keys, Ambrosia, Mount Kalaga, Port Gellhorn) are NOT on the Rockstar pages read; Wikipedia secondary lists them; treat as community/leak-derived, not official"
+  },
+  {
+   "id": "C-07",
+   "text": "The setting satirises 2020s American culture; no specific year is given.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Grand_Theft_Auto_VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "Wikipedia, first 100k characters of the article only"
+  },
+  {
+   "id": "C-08",
+   "text": "Snapmatic is said (Wikipedia, secondary) to return as an in-game social app; Rockstar's pages do not confirm it. App names Snapmatic, Ryde Me, WAINK, Criminal Profile are unconfirmed.",
+   "tier": "secondary",
+   "label": "community",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Grand_Theft_Auto_VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "do not state as official"
+  },
+  {
+   "id": "C-09",
+   "text": "Rockstar has announced no in-game cryptocurrency (absence reported by a secondary summary).",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Grand_Theft_Auto_VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "crypto is unconfirmed for VI"
+  },
+  {
+   "id": "C-10",
+   "text": "Press report: leaks of footage (2022 teapotuberhacker) and an August 2026 map and footage leak are described by a secondary source; a leaker-promoted meme coin was flagged by journalists as a possible scam.",
+   "tier": "secondary",
+   "label": "reported_leak",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Grand_Theft_Auto_VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "named press outlets were not opened; usable only as 'reported' background, never as content; no leaked material is used (ER-17)"
+  },
+  {
+   "id": "C-11",
+   "text": "The in-game stock market in GTA V is reached through an internet browser; this page names no exchange.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Grand_Theft_Auto_V",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "Wikipedia text read: 'The Internet lets players trade in stocks via a stock market'"
+  },
+  {
+   "id": "C-12",
+   "text": "In GTA V, community guides describe LCN as the offline/single-player exchange driven by the player's own actions and BAWSAQ as driven by online players; neither is confirmed for VI. A link between the LifeInvader/Jay Norris assassination and LCN is NOT sourced.",
+   "tier": "community",
+   "label": "community",
+   "source": "none",
+   "verified": false,
+   "note": "source: search summary of fan guides (gtaboom, gamerhorizon, gamersheroes); fandom wiki returned 402; the bitget article was not opened and is low quality"
+  },
+  {
+   "id": "C-13",
+   "text": "LifeInvader is GTA V's Facebook-style social network; not shown for VI.",
+   "tier": "community",
+   "label": "community",
+   "source": "none",
+   "verified": false,
+   "note": "not found in the pages read; nothing official for VI; speak only as 'GTA V's LifeInvader'"
+  },
+  {
+   "id": "C-14",
+   "text": "Lester Crest is a GTA V character, described as a disabled hacker and Michael's old friend (voiced by Jay Klaitz); he is not shown in VI.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Grand_Theft_Auto_V",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "'not shown in VI' is an absence claim, not verified"
+  },
+  {
+   "id": "C-15",
+   "text": "Devin Weston is a GTA V billionaire venture capitalist and corporate raider; he is not shown in VI.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Grand_Theft_Auto_V",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "'not shown in VI' is an absence claim, not verified"
+  },
+  {
+   "id": "C-16",
+   "text": "Al Capone was convicted on five counts of income-tax evasion on 17 October 1931 and sentenced a week later to 11 years in federal prison.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Al_Capone",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "encyclopedia page read first-hand; Britannica and FBI pages returned 403"
+  },
+  {
+   "id": "C-17",
+   "text": "Capone was moved to Alcatraz in August 1934 and released from prison on 16 November 1939.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Al_Capone",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "NPS and BOP pages gave no dates (NPS 404; BOP names him without dates)"
+  },
+  {
+   "id": "C-18",
+   "text": "Capone died at home on Palm Island, Miami Beach, Florida, on 25 January 1947.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Al_Capone",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": ""
+  },
+  {
+   "id": "C-19",
+   "text": "In March 1930 Capone was listed as 'Public Enemy #1' on the Chicago Crime Commission's widely publicised unofficial list.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Al_Capone",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "Wikipedia Capone: March 1930 (a week after his release). The creator's report says 'early 1930'; April 1930 is also commonly cited but I found no source for April: use 'in 1930' in speech unless a primary-tier source is opened"
+  },
+  {
+   "id": "C-20",
+   "text": "Capone sponsored a soup kitchen during the Depression (a photo caption dates one to February 1931).",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Al_Capone",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "Wikipedia: during the Depression, photo caption Feb 1931; the report's 'Nov 1930' is unsourced here: say 'during the Depression'"
+  },
+  {
+   "id": "C-21",
+   "text": "IRS agent Frank J. Wilson, sent by Elmer Irey in May 1930, found a ledger line 'Frank paid $17,500 for Al' in fall 1930 and traced the bookkeeper (Leslie Shumway) who testified.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Frank_J._Wilson",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "Wikipedia Frank J. Wilson, read first-hand. The Hawthorne Smoke Shop 1926 raid is not in that article (report's 'Hawthorne Hotel' looks wrong; search summaries say smoke shop): unverified. Indictment counts differ (Wilson article 23 counts, a search summary 22): do not give a number"
+  },
+  {
+   "id": "C-22",
+   "text": "Newsreel coverage amplified Capone's public image.",
+   "tier": "community",
+   "label": "community",
+   "source": "none",
+   "verified": false,
+   "note": "no newsreel mention found in the pages read; unverified"
+  },
+  {
+   "id": "C-23",
+   "text": "Genco Pura Olive Oil Company is the main legal front of Vito Corleone's syndicate.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Vito_Corleone",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "fictional character page"
+  },
+  {
+   "id": "C-24",
+   "text": "Vito refuses Sollozzo's offer to back heroin trafficking because the politicians and judges on his payroll would turn against him.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Vito_Corleone",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": ""
+  },
+  {
+   "id": "C-25",
+   "text": "Vito dies of a heart attack on 29 July 1955 playing with his grandson in his garden.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Vito_Corleone",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": ""
+  },
+  {
+   "id": "C-26",
+   "text": "The pursuit of casinos (Moe Greene stonewalling) is Michael Corleone's effort, not Vito's; the page does not name Nevada.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Vito_Corleone",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "Nevada/Las Vegas setting comes from the films and is unverified here"
+  },
+  {
+   "id": "C-27",
+   "text": "A phone camera that makes every act public plays the role the newsreel and press played for Capone.",
+   "tier": "inference",
+   "label": "speculation",
+   "source": "none",
+   "verified": false,
+   "note": "inference from C-19, C-20; may also use Capone's 1930 'Public Enemy' listing"
+  },
+  {
+   "id": "C-28",
+   "text": "The 1930s Shelby: elected MP in 1927 (constituency not confirmed; 'Birmingham South' not found); Series 5 runs 1929, Series 6 from December 1933; he uses information (Jessie Eden, false information fed to Billy Grade) but also arranges an assassination attempt on Mosley, murders the Barwell family and trades opium; no public 1930s gunfight is described.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Tommy_Shelby",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "Wikipedia Peaky Blinders and Tommy Shelby articles (first 100k characters); 'wins by data with no gunfire' is therefore our inference, not canon: a Shelby in public gunfights would be out of 1930s character, but 'never violent' would be wrong"
+  },
+  {
+   "id": "C-29",
+   "text": "Take-Two's 2025-05-06 Trailer 2 release gave 'May 26, 2026' as the launch date; later releases moved it to November 19, 2026.",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://ir.take2games.com/node/31186",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "history of the date only"
+  },
+  {
+   "id": "C-30",
+   "text": "Official trailer 1 shows civilians filming crimes on phones with short-form-video-style overlays.",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/videos/rkoCtr1r",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "the page confirms only the title 'Grand Theft Auto VI - Trailer 1'; the footage was not watched by me. The script may call 'filming civilians' OFFICIAL only after a person watches the trailer privately (ER-19) and records timestamps; until then it is 'reported in the creator's research'"
+  },
+  {
+   "id": "C-31",
+   "text": "Take-Two filed DMCA subpoenas on 2026-08-20 in the Southern District of New York against Microsoft and Discord to identify the 'CyberLeek' leaker.",
+   "tier": "secondary",
+   "label": "reported_leak",
+   "source": {
+    "url": "https://videogameschronicle.com/news/take-two-files-subpoenas-to-microsoft-and-discord-in-hunt-for-gta-6-leaker/",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "press report about the leak case, not leaked content; IGN's article not opened; no leaked material is used (ER-17)"
+  },
+  {
+   "id": "C-32",
+   "text": "GRAND THEFT AUTO is a US registered mark of Take-Two Interactive Software (reg 4321159, serial 85713489, registered 2013-04-16, renewal accepted 2023-10-06).",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://www.trademarkia.com/grand-theft-auto-85713489",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "mirror of USPTO data; plain-text use only (ER-19, ER-20)"
+  },
+  {
+   "id": "C-33",
+   "text": "GRAND THEFT AUTO VI (serial 98298472, filed Dec 2023, marked abandoned Apr 2026, revived in 8 days), VICE CITY (serial 78842346), a WWE abandoned 'Vice City' application and a 'Leonidas Keys' typo registration exist.",
+   "tier": "community",
+   "label": "community",
+   "source": "none",
+   "verified": false,
+   "note": "uspto.report returned 403; not verified; no USPTO row was found by the creator's report for Bleeter, LifeInvader, BAWSAQ or LCN (absence of what was searched only)"
+  },
+  {
+   "id": "C-34",
+   "text": "Rockstar's posting policy (updated 2025-01-10 per the report) allows non-commercial uses without spoilers, takes down leaked footage, isolated cinematics, spoiler edits, isolated in-game entertainment and cheat/mod-menu content, and says nothing about custom monetised 2D animation.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://support.rockstargames.com/articles/200153756/Policy-on-posting-copyrighted-Rockstar-Games-material",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "503 on every attempt, not read first-hand; RK-02 stays REVIEW"
+  },
+  {
+   "id": "C-35",
+   "text": "Illinois (765 ILCS 1075): post-mortem publicity right lasts 50 years, only for deaths after 1 Jan 1999, with exemptions for original films, books and other non-advertising works. Capone died in 1947, so this statute's post-mortem term does not reach him.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://www.rightofpublicityroadmap.com/state_page/illinois/",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "secondary summary; statute not read; not legal advice"
+  },
+  {
+   "id": "C-36",
+   "text": "Florida Stat. 540.08: 40 years post-mortem; Tyne v. Time Warner (Fla. 2005) limited 'commercial purpose' to uses that directly promote a product or service and found a motion picture use not commercial. Capone died in 1947 (in Florida), beyond that term.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://www.rightofpublicityroadmap.com/state_page/florida/",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "secondary summary; statute not read; not legal advice"
+  },
+  {
+   "id": "C-37",
+   "text": "'Burger Sohne AG' owns USPTO reg 1131459 'AL CAPONE' for tobacco goods; no estate enforcement found.",
+   "tier": "community",
+   "label": "community",
+   "source": "none",
+   "verified": false,
+   "note": "uspto.report company page 403; unverified"
+  },
+  {
+   "id": "C-38",
+   "text": "Vito's details by novel chapter: Genco Pura (ch. 9), Sollozzo refusal (ch. 1), death in the tomato garden 1955 (ch. 31).",
+   "tier": "community",
+   "label": "community",
+   "source": "none",
+   "verified": false,
+   "note": "chapter numbers not opened: unverified; the film-character facts are C-23..C-25"
+  },
+  {
+   "id": "C-39",
+   "text": "The real Peaky Blinders were a Birmingham urban youth gang active from the 1880s to the 1920s; the Shelbys are fictional.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Peaky_Blinders_(TV_series)",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "Wikipedia ('loosely based'); the report's 1890s-1910s per historian Carl Chinn was not opened: unverified"
+  },
+  {
+   "id": "C-40",
+   "text": "Peaky Blinders: The Immortal Man, set a few years after the series finale, was released in cinemas on 6 March 2026 and on Netflix on 20 March 2026 with Cillian Murphy as Tommy.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://en.wikipedia.org/wiki/Peaky_Blinders_(TV_series)",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "the 1930s-Shelby choice avoids the film's content"
+  },
+  {
+   "id": "C-41",
+   "text": "Banijay UK acquired Caryn Mandabach Productions (announced 2024-06-06) with the Peaky Blinders franchise rights.",
+   "tier": "secondary",
+   "label": "official",
+   "source": {
+    "url": "https://group.banijay.com/wp-content/uploads/2024/06/BanijayUKacquiresCMPProductions.pdf",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "trade outlets in a search summary agree; the Banijay pages returned 503: not first-hand"
+  },
+  {
+   "id": "C-42",
+   "text": "Sega's streaming guidelines require significant new elements and forbid isolated assets, illegal acts and discrimination; Yakuza legal status (1992 Anti-Boryokudan Act, 2011 ordinances, NPA membership lows) is as the report states.",
+   "tier": "community",
+   "label": "community",
+   "source": "none",
+   "verified": false,
+   "note": "support.sega.com returned 403; none of the Japanese-law items was opened: unverified"
+  },
+  {
+   "id": "C-43",
+   "text": "Boobie Ike, Brian Heder, Raul Bautista and Only Raw Records are not on Rockstar's pages; wanted system, money, crypto, laundering and legacy brands (eCola, Sprunk, LifeInvader, Bleeter, BAWSAQ, LCN, Lester, Weston) have nothing official for VI.",
+   "tier": "primary_read",
+   "label": "community",
+   "source": {
+    "url": "https://www.rockstargames.com/VI",
+    "accessed": "2026-10-17"
+   },
+   "verified": true,
+   "note": "absence on the one page read; items are community/leak-derived and may be used only as labelled 'reported' or speculation"
+  },
+  {
+   "id": "C-44",
+   "text": "Our rating of Capone (opinion): Brutality 5, Adaptability 1, Tech-Savviness 1, Intimidation 4, Chaos Management 2. Reasons: public reputation for violence (opinion); his business and fame were tied to one city and to paper records (ledger line, C-21); no phone-era skills exist in the record. After the test (S30), our rating of Capone's Intimidation drops from 4 to 2: a public face leaves a trail (C-21, C-27).",
+   "tier": "inference",
+   "label": "speculation",
+   "source": {
+    "url": "https://github.com/vano1919/explainer-engine/blob/main/jobs/syndicate_wars/claim_map.md",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "The star values are the creator's; the reasons are ours. Said on screen and in narration as 'our rating'."
+  },
+  {
+   "id": "C-45",
+   "text": "Our rating of Vito Corleone, film-era Don (opinion): Brutality 2, Adaptability 2, Tech-Savviness 1, Influence/Networking 5, Strategy 4. Reasons: power from favours, judges and politicians and his refusal of the heroin deal (C-24); Genco Pura Olive Oil as the legal import front (C-23). After the test (S30), our rating of Vito's Influence drops from 5 to 3 once outside his circle (C-24, our inference).",
+   "tier": "inference",
+   "label": "speculation",
+   "source": {
+    "url": "https://github.com/vano1919/explainer-engine/blob/main/jobs/syndicate_wars/claim_map.md",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "Star values are the creator's; reasons from C-23, C-24."
+  },
+  {
+   "id": "C-46",
+   "text": "Our rating of the invented Yakuza boss (opinion, invented character): Brutality 4, Adaptability 4, Tech-Savviness 4, Discipline 5, Chaos Management 2. The character, his name and his corporate play are invented by us; 'the stock-market way of GTA V' refers to the stock market in GTA V (C-11). After the test (S30), our rating of the invented boss's Discipline goes from 5 to 4 (the street is not a boardroom).",
+   "tier": "inference",
+   "label": "speculation",
+   "source": {
+    "url": "https://github.com/vano1919/explainer-engine/blob/main/jobs/syndicate_wars/claim_map.md",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "Fully invented; no real group or real person; no Japanese-law claim is made (C-42 unverified)."
+  },
+  {
+   "id": "C-47",
+   "text": "Our rating of Tommy Shelby, 1930s (opinion): Brutality 3, Adaptability 5, Tech-Savviness 5, Intelligence/Strategy 5, Influence 4. Reasons: information and politics (MP, false information fed to a rival) but also violence and opium trade (C-28); Tech-Savviness is relative to his era and our guess for a modern city. After the test (S30), our rating of Shelby's Strategy goes from 5 to 4 (certainty is a blind spot, our inference).",
+   "tier": "inference",
+   "label": "speculation",
+   "source": {
+    "url": "https://github.com/vano1919/explainer-engine/blob/main/jobs/syndicate_wars/claim_map.md",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "Star values are the creator's; reasons from C-28."
+  },
+  {
+   "id": "C-48",
+   "text": "The scenario is invented: four bosses from different eras placed in Leonida's Vice City. Rockstar gives no in-game year (C-04), so the year is our assumption.",
+   "tier": "inference",
+   "label": "speculation",
+   "source": {
+    "url": "https://github.com/vano1919/explainer-engine/blob/main/jobs/syndicate_wars/claim_map.md",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "Said plainly in the narration."
+  },
+  {
+   "id": "C-49",
+   "text": "The 'Florida-style' comic inserts are fully invented: no real incident, person or headline.",
+   "tier": "inference",
+   "label": "speculation",
+   "source": {
+    "url": "https://github.com/vano1919/explainer-engine/blob/main/jobs/syndicate_wars/claim_map.md",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "ER-15."
+  },
+  {
+   "id": "C-50",
+   "text": "In GTA V, the wanted level (stars) rises when the police witness a crime.",
+   "tier": "community",
+   "label": "community",
+   "source": {
+    "url": "https://github.com/vano1919/explainer-engine/blob/main/jobs/syndicate_wars/claim_map.md",
+    "accessed": "2026-10-17"
+   },
+   "verified": false,
+   "note": "general franchise knowledge, not opened in this run; spoken only as 'In GTA V'; nothing about the wanted level of the new game is stated (C-43)."
+  }
+ ],
+ "dropped": [
+  {
+   "what": "rows sourced to 'The GTA VI Document v1.6'",
+   "why": "leaked material, RR-10 and ER-17"
+  },
+  {
+   "what": "dokumen.pub and scribd copies",
+   "why": "pirated or unattributable hosts, ES-19"
+  },
+  {
+   "what": "tags from gtavispot.com, leonidaverse.com, gtaintel, fandom wikis",
+   "why": "community tier only; none is the sole source of a claim"
+  },
+  {
+   "what": "press-tagged leak items (outlets named in the report)",
+   "why": "outlets not opened; kept out of the map or marked unverified (C-10)"
+  }
+ ],
+ "not_opened": [
+  "support.rockstargames.com fan-content policy (503 twice)",
+  "rockstargames.com newswire release-date article (index only)",
+  "Britannica Al Capone (403)",
+  "fbi.gov Capone (403)",
+  "nps.gov Capone page (404)",
+  "gtavispot.com, leonidaverse.com, gtaintel, fandom wikis (not needed, community)",
+  "outlets behind leak-tagged items",
+  "support.rockstargames.com policy and PC mods pages (503, three attempts)",
+  "uspto.report GRAND THEFT AUTO VI and Al-Capone-Inc pages (403)",
+  "gtavice.net abandoned-application article, IGN subpoena article, bitget LifeInvader article, Banijay pages, support.sega.com (not opened or 403/503)",
+  "Britannica, FBI (403 earlier)"
+ ],
+ "script_use": {
+  "official_lines_allowed": [
+   "C-01",
+   "C-02",
+   "C-03",
+   "C-04",
+   "C-05",
+   "C-29"
+  ],
+  "official_only_after_trailer_watch": [
+   "C-30"
+  ],
+  "everything_else": "say 'GTA V's version of...', 'reported', 'community speculation' or 'our inference'; never 'confirmed for Leonida'"
+ },
+ "other_checks": {
+  "youtube_edsa": "B-15 (read first-hand) says exceptions for educational, documentary, scientific or artistic context must come from the video itself and states no fiction exception; the report's unopened version does not override it",
+  "georgian_article_23": "unopened; B-08 stays unverified",
+  "free_assets": "Kevin MacLeod, White Bat Audio, Google Fonts SIL OFL, Game-icons.net CC BY, Epidemic Sound and Artlist (paid): all unverified; Content ID false-claim risk on CC0 tracks; no track chosen; licence per track required (ES-09, RK-14)",
+  "canva": "the creator read and accepted Canva's terms (baseline channel.canva_terms_verified true, D-47); no clause quoted"
+ }
+}

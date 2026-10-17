@@ -20,9 +20,9 @@ def world():
     return resolver.resolve(SPEC)
 
 
-def test_codex_has_twelve_eras_and_every_grade_exists():
+def test_codex_has_thirteen_eras_and_every_grade_exists():
     c = resolver.load_codex()
-    assert len(c["eras"]) == 12
+    assert len(c["eras"]) == 13  # the 12 history/science eras + modern_neon_florida (Syndicate Wars, 2026-10-17)
     assert all(e["grade"] in c["grades"] for e in c["eras"].values())
 
 
@@ -111,3 +111,11 @@ def test_story_state_not_yet():
     bad = prompt_v2.lint(p + ", a small campfire burns", w, beat=1)
     assert any(f["rule"] == "UR-27" for f in bad)
     assert prompt_v2.lint(prompt_v2.compose("A", "a camp", w, 3), w, beat=3) == []
+
+
+def test_modern_neon_florida_era_resolves_and_keeps_franchise_names_out_of_prompts():
+    c = resolver.load_codex()
+    w = resolver.resolve({"topic": "t", "host": {"era": "modern_neon_florida", "place": "p", "when": "w"},
+                          "visitors": [], "day_arc": [{"beat": 1, "light": "neon_dusk"}]})
+    assert w["grade"] == "neon_dusk" and "neon_dusk" in c["grades"]
+    assert resolver.words_in("a Rockstar skyline, GTA logo", w["absent"]) == ["gta", "rockstar"]

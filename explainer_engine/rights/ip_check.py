@@ -48,7 +48,8 @@ def check(manifest: dict) -> list[dict]:
         return findings  # the rules apply only to episodes about someone else's fiction
 
     required = ("franchises", "purpose", "third_party_media", "quotes", "narration_words", "recap_words", "art",
-                "fan_theories", "thumbnail", "description_has_unofficial_note", "uses_leaks")
+                "fan_theories", "thumbnail", "description_has_unofficial_note", "uses_leaks",
+                "commentary_target", "official_images_as_generator_input", "merch_or_product_use")
     missing = [k for k in required if k not in manifest]
     for key in missing:
         add("missing_field", "contract", "FAIL", f"franchise episode needs '{key}'")
@@ -107,7 +108,14 @@ def check(manifest: dict) -> list[dict]:
     if not manifest["description_has_unofficial_note"]:
         add("unofficial_note", "RR-08", "FAIL", f"description must carry: \"{UNOFFICIAL_NOTE}\"")
     if manifest["uses_leaks"]:
-        add("leaks", "RR-10", "FAIL", "leaked, unaired or pirated material used as a source")
+        add("leaks", "RR-10", "FAIL", "leaked, unaired or pirated material (not just leaked information) used as a source")
+    if len(manifest["commentary_target"].split()) < 8:
+        add("commentary_target", "RR-14", "FAIL", "name what the episode says ABOUT the source work (one full sentence): "
+            "a story that only places its characters in a new adventure is a commercial derivative (V-38)")
+    if manifest["official_images_as_generator_input"]:
+        add("generator_input", "RR-15", "FAIL", "an official screenshot or key art was used as an image input to a generator")
+    if manifest["merch_or_product_use"]:
+        add("merch", "RR-16", "FAIL", "an invented parody brand or the franchise name is used on merchandise, an app or a product")
     return findings
 
 

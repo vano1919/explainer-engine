@@ -6,6 +6,10 @@ TMR repository (read-only, `vano1919/tmr-video-script-engine@d88ba8f`): `render/
 
 ## Who makes what
 
+**Current routing (D-46, 2026-10-17):** every picture is painted by Gemini on the batch tier (`production/paint.py`, tiers in
+`imagegen/routing.py`); narration, music and sound effects come from ElevenLabs only. The pod and Z-Image rows below are kept as
+history of D-19/D-36; they are no longer used.
+
 | Part of the video | Tool | Why | Cost | Evidence |
 |---|---|---|---|---|
 | Mascot pose and expression kit (made once, kept in the library) | Gemini image (`gemini-3.1-flash-image`), on a flat green background, keyed to RGBA | identity asset (D-19); the creator's references were made with Gemini; Gemini can keep one character from a reference picture | list price $0.067 (1K) / $0.101 (2K) per picture, checked 2026-10-08 in TMR, re-check before the first call | TMR keyed Gemini owls from flat green (`owl_pair.key_green`: corner-measured green, despill, 0.8 px edge blur) |

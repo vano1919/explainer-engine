@@ -17,6 +17,10 @@ enforces the money and stop rules is `explainer_engine/core/ledger.py`. Gates of
 | OR-06 | **No pod without a spoken yes.** A pod needs the creator's approved price and time cap for that pod, `rp.py guard`, and a sweep before and after. A cap or a surprise near 80 % stops acting and waits. | TMR money rules |
 | OR-07 | **Look at the output.** Every phase ends by opening what it made (contact sheet, listening to chunk joins, a sample frame) and writing one line of evidence in the report, never only "tests pass". | report |
 | OR-08 | **Morning report.** One short Georgian message: files and links, minutes, credits and dollars per service against the caps, balances read, what failed and what was fixed, what needs the creator. | orchestrator |
+| OR-10 | **One episode rulebook binds every step.** After the topic and format are known the `episode-standards-director` writes `episode_rules.json` (provisional), finalises it before the script is committed, and the orchestrator passes `python -m explainer_engine.standards brief <rules> --role <role>` to research, script, voice, image, music, sound, edit, metadata and QA; no step invents its own legal policy, licence assumption or art direction; conflicts come back to the orchestrator, which decides or asks the creator. | `standards/rulebook.py`, [EPISODE_STANDARDS](EPISODE_STANDARDS.md) ES-18 |
+| OR-11 | **Rechecks at the irreversible steps.** The rulebook gate runs at `script_lock`, before any paid or high-cost generation (`paid_assets`) and at `final_qa`; a changed script or rulebook re-checks only the affected rules and stamps again; a BLOCK or an undecided REVIEW stops that step, not the whole episode. | `standards gate`/`stamp` (ES-16), `production/paint.py`, `production_gate` |
+| OR-12 | **Every executor has a contract** (table below): it receives the slice of the plan it executes (shot, line, sound event), the rulebook brief for its role, references and limits, and returns its output with provenance; it never invents another scene, voice direction or art direction. | this table, `standards brief` |
+| OR-13 | **Code before prose.** A rule that can be checked by code is checked by code: schemas, validators (PV, ES, ENG, HY), the run ledger, and the PreToolUse hook on the ElevenLabs connector (`.claude/settings.json`). | tests |
 | OR-09 | **Update the repo first.** A creator note becomes a rule, a check or a skill line, with a test where it can be tested, before the next production phase uses it. | feedback log |
 
 ## Series structure (SR-xx) for time-jump episodes ("what happens after a day, a week, a month, a year, 10 years, 100 years")
@@ -40,6 +44,18 @@ enforces the money and stop rules is `explainer_engine/core/ledger.py`. Gates of
 | SH-02 | A Short has its own text and script (`shorts` block of the production script); its voice is the episode's voice; pace may be raised by at most 8 % only when the timbre check passes, otherwise left as it is. |
 | SH-03 | Pictures are the video's pictures, cropped to 9:16 around the named heroes and the action (the crop centre is set per shot); faces are never cut. |
 | SH-04 | Each Short opens with a fact or a "did you know" that is true and sourced by the claim map. |
+
+## Executor contracts (OR-12)
+
+| Executor | Inputs and source of truth | Tools and models | Output | Constraints and checks | Budget and failure limits | Returns |
+|---|---|---|---|---|---|---|
+| research (skill `science-grounding`) | topic, rulebook brief `research` | web search and fetch, vidIQ within cap | claim map, `story_hypotheses.json` | sources dated, labels established/model/reasoned/guess; HY-0..HY-4 | vidIQ cap in the ledger | URLs, access dates, what was not verified |
+| script (skills `narration-script`, `time-jump-episode`, `crossover-episode`) | selected hypothesis, claim map, brief `script` | none paid | `production_script.json` | PV-01..PV-35, narration lint, engagement gate | free | validator output |
+| voice (skill `elevenlabs-voice`) | the script's chunks (`tts_chunks.json`), brief `voice` | ElevenLabs `eleven_v4`, one take | read files in the episode folder | EL-01..EL-12, hook, `voice_check`, coverage >= 97 % | estimate first; ledger cap; 3 failures stop a chunk | credits per chunk, files, checks |
+| image (`production/paint.py`, skill `shot-visuals`) | the shot's picture spec (subject, heroes, props, refs, tier), compiled prompt, brief `image` | Gemini batch tier only (D-46) | PNG per picture id | PV-05..PV-11, PV-26, PV-33, visual judge, contact sheet by eye | ledger cap, stop at 80 %; repaint at most twice | batch name, cost, file per id |
+| music and sound (`audio/sfx_library.py`, AUDIO_SYSTEM) | the script's audio events with purpose, brief `music`/`sound` | library first; ElevenLabs `eleven_music_v2_5`, `eleven_text_to_sound_v2`, one take | library record per asset | PV-29, PV-34, licence record (ES-09), `qa/targets.py` | estimate first; hook | prompt, model, parameters, duration, cost, licence basis |
+| edit and mix (`production time`/`assemble`, skills `editing-style`, `video-editing-architect`) | timed script from the real read | ffmpeg, our code | preview, final video | ED-01..ED-12, PV-20..PV-31, `qa/targets.py` | free | measurements, frames and joins looked at |
+| metadata and QA | final video, rulebook, claim map | vidIQ within cap | metadata draft, QA report | Q-T, Q-E, `standards gate --at final_qa`, disclosure `upload_action` | vidIQ cap | report; nothing uploaded |
 
 ## Money ledger of a run
 `jobs/<run>/run.json` holds caps, reservations, paid items and failures; the dollar and credit totals of the report are read from
