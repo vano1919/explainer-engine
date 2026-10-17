@@ -3326,17 +3326,6 @@
      "at": "Every. Day.",
      "type": "A",
      "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.07
-     },
-     "picture": "w1_camp_wide",
-     "reuse": "reframe"
-    },
-    {
-     "at": "Luckily, wild",
-     "type": "A",
-     "motion": {
       "kind": "pan",
       "z0": 1.06,
       "z1": 1.06,
@@ -4409,14 +4398,15 @@
      "picture": "m1_smoke_ridge"
     },
     {
-     "at": "Somebody else",
-     "type": "B",
+     "at": "Not theirs.",
+     "type": "A",
      "motion": {
       "kind": "push",
       "z0": 1.0,
-      "z1": 1.06
+      "z1": 1.07
      },
-     "picture": "m1_hunters_ridge"
+     "picture": "m1_smoke_ridge",
+     "reuse": "reframe"
     },
     {
      "at": "Hunters have",
@@ -5131,6 +5121,17 @@
       "z1": 1.06
      },
      "picture": "y1_school"
+    },
+    {
+     "at": "So ten",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "y1_school",
+     "reuse": "reframe"
     }
    ],
    "audio": {
@@ -5325,6 +5326,17 @@
       "dx": 0.05
      },
      "picture": "y10_furnace"
+    },
+    {
+     "at": "and blow",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "y10_furnace",
+     "reuse": "reframe"
     },
     {
      "at": "Hours later",

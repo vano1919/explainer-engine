@@ -56,6 +56,7 @@ def join_reads(audio: list[Path], wav: Path, gap_s: float = 0.3) -> None:
         ins += ["-i", str(p)]
         parts.append(seams.chain(k, p, rep["gains_db"][k], gap_s))
     join_reads.report = rep
+    graph = ";".join(parts) + ";" + "".join(f"[a{k}]" for k in range(len(audio))) + f"concat=n={len(audio)}:v=0:a=1[out]"
     subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", graph, "-map", "[out]", "-ar", "48000", str(wav)],
                    check=True)
 
