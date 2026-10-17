@@ -473,3 +473,4 @@ existed before remain (sound-library WAVs not in the repository). docs_lint 0.
 Not done: no new episode produced (the topic is not chosen); the Shorts renderer's export settings and BT.709 tagging are not yet
 measured against Q-T19; the creator's ElevenLabs plan (music media rights, V-28) and country of residence are still to confirm.
 Update (same day): the creator confirmed ElevenLabs plan Creator, residence Georgia, target audience US: recorded in `policy_baseline.json` `channel`, EPISODE_STANDARDS section 5, AUDIO_SYSTEM, D-46.
+Update (same day): content language fixed by the creator: everything the audience sees or hears is English; Georgian only for chat with the creator (`channel.content_language`, CLAUDE.md). Likeness: recognisable archetype allowed, no real actor's face. Crossover topic received (four bosses in GTA 6 Leonida): rulebook started by `episode-standards-director`, nothing produced.

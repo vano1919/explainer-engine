@@ -278,4 +278,5 @@ def test_the_new_agent_and_docs_are_wired():
 def test_channel_defaults_are_confirmed_and_match_the_default_jurisdictions():
     ch = R.baseline()["channel"]
     assert ch["jurisdictions"] == ["US", "GE"] and ch["audience_market"] == "US" and ch["elevenlabs_plan"] == "Creator"
+    assert ch["content_language"] == "en" and ch["creator_chat_language"] == "ka"
     assert set(ch["jurisdictions"]) <= set(rules()["jurisdictions"]["relevant"])

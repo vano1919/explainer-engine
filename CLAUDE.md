@@ -45,7 +45,8 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 `python -m explainer_engine.production_gate <episode folder>` to see the gates (script, test read, shot plan, style bridge,
 sprites, pictures, full read, render, QA). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures
 show). Entertainment first, facts second; stakes and named heroes in every frame; one drawn world; limits computed from
-measured speeds; every paid step estimated and approved first; look at the output before reporting it; reply in Georgian.
+measured speeds; every paid step estimated and approved first; look at the output before reporting it; reply to the creator in Georgian.
+**Language (creator, 2026-10-17):** Georgian is only for talking to the creator. Everything the viewer sees or hears (narration, on-screen text, picture prompts, titles, metadata, Shorts) is English for the US audience; never ask again.
 
 **Episode rulebook (D-45):** every new episode gets `episode_rules.json` from the `episode-standards-director` agent
 (`docs/EPISODE_STANDARDS.md`, ES-xx): rules with dated sources and their kind (law, platform policy, provider terms, invariant,

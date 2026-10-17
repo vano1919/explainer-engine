@@ -129,6 +129,8 @@
     "creator_residence": "GE",
     "audience_market": "US",
     "platform": "YouTube",
+    "content_language": "en",
+    "creator_chat_language": "ka",
     "jurisdictions": [
       "US",
       "GE"
