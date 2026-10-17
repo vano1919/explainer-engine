@@ -42,3 +42,23 @@ One style per beat, at most three transition kinds in the whole video: cut, diss
 
 Study the cut (frames on both sides of three joins, a listen to three chunk joins), ask the creator what is unclear, update the
 rules and this skill, then produce. A creator note becomes a rule with a test before the next render (OR-09).
+
+## Show the logic, not only the story (creator 2026-10-17)
+
+The video must look like there is a calculation and a logic behind it, not like a sleep-story. Each period gets at least one data
+visual (ED-10), in this order of preference:
+
+| Visual | Use for | Example from Episode 1 |
+|---|---|---|
+| Counter / ticker | one number that grows | 100 adults x 2,500 kcal = 250,000 kcal a day |
+| Bar pair (before / after) | a bottleneck solved | grain: 2 kg an hour of cutting vs 75 kg needed a day |
+| Line or step chart | change over time | colony size, tools, pots across the periods |
+| Ledger / table of 3-5 rows | who does what | jobs of the 100 and their output |
+| Timeline strip | where we are, what came first | Day 1 to Year 100 with the real record under it |
+| Two-column comparison | the verdict | our group vs real history, the same milestone each row |
+| Map / flow arrow | supply chains (tin, iron) | tin from far away to the furnace |
+
+Rules: numbers only from the claim map; each visual has one sentence of narration that says what to look at; build it with a pop
+(0.6-1.0 s), hold 3-7 s; hand-drawn look; do not stack a chart on the speech bubble; the period card (ED-09) comes first, the
+visual after the first explanation, never in the first 5 s of a period. Voice and cut are the main work; visuals, music and
+texture are bonuses that must never hurt them (ED-11).

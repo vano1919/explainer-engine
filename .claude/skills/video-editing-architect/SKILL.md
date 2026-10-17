@@ -76,6 +76,14 @@ Rule of three: at most three transition kinds in one video `[ours: cut, dissolve
 - **Contrast**: text luminance contrast of at least 4.5:1 against what is behind it; use drop shadow (offset 2-4 px, blur 6-12 px, 60-70% black) or a blurred box (30-50% black, 12-24 px blur, 8-12 px radius). Test on the brightest frame under the text.
 - **Mobile size**: caption cap height at least 4% of frame height (about 43 px on 1080 tall); body text never below 36 px at 1080p.
 
+### 2.3b Data visuals and period cards
+
+- A period or chapter card: 3-4 s, big title (cap height 8-12% of the frame), one short line under it, a progress strip; the previous
+  sentence's sound rings 0.3-0.5 s into the card; a soft whoosh or low tone, never a boom in calm genres.
+- Charts/counters: build 0.6-1.0 s with a pop, hold 3-7 s, at most 6 marks, label height at least 4% of the frame, one idea each,
+  numbers from a sourced list only. A counter that adds up a calculation on screen ("100 x 2,500 = 250,000") convinces more than a
+  finished chart: let the viewer watch the sum happen.
+
 ### 2.4 B-roll and visual fillers
 
 - Choose B-roll by **meaning, not decoration**: it must show the noun or the action in the sentence being said, within 0.3 s of the word.
