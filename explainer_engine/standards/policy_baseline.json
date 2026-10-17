@@ -122,6 +122,52 @@
       "verified": true,
       "url": "https://support.google.com/youtube/answer/6154218",
       "statement": "YouTube trademark policy: use likely to cause confusion about the source is not allowed."
+    },
+    {
+      "id": "B-14",
+      "kind": "provider_terms",
+      "checked": "2026-10-17",
+      "verified_in": "V-33",
+      "verified": false,
+      "url": "https://support.rockstargames.com/articles/200153756/Policy-on-posting-copyrighted-Rockstar-Games-material",
+      "statement": "Rockstar/Take-Two policy on posting copyrighted Rockstar material (per search-result summary, page itself returned 503 on 2026-10-17, last updated 2025-01-10 per the summary): non-commercial fan use that does not spoil the plot is tolerated and machinima is welcomed; 'non-commercial' means no money made through the posted game footage; film, TV, streaming, ads and similar exploitation are outside the policy and need a licence request; Take-Two may take material down at any time. NOT read first-hand: re-read before paid_assets."
+    },
+    {
+      "id": "B-15",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-34",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/9229472",
+      "statement": "YouTube violent criminal organizations policy: content that praises, promotes or aids criminal organizations, recruits for them, or uses their insignia to praise them is not allowed; exceptions may be made for educational, documentary, scientific or artistic context that the video itself provides; no fictional-content exception is stated."
+    },
+    {
+      "id": "B-16",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-35",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/6162278",
+      "statement": "YouTube advertiser-friendly guidelines: violence is unsuitable when blood or injury is the focal point without context; artistic, documentary or educational framing helps; mild violence and non-graphic injury can earn ads; glorification or incitement earns none; graphic game violence in the thumbnail or first seven seconds can lose ad eligibility; documentaries about crime are fully eligible. No update date shown on the page."
+    },
+    {
+      "id": "B-17",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-36",
+      "verified": false,
+      "jurisdiction": "US",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=3344.1",
+      "statement": "California Civil Code 3344.1 (post-mortem right of publicity): 70 years after death, covers name, voice, likeness used for commercial gain without consent, transferable; a federal court reading limits it to California domiciliaries. Read only through search-result summaries of secondary pages: the statute page itself was not read. US publicity law is state by state."
+    },
+    {
+      "id": "B-18",
+      "kind": "provider_terms",
+      "checked": "2026-10-17",
+      "verified_in": "V-37",
+      "verified": true,
+      "url": "https://www.rockstargames.com/VI",
+      "statement": "Rockstar's official GTA VI page (read 2026-10-17): 'Coming November 19, 2026' for PlayStation 5 and Xbox Series X|S; setting 'Vice City, USA' in the state of Leonida; protagonists Jason and Lucia; pre-order editions, in-game radio and 'GTAVI: The Album'. The page names no in-game social app, stock exchange or year. Release date reaffirmed in Take-Two's May 2026 report per secondary news (not first-hand). The game is not out on the date of this rulebook."
     }
   ],
   "channel": {
