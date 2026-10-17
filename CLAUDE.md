@@ -58,6 +58,7 @@ Also binding: crossover episodes of other people's fictional worlds follow docs/
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
 Pictures: Gemini batch tier only, tiers draft/standard/premium (`imagegen/routing.py`, D-46; supersedes the 2026-10-11 rule
 and D-36); audio: ElevenLabs for narration and sound effects, music from ElevenLabs or a per-track verified free library (D-46), guarded by the `.claude/settings.json` PreToolUse hook.
+Filler pictures (type A/C, no person, used once, low-stakes beat, at most 30 %) may come from Canva once its terms are verified (D-47, PV-36).
 Main market: US (D-46). Disclosure is decided per video by the checklist (realistic content
 only, YouTube Help 14328491); channel audience "not made for kids".
 

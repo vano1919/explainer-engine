@@ -110,6 +110,14 @@ def jobs(doc: dict) -> tuple[list[dict], dict]:
     return gemini, pod_job
 
 
+def canva_pending(doc: dict) -> list[str]:
+    """Filler pictures (engine canva, PV-36) still to be made by hand in Canva and placed as files."""
+    if "segments" not in doc:
+        return []
+    pics, _ = S.pictures(doc)
+    return [k for k, p in pics.items() if p.get("uses") and not p.get("file") and p.get("engine") == "canva"]
+
+
 def write_outputs(doc: dict, out_dir: Path) -> list[Path]:
     from explainer_engine.core.store import write_json_atomic, write_text_atomic
     out_dir.mkdir(parents=True, exist_ok=True)

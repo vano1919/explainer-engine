@@ -139,6 +139,9 @@ def main(argv: list[str] | None = None) -> int:
     cost = sum(routing.batch_cost(j["tier"], len(j["refs"])) for j in todo)
     print(f"{len(todo)} pictures to paint on the batch tier, estimate ${cost:.3f}; spent so far "
           f"${run.spent('gemini_usd'):.3f} of cap {run.data['caps'].get('gemini_usd')} (stop at 80 %)")
+    pending = C.canva_pending(doc)
+    if pending:
+        print(f"{len(pending)} filler pictures are made by hand in Canva, not painted here (PV-36): {', '.join(pending)}")
     if a.estimate:
         return 0
     if a.collect:

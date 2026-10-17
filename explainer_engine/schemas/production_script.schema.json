@@ -858,8 +858,10 @@
             "existing",
             "gemini",
             "pod_ref",
-            "pod_text"
-          ]
+            "pod_text",
+            "canva"
+          ],
+          "description": "canva: filler pictures only (D-47, PV-36); made by hand in Canva, placed as a file"
         },
         "subject": {
           "type": "string",

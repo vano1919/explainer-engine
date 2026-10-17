@@ -240,3 +240,55 @@ def test_disclosure_follows_declared_ai_uses_and_names_the_upload_action():
     assert [f["severity"] for f in R.check(doc, "final_qa", today=TODAY) if f["check"] == "disclosure_action"] == ["FAIL"]
     doc["platform"]["disclosure"]["upload_action"] = "Studio upload flow, Attributes, AI use: Yes"
     assert not [f for f in R.check(doc, "final_qa", today=TODAY) if f["rule"] == "ES-08"]
+
+
+# --- D-47: filler pictures may come from Canva (PV-36) ---
+
+def _filler_doc(job="explanation"):
+    doc = copy.deepcopy(json.loads(EP1.read_text(encoding="utf-8")))
+    seg = doc["segments"][1]
+    seg["job"] = job
+    pid = "canva_plate_1"
+    doc.setdefault("library", {})[pid] = {"subject": "empty shore at dusk", "engine": "canva", "people": False}
+    seg["shots"][0] = {"at": seg["shots"][0]["at"], "type": "A", "motion": seg["shots"][0]["motion"], "picture": pid}
+    return doc, pid
+
+
+def test_importance_is_computed_and_a_lone_plate_in_an_explanation_is_filler():
+    from explainer_engine.imagegen import importance
+    doc, pid = _filler_doc()
+    assert importance.classify(doc)[pid] == {"filler": True, "why_not": []}
+
+
+def test_importance_cannot_be_declared_by_the_script():
+    from explainer_engine.imagegen import importance
+    doc, pid = _filler_doc(job="reveal")
+    doc["library"][pid]["heroes"] = ["newton"]
+    doc["library"][pid]["filler"] = True      # a self-declared flag is ignored
+    res = importance.classify(doc)[pid]
+    assert not res["filler"] and any("heroes" in w for w in res["why_not"]) and any("reveal" in w for w in res["why_not"])
+
+
+def test_canva_is_refused_until_the_terms_are_verified_and_never_for_important_pictures(monkeypatch):
+    doc, pid = _filler_doc()
+    found = V.canva_findings(doc)
+    assert any(f["rule"] == "PV-36" and "not verified" in f["detail"] for f in found)
+    monkeypatch.setattr(R, "baseline", lambda: {"channel": {"canva_terms_verified": True}})
+    assert not [f for f in V.canva_findings(doc) if f["severity"] == "FAIL"]
+    doc["library"][pid]["heroes"] = ["newton"]
+    assert any(f["where"] == pid and "not filler" in f["detail"] for f in V.canva_findings(doc))
+
+
+def test_canva_share_is_capped_and_other_engines_are_untouched(monkeypatch):
+    monkeypatch.setattr(R, "baseline", lambda: {"channel": {"canva_terms_verified": True}})
+    doc = json.loads(EP1.read_text(encoding="utf-8"))
+    assert V.canva_findings(doc) == []
+    doc, pid = _filler_doc()
+    used = len(S.pictures(doc)[0])
+    assert any("come from Canva" in f["detail"] for f in V.canva_findings(doc)) == (1 / used > 0.30)
+
+
+def test_paint_leaves_canva_pictures_out_of_the_gemini_jobs():
+    from explainer_engine.production import compile as C
+    doc, pid = _filler_doc()
+    assert pid not in [j["id"] for j in paint.jobs_of(doc)] and pid in C.canva_pending(doc)

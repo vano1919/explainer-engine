@@ -90,3 +90,5 @@ bubbles instead of a new picture per sentence (UR-31).
 7. Composite a few B shots (sprite over plate) before accepting the plates: the plate must hold the pose.
 
 **Official game screenshots are private study only (RR-15):** never an image input or reference upload to a generator; describe the look in your own words.
+
+**Filler (D-47):** a type A plate or type C insert with no person, used once, in an explanation, pause, humour or transition beat may be marked `engine: "canva"` (at most 30 %); the script cannot declare importance, `imagegen/importance.py` computes it (PV-36).

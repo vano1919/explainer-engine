@@ -63,6 +63,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-33 | (rulebook-era) painted pictures go to Gemini's batch tier on a tier (D-46); `pod_text` FAIL; `premium` needs `tier_reason`; more than 10 % premium REVIEW |
 | PV-34 | (rulebook-era) every bed and sound event has a `purpose` (REVIEW) |
 | PV-35 | (rulebook-era) every shot has a `purpose` (REVIEW); a spoken number has a claim id (FAIL, invariant 5) |
+| PV-36 | (always) a picture with engine `canva` must be filler by `imagegen/importance.py` (type A or C, no heroes or people, used once, beat job explanation / emotional_pause / humor / transition; never hook, question, evidence, complication, reveal or payoff, never premium); at most 30 % of an episode's pictures; FAIL while `channel.canva_terms_verified` is false; REVIEW above the free plan's about 20 AI uses. The 4-second shot limit is checked after timing, since a script has no shot lengths yet (D-47) |
 
 ## Voice direction
 

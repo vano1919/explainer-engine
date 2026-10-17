@@ -286,6 +286,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
                 _f(out, "PV-28", sh["id"], f"picture {x['picture']!r} is not a picture of the video (SH-03)")
     if doc["episode"].get("rulebook"):  # scripts written to an episode rulebook (D-45/D-46)
         out += rulebook_era_findings(doc)
+    out += canva_findings(doc)
     # PV-12 narration lint on what the voice gets
     for f in narration_lint.lint(S.tts_text(doc)):
         if f["severity"] == "FAIL":
@@ -302,6 +303,33 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
 
 
 NUMBER = re.compile(r"\d")
+
+
+def canva_findings(doc: dict) -> list[dict]:
+    """PV-36 (D-47): a picture may come from Canva only when it is filler, only while the Canva terms are verified, and at
+    most FILLER_SHARE_MAX of the episode's pictures (always checked, a script without a rulebook included)."""
+    from explainer_engine.imagegen import importance
+    from explainer_engine.standards import rulebook
+    pics, _ = S.pictures(doc)
+    used = {k: p for k, p in pics.items() if p.get("uses")}
+    canva = [k for k, p in used.items() if p.get("engine") == "canva"]
+    out: list[dict] = []
+    if not canva:
+        return out
+    if not rulebook.baseline()["channel"].get("canva_terms_verified"):
+        _f(out, "PV-36", "pictures", f"{len(canva)} pictures use engine canva but the Canva AI terms and content licence are "
+           "not verified (policy_baseline channel.canva_terms_verified); paint them on the Gemini batch tier")
+    kinds = importance.classify(doc)
+    for k in canva:
+        if not kinds[k]["filler"]:
+            _f(out, "PV-36", k, "Canva is for filler only; this picture is not filler: " + "; ".join(kinds[k]["why_not"]))
+    if len(canva) / len(used) > importance.FILLER_SHARE_MAX:
+        _f(out, "PV-36", "pictures", f"{len(canva)} of {len(used)} pictures come from Canva (> "
+           f"{importance.FILLER_SHARE_MAX:.0%})")
+    if len(canva) > importance.CANVA_FREE_AI_USES:
+        _f(out, "PV-36", "pictures", f"{len(canva)} Canva pictures exceed the free plan's about "
+           f"{importance.CANVA_FREE_AI_USES} AI uses (V-39)", "REVIEW")
+    return out
 
 
 def rulebook_era_findings(doc: dict) -> list[dict]:
