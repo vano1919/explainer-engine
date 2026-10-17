@@ -497,3 +497,4 @@ retries when the proxy cuts a 57 MB answer (never a POST); `fill_holds.drop_shor
 Stopped: the ElevenLabs connector tools were not loaded in this session (ToolSearch found none), so no voice, music or sound effect exists and no
 real timing, mix, assemble, scorecard or `final_qa` stamp is possible. Not done: Canva fillers (connector absent; all pictures are Gemini), the
 Rockstar fan-content policy page (HTTP 503 on every attempt, not read first-hand), the trailer-1 watch (C-30).
+Update (same day): reviewer notes fixed: s02_history repainted without readable headlines, s23_street repainted with exactly one period-dressed man (one repaint each, US$0.054; total Gemini US$1.849). The ElevenLabs and Canva tools were still not loadable when the run was resumed (ToolSearch: no match), so voice, music, sound effects and everything after them stay open.

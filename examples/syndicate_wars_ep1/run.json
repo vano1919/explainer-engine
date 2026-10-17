@@ -7,7 +7,7 @@
     "runpod_usd": 0
   },
   "spent": {
-    "gemini_usd": 1.7952000000000001
+    "gemini_usd": 1.8489
   },
   "reserved": {
     "batch:s01_skyline+1": {
@@ -33,6 +33,10 @@
     "batch:m21_trend+10": {
       "service": "gemini_usd",
       "amount": 0.2696
+    },
+    "batch:s02_history+2": {
+      "service": "gemini_usd",
+      "amount": 0.0537
     }
   },
   "phases": {
@@ -112,7 +116,7 @@
       },
       "s02_history": {
         "file": "s02_history.png",
-        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+        "batch": "batches/dq39ool22sg8rkbvvcdzcgyokfcuk03hc257"
       },
       "s03_cursor": {
         "file": "s03_cursor.png",
@@ -248,7 +252,7 @@
       },
       "s23_street": {
         "file": "s23_street.png",
-        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+        "batch": "batches/dq39ool22sg8rkbvvcdzcgyokfcuk03hc257"
       },
       "s24_proxy": {
         "file": "s24_proxy.png",

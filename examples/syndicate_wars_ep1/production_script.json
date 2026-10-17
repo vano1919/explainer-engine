@@ -429,11 +429,11 @@
      "picture": {
       "id": "s02_history",
       "engine": "pod_ref",
-      "subject": "tight insert, an old yellowed newspaper page with blurred headlines of no readable words and a rubber stamp mark, resting under a brass lamp, a single warm desk lamp, amber pool of light, deep teal shadows",
+      "subject": "tight insert, an old yellowed newspaper page whose headlines and columns are only grey bars and loose scribble, no letters or words at all, with a round rubber stamp mark made of plain rings, resting under a brass lamp, a single warm desk lamp, amber pool of light, deep teal shadows",
       "refs": [
        "s01_skyline"
       ],
-      "prompt": "tight insert, an old yellowed newspaper page with blurred headlines of no readable words and a rubber stamp mark, resting under a brass lamp, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+      "prompt": "tight insert, an old yellowed newspaper page whose headlines and columns are only grey bars and loose scribble, no letters or words at all, with a round rubber stamp mark made of plain rings, resting under a brass lamp, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
      "purpose": "A tactile cue for what is real history",
      "motion": {
@@ -2339,7 +2339,7 @@
      "picture": {
       "id": "s23_street",
       "engine": "pod_ref",
-      "subject": "a lean man in a long dark overcoat and flat cap walking through a neon street full of people filming with phones, none of them looking at him, he moves with perfect calm, hot neon pink and cyan signs against a soft sunset-orange sky",
+      "subject": "exactly one man, the only one dressed in old-fashioned clothes, walking through a neon street full of ordinary modern people in casual clothes filming with phones, none of them looking at him, he moves with perfect calm, hot neon pink and cyan signs against a soft sunset-orange sky",
       "heroes": [
        "shelby"
       ],
@@ -2348,7 +2348,7 @@
        "s01_skyline"
       ],
       "costume": "1930s wool overcoats and three-piece suits",
-      "prompt": "a lean man in a long dark overcoat and flat cap walking through a neon street full of people filming with phones, none of them looking at him, he moves with perfect calm, hot neon pink and cyan signs against a soft sunset-orange sky. One named hero: a stocky square-jawed man in his thirties, side-parted wavy auburn hair, thick eyebrows, warm brown eyes, a neat trimmed moustache, a soft brown tweed cap with a short brim, grey three-piece suit with a watch chain, long charcoal overcoat, calm confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+      "prompt": "exactly one man, the only one dressed in old-fashioned clothes, walking through a neon street full of ordinary modern people in casual clothes filming with phones, none of them looking at him, he moves with perfect calm, hot neon pink and cyan signs against a soft sunset-orange sky. One named hero: a stocky square-jawed man in his thirties, side-parted wavy auburn hair, thick eyebrows, warm brown eyes, a neat trimmed moustache, a soft brown tweed cap with a short brim, grey three-piece suit with a watch chain, long charcoal overcoat, calm confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
      "purpose": "Shelby among the phones, unbothered",
      "motion": {
