@@ -4,7 +4,7 @@ ambience, sound and music, from when to when, how loud.
 
 Audio: the narration (peak-normalised), ambience beds crossfaded at their times, sounds on their times, music; the
 beds and music duck under the voice (as in v5) and dip under every sound with millisecond ramps (``audio/duck.py``,
-UR-32); loudness normalised to -14 LUFS. Picture: each shot's frames from its picture, graded once (``finish/grade``),
+UR-32); loudness normalised to the house target (qa/targets.py, P-90). Picture: each shot's frames from its picture, graded once (``finish/grade``),
 cropped with sub-pixel boxes for the move, bubbles composited (``finish/bubbles``). A picture that is not painted yet:
 ``final`` stops; a draft shows its stand-in, else a placeholder card with the picture id and its subject.
 CPU only (numpy, PIL, ffmpeg). Helpers come from ``examples/stone_age/day1_v5/assemble.py`` (same author, moved here).
@@ -28,6 +28,7 @@ from explainer_engine.production import graphics as GFX
 from explainer_engine.finish import bubbles as BUB
 from explainer_engine.finish.grade import grade
 from explainer_engine.world import resolver
+from explainer_engine.qa import targets
 
 ROOT = Path(__file__).resolve().parents[2]
 LIB = ROOT / "assets" / "audio" / "library"
@@ -295,7 +296,7 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
     with wave.open(str(raw), "wb") as w:
         w.setnchannels(1), w.setsampwidth(2), w.setframerate(SR)
         w.writeframes((np.clip(audio, -1, 1) * 32767).astype("<i2").tobytes())
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(raw), "-af", "loudnorm=I=-14:TP=-1.5:LRA=9", "-ar", str(SR),
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(raw), "-af", targets.loudnorm("long"), "-ar", str(SR),
                     "-ac", "1", str(out / "audio.wav")], check=True)
     meas = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(out / "audio.wav"), "-af", "ebur128", "-f", "null", "-"],
                           capture_output=True, text=True).stderr

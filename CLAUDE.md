@@ -55,8 +55,9 @@ threshold, heuristic), risks as PASS/ADAPT/REVIEW/BLOCK, creative and anti-monot
 
 Also binding: crossover episodes of other people's fictional worlds follow docs/RIGHTS_AND_FAIR_USE.md (no third-party
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
-Gemini only for reusable channel-identity assets (the mascot, thumbnail design elements), never for one
-topic's pictures (creator's rule, 2026-10-11), except where the creator records an exception for an episode (D-44: Episode 1, new spend cap US$6 in `core/ledger.py`). Disclosure is decided per video by the checklist (realistic content
+Pictures: Gemini batch tier only, tiers draft/standard/premium (`imagegen/routing.py`, D-46; supersedes the 2026-10-11 rule
+and D-36); audio: ElevenLabs only (narration, music, sound effects), guarded by the `.claude/settings.json` PreToolUse hook.
+Main market: US (D-46). Disclosure is decided per video by the checklist (realistic content
 only, YouTube Help 14328491); channel audience "not made for kids".
 
 ## Layout
@@ -71,7 +72,10 @@ explainer_engine/docs_lint.py   documentation consistency (D-23)
 explainer_engine/rights/  ip_check.py: rights check of an episode's rights manifest (RR rules, D-26); any FAIL blocks
 explainer_engine/standards/ rulebook.py (episode_rules.json: check, gate, stamp, brief, render), policy_baseline.json
                           (verified law/policy/terms sources, MARKET_RESEARCH V-13..V-24); CLI python -m explainer_engine.standards
-explainer_engine/research/ fan_brief.py: fan research brief, audience balance, template phrases (crossover episodes)
+explainer_engine/research/ fan_brief.py (crossover fan brief), hypotheses.py (story premises compared, HY rules)
+explainer_engine/qa/      scorecard.py, engagement.py (anti-boredom gate, ENG), targets.py (the one set of loudness numbers)
+explainer_engine/imagegen/ gemini.py (client, batch tier), routing.py (tiers draft/standard/premium, D-46)
+.claude/settings.json     PreToolUse hook on the ElevenLabs connector -> standards/hook.py (pictures refused, one take, rulebook gate)
 explainer_engine/schemas/ versioned JSON Schemas (rights_manifest, fan_brief, episode_rules, production_script, ...)
 .claude/skills/crossover-episode/   procedure for crossover episodes (fan research -> scenario -> script -> rights)
 assets/characters/kit/    kit_reference.svg (character parts; poses and rig come in Phase 4)

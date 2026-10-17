@@ -19,6 +19,7 @@ import numpy as np
 
 from explainer_engine.audio import local_words, scribe_words, voice_check, voice_layer
 from explainer_engine.production import script as S
+from explainer_engine.qa import targets
 
 W, H, FPS = 1080, 1920, 30
 MAX_TEMPO = 1.08
@@ -37,12 +38,12 @@ def prepare_audio(src: Path, out: Path, tempo: float) -> tuple[Path, list[dict]]
     assert 1.0 <= tempo <= MAX_TEMPO, f"tempo above {MAX_TEMPO} is not allowed"
     wav = out / "short.wav"
     chain = f"atempo={tempo}," if tempo != 1.0 else ""
-    _run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", chain + "loudnorm=I=-15:TP=-1.5:LRA=9", "-ac", "1", "-ar", "48000", str(wav)])
+    _run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", chain + targets.loudnorm("short"), "-ac", "1", "-ar", "48000", str(wav)])
     pcm, sr = voice_layer.read_wav(wav)
     found, _ = voice_check.check(np.asarray(pcm, dtype=float), sr)
     drift = [f for f in found if f.get("severity") in ("FAIL", "REVIEW")]
     if tempo != 1.0 and drift:
-        _run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", "loudnorm=I=-15:TP=-1.5:LRA=9", "-ac", "1", "-ar", "48000", str(wav)])
+        _run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", targets.loudnorm("short"), "-ac", "1", "-ar", "48000", str(wav)])
     return wav, drift
 
 

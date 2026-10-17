@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "explainer.story_hypotheses.v1",
+  "title": "Story hypotheses of one episode, compared before the treatment (docs/EPISODE_STANDARDS.md section 8)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "version",
+    "episode_id",
+    "hypotheses",
+    "selected"
+  ],
+  "properties": {
+    "schema": {
+      "const": "explainer.story_hypotheses"
+    },
+    "version": {
+      "const": 1
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "hypotheses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "premise",
+          "question",
+          "audience_reason",
+          "stakes",
+          "surprise",
+          "payoff",
+          "evidence_for",
+          "evidence_against",
+          "uncertainties",
+          "visual_opportunities",
+          "rights_risks",
+          "scores"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^H[0-9]{1,2}$"
+          },
+          "premise": {
+            "type": "string",
+            "minLength": 1
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "audience_reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stakes": {
+            "type": "string",
+            "minLength": 1
+          },
+          "conflict": {
+            "type": "string"
+          },
+          "surprise": {
+            "type": "string",
+            "minLength": 1
+          },
+          "payoff": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_for": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "claim ids (C-xx) or source URLs that support the premise"
+          },
+          "evidence_against": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "claim ids or URLs that weaken it; empty means none found, say so in uncertainties"
+          },
+          "uncertainties": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "counterarguments": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "visual_opportunities": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "audio_opportunities": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "rights_risks": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "each becomes a risk in episode_rules.json if the hypothesis is selected"
+          },
+          "scores": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "evidence",
+              "narrative"
+            ],
+            "properties": {
+              "evidence": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5,
+                "description": "how well sources support it, judged without the story"
+              },
+              "narrative": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5,
+                "description": "stakes, surprise, payoff, judged without the evidence"
+              },
+              "why": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "selected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "why",
+        "beats"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^H[0-9]{1,2}$"
+        },
+        "why": {
+          "type": "string",
+          "minLength": 1
+        },
+        "beats": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "job",
+              "what"
+            ],
+            "properties": {
+              "job": {
+                "enum": [
+                  "hook",
+                  "question",
+                  "explanation",
+                  "evidence",
+                  "complication",
+                  "reveal",
+                  "emotional_pause",
+                  "humor",
+                  "payoff",
+                  "transition"
+                ]
+              },
+              "what": {
+                "type": "string",
+                "minLength": 1
+              },
+              "claims": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

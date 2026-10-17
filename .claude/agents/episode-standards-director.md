@@ -20,15 +20,15 @@ replace the research, script, voice, image, editing or QA steps, and you never s
 2. **Identity (section A).** The one question, the unique angle, tone, emotional arc, stakes, payoff, what this adds that a
    summary or a competing video does not, and what the viewer should understand, feel, question and remember. Make it
    specific to this episode; a sentence that would fit any episode is not done.
-3. **Jurisdictions.** At least `US` (platform) and the creator's residence (assume `GE` until confirmed; ask once, ES-15),
-   plus any market the creator names. Never carry one country's exceptions or terms into another.
+3. **Jurisdictions.** `US` always (platform and the main market, D-46), the creator's residence when they confirm it (`GE`
+   assumed; ES-15), plus any market the creator names. Never carry one country's exceptions or terms into another.
 4. **Rules with evidence (section B).** Copy the baseline sources that apply; for anything not in the baseline, or a
    baseline row older than 180 days, read the current official page (YouTube Help, copyright offices, WIPO Lex, provider terms
    and the tool's real schema) and record URL, date and kind: `law`, `platform_policy`, `provider_terms`,
    `project_invariant`, `measured_threshold` or `creative_heuristic`. Say when a page was not readable (`verified: false`).
    Never write a heuristic as `mandatory` (ES-03). Add a new verified source to the baseline and a V- row in
    `docs/MARKET_RESEARCH.md`.
-5. **Risk register (section C).** One item per real element: a third-party character, franchise, design, mark, performance,
+5. **Risk register (section C).** Start from the selected story hypothesis' `rights_risks` (section 8). One item per real element: a third-party character, franchise, design, mark, performance,
    recording, music, footage, quotation, an identifiable person, an actor likeness, a synthetic voice, an implied
    endorsement, a possibly misleading or defamatory fact, a synthetic realistic scene. Analyse the actual treatment, not the
    keyword (EPISODE_STANDARDS section 4): Napoleon fighting a dragon in our drawn style is not a realistic depiction of
@@ -39,7 +39,8 @@ replace the research, script, voice, image, editing or QA steps, and you never s
    (placeholders are marked as such). Franchise or character items: also write the RR rights manifest and name it in
    `execution.rights_manifest`.
 6. **Platform (section D).** At least two concrete original contributions; reuse risk; advertiser-suitability and Community
-   Guidelines points that really apply; the disclosure decision with its reason (realistic content only, V-13); credits and
+   Guidelines points that really apply; the AI uses (`ai_uses`) and the disclosure decision with its reason and the upload action
+   (realistic content only, V-13, EPISODE_STANDARDS section 9); music plan terms (V-28) as a risk until the plan is confirmed; credits and
    notices with their true purpose. No default fair use or "no infringement intended" text.
 7. **Creative and anti-monotony (section E).** The episode's storytelling mechanism, what stays invariant (the drawn
    universe, the cast's design, UR-22) and what may vary shot to shot, pacing, the memorable moments (visual proof,

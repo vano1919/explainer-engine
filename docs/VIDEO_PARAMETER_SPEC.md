@@ -26,7 +26,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
 | P-10 | long duration | 7 min | 5-11 | depth without padding | L/P,T | word budget | outside range = REVIEW, not FAIL |
-| P-11 | short duration | 45 s | 25-60 | standalone Shorts | L/P,T | script | > 60 s = FAIL (no longer Shorts at launch) |
+| P-11 | short duration | 45 s | 25-60 (house) | standalone Shorts; YouTube counts square/vertical videos up to 3 minutes as Shorts (V-25) | L/P,T | script | > 60 s REVIEW (house length), > 180 s FAIL (not a Short) |
 | P-12 | resolution | 1920x1080 (16:9), 1080x1920 (9:16) | fixed pair | vector art needs no 4K (D-08) | H/F | renderer | ffprobe |
 | P-13 | frame rate | 30, constant | 24, 30 | smooth motion at low cost | M/C | cache key | ffprobe CFR |
 | P-14 | video codec | H.264 High, yuv420p, CRF 18, preset medium, +faststart | CRF 16-23 | quality vs size (D-08) | H/C | disk | ffprobe |
@@ -90,10 +90,10 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 ## 7. Audio
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
-| P-90 | integrated loudness | -14 LUFS +/- 1 | -16 to -13 | playback normalisation (D-08) | M/C | mix | ebur128 FAIL outside |
-| P-91 | true peak | <= -1.0 dBTP | | codec headroom | H/F | mix | ebur128 |
+| P-90 | integrated loudness | -14 LUFS | PASS -15 to -13, REVIEW -16 to -15, FAIL outside -16 to -13 | house target (D-08, measured on Episode 1); not a YouTube requirement: the upload settings page names no loudness (V-26) | M/C | mix | `qa/targets.py` (scorecard, mixer, Shorts) |
+| P-91 | true peak | <= -1.0 dBTP (limiter at -1.5) | | codec headroom | H/F | mix | `qa/targets.py` FAIL above -1.0 |
 | P-92 | voice shaping | de-ess, gentle low-cut, soft limit (TMR shape_voice) | | clarity | M/C | | level audit |
-| P-93 | music | one state per scene group; speech gap >= 10 dB; attack 50 ms, release 400 ms | | speech first (D-18) | M/C | | measured gap |
+| P-93 | music | one state per scene group; voice at least 14 dB (RMS) above bed and music while speaking; attack 50 ms, release 400 ms | | speech first (D-18); the 10 dB of the first draft was reconciled up to the scorecard's 14 dB | M/C | | `qa/targets.gap_verdict` |
 | P-94 | SFX | each event has purpose clarify/humour/transition; peak <= voice peak - 3 dB | | not on every movement | M/F | event contract | schema + level audit |
 | P-95 | silence | no unintended silence > 1.5 s (long-form), > 0.8 s (Shorts) | | pacing | M/C | | audio scan |
 | P-96 | fades | 20 ms edge fades on clips; music 1 s in, 2 s out | | no clicks | M/C | | click check |
@@ -105,7 +105,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
 | P-100 | Shorts per long-form | 2-3, only if the material supports distinct ideas | 0-3 | D-05 | M/P | dossier | each passes standalone checklist |
-| P-101 | Short loudness | -14 LUFS, TP <= -1.0 | | consistency | M/C | | ebur128 |
+| P-101 | Short loudness | as P-90 and P-91 | | consistency (the Shorts renderer used -15 LUFS until 2026-10-17) | M/C | | `qa/targets.py` profile `short` |
 | P-102 | Short safe area | keep bottom 420 px and right 140 px clear of text | | platform UI overlays (TMR measured) | M/C | | safe-area check |
 | P-103 | Short captions | phrase captions <= 2 lines x 32 chars, current word lit | | silent viewing | M/P | timings | check |
 | P-104 | analytics snapshots | 48 h, 7 d, 28 d | | like-for-like comparison | M/C | | record present |

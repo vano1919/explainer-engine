@@ -14,6 +14,7 @@ import re
 import numpy as np
 
 from ..edit import shot_rules as R
+from . import targets
 
 LUMA = np.array([0.2126, 0.7152, 0.0722])
 
@@ -73,14 +74,17 @@ def score(shots, words, text, look, *, pic_stats=None, judge=None, audio=None, s
         if masked:
             st = "FAIL"
         if audio:
+            gap = targets.PROFILES["long"]["voice_gap_min_db"]
             ev.append(f"voice {audio['voice_rms_db']:.1f} dB, bed {audio['bed_rms_db']:.1f} dB, music {audio['music_rms_db']:.1f} dB "
-                      f"(voice at least 14 dB above bed+music)")
-            if audio["voice_rms_db"] - max(audio["bed_rms_db"], audio["music_rms_db"]) < 14:
-                st = "FAIL"
+                      f"(voice at least {gap:g} dB above bed+music, P-93)")
+            st = worst([st, targets.gap_verdict(audio["voice_rms_db"], max(audio["bed_rms_db"], audio["music_rms_db"]))])
             if "lufs" in audio:
-                ev.append(f"integrated loudness {audio['lufs']:.1f} LUFS (target -16 to -12)")
-                if not -17.5 <= audio["lufs"] <= -11:
-                    st = worst([st, "REVIEW"])
+                lo, hi = targets.PROFILES["long"]["pass_band"]
+                ev.append(f"integrated loudness {audio['lufs']:.1f} LUFS (target {lo:g} to {hi:g}, P-90)")
+                st = worst([st, targets.loudness_verdict(audio["lufs"])])
+            if "true_peak" in audio:
+                ev.append(f"true peak {audio['true_peak']:.1f} dBTP (at most {targets.PROFILES['long']['true_peak_max']:g}, P-91)")
+                st = worst([st, targets.true_peak_verdict(audio["true_peak"])])
         ev.append("does the sound feel natural and helpful: the creator listens")
         rows.append(row(2, "sound effects and sync", st, ev, human=True))
 

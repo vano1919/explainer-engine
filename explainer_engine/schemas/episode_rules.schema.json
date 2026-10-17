@@ -143,7 +143,13 @@
         "disclosure": {
           "type": "object", "additionalProperties": false, "required": ["realistic_synthetic_content", "required", "reason"],
           "properties": {"realistic_synthetic_content": {"type": "boolean"}, "required": {"type": "boolean"},
-                         "reason": {"$ref": "#/$defs/text"}}},
+                         "reason": {"$ref": "#/$defs/text"},
+                         "ai_uses": {"type": "array", "items": {"enum": ["ideation_or_script", "stylised_imagery",
+                           "realistic_person", "altered_real_footage", "realistic_scene_never_happened",
+                           "synthetic_voice", "ai_music_main_focus", "minor_aesthetic_edit"]}},
+                         "upload_action": {"type": "string", "description": "what the creator does in the upload flow"},
+                         "api_field": {"enum": ["status.containsSyntheticMedia"]},
+                         "submitted": {"const": false, "description": "the pipeline never uploads; the creator records it"}}},
         "content_id": {"type": "string"},
         "made_for_kids": {"type": "boolean"},
         "metadata": {

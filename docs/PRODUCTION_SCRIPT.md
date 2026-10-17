@@ -22,7 +22,8 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
   `library` (pictures that already exist), `music`, `sound_dirs`, `picture_dirs`.
 * `segments[]` (S01..): `lines[]` (text, tags, tone, emotion, one emphasised word, `pause_after`, claims), `shots[]` (phrase `at`, type A/B/C,
   picture id or inline picture with `subject`/`engine`/`refs`/`edit`/`heroes`/`shows`/`props`/`speakers`, motion, bubbles), `audio` (`beds`, `sfx` on phrases).
-* Engines: `existing` (a file), `gemini` (D-41 prompt, channel style refs), `pod_ref` (RunPod Qwen-Image-Edit from Gemini references), `pod_text`.
+* Engines: `existing` (a file), `gemini` (D-41 prompt, channel style refs), `pod_ref` (a reference edit; painted by Gemini on the batch tier since D-44/D-46), `pod_text` (no longer made, D-46).
+* Rulebook-era fields (D-45, D-46): `episode.rulebook`; segment `job`, `feel`, `rules`; shot `purpose`, `cut.why`; picture `tier`, `tier_reason`; bed and sound `purpose`, `yields_to`. Times are still never written by hand: anchors are phrases, durations come from the read.
 
 ## Flow (one command line: `python -m explainer_engine.production ...`)
 
@@ -58,6 +59,10 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-26 | likeness by reference: a picture painted by editing (`pod_ref`) that names a hero needs a reference picture whose library `heroes` lists that hero (the model copies the face from the reference) |
 | PV-27 | time-jump `periods`: every segment names a known period, a period's segments are consecutive, tone shares sum to 1; REVIEW when a period does not end on the question that opens the next (SR-03) |
 | PV-28 | `shorts`: the hook is one question of at most 14 words and the first line; 40-130 words (REVIEW); pictures are the video's own (SH-01..SH-03) |
+| PV-32 | (rulebook-era scripts, `episode.rulebook` set) every segment has a beat `job`; the first is a hook or question, the last a payoff (REVIEW) |
+| PV-33 | (rulebook-era) painted pictures go to Gemini's batch tier on a tier (D-46); `pod_text` FAIL; `premium` needs `tier_reason`; more than 10 % premium REVIEW |
+| PV-34 | (rulebook-era) every bed and sound event has a `purpose` (REVIEW) |
+| PV-35 | (rulebook-era) every shot has a `purpose` (REVIEW); a spoken number has a claim id (FAIL, invariant 5) |
 
 ## Voice direction
 

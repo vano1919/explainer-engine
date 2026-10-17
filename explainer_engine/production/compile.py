@@ -99,10 +99,12 @@ def jobs(doc: dict) -> tuple[list[dict], dict]:
             continue
         eng = engine_of(doc, pic)
         if eng == "gemini":
-            gemini.append({"id": pid, "prompt": pic["prompt"], "refs": refs, "first_use": pic["first_use"]})
+            gemini.append({"id": pid, "prompt": pic["prompt"], "refs": refs, "first_use": pic["first_use"],
+                           "tier": pic.get("tier", "standard")})
         elif eng == "pod_ref":
             pod.append({"id": pid, "seed": 600 + len(pod) * 11, "refs": [f"{r}.png" for r in pic.get("refs", [])],
-                        "prompt": pic["prompt"].replace(POD_SUFFIX, ""), "first_use": pic["first_use"]})
+                        "prompt": pic["prompt"].replace(POD_SUFFIX, ""), "first_use": pic["first_use"],
+                        "tier": pic.get("tier", "standard")})
     pod_job = {"name": f"{doc['episode']['id']}_pod_refs", "note": "made by explainer_engine.production.compile",
                "width": 1792, "height": 1008, "variants": 2, "suffix": POD_SUFFIX, "negative": POD_NEGATIVE, "pictures": pod}
     return gemini, pod_job

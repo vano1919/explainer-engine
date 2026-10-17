@@ -1,7 +1,8 @@
 # Episode standards: the per-episode rulebook (D-45)
 
-Canonical for the episode rulebook (`episode_rules.json`), its checks (ES-xx) and how the legal, platform and creative
-questions of one video are decided. Written by the `episode-standards-director` agent
+Canonical for the episode rulebook (`episode_rules.json`), its checks (ES-xx), how the legal, platform and creative
+questions of one video are decided, the engagement gate (section 7), story hypotheses (section 8) and the upload disclosure
+(section 9). Written by the `episode-standards-director` agent
 ([.claude/agents/episode-standards-director.md](../.claude/agents/episode-standards-director.md)), loaded by the
 `orchestrator` ([ORCHESTRATION](ORCHESTRATION.md) OR-10, OR-11) and passed to every downstream step. Schema:
 [`explainer_engine/schemas/episode_rules.schema.json`](../explainer_engine/schemas/episode_rules.schema.json); code:
@@ -119,9 +120,10 @@ the contributions and the patterns of earlier episodes to avoid (ES-13, ES-14).
 
 ## 5. Default jurisdictions
 
-YouTube is operated from the US and the channel is in English for a general audience (D-09), so `US` is always relevant. The
-creator works in Georgian and is assumed to live in Georgia (`GE`) until they confirm it (ES-15, REVIEW). A known large
-audience or a sale in another country (UK, EU) adds it. The agent does not apply one country's exceptions or terms to another.
+`US` is always relevant: YouTube is operated from the US, the channel is in English for a general audience (D-09) and the US is
+the main market (the creator, 2026-10-17, D-46). The creator works in Georgian; their country of residence (`GE` assumed) is added
+when they confirm it, because a claim or a publicity question can also arise where the publisher lives. A known large audience in
+another country (UK, EU) adds it. The agent does not apply one country's exceptions or terms to another.
 
 ## 6. Current state and gaps (audit of `systemic/next-video` at a182195, 2026-10-17)
 
@@ -140,4 +142,49 @@ audience or a sale in another country (UK, EU) adds it. The agent does not apply
 | Downstream agents share one rule set | missing | the orchestrator passed CLAUDE.md and PRODUCTION_RULES only; skills carried their own copies of rights hints; now `standards brief --role` |
 | Universal negative prompt | not a problem found | `compile.POD_NEGATIVE` is a model-specific style control, not a safety list (4.4) |
 | Contradiction: channel scope | contradictory | CLAUDE.md said "public-domain worlds only, D-25" while D-26 allows franchise analysis episodes; CLAUDE.md now cites both |
+| Loudness targets | contradictory | P-90 FAIL outside -16..-13 vs scorecard -17.5..-11; Shorts renderer -15 LUFS vs P-101 -14; voice gap 10 dB (P-93, Q-T08) vs 14 dB (scorecard); now one `qa/targets.py`, stricter value kept |
+| Shorts length | outdated | P-11 and Q-T12 failed Shorts over 60 s; YouTube counts up to 3 minutes (V-25); now 60 s house REVIEW, 180 s FAIL |
+| Picture routing | contradictory | D-36 (pod for scene pictures) vs D-44 practice (Gemini for Episode 1) vs PRODUCTION_RULES order 5; now D-46: Gemini batch tiers for every picture, PV-33 |
+| ElevenLabs takes | money leak | connector default `generations_count` is 4 (V-29); EL-10 said 1 in prose only; now enforced by the PreToolUse hook |
+| Deterministic enforcement in Claude Code | missing | no `.claude/settings.json` hooks; now one PreToolUse hook on the ElevenLabs connector |
+| Story alternatives, beat jobs, engagement check | missing | no record of rejected premises; segments had `purpose` text only; now `story_hypotheses.json`, `job`, `qa/engagement.py` |
 | Duplicate orchestrator or pipeline | none | one orchestrator, one production script (D-43); this layer adds no second pipeline |
+
+## 7. The engagement gate (anti-boredom, Q-E16)
+
+Run `python -m explainer_engine.qa.engagement <production_script.json>` before script approval and again before the final render.
+The code names the measurably weak beats: ENG-1 no question in the opening, ENG-2 a flat run of three beats with the same job or
+no reveal/payoff at all, ENG-3 a spoken number that nothing on screen shows (ED-10), ENG-4 wording repeated from another beat,
+ENG-5 an ending that never returns to the central question, ENG-6 a beat longer than about 100 s without a turn. Each is REVIEW: a
+person answers it with a revision of that beat (cite the segment) or a reason to keep it. Then the seven questions of the gate are
+answered for the whole script: a compelling and accurate opening question; each section changes knowledge, expectations, stakes or
+feeling; evidence is shown where a claim benefits from being seen; reveals are carried by the edit and the sound; no repetitive
+narration, needless explanation, generic visuals or purposeless music; memorable moments specific to this topic; an ending that
+answers. The fix is a better beat, never more cuts, more sound effects or another colour. The episode passes only when it is both
+reasonably compliant under the checks performed and meaningfully engaging.
+
+Retention without deception: hooks are accurate, a delayed answer is delivered, uncertainty is never invented, thumbnails and
+titles keep the video's promise (Q-E03, Q-E10). Visual variety comes from motivated changes inside one art bible (shot size,
+angle, depth, light direction, diagrams, maps, quiet moments), not from switching styles (UR-22); a deliberate style change is
+written into the rulebook with its purpose.
+
+## 8. Story hypotheses before the treatment (Q-E17)
+
+Before the narrative is committed, at least three genuinely different premises are written into `story_hypotheses.json`
+([schema](../explainer_engine/schemas/story_hypotheses.schema.json)) with question, audience reason, stakes, surprise, payoff,
+evidence for and against (claim ids or URLs), uncertainties, counterarguments, visual and audio opportunities and rights risks.
+Each is researched fairly with the `science-grounding` skill and scored twice, separately: `evidence` (sources, without the story)
+and `narrative` (stakes, surprise, payoff, without the evidence). `python -m explainer_engine.research.hypotheses <file>` refuses
+fewer than three, a selected premise with evidence under 3 (a good story never makes up for weak evidence), and a beat sheet without a
+payoff; it asks why a premise lost that scored higher on both. The selected premise's beat sheet (each beat with its job: hook,
+question, explanation, evidence, complication, reveal, emotional pause, humour, payoff, transition) becomes the production script's
+segment `job`s (PV-32), and its rights risks become rulebook risks.
+
+## 9. Disclosure at upload (4.9)
+
+The rulebook records which AI uses the video contains (`platform.disclosure.ai_uses`: script help, stylised imagery, a realistic
+person, altered real footage, a realistic scene that never happened, a synthetic voice, AI music as the main focus, minor aesthetic
+edits). A realistic use turns the disclosure on (ES-08, V-13); script help, clearly stylised or fantastical drawn imagery and minor
+edits do not by themselves. A required disclosure carries `upload_action` (YouTube Studio upload flow, Attributes, "AI use": Yes;
+the API field is `status.containsSyntheticMedia`, V-27). The pipeline never uploads and never marks a disclosure as submitted
+(`submitted` is always false); the creator does it at upload after approval #2.

@@ -34,6 +34,7 @@ PROTECTIVE = re.compile(r"no copyright infringement intended|fair use|section 10
                         r"i do not own|not my (?:music|footage)", re.I)
 PERMISSION_CLAIM = re.compile(r"\b(?:grants?|gives?|creates?|guarantees?)\b.*\b(?:permission|right|licen[cs]e|fair use)\b|"
                               r"\b(?:makes?|keeps?) (?:it|this|the (?:use|video)) (?:legal|lawful|safe)\b", re.I)
+REALISTIC_USES = {"realistic_person", "altered_real_footage", "realistic_scene_never_happened", "ai_music_main_focus"}
 LEGAL_REVIEW = ("real_person", "actor_likeness", "synthetic_voice", "defamation", "privacy", "franchise", "character")
 PLACEHOLDER = re.compile(r"\bTBD\b|<[^>]+>|\?\?\?")
 
@@ -197,6 +198,16 @@ def check(rules: dict, checkpoint: str = "provisional", *, today: date | None = 
             if not k.get("decision"):
                 add("exception_decision", "ES-10", "FAIL" if paid else "REVIEW", rid, "an exception is decided case by "
                     "case: the creator (and counsel when material) records the decision")
+
+    # ES-08 the disclosure follows the declared AI uses (YouTube 14328491, V-13) and says what the creator does at upload
+    realistic_uses = REALISTIC_USES & set(disclosure.get("ai_uses", []))
+    if realistic_uses and not disclosure["required"]:
+        add("disclosure_uses", "ES-08", "FAIL", "platform.disclosure", f"declared AI uses {sorted(realistic_uses)} are "
+            "realistic altered or synthetic content: the disclosure is required")
+    if disclosure["required"] and not (disclosure.get("upload_action") or "").strip():
+        add("disclosure_action", "ES-08", "FAIL" if _at_least(checkpoint, "final_qa") else "REVIEW", "platform.disclosure",
+            "write the upload action: YouTube Studio upload flow, Attributes section, 'AI use': Yes (V-13; the API "
+            "field is status.containsSyntheticMedia, V-27; this pipeline never sets it)")
 
     # ES-11 / ES-12 metadata notices and credits
     meta = rules["platform"]["metadata"]

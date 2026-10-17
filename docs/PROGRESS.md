@@ -452,3 +452,23 @@ Tests: 26 new, 237 pass; 2 failures existed before this change (`test_committed_
 Not done / open: the creator's residence and target markets (ES-15, assumed GE + US); no rulebook yet for the next episode
 (its topic is not chosen); voice and music steps have no paid-call refusal in code yet (their paid calls go through the
 ElevenLabs connector, so the orchestrator runs the gate); the master prompt arrived cut off in section 4.8.
+
+## 2026-10-17 — The rest of the master prompt; the creator's answers (D-46)
+
+Creator's answers: main market US; ElevenLabs is the only audio provider; pictures by Gemini on the batch tier only, cheap and
+dear versions chosen by Claude after building the system. Decided (D-46, `imagegen/routing.py`): `draft` Nano Banana 2.1 1K
+$0.0168, `standard` Nano Banana 2.1 2K $0.0252 (every scene picture; Episode 1's 74 accepted), `premium` Gemini 3 Pro Image 2K
+$0.067 (reused identity assets, multi-reference reveals; reason required, at most 10 %). Flash-Lite rejected (failed the palette in
+the Episode 1 test), Flash 3.1 2K ($0.050) not routed (no measured gain). `paint.py` sends one batch per tier and has no synchronous
+path left. Research V-25..V-32 (Shorts up to 3 minutes; YouTube upload settings name no loudness; `status.containsSyntheticMedia`;
+ElevenLabs terms, Music Terms and the connector's real parameters, `generations_count` defaults to 4; Gemini batch prices; Claude
+Code hooks; AES TD1008 only through secondary sources).
+Built: PreToolUse hook on the ElevenLabs connector (`.claude/settings.json`, `standards/hook.py`: pictures/video refused, one take,
+rulebook `paid_assets` gate, logged creator overrides); production-script fields `job`, `feel`, `rules`, shot `purpose`/`cut`, picture
+`tier`, sound `purpose`/`yields_to` and PV-32..PV-35 for rulebook-era scripts (Episode 1 unchanged); `qa/engagement.py` (ENG-1..6 and
+the seven gate questions); `research/hypotheses.py` + schema (HY-0..4); `qa/targets.py` (one loudness/true-peak/gap definition for
+mixer, Shorts and scorecard; stricter value kept where documents disagreed); rulebook disclosure `ai_uses`, `upload_action`;
+executor contracts (OR-12), OR-13; QA map of the nine final areas, Q-T19, Q-E16, Q-E17. Tests: 13 new (250 pass); the 2 failures that
+existed before remain (sound-library WAVs not in the repository). docs_lint 0.
+Not done: no new episode produced (the topic is not chosen); the Shorts renderer's export settings and BT.709 tagging are not yet
+measured against Q-T19; the creator's ElevenLabs plan (music media rights, V-28) and country of residence are still to confirm.

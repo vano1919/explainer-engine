@@ -15,8 +15,8 @@ Read it before starting any video; update the feedback log (section 3) whenever 
 4. **Money is never a surprise.** Estimate before every paid call, state units, price and caps in the request, wait for a yes,
    stop at 80 % of any cap, finish with nothing running and the balance reported ([TOOL_STRATEGY](TOOL_STRATEGY.md),
    [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md), CLAUDE.md invariants 1-2).
-5. **Pictures of one episode come from the local pod; Gemini only for reusable assets** (cast sprites, props, thumbnail
-   elements) (D-36).
+5. **Pictures are painted by Gemini on the batch tier, on the tier the picture needs** (draft, standard, premium; D-46,
+   which supersedes the pod routing of D-36). Audio comes from ElevenLabs only.
 6. **Look at the output before reporting it.** Open the contact sheet, listen to the test read, composite a sample; a green test
    is not acceptance (CLAUDE_EXECUTION_GUIDE step 5).
 7. **Say what was and was not verified.** No legal or factual guarantee the sources do not give; a creator decision is recorded

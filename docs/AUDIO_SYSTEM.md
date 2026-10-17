@@ -24,6 +24,20 @@ gets silence inserted in its middle; no word is touched, later words move by the
 rewritten on the padded audio the mix uses (Day 1: 41 gaps, +6.7 s on 170.6 s). Kokoro stays the free draft and
 the fallback when ElevenLabs is unavailable.
 
+## ElevenLabs only (D-46): what the connector really exposes (read with `creative_get_model_schema`, 2026-10-17, V-29)
+| Use | Model | Parameters the tool accepts | Notes |
+|---|---|---|---|
+| narration | `eleven_v4` | voice, `language_code` | no stability/style/seed; delivery comes from text, tags, chunking (skill `elevenlabs-voice`) |
+| music | `eleven_music_v2_5` (node `music`) | `duration_seconds` 3-600, `instrumental`, `lyrics_type`, `lyrics` | describe mood, energy, arc, instruments, tempo, ending and what to avoid; never "like <score>" |
+| sound effects | `eleven_text_to_sound_v2` (node `sfx`) | `duration_seconds` 0.5-30, `prompt_influence` 0-1, `loop` | the library first (D-34); a new sound gets a library record |
+
+Every generation call passes `generations_count: 1` after an `estimate_only` call; the PreToolUse hook (`standards/hook.py`) refuses
+four-take calls, picture or video calls, and paid calls before the episode rulebook's `paid_assets` gate. Terms (V-28): commercial
+use needs a paid plan; Eleven Music's terms list media rights by plan (film, TV, radio and studio games excluded below Enterprise;
+attribution required only on the Free plan; streaming distribution not on Free/Starter). Whether the creator's plan covers monetised
+YouTube music is recorded per episode in the rulebook (REVIEW until the plan is confirmed). Outputs are not guaranteed unique
+(ElevenLabs terms s.10), so a Content ID match is possible even for our own generations: keep the generation record.
+
 ## Voice alteration layer (D-38, Kokoro drafts only)
 Kokoro-82M was the only TTS when this was written (superseded for the final read by D-39): its word timings and pauses are what the edit's cuts stand on (UR-12). The narrator's own
 sound is made on top of it, cheapest step first, each step optional after the one before. The voice is data:
@@ -84,6 +98,7 @@ model and prompt, Lyria prompt), estimated cost, licence status and review. Rule
 - The analyst (Dirkus) is silent: his vocal sounds are reactions, never speech. The companion (Tick) makes mechanical sounds.
 
 ## Checks run on every mix
+Numbers: one definition in `explainer_engine/qa/targets.py` (P-90, P-91, P-93, P-101), used by the mixer, the Shorts renderer and the scorecard.
 Peak and true peak; integrated loudness; clipping; silence map; voice-to-music gap while speaking; click detection at
 clip joins; speech does not overlap itself; measured pace against the target; ASR word error where available; level
 jumps between scenes. Reports go to the review bundle ([QA_SPECIFICATION](QA_SPECIFICATION.md)).
