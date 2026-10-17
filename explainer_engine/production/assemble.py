@@ -349,7 +349,8 @@ def lock_alive(lock: Path) -> bool:
 
 def assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Path], sound_dirs: list[Path], *,
              size: tuple[int, int] = (1920, 1080), final: bool = False, grade_key: str | None = None,
-             audio_only: bool = False, crf: int = 18, chunk_seconds: float = CHUNK_SECONDS) -> dict:
+             audio_only: bool = False, crf: int = 18, chunk_seconds: float = CHUNK_SECONDS,
+             only: tuple[int, int] | None = None) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     fails = [x for x in timed.get("findings", []) if x.get("severity") == "FAIL"]
     if fails:  # 2026-10-16: a shell chain started a render on a timing with 3 FAIL
@@ -360,14 +361,14 @@ def assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pat
     lock.write_text(str(os.getpid()))
     try:
         return _assemble(timed, narration_wav, out, picture_dirs, sound_dirs, size=size, final=final, grade_key=grade_key,
-                         audio_only=audio_only, crf=crf, chunk_seconds=chunk_seconds)
+                         audio_only=audio_only, crf=crf, chunk_seconds=chunk_seconds, only=only)
     finally:
         lock.unlink(missing_ok=True)
 
 
 def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Path], sound_dirs: list[Path], *,
               size: tuple[int, int], final: bool, grade_key: str | None, audio_only: bool, crf: int,
-              chunk_seconds: float) -> dict:
+              chunk_seconds: float, only: tuple[int, int] | None) -> dict:
     OW, OH = size
     fps = timed["fps"]
     sounds = Sounds(sound_dirs)
@@ -448,7 +449,10 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         return overlays(frame, f, fps, timed)
 
     written, reused = 0, 0
+    todo = range(len(bounds)) if only is None else range(*only)  # a part-by-part run draws only its chunks (e.g. 0:3)
     for i, (k0, k1) in enumerate(bounds):
+        if i not in todo:
+            continue
         n_frames = sum(shots[k]["end_frame"] - shots[k]["start_frame"] for k in range(k0, k1))
         part = chunks / f"c_{i:04d}.mp4"
         if part.exists():
@@ -482,10 +486,12 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
             raise SystemExit(f"ffmpeg failed in chunk {i}; the finished chunks stay in {chunks} and the next run reuses them")
         os.replace(tmp, part)  # a c_NNNN.mp4 on disk is always a finished chunk
         progress(out, i + 1, len(bounds), reused)
-    mux(out, bounds)
-    result["video"] = str(out / "video.mp4")
+    left = [i for i in range(len(bounds)) if not (chunks / f"c_{i:04d}.mp4").exists()]
+    result["chunks"] = {"count": len(bounds), "reused": reused, "left": left}
+    if not left:
+        mux(out, bounds)
+        result["video"] = str(out / "video.mp4")
     result["frames_written"] = written
     result["frames_planned"] = timed["frames"]
-    result["chunks"] = {"count": len(bounds), "reused": reused}
     (out / "assemble_report.json").write_text(json.dumps(result, indent=1))
     return result

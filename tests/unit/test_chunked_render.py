@@ -104,8 +104,55 @@ def test_a_render_that_dies_before_the_join_resumes_from_its_chunks(tmp_path, mo
                      "--size", "320x180", "--chunk-seconds", "5"]) == 0
     rep = json.loads((out / "assemble_report.json").read_text())
     timed = json.loads((out / "timed.json").read_text())
-    assert rep["chunks"] == {"count": len(left), "reused": len(left)}  # nothing was drawn twice
+    assert rep["chunks"] == {"count": len(left), "reused": len(left), "left": []}  # nothing was drawn twice
     assert marks and not (out / "chunks").exists()
     n = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries", "stream=nb_read_frames",
                         "-of", "csv=p=0", str(out / "video.mp4")], capture_output=True, text=True).stdout.strip()
     assert int(n) == timed["frames"] == rep["frames_written"]
+
+
+def _tiny_episode(tmp_path):
+    d = compiled()
+    rng = np.random.default_rng(0)
+    pics, snd = tmp_path / "pictures", tmp_path / "sounds"
+    pics.mkdir(), snd.mkdir()
+    for k, name in enumerate(["valley", "camp", "duo", "cold_hands"]):
+        Image.fromarray((rng.random((180, 320, 3)) * 80 + k * 40).astype(np.uint8)).save(pics / f"{name}.png")
+    sr = 48000
+    _wav(snd / "wind.wav", rng.normal(0, 0.1, sr * 2))
+    _wav(snd / "crackle.wav", rng.normal(0, 0.1, sr))
+    _wav(snd / "pop.wav", np.sin(np.arange(sr // 4) * 0.2) * 0.5)
+    _wav(snd / "tone.wav", np.sin(np.arange(sr * 2) * 2 * np.pi * 220 / sr) * 0.3)
+    w = words_for(d)
+    voice = np.zeros(int(w["duration"] * sr))
+    for x in w["words"]:
+        a, b = int(x["s"] * sr), int(x["e"] * sr)
+        voice[a:b] = np.sin(np.arange(b - a) * 2 * np.pi * 150 / sr) * 0.5
+    _wav(tmp_path / "narration.wav", voice)
+    script, wjson = tmp_path / "script.json", tmp_path / "words.json"
+    d["picture_dirs"], d["sound_dirs"] = ["pictures"], ["sounds"]
+    script.write_text(json.dumps(d))
+    wjson.write_text(json.dumps(w))
+    return script, wjson
+
+
+@pytest.mark.skipif(subprocess.run(["which", "ffmpeg"], capture_output=True).returncode != 0, reason="needs ffmpeg")
+def test_part_by_part_draws_only_its_chunks_then_joins_when_all_are_there(tmp_path):
+    from explainer_engine.production import __main__ as CLI
+    script, wjson = _tiny_episode(tmp_path)
+    out = tmp_path / "out"
+    base = ["run", str(script), str(tmp_path / "narration.wav"), str(wjson), "--out", str(out), "--size", "320x180",
+            "--chunk-seconds", "5"]
+    assert CLI.main(base + ["--chunks", "0:1"]) == 0
+    assert (out / "chunks" / "c_0000.mp4").exists() and not (out / "chunks" / "c_0001.mp4").exists()
+    assert not (out / "video.mp4").exists()  # a part of the film is not a film
+    rep = json.loads((out / "assemble_report.json").read_text())
+    assert rep["chunks"]["left"] and rep["video"] is None
+    assert CLI.main(base + ["--chunks", "1:99"]) == 0
+    timed = json.loads((out / "timed.json").read_text())
+    assert (out / "video.mp4").exists() and not (out / "chunks").exists()
+    rep = json.loads((out / "assemble_report.json").read_text())
+    assert rep["chunks"]["left"] == [] and rep["video"]
+    n = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries", "stream=nb_read_frames",
+                        "-of", "csv=p=0", str(out / "video.mp4")], capture_output=True, text=True).stdout.strip()
+    assert int(n) == timed["frames"]
