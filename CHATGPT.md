@@ -104,7 +104,7 @@ The complete Claude instruction file is copied above. Every file that existed un
 
 ### Script quality is a production gate
 
-A production script is not approved because its JSON validates or because its authoring model says it is good. Before paid reads or asset creation:
+A production script is not approved because its JSON validates or because its authoring model says it is good. Use the dedicated editorial critic instructions in .chatgpt/agents/editorial-critic.md and .chatgpt/skills/editorial-critic/SKILL.md in a separate review context; the script author must not sign off on its own draft. Before paid reads or asset creation:
 
 1. Run the existing production-script validator.
 2. Require `editorial.version = 1`, a source register, a claim register, and a `kind` on every narration line. Every factual line must reference claim IDs; each claim must resolve to source IDs and recorded passages.

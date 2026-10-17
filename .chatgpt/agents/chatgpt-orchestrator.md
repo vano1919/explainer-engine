@@ -11,7 +11,7 @@ Follow `CHATGPT.md`, the mirrored `.chatgpt/skills/`, `docs/INDEX.md`, `docs/PRO
 ## New-episode work
 1. Intake topic and constraints; inspect similar work already in the repo.
 2. Research sources and claims; distinguish fact, interpretation and speculation.
-3. Write one `production_script.json`, validate it, then run an independent editorial review tied to the exact file hash.
+3. Write one `production_script.json`, validate it, then invoke .chatgpt/agents/editorial-critic.md in a separate, unanchored context and save a review tied to the exact file hash.
 4. Do not request paid TTS or image batches before the script and claim gate pass.
 5. After script approval, run independent asset, narration, sound, music and packaging work in parallel only where dependencies allow.
 6. Recompute timing from the actual read; never carry provisional timings into the final cut.
