@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import http.client
 import json
 import os
 import time
@@ -153,11 +154,19 @@ class GeminiClient:
         data = json.dumps(body).encode() if body is not None else None
         request = urllib.request.Request(url, data=data, method=method,
                                          headers={"x-goog-api-key": self.key, "Content-Type": "application/json"})
-        try:
-            with urllib.request.urlopen(request, timeout=self.timeout) as r:
-                return json.load(r)
-        except urllib.error.HTTPError as exc:
-            raise GeminiError(f"batch HTTP {exc.code}: {exc.read().decode('utf-8', 'replace')[:300]}") from None
+        last = None
+        for attempt in range(1, self.retries + 2):  # a big answer (several 2K pictures, 50+ MB) can be cut off by the proxy
+            try:
+                with urllib.request.urlopen(request, timeout=self.timeout) as r:
+                    return json.loads(r.read())
+            except urllib.error.HTTPError as exc:
+                raise GeminiError(f"batch HTTP {exc.code}: {exc.read().decode('utf-8', 'replace')[:300]}") from None
+            except (http.client.IncompleteRead, ConnectionError, TimeoutError, urllib.error.URLError) as exc:
+                last = exc
+                if method != "GET":  # never repeat a POST: it could submit (and charge) a second batch
+                    raise GeminiError(f"batch request failed: {exc!r}") from None
+                time.sleep(min(2.0 * attempt, 6.0))
+        raise GeminiError(f"batch answer could not be read after {self.retries + 1} tries: {last!r}")
 
     def submit_batch(self, items: list[dict], *, model: str, size: str = "2K", aspect: str = "16:9") -> str:
         """items: [{name, prompt, refs: [bytes]}]. Reserves the batch price, sends ONE batch, records it on disk at once

@@ -481,3 +481,19 @@ Update (same day): Canva tested: one test image generated from a neutral prompt 
 Update (same day): Canva Privacy Policy (V-40, creator-supplied): content in the account may train Canva's AI unless the creator switches it off in privacy settings. Rule for our work: no unpublished scripts, claim maps, rights manifests or personal data in Canva; test images only.
 Update (same day): D-47 filler pictures via Canva: `imagegen/importance.py` computes importance from shot type, heroes, reuse, tier and beat job; PV-36 refuses non-filler Canva pictures, more than 30 %, and any use while `canva_terms_verified` is false; `paint.py` lists the Canva pictures it does not paint. Shot length is not known at script stage: the 4 s limit is still to be checked after timing.
 Update (same day): the creator read the Canva terms himself and accepted D-47: `channel.canva_terms_verified` is now true (note: text not seen by Claude). PV-36 still limits Canva to computed filler, at most 30 %.
+
+## 2026-10-17 — Syndicate Wars (episode run up to the voice; ElevenLabs not available)
+
+Orchestrated run of "Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida" (rulebook v5, premise H1 "Who Leaves a Footprint?", H2/H3
+compared, `story_hypotheses.json` 0 FAIL). Done: claim map C-01..C-50 (C-44..C-50 added: our star ratings as labelled opinion, scenario
+assumption, invented gags, GTA V wanted level); rulebook final (BLOCK RK-07 removed, REVIEW RK-10/RK-14 decided from the creator's statements, ADAPT
+items resolved) and stamped final, script_lock and paid_assets (re-stamped four times as the script changed: scopes in `episode_rules.json`);
+script `production_script.json` (31 segments, 1,289 words, estimated 9.4 min, 84 shots, 8 date graphics, 2 Shorts), engagement gate 0 weak beats,
+narration lint 0 FAIL, ip_check 0 FAIL. Pictures: Gemini batch, 51 pictures (4 premium portraits painted twice: the first set read as actor
+likenesses (Shelby, Vito) and had garbled street signs, rejected and repainted once), US$1.795 of the US$10 cap; 9 character-select screens and the
+thumbnail drawn by `production/select_screen.py`. Silent animatic and two silent Short previews on ESTIMATED timing (not deliverables).
+Repo fixes with tests: era `modern_neon_florida` in the codex; acronyms GTA/IRS/LCN/BAWSAQ/MP are not stress marks (narration lint); Gemini batch GET
+retries when the proxy cuts a 57 MB answer (never a POST); `fill_holds.drop_short_shots` hands an inline picture definition to its next use.
+Stopped: the ElevenLabs connector tools were not loaded in this session (ToolSearch found none), so no voice, music or sound effect exists and no
+real timing, mix, assemble, scorecard or `final_qa` stamp is possible. Not done: Canva fillers (connector absent; all pictures are Gemini), the
+Rockstar fan-content policy page (HTTP 503 on every attempt, not read first-hand), the trailer-1 watch (C-30).

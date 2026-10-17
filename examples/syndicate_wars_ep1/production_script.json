@@ -1,0 +1,3239 @@
+{
+ "schema": "production_script/1",
+ "episode": {
+  "id": "syndicate_wars",
+  "title": "Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida",
+  "fps": 30,
+  "size": [
+   1920,
+   1080
+  ],
+  "grade": "neon_dusk",
+  "rulebook": "episode_rules.json",
+  "notes": "Invented crossover scenario; commentary target in rights_manifest.json; stats are the channel's own rating."
+ },
+ "voice": {
+  "provider": "elevenlabs",
+  "model": "eleven_v4",
+  "voice_id": null,
+  "name": null,
+  "style": "warm, mature baritone storyteller with dry humour; unhurried but lively, gently amused; emotion carried quietly, a held breath, a dry smile",
+  "pace_wpm": [
+   150,
+   172
+  ],
+  "default_tags": [
+   "warmly"
+  ],
+  "candidates": []
+ },
+ "world": {
+  "topic": "four classic crime bosses in a neon Florida-style city",
+  "host": {
+   "era": "modern_neon_florida",
+   "place": "an invented neon coastal city of causeways and palms (Vice City in plain words only)",
+   "when": "our assumed present day"
+  },
+  "visitors": [],
+  "light_owner": "host",
+  "day_arc": [
+   {
+    "beat": 1,
+    "light": "neon_dusk"
+   },
+   {
+    "beat": 2,
+    "light": "night_neon"
+   },
+   {
+    "beat": 3,
+    "light": "sunset_causeway"
+   },
+   {
+    "beat": 4,
+    "light": "ledger_lamp"
+   },
+   {
+    "beat": 5,
+    "light": "night_neon"
+   },
+   {
+    "beat": 6,
+    "light": "harsh_day"
+   },
+   {
+    "beat": 7,
+    "light": "neon_dusk"
+   },
+   {
+    "beat": 8,
+    "light": "ledger_lamp"
+   },
+   {
+    "beat": 9,
+    "light": "sunset_causeway"
+   }
+  ]
+ },
+ "look": {
+  "style_refs": [],
+  "default_engine": "pod_ref"
+ },
+ "cast": {
+  "capone": {
+   "names": [
+    "capone",
+    "al capone"
+   ],
+   "card": "a heavy-set 1930s Chicago crime boss, broad round face with three thin old scars on the left cheek, slicked-back dark hair, cream wide-lapel pinstripe suit, white fedora, a flower in the lapel, theatrical confident posture"
+  },
+  "vito": {
+   "names": [
+    "vito",
+    "vito corleone"
+   ],
+   "card": "an older heavy-set patriarch of the 1950s, bald crown with a white fringe, round full face, thick grey eyebrows, small round spectacles, dark double-breasted suit with a white pocket square, a gold signet ring, soft-spoken courtly posture"
+  },
+  "mizuno": {
+   "names": [
+    "mizuno",
+    "haruto mizuno"
+   ],
+   "card": "a composed middle-aged Japanese businessman, short crew cut streaked with silver, thin rimless glasses, slim charcoal suit, crisp white shirt, slim black briefcase, upright disciplined posture"
+  },
+  "shelby": {
+   "names": [
+    "shelby",
+    "tommy shelby"
+   ],
+   "card": "a stocky square-jawed man in his thirties, side-parted wavy auburn hair, thick eyebrows, warm brown eyes, a neat trimmed moustache, a soft brown tweed cap with a short brim, grey three-piece suit with a watch chain, long charcoal overcoat, calm confident posture"
+  }
+ },
+ "story": {
+  "events": [],
+  "forbidden_props": [
+   "gun fired in public",
+   "blood",
+   "drugs on display"
+  ]
+ },
+ "picture_dirs": [
+  "pictures"
+ ],
+ "sound_dirs": [],
+ "library": {
+  "sc_all": {
+   "file": "sc_all.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "sc_capone": {
+   "file": "sc_capone.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "sc_vito": {
+   "file": "sc_vito.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "sc_mizuno": {
+   "file": "sc_mizuno.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "sc_shelby": {
+   "file": "sc_shelby.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "sc_capone_out": {
+   "file": "sc_capone_out.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "sc_vito_out": {
+   "file": "sc_vito_out.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "sc_mizuno_out": {
+   "file": "sc_mizuno_out.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "sc_final": {
+   "file": "sc_final.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  },
+  "p_capone": {
+   "file": "p_capone.png",
+   "engine": "existing",
+   "heroes": [
+    "capone"
+   ],
+   "shows": []
+  },
+  "p_vito": {
+   "file": "p_vito.png",
+   "engine": "existing",
+   "heroes": [
+    "vito"
+   ],
+   "shows": []
+  },
+  "p_mizuno": {
+   "file": "p_mizuno.png",
+   "engine": "existing",
+   "heroes": [
+    "mizuno"
+   ],
+   "shows": []
+  },
+  "p_shelby": {
+   "file": "p_shelby.png",
+   "engine": "existing",
+   "heroes": [
+    "shelby"
+   ],
+   "shows": []
+  },
+  "s01_skyline": {
+   "file": "s01_skyline.png",
+   "engine": "existing",
+   "heroes": [],
+   "shows": []
+  }
+ },
+ "music": [],
+ "segments": [
+  {
+   "id": "S01",
+   "beat": "hook",
+   "job": "hook",
+   "light_beat": 1,
+   "feel": "Curiosity: a yes/no question and four bosses dropped into a city of cameras.",
+   "purpose": "Curiosity: a yes/no question and four bosses dropped into a city of cameras.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Could a gangster from the 1930s survive a world where everybody has a CAMERA?",
+     "tags": [
+      "curious"
+     ],
+     "emphasis": [
+      "camera"
+     ],
+     "claims": [
+      "C-16"
+     ]
+    },
+    {
+     "text": "Not a film set. A causeway, a neon sunset, and every phone pointing at you."
+    },
+    {
+     "text": "Welcome to Vice City, in the state of Leonida.",
+     "pause_after": 0.3,
+     "claims": [
+      "C-02"
+     ]
+    },
+    {
+     "text": "Rockstar's next game lives there. And we're about to drop four crime bosses into it."
+    },
+    {
+     "text": "Four bosses. Four ways of ruling.",
+     "pause_after": 0.3
+    },
+    {
+     "text": "And only one of them understands what a phone camera REALLY is.",
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "really"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Could a gangster",
+     "type": "A",
+     "picture": "s01_skyline",
+     "purpose": "Open on the place: neon, heat, scale, no violence in the first 7 seconds",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    },
+    {
+     "at": "Not a film set",
+     "type": "C",
+     "picture": {
+      "id": "s01_phones",
+      "engine": "pod_ref",
+      "subject": "tight insert, a forest of raised hands holding glowing phones toward the camera, screens lit neon cyan and pink, one lens in the middle, shaded faces behind, hot neon pink and cyan signs against a soft sunset-orange sky, humid haze",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, a forest of raised hands holding glowing phones toward the camera, screens lit neon cyan and pink, one lens in the middle, shaded faces behind, hot neon pink and cyan signs against a soft sunset-orange sky, humid haze Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The threat of the video in one image: every phone is a witness",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "cut": {
+      "why": "the question lands, then the images answer"
+     }
+    },
+    {
+     "at": "Welcome to Vice City",
+     "type": "B",
+     "picture": {
+      "id": "s01_boardwalk",
+      "engine": "pod_ref",
+      "subject": "a wide neon boardwalk at dusk packed with tourists and locals all filming the sunset and each other on phones, palm trees, a roller coaster glowing in the distance, a sense of being watched from every direction, hot neon pink and cyan signs against a soft sunset-orange sky, humid haze",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "a wide neon boardwalk at dusk packed with tourists and locals all filming the sunset and each other on phones, palm trees, a roller coaster glowing in the distance, a sense of being watched from every direction, hot neon pink and cyan signs against a soft sunset-orange sky, humid haze Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The place named: everybody filming everybody",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     }
+    },
+    {
+     "at": "Rockstar's next game",
+     "type": "A",
+     "picture": {
+      "id": "s01_four",
+      "engine": "pod_ref",
+      "subject": "four tall silhouettes standing in a row on the causeway at sunset seen from behind, one in a white fedora and pinstripe suit, one in a dark double-breasted suit and homburg, one in a slim business suit with a briefcase, one in a long overcoat and flat cap, long shadows toward the viewer, phone lights glowing in the crowd beyond, hot neon pink and cyan signs against a soft sunset-orange sky, humid haze",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "four tall silhouettes standing in a row on the causeway at sunset seen from behind, one in a white fedora and pinstripe suit, one in a dark double-breasted suit and homburg, one in a slim business suit with a briefcase, one in a long overcoat and flat cap, long shadows toward the viewer, phone lights glowing in the crowd beyond, hot neon pink and cyan signs against a soft sunset-orange sky, humid haze Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Promise the four bosses before anyone is named",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "And only one",
+     "type": "C",
+     "picture": "s01_phones",
+     "purpose": "The phones return as the sting of the hook",
+     "motion": {
+      "kind": "push",
+      "z0": 1.03,
+      "z1": 1.1
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S02",
+   "beat": "explanation",
+   "job": "explanation",
+   "light_beat": 1,
+   "feel": "Trust: we say what is official, what is our guess, and what is history.",
+   "purpose": "Trust: we say what is official, what is our guess, and what is history.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Quick honesty first.",
+     "tags": [
+      "softly"
+     ],
+     "pause_after": 0.3
+    },
+    {
+     "text": "Rockstar's page gives a release date, November 19, 2026. It gives no year for the story.",
+     "claims": [
+      "C-01",
+      "C-04"
+     ]
+    },
+    {
+     "text": "So the year is OUR assumption. The scenario is our invention. Every word the bosses say here is made up.",
+     "emphasis": [
+      "our"
+     ],
+     "claims": [
+      "C-48"
+     ]
+    },
+    {
+     "text": "The history? That part is real. We'll tell you when it is."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Quick honesty",
+     "type": "A",
+     "picture": "s01_skyline",
+     "purpose": "Back to the place while the official facts are said",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.02
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "So the year",
+     "type": "A",
+     "picture": {
+      "id": "s02_chairs",
+      "engine": "pod_ref",
+      "subject": "an empty round table in a dim neon-lit back room with four empty chairs and a single unlit ceiling lamp, a stack of folded newspapers with no readable text on the table, ominous and quiet, hot neon pink and cyan signs against a soft sunset-orange sky, humid haze",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "an empty round table in a dim neon-lit back room with four empty chairs and a single unlit ceiling lamp, a stack of folded newspapers with no readable text on the table, ominous and quiet, hot neon pink and cyan signs against a soft sunset-orange sky, humid haze Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "An empty table: the stage is set but the story is invented",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "The history",
+     "type": "C",
+     "picture": {
+      "id": "s02_history",
+      "engine": "pod_ref",
+      "subject": "tight insert, an old yellowed newspaper page with blurred headlines of no readable words and a rubber stamp mark, resting under a brass lamp, a single warm desk lamp, amber pool of light, deep teal shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, an old yellowed newspaper page with blurred headlines of no readable words and a rubber stamp mark, resting under a brass lamp, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "A tactile cue for what is real history",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "cut": {
+      "why": "the switch to the real marks the honesty line"
+     }
+    }
+   ]
+  },
+  {
+   "id": "S03",
+   "beat": "explanation",
+   "job": "explanation",
+   "light_beat": 2,
+   "feel": "Fun: the video-game character-select screen and our rating rule.",
+   "purpose": "Fun: the video-game character-select screen and our rating rule.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Now. Choose your boss.",
+     "tags": [
+      "excited"
+     ],
+     "pause_after": 0.4
+    },
+    {
+     "text": "Five stats each, out of five stars. These ratings are OURS. Opinions, not facts. And we'll show our reasons.",
+     "emphasis": [
+      "ours"
+     ],
+     "claims": [
+      "C-44"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Now. Choose",
+     "type": "B",
+     "picture": "sc_all",
+     "purpose": "The character-select grid: the video's central visual",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.04
+     }
+    },
+    {
+     "at": "Five stats each",
+     "type": "C",
+     "picture": {
+      "id": "s03_cursor",
+      "engine": "pod_ref",
+      "subject": "tight insert, a glowing neon-pink arrow cursor sliding across a row of four empty portrait frames on a dark screen, one frame lit cyan, a satisfying game-menu energy, no text, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, a glowing neon-pink arrow cursor sliding across a row of four empty portrait frames on a dark screen, one frame lit cyan, a satisfying game-menu energy, no text, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The cursor moves across the frames while the rule is said",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     }
+    }
+   ]
+  },
+  {
+   "id": "S04",
+   "beat": "evidence",
+   "job": "evidence",
+   "light_beat": 2,
+   "feel": "Understand why Capone is rated brutal but brittle.",
+   "purpose": "Understand why Capone is rated brutal but brittle.",
+   "rules": [
+    "ER-07",
+    "ER-02"
+   ],
+   "lines": [
+    {
+     "text": "First card. Al Capone.",
+     "tags": [
+      "dramatically"
+     ]
+    },
+    {
+     "text": "Brutality, five stars. Intimidation, four.",
+     "claims": [
+      "C-44"
+     ]
+    },
+    {
+     "text": "But adaptability? One star. Tech-savviness? One star.",
+     "tags": [
+      "deadpan"
+     ],
+     "claims": [
+      "C-44"
+     ]
+    },
+    {
+     "text": "Our reasoning: Capone ran on fear. And fear needs a room to work in. Not a FEED.",
+     "emphasis": [
+      "feed"
+     ],
+     "claims": [
+      "C-44"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "First card",
+     "type": "B",
+     "picture": "sc_capone",
+     "purpose": "Capone's card with the stars",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "Our reasoning",
+     "type": "B",
+     "picture": "p_capone",
+     "purpose": "The portrait that carries his face for the whole video",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "cut": {
+      "why": "the card gives way to the face when the reasoning starts"
+     }
+    }
+   ]
+  },
+  {
+   "id": "S05",
+   "beat": "evidence",
+   "job": "evidence",
+   "light_beat": 2,
+   "feel": "Understand that Vito is a network, not a fist.",
+   "purpose": "Understand that Vito is a network, not a fist.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Second card. Vito Corleone, the film-era Don.",
+     "tags": [
+      "warmly"
+     ]
+    },
+    {
+     "text": "Influence and networking, five stars. Strategy, four.",
+     "claims": [
+      "C-45"
+     ]
+    },
+    {
+     "text": "Brutality, just two. Tech-savviness, one.",
+     "claims": [
+      "C-45"
+     ]
+    },
+    {
+     "text": "Vito rules with favours, not fists. Judges. Politicians. And a very long memory.",
+     "tags": [
+      "softly"
+     ],
+     "claims": [
+      "C-24"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Second card",
+     "type": "B",
+     "picture": "sc_vito",
+     "purpose": "Vito's card with the stars",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "Vito rules",
+     "type": "B",
+     "picture": "p_vito",
+     "purpose": "The portrait that carries his face for the whole video",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    }
+   ]
+  },
+  {
+   "id": "S06",
+   "beat": "complication",
+   "job": "complication",
+   "light_beat": 2,
+   "feel": "Curiosity: a disciplined boss with one hidden weakness.",
+   "purpose": "Curiosity: a disciplined boss with one hidden weakness.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Third card. Haruto Mizuno, our invented Yakuza boss. No real person. No real group.",
+     "claims": [
+      "C-46"
+     ]
+    },
+    {
+     "text": "Discipline, five stars. Brutality, four. Adaptability, four. Tech, four.",
+     "claims": [
+      "C-46"
+     ]
+    },
+    {
+     "text": "But chaos management?",
+     "tags": [
+      "deadpan"
+     ],
+     "pause_after": 0.3
+    },
+    {
+     "text": "Two. Remember that.",
+     "tags": [
+      "whispers"
+     ],
+     "pause_after": 0.4,
+     "claims": [
+      "C-46"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Third card",
+     "type": "B",
+     "picture": "sc_mizuno",
+     "purpose": "Mizuno's card with the stars",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "But chaos",
+     "type": "B",
+     "picture": "p_mizuno",
+     "purpose": "The portrait; the held look plants the open loop",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    }
+   ]
+  },
+  {
+   "id": "S07",
+   "beat": "evidence",
+   "job": "evidence",
+   "light_beat": 2,
+   "feel": "Understand why Shelby is the planner.",
+   "purpose": "Understand why Shelby is the planner.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Fourth card. Tommy Shelby, in his 1930s Birmingham years.",
+     "claims": [
+      "C-28"
+     ]
+    },
+    {
+     "text": "Adaptability, five. Tech-savviness, five. Strategy, five.",
+     "claims": [
+      "C-47"
+     ]
+    },
+    {
+     "text": "Influence, four. Brutality, three.",
+     "claims": [
+      "C-47"
+     ]
+    },
+    {
+     "text": "Our reasoning: Shelby treats information like CASH.",
+     "emphasis": [
+      "cash"
+     ],
+     "claims": [
+      "C-47"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Fourth card",
+     "type": "B",
+     "picture": "sc_shelby",
+     "purpose": "Shelby's card with the stars",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "Our reasoning",
+     "type": "B",
+     "picture": "p_shelby",
+     "purpose": "The portrait that carries his face for the whole video",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    }
+   ]
+  },
+  {
+   "id": "S08",
+   "beat": "question",
+   "job": "question",
+   "light_beat": 2,
+   "feel": "Stakes: the question of the whole video and what it tests.",
+   "purpose": "Stakes: the question of the whole video and what it tests.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "So here's what this video asks.",
+     "tags": [
+      "curious"
+     ],
+     "pause_after": 0.3
+    },
+    {
+     "text": "In a world where everybody films everything, who realises FIRST that attention is both power and danger?",
+     "tags": [
+      "dramatically"
+     ],
+     "emphasis": [
+      "first"
+     ]
+    },
+    {
+     "text": "We'll test it on the things Rockstar's games love to joke about. The phone. The feed. The money. The wanted level.",
+     "claims": [
+      "C-43"
+     ]
+    },
+    {
+     "text": "In GTA V, those were jokes. For the new game, we can only guess.",
+     "claims": [
+      "C-43"
+     ]
+    },
+    {
+     "text": "Four rounds. Loudest first.",
+     "tags": [
+      "mischievously"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "So here's",
+     "type": "A",
+     "picture": {
+      "id": "s08_paths",
+      "engine": "pod_ref",
+      "subject": "four glowing neon corridors diverging from one starting line on wet asphalt at night, each corridor lit in a different colour, a single phone-screen eye at the far end of each, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "four glowing neon corridors diverging from one starting line on wet asphalt at night, each corridor lit in a different colour, a single phone-screen eye at the far end of each, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Four routes to one test: the structure of the video",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "In a world",
+     "type": "C",
+     "picture": {
+      "id": "s08_eye",
+      "engine": "pod_ref",
+      "subject": "tight insert, a phone camera lens as a huge glowing eye reflecting a neon street, tiny silhouettes of people reflected in the lens, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, a phone camera lens as a huge glowing eye reflecting a neon street, tiny silhouettes of people reflected in the lens, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The phone as the thing under test",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     }
+    },
+    {
+     "at": "We'll test it",
+     "type": "C",
+     "picture": "s01_phones",
+     "purpose": "The things tested, again as a crowd of phones",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "Four rounds",
+     "type": "A",
+     "picture": "s08_paths",
+     "purpose": "Return to the four paths for the countdown",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S09",
+   "beat": "evidence",
+   "job": "evidence",
+   "light_beat": 3,
+   "feel": "Recognise Capone's fame as the 1930s version of going viral.",
+   "purpose": "Recognise Capone's fame as the 1930s version of going viral.",
+   "rules": [
+    "ER-07",
+    "ER-02"
+   ],
+   "lines": [
+    {
+     "text": "Round one. Al Capone.",
+     "tags": [
+      "dramatically"
+     ],
+     "pause_after": 0.3
+    },
+    {
+     "text": "In 1930, Chicago's crime commission names him Public Enemy Number One. And during the Depression, he sponsors a soup kitchen.",
+     "claims": [
+      "C-19",
+      "C-20"
+     ]
+    },
+    {
+     "text": "He's not hiding. He's performing.",
+     "tags": [
+      "softly"
+     ]
+    },
+    {
+     "text": "Our reading? Capone understood that fame is a kind of shield.",
+     "emphasis": [
+      "shield"
+     ],
+     "claims": [
+      "C-27"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Round one",
+     "type": "B",
+     "picture": {
+      "id": "c09_press",
+      "engine": "pod_ref",
+      "subject": "a crowded 1930s city street at sunset, newspaper vendors in flat caps holding up front pages with wordless headline blocks, a long black car passing with a man in a white fedora waving from the back seat, low sunset-orange sun, pink clouds, long warm shadows",
+      "heroes": [
+       "capone"
+      ],
+      "refs": [
+       "p_capone",
+       "s01_skyline"
+      ],
+      "costume": "1930s pinstripe suits and fedoras",
+      "prompt": "a crowded 1930s city street at sunset, newspaper vendors in flat caps holding up front pages with wordless headline blocks, a long black car passing with a man in a white fedora waving from the back seat, low sunset-orange sun, pink clouds, long warm shadows. One named hero: a heavy-set 1930s Chicago crime boss, broad round face with three thin old scars on the left cheek, slicked-back dark hair, cream wide-lapel pinstripe suit, white fedora, a flower in the lapel, theatrical confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Capone as a public figure: fame is the setting",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    },
+    {
+     "at": "And during the Depression",
+     "type": "B",
+     "picture": {
+      "id": "c09_soup",
+      "engine": "pod_ref",
+      "subject": "a long line of ordinary people in worn 1930s coats waiting at a soup-kitchen counter, a large pot steaming, the heavy-set boss in a cream suit ladling a bowl with a beaming showman's smile, a photographer's flash popping, low sunset-orange sun, pink clouds, long warm shadows",
+      "heroes": [
+       "capone"
+      ],
+      "refs": [
+       "p_capone",
+       "s01_skyline"
+      ],
+      "costume": "1930s pinstripe suits and fedoras",
+      "prompt": "a long line of ordinary people in worn 1930s coats waiting at a soup-kitchen counter, a large pot steaming, the heavy-set boss in a cream suit ladling a bowl with a beaming showman's smile, a photographer's flash popping, low sunset-orange sun, pink clouds, long warm shadows. One named hero: a heavy-set 1930s Chicago crime boss, broad round face with three thin old scars on the left cheek, slicked-back dark hair, cream wide-lapel pinstripe suit, white fedora, a flower in the lapel, theatrical confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The soup kitchen: generosity as publicity",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "Our reading",
+     "type": "B",
+     "picture": "p_capone",
+     "purpose": "Face to the viewer for his reading",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S10",
+   "beat": "complication",
+   "job": "complication",
+   "light_beat": 3,
+   "feel": "Fun: Capone's fame turns into a trail of evidence in a city of phones.",
+   "purpose": "Fun: Capone's fame turns into a trail of evidence in a city of phones.",
+   "rules": [
+    "ER-07",
+    "ER-02"
+   ],
+   "lines": [
+    {
+     "text": "Now drop Capone in Vice City. Invented, remember.",
+     "tags": [
+      "mischievously"
+     ]
+    },
+    {
+     "text": "Someone films him handing out free sandwiches. Millions of views by lunch.",
+     "tags": [
+      "chuckles"
+     ]
+    },
+    {
+     "text": "Brilliant! Oh, but then someone films the car he arrived in. Then the driver. Then the licence plate."
+    },
+    {
+     "text": "In the 1930s, newspapers needed him as a story. Today, a camera makes everyone one.",
+     "claims": [
+      "C-27"
+     ]
+    },
+    {
+     "text": "Attention is power. Right up until it becomes a MAP.",
+     "emphasis": [
+      "map"
+     ],
+     "claims": [
+      "C-27"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Now drop",
+     "type": "B",
+     "picture": "s01_boardwalk",
+     "purpose": "Capone arrives in the world of phones",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "Someone films him",
+     "type": "B",
+     "picture": {
+      "id": "c10_viral",
+      "engine": "pod_ref",
+      "subject": "the heavy-set boss in a cream suit and white fedora handing out sandwiches on a neon boardwalk to a delighted crowd, every person holding a phone up to film him, he smiles broadly, a clearly comic moment, low sunset-orange sun, pink clouds, long warm shadows",
+      "heroes": [
+       "capone"
+      ],
+      "refs": [
+       "p_capone",
+       "s01_skyline"
+      ],
+      "costume": "1930s pinstripe suits and fedoras",
+      "prompt": "the heavy-set boss in a cream suit and white fedora handing out sandwiches on a neon boardwalk to a delighted crowd, every person holding a phone up to film him, he smiles broadly, a clearly comic moment, low sunset-orange sun, pink clouds, long warm shadows. One named hero: a heavy-set 1930s Chicago crime boss, broad round face with three thin old scars on the left cheek, slicked-back dark hair, cream wide-lapel pinstripe suit, white fedora, a flower in the lapel, theatrical confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The viral moment: power, and the joke",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    },
+    {
+     "at": "Oh, but then someone films the car",
+     "type": "C",
+     "picture": {
+      "id": "c10_plate",
+      "engine": "pod_ref",
+      "subject": "tight insert, a phone screen filming the rear bumper of a long cream vintage car, a glowing red tracking box drawn around the blank licence plate, a cursor tapping it, low sunset-orange sun, pink clouds, long warm shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, a phone screen filming the rear bumper of a long cream vintage car, a glowing red tracking box drawn around the blank licence plate, a cursor tapping it, low sunset-orange sun, pink clouds, long warm shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The trail starts with a plate",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "cut": {
+      "why": "from the big smile to the cold detail"
+     }
+    },
+    {
+     "at": "Attention is power",
+     "type": "A",
+     "picture": {
+      "id": "c10_map",
+      "engine": "pod_ref",
+      "subject": "wide top-down view of a neon city map on a phone screen, dozens of glowing pins converging on one small car icon, a thin red line tracing the route back to a single building, low sunset-orange sun, pink clouds, long warm shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "wide top-down view of a neon city map on a phone screen, dozens of glowing pins converging on one small car icon, a thin red line tracing the route back to a single building, low sunset-orange sun, pink clouds, long warm shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The map: attention turned into a route",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     }
+    }
+   ]
+  },
+  {
+   "id": "S11",
+   "beat": "reveal",
+   "job": "reveal",
+   "light_beat": 4,
+   "feel": "Surprise: in real history it was a ledger, not a bullet, that ended Capone.",
+   "purpose": "Surprise: in real history it was a ledger, not a bullet, that ended Capone.",
+   "rules": [
+    "ER-07",
+    "ER-02"
+   ],
+   "lines": [
+    {
+     "text": "And here's the part history already wrote.",
+     "tags": [
+      "softly"
+     ],
+     "pause_after": 0.4
+    },
+    {
+     "text": "What brought Capone down wasn't a rival. Or a bullet. It was a LEDGER.",
+     "tags": [
+      "dramatically"
+     ],
+     "emphasis": [
+      "ledger"
+     ],
+     "claims": [
+      "C-16"
+     ]
+    },
+    {
+     "text": "An IRS investigator, Frank J. Wilson, found a line in a book. About seventeen thousand five hundred dollars, paid for Al.",
+     "claims": [
+      "C-21"
+     ]
+    },
+    {
+     "text": "In October 1931, Capone was convicted of tax evasion. Eleven years in prison.",
+     "claims": [
+      "C-16"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "And here's",
+     "type": "C",
+     "picture": {
+      "id": "c11_ledger",
+      "engine": "pod_ref",
+      "subject": "tight insert, a ledger book open under a warm desk lamp, a finger on one handwritten line of figures with no readable text, a fountain pen beside it, a single warm desk lamp, amber pool of light, deep teal shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, a ledger book open under a warm desk lamp, a finger on one handwritten line of figures with no readable text, a fountain pen beside it, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The ledger: the real tool that finished him",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     }
+    },
+    {
+     "at": "An IRS investigator",
+     "type": "B",
+     "picture": {
+      "id": "c11_agent",
+      "engine": "pod_ref",
+      "subject": "a patient tax investigator in a rumpled grey suit and round glasses sitting at a desk piled with ledgers, a stamped line circled in red ink, a quiet moment of discovery under a warm desk lamp, a single warm desk lamp, amber pool of light, deep teal shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "a patient tax investigator in a rumpled grey suit and round glasses sitting at a desk piled with ledgers, a stamped line circled in red ink, a quiet moment of discovery under a warm desk lamp, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The patient investigator",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "In October",
+     "type": "A",
+     "picture": {
+      "id": "c11_verdict",
+      "engine": "pod_ref",
+      "subject": "a wide 1930s courtroom, the heavy-set boss in a cream suit small at the defence table, a judge's bench towering above him, jurors in rows, dust in the lamp light, a heavy silence, a single warm desk lamp, amber pool of light, deep teal shadows",
+      "heroes": [
+       "capone"
+      ],
+      "refs": [
+       "p_capone",
+       "s01_skyline"
+      ],
+      "costume": "1930s pinstripe suits and fedoras",
+      "prompt": "a wide 1930s courtroom, the heavy-set boss in a cream suit small at the defence table, a judge's bench towering above him, jurors in rows, dust in the lamp light, a heavy silence, a single warm desk lamp, amber pool of light, deep teal shadows. One named hero: a heavy-set 1930s Chicago crime boss, broad round face with three thin old scars on the left cheek, slicked-back dark hair, cream wide-lapel pinstripe suit, white fedora, a flower in the lapel, theatrical confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The conviction: consequence, not spectacle",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     }
+    }
+   ]
+  },
+  {
+   "id": "S12",
+   "beat": "emotional_pause",
+   "job": "emotional_pause",
+   "light_beat": 4,
+   "feel": "Payoff of round one: Capone confused controlling people with controlling information; he falls first.",
+   "purpose": "Payoff of round one: Capone confused controlling people with controlling information; he falls first.",
+   "rules": [
+    "ER-07",
+    "ER-02"
+   ],
+   "lines": [
+    {
+     "text": "Hmm. Capone's mistake would work in any century. He thought controlling people meant controlling INFORMATION.",
+     "emphasis": [
+      "information"
+     ],
+     "claims": [
+      "C-27"
+     ]
+    },
+    {
+     "text": "It doesn't.",
+     "tags": [
+      "sighs"
+     ],
+     "pause_after": 0.5
+    },
+    {
+     "text": "Round one, and he's out.",
+     "tags": [
+      "deadpan"
+     ],
+     "pause_after": 0.3
+    },
+    {
+     "text": "He did end up in Florida, though. At home on Palm Island, in 1947. A quiet ending for a loud man.",
+     "claims": [
+      "C-18"
+     ]
+    },
+    {
+     "text": "The next boss never makes a speech.",
+     "tags": [
+      "whispers"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Hmm. Capone's mistake",
+     "type": "B",
+     "picture": "sc_capone_out",
+     "purpose": "Capone eliminated: the first fall",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "It doesn't",
+     "type": "B",
+     "picture": "p_capone",
+     "purpose": "The face as he is told it does not work",
+     "motion": {
+      "kind": "push",
+      "z0": 1.03,
+      "z1": 1.09
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "He did end up",
+     "type": "A",
+     "picture": {
+      "id": "c12_palm",
+      "engine": "pod_ref",
+      "subject": "a quiet white house on a palm-fringed island at sunset, an empty wooden chair on the veranda, calm water, a long pink horizon, an ending that feels peaceful and lonely, a single warm desk lamp, amber pool of light, deep teal shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "a quiet white house on a palm-fringed island at sunset, an empty wooden chair on the veranda, calm water, a long pink horizon, an ending that feels peaceful and lonely, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The quiet real ending, set against the loud scenario",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "cut": {
+      "why": "from the stamp to the stillness"
+     }
+    }
+   ]
+  },
+  {
+   "id": "S13",
+   "beat": "explanation",
+   "job": "explanation",
+   "light_beat": 2,
+   "feel": "Commentary on a game system: the wanted level, and what changes when everybody has a phone.",
+   "purpose": "Commentary on a game system: the wanted level, and what changes when everybody has a phone.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "A quick word on stars.",
+     "tags": [
+      "warmly"
+     ],
+     "pause_after": 0.3
+    },
+    {
+     "text": "In GTA V, your wanted level climbs when the police see you.",
+     "claims": [
+      "C-50"
+     ]
+    },
+    {
+     "text": "In a city of phones, we're guessing it climbs when ANYBODY sees you.",
+     "emphasis": [
+      "anybody"
+     ],
+     "claims": [
+      "C-27"
+     ]
+    },
+    {
+     "text": "The stars in the corner aren't about the police any more. They're about the audience."
+    }
+   ],
+   "shots": [
+    {
+     "at": "A quick word",
+     "type": "C",
+     "picture": {
+      "id": "w13_stars",
+      "engine": "pod_ref",
+      "subject": "tight insert, a row of five glowing neon-pink stars hanging over an empty night street, a police car's blue light washing across a wet wall, the stars flickering on one by one, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, a row of five glowing neon-pink stars hanging over an empty night street, a police car's blue light washing across a wet wall, the stars flickering on one by one, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The wanted stars as a neon sign: the game system under comment",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     }
+    }
+   ]
+  },
+  {
+   "id": "S14",
+   "beat": "question",
+   "job": "question",
+   "light_beat": 5,
+   "feel": "Question for round two: favours versus cameras.",
+   "purpose": "Question for round two: favours versus cameras.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Round two. Vito Corleone.",
+     "tags": [
+      "dramatically"
+     ],
+     "pause_after": 0.3
+    },
+    {
+     "text": "A man who wins with favours. Can Vito survive a city where every phone is a witness and nobody owes him ANYTHING?",
+     "tags": [
+      "curious"
+     ],
+     "emphasis": [
+      "anything"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Round two",
+     "type": "B",
+     "picture": {
+      "id": "v13_table",
+      "engine": "pod_ref",
+      "subject": "a candlelit family dinner table in a warm back room with a neon sign glowing through the window behind, the grey-haired patriarch seated at the head of the table with folded hands, calm and attentive, family silhouettes at the edges, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "heroes": [
+       "vito"
+      ],
+      "refs": [
+       "p_vito",
+       "s01_skyline"
+      ],
+      "costume": "1950s dark double-breasted suits",
+      "prompt": "a candlelit family dinner table in a warm back room with a neon sign glowing through the window behind, the grey-haired patriarch seated at the head of the table with folded hands, calm and attentive, family silhouettes at the edges, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows. One named hero: an older heavy-set patriarch of the 1950s, bald crown with a white fringe, round full face, thick grey eyebrows, small round spectacles, dark double-breasted suit with a white pocket square, a gold signet ring, soft-spoken courtly posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Vito at the head of his table: a man whose power is people",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "A man who wins",
+     "type": "B",
+     "picture": {
+      "id": "v13_window",
+      "engine": "pod_ref",
+      "subject": "seen from a dark street through a lit window, a family dinner at a long table with the grey-haired patriarch at its head, in the foreground the black silhouette of a hand holding up a glowing phone lens toward the window, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "heroes": [
+       "vito"
+      ],
+      "refs": [
+       "p_vito",
+       "s01_skyline"
+      ],
+      "costume": "1950s dark double-breasted suits",
+      "prompt": "seen from a dark street through a lit window, a family dinner at a long table with the grey-haired patriarch at its head, in the foreground the black silhouette of a hand holding up a glowing phone lens toward the window, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows. One named hero: an older heavy-set patriarch of the 1950s, bald crown with a white fringe, round full face, thick grey eyebrows, small round spectacles, dark double-breasted suit with a white pocket square, a gold signet ring, soft-spoken courtly posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Seen from outside: a lens aimed at a private table",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     }
+    }
+   ]
+  },
+  {
+   "id": "S15",
+   "beat": "evidence",
+   "job": "evidence",
+   "light_beat": 5,
+   "feel": "Understand Vito's discipline: favours, a legal front, and a refusal made for strategy.",
+   "purpose": "Understand Vito's discipline: favours, a legal front, and a refusal made for strategy.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Vito's business is quiet.",
+     "tags": [
+      "softly"
+     ]
+    },
+    {
+     "text": "His legal front is an olive-oil import company, Genco Pura.",
+     "claims": [
+      "C-23"
+     ]
+    },
+    {
+     "text": "His real power is who owes him. Judges. Politicians.",
+     "claims": [
+      "C-24"
+     ]
+    },
+    {
+     "text": "And when someone offers Vito the heroin trade, he says no. Because those same judges and politicians would turn on him.",
+     "claims": [
+      "C-24"
+     ]
+    },
+    {
+     "text": "That's not morality. That's STRATEGY.",
+     "emphasis": [
+      "strategy"
+     ],
+     "claims": [
+      "C-24"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Vito's business",
+     "type": "C",
+     "picture": {
+      "id": "v14_oil",
+      "engine": "pod_ref",
+      "subject": "tight insert, wooden crates of olive-oil tins stacked on a neon pier at dusk, a stencil of an invented olive-branch mark, a forklift shadow, water reflecting the signs, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, wooden crates of olive-oil tins stacked on a neon pier at dusk, a stencil of an invented olive-branch mark, a forklift shadow, water reflecting the signs, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The legal front, as a plain crate of oil",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     }
+    },
+    {
+     "at": "His real power",
+     "type": "B",
+     "picture": {
+      "id": "v14_judge",
+      "engine": "pod_ref",
+      "subject": "an older patriarch in a dark suit sharing a quiet handshake with a judge in a robe and a politician in a sash across a small table in a back room, all three smiling thinly, a sense of old obligations, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "heroes": [
+       "vito"
+      ],
+      "refs": [
+       "p_vito",
+       "s01_skyline"
+      ],
+      "costume": "1950s dark double-breasted suits",
+      "prompt": "an older patriarch in a dark suit sharing a quiet handshake with a judge in a robe and a politician in a sash across a small table in a back room, all three smiling thinly, a sense of old obligations, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows. One named hero: an older heavy-set patriarch of the 1950s, bald crown with a white fringe, round full face, thick grey eyebrows, small round spectacles, dark double-breasted suit with a white pocket square, a gold signet ring, soft-spoken courtly posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Judges and politicians: the network made visible",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "And when someone",
+     "type": "B",
+     "picture": {
+      "id": "v14_no",
+      "engine": "pod_ref",
+      "subject": "across a small table a stranger in a flashy suit slides a thick envelope forward, the grey-haired patriarch calmly pushes it back with two fingers and a firm gentle look, a closed door behind him, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "heroes": [
+       "vito"
+      ],
+      "refs": [
+       "p_vito",
+       "s01_skyline"
+      ],
+      "costume": "1950s dark double-breasted suits",
+      "prompt": "across a small table a stranger in a flashy suit slides a thick envelope forward, the grey-haired patriarch calmly pushes it back with two fingers and a firm gentle look, a closed door behind him, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows. One named hero: an older heavy-set patriarch of the 1950s, bald crown with a white fringe, round full face, thick grey eyebrows, small round spectacles, dark double-breasted suit with a white pocket square, a gold signet ring, soft-spoken courtly posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The refusal: strategy, shown as a gesture",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    }
+   ]
+  },
+  {
+   "id": "S16",
+   "beat": "complication",
+   "job": "complication",
+   "light_beat": 5,
+   "feel": "Complication: favours do not travel to strangers with phones.",
+   "purpose": "Complication: favours do not travel to strangers with phones.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "So in Vice City, Vito does the sensible thing. He retreats to his import business. Legal. Boring. Safe.",
+     "tags": [
+      "warmly"
+     ]
+    },
+    {
+     "text": "Safe? Well, no.",
+     "tags": [
+      "deadpan"
+     ],
+     "pause_after": 0.4
+    },
+    {
+     "text": "A favour works on people who know you. Strangers with phones don't.",
+     "emphasis": [
+      "know"
+     ]
+    },
+    {
+     "text": "One delivery driver films a crate going into a van. The clip spreads. And the judge who owed Vito a favour stops answering his calls. Invented, but it tracks."
+    }
+   ],
+   "shots": [
+    {
+     "at": "So in Vice City",
+     "type": "A",
+     "picture": {
+      "id": "v15_dock",
+      "engine": "pod_ref",
+      "subject": "wide view of a neon harbour at night, a row of people on a railing all holding glowing phones toward a crate being loaded onto a truck, the crate stencilled with an olive-branch mark, red recording dots floating over their phones, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "wide view of a neon harbour at night, a row of people on a railing all holding glowing phones toward a crate being loaded onto a truck, the crate stencilled with an olive-branch mark, red recording dots floating over their phones, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The place and the phones: the witnesses arrive",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     }
+    },
+    {
+     "at": "A favour works",
+     "type": "B",
+     "picture": "v13_table",
+     "purpose": "Back to the table: his world of known faces",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "One delivery driver",
+     "type": "B",
+     "picture": {
+      "id": "v15_driver",
+      "engine": "pod_ref",
+      "subject": "a delivery driver in a bright uniform on a neon loading dock holding up a phone to film a crate being slid into a van, a nervous half-smile, a moustache, wide eyes, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "a delivery driver in a bright uniform on a neon loading dock holding up a phone to film a crate being slid into a van, a nervous half-smile, a moustache, wide eyes, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The stranger with the phone",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "cut": {
+      "why": "from the known table to the stranger"
+     }
+    },
+    {
+     "at": "And the judge",
+     "type": "B",
+     "picture": {
+      "id": "v15_phone",
+      "engine": "pod_ref",
+      "subject": "the grey-haired patriarch alone at a desk in a dim room staring at a black rotary telephone that does not ring, an untouched address book beside it, neon light striping the wall, a heavy loneliness, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "heroes": [
+       "vito"
+      ],
+      "refs": [
+       "p_vito",
+       "s01_skyline"
+      ],
+      "costume": "1950s dark double-breasted suits",
+      "prompt": "the grey-haired patriarch alone at a desk in a dim room staring at a black rotary telephone that does not ring, an untouched address book beside it, neon light striping the wall, a heavy loneliness, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows. One named hero: an older heavy-set patriarch of the 1950s, bald crown with a white fringe, round full face, thick grey eyebrows, small round spectacles, dark double-breasted suit with a white pocket square, a gold signet ring, soft-spoken courtly posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The phone that does not ring: the loss",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    }
+   ]
+  },
+  {
+   "id": "S17",
+   "beat": "emotional_pause",
+   "job": "emotional_pause",
+   "light_beat": 5,
+   "feel": "Payoff of round two: his authority does not reach the people his network depends on.",
+   "purpose": "Payoff of round two: his authority does not reach the people his network depends on.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Vito doesn't lose a fight. He loses a phone call.",
+     "tags": [
+      "softly"
+     ],
+     "pause_after": 0.6
+    },
+    {
+     "text": "Round two. The Don finds out his authority doesn't reach the people his network DEPENDS on.",
+     "emphasis": [
+      "depends"
+     ]
+    },
+    {
+     "text": "In the story, he dies in his garden in 1955, playing with his grandson. A gentler ending than anyone else here gets.",
+     "claims": [
+      "C-25"
+     ]
+    },
+    {
+     "text": "And the next boss doesn't need anyone to love him. Just to sign.",
+     "tags": [
+      "mischievously"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Vito doesn't lose",
+     "type": "B",
+     "picture": "v15_phone",
+     "purpose": "The silent phone again as the line lands",
+     "motion": {
+      "kind": "push",
+      "z0": 1.03,
+      "z1": 1.09
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "Round two. The Don",
+     "type": "B",
+     "picture": "sc_vito_out",
+     "purpose": "Vito eliminated: the second fall",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "In the story",
+     "type": "A",
+     "picture": {
+      "id": "v16_garden",
+      "engine": "pod_ref",
+      "subject": "a vegetable garden of staked tomato plants at golden sunset with a single empty wooden chair, long shadows, a peaceful ending, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "a vegetable garden of staked tomato plants at golden sunset with a single empty wooden chair, long shadows, a peaceful ending, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The garden: a quiet canon ending",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     }
+    },
+    {
+     "at": "And the next boss",
+     "type": "A",
+     "picture": {
+      "id": "m17_tower",
+      "engine": "pod_ref",
+      "subject": "wide view of a gleaming glass tower at noon, pink and cyan reflections, a shadow of a bridge over the lobby entrance, quiet and powerful, hard white subtropical noon sun, short shadows, cyan sky",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "wide view of a gleaming glass tower at noon, pink and cyan reflections, a shadow of a bridge over the lobby entrance, quiet and powerful, hard white subtropical noon sun, short shadows, cyan sky Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "A glass tower: the next kind of power",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    }
+   ]
+  },
+  {
+   "id": "S18",
+   "beat": "question",
+   "job": "question",
+   "light_beat": 6,
+   "feel": "Question for round three: can discipline beat a feed?",
+   "purpose": "Question for round three: can discipline beat a feed?",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Round three. Haruto Mizuno. Invented, remember.",
+     "tags": [
+      "dramatically"
+     ]
+    },
+    {
+     "text": "Quiet voice. Slim suit. A business card that says consultant.",
+     "claims": [
+      "C-46"
+     ]
+    },
+    {
+     "text": "Can a man with perfect discipline be beaten by a FEED?",
+     "tags": [
+      "curious"
+     ],
+     "emphasis": [
+      "feed"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Round three",
+     "type": "B",
+     "picture": {
+      "id": "m17_card",
+      "engine": "pod_ref",
+      "subject": "a composed businessman in a slim charcoal suit offering a plain white business card with a small bow, in a glass-walled neon-lit office, a skyline behind him at dusk, hard white subtropical noon sun, short shadows, cyan sky",
+      "heroes": [
+       "mizuno"
+      ],
+      "refs": [
+       "p_mizuno",
+       "s01_skyline"
+      ],
+      "costume": "slim modern business suits",
+      "prompt": "a composed businessman in a slim charcoal suit offering a plain white business card with a small bow, in a glass-walled neon-lit office, a skyline behind him at dusk, hard white subtropical noon sun, short shadows, cyan sky. One named hero: a composed middle-aged Japanese businessman, short crew cut streaked with silver, thin rimless glasses, slim charcoal suit, crisp white shirt, slim black briefcase, upright disciplined posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Mizuno introduced by manners, not menace",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "Can a man",
+     "type": "A",
+     "picture": "m17_tower",
+     "purpose": "The corporate stage he plays on",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S19",
+   "beat": "explanation",
+   "job": "explanation",
+   "light_beat": 6,
+   "feel": "Understand what money system the invented boss plays, and that it is a guess.",
+   "purpose": "Understand what money system the invented boss plays, and that it is a guess.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Mizuno plays the stock-market way of GTA V.",
+     "tags": [
+      "warmly"
+     ],
+     "claims": [
+      "C-11"
+     ]
+    },
+    {
+     "text": "In that game, you can trade stocks through the in-game internet.",
+     "claims": [
+      "C-11"
+     ]
+    },
+    {
+     "text": "Fans say there are two exchanges, LCN and BAWSAQ. One is moved by your own actions, the other by other players.",
+     "claims": [
+      "C-12"
+     ]
+    },
+    {
+     "text": "Whether the new game has either, nobody outside Rockstar can tell us. We're guessing."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Mizuno plays",
+     "type": "A",
+     "picture": {
+      "id": "m18_board",
+      "engine": "pod_ref",
+      "subject": "a wall of glowing line charts and ticker symbols in cyan and pink inside a trading room, invented wordless logos, every line spiking upward, empty chairs, hard white subtropical noon sun, short shadows, cyan sky",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "a wall of glowing line charts and ticker symbols in cyan and pink inside a trading room, invented wordless logos, every line spiking upward, empty chairs, hard white subtropical noon sun, short shadows, cyan sky Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The money system: charts as a battlefield",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "In that game",
+     "type": "C",
+     "picture": {
+      "id": "m18_phone",
+      "engine": "pod_ref",
+      "subject": "tight insert, a phone screen showing a jagged glowing stock chart, a thumb hovering over a button, neon reflections on the glass, hard white subtropical noon sun, short shadows, cyan sky",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, a phone screen showing a jagged glowing stock chart, a thumb hovering over a button, neon reflections on the glass, hard white subtropical noon sun, short shadows, cyan sky Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The in-game market on a phone screen",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     }
+    },
+    {
+     "at": "Fans say",
+     "type": "A",
+     "picture": {
+      "id": "m18_two",
+      "engine": "pod_ref",
+      "subject": "two tall glowing towers facing each other across a neon street at night, the left tower built of one lone figure's glowing footprints, the right tower built of a swarming crowd of tiny phones, a chart line crossing between them, hard white subtropical noon sun, short shadows, cyan sky",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "two tall glowing towers facing each other across a neon street at night, the left tower built of one lone figure's glowing footprints, the right tower built of a swarming crowd of tiny phones, a chart line crossing between them, hard white subtropical noon sun, short shadows, cyan sky Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Two exchanges: the player's tower and the crowd's tower",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "Whether the new game",
+     "type": "A",
+     "picture": "m18_board",
+     "purpose": "Back to the board for the honest guess",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S20",
+   "beat": "evidence",
+   "job": "evidence",
+   "light_beat": 6,
+   "feel": "Show competence: Mizuno wins the boardroom, dignity intact.",
+   "purpose": "Show competence: Mizuno wins the boardroom, dignity intact.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "And in our scenario, Mizuno wins the boardroom.",
+     "tags": [
+      "softly"
+     ]
+    },
+    {
+     "text": "Clean contracts. Patient partners. Rivals sign. Rivals smile. Rivals pay.",
+     "tags": [
+      "deadpan"
+     ]
+    },
+    {
+     "text": "A skyline of buildings that never saw a bad invoice."
+    }
+   ],
+   "shots": [
+    {
+     "at": "And in our scenario",
+     "type": "B",
+     "picture": {
+      "id": "m19_sign",
+      "engine": "pod_ref",
+      "subject": "a long polished conference table, the composed businessman in a charcoal suit calmly signing a contract while rivals in loud suits sign eagerly across from him, handshake in the foreground, glass skyline behind, hard white subtropical noon sun, short shadows, cyan sky",
+      "heroes": [
+       "mizuno"
+      ],
+      "refs": [
+       "p_mizuno",
+       "s01_skyline"
+      ],
+      "costume": "slim modern business suits",
+      "prompt": "a long polished conference table, the composed businessman in a charcoal suit calmly signing a contract while rivals in loud suits sign eagerly across from him, handshake in the foreground, glass skyline behind, hard white subtropical noon sun, short shadows, cyan sky. One named hero: a composed middle-aged Japanese businessman, short crew cut streaked with silver, thin rimless glasses, slim charcoal suit, crisp white shirt, slim black briefcase, upright disciplined posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The win: contracts signed, rivals eager",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "Clean contracts",
+     "type": "C",
+     "picture": "m18_phone",
+     "purpose": "The clean numbers on the screen",
+     "motion": {
+      "kind": "push",
+      "z0": 1.03,
+      "z1": 1.09
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "A skyline",
+     "type": "A",
+     "picture": "m17_tower",
+     "purpose": "The skyline that never saw a bad invoice",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S21",
+   "beat": "humor",
+   "job": "humor",
+   "light_beat": 6,
+   "feel": "Fun: invented Florida-style chaos, clearly flagged as made up.",
+   "purpose": "Fun: invented Florida-style chaos, clearly flagged as made up.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Meanwhile, elsewhere in Leonida.",
+     "tags": [
+      "mischievously"
+     ],
+     "pause_after": 0.3
+    },
+    {
+     "text": "A man tries to escape the police on a flamingo-shaped boat. Straight into a car wash.",
+     "tags": [
+      "chuckles"
+     ]
+    },
+    {
+     "text": "A seagull in a tiny captain's hat takes credit for the arrest.",
+     "tags": [
+      "deadpan"
+     ]
+    },
+    {
+     "text": "None of this happened. We made it up. But it's Florida, so it feels like it should have.",
+     "tags": [
+      "warmly"
+     ]
+    },
+    {
+     "text": "The point? Chaos does not read quarterly reports.",
+     "emphasis": [
+      "quarterly"
+     ],
+     "claims": [
+      "C-49"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Meanwhile",
+     "type": "A",
+     "picture": {
+      "id": "f20_flamingo",
+      "engine": "pod_ref",
+      "subject": "a comic wide shot, a giant pink flamingo-shaped speedboat on wheels crashing through a car wash, foam flying, a surprised driver in sunglasses and a Hawaiian shirt waving both hands, a police car behind, bright exaggerated Florida chaos, hard white subtropical noon sun, short shadows, cyan sky",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "a comic wide shot, a giant pink flamingo-shaped speedboat on wheels crashing through a car wash, foam flying, a surprised driver in sunglasses and a Hawaiian shirt waving both hands, a police car behind, bright exaggerated Florida chaos, hard white subtropical noon sun, short shadows, cyan sky Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Invented comic chaos, drawn in the same world",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    },
+    {
+     "at": "A seagull",
+     "type": "C",
+     "picture": {
+      "id": "f20_gator",
+      "engine": "pod_ref",
+      "subject": "a comic tight insert, a seagull wearing a tiny captain's hat standing triumphantly on top of a police cruiser's lights beside a flustered officer, bright exaggerated Florida chaos, hard white subtropical noon sun, short shadows, cyan sky",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "a comic tight insert, a seagull wearing a tiny captain's hat standing triumphantly on top of a police cruiser's lights beside a flustered officer, bright exaggerated Florida chaos, hard white subtropical noon sun, short shadows, cyan sky Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The punchline insert",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "cut": {
+      "why": "a joke needs a quick second image"
+     }
+    },
+    {
+     "at": "None of this",
+     "type": "C",
+     "picture": "s02_history",
+     "purpose": "The stamped page: invented, on the record",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "The point",
+     "type": "A",
+     "picture": "f20_flamingo",
+     "purpose": "Return to the chaos as the thesis for round three",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S22",
+   "beat": "reveal",
+   "job": "reveal",
+   "light_beat": 6,
+   "feel": "Payoff of round three: wins the boardroom, loses the street.",
+   "purpose": "Payoff of round three: wins the boardroom, loses the street.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Now picture Mizuno stepping out of the boardroom.",
+     "tags": [
+      "curious"
+     ]
+    },
+    {
+     "text": "A flamingo boat crashes into his lobby. Someone films it. A rumour trends. His biggest partner panics before his lawyers wake up."
+    },
+    {
+     "text": "He wins the boardroom. He loses the STREET.",
+     "tags": [
+      "dramatically"
+     ],
+     "emphasis": [
+      "street"
+     ],
+     "pause_after": 0.4
+    },
+    {
+     "text": "Chaos management, two stars. We did warn you.",
+     "tags": [
+      "deadpan"
+     ],
+     "claims": [
+      "C-46"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Now picture",
+     "type": "B",
+     "picture": {
+      "id": "m21_lobby",
+      "engine": "pod_ref",
+      "subject": "the composed businessman in a charcoal suit standing perfectly still in a glass lobby as a giant pink flamingo-shaped boat bursts through the doors behind him, glass flying, phones raised all around, his eyebrow barely lifting, hard white subtropical noon sun, short shadows, cyan sky",
+      "heroes": [
+       "mizuno"
+      ],
+      "refs": [
+       "p_mizuno",
+       "s01_skyline"
+      ],
+      "costume": "slim modern business suits",
+      "prompt": "the composed businessman in a charcoal suit standing perfectly still in a glass lobby as a giant pink flamingo-shaped boat bursts through the doors behind him, glass flying, phones raised all around, his eyebrow barely lifting, hard white subtropical noon sun, short shadows, cyan sky. One named hero: a composed middle-aged Japanese businessman, short crew cut streaked with silver, thin rimless glasses, slim charcoal suit, crisp white shirt, slim black briefcase, upright disciplined posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The calm man and the absurd arrival",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    },
+    {
+     "at": "Someone films it",
+     "type": "C",
+     "picture": {
+      "id": "m21_trend",
+      "engine": "pod_ref",
+      "subject": "tight insert, a phone screen showing a shaky video of a pink flamingo-shaped boat in a glass lobby, a red falling chart in the corner, a thumb frantically scrolling, hard white subtropical noon sun, short shadows, cyan sky",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, a phone screen showing a shaky video of a pink flamingo-shaped boat in a glass lobby, a red falling chart in the corner, a thumb frantically scrolling, hard white subtropical noon sun, short shadows, cyan sky Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The rumour trends: the street speaks",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     }
+    },
+    {
+     "at": "He wins",
+     "type": "B",
+     "picture": "sc_mizuno_out",
+     "purpose": "Mizuno eliminated: the third fall",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "cut": {
+      "why": "the stamp lands on the word street"
+     }
+    }
+   ]
+  },
+  {
+   "id": "S23",
+   "beat": "transition",
+   "job": "transition",
+   "light_beat": 7,
+   "feel": "Hook for the last round.",
+   "purpose": "Hook for the last round.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Three bosses down.",
+     "tags": [
+      "softly"
+     ],
+     "pause_after": 0.4
+    },
+    {
+     "text": "One left. And he's been watching all of this, very closely.",
+     "tags": [
+      "whispers"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Three bosses down",
+     "type": "A",
+     "picture": {
+      "id": "m22_watch",
+      "engine": "pod_ref",
+      "subject": "wide night shot of a rooftop at the edge of a neon skyline, one dark figure in a long overcoat and a flat cap watching the city through the dark, phone lights glittering far below like stars, hot neon pink and cyan signs against a soft sunset-orange sky",
+      "refs": [
+       "p_shelby",
+       "s01_skyline"
+      ],
+      "prompt": "wide night shot of a rooftop at the edge of a neon skyline, one dark figure in a long overcoat and a flat cap watching the city through the dark, phone lights glittering far below like stars, hot neon pink and cyan signs against a soft sunset-orange sky Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "A silhouette watching from the dark: the last boss arrives",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    }
+   ]
+  },
+  {
+   "id": "S24",
+   "beat": "question",
+   "job": "question",
+   "light_beat": 7,
+   "feel": "Question for round four.",
+   "purpose": "Question for round four.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Round four. Tommy Shelby.",
+     "tags": [
+      "dramatically"
+     ]
+    },
+    {
+     "text": "Can the man who treats information like cash be beaten by a world that shares EVERYTHING?",
+     "tags": [
+      "curious"
+     ],
+     "emphasis": [
+      "everything"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Round four",
+     "type": "B",
+     "picture": {
+      "id": "s23_street",
+      "engine": "pod_ref",
+      "subject": "a lean man in a long dark overcoat and flat cap walking through a neon street full of people filming with phones, none of them looking at him, he moves with perfect calm, hot neon pink and cyan signs against a soft sunset-orange sky",
+      "heroes": [
+       "shelby"
+      ],
+      "refs": [
+       "p_shelby",
+       "s01_skyline"
+      ],
+      "costume": "1930s wool overcoats and three-piece suits",
+      "prompt": "a lean man in a long dark overcoat and flat cap walking through a neon street full of people filming with phones, none of them looking at him, he moves with perfect calm, hot neon pink and cyan signs against a soft sunset-orange sky. One named hero: a stocky square-jawed man in his thirties, side-parted wavy auburn hair, thick eyebrows, warm brown eyes, a neat trimmed moustache, a soft brown tweed cap with a short brim, grey three-piece suit with a watch chain, long charcoal overcoat, calm confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Shelby among the phones, unbothered",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "Can the man",
+     "type": "A",
+     "picture": "m22_watch",
+     "purpose": "He watches the city that never stops sharing",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S25",
+   "beat": "evidence",
+   "job": "evidence",
+   "light_beat": 7,
+   "feel": "Understand Shelby's method: feed the attention, hide the business.",
+   "purpose": "Understand Shelby's method: feed the attention, hide the business.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Right. Shelby never hides from attention. He feeds it.",
+     "tags": [
+      "softly"
+     ]
+    },
+    {
+     "text": "In the story, he becomes an MP. He plants false information to fool a rival.",
+     "claims": [
+      "C-28"
+     ]
+    },
+    {
+     "text": "In Vice City, Shelby wouldn't post. He'd pay someone else to post the wrong thing. In the wrong place.",
+     "tags": [
+      "mischievously"
+     ],
+     "claims": [
+      "C-28"
+     ]
+    },
+    {
+     "text": "A decoy here. The real ledger there. Every phone points at the decoy. And the real business moves."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Right. Shelby never",
+     "type": "B",
+     "picture": {
+      "id": "s24_proxy",
+      "engine": "pod_ref",
+      "subject": "the lean man in a long overcoat handing a thin envelope to a cheerful influencer holding a ring-light phone rig on a neon boardwalk, a sly nod, the influencer grinning at the camera, hot neon pink and cyan signs against a soft sunset-orange sky",
+      "heroes": [
+       "shelby"
+      ],
+      "refs": [
+       "p_shelby",
+       "s01_skyline"
+      ],
+      "costume": "1930s wool overcoats and three-piece suits",
+      "prompt": "the lean man in a long overcoat handing a thin envelope to a cheerful influencer holding a ring-light phone rig on a neon boardwalk, a sly nod, the influencer grinning at the camera, hot neon pink and cyan signs against a soft sunset-orange sky. One named hero: a stocky square-jawed man in his thirties, side-parted wavy auburn hair, thick eyebrows, warm brown eyes, a neat trimmed moustache, a soft brown tweed cap with a short brim, grey three-piece suit with a watch chain, long charcoal overcoat, calm confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The proxy: attention bought and aimed",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "In the story",
+     "type": "B",
+     "picture": {
+      "id": "s24_hall",
+      "engine": "pod_ref",
+      "subject": "a grand 1930s debating hall with rows of leather benches, the lean man in a long overcoat standing quietly among well-fed men in top hats, a single lamp, whispers travelling along the benches, hot neon pink and cyan signs against a soft sunset-orange sky",
+      "heroes": [
+       "shelby"
+      ],
+      "refs": [
+       "p_shelby",
+       "s01_skyline"
+      ],
+      "costume": "1930s wool overcoats and three-piece suits",
+      "prompt": "a grand 1930s debating hall with rows of leather benches, the lean man in a long overcoat standing quietly among well-fed men in top hats, a single lamp, whispers travelling along the benches, hot neon pink and cyan signs against a soft sunset-orange sky. One named hero: a stocky square-jawed man in his thirties, side-parted wavy auburn hair, thick eyebrows, warm brown eyes, a neat trimmed moustache, a soft brown tweed cap with a short brim, grey three-piece suit with a watch chain, long charcoal overcoat, calm confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The political side of Shelby",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "In Vice City",
+     "type": "A",
+     "picture": {
+      "id": "s24_decoy",
+      "engine": "pod_ref",
+      "subject": "split composition: on the left a bright noisy neon club with a crowd of phones all pointed at one man in a flashy jacket, on the right a dark quiet back street where a van is quietly loaded, the contrast is the whole joke, hot neon pink and cyan signs against a soft sunset-orange sky",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "split composition: on the left a bright noisy neon club with a crowd of phones all pointed at one man in a flashy jacket, on the right a dark quiet back street where a van is quietly loaded, the contrast is the whole joke, hot neon pink and cyan signs against a soft sunset-orange sky Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The decoy: one side loud, one side quiet",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     }
+    },
+    {
+     "at": "A decoy here",
+     "type": "C",
+     "picture": {
+      "id": "s24_ledger",
+      "engine": "pod_ref",
+      "subject": "tight insert, a leather ledger and a pocket watch on a dark wooden desk under a warm lamp, a neat column of handwritten figures with no readable text, a razor-sharp pencil, a single warm desk lamp, amber pool of light, deep teal shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "tight insert, a leather ledger and a pocket watch on a dark wooden desk under a warm lamp, a neat column of handwritten figures with no readable text, a razor-sharp pencil, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The real ledger: the quiet half of the trick",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     }
+    }
+   ]
+  },
+  {
+   "id": "S26",
+   "beat": "complication",
+   "job": "complication",
+   "light_beat": 8,
+   "feel": "Complication: Shelby is violent in canon, so the win is not innocence.",
+   "purpose": "Complication: Shelby is violent in canon, so the win is not innocence.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Is Shelby violent? Yes. The story shows it. An assassination attempt. Worse.",
+     "claims": [
+      "C-28"
+     ]
+    },
+    {
+     "text": "But in Vice City, violence is content. So he does the one thing nobody else did.",
+     "tags": [
+      "softly"
+     ]
+    },
+    {
+     "text": "Shelby makes himself BORING on camera.",
+     "emphasis": [
+      "boring"
+     ],
+     "pause_after": 0.4
+    }
+   ],
+   "shots": [
+    {
+     "at": "Is Shelby violent",
+     "type": "B",
+     "picture": "s23_street",
+     "purpose": "Back to the street: canon violence acknowledged",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "But in Vice City",
+     "type": "A",
+     "picture": "s24_decoy",
+     "purpose": "Violence as content: the loud side of the city",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "Shelby makes himself",
+     "type": "B",
+     "picture": {
+      "id": "s25_calm",
+      "engine": "pod_ref",
+      "subject": "the lean man in a long overcoat standing perfectly still in a bright doorway while a blur of phones flashes around him, his face blank and bored, a deliberately dull moment, a single warm desk lamp, amber pool of light, deep teal shadows",
+      "heroes": [
+       "shelby"
+      ],
+      "refs": [
+       "p_shelby",
+       "s01_skyline"
+      ],
+      "costume": "1930s wool overcoats and three-piece suits",
+      "prompt": "the lean man in a long overcoat standing perfectly still in a bright doorway while a blur of phones flashes around him, his face blank and bored, a deliberately dull moment, a single warm desk lamp, amber pool of light, deep teal shadows. One named hero: a stocky square-jawed man in his thirties, side-parted wavy auburn hair, thick eyebrows, warm brown eyes, a neat trimmed moustache, a soft brown tweed cap with a short brim, grey three-piece suit with a watch chain, long charcoal overcoat, calm confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "Deliberate dullness: the winning move",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    }
+   ]
+  },
+  {
+   "id": "S27",
+   "beat": "reveal",
+   "job": "reveal",
+   "light_beat": 8,
+   "feel": "Surprise: Shelby's flaw is certainty, not weakness.",
+   "purpose": "Surprise: Shelby's flaw is certainty, not weakness.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "Shelby's flaw isn't weakness. It's CERTAINTY.",
+     "tags": [
+      "dramatically"
+     ],
+     "emphasis": [
+      "certainty"
+     ],
+     "pause_after": 0.4
+    },
+    {
+     "text": "He believes he's always several steps ahead. And a man like that never checks behind him.",
+     "tags": [
+      "softly"
+     ]
+    },
+    {
+     "text": "In a city of cameras, behind him is exactly where the cameras are.",
+     "tags": [
+      "whispers"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Shelby's flaw",
+     "type": "B",
+     "picture": "p_shelby",
+     "purpose": "Face on the flaw",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "He believes",
+     "type": "A",
+     "picture": {
+      "id": "s26_behind",
+      "engine": "pod_ref",
+      "subject": "the lean man in a long overcoat and flat cap walking away down a causeway at sunset, behind him a long line of glowing phone lights forming a trailing constellation, he does not look back, low sunset-orange sun over a palm-lined causeway, pink clouds, long warm shadows",
+      "heroes": [
+       "shelby"
+      ],
+      "refs": [
+       "p_shelby",
+       "s01_skyline"
+      ],
+      "costume": "1930s wool overcoats and three-piece suits",
+      "prompt": "the lean man in a long overcoat and flat cap walking away down a causeway at sunset, behind him a long line of glowing phone lights forming a trailing constellation, he does not look back, low sunset-orange sun over a palm-lined causeway, pink clouds, long warm shadows. One named hero: a stocky square-jawed man in his thirties, side-parted wavy auburn hair, thick eyebrows, warm brown eyes, a neat trimmed moustache, a soft brown tweed cap with a short brim, grey three-piece suit with a watch chain, long charcoal overcoat, calm confident posture Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "He walks away, and the lights follow",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     }
+    }
+   ]
+  },
+  {
+   "id": "S28",
+   "beat": "explanation",
+   "job": "explanation",
+   "light_beat": 9,
+   "feel": "The order of the falls: loudest to quietest.",
+   "purpose": "The order of the falls: loudest to quietest.",
+   "rules": [
+    "ER-07",
+    "ER-02"
+   ],
+   "lines": [
+    {
+     "text": "So that's the order. Capone first, loud and famous. Vito second. Mizuno third.",
+     "claims": [
+      "C-48"
+     ]
+    },
+    {
+     "text": "Shelby last. Quietest of all.",
+     "tags": [
+      "deadpan"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "So that's the order",
+     "type": "B",
+     "picture": "sc_all",
+     "purpose": "The four cards again as the order is said",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S29",
+   "beat": "payoff",
+   "job": "payoff",
+   "light_beat": 9,
+   "feel": "Answer: Shelby realised first, which is why he wins, mostly.",
+   "purpose": "Answer: Shelby realised first, which is why he wins, mostly.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "So who saw it first? Who understood that attention cuts both ways?",
+     "tags": [
+      "curious"
+     ]
+    },
+    {
+     "text": "Shelby. That's why he wins. Mostly.",
+     "tags": [
+      "deadpan"
+     ],
+     "pause_after": 0.4
+    },
+    {
+     "text": "But he's the only one who thinks he has it under CONTROL.",
+     "emphasis": [
+      "control"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "So who",
+     "type": "B",
+     "picture": "s26_behind",
+     "purpose": "The answer on the walking figure",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "But he's the only",
+     "type": "B",
+     "picture": "p_shelby",
+     "purpose": "The face that thinks it has control",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S30",
+   "beat": "evidence",
+   "job": "evidence",
+   "light_beat": 9,
+   "feel": "Stat screen returns: the stars changed by the test.",
+   "purpose": "Stat screen returns: the stars changed by the test.",
+   "rules": [
+    "ER-07",
+    "ER-02"
+   ],
+   "lines": [
+    {
+     "text": "Here's the stat screen again, after the test.",
+     "tags": [
+      "warmly"
+     ]
+    },
+    {
+     "text": "Capone's intimidation, down to two. Vito's influence, down to three once you leave his circle. Mizuno's discipline, four. Shelby's strategy, four.",
+     "claims": [
+      "C-44",
+      "C-45",
+      "C-46",
+      "C-47"
+     ]
+    },
+    {
+     "text": "Every star is our opinion. Every drop has a reason."
+    }
+   ],
+   "shots": [
+    {
+     "at": "Here's the stat",
+     "type": "B",
+     "picture": "sc_final",
+     "purpose": "The screen returns with changed stars",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     }
+    },
+    {
+     "at": "Every star",
+     "type": "C",
+     "picture": "s03_cursor",
+     "purpose": "The cursor again: the player's choice returns",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "reuse": "reuse"
+    }
+   ]
+  },
+  {
+   "id": "S31",
+   "beat": "payoff",
+   "job": "payoff",
+   "light_beat": 9,
+   "feel": "Aftertaste: a debatable question, a smile.",
+   "purpose": "Aftertaste: a debatable question, a smile.",
+   "rules": [
+    "ER-07"
+   ],
+   "lines": [
+    {
+     "text": "So whose old way of ruling survives phone cameras, viral fame, big money and Florida chaos?"
+    },
+    {
+     "text": "The quiet one, mostly. But is winning quietly a victory, or just a different way to lose?"
+    },
+    {
+     "text": "Who did we rate wrong? Tell us in the comments."
+    },
+    {
+     "text": "And smile. Somebody's FILMING.",
+     "tags": [
+      "mischievously"
+     ],
+     "emphasis": [
+      "filming"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "So whose old way",
+     "type": "A",
+     "picture": {
+      "id": "s29_end",
+      "engine": "pod_ref",
+      "subject": "the four bosses seen from behind on the causeway at sunset, small against a huge sky, a ring of phone lights glowing around them, low sunset-orange sun over a palm-lined causeway, pink clouds, long warm shadows",
+      "refs": [
+       "s01_skyline"
+      ],
+      "prompt": "the four bosses seen from behind on the causeway at sunset, small against a huge sky, a ring of phone lights glowing around them, low sunset-orange sun over a palm-lined causeway, pink clouds, long warm shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+     },
+     "purpose": "The four bosses small against the sky: the open question",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     }
+    },
+    {
+     "at": "And smile",
+     "type": "C",
+     "picture": "s01_phones",
+     "purpose": "The phones return: the last wink",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "reuse": "reuse"
+    }
+   ]
+  }
+ ],
+ "graphics": [
+  {
+   "id": "G01",
+   "segment": "S01",
+   "at": "Could a gangster",
+   "kind": "timeline",
+   "title": "Two worlds",
+   "hold": 4.5,
+   "claim": "C-16",
+   "side": "right",
+   "marks": [
+    {
+     "at": 0.0,
+     "label": "1930s: Capone's era"
+    },
+    {
+     "at": 1.0,
+     "label": "Our invented present"
+    }
+   ],
+   "span": "one invented city"
+  },
+  {
+   "id": "G02",
+   "segment": "S02",
+   "at": "Rockstar's page",
+   "kind": "timeline",
+   "title": "What is official",
+   "hold": 4.5,
+   "claim": "C-01",
+   "side": "right",
+   "marks": [
+    {
+     "at": 0.0,
+     "label": "No story year given"
+    },
+    {
+     "at": 1.0,
+     "label": "Nov 19, 2026: release"
+    }
+   ],
+   "span": "official page"
+  },
+  {
+   "id": "G03",
+   "segment": "S07",
+   "at": "Fourth card",
+   "kind": "timeline",
+   "title": "Shelby's era",
+   "hold": 4.5,
+   "claim": "C-28",
+   "side": "right",
+   "marks": [
+    {
+     "at": 0.0,
+     "label": "1927: elected MP in the story"
+    },
+    {
+     "at": 1.0,
+     "label": "1933: Series 6"
+    }
+   ],
+   "span": "1930s Birmingham"
+  },
+  {
+   "id": "G04",
+   "segment": "S09",
+   "at": "In 1930",
+   "kind": "timeline",
+   "title": "Capone, public figure",
+   "hold": 4.5,
+   "claim": "C-19",
+   "side": "right",
+   "marks": [
+    {
+     "at": 0.0,
+     "label": "1930: Public Enemy list"
+    },
+    {
+     "at": 1.0,
+     "label": "Depression: soup kitchen"
+    }
+   ],
+   "span": "1930s Chicago"
+  },
+  {
+   "id": "G05",
+   "segment": "S10",
+   "at": "In the 1930s",
+   "kind": "timeline",
+   "title": "Press then, phones now",
+   "hold": 4.5,
+   "claim": "C-27",
+   "side": "right",
+   "marks": [
+    {
+     "at": 0.0,
+     "label": "1930s: newspapers"
+    },
+    {
+     "at": 1.0,
+     "label": "Today: phones"
+    }
+   ],
+   "span": "our reading"
+  },
+  {
+   "id": "G06",
+   "segment": "S11",
+   "at": "In October",
+   "kind": "timeline",
+   "title": "The real case",
+   "hold": 5.0,
+   "claim": "C-16",
+   "side": "right",
+   "marks": [
+    {
+     "at": 0.0,
+     "label": "1930: the ledger line"
+    },
+    {
+     "at": 1.0,
+     "label": "Oct 1931: convicted"
+    }
+   ],
+   "span": "one year"
+  },
+  {
+   "id": "G07",
+   "segment": "S12",
+   "at": "He did end up",
+   "kind": "timeline",
+   "title": "The real ending",
+   "hold": 4.5,
+   "claim": "C-18",
+   "side": "right",
+   "marks": [
+    {
+     "at": 0.0,
+     "label": "1931: convicted"
+    },
+    {
+     "at": 1.0,
+     "label": "1947: dies in Florida"
+    }
+   ],
+   "span": "sixteen years"
+  },
+  {
+   "id": "G08",
+   "segment": "S17",
+   "at": "In the story",
+   "kind": "timeline",
+   "title": "Vito's end (story)",
+   "hold": 4.5,
+   "claim": "C-25",
+   "side": "right",
+   "marks": [
+    {
+     "at": 0.0,
+     "label": "Film-era Don"
+    },
+    {
+     "at": 1.0,
+     "label": "1955: dies in his garden"
+    }
+   ],
+   "span": "in the story"
+  }
+ ],
+ "shorts": [
+  {
+   "id": "SH01",
+   "hook": "Could one line in a ledger bring down Al Capone?",
+   "lines": [
+    {
+     "text": "Could one line in a ledger bring down Al Capone?",
+     "tags": [
+      "curious"
+     ],
+     "emphasis": [
+      "capone"
+     ],
+     "claims": [
+      "C-21"
+     ]
+    },
+    {
+     "text": "What brought Capone down wasn't a rival. Or a bullet. It was a LEDGER.",
+     "tags": [
+      "dramatically"
+     ],
+     "emphasis": [
+      "ledger"
+     ],
+     "claims": [
+      "C-16"
+     ]
+    },
+    {
+     "text": "An IRS investigator, Frank J. Wilson, found a line in a book. About seventeen thousand five hundred dollars, paid for Al.",
+     "claims": [
+      "C-21"
+     ]
+    },
+    {
+     "text": "In October 1931, Capone was convicted of tax evasion. Eleven years in prison.",
+     "claims": [
+      "C-16"
+     ]
+    },
+    {
+     "text": "Capone's mistake would work in any century. He thought controlling people meant controlling INFORMATION.",
+     "emphasis": [
+      "information"
+     ],
+     "claims": [
+      "C-27"
+     ]
+    },
+    {
+     "text": "Four bosses, one question. The full video is on the channel.",
+     "tags": [
+      "warmly"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Could one line",
+     "picture": "c11_ledger",
+     "crop_x": 0.4,
+     "zoom": 1.0
+    },
+    {
+     "at": "What brought Capone",
+     "picture": "p_capone",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "An IRS investigator",
+     "picture": "c11_agent",
+     "crop_x": 0.8,
+     "zoom": 1.0
+    },
+    {
+     "at": "In October",
+     "picture": "c11_verdict",
+     "crop_x": 0.3,
+     "zoom": 1.0
+    },
+    {
+     "at": "Capone's mistake",
+     "picture": "c10_map",
+     "crop_x": 0.4,
+     "zoom": 1.0
+    },
+    {
+     "at": "Four bosses",
+     "picture": "s01_four",
+     "crop_x": 0.35,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH02",
+   "hook": "Who wins in a city where everybody films everything?",
+   "lines": [
+    {
+     "text": "Who wins in a city where everybody films everything?",
+     "tags": [
+      "curious"
+     ],
+     "emphasis": [
+      "everything"
+     ]
+    },
+    {
+     "text": "Shelby never hides from attention. He feeds it.",
+     "tags": [
+      "softly"
+     ]
+    },
+    {
+     "text": "In Vice City, Shelby wouldn't post. He'd pay someone else to post the wrong thing. In the wrong place.",
+     "tags": [
+      "mischievously"
+     ],
+     "claims": [
+      "C-28"
+     ]
+    },
+    {
+     "text": "A decoy here. The real ledger there. Every phone points at the decoy. And the real business moves."
+    },
+    {
+     "text": "Shelby's flaw isn't weakness. It's CERTAINTY.",
+     "tags": [
+      "dramatically"
+     ],
+     "emphasis": [
+      "certainty"
+     ]
+    },
+    {
+     "text": "He believes he's always several steps ahead. And a man like that never checks behind him.",
+     "tags": [
+      "softly"
+     ]
+    },
+    {
+     "text": "Which boss would you bet on? The full video is on the channel.",
+     "tags": [
+      "warmly"
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Who wins",
+     "picture": "s23_street",
+     "crop_x": 0.35,
+     "zoom": 1.0
+    },
+    {
+     "at": "Shelby never hides",
+     "picture": "s24_proxy",
+     "crop_x": 0.15,
+     "zoom": 1.0
+    },
+    {
+     "at": "In Vice City",
+     "picture": "s24_decoy",
+     "crop_x": 0.2,
+     "zoom": 1.0
+    },
+    {
+     "at": "A decoy here",
+     "picture": "s24_ledger",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    },
+    {
+     "at": "Shelby's flaw",
+     "picture": "p_shelby",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "He believes",
+     "picture": "s26_behind",
+     "crop_x": 0.1,
+     "zoom": 1.0
+    },
+    {
+     "at": "Which boss",
+     "picture": "s29_end",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    }
+   ]
+  }
+ ]
+}
