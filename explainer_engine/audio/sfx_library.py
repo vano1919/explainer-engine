@@ -135,8 +135,8 @@ def validate(root: Path, *, check_files: bool = True) -> list[str]:
             problems.append(f"{item['id']}: peak {m['peak_dbfs']} dBFS is above {MAX_PEAK_DBFS}")
     if check_files:
         for path in root.rglob("*.wav"):
-        if path.relative_to(root).as_posix() not in {i["file"] for i in manifest["items"]}:
-            problems.append(f"{path.relative_to(root).as_posix()}: not in the manifest")
+            if path.relative_to(root).as_posix() not in {i["file"] for i in manifest["items"]}:
+                problems.append(f"{path.relative_to(root).as_posix()}: not in the manifest")
     return problems
 
 
