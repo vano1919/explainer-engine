@@ -273,3 +273,9 @@ def test_the_new_agent_and_docs_are_wired():
     assert "episode-standards-director" in orch and "paid_assets" in orch and "final_qa" in orch
     assert "| OR-10 |" in (ROOT / "docs/ORCHESTRATION.md").read_text(encoding="utf-8")
     assert "EPISODE_STANDARDS" in (ROOT / "docs/INDEX.md").read_text(encoding="utf-8")
+
+
+def test_channel_defaults_are_confirmed_and_match_the_default_jurisdictions():
+    ch = R.baseline()["channel"]
+    assert ch["jurisdictions"] == ["US", "GE"] and ch["audience_market"] == "US" and ch["elevenlabs_plan"] == "Creator"
+    assert set(ch["jurisdictions"]) <= set(rules()["jurisdictions"]["relevant"])

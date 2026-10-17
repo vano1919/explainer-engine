@@ -121,8 +121,8 @@ the contributions and the patterns of earlier episodes to avoid (ES-13, ES-14).
 ## 5. Default jurisdictions
 
 `US` is always relevant: YouTube is operated from the US, the channel is in English for a general audience (D-09) and the US is
-the main market (the creator, 2026-10-17, D-46). The creator works in Georgian; their country of residence (`GE` assumed) is added
-when they confirm it, because a claim or a publicity question can also arise where the publisher lives. A known large audience in
+the main market (the creator, 2026-10-17, D-46). The creator lives in Georgia (`GE`, confirmed 2026-10-17), the target audience is the US, so the default jurisdictions are
+`["US", "GE"]` (`standards/policy_baseline.json`, `channel`); a claim or a publicity question can also arise where the publisher lives. A known large audience in
 another country (UK, EU) adds it. The agent does not apply one country's exceptions or terms to another.
 
 ## 6. Current state and gaps (audit of `systemic/next-video` at a182195, 2026-10-17)

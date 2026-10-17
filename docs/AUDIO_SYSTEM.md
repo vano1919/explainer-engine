@@ -34,8 +34,10 @@ the fallback when ElevenLabs is unavailable.
 Every generation call passes `generations_count: 1` after an `estimate_only` call; the PreToolUse hook (`standards/hook.py`) refuses
 four-take calls, picture or video calls, and paid calls before the episode rulebook's `paid_assets` gate. Terms (V-28): commercial
 use needs a paid plan; Eleven Music's terms list media rights by plan (film, TV, radio and studio games excluded below Enterprise;
-attribution required only on the Free plan; streaming distribution not on Free/Starter). Whether the creator's plan covers monetised
-YouTube music is recorded per episode in the rulebook (REVIEW until the plan is confirmed). Outputs are not guaranteed unique
+attribution required only on the Free plan; streaming distribution not on Free/Starter). The creator's plan is **Creator** (confirmed 2026-10-17): individual
+use only (the creator publishes as an individual; a company or a second person using the output needs a higher plan), commercial use
+allowed except film, TV, radio and studio games, streaming distribution permitted, no attribution. The terms do not mention YouTube
+monetisation or Content ID, so each episode's music risk stays REVIEW with the creator's recorded decision, not an assumption. Outputs are not guaranteed unique
 (ElevenLabs terms s.10), so a Content ID match is possible even for our own generations: keep the generation record.
 
 ## Voice alteration layer (D-38, Kokoro drafts only)

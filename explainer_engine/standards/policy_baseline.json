@@ -1,44 +1,139 @@
 {
   "note": "Channel-wide sources the episode-standards-director copies into each episode's rules[].sources. Each row was read on the date given; the verification log is docs/MARKET_RESEARCH.md (verified_in). A row is evidence for a rule, never a legal conclusion. Re-read a page older than 180 days before relying on it (ES-02).",
   "sources": [
-    {"id": "B-01", "kind": "platform_policy", "checked": "2026-10-17", "verified_in": "V-13", "verified": true,
-     "url": "https://support.google.com/youtube/answer/14328491",
-     "statement": "Disclose realistic altered or synthetic content: a real person made to say or do what they did not, altered footage of a real event or place, a realistic scene that did not occur, AI music as the main focus. Not required: clearly unrealistic or fantasy content, fully animated content, minor aesthetic edits, AI help with script, outline, titles, thumbnails, captions or ideas."},
-    {"id": "B-02", "kind": "platform_policy", "checked": "2026-10-17", "verified_in": "V-14", "verified": true,
-     "url": "https://support.google.com/youtube/answer/1311392",
-     "statement": "YPP inauthentic content: template-made, mass-produced or interchangeable videos (same situation and outcome repeated, slideshows or scrolling text with little narrative) are not eligible; recurring characters and intros are fine when each video's substance differs. Reused content: repurposed material needs a meaningful difference (commentary, substantive change, educational or entertainment value); readings of material the creator did not write are not eligible; the policy applies even with permission and is separate from copyright."},
-    {"id": "B-03", "kind": "platform_policy", "checked": "2026-10-17", "verified_in": "V-15", "verified": true,
-     "url": "https://support.google.com/youtube/answer/2801895",
-     "statement": "Privacy complaints can remove realistic altered or synthetic content of a uniquely identifiable person; YouTube weighs disclosure, identifiability, realism, parody/satire/public-interest value, and whether a public figure is shown in sensitive behaviour."},
-    {"id": "B-04", "kind": "platform_policy", "checked": "2026-10-17", "verified_in": "V-16", "verified": true,
-     "url": "https://support.google.com/youtube/answer/2801947",
-     "statement": "Impersonation that may mislead viewers is not allowed, including an AI likeness or voice that falsely implies a person owns or authorises the content, or a fake speech passed off as real; disclosure is not a free pass; parody and satire are weighed on removal requests."},
-    {"id": "B-05", "kind": "law", "checked": "2026-10-17", "verified_in": "V-17", "verified": true, "jurisdiction": "US",
-     "url": "https://www.copyright.gov/fair-use/",
-     "statement": "17 U.S.C. 107: four factors decided case by case; transformative uses that add something new and do not substitute are more likely fair; no safe percentage or word count; even a small taking can fail if it is the heart of the work."},
-    {"id": "B-06", "kind": "law", "checked": "2026-10-17", "verified_in": "V-18", "verified": true, "jurisdiction": "US",
-     "url": "https://www.copyright.gov/help/faq/faq-duration.html",
-     "statement": "US term: life of the author + 70 years for works created from 1978; anonymous, pseudonymous and work-for-hire works 95 years from publication or 120 from creation, whichever ends first; works published before 1978 vary by several factors (check the specific work)."},
-    {"id": "B-07", "kind": "law", "checked": "2026-10-17", "verified_in": "V-19", "verified": true, "jurisdiction": "GB",
-     "url": "https://www.gov.uk/guidance/exceptions-to-copyright",
-     "statement": "UK fair dealing for criticism, review and quotation (sufficient acknowledgement unless impractical) and for caricature, parody or pastiche (limited amounts, only to the extent it is fair dealing); fairness is 'fact, degree and impression', including market effect and a reasonable amount."},
-    {"id": "B-08", "kind": "law", "checked": "2026-10-17", "verified_in": "V-20", "verified": false, "jurisdiction": "GE",
-     "url": "https://www.wipo.int/wipolex/en/legislation/details/22704",
-     "statement": "Georgia, Law on Copyright and Neighboring Rights (No. 2112-IIS, consolidated to 15 Dec 2023): term life + 70 years (Art. 31); quotation for scientific, research, polemical, critical or informational purposes to the extent the purpose justifies, with author and source named (Art. 23). No separate parody exception was found in the 2017 English text. Read from the Georgian text through a machine summary: confirm with an official translation."},
-    {"id": "B-09", "kind": "law", "checked": "2026-10-17", "verified_in": "V-21", "verified": false, "jurisdiction": "EU",
-     "url": "https://eur-lex.europa.eu/eli/dir/2019/790/oj",
-     "statement": "EU Directive 2019/790 Art. 17(7): users of content-sharing platforms may rely on quotation, criticism, review, caricature, parody and pastiche. The page did not load on 2026-10-17: not verified."},
-    {"id": "B-10", "kind": "provider_terms", "checked": "2026-10-17", "verified_in": "V-22", "verified": true,
-     "url": "https://elevenlabs.io/use-policy",
-     "statement": "ElevenLabs: no impersonating the voice, identity or likeness of a living person without explicit, informed consent; deceased people where reasonably likely to cause harm or infringing post-mortem rights; no false endorsement, sponsorship or affiliation; disclose AI where law requires or where not doing so would materially mislead; do not remove watermarks."},
-    {"id": "B-11", "kind": "provider_terms", "checked": "2026-10-17", "verified_in": "V-23", "verified": true,
-     "url": "https://policies.google.com/terms/generative-ai/use-policy",
-     "statement": "Google generative AI (Gemini, Veo): no violating others' IP or privacy rights; no impersonating a living or dead individual without explicit disclosure in order to deceive; no claiming generated content was made solely by a human in order to deceive."},
-    {"id": "B-12", "kind": "platform_policy", "checked": "2026-10-16", "verified_in": "V-07", "verified": true,
-     "url": "https://support.google.com/youtube/answer/9783148",
-     "statement": "YouTube fair use: credit, 'no infringement intended' and 'entertainment only' do not make a use fair; adding new expression or meaning is more likely fair; courts decide."},
-    {"id": "B-13", "kind": "platform_policy", "checked": "2026-10-16", "verified_in": "V-09", "verified": true,
-     "url": "https://support.google.com/youtube/answer/6154218",
-     "statement": "YouTube trademark policy: use likely to cause confusion about the source is not allowed."}
-  ]
+    {
+      "id": "B-01",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-13",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/14328491",
+      "statement": "Disclose realistic altered or synthetic content: a real person made to say or do what they did not, altered footage of a real event or place, a realistic scene that did not occur, AI music as the main focus. Not required: clearly unrealistic or fantasy content, fully animated content, minor aesthetic edits, AI help with script, outline, titles, thumbnails, captions or ideas."
+    },
+    {
+      "id": "B-02",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-14",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/1311392",
+      "statement": "YPP inauthentic content: template-made, mass-produced or interchangeable videos (same situation and outcome repeated, slideshows or scrolling text with little narrative) are not eligible; recurring characters and intros are fine when each video's substance differs. Reused content: repurposed material needs a meaningful difference (commentary, substantive change, educational or entertainment value); readings of material the creator did not write are not eligible; the policy applies even with permission and is separate from copyright."
+    },
+    {
+      "id": "B-03",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-15",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/2801895",
+      "statement": "Privacy complaints can remove realistic altered or synthetic content of a uniquely identifiable person; YouTube weighs disclosure, identifiability, realism, parody/satire/public-interest value, and whether a public figure is shown in sensitive behaviour."
+    },
+    {
+      "id": "B-04",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-16",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/2801947",
+      "statement": "Impersonation that may mislead viewers is not allowed, including an AI likeness or voice that falsely implies a person owns or authorises the content, or a fake speech passed off as real; disclosure is not a free pass; parody and satire are weighed on removal requests."
+    },
+    {
+      "id": "B-05",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-17",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.copyright.gov/fair-use/",
+      "statement": "17 U.S.C. 107: four factors decided case by case; transformative uses that add something new and do not substitute are more likely fair; no safe percentage or word count; even a small taking can fail if it is the heart of the work."
+    },
+    {
+      "id": "B-06",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-18",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.copyright.gov/help/faq/faq-duration.html",
+      "statement": "US term: life of the author + 70 years for works created from 1978; anonymous, pseudonymous and work-for-hire works 95 years from publication or 120 from creation, whichever ends first; works published before 1978 vary by several factors (check the specific work)."
+    },
+    {
+      "id": "B-07",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-19",
+      "verified": true,
+      "jurisdiction": "GB",
+      "url": "https://www.gov.uk/guidance/exceptions-to-copyright",
+      "statement": "UK fair dealing for criticism, review and quotation (sufficient acknowledgement unless impractical) and for caricature, parody or pastiche (limited amounts, only to the extent it is fair dealing); fairness is 'fact, degree and impression', including market effect and a reasonable amount."
+    },
+    {
+      "id": "B-08",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-20",
+      "verified": false,
+      "jurisdiction": "GE",
+      "url": "https://www.wipo.int/wipolex/en/legislation/details/22704",
+      "statement": "Georgia, Law on Copyright and Neighboring Rights (No. 2112-IIS, consolidated to 15 Dec 2023): term life + 70 years (Art. 31); quotation for scientific, research, polemical, critical or informational purposes to the extent the purpose justifies, with author and source named (Art. 23). No separate parody exception was found in the 2017 English text. Read from the Georgian text through a machine summary: confirm with an official translation."
+    },
+    {
+      "id": "B-09",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-21",
+      "verified": false,
+      "jurisdiction": "EU",
+      "url": "https://eur-lex.europa.eu/eli/dir/2019/790/oj",
+      "statement": "EU Directive 2019/790 Art. 17(7): users of content-sharing platforms may rely on quotation, criticism, review, caricature, parody and pastiche. The page did not load on 2026-10-17: not verified."
+    },
+    {
+      "id": "B-10",
+      "kind": "provider_terms",
+      "checked": "2026-10-17",
+      "verified_in": "V-22",
+      "verified": true,
+      "url": "https://elevenlabs.io/use-policy",
+      "statement": "ElevenLabs: no impersonating the voice, identity or likeness of a living person without explicit, informed consent; deceased people where reasonably likely to cause harm or infringing post-mortem rights; no false endorsement, sponsorship or affiliation; disclose AI where law requires or where not doing so would materially mislead; do not remove watermarks."
+    },
+    {
+      "id": "B-11",
+      "kind": "provider_terms",
+      "checked": "2026-10-17",
+      "verified_in": "V-23",
+      "verified": true,
+      "url": "https://policies.google.com/terms/generative-ai/use-policy",
+      "statement": "Google generative AI (Gemini, Veo): no violating others' IP or privacy rights; no impersonating a living or dead individual without explicit disclosure in order to deceive; no claiming generated content was made solely by a human in order to deceive."
+    },
+    {
+      "id": "B-12",
+      "kind": "platform_policy",
+      "checked": "2026-10-16",
+      "verified_in": "V-07",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/9783148",
+      "statement": "YouTube fair use: credit, 'no infringement intended' and 'entertainment only' do not make a use fair; adding new expression or meaning is more likely fair; courts decide."
+    },
+    {
+      "id": "B-13",
+      "kind": "platform_policy",
+      "checked": "2026-10-16",
+      "verified_in": "V-09",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/6154218",
+      "statement": "YouTube trademark policy: use likely to cause confusion about the source is not allowed."
+    }
+  ],
+  "channel": {
+    "confirmed_by_creator": "2026-10-17",
+    "creator_residence": "GE",
+    "audience_market": "US",
+    "platform": "YouTube",
+    "jurisdictions": [
+      "US",
+      "GE"
+    ],
+    "elevenlabs_plan": "Creator",
+    "elevenlabs_music_terms": "Creator: individual use only; commercial use allowed except film, TV, radio and studio games; streaming distribution permitted; no attribution (Music Terms, updated 2026-10-09, V-28). Monetised YouTube use and Content ID are not addressed by the terms."
+  }
 }
