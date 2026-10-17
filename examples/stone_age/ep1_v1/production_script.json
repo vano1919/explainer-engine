@@ -4472,7 +4472,7 @@
      "picture": "m1_hunter_knock"
     },
     {
-     "at": "in any",
+     "at": "and says",
      "type": "B",
      "motion": {
       "kind": "push",
@@ -6121,12 +6121,24 @@
      "reuse": "reframe"
     },
     {
-     "at": "No tin.",
+     "at": "Materials.",
      "type": "A",
      "motion": {
       "kind": "push",
       "z0": 1.1,
       "z1": 1.04
+     },
+     "picture": "c_tiny_crowd",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Fuel.",
+     "type": "A",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.06,
+      "z1": 1.06,
+      "dx": 0.05
      },
      "picture": "c_tiny_crowd",
      "reuse": "reframe"
@@ -6297,7 +6309,7 @@
      "picture": "c_steam"
     },
     {
-     "at": "and the",
+     "at": "Shortcut the first",
      "type": "A",
      "motion": {
       "kind": "push",

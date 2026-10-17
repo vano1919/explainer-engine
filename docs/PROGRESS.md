@@ -422,3 +422,13 @@ Tests: 200 passed, docs_lint 0. Web research was thin on room tone and documenta
   Lite 1K test picture (y10_malachite, $0.019): well drawn but ignored the world's palette (sunny sky, clean black dress) and is 1376x768:
   not used for this universe. Nano Banana 2.1 Batch 2K ($0.0252) is the cheap route.
 - Skill `elevenlabs-voice` (EL-01..12): Shorts must be cut from the main read (Episode 1 paid 2,575 credits for re-reads).
+
+## 2026-10-17 — Cut-off words (creator heard "Franklin keeps the tinder dry," break at 2:58)
+
+Cause (measured): `audio/pause_pad.py` put the silence in the MIDDLE of the recogniser's measured gap, but word times from the
+local recogniser are off by 0.1-0.2 s, so 67 of 131 inserted 0.26 s silences landed inside spoken words (sound at both sides at
+-30 dB, found by `/tmp/dropouts.py`-style scan for exact-zero runs). Fix: the silence goes to the quietest 10 ms spot within 0.1 s of
+the gap (nearest the gap's middle among the quietest), must be at most -40 dB or the insertion is skipped, and it is entered and left
+on a 10 ms fade; word times follow the real quiet spot. Re-run: 131 -> 113 silences, 67 -> 2 cut into sound (both borderline -37 /
+-42 dB), 18 insertions skipped (no quiet spot). Three cuts that relied on a skipped pause were moved to legal pauses (S18, S31, S32)
+and one reframe added (S31 "Fuel."). Tests: 210 passed. Creator picked speed 1.15.

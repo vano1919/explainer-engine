@@ -22,6 +22,26 @@ from . import voice_layer
 from ..edit.shot_rules import CUT_MARKS
 
 MIN_GAP = 0.26  # seconds: a cut needs 2 x EDGE (0.1 s) of room plus a margin
+SEARCH = 0.10  # seconds around the measured gap searched for the really quiet spot (word times are off by 0.1-0.2 s)
+QUIET_DB = -40.0  # the insertion point must be at least this quiet (10 ms rms); louder means inside a word: skip it
+FADE_MS = 10  # the silence is entered and left with a 10 ms fade, so it never clicks
+
+
+def quiet_point(audio: np.ndarray, sr: int, lo: float, hi: float, prefer: float | None = None) -> tuple[float, float]:
+    """(time, level dB) of the quietest 10 ms between lo and hi seconds: where a pause may be inserted without cutting a word."""
+    a, b = max(0, int(lo * sr)), min(len(audio), int(hi * sr))
+    h = max(1, int(0.01 * sr))
+    if b - a < h:
+        return (lo + hi) / 2, 0.0
+    seg = audio[a:b].astype(np.float64)
+    n = (len(seg) // h) * h
+    rms = np.sqrt(np.mean(seg[:n].reshape(-1, h) ** 2, axis=1))
+    # prefer the middle of a quiet stretch: smooth over 3 blocks so a single zero-crossing does not win
+    sm = np.convolve(rms, np.ones(3) / 3, mode="same")
+    near = np.flatnonzero(sm <= sm.min() * 1.41 + 1e-9)  # within 3 dB of the quietest: take the one nearest the measured gap
+    centre = ((lo + hi) / 2 if prefer is None else prefer)
+    k = int(near[np.argmin(np.abs((a + near * h + h / 2) / sr - centre))])
+    return (a + k * h + h / 2) / sr, float(20 * np.log10(sm[k] + 1e-9))
 
 
 def pad_pauses(words: list[dict], audio: np.ndarray, sr: int, min_gap: float = MIN_GAP,
@@ -31,35 +51,53 @@ def pad_pauses(words: list[dict], audio: np.ndarray, sr: int, min_gap: float = M
     that long, whatever the voice did."""
     targets = targets or {}
     inserts: list[tuple[float, float]] = []  # (position in the old clock, seconds of silence)
+    skipped = 0
     for k, (a, b) in enumerate(zip(words, words[1:])):
         mark = a["w"].rstrip("\"'”’)")[-1:]
         gap = b["s"] - a["e"]
         want = max(min_gap if mark and mark in CUT_MARKS else 0.0, targets.get(k, 0.0))
         if gap < want:
-            inserts.append((a["e"] + gap / 2, want - gap))
+            # Word times from the recogniser are off by 0.1-0.2 s: the middle of the measured gap can be inside a word
+            # (Episode 1, 2:58 "Franklin keeps the tinder dry,": 67 of 131 insertions cut into sound). Find the quietest spot.
+            lo, hi = max(a["s"] + 0.05, a["e"] - SEARCH), min(b["e"] - 0.05, b["s"] + SEARCH)
+            pos, level = quiet_point(audio, sr, lo, hi, (a["e"] + b["s"]) / 2) if hi > lo else ((a["e"] + b["s"]) / 2, 0.0)
+            if level > QUIET_DB:
+                skipped += 1
+                continue
+            inserts.append((pos, want - gap))
+    inserts.sort()
+    src = audio.copy()
+    f = max(1, int(FADE_MS / 1000 * sr))
+    for pos, _ in inserts:  # the silence is entered and left on a 10 ms fade (no click, no clipped consonant)
+        i = int(round(pos * sr))
+        n0 = min(f, i)
+        if n0:
+            src[i - n0:i] *= np.linspace(1, 0, n0)
+        n1 = min(f, len(src) - i)
+        if n1:
+            src[i:i + n1] *= np.linspace(0, 1, n1)
     pieces, last = [], 0
     for pos, add in inserts:
         i = int(round(pos * sr))
-        pieces.append(audio[last:i])
+        pieces.append(src[last:i])
         pieces.append(np.zeros(int(round(add * sr)), audio.dtype))
         last = i
-    pieces.append(audio[last:])
+    pieces.append(src[last:])
     out = np.concatenate(pieces) if pieces else audio
-    shifted, k, total = [], 0, 0.0
+    shifted = []
     for w in words:
-        while k < len(inserts) and inserts[k][0] <= w["s"]:
-            total += inserts[k][1]
-            k += 1
-        # a word that starts before an insertion ends before it, so it only moves by the insertions before it
-        e_total = total
-        j = k
-        while j < len(inserts) and inserts[j][0] < w["e"]:
-            e_total += inserts[j][1]  # an insertion inside a word never happens (gaps are between words)
-            j += 1
-        item = dict(w, s=round(w["s"] + total, 3), e=round(w["e"] + e_total, 3))
-        shifted.append(item)
+        s0, e0, before = w["s"], w["e"], 0.0
+        for pos, add in inserts:
+            if pos <= s0:
+                before += add
+            elif pos < e0:
+                if pos - s0 <= e0 - pos:  # the quiet spot is at the word's start: the recogniser began it early
+                    s0, before = pos, before + add
+                else:  # at its end: the recogniser ended it late; the word ends where the quiet begins
+                    e0 = pos
+        shifted.append(dict(w, s=round(s0 + before, 3), e=round(e0 + before, 3)))
     report = {"min_gap": min_gap, "inserted": len(inserts), "added_seconds": round(sum(a for _, a in inserts), 3),
-              "words": len(words)}
+              "skipped_not_quiet": skipped, "words": len(words)}
     return out, shifted, report
 
 

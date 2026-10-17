@@ -71,3 +71,29 @@ def test_camera_rests_at_a_cut_to_another_picture_and_runs_on_inside_one():
     assert continuity.warp(0.0, True, True) == 0.0 and continuity.warp(1.0, True, True) == 1.0
     assert continuity.warp(0.01, True, True) < 0.001
     assert continuity.warp(0.5, False, False) == 0.5
+
+
+def test_pause_is_inserted_in_the_quiet_spot_not_the_middle_of_a_word():
+    import numpy as np
+    from explainer_engine.audio import pause_pad
+    sr = 16000
+    t = np.arange(int(1.2 * sr)) / sr
+    audio = 0.3 * np.sin(2 * np.pi * 220 * t)
+    audio[int(0.55 * sr):int(0.70 * sr)] = 0.0  # the real gap: 0.55-0.70 s
+    # the recogniser puts the word end at 0.40 s and the next start at 0.60 s: the middle (0.50) is inside the word
+    words = [{"w": "dry,", "s": 0.0, "e": 0.40}, {"w": "and", "s": 0.60, "e": 1.1}]
+    out, shifted, rep = pause_pad.pad_pauses(words, audio, sr)
+    assert rep["inserted"] == 1 and rep["skipped_not_quiet"] == 0
+    seg = out[int(0.45 * sr):int(0.55 * sr)]
+    assert np.abs(seg).max() > 0.2  # still sound there: the word was not cut at 0.50
+    assert len(out) > len(audio)
+
+
+def test_no_quiet_spot_means_no_insertion():
+    import numpy as np
+    from explainer_engine.audio import pause_pad
+    sr = 16000
+    audio = 0.3 * np.sin(2 * np.pi * 220 * np.arange(sr) / sr)
+    words = [{"w": "dry,", "s": 0.0, "e": 0.45}, {"w": "and", "s": 0.50, "e": 0.9}]
+    out, _, rep = pause_pad.pad_pauses(words, audio, sr)
+    assert rep["inserted"] == 0 and rep["skipped_not_quiet"] == 1 and len(out) == len(audio)
