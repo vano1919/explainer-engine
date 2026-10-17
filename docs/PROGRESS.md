@@ -410,3 +410,15 @@ the whole video and overlapped `sneaky_pizzicato` (two music tracks + the wind b
 `audio/seams.py` (levelled chunks, edge fades), `production/continuity.py` (ZOOM-1 chained zoom), PV-29 (one music, quiet tick),
 period dissolves + fade in/out + one film look in the assembler, `finish/speed.py` (1.05/1.10/1.15 excerpts, then a final file).
 Tests: 200 passed, docs_lint 0. Web research was thin on room tone and documentary pacing: numbers for those are our measurements.
+
+## 2026-10-17 — Cards, data visuals, Gemini batch tier, ElevenLabs skill
+
+- Zoom: ED-02 (chained zoom on one picture), ED-08 (camera at rest at every cut to another picture); the creator's note that cuts
+  must not land mid-zoom. Checked on the 720p v2 render: same-picture joins show no jump (frames 289.1-289.7 s identical framing).
+- ED-09 period cards (7) and ED-10 data visuals (11, numbers from claim_map C-xx) drawn by `production/graphics.py`, PV-30/31.
+- Grain level 5 made the 720p file 5x larger (1.65 GB at 80 % of the render); level 2 costs +16 %: `LOOK` now `noise=alls=2`.
+- 720p v2: 1191.3 s, -14.6 LUFS, LRA 3.6; chunk loudness spread 5.6 -> 0.0 dB; one music at a time (clockwork loop at -26 dB).
+- Gemini: batch tier added (`submit_batch`/`collect_batch`, `paint --batch/--collect`): half price, a batch of one came back in under 4 minutes.
+  Lite 1K test picture (y10_malachite, $0.019): well drawn but ignored the world's palette (sunny sky, clean black dress) and is 1376x768:
+  not used for this universe. Nano Banana 2.1 Batch 2K ($0.0252) is the cheap route.
+- Skill `elevenlabs-voice` (EL-01..12): Shorts must be cut from the main read (Episode 1 paid 2,575 credits for re-reads).
