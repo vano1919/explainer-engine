@@ -354,6 +354,8 @@ def lock_alive(lock: Path) -> bool:
     try:
         pid = int(lock.read_text())
         os.kill(pid, 0)
+    except PermissionError:
+        pass  # the pid exists but belongs to another user (a non-root runner): it is not ours unless its cmdline says so
     except (ProcessLookupError, ValueError, FileNotFoundError):
         return False
     cmd = Path(f"/proc/{pid}/cmdline")
