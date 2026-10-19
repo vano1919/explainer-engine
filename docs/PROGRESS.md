@@ -682,3 +682,13 @@ Image behind the estimate -> creator OK gate, headline in our font, TN checks), 
 the API and paid promotion is not settable on insert, so both are Studio checklist items; an upload costs 1 unit of a 100/day
 bucket now, not 1600 units. The old YouTube token in the cloud env (TMR's) has expired: the creator re-authorises once.
 Tests: `tests/unit/test_youtube_publish.py` (13, fake API, no network). Nothing uploaded, nothing paid.
+
+## 2026-10-19 - Thumbnail and package research, rules regraded (PR #7)
+Five research passes (YouTube Help/policy, studies, curiosity/colour/AI, niche cases, title/tags/description) in
+`docs/research/thumbnail_research_2026-10-19.md`; V-50. Finding: policy is solid, element rules are weak, so `docs/THUMBNAIL_RULES.md`
+now grades every rule (P/S/H), adds the clothed noir-silhouette motif with the exact sexual-content line (TN-12, TN-13), package
+rules for title, tags, description and Shorts (TN-14..TN-18), a review checklist and a Test & Compare plan (T-1..T-5, sample sizes).
+`publish/plan.py` now flags titles over 70 characters, more than 3 hashtags in the long description, over 60 anywhere (FAIL) and
+"18+"/"21+" wording; test `test_package_findings_follow_the_thumbnail_rules`. Not done: no thumbnail painted (needs the silhouette
+collage approval, cost shown, creator's OK); vidIQ outlier pass not run (credits need approval). 411 tests pass, docs_lint 0.
+

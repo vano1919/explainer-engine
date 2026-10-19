@@ -29,6 +29,10 @@ LONG_LINK = "https://youtu.be/{id}"
 PENDING_LINK = "(the full video's link is added when it is uploaded)"
 SHOUTY = re.compile(r"\b[A-Z]{4,}\b")
 BANNED_TITLE = re.compile(r"%|\bboring\b", re.I)  # TITLE_THUMBNAIL_SYSTEM title rules
+HASHTAG = re.compile(r"(?<!\w)#\w+")
+ADULT_TEXT = re.compile(r"(?<!\w)(?:18|21)\s*\+", re.I)  # THUMBNAIL_RULES TN-07: ad guidelines, sexual text
+TITLE_TARGET = 70  # THUMBNAIL_RULES TN-14 working target (a hypothesis, so only REVIEW)
+HASHTAGS_SHOWN = 3  # Help 6390658: three show above the title, over 60 are all ignored
 
 
 def sha256(path: Path) -> str:
@@ -72,6 +76,16 @@ def field_findings(item_id: str, title: str, description: str) -> list[dict]:
         add("REVIEW", "title", f"ALL-CAPS word {SHOUTY.search(title).group()!r} (TITLE_THUMBNAIL_SYSTEM: no all caps)")
     if BANNED_TITLE.search(title):
         add("REVIEW", "title", "'%' or 'boring' in the title (TITLE_THUMBNAIL_SYSTEM)")
+    if TITLE_TARGET < len(title) <= TITLE_MAX:
+        add("REVIEW", "title", f"{len(title)} characters; feeds cut long titles, target about {TITLE_TARGET} (TN-14)")
+    tags = HASHTAG.findall(description)
+    if len(tags) > 60:
+        add("FAIL", "description", f"{len(tags)} hashtags; over 60 are all ignored (Help 6390658)")
+    elif item_id == LONG_ID and len(tags) > HASHTAGS_SHOWN:
+        add("REVIEW", "description", f"{len(tags)} hashtags; only {HASHTAGS_SHOWN} show above the title (TN-16)")
+    for field, text in (("title", title), ("description", description)):
+        if ADULT_TEXT.search(text):
+            add("REVIEW", field, "'18+' or '21+' wording; the ad guidelines treat it as adult (TN-07)")
     return out
 
 

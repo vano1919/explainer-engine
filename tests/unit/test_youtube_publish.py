@@ -127,6 +127,19 @@ def test_youtube_field_limits():
     assert any(f["severity"] == "REVIEW" for f in P.field_findings("long", "WHO wins EVERYTHING", ""))
 
 
+def test_package_findings_follow_the_thumbnail_rules():
+    def sev(item, title, desc):
+        return {(f["severity"], f["field"]) for f in P.field_findings(item, title, desc)}
+    assert ("REVIEW", "title") in sev("long", "t" * 80, "")
+    assert not sev("long", "t" * 60, "")
+    assert ("REVIEW", "description") in sev("long", "ok", "#a #b #c #d")
+    assert not sev("long", "ok", "#a #b #c")
+    assert not sev("s1", "ok", "#shorts #a #b #c #d")
+    assert ("FAIL", "description") in sev("long", "ok", " ".join(f"#t{i}" for i in range(61)))
+    assert ("REVIEW", "title") in sev("long", "Only 18+ may watch", "")
+    assert not sev("long", "Chapter 18 and 21 plus", "")
+
+
 def test_dry_run_sends_nothing_and_prints_checklist(tmp_path):
     ep = episode(tmp_path)
     lines = []
