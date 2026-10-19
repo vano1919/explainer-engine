@@ -225,6 +225,39 @@
             "gemini",
             "pod_text"
           ]
+        },
+        "environment": {
+          "type": "object",
+          "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference",
+          "required": [
+            "collage",
+            "tile",
+            "picture",
+            "approved_by",
+            "approved_at"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "collage": {
+              "type": "string"
+            },
+            "tile": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "picture": {
+              "type": "string"
+            },
+            "approved_by": {
+              "type": "string"
+            },
+            "approved_at": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -468,6 +501,39 @@
                 "items": {
                   "type": "string"
                 }
+              }
+            }
+          },
+          "reference": {
+            "type": "object",
+            "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference",
+            "required": [
+              "collage",
+              "tile",
+              "picture",
+              "approved_by",
+              "approved_at"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "collage": {
+                "type": "string"
+              },
+              "tile": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "picture": {
+                "type": "string"
+              },
+              "approved_by": {
+                "type": "string"
+              },
+              "approved_at": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
               }
             }
           }

@@ -271,3 +271,65 @@ def composite(frame: Image.Image, faces: list[dict], f: int, fps: int, order: li
     out = back.convert("RGBA")
     out.alpha_composite(piece, (x, max(0, OH - h)))
     return out.convert("RGB")
+
+
+# --- one framing per sheet (QA 2026-10-19: the painter framed some close-ups tighter, so a face change jumped in size) ----
+PROFILE_W = 688  # the alpha silhouette is measured at this width
+PROFILE_HEAD = 0.3  # share of the silhouette (from its top) compared: hat, head and neck, before the frame cuts the shoulders
+SCALES = np.exp(np.linspace(np.log(0.4), np.log(2.5), 200))
+
+
+def _profile(im: Image.Image) -> tuple[np.ndarray, int, float]:
+    """Silhouette width per row from the top of the hero down (at PROFILE_W), the top row and the head's centre x (0..1)."""
+    a = keyed(im).getchannel("A").resize((PROFILE_W, max(1, round(PROFILE_W * im.height / im.width))), Image.BILINEAR)
+    m = np.asarray(a) > 127
+    rows = np.where(m.sum(1) > 2)[0]
+    if not len(rows):
+        raise ValueError("no hero on the close-up: the whole picture keys out")
+    y0 = int(rows[0])
+    any_ = m.any(1)
+    left = np.where(any_, m.argmax(1), 0)
+    right = np.where(any_, m.shape[1] - m[:, ::-1].argmax(1), 0)
+    w = (right - left).astype(float)
+    head = slice(y0, y0 + max(2, int(PROFILE_HEAD * (len(w) - y0))))
+    cx = float(((left[head] + right[head]) / 2).mean() / PROFILE_W)
+    return w[y0:], y0, cx
+
+
+def relative_scale(ref: Image.Image, cand: Image.Image) -> tuple[float, float]:
+    """(s, error): resizing ``cand`` by s makes its hero the size of ``ref``'s, matched on the head silhouette."""
+    wr, _, _ = _profile(ref)
+    wc, _, _ = _profile(cand)
+    n = max(2, int(PROFILE_HEAD * len(wr)))
+    y = np.arange(n)
+    best = (np.inf, 1.0)
+    for s in SCALES:
+        yc = y / s
+        if yc[-1] >= len(wc) - 1:
+            continue
+        err = float(np.mean(np.abs(s * np.interp(yc, np.arange(len(wc)), wc) - wr[:n])) / max(1e-6, np.mean(wr[:n])))
+        if err < best[0]:
+            best = (err, float(s))
+    return best[1], best[0]
+
+
+def same_framing(paths: list[Path], ref: Path) -> dict[Path, Image.Image]:
+    """Every close-up of one sheet re-framed like the tightest one: scaled up (never down, which would leave the body
+    floating above the frame's bottom edge), the head's top and centre at the tightest one's place, key green filled in."""
+    ims = {p: Image.open(p).convert("RGB") for p in paths}
+    r = ims[ref]
+    scale = {p: relative_scale(r, im)[0] for p, im in ims.items()}
+    tight = min(paths, key=lambda p: scale[p])
+    _, ty0, tcx = _profile(ims[tight])
+    out = {}
+    for p, im in ims.items():
+        f = scale[p] / scale[tight]
+        _, y0, cx = _profile(im)
+        k = im.width / PROFILE_W
+        big = im.resize((round(im.width * f), round(im.height * f)), Image.LANCZOS)
+        ox = round(cx * im.width * f - tcx * im.width)  # where the target canvas starts inside the enlarged picture
+        oy = round(y0 * k * f - ty0 * k)
+        canvas = Image.new("RGB", im.size, key_rgb())
+        canvas.paste(big, (-ox, -oy))
+        out[p] = canvas
+    return out

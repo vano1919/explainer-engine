@@ -667,3 +667,21 @@ death year, uninvented-looking Shorts, graphics one segment early); all applied;
 mean 3.92) leaves only EG-11 REVIEWs (C-03, C-05, C-17, C-29 unused). Rulebook v7 (RK-12 per-Short flags, new RK-19) and
 the `script_lock` stamp pass; `paid_assets` is stale until re-checked. `production validate`: only PV-05 (pictures not yet
 made). Tests: the full suite (397) including `test_syndicate_wars_example.py`.
+
+## 2026-10-19 — Syndicate Wars pictures: v1 recovered, one variant collage first (OR-16, PV-47), face sheets painted
+
+The creator: before a hero or a world is painted for the first time, ONE collage of variants (colours, character, buildings),
+approved, instead of many exploration pictures. Built: `scripting/reference_approval.py` (PV-47: every hero drawn in a painted
+picture or with a face sheet has `cast.<id>.reference`, a script with painted pictures has `look.environment`: collage, tile,
+library picture, approved_by, approved_at; FAIL on `/2` so paint refuses, REVIEW on `/1`; `collage_prompt` asks for 4-6 tiles in
+one picture, `build_sheet` lays out existing pictures for free), schema fields, OR-16 in ORCHESTRATION. Syndicate Wars: the
+v1 Gemini batch answers were still on the server, so 51 pictures came back for free (`runs/syndicate_wars/pictures_v1` on HF);
+46 of the 48 the script needs plus the four portraits and s01_skyline. The creator approved the free collage of those
+(`reference_collage_v1.jpg`, tiles 1-4 the bosses, 5 the world) and chose existing pictures for the two missing shots
+(`It already has` -> s01_boardwalk, `And in the Keys` -> c12_palm); sc_* cards from `select_screen`. Four unused claims
+(C-03, C-05, C-17, C-29) left the editorial contract; the independent delta review passes (EG gate PASS) and `paid_assets` is
+stamped again. Face sheets: plan F1 (42 close-ups, Gemini batch, $1.105) approved and painted ($1.03 charged; three empty
+answers repainted in the same plan). QA by eye: the painter framed about eight close-ups tighter, so a face change would jump
+in size; `faces.same_framing` matches every close-up of a sheet to the tightest by the head silhouette (scaled up only, head
+top and centre aligned); originals kept in `jobs/syndicate_wars/faces_raw`. Tests: `test_reference_collage.py` (6),
+`test_face_sheets.py` (+1); `test_visual_beats.py` fixture records the pick. No pod was started.

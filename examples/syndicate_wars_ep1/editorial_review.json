@@ -1,17 +1,16 @@
 {
  "schema": "editorial_review/1",
- "script_sha256": "43c9e4fcaaf9ae49a33f2727b600f562699c94c7dfba034bd74d9c080b686085",
+ "script_sha256": "ef6a1db1bef4825c2a17c936ce935e235d9230f6dbd6a0cd237f1dc01d992149",
  "script": "examples/syndicate_wars_ep1/production_script.json",
  "reviewer_role": "independent_critic",
  "independent": true,
  "reviewed_at": "2026-10-19",
- "method": "Fresh read of all 32 segments, 8 graphics and 10 Shorts of the rebuilt script against editorial.sources/claims (unchanged: 27 sources, 32 claims); graphics anchors checked against their segments; the five key sources were read first-hand earlier the same day. The author's review_answers.md and self-scores were not read.",
+ "method": "Delta review of the exact current file against the previously reviewed version (sha 43c9e4fc). A structural JSON diff of HEAD vs the working file shows only: cast.<id>.reference and look.environment (OR-16/PV-47 creator pick, collage tiles 1-5); S03 shot 'It already has' now s01_boardwalk (reuse); S03 shot 'And in the Keys' now defines c12_palm inline; S13 shot 'He did end up' reuses c12_palm; Shorts 3 and 6 shots w02_studio/w02_keys swapped to s01_boardwalk/c12_palm. No narration, claim, source, graphic, timing or other shot changed; make_script_content.py/make_script_builder.py diffs match. The two pictures were opened and viewed; production validate passes. Scores and findings of the full review are kept because nothing they rest on changed. The author's review_answers.md and self-scores were not read. Second delta (same day, after the rebuild): the only change since sha 7f43c269 is that claims C-03, C-05, C-17, C-29 left editorial.claims (28 claims remain, each identical to HEAD by id); a diff against HEAD shows no other editorial, segment, line, source, picture or graphic change beyond the creator picture decisions already reviewed; validate passes.",
  "verdict": "PASS_WITH_RECOMMENDATIONS",
  "previous_review": {
-  "script_sha256": "e8a46f4d9d227a4b9ef8108819b8c9c0f0ed32324ef83c1d1d6228e8f49def29",
-  "verdict": "NEEDS_REVISION",
-  "required_revisions": 10,
-  "status": "all 10 applied and verified in this file"
+  "script_sha256": "7f43c269529542d68b727d4a4f1bc4f48564d488357f51efe645cb3b0dcfe2d5",
+  "verdict": "PASS_WITH_RECOMMENDATIONS",
+  "status": "same verdict; delta review, the four unused claims were removed from the contract"
  },
  "scores": {
   "factual_reliability": {
@@ -114,10 +113,17 @@
   },
   {
    "rank": 7,
-   "severity": "note",
+   "severity": "resolved",
    "where": "editorial.claims C-03, C-05, C-17, C-29",
-   "issue": "Unused by every narration line (gate EG-11 REVIEW).",
-   "proposal": "Drop them from the contract or keep as background; the creator/editor decides."
+   "issue": "Claims C-03, C-05, C-17, C-29 were unused by every narration line (gate EG-11 REVIEW).",
+   "proposal": "Resolved 2026-10-19: removed from editorial_contract.json and the script; EG-11 no longer fires."
+  },
+  {
+   "rank": 8,
+   "severity": "note",
+   "where": "S03 'And in the Keys' / S13 'He did end up' / SH06 'In Leonida'",
+   "issue": "c12_palm is Capone's lonely Palm Island house. Used for the Keys (Brian Heder, S03 and SH06) it pre-shows the S13 ending image, and a viewer may link Heder's Keys with Capone's house.",
+   "proposal": "Accept (creator decision); optionally vary the S13 crop/motion (the pull already differs from the S03 push) so the echo reads as intentional."
   }
  ],
  "sources_spot_checked": [
@@ -140,6 +146,32 @@
   {
    "url": "https://catalog.afi.com/Film/54023-the-godfather",
    "result": "olive oil business 'a legitimate cover'; Vito 'refuses to risk losing his political influence by embracing the drug traffic'; 'fatal heart attack in his vegetable garden' with grandson. C-23 (without the name), C-24, C-25 hold."
+  }
+ ],
+ "delta_checks": [
+  {
+   "where": "S03 'It already has' (s01_boardwalk)",
+   "result": "fits: the line names Leonida's own places (Real estate, Boobie Ike's businesses); a neon strip with crowds filming is on theme, no Rockstar character is drawn (only anonymous faceless crowd), neighbours are s01_skyline and s01_phones so no back-to-back repeat. Only softness: the picture already appeared in S01, so it is a reuse not a new place."
+  },
+  {
+   "where": "S03 'And in the Keys' (c12_palm)",
+   "result": "fits: empty island, nobody drawn, no Rockstar character; reads as quiet water for 'an old smuggler still works the water'. It loses the boat-yard/smuggling cue of the dropped w02_keys, so the picture says 'island' rather than 'smuggler'; the narration carries that."
+  },
+  {
+   "where": "S13 'He did end up' (c12_palm, reuse)",
+   "result": "still reads right: the lit house and empty chair match 'At home on Palm Island ... a quiet ending'. Previous shot is p_capone, no repeat. The picture now appeared earlier in S03, so the ending is an echo rather than a first sight."
+  },
+  {
+   "where": "Shorts 3 and 6",
+   "result": "swaps are consistent with the long video; the s01_boardwalk and c12_palm shots run as two consecutive shots with different crops, the same pattern the script already uses for s03_cursor and c10_viral, so no new type of repeat."
+  },
+  {
+   "where": "nothing else changed",
+   "result": "confirmed by structural diff; narration, claims, sources, graphics unchanged."
+  },
+  {
+   "where": "editorial.claims",
+   "result": "C-03, C-05, C-17, C-29 removed; no remaining claim changed; no narration line referenced them (they were unused), so no line lost its support."
   }
  ]
 }

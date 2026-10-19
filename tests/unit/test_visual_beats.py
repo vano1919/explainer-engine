@@ -37,6 +37,10 @@ def beats_doc() -> dict:
     d["cast"]["einstein"]["face_sheet"] = {"id": "einstein_faces_v1", "ref": "duo", "set": list(FACES.DEFAULT_SET)}
     d["cast"]["einstein"]["speech"] = {"basis": "public", "style": "quick, playful, plain words, thinks aloud",  # PV-46
                                      "words": ["imagine", "simple", "you see"], "sources": ["test"]}
+    for who in d["cast"]:  # PV-47: the creator picked a collage tile first
+        d["cast"][who]["reference"] = {"collage": "collage.jpg", "tile": 1, "picture": "duo", "approved_by": "creator",
+                                       "approved_at": "2026-10-19"}
+    d.setdefault("look", {})["environment"] = d["cast"]["einstein"]["reference"]
     s1, s2 = d["segments"][0]["lines"], d["segments"][1]["lines"]
     s1[0]["visual_beats"] = [_b("survive", "symbol", "asks if they survive", "blip", symbol="question"),
                              _b("night", "text", "the night is the threat", text="THE NIGHT")]
@@ -271,7 +275,8 @@ def test_cues_are_in_the_timed_audio_and_the_mix():
 
 def test_stage_guard_beats_own_their_field_and_the_editor_only_moves_them():
     before, after = mini(), beats_doc()
-    after["schema"], after["cast"], after["episode"] = before["schema"], before["cast"], before["episode"]
+    for k in ("schema", "cast", "episode", "look"):
+        after[k] = before[k]
     after["segments"][1]["lines"][1].pop("speaker")
     assert not G.violations("beats", before, after)
     assert G.violations("performer", before, after)

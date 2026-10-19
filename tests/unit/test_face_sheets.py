@@ -137,3 +137,24 @@ def test_end_to_end_dialogue_renders_the_keyed_close_up(tmp_path, monkeypatch):
         _close_up(pics / f"einstein_faces_v1_{e}.png")
     TVB.test_end_to_end_beats_render(tmp_path)
     assert calls  # the dialogue line's frames went through the composite
+
+
+def test_one_framing_per_sheet_scales_a_wide_close_up_to_the_tightest(tmp_path):
+    key = FACES.key_rgb()
+
+    def hero(path, s, top):  # a head (ellipse) on shoulders (wide trapezoid) at scale s
+        im = Image.new("RGB", (688, 384), key)
+        d = ImageDraw.Draw(im)
+        cx = 344
+        d.ellipse([cx - 40 * s, top, cx + 40 * s, top + 100 * s], fill=(200, 160, 140))
+        d.polygon([(cx - 30 * s, top + 90 * s), (cx + 30 * s, top + 90 * s), (cx + 160 * s, 384), (cx - 160 * s, 384)],
+                  fill=(40, 40, 50))
+        im.save(path)
+        return path
+
+    wide, tight = hero(tmp_path / "w.png", 1.0, 60), hero(tmp_path / "t.png", 1.6, 20)
+    s, err = FACES.relative_scale(Image.open(wide), Image.open(tight))
+    assert abs(s - 1 / 1.6) < 0.05 and err < 0.1
+    out = FACES.same_framing([wide, tight], wide)
+    a, b = (FACES._profile(out[p]) for p in (wide, tight))
+    assert abs(a[1] - b[1]) <= 3 and abs(a[0][40] - b[0][40]) <= 6  # same head top, same width a little below it

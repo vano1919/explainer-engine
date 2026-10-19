@@ -308,16 +308,6 @@
    "uncertainty": ""
   },
   {
-   "id": "C-03",
-   "text": "Rockstar's page names Jason and Lucia as the pair in the story.",
-   "type": "fact",
-   "source_ids": [
-    "S-01"
-   ],
-   "confidence": "verified",
-   "uncertainty": "Surnames and backstory are not on that page."
-  },
-  {
    "id": "C-04",
    "text": "Rockstar's page shows only the year 2026 (release and Newswire dates) and gives no in-story year.",
    "type": "fact",
@@ -326,16 +316,6 @@
    ],
    "confidence": "verified",
    "uncertainty": "Absence on the official pages read; Rockstar may announce a year later."
-  },
-  {
-   "id": "C-05",
-   "text": "Rockstar's main GTA VI page names no in-game social app, stock exchange or cryptocurrency.",
-   "type": "fact",
-   "source_ids": [
-    "S-01"
-   ],
-   "confidence": "verified",
-   "uncertainty": "Absence on one page, not a denial. The region names are now on the Only in Leonida page (C-51)."
   },
   {
    "id": "C-11",
@@ -374,17 +354,6 @@
    ],
    "confidence": "corroborated",
    "uncertainty": "Verdict 17 October (NARA exhibit, Wikipedia, HISTORY) or 18 October (FBI, Prologue text); sentencing 'a week later' (Wikipedia), 'a month later' (Prologue) or 24 November (FBI). The narration says only 'October 1931' and 'eleven years'."
-  },
-  {
-   "id": "C-17",
-   "text": "Capone served part of his sentence at Alcatraz (moved there in August 1934) and was released on 16 November 1939.",
-   "type": "fact",
-   "source_ids": [
-    "S-06",
-    "S-07"
-   ],
-   "confidence": "corroborated",
-   "uncertainty": "The August 1934 date is in Wikipedia only; FBI confirms Alcatraz and the release date."
   },
   {
    "id": "C-18",
@@ -491,17 +460,6 @@
    ],
    "confidence": "corroborated",
    "uncertainty": "Fictional canon. MP: Wikipedia, NME. Mosley assassination plan: Wikipedia, NME, Den of Geek. False information to Billy Grade: Wikipedia, Looper (Looper credits 'the Peaky Blinders'). Barwell murders and opium: Wikipedia only. Election year and constituency not confirmed. 'Wins by data with no gunfire' is our inference, not canon."
-  },
-  {
-   "id": "C-29",
-   "text": "Take-Two's 2025-05-06 Trailer 2 release gave 'May 26, 2026' as the launch date; a later release gives November 19, 2026.",
-   "type": "fact",
-   "source_ids": [
-    "S-05",
-    "S-04"
-   ],
-   "confidence": "verified",
-   "uncertainty": "History of the date only."
   },
   {
    "id": "C-43",

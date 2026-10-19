@@ -7,7 +7,7 @@
     "runpod_usd": 0
   },
   "spent": {
-    "gemini_usd": 1.8489
+    "gemini_usd": 2.9535
   },
   "reserved": {
     "batch:s01_skyline+1": {
@@ -37,6 +37,14 @@
     "batch:s02_history+2": {
       "service": "gemini_usd",
       "amount": 0.0537
+    },
+    "batch:capone_faces_v1_neutral+42": {
+      "service": "gemini_usd",
+      "amount": 1.1046
+    },
+    "batch:vito_faces_v1_sad+3": {
+      "service": "gemini_usd",
+      "amount": 0.0789
     }
   },
   "phases": {
@@ -281,9 +289,290 @@
       "s29_end": {
         "file": "s29_end.png",
         "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "capone_faces_v1_neutral": {
+        "file": "capone_faces_v1_neutral.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "558f709efb0dce93"
+      },
+      "capone_faces_v1_joyful": {
+        "file": "capone_faces_v1_joyful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "1779aa19a33a3509"
+      },
+      "capone_faces_v1_sad": {
+        "file": "capone_faces_v1_sad.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "ebd1b35a03c20ccb"
+      },
+      "capone_faces_v1_scared": {
+        "file": "capone_faces_v1_scared.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "d3cb9b980e7e6035"
+      },
+      "capone_faces_v1_angry": {
+        "file": "capone_faces_v1_angry.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "9fdfc133e87ce943"
+      },
+      "capone_faces_v1_surprised": {
+        "file": "capone_faces_v1_surprised.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "989c28473eb9b15e"
+      },
+      "capone_faces_v1_smug": {
+        "file": "capone_faces_v1_smug.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "029533038506a381"
+      },
+      "capone_faces_v1_confused": {
+        "file": "capone_faces_v1_confused.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "db2ffe79dbce0c07"
+      },
+      "capone_faces_v1_worried": {
+        "file": "capone_faces_v1_worried.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "db0e1d45d5ef4033"
+      },
+      "capone_faces_v1_doubtful": {
+        "file": "capone_faces_v1_doubtful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "dcb8c7e3425f358f"
+      },
+      "capone_faces_v1_amused": {
+        "file": "capone_faces_v1_amused.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "9aaf91c2b4842c6b"
+      },
+      "vito_faces_v1_neutral": {
+        "file": "vito_faces_v1_neutral.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "530579a19ed3e134"
+      },
+      "vito_faces_v1_joyful": {
+        "file": "vito_faces_v1_joyful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "e3c153d31b11060b"
+      },
+      "vito_faces_v1_scared": {
+        "file": "vito_faces_v1_scared.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "612504e73feabd33"
+      },
+      "vito_faces_v1_surprised": {
+        "file": "vito_faces_v1_surprised.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "27e3c7abe4c8b472"
+      },
+      "vito_faces_v1_smug": {
+        "file": "vito_faces_v1_smug.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "d3af1c55cb0b56a5"
+      },
+      "vito_faces_v1_curious": {
+        "file": "vito_faces_v1_curious.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "189e1b15aba373ee"
+      },
+      "vito_faces_v1_worried": {
+        "file": "vito_faces_v1_worried.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "806b17d0d99ce9b4"
+      },
+      "mizuno_faces_v1_neutral": {
+        "file": "mizuno_faces_v1_neutral.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "3ed3947edbe0e787"
+      },
+      "mizuno_faces_v1_joyful": {
+        "file": "mizuno_faces_v1_joyful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "12bd9ad2fa101c13"
+      },
+      "mizuno_faces_v1_sad": {
+        "file": "mizuno_faces_v1_sad.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "05e30bb99271547a"
+      },
+      "mizuno_faces_v1_scared": {
+        "file": "mizuno_faces_v1_scared.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "3c38569e910411a0"
+      },
+      "mizuno_faces_v1_angry": {
+        "file": "mizuno_faces_v1_angry.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "32d5344a74faed8b"
+      },
+      "mizuno_faces_v1_surprised": {
+        "file": "mizuno_faces_v1_surprised.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "8cf5860ea7e7c4f8"
+      },
+      "mizuno_faces_v1_determined": {
+        "file": "mizuno_faces_v1_determined.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "5d8aefdac6a61699"
+      },
+      "mizuno_faces_v1_confused": {
+        "file": "mizuno_faces_v1_confused.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "2e51ca37770c3506"
+      },
+      "mizuno_faces_v1_worried": {
+        "file": "mizuno_faces_v1_worried.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "4aa12880fe7c6822"
+      },
+      "mizuno_faces_v1_deadpan": {
+        "file": "mizuno_faces_v1_deadpan.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "04d606d5af3914a7"
+      },
+      "shelby_faces_v1_neutral": {
+        "file": "shelby_faces_v1_neutral.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "1ab069e8ae29579b"
+      },
+      "shelby_faces_v1_joyful": {
+        "file": "shelby_faces_v1_joyful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "fab3db5ec7463694"
+      },
+      "shelby_faces_v1_sad": {
+        "file": "shelby_faces_v1_sad.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "7d91f9c385a604b4"
+      },
+      "shelby_faces_v1_scared": {
+        "file": "shelby_faces_v1_scared.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "ee95df9e0b4c8849"
+      },
+      "shelby_faces_v1_angry": {
+        "file": "shelby_faces_v1_angry.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "19ad1cec82ea7a79"
+      },
+      "shelby_faces_v1_surprised": {
+        "file": "shelby_faces_v1_surprised.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "a8508a2cecfce92f"
+      },
+      "shelby_faces_v1_smug": {
+        "file": "shelby_faces_v1_smug.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "17dd985687989547"
+      },
+      "shelby_faces_v1_determined": {
+        "file": "shelby_faces_v1_determined.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "64e0e9ed86d7887a"
+      },
+      "shelby_faces_v1_amused": {
+        "file": "shelby_faces_v1_amused.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "e54314a03a280e43"
+      },
+      "shelby_faces_v1_deadpan": {
+        "file": "shelby_faces_v1_deadpan.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "2119b53696f8c7dd"
+      },
+      "shelby_faces_v1_doubtful": {
+        "file": "shelby_faces_v1_doubtful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "56939ad47c50caf9"
+      },
+      "vito_faces_v1_sad": {
+        "file": "vito_faces_v1_sad.png",
+        "batch": "batches/wbstrdook3b7c2hbqpq9x2xwepbgit9vla65",
+        "plan": "F1",
+        "hash": "6ab4a948d72e4187"
+      },
+      "vito_faces_v1_angry": {
+        "file": "vito_faces_v1_angry.png",
+        "batch": "batches/wbstrdook3b7c2hbqpq9x2xwepbgit9vla65",
+        "plan": "F1",
+        "hash": "36bc0431863989a4"
+      },
+      "vito_faces_v1_doubtful": {
+        "file": "vito_faces_v1_doubtful.png",
+        "batch": "batches/wbstrdook3b7c2hbqpq9x2xwepbgit9vla65",
+        "plan": "F1",
+        "hash": "7bb2abface90a2e2"
       }
     }
   },
-  "failures": {},
-  "meta": {}
+  "failures": {
+    "vito_faces_v1_sad": [
+      {
+        "at": "15:24:52",
+        "cause": "no picture in the answer"
+      }
+    ],
+    "vito_faces_v1_angry": [
+      {
+        "at": "15:24:52",
+        "cause": "no picture in the answer"
+      }
+    ],
+    "vito_faces_v1_doubtful": [
+      {
+        "at": "15:24:52",
+        "cause": "no picture in the answer"
+      }
+    ]
+  },
+  "meta": {},
+  "approvals": {
+    "F1": {
+      "hash": "76c529070912ad1954c4",
+      "by": "ვანო (vano1919)",
+      "ref": "thread decision card 2026-10-19 14:50 (Pod + Gemini faces ~$1.1) + project chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWBfkVTtj3Jd9zLcdxkymB8i '1 კი' approving the collage and the ~$1.1 face sheets",
+      "provider": "gemini",
+      "usd": 1.1046,
+      "at": "2026-10-19T15:20:05"
+    }
+  }
 }

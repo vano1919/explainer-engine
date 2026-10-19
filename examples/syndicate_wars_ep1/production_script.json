@@ -89,7 +89,14 @@
  },
  "look": {
   "style_refs": [],
-  "default_engine": "pod_ref"
+  "default_engine": "pod_ref",
+  "environment": {
+   "collage": "pictures/reference_collage_v1.jpg",
+   "tile": 5,
+   "picture": "s01_skyline",
+   "approved_by": "creator",
+   "approved_at": "2026-10-19"
+  }
  },
  "cast": {
   "capone": {
@@ -155,6 +162,13 @@
      "doubtful",
      "amused"
     ]
+   },
+   "reference": {
+    "collage": "pictures/reference_collage_v1.jpg",
+    "tile": 1,
+    "picture": "p_capone",
+    "approved_by": "creator",
+    "approved_at": "2026-10-19"
    }
   },
   "vito": {
@@ -214,6 +228,13 @@
      "doubtful",
      "worried"
     ]
+   },
+   "reference": {
+    "collage": "pictures/reference_collage_v1.jpg",
+    "tile": 2,
+    "picture": "p_vito",
+    "approved_by": "creator",
+    "approved_at": "2026-10-19"
    }
   },
   "mizuno": {
@@ -269,6 +290,13 @@
      "worried",
      "deadpan"
     ]
+   },
+   "reference": {
+    "collage": "pictures/reference_collage_v1.jpg",
+    "tile": 3,
+    "picture": "p_mizuno",
+    "approved_by": "creator",
+    "approved_at": "2026-10-19"
    }
   },
   "shelby": {
@@ -328,6 +356,13 @@
      "deadpan",
      "doubtful"
     ]
+   },
+   "reference": {
+    "collage": "pictures/reference_collage_v1.jpg",
+    "tile": 4,
+    "picture": "p_shelby",
+    "approved_by": "creator",
+    "approved_at": "2026-10-19"
    }
   }
  },
@@ -1430,21 +1465,14 @@
     {
      "at": "It already has",
      "type": "B",
-     "picture": {
-      "id": "w02_studio",
-      "engine": "pod_ref",
-      "subject": "a neon-lit recording studio entrance on a Vice City street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
-      "refs": [
-       "s01_skyline"
-      ],
-      "prompt": "a neon-lit recording studio entrance on a Vice City street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
-     },
-     "purpose": "Leonida's own crime as a business: a studio front, no Rockstar character drawn",
+     "picture": "s01_boardwalk",
+     "purpose": "Leonida's own crime as a business: the neon strip, no Rockstar character drawn (existing picture, creator 2026-10-19)",
      "motion": {
       "kind": "push",
       "z0": 1.0,
       "z1": 1.06
-     }
+     },
+     "reuse": "reuse"
     },
     {
      "at": "The Real Dimez",
@@ -1462,15 +1490,15 @@
      "at": "And in the Keys",
      "type": "A",
      "picture": {
-      "id": "w02_keys",
+      "id": "c12_palm",
       "engine": "pod_ref",
-      "subject": "small green islands and a boat yard on turquoise water at dusk, old fishing boats, coiled ropes and stacked crates on a weathered dock, nobody in view, a quiet coast with a long history of smuggling, low sunset-orange sun, pink clouds, long warm shadows",
+      "subject": "a quiet white house on a palm-fringed island at sunset, an empty wooden chair on the veranda, calm water, a long pink horizon, an ending that feels peaceful and lonely, a single warm desk lamp, amber pool of light, deep teal shadows",
       "refs": [
        "s01_skyline"
       ],
-      "prompt": "small green islands and a boat yard on turquoise water at dusk, old fishing boats, coiled ropes and stacked crates on a weathered dock, nobody in view, a quiet coast with a long history of smuggling, low sunset-orange sun, pink clouds, long warm shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+      "prompt": "a quiet white house on a palm-fringed island at sunset, an empty wooden chair on the veranda, calm water, a long pink horizon, an ending that feels peaceful and lonely, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
-     "purpose": "The Keys: islands and a boat yard, the smugglers' water",
+     "purpose": "The Keys: a quiet island on the water (existing picture, creator 2026-10-19)",
      "motion": {
       "kind": "push",
       "z0": 1.0,
@@ -4172,15 +4200,7 @@
     {
      "at": "He did end up",
      "type": "A",
-     "picture": {
-      "id": "c12_palm",
-      "engine": "pod_ref",
-      "subject": "a quiet white house on a palm-fringed island at sunset, an empty wooden chair on the veranda, calm water, a long pink horizon, an ending that feels peaceful and lonely, a single warm desk lamp, amber pool of light, deep teal shadows",
-      "refs": [
-       "s01_skyline"
-      ],
-      "prompt": "a quiet white house on a palm-fringed island at sunset, an empty wooden chair on the veranda, calm water, a long pink horizon, an ending that feels peaceful and lonely, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
-     },
+     "picture": "c12_palm",
      "purpose": "The quiet real ending, set against the loud scenario",
      "motion": {
       "kind": "pull",
@@ -4189,7 +4209,8 @@
      },
      "cut": {
       "why": "from the stamp to the stillness"
-     }
+     },
+     "reuse": "reuse"
     }
    ]
   },
@@ -9512,13 +9533,13 @@
     },
     {
      "at": "It already has",
-     "picture": "w02_studio",
+     "picture": "s01_boardwalk",
      "crop_x": 0.5,
      "zoom": 1.0
     },
     {
      "at": "Real estate",
-     "picture": "w02_studio",
+     "picture": "s01_boardwalk",
      "crop_x": 0.3,
      "zoom": 1.3
     },
@@ -9536,13 +9557,13 @@
     },
     {
      "at": "And in the Keys",
-     "picture": "w02_keys",
+     "picture": "c12_palm",
      "crop_x": 0.5,
      "zoom": 1.0
     },
     {
      "at": "still works the water",
-     "picture": "w02_keys",
+     "picture": "c12_palm",
      "crop_x": 0.7,
      "zoom": 1.3
     },
@@ -9931,13 +9952,13 @@
     },
     {
      "at": "In Leonida",
-     "picture": "w02_keys",
+     "picture": "c12_palm",
      "crop_x": 0.3,
      "zoom": 1.0
     },
     {
      "at": "still work the water",
-     "picture": "w02_keys",
+     "picture": "c12_palm",
      "crop_x": 0.7,
      "zoom": 1.25
     },
@@ -10761,16 +10782,6 @@
     "uncertainty": ""
    },
    {
-    "id": "C-03",
-    "text": "Rockstar's page names Jason and Lucia as the pair in the story.",
-    "type": "fact",
-    "source_ids": [
-     "S-01"
-    ],
-    "confidence": "verified",
-    "uncertainty": "Surnames and backstory are not on that page."
-   },
-   {
     "id": "C-04",
     "text": "Rockstar's page shows only the year 2026 (release and Newswire dates) and gives no in-story year.",
     "type": "fact",
@@ -10779,16 +10790,6 @@
     ],
     "confidence": "verified",
     "uncertainty": "Absence on the official pages read; Rockstar may announce a year later."
-   },
-   {
-    "id": "C-05",
-    "text": "Rockstar's main GTA VI page names no in-game social app, stock exchange or cryptocurrency.",
-    "type": "fact",
-    "source_ids": [
-     "S-01"
-    ],
-    "confidence": "verified",
-    "uncertainty": "Absence on one page, not a denial. The region names are now on the Only in Leonida page (C-51)."
    },
    {
     "id": "C-11",
@@ -10827,17 +10828,6 @@
     ],
     "confidence": "corroborated",
     "uncertainty": "Verdict 17 October (NARA exhibit, Wikipedia, HISTORY) or 18 October (FBI, Prologue text); sentencing 'a week later' (Wikipedia), 'a month later' (Prologue) or 24 November (FBI). The narration says only 'October 1931' and 'eleven years'."
-   },
-   {
-    "id": "C-17",
-    "text": "Capone served part of his sentence at Alcatraz (moved there in August 1934) and was released on 16 November 1939.",
-    "type": "fact",
-    "source_ids": [
-     "S-06",
-     "S-07"
-    ],
-    "confidence": "corroborated",
-    "uncertainty": "The August 1934 date is in Wikipedia only; FBI confirms Alcatraz and the release date."
    },
    {
     "id": "C-18",
@@ -10944,17 +10934,6 @@
     ],
     "confidence": "corroborated",
     "uncertainty": "Fictional canon. MP: Wikipedia, NME. Mosley assassination plan: Wikipedia, NME, Den of Geek. False information to Billy Grade: Wikipedia, Looper (Looper credits 'the Peaky Blinders'). Barwell murders and opium: Wikipedia only. Election year and constituency not confirmed. 'Wins by data with no gunfire' is our inference, not canon."
-   },
-   {
-    "id": "C-29",
-    "text": "Take-Two's 2025-05-06 Trailer 2 release gave 'May 26, 2026' as the launch date; a later release gives November 19, 2026.",
-    "type": "fact",
-    "source_ids": [
-     "S-05",
-     "S-04"
-    ],
-    "confidence": "verified",
-    "uncertainty": "History of the date only."
    },
    {
     "id": "C-43",

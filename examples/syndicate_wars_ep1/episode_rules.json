@@ -1393,6 +1393,22 @@
       "script_sha256": "43c9e4fcaaf9ae49a33f2727b600f562699c94c7dfba034bd74d9c080b686085",
       "rulebook_version": 7,
       "scope": "rulebook v7 on script v2 (rebuilt 2026-10-19): re-checked ER-02/RK-08 (Capone's invented lines flagged in S02 and in every Short with boss dialogue: SH02 'Made up, every word', SH04, SH05, SH06, SH07), ER-03/RK-12 (14 boss lines voiced by own library voices cast from traits, voice_id unset, no actor/recording named, no sound-alike prompt; Vito's 'slightly husky' to be confirmed at the VC-03 test read), dialogue original (no film or series quote), ER-05/ER-06/RK-07/new RK-19 (Boobie Ike, Real Dimez, Raul Bautista, Brian Heder named only from Rockstar's page, read first-hand 2026-10-19, never drawn, voiced or quoted; The Godfather films and Peaky Blinders named in plain text in S06/S08), ER-07/ER-18 (S03 and SH03 credited to 'Rockstar's page', S09 'Rockstar hasn't said', no GTA VI mechanic as fact), ER-08 (comic lines, consequences kept), ER-14 (G03 '1933: Series 6' and S08 'around 1930' match C-28), Shorts SH01-SH10"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-19",
+      "by": "claude (thread session); re-checked: only 2 shots now reuse existing pictures and the collage references were recorded, no image/likeness rule touched",
+      "script_sha256": "7f43c269529542d68b727d4a4f1bc4f48564d488357f51efe645cb3b0dcfe2d5",
+      "rulebook_version": 7,
+      "scope": "pictures: s01_boardwalk, c12_palm reuse; cast.reference, look.environment"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-19",
+      "by": "claude (thread session); re-checked after removing 4 unused claims (C-03, C-05, C-17, C-29) from the editorial contract; no rule source or risk touched",
+      "script_sha256": "ef6a1db1bef4825c2a17c936ce935e235d9230f6dbd6a0cd237f1dc01d992149",
+      "rulebook_version": 7,
+      "scope": "editorial.claims cleanup"
     }
   ],
   "supersedes": 4
