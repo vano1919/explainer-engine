@@ -1,0 +1,207 @@
+{
+  "schema": "youtube_stage/1",
+  "episode": "examples/stone_age/ep1_v1",
+  "privacy": "unlisted",
+  "settings": {
+    "category": "Entertainment",
+    "language": "en",
+    "location": "United States",
+    "made_for_kids": false,
+    "paid_promotion": false
+  },
+  "synthetic_media": true,
+  "items": [
+    {
+      "id": "long",
+      "kind": "long",
+      "file": "examples/stone_age/ep1_v1/render/video.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "What Happens When 100 Geniuses Are Trapped in the Stone Age?",
+          "description": "What happens to the 100 greatest scientists in history if they wake up in the Stone Age? We follow Franklin, Newton, Einstein, Curie, Darwin, Snow, Nansen, Wallace and Tesla for a day, a week, a month, a year, ten years and a hundred years, then check the story against the real record: would knowledge alone have beaten history?\n\nThe people are real; what they say and do here is our invention. The science, dates and numbers are real and sourced (claim map in the project).\n\nChapters\n0:00 Day 1\n4:13 Week 1\n8:18 Month 1\n10:29 Year 1\n13:39 Year 10\n16:00 Year 100\n17:13 Did they beat real history?",
+          "tags": [],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": true,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH01",
+      "kind": "short",
+      "file": "examples/stone_age/ep1_v1/render/shorts/SH01.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Could a hundred of history's smartest people light one fire before dark?",
+          "description": "Could a hundred of history's smartest people light one fire before dark?\n\nFull video: What Happens When 100 Geniuses Are Trapped in the Stone Age?\n(the full video's link is added when it is uploaded)\n\n#shorts #Shorts",
+          "tags": [
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": true,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH02",
+      "kind": "short",
+      "file": "examples/stone_age/ep1_v1/render/shorts/SH02.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "How much grain does a hundred-person camp need every single day?",
+          "description": "How much grain does a hundred-person camp need every single day?\n\nFull video: What Happens When 100 Geniuses Are Trapped in the Stone Age?\n(the full video's link is added when it is uploaded)\n\n#shorts #Shorts",
+          "tags": [
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": true,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH03",
+      "kind": "short",
+      "file": "examples/stone_age/ep1_v1/render/shorts/SH03.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Why did the smartest people in history explode seven pots in a row?",
+          "description": "Why did the smartest people in history explode seven pots in a row?\n\nFull video: What Happens When 100 Geniuses Are Trapped in the Stone Age?\n(the full video's link is added when it is uploaded)\n\n#shorts #Shorts",
+          "tags": [
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": true,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH04",
+      "kind": "short",
+      "file": "examples/stone_age/ep1_v1/render/shorts/SH04.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "What stopped a hundred geniuses from making bronze?",
+          "description": "What stopped a hundred geniuses from making bronze?\n\nFull video: What Happens When 100 Geniuses Are Trapped in the Stone Age?\n(the full video's link is added when it is uploaded)\n\n#shorts #Shorts",
+          "tags": [
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": true,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH05",
+      "kind": "short",
+      "file": "examples/stone_age/ep1_v1/render/shorts/SH05.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Would a hundred geniuses beat real history by thousands of years?",
+          "description": "Would a hundred geniuses beat real history by thousands of years?\n\nFull video: What Happens When 100 Geniuses Are Trapped in the Stone Age?\n(the full video's link is added when it is uploaded)\n\n#shorts #Shorts",
+          "tags": [
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": true,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    }
+  ],
+  "findings": [
+    {
+      "item": "long",
+      "severity": "REVIEW",
+      "field": "tags",
+      "detail": "no tags in publish.json"
+    },
+    {
+      "item": "long",
+      "severity": "FAIL",
+      "field": "file",
+      "detail": "examples/stone_age/ep1_v1/render/video.mp4 not found"
+    },
+    {
+      "item": "SH01",
+      "severity": "FAIL",
+      "field": "file",
+      "detail": "examples/stone_age/ep1_v1/render/shorts/SH01.mp4 not found"
+    },
+    {
+      "item": "SH02",
+      "severity": "FAIL",
+      "field": "file",
+      "detail": "examples/stone_age/ep1_v1/render/shorts/SH02.mp4 not found"
+    },
+    {
+      "item": "SH03",
+      "severity": "FAIL",
+      "field": "file",
+      "detail": "examples/stone_age/ep1_v1/render/shorts/SH03.mp4 not found"
+    },
+    {
+      "item": "SH04",
+      "severity": "FAIL",
+      "field": "file",
+      "detail": "examples/stone_age/ep1_v1/render/shorts/SH04.mp4 not found"
+    },
+    {
+      "item": "SH05",
+      "severity": "FAIL",
+      "field": "file",
+      "detail": "examples/stone_age/ep1_v1/render/shorts/SH05.mp4 not found"
+    }
+  ]
+}

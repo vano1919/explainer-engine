@@ -6,6 +6,25 @@ Studio (visibility and schedule are the creator's) -> the creator gives the vide
 snapshot schedule. Studio settings checklist: audience "not made for kids"; altered/synthetic label only if the policy
 checklist says so; chapters; sources in the description; no mid-roll ads decision recorded; end screen to the next video.
 
+## YouTube staging (D-56)
+The finished episode is uploaded unlisted (or private), never public, by one command; the creator reviews in Studio and
+clicks Public there.
+
+```powershell
+python -m explainer_engine.publish thumbnail <episode>                 # price and prompt; nothing paid
+python -m explainer_engine.publish thumbnail <episode> --generate --approved-by "<who, where>"   # after the creator's OK
+python -m explainer_engine.publish stage <episode>                     # dry run: youtube_stage.json + checklist, no network
+python -m explainer_engine.publish stage <episode> --yes --confirm "<who, where>"   # upload: long video, thumbnail, Shorts
+```
+
+Inputs: `publish.json` (publish/1 with `tags`, `youtube`, `thumbnail`, per-Short `title`; PC rules must have no FAIL), the
+Shorts of `production_script.json`, the render (`render/video.mp4`, `render/shorts/SHxx.mp4`, or `--video` / `--shorts-dir`).
+Setup, once: a Google Cloud project with the YouTube Data API v3, an OAuth client of type Desktop app, its consent screen
+published ("In production"; in Testing the refresh token dies after 7 days), then `python -m explainer_engine.publish auth
+<client_secret.json>` on the creator's PC; the printed channel id goes into `EXPLAINER_YT_CHANNEL` and the content of
+`tools/youtube/token.b64.txt` into `YOUTUBE_TOKEN_B64`, both as variables of the cloud environment, never in the repository
+or a chat. Quota per V-47: an episode of 1 + 10 videos uses 11 of 100 daily uploads and about 65 of 10,000 units.
+
 ## Cadence hypothesis (D-06; not competitor frequency)
 One long-form every two weeks and two Shorts a week for the first cycle, from estimated hours
 ([COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md)), revisited after three long-forms. What competitors post (SE-26) and what

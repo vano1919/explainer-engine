@@ -667,3 +667,18 @@ death year, uninvented-looking Shorts, graphics one segment early); all applied;
 mean 3.92) leaves only EG-11 REVIEWs (C-03, C-05, C-17, C-29 unused). Rulebook v7 (RK-12 per-Short flags, new RK-19) and
 the `script_lock` stamp pass; `paid_assets` is stale until re-checked. `production validate`: only PV-05 (pictures not yet
 made). Tests: the full suite (397) including `test_syndicate_wars_example.py`.
+
+## 2026-10-19 — YouTube staging upload (D-56): unlisted, everything filled in, the creator clicks Public
+
+The creator: when the video and the Shorts are done, upload them unlisted with title, description, tags, thumbnail, US location,
+not made for kids and no paid promotion; they only check and publish. Built `explainer_engine/publish/` (stdlib): `plan.py` (the
+`videos.insert` bodies from `publish.json` + the script's Shorts; chapters into the description; tags fitted to 500 characters;
+the Shorts link the long video), `youtube.py` (token refresh, resumable upload with resume after a drop, thumbnails.set, read-only
+channel and duplicate checks; refuses public and `publishAt`; no `videos.update`), `stage.py` (PC gate, channel id check, ids
+saved per file sha256 so nothing uploads twice, daily quota counter, the Studio review checklist), `thumbnail.py` (Gemini 3 Pro
+Image behind the estimate -> creator OK gate, headline in our font, TN checks), `auth.py` (one-time sign-in on the creator's PC).
+`publish.schema.json` gains optional `tags`, `youtube`, `thumbnail`, `files`, `pinned_comment` and per-Short `title`/`description`/
+`tags`. New rules file `docs/THUMBNAIL_RULES.md` (TN-01..TN-11, sources V-49). API facts V-45..V-49: location is deprecated in
+the API and paid promotion is not settable on insert, so both are Studio checklist items; an upload costs 1 unit of a 100/day
+bucket now, not 1600 units. The old YouTube token in the cloud env (TMR's) has expired: the creator re-authorises once.
+Tests: `tests/unit/test_youtube_publish.py` (13, fake API, no network). Nothing uploaded, nothing paid.

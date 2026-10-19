@@ -212,7 +212,7 @@ def check(rules: dict, checkpoint: str = "provisional", *, today: date | None = 
     if disclosure["required"] and not (disclosure.get("upload_action") or "").strip():
         add("disclosure_action", "ES-08", "FAIL" if _at_least(checkpoint, "final_qa") else "REVIEW", "platform.disclosure",
             "write the upload action: YouTube Studio upload flow, Attributes section, 'AI use': Yes (V-13; the API "
-            "field is status.containsSyntheticMedia, V-27; this pipeline never sets it)")
+            "field is status.containsSyntheticMedia, V-27, sent by `publish stage` from publish.json, D-56)")
 
     # ES-11 / ES-12 metadata notices and credits
     meta = rules["platform"]["metadata"]
