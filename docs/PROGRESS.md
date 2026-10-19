@@ -653,3 +653,17 @@ voice rule VC-02 (no imitation) is unchanged. Tests: `tests/unit/test_scenario_f
 the /2 fixture of `test_visual_beats.py` records an approved scenario. Syndicate Wars: visual beats for all 31 segments in
 `examples/syndicate_wars_ep1/beats/` (375 beats, written by the beat-writer procedure, 0 PV-44 FAIL per segment range), not yet
 applied: the script waits for the creator's approval of `scenario_dialogue_v1`.
+
+## 2026-10-19 — Syndicate Wars script v2: the approved story, boss dialogue, GTA VI world, 10 Shorts
+
+The creator approved the short scenario (`examples/syndicate_wars_ep1/scenario.md`, bound by sha256 in `episode.scenario`)
+with the GTA VI facts from Rockstar's own pages. Built: segment S03 (Leonida's six places and Rockstar's named characters,
+named only, C-51..C-55, read first-hand 2026-10-19); 14 original boss lines (Capone, Vito, Mizuno, Shelby) with their own
+cast voices by traits (ER-03), `speech` manners and face sheets; ten new Shorts SH01-SH10 (ten styles, each flags its invented
+scenes); visual beats for all 136 narration lines (`beats/beats_by_line.json` + `beats_v2_new_lines.json`, `apply_beats.py`).
+Editorial contract (`editorial_contract.json`: 27 graded sources, 32 claims; `line_kinds.json`) copied into the script by
+the builder. An independent critic asked for 10 revisions (unsupported years on G03/G06, GTA V wanted-level wording, Vito's
+death year, uninvented-looking Shorts, graphics one segment early); all applied; its re-review (`editorial_review.json`,
+mean 3.92) leaves only EG-11 REVIEWs (C-03, C-05, C-17, C-29 unused). Rulebook v7 (RK-12 per-Short flags, new RK-19) and
+the `script_lock` stamp pass; `paid_assets` is stale until re-checked. `production validate`: only PV-05 (pictures not yet
+made). Tests: the full suite (397) including `test_syndicate_wars_example.py`.

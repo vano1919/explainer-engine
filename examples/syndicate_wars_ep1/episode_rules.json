@@ -2,7 +2,7 @@
   "schema": "explainer.episode_rules",
   "version": 1,
   "episode_id": "syndicate_wars",
-  "rulebook_version": 5,
+  "rulebook_version": 7,
   "status": "final",
   "identity": {
     "topic": "Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida (working title). Al Capone, Vito Corleone (film-era Don), an invented Yakuza boss and Tommy Shelby (1930s) arrive in the Vice City of Rockstar's Leonida.",
@@ -94,7 +94,7 @@
     },
     {
       "id": "ER-03",
-      "requirement": "No character or narrator voice imitates a real person or an actor (Brando, Murphy, De Niro, any Capone recording); only the narrator's library voice, characters are not voiced by clones or sound-alikes.",
+      "requirement": "No character or narrator voice imitates a real person or an actor (Brando, Murphy, De Niro, any Capone recording). The narrator and each speaking boss have their own library voice, cast from described traits (D-45, VC-01, VC-02): no clones, no sound-alikes, no 'famous' category, never prompted with a person's or actor's name; the creator hears a test read before a voice is fixed (VC-03).",
       "applies_to": [
         "voice"
       ],
@@ -924,7 +924,7 @@
       "category": "synthetic_voice",
       "source_type": "original",
       "status": "PASS",
-      "evidence": "One narrator on a library voice (ER-03); characters speak through narration and captions, not cloned actor voices.",
+      "evidence": "The narrator and the four bosses each have their own library voice chosen from described traits (ER-03, D-45, the creator's rule of 2026-10-19: every character gets a voice that fits their personality); no clone, no actor or recording imitated; the bosses' lines are original and flagged as invented in S02. v7 (script v2, 2026-10-19): the main video flags them in S02; every Short with boss dialogue carries its own flag, because a Short is uploaded alone (SH02 'Made up, every word', SH04 'Invented, but it tracks', SH05 'our invented Vice City test', SH06 'our invented Vice City', SH07 'our invented boss'; SH10's Shelby line is a fictional character's). No line quotes a film or the series.",
       "rules": [
         "ER-03"
       ]
@@ -1064,6 +1064,19 @@
         "US"
       ],
       "resolved": "Applied: no official image, frame or description of one is in any prompt or reference slot; references are only our own painted pictures (manifest official_images_as_generator_input false)."
+    },
+    {
+      "id": "RK-19",
+      "element": "Rockstar's GTA VI characters Boobie Ike, the Real Dimez, Raul Bautista and Brian Heder, and the label Only Raw Records, named in S03 and SH03",
+      "category": "character",
+      "source_type": "reference_only",
+      "status": "PASS",
+      "evidence": "Each sentence paraphrases Rockstar's own 'Only in Leonida' page (rockstargames.com/VI/only-in-leonida, read first-hand 2026-10-19 by research and again by the standards director the same day; claim map C-51..C-55, tier primary_read, label official) and is spoken as 'Rockstar's page'. None of the four has a dialogue line, a cast entry, a voice or a face sheet; no picture prompt draws them (w02_studio is an invented wordless studio front, w02_keys shows nobody); Only Raw Records is not spoken, shown or lettered; no Rockstar text is quoted on screen. Plain-text names identify the subject of the commentary (RR-14).",
+      "rules": [
+        "ER-05",
+        "ER-06",
+        "ER-07"
+      ]
     }
   ],
   "platform": {
@@ -1372,6 +1385,14 @@
       "script_sha256": "cf7ccf2f0f1a953387d195eefd3a22a92eb458e1b70683648fb6499bbbed154d",
       "rulebook_version": 5,
       "scope": "re-check after v4: three reuse shots removed (rhythm), Shorts crop centres set after looking at the painted pictures; no new person, claim or franchise element"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "episode-standards-director",
+      "script_sha256": "43c9e4fcaaf9ae49a33f2727b600f562699c94c7dfba034bd74d9c080b686085",
+      "rulebook_version": 7,
+      "scope": "rulebook v7 on script v2 (rebuilt 2026-10-19): re-checked ER-02/RK-08 (Capone's invented lines flagged in S02 and in every Short with boss dialogue: SH02 'Made up, every word', SH04, SH05, SH06, SH07), ER-03/RK-12 (14 boss lines voiced by own library voices cast from traits, voice_id unset, no actor/recording named, no sound-alike prompt; Vito's 'slightly husky' to be confirmed at the VC-03 test read), dialogue original (no film or series quote), ER-05/ER-06/RK-07/new RK-19 (Boobie Ike, Real Dimez, Raul Bautista, Brian Heder named only from Rockstar's page, read first-hand 2026-10-19, never drawn, voiced or quoted; The Godfather films and Peaky Blinders named in plain text in S06/S08), ER-07/ER-18 (S03 and SH03 credited to 'Rockstar's page', S09 'Rockstar hasn't said', no GTA VI mechanic as fact), ER-08 (comic lines, consequences kept), ER-14 (G03 '1933: Series 6' and S08 'around 1930' match C-28), Shorts SH01-SH10"
     }
   ],
   "supersedes": 4

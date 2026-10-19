@@ -74,7 +74,7 @@
     "accessed": "2026-10-17"
    },
    "verified": true,
-   "note": "absence on one page, not a denial"
+   "note": "absence on one page, not a denial Partly superseded on 2026-10-19 by C-51..C-55 (the Only in Leonida page names the places and these characters)."
   },
   {
    "id": "C-06",
@@ -86,7 +86,7 @@
     "accessed": "2026-10-17"
    },
    "verified": true,
-   "note": "regions (Grassrivers, Leonida Keys, Ambrosia, Mount Kalaga, Port Gellhorn) are NOT on the Rockstar pages read; Wikipedia secondary lists them; treat as community/leak-derived, not official"
+   "note": "regions (Grassrivers, Leonida Keys, Ambrosia, Mount Kalaga, Port Gellhorn) are NOT on the Rockstar pages read; Wikipedia secondary lists them; treat as community/leak-derived, not official Partly superseded on 2026-10-19 by C-51..C-55 (the Only in Leonida page names the places and these characters)."
   },
   {
    "id": "C-07",
@@ -506,7 +506,7 @@
     "accessed": "2026-10-17"
    },
    "verified": true,
-   "note": "absence on the one page read; items are community/leak-derived and may be used only as labelled 'reported' or speculation"
+   "note": "absence on the one page read; items are community/leak-derived and may be used only as labelled 'reported' or speculation Partly superseded on 2026-10-19 by C-51..C-55 (the Only in Leonida page names the places and these characters)."
   },
   {
    "id": "C-44",
@@ -591,6 +591,66 @@
    },
    "verified": false,
    "note": "general franchise knowledge, not opened in this run; spoken only as 'In GTA V'; nothing about the wanted level of the new game is stated (C-43)."
+  },
+  {
+   "id": "C-51",
+   "text": "Rockstar's 'Only in Leonida' page names six places of Leonida: Vice City, Leonida Keys, Grassrivers, Port Gellhorn, Ambrosia and Mount Kalaga; release November 19, 2026.",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/VI/only-in-leonida",
+    "accessed": "2026-10-19"
+   },
+   "verified": true,
+   "note": "first-hand: rockstargames.com/VI/only-in-leonida, 2026-10-19; the page names the places but does not describe Grassrivers, Port Gellhorn, Ambrosia or Mount Kalaga, so the script names them only. Supersedes C-05/C-06 on the region names"
+  },
+  {
+   "id": "C-52",
+   "text": "Rockstar's page: Boobie Ike is a Vice City figure who built a business empire of real estate, a strip club and a recording studio, and co-runs Only Raw Records with Dre'Quan Priest.",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/VI/only-in-leonida",
+    "accessed": "2026-10-19"
+   },
+   "verified": true,
+   "note": "first-hand, same page, 2026-10-19; that the business is funded by drug money is NOT on the page (not used). Supersedes C-43 on Boobie Ike"
+  },
+  {
+   "id": "C-53",
+   "text": "Rockstar's page: the Real Dimez (Bae-Luxe and Roxy) make rap tracks and build a social-media following ('Viral videos. Viral hooks.'), signed to Only Raw Records.",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/VI/only-in-leonida",
+    "accessed": "2026-10-19"
+   },
+   "verified": true,
+   "note": "first-hand, same page, 2026-10-19"
+  },
+  {
+   "id": "C-54",
+   "text": "Rockstar's page: Raul Bautista is a seasoned bank robber who recruits people willing to take big risks ('Experience counts.').",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/VI/only-in-leonida",
+    "accessed": "2026-10-19"
+   },
+   "verified": true,
+   "note": "first-hand, same page, 2026-10-19"
+  },
+  {
+   "id": "C-55",
+   "text": "Rockstar's page: Brian Heder is an older drug runner in the Keys, from 'the golden age of smuggling in the Keys', who runs a boat yard; Jason Duval works for drug runners in the Keys.",
+   "tier": "primary_read",
+   "label": "official",
+   "source": {
+    "url": "https://www.rockstargames.com/VI/only-in-leonida",
+    "accessed": "2026-10-19"
+   },
+   "verified": true,
+   "note": "first-hand, rockstargames.com/VI/only-in-leonida and /VI/kalaga, 2026-10-19"
   }
  ],
  "dropped": [

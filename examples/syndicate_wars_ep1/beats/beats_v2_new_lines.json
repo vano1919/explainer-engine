@@ -1,0 +1,966 @@
+{
+ "note": "Stage 2b beats (beat-writer, 2026-10-19) for the 24 lines new or changed in the v2 script: S03 world segment on Rockstar's official Leonida (C-51..C-55), changed narration lines in S11/S17/S21/S23/S26, and 14 dialogue lines (expression changes from each hero's face_sheet.set). Rockstar's characters appear only as text names, never drawn.",
+ "lines": {
+  "And Leonida isn't empty. Rockstar's page names six places. Vice City, the Leonida Keys, Grassrivers, Port Gellhorn, Ambrosia and Mount Kalaga.": [
+   {
+    "at": "isn't empty.",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "isn't empty: crossed out",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "Rockstar's page",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "Rockstar's page: the official source",
+    "cue": {
+     "sound": "chime"
+    }
+   },
+   {
+    "at": "six places.",
+    "kind": "chart",
+    "chart": "counter",
+    "values": [
+     6
+    ],
+    "unit": "places",
+    "claim": "C-51",
+    "pos": [
+     0.8,
+     0.24
+    ],
+    "why": "counts the six places on Rockstar's page",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "Vice City,",
+    "kind": "label",
+    "text": "VICE CITY",
+    "pos": [
+     0.45,
+     0.42
+    ],
+    "why": "names the first place: Vice City",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "Keys,",
+    "kind": "label",
+    "text": "LEONIDA KEYS",
+    "pos": [
+     0.3,
+     0.7
+    ],
+    "why": "names the Leonida Keys",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "Port Gellhorn,",
+    "kind": "text",
+    "text": "PORT GELLHORN",
+    "pos": [
+     0.5,
+     0.82
+    ],
+    "why": "names the place Port Gellhorn",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "and Mount",
+    "kind": "symbol",
+    "symbol": "plus",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "and Mount Kalaga: one more place",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  "It already has its own crime. Boobie Ike built an empire from the street up. Real estate, a strip club, a recording studio.": [
+   {
+    "at": "own crime.",
+    "kind": "symbol",
+    "symbol": "exclaim",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "its own crime: a warning mark",
+    "cue": {
+     "sound": "pop"
+    }
+   },
+   {
+    "at": "Boobie Ike",
+    "kind": "text",
+    "text": "BOOBIE IKE",
+    "pos": [
+     0.5,
+     0.16
+    ],
+    "why": "names Rockstar's character Boobie Ike as text, never drawn",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "an empire",
+    "kind": "symbol",
+    "symbol": "arrow_up",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "built an empire: rising",
+    "cue": {
+     "sound": "rise"
+    }
+   },
+   {
+    "at": "street up.",
+    "kind": "accent",
+    "effect": "punch",
+    "strength": 0.5,
+    "why": "punch in: from the street up",
+    "cue": {
+     "sound": "whiff"
+    }
+   },
+   {
+    "at": "Real estate,",
+    "kind": "text",
+    "text": "REAL ESTATE",
+    "pos": [
+     0.5,
+     0.82
+    ],
+    "why": "names the first business: real estate",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "strip club,",
+    "kind": "symbol",
+    "symbol": "plus",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "adds a strip club to the empire",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "studio.",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.5
+    ],
+    "why": "rings the recording studio in the picture",
+    "cue": {
+     "sound": "pluck"
+    }
+   }
+  ],
+  "The Real Dimez chase viral videos. Raul Bautista robs banks. And in the Keys, an old smuggler, Brian Heder, still works the water.": [
+   {
+    "at": "Real Dimez",
+    "kind": "text",
+    "text": "THE REAL DIMEZ",
+    "pos": [
+     0.5,
+     0.16
+    ],
+    "why": "names The Real Dimez as text, never drawn",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "viral videos.",
+    "kind": "symbol",
+    "symbol": "arrow_up",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "viral videos: views going up",
+    "cue": {
+     "sound": "rise"
+    }
+   },
+   {
+    "at": "Bautista",
+    "kind": "text",
+    "text": "RAUL BAUTISTA",
+    "pos": [
+     0.5,
+     0.82
+    ],
+    "why": "names Raul Bautista as text, never drawn",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "Keys,",
+    "kind": "label",
+    "text": "THE KEYS",
+    "pos": [
+     0.5,
+     0.4
+    ],
+    "why": "names the place: in the Keys",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "Brian Heder,",
+    "kind": "text",
+    "text": "BRIAN HEDER",
+    "pos": [
+     0.5,
+     0.16
+    ],
+    "why": "names the old smuggler Brian Heder as text, never drawn",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "works the water.",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.75
+    ],
+    "why": "rings the water he still works",
+    "cue": {
+     "sound": "pluck"
+    }
+   }
+  ],
+  "That's Rockstar's world. Our four bosses are only guests in it.": [
+   {
+    "at": "world.",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "Rockstar's world: the official one",
+    "cue": {
+     "sound": "chime"
+    }
+   },
+   {
+    "at": "four bosses",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.55
+    ],
+    "why": "rings our four bosses together",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "guests",
+    "kind": "text",
+    "text": "ONLY GUESTS",
+    "pos": [
+     0.5,
+     0.16
+    ],
+    "why": "the point: only guests in it",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  "In this city, viral is a business. The Real Dimez live on it.": [
+   {
+    "at": "this city,",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.4
+    ],
+    "why": "rings the city: in this city",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "business.",
+    "kind": "symbol",
+    "symbol": "equals",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "viral is a business: equals",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "Real Dimez",
+    "kind": "text",
+    "text": "THE REAL DIMEZ",
+    "pos": [
+     0.5,
+     0.16
+    ],
+    "why": "names The Real Dimez as text, never drawn",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  "Millions? For a sandwich? Print more sandwiches!": [
+   {
+    "at": "Millions?",
+    "kind": "expression",
+    "expression": "surprised",
+    "why": "the take on Millions?",
+    "cue": {
+     "sound": "pop"
+    }
+   },
+   {
+    "at": "sandwich?",
+    "kind": "expression",
+    "expression": "joyful",
+    "why": "delighted: for a sandwich?",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "more",
+    "kind": "expression",
+    "expression": "smug",
+    "why": "the punchline: print more sandwiches",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "Wait. Who filmed my car?": [
+   {
+    "at": "Wait.",
+    "kind": "expression",
+    "expression": "confused",
+    "why": "Wait: he does not get it",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "my car?",
+    "kind": "expression",
+    "expression": "worried",
+    "why": "worry lands on my car",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "Nobody tells me it doesn't.": [
+   {
+    "at": "Nobody",
+    "kind": "expression",
+    "expression": "angry",
+    "why": "Nobody tells me: angry",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "it doesn't.",
+    "kind": "expression",
+    "expression": "doubtful",
+    "why": "doubt creeps in: it doesn't",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "So Vito leaves the noise of Vice City for Ambrosia, another place on Rockstar's page. He runs his import business from there. Legal. Boring. Safe.": [
+   {
+    "at": "noise",
+    "kind": "accent",
+    "effect": "shake",
+    "strength": 0.5,
+    "why": "a shake for the noise of Vice City",
+    "cue": {
+     "sound": "whiff"
+    }
+   },
+   {
+    "at": "Ambrosia,",
+    "kind": "label",
+    "text": "AMBROSIA",
+    "pos": [
+     0.5,
+     0.4
+    ],
+    "why": "names the place he goes: Ambrosia",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "Rockstar's page.",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "a real place on Rockstar's page",
+    "cue": {
+     "sound": "chime"
+    }
+   },
+   {
+    "at": "runs his import",
+    "kind": "highlight",
+    "pos": [
+     0.55,
+     0.6
+    ],
+    "why": "rings the crate of his import business",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "from there.",
+    "kind": "highlight",
+    "pos": [
+     0.3,
+     0.45
+    ],
+    "why": "rings the harbour of the import business",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "Legal.",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "Legal: checked off",
+    "cue": {
+     "sound": "chime"
+    }
+   },
+   {
+    "at": "Safe.",
+    "kind": "text",
+    "text": "SAFE",
+    "pos": [
+     0.5,
+     0.16
+    ],
+    "why": "the last word of the list: Safe",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  "Olive oil. Nobody films olive oil.": [
+   {
+    "at": "Olive",
+    "kind": "expression",
+    "expression": "neutral",
+    "why": "calm and flat: olive oil",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "Nobody",
+    "kind": "expression",
+    "expression": "smug",
+    "why": "smug: nobody films olive oil",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "He doesn't call back. He always calls back.": [
+   {
+    "at": "He",
+    "kind": "expression",
+    "expression": "curious",
+    "why": "curious: he doesn't call",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "back.",
+    "kind": "expression",
+    "expression": "doubtful",
+    "why": "doubt after call back",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "always",
+    "kind": "expression",
+    "expression": "sad",
+    "why": "sad: he always calls back",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "And in our scenario, Mizuno takes an office in Vice City and wins the boardroom.": [
+   {
+    "at": "scenario,",
+    "kind": "text",
+    "text": "OUR SCENARIO",
+    "pos": [
+     0.5,
+     0.16
+    ],
+    "why": "flags our scenario: invented",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "office in",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.5
+    ],
+    "why": "rings Mizuno taking an office",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "wins",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "wins the boardroom: a check",
+    "cue": {
+     "sound": "chime"
+    }
+   }
+  ],
+  "Sign here. And here. Thank you.": [
+   {
+    "at": "Sign",
+    "kind": "expression",
+    "expression": "neutral",
+    "why": "neutral: sign here",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "And here.",
+    "kind": "expression",
+    "expression": "determined",
+    "why": "determined: sign again here",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "Thank you.",
+    "kind": "expression",
+    "expression": "joyful",
+    "why": "joyful: thank you",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "A flamingo boat crashes into his lobby. Someone films it. A rumour trends.": [
+   {
+    "at": "flamingo boat",
+    "kind": "highlight",
+    "pos": [
+     0.7,
+     0.45
+    ],
+    "why": "rings the flamingo boat in the lobby",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "crashes",
+    "kind": "accent",
+    "effect": "shake",
+    "strength": 0.6,
+    "why": "a shake as it crashes into the lobby",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "A rumour",
+    "kind": "symbol",
+    "symbol": "arrow_up",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "a rumour trends: going up",
+    "cue": {
+     "sound": "rise"
+    }
+   }
+  ],
+  "A flamingo. In my lobby.": [
+   {
+    "at": "A",
+    "kind": "expression",
+    "expression": "confused",
+    "why": "confused: a flamingo",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "In my lobby.",
+    "kind": "expression",
+    "expression": "surprised",
+    "why": "surprise lands on in my lobby",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "His biggest partner panics before his lawyers wake up.": [
+   {
+    "at": "biggest partner",
+    "kind": "highlight",
+    "pos": [
+     0.4,
+     0.5
+    ],
+    "why": "rings his biggest partner",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "panics",
+    "kind": "symbol",
+    "symbol": "exclaim",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "the partner panics: alarm",
+    "cue": {
+     "sound": "pop"
+    }
+   },
+   {
+    "at": "lawyers wake up.",
+    "kind": "symbol",
+    "symbol": "clock",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "before the lawyers wake up: time",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  "This was not in the plan.": [
+   {
+    "at": "This",
+    "kind": "expression",
+    "expression": "worried",
+    "why": "worried as the plan slips",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "in the plan.",
+    "kind": "expression",
+    "expression": "angry",
+    "why": "anger on not in the plan",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "In Leonida, Shelby picks the Keys, where Rockstar says smugglers still work the water.": [
+   {
+    "at": "Leonida,",
+    "kind": "text",
+    "text": "LEONIDA",
+    "pos": [
+     0.5,
+     0.16
+    ],
+    "why": "names the state: in Leonida",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "Keys,",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.6
+    ],
+    "why": "rings the place he picks: the Keys",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "says smugglers",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "Rockstar says it: the official world",
+    "cue": {
+     "sound": "chime"
+    }
+   },
+   {
+    "at": "still",
+    "kind": "symbol",
+    "symbol": "clock",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "smugglers still work it: now, not history",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  "Let them film. Just not the right thing.": [
+   {
+    "at": "Let",
+    "kind": "expression",
+    "expression": "smug",
+    "why": "smug: let them film",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "Just",
+    "kind": "expression",
+    "expression": "determined",
+    "why": "determined: just not the right",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "right thing.",
+    "kind": "expression",
+    "expression": "smug",
+    "why": "sly again on the right thing",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "Lovely weather. Nothing to report.": [
+   {
+    "at": "Lovely",
+    "kind": "expression",
+    "expression": "neutral",
+    "why": "bland: lovely weather",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "Nothing",
+    "kind": "expression",
+    "expression": "amused",
+    "why": "amused: nothing to report",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "I'm always three steps ahead.": [
+   {
+    "at": "I'm",
+    "kind": "expression",
+    "expression": "smug",
+    "why": "smug: I'm always ahead",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "steps ahead.",
+    "kind": "expression",
+    "expression": "deadpan",
+    "why": "deadpan on steps ahead",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "Third? He lost to a flamingo!": [
+   {
+    "at": "Third?",
+    "kind": "expression",
+    "expression": "surprised",
+    "why": "the take on Third?",
+    "cue": {
+     "sound": "pop"
+    }
+   },
+   {
+    "at": "lost",
+    "kind": "expression",
+    "expression": "amused",
+    "why": "amused: he lost to a flamingo",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "flamingo!",
+    "kind": "expression",
+    "expression": "deadpan",
+    "why": "Mizuno listens, flat-faced, at flamingo",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    },
+    "who": "mizuno"
+   }
+  ],
+  "The flamingo was not my fault.": [
+   {
+    "at": "The",
+    "kind": "expression",
+    "expression": "angry",
+    "why": "angry: the flamingo again",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "not my fault.",
+    "kind": "expression",
+    "expression": "deadpan",
+    "why": "deadpan: not my fault",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   }
+  ],
+  "Mostly?": [
+   {
+    "at": "Mostly?",
+    "kind": "expression",
+    "expression": "doubtful",
+    "why": "doubt on Mostly?",
+    "cue": {
+     "sound": "none",
+     "why": "silent face change: the voice carries it"
+    }
+   },
+   {
+    "at": "Mostly?",
+    "kind": "expression",
+    "expression": "surprised",
+    "why": "the take: Mostly? surprised",
+    "cue": {
+     "sound": "pop"
+    },
+    "offset": 0.2
+   }
+  ]
+ }
+}

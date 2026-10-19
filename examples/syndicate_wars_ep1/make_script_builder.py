@@ -67,10 +67,11 @@ def S(at, typ, picture, purpose, motion=("push", 1.0, 1.06), cut=None, reuse=Non
 exec(open(sys.argv[1]).read())   # defines segments via seg()/pic()
 
 doc = {
- "schema": "production_script/1",
+ "schema": "production_script/2",
  "episode": {"id": "syndicate_wars", "title": "Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida", "fps": 30,
              "size": [1920, 1080], "grade": "neon_dusk", "rulebook": "episode_rules.json",
-             "notes": "Invented crossover scenario; commentary target in rights_manifest.json; stats are the channel's own rating."},
+             "notes": "Invented crossover scenario; commentary target in rights_manifest.json; stats are the channel's own rating.",
+             **({"scenario": SCENARIO} if "SCENARIO" in globals() else {}), **({"distinct": DISTINCT} if "DISTINCT" in globals() else {})},
  "voice": {"provider": "elevenlabs", "model": "eleven_v4", "voice_id": None, "name": None,
            "style": "warm, mature baritone storyteller with dry humour; unhurried but lively, gently amused; emotion carried quietly, a held breath, a dry smile",
            "pace_wpm": [150, 172], "default_tags": ["warmly"], "candidates": []},
@@ -81,7 +82,7 @@ doc = {
                        {"beat": 4, "light": "ledger_lamp"}, {"beat": 5, "light": "night_neon"}, {"beat": 6, "light": "harsh_day"},
                        {"beat": 7, "light": "neon_dusk"}, {"beat": 8, "light": "ledger_lamp"}, {"beat": 9, "light": "sunset_causeway"}]},
  "look": {"style_refs": [], "default_engine": "pod_ref"},
- "cast": {h: {"names": NAMES[h], "card": CARDS[h]} for h in CARDS},
+ "cast": {h: {"names": NAMES[h], "card": CARDS[h], **(CAST_EXTRA.get(h, {}) if "CAST_EXTRA" in globals() else {})} for h in CARDS},
  "story": {"events": [], "forbidden_props": ["gun fired in public", "blood", "drugs on display"]},
  "picture_dirs": ["pictures"],
  "sound_dirs": [],
@@ -95,6 +96,43 @@ for sid, job, light, feel, lines, shots in SEGS:
     doc["segments"].append({"id": sid, "beat": job, "job": job, "light_beat": light, "feel": feel, "purpose": feel,
                             "rules": ["ER-07", "ER-02"] if any("Capone" in l["text"] or "capone" in str(shots).lower() for l in lines) else ["ER-07"],
                             "lines": lines, "shots": shots})
+
+# editorial contract (EG-01..EG-11): sources + claims from editorial_contract.json, a kind on every line
+from pathlib import Path
+_HERE = Path(__file__).resolve().parent
+if (_HERE / "editorial_contract.json").exists():
+    doc["editorial"] = json.loads((_HERE / "editorial_contract.json").read_text(encoding="utf-8"))
+    _src = {s["id"]: s for s in doc["editorial"]["sources"]}
+    _claim = {c["id"]: c for c in doc["editorial"]["claims"]}
+
+    def _supported(c):   # one grade-A source or two independent grade-B/C publishers (EG-10)
+        used = [_src[s] for s in c["source_ids"] if s in _src]
+        return any(s["grade"] == "A" for s in used) or len({s["publisher"].casefold() for s in used if s["grade"] in "BC"}) >= 2
+
+    def line_kind(line):
+        ids = line.get("claims", [])
+        if not ids:
+            return "joke" if line.get("speaker") else "transition"
+        cs = [_claim.get(i) for i in ids]
+        if any(c is None for c in cs):
+            return None   # unknown claim: leave the kind out so the gate flags the line
+        if any(c["type"] == "speculation" for c in cs):
+            return "speculation"
+        if any(c["type"] != "fact" for c in cs):
+            return "analysis"
+        if all(c["confidence"] in ("verified", "corroborated") and _supported(c) for c in cs):
+            return "fact"
+        return None       # a fact claim too weak for a fact line: decide in line_kinds.json
+
+    _over = json.loads((_HERE / "line_kinds.json").read_text(encoding="utf-8"))["lines"] if (_HERE / "line_kinds.json").exists() else {}
+    for _seg in doc["segments"]:
+        for _ln in _seg["lines"]:
+            _k = _over.get(_ln["text"]) or line_kind(_ln)
+            if _k:
+                _ln["kind"] = _k
+    _stale = sorted(set(_over) - {l["text"] for g in doc["segments"] for l in g["lines"]})
+    if _stale:
+        print("line_kinds.json: no line has this text any more:", *_stale, sep="\n  ")
 json.dump(doc, open(sys.argv[2], "w"), indent=1, ensure_ascii=False)
 words = sum(len(l["text"].split()) for _, _, _, _, ls, _ in SEGS for l in ls)
 npics = len({(s["picture"] if isinstance(s["picture"], str) else s["picture"]["id"]) for g in doc["segments"] for s in g["shots"]})

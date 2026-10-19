@@ -81,6 +81,8 @@ add("v15_driver", "a delivery driver in a bright uniform on a neon loading dock 
 add("m18_two", "two tall glowing towers facing each other across a neon street at night, the left tower built of one lone figure's glowing footprints, the right tower built of a swarming crowd of tiny phones, a chart line crossing between them", 6)
 add("m21_trend", "tight insert, a phone screen showing a shaky video of a pink flamingo-shaped boat in a glass lobby, a red falling chart in the corner, a thumb frantically scrolling", 6)
 add("s24_hall", "a grand 1930s debating hall with rows of leather benches, the lean man in a long overcoat standing quietly among well-fed men in top hats, a single lamp, whispers travelling along the benches", 7, heroes=["shelby"], costume=COSTUME["shelby"])
+add("w02_keys", "small green islands and a boat yard on turquoise water at dusk, old fishing boats, coiled ropes and stacked crates on a weathered dock, nobody in view, a quiet coast with a long history of smuggling", 3)
+add("w02_studio", "a neon-lit recording studio entrance on a Vice City street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming", 2)
 add("s03_cursor", "tight insert, a glowing neon-pink arrow cursor sliding across a row of four empty portrait frames on a dark screen, one frame lit cyan, a satisfying game-menu energy, no text", 2)
 
 def G(gid, seg_no, at, title, claim, marks, span, hold=4.5):
@@ -89,41 +91,174 @@ def G(gid, seg_no, at, title, claim, marks, span, hold=4.5):
 GRAPHICS = [
   G("G01", 1, "Could a gangster", "Two worlds", "C-16", [(0.0, "1930s: Capone's era"), (1.0, "Our invented present")], "one invented city"),
   G("G02", 2, "Rockstar's page", "What is official", "C-01", [(0.0, "No story year given"), (1.0, "Nov 19, 2026: release")], "official page"),
-  G("G03", 7, "Fourth card", "Shelby's era", "C-28", [(0.0, "1927: elected MP in the story"), (1.0, "1933: Series 6")], "1930s Birmingham"),
-  G("G04", 9, "In 1930", "Capone, public figure", "C-19", [(0.0, "1930: Public Enemy list"), (1.0, "Depression: soup kitchen")], "1930s Chicago"),
-  G("G05", 10, "In the 1930s", "Press then, phones now", "C-27", [(0.0, "1930s: newspapers"), (1.0, "Today: phones")], "our reading"),
-  G("G06", 11, "In October", "The real case", "C-16", [(0.0, "1930: the ledger line"), (1.0, "Oct 1931: convicted")], "one year", 5.0),
-  G("G07", 12, "He did end up", "The real ending", "C-18", [(0.0, "1931: convicted"), (1.0, "1947: dies in Florida")], "sixteen years"),
-  G("G08", 17, "In the story", "Vito's end (story)", "C-25", [(0.0, "Film-era Don"), (1.0, "1955: dies in his garden")], "in the story"),
+  G("G03", 8, "Fourth card", "Shelby's era", "C-28", [(0.0, "Elected MP (in the story)"), (1.0, "1933: Series 6")], "1930s Birmingham"),
+  G("G04", 10, "In 1930", "Capone, public figure", "C-19", [(0.0, "1930: Public Enemy list"), (1.0, "Depression: soup kitchen")], "1930s Chicago"),
+  G("G05", 11, "In the 1930s", "Press then, phones now", "C-27", [(0.0, "1930s: newspapers"), (1.0, "Today: phones")], "our reading"),
+  G("G06", 12, "In October", "The real case", "C-16", [(0.0, "The ledger line found"), (1.0, "Oct 1931: convicted")], "one year", 5.0),
+  G("G07", 13, "He did end up", "The real ending", "C-18", [(0.0, "1931: convicted"), (1.0, "1947: dies in Florida")], "sixteen years"),
+  G("G08", 18, "In the story", "Vito's end (story)", "C-25", [(0.0, "Film-era Don"), (1.0, "Mid-1950s: dies in his garden")], "in the story"),
 ]
+
+def D(who, text, tags=None, emph=None, claims=None, pause=None):
+    """A hero's own line (D-45): invented, in their manner (cast.<id>.speech), voiced by their own cast voice."""
+    return dict(L(text, tags, emph, pause, claims), speaker=who)
+
 
 def SL(text, tags=None, emph=None, claims=None, pause=None):
     return L(text, tags, emph, pause, claims)
 def SS_(at, picture, crop, zoom=1.0):
     return {"at": at, "picture": picture, "crop_x": crop, "zoom": zoom}
+def SD(who, text, tags=None):
+    return dict(SL(text, tags), speaker=who)
 SHORTS = [
- {"id": "SH01", "hook": "Could one line in a ledger bring down Al Capone?", "lines": [
+ # 1 fact_bomb, short band: the ledger
+ {"id": "SH01", "style": "fact_bomb", "ending": "pointer", "hook": "Could one line in a ledger bring down Al Capone?", "lines": [
    SL("Could one line in a ledger bring down Al Capone?", ["curious"], "capone", ["C-21"]),
    SL("What brought Capone down wasn't a rival. Or a bullet. It was a LEDGER.", ["dramatically"], "ledger", ["C-16"]),
    SL("An IRS investigator, Frank J. Wilson, found a line in a book. About seventeen thousand five hundred dollars, paid for Al.", claims=["C-21"]),
    SL("In October 1931, Capone was convicted of tax evasion. Eleven years in prison.", claims=["C-16"]),
-   SL("Capone's mistake would work in any century. He thought controlling people meant controlling INFORMATION.", emph="information", claims=["C-27"]),
-   SL("Four bosses, one question. The full video is on the channel.", ["warmly"])],
-  "shots": [SS_("Could one line", "c11_ledger", 0.4, 1.0), SS_("What brought Capone", "p_capone", 0.5, 1.0),
-            SS_("An IRS investigator", "c11_agent", 0.8, 1.0), SS_("In October", "c11_verdict", 0.3, 1.0),
-            SS_("Capone's mistake", "c10_map", 0.4, 1.0), SS_("Four bosses", "s01_four", 0.35, 1.0)]},
- {"id": "SH02", "hook": "Who wins in a city where everybody films everything?", "lines": [
-   SL("Who wins in a city where everybody films everything?", ["curious"], "everything"),
-   SL("Shelby never hides from attention. He feeds it.", ["softly"]),
-   SL("In Vice City, Shelby wouldn't post. He'd pay someone else to post the wrong thing. In the wrong place.", ["mischievously"], claims=["C-28"]),
+   SL("The full video is Syndicate Wars, on the channel.", ["warmly"])],
+  "shots": [SS_("Could one line", "c11_ledger", 0.4, 1.0), SS_("bring down Al Capone", "p_capone", 0.5, 1.1),
+            SS_("What brought Capone", "c09_press", 0.5, 1.0), SS_("It was a LEDGER", "c11_ledger", 0.6, 1.3),
+            SS_("An IRS investigator", "c11_agent", 0.8, 1.0), SS_("About seventeen", "c11_agent", 0.4, 1.3),
+            SS_("In October", "c11_verdict", 0.3, 1.0), SS_("Eleven years", "c11_verdict", 0.6, 1.25),
+            SS_("The full video", "sc_capone_out", 0.5, 1.0)]},
+ # 2 dialogue_clash, short band: the flamingo argument
+ {"id": "SH02", "style": "dialogue_clash", "ending": "question", "hook": "Who lost to a flamingo?", "lines": [
+   SL("Who lost to a flamingo?", ["mischievously"], "flamingo"),
+   SL("Made up, every word: our invented boss Haruto Mizuno, in our invented Vice City.", claims=["C-49"]),
+   SL("A flamingo boat crashes into his lobby. Someone films it. A rumour trends."),
+   SD("mizuno", "A flamingo. In my lobby.", ["deadpan"]),
+   SL("His biggest partner panics before his lawyers wake up."),
+   SD("mizuno", "This was not in the plan.", ["tense"]),
+   SD("capone", "Third? He lost to a flamingo!", ["laughs"]),
+   SD("mizuno", "The flamingo was not my fault.", ["annoyed"]),
+   SL("Whose fault was it? Tell us, then watch the full video, Syndicate Wars.", ["warmly"])],
+  "shots": [SS_("Who lost", "f20_flamingo", 0.5, 1.0), SS_("a flamingo?", "m21_lobby", 0.6, 1.0),
+            SS_("Someone films it", "m21_trend", 0.5, 1.0), SS_("A flamingo. In my", "p_mizuno", 0.5, 1.15),
+            SS_("His biggest partner", "m21_trend", 0.4, 1.3), SS_("This was not", "p_mizuno", 0.5, 1.35),
+            SS_("Third?", "p_capone", 0.5, 1.15), SS_("The flamingo was", "m21_lobby", 0.3, 1.25),
+            SS_("Whose fault", "sc_mizuno_out", 0.5, 1.0)]},
+ # 3 pov_you, long band: you land in Leonida
+ {"id": "SH03", "style": "pov_you", "ending": "question", "hook": "You're a 1930s crime boss, and you just landed in Leonida.", "lines": [
+   SL("You're a 1930s crime boss, and you just landed in Leonida.", ["curious"], "leonida"),
+   SL("And Leonida isn't empty. Rockstar's page names six places. Vice City, the Leonida Keys, Grassrivers, Port Gellhorn, Ambrosia and Mount Kalaga.", claims=["C-51"]),
+   SL("It already has its own crime. Boobie Ike built an empire from the street up. Real estate, a strip club, a recording studio.", claims=["C-52"]),
+   SL("The Real Dimez chase viral videos. Raul Bautista robs banks. And in the Keys, an old smuggler, Brian Heder, still works the water.", claims=["C-53", "C-54", "C-55"]),
+   SL("Not a film set. A causeway, a neon sunset, and every phone pointing at you."),
+   SL("That's Rockstar's world. Our four bosses are only guests in it.", ["warmly"], claims=["C-48"]),
+   SL("So where would you hide, if every phone in Leonida pointed at you? Four bosses tried it in the full video, Syndicate Wars.", ["warmly"])],
+  "shots": [SS_("You're a 1930s", "s02_chairs", 0.5, 1.0), SS_("just landed in Leonida", "s01_skyline", 0.5, 1.0),
+            SS_("Rockstar's page names", "s01_skyline", 0.2, 1.3), SS_("Grassrivers", "s03_cursor", 0.5, 1.0),
+            SS_("Ambrosia and", "s03_cursor", 0.3, 1.3), SS_("It already has", "w02_studio", 0.5, 1.0),
+            SS_("Real estate", "w02_studio", 0.3, 1.3), SS_("The Real Dimez", "c10_viral", 0.5, 1.0),
+            SS_("Raul Bautista", "c10_viral", 0.3, 1.3), SS_("And in the Keys", "w02_keys", 0.5, 1.0),
+            SS_("still works the water", "w02_keys", 0.7, 1.3), SS_("Not a film set", "s01_boardwalk", 0.5, 1.0), SS_("every phone pointing", "s08_eye", 0.5, 1.0),
+            SS_("That's Rockstar's world", "s02_history", 0.5, 1.0),
+            SS_("So where would", "m22_watch", 0.5, 1.0), SS_("Four bosses tried", "s02_chairs", 0.3, 1.3)]},
+ # 4 myth_buster, long band: the quiet boss is not safe
+ {"id": "SH04", "style": "myth_buster", "ending": "pointer", "hook": "Is the quiet, legal business always the safe one?", "lines": [
+   SL("Is the quiet, legal business always the safe one?", ["curious"], "safe"),
+   SL("Vito rules with favours, not fists. Judges. Politicians. And a very long memory.", ["softly"], claims=["C-24"]),
+   SL("So Vito leaves the noise of Vice City for Ambrosia, another place on Rockstar's page. He runs his import business from there. Legal. Boring. Safe.", ["warmly"], claims=["C-51"]),
+   SD("vito", "Olive oil. Nobody films olive oil.", ["calm"]),
+   SL("A favour works on people who know you. Strangers with phones don't.", emph="know"),
+   SL("One delivery driver films a crate going into a van. The clip spreads. And the judge who owed Vito a favour stops answering his calls. Invented, but it tracks."),
+   SD("vito", "He doesn't call back. He always calls back.", ["softly"]),
+   SL("Vito doesn't lose a fight. He loses a phone call. That round is in the full video, Syndicate Wars.", ["softly"])],
+  "shots": [SS_("Is the quiet", "v14_oil", 0.5, 1.0), SS_("always the safe", "v13_table", 0.5, 1.0),
+            SS_("Vito rules", "p_vito", 0.5, 1.1), SS_("Judges", "v14_judge", 0.5, 1.0),
+            SS_("So Vito leaves", "v15_dock", 0.5, 1.0), SS_("Legal. Boring", "v14_oil", 0.3, 1.3),
+            SS_("Olive oil", "p_vito", 0.5, 1.3), SS_("A favour works", "v13_window", 0.5, 1.0),
+            SS_("Strangers with phones", "v13_window", 0.2, 1.3), SS_("One delivery driver", "v15_driver", 0.5, 1.0),
+            SS_("The clip spreads", "v15_dock", 0.2, 1.3), SS_("And the judge", "v15_phone", 0.5, 1.0),
+            SS_("He doesn't call", "p_vito", 0.4, 1.4), SS_("Vito doesn't lose", "v15_phone", 0.6, 1.3)]},
+ # 5 ranked_three, short band: the order of the falls
+ {"id": "SH05", "style": "ranked_three", "ending": "question", "hook": "Four crime bosses in our invented Vice City test. Who falls first?", "lines": [
+   SL("Four crime bosses in our invented Vice City test. Who falls first?", ["curious"], "first"),
+   SL("So that's the order. Capone first, loud and famous. Vito second. Mizuno third.", claims=["C-48"]),
+   SL("Shelby last. Quietest of all.", ["deadpan"]),
+   SL("Shelby. That's why he wins. Mostly.", ["deadpan"]),
+   SD("shelby", "Mostly?", ["surprised"]),
+   SL("Would you rank them the same? The full video is Syndicate Wars.", ["warmly"])],
+  "shots": [SS_("Four crime bosses", "s01_four", 0.5, 1.0), SS_("Who falls first", "sc_all", 0.5, 1.0),
+            SS_("Capone first", "sc_capone_out", 0.5, 1.0), SS_("Vito second", "sc_vito_out", 0.5, 1.0),
+            SS_("Mizuno third", "sc_mizuno_out", 0.5, 1.0), SS_("Shelby last", "p_shelby", 0.5, 1.0),
+            SS_("That's why", "s26_behind", 0.4, 1.0), SS_("Mostly?", "p_shelby", 0.5, 1.4),
+            SS_("Would you rank", "sc_final", 0.5, 1.0)]},
+ # 6 anti_intuition, long band: don't hide from the cameras
+ {"id": "SH06", "style": "anti_intuition", "ending": "pointer", "hook": "If everyone films you, don't hide from them, feed them the wrong thing.", "lines": [
+   SL("If everyone films you, don't hide from them, feed them the wrong thing.", ["mischievously"], "wrong"),
+   SL("Right. Shelby never hides from attention. He feeds it.", ["softly"]),
+   SL("In Leonida, Shelby picks the Keys, where Rockstar says smugglers still work the water.", claims=["C-55"]),
+   SD("shelby", "Let them film. Just not the right thing.", ["quietly"]),
+   SL("In our invented Vice City, Shelby wouldn't post. He'd pay someone else to post the wrong thing. In the wrong place.", ["mischievously"], claims=["C-28"]),
    SL("A decoy here. The real ledger there. Every phone points at the decoy. And the real business moves."),
+   SL("But in Vice City, violence is content. So he does the one thing nobody else did.", ["softly"]),
+   SL("Shelby makes himself BORING on camera.", emph="boring"),
+   SD("shelby", "Lovely weather. Nothing to report.", ["deadpan"]),
+   SL("Is it enough to win? Watch the full video, Syndicate Wars.", ["warmly"])],
+  "shots": [SS_("If everyone films", "s23_street", 0.5, 1.0), SS_("don't hide", "s25_calm", 0.5, 1.0),
+            SS_("Right. Shelby", "s24_proxy", 0.2, 1.0), SS_("He feeds it", "s24_proxy", 0.6, 1.3),
+            SS_("In Leonida", "w02_keys", 0.3, 1.0), SS_("still work the water", "w02_keys", 0.7, 1.25),
+            SS_("Let them film", "p_shelby", 0.5, 1.2), SS_("In our invented", "s24_decoy", 0.2, 1.0),
+            SS_("In the wrong place", "s24_decoy", 0.8, 1.2), SS_("A decoy here", "s24_ledger", 0.5, 1.0),
+            SS_("And the real business", "s24_ledger", 0.3, 1.3), SS_("But in Vice City", "s24_decoy", 0.5, 1.3),
+            SS_("So he does", "s25_calm", 0.3, 1.0), SS_("Shelby makes himself", "s25_calm", 0.6, 1.3),
+            SS_("Lovely weather", "p_shelby", 0.5, 1.35), SS_("Is it enough", "s26_behind", 0.5, 1.0)]},
+ # 7 would_you, short band: the boardroom or the street
+ {"id": "SH07", "style": "would_you", "ending": "question", "hook": "Would you rather win the boardroom or the street?", "lines": [
+   SL("Would you rather win the boardroom or the street?", ["curious"], "street"),
+   SL("And in our scenario, our invented boss Haruto Mizuno takes an office in Vice City and wins the boardroom.", ["softly"]),
+   SD("mizuno", "Sign here. And here. Thank you.", ["calm"]),
+   SL("Clean contracts. Patient partners. Rivals sign. Rivals smile. Rivals pay.", ["deadpan"]),
+   SL("He wins the boardroom. He loses the STREET.", ["dramatically"], "street"),
+   SL("Which would you pick? The full video is Syndicate Wars.", ["warmly"])],
+  "shots": [SS_("Would you rather", "m17_tower", 0.5, 1.0), SS_("the boardroom", "m19_sign", 0.5, 1.0),
+            SS_("And in our scenario", "m17_card", 0.5, 1.0), SS_("Sign here", "m19_sign", 0.3, 1.3),
+            SS_("Clean contracts", "m18_board", 0.5, 1.0), SS_("Rivals pay", "m18_phone", 0.5, 1.0),
+            SS_("He wins", "m21_lobby", 0.5, 1.0), SS_("He loses the STREET", "f20_flamingo", 0.5, 1.0),
+            SS_("Which would", "p_mizuno", 0.5, 1.0)]},
+ # 8 cold_open_cliffhanger, long band: the video's opening
+ {"id": "SH08", "style": "cold_open_cliffhanger", "ending": "cliffhanger", "hook": "Could a gangster from the 1930s survive a world where everybody has a CAMERA?", "lines": [
+   SL("Could a gangster from the 1930s survive a world where everybody has a CAMERA?", ["curious"], "camera", ["C-16"]),
+   SL("Welcome to Vice City, in the state of Leonida.", claims=["C-02"]),
+   SL("Rockstar's next game lives there. And we're about to drop four crime bosses into it."),
+   SL("Four bosses. Four ways of ruling."),
+   SL("In a world where everybody films everything, who realises FIRST that attention is both power and danger?", ["dramatically"], "first"),
+   SL("And only one of them understands what a phone camera REALLY is.", ["warmly"], "really"),
+   SL("Which one? The full video, Syndicate Wars, has the answer.", ["warmly"])],
+  "shots": [SS_("Could a gangster", "c09_press", 0.5, 1.0), SS_("everybody has a CAMERA", "s01_phones", 0.5, 1.0),
+            SS_("Welcome to Vice City", "s01_skyline", 0.5, 1.0), SS_("Rockstar's next game", "s01_boardwalk", 0.4, 1.0),
+            SS_("drop four crime", "s01_four", 0.5, 1.0), SS_("Four bosses", "sc_all", 0.5, 1.0),
+            SS_("In a world", "s08_eye", 0.5, 1.0), SS_("who realises FIRST", "s08_paths", 0.5, 1.0),
+            SS_("power and danger", "c10_map", 0.5, 1.0), SS_("And only one", "s01_phones", 0.3, 1.3),
+            SS_("Which one", "s29_end", 0.5, 1.0)]},
+ # 9 countdown_hud, short band: the stars drop
+ {"id": "SH09", "style": "countdown_hud", "ending": "cliffhanger", "hook": "What happens to a crime boss's stars in a city of phones?", "lines": [
+   SL("What happens to a crime boss's stars in a city of phones?", ["curious"], "stars"),
+   SL("In GTA V, commit a crime and your wanted stars climb.", claims=["C-50"]),
+   SL("In a city of phones, we're guessing it climbs when ANYBODY sees you.", emph="anybody", claims=["C-27"]),
+   SL("Capone's intimidation, down to two. Vito's influence, down to three once you leave his circle. Mizuno's discipline, four. Shelby's strategy, four.", claims=["C-44", "C-45", "C-46", "C-47"]),
+   SL("Every star is our opinion. The reasons are in the full video, Syndicate Wars.", ["warmly"])],
+  "shots": [SS_("What happens", "w13_stars", 0.5, 1.0), SS_("a city of phones", "s01_phones", 0.5, 1.0),
+            SS_("In GTA V", "w13_stars", 0.3, 1.3), SS_("In a city of phones", "s08_eye", 0.5, 1.0),
+            SS_("ANYBODY sees", "s01_boardwalk", 0.5, 1.0), SS_("Capone's intimidation", "sc_capone", 0.5, 1.0),
+            SS_("Vito's influence", "sc_vito", 0.5, 1.0), SS_("Mizuno's discipline", "sc_mizuno", 0.5, 1.0),
+            SS_("Shelby's strategy", "sc_shelby", 0.5, 1.0), SS_("Every star", "sc_final", 0.5, 1.0)]},
+ # 10 loop, short band: certainty
+ {"id": "SH10", "style": "loop", "ending": "loop", "hook": "Could the smartest boss in Vice City still lose?", "lines": [
+   SL("Could the smartest boss in Vice City still lose?", ["curious"], "lose"),
    SL("Shelby's flaw isn't weakness. It's CERTAINTY.", ["dramatically"], "certainty"),
+   SD("shelby", "I'm always three steps ahead.", ["confident"]),
    SL("He believes he's always several steps ahead. And a man like that never checks behind him.", ["softly"]),
-   SL("Which boss would you bet on? The full video is on the channel.", ["warmly"])],
-  "shots": [SS_("Who wins", "s23_street", 0.35, 1.0), SS_("Shelby never hides", "s24_proxy", 0.15, 1.0),
-            SS_("In Vice City", "s24_decoy", 0.2, 1.0), SS_("A decoy here", "s24_ledger", 0.45, 1.0),
-            SS_("Shelby's flaw", "p_shelby", 0.5, 1.0), SS_("He believes", "s26_behind", 0.1, 1.0),
-            SS_("Which boss", "s29_end", 0.45, 1.0)]},
+   SL("In a city of cameras, behind him is exactly where the cameras are.", ["whispers"]),
+   SL("And that's why, in the full video, Syndicate Wars, the smartest boss in Vice City could still lose. So:", ["softly"])],
+  "shots": [SS_("Could the smartest", "m22_watch", 0.5, 1.0), SS_("still lose", "p_shelby", 0.5, 1.0),
+            SS_("It's CERTAINTY", "p_shelby", 0.5, 1.35), SS_("I'm always", "s25_calm", 0.5, 1.2),
+            SS_("He believes", "s26_behind", 0.5, 1.0), SS_("never checks", "s26_behind", 0.2, 1.3),
+            SS_("In a city of cameras", "s08_eye", 0.5, 1.0), SS_("exactly where", "s01_phones", 0.6, 1.25),
+            SS_("And that's why", "m22_watch", 0.3, 1.3)]},
 ]
 
 for _h in CARDS:
@@ -151,6 +286,17 @@ seg("S02", "explanation", 1, "Trust: we say what is official, what is our guess,
     S("So the year", "A", P("s02_chairs"), "An empty table: the stage is set but the story is invented", ("push", 1.0, 1.05)),
     S("The history", "C", P("s02_history"), "A tactile cue for what is real history", ("push", 1.0, 1.06), cut="the switch to the real marks the honesty line")])
 
+seg("S03", "explanation", 1, "Context: Rockstar's own Leonida already has its own crime; our bosses are guests in it.", [
+  L("And Leonida isn't empty. Rockstar's page names six places. Vice City, the Leonida Keys, Grassrivers, Port Gellhorn, Ambrosia and Mount Kalaga.", claims=["C-51"]),
+  L("It already has its own crime. Boobie Ike built an empire from the street up. Real estate, a strip club, a recording studio.", claims=["C-52"]),
+  L("The Real Dimez chase viral videos. Raul Bautista robs banks. And in the Keys, an old smuggler, Brian Heder, still works the water.", claims=["C-53", "C-54", "C-55"]),
+  L("That's Rockstar's world. Our four bosses are only guests in it.", ["warmly"], claims=["C-48"]),
+], [S("And Leonida", "A", "s01_skyline", "The state and its city again while the official places are named", ("pull", 1.06, 1.0), reuse="reuse"),
+    S("It already has", "B", P("w02_studio"), "Leonida's own crime as a business: a studio front, no Rockstar character drawn", ("push", 1.0, 1.06)),
+    S("The Real Dimez", "C", "s01_phones", "Viral videos: the phones again", ("push", 1.02, 1.08), reuse="reuse"),
+    S("And in the Keys", "A", P("w02_keys"), "The Keys: islands and a boat yard, the smugglers' water", ("push", 1.0, 1.05), cut="from the city to the water"),
+    S("That's Rockstar's world", "A", "s01_four", "Our guests arrive", ("push", 1.0, 1.05), reuse="reuse")])
+
 seg("S03", "explanation", 2, "Fun: the video-game character-select screen and our rating rule.", [
   L("Now. Choose your boss.", ["excited"], pause=0.4),
   L("Five stats each, out of five stars. These ratings are OURS. Opinions, not facts. And we'll show our reasons.", claims=["C-44"], emph="ours"),
@@ -166,7 +312,7 @@ seg("S04", "evidence", 2, "Understand why Capone is rated brutal but brittle.", 
     S("Our reasoning", "B", P("p_capone"), "The portrait that carries his face for the whole video", ("push", 1.0, 1.06), cut="the card gives way to the face when the reasoning starts")])
 
 seg("S05", "evidence", 2, "Understand that Vito is a network, not a fist.", [
-  L("Second card. Vito Corleone, the film-era Don.", ["warmly"]),
+  L("Second card. Vito Corleone, the Don from The Godfather films.", ["warmly"]),
   L("Influence and networking, five stars. Strategy, four.", claims=["C-45"]),
   L("Brutality, just two. Tech-savviness, one.", claims=["C-45"]),
   L("Vito rules with favours, not fists. Judges. Politicians. And a very long memory.", ["softly"], claims=["C-24"]),
@@ -182,7 +328,7 @@ seg("S06", "complication", 2, "Curiosity: a disciplined boss with one hidden wea
     S("But chaos", "B", P("p_mizuno"), "The portrait; the held look plants the open loop", ("push", 1.0, 1.06))])
 
 seg("S07", "evidence", 2, "Understand why Shelby is the planner.", [
-  L("Fourth card. Tommy Shelby, in his 1930s Birmingham years.", claims=["C-28"]),
+  L("Fourth card. Tommy Shelby, from the TV series Peaky Blinders, in his Birmingham years around 1930.", claims=["C-28"]),
   L("Adaptability, five. Tech-savviness, five. Strategy, five.", claims=["C-47"]),
   L("Influence, four. Brutality, three.", claims=["C-47"]),
   L("Our reasoning: Shelby treats information like CASH.", emph="cash", claims=["C-47"]),
@@ -192,8 +338,8 @@ seg("S07", "evidence", 2, "Understand why Shelby is the planner.", [
 seg("S08", "question", 2, "Stakes: the question of the whole video and what it tests.", [
   L("So here's what this video asks.", ["curious"], pause=0.3),
   L("In a world where everybody films everything, who realises FIRST that attention is both power and danger?", ["dramatically"], "first"),
-  L("We'll test it on the things Rockstar's games love to joke about. The phone. The feed. The money. The wanted level.", claims=["C-43"]),
-  L("In GTA V, those were jokes. For the new game, we can only guess.", claims=["C-43"]),
+  L("We'll test it on four things: the phone, the feed, the money and the wanted level.", claims=["C-43"]),
+  L("What the new game does with any of them, Rockstar hasn't said. We can only guess.", claims=["C-43"]),
   L("Four rounds. Loudest first.", ["mischievously"]),
 ], [S("So here's", "A", P("s08_paths"), "Four routes to one test: the structure of the video", ("push", 1.0, 1.05)),
     S("In a world", "C", P("s08_eye"), "The phone as the thing under test", ("push", 1.0, 1.07)),
@@ -203,7 +349,7 @@ seg("S08", "question", 2, "Stakes: the question of the whole video and what it t
 seg("S09", "evidence", 3, "Recognise Capone's fame as the 1930s version of going viral.", [
   L("Round one. Al Capone.", ["dramatically"], pause=0.3),
   L("In 1930, Chicago's crime commission names him Public Enemy Number One. And during the Depression, he sponsors a soup kitchen.", claims=["C-19", "C-20"]),
-  L("He's not hiding. He's performing.", ["softly"]),
+  L("He's not hiding. He's performing.", ["softly"], claims=["C-27"]),
   L("Our reading? Capone understood that fame is a kind of shield.", claims=["C-27"], emph="shield"),
 ], [S("Round one", "B", P("c09_press"), "Capone as a public figure: fame is the setting", ("push", 1.0, 1.06)),
     S("And during the Depression", "B", P("c09_soup"), "The soup kitchen: generosity as publicity", ("push", 1.0, 1.05)),
@@ -211,8 +357,11 @@ seg("S09", "evidence", 3, "Recognise Capone's fame as the 1930s version of going
 
 seg("S10", "complication", 3, "Fun: Capone's fame turns into a trail of evidence in a city of phones.", [
   L("Now drop Capone in Vice City. Invented, remember.", ["mischievously"]),
+  L("In this city, viral is a business. The Real Dimez live on it.", claims=["C-53"]),
   L("Someone films him handing out free sandwiches. Millions of views by lunch.", ["chuckles"]),
+  D("capone", "Millions? For a sandwich? Print more sandwiches!", ["excited"]),
   L("Brilliant! Oh, but then someone films the car he arrived in. Then the driver. Then the licence plate."),
+  D("capone", "Wait. Who filmed my car?", ["suspicious"]),
   L("In the 1930s, newspapers needed him as a story. Today, a camera makes everyone one.", claims=["C-27"]),
   L("Attention is power. Right up until it becomes a MAP.", emph="map", claims=["C-27"]),
 ], [S("Now drop", "B", "s01_boardwalk", "Capone arrives in the world of phones", ("push", 1.0, 1.05), reuse="reuse"),
@@ -230,8 +379,9 @@ seg("S11", "reveal", 4, "Surprise: in real history it was a ledger, not a bullet
     S("In October", "A", P("c11_verdict"), "The conviction: consequence, not spectacle", ("pull", 1.07, 1.0))])
 
 seg("S12", "emotional_pause", 4, "Payoff of round one: Capone confused controlling people with controlling information; he falls first.", [
-  L("Hmm. Capone's mistake would work in any century. He thought controlling people meant controlling INFORMATION.", emph="information", claims=["C-27"]),
-  L("It doesn't.", ["sighs"], pause=0.5),
+  L("Hmm. Capone's mistake would sink him in any century. He thought controlling people meant controlling the INFORMATION about him.", emph="information", claims=["C-27"]),
+  L("It doesn't.", ["sighs"], pause=0.5, claims=["C-27"]),
+  D("capone", "Nobody tells me it doesn't.", ["annoyed"]),
   L("Round one, and he's out.", ["deadpan"], pause=0.3),
   L("He did end up in Florida, though. At home on Palm Island, in 1947. A quiet ending for a loud man.", claims=["C-18"]),
   L("The next boss never makes a speech.", ["whispers"]),
@@ -241,9 +391,9 @@ seg("S12", "emotional_pause", 4, "Payoff of round one: Capone confused controlli
 
 seg("S13", "explanation", 2, "Commentary on a game system: the wanted level, and what changes when everybody has a phone.", [
   L("A quick word on stars.", ["warmly"], pause=0.3),
-  L("In GTA V, your wanted level climbs when the police see you.", claims=["C-50"]),
+  L("In GTA V, commit a crime and your wanted stars climb.", claims=["C-50"]),
   L("In a city of phones, we're guessing it climbs when ANYBODY sees you.", emph="anybody", claims=["C-27"]),
-  L("The stars in the corner aren't about the police any more. They're about the audience."),
+  L("The stars in the corner aren't about the police any more. They're about the audience.", claims=["C-27"]),
 ], [S("A quick word", "C", P("w13_stars"), "The wanted stars as a neon sign: the game system under comment", ("push", 1.0, 1.07))])
 
 seg("S14", "question", 5, "Question for round two: favours versus cameras.", [
@@ -263,11 +413,13 @@ seg("S15", "evidence", 5, "Understand Vito's discipline: favours, a legal front,
     S("And when someone", "B", P("v14_no"), "The refusal: strategy, shown as a gesture", ("push", 1.0, 1.06))])
 
 seg("S16", "complication", 5, "Complication: favours do not travel to strangers with phones.", [
-  L("So in Vice City, Vito does the sensible thing. He retreats to his import business. Legal. Boring. Safe.", ["warmly"]),
+  L("So Vito leaves the noise of Vice City for Ambrosia, another place on Rockstar's page. He runs his import business from there. Legal. Boring. Safe.", ["warmly"], claims=["C-51"]),
+  D("vito", "Olive oil. Nobody films olive oil.", ["calm"]),
   L("Safe? Well, no.", ["deadpan"], pause=0.4),
-  L("A favour works on people who know you. Strangers with phones don't.", emph="know"),
+  L("A favour works on people who know you. Strangers with phones don't.", emph="know", claims=["C-45"]),
   L("One delivery driver films a crate going into a van. The clip spreads. And the judge who owed Vito a favour stops answering his calls. Invented, but it tracks."),
-], [S("So in Vice City", "A", P("v15_dock"), "The place and the phones: the witnesses arrive", ("pull", 1.07, 1.0)),
+  D("vito", "He doesn't call back. He always calls back.", ["softly"]),
+], [S("So Vito leaves", "A", P("v15_dock"), "The place and the phones: the witnesses arrive", ("pull", 1.07, 1.0)),
     S("A favour works", "B", "v13_table", "Back to the table: his world of known faces", ("push", 1.0, 1.05), reuse="reuse"),
     S("One delivery driver", "B", P("v15_driver"), "The stranger with the phone", ("push", 1.0, 1.06), cut="from the known table to the stranger"),
     S("And the judge", "B", P("v15_phone"), "The phone that does not ring: the loss", ("push", 1.0, 1.06))])
@@ -275,7 +427,7 @@ seg("S16", "complication", 5, "Complication: favours do not travel to strangers 
 seg("S17", "emotional_pause", 5, "Payoff of round two: his authority does not reach the people his network depends on.", [
   L("Vito doesn't lose a fight. He loses a phone call.", ["softly"], pause=0.6),
   L("Round two. The Don finds out his authority doesn't reach the people his network DEPENDS on.", emph="depends"),
-  L("In the story, he dies in his garden in 1955, playing with his grandson. A gentler ending than anyone else here gets.", claims=["C-25"]),
+  L("In the story, he dies in his garden in the mid-1950s, playing with his grandson. A gentler ending than anyone else here gets.", claims=["C-25"]),
   L("And the next boss doesn't need anyone to love him. Just to sign.", ["mischievously"]),
 ], [S("Vito doesn't lose", "B", "v15_phone", "The silent phone again as the line lands", ("push", 1.03, 1.09), reuse="reuse"),
     S("Round two. The Don", "B", "sc_vito_out", "Vito eliminated: the second fall", ("push", 1.0, 1.05)),
@@ -300,7 +452,8 @@ seg("S19", "explanation", 6, "Understand what money system the invented boss pla
     S("Whether the new game", "A", "m18_board", "Back to the board for the honest guess", ("pull", 1.07, 1.0), reuse="reuse")])
 
 seg("S20", "evidence", 6, "Show competence: Mizuno wins the boardroom, dignity intact.", [
-  L("And in our scenario, Mizuno wins the boardroom.", ["softly"]),
+  L("And in our scenario, Mizuno takes an office in Vice City and wins the boardroom.", ["softly"]),
+  D("mizuno", "Sign here. And here. Thank you.", ["calm"]),
   L("Clean contracts. Patient partners. Rivals sign. Rivals smile. Rivals pay.", ["deadpan"]),
   L("A skyline of buildings that never saw a bad invoice."),
 ], [S("And in our scenario", "B", P("m19_sign"), "The win: contracts signed, rivals eager", ("push", 1.0, 1.05)),
@@ -311,7 +464,7 @@ seg("S21", "humor", 6, "Fun: invented Florida-style chaos, clearly flagged as ma
   L("Meanwhile, elsewhere in Leonida.", ["mischievously"], pause=0.3),
   L("A man tries to escape the police on a flamingo-shaped boat. Straight into a car wash.", ["chuckles"]),
   L("A seagull in a tiny captain's hat takes credit for the arrest.", ["deadpan"]),
-  L("None of this happened. We made it up. But it's Florida, so it feels like it should have.", ["warmly"]),
+  L("None of this happened. We made it up. But it's Florida, so it feels like it should have.", ["warmly"], claims=["C-49"]),
   L("The point? Chaos does not read quarterly reports.", emph="quarterly", claims=["C-49"]),
 ], [S("Meanwhile", "A", P("f20_flamingo"), "Invented comic chaos, drawn in the same world", ("push", 1.0, 1.06)),
     S("A seagull", "C", P("f20_gator"), "The punchline insert", ("push", 1.0, 1.08), cut="a joke needs a quick second image"),
@@ -320,7 +473,10 @@ seg("S21", "humor", 6, "Fun: invented Florida-style chaos, clearly flagged as ma
 
 seg("S22", "reveal", 6, "Payoff of round three: wins the boardroom, loses the street.", [
   L("Now picture Mizuno stepping out of the boardroom.", ["curious"]),
-  L("A flamingo boat crashes into his lobby. Someone films it. A rumour trends. His biggest partner panics before his lawyers wake up."),
+  L("A flamingo boat crashes into his lobby. Someone films it. A rumour trends."),
+  D("mizuno", "A flamingo. In my lobby.", ["deadpan"]),
+  L("His biggest partner panics before his lawyers wake up."),
+  D("mizuno", "This was not in the plan.", ["tense"]),
   L("He wins the boardroom. He loses the STREET.", ["dramatically"], "street", pause=0.4),
   L("Chaos management, two stars. We did warn you.", ["deadpan"], claims=["C-46"]),
 ], [S("Now picture", "B", P("m21_lobby"), "The calm man and the absurd arrival", ("push", 1.0, 1.06)),
@@ -339,8 +495,10 @@ seg("S24", "question", 7, "Question for round four.", [
     S("Can the man", "A", "m22_watch", "He watches the city that never stops sharing", ("pull", 1.07, 1.0), reuse="reuse")])
 
 seg("S25", "evidence", 7, "Understand Shelby's method: feed the attention, hide the business.", [
-  L("Right. Shelby never hides from attention. He feeds it.", ["softly"]),
+  L("Right. Shelby never hides from attention. He feeds it.", ["softly"], claims=["C-47"]),
   L("In the story, he becomes an MP. He plants false information to fool a rival.", claims=["C-28"]),
+  L("In Leonida, Shelby picks the Keys, where Rockstar says smugglers still work the water.", claims=["C-55"]),
+  D("shelby", "Let them film. Just not the right thing.", ["quietly"]),
   L("In Vice City, Shelby wouldn't post. He'd pay someone else to post the wrong thing. In the wrong place.", ["mischievously"], claims=["C-28"]),
   L("A decoy here. The real ledger there. Every phone points at the decoy. And the real business moves."),
 ], [S("Right. Shelby never", "B", P("s24_proxy"), "The proxy: attention bought and aimed", ("push", 1.0, 1.05)),
@@ -352,25 +510,30 @@ seg("S26", "complication", 8, "Complication: Shelby is violent in canon, so the 
   L("Is Shelby violent? Yes. The story shows it. An assassination attempt. Worse.", claims=["C-28"]),
   L("But in Vice City, violence is content. So he does the one thing nobody else did.", ["softly"]),
   L("Shelby makes himself BORING on camera.", emph="boring", pause=0.4),
+  D("shelby", "Lovely weather. Nothing to report.", ["deadpan"]),
 ], [S("Is Shelby violent", "B", "s23_street", "Back to the street: canon violence acknowledged", ("pull", 1.07, 1.0), reuse="reuse"),
     S("But in Vice City", "A", "s24_decoy", "Violence as content: the loud side of the city", ("push", 1.0, 1.05), reuse="reuse"),
     S("Shelby makes himself", "B", P("s25_calm"), "Deliberate dullness: the winning move", ("push", 1.0, 1.05))])
 
 seg("S27", "reveal", 8, "Surprise: Shelby's flaw is certainty, not weakness.", [
-  L("Shelby's flaw isn't weakness. It's CERTAINTY.", ["dramatically"], "certainty", pause=0.4),
+  L("Shelby's flaw isn't weakness. It's CERTAINTY.", ["dramatically"], "certainty", pause=0.4, claims=["C-47"]),
   L("He believes he's always several steps ahead. And a man like that never checks behind him.", ["softly"]),
+  D("shelby", "I'm always three steps ahead.", ["confident"]),
   L("In a city of cameras, behind him is exactly where the cameras are.", ["whispers"]),
 ], [S("Shelby's flaw", "B", "p_shelby", "Face on the flaw", ("push", 1.0, 1.06), reuse="reuse"),
     S("He believes", "A", P("s26_behind"), "He walks away, and the lights follow", ("pull", 1.07, 1.0))])
 
 seg("S28", "explanation", 9, "The order of the falls: loudest to quietest.", [
   L("So that's the order. Capone first, loud and famous. Vito second. Mizuno third.", claims=["C-48"]),
+  D("capone", "Third? He lost to a flamingo!", ["laughs"]),
+  D("mizuno", "The flamingo was not my fault.", ["annoyed"]),
   L("Shelby last. Quietest of all.", ["deadpan"]),
 ], [S("So that's the order", "B", "sc_all", "The four cards again as the order is said", ("push", 1.0, 1.05), reuse="reuse")])
 
 seg("S29", "payoff", 9, "Answer: Shelby realised first, which is why he wins, mostly.", [
   L("So who saw it first? Who understood that attention cuts both ways?", ["curious"]),
-  L("Shelby. That's why he wins. Mostly.", ["deadpan"], pause=0.4),
+  L("Shelby. That's why he wins. Mostly.", ["deadpan"], pause=0.4, claims=["C-47"]),
+  D("shelby", "Mostly?", ["surprised"]),
   L("But he's the only one who thinks he has it under CONTROL.", emph="control"),
 ], [S("So who", "B", "s26_behind", "The answer on the walking figure", ("push", 1.0, 1.06), reuse="reuse"),
     S("But he's the only", "B", "p_shelby", "The face that thinks it has control", ("push", 1.0, 1.08), reuse="reuse")])
@@ -389,3 +552,47 @@ seg("S31", "payoff", 9, "Aftertaste: a debatable question, a smile.", [
   L("And smile. Somebody's FILMING.", ["mischievously"], "filming"),
 ], [S("So whose old way", "A", P("s29_end"), "The four bosses small against the sky: the open question", ("pull", 1.08, 1.0)),
     S("And smile", "C", "s01_phones", "The phones return: the last wink", ("push", 1.0, 1.07), reuse="reuse")])
+
+# --- the approved scenario (PV-45), what is new (PV-38), and each speaking hero's voice, manner and faces -----------------
+import hashlib as _hl
+SCENARIO = {"file": "scenario.md", "approved_by": "vano1919 (creator, project thread)", "approved_at": "2026-10-19",
+            "sha256": _hl.sha256(open(__import__("os").path.join(__import__("os").path.dirname(sys.argv[1]), "scenario.md"), "rb").read()).hexdigest()}
+DISTINCT = {"premise": "four crime bosses from different eras and fictions (Capone, Vito Corleone, an invented Yakuza boss, Tommy Shelby) dropped into GTA VI's Leonida, each in their own place",
+            "question": "who realises first that attention is both power and danger, in a city where everybody films everything?",
+            "outcome": "they fall from loudest to quietest; Shelby wins, mostly, and his flaw is certainty",
+            "mechanism": "old ways of ruling (fame, favours, corporate discipline, misdirection) tested against phone cameras, viral fame and the wanted level"}
+_FACES = ("neutral", "joyful", "sad", "scared", "angry", "surprised")
+CAST_EXTRA = {
+ "capone": {
+  "voice": {"voice_id": None, "name": None,
+            "style": "a gravelly, warm, boisterous American baritone, big and theatrical, quick to laugh and quick to anger",
+            "traits": {"gender": "male", "age": "middle_aged", "temperament": ["boastful", "theatrical", "hot-tempered"], "energy": "high",
+                       "origin": "1930s American big city", "role": "rival", "real_person": True, "documented": ["C-19", "C-20"]}},
+  "speech": {"basis": "public", "style": "a loud showman: short punchy exclamations, talks like a businessman and a benefactor, sure of his own fame, flares up when doubted",
+             "words": ["business", "the people", "my car", "print more"], "avoid": ["algorithm", "content creator"], "sources": ["C-19", "C-20", "C-27"]},
+  "face_sheet": {"id": "capone_faces_v1", "ref": "p_capone", "set": list(_FACES) + ["smug", "confused", "worried", "doubtful", "amused"]}},
+ "vito": {
+  "voice": {"voice_id": None, "name": None,
+            "style": "a soft, low, slightly husky elderly voice, slow and courteous, never raised",
+            "traits": {"gender": "male", "age": "old", "temperament": ["soft-spoken", "courtly", "patient"], "energy": "low",
+                       "origin": "Italian-American, 1950s New York", "role": "mentor", "real_person": False}},
+  "speech": {"basis": "public", "style": "a patriarch's quiet courtesy: few words, calm statements, loyalty and favours, never a threat said aloud",
+             "words": ["friend", "favour", "respect", "always"], "avoid": ["offer he can't refuse", "dude"], "sources": ["C-23", "C-24"]},
+  "face_sheet": {"id": "vito_faces_v1", "ref": "p_vito", "set": list(_FACES) + ["smug", "curious", "doubtful", "worried"]}},
+ "mizuno": {
+  "voice": {"voice_id": None, "name": None,
+            "style": "a calm, clear, measured mid-range voice with precise diction, polite and controlled; no exaggerated accent",
+            "traits": {"gender": "male", "age": "middle_aged", "temperament": ["composed", "precise", "polite"], "energy": "low",
+                       "origin": "a Japanese businessman speaking English", "role": "rival", "real_person": False}},
+  "speech": {"basis": "personality", "style": "clipped, polite and exact: short complete sentences, procedure and plans, thanks people, never raises his voice until the plan breaks",
+             "words": ["plan", "sign here", "thank you", "not my fault"], "avoid": ["dude", "awesome"]},
+  "face_sheet": {"id": "mizuno_faces_v1", "ref": "p_mizuno", "set": list(_FACES) + ["determined", "confused", "worried", "deadpan"]}},
+ "shelby": {
+  "voice": {"voice_id": None, "name": None,
+            "style": "a quiet, low, dry voice with a soft regional English accent, flat and controlled, every word placed",
+            "traits": {"gender": "male", "age": "middle_aged", "temperament": ["cold", "terse", "calculating"], "energy": "low",
+                       "origin": "1930s Birmingham, England", "role": "hero", "real_person": False}},
+  "speech": {"basis": "public", "style": "terse and cold: short declaratives, dry understatement, always one step ahead, never explains himself",
+             "words": ["let them", "nothing", "steps ahead", "mostly"], "avoid": ["by order of", "awesome"], "sources": ["C-28"]},
+  "face_sheet": {"id": "shelby_faces_v1", "ref": "p_shelby", "set": list(_FACES) + ["smug", "determined", "amused", "deadpan", "doubtful"]}},
+}
