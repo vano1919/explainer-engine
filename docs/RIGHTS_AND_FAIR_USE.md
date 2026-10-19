@@ -11,6 +11,10 @@ taken, nothing that substitutes for the original. They lower the risk; they do n
 before monetising franchise episodes, and whenever a removal request arrives, the creator decides whether to ask a
 lawyer.
 
+**Scope.** These rules are the floor for franchise episodes; every episode's wider legal, platform and creative questions
+(people, likeness, voices, licences, jurisdictions, originality) are decided in its rulebook ([EPISODE_STANDARDS](EPISODE_STANDARDS.md),
+ES-17 links the two). The sources below are US law and YouTube policy; other jurisdictions (Georgia, UK) are in V-19, V-20.
+
 ## What the sources say (verified 2026-10-16, see MARKET_RESEARCH B.2)
 - YouTube: credit does not make a use fair, "no infringement intended" does not protect, "entertainment only" does not
   help; adding new expression or meaning is more likely fair; factual works are more likely fair than fiction; taking the
@@ -37,10 +41,13 @@ lawyer.
 | RR-07 | Fan theories: name and link the person or thread, summarise in our words, never copy their text or art (fan art is its creator's copyright); using their wording or pictures needs written permission. | `fan_theories` (FAIL) |
 | RR-08 | Names only to identify the subject, in plain text (title, description, narration); no logos, no official title lettering, nothing implying endorsement. The description carries: "Unofficial fan analysis. Not affiliated with or endorsed by the rights holders." (against confusion; it does not create fair use). | `description_has_unofficial_note`, thumbnail block |
 | RR-09 | Thumbnails: our own art only; no actor faces, key art, logos or screenshots. | `thumbnail` block (FAIL) |
-| RR-10 | Never leaks, unaired material, unpublished drafts or pirated copies as a source. | `uses_leaks` (FAIL) |
+| RR-10 | Never leaked, unaired or pirated *material* (files, footage, screenshots, code, drafts, copies) as a source or drawing reference. Leaked *information* may be discussed (creator 2026-10-17: the channel is entertainment) when it is labelled "reported leak", comes from a named outlet, and does not directly and unambiguously harm a person (private data, safety, a person's livelihood); doubt means leave it out. | `uses_leaks` (FAIL; means leaked material) |
 | RR-11 | Music and sound: own, CC0 or licensed with a record; never a franchise theme or a sound-alike of it. | licence register (Q-T16) |
 | RR-12 | The channel stays itself: the mascot, the "worlds collide" frame and the public-domain episodes remain; franchise episodes are a series inside it, not the identity (directive section 3). Share of franchise episodes is a parameter (P-121). | publishing plan |
 | RR-13 | When a claim or removal request arrives: do not dispute a Content ID claim without a real reason; record it in the incident log; for a strike, stop new franchise uploads, complete Copyright School, consider a retraction request or a counter notification only with a genuine fair use basis, and decide with the creator (and a lawyer if needed). | incident log in `channel/incidents.json` |
+| RR-14 | Every franchise episode states its **commentary target**: what it says about the source work itself (its systems, tropes, economy), in one full sentence, and each act serves it. A story that only puts characters into a new adventure shares the source's commercial purpose and is the weak case (Warhol v. Goldsmith; strongest case is parody or criticism of the source, Campbell v. Acuff-Rose; V-38). A risk heuristic, never a guarantee. | `commentary_target` (FAIL) |
+| RR-15 | Official screenshots, trailer frames or key art are private study only: never an image input, reference upload or "in the style of this picture" to a generator (Google generative AI use policy, B-11; the output may resemble the input). | `official_images_as_generator_input` (FAIL) |
+| RR-16 | Invented parody brands and the franchise name stay narrative props: never on merchandise, an app or anything sold (Jack Daniel's v. VIP, V-38). Plain-text name in title, description and narration is allowed (nominative use, RR-08); the stylised logo, font or game's mark is not. | `merch_or_product_use` (FAIL) |
 
 ## Real historical people as characters (creator's decision 2026-10-16, D-40)
 Episodes may use real historical figures (Einstein, Newton, Franklin, Darwin, Curie...) as named caricature heroes in a

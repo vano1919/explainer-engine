@@ -98,6 +98,10 @@
               "type": "string"
             }
           }
+        },
+        "rulebook": {
+          "type": "string",
+          "description": "episode_rules.json next to the script (D-51); new-style scripts set it and PV-39..PV-42 apply"
         }
       }
     },
@@ -670,6 +674,24 @@
                       }
                     }
                   }
+                },
+                "purpose": {
+                  "type": "string",
+                  "description": "why this picture is on screen now (PV-42 REVIEW when missing)"
+                },
+                "cut": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "why"
+                  ],
+                  "properties": {
+                    "why": {
+                      "type": "string",
+                      "minLength": 3
+                    }
+                  },
+                  "description": "why the cut or transition into this shot suits the beat (the type stays in transition/UR-14)"
                 }
               }
             }
@@ -698,6 +720,22 @@
                       "type": "number",
                       "minimum": -40,
                       "maximum": -6
+                    },
+                    "purpose": {
+                      "type": "string",
+                      "description": "the event's narrative or emotional job (PV-41)"
+                    },
+                    "yields_to": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "voice",
+                          "sfx",
+                          "music",
+                          "bed"
+                        ]
+                      },
+                      "description": "layers this event ducks under"
                     }
                   }
                 },
@@ -733,6 +771,22 @@
                       "type": "number",
                       "minimum": -1,
                       "maximum": 1
+                    },
+                    "purpose": {
+                      "type": "string",
+                      "description": "the event's narrative or emotional job (PV-41)"
+                    },
+                    "yields_to": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "voice",
+                          "sfx",
+                          "music",
+                          "bed"
+                        ]
+                      },
+                      "description": "layers this event ducks under"
                     }
                   }
                 }
@@ -821,6 +875,33 @@
                 "description": "ST-09: what kind of statement carries this segment"
               }
             }
+          },
+          "job": {
+            "enum": [
+              "hook",
+              "question",
+              "explanation",
+              "evidence",
+              "complication",
+              "reveal",
+              "emotional_pause",
+              "humor",
+              "payoff",
+              "transition"
+            ],
+            "description": "what this beat does for the viewer (EPISODE_STANDARDS 5.4, PV-39)"
+          },
+          "feel": {
+            "type": "string",
+            "description": "what the viewer should understand or feel at the end of the beat"
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^ER-[0-9]{2,3}$"
+            },
+            "description": "rulebook rules this beat must respect"
           }
         }
       }
@@ -1366,8 +1447,10 @@
             "existing",
             "gemini",
             "pod_ref",
-            "pod_text"
-          ]
+            "pod_text",
+            "canva"
+          ],
+          "description": "canva: filler pictures only (D-53, PV-43); made by hand in Canva, placed as a file"
         },
         "subject": {
           "type": "string",
@@ -1448,6 +1531,18 @@
             "null"
           ],
           "description": "draft only: an existing picture shown until this one is painted"
+        },
+        "tier": {
+          "enum": [
+            "draft",
+            "standard",
+            "premium"
+          ],
+          "description": "Gemini batch tier (D-52, imagegen/routing.py); default standard"
+        },
+        "tier_reason": {
+          "type": "string",
+          "description": "premium only: why this picture needs the dearer model (PV-40)"
         }
       }
     }

@@ -1,0 +1,218 @@
+{
+  "note": "Channel-wide sources the episode-standards-director copies into each episode's rules[].sources. Each row was read on the date given; the verification log is docs/MARKET_RESEARCH.md (verified_in). A row is evidence for a rule, never a legal conclusion. Re-read a page older than 180 days before relying on it (ES-02).",
+  "sources": [
+    {
+      "id": "B-01",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-13",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/14328491",
+      "statement": "Disclose realistic altered or synthetic content: a real person made to say or do what they did not, altered footage of a real event or place, a realistic scene that did not occur, AI music as the main focus. Not required: clearly unrealistic or fantasy content, fully animated content, minor aesthetic edits, AI help with script, outline, titles, thumbnails, captions or ideas."
+    },
+    {
+      "id": "B-02",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-14",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/1311392",
+      "statement": "YPP inauthentic content: template-made, mass-produced or interchangeable videos (same situation and outcome repeated, slideshows or scrolling text with little narrative) are not eligible; recurring characters and intros are fine when each video's substance differs. Reused content: repurposed material needs a meaningful difference (commentary, substantive change, educational or entertainment value); readings of material the creator did not write are not eligible; the policy applies even with permission and is separate from copyright."
+    },
+    {
+      "id": "B-03",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-15",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/2801895",
+      "statement": "Privacy complaints can remove realistic altered or synthetic content of a uniquely identifiable person; YouTube weighs disclosure, identifiability, realism, parody/satire/public-interest value, and whether a public figure is shown in sensitive behaviour."
+    },
+    {
+      "id": "B-04",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-16",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/2801947",
+      "statement": "Impersonation that may mislead viewers is not allowed, including an AI likeness or voice that falsely implies a person owns or authorises the content, or a fake speech passed off as real; disclosure is not a free pass; parody and satire are weighed on removal requests."
+    },
+    {
+      "id": "B-05",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-17",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.copyright.gov/fair-use/",
+      "statement": "17 U.S.C. 107: four factors decided case by case; transformative uses that add something new and do not substitute are more likely fair; no safe percentage or word count; even a small taking can fail if it is the heart of the work."
+    },
+    {
+      "id": "B-06",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-18",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.copyright.gov/help/faq/faq-duration.html",
+      "statement": "US term: life of the author + 70 years for works created from 1978; anonymous, pseudonymous and work-for-hire works 95 years from publication or 120 from creation, whichever ends first; works published before 1978 vary by several factors (check the specific work)."
+    },
+    {
+      "id": "B-07",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-19",
+      "verified": true,
+      "jurisdiction": "GB",
+      "url": "https://www.gov.uk/guidance/exceptions-to-copyright",
+      "statement": "UK fair dealing for criticism, review and quotation (sufficient acknowledgement unless impractical) and for caricature, parody or pastiche (limited amounts, only to the extent it is fair dealing); fairness is 'fact, degree and impression', including market effect and a reasonable amount."
+    },
+    {
+      "id": "B-08",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-20",
+      "verified": false,
+      "jurisdiction": "GE",
+      "url": "https://www.wipo.int/wipolex/en/legislation/details/22704",
+      "statement": "Georgia, Law on Copyright and Neighboring Rights (No. 2112-IIS, consolidated to 15 Dec 2023): term life + 70 years (Art. 31); quotation for scientific, research, polemical, critical or informational purposes to the extent the purpose justifies, with author and source named (Art. 23). No separate parody exception was found in the 2017 English text. Read from the Georgian text through a machine summary: confirm with an official translation."
+    },
+    {
+      "id": "B-09",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-21",
+      "verified": false,
+      "jurisdiction": "EU",
+      "url": "https://eur-lex.europa.eu/eli/dir/2019/790/oj",
+      "statement": "EU Directive 2019/790 Art. 17(7): users of content-sharing platforms may rely on quotation, criticism, review, caricature, parody and pastiche. The page did not load on 2026-10-17: not verified."
+    },
+    {
+      "id": "B-10",
+      "kind": "provider_terms",
+      "checked": "2026-10-17",
+      "verified_in": "V-22",
+      "verified": true,
+      "url": "https://elevenlabs.io/use-policy",
+      "statement": "ElevenLabs: no impersonating the voice, identity or likeness of a living person without explicit, informed consent; deceased people where reasonably likely to cause harm or infringing post-mortem rights; no false endorsement, sponsorship or affiliation; disclose AI where law requires or where not doing so would materially mislead; do not remove watermarks."
+    },
+    {
+      "id": "B-11",
+      "kind": "provider_terms",
+      "checked": "2026-10-17",
+      "verified_in": "V-23",
+      "verified": true,
+      "url": "https://policies.google.com/terms/generative-ai/use-policy",
+      "statement": "Google generative AI (Gemini, Veo): no violating others' IP or privacy rights; no impersonating a living or dead individual without explicit disclosure in order to deceive; no claiming generated content was made solely by a human in order to deceive."
+    },
+    {
+      "id": "B-12",
+      "kind": "platform_policy",
+      "checked": "2026-10-16",
+      "verified_in": "V-07",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/9783148",
+      "statement": "YouTube fair use: credit, 'no infringement intended' and 'entertainment only' do not make a use fair; adding new expression or meaning is more likely fair; courts decide."
+    },
+    {
+      "id": "B-13",
+      "kind": "platform_policy",
+      "checked": "2026-10-16",
+      "verified_in": "V-09",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/6154218",
+      "statement": "YouTube trademark policy: use likely to cause confusion about the source is not allowed."
+    },
+    {
+      "id": "B-14",
+      "kind": "provider_terms",
+      "checked": "2026-10-17",
+      "verified_in": "V-33",
+      "verified": false,
+      "url": "https://support.rockstargames.com/articles/200153756/Policy-on-posting-copyrighted-Rockstar-Games-material",
+      "statement": "Rockstar/Take-Two policy on posting copyrighted Rockstar material. NOT read first-hand: HTTP 503 on every attempt on 2026-10-17 (three support URLs, incl. articles/7bNaeoMFTV0iUDGhStTXvz and the PC single-player mods article 5NVOAYjcTomO8v6SX2k76k). Second-hand only: a search summary and the creator's Gemini report agree that the page (updated 2025-01-10) allows non-commercial uses without spoilers, takes down leaked pre-release footage, isolated cinematics, spoiler edits, isolated in-game entertainment and cheat/mod-menu content, and does not mention custom monetised 2D animation. verified stays false; re-read before paid_assets."
+    },
+    {
+      "id": "B-15",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-34",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/9229472",
+      "statement": "YouTube violent criminal organizations policy: content that praises, promotes or aids criminal organizations, recruits for them, or uses their insignia to praise them is not allowed; exceptions may be made for educational, documentary, scientific or artistic context that the video itself provides; no fictional-content exception is stated."
+    },
+    {
+      "id": "B-16",
+      "kind": "platform_policy",
+      "checked": "2026-10-17",
+      "verified_in": "V-35",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/6162278",
+      "statement": "YouTube advertiser-friendly guidelines: violence is unsuitable when blood or injury is the focal point without context; artistic, documentary or educational framing helps; mild violence and non-graphic injury can earn ads; glorification or incitement earns none; graphic game violence in the thumbnail or first seven seconds can lose ad eligibility; documentaries about crime are fully eligible. No update date shown on the page."
+    },
+    {
+      "id": "B-17",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-36",
+      "verified": false,
+      "jurisdiction": "US",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=3344.1",
+      "statement": "California Civil Code 3344.1 (post-mortem right of publicity): 70 years after death, covers name, voice, likeness used for commercial gain without consent, transferable; a federal court reading limits it to California domiciliaries. Read only through search-result summaries of secondary pages: the statute page itself was not read. US publicity law is state by state."
+    },
+    {
+      "id": "B-18",
+      "kind": "provider_terms",
+      "checked": "2026-10-17",
+      "verified_in": "V-37",
+      "verified": true,
+      "url": "https://www.rockstargames.com/VI",
+      "statement": "Rockstar's official GTA VI page (read 2026-10-17): 'Coming November 19, 2026' for PlayStation 5 and Xbox Series X|S; setting 'Vice City, USA' in the state of Leonida; protagonists Jason and Lucia; pre-order editions, in-game radio and 'GTAVI: The Album'. The page names no in-game social app, stock exchange or year. Release date reaffirmed in Take-Two's May 2026 report per secondary news (not first-hand). The game is not out on the date of this rulebook. Re-read first-hand 2026-10-17 (a second time): only the year 2026 appears (release and three Newswire items dated Oct 8 and Oct 15, 2026); the page names no regions and no in-game apps; the Newswire release-date article itself was not found (index page returned no article text). Take-Two investor releases read first-hand 2026-10-17: ir.take2games.com/node/31186 (dated 2025-05-06, Trailer 2, gave 'May 26, 2026', superseded by later delays) and /node/32311 (dated 2026-06-24, pre-orders open 2026-06-25: release November 19, 2026, PS5 and Xbox Series X|S, standard edition $79.99, pre-load November 12). The video page rockstargames.com/videos/rkoCtr1r loaded as 'Grand Theft Auto VI - Trailer 1' with no description text: what the trailer shows (phones filming crimes) could not be confirmed from the page."
+    },
+    {
+      "id": "B-19",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-41",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.trademarkia.com/grand-theft-auto-85713489",
+      "statement": "USPTO record via a mirror (trademarkia, read 2026-10-17): GRAND THEFT AUTO, registration 4321159, serial 85713489, owner Take-Two Interactive Software, Inc., filed 2012-08-27, registered 2013-04-16, live, Sec. 8 & 9 renewal accepted 2023-10-06. A mirror, not the USPTO database; uspto.report/TM/98298472 (GRAND THEFT AUTO VI) and uspto.report/company/Al-Capone-Inc returned 403 and were not read."
+    },
+    {
+      "id": "B-20",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-42",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.rightofpublicityroadmap.com/state_page/illinois/",
+      "statement": "Right-of-publicity summaries (roadmap pages, secondary, read 2026-10-17). Illinois (765 ILCS 1075): post-mortem right 50 years, only for deaths after 1 Jan 1999; exemptions for original works of fine art, books, films and other audio-visual works that are not commercial advertisements, and noncommercial news and public-affairs uses. Florida (Stat. 540.08): 40 years post-mortem; exempt newspapers, magazines, books, news; Tyne v. Time Warner (Fla. 2005) limited 'commercial purpose' to uses that directly promote a product or service and found a motion picture use not commercial. Neither page reproduces the statute text: the statutes were not read. California 3344.1 stays in B-17."
+    },
+    {
+      "id": "B-21",
+      "kind": "law",
+      "checked": "2026-10-17",
+      "verified_in": "V-43",
+      "verified": false,
+      "url": "https://group.banijay.com/wp-content/uploads/2024/06/BanijayUKacquiresCMPProductions.pdf",
+      "statement": "Banijay UK acquired Caryn Mandabach Productions (Peaky Blinders producer), announced 2024-06-06, with the back catalogue and future series, spin-offs and brand ventures including the Netflix film (company renamed Garrison Drama). Source: a search summary of the Banijay press release and trade outlets (Deadline, Advanced Television, IBC, Televisual). The Banijay pages returned 503 and were not opened: not verified first-hand."
+    }
+  ],
+  "channel": {
+    "confirmed_by_creator": "2026-10-17",
+    "creator_residence": "GE",
+    "audience_market": "US",
+    "platform": "YouTube",
+    "canva_terms_verified": true,
+    "canva_terms_note": "Read and accepted by the creator on 2026-10-17 (Canva AI Product Terms, Content License); the text was not shown to Claude, so no clause is quoted here. Free plan, V-39.",
+    "content_language": "en",
+    "creator_chat_language": "ka",
+    "jurisdictions": [
+      "US",
+      "GE"
+    ],
+    "elevenlabs_plan": "Creator",
+    "elevenlabs_music_terms": "Creator: individual use only; commercial use allowed except film, TV, radio and studio games; streaming distribution permitted; no attribution (Music Terms, updated 2026-10-09, V-28). Monetised YouTube use and Content ID are not addressed by the terms."
+  }
+}

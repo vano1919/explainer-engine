@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__ElevenLabs__creative_.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && (python3 -m explainer_engine.standards.hook || python -m explainer_engine.standards.hook)"
+          }
+        ]
+      }
+    ]
+  }
+}

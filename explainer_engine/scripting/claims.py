@@ -19,14 +19,27 @@ SOURCED = ("E", "M")  # labels that claim the world says so: they need a link
 
 
 def parse_map(text: str) -> dict[str, dict]:
+    """Rows ``| C-01 | sentence | label | source |``; a header row naming its columns (``claim``, ``label``, ``source`` or
+    ``note``) is followed instead, so older maps with more columns read too."""
     out = {}
+    cols = None
     for line in text.splitlines():
-        m = ROW.match(line.strip())
+        s = line.strip()
+        m = ROW.match(s)
         if not m:
+            if s.startswith("|") and not set(s) <= set("|-: ") and cols is None:
+                head = [c.strip().lower() for c in s.strip("|").split("|")][1:]
+                if "label" in head:
+                    cols = head
             continue
         cells = [c.strip() for c in m.group(2).rstrip("|").split("|")]
-        sentence, label, source = (cells + ["", "", ""])[:3]
-        out[m.group(1)] = {"sentence": sentence, "label": label, "source": source}
+        if cols:
+            row = dict(zip(cols, cells + [""] * len(cols)))
+            out[m.group(1)] = {"sentence": row.get("claim") or row.get("sentence", ""), "label": row.get("label", ""),
+                               "source": row.get("source") or row.get("note", "")}
+        else:
+            sentence, label, source = (cells + ["", "", ""])[:3]
+            out[m.group(1)] = {"sentence": sentence, "label": label, "source": source}
     return out
 
 

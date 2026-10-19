@@ -16,6 +16,8 @@ every painted prompt), the plan has no PP FAIL, and the ledger holds an approval
 reserved in the ledger before its call and recorded with its prompt hash as soon as it arrives, so a stop, a cap or a crash
 loses nothing; a re-run skips what was painted from the same prompt, repaints a picture whose prompt changed (in a new plan),
 never re-sends an item of an open batch, and stops an item after three failures.
+On Gemini, ``plan --tier draft|standard|premium`` takes the model and size from ``imagegen/routing.py`` (D-52). When the
+episode has ``episode_rules.json``, ``run`` also needs its ``paid_assets`` checkpoint (OR-12, D-51), and the editorial gate (EG).
 """
 
 from __future__ import annotations
@@ -30,6 +32,7 @@ from pathlib import Path
 from explainer_engine.core.ledger import CapReached, Run
 from explainer_engine.core.store import write_json_atomic
 from explainer_engine.imagegen import plan as P
+from explainer_engine.imagegen import routing
 from explainer_engine.imagegen.gemini import ChargeUncertain, GeminiClient, GeminiError, open_batches
 from explainer_engine.production import compile as C
 from explainer_engine.production import script as S
@@ -95,6 +98,13 @@ def preflight(plan: dict, doc: dict, dirs: list[Path], run: Run, script_path: Pa
     else:
         eg = EG.contract_findings(doc)
     why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in eg]
+    rules_path = Path(script_path).with_name("episode_rules.json") if script_path else None
+    if rules_path and rules_path.exists():  # OR-12 (D-51): no paid picture before the rulebook's paid_assets checkpoint passes
+        from explainer_engine.standards import rulebook as R
+        why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in R.gate(rules_path, "paid_assets", script_path)
+                if f["severity"] == "FAIL"]
+    elif doc["episode"].get("rulebook"):
+        why.append("OR-11 the script names a rulebook but there is no episode_rules.json next to it")
     if not run.approved(plan["id"], plan["hash"]):
         why.append(f"PP-02 plan {plan['id']} ({plan['hash']}) has no approval in {run.path}: ask the creator, then `paint approve`")
     return why
@@ -121,6 +131,9 @@ def cmd_plan(a) -> int:
     print(P.table(P.options(items), chosen=plan))
     for f in P.check(plan, doc):
         print(f"{f['severity']:6} {f['rule']} {f['where']}: {f['detail']}")
+    canva = C.canva_pending(doc)
+    if canva:
+        print(f"{len(canva)} filler pictures are made by hand in Canva, not painted here (PV-43): {', '.join(canva)}")
     print("nothing is painted until the creator chooses a provider and `paint approve` records the yes")
     return 0
 
@@ -283,6 +296,7 @@ def main(argv: list[str] | None = None) -> int:
     q.add_argument("--model")
     q.add_argument("--size")
     q.add_argument("--batch", action="store_true", help="Gemini half-price batch tier (answers in minutes to hours)")
+    q.add_argument("--tier", choices=sorted(routing.TIERS), help="Gemini: model and size from the tier (D-52 routing)")
     q.add_argument("--run", help="the run ledger, to skip pictures already painted from the same prompt")
     q.add_argument("--only")
     q.add_argument("--first", action="store_true", help="one picture only (OR-01: the test before the batch)")
@@ -306,8 +320,10 @@ def main(argv: list[str] | None = None) -> int:
         q.add_argument("--workers", type=int, default=4, help="pictures painted at the same time (Gemini takes 1-2 min each)")
         q.add_argument("--wait", type=float, default=1500.0, help="seconds to wait for a batch before leaving it for collect")
     a = ap.parse_args(argv)
+    if a.cmd == "plan" and a.tier:
+        a.model, a.size = routing.route(a.tier)
     if a.cmd == "plan" and a.provider == "gemini" and not (a.model and a.size):
-        ap.error("--provider gemini needs --model and --size (prices: imagegen/gemini.py)")
+        ap.error("--provider gemini needs --tier, or --model and --size (prices: imagegen/gemini.py)")
     return {"plan": cmd_plan, "approve": cmd_approve, "run": cmd_run, "collect": cmd_collect}[a.cmd](a)
 
 

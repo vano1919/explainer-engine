@@ -37,7 +37,7 @@ def _phrase(toks: list[dict], t_new: int, lo: int, hi: int) -> str | None:
 def _move_definition(doc: dict, gone: dict) -> None:
     """A dropped shot that defined its picture inline hands the definition to the next shot that uses the picture, so the
     later references keep resolving (PV-03; audit 2026-10-19 M3). A picture nobody uses any more simply goes."""
-    pic = gone.get("picture")
+    pic = gone.get("picture") if "at" in gone else gone  # the dropped shot, or its inline picture itself
     if not isinstance(pic, dict):
         return
     for seg in doc["segments"]:

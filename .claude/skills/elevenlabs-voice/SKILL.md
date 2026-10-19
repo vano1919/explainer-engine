@@ -5,6 +5,8 @@ description: How to get a natural, consistent ElevenLabs read on the first try a
 
 # ElevenLabs: right on the first take, cheapest path
 
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role voice` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+
 Facts for this project: model `eleven_v4`, voice `NOpBlnGInO9m6vDvFkFC` (Grandpa Spuds Oxley), 1 credit per character **including
 tags**, concurrency 5, signed result links live 7200 s. Episode 1 used 17,353 credits: 14,778 for the 24 chunks and **2,575 for five
 Shorts whose lines were written new for the Short**. Rules below come from ElevenLabs' own model guide (read through
@@ -12,7 +14,12 @@ Shorts whose lines were written new for the Short**. Rules below come from Eleve
 
 ## What the connector lets you control (v4)
 
-`creative_get_model_schema` for `eleven_v4` exposes only `voice` and `language_code`. **There is no stability, similarity, style or
+`creative_get_model_schema` for `eleven_v4` exposes only `voice` and `language_code` (re-read 2026-10-17, MARKET_RESEARCH V-29).
+The generation tools default to `generations_count: 4` (four takes charged): always pass 1; the PreToolUse hook in
+`.claude/settings.json` refuses any other value, any paid call before the episode rulebook's `paid_assets` gate, and any picture or
+video request (pictures are Gemini batch only, D-52). ElevenLabs is the only audio provider (D-52): music `eleven_music_v2_5`
+(`duration_seconds`, `instrumental`, `lyrics_type`, `lyrics`) and sound effects `eleven_text_to_sound_v2` (`duration_seconds`,
+`prompt_influence`, `loop`) follow the same estimate-then-one-take rule (docs/AUDIO_SYSTEM.md). **There is no stability, similarity, style or
 seed knob and no previous/next-text context.** The levers are therefore: (1) the voice, (2) the text (punctuation, capitals, tags),
 (3) the chunking, (4) the number of takes. The read is not repeatable (3P: same text gives different output), so consistency comes from
 short, similar chunks and from keeping what was already good.

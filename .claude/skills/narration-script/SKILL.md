@@ -5,6 +5,8 @@ description: Write or fix the spoken narration of a Crossworld Theories video so
 
 # Narration script: write for the ear, then for the voice
 
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+
 Crossworld Theories is entertainment first, real facts second (SCRIPTING_SPEC §8.1): a witty historian telling an
 unbelievable true story over a campfire. The voice reads exactly what is written, so **the script is the
 performance**. Every rule below fixes a defect the creator heard in a real read (2026-10-16) or a pattern measured in

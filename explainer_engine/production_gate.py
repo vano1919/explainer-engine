@@ -35,6 +35,22 @@ def _words_of(text: str) -> list[str]:
     return out
 
 
+def rulebook_state(rules_path: Path, script: Path) -> tuple[str, str, str]:
+    """How far the episode rulebook's checkpoints pass (docs/EPISODE_STANDARDS.md section 1)."""
+    from .standards import rulebook as R
+    reached = None
+    for cp in R.CHECKPOINTS:
+        fails = [f for f in R.gate(rules_path, cp, script) if f["severity"] == "FAIL"]
+        if fails:
+            rules = sorted({f["rule"] for f in fails})
+            if reached is None:
+                return "BLOCKED", f"provisional: {len(fails)} FAIL ({', '.join(rules)})", "standards check, fix the FAILs"
+            return "PASS", f"passes up to {reached}; {cp}: {len(fails)} FAIL ({', '.join(rules)})", \
+                f"before {cp}: re-check, then standards stamp --at {cp}"
+        reached = cp
+    return "PASS", "passes every checkpoint up to final_qa", ""
+
+
 def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
     """The gates of a D-43 episode, read from what that flow writes: the production script, ``words.json``, ``timed.json``,
     the paint plans in ``pictures/plans`` and the run ledger (audit 2026-10-19 M2: gates 1-6 used to read ``shots.json`` and
@@ -49,7 +65,15 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
     def add(n, name, status, detail, nxt=""):
         out.append({"gate": n, "name": name, "status": status, "detail": detail, "next": nxt})
 
+    rules_path = day / "episode_rules.json"  # R: the episode rulebook (D-51)
+    if rules_path.exists():
+        add("R", "episode rulebook", *rulebook_state(rules_path, day / "production_script.json"))
+    else:
+        add("R", "episode rulebook", "WAIT", "no episode_rules.json", "agent episode-standards-director (OR-11)")
     doc = _ps.load(day / "production_script.json")
+    if _ps.schema_errors(doc):
+        add(0, "production script", "BLOCKED", f"{len(_ps.schema_errors(doc))} schema errors", "python -m explainer_engine.production validate")
+        return out
     pic_dirs = [day / d for d in doc.get("picture_dirs", [])]
     from .scripting import claims as _claims
     found = _pv.check_script(doc, picture_dirs=pic_dirs or None, claim_map=_claims.load_map(day / "production_script.json"))
@@ -124,6 +148,8 @@ def gates(day: Path, look_path: Path | None = None, run_path: Path | None = None
         out.append({"gate": n, "name": name, "status": status, "detail": detail, "next": nxt})
 
     # legacy day folders (narration_tts.txt, shots.json, look.json): the D-43 flow goes through script_gates
+    if (day / "episode_rules.json").exists():  # R: a rulebook written before the script (D-51)
+        add("R", "episode rulebook", *rulebook_state(day / "episode_rules.json", day / "production_script.json"))
     # 1 script
     tts = day / "narration_tts.txt"
     if not tts.exists():

@@ -5,6 +5,8 @@ description: Ground a Crossworld Theories "what if" episode in real science, his
 
 # Science grounding for "what if" episodes
 
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role research` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+
 The creator's brief (2026-10-16): lean on real science and logic, be creative in the telling. The audience trusts the channel
 because the jokes never touch the facts (UR-21).
 

@@ -47,3 +47,10 @@ def test_sounds_mid_sentence_and_stage_directions():
 def test_the_committed_day1_v4_text_passes():
     text = (ROOT / "examples/stone_age/day1_v4/narration_tts.txt").read_text(encoding="utf-8")
     assert [f for f in L.lint(text) if f["severity"] == "FAIL"] == []
+
+
+def test_named_game_and_agency_acronyms_are_not_stress_marks():
+    """Syndicate Wars: 'LCN and BAWSAQ', 'GTA', 'IRS' are names, not two stressed words (2026-10-17)."""
+    line = "Fans say there are two exchanges, LCN and BAWSAQ, in GTA V."
+    assert "N-04" not in rules(GOOD + line + "\n")
+    assert "N-04" in rules(GOOD + "Fans say it is REALLY and TRULY odd.\n", "FAIL")

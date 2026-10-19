@@ -127,6 +127,10 @@ from new hero sheets.
 
 ## 6. Layer 4: generation engine, anchored by pictures, routed by shot
 
+**Superseded routing (D-52, 2026-10-17):** all pictures go to Gemini on the batch tier, by tier: `draft` (Nano Banana 2.1 1K),
+`standard` (Nano Banana 2.1 2K, every scene picture), `premium` (Gemini 3 Pro Image 2K, reused identity assets and multi-reference
+reveals, with `tier_reason`, at most 10 %, PV-40). The reference-anchoring below still applies; the pod engines do not.
+
 Words alone do not hold a style across two generators (section 1). Three anchors replace them:
 
 1. **Look bible (Gemini, paid once, reusable):** about 4 master frames per look made with Nano Banana Pro (`gemini-3-pro-image`,

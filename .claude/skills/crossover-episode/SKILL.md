@@ -5,6 +5,8 @@ description: Research and write a "worlds collide" crossover episode (two fictio
 
 # Crossover episode: fan research -> scenario -> balanced script -> rights check
 
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+
 The goal is the scenario fans of both worlds have argued about and never seen done properly, explained so a newcomer
 enjoys it too. Not a generic "who would win", not a recap, not a template with names swapped.
 
@@ -59,8 +61,10 @@ the productions' designs, costumes or actors; no generator prompt names a franch
 ## 5. Rights manifest and check
 Write `rights_manifest.json` (`explainer_engine/schemas/rights_manifest.schema.json`) and run
 `python -m explainer_engine.rights.ip_check jobs/<slug>/rights_manifest.json`. Any FAIL blocks the package; answer each
-REVIEW in writing. The description gets the unofficial note (RR-08).
+REVIEW in writing. Name the manifest in the episode rulebook (`execution.rights_manifest`, ES-17): its gate merges these findings. The description gets the unofficial note (RR-08).
 
 ## 6. Stop for the creator (approval #1)
 Hand over: the fan brief summary, the chosen premise and the rejected ones, the script with beat tags, the balance and
 template reports, the rights report. Nothing goes to storyboard or render before the creator approves.
+
+**Rights rules added 2026-10-17 (RR-14..RR-16):** state the commentary target first (what the episode says about the source work), never feed official images to a generator, keep parody brands as props only. See `docs/RIGHTS_AND_FAIR_USE.md`.
