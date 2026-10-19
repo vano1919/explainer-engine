@@ -69,6 +69,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-34 | the Shorts set's styles (SS-01..SS-08): enough different styles, no style twice in a row, a loop ending runs into the first line, a pointer ending points to the video, two length bands, the first cut inside the hook, at least 3 visual events every 10 s (REVIEW) |
 | PV-35 | motion and visual variety (MO-01..MO-06, `edit/motion_lint.py`) on the estimated read and on the real read (REVIEW) |
 | PV-36 | sound layers (AL-01..AL-04, `audio/layers.py`) on the estimated read and on the real read (REVIEW) |
+| PV-37 | claims resolve (invariant 5, `scripting/claims.py`): every claim id on a line or a Short is a row of the episode's `claim_map.md` (FAIL; ids with no map FAIL); an E or M claim names a link, a line with a number has a claim id, a map nobody cites is a REVIEW. Whether the source says what the line says is the critic's claim pass |
 
 ## Paint plans (PP-xx; audit 2026-10-19; `imagegen/plan.py`, `production/paint.py`)
 

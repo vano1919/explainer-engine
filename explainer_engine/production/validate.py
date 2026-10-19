@@ -76,7 +76,8 @@ def content_words(text: str) -> set[str]:
     return {w for w in re.findall(r"[a-z']+", text.lower()) if len(w) > 3 and w not in STOP}
 
 
-def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=None) -> list[dict]:
+def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=None, claim_map: dict | None = None) -> list[dict]:
+    """PV findings. ``claim_map`` (``scripting.claims.load_map``) turns on PV-37; callers that know the script's folder pass it."""
     out: list[dict] = []
     errs = S.schema_errors(doc)
     for e in errs:
@@ -408,6 +409,9 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             out.append(dict(f, rule="PV-35 " + f["rule"], detail=f["detail"] + " (estimated read)"))
         for f in layers.check(timed):  # AL rules on the estimated read (REVIEW)
             out.append(dict(f, rule="PV-36 " + f["rule"], detail=f["detail"] + " (estimated read)"))
+    if claim_map is not None or any(c for seg in doc["segments"] for ln in seg["lines"] for c in ln.get("claims", [])):
+        from explainer_engine.scripting import claims as _claims
+        out += _claims.check(doc, claim_map)
     return out
 
 

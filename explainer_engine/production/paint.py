@@ -80,11 +80,13 @@ def pending(items: list[dict], out: Path, run: Run | None) -> list[dict]:
     return todo
 
 
-def preflight(plan: dict, doc: dict, dirs: list[Path], run: Run) -> list[str]:
+def preflight(plan: dict, doc: dict, dirs: list[Path], run: Run, script_path: Path | None = None) -> list[str]:
     """Every reason not to spend (empty = go)."""
     from explainer_engine.production import validate as V
     why = []
-    fails = [f for f in V.check_script(doc, picture_dirs=dirs) if f["severity"] == "FAIL"]
+    from explainer_engine.scripting import claims
+    cmap = claims.load_map(script_path) if script_path else None
+    fails = [f for f in V.check_script(doc, picture_dirs=dirs, claim_map=cmap) if f["severity"] == "FAIL"]
     why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in fails]
     why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in P.check(plan, doc) if f["severity"] == "FAIL"]
     if not run.approved(plan["id"], plan["hash"]):
@@ -141,7 +143,7 @@ def _load(a):
 def cmd_run(a) -> int:
     plan, doc, out, dirs = _load(a)
     run = Run.open(a.run)
-    why = preflight(plan, doc, dirs, run)
+    why = preflight(plan, doc, dirs, run, Path(a.script))
     if why:
         print("refused, nothing was sent:")
         for w in why:

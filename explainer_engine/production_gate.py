@@ -51,7 +51,8 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
 
     doc = _ps.load(day / "production_script.json")
     pic_dirs = [day / d for d in doc.get("picture_dirs", [])]
-    found = _pv.check_script(doc, picture_dirs=pic_dirs or None)
+    from .scripting import claims as _claims
+    found = _pv.check_script(doc, picture_dirs=pic_dirs or None, claim_map=_claims.load_map(day / "production_script.json"))
     fails = [f for f in found if f["severity"] == "FAIL"]
     add(0, "production script", "BLOCKED" if fails else "PASS", f"{_pv.summary(found)} (PV rules)",
         "fix the FAILs: python -m explainer_engine.production validate" if fails else "answer every REVIEW")

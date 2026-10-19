@@ -14,5 +14,8 @@ shot list) and `docs/STORY_ENGINE.md`; never the writers' notes.
    `docs/STORY_ENGINE.md` (question, causality, stakes, character conflict, loops, set-up/pay-off, needs, objectivity).
 3. For each finding give: where (segment, line), what the viewer feels, the cause, and the owner stage (architect,
    writer, performer, editor, caster, shorts) with one concrete fix. Never rewrite the text yourself.
-4. Run `production validate` and `story_lint`; list remaining REVIEWs.
+4. **Claim pass** (PV-37 is only the deterministic half): for every line that carries an E or M claim, open the source in
+   `claim_map.md` and say supported / partly / not supported, with the source's own words as evidence. "Not supported" is a
+   finding for the writer; a claim you could not open is reported as unverified, never as supported.
+5. Run `production validate` and `story_lint`; list remaining REVIEWs.
 Accept only when the SCRIPTING_SPEC gates pass and no "bored" window remains; otherwise return the list.

@@ -147,7 +147,8 @@ def main(argv: list[str] | None = None) -> int:
     snd = _dirs(path, a.snd, "sound_dirs")
     sounds = A.Sounds(snd)
     if a.cmd == "validate":
-        return _print(V.check_script(doc, pics, sounds.exists), "script")
+        from explainer_engine.scripting import claims
+        return _print(V.check_script(doc, pics, sounds.exists, claims.load_map(path)), "script")
     if a.cmd == "compile":
         new = C.compile_doc(doc)
         if a.write or not a.out:
