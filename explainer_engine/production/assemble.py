@@ -23,8 +23,10 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 from explainer_engine.audio.level import level_voice
-from explainer_engine.audio import duck
+from explainer_engine.audio import cues as CUES, duck
 from explainer_engine.production import accents as ACC
+from explainer_engine.production import beats as BEATS
+from explainer_engine.production import faces as FACES
 from explainer_engine.production import continuity
 from explainer_engine.production import graphics as GFX
 from explainer_engine.finish import bubbles as BUB
@@ -177,10 +179,17 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
             for b in s["bubbles"]:
                 a = t(b["start"])
                 fx[a:a + len(pop)] += pop[: max(0, n - a)]
+    cue_bus = np.zeros(n)  # VB-08: beat cues ride over everything without ducking it (25-200 ms, at most -20 dB)
+    for c in au.get("cues", []):
+        a = t(c["start"])
+        w = CUES.render(c["sound"])[: t((c.get("max_ms") or 1e9) / 1000) or None] * db(c.get("gain_db", CUES.DEFAULT_GAIN_DB))
+        w = w[: max(0, n - a)]
+        cue_bus[a:a + len(w)] += w
+    stats["cues"] = len(au.get("cues", []))
     fduck = duck.duck_gain(fx, SR, n, depth_db=9.0, threshold=0.01, attack_ms=20, release_ms=280, hold_ms=80)
     bduck = duck.duck_gain(fx, SR, n, depth_db=4.0, threshold=0.01, attack_ms=25, release_ms=350, hold_ms=80)
     stats["music_dip_max_step_db_per_ms"] = round(duck.max_step_db_per_ms(fduck, SR), 3)
-    mix = voice * db(-3) + (bed * bduck + music * fduck) * vduck + fx
+    mix = voice * db(-3) + (bed * bduck + music * fduck) * vduck + fx + cue_bus
     speaking = env > 0.15
     stats.update(voice_rms_db=round(rms_db((voice * db(-3))[speaking]), 2),
                  bed_rms_db=round(rms_db((bed * vduck)[speaking]), 2), music_rms_db=round(rms_db((music * vduck)[speaking]), 2))
@@ -415,6 +424,23 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
             old.unlink()
         plan_file.write_text(json.dumps({"stamp": stamp, "bounds": bounds}))
     cache: dict = {}
+    all_beats = timed.get("visual_beats", [])
+    hero_faces = {who: {"expressions": e} for who, e in timed.get("expressions", {}).items()}
+    for who, sheet in timed.get("face_sheets", {}).items():
+        hero_faces.setdefault(who, {})["face_sheet"] = sheet
+    face_order = sorted(hero_faces)
+
+    def shot_beats(k: int) -> list[dict]:
+        """VB rules: the beats on screen during shot k (a picture-bound one only in its own shot); expressions get the
+        face point of the shot's picture."""
+        s = shots[k]
+        on = [b for b in all_beats if b["start_frame"] < s["end_frame"] and max(b["end_frame"], b["start_frame"] + 1) > s["start_frame"]
+              and (b["kind"] not in BEATS.PICTURE_BOUND or b["shot"] == s["id"])]
+        face = {id(b): b for b in BEATS.faces(on, pics)}
+        on = [dict(b, face=face[id(b)]["face"]) if id(b) in face else b for b in on]
+        keyed = {(b["start_frame"], b["who"]): b["close_up"] for b in FACES.sheet_beats(on, hero_faces, picture_dirs)}
+        return [dict(b, close_up=keyed[(b["start_frame"], b["who"])]) if b["kind"] == "expression"
+                and (b["start_frame"], b.get("who")) in keyed else b for b in on]
 
     def prep(k: int):
         """The graded picture and the bubbles of shot k. A run of shots on one picture shares one grading (the seed is the
@@ -451,15 +477,24 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         W, H = im.size
         u = (f - f0) / max(1, f1 - f0 - 1)
         box = motion_box(s.get("render_motion", s["motion"]), W, H, u)
+        sb = beats_of.get(k) or []
+        if sb:  # VB-02: the speaking face is the focus; each expression change pops toward it
+            box = BEATS.face_camera(box, W, H, [b for b in sb if b.get("face") is not None and b["shot"] == s["id"]], f, fps)
         acc = s.get("accents", [])
         if acc:  # MO rules (D-48): punch, shake, wobble move the crop; whips, flashes and words are drawn
             box = ACC.apply_camera(box, W, H, *ACC.camera(acc, f, fps, f0))
         frame = im.resize((OW, OH), Image.BICUBIC, box=box)
         if acc:
             frame = ACC.draw(frame, acc, f, fps, f0, f1, before, BUB.FONT)
+        if sb:  # VB-09: in dialogue the speaking hero's keyed close-up over the scene, zoomed and blurred
+            frame = FACES.composite(frame, [b for b in sb if b.get("close_up") and b["shot"] == s["id"]], f, fps, face_order)
         if bubbles:
             frame = BUB.composite(frame, bubbles, f / fps)
+        if sb:
+            frame = BEATS.draw(frame, sb, f, fps, box, (W, H), hero_faces, picture_dirs)
         return overlays(frame, f, fps, timed)
+
+    beats_of = {k: shot_beats(k) for k in range(len(shots))} if all_beats else {}
 
     written, reused = 0, 0
     todo = range(len(bounds)) if only is None else range(*only)  # a part-by-part run draws only its chunks (e.g. 0:3)

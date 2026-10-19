@@ -51,7 +51,7 @@ def check(timed: dict) -> list[dict]:
     if dur >= 60 and not SFX_PER_MIN[0] <= per_min <= SFX_PER_MIN[1]:
         add("AL-02", "video", f"{per_min:.1f} effects a minute (keep {SFX_PER_MIN[0]:.0f}-{SFX_PER_MIN[1]:.0f}): "
             + ("the motion is silent" if per_min < SFX_PER_MIN[0] else "clutter"))
-    starts = [e["start"] for e in sfx]
+    starts = [e["start"] for e in sfx] + [c["start"] for c in au.get("cues", [])]  # a beat cue (VB-08) is heard too
     for s in timed.get("shots", []):
         for a in s.get("accents", []):
             if a["kind"] in HARD and not any(abs(x - a["start"]) <= SYNC for x in starts):

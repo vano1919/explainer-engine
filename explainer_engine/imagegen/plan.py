@@ -128,11 +128,16 @@ def check(plan: dict, doc: dict | None = None) -> list[dict]:
                                      "creator's exception in episode.gemini_exception (decision id and cap)")
     if doc is not None:
         from explainer_engine.production import compile as C
+        from explainer_engine.production import faces as FACES
         from explainer_engine.production import script as S
         pics, _ = S.pictures(doc)
+        faces = {i["id"]: i for i in FACES.to_paint(doc)}
         for it in plan["items"]:
             p = pics.get(it["id"])
-            if p is None:
+            if p is None and it["id"] in faces:  # a close-up of an expression sheet (VB-09)
+                if faces[it["id"]]["prompt"] != it["prompt"]:
+                    add("PP-06", it["id"], "the hero's card or the sheet changed since the plan was made: make the plan again")
+            elif p is None:
                 add("PP-06", it["id"], "not a picture of this script")
             elif p.get("prompt") and p["prompt"].replace(C.POD_SUFFIX, "") != it["prompt"].replace(C.POD_SUFFIX, ""):
                 add("PP-06", it["id"], "the script's prompt changed since the plan was made: make the plan again")

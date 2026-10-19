@@ -23,6 +23,7 @@ them in order and stops at the first failed gate.
 | 0 | research (orchestrator, skill `science-grounding`) | claim map C-xx, dossier | sources graded, every number has a claim |
 | 1 | `story-architect` | `drama`, `cast`, segment skeleton | `story_lint` 0 FAIL, REVIEWs answered |
 | 2 | `scene-writer` (one segment per call) | segment `lines` (text, speaker, claims) | `stage_guard writer`, PV-12, PV-33 |
+| 2b | `beat-writer` (same segment, right after the writer) | line `visual_beats` with their cues (skill `visual-beats`) | `stage_guard beats`, PV-44 |
 | 3 | `performance-director` | tags, emphasis, tone, emotion, pauses, interjections | `stage_guard performer` (words frozen), PV-12 |
 | 4 | `edit-planner` | shots, motion, accents, bubbles, graphics, beds, sfx, music | `stage_guard editor`, `validate`: PV-24, PV-35, PV-36 |
 | 5 | `voice-caster` | `voice`, `cast.<id>.voice` (traits, candidates) | `stage_guard caster`, PV-10, PV-32 |
@@ -45,6 +46,11 @@ them in order and stops at the first failed gate.
 Input is small on purpose: the skeleton (one line per segment), this segment's drama, the last three lines before it,
 the next beat, its claim ids, the arcs. The writer never sees shots or tags, so it cannot drift into them.
 Dialogue rules DW-01..DW-08 in `docs/STORY_ENGINE.md`; narration rules N-01..N-10 in `narration-script`.
+
+## 2b. Visual beats (beat-writer), same segment, before the next one is written
+While the segment's words are fresh, the beat-writer marks something new on screen about every 1.5 s of narration and an
+expression change about every second of dialogue, each with its reason and cue (skill `visual-beats`, VB rules). It never
+changes a word; if the writer later rewrites a line, run 2b again for that line (PV-44 finds beats whose phrase is gone).
 
 ## 3. Performance (performance-director)
 Delivery only; words frozen. Tags per speaker temperament, one stressed word, pauses before reveals and after

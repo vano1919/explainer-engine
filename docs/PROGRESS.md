@@ -616,3 +616,28 @@ provider is chosen per batch (D-50) instead of "Gemini batch tier only" (D-52), 
 (`paint plan --tier`). `paint run` also needs the rulebook's `paid_assets` checkpoint when the episode has `episode_rules.json`
 (OR-12); `production_gate` shows the rulebook as row `R`. The Syndicate Wars rulebook stamps are stale after the renaming (ES-16):
 re-check and stamp before any paid step. Its pictures and voice were never uploaded (the job folder is gone with its container).
+
+## 2026-10-19 — Visual beats and their cues (D-54, VB-00..VB-08, PV-44)
+
+The creator: pictures every 3-6 s stay, but about every 1.5 s something contextual must appear (a chart, a word, an object),
+written with the script; in dialogue the face changes about once a second; later the same day: every addition makes a very
+short light sound, and whether face changes should sound is for the evidence to decide. Built: `production_script/2` with
+`lines[].visual_beats` (text, label, prop, chart, highlight, symbol, accent, expression; `at` phrase + `offset`, `why`, `cue`) and
+`cast.<id>.expressions`; stage 2b `beat-writer` + skill `visual-beats` (same segment, right after the scene-writer; `stage_guard
+beats`, the editor may only move a beat's `pos`); `production/beats.py` (lint, timing, cadence checks, free deterministic render:
+labels, rings, signs, counters, bars, props, a face push with an emotion mark and a cut-out face inset); `audio/cues.py` (ten
+procedural cues of 25-180 ms, mixed undocked at -26 dB); beats count as MO events, a cue answers AL-03. Expression changes are
+silent except one big take a line (Van der Burg 2008, Google earcon guidance, Connor 2019; STORY_ENGINE VB section). Legacy `/1`
+scripts get one VB-00 REVIEW. Worked example: Episode 1's first three segments (`tests/fixtures/ep1_beats`, 49 beats, mean gap
+1.23 s on the estimated read, 0 VB FAIL). Nothing paid, nothing painted, nothing read aloud.
+
+## 2026-10-19 — Expression sheets for dialogue faces (D-55, VB-09, PV-44)
+
+The creator: faces change about once a second in dialogue, so do not paint the hero again into every place; paint about ten
+close-up expressions per speaking hero on green once, and in dialogue lay the keyed close-up over the scene's picture,
+zoomed in and blurred. Built: `cast.<id>.face_sheet` (`id`, `ref`, `set`) in the schema; `production/faces.py` (VB-09 lint:
+8-12 expressions, base set neutral/joyful/sad/scared/angry/surprised, every expression beat inside its hero's set, a reference
+picture, a clean key edge once painted; the paint-plan items with prompts from the hero's card and the reference; the saving
+against a full picture per face; chroma key with despill; the composite); `paint plan --faces` (a reusable plan behind the same
+approve -> run gate, `faces_saving` in the plan, PP-06 knows the close-ups); palette token `chroma_key`; `assemble` composites
+the dialogue frames. Tests: `tests/unit/test_face_sheets.py` (10). Nothing paid or painted.

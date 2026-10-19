@@ -38,6 +38,7 @@ HOMES = {
     "AL": "STORY_ENGINE.md",
     "PF": "STORY_ENGINE.md",
     "VC": "STORY_ENGINE.md",
+    "VB": "STORY_ENGINE.md",
     "ES": "EPISODE_STANDARDS.md",
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))

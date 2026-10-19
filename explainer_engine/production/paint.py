@@ -2,7 +2,7 @@
 
     python -m explainer_engine.production.paint plan    <script.json> --out <pictures dir> --id B1 --provider gemini
                                                         [--model M --size S --batch] [--only id,id] [--first] [--limit N]
-                                                        [--purpose "..."] [--reusable]                            # free
+                                                        [--purpose "..."] [--reusable] [--faces]                  # free
     python -m explainer_engine.production.paint approve <plan.json> --run jobs/<run>/run.json --by <name> --ref <message>
     python -m explainer_engine.production.paint run     <plan.json> <script.json> --run jobs/<run>/run.json --out <dir>
                                                         [--refs DIR] [--workers 4] [--wait 1500]
@@ -16,6 +16,10 @@ every painted prompt), the plan has no PP FAIL, and the ledger holds an approval
 reserved in the ledger before its call and recorded with its prompt hash as soon as it arrives, so a stop, a cap or a crash
 loses nothing; a re-run skips what was painted from the same prompt, repaints a picture whose prompt changed (in a new plan),
 never re-sends an item of an open batch, and stops an item after three failures.
+``plan --faces`` plans the speaking heroes' expression sheets instead (VB-09, ``production/faces.py``): about ten close-ups on
+chroma green per hero, painted once from the hero's reference and reused by every episode (a close-up already found in the
+picture folders is never planned again); the plan is a reusable channel asset and records what it saves against a full
+picture for every face change (``faces_saving``). It goes through the same approve -> run gate.
 On Gemini, ``plan --tier draft|standard|premium`` takes the model and size from ``imagegen/routing.py`` (D-52). When the
 episode has ``episode_rules.json``, ``run`` also needs its ``paid_assets`` checkpoint (OR-12, D-51), and the editorial gate (EG).
 """
@@ -35,6 +39,7 @@ from explainer_engine.imagegen import plan as P
 from explainer_engine.imagegen import routing
 from explainer_engine.imagegen.gemini import ChargeUncertain, GeminiClient, GeminiError, open_batches
 from explainer_engine.production import compile as C
+from explainer_engine.production import faces as FACES
 from explainer_engine.production import script as S
 
 MAX_FAILURES = 3
@@ -115,7 +120,14 @@ def cmd_plan(a) -> int:
     doc = S.load(path)
     out = Path(a.out)
     run = Run.open(a.run) if a.run else None
-    items = pending(to_paint(doc), out, run)
+    if a.faces:
+        found = [path.parent / d for d in doc.get("picture_dirs", [])] + [out]
+        items = pending(FACES.to_paint(doc, found), out, run)
+        a.reusable = True  # a sheet is the channel's asset: every later scene and episode reuses it
+        a.purpose = a.purpose or ("expression sheets of " + ", ".join(sorted({i["who"] for i in items})) +
+                                  ": close-ups on chroma green, painted once and reused in every scene and episode (VB-09)")
+    else:
+        items = pending(to_paint(doc), out, run)
     if a.only:
         want = set(a.only.split(","))
         items = [i for i in items if i["id"] in want]
@@ -125,10 +137,17 @@ def cmd_plan(a) -> int:
         items = items[:a.limit]
     plan = P.make(a.id, doc["episode"]["id"], items, provider=a.provider, model=a.model, size=a.size, batch=a.batch,
                   purpose=a.purpose or "", reusable=a.reusable)
+    if a.faces:
+        plan["faces_saving"] = FACES.saving(doc, items, plan["estimate_usd"] / len(items) if items else 0.0)
     dest = write_json_atomic(out / "plans" / f"{a.id}.json", plan)
     print(f"plan {a.id}: {len(items)} pictures, {plan['provider']} {plan['model'] or ''} {plan['size'] or ''}"
           f"{' batch' if a.batch else ''}, estimate ${plan['estimate_usd']:.3f}, hash {plan['hash']} -> {dest}")
     print(P.table(P.options(items), chosen=plan))
+    if plan.get("faces_saving"):
+        fs = plan["faces_saving"]
+        print(f"faces: {fs['close_ups']} close-ups (${fs['usd_sheet']:.3f}) carry {fs['expression_changes']} expression changes; "
+              f"a full picture per face would be {fs['full_pictures_instead']} pictures (${fs['usd_instead']:.3f}), "
+              f"saving ${fs['usd_saved']:.3f}; {fs['note']}")
     for f in P.check(plan, doc):
         print(f"{f['severity']:6} {f['rule']} {f['where']}: {f['detail']}")
     canva = C.canva_pending(doc)
@@ -303,6 +322,7 @@ def main(argv: list[str] | None = None) -> int:
     q.add_argument("--limit", type=int)
     q.add_argument("--purpose")
     q.add_argument("--reusable", action="store_true", help="channel assets reused across episodes (Gemini allowed)")
+    q.add_argument("--faces", action="store_true", help="the heroes' expression sheets (VB-09) instead of the pictures")
     q = sub.add_parser("approve")
     q.add_argument("plan")
     q.add_argument("--run", required=True)

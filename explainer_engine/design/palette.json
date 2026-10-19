@@ -13,7 +13,8 @@
     "false_red":       {"hex": "#E5484D", "role": "myth check: not supported (always with a cross icon)"},
     "uncertain_amber": {"hex": "#FFC145", "role": "evidence is mixed (badge)"},
     "night":           {"hex": "#2B2D42", "role": "dark scenes, Short end cards"},
-    "grey_mid":        {"hex": "#8D99AE", "role": "inactive / background props"}
+    "grey_mid":        {"hex": "#8D99AE", "role": "inactive / background props"},
+    "chroma_key":      {"hex": "#00B140", "role": "flat background of the expression sheets (VB-09); keyed out, never on screen"}
   },
   "text_pairs": [
     {"text": "ink",   "on": "paper"},

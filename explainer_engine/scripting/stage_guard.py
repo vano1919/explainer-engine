@@ -9,10 +9,12 @@ Stages and what they own:
 
 * ``architect``  the story layer: ``drama``, ``cast``, ``periods``, segment ids, ``beat``, ``purpose``, ``period``, ``light_beat``, segment ``drama``
 * ``writer``     the words: segment ``lines`` (text, speaker, claims); one segment at a time
+* ``beats``      the visual beats (VB rules): line ``visual_beats`` only, written segment by segment right after the writer, on
+  the same frozen words (stage 2b, agent ``beat-writer``)
 * ``performer``  the delivery: line ``tags``, ``emphasis``, ``tone``, ``emotion``, ``pause_after``; the text may only gain
   an interjection at its start (``INTERJECTIONS``)
 * ``editor``     the picture and sound: ``shots``, segment ``audio``, ``music``, ``graphics``, ``library``, ``story``,
-  ``look``, ``picture_dirs``, ``sound_dirs``
+  ``look``, ``picture_dirs``, ``sound_dirs``; of the beats only their ``pos`` (where on the frame), never what they show
 * ``caster``     the voices: ``voice`` and ``cast.<id>.voice`` (the architect owns the rest of ``cast``)
 * ``shorts``     the ``shorts`` block
 """
@@ -31,6 +33,7 @@ LINE_DELIVERY = ("tags", "emphasis", "tone", "emotion", "pause_after")
 STAGES = {
     "architect": {"top": {"drama", "episode", "periods", "cast"}, "seg": set(SEG_STORY), "line": set()},
     "writer": {"top": set(), "seg": {"lines"}, "line": set(LINE_WORDS)},
+    "beats": {"top": set(), "seg": set(), "line": {"visual_beats"}},
     "performer": {"top": set(), "seg": set(), "line": set(LINE_DELIVERY) | {"text"}},
     "editor": {"top": {"music", "graphics", "library", "story", "look", "picture_dirs", "sound_dirs", "world"},
                "seg": {"shots", "audio"}, "line": set()},
@@ -85,9 +88,15 @@ def violations(stage: str, before: dict, after: dict) -> list[str]:
                     continue
                 if k == "text" and "text" in own["line"] and _interjection_only(a["text"], b["text"]):
                     continue
+                if k == "visual_beats" and stage == "editor" and _unplaced(a.get(k)) == _unplaced(b.get(k)):
+                    continue  # the editor may move a beat on the frame (pos) to fit the picture it chose
                 if k not in own["line"] or k == "text":
                     out.append(f"{sid} line {i}: {k} changed ({str(a.get(k))[:30]!r} -> {str(b.get(k))[:30]!r})")
     return out
+
+
+def _unplaced(beats) -> list | None:
+    return None if beats is None else [{k: v for k, v in b.items() if k != "pos"} for b in beats]
 
 
 def words_frozen(before: dict, after: dict) -> bool:

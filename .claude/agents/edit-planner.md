@@ -18,5 +18,9 @@ For each segment:
 3. Sound: every accent and every on-screen action has its effect (whoosh on a whip, hit on a slam, tick on a counter);
    one music track per act with a change at each act turn; music drops to a drone or silence for the crisis line; the
    ambience bed names the place. Layers: voice + at most one music + one bed + effects (AL rules).
-4. Run `python -m explainer_engine.production validate <script>`: 0 FAIL; the PV-35 (MO) and PV-24 RHYTHM REVIEWs on the
-   estimated read answered or fixed. Report events a minute, the kinds used and the alive share.
+4. The lines already carry their `visual_beats` (stage 2b): plan pictures every 3-6 s around them, never a second accent
+   or pop on a beat's word; for a dialogue line pick a picture whose `speakers` point shows the speaking face (VB-06). You may
+   move a beat (`pos`) to fit the picture, never change what it shows; a beat whose cue lands on your effect gets cue `none`
+   from the beat-writer (send it back), not from you.
+5. Run `python -m explainer_engine.production validate <script>`: 0 FAIL; the PV-35 (MO) and PV-24 RHYTHM REVIEWs on the
+   estimated read answered or fixed, 0 PV-44 FAIL. Report events a minute, the kinds used and the alive share.

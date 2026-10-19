@@ -210,6 +210,58 @@ Shorts tricks, all checked or planned in the script:
 
 PV-28 asks that the hook be one question of at most 14 words, except for the two statement-hook styles of SS-05.
 
+## Visual beats (VB)
+
+The creator's notes of 2026-10-19: a picture change every 3-6 s is fine, but about every 1.5 s something must happen in the
+picture (a chart, a word, an object, a sign), chosen by what the narrator says at that instant, and written while the script is
+written, not added at the render. In dialogue the face is the focus, so the expression changes about once a second (anger, joy,
+surprise, doubt...). Every addition also makes a very short, light sound so the change is noticed for a moment without tiring
+the ear; whether expression changes should sound too was left to the evidence.
+
+The beats are a field of each line, `lines[].visual_beats` ([PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md), `production_script/2`),
+written by stage 2b (`beat-writer`, skill `visual-beats`) right after the scene-writer finishes the same segment, on frozen
+words (`stage_guard beats`). A beat lands on a phrase of its own line (`at`) plus an optional `offset` (-0.3..1.5 s): never a
+clock time. Kinds: `text`, `label`, `prop`, `chart`, `highlight`, `symbol`, `accent` (a punch or shake of `production/accents.py`),
+`expression`. The render draws them for free (`production/beats.py`); the cues are made in code (`audio/cues.py`).
+Checked by PV-44: on the estimated read while writing, again on the real read. In a `production_script/1` (legacy) they are one
+VB-00 REVIEW; in `/2` the FAIL rules below block the script.
+
+| ID | Rule | Severity |
+|---|---|---|
+| VB-00 | A legacy `production_script/1` without beats gets one notice: new episodes are written as `/2`. | REVIEW |
+| VB-01 | **A beat about every 1.5 s while the narrator speaks.** Any visual event counts (a new picture, a reframe, an accent, a bubble, a data visual, a card, a beat). A gap over 2.0 s is a REVIEW, over 3.0 s a FAIL; a segment's mean gap over 1.8 s is a REVIEW. The picture itself still changes every 3-6 s (PV-24 RHYTHM). | REVIEW / FAIL |
+| VB-02 | **In dialogue the face changes about once a second.** Every line with a `speaker` has expression changes from its first word; the longest stretch without a change is at most 1.5 s (REVIEW over 1.5 s, FAIL over 2.0 s). The same expression twice in a row is not a change. | REVIEW / FAIL |
+| VB-03 | **Every beat has a reason and belongs to its instant.** `why` (at least three words) says what in the line it shows; `at` is a phrase of its own line, in the order the beats land (FAIL). A beat whose words share nothing with its line or the lines next to it is a REVIEW. | FAIL / REVIEW |
+| VB-04 | **Few words, no number without a source.** At most 4 words a beat; a digit on screen or any chart needs a claim id on the beat or its line (invariant 5); bars have 2-3 values. | FAIL |
+| VB-05 | **Variety.** No more than 3 beats of one kind in a row in a segment; at most half of a segment's beats are words (show the thing instead). | REVIEW |
+| VB-06 | **The render can draw it.** An expression names a hero of the cast (`who`, default the line's speaker) and that face is in the shot's picture (`speakers` point) or the hero has a cut-out for that expression (`cast.<id>.expressions`). A prop without a cut-out is drawn as a word sticker (REVIEW). | FAIL / REVIEW |
+| VB-07 | **At most 2 beat overlays on screen at once.** | REVIEW |
+| VB-08 | **Every beat names its cue** (`cue.sound` from `audio/cues.py`, or `none` with a reason). A cue is 20-250 ms (the built ones are 25-180 ms) at -36..-20 dB, starts on the beat's first frame and is never ducked. It never doubles a sound effect (no cue within 0.15 s of an effect or under a playing one: the effect is the beat's sound), two cues are at least 0.25 s apart, and with a cue the layers stay at most 4 (AL-01). A narration beat with `none` and no effect at its moment is a FAIL. Expression changes are silent, except one big take a line (surprised, scared, angry, joyful) that may carry a cue; a cue on a quiet expression is a REVIEW, two cued expressions on one line a FAIL. A cue counts as the sound AL-03 asks for on a hard accent. | FAIL / REVIEW |
+| VB-09 | **Expression sheets** (D-55, `production/faces.py`). A hero who changes expression in dialogue has one `cast.<id>.face_sheet`: 8-12 close-ups (about 10) on flat chroma green (palette token `chroma_key`), always including the base set neutral, joyful, sad, scared, angry, surprised; painted once from the hero's reference picture (`ref`, invariant 6: the same face, never redrawn) through `paint plan --faces` -> approve -> run, and reused in every scene and episode. Every expression beat names an expression of its hero's sheet. With the sheet painted, the dialogue frame is the scene's own picture zoomed in 1.3x on the face and blurred, with the keyed close-up of the current expression over it, swapped on every change; without it the face push and emotion mark stand in. A close-up whose edge does not key out cleanly (under 85 %) is a REVIEW. | FAIL / REVIEW |
+
+**Defaults chosen (2026-10-19, the creator may change them):** target 1.5 s with the tolerances above; expression vocabulary
+neutral, curious, surprised, joyful, amused, smug, confused, doubtful, worried, scared, angry, sad, determined, deadpan (the style
+bible's eight plus the creator's anger, joy, doubt and four more). A painted picture cannot change its face, so an expression is
+shown by a push in on the face (`speakers` point), a pop toward it on each change and a drawn emotion mark beside it (vein,
+sparkles, sweat drop, ?, !, swirl...); when the hero has cut-outs (`cast.<id>.expressions`, for example the analyst's
+`a_amused`, `a_startled`, `a_think`, `a_shrug`), a face inset swaps them on every change. When the narrator says something
+abstract, the beat shows the operative word as a sign (question, cross for "no/not", arrows for more/less, check, clock for
+time, equals/plus) or rings the thing in the picture; a number becomes a counter or bars only with a claim.
+
+**Cue evidence.** A 60 ms tone in sync with a visual change pulls attention to it and speeds finding it ("pip and pop": Van der
+Burg, Olivers, Bronkhorst and Theeuwes 2008, J Exp Psychol HPP 34(5); temporal-order study, Journal of Vision 8(5):2, 2008);
+the Journal of Vision paper's introduction reports that search still gains when the tone also falls on a distractor in 80 % of
+trials, but loses when it always falls on a distractor: a tone that marks the wrong things, or everything, stops helping.
+Interface sounds should be "as brief as possible", used "in moderation, or they can quickly become overwhelming", "just a few
+sounds that are easily distinguishable" ([Google conversation design: earcons](https://developers.google.com/assistant/conversation-design/earcons)).
+Matching a sound to every movement ("mickey-mousing") "can lead to a very artificial experience" (Connor 2019,
+[animationstudies 2.0](https://blog.animationstudies.org/synchronization-and-synchresis-avoiding-mickey-mousing-in-sound-design/)).
+Hence: ten short, distinct cues, light and quiet, one per narration beat (the creator's ask), and **silent expression changes in
+dialogue**, because there the voice is already sounding once a second, a cue per face change would sit on every word and mask
+it (AL-04: the voice first), and a tone on every change is the case where the attention gain is no longer shown. One cue a line is kept for the
+big take, the moment a cartoon would score anyway. The cue timings and levels are product hypotheses; the creator's ear and the
+channel's retention decide.
+
 ## The writers' room
 
 These are the stages and gates. How to run them is in the skill `story-engine`.
@@ -218,8 +270,9 @@ These are the stages and gates. How to run them is in the skill `story-engine`.
 |---|---|---|---|
 | 1 | `story-architect` | `drama`, `cast`, segment skeleton | PV-33 0 FAIL |
 | 2 | `scene-writer` | segment `lines` | `stage_guard writer`, PV-12, PV-33 |
+| 2b | `beat-writer` (same segment, right after the writer) | line `visual_beats` with their cues | `stage_guard beats`, PV-44 (VB rules) |
 | 3 | `performance-director` | line delivery | `stage_guard performer` (words frozen) |
-| 4 | `edit-planner` | shots, accents, audio, visuals | `stage_guard editor`, PV-24, PV-35, PV-36 |
+| 4 | `edit-planner` | shots, accents, audio, visuals; a beat's `pos` only | `stage_guard editor`, PV-24, PV-35, PV-36, PV-44 |
 | 5 | `voice-caster` | `voice`, `cast.<id>.voice` | `stage_guard caster`, PV-10, PV-32 |
 | 6 | `shorts-writer` | `shorts` | `stage_guard shorts`, PV-28, PV-34 |
 | 7 | `script-critic` | findings only | at most 2 rounds, then creator approval #1 |
