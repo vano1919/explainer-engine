@@ -264,6 +264,9 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             if not hv.get("voice_id"):
                 _f(out, "PV-32", who, "no voice chosen yet for this hero: pick one after a test read, before the full read",
                    "REVIEW")
+            if not casting.age_of(doc["cast"][who]):  # the creator 2026-10-19: ages matter most
+                _f(out, "PV-32", who, "the hero's age is not known: set voice.traits.age (young/middle_aged/old) before "
+                   "casting, so no voice of the wrong age is offered", "REVIEW")
             for why in casting.problems(doc["cast"][who]):  # VC-01/VC-02: cast from documented traits, never imitate
                 _f(out, "PV-10", who, why)
     if S.has_dialogue(doc):
