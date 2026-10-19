@@ -68,6 +68,8 @@ def _exchange(client: dict, code: str, redirect: str, verifier: str) -> tuple[di
     items = json.load(urllib.request.urlopen(req, timeout=60)).get("items") or []
     saved = {"client_id": client["client_id"], "client_secret": client["client_secret"],
              "refresh_token": tok["refresh_token"], "token_uri": client.get("token_uri") or TOKEN_URI, "scopes": SCOPES}
+    if items:
+        saved["channel_id"] = items[0]["id"]  # `stage` refuses any other channel unless EXPLAINER_YT_CHANNEL says otherwise
     return saved, items
 
 

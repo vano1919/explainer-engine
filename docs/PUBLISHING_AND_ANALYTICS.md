@@ -19,11 +19,13 @@ python -m explainer_engine.publish stage <episode> --yes --confirm "<who, where>
 
 Inputs: `publish.json` (publish/1 with `tags`, `youtube`, `thumbnail`, per-Short `title`; PC rules must have no FAIL), the
 Shorts of `production_script.json`, the render (`render/video.mp4`, `render/shorts/SHxx.mp4`, or `--video` / `--shorts-dir`).
-Setup, once: a Google Cloud project with the YouTube Data API v3, an OAuth client of type Desktop app, its consent screen
-published ("In production"; in Testing the refresh token dies after 7 days), then `python -m explainer_engine.publish auth
-<client_secret.json>` on the creator's PC; the printed channel id goes into `EXPLAINER_YT_CHANNEL` and the content of
-`tools/youtube/token.b64.txt` into `YOUTUBE_TOKEN_B64`, both as variables of the cloud environment, never in the repository
-or a chat. Quota per V-47: an episode of 1 + 10 videos uses 11 of 100 daily uploads and about 65 of 10,000 units.
+Sign-in (creator, 2026-10-19: no token is stored or pasted anywhere): a Google Cloud project with the YouTube Data API v3 and a
+Desktop-app OAuth client whose JSON is the cloud variable `YOUTUBE_CLIENT_B64` (a client secret is not a token). The token is
+obtained per upload session: Claude runs `python -m explainer_engine.publish auth-url` and gives the creator the link; the
+creator signs in on a phone as the channel's account (the app may stay in Testing, the account listed as a test user) and
+sends back the `http://127.0.0.1:8765/?...` address, which fails to load by design; `auth-finish '<address>'` exchanges it
+for a token in the gitignored `tools/youtube/token.json` of that session only, along with the channel id, which `stage`
+checks. The desktop route (`auth <client_secret.json>` on a PC) is the same flow. Quota per V-47: an episode of 1 + 10 videos uses 11 of 100 daily uploads and about 65 of 10,000 units.
 
 ## Cadence hypothesis (D-06; not competitor frequency)
 One long-form every two weeks and two Shorts a week for the first cycle, from estimated hours

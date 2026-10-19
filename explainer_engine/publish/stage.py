@@ -125,13 +125,13 @@ def run(episode: Path, *, privacy: str = "unlisted", yes: bool = False, confirm:
         log("refusing: --confirm '<who said OK, where>' records the creator's OK for this staging upload")
         return 1
     env = env if env is not None else __import__("os").environ
-    expected = env.get(CHANNEL_ENV, "")
+    if yt is None:
+        from explainer_engine.publish.youtube import load_token
+        yt = YouTube(load_token())
+    expected = env.get(CHANNEL_ENV, "") or yt.token.get("channel_id", "")
     if not expected:
         log(f"refusing: set {CHANNEL_ENV} to the channel id the videos belong on (a token of another channel is refused)")
         return 1
-    if yt is None:
-        from explainer_engine.publish.youtube import load_token
-        yt = YouTube(load_token(env))
     channel = yt.my_channel()
     _count(state, units=UNIT_COST["list"])
     if channel["id"] != expected:

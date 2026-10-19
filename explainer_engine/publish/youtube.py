@@ -68,11 +68,18 @@ def http_transport(method: str, url: str, headers: dict, body=None, timeout: flo
         conn.close()
 
 
-def load_token(env: dict | None = None) -> dict:
+TOKEN_FILE = Path(__file__).resolve().parents[2] / "tools" / "youtube" / "token.json"  # gitignored, one session's sign-in
+
+
+def load_token(env: dict | None = None, file: Path | None = None) -> dict:
+    """The token of this session's sign-in (tools/youtube/token.json, made by ``publish auth-finish``), else YOUTUBE_TOKEN_B64."""
+    file = TOKEN_FILE if file is None else file
+    if env is None and file.exists():
+        return json.loads(file.read_text(encoding="utf-8"))
     raw = (env if env is not None else os.environ).get(TOKEN_ENV, "")
     if not raw:
-        raise YouTubeError(f"{TOKEN_ENV} is not set: run `python -m explainer_engine.publish auth` once on the creator's PC "
-                           "(docs/PUBLISHING_AND_ANALYTICS.md, 'YouTube staging')")
+        raise YouTubeError("no YouTube sign-in in this session: run `python -m explainer_engine.publish auth-url`, the creator "
+                           "opens the link and sends back the 127.0.0.1 address, then `auth-finish '<address>'`")
     try:
         tok = json.loads(base64.b64decode(raw))
     except ValueError:
