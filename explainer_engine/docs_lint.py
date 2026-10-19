@@ -23,9 +23,25 @@ HOMES = {
     "Q": "QA_SPECIFICATION.md",
     "RR": "RIGHTS_AND_FAIR_USE.md",
     "UR": "UNIVERSAL_RULE_BASE.md",
+    # the rule families added since D-23 (audit 2026-10-19 H4: branches reused PV-32..36 and OR-10 for different rules)
+    "PV": "PRODUCTION_SCRIPT.md",
+    "PP": "PRODUCTION_SCRIPT.md",
+    "PC": "QA_SPECIFICATION.md",
+    "ED": "EDITING.md",
+    "OR": "ORCHESTRATION.md",
+    "SR": "ORCHESTRATION.md",
+    "SH": "ORCHESTRATION.md",
+    "ST": "STORY_ENGINE.md",
+    "SS": "STORY_ENGINE.md",
+    "DW": "STORY_ENGINE.md",
+    "MO": "STORY_ENGINE.md",
+    "AL": "STORY_ENGINE.md",
+    "PF": "STORY_ENGINE.md",
+    "VC": "STORY_ENGINE.md",
 }
-ID = re.compile(r"\b(D|SE|V|P|RR|R|Q|UR)-([TE]?\d{2,3})\b")
-ROW = re.compile(r"^\|\s*(D|SE|V|P|RR|R|Q|UR)-([TE]?\d{2,3})\s*\|")
+_PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))
+ID = re.compile(rf"\b({_PREFIX})-([TE]?\d{{2,3}})\b")
+ROW = re.compile(rf"^\|\s*\**({_PREFIX})-([TE]?\d{{2,3}})\**\s*\|")
 LINK = re.compile(r"\[[^\]]+\]\(([^)#\s]+)(?:#[^)]*)?\)")
 HEX = re.compile(r"#[0-9A-Fa-f]{6}\b")
 

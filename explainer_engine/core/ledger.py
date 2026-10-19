@@ -25,11 +25,17 @@ class CapReached(RuntimeError):
     """A reservation would pass 80 % of a cap: stop this phase, report, wait for the creator."""
 
 
+class LedgerConflict(RuntimeError):
+    """``run.json`` changed on disk since this process read or wrote it: another process uses the same run. Writing now
+    would erase its reservations, so this process stops (audit 2026-10-19 H3)."""
+
+
 class Run:
     def __init__(self, path: Path, data: dict):
         self.path = Path(path)
         self.data = data
         self.lock = threading.RLock()  # paint workers share one ledger
+        self._seen = self._stamp()
 
     @classmethod
     def open(cls, path: Path | str, caps: dict[str, float] | None = None, **meta) -> "Run":
@@ -49,9 +55,33 @@ class Run:
         run.save()
         return run
 
+    def _stamp(self):
+        try:
+            return self.path.read_bytes()
+        except FileNotFoundError:
+            return None
+
     def save(self) -> None:
         with self.lock:
+            if self._stamp() != self._seen:
+                raise LedgerConflict(f"{self.path} was changed by another process; stop and re-open the run")
             write_json_atomic(self.path, self.data)
+            self._seen = self._stamp()
+
+    # --- approvals (a paid batch runs only with the creator's yes on exactly that batch) -------------------------------
+    def approve(self, plan_id: str, plan_hash: str, *, by: str, ref: str, provider: str, usd: float) -> None:
+        """Record the creator's approval of one paint plan. ``ref`` points at the creator's own message (thread message id
+        or date and words); the approval binds the plan's hash, so a changed plan needs a new yes."""
+        if not by or not ref:
+            raise ValueError("an approval needs who approved (by) and where they said it (ref)")
+        with self.lock:
+            self.data.setdefault("approvals", {})[plan_id] = {
+                "hash": plan_hash, "by": by, "ref": ref, "provider": provider, "usd": round(usd, 4),
+                "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+            self.save()
+
+    def approved(self, plan_id: str, plan_hash: str) -> bool:
+        return (self.data.get("approvals", {}).get(plan_id) or {}).get("hash") == plan_hash
 
     # --- money -------------------------------------------------------------------------------------------------------
     def spent(self, service: str) -> float:

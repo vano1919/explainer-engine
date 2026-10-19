@@ -37,10 +37,28 @@ BATCH_URL = "https://generativelanguage.googleapis.com/v1beta/"
 BATCH_MAX_BYTES = 18_000_000  # inline requests must stay under 20 MB
 REFERENCE_USD = 0.0011  # one input picture at the Pro rate (the dearest listed)
 MAX_REFERENCES = 14
+JUDGE_USD = 0.0015  # one vision answer (judge)
+
+
+def _write_atomic(path: Path, data: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_bytes(data)
+    os.replace(tmp, path)
 
 
 class GeminiError(RuntimeError):
     pass
+
+
+class ChargeUncertain(GeminiError):
+    """The paid request was sent but no answer came back (a timeout): the provider may have generated and billed it. Never
+    retried and never refunded; the item is recorded as a failure with this cause (audit 2026-10-19 H3)."""
+
+
+def _timed_out(exc: BaseException) -> bool:
+    reason = getattr(exc, "reason", exc)
+    return isinstance(exc, TimeoutError) or isinstance(reason, TimeoutError) or "timed out" in str(reason).lower()
 
 
 def price(model: str, size: str) -> float:
@@ -63,11 +81,26 @@ def cache_key(prompt: str, model: str, size: str, aspect: str, refs: list[bytes]
     return h.hexdigest()[:24]
 
 
+def open_batches(root: Path) -> dict[str, str]:
+    """{item: batch file} for every batch under ``<root>/batches`` that is not settled yet (submitted and not collected, or
+    a submit whose answer was lost). ``paint`` never sends these items again (audit 2026-10-19 H2)."""
+    out = {}
+    for f in sorted((Path(root) / "batches").glob("*.json")):
+        meta = json.loads(f.read_text())
+        if not meta.get("settled"):
+            for item in meta.get("items", []):
+                out[item] = f.name
+    return out
+
+
 class GeminiClient:
     def __init__(self, root: Path, *, key: str | None = None, cap_usd: float, post=None, timeout: float = 180.0,
-                 retries: int = 3, run=None):
+                 retries: int = 3, run=None, cache_dir: Path | None = None):
         self.run = run  # core.ledger.Run: charges are reserved there before the call (OR-02)
         self.root = Path(root)
+        # one cache for every episode and output folder (EXPLAINER_IMAGE_CACHE), so a paid picture is never bought twice
+        env = os.environ.get("EXPLAINER_IMAGE_CACHE")
+        self.cache = Path(cache_dir) if cache_dir else Path(env) if env else self.root / "cache"
         self.key = key or os.environ.get("GEMINI_API_KEY", "")
         self.cap = cap_usd
         self.post = post or self._http
@@ -93,6 +126,8 @@ class GeminiClient:
                     continue
                 raise GeminiError(f"{model}: HTTP {exc.code}: {detail}") from None
             except (urllib.error.URLError, TimeoutError) as exc:
+                if _timed_out(exc):  # the request may have been generated and billed: a retry could pay twice
+                    raise ChargeUncertain(f"{model}: no answer within {self.timeout:.0f} s; the charge is uncertain") from None
                 if attempt < self.retries:
                     time.sleep(delay)
                     delay *= 2
@@ -110,7 +145,7 @@ class GeminiClient:
         refs = refs or []
         out = self.root / f"{name}.png"
         key = cache_key(prompt, model, size, aspect, refs)
-        cached = self.root / "cache" / f"{key}.png"
+        cached = self.cache / f"{key}.png"
         if cached.exists():
             out.write_bytes(cached.read_bytes())
             self._log({"name": name, "model": model, "size": size, "usd": 0.0, "cached": True})
@@ -126,6 +161,8 @@ class GeminiClient:
             self.run.reserve("gemini_usd", cost, item=name)
         try:
             data = self.post(model, body)
+        except ChargeUncertain:
+            raise  # the reservation stays: the provider may have billed it
         except GeminiError:
             if self.run is not None:
                 self.run.refund("gemini_usd", cost)
@@ -135,9 +172,8 @@ class GeminiClient:
                 inline = part.get("inlineData") or part.get("inline_data")
                 if inline and str(inline.get("mimeType") or inline.get("mime_type") or "").startswith("image/"):
                     raw = base64.b64decode(inline["data"])
-                    cached.parent.mkdir(parents=True, exist_ok=True)
-                    cached.write_bytes(raw)
-                    out.write_bytes(raw)
+                    _write_atomic(cached, raw)  # a torn cache file would be served as a hit forever
+                    _write_atomic(out, raw)
                     self.spent += cost
                     self._log({"name": name, "model": model, "size": size, "usd": cost, "cached": False,
                                "prompt": prompt[:200]})
@@ -170,6 +206,7 @@ class GeminiClient:
                 {"inlineData": {"mimeType": "image/jpeg" if r[:2] == b"\xff\xd8" else "image/png",
                                 "data": base64.b64encode(r).decode()}} for r in refs]
             total += sum(len(r) for r in refs) * 4 // 3 + len(it["prompt"])
+            it.setdefault("cache_key", cache_key(it["prompt"], model, size, aspect, refs))
             reqs.append({"request": {"contents": [{"parts": parts}],
                                      "generationConfig": {"responseModalities": ["IMAGE"],
                                                           "imageConfig": {"aspectRatio": aspect, "imageSize": size}}},
@@ -181,24 +218,33 @@ class GeminiClient:
             self.run.reserve("gemini_usd", cost, item=f"batch:{items[0]['name']}+{len(items)}")
         elif self.spent + cost > self.cap * 0.8 + 1e-9:
             raise GeminiError(f"stop: {self.spent + cost:.3f} USD would pass 80 % of the {self.cap} cap")
+        d = self.root / "batches"
+        d.mkdir(parents=True, exist_ok=True)
+        meta = {"model": model, "size": size, "cost": cost, "items": [i["name"] for i in items],
+                "keys": {i["name"]: i["cache_key"] for i in items}}
+        # written BEFORE the POST: if the answer is lost, these items count as submitted and are never sent again
+        pending = d / f"submitting_{meta['keys'][items[0]['name']]}.json"
+        pending.write_text(json.dumps({**meta, "name": None, "state": "SUBMITTING"}))
         try:
             res = http("POST", f"{BATCH_URL}models/{model}:batchGenerateContent",
                        {"batch": {"display_name": f"ep-{items[0]['name']}-{len(items)}",
                                   "input_config": {"requests": {"requests": reqs}}}})
         except GeminiError:
+            pending.unlink()
             if self.run is not None:
                 self.run.refund("gemini_usd", cost)
             raise
+        except (urllib.error.URLError, TimeoutError, OSError) as exc:  # sent, no answer: maybe accepted; never repeated
+            raise ChargeUncertain(f"batch submit: {exc}; {pending.name} keeps these items from being sent again") from None
         name = res.get("name") or (res.get("batch") or {}).get("name")
         if not name:
+            pending.unlink()
             if self.run is not None:
                 self.run.refund("gemini_usd", cost)
             raise GeminiError(f"batch not accepted: {str(res)[:200]}")
         self.spent += cost
-        d = self.root / "batches"
-        d.mkdir(parents=True, exist_ok=True)
-        (d / (name.replace("/", "_") + ".json")).write_text(
-            json.dumps({"name": name, "model": model, "size": size, "cost": cost, "items": [i["name"] for i in items]}))
+        (d / (name.replace("/", "_") + ".json")).write_text(json.dumps({**meta, "name": name}))
+        pending.unlink()
         self._log({"batch": name, "model": model, "size": size, "usd": cost, "items": len(items)})
         return name
 
@@ -241,7 +287,10 @@ class GeminiClient:
         for item, val in st["results"].items():
             if isinstance(val, bytes):
                 p = self.root / f"{item}.png"
-                p.write_bytes(val)
+                _write_atomic(p, val)
+                key = (meta.get("keys") or {}).get(item)
+                if key:
+                    _write_atomic(self.cache / f"{key}.png", val)
                 out[item] = p
             else:
                 out[item] = val
@@ -255,13 +304,18 @@ class GeminiClient:
         return {"state": st["state"], "done": st["done"], "items": out}
 
     def judge(self, image: bytes, question: str, *, model: str = "gemini-3.8-flash") -> str:
-        """A vision answer as text (input price about $0.0015 per picture at $0.75 per million input tokens)."""
+        """A vision answer as text (input price about $0.0015 per picture at $0.75 per million input tokens). Paid, so it is
+        reserved in the run ledger like a picture (audit 2026-10-19 H3); without a ledger the client's own cap applies."""
+        if self.run is not None:
+            self.run.reserve("gemini_usd", JUDGE_USD, item=f"judge:{hashlib.sha256(image).hexdigest()[:12]}")
+        elif self.spent + JUDGE_USD > self.cap * 0.8 + 1e-9:
+            raise GeminiError(f"stop: {self.spent + JUDGE_USD:.4f} USD would pass 80 % of the {self.cap} cap")
         parts = [{"text": question}, {"inlineData": {"mimeType": "image/png", "data": base64.b64encode(image).decode()}}]
         data = self.post(model, {"contents": [{"parts": parts}],
                                  "generationConfig": {"temperature": 0, "responseMimeType": "application/json"}})
         for cand in data.get("candidates") or []:
             for part in (cand.get("content") or {}).get("parts") or []:
                 if "text" in part:
-                    self.spent += 0.0015
+                    self.spent += JUDGE_USD
                     return part["text"]
         raise GeminiError(f"{model}: no text answer")

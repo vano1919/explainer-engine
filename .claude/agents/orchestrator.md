@@ -21,8 +21,11 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
 4. **Phase 3, one-item tests**: first read chunk and first picture; check them (listen for drift with `audio/voice_check`,
    look at the picture and run the likeness judge). Only then phase 4.
 5. **Phase 4, voice**: `estimate_only` first, reserve in the ledger, one chunk at a time, record each; level, `production words`.
-6. **Phase 5, pictures** (Gemini, creator's exception for this episode): references from existing pictures, reserve per
-   picture, repaint at most twice, judge by likeness and style; contact sheet looked at.
+6. **Phase 5, pictures**, one batch at a time (PP rules, docs/PRODUCTION_SCRIPT.md): `paint plan` (free; it prints the batch
+   priced at every provider), then **ask the creator which provider to use for this batch and wait for the answer**; never
+   pick one yourself and never paint ahead of the answer. Record the yes with `paint approve --by <creator> --ref <message>`,
+   then `paint run`. Gemini on episode pictures only with `episode.gemini_exception`. Contact sheet looked at (Claude reads it:
+   the visual-judge questions, no paid judge); repaint at most twice, each repaint in a new approved plan.
 7. **Phase 6**: sounds, `production time` (0 FAIL), `assemble` (720p preview, then 2K), QA scorecard.
 8. **Phase 7**: Shorts (9:16 crops around the heroes), metadata drafts (vidIQ within its cap). Nothing is uploaded.
 9. **Report** (OR-08) and commit/push everything to the branch; nothing running.

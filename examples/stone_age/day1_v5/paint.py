@@ -39,6 +39,9 @@ def main() -> None:
     out = Path(sys.argv[sys.argv.index("--run") + 1])
     look_dir = Path(sys.argv[sys.argv.index("--look") + 1])
     only = sys.argv[sys.argv.index("--only") + 1].split(",") if "--only" in sys.argv else None
+    if "--run" in sys.argv and "--force" not in sys.argv:  # audit 2026-10-19 H3: one-off painter outside the run ledger
+        raise SystemExit("history: this one-off paints outside the run ledger; use `production.paint plan/approve/run` "
+                         "(or add --force after the creator said yes)")
     c = GeminiClient(out, cap_usd=4.9)  # 80 % = $3.92 = what is left under the $10 Gemini cap after the look test
     refs = refs_from(look_dir)
     verdicts = {}

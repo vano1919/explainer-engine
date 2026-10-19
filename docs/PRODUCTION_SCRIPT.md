@@ -30,7 +30,9 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 1. **Write a segment** (lines, shots with picture subjects, sounds together) -> `validate` (free; also runs the whole board on an
    estimated read, so a rhythm or story-state problem shows while writing).
 2. `compile --write --out DIR`: fills every painted picture's prompt, writes `narration.txt`, `narration_tts.txt`, `pictures_gemini.json`, `pod_job.json`.
-3. Paid steps use those files (read, pictures); each needs its price and the creator's yes first.
+3. Paid steps use those files (read, pictures); each needs its price and the creator's yes first. Pictures go in batches:
+   `paint plan` (free: the batch priced at every provider, written with a hash) -> the creator chooses the provider ->
+   `paint approve` (records the yes against that hash in the run ledger) -> `paint run` (refuses without it). See PP rules.
 4. `words`: local Whisper (free) or a Scribe JSON -> `scribe_words.align` on the script's own tokens -> `pause_pad` (punctuated gaps and every `pause_after`).
 5. `time`: `timed.json` = frames at the episode fps (shots tile the video exactly), bubbles, beds, sounds, music, events, picture list, findings.
 6. `assemble` / `run` (`--final` refuses missing pictures): graded pictures with motion and bubbles, narration, ambience, sounds, music ducked under voice and world sounds, -14 LUFS.
@@ -48,7 +50,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-07 | forbidden props never shown; a prop is held by its owner |
 | PV-08 | a painted picture's subject shares content with its segment (REVIEW) |
 | PV-10 | voice style describes a sound, never a person; a voice must be chosen before the full read (REVIEW) |
-| PV-11 | prompts are compiled from the subject (fresh) and pass the D-41 prompt lint |
+| PV-11 | prompts are compiled from the subject (fresh) and **every painted prompt** passes the D-41 prompt lint, reference edits (`pod_ref`) too; on a reference edit a missing look thread (UR-22) or light key (UR-26) is one REVIEW per picture (the reference picture carries them), child cues, absent objects and "not yet" stay FAIL (audit 2026-10-19) |
 | PV-12 | narration lint (N-01..N-10) on the text the voice gets |
 | PV-14 | if any bed is used, the first segment names one |
 | PV-20 | the read matches the script text at least 97 % |
@@ -59,11 +61,35 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-26 | likeness by reference: a picture painted by editing (`pod_ref`) that names a hero needs a reference picture whose library `heroes` lists that hero (the model copies the face from the reference) |
 | PV-27 | time-jump `periods`: every segment names a known period, a period's segments are consecutive, tone shares sum to 1; REVIEW when a period does not end on the question that opens the next (SR-03) |
 | PV-28 | `shorts`: the hook is one question of at most 14 words (one statement for the `anti_intuition` and `pov_you` styles, SS-05) and the first line; 40-130 words (REVIEW); pictures are the video's own (SH-01..SH-03); the last line points to the video (REVIEW, SH-01); across the set no two hooks are the same (FAIL) and no two Shorts share a body line or half their pictures (REVIEW, SH-05) |
+| PV-29 | one music at a time (ED-03): two tracks overlap at most for a crossfade; the tick stays at or under its level |
+| PV-30 | every period opens on a card with a title (ED-09, REVIEW) |
+| PV-31 | data visuals (ED-10): each passes `graphics.check_visual` and sits in an existing segment; a period without one is a REVIEW |
 | PV-32 | voiced dialogue (D-45): a line's `speaker` is in the cast and has `cast.<id>.voice` (FAIL); that voice is described, never imitated (PV-10); no voice id yet, or two speakers on one voice id (REVIEW); imitation words, the person's name in the voice text, or a real person without documented traits are PV-10 FAILs (`audio/casting.problems`, VC-02); two heroes who would cast alike are REVIEW (VC-04) |
 | PV-33 | the story layer (D-48, ST rules in [STORY_ENGINE](STORY_ENGINE.md), `scripting/story_lint.py`): unknown or premature loops, a pay-off before its plant, a fact segment without claims, an arc outside the cast FAIL; craft findings REVIEW, including stacked questions outside a declared loop (ST-11, D-49) |
 | PV-34 | the Shorts set's styles (SS-01..SS-08): enough different styles, no style twice in a row, a loop ending runs into the first line, a pointer ending points to the video, two length bands, the first cut inside the hook, at least 3 visual events every 10 s (REVIEW) |
 | PV-35 | motion and visual variety (MO-01..MO-06, `edit/motion_lint.py`) on the estimated read and on the real read (REVIEW) |
 | PV-36 | sound layers (AL-01..AL-04, `audio/layers.py`) on the estimated read and on the real read (REVIEW) |
+
+## Paint plans (PP-xx; audit 2026-10-19; `imagegen/plan.py`, `production/paint.py`)
+
+The image provider is chosen for every batch, by the creator, and nothing is painted without that answer. Claude does not
+generate images (Anthropic: "an image understanding model only"); it prepares the plan, asks, and runs the chosen provider.
+
+| Id | Rule |
+|---|---|
+| PP-01 | a plan is a `paint_plan/1` file with a known provider (`gemini`, `pod`, `local`); there is no default provider |
+| PP-02 | the plan's hash covers its pictures, prompts, references, provider, model, size and tier; `paint run` needs an approval of exactly that hash in the run ledger (`Run.approve`: who, and which message); an edited plan loses its approval |
+| PP-03 | the provider can take the batch: a listed price for the model and size, no more references than the provider takes |
+| PP-04 | every item has a compiled prompt (`production compile --write`) |
+| PP-05 | Gemini paints one episode's own pictures only with `episode.gemini_exception` (the creator's decision id and cap); otherwise the plan must be `reusable` channel assets (creator's rule 2026-10-11) |
+| PP-06 | every item is a picture of the script and its prompt is still the script's prompt |
+| PP-07 | the plan says what the batch is for (REVIEW) |
+
+`paint run` also refuses a script with any PV FAIL (it runs `validate` with the picture folders), reserves every picture in
+the ledger before its call, records it with its prompt hash, repaints a picture only when its prompt changed (in a new plan),
+never sends an item of an open or lost batch again (`imagegen/gemini.open_batches`), never retries a request that timed out
+(`ChargeUncertain`: it may have been billed), and stops an item after three failures. The cache of paid pictures is shared by
+every output folder (`EXPLAINER_IMAGE_CACHE`).
 
 ## Voice direction
 

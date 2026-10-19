@@ -57,6 +57,28 @@
         },
         "notes": {
           "type": "string"
+        },
+        "gemini_exception": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decision",
+            "cap_usd"
+          ],
+          "description": "the creator's recorded exception letting Gemini paint this episode's own pictures (D-44 style); without it a Gemini paint plan FAILs PP-05",
+          "properties": {
+            "decision": {
+              "type": "string",
+              "pattern": "^D-[0-9]{2,3}$"
+            },
+            "cap_usd": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "note": {
+              "type": "string"
+            }
+          }
         }
       }
     },

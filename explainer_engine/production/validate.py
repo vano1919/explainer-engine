@@ -37,6 +37,7 @@ DUP_SIMILAR = 0.97
 SHORT_WPM = 170  # heard pace of a Short read (P-52, D-49)
 SHORT_EVENTS_PER_10S = 3  # SS-08: observed 3-6 in breakout Shorts (vidIQ 2026-10-19), 1.4 in Episode 1's
 STATEMENT_HOOK_STYLES = {"anti_intuition", "pov_you"}  # may open with one statement instead of a question (SS-05)
+REF_EDIT_SOFT = {"UR-22", "UR-26"}  # look thread and light key: carried by the reference picture of a pod_ref edit (PV-11)
 
 
 def _norm(text: str) -> str:
@@ -190,12 +191,21 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             _f(out, "PV-11", pid, "prompt is missing or stale: run `python -m explainer_engine.production compile`")
             continue
         prompts[pid] = want
-        if C.engine_of(doc, p) in ("gemini", "pod_text"):
-            _, beat = C.shot_type_of(doc, pid)
-            people = C.subject_with_cast(doc, p)[1]
-            for f in C.prompt_v2.lint(want, world, people=people, visitors_named=sorted(doc["cast"]), beat=beat):
-                if f["severity"] == "FAIL":
-                    _f(out, "PV-11", pid, f"{f['rule']}: {f['detail']}")
+        # every painted prompt is linted, the reference edits (pod_ref) too: they are what is paid for (audit 2026-10-19 H1).
+        # A reference edit takes its look and light from the reference picture, so a missing thread (UR-22) or light key
+        # (UR-26) is a REVIEW there; child cues, absent objects and "not yet" stay FAIL for every engine.
+        eng = C.engine_of(doc, p)
+        _, beat = C.shot_type_of(doc, pid)
+        people = C.subject_with_cast(doc, p)[1]
+        soft = []
+        for f in C.prompt_v2.lint(want, world, people=people, visitors_named=sorted(doc["cast"]), beat=beat):
+            if eng == "pod_ref" and f["rule"] in REF_EDIT_SOFT:
+                soft.append(f["rule"])
+            elif f["severity"] == "FAIL":
+                _f(out, "PV-11", pid, f"{f['rule']}: {f['detail']}")
+        if soft:
+            _f(out, "PV-11", pid, f"reference edit without {' and '.join(sorted(set(soft)))} (look thread / one light key): "
+                                  "the reference picture must carry them", "REVIEW")
     seen = {}
     for pid, pr in prompts.items():
         key = re.sub(r"\s+", " ", pr.lower()).strip()

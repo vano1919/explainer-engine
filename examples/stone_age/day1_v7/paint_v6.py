@@ -30,6 +30,9 @@ def main() -> None:
     print(len(jobs), "pictures, estimate $", round(sum(estimate(MODEL, SIZE, 1, len(j["refs"])) for j in jobs), 4))
     if "--run" not in sys.argv:
         return
+    if "--run" in sys.argv and "--force" not in sys.argv:  # audit 2026-10-19 H3: one-off painter outside the run ledger
+        raise SystemExit("history: this one-off paints outside the run ledger; use `production.paint plan/approve/run` "
+                         "(or add --force after the creator said yes)")
     c = GeminiClient(out, cap_usd=0.5)
     for j in jobs:
         p = c.generate(j["id"], j["prompt"], model=MODEL, size=SIZE, refs=[ref(pics, r) for r in j["refs"]])

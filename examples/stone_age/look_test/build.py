@@ -54,6 +54,9 @@ if __name__ == "__main__":
             print(x["id"], f)
     if "--run" in sys.argv and not bad:
         out = Path(sys.argv[sys.argv.index("--run") + 1])
+        if "--run" in sys.argv and "--force" not in sys.argv:  # audit 2026-10-19 H3: one-off painter outside the run ledger
+            raise SystemExit("history: this one-off paints outside the run ledger; use `production.paint plan/approve/run` "
+                             "(or add --force after the creator said yes)")
         c = GeminiClient(out, cap_usd=1.2)
         for x in P:
             c.generate(x["id"], x["prompt"], model="gemini-3-pro-image", size="2K")
