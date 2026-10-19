@@ -59,6 +59,10 @@ threshold, heuristic), risks as PASS/ADAPT/REVIEW/BLOCK, creative and anti-monot
 (`python -m explainer_engine.standards brief <rules> --role image`). Gates `final`, `script_lock`, `paid_assets`, `final_qa`;
 `production/paint.py` refuses a paid run without a passing `paid_assets` gate. Constrain specific risks, never creativity.
 
+**Upload per piece (creator, 2026-10-19):** each video or Short goes up to YouTube unlisted as soon as it passes its own tests,
+one at a time, never waiting for the batch (`docs/PRODUCTION_RULES.md` standing order 9); never public, the creator sets the
+thumbnail, sign-in by a fresh link per upload session.
+
 Also binding: crossover episodes of other people's fictional worlds follow docs/RIGHTS_AND_FAIR_USE.md (no third-party
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
 Pictures: the creator picks the provider for every batch (D-50, paint plan -> approve -> run; supersedes D-52's "Gemini

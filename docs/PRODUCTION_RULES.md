@@ -22,6 +22,12 @@ Read it before starting any video; update the feedback log (section 3) whenever 
 7. **Say what was and was not verified.** No legal or factual guarantee the sources do not give; a creator decision is recorded
    as a decision and its risk as a risk (RIGHTS_AND_FAIR_USE, invariant 5).
 8. **Reply to the creator in Georgian**, with numbers (words, seconds, dollars), the decision needed and the next step.
+9. **Upload each piece as soon as it passes** (creator, 2026-10-19: "whatever video or Short passes every test goes up to YouTube,
+   not everything together"). The long video and each Short are staged one by one, unlisted, the moment that piece has passed its
+   own tests (the seven-point test and QA for the video; render, frame look and loudness for a Short): `python -m
+   explainer_engine.publish stage <episode> --only <id> --yes --confirm '<the creator's standing order, 2026-10-19>'`. No waiting
+   for the batch. Unchanged: never public (the creator clicks Public), the creator sets the thumbnail in Studio, sign-in is a fresh
+   link per upload session (`publish auth-url` / `auth-finish`), and a piece that fails a test is fixed, not uploaded.
 
 ## 2. The gates, in order (a video does not skip one)
 
@@ -39,7 +45,7 @@ action. Gates 3-7 spend money and need the creator's yes first.
 | 6 | **Pictures (pod)** | limit = units x measured seconds x margin; approval with price and caps; pushed even on failure; contact sheet reviewed by eye, bad pictures repainted | TMR `cloud/lint_manifest.py` (`picture_budget`, `fatal_before_push`), `cloud/job_speeds.json`, runbook R6 |
 | 7 | **Full read and timings** | one paid read of the final text; Scribe words, coverage >= 97 %, pauses padded, `words.json` on the audio the mix uses; shot cuts recomputed | D-39, UR-12, `build_shots.py` 0 FAIL |
 | 8 | **Animatic and render** | GPU compositor (D-32), motion per UR-13, transitions UR-14, sound UR-15 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) |
-| 9 | **Seven-point test, QA and approval #2** | every video passes all seven checks of section 6 (`qa/scorecard.py`), then technical and editorial QA, the review bundle and the creator's recorded approval before any upload | section 6, [QA_SPECIFICATION](QA_SPECIFICATION.md) |
+| 9 | **Seven-point test, QA and approval #2** | every video passes all seven checks of section 6 (`qa/scorecard.py`), then technical and editorial QA; each piece that passes is staged unlisted at once (standing order 9: the creator's standing approval for unlisted staging); approval #2 is the creator's own click to Public | section 6, [QA_SPECIFICATION](QA_SPECIFICATION.md) |
 
 For an episode with a `production_script.json` (D-43) the gate command reads what that flow writes (audit 2026-10-19):
 the script (gate 0, PV rules with the picture folders), its voice text (1), `words.json` (2), the board on the real read (3),
@@ -59,6 +65,7 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-16 | The narrator is too generic, too stable and flat | Kokoro blends and pitch shifts stay generic | ElevenLabs voice Clyde (D-39); Kokoro only for drafts | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) |
 | 2026-10-16 | Write for an expressive read; mysterious, curious, funny | plain documentary prose | SCRIPTING_SPEC §8 | `narration-script` skill |
 | 2026-10-16 | The read is slow and monotone; the question is not asked like a question; stress on wrong words; add hmm / oh / eh where natural; study similar videos; write a big rules skill | wh-question hook falls; ellipses slow; no stressed word; no interjections; no open loops | N-01..N-10 | `narration_lint`, skill |
+| 2026-10-19 | Upload whatever video or Short passes every test right away, not everything together | Shorts waited for the long video and the whole batch | standing order 9 | `publish stage --only <id>` (per-piece state in `publish/youtube_state.json`) |
 | 2026-10-16 | Humour must never touch the facts; credible science | joke-driven rewrites risk false statements | SCRIPTING_SPEC §8.1, UR-21 | skill, editorial review |
 | 2026-10-16 | Pictures too generic: no named heroes, no fear, clichés of the primitive; real figures by name in every topic | prompts described places; B shots faceless; idle sprite poses; empty plates | UR-16..UR-21 (D-40) | `check_stakes`, `stakes.json`, skill `shot-visuals` |
 | 2026-10-16 | The man seen from behind and the main hero are different kinds of people; everything must be one world | UR-07 asked for natural proportions next to caricatures; two generators | UR-22; style bridge | `check_stakes`, `look.figure_style` |
