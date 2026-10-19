@@ -52,6 +52,28 @@ or synthetic content label; cartoon visuals, AI-assisted scripting and a synthet
 likeness do not by themselves require it (re-verify against the current page before each publishing batch). Audience: set
 "not made for kids" in Studio. Copyright: every asset has a licence record. Sensitive topics: second read done.
 
+## Publish checklist (PC-xx; `qa/publish_check.py` on the episode's `publish.json`, schema `publish/1`; audit 2026-10-19)
+
+Free and deterministic; it says what is missing or contradicts a rule, the decisions stay the creator's. Pages opened
+2026-10-19; re-open them before each publishing batch.
+
+| Id | Rule |
+|---|---|
+| PC-01 | the file matches `publish/1`; chapters start at 0:00, at least three, ascending, each at least 10 s (Help 9884579) |
+| PC-02 | audience "not made for kids" (D-17; Help 9528076) |
+| PC-03 | GenAI disclosure (Help 14328491): photoreal pictures, a realistic real person saying or doing what they did not, an altered real event or place, or AI music as the main focus need "disclose"; each trigger is answered true or false (REVIEW); real people with invented lines are flagged from the script |
+| PC-04 | a Short over 60 s uses only our own voice, library or procedural audio: any claim blocks a Short that long (Help 15424877) |
+| PC-05 | a Short is at most 180 s |
+| PC-06 | title at most 100 and description at most 5,000 characters |
+| PC-07 | a source link in the description, the mid-roll decision and the advertiser self-certification recorded (REVIEW) |
+| PC-08 | approval #2 recorded (who, which message); without it nothing is uploaded (REVIEW; invariant 4) |
+
+**Packaging review (Claude, in the session, before approval #2):** read the title, the thumbnail and the transcript of the
+first 30 s together and answer in writing: does the opening deliver what the title and thumbnail promise (Help 16559650), is
+anything misleading (Help 2801973, thumbnails Help 9229980), and does the episode differ from the earlier ones in premise and
+outcome (the inauthentic-content line "characters put in the same situation over and over again with the same outcome",
+Help 1311392). A "no" is a finding for the owner stage.
+
 ## Review bundle
 Contact sheet of mid-scene frames; scene preview clips; narration preview; audio peak and silence report; captions
 preview; the high-risk-scene list; unresolved factual issues; thumbnail preview; the technical report; the editorial

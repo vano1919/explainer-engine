@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "publish/1: what the creator types into Studio, checked before approval #2 (qa/publish_check.py, PC rules)",
+  "type": "object",
+  "required": ["schema", "title", "description", "chapters", "audience", "disclosure"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "publish/1"},
+    "title": {"type": "string", "minLength": 1},
+    "description": {"type": "string"},
+    "duration_s": {"type": "number", "exclusiveMinimum": 0},
+    "chapters": {"type": "array", "items": {"type": "object", "required": ["t", "title"], "additionalProperties": false,
+                 "properties": {"t": {"type": "string", "pattern": "^\\d{1,2}:\\d{2}(:\\d{2})?$"}, "title": {"type": "string", "minLength": 1}}}},
+    "audience": {"enum": ["not_made_for_kids", "made_for_kids"]},
+    "disclosure": {"type": "object", "required": ["decision", "reason"], "additionalProperties": false,
+                   "description": "Help 14328491: realistic AI content that makes a real person say or do what they did not, alters a real event or place, shows a realistic scene that did not occur, or AI music as the main focus",
+                   "properties": {"decision": {"enum": ["disclose", "not_needed"]}, "reason": {"type": "string", "minLength": 3},
+                                  "photoreal_pictures": {"type": "boolean"}, "real_person_realistic": {"type": "boolean"},
+                                  "real_event_altered": {"type": "boolean"}, "ai_music_main": {"type": "boolean"}}},
+    "mid_roll": {"enum": ["off", "on", "undecided"]},
+    "self_certification_answered": {"type": "boolean"},
+    "shorts": {"type": "array", "items": {"type": "object", "required": ["id", "seconds", "audio"], "additionalProperties": false,
+               "properties": {"id": {"type": "string"}, "seconds": {"type": "number", "exclusiveMinimum": 0},
+                              "audio": {"type": "array", "items": {"enum": ["own_voice", "library", "procedural", "licensed", "third_party"]}}}}},
+    "approval": {"type": ["object", "null"], "required": ["by", "ref"], "additionalProperties": false,
+                 "properties": {"by": {"type": "string", "minLength": 1}, "ref": {"type": "string", "minLength": 1}, "at": {"type": "string"}}}
+  }
+}
