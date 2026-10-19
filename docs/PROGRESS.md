@@ -432,3 +432,17 @@ the gap (nearest the gap's middle among the quietest), must be at most -40 dB or
 on a 10 ms fade; word times follow the real quiet spot. Re-run: 131 -> 113 silences, 67 -> 2 cut into sound (both borderline -37 /
 -42 dB), 18 insertions skipped (no quiet spot). Three cuts that relied on a skipped pause were moved to legal pauses (S18, S31, S32)
 and one reframe added (S31 "Fuel."). Tests: 210 passed. Creator picked speed 1.15.
+
+## 2026-10-19 — Research handoff checked against the code; voiced dialogue (D-45) and the Shorts set (SH-05)
+
+Target given by the creator: an 8-12 minute dialogue video plus 10 Shorts. The expected `docs/research/` package does not exist on
+`systemic/next-video`; the inputs were the creator's attached Georgian research `.docx` (no source list) and
+`docs/Explainer Engine Architecture Technical Analysis.docx` (39 links, mostly blogs; describes a stack this repository does not
+use: TinyDB/Redis, FLUX, an "EML" compiler). Checked against the code: the hook (UR-01/02, N-01), music ducking (`audio/duck.py`,
+UR-32), period hooks (SR-03, PV-27), the Shorts hook and pointer (SH-01, PV-28) and the Shorts metric (viewed vs swiped away) were
+already in place. Missing for the target: a line could not be read in a hero's own voice (one narrator voice only), and nothing
+checked a set of Shorts against itself. Added: optional `speaker` per line and `cast.<id>.voice` (schema), per-speaker read chunks
+with their voice id (`script.tts_chunks`), PV-32, `voice_check.check_speakers` used by `production words` for dialogue scripts,
+PV-28 set checks (same hook FAIL; shared body line, half the pictures shared, last line not pointing to the video REVIEW), SH-05.
+Narrator-only scripts chunk and check exactly as before (Day 1 chunks unchanged, Episode 1 Shorts pass SH-05). Tests: 218 passed,
+2 fail as before this change (gitignored sound files absent in a fresh clone); docs_lint 0. Nothing paid, nothing rendered.

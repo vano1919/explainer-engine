@@ -40,6 +40,7 @@ enforces the money and stop rules is `explainer_engine/core/ledger.py`. Gates of
 | SH-02 | A Short has its own text and script (`shorts` block of the production script); its voice is the episode's voice; pace may be raised by at most 8 % only when the timbre check passes, otherwise left as it is. |
 | SH-03 | Pictures are the video's pictures, cropped to 9:16 around the named heroes and the action (the crop centre is set per shot); faces are never cut. |
 | SH-04 | Each Short opens with a fact or a "did you know" that is true and sourced by the claim map. |
+| SH-05 | **A set of Shorts tells different scenes.** For one video's set (up to 10 planned for the 8-12 min video) every Short opens its own question and tells its own scene: no two hooks alike, no body line told in two Shorts, no two Shorts on mostly the same pictures (PV-28). Which angle wins is measured per Short (viewed vs swiped away, [PUBLISHING_AND_ANALYTICS](PUBLISHING_AND_ANALYTICS.md)), never assumed. |
 
 ## Money ledger of a run
 `jobs/<run>/run.json` holds caps, reservations, paid items and failures; the dollar and credit totals of the report are read from

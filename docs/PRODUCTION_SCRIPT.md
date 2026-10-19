@@ -20,7 +20,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 * `episode`, `voice` (provider, model, style words, pace range, tags; **never a real person's name to imitate** (PV-10); candidates for the test read),
   `world` (D-41 world spec), `look`, `cast` (hero names, hero card, props), `story` (events with their phrase, forbidden props),
   `library` (pictures that already exist), `music`, `sound_dirs`, `picture_dirs`.
-* `segments[]` (S01..): `lines[]` (text, tags, tone, emotion, one emphasised word, `pause_after`, claims), `shots[]` (phrase `at`, type A/B/C,
+* `segments[]` (S01..): `lines[]` (text, tags, tone, emotion, one emphasised word, `pause_after`, claims, optional `speaker` = a cast id read in that hero's own `cast.<id>.voice`, D-45), `shots[]` (phrase `at`, type A/B/C,
   picture id or inline picture with `subject`/`engine`/`refs`/`edit`/`heroes`/`shows`/`props`/`speakers`, motion, bubbles), `audio` (`beds`, `sfx` on phrases).
 * Engines: `existing` (a file), `gemini` (D-41 prompt, channel style refs), `pod_ref` (RunPod Qwen-Image-Edit from Gemini references), `pod_text`.
 
@@ -57,7 +57,8 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-25 | picture file present (REVIEW in a draft, FAIL with `--final`) |
 | PV-26 | likeness by reference: a picture painted by editing (`pod_ref`) that names a hero needs a reference picture whose library `heroes` lists that hero (the model copies the face from the reference) |
 | PV-27 | time-jump `periods`: every segment names a known period, a period's segments are consecutive, tone shares sum to 1; REVIEW when a period does not end on the question that opens the next (SR-03) |
-| PV-28 | `shorts`: the hook is one question of at most 14 words and the first line; 40-130 words (REVIEW); pictures are the video's own (SH-01..SH-03) |
+| PV-28 | `shorts`: the hook is one question of at most 14 words and the first line; 40-130 words (REVIEW); pictures are the video's own (SH-01..SH-03); the last line points to the video (REVIEW, SH-01); across the set no two hooks are the same (FAIL) and no two Shorts share a body line or half their pictures (REVIEW, SH-05) |
+| PV-32 | voiced dialogue (D-45): a line's `speaker` is in the cast and has `cast.<id>.voice` (FAIL); that voice is described, never imitated (PV-10); no voice id yet, or two speakers on one voice id (REVIEW) |
 
 ## Voice direction
 
@@ -66,7 +67,7 @@ a description of a sound, never "like <person>": no imitation and no cloning (PV
 from the candidates after a short test read; the full read follows only then.
 
 The read is made in chunks (`tts_chunks.json`, written by `compile`): whole segments, at most 900 characters each, one generation
-per chunk with the same voice, model and settings, each given the text before and after it. One generation of a whole 3-minute
+per chunk with the same voice, model and settings, each given the text before and after it. With voiced dialogue (D-45) a chunk never mixes speakers and names its `speaker` and `voice_id`; `words` then checks each voice against its own turns. One generation of a whole 3-minute
 read drifted to another-sounding voice after about three minutes (Day 1, 2026-10-16). `production words <script> T01.mp3 T02.mp3 ...`
 joins the chunks in order, and `audio/voice_check.py` lists every 15 s window whose timbre is far from the read's own median
 (VOICE-1, REVIEW: listen there; a chunk that sounds like another voice is read again, only that chunk).

@@ -18,3 +18,5 @@ Rules: `docs/ORCHESTRATION.md` SH-01..SH-04. A Short is a trailer with its own t
 6. Voice: the same ElevenLabs voice; if the pace is raised (at most 8 %), run `audio/voice_check` and keep the original on any
    timbre drift.
 7. Captions: English, large, inside the safe area; no text over faces.
+8. A set (up to 10 for one video): each Short its own scene and question, no body line or most pictures shared with
+   another Short (SH-05, PV-28). A voiced dialogue line keeps its `speaker` (D-45).

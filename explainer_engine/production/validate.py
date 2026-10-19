@@ -30,7 +30,12 @@ one two all any each every some more most much many few very just only also too 
 we our you your i me my out up down off again once now still yet even""".split())
 REAL_PERSON_VOICE = re.compile(r"\b(sound(s|ing)? like|in the voice of|imitat\w*|impersonat\w*|clon\w*|voice of)\b", re.I)
 NAME_LIKE = re.compile(r"\b[A-Z][a-z]+ [A-Z][a-z]+\b")
+POINTER = re.compile(r"\b(full (story|video|episode)|whole (story|video)|on the channel|the video|this episode|watch)\b", re.I)
 DUP_SIMILAR = 0.97
+
+
+def _norm(text: str) -> str:
+    return re.sub(r"\W+", " ", text.lower()).strip()
 
 
 def _f(out, rule, where, detail, sev="FAIL"):
@@ -225,6 +230,29 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     v = doc["voice"]
     if REAL_PERSON_VOICE.search(v["style"]) or NAME_LIKE.search(v["style"]):
         _f(out, "PV-10", "voice", "the voice style must describe the sound, never a real person to imitate or clone")
+    # PV-32 voiced dialogue (D-45): a speaking hero is in the cast and has a voice of their own, described, never imitated
+    spoken = [(seg["id"], ln) for seg in doc["segments"] for ln in seg["lines"]]
+    spoken += [(sh["id"], ln) for sh in doc.get("shorts", []) for ln in sh["lines"]]
+    for who in dict.fromkeys(ln["speaker"] for _, ln in spoken if ln.get("speaker")):
+        where = next(w for w, ln in spoken if ln.get("speaker") == who)
+        if who not in doc["cast"]:
+            _f(out, "PV-32", where, f"speaker {who!r} is not in the cast")
+        elif not doc["cast"][who].get("voice"):
+            _f(out, "PV-32", where, f"speaker {who!r} has no cast voice: describe it in cast.{who}.voice.style")
+        else:
+            hv = doc["cast"][who]["voice"]
+            if REAL_PERSON_VOICE.search(hv["style"]) or NAME_LIKE.search(hv["style"]):
+                _f(out, "PV-10", who, "the voice style must describe the sound, never a real person to imitate or clone")
+            if not hv.get("voice_id"):
+                _f(out, "PV-32", who, "no voice chosen yet for this hero: pick one after a test read, before the full read",
+                   "REVIEW")
+    if S.has_dialogue(doc):
+        ids = {}
+        for who in [S.NARRATOR] + [h for h in doc["cast"] if doc["cast"][h].get("voice")]:
+            vid = S.voice_of(doc, who)
+            if vid and vid in ids:
+                _f(out, "PV-32", who, f"same voice id as {ids[vid]!r}: two speakers must sound different", "REVIEW")
+            ids.setdefault(vid, who)
     # PV-27 time-jump periods: each period's last spoken line opens the next question; tone mix sums to about 1
     periods = {p["id"]: p for p in doc.get("periods", [])}
     if periods:
@@ -284,6 +312,22 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         for x in sh["shots"]:
             if x["picture"] not in pic_ids:
                 _f(out, "PV-28", sh["id"], f"picture {x['picture']!r} is not a picture of the video (SH-03)")
+        if len(sh["lines"]) > 1 and not POINTER.search(sh["lines"][-1]["text"]):
+            _f(out, "PV-28", sh["id"], "the last line does not point to the full video (SH-01)", "REVIEW")
+    # PV-28 a set of Shorts (SH-05): each opens its own question and tells its own scene
+    shorts = doc.get("shorts", [])
+    for i, a in enumerate(shorts):
+        for b in shorts[i + 1:]:
+            if _norm(a["hook"]) == _norm(b["hook"]):
+                _f(out, "PV-28", b["id"], f"the same hook as {a['id']}: every Short opens its own question (SH-05)")
+            shared = {_norm(x["text"]) for x in a["lines"][1:-1]} & {_norm(x["text"]) for x in b["lines"][1:-1]}
+            if shared:
+                _f(out, "PV-28", b["id"], f"{len(shared)} line(s) also told in {a['id']}: one scene, one Short (SH-05)",
+                   "REVIEW")
+            pa, pb = {x["picture"] for x in a["shots"]}, {x["picture"] for x in b["shots"]}
+            if pa and pb and len(pa & pb) / len(pa | pb) >= 0.5:
+                _f(out, "PV-28", b["id"], f"half or more of its pictures are also in {a['id']}: one scene, one Short (SH-05)",
+                   "REVIEW")
     # PV-12 narration lint on what the voice gets
     for f in narration_lint.lint(S.tts_text(doc)):
         if f["severity"] == "FAIL":

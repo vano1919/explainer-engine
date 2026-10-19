@@ -74,9 +74,19 @@ def cmd_words(doc: dict, audio: list[Path], out: Path, transcript: Path | None) 
         (out / "heard.json").write_text(json.dumps(res, indent=0), encoding="utf-8")
         heard, source = res["words"], res["source"]
     pcm, sr = voice_layer.read_wav(wav)
-    _, drift = voice_check.check(np.asarray(pcm, dtype=float), sr)
     aligned = scribe_words.align(S.narration_text(doc), heard, len(pcm) / sr)
     toks = S.tokens(doc)
+    if S.has_dialogue(doc):  # D-45: each voice against its own turns, never against the other voices
+        turns = []
+        for tk, w in zip(toks, aligned["words"]):
+            who = S.speaker(doc["segments"][tk["seg"]]["lines"][tk["line"]])
+            if turns and turns[-1][0] == who:
+                turns[-1][2] = w["e"]
+            else:
+                turns.append([who, w["s"], w["e"]])
+        _, drift = voice_check.check_speakers(np.asarray(pcm, dtype=float), sr, [tuple(x) for x in turns])
+    else:
+        _, drift = voice_check.check(np.asarray(pcm, dtype=float), sr)
     targets, k = {}, -1
     for seg_i, seg in enumerate(doc["segments"]):
         for li, line in enumerate(seg["lines"]):

@@ -66,26 +66,59 @@ def tts_text(doc: dict) -> str:
     return "\n".join(" ".join(tts_line(line) for line in seg["lines"]) for seg in doc["segments"]) + "\n"
 
 
+NARRATOR = "narrator"
+
+
+def speaker(line: dict) -> str:
+    """Who says a line: a cast id for a voiced dialogue line (D-45), else the narrator."""
+    return line.get("speaker") or NARRATOR
+
+
+def has_dialogue(doc: dict) -> bool:
+    return any(line.get("speaker") for seg in doc["segments"] for line in seg["lines"])
+
+
+def voice_of(doc: dict, who: str) -> str | None:
+    """The voice id that reads ``who``'s lines: the narrator's ``voice`` or the hero's ``cast.<id>.voice``."""
+    if who == NARRATOR:
+        return doc["voice"].get("voice_id")
+    return (doc["cast"].get(who, {}).get("voice") or {}).get("voice_id")
+
+
 def tts_chunks(doc: dict, max_chars: int = 900) -> list[dict]:
     """The read in chunks of whole segments, at most ``max_chars`` each (one segment longer than that is its own chunk).
     One v4 generation of the whole Day 1 read (2,917 characters) drifted to another-sounding voice after ~3 minutes
     (``audio/voice_check.py``); each chunk is one generation with the same voice and settings, and carries the text
-    before and after it so the delivery joins up. The chunks are joined by ``production words`` (several files)."""
-    segs = [(seg["id"], " ".join(tts_line(line) for line in seg["lines"])) for seg in doc["segments"]]
+    before and after it so the delivery joins up. The chunks are joined by ``production words`` (several files).
+    Voiced dialogue (D-45): a chunk never mixes speakers. A run of one speaker's lines inside a segment is the unit,
+    and each chunk names its ``speaker`` and the ``voice_id`` that reads it; a narrator-only script chunks as before."""
+    units = []  # [segment id, speaker, tts lines]
+    for seg in doc["segments"]:
+        for line in seg["lines"]:
+            if units and units[-1][0] == seg["id"] and units[-1][1] == speaker(line):
+                units[-1][2].append(tts_line(line))
+            else:
+                units.append([seg["id"], speaker(line), [tts_line(line)]])
+    units = [(sid, who, " ".join(lines)) for sid, who, lines in units]
     groups, cur = [], []
-    for sid, text in segs:
-        if cur and sum(len(t) + 1 for _, t in cur) + len(text) > max_chars:
+    for u in units:
+        if cur and (cur[-1][1] != u[1] or sum(len(t) + 1 for _, _, t in cur) + len(u[2]) > max_chars):
             groups.append(cur)
             cur = []
-        cur.append((sid, text))
+        cur.append(u)
     if cur:
         groups.append(cur)
+    dialogue = has_dialogue(doc)
     out = []
     for k, g in enumerate(groups):
-        out.append({"id": f"T{k + 1:02d}", "segments": [s for s, _ in g], "text": "\n".join(t for _, t in g),
-                    "chars": sum(len(t) for _, t in g),
-                    "previous_text": groups[k - 1][-1][1] if k else "",
-                    "next_text": groups[k + 1][0][1] if k + 1 < len(groups) else ""})
+        c = {"id": f"T{k + 1:02d}", "segments": list(dict.fromkeys(s for s, _, _ in g)),
+             "text": "\n".join(t for _, _, t in g),
+             "chars": sum(len(t) for _, _, t in g),
+             "previous_text": groups[k - 1][-1][2] if k else "",
+             "next_text": groups[k + 1][0][2] if k + 1 < len(groups) else ""}
+        if dialogue:
+            c.update(speaker=g[0][1], voice_id=voice_of(doc, g[0][1]))
+        out.append(c)
     return out
 
 

@@ -186,6 +186,53 @@
             "items": {
               "type": "string"
             }
+          },
+          "voice": {
+            "type": "object",
+            "description": "the hero's own voice for spoken dialogue lines (D-45): a description of the sound, never a real person to imitate (PV-10, PV-32)",
+            "required": [
+              "style"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "voice_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "style": {
+                "type": "string",
+                "minLength": 10
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "voice_id",
+                    "name"
+                  ],
+                  "properties": {
+                    "voice_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "why": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -354,6 +401,10 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "speaker": {
+                  "type": "string",
+                  "description": "cast id of the hero who speaks this line in their own voice (D-45, PV-32); absent = the narrator"
                 }
               }
             }
@@ -638,6 +689,10 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "speaker": {
+                  "type": "string",
+                  "description": "cast id of the hero who speaks this line in their own voice (D-45, PV-32); absent = the narrator"
                 }
               }
             }
