@@ -15,6 +15,7 @@ import threading
 import time
 from pathlib import Path
 
+from explainer_engine.core.spend_caps import check_caps
 from explainer_engine.core.store import write_json_atomic
 
 STOP_FRACTION = 0.8
@@ -51,6 +52,7 @@ class Run:
         else:
             data = {"created": time.strftime("%Y-%m-%dT%H:%M:%S"), "caps": dict(caps or {}), "spent": {}, "reserved": {},
                     "phases": {}, "items": {}, "failures": {}, "meta": meta}
+        data["caps"] = check_caps(data["caps"])  # the creator's ceilings (config/spend_caps.json, D-56)
         run = cls(path, data)
         run.save()
         return run
@@ -110,6 +112,23 @@ class Run:
         with self.lock:
             self.data["spent"][service] = max(0.0, self.spent(service) - amount)
             self.save()
+
+    def settle(self, service: str, item: str, actual: float) -> float:
+        """Replace an item's reservation with what the provider really billed (a pod's RunPod billing). Money already spent
+        is recorded even past a cap; returns the change to ``spent``."""
+        with self.lock:
+            row = self.data["reserved"].get(item) or {"service": service, "amount": 0.0}
+            delta = actual - row["amount"]
+            self.data["spent"][service] = max(0.0, self.spent(service) + delta)
+            self.data["reserved"][item] = {"service": service, "amount": actual, "settled": True}
+            self.save()
+            return delta
+
+    def rename_reservation(self, old: str, new: str) -> None:
+        with self.lock:
+            if old in self.data["reserved"]:
+                self.data["reserved"][new] = self.data["reserved"].pop(old)
+                self.save()
 
     # --- items and phases --------------------------------------------------------------------------------------------
     def done(self, kind: str, item: str, **info) -> None:

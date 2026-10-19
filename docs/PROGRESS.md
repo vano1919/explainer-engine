@@ -667,3 +667,16 @@ death year, uninvented-looking Shorts, graphics one segment early); all applied;
 mean 3.92) leaves only EG-11 REVIEWs (C-03, C-05, C-17, C-29 unused). Rulebook v7 (RK-12 per-Short flags, new RK-19) and
 the `script_lock` stamp pass; `paid_assets` is stale until re-checked. `production validate`: only PV-05 (pictures not yet
 made). Tests: the full suite (397) including `test_syndicate_wars_example.py`.
+
+## 2026-10-19 — RunPod money control in code (D-56)
+Found (RunPod API, read-only): a stopped TMR preflight pod `etkpzxh16v1ksm` (60 GB volume) had billed $0.40/day since
+2026-10-17 (billing API: $0.40, $0.40, $0.23 so far today) with the balance at $0.97; deleted on the creator's word, API shows
+0 pods and $0/h after. Cause in the rules: they said "sweep and delete at the end" but nothing ran them, and TMR's sweep
+ignored stopped pods unless `--delete`. Built (narrow; the in-pod side stays in TMR): `explainer_engine/cloud/runpod.py`
+(port of TMR `rp.py` with retries, a create that is never POSTed twice, verified idempotent stop/delete, per-pod sessions,
+guard with lifetime/boot/blind handling, `check`, `cost` from `GET /billing/pods`, `PodSession`), `config/spend_caps.json` +
+`core/spend_caps.py` (the ledger refuses caps above the ceilings), `Run.settle`, and session hooks `cloud/hooks.py`
+(SessionStart report, Stop refuses to end a turn while something bills unapproved, Bash refuses `rp.py create/start` and raw
+`POST /pods`). Tests: `tests/unit/test_runpod.py` (27, fake RunPod API, no network); full suite 424 passed, docs_lint 0. No pod was started; $0 spent.
+Not changed: TMR's conductor still deletes its pod at DONE by manifest (`end_action`), and its money clock restarts with a
+container restart (`/proc/1` ctime); the outside guard here keeps the session clock, so it covers that case.
