@@ -136,6 +136,18 @@ class Sounds:
         return load_audio(p)
 
 
+def cue_bus(cues: list[dict], n: int) -> np.ndarray:
+    """VB-08: the timed beat cues (25-200 ms, at most -20 dB) on one track of ``n`` samples at SR (the Shorts use it too)."""
+    t = lambda s: int(round(s * SR))  # noqa: E731
+    bus = np.zeros(n)
+    for c in cues:
+        a = t(c["start"])
+        w = CUES.render(c["sound"])[: t((c.get("max_ms") or 1e9) / 1000) or None] * db(c.get("gain_db", CUES.DEFAULT_GAIN_DB))
+        w = w[: max(0, n - a)]
+        bus[a:a + len(w)] += w
+    return bus
+
+
 def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict) -> np.ndarray:
     n = len(narration)
     t = lambda s: int(round(s * SR))  # noqa: E731
@@ -179,17 +191,12 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
             for b in s["bubbles"]:
                 a = t(b["start"])
                 fx[a:a + len(pop)] += pop[: max(0, n - a)]
-    cue_bus = np.zeros(n)  # VB-08: beat cues ride over everything without ducking it (25-200 ms, at most -20 dB)
-    for c in au.get("cues", []):
-        a = t(c["start"])
-        w = CUES.render(c["sound"])[: t((c.get("max_ms") or 1e9) / 1000) or None] * db(c.get("gain_db", CUES.DEFAULT_GAIN_DB))
-        w = w[: max(0, n - a)]
-        cue_bus[a:a + len(w)] += w
+    bus = cue_bus(au.get("cues", []), n)  # VB-08: beat cues ride over everything without ducking it
     stats["cues"] = len(au.get("cues", []))
     fduck = duck.duck_gain(fx, SR, n, depth_db=9.0, threshold=0.01, attack_ms=20, release_ms=280, hold_ms=80)
     bduck = duck.duck_gain(fx, SR, n, depth_db=4.0, threshold=0.01, attack_ms=25, release_ms=350, hold_ms=80)
     stats["music_dip_max_step_db_per_ms"] = round(duck.max_step_db_per_ms(fduck, SR), 3)
-    mix = voice * db(-3) + (bed * bduck + music * fduck) * vduck + fx + cue_bus
+    mix = voice * db(-3) + (bed * bduck + music * fduck) * vduck + fx + bus
     speaking = env > 0.15
     stats.update(voice_rms_db=round(rms_db((voice * db(-3))[speaking]), 2),
                  bed_rms_db=round(rms_db((bed * vduck)[speaking]), 2), music_rms_db=round(rms_db((music * vduck)[speaking]), 2))
@@ -278,6 +285,50 @@ def picture_image(pid: str, pics: dict, dirs: list[Path], final: bool, report: l
 def to_frame(pt, box, W, H, OW, OH):
     x0, y0, x1, y1 = box
     return ((pt[0] * W - x0) / (x1 - x0) * OW, (pt[1] * H - y0) / (y1 - y0) * OH)
+
+
+def hero_faces_of(timed: dict) -> dict:
+    """The cast's expression cut-outs and face sheets as the beat and face renderers take them."""
+    hero_faces = {who: {"expressions": e} for who, e in timed.get("expressions", {}).items()}
+    for who, sheet in timed.get("face_sheets", {}).items():
+        hero_faces.setdefault(who, {})["face_sheet"] = sheet
+    return hero_faces
+
+
+def beats_for_shot(all_beats: list[dict], s: dict, pics: dict, hero_faces: dict, picture_dirs: list[Path]) -> list[dict]:
+    """VB rules: the beats on screen during shot ``s`` (a picture-bound one only in its own shot); expressions get the
+    face point of the shot's picture and, when the hero's sheet is painted, the close-up (VB-09)."""
+    on = [b for b in all_beats if b["start_frame"] < s["end_frame"] and max(b["end_frame"], b["start_frame"] + 1) > s["start_frame"]
+          and (b["kind"] not in BEATS.PICTURE_BOUND or b["shot"] == s["id"])]
+    face = {id(b): b for b in BEATS.faces(on, pics)}
+    on = [dict(b, face=face[id(b)]["face"]) if id(b) in face else b for b in on]
+    keyed = {(b["start_frame"], b["who"]): b["close_up"] for b in FACES.sheet_beats(on, hero_faces, picture_dirs)}
+    return [dict(b, close_up=keyed[(b["start_frame"], b["who"])]) if b["kind"] == "expression"
+            and (b["start_frame"], b.get("who")) in keyed else b for b in on]
+
+
+def finish_frame(im: Image.Image, box, s: dict, f: int, fps: int, size: tuple[int, int], sb: list[dict], hero_faces: dict,
+                 face_order: list[str], picture_dirs: list[Path], bubbles: list | None = None,
+                 before: Image.Image | None = None) -> Image.Image:
+    """One frame of shot ``s`` from its picture and the crop ``box`` of the shot's own move: the face focus (VB-02), the
+    accents (MO), the close-ups (VB-09), the bubbles and the visual beats. The long video and the Shorts both draw here."""
+    f0, f1 = s["start_frame"], s["end_frame"]
+    W, H = im.size
+    if sb:  # VB-02: the speaking face is the focus; each expression change pops toward it
+        box = BEATS.face_camera(box, W, H, [b for b in sb if b.get("face") is not None and b["shot"] == s["id"]], f, fps)
+    acc = s.get("accents", [])
+    if acc:  # MO rules (D-48): punch, shake, wobble move the crop; whips, flashes and words are drawn
+        box = ACC.apply_camera(box, W, H, *ACC.camera(acc, f, fps, f0))
+    frame = im.resize(size, Image.BICUBIC, box=box)
+    if acc:
+        frame = ACC.draw(frame, acc, f, fps, f0, f1, before, BUB.FONT)
+    if sb:  # VB-09: in dialogue the speaking hero's keyed close-up over the scene, zoomed and blurred
+        frame = FACES.composite(frame, [b for b in sb if b.get("close_up") and b["shot"] == s["id"]], f, fps, face_order)
+    if bubbles:
+        frame = BUB.composite(frame, bubbles, f / fps)
+    if sb:
+        frame = BEATS.draw(frame, sb, f, fps, box, (W, H), hero_faces, picture_dirs)
+    return frame
 
 
 CHUNK_SECONDS = 60.0  # a render is written in chunks that survive a restart of the machine; a restart costs at most one chunk
@@ -425,22 +476,8 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         plan_file.write_text(json.dumps({"stamp": stamp, "bounds": bounds}))
     cache: dict = {}
     all_beats = timed.get("visual_beats", [])
-    hero_faces = {who: {"expressions": e} for who, e in timed.get("expressions", {}).items()}
-    for who, sheet in timed.get("face_sheets", {}).items():
-        hero_faces.setdefault(who, {})["face_sheet"] = sheet
+    hero_faces = hero_faces_of(timed)
     face_order = sorted(hero_faces)
-
-    def shot_beats(k: int) -> list[dict]:
-        """VB rules: the beats on screen during shot k (a picture-bound one only in its own shot); expressions get the
-        face point of the shot's picture."""
-        s = shots[k]
-        on = [b for b in all_beats if b["start_frame"] < s["end_frame"] and max(b["end_frame"], b["start_frame"] + 1) > s["start_frame"]
-              and (b["kind"] not in BEATS.PICTURE_BOUND or b["shot"] == s["id"])]
-        face = {id(b): b for b in BEATS.faces(on, pics)}
-        on = [dict(b, face=face[id(b)]["face"]) if id(b) in face else b for b in on]
-        keyed = {(b["start_frame"], b["who"]): b["close_up"] for b in FACES.sheet_beats(on, hero_faces, picture_dirs)}
-        return [dict(b, close_up=keyed[(b["start_frame"], b["who"])]) if b["kind"] == "expression"
-                and (b["start_frame"], b.get("who")) in keyed else b for b in on]
 
     def prep(k: int):
         """The graded picture and the bubbles of shot k. A run of shots on one picture shares one grading (the seed is the
@@ -477,24 +514,11 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         W, H = im.size
         u = (f - f0) / max(1, f1 - f0 - 1)
         box = motion_box(s.get("render_motion", s["motion"]), W, H, u)
-        sb = beats_of.get(k) or []
-        if sb:  # VB-02: the speaking face is the focus; each expression change pops toward it
-            box = BEATS.face_camera(box, W, H, [b for b in sb if b.get("face") is not None and b["shot"] == s["id"]], f, fps)
-        acc = s.get("accents", [])
-        if acc:  # MO rules (D-48): punch, shake, wobble move the crop; whips, flashes and words are drawn
-            box = ACC.apply_camera(box, W, H, *ACC.camera(acc, f, fps, f0))
-        frame = im.resize((OW, OH), Image.BICUBIC, box=box)
-        if acc:
-            frame = ACC.draw(frame, acc, f, fps, f0, f1, before, BUB.FONT)
-        if sb:  # VB-09: in dialogue the speaking hero's keyed close-up over the scene, zoomed and blurred
-            frame = FACES.composite(frame, [b for b in sb if b.get("close_up") and b["shot"] == s["id"]], f, fps, face_order)
-        if bubbles:
-            frame = BUB.composite(frame, bubbles, f / fps)
-        if sb:
-            frame = BEATS.draw(frame, sb, f, fps, box, (W, H), hero_faces, picture_dirs)
+        frame = finish_frame(im, box, s, f, fps, (OW, OH), beats_of.get(k) or [], hero_faces, face_order, picture_dirs,
+                             bubbles, before)
         return overlays(frame, f, fps, timed)
 
-    beats_of = {k: shot_beats(k) for k in range(len(shots))} if all_beats else {}
+    beats_of = {k: beats_for_shot(all_beats, s, pics, hero_faces, picture_dirs) for k, s in enumerate(shots)} if all_beats else {}
 
     written, reused = 0, 0
     todo = range(len(bounds)) if only is None else range(*only)  # a part-by-part run draws only its chunks (e.g. 0:3)

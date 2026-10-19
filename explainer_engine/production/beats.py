@@ -89,6 +89,25 @@ def has_beats(doc: dict) -> bool:
     return any(ln.get("visual_beats") for seg in doc["segments"] for ln in seg["lines"])
 
 
+SHORT_PUSH = 1.07  # a Short's shot pushes in from 1.0 to this over its length (production/shorts.py)
+
+
+def has_short_beats(doc: dict) -> bool:
+    return any(ln.get("visual_beats") for sh in doc.get("shorts", []) for ln in sh["lines"])
+
+
+def short_doc(doc: dict, short: dict) -> dict:
+    """SS-09: a Short as a script of its own (one segment named after the Short, its lines, its shots on the video's
+    pictures), so the VB lint, the timing and the cadence check run on it unchanged and report "SH03 line 2"."""
+    pics, _ = S.pictures(doc)
+    shots = [{"at": x["at"], "picture": x["picture"], "type": "A", "crop_x": x["crop_x"], "zoom": x.get("zoom", 1.0),
+              "motion": {"kind": "push", "z0": 1.0, "z1": SHORT_PUSH}} for x in short["shots"]]
+    return {"schema": doc.get("schema"), "episode": doc["episode"], "voice": doc["voice"], "cast": doc.get("cast", {}),
+            "library": {k: {kk: vv for kk, vv in v.items() if kk not in ("id", "source", "first_use", "uses")}
+                        for k, v in pics.items()},
+            "segments": [{"id": short["id"], "beat": "short", "light_beat": 1, "lines": short["lines"], "shots": shots}]}
+
+
 def payload(b: dict) -> str:
     return " ".join([b.get("text", ""), b.get("thing", ""), " ".join(b.get("labels", [])), b.get("unit", "")]).strip()
 
@@ -645,6 +664,7 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
          dirs: list[Path]) -> Image.Image:
     """Every beat of the shot active at frame ``f``, drawn on the finished frame (after accents and bubbles)."""
     OW, OH = frame.size
+    U = min(OW, OH)  # mark size: the short side, so a 9:16 Short draws marks as big as the video does, not 1.8x
     W, H = src_size
     active = [b for b in shot_beats if b["kind"] != "accent" and b["start_frame"] <= f < max(b["end_frame"], b["start_frame"] + 1)]
     if not active:
@@ -670,24 +690,24 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
             d = ImageDraw.Draw(lay)
             frame = ACC._text_layer(frame, b["text"], (px, py), sc * TEXT_SCALE, a / 255, BUB.SHOUT_FONT, big=False)
         elif kind == "label":
-            tx, ty = x + (-1 if px > 0.5 else 1) * OH * 0.16, max(OH * 0.08, y - OH * 0.14)
-            d.line([(x, y), (tx, ty)], fill=PAPER + (a,), width=max(2, OH // 220))
-            d.ellipse([x - OH * 0.008, y - OH * 0.008, x + OH * 0.008, y + OH * 0.008], fill=CORAL + (a,))
-            _tag(d, b["text"], tx, ty, OH * 0.06 * min(sc, 1.05), a)
+            tx, ty = x + (-1 if px > 0.5 else 1) * U * 0.16, max(U * 0.08, y - U * 0.14)
+            d.line([(x, y), (tx, ty)], fill=PAPER + (a,), width=max(2, U // 220))
+            d.ellipse([x - U * 0.008, y - U * 0.008, x + U * 0.008, y + U * 0.008], fill=CORAL + (a,))
+            _tag(d, b["text"], tx, ty, U * 0.06 * min(sc, 1.05), a)
         elif kind == "highlight":
-            r = OH * 0.13 * (b.get("strength") or 1.0)
+            r = U * 0.13 * (b.get("strength") or 1.0)
             sweep = 360 * _ease(t / 0.35)
-            d.arc([x - r, y - r * 0.8, x + r, y + r * 0.8], -90, -90 + sweep, fill=CORAL + (a,), width=max(4, OH // 90))
+            d.arc([x - r, y - r * 0.8, x + r, y + r * 0.8], -90, -90 + sweep, fill=CORAL + (a,), width=max(4, U // 90))
         elif kind == "symbol":
-            _symbol(d, b["symbol"], x, y, OH * 0.085 * sc, a)
+            _symbol(d, b["symbol"], x, y, U * 0.085 * sc, a)
         elif kind == "chart":
-            _chart(d, b, x, y, OH, t, a)
+            _chart(d, b, x, y, U, t, a)
         elif kind == "prop":
             im = _sprite(find_file(b.get("asset"), dirs))
             if im is None:
-                _tag(d, b["thing"], x, y, OH * 0.06 * min(sc, 1.05), a)
+                _tag(d, b["thing"], x, y, U * 0.06 * min(sc, 1.05), a)
             else:
-                h = int(OH * 0.26 * sc)
+                h = int(U * 0.26 * sc)
                 w = max(1, int(im.width * h / max(1, im.height)))
                 piece = im.resize((w, max(1, h)), Image.BICUBIC)
                 if a < 255:
@@ -699,11 +719,11 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
             face = (b.get("face") or None)
             if face is not None:
                 fx, fy = _to_frame(face, box, W, H, OW, OH)
-                r = OH * MARK_R * min(sc, 1.05)
-                emotion_mark(d, b["expression"], fx + OH * 0.13, fy - OH * 0.13, r, a)
+                r = U * MARK_R * min(sc, 1.05)
+                emotion_mark(d, b["expression"], fx + U * 0.13, fy - U * 0.13, r, a)
             sprite = _sprite(find_file((cast.get(b["who"], {}).get("expressions") or {}).get(b["expression"]), dirs))
             if sprite is not None:  # the face inset: the hero's own cut-out for this expression, swapped on every change
-                h = int(OH * 0.34 * sc)
+                h = int(U * 0.34 * sc)
                 w = max(1, int(sprite.width * h / max(1, sprite.height)))
                 left = face is not None and face[0] > 0.5
                 ix = int(OW * 0.03) if left else int(OW * 0.97) - w

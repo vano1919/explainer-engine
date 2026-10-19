@@ -16,4 +16,6 @@ You write the `shorts` block only (stage guard `shorts`). Read `docs/STORY_ENGIN
    a reaction line, the ending. Reuse lines of the main read where they fit (EL-09: new text costs credits). A voiced
    dialogue line keeps its `speaker`.
 4. Shots: the video's own pictures cropped 9:16 (`crop_x` on the speaking face).
-5. `production validate`: PV-28 and PV-34 with 0 FAIL; report new characters per Short.
+5. Hand the Short lines that are not lines of the video (hook, pointer) to the `beat-writer` (SS-09: a Short carries the
+   same visual beats and cues; the video's own lines bring theirs).
+6. `production validate`: PV-28, PV-34 and PV-44 with 0 FAIL; report new characters per Short.

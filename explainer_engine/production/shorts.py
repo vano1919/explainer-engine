@@ -1,5 +1,8 @@
 """Render one Short of the production script's ``shorts`` block (docs/ORCHESTRATION.md SH-01..SH-04): 1080x1920, the video's own
-pictures cropped around the hero (``crop_x``, ``zoom``) with a slow push, the same narrator, word-timed captions, a low music bed.
+pictures cropped around the hero (``crop_x``, ``zoom``) with a slow push, the same narrator, word-timed captions, a low music bed,
+and the same visual-beat layer as the long video (SS-09): the Short is timed by ``timing.time_script`` on ``beats.short_doc`` and
+every frame is finished by ``assemble.finish_frame`` (face focus, accents, close-ups, beats); the beats' cues are mixed with
+``assemble.cue_bus``.
 
     python -m explainer_engine.production.shorts <script.json> --id SH01 --audio <read.mp3> --out <dir> [--pics DIR ...] [--tempo 1.05]
 
@@ -13,15 +16,20 @@ import argparse
 import json
 import subprocess
 import sys
+import wave
 from pathlib import Path
 
 import numpy as np
+from PIL import Image
 
 from explainer_engine.audio import local_words, scribe_words, voice_check, voice_layer
+from explainer_engine.production import assemble as ASM
+from explainer_engine.production import beats as BEATS
 from explainer_engine.production import script as S
+from explainer_engine.production import timing as T
 from explainer_engine.qa import targets
 
-W, H, FPS = 1080, 1920, 30
+W, H = 1080, 1920  # the frame rate is the episode's (timing.time_script)
 MAX_TEMPO = 1.08
 
 
@@ -55,19 +63,91 @@ def short_words(short: dict, wav: Path, out: Path) -> dict:
     return aligned
 
 
-def shot_times(short: dict, words: list[dict], duration: float) -> list[dict]:
-    toks = scribe_words.script_tokens(narration(short))
-    rows, cursor = [], 0
-    for k, sh in enumerate(short["shots"]):
-        i = 0 if k == 0 else S.find_phrase([{"w": t["w"]} for t in toks], sh["at"], cursor)
-        if i is None:
-            raise ValueError(f"{short['id']}: phrase {sh['at']!r} not found in order")
-        cursor = i + 1
-        start = 0.0 if k == 0 else max(0.0, words[i]["s"] - 0.12)
-        rows.append(dict(sh, start=round(start, 3)))
-    for k, r in enumerate(rows):
-        r["end"] = rows[k + 1]["start"] if k + 1 < len(rows) else round(duration, 3)
-    return rows
+def time_short(doc: dict, short: dict, words: list[dict], duration: float) -> dict:
+    """The Short timed like the video (SS-09): its shots, visual beats (accent beats join their shot's accents) and cues on
+    the read's words. Shot k of the result is ``short["shots"][k]``."""
+    timed = T.time_script(BEATS.short_doc(doc, short), {"words": words, "duration": duration})
+    if timed["problems"]:
+        raise ValueError(f"{short['id']}: {timed['problems'][0]['detail']}")
+    for row, sh in zip(timed["shots"], short["shots"]):
+        row.update(crop_x=float(sh["crop_x"]), zoom=float(sh.get("zoom", 1.0)))
+    return timed
+
+
+def crop_box(row: dict, iw: int, ih: int, u: float) -> tuple[float, float, float, float]:
+    """The 9:16 crop of a shot in picture pixels: ``zoom`` and ``crop_x`` set it, a push of ``beats.SHORT_PUSH`` runs over
+    the shot (``u`` 0..1) about its centre."""
+    z = float(row.get("zoom", 1.0))
+    ch = ih / z
+    cw = min(iw, ch * W / H)
+    cx = min(max(float(row["crop_x"]) * iw, cw / 2), iw - cw / 2)
+    k = 1 + (BEATS.SHORT_PUSH - 1) * min(max(u, 0.0), 1.0)
+    return (cx - cw / 2 / k, ih / 2 - ch / 2 / k, cx + cw / 2 / k, ih / 2 + ch / 2 / k)
+
+
+def fit_spots(beats: list[dict], row: dict, iw: int, ih: int, margin: float = 0.08) -> int:
+    """A label or ring points at a spot of the picture; written for the 16:9 frame, the spot may fall outside the Short's
+    9:16 crop. Such a spot is moved to the nearest place inside the crop (the leader then points toward the thing).
+    Returns how many were moved (the report lists it)."""
+    x0, y0, x1, y1 = crop_box(row, iw, ih, 0.0)
+    mx, my = (x1 - x0) * margin, (y1 - y0) * margin
+    moved = 0
+    for b in beats:
+        if b["kind"] in ("label", "highlight") and b.get("pos") and b["shot"] == row["id"]:
+            px, py = b["pos"][0] * iw, b["pos"][1] * ih
+            nx, ny = min(max(px, x0 + mx), x1 - mx), min(max(py, y0 + my), y1 - my)
+            if (nx, ny) != (px, py):
+                b["pos"] = [nx / iw, ny / ih]
+                moved += 1
+    return moved
+
+
+def short_frame(im: Image.Image, row: dict, f: int, fps: int, sb: list[dict], hero_faces: dict, dirs: list[Path],
+                before: Image.Image | None = None) -> Image.Image:
+    """Frame ``f`` of shot ``row``: its crop and push, then everything ``assemble.finish_frame`` draws on the video."""
+    u = (f - row["start_frame"]) / max(1, row["end_frame"] - row["start_frame"])
+    box = crop_box(row, *im.size, u)
+    return ASM.finish_frame(im, box, row, f, fps, (W, H), sb, hero_faces, sorted(hero_faces), dirs, None, before)
+
+
+def render_video(timed: dict, pics: dict, pic_dirs: list[Path], out: Path, short_id: str) -> int:
+    """The silent 1080x1920 video, frame by frame; returns how many beat spots were moved into the crop."""
+    fps, rows = timed["fps"], timed["shots"]
+    hero_faces = ASM.hero_faces_of(timed)
+    beats = [dict(b) for b in timed.get("visual_beats", [])]
+    ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(fps),
+                           "-i", "-", "-c:v", "libx264", "-crf", "16", "-preset", "medium", "-pix_fmt", "yuv420p",
+                           "-frames:v", str(timed["frames"]), str(out)], stdin=subprocess.PIPE)
+    moved, last = 0, None
+    for row in rows:
+        name = (pics.get(row["picture"]) or {}).get("file") or f"{row['picture']}.png"
+        pic = next((d / name for d in pic_dirs if (d / name).exists()), None)
+        if pic is None:
+            ff.kill()
+            raise FileNotFoundError(f"{short_id}: picture {name} not found")
+        im = Image.open(pic).convert("RGB")
+        moved += fit_spots(beats, row, *im.size)
+        sb = ASM.beats_for_shot(beats, row, timed["pictures"], hero_faces, pic_dirs) if beats else []
+        before = last
+        for f in range(row["start_frame"], row["end_frame"]):
+            last = short_frame(im, row, f, fps, sb, hero_faces, pic_dirs, before)
+            ff.stdin.write(last.tobytes())
+    ff.stdin.close()
+    if ff.wait() != 0:
+        raise SystemExit(f"{short_id}: ffmpeg failed")
+    return moved
+
+
+def with_cues(wav: Path, cues: list[dict], out: Path) -> Path:
+    """VB-08: the read with the beats' cues on it (``assemble.cue_bus``; the read is 48 kHz mono, as the long mix)."""
+    pcm, sr = voice_layer.read_wav(wav)
+    assert sr == ASM.SR, f"the Short's read is {sr} Hz, the cues are made at {ASM.SR}"
+    mix = np.clip(np.asarray(pcm, dtype=np.float64) + ASM.cue_bus(cues, len(pcm)), -1, 1)
+    path = out / "voice_cues.wav"
+    with wave.open(str(path), "wb") as w:
+        w.setnchannels(1), w.setsampwidth(2), w.setframerate(sr)
+        w.writeframes((mix * 32767).astype("<i2").tobytes())
+    return path
 
 
 def ass_captions(words: list[dict], path: Path) -> None:
@@ -96,21 +176,6 @@ def ass_captions(words: list[dict], path: Path) -> None:
     path.write_text(head + "\n".join(rows) + "\n", encoding="utf-8")
 
 
-def clip(pic: Path, sh: dict, dur: float, out: Path) -> None:
-    from PIL import Image
-    iw, ih = Image.open(pic).size
-    z = float(sh.get("zoom", 1.0))
-    ch = ih / z
-    cw = min(iw, ch * 9 / 16)
-    cx = min(max(float(sh["crop_x"]) * iw, cw / 2), iw - cw / 2)
-    x0, y0 = cx - cw / 2, (ih - ch) / 2
-    n = max(1, int(round(dur * FPS)))
-    vf = (f"crop={int(cw)}:{int(ch)}:{int(x0)}:{int(y0)},scale={W}:{H}:flags=lanczos,"
-          f"zoompan=z='min(1+0.07*on/{n},1.07)':d=1:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s={W}x{H}:fps={FPS}")
-    _run(["ffmpeg", "-v", "error", "-y", "-loop", "1", "-framerate", str(FPS), "-t", f"{dur:.3f}", "-i", str(pic), "-vf", vf,
-          "-frames:v", str(n), "-c:v", "libx264", "-crf", "16", "-preset", "medium", "-pix_fmt", "yuv420p", str(out)])
-
-
 def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path], music: Path | None, tempo: float) -> Path:
     short = next(s for s in doc["shorts"] if s["id"] == short_id)
     out.mkdir(parents=True, exist_ok=True)
@@ -118,23 +183,14 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
     aligned = short_words(short, wav, out)
     pcm, sr = voice_layer.read_wav(wav)
     duration = len(pcm) / sr + 0.5
-    rows = shot_times(short, aligned["words"], duration)
+    timed = time_short(doc, short, aligned["words"], duration)
     pics, _ = S.pictures(doc)
-    parts = []
-    for k, r in enumerate(rows):
-        name = (pics.get(r["picture"]) or {}).get("file") or f"{r['picture']}.png"
-        pic = next((d / name for d in pic_dirs if (d / name).exists()), None)
-        if pic is None:
-            raise FileNotFoundError(f"{short_id}: picture {name} not found")
-        part = out / f"clip{k}.mp4"
-        clip(pic, r, r["end"] - r["start"], part)
-        parts.append(part)
-    (out / "list.txt").write_text("".join(f"file '{p.name}'\n" for p in parts), encoding="utf-8")
     silent = out / "silent.mp4"
-    _run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(out / "list.txt"), "-c", "copy", str(silent)])
+    moved = render_video(timed, pics, pic_dirs, silent, short_id)
+    voice = with_cues(wav, timed["audio"]["cues"], out)
     ass_captions(aligned["words"], out / "cap.ass")
     final = out / f"{short_id}.mp4"
-    inputs = ["-i", str(silent), "-i", str(wav)]
+    inputs = ["-i", str(silent), "-i", str(voice)]
     fc = "[2:a]volume=0.10,afade=t=out:st=%.2f:d=1.2[m];[1:a][m]amix=inputs=2:duration=first:normalize=0[a]" % max(0.0, duration - 1.2)
     if music:
         inputs += ["-stream_loop", "-1", "-i", str(music)]
@@ -142,7 +198,10 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
         fc = "[1:a]anull[a]"
     _run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", f"{fc};[0:v]subtitles={out / 'cap.ass'}[v]", "-map", "[v]", "-map", "[a]",
           "-t", f"{duration:.2f}", "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", str(final)])
-    (out / "report.json").write_text(json.dumps({"duration": round(duration, 2), "timbre_review": drift, "shots": rows}, indent=1), encoding="utf-8")
+    rows = [{k: r[k] for k in ("id", "picture", "at", "crop_x", "zoom", "start", "end")} for r in timed["shots"]]
+    report = {"duration": round(duration, 2), "timbre_review": drift, "shots": rows, "beats": BEATS.measure(timed),
+              "cues": len(timed["audio"]["cues"]), "beat_spots_moved_into_crop": moved}
+    (out / "report.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
     return final
 
 

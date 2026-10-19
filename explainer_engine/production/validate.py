@@ -400,6 +400,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     out += canva_findings(doc)
     out += BEATS.lint(doc)  # PV-44 visual beats: reasons, words, numbers, faces (VB-00, VB-03, VB-04, VB-06)
     out += FACES.lint(doc, picture_dirs)  # PV-44 expression sheets (VB-09)
+    out += short_beat_findings(doc)  # PV-44 on every Short (SS-09)
     # PV-12 narration lint on what the voice gets
     for f in narration_lint.lint(S.tts_text(doc)):
         if f["severity"] == "FAIL":
@@ -427,6 +428,33 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     out += _scenario.check(doc, picture_dirs[0].parent if picture_dirs else None)
     from explainer_engine.scripting import speech as _speech
     out += _speech.check(doc)
+    return out
+
+
+def short_words(sd: dict) -> dict:
+    """The estimated read of a Short (``short_doc``) at the Shorts' heard pace (SHORT_WPM, as PV-34)."""
+    return estimated_words(dict(sd, voice=dict(sd["voice"], pace_wpm=[SHORT_WPM, SHORT_WPM])))
+
+
+def short_beat_findings(doc: dict) -> list[dict]:
+    """PV-44 on every Short (SS-09): the same VB lint and cadence check as the segments, on the Short's own estimated read,
+    reported as "SH03 line 2". A legacy script whose Shorts have no beats gets nothing (its one VB-00 notice covers it)."""
+    out: list[dict] = []
+    if not BEATS.binding(doc) and not BEATS.has_short_beats(doc):
+        return out
+    for sh in doc.get("shorts", []):
+        sd = BEATS.short_doc(doc, sh)
+        if not BEATS.has_beats(sd) and not BEATS.binding(doc):
+            continue
+        found = BEATS.lint(sd) + [f for f in FACES.lint(sd) if not f["where"].startswith("cast.")]
+        found = [dict(f, where=sh["id"]) if f["where"] == "script" else f for f in found]
+        if BEATS.has_beats(sd) and not [f for f in found if f["severity"] == "FAIL" and f["rule"].endswith("VB-03")]:
+            timed = T.time_script(sd, short_words(sd))
+            if timed["problems"]:
+                found += [dict(f, detail=f["detail"] + f" ({sh['id']})") for f in timed["problems"]]
+            else:
+                found += [dict(f, detail=f["detail"] + " (estimated read)") for f in BEATS.check_timed(timed, sd)]
+        out += found
     return out
 
 

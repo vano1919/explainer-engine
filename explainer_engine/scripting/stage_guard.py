@@ -10,7 +10,7 @@ Stages and what they own:
 * ``architect``  the story layer: ``drama``, ``cast``, ``periods``, segment ids, ``beat``, ``purpose``, ``period``, ``light_beat``, segment ``drama``
 * ``writer``     the words: segment ``lines`` (text, speaker, claims); one segment at a time
 * ``beats``      the visual beats (VB rules): line ``visual_beats`` only, written segment by segment right after the writer, on
-  the same frozen words (stage 2b, agent ``beat-writer``)
+  the same frozen words (stage 2b, agent ``beat-writer``); the Shorts' lines too (``shorts[].lines[].visual_beats``, SS-09)
 * ``performer``  the delivery: line ``tags``, ``emphasis``, ``tone``, ``emotion``, ``pause_after``; the text may only gain
   an interjection at its start (``INTERJECTIONS``)
 * ``editor``     the picture and sound: ``shots``, segment ``audio``, ``music``, ``graphics``, ``library``, ``story``,
@@ -63,6 +63,8 @@ def violations(stage: str, before: dict, after: dict) -> list[str]:
                 if {x: y for x, y in (bc.get(h) or {}).items() if x != "voice"} != {x: y for x, y in (ac.get(h) or {}).items() if x != "voice"}:
                     out.append(f"cast.{h} changed beyond its voice")
             continue
+        if k == "shorts" and stage == "beats" and _no_short_beats(before.get(k)) == _no_short_beats(after.get(k)):
+            continue  # SS-09: the beat-writer writes the Shorts' beats too, nothing else of a Short
         if before.get(k) != after.get(k):
             out.append(f"{k} changed: not the {stage}'s field")
     bs, as_ = before.get("segments", []), after.get("segments", [])
@@ -93,6 +95,12 @@ def violations(stage: str, before: dict, after: dict) -> list[str]:
                 if k not in own["line"] or k == "text":
                     out.append(f"{sid} line {i}: {k} changed ({str(a.get(k))[:30]!r} -> {str(b.get(k))[:30]!r})")
     return out
+
+
+def _no_short_beats(shorts) -> list | None:
+    if shorts is None:
+        return None
+    return [dict(sh, lines=[{k: v for k, v in ln.items() if k != "visual_beats"} for ln in sh.get("lines", [])]) for sh in shorts]
 
 
 def _unplaced(beats) -> list | None:
