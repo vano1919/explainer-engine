@@ -15,7 +15,7 @@ import difflib
 
 from explainer_engine.audio.scribe_words import norm
 from explainer_engine.edit import board as B
-from explainer_engine.production import accents as ACC, continuity, script as S
+from explainer_engine.production import accents as ACC, beats as BEATS, continuity, script as S
 
 BED_DEFAULT_DB = -15.0  # a bed with no gain sits at the D-49 cap (audio/layers.MAX_BED_DB); it was -13 and FAILed the cap
 
@@ -91,6 +91,8 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             lines.append({"segment": seg["id"], "line": li + 1, "text": line["text"], "start": a["s"], "end": b["e"],
                           "duration": round(b["e"] - a["s"], 3), "tone": line.get("tone"), "emotion": line.get("emotion"),
                           "pause_after": line.get("pause_after", 0)})
+            if line.get("speaker"):
+                lines[-1]["speaker"] = line["speaker"]
         segs.append({"id": seg["id"], "beat": seg["beat"], "start": words[wi(lo)]["s"], "end": words[wi(hi - 1)]["e"]})
         for s in seg["shots"]:
             n = len(out_shots) + 1
@@ -147,6 +149,7 @@ def time_script(doc: dict, words_doc: dict) -> dict:
 
         s["accents"] = ACC.resolve(s.pop("_accents"), s["start"], s["end"], accent_start, fps)  # MO rules (D-48)
         s.pop("_seg_hi")
+    beats = BEATS.resolve(doc, toks, words, wi, out_shots, fps, duration, problems)  # VB rules: the lines' visual beats
     # sound
     beds, sfx = [], []
     for si, seg in enumerate(doc["segments"]):
@@ -171,6 +174,7 @@ def time_script(doc: dict, words_doc: dict) -> dict:
     for k, b in enumerate(beds):
         b["end"] = round(min(duration, beds[k + 1]["start"] + BED_FADE), 3) if k + 1 < len(beds) else round(duration, 3)
         b["fade_s"] = BED_FADE
+    cues = BEATS.cue_track(beats, duration, fps)  # VB-08: a short light sound on every beat that has one
     music = []
     for m in doc.get("music", []):
         a = at_word(m["from"], 0, len(toks), f"music {m['track']}") if m["from"] != "<start>" else 0
@@ -214,6 +218,7 @@ def time_script(doc: dict, words_doc: dict) -> dict:
         events[e["thing"]] = B.cut_before(words, wi(j))[0]  # a thing exists from the cut before its words
     return {"schema": "production_timed/1", "episode": doc["episode"]["id"], "fps": fps, "duration": round(duration, 3),
             "frames": total_frames, "text_match": share, "segments": segs, "lines": lines, "shots": out_shots,
-            "audio": {"beds": beds, "sfx": sfx, "music": music}, "visuals": visuals, "cards": cards, "events": events,
+            "audio": {"beds": beds, "sfx": sfx, "music": music, "cues": cues}, "visuals": visuals, "cards": cards, "visual_beats": beats,
+            "expressions": {h: c["expressions"] for h, c in doc.get("cast", {}).items() if c.get("expressions")}, "events": events,
             "pictures": {k: {kk: vv for kk, vv in v.items() if kk not in ("source",)} for k, v in pics.items()},
             "problems": problems}

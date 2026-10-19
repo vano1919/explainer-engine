@@ -19,6 +19,7 @@ from pathlib import Path
 from explainer_engine.audio import casting, layers
 from explainer_engine.edit import board as B
 from explainer_engine.edit import motion_lint
+from explainer_engine.production import beats as BEATS
 from explainer_engine.production import compile as C
 from explainer_engine.production import continuity
 from explainer_engine.production import graphics as GFX
@@ -396,6 +397,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     if doc["episode"].get("rulebook"):  # scripts written to an episode rulebook (D-51/D-52)
         out += rulebook_era_findings(doc)
     out += canva_findings(doc)
+    out += BEATS.lint(doc)  # PV-44 visual beats: reasons, words, numbers, faces (VB-00, VB-03, VB-04, VB-06)
     # PV-12 narration lint on what the voice gets
     for f in narration_lint.lint(S.tts_text(doc)):
         if f["severity"] == "FAIL":
@@ -412,6 +414,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             out.append(dict(f, rule="PV-35 " + f["rule"], detail=f["detail"] + " (estimated read)"))
         for f in layers.check(timed):  # AL rules on the estimated read (REVIEW)
             out.append(dict(f, rule="PV-36 " + f["rule"], detail=f["detail"] + " (estimated read)"))
+        for f in BEATS.check_timed(timed, doc):  # VB rules on the estimated read (the beat-writer's own check)
+            out.append(dict(f, detail=f["detail"] + " (estimated read)"))
     if claim_map is not None or any(c for seg in doc["segments"] for ln in seg["lines"] for c in ln.get("claims", [])):
         from explainer_engine.scripting import claims as _claims
         out += _claims.check(doc, claim_map)
@@ -552,6 +556,7 @@ def check_timed(timed: dict, doc: dict, *, final: bool = False, picture_dirs: li
     out += music_findings(timed["audio"]["music"])
     out += [dict(f, rule="PV-35 " + f["rule"]) for f in motion_lint.check(timed)]  # MO rules (D-48)
     out += [dict(f, rule="PV-36 " + f["rule"]) for f in layers.check(timed)]  # AL rules (D-48)
+    out += BEATS.check_timed(timed, doc)  # VB rules on the real read (PV-44)
     for pid in {s["picture"] for s in shots}:
         p = timed["pictures"].get(pid, {})
         have = p.get("file") and (not picture_dirs or any((Path(d) / p["file"]).exists() for d in picture_dirs))

@@ -21,6 +21,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
   `world` (D-41 world spec), `look`, `cast` (hero names, hero card, props), `story` (events with their phrase, forbidden props),
   `library` (pictures that already exist), `music`, `sound_dirs`, `picture_dirs`.
 * `drama` (D-48): premise, dramatic question, promise, needs, arcs, loops (L01..), set-ups (P01..), ending kind; `cast.<id>.voice.traits` (gender, age, temperament, energy, origin, role, real_person, documented) for casting (VC-01).
+* `schema`: `production_script/2` (2026-10-19, D-54) adds `lines[].visual_beats` (kind, `at` phrase, `offset`, `why`, the kind's fields, `cue`) and `cast.<id>.expressions` (expression -> cut-out); `/1` scripts stay valid without them (PV-44).
 * `segments[]` (S01..): `drama` (function, turn, stakes, shift, need, opens, closes, claim_share), `lines[]` (text, tags, tone, emotion, one emphasised word, `pause_after`, claims, optional `speaker` = a cast id read in that hero's own `cast.<id>.voice`, D-45), `shots[]` (phrase `at`, type A/B/C,
   `accents` (punch, shake, whip_in, flash_in, pop_text, slam_text, wobble on a phrase), picture id or inline picture with `subject`/`engine`/`refs`/`edit`/`heroes`/`shows`/`props`/`speakers`, motion, bubbles), `audio` (`beds`, `sfx` on phrases).
 * Engines: `existing` (a file), `gemini` (D-41 prompt, channel style refs), `pod_ref` (a reference edit, painted by the provider the creator picks for the batch, D-50), `pod_text` (no longer made, D-52), `canva` (filler made by hand, D-53).
@@ -77,6 +78,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-41 | (rulebook-era) every bed and sound event has a `purpose` (REVIEW) |
 | PV-42 | (rulebook-era) every shot has a `purpose` (REVIEW); a spoken number has a claim id (FAIL, invariant 5) |
 | PV-43 | (always) a picture with engine `canva` must be filler by `imagegen/importance.py` (type A or C, no heroes or people, used once, beat job explanation / emotional_pause / humor / transition; never hook, question, evidence, complication, reveal or payoff, never premium); at most 30 % of an episode's pictures; FAIL while `channel.canva_terms_verified` is false; REVIEW above the free plan's about 20 AI uses. The 4-second shot limit is checked after timing, since a script has no shot lengths yet (D-53) |
+| PV-44 | visual beats and their cues (VB-00..VB-08 in [STORY_ENGINE](STORY_ENGINE.md), `production/beats.py`): in a `production_script/2` every line carries `visual_beats` (a visual event about every 1.5 s of narration, an expression change about every second of dialogue, each with a reason on its own line's words, few words, numbers with a claim, a face the render can change, a short cue or `none` with a reason that never doubles an effect or stacks past 4 layers); FAIL rules block a /2 script, a legacy /1 gets one VB-00 REVIEW; checked on the estimated read and on the real read |
 
 ## Paint plans (PP-xx; audit 2026-10-19; `imagegen/plan.py`, `production/paint.py`)
 

@@ -1,0 +1,713 @@
+"""Visual beats (VB rules, docs/STORY_ENGINE.md; the creator, 2026-10-19): something new happens on screen about every
+1.5 s, tied to what the narrator says at that instant, and in dialogue the speaking face changes its expression about once
+a second. The picture still changes every 3-6 s (PV-24 RHYTHM); the beats live between the cuts.
+
+Beats are written WITH the words (stage 2b, agent ``beat-writer``), one list per line (``lines[].visual_beats``), each landing on
+a phrase of its own line (``at``) plus an optional ``offset`` in seconds: never a clock time, the read decides (D-43).
+
+Kinds and what draws them (all free and deterministic: a frame renders the same twice):
+
+* ``text``      up to 4 words pop in small (``accents._text_layer``); ``label`` the same words on a tag with a leader line
+                to a spot of the picture (``pos``)
+* ``prop``      the object the line names: a cut-out PNG (``asset``) popped onto the frame, else a word sticker
+* ``chart``     a small ``counter`` (counts up to the number) or ``bars`` (2-3 bars grow); always with a ``claim``
+* ``highlight`` a hand-drawn ring drawn round a spot of the picture; ``symbol`` a drawn sign (? ! arrows cross check...)
+* ``accent``    a camera ``punch`` / ``shake`` of ``production/accents.py`` (the beat only times it)
+* ``expression`` the face of ``who`` changes: a push in on the face (the picture's ``speakers`` point), a drawn emotion
+                mark beside it (vein, sparkles, sweat, ? ...) and, when ``cast.<id>.expressions`` has a cut-out for that
+                expression, a face inset that swaps on every change
+
+    lint(doc)                   static VB findings (reasons, words, numbers, faces in the cast)
+    resolve(...)                timed beats (called by timing.time_script)
+    check_timed(timed, doc)     cadence and render findings on a timed script (estimated or real read)
+"""
+
+from __future__ import annotations
+
+import json
+import math
+import re
+from pathlib import Path
+
+from PIL import Image, ImageDraw
+
+from explainer_engine.audio import cues as CUES
+from explainer_engine.finish import bubbles as BUB
+from explainer_engine.production import accents as ACC
+from explainer_engine.production import script as S
+
+LEGACY = "production_script/1"  # beats optional (one VB-00 REVIEW); /2 makes every VB rule binding
+TARGET, GAP_OK, GAP_FAIL, MEAN_OK = 1.5, 2.0, 3.0, 1.8  # VB-01: seconds between visual events while the narrator speaks
+FACE_TARGET, FACE_OK, FACE_FAIL = 1.0, 1.5, 2.0  # VB-02: seconds between expression changes on a dialogue line
+MAX_WORDS = 4  # VB-04: words on screen in one beat (as MO-05)
+MAX_SAME_RUN, MAX_WORD_SHARE = 3, 0.5  # VB-05 variety
+MAX_OVERLAYS = 2  # VB-07: beat overlays on screen at once
+HOLD = {"prop": 2.0, "symbol": 1.2, "highlight": 1.3, "chart": 2.6}
+PICTURE_BOUND = {"label", "highlight", "expression"}  # they point into the picture, so they end with their shot
+EXPR_TAIL = 0.3  # an expression stays this long after its line's last word
+EXPRESSIONS = ("neutral", "curious", "surprised", "joyful", "amused", "smug", "confused", "doubtful", "worried", "scared",
+               "angry", "sad", "determined", "deadpan")
+TAKES = {"surprised", "scared", "angry", "joyful"}  # VB-08: the only expression changes that may carry a cue (one a line)
+CUE_COVER = 0.15  # a cue within this of an effect, or under a playing effect, doubles it: the effect is the beat's sound
+CUE_MIN_GAP = 0.25  # two cues closer than this stack into one noise
+OVERLAY = {"text", "label", "prop", "chart", "highlight", "symbol"}
+FACE_HOLD, FACE_POP, FACE_EASE, POP_S = 0.10, 0.04, 0.25, 0.18
+TEXT_SCALE, MARK_R = 1.15, 0.075  # beat words about 0.09 of the frame height; emotion mark radius (share of the height)
+DEFAULT_POS = {"text": (0.5, 0.16), "label": (0.5, 0.5), "prop": (0.8, 0.3), "chart": (0.8, 0.24), "symbol": (0.86, 0.2)}
+_PALETTE = Path(__file__).resolve().parents[1] / "design" / "palette.json"
+_STOP = set("""a an the and or but so of to in on at for with by from into than then that this these those it its is are was
+were be been has have had do does did not no as if when while who what where why how one all any each every some more most
+very just only also here there their them they he she his her him we our you your i me my out up down off now still yet""".split())
+
+
+def _rgb(name: str) -> tuple[int, int, int]:
+    h = json.loads(_PALETTE.read_text(encoding="utf-8"))["tokens"][name]["hex"].lstrip("#")
+    return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
+
+INK, PAPER, CORAL, TEAL, BLUE, GREEN, RED, AMBER = (_rgb(n) for n in (
+    "ink", "paper", "answer_coral", "mechanism_teal", "support_blue", "true_green", "false_red", "uncertain_amber"))
+
+
+def binding(doc: dict) -> bool:
+    return doc.get("schema") != LEGACY
+
+
+def _sev(doc: dict, fail: bool) -> str:
+    return "FAIL" if fail and binding(doc) else "REVIEW"
+
+
+def _f(out, rule, sev, where, detail):
+    out.append({"rule": "PV-44 " + rule, "severity": sev, "where": where, "detail": detail})
+
+
+def _stems(text: str) -> set[str]:
+    return {w[:5] for w in re.findall(r"[a-z']+", text.lower()) if len(w) > 2 and w not in _STOP}
+
+
+def has_beats(doc: dict) -> bool:
+    return any(ln.get("visual_beats") for seg in doc["segments"] for ln in seg["lines"])
+
+
+def payload(b: dict) -> str:
+    return " ".join([b.get("text", ""), b.get("thing", ""), " ".join(b.get("labels", [])), b.get("unit", "")]).strip()
+
+
+def lint(doc: dict) -> list[dict]:
+    """Static VB findings: every beat has a reason and lands on its own line (VB-03), few words and no number without a
+    claim (VB-04), an expression belongs to a hero of the cast (VB-06). Cadence needs times: ``check_timed``."""
+    out: list[dict] = []
+    if not has_beats(doc):
+        if not binding(doc):
+            _f(out, "VB-00", "REVIEW", "script", "a production_script/1 without visual beats: a new episode is written as "
+               "production_script/2 with lines[].visual_beats (stage 2b, beat-writer)")
+        else:
+            _f(out, "VB-01", "FAIL", "script", "no visual beats at all: every line carries its beats (stage 2b, beat-writer)")
+        return out
+    toks = S.tokens(doc)
+    for si, seg in enumerate(doc["segments"]):
+        for li, line in enumerate(seg["lines"]):
+            idx = [i for i, t in enumerate(toks) if t["seg"] == si and t["line"] == li]
+            lo, hi = idx[0], idx[-1] + 1
+            here = _stems(line["text"])
+            near = set(here)
+            for nb in (li - 1, li + 1):
+                if 0 <= nb < len(seg["lines"]):
+                    near |= _stems(seg["lines"][nb]["text"])
+            cur = lo
+            for bi, b in enumerate(line.get("visual_beats", [])):
+                where = f"{seg['id']} line {li + 1} beat {bi + 1}"
+                j = S.find_phrase(toks, b["at"], cur, hi)
+                if j is None:
+                    _f(out, "VB-03", _sev(doc, True), where, f"phrase {b['at']!r} is not in this line after the beat before: a "
+                       "beat lands on the words said at that instant")
+                else:
+                    cur = j
+                if len(b.get("why", "").split()) < 3:
+                    _f(out, "VB-03", _sev(doc, True), where, "no reason: 'why' says in a few words what in the line this shows")
+                words = payload(b)
+                if words and not (_stems(words) & near) and not (_stems(b.get("why", "")) & here):
+                    _f(out, "VB-03", "REVIEW", where, f"{words!r} shares no word with this line or its neighbours: is it what the "
+                       "narrator says here?")
+                elif not words and not (_stems(b.get("why", "")) & here):
+                    _f(out, "VB-03", "REVIEW", where, "the reason names nothing of this line: quote the word the beat shows")
+                if b["kind"] in ("text", "label") and len(b["text"].split()) > MAX_WORDS:
+                    _f(out, "VB-04", _sev(doc, True), where, f"{len(b['text'].split())} words on screen; at most {MAX_WORDS}")
+                shows_number = re.search(r"\d", words) or b["kind"] == "chart"
+                if shows_number and not (b.get("claim") or line.get("claims")):
+                    _f(out, "VB-04", _sev(doc, True), where, "a number on screen without a claim id (invariant 5): put the claim "
+                       "on the beat or its line")
+                if b["kind"] == "chart" and b.get("chart") == "bars" and not 2 <= len(b["values"]) <= 3:
+                    _f(out, "VB-04", _sev(doc, True), where, "bars need 2-3 values")
+                if b["kind"] == "expression":
+                    who = b.get("who") or line.get("speaker")
+                    if not who:
+                        _f(out, "VB-06", _sev(doc, True), where, "an expression on a narrator line needs 'who' (a hero of the cast)")
+                    elif who not in doc.get("cast", {}):
+                        _f(out, "VB-06", _sev(doc, True), where, f"{who!r} is not in the cast")
+                cue = b.get("cue")
+                if cue is None:
+                    _f(out, "VB-08", _sev(doc, True), where, "no cue: every beat names its short sound (audio/cues.py) or "
+                       "'none' with a reason")
+                elif cue["sound"] == CUES.NONE and not cue.get("why"):
+                    _f(out, "VB-08", _sev(doc, True), where, "cue 'none' without a reason")
+                elif b["kind"] == "expression" and cue["sound"] != CUES.NONE and b["expression"] not in TAKES:
+                    _f(out, "VB-08", "REVIEW", where, f"a cue on a quiet expression ({b['expression']}): only a big take "
+                       f"({', '.join(sorted(TAKES))}) may sound, the voice carries the rest")
+                elif cue["sound"] != CUES.NONE and not CUES.MIN_MS <= CUES.length_ms(cue["sound"], cue.get("max_ms")) <= CUES.MAX_MS:
+                    _f(out, "VB-08", _sev(doc, True), where, f"cue {cue['sound']!r} lasts {CUES.length_ms(cue['sound'], cue.get('max_ms')):.0f} "
+                       f"ms; a cue is {CUES.MIN_MS}-{CUES.MAX_MS} ms")
+                if b["kind"] == "prop" and not b.get("asset"):
+                    _f(out, "VB-06", "REVIEW", where, f"prop {b['thing']!r} has no cut-out (asset): it is drawn as a word sticker")
+    return out
+
+
+def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict], fps: int, duration: float,
+            problems: list[dict]) -> list[dict]:
+    """Timed beats: start = the phrase's first word + offset, the shot it lands in, an end per kind (``HOLD``, a text's
+    reading time, an expression until the same face changes again or its line ends). ``accent`` beats are added to their
+    shot's accents (``accents.resolve`` form) so the camera code draws them."""
+    out: list[dict] = []
+    starts = [s["start"] for s in shots]
+    for si, seg in enumerate(doc["segments"]):
+        for li, line in enumerate(seg["lines"]):
+            if not line.get("visual_beats"):
+                continue
+            idx = [i for i, t in enumerate(toks) if t["seg"] == si and t["line"] == li]
+            lo, hi = idx[0], idx[-1] + 1
+            line_end = words[wi(idx[-1])]["e"]
+            cur = lo
+            for bi, b in enumerate(line["visual_beats"]):
+                j = S.find_phrase(toks, b["at"], cur, hi)
+                if j is None or wi(j) is None:
+                    problems.append({"rule": "PV-44 VB-03", "severity": _sev(doc, True), "where": f"{seg['id']} line {li + 1} "
+                                     f"beat {bi + 1}", "detail": f"phrase {b['at']!r} not found in its line"})
+                    continue
+                cur = j
+                st = round(min(max(0.0, words[wi(j)]["s"] + float(b.get("offset", 0.0))), duration), 3)
+                k = max(0, sum(1 for x in starts if x <= st) - 1)
+                item = dict(b, segment=seg["id"], line=li + 1, start=st, start_frame=int(round(st * fps)), shot=shots[k]["id"],
+                            picture=shots[k]["picture"], line_end=round(line_end, 3), _shot_end=shots[k]["end"])
+                if line.get("speaker"):
+                    item["speaker"] = line["speaker"]
+                if b["kind"] == "expression":
+                    item["who"] = b.get("who") or line.get("speaker")
+                out.append(item)
+    for k, b in enumerate(out):
+        kind = b["kind"]
+        if kind == "expression":
+            nxt = next((x["start"] for x in out[k + 1:] if x["kind"] == "expression" and x["who"] == b["who"]), None)
+            end = b["line_end"] + EXPR_TAIL
+            if nxt is not None and nxt < end:
+                end = nxt
+        elif kind in ("text", "label"):
+            end = b["start"] + ACC.text_hold(b["text"])
+        elif kind == "accent":
+            end = b["start"]
+        else:
+            end = b["start"] + HOLD[kind]
+        if kind in PICTURE_BOUND:
+            end = min(end, b["_shot_end"])
+        b["end"] = round(max(b["start"], min(end, duration)), 3)
+        b["end_frame"] = int(round(b["end"] * fps))
+        b.pop("_shot_end")
+    by_id = {s["id"]: s for s in shots}
+    for b in out:
+        sh = by_id[b["shot"]]
+        sh["visual_beats"] = sh.get("visual_beats", 0) + 1
+        if b["kind"] == "accent":
+            sh["accents"].append({"kind": b["effect"], "start": b["start"], "start_frame": b["start_frame"],
+                                  "strength": float(b.get("strength", 0.6)), "text": "", "pos": [0.5, 0.2], "beat": True})
+            sh["accents"].sort(key=lambda a: a["start"])
+    return out
+
+
+def cue_track(beats: list[dict], duration: float, fps: int) -> list[dict]:
+    """VB-08: the cues of the timed beats (start on the beat's first frame, in sync with the change on screen)."""
+    out = []
+    for b in beats:
+        cue = b.get("cue") or {}
+        name = cue.get("sound", CUES.NONE)
+        if name == CUES.NONE:
+            continue
+        st = b["start"]
+        en = min(duration, st + CUES.length_ms(name, cue.get("max_ms")) / 1000)
+        out.append({"sound": name, "start": st, "end": round(en, 3), "gain_db": float(cue.get("gain_db", CUES.DEFAULT_GAIN_DB)),
+                    "max_ms": cue.get("max_ms"), "segment": b["segment"], "line": b["line"], "kind": b["kind"],
+                    "start_frame": int(round(st * fps))})
+    return out
+
+
+def _cue_findings(timed: dict, doc: dict, beats: list[dict], out: list[dict]) -> None:
+    from explainer_engine.audio import layers as L
+
+    au = timed.get("audio", {})
+    sfx, cues, music, beds = au.get("sfx", []), au.get("cues", []), au.get("music", []), au.get("beds", [])
+    starts = [e["start"] for e in sfx]
+
+    def covered(t: float) -> bool:
+        return any(abs(x - t) <= CUE_COVER for x in starts) or any(e["start"] <= t < e["end"] for e in sfx)
+
+    for b in beats:
+        where = f"{b['segment']} line {b['line']}"
+        name = (b.get("cue") or {}).get("sound", CUES.NONE)
+        if name != CUES.NONE and covered(b["start"]):
+            _f(out, "VB-08", _sev(doc, True), where, f"cue {name!r} at {b['start']:.1f}s doubles a sound effect: the effect is "
+               "this beat's sound, set the cue to 'none'")
+        elif name == CUES.NONE and b["kind"] not in ("expression",) and not covered(b["start"]):
+            _f(out, "VB-08", _sev(doc, True), where, f"a {b['kind']} beat at {b['start']:.1f}s makes no sound: every addition "
+               "gets a short cue unless an effect already sounds there")
+    for a, c in zip(cues, cues[1:]):
+        if c["start"] - a["start"] < CUE_MIN_GAP:
+            _f(out, "VB-08", _sev(doc, True), f"{c['segment']} line {c['line']}", f"two cues {c['start'] - a['start']:.2f} s apart "
+               f"stack into noise (at least {CUE_MIN_GAP} s)")
+    for c in cues:
+        t = c["start"] + 1e-3
+        n = 1 + min(1, L._active(music, t)) + min(1, L._active(beds, t)) + L._active(sfx, t) + L._active(cues, t)
+        if n > L.MAX_LAYERS:
+            _f(out, "VB-08", _sev(doc, True), f"{c['segment']} line {c['line']}", f"{n} layers at {c['start']:.1f}s with the cue "
+               f"(at most {L.MAX_LAYERS}: voice, music, bed, one effect or cue)")
+    cued: dict = {}
+    for b in beats:
+        if b["kind"] == "expression" and (b.get("cue") or {}).get("sound", CUES.NONE) != CUES.NONE:
+            cued.setdefault((b["segment"], b["line"]), []).append(b)
+    for (sid, ln), bs in cued.items():
+        if len(bs) > 1:
+            _f(out, "VB-08", _sev(doc, True), f"{sid} line {ln}", f"{len(bs)} expression cues on one dialogue line: at most one "
+               "(the big take), the rest of the face changes are silent")
+
+
+# --- cadence on a timed script -------------------------------------------------------------------------------------------
+
+def _windows(timed: dict, dialogue: bool) -> list[dict]:
+    return [ln for ln in timed.get("lines", []) if bool(ln.get("speaker")) == dialogue and ln["end"] > ln["start"]]
+
+
+def check_timed(timed: dict, doc: dict) -> list[dict]:
+    """VB-01 (narration cadence), VB-02 (expression cadence in dialogue), VB-05 (variety), VB-06 (a face to change),
+    VB-07 (overlays at once) on the read's times."""
+    from explainer_engine.edit import motion_lint
+
+    out: list[dict] = []
+    beats = timed.get("visual_beats", [])
+    if not has_beats(doc) and not binding(doc):
+        return out
+    times = sorted(t for t, _ in motion_lint.events(timed))
+    pts = [0.0] + times + [timed["duration"]]
+    narr = _windows(timed, False)
+    for a, b in zip(pts, pts[1:]):
+        gap = b - a
+        if gap <= GAP_OK:
+            continue
+        ln = next((w for w in narr if w["start"] < b and w["end"] > a), None)
+        if ln is None:
+            continue
+        sev = _sev(doc, True) if gap > GAP_FAIL else "REVIEW"
+        _f(out, "VB-01", sev, f"{ln['segment']} line {ln['line']} {a:.1f}s",
+           f"{gap:.1f} s with nothing new on screen while the narrator speaks; a beat about every {TARGET} s "
+           f"(REVIEW over {GAP_OK} s, FAIL over {GAP_FAIL} s)")
+    by_seg: dict = {}
+    for w in narr:
+        s = by_seg.setdefault(w["segment"], [0.0, 0])
+        s[0] += w["end"] - w["start"]
+        s[1] += sum(1 for t in times if w["start"] <= t < w["end"])
+    for sid, (secs, n) in by_seg.items():
+        if secs >= 6 and (n == 0 or secs / n > MEAN_OK):
+            _f(out, "VB-01", "REVIEW", sid, f"one visual event every {secs / max(n, 1):.1f} s of narration on average (target "
+               f"{TARGET} s, at most {MEAN_OK} s)")
+    expr = [b for b in beats if b["kind"] == "expression"]
+    for ln in _windows(timed, True):
+        last: dict = {}
+        for b in expr:
+            if b["start"] < ln["start"] - 0.05:
+                last[b["who"]] = b["expression"]
+        changes = []
+        for b in expr:
+            if ln["start"] - 0.05 <= b["start"] < ln["end"]:
+                if last.get(b["who"]) == b["expression"]:
+                    _f(out, "VB-02", "REVIEW", f"{ln['segment']} line {ln['line']}", f"{b['who']} stays {b['expression']}: "
+                       "an expression beat is a change")
+                    continue
+                last[b["who"]] = b["expression"]
+                changes.append(b["start"])
+        where = f"{ln['segment']} line {ln['line']}"
+        if not changes:
+            _f(out, "VB-02", _sev(doc, True), where, f"a dialogue line ({ln['duration']:.1f} s) with no expression change: the "
+               f"face carries the line, about one change every {FACE_TARGET:.0f} s")
+            continue
+        p = [ln["start"]] + changes + [ln["end"]]
+        worst = max(y - x for x, y in zip(p, p[1:]))
+        if worst > FACE_FAIL:
+            _f(out, "VB-02", _sev(doc, True), where, f"{worst:.1f} s without an expression change in dialogue (FAIL over "
+               f"{FACE_FAIL} s, target {FACE_TARGET:.0f} s)")
+        elif worst > FACE_OK:
+            _f(out, "VB-02", "REVIEW", where, f"{worst:.1f} s without an expression change (target {FACE_TARGET:.0f} s, "
+               f"REVIEW over {FACE_OK} s)")
+    pics = timed.get("pictures", {})
+    for b in expr:
+        hero = doc.get("cast", {}).get(b["who"] or "", {})
+        if not hero:
+            continue
+        face = (pics.get(b["picture"], {}).get("speakers") or {}).get(b["who"])
+        sprite = (hero.get("expressions") or {}).get(b["expression"])
+        if face is None and not sprite:
+            _f(out, "VB-06", _sev(doc, True), f"{b['segment']} line {b['line']}", f"{b['who']}'s face is not in picture "
+               f"{b['picture']!r} (no speakers point) and there is no {b['expression']!r} cut-out in cast.{b['who']}.expressions: "
+               "the render has no face to change")
+    _cue_findings(timed, doc, beats, out)
+    by_seg_kinds: dict = {}
+    for b in beats:
+        if b["kind"] != "expression":
+            by_seg_kinds.setdefault(b["segment"], []).append(b["kind"])
+    for sid, kinds in by_seg_kinds.items():
+        run = 1
+        for x, y in zip(kinds, kinds[1:]):
+            run = run + 1 if x == y else 1
+            if run == MAX_SAME_RUN + 1:
+                _f(out, "VB-05", "REVIEW", sid, f"{run} {y} beats in a row: vary the kind (text, prop, chart, highlight, symbol, "
+                   "accent)")
+        if len(kinds) >= 4 and sum(k in ("text", "label") for k in kinds) / len(kinds) > MAX_WORD_SHARE:
+            _f(out, "VB-05", "REVIEW", sid, f"{sum(k in ('text', 'label') for k in kinds)} of {len(kinds)} beats are words: "
+               f"at most {MAX_WORD_SHARE:.0%}; show the thing instead")
+    ov = sorted((b["start"], b["end"], b["segment"]) for b in beats if b["kind"] in OVERLAY)
+    flagged = set()
+    for i, (s, _, sid) in enumerate(ov):
+        n = sum(1 for s2, e2, _ in ov[:i + 1] if e2 > s)
+        if n > MAX_OVERLAYS and sid not in flagged:
+            flagged.add(sid)
+            _f(out, "VB-07", "REVIEW", sid, f"{n} beat overlays on screen at once at {s:.1f}s (at most {MAX_OVERLAYS})")
+    return out
+
+
+def measure(timed: dict) -> dict:
+    """Numbers for the review bundle: beats by kind, mean narration gap, expression changes a second of dialogue."""
+    from explainer_engine.edit import motion_lint
+
+    beats = timed.get("visual_beats", [])
+    times = sorted(t for t, _ in motion_lint.events(timed))
+    narr = _windows(timed, False)
+    secs = sum(w["end"] - w["start"] for w in narr)
+    n = sum(1 for w in narr for t in times if w["start"] <= t < w["end"])
+    dial = _windows(timed, True)
+    dsecs = sum(w["end"] - w["start"] for w in dial)
+    ex = sum(1 for b in beats if b["kind"] == "expression")
+    kinds: dict = {}
+    for b in beats:
+        kinds[b["kind"]] = kinds.get(b["kind"], 0) + 1
+    return {"beats": len(beats), "kinds": kinds, "narration_gap_mean": round(secs / n, 2) if n else None,
+            "expressions_per_dialogue_second": round(ex / dsecs, 2) if dsecs else None}
+
+
+# --- render ------------------------------------------------------------------------------------------------------------
+
+def _ease(u: float) -> float:
+    u = min(max(u, 0.0), 1.0)
+    return 1 - (1 - u) ** 3
+
+
+def _bump(u: float) -> float:
+    return math.sin(math.pi * min(max(u, 0.0), 1.0))
+
+
+def faces(shot_beats: list[dict], pics: dict) -> list[dict]:
+    """The expression beats of one shot that have a face point in the shot's picture."""
+    out = []
+    for b in shot_beats:
+        if b["kind"] == "expression":
+            p = (pics.get(b["picture"], {}).get("speakers") or {}).get(b["who"])
+            if p is not None:
+                out.append(dict(b, face=p))
+    return out
+
+
+def face_camera(box, W: int, H: int, face_beats: list[dict], f: int, fps: int):
+    """ED-02-safe face focus: while a shot's faces talk the crop leans in on the face (eased in and out over the span of
+    the shot's expressions) and every expression change adds a short pop toward it."""
+    if not face_beats:
+        return box
+    span0 = min(b["start_frame"] for b in face_beats)
+    span1 = max(b["end_frame"] for b in face_beats)
+    if not span0 <= f < span1 + FACE_EASE * fps:
+        return box
+    hold = FACE_HOLD * min(_ease((f - span0) / (FACE_EASE * fps)), _ease((span1 + FACE_EASE * fps - f) / (FACE_EASE * fps)))
+    cur = [b for b in face_beats if b["start_frame"] <= f]
+    b = cur[-1] if cur else face_beats[0]
+    pop = FACE_POP * _bump((f - b["start_frame"]) / (POP_S * fps)) if cur else 0.0
+    z = 1 + hold + pop
+    px, py = b["face"][0] * W, b["face"][1] * H
+    x0, y0, x1, y1 = box
+    nx0, ny0 = px + (x0 - px) / z, py + (y0 - py) / z
+    nx1, ny1 = px + (x1 - px) / z, py + (y1 - py) / z
+    dx = max(0.0, -nx0) - max(0.0, nx1 - W)
+    dy = max(0.0, -ny0) - max(0.0, ny1 - H)
+    return (nx0 + dx, ny0 + dy, nx1 + dx, ny1 + dy)
+
+
+def _to_frame(pt, box, W, H, OW, OH):
+    x0, y0, x1, y1 = box
+    return ((pt[0] * W - x0) / (x1 - x0) * OW, (pt[1] * H - y0) / (y1 - y0) * OH)
+
+
+def _alpha(t: float, life: float) -> float:
+    return max(0.0, min(_ease(t / 0.12), _ease((life - t) / 0.15)))
+
+
+def _scale(t: float) -> float:
+    u = t / 0.25
+    return 0.6 + 0.52 * _ease(u) if u < 1 else 1.12 - 0.12 * min(1.0, (t - 0.25) / 0.1)
+
+
+def _font(size: float, shout: bool = False):
+    return ACC._font(int(size), BUB.SHOUT_FONT if shout else BUB.FONT)
+
+
+def _star(d, cx, cy, r, col):
+    pts = []
+    for i in range(8):
+        a = math.pi / 4 * i - math.pi / 2
+        rr = r if i % 2 == 0 else r * 0.32
+        pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+    d.polygon(pts, fill=col)
+
+
+def _drop(d, cx, cy, r, col):
+    d.ellipse([cx - r * 0.6, cy - r * 0.1, cx + r * 0.6, cy + r * 1.1], fill=col)
+    d.polygon([(cx - r * 0.55, cy + r * 0.35), (cx, cy - r * 0.9), (cx + r * 0.55, cy + r * 0.35)], fill=col)
+
+
+def _sign(d, ch: str, cx, cy, r, col, a):
+    f = _font(r * 2.2, shout=True)
+    d.text((cx, cy), ch, font=f, fill=col + (a,), anchor="mm", stroke_width=max(2, int(r / 6)), stroke_fill=INK + (a,))
+
+
+class _Inked:
+    """Draws every stroke twice, a dark ink line under the colour, so a mark reads on a light and a dark picture alike."""
+
+    def __init__(self, d: ImageDraw.ImageDraw, a: int):
+        self.d, self.a = d, a
+
+    def line(self, pts, fill, width=1):
+        self.d.line(pts, fill=INK + (self.a,), width=width + 4, joint="curve")
+        self.d.line(pts, fill=fill, width=width, joint="curve")
+
+    def arc(self, box, start, end, fill, width=1):
+        self.d.arc(box, start, end, fill=INK + (self.a,), width=width + 4)
+        self.d.arc(box, start, end, fill=fill, width=width)
+
+    def polygon(self, pts, fill):
+        self.d.polygon(pts, fill=fill, outline=INK + (self.a,), width=3)
+
+    def ellipse(self, box, fill=None, outline=None, width=1):
+        self.d.ellipse(box, fill=fill, outline=outline or INK + (self.a,), width=max(width, 3))
+
+    def text(self, *args, **kw):
+        self.d.text(*args, **kw)
+
+
+def emotion_mark(d: ImageDraw.ImageDraw, expression: str, cx: float, cy: float, r: float, a: int) -> None:
+    """The drawn emotion mark beside a face (comic emanata): one per expression, none for neutral."""
+    d = _Inked(d, a)
+    w = max(2, int(r / 5))
+    if expression == "angry":
+        for sx, sy in ((-1, -1), (1, -1), (-1, 1), (1, 1)):
+            box = [cx + sx * r * 0.3 - r * 0.7, cy + sy * r * 0.3 - r * 0.7, cx + sx * r * 0.3 + r * 0.7,
+                   cy + sy * r * 0.3 + r * 0.7]
+            start = {(-1, -1): 0, (1, -1): 90, (1, 1): 180, (-1, 1): 270}[(sx, sy)]
+            d.arc(box, start, start + 90, fill=RED + (a,), width=w + 1)
+    elif expression in ("joyful", "smug", "amused"):
+        spots = [(0, 0, 1.0), (-0.9, 0.6, 0.55), (0.8, 0.8, 0.45)] if expression == "joyful" else [(0, 0, 0.8)]
+        for ox, oy, k in spots:
+            _star(d, cx + ox * r, cy + oy * r, r * k, AMBER + (a,))
+        if expression == "amused":
+            for k in (0.6, 1.0):
+                d.arc([cx - r * k, cy + r * 0.2, cx + r * k, cy + r * (0.2 + k)], 200, 340, fill=INK + (a,), width=w)
+    elif expression == "surprised":
+        _sign(d, "!", cx, cy, r, PAPER, a)
+        for i in range(5):
+            ang = -math.pi / 2 + (i - 2) * 0.45
+            d.line([(cx + math.cos(ang) * r * 1.1, cy + math.sin(ang) * r * 1.1),
+                    (cx + math.cos(ang) * r * 1.6, cy + math.sin(ang) * r * 1.6)], fill=PAPER + (a,), width=w)
+    elif expression == "curious":
+        _sign(d, "?", cx, cy, r, TEAL, a)
+    elif expression == "doubtful":
+        for i in (-1, 0, 1):
+            d.ellipse([cx + i * r * 0.6 - r * 0.16, cy - r * 0.16, cx + i * r * 0.6 + r * 0.16, cy + r * 0.16], fill=PAPER + (a,),
+                      outline=INK + (a,), width=max(1, w // 2))
+    elif expression == "confused":
+        pts = [(cx + math.cos(u) * r * u / 12, cy + math.sin(u) * r * u / 12) for u in [i * 0.3 for i in range(40)]]
+        d.line(pts, fill=PAPER + (a,), width=w)
+    elif expression in ("worried", "scared"):
+        _drop(d, cx, cy, r * 0.7, BLUE + (a,))
+        if expression == "scared":
+            for i in (-1, 1):
+                x = cx + i * r * 1.1
+                d.line([(x, cy - r * 0.8), (x - r * 0.15, cy - r * 0.3), (x + r * 0.15, cy + r * 0.2), (x, cy + r * 0.7)],
+                       fill=PAPER + (a,), width=w)
+    elif expression == "sad":
+        for i in (-1, 1):
+            _drop(d, cx + i * r * 0.45, cy + r * 0.3 * (i + 1), r * 0.4, BLUE + (a,))
+    elif expression == "determined":
+        for i in range(3):
+            x = cx - r * 0.6 + i * r * 0.6
+            d.line([(x, cy + r * 0.6), (x + r * 0.45, cy - r * 0.6)], fill=CORAL + (a,), width=w + 1)
+    elif expression == "deadpan":
+        d.line([(cx - r * 0.8, cy), (cx + r * 0.8, cy)], fill=PAPER + (a,), width=w + 1)
+
+
+def _tag(d, text, x, y, size, a):
+    f = _font(size)
+    l, t, r, b = d.textbbox((x, y), text, font=f, anchor="mm")
+    pad = size * 0.35
+    d.rounded_rectangle([l - pad, t - pad, r + pad, b + pad], int(size * 0.4), fill=PAPER + (int(a * 0.94),),
+                        outline=INK + (a,), width=max(2, int(size / 12)))
+    d.text((x, y), text, font=f, fill=INK + (a,), anchor="mm")
+    return l - pad, t - pad, r + pad, b + pad
+
+
+def _symbol(d, sym, cx, cy, r, a):
+    d = _Inked(d, a)
+    w = max(3, int(r / 4))
+    if sym in ("question", "exclaim"):
+        _sign(d, "?" if sym == "question" else "!", cx, cy, r, AMBER, a)
+    elif sym in ("arrow_up", "arrow_down"):
+        s = -1 if sym == "arrow_up" else 1
+        col = (GREEN if s < 0 else RED) + (a,)
+        d.line([(cx, cy - s * r), (cx, cy + s * r * 0.6)], fill=col, width=w)
+        d.polygon([(cx - r * 0.6, cy + s * r * 0.3), (cx + r * 0.6, cy + s * r * 0.3), (cx, cy + s * r * 1.1)], fill=col)
+    elif sym == "cross":
+        for s in (-1, 1):
+            d.line([(cx - r * 0.8, cy - s * r * 0.8), (cx + r * 0.8, cy + s * r * 0.8)], fill=RED + (a,), width=w)
+    elif sym == "check":
+        d.line([(cx - r * 0.8, cy), (cx - r * 0.2, cy + r * 0.6), (cx + r * 0.9, cy - r * 0.7)], fill=GREEN + (a,), width=w)
+    elif sym in ("plus", "equals"):
+        _sign(d, "+" if sym == "plus" else "=", cx, cy, r, TEAL, a)
+    elif sym == "clock":
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=PAPER + (a,), width=w)
+        d.line([(cx, cy), (cx, cy - r * 0.7)], fill=PAPER + (a,), width=w)
+        d.line([(cx, cy), (cx + r * 0.5, cy)], fill=PAPER + (a,), width=w)
+
+
+def _chart(d, b, x, y, H, t, a):
+    k = _ease((t - 0.1) / 0.8)
+    vals = b["values"]
+    if b["chart"] == "counter":
+        v0, v1 = (vals[0], vals[-1]) if len(vals) > 1 else (0, vals[0])
+        v = v0 + (v1 - v0) * k
+        num = f"{v:,.0f}" if abs(v1) >= 10 or float(v1).is_integer() else f"{v:.1f}"
+        label = (b.get("labels") or [""])[0]
+        f = _font(H * 0.08, shout=True)
+        l, tt, r, bb = d.textbbox((x, y), num + (" " + b["unit"] if b.get("unit") else ""), font=f, anchor="mm")
+        d.rounded_rectangle([l - H * 0.025, tt - H * 0.03, r + H * 0.025, bb + H * (0.06 if label else 0.03)], int(H * 0.02),
+                            fill=(34, 27, 22, int(a * 0.85)), outline=PAPER + (a,), width=max(2, H // 300))
+        d.text((x, y), num + (" " + b["unit"] if b.get("unit") else ""), font=f, fill=AMBER + (a,), anchor="mm")
+        if label:
+            d.text((x, bb + H * 0.025), label, font=_font(H * 0.035), fill=PAPER + (a,), anchor="mm")
+        return
+    top = max(abs(v) for v in vals) or 1
+    bw, bh = H * 0.07, H * 0.2
+    x0 = x - (len(vals) * bw * 1.5) / 2
+    d.rounded_rectangle([x0 - bw * 0.4, y - bh * 0.75, x0 + len(vals) * bw * 1.5 + bw * 0.1, y + bh * 0.45], int(H * 0.02),
+                        fill=(34, 27, 22, int(a * 0.85)), outline=PAPER + (a,), width=max(2, H // 300))
+    for i, v in enumerate(vals):
+        h = bh * 0.8 * abs(v) / top * k
+        bx = x0 + i * bw * 1.5
+        d.rectangle([bx, y + bh * 0.25 - h, bx + bw, y + bh * 0.25], fill=(CORAL if i == len(vals) - 1 else TEAL) + (a,))
+        lab = (b.get("labels") or [])[i] if i < len(b.get("labels") or []) else ""
+        if lab:
+            d.text((bx + bw / 2, y + bh * 0.33), lab, font=_font(H * 0.028), fill=PAPER + (a,), anchor="mt")
+
+
+_SPRITES: dict = {}
+
+
+def _sprite(path: Path | None):
+    if path is None:
+        return None
+    if path not in _SPRITES:
+        _SPRITES.clear() if len(_SPRITES) > 32 else None
+        _SPRITES[path] = Image.open(path).convert("RGBA")
+    return _SPRITES[path]
+
+
+def find_file(name: str | None, dirs: list[Path]) -> Path | None:
+    if not name:
+        return None
+    for d in list(dirs) + [Path(__file__).resolve().parents[2]]:
+        p = Path(d) / name
+        if p.exists():
+            return p
+    return None
+
+
+def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_size: tuple[int, int], cast: dict,
+         dirs: list[Path]) -> Image.Image:
+    """Every beat of the shot active at frame ``f``, drawn on the finished frame (after accents and bubbles)."""
+    OW, OH = frame.size
+    W, H = src_size
+    active = [b for b in shot_beats if b["kind"] != "accent" and b["start_frame"] <= f < max(b["end_frame"], b["start_frame"] + 1)]
+    if not active:
+        return frame
+    lay = Image.new("RGBA", frame.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    for b in active:
+        t = (f - b["start_frame"]) / fps
+        life = max(1.0 / fps, b["end"] - b["start"])
+        a = int(255 * _alpha(t, life))
+        if a <= 0:
+            continue
+        kind = b["kind"]
+        px, py = b.get("pos") or DEFAULT_POS.get(kind, (0.5, 0.5))
+        if kind in ("label", "highlight"):  # a spot of the picture: follow the camera
+            px, py = _to_frame((px, py), box, W, H, OW, OH)
+            px, py = px / OW, py / OH
+        x, y = px * OW, py * OH
+        sc = _scale(t)
+        if kind == "text":
+            frame = Image.alpha_composite(frame.convert("RGBA"), lay).convert("RGB")
+            lay = Image.new("RGBA", frame.size, (0, 0, 0, 0))
+            d = ImageDraw.Draw(lay)
+            frame = ACC._text_layer(frame, b["text"], (px, py), sc * TEXT_SCALE, a / 255, BUB.SHOUT_FONT, big=False)
+        elif kind == "label":
+            tx, ty = x + (-1 if px > 0.5 else 1) * OH * 0.16, max(OH * 0.08, y - OH * 0.14)
+            d.line([(x, y), (tx, ty)], fill=PAPER + (a,), width=max(2, OH // 220))
+            d.ellipse([x - OH * 0.008, y - OH * 0.008, x + OH * 0.008, y + OH * 0.008], fill=CORAL + (a,))
+            _tag(d, b["text"], tx, ty, OH * 0.06 * min(sc, 1.05), a)
+        elif kind == "highlight":
+            r = OH * 0.13 * (b.get("strength") or 1.0)
+            sweep = 360 * _ease(t / 0.35)
+            d.arc([x - r, y - r * 0.8, x + r, y + r * 0.8], -90, -90 + sweep, fill=CORAL + (a,), width=max(4, OH // 90))
+        elif kind == "symbol":
+            _symbol(d, b["symbol"], x, y, OH * 0.085 * sc, a)
+        elif kind == "chart":
+            _chart(d, b, x, y, OH, t, a)
+        elif kind == "prop":
+            im = _sprite(find_file(b.get("asset"), dirs))
+            if im is None:
+                _tag(d, b["thing"], x, y, OH * 0.06 * min(sc, 1.05), a)
+            else:
+                h = int(OH * 0.26 * sc)
+                w = max(1, int(im.width * h / max(1, im.height)))
+                piece = im.resize((w, max(1, h)), Image.BICUBIC)
+                if a < 255:
+                    piece.putalpha(piece.getchannel("A").point(lambda v: v * a // 255))
+                lay.alpha_composite(piece, (int(x - w / 2), int(y - h / 2)))
+        elif kind == "expression":
+            face = (b.get("face") or None)
+            if face is not None:
+                fx, fy = _to_frame(face, box, W, H, OW, OH)
+                r = OH * MARK_R * min(sc, 1.05)
+                emotion_mark(d, b["expression"], fx + OH * 0.13, fy - OH * 0.13, r, a)
+            sprite = _sprite(find_file((cast.get(b["who"], {}).get("expressions") or {}).get(b["expression"]), dirs))
+            if sprite is not None:  # the face inset: the hero's own cut-out for this expression, swapped on every change
+                h = int(OH * 0.34 * sc)
+                w = max(1, int(sprite.width * h / max(1, sprite.height)))
+                left = face is not None and face[0] > 0.5
+                ix = int(OW * 0.03) if left else int(OW * 0.97) - w
+                iy = int(OH * 0.95) - h
+                d.rounded_rectangle([ix - 8, iy - 8, ix + w + 8, iy + h + 8], 18, fill=(34, 27, 22, int(a * 0.8)),
+                                    outline=PAPER + (a,), width=3)
+                piece = sprite.resize((w, max(1, h)), Image.BICUBIC)
+                if a < 255:
+                    piece.putalpha(piece.getchannel("A").point(lambda v: v * a // 255))
+                lay.alpha_composite(piece, (ix, iy))
+    return Image.alpha_composite(frame.convert("RGBA"), lay).convert("RGB")

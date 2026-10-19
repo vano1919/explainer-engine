@@ -40,11 +40,14 @@ def events(timed: dict) -> list[tuple[float, str]]:
         ev.append((g["start"], "visual"))
     for c in timed.get("cards", []):
         ev.append((c["start"], "card"))
+    for b in timed.get("visual_beats", []):  # VB rules: the lines' visual beats (an accent beat is already a shot accent)
+        if b["kind"] != "accent":
+            ev.append((b["start"], "beat_" + b["kind"]))
     return sorted(ev)
 
 
 def _alive(s: dict) -> bool:
-    return bool(s.get("accents") or s.get("bubbles") or s.get("speaker"))
+    return bool(s.get("accents") or s.get("bubbles") or s.get("speaker") or s.get("visual_beats"))
 
 
 def measure(timed: dict) -> dict:

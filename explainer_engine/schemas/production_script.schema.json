@@ -15,7 +15,11 @@
   "additionalProperties": false,
   "properties": {
     "schema": {
-      "const": "production_script/1"
+      "enum": [
+        "production_script/1",
+        "production_script/2"
+      ],
+      "description": "/2 (2026-10-19): every line carries its visual beats (VB rules, PV-39 FAIL); /1 is the legacy contract"
     },
     "episode": {
       "type": "object",
@@ -337,6 +341,31 @@
                 }
               }
             }
+          },
+          "expressions": {
+            "type": "object",
+            "propertyNames": {
+              "enum": [
+                "neutral",
+                "curious",
+                "surprised",
+                "joyful",
+                "amused",
+                "smug",
+                "confused",
+                "doubtful",
+                "worried",
+                "scared",
+                "angry",
+                "sad",
+                "determined",
+                "deadpan"
+              ]
+            },
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "VB-06: expression -> a cut-out face/pose PNG of this hero (the face inset swaps it on every change)"
           }
         }
       }
@@ -519,6 +548,13 @@
                     "transition"
                   ],
                   "description": "Narrative classification for the editorial gate; fact, analysis and speculation require claim references."
+                },
+                "visual_beats": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/beat"
+                  },
+                  "description": "VB rules: the visual beats of this line (stage 2b, beat-writer), in the order they land"
                 }
               }
             }
@@ -1545,6 +1581,293 @@
           "description": "premium only: why this picture needs the dearer model (PV-40)"
         }
       }
+    },
+    "beat": {
+      "type": "object",
+      "required": [
+        "at",
+        "kind",
+        "why"
+      ],
+      "additionalProperties": false,
+      "description": "a visual beat (VB rules, docs/STORY_ENGINE.md): something new on screen, on a phrase of this line, written with the line",
+      "properties": {
+        "at": {
+          "type": "string",
+          "minLength": 1,
+          "description": "the words of THIS line the beat lands on"
+        },
+        "offset": {
+          "type": "number",
+          "minimum": -0.3,
+          "maximum": 1.5,
+          "default": 0,
+          "description": "seconds after the phrase's first word starts (never a clock time: the read decides)"
+        },
+        "kind": {
+          "enum": [
+            "text",
+            "label",
+            "prop",
+            "chart",
+            "highlight",
+            "symbol",
+            "accent",
+            "expression"
+          ]
+        },
+        "why": {
+          "type": "string",
+          "minLength": 8,
+          "description": "what in the line at that instant this beat shows (VB-03)"
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "text / label: at most 4 words"
+        },
+        "pos": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "where on the frame (0..1); a label or highlight points at this spot of the picture"
+        },
+        "thing": {
+          "type": "string",
+          "description": "prop: the object named in the line"
+        },
+        "asset": {
+          "type": "string",
+          "description": "prop: a cut-out PNG (relative to the picture folders or the repo); without one the prop is drawn as a word sticker"
+        },
+        "chart": {
+          "enum": [
+            "counter",
+            "bars"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "maxItems": 3
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "maxItems": 3
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 12
+        },
+        "claim": {
+          "type": "string",
+          "description": "claim id behind a number on screen (invariant 5)"
+        },
+        "symbol": {
+          "enum": [
+            "question",
+            "exclaim",
+            "arrow_up",
+            "arrow_down",
+            "cross",
+            "check",
+            "plus",
+            "equals",
+            "clock"
+          ]
+        },
+        "effect": {
+          "enum": [
+            "punch",
+            "shake"
+          ],
+          "description": "accent: a camera accent of production/accents.py"
+        },
+        "strength": {
+          "type": "number",
+          "minimum": 0.2,
+          "maximum": 1.0
+        },
+        "who": {
+          "type": "string",
+          "description": "expression: the cast id whose face changes (default: the line's speaker)"
+        },
+        "expression": {
+          "enum": [
+            "neutral",
+            "curious",
+            "surprised",
+            "joyful",
+            "amused",
+            "smug",
+            "confused",
+            "doubtful",
+            "worried",
+            "scared",
+            "angry",
+            "sad",
+            "determined",
+            "deadpan"
+          ]
+        },
+        "cue": {
+          "type": "object",
+          "required": [
+            "sound"
+          ],
+          "additionalProperties": false,
+          "description": "VB-08: the short light sound that marks this beat (audio/cues.py), or 'none' with a reason",
+          "properties": {
+            "sound": {
+              "enum": [
+                "tick",
+                "tap",
+                "pop",
+                "blip",
+                "pluck",
+                "chime",
+                "whiff",
+                "thud",
+                "rise",
+                "fall",
+                "none"
+              ]
+            },
+            "gain_db": {
+              "type": "number",
+              "minimum": -36.0,
+              "maximum": -20.0,
+              "default": -26.0
+            },
+            "max_ms": {
+              "type": "number",
+              "minimum": 20,
+              "maximum": 250
+            },
+            "why": {
+              "type": "string",
+              "description": "why this sound (or why none: an effect already sounds here, a quiet expression)"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "text",
+                  "label"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "text"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "prop"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "thing"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "chart"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "chart",
+              "values",
+              "claim"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "highlight"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "pos"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "symbol"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "symbol"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "accent"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "effect"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "expression"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "expression"
+            ]
+          }
+        }
+      ]
     }
   }
 }
