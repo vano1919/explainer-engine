@@ -12,6 +12,7 @@ CPU only (numpy, PIL, ffmpeg). Helpers come from ``examples/stone_age/day1_v5/as
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
@@ -196,7 +197,7 @@ LOOK = "vignette=PI/5,noise=alls=2:allf=t"  # ED-04: one constant film look over
 
 
 def look_filter(duration: float) -> str:
-    return f"{LOOK},fade=t=in:st=0:d={FADE_IN},fade=t=out:st={max(0.0, duration - FADE_OUT):.3f}:d={FADE_OUT}"
+    return chunk_look(True, True, duration)
 
 
 def overlays(frame: Image.Image, f: int, fps: int, timed: dict) -> Image.Image:
@@ -239,14 +240,22 @@ def placeholder(pid: str, text: str, size: tuple[int, int]) -> Image.Image:
     return im
 
 
-def picture_image(pid: str, pics: dict, dirs: list[Path], final: bool, report: list) -> Image.Image | None:
+def find_picture(pid: str, pics: dict, dirs: list[Path]) -> Path | None:
     p = pics.get(pid, {})
     for cand in [p.get("file"), f"{pid}.png", f"{pid}_v1.png"]:
         if not cand:
             continue
         for d in dirs:
             if (Path(d) / cand).exists():
-                return Image.open(Path(d) / cand).convert("RGB")
+                return Path(d) / cand
+    return None
+
+
+def picture_image(pid: str, pics: dict, dirs: list[Path], final: bool, report: list) -> Image.Image | None:
+    p = pics.get(pid, {})
+    found = find_picture(pid, pics, dirs)
+    if found:
+        return Image.open(found).convert("RGB")
     if final:
         raise SystemExit(f"final render: picture {pid} is missing (PV-25)")
     if p.get("stand_in"):
@@ -261,30 +270,109 @@ def to_frame(pt, box, W, H, OW, OH):
     return ((pt[0] * W - x0) / (x1 - x0) * OW, (pt[1] * H - y0) / (y1 - y0) * OH)
 
 
+CHUNK_SECONDS = 60.0  # a render is written in chunks that survive a restart of the machine; a restart costs at most one chunk
+
+
+def clean_cut(shots: list, k: int, fps: int) -> bool:
+    """A chunk may start at shot k only when the frame before it is a plain frame of shot k-1: not inside that shot's own dissolve
+    (a dissolve blends the frame before with the new one, so frames inside it depend on frames that came earlier)."""
+    prev = shots[k - 1]
+    if prev.get("transition") != "dissolve" or k - 1 == 0:
+        return True
+    return prev["end_frame"] - prev["start_frame"] > round(float(prev.get("transition_seconds", 1.0)) * fps)
+
+
+def chunk_bounds(shots: list, fps: int, total: int, seconds: float = CHUNK_SECONDS) -> list[list[int]]:
+    """[[first shot, end shot)] per chunk. Edges are shot starts (a cut is a clean place to join), chunks are at least ``seconds``
+    long, and the last one keeps room for the closing fade."""
+    want = max(1, round(seconds * fps)) if seconds > 0 else total
+    min_tail = round((FADE_OUT + 1.5) * fps)
+    starts = [0]
+    for k in range(1, len(shots)):
+        edge = shots[k]["start_frame"]
+        if edge - shots[starts[-1]]["start_frame"] < want:
+            continue
+        if total - edge < min_tail:
+            break
+        if clean_cut(shots, k, fps):
+            starts.append(k)
+    return [[a, b] for a, b in zip(starts, starts[1:] + [len(shots)])]
+
+
+def chunk_look(first: bool, last: bool, seconds: float) -> str:
+    """The film look, plus the fade in on the first chunk and the fade out on the last (ED-04)."""
+    f = LOOK
+    if first:
+        f += f",fade=t=in:st=0:d={FADE_IN}"
+    if last:
+        f += f",fade=t=out:st={max(0.0, seconds - FADE_OUT):.3f}:d={FADE_OUT}"
+    return f
+
+
+def plan_stamp(timed: dict, size: tuple[int, int], crf: int, grade_key: str | None, bounds: list, pics: dict, dirs: list[Path]) -> str:
+    """What the chunks on disk were made from: the timing, the size, the picture files. A change anywhere starts the chunks over."""
+    files = []
+    for pid in sorted({s["picture"] for s in timed["shots"]}):
+        p = find_picture(pid, pics, dirs)
+        if p:
+            st = p.stat()
+            files.append([pid, p.name, st.st_size, st.st_mtime_ns])
+    body = {"timed": {k: v for k, v in timed.items() if k != "findings"}, "size": list(size), "crf": crf, "grade": grade_key,
+            "bounds": bounds, "pictures": files, "look": LOOK, "version": 1}
+    return hashlib.sha1(json.dumps(body, sort_keys=True, default=str).encode()).hexdigest()
+
+
+def progress(out: Path, done: int, total: int, reused: int) -> None:
+    (out / "render_progress.json").write_text(json.dumps({"chunks_done": done, "chunks_total": total, "reused": reused}))
+    print(f"chunk {done}/{total} done ({reused} reused)", flush=True)
+
+
+def mux(out: Path, bounds: list) -> None:
+    """The finished chunks joined without re-encoding, with the audio; the chunk files go only after video.mp4 is whole."""
+    chunks = out / "chunks"
+    names = [f"c_{i:04d}.mp4" for i in range(len(bounds))]
+    (chunks / "list.txt").write_text("".join(f"file '{n}'\n" for n in names))
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(chunks / "list.txt"), "-i", str(out / "audio.wav"),
+                    "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", str(out / "video.part.mp4")], check=True)
+    os.replace(out / "video.part.mp4", out / "video.mp4")  # a video.mp4 on disk is always a finished one
+    for f in chunks.iterdir():
+        f.unlink()
+    chunks.rmdir()
+
+
+def lock_alive(lock: Path) -> bool:
+    """Is the process named in the lock still an assemble? After a restart of the machine the pid may belong to something else."""
+    try:
+        pid = int(lock.read_text())
+        os.kill(pid, 0)
+    except (ProcessLookupError, ValueError, FileNotFoundError):
+        return False
+    cmd = Path(f"/proc/{pid}/cmdline")
+    return b"explainer_engine" in cmd.read_bytes() if cmd.exists() else True
+
+
 def assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Path], sound_dirs: list[Path], *,
              size: tuple[int, int] = (1920, 1080), final: bool = False, grade_key: str | None = None,
-             audio_only: bool = False, crf: int = 18) -> dict:
+             audio_only: bool = False, crf: int = 18, chunk_seconds: float = CHUNK_SECONDS,
+             only: tuple[int, int] | None = None) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     fails = [x for x in timed.get("findings", []) if x.get("severity") == "FAIL"]
     if fails:  # 2026-10-16: a shell chain started a render on a timing with 3 FAIL
         raise SystemExit(f"refused: the timing has {len(fails)} FAIL ({fails[0]['rule']}: {fails[0]['detail']}); fix and re-time")
     lock = out / ".assemble.lock"
-    if lock.exists():
-        try:
-            os.kill(int(lock.read_text()), 0)
-            raise SystemExit(f"refused: another assemble (pid {lock.read_text()}) writes {out}")
-        except (ProcessLookupError, ValueError):
-            pass  # a stale lock from a run that died
+    if lock.exists() and lock_alive(lock):
+        raise SystemExit(f"refused: another assemble (pid {lock.read_text()}) writes {out}")  # else a stale lock from a run that died
     lock.write_text(str(os.getpid()))
     try:
         return _assemble(timed, narration_wav, out, picture_dirs, sound_dirs, size=size, final=final, grade_key=grade_key,
-                         audio_only=audio_only, crf=crf)
+                         audio_only=audio_only, crf=crf, chunk_seconds=chunk_seconds, only=only)
     finally:
         lock.unlink(missing_ok=True)
 
 
 def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Path], sound_dirs: list[Path], *,
-              size: tuple[int, int], final: bool, grade_key: str | None, audio_only: bool, crf: int) -> dict:
+              size: tuple[int, int], final: bool, grade_key: str | None, audio_only: bool, crf: int,
+              chunk_seconds: float, only: tuple[int, int] | None) -> dict:
     OW, OH = size
     fps = timed["fps"]
     sounds = Sounds(sound_dirs)
@@ -311,25 +399,39 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         return result
     codex = resolver.load_codex()
     params = codex["grades"].get(grade_key or "prehistory")
-    ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{OW}x{OH}", "-r", str(fps),
-                           "-i", "-", "-i", str(out / "audio.wav"), "-vf", look_filter(timed["duration"]), "-c:v", "libx264", "-crf", str(crf), "-preset", "medium",
-                           "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-frames:v", str(timed["frames"]),
-                           str(out / "video.part.mp4")], stdin=subprocess.PIPE)
-    pics, cache = timed["pictures"], {}
-    written = 0
-    last = None
-    for k, s in enumerate(timed["shots"]):
-        f0, f1 = s["start_frame"], s["end_frame"]
+    pics, shots = timed["pictures"], timed["shots"]
+    bounds = chunk_bounds(shots, fps, timed["frames"], chunk_seconds)
+    chunks = out / "chunks"
+    chunks.mkdir(exist_ok=True)
+    stamp = plan_stamp(timed, size, crf, grade_key, bounds, pics, picture_dirs)
+    plan_file = chunks / "plan.json"
+    if not plan_file.exists() or json.loads(plan_file.read_text()).get("stamp") != stamp:
+        for old in chunks.glob("c_*.mp4"):  # a chunk of another plan is never reused
+            old.unlink()
+        for old in chunks.glob("c_*.part.mp4"):
+            old.unlink()
+        plan_file.write_text(json.dumps({"stamp": stamp, "bounds": bounds}))
+    cache: dict = {}
+
+    def prep(k: int):
+        """The graded picture and the bubbles of shot k. A run of shots on one picture shares one grading (the seed is the
+        run's first shot), so a chunk edge inside such a run draws the same grain as the unbroken render would."""
+        s = shots[k]
         pid = s["picture"]
         if pid not in cache:
+            seed = k
+            while seed > 0 and shots[seed - 1]["picture"] == pid:
+                seed -= 1
             im = picture_image(pid, pics, picture_dirs, final, report)
             if im is None:
                 im = placeholder(pid, pics.get(pid, {}).get("subject") or pics.get(pid, {}).get("edit", ""), (OW, OH))
             elif params:
-                im = Image.fromarray((grade(np.asarray(im, dtype=np.float64) / 255.0, params, seed=k) * 255).astype(np.uint8))
-            cache = {pid: im}  # one picture in memory at a time (8 GB machines)
+                im = Image.fromarray((grade(np.asarray(im, dtype=np.float64) / 255.0, params, seed=seed) * 255).astype(np.uint8))
+            cache.clear()  # one picture in memory at a time (8 GB machines)
+            cache[pid] = im
         im = cache[pid]
         W, H = im.size
+        f0, f1 = s["start_frame"], s["end_frame"]
         speakers = pics.get(pid, {}).get("speakers", {})
         bubbles = []
         for b in s["bubbles"]:
@@ -338,30 +440,68 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
             sp = to_frame(speakers.get(b["who"], [0.5, 0.4]), box, W, H, OW, OH)
             bubbles.append(BUB.Bubble(b["text"], sp, b["start"], b["end"], (OW, OH), kind=b.get("kind", "speech"),
                                       avoid=[x.box for x in bubbles if x.end > b["start"]]))
-        dissolve = round(float(s.get("transition_seconds", 1.0)) * fps) if s.get("transition") == "dissolve" and last is not None else 0
+        return im, bubbles
+
+    def draw(k: int, im: Image.Image, bubbles: list, f: int, before: Image.Image | None = None) -> Image.Image:
+        s = shots[k]
+        f0, f1 = s["start_frame"], s["end_frame"]
+        W, H = im.size
+        u = (f - f0) / max(1, f1 - f0 - 1)
+        box = motion_box(s.get("render_motion", s["motion"]), W, H, u)
         acc = s.get("accents", [])
-        before = last
-        for f in range(f0, f1):
-            u = (f - f0) / max(1, f1 - f0 - 1)
-            box = motion_box(s.get("render_motion", s["motion"]), W, H, u)
-            if acc:  # MO rules (D-48): punch, shake, wobble move the crop; whips, flashes and words are drawn
-                box = ACC.apply_camera(box, W, H, *ACC.camera(acc, f, fps, f0))
-            frame = im.resize((OW, OH), Image.BICUBIC, box=box)
-            if acc:
-                frame = ACC.draw(frame, acc, f, fps, f0, f1, before, BUB.FONT)
-            if bubbles:
-                frame = BUB.composite(frame, bubbles, f / fps)
-            frame = overlays(frame, f, fps, timed)
-            if f - f0 < dissolve:  # UR-14: the picture before melts into this one
-                frame = Image.blend(last, frame, (f - f0 + 1) / (dissolve + 1))
-            last = frame
-            ff.stdin.write(frame.tobytes())
-            written += 1
-    ff.stdin.close()
-    if ff.wait() != 0:
-        raise SystemExit("ffmpeg failed; video.part.mp4 kept for a look")
-    os.replace(out / "video.part.mp4", out / "video.mp4")  # a video.mp4 on disk is always a finished one
-    result["video"] = str(out / "video.mp4")
+        if acc:  # MO rules (D-48): punch, shake, wobble move the crop; whips, flashes and words are drawn
+            box = ACC.apply_camera(box, W, H, *ACC.camera(acc, f, fps, f0))
+        frame = im.resize((OW, OH), Image.BICUBIC, box=box)
+        if acc:
+            frame = ACC.draw(frame, acc, f, fps, f0, f1, before, BUB.FONT)
+        if bubbles:
+            frame = BUB.composite(frame, bubbles, f / fps)
+        return overlays(frame, f, fps, timed)
+
+    written, reused = 0, 0
+    todo = range(len(bounds)) if only is None else range(*only)  # a part-by-part run draws only its chunks (e.g. 0:3)
+    for i, (k0, k1) in enumerate(bounds):
+        if i not in todo:
+            continue
+        n_frames = sum(shots[k]["end_frame"] - shots[k]["start_frame"] for k in range(k0, k1))
+        part = chunks / f"c_{i:04d}.mp4"
+        if part.exists():
+            written += n_frames
+            reused += 1
+            progress(out, i + 1, len(bounds), reused)
+            continue
+        tmp = chunks / f"c_{i:04d}.part.mp4"
+        ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{OW}x{OH}", "-r", str(fps),
+                               "-i", "-", "-vf", chunk_look(i == 0, i == len(bounds) - 1, n_frames / fps), "-c:v", "libx264",
+                               "-crf", str(crf), "-preset", "medium", "-pix_fmt", "yuv420p", "-frames:v", str(n_frames), "-an",
+                               str(tmp)], stdin=subprocess.PIPE)
+        last = None
+        if k0 > 0 and shots[k0].get("transition") == "dissolve":  # the picture before melts into this one: draw its last frame
+            im, bubbles = prep(k0 - 1)
+            last = draw(k0 - 1, im, bubbles, shots[k0 - 1]["end_frame"] - 1)
+        for k in range(k0, k1):
+            s = shots[k]
+            f0, f1 = s["start_frame"], s["end_frame"]
+            im, bubbles = prep(k)
+            dissolve = round(float(s.get("transition_seconds", 1.0)) * fps) if s.get("transition") == "dissolve" and last is not None else 0
+            before = last  # the last frame of the shot before (a whip accent pulls from it)
+            for f in range(f0, f1):
+                frame = draw(k, im, bubbles, f, before)
+                if f - f0 < dissolve:  # UR-14: the picture before melts into this one
+                    frame = Image.blend(last, frame, (f - f0 + 1) / (dissolve + 1))
+                last = frame
+                ff.stdin.write(frame.tobytes())
+                written += 1
+        ff.stdin.close()
+        if ff.wait() != 0:
+            raise SystemExit(f"ffmpeg failed in chunk {i}; the finished chunks stay in {chunks} and the next run reuses them")
+        os.replace(tmp, part)  # a c_NNNN.mp4 on disk is always a finished chunk
+        progress(out, i + 1, len(bounds), reused)
+    left = [i for i in range(len(bounds)) if not (chunks / f"c_{i:04d}.mp4").exists()]
+    result["chunks"] = {"count": len(bounds), "reused": reused, "left": left}
+    if not left:
+        mux(out, bounds)
+        result["video"] = str(out / "video.mp4")
     result["frames_written"] = written
     result["frames_planned"] = timed["frames"]
     (out / "assemble_report.json").write_text(json.dumps(result, indent=1))

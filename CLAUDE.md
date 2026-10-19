@@ -41,6 +41,8 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 
 **How we work (creator, 2026-10-17):** a change request goes in this order: (1) study the process and the real output (open files, measure, find the cause); (2) research when the topic needs it and write the findings into a skill; (3) ask the creator the questions that are truly his to answer; (4) update rules, skills, agents and tests; (5) only then produce. Never produce before steps 1-4. Creator notes become rules with a test (OR-09).
 
+**Long renders (RULE-R1, 2026-10-17):** a render longer than ~10 minutes runs as a tracked background task of the session, never a detached process; it is written in chunks (ED-13) and each run draws only its chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once. The session keeps a wake-up timer while it runs. Details: `docs/PRODUCTION_RULES.md` section 3.
+
 **Production rules (binding for every video, creator 2026-10-16):** start from `docs/PRODUCTION_RULES.md` and run
 `python -m explainer_engine.production_gate <episode folder>` to see the gates (script, test read, shot plan, style bridge,
 sprites, pictures, full read, render, QA). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures

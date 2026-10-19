@@ -433,6 +433,29 @@ on a 10 ms fade; word times follow the real quiet spot. Re-run: 131 -> 113 silen
 -42 dB), 18 insertions skipped (no quiet spot). Three cuts that relied on a skipped pause were moved to legal pauses (S18, S31, S32)
 and one reframe added (S31 "Fuel."). Tests: 210 passed. Creator picked speed 1.15.
 
+## 2026-10-17 — The 2K render died three times (10:11, 11:21, 12:04): the machine restarted
+
+Cause (measured, not guessed): after the third death `/proc/uptime` read 97 s and PID 1 had run 27 s - the whole container restarted, so
+the render, its ffmpeg and a watcher started with `setsid` all disappeared at once (the watcher's last line is 12:04:27). Memory was
+not the cause (cgroup 3 GB of 14.3 GB, no OOM kill, python peak 6.2 GB). No log shows an error because nothing got to write one.
+Fix: ED-13. The assembler now writes ~60 s chunks as finished files and resumes from them (`chunk_bounds`, `plan_stamp`, `mux`);
+the grading seed of a picture is the first shot of its run so a chunk edge inside one picture draws the same grain; a lock whose pid is
+reused by another program is stale (`lock_alive`). Tests: `tests/unit/test_chunked_render.py` (6, including a render that dies before
+the join and resumes with every chunk reused and the exact frame count). 219 tests pass, docs_lint 0. The 2K render was restarted with it.
+
+## 2026-10-17 — Episode 1 finished as it is (creator: "დავდებ", he uploads it himself)
+
+- 2K master (chunked render, ED-13, 19 chunks, the last 11 drawn part by part under RULE-R1): 1182.23 s, 2560x1440, -14.6 LUFS,
+  frames 35467 = planned. Master kept at 1.0.
+- Speed 1.15 (`finish/speed.py --final 1.15`): 1028.05 s (1182.23 / 1.15), 2560x1440 H.264, AAC. Audio scan: 0 silence runs, 0 cuts
+  into sound. Two frames checked by looking (250 s join area, 60/500 s cards and data bars, 900 s card entrance crossfade, 897 vs 903 s).
+- Chapters for the 1.15 file: 0:00, 3:40, 7:13, 9:07, 11:52, 13:55, 14:58 (last chapter ends at 17:08) in
+  `examples/stone_age/ep1_v1/metadata.md`.
+- Shorts are NOT re-cut: they stay at 1.0 (see decision open in the report).
+- Creator's approval for the manual upload is recorded here. Nothing is uploaded by code.
+- Dropped by the creator's decision (assumed, to confirm): ElevenLabs narrator samples and the Day 1 pod batch.
+- Stored: `vano1919/tmr-artifacts` under `episode1/final` (1.15 file, metadata) and `episode1/out` (1.0 master).
+
 ## 2026-10-19 — Research handoff checked against the code; voiced dialogue (D-45) and the Shorts set (SH-05)
 
 Target given by the creator: an 8-12 minute dialogue video plus 10 Shorts. The expected `docs/research/` package does not exist on
