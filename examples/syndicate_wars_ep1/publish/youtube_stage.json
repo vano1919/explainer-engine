@@ -1,0 +1,455 @@
+{
+  "schema": "youtube_stage/1",
+  "episode": "/home/user/explainer-engine/examples/syndicate_wars_ep1",
+  "privacy": "unlisted",
+  "settings": {
+    "category": "Entertainment",
+    "language": "en",
+    "location": "United States",
+    "made_for_kids": false,
+    "paid_promotion": false
+  },
+  "synthetic_media": false,
+  "items": [
+    {
+      "id": "SH01",
+      "kind": "short",
+      "file": "/home/user/explainer-engine/jobs/syndicate_wars/shorts/final/SH01.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Could one line in a ledger bring down Al Capone?",
+          "description": "Could one line in a ledger bring down Al Capone?\n\nFull video: Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida\nhttps://youtu.be/JKzH8GNaaVk\n\n#shorts #Gta6 #GtaVi",
+          "tags": [
+            "GTA 6",
+            "GTA VI",
+            "Vice City",
+            "Leonida",
+            "Al Capone",
+            "Vito Corleone",
+            "Tommy Shelby",
+            "mafia",
+            "crime boss",
+            "who would win",
+            "character select",
+            "video game analysis",
+            "animated explainer",
+            "history",
+            "Peaky Blinders",
+            "The Godfather",
+            "GTA 6 theory",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH02",
+      "kind": "short",
+      "file": "/home/user/explainer-engine/jobs/syndicate_wars/shorts/final/SH02.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Who lost to a flamingo?",
+          "description": "Who lost to a flamingo?\n\nFull video: Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida\nhttps://youtu.be/JKzH8GNaaVk\n\n#shorts #Gta6 #GtaVi",
+          "tags": [
+            "GTA 6",
+            "GTA VI",
+            "Vice City",
+            "Leonida",
+            "Al Capone",
+            "Vito Corleone",
+            "Tommy Shelby",
+            "mafia",
+            "crime boss",
+            "who would win",
+            "character select",
+            "video game analysis",
+            "animated explainer",
+            "history",
+            "Peaky Blinders",
+            "The Godfather",
+            "GTA 6 theory",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH03",
+      "kind": "short",
+      "file": "/home/user/explainer-engine/jobs/syndicate_wars/shorts/final/SH03.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "You're a 1930s crime boss, and you just landed in Leonida.",
+          "description": "You're a 1930s crime boss, and you just landed in Leonida.\n\nFull video: Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida\nhttps://youtu.be/JKzH8GNaaVk\n\n#shorts #Gta6 #GtaVi",
+          "tags": [
+            "GTA 6",
+            "GTA VI",
+            "Vice City",
+            "Leonida",
+            "Al Capone",
+            "Vito Corleone",
+            "Tommy Shelby",
+            "mafia",
+            "crime boss",
+            "who would win",
+            "character select",
+            "video game analysis",
+            "animated explainer",
+            "history",
+            "Peaky Blinders",
+            "The Godfather",
+            "GTA 6 theory",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH04",
+      "kind": "short",
+      "file": "/home/user/explainer-engine/jobs/syndicate_wars/shorts/final/SH04.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Is the quiet, legal business always the safe one?",
+          "description": "Is the quiet, legal business always the safe one?\n\nFull video: Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida\nhttps://youtu.be/JKzH8GNaaVk\n\n#shorts #Gta6 #GtaVi",
+          "tags": [
+            "GTA 6",
+            "GTA VI",
+            "Vice City",
+            "Leonida",
+            "Al Capone",
+            "Vito Corleone",
+            "Tommy Shelby",
+            "mafia",
+            "crime boss",
+            "who would win",
+            "character select",
+            "video game analysis",
+            "animated explainer",
+            "history",
+            "Peaky Blinders",
+            "The Godfather",
+            "GTA 6 theory",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH05",
+      "kind": "short",
+      "file": "/home/user/explainer-engine/jobs/syndicate_wars/shorts/final/SH05.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Four crime bosses in our invented Vice City test. Who falls first?",
+          "description": "Four crime bosses in our invented Vice City test. Who falls first?\n\nFull video: Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida\nhttps://youtu.be/JKzH8GNaaVk\n\n#shorts #Gta6 #GtaVi",
+          "tags": [
+            "GTA 6",
+            "GTA VI",
+            "Vice City",
+            "Leonida",
+            "Al Capone",
+            "Vito Corleone",
+            "Tommy Shelby",
+            "mafia",
+            "crime boss",
+            "who would win",
+            "character select",
+            "video game analysis",
+            "animated explainer",
+            "history",
+            "Peaky Blinders",
+            "The Godfather",
+            "GTA 6 theory",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH06",
+      "kind": "short",
+      "file": "/home/user/explainer-engine/jobs/syndicate_wars/shorts/final/SH06.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "If everyone films you, don't hide from them, feed them the wrong thing.",
+          "description": "If everyone films you, don't hide from them, feed them the wrong thing.\n\nFull video: Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida\nhttps://youtu.be/JKzH8GNaaVk\n\n#shorts #Gta6 #GtaVi",
+          "tags": [
+            "GTA 6",
+            "GTA VI",
+            "Vice City",
+            "Leonida",
+            "Al Capone",
+            "Vito Corleone",
+            "Tommy Shelby",
+            "mafia",
+            "crime boss",
+            "who would win",
+            "character select",
+            "video game analysis",
+            "animated explainer",
+            "history",
+            "Peaky Blinders",
+            "The Godfather",
+            "GTA 6 theory",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH07",
+      "kind": "short",
+      "file": "/home/user/explainer-engine/jobs/syndicate_wars/shorts/final/SH07.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Would you rather win the boardroom or the street?",
+          "description": "Would you rather win the boardroom or the street?\n\nFull video: Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida\nhttps://youtu.be/JKzH8GNaaVk\n\n#shorts #Gta6 #GtaVi",
+          "tags": [
+            "GTA 6",
+            "GTA VI",
+            "Vice City",
+            "Leonida",
+            "Al Capone",
+            "Vito Corleone",
+            "Tommy Shelby",
+            "mafia",
+            "crime boss",
+            "who would win",
+            "character select",
+            "video game analysis",
+            "animated explainer",
+            "history",
+            "Peaky Blinders",
+            "The Godfather",
+            "GTA 6 theory",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH08",
+      "kind": "short",
+      "file": "/home/user/explainer-engine/jobs/syndicate_wars/shorts/final/SH08.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Could a gangster from the 1930s survive a world where everybody has a CAMERA?",
+          "description": "Could a gangster from the 1930s survive a world where everybody has a CAMERA?\n\nFull video: Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida\nhttps://youtu.be/JKzH8GNaaVk\n\n#shorts #Gta6 #GtaVi",
+          "tags": [
+            "GTA 6",
+            "GTA VI",
+            "Vice City",
+            "Leonida",
+            "Al Capone",
+            "Vito Corleone",
+            "Tommy Shelby",
+            "mafia",
+            "crime boss",
+            "who would win",
+            "character select",
+            "video game analysis",
+            "animated explainer",
+            "history",
+            "Peaky Blinders",
+            "The Godfather",
+            "GTA 6 theory",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH09",
+      "kind": "short",
+      "file": "/home/user/explainer-engine/jobs/syndicate_wars/shorts/final/SH09.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "What happens to a crime boss's stars in a city of phones?",
+          "description": "What happens to a crime boss's stars in a city of phones?\n\nFull video: Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida\nhttps://youtu.be/JKzH8GNaaVk\n\n#shorts #Gta6 #GtaVi",
+          "tags": [
+            "GTA 6",
+            "GTA VI",
+            "Vice City",
+            "Leonida",
+            "Al Capone",
+            "Vito Corleone",
+            "Tommy Shelby",
+            "mafia",
+            "crime boss",
+            "who would win",
+            "character select",
+            "video game analysis",
+            "animated explainer",
+            "history",
+            "Peaky Blinders",
+            "The Godfather",
+            "GTA 6 theory",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    },
+    {
+      "id": "SH10",
+      "kind": "short",
+      "file": "/home/user/explainer-engine/jobs/syndicate_wars/shorts/final/SH10.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Could the smartest boss in Vice City still lose?",
+          "description": "Could the smartest boss in Vice City still lose?\n\nFull video: Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida\nhttps://youtu.be/JKzH8GNaaVk\n\n#shorts #Gta6 #GtaVi",
+          "tags": [
+            "GTA 6",
+            "GTA VI",
+            "Vice City",
+            "Leonida",
+            "Al Capone",
+            "Vito Corleone",
+            "Tommy Shelby",
+            "mafia",
+            "crime boss",
+            "who would win",
+            "character select",
+            "video game analysis",
+            "animated explainer",
+            "history",
+            "Peaky Blinders",
+            "The Godfather",
+            "GTA 6 theory",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    }
+  ],
+  "findings": [
+    {
+      "item": "SH06",
+      "severity": "REVIEW",
+      "field": "title",
+      "detail": "71 characters; feeds cut long titles, target about 70 (TN-14)"
+    },
+    {
+      "item": "SH08",
+      "severity": "REVIEW",
+      "field": "title",
+      "detail": "ALL-CAPS word 'CAMERA' (TITLE_THUMBNAIL_SYSTEM: no all caps)"
+    },
+    {
+      "item": "SH08",
+      "severity": "REVIEW",
+      "field": "title",
+      "detail": "77 characters; feeds cut long titles, target about 70 (TN-14)"
+    }
+  ]
+}

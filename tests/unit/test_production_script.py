@@ -384,3 +384,13 @@ def test_dropping_a_shot_hands_its_inline_picture_definition_to_the_next_use():
     F._move_definition(doc, pic)
     assert doc["segments"][1]["shots"][1]["picture"] == pic
     assert doc["segments"][1]["shots"][0]["picture"] == "other"
+
+
+def test_a_painted_picture_found_by_its_id_counts_as_painted(tmp_path):
+    from PIL import Image
+    d = compiled()
+    timed = T.time_script(d, words_for(d))
+    pids = {s["picture"] for s in timed["shots"]}
+    for pid in pids:  # the painter writes <id>.png; the library entry may carry no "file" (assemble.find_picture)
+        Image.new("RGB", (8, 8)).save(tmp_path / f"{pid}.png")
+    assert "PV-25" not in rules(V.check_timed(timed, d, final=True, picture_dirs=[tmp_path]))

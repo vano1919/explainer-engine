@@ -33,10 +33,29 @@ history of D-19/D-36; they are no longer used.
 - Style match between Gemini identity assets and Z-Image backgrounds is a hypothesis: the kit test includes 3 Z-Image
   backgrounds next to the Gemini mascot. If they clash, the fallback is fewer, reused Gemini world backgrounds.
 
-## Money control for RunPod (carried over from TMR, binding)
-No pod without an approved price and time cap; every pod gets `rp.py guard` (with a 2 h tool timeout) and push
-notifications; `rp.py sweep` at the start and end of every session; one pod per job, deleted at the end; at 80 % of a
-cap stop and ask. This project has no RunPod budget yet: the creator sets one before the first pod.
+## Money control for RunPod (D-56: enforced in code, not by memory)
+Every pod goes through `python -m explainer_engine.cloud.runpod` (`check`, `create`, `wait-ready`, `guard`, `stop`, `sweep`,
+`cost`, `delete --yes`); TMR's `rp.py create/start` and raw `POST /pods` are refused by the Bash hook. Ceilings live in ONE file,
+`config/spend_caps.json` (per pod, per 24 h of RunPod billing, per episode, hours, $/h, balance left, kept stopped disks); the run
+ledger refuses caps above it. `create` refuses past any ceiling, without `--ledger`, or while the account has a stray pod or an
+unkept stopped disk; it reserves `--max-usd` in the episode ledger and starts the guard as its own process. The guard stops the
+pod at the money cap, the time cap, the end of the lifetime in its name (`-until-<epoch>`), the boot deadline or after the
+conductor ended. A pod's end is STOP; deletion only on the creator's word (`--on-cap delete`, `delete --yes`, `sweep --delete
+--yes`). `cost` settles the ledger with RunPod's billed amount. Session hooks (`.claude/settings.json`, `cloud/hooks.py`) run
+`check` at session start and refuse to end a turn while something bills that nobody approved or guards.
+
+RunPod facts behind it (docs.runpod.io API reference and pricing, read 2026-10-19):
+- Billing is per second for compute and disks. A stopped pod still bills its volume at $0.20/GB/month (running: $0.10 for
+  container and volume): the stopped 60 GB preflight pod cost $0.40/day for three days (billing API, 2026-10-17..19).
+- At a $0 balance RunPod stops pods; pods without a network volume are terminated and their data is lost. Deploying needs at
+  least one hour of credits.
+- `POST /pods` has no idempotency key and no TTL: a retried create can rent a second pod, so the manager never re-POSTs after
+  an unclear answer (only after a 429) and finds the pod by its unique name instead.
+- `GET /pods/{id}`: `desiredStatus` RUNNING/EXITED/TERMINATED, `costPerHr`, `lastStartedAt`, `publicIp`/`portMappings` empty
+  while initialising, 404 when gone. `GET /pods` filters by `name`, `desiredStatus`. `GET /billing/pods` (hour buckets,
+  `grouping=podId`) gives the billed `amount` and `timeBilledMs`, disks of stopped pods included.
+- No documented rate limit for the REST API; 429 and 5xx are retried with backoff. Stop on an already stopped pod is not
+  documented, so stop and delete check the state first and count only what GET shows afterwards.
 
 ## Kit test (before any full kit)
 1. Gemini, 1K: base traveller from the creator's reference 02 on flat green, then 8 poses and 4 expressions

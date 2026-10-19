@@ -81,8 +81,6 @@ add("v15_driver", "a delivery driver in a bright uniform on a neon loading dock 
 add("m18_two", "two tall glowing towers facing each other across a neon street at night, the left tower built of one lone figure's glowing footprints, the right tower built of a swarming crowd of tiny phones, a chart line crossing between them", 6)
 add("m21_trend", "tight insert, a phone screen showing a shaky video of a pink flamingo-shaped boat in a glass lobby, a red falling chart in the corner, a thumb frantically scrolling", 6)
 add("s24_hall", "a grand 1930s debating hall with rows of leather benches, the lean man in a long overcoat standing quietly among well-fed men in top hats, a single lamp, whispers travelling along the benches", 7, heroes=["shelby"], costume=COSTUME["shelby"])
-add("w02_keys", "small green islands and a boat yard on turquoise water at dusk, old fishing boats, coiled ropes and stacked crates on a weathered dock, nobody in view, a quiet coast with a long history of smuggling", 3)
-add("w02_studio", "a neon-lit recording studio entrance on a neon coastal city street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming", 2)
 add("s03_cursor", "tight insert, a glowing neon-pink arrow cursor sliding across a row of four empty portrait frames on a dark screen, one frame lit cyan, a satisfying game-menu energy, no text", 2)
 
 def G(gid, seg_no, at, title, claim, marks, span, hold=4.5):
@@ -150,10 +148,10 @@ SHORTS = [
    SL("So where would you hide, if every phone in Leonida pointed at you? Four bosses tried it in the full video, Syndicate Wars.", ["warmly"])],
   "shots": [SS_("You're a 1930s", "s02_chairs", 0.5, 1.0), SS_("just landed in Leonida", "s01_skyline", 0.5, 1.0),
             SS_("Rockstar's page names", "s01_skyline", 0.2, 1.3), SS_("Grassrivers", "s03_cursor", 0.5, 1.0),
-            SS_("Ambrosia and", "s03_cursor", 0.3, 1.3), SS_("It already has", "w02_studio", 0.5, 1.0),
-            SS_("Real estate", "w02_studio", 0.3, 1.3), SS_("The Real Dimez", "c10_viral", 0.5, 1.0),
-            SS_("Raul Bautista", "c10_viral", 0.3, 1.3), SS_("And in the Keys", "w02_keys", 0.5, 1.0),
-            SS_("still works the water", "w02_keys", 0.7, 1.3), SS_("Not a film set", "s01_boardwalk", 0.5, 1.0), SS_("every phone pointing", "s08_eye", 0.5, 1.0),
+            SS_("Ambrosia and", "s03_cursor", 0.3, 1.3), SS_("It already has", "s01_boardwalk", 0.5, 1.0),
+            SS_("Real estate", "s01_boardwalk", 0.3, 1.3), SS_("The Real Dimez", "c10_viral", 0.5, 1.0),
+            SS_("Raul Bautista", "c10_viral", 0.3, 1.3), SS_("And in the Keys", "c12_palm", 0.5, 1.0),
+            SS_("still works the water", "c12_palm", 0.7, 1.3), SS_("Not a film set", "s01_boardwalk", 0.5, 1.0), SS_("every phone pointing", "s08_eye", 0.5, 1.0),
             SS_("That's Rockstar's world", "s02_history", 0.5, 1.0),
             SS_("So where would", "m22_watch", 0.5, 1.0), SS_("Four bosses tried", "s02_chairs", 0.3, 1.3)]},
  # 4 myth_buster, long band: the quiet boss is not safe
@@ -200,7 +198,7 @@ SHORTS = [
    SL("Is it enough to win? Watch the full video, Syndicate Wars.", ["warmly"])],
   "shots": [SS_("If everyone films", "s23_street", 0.5, 1.0), SS_("don't hide", "s25_calm", 0.5, 1.0),
             SS_("Right. Shelby", "s24_proxy", 0.2, 1.0), SS_("He feeds it", "s24_proxy", 0.6, 1.3),
-            SS_("In Leonida", "w02_keys", 0.3, 1.0), SS_("still work the water", "w02_keys", 0.7, 1.25),
+            SS_("In Leonida", "c12_palm", 0.3, 1.0), SS_("still work the water", "c12_palm", 0.7, 1.25),
             SS_("Let them film", "p_shelby", 0.5, 1.2), SS_("In our invented", "s24_decoy", 0.2, 1.0),
             SS_("In the wrong place", "s24_decoy", 0.8, 1.2), SS_("A decoy here", "s24_ledger", 0.5, 1.0),
             SS_("And the real business", "s24_ledger", 0.3, 1.3), SS_("But in Vice City", "s24_decoy", 0.5, 1.3),
@@ -292,9 +290,9 @@ seg("S03", "explanation", 1, "Context: Rockstar's own Leonida already has its ow
   L("The Real Dimez chase viral videos. Raul Bautista robs banks. And in the Keys, an old smuggler, Brian Heder, still works the water.", claims=["C-53", "C-54", "C-55"]),
   L("That's Rockstar's world. Our four bosses are only guests in it.", ["warmly"], claims=["C-48"]),
 ], [S("And Leonida", "A", "s01_skyline", "The state and its city again while the official places are named", ("pull", 1.06, 1.0), reuse="reuse"),
-    S("It already has", "B", P("w02_studio"), "Leonida's own crime as a business: a studio front, no Rockstar character drawn", ("push", 1.0, 1.06)),
+    S("It already has", "B", "s01_boardwalk", "Leonida's own crime as a business: the neon strip, no Rockstar character drawn (existing picture, creator 2026-10-19)", ("push", 1.0, 1.06), reuse="reuse"),
     S("The Real Dimez", "C", "s01_phones", "Viral videos: the phones again", ("push", 1.02, 1.08), reuse="reuse"),
-    S("And in the Keys", "A", P("w02_keys"), "The Keys: islands and a boat yard, the smugglers' water", ("push", 1.0, 1.05), cut="from the city to the water"),
+    S("And in the Keys", "A", P("c12_palm"), "The Keys: a quiet island on the water (existing picture, creator 2026-10-19)", ("push", 1.0, 1.05), cut="from the city to the water"),
     S("That's Rockstar's world", "A", "s01_four", "Our guests arrive", ("push", 1.0, 1.05), reuse="reuse")])
 
 seg("S03", "explanation", 2, "Fun: the video-game character-select screen and our rating rule.", [
@@ -387,7 +385,7 @@ seg("S12", "emotional_pause", 4, "Payoff of round one: Capone confused controlli
   L("The next boss never makes a speech.", ["whispers"]),
 ], [S("Hmm. Capone's mistake", "B", "sc_capone_out", "Capone eliminated: the first fall", ("push", 1.0, 1.05)),
     S("It doesn't", "B", "p_capone", "The face as he is told it does not work", ("push", 1.03, 1.09), reuse="reuse"),
-    S("He did end up", "A", P("c12_palm"), "The quiet real ending, set against the loud scenario", ("pull", 1.07, 1.0), cut="from the stamp to the stillness")])
+    S("He did end up", "A", "c12_palm", "The quiet real ending, set against the loud scenario", ("pull", 1.07, 1.0), cut="from the stamp to the stillness", reuse="reuse")])
 
 seg("S13", "explanation", 2, "Commentary on a game system: the wanted level, and what changes when everybody has a phone.", [
   L("A quick word on stars.", ["warmly"], pause=0.3),
@@ -564,34 +562,34 @@ DISTINCT = {"premise": "four crime bosses from different eras and fictions (Capo
 _FACES = ("neutral", "joyful", "sad", "scared", "angry", "surprised")
 CAST_EXTRA = {
  "capone": {
-  "voice": {"voice_id": None, "name": None,
+  "voice": {"voice_id": "OTMqA7lryJHXgAnPIQYt", "name": "Crazy Eddie - Rough n Cheeky",
             "style": "a gravelly, warm, boisterous American baritone, big and theatrical, quick to laugh and quick to anger",
             "traits": {"gender": "male", "age": "middle_aged", "temperament": ["boastful", "theatrical", "hot-tempered"], "energy": "high",
-                       "origin": "1930s American big city", "role": "rival", "real_person": True, "documented": ["C-19", "C-20"]}},
+                       "origin": "1930s American big city", "ethnicity": "Italian-American", "role": "rival", "real_person": True, "documented": ["C-19", "C-20"]}},
   "speech": {"basis": "public", "style": "a loud showman: short punchy exclamations, talks like a businessman and a benefactor, sure of his own fame, flares up when doubted",
              "words": ["business", "the people", "my car", "print more"], "avoid": ["algorithm", "content creator"], "sources": ["C-19", "C-20", "C-27"]},
   "face_sheet": {"id": "capone_faces_v1", "ref": "p_capone", "set": list(_FACES) + ["smug", "confused", "worried", "doubtful", "amused"]}},
  "vito": {
-  "voice": {"voice_id": None, "name": None,
+  "voice": {"voice_id": "HSBWXljo3oivWhybh3YX", "name": "Mr Wellington",
             "style": "a soft, low, slightly husky elderly voice, slow and courteous, never raised",
             "traits": {"gender": "male", "age": "old", "temperament": ["soft-spoken", "courtly", "patient"], "energy": "low",
-                       "origin": "Italian-American, 1950s New York", "role": "mentor", "real_person": False}},
+                       "origin": "Italian-American, 1950s New York", "ethnicity": "Italian-American", "role": "mentor", "real_person": False}},
   "speech": {"basis": "public", "style": "a patriarch's quiet courtesy: few words, calm statements, loyalty and favours, never a threat said aloud",
              "words": ["friend", "favour", "respect", "always"], "avoid": ["offer he can't refuse", "dude"], "sources": ["C-23", "C-24"]},
   "face_sheet": {"id": "vito_faces_v1", "ref": "p_vito", "set": list(_FACES) + ["smug", "curious", "doubtful", "worried"]}},
  "mizuno": {
-  "voice": {"voice_id": None, "name": None,
-            "style": "a calm, clear, measured mid-range voice with precise diction, polite and controlled; no exaggerated accent",
+  "voice": {"voice_id": "FMgBdHe1YV2Xi0B9anXW", "name": "Hideo - Japanese Asian Accent",
+            "style": "a calm, clear, measured mid-range voice with precise diction, polite and controlled; English spoken with a light, natural Japanese accent",
             "traits": {"gender": "male", "age": "middle_aged", "temperament": ["composed", "precise", "polite"], "energy": "low",
-                       "origin": "a Japanese businessman speaking English", "role": "rival", "real_person": False}},
+                       "origin": "a Japanese businessman speaking English", "ethnicity": "Japanese", "role": "rival", "real_person": False}},
   "speech": {"basis": "personality", "style": "clipped, polite and exact: short complete sentences, procedure and plans, thanks people, never raises his voice until the plan breaks",
              "words": ["plan", "sign here", "thank you", "not my fault"], "avoid": ["dude", "awesome"]},
   "face_sheet": {"id": "mizuno_faces_v1", "ref": "p_mizuno", "set": list(_FACES) + ["determined", "confused", "worried", "deadpan"]}},
  "shelby": {
-  "voice": {"voice_id": None, "name": None,
-            "style": "a quiet, low, dry voice with a soft regional English accent, flat and controlled, every word placed",
+  "voice": {"voice_id": "n9RJRb8CoeRtSYSpKZRH", "name": "Robert - Calm Confident British",
+            "style": "a quiet, low, dry voice with a Birmingham accent, flat and controlled, every word placed",
             "traits": {"gender": "male", "age": "middle_aged", "temperament": ["cold", "terse", "calculating"], "energy": "low",
-                       "origin": "1930s Birmingham, England", "role": "hero", "real_person": False}},
+                       "origin": "1930s Birmingham, England", "ethnicity": "English (Birmingham)", "role": "hero", "real_person": False}},
   "speech": {"basis": "public", "style": "terse and cold: short declaratives, dry understatement, always one step ahead, never explains himself",
              "words": ["let them", "nothing", "steps ahead", "mostly"], "avoid": ["by order of", "awesome"], "sources": ["C-28"]},
   "face_sheet": {"id": "shelby_faces_v1", "ref": "p_shelby", "set": list(_FACES) + ["smug", "determined", "amused", "deadpan", "doubtful"]}},

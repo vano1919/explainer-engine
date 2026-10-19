@@ -27,8 +27,8 @@
  "voice": {
   "provider": "elevenlabs",
   "model": "eleven_v4",
-  "voice_id": null,
-  "name": null,
+  "voice_id": "NOpBlnGInO9m6vDvFkFC",
+  "name": "Grandpa Spuds Oxley",
   "style": "warm, mature baritone storyteller with dry humour; unhurried but lively, gently amused; emotion carried quietly, a held breath, a dry smile",
   "pace_wpm": [
    150,
@@ -89,7 +89,14 @@
  },
  "look": {
   "style_refs": [],
-  "default_engine": "pod_ref"
+  "default_engine": "pod_ref",
+  "environment": {
+   "collage": "pictures/reference_collage_v1.jpg",
+   "tile": 5,
+   "picture": "s01_skyline",
+   "approved_by": "creator",
+   "approved_at": "2026-10-19"
+  }
  },
  "cast": {
   "capone": {
@@ -99,8 +106,8 @@
    ],
    "card": "a heavy-set 1930s Chicago crime boss, broad round face with three thin old scars on the left cheek, slicked-back dark hair, cream wide-lapel pinstripe suit, white fedora, a flower in the lapel, theatrical confident posture",
    "voice": {
-    "voice_id": null,
-    "name": null,
+    "voice_id": "OTMqA7lryJHXgAnPIQYt",
+    "name": "Crazy Eddie - Rough n Cheeky",
     "style": "a gravelly, warm, boisterous American baritone, big and theatrical, quick to laugh and quick to anger",
     "traits": {
      "gender": "male",
@@ -112,6 +119,7 @@
      ],
      "energy": "high",
      "origin": "1930s American big city",
+     "ethnicity": "Italian-American",
      "role": "rival",
      "real_person": true,
      "documented": [
@@ -155,6 +163,13 @@
      "doubtful",
      "amused"
     ]
+   },
+   "reference": {
+    "collage": "pictures/reference_collage_v1.jpg",
+    "tile": 1,
+    "picture": "p_capone",
+    "approved_by": "creator",
+    "approved_at": "2026-10-19"
    }
   },
   "vito": {
@@ -164,8 +179,8 @@
    ],
    "card": "an older heavy-set patriarch of the 1950s, bald crown with a white fringe, round full face, thick grey eyebrows, small round spectacles, dark double-breasted suit with a white pocket square, a gold signet ring, soft-spoken courtly posture",
    "voice": {
-    "voice_id": null,
-    "name": null,
+    "voice_id": "HSBWXljo3oivWhybh3YX",
+    "name": "Mr Wellington",
     "style": "a soft, low, slightly husky elderly voice, slow and courteous, never raised",
     "traits": {
      "gender": "male",
@@ -177,6 +192,7 @@
      ],
      "energy": "low",
      "origin": "Italian-American, 1950s New York",
+     "ethnicity": "Italian-American",
      "role": "mentor",
      "real_person": false
     }
@@ -214,6 +230,13 @@
      "doubtful",
      "worried"
     ]
+   },
+   "reference": {
+    "collage": "pictures/reference_collage_v1.jpg",
+    "tile": 2,
+    "picture": "p_vito",
+    "approved_by": "creator",
+    "approved_at": "2026-10-19"
    }
   },
   "mizuno": {
@@ -223,9 +246,9 @@
    ],
    "card": "a composed middle-aged Japanese businessman, short crew cut streaked with silver, thin rimless glasses, slim charcoal suit, crisp white shirt, slim black briefcase, upright disciplined posture",
    "voice": {
-    "voice_id": null,
-    "name": null,
-    "style": "a calm, clear, measured mid-range voice with precise diction, polite and controlled; no exaggerated accent",
+    "voice_id": "FMgBdHe1YV2Xi0B9anXW",
+    "name": "Hideo - Japanese Asian Accent",
+    "style": "a calm, clear, measured mid-range voice with precise diction, polite and controlled; English spoken with a light, natural Japanese accent",
     "traits": {
      "gender": "male",
      "age": "middle_aged",
@@ -236,6 +259,7 @@
      ],
      "energy": "low",
      "origin": "a Japanese businessman speaking English",
+     "ethnicity": "Japanese",
      "role": "rival",
      "real_person": false
     }
@@ -269,6 +293,13 @@
      "worried",
      "deadpan"
     ]
+   },
+   "reference": {
+    "collage": "pictures/reference_collage_v1.jpg",
+    "tile": 3,
+    "picture": "p_mizuno",
+    "approved_by": "creator",
+    "approved_at": "2026-10-19"
    }
   },
   "shelby": {
@@ -278,9 +309,9 @@
    ],
    "card": "a stocky square-jawed man in his thirties, side-parted wavy auburn hair, thick eyebrows, warm brown eyes, a neat trimmed moustache, a soft brown tweed cap with a short brim, grey three-piece suit with a watch chain, long charcoal overcoat, calm confident posture",
    "voice": {
-    "voice_id": null,
-    "name": null,
-    "style": "a quiet, low, dry voice with a soft regional English accent, flat and controlled, every word placed",
+    "voice_id": "n9RJRb8CoeRtSYSpKZRH",
+    "name": "Robert - Calm Confident British",
+    "style": "a quiet, low, dry voice with a Birmingham accent, flat and controlled, every word placed",
     "traits": {
      "gender": "male",
      "age": "middle_aged",
@@ -291,6 +322,7 @@
      ],
      "energy": "low",
      "origin": "1930s Birmingham, England",
+     "ethnicity": "English (Birmingham)",
      "role": "hero",
      "real_person": false
     }
@@ -328,6 +360,13 @@
      "deadpan",
      "doubtful"
     ]
+   },
+   "reference": {
+    "collage": "pictures/reference_collage_v1.jpg",
+    "tile": 4,
+    "picture": "p_shelby",
+    "approved_by": "creator",
+    "approved_at": "2026-10-19"
    }
   }
  },
@@ -793,6 +832,17 @@
      }
     },
     {
+     "at": "Four bosses.",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s01_four",
+     "reuse": "reframe"
+    },
+    {
      "at": "And only one",
      "type": "C",
      "picture": "s01_phones",
@@ -867,6 +917,19 @@
        "why": "rings the date November 19 on the card",
        "cue": {
         "sound": "pluck"
+       }
+      },
+      {
+       "at": "2026.",
+       "kind": "text",
+       "text": "NOV 19, 2026",
+       "pos": [
+        0.5,
+        0.2
+       ],
+       "why": "the release date Rockstar's page gives",
+       "cue": {
+        "sound": "tick"
        }
       },
       {
@@ -1021,6 +1084,17 @@
      "reuse": "reuse"
     },
     {
+     "at": "November 19,",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "s01_skyline",
+     "reuse": "reframe"
+    },
+    {
      "at": "So the year",
      "type": "A",
      "picture": {
@@ -1038,6 +1112,17 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Every word",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s02_chairs",
+     "reuse": "reframe"
     },
     {
      "at": "The history",
@@ -1263,12 +1348,13 @@
       },
       {
        "at": "studio.",
-       "kind": "highlight",
+       "kind": "text",
+       "text": "RECORDING STUDIO",
        "pos": [
         0.5,
-        0.5
+        0.82
        ],
-       "why": "rings the recording studio in the picture",
+       "why": "names the third business, the recording studio, as text: the boardwalk picture shows none",
        "cue": {
         "sound": "pluck"
        }
@@ -1428,23 +1514,38 @@
      "reuse": "reuse"
     },
     {
+     "at": "the Leonida",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "s01_skyline",
+     "reuse": "reframe"
+    },
+    {
      "at": "It already has",
      "type": "B",
-     "picture": {
-      "id": "w02_studio",
-      "engine": "pod_ref",
-      "subject": "a neon-lit recording studio entrance on a neon coastal city street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
-      "refs": [
-       "s01_skyline"
-      ],
-      "prompt": "a neon-lit recording studio entrance on a neon coastal city street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
-     },
-     "purpose": "Leonida's own crime as a business: a studio front, no Rockstar character drawn",
+     "picture": "s01_boardwalk",
+     "purpose": "Leonida's own crime as a business: the neon strip, no Rockstar character drawn (existing picture, creator 2026-10-19)",
      "motion": {
       "kind": "push",
       "z0": 1.0,
       "z1": 1.06
-     }
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "Real estate,",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s01_boardwalk",
+     "reuse": "reframe"
     },
     {
      "at": "The Real Dimez",
@@ -1462,15 +1563,15 @@
      "at": "And in the Keys",
      "type": "A",
      "picture": {
-      "id": "w02_keys",
+      "id": "c12_palm",
       "engine": "pod_ref",
-      "subject": "small green islands and a boat yard on turquoise water at dusk, old fishing boats, coiled ropes and stacked crates on a weathered dock, nobody in view, a quiet coast with a long history of smuggling, low sunset-orange sun, pink clouds, long warm shadows",
+      "subject": "a quiet white house on a palm-fringed island at sunset, an empty wooden chair on the veranda, calm water, a long pink horizon, an ending that feels peaceful and lonely, a single warm desk lamp, amber pool of light, deep teal shadows",
       "refs": [
        "s01_skyline"
       ],
-      "prompt": "small green islands and a boat yard on turquoise water at dusk, old fishing boats, coiled ropes and stacked crates on a weathered dock, nobody in view, a quiet coast with a long history of smuggling, low sunset-orange sun, pink clouds, long warm shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+      "prompt": "a quiet white house on a palm-fringed island at sunset, an empty wooden chair on the veranda, calm water, a long pink horizon, an ending that feels peaceful and lonely, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
-     "purpose": "The Keys: islands and a boat yard, the smugglers' water",
+     "purpose": "The Keys: a quiet island on the water (existing picture, creator 2026-10-19)",
      "motion": {
       "kind": "push",
       "z0": 1.0,
@@ -1604,17 +1705,6 @@
    "shots": [
     {
      "at": "Now. Choose",
-     "type": "B",
-     "picture": "sc_all",
-     "purpose": "The character-select grid: the video's central visual",
-     "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.04
-     }
-    },
-    {
-     "at": "Five stats each",
      "type": "C",
      "picture": {
       "id": "s03_cursor",
@@ -1625,12 +1715,23 @@
       ],
       "prompt": "tight insert, a glowing neon-pink arrow cursor sliding across a row of four empty portrait frames on a dark screen, one frame lit cyan, a satisfying game-menu energy, no text, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
-     "purpose": "The cursor moves across the frames while the rule is said",
+     "purpose": "The cursor slides across the four frames: choose your boss, five stats each",
      "motion": {
       "kind": "push",
       "z0": 1.0,
       "z1": 1.07
      }
+    },
+    {
+     "at": "These ratings",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_all",
+     "reuse": "reframe"
     }
    ]
   },
@@ -1864,6 +1965,17 @@
      }
     },
     {
+     "at": "four. But",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_capone",
+     "reuse": "reframe"
+    },
+    {
      "at": "Our reasoning",
      "type": "B",
      "picture": "p_capone",
@@ -1991,6 +2103,19 @@
      "kind": "analysis",
      "visual_beats": [
       {
+       "at": "Brutality,",
+       "kind": "label",
+       "text": "BRUTALITY",
+       "pos": [
+        0.5,
+        0.2
+       ],
+       "why": "names the next stat on the card",
+       "cue": {
+        "sound": "tap"
+       }
+      },
+      {
        "at": "just two.",
        "kind": "symbol",
        "symbol": "arrow_down",
@@ -2102,6 +2227,17 @@
      }
     },
     {
+     "at": "five stars.",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_vito",
+     "reuse": "reframe"
+    },
+    {
      "at": "Vito rules",
      "type": "B",
      "picture": "p_vito",
@@ -2111,6 +2247,17 @@
       "z0": 1.0,
       "z1": 1.06
      }
+    },
+    {
+     "at": "Politicians. And",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "p_vito",
+     "reuse": "reframe"
     }
    ]
   },
@@ -2336,6 +2483,17 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Discipline, five",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_mizuno",
+     "reuse": "reframe"
     },
     {
      "at": "But chaos",
@@ -2583,6 +2741,28 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Adaptability, five.",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_shelby",
+     "reuse": "reframe"
+    },
+    {
+     "at": "five. Influence,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "sc_shelby",
+     "reuse": "reframe"
     },
     {
      "at": "Our reasoning",
@@ -2890,7 +3070,7 @@
      }
     },
     {
-     "at": "In a world",
+     "at": "who realises",
      "type": "C",
      "picture": {
       "id": "s08_eye",
@@ -2919,6 +3099,17 @@
       "z1": 1.06
      },
      "reuse": "reuse"
+    },
+    {
+     "at": "What the",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s01_phones",
+     "reuse": "reframe"
     },
     {
      "at": "Four rounds",
@@ -3136,6 +3327,17 @@
       "z0": 1.0,
       "z1": 1.06
      }
+    },
+    {
+     "at": "In 1930,",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c09_press",
+     "reuse": "reframe"
     },
     {
      "at": "And during the Depression",
@@ -3538,6 +3740,17 @@
      "reuse": "reuse"
     },
     {
+     "at": "viral is",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s01_boardwalk",
+     "reuse": "reframe"
+    },
+    {
      "at": "Someone films him",
      "type": "B",
      "picture": {
@@ -3562,6 +3775,17 @@
      }
     },
     {
+     "at": "Millions? For",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c10_viral",
+     "reuse": "reframe"
+    },
+    {
      "at": "Oh, but then someone films the car",
      "type": "C",
      "picture": {
@@ -3582,6 +3806,39 @@
      "cut": {
       "why": "from the big smile to the cold detail"
      }
+    },
+    {
+     "at": "Then the licence",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c10_plate",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Who filmed",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c10_plate",
+     "reuse": "reframe"
+    },
+    {
+     "at": "newspapers needed",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c10_plate",
+     "reuse": "reframe"
     },
     {
      "at": "Attention is power",
@@ -3776,6 +4033,19 @@
      "kind": "fact",
      "visual_beats": [
       {
+       "at": "October 1931,",
+       "kind": "text",
+       "text": "OCTOBER 1931",
+       "pos": [
+        0.5,
+        0.16
+       ],
+       "why": "the date of the verdict",
+       "cue": {
+        "sound": "tick"
+       }
+      },
+      {
        "at": "convicted",
        "kind": "accent",
        "effect": "punch",
@@ -3839,6 +4109,17 @@
      }
     },
     {
+     "at": "Or a",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c11_ledger",
+     "reuse": "reframe"
+    },
+    {
      "at": "An IRS investigator",
      "type": "B",
      "picture": {
@@ -3856,6 +4137,17 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "About seventeen",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c11_agent",
+     "reuse": "reframe"
     },
     {
      "at": "In October",
@@ -4158,6 +4450,17 @@
      }
     },
     {
+     "at": "He thought",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_capone_out",
+     "reuse": "reframe"
+    },
+    {
      "at": "It doesn't",
      "type": "B",
      "picture": "p_capone",
@@ -4172,15 +4475,7 @@
     {
      "at": "He did end up",
      "type": "A",
-     "picture": {
-      "id": "c12_palm",
-      "engine": "pod_ref",
-      "subject": "a quiet white house on a palm-fringed island at sunset, an empty wooden chair on the veranda, calm water, a long pink horizon, an ending that feels peaceful and lonely, a single warm desk lamp, amber pool of light, deep teal shadows",
-      "refs": [
-       "s01_skyline"
-      ],
-      "prompt": "a quiet white house on a palm-fringed island at sunset, an empty wooden chair on the veranda, calm water, a long pink horizon, an ending that feels peaceful and lonely, a single warm desk lamp, amber pool of light, deep teal shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
-     },
+     "picture": "c12_palm",
      "purpose": "The quiet real ending, set against the loud scenario",
      "motion": {
       "kind": "pull",
@@ -4189,7 +4484,19 @@
      },
      "cut": {
       "why": "from the stamp to the stillness"
-     }
+     },
+     "reuse": "reuse"
+    },
+    {
+     "at": "A quiet",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c12_palm",
+     "reuse": "reframe"
     }
    ]
   },
@@ -4376,6 +4683,28 @@
       "z0": 1.0,
       "z1": 1.07
      }
+    },
+    {
+     "at": "we're guessing",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "w13_stars",
+     "reuse": "reframe"
+    },
+    {
+     "at": "The stars",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w13_stars",
+     "reuse": "reframe"
     }
    ]
   },
@@ -4803,6 +5132,17 @@
       "z0": 1.0,
       "z1": 1.06
      }
+    },
+    {
+     "at": "Because those",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v14_no",
+     "reuse": "reframe"
     }
    ]
   },
@@ -5075,6 +5415,15 @@
        }
       },
       {
+       "at": "his calls.",
+       "kind": "accent",
+       "effect": "punch",
+       "why": "the calls go unanswered: the cut-off lands",
+       "cue": {
+        "sound": "thud"
+       }
+      },
+      {
        "at": "Invented",
        "kind": "text",
        "text": "INVENTED",
@@ -5156,6 +5505,39 @@
      }
     },
     {
+     "at": "another place",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "v15_dock",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Legal. Boring.",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "v15_dock",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Nobody films",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v15_dock",
+     "reuse": "reframe"
+    },
+    {
      "at": "A favour works",
      "type": "B",
      "picture": "v13_table",
@@ -5212,6 +5594,17 @@
       "z0": 1.0,
       "z1": 1.06
      }
+    },
+    {
+     "at": "but it",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v15_phone",
+     "reuse": "reframe"
     }
    ]
   },
@@ -5500,6 +5893,17 @@
      }
     },
     {
+     "at": "playing with",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "v16_garden",
+     "reuse": "reframe"
+    },
+    {
      "at": "And the next boss",
      "type": "A",
      "picture": {
@@ -5694,6 +6098,17 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Quiet voice.",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m17_card",
+     "reuse": "reframe"
     },
     {
      "at": "Can a man",
@@ -5993,6 +6408,17 @@
      }
     },
     {
+     "at": "One is",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m18_two",
+     "reuse": "reframe"
+    },
+    {
      "at": "Whether the new game",
      "type": "A",
      "picture": "m18_board",
@@ -6234,6 +6660,17 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Sign here.",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m19_sign",
+     "reuse": "reframe"
     },
     {
      "at": "Clean contracts",
@@ -6542,6 +6979,17 @@
       "z0": 1.0,
       "z1": 1.06
      }
+    },
+    {
+     "at": "A man",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "f20_flamingo",
+     "reuse": "reframe"
     },
     {
      "at": "A seagull",
@@ -6922,6 +7370,17 @@
      }
     },
     {
+     "at": "His biggest",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m21_trend",
+     "reuse": "reframe"
+    },
+    {
      "at": "He wins",
      "type": "B",
      "picture": "sc_mizuno_out",
@@ -6934,6 +7393,17 @@
      "cut": {
       "why": "the stamp lands on the word street"
      }
+    },
+    {
+     "at": "Chaos management,",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_mizuno_out",
+     "reuse": "reframe"
     }
    ]
   },
@@ -7210,7 +7680,7 @@
        }
       },
       {
-       "at": "never hides",
+       "at": "from attention.",
        "kind": "symbol",
        "symbol": "cross",
        "pos": [
@@ -7581,6 +8051,17 @@
      }
     },
     {
+     "at": "Shelby picks",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s24_hall",
+     "reuse": "reframe"
+    },
+    {
      "at": "In Vice City",
      "type": "A",
      "picture": {
@@ -7600,6 +8081,17 @@
      }
     },
     {
+     "at": "He'd pay",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s24_decoy",
+     "reuse": "reframe"
+    },
+    {
      "at": "A decoy here",
      "type": "C",
      "picture": {
@@ -7617,6 +8109,17 @@
       "z0": 1.0,
       "z1": 1.08
      }
+    },
+    {
+     "at": "Every phone",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s24_ledger",
+     "reuse": "reframe"
     }
    ]
   },
@@ -8101,6 +8604,17 @@
       "z0": 1.07,
       "z1": 1.0
      }
+    },
+    {
+     "at": "I'm always",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "s26_behind",
+     "reuse": "reframe"
     }
    ]
   },
@@ -8294,6 +8808,28 @@
       "z1": 1.05
      },
      "reuse": "reuse"
+    },
+    {
+     "at": "Vito second.",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_all",
+     "reuse": "reframe"
+    },
+    {
+     "at": "He lost",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_all",
+     "reuse": "reframe"
     }
    ]
   },
@@ -8485,6 +9021,17 @@
       "z1": 1.06
      },
      "reuse": "reuse"
+    },
+    {
+     "at": "Shelby. That's",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s26_behind",
+     "reuse": "reframe"
     },
     {
      "at": "But he's the only",
@@ -8737,6 +9284,39 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Capone's intimidation,",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_final",
+     "reuse": "reframe"
+    },
+    {
+     "at": "down to three",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_final",
+     "reuse": "reframe"
+    },
+    {
+     "at": "four. Shelby's",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "sc_final",
+     "reuse": "reframe"
     },
     {
      "at": "Every star",
@@ -9013,6 +9593,39 @@
       "z0": 1.08,
       "z1": 1.0
      }
+    },
+    {
+     "at": "big money",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "s29_end",
+     "reuse": "reframe"
+    },
+    {
+     "at": "mostly. But",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "s29_end",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Who did",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s29_end",
+     "reuse": "reframe"
     },
     {
      "at": "And smile",
@@ -10167,12 +10780,13 @@
       },
       {
        "at": "studio.",
-       "kind": "highlight",
+       "kind": "text",
+       "text": "RECORDING STUDIO",
        "pos": [
         0.5,
-        0.5
+        0.82
        ],
-       "why": "rings the recording studio in the picture",
+       "why": "names the third business, the recording studio, as text: the boardwalk picture shows none",
        "cue": {
         "sound": "pluck"
        }
@@ -10479,13 +11093,13 @@
     },
     {
      "at": "It already has",
-     "picture": "w02_studio",
+     "picture": "s01_boardwalk",
      "crop_x": 0.5,
      "zoom": 1.0
     },
     {
      "at": "Real estate",
-     "picture": "w02_studio",
+     "picture": "s01_boardwalk",
      "crop_x": 0.3,
      "zoom": 1.3
     },
@@ -10503,13 +11117,13 @@
     },
     {
      "at": "And in the Keys",
-     "picture": "w02_keys",
+     "picture": "c12_palm",
      "crop_x": 0.5,
      "zoom": 1.0
     },
     {
      "at": "still works the water",
-     "picture": "w02_keys",
+     "picture": "c12_palm",
      "crop_x": 0.7,
      "zoom": 1.3
     },
@@ -11997,13 +12611,13 @@
     },
     {
      "at": "In Leonida",
-     "picture": "w02_keys",
+     "picture": "c12_palm",
      "crop_x": 0.3,
      "zoom": 1.0
     },
     {
      "at": "still work the water",
-     "picture": "w02_keys",
+     "picture": "c12_palm",
      "crop_x": 0.7,
      "zoom": 1.25
     },
@@ -13908,16 +14522,6 @@
     "uncertainty": ""
    },
    {
-    "id": "C-03",
-    "text": "Rockstar's page names Jason and Lucia as the pair in the story.",
-    "type": "fact",
-    "source_ids": [
-     "S-01"
-    ],
-    "confidence": "verified",
-    "uncertainty": "Surnames and backstory are not on that page."
-   },
-   {
     "id": "C-04",
     "text": "Rockstar's page shows only the year 2026 (release and Newswire dates) and gives no in-story year.",
     "type": "fact",
@@ -13926,16 +14530,6 @@
     ],
     "confidence": "verified",
     "uncertainty": "Absence on the official pages read; Rockstar may announce a year later."
-   },
-   {
-    "id": "C-05",
-    "text": "Rockstar's main GTA VI page names no in-game social app, stock exchange or cryptocurrency.",
-    "type": "fact",
-    "source_ids": [
-     "S-01"
-    ],
-    "confidence": "verified",
-    "uncertainty": "Absence on one page, not a denial. The region names are now on the Only in Leonida page (C-51)."
    },
    {
     "id": "C-11",
@@ -13974,17 +14568,6 @@
     ],
     "confidence": "corroborated",
     "uncertainty": "Verdict 17 October (NARA exhibit, Wikipedia, HISTORY) or 18 October (FBI, Prologue text); sentencing 'a week later' (Wikipedia), 'a month later' (Prologue) or 24 November (FBI). The narration says only 'October 1931' and 'eleven years'."
-   },
-   {
-    "id": "C-17",
-    "text": "Capone served part of his sentence at Alcatraz (moved there in August 1934) and was released on 16 November 1939.",
-    "type": "fact",
-    "source_ids": [
-     "S-06",
-     "S-07"
-    ],
-    "confidence": "corroborated",
-    "uncertainty": "The August 1934 date is in Wikipedia only; FBI confirms Alcatraz and the release date."
    },
    {
     "id": "C-18",
@@ -14091,17 +14674,6 @@
     ],
     "confidence": "corroborated",
     "uncertainty": "Fictional canon. MP: Wikipedia, NME. Mosley assassination plan: Wikipedia, NME, Den of Geek. False information to Billy Grade: Wikipedia, Looper (Looper credits 'the Peaky Blinders'). Barwell murders and opium: Wikipedia only. Election year and constituency not confirmed. 'Wins by data with no gunfire' is our inference, not canon."
-   },
-   {
-    "id": "C-29",
-    "text": "Take-Two's 2025-05-06 Trailer 2 release gave 'May 26, 2026' as the launch date; a later release gives November 19, 2026.",
-    "type": "fact",
-    "source_ids": [
-     "S-05",
-     "S-04"
-    ],
-    "confidence": "verified",
-    "uncertainty": "History of the date only."
    },
    {
     "id": "C-43",

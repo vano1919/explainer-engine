@@ -67,3 +67,15 @@ def test_audio_tags_are_not_words():
     assert S.strip_tags(tagged) == "Could they survive? Both of them... unsure."
     res = S.align(tagged, heard("Could they survive Both of them unsure".split()))
     assert res["coverage"] == 1.0 and [w["w"] for w in res["words"]][0] == "Could"
+
+
+def test_british_spelling_and_hyphens_match_what_the_recogniser_writes():
+    heard = [{"text": t, "start": i * 0.5, "end": i * 0.5 + 0.4} for i, t in
+             enumerate("He realizes the tech savviness of every favor and license".split())]
+    res = S.align("He realises the tech-savviness of every favour and licence", heard)
+    assert res["coverage"] == 1.0 and res["words"][3]["w"] == "tech-savviness" and res["words"][3]["e"] == 2.4
+    assert S.norm("hours") == ["hours"] and S.norm("our") == ["our"]
+
+
+def test_a_dollar_amount_is_heard_as_its_words():
+    assert S.norm("$17,500") == ["seventeen", "thousand", "five", "hundred", "dollars"]

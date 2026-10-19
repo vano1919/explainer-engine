@@ -264,6 +264,12 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             if not hv.get("voice_id"):
                 _f(out, "PV-32", who, "no voice chosen yet for this hero: pick one after a test read, before the full read",
                    "REVIEW")
+            if not casting.age_of(doc["cast"][who]):  # the creator 2026-10-19: ages matter most
+                _f(out, "PV-32", who, "the hero's age is not known: set voice.traits.age (young/middle_aged/old) before "
+                   "casting, so no voice of the wrong age is offered", "REVIEW")
+            if not casting.accent_of(doc["cast"][who]["voice"].get("traits", {})):  # VC-05
+                _f(out, "PV-32", who, "no accent follows from voice.traits.origin or .ethnicity: name where the hero is from "
+                   "so the voice carries the right accent", "REVIEW")
             for why in casting.problems(doc["cast"][who]):  # VC-01/VC-02: cast from documented traits, never imitate
                 _f(out, "PV-10", who, why)
     if S.has_dialogue(doc):
@@ -428,6 +434,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     out += _scenario.check(doc, picture_dirs[0].parent if picture_dirs else None)
     from explainer_engine.scripting import speech as _speech
     out += _speech.check(doc)
+    from explainer_engine.scripting import reference_approval as _reference
+    out += _reference.check(doc, picture_dirs[0].parent if picture_dirs else None)  # PV-47 variant collage first (OR-16)
     return out
 
 
@@ -593,7 +601,8 @@ def check_timed(timed: dict, doc: dict, *, final: bool = False, picture_dirs: li
     out += BEATS.check_timed(timed, doc)  # VB rules on the real read (PV-44)
     for pid in {s["picture"] for s in shots}:
         p = timed["pictures"].get(pid, {})
-        have = p.get("file") and (not picture_dirs or any((Path(d) / p["file"]).exists() for d in picture_dirs))
+        names = [n for n in (p.get("file"), f"{pid}.png", f"{pid}_v1.png") if n]  # as assemble.find_picture looks them up
+        have = any((Path(d) / n).exists() for d in picture_dirs for n in names) if picture_dirs else bool(p.get("file"))
         if not have:
             if final:
                 _f(out, "PV-25", pid, "picture not painted yet: a final render needs every picture")

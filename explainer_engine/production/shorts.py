@@ -20,17 +20,19 @@ import wave
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 from explainer_engine.audio import local_words, scribe_words, voice_check, voice_layer
 from explainer_engine.production import assemble as ASM
 from explainer_engine.production import beats as BEATS
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
-from explainer_engine.qa import targets
+from explainer_engine.qa import short_format as SF, targets
 
 W, H = 1080, 1920  # the frame rate is the episode's (timing.time_script)
 MAX_TEMPO = 1.08
+SCREEN = "sc_"  # production/select_screen.py's stat cards: text across the whole 16:9 width, never cropped to 9:16
+SCREEN_MARGIN = 0.03  # share of the Short's width left on each side of a fitted card
 
 
 def narration(short: dict) -> str:
@@ -110,6 +112,25 @@ def short_frame(im: Image.Image, row: dict, f: int, fps: int, sb: list[dict], he
     return ASM.finish_frame(im, box, row, f, fps, (W, H), sb, hero_faces, sorted(hero_faces), dirs, None, before)
 
 
+def fit_screen(im: Image.Image, beats: list[dict], row: dict) -> Image.Image:
+    """A stat card in the Short (QA 2026-10-19: the 9:16 crop cut its title and stars): the whole card fitted to the width,
+    over a blurred, dimmed fill of itself; the shot's spots move with the card. The row's crop then shows the whole frame."""
+    iw, ih = im.size
+    cw = round(W * (1 - 2 * SCREEN_MARGIN))
+    chh = round(ih * cw / iw)
+    x0, y0 = (W - cw) // 2, (H - chh) // 2
+    k = max(W / iw, H / ih)
+    fill = im.resize((round(iw * k), round(ih * k)), Image.BICUBIC)
+    fill = fill.crop(((fill.width - W) // 2, (fill.height - H) // 2, (fill.width - W) // 2 + W, (fill.height - H) // 2 + H))
+    fill = Image.eval(fill.filter(ImageFilter.GaussianBlur(H * 0.02)), lambda v: int(v * 0.45))
+    fill.paste(im.resize((cw, chh), Image.LANCZOS), (x0, y0))
+    for b in beats:
+        if b.get("pos") and b.get("shot") == row["id"]:
+            b["pos"] = [(x0 + b["pos"][0] * cw) / W, (y0 + b["pos"][1] * chh) / H]
+    row.update(crop_x=0.5, zoom=1.0)
+    return fill
+
+
 def render_video(timed: dict, pics: dict, pic_dirs: list[Path], out: Path, short_id: str) -> int:
     """The silent 1080x1920 video, frame by frame; returns how many beat spots were moved into the crop."""
     fps, rows = timed["fps"], timed["shots"]
@@ -126,6 +147,8 @@ def render_video(timed: dict, pics: dict, pic_dirs: list[Path], out: Path, short
             ff.kill()
             raise FileNotFoundError(f"{short_id}: picture {name} not found")
         im = Image.open(pic).convert("RGB")
+        if row["picture"].startswith(SCREEN):
+            im = fit_screen(im, beats, row)
         moved += fit_spots(beats, row, *im.size)
         sb = ASM.beats_for_shot(beats, row, timed["pictures"], hero_faces, pic_dirs) if beats else []
         before = last
@@ -200,8 +223,11 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
           "-t", f"{duration:.2f}", "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", str(final)])
     rows = [{k: r[k] for k in ("id", "picture", "at", "crop_x", "zoom", "start", "end")} for r in timed["shots"]]
     report = {"duration": round(duration, 2), "timbre_review": drift, "shots": rows, "beats": BEATS.measure(timed),
-              "cues": len(timed["audio"]["cues"]), "beat_spots_moved_into_crop": moved}
+              "cues": len(timed["audio"]["cues"]), "beat_spots_moved_into_crop": moved,
+              "short_format": SF.check(SF.probe(final))}
     (out / "report.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
+    if report["short_format"]:  # a file YouTube would not make a Short is never handed on (qa/short_format.py)
+        raise SystemExit(f"{short_id}: not a Short: {report['short_format'][0]['detail']}")
     return final
 
 

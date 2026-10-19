@@ -44,7 +44,10 @@ def _dirs(doc_path: Path, extra: list[str] | None, key: str) -> list[Path]:
     return [Path(p) for p in (extra or [])] + [base / p for p in doc.get(key, [])]
 
 
-def join_reads(audio: list[Path], wav: Path, gap_s: float = 0.3) -> None:
+JOIN_GAP = 0.3  # seconds of silence between chunk reads
+
+
+def join_reads(audio: list[Path], wav: Path, gap_s: float = JOIN_GAP) -> None:
     """One read, or the chunk reads joined in order with a short silence (pause_pad widens it where the script wants)."""
     import subprocess
     if len(audio) == 1:
@@ -70,6 +73,15 @@ def cmd_words(doc: dict, audio: list[Path], out: Path, transcript: Path | None) 
     if transcript:
         heard = scribe_words.transcript_words(json.loads(transcript.read_text(encoding="utf-8")))
         source = f"transcript {transcript.name}"
+    elif len(audio) > 1:  # every chunk heard alone (Whisper drops repeats on a long read); offsets as join_reads lays them
+        from explainer_engine.audio import seams
+        offsets, t = [], 0.0
+        for p in audio:
+            offsets.append(t)
+            t += seams.duration(p) + JOIN_GAP
+        res = local_words.transcribe_chunks(audio, offsets)
+        write_text_atomic(out / "heard.json", json.dumps(res, indent=0))
+        heard, source = res["words"], res["source"]
     else:
         res = local_words.transcribe(wav)
         write_text_atomic(out / "heard.json", json.dumps(res, indent=0))

@@ -668,6 +668,35 @@ mean 3.92) leaves only EG-11 REVIEWs (C-03, C-05, C-17, C-29 unused). Rulebook v
 the `script_lock` stamp pass; `paid_assets` is stale until re-checked. `production validate`: only PV-05 (pictures not yet
 made). Tests: the full suite (397) including `test_syndicate_wars_example.py`.
 
+## 2026-10-19 — RunPod money control in code (D-56)
+Found (RunPod API, read-only): a stopped TMR preflight pod `etkpzxh16v1ksm` (60 GB volume) had billed $0.40/day since
+2026-10-17 (billing API: $0.40, $0.40, $0.23 so far today) with the balance at $0.97; deleted on the creator's word, API shows
+0 pods and $0/h after. Cause in the rules: they said "sweep and delete at the end" but nothing ran them, and TMR's sweep
+ignored stopped pods unless `--delete`. Built (narrow; the in-pod side stays in TMR): `explainer_engine/cloud/runpod.py`
+(port of TMR `rp.py` with retries, a create that is never POSTed twice, verified idempotent stop/delete, per-pod sessions,
+guard with lifetime/boot/blind handling, `check`, `cost` from `GET /billing/pods`, `PodSession`), `config/spend_caps.json` +
+`core/spend_caps.py` (the ledger refuses caps above the ceilings), `Run.settle`, and session hooks `cloud/hooks.py`
+(SessionStart report, Stop refuses to end a turn while something bills unapproved, Bash refuses `rp.py create/start` and raw
+`POST /pods`). Tests: `tests/unit/test_runpod.py` (27, fake RunPod API, no network); full suite 424 passed, docs_lint 0. No pod was started; $0 spent.
+Not changed: TMR's conductor still deletes its pod at DONE by manifest (`end_action`), and its money clock restarts with a
+container restart (`/proc/1` ctime); the outside guard here keeps the session clock, so it covers that case.
+## 2026-10-19 — Syndicate Wars pictures: v1 recovered, one variant collage first (OR-16, PV-47), face sheets painted
+
+The creator: before a hero or a world is painted for the first time, ONE collage of variants (colours, character, buildings),
+approved, instead of many exploration pictures. Built: `scripting/reference_approval.py` (PV-47: every hero drawn in a painted
+picture or with a face sheet has `cast.<id>.reference`, a script with painted pictures has `look.environment`: collage, tile,
+library picture, approved_by, approved_at; FAIL on `/2` so paint refuses, REVIEW on `/1`; `collage_prompt` asks for 4-6 tiles in
+one picture, `build_sheet` lays out existing pictures for free), schema fields, OR-16 in ORCHESTRATION. Syndicate Wars: the
+v1 Gemini batch answers were still on the server, so 51 pictures came back for free (`runs/syndicate_wars/pictures_v1` on HF);
+46 of the 48 the script needs plus the four portraits and s01_skyline. The creator approved the free collage of those
+(`reference_collage_v1.jpg`, tiles 1-4 the bosses, 5 the world) and chose existing pictures for the two missing shots
+(`It already has` -> s01_boardwalk, `And in the Keys` -> c12_palm); sc_* cards from `select_screen`. Four unused claims
+(C-03, C-05, C-17, C-29) left the editorial contract; the independent delta review passes (EG gate PASS) and `paid_assets` is
+stamped again. Face sheets: plan F1 (42 close-ups, Gemini batch, $1.105) approved and painted ($1.03 charged; three empty
+answers repainted in the same plan). QA by eye: the painter framed about eight close-ups tighter, so a face change would jump
+in size; `faces.same_framing` matches every close-up of a sheet to the tightest by the head silhouette (scaled up only, head
+top and centre aligned); originals kept in `jobs/syndicate_wars/faces_raw`. Tests: `test_reference_collage.py` (6),
+`test_face_sheets.py` (+1); `test_visual_beats.py` fixture records the pick. No pod was started.
 ## 2026-10-19 — Shorts carry the visual-beat layer and its cues (SS-09, PV-44)
 
 Measured: the creator's Shorts keep about 80 % viewed vs 20 % swiped away (Studio, the creator, recorded in
@@ -693,3 +722,56 @@ Rockstar's fan-content policy page read first-hand (B-14 verified, RK-02 evidenc
 `w02_studio` prompt (RR-03); `script_lock` and `paid_assets` stamped on rulebook v8 with the condition that pictures recovered
 from earlier Gemini batches are only ones painted from today's prompts, never the pre-v2 Vito/Shelby portraits, each face checked
 for actor likeness. Editorial review rebound to the script (EG-11 REVIEWs only).
+
+## 2026-10-19 — voice casting: age is a hard filter (creator: "ages matter most")
+
+Three voice options offered for Vito and Mizuno sounded too young: they were picked by name and description, outside
+`audio/casting.rank`. `casting.age_of` now reads `voice.traits.age`, or the age words of the style and card; `rank` never
+offers a voice labelled two bands off or a young voice for a middle-aged hero; PV-32 REVIEWs a speaking hero whose age is
+unknown. Tests: `tests/unit/test_casting_age.py`; `test_casting_ranks_returned_voices_and_never_reuses_one` now expects the
+young voice to be dropped for the old hero.
+
+## 2026-10-19 — voice casting: ethnicity, accent and region (VC-05); Syndicate Wars picks
+
+Creator: Capone = Crazy Eddie, Vito = Mr Wellington; Mizuno must carry a Japanese accent and Shelby a Birmingham accent ("add the
+ethnicity to the rules too"). `traits.ethnicity` is new in the schema; `casting.accent_of` reads `origin`, then `ethnicity`
+(Japanese and Welsh among the accents); `casting.region_of` puts a named region (Birmingham, Midlands...) into the search text
+and a +2 weight in `rank`, because library labels only say "british". PV-32 REVIEWs a hero with no accent source. Rule VC-05 in
+`docs/STORY_ENGINE.md`; tests in `tests/unit/test_casting_age.py`. Cast styles of Mizuno and Shelby changed in the content file;
+the script is rebuilt and the stamps re-bound once all four voice ids are fixed (ES-16). Library search found no West Midlands
+male voice; Midlands candidates (Robert, Dan) and a Japanese-accent voice (Hideo) were sampled, 122 credits.
+
+## 2026-10-19 — Syndicate Wars: full read, words and shot plan on the real read
+
+Full read on ElevenLabs v4: 26 chunks paid (9,127 credits, settled in `run.json`), 7 reused from the test reads. The narrator
+read 115-130 wpm (EL-12 asks 155-185): his chunks were sped up 8 % with atempo (the cap the creator allowed for Shorts) and the
+creator is asked whether to keep it; the chunks are levelled to -29 LUFS before the join (26.5 dB spread; `seams` clamps at 6 dB).
+`production words` now hears every chunk alone (`local_words.transcribe_chunks`: on the joined 12-minute read Whisper dropped
+repeated words, coverage 96 %); `scribe_words.norm` reads British spellings, hyphenated words and dollar amounts as the recogniser
+writes them; `pause_pad` searches 0.25 s round a gap and inserts only below -46 dB, under the dropout scan's -42 dB (6 cuts ->
+0 FAIL); `validate` finds a painted picture by its id like `assemble.find_picture` (46 false PV-25). Coverage 97.1 %, 12:15.
+`fill` added 50 re-framed shots (RHYTHM-3); two painted shots it dropped were restored by moving their anchors; four beats added,
+one cue moved (VB-01/VB-08). Editorial review and rulebook stamps re-bound (shots and beats only). Tests:
+`test_scribe_words.py`, `test_pause_pad.py`, `test_local_words_chunks.py`, `test_production_script.py`.
+
+## 2026-10-19 — Syndicate Wars: render, 10 Shorts, publish checklist
+
+Main video rendered in 12 chunks of about 60 s (RULE-R1) and joined: 12:14, 1920x1080 30 fps, -14.7 LUFS, true peak -1.1 dBTP,
+no music or ambience bed (none was planned). The Shorts reuse 47 lines cut from the main read; 22 new lines were recorded on the
+narrator's voice (1,739.83 credits, settled; credits = prompt characters), paced +8 % and levelled to the cut lines (-28.8 LUFS).
+Looking at the first Shorts found two defects, both fixed with a test: a dialogue close-up (16:9) was pinned to the left edge of
+the 9:16 frame, so the speaking hero fell off screen over a blurred background (`faces.composite` now centres it and caps it at
+`PORTRAIT_W` frame widths in a portrait frame; the long video is unchanged); the stat cards (`sc_*`) were cropped to 9:16 and lost
+their title and stars (`shorts.fit_screen` fits the whole card over a blurred fill and moves its spots with it). `publish.json`
+written from the real segment times (10 chapters); `publish_check`: 0 FAIL, 3 REVIEW for the creator (mid-roll, self-certification,
+approval #2). Tests: `test_face_sheets.py::test_composite_in_a_short_centres_the_hero_of_a_wide_close_up`,
+`test_short_beats.py::test_a_stat_card_is_fitted_whole_in_the_short_and_its_spots_move_with_it`.
+
+## 2026-10-19 — Syndicate Wars staged on YouTube; a Short is checked to be a Short
+
+Long video and 10 Shorts staged unlisted (state in `examples/syndicate_wars_ep1/publish/youtube_state.json`), each item as it
+passed (standing order 9). The creator saw the Shorts as videos: YouTube had made all ten Shorts (1080x1920, 0.5625, under
+60 s; `youtube.com/shorts/<id>` answers 200, the long video redirects), but the links given were `youtu.be`, which opens the
+ordinary player. `qa/short_format.py` now checks a Short file (SF-01 horizontal, SF-02 not 9:16, SF-03 over 180 s),
+`production.shorts` refuses to hand on a file that fails, and links to Shorts are `youtube.com/shorts/<id>`. The upload tool
+(PR #7) should run the same check before `videos.insert` once it is merged. Test: `tests/unit/test_short_format.py`.

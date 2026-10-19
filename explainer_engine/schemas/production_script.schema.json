@@ -225,6 +225,39 @@
             "gemini",
             "pod_text"
           ]
+        },
+        "environment": {
+          "type": "object",
+          "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference",
+          "required": [
+            "collage",
+            "tile",
+            "picture",
+            "approved_by",
+            "approved_at"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "collage": {
+              "type": "string"
+            },
+            "tile": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "picture": {
+              "type": "string"
+            },
+            "approved_by": {
+              "type": "string"
+            },
+            "approved_at": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -336,6 +369,10 @@
                   },
                   "origin": {
                     "type": "string"
+                  },
+                  "ethnicity": {
+                    "type": "string",
+                    "description": "VC-05: the hero's ethnic or national background, from which the accent is read when origin names none (a Japanese businessman speaks English with a Japanese accent)"
                   },
                   "role": {
                     "enum": [
@@ -468,6 +505,39 @@
                 "items": {
                   "type": "string"
                 }
+              }
+            }
+          },
+          "reference": {
+            "type": "object",
+            "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference",
+            "required": [
+              "collage",
+              "tile",
+              "picture",
+              "approved_by",
+              "approved_at"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "collage": {
+                "type": "string"
+              },
+              "tile": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "picture": {
+                "type": "string"
+              },
+              "approved_by": {
+                "type": "string"
+              },
+              "approved_at": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
               }
             }
           }

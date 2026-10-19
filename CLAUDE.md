@@ -15,13 +15,15 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 .venv\Scripts\python -m pytest -q             # all tests
 .venv\Scripts\python -m explainer_engine.docs_lint        # docs: one home per ID, links, fixtures
 .venv\Scripts\python -m explainer_engine.design.palette   # palette contrast table + rule check
+.venv\Scripts\python -m explainer_engine.cloud.runpod check  # what bills on RunPod now (also run by the session hooks)
 ```
 
 ## Invariants (do not violate; stop and ask if a task seems to require it)
 
-1. Production is cloud-first (D-31): the cloud session + RunPod pods, RunPod hard cap $3, TMR's money-control rules
-   (approved price and time cap per pod, `rp.py guard`, sweep at start and end, delete at the end). The creator's PC
-   only reviews and uploads.
+1. Production is cloud-first (D-31): the cloud session + RunPod pods. Money ceilings live only in
+   `config/spend_caps.json` and are enforced by code (D-56): pods only via `python -m explainer_engine.cloud.runpod`
+   (`check` at start and end, `create --ledger`, guard, `stop`; delete only on the creator's word; a stopped disk bills).
+   The creator's PC only reviews and uploads.
 2. Budget caps are ceilings, not targets: Gemini ≤ $10 total, vidIQ ≤ 200 credits. Estimate and log before every paid
    call (`docs/COST_AND_TIME_MODEL.md` ledger); at 80 % of a cap stop and ask. Leave nothing paid running.
 3. No long-form pipeline before the 60–90 s prototype passes its acceptance criteria (plan F).
@@ -57,6 +59,10 @@ threshold, heuristic), risks as PASS/ADAPT/REVIEW/BLOCK, creative and anti-monot
 (`python -m explainer_engine.standards brief <rules> --role image`). Gates `final`, `script_lock`, `paid_assets`, `final_qa`;
 `production/paint.py` refuses a paid run without a passing `paid_assets` gate. Constrain specific risks, never creativity.
 
+**Upload per piece (creator, 2026-10-19):** each video or Short goes up to YouTube unlisted as soon as it passes its own tests,
+one at a time, never waiting for the batch (`docs/PRODUCTION_RULES.md` standing order 9); never public, the creator sets the
+thumbnail, sign-in by a fresh link per upload session.
+
 Also binding: crossover episodes of other people's fictional worlds follow docs/RIGHTS_AND_FAIR_USE.md (no third-party
 media, our own art only, short analysed quotes, small recap, credited fan theories) and pass `rights/ip_check.py`.
 Pictures: the creator picks the provider for every batch (D-50, paint plan -> approve -> run; supersedes D-52's "Gemini
@@ -72,6 +78,8 @@ explainer_engine/core/    store.py (JobStore, atomic writes, stage registry), jo
                           errors.py (Contract/Config/Retryable/NeedsReview), labels.py (evidence labels)
 explainer_engine/audio/   timings.py (phoneme timings -> words), visemes.py (mouth opening/shape, blinks),
                           envelope.py (loudness mouth fallback)
+explainer_engine/cloud/   runpod.py (the only pod manager: check, create, guard, stop, sweep, cost), hooks.py (session money hooks)
+config/spend_caps.json    the creator's money ceilings (D-56), read by the ledger and the pod manager
 explainer_engine/design/  palette.json (the only place hex colours live), palette.py (contrast + rules)
 explainer_engine/docs_lint.py   documentation consistency (D-23)
 explainer_engine/rights/  ip_check.py: rights check of an episode's rights manifest (RR rules, D-26); any FAIL blocks

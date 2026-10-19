@@ -45,6 +45,7 @@ KEY_LO, KEY_HI = 0.06, 0.22  # green dominance (g - max(r, b)) from where a pixe
 BORDER_KEYED = 0.85  # a painted close-up's frame edge must be at least this share key green (else the key leaves a halo)
 ZOOM, BLUR, DIM = 1.3, 0.014, 0.82  # the environment behind a close-up: zoom about the face, blur (share of the height), dim
 FACE_H, EASE_S, POP_S, POP = 0.94, 0.22, 0.16, 0.035  # close-up height (share of the frame), cross-fade in/out, swap pop
+PORTRAIT_W = 2.0  # in a 9:16 Short the 16:9 close-up is at most this many frame widths wide, its middle (the hero) centred
 _PALETTE = Path(__file__).resolve().parents[1] / "design" / "palette.json"
 
 
@@ -263,11 +264,79 @@ def composite(frame: Image.Image, faces: list[dict], f: int, fps: int, order: li
     face = close_up(b["close_up"])
     pop = POP * np.sin(np.pi * min(max((f - b["start_frame"]) / (POP_S * fps), 0.0), 1.0)) if cur else 0.0
     h = int(OH * FACE_H * (1 + pop))
+    portrait = OH > OW  # a Short (QA 2026-10-19: the 16:9 close-up was pinned to the left edge, the hero fell off frame)
+    if portrait:
+        h = min(h, int(PORTRAIT_W * OW * face.height / max(1, face.width) * (1 + pop)))
     fw = max(1, int(face.width * h / max(1, face.height)))
     piece = face.resize((fw, max(1, h)), Image.BICUBIC)
     if w < 1:
         piece.putalpha(piece.getchannel("A").point(lambda v: int(v * w)))
-    x = min(max(int(_side(b, order) * OW - fw / 2), 0), max(0, OW - fw))
+    if portrait:
+        x = int(OW / 2 - fw / 2)
+    else:
+        x = min(max(int(_side(b, order) * OW - fw / 2), 0), max(0, OW - fw))
     out = back.convert("RGBA")
     out.alpha_composite(piece, (x, max(0, OH - h)))
     return out.convert("RGB")
+
+
+# --- one framing per sheet (QA 2026-10-19: the painter framed some close-ups tighter, so a face change jumped in size) ----
+PROFILE_W = 688  # the alpha silhouette is measured at this width
+PROFILE_HEAD = 0.3  # share of the silhouette (from its top) compared: hat, head and neck, before the frame cuts the shoulders
+SCALES = np.exp(np.linspace(np.log(0.4), np.log(2.5), 200))
+
+
+def _profile(im: Image.Image) -> tuple[np.ndarray, int, float]:
+    """Silhouette width per row from the top of the hero down (at PROFILE_W), the top row and the head's centre x (0..1)."""
+    a = keyed(im).getchannel("A").resize((PROFILE_W, max(1, round(PROFILE_W * im.height / im.width))), Image.BILINEAR)
+    m = np.asarray(a) > 127
+    rows = np.where(m.sum(1) > 2)[0]
+    if not len(rows):
+        raise ValueError("no hero on the close-up: the whole picture keys out")
+    y0 = int(rows[0])
+    any_ = m.any(1)
+    left = np.where(any_, m.argmax(1), 0)
+    right = np.where(any_, m.shape[1] - m[:, ::-1].argmax(1), 0)
+    w = (right - left).astype(float)
+    head = slice(y0, y0 + max(2, int(PROFILE_HEAD * (len(w) - y0))))
+    cx = float(((left[head] + right[head]) / 2).mean() / PROFILE_W)
+    return w[y0:], y0, cx
+
+
+def relative_scale(ref: Image.Image, cand: Image.Image) -> tuple[float, float]:
+    """(s, error): resizing ``cand`` by s makes its hero the size of ``ref``'s, matched on the head silhouette."""
+    wr, _, _ = _profile(ref)
+    wc, _, _ = _profile(cand)
+    n = max(2, int(PROFILE_HEAD * len(wr)))
+    y = np.arange(n)
+    best = (np.inf, 1.0)
+    for s in SCALES:
+        yc = y / s
+        if yc[-1] >= len(wc) - 1:
+            continue
+        err = float(np.mean(np.abs(s * np.interp(yc, np.arange(len(wc)), wc) - wr[:n])) / max(1e-6, np.mean(wr[:n])))
+        if err < best[0]:
+            best = (err, float(s))
+    return best[1], best[0]
+
+
+def same_framing(paths: list[Path], ref: Path) -> dict[Path, Image.Image]:
+    """Every close-up of one sheet re-framed like the tightest one: scaled up (never down, which would leave the body
+    floating above the frame's bottom edge), the head's top and centre at the tightest one's place, key green filled in."""
+    ims = {p: Image.open(p).convert("RGB") for p in paths}
+    r = ims[ref]
+    scale = {p: relative_scale(r, im)[0] for p, im in ims.items()}
+    tight = min(paths, key=lambda p: scale[p])
+    _, ty0, tcx = _profile(ims[tight])
+    out = {}
+    for p, im in ims.items():
+        f = scale[p] / scale[tight]
+        _, y0, cx = _profile(im)
+        k = im.width / PROFILE_W
+        big = im.resize((round(im.width * f), round(im.height * f)), Image.LANCZOS)
+        ox = round(cx * im.width * f - tcx * im.width)  # where the target canvas starts inside the enlarged picture
+        oy = round(y0 * k * f - ty0 * k)
+        canvas = Image.new("RGB", im.size, key_rgb())
+        canvas.paste(big, (-ox, -oy))
+        out[p] = canvas
+    return out

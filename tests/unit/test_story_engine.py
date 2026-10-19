@@ -220,8 +220,8 @@ def test_casting_ranks_returned_voices_and_never_reuses_one():
               {"voice_id": "b", "name": "Young Girl", "labels": {"gender": "female", "age": "young"}},
               {"voice_id": "c", "name": "Star", "labels": {"gender": "male", "age": "old", "category": "famous"}}]
     r = casting.rank(voices, hero())
-    assert [x["voice_id"] for x in r] == ["a", "b"]
-    assert [x["voice_id"] for x in casting.rank(voices, hero(), taken={"a"})] == ["b"]
+    assert [x["voice_id"] for x in r] == ["a"]  # the young voice is never offered for an old hero (creator 2026-10-19)
+    assert casting.rank(voices, hero(), taken={"a"}) == []
     desc = casting.design_description(hero())
     assert "elderly male voice" in desc and "american" in desc and "Franklin" not in desc
 

@@ -104,6 +104,15 @@ def test_composite_blurs_the_scene_behind_the_close_up_and_rests_outside_dialogu
     assert (one[:, 250:, 1] <= one[:, 250:].max(axis=2)).all() and one[5, 300, 1] < 200  # no key green on screen
 
 
+
+def test_composite_in_a_short_centres_the_hero_of_a_wide_close_up(tmp_path):
+    frame = Image.new("RGB", (180, 320), (40, 40, 60))  # 9:16
+    b = {"start_frame": 30, "end_frame": 90, "who": "einstein", "close_up": _close_up(tmp_path / "f.png"), "face": None}
+    one = np.asarray(FACES.composite(frame, [b], 60, 30, ["einstein", "curie"])).astype(int)
+    face = np.abs(one - np.array([210, 150, 110])).max(axis=2) < 4
+    cols = np.where(face.any(axis=0))[0]
+    assert len(cols) and abs((cols.min() + cols.max()) / 2 - 90) < 12  # the hero sits in the middle, not off the edge
+
 def test_paint_plan_faces_is_a_reusable_plan_with_its_saving(tmp_path):
     d = C.compile_doc(beats_doc())
     (tmp_path / "script.json").write_text(json.dumps(d))
@@ -137,3 +146,24 @@ def test_end_to_end_dialogue_renders_the_keyed_close_up(tmp_path, monkeypatch):
         _close_up(pics / f"einstein_faces_v1_{e}.png")
     TVB.test_end_to_end_beats_render(tmp_path)
     assert calls  # the dialogue line's frames went through the composite
+
+
+def test_one_framing_per_sheet_scales_a_wide_close_up_to_the_tightest(tmp_path):
+    key = FACES.key_rgb()
+
+    def hero(path, s, top):  # a head (ellipse) on shoulders (wide trapezoid) at scale s
+        im = Image.new("RGB", (688, 384), key)
+        d = ImageDraw.Draw(im)
+        cx = 344
+        d.ellipse([cx - 40 * s, top, cx + 40 * s, top + 100 * s], fill=(200, 160, 140))
+        d.polygon([(cx - 30 * s, top + 90 * s), (cx + 30 * s, top + 90 * s), (cx + 160 * s, 384), (cx - 160 * s, 384)],
+                  fill=(40, 40, 50))
+        im.save(path)
+        return path
+
+    wide, tight = hero(tmp_path / "w.png", 1.0, 60), hero(tmp_path / "t.png", 1.6, 20)
+    s, err = FACES.relative_scale(Image.open(wide), Image.open(tight))
+    assert abs(s - 1 / 1.6) < 0.05 and err < 0.1
+    out = FACES.same_framing([wide, tight], wide)
+    a, b = (FACES._profile(out[p]) for p in (wide, tight))
+    assert abs(a[1] - b[1]) <= 3 and abs(a[0][40] - b[0][40]) <= 6  # same head top, same width a little below it
