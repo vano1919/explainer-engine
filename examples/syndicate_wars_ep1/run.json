@@ -8,7 +8,7 @@
   },
   "spent": {
     "gemini_usd": 2.9535,
-    "elevenlabs_credits": 1175.92
+    "elevenlabs_credits": 10303.01
   },
   "reserved": {
     "batch:s01_skyline+1": {
@@ -139,7 +139,9 @@
     },
     "full_read_main": {
       "service": "elevenlabs_credits",
-      "amount": 9396
+      "amount": 9127.09,
+      "settled": true,
+      "note": "26 chunks generated (1 credit/char incl. tags); 7 reused from test reads, 0 credits"
     }
   },
   "phases": {
