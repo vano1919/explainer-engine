@@ -117,7 +117,10 @@ class Sounds:
             for ext in (".mp3", ".wav"):
                 if (d / f"{name}{ext}").exists():
                     return d / f"{name}{ext}"
-        return self.lib.get(name)
+        p = self.lib.get(name)
+        # the library WAVs are not in git (media rule): a manifest entry without its file is missing, so PV-05 says so
+        # before the render instead of ffmpeg failing inside it (audit 2026-10-19 M4)
+        return p if p is not None and p.is_file() else None
 
     def exists(self, name: str) -> bool:
         return self.path(name) is not None

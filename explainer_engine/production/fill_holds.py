@@ -21,7 +21,7 @@ MIN_PART = 2.5  # each side of a cut stays at or above MIN_SHOT (2.5 s)
 
 def alt_motion(prev: dict) -> dict:
     if prev.get("kind") == "push" and prev.get("z1", 1.0) > prev.get("z0", 1.0):
-        return {"kind": "push", "z0": 1.10, "z1": 1.04}
+        return {"kind": "pull", "z0": 1.10, "z1": 1.04}  # it shrinks: a pull (continuity.chain reads kind)
     return {"kind": "push", "z0": 1.0, "z1": 1.07}
 
 
@@ -32,6 +32,19 @@ def _phrase(toks: list[dict], t_new: int, lo: int, hi: int) -> str | None:
         if S.find_phrase(toks, phrase, lo, hi) == t_new:
             return phrase
     return None
+
+
+def _move_definition(doc: dict, gone: dict) -> None:
+    """A dropped shot that defined its picture inline hands the definition to the next shot that uses the picture, so the
+    later references keep resolving (PV-03; audit 2026-10-19 M3). A picture nobody uses any more simply goes."""
+    pic = gone.get("picture")
+    if not isinstance(pic, dict):
+        return
+    for seg in doc["segments"]:
+        for sh in seg["shots"]:
+            if sh.get("picture") == pic["id"]:
+                sh["picture"] = pic
+                return
 
 
 def drop_short_shots(doc: dict, words_doc: dict, min_s: float = B.MIN_SHOT) -> tuple[dict, list[dict]]:
@@ -55,7 +68,9 @@ def drop_short_shots(doc: dict, words_doc: dict, min_s: float = B.MIN_SHOT) -> t
         vseg = next(x for x in doc["segments"] if x["id"] == v["segment"])
         if vseg["shots"][0]["at"] == v["at"] and victim != bad:
             break  # would remove another segment's opening picture: leave for a human
-        vseg["shots"] = [x for x in vseg["shots"] if x["at"] != v["at"]]
+        k = next(j for j, x in enumerate(vseg["shots"]) if x["at"] == v["at"])  # only this shot, not every shot with that phrase
+        gone = vseg["shots"].pop(k)
+        _move_definition(doc, gone)
         dropped.append({"segment": v["segment"], "at": v["at"], "picture": v["picture"], "duration": v["duration"]})
     return doc, dropped
 

@@ -42,6 +42,16 @@ def word_map(toks: list[dict], words: list[dict]) -> tuple[list[int | None], flo
             m[i] = nxt
         else:
             nxt = m[i]
+    # a read that stops early leaves the last tokens with no next word: they hold on the last heard word, so the timing
+    # still builds and PV-20 reports the low match instead of a crash (audit 2026-10-19 M3)
+    prev = None
+    for i in range(len(m)):
+        if m[i] is None:
+            m[i] = prev
+        else:
+            prev = m[i]
+    if words and any(x is None for x in m):  # nothing matched at all
+        m = [min(i, len(words) - 1) for i in range(len(m))]
     return m, round(matched, 4)
 
 

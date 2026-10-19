@@ -101,7 +101,9 @@ def find(root: Path, *, tags: list[str] | None = None, category: str | None = No
     return out
 
 
-def validate(root: Path) -> list[str]:
+def validate(root: Path, check_files: bool = True) -> list[str]:
+    """Manifest problems; with ``check_files`` also every file (present, unchanged, readable). The WAVs are not in git, so a
+    clean checkout validates the manifest only (``check_files=False``)."""
     root = Path(root)
     problems: list[str] = []
     manifest = load_manifest(root)
@@ -114,6 +116,8 @@ def validate(root: Path) -> list[str]:
         if item["id"] in seen:
             problems.append(f"{item['id']}: duplicate id")
         seen.add(item["id"])
+        if not check_files:
+            continue
         path = root / item["file"]
         if not path.exists():
             problems.append(f"{item['id']}: file missing")

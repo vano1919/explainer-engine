@@ -13,7 +13,7 @@ import json
 import re
 from pathlib import Path
 
-from explainer_engine.audio.scribe_words import script_tokens
+from explainer_engine.audio.scribe_words import _LONE_MARK, script_tokens
 
 SCHEMA_FILE = Path(__file__).resolve().parents[1] / "schemas" / "production_script.schema.json"
 PAUSE_TAGS = ((1.8, "[long pause]"), (1.0, "[pause]"), (0.5, "[short pause]"))
@@ -130,7 +130,12 @@ def tokens(doc: dict) -> list[dict]:
     k = 0
     for si, seg in enumerate(doc["segments"]):
         for li, line in enumerate(seg["lines"]):
-            n = len(script_tokens(line["text"]))
+            own = script_tokens(line["text"])
+            # a leading lone mark ("— and then") is glued to the previous word in the joined text (audit 2026-10-19 M3)
+            lead = 0
+            while li > 0 and lead < len(own) and _LONE_MARK.match(own[lead]["w"]):  # same segment = same paragraph
+                lead += 1
+            n = len(own) - lead
             for t in toks[k:k + n]:
                 t["seg"], t["line"] = si, li
             k += n
