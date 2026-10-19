@@ -2,7 +2,7 @@
 
 A solo creator's 2D hand-drawn explainer channel ("worlds collide": history, science and money meeting other
 eras, D-25; analysis episodes of other people's fictional worlds under the RR rules, D-26) and its production
-pipeline: topic → research dossier + claim map → script → **creator approval** → schema-validated storyboard →
+pipeline: topic → research dossier + claim map → short scenario → **creator approval** (OR-15) → script → **creator approval** → schema-validated storyboard →
 paint plan + **creator's provider choice** → pictures → ElevenLabs narration + Scribe word timings → PIL/ffmpeg assembly
 (`production/assemble.py`) → Shorts → thumbnail + metadata (`qa/publish_check.py`) →
 technical + editorial QA → review bundle → **creator approval** → manual upload. Cloud-first (D-31). Start from `docs/INDEX.md`: every specification and every ID (D-, SE-, V-, P-, R-, Q-) has ONE canonical home —

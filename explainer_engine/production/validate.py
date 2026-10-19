@@ -423,6 +423,10 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         out += _claims.check(doc, claim_map)
     from explainer_engine.scripting import distinct as _distinct
     out += _distinct.check(doc)
+    from explainer_engine.scripting import scenario as _scenario
+    out += _scenario.check(doc, picture_dirs[0].parent if picture_dirs else None)
+    from explainer_engine.scripting import speech as _speech
+    out += _speech.check(doc)
     return out
 
 

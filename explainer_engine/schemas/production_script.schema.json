@@ -106,6 +106,26 @@
         "rulebook": {
           "type": "string",
           "description": "episode_rules.json next to the script (D-51); new-style scripts set it and PV-39..PV-42 apply"
+        },
+        "scenario": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "PV-45, OR-15: the short scenario the creator approved before this script was written (file next to the script, sha256 binds the approval)",
+          "properties": {
+            "file": {
+              "type": "string"
+            },
+            "approved_by": {
+              "type": "string"
+            },
+            "approved_at": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
         }
       }
     },
@@ -409,6 +429,45 @@
               },
               "note": {
                 "type": "string"
+              }
+            }
+          },
+          "speech": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "basis",
+              "style",
+              "words"
+            ],
+            "description": "PV-46, DW-11: how the hero talks - from their generally known manner (public, with sources) or, for an invented hero, their personality; our own words, never a quote or an actor's delivery",
+            "properties": {
+              "basis": {
+                "enum": [
+                  "public",
+                  "personality"
+                ]
+              },
+              "style": {
+                "type": "string"
+              },
+              "words": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "avoid": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }

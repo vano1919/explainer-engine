@@ -31,8 +31,12 @@ def beats_doc() -> dict:
     """mini() as a production_script/2 with its beats written the way the beat-writer is asked to."""
     d = mini()
     d["schema"] = "production_script/2"
+    d["episode"]["scenario"] = {"file": "scenario.md", "approved_by": "creator", "approved_at": "2026-10-19",
+                                "sha256": "0" * 64}  # PV-45: the creator approved the scenario before the script
     d["cast"]["einstein"]["voice"] = {"voice_id": "e1", "name": "E", "style": "bright, quick, amused tenor"}
     d["cast"]["einstein"]["face_sheet"] = {"id": "einstein_faces_v1", "ref": "duo", "set": list(FACES.DEFAULT_SET)}
+    d["cast"]["einstein"]["speech"] = {"basis": "public", "style": "quick, playful, plain words, thinks aloud",  # PV-46
+                                     "words": ["imagine", "simple", "you see"], "sources": ["test"]}
     s1, s2 = d["segments"][0]["lines"], d["segments"][1]["lines"]
     s1[0]["visual_beats"] = [_b("survive", "symbol", "asks if they survive", "blip", symbol="question"),
                              _b("night", "text", "the night is the threat", text="THE NIGHT")]
@@ -267,7 +271,7 @@ def test_cues_are_in_the_timed_audio_and_the_mix():
 
 def test_stage_guard_beats_own_their_field_and_the_editor_only_moves_them():
     before, after = mini(), beats_doc()
-    after["schema"], after["cast"] = before["schema"], before["cast"]
+    after["schema"], after["cast"], after["episode"] = before["schema"], before["cast"], before["episode"]
     after["segments"][1]["lines"][1].pop("speaker")
     assert not G.violations("beats", before, after)
     assert G.violations("performer", before, after)

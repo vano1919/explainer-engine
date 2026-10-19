@@ -20,6 +20,9 @@ Procedure:
 2. Fill `drama`: premise (one sentence), the dramatic question (one yes/no question the whole video answers), the promise
    (what the title sells), at least three `needs`, `arcs` for every hero who will speak (want, flaw; need and change for
    the lead), `loops` (L01..), `setups` (P01.., plant early, pay late), `ending.kind`.
+   For every hero who will speak, write `cast.<id>.speech` (DW-11): how they are generally known to talk (`basis: public`,
+   with sources) or, for an invented hero, how their personality talks (`basis: personality`): `style`, at least three
+   signature `words`, and what they never say (`avoid`).
 3. Lay out the segments with the beat grid of `docs/STORY_ENGINE.md` (cold open by 0:00, the question by 0:15, a turn in
    every third, the midpoint reversal, the crisis, the climax, a button). Each segment: `function`, `turn` (BUT or THEREFORE,
    never "and then"), `stakes`, `shift` ("safe -> hunted"), `need`, `opens`/`closes`, `claim_share`

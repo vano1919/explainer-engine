@@ -1,0 +1,1351 @@
+{
+  "note": "Syndicate Wars Episode 1, segments S01-S08: visual beats written by the beat-writer procedure (skill visual-beats), 2026-10-19. Shot starts and the timeline cards G01-G03 count as events, so lines opening them carry one beat fewer. Every number on screen is a star rating from the opinion claims C-44..C-47 (our ratings, labelled opinion in the script); the premise counts (four bosses, four rounds) are spoken words, never digits. No sound effects play in these segments, so every narration beat carries a cue.",
+  "S01": [
+    [
+      {
+        "at": "1930s",
+        "kind": "symbol",
+        "symbol": "clock",
+        "pos": [
+          0.18,
+          0.22
+        ],
+        "why": "a gangster from the 1930s: a time sign",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "world where everybody",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.62
+        ],
+        "why": "rings the crowd: everybody in the world",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "CAMERA?",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.24
+        ],
+        "why": "asks: survive a world with a CAMERA?",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "set.",
+        "kind": "symbol",
+        "symbol": "cross",
+        "pos": [
+          0.8,
+          0.28
+        ],
+        "why": "not a film set: crossed out",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "neon sunset,",
+        "kind": "label",
+        "text": "NEON SUNSET",
+        "pos": [
+          0.5,
+          0.25
+        ],
+        "why": "names the neon sunset",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "every phone",
+        "kind": "highlight",
+        "pos": [
+          0.74,
+          0.6
+        ],
+        "why": "rings every phone pointing at you",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "at you.",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "punch in: pointing at you",
+        "strength": 0.5,
+        "cue": {
+          "sound": "whiff"
+        }
+      }
+    ],
+    [
+      {
+        "at": "Vice City,",
+        "kind": "label",
+        "text": "VICE CITY",
+        "pos": [
+          0.5,
+          0.4
+        ],
+        "why": "names the city: Vice City",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "state",
+        "kind": "label",
+        "text": "LEONIDA",
+        "pos": [
+          0.5,
+          0.7
+        ],
+        "why": "names the state of Leonida",
+        "cue": {
+          "sound": "tap"
+        }
+      }
+    ],
+    [
+      {
+        "at": "game",
+        "kind": "label",
+        "text": "ROCKSTAR'S NEXT GAME",
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "why": "names Rockstar's next game",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "And we're",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.55
+        ],
+        "why": "rings the city they will drop into: we're about to",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "drop",
+        "kind": "symbol",
+        "symbol": "arrow_down",
+        "pos": [
+          0.5,
+          0.18
+        ],
+        "why": "the drop: an arrow down into it",
+        "cue": {
+          "sound": "fall"
+        }
+      },
+      {
+        "at": "bosses into",
+        "kind": "text",
+        "text": "FOUR CRIME BOSSES",
+        "why": "four crime bosses, the cast",
+        "cue": {
+          "sound": "tick"
+        }
+      }
+    ],
+    [
+      {
+        "at": "Four bosses.",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "punch on the four bosses",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "ways of ruling.",
+        "kind": "text",
+        "text": "FOUR WAYS OF RULING",
+        "why": "the point: four ways of ruling",
+        "cue": {
+          "sound": "tick"
+        }
+      }
+    ],
+    [
+      {
+        "at": "one of them",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.5
+        ],
+        "why": "rings the only one who understands",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "phone camera",
+        "kind": "label",
+        "text": "PHONE CAMERA",
+        "pos": [
+          0.78,
+          0.35
+        ],
+        "why": "names what a phone camera is",
+        "offset": -0.3,
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "REALLY",
+        "kind": "accent",
+        "effect": "shake",
+        "why": "a shake on the stressed REALLY",
+        "strength": 0.4,
+        "cue": {
+          "sound": "whiff"
+        }
+      }
+    ]
+  ],
+  "S02": [
+    [
+      {
+        "at": "honesty",
+        "kind": "text",
+        "text": "HONESTY FIRST",
+        "why": "the promise: quick honesty first",
+        "cue": {
+          "sound": "tick"
+        }
+      }
+    ],
+    [
+      {
+        "at": "release date,",
+        "kind": "symbol",
+        "symbol": "clock",
+        "pos": [
+          0.2,
+          0.3
+        ],
+        "why": "a release date: a time sign",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "November 19,",
+        "kind": "highlight",
+        "pos": [
+          0.8,
+          0.5
+        ],
+        "why": "rings the date November 19 on the card",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "gives no year",
+        "kind": "symbol",
+        "symbol": "cross",
+        "pos": [
+          0.2,
+          0.62
+        ],
+        "why": "no year for the story: crossed",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "the story.",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.5,
+          0.3
+        ],
+        "why": "the story's year is a question",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "OUR assumption.",
+        "kind": "text",
+        "text": "OUR ASSUMPTION",
+        "why": "the year is OUR assumption",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "scenario",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.5
+        ],
+        "why": "rings the scene: the scenario is invented",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "Every word",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "punch on every word being made up",
+        "strength": 0.5,
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "bosses say",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.6
+        ],
+        "why": "rings the bosses who say the words",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "made up.",
+        "kind": "text",
+        "text": "MADE UP",
+        "why": "every word is made up",
+        "cue": {
+          "sound": "tick"
+        }
+      }
+    ],
+    [
+      {
+        "at": "history?",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.8,
+          0.25
+        ],
+        "why": "asks: the history?",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "real.",
+        "kind": "symbol",
+        "symbol": "check",
+        "pos": [
+          0.8,
+          0.25
+        ],
+        "why": "that part is real: a check",
+        "cue": {
+          "sound": "chime"
+        }
+      },
+      {
+        "at": "when it is.",
+        "kind": "symbol",
+        "symbol": "clock",
+        "pos": [
+          0.2,
+          0.25
+        ],
+        "why": "we will tell you when: a time sign",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ]
+  ],
+  "S03": [
+    [
+      {
+        "at": "Choose your boss.",
+        "kind": "text",
+        "text": "CHOOSE YOUR BOSS",
+        "why": "the game screen: choose your boss",
+        "cue": {
+          "sound": "tick"
+        }
+      }
+    ],
+    [
+      {
+        "at": "stats each,",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.6
+        ],
+        "why": "rings the stats on each card",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "five stars.",
+        "kind": "chart",
+        "chart": "counter",
+        "values": [
+          5
+        ],
+        "labels": [
+          "Out of"
+        ],
+        "unit": "stars",
+        "claim": "C-44",
+        "why": "counts the scale: out of five stars",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "ratings are OURS.",
+        "kind": "text",
+        "text": "OURS",
+        "why": "the ratings are OURS",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "not facts.",
+        "kind": "symbol",
+        "symbol": "cross",
+        "pos": [
+          0.8,
+          0.3
+        ],
+        "why": "opinions, not facts: facts crossed",
+        "offset": -0.3,
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "we'll show",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.75
+        ],
+        "why": "rings where we show our reasons",
+        "cue": {
+          "sound": "pluck"
+        }
+      }
+    ]
+  ],
+  "S04": [
+    [
+      {
+        "at": "Al Capone.",
+        "kind": "label",
+        "text": "AL CAPONE",
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "why": "names the first card: Al Capone",
+        "cue": {
+          "sound": "tap"
+        }
+      }
+    ],
+    [
+      {
+        "at": "five stars.",
+        "kind": "chart",
+        "chart": "counter",
+        "values": [
+          5
+        ],
+        "labels": [
+          "Brutality"
+        ],
+        "unit": "stars",
+        "claim": "C-44",
+        "why": "counts brutality to five stars",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "four.",
+        "kind": "chart",
+        "chart": "bars",
+        "values": [
+          5,
+          4
+        ],
+        "labels": [
+          "Brutality",
+          "Intimidation"
+        ],
+        "unit": "stars",
+        "claim": "C-44",
+        "why": "adds intimidation, four, beside brutality",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "But adaptability?",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "a punch on the turn: but adaptability?",
+        "strength": 0.5,
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "One star.",
+        "kind": "chart",
+        "chart": "counter",
+        "values": [
+          1
+        ],
+        "labels": [
+          "Adaptability"
+        ],
+        "unit": "stars",
+        "claim": "C-44",
+        "why": "adaptability: one star",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Tech-savviness?",
+        "kind": "accent",
+        "effect": "shake",
+        "why": "a shake on the doubt: tech-savviness?",
+        "strength": 0.4,
+        "cue": {
+          "sound": "whiff"
+        }
+      },
+      {
+        "at": "One star.",
+        "kind": "chart",
+        "chart": "bars",
+        "values": [
+          1,
+          1
+        ],
+        "labels": [
+          "Adaptability",
+          "Tech-savviness"
+        ],
+        "unit": "stars",
+        "claim": "C-44",
+        "why": "tech-savviness, one star, beside adaptability",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "ran on fear.",
+        "kind": "text",
+        "text": "RAN ON FEAR",
+        "why": "the reasoning: Capone ran on fear",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "fear needs",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.5
+        ],
+        "why": "rings Capone: fear needs a room",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "room to work",
+        "kind": "label",
+        "text": "A ROOM",
+        "pos": [
+          0.3,
+          0.4
+        ],
+        "why": "fear needs a room to work in",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "Not a FEED.",
+        "kind": "symbol",
+        "symbol": "cross",
+        "pos": [
+          0.75,
+          0.3
+        ],
+        "why": "not a feed: crossed",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "FEED.",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "punch on the stressed FEED",
+        "strength": 0.6,
+        "cue": {
+          "sound": "whiff"
+        }
+      }
+    ]
+  ],
+  "S05": [
+    [
+      {
+        "at": "Vito Corleone,",
+        "kind": "label",
+        "text": "VITO CORLEONE",
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "why": "names the second card: Vito Corleone",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "film-era Don.",
+        "kind": "symbol",
+        "symbol": "clock",
+        "pos": [
+          0.82,
+          0.25
+        ],
+        "why": "the film-era Don: a time sign",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "networking,",
+        "kind": "chart",
+        "chart": "counter",
+        "values": [
+          5
+        ],
+        "labels": [
+          "Influence"
+        ],
+        "unit": "stars",
+        "claim": "C-45",
+        "why": "influence and networking: five stars",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Strategy,",
+        "kind": "chart",
+        "chart": "bars",
+        "values": [
+          5,
+          4
+        ],
+        "labels": [
+          "Influence",
+          "Strategy"
+        ],
+        "unit": "stars",
+        "claim": "C-45",
+        "why": "adds strategy, four, beside influence",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "just two.",
+        "kind": "symbol",
+        "symbol": "arrow_down",
+        "pos": [
+          0.82,
+          0.3
+        ],
+        "why": "brutality, just two: arrow down",
+        "cue": {
+          "sound": "fall"
+        }
+      },
+      {
+        "at": "one.",
+        "kind": "chart",
+        "chart": "bars",
+        "values": [
+          2,
+          1
+        ],
+        "labels": [
+          "Brutality",
+          "Tech-savviness"
+        ],
+        "unit": "stars",
+        "claim": "C-45",
+        "why": "brutality two and tech-savviness one",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "not fists.",
+        "kind": "symbol",
+        "symbol": "cross",
+        "pos": [
+          0.75,
+          0.35
+        ],
+        "why": "favours, not fists: fists crossed",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "Judges.",
+        "kind": "label",
+        "text": "JUDGES",
+        "pos": [
+          0.25,
+          0.4
+        ],
+        "why": "names his judges",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "Politicians.",
+        "kind": "label",
+        "text": "POLITICIANS",
+        "pos": [
+          0.75,
+          0.45
+        ],
+        "why": "names his politicians",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "very long memory.",
+        "kind": "symbol",
+        "symbol": "clock",
+        "pos": [
+          0.5,
+          0.25
+        ],
+        "why": "a very long memory: a time sign",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ]
+  ],
+  "S06": [
+    [
+      {
+        "at": "Haruto Mizuno,",
+        "kind": "label",
+        "text": "HARUTO MIZUNO",
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "why": "names the third card: Haruto Mizuno",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "invented Yakuza boss.",
+        "kind": "text",
+        "text": "INVENTED",
+        "why": "our invented Yakuza boss",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "No real person.",
+        "kind": "symbol",
+        "symbol": "cross",
+        "pos": [
+          0.25,
+          0.35
+        ],
+        "why": "no real person: crossed",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "No real group.",
+        "kind": "symbol",
+        "symbol": "cross",
+        "pos": [
+          0.75,
+          0.35
+        ],
+        "why": "no real group: crossed",
+        "cue": {
+          "sound": "thud"
+        }
+      }
+    ],
+    [
+      {
+        "at": "Discipline,",
+        "kind": "chart",
+        "chart": "counter",
+        "values": [
+          5
+        ],
+        "labels": [
+          "Discipline"
+        ],
+        "unit": "stars",
+        "claim": "C-46",
+        "why": "discipline: five stars",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Brutality,",
+        "kind": "chart",
+        "chart": "bars",
+        "values": [
+          5,
+          4
+        ],
+        "labels": [
+          "Discipline",
+          "Brutality"
+        ],
+        "unit": "stars",
+        "claim": "C-46",
+        "why": "adds brutality, four, beside discipline",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Adaptability,",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.65
+        ],
+        "why": "rings adaptability on the card",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "Tech,",
+        "kind": "chart",
+        "chart": "bars",
+        "values": [
+          4,
+          4
+        ],
+        "labels": [
+          "Adaptability",
+          "Tech"
+        ],
+        "unit": "stars",
+        "claim": "C-46",
+        "why": "adaptability four and tech four",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "management?",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.3
+        ],
+        "why": "asks: but chaos management?",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "Two.",
+        "kind": "chart",
+        "chart": "counter",
+        "values": [
+          2
+        ],
+        "labels": [
+          "Chaos management"
+        ],
+        "unit": "stars",
+        "claim": "C-46",
+        "why": "chaos management: just two",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Remember that.",
+        "kind": "symbol",
+        "symbol": "exclaim",
+        "pos": [
+          0.82,
+          0.3
+        ],
+        "why": "remember that: a warning sign",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ]
+  ],
+  "S07": [
+    [
+      {
+        "at": "Tommy Shelby,",
+        "kind": "label",
+        "text": "TOMMY SHELBY",
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "why": "names the fourth card: Tommy Shelby",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "Birmingham",
+        "kind": "label",
+        "text": "BIRMINGHAM",
+        "pos": [
+          0.3,
+          0.7
+        ],
+        "why": "names his Birmingham years",
+        "cue": {
+          "sound": "tap"
+        }
+      }
+    ],
+    [
+      {
+        "at": "Adaptability,",
+        "kind": "chart",
+        "chart": "counter",
+        "values": [
+          5
+        ],
+        "labels": [
+          "Adaptability"
+        ],
+        "unit": "stars",
+        "claim": "C-47",
+        "why": "adaptability: five stars",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Tech-savviness,",
+        "kind": "chart",
+        "chart": "bars",
+        "values": [
+          5,
+          5
+        ],
+        "labels": [
+          "Adaptability",
+          "Tech-savviness"
+        ],
+        "unit": "stars",
+        "claim": "C-47",
+        "why": "adds tech-savviness, five",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Strategy,",
+        "kind": "chart",
+        "chart": "bars",
+        "values": [
+          5,
+          5,
+          5
+        ],
+        "labels": [
+          "Adaptability",
+          "Tech-savviness",
+          "Strategy"
+        ],
+        "unit": "stars",
+        "claim": "C-47",
+        "why": "adds strategy, five: three fives",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "Influence, four.",
+        "kind": "symbol",
+        "symbol": "arrow_down",
+        "pos": [
+          0.82,
+          0.3
+        ],
+        "why": "influence, four: a step down",
+        "cue": {
+          "sound": "fall"
+        }
+      },
+      {
+        "at": "Brutality,",
+        "kind": "chart",
+        "chart": "bars",
+        "values": [
+          4,
+          3
+        ],
+        "labels": [
+          "Influence",
+          "Brutality"
+        ],
+        "unit": "stars",
+        "claim": "C-47",
+        "why": "influence four and brutality three",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "Shelby treats",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.5
+        ],
+        "why": "rings Shelby, who treats information so",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "like CASH.",
+        "kind": "symbol",
+        "symbol": "equals",
+        "pos": [
+          0.5,
+          0.3
+        ],
+        "why": "information like cash: equals",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "CASH.",
+        "kind": "text",
+        "text": "CASH",
+        "why": "the stressed word CASH",
+        "cue": {
+          "sound": "tick"
+        }
+      }
+    ]
+  ],
+  "S08": [
+    [
+      {
+        "at": "this video asks.",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.25
+        ],
+        "why": "what this video asks: a question",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "everybody films",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.6
+        ],
+        "why": "rings everybody who films everything",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "who",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.25
+        ],
+        "why": "asks who realises first",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "FIRST",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "punch on the stressed FIRST",
+        "strength": 0.5,
+        "cue": {
+          "sound": "whiff"
+        }
+      },
+      {
+        "at": "attention",
+        "kind": "text",
+        "text": "ATTENTION",
+        "why": "the key word: attention",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "power and danger?",
+        "kind": "text",
+        "text": "POWER AND DANGER",
+        "why": "attention is both power and danger",
+        "cue": {
+          "sound": "tick"
+        }
+      }
+    ],
+    [
+      {
+        "at": "things Rockstar's",
+        "kind": "label",
+        "text": "ROCKSTAR'S GAMES",
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "why": "names Rockstar's games",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "joke about.",
+        "kind": "symbol",
+        "symbol": "exclaim",
+        "pos": [
+          0.82,
+          0.3
+        ],
+        "why": "what the games love to joke about",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "The phone.",
+        "kind": "prop",
+        "thing": "phone",
+        "pos": [
+          0.2,
+          0.55
+        ],
+        "why": "the phone, first of four",
+        "cue": {
+          "sound": "pop"
+        }
+      },
+      {
+        "at": "The feed.",
+        "kind": "label",
+        "text": "THE FEED",
+        "pos": [
+          0.4,
+          0.55
+        ],
+        "why": "names the feed, second of four",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "The money.",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "a punch on the money, third of four",
+        "strength": 0.5,
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "The wanted level.",
+        "kind": "label",
+        "text": "WANTED LEVEL",
+        "pos": [
+          0.8,
+          0.55
+        ],
+        "why": "names the wanted level, fourth",
+        "cue": {
+          "sound": "tap"
+        }
+      }
+    ],
+    [
+      {
+        "at": "GTA V,",
+        "kind": "label",
+        "text": "GTA V",
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "why": "names the old game: GTA V",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "jokes.",
+        "kind": "symbol",
+        "symbol": "exclaim",
+        "pos": [
+          0.82,
+          0.3
+        ],
+        "why": "those were jokes: a sign",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "the new game,",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.55
+        ],
+        "why": "rings the new game in the picture",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "only guess.",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.3
+        ],
+        "why": "we can only guess: a question",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    [
+      {
+        "at": "rounds.",
+        "kind": "text",
+        "text": "FOUR ROUNDS",
+        "why": "the plan: four rounds",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "Loudest first.",
+        "kind": "symbol",
+        "symbol": "arrow_up",
+        "pos": [
+          0.82,
+          0.3
+        ],
+        "why": "loudest first: the loud ones up",
+        "cue": {
+          "sound": "rise"
+        }
+      }
+    ]
+  ]
+}

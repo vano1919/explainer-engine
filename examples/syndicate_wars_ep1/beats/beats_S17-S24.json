@@ -1,0 +1,1146 @@
+{
+ "note": "Syndicate Wars Episode 1, segments S17-S24: visual beats written by the beat-writer procedure (skill visual-beats), 2026-10-19. Shots and the G08 timeline card count as events, so lines that open them carry one beat fewer. Digits on screen only with a claim: the 'two stars' counter cites C-46 (our invented rating); 1955 is shown as a clock (the G08 card carries the date with C-25). 'Three bosses down' is a cross, not a digit. No sound effects play in these segments, so every beat names a real cue.",
+ "S17": [
+  [
+   {
+    "at": "fight.",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "doesn't lose a fight: crossed out",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "phone call.",
+    "kind": "prop",
+    "thing": "phone",
+    "pos": [
+     0.62,
+     0.42
+    ],
+    "why": "he loses a phone call",
+    "cue": {
+     "sound": "pop"
+    }
+   }
+  ],
+  [
+   {
+    "at": "The Don",
+    "kind": "label",
+    "text": "THE DON",
+    "pos": [
+     0.5,
+     0.45
+    ],
+    "why": "names the Don, Vito",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "authority",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.4
+    ],
+    "why": "rings the Don's authority, his figure",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "doesn't reach",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "authority doesn't reach: crossed",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "network",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.55
+    ],
+    "why": "rings the people of his network",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "DEPENDS",
+    "kind": "accent",
+    "effect": "punch",
+    "why": "the stressed word DEPENDS lands",
+    "cue": {
+     "sound": "whiff"
+    }
+   }
+  ],
+  [
+   {
+    "at": "dies",
+    "kind": "highlight",
+    "pos": [
+     0.45,
+     0.62
+    ],
+    "why": "rings the garden where he dies",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "1955,",
+    "kind": "symbol",
+    "symbol": "clock",
+    "pos": [
+     0.14,
+     0.2
+    ],
+    "why": "1955 in the story: the clock",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "grandson.",
+    "kind": "symbol",
+    "symbol": "plus",
+    "pos": [
+     0.14,
+     0.2
+    ],
+    "why": "playing with his grandson: together",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "gentler ending",
+    "kind": "text",
+    "text": "A GENTLER ENDING",
+    "why": "a gentler ending than the others",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "anyone else",
+    "kind": "symbol",
+    "symbol": "arrow_down",
+    "pos": [
+     0.14,
+     0.2
+    ],
+    "why": "anyone else here gets less: down",
+    "cue": {
+     "sound": "fall"
+    }
+   }
+  ],
+  [
+   {
+    "at": "next boss",
+    "kind": "label",
+    "text": "THE NEXT BOSS",
+    "pos": [
+     0.5,
+     0.4
+    ],
+    "why": "names the next boss: the tower",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "doesn't need",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "doesn't need anyone: crossed",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "love him.",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.35
+    ],
+    "why": "rings the tower nobody needs to love",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "sign.",
+    "kind": "accent",
+    "effect": "punch",
+    "why": "just to sign: the push lands",
+    "cue": {
+     "sound": "whiff"
+    }
+   }
+  ]
+ ],
+ "S18": [
+  [
+   {
+    "at": "Haruto Mizuno.",
+    "kind": "label",
+    "text": "HARUTO MIZUNO",
+    "pos": [
+     0.5,
+     0.42
+    ],
+    "why": "names Haruto Mizuno on him",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "Invented,",
+    "kind": "symbol",
+    "symbol": "exclaim",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "invented, remember: a reminder mark",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  [
+   {
+    "at": "Quiet voice.",
+    "kind": "symbol",
+    "symbol": "arrow_down",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "quiet voice: the volume goes down",
+    "cue": {
+     "sound": "fall"
+    }
+   },
+   {
+    "at": "Slim suit.",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.55
+    ],
+    "why": "rings the slim suit he wears",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "business card",
+    "kind": "prop",
+    "thing": "business card",
+    "pos": [
+     0.6,
+     0.5
+    ],
+    "why": "the business card he offers",
+    "cue": {
+     "sound": "pop"
+    }
+   },
+   {
+    "at": "consultant.",
+    "kind": "text",
+    "text": "CONSULTANT",
+    "why": "the card says consultant",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  [
+   {
+    "at": "perfect discipline",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "perfect discipline: a check mark",
+    "cue": {
+     "sound": "chime"
+    }
+   },
+   {
+    "at": "be beaten",
+    "kind": "accent",
+    "effect": "shake",
+    "why": "be beaten: the frame shakes",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "FEED?",
+    "kind": "symbol",
+    "symbol": "question",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "beaten by a FEED? a question",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ]
+ ],
+ "S19": [
+  [
+   {
+    "at": "stock-market",
+    "kind": "symbol",
+    "symbol": "arrow_up",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "the stock-market way: prices rise",
+    "cue": {
+     "sound": "rise"
+    }
+   },
+   {
+    "at": "GTA V.",
+    "kind": "label",
+    "text": "GTA V",
+    "pos": [
+     0.5,
+     0.3
+    ],
+    "why": "names GTA V, the game",
+    "cue": {
+     "sound": "tap"
+    }
+   }
+  ],
+  [
+   {
+    "at": "trade stocks",
+    "kind": "highlight",
+    "pos": [
+     0.55,
+     0.6
+    ],
+    "why": "rings the thumb that trades stocks",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "in-game internet.",
+    "kind": "text",
+    "text": "IN-GAME INTERNET",
+    "why": "through the in-game internet",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  [
+   {
+    "at": "two exchanges,",
+    "kind": "accent",
+    "effect": "punch",
+    "strength": 0.4,
+    "why": "fans say two exchanges: push in",
+    "cue": {
+     "sound": "whiff"
+    }
+   },
+   {
+    "at": "LCN",
+    "kind": "label",
+    "text": "LCN",
+    "pos": [
+     0.3,
+     0.4
+    ],
+    "why": "names LCN, one exchange",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "BAWSAQ.",
+    "kind": "label",
+    "text": "BAWSAQ",
+    "pos": [
+     0.7,
+     0.4
+    ],
+    "why": "names BAWSAQ, the other exchange",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "moved",
+    "kind": "symbol",
+    "symbol": "arrow_up",
+    "pos": [
+     0.3,
+     0.2
+    ],
+    "why": "one is moved by your actions: rises",
+    "cue": {
+     "sound": "rise"
+    }
+   },
+   {
+    "at": "own actions,",
+    "kind": "highlight",
+    "pos": [
+     0.3,
+     0.45
+    ],
+    "why": "rings LCN, moved by your own actions",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "the other",
+    "kind": "highlight",
+    "pos": [
+     0.7,
+     0.45
+    ],
+    "why": "rings BAWSAQ, the other exchange",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "other players.",
+    "kind": "symbol",
+    "symbol": "plus",
+    "pos": [
+     0.7,
+     0.2
+    ],
+    "why": "the other by other players: plus",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  [
+   {
+    "at": "either,",
+    "kind": "symbol",
+    "symbol": "question",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "whether the new game has either: question",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "nobody outside",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "nobody outside Rockstar can tell",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "tell us.",
+    "kind": "accent",
+    "effect": "punch",
+    "why": "can tell us: a push in",
+    "cue": {
+     "sound": "whiff"
+    }
+   },
+   {
+    "at": "guessing.",
+    "kind": "text",
+    "text": "WE'RE GUESSING",
+    "why": "we're guessing, said openly",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ]
+ ],
+ "S20": [
+  [
+   {
+    "at": "our scenario,",
+    "kind": "text",
+    "text": "OUR SCENARIO",
+    "why": "in our scenario: the invented part",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "wins",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "Mizuno wins the boardroom: check",
+    "cue": {
+     "sound": "chime"
+    }
+   }
+  ],
+  [
+   {
+    "at": "Patient partners.",
+    "kind": "symbol",
+    "symbol": "plus",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "patient partners: together, plus",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "Rivals sign.",
+    "kind": "prop",
+    "thing": "contract",
+    "pos": [
+     0.75,
+     0.35
+    ],
+    "why": "rivals sign the contract",
+    "cue": {
+     "sound": "pop"
+    }
+   },
+   {
+    "at": "Rivals smile.",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "rivals smile: it works",
+    "cue": {
+     "sound": "chime"
+    }
+   },
+   {
+    "at": "Rivals pay.",
+    "kind": "symbol",
+    "symbol": "arrow_up",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "rivals pay: the money rises",
+    "cue": {
+     "sound": "rise"
+    }
+   }
+  ],
+  [
+   {
+    "at": "buildings",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.4
+    ],
+    "why": "rings the skyline of buildings",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "never saw",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "never saw a bad invoice: cross",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "bad invoice.",
+    "kind": "prop",
+    "thing": "invoice",
+    "pos": [
+     0.78,
+     0.32
+    ],
+    "why": "the bad invoice they never saw",
+    "cue": {
+     "sound": "pop"
+    }
+   }
+  ]
+ ],
+ "S21": [
+  [
+   {
+    "at": "Leonida.",
+    "kind": "label",
+    "text": "LEONIDA",
+    "pos": [
+     0.5,
+     0.35
+    ],
+    "why": "names Leonida, elsewhere in the game",
+    "cue": {
+     "sound": "tap"
+    }
+   }
+  ],
+  [
+   {
+    "at": "man tries",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.5
+    ],
+    "why": "rings the man who tries to escape",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "police",
+    "kind": "highlight",
+    "pos": [
+     0.82,
+     0.55
+    ],
+    "why": "rings the police car behind him",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "flamingo-shaped boat.",
+    "kind": "label",
+    "text": "FLAMINGO BOAT",
+    "pos": [
+     0.45,
+     0.55
+    ],
+    "why": "names the flamingo-shaped boat",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "Straight into",
+    "kind": "accent",
+    "effect": "shake",
+    "why": "straight into a car wash: impact",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "car wash.",
+    "kind": "symbol",
+    "symbol": "exclaim",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "a car wash, of all places",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  [
+   {
+    "at": "captain's hat.",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.3
+    ],
+    "why": "rings the seagull's tiny captain's hat",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "takes credit",
+    "kind": "accent",
+    "effect": "punch",
+    "why": "takes credit: a proud push",
+    "cue": {
+     "sound": "whiff"
+    }
+   },
+   {
+    "at": "arrest.",
+    "kind": "text",
+    "text": "THE ARREST",
+    "why": "credit for the arrest",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  [
+   {
+    "at": "happened.",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "none of this happened: cross",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "made it up.",
+    "kind": "text",
+    "text": "WE MADE IT UP",
+    "why": "we made it up, openly",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "Florida,",
+    "kind": "label",
+    "text": "FLORIDA",
+    "pos": [
+     0.5,
+     0.4
+    ],
+    "why": "but it's Florida: named",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "feels like",
+    "kind": "symbol",
+    "symbol": "question",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "it feels like: a doubt mark",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "should have.",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "it should have happened: check",
+    "cue": {
+     "sound": "chime"
+    }
+   }
+  ],
+  [
+   {
+    "at": "Chaos",
+    "kind": "accent",
+    "effect": "shake",
+    "why": "Chaos: the frame shakes",
+    "cue": {
+     "sound": "whiff"
+    }
+   },
+   {
+    "at": "not read",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "chaos does not read: cross",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "quarterly reports.",
+    "kind": "prop",
+    "thing": "quarterly report",
+    "pos": [
+     0.78,
+     0.32
+    ],
+    "why": "the quarterly reports it ignores",
+    "cue": {
+     "sound": "pop"
+    }
+   }
+  ]
+ ],
+ "S22": [
+  [
+   {
+    "at": "Mizuno",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.45
+    ],
+    "why": "rings Mizuno in the lobby",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "boardroom.",
+    "kind": "symbol",
+    "symbol": "exclaim",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "stepping out of the boardroom: alert",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  [
+   {
+    "at": "flamingo boat",
+    "kind": "label",
+    "text": "FLAMINGO BOAT",
+    "pos": [
+     0.5,
+     0.5
+    ],
+    "why": "names the flamingo boat bursting in",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "crashes",
+    "kind": "accent",
+    "effect": "shake",
+    "why": "the flamingo boat crashes in",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "lobby.",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.6
+    ],
+    "why": "rings his glass lobby, broken",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "rumour trends.",
+    "kind": "symbol",
+    "symbol": "arrow_up",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "a rumour trends: it rises",
+    "cue": {
+     "sound": "rise"
+    }
+   },
+   {
+    "at": "biggest partner",
+    "kind": "text",
+    "text": "BIGGEST PARTNER",
+    "why": "his biggest partner, named",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "panics",
+    "kind": "accent",
+    "effect": "shake",
+    "strength": 0.4,
+    "why": "his biggest partner panics: shake",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "lawyers wake",
+    "kind": "symbol",
+    "symbol": "clock",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "before his lawyers wake: the clock",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  [
+   {
+    "at": "boardroom.",
+    "kind": "accent",
+    "effect": "punch",
+    "why": "he wins the boardroom: push",
+    "cue": {
+     "sound": "whiff"
+    }
+   },
+   {
+    "at": "loses",
+    "kind": "symbol",
+    "symbol": "arrow_down",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "he loses the street: down",
+    "cue": {
+     "sound": "fall"
+    }
+   },
+   {
+    "at": "STREET.",
+    "kind": "text",
+    "text": "THE STREET",
+    "why": "the STREET is where he loses",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  [
+   {
+    "at": "Chaos management,",
+    "kind": "text",
+    "text": "CHAOS MANAGEMENT",
+    "why": "chaos management is the score",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "two stars.",
+    "kind": "chart",
+    "chart": "counter",
+    "values": [
+     2
+    ],
+    "unit": "stars",
+    "labels": [
+     "CHAOS MGMT"
+    ],
+    "claim": "C-46",
+    "pos": [
+     0.8,
+     0.24
+    ],
+    "why": "two stars for chaos management",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "warn you.",
+    "kind": "accent",
+    "effect": "punch",
+    "why": "we did warn you: a push",
+    "cue": {
+     "sound": "whiff"
+    }
+   }
+  ]
+ ],
+ "S23": [
+  [
+   {
+    "at": "down.",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "three bosses down: crossed out",
+    "cue": {
+     "sound": "thud"
+    }
+   }
+  ],
+  [
+   {
+    "at": "One left.",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.45
+    ],
+    "why": "rings the one left, watching",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "watching",
+    "kind": "text",
+    "text": "WATCHING",
+    "why": "he's been watching all of this",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "very closely.",
+    "kind": "accent",
+    "effect": "punch",
+    "why": "very closely: the camera pushes in",
+    "cue": {
+     "sound": "whiff"
+    }
+   }
+  ]
+ ],
+ "S24": [
+  [
+   {
+    "at": "Tommy Shelby.",
+    "kind": "label",
+    "text": "TOMMY SHELBY",
+    "pos": [
+     0.5,
+     0.42
+    ],
+    "why": "names Tommy Shelby on him",
+    "cue": {
+     "sound": "tap"
+    }
+   }
+  ],
+  [
+   {
+    "at": "information",
+    "kind": "text",
+    "text": "INFORMATION",
+    "why": "he treats information like cash",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "cash",
+    "kind": "prop",
+    "thing": "cash",
+    "pos": [
+     0.78,
+     0.32
+    ],
+    "why": "the cash information is worth",
+    "cue": {
+     "sound": "pop"
+    }
+   },
+   {
+    "at": "beaten",
+    "kind": "accent",
+    "effect": "shake",
+    "why": "be beaten: the frame shakes",
+    "cue": {
+     "sound": "thud"
+    }
+   },
+   {
+    "at": "WORLD",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.6
+    ],
+    "why": "rings the WORLD of phones around him",
+    "cue": {
+     "sound": "pluck"
+    }
+   },
+   {
+    "at": "EVERYTHING?",
+    "kind": "symbol",
+    "symbol": "question",
+    "pos": [
+     0.86,
+     0.2
+    ],
+    "why": "shares EVERYTHING? the question",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ]
+ ]
+}

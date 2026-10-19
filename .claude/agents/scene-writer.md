@@ -17,7 +17,9 @@ Write:
 - Enter late, leave early: start in the middle of the action, end on the open loop the skeleton names.
 - The segment turns its value (`shift`): something is different at the end.
 - Dialogue is conflict: each speaking hero wants something in the scene; lines carry subtext and character voice (word
-  choice from the hero card and arc), never two characters saying the same kind of line; a reaction after every reveal.
+  choice from the hero card and arc, and the hero's `cast.<id>.speech`: their known manner or, if invented, their
+  personality, DW-11; our own words, never a quoted line), never two characters saying the same kind of line; a reaction after
+  every reveal.
 - Narration is the friendly guide: short spoken sentences (4-12 words mostly), contractions, one question about every
   minute, the stressed word last. It explains what the heroes cannot; it never repeats what a hero just said.
 - Every factual sentence carries its claim id; reasoned and invented parts are said as such ("we can only guess", "in

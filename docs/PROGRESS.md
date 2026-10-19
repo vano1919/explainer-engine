@@ -641,3 +641,15 @@ picture, a clean key edge once painted; the paint-plan items with prompts from t
 against a full picture per face; chroma key with despill; the composite); `paint plan --faces` (a reusable plan behind the same
 approve -> run gate, `faces_saving` in the plan, PP-06 knows the close-ups); palette token `chroma_key`; `assemble` composites
 the dialogue frames. Tests: `tests/unit/test_face_sheets.py` (10). Nothing paid or painted.
+
+## 2026-10-19 — A short scenario before every script; each hero talks like themselves (OR-15, PV-45, DW-11, PV-46)
+
+The creator: always send a short scenario first, and write the script only once they like the final story; and every
+character talks in the manner and vocabulary they are generally known for, or, when invented, from their personality.
+Built: `episode.scenario` (file, approved_by, approved_at, sha256) and `scripting/scenario.py` (PV-45: missing or changed
+after the approval is a FAIL on `/2`, a REVIEW on `/1`); `cast.<id>.speech` (basis public with sources or personality, style,
+signature words, avoid) and `scripting/speech.py` (PV-46), written by the story-architect and used by the scene-writer; the
+voice rule VC-02 (no imitation) is unchanged. Tests: `tests/unit/test_scenario_first.py` (3), `test_speech_manner.py` (3);
+the /2 fixture of `test_visual_beats.py` records an approved scenario. Syndicate Wars: visual beats for all 31 segments in
+`examples/syndicate_wars_ep1/beats/` (375 beats, written by the beat-writer procedure, 0 PV-44 FAIL per segment range), not yet
+applied: the script waits for the creator's approval of `scenario_dialogue_v1`.
