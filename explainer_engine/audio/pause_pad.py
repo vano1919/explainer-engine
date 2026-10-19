@@ -22,8 +22,10 @@ from . import voice_layer
 from ..edit.shot_rules import CUT_MARKS
 
 MIN_GAP = 0.26  # seconds: a cut needs 2 x EDGE (0.1 s) of room plus a margin
-SEARCH = 0.10  # seconds around the measured gap searched for the really quiet spot (word times are off by 0.1-0.2 s)
-QUIET_DB = -40.0  # the insertion point must be at least this quiet (10 ms rms); louder means inside a word: skip it
+SEARCH = 0.25  # seconds around the measured gap searched for the really quiet spot (word times are off by 0.1-0.2 s;
+# Syndicate Wars "three. Our": the quiet began 0.10 s after the recogniser's boundary, so 0.10 found no pause)
+QUIET_DB = -46.0  # the insertion point must be at least this quiet (10 ms rms), below the dropout scan's -42 dB (ED-12) with margin;
+# louder means inside a word or its breath: skip it (Syndicate Wars: inserts at -40..-42 dB were reported as cuts)
 FADE_MS = 10  # the silence is entered and left with a 10 ms fade, so it never clicks
 
 

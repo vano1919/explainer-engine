@@ -601,7 +601,8 @@ def check_timed(timed: dict, doc: dict, *, final: bool = False, picture_dirs: li
     out += BEATS.check_timed(timed, doc)  # VB rules on the real read (PV-44)
     for pid in {s["picture"] for s in shots}:
         p = timed["pictures"].get(pid, {})
-        have = p.get("file") and (not picture_dirs or any((Path(d) / p["file"]).exists() for d in picture_dirs))
+        names = [n for n in (p.get("file"), f"{pid}.png", f"{pid}_v1.png") if n]  # as assemble.find_picture looks them up
+        have = any((Path(d) / n).exists() for d in picture_dirs for n in names) if picture_dirs else bool(p.get("file"))
         if not have:
             if final:
                 _f(out, "PV-25", pid, "picture not painted yet: a final render needs every picture")

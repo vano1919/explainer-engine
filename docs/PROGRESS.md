@@ -740,3 +740,16 @@ and a +2 weight in `rank`, because library labels only say "british". PV-32 REVI
 `docs/STORY_ENGINE.md`; tests in `tests/unit/test_casting_age.py`. Cast styles of Mizuno and Shelby changed in the content file;
 the script is rebuilt and the stamps re-bound once all four voice ids are fixed (ES-16). Library search found no West Midlands
 male voice; Midlands candidates (Robert, Dan) and a Japanese-accent voice (Hideo) were sampled, 122 credits.
+
+## 2026-10-19 — Syndicate Wars: full read, words and shot plan on the real read
+
+Full read on ElevenLabs v4: 26 chunks paid (9,127 credits, settled in `run.json`), 7 reused from the test reads. The narrator
+read 115-130 wpm (EL-12 asks 155-185): his chunks were sped up 8 % with atempo (the cap the creator allowed for Shorts) and the
+creator is asked whether to keep it; the chunks are levelled to -29 LUFS before the join (26.5 dB spread; `seams` clamps at 6 dB).
+`production words` now hears every chunk alone (`local_words.transcribe_chunks`: on the joined 12-minute read Whisper dropped
+repeated words, coverage 96 %); `scribe_words.norm` reads British spellings, hyphenated words and dollar amounts as the recogniser
+writes them; `pause_pad` searches 0.25 s round a gap and inserts only below -46 dB, under the dropout scan's -42 dB (6 cuts ->
+0 FAIL); `validate` finds a painted picture by its id like `assemble.find_picture` (46 false PV-25). Coverage 97.1 %, 12:15.
+`fill` added 50 re-framed shots (RHYTHM-3); two painted shots it dropped were restored by moving their anchors; four beats added,
+one cue moved (VB-01/VB-08). Editorial review and rulebook stamps re-bound (shots and beats only). Tests:
+`test_scribe_words.py`, `test_pause_pad.py`, `test_local_words_chunks.py`, `test_production_script.py`.

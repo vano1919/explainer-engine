@@ -45,3 +45,10 @@ def test_nothing_to_pad_returns_the_same_audio():
     out, new, rep = P.pad_pauses(words, audio, SR)
     assert rep["inserted"] == 0 and np.array_equal(out, audio)
     assert [w["s"] for w in new] == [w["s"] for w in words]
+
+
+def test_an_insert_point_is_quieter_than_the_dropout_scan_calls_sound():
+    from explainer_engine.audio import dropouts, pause_pad
+    import inspect
+    scan_db = inspect.signature(dropouts.scan).parameters["loud_db"].default
+    assert pause_pad.QUIET_DB <= scan_db - 3  # a pause the pad accepts is never reported as cut into sound (ED-12)

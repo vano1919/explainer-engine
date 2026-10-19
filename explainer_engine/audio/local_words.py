@@ -11,6 +11,7 @@ open every file). Measured 2026-10-16: small.en int8 hears 25 s of ElevenLabs sp
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import subprocess
 import sys
@@ -26,16 +27,30 @@ def decode(path: Path, sr: int = 16000):
     return np.frombuffer(raw, dtype=np.float32)
 
 
-def transcribe(path: Path, model: str = "small.en", prompt: str | None = None) -> dict:
+@functools.lru_cache(maxsize=2)
+def _model(model: str):
     from faster_whisper import WhisperModel
+    return WhisperModel(model, device="cpu", compute_type="int8")
 
+
+def transcribe(path: Path, model: str = "small.en", prompt: str | None = None) -> dict:
     t0 = time.time()
-    m = WhisperModel(model, device="cpu", compute_type="int8")
+    m = _model(model)
     segs, _ = m.transcribe(decode(path), word_timestamps=True, language="en", initial_prompt=prompt)
     words = [{"text": w.word.strip(), "start": round(float(w.start), 3), "end": round(float(w.end), 3), "type": "word"}
              for s in segs for w in s.words if w.word.strip()]
     words = [w for w in words if w["end"] - w["start"] >= 0.03]  # 20 ms "words" at the end are hallucinations
     return {"source": f"faster-whisper {model} (local, free)", "seconds": round(time.time() - t0, 1), "words": words}
+
+
+def transcribe_chunks(paths: list[Path], offsets: list[float], model: str = "small.en") -> dict:
+    """Each chunk read heard on its own, its words moved to where the chunk sits in the joined read. On a 12-minute joined
+    read Whisper dropped repeated words ("Rivals sign. Rivals smile.") and a second speaker's echo ("Mostly. Mostly?")
+    that it hears in the chunk alone (Syndicate Wars, coverage 96 % -> see PROGRESS)."""
+    t0, words = time.time(), []
+    for p, off in zip(paths, offsets):
+        words += [dict(w, start=round(w["start"] + off, 3), end=round(w["end"] + off, 3)) for w in transcribe(p, model)["words"]]
+    return {"source": f"faster-whisper {model} per chunk (local, free)", "seconds": round(time.time() - t0, 1), "words": words}
 
 
 def main(argv: list[str] | None = None) -> int:

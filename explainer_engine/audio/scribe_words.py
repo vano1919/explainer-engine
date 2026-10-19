@@ -49,13 +49,35 @@ def number_words(n: int) -> list[str]:
 def norm(token: str) -> list[str]:
     """Comparable form of one token: lower case, no punctuation, digits spelled out (may give several words)."""
     t = token.lower().replace("’", "'")
-    digits = t.replace(",", "")
+    digits = t.replace(",", "").rstrip(".?!;:")
+    money = digits.startswith("$")  # "$17,500" is read "seventeen thousand five hundred dollars"
+    if money:
+        digits = digits[1:]
     if re.fullmatch(r"\d+(st|nd|rd|th)?", digits):
         n = int(re.match(r"\d+", digits).group())
         if n < 10 ** 9:
-            return number_words(n)
-    t = re.sub(r"[^a-z0-9']+", "", t).strip("'")
-    return [t] if t else []
+            return number_words(n) + (["dollars"] if money else [])
+    out = []
+    for part in re.split(r"[-\u2010\u2011]+", t):  # "tech-savviness" is heard as two words
+        part = re.sub(r"[^a-z0-9']+", "", part).strip("'")
+        if part:
+            out.append(_us_spelling(part))
+    return out
+
+
+_UK = ((re.compile(r"our(s|ed|ing|ite|ites|able)?$"), r"or\1"), (re.compile(r"(?<=[a-z]{3})is(e|es|ed|ing|ation)$"), r"iz\1"),
+       (re.compile(r"^licence(s|d)?$"), r"license\1"), (re.compile(r"^defence(s)?$"), r"defense\1"))
+_OUR_KEEP = {"our", "ours", "four", "fours", "hour", "hours", "pour", "pours", "tour", "tours", "your", "yours", "sour",
+             "flour", "dour", "detour", "contour", "devour", "devours", "scour", "amour"}
+
+
+def _us_spelling(word: str) -> str:
+    """One spelling for comparison: the script may be British ("favour", "realises") and the recogniser writes American."""
+    if word in _OUR_KEEP or len(word) < 5:
+        return word
+    for pat, rep in _UK:
+        word = pat.sub(rep, word)
+    return word
 
 
 def script_tokens(text: str) -> list[dict]:

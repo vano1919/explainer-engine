@@ -1465,6 +1465,30 @@
       "script_sha256": "563aa037da25216f38f849b2f842b7810ef3c8bd6a96f12f162fb3830cd76074",
       "rulebook_version": 8,
       "scope": "v8 on the script with the creator's voice picks (sha 563aa037): narrator Grandpa Spuds Oxley, Capone Crazy Eddie, Vito Mr Wellington, Mizuno Hideo (light natural Japanese accent, creator's ask; RK-09 no caricature), Shelby Robert (Midlands, Birmingham accent asked by the creator). All library voices from test reads, no clone, no actor or person named (ER-03). Only voice fields changed since bdf2887f; recovered-pictures condition as before."
+    },
+    {
+      "checkpoint": "final",
+      "date": "2026-10-19",
+      "by": "claude",
+      "script_sha256": "61679821f7964d4f428a0efbf8f3c3261bcd3dfc8860a349fdeced604488829c",
+      "rulebook_version": 8,
+      "scope": "shots and visual beats only after the full read (re-framed shots of painted pictures, 4 beats restating the lines' own words, one cue moved); narration, claims, sources, pictures and Shorts unchanged; no rule's subject touched"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "claude",
+      "script_sha256": "61679821f7964d4f428a0efbf8f3c3261bcd3dfc8860a349fdeced604488829c",
+      "rulebook_version": 8,
+      "scope": "shots and visual beats only after the full read (re-framed shots of painted pictures, 4 beats restating the lines' own words, one cue moved); narration, claims, sources, pictures and Shorts unchanged; no rule's subject touched"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-19",
+      "by": "claude",
+      "script_sha256": "61679821f7964d4f428a0efbf8f3c3261bcd3dfc8860a349fdeced604488829c",
+      "rulebook_version": 8,
+      "scope": "shots and visual beats only after the full read (re-framed shots of painted pictures, 4 beats restating the lines' own words, one cue moved); narration, claims, sources, pictures and Shorts unchanged; no rule's subject touched"
     }
   ],
   "supersedes": 4

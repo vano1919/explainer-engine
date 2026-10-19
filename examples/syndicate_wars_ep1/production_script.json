@@ -832,6 +832,17 @@
      }
     },
     {
+     "at": "Four bosses.",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s01_four",
+     "reuse": "reframe"
+    },
+    {
      "at": "And only one",
      "type": "C",
      "picture": "s01_phones",
@@ -906,6 +917,19 @@
        "why": "rings the date November 19 on the card",
        "cue": {
         "sound": "pluck"
+       }
+      },
+      {
+       "at": "2026.",
+       "kind": "text",
+       "text": "NOV 19, 2026",
+       "pos": [
+        0.5,
+        0.2
+       ],
+       "why": "the release date Rockstar's page gives",
+       "cue": {
+        "sound": "tick"
        }
       },
       {
@@ -1060,6 +1084,17 @@
      "reuse": "reuse"
     },
     {
+     "at": "November 19,",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "s01_skyline",
+     "reuse": "reframe"
+    },
+    {
      "at": "So the year",
      "type": "A",
      "picture": {
@@ -1077,6 +1112,17 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Every word",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s02_chairs",
+     "reuse": "reframe"
     },
     {
      "at": "The history",
@@ -1468,6 +1514,17 @@
      "reuse": "reuse"
     },
     {
+     "at": "the Leonida",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "s01_skyline",
+     "reuse": "reframe"
+    },
+    {
      "at": "It already has",
      "type": "B",
      "picture": "s01_boardwalk",
@@ -1478,6 +1535,17 @@
       "z1": 1.06
      },
      "reuse": "reuse"
+    },
+    {
+     "at": "Real estate,",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s01_boardwalk",
+     "reuse": "reframe"
     },
     {
      "at": "The Real Dimez",
@@ -1637,17 +1705,6 @@
    "shots": [
     {
      "at": "Now. Choose",
-     "type": "B",
-     "picture": "sc_all",
-     "purpose": "The character-select grid: the video's central visual",
-     "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.04
-     }
-    },
-    {
-     "at": "Five stats each",
      "type": "C",
      "picture": {
       "id": "s03_cursor",
@@ -1658,12 +1715,23 @@
       ],
       "prompt": "tight insert, a glowing neon-pink arrow cursor sliding across a row of four empty portrait frames on a dark screen, one frame lit cyan, a satisfying game-menu energy, no text, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
-     "purpose": "The cursor moves across the frames while the rule is said",
+     "purpose": "The cursor slides across the four frames: choose your boss, five stats each",
      "motion": {
       "kind": "push",
       "z0": 1.0,
       "z1": 1.07
      }
+    },
+    {
+     "at": "These ratings",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_all",
+     "reuse": "reframe"
     }
    ]
   },
@@ -1897,6 +1965,17 @@
      }
     },
     {
+     "at": "four. But",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_capone",
+     "reuse": "reframe"
+    },
+    {
      "at": "Our reasoning",
      "type": "B",
      "picture": "p_capone",
@@ -2024,6 +2103,19 @@
      "kind": "analysis",
      "visual_beats": [
       {
+       "at": "Brutality,",
+       "kind": "label",
+       "text": "BRUTALITY",
+       "pos": [
+        0.5,
+        0.2
+       ],
+       "why": "names the next stat on the card",
+       "cue": {
+        "sound": "tap"
+       }
+      },
+      {
        "at": "just two.",
        "kind": "symbol",
        "symbol": "arrow_down",
@@ -2135,6 +2227,17 @@
      }
     },
     {
+     "at": "five stars.",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_vito",
+     "reuse": "reframe"
+    },
+    {
      "at": "Vito rules",
      "type": "B",
      "picture": "p_vito",
@@ -2144,6 +2247,17 @@
       "z0": 1.0,
       "z1": 1.06
      }
+    },
+    {
+     "at": "Politicians. And",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "p_vito",
+     "reuse": "reframe"
     }
    ]
   },
@@ -2369,6 +2483,17 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Discipline, five",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_mizuno",
+     "reuse": "reframe"
     },
     {
      "at": "But chaos",
@@ -2616,6 +2741,28 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Adaptability, five.",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_shelby",
+     "reuse": "reframe"
+    },
+    {
+     "at": "five. Influence,",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "sc_shelby",
+     "reuse": "reframe"
     },
     {
      "at": "Our reasoning",
@@ -2923,7 +3070,7 @@
      }
     },
     {
-     "at": "In a world",
+     "at": "who realises",
      "type": "C",
      "picture": {
       "id": "s08_eye",
@@ -2952,6 +3099,17 @@
       "z1": 1.06
      },
      "reuse": "reuse"
+    },
+    {
+     "at": "What the",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s01_phones",
+     "reuse": "reframe"
     },
     {
      "at": "Four rounds",
@@ -3169,6 +3327,17 @@
       "z0": 1.0,
       "z1": 1.06
      }
+    },
+    {
+     "at": "In 1930,",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c09_press",
+     "reuse": "reframe"
     },
     {
      "at": "And during the Depression",
@@ -3571,6 +3740,17 @@
      "reuse": "reuse"
     },
     {
+     "at": "viral is",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s01_boardwalk",
+     "reuse": "reframe"
+    },
+    {
      "at": "Someone films him",
      "type": "B",
      "picture": {
@@ -3595,6 +3775,17 @@
      }
     },
     {
+     "at": "Millions? For",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c10_viral",
+     "reuse": "reframe"
+    },
+    {
      "at": "Oh, but then someone films the car",
      "type": "C",
      "picture": {
@@ -3615,6 +3806,39 @@
      "cut": {
       "why": "from the big smile to the cold detail"
      }
+    },
+    {
+     "at": "Then the licence",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c10_plate",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Who filmed",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c10_plate",
+     "reuse": "reframe"
+    },
+    {
+     "at": "newspapers needed",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c10_plate",
+     "reuse": "reframe"
     },
     {
      "at": "Attention is power",
@@ -3809,6 +4033,19 @@
      "kind": "fact",
      "visual_beats": [
       {
+       "at": "October 1931,",
+       "kind": "text",
+       "text": "OCTOBER 1931",
+       "pos": [
+        0.5,
+        0.16
+       ],
+       "why": "the date of the verdict",
+       "cue": {
+        "sound": "tick"
+       }
+      },
+      {
        "at": "convicted",
        "kind": "accent",
        "effect": "punch",
@@ -3872,6 +4109,17 @@
      }
     },
     {
+     "at": "Or a",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c11_ledger",
+     "reuse": "reframe"
+    },
+    {
      "at": "An IRS investigator",
      "type": "B",
      "picture": {
@@ -3889,6 +4137,17 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "About seventeen",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "c11_agent",
+     "reuse": "reframe"
     },
     {
      "at": "In October",
@@ -4191,6 +4450,17 @@
      }
     },
     {
+     "at": "He thought",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_capone_out",
+     "reuse": "reframe"
+    },
+    {
      "at": "It doesn't",
      "type": "B",
      "picture": "p_capone",
@@ -4216,6 +4486,17 @@
       "why": "from the stamp to the stillness"
      },
      "reuse": "reuse"
+    },
+    {
+     "at": "A quiet",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "c12_palm",
+     "reuse": "reframe"
     }
    ]
   },
@@ -4402,6 +4683,28 @@
       "z0": 1.0,
       "z1": 1.07
      }
+    },
+    {
+     "at": "we're guessing",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "w13_stars",
+     "reuse": "reframe"
+    },
+    {
+     "at": "The stars",
+     "type": "C",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "w13_stars",
+     "reuse": "reframe"
     }
    ]
   },
@@ -4829,6 +5132,17 @@
       "z0": 1.0,
       "z1": 1.06
      }
+    },
+    {
+     "at": "Because those",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v14_no",
+     "reuse": "reframe"
     }
    ]
   },
@@ -5101,6 +5415,15 @@
        }
       },
       {
+       "at": "his calls.",
+       "kind": "accent",
+       "effect": "punch",
+       "why": "the calls go unanswered: the cut-off lands",
+       "cue": {
+        "sound": "thud"
+       }
+      },
+      {
        "at": "Invented",
        "kind": "text",
        "text": "INVENTED",
@@ -5182,6 +5505,39 @@
      }
     },
     {
+     "at": "another place",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "v15_dock",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Legal. Boring.",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "v15_dock",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Nobody films",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v15_dock",
+     "reuse": "reframe"
+    },
+    {
      "at": "A favour works",
      "type": "B",
      "picture": "v13_table",
@@ -5238,6 +5594,17 @@
       "z0": 1.0,
       "z1": 1.06
      }
+    },
+    {
+     "at": "but it",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "v15_phone",
+     "reuse": "reframe"
     }
    ]
   },
@@ -5526,6 +5893,17 @@
      }
     },
     {
+     "at": "playing with",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "v16_garden",
+     "reuse": "reframe"
+    },
+    {
      "at": "And the next boss",
      "type": "A",
      "picture": {
@@ -5720,6 +6098,17 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Quiet voice.",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m17_card",
+     "reuse": "reframe"
     },
     {
      "at": "Can a man",
@@ -6019,6 +6408,17 @@
      }
     },
     {
+     "at": "One is",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m18_two",
+     "reuse": "reframe"
+    },
+    {
      "at": "Whether the new game",
      "type": "A",
      "picture": "m18_board",
@@ -6260,6 +6660,17 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Sign here.",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m19_sign",
+     "reuse": "reframe"
     },
     {
      "at": "Clean contracts",
@@ -6568,6 +6979,17 @@
       "z0": 1.0,
       "z1": 1.06
      }
+    },
+    {
+     "at": "A man",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "f20_flamingo",
+     "reuse": "reframe"
     },
     {
      "at": "A seagull",
@@ -6948,6 +7370,17 @@
      }
     },
     {
+     "at": "His biggest",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "m21_trend",
+     "reuse": "reframe"
+    },
+    {
      "at": "He wins",
      "type": "B",
      "picture": "sc_mizuno_out",
@@ -6960,6 +7393,17 @@
      "cut": {
       "why": "the stamp lands on the word street"
      }
+    },
+    {
+     "at": "Chaos management,",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_mizuno_out",
+     "reuse": "reframe"
     }
    ]
   },
@@ -7236,7 +7680,7 @@
        }
       },
       {
-       "at": "never hides",
+       "at": "from attention.",
        "kind": "symbol",
        "symbol": "cross",
        "pos": [
@@ -7607,6 +8051,17 @@
      }
     },
     {
+     "at": "Shelby picks",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s24_hall",
+     "reuse": "reframe"
+    },
+    {
      "at": "In Vice City",
      "type": "A",
      "picture": {
@@ -7626,6 +8081,17 @@
      }
     },
     {
+     "at": "He'd pay",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s24_decoy",
+     "reuse": "reframe"
+    },
+    {
      "at": "A decoy here",
      "type": "C",
      "picture": {
@@ -7643,6 +8109,17 @@
       "z0": 1.0,
       "z1": 1.08
      }
+    },
+    {
+     "at": "Every phone",
+     "type": "C",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s24_ledger",
+     "reuse": "reframe"
     }
    ]
   },
@@ -8127,6 +8604,17 @@
       "z0": 1.07,
       "z1": 1.0
      }
+    },
+    {
+     "at": "I'm always",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "s26_behind",
+     "reuse": "reframe"
     }
    ]
   },
@@ -8320,6 +8808,28 @@
       "z1": 1.05
      },
      "reuse": "reuse"
+    },
+    {
+     "at": "Vito second.",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_all",
+     "reuse": "reframe"
+    },
+    {
+     "at": "He lost",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_all",
+     "reuse": "reframe"
     }
    ]
   },
@@ -8511,6 +9021,17 @@
       "z1": 1.06
      },
      "reuse": "reuse"
+    },
+    {
+     "at": "Shelby. That's",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s26_behind",
+     "reuse": "reframe"
     },
     {
      "at": "But he's the only",
@@ -8763,6 +9284,39 @@
       "z0": 1.0,
       "z1": 1.05
      }
+    },
+    {
+     "at": "Capone's intimidation,",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_final",
+     "reuse": "reframe"
+    },
+    {
+     "at": "down to three",
+     "type": "B",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "sc_final",
+     "reuse": "reframe"
+    },
+    {
+     "at": "four. Shelby's",
+     "type": "B",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "sc_final",
+     "reuse": "reframe"
     },
     {
      "at": "Every star",
@@ -9039,6 +9593,39 @@
       "z0": 1.08,
       "z1": 1.0
      }
+    },
+    {
+     "at": "big money",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "s29_end",
+     "reuse": "reframe"
+    },
+    {
+     "at": "mostly. But",
+     "type": "A",
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "picture": "s29_end",
+     "reuse": "reframe"
+    },
+    {
+     "at": "Who did",
+     "type": "A",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.04
+     },
+     "picture": "s29_end",
+     "reuse": "reframe"
     },
     {
      "at": "And smile",
