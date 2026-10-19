@@ -723,7 +723,7 @@ Rockstar's fan-content policy page read first-hand (B-14 verified, RK-02 evidenc
 from earlier Gemini batches are only ones painted from today's prompts, never the pre-v2 Vito/Shelby portraits, each face checked
 for actor likeness. Editorial review rebound to the script (EG-11 REVIEWs only).
 
-### 2026-10-19 — voice casting: age is a hard filter (creator: "ages matter most")
+## 2026-10-19 — voice casting: age is a hard filter (creator: "ages matter most")
 
 Three voice options offered for Vito and Mizuno sounded too young: they were picked by name and description, outside
 `audio/casting.rank`. `casting.age_of` now reads `voice.traits.age`, or the age words of the style and card; `rank` never
