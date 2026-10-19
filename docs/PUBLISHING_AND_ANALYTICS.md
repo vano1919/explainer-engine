@@ -6,6 +6,27 @@ Studio (visibility and schedule are the creator's) -> the creator gives the vide
 snapshot schedule. Studio settings checklist: audience "not made for kids"; altered/synthetic label only if the policy
 checklist says so; chapters; sources in the description; no mid-roll ads decision recorded; end screen to the next video.
 
+## YouTube staging (D-57)
+The finished episode is uploaded unlisted (or private), never public, by one command; the creator reviews in Studio and
+clicks Public there.
+
+```powershell
+python -m explainer_engine.publish thumbnail <episode>                 # price and prompt; nothing paid
+python -m explainer_engine.publish thumbnail <episode> --generate --approved-by "<who, where>"   # after the creator's OK
+python -m explainer_engine.publish stage <episode>                     # dry run: youtube_stage.json + checklist, no network
+python -m explainer_engine.publish stage <episode> --yes --confirm "<who, where>"   # upload: long video, Shorts (thumbnail is the creator's, set in Studio)
+```
+
+Inputs: `publish.json` (publish/1 with `tags`, `youtube`, `thumbnail`, per-Short `title`; PC rules must have no FAIL), the
+Shorts of `production_script.json`, the render (`render/video.mp4`, `render/shorts/SHxx.mp4`, or `--video` / `--shorts-dir`).
+Sign-in (creator, 2026-10-19: no token is stored or pasted anywhere): a Google Cloud project with the YouTube Data API v3 and a
+Desktop-app OAuth client whose JSON is the cloud variable `YOUTUBE_CLIENT_B64` (a client secret is not a token). The token is
+obtained per upload session: Claude runs `python -m explainer_engine.publish auth-url` and gives the creator the link; the
+creator signs in on a phone as the channel's account (the app may stay in Testing, the account listed as a test user) and
+sends back the `http://127.0.0.1:8765/?...` address, which fails to load by design; `auth-finish '<address>'` exchanges it
+for a token in the gitignored `tools/youtube/token.json` of that session only, along with the channel id, which `stage`
+checks. The desktop route (`auth <client_secret.json>` on a PC) is the same flow. Quota per V-47: an episode of 1 + 10 videos uses 11 of 100 daily uploads and about 65 of 10,000 units.
+
 ## Cadence hypothesis (D-06; not competitor frequency)
 One long-form every two weeks and two Shorts a week for the first cycle, from estimated hours
 ([COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md)), revisited after three long-forms. What competitors post (SE-26) and what

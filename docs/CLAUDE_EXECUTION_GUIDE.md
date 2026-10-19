@@ -40,7 +40,7 @@ finished jobs first and report.
   PROGRESS 2026-10-16).
 
 ## Never
-Skip the creator gates; publish or upload; exceed a budget cap or call a paid service without the ledger entry; invent
+Skip the creator gates; publish, or upload other than the unlisted/private staging of D-57 after the creator's OK; exceed a budget cap or call a paid service without the ledger entry; invent
 sources, metrics, measurements, tests or tool capabilities; claim a task is complete from code changes alone; weaken or
 remove a test or acceptance criterion; bypass the schema; change the strategy, identity, hardware baseline, budget,
 publication rule, schema or renderer silently; delete broadly or expose credentials; add a dependency, hook, agent or

@@ -187,5 +187,5 @@ The rulebook records which AI uses the video contains (`platform.disclosure.ai_u
 person, altered real footage, a realistic scene that never happened, a synthetic voice, AI music as the main focus, minor aesthetic
 edits). A realistic use turns the disclosure on (ES-08, V-13); script help, clearly stylised or fantastical drawn imagery and minor
 edits do not by themselves. A required disclosure carries `upload_action` (YouTube Studio upload flow, Attributes, "AI use": Yes;
-the API field is `status.containsSyntheticMedia`, V-27). The pipeline never uploads and never marks a disclosure as submitted
-(`submitted` is always false); the creator does it at upload after approval #2.
+the API field is `status.containsSyntheticMedia`, V-27). The staging upload (D-57) sends that field from the episode's
+`publish.json` disclosure decision; `submitted` stays false here, and the creator confirms the flag in Studio before going public.

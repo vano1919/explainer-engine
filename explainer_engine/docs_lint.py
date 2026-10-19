@@ -40,6 +40,7 @@ HOMES = {
     "VC": "STORY_ENGINE.md",
     "VB": "STORY_ENGINE.md",
     "ES": "EPISODE_STANDARDS.md",
+    "TN": "THUMBNAIL_RULES.md",
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))
 ID = re.compile(rf"\b({_PREFIX})-([TE]?\d{{2,3}})\b")

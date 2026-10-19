@@ -21,6 +21,7 @@ Rules: sentence case; no ALL CAPS, no "%", no "boring", no false urgency or fabr
 Rankings only when the topic is naturally a list. A title is never written before the script's promise is fixed.
 
 ## Thumbnail specification
+How hard a thumbnail may pull (curiosity without deception) and the paid generation step: [THUMBNAIL_RULES](THUMBNAIL_RULES.md).
 - Output: 1280 x 720 PNG, <= 2 MB (re-verify the limit when building it, Phase 7), made by `renderStill` from the
   episode's own assets; the editable source is the composition plus its props JSON. A finished image, not a mockup.
 - Layout templates: T1 object + Kit's reaction; T2 before/after split; T3 cutaway (object with Kit's lid open).

@@ -27,7 +27,8 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 2. Budget caps are ceilings, not targets: Gemini ≤ $10 total, vidIQ ≤ 200 credits. Estimate and log before every paid
    call (`docs/COST_AND_TIME_MODEL.md` ledger); at 80 % of a cap stop and ask. Leave nothing paid running.
 3. No long-form pipeline before the 60–90 s prototype passes its acceptance criteria (plan F).
-4. No public upload, ever, without a recorded creator approval. No upload code in Phases 1–8.
+4. No public upload, ever, without a recorded creator approval. The only upload code is the unlisted/private staging of
+   D-57 (`publish/`), run after the creator's OK; going public is the creator's click in Studio.
 5. No unsupported claims, fabricated research, invented metrics, or copied protected IP. Every factual sentence maps
    to a claim with a source; say exactly what was and was not verified.
 6. The original character/visual identity stays stable (part-based rig, reference sheet; never redraw from scratch).
@@ -99,6 +100,8 @@ explainer_engine/production/  the D-43 production script: compile, validate (PV-
 explainer_engine/imagegen/  gemini.py (sync/batch, cache in $EXPLAINER_IMAGE_CACHE or <out>/cache, ChargeUncertain), plan.py
 explainer_engine/scripting/ story_lint, stage_guard, claims.py (claim_map.md -> PV-37), distinct.py (docs/episodes.json -> PV-38)
 explainer_engine/qa/      visual_judge (questions), sheet_review.py (Claude answers them, free), publish_check.py (PC-xx)
+explainer_engine/publish/ YouTube staging (D-57): plan.py (insert bodies), stage.py (unlisted upload, state, quota),
+                          youtube.py (stdlib API client, never public), thumbnail.py (Gemini premium, TN rules), auth.py
 explainer_engine/world/   resolver (UR-22..27 prompt lint), look_v2.json; edit/, finish/, research/, rights/ as named
 jobs/                     job output (gitignored): jobs/<slug>/job-NNN_<date>/{state.json, artifacts/...}
 ```

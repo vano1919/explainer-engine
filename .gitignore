@@ -31,3 +31,6 @@ id_ed25519*
 
 # per-session pointer for the ElevenLabs gate hook (explainer_engine/standards/hook.py)
 .claude/active_episode.json
+
+# resumable upload sessions of the YouTube staging step (publish/stage.py)
+.sessions.json

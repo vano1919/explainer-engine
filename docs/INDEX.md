@@ -9,6 +9,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [MARKET_RESEARCH](MARKET_RESEARCH.md) | seed-evidence register, verification log, topic comparison, vidIQ ledger | SE-, V- |
 | [CREATIVE_STYLE_BIBLE](CREATIVE_STYLE_BIBLE.md) | tone, Kit, shape grammar, typography, hook framework | |
 | [TITLE_THUMBNAIL_SYSTEM](TITLE_THUMBNAIL_SYSTEM.md) | title patterns, thumbnail spec, packaging QA | |
+| [THUMBNAIL_RULES](THUMBNAIL_RULES.md) | click-worthy but honest thumbnails: rules with sources, what the `publish thumbnail` step checks; D-57 | TN- |
 | [NARRATION_AND_LANGUAGE_GUIDE](NARRATION_AND_LANGUAGE_GUIDE.md) | voice, vocabulary, anti-patterns, pronunciation | |
 | [SCRIPTING_SPEC](SCRIPTING_SPEC.md) | research-to-script gate, format structures, script rubric | |
 | [VIDEO_PARAMETER_SPEC](VIDEO_PARAMETER_SPEC.md) | every parameter: default, range, evidence, validation | P- |

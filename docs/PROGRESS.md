@@ -775,3 +775,36 @@ passed (standing order 9). The creator saw the Shorts as videos: YouTube had mad
 ordinary player. `qa/short_format.py` now checks a Short file (SF-01 horizontal, SF-02 not 9:16, SF-03 over 180 s),
 `production.shorts` refuses to hand on a file that fails, and links to Shorts are `youtube.com/shorts/<id>`. The upload tool
 (PR #7) should run the same check before `videos.insert` once it is merged. Test: `tests/unit/test_short_format.py`.
+
+## 2026-10-19 — YouTube staging upload (D-57): unlisted, everything filled in, the creator clicks Public
+
+The creator: when the video and the Shorts are done, upload them unlisted with title, description, tags, thumbnail, US location,
+not made for kids and no paid promotion; they only check and publish. Built `explainer_engine/publish/` (stdlib): `plan.py` (the
+`videos.insert` bodies from `publish.json` + the script's Shorts; chapters into the description; tags fitted to 500 characters;
+the Shorts link the long video), `youtube.py` (token refresh, resumable upload with resume after a drop, thumbnails.set, read-only
+channel and duplicate checks; refuses public and `publishAt`; no `videos.update`), `stage.py` (PC gate, channel id check, ids
+saved per file sha256 so nothing uploads twice, daily quota counter, the Studio review checklist), `thumbnail.py` (Gemini 3 Pro
+Image behind the estimate -> creator OK gate, headline in our font, TN checks), `auth.py` (one-time sign-in on the creator's PC).
+`publish.schema.json` gains optional `tags`, `youtube`, `thumbnail`, `files`, `pinned_comment` and per-Short `title`/`description`/
+`tags`. New rules file `docs/THUMBNAIL_RULES.md` (TN-01..TN-11, sources V-49). API facts V-45..V-49: location is deprecated in
+the API and paid promotion is not settable on insert, so both are Studio checklist items; an upload costs 1 unit of a 100/day
+bucket now, not 1600 units. The old YouTube token in the cloud env (TMR's) has expired: the creator re-authorises once.
+Tests: `tests/unit/test_youtube_publish.py` (13, fake API, no network). Nothing uploaded, nothing paid.
+
+## 2026-10-19 - Thumbnail and package research, rules regraded (PR #7)
+Five research passes (YouTube Help/policy, studies, curiosity/colour/AI, niche cases, title/tags/description) in
+`docs/research/thumbnail_research_2026-10-19.md`; V-50. Finding: policy is solid, element rules are weak, so `docs/THUMBNAIL_RULES.md`
+now grades every rule (P/S/H), adds the clothed noir-silhouette motif with the exact sexual-content line (TN-12, TN-13), package
+rules for title, tags, description and Shorts (TN-14..TN-18), a review checklist and a Test & Compare plan (T-1..T-5, sample sizes).
+`publish/plan.py` now flags titles over 70 characters, more than 3 hashtags in the long description, over 60 anywhere (FAIL) and
+"18+"/"21+" wording; test `test_package_findings_follow_the_thumbnail_rules`. Not done: no thumbnail painted (needs the silhouette
+collage approval, cost shown, creator's OK); vidIQ outlier pass not run (credits need approval). 411 tests pass, docs_lint 0.
+
+
+2026-10-19 vidIQ thumbnail pass: 2 calls, 10 credits (balance 90 -> 80); no usable evidence (research file, Appendix F). Ledger about 165 of 200 by project memory, past the 160 stop line; no more vidIQ calls without the creator's word.
+
+2026-10-19 thumbnail niche study (free): looked at 28 real thumbnails of the niche (research Appendix G, contact sheets in docs/research). Finding: bright, face-forward, versus layouts, fixed templates; no dark silhouette as a main subject. TN-12 changed to a small cameo, TN-19 (named heroes/versus) and TN-20 (one template) added. Gemini: one collage $0.134 (silhouette variants, creator OK), now not the main subject; no thumbnail painted yet.
+
+2026-10-19 thumbnail drafts v2 (nano-banana 2K, $0.107; thumbnails today about $0.40 in all): Vito and Shelby seen only from behind, dressed in the films' look on the creator's order (tuxedo and slicked grey hair at a long table; undercut, flat cap, long coat by a canal). This overrides Syndicate Wars ER-04/RK-05/RK-06 ("no production costume combination") for back views; faces stay invented (RK-07). The episode rulebook on systemic/next-video must record the change (episode-standards-director) before the thumbnail is used. Files in project-files explainer-engine/thumbnail_motif.
+
+2026-10-19 thumbnail is the creator's job (creator): `publish stage` no longer sends a thumbnail unless publish.json `thumbnail.upload` is true; the Studio checklist says "YOUR thumbnail set in Studio"; `publish thumbnail` stays as the paid draft maker. Test `test_thumbnail_is_sent_only_when_publish_json_allows_it`; THUMBNAIL_RULES.md and PUBLISHING_AND_ANALYTICS.md updated.
