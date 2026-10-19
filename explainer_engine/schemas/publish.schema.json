@@ -34,7 +34,7 @@
                                "paid_promotion": {"const": false},
                                "ai_note": {"type": "string", "description": "one line added to the Shorts' descriptions when the disclosure decision is 'disclose'"}}},
     "thumbnail": {"type": "object", "required": ["file"], "additionalProperties": false, "description": "docs/THUMBNAIL_RULES.md; publish/thumbnail.py",
-                  "properties": {"file": {"type": "string", "minLength": 1}, "text": {"type": "string"}, "concept": {"type": "string"},
+                  "properties": {"file": {"type": "string", "minLength": 1}, "upload": {"type": "boolean"}, "text": {"type": "string"}, "concept": {"type": "string"},
                                  "refs": {"type": "array", "items": {"type": "string"}}, "text_side": {"enum": ["left", "right"]}}},
     "files": {"type": "object", "additionalProperties": false, "properties": {"video": {"type": "string"}, "shorts_dir": {"type": "string"}}},
     "approval": {"type": ["object", "null"], "required": ["by", "ref"], "additionalProperties": false,

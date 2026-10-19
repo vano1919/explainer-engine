@@ -87,7 +87,7 @@ def checklist(stage: dict, state: dict) -> list[str]:
         "(sent as containsSyntheticMedia; YouTube Help 14328491)",
         f"  [ ] paid promotion: unticked (the API leaves it at false; it cannot be set on upload)",
         f"  [ ] video location: {s['location']} (the API field is deprecated, V-46: type it in Studio)",
-        "  [ ] the long video: thumbnail shown; chapters detected; end screen to the next video",
+        "  [ ] the long video: YOUR thumbnail set in Studio (the tool sends none unless publish.json thumbnail.upload is true); chapters detected; end screen to the next video",
         "  [ ] each Short: Related video = the long video (Studio only); optional 9:16 thumbnail (Studio on a computer)",
         "  [ ] pinned comment (publish.json pinned_comment) posted after it goes public",
         "  [ ] then, and only then, Visibility -> Public: your click; this tool cannot do it",
@@ -226,7 +226,7 @@ def _stage_one(ctx: dict, it: dict) -> None:
 
 def _thumbnail(episode: Path, state: dict, yt: YouTube, thumb: dict | None, log) -> None:
     if not thumb:
-        log("long: no thumbnail in publish.json (thumbnail.file); run `publish thumbnail` or set it in Studio")
+        log("long: thumbnail not sent (creator sets it in Studio; publish.json thumbnail.upload true makes the tool send it)")
         return
     rec = state["items"][P.LONG_ID]
     image = Path(episode) / thumb["thumbnail"]

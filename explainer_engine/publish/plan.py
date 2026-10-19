@@ -89,6 +89,12 @@ def field_findings(item_id: str, title: str, description: str) -> list[dict]:
     return out
 
 
+def _thumbnail_to_upload(pub: dict) -> str | None:
+    """The thumbnail is the creator's job (Studio) unless publish.json's thumbnail.upload says the tool may send it."""
+    t = pub.get("thumbnail") or {}
+    return t.get("file") if t.get("upload") is True else None
+
+
 def chapters_block(chapters: list[dict]) -> str:
     return "\n".join(f"{c['t']} {c['title']}" for c in chapters)
 
@@ -168,7 +174,7 @@ def build(episode: Path, *, privacy: str = "unlisted", video: Path | None = None
     items = []
     desc = long_description(pub)
     items.append({"id": LONG_ID, "kind": "long", "file": str(video),
-                  "thumbnail": (pub.get("thumbnail") or {}).get("file"),
+                  "thumbnail": _thumbnail_to_upload(pub),
                   "body": body(pub["title"], desc, tags, yt, synthetic, privacy)})
     findings += field_findings(LONG_ID, pub["title"], desc)
     link = LONG_LINK.format(id=long_id) if long_id else PENDING_LINK

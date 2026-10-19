@@ -14,7 +14,7 @@ clicks Public there.
 python -m explainer_engine.publish thumbnail <episode>                 # price and prompt; nothing paid
 python -m explainer_engine.publish thumbnail <episode> --generate --approved-by "<who, where>"   # after the creator's OK
 python -m explainer_engine.publish stage <episode>                     # dry run: youtube_stage.json + checklist, no network
-python -m explainer_engine.publish stage <episode> --yes --confirm "<who, where>"   # upload: long video, thumbnail, Shorts
+python -m explainer_engine.publish stage <episode> --yes --confirm "<who, where>"   # upload: long video, Shorts (thumbnail is the creator's, set in Studio)
 ```
 
 Inputs: `publish.json` (publish/1 with `tags`, `youtube`, `thumbnail`, per-Short `title`; PC rules must have no FAIL), the

@@ -1,8 +1,7 @@
 # Packaging rules: thumbnail, title, tags, description (TN-)
 
 One package, one promise: the thumbnail shows it, the title says it, the first line of the description repeats its keyword,
-the first seconds of the video pay it off. `python -m explainer_engine.publish thumbnail <episode>` prices and, after the
-creator's OK, paints the long video's thumbnail (D-56); `publish stage` checks the rest. Layout templates, palette and the
+the first seconds of the video pay it off. **The thumbnail is the creator's own job (creator, 2026-10-19):** `publish stage` uploads the video, title, description and tags and sends no thumbnail; the creator sets it in Studio (from the phone, the mobile app takes one for videos). `publish.json` `thumbnail.upload: true` is the only switch that lets the tool send one (then `thumbnails.set`, 50 units). `python -m explainer_engine.publish thumbnail <episode>` stays as the paid draft maker (price first, creator's OK); `publish stage` checks title, description and tags. Layout templates, palette and the
 general packaging QA stay in [TITLE_THUMBNAIL_SYSTEM](TITLE_THUMBNAIL_SYSTEM.md).
 
 Evidence: [thumbnail_research_2026-10-19](research/thumbnail_research_2026-10-19.md) (five passes, every URL dated 2026-10-19;
@@ -95,7 +94,7 @@ impressions, impressions CTR, average view duration, Studio's verdict. Conclusio
 
 ## What the tool checks and what stays human
 
-`publish/thumbnail.py`: concept present, headline at most 4 words (TN-04), 1280 x 720 and under 2 MB (TN-09), the paid gate.
+`publish/thumbnail.py` (draft maker only): concept present, headline at most 4 words (TN-04), 1280 x 720 and under 2 MB (TN-09), the paid gate.
 `publish/plan.py`: title and description limits, no < or >, all-caps word, "%" or "boring", title over 70 characters,
 more than 3 hashtags in a description, "18+"/"21+" wording, chapters. Everything else (TN-01, 03, 05, 07, 08, 12, 18) is the
 checklist above, answered by the creator.

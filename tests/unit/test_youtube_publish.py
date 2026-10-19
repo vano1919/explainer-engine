@@ -160,13 +160,23 @@ def test_stage_uploads_long_first_then_shorts_with_its_link_and_never_twice(tmp_
     assert [b["snippet"]["title"] for b in api.bodies][0] == PUB["title"]
     assert all(b["status"]["privacyStatus"] == "unlisted" for b in api.bodies)
     assert "https://youtu.be/vid1" in api.bodies[1]["snippet"]["description"]
-    assert ("POST", "https://www.googleapis.com/upload/youtube/v3/thumbnails/set") in api.calls
+    assert ("POST", "https://www.googleapis.com/upload/youtube/v3/thumbnails/set") not in api.calls  # the creator's job
     state = json.loads(S.state_path(ep).read_text())
     assert {k: v["video_id"] for k, v in state["items"].items()} == {"long": "vid1", "SH01": "vid2", "SH02": "vid3"}
-    assert state["items"]["long"]["thumbnail"] == "thumbnail.jpg"
+    assert "thumbnail" not in state["items"]["long"]
     assert state["quota"]["uploads"] == 3
     rc, out = go(ep, api)  # again: nothing new is sent
     assert rc == 0 and len(api.bodies) == 3 and out.count("already staged") == 3
+
+
+def test_thumbnail_is_sent_only_when_publish_json_allows_it(tmp_path):
+    ep = episode(tmp_path, pub={**PUB, "thumbnail": {**PUB["thumbnail"], "upload": True}})
+    (ep / "publish").mkdir()
+    (ep / "publish" / "thumbnail.jpg").write_bytes(b"jpg")
+    api = FakeAPI()
+    rc, out = go(ep, api)
+    assert rc == 0, out
+    assert ("POST", "https://www.googleapis.com/upload/youtube/v3/thumbnails/set") in api.calls
 
 
 def test_a_dropped_upload_resumes_in_the_same_session(tmp_path):
