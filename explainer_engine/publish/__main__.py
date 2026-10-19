@@ -4,6 +4,7 @@
                                              [--only long,SH01] [--yes --confirm '<who said OK, where>'] [--adopt SH01=<id>]
     python -m explainer_engine.publish thumbnail <episode> [--generate --approved-by '<who said OK, where>']
     python -m explainer_engine.publish auth <client_secret.json>        # once, on the creator's PC
+    python -m explainer_engine.publish auth-url | auth-finish '<address>'  # the same from the cloud, consent on a phone
 
 Without --yes ``stage`` is a dry run: it writes <episode>/publish/youtube_stage.json and prints the plan, the quota and the
 review checklist, with no network call. There is no public option.
@@ -35,6 +36,9 @@ def main(argv: list[str] | None = None) -> int:
     t.add_argument("--approved-by", default="")
     a = sub.add_parser("auth", help="one-time sign-in on the creator's PC")
     a.add_argument("client_secret")
+    sub.add_parser("auth-url", help="print the consent link (sign in on a phone)")
+    f = sub.add_parser("auth-finish", help="exchange the address the phone ended on for a token")
+    f.add_argument("answer")
     args = ap.parse_args(argv)
     if args.cmd == "stage":
         from explainer_engine.publish import stage
@@ -46,6 +50,10 @@ def main(argv: list[str] | None = None) -> int:
         from explainer_engine.publish import thumbnail
         return thumbnail.run(args.episode, generate=args.generate, approved_by=args.approved_by)
     from explainer_engine.publish import auth
+    if args.cmd == "auth-url":
+        return auth.url_step()
+    if args.cmd == "auth-finish":
+        return auth.finish_step(args.answer)
     return auth.main(args.client_secret)
 
 
