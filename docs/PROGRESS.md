@@ -692,3 +692,5 @@ rules for title, tags, description and Shorts (TN-14..TN-18), a review checklist
 "18+"/"21+" wording; test `test_package_findings_follow_the_thumbnail_rules`. Not done: no thumbnail painted (needs the silhouette
 collage approval, cost shown, creator's OK); vidIQ outlier pass not run (credits need approval). 411 tests pass, docs_lint 0.
 
+
+2026-10-19 vidIQ thumbnail pass: 2 calls, 10 credits (balance 90 -> 80); no usable evidence (research file, Appendix F). Ledger about 165 of 200 by project memory, past the 160 stop line; no more vidIQ calls without the creator's word.

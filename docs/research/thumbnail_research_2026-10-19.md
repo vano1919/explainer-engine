@@ -174,3 +174,12 @@ Patterns that repeat (ALL INFERRED, hypotheses): one subject, 2-3 elements, one 
 Noise: generic CTR-lift claims (15-40 %, MrBeast 20-30 variants), "60 % visual area", "salience mapping", "70 % of views on phones" (unsourced), vendor-reported growth numbers.
 
 Recommendation from the agent: web pass cannot support rules from "winners" in the niche; real evidence needs (a) the creator looking at top-10 videos of AHH, Extra History, Kings and Generals, Oversimplified in the browser, or (b) vidIQ outlier / similar-thumbnail data from an approved vidIQ session; until then only policy facts and cautious hypotheses, tested with YouTube's Test & Compare.
+
+## Appendix F: vidIQ pass, 2026-10-19 (2 calls, 10 credits)
+Balance 90 -> 80 (add-on credits). Calls: `outliers` ("what if history alternate history crossover animated explainer", 15 results, last year) and
+`similar_thumbnails` (text description of a clothed noir silhouette beside a gangster boss, 15 results).
+Result: **no usable evidence.** Both lists were mostly unrelated (kids' cartoons, game mods, music, fan animation); the
+niche's big channels did not surface; vidIQ returns metadata and a breakout score, not what a thumbnail shows, and the
+similarity search matched on topic words, not on the silhouette. Nothing here supports or contradicts the motif; T-4 stays the test.
+Ledger note: project memory records 155 of 200 credits spent before this pass, so with these 10 the total is about 165, past the
+creator's stop line of 160. The calls were started before that figure reached this thread. No further vidIQ calls.
