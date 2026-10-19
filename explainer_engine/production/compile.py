@@ -59,8 +59,13 @@ def compose(doc: dict, pid: str, pic: dict, world: dict | None = None) -> str | 
         sub, _ = subject_with_cast(doc, pic)
         return (pic.get("edit") or sub).strip() + POD_SUFFIX
     sub, people = subject_with_cast(doc, pic)
-    hint = pic.get("costume") or (VISITOR_COSTUME if world["visitors"] else "")
+    hint = pic.get("costume") or (_visitor_costume(doc) if world["visitors"] else "")
     return prompt_v2.compose(kind, sub, world, beat, people=people, costume_hint=hint if people else "")
+
+
+def _visitor_costume(doc: dict) -> str:
+    """The visitors' clothing words: the episode's ``world.visitor_costume``, else the Day 1 default (audit 2026-10-19)."""
+    return (doc.get("world") or {}).get("visitor_costume") or VISITOR_COSTUME
 
 
 def compile_doc(doc: dict) -> dict:

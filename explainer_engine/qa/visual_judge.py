@@ -23,12 +23,15 @@ GOOD = {"adults": True, "era_objects": False, "text": False, "mood": True}  # FA
 SOFT = {"one_light": True}  # REVIEW only: firelight against dusk is two lights on purpose in some beats
 
 
+VISITORS_NOTE = "scientists from the 1700s to 1900s dropped into this world"  # Day 1 default; world.visitors_note overrides
+
+
 def build_prompt(world: dict, meta: dict) -> str:
     """meta: {plate: bool, hero: str|None, stakes: str}. The answer is JSON only."""
     lines = [f"You review one painted picture for a video about: {world['topic']}.",
              f"The world is: {world['host'].get('place', '')}, {world['host'].get('when', '')}. "
              f"Things that do NOT exist there: {', '.join(world['absent'])}.",
-             f"The scene intentionally shows scientists from the 1700s to 1900s dropped into this world: they keep their own clothes.",
+             f"The scene intentionally shows {world.get('visitors_note') or VISITORS_NOTE}: they keep their own clothes.",
              f"What the picture should show: {meta.get('stakes', '')}.",
              "Answer ONLY a JSON object with a boolean for every key, plus a string 'why_<key>' for every key you answer true, "
              "naming exactly what you see, and a short 'note':"]

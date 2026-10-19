@@ -3,7 +3,8 @@
 A solo creator's 2D hand-drawn explainer channel ("worlds collide": history, science and money meeting other
 eras, public-domain worlds only, D-25) and its production
 pipeline: topic → research dossier + claim map → script → **creator approval** → schema-validated storyboard →
-assets → Kokoro narration + timings → Remotion scene renders (muted) → Python mix → Shorts → thumbnail + metadata →
+paint plan + **creator's provider choice** → pictures → ElevenLabs narration + Scribe word timings → PIL/ffmpeg assembly
+(`production/assemble.py`) → Shorts → thumbnail + metadata (`qa/publish_check.py`) →
 technical + editorial QA → review bundle → **creator approval** → manual upload. Cloud-first (D-31). Start from `docs/INDEX.md`: every specification and every ID (D-, SE-, V-, P-, R-, Q-) has ONE canonical home —
 link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this). `docs/PLAN_2026-10-15.md` is history.
 
@@ -68,6 +69,12 @@ explainer_engine/schemas/ versioned JSON Schemas (rights_manifest, fan_brief; th
 assets/characters/kit/    kit_reference.svg (character parts; poses and rig come in Phase 4)
 tests/unit/               fast tests; test_repo_hygiene.py guards media/keys, tmr_engine imports, provenance
 docs/                     INDEX.md and the canonical specifications; PROGRESS.md (read the last entry first)
+explainer_engine/production/  the D-43 production script: compile, validate (PV-xx), timing, assemble, paint (paint plans:
+                          provider per batch, creator approval bound to the plan hash, PP-xx), fill_holds, accents
+explainer_engine/imagegen/  gemini.py (sync/batch, cache in $EXPLAINER_IMAGE_CACHE or <out>/cache, ChargeUncertain), plan.py
+explainer_engine/scripting/ story_lint, stage_guard, claims.py (claim_map.md -> PV-37), distinct.py (docs/episodes.json -> PV-38)
+explainer_engine/qa/      visual_judge (questions), sheet_review.py (Claude answers them, free), publish_check.py (PC-xx)
+explainer_engine/world/   resolver (UR-22..27 prompt lint), look_v2.json; edit/, finish/, research/, rights/ as named
 jobs/                     job output (gitignored): jobs/<slug>/job-NNN_<date>/{state.json, artifacts/...}
 ```
 

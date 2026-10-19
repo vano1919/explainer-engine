@@ -17,6 +17,8 @@ from explainer_engine.audio.scribe_words import norm
 from explainer_engine.edit import board as B
 from explainer_engine.production import accents as ACC, continuity, script as S
 
+BED_DEFAULT_DB = -15.0  # a bed with no gain sits at the D-49 cap (audio/layers.MAX_BED_DB); it was -13 and FAILed the cap
+
 MIN_TEXT_MATCH = 0.97
 BUBBLE_LEAD = B.BUBBLE_LEAD
 BED_LEAD, BED_FADE = 0.4, 1.5
@@ -156,7 +158,7 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             if j is None:
                 continue
             cb = j
-            beds.append({"sound": bd["sound"], "segment": seg["id"], "at": bd["at"], "gain_db": bd.get("gain_db", -13),
+            beds.append({"sound": bd["sound"], "segment": seg["id"], "at": bd["at"], "gain_db": bd.get("gain_db", BED_DEFAULT_DB),
                          "start": 0.0 if not beds else round(max(0.0, words[wi(j)]["s"] - BED_LEAD), 3)})
         for e in au.get("sfx", []):
             j = at_word(e["at"], lo, hi, f"{seg['id']} sfx {e['sound']}")

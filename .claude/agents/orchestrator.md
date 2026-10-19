@@ -25,7 +25,7 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
    priced at every provider), then **ask the creator which provider to use for this batch and wait for the answer**; never
    pick one yourself and never paint ahead of the answer. Record the yes with `paint approve --by <creator> --ref <message>`,
    then `paint run`. Gemini on episode pictures only with `episode.gemini_exception`. Contact sheet looked at (Claude reads it:
-   the visual-judge questions, no paid judge); repaint at most twice, each repaint in a new approved plan.
+   `qa.sheet_review request` -> open every picture -> `visual_review.json` -> `qa.sheet_review apply`, 0 FAIL; no paid judge); repaint at most twice, each repaint in a new approved plan.
 7. **Phase 6**: sounds, `production time` (0 FAIL), `assemble` (720p preview, then 2K), QA scorecard.
 8. **Phase 7**: Shorts (9:16 crops around the heroes), metadata drafts (vidIQ within its cap). Nothing is uploaded.
 9. **Report** (OR-08) and commit/push everything to the branch; nothing running.

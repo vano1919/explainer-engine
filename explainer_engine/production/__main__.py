@@ -28,6 +28,7 @@ from explainer_engine.production import compile as C
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
 from explainer_engine.production import validate as V
+from explainer_engine.core.store import write_text_atomic
 
 
 def _print(found: list[dict], title: str) -> int:
@@ -71,7 +72,7 @@ def cmd_words(doc: dict, audio: list[Path], out: Path, transcript: Path | None) 
         source = f"transcript {transcript.name}"
     else:
         res = local_words.transcribe(wav)
-        (out / "heard.json").write_text(json.dumps(res, indent=0), encoding="utf-8")
+        write_text_atomic(out / "heard.json", json.dumps(res, indent=0))
         heard, source = res["words"], res["source"]
     pcm, sr = voice_layer.read_wav(wav)
     aligned = scribe_words.align(S.narration_text(doc), heard, len(pcm) / sr)
@@ -102,7 +103,7 @@ def cmd_words(doc: dict, audio: list[Path], out: Path, transcript: Path | None) 
                        f"pause_pad +{rep['added_seconds']} s", "duration": round(len(padded) / sr, 3),
              "coverage": aligned["coverage"], "unmatched": aligned["unmatched"], "voice_check": drift,
              "seams": getattr(join_reads, "report", None), "dropouts": cuts, "words": words}
-    (out / "words.json").write_text(json.dumps(doc_w, indent=0), encoding="utf-8")
+    write_text_atomic(out / "words.json", json.dumps(doc_w, indent=0))
     n_cut = len(cuts["cut_into_sound"])
     print(f"dropout scan: {cuts['silence_runs']} silence runs, {n_cut} cut into sound; chunk loudness spread {seam_spread} dB")
     if seam_spread > 1.5:
@@ -185,7 +186,7 @@ def main(argv: list[str] | None = None) -> int:
         target.parent.mkdir(parents=True, exist_ok=True)
         found = V.check_timed(timed, doc, final=a.final, picture_dirs=pics)
         timed["findings"] = found
-        target.write_text(json.dumps(timed, indent=1, ensure_ascii=False), encoding="utf-8")
+        write_text_atomic(target, json.dumps(timed, indent=1, ensure_ascii=False))
         code = _print(found, "timed")
         if a.cmd == "time" or code:
             return code

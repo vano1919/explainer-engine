@@ -473,3 +473,20 @@ size; Studio analytics still empty, read after 10-21). Report: `docs/research/PA
 Shorts styles stage by stage, Episode 1's Shorts against the rules). Changed: pace 170 wpm; DW-07, DW-09, DW-10, ST-11, PF-03, AL-04;
 `accents.text_hold` (P-71); SS-06..SS-08 in PV-34; ST-11 in `story_lint`. Kept as hypotheses: MO-01 5 s, AL-02, P-05, UR-11, ED-05.
 vidIQ 45 credits (155 of the 200 allowance; stop at 160). Tests and docs_lint below. Nothing paid beyond vidIQ.
+
+## 2026-10-19 — Audit fixes (AUDIT_2026-10-19, D-50): provider per batch, money safety, claims, publish checklist, distinctness
+
+The creator asked for every change the audit proposed, on `systemic/next-video` (PR #3's commits included). Images: `paint plan`
+prices the options for free and writes `plans/<id>.json`; the creator names the provider (gemini, pod, local; no default) and
+`paint approve` records the yes against the plan hash; `paint run` refuses without it, with a validate FAIL, an open batch or a
+changed prompt (PP-01..07, D-50); the old example painters need `--force`. Money: a timeout is `ChargeUncertain` (no retry, no
+refund), a batch marker is written before the POST, cache/output writes are atomic, the judge reserves in the ledger, the ledger
+refuses a write over a newer run.json (`LedgerConflict`). Checks: PV-11 lints every painted prompt (Episode 1: 11 UR-24 FAILs,
+"tiny figures"), PV-37 claims resolve to `claim_map.md`, PV-38 episode distinctness (`docs/episodes.json`, Help 1311392),
+`qa/publish_check.py` PC-01..08, `production_gate` gates D-43 folders, `qa/sheet_review.py` (Claude answers the visual-judge
+questions, free). Fixes: a short read gives PV-20 instead of a crash, a line opening with a dash keeps its tokens, dropping a short
+shot keeps its picture definition, a shrinking reframe is a pull, a library sound without its file is missing (Episode 1 now shows
+78 PV-05 in a clone without the gitignored sounds, 62 before), an ungained bed sits at the -15 dB cap (was -13), the visitors'
+costume and judge note come from the world, atomic words/heard/timed writes, the shot-visuals skill no longer uses look v2's child
+cues. Open for the creator: ZMAX 1.25 vs MAX_ZOOM 1.15 (QA_SPECIFICATION); PR #2's D-45/PV-32..36 numbers still collide.
+Tests: 283 passed, 1 skipped (the media test, gitignored WAVs); docs_lint 0. Nothing paid, nothing painted, nothing uploaded.

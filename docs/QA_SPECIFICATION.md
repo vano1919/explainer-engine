@@ -82,3 +82,14 @@ checklist; the cost and time log. Built so a human can review one episode in abo
 ## Gates
 The prototype and every video: no technical FAIL; editorial items answered; policy checklist complete; creator approval
 recorded in `acceptance_report.md` / the package. Stop and report after 5 iterations on the same issue.
+
+## Picture review by Claude (audit 2026-10-19)
+
+The visual judge's questions (`qa/visual_judge.QUESTIONS`) are answered by Claude in the session, not by a paid model:
+`python -m explainer_engine.qa.sheet_review request <script> --pictures <dir>` writes the questions per picture, Claude opens every
+file and writes `visual_review.json` (`visual_review/1`: a boolean per question, a `why_` for every true answer), and
+`python -m explainer_engine.qa.sheet_review apply <script> <visual_review.json>` gives PASS / FAIL / REVIEW per picture. A FAIL means a
+repaint in a new approved paint plan. `GeminiClient.judge` stays for the creator's explicit request only and reserves in the ledger.
+
+Two camera limits differ on purpose until the creator decides: `production/continuity.ZMAX` 1.25 (the furthest push on one
+picture in the D-43 script) and `edit/shot_rules.MAX_ZOOM` 1.15 (UR-13, the storyboard rule). Neither was changed by the audit.

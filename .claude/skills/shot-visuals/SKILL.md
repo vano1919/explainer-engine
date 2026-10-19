@@ -6,8 +6,8 @@ description: Plan the pictures of a Crossworld Theories video so they carry stak
 # Shot visuals: stakes in every frame, heroes you can recognise
 
 > **Primary rule, above everything below (UR-22, one universe):** every picture, sprite, prop and background is drawn in the same
-> universe, as if by one artist for one scene. Characters and environment share one design language (quirky, gently exaggerated
-> shapes), one line, one fill, one palette; an era or a place changes props, clothes and architecture, never the style. The
+> universe, as if by one artist for one scene. Characters and environment share one design language (look v2: bold ink-shadowed
+> silhouettes, caricature in faces, hands and posture on adult proportions), one line, one fill, one palette; an era or a place changes props, clothes and architecture, never the style. The
 > look's `universe_thread` is appended to every image prompt (pod and Gemini); nothing may override it.
 
 Read first: `docs/UNIVERSAL_RULE_BASE.md` (§E, UR-16..UR-21), `explainer_engine/edit/stakes.json`, the episode's `look.json`
@@ -44,8 +44,8 @@ Every shot is: **who is at risk of what, seen how**. Fill the `stakes` line firs
 The creator, 2026-10-16: a man seen from behind and the main hero looked like different kinds of people; every visual part
 must belong to one world. The cause was our own rule (pod figures at natural proportions next to caricature sprites) and two
 different renderers. Now:
-- **Every person, crowd or hand painted by the pod follows the look's `figure_style`** (oversized head, large hands, thick
-  brown ink outline, flat watercolour fill); `build_shots.py` appends it, the lint FAILs a prompt that names people or body
+- **Every person, crowd or hand painted by the pod follows the look's `figure_style`** (look v2: adult proportions, expressive
+  faces and hands, one thick dark ink outline; the v1 "oversized head" figure is retired, its words are UR-24 child cues); `build_shots.py` appends it, the lint FAILs a prompt that names people or body
   parts without it. No realistic extras, no realistic hands, no "natural proportions".
 - **Plates carry no people at all** (UR-20); the hero is always our sprite, never a pod-painted man.
 - **Style bridge before any batch:** paint 6 test pictures (a hand, a crowd, a wide shot, plates), composite a sprite onto a

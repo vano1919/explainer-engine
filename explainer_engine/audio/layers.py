@@ -57,6 +57,6 @@ def check(timed: dict) -> list[dict]:
             if a["kind"] in HARD and not any(abs(x - a["start"]) <= SYNC for x in starts):
                 add("AL-03", s["id"], f"{a['kind']} at {a['start']:.1f}s has no effect within {SYNC} s: a move the eye sees, the ear misses")
     for b in beds:
-        if b.get("gain_db", -13) > MAX_BED_DB:
+        if b.get("gain_db", MAX_BED_DB) > MAX_BED_DB:
             add("AL-04", b["sound"], f"bed at {b['gain_db']} dB: above {MAX_BED_DB} dB the ambience masks words")
     return out
