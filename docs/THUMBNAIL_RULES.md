@@ -41,7 +41,7 @@ average view duration, which makes a video less likely to be recommended.
 
 | ID | Grade | Rule |
 |---|---|---|
-| TN-12 | H + P | The channel's signature is **a small recurring noir silhouette of a fully clothed woman, a "femme fatale" cameo,** always in the same corner, size (about a tenth of the frame) and palette, never the main subject (what 28 real niche thumbnails look like: bright, face-forward, no dark silhouette as the subject, research Appendix G). Allowed: hat, coat, smoke, blinds, profile or shoulders-up, or a neutral stance. **Not allowed** (YouTube's wording, Help 9229980 and 2802002): breasts, buttocks or groin as the focal point; a pose or clothing "intended to sexually arouse" (arched back, hip thrust, bent toward the camera, spread legs); a skin-coloured or nudity-implying form; sexualised text. The policy applies to illustrated and animated content (Help 6162278: "real and computer-generated visuals"). The cost of a miss is age restriction, removal or limited ads, which can hit the whole video; "intended to arouse" is judged by a reviewer, not a checklist, so the figure keeps a wide margin below the wording. The motif is a hypothesis: no study shows a silhouette helps on YouTube (general support: distinctive brand assets, Romaniuk 2018); it is tested in T-4. |
+| TN-12 | H + P | The channel's signature (the creator, 2026-10-19: "a little sexiness, like the GTA VI cover woman"): **our own glamorous, confident woman** in a game-cover mood (sunglasses, crop top or dress, jeans, sunset and neon colours, a knowing look), in one fixed slot and style on every thumbnail. She must appear in the video too (a character of the story, TN-01). Never Rockstar's Lucia, key art or poses (RIGHTS_AND_FAIR_USE: our own art only). The focus is her face and attitude. **Not allowed** (YouTube's wording, Help 9229980 and 2802002): breasts, buttocks or groin as the focal point; a pose or clothing "intended to sexually arouse" (a bikini in the foreground, bent over, arched back, hip thrust, the camera on the buttocks); a skin-coloured or nudity-implying form; sexualised text. The policy applies to illustrated and animated content (Help 6162278: "real and computer-generated visuals"). The cost of a miss is age restriction, removal or limited ads ("titles or thumbnails with sexualized themes"), which can hit the whole video; it is judged by a reviewer, so she keeps a clear margin below the wording. The niche's thumbnails are bright and face-forward (Appendix G), so she sits beside the heroes, not alone in the dark. The motif is a hypothesis, tested in T-4. |
 | TN-13 | H | The silhouette is drawn once as a reference sheet and reused (the same discipline as the heroes' face sheets, D-55); its look is chosen from ONE collage of variants that the creator approves before any thumbnail is painted (the creator's standing rule for a new character style). The model's lettering is never used; headlines are composited by us (exact spelling, one typeface). Every Gemini picture carries SynthID. Check hands and faces by eye. |
 
 ## Title, tags, description, Shorts (the rest of the package)
@@ -59,7 +59,7 @@ average view duration, which makes a video less likely to be recommended.
 1. One sentence: what does the thumbnail promise? Is that moment in the video, at what time?
 2. Squint at 168 x 94 px and in greyscale: subject and headline still readable?
 3. Headline: at most 4 words, adds to the title, spelled right, lower-right corner clear?
-4. Motif: clothed, no body part as the focus, no pose built to arouse, no skin-coloured form, wide margin? (TN-12)
+4. The signature woman: in the video too, face and attitude as the focus, no bikini, bent or arched pose, no body part as the focus, not Rockstar's art? (TN-12)
 5. No franchise logo, key art, real person's likeness, blood, weapon pointed at the viewer?
 6. Title: hook first, about 60-70 characters, no all-caps word, no repetition of the headline?
 7. First description line carries the keyword and the promise? Hashtags at most 3? Sources below?
@@ -85,7 +85,7 @@ difference", not as failure.
 | T-1 | Headline presence | no text / 2 words | the evidence on text is thin and contradictory |
 | T-2 | Headline length | 2 words / 4 words | our cap of 4 is a default, Eden's gap favoured 4-6 |
 | T-3 | Subject | the hero's face / the object or document at stake | the face evidence is a wash |
-| T-4 | The cameo | with the silhouette cameo / the same picture without it | nothing published; also the recognition hypothesis |
+| T-4 | The signature woman | with her / the same picture without her | nothing published; also the recognition hypothesis |
 | T-5 | Title | curiosity title / keyword title (vidIQ's "title flip") | which promise the audience follows to the end |
 
 Run T-4 first on the first long video, on the video's 2nd to 3rd week if it is old enough to give impressions; Shorts cannot be
