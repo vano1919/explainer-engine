@@ -35,7 +35,81 @@ def _words_of(text: str) -> list[str]:
     return out
 
 
-def gates(day: Path, look_path: Path | None = None) -> list[dict]:
+def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
+    """The gates of a D-43 episode, read from what that flow writes: the production script, ``words.json``, ``timed.json``,
+    the paint plans in ``pictures/plans`` and the run ledger (audit 2026-10-19 M2: gates 1-6 used to read ``shots.json`` and
+    ``pictures/report.json``, which this flow never writes, so they could never pass)."""
+    from .core.ledger import Run
+    from .imagegen import plan as _plan
+    from .production import script as _ps
+    from .production import timing as _pt
+    from .production import validate as _pv
+    out: list[dict] = []
+
+    def add(n, name, status, detail, nxt=""):
+        out.append({"gate": n, "name": name, "status": status, "detail": detail, "next": nxt})
+
+    doc = _ps.load(day / "production_script.json")
+    pic_dirs = [day / d for d in doc.get("picture_dirs", [])]
+    found = _pv.check_script(doc, picture_dirs=pic_dirs or None)
+    fails = [f for f in found if f["severity"] == "FAIL"]
+    add(0, "production script", "BLOCKED" if fails else "PASS", f"{_pv.summary(found)} (PV rules)",
+        "fix the FAILs: python -m explainer_engine.production validate" if fails else "answer every REVIEW")
+    lint = narration_lint.lint(_ps.tts_text(doc))
+    lf = [f for f in lint if f["severity"] == "FAIL"]
+    add(1, "script for the ear", "BLOCKED" if lf else "PASS", f"{len(lf)} FAIL, {len(lint) - len(lf)} REVIEW (narration_lint)",
+        "fix the FAILs" if lf else "answer every REVIEW in one line")
+    words = _json(day / "words.json")
+    if not words:
+        add(2, "full read and timings", "WAIT", "no words.json", "test read, then the full read (estimate, ask first)")
+    else:
+        a = _words_of(_ps.narration_text(doc))
+        b = [x for w in words["words"] for x in norm(w["w"])]
+        ratio = difflib.SequenceMatcher(a=a, b=b, autojunk=False).ratio()
+        cov = float(words.get("coverage", 1.0))
+        if ratio < MIN_COVERAGE:
+            add(2, "full read and timings", "WAIT", f"words.json matches this text only {ratio:.0%}: timings of another read",
+                "full read of this text, then production words")
+        elif cov < MIN_COVERAGE:
+            add(2, "full read and timings", "BLOCKED", f"coverage {cov:.1%} < {MIN_COVERAGE:.0%}", "listen and repair")
+        else:
+            add(2, "full read and timings", "PASS", f"text match {ratio:.0%}, coverage {cov:.1%}")
+    if not words:
+        add(3, "shot plan on the read", "WAIT", "no read yet; the board runs on the estimated read inside gate 0")
+    else:
+        timed = _pt.time_script(doc, words)
+        tf = [f for f in _pv.check_timed(timed, doc, picture_dirs=pic_dirs or None) if f["severity"] == "FAIL"]
+        add(3, "shot plan on the read", "BLOCKED" if tf else "PASS", f"{len(timed['shots'])} shots, {len(tf)} FAIL",
+            "; ".join(sorted({f["rule"] for f in tf})))
+    heroes = [f for f in fails if f["rule"] == "PV-26"]
+    add(4, "style bridge and hero references", "BLOCKED" if heroes else "PASS" if not fails else "WAIT",
+        f"{len(heroes)} pictures without a reference of their hero (PV-26)" if heroes else
+        "PV-26 references in place" if not fails else "waits for gate 0",
+        "the creator approves the style bridge once per episode")
+    pics, _ = _ps.pictures(doc)
+    used = {k: v for k, v in pics.items() if v.get("uses")}
+    have = {k for k, v in used.items() if v.get("file") or any((d / f"{k}.png").exists() for d in pic_dirs + [day / "pictures"])}
+    todo = sorted(set(used) - have)
+    run = Run.open(run_path) if run_path and Path(run_path).exists() else None
+    plans = [_json(f) for f in sorted((day / "pictures" / "plans").glob("*.json"))]
+    waiting = [p for p in plans if not (run and run.approved(p["id"], p["hash"]))]
+    add(5, "picture plans", "PASS" if not todo else "WAIT",
+        f"{len(todo)} pictures to paint, {len(plans)} plans, {len(waiting)} waiting for the creator's provider choice",
+        "" if not todo else "paint plan (free), ask the creator which provider, paint approve, paint run")
+    if todo:
+        add(6, "pictures", "WAIT", f"{len(have)} of {len(used)} pictures exist", "contact sheet looked at after each batch")
+    else:
+        add(6, "pictures", "PASS", f"all {len(used)} pictures exist", "review the contact sheet by eye")
+    for n, name, hint in ((7, "animatic and render", "production run, after gates 0-6"),
+                          (8, "QA", "technical and editorial QA, the publish checklist"),
+                          (9, "approval #2", "the creator's recorded approval")):
+        add(n, name, "WAIT", hint)
+    return out
+
+
+def gates(day: Path, look_path: Path | None = None, run_path: Path | None = None) -> list[dict]:
+    if (day / "production_script.json").exists():
+        return script_gates(day, run_path)
     look_path = look_path or day.parent / "look.json"
     look = _json(look_path) or {}
     out: list[dict] = []
@@ -43,15 +117,7 @@ def gates(day: Path, look_path: Path | None = None) -> list[dict]:
     def add(n, name, status, detail, nxt=""):
         out.append({"gate": n, "name": name, "status": status, "detail": detail, "next": nxt})
 
-    # 0 production script (D-43): when the episode has one, it is the source of everything below
-    ps = day / "production_script.json"
-    if ps.exists():
-        from .production import validate as _pv
-        from .production import script as _ps
-        found = _pv.check_script(_ps.load(ps))
-        fails = [f for f in found if f["severity"] == "FAIL"]
-        add(0, "production script", "BLOCKED" if fails else "PASS", f"{_pv.summary(found)} (PV rules)",
-            "fix the FAILs: python -m explainer_engine.production validate" if fails else "answer every REVIEW")
+    # legacy day folders (narration_tts.txt, shots.json, look.json): the D-43 flow goes through script_gates
     # 1 script
     tts = day / "narration_tts.txt"
     if not tts.exists():
@@ -127,8 +193,9 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("day")
     p.add_argument("--look")
+    p.add_argument("--run", help="the run ledger (approvals of the paint plans)")
     a = p.parse_args(argv)
-    rows = gates(Path(a.day), Path(a.look) if a.look else None)
+    rows = gates(Path(a.day), Path(a.look) if a.look else None, Path(a.run) if a.run else None)
     for r in rows:
         print(f"{r['gate']} {r['status']:7} {r['name']:24} {r['detail']}" + (f"  -> {r['next']}" if r["next"] else ""))
     return 1 if any(r["status"] == "BLOCKED" for r in rows) else 0

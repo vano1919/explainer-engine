@@ -41,6 +41,12 @@ action. Gates 3-7 spend money and need the creator's yes first.
 | 8 | **Animatic and render** | GPU compositor (D-32), motion per UR-13, transitions UR-14, sound UR-15 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) |
 | 9 | **Seven-point test, QA and approval #2** | every video passes all seven checks of section 6 (`qa/scorecard.py`), then technical and editorial QA, the review bundle and the creator's recorded approval before any upload | section 6, [QA_SPECIFICATION](QA_SPECIFICATION.md) |
 
+For an episode with a `production_script.json` (D-43) the gate command reads what that flow writes (audit 2026-10-19):
+the script (gate 0, PV rules with the picture folders), its voice text (1), `words.json` (2), the board on the real read (3),
+hero references (4, PV-26), the paint plans in `pictures/plans` and their approvals in the run ledger (5, `--run run.json`;
+the creator picks the provider for every batch) and the picture files (6). Day folders without a production script keep
+the legacy reading of `shots.json` and `look.json`.
+
 Order matters: a script is not paid-read before gate 1 is clean; pictures are not painted before the style bridge (gate 4) and
 the sprite plan (gate 5); the full read waits for the creator's yes on the test read.
 

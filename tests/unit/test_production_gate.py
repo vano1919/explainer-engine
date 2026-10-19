@@ -32,3 +32,26 @@ def test_production_rules_page_is_linked_and_names_every_gate():
     text = (ROOT / "docs/PRODUCTION_RULES.md").read_text(encoding="utf-8")
     assert all(f"| {n} |" in text for n in range(10))
     assert "PRODUCTION_RULES" in (ROOT / "docs/INDEX.md").read_text(encoding="utf-8")
+
+
+def test_a_production_script_episode_is_gated_on_what_its_flow_writes(tmp_path):
+    """D-43 episodes: gates read the script, words.json, the paint plans and the ledger, never shots.json (audit M2)."""
+    import json
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent))
+    from test_production_script import compiled
+    from explainer_engine.core.ledger import Run
+    from explainer_engine.imagegen import plan as P
+    from explainer_engine.production import script as S
+    doc = compiled()
+    S.save(doc, tmp_path / "production_script.json")
+    g = {r["gate"]: r for r in G.gates(tmp_path)}
+    assert g[0]["status"] in ("PASS", "BLOCKED") and g[2]["status"] == "WAIT" and "words.json" in g[2]["detail"]
+    assert g[5]["status"] == "WAIT" and "0 plans" in g[5]["detail"]
+    plan = P.make("B1", "mini", [{"id": "cold_hands", "prompt": "p", "refs": []}], provider="pod", purpose="x")
+    (tmp_path / "pictures" / "plans").mkdir(parents=True)
+    (tmp_path / "pictures" / "plans" / "B1.json").write_text(json.dumps(plan))
+    run = Run.open(tmp_path / "run.json", caps={"runpod_usd": 3.0})
+    assert "1 waiting" in G.gates(tmp_path, run_path=tmp_path / "run.json")[5]["detail"]
+    run.approve("B1", plan["hash"], by="creator", ref="cmsg_x", provider="pod", usd=plan["estimate_usd"])
+    assert "0 waiting" in G.gates(tmp_path, run_path=tmp_path / "run.json")[5]["detail"]
