@@ -70,6 +70,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-35 | motion and visual variety (MO-01..MO-06, `edit/motion_lint.py`) on the estimated read and on the real read (REVIEW) |
 | PV-36 | sound layers (AL-01..AL-04, `audio/layers.py`) on the estimated read and on the real read (REVIEW) |
 | PV-37 | claims resolve (invariant 5, `scripting/claims.py`): every claim id on a line or a Short is a row of the episode's `claim_map.md` (FAIL; ids with no map FAIL); an E or M claim names a link, a line with a number has a claim id, a map nobody cites is a REVIEW. Whether the source says what the line says is the critic's claim pass |
+| PV-38 | the episode is its own (`scripting/distinct.py`, REVIEW): `episode.distinct` names the premise, question, outcome and what is new (mechanism), compared with every approved episode in `docs/episodes.json`; a premise and outcome much like an earlier one is the inauthentic-content case "characters put in the same situation over and over again with the same outcome" (YouTube Help 1311392) |
 
 ## Paint plans (PP-xx; audit 2026-10-19; `imagegen/plan.py`, `production/paint.py`)
 

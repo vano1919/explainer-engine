@@ -79,6 +79,25 @@
               "type": "string"
             }
           }
+        },
+        "distinct": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "what makes this episode its own (PV-38): compared with docs/episodes.json",
+          "properties": {
+            "premise": {
+              "type": "string"
+            },
+            "question": {
+              "type": "string"
+            },
+            "outcome": {
+              "type": "string"
+            },
+            "mechanism": {
+              "type": "string"
+            }
+          }
         }
       }
     },

@@ -412,6 +412,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     if claim_map is not None or any(c for seg in doc["segments"] for ln in seg["lines"] for c in ln.get("claims", [])):
         from explainer_engine.scripting import claims as _claims
         out += _claims.check(doc, claim_map)
+    from explainer_engine.scripting import distinct as _distinct
+    out += _distinct.check(doc)
     return out
 
 
