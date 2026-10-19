@@ -8,7 +8,7 @@
   },
   "spent": {
     "gemini_usd": 2.9535,
-    "elevenlabs_credits": 10303.01
+    "elevenlabs_credits": 12042.84
   },
   "reserved": {
     "batch:s01_skyline+1": {
@@ -142,6 +142,11 @@
       "amount": 9127.09,
       "settled": true,
       "note": "26 chunks generated (1 credit/char incl. tags); 7 reused from test reads, 0 credits"
+    },
+    "shorts_new_lines": {
+      "service": "elevenlabs_credits",
+      "amount": 1739.83,
+      "settled": true
     }
   },
   "phases": {
@@ -696,6 +701,12 @@
       "provider": "elevenlabs",
       "credits": 9396,
       "at": "2026-10-19T16:21:33"
+    },
+    "V2_shorts": {
+      "by": "creator",
+      "msg": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW4ZFyHoix6YtcQByzp9TR1V",
+      "amount": 1740,
+      "at": "2026-10-19T17:38:21Z"
     }
   }
 }
