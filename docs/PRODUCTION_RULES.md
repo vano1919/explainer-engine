@@ -26,7 +26,9 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    not everything together"). The long video and each Short are staged one by one, unlisted, the moment that piece has passed its
    own tests (the seven-point test and QA for the video; render, frame look and loudness for a Short): `python -m
    explainer_engine.publish stage <episode> --only <id> --yes --confirm '<the creator's standing order, 2026-10-19>'`. No waiting
-   for the batch. Unchanged: never public (the creator clicks Public), the creator sets the thumbnail in Studio, sign-in is a fresh
+   for the batch, and no waiting for the creator to ask: the moment a piece passes, Claude posts a fresh sign-in link
+   (`publish auth-url`) in the thread, and when the creator sends back the 127.0.0.1 address it runs `auth-finish` and uploads
+   at once (creator, 2026-10-19: "it's ready, it passed every test: ask me to log in, upload, done"). Unchanged: never public (the creator clicks Public), the creator sets the thumbnail in Studio, sign-in is a fresh
    link per upload session (`publish auth-url` / `auth-finish`), and a piece that fails a test is fixed, not uploaded.
 
 ## 2. The gates, in order (a video does not skip one)
