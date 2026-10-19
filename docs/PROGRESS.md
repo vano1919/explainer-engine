@@ -460,5 +460,5 @@ words by `timing`), `edit/motion_lint.py` (MO, PV-35), `audio/layers.py` (AL, PV
 PV-34 (Shorts styles), `scripting/stage_guard.py`; seven stage agents and the skill `story-engine`; ED-04 amended (MO-04).
 A 640x360 test render of the mini script drew punch, pop text and whip (836/836 frames). Tests: 237 passed, the same 2 fail as
 before (gitignored sound files absent in a fresh clone); docs_lint 0. Nothing paid, no voice or picture generated.
-Open for the creator: may some Short styles open with a statement instead of PV-28's question; decision numbers from D-45 on are used differently on the
+Creator decided (2026-10-19): `anti_intuition` and `pov_you` Shorts may open with one statement (SS-05, PV-28). Open: decision numbers from D-45 on are used differently on the
 `ccr-0d2b1961` branch.

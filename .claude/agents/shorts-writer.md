@@ -12,7 +12,7 @@ You write the `shorts` block only (stage guard `shorts`). Read `docs/STORY_ENGIN
    video corrects) with their segment ids; one moment per Short, never two Shorts on one scene.
 2. Give each Short a style from the catalog so the set uses at least six styles, and order them so no style repeats back
    to back; pick each Short's `ending` (cliffhanger, loop, question, pointer).
-3. Write: hook line first (a question of at most 14 words that is also on screen), 40-130 words, the stakes in plain words,
+3. Write: hook line first (a question of at most 14 words that is also on screen; `anti_intuition` and `pov_you` may use one statement, SS-05), 40-130 words, the stakes in plain words,
    a reaction line, the ending. Reuse lines of the main read where they fit (EL-09: new text costs credits). A voiced
    dialogue line keeps its `speaker`.
 4. Shots: the video's own pictures cropped 9:16 (`crop_x` on the speaking face).

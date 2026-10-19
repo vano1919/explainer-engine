@@ -66,6 +66,8 @@ These are planning targets, not hard checks. Times are for 10 minutes and scale 
 | 7:30-9:30 | resolution | The dramatic question is answered and the set-up pays off. |
 | 9:30-10:00 | button | The twist, bookend or callback, and one line pointing at the next question. |
 
+The timings in this grid are **product hypotheses**. The web research refuted every published numeric retention rule as evidence (0-3 votes: blogs that cite no data), including stakes every 60-90 s, a loop every 2-3 min, a surprise every 20-30 s, proving the title within 10 s and the best moment at two-thirds. The grid encodes the competitor videos we watched, and our own retention data will adjust it.
+
 The format blends three references:
 - Infographics Show what-ifs: a named hero with a personal stake, three loops, a reversal at the real limits, and a twist.
 - Kurzgesagt: claims grounded in sources, picture beats on the operative word, and a crisis reframed as hope.
@@ -167,6 +169,7 @@ Stage 6 writes the Shorts, checked by PV-34 and, as before, PV-28 / SH rules.
 | SS-01 | **A set of 10 uses at least 6 styles.** A set of 5 or more uses at least min(6, max(3, 60 % of the set)). |
 | SS-02 | **Alternate styles in posting order.** Two Shorts in a row never share a style. |
 | SS-03 | **Every Short is a moment of the video, re-cut, not a summary.** The long video's exact title is said aloud or shown, and the related-video link (shown under the channel handle; a public or unlisted video of our own channel) is set in Studio by hand at upload. |
+| SS-05 | **A statement hook for two styles** (creator, 2026-10-19): `anti_intuition` and `pov_you` may open with one statement of at most 14 words ("Don't go to the lifeboats.", "You wake up in 1347.") instead of a question; every other style keeps SH-01's question. Checked by PV-28. |
 | SS-04 | **The ending has a kind:** cliffhanger, loop (the last line runs into the first), question, or pointer (the last line points to the video). |
 
 ### Style catalog
@@ -194,7 +197,7 @@ Shorts tricks, all checked or planned in the script:
 - the long title said aloud;
 - the related-video link and a pinned comment at upload, which is manual (no upload code, invariant 4).
 
-PV-28 still asks that the hook be one question of at most 14 words. Whether some styles (`anti_intuition`, `pov_you`) may open with a statement instead is an open question for the creator.
+PV-28 asks that the hook be one question of at most 14 words, except for the two statement-hook styles of SS-05.
 
 ## The writers' room
 

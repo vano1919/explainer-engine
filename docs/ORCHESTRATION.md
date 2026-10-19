@@ -36,7 +36,7 @@ enforces the money and stop rules is `explainer_engine/core/ledger.py`. Gates of
 
 | ID | Rule |
 |---|---|
-| SH-01 | Shorts exist to advertise the video: a **hook of one question in the first 3 seconds**, then 25-50 s of the most surprising scene, then a line that points to the video. |
+| SH-01 | Shorts exist to advertise the video: a **hook of one question in the first 3 seconds** (one statement for the `anti_intuition` and `pov_you` styles, SS-05 in [STORY_ENGINE](STORY_ENGINE.md)), then 25-50 s of the most surprising scene, then a line that points to the video. |
 | SH-02 | A Short has its own text and script (`shorts` block of the production script); its voice is the episode's voice; pace may be raised by at most 8 % only when the timbre check passes, otherwise left as it is. |
 | SH-03 | Pictures are the video's pictures, cropped to 9:16 around the named heroes and the action (the crop centre is set per shot); faces are never cut. |
 | SH-04 | Each Short opens with a fact or a "did you know" that is true and sourced by the claim map. |

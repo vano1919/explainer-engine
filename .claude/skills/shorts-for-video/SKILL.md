@@ -25,4 +25,5 @@ Rules: `docs/ORCHESTRATION.md` SH-01..SH-04. A Short is a trailer with its own t
    `ending` (cliffhanger, loop, question, pointer); 10 Shorts use at least 6 styles, never the same style twice in a row.
    Tricks: on-screen text with the hook in 0-3 s, 3-6 changes every 10 s, word-highlight captions, a HUD counter for steps,
    a sound on every pop, the long video's exact title said aloud; related-video link and pinned comment are set at upload
-   by hand. The agent `shorts-writer` writes the set.
+   by hand. The agent `shorts-writer` writes the set. `anti_intuition` and `pov_you` may open with one statement of at most
+   14 words instead of a question (SS-05).

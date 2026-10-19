@@ -18,6 +18,32 @@ There are three inputs:
 - No listening or viewing panel.
 - The vendor pacing numbers (a visual change every 3-5 s, 5-10 s, 10-20 s) are advice without data. MO-01's 5 s is our own planning choice and labelled as such.
 
+## Synthesis of the web run (finished 2026-10-19)
+
+The run fetched 25 sources and extracted 113 claims. The 25 most central claims were sent to the verifiers: 14 survived and 11 were refuted. After duplicates were merged, 8 findings stand.
+
+**Strong** (primary sources, 3-0):
+- The writing pipeline: plan top-down (logline, characters, beat outline tied to settings and characters, then dialogue), with programmatic gates between the steps and a critic with an explicit rubric.
+- The but/therefore rule.
+- ElevenLabs Voice Design's prompt template.
+- ElevenLabs' ban on impersonation, which applies whether or not a voice is on the no-go list.
+
+**Medium:**
+- Story first, technical layer second (DSR, a preprint).
+- Kurzgesagt's sources-experts-drafts process (the studio describing itself).
+- The Short-to-video link (a 2023 announcement; the current placement comes from YouTube Help).
+
+**Refuted as evidence:** every numeric retention or editing rule found: a change every 5-10 s, a loop every 2-3 min, a surprise every 20-30 s, the title proven within 10 s, tension by 10-15 s, the biggest drop at 15-30 s. These were 0-3 votes, from blogs that cite no data. The MO thresholds and the beat-grid timings are therefore our own product hypotheses, labelled as such.
+
+**No verified evidence (open questions):**
+- competitor practice beyond Kurzgesagt;
+- shot lengths, kinetic type and 2D rigs;
+- YouTube loudness and mix levels (the existing mix rules stay as they are);
+- Shorts hook styles and lengths, and which of them actually move viewers to the long video;
+- what ElevenLabs' prohibited-use policy allows for a parody voice inspired by a historical figure.
+
+The vidIQ watches and our own A/B results across the 10 Shorts styles are how we answer these.
+
 ## Story structure
 
 | Finding | Verdict | Source | Used in |
@@ -37,8 +63,8 @@ There are three inputs:
 |---|---|---|---|
 | Writing the narrative first and formatting the screenplay second scores higher than one pass (about +2.4 on a 12-point professional scale) | holds | two-stage screenplay generation paper (DSR, 2025) | stages 1-2 before 3-4 |
 | Dramatron generates top-down: logline, characters, plot of scene beats, locations, dialogue, each with its own prompt | holds | Mirowski et al., arXiv 2209.14958 | the writers' room |
-| Dramatron's scene dialogue never saw earlier dialogue, so participants found it inconsistent | qualified: the inconsistency holds; "repetitive loops caused by it" overreaches | the same paper, §5.6.3 | the scene writer gets the last three lines |
-| A detailed outline before drafting improves long-range coherence without costing interest (DOC preferred as more interesting, 60.1 % vs 39.4 %) | holds | Yang et al., arXiv 2212.10077 | skeleton first (ST layer) |
+| Dramatron's scene dialogue never saw earlier dialogue, so participants found it inconsistent | refuted as worded (0-3, because of the "repetitive loops" cause); the verifiers did confirm the inconsistency quotes in §5.6.3 | the same paper, §5.6.3 | the scene writer gets the last three lines |
+| A detailed outline before drafting improves long-range coherence (plot coherence 67.6 % vs 45.1 % against Re3) without costing interest (60.1 % vs 39.4 %) | holds (3-0) | Yang et al., arXiv 2212.10077 | skeleton first (ST layer) |
 | "The controller alone raised relevance 65.3 % vs 37.1 %" | refuted: that is the whole DOC system against Re3; the controller ablation is 73.5 vs 52.0 | the same paper, Tables 1 and 5 | none (the guard is our own controller) |
 | Prompt chaining with programmatic gates between steps; evaluator-optimizer loops for creative work; strict, mistake-proof tool interfaces | holds | Anthropic, "Building effective agents" | stage guard, critic, schema |
 

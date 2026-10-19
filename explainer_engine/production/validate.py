@@ -34,6 +34,7 @@ REAL_PERSON_VOICE = re.compile(r"\b(sound(s|ing)? like|in the voice of|imitat\w*
 NAME_LIKE = re.compile(r"\b[A-Z][a-z]+ [A-Z][a-z]+\b")
 POINTER = re.compile(r"\b(full (story|video|episode)|whole (story|video)|on the channel|the video|this episode|watch)\b", re.I)
 DUP_SIMILAR = 0.97
+STATEMENT_HOOK_STYLES = {"anti_intuition", "pov_you"}  # may open with one statement instead of a question (SS-05)
 
 
 def _norm(text: str) -> str:
@@ -303,8 +304,11 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     pic_ids = set(S.pictures(doc)[0])
     for sh in doc.get("shorts", []):
         hook = sh["hook"].strip()
-        if not (hook.endswith("?") and len(hook.split()) <= 14):
-            _f(out, "PV-28", sh["id"], "the hook must be one question of at most 14 words (SH-01)")
+        statement_ok = sh.get("style") in STATEMENT_HOOK_STYLES  # creator 2026-10-19 (SS-05)
+        one_sentence = len(re.findall(r"[.!?](?:\s|$)", hook)) <= 1
+        if len(hook.split()) > 14 or not (hook.endswith("?") or (statement_ok and one_sentence)):
+            _f(out, "PV-28", sh["id"], "the hook must be one question of at most 14 words (SH-01)"
+               + ("; this style may open with one statement (SS-05)" if statement_ok else ""))
         if sh["lines"][0]["text"].strip() != hook:
             _f(out, "PV-28", sh["id"], "the first line must be the hook")
         words = sum(len(l["text"].split()) for l in sh["lines"])
