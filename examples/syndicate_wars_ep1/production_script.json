@@ -1298,12 +1298,13 @@
       },
       {
        "at": "studio.",
-       "kind": "highlight",
+       "kind": "text",
+       "text": "RECORDING STUDIO",
        "pos": [
         0.5,
-        0.5
+        0.82
        ],
-       "why": "rings the recording studio in the picture",
+       "why": "names the third business, the recording studio, as text: the boardwalk picture shows none",
        "cue": {
         "sound": "pluck"
        }
@@ -10188,12 +10189,13 @@
       },
       {
        "at": "studio.",
-       "kind": "highlight",
+       "kind": "text",
+       "text": "RECORDING STUDIO",
        "pos": [
         0.5,
-        0.5
+        0.82
        ],
-       "why": "rings the recording studio in the picture",
+       "why": "names the third business, the recording studio, as text: the boardwalk picture shows none",
        "cue": {
         "sound": "pluck"
        }

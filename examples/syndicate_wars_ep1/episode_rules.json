@@ -1409,6 +1409,30 @@
       "script_sha256": "ef6a1db1bef4825c2a17c936ce935e235d9230f6dbd6a0cd237f1dc01d992149",
       "rulebook_version": 7,
       "scope": "editorial.claims cleanup"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
+      "rulebook_version": 7,
+      "scope": "re-check after the Shorts visual beats (1f2f365) and the SH03/S03 studio beat turned into a RECORDING STUDIO text beat; Rockstar characters only as text, invented scenes still flagged (independent review bound to bdf2887f); no new person, claim, franchise element or picture"
+    },
+    {
+      "checkpoint": "final",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
+      "rulebook_version": 7,
+      "scope": "re-check after the Shorts visual beats (1f2f365) and the studio beat fix; no new person, claim, franchise element or picture; independent review bound to bdf2887f"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
+      "rulebook_version": 7,
+      "scope": "re-check after the Shorts visual beats (1f2f365) and the studio beat fix; no new person, claim, franchise element or picture; independent review bound to bdf2887f"
     }
   ],
   "supersedes": 4
