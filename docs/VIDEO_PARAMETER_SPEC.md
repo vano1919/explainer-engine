@@ -56,7 +56,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 |---|---|---|---|---|---|---|---|
 | P-50 | TTS route | Kokoro-82M local | (listening test) | zero cost, timings exist (D-12) | M/P | Phase 5 test | blind A/B vs one cloud voice |
 | P-51 | voice | chosen in the Phase 5 test, male or female, warm/clear | Kokoro built-in voices only | rights layer (built-ins only) | L/P | P-50 | listening panel |
-| P-52 | heard pace | 155 wpm | 135-175 | clarity; TMR measured Kokoro 150-178 wpm | M/P | voice | measured post-TTS, +/- 10 % |
+| P-52 | heard pace | 170 wpm | 155-185 | D-49: engagement rises with pace (Guo 2014), 180 wpm best for recall in Rodero 2020, comprehension holds to ~330 (Murphy 2022); Episode 1 read at 120-140 and felt slow | M/P | voice | measured post-TTS, +/- 10 % |
 | P-53 | pauses | sentence 0.35 s, paragraph 0.7 s, before a reveal 0.9 s | 0.2-1.2 s | rhythm | L/C | | measured |
 | P-54 | pronunciation | `pronunciations.json` (project) over speakable() defaults | | numbers, units, acronyms | M/C | TTS | ASR word error check |
 | P-55 | numbers | spoken form decided in the script, never left to TTS | | accuracy | H/F | script | lint: digits in narration need a spoken form |

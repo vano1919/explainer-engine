@@ -26,4 +26,6 @@ Rules: `docs/ORCHESTRATION.md` SH-01..SH-04. A Short is a trailer with its own t
    Tricks: on-screen text with the hook in 0-3 s, 3-6 changes every 10 s, word-highlight captions, a HUD counter for steps,
    a sound on every pop, the long video's exact title said aloud; related-video link and pinned comment are set at upload
    by hand. The agent `shorts-writer` writes the set. `anti_intuition` and `pov_you` may open with one statement of at most
-   14 words instead of a question (SS-05).
+   14 words instead of a question (SS-05). D-49 (`docs/research/PARAMETER_AUDIT_2026-10-19.md`, section 6 has the recipe per
+   style): the hook's words on frame 0 and the first cut inside the hook line (SS-07), at least 3 visual events every 10 s
+   (SS-08), the set in two length bands, 15-30 s and 45-75 s (SS-06), posted within three days of the video (SS-03).

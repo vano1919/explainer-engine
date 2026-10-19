@@ -66,7 +66,7 @@ end of every section pointing at the next problem. None of them sounds like a le
 - **N-05 Spoken sentences stay under 22 words**; most should be 4-12. Fragments are allowed and fast ("A convex lens.
   The afternoon sun. One bright point on the grass.").
 - **Contractions always** ("what's", "isn't", "they're"): they speed the read and sound like talk.
-- Target pace for this channel: **160-175 words a minute** heard (the first read was 140; the v3 test 168).
+- Target pace for this channel: **170 words a minute** heard, 160-185 accepted (the first read was 140; the v3 test 168; D-49: engagement rises with pace and recall peaks near 180).
 
 ### Open loops
 - **N-02 Every beat ends on an open loop**: the next question, danger or promise, never a closed fact. Patterns:
@@ -123,7 +123,7 @@ read; with a soft deep voice, carry emotion with short lines, a held `pause_afte
    one question per minute; an open loop at the end of every beat; interjections where a person would say them.
 3. Add tags at delivery changes only; write `narration_tts.txt`; derive `narration.txt` (no tags, normal case).
 4. `narration_lint` → 0 FAIL; fix or answer every REVIEW.
-5. Read it aloud at 165 words a minute; anything you stumble on, cut.
+5. Read it aloud at 170 words a minute; anything you stumble on, cut.
 6. **Paid test read of the first 45-60 s only** (estimate first, log it); the creator listens; then the full read.
 7. After the read: Scribe → `scribe_words` → `pause_pad` → `build_shots` (0 FAIL) → the creator listens again.
 

@@ -339,3 +339,65 @@ def test_story_engine_doc_defines_every_rule_the_code_uses():
     defined = set(re.findall(r"^\| ((?:ST|DW|PF|MO|AL|VC|SS)-\d\d) \|", doc, flags=re.M))
     assert used, "no rule ids found"
     assert used <= defined, sorted(used - defined)
+
+
+# --- D-49: parameters checked against evidence ---------------------------------------------------------------------------
+
+def test_popped_text_holds_longer_for_more_words():
+    """P-71 via accents.text_hold: 1.5 s + 0.3 s a word, a slam 0.6 s longer (the fixed 1.6 s was too short for four words)."""
+    assert ACC.text_hold("Fire.") == 1.8
+    assert ACC.text_hold("No matches, no lighter.") == 1.5 + 0.3 * 4
+    assert ACC.text_hold("SOUP", "slam_text") == 1.8 + 0.6
+
+
+def test_bed_cap_is_fifteen_db_under():
+    """AL-04 (D-49): a bed at -13 dB is flagged, at -15 it passes (ambience 15 LU under commentary, Torcoli 2019)."""
+    base = {"duration": 60.0, "shots": [], "audio": {"sfx": [{"sound": "s", "start": 1.0, "end": 2.0, "gain_db": -18}] * 5, "beds": [], "music": []}}
+    loud = copy.deepcopy(base)
+    loud["audio"]["beds"] = [{"sound": "wind", "start": 0, "end": 60, "gain_db": -13}]
+    assert any(f["rule"] == "AL-04" for f in L.check(loud))
+    quiet = copy.deepcopy(base)
+    quiet["audio"]["beds"] = [{"sound": "wind", "start": 0, "end": 60, "gain_db": -15}]
+    assert not any(f["rule"] == "AL-04" for f in L.check(quiet))
+
+
+def _short(i, style, words, hook="Could they survive the night?"):
+    body = " ".join(["word"] * words) + "."
+    return {"id": f"SH{i:02d}", "hook": hook, "style": style, "ending": "pointer",
+            "lines": [{"text": hook}, {"text": body}, {"text": "Full story on the channel."}],
+            "shots": [{"at": "Could", "picture": "valley", "crop_x": 0.5}, {"at": "night", "picture": "fire", "crop_x": 0.5}]}
+
+
+def test_shorts_set_spans_two_length_bands_and_hooks_cut_early():
+    """SS-06..SS-08 (D-49): one band only, a first cut outside the hook, and a slow cut rate are REVIEWs; a set that does it is clean."""
+    styles = ["fact_bomb", "pov_you", "dialogue_clash", "loop", "countdown_hud", "would_you"]
+    d = mini()
+    d["shorts"] = [_short(i + 1, st, 60, hook=f"Could they survive night {i + 1}?") for i, st in enumerate(styles)]  # all ~25 s
+    found = [f["detail"] for f in V.check_script(d) if f["rule"] == "PV-34"]
+    assert any("SS-06" in x for x in found)
+    assert any("SS-08" in x for x in found)  # 2 shots in ~25 s
+    assert not any("SS-07" in x for x in found)  # the second shot starts on "night", a hook word
+    d["shorts"][0]["shots"][1]["at"] = "word"
+    assert any("SS-07" in f["detail"] and f["where"] == "SH01" for f in V.check_script(d) if f["rule"] == "PV-34")
+    for i in range(3):  # three Shorts into the 45-75 s band, with enough events
+        sh = d["shorts"][i]
+        sh["lines"][1]["text"] = " ".join(["word"] * 130) + "."
+        sh["shots"] = [{"at": "Could", "picture": "valley", "crop_x": 0.5}, {"at": "night", "picture": "fire", "crop_x": 0.5,
+                       "accents": [{"kind": "pop_text", "text": "Two.", "at": "night"}]}] + [
+                       {"at": "word", "picture": "valley", "crop_x": 0.5, "bubbles": [{"at": "word", "speaker": "newton", "text": "Hm."}]}] * 12
+    d["shorts"][0]["shots"][1]["at"] = "night"
+    for sh in d["shorts"][3:]:
+        sh["shots"] += [{"at": "word", "picture": "valley", "crop_x": 0.5}] * 6
+    found = [f["detail"] for f in V.check_script(d) if f["rule"] == "PV-34"]
+    assert not [x for x in found if "SS-06" in x or "SS-07" in x or "SS-08" in x], found
+
+
+def test_stacked_questions_outside_a_loop_are_flagged():
+    """ST-11 (D-49): three questions in a segment that opens no loop are stacked, not answered."""
+    d = storied()
+    seg = d["segments"][1]
+    seg["drama"].pop("opens", None)
+    seg["lines"] = [{"text": "Who lit it?"}, {"text": "Why now?"}, {"text": "And who pays?"}] + seg["lines"]
+    assert any(f["rule"] == "ST-11" and f["where"] == seg["id"] for f in SL.lint(d))
+    seg["drama"]["opens"] = [d["drama"]["loops"][0]["id"]]
+    assert not any(f["rule"] == "ST-11" for f in SL.lint(d))

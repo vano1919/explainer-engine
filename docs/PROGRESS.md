@@ -462,3 +462,14 @@ A 640x360 test render of the mini script drew punch, pop text and whip (836/836 
 before (gitignored sound files absent in a fresh clone); docs_lint 0. Nothing paid, no voice or picture generated.
 Creator decided (2026-10-19): `anti_intuition` and `pov_you` Shorts may open with one statement (SS-05, PV-28). Open: decision numbers from D-45 on are used differently on the
 `ccr-0d2b1961` branch.
+
+## 2026-10-19 — Parameter audit (D-49): every rule checked against studies, standards and official pages
+
+The creator asked whether each parameter (pace, cut rate, "5 s", tags, sound levels, Shorts rules) matches the best videos and real
+evidence, and to change what evidence contradicts. Three research workers collected 60+ sources (peer-reviewed studies and
+meta-analyses, EBU/Netflix/AES standards, YouTube and ElevenLabs official pages, two 100k-scale Shorts datasets); vidIQ measured the
+creator's own channel (5 Shorts: 1.4 changes every 10 s, a still held 4-8 s, likes per view 0.4-1.0 % against a 1.7 % median for the
+size; Studio analytics still empty, read after 10-21). Report: `docs/research/PARAMETER_AUDIT_2026-10-19.md` (verdict per rule, the
+Shorts styles stage by stage, Episode 1's Shorts against the rules). Changed: pace 170 wpm; DW-07, DW-09, DW-10, ST-11, PF-03, AL-04;
+`accents.text_hold` (P-71); SS-06..SS-08 in PV-34; ST-11 in `story_lint`. Kept as hypotheses: MO-01 5 s, AL-02, P-05, UR-11, ED-05.
+vidIQ 45 credits (155 of the 200 allowance; stop at 160). Tests and docs_lint below. Nothing paid beyond vidIQ.

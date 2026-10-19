@@ -34,6 +34,8 @@ REAL_PERSON_VOICE = re.compile(r"\b(sound(s|ing)? like|in the voice of|imitat\w*
 NAME_LIKE = re.compile(r"\b[A-Z][a-z]+ [A-Z][a-z]+\b")
 POINTER = re.compile(r"\b(full (story|video|episode)|whole (story|video)|on the channel|the video|this episode|watch)\b", re.I)
 DUP_SIMILAR = 0.97
+SHORT_WPM = 170  # heard pace of a Short read (P-52, D-49)
+SHORT_EVENTS_PER_10S = 3  # SS-08: observed 3-6 in breakout Shorts (vidIQ 2026-10-19), 1.4 in Episode 1's
 STATEMENT_HOOK_STYLES = {"anti_intuition", "pov_you"}  # may open with one statement instead of a question (SS-05)
 
 
@@ -357,6 +359,26 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             _f(out, "PV-34", sh["id"], "a loop ending must run into the first line (shared words or an unfinished last line) (SS-04)", "REVIEW")
         if end == "pointer" and not POINTER.search(last):
             _f(out, "PV-34", sh["id"], "ending 'pointer' but the last line does not point to the video (SS-04)", "REVIEW")
+    # PV-34 continued (D-49): two length bands, the first cut inside the hook, enough visual events (SS-06..SS-08)
+    def _short_seconds(sh):
+        return sum(len(x["text"].split()) for x in sh["lines"]) / SHORT_WPM * 60
+    if len(shorts) >= 6:
+        secs = [_short_seconds(sh) for sh in shorts]
+        short_band, long_band = sum(s <= 32 for s in secs), sum(s >= 42 for s in secs)
+        if short_band < 3 or long_band < 3:
+            _f(out, "PV-34", "shorts", f"{short_band} Short(s) of 15-30 s and {long_band} of 45-75 s (estimated at {SHORT_WPM} wpm): "
+               "a set spans both bands, at least 3 each, so the channel's own data decides the length (SS-06)", "REVIEW")
+    for sh in shorts:
+        hook_words = content_words(sh["hook"])
+        shots = sh.get("shots", [])
+        if len(shots) >= 2 and not content_words(shots[1].get("at", "")) & hook_words:
+            _f(out, "PV-34", sh["id"], "the first cut is not inside the hook line: the second shot starts on a word of the hook "
+               "(about 2 s in), the first still never holds past it (SS-07)", "REVIEW")
+        secs = _short_seconds(sh)
+        events = len(shots) + sum(len(x.get("accents", [])) + len(x.get("bubbles", [])) for x in shots)
+        if secs >= 10 and events / secs * 10 < SHORT_EVENTS_PER_10S:
+            _f(out, "PV-34", sh["id"], f"{events / secs * 10:.1f} visual events every 10 s (shots + accents + bubbles): "
+               f"the breakouts show 3-6, ours showed 1.4; plan at least {SHORT_EVENTS_PER_10S} (SS-08)", "REVIEW")
     # PV-33 the story layer (ST rules, scripting/story_lint.py)
     for f in story_lint.lint(doc):
         _f(out, "PV-33 " + f["rule"], f["where"], f["detail"], f["severity"])

@@ -11,7 +11,9 @@ The creator's notes of 2026-10-19:
 - Each video gets 10 Shorts in different styles that promote it.
 
 This document is the canonical home of the ST, DW, PF, MO, AL, VC and SS rules. The research behind them is in
-[research/STORY_EDIT_VOICE_2026-10-19.md](research/STORY_EDIT_VOICE_2026-10-19.md). The procedure is the skill
+[research/STORY_EDIT_VOICE_2026-10-19.md](research/STORY_EDIT_VOICE_2026-10-19.md); every parameter was then checked
+against studies, standards and official pages in [research/PARAMETER_AUDIT_2026-10-19.md](research/PARAMETER_AUDIT_2026-10-19.md)
+(D-49), which says per rule whether it holds, changed, or stays a hypothesis. The procedure is the skill
 `story-engine`, and each stage is an agent in `.claude/agents/`. The fields live in
 [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md) (`drama`, `accents`, Short `style` and `ending`, `cast.<id>.voice.traits`),
 and the checks are PV-33..PV-36 there.
@@ -49,6 +51,7 @@ The story layer is written before any line (stage 1). It is checked by `scriptin
 | ST-08 | **Human needs.** At least 3 needs are named and each is served by a segment. The needs are curiosity, stakes, humour, wonder, fear, identity, justice, belonging, competence and surprise. | REVIEW |
 | ST-09 | **Objectivity is labelled.** Every segment is `fact`, `reasoned` or `invented` (`claim_share`). Invention is never the majority. A segment labelled fact must carry claim ids, or it is a FAIL. The narrator says aloud which parts are guesses ("in our story", "we can only guess"). | REVIEW / FAIL |
 | ST-10 | **The ending pays the promise.** It has a named kind: twist, reversal, bookend, callback or open question. | REVIEW |
+| ST-11 | **A question is answered within seconds unless it is a declared loop** (D-49). The curiosity a question opens boosts memory for what follows in the next 2-4 s and is gone by 6-8 s (Murphy 2020), so an undeclared question gets its answer at once; only `drama.loops` stay open. The hook names what the viewer already knows and what they do not: a partial gap pulls harder than a total mystery (Frede 2026). Three or more questions in a segment that opens no loop are stacked, not answered. | REVIEW |
 
 ### Beat grid for an 8-12 minute what-if
 
@@ -85,7 +88,9 @@ Stage 2 writes the dialogue one segment per call.
 | DW-04 | **Subtext over statement.** Heroes do not announce their feelings. The narrator explains only what the heroes cannot know. |
 | DW-05 | **A reaction after every reveal.** A short line, an interjection or a beat of silence, before the next information. |
 | DW-06 | **Short spoken turns.** Mostly 4-12 words, at most 3 sentences a turn, with contractions. A turn longer than 25 words is split or given to the narrator. |
-| DW-07 | **Humour from situation and character, never from a false fact.** A joke never carries a claim. |
+| DW-07 | **Humour from situation and character, never from a false fact.** A joke never carries a claim, and a joke never carries the explanation either (D-49): the fact is said straight, the joke is the reaction to it. Humorous examples woven into the explanation cut recall by 13-17 % in Bolkan 2018; humour beside the content did not. |
+| DW-09 | **One hero is the learner** (D-49). In every scene one speaking hero guesses, gets it wrong and is corrected on the key fact; the viewer learns by watching the correction. That is the dialogue the evidence supports (tutor-tutee observation, Chi 2017 d = 1.08 on transfer; Qian 2024), not two experts bantering. The learner's wrong guess is the "but" of the scene. |
+| DW-10 | **The narrator talks to "you"** (D-49): second person, contractions, a direct question to the viewer about once a minute (N-06). Conversational style: d = 0.79 in Mayer's tests, transfer d = 0.54 in the Ginns 2013 meta-analysis. |
 | DW-08 | **No info-dump in a mouth.** A number belongs to the narrator or a data visual (ED-10), unless the hero's want is to argue it. At most one number per turn. |
 
 ## Performance (PF)
@@ -96,7 +101,7 @@ Stage 3 writes the delivery only. The words are frozen, and `stage_guard perform
 |---|---|
 | PF-01 | **Tags follow the speaker's temperament** (`cast.<id>.voice.traits.temperament`). There are at most 2 tags a line, and none on a line that reads well flat (rules EL in skill `elevenlabs-voice`). |
 | PF-02 | **One stressed word a line,** usually the last content word or the operative word the picture lands on. |
-| PF-03 | **Pauses carry the story:** before a reveal (0.4-0.8 s), after a punchline (0.3-0.6 s), never inside a name or number. |
+| PF-03 | **Pauses carry the story:** about 0.5 s before a reveal (the one pause length with measured comprehension gain, Van Loon 2000), never inside a name or number. A pause after a punchline is a style choice: the one study of joke performances found no evidence that punchlines are preceded or followed by pauses (Attardo 2011). |
 | PF-04 | **Interjections are reactions,** prepended only from the guard's list (oh, hmm, well, wait, huh, uh-oh...). There is at most one in five lines a speaker, and never on the narrator's factual lines. |
 | PF-05 | **Emotion arcs with the story:** the crisis line is quieter, not louder. The climax is the most energetic segment. |
 
@@ -113,7 +118,7 @@ Rate alone does not cure a slideshow. Variety does: different kinds of event, an
 
 | ID | Rule (all REVIEW) |
 |---|---|
-| MO-01 | **No dead air.** At most 5 s without a visual event. The research gives 3-10 s depending on the source; 5 s is our midpoint for an 8-12 min video. |
+| MO-01 | **No dead air.** At most 5 s without a visual event. A hypothesis (D-49): cuts and motion do raise attention and memory (Lang 2000) and film shot lengths fell under 4 s after 2000 (Cutting 2011), but no study fixes a number for explainers and the "3-5 s" and "5-10 s" blog rules have no data; our own retention curves adjust it. |
 | MO-02 | **Variety.** Every 60 s window holds at least 3 kinds of event. |
 | MO-03 | **No plain runs.** At most 4 shots in a row that are only a camera move (no accent, bubble or visual). |
 | MO-04 | **Hard entries are motivated.** `whip_in` and `flash_in` go only on a segment's first shot (a story turn), and at least 45 s apart. This amends ED-04: they mark a turn, they are not a style. |
@@ -147,7 +152,7 @@ Stage 4 also plans the sound. `audio/layers.py` checks it as PV-36. ED-03 (one m
 | AL-01 | **Few layers at once.** At most 2 effects overlap. Voice, music, bed and effects together stay at most 4 layers. |
 | AL-02 | **Enough sound, not clutter.** 4-20 effects a minute. Below 4, the motion is silent (Episode 1 had 1.2). Above 20, it is clutter. |
 | AL-03 | **Every hard move is heard.** A whip, flash, slam, shake or punch has an effect within 0.25 s. |
-| AL-04 | **Under the voice.** Effects are at most -8 dB and beds at most -12 dB before ducking. Music ducks well under speech and rises in pauses. |
+| AL-04 | **Under the voice.** Effects are at most -8 dB and beds at most -15 dB before ducking (D-49: listeners prefer commentary at least 10 LU over music and 15 LU over ambience, Torcoli 2019; foreground effects within 4-5 LU of dialogue, EBU Tech 3343, Netflix). Music ducks well under speech and rises in pauses. |
 
 ## Voice casting (VC)
 
@@ -168,11 +173,17 @@ Stage 6 writes the Shorts, checked by PV-34 and, as before, PV-28 / SH rules.
 |---|---|
 | SS-01 | **A set of 10 uses at least 6 styles.** A set of 5 or more uses at least min(6, max(3, 60 % of the set)). |
 | SS-02 | **Alternate styles in posting order.** Two Shorts in a row never share a style. |
-| SS-03 | **Every Short is a moment of the video, re-cut, not a summary.** The long video's exact title is said aloud or shown, and the related-video link (shown under the channel handle; a public or unlisted video of our own channel) is set in Studio by hand at upload. |
+| SS-03 | **Every Short is a moment of the video, re-cut, not a summary.** The long video's exact title is said aloud or shown, and the related-video link (shown under the channel handle; a public or unlisted video of our own channel) is set in Studio by hand at upload. The set is posted within three days of the video (weak evidence, one channel's data; D-49). |
 | SS-05 | **A statement hook for two styles** (creator, 2026-10-19): `anti_intuition` and `pov_you` may open with one statement of at most 14 words ("Don't go to the lifeboats.", "You wake up in 1347.") instead of a question; every other style keeps SH-01's question. Checked by PV-28. |
+| SS-06 | **Two length bands** (D-49). A set of six or more has at least three Shorts of 15-30 s and three of 45-75 s. Views per Short peak at 11-30 s in a 108k-Short analysis, while interaction is about twice as high at 30-90 s and the animated what-if breakouts run 38-100 s; YouTube says no length is favoured. The channel's own viewed-vs-swiped numbers decide. Checked by PV-34 on the estimated read. |
+| SS-07 | **The hook is on frame 0 and the first cut lands inside it** (D-49). The hook's key words are on screen from the first frame (99.9 % of Shorts views come from the feed, so the first frame is the thumbnail) and the second shot starts on a word of the hook line, about 2 s in; a still never holds through the hook. Episode 1's Shorts held one still 4-8 s and completed the hook at 2.5-3.5 s. Checked by PV-34. |
+| SS-08 | **At least 3 visual events every 10 s** (cuts, reframes, accents, text pops, HUD ticks). A hypothesis from observation (D-49): the breakout Shorts watched showed 3-6, Episode 1's 1.4. Checked by PV-34 on the estimated read. |
 | SS-04 | **The ending has a kind:** cliffhanger, loop (the last line runs into the first), question, or pointer (the last line points to the video). |
 
 ### Style catalog
+
+The stage-by-stage recipe of each style (frame 0, the hook, the body, text and HUD, sound, ending, length band) is in
+[research/PARAMETER_AUDIT_2026-10-19.md](research/PARAMETER_AUDIT_2026-10-19.md) section 6 and in the skill `shorts-for-video`.
 
 | style | Shape | Typical ending |
 |---|---|---|

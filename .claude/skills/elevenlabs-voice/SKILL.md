@@ -32,7 +32,7 @@ short, similar chunks and from keeping what was already good.
 | EL-09 | **Do not pay twice for the same words.** A Short's script is written for the Short (SH-02), but any line that already exists in the main read is cut out of it (inside pauses, UR-12; `words.json` gives the times) instead of being read again. PV-28 reports a Short whose new text passes 400 characters (REVIEW). |
 | EL-10 | **Estimate, then call once.** `estimate_only` first, record it in the ledger, then one generation per chunk with `generations_count: 1`. Never repeat a call to "retry" (it charges again). Max 3 failures per chunk (OR-04). |
 | EL-11 | **Download immediately** (links expire, 7200 s) and re-poll the status for fresh links if they did; write each chunk to disk and into the ledger as soon as it is paid (OR-03). |
-| EL-12 | **Check every chunk when it arrives, before the next is paid.** Loudness within 1.5 dB of the others (ED-01), no clipped start/end, words match the script (coverage), timbre within the drift check (`audio/voice_check`), reading speed 140-175 wpm. A bad first chunk stops the batch. |
+| EL-12 | **Check every chunk when it arrives, before the next is paid.** Loudness within 1.5 dB of the others (ED-01), no clipped start/end, words match the script (coverage), timbre within the drift check (`audio/voice_check`), reading speed 155-185 wpm (target 170, P-52). A bad first chunk stops the batch. |
 
 ## Pre-flight (all free, before a paid call)
 

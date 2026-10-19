@@ -19,6 +19,7 @@ import sys
 from pathlib import Path
 
 MIN_NEEDS = 3
+MAX_UNANSWERED_QUESTIONS = 3  # ST-11 (D-49)
 MAX_AND_THEN_SHARE = 0.0
 TURN_FUNCS = {"reversal", "midpoint", "crisis", "twist", "climax"}
 OPENERS = {"cold_open", "hook"}
@@ -137,6 +138,12 @@ def lint(doc: dict) -> list[dict]:
     for i, (sid, d) in enumerate(sd):
         if d and d.get("claim_share") == "fact" and not any(ln.get("claims") for ln in segs[i].get("lines", [])):
             _f(out, "ST-09", sid, "labelled fact but no line carries a claim id", "FAIL")
+    # ST-11 a question outside a declared loop is answered within seconds (the curiosity boost fades in 6-8 s);
+    # three or more questions in one segment that opens no loop are stacked, not answered
+    for i, (sid, d) in enumerate(sd):
+        qs = sum(1 for ln in segs[i].get("lines", []) if ln["text"].rstrip().endswith("?"))
+        if qs >= MAX_UNANSWERED_QUESTIONS and not (d or {}).get("opens"):
+            _f(out, "ST-11", sid, f"{qs} questions in one segment that opens no loop: answer each within a few seconds or declare the loop")
     # ST-10 the ending pays the promise
     end = drama.get("ending")
     if not end:

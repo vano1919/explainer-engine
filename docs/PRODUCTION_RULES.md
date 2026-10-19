@@ -32,7 +32,7 @@ action. Gates 3-7 spend money and need the creator's yes first.
 |---|---|---|---|
 | 0 | **Topic and claims** | research dossier, claim map, rights check; the creator approves the script (approval #1) | [SCRIPTING_SPEC](SCRIPTING_SPEC.md) §1-5, crossover skill, `rights/ip_check.py` |
 | 1 | **Script for the ear** | hook is a yes/no question by 5 s; short sentences; one stress word; open loop at every beat end; interjections where a person would say them; named heroes with archetype lines; humour from the situation; `narration_tts.txt` + plain `narration.txt` | skill `narration-script`, `scripting/narration_lint.py` 0 FAIL |
-| 2 | **Voice test read** | first 45-60 s only (estimate first), the creator listens; then the full read, pace 155-175 wpm | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) (D-39), `audio/scribe_words.py`, `audio/pause_pad.py` |
+| 2 | **Voice test read** | first 45-60 s only (estimate first), the creator listens; then the full read, pace 160-185 wpm (target 170, P-52) | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) (D-39), `audio/scribe_words.py`, `audio/pause_pad.py` |
 | 3 | **Shot plan** | every shot has `stakes`, type A/B/C in rhythm, named heroes with emotional poses in every B, friction per beat, palette and one emotion per shot, figure style on every person/hand prompt, plates without people; cuts placed by the solver inside punctuated pauses | skill `shot-visuals`, [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) UR-01..UR-22, `edit/shot_rules.check_shots` 0 FAIL |
 | 4 | **Style bridge** | 6 test pictures, a sprite and a pod-painted hand and crowd in one frame, approved once per episode | UR-22, `look.style_bridge.approved` |
 | 5 | **Sprites** | every hero and pose of the plan exists (sprite bank), keyed and graded | `sprite_needs.md`, `look.pose_bank`, [ASSET_SYSTEM](ASSET_SYSTEM.md) |
@@ -88,7 +88,7 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 
 | | 8 min | 10 min | 12 min | Source |
 |---|---|---|---|---|
-| words at 165 wpm | about 1,320 | about 1,650 | about 1,980 | v3/v4 test reads 155-168 wpm; the first read was 140 |
+| words at 170 wpm | about 1,360 | about 1,700 | about 2,040 | v3/v4 test reads 155-168 wpm; the first read was 140; target raised to 170 by D-49 |
 | shots at 3.85 s | about 125 | about 155 | about 187 | Day 1: 46 shots in 177 s |
 | unique pictures at 0.85 per shot | about 115 | about 140 | about 170 | Day 1: 42 pictures for 46 shots |
 | pod time at 22.7 s per picture | about 45 min | about 55 min | about 65 min | 35 pictures in 793 s on an RTX 4090 |
@@ -118,7 +118,7 @@ and charged 998 on 2026-10-16; sound effects were estimated at 55 and charged 17
 
 | # | Check | What is measured or looked at |
 |---|---|---|
-| 1 | Narration tone and its sync with the video | words per minute (155-175), every cut inside a punctuated pause (UR-12), questions per minute; the creator listens for tone, stress and question intonation |
+| 1 | Narration tone and its sync with the video | words per minute (160-185, target 170), every cut inside a punctuated pause (UR-12), questions per minute; the creator listens for tone, stress and question intonation |
 | 2 | Sound effects and their sync | no sound event on a spoken word, voice at least 14 dB above bed + music, loudness -16 to -12 LUFS; the creator listens: natural and helpful, not cartoon placeholders |
 | 3 | Pictures fit the topic and its world | the visual judge (adults, no object from the world's `absent` list, no people in plates, one light, mood), 0 FAIL |
 | 4 | Pictures fit the topic's cliché expectations | the era codex `cliches` and screen codes; the creator looks: does it read as the genre the audience knows |

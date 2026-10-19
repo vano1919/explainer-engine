@@ -27,7 +27,8 @@ PUNCH_IN, PUNCH_ZOOM = 0.12, 0.18  # seconds to reach the punch, extra zoom at s
 SHAKE_S, SHAKE_AMP = 0.45, 0.018  # length, amplitude as a share of the frame at strength 1
 WOBBLE_PERIOD, WOBBLE_AMP = 2.4, 0.015
 WHIP_S, FLASH_FRAMES = 0.22, 3
-POP_S, TEXT_HOLD, TEXT_FADE = 0.25, 1.6, 0.15
+POP_S, TEXT_FADE = 0.25, 0.15
+TEXT_HOLD_BASE, TEXT_HOLD_PER_WORD = 1.5, 0.3  # P-71: a label holds 1.5 s + 0.3 s a word (D-49)
 SLAM_S = 0.12
 
 
@@ -43,6 +44,11 @@ def resolve(accents: list[dict], shot_start: float, shot_end: float, word_start,
         out.append({"kind": a["kind"], "start": round(t, 3), "start_frame": int(round(t * fps)),
                     "strength": float(a.get("strength", 0.6)), "text": a.get("text", ""), "pos": a.get("pos", [0.5, 0.2])})
     return out
+
+
+def text_hold(text: str, kind: str = "pop_text") -> float:
+    """Seconds a popped or slammed word stays readable (P-71); a slam holds a little longer."""
+    return TEXT_HOLD_BASE + TEXT_HOLD_PER_WORD * max(1, len(text.split())) + (0.6 if kind == "slam_text" else 0.0)
 
 
 def _ease_out(u: float) -> float:
@@ -121,7 +127,7 @@ def draw(frame: Image.Image, accents: list[dict], f: int, fps: int, f0: int, f1:
             white = Image.new("RGB", frame.size, (255, 252, 244))
             frame = Image.blend(white, frame, (f - f0 + 1) / (FLASH_FRAMES + 1))
         elif k in TEXT and a["text"]:
-            end = min((f1 - a["start_frame"]) / fps, TEXT_HOLD + (0.6 if k == "slam_text" else 0))
+            end = min((f1 - a["start_frame"]) / fps, text_hold(a["text"], k))
             if not 0 <= t < end:
                 continue
             fade = min(1.0, (end - t) / TEXT_FADE)

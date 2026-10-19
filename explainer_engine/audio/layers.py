@@ -7,7 +7,8 @@ music and the tick fighting the voice (ED-03). The rules count what plays at onc
 * AL-01 at most ``MAX_SFX_AT_ONCE`` effects overlap, and voice + music + bed + effects stay at most ``MAX_LAYERS`` layers;
 * AL-02 effects a minute inside ``SFX_PER_MIN`` (too few: the motion is silent; too many: clutter);
 * AL-03 a drawn accent that moves the picture hard (whip, flash, slam, shake, punch) has an effect within 0.25 s;
-* AL-04 effects and beds stay under the voice (gain at most ``MAX_SFX_DB`` / ``MAX_BED_DB`` before the mix's ducking).
+* AL-04 effects and beds stay under the voice (gain at most ``MAX_SFX_DB`` / ``MAX_BED_DB`` before the mix's ducking;
+  the bed cap follows the measured preference for ambience 15 LU under commentary, docs/research/PARAMETER_AUDIT_2026-10-19.md).
 
 All REVIEW: the ear decides; the numbers say where to listen.
 """
@@ -19,7 +20,7 @@ MAX_LAYERS = 4  # voice + music + bed + one effect (a second effect may overlap 
 SFX_PER_MIN = (4.0, 20.0)
 HARD = {"whip_in", "flash_in", "slam_text", "shake", "punch"}
 SYNC = 0.25
-MAX_SFX_DB, MAX_BED_DB = -8.0, -12.0
+MAX_SFX_DB, MAX_BED_DB = -8.0, -15.0  # D-49: listeners want ambience >= 15 LU under commentary (Torcoli 2019)
 
 
 def _active(items: list[dict], t: float) -> int:
