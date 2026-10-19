@@ -60,6 +60,19 @@ section carries more than about five new claims per minute (REVIEW, topic-depend
 >= 3.8. A critical factual gap, weak story logic or a misleading promise stops the pipeline (NEEDS_REVIEW) before any
 storyboard, TTS or render spend. Scores are the reviewer's, with notes, not a model's assertion.
 
+
+## 5.1 Executable source and editorial gate
+
+New production scripts use the optional schema field `editorial` with `version: 1`, `sources[]` and `claims[]`. Each source records its ID, URL, title, publisher, publication date (or null), access date, grade and supporting passage. Each claim records its ID, text, type, source IDs, confidence and uncertainty. Every narration line carries `kind` (`fact`, `analysis`, `speculation`, `joke`, or `transition`). Facts, analysis and speculation must map to claim IDs; factual lines cannot rely on unknown or unverified claims. A factual claim must cite one grade-A source or at least two independent grade-B/C publishers.
+
+Before any paid narration or asset generation, save an independent `editorial_review.json` bound to the exact script bytes by SHA-256. It includes all rubric scores with evidence notes, `critical_blockers`, and `required_revisions`. Run:
+
+```powershell
+.venv\Scripts\python -m explainer_engine.production.editorial_gate <production_script.json> --review <editorial_review.json>
+```
+
+This command is separate from the structural validator; both must pass. Editing the script invalidates the review hash. Existing episode JSON without the new contract is legacy data and remains schema-valid, but it must be migrated before reuse for a new production run.
+
 ## 6. Shorts selection
 Per long-form: (a) adapt a strong section, (b) script a separate Short from the same verified research, or (c) use a
 related standalone angle, chosen by creative and production value. A Short stands alone (independent hook, arc, payoff,

@@ -41,3 +41,13 @@ def test_established_claims_need_a_link_and_numbers_need_a_claim():
     f = found(doc, claims.parse_map(MAP))
     assert ("REVIEW", "C-02") in f and ("REVIEW", "C-01") not in f and ("REVIEW", "C-03") not in f
     assert ("REVIEW", "S01#2") in f
+
+
+def test_the_editorial_contract_is_a_claim_map():
+    from test_editorial_gate import valid_doc
+    d = mini()
+    d["editorial"] = valid_doc()["editorial"]
+    d["segments"][0]["lines"][0]["claims"] = ["C1"]
+    assert not [f for f in claims.check(d, None) if f["severity"] == "FAIL"]
+    d["segments"][0]["lines"][0]["claims"] = ["C9"]
+    assert any("C9" in f["detail"] for f in claims.check(d, None) if f["severity"] == "FAIL")

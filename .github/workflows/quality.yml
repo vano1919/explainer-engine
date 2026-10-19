@@ -1,0 +1,40 @@
+name: Quality checks
+
+on:
+  push:
+    branches:
+      - main
+      - "systemic/**"
+      - "chatgpt/**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg
+      - name: Install project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+      - name: Run non-system tests
+        run: python -m pytest -q -m "not system and not media"
+      - name: Lint documentation
+        run: python -m explainer_engine.docs_lint
+      - name: Check palette rules
+        run: python -m explainer_engine.design.palette

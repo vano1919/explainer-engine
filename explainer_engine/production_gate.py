@@ -56,6 +56,11 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
     fails = [f for f in found if f["severity"] == "FAIL"]
     add(0, "production script", "BLOCKED" if fails else "PASS", f"{_pv.summary(found)} (PV rules)",
         "fix the FAILs: python -m explainer_engine.production validate" if fails else "answer every REVIEW")
+    from .production import editorial_gate as _eg  # 0.5: sources and an independent review bound to this script's hash
+    eg = _eg.check(day / "production_script.json", day / "editorial_review.json")
+    ef = [f for f in eg if f["severity"] == "FAIL"]
+    add(0.5, "editorial quality", "BLOCKED" if ef else "WAIT" if eg else "PASS", f"{len(ef)} FAIL, {len(eg) - len(ef)} REVIEW (EG rules)",
+        "add editorial v1 and editorial_review.json: python -m explainer_engine.production.editorial_gate" if eg else "approved for production")
     lint = narration_lint.lint(_ps.tts_text(doc))
     lf = [f for f in lint if f["severity"] == "FAIL"]
     add(1, "script for the ear", "BLOCKED" if lf else "PASS", f"{len(lf)} FAIL, {len(lint) - len(lf)} REVIEW (narration_lint)",

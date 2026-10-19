@@ -35,9 +35,24 @@ def load_map(script_path: Path | str) -> dict[str, dict] | None:
     return parse_map(p.read_text(encoding="utf-8")) if p.exists() else None
 
 
+def from_editorial(doc: dict) -> dict[str, dict] | None:
+    """The script's own ``editorial`` contract (``production/editorial_gate.py``, EG rules) as a claim map: one home for the
+    claims when a script carries them inline, so PV-37 and the editorial gate read the same list."""
+    ed = doc.get("editorial") or {}
+    if not ed.get("claims"):
+        return None
+    urls = {s.get("id"): s.get("url", "") for s in ed.get("sources") or [] if isinstance(s, dict)}
+    label = {"fact": "E", "estimate": "M", "interpretation": "R", "allegation": "M", "speculation": "G"}
+    return {c["id"]: {"sentence": c.get("text", ""), "label": label.get(c.get("type"), "R"),
+                      "source": " ".join(urls.get(s, "") for s in c.get("source_ids", []))}
+            for c in ed["claims"] if isinstance(c, dict) and c.get("id")}
+
+
 def check(doc: dict, cmap: dict[str, dict] | None) -> list[dict]:
-    """PV-37 findings: [{rule, severity, where, detail}]."""
+    """PV-37 findings: [{rule, severity, where, detail}]. Without ``claim_map.md`` the script's ``editorial`` claims count."""
     out = []
+    if cmap is None:
+        cmap = from_editorial(doc)
 
     def add(where, detail, sev="FAIL"):
         out.append({"rule": "PV-37", "severity": sev, "where": where, "detail": detail})

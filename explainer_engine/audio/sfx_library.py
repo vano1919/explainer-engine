@@ -101,7 +101,7 @@ def find(root: Path, *, tags: list[str] | None = None, category: str | None = No
     return out
 
 
-def validate(root: Path, check_files: bool = True) -> list[str]:
+def validate(root: Path, *, check_files: bool = True) -> list[str]:
     """Manifest problems; with ``check_files`` also every file (present, unchanged, readable). The WAVs are not in git, so a
     clean checkout validates the manifest only (``check_files=False``)."""
     root = Path(root)
@@ -119,8 +119,13 @@ def validate(root: Path, check_files: bool = True) -> list[str]:
         if not check_files:
             continue
         path = root / item["file"]
+        if not item["file"].startswith(item["category"] + "/"):
+            problems.append(f"{item['id']}: file is not under its category folder")
         if not path.exists():
-            problems.append(f"{item['id']}: file missing")
+            if check_files:
+                problems.append(f"{item['id']}: file missing")
+            continue
+        if not check_files:
             continue
         data = path.read_bytes()
         if hashlib.sha256(data).hexdigest() != item["sha256"]:
@@ -132,11 +137,10 @@ def validate(root: Path, check_files: bool = True) -> list[str]:
             problems.append(f"{item['id']}: duration or sample rate differs from the manifest")
         if m["peak_dbfs"] > MAX_PEAK_DBFS:
             problems.append(f"{item['id']}: peak {m['peak_dbfs']} dBFS is above {MAX_PEAK_DBFS}")
-        if not item["file"].startswith(item["category"] + "/"):
-            problems.append(f"{item['id']}: file is not under its category folder")
-    for path in root.rglob("*.wav"):
-        if path.relative_to(root).as_posix() not in {i["file"] for i in manifest["items"]}:
-            problems.append(f"{path.relative_to(root).as_posix()}: not in the manifest")
+    if check_files:
+        for path in root.rglob("*.wav"):
+            if path.relative_to(root).as_posix() not in {i["file"] for i in manifest["items"]}:
+                problems.append(f"{path.relative_to(root).as_posix()}: not in the manifest")
     return problems
 
 

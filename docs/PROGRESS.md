@@ -433,6 +433,20 @@ on a 10 ms fade; word times follow the real quiet spot. Re-run: 131 -> 113 silen
 -42 dB), 18 insertions skipped (no quiet spot). Three cuts that relied on a skipped pause were moved to legal pauses (S18, S31, S32)
 and one reframe added (S31 "Fuel."). Tests: 210 passed. Creator picked speed 1.15.
 
+## 2026-10-18 — ChatGPT repository governance and script editorial gate
+
+- Created isolated branch `chatgpt/repo-management` from `systemic/next-video` at source commit `a1821958c4195953e52261bfb42d9b3351d6aa45`. No write was made to the source branch.
+- Copied the complete contents of `CLAUDE.md` into `CHATGPT.md`, then appended ChatGPT-specific branch, evidence, QA and parallel-production rules. Mirrored all 10 files under `.claude/agents/` and `.claude/skills/` into `.chatgpt/agents/` and `.chatgpt/skills/`; the original Claude files remain unchanged.
+- Added `.chatgpt/rules/repo-maintenance.md`, `.chatgpt/rules/script-and-video-quality.md`, `.chatgpt/agents/chatgpt-orchestrator.md`, `.chatgpt/README.md`, and `docs/CHATGPT_WORKFLOW.md`.
+- Added optional `editorial.version=1` source/claim schema fields and narration-line `kind` while keeping legacy scripts schema-valid.
+- Added `explainer_engine/production/editorial_gate.py` and seven focused regression tests. The gate validates source passages, claim references, source support for factual lines, rubric thresholds, review blockers and a SHA-256 binding between a script and its independent review.
+- Wired the new gate into `production_gate.py` and the paid image CLI `production.paint`; estimate-only and collection of already-paid batches remain available without a new editorial pass. Documented OR-10 plus the pre-spend script gate in `docs/ORCHESTRATION.md`, `docs/SCRIPTING_SPEC.md` and `docs/PRODUCTION_RULES.md`.
+- Added a separate `.chatgpt/agents/editorial-critic.md` and `.chatgpt/skills/editorial-critic/SKILL.md`. The critic scores from the existing rubric, records concrete evidence, and cannot edit the script; its report is hash-bound. Independence is operational, not cryptographically proven.
+- Added `.github/workflows/quality.yml` for non-system pytest, docs lint and palette checks. At commit `65c15cd8be310892e8e2f73fe8983621d47f0b17`, GitHub Actions passed: 220 tests passed, 1 media test deselected, docs lint reported 0 findings and palette validation succeeded.
+- Reconciled current-state notes in `docs/RENDERING_ARCHITECTURE.md`, `docs/PIPELINE_ARCHITECTURE.md`, `docs/IMPLEMENTATION_PLAN.md`, `README.md` and `docs/INDEX.md`: the current renderer is Python/NumPy/PIL/FFmpeg, and the planned `python -m explainer_engine run ...` DAG coordinator is not implemented yet.
+- The focused editorial-gate tests and non-media repository tests were executed by GitHub Actions; all passed in the successful run above. The full-media checksum test is deliberately excluded from clean-checkout CI because `.wav` assets are intentionally gitignored; it remains available under the `media` marker for a local media-equipped checkout. The latest docs-only critic-instruction commit triggers another workflow run; its result must be checked separately.
+- CI exposed a real missing-file bug: `Sounds.exists()` treated a manifest entry as available even when its gitignored WAV did not exist. Fixed `Sounds.path()` to return only existing files; split manifest-only validation from full audio-file validation in `sfx_library.validate(check_files=False)` while retaining the full validation mode.
+
 ## 2026-10-17 — The 2K render died three times (10:11, 11:21, 12:04): the machine restarted
 
 Cause (measured, not guessed): after the third death `/proc/uptime` read 97 s and PID 1 had run 27 s - the whole container restarted, so
@@ -513,3 +527,12 @@ shot keeps its picture definition, a shrinking reframe is a pull, a library soun
 costume and judge note come from the world, atomic words/heard/timed writes, the shot-visuals skill no longer uses look v2's child
 cues. Open for the creator: ZMAX 1.25 vs MAX_ZOOM 1.15 (QA_SPECIFICATION); PR #2's D-45/PV-32..36 numbers still collide.
 Tests: 283 passed, 1 skipped (the media test, gitignored WAVs); docs_lint 0. Nothing paid, nothing painted, nothing uploaded.
+
+## 2026-10-19 — Branches gathered on next-video: chunked render (phase-2-spec-pack) and the editorial gate (chatgpt/repo-management)
+
+The creator asked that every open change be on `systemic/next-video` before the next video. Merged `phase-2-spec-pack` (ED-13 chunked,
+resumable render and RULE-R1, the fix for the 2K render that died when the container restarted); its chunk loop now also draws the D-48
+accents. Merged `chatgpt/repo-management` (editorial gate EG, editorial-critic agent, CI workflow, media-aware tests): `paint run`
+refuses without a passing editorial contract and a hash-bound `editorial_review.json`; `production_gate` shows it as gate 0.5; PV-37
+reads the script's `editorial.claims` when no `claim_map.md` exists, so the claims have one list. Tests: 299 passed, 1 skipped;
+docs_lint 0. Still separate: `ccr-0d2b1961-9r63nt` (Syndicate Wars, D-45..D-47 numbers collide).

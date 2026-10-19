@@ -52,6 +52,7 @@ def test_a_production_script_episode_is_gated_on_what_its_flow_writes(tmp_path):
     (tmp_path / "pictures" / "plans").mkdir(parents=True)
     (tmp_path / "pictures" / "plans" / "B1.json").write_text(json.dumps(plan))
     run = Run.open(tmp_path / "run.json", caps={"runpod_usd": 3.0})
-    assert "1 waiting" in G.gates(tmp_path, run_path=tmp_path / "run.json")[5]["detail"]
+    assert "1 waiting" in {r["gate"]: r for r in G.gates(tmp_path, run_path=tmp_path / "run.json")}[5]["detail"]
     run.approve("B1", plan["hash"], by="creator", ref="cmsg_x", provider="pod", usd=plan["estimate_usd"])
-    assert "0 waiting" in G.gates(tmp_path, run_path=tmp_path / "run.json")[5]["detail"]
+    assert "0 waiting" in {r["gate"]: r for r in G.gates(tmp_path, run_path=tmp_path / "run.json")}[5]["detail"]
+    assert {r["gate"]: r for r in G.gates(tmp_path)}[0.5]["status"] == "BLOCKED"  # no editorial contract yet

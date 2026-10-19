@@ -89,6 +89,12 @@ def preflight(plan: dict, doc: dict, dirs: list[Path], run: Run, script_path: Pa
     fails = [f for f in V.check_script(doc, picture_dirs=dirs, claim_map=cmap) if f["severity"] == "FAIL"]
     why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in fails]
     why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in P.check(plan, doc) if f["severity"] == "FAIL"]
+    from explainer_engine.production import editorial_gate as EG  # chatgpt/repo-management: sources + an independent review
+    if script_path:
+        eg = EG.check(script_path, Path(script_path).with_name("editorial_review.json"))
+    else:
+        eg = EG.contract_findings(doc)
+    why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in eg]
     if not run.approved(plan["id"], plan["hash"]):
         why.append(f"PP-02 plan {plan['id']} ({plan['hash']}) has no approval in {run.path}: ask the creator, then `paint approve`")
     return why

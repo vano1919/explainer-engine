@@ -11,6 +11,7 @@ from explainer_engine.imagegen import plan as P
 from explainer_engine.production import paint
 from explainer_engine.production import validate as V
 from explainer_engine.production import script as S
+from test_editorial_gate import valid_doc, valid_review
 from test_production_script import compiled, mini
 
 PNG = b"\x89PNG fake"
@@ -29,8 +30,14 @@ def episode(tmp_path, monkeypatch):
     doc["episode"]["gemini_exception"] = {"decision": "D-44", "cap_usd": 6.0}
     for name in ("camp", "valley", "duo"):
         Image.new("RGB", (16, 9)).save(tmp_path / f"{name}.png")
+    doc["editorial"] = valid_doc()["editorial"]  # the editorial gate (EG) passes: sources and a hash-bound review
+    for seg in doc["segments"]:
+        for ln in seg["lines"]:
+            ln["kind"] = "transition"
+    doc["segments"][0]["lines"][0].update(kind="fact", claims=["C1"])
     script = tmp_path / "production_script.json"
     S.save(doc, script)
+    (tmp_path / "editorial_review.json").write_text(json.dumps(valid_review(script)))
     calls = []
 
     def post(self, model, body):
