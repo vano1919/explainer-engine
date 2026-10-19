@@ -284,3 +284,37 @@ def test_stage_guard_ownership_of_story_cast_and_shorts():
     s = copy.deepcopy(before)
     s["segments"] = s["segments"][::-1]
     assert G.violations("writer", before, s)
+
+
+# --- sound layers (AL) ---------------------------------------------------------------------------------------------------
+
+from explainer_engine.audio import layers as L  # noqa: E402
+
+
+def test_sound_layers_count_noise_and_silent_motion():
+    shots = [_shot(1, 0, 60, "a", [{"kind": "slam_text", "start": 10.0}, {"kind": "punch", "start": 30.0}])]
+    sfx = [{"sound": f"s{i}", "start": 30.0 + i * 0.1, "end": 31.0, "gain_db": -18} for i in range(3)]
+    timed = {"duration": 60.0, "shots": shots, "audio": {"sfx": sfx, "beds": [{"sound": "wind", "start": 0, "end": 60, "gain_db": -6}],
+                                                          "music": [{"track": "m", "start": 0, "end": 60}]}}
+    rules = [f["rule"] for f in L.check(timed)]
+    assert "AL-01" in rules  # three effects at once
+    assert "AL-02" in rules  # 3 a minute: too few
+    assert rules.count("AL-03") == 1  # the slam at 10 s is silent; the punch at 30 s has its hit
+    assert "AL-04" in rules  # a bed at -6 dB
+    quiet = {"duration": 60.0, "shots": [_shot(1, 0, 60, "a")],
+             "audio": {"sfx": [{"sound": f"s{i}", "start": i * 6.0, "end": i * 6.0 + 0.5} for i in range(10)], "beds": [], "music": []}}
+    assert L.check(quiet) == []
+
+
+def test_story_engine_doc_defines_every_rule_the_code_uses():
+    """Every ST/MO/AL/VC/SS/DW rule id named in the code has a row in its one home, docs/STORY_ENGINE.md (D-48)."""
+    import re
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2]
+    used = set()
+    for p in list((root / "explainer_engine").rglob("*.py")) + list((root / ".claude").rglob("*.md")):
+        used |= set(re.findall(r"\b(?:ST|DW|PF|MO|AL|VC|SS)-\d\d\b", p.read_text(encoding="utf-8")))
+    doc = (root / "docs" / "STORY_ENGINE.md").read_text(encoding="utf-8")
+    defined = set(re.findall(r"^\| ((?:ST|DW|PF|MO|AL|VC|SS)-\d\d) \|", doc, flags=re.M))
+    assert used, "no rule ids found"
+    assert used <= defined, sorted(used - defined)

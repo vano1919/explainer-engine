@@ -20,3 +20,9 @@ Rules: `docs/ORCHESTRATION.md` SH-01..SH-04. A Short is a trailer with its own t
 7. Captions: English, large, inside the safe area; no text over faces.
 8. A set (up to 10 for one video): each Short its own scene and question, no body line or most pictures shared with
    another Short (SH-05, PV-28). A voiced dialogue line keeps its `speaker` (D-45).
+9. Styles (D-48, `docs/STORY_ENGINE.md` SS-01..SS-04, PV-34): each Short has a `style` from the catalog (cold_open_cliffhanger,
+   anti_intuition, countdown_hud, dialogue_clash, fact_bomb, pov_you, myth_buster, ranked_three, loop, would_you) and an
+   `ending` (cliffhanger, loop, question, pointer); 10 Shorts use at least 6 styles, never the same style twice in a row.
+   Tricks: on-screen text with the hook in 0-3 s, 3-6 changes every 10 s, word-highlight captions, a HUD counter for steps,
+   a sound on every pop, the long video's exact title said aloud; related-video link and pinned comment are set at upload
+   by hand. The agent `shorts-writer` writes the set.

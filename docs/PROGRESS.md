@@ -446,3 +446,19 @@ with their voice id (`script.tts_chunks`), PV-32, `voice_check.check_speakers` u
 PV-28 set checks (same hook FAIL; shared body line, half the pictures shared, last line not pointing to the video REVIEW), SH-05.
 Narrator-only scripts chunk and check exactly as before (Day 1 chunks unchanged, Episode 1 Shorts pass SH-05). Tests: 218 passed,
 2 fail as before this change (gitignored sound files absent in a fresh clone); docs_lint 0. Nothing paid, nothing rendered.
+
+## 2026-10-19 — Story engine (D-48): writers' room, motion accents, sound layers, voice casting, Shorts styles
+
+Creator's note after Episode 1: the story was less interesting than it could be, the edit was slow and static, the sound must not
+turn into noise, voices should be cast from the hero's character, 10 Shorts in different styles, and a Sonnet-run agent system that
+keeps the whole text. Measured Episode 1 first (`docs/STORY_ENGINE.md`): 217 shots, all pushes/pans and cuts, 4 % of shots with
+anything moving, 1.2 effects a minute. Research: vidIQ (comment insights, 2 long-form and 3 Shorts watches, 110 credits,
+245 -> 135) and a web research run with adversarial verification
+([report](research/STORY_EDIT_VOICE_2026-10-19.md)). Added: schema `drama` (story layer), shot `accents`, Short `style`/`ending`,
+`cast.<id>.voice.traits`; `scripting/story_lint.py` (ST, PV-33), `production/accents.py` (seven accents drawn in `assemble`, timed to
+words by `timing`), `edit/motion_lint.py` (MO, PV-35), `audio/layers.py` (AL, PV-36), `audio/casting.py` (VC, PV-10/PV-32 checks),
+PV-34 (Shorts styles), `scripting/stage_guard.py`; seven stage agents and the skill `story-engine`; ED-04 amended (MO-04).
+A 640x360 test render of the mini script drew punch, pop text and whip (836/836 frames). Tests: 237 passed, the same 2 fail as
+before (gitignored sound files absent in a fresh clone); docs_lint 0. Nothing paid, no voice or picture generated.
+Open for the creator: may some Short styles open with a statement instead of PV-28's question; decision numbers from D-45 on are used differently on the
+`ccr-0d2b1961` branch.

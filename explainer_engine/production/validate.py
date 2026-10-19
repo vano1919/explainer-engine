@@ -16,7 +16,7 @@ import difflib
 import re
 from pathlib import Path
 
-from explainer_engine.audio import casting
+from explainer_engine.audio import casting, layers
 from explainer_engine.edit import board as B
 from explainer_engine.edit import motion_lint
 from explainer_engine.production import compile as C
@@ -370,6 +370,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             out.append(f)
         for f in motion_lint.check(timed):  # MO rules on the estimated read (REVIEW)
             out.append(dict(f, rule="PV-35 " + f["rule"], detail=f["detail"] + " (estimated read)"))
+        for f in layers.check(timed):  # AL rules on the estimated read (REVIEW)
+            out.append(dict(f, rule="PV-36 " + f["rule"], detail=f["detail"] + " (estimated read)"))
     return out
 
 
@@ -433,6 +435,7 @@ def check_timed(timed: dict, doc: dict, *, final: bool = False, picture_dirs: li
     out += continuity.findings(shots)
     out += music_findings(timed["audio"]["music"])
     out += [dict(f, rule="PV-35 " + f["rule"]) for f in motion_lint.check(timed)]  # MO rules (D-48)
+    out += [dict(f, rule="PV-36 " + f["rule"]) for f in layers.check(timed)]  # AL rules (D-48)
     for pid in {s["picture"] for s in shots}:
         p = timed["pictures"].get(pid, {})
         have = p.get("file") and (not picture_dirs or any((Path(d) / p["file"]).exists() for d in picture_dirs))

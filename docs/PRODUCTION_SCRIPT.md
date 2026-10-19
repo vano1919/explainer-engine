@@ -20,8 +20,9 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 * `episode`, `voice` (provider, model, style words, pace range, tags; **never a real person's name to imitate** (PV-10); candidates for the test read),
   `world` (D-41 world spec), `look`, `cast` (hero names, hero card, props), `story` (events with their phrase, forbidden props),
   `library` (pictures that already exist), `music`, `sound_dirs`, `picture_dirs`.
-* `segments[]` (S01..): `lines[]` (text, tags, tone, emotion, one emphasised word, `pause_after`, claims, optional `speaker` = a cast id read in that hero's own `cast.<id>.voice`, D-45), `shots[]` (phrase `at`, type A/B/C,
-  picture id or inline picture with `subject`/`engine`/`refs`/`edit`/`heroes`/`shows`/`props`/`speakers`, motion, bubbles), `audio` (`beds`, `sfx` on phrases).
+* `drama` (D-48): premise, dramatic question, promise, needs, arcs, loops (L01..), set-ups (P01..), ending kind; `cast.<id>.voice.traits` (gender, age, temperament, energy, origin, role, real_person, documented) for casting (VC-01).
+* `segments[]` (S01..): `drama` (function, turn, stakes, shift, need, opens, closes, claim_share), `lines[]` (text, tags, tone, emotion, one emphasised word, `pause_after`, claims, optional `speaker` = a cast id read in that hero's own `cast.<id>.voice`, D-45), `shots[]` (phrase `at`, type A/B/C,
+  `accents` (punch, shake, whip_in, flash_in, pop_text, slam_text, wobble on a phrase), picture id or inline picture with `subject`/`engine`/`refs`/`edit`/`heroes`/`shows`/`props`/`speakers`, motion, bubbles), `audio` (`beds`, `sfx` on phrases).
 * Engines: `existing` (a file), `gemini` (D-41 prompt, channel style refs), `pod_ref` (RunPod Qwen-Image-Edit from Gemini references), `pod_text`.
 
 ## Flow (one command line: `python -m explainer_engine.production ...`)
@@ -58,7 +59,11 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-26 | likeness by reference: a picture painted by editing (`pod_ref`) that names a hero needs a reference picture whose library `heroes` lists that hero (the model copies the face from the reference) |
 | PV-27 | time-jump `periods`: every segment names a known period, a period's segments are consecutive, tone shares sum to 1; REVIEW when a period does not end on the question that opens the next (SR-03) |
 | PV-28 | `shorts`: the hook is one question of at most 14 words and the first line; 40-130 words (REVIEW); pictures are the video's own (SH-01..SH-03); the last line points to the video (REVIEW, SH-01); across the set no two hooks are the same (FAIL) and no two Shorts share a body line or half their pictures (REVIEW, SH-05) |
-| PV-32 | voiced dialogue (D-45): a line's `speaker` is in the cast and has `cast.<id>.voice` (FAIL); that voice is described, never imitated (PV-10); no voice id yet, or two speakers on one voice id (REVIEW) |
+| PV-32 | voiced dialogue (D-45): a line's `speaker` is in the cast and has `cast.<id>.voice` (FAIL); that voice is described, never imitated (PV-10); no voice id yet, or two speakers on one voice id (REVIEW); imitation words, the person's name in the voice text, or a real person without documented traits are PV-10 FAILs (`audio/casting.problems`, VC-02); two heroes who would cast alike are REVIEW (VC-04) |
+| PV-33 | the story layer (D-48, ST rules in [STORY_ENGINE](STORY_ENGINE.md), `scripting/story_lint.py`): unknown or premature loops, a pay-off before its plant, a fact segment without claims, an arc outside the cast FAIL; craft findings REVIEW |
+| PV-34 | the Shorts set's styles (SS-01..SS-04): enough different styles, no style twice in a row, a loop ending runs into the first line, a pointer ending points to the video (REVIEW) |
+| PV-35 | motion and visual variety (MO-01..MO-06, `edit/motion_lint.py`) on the estimated read and on the real read (REVIEW) |
+| PV-36 | sound layers (AL-01..AL-04, `audio/layers.py`) on the estimated read and on the real read (REVIEW) |
 
 ## Voice direction
 

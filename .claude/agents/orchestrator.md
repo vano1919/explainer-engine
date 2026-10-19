@@ -14,6 +14,10 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
    (established / reasoned / guess); the comparison with the real record.
 3. **Phase 2, script** (skills `narration-script`, `time-jump-episode`): one `production_script.json`, periods with unequal time,
    hooks at every period end, reuse plan, Shorts block; validators 0 FAIL; ask nothing the creator already answered.
+   A dialogue what-if episode (D-48) is written by the writers' room (skill `story-engine`, `docs/STORY_ENGINE.md`): the agents
+   `story-architect` -> `scene-writer` (one segment per call) -> `performance-director` -> `edit-planner` -> `voice-caster` ->
+   `shorts-writer` -> `script-critic`, each followed by `python -m explainer_engine.scripting.stage_guard <stage> before after`
+   and `production validate` (PV-33..PV-36); at most two critic rounds, then creator approval #1.
 4. **Phase 3, one-item tests**: first read chunk and first picture; check them (listen for drift with `audio/voice_check`,
    look at the picture and run the likeness judge). Only then phase 4.
 5. **Phase 4, voice**: `estimate_only` first, reserve in the ledger, one chunk at a time, record each; level, `production words`.
