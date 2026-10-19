@@ -136,6 +136,10 @@
       "service": "elevenlabs_credits",
       "amount": 41.0,
       "settled": true
+    },
+    "full_read_main": {
+      "service": "elevenlabs_credits",
+      "amount": 9396
     }
   },
   "phases": {
@@ -683,6 +687,13 @@
       "provider": "gemini",
       "usd": 1.1046,
       "at": "2026-10-19T15:20:05"
+    },
+    "V1": {
+      "by": "ვანო (vano1919)",
+      "ref": "thread cmsg_01Hnu5zB86sjUj5GtTgaUkPW3uQbgp1nCvaLCq38PVR9H9 'მიზუნო ჰიდეო შელბი რობერტი გაუშვი სრული' (full read)",
+      "provider": "elevenlabs",
+      "credits": 9396,
+      "at": "2026-10-19T16:21:33"
     }
   }
 }

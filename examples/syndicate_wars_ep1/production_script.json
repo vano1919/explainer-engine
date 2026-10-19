@@ -27,8 +27,8 @@
  "voice": {
   "provider": "elevenlabs",
   "model": "eleven_v4",
-  "voice_id": null,
-  "name": null,
+  "voice_id": "NOpBlnGInO9m6vDvFkFC",
+  "name": "Grandpa Spuds Oxley",
   "style": "warm, mature baritone storyteller with dry humour; unhurried but lively, gently amused; emotion carried quietly, a held breath, a dry smile",
   "pace_wpm": [
    150,
@@ -106,8 +106,8 @@
    ],
    "card": "a heavy-set 1930s Chicago crime boss, broad round face with three thin old scars on the left cheek, slicked-back dark hair, cream wide-lapel pinstripe suit, white fedora, a flower in the lapel, theatrical confident posture",
    "voice": {
-    "voice_id": null,
-    "name": null,
+    "voice_id": "OTMqA7lryJHXgAnPIQYt",
+    "name": "Crazy Eddie - Rough n Cheeky",
     "style": "a gravelly, warm, boisterous American baritone, big and theatrical, quick to laugh and quick to anger",
     "traits": {
      "gender": "male",
@@ -119,6 +119,7 @@
      ],
      "energy": "high",
      "origin": "1930s American big city",
+     "ethnicity": "Italian-American",
      "role": "rival",
      "real_person": true,
      "documented": [
@@ -178,8 +179,8 @@
    ],
    "card": "an older heavy-set patriarch of the 1950s, bald crown with a white fringe, round full face, thick grey eyebrows, small round spectacles, dark double-breasted suit with a white pocket square, a gold signet ring, soft-spoken courtly posture",
    "voice": {
-    "voice_id": null,
-    "name": null,
+    "voice_id": "HSBWXljo3oivWhybh3YX",
+    "name": "Mr Wellington",
     "style": "a soft, low, slightly husky elderly voice, slow and courteous, never raised",
     "traits": {
      "gender": "male",
@@ -191,6 +192,7 @@
      ],
      "energy": "low",
      "origin": "Italian-American, 1950s New York",
+     "ethnicity": "Italian-American",
      "role": "mentor",
      "real_person": false
     }
@@ -244,9 +246,9 @@
    ],
    "card": "a composed middle-aged Japanese businessman, short crew cut streaked with silver, thin rimless glasses, slim charcoal suit, crisp white shirt, slim black briefcase, upright disciplined posture",
    "voice": {
-    "voice_id": null,
-    "name": null,
-    "style": "a calm, clear, measured mid-range voice with precise diction, polite and controlled; no exaggerated accent",
+    "voice_id": "FMgBdHe1YV2Xi0B9anXW",
+    "name": "Hideo - Japanese Asian Accent",
+    "style": "a calm, clear, measured mid-range voice with precise diction, polite and controlled; English spoken with a light, natural Japanese accent",
     "traits": {
      "gender": "male",
      "age": "middle_aged",
@@ -257,6 +259,7 @@
      ],
      "energy": "low",
      "origin": "a Japanese businessman speaking English",
+     "ethnicity": "Japanese",
      "role": "rival",
      "real_person": false
     }
@@ -306,9 +309,9 @@
    ],
    "card": "a stocky square-jawed man in his thirties, side-parted wavy auburn hair, thick eyebrows, warm brown eyes, a neat trimmed moustache, a soft brown tweed cap with a short brim, grey three-piece suit with a watch chain, long charcoal overcoat, calm confident posture",
    "voice": {
-    "voice_id": null,
-    "name": null,
-    "style": "a quiet, low, dry voice with a soft regional English accent, flat and controlled, every word placed",
+    "voice_id": "n9RJRb8CoeRtSYSpKZRH",
+    "name": "Robert - Calm Confident British",
+    "style": "a quiet, low, dry voice with a Birmingham accent, flat and controlled, every word placed",
     "traits": {
      "gender": "male",
      "age": "middle_aged",
@@ -319,6 +322,7 @@
      ],
      "energy": "low",
      "origin": "1930s Birmingham, England",
+     "ethnicity": "English (Birmingham)",
      "role": "hero",
      "real_person": false
     }

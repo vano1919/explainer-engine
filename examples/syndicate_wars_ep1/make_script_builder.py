@@ -72,7 +72,7 @@ doc = {
              "size": [1920, 1080], "grade": "neon_dusk", "rulebook": "episode_rules.json",
              "notes": "Invented crossover scenario; commentary target in rights_manifest.json; stats are the channel's own rating.",
              **({"scenario": SCENARIO} if "SCENARIO" in globals() else {}), **({"distinct": DISTINCT} if "DISTINCT" in globals() else {})},
- "voice": {"provider": "elevenlabs", "model": "eleven_v4", "voice_id": None, "name": None,
+ "voice": {"provider": "elevenlabs", "model": "eleven_v4", "voice_id": "NOpBlnGInO9m6vDvFkFC", "name": "Grandpa Spuds Oxley",
            "style": "warm, mature baritone storyteller with dry humour; unhurried but lively, gently amused; emotion carried quietly, a held breath, a dry smile",
            "pace_wpm": [150, 172], "default_tags": ["warmly"], "candidates": []},
  "world": {"topic": "four classic crime bosses in a neon Florida-style city", "host": {"era": "modern_neon_florida",

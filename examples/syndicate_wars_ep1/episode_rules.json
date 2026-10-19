@@ -1441,6 +1441,30 @@
       "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
       "rulebook_version": 8,
       "scope": "v8 on the combined script (PR #8): Shorts beats, studio beat as text, review bound to bdf2887f. Recovered-pictures condition checked: all 51 recovered pictures have prompt, subject and refs identical to the v8 script (compared with 1d579fd); w02_studio/w02_keys are not used; p_vito and p_shelby are the v3 portraits (bald, round glasses; red hair and moustache), and every portrait and the 42 close-ups were looked at: invented faces, no named-actor likeness"
+    },
+    {
+      "checkpoint": "final",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "563aa037da25216f38f849b2f842b7810ef3c8bd6a96f12f162fb3830cd76074",
+      "rulebook_version": 8,
+      "scope": "v8 on the script with the creator's voice picks (sha 563aa037): narrator Grandpa Spuds Oxley, Capone Crazy Eddie, Vito Mr Wellington, Mizuno Hideo (light natural Japanese accent, creator's ask; RK-09 no caricature), Shelby Robert (Midlands, Birmingham accent asked by the creator). All library voices from test reads, no clone, no actor or person named (ER-03). Only voice fields changed since bdf2887f; recovered-pictures condition as before."
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "563aa037da25216f38f849b2f842b7810ef3c8bd6a96f12f162fb3830cd76074",
+      "rulebook_version": 8,
+      "scope": "v8 on the script with the creator's voice picks (sha 563aa037): narrator Grandpa Spuds Oxley, Capone Crazy Eddie, Vito Mr Wellington, Mizuno Hideo (light natural Japanese accent, creator's ask; RK-09 no caricature), Shelby Robert (Midlands, Birmingham accent asked by the creator). All library voices from test reads, no clone, no actor or person named (ER-03). Only voice fields changed since bdf2887f; recovered-pictures condition as before."
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "563aa037da25216f38f849b2f842b7810ef3c8bd6a96f12f162fb3830cd76074",
+      "rulebook_version": 8,
+      "scope": "v8 on the script with the creator's voice picks (sha 563aa037): narrator Grandpa Spuds Oxley, Capone Crazy Eddie, Vito Mr Wellington, Mizuno Hideo (light natural Japanese accent, creator's ask; RK-09 no caricature), Shelby Robert (Midlands, Birmingham accent asked by the creator). All library voices from test reads, no clone, no actor or person named (ER-03). Only voice fields changed since bdf2887f; recovered-pictures condition as before."
     }
   ],
   "supersedes": 4

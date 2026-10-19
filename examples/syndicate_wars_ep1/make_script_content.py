@@ -562,7 +562,7 @@ DISTINCT = {"premise": "four crime bosses from different eras and fictions (Capo
 _FACES = ("neutral", "joyful", "sad", "scared", "angry", "surprised")
 CAST_EXTRA = {
  "capone": {
-  "voice": {"voice_id": None, "name": None,
+  "voice": {"voice_id": "OTMqA7lryJHXgAnPIQYt", "name": "Crazy Eddie - Rough n Cheeky",
             "style": "a gravelly, warm, boisterous American baritone, big and theatrical, quick to laugh and quick to anger",
             "traits": {"gender": "male", "age": "middle_aged", "temperament": ["boastful", "theatrical", "hot-tempered"], "energy": "high",
                        "origin": "1930s American big city", "ethnicity": "Italian-American", "role": "rival", "real_person": True, "documented": ["C-19", "C-20"]}},
@@ -570,7 +570,7 @@ CAST_EXTRA = {
              "words": ["business", "the people", "my car", "print more"], "avoid": ["algorithm", "content creator"], "sources": ["C-19", "C-20", "C-27"]},
   "face_sheet": {"id": "capone_faces_v1", "ref": "p_capone", "set": list(_FACES) + ["smug", "confused", "worried", "doubtful", "amused"]}},
  "vito": {
-  "voice": {"voice_id": None, "name": None,
+  "voice": {"voice_id": "HSBWXljo3oivWhybh3YX", "name": "Mr Wellington",
             "style": "a soft, low, slightly husky elderly voice, slow and courteous, never raised",
             "traits": {"gender": "male", "age": "old", "temperament": ["soft-spoken", "courtly", "patient"], "energy": "low",
                        "origin": "Italian-American, 1950s New York", "ethnicity": "Italian-American", "role": "mentor", "real_person": False}},
@@ -578,7 +578,7 @@ CAST_EXTRA = {
              "words": ["friend", "favour", "respect", "always"], "avoid": ["offer he can't refuse", "dude"], "sources": ["C-23", "C-24"]},
   "face_sheet": {"id": "vito_faces_v1", "ref": "p_vito", "set": list(_FACES) + ["smug", "curious", "doubtful", "worried"]}},
  "mizuno": {
-  "voice": {"voice_id": None, "name": None,
+  "voice": {"voice_id": "FMgBdHe1YV2Xi0B9anXW", "name": "Hideo - Japanese Asian Accent",
             "style": "a calm, clear, measured mid-range voice with precise diction, polite and controlled; English spoken with a light, natural Japanese accent",
             "traits": {"gender": "male", "age": "middle_aged", "temperament": ["composed", "precise", "polite"], "energy": "low",
                        "origin": "a Japanese businessman speaking English", "ethnicity": "Japanese", "role": "rival", "real_person": False}},
@@ -586,8 +586,8 @@ CAST_EXTRA = {
              "words": ["plan", "sign here", "thank you", "not my fault"], "avoid": ["dude", "awesome"]},
   "face_sheet": {"id": "mizuno_faces_v1", "ref": "p_mizuno", "set": list(_FACES) + ["determined", "confused", "worried", "deadpan"]}},
  "shelby": {
-  "voice": {"voice_id": None, "name": None,
-            "style": "a quiet, low, dry voice with a Birmingham (West Midlands) accent, flat and controlled, every word placed",
+  "voice": {"voice_id": "n9RJRb8CoeRtSYSpKZRH", "name": "Robert - Calm Confident British",
+            "style": "a quiet, low, dry voice with a Birmingham accent, flat and controlled, every word placed",
             "traits": {"gender": "male", "age": "middle_aged", "temperament": ["cold", "terse", "calculating"], "energy": "low",
                        "origin": "1930s Birmingham, England", "ethnicity": "English (Birmingham)", "role": "hero", "real_person": False}},
   "speech": {"basis": "public", "style": "terse and cold: short declaratives, dry understatement, always one step ahead, never explains himself",
