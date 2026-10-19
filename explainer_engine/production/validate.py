@@ -16,13 +16,15 @@ import difflib
 import re
 from pathlib import Path
 
+from explainer_engine.audio import casting
 from explainer_engine.edit import board as B
+from explainer_engine.edit import motion_lint
 from explainer_engine.production import compile as C
 from explainer_engine.production import continuity
 from explainer_engine.production import graphics as GFX
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
-from explainer_engine.scripting import narration_lint
+from explainer_engine.scripting import narration_lint, story_lint
 
 STOP = set("""a an the and or but so of to in on at for with by from into onto over under than then that this these those
 it its it's is are was were be been being has have had do does did not no nor as if when while who whom which what where why how
@@ -246,6 +248,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             if not hv.get("voice_id"):
                 _f(out, "PV-32", who, "no voice chosen yet for this hero: pick one after a test read, before the full read",
                    "REVIEW")
+            for why in casting.problems(doc["cast"][who]):  # VC-01/VC-02: cast from documented traits, never imitate
+                _f(out, "PV-10", who, why)
     if S.has_dialogue(doc):
         ids = {}
         for who in [S.NARRATOR] + [h for h in doc["cast"] if doc["cast"][h].get("voice")]:
@@ -253,6 +257,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             if vid and vid in ids:
                 _f(out, "PV-32", who, f"same voice id as {ids[vid]!r}: two speakers must sound different", "REVIEW")
             ids.setdefault(vid, who)
+        for why in casting.distinct({h: c for h, c in doc["cast"].items() if c.get("voice")}):
+            _f(out, "PV-32", "cast", why + " (VC-04)", "REVIEW")
     # PV-27 time-jump periods: each period's last spoken line opens the next question; tone mix sums to about 1
     periods = {p["id"]: p for p in doc.get("periods", [])}
     if periods:
@@ -328,6 +334,28 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             if pa and pb and len(pa & pb) / len(pa | pb) >= 0.5:
                 _f(out, "PV-28", b["id"], f"half or more of its pictures are also in {a['id']}: one scene, one Short (SH-05)",
                    "REVIEW")
+    # PV-34 a set of Shorts in different styles (SS-01..SS-03)
+    styles = [sh.get("style") for sh in shorts]
+    if len(shorts) >= 5:
+        if None in styles:
+            _f(out, "PV-34", "shorts", f"{styles.count(None)} Short(s) without a style (SS-01)", "REVIEW")
+        named = [x for x in styles if x]
+        need = min(6, max(3, len(shorts) * 6 // 10))
+        if len(set(named)) < need:
+            _f(out, "PV-34", "shorts", f"{len(set(named))} styles in {len(shorts)} Shorts; a set uses at least {need} (SS-01)", "REVIEW")
+    for a, b in zip(shorts, shorts[1:]):
+        if a.get("style") and a.get("style") == b.get("style"):
+            _f(out, "PV-34", b["id"], f"same style as {a['id']} right before it: alternate styles in the posting order (SS-02)", "REVIEW")
+    for sh in shorts:
+        end = sh.get("ending")
+        last = sh["lines"][-1]["text"] if sh["lines"] else ""
+        if end == "loop" and not (content_words(last) & content_words(sh["lines"][0]["text"]) or last.rstrip()[-1:] in ",-—…"):
+            _f(out, "PV-34", sh["id"], "a loop ending must run into the first line (shared words or an unfinished last line) (SS-04)", "REVIEW")
+        if end == "pointer" and not POINTER.search(last):
+            _f(out, "PV-34", sh["id"], "ending 'pointer' but the last line does not point to the video (SS-04)", "REVIEW")
+    # PV-33 the story layer (ST rules, scripting/story_lint.py)
+    for f in story_lint.lint(doc):
+        _f(out, "PV-33 " + f["rule"], f["where"], f["detail"], f["severity"])
     # PV-12 narration lint on what the voice gets
     for f in narration_lint.lint(S.tts_text(doc)):
         if f["severity"] == "FAIL":
@@ -340,6 +368,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             if "RHYTHM" in f["rule"]:
                 f["severity"] = "REVIEW"  # pace is a guess before the read; the real read decides
             out.append(f)
+        for f in motion_lint.check(timed):  # MO rules on the estimated read (REVIEW)
+            out.append(dict(f, rule="PV-35 " + f["rule"], detail=f["detail"] + " (estimated read)"))
     return out
 
 
@@ -402,6 +432,7 @@ def check_timed(timed: dict, doc: dict, *, final: bool = False, picture_dirs: li
     out += board_findings(timed, doc)
     out += continuity.findings(shots)
     out += music_findings(timed["audio"]["music"])
+    out += [dict(f, rule="PV-35 " + f["rule"]) for f in motion_lint.check(timed)]  # MO rules (D-48)
     for pid in {s["picture"] for s in shots}:
         p = timed["pictures"].get(pid, {})
         have = p.get("file") and (not picture_dirs or any((Path(d) / p["file"]).exists() for d in picture_dirs))

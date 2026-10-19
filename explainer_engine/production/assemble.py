@@ -23,6 +23,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from explainer_engine.audio.level import level_voice
 from explainer_engine.audio import duck
+from explainer_engine.production import accents as ACC
 from explainer_engine.production import continuity
 from explainer_engine.production import graphics as GFX
 from explainer_engine.finish import bubbles as BUB
@@ -335,9 +336,16 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
             bubbles.append(BUB.Bubble(b["text"], sp, b["start"], b["end"], (OW, OH), kind=b.get("kind", "speech"),
                                       avoid=[x.box for x in bubbles if x.end > b["start"]]))
         dissolve = round(float(s.get("transition_seconds", 1.0)) * fps) if s.get("transition") == "dissolve" and last is not None else 0
+        acc = s.get("accents", [])
+        before = last
         for f in range(f0, f1):
             u = (f - f0) / max(1, f1 - f0 - 1)
-            frame = im.resize((OW, OH), Image.BICUBIC, box=motion_box(s.get("render_motion", s["motion"]), W, H, u))
+            box = motion_box(s.get("render_motion", s["motion"]), W, H, u)
+            if acc:  # MO rules (D-48): punch, shake, wobble move the crop; whips, flashes and words are drawn
+                box = ACC.apply_camera(box, W, H, *ACC.camera(acc, f, fps, f0))
+            frame = im.resize((OW, OH), Image.BICUBIC, box=box)
+            if acc:
+                frame = ACC.draw(frame, acc, f, fps, f0, f1, before, BUB.FONT)
             if bubbles:
                 frame = BUB.composite(frame, bubbles, f / fps)
             frame = overlays(frame, f, fps, timed)

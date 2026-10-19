@@ -231,6 +231,65 @@
                     }
                   }
                 }
+              },
+              "traits": {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "VC rules: the character's audible traits (age, gender, temperament, energy, origin), from which audio/casting.py builds the voice search; for a real person only documented traits, never an imitation",
+                "properties": {
+                  "gender": {
+                    "enum": [
+                      "male",
+                      "female",
+                      "neutral"
+                    ]
+                  },
+                  "age": {
+                    "enum": [
+                      "young",
+                      "middle_aged",
+                      "old"
+                    ]
+                  },
+                  "temperament": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 4
+                  },
+                  "energy": {
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high"
+                    ]
+                  },
+                  "origin": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "enum": [
+                      "narrator",
+                      "hero",
+                      "rival",
+                      "mentor",
+                      "comic",
+                      "villain",
+                      "everyman"
+                    ]
+                  },
+                  "real_person": {
+                    "type": "boolean"
+                  },
+                  "documented": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "sourced facts about a real person's speech (era, origin, temperament); claim ids or URLs"
+                  }
+                }
               }
             }
           }
@@ -511,6 +570,55 @@
                 "reuse": {
                   "type": "string",
                   "description": "SR-08 plan: 'unique' or 'reuse' (the picture appeared before; a different crop, zoom or bubble)"
+                },
+                "accents": {
+                  "type": "array",
+                  "description": "MO rules: drawn motion accents on top of the camera move, rendered by production/accents.py",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "punch",
+                          "shake",
+                          "whip_in",
+                          "flash_in",
+                          "pop_text",
+                          "slam_text",
+                          "wobble"
+                        ]
+                      },
+                      "at": {
+                        "type": "string",
+                        "description": "the words the accent lands on (default: the shot's start)"
+                      },
+                      "text": {
+                        "type": "string",
+                        "maxLength": 32,
+                        "description": "pop_text / slam_text: the words shown (at most 4)"
+                      },
+                      "strength": {
+                        "type": "number",
+                        "minimum": 0.2,
+                        "maximum": 1.0,
+                        "default": 0.6
+                      },
+                      "pos": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -583,6 +691,85 @@
           "period": {
             "type": "string",
             "description": "the time-jump chapter this segment belongs to (day1, week1, month1, year1, year10, year100, compare)"
+          },
+          "drama": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "function",
+              "turn"
+            ],
+            "description": "what this segment does in the story (ST rules): its function, how it follows the one before (but / therefore), the stakes, the value that turns, the loops it opens and closes",
+            "properties": {
+              "function": {
+                "enum": [
+                  "cold_open",
+                  "hook",
+                  "setup",
+                  "inciting",
+                  "escalation",
+                  "reversal",
+                  "midpoint",
+                  "crisis",
+                  "climax",
+                  "twist",
+                  "resolution",
+                  "button"
+                ]
+              },
+              "turn": {
+                "enum": [
+                  "but",
+                  "therefore",
+                  "start"
+                ],
+                "description": "ST-02: every segment after the first follows by BUT or THEREFORE, never AND THEN"
+              },
+              "stakes": {
+                "type": "string",
+                "description": "what is lost if it goes wrong, in plain words"
+              },
+              "shift": {
+                "type": "string",
+                "description": "the value that turns in this segment, as 'from -> to' (safe -> hunted)"
+              },
+              "need": {
+                "enum": [
+                  "curiosity",
+                  "stakes",
+                  "humour",
+                  "wonder",
+                  "fear",
+                  "identity",
+                  "justice",
+                  "belonging",
+                  "competence",
+                  "surprise"
+                ]
+              },
+              "opens": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^L[0-9]{2}$"
+                }
+              },
+              "closes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^L[0-9]{2}$"
+                }
+              },
+              "claim_share": {
+                "enum": [
+                  "fact",
+                  "reasoned",
+                  "invented"
+                ],
+                "description": "ST-09: what kind of statement carries this segment"
+              }
+            }
           }
         }
       }
@@ -727,6 +914,30 @@
                 }
               }
             }
+          },
+          "style": {
+            "enum": [
+              "cold_open_cliffhanger",
+              "anti_intuition",
+              "countdown_hud",
+              "dialogue_clash",
+              "fact_bomb",
+              "pov_you",
+              "myth_buster",
+              "ranked_three",
+              "loop",
+              "would_you"
+            ],
+            "description": "SS-01: the Short's style; a set of 10 uses at least 6 styles"
+          },
+          "ending": {
+            "enum": [
+              "cliffhanger",
+              "loop",
+              "question",
+              "pointer"
+            ],
+            "description": "SS-04: how the Short ends"
           }
         }
       }
@@ -775,6 +986,149 @@
               "right",
               "center"
             ]
+          }
+        }
+      }
+    },
+    "drama": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "the story layer (ST rules, docs/STORY_ENGINE.md): premise, the dramatic question, the hero arcs, the open loops and the set-ups the segments open and pay off",
+      "required": [
+        "premise",
+        "question",
+        "promise"
+      ],
+      "properties": {
+        "premise": {
+          "type": "string",
+          "minLength": 10,
+          "description": "the alternate reality in one sentence: what is changed, for whom"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 8,
+          "description": "the dramatic question the whole video answers (ST-01)"
+        },
+        "promise": {
+          "type": "string",
+          "minLength": 8,
+          "description": "what the viewer gets by the end; the title and thumbnail make this promise"
+        },
+        "needs": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "curiosity",
+              "stakes",
+              "humour",
+              "wonder",
+              "fear",
+              "identity",
+              "justice",
+              "belonging",
+              "competence",
+              "surprise"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "the human needs the episode serves (ST-08); at least three"
+        },
+        "arcs": {
+          "type": "object",
+          "description": "cast id -> want, need, flaw, change (ST-04)",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "want",
+              "flaw"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "want": {
+                "type": "string"
+              },
+              "need": {
+                "type": "string"
+              },
+              "flaw": {
+                "type": "string"
+              },
+              "change": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "loops": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "question"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^L[0-9]{2}$"
+              },
+              "question": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "setups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "what",
+              "plant",
+              "payoff"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^P[0-9]{2}$"
+              },
+              "what": {
+                "type": "string"
+              },
+              "plant": {
+                "type": "string",
+                "pattern": "^S[0-9]{2}$"
+              },
+              "payoff": {
+                "type": "string",
+                "pattern": "^S[0-9]{2}$"
+              }
+            }
+          }
+        },
+        "ending": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "twist",
+                "reversal",
+                "bookend",
+                "callback",
+                "open_question"
+              ]
+            },
+            "note": {
+              "type": "string"
+            }
           }
         }
       }

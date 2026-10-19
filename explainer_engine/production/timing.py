@@ -15,7 +15,7 @@ import difflib
 
 from explainer_engine.audio.scribe_words import norm
 from explainer_engine.edit import board as B
-from explainer_engine.production import continuity, script as S
+from explainer_engine.production import accents as ACC, continuity, script as S
 
 MIN_TEXT_MATCH = 0.97
 BUBBLE_LEAD = B.BUBBLE_LEAD
@@ -94,7 +94,7 @@ def time_script(doc: dict, words_doc: dict) -> dict:
                               "at": s["at"], "token": i, "word": w, "start": start, "cut_legal": legal,
                               "motion": s["motion"], "transition": s.get("transition", "cut"),
                               "insert": s.get("insert", False), "reuse": s.get("reuse"), "reveal": s.get("reveal"), "heroes_ok": s.get("heroes_ok", False),
-                              "_bubbles": s.get("bubbles", []), "_seg_hi": hi})
+                              "_bubbles": s.get("bubbles", []), "_accents": s.get("accents", []), "_seg_hi": hi})
     seg_period = {sg["id"]: sg.get("period") for sg in doc["segments"]}
     for k, s in enumerate(out_shots):  # UR-14/ED-04: a period opens with a dissolve (a time jump), nothing else dissolves
         if k and s.get("transition", "cut") == "cut" and seg_period.get(s["segment"]) != seg_period.get(out_shots[k - 1]["segment"]):
@@ -128,6 +128,12 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             bub.append({"who": b["who"], "text": b["text"], "kind": b.get("kind", "speech"), "start": round(bstart, 3),
                         "end": round(bend, 3), "start_frame": _frames(bstart, fps), "end_frame": _frames(bend, fps)})
         s["bubbles"] = bub
+
+        def accent_start(phrase, lo=s["token"], hi=tok_end, where=s["id"]):
+            j = at_word(phrase, lo, hi, where + " accent")
+            return None if j is None else words[wi(j)]["s"]
+
+        s["accents"] = ACC.resolve(s.pop("_accents"), s["start"], s["end"], accent_start, fps)  # MO rules (D-48)
         s.pop("_seg_hi")
     # sound
     beds, sfx = [], []
