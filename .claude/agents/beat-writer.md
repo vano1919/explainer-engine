@@ -9,7 +9,7 @@ You write `lines[].visual_beats` of one segment, nothing else (stage guard `beat
 sound effect. Read `docs/STORY_ENGINE.md` (section "Visual beats", VB-00..VB-08) and the skill `visual-beats`.
 
 Input (and you read nothing else of the script): the segment's lines as the scene-writer left them, the one-line skeleton,
-the cast (who has `speakers` points or `cast.<id>.expressions` cut-outs), the claim ids the segment may use.
+the cast (who has `speakers` points, a `cast.<id>.face_sheet` (its `set` is the only expressions you may use, VB-09) or `cast.<id>.expressions` cut-outs), the claim ids the segment may use.
 
 For each line:
 1. Read it aloud at about 2.5 words a second and mark where the eye needs something new: about every 1.5 s of narration

@@ -219,6 +219,7 @@ def time_script(doc: dict, words_doc: dict) -> dict:
     return {"schema": "production_timed/1", "episode": doc["episode"]["id"], "fps": fps, "duration": round(duration, 3),
             "frames": total_frames, "text_match": share, "segments": segs, "lines": lines, "shots": out_shots,
             "audio": {"beds": beds, "sfx": sfx, "music": music, "cues": cues}, "visuals": visuals, "cards": cards, "visual_beats": beats,
-            "expressions": {h: c["expressions"] for h, c in doc.get("cast", {}).items() if c.get("expressions")}, "events": events,
+            "expressions": {h: c["expressions"] for h, c in doc.get("cast", {}).items() if c.get("expressions")},
+            "face_sheets": {h: c["face_sheet"] for h, c in doc.get("cast", {}).items() if c.get("face_sheet")}, "events": events,
             "pictures": {k: {kk: vv for kk, vv in v.items() if kk not in ("source",)} for k, v in pics.items()},
             "problems": problems}

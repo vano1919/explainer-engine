@@ -366,6 +366,51 @@
               "type": "string"
             },
             "description": "VB-06: expression -> a cut-out face/pose PNG of this hero (the face inset swaps it on every change)"
+          },
+          "face_sheet": {
+            "type": "object",
+            "description": "VB-09: one sheet of close-up expressions on chroma green, painted once from the hero's reference picture and reused in every scene and episode (production/faces.py)",
+            "required": [
+              "ref",
+              "set"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "set": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "neutral",
+                    "curious",
+                    "surprised",
+                    "joyful",
+                    "amused",
+                    "smug",
+                    "confused",
+                    "doubtful",
+                    "worried",
+                    "scared",
+                    "angry",
+                    "sad",
+                    "determined",
+                    "deadpan"
+                  ]
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "note": {
+                "type": "string"
+              }
+            }
           }
         }
       }

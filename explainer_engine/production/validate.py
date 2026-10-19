@@ -20,6 +20,7 @@ from explainer_engine.audio import casting, layers
 from explainer_engine.edit import board as B
 from explainer_engine.edit import motion_lint
 from explainer_engine.production import beats as BEATS
+from explainer_engine.production import faces as FACES
 from explainer_engine.production import compile as C
 from explainer_engine.production import continuity
 from explainer_engine.production import graphics as GFX
@@ -398,6 +399,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         out += rulebook_era_findings(doc)
     out += canva_findings(doc)
     out += BEATS.lint(doc)  # PV-44 visual beats: reasons, words, numbers, faces (VB-00, VB-03, VB-04, VB-06)
+    out += FACES.lint(doc, picture_dirs)  # PV-44 expression sheets (VB-09)
     # PV-12 narration lint on what the voice gets
     for f in narration_lint.lint(S.tts_text(doc)):
         if f["severity"] == "FAIL":

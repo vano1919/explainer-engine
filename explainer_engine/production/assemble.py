@@ -26,6 +26,7 @@ from explainer_engine.audio.level import level_voice
 from explainer_engine.audio import cues as CUES, duck
 from explainer_engine.production import accents as ACC
 from explainer_engine.production import beats as BEATS
+from explainer_engine.production import faces as FACES
 from explainer_engine.production import continuity
 from explainer_engine.production import graphics as GFX
 from explainer_engine.finish import bubbles as BUB
@@ -425,6 +426,9 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
     cache: dict = {}
     all_beats = timed.get("visual_beats", [])
     hero_faces = {who: {"expressions": e} for who, e in timed.get("expressions", {}).items()}
+    for who, sheet in timed.get("face_sheets", {}).items():
+        hero_faces.setdefault(who, {})["face_sheet"] = sheet
+    face_order = sorted(hero_faces)
 
     def shot_beats(k: int) -> list[dict]:
         """VB rules: the beats on screen during shot k (a picture-bound one only in its own shot); expressions get the
@@ -433,7 +437,10 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         on = [b for b in all_beats if b["start_frame"] < s["end_frame"] and max(b["end_frame"], b["start_frame"] + 1) > s["start_frame"]
               and (b["kind"] not in BEATS.PICTURE_BOUND or b["shot"] == s["id"])]
         face = {id(b): b for b in BEATS.faces(on, pics)}
-        return [dict(b, face=face[id(b)]["face"]) if id(b) in face else b for b in on]
+        on = [dict(b, face=face[id(b)]["face"]) if id(b) in face else b for b in on]
+        keyed = {(b["start_frame"], b["who"]): b["close_up"] for b in FACES.sheet_beats(on, hero_faces, picture_dirs)}
+        return [dict(b, close_up=keyed[(b["start_frame"], b["who"])]) if b["kind"] == "expression"
+                and (b["start_frame"], b.get("who")) in keyed else b for b in on]
 
     def prep(k: int):
         """The graded picture and the bubbles of shot k. A run of shots on one picture shares one grading (the seed is the
@@ -479,6 +486,8 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         frame = im.resize((OW, OH), Image.BICUBIC, box=box)
         if acc:
             frame = ACC.draw(frame, acc, f, fps, f0, f1, before, BUB.FONT)
+        if sb:  # VB-09: in dialogue the speaking hero's keyed close-up over the scene, zoomed and blurred
+            frame = FACES.composite(frame, [b for b in sb if b.get("close_up") and b["shot"] == s["id"]], f, fps, face_order)
         if bubbles:
             frame = BUB.composite(frame, bubbles, f / fps)
         if sb:

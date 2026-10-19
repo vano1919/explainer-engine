@@ -38,9 +38,13 @@ three of one kind in a row; at most two overlays on screen at once.
 On a line with a `speaker`, write an `expression` beat on the first word and then about one a second, each a change:
 neutral, curious, surprised, joyful, amused, smug, confused, doubtful, worried, scared, angry, sad, determined, deadpan.
 Follow the words: doubt on "if", surprise on the reveal, worry on the risk, smug on the punchline, a listener's reaction with
-`who`. The render pushes in on the face (the picture's `speakers` point) and draws the emotion mark beside it; a hero with
-cut-outs in `cast.<id>.expressions` also gets a face inset that swaps on every change. No face point and no cut-out = FAIL
-(VB-06): the edit-planner then picks a picture with the speaker's `speakers` point.
+`who`. Use only the expressions of the hero's `cast.<id>.face_sheet` (VB-09: 8-12 close-ups on chroma green, about 10, always
+neutral, joyful, sad, scared, angry, surprised; painted once from the hero's reference with `paint plan --faces` and reused
+in every episode). A hero who speaks without a sheet is a FAIL on `/2`: give the hero a sheet (`ref` = the hero's reference
+picture, `set` = the ten expressions the story needs) before writing faces; never ask for a new full picture per face.
+In the render the scene's picture is zoomed in on the face and blurred, and the keyed close-up of the current expression
+stands over it; before the sheet is painted the face push and emotion mark stand in. No face point and no sheet entry =
+FAIL (VB-06).
 
 ## Cues
 

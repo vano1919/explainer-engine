@@ -349,10 +349,12 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
         if not hero:
             continue
         face = (pics.get(b["picture"], {}).get("speakers") or {}).get(b["who"])
-        sprite = (hero.get("expressions") or {}).get(b["expression"])
+        from explainer_engine.production import faces as FACES
+        sprite = FACES.file_name(b["who"], hero, b["expression"])
         if face is None and not sprite:
             _f(out, "VB-06", _sev(doc, True), f"{b['segment']} line {b['line']}", f"{b['who']}'s face is not in picture "
-               f"{b['picture']!r} (no speakers point) and there is no {b['expression']!r} cut-out in cast.{b['who']}.expressions: "
+               f"{b['picture']!r} (no speakers point) and {b['expression']!r} is in neither cast.{b['who']}.face_sheet nor "
+               f"cast.{b['who']}.expressions: "
                "the render has no face to change")
     _cue_findings(timed, doc, beats, out)
     by_seg_kinds: dict = {}
@@ -692,6 +694,8 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
                     piece.putalpha(piece.getchannel("A").point(lambda v: v * a // 255))
                 lay.alpha_composite(piece, (int(x - w / 2), int(y - h / 2)))
         elif kind == "expression":
+            if b.get("close_up"):  # VB-09: the sheet's close-up is the frame (faces.composite); nothing drawn on top
+                continue
             face = (b.get("face") or None)
             if face is not None:
                 fx, fy = _to_frame(face, box, W, H, OW, OH)
