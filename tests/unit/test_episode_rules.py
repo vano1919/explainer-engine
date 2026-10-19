@@ -1,4 +1,4 @@
-"""The episode rulebook (docs/EPISODE_STANDARDS.md, ES-01..ES-18, D-45): checks, gates, stamps, briefs."""
+"""The episode rulebook (docs/EPISODE_STANDARDS.md, ES-01..ES-18, D-51): checks, gates, stamps, briefs."""
 
 from __future__ import annotations
 
@@ -271,7 +271,7 @@ def test_the_new_agent_and_docs_are_wired():
     assert agent.startswith("---\nname: episode-standards-director\ndescription: ")
     orch = (ROOT / ".claude/agents/orchestrator.md").read_text(encoding="utf-8")
     assert "episode-standards-director" in orch and "paid_assets" in orch and "final_qa" in orch
-    assert "| OR-10 |" in (ROOT / "docs/ORCHESTRATION.md").read_text(encoding="utf-8")
+    assert "| OR-11 |" in (ROOT / "docs/ORCHESTRATION.md").read_text(encoding="utf-8")
     assert "EPISODE_STANDARDS" in (ROOT / "docs/INDEX.md").read_text(encoding="utf-8")
 
 

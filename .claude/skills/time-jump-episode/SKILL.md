@@ -5,7 +5,7 @@ description: Structure a Crossworld Theories episode that follows a premise acro
 
 # Time-jump episodes
 
-**Episode rulebook first (D-45, OR-10):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 Rules live in `docs/ORCHESTRATION.md` (SR-01..SR-08); this page is how to apply them.
 

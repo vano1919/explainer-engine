@@ -111,7 +111,7 @@ def jobs(doc: dict) -> tuple[list[dict], dict]:
 
 
 def canva_pending(doc: dict) -> list[str]:
-    """Filler pictures (engine canva, PV-36) still to be made by hand in Canva and placed as files."""
+    """Filler pictures (engine canva, PV-43) still to be made by hand in Canva and placed as files."""
     if "segments" not in doc:
         return []
     pics, _ = S.pictures(doc)

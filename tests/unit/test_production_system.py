@@ -1,4 +1,4 @@
-"""D-46 and the master-prompt system: Gemini batch tiers, the ElevenLabs gate hook, script rules PV-32..PV-35, the
+"""D-52 and the master-prompt system: Gemini batch tiers, the ElevenLabs gate hook, script rules PV-39..PV-42, the
 engagement gate, story hypotheses, the shared audio targets and the disclosure fields."""
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ RULES = ROOT / "tests/fixtures/episode_rules/episode_rules.json"
 TODAY = date(2026, 10, 17)
 
 
-# --- pictures: Gemini batch tier only, three tiers (D-46) ---
+# --- pictures: Gemini batch tier only, three tiers (D-52) ---
 
 def test_tiers_route_to_batch_prices_and_unknown_tiers_fail():
     assert routing.route("standard") == ("gemini-nano-banana-2.1", "2K")
@@ -73,8 +73,8 @@ def _ep(tmp_path: Path, rules: dict | None = None, cfg: dict | None = None) -> P
 
 def test_hook_refuses_pictures_and_four_takes_and_lets_estimates_through(tmp_path):
     root = _ep(tmp_path)
-    assert "D-46" in hook.decide("mcp__ElevenLabs__creative_generate_image", {}, root)
-    assert "D-46" in hook.decide("mcp__ElevenLabs__creative_generate_in_flow", {"node_type": "image-generation"}, root)
+    assert "D-52" in hook.decide("mcp__ElevenLabs__creative_generate_image", {}, root)
+    assert "D-52" in hook.decide("mcp__ElevenLabs__creative_generate_in_flow", {"node_type": "image-generation"}, root)
     assert hook.decide("mcp__ElevenLabs__creative_generate_speech", {"estimate_only": True}, root) is None
     assert hook.decide("mcp__ElevenLabs__creative_list_voices", {}, root) is None
     assert "EL-10" in hook.decide("mcp__ElevenLabs__creative_generate_speech", {"prompt": "x"}, root)
@@ -117,11 +117,11 @@ def _ep1() -> dict:
 
 def test_old_scripts_keep_their_rules_and_new_scripts_get_pv32_to_35():
     doc = _ep1()
-    assert not [f for f in V.check_script(copy.deepcopy(doc)) if f["rule"] in ("PV-32", "PV-33", "PV-34", "PV-35")]
+    assert not [f for f in V.check_script(copy.deepcopy(doc)) if f["rule"] in ("PV-39", "PV-40", "PV-41", "PV-42")]
     new = copy.deepcopy(doc)
     new["episode"]["rulebook"] = "episode_rules.json"
     rules = {f["rule"] for f in V.rulebook_era_findings(new)}
-    assert {"PV-32", "PV-35"} <= rules  # no beat jobs, shots without purpose
+    assert {"PV-39", "PV-42"} <= rules  # no beat jobs, shots without purpose
 
 
 def test_pv32_beat_jobs_and_pv33_premium_needs_a_reason():
@@ -130,7 +130,7 @@ def test_pv32_beat_jobs_and_pv33_premium_needs_a_reason():
     for seg in doc["segments"]:
         seg["job"] = "explanation"
     doc["segments"][0]["job"], doc["segments"][-1]["job"] = "hook", "payoff"
-    assert not [f for f in V.rulebook_era_findings(doc) if f["rule"] == "PV-32"]
+    assert not [f for f in V.rulebook_era_findings(doc) if f["rule"] == "PV-39"]
     pics, _ = S.pictures(doc)
     painted = [p for p in pics.values() if p.get("uses") and not p.get("file")]
     if not painted:
@@ -142,7 +142,7 @@ def test_pv32_beat_jobs_and_pv33_premium_needs_a_reason():
                 sh["picture"]["tier"] = "premium"
     if lib_or_inline in doc.get("library", {}):
         doc["library"][lib_or_inline]["tier"] = "premium"
-    assert any(f["rule"] == "PV-33" and f["severity"] == "FAIL" for f in V.rulebook_era_findings(doc))
+    assert any(f["rule"] == "PV-40" and f["severity"] == "FAIL" for f in V.rulebook_era_findings(doc))
 
 
 # --- engagement gate ---
@@ -242,7 +242,7 @@ def test_disclosure_follows_declared_ai_uses_and_names_the_upload_action():
     assert not [f for f in R.check(doc, "final_qa", today=TODAY) if f["rule"] == "ES-08"]
 
 
-# --- D-47: filler pictures may come from Canva (PV-36) ---
+# --- D-53: filler pictures may come from Canva (PV-43) ---
 
 def _filler_doc(job="explanation"):
     doc = copy.deepcopy(json.loads(EP1.read_text(encoding="utf-8")))
@@ -273,7 +273,7 @@ def test_canva_is_refused_until_the_terms_are_verified_and_never_for_important_p
     doc, pid = _filler_doc()
     monkeypatch.setattr(R, "baseline", lambda: {"channel": {"canva_terms_verified": False}})
     found = V.canva_findings(doc)
-    assert any(f["rule"] == "PV-36" and "not verified" in f["detail"] for f in found)
+    assert any(f["rule"] == "PV-43" and "not verified" in f["detail"] for f in found)
     monkeypatch.setattr(R, "baseline", lambda: {"channel": {"canva_terms_verified": True}})
     assert not [f for f in V.canva_findings(doc) if f["severity"] == "FAIL"]
     doc["library"][pid]["heroes"] = ["newton"]

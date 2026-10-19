@@ -5,7 +5,7 @@ description: Foundational guide, technique database and decision framework for a
 
 # Video Editing Architect
 
-**Episode rulebook first (D-45, OR-10):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 File requested as `video-editing-architect.md`; stored as `SKILL.md` so the skill loader finds it. Project-specific, binding rules
 stay in `docs/EDITING.md` (ED-xx) and `docs/UNIVERSAL_RULE_BASE.md` (UR-xx); the `editing-style` skill is the Crossworld Theories

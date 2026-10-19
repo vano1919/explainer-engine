@@ -59,14 +59,14 @@ def gates(day: Path, look_path: Path | None = None) -> list[dict]:
     def add(n, name, status, detail, nxt=""):
         out.append({"gate": n, "name": name, "status": status, "detail": detail, "next": nxt})
 
-    # R episode rulebook (D-45): new-style episodes (a production script or a rulebook in the folder) need one
+    # R episode rulebook (D-51): new-style episodes (a production script or a rulebook in the folder) need one
     ps = day / "production_script.json"
     rules_path = day / "episode_rules.json"
     if rules_path.exists():
         st, detail, nxt = rulebook_state(rules_path, ps)
         add("R", "episode rulebook", st, detail, nxt)
     elif ps.exists():
-        add("R", "episode rulebook", "WAIT", "no episode_rules.json", "agent episode-standards-director (OR-10)")
+        add("R", "episode rulebook", "WAIT", "no episode_rules.json", "agent episode-standards-director (OR-11)")
     # 0 production script (D-43): when the episode has one, it is the source of everything below
     if ps.exists():
         from .production import validate as _pv

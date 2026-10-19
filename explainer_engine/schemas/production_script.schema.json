@@ -60,7 +60,7 @@
         },
         "rulebook": {
           "type": "string",
-          "description": "episode_rules.json next to the script (D-45); new-style scripts set it and PV-32..PV-35 apply"
+          "description": "episode_rules.json next to the script (D-51); new-style scripts set it and PV-39..PV-42 apply"
         }
       }
     },
@@ -467,7 +467,7 @@
                 },
                 "purpose": {
                   "type": "string",
-                  "description": "why this picture is on screen now (PV-35 REVIEW when missing)"
+                  "description": "why this picture is on screen now (PV-42 REVIEW when missing)"
                 },
                 "cut": {
                   "type": "object",
@@ -513,7 +513,7 @@
                     },
                     "purpose": {
                       "type": "string",
-                      "description": "the event's narrative or emotional job (PV-34)"
+                      "description": "the event's narrative or emotional job (PV-41)"
                     },
                     "yields_to": {
                       "type": "array",
@@ -564,7 +564,7 @@
                     },
                     "purpose": {
                       "type": "string",
-                      "description": "the event's narrative or emotional job (PV-34)"
+                      "description": "the event's narrative or emotional job (PV-41)"
                     },
                     "yields_to": {
                       "type": "array",
@@ -600,7 +600,7 @@
               "payoff",
               "transition"
             ],
-            "description": "what this beat does for the viewer (EPISODE_STANDARDS 5.4, PV-32)"
+            "description": "what this beat does for the viewer (EPISODE_STANDARDS 5.4, PV-39)"
           },
           "feel": {
             "type": "string",
@@ -861,7 +861,7 @@
             "pod_text",
             "canva"
           ],
-          "description": "canva: filler pictures only (D-47, PV-36); made by hand in Canva, placed as a file"
+          "description": "canva: filler pictures only (D-53, PV-43); made by hand in Canva, placed as a file"
         },
         "subject": {
           "type": "string",
@@ -949,11 +949,11 @@
             "standard",
             "premium"
           ],
-          "description": "Gemini batch tier (D-46, imagegen/routing.py); default standard"
+          "description": "Gemini batch tier (D-52, imagegen/routing.py); default standard"
         },
         "tier_reason": {
           "type": "string",
-          "description": "premium only: why this picture needs the dearer model (PV-33)"
+          "description": "premium only: why this picture needs the dearer model (PV-40)"
         }
       }
     }

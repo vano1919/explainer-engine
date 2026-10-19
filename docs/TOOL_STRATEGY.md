@@ -6,7 +6,7 @@ TMR repository (read-only, `vano1919/tmr-video-script-engine@d88ba8f`): `render/
 
 ## Who makes what
 
-**Current routing (D-46, 2026-10-17):** every picture is painted by Gemini on the batch tier (`production/paint.py`, tiers in
+**Current routing (D-52, 2026-10-17):** every picture is painted by Gemini on the batch tier (`production/paint.py`, tiers in
 `imagegen/routing.py`); narration, music and sound effects come from ElevenLabs only. The pod and Z-Image rows below are kept as
 history of D-19/D-36; they are no longer used.
 

@@ -29,7 +29,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [TOOL_STRATEGY](TOOL_STRATEGY.md) | which tool makes which asset, costs, kit test, RunPod money rules | |
 | [RISK_REGISTER](RISK_REGISTER.md) | risks and mitigations | R- |
 | [RIGHTS_AND_FAIR_USE](RIGHTS_AND_FAIR_USE.md) | rights rules for crossover episodes of fictional worlds | RR- |
-| [EPISODE_STANDARDS](EPISODE_STANDARDS.md) | the per-episode rulebook (`episode_rules.json`): legal, platform and creative rules of one video, risk statuses PASS/ADAPT/REVIEW/BLOCK, checkpoints and rechecks; D-45 | ES- |
+| [EPISODE_STANDARDS](EPISODE_STANDARDS.md) | the per-episode rulebook (`episode_rules.json`): legal, platform and creative rules of one video, risk statuses PASS/ADAPT/REVIEW/BLOCK, checkpoints and rechecks; D-51 | ES- |
 | [IMPLEMENTATION_PLAN](IMPLEMENTATION_PLAN.md) | phases, tasks, acceptance, stop conditions | |
 | [CLAUDE_EXECUTION_GUIDE](CLAUDE_EXECUTION_GUIDE.md) | phase gates, recovery, never-do list | |
 | [REPO_REUSE_AUDIT](REPO_REUSE_AUDIT.md), [PROVENANCE](PROVENANCE.md) | what came from the TMR repository | |

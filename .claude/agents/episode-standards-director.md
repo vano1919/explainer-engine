@@ -20,7 +20,7 @@ replace the research, script, voice, image, editing or QA steps, and you never s
 2. **Identity (section A).** The one question, the unique angle, tone, emotional arc, stakes, payoff, what this adds that a
    summary or a competing video does not, and what the viewer should understand, feel, question and remember. Make it
    specific to this episode; a sentence that would fit any episode is not done.
-3. **Jurisdictions.** `US` always (platform and the main market, D-46), the creator's residence when they confirm it (`GE`
+3. **Jurisdictions.** `US` always (platform and the main market, D-52), the creator's residence when they confirm it (`GE`
    assumed; ES-15), plus any market the creator names. Never carry one country's exceptions or terms into another.
 4. **Rules with evidence (section B).** Copy the baseline sources that apply; for anything not in the baseline, or a
    baseline row older than 180 days, read the current official page (YouTube Help, copyright offices, WIPO Lex, provider terms

@@ -284,7 +284,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         for x in sh["shots"]:
             if x["picture"] not in pic_ids:
                 _f(out, "PV-28", sh["id"], f"picture {x['picture']!r} is not a picture of the video (SH-03)")
-    if doc["episode"].get("rulebook"):  # scripts written to an episode rulebook (D-45/D-46)
+    if doc["episode"].get("rulebook"):  # scripts written to an episode rulebook (D-51/D-52)
         out += rulebook_era_findings(doc)
     out += canva_findings(doc)
     # PV-12 narration lint on what the voice gets
@@ -306,7 +306,7 @@ NUMBER = re.compile(r"\d")
 
 
 def canva_findings(doc: dict) -> list[dict]:
-    """PV-36 (D-47): a picture may come from Canva only when it is filler, only while the Canva terms are verified, and at
+    """PV-43 (D-53): a picture may come from Canva only when it is filler, only while the Canva terms are verified, and at
     most FILLER_SHARE_MAX of the episode's pictures (always checked, a script without a rulebook included)."""
     from explainer_engine.imagegen import importance
     from explainer_engine.standards import rulebook
@@ -317,59 +317,59 @@ def canva_findings(doc: dict) -> list[dict]:
     if not canva:
         return out
     if not rulebook.baseline()["channel"].get("canva_terms_verified"):
-        _f(out, "PV-36", "pictures", f"{len(canva)} pictures use engine canva but the Canva AI terms and content licence are "
+        _f(out, "PV-43", "pictures", f"{len(canva)} pictures use engine canva but the Canva AI terms and content licence are "
            "not verified (policy_baseline channel.canva_terms_verified); paint them on the Gemini batch tier")
     kinds = importance.classify(doc)
     for k in canva:
         if not kinds[k]["filler"]:
-            _f(out, "PV-36", k, "Canva is for filler only; this picture is not filler: " + "; ".join(kinds[k]["why_not"]))
+            _f(out, "PV-43", k, "Canva is for filler only; this picture is not filler: " + "; ".join(kinds[k]["why_not"]))
     if len(canva) / len(used) > importance.FILLER_SHARE_MAX:
-        _f(out, "PV-36", "pictures", f"{len(canva)} of {len(used)} pictures come from Canva (> "
+        _f(out, "PV-43", "pictures", f"{len(canva)} of {len(used)} pictures come from Canva (> "
            f"{importance.FILLER_SHARE_MAX:.0%})")
     if len(canva) > importance.CANVA_FREE_AI_USES:
-        _f(out, "PV-36", "pictures", f"{len(canva)} Canva pictures exceed the free plan's about "
+        _f(out, "PV-43", "pictures", f"{len(canva)} Canva pictures exceed the free plan's about "
            f"{importance.CANVA_FREE_AI_USES} AI uses (V-39)", "REVIEW")
     return out
 
 
 def rulebook_era_findings(doc: dict) -> list[dict]:
-    """PV-32..PV-35 for scripts written to an episode rulebook (older scripts keep their rules unchanged)."""
+    """PV-39..PV-42 for scripts written to an episode rulebook (older scripts keep their rules unchanged)."""
     from explainer_engine.imagegen import routing
     out: list[dict] = []
     segs = doc["segments"]
-    for seg in segs:  # PV-32 every beat says what it does for the viewer
+    for seg in segs:  # PV-39 every beat says what it does for the viewer
         if not seg.get("job"):
-            _f(out, "PV-32", seg["id"], "no beat job (hook, question, explanation, evidence, complication, reveal, "
+            _f(out, "PV-39", seg["id"], "no beat job (hook, question, explanation, evidence, complication, reveal, "
                "emotional_pause, humor, payoff, transition)")
     if segs[0].get("job") not in (None, "hook", "question"):
-        _f(out, "PV-32", segs[0]["id"], "the first beat is not a hook or a question", "REVIEW")
+        _f(out, "PV-39", segs[0]["id"], "the first beat is not a hook or a question", "REVIEW")
     if segs[-1].get("job") not in (None, "payoff"):
-        _f(out, "PV-32", segs[-1]["id"], "the last beat is not a payoff", "REVIEW")
-    pics, _ = S.pictures(doc)  # PV-33 every painted picture goes to the Gemini batch tier, premium only with a reason
+        _f(out, "PV-39", segs[-1]["id"], "the last beat is not a payoff", "REVIEW")
+    pics, _ = S.pictures(doc)  # PV-40 every painted picture goes to the Gemini batch tier, premium only with a reason
     painted = [p for p in pics.values() if p.get("uses") and not p.get("file")]
     for p in painted:
         eng = C.engine_of(doc, p)
         if eng == "pod_text":
-            _f(out, "PV-33", p["id"], "pod pictures are no longer made (D-46): engine gemini or pod_ref, batch tier")
+            _f(out, "PV-40", p["id"], "pod pictures are no longer made (D-52): engine gemini or pod_ref, batch tier")
         if routing.tier_of(p) == "premium" and not (p.get("tier_reason") or "").strip():
-            _f(out, "PV-33", p["id"], "a premium picture needs tier_reason (reused across videos, or a reveal that must "
+            _f(out, "PV-40", p["id"], "a premium picture needs tier_reason (reused across videos, or a reveal that must "
                "hold several references)")
     prem = sum(routing.tier_of(p) == "premium" for p in painted)
     if painted and prem / len(painted) > routing.PREMIUM_SHARE_MAX:
-        _f(out, "PV-33", "pictures", f"{prem} of {len(painted)} pictures are premium (> {routing.PREMIUM_SHARE_MAX:.0%})",
+        _f(out, "PV-40", "pictures", f"{prem} of {len(painted)} pictures are premium (> {routing.PREMIUM_SHARE_MAX:.0%})",
            "REVIEW")
-    for seg in segs:  # PV-34 sounds have a job; PV-35 shots have a purpose, numbers have a claim
+    for seg in segs:  # PV-41 sounds have a job; PV-42 shots have a purpose, numbers have a claim
         for kind in ("beds", "sfx"):
             for ev in seg.get("audio", {}).get(kind, []):
                 if not (ev.get("purpose") or "").strip():
-                    _f(out, "PV-34", seg["id"], f"{kind[:-1] if kind == 'beds' else 'sound'} {ev['sound']!r} at "
+                    _f(out, "PV-41", seg["id"], f"{kind[:-1] if kind == 'beds' else 'sound'} {ev['sound']!r} at "
                        f"{ev['at']!r} has no purpose", "REVIEW")
         for sh in seg["shots"]:
             if not (sh.get("purpose") or "").strip():
-                _f(out, "PV-35", seg["id"], f"shot at {sh['at']!r} has no purpose", "REVIEW")
+                _f(out, "PV-42", seg["id"], f"shot at {sh['at']!r} has no purpose", "REVIEW")
         for line in seg["lines"]:
             if NUMBER.search(line["text"]) and not line.get("claims"):
-                _f(out, "PV-35", seg["id"], f"a number without a claim id: {line['text'][:50]!r} (invariant 5)")
+                _f(out, "PV-42", seg["id"], f"a number without a claim id: {line['text'][:50]!r} (invariant 5)")
     return out
 
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "explainer.episode_rules.v1",
-  "title": "Episode rulebook of one video (docs/EPISODE_STANDARDS.md, D-45)",
+  "title": "Episode rulebook of one video (docs/EPISODE_STANDARDS.md, D-51)",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema", "version", "episode_id", "rulebook_version", "status", "identity", "jurisdictions", "rules",

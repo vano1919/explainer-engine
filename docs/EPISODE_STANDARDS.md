@@ -1,10 +1,10 @@
-# Episode standards: the per-episode rulebook (D-45)
+# Episode standards: the per-episode rulebook (D-51)
 
 Canonical for the episode rulebook (`episode_rules.json`), its checks (ES-xx), how the legal, platform and creative
 questions of one video are decided, the engagement gate (section 7), story hypotheses (section 8) and the upload disclosure
 (section 9). Written by the `episode-standards-director` agent
 ([.claude/agents/episode-standards-director.md](../.claude/agents/episode-standards-director.md)), loaded by the
-`orchestrator` ([ORCHESTRATION](ORCHESTRATION.md) OR-10, OR-11) and passed to every downstream step. Schema:
+`orchestrator` ([ORCHESTRATION](ORCHESTRATION.md) OR-11, OR-12) and passed to every downstream step. Schema:
 [`explainer_engine/schemas/episode_rules.schema.json`](../explainer_engine/schemas/episode_rules.schema.json); code:
 `explainer_engine/standards/`; verified sources: `explainer_engine/standards/policy_baseline.json` (log: MARKET_RESEARCH
 V-13..V-24).
@@ -122,7 +122,7 @@ the contributions and the patterns of earlier episodes to avoid (ES-13, ES-14).
 ## 5. Default jurisdictions
 
 `US` is always relevant: YouTube is operated from the US, the channel is in English for a general audience (D-09) and the US is
-the main market (the creator, 2026-10-17, D-46). The creator lives in Georgia (`GE`, confirmed 2026-10-17), the target audience is the US, so the default jurisdictions are
+the main market (the creator, 2026-10-17, D-52). The creator lives in Georgia (`GE`, confirmed 2026-10-17), the target audience is the US, so the default jurisdictions are
 `["US", "GE"]` (`standards/policy_baseline.json`, `channel`); a claim or a publicity question can also arise where the publisher lives. A known large audience in
 another country (UK, EU) adds it. The agent does not apply one country's exceptions or terms to another.
 
@@ -145,7 +145,7 @@ another country (UK, EU) adds it. The agent does not apply one country's excepti
 | Contradiction: channel scope | contradictory | CLAUDE.md said "public-domain worlds only, D-25" while D-26 allows franchise analysis episodes; CLAUDE.md now cites both |
 | Loudness targets | contradictory | P-90 FAIL outside -16..-13 vs scorecard -17.5..-11; Shorts renderer -15 LUFS vs P-101 -14; voice gap 10 dB (P-93, Q-T08) vs 14 dB (scorecard); now one `qa/targets.py`, stricter value kept |
 | Shorts length | outdated | P-11 and Q-T12 failed Shorts over 60 s; YouTube counts up to 3 minutes (V-25); now 60 s house REVIEW, 180 s FAIL |
-| Picture routing | contradictory | D-36 (pod for scene pictures) vs D-44 practice (Gemini for Episode 1) vs PRODUCTION_RULES order 5; now D-46: Gemini batch tiers for every picture, PV-33 |
+| Picture routing | contradictory | D-36 (pod for scene pictures) vs D-44 practice (Gemini for Episode 1) vs PRODUCTION_RULES order 5; now D-52: Gemini batch tiers for every picture, PV-40 |
 | ElevenLabs takes | money leak | connector default `generations_count` is 4 (V-29); EL-10 said 1 in prose only; now enforced by the PreToolUse hook |
 | Deterministic enforcement in Claude Code | missing | no `.claude/settings.json` hooks; now one PreToolUse hook on the ElevenLabs connector |
 | Story alternatives, beat jobs, engagement check | missing | no record of rejected premises; segments had `purpose` text only; now `story_hypotheses.json`, `job`, `qa/engagement.py` |
@@ -179,7 +179,7 @@ and `narrative` (stakes, surprise, payoff, without the evidence). `python -m exp
 fewer than three, a selected premise with evidence under 3 (a good story never makes up for weak evidence), and a beat sheet without a
 payoff; it asks why a premise lost that scored higher on both. The selected premise's beat sheet (each beat with its job: hook,
 question, explanation, evidence, complication, reveal, emotional pause, humour, payoff, transition) becomes the production script's
-segment `job`s (PV-32), and its rights risks become rulebook risks.
+segment `job`s (PV-39), and its rights risks become rulebook risks.
 
 ## 9. Disclosure at upload (4.9)
 

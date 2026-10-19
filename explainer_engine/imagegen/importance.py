@@ -1,4 +1,4 @@
-"""Which pictures are filler (D-47, PV-36). stdlib only.
+"""Which pictures are filler (D-53, PV-43). stdlib only.
 
 Importance is computed from what the script already says, never declared by the script: a writer cannot mark a picture
 "filler" to get it past a gate. A picture is NOT filler when any of these holds:
@@ -10,7 +10,7 @@ Importance is computed from what the script already says, never declared by the 
 
 What stays is the establishing plate (type A) or the insert (type C) with no person in it, used once, inside an explanation,
 emotional pause, humour or transition beat. Shot length is not known at script stage; the 4-second limit the creator chose is
-checked after timing (docs/PRODUCTION_SCRIPT.md PV-36).
+checked after timing (docs/PRODUCTION_SCRIPT.md PV-43).
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from __future__ import annotations
 from explainer_engine.production import script as S
 
 FILLER_JOBS = {"explanation", "emotional_pause", "humor", "transition"}
-FILLER_SHARE_MAX = 0.30        # at most this share of an episode's painted pictures may come from Canva (D-47)
+FILLER_SHARE_MAX = 0.30        # at most this share of an episode's painted pictures may come from Canva (D-53)
 CANVA_FREE_AI_USES = 20        # the creator's free plan (V-39); a count above it is reviewed
 
 

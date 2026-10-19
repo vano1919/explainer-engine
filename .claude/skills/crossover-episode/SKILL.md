@@ -5,7 +5,7 @@ description: Research and write a "worlds collide" crossover episode (two fictio
 
 # Crossover episode: fan research -> scenario -> balanced script -> rights check
 
-**Episode rulebook first (D-45, OR-10):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role script` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 The goal is the scenario fans of both worlds have argued about and never seen done properly, explained so a newcomer
 enjoys it too. Not a generic "who would win", not a recap, not a template with names swapped.

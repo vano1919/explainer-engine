@@ -62,8 +62,8 @@ likeness do not by themselves require it (re-verify against the current page bef
 | Story and evidence | Q-E02, Q-E04, Q-E17, claim map (invariant 5) |
 | Rulebook compliance | Q-E15 (`standards gate --at final_qa`), Q-E13 |
 | Narration | Q-E05, Q-T18, PV-20, `voice_check`, ED-01, ED-12 |
-| Visuals | Q-E06, Q-E11, `visual_judge`, PV-24, PV-33 |
-| Audio | Q-T07, Q-T08, PV-29, PV-34, `qa/targets.py` |
+| Visuals | Q-E06, Q-E11, `visual_judge`, PV-24, PV-40 |
+| Audio | Q-T07, Q-T08, PV-29, PV-41, `qa/targets.py` |
 | Editing | Q-T17, Q-E07, ED-01..ED-12, captions Q-T09, Q-T10 |
 | Assets and provenance | Q-T16, ES-09, the run ledger (`core/ledger.py`) |
 | Originality and engagement | Q-E16, ES-13, ES-14 |

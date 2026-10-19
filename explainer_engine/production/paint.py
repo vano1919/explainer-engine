@@ -1,16 +1,16 @@
-"""Paint an episode's pictures with Gemini on the batch tier (D-46: every picture, half price), safely.
+"""Paint an episode's pictures with Gemini on the batch tier (D-52: every picture, half price), safely.
 
     python -m explainer_engine.production.paint <script.json> --run jobs/<run>/run.json --out <pictures dir> [--only id,id] [--estimate]
                                                 [--limit N] [--first] [--tier draft|standard|premium] [--collect NAME]
 
 Each picture's tier (``draft``, ``standard``, ``premium``; ``imagegen/routing.py``) picks the model and size; ``--tier`` paints
-the selection on one tier (a draft pass). The standard tier (synchronous calls) is never used (D-46).
+the selection on one tier (a draft pass). The standard tier (synchronous calls) is never used (D-52).
 
 Every picture is one reference-edit request: the compiled ``pod_job`` prompt plus its reference pictures (the library's files).
 The price is reserved in the run ledger before the call (refused past 80 % of the cap), the PNG is written as soon as it
 arrives and recorded as an item, so a stop, a cap or a crash loses nothing and a re-run skips what exists (OR-02, OR-03). A
 failed picture counts a failure; the third failure stops that picture, never the whole batch. ``--first`` paints one picture
-only (the phase-3 test). Before any paid call the episode rulebook's ``paid_assets`` checkpoint must pass (OR-11, D-45);
+only (the phase-3 test). Before any paid call the episode rulebook's ``paid_assets`` checkpoint must pass (OR-12, D-51);
 ``--legacy-no-rulebook`` exists only for episodes made before it.
 """
 
@@ -115,10 +115,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--first", action="store_true")
     ap.add_argument("--estimate", action="store_true")
     ap.add_argument("--tier", choices=sorted(routing.TIERS), help="paint the selection on this tier (default: each picture's own)")
-    ap.add_argument("--batch", action="store_true", help="kept for old command lines: the batch tier is always used (D-46)")
+    ap.add_argument("--batch", action="store_true", help="kept for old command lines: the batch tier is always used (D-52)")
     ap.add_argument("--wait", type=float, default=1500.0, help="seconds to wait for a batch before leaving it for --collect")
     ap.add_argument("--collect", help="collect an earlier batch by name instead of submitting")
-    ap.add_argument("--legacy-no-rulebook", action="store_true", help="episodes made before D-45 (Episode 1) only")
+    ap.add_argument("--legacy-no-rulebook", action="store_true", help="episodes made before D-51 (Episode 1) only")
     a = ap.parse_args(argv)
     path = Path(a.script)
     doc = S.load(path)
@@ -141,7 +141,7 @@ def main(argv: list[str] | None = None) -> int:
           f"${run.spent('gemini_usd'):.3f} of cap {run.data['caps'].get('gemini_usd')} (stop at 80 %)")
     pending = C.canva_pending(doc)
     if pending:
-        print(f"{len(pending)} filler pictures are made by hand in Canva, not painted here (PV-36): {', '.join(pending)}")
+        print(f"{len(pending)} filler pictures are made by hand in Canva, not painted here (PV-43): {', '.join(pending)}")
     if a.estimate:
         return 0
     if a.collect:
@@ -153,18 +153,18 @@ def main(argv: list[str] | None = None) -> int:
                 run.done("pictures", item, file=f"{item}.png", batch=a.collect)
         print(res["state"], len(res["items"]), "pictures")
         return 0 if res["done"] else 1
-    if not a.legacy_no_rulebook:  # OR-11: no paid picture before the rulebook's paid_assets checkpoint passes
+    if not a.legacy_no_rulebook:  # OR-12: no paid picture before the rulebook's paid_assets checkpoint passes
         from explainer_engine.standards import rulebook as R
         rules_path = path.with_name("episode_rules.json")
         if not rules_path.exists():
-            print(f"STOP: no {rules_path.name} next to the script (OR-10); --legacy-no-rulebook only for episodes made "
-                  "before D-45")
+            print(f"STOP: no {rules_path.name} next to the script (OR-11); --legacy-no-rulebook only for episodes made "
+                  "before D-51")
             return 4
         fails = [f for f in R.gate(rules_path, "paid_assets", path) if f["severity"] == "FAIL"]
         if fails:
             for f in fails:
                 print("FAIL", f["rule"], f["where"], f["detail"])
-            print("STOP: the rulebook's paid_assets checkpoint does not pass (OR-11)")
+            print("STOP: the rulebook's paid_assets checkpoint does not pass (OR-12)")
             return 4
     code = 0
     for tier in routing.TIERS:  # one batch run per tier: a batch has one model and size

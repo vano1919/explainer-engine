@@ -433,7 +433,7 @@ on a 10 ms fade; word times follow the real quiet spot. Re-run: 131 -> 113 silen
 -42 dB), 18 insertions skipped (no quiet spot). Three cuts that relied on a skipped pause were moved to legal pauses (S18, S31, S32)
 and one reframe added (S31 "Fuel."). Tests: 210 passed. Creator picked speed 1.15.
 
-## 2026-10-17 — Episode standards: one rulebook per video (D-45)
+## 2026-10-17 — Episode standards: one rulebook per video (D-51)
 
 Creator's master prompt (director-controlled, copyright-aware, creative-first). Built on `systemic/next-video` (a182195); Episode 1
 untouched. Audit first: all four remote branches compared (`main` = Phase 1 scaffold, `phase-2-spec-pack` and `systemic/next-video`
@@ -446,17 +446,17 @@ EU Art. 17(7) not loaded (not verified); ElevenLabs and Google generative-AI use
 Added: agent `episode-standards-director`; `schemas/episode_rules.schema.json` v1; `standards/rulebook.py` (ES-01..ES-18:
 check, gate per checkpoint provisional/final/script_lock/paid_assets/final_qa, stamp tied to the script's sha256, brief per
 role, generated markdown view) and `policy_baseline.json`; `production_gate` row R; `paint.py` refuses a paid run unless
-`paid_assets` passes (`--legacy-no-rulebook` for pre-D-45 episodes); OR-10/OR-11, Q-E15, R-30; skills read their brief.
+`paid_assets` passes (`--legacy-no-rulebook` for pre-D-51 episodes); OR-11/OR-12, Q-E15, R-30; skills read their brief.
 Tests: 26 new, 237 pass; 2 failures existed before this change (`test_committed_sound_library`, `test_end_to_end_script_to_video`:
 `assets/audio/library/foley/*.wav` are not in the repository on this branch). docs_lint 0.
 Not done / open: the creator's residence and target markets (ES-15, assumed GE + US); no rulebook yet for the next episode
 (its topic is not chosen); voice and music steps have no paid-call refusal in code yet (their paid calls go through the
 ElevenLabs connector, so the orchestrator runs the gate); the master prompt arrived cut off in section 4.8.
 
-## 2026-10-17 — The rest of the master prompt; the creator's answers (D-46)
+## 2026-10-17 — The rest of the master prompt; the creator's answers (D-52)
 
 Creator's answers: main market US; ElevenLabs is the only audio provider; pictures by Gemini on the batch tier only, cheap and
-dear versions chosen by Claude after building the system. Decided (D-46, `imagegen/routing.py`): `draft` Nano Banana 2.1 1K
+dear versions chosen by Claude after building the system. Decided (D-52, `imagegen/routing.py`): `draft` Nano Banana 2.1 1K
 $0.0168, `standard` Nano Banana 2.1 2K $0.0252 (every scene picture; Episode 1's 74 accepted), `premium` Gemini 3 Pro Image 2K
 $0.067 (reused identity assets, multi-reference reveals; reason required, at most 10 %). Flash-Lite rejected (failed the palette in
 the Episode 1 test), Flash 3.1 2K ($0.050) not routed (no measured gain). `paint.py` sends one batch per tier and has no synchronous
@@ -465,22 +465,22 @@ ElevenLabs terms, Music Terms and the connector's real parameters, `generations_
 Code hooks; AES TD1008 only through secondary sources).
 Built: PreToolUse hook on the ElevenLabs connector (`.claude/settings.json`, `standards/hook.py`: pictures/video refused, one take,
 rulebook `paid_assets` gate, logged creator overrides); production-script fields `job`, `feel`, `rules`, shot `purpose`/`cut`, picture
-`tier`, sound `purpose`/`yields_to` and PV-32..PV-35 for rulebook-era scripts (Episode 1 unchanged); `qa/engagement.py` (ENG-1..6 and
+`tier`, sound `purpose`/`yields_to` and PV-39..PV-42 for rulebook-era scripts (Episode 1 unchanged); `qa/engagement.py` (ENG-1..6 and
 the seven gate questions); `research/hypotheses.py` + schema (HY-0..4); `qa/targets.py` (one loudness/true-peak/gap definition for
 mixer, Shorts and scorecard; stricter value kept where documents disagreed); rulebook disclosure `ai_uses`, `upload_action`;
-executor contracts (OR-12), OR-13; QA map of the nine final areas, Q-T19, Q-E16, Q-E17. Tests: 13 new (250 pass); the 2 failures that
+executor contracts (OR-13), OR-14; QA map of the nine final areas, Q-T19, Q-E16, Q-E17. Tests: 13 new (250 pass); the 2 failures that
 existed before remain (sound-library WAVs not in the repository). docs_lint 0.
 Not done: no new episode produced (the topic is not chosen); the Shorts renderer's export settings and BT.709 tagging are not yet
 measured against Q-T19; the creator's ElevenLabs plan (music media rights, V-28) and country of residence are still to confirm.
-Update (same day): the creator confirmed ElevenLabs plan Creator, residence Georgia, target audience US: recorded in `policy_baseline.json` `channel`, EPISODE_STANDARDS section 5, AUDIO_SYSTEM, D-46.
+Update (same day): the creator confirmed ElevenLabs plan Creator, residence Georgia, target audience US: recorded in `policy_baseline.json` `channel`, EPISODE_STANDARDS section 5, AUDIO_SYSTEM, D-52.
 Update (same day): content language fixed by the creator: everything the audience sees or hears is English; Georgian only for chat with the creator (`channel.content_language`, CLAUDE.md). Likeness: recognisable archetype allowed, no real actor's face. Crossover topic received (four bosses in GTA 6 Leonida): rulebook started by `episode-standards-director`, nothing produced.
-Update (same day): D-46 music wording widened by the creator (free library allowed per verified licence); Syndicate Wars rulebook v2 (Vito film-era, Shelby 1930s, leaks only as labelled press reports, never leaked files). Open: RR-10 wording on press-reported leaks.
+Update (same day): D-52 music wording widened by the creator (free library allowed per verified licence); Syndicate Wars rulebook v2 (Vito film-era, Shelby 1930s, leaks only as labelled press reports, never leaked files). Open: RR-10 wording on press-reported leaks.
 Update (same day): RR-10 rewritten by the creator's decision: leaked material stays banned; labelled leaked information from a named outlet is allowed unless it directly and unambiguously harms a person. Official GTA VI images: studied for the look, not yet fed to the picture generator; the dose of signs and logos waits for the Gemini research.
 Update (same day): the Gemini legal report became rules: RR-14 (commentary target), RR-15 (no official image as generator input), RR-16 (no merchandise use of parody brands), ES-19 (source quality; pirated hosts refused), V-38 (cases, unverified until read). The second report (GTA VI world, four bosses) was triaged: wrong 'official' tags, leaked-document rows dropped, LCN and BAWSAQ are two exchanges.
 Update (same day): Canva tested: one test image generated from a neutral prompt (media id MAHYRlcFvKM, private, not published; looked at by the creator and us: palette fits, no franchise). Free plan recorded from the creator's browser (V-39): about 20 AI uses, 4.7M stock assets, 1 brand kit. The Canva terms are still unverified (403); no Canva asset goes into a production episode until the creator reads its AI Product Terms and stock licence.
 Update (same day): Canva Privacy Policy (V-40, creator-supplied): content in the account may train Canva's AI unless the creator switches it off in privacy settings. Rule for our work: no unpublished scripts, claim maps, rights manifests or personal data in Canva; test images only.
-Update (same day): D-47 filler pictures via Canva: `imagegen/importance.py` computes importance from shot type, heroes, reuse, tier and beat job; PV-36 refuses non-filler Canva pictures, more than 30 %, and any use while `canva_terms_verified` is false; `paint.py` lists the Canva pictures it does not paint. Shot length is not known at script stage: the 4 s limit is still to be checked after timing.
-Update (same day): the creator read the Canva terms himself and accepted D-47: `channel.canva_terms_verified` is now true (note: text not seen by Claude). PV-36 still limits Canva to computed filler, at most 30 %.
+Update (same day): D-53 filler pictures via Canva: `imagegen/importance.py` computes importance from shot type, heroes, reuse, tier and beat job; PV-43 refuses non-filler Canva pictures, more than 30 %, and any use while `canva_terms_verified` is false; `paint.py` lists the Canva pictures it does not paint. Shot length is not known at script stage: the 4 s limit is still to be checked after timing.
+Update (same day): the creator read the Canva terms himself and accepted D-53: `channel.canva_terms_verified` is now true (note: text not seen by Claude). PV-43 still limits Canva to computed filler, at most 30 %.
 
 ## 2026-10-17 — Syndicate Wars (episode run up to the voice; ElevenLabs not available)
 

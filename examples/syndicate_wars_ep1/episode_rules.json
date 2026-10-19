@@ -305,7 +305,7 @@
     },
     {
       "id": "ER-10",
-      "requirement": "Music has a licence record per track and is never a GTA radio station, song, cue or sound-alike, nor a Godfather or Peaky Blinders theme. Sources allowed for MUSIC only (creator 2026-10-17): ElevenLabs music, or a free library whose licence is verified per track (CC0 or explicit commercial-use grant; stance on YouTube monetisation and Content ID; URL, date, licence text recorded). Narration and sound effects stay ElevenLabs (D-46). The 'GTA V feel' is described by musical qualities (era, tempo, instrumentation), never by naming a station, artist or song.",
+      "requirement": "Music has a licence record per track and is never a GTA radio station, song, cue or sound-alike, nor a Godfather or Peaky Blinders theme. Sources allowed for MUSIC only (creator 2026-10-17): ElevenLabs music, or a free library whose licence is verified per track (CC0 or explicit commercial-use grant; stance on YouTube monetisation and Content ID; URL, date, licence text recorded). Narration and sound effects stay ElevenLabs (D-52). The 'GTA V feel' is described by musical qualities (era, tempo, instrumentation), never by naming a station, artist or song.",
       "applies_to": [
         "music",
         "sound"
@@ -377,7 +377,7 @@
           "checked": "2026-10-17",
           "kind": "project_invariant",
           "verified": true,
-          "note": "CLAUDE.md 'Language (creator, 2026-10-17)', D-09, D-46"
+          "note": "CLAUDE.md 'Language (creator, 2026-10-17)', D-09, D-52"
         }
       ]
     },
@@ -901,7 +901,7 @@
       "category": "other",
       "source_type": "not_applicable",
       "status": "ADAPT",
-      "evidence": "CLAUDE.md language rule (creator, 2026-10-17): everything the viewer sees or hears is English for the US audience; D-09, D-46. ElevenLabs v4 support for Georgian was not checked.",
+      "evidence": "CLAUDE.md language rule (creator, 2026-10-17): everything the viewer sees or hears is English for the US audience; D-09, D-52. ElevenLabs v4 support for Georgian was not checked.",
       "rationale": "Georgian narration would cut the main (US) market off from the video, contradicts a standing creator rule and cannot be checked against the English-language fan canon the episode depends on.",
       "mitigation": "Narration, on-screen text, titles, metadata and picture prompts are written in English; the brief's Georgian request is recorded as superseded by the standing rule; a Georgian subtitle track or dub can be proposed after approval #2.",
       "dependencies": [
@@ -952,7 +952,7 @@
       "dependencies": [
         "music",
         "metadata",
-        "orchestrator (D-46 wording)"
+        "orchestrator (D-52 wording)"
       ],
       "rules": [
         "ER-10"
@@ -1240,7 +1240,7 @@
           "leaked images are never reference for drawings (ER-17)",
           "no official screenshot, frame or key art in any generator call, reference slot or style slot (ER-19)",
           "parody brands as in-scene props only, never merchandise or a product (ER-20)",
-          "filler pictures made in Canva (D-47) follow the same rules: our own elements only, no franchise, logo, actor or parody-brand merchandise use; the creator accepted Canva's terms on 2026-10-17"
+          "filler pictures made in Canva (D-53) follow the same rules: our own elements only, no franchise, logo, actor or parody-brand merchandise use; the creator accepted Canva's terms on 2026-10-17"
         ],
         "human_review": [
           "every boss's face against 'does this look like a named actor?'"

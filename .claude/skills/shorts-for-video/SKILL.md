@@ -5,7 +5,7 @@ description: Write and cut the YouTube Shorts that advertise a Crossworld Theori
 
 # Shorts that sell the video
 
-**Episode rulebook first (D-45, OR-10):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 Rules: `docs/ORCHESTRATION.md` SH-01..SH-04. A Short is a trailer with its own text, never a cut of the long video's read.
 

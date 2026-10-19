@@ -24,7 +24,7 @@ gets silence inserted in its middle; no word is touched, later words move by the
 rewritten on the padded audio the mix uses (Day 1: 41 gaps, +6.7 s on 170.6 s). Kokoro stays the free draft and
 the fallback when ElevenLabs is unavailable.
 
-## ElevenLabs only (D-46): what the connector really exposes (read with `creative_get_model_schema`, 2026-10-17, V-29)
+## ElevenLabs only (D-52): what the connector really exposes (read with `creative_get_model_schema`, 2026-10-17, V-29)
 | Use | Model | Parameters the tool accepts | Notes |
 |---|---|---|---|
 | narration | `eleven_v4` | voice, `language_code` | no stability/style/seed; delivery comes from text, tags, chunking (skill `elevenlabs-voice`) |

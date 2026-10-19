@@ -1,4 +1,4 @@
-"""PreToolUse hook for the ElevenLabs connector (OR-11, D-46): a paid generation runs only through the rulebook gate.
+"""PreToolUse hook for the ElevenLabs connector (OR-12, D-52): a paid generation runs only through the rulebook gate.
 
 Wired in ``.claude/settings.json`` (matcher ``mcp__ElevenLabs__creative_.*``). Claude Code passes the call as JSON on stdin
 (``tool_name``, ``tool_input``); the hook answers ``permissionDecision: deny`` with a reason, or nothing (normal flow).
@@ -30,7 +30,7 @@ def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
     tool = tool_name.split("__")[-1]
     node = tool_input.get("node_type", "")
     if tool in PICTURE_TOOLS or node in PICTURE_NODES:
-        return ("D-46: pictures and video are painted by Gemini on the batch tier (python -m explainer_engine.production.paint), "
+        return ("D-52: pictures and video are painted by Gemini on the batch tier (python -m explainer_engine.production.paint), "
                 "never through ElevenLabs")
     if tool not in PAID_TOOLS or tool_input.get("estimate_only"):
         return None
@@ -38,7 +38,7 @@ def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
         return "EL-10: pass generations_count 1 (the default 4 charges four takes); estimate_only first"
     cfg_path = root / ".claude" / "active_episode.json"
     if not cfg_path.exists():
-        return ("OR-11: no active episode: write .claude/active_episode.json {\"episode\": \"<folder>\"} so the rulebook's "
+        return ("OR-12: no active episode: write .claude/active_episode.json {\"episode\": \"<folder>\"} so the rulebook's "
                 "paid_assets gate can run (or an \"override\" with the creator's reason)")
     cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
     if (cfg.get("override") or "").strip():
@@ -51,11 +51,11 @@ def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
     folder = root / cfg.get("episode", "")
     rules = folder / "episode_rules.json"
     if not rules.exists():
-        return f"OR-10: {rules} does not exist"
+        return f"OR-11: {rules} does not exist"
     from explainer_engine.standards import rulebook as R
     fails = [f for f in R.gate(rules, "paid_assets", folder / "production_script.json") if f["severity"] == "FAIL"]
     if fails:
-        return "OR-11: the rulebook's paid_assets checkpoint fails: " + "; ".join(
+        return "OR-12: the rulebook's paid_assets checkpoint fails: " + "; ".join(
             f"{f['rule']} {f['where']}: {f['detail']}" for f in fails[:3]) + (f" (+{len(fails) - 3} more)" if len(fails) > 3 else "")
     return None
 

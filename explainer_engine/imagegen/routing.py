@@ -1,4 +1,4 @@
-"""Picture routing (D-46): every picture is painted by Gemini on the batch tier, on one of three tiers. stdlib only.
+"""Picture routing (D-52): every picture is painted by Gemini on the batch tier, on one of three tiers. stdlib only.
 
 The tier is chosen by what the picture has to do, never by habit (docs/VISUAL_WORLD_ARCHITECTURE.md section 6):
 
@@ -8,7 +8,7 @@ The tier is chosen by what the picture has to do, never by habit (docs/VISUAL_WO
 * ``standard`` - Nano Banana 2.1 at 2K: every scene picture. Episode 1's 74 pictures were made with it and accepted.
 * ``premium``  - Gemini 3 Pro Image at 2K: only where the picture is reused across videos (cast references, thumbnail
                  elements) or a reveal shot that must hold several references at once; each one carries a reason, and at
-                 most a tenth of an episode's pictures may be premium (PV-33).
+                 most a tenth of an episode's pictures may be premium (PV-40).
 
 4K is not routed: the video is 1080p/1440p and pictures are graded to 1.2 x the frame, which 2K covers.
 Batch prices (USD per picture, ai.google.dev/gemini-api/docs/pricing, checked 2026-10-17) live in ``gemini.BATCH_PRICES``.

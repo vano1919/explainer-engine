@@ -15,7 +15,7 @@ Read it before starting any video; update the feedback log (section 3) whenever 
 4. **Money is never a surprise.** Estimate before every paid call, state units, price and caps in the request, wait for a yes,
    stop at 80 % of any cap, finish with nothing running and the balance reported ([TOOL_STRATEGY](TOOL_STRATEGY.md),
    [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md), CLAUDE.md invariants 1-2).
-5. **Pictures are painted by Gemini on the batch tier, on the tier the picture needs** (draft, standard, premium; D-46,
+5. **Pictures are painted by Gemini on the batch tier, on the tier the picture needs** (draft, standard, premium; D-52,
    which supersedes the pod routing of D-36). Audio comes from ElevenLabs only.
 6. **Look at the output before reporting it.** Open the contact sheet, listen to the test read, composite a sample; a green test
    is not acceptance (CLAUDE_EXECUTION_GUIDE step 5).
@@ -41,7 +41,7 @@ action. Gates 3-7 spend money and need the creator's yes first.
 | 8 | **Animatic and render** | GPU compositor (D-32), motion per UR-13, transitions UR-14, sound UR-15 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) |
 | 9 | **Seven-point test, QA and approval #2** | every video passes all seven checks of section 6 (`qa/scorecard.py`), then technical and editorial QA, the review bundle and the creator's recorded approval before any upload | section 6, [QA_SPECIFICATION](QA_SPECIFICATION.md) |
 
-Order matters: no paid read, picture or music before the rulebook's `paid_assets` checkpoint passes (OR-11); a script is not paid-read before gate 1 is clean; pictures are not painted before the style bridge (gate 4) and
+Order matters: no paid read, picture or music before the rulebook's `paid_assets` checkpoint passes (OR-12); a script is not paid-read before gate 1 is clean; pictures are not painted before the style bridge (gate 4) and
 the sprite plan (gate 5); the full read waits for the creator's yes on the test read.
 
 ## 3. Feedback log (every creator note, its cause, its rule, what enforces it)

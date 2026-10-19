@@ -5,7 +5,7 @@ description: Plan the pictures of a Crossworld Theories video so they carry stak
 
 # Shot visuals: stakes in every frame, heroes you can recognise
 
-**Episode rulebook first (D-45, OR-10):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 > **Primary rule, above everything below (UR-22, one universe):** every picture, sprite, prop and background is drawn in the same
 > universe, as if by one artist for one scene. Characters and environment share one design language (quirky, gently exaggerated
@@ -91,4 +91,4 @@ bubbles instead of a new picture per sentence (UR-31).
 
 **Official game screenshots are private study only (RR-15):** never an image input or reference upload to a generator; describe the look in your own words.
 
-**Filler (D-47):** a type A plate or type C insert with no person, used once, in an explanation, pause, humour or transition beat may be marked `engine: "canva"` (at most 30 %); the script cannot declare importance, `imagegen/importance.py` computes it (PV-36).
+**Filler (D-53):** a type A plate or type C insert with no person, used once, in an explanation, pause, humour or transition beat may be marked `engine: "canva"` (at most 30 %); the script cannot declare importance, `imagegen/importance.py` computes it (PV-43).

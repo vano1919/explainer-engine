@@ -5,7 +5,7 @@ description: Choose and apply an editing style for a Crossworld Theories video (
 
 # Editing style
 
-**Episode rulebook first (D-45, OR-10):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
+**Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 Rules: `docs/EDITING.md` (ED-01..ED-07). This page is the judgement behind them. Sources of the research (2026-10-17):
 Adobe, Vimeo and Boris FX on split edits; Wikipedia on dissolves (typically 1-2 s, 6-12 frames to soften a hard cut) and

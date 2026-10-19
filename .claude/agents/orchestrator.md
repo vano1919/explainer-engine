@@ -13,7 +13,7 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
 1b. **Episode rulebook** (agent `episode-standards-director`, docs/EPISODE_STANDARDS.md): provisional `episode_rules.json` as soon as
    topic and format are known; `standards check` 0 FAIL. From here every phase reads its brief
    (`python -m explainer_engine.standards brief <rules> --role research|script|voice|image|music|sound|edit|metadata|qa`) and
-   follows it; a conflict between a brief and another rule comes back to you, never solved silently by a step (OR-10).
+   follows it; a conflict between a brief and another rule comes back to you, never solved silently by a step (OR-11).
    Write `.claude/active_episode.json` (`{"episode": "<episode folder>"}`): the ElevenLabs hook gates paid calls on it.
 2. **Phase 1, research** (skills `science-grounding`, vidIQ within its cap): claim map with sources and labels
    (established / reasoned / guess); the comparison with the real record.
@@ -27,7 +27,7 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
 4. **Phase 3, one-item tests**: first `standards gate --at paid_assets` (no open REVIEW/ADAPT/BLOCK, fresh sources);: first read chunk and first picture; check them (listen for drift with `audio/voice_check`,
    look at the picture and run the likeness judge). Only then phase 4.
 5. **Phase 4, voice**: `estimate_only` first, reserve in the ledger, one chunk at a time, record each; level, `production words`.
-6. **Phase 5, pictures** (Gemini batch tier only, tiers draft/standard/premium, D-46): references from existing pictures, reserve per
+6. **Phase 5, pictures** (Gemini batch tier only, tiers draft/standard/premium, D-52): references from existing pictures, reserve per
    picture, repaint at most twice, judge by likeness and style; contact sheet looked at.
 7. **Phase 6**: sounds, `production time` (0 FAIL), `assemble` (720p preview, then 2K), QA scorecard, engagement gate again before the final render, `standards gate --at final_qa`.
 8. **Phase 7**: Shorts (9:16 crops around the heroes), metadata drafts (vidIQ within its cap). Nothing is uploaded.
