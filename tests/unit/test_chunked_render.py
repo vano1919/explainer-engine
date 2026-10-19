@@ -171,3 +171,14 @@ def test_the_chunked_render_still_draws_the_accents(tmp_path, monkeypatch):
     assert CLI.main(["run", str(script), str(tmp_path / "narration.wav"), str(wjson), "--out", str(tmp_path / "out"),
                      "--size", "320x180", "--chunk-seconds", "5"]) == 0
     assert seen and (tmp_path / "out" / "video.mp4").exists()
+
+
+def test_a_pid_of_another_user_is_not_a_crash(tmp_path, monkeypatch):
+    """CI 2026-10-19: on a non-root runner os.kill(1, 0) raises PermissionError; the pid exists but is not an assemble."""
+    lock = tmp_path / ".assemble.lock"
+    lock.write_text("1")
+
+    def denied(pid, sig):
+        raise PermissionError(1, "Operation not permitted")
+    monkeypatch.setattr(A.os, "kill", denied)
+    assert not A.lock_alive(lock)
