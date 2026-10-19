@@ -686,3 +686,10 @@ only. Rule SS-09 (STORY_ENGINE), PV-44 text, skills `visual-beats` and `shorts-f
 video's beats); the beat-writer procedure wrote 86 beats for the 22 Short-only lines (`beats/beats_shorts.json`, each with
 its cue, no numbers on screen, no new pictures): 255 beats on the 69 Short lines, 0 PV-44 FAIL on the Shorts; `production
 validate` after rebuild + compile: only the 14 PV-05 (pictures not made). Tests: `tests/unit/test_short_beats.py` (8).
+
+## 2026-10-19 — Syndicate Wars: paid_assets stamped (rulebook v8)
+
+Rockstar's fan-content policy page read first-hand (B-14 verified, RK-02 evidence); one franchise word removed from the
+`w02_studio` prompt (RR-03); `script_lock` and `paid_assets` stamped on rulebook v8 with the condition that pictures recovered
+from earlier Gemini batches are only ones painted from today's prompts, never the pre-v2 Vito/Shelby portraits, each face checked
+for actor likeness. Editorial review rebound to the script (EG-11 REVIEWs only).

@@ -1,11 +1,11 @@
 {
  "schema": "editorial_review/1",
- "script_sha256": "43c9e4fcaaf9ae49a33f2727b600f562699c94c7dfba034bd74d9c080b686085",
+ "script_sha256": "a4ad046d7e643e1c0879b304209ebc5bc80342f0cafd0217b02a9d54087d0039",
  "script": "examples/syndicate_wars_ep1/production_script.json",
  "reviewer_role": "independent_critic",
  "independent": true,
  "reviewed_at": "2026-10-19",
- "method": "Fresh read of all 32 segments, 8 graphics and 10 Shorts of the rebuilt script against editorial.sources/claims (unchanged: 27 sources, 32 claims); graphics anchors checked against their segments; the five key sources were read first-hand earlier the same day. The author's review_answers.md and self-scores were not read.",
+ "method": "Fresh read of all 32 segments, 8 graphics and 10 Shorts of the rebuilt script against editorial.sources/claims (unchanged: 27 sources, 32 claims); graphics anchors checked against their segments; the five key sources were read first-hand earlier the same day. The author's review_answers.md and self-scores were not read. Rebound 2026-10-19 to the script of commit 1f2f365 after verifying that it differs from the reviewed bytes (sha256 43c9e4fcaaf9ae49a33f2727b600f562699c94c7dfba034bd74d9c080b686085, commit f4cbb6f) only by the added shorts[].lines[].visual_beats: with those removed the two JSON documents are equal. Every new Short beat was read: the only numbers on screen are SH01 $17,500 (C-21) and 11 years (C-16), SH03 six places (C-51), and SH09 star bars Capone intimidation 4->2 (C-44), Vito influence 5->3 (C-45), Mizuno discipline 5->4 (C-46), Shelby strategy 5->4 (C-47), each matching its claim; on-screen text adds no claim beyond the spoken line (e.g. SH02 'MADE UP', SH04 'INVENTED', SH07 'OUR SCENARIO'); Rockstar characters appear as text only, never drawn.",
  "verdict": "PASS_WITH_RECOMMENDATIONS",
  "previous_review": {
   "script_sha256": "e8a46f4d9d227a4b9ef8108819b8c9c0f0ed32324ef83c1d1d6228e8f49def29",
@@ -64,7 +64,7 @@
   },
   "shorts_potential": {
    "score": 4,
-   "evidence": "10 Shorts with distinct ideas; honesty now consistent: SH02#L02 'Made up, every word: our invented boss Haruto Mizuno, in our invented Vice City.', SH05#L01 'our invented Vice City test', SH06#L05 'In our invented Vice City', SH07#L02 'our invented boss Haruto Mizuno', SH10#L01 'Could the smartest boss ... still lose?' matches the long outcome; SH08 ending no longer implies a 'part two'."
+   "evidence": "10 Shorts with distinct ideas; honesty now consistent: SH02#L02 'Made up, every word: our invented boss Haruto Mizuno, in our invented Vice City.', SH05#L01 'our invented Vice City test', SH06#L05 'In our invented Vice City', SH07#L02 'our invented boss Haruto Mizuno', SH10#L01 'Could the smartest boss ... still lose?' matches the long outcome; SH08 ending no longer implies a 'part two'. Commit 1f2f365 beats checked: every on-screen number is claim-bound and matches its claim (SH01, SH03, SH09). SH09's before/after star bars appear before the Short says 'Every star is our opinion' (text 'OUR OPINION' at the end); disclosed within the same Short, acceptable."
   }
  },
  "critical_blockers": [],
@@ -118,6 +118,13 @@
    "where": "editorial.claims C-03, C-05, C-17, C-29",
    "issue": "Unused by every narration line (gate EG-11 REVIEW).",
    "proposal": "Drop them from the contract or keep as background; the creator/editor decides."
+  },
+  {
+   "rank": 8,
+   "severity": "note",
+   "where": "SH09 chart beats",
+   "issue": "The opinion star bars (BEFORE/AFTER) show before the Short's 'OUR OPINION' disclosure, which comes in its last line.",
+   "proposal": "Optional: label the bars 'OUR RATING' instead of BEFORE/AFTER, or keep as is."
   }
  ],
  "sources_spot_checked": [
@@ -140,6 +147,20 @@
   {
    "url": "https://catalog.afi.com/Film/54023-the-godfather",
    "result": "olive oil business 'a legitimate cover'; Vito 'refuses to risk losing his political influence by embracing the drug traffic'; 'fatal heart attack in his vegetable garden' with grandson. C-23 (without the name), C-24, C-25 hold."
+  }
+ ],
+ "rebinds": [
+  {
+   "from_sha256": "43c9e4fcaaf9ae49a33f2727b600f562699c94c7dfba034bd74d9c080b686085",
+   "to_sha256": "a1402727fe05509cfc24a22c46fb447ca9f531a5dfe77f42d992bb512a45bba9",
+   "change": "shorts visual_beats only (commit 1f2f365)",
+   "verified": "JSON equal after removing shorts[].lines[].visual_beats"
+  },
+  {
+   "from_sha256": "a1402727fe05509cfc24a22c46fb447ca9f531a5dfe77f42d992bb512a45bba9",
+   "to_sha256": "a4ad046d7e643e1c0879b304209ebc5bc80342f0cafd0217b02a9d54087d0039",
+   "change": "segments[2] (S03) shots[1] picture w02_studio: subject and prompt say 'on a neon coastal city street at night' instead of 'on a Vice City street at night' (uncommitted working-tree change on top of 1f2f365)",
+   "verified": "recursive JSON diff against 1f2f365 shows only those two strings changed; no narration, claim, Short, graphic or editorial change; scores unchanged"
   }
  ]
 }

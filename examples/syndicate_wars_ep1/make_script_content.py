@@ -82,7 +82,7 @@ add("m18_two", "two tall glowing towers facing each other across a neon street a
 add("m21_trend", "tight insert, a phone screen showing a shaky video of a pink flamingo-shaped boat in a glass lobby, a red falling chart in the corner, a thumb frantically scrolling", 6)
 add("s24_hall", "a grand 1930s debating hall with rows of leather benches, the lean man in a long overcoat standing quietly among well-fed men in top hats, a single lamp, whispers travelling along the benches", 7, heroes=["shelby"], costume=COSTUME["shelby"])
 add("w02_keys", "small green islands and a boat yard on turquoise water at dusk, old fishing boats, coiled ropes and stacked crates on a weathered dock, nobody in view, a quiet coast with a long history of smuggling", 3)
-add("w02_studio", "a neon-lit recording studio entrance on a Vice City street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming", 2)
+add("w02_studio", "a neon-lit recording studio entrance on a neon coastal city street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming", 2)
 add("s03_cursor", "tight insert, a glowing neon-pink arrow cursor sliding across a row of four empty portrait frames on a dark screen, one frame lit cyan, a satisfying game-menu energy, no text", 2)
 
 def G(gid, seg_no, at, title, claim, marks, span, hold=4.5):

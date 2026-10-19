@@ -1433,11 +1433,11 @@
      "picture": {
       "id": "w02_studio",
       "engine": "pod_ref",
-      "subject": "a neon-lit recording studio entrance on a Vice City street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
+      "subject": "a neon-lit recording studio entrance on a neon coastal city street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows",
       "refs": [
        "s01_skyline"
       ],
-      "prompt": "a neon-lit recording studio entrance on a Vice City street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
+      "prompt": "a neon-lit recording studio entrance on a neon coastal city street at night, an invented wordless sign shaped like a gold record, a velvet rope, parked sports cars, a phone held up in the foreground filming, night street lit by neon pink and cyan signs, wet asphalt reflections, deep blue shadows Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles."
      },
      "purpose": "Leonida's own crime as a business: a studio front, no Rockstar character drawn",
      "motion": {
