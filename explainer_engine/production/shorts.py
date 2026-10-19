@@ -193,7 +193,9 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
     inputs = ["-i", str(silent), "-i", str(voice)]
     fc = "[2:a]volume=0.10,afade=t=out:st=%.2f:d=1.2[m];[1:a][m]amix=inputs=2:duration=first:normalize=0[a]" % max(0.0, duration - 1.2)
     if music:
-        inputs += ["-stream_loop", "-1", "-i", str(music)]
+        # only a track the library marks loopable is tiled; a one-shot plays once and the fade-out covers the rest
+        loop_args = ["-stream_loop", "-1"] if ASM.Sounds([]).loopable(music.stem) else []
+        inputs += [*loop_args, "-i", str(music)]
     else:
         fc = "[1:a]anull[a]"
     _run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", f"{fc};[0:v]subtitles={out / 'cap.ass'}[v]", "-map", "[v]", "-map", "[a]",

@@ -5,7 +5,8 @@ Episode 1 had 22 effects in 18 minutes (1.2 a minute) under one bed and up to tw
 music and the tick fighting the voice (ED-03). The rules count what plays at once and what is missing:
 
 * AL-01 at most ``MAX_SFX_AT_ONCE`` effects overlap, and voice + music + bed + effects stay at most ``MAX_LAYERS`` layers;
-* AL-02 effects a minute inside ``SFX_PER_MIN`` (too few: the motion is silent; too many: clutter);
+* AL-02 sound events a minute — effects and beat cues together — inside ``SFX_PER_MIN`` (too few: the motion is
+  silent; too many: clutter);
 * AL-03 a drawn accent that moves the picture hard (whip, flash, slam, shake, punch) has an effect within 0.25 s;
 * AL-04 effects and beds stay under the voice (gain at most ``MAX_SFX_DB`` / ``MAX_BED_DB`` before the mix's ducking;
   the bed cap follows the measured preference for ambience 15 LU under commentary, docs/research/PARAMETER_AUDIT_2026-10-19.md).
@@ -47,9 +48,13 @@ def check(timed: dict) -> list[dict]:
             flagged = e["start"] + 1.0
         if e.get("gain_db", -18) > MAX_SFX_DB:
             add("AL-04", e["sound"], f"effect at {e['gain_db']} dB: above {MAX_SFX_DB} dB it competes with the voice")
-    per_min = len(sfx) / dur * 60
+    # AL-02 counts everything the ear hears as an event: effects AND beat cues. The old count left the cues out, so
+    # the density rule never fired on the layer it existed for (Syndicate Wars: 33 cues/min, AL-02 silent).
+    n_events = len(sfx) + len(au.get("cues", []))
+    per_min = n_events / dur * 60
     if dur >= 60 and not SFX_PER_MIN[0] <= per_min <= SFX_PER_MIN[1]:
-        add("AL-02", "video", f"{per_min:.1f} effects a minute (keep {SFX_PER_MIN[0]:.0f}-{SFX_PER_MIN[1]:.0f}): "
+        add("AL-02", "video", f"{per_min:.1f} sound events a minute, effects and cues together "
+            f"(keep {SFX_PER_MIN[0]:.0f}-{SFX_PER_MIN[1]:.0f}): "
             + ("the motion is silent" if per_min < SFX_PER_MIN[0] else "clutter"))
     starts = [e["start"] for e in sfx] + [c["start"] for c in au.get("cues", [])]  # a beat cue (VB-08) is heard too
     for s in timed.get("shots", []):

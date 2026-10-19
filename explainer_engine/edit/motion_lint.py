@@ -1,4 +1,4 @@
-"""Motion and visual-change rules MO-01..MO-06 (docs/STORY_ENGINE.md, D-48) on a timed production script.
+"""Motion and visual-change rules MO-01..MO-07 (docs/STORY_ENGINE.md, D-48) on a timed production script.
 
 Episode 1 (measured 2026-10-19 on its production script): 217 shots, a picture change every 5.0 s on average, but every
 change the same kind (161 pushes, 54 pans, zoom at most 1.08), 89 of the changes a reframe of the same picture, no
@@ -20,6 +20,8 @@ MAX_PLAIN_RUN = 4        # MO-03: consecutive shots that are only a camera move
 ENTRY_MIN_GAP = 45.0     # MO-04: seconds between two whips or flashes
 TEXT_MIN_GAP = 12.0      # MO-05: seconds between two pop/slam words
 MIN_ALIVE = 0.5          # MO-06: share of shots with something moving besides the camera
+HOLD_SIMILAR, MAX_SIMILAR_RUN = 0.15, 3  # MO-07: consecutive shots holding within ±15 % of each other read as a metronome
+HOLD_CV = 0.2            # MO-07: a segment of 5+ shots whose hold lengths barely vary is a slideshow rhythm
 ENTRY = {"whip_in", "flash_in"}
 TEXT = {"pop_text", "slam_text"}
 
@@ -116,4 +118,23 @@ def check(timed: dict) -> list[dict]:
     if timed["shots"] and m["alive_share"] < MIN_ALIVE:
         add("MO-06", "video", f"only {m['alive_share']:.0%} of shots have motion besides the camera (accent or bubble); "
             f"at least {MIN_ALIVE:.0%}")
+    # MO-07 rhythm follows content, not a clock: a run of near-equal holds, or a whole segment of them, is a metronome
+    holds = [(s["segment"], s["id"], s["end"] - s["start"]) for s in timed["shots"] if "end" in s and "start" in s]
+    same_run = 1
+    for (seg_a, _, a), (seg_b, sid, b) in zip(holds, holds[1:]):
+        same = seg_a == seg_b and max(a, b) > 0 and abs(b - a) / max(a, b) <= HOLD_SIMILAR
+        same_run = same_run + 1 if same else 1
+        if same_run == MAX_SIMILAR_RUN + 1:
+            add("MO-07", sid, f"{same_run} shots in a row hold almost the same time (~{b:.1f} s, within ±{HOLD_SIMILAR:.0%}): "
+                "a metronome cut; hold long on wonder, cut short on action")
+    by_seg: dict = {}
+    for seg, _, h in holds:
+        by_seg.setdefault(seg, []).append(h)
+    for seg, hs in by_seg.items():
+        if len(hs) >= 5:
+            mean = sum(hs) / len(hs)
+            cv = (sum((h - mean) ** 2 for h in hs) / len(hs)) ** 0.5 / max(mean, 1e-6)
+            if cv < HOLD_CV:
+                add("MO-07", seg, f"{len(hs)} shots whose holds barely vary (spread {cv:.2f} of the mean, under {HOLD_CV}): "
+                    "the cut rhythm should breathe with the content, not tick")
     return out

@@ -17,9 +17,10 @@
     "schema": {
       "enum": [
         "production_script/1",
-        "production_script/2"
+        "production_script/2",
+        "production_script/3"
       ],
-      "description": "/2 (2026-10-19): every line carries its visual beats (VB rules, PV-39 FAIL); /1 is the legacy contract"
+      "description": "/2 (2026-10-19): every line carries its visual beats (VB rules, PV-39 FAIL); /3 (2026-10-19, the scene rewrite): dialogue lives in scenes (segments[].scene, lines[].to, SC rules PV-47), cues are opt-in and event-bound (VB-08/VB-10/VB-11); /1 is the legacy contract"
     },
     "episode": {
       "type": "object",
@@ -643,6 +644,23 @@
                   "type": "string",
                   "description": "cast id of the hero who speaks this line in their own voice (D-45, PV-32); absent = the narrator"
                 },
+                "to": {
+                  "type": "string",
+                  "description": "SC-04 (/3): who this line is said to - a cast id of scene.present, 'self' or 'room'; a hero never talks to the narrator"
+                },
+                "intent": {
+                  "enum": [
+                    "reveal",
+                    "press",
+                    "deflect",
+                    "concede",
+                    "question",
+                    "banter",
+                    "decide",
+                    "aside"
+                  ],
+                  "description": "what the line DOES in the exchange (DW-05/DW-12); a reveal expects another character's reaction"
+                },
                 "kind": {
                   "enum": [
                     "fact",
@@ -937,6 +955,109 @@
             "type": "string",
             "description": "the time-jump chapter this segment belongs to (day1, week1, month1, year1, year10, year100, compare)"
           },
+          "scene": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "SC rules (docs/STORY_ENGINE.md, PV-47): the staged scene this segment's dialogue plays in; required on a production_script/3 segment with any speaker line",
+            "required": [
+              "place",
+              "present",
+              "pov",
+              "want",
+              "obstacle_want",
+              "value",
+              "open_charge",
+              "close_charge",
+              "exit"
+            ],
+            "properties": {
+              "place": {
+                "type": "string",
+                "minLength": 3,
+                "description": "where this plays, concrete (the back room of the club, night)"
+              },
+              "time": {
+                "type": "string",
+                "description": "when, relative to the story (that night, an hour later)"
+              },
+              "present": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "uniqueItems": true,
+                "description": "cast ids physically in the scene; only they may speak or be spoken to (SC-04)"
+              },
+              "why_now": {
+                "type": "string",
+                "description": "what just changed that forces this conversation NOW"
+              },
+              "pov": {
+                "type": "string",
+                "description": "the cast id whose want drives the scene"
+              },
+              "want": {
+                "type": "string",
+                "minLength": 3,
+                "description": "the pov hero's short-term, concrete want in THIS scene"
+              },
+              "obstacle_want": {
+                "type": "string",
+                "minLength": 3,
+                "description": "the opposing want of another present character (SC-03: must differ from want)"
+              },
+              "value": {
+                "type": "string",
+                "description": "the value at stake (control, trust, safety)"
+              },
+              "open_charge": {
+                "enum": [
+                  "+",
+                  "-"
+                ],
+                "description": "the value's charge when the scene opens"
+              },
+              "close_charge": {
+                "enum": [
+                  "+",
+                  "-"
+                ],
+                "description": "the charge when it closes; SC-02: must differ from open_charge or the scene is a nonevent"
+              },
+              "turn": {
+                "type": "string",
+                "description": "the beat where the scene turns, in one sentence"
+              },
+              "exit": {
+                "enum": [
+                  "fail_new_goal",
+                  "succeed_complication",
+                  "interrupted"
+                ],
+                "description": "how the scene ends: a failure that sets a new goal, a success that costs, or an interruption"
+              },
+              "surface_topic": {
+                "type": "string",
+                "description": "what the characters talk ABOUT on the surface (SC-10)"
+              },
+              "real_subject": {
+                "type": "string",
+                "description": "what the scene is REALLY about; no line may state it verbatim (SC-10)"
+              },
+              "mode": {
+                "enum": [
+                  "balanced",
+                  "asymmetric",
+                  "indirect",
+                  "comic",
+                  "minimal",
+                  "learner"
+                ],
+                "description": "the scene's conflict mode (DW-09: learner is one mode among several, varied across the episode)"
+              }
+            }
+          },
           "drama": {
             "type": "object",
             "additionalProperties": false,
@@ -1152,6 +1273,22 @@
                 "speaker": {
                   "type": "string",
                   "description": "cast id of the hero who speaks this line in their own voice (D-45, PV-32); absent = the narrator"
+                },
+                "to": {
+                  "type": "string",
+                  "description": "kept when a Short reuses a scene line (SC-04); not checked on a Short's own lines"
+                },
+                "intent": {
+                  "enum": [
+                    "reveal",
+                    "press",
+                    "deflect",
+                    "concede",
+                    "question",
+                    "banter",
+                    "decide",
+                    "aside"
+                  ]
                 },
                 "visual_beats": {
                   "type": "array",
@@ -1866,6 +2003,18 @@
               "type": "number",
               "minimum": 20,
               "maximum": 250
+            },
+            "event": {
+              "enum": [
+                "reveal",
+                "impact",
+                "transition",
+                "build",
+                "diegetic",
+                "take",
+                "place"
+              ],
+              "description": "VB-08 (/3): the story event this cue marks; on /3 a cue without an event FAILs - silence is the default"
             },
             "why": {
               "type": "string",
