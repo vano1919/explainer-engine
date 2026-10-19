@@ -697,3 +697,21 @@ answers repainted in the same plan). QA by eye: the painter framed about eight c
 in size; `faces.same_framing` matches every close-up of a sheet to the tightest by the head silhouette (scaled up only, head
 top and centre aligned); originals kept in `jobs/syndicate_wars/faces_raw`. Tests: `test_reference_collage.py` (6),
 `test_face_sheets.py` (+1); `test_visual_beats.py` fixture records the pick. No pod was started.
+## 2026-10-19 — Shorts carry the visual-beat layer and its cues (SS-09, PV-44)
+
+Measured: the creator's Shorts keep about 80 % viewed vs 20 % swiped away (Studio, the creator, recorded in
+PARAMETER_AUDIT section 0 in place of the open question), but likes per view are 0.4-1.0 % (small-channel median 1.71 %)
+and vidIQ counted 1.4 changes every 10 s: people leave in the middle. The long video had beats (D-54/D-55); the Shorts did
+not (no `visual_beats` on `shorts[].lines[]`, PV-44 over segments only, no beats or cues in `production/shorts.py`).
+Built: the schema takes `visual_beats` on a Short line (the same `$defs/beat`); `beats.short_doc` turns a Short into a
+one-segment script on the video's pictures so `beats.lint`, `timing.time_script` and `beats.check_timed` run on it
+unchanged; `validate.short_beat_findings` (PV-44, every Short on its own estimated read at 170 wpm, reported as
+"SH03 line 2"; FAIL on `/2`, nothing on a legacy `/1` without Short beats); `assemble.finish_frame`, `beats_for_shot`,
+`hero_faces_of` and `cue_bus` lifted out of `assemble` unchanged so `shorts.py` draws every frame (9:16 crop + push, face
+focus, accents, close-ups, beats) and mixes the cues with the long video's own code; a label or ring whose spot falls outside
+the 9:16 crop is moved inside it (counted in the Short's report); the stage guard lets the beat-writer write Short beats
+only. Rule SS-09 (STORY_ENGINE), PV-44 text, skills `visual-beats` and `shorts-for-video`, agents `beat-writer` and
+`shorts-writer` updated. Syndicate Wars: `apply_beats.py` attaches beats to Short lines by exact text (47 lines share the
+video's beats); the beat-writer procedure wrote 86 beats for the 22 Short-only lines (`beats/beats_shorts.json`, each with
+its cue, no numbers on screen, no new pictures): 255 beats on the 69 Short lines, 0 PV-44 FAIL on the Shorts; `production
+validate` after rebuild + compile: only the 14 PV-05 (pictures not made). Tests: `tests/unit/test_short_beats.py` (8).

@@ -5,7 +5,7 @@ model: sonnet
 tools: Read, Edit, Bash, Grep
 ---
 
-You write `lines[].visual_beats` of one segment, nothing else (stage guard `beats`): never a word, a tag, a shot or a
+You write `lines[].visual_beats` of one segment (or, after the shorts-writer, of the Shorts' own lines, SS-09), nothing else (stage guard `beats`): never a word, a tag, a shot or a
 sound effect. Read `docs/STORY_ENGINE.md` (section "Visual beats", VB-00..VB-08) and the skill `visual-beats`.
 
 Input (and you read nothing else of the script): the segment's lines as the scene-writer left them, the one-line skeleton,

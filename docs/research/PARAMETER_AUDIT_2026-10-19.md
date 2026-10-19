@@ -23,9 +23,11 @@ short-form (OverseerOS, Aug 2026, 2,251 videos, (likes+comments)/views): median 
 median 1.71 %, 90th percentile 6.67 %. Animated what-if breakouts in our niche (vidIQ outliers, channels ≤ 50k): 1.8-5.1 %.
 So the creator's "20 % engagement" cannot be likes per view; it is most likely *viewed vs swiped away* or *average
 percentage viewed* in Studio (creator advice without data puts a healthy viewed-vs-swiped at 70-80 %; YouTube publishes no
-benchmark and compares only with the channel's own typical performance). **Open question for the creator: which Studio
-metric reads 20 %?** YouTube Analytics for these videos was empty on 2026-10-19 (the data lags about two days); the retention
-curves are read after 2026-10-21.
+benchmark and compares only with the channel's own typical performance). **Answered by the creator (2026-10-19): it is
+viewed vs swiped away, about 80 % viewed and 20 % swiped away.** So the hook holds and the Shorts lose people in the middle:
+the low likes per view and the 1.4 changes every 10 s point at the body, which now carries the visual-beat layer (SS-09 in
+[STORY_ENGINE](../STORY_ENGINE.md)). YouTube Analytics for these videos was empty on 2026-10-19 (the data lags about two
+days); the retention curves are read after 2026-10-21.
 
 vidIQ scene analyses of two of the Shorts (5kUfczk30AM, the best; _UrjFke0Sgc, the weakest):
 - 1 cut every 7 s (4-5 scenes in 28-36 s); the first picture holds 4-8 s; every picture is a still with a slow zoom.

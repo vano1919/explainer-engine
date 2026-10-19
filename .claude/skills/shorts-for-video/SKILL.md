@@ -31,3 +31,4 @@ Rules: `docs/ORCHESTRATION.md` SH-01..SH-04. A Short is a trailer with its own t
    14 words instead of a question (SS-05). D-49 (`docs/research/PARAMETER_AUDIT_2026-10-19.md`, section 6 has the recipe per
    style): the hook's words on frame 0 and the first cut inside the hook line (SS-07), at least 3 visual events every 10 s
    (SS-08), the set in two length bands, 15-30 s and 45-75 s (SS-06), posted within three days of the video (SS-03).
+   Every Short carries the video's visual-beat layer with its cues (SS-09): the beat-writer gives the Short's own lines beats.

@@ -1218,6 +1218,13 @@
                 "speaker": {
                   "type": "string",
                   "description": "cast id of the hero who speaks this line in their own voice (D-45, PV-32); absent = the narrator"
+                },
+                "visual_beats": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/beat"
+                  },
+                  "description": "VB rules on a Short (SS-09): the visual beats of this line, same contract as a segment line's"
                 }
               }
             }

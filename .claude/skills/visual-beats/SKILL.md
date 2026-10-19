@@ -12,6 +12,10 @@ production script (`docs/PRODUCTION_SCRIPT.md`). Render: `production/beats.py` (
 The picture still changes every 3-6 s; beats fill the time between cuts. A shot start, a bubble, an accent or a data
 visual is already an event, so a line that opens a shot needs one beat fewer.
 
+Shorts carry the same layer (SS-09): a Short line that is a line of the video takes that line's beats; a Short's own lines
+(hook, pointer, a bridging line) get beats of their own, and a `label` or `highlight` points at a spot inside the Short's 9:16
+crop (`crop_x`, `zoom` of its shot). PV-44 checks each Short on its own read at 170 wpm.
+
 ## Choosing the beat from the words
 
 | The narrator says | Beat | Cue |
