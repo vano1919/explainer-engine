@@ -766,3 +766,12 @@ their title and stars (`shorts.fit_screen` fits the whole card over a blurred fi
 written from the real segment times (10 chapters); `publish_check`: 0 FAIL, 3 REVIEW for the creator (mid-roll, self-certification,
 approval #2). Tests: `test_face_sheets.py::test_composite_in_a_short_centres_the_hero_of_a_wide_close_up`,
 `test_short_beats.py::test_a_stat_card_is_fitted_whole_in_the_short_and_its_spots_move_with_it`.
+
+## 2026-10-19 — Syndicate Wars staged on YouTube; a Short is checked to be a Short
+
+Long video and 10 Shorts staged unlisted (state in `examples/syndicate_wars_ep1/publish/youtube_state.json`), each item as it
+passed (standing order 9). The creator saw the Shorts as videos: YouTube had made all ten Shorts (1080x1920, 0.5625, under
+60 s; `youtube.com/shorts/<id>` answers 200, the long video redirects), but the links given were `youtu.be`, which opens the
+ordinary player. `qa/short_format.py` now checks a Short file (SF-01 horizontal, SF-02 not 9:16, SF-03 over 180 s),
+`production.shorts` refuses to hand on a file that fails, and links to Shorts are `youtube.com/shorts/<id>`. The upload tool
+(PR #7) should run the same check before `videos.insert` once it is merged. Test: `tests/unit/test_short_format.py`.

@@ -27,7 +27,7 @@ from explainer_engine.production import assemble as ASM
 from explainer_engine.production import beats as BEATS
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
-from explainer_engine.qa import targets
+from explainer_engine.qa import short_format as SF, targets
 
 W, H = 1080, 1920  # the frame rate is the episode's (timing.time_script)
 MAX_TEMPO = 1.08
@@ -223,8 +223,11 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
           "-t", f"{duration:.2f}", "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", str(final)])
     rows = [{k: r[k] for k in ("id", "picture", "at", "crop_x", "zoom", "start", "end")} for r in timed["shots"]]
     report = {"duration": round(duration, 2), "timbre_review": drift, "shots": rows, "beats": BEATS.measure(timed),
-              "cues": len(timed["audio"]["cues"]), "beat_spots_moved_into_crop": moved}
+              "cues": len(timed["audio"]["cues"]), "beat_spots_moved_into_crop": moved,
+              "short_format": SF.check(SF.probe(final))}
     (out / "report.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
+    if report["short_format"]:  # a file YouTube would not make a Short is never handed on (qa/short_format.py)
+        raise SystemExit(f"{short_id}: not a Short: {report['short_format'][0]['detail']}")
     return final
 
 

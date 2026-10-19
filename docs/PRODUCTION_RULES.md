@@ -28,7 +28,9 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    explainer_engine.publish stage <episode> --only <id> --yes --confirm '<the creator's standing order, 2026-10-19>'`. No waiting
    for the batch, and no waiting for the creator to ask: the moment a piece passes, Claude posts a fresh sign-in link
    (`publish auth-url`) in the thread, and when the creator sends back the 127.0.0.1 address it runs `auth-finish` and uploads
-   at once (creator, 2026-10-19: "it's ready, it passed every test: ask me to log in, upload, done"). Unchanged: never public (the creator clicks Public), the creator sets the thumbnail in Studio, sign-in is a fresh
+   at once (creator, 2026-10-19: "it's ready, it passed every test: ask me to log in, upload, done"). A Short goes up only
+   when `python -m explainer_engine.qa.short_format <file>` passes (vertical 9:16, at most 3 min; `production.shorts` refuses
+   to hand on any other file), and its link is given as `youtube.com/shorts/<id>`, never `youtu.be`. Unchanged: never public (the creator clicks Public), the creator sets the thumbnail in Studio, sign-in is a fresh
    link per upload session (`publish auth-url` / `auth-finish`), and a piece that fails a test is fixed, not uploaded.
 
 ## 2. The gates, in order (a video does not skip one)
