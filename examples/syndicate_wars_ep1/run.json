@@ -7,7 +7,8 @@
     "runpod_usd": 0
   },
   "spent": {
-    "gemini_usd": 2.9535
+    "gemini_usd": 2.9535,
+    "elevenlabs_credits": 1175.92
   },
   "reserved": {
     "batch:s01_skyline+1": {
@@ -45,6 +46,96 @@
     "batch:vito_faces_v1_sad+3": {
       "service": "gemini_usd",
       "amount": 0.0789
+    },
+    "test_read_capone": {
+      "service": "elevenlabs_credits",
+      "amount": 172.98,
+      "settled": true
+    },
+    "test_read_vito": {
+      "service": "elevenlabs_credits",
+      "amount": 93.99,
+      "settled": true
+    },
+    "test_read_mizuno": {
+      "service": "elevenlabs_credits",
+      "amount": 147.99,
+      "settled": true
+    },
+    "test_read_shelby": {
+      "service": "elevenlabs_credits",
+      "amount": 156.98,
+      "settled": true
+    },
+    "voice_option_capone_2": {
+      "service": "elevenlabs_credits",
+      "amount": 57.99,
+      "settled": true
+    },
+    "voice_option_capone_3": {
+      "service": "elevenlabs_credits",
+      "amount": 57.99,
+      "settled": true
+    },
+    "voice_option_vito_2": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_vito_3": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_mizuno_2": {
+      "service": "elevenlabs_credits",
+      "amount": 40.0,
+      "settled": true
+    },
+    "voice_option_mizuno_3": {
+      "service": "elevenlabs_credits",
+      "amount": 40.0,
+      "settled": true
+    },
+    "voice_option_shelby_2": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_shelby_3": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_vito_moody": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_vito_wellington": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_mizuno_takumi": {
+      "service": "elevenlabs_credits",
+      "amount": 40.0,
+      "settled": true
+    },
+    "voice_option_mizuno_hideo": {
+      "service": "elevenlabs_credits",
+      "amount": 40.0,
+      "settled": true
+    },
+    "voice_option_shelby_robert": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_shelby_dan": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
     }
   },
   "phases": {
@@ -541,6 +632,25 @@
         "batch": "batches/wbstrdook3b7c2hbqpq9x2xwepbgit9vla65",
         "plan": "F1",
         "hash": "7bb2abface90a2e2"
+      }
+    },
+    "voice_test": {
+      "bosses": {
+        "flow": "JmyikAj1LkZjVuG3yLzm",
+        "files": "jobs/syndicate_wars/voice/test"
+      },
+      "options": {
+        "files": "/mnt/project-files/explainer-engine/syndicate_wars/review/voice_test/options",
+        "credits": 481,
+        "dropped_for_age": [
+          "Lorenzo",
+          "Spence",
+          "Tahm"
+        ]
+      },
+      "accent_options": {
+        "files": "/mnt/project-files/explainer-engine/syndicate_wars/review/voice_test/accent",
+        "credits": 122
       }
     }
   },

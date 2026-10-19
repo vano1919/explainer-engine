@@ -36,7 +36,13 @@ ROLE_USE = {"narrator": ["narrative_story"], "hero": ["characters_animation"], "
             "mentor": ["characters_animation", "narrative_story"], "comic": ["characters_animation"],
             "villain": ["characters_animation"], "everyman": ["conversational", "characters_animation"]}
 ACCENTS = {"american", "british", "australian", "irish", "scottish", "indian", "canadian", "german", "french", "italian",
-           "spanish", "russian", "swedish", "polish", "greek", "nigerian", "south african", "new zealand"}
+           "spanish", "russian", "swedish", "polish", "greek", "nigerian", "south african", "new zealand", "japanese",
+           "chinese", "korean", "welsh", "jamaican"}
+# a region inside an accent the library cannot filter on: it goes into the free-text search and the ranking (the creator,
+# 2026-10-19: "Shelby must have a Birmingham accent")
+REGIONS = {"birmingham": "midlands", "west midlands": "midlands", "black country": "midlands", "midlands": "midlands",
+           "yorkshire": "yorkshire", "liverpool": "liverpool", "manchester": "manchester", "glasgow": "glasgow",
+           "cockney": "cockney", "geordie": "geordie", "texas": "texan", "brooklyn": "brooklyn", "chicago": "chicago"}
 IMITATION = re.compile(r"\b(sound(s|ing)? like|in the voice of|voice of|imitat\w*|impersonat\w*|clon\w*|famous|celebrity|"
                        r"real voice|exact voice|soundalike)\b", re.I)
 
@@ -52,7 +58,8 @@ def _descriptives(traits: dict, style: str) -> list[str]:
 
 
 PLACES = {"england": "british", "london": "british", "usa": "american", "new york": "american", "boston": "american",
-          "dublin": "irish", "glasgow": "scottish", "edinburgh": "scottish", "germany": "german", "france": "french",
+          "dublin": "irish", "japan": "japanese", "tokyo": "japanese", "birmingham": "british", "midlands": "british",
+          "yorkshire": "british", "liverpool": "british", "manchester": "british", "wales": "welsh", "chicago": "american", "glasgow": "scottish", "edinburgh": "scottish", "germany": "german", "france": "french",
           "italy": "italian", "spain": "spanish", "russia": "russian", "greece": "greek"}
 
 
@@ -81,12 +88,26 @@ def _age_clash(want: str, label: str) -> bool:
     return abs(AGES.index(want) - AGES.index(label)) == 2 or (want == "middle_aged" and label == "young")
 
 
+def region_of(hero: dict) -> str | None:
+    """The regional accent word (``midlands``...) from the origin, the ethnicity or the voice style."""
+    voice = hero.get("voice", {})
+    t = voice.get("traits", {})
+    text = " ".join([t.get("origin", ""), t.get("ethnicity", ""), voice.get("style", "")]).lower()
+    return next((r for place, r in sorted(REGIONS.items(), key=lambda x: -len(x[0])) if place in text), None)
+
+
 def _accent(origin: str) -> str | None:
     o = origin.lower()
     for a in sorted(ACCENTS, key=len, reverse=True):
         if a in o:
             return a
     return next((acc for place, acc in PLACES.items() if place in o), None)
+
+
+def accent_of(traits: dict) -> str | None:
+    """The accent the voice must carry: from ``origin`` first, then ``ethnicity`` (the creator, 2026-10-19: "add the
+    ethnicity to the rules too": a Japanese businessman speaks English with a Japanese accent, not an American one)."""
+    return _accent(traits.get("origin", "")) or _accent(traits.get("ethnicity", ""))
 
 
 def problems(hero: dict, names: list[str] | None = None) -> list[str]:
@@ -122,11 +143,12 @@ def query(hero: dict, language: str = "en") -> dict:
     if d:
         q["descriptives"] = d
     q["use_cases"] = ROLE_USE.get(traits.get("role", "hero"), ["characters_animation"])
-    acc = _accent(traits.get("origin", ""))
+    acc = accent_of(traits)
     if acc:
         q["accent"] = acc
     energy = {"low": "slow measured", "medium": "", "high": "energetic fast"}.get(traits.get("energy", "medium"), "")
-    q["search"] = " ".join(x for x in [energy, " ".join(d[:2]), "character" if traits.get("role") != "narrator" else "storyteller"] if x).strip()
+    reg = region_of(hero)
+    q["search"] = " ".join(x for x in [reg, energy, " ".join(d[:2]), "character" if traits.get("role") != "narrator" else "storyteller"] if x).strip()
     return q
 
 
@@ -164,10 +186,14 @@ def score(v: dict, hero: dict) -> float:
         if want[key]:
             total += w
             s += w * (want[key].replace("_", " ") in lab.get(key, "").replace("_", " "))
-    acc = _accent(traits.get("origin", ""))
+    acc = accent_of(traits)
     if acc:
         total += 1.0
         s += 1.0 * (acc in lab.get("accent", ""))
+    reg = region_of(hero)
+    if reg:
+        total += 2.0  # a region the labels cannot carry is read from the voice's own description and name
+        s += 2.0 * (reg in text)
     for d in _descriptives(traits, hero.get("voice", {}).get("style", "")):
         total += 1.0
         s += 1.0 * (d in text)
@@ -199,9 +225,9 @@ def design_description(hero: dict) -> str:
     age = {"young": "young adult", "middle_aged": "middle-aged", "old": "elderly"}.get(age_of(hero) or "", "")
     parts = [p for p in [age, t.get("gender", ""), "voice"] if p]
     desc = " ".join(parts)
-    acc = _accent(t.get("origin", ""))
+    acc = accent_of(t)
     if acc:
-        desc += f" with a light {acc} accent"
+        desc += f" with a {region_of(hero) + ' ' if region_of(hero) else ''}{acc} accent"
     temper = ", ".join(t.get("temperament", []))
     if temper:
         desc += f"; {temper}"

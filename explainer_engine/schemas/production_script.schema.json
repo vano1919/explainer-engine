@@ -370,6 +370,10 @@
                   "origin": {
                     "type": "string"
                   },
+                  "ethnicity": {
+                    "type": "string",
+                    "description": "VC-05: the hero's ethnic or national background, from which the accent is read when origin names none (a Japanese businessman speaks English with a Japanese accent)"
+                  },
                   "role": {
                     "enum": [
                       "narrator",

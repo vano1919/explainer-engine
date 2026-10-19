@@ -267,6 +267,9 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             if not casting.age_of(doc["cast"][who]):  # the creator 2026-10-19: ages matter most
                 _f(out, "PV-32", who, "the hero's age is not known: set voice.traits.age (young/middle_aged/old) before "
                    "casting, so no voice of the wrong age is offered", "REVIEW")
+            if not casting.accent_of(doc["cast"][who]["voice"].get("traits", {})):  # VC-05
+                _f(out, "PV-32", who, "no accent follows from voice.traits.origin or .ethnicity: name where the hero is from "
+                   "so the voice carries the right accent", "REVIEW")
             for why in casting.problems(doc["cast"][who]):  # VC-01/VC-02: cast from documented traits, never imitate
                 _f(out, "PV-10", who, why)
     if S.has_dialogue(doc):

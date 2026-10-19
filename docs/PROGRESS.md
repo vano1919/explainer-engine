@@ -730,3 +730,13 @@ Three voice options offered for Vito and Mizuno sounded too young: they were pic
 offers a voice labelled two bands off or a young voice for a middle-aged hero; PV-32 REVIEWs a speaking hero whose age is
 unknown. Tests: `tests/unit/test_casting_age.py`; `test_casting_ranks_returned_voices_and_never_reuses_one` now expects the
 young voice to be dropped for the old hero.
+
+## 2026-10-19 — voice casting: ethnicity, accent and region (VC-05); Syndicate Wars picks
+
+Creator: Capone = Crazy Eddie, Vito = Mr Wellington; Mizuno must carry a Japanese accent and Shelby a Birmingham accent ("add the
+ethnicity to the rules too"). `traits.ethnicity` is new in the schema; `casting.accent_of` reads `origin`, then `ethnicity`
+(Japanese and Welsh among the accents); `casting.region_of` puts a named region (Birmingham, Midlands...) into the search text
+and a +2 weight in `rank`, because library labels only say "british". PV-32 REVIEWs a hero with no accent source. Rule VC-05 in
+`docs/STORY_ENGINE.md`; tests in `tests/unit/test_casting_age.py`. Cast styles of Mizuno and Shelby changed in the content file;
+the script is rebuilt and the stamps re-bound once all four voice ids are fixed (ES-16). Library search found no West Midlands
+male voice; Midlands candidates (Robert, Dan) and a Japanese-accent voice (Hideo) were sampled, 122 credits.
