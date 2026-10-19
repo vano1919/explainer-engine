@@ -104,6 +104,15 @@ def test_composite_blurs_the_scene_behind_the_close_up_and_rests_outside_dialogu
     assert (one[:, 250:, 1] <= one[:, 250:].max(axis=2)).all() and one[5, 300, 1] < 200  # no key green on screen
 
 
+
+def test_composite_in_a_short_centres_the_hero_of_a_wide_close_up(tmp_path):
+    frame = Image.new("RGB", (180, 320), (40, 40, 60))  # 9:16
+    b = {"start_frame": 30, "end_frame": 90, "who": "einstein", "close_up": _close_up(tmp_path / "f.png"), "face": None}
+    one = np.asarray(FACES.composite(frame, [b], 60, 30, ["einstein", "curie"])).astype(int)
+    face = np.abs(one - np.array([210, 150, 110])).max(axis=2) < 4
+    cols = np.where(face.any(axis=0))[0]
+    assert len(cols) and abs((cols.min() + cols.max()) / 2 - 90) < 12  # the hero sits in the middle, not off the edge
+
 def test_paint_plan_faces_is_a_reusable_plan_with_its_saving(tmp_path):
     d = C.compile_doc(beats_doc())
     (tmp_path / "script.json").write_text(json.dumps(d))

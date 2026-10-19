@@ -753,3 +753,16 @@ writes them; `pause_pad` searches 0.25 s round a gap and inserts only below -46 
 `fill` added 50 re-framed shots (RHYTHM-3); two painted shots it dropped were restored by moving their anchors; four beats added,
 one cue moved (VB-01/VB-08). Editorial review and rulebook stamps re-bound (shots and beats only). Tests:
 `test_scribe_words.py`, `test_pause_pad.py`, `test_local_words_chunks.py`, `test_production_script.py`.
+
+## 2026-10-19 — Syndicate Wars: render, 10 Shorts, publish checklist
+
+Main video rendered in 12 chunks of about 60 s (RULE-R1) and joined: 12:14, 1920x1080 30 fps, -14.7 LUFS, true peak -1.1 dBTP,
+no music or ambience bed (none was planned). The Shorts reuse 47 lines cut from the main read; 22 new lines were recorded on the
+narrator's voice (1,739.83 credits, settled; credits = prompt characters), paced +8 % and levelled to the cut lines (-28.8 LUFS).
+Looking at the first Shorts found two defects, both fixed with a test: a dialogue close-up (16:9) was pinned to the left edge of
+the 9:16 frame, so the speaking hero fell off screen over a blurred background (`faces.composite` now centres it and caps it at
+`PORTRAIT_W` frame widths in a portrait frame; the long video is unchanged); the stat cards (`sc_*`) were cropped to 9:16 and lost
+their title and stars (`shorts.fit_screen` fits the whole card over a blurred fill and moves its spots with it). `publish.json`
+written from the real segment times (10 chapters); `publish_check`: 0 FAIL, 3 REVIEW for the creator (mid-roll, self-certification,
+approval #2). Tests: `test_face_sheets.py::test_composite_in_a_short_centres_the_hero_of_a_wide_close_up`,
+`test_short_beats.py::test_a_stat_card_is_fitted_whole_in_the_short_and_its_spots_move_with_it`.

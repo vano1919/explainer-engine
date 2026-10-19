@@ -124,3 +124,20 @@ def test_stage_guard_lets_the_beat_writer_write_short_beats_and_nothing_else():
     worded = copy.deepcopy(after)
     worded["shorts"][0]["lines"][0]["text"] = "Could anyone survive the night?"
     assert G.violations("beats", before, worded)  # the beat-writer never changes a Short's words
+
+
+def test_a_stat_card_is_fitted_whole_in_the_short_and_its_spots_move_with_it():
+    card = Image.new("RGB", (1920, 1080), (30, 20, 60))
+    card.paste((250, 250, 250), (0, 0, 1920, 60))  # the title band across the whole width
+    beats = [{"shot": "SH001", "kind": "label", "pos": [0.0, 0.0]}, {"shot": "SH002", "kind": "label", "pos": [0.0, 0.0]}]
+    row = {"id": "SH001", "picture": "sc_final", "crop_x": 0.2, "zoom": 1.4}
+    im = SHORTS.fit_screen(card, beats, row)
+    assert im.size == (SHORTS.W, SHORTS.H) and row["crop_x"] == 0.5 and row["zoom"] == 1.0
+    box = SHORTS.crop_box(row, *im.size, 0.0)
+    assert box[0] <= 0 + 1e-6 and box[2] >= SHORTS.W - 1e-6  # the crop shows the whole width: nothing of the card is cut
+    a = np.asarray(im)
+    x0 = round(SHORTS.W * SHORTS.SCREEN_MARGIN)
+    y0 = (SHORTS.H - round(1080 * (SHORTS.W - 2 * x0) / 1920)) // 2
+    assert a[y0 + 5, x0 + 5].min() > 200 and a[y0 + 5, SHORTS.W - x0 - 5].min() > 200  # both ends of the title band
+    assert abs(beats[0]["pos"][0] * SHORTS.W - x0) < 2 and abs(beats[0]["pos"][1] * SHORTS.H - y0) < 2
+    assert beats[1]["pos"] == [0.0, 0.0]  # another shot's spot stays

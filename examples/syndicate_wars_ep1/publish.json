@@ -1,0 +1,132 @@
+{
+ "schema": "publish/1",
+ "title": "Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida",
+ "description": "Could a gangster from the 1930s survive a world where everybody has a camera? We drop four crime bosses into an invented neon city and test them against phones, feeds, money and chaos. Character-select stats are OUR rating: opinions, each with a reason in the video.\n\nInvented scenario: the year, the city's rules and every line the bosses say are our invention. The history (Capone's ledger case, dates) is sourced below. Haruto Mizuno is an invented character. The \"Florida-style\" gags are fully invented.\n\nWhat is official about GTA VI: Rockstar's page gives the release date (Nov 19, 2026) and the setting (Vice City, state of Leonida); it gives no story year. Everything else we say about the new game is labelled as GTA V, \"fans say\" or our guess.\n\nChapters:\n0:00 Four bosses, one question\n1:31 Choose your boss (our ratings)\n3:08 What this video asks\n3:37 Round 1: Al Capone\n5:44 A word on stars\n6:00 Round 2: Vito Corleone\n7:40 Round 3: Haruto Mizuno (invented)\n9:38 Round 4: Tommy Shelby\n11:00 The order they fall\n11:31 The stat screen after the test\n\nSources read (secondary unless marked): https://www.rockstargames.com/VI (official page) | https://en.wikipedia.org/wiki/Al_Capone | https://en.wikipedia.org/wiki/Frank_J._Wilson | https://en.wikipedia.org/wiki/Vito_Corleone | https://en.wikipedia.org/wiki/Tommy_Shelby | https://en.wikipedia.org/wiki/Grand_Theft_Auto_V\n\nUnofficial fan analysis. Not affiliated with or endorsed by the rights holders. Grand Theft Auto, Rockstar Games, The Godfather, Peaky Blinders and other names belong to their owners; they are used in plain text to identify the subjects. All pictures are our own drawings.",
+ "duration_s": 734.53,
+ "chapters": [
+  {
+   "t": "0:00",
+   "title": "Four bosses, one question"
+  },
+  {
+   "t": "1:31",
+   "title": "Choose your boss (our ratings)"
+  },
+  {
+   "t": "3:08",
+   "title": "What this video asks"
+  },
+  {
+   "t": "3:37",
+   "title": "Round 1: Al Capone"
+  },
+  {
+   "t": "5:44",
+   "title": "A word on stars"
+  },
+  {
+   "t": "6:00",
+   "title": "Round 2: Vito Corleone"
+  },
+  {
+   "t": "7:40",
+   "title": "Round 3: Haruto Mizuno (invented)"
+  },
+  {
+   "t": "9:38",
+   "title": "Round 4: Tommy Shelby"
+  },
+  {
+   "t": "11:00",
+   "title": "The order they fall"
+  },
+  {
+   "t": "11:31",
+   "title": "The stat screen after the test"
+  }
+ ],
+ "audience": "not_made_for_kids",
+ "disclosure": {
+  "decision": "not_needed",
+  "reason": "metadata.md / rulebook ER-01: clearly drawn 2D fiction, no realistic person or altered footage, no music; the creator confirms at upload",
+  "photoreal_pictures": false,
+  "real_person_realistic": false,
+  "real_event_altered": false,
+  "ai_music_main": false
+ },
+ "mid_roll": "undecided",
+ "self_certification_answered": false,
+ "shorts": [
+  {
+   "id": "SH01",
+   "seconds": 32.57,
+   "audio": [
+    "library"
+   ]
+  },
+  {
+   "id": "SH02",
+   "seconds": 36.3,
+   "audio": [
+    "library"
+   ]
+  },
+  {
+   "id": "SH03",
+   "seconds": 58.93,
+   "audio": [
+    "library"
+   ]
+  },
+  {
+   "id": "SH04",
+   "seconds": 56.1,
+   "audio": [
+    "library"
+   ]
+  },
+  {
+   "id": "SH05",
+   "seconds": 24.37,
+   "audio": [
+    "library"
+   ]
+  },
+  {
+   "id": "SH06",
+   "seconds": 51.39,
+   "audio": [
+    "library"
+   ]
+  },
+  {
+   "id": "SH07",
+   "seconds": 30.15,
+   "audio": [
+    "library"
+   ]
+  },
+  {
+   "id": "SH08",
+   "seconds": 35.88,
+   "audio": [
+    "library"
+   ]
+  },
+  {
+   "id": "SH09",
+   "seconds": 32.38,
+   "audio": [
+    "library"
+   ]
+  },
+  {
+   "id": "SH10",
+   "seconds": 29.78,
+   "audio": [
+    "library"
+   ]
+  }
+ ],
+ "approval": null
+}

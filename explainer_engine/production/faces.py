@@ -45,6 +45,7 @@ KEY_LO, KEY_HI = 0.06, 0.22  # green dominance (g - max(r, b)) from where a pixe
 BORDER_KEYED = 0.85  # a painted close-up's frame edge must be at least this share key green (else the key leaves a halo)
 ZOOM, BLUR, DIM = 1.3, 0.014, 0.82  # the environment behind a close-up: zoom about the face, blur (share of the height), dim
 FACE_H, EASE_S, POP_S, POP = 0.94, 0.22, 0.16, 0.035  # close-up height (share of the frame), cross-fade in/out, swap pop
+PORTRAIT_W = 2.0  # in a 9:16 Short the 16:9 close-up is at most this many frame widths wide, its middle (the hero) centred
 _PALETTE = Path(__file__).resolve().parents[1] / "design" / "palette.json"
 
 
@@ -263,11 +264,17 @@ def composite(frame: Image.Image, faces: list[dict], f: int, fps: int, order: li
     face = close_up(b["close_up"])
     pop = POP * np.sin(np.pi * min(max((f - b["start_frame"]) / (POP_S * fps), 0.0), 1.0)) if cur else 0.0
     h = int(OH * FACE_H * (1 + pop))
+    portrait = OH > OW  # a Short (QA 2026-10-19: the 16:9 close-up was pinned to the left edge, the hero fell off frame)
+    if portrait:
+        h = min(h, int(PORTRAIT_W * OW * face.height / max(1, face.width) * (1 + pop)))
     fw = max(1, int(face.width * h / max(1, face.height)))
     piece = face.resize((fw, max(1, h)), Image.BICUBIC)
     if w < 1:
         piece.putalpha(piece.getchannel("A").point(lambda v: int(v * w)))
-    x = min(max(int(_side(b, order) * OW - fw / 2), 0), max(0, OW - fw))
+    if portrait:
+        x = int(OW / 2 - fw / 2)
+    else:
+        x = min(max(int(_side(b, order) * OW - fw / 2), 0), max(0, OW - fw))
     out = back.convert("RGBA")
     out.alpha_composite(piece, (x, max(0, OH - h)))
     return out.convert("RGB")
