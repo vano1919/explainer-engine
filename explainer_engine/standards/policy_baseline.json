@@ -126,11 +126,11 @@
     {
       "id": "B-14",
       "kind": "provider_terms",
-      "checked": "2026-10-17",
+      "checked": "2026-10-19",
       "verified_in": "V-33",
-      "verified": false,
+      "verified": true,
       "url": "https://support.rockstargames.com/articles/200153756/Policy-on-posting-copyrighted-Rockstar-Games-material",
-      "statement": "Rockstar/Take-Two policy on posting copyrighted Rockstar material. NOT read first-hand: HTTP 503 on every attempt on 2026-10-17 (three support URLs, incl. articles/7bNaeoMFTV0iUDGhStTXvz and the PC single-player mods article 5NVOAYjcTomO8v6SX2k76k). Second-hand only: a search summary and the creator's Gemini report agree that the page (updated 2025-01-10) allows non-commercial uses without spoilers, takes down leaked pre-release footage, isolated cinematics, spoiler edits, isolated in-game entertainment and cheat/mod-menu content, and does not mention custom monetised 2D animation. verified stays false; re-read before paid_assets."
+      "statement": "Rockstar/Take-Two policy on posting copyrighted Rockstar material. Read first-hand 2026-10-19 (the page answered; quoted excerpts): 'Take-Two Interactive does not object to our fans using materials for non-commercial uses'; 'Non-commercial means that you don't make money through the game footage you post'; takedown 'at any time'; leaked pre-release footage and isolated cutscenes or endings are removed; film, TV, streaming, advertising and publishing professionals are told 'this policy likely does not apply to you' and sent to copyright@take2games.com. The page does not mention fan art or original animation. Earlier attempts on 2026-10-17 returned HTTP 503."
     },
     {
       "id": "B-15",

@@ -2,7 +2,7 @@
   "schema": "explainer.episode_rules",
   "version": 1,
   "episode_id": "syndicate_wars",
-  "rulebook_version": 7,
+  "rulebook_version": 8,
   "status": "final",
   "identity": {
     "topic": "Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida (working title). Al Capone, Vito Corleone (film-era Don), an invented Yakuza boss and Tommy Shelby (1930s) arrive in the Vice City of Rockstar's Leonida.",
@@ -171,14 +171,14 @@
         },
         {
           "url": "https://support.rockstargames.com/articles/200153756/Policy-on-posting-copyrighted-Rockstar-Games-material",
-          "checked": "2026-10-17",
+          "checked": "2026-10-19",
           "kind": "provider_terms",
-          "verified": false,
+          "verified": true,
           "baseline_id": "B-14",
-          "note": "Rockstar's policy tolerates non-commercial fan use and sends film/TV/streaming/ad uses to a licence request; a monetised channel is not clearly inside it. Page was not read first-hand."
+          "note": "Read first-hand 2026-10-19 (the page answered; quoted excerpts): 'Take-Two Interactive does not object to our fans using materials for non-commercial uses'; 'Non-commercial means that you don't make money through the game footage you post'; takedown 'at any time'; leaked pre-release footage and isolated cutscenes or endings are removed; film, TV, streaming, advertising and publishing professionals are told 'this policy likely does not apply to you' and sent to copyright@take2games.com. The page does not mention fan art or original animation. The policy governs posting Take-Two's own material; this episode posts none."
         }
       ],
-      "uncertainty": "Whether a monetised YouTube analysis falls under Rockstar's tolerance is unclear; this is why no Rockstar material is used at all."
+      "uncertainty": "The policy's tolerance covers non-commercial posting of Take-Two material and sends professional uses to a licence request; a monetised video with no Take-Two material and only plain-text names is not addressed by the page either way, which is why no Rockstar material is used at all."
     },
     {
       "id": "ER-06",
@@ -654,9 +654,9 @@
       "category": "affiliation",
       "source_type": "reference_only",
       "status": "REVIEW",
-      "evidence": "B-14 (secondary summary, 503 on the page): non-commercial fan use tolerated; film, TV, streaming, advertising uses need a licence request; takedown at any time. Not read first-hand. Re-graded in v3: the commentary target (RR-14, RK-16), the plain-text-only naming (RR-16, RK-17), and the private-study boundary (RR-15, RK-18) reduce the exposure, and the policy page itself still returned 503 on both support URLs (not read first-hand). v4: the policy page returned 503 on every attempt (three URLs); second-hand reports agree it allows non-commercial uses and says nothing about custom monetised 2D animation, so the gap is known only second-hand. 2026-10-17 (run of this episode): the policy page returned HTTP 503 again from this session (WebFetch) and the support URL failed over curl; the page was NOT read first-hand.",
+      "evidence": "B-14 (secondary summary, 503 on the page): non-commercial fan use tolerated; film, TV, streaming, advertising uses need a licence request; takedown at any time. Not read first-hand. Re-graded in v3: the commentary target (RR-14, RK-16), the plain-text-only naming (RR-16, RK-17), and the private-study boundary (RR-15, RK-18) reduce the exposure, and the policy page itself still returned 503 on both support URLs (not read first-hand). v4: the policy page returned 503 on every attempt (three URLs); second-hand reports agree it allows non-commercial uses and says nothing about custom monetised 2D animation, so the gap is known only second-hand. 2026-10-17 (run of this episode): the policy page returned HTTP 503 again from this session (WebFetch) and the support URL failed over curl; the page was NOT read first-hand. v8 (2026-10-19): the page was read first-hand from this session. Read first-hand 2026-10-19 (the page answered; quoted excerpts): 'Take-Two Interactive does not object to our fans using materials for non-commercial uses'; 'Non-commercial means that you don't make money through the game footage you post'; takedown 'at any time'; leaked pre-release footage and isolated cutscenes or endings are removed; film, TV, streaming, advertising and publishing professionals are told 'this policy likely does not apply to you' and sent to copyright@take2games.com. The page does not mention fan art or original animation. So the second-hand summary was right: the tolerance is about Take-Two material, and a channel that posts none of it and names the game in plain text is outside what the page addresses.",
       "rationale": "The channel is monetisable, so Rockstar's tolerance for non-commercial fan use may not cover it and Take-Two could ask for removal; with zero Rockstar media, a stated commentary target, plain-text names and invented brands the exposure is reduced to the names and the analysis itself, but it is not removed and this is not legal advice.",
-      "mitigation": "Keep zero Rockstar media and invented brand names; re-read the policy page first-hand before paid_assets; the creator decides whether to ask counsel or to publish; on a notice follow RR-13. Creator accepted this condition on 2026-10-17; the page is still to be re-read first-hand before paid_assets. Not legal advice.",
+      "mitigation": "Keep zero Rockstar media and invented brand names; re-read the policy page first-hand before paid_assets; the creator decides whether to ask counsel or to publish; on a notice follow RR-13. Creator accepted this condition on 2026-10-17; the page was re-read first-hand on 2026-10-19. Not legal advice.",
       "dependencies": [
         "metadata",
         "qa"
@@ -1071,7 +1071,7 @@
       "category": "character",
       "source_type": "reference_only",
       "status": "PASS",
-      "evidence": "Each sentence paraphrases Rockstar's own 'Only in Leonida' page (rockstargames.com/VI/only-in-leonida, read first-hand 2026-10-19 by research and again by the standards director the same day; claim map C-51..C-55, tier primary_read, label official) and is spoken as 'Rockstar's page'. None of the four has a dialogue line, a cast entry, a voice or a face sheet; no picture prompt draws them (w02_studio is an invented wordless studio front, w02_keys shows nobody); Only Raw Records is not spoken, shown or lettered; no Rockstar text is quoted on screen. Plain-text names identify the subject of the commentary (RR-14).",
+      "evidence": "Each sentence paraphrases Rockstar's own 'Only in Leonida' page (rockstargames.com/VI/only-in-leonida, read first-hand 2026-10-19 by research and again by the standards director the same day; claim map C-51..C-55, tier primary_read, label official) and is spoken as 'Rockstar's page'. None of the four has a dialogue line, a cast entry, a voice or a face sheet; no picture prompt draws them (w02_studio is an invented wordless studio front, w02_keys shows nobody); Only Raw Records is not spoken, shown or lettered; no Rockstar text is quoted on screen. Plain-text names identify the subject of the commentary (RR-14). v8: the Shorts' visual beats (SH03) show the four names as plain caption text in the house caption style (nominative, ER-06), with no Rockstar lettering, logo or picture of the characters.",
       "rules": [
         "ER-05",
         "ER-06",
@@ -1395,44 +1395,52 @@
       "scope": "rulebook v7 on script v2 (rebuilt 2026-10-19): re-checked ER-02/RK-08 (Capone's invented lines flagged in S02 and in every Short with boss dialogue: SH02 'Made up, every word', SH04, SH05, SH06, SH07), ER-03/RK-12 (14 boss lines voiced by own library voices cast from traits, voice_id unset, no actor/recording named, no sound-alike prompt; Vito's 'slightly husky' to be confirmed at the VC-03 test read), dialogue original (no film or series quote), ER-05/ER-06/RK-07/new RK-19 (Boobie Ike, Real Dimez, Raul Bautista, Brian Heder named only from Rockstar's page, read first-hand 2026-10-19, never drawn, voiced or quoted; The Godfather films and Peaky Blinders named in plain text in S06/S08), ER-07/ER-18 (S03 and SH03 credited to 'Rockstar's page', S09 'Rockstar hasn't said', no GTA VI mechanic as fact), ER-08 (comic lines, consequences kept), ER-14 (G03 '1933: Series 6' and S08 'around 1930' match C-28), Shorts SH01-SH10"
     },
     {
-      "checkpoint": "paid_assets",
+      "checkpoint": "script_lock",
       "date": "2026-10-19",
-      "by": "claude (thread session); re-checked: only 2 shots now reuse existing pictures and the collage references were recorded, no image/likeness rule touched",
-      "script_sha256": "7f43c269529542d68b727d4a4f1bc4f48564d488357f51efe645cb3b0dcfe2d5",
-      "rulebook_version": 7,
-      "scope": "pictures: s01_boardwalk, c12_palm reuse; cast.reference, look.environment"
+      "by": "episode-standards-director",
+      "script_sha256": "a1402727fe05509cfc24a22c46fb447ca9f531a5dfe77f42d992bb512a45bba9",
+      "rulebook_version": 8,
+      "scope": "rulebook v8 on script v2 + Shorts visual beats (1f2f365, no text, shot, cast or picture change): re-checked on-screen text of every Short beat (text, label, chart, prop): plain-text names only (Vice City, Leonida, GTA V, 'Rockstar's next game', Rockstar's four characters as captions, RK-19), no logo, lettering, title font or quote of Rockstar text (ER-05, ER-06, ER-19); charts SH01 $17,500 (C-21) and 11 years (C-16), SH03 six places (C-51), SH09 star bars match C-44..C-47 and say OUR OPINION; SH02 MADE UP and SH04 INVENTED flag invented dialogue (ER-02); expression beats only on our four cast faces; English only (ER-12). RK-02 source read first-hand 2026-10-19 (B-14 verified)."
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "episode-standards-director",
+      "script_sha256": "a4ad046d7e643e1c0879b304209ebc5bc80342f0cafd0217b02a9d54087d0039",
+      "rulebook_version": 8,
+      "scope": "one prompt word removed from w02_studio ('a Vice City street' -> 'a neon coastal city street'); diff against 1f2f365 is that line only; all 48 compiled prompts and 4 cast cards scanned: no franchise, character, actor or Rockstar word (RR-03, RK-01)"
     },
     {
       "checkpoint": "paid_assets",
       "date": "2026-10-19",
-      "by": "claude (thread session); re-checked after removing 4 unused claims (C-03, C-05, C-17, C-29) from the editorial contract; no rule source or risk touched",
-      "script_sha256": "ef6a1db1bef4825c2a17c936ce935e235d9230f6dbd6a0cd237f1dc01d992149",
-      "rulebook_version": 7,
-      "scope": "editorial.claims cleanup"
-    },
-    {
-      "checkpoint": "paid_assets",
-      "date": "2026-10-19",
-      "by": "orchestrator",
-      "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
-      "rulebook_version": 7,
-      "scope": "re-check after the Shorts visual beats (1f2f365) and the SH03/S03 studio beat turned into a RECORDING STUDIO text beat; Rockstar characters only as text, invented scenes still flagged (independent review bound to bdf2887f); no new person, claim, franchise element or picture"
+      "by": "episode-standards-director",
+      "script_sha256": "a4ad046d7e643e1c0879b304209ebc5bc80342f0cafd0217b02a9d54087d0039",
+      "rulebook_version": 8,
+      "scope": "painting step approved by the creator: 48 pictures on pod (pod_ref, references only our own p_* portraits and s01_skyline, no official image in any slot: ER-19, RK-18; prompts free of franchise, character and actor words: RR-03, RK-01, RK-03) and 4 face sheets on Gemini as reusable cast assets (prompts from the cast cards, no names, painted from our own portraits checked in v3 for no actor likeness: ER-04, RK-07). No open BLOCK or ADAPT; REVIEW RK-02 (policy page read first-hand 2026-10-19), RK-10 and RK-14 decided; sources fresh. CONDITION on pictures recovered from earlier Gemini batches: only pictures painted from the current prompts may be used; no pre-v2 Vito or Shelby portrait (they read as actor likenesses, RK-07); every recovered face is checked against 'does this look like a named actor?' before use."
     },
     {
       "checkpoint": "final",
       "date": "2026-10-19",
       "by": "orchestrator",
       "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
-      "rulebook_version": 7,
-      "scope": "re-check after the Shorts visual beats (1f2f365) and the studio beat fix; no new person, claim, franchise element or picture; independent review bound to bdf2887f"
+      "rulebook_version": 8,
+      "scope": "v8 on the combined script (PR #8): Shorts beats, studio beat as text, review bound to bdf2887f. Recovered-pictures condition checked: all 51 recovered pictures have prompt, subject and refs identical to the v8 script (compared with 1d579fd); w02_studio/w02_keys are not used; p_vito and p_shelby are the v3 portraits (bald, round glasses; red hair and moustache), and every portrait and the 42 close-ups were looked at: invented faces, no named-actor likeness"
     },
     {
       "checkpoint": "script_lock",
       "date": "2026-10-19",
       "by": "orchestrator",
       "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
-      "rulebook_version": 7,
-      "scope": "re-check after the Shorts visual beats (1f2f365) and the studio beat fix; no new person, claim, franchise element or picture; independent review bound to bdf2887f"
+      "rulebook_version": 8,
+      "scope": "v8 on the combined script (PR #8): Shorts beats, studio beat as text, review bound to bdf2887f. Recovered-pictures condition checked: all 51 recovered pictures have prompt, subject and refs identical to the v8 script (compared with 1d579fd); w02_studio/w02_keys are not used; p_vito and p_shelby are the v3 portraits (bald, round glasses; red hair and moustache), and every portrait and the 42 close-ups were looked at: invented faces, no named-actor likeness"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
+      "rulebook_version": 8,
+      "scope": "v8 on the combined script (PR #8): Shorts beats, studio beat as text, review bound to bdf2887f. Recovered-pictures condition checked: all 51 recovered pictures have prompt, subject and refs identical to the v8 script (compared with 1d579fd); w02_studio/w02_keys are not used; p_vito and p_shelby are the v3 portraits (bald, round glasses; red hair and moustache), and every portrait and the 42 close-ups were looked at: invented faces, no named-actor likeness"
     }
   ],
   "supersedes": 4
