@@ -694,3 +694,5 @@ collage approval, cost shown, creator's OK); vidIQ outlier pass not run (credits
 
 
 2026-10-19 vidIQ thumbnail pass: 2 calls, 10 credits (balance 90 -> 80); no usable evidence (research file, Appendix F). Ledger about 165 of 200 by project memory, past the 160 stop line; no more vidIQ calls without the creator's word.
+
+2026-10-19 thumbnail niche study (free): looked at 28 real thumbnails of the niche (research Appendix G, contact sheets in docs/research). Finding: bright, face-forward, versus layouts, fixed templates; no dark silhouette as a main subject. TN-12 changed to a small cameo, TN-19 (named heroes/versus) and TN-20 (one template) added. Gemini: one collage $0.134 (silhouette variants, creator OK), now not the main subject; no thumbnail painted yet.

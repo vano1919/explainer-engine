@@ -183,3 +183,28 @@ niche's big channels did not surface; vidIQ returns metadata and a breakout scor
 similarity search matched on topic words, not on the silhouette. Nothing here supports or contradicts the motif; T-4 stays the test.
 Ledger note: project memory records 155 of 200 credits spent before this pass, so with these 10 the total is about 165, past the
 creator's stop line of 160. The calls were started before that figure reached this thread. No further vidIQ calls.
+
+## Appendix G: what real thumbnails of our niche look like (looked at, 2026-10-19, no credits spent)
+Method: YouTube search pages for 17 queries (alternate history, history what-if, "who would win", mafia and GTA lore, animated history),
+179 videos, sorted by views; 28 thumbnails of the niche's channels downloaded and looked at (contact sheets
+`thumbnail_niche_sheet1_2026-10-19.jpg`, `thumbnail_niche_sheet2_2026-10-19.jpg`, plus four more by eye). Limits: chosen by search
+relevance and view count (survivorship; old hits like OverSimplified carry the channel's size, not its thumbnail), one viewer, no CTR data.
+Grade: [P] observed practice, not evidence that it works.
+
+Seen (28 of 28 unless stated):
+- **Bright, not dark.** White, primary-colour or sky backgrounds; thick black outlines; saturated 2D characters. **No dark noir or silhouette
+  thumbnail among the 28.** The darkest are screenshots of games (GTA lore) and a photoreal bomber.
+- **Big readable faces with a strong expression** (anger, fear, disgust, smirk) on about 20 of 28; the characters are drawn simply (dot eyes)
+  or semi-realistically; a face or a head fills a third to a half of the frame.
+- **Versus composition**: two opponents left and right with a label or number between them (Marine x43 vs Roman x5000, Viking vs Samurai,
+  "Bugsy Siegel / Albert Anastasia", Marvel vs DC): about 6 of 28 and the most "crossover-like" format in the sample.
+- **Text**: 1-3 giant words (PROHIBITION, WW2, "NO", "Dead Man Walking", "WHO WOULD WIN?") or the proper names of the people shown; long
+  explanatory text only in game-lore fan videos. Text is on a plain area, outlined or in a coloured box.
+- **A pointer or symbol that carries the topic**: a map with a red arrow, a hammer-and-sickle, a radiation sign, a shield, a flag.
+- **A fixed series template** on every big channel: OverSimplified (title top, channel word bottom, drawn heroes at the sides), Kings and
+  Generals (corner logo, title in a fixed font), Paint Explainer (two portraits on white), AlternateHistoryHub (one mascot plus a topic icon).
+- One outlier of the opposite kind: an anime-style woman holding cash (MSA, "Mafia Boss", 11.6 M views): the kind of image YouTube's
+  sexual-content wording ("pose or clothing intended to arouse") is about; it shows what the motif must not drift into.
+Reading for us: the niche rewards bright, face-forward, simple, template-consistent packaging with named opponents; a dark silhouette as the
+**main subject** runs against everything seen. The recurring motif therefore stays, but as a small constant element (a stamp or a cameo in
+one fixed corner, in the channel palette), not as the picture. Whether it helps is still T-4.
