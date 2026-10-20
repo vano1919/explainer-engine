@@ -123,6 +123,10 @@ def time_script(doc: dict, words_doc: dict) -> dict:
     for k, s in enumerate(out_shots):  # UR-14/ED-04: a period opens with a dissolve (a time jump), nothing else dissolves
         if k and s.get("transition", "cut") == "cut" and seg_period.get(s["segment"]) != seg_period.get(out_shots[k - 1]["segment"]):
             s["transition"], s["time_jump"], s["transition_seconds"] = "dissolve", True, 1.0
+    seg_scene = {sg["id"]: ((sg.get("scene") or {}).get("place"), (sg.get("scene") or {}).get("time")) for sg in doc["segments"]}
+    for k, s in enumerate(out_shots):  # BP-31: a change of place or time (a scene boundary) may open with a dissolve (RX-08)
+        if k and s["segment"] != out_shots[k - 1]["segment"] and seg_scene.get(s["segment"]) != seg_scene.get(out_shots[k - 1]["segment"]):
+            s["place_change"] = True
     continuity.chain(out_shots)  # ED-02: render_motion continues across shots of one picture
     total_frames = _frames(duration, fps)
     for k, s in enumerate(out_shots):

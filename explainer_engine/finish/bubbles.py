@@ -25,7 +25,7 @@ INK = (30, 26, 22, 255)
 POP_S, OUT_S = 0.18, 0.15
 MARGIN = 0.035  # of the frame, a bubble never touches the edge
 MAX_CHARS = int(SR.T("BP-84", "bubble_chars_per_line"))  # per line
-MAX_WORDS = int(SR.T("BP-84", "bubble_words_max"))  # a bubble is a line, not a paragraph (check_bubbles)
+MAX_WORDS = int(SR.T("BP-38", "max_words"))  # BP-84: a bubble is an accent of BP-38's words, never a line (RX-01)
 
 
 @lru_cache(maxsize=16)

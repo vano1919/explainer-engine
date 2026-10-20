@@ -144,6 +144,9 @@ def test_a_missed_word_after_the_gap_never_lands_before_it():
 def test_the_narrator_reports_the_exchange_bubbles_are_only_an_accent():
     """D-63: the creator found bubble-only dialogue unread and boring; one accent bubble per scene is allowed, two FAIL."""
     d = doc()
+    long = next(ln for ln in d["segments"][0]["lines"] if not SIL.voiced(ln))
+    assert any("BP-84" in why for why in SIL.check_reported_dialogue(d))  # a 15-word bubble is a line read alone (D-64)
+    long["text"] = " ".join(long["text"].split()[:SIL.max_words()])  # the accent: a key phrase of BP-38's words
     assert SIL.check_reported_dialogue(d) == []  # one silent line: an accent
     d["segments"][0]["lines"].append({"text": "Fine.", "speaker": "musk", "voiced": False})
     assert SIL.check_reported_dialogue(d) and "D-63" in SIL.check_reported_dialogue(d)[0]

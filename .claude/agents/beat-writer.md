@@ -17,16 +17,17 @@ claim ids the segment may use.
 
 For each line:
 1. Place beats where NEW INFORMATION lands, not on a clock (VB-01 on /3). Section guidance: the hook's change interval and the body's
-   still limits are BP-40's (a visual beat counts as a change; RHYTHM-3 gates them, MO-01 is their REVIEW band); one
+   still limits are BP-40's (only a beat tied to a narration word counts as a change, BP-93; RHYTHM-3 gates them, MO-01 is their REVIEW band); one
    pattern interrupt in BP-41's window. VB-01 nests a stricter narration-only rule inside them: never leave the screen
-   without anything new past BP-36's REVIEW and FAIL gaps while the narrator speaks. Shorts follow BP-45 instead. A sentence that adds nothing new needs no beat; a reveal earns several.
+   without anything new past BP-36's REVIEW and FAIL gaps while the narrator speaks. Shorts follow BP-45 instead. A sentence that adds nothing new needs no beat; a reveal earns several. Never add a prop, ring or symbol to
+   meet a gap rule: a beat on a hero's line or on a phrase without a content word is not new (VB-12, BP-93).
 2. Choose each beat from what is said at that instant (the skill's visual-choice table: a concrete noun as a prop or
    label, a number as a counter or bars with its claim, "no/not" as a cross, a name as a ring). Write `at` (words of
    THIS line), an `offset` only when a beat must land in a pause, and `why` (at least three words, quoting the word it
    shows).
-3. Faces (VB-02 on /3): every dialogue line gets at least one `expression` change (none at all is a FAIL), placed on
-   the reaction-worthy words — the reveal, the risk, the punchline — not once a second. A gap without a change past BP-37's
-   REVIEW and FAIL gaps is a finding; two changes of ONE face closer than BP-33's floor are a flicker (REVIEW). On a line with
+3. Faces (VB-02 on /3): no quota per line (BP-37, D-64); an `expression` change goes only where a line lands —
+   the reveal, the risk, the punchline — never once a second or once a line. A gap without a change past BP-37's
+   gaps is a REVIEW; two changes of ONE face closer than BP-33's floor are a flicker (REVIEW). On a line with
    intent `reveal`, prefer the LISTENER's face (`who` != the speaker): the reaction is where the line lands.
 4. Cues are OPT-IN (VB-08 on /3): the default beat is silent. Write a `cue` only when a named story event earns it, and
    give the cue its required `event`: reveal | impact | transition | build | diegetic | take | place (the event grammar

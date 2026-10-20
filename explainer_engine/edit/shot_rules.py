@@ -33,7 +33,8 @@ A_ZOOM = tuple(float(x) for x in SR.T("BP-85", "a_zoom"))
 A_PAN_PER_5S = SR.T("BP-22", "pan_default_width_per_s") * 5  # share of the frame width (BP-22's house default)
 B_PUSH_MAX = SR.T("BP-20", "push_default_max")
 C_PULL_MAX = float(SR.T("BP-85", "c_pull_max"))
-DISSOLVE_SECONDS = SR.T("BP-31", "dissolve_s")  # UR-14 / BP-31
+DISSOLVE_SECONDS = SR.T("BP-31", "dissolve_s")  # UR-14 / BP-31: the default dissolve, and the shortest
+DISSOLVE_MAX = SR.T("BP-31", "dissolve_max_s")  # BP-31 (the creator, 2026-10-20 21:14): a dissolve lasts 1-2 s (RX-08)
 DISSOLVE_SHARE = float(SR.T("BP-85", "dissolve_share_max"))  # the hard-cut convention BP-31 names, the creator's (BP-85)
 EDGE = float(SR.T("BP-85", "cut_edge_s"))  # UR-12: a cut keeps this far from both words
 CUT_MARKS = ",.:;?!—…"
@@ -324,8 +325,8 @@ def check_shots(shots: list[dict], words: list[dict], look: dict, moods: dict | 
                 dissolves += 1
                 if not (s.get("time_jump") or s.get("place_change")):
                     add("UR-14", sid, "dissolve without a time jump or place change")
-                if abs(float(s.get("transition_seconds", DISSOLVE_SECONDS)) - DISSOLVE_SECONDS) > 1e-6:
-                    add("UR-14", sid, f"dissolve of {s.get('transition_seconds')} s; must be {DISSOLVE_SECONDS}")
+                if not DISSOLVE_SECONDS - 1e-6 <= float(s.get("transition_seconds", DISSOLVE_SECONDS)) <= DISSOLVE_MAX + 1e-6:
+                    add("UR-14", sid, f"dissolve of {s.get('transition_seconds')} s; must be {DISSOLVE_SECONDS}-{DISSOLVE_MAX} (BP-31)")
             elif tr != "cut":
                 add("UR-14", sid, f"transition {tr!r}; only cut or dissolve")
         # UR-15 sound at cuts

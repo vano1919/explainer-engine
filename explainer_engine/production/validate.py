@@ -63,6 +63,43 @@ def _f(out, rule, where, detail, sev="FAIL"):
     out.append({"rule": rule, "severity": sev, "where": where, "detail": detail})
 
 
+def establishing_cast(doc: dict) -> list[tuple[str, str]]:
+    """PV-57 (BP-91, RX-09; the creator 2026-10-20 21:14): in a segment the first shot that shows heroes is the establishing
+    view; a later shot shows only heroes of that view, or a newcomer the narrator has named in the segment up to the line the
+    shot opens on, or the hero the shot's ``reveal`` names. Binds a production_script/3."""
+    if doc.get("schema") != "production_script/3":
+        return []
+    pics, _ = S.pictures(doc)
+    names = {h: [n.lower() for n in (c.get("names") or [h])] for h, c in doc.get("cast", {}).items()}
+    out = []
+    for sh_seg in doc["segments"]:
+        lines = sh_seg["lines"]
+        est: set | None = None
+        li = 0
+        for s in sh_seg["shots"]:
+            pid = s["picture"] if isinstance(s["picture"], str) else s["picture"]["id"]
+            heroes = set((pics.get(pid) or {}).get("heroes") or [])
+            at = " ".join(str(s["at"]).lower().split())
+            while li < len(lines) - 1 and at not in " ".join(lines[li]["text"].lower().split()):
+                li += 1
+            if not heroes:
+                continue
+            if est is None:
+                est = heroes
+                continue
+            told = " " + re.sub(r"[^a-z0-9' ]", " ", " ".join(ln["text"] for ln in lines[:li + 1]
+                                                                if not ln.get("speaker")).lower()) + " "
+            revealed = str(s.get("reveal", "")).lower()  # a deliberate reveal of the hero (the shot's ``reveal``) is no stranger
+            new = sorted(h for h in heroes - est if revealed not in {h, *names.get(h, [h])}
+                         and not any(f" {n} " in told or f" {n}'s " in told for n in names.get(h, [h])))
+            if new:
+                out.append((f"{sh_seg['id']} {pid}", f"shows {', '.join(new)}, who is not in the establishing view of this "
+                            f"segment ({', '.join(sorted(est))}) and not named by the narrator before: the closer shots are "
+                            "parts of the establishing view; name him first, or mark a deliberate reveal (BP-91)"))
+            est |= heroes
+    return out
+
+
 def estimated_words(doc: dict) -> dict:
     """A plausible read of the text at the middle of the voice's pace: the same tokens, times from word counts and
     punctuation (0.35 s after . ? !, 0.15 s after , ; : and dashes, plus each line's pause_after)."""
@@ -363,6 +400,9 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         _f(out, "PV-55", "lines", why)
     for why in _sil.check_reported_dialogue(doc):  # PV-56 (D-63): the narrator reports the exchange
         _f(out, "PV-56", "lines", why)
+    # PV-57 the establishing cast is the scene's cast (BP-91, RX-09)
+    for where, why in establishing_cast(doc):
+        _f(out, "PV-57", where, why, SR.rule("BP-91").get("severity", "REVIEW"))
     # PV-54 the time counter (ED-15)
     for why in GFX.check_counter(doc.get("counter", []), [sg["id"] for sg in doc["segments"]]):
         _f(out, "PV-54", "counter", why)
@@ -728,7 +768,9 @@ def board_findings(timed: dict, doc: dict) -> list[dict]:
     # the visual beats, data visuals and cards ride along: they are changes on screen for RHYTHM-3 and BP-41 (BP-40)
     found = B.check(board, {"shots": shots, "duration": timed["duration"], "visual_beats": timed.get("visual_beats", []),
                             "visuals": timed.get("visuals", []), "cards": timed.get("cards", [])})
-    return [{"rule": "PV-24 " + f["rule"], "severity": f["severity"], "where": f["shot"], "detail": f["detail"]} for f in found]
+    legacy = doc.get("schema") == "production_script/1"  # a shipped /1 keeps its bubble lines: BP-84's accent cap is a REVIEW there
+    return [{"rule": "PV-24 " + f["rule"], "where": f["shot"], "detail": f["detail"],
+             "severity": "REVIEW" if legacy and f["rule"] == "BUBBLE-1" else f["severity"]} for f in found]
 
 
 TICKS = ("clockwork_loop",)  # music beds that are a tick: they sit well under every other track (ED-03)

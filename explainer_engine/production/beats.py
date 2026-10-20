@@ -51,6 +51,8 @@ GAP_OK_3, GAP_FAIL_3 = float(SR.T("BP-36", "gap_review_s")), float(SR.T("BP-36",
 # VB-02 (BP-37): seconds between expression changes on a dialogue line, /2 metronome and /3 reactions
 FACE_TARGET, FACE_OK, FACE_FAIL = (float(SR.T("BP-37", k)) for k in ("v2_target_s", "v2_gap_review_s", "v2_gap_fail_s"))
 FACE_OK_3, FACE_FAIL_3 = float(SR.T("BP-37", "gap_review_s")), float(SR.T("BP-37", "gap_fail_s"))
+FACE_PER_LINE = int(SR.T("BP-37", "changes_per_line_min"))  # VB-02: no quota since the creator's call of 2026-10-20 21:14
+ANCHOR_WORDS = int(SR.T("BP-93", "anchor_content_words_min"))  # VB-12: a beat is new information only on a narration word
 FACE_FLICKER = float(SR.T("BP-33", "hold_min_s"))  # two changes of one face closer than BP-33's hold are flicker
 CUE_EVENTS = ("reveal", "impact", "transition", "build", "diegetic", "take", "place")  # VB-08 on /3: a cue names its story event
 CUE_REPEAT_WINDOW, CUE_REPEAT_FAIL = float(SR.T("BP-80", "window_s")), int(SR.T("BP-80", "fail_count"))  # VB-10
@@ -108,6 +110,27 @@ def _sev(doc: dict, fail: bool, bp: str | None = None) -> str:
     if not (fail and binding(doc)):
         return "REVIEW"
     return SR.rule(bp).get("severity", "REVIEW") if bp else "FAIL"
+
+
+_WORDS = re.compile(r"[a-z0-9']+")
+
+
+def _content(text: str) -> set[str]:
+    return {w.strip("'") for w in _WORDS.findall(str(text).lower())} - _STOP - {""}
+
+
+def anchored(beat: dict, line: dict) -> bool:
+    """BP-93 (VB-12, RX-12): a beat is tied to a narration word when its line is the narrator's (not a hero's) and its
+    ``at`` holds at least ANCHOR_WORDS content word (not only "the", "of", "them"...). What it shows is VB-03's check."""
+    if line.get("speaker"):
+        return False
+    return len(_content(beat.get("at", ""))) >= ANCHOR_WORDS
+
+
+def counts_as_new(item: dict) -> bool:
+    """BP-36 / BP-40 count a visual beat (or an accent a beat made) as a change only when it is tied to a narration word
+    (BP-93); a timed file written before the rule carries no flag and counts as before."""
+    return item.get("anchored", True)
 
 
 def is_short(doc: dict) -> bool:
@@ -188,6 +211,10 @@ def lint(doc: dict) -> list[dict]:
                        "narrator says here?")
                 elif not words and not (_stems(b.get("why", "")) & here):
                     _f(out, "VB-03", "REVIEW", where, "the reason names nothing of this line: quote the word the beat shows")
+                if scene_rules(doc) and not anchored(b, line) and not (b["kind"] == "expression" and line.get("speaker")):
+                    _f(out, "VB-12", SR.rule("BP-93").get("severity", "REVIEW"), where, f"{b['kind']} beat on {b['at']!r} is "
+                       "not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does "
+                       "not count as something new (BP-93); keep it only if the story needs it")
                 if b["kind"] in ("text", "label") and len(b["text"].split()) > MAX_WORDS:
                     _f(out, "VB-04", _sev(doc, True, "BP-38"), where, f"{len(b['text'].split())} words on screen; at most {MAX_WORDS}")
                 shows_number = re.search(r"\d", words) or b["kind"] == "chart"
@@ -267,7 +294,8 @@ def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict
                 last_j = j
                 k = max(0, sum(1 for x in starts if x <= st) - 1)
                 item = dict(b, segment=seg["id"], line=li + 1, start=st, start_frame=int(round(st * fps)), shot=shots[k]["id"],
-                            picture=shots[k]["picture"], line_end=round(line_end, 3), _shot_end=shots[k]["end"])
+                            picture=shots[k]["picture"], line_end=round(line_end, 3), _shot_end=shots[k]["end"],
+                            anchored=anchored(b, line) if scene_rules(doc) else True)  # BP-93 binds /3; /2 keeps its contract
                 if line.get("speaker"):
                     item["speaker"] = line["speaker"]
                 if b["kind"] == "expression":
@@ -297,7 +325,8 @@ def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict
         sh["visual_beats"] = sh.get("visual_beats", 0) + 1
         if b["kind"] == "accent":
             sh["accents"].append({"kind": b["effect"], "start": b["start"], "start_frame": b["start_frame"],
-                                  "strength": float(b.get("strength", 0.6)), "text": "", "pos": [0.5, 0.2], "beat": True})
+                                  "strength": float(b.get("strength", 0.6)), "text": "", "pos": [0.5, 0.2], "beat": True,
+                                  "anchored": b["anchored"]})
             sh["accents"].sort(key=lambda a: a["start"])
     return out
 
@@ -469,6 +498,8 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
                 changes.append(b["start"])
         where = f"{ln['segment']} line {ln['line']}"
         if not changes:
+            if len(changes) >= FACE_PER_LINE:  # BP-37: no quota per line (0): a reaction is a choice, not a rule
+                continue
             if scene_rules(doc):
                 _f(out, "VB-02", _sev(doc, True, "BP-37"), where, f"a dialogue line ({ln['duration']:.1f} s) with no expression change: "
                    "the listener's face is where the line lands (Kuleshov); at least one reaction on every spoken line")

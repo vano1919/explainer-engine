@@ -17,15 +17,15 @@ documentary pacing, so the numbers for those come from our own measurements (the
 
 | Style | Use when | How we make it |
 |---|---|---|
-| **Narrated montage** | time passes, many small proofs (Year 1 to Year 100) | a change on screen inside the section's window (BP-40), hard cuts inside pauses, the period dissolve once at the start of each period (BP-31) |
-| **Held tableau + bubbles** | a conversation, a joke, a hero decision | one picture held as long as BP-40 allows its section, speech bubbles, slow push continued across the beat (BP-20, BP-21) |
+| **Narrated montage** | time passes, many small proofs (Year 1 to Year 100) | a change on screen inside the section's window (BP-40), hard cuts inside pauses, the scene-boundary dissolve once at the start of each period (BP-31) |
+| **Held tableau, narrator-told exchange** | a conversation, a joke, a hero decision (setup, exchange, conclusion: BP-90; a bubble at most one accent of BP-84's size) | one picture held as long as BP-40 allows its section, speech bubbles, slow push continued across the beat (BP-20, BP-21) |
 | **J-cut / L-cut** | a reveal, a question hook, dialogue coverage | in a dialogue scene the audio leads or trails the picture by ED-14's J/L offset on about a third of the cuts (planned on the cuts); a location bed is a separate, shorter pre-lap: `production/timing.BED_LEAD` starts it just before its anchor word, which is not a J/L cut |
-| **Slow dissolve** | a time jump or a change of place | the period dissolve only (BP-31), nothing else dissolves |
+| **Slow dissolve** | a time jump or a change of place (a scene boundary) | BP-31's dissolve, placed after the narrator's conclusion and the held mood of the exchange (BP-94); nothing inside a scene dissolves |
 | **Fade from / to black** | start, end, the Year 100 silence | 1 s in, 1.5 s out |
 | **Match cut** | a object that returns (the grain, the pot, the fire) | the next shot opens on the same object at the same screen position |
 | **Mystery look** | the whole episode | vignette + fine grain from one `look`, a quiet low tone under reveals; a whip or flash only opens a story turn (MO-04, BP-25, BP-26), never a spin |
 
-One style per beat. Every cut is hard except the dissolve on a period boundary (BP-31) and the fade to or from black at the start
+One style per beat. Every cut is hard except the dissolve at a change of place or time (BP-31, D-64, the creator 2026-10-20 21:14) and the fade to or from black at the start
 and the end; a whip or flash is a hard cut with an entry accent (BP-25), not a transition kind.
 
 ## Common mistakes (do not make them)
@@ -83,8 +83,14 @@ The numbers of this skill live in the registry (D-59); the code reads them with 
 - BP-28: on-screen text inside x 12.5-87.5 %, y 5-95 % of the 16:9 frame, never over a face, 4.5:1 contrast (3:1 from 24 px).
 - BP-30: across a hard cut the focal point stays within 10 % of the frame; never the same framing of the same picture twice
   in a row; a direction change over 90 degrees needs a neutral picture between.
-- BP-31: a dissolve (1 s) only on a period boundary (a time jump or a change of place); every other transition is a hard cut.
+- BP-31: a dissolve only at a change of place or time (a scene boundary), its length inside BP-31's band; every other
+  transition is a hard cut. After an exchange: hold the hero's mood (BP-94), then move slowly into the next scene.
+- BP-92: a camera move never resets: a cut to the same picture continues the move; a run of shots on one picture never
+  comes back to the framing it started from; a turn back comes to rest first.
+- BP-91: the establishing shot shows the scene's cast; closer shots show a part of it, never a new set of people.
 - BP-35: parallax on a still uses at least three depth layers moving toward the subject, foreground faster, eased; it counts as alive.
 - BP-40: in the first 30 s something changes at least every 5 s (FAIL); in the body a still over 20 s is REVIEW, over 40 s FAIL;
-  at most 10 pictures a minute on average, one burst of 5-10 cuts per 2-3 min; every change carries new information.
+  at most 10 pictures a minute on average, one burst of 5-10 cuts per 2-3 min; every change carries new information. A visual
+  beat counts only when it is tied to a narration word (BP-93): never add a prop or ring to beat a clock; fix a long still
+  with a cut or a move the story asks for, or accept the REVIEW.
 - BP-41: one scripted pattern interrupt in the 25-35 s window (a cut with a new element).

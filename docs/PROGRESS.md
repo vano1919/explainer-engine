@@ -1185,3 +1185,22 @@ each bubble out on its view (on a close-up at the mouth measured on the keyed si
 `beats.fit_to_views` centres a ring that names a hero on his face point, keeps rings and labels off close-ups and ends a word
 with its shot when it stays readable (BP-27). The preview's plan: 13 views in 61.7-123 s, none under 2.2 s, 0 of the frame
 review's 17 FAIL causes left (`jobs/titans_from_zero/render/review/static/timed_planned.json`). Test: `tests/unit/test_view_plan.py`.
+
+## 2026-10-20 — The research becomes rules: D-64 (the creator's call of 21:14, RX-01..RX-14)
+
+The titans QA loop's research (`titans_from_zero/qa_loop/research_editing_rules.md`, A + B sources per rule; the C videos
+could not be watched) and static analysis, settled by the creator's dated call ([D-64](DECISIONS_AND_OPEN_QUESTIONS.md),
+recorded as `house` next to the sources in `standards/sourced_rules.json`). Changed: BP-84's bubble cap now reads BP-38's
+word cap (a bubble is an accent; the PV-56 accent line too; a shipped `/1` gets a REVIEW); BP-31 allows a dissolve at every
+change of place or time (timing marks `place_change` where the segment's scene place or time changes) and gains a length
+band; BP-37's per-line minimum is 0 and the rule REVIEW; BP-36 and BP-40 count a visual beat only when it is tied to a
+narration word (`/3`); BP-83's MO-06 is reported only (INFO). New: BP-90 / ST-14 (setup, exchange, conclusion, never
+chained; the speaker-naming part REVIEW), BP-91 / PV-57 (the establishing cast), BP-92 (moves never reset:
+`continuity.chain` pulls out by one step at most and rests at a turn; a run that returns to its start framing FAILs),
+BP-93 / VB-12 (a beat needs a word), BP-94 (the held mood after an exchange, a hypothesis). Skills editing-style,
+visual-beats, dialogue-scenes, video-editing-architect and agents beat-writer, edit-planner, scene-writer, script-critic
+link the BP ids. Tests: `tests/unit/test_d64_editing_rules.py`; updated to the new sourced values:
+`test_rule_consistency_motion.py` (BP-83 without `alive_share_min`, the bubble cap from BP-38, the BUBBLE-1/2 test at 4
+words), `test_silent_lines.py` (the 15-word accent now FAILs, its 4-word key phrase passes), `test_story_engine.py` (MO-06
+INFO). On the titans script: 6 new FAIL (BUBBLE-1 on a Short bubble, PV-56 on S12's 14-word bubble, PV-57 on S03, S11,
+S14, S16) and VB-12 REVIEWs on the beats of hero lines; the script is not changed here.

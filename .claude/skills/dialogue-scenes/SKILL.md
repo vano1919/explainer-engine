@@ -180,3 +180,5 @@ into fear, shown by a silence beat and a quieter repeat of his own question.
 ## Real people in a scene (D-63, creator 2026-10-20)
 
 When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood, then a slow move to the next shot, never a cut straight into other people's talk.
+
+Frame every exchange (ST-14, BP-90, D-64, the creator 2026-10-20 21:14): a narrator setup that names who talks and what idea or want brings them there, then the exchange, then a narrator conclusion that says what came of it, and only then the next exchange: never two exchanges chained. The narrator gives the context whenever a conversation needs it. The establishing shot of the scene shows its cast (BP-91); a bubble, when the scene keeps one, is a key phrase within BP-84's cap that the narrator has just told.

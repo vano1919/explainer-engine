@@ -1,7 +1,8 @@
 """Zoom continuity (ED-02): consecutive shots of the same picture continue one camera move instead of snapping back to the
 default view. Each timed shot gets ``render_motion`` (what the assembler draws); the script's ``motion`` stays what the board
 rules (UR-13) judge. State is (zoom, horizontal centre offset as a share of the picture width). ``findings`` also carries
-BP-30 (docs/SOURCED_RULES.md): the same framing of the same picture twice in a row is a REVIEW."""
+BP-30 (docs/SOURCED_RULES.md): the same framing of the same picture twice in a row is a REVIEW; BP-92: a camera move never
+resets (a run of shots on one picture never returns to its start framing, a turn comes to rest)."""
 from __future__ import annotations
 
 from explainer_engine.standards import sourced_rules as SR
@@ -35,8 +36,8 @@ def chain(shots: list[dict], zmax: float = ZMAX) -> list[dict]:
         if prev is not None and prev["picture"] == s["picture"]:
             z, x = end_state(prev["render_motion"])
             grow = max(STEP, float(m["z1"]) - float(m["z0"])) if m.get("kind") != "pull" else -abs(float(m["z1"]) - float(m["z0"]))
-            if z >= zmax - 0.01 or grow < 0:
-                z1 = 1.0 if grow >= 0 else max(1.0, z + grow)  # past the cap: ease all the way out, never jump
+            if z >= zmax - 0.01 or grow < 0:  # past the cap: pull out by one step, never all the way back (BP-92)
+                z1 = max(1.0, z - STEP) if grow >= 0 else max(1.0, z + max(grow, -STEP))
                 x1 = x * (z1 - 1.0) / max(z - 1.0, 1e-6) if z > 1.0 else 0.0
             else:
                 z1 = min(zmax, z + grow)
@@ -49,7 +50,15 @@ def chain(shots: list[dict], zmax: float = ZMAX) -> list[dict]:
     for a, b in zip(shots, shots[1:] + [None]):  # ED-08: the camera is at rest at every cut to another picture
         a["render_motion"]["ein"] = not a["render_motion"].get("chained", False)
         a["render_motion"]["eout"] = b is None or b["picture"] != a["picture"]
+    for a, b in zip(shots, shots[1:]):  # BP-92: a move that turns back on one picture comes to rest at the turn
+        if b["render_motion"].get("chained") and _direction(a["render_motion"]) * _direction(b["render_motion"]) < 0:
+            a["render_motion"]["eout"] = b["render_motion"]["ein"] = True
     return shots
+
+
+def _direction(m: dict) -> int:
+    dz = float(m["z1"]) - float(m["z0"])
+    return (dz > 1e-9) - (dz < -1e-9)
 
 
 def warp(u: float, ein: bool, eout: bool) -> float:
@@ -69,6 +78,20 @@ def findings(shots: list[dict]) -> list[dict]:
     """ZOOM-1: the camera state at a cut inside one picture must be the same on both sides. BP-30: a shot that ends where the
     shot before it ended (same crop, zoom within SAME_ZOOM) shows the same framing of the same picture twice in a row."""
     out = []
+    run_start = None
+    for a, b in zip([None] + shots, shots):  # BP-92: a run of shots on one picture never comes back to where it started
+        if "render_motion" not in b:
+            run_start = None
+            continue
+        if a is None or a["picture"] != b["picture"] or "render_motion" not in a:
+            run_start, moved = start_state(b["render_motion"]), False
+        ze, xe = end_state(b["render_motion"])
+        back = abs(ze - run_start[0]) < SAME_ZOOM and abs(xe - run_start[1]) <= TOL
+        if moved and back:
+            out.append({"rule": "BP-92", "severity": SR.rule("BP-92").get("severity", "REVIEW"), "where": b["id"],
+                        "detail": f"the camera returns to the framing this picture's run started from (zoom {ze:.3f}): a "
+                                  "reset; continue the move, or cut to another picture"})
+        moved = moved or not back
     for a, b in zip(shots, shots[1:]):
         if a["picture"] != b["picture"] or "render_motion" not in a or "render_motion" not in b:
             continue

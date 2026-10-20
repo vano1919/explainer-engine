@@ -1307,9 +1307,10 @@
    "area": "editing",
    "status": "binding",
    "severity": "FAIL",
-   "statement": "A dissolve marks elapsed time or a change of place only: it is allowed on a period boundary (time jump) and nowhere else; every other transition is a hard cut (whips and flashes count as cuts for the share).",
+   "statement": "A dissolve marks a change of time or place: it is allowed at a scene boundary (a period boundary or time jump, or a change of place: a segment whose scene place or time differs from the one before) and nowhere else; inside a scene every transition is a hard cut (whips and flashes count as cuts for the share). A dissolve lasts dissolve_s to dissolve_max_s. After an exchange the picture moves slowly into the next scene, never straight into another dialogue (BP-94).",
    "thresholds": {
-    "dissolve_s": 1.0
+    "dissolve_s": 1.0,
+    "dissolve_max_s": 2.0
    },
    "sources": [
     {
@@ -1326,17 +1327,25 @@
      "type": "B",
      "title": "In the Blink of an Eye (W. Murch)",
      "url": "https://books.google.com/books?vid=ISBN9781879505629"
+    },
+    {
+     "type": "A",
+     "title": "Dissolve (filmmaking) (Wikipedia, citing Fielding)",
+     "url": "https://en.wikipedia.org/wiki/Dissolve_(filmmaking)"
     }
    ],
    "enforced_by": [
     "explainer_engine/edit/motion_lint.py:BP-31",
-    "explainer_engine/edit/shot_rules.py:DISSOLVE_SECONDS"
+    "explainer_engine/edit/shot_rules.py:DISSOLVE_SECONDS",
+    "explainer_engine/production/timing.py:place_change"
    ],
    "supersedes": [
     "UR-14 (its 90 % figure stays a house convention: nobody measurable states it)",
     "ED-04 period only",
-    "P-76 wipe / lid-open"
-   ]
+    "P-76 wipe / lid-open",
+    "BP-31 period boundary only, 1.0 s (2026-10-19)"
+   ],
+   "decided": "the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): a 1-2 s dissolve at every change of place or time (RX-08)"
   },
   {
    "id": "BP-32",
@@ -1497,7 +1506,7 @@
    "area": "rhythm",
    "status": "house",
    "severity": "FAIL",
-   "statement": "Visual-beat cadence while the narrator speaks (VB-01, production/beats.py). On production_script/3 pace follows new information: a narration stretch with nothing new on screen (a cut, bubble, accent, data visual, card or visual beat) longer than 8 s is REVIEW and longer than 15 s FAIL. On /2 the metronome: a beat about every 1.5 s, REVIEW over 2 s, FAIL over 3 s, a segment mean over 1.8 s REVIEW. A stricter, narration-only rule nested inside BP-40 (the whole video's still limits, counted on the same events): in the hook window BP-40's still limit is the stricter one, in the body this rule's FAIL is. Shorts follow BP-45 instead.",
+   "statement": "Visual-beat cadence while the narrator speaks (VB-01, production/beats.py). On production_script/3 pace follows new information: a narration stretch with nothing new on screen (a cut, bubble, accent, data visual, card, or a visual beat tied to a narration word, BP-93; an untied beat does not count) longer than 8 s is REVIEW and longer than 15 s FAIL. On /2 the metronome: a beat about every 1.5 s, REVIEW over 2 s, FAIL over 3 s, a segment mean over 1.8 s REVIEW. A stricter, narration-only rule nested inside BP-40 (the whole video's still limits, counted on the same events): in the hook window BP-40's still limit is the stricter one, in the body this rule's FAIL is. Shorts follow BP-45 instead.",
    "thresholds": {
     "gap_review_s": 8.0,
     "gap_fail_s": 15.0,
@@ -1530,23 +1539,24 @@
    ],
    "enforced_by": [
     "explainer_engine/production/beats.py:GAP_FAIL_3",
-    "explainer_engine/production/beats.py:check_timed"
+    "explainer_engine/production/beats.py:check_timed",
+    "explainer_engine/edit/motion_lint.py:events"
    ],
    "supersedes": [
     "VB-01 /3 8/15 s literals",
     "VB-01 /2 1.5/2/3/1.8 s literals",
     "VB-01 guidance 'hook every 3-8 s, body every 10-25 s'"
    ],
-   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19)"
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19); the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): a beat not tied to a narration word no longer counts as something new (BP-93)"
   },
   {
    "id": "BP-37",
    "area": "faces",
    "status": "house",
-   "severity": "FAIL",
-   "statement": "Expression cadence on a dialogue line (VB-02, production/beats.py): every spoken dialogue line carries at least one expression change (FAIL without). On /3 changes follow reactions, not a clock: REVIEW over 4 s without a change, FAIL over 6 s. On /2 the metronome: a change about every 1 s, REVIEW over 1.5 s, FAIL over 2 s. Two changes of one face closer than BP-33's hold are flicker (BP-33 owns that floor).",
+   "severity": "REVIEW",
+   "statement": "Expression cadence on a dialogue line (VB-02, production/beats.py): no quota per line (changes_per_line_min); a reaction where a line lands is a choice, never a rule. On /3 a stretch without a change longer than 4 s is REVIEW and longer than 6 s too; on /2 the metronome lines (about 1 s, 1.5 s, 2 s) are REVIEW. Everything here is REVIEW. Two changes of one face closer than BP-33's hold are flicker (BP-33 owns that floor).",
    "thresholds": {
-    "changes_per_line_min": 1,
+    "changes_per_line_min": 0,
     "gap_review_s": 4.0,
     "gap_fail_s": 6.0,
     "v2_target_s": 1.0,
@@ -1561,21 +1571,23 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/production/beats.py:FACE_FAIL_3"
+    "explainer_engine/production/beats.py:FACE_FAIL_3",
+    "explainer_engine/production/beats.py:FACE_PER_LINE"
    ],
    "supersedes": [
     "VB-02 /3 4/6 s literals",
     "VB-02 /2 1/1.5/2 s literals",
-    "VB-02 flicker 0.7 s (BP-33's hold wins)"
+    "VB-02 flicker 0.7 s (BP-33's hold wins)",
+    "BP-37 one change per line, FAIL (2026-10-20)"
    ],
-   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19)"
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19); the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): the per-line minimum goes to 0 and the rule to REVIEW (per-line face swaps made every line a cut)"
   },
   {
    "id": "BP-38",
    "area": "text",
    "status": "house",
    "severity": "FAIL",
-   "statement": "Words a visual beat puts on screen (VB-04): a text or label beat shows at most 4 words; a bars chart has 2-3 bars (ED-10). MO-05 reads the same word cap for a pop_text or slam_text accent (REVIEW, BP-83).",
+   "statement": "Words a visual beat puts on screen (VB-04): a text or label beat shows at most 4 words; a bars chart has 2-3 bars (ED-10). MO-05 reads the same word cap for a pop_text or slam_text accent (REVIEW, BP-83). A speech bubble reads the same cap (BP-84).",
    "thresholds": {
     "max_words": 4,
     "bars": [
@@ -1597,7 +1609,9 @@
    ],
    "enforced_by": [
     "explainer_engine/production/beats.py:MAX_WORDS",
-    "explainer_engine/edit/motion_lint.py:MAX_WORDS"
+    "explainer_engine/edit/motion_lint.py:MAX_WORDS",
+    "explainer_engine/finish/bubbles.py:MAX_WORDS",
+    "explainer_engine/production/silent.py:max_words"
    ],
    "supersedes": [
     "VB-04 MAX_WORDS literal",
@@ -1646,7 +1660,7 @@
    "area": "rhythm",
    "status": "binding",
    "severity": "FAIL",
-   "statement": "Section-aware rhythm: in the first 30 s something changes on screen at least every 5 s (FAIL); in the body a still longer than 20 s is REVIEW and longer than 40 s is FAIL; the average stays at most 10 pictures a minute (the creator) with one burst of 5-10 cuts allowed per 2-3 min; every change carries new information. A change is anything new on screen: a cut, a bubble, an accent (not the wobble), a data visual, a card or a visual beat (default of 2026-10-20: a beat counts; the creator may overturn it).",
+   "statement": "Section-aware rhythm: in the first 30 s something changes on screen at least every 5 s (FAIL); in the body a still longer than 20 s is REVIEW and longer than 40 s is FAIL; the average stays at most 10 pictures a minute (the creator) with one burst of 5-10 cuts allowed per 2-3 min; every change carries new information. A change is anything new on screen: a cut, a bubble, an accent (not the wobble), a data visual, a card or a visual beat tied to a narration word (BP-93); an untied beat is not a change.",
    "thresholds": {
     "hook_window_s": 30,
     "hook_max_still_s": 5,
@@ -1695,14 +1709,16 @@
     "explainer_engine/edit/board.py:RHYTHM-3",
     "explainer_engine/edit/board.py:MAX_PER_MIN",
     "explainer_engine/edit/motion_lint.py:MO-01",
-    "explainer_engine/edit/board.py:change_times"
+    "explainer_engine/edit/board.py:change_times",
+    "explainer_engine/production/beats.py:counts_as_new"
    ],
    "supersedes": [
     "UR-31 flat 9 s",
     "MO-01 5 s",
     "VB-01 3-6 s pictures",
     "PRODUCTION_RULES planning 13-14 pictures/min"
-   ]
+   ],
+   "decided": "the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): overturned the default that every visual beat counts as a change (BP-93)"
   },
   {
    "id": "BP-41",
@@ -3382,13 +3398,12 @@
    "area": "motion",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Motion variety (MO-02..MO-07, edit/motion_lint.py): every 60 s shows at least 3 kinds of visual event; at most 4 shots in a row are only a camera move; two pop or slam words at least 12 s apart; at least half of the shots move besides the camera; more than 3 shot holds in a row within 15 % of each other, or a segment of 5+ shots whose holds vary by under 0.2 of their mean, is a metronome. All REVIEW: the numbers are an engineering hypothesis (the sources back variance, not these values). MO-01's still limit is BP-40.",
+   "statement": "Motion variety (MO-02..MO-07, edit/motion_lint.py): every 60 s shows at least 3 kinds of visual event; at most 4 shots in a row are only a camera move; two pop or slam words at least 12 s apart; the share of shots that move besides the camera is reported only (INFO, no target); more than 3 shot holds in a row within 15 % of each other, or a segment of 5+ shots whose holds vary by under 0.2 of their mean, is a metronome. All REVIEW: the numbers are an engineering hypothesis (the sources back variance, not these values). MO-01's still limit is BP-40.",
    "thresholds": {
     "window_s": 60.0,
     "kinds_min": 3,
     "plain_run_max": 4,
     "text_min_gap_s": 12.0,
-    "alive_share_min": 0.5,
     "hold_similar": 0.15,
     "similar_run_max": 3,
     "hold_cv_min": 0.2,
@@ -3420,19 +3435,20 @@
     "explainer_engine/edit/motion_lint.py:HOLD_CV"
    ],
    "supersedes": [
-    "MO-02..MO-07 literals"
-   ]
+    "MO-02..MO-07 literals",
+    "MO-06 alive_share_min 0.5"
+   ],
+   "decided": "the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): MO-06's motion-share target becomes report-only (it pushed accents onto plain shots)"
   },
   {
    "id": "BP-84",
    "area": "rhythm",
    "status": "house",
    "severity": "FAIL",
-   "statement": "Storyboard floors (D-42, UR-31): no shot shorter than 2.5 s, an insert 2.0 s (RHYTHM-2); a speech bubble is a line of at most 14 words and 26 characters a line (BUBBLE-1). How long a bubble stays on screen is BP-27's hold.",
+   "statement": "Storyboard floors (D-42, UR-31): no shot shorter than 2.5 s, an insert 2.0 s (RHYTHM-2). A speech bubble is an accent, never the carrier of a line: the narrator tells the exchange (D-63) and a bubble shows at most BP-38's words (max_words) and bubble_chars_per_line characters a line (BUBBLE-1; a REVIEW on a shipped legacy production_script/1). How long a bubble stays on screen is BP-27's hold.",
    "thresholds": {
     "min_shot_s": 2.5,
     "min_insert_s": 2.0,
-    "bubble_words_max": 14,
     "bubble_chars_per_line": 26
    },
    "sources": [
@@ -3440,17 +3456,42 @@
      "type": "A",
      "title": "How many shots are in the average movie? (Stephen Follows)",
      "url": "https://stephenfollows.com/many-shots-average-movie/"
+    },
+    {
+     "type": "A",
+     "title": "Multimedia Principles, one-page list from Multimedia Learning 3rd ed. (R. E. Mayer 2020)",
+     "url": "https://ugc.futurelearn.com/uploads/files/7d/d6/7dd6188d-c343-4311-b064-ac98d2c95abc/Multimedia_Principles._R._E._Mayer__2020.pdf"
+    },
+    {
+     "type": "A",
+     "title": "The effect of subtitle speed on viewers: an eye-tracking study (Szarkowska et al., J. of Specialised Translation 44, 2025)",
+     "url": "https://ueaeprints.uea.ac.uk/id/eprint/100082/1/6_Szarkowska_et_al.pdf"
+    },
+    {
+     "type": "B",
+     "title": "Multimedia Learning, ch. 11 Modality principle (R. E. Mayer, Cambridge UP)",
+     "url": "https://www.cambridge.org/core/books/abs/multimedia-learning/modality-principle/E5CD6E01CEA0B568CE260F66A3CD0D1F",
+     "note": "abstract page read"
+    },
+    {
+     "type": "B",
+     "title": "The Cambridge Handbook of Multimedia Learning, ch. Principles for reducing extraneous processing (R. E. Mayer, ed.)",
+     "url": "https://www.cambridge.org/core/books/abs/cambridge-handbook-of-multimedia-learning/principles-for-reducing-extraneous-processing-in-multimedia-learning-coherence-signaling-redundancy-spatial-contiguity-and-temporal-contiguity-principles/C98AB3A6CE760DD63C048936EA0B3B44",
+     "note": "abstract page read"
     }
    ],
    "enforced_by": [
     "explainer_engine/edit/board.py:MIN_SHOT",
-    "explainer_engine/finish/bubbles.py:MAX_WORDS"
+    "explainer_engine/finish/bubbles.py:MAX_WORDS",
+    "explainer_engine/production/silent.py:max_words",
+    "explainer_engine/production/validate.py:board_findings"
    ],
    "supersedes": [
     "board MIN_SHOT / MIN_INSERT literals",
-    "bubbles MAX_WORDS / MAX_CHARS literals"
+    "bubbles MAX_WORDS / MAX_CHARS literals",
+    "bubble_words_max 14 (D-42, UR-31)"
    ],
-   "decided": "the creator, 2026-10-16: pictures follow the story, one held picture carries a dialogue with bubbles (D-42, UR-31)"
+   "decided": "the creator, 2026-10-16: pictures follow the story, one held picture carries a dialogue with bubbles (D-42, UR-31); the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): text bubbles are not read; a bubble is at most an accent at BP-38's word cap (RX-01)"
   },
   {
    "id": "BP-85",
@@ -3745,6 +3786,208 @@
     ".claude/skills/story-engine/SKILL.md"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-90",
+   "area": "story",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "Every exchange is framed (ST-14, scripting/story_lint.py): a segment's exchange (its hero lines, voiced or bubble) opens after at least setup_lines_min narrator line, and the narrator names each speaker before his first line (REVIEW: a description may stand for a name), and closes with at least conclusion_lines_min narrator line after its last line that says what came of it; two exchanges never touch (a segment never ends on a hero line, and the next never opens on one). The narrator gives the context whenever a conversation needs it.",
+   "thresholds": {
+    "setup_lines_min": 1,
+    "conclusion_lines_min": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Scene and sequel (Wikipedia, Swain's structure)",
+     "url": "https://en.wikipedia.org/wiki/Scene_and_sequel"
+    },
+    {
+     "type": "A",
+     "title": "Multimedia Principles, one-page list from Multimedia Learning 3rd ed. (R. E. Mayer 2020)",
+     "url": "https://ugc.futurelearn.com/uploads/files/7d/d6/7dd6188d-c343-4311-b064-ac98d2c95abc/Multimedia_Principles._R._E._Mayer__2020.pdf"
+    },
+    {
+     "type": "B",
+     "title": "Techniques of the Selling Writer (D. Swain, 1965)",
+     "url": "https://books.google.com/books?vid=ISBN9780806111919",
+     "note": "read through the Wikipedia article Scene and sequel"
+    },
+    {
+     "type": "B",
+     "title": "The Cambridge Handbook of Multimedia Learning, ch. Principles for reducing extraneous processing (R. E. Mayer, ed.)",
+     "url": "https://www.cambridge.org/core/books/abs/cambridge-handbook-of-multimedia-learning/principles-for-reducing-extraneous-processing-in-multimedia-learning-coherence-signaling-redundancy-spatial-contiguity-and-temporal-contiguity-principles/C98AB3A6CE760DD63C048936EA0B3B44",
+     "note": "abstract page read"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:ST-14"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): narrator setup, exchange, narrator conclusion, never chained (RX-03, CC-07, CC-09)"
+  },
+  {
+   "id": "BP-91",
+   "area": "continuity",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "The establishing cast is the scene's cast (PV-57, RX-09): the first shot of a segment that shows heroes is its establishing view, and every later shot of the segment shows a subset of those heroes, unless the narrator names the newcomer in the segment up to the line the shot opens on (he is announced) or the shot's reveal names him (a deliberate reveal). A closer shot is a part of the establishing view, never a new set of people.",
+   "thresholds": {},
+   "sources": [
+    {
+     "type": "A",
+     "title": "Continuity editing (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Continuity_editing"
+    },
+    {
+     "type": "A",
+     "title": "What happens between shots happens between your ears (D. Bordwell, 2008)",
+     "url": "https://www.davidbordwell.net/blog/wp-json/wp/v2/posts/1861"
+    },
+    {
+     "type": "B",
+     "title": "Film Art: An Introduction, ch. 6 (Bordwell & Thompson)",
+     "url": "https://books.google.com/books?vid=ISBN9781260056082",
+     "note": "read through Bordwell's post and the Wikipedia page"
+    },
+    {
+     "type": "B",
+     "title": "In the Blink of an Eye (W. Murch)",
+     "url": "https://books.google.com/books?vid=ISBN9781879505629"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/validate.py:PV-57",
+    "explainer_engine/production/validate.py:establishing_cast"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): the establishing cast is the scene's cast (RX-09, CC-05)"
+  },
+  {
+   "id": "BP-92",
+   "area": "motion",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "A camera move never resets (RX-11): a cut to the same picture continues the move from its end framing (ED-02's ZOOM-1 catches a snap); a move that turns back on one picture comes to rest at the turn; no shot brings a run of shots on one picture back to the framing the run started from (within BP-30's same-framing tolerance) after it had moved away; a continued shot that pulls out (past BP-20's cap, or a pull the script asks for) moves by one step (continuity.STEP), never all the way back.",
+   "thresholds": {},
+   "sources": [
+    {
+     "type": "A",
+     "title": "Meaning in Motion: Ken Burns and His 'Effect' (Poynter, 2007)",
+     "url": "https://www.poynter.org/news/meaning-motion-ken-burns-and-his-effect"
+    },
+    {
+     "type": "A",
+     "title": "3 Ways to Achieve Smoother Results in the Edit Room (PremiumBeat, 2014)",
+     "url": "https://www.premiumbeat.com/blog/44840"
+    },
+    {
+     "type": "A",
+     "title": "30-degree rule (Wikipedia, citing Murch p. 146)",
+     "url": "https://en.wikipedia.org/wiki/30-degree_rule"
+    },
+    {
+     "type": "B",
+     "title": "In the Blink of an Eye (W. Murch)",
+     "url": "https://books.google.com/books?vid=ISBN9781879505629"
+    },
+    {
+     "type": "B",
+     "title": "The Illusion of Life (F. Thomas & O. Johnston)",
+     "url": "https://books.google.com/books?vid=ISBN9780786860708"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/continuity.py:BP-92",
+    "explainer_engine/production/continuity.py:chain"
+   ],
+   "supersedes": [
+    "continuity.chain 'ease all the way out' past the cap"
+   ],
+   "decided": "the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): camera moves never reset (RX-11, CC-06)"
+  },
+  {
+   "id": "BP-93",
+   "area": "beats",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A beat needs a word (VB-12, RX-12; production_script/3, a /2 keeps its metronome contract): a visual beat is new information only when it is tied to a narration word: it sits on a narrator line (not a hero's line), its at phrase holds at least anchor_content_words_min content word (what it shows is VB-03's check). An untied beat is reported and does not count as a change for BP-36 or BP-40. No rule demands a beat on a timer: a long still is fixed by a cut or a camera move the story asks for, or accepted as a REVIEW.",
+   "thresholds": {
+    "anchor_content_words_min": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Multimedia Principles, one-page list from Multimedia Learning 3rd ed. (R. E. Mayer 2020)",
+     "url": "https://ugc.futurelearn.com/uploads/files/7d/d6/7dd6188d-c343-4311-b064-ac98d2c95abc/Multimedia_Principles._R._E._Mayer__2020.pdf"
+    },
+    {
+     "type": "A",
+     "title": "Cut It Out: Learning with Seductive Details (The Learning Scientists, 2019)",
+     "url": "https://www.learningscientists.org/blog/2019/6/20-1"
+    },
+    {
+     "type": "A",
+     "title": "Meaning in Motion: Ken Burns and His 'Effect' (Poynter, 2007)",
+     "url": "https://www.poynter.org/news/meaning-motion-ken-burns-and-his-effect"
+    },
+    {
+     "type": "B",
+     "title": "Multimedia Learning, ch. 4 Coherence principle (R. E. Mayer, Cambridge UP)",
+     "url": "https://www.cambridge.org/core/books/abs/multimedia-learning/coherence-principle/4E80B70CB76E2166B76E5653EBDE7D3E",
+     "note": "abstract page read"
+    },
+    {
+     "type": "B",
+     "title": "The Cambridge Handbook of Multimedia Learning, ch. Principles for reducing extraneous processing (R. E. Mayer, ed.)",
+     "url": "https://www.cambridge.org/core/books/abs/cambridge-handbook-of-multimedia-learning/principles-for-reducing-extraneous-processing-in-multimedia-learning-coherence-signaling-redundancy-spatial-contiguity-and-temporal-contiguity-principles/C98AB3A6CE760DD63C048936EA0B3B44",
+     "note": "abstract page read"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:anchored",
+    "explainer_engine/production/beats.py:counts_as_new",
+    "explainer_engine/edit/motion_lint.py:events",
+    "explainer_engine/edit/board.py:change_times"
+   ],
+   "supersedes": [
+    "BP-40 default 'a visual beat counts' (2026-10-20)"
+   ],
+   "decided": "the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): props and beats that appear only because a rule demands them (CC-03, CC-04)"
+  },
+  {
+   "id": "BP-94",
+   "area": "faces",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "After an exchange the hero's mood is held (RX-07): from the last word of a segment's last hero line to the next cut at least hold_min_s, under the narrator's conclusion (BP-90); then the picture moves slowly to the next scene (BP-31). The principle has an article and books behind it; the number is a hypothesis to test on our renders.",
+   "thresholds": {
+    "hold_min_s": 2.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "What is a reaction shot (StudioBinder)",
+     "url": "https://www.studiobinder.com/blog/what-is-a-reaction-shot-definition/"
+    },
+    {
+     "type": "B",
+     "title": "Techniques of the Selling Writer (D. Swain, 1965)",
+     "url": "https://books.google.com/books?vid=ISBN9780806111919",
+     "note": "read through the Wikipedia article Scene and sequel"
+    },
+    {
+     "type": "B",
+     "title": "In the Blink of an Eye (W. Murch)",
+     "url": "https://books.google.com/books?vid=ISBN9781879505629"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/motion_lint.py:BP-94"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): after an exchange the hero's mood is held, then a slow move to the next scene"
   }
  ]
 }

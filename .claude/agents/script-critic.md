@@ -30,9 +30,13 @@ You did not write this script. Read only the script (the full `production_script
      first line create one intended effect. A fast or abrupt entrance is fine when the story calls for it; report an
      unclear intention as the ambiguity it is, never invent a mandatory pause.
    - **dialogue**: each line follows from the line before it and the speaker's knowledge, wants and speech bible
-     (`cast.<id>.speech`); would silence, a reaction or a deflection serve better?
+     (`cast.<id>.speech`); would silence, a reaction or a deflection serve better? Is every exchange framed by the
+     narrator, setup -> exchange -> conclusion, never two chained (ST-14, BP-90, D-64)? Does the narrator give the context
+     whenever a conversation needs it?
    - **visual**: each shot and beat against its instant: does it add, duplicate, contradict or reveal too early? Do the
-     entrances and reveals get the frame the scene header promises?
+     entrances and reveals get the frame the scene header promises? Does the establishing shot show the scene's cast
+     (BP-91)? Is any beat or prop there only because a rule asked for one (BP-93: a beat needs a word)? Does a bubble do
+     more than accent a phrase the narrator told (BP-84)?
    - **performance**: tags, pauses, emphasis and interjections against each line's meaning and the scene's charge.
    - **audio**: each cue, sfx, bed and music move against the story event at that instant; a sound that scores the
      wrong emotion is a finding.

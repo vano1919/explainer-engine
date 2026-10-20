@@ -4,7 +4,8 @@ The creator's call (2026-10-20, titans thread): real living people speak only in
 terms bar synthesizing a living person's identity without consent (episode rule RK-01/RK-02). PV-55 binds it: a cast
 member marked ``traits.real_person`` has no voiced line.
 
-A silent line takes reading time instead of speaking time. Its text is cut into bubble pieces of at most BP-84's words,
+A silent line takes reading time instead of speaking time. Its text is cut into bubble pieces of at most BP-84's words
+(BP-38's cap: a bubble is an accent, the narrator tells the exchange),
 each held BP-27's reading hold. ``production words`` aligns the read against the voiced lines only, then ``insert``
 opens a quiet gap in the read for every silent line and gives its tokens synthetic word times inside that gap, so
 words.json keeps one entry per written token and the timing, beats and shots work as before. ``time_script`` turns each
@@ -28,7 +29,8 @@ def voiced(line: dict) -> bool:
 
 
 def max_words() -> int:
-    return int(SR.T("BP-84", "bubble_words_max"))
+    """BP-84: a bubble is an accent of at most BP-38's words (the creator, 2026-10-20 21:14: bubbles are not read)."""
+    return int(SR.T("BP-38", "max_words"))
 
 
 def hold(n_words: int) -> float:
@@ -279,6 +281,11 @@ def check_reported_dialogue(doc: dict) -> list[str]:
         if len(silent) > MAX_ACCENT_BUBBLES:
             out.append(f"{seg['id']}: {len(silent)} bubble lines (lines {silent[:6]}); the narrator reports the exchange and "
                        f"a scene keeps at most {MAX_ACCENT_BUBBLES} bubble as an accent (D-63)")
+        for k in silent:  # BP-84: the accent is a short key phrase the narrator has just told, not a line read alone (RX-01)
+            n = len(seg["lines"][k - 1]["text"].split())
+            if n > max_words():
+                out.append(f"{seg['id']} line {k}: a bubble line of {n} words; a bubble is an accent of at most {max_words()} "
+                           "words (BP-84, BP-38): let the narrator tell the line and keep a key phrase")
     return out
 
 
