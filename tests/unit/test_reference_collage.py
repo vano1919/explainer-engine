@@ -67,3 +67,16 @@ def test_a_picture_painted_inline_on_a_shot_needs_the_world_record():
     d["library"] = {}
     d["segments"][0]["shots"] = [{"picture": {"engine": "pod_ref", "subject": "a neon street", "refs": ["s01_skyline"]}}]
     assert [f["where"] for f in RA.check(d)] == ["look.environment"]
+
+
+def test_a_waived_collage_draws_the_first_scene_picture_and_waits_for_the_creators_ok():
+    d = copy.deepcopy(BASE)
+    d["look"]["environment"] = REC
+    d["cast"]["vito"]["reference"] = {"first_picture": True, "approved_by": "creator", "approved_at": "2026-10-20"}
+    assert [(f["severity"], f["where"]) for f in RA.check(d)] == [("REVIEW", "vito")]
+    assert not [e for e in S.schema_errors(d) if "reference" in str(e)]
+    d["cast"]["vito"]["reference"]["picture"] = "v13_table"
+    assert RA.check(d) == []
+    d["cast"]["vito"]["reference"] = {"first_picture": True, "approved_at": "2026-10-20"}
+    assert [f["severity"] for f in RA.check(d)] == ["FAIL"]
+    assert S.schema_errors(d)

@@ -1067,3 +1067,11 @@ beats and shots keep one entry per token. PV-55 FAILs a voiced line of a real li
 (every speaker's face, at the bubble's start and end crop), BUBBLE-5 FAILs a cut inside a bubble and the same text shown
 twice. Titans: 149 lines silent, edit plan re-cut (no BUBBLE/CUT FAIL left), Shorts re-balanced (narrator lines break
 silent runs). Tests: `tests/unit/test_silent_lines.py` (8). Nothing paid; the script needs the creator's re-approval.
+
+## 2026-10-20 - Titans: style and six hero references picked; collage waivable per hero (OR-16)
+
+The creator picked a synthesis of tiles 1 and 3 of `examples/titans_from_zero/pictures/style_collage_v1.jpg` and OK'd the
+six named caricatures of `hero_caricatures_v1.jpg` (Nano Banana 2, $0.05; style collage Gemini 3 Pro, $0.13), recorded as
+`cast.<id>.reference` and `look.environment`. For the five other characters he declined a separate collage ("not worth
+drawing just to show"): `reference.first_picture: true` (schema anyOf) makes PV-47 a REVIEW until the hero's first scene
+picture, OK'd on the contact sheet, is recorded as `picture`. Test: `tests/unit/test_reference_collage.py` (+1).

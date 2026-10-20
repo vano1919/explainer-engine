@@ -246,14 +246,7 @@
         },
         "environment": {
           "type": "object",
-          "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference",
-          "required": [
-            "collage",
-            "tile",
-            "picture",
-            "approved_by",
-            "approved_at"
-          ],
+          "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference; or, when the creator waived the collage, first_picture: the hero's first scene picture becomes the reference once the creator OKs it on the contact sheet",
           "additionalProperties": false,
           "properties": {
             "collage": {
@@ -274,8 +267,30 @@
             },
             "note": {
               "type": "string"
+            },
+            "first_picture": {
+              "const": true,
+              "description": "the creator waived the collage (2026-10-20): drawn first in its scene in the episode's approved style"
             }
-          }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "collage",
+                "tile",
+                "picture",
+                "approved_by",
+                "approved_at"
+              ]
+            },
+            {
+              "required": [
+                "first_picture",
+                "approved_by",
+                "approved_at"
+              ]
+            }
+          ]
         }
       }
     },
@@ -532,14 +547,7 @@
           },
           "reference": {
             "type": "object",
-            "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference",
-            "required": [
-              "collage",
-              "tile",
-              "picture",
-              "approved_by",
-              "approved_at"
-            ],
+            "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference; or, when the creator waived the collage, first_picture: the hero's first scene picture becomes the reference once the creator OKs it on the contact sheet",
             "additionalProperties": false,
             "properties": {
               "collage": {
@@ -560,8 +568,30 @@
               },
               "note": {
                 "type": "string"
+              },
+              "first_picture": {
+                "const": true,
+                "description": "the creator waived the collage (2026-10-20): drawn first in its scene in the episode's approved style"
               }
-            }
+            },
+            "anyOf": [
+              {
+                "required": [
+                  "collage",
+                  "tile",
+                  "picture",
+                  "approved_by",
+                  "approved_at"
+                ]
+              },
+              {
+                "required": [
+                  "first_picture",
+                  "approved_by",
+                  "approved_at"
+                ]
+              }
+            ]
           }
         }
       }
@@ -1462,11 +1492,19 @@
       "description": "ED-15 (PV-54): the on-screen time counter; from the first shot of each listed segment the corner shows its label until the next entry",
       "items": {
         "type": "object",
-        "required": ["segment", "label"],
+        "required": [
+          "segment",
+          "label"
+        ],
         "additionalProperties": false,
         "properties": {
-          "segment": {"type": "string"},
-          "label": {"type": "string", "maxLength": 14}
+          "segment": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 14
+          }
         }
       }
     },
