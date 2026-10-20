@@ -1,11 +1,11 @@
 {
  "schema": "editorial_review/2",
- "script_sha256": "29ed1675189b2b53046b8aa82e2006a0a92f324a6ecca8f5c9b89c5608fd898d",
+ "script_sha256": "a2f32dfdc41208a1d0771535ef446a944a54713bf05a5736a8270d0a5e0d5370",
  "reviewer": "script-critic (Stage 7)",
  "reviewer_role": "independent_critic",
  "independent": true,
- "reviewed_at": "2026-10-20 (round 5, after stages 05-09, 01, 02, 04, 11)",
- "verdict": "ACCEPTED with REVIEWs. No FAIL, no blocker, no bored or confused window. Round 4's eleven findings: six are closed (overlay echoes on silent lines: the 111 beats on silent lines are now expressions plus one label; the L-cut notes are reworded, none left; S11 L4-L6 merged into one exchange; the S16 recap is cut to two lines and the last line is the open question; VB-07 on SH05/SH06 cleared; the 'Yes.' has its own thud on the beat and a 0.8 s pause after it), three are partly closed (music now runs under S08, S10, S13 but S15 is bare by plan; S04 still explains its sale in L7-L8; S06 and S03 each got one 'you' line but the heard track still goes from S06 L5 to S16 L3 with no address), one stays open by the creator's rule (Vance's voice contrast, no audition), one is now a smaller variant. One new defect found: S15 L9 'He opens his briefcase' follows Belfort's grin, so a listener who does not look hears the wrong man (one word to fix, not blocking). The film plays about 14.0 min (estimate), 38 % of it silent bubbles (5.3 min), longest silent run 40 s (S02, unchanged), the others 33 s or less. Hash bound to the current file; the script was not edited by this review.",
+ "reviewed_at": "2026-10-20 (round 6, after R5-01 fix and creator script_approval re-serialisation)",
+ "verdict": "Round 6: R5-01 closed (S15 L9 now 'O'Leary opens his briefcase.' in the line and its shot anchor; the listener no longer hears Belfort). Script re-read at the changed spots after the approval re-serialisation; validate and story_lint results unchanged (46 FAIL all PV-05 unmade sounds / VB-09 unpainted face sheets, belonging to paid stages; story_lint 0 FAIL, 2 REVIEW). Remaining findings are REVIEWs only. Earlier verdict stands: ACCEPTED with REVIEWs. No FAIL, no blocker, no bored or confused window. Round 4's eleven findings: six are closed (overlay echoes on silent lines: the 111 beats on silent lines are now expressions plus one label; the L-cut notes are reworded, none left; S11 L4-L6 merged into one exchange; the S16 recap is cut to two lines and the last line is the open question; VB-07 on SH05/SH06 cleared; the 'Yes.' has its own thud on the beat and a 0.8 s pause after it), three are partly closed (music now runs under S08, S10, S13 but S15 is bare by plan; S04 still explains its sale in L7-L8; S06 and S03 each got one 'you' line but the heard track still goes from S06 L5 to S16 L3 with no address), one stays open by the creator's rule (Vance's voice contrast, no audition), one is now a smaller variant. One new defect found: S15 L9 'He opens his briefcase' follows Belfort's grin, so a listener who does not look hears the wrong man (one word to fix, not blocking). The film plays about 14.0 min (estimate), 38 % of it silent bubbles (5.3 min), longest silent run 40 s (S02, unchanged), the others 33 s or less. Hash bound to the current file; the script was not edited by this review.",
  "scores": {
   "factual_reliability": {
    "score": 4,
@@ -272,28 +272,6 @@
    }
   },
   "findings": [
-   {
-    "id": "TFZ-R5-01",
-    "layers": [
-     "dialogue",
-     "story"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S15 L8",
-     "S15 L9",
-     "belfort",
-     "oleary"
-    ],
-    "expected": "The ear and the eye agree on who opens the briefcase: O'Leary, who owns the envelopes (S02 L17, S15 shot 2).",
-    "instructed": "S15 L8 'Belfort's grin stays on a second too long.' then S15 L9 'He opens his briefcase. Eight signed envelopes. Trump. Kiyosaki...'. The shot for L9 shows a bald man's hands on the lid.",
-    "conflict": "The narrator's 'He' after a sentence about Belfort points at Belfort; the picture shows O'Leary. Real people are silent, so the narration is the only thing a listener who looks away has.",
-    "consequence": "A listener hears Belfort holding eight signed envelopes with his own partners' names; 'Eight?' (L10) and 'Nine offered' (L11) then arrive as confusion, not twist, at ~13:00 (estimate).",
-    "confidence": "high",
-    "basis": "data",
-    "fix": "Name the man: 'O'Leary opens his briefcase.' (same word count).",
-    "owner": "writer"
-   },
    {
     "id": "TFZ-R5-02",
     "layers": [
