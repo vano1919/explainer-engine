@@ -1,0 +1,653 @@
+{
+ "note": "Episode 1's first three segments with their visual beats written by the beat-writer procedure (skill visual-beats), 2026-10-19; applied to examples/stone_age/ep1_v1/production_script.json by tests/unit/test_visual_beats.py. The premise numbers (a hundred scientists, twelve thousand years) are the episode's invention with no claim id, so no beat shows them as digits (VB-04).",
+ "S01": [
+  [
+   {
+    "at": "greatest minds",
+    "kind": "label",
+    "text": "GREATEST MINDS",
+    "pos": [
+     0.5,
+     0.45
+    ],
+    "why": "names the greatest minds",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "survive",
+    "kind": "symbol",
+    "symbol": "question",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "asks: could they survive",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "Stone Age?",
+    "kind": "text",
+    "text": "THE STONE AGE",
+    "why": "the Stone Age is the stake",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  [
+   {
+    "at": "tools.",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.8,
+     0.3
+    ],
+    "why": "no tools: crossed out",
+    "cue": {
+     "sound": "thud"
+    }
+   }
+  ],
+  [
+   {
+    "at": "matches.",
+    "kind": "prop",
+    "thing": "matches",
+    "pos": [
+     0.78,
+     0.32
+    ],
+    "why": "the matches they do not have",
+    "cue": {
+     "sound": "pop"
+    }
+   }
+  ],
+  [
+   {
+    "at": "night",
+    "kind": "symbol",
+    "symbol": "clock",
+    "pos": [
+     0.85,
+     0.2
+    ],
+    "why": "night is coming: the clock runs",
+    "cue": {
+     "sound": "blip"
+    }
+   },
+   {
+    "at": "fast.",
+    "kind": "accent",
+    "effect": "punch",
+    "why": "coming fast: a push",
+    "cue": {
+     "sound": "whiff"
+    }
+   }
+  ]
+ ],
+ "S02": [
+  [
+   {
+    "at": "Right.",
+    "kind": "accent",
+    "effect": "punch",
+    "why": "right: settling in",
+    "cue": {
+     "sound": "none",
+     "why": "the landing thud effect sounds here"
+    }
+   }
+  ],
+  [
+   {
+    "at": "rules.",
+    "kind": "text",
+    "text": "THE RULES",
+    "why": "here are the rules",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  [
+   {
+    "at": "hundred scientists",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.5
+    ],
+    "why": "rings the crowd of a hundred scientists",
+    "cue": {
+     "sound": "pluck"
+    }
+   }
+  ],
+  [
+   {
+    "at": "river valley",
+    "kind": "highlight",
+    "why": "rings the river valley",
+    "cue": {
+     "sound": "pluck"
+    },
+    "pos": [
+     0.5,
+     0.6
+    ]
+   },
+   {
+    "at": "Anatolia",
+    "kind": "label",
+    "text": "ANATOLIA",
+    "pos": [
+     0.5,
+     0.55
+    ],
+    "why": "names the river valley in Anatolia",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "thousand years",
+    "kind": "symbol",
+    "symbol": "clock",
+    "pos": [
+     0.85,
+     0.2
+    ],
+    "why": "twelve thousand years ago: the clock turns back",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  [
+   {
+    "at": "arrives",
+    "kind": "symbol",
+    "why": "each one arrives: dropped in",
+    "cue": {
+     "sound": "whiff"
+    },
+    "symbol": "arrow_down",
+    "pos": [
+     0.5,
+     0.2
+    ]
+   },
+   {
+    "at": "the age",
+    "kind": "text",
+    "why": "at the age of their famous work",
+    "cue": {
+     "sound": "tick"
+    },
+    "text": "AT THEIR PEAK"
+   },
+   {
+    "at": "famous work",
+    "kind": "highlight",
+    "pos": [
+     0.45,
+     0.4
+    ],
+    "why": "rings one at their most famous work",
+    "cue": {
+     "sound": "pluck"
+    }
+   }
+  ],
+  [
+   {
+    "at": "clothes.",
+    "kind": "symbol",
+    "symbol": "equals",
+    "pos": [
+     0.82,
+     0.25
+    ],
+    "why": "same clothes: equal",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  [
+   {
+    "at": "pockets.",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.6
+    ],
+    "why": "rings what is in their pockets",
+    "cue": {
+     "sound": "pluck"
+    }
+   }
+  ],
+  [
+   {
+    "at": "understand",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.82,
+     0.22
+    ],
+    "why": "they understand each other",
+    "cue": {
+     "sound": "chime"
+    }
+   },
+   {
+    "at": "each other",
+    "kind": "symbol",
+    "why": "they understand each other: plus",
+    "cue": {
+     "sound": "blip"
+    },
+    "symbol": "plus",
+    "pos": [
+     0.6,
+     0.25
+    ]
+   },
+   {
+    "at": "only magic",
+    "kind": "text",
+    "text": "ONLY MAGIC",
+    "why": "the only magic",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  [
+   {
+    "at": "rocks",
+    "kind": "label",
+    "text": "ROCKS",
+    "pos": [
+     0.3,
+     0.7
+    ],
+    "why": "the rocks are real",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "physics",
+    "kind": "label",
+    "text": "PHYSICS",
+    "pos": [
+     0.7,
+     0.4
+    ],
+    "why": "the physics is real",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "painfully real",
+    "kind": "symbol",
+    "symbol": "exclaim",
+    "pos": [
+     0.85,
+     0.2
+    ],
+    "why": "all of it painfully real",
+    "cue": {
+     "sound": "thud"
+    }
+   }
+  ],
+  [
+   {
+    "at": "scientists",
+    "kind": "highlight",
+    "why": "rings the scientists",
+    "cue": {
+     "sound": "pluck"
+    },
+    "pos": [
+     0.5,
+     0.45
+    ]
+   },
+   {
+    "at": "real people",
+    "kind": "symbol",
+    "symbol": "check",
+    "pos": [
+     0.83,
+     0.22
+    ],
+    "why": "the scientists are real people",
+    "cue": {
+     "sound": "chime"
+    }
+   }
+  ],
+  [
+   {
+    "at": "What they say",
+    "kind": "highlight",
+    "why": "rings what they say and do",
+    "cue": {
+     "sound": "pluck"
+    },
+    "pos": [
+     0.45,
+     0.45
+    ]
+   },
+   {
+    "at": "invention.",
+    "kind": "text",
+    "text": "OUR INVENTION",
+    "why": "what they do is our invention",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  [
+   {
+    "at": "So who",
+    "kind": "accent",
+    "why": "a push on who takes charge",
+    "cue": {
+     "sound": "whiff"
+    },
+    "effect": "punch"
+   },
+   {
+    "at": "takes charge?",
+    "kind": "symbol",
+    "symbol": "question",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "who takes charge",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  [
+   {
+    "at": "panics",
+    "kind": "symbol",
+    "symbol": "exclaim",
+    "pos": [
+     0.84,
+     0.22
+    ],
+    "why": "who panics first",
+    "cue": {
+     "sound": "thud"
+    }
+   }
+  ]
+ ],
+ "S03": [
+  [
+   {
+    "at": "late morning.",
+    "kind": "symbol",
+    "symbol": "clock",
+    "pos": [
+     0.85,
+     0.2
+    ],
+    "why": "late morning on the clock",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  [
+   {
+    "at": "brilliant people.",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.5
+    ],
+    "why": "rings the brilliant people",
+    "cue": {
+     "sound": "pluck"
+    }
+   }
+  ],
+  [
+   {
+    "at": "different ideas",
+    "kind": "text",
+    "text": "DIFFERENT IDEAS",
+    "why": "a hundred different ideas",
+    "cue": {
+     "sound": "tick"
+    }
+   },
+   {
+    "at": "first.",
+    "kind": "symbol",
+    "why": "what to do first",
+    "cue": {
+     "sound": "blip"
+    },
+    "symbol": "question",
+    "pos": [
+     0.84,
+     0.22
+    ]
+   }
+  ],
+  [
+   {
+    "at": "whole hour",
+    "kind": "symbol",
+    "symbol": "clock",
+    "pos": [
+     0.85,
+     0.2
+    ],
+    "why": "a whole hour passes",
+    "cue": {
+     "sound": "none",
+     "why": "the clock tick effect plays here"
+    }
+   },
+   {
+    "at": "nothing useful",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.8,
+     0.3
+    ],
+    "why": "nothing useful happens",
+    "cue": {
+     "sound": "none",
+     "why": "the clock tick effect plays here"
+    }
+   }
+  ],
+  [
+   {
+    "at": "Nansen,",
+    "kind": "label",
+    "text": "NANSEN",
+    "pos": [
+     0.85,
+     0.37
+    ],
+    "why": "names Fridtjof Nansen",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "crossed Greenland",
+    "kind": "label",
+    "text": "CROSSED GREENLAND",
+    "pos": [
+     0.5,
+     0.25
+    ],
+    "why": "the man who crossed Greenland",
+    "cue": {
+     "sound": "tap"
+    }
+   },
+   {
+    "at": "skis,",
+    "kind": "prop",
+    "thing": "skis",
+    "pos": [
+     0.2,
+     0.7
+    ],
+    "why": "he crossed it on skis",
+    "cue": {
+     "sound": "pop"
+    }
+   },
+   {
+    "at": "one question",
+    "kind": "symbol",
+    "symbol": "question",
+    "pos": [
+     0.6,
+     0.2
+    ],
+    "why": "the one question that matters",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ],
+  [
+   {
+    "at": "make fire",
+    "kind": "prop",
+    "thing": "fire",
+    "pos": [
+     0.8,
+     0.35
+    ],
+    "why": "can anyone make fire",
+    "cue": {
+     "sound": "pop"
+    }
+   },
+   {
+    "at": "without matches?",
+    "kind": "symbol",
+    "symbol": "cross",
+    "pos": [
+     0.8,
+     0.2
+    ],
+    "why": "and without any matches",
+    "cue": {
+     "sound": "thud"
+    }
+   }
+  ],
+  [
+   {
+    "at": "go up.",
+    "kind": "symbol",
+    "symbol": "arrow_up",
+    "pos": [
+     0.5,
+     0.25
+    ],
+    "why": "two hands go up",
+    "cue": {
+     "sound": "rise"
+    }
+   }
+  ],
+  [
+   {
+    "at": "Halfway.",
+    "kind": "highlight",
+    "pos": [
+     0.5,
+     0.4
+    ],
+    "why": "halfway: rings the hesitating hand",
+    "cue": {
+     "sound": "pluck"
+    }
+   }
+  ],
+  [
+   {
+    "at": "Two!",
+    "kind": "text",
+    "text": "TWO!",
+    "why": "two of them",
+    "cue": {
+     "sound": "tick"
+    }
+   }
+  ],
+  [
+   {
+    "at": "Out of",
+    "kind": "accent",
+    "why": "a jolt: out of a hundred",
+    "cue": {
+     "sound": "thud"
+    },
+    "effect": "shake"
+   },
+   {
+    "at": "hundred.",
+    "kind": "symbol",
+    "symbol": "arrow_down",
+    "pos": [
+     0.8,
+     0.3
+    ],
+    "why": "only two out of a hundred",
+    "cue": {
+     "sound": "fall"
+    }
+   }
+  ],
+  [
+   {
+    "at": "unsure.",
+    "kind": "symbol",
+    "symbol": "question",
+    "pos": [
+     0.5,
+     0.3
+    ],
+    "why": "both look unsure",
+    "cue": {
+     "sound": "blip"
+    }
+   }
+  ]
+ ]
+}

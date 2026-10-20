@@ -1,0 +1,113 @@
+{
+  "schema": "youtube_state/1",
+  "channel": {
+    "id": "UCndsNlyExB-jKRB9hs283BQ",
+    "title": "CrossWorld Chronicles"
+  },
+  "items": {
+    "long": {
+      "video_id": "JKzH8GNaaVk",
+      "sha256": "f3c918fdfed32e45018d648387a4953f79ee194cdb1862c1fe83bbe2890553c1",
+      "file": "video.mp4",
+      "title": "Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread message cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:43:44Z"
+    },
+    "SH01": {
+      "video_id": "CXT6z0c6s0Q",
+      "sha256": "84b95dab27e52752aee2e68d8cde3f3b395f12f931b5025cdc0a0b3ff3a3bfb7",
+      "file": "SH01.mp4",
+      "title": "Could one line in a ledger bring down Al Capone?",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread messages cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:43:55Z"
+    },
+    "SH02": {
+      "video_id": "33428FJzgW8",
+      "sha256": "749bc208dd07fc5a76f22d608021ae7e9754a5f3fd7828e8ebf4b4eed55ab024",
+      "file": "SH02.mp4",
+      "title": "Who lost to a flamingo?",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread messages cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:43:57Z"
+    },
+    "SH03": {
+      "video_id": "ogCi1Coto9A",
+      "sha256": "21ca6fc69ff1cfd0fc0ce75788619f8f65c407b373f400c97d444130e8461ecb",
+      "file": "SH03.mp4",
+      "title": "You're a 1930s crime boss, and you just landed in Leonida.",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread messages cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:43:59Z"
+    },
+    "SH04": {
+      "video_id": "Ed5rzVpGBkQ",
+      "sha256": "3ee879cbac72fd1c1e748ac4891de7abf759abf2c53a71cfaa55036d00dddbac",
+      "file": "SH04.mp4",
+      "title": "Is the quiet, legal business always the safe one?",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread messages cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:44:01Z"
+    },
+    "SH05": {
+      "video_id": "zvh7XBrieyU",
+      "sha256": "85efc819c01d2874dee40c9252394128fd0ac3e862e4f2752e176e6bd91b2abc",
+      "file": "SH05.mp4",
+      "title": "Four crime bosses in our invented Vice City test. Who falls first?",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread messages cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:44:02Z"
+    },
+    "SH06": {
+      "video_id": "KYgve3PbHNo",
+      "sha256": "c48bde16a3d29fd384b86163130c1f4a92faf454b3365e89cca099c71315feb8",
+      "file": "SH06.mp4",
+      "title": "If everyone films you, don't hide from them, feed them the wrong thing.",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread messages cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:44:04Z"
+    },
+    "SH07": {
+      "video_id": "Nsht_nwXMzI",
+      "sha256": "79ae4e992475c01dd18c336ca47e0e3eb1bc79c2d16ba3ccf9a61c714332d4c6",
+      "file": "SH07.mp4",
+      "title": "Would you rather win the boardroom or the street?",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread messages cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:44:06Z"
+    },
+    "SH08": {
+      "video_id": "_ZUktYre6j8",
+      "sha256": "b7f492289077a11504ad1f0dec3d55f73093caf65b237d76dceabe11e933f10b",
+      "file": "SH08.mp4",
+      "title": "Could a gangster from the 1930s survive a world where everybody has a CAMERA?",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread messages cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:44:07Z"
+    },
+    "SH09": {
+      "video_id": "C0uBZVul4EI",
+      "sha256": "590ca5c5b1809da3ce39b982ebbd5aaf08aeaf0f29918656f5d21f55c1322076",
+      "file": "SH09.mp4",
+      "title": "What happens to a crime boss's stars in a city of phones?",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread messages cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:44:09Z"
+    },
+    "SH10": {
+      "video_id": "O1BBOHK8lwE",
+      "sha256": "626e675d6d665a80388cc748f440589aabd901c58d5cac67f2289c91bf2970fe",
+      "file": "SH10.mp4",
+      "title": "Could the smartest boss in Vice City still lose?",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "creator ვანო, thread messages cmsg_01Hnu5zB86sjUj5GtTgaUkPWYDkwpHPwbkPkZjE11J4EiR and cmsg_01Hnu5zB86sjUj5GtTgaUkPWEc87pgBoTAhRTdMVtF74ei, 2026-10-19: upload every piece that passes, unlisted",
+      "staged_at": "2026-10-19T18:44:11Z"
+    }
+  },
+  "quota": {
+    "day": "2026-10-19",
+    "uploads": 11,
+    "units": 4
+  }
+}

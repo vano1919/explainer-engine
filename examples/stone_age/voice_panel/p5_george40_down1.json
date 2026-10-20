@@ -1,0 +1,22 @@
+{
+ "version": 1,
+ "id": "p5_george40_down1",
+ "base": "am_michael",
+ "blend": [
+  {
+   "voice": "bm_george",
+   "weight": 0.4
+  }
+ ],
+ "speed": 1.05,
+ "pitch": {
+  "semitones": -1.0,
+  "formant": "preserved"
+ },
+ "tone": {
+  "warmth_db": 2.0,
+  "brightness_db": -1.0,
+  "deess": 0.3
+ },
+ "rvc": null
+}

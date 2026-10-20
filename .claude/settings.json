@@ -1,0 +1,44 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__ElevenLabs__creative_.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && (python3 -m explainer_engine.standards.hook || python -m explainer_engine.standards.hook)"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.cloud.hooks pre-bash"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.cloud.hooks session-start"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.cloud.hooks stop"
+          }
+        ]
+      }
+    ]
+  }
+}

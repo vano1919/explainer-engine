@@ -1,0 +1,712 @@
+{
+  "created": "2026-10-17T14:40:34",
+  "caps": {
+    "gemini_usd": 10.0,
+    "elevenlabs_credits": 40000,
+    "vidiq_credits": 0,
+    "runpod_usd": 0
+  },
+  "spent": {
+    "gemini_usd": 2.9535,
+    "elevenlabs_credits": 12042.84
+  },
+  "reserved": {
+    "batch:s01_skyline+1": {
+      "service": "gemini_usd",
+      "amount": 0.0252
+    },
+    "batch:p_capone+4": {
+      "service": "gemini_usd",
+      "amount": 0.2724
+    },
+    "batch:s01_phones+12": {
+      "service": "gemini_usd",
+      "amount": 0.3189
+    },
+    "batch:c10_map+12": {
+      "service": "gemini_usd",
+      "amount": 0.3211
+    },
+    "batch:v15_driver+12": {
+      "service": "gemini_usd",
+      "amount": 0.32
+    },
+    "batch:m21_trend+10": {
+      "service": "gemini_usd",
+      "amount": 0.2696
+    },
+    "batch:s02_history+2": {
+      "service": "gemini_usd",
+      "amount": 0.0537
+    },
+    "batch:capone_faces_v1_neutral+42": {
+      "service": "gemini_usd",
+      "amount": 1.1046
+    },
+    "batch:vito_faces_v1_sad+3": {
+      "service": "gemini_usd",
+      "amount": 0.0789
+    },
+    "test_read_capone": {
+      "service": "elevenlabs_credits",
+      "amount": 172.98,
+      "settled": true
+    },
+    "test_read_vito": {
+      "service": "elevenlabs_credits",
+      "amount": 93.99,
+      "settled": true
+    },
+    "test_read_mizuno": {
+      "service": "elevenlabs_credits",
+      "amount": 147.99,
+      "settled": true
+    },
+    "test_read_shelby": {
+      "service": "elevenlabs_credits",
+      "amount": 156.98,
+      "settled": true
+    },
+    "voice_option_capone_2": {
+      "service": "elevenlabs_credits",
+      "amount": 57.99,
+      "settled": true
+    },
+    "voice_option_capone_3": {
+      "service": "elevenlabs_credits",
+      "amount": 57.99,
+      "settled": true
+    },
+    "voice_option_vito_2": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_vito_3": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_mizuno_2": {
+      "service": "elevenlabs_credits",
+      "amount": 40.0,
+      "settled": true
+    },
+    "voice_option_mizuno_3": {
+      "service": "elevenlabs_credits",
+      "amount": 40.0,
+      "settled": true
+    },
+    "voice_option_shelby_2": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_shelby_3": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_vito_moody": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_vito_wellington": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_mizuno_takumi": {
+      "service": "elevenlabs_credits",
+      "amount": 40.0,
+      "settled": true
+    },
+    "voice_option_mizuno_hideo": {
+      "service": "elevenlabs_credits",
+      "amount": 40.0,
+      "settled": true
+    },
+    "voice_option_shelby_robert": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "voice_option_shelby_dan": {
+      "service": "elevenlabs_credits",
+      "amount": 41.0,
+      "settled": true
+    },
+    "full_read_main": {
+      "service": "elevenlabs_credits",
+      "amount": 9127.09,
+      "settled": true,
+      "note": "26 chunks generated (1 credit/char incl. tags); 7 reused from test reads, 0 credits"
+    },
+    "shorts_new_lines": {
+      "service": "elevenlabs_credits",
+      "amount": 1739.83,
+      "settled": true
+    }
+  },
+  "phases": {
+    "0_free": {
+      "status": "PASSED",
+      "note": "tests 259 pass + 2 pre-existing fails; ElevenLabs connector not loaded in this session",
+      "at": "14:40:34"
+    },
+    "1_hypotheses": {
+      "status": "PASSED",
+      "note": "H1 selected, 0 FAIL",
+      "at": "15:31:08"
+    },
+    "2_script": {
+      "status": "PASSED",
+      "note": "31 segments, 1289 words, 0 FAIL, engagement 0 weak",
+      "at": "15:31:08"
+    },
+    "5_pictures": {
+      "status": "PASSED",
+      "note": "51 painted pictures + 9 code screens",
+      "at": "15:31:08"
+    },
+    "4_voice": {
+      "status": "STOPPED",
+      "note": "ElevenLabs connector tools not available in this session: no voice, music or sound could be made",
+      "at": "15:31:17"
+    },
+    "6_assemble": {
+      "status": "STOPPED",
+      "note": "needs the real read",
+      "at": "15:31:17"
+    },
+    "7_shorts_metadata": {
+      "status": "STOPPED",
+      "note": "scripts, crops, silent previews and drafts done; no voice",
+      "at": "15:31:17"
+    }
+  },
+  "items": {
+    "pictures": {
+      "s01_skyline": {
+        "file": "s01_skyline.png",
+        "batch": "batches/hmcz2t6gu0s1tnfegue4zbd5qqyz3f7ajr8y"
+      },
+      "p_capone": {
+        "file": "p_capone.png",
+        "batch": "batches/2ysijozjjjx5e555zwgefg6bd98oimhg4cmx"
+      },
+      "p_vito": {
+        "file": "p_vito.png",
+        "batch": "batches/2ysijozjjjx5e555zwgefg6bd98oimhg4cmx"
+      },
+      "p_mizuno": {
+        "file": "p_mizuno.png",
+        "batch": "batches/2ysijozjjjx5e555zwgefg6bd98oimhg4cmx"
+      },
+      "p_shelby": {
+        "file": "p_shelby.png",
+        "batch": "batches/2ysijozjjjx5e555zwgefg6bd98oimhg4cmx"
+      },
+      "s01_phones": {
+        "file": "s01_phones.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s01_boardwalk": {
+        "file": "s01_boardwalk.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s01_four": {
+        "file": "s01_four.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s02_chairs": {
+        "file": "s02_chairs.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s02_history": {
+        "file": "s02_history.png",
+        "batch": "batches/dq39ool22sg8rkbvvcdzcgyokfcuk03hc257"
+      },
+      "s03_cursor": {
+        "file": "s03_cursor.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s08_paths": {
+        "file": "s08_paths.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "s08_eye": {
+        "file": "s08_eye.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "c09_press": {
+        "file": "c09_press.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "c09_soup": {
+        "file": "c09_soup.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "c10_viral": {
+        "file": "c10_viral.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "c10_plate": {
+        "file": "c10_plate.png",
+        "batch": "batches/eh20zin5wwacb7rxoboww7hqn96k3zy66krx"
+      },
+      "c10_map": {
+        "file": "c10_map.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "c11_ledger": {
+        "file": "c11_ledger.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "c11_agent": {
+        "file": "c11_agent.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "c11_verdict": {
+        "file": "c11_verdict.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "c12_palm": {
+        "file": "c12_palm.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "w13_stars": {
+        "file": "w13_stars.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v13_table": {
+        "file": "v13_table.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v13_window": {
+        "file": "v13_window.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v14_oil": {
+        "file": "v14_oil.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v14_judge": {
+        "file": "v14_judge.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v14_no": {
+        "file": "v14_no.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v15_dock": {
+        "file": "v15_dock.png",
+        "batch": "batches/wxqn1jlwb5prvz49e7psi6kjplbll3a67o8j"
+      },
+      "v15_driver": {
+        "file": "v15_driver.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "v15_phone": {
+        "file": "v15_phone.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "v16_garden": {
+        "file": "v16_garden.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m17_tower": {
+        "file": "m17_tower.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m17_card": {
+        "file": "m17_card.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m18_board": {
+        "file": "m18_board.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m18_phone": {
+        "file": "m18_phone.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m18_two": {
+        "file": "m18_two.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m19_sign": {
+        "file": "m19_sign.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "f20_flamingo": {
+        "file": "f20_flamingo.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "f20_gator": {
+        "file": "f20_gator.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m21_lobby": {
+        "file": "m21_lobby.png",
+        "batch": "batches/ml6r2hu5v9unylun7rj81naeo2pxhjpv65j4"
+      },
+      "m21_trend": {
+        "file": "m21_trend.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "m22_watch": {
+        "file": "m22_watch.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s23_street": {
+        "file": "s23_street.png",
+        "batch": "batches/dq39ool22sg8rkbvvcdzcgyokfcuk03hc257"
+      },
+      "s24_proxy": {
+        "file": "s24_proxy.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s24_hall": {
+        "file": "s24_hall.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s24_decoy": {
+        "file": "s24_decoy.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s24_ledger": {
+        "file": "s24_ledger.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s25_calm": {
+        "file": "s25_calm.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s26_behind": {
+        "file": "s26_behind.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "s29_end": {
+        "file": "s29_end.png",
+        "batch": "batches/e5vb3vqf7d0i16byu48mimf41ycn72xfa2pn"
+      },
+      "capone_faces_v1_neutral": {
+        "file": "capone_faces_v1_neutral.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "558f709efb0dce93"
+      },
+      "capone_faces_v1_joyful": {
+        "file": "capone_faces_v1_joyful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "1779aa19a33a3509"
+      },
+      "capone_faces_v1_sad": {
+        "file": "capone_faces_v1_sad.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "ebd1b35a03c20ccb"
+      },
+      "capone_faces_v1_scared": {
+        "file": "capone_faces_v1_scared.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "d3cb9b980e7e6035"
+      },
+      "capone_faces_v1_angry": {
+        "file": "capone_faces_v1_angry.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "9fdfc133e87ce943"
+      },
+      "capone_faces_v1_surprised": {
+        "file": "capone_faces_v1_surprised.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "989c28473eb9b15e"
+      },
+      "capone_faces_v1_smug": {
+        "file": "capone_faces_v1_smug.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "029533038506a381"
+      },
+      "capone_faces_v1_confused": {
+        "file": "capone_faces_v1_confused.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "db2ffe79dbce0c07"
+      },
+      "capone_faces_v1_worried": {
+        "file": "capone_faces_v1_worried.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "db0e1d45d5ef4033"
+      },
+      "capone_faces_v1_doubtful": {
+        "file": "capone_faces_v1_doubtful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "dcb8c7e3425f358f"
+      },
+      "capone_faces_v1_amused": {
+        "file": "capone_faces_v1_amused.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "9aaf91c2b4842c6b"
+      },
+      "vito_faces_v1_neutral": {
+        "file": "vito_faces_v1_neutral.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "530579a19ed3e134"
+      },
+      "vito_faces_v1_joyful": {
+        "file": "vito_faces_v1_joyful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "e3c153d31b11060b"
+      },
+      "vito_faces_v1_scared": {
+        "file": "vito_faces_v1_scared.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "612504e73feabd33"
+      },
+      "vito_faces_v1_surprised": {
+        "file": "vito_faces_v1_surprised.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "27e3c7abe4c8b472"
+      },
+      "vito_faces_v1_smug": {
+        "file": "vito_faces_v1_smug.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "d3af1c55cb0b56a5"
+      },
+      "vito_faces_v1_curious": {
+        "file": "vito_faces_v1_curious.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "189e1b15aba373ee"
+      },
+      "vito_faces_v1_worried": {
+        "file": "vito_faces_v1_worried.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "806b17d0d99ce9b4"
+      },
+      "mizuno_faces_v1_neutral": {
+        "file": "mizuno_faces_v1_neutral.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "3ed3947edbe0e787"
+      },
+      "mizuno_faces_v1_joyful": {
+        "file": "mizuno_faces_v1_joyful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "12bd9ad2fa101c13"
+      },
+      "mizuno_faces_v1_sad": {
+        "file": "mizuno_faces_v1_sad.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "05e30bb99271547a"
+      },
+      "mizuno_faces_v1_scared": {
+        "file": "mizuno_faces_v1_scared.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "3c38569e910411a0"
+      },
+      "mizuno_faces_v1_angry": {
+        "file": "mizuno_faces_v1_angry.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "32d5344a74faed8b"
+      },
+      "mizuno_faces_v1_surprised": {
+        "file": "mizuno_faces_v1_surprised.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "8cf5860ea7e7c4f8"
+      },
+      "mizuno_faces_v1_determined": {
+        "file": "mizuno_faces_v1_determined.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "5d8aefdac6a61699"
+      },
+      "mizuno_faces_v1_confused": {
+        "file": "mizuno_faces_v1_confused.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "2e51ca37770c3506"
+      },
+      "mizuno_faces_v1_worried": {
+        "file": "mizuno_faces_v1_worried.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "4aa12880fe7c6822"
+      },
+      "mizuno_faces_v1_deadpan": {
+        "file": "mizuno_faces_v1_deadpan.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "04d606d5af3914a7"
+      },
+      "shelby_faces_v1_neutral": {
+        "file": "shelby_faces_v1_neutral.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "1ab069e8ae29579b"
+      },
+      "shelby_faces_v1_joyful": {
+        "file": "shelby_faces_v1_joyful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "fab3db5ec7463694"
+      },
+      "shelby_faces_v1_sad": {
+        "file": "shelby_faces_v1_sad.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "7d91f9c385a604b4"
+      },
+      "shelby_faces_v1_scared": {
+        "file": "shelby_faces_v1_scared.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "ee95df9e0b4c8849"
+      },
+      "shelby_faces_v1_angry": {
+        "file": "shelby_faces_v1_angry.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "19ad1cec82ea7a79"
+      },
+      "shelby_faces_v1_surprised": {
+        "file": "shelby_faces_v1_surprised.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "a8508a2cecfce92f"
+      },
+      "shelby_faces_v1_smug": {
+        "file": "shelby_faces_v1_smug.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "17dd985687989547"
+      },
+      "shelby_faces_v1_determined": {
+        "file": "shelby_faces_v1_determined.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "64e0e9ed86d7887a"
+      },
+      "shelby_faces_v1_amused": {
+        "file": "shelby_faces_v1_amused.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "e54314a03a280e43"
+      },
+      "shelby_faces_v1_deadpan": {
+        "file": "shelby_faces_v1_deadpan.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "2119b53696f8c7dd"
+      },
+      "shelby_faces_v1_doubtful": {
+        "file": "shelby_faces_v1_doubtful.png",
+        "batch": "batches/qc5fq06aro7hqa70bikfhfugxp7n9c3pd22c",
+        "plan": "F1",
+        "hash": "56939ad47c50caf9"
+      },
+      "vito_faces_v1_sad": {
+        "file": "vito_faces_v1_sad.png",
+        "batch": "batches/wbstrdook3b7c2hbqpq9x2xwepbgit9vla65",
+        "plan": "F1",
+        "hash": "6ab4a948d72e4187"
+      },
+      "vito_faces_v1_angry": {
+        "file": "vito_faces_v1_angry.png",
+        "batch": "batches/wbstrdook3b7c2hbqpq9x2xwepbgit9vla65",
+        "plan": "F1",
+        "hash": "36bc0431863989a4"
+      },
+      "vito_faces_v1_doubtful": {
+        "file": "vito_faces_v1_doubtful.png",
+        "batch": "batches/wbstrdook3b7c2hbqpq9x2xwepbgit9vla65",
+        "plan": "F1",
+        "hash": "7bb2abface90a2e2"
+      }
+    },
+    "voice_test": {
+      "bosses": {
+        "flow": "JmyikAj1LkZjVuG3yLzm",
+        "files": "jobs/syndicate_wars/voice/test"
+      },
+      "options": {
+        "files": "/mnt/project-files/explainer-engine/syndicate_wars/review/voice_test/options",
+        "credits": 481,
+        "dropped_for_age": [
+          "Lorenzo",
+          "Spence",
+          "Tahm"
+        ]
+      },
+      "accent_options": {
+        "files": "/mnt/project-files/explainer-engine/syndicate_wars/review/voice_test/accent",
+        "credits": 122
+      }
+    }
+  },
+  "failures": {
+    "vito_faces_v1_sad": [
+      {
+        "at": "15:24:52",
+        "cause": "no picture in the answer"
+      }
+    ],
+    "vito_faces_v1_angry": [
+      {
+        "at": "15:24:52",
+        "cause": "no picture in the answer"
+      }
+    ],
+    "vito_faces_v1_doubtful": [
+      {
+        "at": "15:24:52",
+        "cause": "no picture in the answer"
+      }
+    ]
+  },
+  "meta": {},
+  "approvals": {
+    "F1": {
+      "hash": "76c529070912ad1954c4",
+      "by": "ვანო (vano1919)",
+      "ref": "thread decision card 2026-10-19 14:50 (Pod + Gemini faces ~$1.1) + project chat cmsg_01Hnu5zB86sjUj5GtTgaUkPWBfkVTtj3Jd9zLcdxkymB8i '1 კი' approving the collage and the ~$1.1 face sheets",
+      "provider": "gemini",
+      "usd": 1.1046,
+      "at": "2026-10-19T15:20:05"
+    },
+    "V1": {
+      "by": "ვანო (vano1919)",
+      "ref": "thread cmsg_01Hnu5zB86sjUj5GtTgaUkPW3uQbgp1nCvaLCq38PVR9H9 'მიზუნო ჰიდეო შელბი რობერტი გაუშვი სრული' (full read)",
+      "provider": "elevenlabs",
+      "credits": 9396,
+      "at": "2026-10-19T16:21:33"
+    },
+    "V2_shorts": {
+      "by": "creator",
+      "msg": "cmsg_01Hnu5zB86sjUj5GtTgaUkPW4ZFyHoix6YtcQByzp9TR1V",
+      "amount": 1740,
+      "at": "2026-10-19T17:38:21Z"
+    }
+  }
+}

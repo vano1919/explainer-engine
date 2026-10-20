@@ -1,0 +1,605 @@
+{
+ "version": 1,
+ "sources": [
+  {
+   "id": "S-01",
+   "url": "https://www.rockstargames.com/VI",
+   "title": "Grand Theft Auto VI",
+   "publisher": "Rockstar Games",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "A",
+   "passage": "\"Coming November 19, 2026\" ... \"PlayStation 5\" \"Xbox Series X|S\" ... \"Vice City, USA.\" ... \"in the middle of a criminal conspiracy stretching across the state of Leonida\" ... \"Jason and Lucia have always known the deck is stacked against them.\" No in-story year is given; the only years are the release date and Newswire dates.",
+   "notes": "Official page, read first-hand by the standards director on 2026-10-17 and again on 2026-10-19."
+  },
+  {
+   "id": "S-02",
+   "url": "https://www.rockstargames.com/VI/only-in-leonida",
+   "title": "Only in Leonida",
+   "publisher": "Rockstar Games",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "A",
+   "passage": "Places named: Vice City, Leonida Keys, Grassrivers, Port Gellhorn, Ambrosia, Mount Kalaga. Boobie Ike: \"One of the few to transform his time in the streets into a legitimate empire\" (real estate, a strip club, a recording studio; co-owns Only Raw Records with Dre'Quan Priest). Real Dimez (Bae-Luxe and Roxy): \"Viral videos. Viral hooks.\" Raul Bautista, a seasoned bank robber: \"Experience counts.\" Brian Heder: a drug runner from the \"golden age of smuggling in the Keys\" who still moves product through his boat yard. Release: November 19, 2026.",
+   "notes": "Official page, first-hand 2026-10-19. The page does not describe Grassrivers, Port Gellhorn, Ambrosia or Mount Kalaga."
+  },
+  {
+   "id": "S-03",
+   "url": "https://www.rockstargames.com/VI/kalaga",
+   "title": "Grand Theft Auto VI: Kalaga",
+   "publisher": "Rockstar Games",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "A",
+   "passage": "\"he found himself in the Keys doing what he knows best, working for local drug runners.\" ... \"Brian's a classic drug runner from the golden age of smuggling in the Keys.\""
+  },
+  {
+   "id": "S-04",
+   "url": "https://ir.take2games.com/node/32311",
+   "title": "Rockstar Games Announces Pre-Orders for Grand Theft Auto VI",
+   "publisher": "Take-Two Interactive",
+   "published_at": "2026-06-24",
+   "accessed_at": "2026-10-19",
+   "grade": "A",
+   "passage": "\"Launching November 19, 2026, for the PlayStation® 5 computer entertainment systems and Xbox Series X|S games and entertainment systems for $79.99,\" ... \"Players who pre-order digital versions of Grand Theft Auto VI will be able to begin pre-loading on November 12, 2026\""
+  },
+  {
+   "id": "S-05",
+   "url": "https://ir.take2games.com/node/31186",
+   "title": "Rockstar Games Releases Trailer 2 for Grand Theft Auto VI",
+   "publisher": "Take-Two Interactive",
+   "published_at": "2025-05-06",
+   "accessed_at": "2026-10-19",
+   "grade": "A",
+   "passage": "\"Set to launch on May 26, 2026, on PlayStation® 5 computer entertainment systems and Xbox Series X|S games\""
+  },
+  {
+   "id": "S-06",
+   "url": "https://en.wikipedia.org/wiki/Al_Capone",
+   "title": "Al Capone",
+   "publisher": "Wikipedia (Wikimedia Foundation)",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"Capone was convicted on five counts of income tax evasion on October 17, 1931\" ... \"was sentenced a week later to 11 years in federal prison\" ... \"Capone was listed as \"Public Enemy #1\" on the unofficial Chicago Crime Commission's widely publicized list\" (placed in March 1930) ... \"sponsored a soup kitchen in Chicago during the Depression\" ... \"moving Capone to the recently opened Alcatraz Federal Penitentiary ... in August 1934\" ... \"Capone was released from prison on November 16, 1939\" ... \"He spent the last years of his life at his Palm Island mansion\" ... \"on January 25, surrounded by his family in his home, died\"",
+   "notes": "Community-edited encyclopedia: graded C."
+  },
+  {
+   "id": "S-07",
+   "url": "https://www.fbi.gov/history/famous-cases/al-capone",
+   "title": "Al Capone (Famous Cases and Criminals)",
+   "publisher": "Federal Bureau of Investigation",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "B",
+   "passage": "\"On October 18, 1931, Capone was convicted after trial\" ... \"on November 24, was sentenced to eleven years in federal prison,\" ... \"he entered the U.S. Penitentiary in Atlanta, serving his sentence there and at Alcatraz.\" ... \"On November 16, 1939, Al Capone was released\" ... \"Capone resided on Palm Island with his wife and immediate family,\" \"until his death due to a stroke and pneumonia on January 25, 1947.\"",
+   "notes": "The FBI page dates the conviction 18 October and the sentence 24 November; NARA and Wikipedia give 17 October."
+  },
+  {
+   "id": "S-08",
+   "url": "https://www.archives.gov/exhibits/american_originals/capone.html",
+   "title": "American Originals: Al Capone",
+   "publisher": "U.S. National Archives and Records Administration",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "B",
+   "passage": "\"Verdict in United States of America v. Alphonse Capone, October 17, 1931.\" ... \"the jurors found Capone guilty of three felonies and two misdemeanors\" ... \"Judge Wilkerson sentenced Al Capone to serve 11 years in prison\" ... \"On April 23, 1930, the Chicago Crime Commission issued its first Public Enemies List; there were 28 names on it, and Al Capone's was the first.\"",
+   "notes": "NARA exhibit presenting the verdict record; graded B (we read the exhibit text, not the record itself)."
+  },
+  {
+   "id": "S-09",
+   "url": "https://prologue.blogs.archives.gov/2011/07/26/the-taxman-cometh-u-s-v-alphonse-capone/",
+   "title": "The Taxman Cometh: U.S. v. Alphonse Capone",
+   "publisher": "U.S. National Archives and Records Administration",
+   "published_at": "2011-07-26",
+   "accessed_at": "2026-10-19",
+   "grade": "B",
+   "passage": "\"On October 18, 1931, Capone was found guilty on five counts of tax evasion.\" ... \"A month later he was sentenced to 11 years in Federal prison, fined $50,000,\"",
+   "notes": "Same publisher as S-08 (counts once); the image caption on the page gives 10/17/1931."
+  },
+  {
+   "id": "S-10",
+   "url": "https://libapps.luc.edu/digitalexhibits/s/loyola_academy/item/1874",
+   "title": "Unemployed men queued outside a depression soup kitchen opened in Chicago by Al Capone",
+   "publisher": "Loyola University Chicago (digital exhibit)",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "B",
+   "passage": "\"This Chicago soup kitchen was opened by Al Capone.\" Date: \"February, 1931\". Source: \"The U.S. National Archives and Records Administration\", National Archives Identifier 541927."
+  },
+  {
+   "id": "S-11",
+   "url": "https://en.wikipedia.org/wiki/Frank_J._Wilson",
+   "title": "Frank J. Wilson",
+   "publisher": "Wikipedia (Wikimedia Foundation)",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"In May 1930, Irey sent Frank J. Wilson, then 42, to lead the investigation\" ... \"Frank paid $17,500 for Al.\" ... \"Informant E. J. O'Hare helped Wilson identify the bookkeeper as Leslie A. Shumway\""
+  },
+  {
+   "id": "S-12",
+   "url": "https://www.history.com/articles/frank-wilson",
+   "title": "Frank Wilson",
+   "publisher": "HISTORY.com (A&E Television Networks)",
+   "published_at": "2010-04-23",
+   "accessed_at": "2026-10-19",
+   "grade": "B",
+   "passage": "\"Frank Wilson, a special agent in the Intelligence Unit of the Internal Revenue Service (IRS)\" ... \"Wilson discovered several ledgers containing notations that allowed him to trace payments\" ... \"This breakthrough led, in June 1931, to Capone's indictment\" ... \"on October 17 he was convicted and sentenced to 11 years in prison\"",
+   "notes": "Last updated 2025-05-28; gives no dollar amount for the ledger entry."
+  },
+  {
+   "id": "S-13",
+   "url": "https://www.grantthornton.co.uk/insights/the-accountant-and-al-capone/",
+   "title": "The accountant and Al Capone",
+   "publisher": "Grant Thornton UK",
+   "published_at": "2020-05-15",
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"Finally, Wilson's investigation found the key that cracked the case: late one night, he found three bound ledgers\" ... \"On one page was the notation: “Frank paid $17,500 for Al”.\""
+  },
+  {
+   "id": "S-14",
+   "url": "https://en.wikipedia.org/wiki/Vito_Corleone",
+   "title": "Vito Corleone",
+   "publisher": "Wikipedia (Wikimedia Foundation)",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"Genco Pura also serves as the main legal front for Vito's growing organized crime syndicate.\" ... \"Vito declines, believing the politicians and judges on his payroll would turn against him\" ... \"on July 29, 1955, Vito dies of a heart attack in his garden while playing with his grandson\""
+  },
+  {
+   "id": "S-15",
+   "url": "https://catalog.afi.com/Film/54023-the-godfather",
+   "title": "AFI Catalog: The Godfather (1972)",
+   "publisher": "American Film Institute",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "B",
+   "passage": "Synopsis: the olive oil business \"had been a legitimate cover for their gambling and prostitution operations\"; Don Vito \"refuses to risk losing his political influence by embracing the drug traffic\"; \"while Don Vito plays with Anthony, Michael and Kay's three-year-old son\" \"he has a fatal heart attack in his vegetable garden\".",
+   "notes": "The synopsis does not name Genco and gives no year for the death."
+  },
+  {
+   "id": "S-16",
+   "url": "https://www.filmsite.org/series-godfather.html",
+   "title": "The Godfather (1972) - Filmsite review",
+   "publisher": "Filmsite.org (Tim Dirks)",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"Corleone's partner in the olive-oil import business\" ... \"Corleone's refusal to allow drug trafficking and share \"all the judges and the politicians\" in New York\" ... \"In a vivid death scene in a garden among the tomato plants in 1954\" ... \"the Don played with Michael's three year old son Anthony, his grandchild\"",
+   "notes": "Dates the death 1954, against Wikipedia's 29 July 1955."
+  },
+  {
+   "id": "S-17",
+   "url": "https://www.vegetariantimes.com/news/godfather-olive-oil-company-genco?scope=anon",
+   "title": "Godfather olive oil company Genco",
+   "publisher": "Vegetarian Times",
+   "published_at": "2021-11-22",
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"Genco Pura Olive Oil Company, the Italian brand made famous by The Godfather, is no longer a purely fictional creation.\" ... \"take their inspiration directly from the on-screen business used to launder the Corleone mafia family's funds\""
+  },
+  {
+   "id": "S-18",
+   "url": "https://en.wikipedia.org/wiki/Tommy_Shelby",
+   "title": "Tommy Shelby",
+   "publisher": "Wikipedia (Wikimedia Foundation)",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"he starts a campaign for Member of Parliament, an election which Tommy wins.\" ... \"In 1929, Tommy goes up to a phone booth on Lickey Hills.\" ... \"In 1933, Tommy, now sober, sets up a meeting with an estranged Michael.\" ... gives \"false information to the informant Billy Grade\" ... \"The plan to assassinate Mosley is foiled\" ... \"he murders the Barwell family who cursed Ruby.\" ... \"agrees to feed information about England's political goings to his gang in exchange for opium.\"",
+   "notes": "Gives no constituency and no election year."
+  },
+  {
+   "id": "S-19",
+   "url": "https://www.nme.com/reviews/peaky-blinders-s05e06-michael-finale-ending-recap-tommy-alfie-solomons-tom-hardy-bbc-one-2550357",
+   "title": "Peaky Blinders season 5 episode 6 finale review",
+   "publisher": "NME",
+   "published_at": "2019-09-22",
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"It's a testament to how commanding Cillian Murphy has been in the role of Thomas Shelby MP\" ... \"The attempted assassination of Oswald Mosley at one of his rallies was the centrepiece of the episode\""
+  },
+  {
+   "id": "S-20",
+   "url": "https://www.looper.com/823386/the-ending-of-peaky-blinders-season-6-explained/",
+   "title": "The Ending Of Peaky Blinders Season 6 Explained",
+   "publisher": "Looper",
+   "published_at": "2022-04-06",
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"the Peaky Blinders get their revenge by feeding IRA informant Billy Grade (Emmett Scanlan) fake information\""
+  },
+  {
+   "id": "S-21",
+   "url": "https://www.denofgeek.com/tv/peaky-blinders-billy-grade-the-ira-and-tommy-michaels-war",
+   "title": "Peaky Blinders: Billy Grade, the IRA, and Tommy & Michael's War",
+   "publisher": "Den of Geek",
+   "published_at": "2022-03-27",
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"the IRA were the ones who'd thwarted Tommy's plan to have Mosley assassinated at the Bingley Hall rally\""
+  },
+  {
+   "id": "S-22",
+   "url": "https://en.wikipedia.org/wiki/Grand_Theft_Auto_V",
+   "title": "Grand Theft Auto V",
+   "publisher": "Wikipedia (Wikimedia Foundation)",
+   "published_at": null,
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"The Internet lets players trade in stocks via a stock market.\" ... \"If players commit crimes, law enforcement may respond as indicated by a \"wanted\" meter in the heads-up display (HUD).\" ... \"Stars displayed on the meter indicate the current wanted level\"",
+   "notes": "The article does not name LCN or BAWSAQ."
+  },
+  {
+   "id": "S-23",
+   "url": "https://www.digitalcitizen.life/gta-5-best-stocks/",
+   "title": "Best Stocks to Buy in GTA 5 Story Mode for Maximum Profit",
+   "publisher": "Digital Citizen",
+   "published_at": "2026-01-14",
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"Use LCN for story-driven swings and most \"rebound\" buys.\" ... BAWSAQ is opened \"from the in-game phone browser\" and is \"tied to Rockstar Social Club connectivity\"."
+  },
+  {
+   "id": "S-24",
+   "url": "https://primagames.com/games/grand-theft-auto-v/strategy/grand-theft-auto-5-bawsaq-tips",
+   "title": "Grand Theft Auto 5: How to Make Money Playing the Stock Market",
+   "publisher": "Prima Games",
+   "published_at": "2013-09-24",
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"There are two general stock markets that you can take part in. One is the LCN, or Liberty City National.\" ... \"you have the ability to manipulate stocks by completing in-game missions\" ... BAWSAQ moves \"rather by the actions of the community through the Rockstar Social Club\""
+  },
+  {
+   "id": "S-25",
+   "url": "https://www.techspot.com/community/topics/gamers-band-together-to-influence-gta-vs-stock-market.196817/",
+   "title": "Gamers band together to influence GTA V's stock market",
+   "publisher": "TechSpot",
+   "published_at": "2013-10-02",
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"Players can buy and sell on two different markets, the BAWSAQ and the LCN, where prices can be influenced by in-game events.\" Reader reply (St1ckM4n, 2013-10-03): \"One market is only affected by your campaign, but the BAWSAQ was apparently affected by global people.\"",
+   "notes": "The split between the two markets is in a reader reply on this page, not in the article."
+  },
+  {
+   "id": "S-26",
+   "url": "https://www.gtaboom.com/gta-5-stock-market-guide/",
+   "title": "GTA 5 Stock Market Guide",
+   "publisher": "GTA BOOM",
+   "published_at": "2013-09-25",
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"When you're playing GTA V there will always be one particular stock on the LCN market that fluctuates within a set range.\" ... \"First get all your characters to invest in Tinkle (TNK) on the BAWSAQ.\""
+  },
+  {
+   "id": "S-27",
+   "url": "https://www.gtaboom.com/gta-5-gets-rdrs-witness-system-42f2",
+   "title": "GTA 5 Gets RDR's Witness System",
+   "publisher": "GTA BOOM",
+   "published_at": "2016-02-08",
+   "accessed_at": "2026-10-19",
+   "grade": "C",
+   "passage": "\"Committing any kind of crime instantly draws the ire of law enforcement.\" ... \"Somehow they will know you did something, they'll know that you did something and they will pinpoint your exact location.\"",
+   "notes": "Describes unmodded GTA V police as needing no witness: contradicts 'when the police see you'."
+  }
+ ],
+ "claims": [
+  {
+   "id": "C-01",
+   "text": "GTA VI is set to release on November 19, 2026 (PS5, Xbox Series X|S); unreleased at the research date.",
+   "type": "fact",
+   "source_ids": [
+    "S-01",
+    "S-04"
+   ],
+   "confidence": "verified",
+   "uncertainty": "Release dates have moved before (C-29)."
+  },
+  {
+   "id": "C-02",
+   "text": "Rockstar's page sets the game in 'Vice City, USA' within the state of Leonida.",
+   "type": "fact",
+   "source_ids": [
+    "S-01"
+   ],
+   "confidence": "verified",
+   "uncertainty": ""
+  },
+  {
+   "id": "C-04",
+   "text": "Rockstar's page shows only the year 2026 (release and Newswire dates) and gives no in-story year.",
+   "type": "fact",
+   "source_ids": [
+    "S-01"
+   ],
+   "confidence": "verified",
+   "uncertainty": "Absence on the official pages read; Rockstar may announce a year later."
+  },
+  {
+   "id": "C-11",
+   "text": "In GTA V, players trade stocks through the in-game internet.",
+   "type": "fact",
+   "source_ids": [
+    "S-22",
+    "S-23"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": ""
+  },
+  {
+   "id": "C-12",
+   "text": "GTA V has two stock exchanges, LCN and BAWSAQ; guides say LCN moves with the player's own actions and BAWSAQ with the community of online players.",
+   "type": "fact",
+   "source_ids": [
+    "S-24",
+    "S-25",
+    "S-26",
+    "S-23"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "Narrated as 'Fans say'. Two exchanges: Prima, TechSpot, GTA BOOM. LCN driven by own actions: Prima, Digital Citizen. BAWSAQ driven by other players: Prima and a reader reply on TechSpot only. Nothing official from Rockstar; nothing for VI."
+  },
+  {
+   "id": "C-16",
+   "text": "Al Capone was convicted of income-tax evasion in October 1931 and sentenced to 11 years in federal prison.",
+   "type": "fact",
+   "source_ids": [
+    "S-06",
+    "S-07",
+    "S-08",
+    "S-09",
+    "S-12"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "Verdict 17 October (NARA exhibit, Wikipedia, HISTORY) or 18 October (FBI, Prologue text); sentencing 'a week later' (Wikipedia), 'a month later' (Prologue) or 24 November (FBI). The narration says only 'October 1931' and 'eleven years'."
+  },
+  {
+   "id": "C-18",
+   "text": "Capone died at his home on Palm Island, Miami Beach, Florida, on 25 January 1947.",
+   "type": "fact",
+   "source_ids": [
+    "S-06",
+    "S-07"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "FBI: he resided on Palm Island until his death; Wikipedia: died in his home."
+  },
+  {
+   "id": "C-19",
+   "text": "In 1930 the Chicago Crime Commission's widely publicised Public Enemies list put Capone first ('Public Enemy Number One').",
+   "type": "fact",
+   "source_ids": [
+    "S-06",
+    "S-08"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "Month differs: NARA gives 23 April 1930, Wikipedia places it in March 1930. Narrate only 'in 1930'."
+  },
+  {
+   "id": "C-20",
+   "text": "Capone sponsored a soup kitchen in Chicago during the Depression (a NARA photograph dates one to February 1931).",
+   "type": "fact",
+   "source_ids": [
+    "S-06",
+    "S-10"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "The opening date is not established; narrate 'during the Depression'."
+  },
+  {
+   "id": "C-21",
+   "text": "IRS investigator Frank J. Wilson found ledgers with the line 'Frank paid $17,500 for Al', a key link in the tax case against Capone.",
+   "type": "fact",
+   "source_ids": [
+    "S-11",
+    "S-12",
+    "S-13"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "Amount and wording: Wikipedia and Grant Thornton; HISTORY confirms the ledgers without the amount. That Irey sent Wilson in May 1930 and the bookkeeper's name (Leslie Shumway) are Wikipedia only. Indictment counts differ between sources: do not give a number."
+  },
+  {
+   "id": "C-23",
+   "text": "In The Godfather, Genco Pura Olive Oil Company is the main legal front of Vito Corleone's syndicate.",
+   "type": "fact",
+   "source_ids": [
+    "S-14",
+    "S-15",
+    "S-17"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "Fictional canon. The name 'Genco Pura' is in Wikipedia and Vegetarian Times; AFI confirms the olive-oil business as a legitimate cover without the name."
+  },
+  {
+   "id": "C-24",
+   "text": "In The Godfather, Vito refuses Sollozzo's offer to back the narcotics (heroin) trade because the politicians and judges he controls would turn against him.",
+   "type": "fact",
+   "source_ids": [
+    "S-14",
+    "S-15",
+    "S-16"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "Fictional canon. AFI words the reason as his political influence; Wikipedia and Filmsite name judges and politicians."
+  },
+  {
+   "id": "C-25",
+   "text": "In The Godfather, Vito dies of a heart attack in his garden while playing with his grandson (Wikipedia dates it 29 July 1955).",
+   "type": "fact",
+   "source_ids": [
+    "S-14",
+    "S-15",
+    "S-16"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "Fictional canon. The death scene is corroborated; the YEAR is not: Wikipedia says 1955, Filmsite 1954, AFI gives none. 'In 1955' is single-source and contradicted; say 'in the mid-1950s' or drop the year."
+  },
+  {
+   "id": "C-27",
+   "text": "A phone camera that makes every act public plays the role the newsreel and press played for Capone.",
+   "type": "speculation",
+   "source_ids": [
+    "S-06",
+    "S-08",
+    "S-10"
+   ],
+   "confidence": "unverified",
+   "uncertainty": "Our inference from Capone's 1930 Public Enemy listing and the soup kitchen; no source makes this comparison."
+  },
+  {
+   "id": "C-28",
+   "text": "Tommy Shelby (Peaky Blinders, set in Birmingham; story years 1929 and 1933-34): elected MP, feeds false information to the informant Billy Grade, but also plans the assassination of Oswald Mosley, murders the Barwell family and trades in opium.",
+   "type": "fact",
+   "source_ids": [
+    "S-18",
+    "S-19",
+    "S-20",
+    "S-21"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "Fictional canon. MP: Wikipedia, NME. Mosley assassination plan: Wikipedia, NME, Den of Geek. False information to Billy Grade: Wikipedia, Looper (Looper credits 'the Peaky Blinders'). Barwell murders and opium: Wikipedia only. Election year and constituency not confirmed. 'Wins by data with no gunfire' is our inference, not canon."
+  },
+  {
+   "id": "C-43",
+   "text": "Rockstar's main GTA VI page shows nothing official for VI about a wanted system, money, crypto, laundering or legacy GTA V brands (LifeInvader, Bleeter, BAWSAQ, LCN).",
+   "type": "fact",
+   "source_ids": [
+    "S-01"
+   ],
+   "confidence": "verified",
+   "uncertainty": "Absence on one page, not a denial; the characters and places once listed here are now named on the Only in Leonida page (C-51..C-55). What VI does with these systems is a guess."
+  },
+  {
+   "id": "C-44",
+   "text": "Our rating of Capone (opinion): Brutality 5, Adaptability 1, Tech-Savviness 1, Intimidation 4, Chaos Management 2; after the test, Intimidation 2. Reasons: public reputation for violence, a business and fame tied to one city and to paper records (the ledger, C-21).",
+   "type": "interpretation",
+   "source_ids": [
+    "S-06",
+    "S-07",
+    "S-11",
+    "S-13"
+   ],
+   "confidence": "unverified",
+   "uncertainty": "Our opinion, said as 'our rating'; the star values are the creator's and cannot be verified; the reasons cite the sources listed."
+  },
+  {
+   "id": "C-45",
+   "text": "Our rating of Vito Corleone, film-era Don (opinion): Brutality 2, Adaptability 2, Tech-Savviness 1, Influence/Networking 5, Strategy 4; after the test, Influence 3 outside his circle. Reasons: power from favours, judges and politicians (C-24), the olive-oil front (C-23).",
+   "type": "interpretation",
+   "source_ids": [
+    "S-14",
+    "S-15",
+    "S-16"
+   ],
+   "confidence": "unverified",
+   "uncertainty": "Our opinion, said as 'our rating'; the star values are the creator's and cannot be verified; the reasons cite the sources listed."
+  },
+  {
+   "id": "C-46",
+   "text": "Our rating of the invented Yakuza boss Haruto Mizuno (opinion, invented character): Brutality 4, Adaptability 4, Tech-Savviness 4, Discipline 5, Chaos Management 2; after the test, Discipline 4. His play is the GTA V stock-market way (C-11).",
+   "type": "interpretation",
+   "source_ids": [
+    "S-22",
+    "S-23"
+   ],
+   "confidence": "unverified",
+   "uncertainty": "Our opinion, said as 'our rating'; the star values are the creator's and cannot be verified; the reasons cite the sources listed. The character, his name and his corporate play are invented by us: no real person or group; no Japanese-law claim is made."
+  },
+  {
+   "id": "C-47",
+   "text": "Our rating of Tommy Shelby, 1930s (opinion): Brutality 3, Adaptability 5, Tech-Savviness 5, Intelligence/Strategy 5, Influence 4; after the test, Strategy 4. Reasons: information and politics but also violence and opium (C-28); Tech-Savviness is relative to his era.",
+   "type": "interpretation",
+   "source_ids": [
+    "S-18",
+    "S-19",
+    "S-20"
+   ],
+   "confidence": "unverified",
+   "uncertainty": "Our opinion, said as 'our rating'; the star values are the creator's and cannot be verified; the reasons cite the sources listed."
+  },
+  {
+   "id": "C-48",
+   "text": "The scenario is invented: four bosses from different eras placed in Leonida's Vice City; Rockstar gives no in-game year (C-04), so the year is our assumption.",
+   "type": "speculation",
+   "source_ids": [
+    "S-01"
+   ],
+   "confidence": "unverified",
+   "uncertainty": "Said plainly in the narration; the source shows only that no in-story year is given."
+  },
+  {
+   "id": "C-49",
+   "text": "The 'Florida-style' comic inserts are fully invented: no real incident, person or headline.",
+   "type": "speculation",
+   "source_ids": [
+    "S-02"
+   ],
+   "confidence": "unverified",
+   "uncertainty": "Our own statement about our invention; the source is cited only for the Florida-style setting the inserts parody."
+  },
+  {
+   "id": "C-50",
+   "text": "In GTA V, committing crimes draws a police response shown as a wanted level in stars.",
+   "type": "fact",
+   "source_ids": [
+    "S-22",
+    "S-27"
+   ],
+   "confidence": "corroborated",
+   "uncertainty": "The claim map's 'rises when the police witness a crime' is NOT supported: GTA BOOM says unmodded GTA V police respond to any crime without a witness ('omniscient'). Narrate 'when you commit a crime', not 'when the police see you'."
+  },
+  {
+   "id": "C-51",
+   "text": "Rockstar's 'Only in Leonida' page names six places of Leonida: Vice City, Leonida Keys, Grassrivers, Port Gellhorn, Ambrosia and Mount Kalaga.",
+   "type": "fact",
+   "source_ids": [
+    "S-02"
+   ],
+   "confidence": "verified",
+   "uncertainty": "The page names but does not describe Grassrivers, Port Gellhorn, Ambrosia or Mount Kalaga."
+  },
+  {
+   "id": "C-52",
+   "text": "Rockstar's page: Boobie Ike turned his time in the streets into a business empire of real estate, a strip club and a recording studio, and co-runs Only Raw Records with Dre'Quan Priest.",
+   "type": "fact",
+   "source_ids": [
+    "S-02"
+   ],
+   "confidence": "verified",
+   "uncertainty": "That the business is funded by drug money is not on the page (not used)."
+  },
+  {
+   "id": "C-53",
+   "text": "Rockstar's page: the Real Dimez (Bae-Luxe and Roxy) build a social-media following on viral content ('Viral videos. Viral hooks.'), signed to Only Raw Records.",
+   "type": "fact",
+   "source_ids": [
+    "S-02"
+   ],
+   "confidence": "verified",
+   "uncertainty": ""
+  },
+  {
+   "id": "C-54",
+   "text": "Rockstar's page: Raul Bautista is a seasoned bank robber ('Experience counts.').",
+   "type": "fact",
+   "source_ids": [
+    "S-02"
+   ],
+   "confidence": "verified",
+   "uncertainty": ""
+  },
+  {
+   "id": "C-55",
+   "text": "Rockstar's pages: Brian Heder is a drug runner from 'the golden age of smuggling in the Keys' who runs a boat yard; Jason works for local drug runners in the Keys.",
+   "type": "fact",
+   "source_ids": [
+    "S-02",
+    "S-03"
+   ],
+   "confidence": "verified",
+   "uncertainty": ""
+  }
+ ]
+}

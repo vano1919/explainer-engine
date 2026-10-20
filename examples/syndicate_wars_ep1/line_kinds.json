@@ -1,0 +1,25 @@
+{
+  "note": "Overrides of the default line kind (make_script_builder.py: line_kind), keyed by the exact line text. The default: a claim of type speculation -> speculation; interpretation/estimate/allegation -> analysis; only verified or corroborated, evidence-supported fact claims -> fact; no claims -> joke for a hero's line, else transition. Edit a line's text and its override must move with it.",
+  "lines": {
+    "Could a gangster from the 1930s survive a world where everybody has a CAMERA?": "transition",
+    "Vito rules with favours, not fists. Judges. Politicians. And a very long memory.": "analysis",
+    "We'll test it on four things: the phone, the feed, the money and the wanted level.": "analysis",
+    "What the new game does with any of them, Rockstar hasn't said. We can only guess.": "speculation",
+    "In this city, viral is a business. The Real Dimez live on it.": "analysis",
+    "Someone films him handing out free sandwiches. Millions of views by lunch.": "joke",
+    "What brought Capone down wasn't a rival. Or a bullet. It was a LEDGER.": "analysis",
+    "His real power is who owes him. Judges. Politicians.": "analysis",
+    "That's not morality. That's STRATEGY.": "analysis",
+    "So Vito leaves the noise of Vice City for Ambrosia, another place on Rockstar's page. He runs his import business from there. Legal. Boring. Safe.": "speculation",
+    "Vito doesn't lose a fight. He loses a phone call.": "joke",
+    "Mizuno plays the stock-market way of GTA V.": "analysis",
+    "A skyline of buildings that never saw a bad invoice.": "joke",
+    "A man tries to escape the police on a flamingo-shaped boat. Straight into a car wash.": "joke",
+    "A seagull in a tiny captain's hat takes credit for the arrest.": "joke",
+    "None of this happened. We made it up. But it's Florida, so it feels like it should have.": "joke",
+    "A flamingo boat crashes into his lobby. Someone films it. A rumour trends.": "joke",
+    "In Leonida, Shelby picks the Keys, where Rockstar says smugglers still work the water.": "speculation",
+    "In Vice City, Shelby wouldn't post. He'd pay someone else to post the wrong thing. In the wrong place.": "speculation",
+    "And smile. Somebody's FILMING.": "joke"
+  }
+}

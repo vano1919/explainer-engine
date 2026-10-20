@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "explainer.rights_manifest.v1",
+  "title": "Rights manifest of one episode (docs/RIGHTS_AND_FAIR_USE.md)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "version", "episode_id", "uses_third_party_fiction"],
+  "properties": {
+    "schema": {"const": "explainer.rights_manifest"},
+    "version": {"const": 1},
+    "episode_id": {"type": "string", "minLength": 1},
+    "uses_third_party_fiction": {"type": "boolean"},
+    "franchises": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["name", "owner"],
+      "properties": {"name": {"type": "string", "minLength": 1}, "owner": {"type": "string"}}}},
+    "purpose": {"enum": ["analysis", "commentary", "criticism", "parody", "none"]},
+    "third_party_media": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "description"],
+      "properties": {"kind": {"enum": ["footage", "still", "screenshot", "trailer", "poster", "key_art", "map", "music",
+                                        "sound_effect", "voice", "font", "logo", "fan_art", "other"]},
+                     "description": {"type": "string"}}}},
+    "quotes": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["text", "source", "analyzed"],
+      "properties": {"text": {"type": "string", "minLength": 1}, "source": {"type": "string", "minLength": 1},
+                     "analyzed": {"type": "boolean"}}}},
+    "narration_words": {"type": "integer", "minimum": 0},
+    "recap_words": {"type": "integer", "minimum": 0},
+    "art": {"type": "object", "additionalProperties": false,
+            "required": ["all_original", "imitates_production_design", "generator_prompts_name_franchise"],
+            "properties": {"all_original": {"type": "boolean"}, "imitates_production_design": {"type": "boolean"},
+                           "generator_prompts_name_franchise": {"type": "boolean"}}},
+    "fan_theories": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["summary", "author", "url", "credited",
+                                                                    "uses_their_text_or_art"],
+      "properties": {"summary": {"type": "string"}, "author": {"type": "string"}, "url": {"type": "string"},
+                     "credited": {"type": "boolean"}, "uses_their_text_or_art": {"type": "boolean"},
+                     "permission": {"type": "boolean"}}}},
+    "thumbnail": {"type": "object", "additionalProperties": false,
+                  "required": ["own_art_only", "has_logo", "has_actor_likeness", "has_key_art"],
+                  "properties": {"own_art_only": {"type": "boolean"}, "has_logo": {"type": "boolean"},
+                                 "has_actor_likeness": {"type": "boolean"}, "has_key_art": {"type": "boolean"}}},
+    "description_has_unofficial_note": {"type": "boolean"},
+    "uses_leaks": {"type": "boolean"},
+    "commentary_target": {"type": "string"},
+    "official_images_as_generator_input": {"type": "boolean"},
+    "merch_or_product_use": {"type": "boolean"}
+  }
+}

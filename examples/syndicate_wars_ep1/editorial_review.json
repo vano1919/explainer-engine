@@ -1,0 +1,203 @@
+{
+  "schema": "editorial_review/1",
+  "script_sha256": "61679821f7964d4f428a0efbf8f3c3261bcd3dfc8860a349fdeced604488829c",
+  "script": "examples/syndicate_wars_ep1/production_script.json",
+  "reviewer_role": "independent_critic",
+  "independent": true,
+  "reviewed_at": "2026-10-19",
+  "method": "Delta review of the exact current file against the previously reviewed version (sha 43c9e4fc). A structural JSON diff of HEAD vs the working file shows only: cast.<id>.reference and look.environment (OR-16/PV-47 creator pick, collage tiles 1-5); S03 shot 'It already has' now s01_boardwalk (reuse); S03 shot 'And in the Keys' now defines c12_palm inline; S13 shot 'He did end up' reuses c12_palm; Shorts 3 and 6 shots w02_studio/w02_keys swapped to s01_boardwalk/c12_palm. No narration, claim, source, graphic, timing or other shot changed; make_script_content.py/make_script_builder.py diffs match. The two pictures were opened and viewed; production validate passes. Scores and findings of the full review are kept because nothing they rest on changed. The author's review_answers.md and self-scores were not read. Second delta (same day, after the rebuild): the only change since sha 7f43c269 is that claims C-03, C-05, C-17, C-29 left editorial.claims (28 claims remain, each identical to HEAD by id); a diff against HEAD shows no other editorial, segment, line, source, picture or graphic change beyond the creator picture decisions already reviewed; validate passes. Third delta (same day, after merging base commit 1f2f365, Shorts visual beats): vs sha ef6a1db1 the only differences are visual_beats on the lines of all 10 Shorts (a structural diff against the pre-merge HEAD plus the already-reviewed picture, reference and claim changes shows nothing else: no narration, claim, source, graphic or shot picture changed). All Shorts beats were read against their lines and the picture subjects of their shots; chart beats were checked against claims C-16, C-21, C-51, C-44..C-47. Fourth delta (same day): vs sha 9444efe2 the only change is the S03 L2 / SH03 L3 beat at 'studio.' (highlight became text 'RECORDING STUDIO' at [0.5, 0.82], why 'the boardwalk picture shows none'); a structural diff against the pre-merge HEAD copy shows the same set of paths as before plus this one beat, in the main video and in the Short. Fifth delta (same day, after the creator's voice picks): vs sha bdf2887f a structural diff shows only the voice of the narrator and of the four bosses: voice_id and name (library voices picked by the creator after test reads), traits.ethnicity added, Mizuno's style now asks for a light natural Japanese accent and Shelby's for a Birmingham accent (creator 2026-10-19). No narration, claim, source, segment, line, beat, shot, picture or graphic changed; validate 0 FAIL. Sixth delta (same day, after the full read): vs sha 563aa037 a structural diff shows only shots and visual beats: 50 re-framed shots of pictures already on screen (production fill, RHYTHM-3 on the real read) and one more at 'who realises' (S09); the s03_cursor shot now starts at 'Now. Choose' in place of the 2.3 s sc_all shot, and s08_eye starts at 'who realises' (RHYTHM-2); four beats added (S02 text 'NOV 19, 2026' = the release date the line already says; S06 label 'BRUTALITY'; S12 text 'OCTOBER 1931' = the line's own date; S17 accent at 'his calls.') and the S26 cross moved to 'from attention.' (VB-08). Narration, editorial claims, sources, library, graphics and Shorts are byte-identical to HEAD; timed 0 FAIL on the real read; validate 0 FAIL.",
+  "verdict": "PASS_WITH_RECOMMENDATIONS",
+  "previous_review": {
+    "script_sha256": "563aa037da25216f38f849b2f842b7810ef3c8bd6a96f12f162fb3830cd76074",
+    "verdict": "PASS_WITH_RECOMMENDATIONS",
+    "status": "same verdict; delta review, structural diff below"
+  },
+  "scores": {
+    "factual_reliability": {
+      "score": 4,
+      "evidence": "All 20 fact lines match their claims; five key sources re-read first-hand 2026-10-19 (Rockstar VI S-01, Only in Leonida S-02, FBI S-07, NARA S-08, AFI S-15). The previous on-screen problems are fixed: G03 'Elected MP (in the story)', G06 'The ledger line found'; S09#L03-L04 no longer assert GTA V satire. Not 5: S27#L01 'Worse.' leans on C-28's Wikipedia-only parts (Barwell murders, opium), and S18#L03 'A gentler ending than anyone else here gets' is a loose comparison with S13#L05."
+    },
+    "clarity": {
+      "score": 4,
+      "evidence": "Fiction is now named: S06#L01 'the Don from The Godfather films', S08#L01 'from the TV series Peaky Blinders, in his Birmingham years around 1930'; S13#L01 now reads 'Capone's mistake would sink him in any century'. Invented parts are flagged at S02#L03, S11#L01, S19#L01, S21#L01, S22#L04."
+    },
+    "story_coherence": {
+      "score": 4,
+      "evidence": "Loudest-to-quietest order set at S09#L05 and kept; handoffs at S13#L06, S18#L04, S24#L02; Mizuno's 'Chaos management? Two. Remember that.' (S07#L03-L04) pays at S23#L07. Weak spot remains: Shelby's 'CERTAINTY' flaw (S28) is told, never shown costing him, yet S31#L02 drops his strategy to four."
+    },
+    "hook": {
+      "score": 4,
+      "evidence": "S01#L01 asks a concrete yes/no puzzle in the first sentence ('Could a gangster from the 1930s survive a world where everybody has a CAMERA?'); S01#L06 opens the loop paid at S30#L02 ('Shelby. That's why he wins. Mostly.')."
+    },
+    "relevance": {
+      "score": 3,
+      "evidence": "The lens that visibility is both shield and map (S11#L08, S14#L04, S27#L03) applies to phone-camera life; otherwise entertainment on a GTA frame, with the Capone tax case (S12) as the real-history payload."
+    },
+    "originality": {
+      "score": 4,
+      "evidence": "Distinct mechanism per boss: fame (Capone), favours (Vito), boardroom discipline (invented Mizuno), misdirection (Shelby), all tested against attention; own line 'Attention is power. Right up until it becomes a MAP' (S11#L08)."
+    },
+    "spoken_naturalness": {
+      "score": 4,
+      "evidence": "Short spoken lines with reactions ('Hmm.' S13#L01, 'Right.' S26#L01, 'Safe? Well, no.' S17#L03); boss lines punchy; S13#L01 now reads cleanly."
+    },
+    "visual_potential": {
+      "score": 4,
+      "evidence": "Every narration line has anchored visual_beats; concrete set pieces at S11#L03, S17#L05, S23#L02, S26#L06; all 8 graphics now name the segment holding their anchor phrase (G03 S08 ... G08 S18, checked)."
+    },
+    "humour_fit": {
+      "score": 4,
+      "evidence": "Jokes come from each boss's logic (S11#L04 'Print more sandwiches!', S17#L02 'Nobody films olive oil.', S17#L06 'He always calls back.'); the Florida gag is disclosed at S22#L04; no joke changes a fact."
+    },
+    "pacing_potential": {
+      "score": 4,
+      "evidence": "Fact-dense rounds alternate with pauses and gags: S12 reveal -> S13 emotional_pause; S16 -> S17 -> S18 pause; S22 humour break between Mizuno's win and fall."
+    },
+    "source_coverage": {
+      "score": 4,
+      "evidence": "Every fact/analysis/speculation line maps to claims; source contradictions are recorded and respected in narration (C-16 'October 1931', C-19 'In 1930', C-25 'mid-1950s', C-50 no witness). Graphics labels now stay within their claims. Not 5: C-28 bundles corroborated and single-source parts; C-44's violence reason is supported by the FBI page but that passage is not quoted in S-07; C-03, C-05, C-17, C-29 are unused."
+    },
+    "title_thumbnail_alignment": {
+      "score": 4,
+      "evidence": "Thumbnail 'WHO FALLS FIRST?' with Capone crossed out is paid early (S13#L04) and fully (S29). Title 'Classic Mafia Bosses' remains loose for an invented Yakuza boss and a Birmingham gang leader, and 'Wars' is not a war between them; the creator's call (approved working title)."
+    },
+    "shorts_potential": {
+      "score": 4,
+      "evidence": "10 Shorts with distinct ideas; honesty now consistent: SH02#L02 'Made up, every word: our invented boss Haruto Mizuno, in our invented Vice City.', SH05#L01 'our invented Vice City test', SH06#L05 'In our invented Vice City', SH07#L02 'our invented boss Haruto Mizuno', SH10#L01 'Could the smartest boss ... still lose?' matches the long outcome; SH08 ending no longer implies a 'part two'."
+    }
+  },
+  "critical_blockers": [],
+  "required_revisions": [],
+  "findings": [
+    {
+      "rank": 1,
+      "severity": "recommended",
+      "where": "editorial.claims C-28 / S27#L01",
+      "issue": "C-28 bundles corroborated parts (MP, Mosley plan, Billy Grade) with Wikipedia-only parts (Barwell murders, opium); S27#L01 'Worse.' rests on the single-source part. Shelby's violence is pervasive in the series, so the line is true, but the evidence for 'Worse' is one publisher.",
+      "proposal": "Split C-28, or drop 'Worse.' so S27#L01 ends 'An assassination attempt.'"
+    },
+    {
+      "rank": 2,
+      "severity": "recommended",
+      "where": "S18#L03",
+      "issue": "'A gentler ending than anyone else here gets' sits badly with S13#L05, where the real Capone also dies at home.",
+      "proposal": "'In the story, he dies in his garden in the mid-1950s, playing with his grandson. A gentle ending, for a man who ruled with favours.'"
+    },
+    {
+      "rank": 3,
+      "severity": "recommended",
+      "where": "S28-S31",
+      "issue": "Shelby's flaw (certainty, cameras behind him) is never shown costing him anything; the drop to strategy four (S31#L02) is told, not dramatised.",
+      "proposal": "One invented beat, e.g. S28 after L04: 'Somewhere behind him, a tourist films the real ledger. By accident.'"
+    },
+    {
+      "rank": 4,
+      "severity": "creator_call",
+      "where": "episode.title",
+      "issue": "'Classic Mafia Bosses' fits Capone and Vito only; 'Syndicate Wars' also names Bullfrog's 1996 game (search confusion, not a rights block).",
+      "proposal": "'Syndicate Wars: Classic Crime Bosses in GTA 6's Leonida'."
+    },
+    {
+      "rank": 5,
+      "severity": "note",
+      "where": "editorial.sources S-07 / C-44",
+      "issue": "C-44's 'public reputation for violence' is supported by the FBI page ('Capone had built a fearsome reputation in the ruthless gang rivalries of the period', read 2026-10-19), but S-07's passage does not quote it.",
+      "proposal": "Add that passage to S-07."
+    },
+    {
+      "rank": 6,
+      "severity": "note",
+      "where": "SH06#L03",
+      "issue": "The invented marker sits on L05; L03 'In Leonida, Shelby picks the Keys' comes first without it. Acceptable: L05 discloses within the same beat.",
+      "proposal": "none required"
+    },
+    {
+      "rank": 7,
+      "severity": "resolved",
+      "where": "editorial.claims C-03, C-05, C-17, C-29",
+      "issue": "Claims C-03, C-05, C-17, C-29 were unused by every narration line (gate EG-11 REVIEW).",
+      "proposal": "Resolved 2026-10-19: removed from editorial_contract.json and the script; EG-11 no longer fires."
+    },
+    {
+      "rank": 8,
+      "severity": "note",
+      "where": "S03 'And in the Keys' / S13 'He did end up' / SH06 'In Leonida'",
+      "issue": "c12_palm is Capone's lonely Palm Island house. Used for the Keys (Brian Heder, S03 and SH06) it pre-shows the S13 ending image, and a viewer may link Heder's Keys with Capone's house.",
+      "proposal": "Accept (creator decision); optionally vary the S13 crop/motion (the pull already differs from the S03 push) so the echo reads as intentional."
+    },
+    {
+      "rank": 9,
+      "severity": "resolved",
+      "where": "SH03 L3 beat at 'studio.' (highlight, 'rings the recording studio in the picture')",
+      "issue": "The shot under that line ('Real estate' onward) is now s01_boardwalk after the creator's swap; it has no recording studio, so the ring points at nothing the line names and the beat's own 'why' is false.",
+      "proposal": "Resolved 2026-10-19: the beat is now a text beat naming the recording studio; the why states the picture shows none (also fixed in the main video line)."
+    },
+    {
+      "rank": 10,
+      "severity": "note",
+      "where": "SH05 L3 'Shelby last' highlight 'his card'; SH04 L5 'people who know you at the table'",
+      "issue": "Both sit on pictures that do not literally show a card (p_shelby portrait) or a table (v13_window is a dinner seen through a window); loose but not contradicting the line.",
+      "proposal": "Optional: reword the 'why' or place the ring on the visible figure."
+    }
+  ],
+  "sources_spot_checked": [
+    {
+      "url": "https://www.rockstargames.com/VI",
+      "result": "release 'Coming November 19, 2026', PS5 / Xbox Series X|S, 'Vice City, USA.'; no story year; no wanted system, social app, stocks or crypto named (C-01, C-02, C-04, C-05, C-43 hold)."
+    },
+    {
+      "url": "https://www.rockstargames.com/VI/only-in-leonida",
+      "result": "Boobie Ike (real estate, strip club, recording studio, Only Raw Records), Real Dimez (social media, signed to Only Raw), Raul Bautista 'seasoned bank robber', Brian Heder 'classic drug runner from the golden age of smuggling in the Keys', boat yard; places Vice City, Leonida Keys, Grassrivers, Port Gellhorn, Ambrosia, Mount Kalaga (also Leonida Penitentiary). C-51..C-55 hold; the four characters are only named and described in Rockstar's terms, never given lines or actions."
+    },
+    {
+      "url": "https://www.fbi.gov/history/famous-cases/al-capone",
+      "result": "convicted 18 Oct 1931, eleven years, Atlanta and Alcatraz, released 16 Nov 1939, Palm Island, died 25 Jan 1947 (stroke, pneumonia). C-16, C-17, C-18 hold."
+    },
+    {
+      "url": "https://www.archives.gov/exhibits/american_originals/capone.html",
+      "result": "verdict 17 Oct 1931, 11 years; first Public Enemies List 23 Apr 1930 with Capone first. C-16, C-19 hold."
+    },
+    {
+      "url": "https://catalog.afi.com/Film/54023-the-godfather",
+      "result": "olive oil business 'a legitimate cover'; Vito 'refuses to risk losing his political influence by embracing the drug traffic'; 'fatal heart attack in his vegetable garden' with grandson. C-23 (without the name), C-24, C-25 hold."
+    }
+  ],
+  "delta_checks": [
+    {
+      "where": "S03 'It already has' (s01_boardwalk)",
+      "result": "fits: the line names Leonida's own places (Real estate, Boobie Ike's businesses); a neon strip with crowds filming is on theme, no Rockstar character is drawn (only anonymous faceless crowd), neighbours are s01_skyline and s01_phones so no back-to-back repeat. Only softness: the picture already appeared in S01, so it is a reuse not a new place."
+    },
+    {
+      "where": "S03 'And in the Keys' (c12_palm)",
+      "result": "fits: empty island, nobody drawn, no Rockstar character; reads as quiet water for 'an old smuggler still works the water'. It loses the boat-yard/smuggling cue of the dropped w02_keys, so the picture says 'island' rather than 'smuggler'; the narration carries that."
+    },
+    {
+      "where": "S13 'He did end up' (c12_palm, reuse)",
+      "result": "still reads right: the lit house and empty chair match 'At home on Palm Island ... a quiet ending'. Previous shot is p_capone, no repeat. The picture now appeared earlier in S03, so the ending is an echo rather than a first sight."
+    },
+    {
+      "where": "Shorts 3 and 6",
+      "result": "swaps are consistent with the long video; the s01_boardwalk and c12_palm shots run as two consecutive shots with different crops, the same pattern the script already uses for s03_cursor and c10_viral, so no new type of repeat."
+    },
+    {
+      "where": "nothing else changed",
+      "result": "confirmed by structural diff; narration, claims, sources, graphics unchanged."
+    },
+    {
+      "where": "editorial.claims",
+      "result": "C-03, C-05, C-17, C-29 removed; no remaining claim changed; no narration line referenced them (they were unused), so no line lost its support."
+    },
+    {
+      "where": "Shorts visual_beats (all 10 Shorts)",
+      "result": "consistent with their lines in all but one beat (finding 9). Counter and bar charts match their claims (17,500 $; 11 years; six places; Capone intimidation 4 to 2, Vito influence 5 to 3, Mizuno discipline 5 to 4, Shelby strategy 5 to 4). Rockstar characters (Boobie Ike, Real Dimez, Raul Bautista, Brian Heder) appear only as text beats marked 'never drawn'. Each Short still flags its invented scenes in its narration (SH02 L2 'Made up', SH04 L6 'Invented, but it tracks', SH06 L5 'our invented Vice City', SH07 L2 'our scenario... invented', SH05 L1 'invented Vice City test'), and the beats add MADE UP, INVENTED and OUR SCENARIO text at those points; no beat presents an invented scene as real. SH09 stars beats and 'OUR OPINION' keep ratings labelled as opinion."
+    },
+    {
+      "where": "S03 line 'Real estate, a strip club, a recording studio' and SH03 L3",
+      "result": "beat at 'studio.' now a text label, true to the boardwalk picture; no ring on a missing object. It shares position [0.5, 0.82] with the earlier REAL ESTATE text, which is harmless as they are on different words and times. Nothing else changed."
+    },
+    {
+      "where": "cast.<boss>.voice and voice (narrator)",
+      "result": "library voice ids and names set, ethnicity traits, two accent words in style; no spoken text changed. The accents fit each hero's stated origin (Japanese businessman, 1930s Birmingham) and are delivered by library voices with a natural accent, not a caricature (RK-09); no actor's or person's name in any voice text (ER-03, PV-10 passes)."
+    }
+  ]
+}

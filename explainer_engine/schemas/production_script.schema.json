@@ -1,0 +1,2203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "production_script.schema.json",
+  "title": "Production script (version 1, D-43): one file is the script, the voice direction, the picture plan, the sound plan and the edit",
+  "description": "Written segment by segment: a segment's lines, its shots (with their picture prompts) and its sounds are written together. Times are never written by hand: explainer_engine.production.timing fills them from the read (words.json) into a separate timed file.",
+  "type": "object",
+  "required": [
+    "schema",
+    "episode",
+    "voice",
+    "world",
+    "cast",
+    "segments"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "enum": [
+        "production_script/1",
+        "production_script/2",
+        "production_script/3"
+      ],
+      "description": "/2 (2026-10-19): every line carries its visual beats (VB rules, PV-39 FAIL); /3 (2026-10-19, the scene rewrite): dialogue lives in scenes (segments[].scene, lines[].to, SC rules PV-48), cues are opt-in and event-bound (VB-08/VB-10/VB-11); /1 is the legacy contract"
+    },
+    "episode": {
+      "type": "object",
+      "required": [
+        "id",
+        "title"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3
+        },
+        "fps": {
+          "type": "integer",
+          "enum": [
+            24,
+            25,
+            30,
+            60
+          ],
+          "default": 30
+        },
+        "size": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 64
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "grade": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "gemini_exception": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decision",
+            "cap_usd"
+          ],
+          "description": "the creator's recorded exception letting Gemini paint this episode's own pictures (D-44 style); without it a Gemini paint plan FAILs PP-05",
+          "properties": {
+            "decision": {
+              "type": "string",
+              "pattern": "^D-[0-9]{2,3}$"
+            },
+            "cap_usd": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        },
+        "distinct": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "what makes this episode its own (PV-38): compared with docs/episodes.json",
+          "properties": {
+            "premise": {
+              "type": "string"
+            },
+            "question": {
+              "type": "string"
+            },
+            "outcome": {
+              "type": "string"
+            },
+            "mechanism": {
+              "type": "string"
+            }
+          }
+        },
+        "rulebook": {
+          "type": "string",
+          "description": "episode_rules.json next to the script (D-51); new-style scripts set it and PV-39..PV-42 apply"
+        },
+        "scenario": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "PV-45, OR-15: the short scenario the creator approved before this script was written (file next to the script, sha256 binds the approval)",
+          "properties": {
+            "file": {
+              "type": "string"
+            },
+            "approved_by": {
+              "type": "string"
+            },
+            "approved_at": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "voice": {
+      "type": "object",
+      "required": [
+        "provider",
+        "model",
+        "style",
+        "pace_wpm"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "enum": [
+            "elevenlabs",
+            "kokoro"
+          ]
+        },
+        "model": {
+          "type": "string"
+        },
+        "voice_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "style": {
+          "type": "string",
+          "minLength": 10,
+          "description": "how the narrator sounds, in descriptive words only (never a real person's name: no imitation, no cloning)"
+        },
+        "pace_wpm": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 90,
+            "maximum": 220
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "default_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "voice_id",
+              "name"
+            ],
+            "properties": {
+              "voice_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "why": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "world": {
+      "type": "object",
+      "description": "the world spec read by world.resolver.resolve (host, visitors, light owner, day_arc)"
+    },
+    "look": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "style_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "picture ids that carry the channel look (Gemini frames)"
+        },
+        "default_engine": {
+          "enum": [
+            "pod_ref",
+            "gemini",
+            "pod_text"
+          ]
+        },
+        "environment": {
+          "type": "object",
+          "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference",
+          "required": [
+            "collage",
+            "tile",
+            "picture",
+            "approved_by",
+            "approved_at"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "collage": {
+              "type": "string"
+            },
+            "tile": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "picture": {
+              "type": "string"
+            },
+            "approved_by": {
+              "type": "string"
+            },
+            "approved_at": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "cast": {
+      "type": "object",
+      "description": "named heroes: how the narration names them, how a picture draws them, what they own",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "names",
+          "card"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "card": {
+            "type": "string",
+            "minLength": 10
+          },
+          "props": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "voice": {
+            "type": "object",
+            "description": "the hero's own voice for spoken dialogue lines (D-45): a description of the sound, never a real person to imitate (PV-10, PV-32)",
+            "required": [
+              "style"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "voice_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "style": {
+                "type": "string",
+                "minLength": 10
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "voice_id",
+                    "name"
+                  ],
+                  "properties": {
+                    "voice_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "why": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "traits": {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "VC rules: the character's audible traits (age, gender, temperament, energy, origin), from which audio/casting.py builds the voice search; for a real person only documented traits, never an imitation",
+                "properties": {
+                  "gender": {
+                    "enum": [
+                      "male",
+                      "female",
+                      "neutral"
+                    ]
+                  },
+                  "age": {
+                    "enum": [
+                      "young",
+                      "middle_aged",
+                      "old"
+                    ]
+                  },
+                  "temperament": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 4
+                  },
+                  "energy": {
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high"
+                    ]
+                  },
+                  "origin": {
+                    "type": "string"
+                  },
+                  "ethnicity": {
+                    "type": "string",
+                    "description": "VC-05: the hero's ethnic or national background, from which the accent is read when origin names none (a Japanese businessman speaks English with a Japanese accent)"
+                  },
+                  "role": {
+                    "enum": [
+                      "narrator",
+                      "hero",
+                      "rival",
+                      "mentor",
+                      "comic",
+                      "villain",
+                      "everyman"
+                    ]
+                  },
+                  "real_person": {
+                    "type": "boolean"
+                  },
+                  "documented": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "sourced facts about a real person's speech (era, origin, temperament); claim ids or URLs"
+                  }
+                }
+              }
+            }
+          },
+          "expressions": {
+            "type": "object",
+            "propertyNames": {
+              "enum": [
+                "neutral",
+                "curious",
+                "surprised",
+                "joyful",
+                "amused",
+                "smug",
+                "confused",
+                "doubtful",
+                "worried",
+                "scared",
+                "angry",
+                "sad",
+                "determined",
+                "deadpan"
+              ]
+            },
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "VB-06: expression -> a cut-out face/pose PNG of this hero (the face inset swaps it on every change)"
+          },
+          "face_sheet": {
+            "type": "object",
+            "description": "VB-09: one sheet of close-up expressions on chroma green, painted once from the hero's reference picture and reused in every scene and episode (production/faces.py)",
+            "required": [
+              "ref",
+              "set"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "set": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "neutral",
+                    "curious",
+                    "surprised",
+                    "joyful",
+                    "amused",
+                    "smug",
+                    "confused",
+                    "doubtful",
+                    "worried",
+                    "scared",
+                    "angry",
+                    "sad",
+                    "determined",
+                    "deadpan"
+                  ]
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          },
+          "speech": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "basis",
+              "style",
+              "words"
+            ],
+            "description": "PV-46, DW-11: how the hero talks - from their generally known manner (public, with sources) or, for an invented hero, their personality; our own words, never a quote or an actor's delivery",
+            "properties": {
+              "basis": {
+                "enum": [
+                  "public",
+                  "personality"
+                ]
+              },
+              "style": {
+                "type": "string"
+              },
+              "words": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "avoid": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "reference": {
+            "type": "object",
+            "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference",
+            "required": [
+              "collage",
+              "tile",
+              "picture",
+              "approved_by",
+              "approved_at"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "collage": {
+                "type": "string"
+              },
+              "tile": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "picture": {
+                "type": "string"
+              },
+              "approved_by": {
+                "type": "string"
+              },
+              "approved_at": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "story": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "thing",
+              "at"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "thing": {
+                "type": "string"
+              },
+              "at": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "forbidden_props": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "objects that must never be shown (a magnifier when the story's lens is reading glasses)"
+        }
+      }
+    },
+    "library": {
+      "type": "object",
+      "description": "pictures that already exist (made in an earlier version): id -> picture",
+      "additionalProperties": {
+        "$ref": "#/$defs/picture"
+      }
+    },
+    "sound_dirs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "folders (relative to the script) with sounds by name"
+    },
+    "picture_dirs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "folders (relative to the script) with the pictures' files"
+    },
+    "music": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "track",
+          "from",
+          "to"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "track": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gain_db": {
+            "type": "number",
+            "minimum": -40,
+            "maximum": -6
+          },
+          "fade_s": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 6
+          }
+        }
+      }
+    },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "beat",
+          "light_beat",
+          "lines",
+          "shots"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^S[0-9]{2}$"
+          },
+          "beat": {
+            "type": "string"
+          },
+          "light_beat": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "exactly what is said, no tags"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "ElevenLabs delivery tags placed before the line"
+                },
+                "tone": {
+                  "type": "string"
+                },
+                "emotion": {
+                  "type": "string"
+                },
+                "emphasis": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 1,
+                  "description": "the one word that carries the surprise (spoken in capitals)"
+                },
+                "pause_after": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 2.5,
+                  "description": "a held pause after the line in seconds, written as [pause] / ... for the voice and enforced by pause_pad"
+                },
+                "claims": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "speaker": {
+                  "type": "string",
+                  "description": "cast id of the hero who speaks this line in their own voice (D-45, PV-32); absent = the narrator"
+                },
+                "to": {
+                  "type": "string",
+                  "description": "SC-04 (/3): who this line is said to - a cast id of scene.present, 'self' or 'room'; a hero never talks to the narrator"
+                },
+                "intent": {
+                  "enum": [
+                    "reveal",
+                    "press",
+                    "deflect",
+                    "concede",
+                    "question",
+                    "banter",
+                    "decide",
+                    "aside"
+                  ],
+                  "description": "what the line DOES in the exchange (DW-05/DW-12); a reveal expects another character's reaction"
+                },
+                "kind": {
+                  "enum": [
+                    "fact",
+                    "analysis",
+                    "speculation",
+                    "joke",
+                    "transition"
+                  ],
+                  "description": "Narrative classification for the editorial gate; fact, analysis and speculation require claim references."
+                },
+                "visual_beats": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/beat"
+                  },
+                  "description": "VB rules: the visual beats of this line (stage 2b, beat-writer), in the order they land"
+                }
+              }
+            }
+          },
+          "shots": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "at",
+                "type",
+                "picture",
+                "motion"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "at": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "the words of this segment where the picture appears; the cut goes in the pause before them"
+                },
+                "type": {
+                  "enum": [
+                    "A",
+                    "B",
+                    "C"
+                  ]
+                },
+                "picture": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$ref": "#/$defs/picture"
+                        },
+                        {
+                          "required": [
+                            "id"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "motion": {
+                  "$ref": "#/$defs/motion"
+                },
+                "transition": {
+                  "enum": [
+                    "cut",
+                    "dissolve"
+                  ],
+                  "default": "cut"
+                },
+                "insert": {
+                  "type": "boolean"
+                },
+                "reveal": {
+                  "type": "string"
+                },
+                "heroes_ok": {
+                  "type": "boolean"
+                },
+                "bubbles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "at",
+                      "who",
+                      "text"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "at": {
+                        "type": "string"
+                      },
+                      "who": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "until": {
+                        "type": "string"
+                      },
+                      "hold": {
+                        "type": "number"
+                      },
+                      "kind": {
+                        "enum": [
+                          "speech",
+                          "shout",
+                          "thought"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "reuse": {
+                  "type": "string",
+                  "description": "SR-08 plan: 'unique' or 'reuse' (the picture appeared before; a different crop, zoom or bubble)"
+                },
+                "accents": {
+                  "type": "array",
+                  "description": "MO rules: drawn motion accents on top of the camera move, rendered by production/accents.py",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "kind": {
+                        "enum": [
+                          "punch",
+                          "shake",
+                          "whip_in",
+                          "flash_in",
+                          "pop_text",
+                          "slam_text",
+                          "wobble"
+                        ]
+                      },
+                      "at": {
+                        "type": "string",
+                        "description": "the words the accent lands on (default: the shot's start)"
+                      },
+                      "text": {
+                        "type": "string",
+                        "maxLength": 32,
+                        "description": "pop_text / slam_text: the words shown (at most 4)"
+                      },
+                      "strength": {
+                        "type": "number",
+                        "minimum": 0.2,
+                        "maximum": 1.0,
+                        "default": 0.6
+                      },
+                      "pos": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                      }
+                    }
+                  }
+                },
+                "purpose": {
+                  "type": "string",
+                  "description": "why this picture is on screen now (PV-42 REVIEW when missing)"
+                },
+                "cut": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "why"
+                  ],
+                  "properties": {
+                    "why": {
+                      "type": "string",
+                      "minLength": 3
+                    }
+                  },
+                  "description": "why the cut or transition into this shot suits the beat (the type stays in transition/UR-14)"
+                }
+              }
+            }
+          },
+          "audio": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "beds": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "at",
+                    "sound"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "at": {
+                      "type": "string"
+                    },
+                    "sound": {
+                      "type": "string"
+                    },
+                    "gain_db": {
+                      "type": "number",
+                      "minimum": -40,
+                      "maximum": -6
+                    },
+                    "purpose": {
+                      "type": "string",
+                      "description": "the event's narrative or emotional job (PV-41)"
+                    },
+                    "yields_to": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "voice",
+                          "sfx",
+                          "music",
+                          "bed"
+                        ]
+                      },
+                      "description": "layers this event ducks under"
+                    }
+                  }
+                },
+                "description": "ambience changes inside the segment, each from its phrase until the next change (crossfaded); a story sound starts on its event's words"
+              },
+              "sfx": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "at",
+                    "sound"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "at": {
+                      "type": "string"
+                    },
+                    "sound": {
+                      "type": "string"
+                    },
+                    "gain_db": {
+                      "type": "number",
+                      "minimum": -40,
+                      "maximum": -6
+                    },
+                    "max_s": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "maximum": 20
+                    },
+                    "offset_s": {
+                      "type": "number",
+                      "minimum": -1,
+                      "maximum": 1
+                    },
+                    "purpose": {
+                      "type": "string",
+                      "description": "the event's narrative or emotional job (PV-41)"
+                    },
+                    "yields_to": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "voice",
+                          "sfx",
+                          "music",
+                          "bed"
+                        ]
+                      },
+                      "description": "layers this event ducks under"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "period": {
+            "type": "string",
+            "description": "the time-jump chapter this segment belongs to (day1, week1, month1, year1, year10, year100, compare)"
+          },
+          "scene": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "SC rules (docs/STORY_ENGINE.md, PV-48): the staged scene this segment's dialogue plays in; required on a production_script/3 segment with any speaker line",
+            "required": [
+              "place",
+              "present",
+              "pov",
+              "want",
+              "obstacle_want",
+              "value",
+              "open_charge",
+              "close_charge",
+              "exit"
+            ],
+            "properties": {
+              "place": {
+                "type": "string",
+                "minLength": 3,
+                "description": "where this plays, concrete (the back room of the club, night)"
+              },
+              "time": {
+                "type": "string",
+                "description": "when, relative to the story (that night, an hour later)"
+              },
+              "present": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "uniqueItems": true,
+                "description": "cast ids physically in the scene; only they may speak or be spoken to (SC-04)"
+              },
+              "why_now": {
+                "type": "string",
+                "description": "what just changed that forces this conversation NOW"
+              },
+              "pov": {
+                "type": "string",
+                "description": "the cast id whose want drives the scene"
+              },
+              "want": {
+                "type": "string",
+                "minLength": 3,
+                "description": "the pov hero's short-term, concrete want in THIS scene"
+              },
+              "obstacle_want": {
+                "type": "string",
+                "minLength": 3,
+                "description": "the opposing want of another present character (SC-03: must differ from want)"
+              },
+              "value": {
+                "type": "string",
+                "description": "the value at stake (control, trust, safety)"
+              },
+              "open_charge": {
+                "enum": [
+                  "+",
+                  "-"
+                ],
+                "description": "the value's charge when the scene opens"
+              },
+              "close_charge": {
+                "enum": [
+                  "+",
+                  "-"
+                ],
+                "description": "the charge when it closes; SC-02: must differ from open_charge or the scene is a nonevent"
+              },
+              "turn": {
+                "type": "string",
+                "description": "the beat where the scene turns, in one sentence"
+              },
+              "exit": {
+                "enum": [
+                  "fail_new_goal",
+                  "succeed_complication",
+                  "interrupted"
+                ],
+                "description": "how the scene ends: a failure that sets a new goal, a success that costs, or an interruption"
+              },
+              "surface_topic": {
+                "type": "string",
+                "description": "what the characters talk ABOUT on the surface (SC-10)"
+              },
+              "real_subject": {
+                "type": "string",
+                "description": "what the scene is REALLY about; no line may state it verbatim (SC-10)"
+              },
+              "mode": {
+                "enum": [
+                  "balanced",
+                  "asymmetric",
+                  "indirect",
+                  "comic",
+                  "minimal",
+                  "learner"
+                ],
+                "description": "the scene's conflict mode (DW-09: learner is one mode among several, varied across the episode)"
+              }
+            }
+          },
+          "drama": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "function",
+              "turn"
+            ],
+            "description": "what this segment does in the story (ST rules): its function, how it follows the one before (but / therefore), the stakes, the value that turns, the loops it opens and closes",
+            "properties": {
+              "function": {
+                "enum": [
+                  "cold_open",
+                  "hook",
+                  "setup",
+                  "inciting",
+                  "escalation",
+                  "reversal",
+                  "midpoint",
+                  "crisis",
+                  "climax",
+                  "twist",
+                  "resolution",
+                  "button"
+                ]
+              },
+              "turn": {
+                "enum": [
+                  "but",
+                  "therefore",
+                  "start"
+                ],
+                "description": "ST-02: every segment after the first follows by BUT or THEREFORE, never AND THEN"
+              },
+              "stakes": {
+                "type": "string",
+                "description": "what is lost if it goes wrong, in plain words"
+              },
+              "shift": {
+                "type": "string",
+                "description": "the value that turns in this segment, as 'from -> to' (safe -> hunted)"
+              },
+              "need": {
+                "enum": [
+                  "curiosity",
+                  "stakes",
+                  "humour",
+                  "wonder",
+                  "fear",
+                  "identity",
+                  "justice",
+                  "belonging",
+                  "competence",
+                  "surprise"
+                ]
+              },
+              "opens": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^L[0-9]{2}$"
+                }
+              },
+              "closes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^L[0-9]{2}$"
+                }
+              },
+              "claim_share": {
+                "enum": [
+                  "fact",
+                  "reasoned",
+                  "invented"
+                ],
+                "description": "ST-09: what kind of statement carries this segment"
+              }
+            }
+          },
+          "job": {
+            "enum": [
+              "hook",
+              "question",
+              "explanation",
+              "evidence",
+              "complication",
+              "reveal",
+              "emotional_pause",
+              "humor",
+              "payoff",
+              "transition"
+            ],
+            "description": "what this beat does for the viewer (EPISODE_STANDARDS 5.4, PV-39)"
+          },
+          "feel": {
+            "type": "string",
+            "description": "what the viewer should understand or feel at the end of the beat"
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^ER-[0-9]{2,3}$"
+            },
+            "description": "rulebook rules this beat must respect"
+          }
+        }
+      }
+    },
+    "periods": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "question",
+          "bottleneck"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "bottleneck": {
+            "type": "string"
+          },
+          "tone": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            }
+          },
+          "card": {
+            "type": "object",
+            "required": [
+              "title"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "line": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "shorts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "hook",
+          "lines",
+          "shots"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^SH[0-9]{2}$"
+          },
+          "hook": {
+            "type": "string"
+          },
+          "source_period": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "emphasis": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 1
+                },
+                "pause_after": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 2.5
+                },
+                "claims": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "speaker": {
+                  "type": "string",
+                  "description": "cast id of the hero who speaks this line in their own voice (D-45, PV-32); absent = the narrator"
+                },
+                "to": {
+                  "type": "string",
+                  "description": "kept when a Short reuses a scene line (SC-04); not checked on a Short's own lines"
+                },
+                "intent": {
+                  "enum": [
+                    "reveal",
+                    "press",
+                    "deflect",
+                    "concede",
+                    "question",
+                    "banter",
+                    "decide",
+                    "aside"
+                  ]
+                },
+                "visual_beats": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/beat"
+                  },
+                  "description": "VB rules on a Short (SS-09): the visual beats of this line, same contract as a segment line's"
+                }
+              }
+            }
+          },
+          "shots": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "at",
+                "picture",
+                "crop_x"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "at": {
+                  "type": "string"
+                },
+                "picture": {
+                  "type": "string"
+                },
+                "crop_x": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "zoom": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 1.6
+                }
+              }
+            }
+          },
+          "style": {
+            "enum": [
+              "cold_open_cliffhanger",
+              "anti_intuition",
+              "countdown_hud",
+              "dialogue_clash",
+              "fact_bomb",
+              "pov_you",
+              "myth_buster",
+              "ranked_three",
+              "loop",
+              "would_you"
+            ],
+            "description": "SS-01: the Short's style; a set of 10 uses at least 6 styles"
+          },
+          "ending": {
+            "enum": [
+              "cliffhanger",
+              "loop",
+              "question",
+              "pointer"
+            ],
+            "description": "SS-04: how the Short ends"
+          }
+        }
+      }
+    },
+    "graphics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "segment",
+          "at",
+          "kind",
+          "claim"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "segment": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "calc",
+              "bars",
+              "timeline"
+            ]
+          },
+          "claim": {
+            "type": "string"
+          },
+          "hold": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "side": {
+            "enum": [
+              "left",
+              "right",
+              "center"
+            ]
+          }
+        }
+      }
+    },
+    "drama": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "the story layer (ST rules, docs/STORY_ENGINE.md): premise, the dramatic question, the hero arcs, the open loops and the set-ups the segments open and pay off",
+      "required": [
+        "premise",
+        "question",
+        "promise"
+      ],
+      "properties": {
+        "premise": {
+          "type": "string",
+          "minLength": 10,
+          "description": "the alternate reality in one sentence: what is changed, for whom"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 8,
+          "description": "the dramatic question the whole video answers (ST-01)"
+        },
+        "promise": {
+          "type": "string",
+          "minLength": 8,
+          "description": "what the viewer gets by the end; the title and thumbnail make this promise"
+        },
+        "needs": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "curiosity",
+              "stakes",
+              "humour",
+              "wonder",
+              "fear",
+              "identity",
+              "justice",
+              "belonging",
+              "competence",
+              "surprise"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "the human needs the episode serves (ST-08); at least three"
+        },
+        "arcs": {
+          "type": "object",
+          "description": "cast id -> want, need, flaw, change (ST-04)",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "want",
+              "flaw"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "want": {
+                "type": "string"
+              },
+              "need": {
+                "type": "string"
+              },
+              "flaw": {
+                "type": "string"
+              },
+              "change": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "loops": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "question"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^L[0-9]{2}$"
+              },
+              "question": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "setups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "what",
+              "plant",
+              "payoff"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^P[0-9]{2}$"
+              },
+              "what": {
+                "type": "string"
+              },
+              "plant": {
+                "type": "string",
+                "pattern": "^S[0-9]{2}$"
+              },
+              "payoff": {
+                "type": "string",
+                "pattern": "^S[0-9]{2}$"
+              }
+            }
+          }
+        },
+        "ending": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind"
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "twist",
+                "reversal",
+                "bookend",
+                "callback",
+                "open_question"
+              ]
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "editorial": {
+      "type": "object",
+      "required": [
+        "version",
+        "sources",
+        "claims"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": 1
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "url",
+              "title",
+              "publisher",
+              "published_at",
+              "accessed_at",
+              "grade",
+              "passage"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "publisher": {
+                "type": "string",
+                "minLength": 1
+              },
+              "published_at": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "accessed_at": {
+                "type": "string",
+                "minLength": 1
+              },
+              "grade": {
+                "enum": [
+                  "A",
+                  "B",
+                  "C",
+                  "D"
+                ]
+              },
+              "passage": {
+                "type": "string",
+                "minLength": 1
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "claims": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "text",
+              "type",
+              "source_ids",
+              "confidence",
+              "uncertainty"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "enum": [
+                  "fact",
+                  "estimate",
+                  "interpretation",
+                  "allegation",
+                  "speculation"
+                ]
+              },
+              "source_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "confidence": {
+                "enum": [
+                  "verified",
+                  "corroborated",
+                  "single-source",
+                  "unverified"
+                ]
+              },
+              "uncertainty": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "motion": {
+      "type": "object",
+      "required": [
+        "kind",
+        "z0",
+        "z1"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "push",
+            "pull",
+            "pan",
+            "hold"
+          ]
+        },
+        "z0": {
+          "type": "number",
+          "minimum": 1.0,
+          "maximum": 1.15
+        },
+        "z1": {
+          "type": "number",
+          "minimum": 1.0,
+          "maximum": 1.15
+        },
+        "dx": {
+          "type": "number",
+          "minimum": -0.1,
+          "maximum": 0.1
+        }
+      }
+    },
+    "picture": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$"
+        },
+        "file": {
+          "type": "string",
+          "description": "an existing picture (relative to the script's picture folders)"
+        },
+        "engine": {
+          "enum": [
+            "existing",
+            "gemini",
+            "pod_ref",
+            "pod_text",
+            "canva"
+          ],
+          "description": "canva: filler pictures only (D-53, PV-43); made by hand in Canva, placed as a file"
+        },
+        "subject": {
+          "type": "string",
+          "description": "who does what, with which feeling: written with the line it illustrates"
+        },
+        "refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "picture ids the reference painter starts from"
+        },
+        "edit": {
+          "type": "string",
+          "description": "pod_ref: what changes in refs[0]"
+        },
+        "heroes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "shows": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "story things visible (fire, smoke, windbreak)"
+        },
+        "props": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "thing"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "thing": {
+                "type": "string"
+              },
+              "held_by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "speakers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "people": {
+          "type": "boolean"
+        },
+        "costume": {
+          "type": "string",
+          "description": "clothing words when the default (the visitors' era) is wrong for this picture"
+        },
+        "prompt": {
+          "type": "string",
+          "description": "filled by compile (prompt_v2.compose); never hand-edited"
+        },
+        "stand_in": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "draft only: an existing picture shown until this one is painted"
+        },
+        "tier": {
+          "enum": [
+            "draft",
+            "standard",
+            "premium"
+          ],
+          "description": "Gemini batch tier (D-52, imagegen/routing.py); default standard"
+        },
+        "tier_reason": {
+          "type": "string",
+          "description": "premium only: why this picture needs the dearer model (PV-40)"
+        }
+      }
+    },
+    "beat": {
+      "type": "object",
+      "required": [
+        "at",
+        "kind",
+        "why"
+      ],
+      "additionalProperties": false,
+      "description": "a visual beat (VB rules, docs/STORY_ENGINE.md): something new on screen, on a phrase of this line, written with the line",
+      "properties": {
+        "at": {
+          "type": "string",
+          "minLength": 1,
+          "description": "the words of THIS line the beat lands on"
+        },
+        "offset": {
+          "type": "number",
+          "minimum": -0.3,
+          "maximum": 1.5,
+          "default": 0,
+          "description": "seconds after the phrase's first word starts (never a clock time: the read decides)"
+        },
+        "kind": {
+          "enum": [
+            "text",
+            "label",
+            "prop",
+            "chart",
+            "highlight",
+            "symbol",
+            "accent",
+            "expression"
+          ]
+        },
+        "why": {
+          "type": "string",
+          "minLength": 8,
+          "description": "what in the line at that instant this beat shows (VB-03)"
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "text / label: at most 4 words"
+        },
+        "pos": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "where on the frame (0..1); a label or highlight points at this spot of the picture"
+        },
+        "thing": {
+          "type": "string",
+          "description": "prop: the object named in the line"
+        },
+        "asset": {
+          "type": "string",
+          "description": "prop: a cut-out PNG (relative to the picture folders or the repo); without one the prop is drawn as a word sticker"
+        },
+        "chart": {
+          "enum": [
+            "counter",
+            "bars"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 1,
+          "maxItems": 3
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 16
+          },
+          "maxItems": 3
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 12
+        },
+        "claim": {
+          "type": "string",
+          "description": "claim id behind a number on screen (invariant 5)"
+        },
+        "symbol": {
+          "enum": [
+            "question",
+            "exclaim",
+            "arrow_up",
+            "arrow_down",
+            "cross",
+            "check",
+            "plus",
+            "equals",
+            "clock"
+          ]
+        },
+        "effect": {
+          "enum": [
+            "punch",
+            "shake"
+          ],
+          "description": "accent: a camera accent of production/accents.py"
+        },
+        "strength": {
+          "type": "number",
+          "minimum": 0.2,
+          "maximum": 1.0
+        },
+        "who": {
+          "type": "string",
+          "description": "expression: the cast id whose face changes (default: the line's speaker)"
+        },
+        "expression": {
+          "enum": [
+            "neutral",
+            "curious",
+            "surprised",
+            "joyful",
+            "amused",
+            "smug",
+            "confused",
+            "doubtful",
+            "worried",
+            "scared",
+            "angry",
+            "sad",
+            "determined",
+            "deadpan"
+          ]
+        },
+        "cue": {
+          "type": "object",
+          "required": [
+            "sound"
+          ],
+          "additionalProperties": false,
+          "description": "VB-08: the short light sound that marks this beat (audio/cues.py), or 'none' with a reason",
+          "properties": {
+            "sound": {
+              "enum": [
+                "tick",
+                "tap",
+                "pop",
+                "blip",
+                "pluck",
+                "chime",
+                "whiff",
+                "thud",
+                "rise",
+                "fall",
+                "none"
+              ]
+            },
+            "gain_db": {
+              "type": "number",
+              "minimum": -36.0,
+              "maximum": -20.0,
+              "default": -26.0
+            },
+            "max_ms": {
+              "type": "number",
+              "minimum": 20,
+              "maximum": 250
+            },
+            "event": {
+              "enum": [
+                "reveal",
+                "impact",
+                "transition",
+                "build",
+                "diegetic",
+                "take",
+                "place"
+              ],
+              "description": "VB-08 (/3): the story event this cue marks; on /3 a cue without an event FAILs - silence is the default"
+            },
+            "why": {
+              "type": "string",
+              "description": "why this sound (or why none: an effect already sounds here, a quiet expression)"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "text",
+                  "label"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "text"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "prop"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "thing"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "chart"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "chart",
+              "values",
+              "claim"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "highlight"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "pos"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "symbol"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "symbol"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "accent"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "effect"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "expression"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "expression"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

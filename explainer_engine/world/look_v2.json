@@ -1,0 +1,10 @@
+{
+ "version": 2,
+ "note": "Channel look v2 (D-41, UR-22 thread): one drawing grammar for every topic and era. The era codex changes light, palette, grade, materials and costume, never this grammar.",
+ "thread": "one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene",
+ "figure": "adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features",
+ "child_cues": ["storybook", "cute", "chibi", "kawaii", "oversized head", "big head", "big eyes", "quirky", "wobbly", "pastel", "cartoonish", "nursery", "toy", "kids", "children", "school", "tiny figures", "gently exaggerated"],
+ "banned_words": ["hyper-realistic", "photo-realistic", "realistic", "lifelike", "photograph", "photography", "unreal engine", "octane", "3d render", "documentary", "film still"],
+ "no_names": "never name an artist, a film, a studio or a character of another work in a prompt",
+ "suffix": ", no text, no letters, no logo"
+}

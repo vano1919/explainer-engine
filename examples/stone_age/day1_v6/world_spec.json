@@ -1,0 +1,89 @@
+{
+ "topic": "100 greatest scientists dropped into the Stone Age, day one",
+ "host": {
+  "era": "prehistory",
+  "place": "limestone uplands of south-east Anatolia",
+  "when": "about 10,000 BCE (12,000 years ago)"
+ },
+ "visitors": [
+  {
+   "era": "industrial_victorian",
+   "people": [
+    "nansen",
+    "franklin",
+    "newton",
+    "einstein",
+    "darwin",
+    "wallace",
+    "snow",
+    "curie",
+    "tesla"
+   ]
+  }
+ ],
+ "light_owner": "host",
+ "day_arc": [
+  {
+   "beat": 1,
+   "light": "storm_dusk",
+   "not_yet": [
+    "fire",
+    "campfire",
+    "flames",
+    "embers"
+   ]
+  },
+  {
+   "beat": 2,
+   "light": "overcast_day",
+   "not_yet": [
+    "fire",
+    "campfire",
+    "flames",
+    "embers"
+   ]
+  },
+  {
+   "beat": 3,
+   "light": "overcast_day",
+   "not_yet": [
+    "fire",
+    "campfire",
+    "flames",
+    "embers"
+   ]
+  },
+  {
+   "beat": 4,
+   "light": "overcast_day",
+   "not_yet": [
+    "fire",
+    "campfire",
+    "flames",
+    "embers"
+   ]
+  },
+  {
+   "beat": 5,
+   "light": "storm_dusk",
+   "not_yet": [
+    "fire",
+    "campfire",
+    "flames",
+    "embers"
+   ]
+  },
+  {
+   "beat": 6,
+   "light": "last_sun"
+  },
+  {
+   "beat": 7,
+   "light": "night_fire"
+  },
+  {
+   "beat": 8,
+   "light": "night_fire"
+  }
+ ]
+}

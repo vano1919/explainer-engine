@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "explainer.fan_brief.v1",
+  "title": "Fan research brief for a crossover episode (crossover-episode skill, P-124)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "version", "episode_id", "worlds", "sources", "theories", "fan_demands",
+               "existing_crossovers", "canon_rules", "our_angle", "casual_onramps", "deep_cuts"],
+  "properties": {
+    "schema": {"const": "explainer.fan_brief"},
+    "version": {"const": 1},
+    "episode_id": {"type": "string", "minLength": 1},
+    "worlds": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "sources": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["id", "kind", "url", "title", "accessed"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^S-[0-9]{2,3}$"},
+        "kind": {"enum": ["reddit", "forum", "fan_wiki", "youtube_video", "youtube_comments", "article", "book",
+                          "interview", "official", "fanfiction_index", "other"]},
+        "url": {"type": "string", "minLength": 8}, "title": {"type": "string", "minLength": 1},
+        "accessed": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}}}},
+    "theories": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["id", "summary", "source_ids", "popularity",
+                                                                    "canon_status"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^T-[0-9]{2,3}$"}, "summary": {"type": "string", "minLength": 10},
+        "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "author": {"type": "string"},
+        "popularity": {"enum": ["low", "medium", "high"]},
+        "canon_status": {"enum": ["confirmed", "plausible", "contradicted", "unknown"]}}}},
+    "fan_demands": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["summary", "source_ids"],
+      "properties": {"summary": {"type": "string", "minLength": 10},
+                     "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}}}},
+    "existing_crossovers": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["title", "url", "angle"],
+      "properties": {"title": {"type": "string", "minLength": 3}, "url": {"type": "string", "minLength": 8},
+                     "angle": {"type": "string", "minLength": 5}}}},
+    "canon_rules": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["world", "rule", "source_ids"],
+      "properties": {"world": {"type": "string"}, "rule": {"type": "string", "minLength": 10},
+                     "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}}}},
+    "our_angle": {"type": "object", "additionalProperties": false, "required": ["premise", "why_new", "differs_from"],
+                  "properties": {"premise": {"type": "string", "minLength": 10},
+                                 "why_new": {"type": "string", "minLength": 40},
+                                 "differs_from": {"type": "array", "minItems": 1, "items": {"type": "string"}}}},
+    "casual_onramps": {"type": "array", "items": {"type": "string", "minLength": 5}},
+    "deep_cuts": {"type": "array", "items": {"type": "string", "minLength": 5}}
+  }
+}

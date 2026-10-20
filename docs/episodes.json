@@ -1,0 +1,10 @@
+{
+  "note": "every finished episode's premise, question and outcome (PV-38, scripting/distinct.py): a new episode is compared with these so the series never repeats 'characters put in the same situation over and over again with the same outcome' (YouTube Help 1311392, inauthentic content). Add a row when an episode is approved.",
+  "episodes": [
+    {"id": "stone_age_ep1",
+     "premise": "one hundred real scientists from history wake up together in the Stone Age, about ten thousand BCE, in south-east Anatolia",
+     "question": "would knowledge alone beat real history?",
+     "outcome": "early on they beat history (farming, writing, metal in centuries), then hit the wall of people, materials, fuel, tools and trade; a hundred geniuses is not a civilization",
+     "mechanism": "knowledge versus materials and population: why progress needs many people, tin, fuel and tools that make tools"}
+  ]
+}

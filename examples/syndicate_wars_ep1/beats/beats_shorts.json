@@ -1,0 +1,1050 @@
+{
+  "note": "visual beats of the Short-only lines (SS-09), keyed by the exact line text (apply_beats.py attaches them to segment and Short lines alike); written 2026-10-19 by the beat-writer procedure (skill visual-beats). label/highlight pos are spots of the picture inside the Short's 9:16 crop (crop_x, zoom); the other kinds are spots of the 1080x1920 frame",
+  "lines": {
+    "Could one line in a ledger bring down Al Capone?": [
+      {
+        "at": "one line",
+        "kind": "highlight",
+        "pos": [
+          0.42,
+          0.56
+        ],
+        "why": "rings the one line in the ledger",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "ledger",
+        "kind": "label",
+        "text": "THE LEDGER",
+        "pos": [
+          0.38,
+          0.42
+        ],
+        "why": "names the ledger the line is in",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "Capone?",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.2
+        ],
+        "why": "asks: could it bring down Capone?",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    "The full video is Syndicate Wars, on the channel.": [
+      {
+        "at": "Syndicate Wars,",
+        "kind": "text",
+        "text": "SYNDICATE WARS",
+        "why": "names the full video: Syndicate Wars",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "channel.",
+        "kind": "symbol",
+        "symbol": "check",
+        "pos": [
+          0.84,
+          0.3
+        ],
+        "why": "on the channel: the way there",
+        "cue": {
+          "sound": "chime"
+        }
+      }
+    ],
+    "Who lost to a flamingo?": [
+      {
+        "at": "lost",
+        "kind": "symbol",
+        "symbol": "arrow_down",
+        "pos": [
+          0.84,
+          0.22
+        ],
+        "why": "who lost: a fall",
+        "cue": {
+          "sound": "fall"
+        }
+      },
+      {
+        "at": "flamingo?",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.16,
+          0.22
+        ],
+        "offset": 0.3,
+        "why": "asks who lost to a flamingo",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    "Made up, every word: our invented boss Haruto Mizuno, in our invented Vice City.": [
+      {
+        "at": "Made up,",
+        "kind": "text",
+        "text": "MADE UP",
+        "why": "made up: the scenario is invented",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "every word:",
+        "kind": "symbol",
+        "symbol": "exclaim",
+        "pos": [
+          0.84,
+          0.24
+        ],
+        "why": "every word made up: a warning sign",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Haruto Mizuno,",
+        "kind": "label",
+        "text": "HARUTO MIZUNO",
+        "pos": [
+          0.58,
+          0.42
+        ],
+        "why": "names our invented boss Haruto Mizuno",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "Vice City.",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "lands on our invented Vice City",
+        "cue": {
+          "sound": "thud"
+        }
+      }
+    ],
+    "Whose fault was it? Tell us, then watch the full video, Syndicate Wars.": [
+      {
+        "at": "fault",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.2
+        ],
+        "why": "asks whose fault it was",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Tell us,",
+        "kind": "text",
+        "text": "TELL US",
+        "why": "tell us: the comment ask",
+        "cue": {
+          "sound": "pop"
+        }
+      },
+      {
+        "at": "watch the full",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "watch the full video: a push",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "Syndicate Wars.",
+        "kind": "symbol",
+        "symbol": "check",
+        "pos": [
+          0.84,
+          0.3
+        ],
+        "why": "the full video, Syndicate Wars: go",
+        "cue": {
+          "sound": "chime"
+        }
+      }
+    ],
+    "You're a 1930s crime boss, and you just landed in Leonida.": [
+      {
+        "at": "1930s",
+        "kind": "symbol",
+        "symbol": "clock",
+        "pos": [
+          0.82,
+          0.2
+        ],
+        "why": "a crime boss from the 1930s: a time sign",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "boss,",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.62
+        ],
+        "why": "rings the crime boss's empty chair: you",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "Leonida.",
+        "kind": "text",
+        "text": "LEONIDA",
+        "offset": 0.2,
+        "why": "where you landed: Leonida",
+        "cue": {
+          "sound": "tick"
+        }
+      }
+    ],
+    "So where would you hide, if every phone in Leonida pointed at you? Four bosses tried it in the full video, Syndicate Wars.": [
+      {
+        "at": "hide,",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.2
+        ],
+        "why": "asks where you would hide",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "every phone",
+        "kind": "text",
+        "text": "EVERY PHONE",
+        "why": "every phone in Leonida",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "pointed at you?",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "every phone pointed at you: a jolt",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "tried it",
+        "kind": "highlight",
+        "pos": [
+          0.3,
+          0.6
+        ],
+        "why": "rings the chairs of the four bosses who tried it",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "full video,",
+        "kind": "symbol",
+        "symbol": "exclaim",
+        "pos": [
+          0.84,
+          0.24
+        ],
+        "why": "the full video: look",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Syndicate Wars.",
+        "kind": "symbol",
+        "symbol": "check",
+        "pos": [
+          0.16,
+          0.3
+        ],
+        "why": "names it: Syndicate Wars, go",
+        "cue": {
+          "sound": "chime"
+        }
+      }
+    ],
+    "Is the quiet, legal business always the safe one?": [
+      {
+        "at": "quiet,",
+        "kind": "text",
+        "text": "QUIET",
+        "why": "the quiet business",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "legal business",
+        "kind": "label",
+        "text": "LEGAL BUSINESS",
+        "pos": [
+          0.5,
+          0.5
+        ],
+        "why": "names the legal business on the crates",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "safe one?",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.2
+        ],
+        "why": "asks: always the safe one?",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    "Vito doesn't lose a fight. He loses a phone call. That round is in the full video, Syndicate Wars.": [
+      {
+        "at": "doesn't lose",
+        "kind": "symbol",
+        "symbol": "cross",
+        "pos": [
+          0.84,
+          0.22
+        ],
+        "why": "doesn't lose a fight: crossed out",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "He loses",
+        "kind": "symbol",
+        "symbol": "arrow_down",
+        "pos": [
+          0.16,
+          0.22
+        ],
+        "why": "he loses: a fall",
+        "cue": {
+          "sound": "fall"
+        }
+      },
+      {
+        "at": "phone call.",
+        "kind": "highlight",
+        "pos": [
+          0.6,
+          0.6
+        ],
+        "why": "rings the phone: the call he loses",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "That round",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "that round: a push",
+        "cue": {
+          "sound": "whiff"
+        }
+      },
+      {
+        "at": "full video,",
+        "kind": "text",
+        "text": "FULL VIDEO",
+        "why": "points to the full video",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "Syndicate Wars.",
+        "kind": "symbol",
+        "symbol": "check",
+        "pos": [
+          0.84,
+          0.3
+        ],
+        "why": "the full video, Syndicate Wars: go",
+        "cue": {
+          "sound": "chime"
+        }
+      }
+    ],
+    "Four crime bosses in our invented Vice City test. Who falls first?": [
+      {
+        "at": "crime bosses",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.5
+        ],
+        "why": "rings the four crime bosses in a row",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "invented Vice City",
+        "kind": "symbol",
+        "symbol": "exclaim",
+        "pos": [
+          0.84,
+          0.22
+        ],
+        "why": "an invented test: a sign",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "test.",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "the test: a jolt",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "falls",
+        "kind": "symbol",
+        "symbol": "arrow_down",
+        "pos": [
+          0.16,
+          0.22
+        ],
+        "offset": 0.1,
+        "why": "who falls first: a fall",
+        "cue": {
+          "sound": "fall"
+        }
+      },
+      {
+        "at": "first?",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.84,
+          0.22
+        ],
+        "offset": 0.3,
+        "why": "asks who falls first",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    "Would you rank them the same? The full video is Syndicate Wars.": [
+      {
+        "at": "rank",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "rank them: a push in",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "same?",
+        "kind": "symbol",
+        "symbol": "equals",
+        "pos": [
+          0.82,
+          0.22
+        ],
+        "why": "the same rank? an equals sign",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "full video",
+        "kind": "symbol",
+        "symbol": "exclaim",
+        "pos": [
+          0.16,
+          0.24
+        ],
+        "why": "the full video: look",
+        "cue": {
+          "sound": "pop"
+        }
+      },
+      {
+        "at": "Syndicate Wars.",
+        "kind": "symbol",
+        "symbol": "check",
+        "pos": [
+          0.84,
+          0.3
+        ],
+        "why": "the full video, Syndicate Wars: go",
+        "cue": {
+          "sound": "chime"
+        }
+      }
+    ],
+    "If everyone films you, don't hide from them, feed them the wrong thing.": [
+      {
+        "at": "everyone films",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.55
+        ],
+        "why": "rings the one man everyone films",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "don't hide",
+        "kind": "symbol",
+        "symbol": "cross",
+        "pos": [
+          0.84,
+          0.22
+        ],
+        "offset": 0.2,
+        "why": "don't hide: crossed out",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "feed them",
+        "kind": "symbol",
+        "symbol": "plus",
+        "pos": [
+          0.16,
+          0.22
+        ],
+        "why": "feed them: add something",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "wrong thing.",
+        "kind": "accent",
+        "effect": "shake",
+        "why": "feed them the wrong thing: a shake",
+        "cue": {
+          "sound": "whiff"
+        }
+      }
+    ],
+    "In our invented Vice City, Shelby wouldn't post. He'd pay someone else to post the wrong thing. In the wrong place.": [
+      {
+        "at": "invented Vice City,",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "our invented Vice City: a push in",
+        "cue": {
+          "sound": "whiff"
+        }
+      },
+      {
+        "at": "wouldn't post.",
+        "kind": "symbol",
+        "symbol": "cross",
+        "pos": [
+          0.16,
+          0.22
+        ],
+        "why": "Shelby wouldn't post: crossed out",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "someone else",
+        "kind": "label",
+        "text": "SOMEONE ELSE",
+        "pos": [
+          0.2,
+          0.5
+        ],
+        "why": "someone else posts: the crowd's phones",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "wrong thing.",
+        "kind": "highlight",
+        "pos": [
+          0.2,
+          0.38
+        ],
+        "why": "rings the phones on the wrong thing",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "wrong place.",
+        "kind": "text",
+        "text": "WRONG PLACE",
+        "why": "in the wrong place",
+        "cue": {
+          "sound": "pop"
+        }
+      }
+    ],
+    "Is it enough to win? Watch the full video, Syndicate Wars.": [
+      {
+        "at": "enough",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.2
+        ],
+        "why": "is it enough? a question",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Watch",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "watch: a push in",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "Syndicate Wars.",
+        "kind": "text",
+        "text": "SYNDICATE WARS",
+        "why": "names the full video: Syndicate Wars",
+        "cue": {
+          "sound": "tick"
+        }
+      }
+    ],
+    "Would you rather win the boardroom or the street?": [
+      {
+        "at": "rather win",
+        "kind": "symbol",
+        "symbol": "arrow_up",
+        "pos": [
+          0.84,
+          0.22
+        ],
+        "why": "rather win: an arrow up",
+        "cue": {
+          "sound": "rise"
+        }
+      },
+      {
+        "at": "street?",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.16,
+          0.22
+        ],
+        "why": "asks: the boardroom or the street?",
+        "cue": {
+          "sound": "blip"
+        }
+      }
+    ],
+    "And in our scenario, our invented boss Haruto Mizuno takes an office in Vice City and wins the boardroom.": [
+      {
+        "at": "scenario,",
+        "kind": "text",
+        "text": "OUR SCENARIO",
+        "why": "our scenario: invented",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "Haruto Mizuno",
+        "kind": "label",
+        "text": "HARUTO MIZUNO",
+        "pos": [
+          0.5,
+          0.4
+        ],
+        "why": "names our invented boss Haruto Mizuno",
+        "cue": {
+          "sound": "tap"
+        }
+      },
+      {
+        "at": "takes an office",
+        "kind": "highlight",
+        "pos": [
+          0.55,
+          0.55
+        ],
+        "why": "rings his card: he takes an office",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "Vice City",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "an office in Vice City: a push in",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "wins the boardroom.",
+        "kind": "symbol",
+        "symbol": "check",
+        "pos": [
+          0.16,
+          0.24
+        ],
+        "why": "he wins the boardroom: a check",
+        "cue": {
+          "sound": "chime"
+        }
+      }
+    ],
+    "Which would you pick? The full video is Syndicate Wars.": [
+      {
+        "at": "pick?",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.2
+        ],
+        "why": "asks which you would pick",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "full video",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "the full video: a push in",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "Syndicate Wars.",
+        "kind": "text",
+        "text": "SYNDICATE WARS",
+        "why": "names the full video: Syndicate Wars",
+        "cue": {
+          "sound": "tick"
+        }
+      }
+    ],
+    "Which one? The full video, Syndicate Wars, has the answer.": [
+      {
+        "at": "Which one?",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.2
+        ],
+        "why": "asks which one of them",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "Which one?",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.55
+        ],
+        "offset": 0.4,
+        "why": "rings the four: which one?",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "Syndicate Wars,",
+        "kind": "text",
+        "text": "SYNDICATE WARS",
+        "why": "names the full video: Syndicate Wars",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "answer.",
+        "kind": "symbol",
+        "symbol": "check",
+        "pos": [
+          0.84,
+          0.3
+        ],
+        "why": "has the answer: a check",
+        "cue": {
+          "sound": "chime"
+        }
+      }
+    ],
+    "What happens to a crime boss's stars in a city of phones?": [
+      {
+        "at": "happens",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.2
+        ],
+        "why": "asks what happens",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "stars",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.3
+        ],
+        "why": "rings the crime boss's stars",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "phones?",
+        "kind": "accent",
+        "effect": "shake",
+        "why": "a city of phones: a shake",
+        "cue": {
+          "sound": "whiff"
+        }
+      }
+    ],
+    "Every star is our opinion. The reasons are in the full video, Syndicate Wars.": [
+      {
+        "at": "Every star",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "every star: a push in",
+        "cue": {
+          "sound": "thud"
+        }
+      },
+      {
+        "at": "our opinion.",
+        "kind": "text",
+        "text": "OUR OPINION",
+        "why": "every star is our opinion",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "reasons",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.16,
+          0.22
+        ],
+        "why": "the reasons: a question answered",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "full video,",
+        "kind": "symbol",
+        "symbol": "exclaim",
+        "pos": [
+          0.84,
+          0.24
+        ],
+        "why": "the full video: look",
+        "cue": {
+          "sound": "pop"
+        }
+      },
+      {
+        "at": "Syndicate Wars.",
+        "kind": "symbol",
+        "symbol": "check",
+        "pos": [
+          0.16,
+          0.3
+        ],
+        "why": "names it: Syndicate Wars, go",
+        "cue": {
+          "sound": "chime"
+        }
+      }
+    ],
+    "Could the smartest boss in Vice City still lose?": [
+      {
+        "at": "smartest boss",
+        "kind": "highlight",
+        "pos": [
+          0.5,
+          0.5
+        ],
+        "why": "rings the smartest boss on the roof",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "Vice City",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.82,
+          0.2
+        ],
+        "why": "asks: in Vice City?",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "lose?",
+        "kind": "symbol",
+        "symbol": "arrow_down",
+        "pos": [
+          0.16,
+          0.22
+        ],
+        "offset": 0.1,
+        "why": "could he still lose: a fall",
+        "cue": {
+          "sound": "fall"
+        }
+      }
+    ],
+    "And that's why, in the full video, Syndicate Wars, the smartest boss in Vice City could still lose. So:": [
+      {
+        "at": "that's why,",
+        "kind": "symbol",
+        "symbol": "exclaim",
+        "pos": [
+          0.84,
+          0.22
+        ],
+        "why": "that's why: the point",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "full video,",
+        "kind": "text",
+        "text": "FULL VIDEO",
+        "why": "points to the full video",
+        "cue": {
+          "sound": "tick"
+        }
+      },
+      {
+        "at": "Syndicate Wars,",
+        "kind": "symbol",
+        "symbol": "check",
+        "pos": [
+          0.84,
+          0.3
+        ],
+        "why": "names it: Syndicate Wars, go",
+        "cue": {
+          "sound": "chime"
+        }
+      },
+      {
+        "at": "smartest boss",
+        "kind": "highlight",
+        "pos": [
+          0.3,
+          0.45
+        ],
+        "why": "rings the smartest boss on the roof",
+        "cue": {
+          "sound": "pluck"
+        }
+      },
+      {
+        "at": "Vice City",
+        "kind": "symbol",
+        "symbol": "question",
+        "pos": [
+          0.84,
+          0.22
+        ],
+        "why": "asks again: in Vice City?",
+        "cue": {
+          "sound": "blip"
+        }
+      },
+      {
+        "at": "still lose.",
+        "kind": "symbol",
+        "symbol": "arrow_down",
+        "pos": [
+          0.16,
+          0.22
+        ],
+        "why": "could still lose: a fall",
+        "cue": {
+          "sound": "fall"
+        }
+      },
+      {
+        "at": "So:",
+        "kind": "accent",
+        "effect": "punch",
+        "why": "So: the loop back, could he still lose",
+        "cue": {
+          "sound": "thud"
+        }
+      }
+    ]
+  }
+}

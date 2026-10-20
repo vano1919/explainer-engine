@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "note": "Canonical colour tokens. docs/CREATIVE_STYLE_BIBLE.md explains the use; this file is the only place hex values live.",
+  "tokens": {
+    "ink":             {"hex": "#1F2430", "role": "outlines, body text"},
+    "paper":           {"hex": "#FFF8EC", "role": "default background, label chips"},
+    "kit_card":        {"hex": "#E0A458", "role": "Kit's body"},
+    "kit_shadow":      {"hex": "#B97A35", "role": "Kit's one shade"},
+    "answer_coral":    {"hex": "#FF6B5B", "role": "the answer / key object (one per shot)"},
+    "mechanism_teal":  {"hex": "#2EC4B6", "role": "arrows, flows, mechanism labels"},
+    "support_blue":    {"hex": "#4D9DE0", "role": "secondary objects"},
+    "true_green":      {"hex": "#7BC950", "role": "myth check: supported (always with a check icon)"},
+    "false_red":       {"hex": "#E5484D", "role": "myth check: not supported (always with a cross icon)"},
+    "uncertain_amber": {"hex": "#FFC145", "role": "evidence is mixed (badge)"},
+    "night":           {"hex": "#2B2D42", "role": "dark scenes, Short end cards"},
+    "grey_mid":        {"hex": "#8D99AE", "role": "inactive / background props"},
+    "chroma_key":      {"hex": "#00B140", "role": "flat background of the expression sheets (VB-09); keyed out, never on screen"}
+  },
+  "text_pairs": [
+    {"text": "ink",   "on": "paper"},
+    {"text": "paper", "on": "night"},
+    {"text": "ink",   "on": "kit_card"},
+    {"text": "ink",   "on": "answer_coral"},
+    {"text": "ink",   "on": "mechanism_teal"},
+    {"text": "ink",   "on": "support_blue"},
+    {"text": "ink",   "on": "true_green"},
+    {"text": "ink",   "on": "uncertain_amber"},
+    {"text": "ink",   "on": "grey_mid"}
+  ],
+  "large_text_only": [
+    {"text": "ink", "on": "false_red", "note": "3.96:1 - use only for text of 24 px bold or larger; small red labels sit on a paper chip next to a red icon"}
+  ],
+  "fill_only": ["kit_card", "kit_shadow", "answer_coral", "mechanism_teal", "support_blue", "true_green", "false_red", "uncertain_amber", "grey_mid"],
+  "fill_only_rule": "Accent colours are 1.5-3.7:1 against paper, below the 3:1 that graphics need. They are fills; every shape that carries meaning also has an ink stroke (>= 4 px at 1080p), and meaning is never carried by colour alone."
+}

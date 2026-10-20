@@ -74,3 +74,15 @@ source commit and what was changed.
   preset `kokoro_neutral` 150 wpm; `MAX_SPEED` 1.4.
 - **Portability:** `fonts.py` falls back to Segoe UI/Georgia; the checks call bare `ffmpeg`/`ffprobe` from PATH.
 - **Repo hygiene:** no secrets in tracked files or history (checked 2026-10-15); keys rely on gitignored `tools/`.
+
+## Cloud and compositor port list (2026-10-16, D-31, D-32; TMR at d88ba8f; copies carry provenance when made)
+| TMR source | Use here | Problem seen in TMR evidence | Solution here |
+|---|---|---|---|
+| `cloud/rp.py` (create, sweep, guard, delete, balance, price and time caps), `notify.py`, `watch.py` | the only way a pod is started or stopped | a forgotten pod billed about $3; the in-pod stop failed once; the guard died at its 30-min tool limit | copy as is; `guard` always with a 2 h timeout; sweep at session start and end; one pod per job; no pod without the creator's approved price and cap |
+| `cloud/Dockerfile`, `setup_pod.sh`, `store.py` (push/pull of run results), `lint_manifest.py`, `dryrun.py`, stage manifests and the conductor pattern | pod image and stage runner | generic pod boot cost about $0.4 per pod (apt, compile); the image is 40 GB of models | lean image: no 27B and no llama.cpp (scripts come from Claude); only Z-Image (33 GB) and the compositor; baked image, boot from GitHub; preflight on the cheapest GPU first |
+| `render/celestial.py` GLBackend, `video.py` (NVENC/x264 args, one FFmpeg pipe, frame(i) determinism, temp file + rename, probe, sync checks), `render/shaders/scene.frag` (parallax, grade), `depth.py` | the compositor core | no EGL in the cloud session: the video can only be proven on a pod | numpy reference compositor for tests (the walk test script is the first one), GPU path proven by the Phase 4 pod benchmark |
+| (new) | sprite layer: pose swaps with crossfade, bob and squash, glow; doodle overlays rasterised per scene (text, arrows, draw-on progress masks) and uploaded as textures | text and doodles must stay exact and editable | overlays are SVG rasterised on the CPU with a pinned library; the sprite bank has a manifest (pose, expression, anchor, foot line) |
+| `render/picture_check.py`, `qa/` checkers | gate on every generated picture | 13 of 23 SDXL pictures were defective; Z-Image passed | copy; retry up to 4 seeds; Gemini kit pictures also pass identity and green-spill checks |
+| `render/subtitles.py` (libass karaoke), `mix.py`, `voice_style.py`, `kokoro_worker.py`, `timings.py`, `video_check.py`, `full_check.py` | audio, captions, QA (already planned for Phases 5-6) | Kokoro on a pod CPU: 45 min per 20 min of speech | narration and mix run in the cloud session (about 8 min per 20 min), clips are pushed to the pod, never rendered there |
+| `render/imagegen.py` (prices, estimate, cache, budget refuse), `owl_pair.key_green`, `patch_pose` | Gemini kit generation | Gemini repaints the whole picture on every edit | region patching for mouth or eye states if a talking mascot is ever needed (D-33 makes it unnecessary for now) |
+

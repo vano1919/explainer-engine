@@ -1,0 +1,1495 @@
+{
+  "schema": "explainer.episode_rules",
+  "version": 1,
+  "episode_id": "syndicate_wars",
+  "rulebook_version": 8,
+  "status": "final",
+  "identity": {
+    "topic": "Syndicate Wars: Classic Mafia Bosses in GTA 6's Leonida (working title). Al Capone, Vito Corleone (film-era Don), an invented Yakuza boss and Tommy Shelby (1930s) arrive in the Vice City of Rockstar's Leonida.",
+    "format": "long-form 2D hand-drawn explainer-comedy with a video-game character-select opening (length to be set by the orchestrator)",
+    "audience": "US general audience, teens and adults, English; fans of crime stories and of GTA who will check the details",
+    "audience_value": "fans see their favourite bosses argued fairly against a world they know; casual viewers get a clean comparison of crime-boss strategy",
+    "central_question": "Whose old way of ruling survives a world of phone cameras, viral fame, crypto and Florida chaos, and why does the winner win?",
+    "unique_angle": "four crime eras scored in a character-select stat screen, then tested against four modern pressures (virality, surveillance, money technology, absurdity), each result argued from the boss's own history or canon",
+    "tone": "serious-documentary framing with dry, situational humour; respect for each boss's competence",
+    "emotional_arc": "fan excitement at the matchup, schadenfreude as the loud boss falls, unease as the quiet one wins, a final debatable aftertaste",
+    "stakes": "each boss loses or keeps the thing his method depends on: secrecy, family loyalty, legal cover or information",
+    "payoff": "the winner is the boss whose method scales with data, and the question left is whether that is a victory or a different kind of loss",
+    "beyond_a_summary": "sourced stat ratings, a mechanism-by-mechanism comparison against modern pressures, true-history hooks (Capone's real Florida end, Peaky Blinders' real gang history) that a summary of the films and game lacks",
+    "viewer_takeaway": {
+      "understand": "why different crime methods break against visibility, regulation and data",
+      "feel": "the pleasure of a debate they care about, and a little sympathy for each fallen boss",
+      "question": "which of these methods still works in the world now",
+      "remember": "the character-select stat screen and the order in which the bosses fall"
+    }
+  },
+  "jurisdictions": {
+    "relevant": [
+      "US",
+      "GE"
+    ],
+    "basis": "platform and main market US; creator resides in Georgia (confirmed 2026-10-17, policy_baseline channel)",
+    "creator_location": "GE",
+    "confirmed_by_creator": true
+  },
+  "rules": [
+    {
+      "id": "ER-01",
+      "requirement": "Disclosure follows the treatment: fully drawn 2D characters in an obviously fictional crossover do not need the altered/synthetic label; any realistic person, realistic scene or faked footage does (and would be a design change, not a default).",
+      "applies_to": [
+        "video"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "metadata",
+        "qa",
+        "image"
+      ],
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/14328491",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-01"
+        }
+      ]
+    },
+    {
+      "id": "ER-02",
+      "requirement": "Al Capone (real, died 1947) is a drawn caricature in an obviously invented scenario; never a fabricated quote presented as real, never a fake endorsement, never shown committing a real crime as fact; every real-history sentence maps to a claim with a source and invented dialogue is flagged as invented.",
+      "applies_to": [
+        "script",
+        "pictures"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "script",
+        "image",
+        "research"
+      ],
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/2801947",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-04"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/2801895",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-03"
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "D-40 real historical people as caricature heroes"
+        }
+      ]
+    },
+    {
+      "id": "ER-03",
+      "requirement": "No character or narrator voice imitates a real person or an actor (Brando, Murphy, De Niro, any Capone recording). The narrator and each speaking boss have their own library voice, cast from described traits (D-45, VC-01, VC-02): no clones, no sound-alikes, no 'famous' category, never prompted with a person's or actor's name; the creator hears a test read before a voice is fixed (VC-03).",
+      "applies_to": [
+        "voice"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "voice"
+      ],
+      "sources": [
+        {
+          "url": "https://elevenlabs.io/use-policy",
+          "checked": "2026-10-17",
+          "kind": "provider_terms",
+          "verified": true,
+          "baseline_id": "B-10"
+        }
+      ]
+    },
+    {
+      "id": "ER-04",
+      "requirement": "RR-03: characters are our own interpretations from text descriptions and neutral archetypes; never traced from, nor resembling, a production's costume combination, set, prop or an actor's face. 'Resembling the original cinematic figures' is interpreted as recognisable role and archetype, not a likeness.",
+      "applies_to": [
+        "pictures",
+        "thumbnail",
+        "script"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "image",
+        "script",
+        "metadata"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "RR-03, RR-09; ES-08 and EPISODE_STANDARDS 4.5"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/2801895",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-03"
+        }
+      ]
+    },
+    {
+      "id": "ER-05",
+      "requirement": "RR-02: zero third-party media. No GTA footage, trailer frames, screenshots, key art, loading-screen art, map, logo, lettering, radio or music, no Godfather or Peaky Blinders stills, score or dialogue clips. Invented parody brands only.",
+      "applies_to": [
+        "pictures",
+        "music",
+        "sound",
+        "edit",
+        "thumbnail"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "image",
+        "music",
+        "sound",
+        "edit",
+        "metadata"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "RR-02"
+        },
+        {
+          "url": "https://support.rockstargames.com/articles/200153756/Policy-on-posting-copyrighted-Rockstar-Games-material",
+          "checked": "2026-10-19",
+          "kind": "provider_terms",
+          "verified": true,
+          "baseline_id": "B-14",
+          "note": "Read first-hand 2026-10-19 (the page answered; quoted excerpts): 'Take-Two Interactive does not object to our fans using materials for non-commercial uses'; 'Non-commercial means that you don't make money through the game footage you post'; takedown 'at any time'; leaked pre-release footage and isolated cutscenes or endings are removed; film, TV, streaming, advertising and publishing professionals are told 'this policy likely does not apply to you' and sent to copyright@take2games.com. The page does not mention fan art or original animation. The policy governs posting Take-Two's own material; this episode posts none."
+        }
+      ],
+      "uncertainty": "The policy's tolerance covers non-commercial posting of Take-Two material and sends professional uses to a licence request; a monetised video with no Take-Two material and only plain-text names is not addressed by the page either way, which is why no Rockstar material is used at all."
+    },
+    {
+      "id": "ER-06",
+      "requirement": "Franchise and game names appear in plain text only (title, description, narration) to identify the subject; no logos, no title lettering, nothing implying Rockstar, Take-Two, Paramount, BBC, Netflix endorsement; the description carries the RR-08 unofficial note.",
+      "applies_to": [
+        "metadata",
+        "thumbnail",
+        "pictures"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "metadata",
+        "image",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/6154218",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-13"
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "RR-08"
+        }
+      ]
+    },
+    {
+      "id": "ER-07",
+      "requirement": "GTA VI information is labelled item by item: official (Rockstar pages, trailers), press-reported leak (only what reputable press reported, worded as 'reported', never confirmed), community speculation, or our inference. Nothing unlabelled (the labels live in the claim map and the description; the narration never reads a source out, BP-15); unreleased gameplay is never stated as fact; GTA IV/V elements (Bleeter, LifeInvader, BAWSAQ, LCN, Lester Crest) are labelled as earlier-game references.",
+      "applies_to": [
+        "script",
+        "research",
+        "metadata"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "research",
+        "script",
+        "metadata",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://www.rockstargames.com/VI",
+          "checked": "2026-10-17",
+          "kind": "provider_terms",
+          "verified": true,
+          "baseline_id": "B-18",
+          "note": "rights-holder statement of fact; kind is the closest allowed"
+        }
+      ],
+      "uncertainty": "Creator decision 2026-10-17 allows leak-derived information as labelled reports. RR-10 ('never leaks as a source') is stricter; see RK-10 and the orchestrator note."
+    },
+    {
+      "id": "ER-08",
+      "requirement": "Crime is shown with consequences and context, not as aspiration or recruitment: no glorifying insignia, no how-to, no graphic violence as the focal point; the thumbnail and first 7 s carry no graphic violence; the brief's 'no public gunfire' outcome is kept; real criminal organisations are not praised.",
+      "applies_to": [
+        "script",
+        "pictures",
+        "thumbnail",
+        "edit"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "script",
+        "image",
+        "edit",
+        "metadata",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/9229472",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-15"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/6162278",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-16"
+        }
+      ],
+      "uncertainty": "The criminal organisations policy states no fiction exception; the artistic/documentary context must be visible in the video (analysis, consequences)."
+    },
+    {
+      "id": "ER-09",
+      "requirement": "The Yakuza boss is an invented, unnamed, individual character with an invented name and design; no real group (e.g. no named designated syndicate), no real person, no Sega 'Yakuza / Like a Dragon' character design; cultural props are used for meaning in the story, not as a costume-stereotype gag; the boss gets the same dignity of competence as the others.",
+      "applies_to": [
+        "script",
+        "pictures"
+      ],
+      "strength": "recommended",
+      "roles": [
+        "script",
+        "image",
+        "research"
+      ],
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/9229472",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-15"
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/CREATIVE_STYLE_BIBLE.md",
+          "checked": "2026-10-17",
+          "kind": "creative_heuristic",
+          "verified": true,
+          "note": "sensitivity of a US general audience and Japanese viewers; no legal rule found"
+        }
+      ]
+    },
+    {
+      "id": "ER-10",
+      "requirement": "Music has a licence record per track and is never a GTA radio station, song, cue or sound-alike, nor a Godfather or Peaky Blinders theme. Sources allowed for MUSIC only (creator 2026-10-17): ElevenLabs music, or a free library whose licence is verified per track (CC0 or explicit commercial-use grant; stance on YouTube monetisation and Content ID; URL, date, licence text recorded). Narration and sound effects stay ElevenLabs (D-52). The 'GTA V feel' is described by musical qualities (era, tempo, instrumentation), never by naming a station, artist or song.",
+      "applies_to": [
+        "music",
+        "sound"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "music",
+        "sound",
+        "metadata"
+      ],
+      "sources": [
+        {
+          "url": "https://elevenlabs.io/music-terms",
+          "checked": "2026-10-17",
+          "kind": "provider_terms",
+          "verified": true,
+          "note": "V-28, read 2026-10-17"
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "RR-11"
+        }
+      ]
+    },
+    {
+      "id": "ER-11",
+      "requirement": "Originality: at least two contributions beyond the sources (the character-select analysis with sourced stats, the era-versus-system argument), no reading of external text, no clips; the four-boss format is not a template shared with another episode.",
+      "applies_to": [
+        "video"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "script",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/1311392",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-02"
+        }
+      ]
+    },
+    {
+      "id": "ER-12",
+      "requirement": "Everything the viewer sees or hears is English for the US audience (creator standing rule 2026-10-17); Georgian is for talking to the creator only. The brief's request for Georgian narration is superseded; captions or an optional Georgian subtitle track are a separate later decision.",
+      "applies_to": [
+        "voice",
+        "script",
+        "metadata",
+        "image"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "voice",
+        "script",
+        "image",
+        "metadata",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/CLAUDE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "CLAUDE.md 'Language (creator, 2026-10-17)', D-09, D-52"
+        }
+      ]
+    },
+    {
+      "id": "ER-13",
+      "requirement": "No 'fair use', 'no infringement intended' or 'for entertainment only' text; the unofficial note is a non-affiliation statement, described as such.",
+      "applies_to": [
+        "metadata"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "metadata",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/9783148",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-12"
+        }
+      ]
+    },
+    {
+      "id": "ER-14",
+      "requirement": "Canon accuracy for hardcore fans: every canon claim about a franchise carries a source (wiki page, film, episode, official page) and a label; fan-contested points are shown as contested; no 'canon' claim about unreleased GTA VI content.",
+      "applies_to": [
+        "research",
+        "script"
+      ],
+      "strength": "recommended",
+      "roles": [
+        "research",
+        "script",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/PRODUCTION_RULES.md",
+          "checked": "2026-10-17",
+          "kind": "creative_heuristic",
+          "verified": true,
+          "note": "the creator's 'nuance matters' note; science-grounding claim map"
+        }
+      ]
+    },
+    {
+      "id": "ER-15",
+      "requirement": "Invented 'Florida Man' style incidents are fully invented; no real arrestee, mugshot, headline or private person is reproduced or imitated.",
+      "applies_to": [
+        "script",
+        "pictures"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "script",
+        "image"
+      ],
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/2801895",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-03"
+        }
+      ]
+    },
+    {
+      "id": "ER-16",
+      "requirement": "Fan-expectation structure: the four-boss crossover is visible in the first 30 s and in every act, the outcomes the creator chose are argued from each boss's own canon or history, and the end leaves a debatable question instead of a verdict.",
+      "applies_to": [
+        "script",
+        "edit"
+      ],
+      "strength": "internal_quality",
+      "roles": [
+        "script",
+        "edit"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/PRODUCTION_RULES.md",
+          "checked": "2026-10-17",
+          "kind": "creative_heuristic",
+          "verified": true,
+          "note": "creator brief: viewers must see the crossover of the 4 heroes and GTA 6"
+        }
+      ]
+    },
+    {
+      "id": "ER-17",
+      "requirement": "Never use leaked or stolen assets, files, footage, code, models or screenshots (no GTA VI hack material, no leaked clips, none shown, described pixel-by-pixel or used as reference for drawings); leak-derived facts appear only as 'reported by <outlet>' from reputable press, never as confirmed.",
+      "applies_to": [
+        "research",
+        "script",
+        "pictures",
+        "thumbnail"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "research",
+        "script",
+        "image",
+        "metadata",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "note": "RR-02, RR-10; creator constraint 2026-10-17"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/1311392",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-02"
+        }
+      ]
+    },
+    {
+      "id": "ER-18",
+      "requirement": "Commentary target (RR-14): the episode states in one sentence what it says about GTA VI's own systems (wanted level, phone cameras, social media, money) and every act serves it; four bosses simply having an adventure in Leonida is the weak case and is not what this episode is. A risk heuristic, not a guarantee.",
+      "applies_to": [
+        "script",
+        "research"
+      ],
+      "strength": "recommended",
+      "roles": [
+        "research",
+        "script",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "RR-14, V-38 (secondary doctrine summary; case texts not read)"
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "creative_heuristic",
+          "verified": true,
+          "note": "commentary framing lowers but does not remove risk"
+        }
+      ],
+      "uncertainty": "The commentary is on an unreleased game; systems claims rest on official statements and labelled reports, so the target sentence must be worded about 'what Rockstar has shown or press has reported'."
+    },
+    {
+      "id": "ER-19",
+      "requirement": "Official screenshots, trailer frames and key art are private study only: never uploaded to, described to, or used as an image-to-image or style reference for any generator (RR-15). Titles may say GTA 6 in plain text, with no logo, no title font and no VI mark; the description carries the non-affiliation note.",
+      "applies_to": [
+        "pictures",
+        "thumbnail",
+        "metadata"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "image",
+        "metadata",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://policies.google.com/terms/generative-ai/use-policy",
+          "checked": "2026-10-17",
+          "kind": "provider_terms",
+          "verified": true,
+          "baseline_id": "B-11"
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "RR-15, RR-08"
+        }
+      ]
+    },
+    {
+      "id": "ER-20",
+      "requirement": "Invented parody brands (our social app, exchange, news outlet) and the franchise name are narrative props only: never on merchandise, a real app, a product or anything sold (RR-16). The plain-text name in title, description and narration stays allowed.",
+      "applies_to": [
+        "pictures",
+        "metadata"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "image",
+        "metadata"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "RR-16, RR-08, V-38"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/6154218",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-13"
+        }
+      ]
+    },
+    {
+      "id": "ER-21",
+      "requirement": "Source quality (ES-19): the claim map ranks sources primary_read > secondary > community > inference; a model-written report, a fan site tagged 'official' (gtavispot, leonidaverse, gtaintel, fandom wikis are community) or a leaked document is never the only source of a claim; dokumen.pub, scribd and similar hosts are refused; rows sourced to the leaked 'GTA VI Document' are dropped (RR-10).",
+      "applies_to": [
+        "research"
+      ],
+      "strength": "mandatory",
+      "roles": [
+        "research",
+        "qa"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/EPISODE_STANDARDS.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "ES-19, V-38"
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/RIGHTS_AND_FAIR_USE.md",
+          "checked": "2026-10-17",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "RR-10"
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "id": "RK-01",
+      "element": "GTA VI / Vice City / Leonida as the setting and the name 'GTA 6' in title and narration",
+      "category": "franchise",
+      "source_type": "reference_only",
+      "status": "ADAPT",
+      "evidence": "Rockstar's official page (read 2026-10-17): 'Vice City, USA', state of Leonida, release Nov 19, 2026, Jason and Lucia; no game footage, art or logo is needed for an analysis crossover.",
+      "rationale": "Naming the setting to identify it is nominative use and the premise is analysis of how four crime eras would fare in it; the risk is copying Rockstar's expression, so every Leonida image must be our own invention built from named facts only.",
+      "mitigation": "Plain-text names only; a drawn Vice City of our own (neon skyline, palms, causeway, humid dusk) assembled from generic Florida-coast archetypes; no Rockstar skyline compositions, no GTA logo or lettering, no HUD or minimap clone; narration says 'Rockstar has shown', never describes unreleased mechanics.",
+      "dependencies": [
+        "research",
+        "script",
+        "image",
+        "metadata"
+      ],
+      "rules": [
+        "ER-05",
+        "ER-06",
+        "ER-07"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "resolved": "Script applied: plain-text names only (Vice City, Leonida, Rockstar as publisher, GTA V/GTA 6 in narration), official facts attributed to 'Rockstar's page' (S02), no unreleased mechanic described; the city is an invented neon coast. Pictures: compiled prompts contain no franchise word (regex check on all prompts)."
+    },
+    {
+      "id": "RK-02",
+      "element": "Monetised YouTube analysis of an unreleased Rockstar game vs the Rockstar/Take-Two fan-content policy",
+      "category": "affiliation",
+      "source_type": "reference_only",
+      "status": "REVIEW",
+      "evidence": "B-14 (secondary summary, 503 on the page): non-commercial fan use tolerated; film, TV, streaming, advertising uses need a licence request; takedown at any time. Not read first-hand. Re-graded in v3: the commentary target (RR-14, RK-16), the plain-text-only naming (RR-16, RK-17), and the private-study boundary (RR-15, RK-18) reduce the exposure, and the policy page itself still returned 503 on both support URLs (not read first-hand). v4: the policy page returned 503 on every attempt (three URLs); second-hand reports agree it allows non-commercial uses and says nothing about custom monetised 2D animation, so the gap is known only second-hand. 2026-10-17 (run of this episode): the policy page returned HTTP 503 again from this session (WebFetch) and the support URL failed over curl; the page was NOT read first-hand. v8 (2026-10-19): the page was read first-hand from this session. Read first-hand 2026-10-19 (the page answered; quoted excerpts): 'Take-Two Interactive does not object to our fans using materials for non-commercial uses'; 'Non-commercial means that you don't make money through the game footage you post'; takedown 'at any time'; leaked pre-release footage and isolated cutscenes or endings are removed; film, TV, streaming, advertising and publishing professionals are told 'this policy likely does not apply to you' and sent to copyright@take2games.com. The page does not mention fan art or original animation. So the second-hand summary was right: the tolerance is about Take-Two material, and a channel that posts none of it and names the game in plain text is outside what the page addresses.",
+      "rationale": "The channel is monetisable, so Rockstar's tolerance for non-commercial fan use may not cover it and Take-Two could ask for removal; with zero Rockstar media, a stated commentary target, plain-text names and invented brands the exposure is reduced to the names and the analysis itself, but it is not removed and this is not legal advice.",
+      "mitigation": "Keep zero Rockstar media and invented brand names; re-read the policy page first-hand before paid_assets; the creator decides whether to ask counsel or to publish; on a notice follow RR-13. Creator accepted this condition on 2026-10-17; the page was re-read first-hand on 2026-10-19. Not legal advice.",
+      "dependencies": [
+        "metadata",
+        "qa"
+      ],
+      "rules": [
+        "ER-05"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "decision": {
+        "by": "creator",
+        "date": "2026-10-17",
+        "answer": "Accepted condition: zero Rockstar material, invented brands, nothing infringing, stay inside the maximum legal frame; the world may feel like GTA V in tone but no rights are violated. This is the creator's risk decision, not legal advice, and not a finding that the video is lawful or monetisation-safe."
+      }
+    },
+    {
+      "id": "RK-03",
+      "element": "'Inspired by GTA loading screens' art direction (poster-collage composition, sunset gradients, stylised figures)",
+      "category": "visual_design",
+      "source_type": "original",
+      "status": "ADAPT",
+      "evidence": "RR-03 forbids imitating a production's designs; Rockstar's loading-screen illustrations are specific protected artworks by identifiable artists; a broad era of poster-style graphic illustration is not itself owned.",
+      "rationale": "A general 80s-Miami poster look in neon pink, orange and cyan is a style, but a prompt or reference that points to Rockstar's actual loading screens could reproduce their composition and figure treatment, which is the protected expression.",
+      "mitigation": "Brief the image role with qualities only (flat hand-drawn shapes, thick outlines, sunset gradient, halftone grain, our existing cast design, UR-22); no reference to Rockstar artworks in any prompt, no 'in the style of GTA' wording; the character-select grid comes from fighting-game conventions with our own layout, stars and icons. 'Feels like GTA V' is delivered by mood and subject matter (sun, neon, satire of social media and money), not by copying Rockstar designs, palettes of specific artworks, logos or compositions.",
+      "dependencies": [
+        "image"
+      ],
+      "rules": [
+        "ER-04",
+        "ER-05"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "resolved": "Script applied: prompts describe qualities only (flat neon pink, sunset orange, cyan, thick ink, planes of colour); no 'in the style of', no Rockstar composition, no HUD; the character-select screen is our own layout drawn in code (portrait frames, star bars)."
+    },
+    {
+      "id": "RK-04",
+      "element": "GTA parody brands (Bleeter, LifeInvader, BAWSAQ, LCN) and GTA V character Lester Crest named in the brief",
+      "category": "trademark",
+      "source_type": "reference_only",
+      "status": "ADAPT",
+      "evidence": "These are GTA IV/V in-game brands and a GTA V character in Los Santos, not shown by Rockstar as Leonida features (B-18 names no in-game social app or exchange). Search coverage of VI's apps is low-quality and unverified. Creator wants the perceived world to feel like GTA V: that makes the parody brands the main carrier of the feel, so they must be our own inventions. v4: GRAND THEFT AUTO is a registered Take-Two mark (reg 4321159, read through a mirror); no USPTO rows for Bleeter, LifeInvader, BAWSAQ or LCN were found by the creator's report (absence of what was searched only, unverified).",
+      "rationale": "Putting earlier-game brand logos in a Leonida scene would both copy Rockstar's designs and misstate canon, which hardcore fans would catch at once, so the names stay as labelled references and the pictures use our own parody brands.",
+      "mitigation": "Invent our own parody apps and exchange names and logos for the scenes; mention Bleeter, LifeInvader, BAWSAQ, LCN or Lester only in narration as 'GTA V's version of...' with a source; no Rockstar logos drawn; Shelby's 'data' win is framed as our own character logic, 'a planner in the mould of GTA V's Lester' at most.",
+      "dependencies": [
+        "research",
+        "script",
+        "image"
+      ],
+      "rules": [
+        "ER-05",
+        "ER-07"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "resolved": "Script applied: Bleeter, LifeInvader are not used; LCN and BAWSAQ are spoken once, labelled 'fans say' and 'GTA V' (S19, C-12); no logo drawn; props use invented wordless brands."
+    },
+    {
+      "id": "RK-05",
+      "element": "Vito Corleone as the film-era Don (about 1945-55 archetype; The Godfather, Puzo novel 1969, Paramount film 1972)",
+      "category": "character",
+      "source_type": "reference_only",
+      "status": "ADAPT",
+      "evidence": "Paramount asserts rights in the film and the characters; a 2012 Paramount v. Puzo estate dispute over characters and the 'Godfather' marks is reported by CSMonitor/CBC (secondary, a 2026 article reports a settlement, unverified). Owner of rights is therefore not settled by us.",
+      "rationale": "A named protected character in a monetised crossover is acceptable only as analysis with our own design; the most recognisable protected elements are the film's costume-and-pose tableaux and lines, which are not needed to show a patient, family-first old Don.",
+      "mitigation": "Creator choice 2026-10-17: the film-era Don. Still no actor likeness: build him from role, manner and generic props (older heavy-set patriarch, quiet courtesy, favours, family table, dark suit) and our own face; no cotton-cheek makeup shape, no rose-and-cat tableau, no famous lines, no Rota theme; plain-text name only.",
+      "dependencies": [
+        "research",
+        "script",
+        "image",
+        "music"
+      ],
+      "rules": [
+        "ER-04",
+        "ER-05",
+        "ER-06"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "resolved": "Era set to the 1945-55 Don by the creator; design rules unchanged until the image role applies them."
+    },
+    {
+      "id": "RK-06",
+      "element": "Tommy Shelby as the 1930s Shelby (Peaky Blinders; Banijay UK per trade press after the 2024 Mandabach acquisition, not verified first-hand)",
+      "category": "character",
+      "source_type": "reference_only",
+      "status": "ADAPT",
+      "evidence": "A feature film, 'Peaky Blinders: The Immortal Man', was announced for March 2026 (cinema March 6, Netflix March 20 per news summaries, secondary); the real Birmingham gang of the 1890s-1910s is historical, Tommy Shelby and the Shelby family are fictional. v4: Banijay UK acquired Caryn Mandabach Productions in June 2024 (trade press, Banijay pages unopened). Read first-hand on Wikipedia: Tommy is an MP from 1927 and uses information, but also arranges an assassination attempt, murders the Barwell family and trades opium; no public 1930s gunfight is described, so 'no public gunfire' fits while 'never violent' would not.",
+      "rationale": "Tommy Shelby is a fictional character in an active franchise with a recently released film, and the very distinctive cap, undercut and long-coat silhouette is bound to the show's design; the historical Birmingham street-gang fashion is free to draw but should not reproduce the production's exact costume tableau.",
+      "mitigation": "Creator choice 2026-10-17: 1930s Shelby (no Immortal Man spoilers or 1940 content). Own face, hairline and palette from interwar Birmingham fashion; no Shelby Company logo, no show lettering, no show music. Verify producer/rights holder before the manifest is final.",
+      "dependencies": [
+        "research",
+        "script",
+        "image",
+        "music"
+      ],
+      "rules": [
+        "ER-04",
+        "ER-05",
+        "ER-06"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "resolved": "Era set to the 1930s by the creator."
+    },
+    {
+      "id": "RK-07",
+      "element": "Faces and costumes 'resembling the original cinematic figures' (Marlon Brando as Vito; Cillian Murphy as Tommy; also Capone film portrayals)",
+      "category": "actor_likeness",
+      "source_type": "third_party_unlicensed",
+      "status": "BLOCK",
+      "evidence": "RR-03 and RR-09 forbid imitating actor likenesses and actor faces in pictures and thumbnails; B-17 (secondary) describes a 70-year post-mortem publicity right in California for Brando (died 2004); Murphy is living; US publicity law is state-by-state and UK has no statutory personality right (not verified).",
+      "rationale": "Drawing faces so that viewers recognise Brando or Murphy would be a depiction meant to resemble a named actor in a commercial video, which our own project rule already prohibits and which adds the highest-risk layer (right of publicity and YouTube privacy complaints) for no storytelling gain, because the character can be recognised by role and manner.",
+      "mitigation": "Remove the actor resemblance, keep the characters: faces and body types are invented from the written archetype; recognition comes from role, setting, props that are generic (gun-metal suit, fedora, cap, family table) and behaviour. 'Resembling the original cinematic figures' becomes 'recognisable by who they are, not by who played them'. Capone is drawn from historical description (not film portrayals, not traced from photographs).",
+      "dependencies": [
+        "image",
+        "metadata",
+        "script"
+      ],
+      "rules": [
+        "ER-03",
+        "ER-04"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Marlon Brando / Cillian Murphy (actors)",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": false,
+        "false_statement_of_fact": false,
+        "voice_imitated": false
+      },
+      "decision": {
+        "by": "creator",
+        "date": "2026-10-17",
+        "answer": "Accepted: recognisable archetype by role and manner, no actor face (Brando, Murphy); the Vito film-era choice does not change this."
+      },
+      "removed": true,
+      "resolved": "The actor resemblance is removed: all four faces are invented from written archetype cards in production_script.json cast (no actor, show or film name in any picture prompt; Capone from historical description); recognition comes from role, manner and generic props."
+    },
+    {
+      "id": "RK-08",
+      "element": "Al Capone as a real historical person in an invented 2020s scenario",
+      "category": "real_person",
+      "source_type": "original",
+      "status": "ADAPT",
+      "evidence": "Capone died 1947; convicted of tax evasion 1931; his publicity as 'Public Enemy No. 1' is part of his real downfall; he lived on Palm Island in Miami Beach and died in Florida (all from memory of standard histories, to be put in the claim map with sources). Estate or trademark licensing of the Capone name is not verified. v4 publicity check (secondary roadmap pages, statutes not read): Illinois's 50-year post-mortem term applies only to deaths after 1999 and Florida's is 40 years (Capone died in Florida in 1947), and Tyne v. Time Warner (Fla. 2005) found a film use not commercial; so no statutory post-mortem term on those pages reaches Capone. An 'AL CAPONE' tobacco trademark (Burger Sohne AG) and the absence of estate enforcement are unverified.",
+      "rationale": "A deceased historical figure drawn as an obvious caricature in a plainly fictional crossover is within the channel's D-40 practice, but the fall-to-viral-infamy outcome and invented posts must not be presented as things he said, and a Capone-family name licence could exist, which D-40 asks us to check.",
+      "mitigation": "Caricature in our cast style, never traced from a photograph; the narration says plainly that the scenario is invented; no invented quote as real; use true history for the hook (Florida retirement, press notoriety, IRS case) in the claim map; run the estate/name-licence check and record it in the manifest.",
+      "dependencies": [
+        "research",
+        "script",
+        "image"
+      ],
+      "rules": [
+        "ER-02",
+        "ER-15"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Al Capone",
+        "living": false,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": true,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "partly done 2026-10-17: Illinois and Florida terms read in secondary summaries (not legal advice); trademark ownership of 'AL CAPONE' and estate enforcement unverified"
+      },
+      "resolved": "Script applied: S02 says the scenario is invented and the bosses' words are made up; S10 repeats 'Invented'; Capone history is limited to C-16, C-18, C-19, C-20, C-21; no invented quote presented as real; Capone drawn from historical description."
+    },
+    {
+      "id": "RK-09",
+      "element": "Unnamed generic Yakuza boss and Japanese organised-crime stereotype",
+      "category": "other",
+      "source_type": "original",
+      "status": "ADAPT",
+      "evidence": "The brief says unnamed and generic; YouTube's criminal-organisations policy (B-15) bars praise of real criminal organisations; 'Yakuza' is also Sega's game franchise title with its own character designs (not verified in this session).",
+      "rationale": "An invented boss is not a real person, but a costume-stereotype (full-body tattoos, finger-cutting jokes) would offend Japanese and hardcore genre fans, and borrowing the look of a Sega game character would add a second franchise risk, so competence and specificity are the safer and stronger writing.",
+      "mitigation": "Give him an invented name, a corporate-era biography and a distinct silhouette; show him winning through contracts and shareholding (a real pattern of Japanese organised crime in finance, to be sourced by research); no named real syndicate, no Sega designs, no humiliating gags; sources for any real-world claim in the claim map.",
+      "dependencies": [
+        "research",
+        "script",
+        "image"
+      ],
+      "rules": [
+        "ER-08",
+        "ER-09"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "resolved": "Script applied: Mizuno is invented ('our invented Yakuza boss', no real group or person), wins the boardroom with dignity and loses the street (S18-S22); no real Japanese-law or syndicate claim is made (C-42 unverified, unused)."
+    },
+    {
+      "id": "RK-10",
+      "element": "Claims about GTA VI, Leonida and Vice City in the brief ('2025 setting', Bleeter/LifeInvader/BAWSAQ/LCN in Leonida, 4K phone cameras)",
+      "category": "misleading_fact",
+      "source_type": "reference_only",
+      "status": "REVIEW",
+      "evidence": "B-18: Rockstar's page names no year, no in-game social app or stock exchange; the game is unreleased until Nov 19, 2026; sources found on VI's phone apps are low-quality SEO pages (unverified). v3: ER-21 and the claim map record the source tier of each GTA VI claim; rows from the leaked GTA VI Document are dropped; the Wikipedia article on VI mentions August 2026 leaks and a leaker-promoted meme coin (secondary, outlet not opened). v4: claim map has 43 claims; regions, app names, named characters and every system (wanted, money, crypto, laundering, legacy brands) are community or inference; only the date, setting names and Jason and Lucia are first-hand official; 'civilians filming crimes' in trailer 1 is official only after a person watches it.",
+      "rationale": "Hardcore fans check canon, and the creator wants everything known, leaks and speculation included, but labelled. Reputable press reports of leaks are secondary reporting; the leaked material itself is stolen and RR-10 says never leaks as a source, so the labelling scheme and the RR-10 conflict need one recorded decision before the script.",
+      "mitigation": "Claim map labels every GTA VI item official / press-reported leak / community speculation / our inference (ER-07); leak items only from reputable press, worded 'reported', never confirmed; never use leaked assets, files, footage, code or screenshots, even as drawing reference (ER-17). Conflict with RR-10 raised to the orchestrator: either RR-10 is clarified to allow labelled press reports, or leak-derived items are dropped.",
+      "dependencies": [
+        "research",
+        "script",
+        "qa"
+      ],
+      "rules": [
+        "ER-07",
+        "ER-14"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "decision": {
+        "by": "creator",
+        "date": "2026-10-17",
+        "answer": "Handled by labelling (creator, 2026-10-17): official facts only C-01..C-05 and C-29; everything else is spoken as 'in GTA V', 'fans say' or 'we are guessing'; 'civilians film crimes' is not stated as official because trailer 1 was not watched (C-30); no leaked material used. Not legal advice."
+      },
+      "resolved": "Script S01, S02, S08, S13, S19 word every GTA item as official (Rockstar's page), GTA V, fans say or our guess; no GTA VI mechanic is stated as fact."
+    },
+    {
+      "id": "RK-11",
+      "element": "Narration language: the brief asks for Georgian narration, the channel is English for a US audience",
+      "category": "other",
+      "source_type": "not_applicable",
+      "status": "ADAPT",
+      "evidence": "CLAUDE.md language rule (creator, 2026-10-17): everything the viewer sees or hears is English for the US audience; D-09, D-52. ElevenLabs v4 support for Georgian was not checked.",
+      "rationale": "Georgian narration would cut the main (US) market off from the video, contradicts a standing creator rule and cannot be checked against the English-language fan canon the episode depends on.",
+      "mitigation": "Narration, on-screen text, titles, metadata and picture prompts are written in English; the brief's Georgian request is recorded as superseded by the standing rule; a Georgian subtitle track or dub can be proposed after approval #2.",
+      "dependencies": [
+        "script",
+        "voice",
+        "metadata"
+      ],
+      "rules": [
+        "ER-12"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "resolved": "Script applied: narration, on-screen text, prompts and metadata are English."
+    },
+    {
+      "id": "RK-12",
+      "element": "Narrator voice and character voices",
+      "category": "synthetic_voice",
+      "source_type": "original",
+      "status": "PASS",
+      "evidence": "The narrator and the four bosses each have their own library voice chosen from described traits (ER-03, D-45, the creator's rule of 2026-10-19: every character gets a voice that fits their personality); no clone, no actor or recording imitated; the bosses' lines are original and flagged as invented in S02. v7 (script v2, 2026-10-19): the main video flags them in S02; every Short with boss dialogue carries its own flag, because a Short is uploaded alone (SH02 'Made up, every word', SH04 'Invented, but it tracks', SH05 'our invented Vice City test', SH06 'our invented Vice City', SH07 'our invented boss'; SH10's Shelby line is a fictional character's). No line quotes a film or the series.",
+      "rules": [
+        "ER-03"
+      ]
+    },
+    {
+      "id": "RK-13",
+      "element": "Invented 'Florida Man' incidents and invented social-media posts, crypto and stock plot points",
+      "category": "misleading_fact",
+      "source_type": "original",
+      "status": "PASS",
+      "evidence": "All incidents and posts are written by the channel as obvious comedy; no real person, headline or mugshot; crypto and stock lines contain no investment advice and no real tickers beyond named GTA parody exchanges.",
+      "rules": [
+        "ER-15"
+      ]
+    },
+    {
+      "id": "RK-14",
+      "element": "Music and sound plan (generated with ElevenLabs, Creator plan)",
+      "category": "music",
+      "source_type": "original",
+      "status": "REVIEW",
+      "evidence": "V-28: Creator plan allows commercial use but monetised YouTube and Content ID are not addressed by the terms; plan was confirmed only as 'Creator' (2026-10-17). v4: free sources named by the creator's report (Kevin MacLeod, White Bat Audio, Google Fonts SIL OFL, Game-icons.net CC BY) are all unverified; no track selected; Content ID false-claim risk on CC0 tracks applies.",
+      "rationale": "Two sources are now allowed for music (ElevenLabs, or a verified free library) and each has an open licence question: ElevenLabs terms are silent on monetised YouTube and Content ID, and a free library's per-track licence, Content ID stance and attribution are not yet checked; a 'GTA V feel' brief can also drift toward a sound-alike of the game's radio.",
+      "mitigation": "Creator 2026-10-17: free-library music allowed beside ElevenLabs for MUSIC only, verified per track (CC0 or explicit commercial grant; monetisation and Content ID stance; URL, date, licence text); narration and sound effects stay ElevenLabs. Describe the feel by era, tempo and instruments; never name or imitate GTA stations or songs; licence record per track before use.",
+      "dependencies": [
+        "music",
+        "metadata",
+        "orchestrator (D-52 wording)"
+      ],
+      "rules": [
+        "ER-10"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "license": {
+        "asset_path": "(not yet created)",
+        "provider": "ElevenLabs eleven_music_v2_5 or a free music library (not chosen yet; per-track record required)",
+        "owner": "the channel (user keeps rights in output per V-28; placeholder until tracks exist)",
+        "basis": "generated_under_provider_terms",
+        "scope": "online video, monetised YouTube (not addressed by terms)",
+        "attribution": "none required on Creator plan",
+        "restrictions": "no film, TV, radio or studio games on Creator",
+        "verified": "2026-10-17",
+        "evidence": "elevenlabs.io/music-terms read 2026-10-17 (V-28)"
+      },
+      "decision": {
+        "by": "creator",
+        "date": "2026-10-17",
+        "answer": "Conservative option (creator, 2026-10-17): music only from ElevenLabs eleven_music_v2_5 (instrumental, described by era, tempo and instruments) or a very light bed; a free-library track is used only if its licence is verified first-hand per track (none is verified). ElevenLabs' silence on monetised YouTube and Content ID (V-28) stays the creator's REVIEW item at final review."
+      }
+    },
+    {
+      "id": "RK-15",
+      "element": "Crime content, advertiser suitability and the 'violent criminal organizations' policy",
+      "category": "other",
+      "source_type": "original",
+      "status": "ADAPT",
+      "evidence": "B-15: praise or promotion of criminal organisations is not allowed, EDSA context must be in the video; B-16: crime documentaries are ad-eligible, glorification or violence as the focal point is not.",
+      "rationale": "Four mafia-themed protagonists make glorification the natural failure mode of this episode, so the analysis frame and consequences must be on screen, not implied.",
+      "mitigation": "Frame as strategy comparison with consequences for each boss; no gunfire spectacle in the first 7 s or the thumbnail; no group insignia; the 'no public gunfire' outcome stays; descriptions avoid recruitment language.",
+      "dependencies": [
+        "script",
+        "image",
+        "edit",
+        "metadata"
+      ],
+      "rules": [
+        "ER-08"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "resolved": "Script applied: consequences shown (ledger, verdict, silent phone); no gunfire anywhere, nothing violent in the first 7 s or the thumbnail; no insignia, no how-to."
+    },
+    {
+      "id": "RK-16",
+      "element": "Commentary target of the episode (what it says about GTA VI itself)",
+      "category": "franchise",
+      "source_type": "reference_only",
+      "status": "ADAPT",
+      "evidence": "Manifest commentary_target is now a full sentence; RR-14 and V-38 (secondary summary of Warhol v. Goldsmith and Campbell v. Acuff-Rose) say commentary or parody about the source is stronger than a new adventure sharing its purpose.",
+      "rationale": "The brief's own stress is that viewers see four bosses in GTA 6, which is the weak adventure case unless every act tests a named GTA VI system, so the script must be built as that test rather than as a story set in Leonida.",
+      "mitigation": "Build every act around one GTA VI system (wanted level, phone cameras, social media, money) and record in the claim map which source (official, reported, speculation) supports the system, never in the narration (BP-15); the bosses stay the stars, the system is the argument.",
+      "dependencies": [
+        "script",
+        "research"
+      ],
+      "rules": [
+        "ER-18"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "resolved": "Script applied: commentary target stated in S08 and S13 (phone, feed, money, wanted level) and every round serves it; the manifest names it."
+    },
+    {
+      "id": "RK-17",
+      "element": "Invented parody brands and the 'GTA 6' name in the title",
+      "category": "trademark",
+      "source_type": "original",
+      "status": "ADAPT",
+      "evidence": "RR-16 and RR-08; V-38 (Jack Daniel's v. VIP, secondary summary): parody marks sold as products are the weak case; plain-text nominative use is allowed.",
+      "rationale": "The title must name GTA 6 to be found, and the parody brands carry the GTA feel, so the risk is limited to the name drifting into a logo or font, or a brand leaving the screen into merchandise or an app.",
+      "mitigation": "Title and description in plain text; no logo, no GTA-like title font, no VI mark; parody brands appear only inside scenes; no merch or product use; non-affiliation note in the description.",
+      "dependencies": [
+        "image",
+        "metadata"
+      ],
+      "rules": [
+        "ER-19",
+        "ER-20"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "resolved": "Script applied: GTA 6 and parody brands are narrative props only; no merchandise; description will carry the non-affiliation note (metadata phase)."
+    },
+    {
+      "id": "RK-18",
+      "element": "Official GTA VI screenshots, trailer frames and key art as private study",
+      "category": "reference",
+      "source_type": "reference_only",
+      "status": "ADAPT",
+      "evidence": "RR-15; B-11 (Google generative AI policy: no IP violations); Gemini outputs may resemble inputs.",
+      "rationale": "Looking at trailers to write accurate analysis is fine, but putting any official image into a generator as reference could reproduce Rockstar's expression, so the boundary is between the researcher and the image role.",
+      "mitigation": "Research may study official frames privately; no official image, frame or description of one goes into any generator call, reference slot or style slot; image prompts use our written scene descriptions only; manifest official_images_as_generator_input stays false.",
+      "dependencies": [
+        "research",
+        "image"
+      ],
+      "rules": [
+        "ER-19",
+        "ER-05"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "resolved": "Applied: no official image, frame or description of one is in any prompt or reference slot; references are only our own painted pictures (manifest official_images_as_generator_input false)."
+    },
+    {
+      "id": "RK-19",
+      "element": "Rockstar's GTA VI characters Boobie Ike, the Real Dimez, Raul Bautista and Brian Heder, and the label Only Raw Records, named in S03 and SH03",
+      "category": "character",
+      "source_type": "reference_only",
+      "status": "PASS",
+      "evidence": "Each sentence paraphrases Rockstar's own 'Only in Leonida' page (rockstargames.com/VI/only-in-leonida, read first-hand 2026-10-19 by research and again by the standards director the same day; claim map C-51..C-55, tier primary_read, label official) and is spoken as 'Rockstar's page'. None of the four has a dialogue line, a cast entry, a voice or a face sheet; no picture prompt draws them (w02_studio is an invented wordless studio front, w02_keys shows nobody); Only Raw Records is not spoken, shown or lettered; no Rockstar text is quoted on screen. Plain-text names identify the subject of the commentary (RR-14). v8: the Shorts' visual beats (SH03) show the four names as plain caption text in the house caption style (nominative, ER-06), with no Rockstar lettering, logo or picture of the characters.",
+      "rules": [
+        "ER-05",
+        "ER-06",
+        "ER-07"
+      ]
+    }
+  ],
+  "platform": {
+    "original_contribution": [
+      "the five-stat character-select analysis, each rating explained and sourced",
+      "a boss-versus-modern-pressure matrix argued step by step with drawn proofs",
+      "true-history hooks (Capone's Florida end, press fame, tax conviction; Birmingham gang history) placed against the fiction",
+      "an invented, original Leonida scenario with its own parody brands"
+    ],
+    "reuse_risk": {
+      "third_party_footage_seconds": 0,
+      "reads_external_text": false,
+      "template_shared_with": [],
+      "note": "no Rockstar, Paramount, BBC or Netflix media; all pictures drawn by us"
+    },
+    "advertiser_suitability": [
+      "crime and organised-crime theme: keep violence non-graphic, no gunfire spectacle in the first 7 s or the thumbnail",
+      "no recruitment language, no insignia",
+      "crypto and stock content carries no investment advice"
+    ],
+    "community_guidelines": [
+      "violent criminal organizations policy (B-15): analysis with consequences, no praise",
+      "impersonation/privacy (B-03, B-04): no realistic or faked person, no actor likeness"
+    ],
+    "disclosure": {
+      "realistic_synthetic_content": false,
+      "required": false,
+      "reason": "all characters and scenes are clearly drawn 2D fiction; no realistic person, no altered footage, no realistic scene that never happened; the narrator is a library voice that is not a real person's voice",
+      "ai_uses": [
+        "ideation_or_script",
+        "stylised_imagery",
+        "synthetic_voice"
+      ],
+      "submitted": false
+    },
+    "content_id": "no third-party media is used, so no claim is expected; generated music carries unaddressed Content ID terms (RK-14)",
+    "made_for_kids": false,
+    "metadata": {
+      "credits": [],
+      "notices": [
+        {
+          "text": "Unofficial fan analysis. Not affiliated with or endorsed by the rights holders.",
+          "purpose": "tells viewers the channel is not affiliated with the rights holders (RR-08)"
+        }
+      ]
+    }
+  },
+  "creative": {
+    "mechanism": "a character-select screen opens the film; each boss then meets the same four modern pressures in turn, and the elimination order is the story; the stat screen returns at the end with changed stars",
+    "visual_invariants": [
+      "one drawn universe (UR-22) in our hand-drawn style",
+      "neon pink, sunset orange and cyan palette from the palette file, not Rockstar's colours",
+      "each boss has one fixed design and signature colour from the first frame to the last",
+      "invented parody brands only"
+    ],
+    "may_vary": [
+      "camera distance and framing per beat",
+      "a boss-specific accent light per act",
+      "phone-screen, newsfeed, stock-chart and boardroom insets",
+      "poster-style title cards for each act"
+    ],
+    "pacing": [
+      "a collision image and the matchup question in the first 15 s, then the character-select reveal",
+      "one fall or turn roughly every 2-3 minutes",
+      "a quiet beat before the winner is revealed",
+      "a debate question at the end instead of a verdict"
+    ],
+    "memorable_moments": [
+      {
+        "kind": "reveal",
+        "what": "character-select screen with five star-rated stats per boss, revisited at the end"
+      },
+      {
+        "kind": "contrast",
+        "what": "loud Capone vs quiet Shelby, the same camera phone in both hands"
+      },
+      {
+        "kind": "visual_proof",
+        "what": "a viral-post counter that rises as Capone's cover falls"
+      },
+      {
+        "kind": "comparison",
+        "what": "the Yakuza stock-market win and the street loss on one split screen"
+      },
+      {
+        "kind": "callback",
+        "what": "Capone's real Florida retirement set against his Leonida arrival"
+      }
+    ],
+    "avoid_patterns": [
+      {
+        "pattern": "a scientist or expert explains in a cave/lab",
+        "seen_in": "stone_age_ep1"
+      },
+      {
+        "pattern": "the same era-by-era purse/price ladder structure",
+        "seen_in": "roman_pay_ep2"
+      }
+    ],
+    "channel_identity": "worlds collide, the drawn universe, with a character-select format inside the channel rather than replacing it"
+  },
+  "execution": {
+    "rights_manifest": "rights_manifest.json",
+    "roles": {
+      "research": {
+        "inputs": [
+          "creative brief",
+          "Rockstar official GTA VI pages",
+          "fan wikis for each franchise",
+          "history sources for Capone and Birmingham gang"
+        ],
+        "outputs": [
+          "claim_map with labels",
+          "fan-fact check list",
+          "stat sheet with sources"
+        ],
+        "must": [
+          "use only Rockstar's official statements for GTA VI; label everything else 'speculation' or 'earlier game'",
+          "answer the fan-check questions (Leonida canon, GTA V brands, Capone history, Vito era, Shelby era, Yakuza facts) with sources",
+          "exclude leaks and datamines (RR-10)",
+          "record the Capone estate/name-licence check and the Shelby/Corleone rights holders",
+          "label every GTA VI item official / press-reported leak / community speculation / our inference; use leaks only as reputable-press reports, worded 'reported' (ER-07, ER-17)",
+          "never fetch, view or use leaked files, footage, code or screenshots (ER-17)",
+          "build and keep jobs/syndicate_wars/claim_map.json: each claim has tier (primary_read / secondary / community / inference), label and a source opened first-hand; community sites and model-written reports are never the only source (ER-21)",
+          "state the commentary target sentence in the claim map header and tie each act to it (ER-18)",
+          "open a page for each unverified claim before the script uses it (Frank Wilson ledger details, Shelby constituency, Yakuza law, Georgian Article 23, USPTO rows), or keep it out"
+        ],
+        "human_review": [
+          "claims with label 'guess' that the script will use"
+        ],
+        "fallbacks": [
+          "if a canon point cannot be sourced, cut it or word it as our speculation"
+        ]
+      },
+      "script": {
+        "must": [
+          "English only; one narrator voice",
+          "say plainly that the scenario is invented; Capone's lines flagged invented",
+          "no famous franchise lines quoted or captioned; at most 6 short analysed quotes (RR-04)",
+          "no GTA VI gameplay claims; brands from GTA V labelled as such",
+          "crime shown with consequences; 'no public gunfire' outcome kept",
+          "Yakuza boss competent and invented; every outcome argued from the boss's own history or canon",
+          "recap under 20 % of narration (RR-05)",
+          "leak-derived items are spoken as 'reported', never confirmed; speculation and inference are said as such",
+          "every act tests one named GTA VI system; the claim map says whether its source is official, reported or speculation (ER-18); the narration never reads a source out (BP-15)",
+          "'filming civilians' may be called official only after C-30 is confirmed by a private trailer watch; otherwise every GTA VI system line is 'GTA V's version', 'reported' or speculation (claim map script_use)",
+          "no spoken or captioned claim about Capone's soup-kitchen or Public Enemy dates beyond the claim map (C-19, C-20); no indictment count"
+        ],
+        "machine_checks": [
+          "python -m explainer_engine.rights.ip_check jobs/syndicate_wars/rights_manifest.json",
+          "python -m explainer_engine.qa.engagement <production_script.json>"
+        ],
+        "human_review": [
+          "fan-contested points",
+          "the order of the falls"
+        ]
+      },
+      "voice": {
+        "must": [
+          "library narrator voice only; no clone or sound-alike of any actor (ER-03)",
+          "English",
+          "first take, one generation (elevenlabs-voice skill)"
+        ]
+      },
+      "image": {
+        "must": [
+          "our drawn universe (UR-22); neon pink, sunset orange, cyan",
+          "describe by qualities only; no franchise, character, actor, artist or 'in the style of GTA' wording in any prompt (RR-03)",
+          "no Rockstar logo, lettering, HUD, map or loading-screen composition; no Godfather or Peaky Blinders costume tableau or title lettering",
+          "faces and bodies invented from written archetypes, not actor likenesses; Capone not traced from a photograph",
+          "invented parody app and exchange logos",
+          "no graphic violence in the thumbnail or first 7 s",
+          "thumbnail own art only, no actor likeness, no key art",
+          "leaked images are never reference for drawings (ER-17)",
+          "no official screenshot, frame or key art in any generator call, reference slot or style slot (ER-19)",
+          "parody brands as in-scene props only, never merchandise or a product (ER-20)",
+          "filler pictures made in Canva (D-53) follow the same rules: our own elements only, no franchise, logo, actor or parody-brand merchandise use; the creator accepted Canva's terms on 2026-10-17"
+        ],
+        "human_review": [
+          "every boss's face against 'does this look like a named actor?'"
+        ],
+        "fallbacks": [
+          "if a face reads as an actor, redraw with a different jaw, hairline and silhouette"
+        ]
+      },
+      "music": {
+        "must": [
+          "licence record per track; sources: ElevenLabs music or a free library verified per track (CC0 or explicit commercial grant, monetisation and Content ID stance, URL, date, licence text); never a GTA radio cue or sound-alike (ER-10)",
+          "feel described by era, tempo and instruments",
+          "do NOT select a track yet: no free-library source is verified; selection waits for the per-track licence check (ES-09)"
+        ],
+        "human_review": [
+          "creator confirms the chosen music source and each track's licence before use (RK-14)"
+        ]
+      },
+      "sound": {
+        "must": [
+          "library or generated sounds with a licence record; no game, film or show sound clips"
+        ]
+      },
+      "edit": {
+        "must": [
+          "stat-screen numbers stay on screen long enough to read (ED-10)",
+          "no graphic violence in the first 7 s",
+          "varied shot size and a diagram or inset in every act; no repeating template"
+        ]
+      },
+      "metadata": {
+        "must": [
+          "title and description in English; franchise names in plain text only",
+          "description carries the RR-08 unofficial note",
+          "no 'fair use' or 'no infringement intended' text (ES-11)",
+          "credits only from verified records (ES-12)",
+          "disclosure left off for the drawn fiction; re-decide if any realistic element is added",
+          "title may say GTA 6 in plain text, no logo, no title font, no VI mark; description carries the non-affiliation note (ER-19, ER-20)"
+        ]
+      },
+      "qa": {
+        "must": [
+          "final_qa gate passes; disclosure decision matches the rulebook",
+          "ip_check has 0 FAIL; every REVIEW answered in writing",
+          "fan-fact list closed or marked speculation",
+          "no actor-likeness, Rockstar or franchise media in the render",
+          "ip_check commentary_target, official_images_as_generator_input and merch_or_product_use are all satisfied"
+        ]
+      }
+    },
+    "escalation": [
+      "any REVIEW item goes to the creator through the orchestrator",
+      "a face that resembles an actor, any third-party media found in a render, or a fact-check failure on a canon claim returns to the orchestrator before paid_assets"
+    ],
+    "reuse": [
+      "Episode 1 and roman_pay pictures are not reused",
+      "the character-select layout may be reused by later episodes only with changed content and a rulebook note"
+    ]
+  },
+  "checks": [
+    {
+      "checkpoint": "final",
+      "date": "2026-10-17",
+      "by": "orchestrator",
+      "script_sha256": "91dd9e7678881694f874cd6930a8377f536ea89b7eb7bb491b98679207716c51",
+      "rulebook_version": 5,
+      "scope": "rulebook v5: BLOCK RK-07 removed, REVIEW RK-10/RK-14 decided from the creator's 2026-10-17 statements, ADAPT items resolved at script level; claim map C-44..C-50 added"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-17",
+      "by": "orchestrator",
+      "script_sha256": "e9cf700ddde8265ce696caf4ec1807836543aa0ee5a2d7dd80db3f55d9b155a6",
+      "rulebook_version": 5,
+      "scope": "script v1 (31 segments, 1289 words): creator's blanket approval of 2026-10-17 'continue autonomously until the video is finished' used as approval #1 because engagement gate = 0 weak beats, narration lint 0 FAIL, hypotheses 0 FAIL, ip_check 0 FAIL; ADAPT items resolved at script level"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-17",
+      "by": "orchestrator",
+      "script_sha256": "e9cf700ddde8265ce696caf4ec1807836543aa0ee5a2d7dd80db3f55d9b155a6",
+      "rulebook_version": 5,
+      "scope": "before the first paid call: no open BLOCK/ADAPT; REVIEW items RK-02 (creator-accepted condition; the Rockstar policy page returned 503 again and was NOT read first-hand), RK-10 and RK-14 have recorded decisions from the creator's 2026-10-17 statements; sources fresh (checked 2026-10-17)"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-17",
+      "by": "orchestrator",
+      "script_sha256": "7c05a20e31d984956a6c8cb12b46ce067872f3f230a227ed1cb38c8a4e4a4124",
+      "rulebook_version": 5,
+      "scope": "re-check after v2: Shorts block added (lines cut from the main read), Vito and Shelby cards redrawn after the first portraits read as actor likenesses (RK-07), portraits now pod_ref without street backdrops; no new person, claim or franchise element"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-17",
+      "by": "orchestrator",
+      "script_sha256": "7c05a20e31d984956a6c8cb12b46ce067872f3f230a227ed1cb38c8a4e4a4124",
+      "rulebook_version": 5,
+      "scope": "re-check after v2: Shorts block added (lines cut from the main read), Vito and Shelby cards redrawn after the first portraits read as actor likenesses (RK-07), portraits now pod_ref without street backdrops; no new person, claim or franchise element"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-17",
+      "by": "orchestrator",
+      "script_sha256": "2d28bfeb536ea95b379b14713f4a71c9eb6225b8a06a6d32eec850ebf7d7148b",
+      "rulebook_version": 5,
+      "scope": "re-check after v3: painted portraits and s01_skyline became library files (own references), character-select screens drawn by code; no new person, claim or franchise element; portraits looked at: invented faces, no actor likeness"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-17",
+      "by": "orchestrator",
+      "script_sha256": "2d28bfeb536ea95b379b14713f4a71c9eb6225b8a06a6d32eec850ebf7d7148b",
+      "rulebook_version": 5,
+      "scope": "re-check after v3: painted portraits and s01_skyline became library files (own references), character-select screens drawn by code; no new person, claim or franchise element; portraits looked at: invented faces, no actor likeness"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-17",
+      "by": "orchestrator",
+      "script_sha256": "cf7ccf2f0f1a953387d195eefd3a22a92eb458e1b70683648fb6499bbbed154d",
+      "rulebook_version": 5,
+      "scope": "re-check after v4: three reuse shots removed (rhythm), Shorts crop centres set after looking at the painted pictures; no new person, claim or franchise element"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-17",
+      "by": "orchestrator",
+      "script_sha256": "cf7ccf2f0f1a953387d195eefd3a22a92eb458e1b70683648fb6499bbbed154d",
+      "rulebook_version": 5,
+      "scope": "re-check after v4: three reuse shots removed (rhythm), Shorts crop centres set after looking at the painted pictures; no new person, claim or franchise element"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "episode-standards-director",
+      "script_sha256": "43c9e4fcaaf9ae49a33f2727b600f562699c94c7dfba034bd74d9c080b686085",
+      "rulebook_version": 7,
+      "scope": "rulebook v7 on script v2 (rebuilt 2026-10-19): re-checked ER-02/RK-08 (Capone's invented lines flagged in S02 and in every Short with boss dialogue: SH02 'Made up, every word', SH04, SH05, SH06, SH07), ER-03/RK-12 (14 boss lines voiced by own library voices cast from traits, voice_id unset, no actor/recording named, no sound-alike prompt; Vito's 'slightly husky' to be confirmed at the VC-03 test read), dialogue original (no film or series quote), ER-05/ER-06/RK-07/new RK-19 (Boobie Ike, Real Dimez, Raul Bautista, Brian Heder named only from Rockstar's page, read first-hand 2026-10-19, never drawn, voiced or quoted; The Godfather films and Peaky Blinders named in plain text in S06/S08), ER-07/ER-18 (S03 and SH03 credited to 'Rockstar's page', S09 'Rockstar hasn't said', no GTA VI mechanic as fact), ER-08 (comic lines, consequences kept), ER-14 (G03 '1933: Series 6' and S08 'around 1930' match C-28), Shorts SH01-SH10"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "episode-standards-director",
+      "script_sha256": "a1402727fe05509cfc24a22c46fb447ca9f531a5dfe77f42d992bb512a45bba9",
+      "rulebook_version": 8,
+      "scope": "rulebook v8 on script v2 + Shorts visual beats (1f2f365, no text, shot, cast or picture change): re-checked on-screen text of every Short beat (text, label, chart, prop): plain-text names only (Vice City, Leonida, GTA V, 'Rockstar's next game', Rockstar's four characters as captions, RK-19), no logo, lettering, title font or quote of Rockstar text (ER-05, ER-06, ER-19); charts SH01 $17,500 (C-21) and 11 years (C-16), SH03 six places (C-51), SH09 star bars match C-44..C-47 and say OUR OPINION; SH02 MADE UP and SH04 INVENTED flag invented dialogue (ER-02); expression beats only on our four cast faces; English only (ER-12). RK-02 source read first-hand 2026-10-19 (B-14 verified)."
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "episode-standards-director",
+      "script_sha256": "a4ad046d7e643e1c0879b304209ebc5bc80342f0cafd0217b02a9d54087d0039",
+      "rulebook_version": 8,
+      "scope": "one prompt word removed from w02_studio ('a Vice City street' -> 'a neon coastal city street'); diff against 1f2f365 is that line only; all 48 compiled prompts and 4 cast cards scanned: no franchise, character, actor or Rockstar word (RR-03, RK-01)"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-19",
+      "by": "episode-standards-director",
+      "script_sha256": "a4ad046d7e643e1c0879b304209ebc5bc80342f0cafd0217b02a9d54087d0039",
+      "rulebook_version": 8,
+      "scope": "painting step approved by the creator: 48 pictures on pod (pod_ref, references only our own p_* portraits and s01_skyline, no official image in any slot: ER-19, RK-18; prompts free of franchise, character and actor words: RR-03, RK-01, RK-03) and 4 face sheets on Gemini as reusable cast assets (prompts from the cast cards, no names, painted from our own portraits checked in v3 for no actor likeness: ER-04, RK-07). No open BLOCK or ADAPT; REVIEW RK-02 (policy page read first-hand 2026-10-19), RK-10 and RK-14 decided; sources fresh. CONDITION on pictures recovered from earlier Gemini batches: only pictures painted from the current prompts may be used; no pre-v2 Vito or Shelby portrait (they read as actor likenesses, RK-07); every recovered face is checked against 'does this look like a named actor?' before use."
+    },
+    {
+      "checkpoint": "final",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
+      "rulebook_version": 8,
+      "scope": "v8 on the combined script (PR #8): Shorts beats, studio beat as text, review bound to bdf2887f. Recovered-pictures condition checked: all 51 recovered pictures have prompt, subject and refs identical to the v8 script (compared with 1d579fd); w02_studio/w02_keys are not used; p_vito and p_shelby are the v3 portraits (bald, round glasses; red hair and moustache), and every portrait and the 42 close-ups were looked at: invented faces, no named-actor likeness"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
+      "rulebook_version": 8,
+      "scope": "v8 on the combined script (PR #8): Shorts beats, studio beat as text, review bound to bdf2887f. Recovered-pictures condition checked: all 51 recovered pictures have prompt, subject and refs identical to the v8 script (compared with 1d579fd); w02_studio/w02_keys are not used; p_vito and p_shelby are the v3 portraits (bald, round glasses; red hair and moustache), and every portrait and the 42 close-ups were looked at: invented faces, no named-actor likeness"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "bdf2887f3027eecbbe194b326c6f57b46d7f0cb0a8cecd6f06bbcc02ab486cf0",
+      "rulebook_version": 8,
+      "scope": "v8 on the combined script (PR #8): Shorts beats, studio beat as text, review bound to bdf2887f. Recovered-pictures condition checked: all 51 recovered pictures have prompt, subject and refs identical to the v8 script (compared with 1d579fd); w02_studio/w02_keys are not used; p_vito and p_shelby are the v3 portraits (bald, round glasses; red hair and moustache), and every portrait and the 42 close-ups were looked at: invented faces, no named-actor likeness"
+    },
+    {
+      "checkpoint": "final",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "563aa037da25216f38f849b2f842b7810ef3c8bd6a96f12f162fb3830cd76074",
+      "rulebook_version": 8,
+      "scope": "v8 on the script with the creator's voice picks (sha 563aa037): narrator Grandpa Spuds Oxley, Capone Crazy Eddie, Vito Mr Wellington, Mizuno Hideo (light natural Japanese accent, creator's ask; RK-09 no caricature), Shelby Robert (Midlands, Birmingham accent asked by the creator). All library voices from test reads, no clone, no actor or person named (ER-03). Only voice fields changed since bdf2887f; recovered-pictures condition as before."
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "563aa037da25216f38f849b2f842b7810ef3c8bd6a96f12f162fb3830cd76074",
+      "rulebook_version": 8,
+      "scope": "v8 on the script with the creator's voice picks (sha 563aa037): narrator Grandpa Spuds Oxley, Capone Crazy Eddie, Vito Mr Wellington, Mizuno Hideo (light natural Japanese accent, creator's ask; RK-09 no caricature), Shelby Robert (Midlands, Birmingham accent asked by the creator). All library voices from test reads, no clone, no actor or person named (ER-03). Only voice fields changed since bdf2887f; recovered-pictures condition as before."
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-19",
+      "by": "orchestrator",
+      "script_sha256": "563aa037da25216f38f849b2f842b7810ef3c8bd6a96f12f162fb3830cd76074",
+      "rulebook_version": 8,
+      "scope": "v8 on the script with the creator's voice picks (sha 563aa037): narrator Grandpa Spuds Oxley, Capone Crazy Eddie, Vito Mr Wellington, Mizuno Hideo (light natural Japanese accent, creator's ask; RK-09 no caricature), Shelby Robert (Midlands, Birmingham accent asked by the creator). All library voices from test reads, no clone, no actor or person named (ER-03). Only voice fields changed since bdf2887f; recovered-pictures condition as before."
+    },
+    {
+      "checkpoint": "final",
+      "date": "2026-10-19",
+      "by": "claude",
+      "script_sha256": "61679821f7964d4f428a0efbf8f3c3261bcd3dfc8860a349fdeced604488829c",
+      "rulebook_version": 8,
+      "scope": "shots and visual beats only after the full read (re-framed shots of painted pictures, 4 beats restating the lines' own words, one cue moved); narration, claims, sources, pictures and Shorts unchanged; no rule's subject touched"
+    },
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-19",
+      "by": "claude",
+      "script_sha256": "61679821f7964d4f428a0efbf8f3c3261bcd3dfc8860a349fdeced604488829c",
+      "rulebook_version": 8,
+      "scope": "shots and visual beats only after the full read (re-framed shots of painted pictures, 4 beats restating the lines' own words, one cue moved); narration, claims, sources, pictures and Shorts unchanged; no rule's subject touched"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-19",
+      "by": "claude",
+      "script_sha256": "61679821f7964d4f428a0efbf8f3c3261bcd3dfc8860a349fdeced604488829c",
+      "rulebook_version": 8,
+      "scope": "shots and visual beats only after the full read (re-framed shots of painted pictures, 4 beats restating the lines' own words, one cue moved); narration, claims, sources, pictures and Shorts unchanged; no rule's subject touched"
+    }
+  ],
+  "supersedes": 4
+}
