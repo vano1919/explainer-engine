@@ -3724,6 +3724,27 @@
     "BP-71 one spoken honesty beat (2 segments; now 0)",
     "narration-script 'we can only reason' as spoken doubt"
    ]
+  },
+  {
+   "id": "BP-89",
+   "area": "story",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-20 (the critic's passing review comes with a one-page story in Georgian)",
+   "statement": "When the script-critic's review of a production_script/3 passes, it also writes story_page.md: the whole story retold on one page in Georgian for the creator, followed by a section that shows why it is a well-told story (cause and effect, the heroes' wants and choices, set-ups and payoffs, the turn and the ending) and not a string of phrases. The editorial gate refuses a /2 review of a /3 script without it (EG-23).",
+   "thresholds": {
+    "words_min": 150,
+    "words_max": 700,
+    "georgian_share_min": 0.6,
+    "why_heading": "რატომ"
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/production/editorial_gate.py:EG-23",
+    ".claude/agents/script-critic.md",
+    ".claude/skills/story-engine/SKILL.md"
+   ],
+   "supersedes": []
   }
  ]
 }

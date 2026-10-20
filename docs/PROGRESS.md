@@ -1013,3 +1013,12 @@ bound the scenario, but approval #1 of the finished script was prose only (PRODU
 - Skills dialogue-scenes, story-engine, narration-script; agents scene-writer, story-architect, script-critic,
   shorts-writer. `/1` and `/2` scripts keep their contract (Syndicate Wars unchanged).
 - Tests: `tests/unit/test_storytelling_rules.py` (10). Nothing paid.
+
+## 2026-10-20 - The critic's passing review comes with a one-page story in Georgian (BP-89, EG-23)
+
+The creator: when the critic's review passes, it also writes the whole story on one page in Georgian and shows why it is a
+well-told story and not a string of phrases. House rule [BP-89](SOURCED_RULES.md) (thresholds: one page in words, share of
+Georgian letters, a "why" heading); `production/editorial_gate.py` EG-23 refuses an `editorial_review/2` of a `/3` script
+without `story_page` (file next to the review), which also keeps gate 0.5 of `production_gate` closed. Agent script-critic
+step 9, skill story-engine, STORY_ENGINE stage 7 row, SCRIPTING_SPEC 5.2. `/1` and `/2` scripts unchanged. Tests:
+`tests/unit/test_story_page.py` (4), the integrated-review fixtures write a page. First page: Titans from Zero.

@@ -48,6 +48,12 @@ You did not write this script. Read only the script (the full `production_script
    stage that owns the fields: architect, writer, beats, performer, editor, caster, shorts, research). A taste note
    goes in `integrated.notes`, never as a finding. `python -m explainer_engine.production.editorial_gate` must accept
    the file; it rejects vague findings and unreviewed layers, and any script edit invalidates the review.
+9. **The story page (BP-89, the creator 2026-10-20).** When the review passes on a `/3` script, also write
+   `story_page.md` next to it and name it in the review's `story_page`: in Georgian, on one page, the whole story retold
+   from the first scene to the last (who wants what, what goes wrong, the turn, how it ends), then a section headed
+   `რატომ ...` that shows why it is a well-told story and not a string of phrases: the cause-and-effect chain, each main
+   hero's want, flaw and choice, the set-ups and their payoffs, the reversals, and how the ending answers the question.
+   Point at scene ids. The creator reads this page first; the editorial gate refuses a passing review without it (EG-23).
 Accept only when the SCRIPTING_SPEC gates pass and no "bored" window remains; otherwise return the list.
 
 ## Sourced rules (docs/SOURCED_RULES.md)

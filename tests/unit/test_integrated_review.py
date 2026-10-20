@@ -186,6 +186,9 @@ def scene_mini() -> dict:
     }
 
 
+STORY_PAGE = "# ისტორია\n\n" + "მარა ხეობაში ლამპარს ეძებს და პოულობს. " * 30 + "\n\n## რატომ მუშაობს\n\nმიზეზი და შედეგი.\n"
+
+
 def no_fails(doc: dict) -> list[dict]:
     found = V.check_script(C.compile_doc(copy.deepcopy(doc)))
     return [f for f in found if f["severity"] == "FAIL"]
@@ -214,7 +217,8 @@ def review2(script: Path, findings=(), layers=None, notes=(), schema="editorial_
              "findings": list(findings), "notes": list(notes)}
     return {"schema": schema, "script_sha256": hashlib.sha256(script.read_bytes()).hexdigest(),
             "reviewer_role": "independent_critic", "independent": True, "scores": scores,
-            "critical_blockers": [], "required_revisions": [], "integrated": integ}
+            "critical_blockers": [], "required_revisions": [], "integrated": integ,
+            "story_page": "story_page.md"}
 
 
 def ir_finding(**kw) -> dict:
@@ -236,6 +240,7 @@ def write_pair(tmp_path: Path, doc: dict, review=None, **review_kw) -> tuple[Pat
     script.write_text(json.dumps(doc), encoding="utf-8")
     rev = tmp_path / "editorial_review.json"
     rev.write_text(json.dumps(review if review is not None else review2(script, **review_kw)), encoding="utf-8")
+    (tmp_path / "story_page.md").write_text(STORY_PAGE, encoding="utf-8")
     return script, rev
 
 
@@ -526,5 +531,8 @@ def test_production_gate_0_5_blocks_on_the_integrated_review(tmp_path):
     rows = {r["gate"]: r for r in PG.script_gates(tmp_path)}
     assert rows[0.5]["status"] == "BLOCKED"  # a blocking integrated finding stops production
     (tmp_path / "editorial_review.json").write_text(json.dumps(review2(script)), encoding="utf-8")
+    rows = {r["gate"]: r for r in PG.script_gates(tmp_path)}
+    assert rows[0.5]["status"] == "BLOCKED"  # the passing review still owes its Georgian story page (EG-23)
+    (tmp_path / "story_page.md").write_text(STORY_PAGE, encoding="utf-8")
     rows = {r["gate"]: r for r in PG.script_gates(tmp_path)}
     assert rows[0.5]["status"] == "PASS"  # the clean review opens the gate

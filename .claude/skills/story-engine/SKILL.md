@@ -29,7 +29,7 @@ them in order and stops at the first failed gate.
 | 4 | `edit-planner` | shots, motion, accents, bubbles, graphics, beds, sfx, music; ED-14 coverage per scene (establish -> listener reactions -> <=4 A/B alternations, J/L 0.5-2 s, one music per chapter, one planned dropout) | `stage_guard editor`, `validate`: PV-24, PV-35, PV-36 |
 | 5 | `voice-caster` | `voice`, `cast.<id>.voice` (traits, candidates) | `stage_guard caster`, PV-10, PV-32 |
 | 6 | `shorts-writer` | `shorts` (10, at least 6 styles) | `stage_guard shorts`, PV-28, PV-34 |
-| 7 | `script-critic` (fresh context) | findings only, each to its owner stage; writes `editorial_review.json` (`editorial_review/2` on /3: the integrated production-coherence pass, D-60) | SCRIPTING_SPEC gates + `production.editorial_gate` (EG), no "bored" window; at most 2 rounds |
+| 7 | `script-critic` (fresh context) | findings only, each to its owner stage; writes `editorial_review.json` (`editorial_review/2` on /3: the integrated production-coherence pass, D-60) | SCRIPTING_SPEC gates + `production.editorial_gate` (EG), no "bored" window; at most 2 rounds; a passing review comes with `story_page.md` (Georgian, one page, the whole story and why it is well told, BP-89, EG-23) |
 | - | creator approval #1 | | nothing is paid before it |
 
 ## 1. The skeleton first (story-architect)
