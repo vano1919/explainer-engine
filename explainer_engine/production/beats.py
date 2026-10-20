@@ -609,7 +609,10 @@ def face_camera(box, W: int, H: int, face_beats: list[dict], f: int, fps: int):
     span1 = max(b["end_frame"] for b in face_beats)
     if not span0 <= f < span1 + FACE_EASE * fps:
         return box
-    hold = FACE_HOLD * min(_ease((f - span0) / (FACE_EASE * fps)), _ease((span1 + FACE_EASE * fps - f) / (FACE_EASE * fps)))
+    def smooth(u):  # zero speed at both ends: an ease-out cubic starts at full speed and read as a jolt (PX-CAM-JUMP)
+        u = min(max(u, 0.0), 1.0)
+        return u * u * (3 - 2 * u)
+    hold = FACE_HOLD * min(smooth((f - span0) / (FACE_EASE * fps)), smooth((span1 + FACE_EASE * fps - f) / (FACE_EASE * fps)))
     cur = [b for b in face_beats if b["start_frame"] <= f]
     b = cur[-1] if cur else face_beats[0]
     pop = FACE_POP * _bump((f - b["start_frame"]) / (POP_S * fps)) if cur else 0.0

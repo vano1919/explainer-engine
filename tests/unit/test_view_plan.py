@@ -153,6 +153,7 @@ def test_the_face_lean_never_jumps_like_a_cut():
     zoom = [W / (b[2] - b[0]) for b in widths]
     assert max(abs(a - b) for a, b in zip(zoom, zoom[1:])) < 0.006   # under 0.6 % a frame: a move, never a cut
     assert max(zoom) <= 1 + B.FACE_HOLD + B.FACE_POP + 1e-9
+    assert abs(zoom[31] - zoom[30]) < 0.0005   # it starts gently: no jolt on the first frame of the lean
 
 
 def test_a_renderer_change_redraws_the_chunks(monkeypatch):
