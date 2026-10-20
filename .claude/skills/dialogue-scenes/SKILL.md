@@ -176,3 +176,7 @@ into fear, shown by a silence beat and a quieter repeat of his own question.
 - SC-09 line lengths (BP-72, BP-73): >35 words FAIL, >15 REVIEW unless the scene's one speech, one >=25-word turn per scene,
   <=3 "?" runs.
 - SC-10 surface_topic and real_subject declared; no line states the real subject verbatim.
+
+## Real people in a scene (D-63, creator 2026-10-20)
+
+When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood, then a slow move to the next shot, never a cut straight into other people's talk.

@@ -44,3 +44,7 @@ Write:
 Then run `python -m explainer_engine.scripting.stage_guard writer before.json after.json` and
 `python -m explainer_engine.production validate <script>`: 0 FAIL for PV-12, PV-33 and PV-48 (scene_lint, SC-01..SC-10).
 Return the segment's lines only.
+
+## Real people in a scene (D-63, creator 2026-10-20)
+
+When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood, then a slow move to the next shot, never a cut straight into other people's talk.

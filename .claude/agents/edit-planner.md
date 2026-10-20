@@ -48,3 +48,7 @@ The validators read these from the registry (D-59); AL-02's events-a-minute band
 - BP-40: in the first 30 s something changes at least every 5 s (FAIL); in the body a still over 20 s is REVIEW, over 40 s FAIL;
   at most 10 pictures a minute on average, one burst of 5-10 cuts per 2-3 min; every change carries new information.
 - BP-41: one scripted pattern interrupt in the 25-35 s window: a cut with a new element (an insert, a text pop or a music change).
+
+## Real people in a scene (D-63, creator 2026-10-20)
+
+When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood, then a slow move to the next shot, never a cut straight into other people's talk.
