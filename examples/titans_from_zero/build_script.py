@@ -1,5 +1,5 @@
 """Builds the story layer (writers' room stages 1-2) of 'Titans from Zero' as production_script/3, plus a readable
-screenplay. Run: python3 build_script.py  (writes production_script.json and script_v2.md next to this file)."""
+screenplay. Run: python3 build_script.py  (writes production_script.json and script_v3.md next to this file)."""
 import json
 from pathlib import Path
 
@@ -250,7 +250,10 @@ seg("S10", "the limousine", [
     L("An audience isn't an asset.", "kiyosaki", "trump", "press"),
     L("It paid for this car.", "trump", "kiyosaki", "reveal"),
     L("A car is a liability.", "kiyosaki", "trump", "deflect"),
-    L("Not when somebody else pays for it.", "trump", "kiyosaki", "decide"),
+    L("Not when somebody else pays for it.", "trump", "kiyosaki", "reveal"),
+    L("There's a seat in the back. Season one needs a man who lost everything.", "trump", "kiyosaki", "press"),
+    L("I'm not a lesson. I teach them.", "kiyosaki", "trump", "decide"),
+    L("Suit yourself.", "trump", "kiyosaki", "concede"),
     L("The car pulls away. Kiyosaki carries his bag to an old Toyota at the far end of the lot."),
     L("He slept in one once, a long time ago, with Kim. He still knows which seat folds flat.", claims=["C-01"]),
 ], {"function": "escalation", "turn": "but", "stakes": "Kiyosaki is back where he started forty years ago",
@@ -259,7 +262,7 @@ seg("S10", "the limousine", [
            "why_now": "the network's car has come for Trump",
            "pov": "kiyosaki", "want": "prove Trump's new money isn't real wealth",
            "obstacle_want": "leave with the car and the contract", "value": "pride",
-           "open_charge": "+", "close_charge": "-", "turn": "Trump turns Kiyosaki's own rule against him and drives off",
+           "open_charge": "+", "close_charge": "-", "turn": "Trump offers him a seat on the show and Kiyosaki turns it down",
            "exit": "interrupted", "surface_topic": "the car", "real_subject": "whose rule still works",
            "mode": "indirect"}, period="year2")
 
@@ -340,9 +343,10 @@ seg("S14", "year five", [
     L("Belfort's whole pitch is one sentence now. Ours burned once. That's why they don't."),
     L("Grant Cardone works their phones. Same calls as year one. Now people pick up, because the name on the box means something."),
     L("Hormozi runs sixty gyms on cash. Zuckerberg sold his little website robot and vanished into a bigger one."),
-    L("Trump is filming season four of How to Lose a Billion, and every season he loses it more profitably."),
+    L("Trump is filming season four of How to Lose a Billion. Last season he read their fire report on air, page by page."),
+    L("He called it the only honest paper in America. Ratings doubled."),
     L("And Kiyosaki is in the motel lobby, explaining to the night clerk why debt is a gift. The clerk has heard it before."),
-    L("Then a buyer walks in who has read every page of the fire report."),
+    L("One viewer read every page after him. Then he walked into their office."),
     L("I read your fire report. All of it.", "bezos", "belfort", "reveal"),
     L("Most buyers ask us to bury it.", "belfort", "bezos", "press"),
     L("That's why I'm offering double what they would.", "bezos", "belfort", "reveal"),
@@ -418,7 +422,7 @@ doc = {
                         "flaw": "promises more than exists", "change": "refuses the cover-up and sells the truth"},
             "trump": {"want": "be on top again", "flaw": "needs to be watched", "change": "turns attention into money"},
             "kiyosaki": {"want": "a lender for his plan", "flaw": "keeps his theory when the world changes",
-                         "change": "none: still preaching in the lobby"},
+                         "change": "none: turns down the seat out of pride and keeps preaching in the lobby"},
             "oleary": {"want": "the best return on forty dollars", "flaw": "owns without building"},
             "cuban": {"want": "suppliers who never lie", "flaw": "orders more than is safe"},
             "vance": {"want": "buy before the bad news", "flaw": "sells risk to others"},
@@ -452,7 +456,7 @@ doc = {
 (HERE / "production_script.json").write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 NAMES = {k: v["names"][-1].upper() for k, v in cast.items()}
-md = ["# Titans from Zero: full script, words (v2, 2026-10-20)", "",
+md = ["# Titans from Zero: full script, words (v3, 2026-10-20)", "",
       f"**Title:** {doc['episode']['title']}", "",
       "NARRATOR lines are in plain text; dialogue is NAME (to whom): line.", ""]
 words = 0
@@ -472,5 +476,5 @@ for s in segments:
             md.append(f"- {ln['text']}")
     md.append("")
 md.insert(4, f"**Spoken words:** {words} (about {words / 165:.1f} minutes at the narrator's pace, plus the pauses of the scenes)")
-(HERE / "script_v2.md").write_text("\n".join(md) + "\n", encoding="utf-8")
+(HERE / "script_v3.md").write_text("\n".join(md) + "\n", encoding="utf-8")
 print(words, "words")
