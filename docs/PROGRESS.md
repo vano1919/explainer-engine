@@ -1056,3 +1056,14 @@ California 3344 not verified (V-56). Baseline: B-10 re-dated, B-22..B-26 added. 
 `paid_assets` gate FAILs on RK-01 BLOCK (Trump's lines voiced by ElevenLabs, provider s.4) and three creator decisions
 (RK-02 the six other real people's synthesised voices, RK-12 the invented buyer's name "Vance", RK-17 Lyria music outside
 D-52). No stamp, nothing paid. Tests: the existing `tests/unit/test_episode_rules.py` baseline test covers the new rows.
+
+## 2026-10-20 - Real people speak in bubbles (D-62, PV-55, BUBBLE-4/5)
+
+The creator's call after RK-01/RK-02: real living people keep their names but are never voiced. A line with
+`"voiced": false` is shown as speech bubbles (`production/silent.py`): one sentence per bubble, BP-84 words, BP-27 hold;
+`production words` aligns the read against the voiced lines only and opens a quiet gap for each silent run, so words.json,
+beats and shots keep one entry per token. PV-55 FAILs a voiced line of a real living person (`production_script/3`;
+`traits.living: false` exempts the dead). The creator also asked for stable bubbles: BUBBLE-4 FAILs a bubble over any face
+(every speaker's face, at the bubble's start and end crop), BUBBLE-5 FAILs a cut inside a bubble and the same text shown
+twice. Titans: 149 lines silent, edit plan re-cut (no BUBBLE/CUT FAIL left), Shorts re-balanced (narrator lines break
+silent runs). Tests: `tests/unit/test_silent_lines.py` (8). Nothing paid; the script needs the creator's re-approval.
