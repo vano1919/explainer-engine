@@ -1112,3 +1112,10 @@ Four dialogue-frame variants on S12 "What's the catch?" (`conversation_variants_
 
 The creator: render the first two parts, join them, show him, and only then the rest; his notes become rules first.
 `docs/PRODUCTION_RULES.md` standing order 11 + feedback row; the orchestrator's render step follows it.
+
+## 2026-10-20 - ElevenLabs takes in the sound library (Titans audio)
+
+The manifest schema records an ElevenLabs take: source kind `elevenlabs`, `cost_credits`, `generation_id`, and the BP-58
+`kind` (one_shot / loop). Titans added two music loops (`eleven_music_v2_5`, 899.8 credits each), `battery_hiss__v1` (5) and
+nine 30 s ambience loops (`amb_*__v1`, 99.99 each, estimated 330); ten Shorts narrator takes (2,352 credits). WAVs stay out of git.
+Test: `test_sfx_library.py::test_elevenlabs_take_with_kind_and_credits_validates`.

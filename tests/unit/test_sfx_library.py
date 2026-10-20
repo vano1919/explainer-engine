@@ -64,3 +64,22 @@ def test_rejected_sounds_are_hidden(tmp_path):
     gone = manifest["items"][0]["id"]
     assert gone not in {i["id"] for i in sfx_library.find(tmp_path)}
     assert gone in {i["id"] for i in sfx_library.find(tmp_path, usable=False)}
+
+
+def test_elevenlabs_take_with_kind_and_credits_validates(tmp_path):
+    """D-52: an ElevenLabs bed is recorded with its source kind, credits, generation id and BP-58 kind; a wrong kind fails."""
+    rate = 48000
+    t = np.arange(rate * 20) / rate
+    bed = 0.2 * np.sin(2 * np.pi * 110 * t)
+    sfx_library.add(tmp_path, name="amb_test_bed", take=1, category="foley", tags=["ambience"], samples=bed, rate=rate,
+                    source={"kind": "elevenlabs", "model": "eleven_text_to_sound_v2", "prompt": "room tone",
+                            "cost_credits": 99.0, "generation_id": "abc"},
+                    licence={"status": "generated_terms_unverified", "note": "ElevenLabs Creator plan"})
+    m = sfx_library.load_manifest(tmp_path)
+    m["items"][0].update(loop=True, kind="loop", intended_seconds=20.0)
+    (tmp_path / "manifest.json").write_text(json.dumps(m))
+    assert sfx_library.validate(tmp_path) == []
+    assert sfx_library.kind_of(m["items"][0]) == "loop"
+    m["items"][0]["kind"] = "bed"
+    (tmp_path / "manifest.json").write_text(json.dumps(m))
+    assert sfx_library.validate(tmp_path)

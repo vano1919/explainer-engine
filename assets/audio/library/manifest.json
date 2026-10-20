@@ -1,1848 +1,2219 @@
 {
- "version": 1,
- "items": [
-  {
-   "id": "blink_click__v1",
-   "file": "foley/blink_click__v1.wav",
-   "category": "foley",
-   "tags": [
-    "blink",
-    "eye"
-   ],
-   "seconds": 0.08,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.99,
-   "sha256": "54c9c248872bef17de08f938563c54c00cd00dd3e4115795d2c5192528c46933",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "blink_click__v2",
-   "file": "foley/blink_click__v2.wav",
-   "category": "foley",
-   "tags": [
-    "blink",
-    "eye"
-   ],
-   "seconds": 0.08,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.22,
-   "sha256": "d230b9a6d0b4cb1b59cd60ec464694d82b1a8836858c9ef4488b72793df3b884",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "blink_click__v3",
-   "file": "foley/blink_click__v3.wav",
-   "category": "foley",
-   "tags": [
-    "blink",
-    "eye"
-   ],
-   "seconds": 0.08,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.5,
-   "sha256": "4097448f2247b1dc2456f4e065cba12f6c19877df4e5e3d76bf74b6ec768c994",
-   "source": {
-    "kind": "procedural",
-    "seed": 3
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "buckle_click__v1",
-   "file": "foley/buckle_click__v1.wav",
-   "category": "foley",
-   "tags": [
-    "buckle",
-    "prop",
-    "satchel"
-   ],
-   "seconds": 0.18,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -23.25,
-   "sha256": "340255de59510806a381bcc39f2e7501032899565b0f05208d5231b9cc634d4d",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "buckle_click__v2",
-   "file": "foley/buckle_click__v2.wav",
-   "category": "foley",
-   "tags": [
-    "buckle",
-    "prop",
-    "satchel"
-   ],
-   "seconds": 0.18,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -23.21,
-   "sha256": "13b04311193a0e9bb5d8d504b9b8748bd65e11ecac63981dadba1bc9503139af",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "chain_jingle__v1",
-   "file": "foley/chain_jingle__v1.wav",
-   "category": "foley",
-   "tags": [
-    "chain",
-    "companion",
-    "prop"
-   ],
-   "seconds": 0.7,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.07,
-   "sha256": "3b1fc609a689e39365fe3a3a2c49d9c34dc372c340ceed77061e8bc601e6c10a",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "chain_jingle__v2",
-   "file": "foley/chain_jingle__v2.wav",
-   "category": "foley",
-   "tags": [
-    "chain",
-    "companion",
-    "prop"
-   ],
-   "seconds": 0.7,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.61,
-   "sha256": "e0a3ee7e6fb240e7a3b1b13e019dbdb598653602280aa70f1bdacd37813e121d",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "clockwork_loop__v1",
-   "file": "music/clockwork_loop__v1.wav",
-   "category": "music",
-   "tags": [
-    "clock",
-    "cue",
-    "loop",
-    "music",
-    "mystery"
-   ],
-   "seconds": 30.772,
-   "sample_rate": 44100,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.5,
-   "sha256": "4f0352173bbbdd1bf69a2bccbd393d0f6acfee21df65cc7456084ec3bf4f00da",
-   "source": {
-    "kind": "lyria",
-    "model": "lyria-3-clip-preview",
-    "prompt": "A mysterious ticking clockwork percussion loop with soft low strings, instrumental only, steady tempo, suitable for looping under narration, no vocals.",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.04
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "generated with the creator's Gemini API key (Lyria); output is watermarked by the provider according to TMR's notes; commercial-use terms not yet checked here"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: ticking woodblocks and metallic clicks, steady pulse",
-    "human": "not_listened"
-   },
-   "loop": true
-  },
-  {
-   "id": "cloth_rustle__v1",
-   "file": "foley/cloth_rustle__v1.wav",
-   "category": "foley",
-   "tags": [
-    "cloth",
-    "coat",
-    "move"
-   ],
-   "seconds": 0.45,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.06,
-   "sha256": "7532fce71d3a46ca1754ab7e9c18c1b1e7e6fa2fb2c16e2acc7ec48b74519e04",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "cloth_rustle__v2",
-   "file": "foley/cloth_rustle__v2.wav",
-   "category": "foley",
-   "tags": [
-    "cloth",
-    "coat",
-    "move"
-   ],
-   "seconds": 0.45,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.8,
-   "sha256": "fa2e222f08806acf0aad7df0cc61470fbc3d3857087f04683e313e77a25cab83",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "cloth_rustle__v3",
-   "file": "foley/cloth_rustle__v3.wav",
-   "category": "foley",
-   "tags": [
-    "cloth",
-    "coat",
-    "move"
-   ],
-   "seconds": 0.45,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.79,
-   "sha256": "2377699fc9ca6fb8e6867b66da2de8030cbc80e08b5894298af43c84c6b4101a",
-   "source": {
-    "kind": "procedural",
-    "seed": 3
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "cough__v1",
-   "file": "vocal/cough__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "cough",
-    "reaction",
-    "vocal"
-   ],
-   "seconds": 0.259,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -15.43,
-   "sha256": "c5c3ba1e0c778aead92d51b845aed4368f0b854206a4692ba3e85e4a3dfa80ac",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[coughs]",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.0002
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person clearing their throat. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "effort_hup__v1",
-   "file": "vocal/effort_hup__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "effort",
-    "jump",
-    "vocal"
-   ],
-   "seconds": 1.524,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -22.4,
-   "sha256": "4e7a32bef0f3e70b907b43b16dc0e63e4da2b323923da7a799145a27f14b96e8",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[grunts] Hup!",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00041
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person making strained grunting or throat-clearing sounds. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_dirt__v1",
-   "file": "foley/footstep_dirt__v1.wav",
-   "category": "foley",
-   "tags": [
-    "dirt",
-    "footstep",
-    "walk"
-   ],
-   "seconds": 0.16,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -15.97,
-   "sha256": "2743873b0b3a5ae3b40c30cc195ffe2f82899e00de2f1fcd81b28d242e10f6bf",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_dirt__v2",
-   "file": "foley/footstep_dirt__v2.wav",
-   "category": "foley",
-   "tags": [
-    "dirt",
-    "footstep",
-    "walk"
-   ],
-   "seconds": 0.16,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -16.3,
-   "sha256": "6c2d53057edc8c6c0d793d06431ad00195648b243d6b8416f4e213eba69218f6",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_dirt__v3",
-   "file": "foley/footstep_dirt__v3.wav",
-   "category": "foley",
-   "tags": [
-    "dirt",
-    "footstep",
-    "walk"
-   ],
-   "seconds": 0.16,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -17.41,
-   "sha256": "af09e2e0660b609d6f9dbaecb853a1c73e9ce967a135aafb6d5f212bdcad07e7",
-   "source": {
-    "kind": "procedural",
-    "seed": 3
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_grass__v1",
-   "file": "foley/footstep_grass__v1.wav",
-   "category": "foley",
-   "tags": [
-    "footstep",
-    "grass",
-    "walk"
-   ],
-   "seconds": 0.18,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.89,
-   "sha256": "30507d85cbdae8806106484521331907229f255995f2fafd9642fdd0c8c8f1eb",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_grass__v2",
-   "file": "foley/footstep_grass__v2.wav",
-   "category": "foley",
-   "tags": [
-    "footstep",
-    "grass",
-    "walk"
-   ],
-   "seconds": 0.18,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -18.95,
-   "sha256": "01f16125cb2e69ec40ba5ff48b85f92803d6c907e7d1706b88f54ef061aa3048",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_grass__v3",
-   "file": "foley/footstep_grass__v3.wav",
-   "category": "foley",
-   "tags": [
-    "footstep",
-    "grass",
-    "walk"
-   ],
-   "seconds": 0.18,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.02,
-   "sha256": "c4373a6b5d508923ce2e9c3dfac519d2651990a3fc3639de1e08d176748e7039",
-   "source": {
-    "kind": "procedural",
-    "seed": 3
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_snow__v1",
-   "file": "foley/footstep_snow__v1.wav",
-   "category": "foley",
-   "tags": [
-    "footstep",
-    "snow",
-    "walk"
-   ],
-   "seconds": 0.22,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.88,
-   "sha256": "94a5af4c1f80094a770207fccb6f4672d6d96eb52e88ad5718029a472664f83b",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_snow__v2",
-   "file": "foley/footstep_snow__v2.wav",
-   "category": "foley",
-   "tags": [
-    "footstep",
-    "snow",
-    "walk"
-   ],
-   "seconds": 0.22,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.57,
-   "sha256": "5e34dbfd4ff6a107cc4715b655f06a806ebdf3fe3b958567b513f52b98f71fe9",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_snow__v3",
-   "file": "foley/footstep_snow__v3.wav",
-   "category": "foley",
-   "tags": [
-    "footstep",
-    "snow",
-    "walk"
-   ],
-   "seconds": 0.22,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.53,
-   "sha256": "027ba75928b17bfbeb6dd7a601f6fb54afdf7bc3d322cf64eb80dc88b3422ed0",
-   "source": {
-    "kind": "procedural",
-    "seed": 3
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_stone__v1",
-   "file": "foley/footstep_stone__v1.wav",
-   "category": "foley",
-   "tags": [
-    "footstep",
-    "stone",
-    "walk"
-   ],
-   "seconds": 0.14,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.15,
-   "sha256": "da40ee710f8ca90d271b193d59584bfeec8afec4febb2dbe1d2cf674c863fe94",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_stone__v2",
-   "file": "foley/footstep_stone__v2.wav",
-   "category": "foley",
-   "tags": [
-    "footstep",
-    "stone",
-    "walk"
-   ],
-   "seconds": 0.14,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -21.42,
-   "sha256": "af05ef56d159038f8ceb5105ce8dc55ae14e987fe8b7eeb09c6170d68cf810e5",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "footstep_stone__v3",
-   "file": "foley/footstep_stone__v3.wav",
-   "category": "foley",
-   "tags": [
-    "footstep",
-    "stone",
-    "walk"
-   ],
-   "seconds": 0.14,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -21.07,
-   "sha256": "1e354707c0cbc85f998720cafa438abfb1dd069cad0071828291b17c9e9dc82e",
-   "source": {
-    "kind": "procedural",
-    "seed": 3
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "gasp_inhale__v1",
-   "file": "vocal/gasp_inhale__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "gasp",
-    "reaction",
-    "surprise",
-    "vocal"
-   ],
-   "seconds": 0.436,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.24,
-   "sha256": "5c9b694c8292b22ccf26a8fb325bebb4dc33d4022aab537f45cd254e138b6ac6",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[inhales sharply in surprise]",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00018
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like someone taking a sudden, sharp gasp of breath. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "glow_ping__v1",
-   "file": "foley/glow_ping__v1.wav",
-   "category": "foley",
-   "tags": [
-    "glow",
-    "magic",
-    "ping"
-   ],
-   "seconds": 1.3,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -16.5,
-   "sha256": "7ea5f0b6556a591124b5d80626312977799a9d79d994cd96a715b77a40d26b37",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "groan_ugh__v1",
-   "file": "vocal/groan_ugh__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "disgust",
-    "groan",
-    "reaction",
-    "vocal"
-   ],
-   "seconds": 1.069,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -18.69,
-   "sha256": "dae829ef4f916c790b45abc1eb616db848452873eaacc8dae31e17b77bed908a",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[groans] Ugh.",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00038
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person groaning or sighing in frustration or disgust. |  | SPEECH: no   | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "hmm_thinking__v1",
-   "file": "vocal/hmm_thinking__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "hmm",
-    "reaction",
-    "think",
-    "vocal"
-   ],
-   "seconds": 0.923,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -15.83,
-   "sha256": "d67ee27a00bf20728df8d25a5ae7b312512ddb3a245ce40ca2accd56945fac1d",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[hums thoughtfully] Hmmmm.",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00038
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person making a thoughtful humming sound. |  | SPEECH: yes (\"hmm\") | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "jump_whoosh__v1",
-   "file": "foley/jump_whoosh__v1.wav",
-   "category": "foley",
-   "tags": [
-    "jump",
-    "move",
-    "whoosh"
-   ],
-   "seconds": 0.28,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -18.25,
-   "sha256": "f2f65cd091a8ba6c9305afb3cd84061e0ba453818a5a3c95d2bf2d2fbeee1840",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "jump_whoosh__v2",
-   "file": "foley/jump_whoosh__v2.wav",
-   "category": "foley",
-   "tags": [
-    "jump",
-    "move",
-    "whoosh"
-   ],
-   "seconds": 0.28,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -18.05,
-   "sha256": "55276f1e2a407d5b0385020d99ba80f195b801e72378f26b40dfdc64259bc44c",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "landing_thud__v1",
-   "file": "foley/landing_thud__v1.wav",
-   "category": "foley",
-   "tags": [
-    "impact",
-    "jump",
-    "land"
-   ],
-   "seconds": 0.3,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -16.17,
-   "sha256": "9952cb6f16be74e22d0869e4092c07b3abcaffca2cd9d4a66b1ce96ff3b3c9a1",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "landing_thud__v2",
-   "file": "foley/landing_thud__v2.wav",
-   "category": "foley",
-   "tags": [
-    "impact",
-    "jump",
-    "land"
-   ],
-   "seconds": 0.3,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -15.75,
-   "sha256": "a13c34f0ad95137474e5901b4a11796d5e21ab41e565019e1da6f294fe1942fb",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "laugh_warm__v1",
-   "file": "vocal/laugh_warm__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "laugh",
-    "reaction",
-    "vocal",
-    "warm"
-   ],
-   "seconds": 0.751,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -21.64,
-   "sha256": "0b75889e9191612e0f70a6e958a601a776cea4579bce8912ad05d4cf64a7f01d",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[laughs warmly]",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00026
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person giving a brief, quiet chuckle. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "monocle_pop__v1",
-   "file": "foley/monocle_pop__v1.wav",
-   "category": "foley",
-   "tags": [
-    "analyst",
-    "prop",
-    "startle"
-   ],
-   "seconds": 0.5,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -17.22,
-   "sha256": "2942449334fbba7e591afab39ec8111e9fde0e2f1ef7ec2eb04407c651592334",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "oof_land__v1",
-   "file": "vocal/oof_land__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "jump",
-    "land",
-    "vocal"
-   ],
-   "seconds": 0.513,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -16.19,
-   "sha256": "56bc0c2f0b927bfe892e9f2ee0cd9d378070bd6a0f31758a231fbb1b58364368",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[grunts] Oof!",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00014
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person grunting in exertion or discomfort. |  | SPEECH: yes (\"oof\") | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "page_flip__v1",
-   "file": "foley/page_flip__v1.wav",
-   "category": "foley",
-   "tags": [
-    "notebook",
-    "page",
-    "prop"
-   ],
-   "seconds": 0.4,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.22,
-   "sha256": "94ff9f34cdcc6e27c2d8a5ad6d7ea64e66321d3949d844dfb0cd6d8b9f289331",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "page_flip__v2",
-   "file": "foley/page_flip__v2.wav",
-   "category": "foley",
-   "tags": [
-    "notebook",
-    "page",
-    "prop"
-   ],
-   "seconds": 0.4,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -21.94,
-   "sha256": "1b07daad5c35eed53e49155bdc8752ff305515d4822cdb8436a2610a2ae62add",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "pencil_scribble__v1",
-   "file": "foley/pencil_scribble__v1.wav",
-   "category": "foley",
-   "tags": [
-    "notebook",
-    "pencil",
-    "write"
-   ],
-   "seconds": 0.7,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -22.0,
-   "sha256": "caa86502e8fdec3acd9edfa20644a9b5715e6d1e458501eba19680482f1ef8b5",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "pencil_scribble__v2",
-   "file": "foley/pencil_scribble__v2.wav",
-   "category": "foley",
-   "tags": [
-    "notebook",
-    "pencil",
-    "write"
-   ],
-   "seconds": 0.7,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -23.05,
-   "sha256": "5c80b471839062c8a04928c805f31e1615672dbf55cabf2fe36ade851d66ae66",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "pleased_mmhm__v1",
-   "file": "vocal/pleased_mmhm__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "approval",
-    "reaction",
-    "vocal"
-   ],
-   "seconds": 0.701,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -15.86,
-   "sha256": "13dad3c9faada0f2347cae02b918c60b6e9fb0424b73af6ebedfeed23d80611b",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "Mm-hmm.",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00017
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person saying \"uh-huh\" in acknowledgement or agreement. |  | SPEECH: yes (\"uh-huh\") | NONVERBAL_SOUND_PRESENT: no",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "pop_in__v1",
-   "file": "foley/pop_in__v1.wav",
-   "category": "foley",
-   "tags": [
-    "appear",
-    "pop",
-    "ui"
-   ],
-   "seconds": 0.1,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -14.03,
-   "sha256": "5a1e8f2a14219b6c676348f9f0983c11db77a171e731d7f7ebf7d25fa560b89a",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "relief_phew__v1",
-   "file": "vocal/relief_phew__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "reaction",
-    "relief",
-    "vocal"
-   ],
-   "seconds": 1.063,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -18.79,
-   "sha256": "eded5c41329bb2f12ebc1cce9cccfadecbe7defadcecff3c0fcdae02d098c906",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[exhales in relief] Phew.",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00035
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: A person sighs audibly in relief. |  | SPEECH: yes (\"ah\", \"phew\") | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "reveal_sting__v1",
-   "file": "music/reveal_sting__v1.wav",
-   "category": "music",
-   "tags": [
-    "drama",
-    "music",
-    "reveal",
-    "sting"
-   ],
-   "seconds": 30.772,
-   "sample_rate": 44100,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -18.72,
-   "sha256": "8f3f6ac71cac1ebb09156599031c28f46095804e952caa7f2fec0f96a44bb97a",
-   "source": {
-    "kind": "lyria",
-    "model": "lyria-3-clip-preview",
-    "prompt": "A short dramatic cinematic reveal sting for a documentary, instrumental only, about 4 seconds, a rising swell into one clean hit and a short tail, no vocals.",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.04
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "generated with the creator's Gemini API key (Lyria); output is watermarked by the provider according to TMR's notes; commercial-use terms not yet checked here"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: dramatic reveal swell then a hit; the model returned a 30 s clip, the sting is somewhere in it: cut before use",
-    "human": "not_listened"
-   },
-   "loop": false,
-   "intended_seconds": 4.0
-  },
-  {
-   "id": "seam_shimmer__v1",
-   "file": "foley/seam_shimmer__v1.wav",
-   "category": "foley",
-   "tags": [
-    "magic",
-    "transition",
-    "worlds"
-   ],
-   "seconds": 2.6,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.86,
-   "sha256": "e660940c25b6f0de5e4829f88576852b921433bb1cc3c92edf482bd9b664771c",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "shiver_brr__v1",
-   "file": "vocal/shiver_brr__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "cold",
-    "reaction",
-    "shiver",
-    "vocal"
-   ],
-   "seconds": 2.042,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -15.86,
-   "sha256": "dace49ee9d3a711eea0b222f3ffaf6e300c33f98cafb4fe804dd0be75bd1436e",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[shivers] Brrr.",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00059
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person shivering from the cold and saying \"brr.\" |  | SPEECH: yes (\"brr\") | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "sigh_tired__v1",
-   "file": "vocal/sigh_tired__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "reaction",
-    "sigh",
-    "tired",
-    "vocal"
-   ],
-   "seconds": 1.162,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.94,
-   "sha256": "b759c323bd89cd9850b01856a183d8b8737c634c910655ff6fdf7398aaa6ec4a",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[sighs heavily]",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00039
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like someone letting out a heavy, tired sigh. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "sneaky_pizzicato__v1",
-   "file": "music/sneaky_pizzicato__v1.wav",
-   "category": "music",
-   "tags": [
-    "comedy",
-    "cue",
-    "loop",
-    "music",
-    "sneak"
-   ],
-   "seconds": 30.772,
-   "sample_rate": 44100,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -17.99,
-   "sha256": "229e429c7d7915b013760ee3884621824ee8b88fcb44f292dc0399d80eeb09b1",
-   "source": {
-    "kind": "lyria",
-    "model": "lyria-3-clip-preview",
-    "prompt": "A playful sneaking pizzicato strings and woodwind motif for a comedic cautious moment, instrumental only, about 10 seconds, light and witty, no vocals.",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.04
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "generated with the creator's Gemini API key (Lyria); output is watermarked by the provider according to TMR's notes; commercial-use terms not yet checked here"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: jaunty pizzicato with steady pulse, loopable",
-    "human": "not_listened"
-   },
-   "loop": true
-  },
-  {
-   "id": "startled_oh__v1",
-   "file": "vocal/startled_oh__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "reaction",
-    "startle",
-    "surprise",
-    "vocal"
-   ],
-   "seconds": 0.946,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -17.08,
-   "sha256": "9d5ecea0396ad11a125e40875a1acd744fd6399a6dfbad28af2a449d3169ec5d",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[gasps] Oh!",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00024
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person letting out a surprised gasp and exclamation. |  | SPEECH: yes (\"Oh\") | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "swish__v1",
-   "file": "foley/swish__v1.wav",
-   "category": "foley",
-   "tags": [
-    "transition",
-    "whoosh"
-   ],
-   "seconds": 0.5,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -19.39,
-   "sha256": "2d3ebe90e5f30d4a5cfa0e1ca503f9aab61bb12bb7b64a977abcfb869ef7a354",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "swish__v2",
-   "file": "foley/swish__v2.wav",
-   "category": "foley",
-   "tags": [
-    "transition",
-    "whoosh"
-   ],
-   "seconds": 0.5,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -18.64,
-   "sha256": "517e881f763e59544b76c011176379145d0d74e951d231f28e04f06d3fbb9629",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "throat_clear__v1",
-   "file": "vocal/throat_clear__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "ahem",
-    "analyst",
-    "reaction",
-    "throat",
-    "vocal"
-   ],
-   "seconds": 0.49,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -14.94,
-   "sha256": "b750c4c5bcfd087996a0eaee2c0b3426491688f34dade4ff607d3d4592043cd1",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[clears throat]",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.0002
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person clearing their throat. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "tick__v1",
-   "file": "foley/tick__v1.wav",
-   "category": "foley",
-   "tags": [
-    "clock",
-    "companion",
-    "tick"
-   ],
-   "seconds": 0.12,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -21.57,
-   "sha256": "50c4721985c3f6c3939cce6f8c2600f80e616c37c7269b9e92ae525a4865ed1c",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "tick__v2",
-   "file": "foley/tick__v2.wav",
-   "category": "foley",
-   "tags": [
-    "clock",
-    "companion",
-    "tick"
-   ],
-   "seconds": 0.12,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -24.06,
-   "sha256": "d43243fdbc77b29158d7e3db66df1efb1acbcb4079516aef731d2ae1e5a6ff5e",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "tick__v3",
-   "file": "foley/tick__v3.wav",
-   "category": "foley",
-   "tags": [
-    "clock",
-    "companion",
-    "tick"
-   ],
-   "seconds": 0.12,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -21.55,
-   "sha256": "c60f89588ab6203d803ab3f137c8b8835f7717b6f6b0ae6ce78d62852e781fba",
-   "source": {
-    "kind": "procedural",
-    "seed": 3
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "tick_loop_4s__v1",
-   "file": "foley/tick_loop_4s__v1.wav",
-   "category": "foley",
-   "tags": [
-    "clock",
-    "companion",
-    "loop"
-   ],
-   "seconds": 4.0,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -31.45,
-   "sha256": "1d98b7e7129d771605baef1e8264a1e4bb62466e9902ee11ef2e4eba90ea3c19",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": true
-  },
-  {
-   "id": "tock__v1",
-   "file": "foley/tock__v1.wav",
-   "category": "foley",
-   "tags": [
-    "clock",
-    "companion",
-    "tock"
-   ],
-   "seconds": 0.12,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -21.22,
-   "sha256": "224b6a960482349eac9aa3e4880dded5a074e949094a15c29a127f62af6ff938",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "tock__v2",
-   "file": "foley/tock__v2.wav",
-   "category": "foley",
-   "tags": [
-    "clock",
-    "companion",
-    "tock"
-   ],
-   "seconds": 0.12,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -21.38,
-   "sha256": "a2e95725e4f8762faf9f2d0369944d34729bed58df15295b974bce7948b2fd4f",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "tock__v3",
-   "file": "foley/tock__v3.wav",
-   "category": "foley",
-   "tags": [
-    "clock",
-    "companion",
-    "tock"
-   ],
-   "seconds": 0.12,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -21.31,
-   "sha256": "9b049b3a598b5817d85bbfd5e71cf39bf3cadb0648f341554c6ba3b333d518c9",
-   "source": {
-    "kind": "procedural",
-    "seed": 3
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "whistle_short__v1",
-   "file": "vocal/whistle_short__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "idle",
-    "vocal",
-    "whistle"
-   ],
-   "seconds": 2.356,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -17.19,
-   "sha256": "1f252249ea5eee7850e17300aed7715e9d6f2d400814b9c34022ebbd77e3f432",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[whistles a short low tune]",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.00068
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person whistling a brief, casual tune. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "wing_flutter__v1",
-   "file": "foley/wing_flutter__v1.wav",
-   "category": "foley",
-   "tags": [
-    "companion",
-    "move",
-    "wing"
-   ],
-   "seconds": 0.55,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.19,
-   "sha256": "45018f93ab4d7228a24f806b517a84b7deeef30473838e21acd8850df22e02c8",
-   "source": {
-    "kind": "procedural",
-    "seed": 1
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "wing_flutter__v2",
-   "file": "foley/wing_flutter__v2.wav",
-   "category": "foley",
-   "tags": [
-    "companion",
-    "move",
-    "wing"
-   ],
-   "seconds": 0.55,
-   "sample_rate": 48000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -20.33,
-   "sha256": "ca4be9ad305530df975d5aca8adba209423c02af2b6539695946741a59745548",
-   "source": {
-    "kind": "procedural",
-    "seed": 2
-   },
-   "licence": {
-    "status": "own_procedural",
-    "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
-   },
-   "review": {
-    "machine": "procedural placeholder: plain, replaceable by recorded foley",
-    "human": "not_listened"
-   },
-   "loop": false
-  },
-  {
-   "id": "yawn__v1",
-   "file": "vocal/yawn__v1.wav",
-   "category": "vocal",
-   "tags": [
-    "analyst",
-    "reaction",
-    "tired",
-    "vocal",
-    "yawn"
-   ],
-   "seconds": 2.444,
-   "sample_rate": 24000,
-   "peak_dbfs": -3.0,
-   "rms_dbfs": -13.92,
-   "sha256": "505a4496b8e8c432e9f0e43ef5a055da6ec63020863e12cfb873a5aff552e0ca",
-   "source": {
-    "kind": "gemini_tts",
-    "model": "gemini-3.8-flash-tts",
-    "prompt": "[yawns widely]",
-    "generated": "2026-10-16",
-    "cost_usd_estimate": 0.0007
-   },
-   "licence": {
-    "status": "generated_terms_unverified",
-    "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
-   },
-   "review": {
-    "machine": "gemini-3.8-flash heard: It sounds like a person letting out a deep, tired groan or yawn. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
-    "human": "not_listened"
-   },
-   "loop": false
-  }
- ]
+  "version": 1,
+  "items": [
+    {
+      "id": "amb_burnt_garage_dawn__v1",
+      "file": "foley/amb_burnt_garage_dawn__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "dawn",
+        "fire",
+        "outdoor",
+        "ruin"
+      ],
+      "seconds": 30.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -25.16,
+      "sha256": "69db199b4eae8aeb05d06f14f8ee9e93ec748a0e3a5f8eee4a7bb8003e6e1e2a",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "Burnt-out garage at dawn the morning after a fire, very quiet, soft wind through a broken roof, slow water dripping onto charred concrete, faint crackle of cooling embers, distant early birds, no voic",
+        "generated": "2026-10-20",
+        "cost_credits": 99.99,
+        "generation_id": "vzCDE9LbLiiuzCbfRdVW"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 30.0
+    },
+    {
+      "id": "amb_city_street_noon__v1",
+      "file": "foley/amb_city_street_noon__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "city",
+        "outdoor",
+        "street",
+        "traffic"
+      ],
+      "seconds": 30.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.21,
+      "sha256": "bb007a0199361a6c19e8484b8f2255e0cea0b24ef4f82eb4a127ee8ca0fceed5",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "Busy New York city street at noon, steady traffic passing on wet-free asphalt, a bus idling, distant car horns, footsteps on the sidewalk, no voices, no music",
+        "generated": "2026-10-20",
+        "cost_credits": 99.99,
+        "generation_id": "ORFf9MNqGJ1GorcCv1JM"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 30.0
+    },
+    {
+      "id": "amb_courthouse_hall__v1",
+      "file": "foley/amb_courthouse_hall__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "courthouse",
+        "hall",
+        "indoor"
+      ],
+      "seconds": 30.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.95,
+      "sha256": "c372efb985a5a673ae5b8fd7c2bf1118fa2734b85677ed8748d5bb291ebbd4da",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "Room tone of a large courthouse hallway on a weekday morning, stone floor and high plaster ceiling, distant footsteps echoing, a heavy door closing far away, steady air-handling hum, no voices, no mus",
+        "generated": "2026-10-20",
+        "cost_credits": 99.99,
+        "generation_id": "jZsVzmXtkg7mzPoAyiW3"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 30.0
+    },
+    {
+      "id": "amb_cuban_warehouse__v1",
+      "file": "foley/amb_cuban_warehouse__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "indoor",
+        "industrial",
+        "warehouse"
+      ],
+      "seconds": 30.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.46,
+      "sha256": "686d9f680f702d712d8fe6263956d5f88dd7087a2d5838f13c7c61e4584b872e",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "Large distribution warehouse interior during the workday, high metal roof reverb, distant forklift electric motor whine and reverse beeps, ventilation fans humming, no voices, no music",
+        "generated": "2026-10-20",
+        "cost_credits": 99.99,
+        "generation_id": "jPUvaD6o0VgUG9Bvt7Uj"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 30.0
+    },
+    {
+      "id": "amb_factory_office__v1",
+      "file": "foley/amb_factory_office__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "factory",
+        "indoor",
+        "industrial",
+        "office"
+      ],
+      "seconds": 30.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -15.45,
+      "sha256": "3ae70978aa70c0645772581d2373fa5673dd7bbcc73d1ae9d5ed68150e07f260",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "Glass-walled office above a working factory floor, muffled steady machinery rhythm through the window, office air conditioning hum, occasional distant metal clank, no voices, no music",
+        "generated": "2026-10-20",
+        "cost_credits": 99.99,
+        "generation_id": "9c18FhnlhYxsRAu2yzON"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 30.0
+    },
+    {
+      "id": "amb_garage_workshop__v1",
+      "file": "foley/amb_garage_workshop__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "garage",
+        "indoor",
+        "workshop"
+      ],
+      "seconds": 30.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.66,
+      "sha256": "8d82100b0902459fee64935280505419cdf83371dcb31a8d896859697cef6adc",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "Small home garage workshop during the day, fluorescent tube light hum, concrete room echo, an occasional soft clink of a metal tool on a workbench, no voices, no music",
+        "generated": "2026-10-20",
+        "cost_credits": 99.99,
+        "generation_id": "539PlK2vccSWpOsUudsD"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 30.0
+    },
+    {
+      "id": "amb_motel_highway__v1",
+      "file": "foley/amb_motel_highway__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "highway",
+        "indoor",
+        "motel",
+        "traffic"
+      ],
+      "seconds": 30.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -14.64,
+      "sha256": "c60e57eb472e4d56b91eeecadba688dc71c1daf4264a8d111a81a9debae99548",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "Inside a cheap roadside motel room next to a highway, trucks swelling past outside through thin walls, rattling window air conditioner, buzzing neon sign, no voices, no music",
+        "generated": "2026-10-20",
+        "cost_credits": 99.99,
+        "generation_id": "6YMv5lM5R2R0V9P2pyYw"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 30.0
+    },
+    {
+      "id": "amb_motel_pool_night__v1",
+      "file": "foley/amb_motel_pool_night__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "crickets",
+        "motel",
+        "night",
+        "outdoor"
+      ],
+      "seconds": 30.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -18.05,
+      "sha256": "603c08e97be1b058b03614403bbbe32972882e6a7ea0492d66a99fcf2a97697b",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "Beside an empty motel swimming pool at night, crickets, a humming pool pump, a buzzing outdoor light, distant highway traffic, no water splashing, no voices, no music",
+        "generated": "2026-10-20",
+        "cost_credits": 99.99,
+        "generation_id": "yvlrxF9nJoWLsYcDwbb4"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 30.0
+    },
+    {
+      "id": "amb_parking_lot_afternoon__v1",
+      "file": "foley/amb_parking_lot_afternoon__v1.wav",
+      "category": "foley",
+      "tags": [
+        "ambience",
+        "bed",
+        "outdoor",
+        "parking",
+        "traffic"
+      ],
+      "seconds": 30.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.09,
+      "sha256": "378b5a536b560ff0a03a67734bd3cf2db2884ca607571bd9b07cb395866ef373",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "Open-air shopping center parking lot on a warm afternoon, distant highway traffic wash, light breeze, a car rolling slowly past on asphalt, faint birds, no voices, no music",
+        "generated": "2026-10-20",
+        "cost_credits": 99.99,
+        "generation_id": "OOwxljbQxxsGB0MThpQx"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 30.0
+    },
+    {
+      "id": "battery_hiss__v1",
+      "file": "foley/battery_hiss__v1.wav",
+      "category": "foley",
+      "tags": [
+        "battery",
+        "electric",
+        "foley",
+        "hiss"
+      ],
+      "seconds": 1.48,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.99,
+      "sha256": "378c88b03fcaa5e6615e29d557463ee6fc68268ece0f6688517bd748190b1e72",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_text_to_sound_v2",
+        "prompt": "A lithium scooter battery pack starting to hiss, short sharp pressurized gas venting hiss, close-mic, dry garage, no voices, no music",
+        "generated": "2026-10-20",
+        "cost_credits": 4.9995,
+        "generation_id": "F3u32A2ZihKS1BSSK92U"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": false,
+      "kind": "one_shot",
+      "intended_seconds": 1.5
+    },
+    {
+      "id": "blink_click__v1",
+      "file": "foley/blink_click__v1.wav",
+      "category": "foley",
+      "tags": [
+        "blink",
+        "eye"
+      ],
+      "seconds": 0.08,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.99,
+      "sha256": "54c9c248872bef17de08f938563c54c00cd00dd3e4115795d2c5192528c46933",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "blink_click__v2",
+      "file": "foley/blink_click__v2.wav",
+      "category": "foley",
+      "tags": [
+        "blink",
+        "eye"
+      ],
+      "seconds": 0.08,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.22,
+      "sha256": "d230b9a6d0b4cb1b59cd60ec464694d82b1a8836858c9ef4488b72793df3b884",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "blink_click__v3",
+      "file": "foley/blink_click__v3.wav",
+      "category": "foley",
+      "tags": [
+        "blink",
+        "eye"
+      ],
+      "seconds": 0.08,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.5,
+      "sha256": "4097448f2247b1dc2456f4e065cba12f6c19877df4e5e3d76bf74b6ec768c994",
+      "source": {
+        "kind": "procedural",
+        "seed": 3
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "buckle_click__v1",
+      "file": "foley/buckle_click__v1.wav",
+      "category": "foley",
+      "tags": [
+        "buckle",
+        "prop",
+        "satchel"
+      ],
+      "seconds": 0.18,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -23.25,
+      "sha256": "340255de59510806a381bcc39f2e7501032899565b0f05208d5231b9cc634d4d",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "buckle_click__v2",
+      "file": "foley/buckle_click__v2.wav",
+      "category": "foley",
+      "tags": [
+        "buckle",
+        "prop",
+        "satchel"
+      ],
+      "seconds": 0.18,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -23.21,
+      "sha256": "13b04311193a0e9bb5d8d504b9b8748bd65e11ecac63981dadba1bc9503139af",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "chain_jingle__v1",
+      "file": "foley/chain_jingle__v1.wav",
+      "category": "foley",
+      "tags": [
+        "chain",
+        "companion",
+        "prop"
+      ],
+      "seconds": 0.7,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.07,
+      "sha256": "3b1fc609a689e39365fe3a3a2c49d9c34dc372c340ceed77061e8bc601e6c10a",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "chain_jingle__v2",
+      "file": "foley/chain_jingle__v2.wav",
+      "category": "foley",
+      "tags": [
+        "chain",
+        "companion",
+        "prop"
+      ],
+      "seconds": 0.7,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.61,
+      "sha256": "e0a3ee7e6fb240e7a3b1b13e019dbdb598653602280aa70f1bdacd37813e121d",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "clockwork_loop__v1",
+      "file": "music/clockwork_loop__v1.wav",
+      "category": "music",
+      "tags": [
+        "clock",
+        "cue",
+        "loop",
+        "music",
+        "mystery"
+      ],
+      "seconds": 60.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.48,
+      "sha256": "dabd356d1c4f95d7d7a7ad500eed3bd556ee721d2b06a9fd09ff502e16e10828",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_music_v2_5",
+        "prompt": "Tense clockwork underscore built on a steady ticking pulse of woodblock and muted metallic clicks, soft low staccato strings and a quiet music-box motif, curious and suspenseful, steady tempo around 90 BPM, even energy throughout with no climax, sparse enough to sit under narration, ending on the same pulse it started with so it loops cleanly. Instrumental only, no vocals.",
+        "generated": "2026-10-20",
+        "cost_credits": 899.8,
+        "generation_id": "3vc1uQYurhzxVUwBj9we"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 60.0
+    },
+    {
+      "id": "cloth_rustle__v1",
+      "file": "foley/cloth_rustle__v1.wav",
+      "category": "foley",
+      "tags": [
+        "cloth",
+        "coat",
+        "move"
+      ],
+      "seconds": 0.45,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.06,
+      "sha256": "7532fce71d3a46ca1754ab7e9c18c1b1e7e6fa2fb2c16e2acc7ec48b74519e04",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "cloth_rustle__v2",
+      "file": "foley/cloth_rustle__v2.wav",
+      "category": "foley",
+      "tags": [
+        "cloth",
+        "coat",
+        "move"
+      ],
+      "seconds": 0.45,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.8,
+      "sha256": "fa2e222f08806acf0aad7df0cc61470fbc3d3857087f04683e313e77a25cab83",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "cloth_rustle__v3",
+      "file": "foley/cloth_rustle__v3.wav",
+      "category": "foley",
+      "tags": [
+        "cloth",
+        "coat",
+        "move"
+      ],
+      "seconds": 0.45,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.79,
+      "sha256": "2377699fc9ca6fb8e6867b66da2de8030cbc80e08b5894298af43c84c6b4101a",
+      "source": {
+        "kind": "procedural",
+        "seed": 3
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "cough__v1",
+      "file": "vocal/cough__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "cough",
+        "reaction",
+        "vocal"
+      ],
+      "seconds": 0.259,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -15.43,
+      "sha256": "c5c3ba1e0c778aead92d51b845aed4368f0b854206a4692ba3e85e4a3dfa80ac",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[coughs]",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.0002
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person clearing their throat. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "effort_hup__v1",
+      "file": "vocal/effort_hup__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "effort",
+        "jump",
+        "vocal"
+      ],
+      "seconds": 1.524,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.4,
+      "sha256": "4e7a32bef0f3e70b907b43b16dc0e63e4da2b323923da7a799145a27f14b96e8",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[grunts] Hup!",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00041
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person making strained grunting or throat-clearing sounds. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_dirt__v1",
+      "file": "foley/footstep_dirt__v1.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.16,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -15.97,
+      "sha256": "2743873b0b3a5ae3b40c30cc195ffe2f82899e00de2f1fcd81b28d242e10f6bf",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_dirt__v2",
+      "file": "foley/footstep_dirt__v2.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.16,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.3,
+      "sha256": "6c2d53057edc8c6c0d793d06431ad00195648b243d6b8416f4e213eba69218f6",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_dirt__v3",
+      "file": "foley/footstep_dirt__v3.wav",
+      "category": "foley",
+      "tags": [
+        "dirt",
+        "footstep",
+        "walk"
+      ],
+      "seconds": 0.16,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.41,
+      "sha256": "af09e2e0660b609d6f9dbaecb853a1c73e9ce967a135aafb6d5f212bdcad07e7",
+      "source": {
+        "kind": "procedural",
+        "seed": 3
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_grass__v1",
+      "file": "foley/footstep_grass__v1.wav",
+      "category": "foley",
+      "tags": [
+        "footstep",
+        "grass",
+        "walk"
+      ],
+      "seconds": 0.18,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.89,
+      "sha256": "30507d85cbdae8806106484521331907229f255995f2fafd9642fdd0c8c8f1eb",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_grass__v2",
+      "file": "foley/footstep_grass__v2.wav",
+      "category": "foley",
+      "tags": [
+        "footstep",
+        "grass",
+        "walk"
+      ],
+      "seconds": 0.18,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -18.95,
+      "sha256": "01f16125cb2e69ec40ba5ff48b85f92803d6c907e7d1706b88f54ef061aa3048",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_grass__v3",
+      "file": "foley/footstep_grass__v3.wav",
+      "category": "foley",
+      "tags": [
+        "footstep",
+        "grass",
+        "walk"
+      ],
+      "seconds": 0.18,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.02,
+      "sha256": "c4373a6b5d508923ce2e9c3dfac519d2651990a3fc3639de1e08d176748e7039",
+      "source": {
+        "kind": "procedural",
+        "seed": 3
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_snow__v1",
+      "file": "foley/footstep_snow__v1.wav",
+      "category": "foley",
+      "tags": [
+        "footstep",
+        "snow",
+        "walk"
+      ],
+      "seconds": 0.22,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.88,
+      "sha256": "94a5af4c1f80094a770207fccb6f4672d6d96eb52e88ad5718029a472664f83b",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_snow__v2",
+      "file": "foley/footstep_snow__v2.wav",
+      "category": "foley",
+      "tags": [
+        "footstep",
+        "snow",
+        "walk"
+      ],
+      "seconds": 0.22,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.57,
+      "sha256": "5e34dbfd4ff6a107cc4715b655f06a806ebdf3fe3b958567b513f52b98f71fe9",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_snow__v3",
+      "file": "foley/footstep_snow__v3.wav",
+      "category": "foley",
+      "tags": [
+        "footstep",
+        "snow",
+        "walk"
+      ],
+      "seconds": 0.22,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.53,
+      "sha256": "027ba75928b17bfbeb6dd7a601f6fb54afdf7bc3d322cf64eb80dc88b3422ed0",
+      "source": {
+        "kind": "procedural",
+        "seed": 3
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_stone__v1",
+      "file": "foley/footstep_stone__v1.wav",
+      "category": "foley",
+      "tags": [
+        "footstep",
+        "stone",
+        "walk"
+      ],
+      "seconds": 0.14,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.15,
+      "sha256": "da40ee710f8ca90d271b193d59584bfeec8afec4febb2dbe1d2cf674c863fe94",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_stone__v2",
+      "file": "foley/footstep_stone__v2.wav",
+      "category": "foley",
+      "tags": [
+        "footstep",
+        "stone",
+        "walk"
+      ],
+      "seconds": 0.14,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.42,
+      "sha256": "af05ef56d159038f8ceb5105ce8dc55ae14e987fe8b7eeb09c6170d68cf810e5",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "footstep_stone__v3",
+      "file": "foley/footstep_stone__v3.wav",
+      "category": "foley",
+      "tags": [
+        "footstep",
+        "stone",
+        "walk"
+      ],
+      "seconds": 0.14,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.07,
+      "sha256": "1e354707c0cbc85f998720cafa438abfb1dd069cad0071828291b17c9e9dc82e",
+      "source": {
+        "kind": "procedural",
+        "seed": 3
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "gasp_inhale__v1",
+      "file": "vocal/gasp_inhale__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "gasp",
+        "reaction",
+        "surprise",
+        "vocal"
+      ],
+      "seconds": 0.436,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.24,
+      "sha256": "5c9b694c8292b22ccf26a8fb325bebb4dc33d4022aab537f45cd254e138b6ac6",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[inhales sharply in surprise]",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00018
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like someone taking a sudden, sharp gasp of breath. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "glow_ping__v1",
+      "file": "foley/glow_ping__v1.wav",
+      "category": "foley",
+      "tags": [
+        "glow",
+        "magic",
+        "ping"
+      ],
+      "seconds": 1.3,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.5,
+      "sha256": "7ea5f0b6556a591124b5d80626312977799a9d79d994cd96a715b77a40d26b37",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "groan_ugh__v1",
+      "file": "vocal/groan_ugh__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "disgust",
+        "groan",
+        "reaction",
+        "vocal"
+      ],
+      "seconds": 1.069,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -18.69,
+      "sha256": "dae829ef4f916c790b45abc1eb616db848452873eaacc8dae31e17b77bed908a",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[groans] Ugh.",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00038
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person groaning or sighing in frustration or disgust. |  | SPEECH: no   | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "hmm_thinking__v1",
+      "file": "vocal/hmm_thinking__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "hmm",
+        "reaction",
+        "think",
+        "vocal"
+      ],
+      "seconds": 0.923,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -15.83,
+      "sha256": "d67ee27a00bf20728df8d25a5ae7b312512ddb3a245ce40ca2accd56945fac1d",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[hums thoughtfully] Hmmmm.",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00038
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person making a thoughtful humming sound. |  | SPEECH: yes (\"hmm\") | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "jump_whoosh__v1",
+      "file": "foley/jump_whoosh__v1.wav",
+      "category": "foley",
+      "tags": [
+        "jump",
+        "move",
+        "whoosh"
+      ],
+      "seconds": 0.28,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -18.25,
+      "sha256": "f2f65cd091a8ba6c9305afb3cd84061e0ba453818a5a3c95d2bf2d2fbeee1840",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "jump_whoosh__v2",
+      "file": "foley/jump_whoosh__v2.wav",
+      "category": "foley",
+      "tags": [
+        "jump",
+        "move",
+        "whoosh"
+      ],
+      "seconds": 0.28,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -18.05,
+      "sha256": "55276f1e2a407d5b0385020d99ba80f195b801e72378f26b40dfdc64259bc44c",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "landing_thud__v1",
+      "file": "foley/landing_thud__v1.wav",
+      "category": "foley",
+      "tags": [
+        "impact",
+        "jump",
+        "land"
+      ],
+      "seconds": 0.3,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.17,
+      "sha256": "9952cb6f16be74e22d0869e4092c07b3abcaffca2cd9d4a66b1ce96ff3b3c9a1",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "landing_thud__v2",
+      "file": "foley/landing_thud__v2.wav",
+      "category": "foley",
+      "tags": [
+        "impact",
+        "jump",
+        "land"
+      ],
+      "seconds": 0.3,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -15.75,
+      "sha256": "a13c34f0ad95137474e5901b4a11796d5e21ab41e565019e1da6f294fe1942fb",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "laugh_warm__v1",
+      "file": "vocal/laugh_warm__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "laugh",
+        "reaction",
+        "vocal",
+        "warm"
+      ],
+      "seconds": 0.751,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.64,
+      "sha256": "0b75889e9191612e0f70a6e958a601a776cea4579bce8912ad05d4cf64a7f01d",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[laughs warmly]",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00026
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person giving a brief, quiet chuckle. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "monocle_pop__v1",
+      "file": "foley/monocle_pop__v1.wav",
+      "category": "foley",
+      "tags": [
+        "analyst",
+        "prop",
+        "startle"
+      ],
+      "seconds": 0.5,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.22,
+      "sha256": "2942449334fbba7e591afab39ec8111e9fde0e2f1ef7ec2eb04407c651592334",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "oof_land__v1",
+      "file": "vocal/oof_land__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "jump",
+        "land",
+        "vocal"
+      ],
+      "seconds": 0.513,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -16.19,
+      "sha256": "56bc0c2f0b927bfe892e9f2ee0cd9d378070bd6a0f31758a231fbb1b58364368",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[grunts] Oof!",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00014
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person grunting in exertion or discomfort. |  | SPEECH: yes (\"oof\") | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "page_flip__v1",
+      "file": "foley/page_flip__v1.wav",
+      "category": "foley",
+      "tags": [
+        "notebook",
+        "page",
+        "prop"
+      ],
+      "seconds": 0.4,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.22,
+      "sha256": "94ff9f34cdcc6e27c2d8a5ad6d7ea64e66321d3949d844dfb0cd6d8b9f289331",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "page_flip__v2",
+      "file": "foley/page_flip__v2.wav",
+      "category": "foley",
+      "tags": [
+        "notebook",
+        "page",
+        "prop"
+      ],
+      "seconds": 0.4,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.94,
+      "sha256": "1b07daad5c35eed53e49155bdc8752ff305515d4822cdb8436a2610a2ae62add",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "pencil_scribble__v1",
+      "file": "foley/pencil_scribble__v1.wav",
+      "category": "foley",
+      "tags": [
+        "notebook",
+        "pencil",
+        "write"
+      ],
+      "seconds": 0.7,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -22.0,
+      "sha256": "caa86502e8fdec3acd9edfa20644a9b5715e6d1e458501eba19680482f1ef8b5",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "pencil_scribble__v2",
+      "file": "foley/pencil_scribble__v2.wav",
+      "category": "foley",
+      "tags": [
+        "notebook",
+        "pencil",
+        "write"
+      ],
+      "seconds": 0.7,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -23.05,
+      "sha256": "5c80b471839062c8a04928c805f31e1615672dbf55cabf2fe36ade851d66ae66",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "pleased_mmhm__v1",
+      "file": "vocal/pleased_mmhm__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "approval",
+        "reaction",
+        "vocal"
+      ],
+      "seconds": 0.701,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -15.86,
+      "sha256": "13dad3c9faada0f2347cae02b918c60b6e9fb0424b73af6ebedfeed23d80611b",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "Mm-hmm.",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00017
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person saying \"uh-huh\" in acknowledgement or agreement. |  | SPEECH: yes (\"uh-huh\") | NONVERBAL_SOUND_PRESENT: no",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "pop_in__v1",
+      "file": "foley/pop_in__v1.wav",
+      "category": "foley",
+      "tags": [
+        "appear",
+        "pop",
+        "ui"
+      ],
+      "seconds": 0.1,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -14.03,
+      "sha256": "5a1e8f2a14219b6c676348f9f0983c11db77a171e731d7f7ebf7d25fa560b89a",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "relief_phew__v1",
+      "file": "vocal/relief_phew__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "reaction",
+        "relief",
+        "vocal"
+      ],
+      "seconds": 1.063,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -18.79,
+      "sha256": "eded5c41329bb2f12ebc1cce9cccfadecbe7defadcecff3c0fcdae02d098c906",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[exhales in relief] Phew.",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00035
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: A person sighs audibly in relief. |  | SPEECH: yes (\"ah\", \"phew\") | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "reveal_sting__v1",
+      "file": "music/reveal_sting__v1.wav",
+      "category": "music",
+      "tags": [
+        "drama",
+        "music",
+        "reveal",
+        "sting"
+      ],
+      "seconds": 30.772,
+      "sample_rate": 44100,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -18.72,
+      "sha256": "8f3f6ac71cac1ebb09156599031c28f46095804e952caa7f2fec0f96a44bb97a",
+      "source": {
+        "kind": "lyria",
+        "model": "lyria-3-clip-preview",
+        "prompt": "A short dramatic cinematic reveal sting for a documentary, instrumental only, about 4 seconds, a rising swell into one clean hit and a short tail, no vocals.",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.04
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "generated with the creator's Gemini API key (Lyria); output is watermarked by the provider according to TMR's notes; commercial-use terms not yet checked here"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: dramatic reveal swell then a hit; the model returned a 30 s clip, the sting is somewhere in it: cut before use",
+        "human": "not_listened"
+      },
+      "loop": false,
+      "intended_seconds": 4.0
+    },
+    {
+      "id": "seam_shimmer__v1",
+      "file": "foley/seam_shimmer__v1.wav",
+      "category": "foley",
+      "tags": [
+        "magic",
+        "transition",
+        "worlds"
+      ],
+      "seconds": 2.6,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.86,
+      "sha256": "e660940c25b6f0de5e4829f88576852b921433bb1cc3c92edf482bd9b664771c",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "shiver_brr__v1",
+      "file": "vocal/shiver_brr__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "cold",
+        "reaction",
+        "shiver",
+        "vocal"
+      ],
+      "seconds": 2.042,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -15.86,
+      "sha256": "dace49ee9d3a711eea0b222f3ffaf6e300c33f98cafb4fe804dd0be75bd1436e",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[shivers] Brrr.",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00059
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person shivering from the cold and saying \"brr.\" |  | SPEECH: yes (\"brr\") | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "sigh_tired__v1",
+      "file": "vocal/sigh_tired__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "reaction",
+        "sigh",
+        "tired",
+        "vocal"
+      ],
+      "seconds": 1.162,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.94,
+      "sha256": "b759c323bd89cd9850b01856a183d8b8737c634c910655ff6fdf7398aaa6ec4a",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[sighs heavily]",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00039
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like someone letting out a heavy, tired sigh. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "sneaky_pizzicato__v1",
+      "file": "music/sneaky_pizzicato__v1.wav",
+      "category": "music",
+      "tags": [
+        "comedy",
+        "cue",
+        "loop",
+        "music",
+        "pizzicato",
+        "sneak"
+      ],
+      "seconds": 60.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.71,
+      "sha256": "74071ea89f6a434054c211602639b790a7e9f3772540173f898847662dccfe50",
+      "source": {
+        "kind": "elevenlabs",
+        "model": "eleven_music_v2_5",
+        "prompt": "Playful sneaky caper underscore with pizzicato strings, bassoon and clarinet staccato, light brushed snare, mischievous and witty, medium-slow tiptoeing tempo around 100 BPM, steady even energy throughout with no big build, sparse enough to sit under narration, ending on the same groove it started with so it loops cleanly. Instrumental only, no vocals.",
+        "generated": "2026-10-20",
+        "cost_credits": 899.8,
+        "generation_id": "YlavI0DN0pW8HpH1i5oF"
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "ElevenLabs output on the creator's Creator plan (commercial use allowed except film/TV/radio/studio games, no attribution; docs/AUDIO_SYSTEM.md V-28); outputs not guaranteed unique, YouTube/Content ID not addressed by the terms: keep this generation record"
+      },
+      "review": {
+        "machine": "none",
+        "human": "not_listened"
+      },
+      "loop": true,
+      "kind": "loop",
+      "intended_seconds": 60.0
+    },
+    {
+      "id": "startled_oh__v1",
+      "file": "vocal/startled_oh__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "reaction",
+        "startle",
+        "surprise",
+        "vocal"
+      ],
+      "seconds": 0.946,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.08,
+      "sha256": "9d5ecea0396ad11a125e40875a1acd744fd6399a6dfbad28af2a449d3169ec5d",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[gasps] Oh!",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00024
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person letting out a surprised gasp and exclamation. |  | SPEECH: yes (\"Oh\") | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish__v1",
+      "file": "foley/swish__v1.wav",
+      "category": "foley",
+      "tags": [
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.5,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -19.39,
+      "sha256": "2d3ebe90e5f30d4a5cfa0e1ca503f9aab61bb12bb7b64a977abcfb869ef7a354",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "swish__v2",
+      "file": "foley/swish__v2.wav",
+      "category": "foley",
+      "tags": [
+        "transition",
+        "whoosh"
+      ],
+      "seconds": 0.5,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -18.64,
+      "sha256": "517e881f763e59544b76c011176379145d0d74e951d231f28e04f06d3fbb9629",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "throat_clear__v1",
+      "file": "vocal/throat_clear__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "ahem",
+        "analyst",
+        "reaction",
+        "throat",
+        "vocal"
+      ],
+      "seconds": 0.49,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -14.94,
+      "sha256": "b750c4c5bcfd087996a0eaee2c0b3426491688f34dade4ff607d3d4592043cd1",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[clears throat]",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.0002
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person clearing their throat. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "tick__v1",
+      "file": "foley/tick__v1.wav",
+      "category": "foley",
+      "tags": [
+        "clock",
+        "companion",
+        "tick"
+      ],
+      "seconds": 0.12,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.57,
+      "sha256": "50c4721985c3f6c3939cce6f8c2600f80e616c37c7269b9e92ae525a4865ed1c",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "tick__v2",
+      "file": "foley/tick__v2.wav",
+      "category": "foley",
+      "tags": [
+        "clock",
+        "companion",
+        "tick"
+      ],
+      "seconds": 0.12,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -24.06,
+      "sha256": "d43243fdbc77b29158d7e3db66df1efb1acbcb4079516aef731d2ae1e5a6ff5e",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "tick__v3",
+      "file": "foley/tick__v3.wav",
+      "category": "foley",
+      "tags": [
+        "clock",
+        "companion",
+        "tick"
+      ],
+      "seconds": 0.12,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.55,
+      "sha256": "c60f89588ab6203d803ab3f137c8b8835f7717b6f6b0ae6ce78d62852e781fba",
+      "source": {
+        "kind": "procedural",
+        "seed": 3
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "tick_loop_4s__v1",
+      "file": "foley/tick_loop_4s__v1.wav",
+      "category": "foley",
+      "tags": [
+        "clock",
+        "companion",
+        "loop"
+      ],
+      "seconds": 4.0,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -31.45,
+      "sha256": "1d98b7e7129d771605baef1e8264a1e4bb62466e9902ee11ef2e4eba90ea3c19",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": true
+    },
+    {
+      "id": "tock__v1",
+      "file": "foley/tock__v1.wav",
+      "category": "foley",
+      "tags": [
+        "clock",
+        "companion",
+        "tock"
+      ],
+      "seconds": 0.12,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.22,
+      "sha256": "224b6a960482349eac9aa3e4880dded5a074e949094a15c29a127f62af6ff938",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "tock__v2",
+      "file": "foley/tock__v2.wav",
+      "category": "foley",
+      "tags": [
+        "clock",
+        "companion",
+        "tock"
+      ],
+      "seconds": 0.12,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.38,
+      "sha256": "a2e95725e4f8762faf9f2d0369944d34729bed58df15295b974bce7948b2fd4f",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "tock__v3",
+      "file": "foley/tock__v3.wav",
+      "category": "foley",
+      "tags": [
+        "clock",
+        "companion",
+        "tock"
+      ],
+      "seconds": 0.12,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -21.31,
+      "sha256": "9b049b3a598b5817d85bbfd5e71cf39bf3cadb0648f341554c6ba3b333d518c9",
+      "source": {
+        "kind": "procedural",
+        "seed": 3
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "whistle_short__v1",
+      "file": "vocal/whistle_short__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "idle",
+        "vocal",
+        "whistle"
+      ],
+      "seconds": 2.356,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -17.19,
+      "sha256": "1f252249ea5eee7850e17300aed7715e9d6f2d400814b9c34022ebbd77e3f432",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[whistles a short low tune]",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.00068
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person whistling a brief, casual tune. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "wing_flutter__v1",
+      "file": "foley/wing_flutter__v1.wav",
+      "category": "foley",
+      "tags": [
+        "companion",
+        "move",
+        "wing"
+      ],
+      "seconds": 0.55,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.19,
+      "sha256": "45018f93ab4d7228a24f806b517a84b7deeef30473838e21acd8850df22e02c8",
+      "source": {
+        "kind": "procedural",
+        "seed": 1
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "wing_flutter__v2",
+      "file": "foley/wing_flutter__v2.wav",
+      "category": "foley",
+      "tags": [
+        "companion",
+        "move",
+        "wing"
+      ],
+      "seconds": 0.55,
+      "sample_rate": 48000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -20.33,
+      "sha256": "ca4be9ad305530df975d5aca8adba209423c02af2b6539695946741a59745548",
+      "source": {
+        "kind": "procedural",
+        "seed": 2
+      },
+      "licence": {
+        "status": "own_procedural",
+        "note": "built from noise and tones in explainer_engine/audio/foley.py; no third-party material"
+      },
+      "review": {
+        "machine": "procedural placeholder: plain, replaceable by recorded foley",
+        "human": "not_listened"
+      },
+      "loop": false
+    },
+    {
+      "id": "yawn__v1",
+      "file": "vocal/yawn__v1.wav",
+      "category": "vocal",
+      "tags": [
+        "analyst",
+        "reaction",
+        "tired",
+        "vocal",
+        "yawn"
+      ],
+      "seconds": 2.444,
+      "sample_rate": 24000,
+      "peak_dbfs": -3.0,
+      "rms_dbfs": -13.92,
+      "sha256": "505a4496b8e8c432e9f0e43ef5a055da6ec63020863e12cfb873a5aff552e0ca",
+      "source": {
+        "kind": "gemini_tts",
+        "model": "gemini-3.8-flash-tts",
+        "prompt": "[yawns widely]",
+        "generated": "2026-10-16",
+        "cost_usd_estimate": 0.0007
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "audio generated with the creator's Gemini API key; Google's output terms not yet checked for commercial use"
+      },
+      "review": {
+        "machine": "gemini-3.8-flash heard: It sounds like a person letting out a deep, tired groan or yawn. |  | SPEECH: no | NONVERBAL_SOUND_PRESENT: yes",
+        "human": "not_listened"
+      },
+      "loop": false
+    }
+  ]
 }
