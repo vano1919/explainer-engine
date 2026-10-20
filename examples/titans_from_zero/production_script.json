@@ -15,12 +15,24 @@
  "voice": {
   "provider": "elevenlabs",
   "model": "eleven_v4",
-  "voice_id": null,
-  "name": null,
+  "voice_id": "oJUpLOe3yEYTEIjO6ddh",
+  "name": "Leo Ashcraft - Late-Night Radio Host",
   "style": "a warm, quick, slightly wry storyteller with a low voice, curious and never solemn",
   "pace_wpm": [
    155,
    185
+  ],
+  "candidates": [
+   {
+    "voice_id": "oJUpLOe3yEYTEIjO6ddh",
+    "name": "Leo Ashcraft - Late-Night Radio Host",
+    "why": "deep, warm, dry humour, middle-aged American storyteller"
+   },
+   {
+    "voice_id": "vrZ1gMhrsD9LI0gRKrLh",
+    "name": "Chris - Warm, Thoughtful",
+    "why": "middle-aged American, understated humour"
+   }
   ]
  },
  "world": {
@@ -109,7 +121,58 @@
    "props": [
     "soldering iron",
     "rebuilt scooter"
-   ]
+   ],
+   "voice": {
+    "voice_id": "wdeEOw9iMDHzRDUDlgPC",
+    "name": "Kyle F - Technical and Soft",
+    "style": "a middle-aged man with a light, slightly nasal mid-range voice that halts and restarts mid-sentence, dry and deadpan, tired and earnest, a faint south african flavour under a mostly American delivery; never loud",
+    "traits": {
+     "gender": "male",
+     "age": "middle_aged",
+     "temperament": [
+      "awkward",
+      "dry",
+      "earnest"
+     ],
+     "energy": "low",
+     "origin": "south african-born, raised in Pretoria, long in the united states",
+     "role": "hero",
+     "real_person": true,
+     "documented": [
+      "https://en.wikipedia.org/wiki/Elon_Musk (born 1971, so mid-50s now; South African upbringing, later Canada and the US)"
+     ]
+    },
+    "candidates": [
+     {
+      "voice_id": "wdeEOw9iMDHzRDUDlgPC",
+      "name": "Kyle F - Technical and Soft",
+      "why": "soft, technical, light mid-range; an engineer who explains, never sells"
+     },
+     {
+      "voice_id": "O7RnF5aNrnDdDZdG7kki",
+      "name": "Isaiah [Male Soft Quiet Voice]",
+      "why": "soft-spoken quiet American male"
+     }
+    ]
+   },
+   "speech": {
+    "basis": "public",
+    "style": "A halting, careful speaker: short bursts, a pause to find the word, then a flat dry aside; engineer's plain words, a small awkward laugh when he is pleased with a joke.",
+    "words": [
+     "build",
+     "parts",
+     "scooter",
+     "wheel"
+    ],
+    "avoid": [
+     "salesman patter",
+     "long speeches"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Elon_Musk",
+     "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
+    ]
+   }
   },
   "belfort": {
    "names": [
@@ -119,7 +182,57 @@
    "card": "Jordan Belfort as our caricature: compact, slicked hair, wide grin, a sharp suit that has seen better days",
    "props": [
     "phone with no contacts"
-   ]
+   ],
+   "voice": {
+    "voice_id": "xB7ZTAdAjd7cI20IXiAL",
+    "name": "Chris Beck - Rocket Radio",
+    "style": "a middle-aged man with a quick, bright, gravelly-smooth new york voice, a salesman's rolling patter that speeds up when he is closing and drops to a confiding murmur on the key line; cocky, warm, never shouting",
+    "traits": {
+     "gender": "male",
+     "age": "middle_aged",
+     "temperament": [
+      "smooth",
+      "hyped",
+      "sassy"
+     ],
+     "energy": "high",
+     "origin": "american, born in Queens, new york",
+     "role": "rival",
+     "real_person": true,
+     "documented": [
+      "https://en.wikipedia.org/wiki/Jordan_Belfort (born 1962, so mid-60s now, carried as the upper end of middle-aged; New York raised; sales-floor career; birth year recalled, page not re-fetched)"
+     ]
+    },
+    "candidates": [
+     {
+      "voice_id": "xB7ZTAdAjd7cI20IXiAL",
+      "name": "Chris Beck - Rocket Radio",
+      "why": "high energy, expressive American; a closer's patter"
+     },
+     {
+      "voice_id": "GorLj2SsI4u2JqL58gAA",
+      "name": "CARTER D",
+      "why": "New York, street-smart; check it stays un-comic"
+     }
+    ]
+   },
+   "speech": {
+    "basis": "public",
+    "style": "A closer's patter: rhythmic, warm, confiding, sentences that build and land on a short punch; talks to one person as if there were no one else in the room.",
+    "words": [
+     "sell",
+     "forever",
+     "give",
+     "owing"
+    ],
+    "avoid": [
+     "technical jargon"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Jordan_Belfort",
+     "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
+    ]
+   }
   },
   "oleary": {
    "names": [
@@ -130,7 +243,57 @@
    "props": [
     "stack of white envelopes",
     "briefcase"
-   ]
+   ],
+   "voice": {
+    "voice_id": "fxnZk29PIJ3WKEC9MDEo",
+    "name": "David Baker confident calm mature",
+    "style": "an older man with a low, dry, even Canadian-English voice, slow and flat as a ledger, a half-smile in the tone, calm even when insulting; never raises the pitch",
+    "traits": {
+     "gender": "male",
+     "age": "old",
+     "temperament": [
+      "deadpan",
+      "crisp",
+      "unsentimental"
+     ],
+     "energy": "low",
+     "origin": "Canadian, raised in Montreal, businessman in Boston and Toronto",
+     "role": "rival",
+     "real_person": true,
+     "documented": [
+      "https://en.wikipedia.org/wiki/Kevin_O%27Leary (born 1954, early 70s now; Canadian, Montreal-raised; birth year recalled, page not re-fetched)"
+     ]
+    },
+    "candidates": [
+     {
+      "voice_id": "fxnZk29PIJ3WKEC9MDEo",
+      "name": "David Baker confident calm mature",
+      "why": "Canadian, calm, mature, flat confidence"
+     },
+     {
+      "voice_id": "BqrxDT5WoicVMMk115Ui",
+      "name": "Shelton",
+      "why": "educated, resonant, older"
+     }
+    ]
+   },
+   "speech": {
+    "basis": "public",
+    "style": "Slow, flat and unhurried: short numbers-first sentences, a blunt verdict delivered as a favour, never in a hurry and never warm for long.",
+    "words": [
+     "forty",
+     "percent",
+     "envelope",
+     "dollars"
+    ],
+    "avoid": [
+     "slang"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Kevin_O%27Leary",
+     "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
+    ]
+   }
   },
   "trump": {
    "names": [
@@ -140,7 +303,57 @@
    "card": "Donald Trump as our caricature: swept blond hair, long red tie, navy suit, a phone held at arm's length",
    "props": [
     "phone on a selfie stick"
-   ]
+   ],
+   "voice": {
+    "voice_id": "lysAcYDrfyxpR1LiWJrt",
+    "name": "Nick - Old, Raspy and Experienced",
+    "style": "an older man with a loud, raspy, nasal new york voice, swaggering and emphatic, stressing a word then repeating it, sing-song rises and sudden hushed asides; boastful but jovial, never menacing",
+    "traits": {
+     "gender": "male",
+     "age": "old",
+     "temperament": [
+      "boastful",
+      "emphatic",
+      "restless"
+     ],
+     "energy": "high",
+     "origin": "american, born in Queens, new york",
+     "role": "villain",
+     "real_person": true,
+     "documented": [
+      "https://en.wikipedia.org/wiki/Donald_Trump (born 1946, late 70s now; Queens, New York; 47th US president)"
+     ]
+    },
+    "candidates": [
+     {
+      "voice_id": "lysAcYDrfyxpR1LiWJrt",
+      "name": "Nick - Old, Raspy and Experienced",
+      "why": "older American, raspy, emphatic"
+     },
+     {
+      "voice_id": "yJYX0af9YgTf8sOP8vbP",
+      "name": "Gerard",
+      "why": "expressive American"
+     }
+    ]
+   },
+   "speech": {
+    "basis": "public",
+    "style": "Boastful and repetitive: big superlatives, a thing said twice for weight, loose digressions that circle back, a confiding aside, and a sudden turn on the other person.",
+    "words": [
+     "fantastic",
+     "cameras",
+     "watch",
+     "sold"
+    ],
+    "avoid": [
+     "quiet apologies"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Donald_Trump",
+     "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
+    ]
+   }
   },
   "kiyosaki": {
    "names": [
@@ -151,7 +364,57 @@
    "props": [
     "napkin with a drawn deal",
     "old Toyota"
-   ]
+   ],
+   "voice": {
+    "voice_id": "PerZoH0r6nxBZXCoIPpv",
+    "name": "Michael Moody - Grandfatherly and warm",
+    "style": "an older man with a warm, gravelly, unhurried American voice, a teacher's easy cadence with a Hawaiian-island looseness, stopping to let a point land, then leaning in; earnest, a little stubborn",
+    "traits": {
+     "gender": "male",
+     "age": "old",
+     "temperament": [
+      "folksy",
+      "teacherly",
+      "earnest"
+     ],
+     "energy": "medium",
+     "origin": "born in Hilo, Hawaii, raised in Hawaii, long in the American Southwest",
+     "role": "mentor",
+     "real_person": true,
+     "documented": [
+      "https://en.wikipedia.org/wiki/Robert_Kiyosaki (born April 8, 1947, so late 70s now; Hilo, Hawaii; author and teacher of personal-finance books)"
+     ]
+    },
+    "candidates": [
+     {
+      "voice_id": "PerZoH0r6nxBZXCoIPpv",
+      "name": "Michael Moody - Grandfatherly and warm",
+      "why": "older American, warm teacher's cadence"
+     },
+     {
+      "voice_id": "KgUSWQPFmuiZ5ycRbnty",
+      "name": "Jessie - Vintage Narrator",
+      "why": "raspy American old-timer"
+     }
+    ]
+   },
+   "speech": {
+    "basis": "public",
+    "style": "A folksy teacher: slow, plain, lesson-shaped sentences, a rule stated and then repeated as a command, stories from his own bad years, never a hedge.",
+    "words": [
+     "debt",
+     "banks",
+     "teach",
+     "write"
+    ],
+    "avoid": [
+     "slang"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Robert_Kiyosaki",
+     "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
+    ]
+   }
   },
   "cuban": {
    "names": [
@@ -161,7 +424,57 @@
    "card": "Mark Cuban as our caricature: dark hair, T-shirt and jeans, arms crossed, a warehouse office with no chairs",
    "props": [
     "clipboard"
-   ]
+   ],
+   "voice": {
+    "voice_id": "gwU7DXdLrTvWCiUTPZG8",
+    "name": "Daniel - Bright, warm, commanding",
+    "style": "a middle-aged man with a plain, brisk, mid-range American voice, rust-belt directness, fast clipped questions, a sports-bar ease and a flat refusal when he says no; blunt, never cruel",
+    "traits": {
+     "gender": "male",
+     "age": "middle_aged",
+     "temperament": [
+      "blunt",
+      "casual",
+      "quick"
+     ],
+     "energy": "medium",
+     "origin": "born in american, born in Pittsburgh, later Dallas",
+     "role": "rival",
+     "real_person": true,
+     "documented": [
+      "https://en.wikipedia.org/wiki/Mark_Cuban (born July 31, 1958, so late 60s now, carried as the upper end of middle-aged; Pittsburgh area; Dallas businessman)"
+     ]
+    },
+    "candidates": [
+     {
+      "voice_id": "gwU7DXdLrTvWCiUTPZG8",
+      "name": "Daniel - Bright, warm, commanding",
+      "why": "middle-aged American, plain and direct"
+     },
+     {
+      "voice_id": "rBymsqRQq6sfNoHxMZdl",
+      "name": "Torch",
+      "why": "American storyteller"
+     }
+    ]
+   },
+   "speech": {
+    "basis": "public",
+    "style": "Blunt and brisk: rapid short questions, numbers with dates, a plain refusal with no cushion, sports-bar casual between deals.",
+    "words": [
+     "how many",
+     "Christmas",
+     "nobody",
+     "pays"
+    ],
+    "avoid": [
+     "flowery words"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Mark_Cuban",
+     "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
+    ]
+   }
   },
   "cardone": {
    "names": [
@@ -201,7 +514,57 @@
    "card": "Jeff Bezos as our caricature: bald, bright smile, a quilted vest, reading a report",
    "props": [
     "thick fire report"
-   ]
+   ],
+   "voice": {
+    "voice_id": "quYBSltBVe10Ud9I6q9p",
+    "name": "Jae",
+    "style": "a middle-aged man with a clear, resonant, bright American mid-Atlantic-neutral voice, unhurried and precise, a sudden big laugh breaking through a calm delivery; pleasant, patient, a little too sure of himself",
+    "traits": {
+     "gender": "male",
+     "age": "middle_aged",
+     "temperament": [
+      "bright",
+      "measured",
+      "amused"
+     ],
+     "energy": "medium",
+     "origin": "american, born in Albuquerque, raised in Texas and Florida",
+     "role": "mentor",
+     "real_person": true,
+     "documented": [
+      "https://en.wikipedia.org/wiki/Jeff_Bezos (born January 12, 1964, so early 60s now; Albuquerque, then Houston and Miami; fetched)"
+     ]
+    },
+    "candidates": [
+     {
+      "voice_id": "quYBSltBVe10Ud9I6q9p",
+      "name": "Jae",
+      "why": "smart, confident CEO, warm and precise"
+     },
+     {
+      "voice_id": "VpOh9UPDOdNq28wv9NVW",
+      "name": "John Abril - Clone v1",
+      "why": "warm, friendly, informative American"
+     }
+    ]
+   },
+   "speech": {
+    "basis": "public",
+    "style": "Precise and patient: complete sentences, calm numbers, a sudden hearty laugh, an offer made like a fact; politely certain.",
+    "words": [
+     "read",
+     "report",
+     "double",
+     "offer"
+    ],
+    "avoid": [
+     "slang"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Jeff_Bezos",
+     "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
+    ]
+   }
   },
   "vance": {
    "names": [
@@ -210,7 +573,49 @@
    "card": "Vance, an invented buyer of failing companies: grey suit, grey tie, grey smile",
    "props": [
     "business card"
-   ]
+   ],
+   "voice": {
+    "voice_id": "Dg1lUQiSAGVHkoQMG3QX",
+    "name": "Jerry B. - Premium Luxury Commercial",
+    "style": "a middle-aged man with a smooth, quiet, even American voice, polite and unhurried, a thin smile you can hear, never raises his voice and never explains twice; calm, cold, courteous",
+    "traits": {
+     "gender": "male",
+     "age": "middle_aged",
+     "temperament": [
+      "smooth",
+      "cold",
+      "polite"
+     ],
+     "energy": "low",
+     "origin": "American, East Coast corporate world",
+     "role": "villain"
+    },
+    "candidates": [
+     {
+      "voice_id": "Dg1lUQiSAGVHkoQMG3QX",
+      "name": "Jerry B. - Premium Luxury Commercial",
+      "why": "polished, understated, quiet authority; courteous and cold"
+     },
+     {
+      "voice_id": "AyuyomQLIrhdNOsoDN2N",
+      "name": "Christopher J Kelly - British",
+      "why": "measured senior finance executive"
+     }
+    ]
+   },
+   "speech": {
+    "basis": "personality",
+    "style": "Polite, quiet and exact: short courteous sentences, offers phrased as favours, never raises his voice, never explains a thing twice.",
+    "words": [
+     "buy",
+     "Friday",
+     "paper",
+     "fine"
+    ],
+    "avoid": [
+     "shouting"
+    ]
+   }
   }
  },
  "drama": {
