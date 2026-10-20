@@ -8570,7 +8570,7 @@
           "tone": "low, confiding",
           "emotion": "pressing",
           "kind": "transition",
-          "pause_after": 0.5
+          "pause_after": 1.1
         },
         {
           "text": "Yeah, I signed paper like that once. I paid for it in a cell.",
@@ -10650,8 +10650,7 @@
           ],
           "tone": "easy, steady",
           "emotion": "anticipation",
-          "kind": "transition",
-          "pause_after": 0.5
+          "kind": "transition"
         },
         {
           "text": "Oh, the bench is still there. So is Kevin O'Leary.",
@@ -11095,7 +11094,7 @@
           ]
         },
         {
-          "at": "Oh, the bench is still there.",
+          "at": "the bench is still there.",
           "type": "B",
           "picture": {
             "id": "s15_bench",
@@ -11479,7 +11478,7 @@
           "emotion": "settled",
           "kind": "transition",
           "text": "Luck decided which envelope paid.",
-          "pause_after": 0.5,
+          "pause_after": 1.3,
           "visual_beats": [
             {
               "at": "Luck decided",
