@@ -32,7 +32,7 @@ this project. Every value can be moved by evidence; when you move one, say why i
 | **Faceless / voiceover / educational and sleep** (Night Owl Library style) | educational: 4-9 s a picture, 6-10 pictures a minute `[ours: <=10]`; sleep: 12-30 s a picture, no cut inside a sentence | slow push 100% to 105-108% over the whole shot (one direction), dissolve 1.5-3 s, dark low-contrast grade, no on-screen text except the title and chapter cards; sleep: nothing flashes, no sudden brightness | voice -20 to -16 LUFS short-term (sleep: lower and steady, 3-4 dB dynamic range), ambience bed (rain, room tone, fire) -34 to -28 dB, music optional and slow; no riser, no boom, no sting; SFX only if soft and rare |
 | **Documentary / video essay / storytelling** | 4-10 s average, longer holds (10-20 s) for weight, faster (2-4 s) in montage; cut on the narration's pauses | Ken Burns push/pull on stills, match cuts between ideas, archive-style grade with constant grain/vignette, maps and timelines as motion graphics, lower thirds for names | layered but quiet: voice dominant, ambience -30 dB, music -24 to -20 dB ducked 6-9 dB under voice, J-cuts/L-cuts for scene changes, a deliberate silence (1-3 s) before a reveal |
 | **Dynamic vlogs / action / off-road** | 1-3 s in action, 3-6 s in calm; cut on motion, 25-40 cuts a minute at peaks | speed ramps, whip pans, shake-cut-on-impact, POV and chase angles alternate, minimal text (speed, place) | engine/wind natural sound is the base, music -18 to -12 dB with a strong beat, hits on cuts: whoosh on whips, low boom on impact, riser 1-3 s before a jump |
-| **Short-form (Shorts / Reels / TikTok)** | hook in 0-3 s, a visual change every 1-2.5 s, 20-45 s total (house up to 60, P-11; YouTube counts up to 3 minutes as a Short, V-25) | 9:16, subject in the centre 60% (the caption and UI zones cover the top 10% and bottom 20%), captions 2-4 words at a time, 6-8% zoom punches on key words | voice -14 LUFS integrated, music -22 to -18 dB, pop on every caption pulse, whoosh on every cut that moves, one sting max at the payoff; loopable last frame |
+| **Short-form (Shorts / Reels / TikTok)** | hook in 0-3 s, a visual change every 1-2.5 s, 20-45 s total (house: BP-12's length bands, P-11; YouTube counts up to 3 minutes as a Short, V-25) | 9:16, subject in the centre 60% (the caption and UI zones cover the top 10% and bottom 20%), captions 2-4 words at a time, 6-8% zoom punches on key words | voice -14 LUFS integrated, music -22 to -18 dB, pop on every caption pulse, whoosh on every cut that moves, one sting max at the payoff; loopable last frame |
 | **Ambient / relaxing / ASMR** | 20-60 s per scene or a single long take; transitions 3-6 s or none | almost still: slow drift under 3% a minute, no zoom punches, no text, soft fades only | no voice or a whisper at -28 to -24 LUFS; texture is the content; no sudden sound ever, peaks below -12 dBFS, noise floor clean (no hiss under -60 dB), loop seams crossfaded 4-8 s |
 
 ---
@@ -74,7 +74,7 @@ Rule of three: at most three transition kinds in one video `[ours: the hard cut,
 - **Lower third**: 4 s on screen, in at 0:02-0:08 of the first appearance, safe margin 5% from edges, sans-serif, 2 lines max.
 - **Key highlights**: one accent colour for one word per sentence; 100-150 ms scale pop (100% to 108% to 100%); never highlight more than 3 words in 5 s.
 - **Dynamic captions**: 1-4 words at a time (shorts), 2 lines x 38 characters (long form); on screen from 0.1 s before the word to 0.2 s after; reading speed 15-17 characters a second.
-- **Kinetic text**: only when the words are the picture (a quote, a number, a rule); ease 6-10 frames in, hold at least 1.2 s, ease out 4-6 frames.
+- **Kinetic text**: only when the words are the picture (a quote, a number, a rule); ease 6-10 frames in, hold at least 1.2 s `[ours: BP-27's hold]`, ease out 4-6 frames.
 - **Contrast**: text luminance contrast of at least 4.5:1 against what is behind it; use drop shadow (offset 2-4 px, blur 6-12 px, 60-70% black) or a blurred box (30-50% black, 12-24 px blur, 8-12 px radius). Test on the brightest frame under the text.
 - **Mobile size**: caption cap height at least 4% of frame height (about 43 px on 1080 tall); body text never below 36 px at 1080p.
 
@@ -162,7 +162,7 @@ Rules: a sound starts with the picture event it belongs to (within one frame); S
 | Chunks of different loudness joined as they came | audible seam | level and fade `[ours: ED-01]` |
 | Template 3D/glitch transitions on serious topics | cheapens the subject | cut or dissolve |
 | Cutting inside a sentence on a half-word | clipped syllable | cut in the pause |
-| Held picture with no change for over 9 s `[ours: UR-31]` | attention drops | bubble, re-frame or cut |
+| Held picture past the still limit `[ours: BP-40, a visual beat counts as a change]` | attention drops | bubble, re-frame or cut |
 
 ---
 
@@ -172,7 +172,7 @@ Rules: a sound starts with the picture event it belongs to (within one frame); S
 - **SEO and navigation**: YouTube requires the first chapter at 0:00, at least 3 chapters, each at least 10 s; titles of 2-6 words with the search keyword where it is natural ("Year 1: the first harvest"); chapters appear as a timeline on the player and in search results.
 - **When not to give chapters**: when the title would spoil a reveal (use a neutral label), in sleep/ambient videos where seeking is not wanted, in Shorts, and when the chapters would be shorter than 30 s each.
 - **Mapping to the cut**: place the chapter's first frame on a dissolve or a card, 0.5 s after the previous sentence ends.
-- **Retention shape**: strongest claim in the first 15 s, second peak at 25-35% of the length, final payoff delivered before the last 10% (not after a long outro).
+- **Retention shape**: strongest claim in the first 15 s, second peak at 25-35% of the length, final payoff delivered before the last 10% (not after a long outro) `[ours: BP-04]`.
 
 ---
 
@@ -194,10 +194,10 @@ Rules: a sound starts with the picture event it belongs to (within one frame); S
 - [ ] No zoom snap (same picture), no cut in the middle of a move.
 - [ ] Transitions: hard cuts, the period dissolve only (BP-31), black at the ends; whips and flashes spaced (BP-25).
 - [ ] Grade, grain and vignette constant across the whole video; skin tones and the hero's colours stay in the same range.
-- [ ] Brightest and darkest frames checked; no frame flashes (under 3 flashes in a second, BP-26) for sleep/ambient or any viewer-safety concern.
+- [ ] Brightest and darkest frames checked; no frame flashes (within BP-26's flash cap) for sleep/ambient or any viewer-safety concern.
 
 **Legibility and platform**
-- [ ] Captions and text readable on a phone held at arm's length: cap height at least 4% of frame, contrast at least 4.5:1, inside the safe area (5% margin; vertical: top 10% and bottom 20% free).
+- [ ] Captions and text readable on a phone held at arm's length: cap height at least 4% of frame, contrast at least 4.5:1, inside the safe area `[ours: BP-28 in 16:9, BP-29 on a Short]`.
 - [ ] 2 lines at most; no word on screen longer than needed to read it (15-17 characters a second).
 - [ ] Chapters: first at 0:00, at least three, each 10 s or longer; titles do not spoil.
 - [ ] Resolution and rate as specified (2560x1440 / 30 fps; Shorts 1080x1920); a 20-second excerpt exported at the final settings and watched on a phone.

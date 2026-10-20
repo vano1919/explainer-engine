@@ -870,3 +870,35 @@ treats RMS stats as REVIEW until then); the Short's mono phone check (BP-61); pa
 machine-checked; the `sfx_manifest` schema needs `kind` (PR #9 owns it); STORY_ENGINE AL-02/AL-03 wording is PR #9's file (PRODUCTION_SCRIPT's PV-40, PV-52 and
 PP-05 rows were brought in line here after CI caught the missing PV-52 row); the Syndicate Wars example now scores FAIL on pace (122 wpm) and hook-window stills (it stays as is, the
 creator's word). Overlaps with PR #9 listed in the PR description.
+
+## 2026-10-20 - Rule consistency after the merge: picture / motion / visual beats
+
+What changed (the D-59 audit's findings for pictures, motion and visual beats; one number, one home):
+- Registry: new BP-36 (VB-01 cadence), BP-37 (VB-02 faces), BP-38 (VB-04 text words, bars), BP-39 (VB-08 cue spacing),
+  BP-80 (VB-10 repeats), BP-81 (VB-11 cue density) as house FAIL rules (the creator, 2026-10-20: PR #9's scene-rewrite
+  limits stop an episode, numbers from D-58); BP-82 (VB-05/07) and BP-83 (MO-02..07) as hypotheses (REVIEW only); BP-84
+  (shot floors, bubble words: D-42/UR-31), BP-85 (UR-01..17 storyboard numbers: D-37) and BP-86 (PV-29 crossfade and tick:
+  ED-03) as house rules. BP-20/24/27/28/30/33/40/41/45 amended (statements and `enforced_by`); SOURCED_RULES.md regenerated.
+- Code reads every number and severity from the registry: `production/beats.py`, `edit/board.py`, `edit/motion_lint.py`,
+  `edit/shot_rules.py`, `production/validate.py` (PV-24, PV-29, PV-34), `fill_holds.py`, `accents.py`, `continuity.py`,
+  `finish/bubbles.py`, `design/palette.py`. No check carries a literal FAIL/REVIEW where a rule exists.
+- `board.change_times` counts visual beats, data visuals and cards (C-1): a dialogue held on one picture with an
+  expression change per line passes RHYTHM-3 and BP-41; the synthetic /3 script went from 1 FAIL (base) and 3 FAIL
+  (hook by beats) to 0 FAIL on `production time` and `validate`. MO-01 is section-aware (hook / body of BP-40).
+- Shorts: VB-01's cadence does not run on a Short; BP-45 owns its pace and PV-34 counts beats as events (C-11).
+- UR-01 checks BP-03's hook forms instead of the superseded "question by 5 s"; BUBBLE-2 uses BP-27's hold (a hypothesis,
+  so REVIEW; it supersedes UR-31's `max(1.4, 0.3 n)`).
+- `python -m explainer_engine.edit.board` on a production script now exits 2 with "not a storyboard ... production time"
+  instead of `KeyError: 'shots'`.
+- Docs, skills and agents link the BP ids instead of restating 1.25 zoom, 3-6 s pictures, every 9 s, 3-frame flash,
+  1.6 s pop hold, 8/15 s and 4/6/0.7 s cadences, "a sound on every accent", 14 framings, the 1.5 s Shorts metronome
+  (SS-09), the J/L 0.4 s lead (a bed pre-lap, not ED-14's J/L cut) and the 40/20 tone mix (BP-09). MO-07's hold variance
+  and BP-40's still limits are documented as satisfiable together.
+
+Defaults applied: a visual beat is an on-screen change; a binding BP rule wins over a house or doc number; a hypothesis
+never FAILs.
+
+Tests: new `tests/unit/test_rule_consistency_motion.py` (registry pins, severity read from JSON, C-1, Shorts, bubbles,
+PV-29, the board CLI error). Expectations moved to the registry: `test_short_beats` (VB-01 FAIL on a Short -> BP-45),
+`test_shot_rules` (UR-01 question by 5 s -> BP-03 forms; the v3 cold open passes), severity reads in `test_visual_beats`,
+`test_scene_system`, `test_shot_rules`. Full suite: 574 passed.

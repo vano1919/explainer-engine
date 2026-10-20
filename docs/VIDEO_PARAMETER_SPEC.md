@@ -77,7 +77,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 ## 6. Animation
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
-| P-70 | shot length | superseded by UR-11 (A 5-7 s, B 3.5-5 s, C 2.5-4 s) and UR-12 (cuts in pauses) | | creator's style, D-37 (SE-20 rejected a universal rate) | M/F | narration | `edit/shot_rules.py` |
+| P-70 | shot length | superseded by UR-11 (the type ranges of BP-85), UR-12 (cuts in pauses) and BP-40 (pictures a minute, still limits) | see BP-85, BP-40 | creator's style, D-37 (SE-20 rejected a universal rate) | M/F | narration | `edit/shot_rules.py` |
 | P-71 | label hold | >= 1.5 s + 0.3 s per word (satisfies the floor of BP-27, which adds the cap) | see BP-27 | reading | M/C | | validator (motion_lint) |
 | P-72 | simultaneous movers | <= 3 | 1-5 | clutter ceiling | M/C | | REVIEW above |
 | P-73 | easing | in-out cubic; entrances out-back, overshoot about 1.1, 12-18 frames; every camera move eased per BP-23 | enum, see BP-23 | natural motion | M/C | vocabulary | enum, motion_lint |

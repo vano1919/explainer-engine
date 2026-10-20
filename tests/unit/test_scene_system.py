@@ -16,6 +16,12 @@ from explainer_engine.production import validate as V
 from explainer_engine.scripting import scene_lint as SC
 from explainer_engine.scripting import speech as SP
 from explainer_engine.scripting import story_lint as ST
+from explainer_engine.standards import sourced_rules as SR
+
+
+def HOUSE(bp: str) -> str:  # noqa: N802  the severity the registry holds for a registered number (a JSON switch)
+    return SR.rule(bp)["severity"]
+
 
 from test_production_script import mini
 
@@ -203,7 +209,7 @@ def test_a_repeated_cue_sound_is_a_tic():
     found = _cue_find(_timed_cues(_cues([("tick", 1.0), ("tick", 5.0)])))
     assert any(f["rule"].endswith("VB-10") and f["severity"] == "REVIEW" for f in found)
     found = _cue_find(_timed_cues(_cues([("tick", 1.0), ("tick", 10.0), ("tick", 20.0)])))
-    assert any(f["rule"].endswith("VB-10") and f["severity"] == "FAIL" for f in found)  # 3 inside 30 s
+    assert any(f["rule"].endswith("VB-10") and f["severity"] == HOUSE("BP-80") for f in found)  # 3 inside 30 s
     found = _cue_find(_timed_cues(_cues([("tick", 1.0), ("blip", 5.0), ("tick", 40.0)])))
     assert not any(f["rule"].endswith("VB-10") for f in found)
     found = _cue_find(_timed_cues(_cues([("tick", 1.0), ("tick", 5.0)])), schema="production_script/2")
@@ -217,7 +223,7 @@ def test_cue_density_is_capped_on_scene_scripts():
     assert any(f["rule"].endswith("VB-11") and f["severity"] == "REVIEW" and "a minute" in f["detail"] for f in found)
     many = _cues([(names[i % 4], 0.3 + i * 1.0) for i in range(15)])  # 15 a minute, and bursts
     found = _cue_find(_timed_cues(many, duration=60.0))
-    assert any(f["rule"].endswith("VB-11") and f["severity"] == "FAIL" for f in found)
+    assert any(f["rule"].endswith("VB-11") and f["severity"] == HOUSE("BP-81") for f in found)
     two = _cues([("thud", 1.0), ("chime", 3.0)])  # two emphasis cues on one line
     found = _cue_find(_timed_cues(two))
     assert any(f["rule"].endswith("VB-11") and "emphasis" in f["detail"] for f in found)

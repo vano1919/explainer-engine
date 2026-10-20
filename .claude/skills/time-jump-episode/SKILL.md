@@ -13,7 +13,9 @@ Rules live in `docs/ORCHESTRATION.md` (SR-01..SR-08); this page is how to apply 
    world. Weight minutes by surprise, not equally (a quiet year can be 40 s, a dangerous first night 2 minutes).
 2. **Write the hook that closes each period** as the question the next period opens ("A month later: do they have a village or a
    graveyard?"). The first period opens with a yes/no question in 5 s (N-01).
-3. **Tone mix**: 40 % drama, 20 % humour, 40 % doubt and curious telling. Count it per period; no period is all one tone.
+3. **Tone mix**: mostly drama, doubt and curious telling, with humour beside the facts at BP-09's density (the first laugh
+   early, never inside the explaining example); the mix is a house guide, not a measured share. Count it per period; no
+   period is all one tone.
 4. **Named heroes carry the story** (UR-16..UR-21): who does what in each period, which friction between them, who is wrong.
 5. **After the heroes die** (100 years): show their effect, not them: written knowledge, schools, tools, trade routes, descendants,
    a world visibly ahead of the real one, with the cost. Name what the real timeline had at the same date.
