@@ -7,7 +7,9 @@ make a scene a contract: a place with people in it, opposing wants, a value that
 McKee's nonevent test), lines addressed to someone present (a hero never talks to the narrator), a real back-and-forth,
 subtext never spoken, and a narration register that tells the story instead of citing sources ("Rockstar's page
 says..." x7 was required by the old rules; now one honesty beat carries the disclosure). Evidence per rule:
-docs/research/STORYTELLING_EDITING_2026-10-19.md.
+docs/research/STORYTELLING_EDITING_2026-10-19.md. The numbers and the severities of SC-05, SC-08 and SC-09 live in the
+sourced rules registry (BP-70..BP-73, docs/SOURCED_RULES.md); SC-07 reads BP-15's one press-release lexicon through
+``narration_lint.press_release`` (N-14 uses the same one).
 
     python -m explainer_engine.scripting.scene_lint production_script.json
 """
@@ -19,31 +21,30 @@ import re
 import sys
 from pathlib import Path
 
+from explainer_engine.scripting import narration_lint as NL
+from explainer_engine.standards import sourced_rules as SR
+
 SCENE_SCHEMA = "production_script/3"
 ADDRESS_EXTRA = {"self", "room"}
-MAX_TURN_WORDS = 35       # SC-09 hard cap; a longer turn is split or given to the narrator
-REVIEW_TURN_WORDS = 15    # SC-09: the default spoken turn is 5-15 words
-SPEECH_WORDS = 25         # SC-09: at most one 25-60-word "speech" per scene, at its peak
-MIN_EXCHANGE = 4          # SC-05: at least one run of 4+ character lines (2+ speakers, no narrator inside)
-MAX_QA_CHAIN = 3          # SC-09/DW-12: more consecutive ?-turns read as an interview
-MAX_DISCLAIMER_SEGMENTS = 2  # SC-08: one honesty beat plus at most one callback
+MAX_TURN_WORDS = SR.T("BP-72", "turn_words_max")  # SC-09 hard cap; a longer turn is split or given to the narrator
+SPEECH_WORDS = SR.T("BP-72", "speech_words")  # SC-09: a turn this long is the scene's speech
+MAX_SPEECHES = SR.T("BP-72", "speeches_per_scene_max")  # SC-09: one speech per scene, at its peak
+REVIEW_TURN_WORDS = SR.T("BP-73", "turn_words_review")  # SC-09: the default spoken turn is 5-15 words
+MAX_QA_CHAIN = SR.T("BP-73", "qa_chain_max")  # SC-09/DW-12: more consecutive ?-turns read as an interview
+MIN_EXCHANGE = SR.T("BP-70", "min_exchange_lines")  # SC-05: at least one run of this many character lines
+MIN_EXCHANGE_SPEAKERS = SR.T("BP-70", "min_exchange_speakers")  # SC-05: ... from at least this many speakers
+MAX_DISCLAIMER_SEGMENTS = SR.T("BP-71", "disclaimer_segments_max")  # SC-08: one honesty beat plus at most one callback
 GREETING = re.compile(r"^\s*(hello|hi there|hi[,.! ]|hey there|hey[,.! ]|good (morning|evening|afternoon)|welcome)\b", re.I)
 WRAP_UP = re.compile(r"^\s*(so that's|anyway|in conclusion|to sum up|well, that settles)\b", re.I)
-PRESS_RELEASE = (  # SC-07: announcement register on a narrator line
-    re.compile(r"\b\w+['’]s (page|site|website) (says|gives|names|lists|confirms)\b", re.I),
-    re.compile(r"\b(announced|announcement|press release)\b", re.I),
-    re.compile(r"\brelease date\b", re.I),
-    re.compile(r"\bis set to (release|launch|come out)\b", re.I),
-    re.compile(r"\bcoming (january|february|march|april|may|june|july|august|september|october|november|december)\b", re.I),
-    re.compile(r"\baccording to [^.?!]{0,40}\b(page|site|website|trailer)\b", re.I),
-    re.compile(r"\bthe trailer (shows|confirms|reveals)\b", re.I),
-)
 DISCLAIMER = re.compile(r"\b(invented|made (it |this |that )?up|we['’]re guessing|we can only guess|our (own )?assumption"
                         r"|none of this happened|our invention)\b", re.I)
 
 
 def _f(out, rule, where, detail, sev):
     out.append({"rule": rule, "severity": sev, "where": where, "detail": detail})
+
+
+sev = NL.sev  # a registered rule's severity is the registry's (BP-15, BP-70..BP-73)
 
 
 def _words(text: str) -> list[str]:
@@ -67,9 +68,10 @@ def lint(doc: dict) -> list[dict]:
         dialogue = [ln for ln in lines if ln.get("speaker")]
         scene = seg.get("scene")
         for li, ln in enumerate(lines):
-            if not ln.get("speaker") and any(p.search(ln["text"]) for p in PRESS_RELEASE):
-                _f(out, "SC-07", f"{sid} line {li + 1}", f"press-release register in narration ({ln['text'][:60]!r}): tell the "
-                   "story; a date or spec enters only inside a scene as stakes or ammunition", "FAIL")
+            hit = None if ln.get("speaker") else NL.press_release(ln["text"])
+            if hit:
+                _f(out, "SC-07", f"{sid} line {li + 1}", f"press-release register in narration ({hit!r} in {ln['text'][:60]!r}, "
+                   "BP-15): tell the story; a date or spec enters only inside a scene as stakes or ammunition", sev("BP-15"))
         if any(DISCLAIMER.search(ln["text"]) for ln in lines if not ln.get("speaker")):
             disclaimer_segs.append(sid)
         if not dialogue:
@@ -126,20 +128,20 @@ def lint(doc: dict) -> list[dict]:
                 _f(out, "SC-04", where, f"{spk} addresses themselves by id; use 'self'", "REVIEW")
             n = len(_words(ln["text"]))
             if n > MAX_TURN_WORDS:
-                _f(out, "SC-09", where, f"a {n}-word turn (cap {MAX_TURN_WORDS}): split it, cut it, or give the "
-                   "summary to the narrator", "FAIL")
+                _f(out, "SC-09", where, f"a {n}-word turn (cap {MAX_TURN_WORDS}, BP-72): split it, cut it, or give the "
+                   "summary to the narrator", sev("BP-72"))
             elif n >= SPEECH_WORDS:
                 speeches += 1
-                if speeches > 1:
-                    _f(out, "SC-09", where, f"a second {n}-word speech in one scene: one long turn per scene, at its "
-                       "peak; everything else is 5-15 words", "FAIL")
+                if speeches > MAX_SPEECHES:
+                    _f(out, "SC-09", where, f"speech {speeches} ({n} words) in one scene: at most {MAX_SPEECHES} long turn per "
+                       f"scene, at its peak; everything else is 5-{REVIEW_TURN_WORDS} words (BP-72)", sev("BP-72"))
             elif n > REVIEW_TURN_WORDS:
-                _f(out, "SC-09", where, f"{n} words in one turn (default 5-15): people speak in jabs; save length for "
-                   "the scene's one speech", "REVIEW")
+                _f(out, "SC-09", where, f"{n} words in one turn (default 5-{REVIEW_TURN_WORDS}, BP-73): people speak in jabs; "
+                   "save length for the scene's one speech", sev("BP-73"))
             qa_chain = qa_chain + 1 if ln["text"].rstrip().endswith("?") else 0
             if qa_chain == MAX_QA_CHAIN + 1:
                 _f(out, "SC-09", where, f"{qa_chain} question-turns in a row read as an interview: answer sideways - "
-                   "deflect, change the subject, counterattack (DW-12)", "REVIEW")
+                   "deflect, change the subject, counterattack (DW-12, BP-73)", sev("BP-73"))
             if real and len(real) >= 4 and real in ln["text"].lower():
                 _f(out, "SC-10", where, f"the line states the real subject ({scene['real_subject']!r}) out loud: "
                    "subtext is never spoken; let the surface carry it", "FAIL")
@@ -151,10 +153,10 @@ def lint(doc: dict) -> list[dict]:
                 if not reacted:
                     _f(out, "SC-05", where, "a reveal lands and nobody reacts: the next beat is another character's "
                        "line or a listener's expression (DW-05, Kuleshov: show the face the line affects)", "REVIEW")
-        if len(present) >= 2 and (best_run < MIN_EXCHANGE or len(best_speakers) < 2):
+        if len(present) >= 2 and (best_run < MIN_EXCHANGE or len(best_speakers) < MIN_EXCHANGE_SPEAKERS):
             _f(out, "SC-05", sid, f"no real exchange: the longest unbroken run is {best_run} character line(s) "
                f"({len(best_speakers)} speaker(s)); a scene plays at least {MIN_EXCHANGE} character lines in a row, "
-               "two voices, no narrator inside", "FAIL")
+               f"{MIN_EXCHANGE_SPEAKERS} voices, no narrator inside (BP-70)", sev("BP-70"))
         silent = present - speakers_seen - {b.get("who") for ln in lines for b in (ln.get("visual_beats") or [])
                                             if b["kind"] == "expression"}
         if silent:
@@ -168,9 +170,9 @@ def lint(doc: dict) -> list[dict]:
             _f(out, "SC-06", sid, f"the scene closes on a wrap-up ({lines[-1]['text'][:30]!r}): leave early, within a "
                "line or two of the turn", "REVIEW")
     if len(disclaimer_segs) > MAX_DISCLAIMER_SEGMENTS:
-        _f(out, "SC-08", ",".join(disclaimer_segs[:6]), f"{len(disclaimer_segs)} segments carry invention disclaimers: "
-           "one honesty beat (plus at most one callback) says it once; on-screen labels and the description carry the "
-           "rest (ST-09)", "FAIL")
+        _f(out, "SC-08", ",".join(disclaimer_segs[:6]), f"{len(disclaimer_segs)} segments carry invention disclaimers "
+           f"(at most {MAX_DISCLAIMER_SEGMENTS}, BP-71): one honesty beat (plus at most one callback) says it once; on-screen "
+           "labels and the description carry the rest (ST-09)", sev("BP-71"))
     return out
 
 

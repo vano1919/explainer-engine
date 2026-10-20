@@ -35,7 +35,7 @@ cast sprites, props, thumbnails).
 
 | ID | Rule | Check |
 |---|---|---|
-| UR-01 | **Hook, 0–5 s.** The first shot is a C (extreme close-up) or a moving A. The first sentence asks the episode's concrete question and the question is asked by 5 s; no greeting, no channel name. A sound event in the first second. | [code] shot 1 type and motion, a "?" word ending by 5 s, greeting words, first word or `sound_at` ≤ 1 s |
+| UR-01 | **Hook, 0–5 s.** The first shot is a C (extreme close-up) or a moving A. The first sentence is the hook in one of the forms of [BP-03](SOURCED_RULES.md) (a question about the episode's concrete stake, a cold-open line, a claim with a number, a preview); no greeting, no channel name. A sound event in the first second. | [code] shot 1 type and motion, the first sentence's hook form (`scripting/narration_lint.hook_form`), greeting words, first word or `sound_at` ≤ 1 s |
 | UR-02 | **First 30 s are fast.** At least 6 shots start in the first 30 s, and each of them stays within its type's minimum + 1 s (A ≤ 6, B ≤ 4.5, C ≤ 3.5). | [code] |
 | UR-03 | **Logical arc.** Beats run in story order; each beat names its time and place. Every shot belongs to a beat and shows what the narration says over it; no unrelated mood picture. Answer early, deepen after (no withheld payoff, SE-21). Shots are contiguous. | [code] beat and sentence ids present, no gaps; [editorial] relevance |
 

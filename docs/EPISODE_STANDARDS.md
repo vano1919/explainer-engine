@@ -150,7 +150,7 @@ another country (UK, EU) adds it. The agent does not apply one country's excepti
 | Universal negative prompt | not a problem found | `compile.POD_NEGATIVE` is a model-specific style control, not a safety list (4.4) |
 | Contradiction: channel scope | contradictory | CLAUDE.md said "public-domain worlds only, D-25" while D-26 allows franchise analysis episodes; CLAUDE.md now cites both |
 | Loudness targets | contradictory | P-90 FAIL outside -16..-13 vs scorecard -17.5..-11; Shorts renderer -15 LUFS vs P-101 -14; voice gap 10 dB (P-93, Q-T08) vs 14 dB (scorecard); now one `qa/targets.py`, stricter value kept |
-| Shorts length | outdated | P-11 and Q-T12 failed Shorts over 60 s; YouTube counts up to 3 minutes (V-25); now 60 s house REVIEW, 180 s FAIL |
+| Shorts length | outdated | P-11 and Q-T12 failed Shorts over 60 s; YouTube counts up to 3 minutes (V-25); now the length bands of BP-12 (REVIEW), over 180 s FAIL (not a Short) |
 | Picture routing | contradictory | D-36 (pod for scene pictures) vs D-44 practice (Gemini for Episode 1) vs PRODUCTION_RULES order 5; now D-52: Gemini batch tiers for every picture, PV-40 |
 | ElevenLabs takes | money leak | connector default `generations_count` is 4 (V-29); EL-10 said 1 in prose only; now enforced by the PreToolUse hook |
 | Deterministic enforcement in Claude Code | missing | no `.claude/settings.json` hooks; now one PreToolUse hook on the ElevenLabs connector |

@@ -6,9 +6,11 @@ The code finds the beats that are measurably weak (no hook question, a flat run 
 to see, repeated wording, an ending that never returns to the question, a long beat without a turn, a long stretch without a
 forward-pointing line, a recap or goodbye at the end) and names them by segment. Whether a beat is actually engaging is a
 person's call: the report ends with the gate's questions, to be answered beat by beat. Every finding is REVIEW (a person
-decides) except ENG-8's sign-off lexicon, which is binding (BP-43); the fix is a better beat, never more cuts, sound effects
-or colour. The numbers come from the sourced rules registry (docs/SOURCED_RULES.md): BP-01 (pace), BP-42 (the forward-pointing
-cadence), BP-43 (the ending).
+decides) except ENG-8's sign-off lexicon and end-screen narration, which carry BP-43's severity (binding FAIL); the fix is a
+better beat, never more cuts, sound effects or colour. The numbers come from the sourced rules registry
+(docs/SOURCED_RULES.md): BP-01 (pace: words become seconds at its heard pace), BP-04 (the central answer waits for the last
+tenth, ENG-5), BP-08 (a number is shown: a data visual, a chart beat or a text/label beat with the digit, ENG-3), BP-42 (the
+forward-pointing cadence), BP-43 (the ending).
 """
 
 from __future__ import annotations
@@ -29,6 +31,8 @@ NGRAM = 5               # a 5-word phrase said in two different beats is repeate
 PROMISE = re.compile(r"\b(will|by the end|watch|until|but|turns out|wait)\b", re.I)
 MICROHOOK_EVERY_S, REVIEW_GAP_S = SR.T("BP-42", "microhook_every_s"), SR.T("BP-42", "review_gap_s")
 LAST_SHARE = SR.T("BP-43", "last_share")  # BP-43: the ending is abrupt
+END_SCREEN_MIN_S = SR.T("BP-43", "end_screen_narration_min_s")  # BP-43: narration runs on under the end screen
+ANSWER_AFTER_SHARE = SR.T("BP-04", "answer_after_share")  # BP-04: the central answer waits for the last tenth
 END_LEXICON = [p.lower() for p in SR.T("BP-43", "lexicon")]
 NEXT_POINTER = re.compile(r"\b(next|watch|episode)\b", re.I)
 QUESTIONS = (
@@ -50,6 +54,22 @@ def _words(text: str) -> list[str]:
 
 def _text(seg: dict) -> str:
     return " ".join(line["text"] for line in seg["lines"])
+
+
+def sev(rule_id: str) -> str:
+    """A registered rule's severity, as the registry holds it."""
+    return SR.rule(rule_id).get("severity", "REVIEW")
+
+
+def shown(line: dict) -> bool:
+    """BP-08: a number said on this line is also on screen through the line's own beats: a chart beat (values) or a text /
+    label beat whose text has the digit."""
+    for b in line.get("visual_beats") or []:
+        if b.get("kind") == "chart" and b.get("values"):
+            return True
+        if b.get("kind") in ("text", "label") and re.search(r"\d", b.get("text", "")):
+            return True
+    return False
 
 
 def forward(text: str) -> bool:
@@ -78,9 +98,10 @@ def check(doc: dict, rules: dict | None = None) -> list[dict]:
             add("ENG-2", "segments", f"no '{job}' beat in the whole script")
     with_visual = {g.get("segment") for g in doc.get("graphics", [])}
     for seg in segs:
-        nums = [line["text"] for line in seg["lines"] if re.search(r"\d", line["text"])]
+        nums = [line["text"] for line in seg["lines"] if re.search(r"\d", line["text"]) and not shown(line)]
         if nums and seg["id"] not in with_visual:  # ENG-3: every number that matters is also shown (BP-08, ED-10)
-            add("ENG-3", seg["id"], f"a number is said and nothing shows it: {nums[0][:60]!r} (ED-10)")
+            add("ENG-3", seg["id"], f"a number is said and nothing shows it (no data visual, chart beat or text beat with "
+                f"the number): {nums[0][:60]!r} (BP-08, ED-10)")
         n = len(_words(_text(seg)))
         if n > LONG_BEAT_WORDS:
             add("ENG-6", seg["id"], f"{n} words without a change of beat (> {LONG_BEAT_WORDS}): split it or turn it")
@@ -125,11 +146,29 @@ def check(doc: dict, rules: dict | None = None) -> list[dict]:
     for phrase in END_LEXICON:
         if phrase in tail_text:
             add("ENG-8", tail[0][0], f"{phrase!r} in the last {LAST_SHARE:.0%}: no recap, no goodbye, the ending is abrupt (BP-43)",
-                "FAIL")
+                sev("BP-43"))
     last_sentence = [s for s in re.split(r"(?<=[.!?])\s+", lines[-1][1].strip()) if s.strip()][-1] if lines[-1][1].strip() else ""
     if not (last_sentence.endswith("?") or NEXT_POINTER.search(last_sentence)):
         add("ENG-8", lines[-1][0], f"the last sentence is neither an open question nor a pointer to one next video: "
             f"{last_sentence[:60]!r} (BP-43)")
+    # ENG-8 (BP-43): the end screen goes up with the line that points to the next video, and the narration runs on under
+    # it for at least END_SCREEN_MIN_S (words at the BP-01 pace from that line to the end)
+    at = next((k for k in range(len(lines) - 1, -1, -1) if NEXT_POINTER.search(lines[k][1])), None)
+    if at is not None:
+        under = sum(len(_words(t)) for _, t in lines[at:]) / WPM * 60
+        if under < END_SCREEN_MIN_S:
+            add("ENG-8", lines[at][0], f"about {under:.0f} s of narration from the pointer to the next video to the end; the "
+                f"narration runs on at least {END_SCREEN_MIN_S} s under the end screen (BP-43): point earlier", sev("BP-43"))
+    # ENG-5 (BP-04): the central answer is held back until the last tenth; the resolution segment starts that late
+    total_words = sum(len(_words(_text(s))) for s in segs)
+    before = 0
+    for seg in segs:
+        if (seg.get("drama") or {}).get("function") == "resolution":
+            if total_words and before / total_words < ANSWER_AFTER_SHARE:
+                add("ENG-5", seg["id"], f"the resolution (the central answer) starts at {before / total_words:.0%} of the words; "
+                    f"hold it until the last {1 - ANSWER_AFTER_SHARE:.0%} (BP-04)", sev("BP-04"))
+            break
+        before += len(_words(_text(seg)))
     if rules:
         # ENG-5: the ending comes back to the central question (BP-04 holds its answer to the last tenth; BP-43 ends on it)
         q = {x for x in _words(rules["identity"]["central_question"]) if x not in STOP and len(x) > 3}

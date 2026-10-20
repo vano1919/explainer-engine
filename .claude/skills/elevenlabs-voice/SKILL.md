@@ -17,7 +17,7 @@ Shorts whose lines were written new for the Short**. Rules below come from Eleve
 `creative_get_model_schema` for `eleven_v4` exposes only `voice` and `language_code` (re-read 2026-10-17, MARKET_RESEARCH V-29).
 The generation tools default to `generations_count: 4` (four takes charged): always pass 1; the PreToolUse hook in
 `.claude/settings.json` refuses any other value, any paid call before the episode rulebook's `paid_assets` gate, and any picture or
-video request (pictures are Gemini batch only, D-52). ElevenLabs is the only audio provider (D-52): music `eleven_music_v2_5`
+video request (pictures: the creator's provider per batch in the approved paint plan, D-50; never through this connector). ElevenLabs is the only audio provider (D-52): music `eleven_music_v2_5`
 (`duration_seconds`, `instrumental`, `lyrics_type`, `lyrics`) and sound effects `eleven_text_to_sound_v2` (`duration_seconds`,
 `prompt_influence`, `loop`) follow the same estimate-then-one-take rule (docs/AUDIO_SYSTEM.md). **There is no stability, similarity, style or
 seed knob and no previous/next-text context.** The levers are therefore: (1) the voice, (2) the text (punctuation, capitals, tags),
@@ -28,7 +28,7 @@ short, similar chunks and from keeping what was already good.
 
 | ID | Rule |
 |---|---|
-| EL-01 | **Voice first.** The voice's character limits what tags can do (a calm voice cannot reliably shout). Pick it by listening to one sample of the same 300-character text, never by description. Keep one voice per series. |
+| EL-01 | **Voice first.** The voice's character limits what tags can do (a calm voice cannot reliably shout). Pick it by listening to one sample of the same 300-character text, never by description. Keep one voice per role within an episode and its Shorts (cast per episode, `voice-caster`). |
 | EL-02 | **Test before the batch.** One chunk (300-900 characters) from the middle of the script, listened to by the creator or by `voice_check`, before 24 chunks are paid. A flat or odd test costs 600 credits; a flat batch costs 15,000. |
 | EL-03 | **Chunk 400-900 characters, at paragraph/beat ends** (a house preference inside BP-14's chunk limit), same size class across chunks (very short prompts under ~250 characters are inconsistent; very long ones drift in the second half; 3P). Never cut mid-sentence. |
 | EL-04 | **Punctuation is the direction.** Comma = breath, period = full stop, `...` = a held thought (use rarely, each one slows the read), `—` = a short beat. No ellipsis inside a question. Over-use of pauses makes the read slow (Episode 1 read at 120 wpm; the target is BP-01's heard pace). |

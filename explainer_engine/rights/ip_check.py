@@ -16,12 +16,16 @@ from pathlib import Path
 
 import jsonschema
 
+from explainer_engine.standards import sourced_rules as SR
+
 SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "rights_manifest.schema.json"
-MAX_QUOTES = 6               # P-122
-MAX_QUOTE_WORDS = 40
-MAX_QUOTE_SENTENCES = 2
-RECAP_REVIEW = 0.20          # P-120
-RECAP_FAIL = 0.35
+# P-122 / P-120: the creator's limits under D-26, kept in the sourced rules registry (BP-77, docs/SOURCED_RULES.md)
+MAX_QUOTES = SR.T("BP-77", "quotes_max")
+MAX_QUOTE_WORDS = SR.T("BP-77", "quote_words_max")
+MAX_QUOTE_SENTENCES = SR.T("BP-77", "quote_sentences_max")
+RECAP_REVIEW = SR.T("BP-77", "recap_share_review")
+RECAP_FAIL = SR.T("BP-77", "recap_share_fail")
+LIMIT_VERDICT = SR.rule("BP-77").get("severity", "REVIEW")  # the verdict of a breached quote or recap limit
 UNOFFICIAL_NOTE = "Unofficial fan analysis. Not affiliated with or endorsed by the rights holders."
 
 
@@ -68,12 +72,12 @@ def check(manifest: dict) -> list[dict]:
 
     quotes = manifest["quotes"]
     if len(quotes) > MAX_QUOTES:
-        add("quote_count", "RR-04", "FAIL", f"{len(quotes)} quotes > {MAX_QUOTES}")
+        add("quote_count", "RR-04", LIMIT_VERDICT, f"{len(quotes)} quotes > {MAX_QUOTES} (BP-77)")
     for q in quotes:
         words = len(q["text"].split())
         if words > MAX_QUOTE_WORDS or _sentences(q["text"]) > MAX_QUOTE_SENTENCES:
-            add("quote_length", "RR-04", "FAIL", f"quote from {q['source']} has {words} words / "
-                f"{_sentences(q['text'])} sentences (max {MAX_QUOTE_WORDS} / {MAX_QUOTE_SENTENCES})")
+            add("quote_length", "RR-04", LIMIT_VERDICT, f"quote from {q['source']} has {words} words / "
+                f"{_sentences(q['text'])} sentences (max {MAX_QUOTE_WORDS} / {MAX_QUOTE_SENTENCES}, BP-77)")
         if not q["analyzed"]:
             add("quote_not_analyzed", "RR-04", "FAIL", f"quote from {q['source']} is not analysed")
 
@@ -83,9 +87,9 @@ def check(manifest: dict) -> list[dict]:
     else:
         share = recap / total
         if share > RECAP_FAIL:
-            add("recap_share", "RR-05", "FAIL", f"recap is {share:.0%} of the narration (> {RECAP_FAIL:.0%})")
+            add("recap_share", "RR-05", LIMIT_VERDICT, f"recap is {share:.0%} of the narration (> {RECAP_FAIL:.0%}, BP-77)")
         elif share > RECAP_REVIEW:
-            add("recap_share", "RR-05", "REVIEW", f"recap is {share:.0%} of the narration (> {RECAP_REVIEW:.0%})")
+            add("recap_share", "RR-05", "REVIEW", f"recap is {share:.0%} of the narration (> {RECAP_REVIEW:.0%}, BP-77)")
 
     art = manifest["art"]
     if not art["all_original"]:

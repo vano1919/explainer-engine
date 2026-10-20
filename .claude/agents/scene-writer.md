@@ -36,7 +36,8 @@ Write:
 - Each hero talks like their bible (DW-11): manner, signature moves, what they never admit; cover the names and the
   reader can still tell who speaks (DW-03). Every factual sentence carries its claim id.
 - Narration between scenes stays the friendly guide (skill `narration-script`): short spoken sentences, contractions,
-  the stressed word last. Length: the segment's word budget from the skeleton (~150 words a minute of planned time).
+  the stressed word last. Length: the segment's word budget from the skeleton (words a minute of planned time at BP-01's heard
+  pace, 170).
 
 Then run `python -m explainer_engine.scripting.stage_guard writer before.json after.json` and
 `python -m explainer_engine.production validate <script>`: 0 FAIL for PV-12, PV-33 and PV-48 (scene_lint, SC-01..SC-10).

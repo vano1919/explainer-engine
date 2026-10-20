@@ -35,7 +35,7 @@ any paid read: 0 FAIL, every REVIEW either fixed or answered in one line.
 | What If (Underknown), "What If You Lived in the Stone Age?" | spoken openers ("Alright, grab your bone flute and gather around the fire."); question then answer with "Well," ("Why is this still a mystery? Well, that's because..."); one-line reactions ("Yeah, good luck with that."); ends on a tease for another episode |
 | Bright Side, "What If You Had to Live a Day in the Stone Age" (2.5 M) | constant direct address; interjections at real moments ("Oh, finally there's an ember, good job!", "Oh no! It got away."); a question every few sentences ("Need a fork? Way too early for that thing.") |
 
-Common to all four: short sentences, a question at least every 20-30 seconds, a reaction after each reveal, and the
+Common to all four: short sentences, a question every 20-30 seconds (an observation; the checked floor is N-06, BP-17), a reaction after each reveal, and the
 end of every section pointing at the next problem. None of them sounds like a lecture.
 
 ## The rules (N-01..N-14 are checked by `narration_lint`; the numbers live in the sourced rules at the end)
@@ -51,10 +51,10 @@ end of every section pointing at the next problem. None of them sounds like a le
   background sentence (a date, a definition, a biography line) before that gap sentence; context comes after the tension.
 - **The stressed word of a question goes last**, right before the "?", so the rise lands on it: "...survive the Stone
   AGE?" rather than "...SURVIVE the Stone Age?" when the age is the surprise. One capital at most (N-04).
-- **N-10 No ellipsis inside a question**, and no question longer than about 12 words: both flatten the contour.
+- **N-10 No ellipsis inside a question**, and no wh-question over BP-18's word cap (12): both flatten the contour.
 - **Answer a question with a reaction word first**: "Two hands go up. Two! Out of a hundred." / "Who takes charge?
   Oh, you already know who."
-- **N-06 At least one question per 150 words** (about one a minute at our pace); a rhetorical question is the cheapest
+- **N-06 At least one question per 150 words** (BP-17; about one a minute at BP-01's pace); a rhetorical question is the cheapest
   way to wake a listener up.
 
 ### Stress and melody
@@ -65,11 +65,11 @@ end of every section pointing at the next problem. None of them sounds like a le
 - **Contrast pairs carry melody**: "Not freezing. Damp." / "The hard part isn't making it. It's keeping it."
 
 ### Tone of the what-if episodes (creator 2026-10-16)
-- Scientific what-if: about 40 % drama, 20 % humour, 40 % doubt and curious telling (a share of the telling's tone, SR-07;
-  the density and placement of the jokes themselves follow BP-09). Say what is established and what is argued ("the evidence says", "we can only reason"); doubt is part of the story, not a disclaimer. Each period ends on the question that opens the next (SR-03).
+- Scientific what-if: mostly drama and curious telling with honest doubt, humour in small doses (SR-07); the density and
+  placement of the jokes follow BP-09 (at most one verbal joke per 60 s, the first inside 45 s, beside the fact). Say what is established and what is argued ("the evidence says", "we can only reason"); doubt is part of the story, not a disclaimer. Each period ends on the question that opens the next (SR-03).
 
 ### Pace
-- **N-03 At most one ellipsis per beat.** Each `...` is a held pause; use it only before the one reveal of that beat.
+- **N-03 At most one ellipsis per beat** (BP-16: two is a REVIEW, more a FAIL). Each `...` is a held pause; use it only before the one reveal of that beat.
   For speed use full stops, dashes and fragments. The ellipsis is the emphasis rule of BP-10: emphasis comes from the
   text (one stressed word, one ellipsis, a tag), never from a held silence, and never a pause before a punch line.
 - **N-05 Sentence length follows BP-06** (a REVIEW cap, a FAIL cap and a median for the ear). Fragments are allowed and
@@ -107,7 +107,8 @@ end of every section pointing at the next problem. None of them sounds like a le
   `[cautiously]`, `[whispers]`, `[softly]`, `[surprised]`, `[nervous]`, `[deadpan]`, `[pause]`, `[short pause]`,
   plus sounds `[chuckles]`, `[laughs softly]`, `[sighs]`, `[gasps]`, `[exhales]`.
 - A tag holds until the next one: place one where the delivery changes (about one per 2-3 sentences), not on every
-  sentence. Match tags to the voice: Clyde takes `[mischievously]`, `[sarcastic]`, `[dramatically]` well.
+  sentence. Match tags to the episode's cast voice (EL-01, `cast.<id>.voice.traits`): a playful voice takes
+  `[mischievously]`, `[sarcastic]`, `[dramatically]` well, a calm one does not.
 - v4 has no speed or stability control through the connector; pace comes from the text.
 
 ### Named heroes and friction (D-40, UR-21)
@@ -159,7 +160,8 @@ into our scripts).
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 The numbers that bind this skill live only in the registry (`explainer_engine/standards/sourced_rules.json`);
-`narration_lint` reads them from there (N-01, N-03, N-05, N-11..N-14). A number changes there, with its sources, never here.
+`narration_lint` reads them from there (N-01, N-03, N-05, N-06, N-07, N-10..N-15). A number changes there, with its sources,
+never here.
 
 - BP-03: the first spoken sentence is the hook in one of four forms: a question, a cold-open line of at most 14 words, a claim
   with a number, or a preview of what the viewer will see; never a greeting, the channel name, "today we look at" or
@@ -175,8 +177,13 @@ The numbers that bind this skill live only in the registry (`explainer_engine/st
 - BP-09: humour sits beside the fact, never inside the example that explains it; the first laugh inside the first 45 s; at
   most one verbal joke per 60 s.
 - BP-10: no pause before a punch line; emphasis from the text (one stressed word, an ellipsis, a tag), never a hold over
-  1 second (N-03, N-04).
+  1 second (N-04; N-15 checks each narration line's `pause_after`; a dialogue scene's scripted silence is a scene device).
+- BP-16: at most one ellipsis per beat; two is a REVIEW, more than two a FAIL (N-03).
+- BP-17: at least one question per 150 words (N-06) and about one interjection per 60 words, at least one (N-07).
+- BP-18: no ellipsis inside a question, and a wh-question of at most 12 words (N-10).
 - BP-15: no press-release lines ("comes out on", "is coming out on", "will be released on", "is scheduled for release",
   "releases on", "is now available", "available now", "launches on", "launching on", "officially announced", "according to
-  the official", "the company announced", "press release", "as reported by"): the fact lives in the claim map, the line in
-  the story; sources are cited in the claim map and the description, never spoken (N-14, FAIL).
+  the official", "the company announced", "press release", "as reported by", "launches worldwide"): the fact lives in the claim map, the line in
+  the story; sources are cited in the claim map and the description, never spoken (N-14, FAIL). The same lexicon also holds
+  the announcement-register patterns of SC-07 ("X's page says", "announced", "release date", "launches worldwide"),
+  checked on narrator lines only: a hero may name a date inside a scene.
