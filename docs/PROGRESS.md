@@ -1107,3 +1107,8 @@ by the episode that first shows them. Titans: 93 template close-ups -> 65 needed
 Four dialogue-frame variants on S12 "What's the catch?" (`conversation_variants_v1.jpg`: blurred backdrop + big face, sharp scene
 + comic face panel, two faces, painted scene only). The creator chose the first "with a slightly more blurred background":
 `faces.BLUR` 0.014 -> 0.024 (`conversation_blur_v2.jpg` compares 0.014 / 0.024 / 0.034). Test: `test_face_sheets.py` (+1).
+
+## 2026-10-20 - Standing order 11: the first two parts are shown before the rest is rendered
+
+The creator: render the first two parts, join them, show him, and only then the rest; his notes become rules first.
+`docs/PRODUCTION_RULES.md` standing order 11 + feedback row; the orchestrator's render step follows it.

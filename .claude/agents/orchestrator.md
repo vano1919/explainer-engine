@@ -34,6 +34,8 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
    Then ONE paid-assets question (PRODUCTION_RULES standing order 10): every paint plan with its price at each provider,
    the narration, the sounds and the music in one cost table; on the yes submit the Gemini batch first and make the audio while it
    runs (phases 4 and 5 in parallel). Each step keeps its own gate and ledger entry.
+   Render: only the first two chunks first (`assemble --chunks 0:2`), joined into one preview for the creator; render the
+   rest only after his notes are turned into rules (PRODUCTION_RULES standing order 11).
 4. **Phase 3, one-item tests**: first `standards gate --at paid_assets` (no open REVIEW/ADAPT/BLOCK, fresh sources); then the first read chunk and first picture; check them (listen for drift with `audio/voice_check`,
    look at the picture and run the likeness judge). Only then phase 4.
 5. **Phase 4, voice**: `estimate_only` first, reserve in the ledger, one chunk at a time, record each; level, `production words`.

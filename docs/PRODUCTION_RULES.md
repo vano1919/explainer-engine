@@ -40,6 +40,10 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    On the yes, the Gemini batch is submitted first (it takes minutes to hours) and the voice and sounds are made while it runs.
    Every step keeps its own estimate, ledger entry and gate; a cap at 80 % still stops and asks. Assets that depend on an earlier
    OK (a hero's first picture before that hero's later pictures and face sheet) are a second, smaller question.
+11. **The first two parts are shown before the rest is rendered** (creator, 2026-10-20: "when the first 2 parts are rendered,
+   join them and show me; I will watch and tell you what and how"). The render runs in chunks (ED-13, RULE-R1): Claude
+   renders only the first two (`assemble --chunks 0:2`), joins them into one preview file, looks at it, sends it to the creator
+   and waits. His notes become rules (with a test, OR-09) before the remaining chunks are rendered.
 
 ## 2. The gates, in order (a video does not skip one)
 
@@ -80,6 +84,7 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-19 | Upload whatever video or Short passes every test right away, not everything together | Shorts waited for the long video and the whole batch | standing order 9 | `publish stage --only <id>` (per-piece state in `publish/youtube_state.json`) |
 | 2026-10-20 | Approve pictures and audio together after the script and start them together | the Titans pictures were asked for only after the voice was recorded, and the batch waited | standing order 10 | the orchestrator's single paid-assets question; each step's own gate |
 | 2026-10-20 | Dialogue frame: the blurred scene with the big face (variant A of four), the background a little more blurred | at blur 0.014 the other heroes behind the face still read as a second focus | `faces.BLUR` 0.024 | `test_face_sheets.py::test_dialogue_backdrop_blur_is_the_creators_choice` |
+| 2026-10-20 | Render the first two parts, join them and show me before the rest | a whole video was rendered before the creator saw any of it | standing order 11 | the orchestrator's render phase |
 | 2026-10-16 | Humour must never touch the facts; credible science | joke-driven rewrites risk false statements | SCRIPTING_SPEC §8.1, UR-21 | skill, editorial review |
 | 2026-10-16 | Pictures too generic: no named heroes, no fear, clichés of the primitive; real figures by name in every topic | prompts described places; B shots faceless; idle sprite poses; empty plates | UR-16..UR-21 (D-40) | `check_stakes`, `stakes.json`, skill `shot-visuals` |
 | 2026-10-16 | The man seen from behind and the main hero are different kinds of people; everything must be one world | UR-07 asked for natural proportions next to caricatures; two generators | UR-22; style bridge | `check_stakes`, `look.figure_style` |
