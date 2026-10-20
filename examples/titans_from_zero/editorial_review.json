@@ -1,11 +1,11 @@
 {
   "schema": "editorial_review/2",
-  "script_sha256": "2a2254ed3cf6339506acbb4c776d1125c3d26a7701e3dbdbedfcaef220906c0b",
+  "script_sha256": "58ba37d6d4af952d9d1f6c82fc06885819a85ac32a669baae4ff9d0bee07cc8b",
   "reviewer": "script-critic (Stage 7)",
   "reviewer_role": "independent_critic",
   "independent": true,
-  "reviewed_at": "2026-10-20 (round 7, after face sheets and five Belfort expression remaps)",
-  "verdict": "Round 7: the only changes since round 6 are nine cast.<hero>.face_sheet records (same 12-expression set each) and five Belfort expression beats remapped (S12 L2 curious->surprised, S13 L7 confused->doubtful, S15 L7 confused->surprised, SH07 L5 curious->surprised, SH09 L8 confused->doubtful); words, bubbles, edit plan and approval hash unchanged. Each remap now matches its line better (the offer 'rich by Friday' = surprise, 'With what?' = doubt, 'I didn't pick him' = surprise), and all five expressions exist in the face-sheet set, so VB-09 FAILs are gone. No score and no verdict changes: ACCEPTED with REVIEWs. validate: 37 FAIL, all PV-05 (sounds not made yet, paid stage); story_lint 0 FAIL, 2 REVIEW. One small finding (TFZ-R7-01, stale 'why' on S15 L7 and SH09 L8) was raised and is RESOLVED: both beats now read surprised with why 'Belfort is caught off guard: I didn't pick him [pick him]', same face in film and Short. Earlier REVIEWs R5-02..R5-07 stand. Hash bound to the current file; the script was not edited by this review.",
+  "reviewed_at": "2026-10-20 (round 8, after the 17 library picture subjects/costumes were fixed for repaints, B1 picture review)",
+  "verdict": "Round 8: since round 7 only picture-library subjects, costumes and their compiled prompts changed (17 entries, 34 lines): 'one continuous full-frame painting' added to five subjects, the drained empty pool added to the S05-S07 pool shots, the S07 viewer-count shot now falls through 98K, 62K, 35K, 15K, 3.2K, the S07 turn shot puts the phone screen toward the viewer with a dark unlit motel sign, the charred cell is a cylindrical AA-style cell (S11, S13), the motel lobby has plain bare walls and Kiyosaki is called Japanese-American, a gym poster is blank-banded, the delivery 'kid' is a rider in his late twenties, the loan form has plain ruled lines, and Musk wears a plain jacket over a dark T-shirt on the two bench shots. Checked on data against the narration: each new subject fits the story (S05 L12 'the empty pool', S07 L1 'a hundred thousand' falling, S09/S11 cells on a garage shelf, S04 delivery rider, S01 bench). Words, beats, bubbles, shots and the approval hash are unchanged. No score or verdict changes: ACCEPTED with REVIEWs; no new finding. R5-02..R5-07 stand; TFZ-R7-01 stays resolved. Hash bound to the current file; the script was not edited by this review.",
   "scores": {
     "factual_reliability": {
       "score": 4,
@@ -425,7 +425,8 @@
       "Taste: Vance as the only heard character may be the film's best device; the 41 % to 38 % silent share is the right size for a mini-film with readable bubbles.",
       "Process note: the reviewer ran `production compile` without --out, which re-saves the script in place (S.save). Compared with the coordinator's snapshot b1.json the saved file differs only in five cast.<hero>.reference records and one removed visual beat in S06 L4 (both most likely the last edits that were already in the file); the byte size fell from 569809 to 485848 because of re-serialisation. The review is bound to the file as it stands now.",
       "Round 7 checked on data: git diff of the script between the approved commit 112ab5a and the working file shows only the nine face_sheet additions and five expression changes; no scores change. validators: validate 37 FAIL (all PV-05) / 41 REVIEW; story_lint 0 FAIL / 2 REVIEW. The reviewer did not run compile.",
-      "TFZ-R7-01 resolved (checked on data): S15 L7 and SH09 L8 expression surprised, why 'Belfort is caught off guard: I didn't pick him [pick him]'. S13 L7 VB-03 remains inside R5-07."
+      "TFZ-R7-01 resolved (checked on data): S15 L7 and SH09 L8 expression surprised, why 'Belfort is caught off guard: I didn't pick him [pick him]'. S13 L7 VB-03 remains inside R5-07.",
+      "Round 8 (basis: data/instructions; no picture seen): the prompts are instructions for pictures not yet repainted. Small points for the creator, not findings: the falling count 98K..3.2K is not narrated (S07 gives 'a hundred thousand' and 'Nine hundred gone. Two thousand.'), so the numbers are picture-only detail that agrees with the story; the drained pool is only in the prompt and agrees with S05 L12 'the empty pool'; 'Japanese-American' for Kiyosaki is a true public fact used as a drawing note, not narrated."
     ]
   }
 }
