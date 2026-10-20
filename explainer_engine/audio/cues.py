@@ -68,15 +68,24 @@ BUILD = {  # name -> (generator, what it suits)
     "fall": (lambda: _sweep(900, 400, 0.15, 0.06), "down: less, loss, arrow down, a sad take"),
 }
 NAMES = tuple(BUILD) + (NONE,)
+VARIANTS = (1.0, 0.94, 1.06)  # VB-10: a reused sound takes the next slight pitch shift, so no two presses are identical
 _CACHE: dict = {}
 
 
-def render(name: str) -> np.ndarray:
-    """Mono float32 at 48 kHz, peak 1, faded at both ends (no click)."""
-    if name not in _CACHE:
+def render(name: str, variant: int = 0) -> np.ndarray:
+    """Mono float32 at 48 kHz, peak 1, faded at both ends (no click). ``variant`` picks one of three deterministic
+    pitch shifts (plain resampling): the mixer rotates them per sound (VB-10), so a cue heard again reads as another
+    press of the same kind, never the identical waveform (the creator's "one press plays many times", 2026-10-19)."""
+    v = variant % len(VARIANTS)
+    if (name, v) not in _CACHE:
         x = BUILD[name][0]()
-        _CACHE[name] = _fade(x / (np.abs(x).max() + 1e-9))
-    return _CACHE[name]
+        x = _fade(x / (np.abs(x).max() + 1e-9))
+        r = VARIANTS[v]
+        if r != 1.0:
+            idx = np.arange(0.0, len(x) - 1, r)
+            x = np.interp(idx, np.arange(len(x)), x).astype(np.float32)
+        _CACHE[(name, v)] = x
+    return _CACHE[(name, v)]
 
 
 def length_ms(name: str, max_ms: float | None = None) -> float:

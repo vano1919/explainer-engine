@@ -24,6 +24,9 @@ MAX_AND_THEN_SHARE = 0.0
 TURN_FUNCS = {"reversal", "midpoint", "crisis", "twist", "climax"}
 OPENERS = {"cold_open", "hook"}
 AND_THEN = re.compile(r"^\s*(and then|after that|next,|then,|also,)", re.I)
+SCENE_SCHEMA = "production_script/3"  # the 2026-10-19 scene rewrite: a missing drama is a FAIL, ST-12/ST-13 apply
+MIDPOINT_BAND = (0.40, 0.60)  # ST-12: the midpoint/reversal sits at 40-60 % of the script's words
+TURN_GAP_S, WORDS_PER_S = 150.0, 2.5  # ST-13: a turn at least every ~150 s, estimated at 2.5 words/s
 
 
 def _f(out, rule, where, detail, sev="REVIEW"):
@@ -35,7 +38,9 @@ def lint(doc: dict) -> list[dict]:
     drama = doc.get("drama")
     segs = doc.get("segments", [])
     if not drama:
-        _f(out, "ST-00", "drama", "no story layer: write drama (premise, question, promise, arcs, loops) before the lines")
+        # Syndicate Wars shipped without a drama block and this single REVIEW was the only trace; on /3 it blocks (D-58)
+        _f(out, "ST-00", "drama", "no story layer: write drama (premise, question, promise, arcs, loops) before the lines",
+           "FAIL" if doc.get("schema") == SCENE_SCHEMA else "REVIEW")
         return out
     order = {s["id"]: i for i, s in enumerate(segs)}
     sd = [(s["id"], s.get("drama")) for s in segs]
@@ -148,6 +153,36 @@ def lint(doc: dict) -> list[dict]:
     end = drama.get("ending")
     if not end:
         _f(out, "ST-10", "drama.ending", "no ending kind (twist, reversal, bookend, callback, open question)")
+    # ST-12 / ST-13 (the 2026-10-19 rewrite): the midpoint sits mid-script and turns arrive on a cadence.
+    # Word counts stand in for the clock at write time (the read decides later); both are craft, so REVIEW.
+    seg_words = [sum(len(ln["text"].split()) for ln in s.get("lines", [])) for s in segs]
+    total = sum(seg_words)
+    if total and len(segs) >= 8:
+        cum = 0.0
+        mid_shares = []
+        for (sid, d), w in zip(sd, seg_words):
+            at = (cum + w / 2) / total
+            cum += w
+            if d and d["function"] in {"midpoint", "reversal"}:
+                mid_shares.append((sid, at))
+        if mid_shares and not any(MIDPOINT_BAND[0] <= at <= MIDPOINT_BAND[1] for _, at in mid_shares):
+            sid, at = min(mid_shares, key=lambda x: abs(x[1] - 0.5))
+            _f(out, "ST-12", sid, f"the midpoint/reversal sits at {at:.0%} of the words (aim "
+               f"{MIDPOINT_BAND[0]:.0%}-{MIDPOINT_BAND[1]:.0%}): the pivot belongs mid-story")
+    if total:
+        gap_words, gap_from = 0.0, None
+        budget = TURN_GAP_S * WORDS_PER_S
+        for (sid, d), w in zip(sd, seg_words):
+            is_turn = bool(d) and (d["function"] in TURN_FUNCS or d.get("turn") == "but")
+            if is_turn or (d and d["function"] in {"resolution", "button"}):
+                gap_words, gap_from = 0.0, None
+                continue
+            gap_from = gap_from or sid
+            gap_words += w
+            if gap_words > budget:
+                _f(out, "ST-13", f"{gap_from}..{sid}", f"about {gap_words / WORDS_PER_S:.0f} s without a turn (a BUT, "
+                   f"reversal, midpoint, crisis, twist or climax): something must change at least every {TURN_GAP_S:.0f} s")
+                gap_words, gap_from = 0.0, None
     return out
 
 

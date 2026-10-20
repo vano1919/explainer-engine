@@ -110,7 +110,9 @@ class Sounds:
     def __init__(self, dirs: list[Path]):
         self.dirs = [Path(d) for d in dirs]
         man = LIB / "manifest.json"
-        self.lib = {x["id"]: LIB / x["file"] for x in json.loads(man.read_text())["items"]} if man.exists() else {}
+        items = json.loads(man.read_text())["items"] if man.exists() else []
+        self.lib = {x["id"]: LIB / x["file"] for x in items}
+        self.meta = {x["id"]: x for x in items}
         music = LIB / "music"
         if music.exists():
             for f in music.glob("*.wav"):
@@ -135,15 +137,33 @@ class Sounds:
             raise FileNotFoundError(name)
         return load_audio(p)
 
+    def loopable(self, name: str) -> bool:
+        """The manifest's ``loop`` field: only a sound made to loop may be tiled over a bed or music slot; a one-shot
+        plays once. A sound without the field (older manifests, files in the sound dirs) keeps looping as before."""
+        return bool(self.meta.get(name, {}).get("loop", True))
+
+
+def play_once(a: np.ndarray, n: int) -> np.ndarray:
+    """A one-shot on a bed or music slot (manifest ``loop: false``): played once, faded, padded with silence — never
+    tiled by ``loop_to``, which turned a single hit into "one press plays many times" (the creator, 2026-10-19)."""
+    out = np.zeros(n)
+    seg = a[:n].copy()
+    out[: len(seg)] = fade(seg, min(2400, len(seg) // 2))
+    return out
+
 
 def cue_bus(cues: list[dict], n: int) -> np.ndarray:
-    """VB-08: the timed beat cues (25-200 ms, at most -20 dB) on one track of ``n`` samples at SR (the Shorts use it too)."""
+    """VB-08: the timed beat cues (25-200 ms, at most -20 dB) on one track of ``n`` samples at SR (the Shorts use it too).
+    Each repeat of a sound rotates to the next pitch variant (VB-10), so a reused cue never plays the identical waveform."""
     t = lambda s: int(round(s * SR))  # noqa: E731
     bus = np.zeros(n)
+    seen: dict = {}
     for c in cues:
         a = t(c["start"])
-        w = CUES.render(c["sound"])[: t((c.get("max_ms") or 1e9) / 1000) or None] * db(c.get("gain_db", CUES.DEFAULT_GAIN_DB))
-        w = w[: max(0, n - a)]
+        v = seen.get(c["sound"], 0)
+        seen[c["sound"]] = v + 1
+        w = CUES.render(c["sound"], v)[: t((c.get("max_ms") or 1e9) / 1000) or None] * db(c.get("gain_db", CUES.DEFAULT_GAIN_DB))
+        w = w[: max(0, n - a)].copy()
         bus[a:a + len(w)] += w
     return bus
 
@@ -157,11 +177,13 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
     vduck = 1.0 - 0.55 * moving_mean(env, t(0.25))
     au = timed["audio"]
     bed = np.zeros(n)
+    can_loop = getattr(sounds, "loopable", lambda name: True)  # tests stub Sounds; an unknown sound keeps looping
     for b in au["beds"]:
         a, z = t(b["start"]), min(n, t(b["end"]))
         if z <= a:
             continue
-        seg = loop_to(sounds.load(b["sound"]), z - a)
+        src = sounds.load(b["sound"])
+        seg = loop_to(src, z - a) if can_loop(b["sound"]) else play_once(src, z - a)
         seg = seg / (np.abs(seg).max() + 1e-9) * db(b.get("gain_db", -13))
         bed[a:z] += fade(seg, t(b.get("fade_s", 1.5)))
     music = np.zeros(n)
@@ -169,7 +191,8 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
         a, z = t(m["start"]), min(n, t(m["end"]))
         if z <= a:
             continue
-        seg = loop_to(sounds.load(m["track"]), z - a)
+        src = sounds.load(m["track"])
+        seg = loop_to(src, z - a) if can_loop(m["track"]) else play_once(src, z - a)
         seg = seg / (np.abs(seg).max() + 1e-9) * db(m.get("gain_db", -18))
         music[a:z] += fade(seg, t(m.get("fade_s", 2.0)))
     fx = np.zeros(n)

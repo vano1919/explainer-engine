@@ -5,10 +5,11 @@ description: Run the writers' room for a Crossworld Theories dialogue "what if" 
 
 # Story engine: the writers' room in seven stages
 
-Rules: `docs/STORY_ENGINE.md` (ST story, DW dialogue, PF performance, MO motion, AL sound layers, VC casting, SS Shorts)
-plus the existing N, EL, ED, SH, PV rules. Research behind them: `docs/research/STORY_EDIT_VOICE_2026-10-19.md`.
+Rules: `docs/STORY_ENGINE.md` (ST story, SC scenes, DW dialogue, PF performance, MO motion, AL sound layers, VC casting,
+SS Shorts) plus the existing N, EL, ED, SH, PV rules. Research behind them: `docs/research/STORY_EDIT_VOICE_2026-10-19.md`
+and, for the /3 scene system, `docs/research/STORYTELLING_EDITING_2026-10-19.md`.
 The output is ONE `production_script.json` (D-43): text, voices, pictures and prompts, sounds and the edit, written
-before anything is paid for (project rule 1).
+before anything is paid for (project rule 1). New episodes are `production_script/3`; a `/2` keeps its old contract.
 
 ## Why stages (and why a mid-size model can do it)
 
@@ -21,11 +22,11 @@ them in order and stops at the first failed gate.
 | # | Stage (agent) | Writes | Gate (free) |
 |---|---|---|---|
 | 0 | research (orchestrator, skill `science-grounding`) | claim map C-xx, dossier | sources graded, every number has a claim |
-| 1 | `story-architect` | `drama`, `cast`, segment skeleton | `story_lint` 0 FAIL, REVIEWs answered |
-| 2 | `scene-writer` (one segment per call) | segment `lines` (text, speaker, claims) | `stage_guard writer`, PV-12, PV-33 |
-| 2b | `beat-writer` (same segment, right after the writer) | line `visual_beats` with their cues (skill `visual-beats`) | `stage_guard beats`, PV-44 |
+| 1 | `story-architect` | `drama`, `cast`, segment skeleton, the beat-template choice (A/B/C), each dialogue segment's `scene` header | `story_lint` 0 FAIL (ST-00 FAIL on /3), PV-48 headers complete, REVIEWs answered |
+| 2 | `scene-writer` (one segment per call, skill `dialogue-scenes`) | segment `lines` (text, speaker, claims, `to`, `intent`) as the hand-off unit | `stage_guard writer`, PV-12, PV-33, PV-48 (SC-01..SC-10) |
+| 2b | `beat-writer` (same segment, right after the writer) | line `visual_beats`; cues OPT-IN, each with its `event` (skill `visual-beats`) | `stage_guard beats`, PV-44 (/3 semantics) |
 | 3 | `performance-director` | tags, emphasis, tone, emotion, pauses, interjections | `stage_guard performer` (words frozen), PV-12 |
-| 4 | `edit-planner` | shots, motion, accents, bubbles, graphics, beds, sfx, music | `stage_guard editor`, `validate`: PV-24, PV-35, PV-36 |
+| 4 | `edit-planner` | shots, motion, accents, bubbles, graphics, beds, sfx, music; ED-14 coverage per scene (establish -> listener reactions -> <=4 A/B alternations, J/L 0.5-2 s, one music per chapter, one planned dropout) | `stage_guard editor`, `validate`: PV-24, PV-35, PV-36 |
 | 5 | `voice-caster` | `voice`, `cast.<id>.voice` (traits, candidates) | `stage_guard caster`, PV-10, PV-32 |
 | 6 | `shorts-writer` | `shorts` (10, at least 6 styles) | `stage_guard shorts`, PV-28, PV-34 |
 | 7 | `script-critic` (fresh context) | findings only, each to its owner stage | SCRIPTING_SPEC gates, no "bored" window; at most 2 rounds |
@@ -35,22 +36,31 @@ them in order and stops at the first failed gate.
 - Twelve premises, scored; the winner gets a one-sentence premise, a yes/no dramatic question and a promise.
 - Heroes: each speaking hero has a want and a flaw (ST-04); the lead also a need and a change. Opposites talk best: the
   theorist and the hands-on one, the optimist and the cynic.
-- The beat grid (`docs/STORY_ENGINE.md`): cold open in the action, the question by 0:15, a turn in every third, the
-  midpoint reversal, the crisis, the climax, a button. Every join is BUT or THEREFORE (ST-02).
+- One of the three beat templates of `docs/STORY_ENGINE.md` (A three-act/7-point default, B Save-the-Cat compressed,
+  C mystery reveal ladder), recorded in `drama`; the midpoint at 40-60 % of the words (ST-12), a turn at least every
+  ~150 s (ST-13). Every join is BUT or THEREFORE (ST-02).
+- Every dialogue segment gets its `scene` header (SC-01): place, present, why_now, opposing wants, value and charges,
+  the turn with its conflict mode, the exit, surface_topic and real_subject (skill `dialogue-scenes`).
 - Loops and set-ups are written before lines: L01 the dramatic question, a smaller loop opened every 2-3 minutes, a
   set-up planted in the first third that decides the end (ST-05, ST-06).
 - Needs: pick at least three from curiosity, stakes, humour, wonder, fear, identity, justice, belonging, competence,
-  surprise, and give each a segment (ST-08). Objectivity is the label on every segment: fact / reasoned / invented (ST-09).
+  surprise, and give each a segment (ST-08). Objectivity is labelled per segment (ST-09); on /3 the spoken disclaimer
+  lives in ONE honesty beat (SC-08).
 
 ## 2. Scenes (scene-writer), one segment per call
-Input is small on purpose: the skeleton (one line per segment), this segment's drama, the last three lines before it,
-the next beat, its claim ids, the arcs. The writer never sees shots or tags, so it cannot drift into them.
-Dialogue rules DW-01..DW-08 in `docs/STORY_ENGINE.md`; narration rules N-01..N-10 in `narration-script`.
+Input is small on purpose: the skeleton (one line per segment), this segment's drama AND its `scene` header, the cast
+voice bibles, the last three lines before it, the next beat, its claim ids. The writer never sees shots or tags, so it
+cannot drift into them. It loads the skill `dialogue-scenes` and writes the hand-off unit: narrator in on the pressure,
+a played scene of 5-12 beats where every line carries `to` (and `intent` where it fits), narrator out on the
+consequence. Scene and dialogue rules SC-01..SC-10 and DW-01..DW-13 in `docs/STORY_ENGINE.md`; narration rules N-01..N-10
+in `narration-script`.
 
 ## 2b. Visual beats (beat-writer), same segment, before the next one is written
-While the segment's words are fresh, the beat-writer marks something new on screen about every 1.5 s of narration and an
-expression change about every second of dialogue, each with its reason and cue (skill `visual-beats`, VB rules). It never
-changes a word; if the writer later rewrites a line, run 2b again for that line (PV-44 finds beats whose phrase is gone).
+While the segment's words are fresh, the beat-writer marks a beat wherever NEW information lands (hook/climax every
+3-8 s, body every 10-25 s, never 8 s of nothing-new under narration) and at least one reaction-driven expression change
+per dialogue line — the listener's face on the line that lands. Cues are OPT-IN: silent by default, a cue only with its
+story `event`, density and repetition capped (VB-10/VB-11; skill `visual-beats`). It never changes a word; if the
+writer later rewrites a line, run 2b again for that line (PV-44 finds beats whose phrase is gone).
 
 ## 3. Performance (performance-director)
 Delivery only; words frozen. Tags per speaker temperament, one stressed word, pauses before reveals and after
@@ -59,7 +69,11 @@ punchlines, interjections as reactions. Check with `stage_guard performer`.
 ## 4. Edit and sound (edit-planner)
 Written per segment on the frozen words, with the accent vocabulary of `production/accents.py`: `wobble`, `punch`,
 `shake`, `whip_in`, `flash_in`, `pop_text`, `slam_text`; plus bubbles, data visuals (ED-10), cards (ED-09). Every hard
-accent has an effect (AL-03). Read the PV-35 report: events a minute, kinds per minute, alive share.
+accent has an effect (AL-03). On a dialogue scene follow the ED-14 coverage grammar (`docs/EDITING.md`): open on an
+establishing/two-shot 2-4 s, cut to the LISTENER on every 2nd-4th line and on news/insult/revelation, never more than
+4 strict A/B alternations without a pattern break, J/L offsets of 0.5-2 s on about a third of scene cuts, hold-length
+variance (MO-07), one music track per story chapter and ONE planned dropout of 0.5-2 s before the biggest reveal,
+broken by an intentional sound. Read the PV-35 report: events a minute, kinds per minute, alive share.
 
 ## 5. Voices (voice-caster)
 Traits -> `audio/casting.query` -> ElevenLabs `creative_list_voices` (free) -> `casting.rank` -> three candidates.
@@ -78,3 +92,13 @@ then the creator decides.
 - Give it the whole skeleton every time (the map), but only the local text it works on (the territory).
 - Ask for one segment per call; ask for a short report table at the end (what changed, which checks ran).
 - Never ask a stage to "improve everything": name the finding and the owner.
+
+## What changed on /3 (2026-10-19)
+
+The old contract optimised presence: a cue on every beat, a face every second, a source label on every sentence — and
+Syndicate Wars showed each mandate producing the named anti-pattern (33 cues/min, quips at the narrator, press-release
+narration). The /3 contract inverts it: **nothing is included by default** — a scene must turn a value, a cut must have
+a reason, a sound must name its story event, or it is deleted. Concretely: scene headers and addressed dialogue
+(SC-01..SC-10, PV-48), the three beat templates with ST-12/ST-13, opt-in event-bound cues (VB-08 inverted, VB-10/VB-11),
+reaction-driven faces (VB-02), hold-length variance (MO-07) and the ED-14 dialogue coverage grammar. Sources and the
+hypothesis labels for every number: `docs/research/STORYTELLING_EDITING_2026-10-19.md`.

@@ -54,4 +54,11 @@ def check(doc: dict) -> list[dict]:
         for bad in sp.get("avoid", []):
             if re.search(r"\b" + re.escape(bad.lower()) + r"\b", text):
                 f(who, f"{who} says {bad!r}, which their speech avoids", "REVIEW")
+        # the fields existing is not the manner being used (the 2026-10-19 audit): on /3, a hero none of whose
+        # signature words or phrases ever appears in their lines probably talks like everyone else
+        words = sp.get("words", [])
+        if doc.get("schema") == "production_script/3" and len(lines) >= 3 and words and not any(
+                re.search(r"\b" + re.escape(w.lower()) + r"\b", text) for w in words):
+            f(who, f"none of {who}'s signature words ({', '.join(words[:4])}...) appears in their {len(lines)} lines: "
+                   "the written voice ignores the declared manner (DW-11)", "REVIEW")
     return out

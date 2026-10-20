@@ -37,8 +37,15 @@ from explainer_engine.production import accents as ACC
 from explainer_engine.production import script as S
 
 LEGACY = "production_script/1"  # beats optional (one VB-00 REVIEW); /2 makes every VB rule binding
-TARGET, GAP_OK, GAP_FAIL, MEAN_OK = 1.5, 2.0, 3.0, 1.8  # VB-01: seconds between visual events while the narrator speaks
-FACE_TARGET, FACE_OK, FACE_FAIL = 1.0, 1.5, 2.0  # VB-02: seconds between expression changes on a dialogue line
+SCENE_SCHEMA = "production_script/3"  # the 2026-10-19 rewrite: metronomes retired, cues opt-in and event-bound (D-58)
+TARGET, GAP_OK, GAP_FAIL, MEAN_OK = 1.5, 2.0, 3.0, 1.8  # VB-01 on /2: seconds between visual events while the narrator speaks
+GAP_OK_3, GAP_FAIL_3 = 8.0, 15.0  # VB-01 on /3: pace follows new information (MO-01's 5 s still REVIEWs); only real dead air blocks
+FACE_TARGET, FACE_OK, FACE_FAIL = 1.0, 1.5, 2.0  # VB-02 on /2: seconds between expression changes on a dialogue line
+FACE_OK_3, FACE_FAIL_3, FACE_FLICKER = 4.0, 6.0, 0.7  # VB-02 on /3: reaction-driven changes; two changes of one face under 0.7 s flicker
+CUE_EVENTS = ("reveal", "impact", "transition", "build", "diegetic", "take", "place")  # VB-08 on /3: a cue names its story event
+CUE_REPEAT_WINDOW, CUE_REPEAT_FAIL = 30.0, 3  # VB-10: the same sound twice in a row REVIEWs; 3+ inside 30 s FAILs on /3
+CUE_PER_MIN_OK, CUE_PER_MIN_FAIL, CUE_BURST = 8.0, 14.0, 3  # VB-11: cues a minute (and >3 in any 10 s REVIEWs)
+EMPHASIS_CUES = {"thud", "chime", "rise", "fall"}  # VB-11: at most one per line on /3
 MAX_WORDS = 4  # VB-04: words on screen in one beat (as MO-05)
 MAX_SAME_RUN, MAX_WORD_SHARE = 3, 0.5  # VB-05 variety
 MAX_OVERLAYS = 2  # VB-07: beat overlays on screen at once
@@ -71,6 +78,11 @@ INK, PAPER, CORAL, TEAL, BLUE, GREEN, RED, AMBER = (_rgb(n) for n in (
 
 def binding(doc: dict) -> bool:
     return doc.get("schema") != LEGACY
+
+
+def scene_rules(doc: dict) -> bool:
+    """True on a /3 script: silence is the default and a cue must name its story event (VB-08 inverted, VB-10, VB-11)."""
+    return doc.get("schema") == SCENE_SCHEMA
 
 
 def _sev(doc: dict, fail: bool) -> str:
@@ -165,7 +177,19 @@ def lint(doc: dict) -> list[dict]:
                     elif who not in doc.get("cast", {}):
                         _f(out, "VB-06", _sev(doc, True), where, f"{who!r} is not in the cast")
                 cue = b.get("cue")
-                if cue is None:
+                if scene_rules(doc):
+                    # /3: silence is the default; a cue is opt-in and names the story event it marks (VB-08 inverted)
+                    if cue and cue["sound"] != CUES.NONE:
+                        if cue.get("event") not in CUE_EVENTS:
+                            _f(out, "VB-08", "FAIL", where, f"cue {cue['sound']!r} names no story event: a sound exists only "
+                               f"for an event ({', '.join(CUE_EVENTS)}); a plain beat stays silent")
+                        if b["kind"] == "expression" and b["expression"] not in TAKES:
+                            _f(out, "VB-08", "REVIEW", where, f"a cue on a quiet expression ({b['expression']}): only a big "
+                               f"take ({', '.join(sorted(TAKES))}) may sound, the voice carries the rest")
+                        if not CUES.MIN_MS <= CUES.length_ms(cue["sound"], cue.get("max_ms")) <= CUES.MAX_MS:
+                            _f(out, "VB-08", "FAIL", where, f"cue {cue['sound']!r} lasts "
+                               f"{CUES.length_ms(cue['sound'], cue.get('max_ms')):.0f} ms; a cue is {CUES.MIN_MS}-{CUES.MAX_MS} ms")
+                elif cue is None:
                     _f(out, "VB-08", _sev(doc, True), where, "no cue: every beat names its short sound (audio/cues.py) or "
                        "'none' with a reason")
                 elif cue["sound"] == CUES.NONE and not cue.get("why"):
@@ -196,6 +220,7 @@ def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict
             lo, hi = idx[0], idx[-1] + 1
             line_end = words[wi(idx[-1])]["e"]
             cur = lo
+            last_j = None
             for bi, b in enumerate(line["visual_beats"]):
                 j = S.find_phrase(toks, b["at"], cur, hi)
                 if j is None or wi(j) is None:
@@ -204,6 +229,16 @@ def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict
                     continue
                 cur = j
                 st = round(min(max(0.0, words[wi(j)]["s"] + float(b.get("offset", 0.0))), duration), 3)
+                if (out and j != last_j and out[-1]["segment"] == seg["id"] and out[-1]["line"] == li + 1
+                        and out[-1]["start"] == st):
+                    # the timing fallback gives unmatched words (numbers, acronyms) the next matched word's start, so
+                    # beats on DIFFERENT words can land on one instant and their cues double; keep the first, report the
+                    # rest (two beats written on the SAME word stay: the cue-spacing lint owns that authoring error)
+                    problems.append({"rule": "PV-44 VB-03", "severity": "REVIEW", "where": f"{seg['id']} line {li + 1} beat "
+                                     f"{bi + 1}", "detail": f"beat {b['at']!r} lands at the same instant ({st:.3f}s) as the beat "
+                                     "before (collapsed word timing): kept the first beat, dropped this one"})
+                    continue
+                last_j = j
                 k = max(0, sum(1 for x in starts if x <= st) - 1)
                 item = dict(b, segment=seg["id"], line=li + 1, start=st, start_frame=int(round(st * fps)), shot=shots[k]["id"],
                             picture=shots[k]["picture"], line_end=round(line_end, 3), _shot_end=shots[k]["end"])
@@ -273,7 +308,7 @@ def _cue_findings(timed: dict, doc: dict, beats: list[dict], out: list[dict]) ->
         if name != CUES.NONE and covered(b["start"]):
             _f(out, "VB-08", _sev(doc, True), where, f"cue {name!r} at {b['start']:.1f}s doubles a sound effect: the effect is "
                "this beat's sound, set the cue to 'none'")
-        elif name == CUES.NONE and b["kind"] not in ("expression",) and not covered(b["start"]):
+        elif name == CUES.NONE and b["kind"] not in ("expression",) and not covered(b["start"]) and not scene_rules(doc):
             _f(out, "VB-08", _sev(doc, True), where, f"a {b['kind']} beat at {b['start']:.1f}s makes no sound: every addition "
                "gets a short cue unless an effect already sounds there")
     for a, c in zip(cues, cues[1:]):
@@ -294,6 +329,46 @@ def _cue_findings(timed: dict, doc: dict, beats: list[dict], out: list[dict]) ->
         if len(bs) > 1:
             _f(out, "VB-08", _sev(doc, True), f"{sid} line {ln}", f"{len(bs)} expression cues on one dialogue line: at most one "
                "(the big take), the rest of the face changes are silent")
+    if scene_rules(doc):
+        # VB-10 a repeated sound stops meaning anything; VB-11 density: silence is the baseline a cue stands out of (D-58)
+        last_name = None
+        recent: dict = {}
+        for c in cues:
+            where = f"{c['segment']} line {c['line']}"
+            times = [t for t in recent.get(c["sound"], []) if c["start"] - t <= CUE_REPEAT_WINDOW]
+            times.append(c["start"])
+            recent[c["sound"]] = times
+            if len(times) == CUE_REPEAT_FAIL:
+                _f(out, "VB-10", "FAIL", where, f"{c['sound']!r} sounds {len(times)} times inside {CUE_REPEAT_WINDOW:.0f} s: a "
+                   "repeated cue is a tic, not a mark; vary the sound or keep only the one on the turn")
+            elif c["sound"] == last_name and len(times) < CUE_REPEAT_FAIL:
+                _f(out, "VB-10", "REVIEW", where, f"{c['sound']!r} twice in a row: two neighbouring story events should not "
+                   "sound the same")
+            last_name = c["sound"]
+        dur = float(timed.get("duration") or 0.0)
+        if dur >= 30 and cues:
+            per_min = len(cues) / dur * 60
+            if per_min > CUE_PER_MIN_FAIL:
+                _f(out, "VB-11", "FAIL", "audio", f"{per_min:.0f} cues a minute (cap {CUE_PER_MIN_FAIL:.0f}): a sound exists "
+                   "only for a story event; a track this dense marks nothing")
+            elif per_min > CUE_PER_MIN_OK:
+                _f(out, "VB-11", "REVIEW", "audio", f"{per_min:.0f} cues a minute (aim under {CUE_PER_MIN_OK:.0f})")
+        ts = [c["start"] for c in cues]
+        burst_flagged = set()
+        for c in cues:
+            n = sum(1 for t in ts if c["start"] - 10.0 < t <= c["start"])
+            if n > CUE_BURST and (c["segment"], c["line"]) not in burst_flagged:
+                burst_flagged.add((c["segment"], c["line"]))
+                _f(out, "VB-11", "REVIEW", f"{c['segment']} line {c['line']}", f"{n} cues inside 10 s around {c['start']:.1f}s "
+                   f"(at most {CUE_BURST}): the moments stop standing out")
+        emph: dict = {}
+        for c in cues:
+            if c["sound"] in EMPHASIS_CUES:
+                emph.setdefault((c["segment"], c["line"]), []).append(c["sound"])
+        for (sid, ln), names in emph.items():
+            if len(names) > 1:
+                _f(out, "VB-11", "FAIL", f"{sid} line {ln}", f"{len(names)} emphasis cues ({', '.join(names)}) on one line: one "
+                   "line gets at most one emphasis, the voice carries the rest")
 
 
 # --- cadence on a timed script -------------------------------------------------------------------------------------------
@@ -314,29 +389,39 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
     times = sorted(t for t, _ in motion_lint.events(timed))
     pts = [0.0] + times + [timed["duration"]]
     narr = _windows(timed, False)
+    gap_ok, gap_fail = (GAP_OK_3, GAP_FAIL_3) if scene_rules(doc) else (GAP_OK, GAP_FAIL)
     for a, b in zip(pts, pts[1:]):
         gap = b - a
-        if gap <= GAP_OK:
+        if gap <= gap_ok:
             continue
         ln = next((w for w in narr if w["start"] < b and w["end"] > a), None)
         if ln is None:
             continue
-        sev = _sev(doc, True) if gap > GAP_FAIL else "REVIEW"
-        _f(out, "VB-01", sev, f"{ln['segment']} line {ln['line']} {a:.1f}s",
-           f"{gap:.1f} s with nothing new on screen while the narrator speaks; a beat about every {TARGET} s "
-           f"(REVIEW over {GAP_OK} s, FAIL over {GAP_FAIL} s)")
-    by_seg: dict = {}
-    for w in narr:
-        s = by_seg.setdefault(w["segment"], [0.0, 0])
-        s[0] += w["end"] - w["start"]
-        s[1] += sum(1 for t in times if w["start"] <= t < w["end"])
-    for sid, (secs, n) in by_seg.items():
-        if secs >= 6 and (n == 0 or secs / n > MEAN_OK):
-            _f(out, "VB-01", "REVIEW", sid, f"one visual event every {secs / max(n, 1):.1f} s of narration on average (target "
-               f"{TARGET} s, at most {MEAN_OK} s)")
+        sev = _sev(doc, True) if gap > gap_fail else "REVIEW"
+        if scene_rules(doc):
+            # /3: the metronome is retired; pace follows new information (D-58), only real dead air is flagged
+            _f(out, "VB-01", sev, f"{ln['segment']} line {ln['line']} {a:.1f}s",
+               f"{gap:.1f} s with nothing new on screen while the narrator speaks: a hold is fine while the line carries "
+               f"new information, this long is dead air (REVIEW over {gap_ok:.0f} s, FAIL over {gap_fail:.0f} s)")
+        else:
+            _f(out, "VB-01", sev, f"{ln['segment']} line {ln['line']} {a:.1f}s",
+               f"{gap:.1f} s with nothing new on screen while the narrator speaks; a beat about every {TARGET} s "
+               f"(REVIEW over {GAP_OK} s, FAIL over {GAP_FAIL} s)")
+    if not scene_rules(doc):
+        by_seg: dict = {}
+        for w in narr:
+            s = by_seg.setdefault(w["segment"], [0.0, 0])
+            s[0] += w["end"] - w["start"]
+            s[1] += sum(1 for t in times if w["start"] <= t < w["end"])
+        for sid, (secs, n) in by_seg.items():
+            if secs >= 6 and (n == 0 or secs / n > MEAN_OK):
+                _f(out, "VB-01", "REVIEW", sid, f"one visual event every {secs / max(n, 1):.1f} s of narration on average (target "
+                   f"{TARGET} s, at most {MEAN_OK} s)")
     expr = [b for b in beats if b["kind"] == "expression"]
+    face_ok, face_fail = (FACE_OK_3, FACE_FAIL_3) if scene_rules(doc) else (FACE_OK, FACE_FAIL)
     for ln in _windows(timed, True):
         last: dict = {}
+        last_t: dict = {}
         for b in expr:
             if b["start"] < ln["start"] - 0.05:
                 last[b["who"]] = b["expression"]
@@ -347,16 +432,30 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
                     _f(out, "VB-02", "REVIEW", f"{ln['segment']} line {ln['line']}", f"{b['who']} stays {b['expression']}: "
                        "an expression beat is a change")
                     continue
+                if scene_rules(doc) and b["who"] in last_t and b["start"] - last_t[b["who"]] < FACE_FLICKER:
+                    _f(out, "VB-02", "REVIEW", f"{ln['segment']} line {ln['line']}", f"{b['who']}'s face changes twice within "
+                       f"{b['start'] - last_t[b['who']]:.1f} s: under {FACE_FLICKER} s reads as flicker; one reaction per thought")
                 last[b["who"]] = b["expression"]
+                last_t[b["who"]] = b["start"]
                 changes.append(b["start"])
         where = f"{ln['segment']} line {ln['line']}"
         if not changes:
-            _f(out, "VB-02", _sev(doc, True), where, f"a dialogue line ({ln['duration']:.1f} s) with no expression change: the "
-               f"face carries the line, about one change every {FACE_TARGET:.0f} s")
+            if scene_rules(doc):
+                _f(out, "VB-02", _sev(doc, True), where, f"a dialogue line ({ln['duration']:.1f} s) with no expression change: "
+                   "the listener's face is where the line lands (Kuleshov); at least one reaction on every spoken line")
+            else:
+                _f(out, "VB-02", _sev(doc, True), where, f"a dialogue line ({ln['duration']:.1f} s) with no expression change: the "
+                   f"face carries the line, about one change every {FACE_TARGET:.0f} s")
             continue
         p = [ln["start"]] + changes + [ln["end"]]
         worst = max(y - x for x, y in zip(p, p[1:]))
-        if worst > FACE_FAIL:
+        if scene_rules(doc):
+            if worst > face_fail:
+                _f(out, "VB-02", _sev(doc, True), where, f"{worst:.1f} s without an expression change in dialogue (FAIL over "
+                   f"{face_fail:.0f} s): a listener reacts when a line lands, not on a clock")
+            elif worst > face_ok:
+                _f(out, "VB-02", "REVIEW", where, f"{worst:.1f} s without an expression change (REVIEW over {face_ok:.0f} s)")
+        elif worst > FACE_FAIL:
             _f(out, "VB-02", _sev(doc, True), where, f"{worst:.1f} s without an expression change in dialogue (FAIL over "
                f"{FACE_FAIL} s, target {FACE_TARGET:.0f} s)")
         elif worst > FACE_OK:

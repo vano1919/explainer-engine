@@ -808,3 +808,27 @@ collage approval, cost shown, creator's OK); vidIQ outlier pass not run (credits
 2026-10-19 thumbnail drafts v2 (nano-banana 2K, $0.107; thumbnails today about $0.40 in all): Vito and Shelby seen only from behind, dressed in the films' look on the creator's order (tuxedo and slicked grey hair at a long table; undercut, flat cap, long coat by a canal). This overrides Syndicate Wars ER-04/RK-05/RK-06 ("no production costume combination") for back views; faces stay invented (RK-07). The episode rulebook on systemic/next-video must record the change (episode-standards-director) before the thumbnail is used. Files in project-files explainer-engine/thumbnail_motif.
 
 2026-10-19 thumbnail is the creator's job (creator): `publish stage` no longer sends a thumbnail unless publish.json `thumbnail.upload` is true; the Studio checklist says "YOUR thumbnail set in Studio"; `publish thumbnail` stays as the paid draft maker. Test `test_thumbnail_is_sent_only_when_publish_json_allows_it`; THUMBNAIL_RULES.md and PUBLISHING_AND_ANALYTICS.md updated.
+
+## 2026-10-19 — The scene rewrite: production_script/3, SC rules, inverted cues (D-58)
+
+After the creator's Syndicate Wars review (senseless cues, no real dialogue, press-release narration, "rewrite the whole
+system"), the storytelling and editing system was rewritten from research on a new schema; `/1`/`/2` keep their exact
+behaviour and the finished video stays as it is. Research first (6 notes + a synthesized report, Georgian summary
+approved by the creator), then rules: every new or changed rule carries at least two source types in
+`docs/research/STORYTELLING_EDITING_2026-10-19.md` (the creator's sourcing rule).
+- Schema `production_script/3`: `segments[].scene` (place, present, pov, want/obstacle_want, value, charges, turn,
+  exit, surface/real subject, mode), `lines[].to` + `intent`, beat `cue.event`.
+- Code: `scripting/scene_lint.py` (SC-01..SC-10, PV-48 in `production/validate.py`); `story_lint` ST-00 FAIL on /3 +
+  ST-12/ST-13; `production/beats.py` VB-08 inverted on /3 (silence default, event-bound cues) + VB-10/VB-11 + /3
+  pacing gates + de-stack of beats collapsed onto one instant; `audio/cues.py` 3 deterministic pitch variants and
+  `assemble.cue_bus` rotates them; manifest `loop`/`intended_seconds` + `Sounds.loopable` so one-shots are never tiled
+  (beds/music `play_once`, Shorts `-stream_loop` gated); `audio/layers.py` AL-02 counts cues; `edit/motion_lint.py`
+  MO-07 hold variance; `scripting/speech.py` signature-words-used check on /3.
+- Docs: STORY_ENGINE (SC section, DW-09 softened + DW-12/DW-13, three story templates replace the beat grid, ST/VB/MO
+  rows), EDITING ED-14 (dialogue coverage grammar), PRODUCTION_SCRIPT (/3 + PV-48), INDEX, D-58 in the decision log.
+- Skills/agents: new `dialogue-scenes` (scene header, hand-off unit, deflections, worked Capone/Enzo example);
+  `visual-beats`, `story-engine` updated to /3; agents scene-writer, story-architect, beat-writer, edit-planner.
+- Tests: `tests/unit/test_scene_system.py` (20); whole suite 425 passed, 1 skipped; docs_lint 0 findings. The
+  Syndicate Wars example test is untouched and green (its /2 contract is frozen).
+- Next: the next episode is written as `/3` by the writers' room; the parallel audit thread covers the rest of the
+  system (its input: `/mnt/project-files/explainer-engine/storytelling_research/RULE_CONFLICTS_2026-10-19.md`).
