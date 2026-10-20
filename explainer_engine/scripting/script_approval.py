@@ -29,10 +29,12 @@ DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 def words_sha256(doc: dict) -> str:
-    """The hash of what is said: every segment's and every Short's lines (speaker, text), in order."""
-    said = [[seg["id"], [[ln.get("speaker") or "narrator", ln["text"].strip()] for ln in seg["lines"]]]
-            for seg in doc.get("segments", [])]
-    said += [[f"short:{sh.get('id', i)}", [[ln.get("speaker") or "narrator", ln["text"].strip()] for ln in sh.get("lines", [])]]
+    """The hash of what is said: every segment's and every Short's lines (speaker, text, and whether it is a bubble), in order."""
+    def one(ln):  # a silent line (D-62, shown as bubbles) is part of what was approved; voiced lines hash as before
+        row = [ln.get("speaker") or "narrator", ln["text"].strip()]
+        return row + ["bubble"] if ln.get("voiced", True) is False else row
+    said = [[seg["id"], [one(ln) for ln in seg["lines"]]] for seg in doc.get("segments", [])]
+    said += [[f"short:{sh.get('id', i)}", [one(ln) for ln in sh.get("lines", [])]]
              for i, sh in enumerate(doc.get("shorts", []))]
     return hashlib.sha256(json.dumps(said, ensure_ascii=False, separators=(",", ":")).encode("utf-8")).hexdigest()
 

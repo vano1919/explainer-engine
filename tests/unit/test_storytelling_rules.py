@@ -102,6 +102,11 @@ def test_the_finished_script_needs_the_creators_recorded_approval(tmp_path):
     d3 = copy.deepcopy(d)
     d3["shorts"] = [{"id": "SH01", "lines": [{"text": "A new Short line."}]}]
     assert SA.check(d3), "a Short added after the yes goes back to the creator"
+    d4 = copy.deepcopy(d)
+    d4["segments"][0]["lines"][2]["voiced"] = False  # a heard line turned into a bubble (D-62) goes back too
+    assert SA.check(d4)
+    d4["segments"][0]["lines"][2]["voiced"] = True  # an explicit true hashes like before
+    assert SA.check(d4) == []
 
 
 def test_paid_pictures_wait_for_the_script_approval():
