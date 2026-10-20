@@ -1022,3 +1022,14 @@ Georgian letters, a "why" heading); `production/editorial_gate.py` EG-23 refuses
 without `story_page` (file next to the review), which also keeps gate 0.5 of `production_gate` closed. Agent script-critic
 step 9, skill story-engine, STORY_ENGINE stage 7 row, SCRIPTING_SPEC 5.2. `/1` and `/2` scripts unchanged. Tests:
 `tests/unit/test_story_page.py` (4), the integrated-review fixtures write a page. First page: Titans from Zero.
+
+## 2026-10-20 - Titans from Zero: stage 4 (edit and sound plan) and a present-day New York era
+
+`edit-planner` pass over S01..S16 of `examples/titans_from_zero/production_script.json` (words, tags and beats untouched;
+`stage_guard editor`: 0 violations). Shots, motion, accents, bubbles, beds, sfx and `music` are planned; `graphics` stay empty
+(the only claim rows are C-01..C-05, the story's numbers are invented, so a data visual would break invariant 5).
+`world` is now a resolvable spec (the string `host` could not be resolved once shots exist): this needed the codex era
+`modern_new_york` (14 eras; light keys for the courthouse, street, lot, motel, garage, warehouse, burnt garage and factory
+office) in `explainer_engine/world/eras.json`; `tests/unit/test_world_architecture.py` pins 14 eras and one light key per beat.
+Nothing painted, nothing paid. Open owners: sound files (WAVs are gitignored; nine ambience beds are not in the manifest),
+cast speech/voice/face sheets and the variant collages (PV-46, PV-32, VB-09, PV-47).
