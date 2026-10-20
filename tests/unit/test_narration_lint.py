@@ -20,8 +20,13 @@ def test_a_good_script_has_no_findings():
     assert L.lint(GOOD) == []
 
 
-def test_the_hook_must_be_a_question_and_a_wh_hook_falls():
-    assert "N-01" in rules("No tools. But night is coming.\n", "FAIL")
+def test_the_hook_takes_one_of_four_forms_never_a_greeting_and_a_wh_hook_falls():
+    """BP-03 (supersedes the yes/no-only N-01): a cold-open line is a hook; a greeting FAILs; a long plain sentence is REVIEW."""
+    assert "N-01" not in rules("No tools. But night is coming.\n")  # a cold-open line
+    assert "N-01" in rules("Welcome back to the channel. But night is coming.\n", "FAIL")
+    assert "N-01" in rules("Today we look at the Stone Age. But night is coming.\n", "FAIL")
+    plain = "The geniuses walked slowly across the wide grey valley toward the distant hills under a low sky. But night falls.\n"
+    assert "N-01" in rules(plain, "REVIEW") and "N-01" not in rules(plain, "FAIL")
     assert "N-01" in rules(GOOD.replace("Could they survive the Stone AGE?", "What happens to them in the Stone Age?"))
 
 

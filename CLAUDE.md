@@ -24,14 +24,17 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
    `config/spend_caps.json` and are enforced by code (D-56): pods only via `python -m explainer_engine.cloud.runpod`
    (`check` at start and end, `create --ledger`, guard, `stop`; delete only on the creator's word; a stopped disk bills).
    The creator's PC only reviews and uploads.
-2. Budget caps are ceilings, not targets: Gemini ≤ $10 total, vidIQ ≤ 200 credits. Estimate and log before every paid
-   call (`docs/COST_AND_TIME_MODEL.md` ledger); at 80 % of a cap stop and ask. Leave nothing paid running.
-3. No long-form pipeline before the 60–90 s prototype passes its acceptance criteria (plan F).
+2. Budget caps are ceilings, not targets; the numbers live only in `config/spend_caps.json` (invariant 1; vidIQ and ElevenLabs
+   credits are counted in the ledger until they have a line there). Estimate and log before every paid call
+   (`docs/COST_AND_TIME_MODEL.md` ledger); at 80 % of a cap stop and ask. Leave nothing paid running.
+3. (retired 2026-10-19: two long videos have shipped) No new pipeline stage goes into a video before its gate runs on the
+   D-43 flow and a focused test proves it (D-59).
 4. No public upload, ever, without a recorded creator approval. The only upload code is the unlisted/private staging of
    D-57 (`publish/`), run after the creator's OK; going public is the creator's click in Studio.
 5. No unsupported claims, fabricated research, invented metrics, or copied protected IP. Every factual sentence maps
    to a claim with a source; say exactly what was and was not verified.
-6. The original character/visual identity stays stable (part-based rig, reference sheet; never redraw from scratch).
+6. The original character/visual identity stays stable (hero references and expression sheets, D-55; never redraw from
+   scratch; a new character or environment style is one collage of variants for the creator's choice).
 7. Versioned schema contracts are authoritative; never bypass or weaken validation to make a render pass.
 8. No destructive command, broad deletion, credential exposure, or unrelated refactor without approval. Cleanup
    deletes only job directories via `core/jobs.clean_jobs`.
@@ -53,6 +56,12 @@ sprites, pictures, full read, render, QA). Skills: `narration-script` (how the n
 show). Entertainment first, facts second; stakes and named heroes in every frame; one drawn world; limits computed from
 measured speeds; every paid step estimated and approved first; look at the output before reporting it; reply to the creator in Georgian.
 **Language (creator, 2026-10-17):** Georgian is only for talking to the creator. Everything the viewer sees or hears (narration, on-screen text, picture prompts, titles, metadata, Shorts) is English for the US audience; never ask again.
+
+**Sourced rules (D-59, creator 2026-10-19):** no production rule is law by itself. Every number a validator enforces comes from
+`explainer_engine/standards/sourced_rules.json` (`docs/SOURCED_RULES.md`, BP-xx; binding = two of three source types, article /
+book / video; hypothesis = REVIEW only; house = the creator's dated call). Code reads `sourced_rules.T("BP-06", "max_words")`,
+documents link the BP id instead of restating a number, `tests/unit/test_sourced_rules.py` keeps the registry, the table and the
+code together. A new rule needs its two source types before it changes a threshold.
 
 **Episode rulebook (D-51):** every new episode gets `episode_rules.json` from the `episode-standards-director` agent
 (`docs/EPISODE_STANDARDS.md`, ES-xx): rules with dated sources and their kind (law, platform policy, provider terms, invariant,
@@ -77,8 +86,9 @@ only, YouTube Help 14328491); channel audience "not made for kids".
 ```
 explainer_engine/core/    store.py (JobStore, atomic writes, stage registry), jobs.py (job naming, cleanup),
                           errors.py (Contract/Config/Retryable/NeedsReview), labels.py (evidence labels)
-explainer_engine/audio/   timings.py (phoneme timings -> words), visemes.py (mouth opening/shape, blinks),
-                          envelope.py (loudness mouth fallback)
+explainer_engine/audio/   scribe_words.py / local_words.py (word timings of the read), voice_layer.py, level.py, seams.py,
+                          pause_pad.py, duck.py, layers.py (AL + BP audio rules), sfx_library.py, cues.py; timings.py and
+                          visemes.py are Kokoro-era leftovers (D-39 retired Kokoro)
 explainer_engine/cloud/   runpod.py (the only pod manager: check, create, guard, stop, sweep, cost), hooks.py (session money hooks)
 config/spend_caps.json    the creator's money ceilings (D-56), read by the ledger and the pod manager
 explainer_engine/design/  palette.json (the only place hex colours live), palette.py (contrast + rules)

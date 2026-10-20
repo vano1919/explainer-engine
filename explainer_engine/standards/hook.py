@@ -6,7 +6,8 @@ Wired in ``.claude/settings.json`` (matcher ``mcp__ElevenLabs__creative_.*``). C
 * Pictures and video never go through ElevenLabs: they are painted by Gemini on the batch tier (``production/paint.py``).
 * ``estimate_only`` calls and read-only tools always pass.
 * A paid audio generation (speech, sound effect, music) needs ``generations_count`` 1 (the connector's default is 4, four
-  times the credits; EL-10) and the active episode's rulebook ``paid_assets`` checkpoint to pass.
+  times the credits; EL-10), the active episode's rulebook ``paid_assets`` checkpoint to pass, and no FAIL from the editorial
+  gate (OR-10: ``production/editorial_gate.check`` on the script and its ``editorial_review.json``).
 * The active episode is named in ``.claude/active_episode.json``: ``{"episode": "<folder with episode_rules.json>"}``. An
   ``"override": "<the creator's reason>"`` lets a paid call through without the gate (voice auditions before a rulebook
   exists); it never lifts the picture rule or the one-take rule, and every override is logged to ``jobs/gate_overrides.jsonl``.
@@ -57,6 +58,13 @@ def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
     if fails:
         return "OR-12: the rulebook's paid_assets checkpoint fails: " + "; ".join(
             f"{f['rule']} {f['where']}: {f['detail']}" for f in fails[:3]) + (f" (+{len(fails) - 3} more)" if len(fails) > 3 else "")
+    script = folder / "production_script.json"
+    if script.exists():  # OR-10: an editorial FAIL stops paid narration and assets, not only paid pictures
+        from explainer_engine.production import editorial_gate as EG
+        ef = [f for f in EG.check(script, folder / "editorial_review.json") if f["severity"] == "FAIL"]
+        if ef:
+            return "OR-10: the editorial gate fails: " + "; ".join(
+                f"{f['rule']} {f['where']}: {f['detail']}" for f in ef[:3]) + (f" (+{len(ef) - 3} more)" if len(ef) > 3 else "")
     return None
 
 

@@ -12,10 +12,23 @@ You write the `shorts` block only (stage guard `shorts`). Read `docs/STORY_ENGIN
    video corrects) with their segment ids; one moment per Short, never two Shorts on one scene.
 2. Give each Short a style from the catalog so the set uses at least six styles, and order them so no style repeats back
    to back; pick each Short's `ending` (cliffhanger, loop, question, pointer).
-3. Write: hook line first (a question of at most 14 words that is also on screen; `anti_intuition` and `pov_you` may use one statement, SS-05), 40-130 words, the stakes in plain words,
-   a reaction line, the ending. Reuse lines of the main read where they fit (EL-09: new text costs credits). A voiced
-   dialogue line keeps its `speaker`.
+3. Write: hook line first (one question, or one statement that raises several, inside the BP-11 word cap and also on screen;
+   `anti_intuition` and `pov_you` open with a statement by design, SS-05), the word budget of the Short's length band (BP-12),
+   the stakes in plain words, a reaction line, lines 2-3 that foreshadow, the answer to the hook held to the last stretch and
+   an ending that loops or points, never a sign-off (BP-44); every line short and simple (BP-46). Reuse lines of the main read
+   where they fit (EL-09: new text costs credits). A voiced dialogue line keeps its `speaker`.
 4. Shots: the video's own pictures cropped 9:16 (`crop_x` on the speaking face).
 5. Hand the Short lines that are not lines of the video (hook, pointer) to the `beat-writer` (SS-09: a Short carries the
    same visual beats and cues; the video's own lines bring theirs).
 6. `production validate`: PV-28, PV-34 and PV-44 with 0 FAIL; report new characters per Short.
+
+## Sourced rules (docs/SOURCED_RULES.md)
+
+The hook cap and the word budget are BP-11 and BP-12 (the shorts-for-video skill lists them); `production validate` PV-28 reads
+every number from the registry. Two rules the code can only half-check are yours to read for:
+
+- BP-44: the premise stays open until the last 15 %: the sentence that answers the hook starts at or after 85 % of the
+  estimated read (the code cannot tell that sentence apart; you can); lines 2-3 foreshadow with a promise marker inside 3 s
+  of the hook; the ending is a loop or a pointer, never a sign-off ("thanks for watching", "subscribe", "see you", "goodbye",
+  "like and").
+- BP-46: every line at most 14 words and the whole Short at Flesch-Kincaid grade 6 or under.

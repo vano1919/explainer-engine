@@ -59,15 +59,15 @@ Cut on the pause, not on the word `[ours: UR-12]`; leave 80-120 ms of room each 
 
 | Transition | Parameters | Meaning | Use |
 |---|---|---|---|
-| **Hard cut** | 0 frames | same time, same place | default, 85-95% of all transitions |
-| **Dissolve** | 12-24 frames (0.4-0.8 s) action; 1-2 s time jump `[ours: 1.0 s at period starts]`; 3-6 s ambient | time passes, mood shifts | at most 10% of transitions `[ours: UR-14]`; never across a spoken sentence |
+| **Hard cut** | 0 frames | same time, same place | default, 85-95% of all transitions `[ours: every cut is hard except the period dissolve, BP-31]` |
+| **Dissolve** | 12-24 frames (0.4-0.8 s) action; 1-2 s time jump `[ours: BP-31, period starts only]`; 3-6 s ambient | time passes, mood shifts | at most 10% of transitions `[ours: period boundaries only, BP-31]`; never across a spoken sentence |
 | **Dip to black/white** | 0.5-1.5 s in, hold 0.2 s, out | chapter end, shock, silence | start and end of a piece `[ours: 1 s in, 1.5 s out]` |
-| **Whip pan** | 6-10 frames of blur, matched by a whoosh | energy, place change in action | vlogs, shorts, tech reviews; never in docu/sleep |
+| **Whip pan** | 6-10 frames of blur, matched by a whoosh | energy, place change in action | vlogs, shorts, tech reviews; never in docu/sleep `[ours: an entry accent that opens a story turn, BP-25; it counts as a cut]` |
 | **Mask transition** | an object (door, hand, tree) wipes the frame 10-20 frames | clever place/time link | when a real foreground object exists; otherwise it looks fake |
-| **Push / zoom transition** | 8-14 frames, 1.15x to 1.3x scale with blur | continues the zoom language across a cut | shorts, tutorials |
+| **Push / zoom transition** | 8-14 frames, 1.15x to 1.3x scale with blur | continues the zoom language across a cut | shorts, tutorials `[ours: not used; BP-20 caps the scale]` |
 | **Match move** | next shot starts with the same motion direction and speed | smooth link between different pictures | the zoom/pan of the outgoing shot ends at the speed the next one starts |
 
-Rule of three: at most three transition kinds in one video `[ours: cut, dissolve, black]`.
+Rule of three: at most three transition kinds in one video `[ours: the hard cut, the period dissolve, black; BP-31]`.
 
 ### 2.3 Typography and motion graphics
 
@@ -141,7 +141,7 @@ Rules: a sound starts with the picture event it belongs to (within one frame); S
 
 ### Patterns (do)
 
-- **Pattern interrupt every 3-7 s**: a cut, a punch-in, a new graphic, a sound, or a change of colour; in calmer genres 8-12 s.
+- **Pattern interrupt every 3-7 s**: a cut, a punch-in, a new graphic, a sound, or a change of colour; in calmer genres 8-12 s `[ours: by section, BP-40; one scripted interrupt in the 25-35 s window, BP-41]`.
 - **Cold open / hook in the first 10-15 s**: the most surprising line or image first, a question or promise within 3 s, then the title; no logo sting, no "welcome back".
 - **Audio lead-in**: the next sound begins 0.3-0.5 s before the picture (J-cut), so the cut feels motivated.
 - **Pause and punch**: alternate dense and quiet beats; a 0.4-1.0 s silence before a key fact makes it land.
@@ -157,7 +157,7 @@ Rules: a sound starts with the picture event it belongs to (within one frame); S
 | Text or graphics appearing with no sound | feels dead | pop/click at the appearance, or deliberately silent |
 | Music covering the voice; SFX painfully loud | viewers leave or mute | voice 14+ dB above music peaks `[ours: UR-32]`, SFX below voice |
 | Two music tracks plus a tick plus a bed together | muddy mix | one music, tick 6 dB under, two layers max `[ours: ED-03]` |
-| Zoom that snaps back to 100% on the same picture | looks like a rendering error | continue the move or ease out `[ours: ED-02]` |
+| Zoom that snaps back to 100% on the same picture | looks like a rendering error | continue the move or ease out `[ours: ED-02]`; the same framing twice in a row is the other fault `[ours: BP-30]` |
 | A cut in the middle of a zoom | jerk | rest at cuts `[ours: ED-08]` |
 | Chunks of different loudness joined as they came | audible seam | level and fade `[ours: ED-01]` |
 | Template 3D/glitch transitions on serious topics | cheapens the subject | cut or dissolve |
@@ -189,12 +189,12 @@ Rules: a sound starts with the picture event it belongs to (within one frame); S
 
 **Picture and retention**
 - [ ] Hook inside 3 s (question or promise), cold open at most 15 s.
-- [ ] A visible change at least every 9 s, a pattern interrupt every 3-7 s (genre-dependent).
+- [ ] A visible change inside the section's window (BP-40) and the 25-35 s pattern interrupt (BP-41).
 - [ ] Open loop at the end of every chapter or period.
 - [ ] No zoom snap (same picture), no cut in the middle of a move.
-- [ ] Transitions: at most three kinds; dissolves at most 10%.
+- [ ] Transitions: hard cuts, the period dissolve only (BP-31), black at the ends; whips and flashes spaced (BP-25).
 - [ ] Grade, grain and vignette constant across the whole video; skin tones and the hero's colours stay in the same range.
-- [ ] Brightest and darkest frames checked; no frame flashes (under 3 flashes in a second) for sleep/ambient or any viewer-safety concern.
+- [ ] Brightest and darkest frames checked; no frame flashes (under 3 flashes in a second, BP-26) for sleep/ambient or any viewer-safety concern.
 
 **Legibility and platform**
 - [ ] Captions and text readable on a phone held at arm's length: cap height at least 4% of frame, contrast at least 4.5:1, inside the safe area (5% margin; vertical: top 10% and bottom 20% free).
@@ -204,3 +204,18 @@ Rules: a sound starts with the picture event it belongs to (within one frame); S
 - [ ] Disclosures, rights and the creator-approval record are present before anything is uploaded (`CLAUDE.md` invariant 4).
 
 When an item fails, find the cause from evidence (the rule, the file, the timestamp), fix the **general** rule or tool, add a test, and re-render only what changed.
+
+## Sourced rules (docs/SOURCED_RULES.md)
+
+Where this database and the project disagree, the registry wins (D-59); the `[ours: ...]` notes above point to these rows.
+
+- BP-20: scale 1.00-1.15 on a still, a default push to 1.10; a punch accent is exempt.
+- BP-21: a push or pull changes scale 0.5-3 % a second; over 5 %/s only as a punch accent.
+- BP-22: a pan covers at most one seventh of the width a second (14.3 %); house default 1.2 %/s.
+- BP-23: every camera move eased in and out; a brisk move keeps a 0.25 s hold at each end.
+- BP-26: at most 3 flashes in any second, no saturated red; a flash_in is 2 frames at most 80 % white.
+- BP-30: the focal point moves at most 10 % of the frame across a hard cut; never the same framing of the same picture twice
+  in a row; a direction change over 90 degrees needs a neutral picture between.
+- BP-31: a dissolve (1 s) only on a period boundary; every other transition is a hard cut (whips and flashes count as cuts).
+- BP-40: first 30 s a change every 5 s (FAIL); body still over 20 s REVIEW, over 40 s FAIL; at most 10 pictures a minute;
+  one burst of 5-10 cuts per 2-3 min.

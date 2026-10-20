@@ -3,9 +3,12 @@
     python -m explainer_engine.qa.engagement <production_script.json> [--rules episode_rules.json]
 
 The code finds the beats that are measurably weak (no hook question, a flat run of the same beat job, a number with nothing
-to see, repeated wording, an ending that never returns to the question, a long beat without a turn) and names them by segment.
-Whether a beat is actually engaging is a person's call: the report ends with the gate's questions, to be answered beat by beat.
-Every finding is REVIEW (a person decides); the fix is a better beat, never more cuts, sound effects or colour.
+to see, repeated wording, an ending that never returns to the question, a long beat without a turn, a long stretch without a
+forward-pointing line, a recap or goodbye at the end) and names them by segment. Whether a beat is actually engaging is a
+person's call: the report ends with the gate's questions, to be answered beat by beat. Every finding is REVIEW (a person
+decides) except ENG-8's sign-off lexicon, which is binding (BP-43); the fix is a better beat, never more cuts, sound effects
+or colour. The numbers come from the sourced rules registry (docs/SOURCED_RULES.md): BP-01 (pace), BP-42 (the forward-pointing
+cadence), BP-43 (the ending).
 """
 
 from __future__ import annotations
@@ -16,9 +19,18 @@ import re
 import sys
 from pathlib import Path
 
+from explainer_engine.standards import sourced_rules as SR
+
+WPM = SR.T("BP-01", "wpm_target")  # BP-01: the heard pace every estimate uses
 FLAT_RUN = 3            # the same beat job this many times in a row is a flat stretch
-LONG_BEAT_WORDS = 260   # about 100 s at 155 wpm without a change of job
+LONG_BEAT_WORDS = round(WPM * 100 / 60)   # about 100 s at the BP-01 pace without a change of job
 NGRAM = 5               # a 5-word phrase said in two different beats is repeated wording
+# BP-42 / BP-44: a line points forward when it asks ("?") or carries a promise marker
+PROMISE = re.compile(r"\b(will|by the end|watch|until|but|turns out|wait)\b", re.I)
+MICROHOOK_EVERY_S, REVIEW_GAP_S = SR.T("BP-42", "microhook_every_s"), SR.T("BP-42", "review_gap_s")
+LAST_SHARE = SR.T("BP-43", "last_share")  # BP-43: the ending is abrupt
+END_LEXICON = [p.lower() for p in SR.T("BP-43", "lexicon")]
+NEXT_POINTER = re.compile(r"\b(next|watch|episode)\b", re.I)
 QUESTIONS = (
     "Does the opening establish a compelling, accurate question or promise?",
     "Does each section change the viewer's knowledge, expectations, stakes or feeling?",
@@ -40,11 +52,16 @@ def _text(seg: dict) -> str:
     return " ".join(line["text"] for line in seg["lines"])
 
 
+def forward(text: str) -> bool:
+    """A forward-pointing line (BP-42): an open question or a promise marker."""
+    return "?" in text or bool(PROMISE.search(text))
+
+
 def check(doc: dict, rules: dict | None = None) -> list[dict]:
     out: list[dict] = []
 
-    def add(rule: str, where: str, detail: str) -> None:
-        out.append({"rule": rule, "severity": "REVIEW", "where": where, "detail": detail})
+    def add(rule: str, where: str, detail: str, severity: str = "REVIEW") -> None:
+        out.append({"rule": rule, "severity": severity, "where": where, "detail": detail})
 
     segs = doc["segments"]
     first = segs[0]["lines"][0]["text"]
@@ -62,7 +79,7 @@ def check(doc: dict, rules: dict | None = None) -> list[dict]:
     with_visual = {g.get("segment") for g in doc.get("graphics", [])}
     for seg in segs:
         nums = [line["text"] for line in seg["lines"] if re.search(r"\d", line["text"])]
-        if nums and seg["id"] not in with_visual:
+        if nums and seg["id"] not in with_visual:  # ENG-3: every number that matters is also shown (BP-08, ED-10)
             add("ENG-3", seg["id"], f"a number is said and nothing shows it: {nums[0][:60]!r} (ED-10)")
         n = len(_words(_text(seg)))
         if n > LONG_BEAT_WORDS:
@@ -79,7 +96,42 @@ def check(doc: dict, rules: dict | None = None) -> list[dict]:
             if src != seg["id"] and (src, seg["id"]) not in told:
                 told.add((src, seg["id"]))
                 add("ENG-4", seg["id"], f"repeats {' '.join(gram)!r} from {src}")
+    # ENG-7 (BP-42): the estimated time between forward-pointing lines, at WPM, never over REVIEW_GAP_S
+    since, last_id = 0, segs[0]["id"]
+    for seg in segs:
+        for line in seg["lines"]:
+            n = len(_words(line["text"]))
+            if forward(line["text"]):
+                if since / WPM * 60 > REVIEW_GAP_S:
+                    add("ENG-7", seg["id"], f"{since} words (~{since / WPM * 60:.0f} s at {WPM} wpm) since the last question or "
+                        f"promise, from {last_id}: a forward-pointing line at least every {MICROHOOK_EVERY_S} s (BP-42)")
+                since, last_id = 0, seg["id"]
+            else:
+                since += n
+    if since / WPM * 60 > REVIEW_GAP_S:
+        add("ENG-7", segs[-1]["id"], f"{since} words (~{since / WPM * 60:.0f} s at {WPM} wpm) to the end without a question or "
+            f"promise, from {last_id}: a forward-pointing line at least every {MICROHOOK_EVERY_S} s (BP-42)")
+    # ENG-8 (BP-43): the ending is abrupt: no recap or goodbye in the last LAST_SHARE of the words (FAIL, binding); the last
+    # sentence is an open question or a pointer to the next video (REVIEW)
+    lines = [(seg["id"], line["text"]) for seg in segs for line in seg["lines"]]
+    total = sum(len(_words(t)) for _, t in lines)
+    tail, count = [], 0
+    for sid, t in reversed(lines):
+        tail.append((sid, t))
+        count += len(_words(t))
+        if count >= total * LAST_SHARE:
+            break
+    tail_text = " ".join(t for _, t in tail).lower().replace("’", "'")
+    for phrase in END_LEXICON:
+        if phrase in tail_text:
+            add("ENG-8", tail[0][0], f"{phrase!r} in the last {LAST_SHARE:.0%}: no recap, no goodbye, the ending is abrupt (BP-43)",
+                "FAIL")
+    last_sentence = [s for s in re.split(r"(?<=[.!?])\s+", lines[-1][1].strip()) if s.strip()][-1] if lines[-1][1].strip() else ""
+    if not (last_sentence.endswith("?") or NEXT_POINTER.search(last_sentence)):
+        add("ENG-8", lines[-1][0], f"the last sentence is neither an open question nor a pointer to one next video: "
+            f"{last_sentence[:60]!r} (BP-43)")
     if rules:
+        # ENG-5: the ending comes back to the central question (BP-04 holds its answer to the last tenth; BP-43 ends on it)
         q = {x for x in _words(rules["identity"]["central_question"]) if x not in STOP and len(x) > 3}
         if q and not q & set(_words(_text(segs[-1]))):
             add("ENG-5", segs[-1]["id"], "the ending never comes back to the central question's words: "

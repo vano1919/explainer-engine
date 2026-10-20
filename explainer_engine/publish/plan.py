@@ -18,6 +18,7 @@ import re
 from pathlib import Path
 
 from explainer_engine.publish.youtube import STAGE_PRIVACY
+from explainer_engine.standards import sourced_rules as SR
 
 TITLE_MAX, DESCRIPTION_MAX_BYTES, TAGS_MAX = 100, 5000, 500
 CATEGORY_IDS = {"Film & Animation": "1", "Gaming": "20", "People & Blogs": "22", "Comedy": "23", "Entertainment": "24",
@@ -33,6 +34,10 @@ HASHTAG = re.compile(r"(?<!\w)#\w+")
 ADULT_TEXT = re.compile(r"(?<!\w)(?:18|21)\s*\+", re.I)  # THUMBNAIL_RULES TN-07: ad guidelines, sexual text
 TITLE_TARGET = 70  # THUMBNAIL_RULES TN-14 working target (a hypothesis, so only REVIEW)
 HASHTAGS_SHOWN = 3  # Help 6390658: three show above the title, over 60 are all ignored
+# BP-47 posting spread of the Shorts set: the first within `first_within_days` of the video, at most `per_day_max` a day, the
+# set over at least `spread_days_min` days. The dates are the creator's (publish.json `shorts[].publish_date`, ISO day; the
+# long video's `publish_date` as the anchor): this only checks them, the tool never schedules (D-57).
+POSTING = SR.rule("BP-47")["thresholds"]
 
 
 def sha256(path: Path) -> str:
@@ -86,6 +91,39 @@ def field_findings(item_id: str, title: str, description: str) -> list[dict]:
     for field, text in (("title", title), ("description", description)):
         if ADULT_TEXT.search(text):
             add("REVIEW", field, "'18+' or '21+' wording; the ad guidelines treat it as adult (TN-07)")
+    return out
+
+
+def posting_findings(pub: dict) -> list[dict]:
+    """BP-47 on the planned publish dates, when publish.json carries them; otherwise one note that the spread is unplanned."""
+    from datetime import date
+    out = []
+    shorts = [s for s in pub.get("shorts") or [] if s.get("publish_date")]
+    sev = SR.rule("BP-47").get("severity", "REVIEW")
+    if not shorts:
+        out.append({"item": LONG_ID, "severity": "REVIEW", "field": "publish_date",
+                    "detail": f"no Short has a publish_date: plan the set (first within {POSTING['first_within_days']} days of the "
+                              f"video, at most {POSTING['per_day_max']} a day, over at least {POSTING['spread_days_min']} days, BP-47)"})
+        return out
+    try:
+        days = sorted(date.fromisoformat(s["publish_date"]) for s in shorts)
+        anchor = date.fromisoformat(pub["publish_date"]) if pub.get("publish_date") else None
+    except (TypeError, ValueError) as exc:
+        return [{"item": LONG_ID, "severity": "REVIEW", "field": "publish_date", "detail": f"unreadable date: {exc} (ISO YYYY-MM-DD)"}]
+    if anchor and (days[0] - anchor).days > POSTING["first_within_days"]:
+        out.append({"item": LONG_ID, "severity": sev, "field": "publish_date",
+                    "detail": f"the first Short is {(days[0] - anchor).days} days after the video (BP-47: within {POSTING['first_within_days']})"})
+    per_day: dict = {}
+    for d in days:
+        per_day[d] = per_day.get(d, 0) + 1
+    for d, n in sorted(per_day.items()):
+        if n > POSTING["per_day_max"]:
+            out.append({"item": LONG_ID, "severity": sev, "field": "publish_date",
+                        "detail": f"{n} Shorts on {d.isoformat()} (BP-47: at most {POSTING['per_day_max']} a day)"})
+    span = (days[-1] - days[0]).days
+    if len(days) > 1 and span < POSTING["spread_days_min"]:
+        out.append({"item": LONG_ID, "severity": sev, "field": "publish_date",
+                    "detail": f"the set spans {span} days (BP-47: at least {POSTING['spread_days_min']})"})
     return out
 
 
@@ -188,6 +226,7 @@ def build(episode: Path, *, privacy: str = "unlisted", video: Path | None = None
         items.append({"id": sid, "kind": "short", "file": str(shorts_dir / f"{sid}.mp4"), "thumbnail": None,
                       "body": body(title, sdesc, stags, yt, synthetic, privacy)})
         findings += field_findings(sid, title, sdesc)
+    findings += posting_findings(pub)  # BP-47: the posting spread, when the creator has planned the dates
     if only:
         items = [i for i in items if i["id"] in only]
         findings = [f for f in findings if f["item"] in only]

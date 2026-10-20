@@ -60,6 +60,19 @@ traffic source); correlation is not recorded as cause.
 | early drop (first 30 s) | hook | rewrite the hook spec |
 | mid or late drop | structure, length, pacing | shorten or restructure |
 | QA failures at release | pipeline | fix the stage, not the content |
+
+Re-edit triggers read from Studio after publishing (the thresholds are BP-48's; the Shorts' posting spread is BP-47's, checked
+by `publish/plan.py` on `publish_date`):
+
+| Studio reading | what it says | first action |
+|---|---|---|
+| Intro ("still watching at 30 s") under BP-48's review line | the opening loses them | rework the first 30 s toward BP-48's target (BP-03..BP-05) |
+| a Short's "chose to view" under BP-48's minimum | frame 0 and line 1 | rework the first frame and the hook line (BP-11) |
+| a drop of BP-48's hook points before 3 s | the hook | rewrite the hook, not the body |
+| a steeper mid-curve than the channel's others | pacing | shorten or re-cut the middle (BP-40..BP-42) |
+| a drop in the last 15 % | a late payoff | move the payoff earlier or cut the tail (BP-43) |
+| a Short under 30 s with average view duration under its length | no loop | end on the line that sends them back to frame 0 (BP-44) |
+
 Change one major variable at a time; no conclusion from fewer than three comparable videos; a pattern is retained,
 changed or retired only after that sample, and the specification changes through a new versioned decision (a new D- id)
 while the baseline stays visible. A/B thumbnails use YouTube's own Test and Compare only after the feature is confirmed

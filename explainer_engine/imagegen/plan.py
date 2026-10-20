@@ -120,12 +120,14 @@ def check(plan: dict, doc: dict | None = None) -> list[dict]:
             add("PP-03", it["id"], f"{len(it['refs'])} references; {plan['provider']} takes at most {prov['max_refs']}")
         if not it.get("prompt", "").strip():
             add("PP-04", it["id"], "empty prompt: run `production compile --write` first")
-    # the creator's rule (2026-10-11, CLAUDE.md): Gemini only for reusable channel assets, unless the episode records an exception
+    # PP-05 (D-50 supersedes D-19's "Gemini only for reusable assets"): the creator picks the provider per batch and the
+    # approval is bound to this plan's hash (PP-02), so Gemini on one episode's pictures is allowed; the reusable question
+    # stays a note for the creator, never a refusal.
     if plan["provider"] == "gemini" and not plan.get("reusable"):
         exc = ((doc or {}).get("episode") or {}).get("gemini_exception")
         if not exc:
-            add("PP-05", plan["id"], "Gemini for one episode's pictures: mark the plan reusable (channel assets) or record the "
-                                     "creator's exception in episode.gemini_exception (decision id and cap)")
+            add("PP-05", plan["id"], "Gemini for one episode's pictures (not marked reusable): the creator's provider choice for this "
+                                     "batch is the decision (D-50); say in the approval that it is this episode's spend", "REVIEW")
     if doc is not None:
         from explainer_engine.production import compile as C
         from explainer_engine.production import faces as FACES

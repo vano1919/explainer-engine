@@ -26,27 +26,27 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
 | P-10 | long duration | 7 min | 5-11 | depth without padding | L/P,T | word budget | outside range = REVIEW, not FAIL |
-| P-11 | short duration | 45 s | 25-60 (house) | standalone Shorts; YouTube counts square/vertical videos up to 3 minutes as Shorts (V-25) | L/P,T | script | > 60 s REVIEW (house length), > 180 s FAIL (not a Short) |
+| P-11 | short duration | the length bands of BP-12 | see BP-12 | standalone Shorts; YouTube counts square/vertical videos up to 3 minutes as Shorts (V-25) | L/P,T | script | PV-28 (BP-12 word budget); > 180 s FAIL (not a Short) |
 | P-12 | resolution | 1920x1080 (16:9), 1080x1920 (9:16) | fixed pair | vector art needs no 4K (D-08) | H/F | renderer | ffprobe |
 | P-13 | frame rate | 30, constant | 24, 30 | smooth motion at low cost | M/C | cache key | ffprobe CFR |
 | P-14 | video codec | H.264 High, yuv420p, CRF 18, preset medium, +faststart | CRF 16-23 | quality vs size (D-08) | H/C | disk | ffprobe |
-| P-15 | audio codec | AAC-LC 48 kHz stereo 384 kbps | 192-384 kbps | TMR measured pipeline; YouTube re-encodes | M/C | mix | ffprobe |
+| P-15 | audio codec | AAC-LC stereo, bitrate and sample rate per BP-63 | see BP-63 | YouTube's recommended upload settings (V-26); `assemble.AUDIO_CODEC` is the one export line for the video and the Shorts | H/F | mix | ffprobe |
 | P-16 | container, names | mp4; `<slug>_<yyyymmdd>_<kind>.mp4` | | traceability | H/F | manifest | regex |
 | P-17 | thumbnail | 1280x720 PNG <= 2 MB (re-verify limit) | | packaging (TITLE_THUMBNAIL_SYSTEM) | M/F | thumbnail render | file check |
-| P-18 | captions | sidecar SRT/VTT from word timings; Shorts burned in | | accessibility, silent viewing | M/C | timings | overlap, safe-area, timing +/- 100 ms |
+| P-18 | captions | sidecar SRT/VTT from word timings; Shorts burned in at the reading speed of BP-13 | see BP-13 | accessibility, silent viewing | M/C | timings | overlap, safe-area (BP-29), timing (BP-13) |
 | P-19 | chapters | >= 3, first at 0:00, each >= 10 s (re-verify) | | navigation | M/F | timeline | metadata check |
 | P-20 | publish | manual only, approval record required | | policy, creator rule | H/F | none | no upload code path |
 
 ## 3. Story and script
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
-| P-30 | premise clear by | 10 s long, 3 s Short | | hook (D-07) | L/P | hook spec | editorial checklist |
+| P-30 | premise clear by | the first spoken sentence is the hook (BP-03) and the title's promise is confirmed inside the 30-second contract (BP-04); a Short's hook by BP-11 | see BP-03, BP-04, BP-11 | hook (D-07) | L/P | hook spec | narration_lint, PV-28 |
 | P-31 | first answer by | <= 40 % of runtime | 25-60 % | no withheld payoff | L/P | structure | marker in storyboard |
-| P-32 | words (long) | duration x heard pace (about 1,050 for 7 min) | | budget | M/T | P-52 | +/- 12 % = REVIEW |
+| P-32 | words (long) | duration x the heard pace of BP-01 | see BP-01 | budget | M/T | P-52 | +/- 12 % = REVIEW |
 | P-33 | claim coverage | every factual sentence -> >= 1 claim -> >= 1 source | | honesty (SCRIPTING_SPEC) | H/F | dossier | traceability FAIL |
 | P-34 | uncertainty labels | fact, estimate, interpretation, allegation, speculation | enum | accurate wording | H/F | claim map | enum + wording check |
-| P-35 | sentence length | mostly 8-18 words, variety | | spoken naturalness | M/C | NARRATION guide | metric flag (review) |
-| P-36 | rhetorical questions | <= 1 per section | 0-2 | avoid AI cadence | M/C | | flag |
+| P-35 | sentence length | for the ear: the median and the caps of BP-06, variety | see BP-06 | spoken naturalness | M/C | NARRATION guide | narration_lint N-05 |
+| P-36 | rhetorical questions | <= 1 per section (a house hypothesis: no sourced rule names a rate; the forward-pointing questions follow BP-42) | 0-2 | avoid AI cadence | M/C | | flag |
 | P-37 | filler / cliche list | see NARRATION guide | | review flags | M/C | | flag, never auto-delete |
 | P-38 | CTA policy | none in the body; one line in the description | | trust, inauthentic-content risk (V-01) | M/C | | flag |
 | P-39 | conclusion | one short payoff line, no recap | | | M/C | | flag |
@@ -54,13 +54,13 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 ## 4. Narration and language
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
-| P-50 | TTS route | Kokoro-82M local | (listening test) | zero cost, timings exist (D-12) | M/P | Phase 5 test | blind A/B vs one cloud voice |
-| P-51 | voice | chosen in the Phase 5 test, male or female, warm/clear | Kokoro built-in voices only | rights layer (built-ins only) | L/P | P-50 | listening panel |
-| P-52 | heard pace | 170 wpm | 155-185 | D-49: engagement rises with pace (Guo 2014), 180 wpm best for recall in Rodero 2020, comprehension holds to ~330 (Murphy 2022); Episode 1 read at 120-140 and felt slow | M/P | voice | measured post-TTS, +/- 10 % |
-| P-53 | pauses | sentence 0.35 s, paragraph 0.7 s, before a reveal 0.9 s | 0.2-1.2 s | rhythm | L/C | | measured |
+| P-50 | TTS route | ElevenLabs (D-39, D-52; the voice is chosen per episode in `production_script.json`, D-43) | - | Kokoro-82M (D-12) was the free draft route and is retired; its timings code is a leftover | H/F | skill `elevenlabs-voice` | the PreToolUse hook (`standards/hook.py`) |
+| P-51 | voice | an ElevenLabs library voice, never a clone, never a famous person (D-39); `voice_id` per episode (D-43, voice-caster) | library voices | rights (D-38, ES-11) | H/F | P-50 | rulebook ES-11 |
+| P-52 | heard pace | target and band per BP-01 (a hypothesis: five studies agree on the norm, one source type) | see BP-01 | engagement rises with pace; Episode 1 read at 120-140 and felt slow (D-49) | M/P | voice | measured on the finished read (scorecard check 1, PV-12) |
+| P-53 | pauses | sentence 0.35 s, paragraph 0.7 s (house, measured by `pause_pad`); no pause before a punch line or a reveal: BP-10 | see BP-10 | rhythm | L/C | | measured |
 | P-54 | pronunciation | `pronunciations.json` (project) over speakable() defaults | | numbers, units, acronyms | M/C | TTS | ASR word error check |
-| P-55 | numbers | spoken form decided in the script, never left to TTS | | accuracy | H/F | script | lint: digits in narration need a spoken form |
-| P-56 | sample rate | 24 kHz native, resampled to 48 kHz | | Kokoro output | H/F | | sample-rate check |
+| P-55 | numbers | spoken form decided in the script, never left to TTS; one numeral a sentence, rounded, and shown on screen when it matters (BP-08) | see BP-08 | accuracy | H/F | script | narration_lint N-13 |
+| P-56 | sample rate | the read as ElevenLabs delivers it, resampled to the delivery rate of BP-63 | see BP-63 | the mix and the export run at one rate (the 24 kHz line was Kokoro's, retired by D-39) | H/F | | sample-rate check |
 
 ## 5. Visual and assets
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
@@ -78,36 +78,36 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
 | P-70 | shot length | superseded by UR-11 (A 5-7 s, B 3.5-5 s, C 2.5-4 s) and UR-12 (cuts in pauses) | | creator's style, D-37 (SE-20 rejected a universal rate) | M/F | narration | `edit/shot_rules.py` |
-| P-71 | label hold | >= 1.5 s + 0.3 s per word | | reading | M/C | | validator |
+| P-71 | label hold | >= 1.5 s + 0.3 s per word (satisfies the floor of BP-27, which adds the cap) | see BP-27 | reading | M/C | | validator (motion_lint) |
 | P-72 | simultaneous movers | <= 3 | 1-5 | clutter ceiling | M/C | | REVIEW above |
-| P-73 | easing | in-out cubic; entrances out-back, overshoot about 1.1, 12-18 frames | enum | natural motion | M/C | vocabulary | enum |
+| P-73 | easing | in-out cubic; entrances out-back, overshoot about 1.1, 12-18 frames; every camera move eased per BP-23 | enum, see BP-23 | natural motion | M/C | vocabulary | enum, motion_lint |
 | P-74 | lip-sync lead | 1 frame (30 ms) | 0-2 | matches TMR viseme finding | M/C | timings | sync test |
 | P-75 | idle motion | blink every 4-8 s in silence, slow sway | | life without distraction | M/C | visemes | seeded, deterministic |
-| P-76 | transitions | cut, wipe, lid-open reveal; max 1 per scene | enum | purposeful change | M/C | | enum |
+| P-76 | transitions | hard cut by default; a dissolve only on a period boundary (BP-31); wipe and lid-open reveal retired | see BP-31 | purposeful change | M/C | | motion_lint |
 | P-77 | missing-asset fallback | named placeholder, job stops at QA | | never silent | H/F | | QA FAIL |
 | P-78 | reduced motion | static hold variant noted per scene where practical | | accessibility | L/C | | note present |
 
 ## 7. Audio
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
-| P-90 | integrated loudness | -14 LUFS | PASS -15 to -13, REVIEW -16 to -15, FAIL outside -16 to -13 | house target (D-08, measured on Episode 1); not a YouTube requirement: the upload settings page names no loudness (V-26) | M/C | mix | `qa/targets.py` (scorecard, mixer, Shorts) |
-| P-91 | true peak | <= -1.0 dBTP (limiter at -1.5) | | codec headroom | H/F | mix | `qa/targets.py` FAIL above -1.0 |
-| P-92 | voice shaping | de-ess, gentle low-cut, soft limit (TMR shape_voice) | | clarity | M/C | | level audit |
-| P-93 | music | one state per scene group; voice at least 14 dB (RMS) above bed and music while speaking; attack 50 ms, release 400 ms | | speech first (D-18); the 10 dB of the first draft was reconciled up to the scorecard's 14 dB | M/C | | `qa/targets.gap_verdict` |
-| P-94 | SFX | each event has purpose clarify/humour/transition; peak <= voice peak - 3 dB | | not on every movement | M/F | event contract | schema + level audit |
-| P-95 | silence | no unintended silence > 1.5 s (long-form), > 0.8 s (Shorts) | | pacing | M/C | | audio scan |
-| P-96 | fades | 20 ms edge fades on clips; music 1 s in, 2 s out | | no clicks | M/C | | click check |
+| P-90 | integrated loudness | target, PASS band and allowed band per BP-50 | see BP-50 | inferred (YouTube's upload settings page names no loudness, V-26); measured on the delivered file with the verdict next to the number | M/C | mix | `qa/targets.py` (`assemble`, `shorts`, scorecard) |
+| P-91 | true peak | ceiling and limiter per BP-50 | see BP-50 | codec headroom | H/F | mix | `qa/targets.py` FAIL above the ceiling |
+| P-92 | voice shaping | gentle low-cut, light de-ess inside the band and depth of BP-60, soft limit; pauses are room tone, never zeros (BP-60) | see BP-60 | clarity | M/C | | `audio/pause_pad`, level audit |
+| P-93 | music | one state per scene group (BP-62); under speech the music, the bed and their sum keep the LU floors of BP-52; the duck is a dip with the depth, attack, release and hold of BP-53 | see BP-52, BP-53 | speech first (D-18) | M/C | | `qa/targets.gap_verdict`, `audio/duck.py` |
+| P-94 | SFX | each event has a purpose from BP-55 (clarify, humour, transition, sync); at most one beat in two carries an effect; peak <= voice peak - 3 dB | see BP-55 | not on every movement | M/F | event contract | schema + `audio/layers.py` |
+| P-95 | silence | no unintended silence > 1.5 s (long-form), > 0.8 s (Shorts): a house hypothesis with no scanner yet; an inserted pause is room tone (BP-60) | | pacing | M/C | | `audio/dropouts.py` (true zeros only) |
+| P-96 | fades | 20 ms edge fades on clips; music fades per BP-62 | see BP-62 | no clicks | M/C | | click check |
 | P-97 | missing audio | job stops at QA, never a silent video | | | H/F | | QA FAIL |
-| P-98 | narrator voice | a Kokoro base voice + up to 3 blended voices (together <= 0.5), pitch -2..+2 semitones, tone shelves, `rvc: null` | blend sum <= 0.5; pitch +/-2 st | one narrator sound for the channel; no real person is imitated (D-38) | M/P | voice spec (`explainer_engine/schemas/voice_spec.schema.json`) | schema + `voice_layer.validate_voice_spec` |
+| P-98 | narrator voice | superseded by D-39 / D-52: an ElevenLabs library voice per episode (`voice_id` in `production_script.json`, D-43); the Kokoro blend spec (`voice_spec.schema.json`, `rvc: null`) is kept only for old drafts | - | no real person is imitated (D-38) | H/F | voice spec | rulebook ES-11 |
 | P-99 | timing contract of the alteration | length change <= 1 frame (33 ms); word-onset lag <= 20 ms | | the cuts are placed on the base render's pauses (UR-12) | M/F | base render | `voice_layer.timing_preserved`; failing audio is not used |
 
 ## 8. Shorts, publishing and cost
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
 | P-100 | Shorts per long-form | 2-3, only if the material supports distinct ideas | 0-3 | D-05 | M/P | dossier | each passes standalone checklist |
-| P-101 | Short loudness | as P-90 and P-91 | | consistency (the Shorts renderer used -15 LUFS until 2026-10-17) | M/C | | `qa/targets.py` profile `short` |
-| P-102 | Short safe area | keep bottom 420 px and right 140 px clear of text | | platform UI overlays (TMR measured) | M/C | | safe-area check |
-| P-103 | Short captions | phrase captions <= 2 lines x 32 chars, current word lit | | silent viewing | M/P | timings | check |
+| P-101 | Short loudness | integrated target, true peak and the short-term cap per BP-61; no loudness-range gate | see BP-61 | short-form rules (EBU R 128 s1); measured on the FINAL Short, after cues and music | M/C | | `qa/targets.py` profile `short`, `production/shorts.py` |
+| P-102 | Short safe area | the ad safe zone of BP-29 | see BP-29 | platform UI overlays | M/C | | safe-area check |
+| P-103 | Short captions | phrase captions in blocks, at the reading speed of BP-13 | see BP-13 | silent viewing | M/P | timings | check |
 | P-104 | analytics snapshots | 48 h, 7 d, 28 d | | like-for-like comparison | M/C | | record present |
 | P-110 | Gemini cap | $10 total; per-call-batch `max_usd` default $1 | | creator budget | H/F | cost ledger | estimate before call; refuse above |
 | P-111 | vidIQ cap | 200 credits; ledger before each call | | creator budget | H/F | | ledger entry first |

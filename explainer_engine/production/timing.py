@@ -16,13 +16,18 @@ import difflib
 from explainer_engine.audio.scribe_words import norm
 from explainer_engine.edit import board as B
 from explainer_engine.production import accents as ACC, beats as BEATS, continuity, script as S
+from explainer_engine.standards import sourced_rules as SR
 
 BED_DEFAULT_DB = -15.0  # a bed with no gain sits at the D-49 cap (audio/layers.MAX_BED_DB); it was -13 and FAILed the cap
 
 MIN_TEXT_MATCH = 0.97
 BUBBLE_LEAD = B.BUBBLE_LEAD
 BED_LEAD, BED_FADE = 0.4, 1.5
-SFX_OFFSET, SFX_MAX = -0.05, 1.0
+# BP-54: a picture-synced sound lands on its frame and never early (the ear forgives late more than early): the default
+# offset is 0 (the word's first frame), and a scripted ``offset_s`` is held inside the sourced window (early_max_ms before,
+# late_max_ms after). The old -0.05 s lead sat past the early limit.
+SFX_OFFSET, SFX_MAX = 0.0, 1.0
+SFX_EARLY_MAX, SFX_LATE_MAX = SR.T("BP-54", "early_max_ms") / 1000, SR.T("BP-54", "late_max_ms") / 1000
 
 
 def word_map(toks: list[dict], words: list[dict]) -> tuple[list[int | None], float]:
@@ -167,7 +172,8 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             j = at_word(e["at"], lo, hi, f"{seg['id']} sfx {e['sound']}")
             if j is None:
                 continue
-            st = max(0.0, words[wi(j)]["s"] + e.get("offset_s", SFX_OFFSET))
+            off = min(max(float(e.get("offset_s", SFX_OFFSET)), -SFX_EARLY_MAX), SFX_LATE_MAX)  # BP-54 window
+            st = max(0.0, words[wi(j)]["s"] + off)
             en = min(duration, st + e.get("max_s", SFX_MAX))
             sfx.append({"sound": e["sound"], "segment": seg["id"], "at": e["at"], "gain_db": e.get("gain_db", -18),
                         "start": round(st, 3), "end": round(en, 3), "start_frame": _frames(st, fps), "end_frame": _frames(en, fps)})

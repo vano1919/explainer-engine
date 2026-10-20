@@ -332,6 +332,10 @@ def brief(rules: dict, role: str) -> str:
              f"Question: {ident['central_question']}", f"Angle: {ident['unique_angle']}", f"Tone: {ident['tone']}",
              f"Mechanism: {rules['creative']['mechanism']}", "", "## Must"]
     lines += [f"- {m}" for m in ex["must"]]
+    if role in ("script", "research", "metadata", "qa"):  # BP-15 (the creator, 2026-10-19): sources are never spoken
+        lines.append("- Sources and labels (official / reported / speculation) live in the claim map and the description; the "
+                     "narration never reads a source, a release date, a price or a feature list out loud (BP-15, "
+                     "narration_lint N-14)")
     for key in ("inputs", "outputs", "machine_checks", "human_review", "fallbacks"):
         if ex.get(key):
             lines += ["", f"## {key.replace('_', ' ').capitalize()}"] + [f"- {x}" for x in ex[key]]

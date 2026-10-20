@@ -12,9 +12,9 @@ defaults to pass. A deterministic FAIL cannot be overridden by an assertion.
 | Q-T03 | corrupt or truncated output | ffprobe decodes whole file |
 | Q-T04 | black, blank or frozen frames | none beyond declared holds |
 | Q-T05 | missing scene, asset, transition | manifest equals render log |
-| Q-T06 | A/V sync | scene starts within +/- 1 frame of anchors; SFX within 1 frame |
+| Q-T06 | A/V sync | scene starts within +/- 1 frame of anchors; a picture-synced sound inside the window of BP-54 (never early) |
 | Q-T07 | silence, clipping, loudness, true peak | P-90, P-91, P-95 |
-| Q-T08 | voice-to-music gap while speaking | >= 14 dB (P-93) |
+| Q-T08 | voice-to-background gap while speaking | the LU floors of BP-52 on the stems (music, bed, their sum) |
 | Q-T09 | captions | no overlap, <= 2 lines, timing +/- 100 ms, inside safe area |
 | Q-T10 | text safe margins and label size | P-64, 10 % margins |
 | Q-T11 | palette and font lint of every SVG and frame text | tokens only |
@@ -24,8 +24,8 @@ defaults to pass. A deterministic FAIL cannot be overridden by an assertion.
 | Q-T15 | job completeness | no stage RUNNING or FAILED |
 | Q-T16 | licence register covers every font, SFX and music file | no unknown |
 | Q-T17 | the edit follows the [Universal Rule Base](UNIVERSAL_RULE_BASE.md) | `edit/shot_rules.check_shots`: 0 FAIL; REVIEWs answered |
-| Q-T18 | the narration WAV keeps the base render's timings (D-38) | P-99: length delta <= 33 ms, lag <= 20 ms; `voice_report.json` says `used: altered` |
-| Q-T19 | export matches YouTube's recommended upload settings (V-26) | MP4 with the index at the front, H.264 High progressive, AAC-LC 48 kHz stereo 384 kbps, BT.709; frame rate as rendered |
+| Q-T18 | retired with Kokoro (D-39 / D-52): no alteration layer runs on an ElevenLabs read, so no `voice_report.json` is expected | P-99 stays for old drafts only |
+| Q-T19 | export matches YouTube's recommended upload settings (V-26) | MP4, H.264 High progressive, BT.709, frame rate as rendered; audio per BP-63 (`assemble.AUDIO_CODEC`) |
 
 ## Editorial QA (a human or a reviewing Claude session; an LLM cannot establish truth by assertion)
 | ID | Question |
@@ -70,7 +70,8 @@ Free and deterministic; it says what is missing or contradicts a rule, the decis
 | PC-05 | a Short is at most 180 s |
 | PC-06 | title at most 100 and description at most 5,000 characters |
 | PC-07 | a source link in the description, the mid-roll decision and the advertiser self-certification recorded (REVIEW) |
-| PC-08 | approval #2 recorded (who, which message); without it nothing is uploaded (REVIEW; invariant 4) |
+| PC-08 | approval #2 recorded (who, which message); without it nothing is uploaded (FAIL; invariant 4; `publish stage` blocks on it) |
+| PC-09 | the episode's gates have run: the rulebook's `final_qa` stamp passes (`standards gate`) and `scorecard.json` (the seven-point test, `qa/scorecard <folder>`) has no FAIL; missing means not run and blocks (FAIL) |
 
 **Packaging review (Claude, in the session, before approval #2):** read the title, the thumbnail and the transcript of the
 first 30 s together and answer in writing: does the opening deliver what the title and thumbnail promise (Help 16559650), is

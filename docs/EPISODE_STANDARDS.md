@@ -70,6 +70,12 @@ dependencies (ES-04).
 
 ## 4. How the hard questions are handled (guidance for the agent; contextual, never keyword rules)
 
+**4.0 Sources are never spoken (BP-15, the creator 2026-10-19).** A rule that asks for a labelled source (official / reported /
+speculation / inference, ES-19) is satisfied in the claim map and the video description, never by the narration reading the
+source, a release date, a price or a feature list out loud; `rulebook.brief` tells the script, research, metadata and qa roles
+so, and `narration_lint` N-14 flags press-release lines. This supersedes the source-citing wording older rulebooks carried
+(ER-07 / RK-08 / RK-16 / RR-10 / SR-04).
+
 **4.1 Public and historical figures.** Not prohibited subjects. Napoleon fighting a dragon, Caesar meeting a robot or
 Einstein debating an invented scientist are obviously fictional and fully animated: no disclosure is required for that (V-13),
 and the channel already uses named historical caricatures (D-40, RIGHTS_AND_FAIR_USE). The agent assesses the treatment:

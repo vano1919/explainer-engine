@@ -19,7 +19,8 @@ def test_zoom_continues_on_the_same_picture():
 
 
 def test_zoom_past_the_cap_eases_out_not_jumps():
-    shots = [shot(1, "a", 1.0, 1.24)] + [shot(2 + k, "a", 1.0, 1.06) for k in range(3)]
+    """ZMAX is BP-20's scale_max (1.15 since 2026-10-19; it was 1.25): a push that reaches it eases out, never jumps."""
+    shots = [shot(1, "a", 1.0, continuity.ZMAX - 0.01)] + [shot(2 + k, "a", 1.0, 1.06) for k in range(3)]
     continuity.chain(shots)
     assert continuity.findings(shots) == []
     assert all(s["render_motion"]["z1"] <= continuity.ZMAX for s in shots)
@@ -56,10 +57,11 @@ def test_retime_shortens_by_the_rate(tmp_path):
     src = tmp_path / "s.mp4"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc=d=4:s=160x90:r=10", "-f", "lavfi", "-i",
                     "sine=f=300:d=4", "-shortest", str(src)], check=True)
-    out = speed.retime(src, tmp_path / "o.mp4", 1.15)
+    rate = speed.MAX_RATE  # BP-02: the ceiling is the fastest legal rate
+    out = speed.retime(src, tmp_path / "o.mp4", rate)
     d = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=nw=1:nk=1", str(out)],
                              capture_output=True, text=True).stdout)
-    assert d == pytest.approx(4 / 1.15, abs=0.15)
+    assert d == pytest.approx(4 / rate, abs=0.15)
 
 
 def test_camera_rests_at_a_cut_to_another_picture_and_runs_on_inside_one():

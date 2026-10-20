@@ -6,7 +6,7 @@ Voice route and parameters: P-50 to P-56 in [VIDEO_PARAMETER_SPEC](VIDEO_PARAMET
 A knowledgeable person explaining something interesting to a friend: warm, clear, confident without shouting, a little
 dry. More conversational than a documentary, less hyped than a trailer. Language: American-neutral English. The voice is
 chosen by a blind listening test (Phase 5) on a realistic passage that includes questions, numbers, technical terms, a
-joke and a long explanatory sentence, not on a showcase sentence. Built-in Kokoro voices only (no cloning, ever).
+joke and a long explanatory sentence, not on a showcase sentence. ElevenLabs library voices only (D-39; no cloning, ever).
 
 ## How the script should read
 - Contractions, active voice, direct address ("you"), concrete analogies, one idea per sentence.
@@ -21,7 +21,7 @@ joke and a long explanatory sentence, not on a showcase sentence. Built-in Kokor
 Generic openers and closers ("have you ever wondered", "in today's video", "let's dive in", "so there you have it");
 overused devices ("imagine", "here's the thing", "but here's the twist", "buckle up"); empty intensifiers and unsupported
 superlatives ("mind-blowing", "insane", "incredible", "the most important ever", "you won't believe"); more than two
-rhetorical questions in a section; repeated sentence openings (three in a row); sentences over 28 words; stacked
+rhetorical questions in a section; repeated sentence openings (three in a row); sentences over the caps of BP-06; stacked
 clauses; a closing recap that restates the video; a begging call to action; keyword stuffing; phrases that appear in
 a known competitor's script (checked by the creator's reference notes, never by copying). The detector reuses the
 negation-aware approach of the TMR lexicons (copied in Phase 6, [PROVENANCE](PROVENANCE.md)) so "never insane" is not
@@ -30,10 +30,10 @@ flagged like "insane".
 ## Pronunciation and delivery
 `speakable()` (copied in Phase 5) expands acronyms, numbers and years; project pronunciations live in a JSON file that
 wins over defaults. After rendering, an ASR word-error check (optional faster-whisper) flags misread terms for a human
-ear. Delivery uses the lively preset family (about 155 wpm heard, short pauses) rather than TMR's calm presets; the
-numbers are P-52/P-53 and are verified by measurement after synthesis.
+ear. Delivery is lively (the heard pace of BP-01, short pauses) rather than TMR's calm presets; the numbers are
+P-52/P-53 and are verified by measurement on the finished read.
 
 ## Failure and fallback
-If the chosen voice mispronounces a term the pronunciation file cannot fix, change the wording. If Kokoro fails the
+If the chosen voice mispronounces a term the pronunciation file cannot fix, change the wording. If the chosen voice fails the
 listening test, propose a paid voice with its cost and a monthly line item for approval; a cloud TTS is never adopted
 silently. Voice consistency: one voice per channel, set once in the channel profile.

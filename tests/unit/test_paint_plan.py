@@ -106,11 +106,14 @@ def test_an_edited_plan_loses_its_approval(episode, capsys):
     assert "PP-02" in capsys.readouterr().out
 
 
-def test_gemini_for_episode_pictures_needs_a_recorded_exception():
+def test_gemini_for_episode_pictures_is_the_creators_call_with_a_note():
+    """D-50 (supersedes D-19's refusal): the creator picks the provider per batch; PP-05 is a REVIEW note, never a FAIL."""
     doc = mini()
     items = [{"id": "cold_hands", "prompt": "p", "refs": []}]
     plan = P.make("B1", "mini", items, provider="gemini", model=MODEL, size=SIZE, purpose="x")
-    assert "PP-05" in {f["rule"] for f in P.check(plan) if f["severity"] == "FAIL"}
+    found = P.check(plan)
+    assert "PP-05" in {f["rule"] for f in found if f["severity"] == "REVIEW"}
+    assert "PP-05" not in {f["rule"] for f in found if f["severity"] == "FAIL"}
     doc["episode"]["gemini_exception"] = {"decision": "D-44", "cap_usd": 6.0}
     assert "PP-05" not in {f["rule"] for f in P.check(plan, compiled_of(doc))}
     assert "PP-05" not in {f["rule"] for f in P.check(P.make("B2", "mini", items, provider="gemini", model=MODEL, size=SIZE,

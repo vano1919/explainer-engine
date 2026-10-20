@@ -6,8 +6,10 @@ every frame is finished by ``assemble.finish_frame`` (face focus, accents, close
 
     python -m explainer_engine.production.shorts <script.json> --id SH01 --audio <read.mp3> --out <dir> [--pics DIR ...] [--tempo 1.05]
 
-Free (local Whisper + ffmpeg). ``--tempo`` speeds the read with ffmpeg's pitch-preserving atempo; the creator allowed at most
-about 8 %, and the timbre check (``audio/voice_check``) runs on the result: on any drift the original pace is used.
+Free (local Whisper + ffmpeg). ``--tempo`` speeds the read with ffmpeg's pitch-preserving atempo, at most BP-02's ceiling
+(the creator's own; docs/SOURCED_RULES.md), and the timbre check (``audio/voice_check``) runs on the result: on any drift the
+original pace is used. The read's leading silence is trimmed so the hook is spoken from the first second (BP-11); the report
+carries the hook timing (BP-11), the caption reading speed (BP-13) and the caption safe zone (BP-29).
 """
 
 from __future__ import annotations
@@ -28,11 +30,17 @@ from explainer_engine.production import beats as BEATS
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
 from explainer_engine.qa import short_format as SF, targets
+from explainer_engine.standards import sourced_rules as SR
 
 W, H = 1080, 1920  # the frame rate is the episode's (timing.time_script)
-MAX_TEMPO = 1.08
+MAX_TEMPO = SR.T("BP-02", "max_tempo")  # BP-02: the creator's ceiling on a Short's speed-up
+DEFAULT_TEMPO = SR.T("BP-02", "rates")[0]  # BP-02: the first offered rate is the default --tempo
+LEAD_SILENCE_KEEP_S = 0.1  # BP-11: the leading silence of the read is trimmed to about this, so the hook starts by first_word_by_s
+FIRST_WORD_BY_S = SR.T("BP-11", "first_word_by_s")
 SCREEN = "sc_"  # production/select_screen.py's stat cards: text across the whole 16:9 width, never cropped to 9:16
 SCREEN_MARGIN = 0.03  # share of the Short's width left on each side of a fitted card
+CAP_FONT_PX, CAP_MARGIN_LR, CAP_MARGIN_V = 76, 90, 430  # the ASS caption style (unchanged; BP-29 only reports how it sits)
+CAP_WORDS_PER_BLOCK = 3  # words per caption block (BP-13 allows up to block_words_max)
 
 
 def narration(short: dict) -> str:
@@ -43,18 +51,98 @@ def _run(cmd: list[str]) -> None:
     subprocess.run(cmd, check=True)
 
 
+def audio_chain(tempo: float) -> str:
+    """The ffmpeg audio filter of the Short's read: leading silence trimmed to about LEAD_SILENCE_KEEP_S (BP-11: the hook is
+    spoken from the first second), the tempo (BP-02), then the shared loudness target."""
+    trim = f"silenceremove=start_periods=1:start_threshold=-45dB:start_silence={LEAD_SILENCE_KEEP_S},"
+    return trim + (f"atempo={tempo}," if tempo != 1.0 else "") + targets.loudnorm("short")
+
+
 def prepare_audio(src: Path, out: Path, tempo: float) -> tuple[Path, list[dict]]:
-    """Levelled mono wav (tempo applied) and a timbre report; falls back to the original pace on drift."""
-    assert 1.0 <= tempo <= MAX_TEMPO, f"tempo above {MAX_TEMPO} is not allowed"
+    """Levelled mono wav (leading silence trimmed, tempo applied) and a timbre report; falls back to the original pace on drift."""
+    assert 1.0 <= tempo <= MAX_TEMPO, f"tempo above {MAX_TEMPO} is not allowed (BP-02)"
     wav = out / "short.wav"
-    chain = f"atempo={tempo}," if tempo != 1.0 else ""
-    _run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", chain + targets.loudnorm("short"), "-ac", "1", "-ar", "48000", str(wav)])
+    _run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", audio_chain(tempo), "-ac", "1", "-ar", "48000", str(wav)])
     pcm, sr = voice_layer.read_wav(wav)
     found, _ = voice_check.check(np.asarray(pcm, dtype=float), sr)
     drift = [f for f in found if f.get("severity") in ("FAIL", "REVIEW")]
     if tempo != 1.0 and drift:
-        _run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", targets.loudnorm("short"), "-ac", "1", "-ar", "48000", str(wav)])
+        _run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-af", audio_chain(1.0), "-ac", "1", "-ar", "48000", str(wav)])
     return wav, drift
+
+
+def hook_timing(words: list[dict]) -> dict:
+    """BP-11: the first word starts within FIRST_WORD_BY_S of frame 0 (FAIL otherwise; the render stops)."""
+    start = float(words[0]["s"]) if words else None
+    ok = start is not None and start <= FIRST_WORD_BY_S
+    return {"first_word_s": None if start is None else round(start, 2), "limit_s": FIRST_WORD_BY_S,
+            "severity": "PASS" if ok else "FAIL",
+            "detail": "the hook is spoken from the first second (BP-11)" if ok else
+            f"the first word starts at {start} s, after {FIRST_WORD_BY_S} s (BP-11): trim the read or re-cut the hook"}
+
+
+def caption_blocks(words: list[dict]) -> list[dict]:
+    """The caption blocks as ``ass_captions`` burns them: CAP_WORDS_PER_BLOCK words or up to a sentence end, each shown from
+    its first word until the next block starts (the last one 0.4 s past its last word, every block at least 0.2 s)."""
+    lines, cur = [], []
+    for w in words:
+        cur.append(w)
+        if len(cur) >= CAP_WORDS_PER_BLOCK or w["w"].rstrip("\"'”’)")[-1:] in ".?!":
+            lines.append(cur)
+            cur = []
+    if cur:
+        lines.append(cur)
+    rows = []
+    for k, ln in enumerate(lines):
+        end = lines[k + 1][0]["s"] if k + 1 < len(lines) else ln[-1]["e"] + 0.4
+        rows.append({"start": ln[0]["s"], "end": max(end - 0.02, ln[0]["s"] + 0.2), "text": " ".join(x["w"] for x in ln).upper(),
+                     "words": len(ln)})
+    return rows
+
+
+def caption_report(words: list[dict]) -> dict:
+    """BP-13 (hypothesis, REVIEW only): reading speed and block sizes of the burned captions."""
+    cps_max, (block_lo, block_hi) = SR.T("BP-13", "cps_max"), SR.T("BP-13", "block_s")
+    words_max, s_per_word = SR.T("BP-13", "block_words_max"), SR.T("BP-13", "s_per_word_min")
+    blocks = caption_blocks(words)
+    if not blocks:
+        return {"blocks": 0, "severity": "REVIEW", "detail": "no caption blocks (BP-13)"}
+    cps = [len(b["text"]) / max(b["end"] - b["start"], 1e-6) for b in blocks]
+    outside = [b for b in blocks if not block_lo <= b["end"] - b["start"] <= block_hi]
+    fast = [b for b in blocks if (b["end"] - b["start"]) / b["words"] < s_per_word]
+    too_many = [b for b in blocks if b["words"] > words_max]
+    why = []
+    if max(cps) > cps_max:
+        why.append(f"{sum(c > cps_max for c in cps)} block(s) over {cps_max} characters per second (max {max(cps):.0f})")
+    if fast:
+        why.append(f"{len(fast)} block(s) under {s_per_word} s per word")
+    if outside:
+        why.append(f"{len(outside)} block(s) shown outside {block_lo}-{block_hi} s")
+    if too_many:
+        why.append(f"{len(too_many)} block(s) over {words_max} words")
+    return {"blocks": len(blocks), "cps_max": round(max(cps), 1), "words_per_block_max": max(b["words"] for b in blocks),
+            "severity": "REVIEW" if why else "PASS",
+            "detail": ("; ".join(why) + " (BP-13)") if why else "captions read at adult subtitle speed (BP-13)"}
+
+
+def safe_zone_report() -> dict:
+    """BP-29 (hypothesis, REVIEW only): where the burned captions and a fitted stat card sit against the 1080 x 1920 ad safe
+    zone. Reports only; the rendered margins are unchanged."""
+    (sx0, sx1), (sy0, sy1) = SR.T("BP-29", "safe_x_px"), SR.T("BP-29", "safe_y_px")
+    cap = [CAP_MARGIN_LR, H - CAP_MARGIN_V - CAP_FONT_PX, W - CAP_MARGIN_LR, H - CAP_MARGIN_V]  # one caption line, bottom-centred
+    card_w = round(W * (1 - 2 * SCREEN_MARGIN))
+    card = [(W - card_w) // 2, None, (W - card_w) // 2 + card_w, None]
+    why = []
+    if cap[0] < sx0 or cap[2] > sx1:
+        why.append(f"caption box x {cap[0]}-{cap[2]} px leaves the safe x {sx0}-{sx1}")
+    if cap[1] < sy0 or cap[3] > sy1:
+        why.append(f"caption box y {cap[1]}-{cap[3]} px leaves the safe y {sy0}-{sy1}")
+    if card[0] < sx0 or card[2] > sx1:
+        why.append(f"a fitted stat card spans x {card[0]}-{card[2]} px, past the safe x {sx0}-{sx1}")
+    return {"caption_box_px": cap, "card_x_px": [card[0], card[2]], "safe_x_px": [sx0, sx1], "safe_y_px": [sy0, sy1],
+            "severity": "REVIEW" if why else "PASS",
+            "detail": ("; ".join(why) + " (BP-29): captions, labels and cards inside the ad safe zone") if why
+            else "captions and cards inside the ad safe zone (BP-29)"}
 
 
 def short_words(short: dict, wav: Path, out: Path) -> dict:
@@ -182,20 +270,10 @@ def ass_captions(words: list[dict], path: Path) -> None:
     head = ("[Script Info]\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\n\n[V4+ Styles]\n"
             "Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,"
             "ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding\n"
-            "Style: Cap,DejaVu Sans,76,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,6,2,2,90,90,430,1\n\n"
+            f"Style: Cap,DejaVu Sans,{CAP_FONT_PX},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,6,2,2,"
+            f"{CAP_MARGIN_LR},{CAP_MARGIN_LR},{CAP_MARGIN_V},1\n\n"
             "[Events]\nFormat: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text\n")
-    lines, cur = [], []
-    for w in words:
-        cur.append(w)
-        if len(cur) >= 3 or w["w"].rstrip("\"'”’)")[-1:] in ".?!":
-            lines.append(cur)
-            cur = []
-    if cur:
-        lines.append(cur)
-    rows = []
-    for k, ln in enumerate(lines):
-        end = lines[k + 1][0]["s"] if k + 1 < len(lines) else ln[-1]["e"] + 0.4
-        rows.append(f"Dialogue: 0,{t(ln[0]['s'])},{t(max(end - 0.02, ln[0]['s'] + 0.2))},Cap,,0,0,0,,{' '.join(x['w'] for x in ln).upper()}")
+    rows = [f"Dialogue: 0,{t(b['start'])},{t(b['end'])},Cap,,0,0,0,,{b['text']}" for b in caption_blocks(words)]
     path.write_text(head + "\n".join(rows) + "\n", encoding="utf-8")
 
 
@@ -204,6 +282,10 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
     out.mkdir(parents=True, exist_ok=True)
     wav, drift = prepare_audio(audio, out, tempo)
     aligned = short_words(short, wav, out)
+    hook = hook_timing(aligned["words"])
+    if hook["severity"] == "FAIL":  # BP-11: a Short whose hook is not spoken from the first second is never handed on
+        (out / "report.json").write_text(json.dumps({"timbre_review": drift, "hook_timing": hook}, indent=1), encoding="utf-8")
+        raise SystemExit(f"{short_id}: {hook['detail']}")
     pcm, sr = voice_layer.read_wav(wav)
     duration = len(pcm) / sr + 0.5
     timed = time_short(doc, short, aligned["words"], duration)
@@ -222,15 +304,28 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
     else:
         fc = "[1:a]anull[a]"
     _run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", f"{fc};[0:v]subtitles={out / 'cap.ass'}[v]", "-map", "[v]", "-map", "[a]",
-          "-t", f"{duration:.2f}", "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", str(final)])
+          "-t", f"{duration:.2f}", "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", *ASM.AUDIO_CODEC, str(final)])  # BP-63: stereo AAC at the delivery bitrate
     rows = [{k: r[k] for k in ("id", "picture", "at", "crop_x", "zoom", "start", "end")} for r in timed["shots"]]
     report = {"duration": round(duration, 2), "timbre_review": drift, "shots": rows, "beats": BEATS.measure(timed),
               "cues": len(timed["audio"]["cues"]), "beat_spots_moved_into_crop": moved,
-              "short_format": SF.check(SF.probe(final))}
+              "hook_timing": hook, "captions": caption_report(aligned["words"]), "safe_zone": safe_zone_report(),
+              "short_format": SF.check(SF.probe(final)),
+              "loudness": measure_final(final)}  # BP-61: measured on the FINAL file, after cues and music, not the voice stem
     (out / "report.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
     if report["short_format"]:  # a file YouTube would not make a Short is never handed on (qa/short_format.py)
         raise SystemExit(f"{short_id}: not a Short: {report['short_format'][0]['detail']}")
+    bad = targets.failures(report["loudness"])
+    if bad:  # BP-61: a Short whose loudness, short-term peak or true peak fails is never handed on
+        raise SystemExit(f"{short_id}: loudness fails {', '.join(bad)} (BP-61); fix the mix, then render again")
     return final
+
+
+def measure_final(final: Path) -> dict:
+    """ebur128 of the finished Short with the short profile's verdicts (BP-61: integrated, max short-term, true peak)."""
+    meas = targets.measure_file(final)
+    out = {k: v for k, v in meas.items() if k in ("lufs", "true_peak", "max_short_term", "lra")}
+    out.update(targets.verdicts(meas, "short"))
+    return out
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -241,7 +336,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--pics", action="append", default=[])
     ap.add_argument("--music")
-    ap.add_argument("--tempo", type=float, default=1.05)
+    ap.add_argument("--tempo", type=float, default=DEFAULT_TEMPO)  # BP-02
     a = ap.parse_args(argv)
     path = Path(a.script)
     doc = S.load(path)

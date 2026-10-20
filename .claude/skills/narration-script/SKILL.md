@@ -38,12 +38,17 @@ any paid read: 0 FAIL, every REVIEW either fixed or answered in one line.
 Common to all four: short sentences, a question at least every 20-30 seconds, a reaction after each reveal, and the
 end of every section pointing at the next problem. None of them sounds like a lecture.
 
-## The rules (N-01..N-10 are checked by `narration_lint`)
+## The rules (N-01..N-14 are checked by `narration_lint`; the numbers live in the sourced rules at the end)
 
 ### Questions
-- **N-01 The hook is a question within 5 s (UR-01), and a yes/no question** so the pitch rises: "Could the greatest
-  minds in history survive the Stone Age?", not "What happens if...". A wh-question is allowed later, short, and
-  usually answered at once ("Why? Well...").
+- **N-01 The first spoken sentence is the hook, in one of the four forms of BP-03**: a question, a cold-open incident
+  line, a claim with a number, or a preview of what the viewer will see; never a greeting, the channel name, "today we
+  look at" or "subscribe" (FAIL). When the hook is a question, make it a yes/no question so the pitch rises: "Could the
+  greatest minds in history survive the Stone Age?", not "What happens if...". A wh-question is allowed later, short,
+  and usually answered at once ("Why? Well...").
+- **N-11 The 30-second contract (BP-04)**: inside the opening words the script confirms the title's promise and opens
+  one named gap (a question or a "but/until" turn); the central answer waits until the last tenth. **BP-05**: no pure
+  background sentence (a date, a definition, a biography line) before that gap sentence; context comes after the tension.
 - **The stressed word of a question goes last**, right before the "?", so the rise lands on it: "...survive the Stone
   AGE?" rather than "...SURVIVE the Stone Age?" when the age is the surprise. One capital at most (N-04).
 - **N-10 No ellipsis inside a question**, and no question longer than about 12 words: both flatten the contour.
@@ -60,15 +65,24 @@ end of every section pointing at the next problem. None of them sounds like a le
 - **Contrast pairs carry melody**: "Not freezing. Damp." / "The hard part isn't making it. It's keeping it."
 
 ### Tone of the what-if episodes (creator 2026-10-16)
-- Scientific what-if: about 40 % drama, 20 % humour, 40 % doubt and curious telling. Say what is established and what is argued ("the evidence says", "we can only reason"); doubt is part of the story, not a disclaimer. Each period ends on the question that opens the next (SR-03).
+- Scientific what-if: about 40 % drama, 20 % humour, 40 % doubt and curious telling (a share of the telling's tone, SR-07;
+  the density and placement of the jokes themselves follow BP-09). Say what is established and what is argued ("the evidence says", "we can only reason"); doubt is part of the story, not a disclaimer. Each period ends on the question that opens the next (SR-03).
 
 ### Pace
 - **N-03 At most one ellipsis per beat.** Each `...` is a held pause; use it only before the one reveal of that beat.
-  For speed use full stops, dashes and fragments.
-- **N-05 Spoken sentences stay under 22 words**; most should be 4-12. Fragments are allowed and fast ("A convex lens.
-  The afternoon sun. One bright point on the grass.").
-- **Contractions always** ("what's", "isn't", "they're"): they speed the read and sound like talk.
-- Target pace for this channel: **170 words a minute** heard, 160-185 accepted (the first read was 140; the v3 test 168; D-49: engagement rises with pace and recall peaks near 180).
+  For speed use full stops, dashes and fragments. The ellipsis is the emphasis rule of BP-10: emphasis comes from the
+  text (one stressed word, one ellipsis, a tag), never from a held silence, and never a pause before a punch line.
+- **N-05 Sentence length follows BP-06** (a REVIEW cap, a FAIL cap and a median for the ear). Fragments are allowed and
+  fast ("A convex lens. The afternoon sun. One bright point on the grass."); one idea per sentence.
+- **N-12 Contractions always** ("what's", "isn't", "they're"): they speed the read and sound like talk; never the -'ve
+  forms (BP-07: the ear hears "would of"). Active voice, subject first, present tense where it is true, and "you" to
+  one listener regularly (BP-07).
+- **N-13 Numbers for the ear (BP-08)**: one numeral per sentence, rounded unless the exact figure is the point, and
+  every number that matters is also shown on screen (ED-10).
+- **N-14 No press-release lines (BP-15)**: never "comes out on", "is now available", "launches on", "according to the
+  official", "as reported by"; the fact lives in the claim map, the line in the story; sources are never spoken.
+- Target pace for this channel: the heard pace of **BP-01** (the first read was 140; the v3 test 168; D-49: engagement
+  rises with pace and recall peaks near the top of the band).
 
 ### Open loops
 - **N-02 Every beat ends on an open loop**: the next question, danger or promise, never a closed fact. Patterns:
@@ -121,11 +135,13 @@ read; with a soft deep voice, carry emotion with short lines, a held `pause_afte
 ## Procedure
 
 1. Write the beat plainly, facts first (claim ids next to each factual sentence in the working notes).
-2. Rewrite for the ear: hook as a yes/no question; short sentences; contractions; one stressed capital per sentence;
-   one question per minute; an open loop at the end of every beat; interjections where a person would say them.
+2. Rewrite for the ear: the hook in one of the four BP-03 forms (a yes/no question rises best); the gap opened inside
+   the 30-second contract (BP-04) with no context before it (BP-05); short sentences; contractions; one stressed
+   capital per sentence; one question per minute; an open loop at the end of every beat; interjections where a person
+   would say them; the first laugh early and beside the fact (BP-09).
 3. Add tags at delivery changes only; write `narration_tts.txt`; derive `narration.txt` (no tags, normal case).
 4. `narration_lint` → 0 FAIL; fix or answer every REVIEW.
-5. Read it aloud at 170 words a minute; anything you stumble on, cut.
+5. Read it aloud at the BP-01 pace; anything you stumble on, cut.
 6. **Paid test read of the first 45-60 s only** (estimate first, log it); the creator listens; then the full read.
 7. After the read: Scribe → `scribe_words` → `pause_pad` → `build_shots` (0 FAIL) → the creator listens again.
 
@@ -139,3 +155,28 @@ Open loops and pattern interrupts in YouTube scripts: https://joyspace.ai/open-l
 https://www.overseeros.com/blog/youtube-storytelling-techniques-6-ways-keep-viewers-watching-longer ·
 vidIQ transcripts read 2026-10-16: aeKrIhktzqU, BTNUK1SCoo4, vS5BmHsuvvk, agRKo_sEb4I (patterns only; no text copied
 into our scripts).
+
+## Sourced rules (docs/SOURCED_RULES.md)
+
+The numbers that bind this skill live only in the registry (`explainer_engine/standards/sourced_rules.json`);
+`narration_lint` reads them from there (N-01, N-03, N-05, N-11..N-14). A number changes there, with its sources, never here.
+
+- BP-03: the first spoken sentence is the hook in one of four forms: a question, a cold-open line of at most 14 words, a claim
+  with a number, or a preview of what the viewer will see; never a greeting, the channel name, "today we look at" or
+  "subscribe" (N-01, FAIL).
+- BP-04: within the first 85 words the script confirms the title's promise and opens one named gap (a question or a
+  but/until turn); the central answer is held back until the last tenth (N-11).
+- BP-05: no pure background sentence (a date, a definition, a biography line) inside the first 85 words before the gap sentence.
+- BP-06: sentences at most 20 words (REVIEW) and never over 25 (FAIL); the median at most 12; fragments allowed (N-05).
+- BP-07: contractions, never would've / could've / should've / might've / must've; passive sentences at most 10 %; "you" or
+  "your" at least once per 100 words; present tense where it is true (N-12).
+- BP-08: at most one numeral per sentence, rounded unless the exact figure is the point; every number that matters is also
+  shown on screen (N-13).
+- BP-09: humour sits beside the fact, never inside the example that explains it; the first laugh inside the first 45 s; at
+  most one verbal joke per 60 s.
+- BP-10: no pause before a punch line; emphasis from the text (one stressed word, an ellipsis, a tag), never a hold over
+  1 second (N-03, N-04).
+- BP-15: no press-release lines ("comes out on", "is coming out on", "will be released on", "is scheduled for release",
+  "releases on", "is now available", "available now", "launches on", "launching on", "officially announced", "according to
+  the official", "the company announced", "press release", "as reported by"): the fact lives in the claim map, the line in
+  the story; sources are cited in the claim map and the description, never spoken (N-14, FAIL).

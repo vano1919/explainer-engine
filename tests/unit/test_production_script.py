@@ -45,7 +45,10 @@ def mini() -> dict:
                        {"text": "Nobody knows, not even the bravest of them, and the cold wind is rising."}],
              "shots": [{"at": "Could", "type": "A", "picture": "valley", "motion": {"kind": "push", "z0": 1.0, "z1": 1.05}},
                        {"at": "Nobody knows.", "type": "C", "insert": True, "motion": {"kind": "hold", "z0": 1.0, "z1": 1.0},
-                        "picture": {"id": "cold_hands", "subject": "cold trembling hands rubbing together in the rising wind at dusk"}}],
+                        "picture": {"id": "cold_hands", "subject": "cold trembling hands rubbing together in the rising wind at dusk"}},
+                       # BP-40: inside the first 30 s something changes at least every 5 s, so the long lines get a reframe
+                       {"at": "and the cold", "type": "A", "picture": "valley", "reuse": "reframe",
+                        "motion": {"kind": "pull", "z0": 1.05, "z1": 1.0}}],
              "audio": {"beds": [{"at": "Could", "sound": "wind"}]}},
             {"id": "S02", "beat": "fire", "light_beat": 6,
              "lines": [{"text": "Then Einstein takes off his glasses."}, {"text": "Oh. A lens."},
@@ -53,7 +56,9 @@ def mini() -> dict:
              "shots": [{"at": "Then Einstein", "type": "B", "picture": "duo", "motion": {"kind": "push", "z0": 1.0, "z1": 1.03},
                         "bubbles": [{"at": "Oh.", "who": "einstein", "text": "Oh. A lens!"}]},
                        {"at": "and fire", "type": "A", "picture": "camp", "reveal": "fire",
-                        "motion": {"kind": "pull", "z0": 1.06, "z1": 1.0}}],
+                        "motion": {"kind": "pull", "z0": 1.06, "z1": 1.0}},
+                       {"at": "and a hundred", "type": "A", "picture": "camp", "reuse": "reframe",
+                        "motion": {"kind": "push", "z0": 1.0, "z1": 1.04}, "accents": [{"kind": "punch", "at": "turn"}]}],
              "audio": {"sfx": [{"at": "One careful", "sound": "pop", "gain_db": -20, "max_s": 0.5}],
                        "beds": [{"at": "and fire", "sound": "crackle"}]}},
         ],
@@ -182,11 +187,11 @@ def test_timing_tiles_frames_exactly_and_lands_on_the_phrases():
     assert shots[0]["start_frame"] == 0 and shots[-1]["end_frame"] == timed["frames"]
     assert all(a["end_frame"] == b["start_frame"] for a, b in zip(shots, shots[1:]))
     assert all(s["cut_legal"] for s in shots)
-    fire = shots[3]
+    fire = shots[4]
     assert fire["text"].startswith("and fire!") and fire["start"] < w["words"][fire["word"]]["s"]
     assert timed["events"]["fire"] == fire["start"]
-    b = shots[2]["bubbles"][0]
-    assert shots[2]["start"] <= b["start"] < b["end"] <= shots[2]["end"]
+    b = shots[3]["bubbles"][0]
+    assert shots[3]["start"] <= b["start"] < b["end"] <= shots[3]["end"]
     beds = timed["audio"]["beds"]
     assert beds[0]["start"] == 0.0 and beds[-1]["end"] == timed["duration"]
     assert not rules(V.check_timed(timed, d))

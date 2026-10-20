@@ -75,7 +75,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-37 | claims resolve (invariant 5, `scripting/claims.py`): every claim id on a line or a Short is a row of the episode's `claim_map.md` (FAIL; ids with no map FAIL); an E or M claim names a link, a line with a number has a claim id, a map nobody cites is a REVIEW. Whether the source says what the line says is the critic's claim pass |
 | PV-38 | the episode is its own (`scripting/distinct.py`, REVIEW): `episode.distinct` names the premise, question, outcome and what is new (mechanism), compared with every approved episode in `docs/episodes.json`; a premise and outcome much like an earlier one is the inauthentic-content case "characters put in the same situation over and over again with the same outcome" (YouTube Help 1311392) |
 | PV-39 | (rulebook-era scripts, `episode.rulebook` set) every segment has a beat `job`; the first is a hook or question, the last a payoff (REVIEW) |
-| PV-40 | (rulebook-era) painted pictures go to Gemini's batch tier on a tier (D-52); `pod_text` FAIL; `premium` needs `tier_reason`; more than 10 % premium REVIEW |
+| PV-40 | (rulebook-era) the creator picks the provider per batch (D-50 supersedes D-52's "Gemini only"): a `pod_text` picture without a paint plan that names it is a REVIEW (`paint plan --provider pod` first); `premium` needs `tier_reason`; more than 10 % premium REVIEW |
 | PV-41 | (rulebook-era) every bed and sound event has a `purpose` (REVIEW) |
 | PV-42 | (rulebook-era) every shot has a `purpose` (REVIEW); a spoken number has a claim id (FAIL, invariant 5) |
 | PV-43 | (always) a picture with engine `canva` must be filler by `imagegen/importance.py` (type A or C, no heroes or people, used once, beat job explanation / emotional_pause / humor / transition; never hook, question, evidence, complication, reveal or payoff, never premium); at most 30 % of an episode's pictures; FAIL while `channel.canva_terms_verified` is false; REVIEW above the free plan's about 20 AI uses. The 4-second shot limit is checked after timing, since a script has no shot lengths yet (D-53) |
@@ -84,6 +84,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-46 | each speaking hero's manner of speech (`scripting/speech.py`, DW-11): `cast.<id>.speech` with `basis` (public with `sources`, or personality), `style`, at least 3 signature `words`; missing is a FAIL on `/2` and a REVIEW on `/1`; a hero saying a word of their own `avoid` list is a REVIEW; on `/3` a hero none of whose signature words appears in their lines is a REVIEW (the manner must be used, not just declared) |
 | PV-47 | the creator picked a variant collage tile first (`scripting/reference_approval.py`, OR-16): every hero drawn in a painted picture (`gemini`/`pod_ref`) or with a face sheet has `cast.<id>.reference`, and a script with painted pictures has `look.environment` (collage, tile, picture in the library, approved_by, approved_at; the collage exists next to the script); missing is a FAIL on `/2` (paint refuses), a REVIEW on `/1` |
 | PV-48 | scenes and dialogue (SC-01..SC-10 in [STORY_ENGINE](STORY_ENGINE.md), `scripting/scene_lint.py`): binds only a `production_script/3` — the scene header and its turn of value, opposing wants, every line addressed to someone present (a hero never answers the narrator), a real exchange, enter late / leave early, no press-release narration, one honesty beat, turn-taking lengths, subtext never spoken; an earlier schema gets no SC findings |
+| PV-52 | the script's planned `voice.pace_wpm` band lies inside the heard-pace band of [BP-01](SOURCED_RULES.md) (one pace band everywhere: the estimated read, the word budgets and the Shorts bands assume it); outside it is a REVIEW that asks why this voice is slower or faster |
 
 ## Paint plans (PP-xx; audit 2026-10-19; `imagegen/plan.py`, `production/paint.py`)
 
@@ -96,7 +97,7 @@ generate images (Anthropic: "an image understanding model only"); it prepares th
 | PP-02 | the plan's hash covers its pictures, prompts, references, provider, model, size and tier; `paint run` needs an approval of exactly that hash in the run ledger (`Run.approve`: who, and which message); an edited plan loses its approval |
 | PP-03 | the provider can take the batch: a listed price for the model and size, no more references than the provider takes |
 | PP-04 | every item has a compiled prompt (`production compile --write`) |
-| PP-05 | Gemini paints one episode's own pictures only with `episode.gemini_exception` (the creator's decision id and cap); otherwise the plan must be `reusable` channel assets (creator's rule 2026-10-11) |
+| PP-05 | Gemini on one episode's own pictures (a plan not marked `reusable` and without `episode.gemini_exception`) is a REVIEW note for the creator, never a refusal: the provider choice per batch is the decision (D-50 supersedes the 2026-10-11 "reusable only" rule) |
 | PP-06 | every item is a picture of the script and its prompt is still the script's prompt |
 | PP-07 | the plan says what the batch is for (REVIEW) |
 

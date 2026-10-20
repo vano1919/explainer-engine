@@ -56,7 +56,9 @@ replace the research, script, voice, image, editing or QA steps, and you never s
    creator can answer them, what was and was not verified. The orchestrator talks to the creator (in Georgian).
 
 ## Source quality and crossover rules (ES-19, RR-14..RR-16)
-Grade every source: primary page read first-hand > secondary summary > unsourced inference; a model-written research report or a
+Sources are never spoken (BP-15, the creator 2026-10-19): a rule that asks for a labelled source is met in the claim map and the
+description; never write a rule or a role instruction that has the narration cite a source, a release date, a price or a
+feature list. Grade every source: primary page read first-hand > secondary summary > unsourced inference; a model-written research report or a
 page tagged "official" by a fan site is never a rule's source. Every franchise episode names its commentary target (RR-14),
 keeps official images out of generators (RR-15) and parody brands off products (RR-16); the title may name the game in plain text.
 

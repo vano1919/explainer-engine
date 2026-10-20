@@ -25,7 +25,8 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
    **Script** (skills `narration-script`, `time-jump-episode`): one `production_script.json`, periods with unequal time,
    hooks at every period end, reuse plan, Shorts block; validators 0 FAIL; ask nothing the creator already answered.
    A dialogue what-if episode (D-48) is written by the writers' room (skill `story-engine`, `docs/STORY_ENGINE.md`): the agents
-   `story-architect` -> `scene-writer` (one segment per call) -> `performance-director` -> `edit-planner` -> `voice-caster` ->
+   `story-architect` -> `scene-writer` (one segment per call) -> `beat-writer` (the visual beats and cues of every line, skill
+   `visual-beats`, D-54; PV-44 fails a /2 script without them) -> `performance-director` -> `edit-planner` -> `voice-caster` ->
    `shorts-writer` -> `script-critic`, each followed by `python -m explainer_engine.scripting.stage_guard <stage> before after`
    and `production validate` (PV-33..PV-36); at most two critic rounds, then creator approval #1.
    Before approval #1: `python -m explainer_engine.qa.engagement <script>`; every weak beat revised or answered.
@@ -36,9 +37,9 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
 6. **Phase 5, pictures**, one batch at a time (PP rules, docs/PRODUCTION_SCRIPT.md): `paint plan` (free; it prints the batch
    priced at every provider), then **ask the creator which provider to use for this batch and wait for the answer**; never
    pick one yourself and never paint ahead of the answer. Record the yes with `paint approve --by <creator> --ref <message>`,
-   then `paint run` (on Gemini, `--tier` picks model and size, D-52). Gemini on episode pictures only with `episode.gemini_exception`. Contact sheet looked at (Claude reads it:
+   then `paint run` (on Gemini, `--tier` picks model and size, D-52). Gemini on one episode's pictures is the creator's call for that batch (D-50; PP-05 is a note, not a refusal). Contact sheet looked at (Claude reads it:
    `qa.sheet_review request` -> open every picture -> `visual_review.json` -> `qa.sheet_review apply`, 0 FAIL; no paid judge); repaint at most twice, each repaint in a new approved plan.
-7. **Phase 6**: sounds, `production time` (0 FAIL), `assemble` (720p preview, then 2K), QA scorecard, engagement gate again before the final render, `standards gate --at final_qa`.
+7. **Phase 6**: sounds, `production time` (0 FAIL), `assemble` (a 720p preview, then the delivery resolution of P-12), `python -m explainer_engine.qa.scorecard <folder>` (gate 8; a FAIL stops), engagement gate again before the final render, `standards gate --at final_qa`.
 8. **Phase 7**: Shorts (9:16 crops around the heroes), metadata drafts (vidIQ within its cap). Nothing is uploaded.
 9. **Report** (OR-08) and commit/push everything to the branch; nothing running.
 

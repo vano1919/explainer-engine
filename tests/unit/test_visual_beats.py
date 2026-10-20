@@ -163,6 +163,7 @@ def test_timing_places_beats_on_their_words_with_offsets_and_shots():
 def test_vb01_gap_while_the_narrator_speaks():
     d = beats_doc()
     d["segments"][0]["lines"][1]["visual_beats"] = d["segments"][0]["lines"][1]["visual_beats"][:1]  # only "not even"
+    d["segments"][0]["shots"] = d["segments"][0]["shots"][:2]  # and no reframe on the line (mini's BP-40 filler)
     found = BEATS.check_timed(_timed(d), d)
     assert _vb(found, "VB-01", "FAIL")
     assert not _vb(BEATS.check_timed(_timed(beats_doc()), beats_doc()), "VB-01", "FAIL")

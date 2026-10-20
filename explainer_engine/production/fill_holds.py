@@ -1,10 +1,12 @@
 """Fill dead holds (RHYTHM-3) with re-framed shots of the picture already on screen.
 
-The creator's rule (2026-10-16): something must change on screen at least every 9 s, and the fix for a long hold is never a faster
-voice. A re-frame is the same picture with a different move (a push in, a pull out, a pan) cut on the start of a spoken line, so
-it costs no new picture. The tool times the script on a read (the real ``words.json`` or the estimated one), finds the first gap
-longer than ``max_gap``, cuts a re-frame at the legal line start nearest the middle of the gap, and repeats until none is left.
-Gaps with no legal cut are returned, never forced.
+The creator's rule (2026-10-16): something must change on screen often enough, and the fix for a long hold is never a faster
+voice. How often is BP-40 (docs/SOURCED_RULES.md, section-aware): inside the hook window a still of at most hook_max_still_s,
+in the body at most body_review_still_s. A re-frame is the same picture with a different move (a push in, a pull out, a pan)
+cut on the start of a spoken line, so it costs no new picture. The tool times the script on a read (the real ``words.json`` or
+the estimated one), finds the first still longer than its section allows (a cut, a bubble or an accent ends a still, so a
+stretch the beats already fill gets no filler), cuts a re-frame at the legal line start nearest the middle of the gap, and
+repeats until none is left. Gaps with no legal cut are returned, never forced.
 """
 
 from __future__ import annotations
@@ -15,7 +17,8 @@ from explainer_engine.edit import board as B
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
 
-MAX_GAP = 8.0   # below the board's 9 s so a read a little slower than measured still passes
+MAX_GAP = B.BODY_REVIEW  # BP-40: the body's limit; inside the hook window B.HOOK_STILL applies (board.still_too_long)
+HOOK_GAP = B.HOOK_STILL
 MIN_PART = 2.5  # each side of a cut stays at or above MIN_SHOT (2.5 s)
 
 
@@ -75,8 +78,10 @@ def drop_short_shots(doc: dict, words_doc: dict, min_s: float = B.MIN_SHOT) -> t
     return doc, dropped
 
 
-def fill_holds(doc: dict, words_doc: dict, max_gap: float = MAX_GAP, min_part: float = MIN_PART) -> tuple[dict, list[dict], list[dict]]:
-    """(new doc, inserted shots, gaps that could not be filled)."""
+def fill_holds(doc: dict, words_doc: dict, max_gap: float = MAX_GAP, min_part: float = MIN_PART,
+               hook_gap: float = HOOK_GAP) -> tuple[dict, list[dict], list[dict]]:
+    """(new doc, inserted shots, gaps that could not be filled). ``max_gap`` is the body's limit, ``hook_gap`` the hook
+    window's (BP-40)."""
     doc = copy.deepcopy(doc)
     toks = S.tokens(doc)
     spans = S.segment_spans(toks, len(doc["segments"]))
@@ -89,8 +94,9 @@ def fill_holds(doc: dict, words_doc: dict, max_gap: float = MAX_GAP, min_part: f
     for _ in range(400):
         timed = T.time_script(doc, words_doc)
         shots = timed["shots"]
-        changes = sorted({s["start"] for s in shots} | {b["start"] for s in shots for b in s["bubbles"]} | {timed["duration"]})
-        gap = next(((a, b) for a, b in zip(changes, changes[1:]) if b - a > max_gap and (a, b) not in skip), None)
+        changes = B.change_times(shots, timed["duration"])
+        gap = next(((a, b) for a, b in zip(changes, changes[1:]) if B.still_too_long(a, b, hook_gap, max_gap) and (a, b) not in skip),
+                   None)
         if gap is None:
             break
         a, b = gap

@@ -92,3 +92,11 @@ bubbles instead of a new picture per sentence (UR-31).
 **Official game screenshots are private study only (RR-15):** never an image input or reference upload to a generator; describe the look in your own words.
 
 **Filler (D-53):** a type A plate or type C insert with no person, used once, in an explanation, pause, humour or transition beat may be marked `engine: "canva"` (at most 30 %); the script cannot declare importance, `imagegen/importance.py` computes it (PV-43).
+
+## Sourced rules (docs/SOURCED_RULES.md)
+
+- BP-28: on-screen text (labels, pops, bubbles, cards) stays inside x 12.5-87.5 %, y 5-95 % of the 16:9 frame, never over a
+  face or a mouth, at 4.5:1 contrast against its backdrop (3:1 from 24 px); plan the picture's empty zone for it.
+- BP-34: a keyed close-up matches its backdrop (anti-sticker): the same light direction, luma within 0.18 and warmth (R - B)
+  within 0.12 of the backdrop, no key halo over 2 px, a contact shadow sampled from the backdrop's darks, shared grain;
+  `production/faces.py` measures it when the files exist (`lint` with picture folders).

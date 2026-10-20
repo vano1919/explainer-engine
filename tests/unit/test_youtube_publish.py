@@ -19,7 +19,7 @@ PUB = {
     "audience": "not_made_for_kids",
     "disclosure": {"decision": "not_needed", "reason": "clearly drawn 2D fiction", "photoreal_pictures": False,
                    "real_person_realistic": False, "real_event_altered": False, "ai_music_main": False},
-    "mid_roll": "off", "self_certification_answered": True, "approval": None,
+    "mid_roll": "off", "self_certification_answered": True, "approval": {"by": "creator", "ref": "cmsg_ok"},
     "tags": ["GTA 6", "Al Capone", "crime boss"],
     "youtube": {"category": "Entertainment", "language": "en", "location": "United States"},
     "thumbnail": {"file": "publish/thumbnail.jpg", "text": "WHO FALLS FIRST?", "concept": "four bosses on a neon street"},
@@ -29,11 +29,22 @@ SCRIPT = {"segments": [], "shorts": [{"id": "SH01", "hook": "Could one line in a
                                      {"id": "SH02", "hook": "Why did Vito never shout?"}]}
 
 
-def episode(tmp_path: Path, pub: dict | None = None) -> Path:
+RULES = Path(__file__).resolve().parents[2] / "tests/fixtures/episode_rules/episode_rules.json"
+
+
+def episode(tmp_path: Path, pub: dict | None = None, *, stamped: bool = True, scorecard: str = "PASS") -> Path:
+    """An episode folder as the D-43 flow leaves it before staging: publish.json, the script, the rendered files, the rulebook
+    stamped at final_qa and the scorecard (PC-09; without them the staging is refused)."""
+    from explainer_engine.standards import rulebook as R
     ep = tmp_path / "ep"
     (ep / "render" / "shorts").mkdir(parents=True)
     (ep / "publish.json").write_text(json.dumps(pub or PUB), encoding="utf-8")
     (ep / "production_script.json").write_text(json.dumps(SCRIPT), encoding="utf-8")
+    (ep / "episode_rules.json").write_text(RULES.read_text(encoding="utf-8"), encoding="utf-8")
+    if stamped:
+        R.stamp(ep / "episode_rules.json", "final_qa", by="test", scope="all", script=ep / "production_script.json")
+    (ep / "scorecard.json").write_text(json.dumps({"schema": "scorecard/1", "verdict": scorecard,
+                                                   "rows": [{"id": 2, "name": "sound", "status": scorecard, "evidence": [], "human": True}]}))
     (ep / "render" / "video.mp4").write_bytes(b"L" * 3000)
     for sid in ("SH01", "SH02"):
         (ep / "render" / "shorts" / f"{sid}.mp4").write_bytes(sid.encode() * 500)

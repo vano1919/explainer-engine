@@ -33,6 +33,7 @@ from explainer_engine.finish import bubbles as BUB
 from explainer_engine.finish.grade import grade
 from explainer_engine.world import resolver
 from explainer_engine.qa import targets
+from explainer_engine.standards import sourced_rules as RULES  # SR is the sample rate here
 
 ROOT = Path(__file__).resolve().parents[2]
 LIB = ROOT / "assets" / "audio" / "library"
@@ -417,11 +418,29 @@ def mux(out: Path, bounds: list) -> None:
     names = [f"c_{i:04d}.mp4" for i in range(len(bounds))]
     (chunks / "list.txt").write_text("".join(f"file '{n}'\n" for n in names))
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(chunks / "list.txt"), "-i", str(out / "audio.wav"),
-                    "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", str(out / "video.part.mp4")], check=True)
+                    "-map", "0:v", "-map", "1:a", "-c:v", "copy", *AUDIO_CODEC, str(out / "video.part.mp4")], check=True)
     os.replace(out / "video.part.mp4", out / "video.mp4")  # a video.mp4 on disk is always a finished one
     for f in chunks.iterdir():
         f.unlink()
     chunks.rmdir()
+
+
+# BP-63: the delivered file carries stereo AAC-LC at the registry's bitrate and sample rate (YouTube's recommended upload
+# settings); the mono mix is upmixed to two identical channels. Shared with the Shorts renderer.
+_DELIVERY = RULES.rule("BP-63")["thresholds"]
+AUDIO_CODEC = ["-c:a", "aac", "-b:a", f"{_DELIVERY['aac_kbps']}k", "-ar", str(_DELIVERY["sample_rate"]), "-ac", str(_DELIVERY["channels"])]
+
+
+def measure_delivery(audio: Path, narration: Path | None = None, profile: str = "long") -> dict:
+    """ebur128 of the normalised mix (integrated, true peak) with the verdicts next to the numbers (BP-50), and, when the
+    narration stem is given, the dialogue anchor (BP-51: mix minus voice in LU) from a second measurement."""
+    meas = targets.measure_file(audio)
+    voice = targets.measure_file(narration)["lufs"] if narration is not None else None
+    out = {k: v for k, v in meas.items() if k in ("lufs", "true_peak", "lra", "max_short_term")}
+    if voice is not None:
+        out["voice_lufs"] = voice
+    out.update(targets.verdicts(meas, profile, voice))
+    return out
 
 
 def lock_alive(lock: Path) -> bool:
@@ -475,11 +494,16 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         w.writeframes((np.clip(audio, -1, 1) * 32767).astype("<i2").tobytes())
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(raw), "-af", targets.loudnorm("long"), "-ar", str(SR),
                     "-ac", "1", str(out / "audio.wav")], check=True)
-    meas = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(out / "audio.wav"), "-af", "ebur128", "-f", "null", "-"],
-                          capture_output=True, text=True).stderr
-    stats["lufs"] = float(meas.split("I:")[-1].split("LUFS")[0])
+    # BP-50: integrated loudness and true peak are measured on the normalised mix and judged, never only stored; BP-51: the
+    # narration stem's loudness against the mix (two ebur128 runs, free)
+    stats.update(measure_delivery(out / "audio.wav", narration_wav, "long"))
     report: list[str] = []
     result = {"audio": stats, "pictures": report, "video": None}
+    bad = targets.failures(stats)
+    if bad and final:  # a final render never passes a FAIL silently: the report is written, then the run stops with the numbers
+        (out / "assemble_report.json").write_text(json.dumps(result, indent=1))
+        raise SystemExit(f"final render refused: the mix fails {', '.join(bad)} ({stats['loudness_verdict']} loudness, "
+                         f"{stats.get('true_peak_verdict', 'n/a')} true peak; BP-50); fix the mix, then render again")
     if audio_only:
         (out / "assemble_report.json").write_text(json.dumps(result, indent=1))
         return result
