@@ -73,6 +73,33 @@ Before any paid narration or asset generation, save an independent `editorial_re
 
 This command is separate from the structural validator; both must pass. Editing the script invalidates the review hash. Existing episode JSON without the new contract is legacy data and remains schema-valid, but it must be migrated before reuse for a new production run.
 
+## 5.2 Integrated production-coherence review (`editorial_review/2`, D-60)
+
+The validators each judge one layer against its own rules, and the rubric of section 5 scores broad properties; neither
+proves anyone read the combined dialogue, visual, performance, audio and timing plan as one viewing experience. On a
+`production_script/3` the independent review therefore uses schema `editorial_review/2`: everything of `/1` (scores with
+evidence, the SHA-256 binding, empty blockers) plus an `integrated` object. A `/1` or `/2` script keeps accepting
+`editorial_review/1` unchanged; a `/2` review is accepted on any script.
+
+`integrated.layers` maps each of **story, entrances, dialogue, visual, performance, audio, timing** to
+`{status, evidence, basis}`: `status` is `inspected` (with `evidence` citing what was read) or `not_applicable` with a
+`reason` (only `entrances`, `dialogue` and `performance` may be not applicable; every episode has a story, pictures,
+sound and a clock). `basis` says what the judgement rests on — `data` (the words on the page), `estimate` (the estimated
+read), `instructions` (prompts and voice profiles for assets that do not exist yet) — so the review never claims to have
+seen a picture or heard a voice that is still an instruction; rendered media stays with the post-render QA.
+
+`integrated.findings` is the machine-routable form of the critic's cross-layer findings. Each carries a stable `id`,
+`layers`, `severity` (`FAIL` blocks the gate, paid narration and paid assets until fixed and re-reviewed; `REVIEW` is
+the creator's call), `refs` that name the exact segment, line, shot, beat, hero or audio event (a ref that names nothing
+of the script is rejected: generic advice is not a finding), `expected` (the intended story beat), `instructed` (what
+the spec says), `conflict`, `consequence` (for the viewer), `confidence` (high/medium/low), `basis`, the smallest `fix`,
+and `owner` — the stage that owns the fields (architect, writer, beats, performer, editor, caster, shorts, research), so
+each correction routes to its owner and the critic never rewrites. Subjective taste goes in `integrated.notes` (never
+blocks). The gate (`production.editorial_gate`, EG-19..EG-22) enforces the contract: a `/3` script with a `/1` review, a
+missing or unevidenced layer, a vague finding, or a malformed review file never passes, and any script edit invalidates
+the review (EG-13), so a correction is always re-reviewed. The reviewer's instructions live in
+`.claude/agents/script-critic.md` (writers' room stage 7); tests: `tests/unit/test_integrated_review.py`.
+
 ## 6. Shorts selection
 Per long-form: (a) adapt a strong section, (b) script a separate Short from the same verified research, or (c) use a
 related standalone angle, chosen by creative and production value. A Short stands alone (independent hook, arc, payoff,

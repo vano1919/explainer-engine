@@ -29,7 +29,7 @@ them in order and stops at the first failed gate.
 | 4 | `edit-planner` | shots, motion, accents, bubbles, graphics, beds, sfx, music; ED-14 coverage per scene (establish -> listener reactions -> <=4 A/B alternations, J/L 0.5-2 s, one music per chapter, one planned dropout) | `stage_guard editor`, `validate`: PV-24, PV-35, PV-36 |
 | 5 | `voice-caster` | `voice`, `cast.<id>.voice` (traits, candidates) | `stage_guard caster`, PV-10, PV-32 |
 | 6 | `shorts-writer` | `shorts` (10, at least 6 styles) | `stage_guard shorts`, PV-28, PV-34 |
-| 7 | `script-critic` (fresh context) | findings only, each to its owner stage | SCRIPTING_SPEC gates, no "bored" window; at most 2 rounds |
+| 7 | `script-critic` (fresh context) | findings only, each to its owner stage; writes `editorial_review.json` (`editorial_review/2` on /3: the integrated production-coherence pass, D-60) | SCRIPTING_SPEC gates + `production.editorial_gate` (EG), no "bored" window; at most 2 rounds |
 | - | creator approval #1 | | nothing is paid before it |
 
 ## 1. The skeleton first (story-architect)
@@ -86,7 +86,14 @@ Ten moments, ten Shorts, at least six styles from the catalog (SS-01), alternati
 
 ## 7. Critic
 Fresh context, reads as a viewer every 30 seconds, sends each finding to the stage that owns it. Two rounds at most;
-then the creator decides.
+then the creator decides. On a /3 the critic also walks the finished script once as ONE timeline (the integrated
+production-coherence pass, D-60): story causality, each hero's entrance, each line against its speaker and the line
+before, each shot/beat/cue against its instant, delivery against meaning, and the estimated clock — layers judged
+together, since each validator only sees its own. The result is `editorial_review.json` schema `editorial_review/2`
+(contract: `docs/SCRIPTING_SPEC.md` section 5.2; instructions: the agent file): per-layer evidence with an honest basis
+(data / estimate / instructions — never a claim to have seen unrendered media), and machine-routable findings whose
+FAILs block the editorial gate, paid narration and paid assets until fixed and re-reviewed (any edit invalidates the
+review by hash).
 
 ## Prompts for a Sonnet stage (how to brief it)
 - Give the stage its rules by ID and the file paths, not pasted text; give it the exact fields it owns.
