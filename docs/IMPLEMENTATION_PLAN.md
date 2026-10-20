@@ -27,10 +27,10 @@ documented dependency requires it. Status: Phase 1 done (24 tests), Phase 2 in r
 ## Prototype acceptance criteria (Phase 6; each reported pass / fail / not tested)
 1. Every contract file validates; invalid fixtures are rejected with specific errors.
 2. Output 1920x1080, 30 fps constant, 60-90 s, no missing scene or asset (manifest equals render log).
-3. Scenes start within +/- 1 frame of their anchors; the knife SFX within 1 frame of its word; mouth timing correlates
+3. Scenes start within +/- 1 frame of their anchors; the knife SFX within 1 frame of its word (the target of [BP-54](SOURCED_RULES.md)); mouth timing correlates
    with the phonemes (lead 0-2 frames).
-4. -14 +/- 1 LUFS integrated, true peak <= -1.0 dBTP, no clipping, voice-to-music gap >= 10 dB, no unintended silence
-   over 1.5 s.
+4. Integrated loudness and true peak inside [BP-50](SOURCED_RULES.md), no clipping, music under the voice by
+   [BP-52](SOURCED_RULES.md) (LU on the stems), no unintended silence over 1.5 s.
 5. No black or frozen picture over 1 s unless declared.
 6. Captions: <= 2 lines, <= 42 characters, no overlaps, inside the safe area, timed to words +/- 100 ms.
 7. Peak RAM < 10 GB; render wall time, disk and spend logged.

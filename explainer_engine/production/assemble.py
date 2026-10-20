@@ -2,9 +2,9 @@
 file (``production/timing.py``): which picture, from which frame to which frame, its camera move, its bubbles; which
 ambience, sound and music, from when to when, how loud.
 
-Audio: the narration (peak-normalised), ambience beds crossfaded at their times, sounds on their times, music; the
-beds and music duck under the voice (as in v5) and dip under every sound with millisecond ramps (``audio/duck.py``,
-UR-32); loudness normalised to the house target (qa/targets.py, P-90). Picture: each shot's frames from its picture, graded once (``finish/grade``),
+Audio: the narration (peak-normalised), ambience beds crossfaded at their times, sounds on their times, music with
+BP-62's fades; the beds and music duck under the voice and dip under every sound with millisecond ramps (``audio/duck.py``,
+one set of numbers for every duck, BP-53); loudness normalised to the house target (qa/targets.py, BP-50). Picture: each shot's frames from its picture, graded once (``finish/grade``),
 cropped with sub-pixel boxes for the move, bubbles composited (``finish/bubbles``). A picture that is not painted yet:
 ``final`` stops; a draft shows its stand-in, else a placeholder card with the picture id and its subject.
 CPU only (numpy, PIL, ffmpeg). Helpers come from ``examples/stone_age/day1_v5/assemble.py`` (same author, moved here).
@@ -97,12 +97,21 @@ def rms_db(a: np.ndarray) -> float:
     return float(20 * np.log10(np.sqrt(np.mean(a ** 2)) + 1e-12)) if len(a) else -120.0
 
 
-def fade(seg: np.ndarray, n: int) -> np.ndarray:
-    n = min(n, len(seg) // 2)
-    if n > 0:
-        seg[:n] *= np.linspace(0, 1, n)
-        seg[-n:] *= np.linspace(1, 0, n)
+def fade(seg: np.ndarray, n: int, n_out: int | None = None) -> np.ndarray:
+    """Linear fade in over ``n`` samples and out over ``n_out`` (default ``n``), each at most half the segment."""
+    n_in, n_out = min(n, len(seg) // 2), min(n if n_out is None else n_out, len(seg) // 2)
+    if n_in > 0:
+        seg[:n_in] *= np.linspace(0, 1, n_in)
+    if n_out > 0:
+        seg[-n_out:] *= np.linspace(1, 0, n_out)
     return seg
+
+
+def music_fades(m: dict) -> tuple[float, float]:
+    """(fade in s, fade out s) of a timed music entry: its own, an older timed file's one ``fade_s``, else BP-62's."""
+    one = m.get("fade_s")
+    return (float(m.get("fade_in_s", one if one is not None else RULES.T("BP-62", "fade_in_s"))),
+            float(m.get("fade_out_s", one if one is not None else RULES.T("BP-62", "fade_out_s"))))
 
 
 class Sounds:
@@ -154,8 +163,8 @@ def play_once(a: np.ndarray, n: int) -> np.ndarray:
 
 
 def cue_bus(cues: list[dict], n: int) -> np.ndarray:
-    """VB-08: the timed beat cues (25-200 ms, at most -20 dB) on one track of ``n`` samples at SR (the Shorts use it too).
-    Each repeat of a sound rotates to the next pitch variant (VB-10), so a reused cue never plays the identical waveform."""
+    """VB-08: the timed beat cues (BP-64's length and level) on one track of ``n`` samples at SR (the Shorts use it too).
+    Each repeat of a sound rotates to the next pitch variant (BP-57, VB-10), so a reused cue never plays the identical waveform."""
     t = lambda s: int(round(s * SR))  # noqa: E731
     bus = np.zeros(n)
     seen: dict = {}
@@ -175,7 +184,7 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
     narration = level_voice(narration, SR)  # D-43: even out the read's loudness swings (audio/level.py)
     voice = narration / (np.abs(narration).max() + 1e-9) * 0.9
     env = envelope(voice)
-    vduck = 1.0 - 0.55 * moving_mean(env, t(0.25))
+    vduck = duck.duck_gain(voice, SR, n)  # BP-53: music and bed dip under the voice with the registry's depth and times
     au = timed["audio"]
     bed = np.zeros(n)
     can_loop = getattr(sounds, "loopable", lambda name: True)  # tests stub Sounds; an unknown sound keeps looping
@@ -195,7 +204,8 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
         src = sounds.load(m["track"])
         seg = loop_to(src, z - a) if can_loop(m["track"]) else play_once(src, z - a)
         seg = seg / (np.abs(seg).max() + 1e-9) * db(m.get("gain_db", -18))
-        music[a:z] += fade(seg, t(m.get("fade_s", 2.0)))
+        f_in, f_out = music_fades(m)  # BP-62: 1 s in, 2 s out
+        music[a:z] += fade(seg, t(f_in), t(f_out))
     fx = np.zeros(n)
     stats["sfx"] = []
     for e in au["sfx"]:
@@ -217,9 +227,12 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
                 fx[a:a + len(pop)] += pop[: max(0, n - a)]
     bus = cue_bus(au.get("cues", []), n)  # VB-08: beat cues ride over everything without ducking it
     stats["cues"] = len(au.get("cues", []))
-    fduck = duck.duck_gain(fx, SR, n, depth_db=9.0, threshold=0.01, attack_ms=20, release_ms=280, hold_ms=80)
-    bduck = duck.duck_gain(fx, SR, n, depth_db=4.0, threshold=0.01, attack_ms=25, release_ms=350, hold_ms=80)
+    # BP-53 for every duck: the registry's house depth and times (duck.py defaults); the bed under a world sound dips by the
+    # range's floor (it already sits BP-65 under the voice and carries the place)
+    fduck = duck.duck_gain(fx, SR, n, threshold=0.01)
+    bduck = duck.duck_gain(fx, SR, n, depth_db=float(RULES.T("BP-53", "depth_db")[0]), threshold=0.01)
     stats["music_dip_max_step_db_per_ms"] = round(duck.max_step_db_per_ms(fduck, SR), 3)
+    stats["voice_duck_max_step_db_per_ms"] = round(duck.max_step_db_per_ms(vduck, SR), 3)
     mix = voice * db(-3) + (bed * bduck + music * fduck) * vduck + fx + bus
     speaking = env > 0.15
     stats.update(voice_rms_db=round(rms_db((voice * db(-3))[speaking]), 2),

@@ -18,18 +18,22 @@ narration script -> ElevenLabs read in chunks (skill `elevenlabs-voice`) -> word
 |---|---|---|
 | integrated loudness and true peak of the long mix, measured on the delivered file | BP-50 | `assemble` (a final render stops on a FAIL), scorecard check 2 |
 | dialogue anchor: the mix at most a few LU over the narration stem | BP-51 | `assemble` (`ldr_lu`), scorecard |
-| music, ambience bed and their sum under the voice, in LU on the stems | BP-52 | `qa/targets.gap_verdict`, `audio/layers.py` AL-04 pre-mix caps |
-| sidechain duck: depth, attack, release, hold, no step over the level JND | BP-53 | `audio/duck.py` |
-| picture-synced sound on its frame, never early | BP-54 | `audio/layers.py` AL-03, `production/timing.py` SFX_OFFSET |
+| music, ambience bed and their sum under the voice, in LU on the stems | BP-52 | `qa/targets.gap_verdict` |
+| pre-mix gain caps of an effect and a bed (dBFS, a proxy for BP-52, never its measure) | BP-65 | `audio/layers.py` AL-04, `production/timing.py` BED_DEFAULT_DB |
+| sidechain duck: depth, attack, release, hold, no step over the level JND; every duck (music and bed under the voice, under a world sound) | BP-53 | `audio/duck.py`, `assemble.build_audio` |
+| picture-synced sound on its frame, never early | BP-54 | `audio/layers.py` AL-03, `production/timing.py` SFX_EARLY_MAX, scorecard check 2 |
+| an effect over speech is synced to its word or it masks it | BP-66 | scorecard check 2 |
 | effects carry a purpose; at most one beat in two carries one | BP-55 | `audio/layers.py`, PV-41 |
+| sound events a minute, effects and cues together (upper bound only on `/3`) | BP-49 | `audio/layers.py` AL-02 |
 | simultaneity: effects of one class at once, layers in all | BP-56 | `audio/layers.py` AL-01 |
-| no identical sample twice in a row | BP-57 | `audio/layers.py` |
+| no identical sample twice in a row; the cue bus's pitch variants | BP-57 | `audio/layers.py`, `audio/cues.VARIANTS` |
+| beat cue length and level (an earcon, not a one-shot) | BP-64 | `audio/cues.py`, VB-08 |
 | one-shots and loops, verified seams | BP-58 | `audio/sfx_library.py lint` |
 | narration consistency: chunk spread, join step, stem range | BP-59 | `audio/seams.py`, `qa/targets.stem_lra_verdict` |
 | pauses as room tone, light de-essing | BP-60 | `audio/pause_pad.py` |
 | Shorts: integrated, short-term cap, true peak, no LRA gate, measured on the FINAL Short | BP-61 | `production/shorts.py` |
-| music spotted on boundaries, a planned no-music stretch, short stings, its fades | BP-62 | `audio/layers.py` |
-| delivery: stereo AAC at the bitrate and rate of the upload settings | BP-63 | `assemble.AUDIO_CODEC` (video and Shorts) |
+| music spotted on boundaries, a planned no-music stretch, short stings, its fades | BP-62 | `audio/layers.py`, `production/timing.py`, `production/shorts.music_filter` |
+| delivery: stereo AAC at the bitrate and rate of the upload settings | BP-63 | `assemble.AUDIO_CODEC` (video, Shorts and the sped file of `finish/speed.py`) |
 
 ## Final narrator: ElevenLabs (D-39)
 The final narration is an ElevenLabs library voice (never a clone, never a famous-person voice), generated through the

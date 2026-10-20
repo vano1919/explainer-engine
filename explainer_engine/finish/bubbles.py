@@ -15,6 +15,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
+from explainer_engine.standards import sourced_rules as SR
+
 ROOT = Path(__file__).resolve().parents[2]
 FONT = ROOT / "assets" / "fonts" / "ComicNeue-Bold.ttf"
 SHOUT_FONT = ROOT / "assets" / "fonts" / "Bangers-Regular.ttf"
@@ -22,8 +24,8 @@ FILL = (244, 236, 216, 255)
 INK = (30, 26, 22, 255)
 POP_S, OUT_S = 0.18, 0.15
 MARGIN = 0.035  # of the frame, a bubble never touches the edge
-MAX_CHARS = 26  # per line
-MAX_WORDS = 14  # a bubble is a line, not a paragraph (check_bubbles)
+MAX_CHARS = int(SR.T("BP-84", "bubble_chars_per_line"))  # per line
+MAX_WORDS = int(SR.T("BP-84", "bubble_words_max"))  # a bubble is a line, not a paragraph (check_bubbles)
 
 
 @lru_cache(maxsize=16)
@@ -176,14 +178,17 @@ def composite(frame: Image.Image, bubbles: list[Bubble], t: float) -> Image.Imag
 
 
 def check_bubbles(rows: list[dict]) -> list[dict]:
-    """Findings for bubble specs: a line at most MAX_WORDS words, on screen long enough to read (0.3 s per word, >= 1.4 s)."""
+    """Findings for bubble specs: a line at most MAX_WORDS words (BP-84), on screen long enough to read: BP-27's hold,
+    max(hold_min_s, s_per_word x words), which superseded the old max(1.4, 0.3 n). Each takes its rule's severity."""
     out = []
+    hold_min, per_word = SR.T("BP-27", "hold_min_s"), SR.T("BP-27", "s_per_word")
     for r in rows:
         n = len(r["text"].split())
         if n > MAX_WORDS:
-            out.append({"rule": "BUBBLE-1", "severity": "FAIL", "detail": f"{r['text'][:40]!r}: {n} words > {MAX_WORDS}"})
-        need = max(1.4, 0.3 * n)
-        if r["end"] - r["start"] < need:
-            out.append({"rule": "BUBBLE-2", "severity": "FAIL",
-                        "detail": f"{r['text'][:40]!r}: on screen {r['end'] - r['start']:.1f} s < {need:.1f} s"})
+            out.append({"rule": "BUBBLE-1", "severity": SR.rule("BP-84").get("severity", "REVIEW"),
+                        "detail": f"{r['text'][:40]!r}: {n} words > {MAX_WORDS} (BP-84)"})
+        need = max(hold_min, per_word * n)
+        if r["end"] - r["start"] < need - 1e-6:
+            out.append({"rule": "BUBBLE-2", "severity": SR.rule("BP-27").get("severity", "REVIEW"),
+                        "detail": f"{r['text'][:40]!r}: on screen {r['end'] - r['start']:.2f} s < {need:.2f} s (BP-27)"})
     return out

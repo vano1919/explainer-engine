@@ -11,12 +11,17 @@ both:
 * a picture's heroes must fit its line: when the line names heroes and the picture's heroes are all others, FAIL
   (HERO-1: Franklin's hand lifting Einstein's glasses);
 * one picture may carry several lines through speech bubbles (``finish/bubbles.py``), so a dialogue is one held picture;
-* rhythm (BP-40, docs/SOURCED_RULES.md): at most MAX_PER_MIN pictures a minute, no shot under MIN_SHOT, and something must
-  change on screen (a cut, a bubble or an accent) often enough for the section: inside the hook window a still longer than
-  HOOK_STILL is a FAIL; in the body a still longer than BODY_REVIEW is a REVIEW and longer than BODY_FAIL a FAIL;
+* rhythm (BP-40, docs/SOURCED_RULES.md): at most MAX_PER_MIN pictures a minute, no shot under MIN_SHOT (BP-84), and
+  something must change on screen often enough for the section: inside the hook window a still longer than HOOK_STILL is a
+  FAIL; in the body a still longer than BODY_REVIEW is a REVIEW and longer than BODY_FAIL a FAIL. A change is a cut, a
+  bubble, an accent (not the wobble), a data visual, a card or a visual beat (``change_times``; that a beat counts is the
+  default of 2026-10-20, the creator may overturn it), the same events ``edit/motion_lint.events`` counts;
 * a pattern interrupt (BP-41): something changes inside the INTERRUPT window of the first minute, else a REVIEW.
 
     python -m explainer_engine.edit.board <board.json> <words.json> [--out timed.json]
+
+The CLI takes a legacy storyboard (``{"pictures", "shots": [{"at", "picture", ...}]}``); a production script is checked by
+``python -m explainer_engine.production time`` (PV-24 runs this board on the timed script).
 """
 from __future__ import annotations
 
@@ -30,8 +35,8 @@ from explainer_engine.edit import shot_rules as R
 from explainer_engine.standards import sourced_rules as SR
 
 MAX_PER_MIN = float(SR.T("BP-40", "pictures_per_min_max"))  # v5 had 14.3; the creator: pictures change too often
-MIN_SHOT = 2.5
-MIN_INSERT = 2.0
+MIN_SHOT = float(SR.T("BP-84", "min_shot_s"))  # RHYTHM-2: no shot shorter (the creator, D-42)
+MIN_INSERT = float(SR.T("BP-84", "min_insert_s"))  # ... an insert may be this short
 HOOK_WINDOW = float(SR.T("BP-40", "hook_window_s"))  # BP-40: the first seconds, where a still is judged hardest
 HOOK_STILL = float(SR.T("BP-40", "hook_max_still_s"))  # a still inside the hook window longer than this FAILs
 BODY_REVIEW = float(SR.T("BP-40", "body_review_still_s"))  # a still in the body longer than this is a REVIEW ...
@@ -104,10 +109,15 @@ def named_heroes(text: str, heroes: dict[str, list[str]]) -> set[str]:
     return {h for h, names in heroes.items() if any(f" {n.lower()} " in low for n in names)}
 
 
-def change_times(shots: list[dict], duration: float) -> list[float]:
-    """When something changes on screen: every cut, every bubble, every accent but the wobble, and the end."""
+def change_times(shots: list[dict], duration: float, timed: dict | None = None) -> list[float]:
+    """When something changes on screen (BP-40): every cut, every bubble, every accent but the wobble, and the end; with
+    ``timed`` (a timed production script) also every data visual, card and visual beat (a label, prop, chart, highlight,
+    symbol, expression change or accent beat is new information on screen; default of 2026-10-20)."""
     times = {s["start"] for s in shots} | {b["start"] for s in shots for b in s.get("bubbles", [])}
     times |= {a["start"] for s in shots for a in s.get("accents", []) if a.get("kind") != "wobble"}
+    if timed:
+        times |= {float(x["start"]) for key in ("visual_beats", "visuals", "cards") for x in timed.get(key, [])
+                  if 0.0 <= float(x["start"]) < duration}
     return sorted(times | {duration})
 
 
@@ -132,6 +142,8 @@ def check(board: dict, timed: dict) -> list[dict]:
     def add(rule, sid, detail, sev="FAIL"):
         out.append({"rule": rule, "shot": sid, "severity": sev, "detail": detail})
 
+    bp40, bp84 = SR.rule("BP-40").get("severity", "REVIEW"), SR.rule("BP-84").get("severity", "REVIEW")
+
     shots = timed["shots"]
     for k, s in enumerate(shots):
         sid, p = s.get("id", f"#{k + 1}"), pics[s["picture"]]
@@ -139,7 +151,7 @@ def check(board: dict, timed: dict) -> list[dict]:
         if not s["cut_legal"]:
             add("CUT-1", sid, f"cut at {s['start']:.2f} s is not in a punctuated pause before {s['at']!r}")
         if dur < (MIN_INSERT if s.get("insert") else MIN_SHOT):
-            add("RHYTHM-2", sid, f"{dur:.2f} s is shorter than {MIN_INSERT if s.get('insert') else MIN_SHOT} s")
+            add("RHYTHM-2", sid, f"{dur:.2f} s is shorter than {MIN_INSERT if s.get('insert') else MIN_SHOT} s (BP-84)", bp84)
         for thing in p.get("shows", []):
             if thing in events and events[thing] > s["start"] + STATE_GRACE:
                 add("STATE-1", sid, f"{s['picture']} shows {thing!r} at {s['start']:.1f} s; it first exists at "
@@ -169,21 +181,21 @@ def check(board: dict, timed: dict) -> list[dict]:
     weight = sum(0.5 if s.get("reuse") == "reframe" else 1.0 for s in shots)
     rate = weight / (max(dur, 60.0) / 60.0) if dur else 0.0  # a clip under a minute is measured as a minute
     if rate > MAX_PER_MIN:
-        add("RHYTHM-1", "-", f"{rate:.1f} pictures a minute > {MAX_PER_MIN}")
-    changes = change_times(shots, dur)
+        add("RHYTHM-1", "-", f"{rate:.2f} pictures a minute > {MAX_PER_MIN:g} (BP-40)", bp40)
+    changes = change_times(shots, dur, timed)
     for a, b in zip(changes, changes[1:]):  # RHYTHM-3 is section-aware (BP-40): the hook window, then the body
         hook, body = still_excess(a, b)
         if hook > HOOK_STILL + 1e-6:
             add("RHYTHM-3", "-", f"nothing changes on screen from {a:.1f} to {b:.1f} s inside the first {HOOK_WINDOW:.0f} s "
-                                 f"({hook:.1f} s > {HOOK_STILL:.0f}; BP-40)")
+                                 f"({hook:.1f} s > {HOOK_STILL:.0f}; BP-40)", bp40)
         if body > BODY_FAIL + 1e-6:
-            add("RHYTHM-3", "-", f"nothing changes on screen from {a:.1f} to {b:.1f} s ({body:.1f} s > {BODY_FAIL:.0f}; BP-40)")
+            add("RHYTHM-3", "-", f"nothing changes on screen from {a:.1f} to {b:.1f} s ({body:.1f} s > {BODY_FAIL:.0f}; BP-40)", bp40)
         elif body > BODY_REVIEW + 1e-6:
             add("RHYTHM-3", "-", f"nothing changes on screen from {a:.1f} to {b:.1f} s ({body:.1f} s > {BODY_REVIEW:.0f}; BP-40)",
                 "REVIEW")
     if dur >= INTERRUPT[1] and not any(INTERRUPT[0] <= t <= INTERRUPT[1] for t in changes[1:-1]):
-        add("BP-41", "-", f"no cut, bubble or accent between {INTERRUPT[0]:.0f} and {INTERRUPT[1]:.0f} s: script one pattern "
-                          "interrupt there (an insert, a text pop or a music change)", "REVIEW")
+        add("BP-41", "-", f"no cut, bubble, accent or visual beat between {INTERRUPT[0]:.0f} and {INTERRUPT[1]:.0f} s: script one "
+                          "pattern interrupt there (an insert, a text pop or a music change)", SR.rule("BP-41").get("severity", "REVIEW"))
     return out
 
 
@@ -201,6 +213,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--out")
     a = p.parse_args(argv)
     board = json.loads(Path(a.board).read_text(encoding="utf-8"))
+    if "shots" not in board or "pictures" not in board:
+        kind = board.get("schema", "this file") if isinstance(board, dict) else "this file"
+        p.error(f"{a.board} is not a storyboard ({{pictures, shots}}): {kind} has no top-level shots. A production script is "
+                "timed and checked with `python -m explainer_engine.production time <script> <words.json>` (PV-24 runs the "
+                "board rules there)")
     timed, findings = build(board, json.loads(Path(a.words).read_text(encoding="utf-8")))
     if a.out:
         Path(a.out).write_text(json.dumps(timed, indent=1), encoding="utf-8")

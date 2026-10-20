@@ -4,8 +4,8 @@ The creator's rule (2026-10-16): something must change on screen often enough, a
 voice. How often is BP-40 (docs/SOURCED_RULES.md, section-aware): inside the hook window a still of at most hook_max_still_s,
 in the body at most body_review_still_s. A re-frame is the same picture with a different move (a push in, a pull out, a pan)
 cut on the start of a spoken line, so it costs no new picture. The tool times the script on a read (the real ``words.json`` or
-the estimated one), finds the first still longer than its section allows (a cut, a bubble or an accent ends a still, so a
-stretch the beats already fill gets no filler), cuts a re-frame at the legal line start nearest the middle of the gap, and
+the estimated one), finds the first still longer than its section allows (a cut, a bubble, an accent, a data visual, a card
+or a visual beat ends a still, ``board.change_times``, so a stretch the beats already fill gets no filler), cuts a re-frame at the legal line start nearest the middle of the gap, and
 repeats until none is left. Gaps with no legal cut are returned, never forced.
 """
 
@@ -16,16 +16,19 @@ import copy
 from explainer_engine.edit import board as B
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
+from explainer_engine.standards import sourced_rules as SR
 
 MAX_GAP = B.BODY_REVIEW  # BP-40: the body's limit; inside the hook window B.HOOK_STILL applies (board.still_too_long)
 HOOK_GAP = B.HOOK_STILL
-MIN_PART = 2.5  # each side of a cut stays at or above MIN_SHOT (2.5 s)
+MIN_PART = B.MIN_SHOT  # each side of a cut stays at or above the board's shot floor (BP-84)
+PULL_FROM = float(SR.T("BP-20", "push_default_max"))  # a re-frame pull starts at the default push cap (BP-20) ...
+PULL_TO, PUSH_TO = 1.04, 1.07  # ... and eases out to here; a re-frame push goes from 1.0 to PUSH_TO (inside BP-20)
 
 
 def alt_motion(prev: dict) -> dict:
     if prev.get("kind") == "push" and prev.get("z1", 1.0) > prev.get("z0", 1.0):
-        return {"kind": "pull", "z0": 1.10, "z1": 1.04}  # it shrinks: a pull (continuity.chain reads kind)
-    return {"kind": "push", "z0": 1.0, "z1": 1.07}
+        return {"kind": "pull", "z0": PULL_FROM, "z1": PULL_TO}  # it shrinks: a pull (continuity.chain reads kind)
+    return {"kind": "push", "z0": 1.0, "z1": PUSH_TO}
 
 
 def _phrase(toks: list[dict], t_new: int, lo: int, hi: int) -> str | None:
@@ -94,7 +97,7 @@ def fill_holds(doc: dict, words_doc: dict, max_gap: float = MAX_GAP, min_part: f
     for _ in range(400):
         timed = T.time_script(doc, words_doc)
         shots = timed["shots"]
-        changes = B.change_times(shots, timed["duration"])
+        changes = B.change_times(shots, timed["duration"], timed)
         gap = next(((a, b) for a, b in zip(changes, changes[1:]) if B.still_too_long(a, b, hook_gap, max_gap) and (a, b) not in skip),
                    None)
         if gap is None:
@@ -137,5 +140,5 @@ def fill_holds(doc: dict, words_doc: dict, max_gap: float = MAX_GAP, min_part: f
             break
         if not done:
             skip.add(gap)
-            stuck.append({"from": a, "to": b, "why": "no legal cut leaves 2.5 s on each side"})
+            stuck.append({"from": a, "to": b, "why": f"no legal cut leaves {min_part:g} s on each side"})
     return doc, inserted, stuck

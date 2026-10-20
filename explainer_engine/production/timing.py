@@ -13,12 +13,13 @@ from __future__ import annotations
 
 import difflib
 
+from explainer_engine.audio import layers as L
 from explainer_engine.audio.scribe_words import norm
 from explainer_engine.edit import board as B
 from explainer_engine.production import accents as ACC, beats as BEATS, continuity, script as S
 from explainer_engine.standards import sourced_rules as SR
 
-BED_DEFAULT_DB = -15.0  # a bed with no gain sits at the D-49 cap (audio/layers.MAX_BED_DB); it was -13 and FAILed the cap
+BED_DEFAULT_DB = L.MAX_BED_DB  # a bed with no gain sits at the AL-04 cap (BP-65); it was -13 and broke the cap
 
 MIN_TEXT_MATCH = 0.97
 BUBBLE_LEAD = B.BUBBLE_LEAD
@@ -28,6 +29,8 @@ BED_LEAD, BED_FADE = 0.4, 1.5
 # late_max_ms after). The old -0.05 s lead sat past the early limit.
 SFX_OFFSET, SFX_MAX = 0.0, 1.0
 SFX_EARLY_MAX, SFX_LATE_MAX = SR.T("BP-54", "early_max_ms") / 1000, SR.T("BP-54", "late_max_ms") / 1000
+# BP-62: music fades 1 s in and 2 s out unless the script sets ``fade_s`` (one length for both ends, kept from /1 and /2)
+MUSIC_FADE_IN, MUSIC_FADE_OUT = float(SR.T("BP-62", "fade_in_s")), float(SR.T("BP-62", "fade_out_s"))
 
 
 def word_map(toks: list[dict], words: list[dict]) -> tuple[list[int | None], float]:
@@ -190,12 +193,12 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             en = words[wi(z)]["s"] if z is not None else duration
         else:
             en = duration
-        music.append({"track": m["track"], "start": round(st, 3), "end": round(min(en, duration), 3),
-                      "gain_db": m.get("gain_db", -18), "fade_s": m.get("fade_s", 2.0)})
+        music.append({"track": m["track"], "start": round(st, 3), "end": round(min(en, duration), 3), "gain_db": m.get("gain_db", -18),
+                      "fade_in_s": float(m.get("fade_s", MUSIC_FADE_IN)), "fade_out_s": float(m.get("fade_s", MUSIC_FADE_OUT))})
     for k in range(len(music) - 1):  # ED-03: a track handing over to the next one crossfades (the earlier rings on while the later fades in)
         a, b = music[k], music[k + 1]
         if abs(a["end"] - b["start"]) < 0.05:
-            a["end"] = round(min(duration, b["start"] + float(b["fade_s"])), 3)
+            a["end"] = round(min(duration, b["start"] + float(b["fade_in_s"])), 3)
     visuals = []  # ED-10: data visuals start on the phrase they explain and hold 3-7 s
     seg_index = {sg["id"]: i for i, sg in enumerate(doc["segments"])}
     for g in doc.get("graphics", []):
@@ -222,7 +225,8 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             problems.append({"rule": "PV-04", "severity": "FAIL", "where": "story", "detail": f"event phrase {e['at']!r} not found"})
             continue
         events[e["thing"]] = B.cut_before(words, wi(j))[0]  # a thing exists from the cut before its words
-    return {"schema": "production_timed/1", "episode": doc["episode"]["id"], "fps": fps, "duration": round(duration, 3),
+    return {"schema": "production_timed/1", "script_schema": doc.get("schema"), "episode": doc["episode"]["id"], "fps": fps,
+            "duration": round(duration, 3),
             "frames": total_frames, "text_match": share, "segments": segs, "lines": lines, "shots": out_shots,
             "audio": {"beds": beds, "sfx": sfx, "music": music, "cues": cues}, "visuals": visuals, "cards": cards, "visual_beats": beats,
             "expressions": {h: c["expressions"] for h, c in doc.get("cast", {}).items() if c.get("expressions")},

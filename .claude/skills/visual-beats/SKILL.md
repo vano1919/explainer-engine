@@ -11,15 +11,17 @@ production script (`docs/PRODUCTION_SCRIPT.md`). Render: `production/beats.py` (
 Evidence for every number: `docs/research/STORYTELLING_EDITING_2026-10-19.md`.
 
 **The /3 inversion:** nothing is included by default. A beat marks NEW information, a cue marks a STORY EVENT, and a
-silent beat is the normal case, never a finding. A `production_script/2` keeps the old contract (the 1.5 s / 1.0 s
-metronomes and the mandatory cue per beat) unchanged; everything below the table is /3.
+silent beat is the normal case, never a finding. A `production_script/2` keeps the old contract (the /2 metronomes of BP-36 and BP-37
+and the mandatory cue per beat) unchanged; everything below the table is /3.
 
-The picture still changes every 3-6 s; beats fill the time between cuts. A shot start, a bubble, an accent or a data
-visual is already an event, so a line that opens a shot needs one beat fewer.
+The picture changes within BP-40's still limits (a visual beat counts as a change, D-59); beats fill the time between
+cuts. A shot start, a bubble, an accent or a data visual is already an event, so a line that opens a shot needs one beat
+fewer.
 
 Shorts carry the same layer (SS-09): a Short line that is a line of the video takes that line's beats; a Short's own
 lines (hook, pointer, a bridging line) get beats of their own, and a `label` or `highlight` points at a spot inside the
-Short's 9:16 crop (`crop_x`, `zoom` of its shot). PV-44 checks each Short on its own read at 170 wpm.
+Short's 9:16 crop (`crop_x`, `zoom` of its shot). PV-44 checks each Short on its own read at 170 wpm, except VB-01's cadence: a Short's pace is BP-45's (PV-34),
+where its beats count as events.
 
 ## Choosing the beat from the words
 
@@ -28,7 +30,7 @@ Short's 9:16 crop (`crop_x`, `zoom` of its shot). PV-44 checks each Short on its
 | a concrete thing (matches, skis, a lens) | `prop` (`thing`, a cut-out `asset` when one exists) or `label` on it |
 | a person's name | `label` on them, or `highlight` (ring) round them |
 | a number (with its claim) | `chart`: `counter` (0 -> n) or `bars` (2-3) |
-| a key word that is the point | `text` (at most 4 words, capitals) |
+| a key word that is the point | `text` (BP-38's word cap, capitals) |
 | no / not / without / fails | `symbol` `cross` |
 | more, grows, rises / less, falls | `symbol` `arrow_up` / `arrow_down` |
 | time: night, an hour, years | `symbol` `clock` |
@@ -45,17 +47,19 @@ three of one kind in a row; at most two overlays on screen at once.
 
 ## Pacing on /3 (VB-01)
 
-Place beats where new information lands, not on a clock. Hook and climax: a visual event every 3-8 s, one pattern
-interrupt at 25-35 s of the hook. Body: every 10-25 s. Never more than 8 s of nothing-new while the narrator speaks
-(REVIEW), never more than 15 s (FAIL); MO-01's 5 s dead-air REVIEW still applies. Rhythm is variance, not a rate
+Place beats where new information lands, not on a clock. The hook's change interval and the body's still limits are
+BP-40's (one pattern interrupt late in the hook); RHYTHM-3 gates them and MO-01 is their REVIEW band. VB-01 nests a
+stricter narration-only dead-air rule inside them: BP-36's REVIEW and FAIL gaps of nothing-new while the narrator
+speaks (in the hook BP-40 is the stricter one, in the body VB-01). A held picture counts as long as its beats
+(an expression, a label, an accent) keep landing (BP-41). Rhythm is variance, not a rate
 (MO-07): runs of near-equal holds read as a metronome even when each hold is "correct".
 
 ## Faces in dialogue (VB-02 on /3)
 
 The 1 s metronome is retired. Every line with a `speaker` gets AT LEAST one `expression` change (none is a FAIL),
 placed on the reaction-worthy words — the reveal, the risk, the refusal, the punchline — not on a schedule. A stretch
-over 4 s without a change is a REVIEW, over 6 s a FAIL; two changes of one face less than 0.7 s apart are a flicker
-(REVIEW). Kuleshov note: on the line that lands (intent `reveal`, an insult, bad news), show the LISTENER's face
+without a change past BP-37's gaps is a REVIEW, then a FAIL; two changes of one face closer than BP-33's floor are a
+flicker (REVIEW). Kuleshov note: on the line that lands (intent `reveal`, an insult, bad news), show the LISTENER's face
 (`who` != the speaker) — the same neutral close-up reads as the needed emotion because of what it is cut against, and
 the listener's reaction is the line's meaning.
 
@@ -82,11 +86,10 @@ type is FOR:
 - `place` — an ambience change on a location change; one bed per place, reused on returns.
 
 The subtractive test decides every cue: does the moment feel more connected with the sound than without it? No ->
-delete it. Density and repetition (VB-10, VB-11): at most ~8 cues a minute over the video (REVIEW over 8, FAIL over
-14), at most 3 cues in any 10 s (REVIEW), never the same cue sound on two consecutive cues (REVIEW; 3+ times within
-30 s FAIL), and emphasis sounds (thud, chime, rise, fall) at most 1 per line (FAIL). Cues count toward AL-02's 4-20
-sound events a minute. Duration and level rules stay: 20-250 ms, -36..-20 dB, never within 0.15 s of an effect (the
-effect is the beat's sound), two cues at least 0.25 s apart, at most 4 layers with the voice (AL-01).
+delete it. Density and repetition (VB-10, VB-11): cues a minute over the video and the burst cap are BP-81's,
+never the same cue sound on two consecutive cues (REVIEW; the repeat window and count are BP-80's), and emphasis sounds
+(thud, chime, rise, fall) at most BP-81's count per line. Cues count toward AL-02's sound events a minute (BP-49). Duration and level rules stay: BP-64's 20-250 ms, -36..-20 dB, never within BP-39's cover time of an effect
+(the effect is the beat's sound), two cues at least BP-39's gap apart, within BP-56's layer cap (AL-01).
 
 The mixer auto-varies playback: `audio/cues.py` renders 3 deterministic pitch variants per sound (1.0 / 0.94 / 1.06)
 and the cue bus round-robins them, so two consecutive plays of one sound are never the identical sample (the "machine

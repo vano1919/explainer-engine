@@ -10,6 +10,12 @@ from pathlib import Path
 import pytest
 
 from explainer_engine.edit import shot_rules as R
+from explainer_engine.standards import sourced_rules as SR
+
+
+def HOUSE(bp: str) -> str:  # noqa: N802  the severity the registry holds for a registered number (a JSON switch)
+    return SR.rule(bp)["severity"]
+
 
 ROOT = Path(__file__).resolve().parents[2]
 V3 = ROOT / "tests/fixtures/fire_v3"
@@ -94,10 +100,30 @@ def test_each_rule_catches_its_break(rule, mutate):
     assert rule in {f["rule"] for f in _fails(shots, words)}
 
 
-def test_the_hook_needs_a_question_in_five_seconds():
+def _with_first_sentence(words: list[dict], text: str) -> list[dict]:
+    """The same timed words with the first sentence replaced by ``text`` (word by word, times kept)."""
+    first = next(k for k, w in enumerate(words) if w["w"].endswith("?")) + 1
+    new = [dict(w, w=t) for w, t in zip(words, text.split())]
+    t = new[-1]["e"]
+    for extra in text.split()[len(new):]:  # a longer sentence keeps going at the same pace
+        new.append({"w": extra, "s": round(t + 0.05, 3), "e": round(t + 0.37, 3)})
+        t = new[-1]["e"]
+    shift = t - words[first - 1]["e"]
+    return new + [dict(w, s=round(w["s"] + shift, 3), e=round(w["e"] + shift, 3)) for w in words[first:]]
+
+
+def test_the_hook_takes_one_of_bp03s_forms():
+    """UR-01 follows BP-03 (2026-10-20): the first sentence is a question, a short cold-open line, a claim with a number or a
+    preview, never a greeting; the old "a question by 5 s" FAIL is superseded (this test pinned it before). The severity is
+    BP-03's in the registry."""
+    from explainer_engine.standards import sourced_rules as SR
     shots, words = _good()
-    words = [dict(w, w=w["w"].replace("?", ".")) for w in words]
-    assert "UR-01" in {f["rule"] for f in _fails(shots, words)}
+    hook = [f for f in R.check_shots(shots, _with_first_sentence(words, "They had no matches."), LOOK) if f["rule"] == "UR-01"]
+    assert hook == []  # a cold open is a hook
+    for text in ("Welcome back to the channel.",
+                 "This is a long first sentence that goes on about the weather and the meadow and the people standing there."):
+        hook = [f for f in R.check_shots(shots, _with_first_sentence(words, text), LOOK) if f["rule"] == "UR-01"]
+        assert hook and hook[0]["severity"] == SR.rule("BP-03")["severity"], (text, hook)
 
 
 def test_a_negated_face_is_not_a_face():
@@ -163,7 +189,7 @@ def test_fire_animatic_v3_regression():
     found = R.check_shots(shots, words, look)
     fails = [f for f in found if f["severity"] == "FAIL"]
     by = lambda rule: sorted({f["shot"] for f in fails if f["rule"] == rule})  # noqa: E731
-    assert by("UR-01") == ["v3-01"]
+    assert by("UR-01") == []  # "Day one." is a BP-03 cold-open hook (the superseded "question by 5 s" FAILed it)
     assert by("UR-11") == ["v3-01", "v3-03", "v3-06", "v3-07", "v3-08", "v3-09", "v3-10", "v3-11"]
     assert by("UR-12") == ["v3-02", "v3-03", "v3-04", "v3-05", "v3-06", "v3-07", "v3-08", "v3-09", "v3-11"]
     assert by("UR-13") == ["v3-01", "v3-03", "v3-05", "v3-06", "v3-07", "v3-08", "v3-10", "v3-11"]
@@ -221,7 +247,7 @@ def test_a_stakes_shot_with_a_posed_hero_passes():
 def test_passive_scenery_and_missing_cues_fail():
     assert "UR-16" in rules_of(_stakes(prompt="medium shot of a peaceful meadow at dusk, a cold wind"), "FAIL")
     assert "UR-16" in rules_of(_stakes(prompt="medium shot of a grassy hill with a river"), "FAIL")
-    assert "UR-16" in rules_of(_stakes(stakes="windy"), "FAIL")
+    assert "UR-16" in rules_of(_stakes(stakes="windy"), HOUSE("BP-85"))
 
 
 def test_plates_never_name_people():
@@ -240,7 +266,7 @@ def test_faceless_needs_a_reason_and_a_small_share():
     assert "UR-17" in rules_of(_stakes(face="faceless", heroes=[]), "FAIL")  # no reason
     shots = [{"id": f"s{i}", "type": "B", "face": "faceless", "faceless_reason": "from behind: the face is the joke later",
               "stakes": "the wind is rising and nobody has fire", "beat": "b"} for i in range(3)]
-    assert "UR-17" in rules_of(R.check_stakes(shots, STAKES_LOOK), "FAIL")  # 100 % faceless
+    assert "UR-17" in rules_of(R.check_stakes(shots, STAKES_LOOK), HOUSE("BP-85"))  # 100 % faceless
 
 
 def test_friction_per_beat_is_a_review():
