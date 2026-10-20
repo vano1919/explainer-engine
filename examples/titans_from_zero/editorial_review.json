@@ -1,23 +1,23 @@
 {
  "schema": "editorial_review/2",
- "script_sha256": "94281b90be6cf0f91d06ec556e29d2ca94d09c864ee5ba6cabceeba457b222f4",
+ "script_sha256": "0aeeb539e4281100f5828c4d031a57cb658fb5ac88dac6cd47700ea2e3d66d92",
  "reviewer": "script-critic (Stage 7)",
  "reviewer_role": "independent_critic",
  "independent": true,
- "reviewed_at": "2026-10-20",
- "verdict": "STORY ACCEPTED, PRODUCTION BLOCKED: no bored window and no structural story fault; the gate stops at the missing editorial contract (EG-01) and one unsupported claim (C-01). Fix TFZ-01 and TFZ-02, send back for a new review.",
+ "reviewed_at": "2026-10-20 (round 2)",
+ "verdict": "ACCEPTED. Round 2: all of TFZ-01..TFZ-17 verified fixed in the current script; no bored window, no blocker, no unsupported claim. What remains are small polish items in integrated.notes (optional), plus the paid-stage gates (PV-05, PV-47, VB-09) which are not this review's.",
  "scores": {
   "factual_reliability": {
-   "score": 3,
-   "evidence": "Opened 2026-10-20: C-05 holds (biography.com: 'In 1999, Belfort pleaded guilty to securities fraud and money laundering ... served 22 months'). C-03 only partly: abi.org says Trump 'has reportedly filed for business bankruptcy at least four times', the spoken S05 L7 'six times' rests on logicallyfacts.com, which would not open (proxy 502). C-01 NOT supported: S10 L13 'He slept in one once ... with Kim' vs the cited thefamouspeople.com page, which has 'insolvent in 1985', 'penniless and homeless', spouse Kim, and no car or Toyota (en.wikipedia raw also has none). C-02 unverified: insideevs 403, cleantechnica Cloudflare block. Everything else is declared invented in claim_map.md."
+   "score": 4,
+   "evidence": "Opened 2026-10-20: C-01 liquisearch.com: 'living with his then girlfriend Kim at the back of an old Toyota for several months' (his book, per the page); C-03 politifact: 'Trump has actually filed Chapter 11 six times' and nbcnews: 'there were actually six'; C-05 biography.com: 'In 1999, Belfort pleaded guilty to securities fraud and money laundering ... only served 22 months'; C-02 houstonchronicle: 'last hour of the last day ... 6 p.m., Christmas Eve, 2008' (spoken line says only 'on a Christmas Eve'; the 'last cash' wording rests on cleantechnica, which still returns 403, so it is unverified and not spoken). The Toyota make is one secondary page and the book was not read: stated honestly in editorial C-01. The rest is declared invented in claim_map.md."
   },
   "clarity": {
    "score": 4,
-   "evidence": "A newcomer follows the money logic by action: S04 L4 'names three times Musk's price', S09 L10 'A heat test takes a day per batch. He skips it on the last two hundred.' Small snags: 'fire report' appears first in S14 L5 with no origin; 'the van' (S09 L1) and cells vs batteries (S09 L9 vs S11 L14) are used without being introduced."
+   "evidence": "S13 L12 'Then they post the fire report online, every page.' now plants the report before S14 L5/L9/L10; S12 L1 'a man in a grey suit steps over the ashes ... holds out a card. Vance.' enters by action. Small snag left: 'the van' (S09 L1) and cells vs batteries (S09 L9 vs S11 L14) are never introduced."
   },
   "story_coherence": {
-   "score": 4,
-   "evidence": "Chain holds: S04 L16 'Me? Never.' -> S08 L5 'Five hundred.' -> S09 L10 skipped test -> S11 L2 'starts to hiss' -> S12 L10 'That's why I'm not signing.' -> S13 L6 'We do.' -> S14 L10 'Most buyers ask us to bury it.' -> S15 L13 'a man who doesn't.' Not 5: the report Bezos read is never made public on screen (S13 -> S14 gap) and the loop ledger closes L03/L09/L10 where they are not answered."
+   "score": 5,
+   "evidence": "Chain: S04 L16 'Me? Never.' -> S08 L5 'Five hundred.' -> S09 L10 'He skips it on the last two hundred.' -> S11 L2 'starts to hiss' -> S12 L10 'That's why I'm not signing.' -> S13 L12 'Then they post the fire report online, every page.' -> S14 L5/L10 'Most buyers ask us to bury it.' -> S15 L13 'a man who doesn't.' -> S16 verdict. Loops close where answered: L03 S15, L09 S09, L10 S11."
   },
   "hook": {
    "score": 4,
@@ -48,8 +48,8 @@
    "evidence": "Tension and rest alternate: S07 laugh -> S08 'Yes.' (0.8 s hold) -> S09 dread -> S10 quiet comedy -> S11 fire -> S12 climax (about 9:36-10:27 est.) -> S13 warmth -> S14 laughs -> S15 twist (12:26). Midpoint S08 falls at 46-50 % (ST-12 passes). Four short segments follow the climax (3.5 min, 25 % of the run) and are kept alive only by S14's list and S15's twist."
   },
   "source_coverage": {
-   "score": 3,
-   "evidence": "claim_map.md maps the four echo claims (C-01, C-02, C-03, C-05) and says the rest is invented, with a shape that is honest. But the script carries no 'editorial' block (EG-01: no sources, claims or line kinds), one mapped source does not carry its claim (C-01), one count differs from its second source (C-03), and two URLs could not be opened (C-02, Logically Facts)."
+   "score": 4,
+   "evidence": "production_script.json now carries editorial v1 with 10 sources and 4 claims (C-01, C-02, C-03, C-05), all marked corroborated, with uncertainty stated (Toyota one page, book unread; Trump 'six' counts corporate filings). Four of six re-opened here; cleantechnica 403."
   },
   "title_thumbnail_alignment": {
    "score": 4,
@@ -57,17 +57,11 @@
   },
   "shorts_potential": {
    "score": 4,
-   "evidence": "Ten distinct hooks and styles: SH02 'Is forty dollars worth ten percent forever?', SH06 'You just promised five hundred scooters.', SH07 'Would you sign to be rich by Friday?', SH08 'Who pays when a battery skips its test?' Not 5: SH09 and SH10 give away the twist and the verdict; SH03 says 'ruined billionaire'."
+   "evidence": "SH03 now 'Nobody lends to a broke business titan.'; SH09 ends 'How many envelopes did he get signed? Watch the full video.' (twist withheld, though 'Fires included' hints the fire); SH10 ends 'First: the one nobody on that bench saw coming. Who was it?' (verdict withheld). Hooks stay distinct: SH02, SH06, SH07, SH08."
   }
  },
- "critical_blockers": [
-  "TFZ-01: no editorial v1 block (sources, claims, line kinds) in the script (EG-01)",
-  "TFZ-02: C-01 'slept in an old Toyota ... with Kim' is not in its cited source (invariant 5)"
- ],
- "required_revisions": [
-  "research: add editorial v1 to production_script.json, fix or replace the C-01 source, reconcile C-03, re-open C-02",
-  "after any script edit this review is stale (EG-13) and the script is re-reviewed"
- ],
+ "critical_blockers": [],
+ "required_revisions": [],
  "story_page": "story_page.md",
  "viewer_read": [
   {
@@ -97,8 +91,8 @@
   },
   {
    "at": "2:30-3:00",
-   "feel": "curious, dipping (nearest to bored)",
-   "why": "S03 L5-L6: narrator explains credit after it was shown (TFZ-06)"
+   "feel": "curious",
+   "why": "S03 L5 now 'A loan was only ever a stranger's trust with interest on top.' then L6 'nobody trusts them for a cent': short, no dip"
   },
   {
    "at": "3:00-3:30",
@@ -168,7 +162,7 @@
   {
    "at": "9:30-10:00",
    "feel": "hooked",
-   "why": "S12: Vance, 'Probably.'"
+   "why": "S12 L1 Vance steps over the ashes and holds out a card; L6 'Probably.'"
   },
   {
    "at": "10:00-10:30",
@@ -178,7 +172,7 @@
   {
    "at": "10:30-11:00",
    "feel": "tense",
-   "why": "S13: 'I don't sell probably.'"
+   "why": "S13 'I don't sell probably.'; S13 L12 the fire report goes online"
   },
   {
    "at": "11:00-11:30",
@@ -192,8 +186,8 @@
   },
   {
    "at": "12:00-12:30",
-   "feel": "curious, brief list dip",
-   "why": "S14 L3-L7 fates of Cardone, Hormozi, Zuckerberg, Trump, Kiyosaki; the report appears for the first time (TFZ-05)"
+   "feel": "curious",
+   "why": "S14 L3-L7 fates list, now with the report already planted in S13 L12; brief list dip only"
   },
   {
    "at": "12:30-13:00",
@@ -213,446 +207,78 @@
  ],
  "checked_sources": [
   {
-   "id": "C-05",
-   "url": "https://www.biography.com/crime/jordan-belfort",
-   "result": "supported: 'In 1999, Belfort pleaded guilty to securities fraud and money laundering. He was sentenced in 2003 to four years in prison but only served 22 months.'"
+   "id": "C-01",
+   "url": "https://liquisearch.com/robert_kiyosaki/life_and_career",
+   "result": "supported (his account, secondary): 'living with his then girlfriend Kim at the back of an old Toyota for several months'; second page (dspace.krok.edu.ua) not re-opened this round, taken from editorial SRC-02 as recorded"
   },
   {
    "id": "C-03",
-   "url": "https://www.abi.org/feed-item/examining-donald-trump%E2%80%99s-chapter-11-bankruptcies",
-   "result": "partly: 'he has reportedly filed for business bankruptcy at least four times'; 'six' not on this page; logicallyfacts.com could not be opened (proxy 502)"
+   "url": "https://api.politifact.com/factchecks/2016/jun/21/hillary-clinton/yep-donald-trumps-companies-have-declared-bankrupt",
+   "result": "supported: 'Trump has actually filed Chapter 11 six times'; nbcnews.com: 'there were actually six'"
   },
   {
-   "id": "C-01",
-   "url": "https://www.thefamouspeople.com/profiles/robert-toru-kiyosaki-2706.php",
-   "result": "not supported for the Toyota and Kim detail: page has 'insolvent in 1985', 'penniless and homeless', spouse Kim Kiyosaki; no car, Toyota or sleeping"
+   "id": "C-05",
+   "url": "https://www.biography.com/crime/jordan-belfort",
+   "result": "supported: 'In 1999, Belfort pleaded guilty to securities fraud and money laundering ... only served 22 months.'"
   },
   {
    "id": "C-02",
-   "url": "https://insideevs.com/news/528410/elon-musk-saved-tesla-bankruptcy/",
-   "result": "unverified: HTTP 403; cleantechnica.com returned a Cloudflare block page"
+   "url": "https://preview-prod.w.houstonchronicle.com/business/technology/article/success-was-once-fleeting-for-billionaire-founder-5278880.php",
+   "result": "supported for the spoken 'Christmas Eve': 'the last hour of the last day ... 6 p.m., Christmas Eve, 2008'; 'last of my remaining cash' (cleantechnica, HTTP 403) unverified here and not spoken"
   }
  ],
  "validators": {
-  "production validate": "59 FAIL, 38 REVIEW; the FAILs are PV-05 (unmade sounds, 38), PV-47 (collages, 12) and VB-09 (face sheets, 9): the paid stages, not raised here. PV-37 passes with claim_map.md.",
-  "story_lint": "0 FAIL, 2 REVIEW (ST-11 S13 and S15, false positives)",
-  "scene_lint (SC-11, SC-12)": "0 FAIL, 0 REVIEW",
-  "remaining REVIEWs": "PV-52 BP-01 (TFZ-14), PV-35 BP-24/32/33 (TFZ-10, TFZ-11), PV-12 N-02 x15 and N-12 (notes), PV-44 VB-03 x5, PV-36 BP-62, PV-38"
+  "production validate": "59 FAIL, 29 REVIEW; every FAIL is PV-05 (unmade sounds), PV-47 (collages) or VB-09 (face sheets): paid stages, not raised. PV-37 passes.",
+  "story_lint": "0 FAIL, 2 REVIEW (ST-11 S13 and S15: each question is answered by the next speaker in the same breath; false positives)",
+  "remaining REVIEWs": "PV-35 BP-33 S05 L11 and S08 L4 at 0.49 s; PV-24 RHYTHM-1 10.21/min and RHYTHM-2 SH039 2.47 s (estimated read); PV-12 N-02 x15, N-05 p12.s1 (22 words), N-12 (271 words without you); PV-44 VB-03 x5; PV-38. All optional polish."
  },
  "integrated": {
   "layers": {
    "story": {
     "status": "inspected",
     "basis": "data",
-    "evidence": "Read S01-S16 as one chain (premise: ten titans, nobody lends, only skill left; question 'Was their money ever skill, or was it luck?'; promise: five years of comebacks). Causality: S04 L16 'Me? Never.' -> S08 L5 'Five hundred.' -> S09 L10 skipped test -> S11 L2 hiss -> S12 L10 refusal -> S13 L8 'With everything.' -> S14 L10 'bury it' -> S15 L11-L17 -> S16 L5. Set-ups: P01 envelopes S02 L17 -> S15 L9; P02 S04 -> S08; P03 S09 L12 -> S11 L2; P04 framed receipt S09 L12 -> S14 L2. Reversals: S07 (but), S08 midpoint at 46-50 %, S11 crisis, S12 climax, S15 twist. Approved options present: S10 L9-L11 (Kiyosaki refuses the seat), S14 L5-L6 (Trump airs the fire report). Gaps: the report's origin (TFZ-05), loop ledger (TFZ-08), claim support (TFZ-01..04). Show-don't-tell and immersion: scene_lint 0 FAIL / 0 REVIEW; manual read finds S12 L1, S03 L5-L6, S06 L9, S16 L2-L3 (TFZ-06, TFZ-07); no spoken disclaimer or hedge about the invention anywhere."
+    "evidence": "Read S01-S16 again as one chain (premise: ten titans, nobody lends, only skill left; question 'Was their money ever skill, or was it luck?'). Causality: S04 L16 'Me? Never.' -> S08 L5 'Five hundred.' -> S09 L10 skipped test -> S11 L2 hiss -> S12 L10 refusal -> S13 L8 'With everything.' / L12 report online -> S14 L10 'bury it' -> S15 L13-L17 -> S16 verdict. TFZ-05 fixed (S13 L12), TFZ-08 fixed (L03 closes S15, L09 S09, L10 S11, no loop open at the end), TFZ-06/07 fixed in S03 L5, S06 L9, S12 L1, S16 (now 5 lines). Approved options S10 and S14 intact. No thread or reveal goes nowhere."
    },
    "entrances": {
     "status": "inspected",
     "basis": "data",
-    "evidence": "Trump and Kiyosaki enter with an action in S01 L3 (tie in the black phone; telling the guard debt is a gift); O'Leary S02 L1 'reads the others one by one, the way a man reads price tags'; Musk and Belfort enter named with an act (S02 L2, S02 L14); Cardone S03 L2 with a refusal; Hormozi, Zuckerberg, Cuban, Bezos, Cardone S06 L4-L8 each with a single-hero shot and one concrete action; Vance S12 L1 by narrator description (TFZ-06); Bezos S14 L8-L9 by voice without a name (TFZ-09). Cuban returns S08 L1 with a purpose. Abrupt entrances (O'Leary sliding down the bench) fit the story's pace; nothing is invented as a mandatory pause."
+    "evidence": "Vance now enters by action (S12 L1 'steps over the ashes, careful of his shoes, and holds out a card. Vance.'; label VANCE on 'holds out a card'); Bezos now carries a label JEFF BEZOS on 'One viewer' (S14 L8) so his voice at L11 has a name; other entrances unchanged (S01 L3 Trump/Kiyosaki, S02 L1 O'Leary, S06 L4-L8 one shot each)."
    },
    "dialogue": {
     "status": "inspected",
     "basis": "data",
-    "evidence": "Each exchange follows from the last and fits cast.<id>.speech: O'Leary numbers-first and flat (S02 L7 'Forty dollars.' L9 'Ten percent ... Forever.'), Musk halting (S04 L7 'It's the same scooter.' S11 L8 'I told you we had parts for fifty.'), Belfort closing patter (S04 L10 'Give a little first. People hate owing you.'), Kiyosaki lesson then command (S07 L5 'Lesson one. Your house is not an asset.'), Cuban blunt with a date (S08 L8), Bezos genial (S14 L11), Vance polite (S12 L6 'Probably.'). Silence serves where it is used: S08 L10 'Yes.' (0.8 s), S13 L10. Echoes are earned: 'Probably.' S12 L6 -> 'I don't sell probably.' S13 L4; 'quietly' S11 L9-L10 -> S08 L6. Weak spot: S15 L7 'I didn't pick him.' is cryptic for ten seconds, then pays at S15 L11. Non-speaking: Cardone, Hormozi, Zuckerberg have no speech bible and no lines, which is consistent."
+    "evidence": "Unchanged strong exchanges (S02 L4-L13, S04 L7-L16, S08 L8, S12 L6-L11, S13 L4-L9, S15 L11-L17); the echoes pay: 'Probably.' S12 L6 -> 'I don't sell probably.' S13 L4; 'quietly' S11 L9-L10 -> S08 L6. Silences kept where used (S08 L10 'Yes.', S11 L13 'He doesn't answer.'). Optional: S15 L7 'I didn't pick him.' is cryptic for ten seconds before S15 L11."
    },
    "visual": {
     "status": "inspected",
     "basis": "instructions",
-    "evidence": "Judged on shot subjects, prompts and 470 beat lines (157 expression, 127 symbol, 72 highlight, 72 text, 22 label, 19 accent), no picture seen. Ten beats read at random against their line: S06 L9 'worried' (adds), S04 L2 label BATTERY (duplicates the word, harmless), S08 L6 'worried' (adds), S12 L12 'joyful' (contradicts, TFZ-12), S02 L2 ring on Musk (adds), S02 L10 'smug' (adds), S15 L5 ring on the envelope (adds), S11 L1 text YEAR THREE (duplicates the date), S02 L16 'amused' (adds), S07 L9 cross on 'out of the picture' (duplicates). Shots: 142 (A 27, B 108, C 7), average 5.9 s; S06 gives each of five heroes his own shot; S15 L9 gets five beats for the eight names. Shake accents on quiet beats: TFZ-10. Face sheets and collages (VB-09, PV-47) are for the paid stage."
+    "evidence": "Instructions only, no picture seen. Fixed: JEFF BEZOS label (S14 L8); S12 L12 now worried then determined (was joyful); S11 L2 the hiss has an accent on the cell, not a shake; dialogue lines S04 L17, S10 L12, S14 L8 carry no shake. Beats read at random: S13 L12 label FIRE REPORT on 'the fire report' (adds), S03 L5 text A LOAN IS TRUST (adds), S12 L1 label VANCE (adds), S16 L3 label EIGHT ENVELOPES (adds), S06 L9 cross on 'can't raise' (adds), S11 L13 deadpan on 'doesn't answer' (adds). Optional: PV-44 VB-03 x5 reasons name no word."
    },
    "performance": {
     "status": "inspected",
     "basis": "instructions",
-    "evidence": "Tags and tone read against meaning: S08 L10 'Yes.' softly, pause 0.8 (resigned, fits); S09 L6 'That's how fires work.' deadpan, 0.8 s, 'flat, very low' (fits); S11 L2 whispers, S11 L14 whispers (fits the dread); S12 L10 excited with 'firm, rising' (fits the turn); S13 L9 Cuban 'flat, moved' with 'surprise' (a restrained emotion, good). Mismatches: S12 L12 expression joyful (TFZ-12); expression timing BP-32/33 confirmed (TFZ-11); holds too short for 'a long time' (TFZ-13). Paces: 152 wpm est (TFZ-14). 'excited' and 'mischievously' are the commonest tags on Belfort and Trump, which is on the speech bible."
+    "evidence": "S11 L13 holds 1.0 s (the BP-10 cap) for 'a long time'; S12 L12 worried then determined fits the turn to calling the buyer; S08 L10 'Yes.' softly 0.8 s; S09 L6 deadpan. caster pace_wpm [160,190] (PV-52 passes). Optional: BP-33 at 0.49 s on S05 L11 and S08 L4."
    },
    "audio": {
     "status": "inspected",
     "basis": "instructions",
-    "evidence": "Music: sneaky_pizzicato (-26) S01-S07 wry, clockwork_loop (-32) S09-S12 tension, silence for S13 (warehouse bed only), sneaky_pizzicato S14 to S15 L8 'a second too long', then silence for the twist, back at -28 for S16. Cutting the track before the reveal is the right move. Beds change with places (courthouse, street, lot, motel, pool, garage, warehouse, burnt garage). The loudest cue (-14 dB landing_thud__v2) is on S15 'Musk. Eight?', the twist, good. Findings: S11 hiss scored by cloth_rustle__v3 (TFZ-15), tension loop under S10 (TFZ-16). The generic 'soft accent on the beat's word' cues (S03 pop_in, S11 tick, S13 tock) are decoration, not story events (see notes). PV-05 / PV-36 are for the paid stage."
+    "evidence": "S11 L2 'starts to hiss' now scored by battery_hiss__v1 (-24 dB), no longer cloth rustle; clockwork_loop runs In the parking lot (S09) -> 'Year two' and 'Year three' -> 'The next morning', so it is silent under S10; S15 has no music (sneaky_pizzicato ends at 'Five years after the bench'), S16 returns at -28; landing_thud__v2 (-14 dB) on 'Musk. Eight?' scores the twist. Beds change with places. Optional: S03 pop_in and S13 tock soft accents are decoration."
    },
    "timing": {
     "status": "inspected",
     "basis": "estimate",
-    "evidence": "Estimated read at 152 wpm: 2083 words, about 13:58 (S01 0:00-0:57, S08 6:29-7:02, S12 9:36-10:27, S15 12:26-13:22, S16 13:22-13:58). Midpoint S08 at 46-50 %, climax 69-75 %, twist 89-96 % of the run; the cold open stakes arrive at ~0:25 and the question at ~0:40. Each turn lands before the next change except the Belfort silences at S11 L13 and S09 L7 (TFZ-13). Four segments follow the climax (3.5 min); S14 and S15 carry them. BP-43: ends on an open question; narration S16 L3-L6 (about 25 s) can run under an end screen."
+    "evidence": "Estimate: 2068 words, about 11:50 at 175 wpm and 12:55 at 160 wpm (inside the caster's [160,190] range). Midpoint S08 near 46-50 %, climax S12, twist S15. S11 L13 has 1.0 s and S08 L10 0.8 s for the reactions. BP-43: ends on 'which envelope would be yours?'; S16 is short (5 lines), about 20 s of narration under an end screen. Optional: RHYTHM-1 10.21 pictures a minute vs 10; SH039 2.47 s."
    }
   },
-  "findings": [
-   {
-    "id": "TFZ-01",
-    "layers": [
-     "story"
-    ],
-    "severity": "FAIL",
-    "refs": [
-     "S05 line 7",
-     "S10 line 13",
-     "S12 line 8",
-     "S13 line 8"
-    ],
-    "expected": "The script carries its sources, claims and a kind per narration line, so the four echo claims can be checked by the gate.",
-    "instructed": "docs/SCRIPTING_SPEC.md 5.1 and EG-01: editorial v1 with sources[], claims[] and a line kind (fact / analysis / speculation / joke / transition), claims on factual lines.",
-    "conflict": "production_script.json has no 'editorial' key; claims live only in claim_map.md. The gate stops at EG-01 before it reads any score.",
-    "consequence": "No editorial_gate PASS is possible; paid narration and paid pictures stay blocked (OR-10) however good the story is.",
-    "confidence": "high",
-    "basis": "data",
-    "fix": "Add editorial v1: one source per URL in claim_map.md with grade and the supporting passage, claims C-01, C-02, C-03, C-05, a kind on each of the 192 narration lines, claim ids on S05 L7, S10 L13, S12 L8, S13 L8 (as syndicate_wars_ep1 did with editorial_contract.json and line_kinds.json); then send the script back for a new review.",
-    "owner": "research"
-   },
-   {
-    "id": "TFZ-02",
-    "layers": [
-     "story"
-    ],
-    "severity": "FAIL",
-    "refs": [
-     "S10 line 13",
-     "kiyosaki"
-    ],
-    "expected": "A spoken fact about a living person ('He slept in one once, a long time ago, with Kim.') is true and sourced.",
-    "instructed": "CLAUDE.md invariant 5 and SCRIPTING_SPEC claim pass: an E claim must be supported by its source's own words.",
-    "conflict": "C-01 cites thefamouspeople.com; opened, it says 'The company became insolvent in 1985' and 'left penniless and homeless' and names Kim as wife, but has no car, no Toyota and no sleeping (checked: no match for sleep, car, Toyota, slept). Wikipedia raw has none either. The claim map itself says 'secondary only; the book itself not read'.",
-    "consequence": "A detail about a real person is broadcast without support; it is also the last image of the Kiyosaki arc.",
-    "confidence": "high",
-    "basis": "data",
-    "fix": "Research: find a source that says it (his own book or an interview) and replace the URL, or, if none is found, writer limits the line to what the page supports ('penniless and homeless'). Do not touch the approved S10 refusal.",
-    "owner": "research"
-   },
-   {
-    "id": "TFZ-03",
-    "layers": [
-     "story",
-     "dialogue"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S05 line 7",
-     "trump"
-    ],
-    "expected": "Trump's boast 'My companies went to bankruptcy court six times.' matches a source.",
-    "instructed": "Claim pass: supported / partly / not supported with the source's own words.",
-    "conflict": "abi.org (opened): 'he has reportedly filed for business bankruptcy at least four times' and 'four bankruptcies'; the 'six' needs logicallyfacts.com, which would not open. The map explains six as 'each corporate filing' but the page that says so was not read.",
-    "consequence": "A viewer who checks finds four; the character is a boaster so it can pass, but the map should say which source gives six.",
-    "confidence": "medium",
-    "basis": "data",
-    "fix": "Open the Logically Facts page and quote its count in claim_map.md, or have Trump give the figure both sources support.",
-    "owner": "research"
-   },
-   {
-    "id": "TFZ-04",
-    "layers": [
-     "story"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S13 line 8",
-     "musk"
-    ],
-    "expected": "Musk's 'With everything. I did it once before, on a Christmas Eve.' is his own account of Dec 2008.",
-    "instructed": "Claim pass: a claim that could not be opened is unverified, never supported.",
-    "conflict": "insideevs.com returned 403 and cleantechnica.com a Cloudflare page; neither could be read, so C-02 is unverified in this pass (the claim map says 'checked: yes').",
-    "consequence": "The strongest character beat of the climax rests on a source nobody in this review has seen.",
-    "confidence": "medium",
-    "basis": "data",
-    "fix": "Research: re-open both URLs from a normal browser, paste the passage ('gave Tesla the last of my remaining cash') into claim_map.md, or add a third source.",
-    "owner": "research"
-   },
-   {
-    "id": "TFZ-05",
-    "layers": [
-     "story",
-     "dialogue"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S14 line 5",
-     "S14 line 10",
-     "S13 line 12",
-     "S13 line 13"
-    ],
-    "expected": "Belfort's choice to tell the truth (S12 L12, S13 L2) is what makes the fire report worth reading, so Trump reading it and Bezos buying because of it (S14, approved) feel earned.",
-    "instructed": "ST-06 set-up and pay-off: a detail that decides the end is planted early; BP-74 / ST-11 a new object is not introduced at its pay-off.",
-    "conflict": "'their fire report' first appears in S14 L5 ('he read their fire report on air'); S14 L10 'Most buyers ask us to bury it' implies Belfort sent it to buyers, but no line in S12-S13 writes, files or sends a report, or says how Trump got it.",
-    "consequence": "The viewer asks 'what report? who gave it to Trump?' at 12:00, one beat before the Bezos reveal, and the honesty arc ends on an assumption.",
-    "confidence": "high",
-    "basis": "data",
-    "fix": "Writer: one clause in S13 L12 or L13 that names the report and its sending (the written cause on page one, mailed to every buyer); no change to S14 or S15.",
-    "owner": "writer"
-   },
-   {
-    "id": "TFZ-06",
-    "layers": [
-     "story",
-     "entrances"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S12 line 1",
-     "S03 line 5",
-     "S03 line 6",
-     "S06 line 9",
-     "S14 line 3"
-    ],
-    "expected": "The viewer learns who Vance and the rules of credit are from what they do (BP-87: show, do not tell).",
-    "instructed": "SC-12 / BP-87: a narrator sentence that explains who a hero is instead of showing it is a finding for the scene-writer.",
-    "conflict": "S12 L1 'His name is Vance, and he buys companies before their bad week.' states the trait; S03 L5-L6 and S06 L9 explain credit and Cardone's failure in the narrator's voice right after three scenes (S03 L2-L4) and a hundred hang-ups (S06 L8) have shown it; S14 L3 'because the name on the box means something' states the moral. The validator caught none (SC-11 / SC-12 lexicon is clean).",
-    "consequence": "A lecture window at about 2:30-2:55 and a told entrance for the climax's antagonist.",
-    "confidence": "medium",
-    "basis": "data",
-    "fix": "Writer: let Vance's first beat be an action in the ashes (what he does before he speaks) and cut S03 L5-L6 and S06 L9 to the last concrete clause or to nothing; keep S03 L7.",
-    "owner": "writer"
-   },
-   {
-    "id": "TFZ-07",
-    "layers": [
-     "story",
-     "dialogue"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S16 line 2",
-     "S16 line 3",
-     "S16 line 5",
-     "S15 line 17"
-    ],
-    "expected": "After O'Leary's 'Luck chose the three. I made sure I owned all eight.' the ending lands the verdict once and ends on the open question.",
-    "instructed": "BP-43: the ending is abrupt, no recap in the last 10 %; SC-12: no verdict about groups from the narrator.",
-    "conflict": "S16 L2-L3 re-sort the heroes into 'waited years' and 'back within months', which S14 already showed; S16 L5 'Luck decided which envelope paid' repeats S15 L17 before adding the skill half. No recap lexicon, but it is a recap in shape.",
-    "consequence": "About 12 s (S16 L2-L3, 13:30-13:45 est.) of summary after the strongest beat of the film; the twist loses some of its silence.",
-    "confidence": "medium",
-    "basis": "estimate",
-    "fix": "Writer: drop S16 L2 and L3 (or fold their one idea into L4) so L1 -> L4 -> L5 -> L6 follows S15 L17's pause; the approved ending and its final question stay.",
-    "owner": "writer"
-   },
-   {
-    "id": "TFZ-08",
-    "layers": [
-     "story"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S03",
-     "S09",
-     "S11",
-     "S13",
-     "L03",
-     "L09",
-     "L10"
-    ],
-    "expected": "Each loop is closed in the segment where the viewer gets its answer.",
-    "instructed": "ST-05: loops are declared, opened and closed in order; the viewer's open questions are what the ledger counts.",
-    "conflict": "L03 'will Musk regret the envelope?' is closed by S03 but is answered in S15 L4-L5 ('Of a burnt garage?' / 'Fires included.'); L09 'can they build five hundred in time?' is closed by S11 but answered at S09 L11 ('One day early'); L10 'what will the leftover cells do?' is closed by S13 but answered at S11 L2.",
-    "consequence": "The ledger shows the Musk-envelope question as dead from 2:55 to 12:50 while it is the live thread of the whole film; the lint cannot warn if S04-S14 ever lose their last open loop.",
-    "confidence": "medium",
-    "basis": "data",
-    "fix": "Architect: move 'closes' for L03 to S15, L09 to S09, L10 to S11 (S13 keeps L11), and re-run story_lint.",
-    "owner": "architect"
-   },
-   {
-    "id": "TFZ-09",
-    "layers": [
-     "entrances",
-     "visual"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S14 line 8",
-     "S14 line 9",
-     "bezos"
-    ],
-    "expected": "Bezos's entrance is the 'reader' payoff: 'One viewer read every page ... Then he walked into their office.' then 'I read your fire report. All of it.'",
-    "instructed": "Entrance rule: why now, what the viewer knows, whether picture and first line make one effect.",
-    "conflict": "Bezos was last seen at S06 L7 (about 8.5 min earlier, selling used books); S14 L8 calls him 'One viewer' and no beat or line names him before S15 L9 lists him. The beats at S14 L9 ring 'the fire report in Bezos's hands' and an expression for Belfort, none labels Bezos.",
-    "consequence": "Part of the audience hears a stranger offer double and only learns who he is three lines later; the 'honest company gets bought' payoff blurs.",
-    "confidence": "medium",
-    "basis": "data",
-    "fix": "Beats: add a label beat 'JEFF BEZOS' on 'One viewer' (S14 L8) or on 'I read your fire report' (S14 L9) on the shot that shows him.",
-    "owner": "beats"
-   },
-   {
-    "id": "TFZ-10",
-    "layers": [
-     "visual",
-     "performance"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S04 line 17",
-     "S10 line 12",
-     "S11 line 2",
-     "S14 line 8"
-    ],
-    "expected": "A shake is an accent on a hit, crash, fall or blast.",
-    "instructed": "BP-24 / PV-35: a shake sits on a beat whose narration names an impact, never a move or a dialogue-only shot.",
-    "conflict": "Confirmed on all four: S04 L17 'lets go first' (a handshake), S10 L12 'pulls away' (a car leaving), S11 L2 'starts to hiss', S14 L8 'walked into' (a man walking in). None names an impact.",
-    "consequence": "A shake on a quiet beat reads as a glitch and spends the accent that S15's 'Eight?' (-14 dB thud) needs.",
-    "confidence": "high",
-    "basis": "data",
-    "fix": "Beats: remove these four shakes, or move the S11 one to the fire itself (S11 L3); leave the dialogue lines without shakes.",
-    "owner": "beats"
-   },
-   {
-    "id": "TFZ-11",
-    "layers": [
-     "performance",
-     "visual"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S08 line 5",
-     "S08 line 10",
-     "S09 line 5",
-     "S12 line 6",
-     "S12 line 10",
-     "S15 line 14"
-    ],
-    "expected": "An expression answers 1-3 frames before its word and holds at least 0.5 s.",
-    "instructed": "BP-32 / BP-33 / PV-35 (estimated read).",
-    "conflict": "Confirmed: S08 L5 musk surprised 7 frames late; S08 L10 belfort joyful 4 late and 0.35 s; S09 L5 musk doubtful holds 0.45 s; S12 L6 musk angry 10 frames late and holds 0.18 s; S12 L10 vance surprised 7 late; S15 L14 belfort sad 4 late. S12 L6 is the worst: Musk's anger is on the last word of Vance's line.",
-    "consequence": "The reaction arrives after the line it answers; at S12 L6 it is gone before it registers. The look is the whole point of S15 L14 and S12 L6.",
-    "confidence": "medium",
-    "basis": "estimate",
-    "fix": "Beats: anchor each `at` on the word before (S12 L6 on 'they'll be fine', S08 L5 on 'Five'), and lengthen the S12 L6 and S09 L5 holds to 0.5 s; re-check on the timed read.",
-    "owner": "beats"
-   },
-   {
-    "id": "TFZ-12",
-    "layers": [
-     "visual",
-     "performance"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S12 line 12",
-     "belfort"
-    ],
-    "expected": "Belfort's phone call is the cost-bearing turn of the climax: 'does something he has never done in a sale', delivered 'urgent, building', emotion 'resolve'.",
-    "instructed": "Beat expression must show what the line means at that instant.",
-    "conflict": "The expression beat at 'calls the buyer' is 'joyful' (its why: 'relieved'); the neighbour beat at S12 L10 is 'determined'. A joyful face on the confession scores the wrong emotion.",
-    "consequence": "A grin where the character is about to lose a fortune; it contradicts S12 L10-L11 and the quiet of S13.",
-    "confidence": "medium",
-    "basis": "data",
-    "fix": "Beats: swap 'joyful' for 'determined' or 'afraid' on that beat.",
-    "owner": "beats"
-   },
-   {
-    "id": "TFZ-13",
-    "layers": [
-     "timing",
-     "performance"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S11 line 13",
-     "S13 line 10",
-     "S09 line 7"
-    ],
-    "expected": "'Belfort looks at the black shelf for a long time. He doesn't answer.' lets the silence be the line.",
-    "instructed": "Timing: a reaction has time before the next change arrives.",
-    "conflict": "S11 L13 holds 0.6 s after saying 'for a long time'; S13 L10 'For once, he closes it.' holds 0.5 s; S09 L7 'stops' has no hold before 'For eleven weeks'. The longest hold in the film is S08 L10 at 0.8 s.",
-    "consequence": "The two best silences of Belfort's arc are shorter than a breath at the estimated 152 wpm.",
-    "confidence": "medium",
-    "basis": "estimate",
-    "fix": "Performer: raise S11 L13 to about 1.2 s and S09 L7 to 0.6 s; pay for it by trimming holds on non-turn lines (see TFZ-14).",
-    "owner": "performer"
-   },
-   {
-    "id": "TFZ-14",
-    "layers": [
-     "timing",
-     "performance"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "voice",
-     "S03 line 4",
-     "S05 line 14",
-     "S07 line 4",
-     "S06 line 8"
-    ],
-    "expected": "The narrator reads in the voice profile's 155-185 wpm band.",
-    "instructed": "BP-01 / PV-52: the heard pace sits in the band, or the script says why not.",
-    "conflict": "Confirmed: the estimate is 152 wpm (2083 words, 27 held pauses totalling 15.3 s). The excess is the holds on lines that are not turns (S03 L4, S05 L14, S06 L8, S07 L4).",
-    "consequence": "A narrator 2 % under the band; not a bored window, but the funny montage lines will drag by a hair.",
-    "confidence": "medium",
-    "basis": "estimate",
-    "fix": "Performer: cut the 0.5 s holds on those four non-turn lines (frees about 2 s) or record in the script why the dialogue-heavy read is 152; keep the 0.8 s on S08 L10 and S09 L6.",
-    "owner": "performer"
-   },
-   {
-    "id": "TFZ-15",
-    "layers": [
-     "audio"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S11 line 2",
-     "cloth_rustle__v3"
-    ],
-    "expected": "The hiss of the leftover cell is the first sign of the fire: a dry fizz that makes the viewer lean in.",
-    "instructed": "AL rules: each cue scores the event of that instant; a sound that scores the wrong thing is a finding.",
-    "conflict": "S11 uses cloth_rustle__v3, whose library tags are cloth / coat / move (manifest), for 'starts to hiss'; the same file family is also the S04 handshake cue. It reads as fabric, not as a cell.",
-    "consequence": "The one sound the whole fire depends on is a coat sound; the dread of the whisper line is undercut. (The unmade-sound FAIL PV-05 is not part of this finding.)",
-    "confidence": "medium",
-    "basis": "instructions",
-    "fix": "Editor: pick a hiss / fizz sound from the sfx library (or order one) for this cue and keep cloth_rustle for S04; leave the volume at -24 dB.",
-    "owner": "editor"
-   },
-   {
-    "id": "TFZ-16",
-    "layers": [
-     "audio",
-     "story"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "clockwork_loop__v1",
-     "S10",
-     "S09 line 1",
-     "S13 line 1"
-    ],
-    "expected": "S10 is the quiet comic-then-sad scene between the order and the fire: 'Well, suit yourself.' / 'He still knows which seat folds flat.'",
-    "instructed": "Music moves with the story event: a tension bed starts where the tension starts.",
-    "conflict": "clockwork_loop__v1 (-32 dB) runs from S09 L1 to S13 L1 (about 7:02-10:27 est., 3.4 min), under S10's year-later Toyota and the car dialogue as well as the countdown scenes.",
-    "consequence": "A countdown ticks under the one scene whose point is the man stepping out of the story; S10's melancholy and its jokes lose their room, and 3.4 min of the same loop tires.",
-    "confidence": "low",
-    "basis": "instructions",
-    "fix": "Editor: stop the loop at S10 L1 ('Year two.') and bring it back at S11 L1, or duck it 6 dB through S10.",
-    "owner": "editor"
-   },
-   {
-    "id": "TFZ-17",
-    "layers": [
-     "story",
-     "audio"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "SH09",
-     "SH10",
-     "SH03"
-    ],
-    "expected": "A Short makes the viewer want the full video.",
-    "instructed": "shorts-for-video: a Short promotes the long video without spending its payoff; fact-check the hook against the title.",
-    "conflict": "SH09 plays the whole S15 twist ('Eight?' / 'One man read to the last line' / 'I made sure I owned all eight.') and SH10 reads the verdict and the closing question word for word; SH03 opens 'Nobody lends to a ruined billionaire.' although the title was changed to 'Business Titans' because Kiyosaki, Cardone, O'Leary and Hormozi are not billionaires.",
-    "consequence": "Viewers from SH09 / SH10 meet the long video's ending first; SH03 repeats the error the v1 review fixed in the title.",
-    "confidence": "medium",
-    "basis": "data",
-    "fix": "Shorts: end SH09 on 'Nine offered. One man read to the last line and said no.' (a cliffhanger) and SH10 on the ranking before the verdict; change SH03's hook to 'ruined titan' or 'ruined tycoon'.",
-    "owner": "shorts"
-   }
-  ],
+  "findings": [],
   "notes": [
-   "Predicted leave points (viewer_read below): no bored window. Three dips, none a leave risk: about 2:30-3:00 (S03 narrator explains credit after it was shown), 5:00-5:30 (S06 five new names), 12:00-12:30 (S14 list of fates and the unplanted report). The estimated drop-off risk is highest at S06 and S14 because both are lists, not scenes.",
-   "N-12 (no 'you' for 249 words, S13 L2 to S14 L8): confirmed, one word under the lint, and dropped: the film is told in full immersion (SC-11) and the dialogue carries the 'you'; the viewer is addressed at S01 L7 and at the last line S16 L6.",
-   "ST-11 (S13 and S15 'three questions'): false positives. Every question is answered by the next speaker in the same breath ('Are they bad?' 'Probably not.'; 'Eight?' 'Nine offered.').",
-   "BP-05: the first 85 words hold one pure set-up line (S01 L1, 15 words, an image) and the stakes arrive by word ~75; the gap sentence ('Five years will show if it was ever skill.') is at word ~100. Passes in spirit; the creator may move L7 up one line.",
-   "BP-09: first laugh at ~0:15, inside 45 s. S04-S05 pack more than one verbal joke per 60 s; the jokes grow from the people and sit beside the facts, so this is the creator's taste, not a finding.",
-   "The two accepted creator options stand: S10 (Kiyosaki refuses the seat, 'I'm not a lesson. I teach them.') makes his defeat a choice and mirrors Belfort's refusal at S12; S14 (Trump airs the report, Bezos sees it) joins the two lines. Neither is re-raised; only the report's origin (TFZ-05) is.",
-   "Soft-accent cues (S03 pop_in 'learn fast', S11 tick 'never listen', S13 tock 'We do.') are marked as 'a soft accent on the beat's word' in their purpose field; the editor may keep S13 (the decision) and drop the other two.",
-   "Cuban's 'Nobody has ever come in here to give me money back.' and Musk's 'I don't sell probably.' are the lines to protect in any edit.",
-   "Remaining validator REVIEWs not raised as findings: PV-12 N-02 'beat ends closed' (15 beats; the film is built from closed scenes, one idea each), PV-44 VB-03 (5 beats whose reason names no word of the line, S02 L5, S05 L8, S13 L6-L7), PV-36 BP-62 (music end at 752 s on no cut), PV-38 (episodes.json entry).",
-   "Limits of this review: no picture was seen and no voice heard; basis is data, the estimated read, or instructions as marked. Sources opened 2026-10-20: biography.com (C-05), abi.org (C-03), thefamouspeople.com (C-01), en.wikipedia raw (Kiyosaki, Tesla); not opened: insideevs.com (403), cleantechnica.com (Cloudflare), logicallyfacts.com (proxy 502)."
+   "Predicted leave points: no bored window; short dips only at S06 (five new names) and S14 L3-L7 (list of fates), both brief.",
+   "ST-11 (S13, S15): false positives; each question is answered by the next speaker at once.",
+   "BP-05/BP-09: first 85 words hold one pure set-up line (S01 L1), the gap sentence is S01 L7; first laugh about 0:15; S04-S05 are denser than one verbal joke per 60 s but the humour grows from the people (creator's taste).",
+   "OPTIONAL polish, none blocks the read: (1) beats: BP-33 expression holds 0.49 s on S05 L11 and S08 L4 (+0.01 s each); (2) editor: RHYTHM-1 10.21 pictures a minute, merge one or two B shots in the busiest scene; (3) shorts: SH039 is 2.47 s, one half second longer or merge it; (4) writer: split the 22-word sentence in p12 (N-05), 'the van' and cells vs batteries in S09; (5) writer: N-12, one 'you' in S13-S14 (the speakers already say it in dialogue); (6) editor: drop the S03 pop_in and S11 tick soft accents; (7) shorts: SH09 'Fires included' hints at the fire.",
+   "The lines to protect in any edit: Cuban 'Nobody has ever come in here to give me money back.' and Musk 'I don't sell probably.'",
+   "Paid-stage gates (PV-05, PV-47, VB-09) are not judged here by the caller's instruction.",
+   "Limits: no picture seen and no voice heard; basis is data, the estimated read, or instructions as marked. Sources opened this round: liquisearch, politifact, nbcnews, biography.com, houstonchronicle, levelfields. Not opened: cleantechnica (403), dspace.krok.edu.ua (taken from editorial SRC-02). Note: `production compile` was run for reading the narration and refreshed the script file's modification time; the review binds to the sha256 of the file as it stands now."
   ]
  }
 }
