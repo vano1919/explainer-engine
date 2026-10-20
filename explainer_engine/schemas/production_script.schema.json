@@ -753,6 +753,10 @@
                   "type": "boolean",
                   "description": "D-62 (PV-55): false = the line is never read by a voice; it is shown as speech bubbles, held for reading (BP-27). A real living person's lines are always false"
                 },
+                "new_read": {
+                  "type": "boolean",
+                  "description": "D-63: a narrator line written after the read was recorded (it replaces a run of silent lines); the audio step records only these and reuses the rest"
+                },
                 "pause_after": {
                   "type": "number",
                   "minimum": 0,

@@ -304,6 +304,7 @@ def test_a_final_render_stops_on_a_loudness_fail_after_writing_the_report(monkey
     monkeypatch.setattr(A, "Sounds", lambda dirs: None)
     monkeypatch.setattr(A, "build_audio", lambda timed, nar, sounds, stats: np.zeros(len(nar)))
     monkeypatch.setattr(A.subprocess, "run", lambda *a, **k: None)
+    monkeypatch.setattr(A.targets, "normalise_file", lambda *a, **k: {})
     monkeypatch.setattr(A, "measure_delivery", lambda *a, **k: {"lufs": -11.0, "loudness_verdict": "FAIL", "true_peak": -2.0,
                                                                 "true_peak_verdict": "PASS"})
     timed = {"fps": 30, "frames": 30, "findings": [], "audio": {"beds": [], "sfx": [], "music": [], "cues": []}, "shots": [], "pictures": {}}
@@ -425,3 +426,27 @@ def test_posting_spread_bp47():
     assert any("first Short" in x["detail"] for x in PLAN.posting_findings(late))
     good = {"publish_date": "2026-11-01", "shorts": [{"id": f"SH{k:02d}", "publish_date": f"2026-11-{2 + 2 * k:02d}"} for k in range(8)]}
     assert PLAN.posting_findings(good) == [] and (2 + 2 * 7) - 2 >= t["spread_days_min"]
+
+
+def test_a_wide_range_mix_is_trimmed_onto_the_long_target(tmp_path):
+    """Single-pass loudnorm left the titans preview 2.5 LU low; normalise_file trims it into the pass band under the TP cap."""
+    import shutil
+    import wave
+
+    import numpy as np
+    import pytest
+    from explainer_engine.qa import targets
+    if not shutil.which("ffmpeg"):
+        pytest.skip("ffmpeg")
+    sr = 48000
+    rng = np.random.default_rng(1)
+    t = np.arange(sr * 40) / sr
+    sig = 0.02 * rng.standard_normal(len(t)) * (1 + np.sin(2 * np.pi * 3 * t))      # quiet speech-like bed
+    sig[sr * 10:sr * 14] += 0.6 * np.sin(2 * np.pi * 220 * t[sr * 10:sr * 14])        # one loud passage: a wide range
+    raw = tmp_path / "raw.wav"
+    with wave.open(str(raw), "wb") as w:
+        w.setnchannels(1), w.setsampwidth(2), w.setframerate(sr)
+        w.writeframes((np.clip(sig, -1, 1) * 32767).astype("<i2").tobytes())
+    m = targets.normalise_file(raw, tmp_path / "out.wav", "long", sr)
+    v = targets.verdicts(m, "long")
+    assert v["loudness_verdict"] == "PASS" and v["true_peak_verdict"] == "PASS", m

@@ -18,3 +18,14 @@ def test_one_take_per_run_or_refuse(tmp_path):
     import pytest
     with pytest.raises(SystemExit):
         SR.pieces([{"at": 1.0}, {"at": 2.0}], tmp_path, [tmp_path / "a.mp3"], tmp_path / "out")
+
+
+def test_the_schema_marks_a_new_narrator_line_and_only_with_a_boolean():
+    import json
+    from pathlib import Path
+    from explainer_engine.production import script as S
+    doc = json.loads(Path("examples/titans_from_zero/production_script.json").read_text(encoding="utf-8"))
+    line = next(ln for seg in doc["segments"] for ln in seg["lines"] if ln.get("new_read"))
+    assert not [e for e in S.schema_errors(doc) if "new_read" in e]
+    line["new_read"] = "yes"
+    assert any("new_read" in e or "yes" in e for e in S.schema_errors(doc))

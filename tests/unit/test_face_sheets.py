@@ -138,10 +138,10 @@ def test_end_to_end_dialogue_renders_the_keyed_close_up(tmp_path, monkeypatch):
     calls = []
     real = FACES.composite
 
-    def spy(frame, faces, f, fps, order):
+    def spy(frame, faces, f, fps, order, *plan):  # plan: the shot's view plan (faces.views), passed by assemble
         if faces:
             calls.append(f)
-        return real(frame, faces, f, fps, order)
+        return real(frame, faces, f, fps, order, *plan)
 
     monkeypatch.setattr(FACES, "composite", spy)
     pics = tmp_path / "pictures"

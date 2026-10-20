@@ -536,7 +536,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             out.append(f)
         from explainer_engine.production import assemble as _asm, silent as _sil
         bubble = [f for f in timed["problems"] if f["rule"].startswith("BUBBLE")]
-        for f in bubble + _sil.check_duplicates(timed["shots"]) + _asm.bubble_findings(timed):  # BUBBLE-4/5 (D-62)
+        laid = _asm.bubble_findings(timed, picture_dirs=picture_dirs)  # BUBBLE-4 on the view each bubble is shown on
+        for f in bubble + _sil.check_duplicates(timed["shots"]) + laid:  # BUBBLE-4/5 (D-62)
             out.append(dict(f, rule="PV-24 " + f["rule"], detail=f["detail"] + " (estimated read)"))
         for f in motion_lint.check(timed):  # MO rules on the estimated read (REVIEW)
             out.append(dict(f, rule="PV-35 " + f["rule"], detail=f["detail"] + " (estimated read)"))
@@ -781,7 +782,7 @@ def check_timed(timed: dict, doc: dict, *, final: bool = False, picture_dirs: li
     out += board_findings(timed, doc)
     from explainer_engine.production import assemble as _asm, silent as _sil
     out += _sil.check_duplicates(shots)  # BUBBLE-5: one text, one bubble (the creator, 2026-10-20)
-    out += _asm.bubble_findings(timed)  # BUBBLE-4: no bubble over a face, laid out as the render lays it out
+    out += _asm.bubble_findings(timed, picture_dirs=picture_dirs)  # BUBBLE-4: no bubble over a face, laid out as the render lays it out
     out += continuity.findings(shots)
     out += music_findings(timed["audio"]["music"])
     out += [dict(f, rule="PV-35 " + f["rule"]) for f in motion_lint.check(timed)]  # MO rules (D-48)

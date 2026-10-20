@@ -75,6 +75,7 @@ CUE_MIN_GAP = float(SR.T("BP-39", "min_gap_s"))  # two cues closer than this sta
 TAKE_CUES = int(SR.T("BP-39", "take_cues_per_line_max"))  # cued expression changes on one dialogue line
 OVERLAY = {"text", "label", "prop", "chart", "highlight", "symbol"}
 FACE_HOLD, FACE_POP, FACE_EASE, POP_S = 0.10, 0.04, 0.25, 0.18
+FACE_GLIDE_S = 0.6  # engineering: the face lean moves its pivot to the next speaker over this (a switch jumped, CC-06)
 TEXT_SCALE, MARK_R = 1.15, 0.075  # beat words about 0.09 of the frame height; emotion mark radius (share of the height)
 DEFAULT_POS = {"text": (0.5, 0.16), "label": (0.5, 0.5), "prop": (0.8, 0.3), "chart": (0.8, 0.24), "symbol": (0.86, 0.2)}
 _PALETTE = Path(__file__).resolve().parents[1] / "design" / "palette.json"
@@ -582,7 +583,12 @@ def face_camera(box, W: int, H: int, face_beats: list[dict], f: int, fps: int):
     b = cur[-1] if cur else face_beats[0]
     pop = FACE_POP * _bump((f - b["start_frame"]) / (POP_S * fps)) if cur else 0.0
     z = 1 + hold + pop
-    px, py = b["face"][0] * W, b["face"][1] * H
+    fx, fy = b["face"]
+    if len(cur) > 1 and cur[-2]["face"] != b["face"]:  # the lean glides to the next face; a switched pivot jumped (CC-06)
+        u = min(max((f - b["start_frame"]) / (FACE_GLIDE_S * fps), 0.0), 1.0)
+        m = u * u * (3 - 2 * u)  # smoothstep: no speed step where the glide starts or ends
+        fx, fy = cur[-2]["face"][0] + (fx - cur[-2]["face"][0]) * m, cur[-2]["face"][1] + (fy - cur[-2]["face"][1]) * m
+    px, py = fx * W, fy * H
     x0, y0, x1, y1 = box
     nx0, ny0 = px + (x0 - px) / z, py + (y0 - py) / z
     nx1, ny1 = px + (x1 - px) / z, py + (y1 - py) / z
@@ -862,3 +868,61 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
                     piece.putalpha(piece.getchannel("A").point(lambda v: v * a // 255))
                 lay.alpha_composite(piece, (ix, iy))
     return Image.alpha_composite(frame.convert("RGBA"), lay).convert("RGB")
+
+
+def _norm(s: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def named_heroes(at: str, cast: dict) -> list[str]:
+    """The cast heroes a beat's phrase names: the hero id or the full name of his card (``name``) in the words."""
+    t = _norm(at)
+    return [w for w, c in cast.items() if _norm(w) in t or (c.get("name") and _norm(c["name"]) in t)]
+
+
+def fit_to_views(shots: list[dict], beats: list[dict], pics: dict, cast: dict, fps: int, problems: list[dict]) -> list[dict]:
+    """The timed beats made to fit what the frame shows (frame review 2026-10-20, CC-04):
+
+    * a ring (``highlight``) whose phrase names a hero is centred on his face point in the shot's picture (FR-RING-HERO:
+      the script's ``pos`` missed the face by most of the ring's radius);
+    * a mark that points into the picture (ring, label) is kept only on the scene: trimmed to the scene frames of its
+      shot's ``views`` (faces.views), dropped with a REVIEW when a close-up covers all of it (FR-RING-FACE);
+    * a word, symbol, prop or chart that would run past its shot's cut ends with the shot when it stays readable there
+      (BP-27's hold floor), so it never lands on the next picture (FR-TEXT-CUT).
+    Returns the beats that remain."""
+    by_id = {s["id"]: s for s in shots}
+    hold_min, per_word = float(SR.T("BP-27", "hold_min_s")), float(SR.T("BP-27", "s_per_word"))
+    keep = []
+    for b in beats:
+        s = by_id.get(b.get("shot"))
+        if s is None:
+            keep.append(b)
+            continue
+        if b["kind"] == "highlight":
+            speakers = (pics.get(s["picture"], {}) or {}).get("speakers") or {}
+            named = [w for w in named_heroes(b.get("at", ""), cast) if w in speakers]
+            if len(named) == 1:
+                b["pos"] = list(speakers[named[0]])
+                b["on_hero"] = named[0]
+        if b["kind"] in ("highlight", "label"):
+            scene = [v for v in s.get("views") or [] if v["who"] is None]
+            if s.get("views") and any(v["who"] is not None for v in s["views"]):
+                e = max(b["end_frame"], b["start_frame"] + 1)
+                runs = [(max(b["start_frame"], v["start_frame"]), min(e, v["end_frame"])) for v in scene]
+                runs = [r for r in runs if r[1] > r[0]]
+                if not runs:
+                    problems.append({"rule": "PV-44 VB-03", "severity": "REVIEW", "where": f"{b['segment']} line {b['line']}",
+                                     "detail": f"{b['kind']} {b.get('at', '')!r} falls on a close-up of {s['id']}: dropped "
+                                     "(a mark in the picture cannot point at a close-up)"})
+                    s["visual_beats"] = max(0, s.get("visual_beats", 1) - 1)
+                    continue
+                a, z = runs[0]
+                b["start_frame"], b["end_frame"] = a, z
+                b["start"], b["end"] = round(a / fps, 3), round(z / fps, 3)
+        elif b["kind"] in OVERLAY and b["end"] > s["end"] + 1e-6:
+            n = len(payload(b).split())
+            need = max(hold_min, per_word * n) if b["kind"] == "text" else hold_min
+            if s["end"] - b["start"] >= need - 1e-6:
+                b["end"], b["end_frame"] = round(s["end"], 3), s["end_frame"]
+        keep.append(b)
+    return keep

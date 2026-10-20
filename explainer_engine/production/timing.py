@@ -17,6 +17,7 @@ from explainer_engine.audio import layers as L
 from explainer_engine.audio.scribe_words import norm
 from explainer_engine.edit import board as B
 from explainer_engine.production import accents as ACC, beats as BEATS, continuity, script as S
+from explainer_engine.production import faces as FACES
 from explainer_engine.production import silent as SIL
 from explainer_engine.standards import sourced_rules as SR
 
@@ -166,6 +167,9 @@ def time_script(doc: dict, words_doc: dict) -> dict:
         s["accents"] = ACC.resolve(s.pop("_accents"), s["start"], s["end"], accent_start, fps)  # MO rules (D-48)
         s.pop("_seg_hi")
     beats = BEATS.resolve(doc, toks, words, wi, out_shots, fps, duration, problems)  # VB rules: the lines' visual beats
+    # what each frame shows (close-up or scene, bound by the bubbles, BP-84's insert floor), then the beats fitted to it
+    FACES.plan_shots(out_shots, beats, doc.get("cast", {}), fps)
+    beats = BEATS.fit_to_views(out_shots, beats, pics, doc.get("cast", {}), fps, problems)
     # sound
     beds, sfx = [], []
     for si, seg in enumerate(doc["segments"]):

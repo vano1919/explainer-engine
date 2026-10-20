@@ -1160,3 +1160,28 @@ Test: `tests/unit/test_frame_review.py` (7).
 bubble lines, the second where its gap opened (`silent.insert_points`, pass 1 of `silent.insert` split out); `pieces` cuts
 `read.wav` there on 10 ms fades and interleaves the new narrator takes in script order, for `production words`. Only the
 new passages are paid for. Titans: 19 runs. Test: `tests/unit/test_splice_read.py`.
+
+## 2026-10-20 — Loudness lands on the target (BP-50)
+
+Single-pass loudnorm left the titans preview at -16.5 LUFS (FAIL; input range 19.9 LU). `qa/targets.normalise_file` runs
+the loudnorm, measures, then trims by the gap with a static gain and an oversampled (4x) limiter at the limiter ceiling,
+up to two rounds; `production/assemble.py` uses it. The same mix now measures -14.8 LUFS / -1.5 dBTP (PASS / PASS).
+Test: `test_a_wide_range_mix_is_trimmed_onto_the_long_target`.
+
+## 2026-10-20 — One view plan per shot: close-ups, bubbles and the camera follow what is on screen (CC-01, CC-03, CC-06)
+
+Static analysis of the Titans 0-123 s preview (`/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/static_analysis.md`).
+Causes: `faces.composite` put a close-up in and out of the frame whenever an expression beat came (24 face-frame runs in
+61.7-123 s, median 1.7 s, 14 under BP-84's 2.0 s insert floor), eased the blurred backdrop 1.0 -> 1.3 -> 1.0 at each edge (the
+"zoom reset"), and let it run up to the cut; bubbles were laid out once on the scene and drawn over whatever the composite
+showed (a speaker's words on another hero's close-up, a tail into blur); `assemble.beats_for_shot` keyed face points by
+`id()` of a copy, so no expression ever had its face point; a held punch, a wobble and the face lean did not return to rest
+at a cut inside one picture (SH069 -> SH070); the face lean switched pivot in one frame.
+Fix: `faces.views` (the shot's view plan: scene or one hero's close-up; never past the cut; a bubble never crosses a view
+change and only shows on the scene or its speaker's own close-up; views under BP-84's insert floor absorbed), written by
+timing into `shots[].views` (`faces.plan_shots`); the composite cuts in and out with its view; `assemble.shot_bubbles` lays
+each bubble out on its view (on a close-up at the mouth measured on the keyed silhouette, `faces.mouth_and_head`);
+`assemble.rest_weight` eases accents and the face lean to rest at a same-picture cut; the face lean glides between speakers;
+`beats.fit_to_views` centres a ring that names a hero on his face point, keeps rings and labels off close-ups and ends a word
+with its shot when it stays readable (BP-27). The preview's plan: 13 views in 61.7-123 s, none under 2.2 s, 0 of the frame
+review's 17 FAIL causes left (`jobs/titans_from_zero/render/review/static/timed_planned.json`). Test: `tests/unit/test_view_plan.py`.
