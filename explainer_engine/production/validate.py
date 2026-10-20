@@ -395,7 +395,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # PV-33 the story layer (ST rules, scripting/story_lint.py)
     for f in story_lint.lint(doc):
         _f(out, "PV-33 " + f["rule"], f["where"], f["detail"], f["severity"])
-    # PV-47 scenes and dialogue (SC rules, scripting/scene_lint.py; binding on production_script/3, D-56)
+    # PV-47 scenes and dialogue (SC rules, scripting/scene_lint.py; binding on production_script/3, D-58)
     from explainer_engine.scripting import scene_lint
     for f in scene_lint.lint(doc):
         _f(out, "PV-47 " + f["rule"], f["where"], f["detail"], f["severity"])

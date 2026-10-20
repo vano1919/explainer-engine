@@ -694,7 +694,7 @@ Rockstar's fan-content policy page read first-hand (B-14 verified, RK-02 evidenc
 from earlier Gemini batches are only ones painted from today's prompts, never the pre-v2 Vito/Shelby portraits, each face checked
 for actor likeness. Editorial review rebound to the script (EG-11 REVIEWs only).
 
-## 2026-10-19 — The scene rewrite: production_script/3, SC rules, inverted cues (D-56)
+## 2026-10-19 — The scene rewrite: production_script/3, SC rules, inverted cues (D-58)
 
 After the creator's Syndicate Wars review (senseless cues, no real dialogue, press-release narration, "rewrite the whole
 system"), the storytelling and editing system was rewritten from research on a new schema; `/1`/`/2` keep their exact
@@ -710,7 +710,7 @@ approved by the creator), then rules: every new or changed rule carries at least
   (beds/music `play_once`, Shorts `-stream_loop` gated); `audio/layers.py` AL-02 counts cues; `edit/motion_lint.py`
   MO-07 hold variance; `scripting/speech.py` signature-words-used check on /3.
 - Docs: STORY_ENGINE (SC section, DW-09 softened + DW-12/DW-13, three story templates replace the beat grid, ST/VB/MO
-  rows), EDITING ED-14 (dialogue coverage grammar), PRODUCTION_SCRIPT (/3 + PV-47), INDEX, D-56 in the decision log.
+  rows), EDITING ED-14 (dialogue coverage grammar), PRODUCTION_SCRIPT (/3 + PV-47), INDEX, D-58 in the decision log.
 - Skills/agents: new `dialogue-scenes` (scene header, hand-off unit, deflections, worked Capone/Enzo example);
   `visual-beats`, `story-engine` updated to /3; agents scene-writer, story-architect, beat-writer, edit-planner.
 - Tests: `tests/unit/test_scene_system.py` (20); whole suite 425 passed, 1 skipped; docs_lint 0 findings. The

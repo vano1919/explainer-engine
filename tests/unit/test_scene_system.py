@@ -1,4 +1,4 @@
-"""The 2026-10-19 scene rewrite (D-56): scenes and dialogue (SC rules, PV-47), story cadence (ST-00/ST-12/ST-13), the
+"""The 2026-10-19 scene rewrite (D-58): scenes and dialogue (SC rules, PV-47), story cadence (ST-00/ST-12/ST-13), the
 inverted cue logic on a production_script/3 (VB-08 / VB-10 / VB-11), hold variance (MO-07), and the audio bugs fixed for
 every schema: cue pitch variants, loop/one-shot manifest guards, beat de-stacking, AL-02 counting cues."""
 import copy

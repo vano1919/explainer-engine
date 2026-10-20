@@ -38,7 +38,7 @@ def lint(doc: dict) -> list[dict]:
     drama = doc.get("drama")
     segs = doc.get("segments", [])
     if not drama:
-        # Syndicate Wars shipped without a drama block and this single REVIEW was the only trace; on /3 it blocks (D-56)
+        # Syndicate Wars shipped without a drama block and this single REVIEW was the only trace; on /3 it blocks (D-58)
         _f(out, "ST-00", "drama", "no story layer: write drama (premise, question, promise, arcs, loops) before the lines",
            "FAIL" if doc.get("schema") == SCENE_SCHEMA else "REVIEW")
         return out

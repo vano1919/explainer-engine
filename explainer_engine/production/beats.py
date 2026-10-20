@@ -37,7 +37,7 @@ from explainer_engine.production import accents as ACC
 from explainer_engine.production import script as S
 
 LEGACY = "production_script/1"  # beats optional (one VB-00 REVIEW); /2 makes every VB rule binding
-SCENE_SCHEMA = "production_script/3"  # the 2026-10-19 rewrite: metronomes retired, cues opt-in and event-bound (D-56)
+SCENE_SCHEMA = "production_script/3"  # the 2026-10-19 rewrite: metronomes retired, cues opt-in and event-bound (D-58)
 TARGET, GAP_OK, GAP_FAIL, MEAN_OK = 1.5, 2.0, 3.0, 1.8  # VB-01 on /2: seconds between visual events while the narrator speaks
 GAP_OK_3, GAP_FAIL_3 = 8.0, 15.0  # VB-01 on /3: pace follows new information (MO-01's 5 s still REVIEWs); only real dead air blocks
 FACE_TARGET, FACE_OK, FACE_FAIL = 1.0, 1.5, 2.0  # VB-02 on /2: seconds between expression changes on a dialogue line
@@ -330,7 +330,7 @@ def _cue_findings(timed: dict, doc: dict, beats: list[dict], out: list[dict]) ->
             _f(out, "VB-08", _sev(doc, True), f"{sid} line {ln}", f"{len(bs)} expression cues on one dialogue line: at most one "
                "(the big take), the rest of the face changes are silent")
     if scene_rules(doc):
-        # VB-10 a repeated sound stops meaning anything; VB-11 density: silence is the baseline a cue stands out of (D-56)
+        # VB-10 a repeated sound stops meaning anything; VB-11 density: silence is the baseline a cue stands out of (D-58)
         last_name = None
         recent: dict = {}
         for c in cues:
@@ -399,7 +399,7 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
             continue
         sev = _sev(doc, True) if gap > gap_fail else "REVIEW"
         if scene_rules(doc):
-            # /3: the metronome is retired; pace follows new information (D-56), only real dead air is flagged
+            # /3: the metronome is retired; pace follows new information (D-58), only real dead air is flagged
             _f(out, "VB-01", sev, f"{ln['segment']} line {ln['line']} {a:.1f}s",
                f"{gap:.1f} s with nothing new on screen while the narrator speaks: a hold is fine while the line carries "
                f"new information, this long is dead air (REVIEW over {gap_ok:.0f} s, FAIL over {gap_fail:.0f} s)")
