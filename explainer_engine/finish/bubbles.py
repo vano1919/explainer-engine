@@ -72,10 +72,23 @@ def draw_bubble(text: str, frame_h: int, kind: str = "speech") -> tuple[Image.Im
     return im, (W, H)
 
 
+def head_box(mouth: tuple[float, float], frame: tuple[int, int]) -> tuple[float, float, float, float]:
+    """The face around a mouth point (frame pixels): what a bubble or an effect must never cover."""
+    (sx, sy), (FW, FH) = mouth, frame
+    return (sx - 0.075 * FW, sy - 0.24 * FH, sx + 0.075 * FW, sy + 0.04 * FH)
+
+
+def overlaps(a, b) -> bool:
+    return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
+
+
 def layout(speaker: tuple[float, float], size: tuple[int, int], frame: tuple[int, int], side: str | None = None,
-           lift: float = 0.16, avoid: list[tuple[int, int, int, int]] = ()) -> tuple[int, int]:
+           lift: float = 0.16, avoid: list[tuple[int, int, int, int]] = (),
+           faces: list[tuple[float, float, float, float]] = ()) -> tuple[int, int]:
     """Top-left corner of a bubble for a speaker point (frame pixels): above the speaker, toward the frame centre (or
-    ``side``), inside the margins, and clear of the ``avoid`` boxes (bubbles already on screen) when any candidate is."""
+    ``side``), inside the margins, clear of every face (the speaker's and ``faces``, the other heroes' head boxes) and of
+    the ``avoid`` boxes (bubbles already on screen). Faces come first: a bubble may touch another bubble before a face
+    (the creator, 2026-10-20: a bubble never sits on a face)."""
     (sx, sy), (w, h), (FW, FH) = speaker, size, frame
     toward = side or ("right" if sx < FW / 2 else "left")
     sign = 1 if toward == "right" else -1
@@ -85,14 +98,15 @@ def layout(speaker: tuple[float, float], size: tuple[int, int], frame: tuple[int
         cx, cy = sx + sign * dx * FW, sy - dy * FH - h / 2
         return int(min(max(cx - w / 2, m), FW - m - w)), int(min(max(cy - h / 2, m), FH - m - h))
 
-    head = (sx - 0.075 * FW, sy - 0.24 * FH, sx + 0.075 * FW, sy + 0.04 * FH)  # the speaker's face stays visible
+    head = head_box(speaker, frame)  # the speaker's face stays visible
 
     def hits(x: int, y: int, boxes) -> bool:
         return any(x < b[2] + m and b[0] < x + w + m and y < b[3] + m / 2 and b[1] < y + h + m / 2 for b in boxes)
 
     cands = [place(0.10, lift), place(0.22, lift), place(-0.10, lift), place(0.30, lift - 0.10), place(0.30, 0.0),
-             place(-0.30, 0.0), place(0.10, lift + 0.12), place(0.30, lift + 0.12)]
-    for boxes in ([head, *avoid], list(avoid)):  # clear of the face and other bubbles; else at least of the bubbles
+             place(-0.30, 0.0), place(0.10, lift + 0.12), place(0.30, lift + 0.12), place(0.42, lift + 0.20),
+             place(-0.42, lift + 0.20), place(0.0, lift + 0.30), place(0.45, -0.25), place(-0.45, -0.25)]
+    for boxes in ([head, *faces, *avoid], [head, *faces], list(avoid)):  # faces and bubbles; else faces; else bubbles
         free = next((c for c in cands if not hits(*c, boxes)), None)
         if free:
             return free
@@ -119,11 +133,13 @@ class Bubble:
     """One bubble: text, speaker point (frame pixels), on-screen interval."""
 
     def __init__(self, text: str, speaker_px: tuple[float, float], start: float, end: float, frame: tuple[int, int],
-                 kind: str = "speech", side: str | None = None, avoid: list[tuple[int, int, int, int]] = ()):
-        self.start, self.end = start, end
+                 kind: str = "speech", side: str | None = None, avoid: list[tuple[int, int, int, int]] = (),
+                 faces: list[tuple[float, float, float, float]] = ()):
+        self.start, self.end, self.text = start, end, text
         body, (w, h) = draw_bubble(text, frame[1], kind)
-        x, y = layout(speaker_px, (w, h), frame, side, avoid=avoid)
+        x, y = layout(speaker_px, (w, h), frame, side, avoid=avoid, faces=faces)
         self.box = (x, y, x + w, y + h)
+        self.covers_face = any(overlaps(self.box, f) for f in [head_box(speaker_px, frame), *faces])  # BUBBLE-4
         ow = max(4, round(frame[1] * 0.0055))
         dist = math.dist((x + w / 2, y + h / 2), speaker_px)
         stop = min(0.10 * frame[1], dist * 0.25)  # the tail stops short of the mouth

@@ -324,6 +324,46 @@ def picture_image(pid: str, pics: dict, dirs: list[Path], final: bool, report: l
     return None
 
 
+def shot_bubbles(s: dict, pic: dict, size: tuple[int, int], out: tuple[int, int]) -> list:
+    """The bubbles of one shot, laid out once at each bubble's start (they stay still on screen, D-42) clear of every
+    hero's face: the faces are taken at the bubble's start AND end, so a camera drift under a still bubble never slides a
+    face beneath it (the creator, 2026-10-20)."""
+    W, H = size
+    OW, OH = out
+    f0, f1 = s["start_frame"], s["end_frame"]
+    speakers = pic.get("speakers", {})
+    bubbles = []
+    for b in s["bubbles"]:
+        faces = []
+        for fr in (b["start_frame"], max(b["start_frame"], b["end_frame"] - 1)):
+            u = (fr - f0) / max(1, f1 - f0 - 1)
+            box = motion_box(s.get("render_motion", s["motion"]), W, H, min(max(u, 0.0), 1.0))
+            faces += [BUB.head_box(to_frame(pt, box, W, H, OW, OH), (OW, OH)) for who, pt in speakers.items()]
+        u = (b["start_frame"] - f0) / max(1, f1 - f0 - 1)
+        box = motion_box(s.get("render_motion", s["motion"]), W, H, min(max(u, 0.0), 1.0))
+        sp = to_frame(speakers.get(b["who"], [0.5, 0.4]), box, W, H, OW, OH)
+        bubbles.append(BUB.Bubble(b["text"], sp, b["start"], b["end"], (OW, OH), kind=b.get("kind", "speech"),
+                                  avoid=[x.box for x in bubbles if x.end > b["start"]], faces=faces))
+    return bubbles
+
+
+def bubble_findings(timed: dict, size: tuple[int, int] = (1920, 1080)) -> list[dict]:
+    """BUBBLE-4 before any render: every bubble laid out as the render will lay it out, none over a face (FAIL)."""
+    out = []
+    pics = timed.get("pictures", {})
+    for s in timed["shots"]:
+        if not s.get("bubbles"):
+            continue
+        p = pics.get(s["picture"], {})
+        aspect = p.get("aspect") or 16 / 9
+        W = 2048
+        for b in shot_bubbles(s, p, (W, round(W / aspect)), size):
+            if b.covers_face:
+                out.append({"rule": "BUBBLE-4", "severity": "FAIL", "where": s["id"],
+                            "detail": f"bubble {b.text[:36]!r} would cover a face: re-frame the shot or move the speaker"})
+    return out
+
+
 def to_frame(pt, box, W, H, OW, OH):
     x0, y0, x1, y1 = box
     return ((pt[0] * W - x0) / (x1 - x0) * OW, (pt[1] * H - y0) / (y1 - y0) * OH)
@@ -563,14 +603,10 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         im = cache[pid]
         W, H = im.size
         f0, f1 = s["start_frame"], s["end_frame"]
-        speakers = pics.get(pid, {}).get("speakers", {})
-        bubbles = []
-        for b in s["bubbles"]:
-            u = (b["start_frame"] - f0) / max(1, f1 - f0 - 1)
-            box = motion_box(s.get("render_motion", s["motion"]), W, H, min(max(u, 0.0), 1.0))
-            sp = to_frame(speakers.get(b["who"], [0.5, 0.4]), box, W, H, OW, OH)
-            bubbles.append(BUB.Bubble(b["text"], sp, b["start"], b["end"], (OW, OH), kind=b.get("kind", "speech"),
-                                      avoid=[x.box for x in bubbles if x.end > b["start"]]))
+        bubbles = shot_bubbles(s, pics.get(pid, {}), (W, H), (OW, OH))
+        for b in bubbles:
+            if b.covers_face:
+                report.append(f"{s['id']}: bubble {b.text[:30]!r} covers a face (BUBBLE-4)")
         return im, bubbles
 
     def draw(k: int, im: Image.Image, bubbles: list, f: int, before: Image.Image | None = None) -> Image.Image:

@@ -17,6 +17,7 @@ from explainer_engine.audio import layers as L
 from explainer_engine.audio.scribe_words import norm
 from explainer_engine.edit import board as B
 from explainer_engine.production import accents as ACC, beats as BEATS, continuity, script as S
+from explainer_engine.production import silent as SIL
 from explainer_engine.standards import sourced_rules as SR
 
 BED_DEFAULT_DB = L.MAX_BED_DB  # a bed with no gain sits at the AL-04 cap (BP-65); it was -13 and broke the cap
@@ -126,13 +127,17 @@ def time_script(doc: dict, words_doc: dict) -> dict:
     for k, s in enumerate(out_shots):
         nxt = out_shots[k + 1] if k + 1 < len(out_shots) else None
         s["end"] = nxt["start"] if nxt else round(duration, 3)
+    silent_bubbles, found = SIL.bubbles_for(doc, toks, words, wi, out_shots)
+    problems += found
+    for k, s in enumerate(out_shots):
+        nxt = out_shots[k + 1] if k + 1 < len(out_shots) else None
         s["duration"] = round(s["end"] - s["start"], 3)
         s["start_frame"] = _frames(s["start"], fps)
         s["end_frame"] = _frames(nxt["start"], fps) if nxt else total_frames
         s["frames"] = s["end_frame"] - s["start_frame"]
         tok_end = nxt["token"] if nxt else len(toks)
         s["text"] = " ".join(t["w"] for t in toks[s["token"]:tok_end])
-        bub, bc = [], s["token"]
+        bub, bc = list(silent_bubbles.get(k, [])), s["token"]  # D-62: a silent line's pieces, timed by its words
         for b in s.pop("_bubbles"):
             j = at_word(b["at"], bc, tok_end, s["id"] + " bubble")
             if j is None:
@@ -149,7 +154,10 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             bend = min(bend, s["end"] - 0.05)
             bub.append({"who": b["who"], "text": b["text"], "kind": b.get("kind", "speech"), "start": round(bstart, 3),
                         "end": round(bend, 3), "start_frame": _frames(bstart, fps), "end_frame": _frames(bend, fps)})
-        s["bubbles"] = bub
+        for b in bub:
+            b.setdefault("start_frame", _frames(b["start"], fps))
+            b.setdefault("end_frame", _frames(b["end"], fps))
+        s["bubbles"] = sorted(bub, key=lambda b: b["start"])
 
         def accent_start(phrase, lo=s["token"], hi=tok_end, where=s["id"]):
             j = at_word(phrase, lo, hi, where + " accent")

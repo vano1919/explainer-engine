@@ -28,7 +28,7 @@ from pathlib import Path
 
 INTERJECTIONS = ("oh", "hmm", "well", "right", "ah", "uh-oh", "wait", "okay", "huh", "so", "look", "yeah", "nope")
 SEG_STORY = ("id", "beat", "purpose", "period", "light_beat", "drama")
-LINE_WORDS = ("text", "speaker", "claims")
+LINE_WORDS = ("text", "speaker", "claims", "voiced")
 LINE_DELIVERY = ("tags", "emphasis", "tone", "emotion", "pause_after")
 STAGES = {
     "architect": {"top": {"drama", "episode", "periods", "cast"}, "seg": set(SEG_STORY), "line": set()},

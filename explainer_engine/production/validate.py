@@ -71,8 +71,26 @@ def estimated_words(doc: dict) -> dict:
     toks = S.tokens(doc)
     lines = [ln for seg in doc["segments"] for ln in seg["lines"]]
     flat_line = [(t["seg"], t["line"]) for t in toks]
+    from explainer_engine.production import silent as _sil
     words, t = [], 0.3
+    n_of: dict = {}
+    for tk in toks:
+        n_of[(tk["seg"], tk["line"])] = n_of.get((tk["seg"], tk["line"]), 0) + 1
+    silent_times: list = []
     for k, tk in enumerate(toks):
+        line = doc["segments"][tk["seg"]]["lines"][tk["line"]]
+        if not _sil.voiced(line):  # D-62: a bubble line holds its reading time (silent.plan_n), quiet lead and tail
+            if k == 0 or flat_line[k - 1] != flat_line[k]:
+                silent_times = []
+                u = t + _sil.LEAD_S
+                for p in _sil.plan_n(line, n_of[flat_line[k]]):
+                    step = p["seconds"] / max(1, p["tokens"])
+                    silent_times += [(u + i * step, u + (i + 1) * step) for i in range(p["tokens"])]
+                    u += p["seconds"] + _sil.GAP_S
+                t += _sil.seconds(line)
+            s0, e0 = silent_times.pop(0)
+            words.append({"w": tk["w"], "s": round(s0, 3), "e": round(e0, 3), "para": tk["para"], "silent": True})
+            continue
         dur = per_word * (0.6 + 0.08 * len(re.sub(r"[^A-Za-z]", "", tk["w"])))
         words.append({"w": tk["w"], "s": round(t, 3), "e": round(t + dur * 0.85, 3), "para": tk["para"]})
         t += dur
@@ -85,6 +103,11 @@ def estimated_words(doc: dict) -> dict:
             t += float(line.get("pause_after", 0))
     del lines
     return {"words": words, "duration": round(t + 0.5, 3), "estimated": True}
+
+
+def _sil_voiced(doc: dict) -> dict:
+    from explainer_engine.production import silent as _sil
+    return _sil.voiced_doc(doc) if _sil.has_silent(doc) else doc
 
 
 def content_words(text: str) -> set[str]:
@@ -264,7 +287,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # PV-52 / BP-01: the heard pace of the estimated read lies inside BP-01's band. Heard pace is words / duration with the
     # pauses (BP-01's one definition); voice.pace_wpm is the voice's speaking rate, which the estimate times the words at
     # before it adds the punctuation and held pauses, so a pace_wpm inside the band can still estimate a slower heard read.
-    heard = heard_wpm(estimated_words(doc))
+    heard = heard_wpm(estimated_words(_sil_voiced(doc)))  # the voice's pace: bubble lines are read, not heard
     if heard is not None and not WPM_MIN <= heard <= WPM_MAX:
         lo_wpm, hi_wpm = v["pace_wpm"]
         _f(out, "PV-52 BP-01", "voice", f"the estimated read is heard at {heard:.0f} wpm (pace_wpm {lo_wpm}-{hi_wpm} plus the "
@@ -273,10 +296,13 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # PV-32 voiced dialogue (D-45): a speaking hero is in the cast and has a voice of their own, described, never imitated
     spoken = [(seg["id"], ln) for seg in doc["segments"] for ln in seg["lines"]]
     spoken += [(sh["id"], ln) for sh in doc.get("shorts", []) for ln in sh["lines"]]
+    heard_speakers = {ln["speaker"] for _, ln in spoken if ln.get("speaker") and ln.get("voiced", True)}
     for who in dict.fromkeys(ln["speaker"] for _, ln in spoken if ln.get("speaker")):
         where = next(w for w, ln in spoken if ln.get("speaker") == who)
         if who not in doc["cast"]:
             _f(out, "PV-32", where, f"speaker {who!r} is not in the cast")
+        elif who not in heard_speakers:  # D-62: a hero who speaks only in bubbles needs no voice
+            continue
         elif not doc["cast"][who].get("voice"):
             _f(out, "PV-32", where, f"speaker {who!r} has no cast voice: describe it in cast.{who}.voice.style")
         else:
@@ -331,6 +357,10 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     for per in doc.get("periods", []):
         if not (per.get("card") or {}).get("title"):
             _f(out, "PV-30", per["id"], "the period has no card title (ED-09)", "REVIEW")
+    # PV-55 silent lines (D-62): a real person's line is never voiced; a silent line hangs on a speaker
+    from explainer_engine.production import silent as _sil
+    for why in _sil.check_real_people(doc):
+        _f(out, "PV-55", "lines", why)
     # PV-54 the time counter (ED-15)
     for why in GFX.check_counter(doc.get("counter", []), [sg["id"] for sg in doc["segments"]]):
         _f(out, "PV-54", "counter", why)
@@ -502,6 +532,10 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             if "RHYTHM" in f["rule"]:
                 f["severity"] = "REVIEW"  # pace is a guess before the read; the real read decides
             out.append(f)
+        from explainer_engine.production import assemble as _asm, silent as _sil
+        bubble = [f for f in timed["problems"] if f["rule"].startswith("BUBBLE")]
+        for f in bubble + _sil.check_duplicates(timed["shots"]) + _asm.bubble_findings(timed):  # BUBBLE-4/5 (D-62)
+            out.append(dict(f, rule="PV-24 " + f["rule"], detail=f["detail"] + " (estimated read)"))
         for f in motion_lint.check(timed):  # MO rules on the estimated read (REVIEW)
             out.append(dict(f, rule="PV-35 " + f["rule"], detail=f["detail"] + " (estimated read)"))
         for f in layers.check(timed):  # AL rules on the estimated read (REVIEW)
@@ -743,6 +777,9 @@ def check_timed(timed: dict, doc: dict, *, final: bool = False, picture_dirs: li
     if beds and (beds[0]["start"] > 0 or beds[-1]["end"] < timed["duration"] - 1e-6):
         _f(out, "PV-23", "beds", "the ambience does not cover the whole video")
     out += board_findings(timed, doc)
+    from explainer_engine.production import assemble as _asm, silent as _sil
+    out += _sil.check_duplicates(shots)  # BUBBLE-5: one text, one bubble (the creator, 2026-10-20)
+    out += _asm.bubble_findings(timed)  # BUBBLE-4: no bubble over a face, laid out as the render lays it out
     out += continuity.findings(shots)
     out += music_findings(timed["audio"]["music"])
     out += [dict(f, rule="PV-35 " + f["rule"]) for f in motion_lint.check(timed)]  # MO rules (D-48)

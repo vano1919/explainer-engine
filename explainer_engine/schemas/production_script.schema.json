@@ -406,6 +406,10 @@
                   "real_person": {
                     "type": "boolean"
                   },
+                  "living": {
+                    "type": "boolean",
+                    "description": "a real person who is alive (D-62, PV-55: a living person's lines are never voiced)"
+                  },
                   "documented": {
                     "type": "array",
                     "items": {
@@ -714,6 +718,10 @@
                   },
                   "maxItems": 1,
                   "description": "the one word that carries the surprise (spoken in capitals)"
+                },
+                "voiced": {
+                  "type": "boolean",
+                  "description": "D-62 (PV-55): false = the line is never read by a voice; it is shown as speech bubbles, held for reading (BP-27). A real living person's lines are always false"
                 },
                 "pause_after": {
                   "type": "number",
@@ -1345,6 +1353,10 @@
                     "type": "string"
                   },
                   "maxItems": 1
+                },
+                "voiced": {
+                  "type": "boolean",
+                  "description": "D-62 (PV-55): false = the line is never read by a voice; it is shown as speech bubbles, held for reading (BP-27). A real living person's lines are always false"
                 },
                 "pause_after": {
                   "type": "number",
