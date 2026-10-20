@@ -3061,10 +3061,10 @@
    "area": "scenes",
    "status": "house",
    "severity": "FAIL",
-   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)",
-   "statement": "One honesty beat (SC-08): invention disclaimers sit in at most 2 segments (the beat plus one callback); on-screen labels and the description carry the rest (ST-09).",
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the same day the strict storytelling rule 2 (BP-88, D-61) set the spoken honesty beat to 0",
+   "statement": "No spoken honesty beat (SC-08): invention disclaimers sit in at most 0 narrator segments; the title and the description carry the disclosure and the claim map labels each segment (ST-09, BP-88). Was one beat plus one callback (2) until 2026-10-20.",
    "thresholds": {
-    "disclaimer_segments_max": 2
+    "disclaimer_segments_max": 0
    },
    "sources": [
     {
@@ -3542,6 +3542,188 @@
     "PV-29 TICK_MAX_DB / MAX_CROSSFADE literals"
    ],
    "decided": "the creator, 2026-10-17: notes on the first full cut of Episode 1 (docs/EDITING.md ED-03)"
+  },
+  {
+   "id": "BP-87",
+   "area": "story",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-20 (strict storytelling rules 1 and 2, general for every episode; D-61)",
+   "statement": "Show, don't tell (SC-12): the narration never states a character's traits, gives a rating, or summarises a background ('he is charismatic', 'she takes risks', '9/10 cunning', 'born in Queens, worth 7 billion'). A trait is shown only through what the hero does, says, gets wrong and decides on screen. No star ratings or stat cards on screen. Heroes may judge each other inside a scene (that is action); the narrator never does.",
+   "thresholds": {
+    "traits": [
+     "charismatic",
+     "ruthless",
+     "risk-taker",
+     "risk taker",
+     "bold",
+     "fearless",
+     "reckless",
+     "cautious",
+     "aggressive",
+     "genius",
+     "brilliant",
+     "visionary",
+     "arrogant",
+     "greedy",
+     "cunning",
+     "calculating",
+     "patient",
+     "impatient",
+     "disciplined",
+     "impulsive",
+     "confident",
+     "ambitious",
+     "stubborn",
+     "persuasive",
+     "manipulative",
+     "generous",
+     "smart",
+     "clever",
+     "lazy",
+     "relentless",
+     "obsessive",
+     "charming",
+     "humble",
+     "proud",
+     "shrewd",
+     "ruthlessly",
+     "natural salesman",
+     "natural leader",
+     "born salesman",
+     "born leader",
+     "hard worker",
+     "workaholic",
+     "risk-averse"
+    ],
+    "phrases": [
+     "known for his",
+     "known for her",
+     "known for their",
+     "famous for his",
+     "famous for her",
+     "takes risks",
+     "loves risk",
+     "loves taking risks",
+     "the kind of man who",
+     "the kind of woman who",
+     "the kind of person who",
+     "a man who never",
+     "a woman who never",
+     "net worth",
+     "was born in",
+     "grew up in",
+     "his personality",
+     "her personality",
+     "character traits",
+     "out of ten"
+    ],
+    "ratings": [
+     "\\b\\d+(\\.\\d+)?\\s*(/|out of)\\s*(5|10|100)\\b",
+     "[\\u2605\\u2606\\u2b50]",
+     "\\b[1-5]\\s+stars?\\b",
+     "\\brating\\s*:"
+    ],
+    "picture_prefixes": [
+     "sc_"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Show, don't tell (Wikipedia): characterisation through action and dialogue",
+     "url": "https://en.wikipedia.org/wiki/Show,_don%27t_tell"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/scene_lint.py:SC-12",
+    "explainer_engine/scripting/scene_lint.py:SHOW_TRAITS",
+    ".claude/skills/dialogue-scenes/SKILL.md",
+    ".claude/skills/narration-script/SKILL.md",
+    ".claude/agents/scene-writer.md",
+    ".claude/agents/script-critic.md"
+   ],
+   "supersedes": [
+    "select_screen.py stat cards (Syndicate Wars, /2) for every /3 episode"
+   ]
+  },
+  {
+   "id": "BP-88",
+   "area": "story",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-20 (strict storytelling rules 1 and 2, general for every episode; D-61)",
+   "statement": "Full immersion, no meta disclaimers (SC-11): no line, Short or on-screen text steps outside the story ('this is a simulation', 'as an AI', 'in this hypothetical story', 'none of this happened'); the narrator never hedges the story itself ('we cannot know for sure'). The episode plays as a tense documentary of events happening now. The invention is disclosed outside the story: the title and the description (and the claim map's labels, ST-09); a hero may doubt inside a scene. Replaces the spoken honesty beat (BP-71 now 0).",
+   "thresholds": {
+    "frames": [
+     "this is a simulation",
+     "this is just a simulation",
+     "this is only a simulation",
+     "as an ai",
+     "as a language model",
+     "this is a work of fiction",
+     "this is fiction",
+     "this story is fictional",
+     "this story is made up",
+     "none of this happened",
+     "none of this is real",
+     "this never happened",
+     "this is not real",
+     "this isn't real",
+     "for entertainment purposes",
+     "we made this up",
+     "we made it up",
+     "we invented",
+     "our invention",
+     "a thought experiment",
+     "this thought experiment",
+     "just a what-if",
+     "only a what-if",
+     "purely hypothetical",
+     "this hypothetical",
+     "in this hypothetical",
+     "hypothetically speaking",
+     "in this simulation",
+     "this simulation"
+    ],
+    "hedges": [
+     "we cannot know for sure",
+     "we can't know for sure",
+     "we can never know",
+     "we will never know",
+     "we'll never know",
+     "no one can know for sure",
+     "nobody can know for sure",
+     "we can only guess",
+     "we can only reason",
+     "we're guessing",
+     "we are guessing",
+     "of course, this is",
+     "in reality, of course",
+     "remember, this is",
+     "keep in mind this is"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Suspension of disbelief (Wikipedia): Tolkien's secondary belief; the viewer stops being immersed",
+     "url": "https://en.wikipedia.org/wiki/Suspension_of_disbelief"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/scene_lint.py:SC-11",
+    "explainer_engine/scripting/scene_lint.py:IMMERSION",
+    ".claude/skills/dialogue-scenes/SKILL.md",
+    ".claude/skills/narration-script/SKILL.md",
+    ".claude/agents/scene-writer.md",
+    ".claude/agents/shorts-writer.md",
+    ".claude/agents/script-critic.md"
+   ],
+   "supersedes": [
+    "BP-71 one spoken honesty beat (2 segments; now 0)",
+    "narration-script 'we can only reason' as spoken doubt"
+   ]
   }
  ]
 }

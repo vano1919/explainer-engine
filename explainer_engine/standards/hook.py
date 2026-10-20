@@ -7,7 +7,8 @@ Wired in ``.claude/settings.json`` (matcher ``mcp__ElevenLabs__creative_.*``). C
 * ``estimate_only`` calls and read-only tools always pass.
 * A paid audio generation (speech, sound effect, music) needs ``generations_count`` 1 (the connector's default is 4, four
   times the credits; EL-10), the active episode's rulebook ``paid_assets`` checkpoint to pass, and no FAIL from the editorial
-  gate (OR-10: ``production/editorial_gate.check`` on the script and its ``editorial_review.json``).
+  gate (OR-10: ``production/editorial_gate.check`` on the script and its ``editorial_review.json``), and on a
+  ``production_script/3`` the creator's recorded approval of the finished script (OR-17, ``scripting/script_approval``).
 * The active episode is named in ``.claude/active_episode.json``: ``{"episode": "<folder with episode_rules.json>"}``. An
   ``"override": "<the creator's reason>"`` lets a paid call through without the gate (voice auditions before a rulebook
   exists); it never lifts the picture rule or the one-take rule, and every override is logged to ``jobs/gate_overrides.jsonl``.
@@ -59,6 +60,11 @@ def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
         return "OR-12: the rulebook's paid_assets checkpoint fails: " + "; ".join(
             f"{f['rule']} {f['where']}: {f['detail']}" for f in fails[:3]) + (f" (+{len(fails) - 3} more)" if len(fails) > 3 else "")
     script = folder / "production_script.json"
+    if script.exists():  # OR-17: no paid read before the creator approved the finished script (approval #1, PV-53)
+        from explainer_engine.scripting import script_approval as SA
+        sa = SA.check(json.loads(script.read_text(encoding="utf-8")))
+        if sa:
+            return "OR-17: " + sa[0]["detail"]
     if script.exists():  # OR-10: an editorial FAIL stops paid narration and assets, not only paid pictures
         from explainer_engine.production import editorial_gate as EG
         ef = [f for f in EG.check(script, folder / "editorial_review.json") if f["severity"] == "FAIL"]

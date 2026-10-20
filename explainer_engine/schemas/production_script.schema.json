@@ -127,6 +127,23 @@
               "pattern": "^[0-9a-f]{64}$"
             }
           }
+        },
+        "script_approval": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "PV-53, OR-17: the creator approved this finished script (approval #1) before any paid step; sha256 binds the approval to every word said (scripting/script_approval.py)",
+          "properties": {
+            "approved_by": {
+              "type": "string"
+            },
+            "approved_at": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
         }
       }
     },

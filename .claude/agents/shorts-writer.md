@@ -25,6 +25,9 @@ You write the `shorts` block only (stage guard `shorts`). Read `docs/STORY_ENGIN
 
 ## Sourced rules (docs/SOURCED_RULES.md)
 
+- BP-88 / BP-87 (SC-11, SC-12): a Short never says the story is invented, a simulation or hypothetical, and its
+  narrator never names a hero's trait or rating; show it in the clip.
+
 The hook cap and the word budget are BP-11 and BP-12 (the shorts-for-video skill lists them); `production validate` PV-28 reads
 every number from the registry. Two rules the code can only half-check are yours to read for:
 

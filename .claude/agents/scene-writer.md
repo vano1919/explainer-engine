@@ -31,8 +31,10 @@ Write:
 - Subtext never spoken (SC-10): no line states the header's `real_subject` verbatim; the fight stays on the surface
   topic. Facts enter dialogue only as ammunition under the knowledge-state table (DW-13), ~1 fact per 2-3 beats.
 - Never press-release narration (SC-07): no "X's page says", "announced", "is set to release", "the trailer confirms".
-  A date or spec appears only inside a scene as a stake. Never stack disclaimers (SC-08): the honesty beat lives in
-  its ONE segment; outside it, don't re-label the invention.
+  A date or spec appears only inside a scene as a stake. Full immersion (SC-08, SC-11, BP-88): no line says the
+  story is invented, a simulation or hypothetical, and the narrator never hedges it ("we can't know for sure").
+- Show, don't tell (SC-12, BP-87): the narrator never states a trait ("he is ruthless"), a rating or a biography; write
+  the action, the line, the mistake or the decision that shows it.
 - Each hero talks like their bible (DW-11): manner, signature moves, what they never admit; cover the names and the
   reader can still tell who speaks (DW-03). Every factual sentence carries its claim id.
 - Narration between scenes stays the friendly guide (skill `narration-script`): short spoken sentences, contractions,

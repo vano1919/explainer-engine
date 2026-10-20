@@ -110,6 +110,8 @@ def preflight(plan: dict, doc: dict, dirs: list[Path], run: Run, script_path: Pa
                 if f["severity"] == "FAIL"]
     elif doc["episode"].get("rulebook"):
         why.append("OR-11 the script names a rulebook but there is no episode_rules.json next to it")
+    from explainer_engine.scripting import script_approval as SA  # OR-17: the creator approved the finished script
+    why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in SA.check(doc)]
     if not run.approved(plan["id"], plan["hash"]):
         why.append(f"PP-02 plan {plan['id']} ({plan['hash']}) has no approval in {run.path}: ask the creator, then `paint approve`")
     return why

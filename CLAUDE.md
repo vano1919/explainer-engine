@@ -55,6 +55,9 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 sprites, pictures, full read, render, QA). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures
 show). Entertainment first, facts second; stakes and named heroes in every frame; one drawn world; limits computed from
 measured speeds; every paid step estimated and approved first; look at the output before reporting it; reply to the creator in Georgian.
+**Strict storytelling (creator, 2026-10-20, D-61):** show, don't tell (no trait statements, ratings or biographies from the
+narrator, SC-12) and full immersion (no meta disclaimers or hedges on the story, SC-11); the creator approves the finished
+script before anything is paid (OR-17, `scripting/script_approval.py`).
 **Language (creator, 2026-10-17):** Georgian is only for talking to the creator. Everything the viewer sees or hears (narration, on-screen text, picture prompts, titles, metadata, Shorts) is English for the US audience; never ask again.
 
 **Sourced rules (D-59, creator 2026-10-19):** no production rule is law by itself. Every number a validator enforces comes from

@@ -66,7 +66,7 @@ end of every section pointing at the next problem. None of them sounds like a le
 
 ### Tone of the what-if episodes (creator 2026-10-16)
 - Scientific what-if: mostly drama and curious telling with honest doubt, humour in small doses (SR-07); the density and
-  placement of the jokes follow BP-09 (at most one verbal joke per 60 s, the first inside 45 s, beside the fact). Say what is established and what is argued ("the evidence says", "we can only reason"); doubt is part of the story, not a disclaimer. Each period ends on the question that opens the next (SR-03).
+  placement of the jokes follow BP-09 (at most one verbal joke per 60 s, the first inside 45 s, beside the fact). Ground the story in what is established, but never hedge the story itself ("we can only reason", "we cannot know for sure", "this is hypothetical" are SC-11 FAILs, BP-88): the narrator tells it as if it is happening now, and doubt lives in the heroes. Show, don't tell (SC-12, BP-87): never name a hero's trait, rating or biography; narrate what they do. Each period ends on the question that opens the next (SR-03).
 
 ### Pace
 - **N-03 At most one ellipsis per beat** (BP-16: two is a REVIEW, more a FAIL). Each `...` is a held pause; use it only before the one reveal of that beat.

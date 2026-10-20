@@ -991,3 +991,25 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-20 - Strict storytelling rules 1 and 2, and approval #1 recorded in code (D-61)
+
+The creator's brief for the next episode ("titans from zero") set two general rules and asked that the order scenario ->
+yes -> full script -> yes -> paid is a rule. Check before the change: next-video (0520c68) holds every branch and PR of
+the repo (no open PR, no branch with commits next-video lacks; main differs only by merge commits); OR-15 / PV-45 already
+bound the scenario, but approval #1 of the finished script was prose only (PRODUCTION_RULES gate 0, EPISODE_STANDARDS
+`script_lock`), never recorded or checked before a paid step.
+
+- Show, don't tell: SC-12 in `scripting/scene_lint.py` (PV-48 on `/3`), lexicons in [BP-87](SOURCED_RULES.md): a narrator
+  line linking a hero to a trait, a rating or a biography line is a FAIL; ratings or stat cards on screen too (`sc_`
+  pictures of `select_screen.py`). Heroes judging each other inside a scene stay allowed.
+- Full immersion: SC-11, [BP-88](SOURCED_RULES.md): a meta frame ("this is a simulation", "as an AI", "in this
+  hypothetical story", "none of this happened") is a FAIL in any line, Short or on-screen text; a hedge on the story
+  ("we cannot know for sure") in narration. [BP-71](SOURCED_RULES.md)'s spoken honesty beat goes from 2 segments to 0;
+  SC-08's pattern no longer fires on the plain verb "invented". The disclosure lives in the title and the description.
+- Approval #1: `scripting/script_approval.py` (PV-53, [OR-17](ORCHESTRATION.md)): `episode.script_approval` (who, date,
+  sha256 of every word said, Shorts included) is required on `/3` by paint preflight, the ElevenLabs hook and gate 0.9 of
+  `production_gate`; tags, pictures and files may change after the yes, words may not. Schema field added.
+- Skills dialogue-scenes, story-engine, narration-script; agents scene-writer, story-architect, script-critic,
+  shorts-writer. `/1` and `/2` scripts keep their contract (Syndicate Wars unchanged).
+- Tests: `tests/unit/test_storytelling_rules.py` (10). Nothing paid.

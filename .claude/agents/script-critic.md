@@ -58,6 +58,9 @@ Read these as a viewer; the code cannot (they need a reading of what a sentence 
   biography line) carries no stake and belongs after the gap sentence; a finding for the writer.
 - BP-09: humour beside the fact, never inside the explaining example; the first laugh inside the first 45 s; at most one
   verbal joke per 60 s.
+- BP-87 / BP-88 (the creator's strict storytelling rules 1 and 2): the code catches the lexicon (SC-11, SC-12); you
+  catch the rest. Any narrator sentence that explains who a hero is instead of showing it, and any sentence that steps
+  outside the story or hedges it, is a finding for the scene-writer.
 - BP-43: the ending is abrupt: no recap or goodbye in the last 10 % ("to recap", "thanks for watching", "and lastly", "don't
   forget to subscribe"; `engagement` ENG-8 FAILs the lexicon), the last sentence is an open question or a pointer to one
   next video, and narration continues at least 15 s under the end screen.

@@ -44,8 +44,9 @@ them in order and stops at the first failed gate.
 - Loops and set-ups are written before lines: L01 the dramatic question, a forward-pointing line or smaller loop at least every BP-42 interval (150 s), a
   set-up planted in the first third that decides the end (ST-05, ST-06).
 - Needs: pick at least three from curiosity, stakes, humour, wonder, fear, identity, justice, belonging, competence,
-  surprise, and give each a segment (ST-08). Objectivity is labelled per segment (ST-09); on /3 the spoken disclaimer
-  lives in ONE honesty beat (SC-08).
+  surprise, and give each a segment (ST-08). Objectivity is labelled per segment (ST-09); on /3 nothing spoken says the
+  story is invented (SC-08, SC-11): the title and the description carry it. Show, don't tell (SC-12): heroes are what
+  they do. When the script is finished, the creator reads and approves it (OR-17) before anything is paid.
 
 ## 2. Scenes (scene-writer), one segment per call
 Input is small on purpose: the skeleton (one line per segment), this segment's drama AND its `scene` header, the cast

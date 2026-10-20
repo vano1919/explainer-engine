@@ -101,8 +101,16 @@ dates and specs live only inside a scene as stakes. Three rewrites:
 | "The company announced six locations." | CAPONE: "Six towns. Pick the one we can hold." |
 | "The trailer confirms the swamp region." | ENZO: "They showed the swamp. That's OUR swamp." |
 
-One honesty beat (SC-08): the "this is invented" disclosure lives in ONE segment (plus at most one callback), with
-on-screen labels and the description carrying the rest. Stacked disclaimers are a FAIL on /3.
+Full immersion (SC-08, SC-11, BP-88; the creator 2026-10-20): the story never stops to say it is invented, a
+simulation or a hypothetical, and the narrator never hedges it ("we cannot know for sure"); the title and the description
+carry the what-if. A hero may doubt inside a scene. Show, don't tell (SC-12, BP-87): the narrator never names a hero's
+traits, rates them or recites a biography; a trait is a choice on screen.
+
+| Telling (FAIL on /3) | Showing |
+|---|---|
+| "Trump is a master of perception." | He spends forty of his hundred dollars on a rented jacket before he spends a cent on food. |
+| "Musk takes huge risks." | MUSK (to the seller): "Eighty for the broken one. All of it." The seller: "That's your last eighty." |
+| "This is only a simulation, of course." | (cut: the title says "What if"; the story plays as if it is happening now) |
 
 ## Conflict modes (DW-09 softened)
 
@@ -163,7 +171,8 @@ into fear, shown by a silence beat and a quieter repeat of his own question.
 - SC-05 a run of >=4 consecutive character lines (>=2 speakers, no narrator inside); every present hero speaks or reacts.
 - SC-06 no greeting opener, no wrap-up closer.
 - SC-07 no press-release register in narration; dates and specs only inside a scene as stakes.
-- SC-08 one honesty beat (plus at most one callback), never a stack.
+- SC-08 no spoken honesty beat (BP-71 is 0); SC-11 no meta disclaimer or hedge on the story (BP-88).
+- SC-12 show, don't tell: no trait statements, ratings or biographies from the narrator, no stat cards (BP-87).
 - SC-09 line lengths (BP-72, BP-73): >35 words FAIL, >15 REVIEW unless the scene's one speech, one >=25-word turn per scene,
   <=3 "?" runs.
 - SC-10 surface_topic and real_subject declared; no line states the real subject verbatim.
