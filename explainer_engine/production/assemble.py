@@ -255,11 +255,16 @@ def look_filter(duration: float) -> str:
 
 
 def overlays(frame: Image.Image, f: int, fps: int, timed: dict) -> Image.Image:
-    """ED-09 period cards and ED-10 data visuals on one finished frame."""
+    """ED-09 period cards, ED-15 the time counter and ED-10 data visuals on one finished frame."""
+    carded = False
     for c in timed.get("cards", []):
         t = (f - c["start_frame"]) / fps
         if 0 <= t <= GFX.card_length():
             frame = GFX.card(frame, c, t, c["of"], c["index"])
+            carded = True
+    for c in timed.get("counters", []):
+        if c["start_frame"] <= f < c["end_frame"] and not carded:  # a card names the period itself
+            frame = GFX.counter(frame, c["label"], (f - c["start_frame"]) / fps, c.get("prev"))
     for g in timed.get("visuals", []):
         if g["start_frame"] <= f < g["end_frame"]:
             frame = GFX.visual(frame, g, (f - g["start_frame"]) / fps, g["hold"])

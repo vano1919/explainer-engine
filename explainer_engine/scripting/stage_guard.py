@@ -35,7 +35,7 @@ STAGES = {
     "writer": {"top": set(), "seg": {"lines"}, "line": set(LINE_WORDS)},
     "beats": {"top": set(), "seg": set(), "line": {"visual_beats"}},
     "performer": {"top": set(), "seg": set(), "line": set(LINE_DELIVERY) | {"text"}},
-    "editor": {"top": {"music", "graphics", "library", "story", "look", "picture_dirs", "sound_dirs", "world"},
+    "editor": {"top": {"music", "graphics", "counter", "library", "story", "look", "picture_dirs", "sound_dirs", "world"},
                "seg": {"shots", "audio"}, "line": set()},
     "caster": {"top": {"voice"}, "seg": set(), "line": set(), "cast_voice": True},
     "shorts": {"top": {"shorts"}, "seg": set(), "line": set()},

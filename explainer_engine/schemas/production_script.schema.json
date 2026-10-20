@@ -1445,6 +1445,19 @@
         }
       }
     },
+    "counter": {
+      "type": "array",
+      "description": "ED-15 (PV-54): the on-screen time counter; from the first shot of each listed segment the corner shows its label until the next entry",
+      "items": {
+        "type": "object",
+        "required": ["segment", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "segment": {"type": "string"},
+          "label": {"type": "string", "maxLength": 14}
+        }
+      }
+    },
     "graphics": {
       "type": "array",
       "items": {

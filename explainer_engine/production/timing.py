@@ -218,6 +218,18 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             cards.append({"period": per["id"], "index": pi, "of": len(doc["periods"]), "title": card.get("title", per["id"].upper()),
                           "line": card.get("line", per.get("question", "")), "start": first["start"],
                           "start_frame": first["start_frame"] if "start_frame" in first else _frames(first["start"], fps)})
+    counters = []  # ED-15: the corner counter shows each label from the first shot of its segment to the next label
+    for c in doc.get("counter", []):
+        first = next((s for s in out_shots if s["segment"] == c["segment"]), None)
+        if first:
+            counters.append({"label": c["label"], "start": first["start"],
+                             "start_frame": first["start_frame"] if "start_frame" in first else _frames(first["start"], fps)})
+    counters.sort(key=lambda c: c["start_frame"])
+    for a, b in zip(counters, counters[1:] + [None]):
+        a["end_frame"] = b["start_frame"] if b else total_frames
+        a["prev"] = None
+    for a, b in zip(counters, counters[1:]):
+        b["prev"] = a["label"]
     events = {}
     for e in doc.get("story", {}).get("events", []):
         j = S.find_phrase(toks, e["at"], 0)
@@ -228,7 +240,7 @@ def time_script(doc: dict, words_doc: dict) -> dict:
     return {"schema": "production_timed/1", "script_schema": doc.get("schema"), "episode": doc["episode"]["id"], "fps": fps,
             "duration": round(duration, 3),
             "frames": total_frames, "text_match": share, "segments": segs, "lines": lines, "shots": out_shots,
-            "audio": {"beds": beds, "sfx": sfx, "music": music, "cues": cues}, "visuals": visuals, "cards": cards, "visual_beats": beats,
+            "audio": {"beds": beds, "sfx": sfx, "music": music, "cues": cues}, "visuals": visuals, "cards": cards, "counters": counters, "visual_beats": beats,
             "expressions": {h: c["expressions"] for h, c in doc.get("cast", {}).items() if c.get("expressions")},
             "face_sheets": {h: c["face_sheet"] for h, c in doc.get("cast", {}).items() if c.get("face_sheet")}, "events": events,
             "pictures": {k: {kk: vv for kk, vv in v.items() if kk not in ("source",)} for k, v in pics.items()},

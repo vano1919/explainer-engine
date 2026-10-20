@@ -1033,3 +1033,15 @@ step 9, skill story-engine, STORY_ENGINE stage 7 row, SCRIPTING_SPEC 5.2. `/1` a
 office) in `explainer_engine/world/eras.json`; `tests/unit/test_world_architecture.py` pins 14 eras and one light key per beat.
 Nothing painted, nothing paid. Open owners: sound files (WAVs are gitignored; nine ambience beds are not in the manifest),
 cast speech/voice/face sheets and the variant collages (PV-46, PV-32, VB-09, PV-47).
+
+## 2026-10-20 - A time counter in the corner (ED-15, PV-54)
+
+- The creator took one note from an outside review of the titans script: a persistent day/year counter on screen. New
+  top-level `counter` (editor-owned in `stage_guard`): segment + label; `timing.py` turns it into `counters` (first shot
+  of the segment to the next label), `assemble.overlays` draws `graphics.counter` (a top-left chip, 0.4 s flip, hidden
+  under a period card). `validate` PV-54 runs `graphics.check_counter`. Docs: ED-15 in EDITING, PV-54 in PRODUCTION_SCRIPT.
+- titans_from_zero: DAY 1 (S01), WEEK 1 (S04), MONTH 6, MONTH 9, YEAR 1, YEAR 2, YEAR 3, YEAR 5 (S14). S05's period
+  stays day1 for the story, the counter keeps WEEK 1 so the clock never runs backwards on screen.
+- Voices re-cast without samples (creator: samples cost credits): from free `creative_list_voices` searches sorted by
+  last year's usage, the most used voice that fits each hero's documented type (VC-02, no soundalikes).
+- Tests: `tests/unit/test_graphics.py` (+3). Nothing paid.

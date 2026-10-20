@@ -1,11 +1,11 @@
 {
  "schema": "editorial_review/2",
- "script_sha256": "0aeeb539e4281100f5828c4d031a57cb658fb5ac88dac6cd47700ea2e3d66d92",
+ "script_sha256": "862d2cc05dee02f7f3b7099c44524ae12e26ac9a0ba8b96ea3bac3e18970868d",
  "reviewer": "script-critic (Stage 7)",
  "reviewer_role": "independent_critic",
  "independent": true,
- "reviewed_at": "2026-10-20 (round 2)",
- "verdict": "ACCEPTED. Round 2: all of TFZ-01..TFZ-17 verified fixed in the current script; no bored window, no blocker, no unsupported claim. What remains are small polish items in integrated.notes (optional), plus the paid-stage gates (PV-05, PV-47, VB-09) which are not this review's.",
+ "reviewed_at": "2026-10-20 (round 3)",
+ "verdict": "ACCEPTED. Round 3: only two things changed since round 2 (the time counter, the re-cast voices); no spoken word changed, so the round-2 reads, scores and claim pass stand. The counter passes PV-54 and reads honestly (S05 under WEEK 1 is defensible, see integrated.timing); the voices pass PV-52. No finding, no blocker (an optional voice-contrast note sits in integrated.notes). Paid-stage gates (PV-05, PV-47, VB-09) are not this review's.",
  "scores": {
   "factual_reliability": {
    "score": 4,
@@ -13,7 +13,7 @@
   },
   "clarity": {
    "score": 4,
-   "evidence": "S13 L12 'Then they post the fire report online, every page.' now plants the report before S14 L5/L9/L10; S12 L1 'a man in a grey suit steps over the ashes ... holds out a card. Vance.' enters by action. Small snag left: 'the van' (S09 L1) and cells vs batteries (S09 L9 vs S11 L14) are never introduced."
+   "evidence": "S13 L12 'Then they post the fire report online, every page.' now plants the report before S14 L5/L9/L10; S12 L1 'a man in a grey suit steps over the ashes ... holds out a card. Vance.' enters by action. Small snag left: 'the van' (S09 L1) and cells vs batteries (S09 L9 vs S11 L14) are never introduced. Round 3: the corner chip DAY 1 -> YEAR 5 (counter) answers 'how far has the clock run' at every cut and removes the need for the spoken period lines to carry it."
   },
   "story_coherence": {
    "score": 5,
@@ -228,7 +228,7 @@
   }
  ],
  "validators": {
-  "production validate": "59 FAIL, 29 REVIEW; every FAIL is PV-05 (unmade sounds), PV-47 (collages) or VB-09 (face sheets): paid stages, not raised. PV-37 passes.",
+  "production validate": "Round 3: 59 FAIL, 29 REVIEW, the same as round 2; every FAIL is PV-05 (unmade sounds), PV-47 (collages) or VB-09 (face sheets): paid stages, not raised. PV-37, PV-52 and PV-54 (counter) pass.",
   "story_lint": "0 FAIL, 2 REVIEW (ST-11 S13 and S15: each question is answered by the next speaker in the same breath; false positives)",
   "remaining REVIEWs": "PV-35 BP-33 S05 L11 and S08 L4 at 0.49 s; PV-24 RHYTHM-1 10.21/min and RHYTHM-2 SH039 2.47 s (estimated read); PV-12 N-02 x15, N-05 p12.s1 (22 words), N-12 (271 words without you); PV-44 VB-03 x5; PV-38. All optional polish."
  },
@@ -237,7 +237,7 @@
    "story": {
     "status": "inspected",
     "basis": "data",
-    "evidence": "Read S01-S16 again as one chain (premise: ten titans, nobody lends, only skill left; question 'Was their money ever skill, or was it luck?'). Causality: S04 L16 'Me? Never.' -> S08 L5 'Five hundred.' -> S09 L10 skipped test -> S11 L2 hiss -> S12 L10 refusal -> S13 L8 'With everything.' / L12 report online -> S14 L10 'bury it' -> S15 L13-L17 -> S16 verdict. TFZ-05 fixed (S13 L12), TFZ-08 fixed (L03 closes S15, L09 S09, L10 S11, no loop open at the end), TFZ-06/07 fixed in S03 L5, S06 L9, S12 L1, S16 (now 5 lines). Approved options S10 and S14 intact. No thread or reveal goes nowhere."
+    "evidence": "Read S01-S16 again as one chain (premise: ten titans, nobody lends, only skill left; question 'Was their money ever skill, or was it luck?'). Causality: S04 L16 'Me? Never.' -> S08 L5 'Five hundred.' -> S09 L10 skipped test -> S11 L2 hiss -> S12 L10 refusal -> S13 L8 'With everything.' / L12 report online -> S14 L10 'bury it' -> S15 L13-L17 -> S16 verdict. TFZ-05 fixed (S13 L12), TFZ-08 fixed (L03 closes S15, L09 S09, L10 S11, no loop open at the end), TFZ-06/07 fixed in S03 L5, S06 L9, S12 L1, S16 (now 5 lines). Approved options S10 and S14 intact. No thread or reveal goes nowhere. Round 3: the counter adds no story event; its eight changes S01 DAY 1, S04 WEEK 1, S06 MONTH 6, S07 MONTH 9, S08 YEAR 1, S10 YEAR 2, S11 YEAR 3, S14 YEAR 5 match the spoken time cues ('A week later' S04 L1, 'Six months later' S06 L1, 'Year two', 'Year three', 'Five years after the bench' S15) and the segment periods, in story order, never backwards."
    },
    "entrances": {
     "status": "inspected",
@@ -247,27 +247,27 @@
    "dialogue": {
     "status": "inspected",
     "basis": "data",
-    "evidence": "Unchanged strong exchanges (S02 L4-L13, S04 L7-L16, S08 L8, S12 L6-L11, S13 L4-L9, S15 L11-L17); the echoes pay: 'Probably.' S12 L6 -> 'I don't sell probably.' S13 L4; 'quietly' S11 L9-L10 -> S08 L6. Silences kept where used (S08 L10 'Yes.', S11 L13 'He doesn't answer.'). Optional: S15 L7 'I didn't pick him.' is cryptic for ten seconds before S15 L11."
+    "evidence": "Unchanged strong exchanges (S02 L4-L13, S04 L7-L16, S08 L8, S12 L6-L11, S13 L4-L9, S15 L11-L17); the echoes pay: 'Probably.' S12 L6 -> 'I don't sell probably.' S13 L4; 'quietly' S11 L9-L10 -> S08 L6. Silences kept where used (S08 L10 'Yes.', S11 L13 'He doesn't answer.'). Optional: S15 L7 'I didn't pick him.' is cryptic for ten seconds before S15 L11. Round 3: re-cast voices change no line; speaker labels and speech bibles are untouched."
    },
    "visual": {
     "status": "inspected",
     "basis": "instructions",
-    "evidence": "Instructions only, no picture seen. Fixed: JEFF BEZOS label (S14 L8); S12 L12 now worried then determined (was joyful); S11 L2 the hiss has an accent on the cell, not a shake; dialogue lines S04 L17, S10 L12, S14 L8 carry no shake. Beats read at random: S13 L12 label FIRE REPORT on 'the fire report' (adds), S03 L5 text A LOAN IS TRUST (adds), S12 L1 label VANCE (adds), S16 L3 label EIGHT ENVELOPES (adds), S06 L9 cross on 'can't raise' (adds), S11 L13 deadpan on 'doesn't answer' (adds). Optional: PV-44 VB-03 x5 reasons name no word."
+    "evidence": "Instructions only, no picture seen. Fixed: JEFF BEZOS label (S14 L8); S12 L12 now worried then determined (was joyful); S11 L2 the hiss has an accent on the cell, not a shake; dialogue lines S04 L17, S10 L12, S14 L8 carry no shake. Beats read at random: S13 L12 label FIRE REPORT on 'the fire report' (adds), S03 L5 text A LOAN IS TRUST (adds), S12 L1 label VANCE (adds), S16 L3 label EIGHT ENVELOPES (adds), S06 L9 cross on 'can't raise' (adds), S11 L13 deadpan on 'doesn't answer' (adds). Optional: PV-44 VB-03 x5 reasons name no word. Round 3 (counter, instructions): the chip is a corner overlay drawn by code, flips in 0.4 s at the first shot of its segment (ED-15); script.graphics is empty and there are no period cards (no periods key), so nothing else competes for the top-left corner and the hide-on-card rule is not triggered. S05 (story period day1, scene time 'the first week', S05 L14 'By midnight, eleven is four thousand') keeps WEEK 1 on purpose: 'week 1' is a span that contains day 1, S04 L1 says 'A week later' and S05 has no spoken time cue of its own, so a viewer sees S03 DAY 1 -> S04/S05 WEEK 1 -> S06 MONTH 6 with no contradiction. Reads honestly; the only softness is that S04's 'a week after the bench' is arguably week 2, a tolerance of one label."
    },
    "performance": {
     "status": "inspected",
     "basis": "instructions",
-    "evidence": "S11 L13 holds 1.0 s (the BP-10 cap) for 'a long time'; S12 L12 worried then determined fits the turn to calling the buyer; S08 L10 'Yes.' softly 0.8 s; S09 L6 deadpan. caster pace_wpm [160,190] (PV-52 passes). Optional: BP-33 at 0.49 s on S05 L11 and S08 L4."
+    "evidence": "S11 L13 holds 1.0 s (the BP-10 cap) for 'a long time'; S12 L12 worried then determined fits the turn to calling the buyer; S08 L10 'Yes.' softly 0.8 s; S09 L6 deadpan. caster pace_wpm [160,190] (PV-52 passes). Optional: BP-33 at 0.49 s on S05 L11 and S08 L4. Round 3 (voices, instructions): Brad (narrator, warm quick storyteller) fits pace_wpm [160,190]; Spence for Musk (soft, halting) fits the speech bible 'short bursts, a pause to find the word'; Callum Husky Trickster for Belfort fits 'patter that speeds up when closing'; Jackson (old, dry, flat) for O'Leary, Flint (old, loud, raspy) for Trump, Bill (old, warm, gravelly) for Kiyosaki, Roger (plain, brisk) for Cuban, Eric (smooth) for Bezos, Silas (quiet, polite) for Vance all match their types. Cardone, Hormozi and Zuckerberg have no voice and speak no lines (PV-52 passes). Nothing was heard: all voices are chosen without samples (creator 2026-10-20)."
    },
    "audio": {
     "status": "inspected",
     "basis": "instructions",
-    "evidence": "S11 L2 'starts to hiss' now scored by battery_hiss__v1 (-24 dB), no longer cloth rustle; clockwork_loop runs In the parking lot (S09) -> 'Year two' and 'Year three' -> 'The next morning', so it is silent under S10; S15 has no music (sneaky_pizzicato ends at 'Five years after the bench'), S16 returns at -28; landing_thud__v2 (-14 dB) on 'Musk. Eight?' scores the twist. Beds change with places. Optional: S03 pop_in and S13 tock soft accents are decoration."
+    "evidence": "S11 L2 'starts to hiss' now scored by battery_hiss__v1 (-24 dB), no longer cloth rustle; clockwork_loop runs In the parking lot (S09) -> 'Year two' and 'Year three' -> 'The next morning', so it is silent under S10; S15 has no music (sneaky_pizzicato ends at 'Five years after the bench'), S16 returns at -28; landing_thud__v2 (-14 dB) on 'Musk. Eight?' scores the twist. Beds change with places. Optional: S03 pop_in and S13 tock soft accents are decoration. Round 3: the counter is silent (no sfx on the flip), so no sound scores a wrong emotion."
    },
    "timing": {
     "status": "inspected",
     "basis": "estimate",
-    "evidence": "Estimate: 2068 words, about 11:50 at 175 wpm and 12:55 at 160 wpm (inside the caster's [160,190] range). Midpoint S08 near 46-50 %, climax S12, twist S15. S11 L13 has 1.0 s and S08 L10 0.8 s for the reactions. BP-43: ends on 'which envelope would be yours?'; S16 is short (5 lines), about 20 s of narration under an end screen. Optional: RHYTHM-1 10.21 pictures a minute vs 10; SH039 2.47 s."
+    "evidence": "Estimate: 2068 words, about 11:50 at 175 wpm and 12:55 at 160 wpm (inside the caster's [160,190] range). Midpoint S08 near 46-50 %, climax S12, twist S15. S11 L13 has 1.0 s and S08 L10 0.8 s for the reactions. BP-43: ends on 'which envelope would be yours?'; S16 is short (5 lines), about 20 s of narration under an end screen. Optional: RHYTHM-1 10.21 pictures a minute vs 10; SH039 2.47 s. Round 3: the counter changes land on segment starts, away from the reaction holds (S08 L10 0.8 s, S11 L13 1.0 s), so a flip never competes with a reaction; the estimated read is unchanged (2068 words, no spoken word edited)."
    }
   },
   "findings": [],
@@ -278,7 +278,9 @@
    "OPTIONAL polish, none blocks the read: (1) beats: BP-33 expression holds 0.49 s on S05 L11 and S08 L4 (+0.01 s each); (2) editor: RHYTHM-1 10.21 pictures a minute, merge one or two B shots in the busiest scene; (3) shorts: SH039 is 2.47 s, one half second longer or merge it; (4) writer: split the 22-word sentence in p12 (N-05), 'the van' and cells vs batteries in S09; (5) writer: N-12, one 'you' in S13-S14 (the speakers already say it in dialogue); (6) editor: drop the S03 pop_in and S11 tick soft accents; (7) shorts: SH09 'Fires included' hints at the fire.",
    "The lines to protect in any edit: Cuban 'Nobody has ever come in here to give me money back.' and Musk 'I don't sell probably.'",
    "Paid-stage gates (PV-05, PV-47, VB-09) are not judged here by the caller's instruction.",
-   "Limits: no picture seen and no voice heard; basis is data, the estimated read, or instructions as marked. Sources opened this round: liquisearch, politifact, nbcnews, biography.com, houstonchronicle, levelfields. Not opened: cleantechnica (403), dspace.krok.edu.ua (taken from editorial SRC-02). Note: `production compile` was run for reading the narration and refreshed the script file's modification time; the review binds to the sha256 of the file as it stands now."
+   "Limits: no picture seen and no voice heard; basis is data, the estimated read, or instructions as marked. Sources opened this round: liquisearch, politifact, nbcnews, biography.com, houstonchronicle, levelfields. Not opened: cleantechnica (403), dspace.krok.edu.ua (taken from editorial SRC-02). Note: `production compile` was run for reading the narration and refreshed the script file's modification time; the review binds to the sha256 of the file as it stands now.",
+   "Counter (round 3): taste only: the chip's own S05 'WEEK 1' is a deliberate compromise (the story period says day1) and the creator may prefer 'DAY 3' style labels, but that would need another change entry and S05 would still step back from S04; keep as is.",
+   "Voices (caster, optional, low confidence, instructions): Spence (Musk) and Roger (Cuban) are both middle-aged mid-range male voices in S13 L4-L9, and Bill (Kiyosaki) and Flint (Trump) are both 'older man' voices in S05; chosen without samples. When the voices are first generated, listen to those lines and swap only Roger if the pair blur."
   ]
  }
 }

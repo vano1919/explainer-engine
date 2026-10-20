@@ -15,14 +15,19 @@
  "voice": {
   "provider": "elevenlabs",
   "model": "eleven_v4",
-  "voice_id": "oJUpLOe3yEYTEIjO6ddh",
-  "name": "Leo Ashcraft - Late-Night Radio Host",
+  "voice_id": "l3OCvamakRoSUNIIz75n",
+  "name": "Brad - Warm, Trusted Storyteller",
   "style": "a warm, quick, slightly wry storyteller with a low voice, curious and never solemn",
   "pace_wpm": [
    160,
    190
   ],
   "candidates": [
+   {
+    "voice_id": "l3OCvamakRoSUNIIz75n",
+    "name": "Brad - Warm, Trusted Storyteller",
+    "why": "the most used middle-aged American storyteller voice: warm, quick enough, trusted; most used in the ElevenLabs library for this type (sorted by last year's characters read), picked without samples (creator 2026-10-20)"
+   },
    {
     "voice_id": "oJUpLOe3yEYTEIjO6ddh",
     "name": "Leo Ashcraft - Late-Night Radio Host",
@@ -123,8 +128,8 @@
     "rebuilt scooter"
    ],
    "voice": {
-    "voice_id": "wdeEOw9iMDHzRDUDlgPC",
-    "name": "Kyle F - Technical and Soft",
+    "voice_id": "ZTho75k1M56OV0k9XtSC",
+    "name": "Spence",
     "style": "a middle-aged man with a light, slightly nasal mid-range voice that halts and restarts mid-sentence, dry and deadpan, tired and earnest, a faint south african flavour under a mostly American delivery; never loud",
     "traits": {
      "gender": "male",
@@ -143,6 +148,11 @@
      ]
     },
     "candidates": [
+     {
+      "voice_id": "ZTho75k1M56OV0k9XtSC",
+      "name": "Spence",
+      "why": "soft-spoken, slight rasp, middle-aged; an engineer who explains and never sells; most used in the ElevenLabs library for this type (sorted by last year's characters read), picked without samples (creator 2026-10-20)"
+     },
      {
       "voice_id": "wdeEOw9iMDHzRDUDlgPC",
       "name": "Kyle F - Technical and Soft",
@@ -184,8 +194,8 @@
     "phone with no contacts"
    ],
    "voice": {
-    "voice_id": "xB7ZTAdAjd7cI20IXiAL",
-    "name": "Chris Beck - Rocket Radio",
+    "voice_id": "N2lVS1w4EtoT3dr4eOWO",
+    "name": "Callum - Husky Trickster",
     "style": "a middle-aged man with a quick, bright, gravelly-smooth new york voice, a salesman's rolling patter that speeds up when he is closing and drops to a confiding murmur on the key line; cocky, warm, never shouting",
     "traits": {
      "gender": "male",
@@ -204,6 +214,11 @@
      ]
     },
     "candidates": [
+     {
+      "voice_id": "N2lVS1w4EtoT3dr4eOWO",
+      "name": "Callum - Husky Trickster",
+      "why": "the most used husky trickster voice: a salesman's charm with an edge; most used in the ElevenLabs library for this type (sorted by last year's characters read), picked without samples (creator 2026-10-20)"
+     },
      {
       "voice_id": "xB7ZTAdAjd7cI20IXiAL",
       "name": "Chris Beck - Rocket Radio",
@@ -245,8 +260,8 @@
     "briefcase"
    ],
    "voice": {
-    "voice_id": "fxnZk29PIJ3WKEC9MDEo",
-    "name": "David Baker confident calm mature",
+    "voice_id": "ZthjuvLPty3kTMaNKVKb",
+    "name": "Jackson",
     "style": "an older man with a low, dry, even Canadian-English voice, slow and flat as a ledger, a half-smile in the tone, calm even when insulting; never raises the pitch",
     "traits": {
      "gender": "male",
@@ -265,6 +280,11 @@
      ]
     },
     "candidates": [
+     {
+      "voice_id": "ZthjuvLPty3kTMaNKVKb",
+      "name": "Jackson",
+      "why": "the most used crisp, confident middle-aged voice: resolute, a man who prices people; most used in the ElevenLabs library for this type (sorted by last year's characters read), picked without samples (creator 2026-10-20)"
+     },
      {
       "voice_id": "fxnZk29PIJ3WKEC9MDEo",
       "name": "David Baker confident calm mature",
@@ -305,8 +325,8 @@
     "phone on a selfie stick"
    ],
    "voice": {
-    "voice_id": "lysAcYDrfyxpR1LiWJrt",
-    "name": "Nick - Old, Raspy and Experienced",
+    "voice_id": "qAZH0aMXY8tw1QufPN0D",
+    "name": "Flint",
     "style": "an older man with a loud, raspy, nasal new york voice, swaggering and emphatic, stressing a word then repeating it, sing-song rises and sudden hushed asides; boastful but jovial, never menacing",
     "traits": {
      "gender": "male",
@@ -325,6 +345,11 @@
      ]
     },
     "candidates": [
+     {
+      "voice_id": "qAZH0aMXY8tw1QufPN0D",
+      "name": "Flint",
+      "why": "deep and raspy, older American: a big voice that fills a room; most used in the ElevenLabs library for this type (sorted by last year's characters read), picked without samples (creator 2026-10-20)"
+     },
      {
       "voice_id": "lysAcYDrfyxpR1LiWJrt",
       "name": "Nick - Old, Raspy and Experienced",
@@ -366,8 +391,8 @@
     "old Toyota"
    ],
    "voice": {
-    "voice_id": "PerZoH0r6nxBZXCoIPpv",
-    "name": "Michael Moody - Grandfatherly and warm",
+    "voice_id": "pqHfZKP75CvOlQylNhV4",
+    "name": "Bill - Wise, Mature, Balanced",
     "style": "an older man with a warm, gravelly, unhurried American voice, a teacher's easy cadence with a Hawaiian-island looseness, stopping to let a point land, then leaning in; earnest, a little stubborn",
     "traits": {
      "gender": "male",
@@ -386,6 +411,11 @@
      ]
     },
     "candidates": [
+     {
+      "voice_id": "pqHfZKP75CvOlQylNhV4",
+      "name": "Bill - Wise, Mature, Balanced",
+      "why": "the most used older American voice: a teacher's calm that turns into a lecture; most used in the ElevenLabs library for this type (sorted by last year's characters read), picked without samples (creator 2026-10-20)"
+     },
      {
       "voice_id": "PerZoH0r6nxBZXCoIPpv",
       "name": "Michael Moody - Grandfatherly and warm",
@@ -426,8 +456,8 @@
     "clipboard"
    ],
    "voice": {
-    "voice_id": "gwU7DXdLrTvWCiUTPZG8",
-    "name": "Daniel - Bright, warm, commanding",
+    "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+    "name": "Roger - Laid-Back, Casual",
     "style": "a middle-aged man with a plain, brisk, mid-range American voice, rust-belt directness, fast clipped questions, a sports-bar ease and a flat refusal when he says no; blunt, never cruel",
     "traits": {
      "gender": "male",
@@ -446,6 +476,11 @@
      ]
     },
     "candidates": [
+     {
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "name": "Roger - Laid-Back, Casual",
+      "why": "the most used laid-back conversational voice: a man in a T-shirt who runs a warehouse; most used in the ElevenLabs library for this type (sorted by last year's characters read), picked without samples (creator 2026-10-20)"
+     },
      {
       "voice_id": "gwU7DXdLrTvWCiUTPZG8",
       "name": "Daniel - Bright, warm, commanding",
@@ -516,8 +551,8 @@
     "thick fire report"
    ],
    "voice": {
-    "voice_id": "quYBSltBVe10Ud9I6q9p",
-    "name": "Jae",
+    "voice_id": "cjVigY5qzO86Huf0OWal",
+    "name": "Eric - Smooth, Trustworthy",
     "style": "a middle-aged man with a clear, resonant, bright American mid-Atlantic-neutral voice, unhurried and precise, a sudden big laugh breaking through a calm delivery; pleasant, patient, a little too sure of himself",
     "traits": {
      "gender": "male",
@@ -536,6 +571,11 @@
      ]
     },
     "candidates": [
+     {
+      "voice_id": "cjVigY5qzO86Huf0OWal",
+      "name": "Eric - Smooth, Trustworthy",
+      "why": "the most used smooth, classy middle-aged voice: precise, controlled; most used in the ElevenLabs library for this type (sorted by last year's characters read), picked without samples (creator 2026-10-20)"
+     },
      {
       "voice_id": "quYBSltBVe10Ud9I6q9p",
       "name": "Jae",
@@ -575,8 +615,8 @@
     "business card"
    ],
    "voice": {
-    "voice_id": "Dg1lUQiSAGVHkoQMG3QX",
-    "name": "Jerry B. - Premium Luxury Commercial",
+    "voice_id": "WzVKtqQpTUUQ2JNx8YxI",
+    "name": "Silas - Weathered Villain",
     "style": "a middle-aged man with a smooth, quiet, even American voice, polite and unhurried, a thin smile you can hear, never raises his voice and never explains twice; calm, cold, courteous",
     "traits": {
      "gender": "male",
@@ -591,6 +631,11 @@
      "role": "villain"
     },
     "candidates": [
+     {
+      "voice_id": "WzVKtqQpTUUQ2JNx8YxI",
+      "name": "Silas - Weathered Villain",
+      "why": "low, precise, quietly threatening: the buyer who arrives after the fire; most used in the ElevenLabs library for this type (sorted by last year's characters read), picked without samples (creator 2026-10-20)"
+     },
      {
       "voice_id": "Dg1lUQiSAGVHkoQMG3QX",
       "name": "Jerry B. - Premium Luxury Commercial",
@@ -13040,6 +13085,40 @@
    "to": null,
    "gain_db": -28,
    "fade_s": 2.0
+  }
+ ],
+ "counter": [
+  {
+   "segment": "S01",
+   "label": "DAY 1"
+  },
+  {
+   "segment": "S04",
+   "label": "WEEK 1"
+  },
+  {
+   "segment": "S06",
+   "label": "MONTH 6"
+  },
+  {
+   "segment": "S07",
+   "label": "MONTH 9"
+  },
+  {
+   "segment": "S08",
+   "label": "YEAR 1"
+  },
+  {
+   "segment": "S10",
+   "label": "YEAR 2"
+  },
+  {
+   "segment": "S11",
+   "label": "YEAR 3"
+  },
+  {
+   "segment": "S14",
+   "label": "YEAR 5"
   }
  ],
  "graphics": [],

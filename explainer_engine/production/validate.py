@@ -331,6 +331,9 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     for per in doc.get("periods", []):
         if not (per.get("card") or {}).get("title"):
             _f(out, "PV-30", per["id"], "the period has no card title (ED-09)", "REVIEW")
+    # PV-54 the time counter (ED-15)
+    for why in GFX.check_counter(doc.get("counter", []), [sg["id"] for sg in doc["segments"]]):
+        _f(out, "PV-54", "counter", why)
     seen = {}
     for g in doc.get("graphics", []):
         for why in GFX.check_visual(g):
