@@ -208,8 +208,10 @@ def test_eng8_abrupt_ending_from_bp43():
 def test_scorecard_pace_band_from_bp01():
     assert scorecard.pace_verdict(SR.T("BP-01", "wpm_target")) == "PASS"
     assert scorecard.pace_verdict(SR.T("BP-01", "wpm_min") - 1) == "REVIEW"
-    assert scorecard.pace_verdict(SR.T("BP-01", "wpm_fail_below") - 1) == "FAIL"
-    assert scorecard.pace_verdict(SR.T("BP-01", "wpm_fail_above") + 1) == "FAIL"
+    # outside the fail bounds: the registry's severity (BP-01 is a hypothesis, so REVIEW: D-59 "hypothesis = REVIEW only")
+    sev = SR.rule("BP-01")["severity"]
+    assert scorecard.pace_verdict(SR.T("BP-01", "wpm_fail_below") - 1) == sev
+    assert scorecard.pace_verdict(SR.T("BP-01", "wpm_fail_above") + 1) == sev
     w = [{"w": f"w{i}" + ("." if i % 6 == 5 else ""), "s": i * 0.35, "e": i * 0.35 + 0.3} for i in range(60)]
     shot = {"id": "s1", "type": "A", "start": 0.0, "end": 21.0, "transition": "cut", "emotion": "tension", "beat": "hook", "phase": "d",
             "sentences": [0], "motion": {"kind": "static", "z0": 1.0, "z1": 1.0}, "picture": "p", "palette": [], "face": "none",

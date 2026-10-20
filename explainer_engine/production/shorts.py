@@ -277,6 +277,13 @@ def ass_captions(words: list[dict], path: Path) -> None:
     path.write_text(head + "\n".join(rows) + "\n", encoding="utf-8")
 
 
+def music_filter(duration: float) -> str:
+    """The Short's music under the voice (input 2 over input 1): BP-62's fades, in at the start and out at the end."""
+    f_in, f_out = float(SR.T("BP-62", "fade_in_s")), float(SR.T("BP-62", "fade_out_s"))
+    return (f"[2:a]volume=0.10,afade=t=in:st=0:d={f_in:.2f},afade=t=out:st={max(0.0, duration - f_out):.2f}:d={f_out:.2f}[m];"
+            "[1:a][m]amix=inputs=2:duration=first:normalize=0[a]")
+
+
 def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path], music: Path | None, tempo: float) -> Path:
     short = next(s for s in doc["shorts"] if s["id"] == short_id)
     out.mkdir(parents=True, exist_ok=True)
@@ -296,7 +303,7 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
     ass_captions(aligned["words"], out / "cap.ass")
     final = out / f"{short_id}.mp4"
     inputs = ["-i", str(silent), "-i", str(voice)]
-    fc = "[2:a]volume=0.10,afade=t=out:st=%.2f:d=1.2[m];[1:a][m]amix=inputs=2:duration=first:normalize=0[a]" % max(0.0, duration - 1.2)
+    fc = music_filter(duration)  # BP-62 fades
     if music:
         # only a track the library marks loopable is tiled; a one-shot plays once and the fade-out covers the rest
         loop_args = ["-stream_loop", "-1"] if ASM.Sounds([]).loopable(music.stem) else []

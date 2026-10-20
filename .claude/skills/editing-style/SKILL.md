@@ -10,7 +10,7 @@ description: Choose and apply an editing style for a Crossworld Theories video (
 Rules: `docs/EDITING.md` (ED-01..ED-07). This page is the judgement behind them. Sources of the research (2026-10-17):
 Adobe, Vimeo and Boris FX on split edits; Wikipedia on dissolves (typically 1-2 s, 6-12 frames to soften a hard cut) and
 continuity editing; Fiveable on cuts and dissolves; editing-mistake guides (too many transition types, unlevelled audio, jump
-cuts); ducking guides (6-12 dB, attack 30-80 ms, release 250-700 ms). The search results were thin on room tone and
+cuts); ducking guides (6-12 dB, attack 30-80 ms, release 250-700 ms; our registry, BP-53, keeps 6-12 dB, attack 20-80 ms with the house 20 ms, release 250-700 ms, for every duck in the mix). The search results were thin on room tone and
 documentary pacing, so the numbers for those come from our own measurements (the Episode 1 read: chunk loudness spread 5.6 dB).
 
 ## Pick the style from what the story is doing
