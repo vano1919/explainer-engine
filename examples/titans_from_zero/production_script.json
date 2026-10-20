@@ -168,6 +168,13 @@
           "https://en.wikipedia.org/wiki/Elon_Musk",
           "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
         ]
+      },
+      "reference": {
+        "collage": "pictures/hero_caricatures_v1.jpg",
+        "tile": 1,
+        "picture": "p_musk",
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20"
       }
     },
     "belfort": {
@@ -214,6 +221,13 @@
           "https://en.wikipedia.org/wiki/Jordan_Belfort",
           "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
         ]
+      },
+      "reference": {
+        "collage": "pictures/hero_caricatures_v1.jpg",
+        "tile": 2,
+        "picture": "p_belfort",
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20"
       }
     },
     "oleary": {
@@ -261,6 +275,13 @@
           "https://en.wikipedia.org/wiki/Kevin_O%27Leary",
           "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
         ]
+      },
+      "reference": {
+        "collage": "pictures/hero_caricatures_v1.jpg",
+        "tile": 3,
+        "picture": "p_oleary",
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20"
       }
     },
     "trump": {
@@ -307,6 +328,13 @@
           "https://en.wikipedia.org/wiki/Donald_Trump",
           "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
         ]
+      },
+      "reference": {
+        "collage": "pictures/hero_caricatures_v1.jpg",
+        "tile": 4,
+        "picture": "p_trump",
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20"
       }
     },
     "kiyosaki": {
@@ -354,6 +382,13 @@
           "https://en.wikipedia.org/wiki/Robert_Kiyosaki",
           "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
         ]
+      },
+      "reference": {
+        "collage": "pictures/hero_caricatures_v1.jpg",
+        "tile": 5,
+        "picture": "p_kiyosaki",
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20"
       }
     },
     "cuban": {
@@ -400,6 +435,13 @@
           "https://en.wikipedia.org/wiki/Mark_Cuban",
           "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
         ]
+      },
+      "reference": {
+        "collage": "pictures/hero_caricatures_v1.jpg",
+        "tile": 6,
+        "picture": "p_cuban",
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20"
       }
     },
     "cardone": {
@@ -16202,5 +16244,65 @@
         "uncertainty": ""
       }
     ]
+  },
+  "library": {
+    "p_musk": {
+      "file": "pictures/p_musk.jpg",
+      "engine": "existing",
+      "heroes": [
+        "musk"
+      ],
+      "shows": []
+    },
+    "p_belfort": {
+      "file": "pictures/p_belfort.jpg",
+      "engine": "existing",
+      "heroes": [
+        "belfort"
+      ],
+      "shows": []
+    },
+    "p_oleary": {
+      "file": "pictures/p_oleary.jpg",
+      "engine": "existing",
+      "heroes": [
+        "oleary"
+      ],
+      "shows": []
+    },
+    "p_trump": {
+      "file": "pictures/p_trump.jpg",
+      "engine": "existing",
+      "heroes": [
+        "trump"
+      ],
+      "shows": []
+    },
+    "p_kiyosaki": {
+      "file": "pictures/p_kiyosaki.jpg",
+      "engine": "existing",
+      "heroes": [
+        "kiyosaki"
+      ],
+      "shows": []
+    },
+    "p_cuban": {
+      "file": "pictures/p_cuban.jpg",
+      "engine": "existing",
+      "heroes": [
+        "cuban"
+      ],
+      "shows": []
+    }
+  },
+  "look": {
+    "environment": {
+      "collage": "pictures/hero_caricatures_v1.jpg",
+      "tile": 1,
+      "picture": "p_musk",
+      "approved_by": "vano1919 (ვანო)",
+      "approved_at": "2026-10-20",
+      "note": "the creator's pick: a synthesis of tiles 1 and 3 of pictures/style_collage_v1.jpg (ink line + loose flat watercolour washes with clean flat shapes, muted blues and warm browns); recognisable editorial caricatures of the real people, our own drawings"
+    }
   }
 }
