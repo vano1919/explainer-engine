@@ -1357,6 +1357,14 @@
       "script_sha256": "e31e3e3477e102b41e88fa5211e72b51b231ebe9d6ebf1f21e312c9c61693a1d",
       "rulebook_version": 2,
       "scope": "re-checked after 17 picture subjects fixed (B1 review) and five hero references recorded (p_vance, p_cardone, p_hormozi, p_zuckerberg, p_bezos); no words, people, asset sources or rules changed"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-20",
+      "by": "vano1919 (ვანო), 2026-10-20: timing-only re-stamp after pauses (paid assets already approved)",
+      "script_sha256": "9d0e73c6d6a1fba28ed364c1d75d62fc9e1981593ab0d16c714617dffb73558f",
+      "rulebook_version": 2,
+      "scope": "pauses on S12, S15, S16 split"
     }
   ]
 }

@@ -1,11 +1,11 @@
 {
   "schema": "editorial_review/2",
-  "script_sha256": "e31e3e3477e102b41e88fa5211e72b51b231ebe9d6ebf1f21e312c9c61693a1d",
+  "script_sha256": "9d0e73c6d6a1fba28ed364c1d75d62fc9e1981593ab0d16c714617dffb73558f",
   "reviewer": "script-critic (Stage 7)",
   "reviewer_role": "independent_critic",
   "independent": true,
-  "reviewed_at": "2026-10-20 (round 9, after the five creator-approved first pictures were recorded as hero references)",
-  "verdict": "Round 9: metadata only. Since round 8 the five first pictures the creator OK'd (Vance s12_ash, Cardone s03_bank, Hormozi s06_gym, Zuckerberg s06_library, Bezos s06_books) were recorded as cast.<hero>.reference.picture (p_<hero>) with a note, and five library entries p_<hero> (engine existing, file pictures/p_<hero>.jpg, one hero each) were added; the five files exist in pictures/. Words, beats, bubbles, shots, prompts and the approval hash are unchanged. This answers the open PV-47 'hero drawn first' REVIEWs for those five heroes (basis: data, no picture seen). No score or verdict change: ACCEPTED with REVIEWs; no new finding. R5-02..R5-07 stand. Hash bound to the current file; the script was not edited by this review.",
+  "reviewed_at": "2026-10-20 (round 10, timing-only re-bind)",
+  "verdict": "Round 10: timing only. Since round 9 (e31e3e34...): pause_after 0.5 added on S12 'You know how this kind of paper works.' and S15 'Five years after the bench...'; the S16 line was split at the full stop into 'Luck decided which envelope paid.' (pause_after 0.5) and 'Skill decided who was still standing when it did.' (pause_after 0.7), same words, same tags/tone/emotion/kind, visual beats divided between the two lines. Verified by git diff that nothing else changed. The split gives the first clause a half-second beat before the turn, which supports the deadpan landing; no finding is created or changed. Scores, verdict and R5-02..R5-07 carry forward unchanged: ACCEPTED with REVIEWs. Basis: data and estimate, no picture seen or voice heard. Hash bound to the current file; the script was not edited by this review.",
   "scores": {
     "factual_reliability": {
       "score": 4,
