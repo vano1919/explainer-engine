@@ -843,6 +843,6 @@ Tests: 541 passed, 1 skipped (new: test_sourced_rules 7, test_sourced_narration 
 docs_lint 0; registry check 0. Nothing paid, nothing uploaded.
 Not done / for the next PR: BP-52 in LU on real mixes needs BS.1770 stem measurements in `build_audio` (PR #9's region; the scorecard
 treats RMS stats as REVIEW until then); the Short's mono phone check (BP-61); payoff position (BP-04/BP-44) is a writer/critic rule, not
-machine-checked; the `sfx_manifest` schema needs `kind` (PR #9 owns it); STORY_ENGINE AL-02/AL-03 and PRODUCTION_SCRIPT PP-05/PV-40
-wording are PR #9's files; the Syndicate Wars example now scores FAIL on pace (122 wpm) and hook-window stills (it stays as is, the
+machine-checked; the `sfx_manifest` schema needs `kind` (PR #9 owns it); STORY_ENGINE AL-02/AL-03 wording is PR #9's file (PRODUCTION_SCRIPT's PV-40, PV-52 and
+PP-05 rows were brought in line here after CI caught the missing PV-52 row); the Syndicate Wars example now scores FAIL on pace (122 wpm) and hook-window stills (it stays as is, the
 creator's word). Overlaps with PR #9 listed in the PR description.
