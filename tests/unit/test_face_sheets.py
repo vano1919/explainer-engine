@@ -62,8 +62,9 @@ def test_the_sheet_needs_the_heroes_reference():
 
 def test_to_paint_asks_for_one_close_up_per_expression_on_key_green_and_reuses_painted_ones(tmp_path):
     d = beats_doc()
-    items = FACES.to_paint(d)
-    assert [i["id"] for i in items] == [f"einstein_faces_v1_{e}" for e in FACES.DEFAULT_SET]
+    items = FACES.to_paint(d)  # only the faces the episode shows (+ neutral), in the sheet's order (the creator 2026-10-20)
+    assert FACES.needed(d) == {"einstein": {"neutral", "curious", "surprised"}}
+    assert [i["id"] for i in items] == [f"einstein_faces_v1_{e}" for e in FACES.DEFAULT_SET if e in FACES.needed(d)["einstein"]]
     it = items[0]
     assert FACES.key_hex() in it["prompt"] and FACES.DESCRIBE["neutral"] in it["prompt"]
     assert d["cast"]["einstein"]["card"].strip(" .") in it["prompt"] and it["refs"][0] == "duo.png"
@@ -86,9 +87,12 @@ def test_lint_with_files_flags_unpainted_and_badly_keyed_close_ups(tmp_path):
         _close_up(tmp_path / f"einstein_faces_v1_{e}.png")
     assert not _vb(FACES.lint(d, [tmp_path]), "VB-09")
     _close_up(tmp_path / "einstein_faces_v1_sad.png", bg=(120, 120, 120))
-    (tmp_path / "einstein_faces_v1_smug.png").unlink()
+    (tmp_path / "einstein_faces_v1_smug.png").unlink()  # in the set, never shown: not needed, no finding
+    (tmp_path / "einstein_faces_v1_curious.png").unlink()  # shown: must be painted
+    _close_up(tmp_path / "einstein_faces_v1_surprised.png", bg=(120, 120, 120))
     found = " ".join(f["detail"] for f in _vb(FACES.lint(d, [tmp_path]), "VB-09", "REVIEW"))
-    assert "smug is not painted yet" in found and "einstein_faces_v1_sad.png: the background" in found
+    assert "curious is not painted yet" in found and "einstein_faces_v1_surprised.png: the background" in found
+    assert "smug" not in found and "einstein_faces_v1_sad.png" not in found
 
 
 def test_composite_blurs_the_scene_behind_the_close_up_and_rests_outside_dialogue(tmp_path):
@@ -120,9 +124,9 @@ def test_paint_plan_faces_is_a_reusable_plan_with_its_saving(tmp_path):
     assert paint.main(["plan", str(tmp_path / "script.json"), "--out", str(out), "--id", "F1", "--provider", "pod",
                        "--faces"]) == 0
     plan = json.loads((out / "plans" / "F1.json").read_text())
-    assert plan["reusable"] and "expression sheets of einstein" in plan["purpose"] and len(plan["items"]) == 10
+    assert plan["reusable"] and "expression sheets of einstein" in plan["purpose"] and len(plan["items"]) == 3
     fs = plan["faces_saving"]
-    assert fs["close_ups"] == 10 and fs["expression_changes"] == 2 and fs["usd_sheet"] > 0
+    assert fs["close_ups"] == 3 and fs["expression_changes"] == 2 and fs["usd_sheet"] > 0
     assert not [f for f in P.check(plan, d) if f["severity"] == "FAIL"]
     changed = copy.deepcopy(d)
     changed["cast"]["einstein"]["card"] += " Now with a hat."
@@ -167,3 +171,13 @@ def test_one_framing_per_sheet_scales_a_wide_close_up_to_the_tightest(tmp_path):
     out = FACES.same_framing([wide, tight], wide)
     a, b = (FACES._profile(out[p]) for p in (wide, tight))
     assert abs(a[1] - b[1]) <= 3 and abs(a[0][40] - b[0][40]) <= 6  # same head top, same width a little below it
+
+
+def test_needed_faces_include_the_shorts_and_skip_unused_template_faces():
+    """The creator 2026-10-20: paint faces only as the script needs them (Titans: 56 of 93 template close-ups were used)."""
+    d = beats_doc()
+    d["shorts"] = [{"id": "SH01", "lines": [{"text": "Hm.", "speaker": "einstein",
+                                             "visual_beats": [{"kind": "expression", "expression": "smug", "at": "Hm"}]}]}]
+    assert FACES.needed(d)["einstein"] == {"neutral", "curious", "surprised", "smug"}
+    ids = {i["expression"] for i in FACES.to_paint(d)}
+    assert ids == {"neutral", "curious", "surprised", "smug"} and "sad" not in ids

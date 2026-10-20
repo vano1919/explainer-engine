@@ -9,7 +9,8 @@ scene's own picture, zoomed in and blurred, with the keyed close-up of the curre
 
     lint(doc, dirs)          VB-09 findings: set size and base expressions, beats inside the set, a reference, the key;
                              with painted files also BP-34 (docs/SOURCED_RULES.md): the close-up against its backdrop
-    to_paint(doc)            paint-plan items for the close-ups not painted yet (``paint plan --faces``)
+    needed(doc)              the expressions the episode shows (film and Shorts beats) + neutral: only these are painted
+    to_paint(doc)            paint-plan items for the needed close-ups not painted yet (``paint plan --faces``)
     saving(doc, items, usd)  what the sheet costs against a full picture for every face change (in the plan)
     composite(...)           the dialogue frame: blurred zoomed environment + keyed close-up (free, deterministic)
 """
@@ -111,17 +112,38 @@ def _used(doc: dict) -> dict[str, list[tuple[str, str, str]]]:
     return out
 
 
+def needed(doc: dict) -> dict[str, set[str]]:
+    """who -> the expressions this episode really shows (the film's and the Shorts' expression beats) plus ``neutral``, the
+    resting face of every close-up between beats. Only these are painted (the creator 2026-10-20: "faces only as needed";
+    Titans used 56 of 93 template close-ups). The rest of a sheet's ``set`` is painted by the episode that first uses it."""
+    out: dict[str, set[str]] = {}
+    for who, uses in _used(doc).items():
+        out.setdefault(who, set()).update(e for e, _, _ in uses if e)
+    shorts = doc.get("shorts")
+    items = shorts if isinstance(shorts, list) else (shorts or {}).get("items", (shorts or {}).get("set", []))
+    for sh in items if isinstance(items, list) else []:
+        for ln in sh.get("lines", []):
+            for b in ln.get("visual_beats", []):
+                who = b.get("who") or ln.get("speaker")
+                if b.get("kind") == "expression" and who and b.get("expression"):
+                    out.setdefault(who, set()).add(b["expression"])
+    for who in out:
+        out[who].add("neutral")
+    return out
+
+
 def to_paint(doc: dict, dirs: list[Path] | None = None) -> list[dict]:
-    """Paint-plan items for every close-up of every sheet that has no file yet (a file found in ``dirs`` is reused: a sheet
-    is painted once for the channel, not once per episode)."""
+    """Paint-plan items for every close-up the episode needs (``needed``) that has no file yet (a file found in ``dirs`` is
+    reused: a close-up is painted once for the channel, not once per episode)."""
     from explainer_engine.production import beats as BEATS
     style = doc.get("look", {}).get("style_refs", [])
+    need = needed(doc)
     items = []
     for who, hero in doc.get("cast", {}).items():
         sheet = hero.get("face_sheet")
         if not sheet:
             continue
-        for e in sheet.get("set", []):
+        for e in [e for e in sheet.get("set", []) if e in need.get(who, set())]:
             name = file_name(who, hero, e)
             if dirs is not None and BEATS.find_file(name, dirs):
                 continue
@@ -232,6 +254,7 @@ def lint(doc: dict, dirs: list[Path] | None = None) -> list[dict]:
     if not BEATS.has_beats(doc) and not BEATS.binding(doc):
         return out
     used = _used(doc)
+    need = needed(doc)
     for who, hero in doc.get("cast", {}).items():
         sheet = hero.get("face_sheet")
         if not sheet:
@@ -259,7 +282,7 @@ def lint(doc: dict, dirs: list[Path] | None = None) -> list[dict]:
                 BEATS._f(out, "VB-09", "FAIL", w, f"{who} {e!r} is not in the face sheet ({', '.join(s)}): use one of them "
                          "or add it to the sheet (and paint it)")
         if dirs is not None:
-            for e in s:
+            for e in [e for e in s if e in need.get(who, set())]:  # only the faces this episode shows must exist
                 p = BEATS.find_file(file_name(who, hero, e), dirs)
                 if p is None:
                     BEATS._f(out, "VB-09", "REVIEW", where, f"{e} is not painted yet ({file_name(who, hero, e)}): "

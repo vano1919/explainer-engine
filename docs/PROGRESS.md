@@ -1094,3 +1094,10 @@ question and runs phases 4 and 5 in parallel. `paint.preflight` refused on the e
 creator"), against D-60 (FAIL blocks, REVIEW is the creator's call; the ElevenLabs hook already filtered); it now blocks on FAIL
 only. Titans B1: 67 of 106 pictures submitted on Nano Banana batch, the rest wait for the creator at the run's 80 % cap line.
 Test: `test_storytelling_rules.py::test_paid_pictures_block_on_editorial_fail_not_review`.
+
+## 2026-10-20 - Face sheets painted only as needed (VB-09)
+
+The creator: "paint the faces only as the script needs them". `faces.needed(doc)` = the expressions the film's and the
+Shorts' expression beats show, plus `neutral` (the resting face between beats); `to_paint` and the VB-09 "not painted yet"
+REVIEW cover only those. A sheet's `set` still defines the hero's range (D-55 unchanged); the faces nobody uses yet are painted
+by the episode that first shows them. Titans: 93 template close-ups -> 65 needed ($2.45 -> $1.71). Tests: `test_face_sheets.py` (+1, 3 updated).
