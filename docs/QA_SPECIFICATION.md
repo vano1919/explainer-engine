@@ -86,7 +86,7 @@ Help 1311392). A "no" is a finding for the owner stage.
 | Rulebook compliance | Q-E15 (`standards gate --at final_qa`), Q-E13 |
 | Narration | Q-E05, Q-T18, PV-20, `voice_check`, ED-01, ED-12 |
 | Visuals | Q-E06, Q-E11, `visual_judge`, PV-24, PV-40 |
-| Audio | Q-T07, Q-T08, PV-29, PV-41, `qa/targets.py` |
+| Audio | Q-T07, Q-T08, PV-29, PV-36 (AL-01..AL-04 and the BP audio rules in `audio/layers.py`), PV-41, `qa/targets.py`, scorecard check 2 (BP-54 sync, [BP-66](SOURCED_RULES.md) masking) |
 | Editing | Q-T17, Q-E07, ED-01..ED-12, captions Q-T09, Q-T10 |
 | Assets and provenance | Q-T16, ES-09, the run ledger (`core/ledger.py`) |
 | Originality and engagement | Q-E16, ES-13, ES-14 |

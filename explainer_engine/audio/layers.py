@@ -7,39 +7,59 @@ Episode 1 had 22 effects in 18 minutes (1.2 a minute) under one bed and up to tw
 music and the tick fighting the voice (ED-03). The rules count what plays at once and what is missing:
 
 * AL-01 (BP-56) at most ``MAX_SFX_AT_ONCE`` effects overlap, and voice + music + bed + effects stay at most ``MAX_LAYERS``;
-* AL-02 sound events a minute, effects and beat cues together, inside ``SFX_PER_MIN`` (a hypothesis: no source
-  gives a rate; REVIEW only, BP-55; the cues count because the ear hears them, D-58);
+* AL-02 (BP-49) sound events a minute, effects and beat cues together, inside ``SFX_PER_MIN`` (a hypothesis: no source
+  gives a rate; the cues count because the ear hears them, D-58). On a ``production_script/3`` silence is the default
+  (VB-08 inverted), so only the upper bound applies there; VB-11 (production/beats.py) caps the cues alone, more strictly;
 * AL-03 (BP-54) a drawn accent that moves the picture hard (whip, flash, slam, shake, punch) has an effect that lands with it:
   within ``SYNC_EARLY`` before or ``SYNC_LATE`` after (early is worse than late); no effect near it is REVIEW, an effect
   outside the window is FAIL;
-* AL-04 (BP-52) effects and beds stay under the voice before the mix's ducking (``MAX_SFX_DB`` / ``MAX_BED_DB``; the bed cap
-  is the sourced "ambience at least 15 LU under the voice");
+* AL-04 (BP-65) effects and beds stay under the voice before the mix's ducking (``MAX_SFX_DB`` / ``MAX_BED_DB``, dBFS gains):
+  a proxy only; BP-52's distances are LU measured on the stems (``qa/targets.gap_verdict``);
 * BP-55 at most one visual beat in two carries an audible non-cue effect (mickey-mousing is redundancy);
-* BP-57 the same sound never plays twice in a row within its type;
-* BP-62 music starts and stops on a shot or segment boundary, a long video keeps a no-music stretch, a sting stays short.
+* BP-57 the same sound never plays twice in a row within its type (beat cues are exempt while the cue bus rotates
+  ``audio/cues.VARIANTS``, which BP-57 itself accepts as a pitch jitter);
+* BP-62 music starts and stops on a shot or segment boundary, fades in and out no faster than its fades, a long video
+  keeps a no-music stretch, a sting stays short.
 
 Severities come from the registry (D-59): a REVIEW rule never FAILs here.
 """
 
 from __future__ import annotations
 
+from explainer_engine.audio import cues as CUES
 from explainer_engine.standards import sourced_rules as SR
 
 MAX_SFX_AT_ONCE = int(SR.T("BP-56", "same_class_max"))
 MAX_LAYERS = int(SR.T("BP-56", "layers_max"))  # voice + music + bed + effects, all counted
-SFX_PER_MIN = (4.0, 20.0)  # AL-02: a hypothesis band (BP-55 keeps it REVIEW; no source names a rate)
+SFX_PER_MIN = tuple(float(x) for x in SR.T("BP-49", "events_per_min"))  # AL-02: a hypothesis band, REVIEW
+DENSITY_MIN_S = float(SR.T("BP-49", "min_video_s"))  # a shorter clip has too few minutes for a rate
 HARD = {"whip_in", "flash_in", "slam_text", "shake", "punch"}
 SYNC_EARLY = SR.T("BP-54", "early_max_ms") / 1000  # seconds a sound may lead its picture event
 SYNC_LATE = SR.T("BP-54", "late_max_ms") / 1000  # seconds it may trail it
 NEAR = 0.5  # seconds: beyond this there is simply no effect for the accent (AL-03), not a mistimed one (BP-54)
-MAX_SFX_DB = -8.0  # house pre-mix cap for an effect
-MAX_BED_DB = -float(SR.T("BP-52", "bed_under_lu"))  # BP-52: the ambience bed at least 15 LU under the voice
+MAX_SFX_DB = float(SR.T("BP-65", "sfx_gain_max_db"))  # AL-04: pre-mix gain cap of an effect (dBFS, a proxy)
+MAX_BED_DB = float(SR.T("BP-65", "bed_gain_max_db"))  # AL-04: pre-mix gain cap of a bed (dBFS; BP-52 is LU on the stems)
 BOUNDARY_TOL = 0.05  # seconds: a music edge within this of a cut counts as on it (one frame and a half at 30 fps)
 LONG_FORM_S = 120.0  # below this a video is a Short for BP-62's no-music stretch (EBU's short-form line, BP-61)
 
 
 def _sev(rule: str) -> str:
     return SR.rule(rule).get("severity", "REVIEW") if rule.startswith("BP-") else "REVIEW"
+
+
+def silence_is_default(timed: dict) -> bool:
+    """A production_script/3 (D-58): cues are opt-in and event-bound, so a quiet stretch is the rule, not a defect."""
+    from explainer_engine.production import beats as BEATS  # lazy: beats imports this module
+    return timed.get("script_schema") == BEATS.SCENE_SCHEMA
+
+
+def cues_vary() -> bool:
+    """BP-57 on beat cues: the cue bus rotates ``cues.VARIANTS`` per sound, so a repeated cue name is another pitch of
+    the same press, never the identical sample. True while there are at least ``variants_min`` distinct variants (or at
+    least two, each within ``pitch_jitter`` of the original)."""
+    v = set(CUES.VARIANTS)
+    jitter_ok = all(abs(x - 1.0) <= SR.T("BP-57", "pitch_jitter") + 1e-9 for x in v)
+    return len(v) >= SR.T("BP-57", "variants_min") or (len(v) >= 2 and jitter_ok)
 
 
 def _active(items: list[dict], t: float) -> int:
@@ -75,15 +95,17 @@ def check(timed: dict) -> list[dict]:
                 f"(at most {MAX_SFX_AT_ONCE} effects, {MAX_LAYERS} layers, BP-56)", _sev("BP-56"))
             flagged = e["start"] + 1.0
         if e.get("gain_db", -18) > MAX_SFX_DB:
-            add("AL-04", e["sound"], f"effect at {e['gain_db']} dB: above {MAX_SFX_DB} dB it competes with the voice")
+            add("AL-04", e["sound"], f"effect at {e['gain_db']} dB: above {MAX_SFX_DB:g} dB it competes with the voice (BP-65, a "
+                "pre-mix proxy; BP-52 is measured in LU on the stems)", _sev("BP-65"))
     # AL-02 counts everything the ear hears as an event: effects AND beat cues. The old count left the cues out, so
     # the density rule never fired on the layer it existed for (Syndicate Wars: 33 cues/min, AL-02 silent).
     n_events = len(sfx) + len(au.get("cues", []))
     per_min = n_events / dur * 60
-    if dur >= 60 and not SFX_PER_MIN[0] <= per_min <= SFX_PER_MIN[1]:
+    lo = 0.0 if silence_is_default(timed) else SFX_PER_MIN[0]  # /3: a silent beat is the default, never "silent motion"
+    if dur >= DENSITY_MIN_S and not lo <= per_min <= SFX_PER_MIN[1]:
         add("AL-02", "video", f"{per_min:.1f} sound events a minute, effects and cues together "
-            f"(keep {SFX_PER_MIN[0]:.0f}-{SFX_PER_MIN[1]:.0f}, a hypothesis): "
-            + ("the motion is silent" if per_min < SFX_PER_MIN[0] else "clutter"), "REVIEW")
+            f"(keep {lo:g}-{SFX_PER_MIN[1]:g}, BP-49, a hypothesis): "
+            + ("the motion is silent" if per_min < lo else "clutter"), _sev("BP-49"))
     starts = [e["start"] for e in sfx] + [c["start"] for c in cues]  # a beat cue (VB-08) is heard too
     for s in timed.get("shots", []):
         for a in s.get("accents", []):
@@ -99,7 +121,8 @@ def check(timed: dict) -> list[dict]:
                     "late; a miss goes late, never early)", _sev("BP-54"))
     for b in beds:
         if b.get("gain_db", MAX_BED_DB) > MAX_BED_DB:
-            add("AL-04", b["sound"], f"bed at {b['gain_db']} dB: above {MAX_BED_DB:g} dB the ambience masks words (BP-52)")
+            add("AL-04", b["sound"], f"bed at {b['gain_db']} dB: above {MAX_BED_DB:g} dB the ambience masks words (BP-65, a "
+                "pre-mix proxy; BP-52 is measured in LU on the stems)", _sev("BP-65"))
     out += beat_share_findings(timed)
     out += repeat_findings(timed)
     out += music_findings(timed)
@@ -137,7 +160,8 @@ def _runs(names: list[str]) -> list[tuple[str, int]]:
 
 
 def repeat_findings(timed: dict) -> list[dict]:
-    """BP-57: the same sample never twice in a row within its type (effects by sound id; beat cues by cue id)."""
+    """BP-57: the same sample never twice in a row within its type (effects by sound id; beat cues by cue id, only when the
+    cue bus does not vary them: ``cues_vary``)."""
     au = timed.get("audio", {})
     out = []
     sfx = sorted(au.get("sfx", []), key=lambda x: x["start"])
@@ -146,7 +170,7 @@ def repeat_findings(timed: dict) -> list[dict]:
                     "detail": f"effect {name!r} plays {n} times in a row: use another variant (at least "
                               f"{SR.T('BP-57', 'variants_min')}) or a deterministic pitch and gain jitter"})
     cues = sorted(au.get("cues", []), key=lambda x: x["start"])
-    runs = _runs([c["sound"] for c in cues])
+    runs = [] if cues_vary() else _runs([c["sound"] for c in cues])  # VB-10 keeps the "same sound on neighbours" check
     if runs:
         worst = max(runs, key=lambda r: r[1])
         out.append({"rule": "BP-57", "severity": _sev("BP-57"), "where": "cues",
@@ -166,7 +190,8 @@ def boundaries(timed: dict) -> list[float]:
 
 
 def music_findings(timed: dict) -> list[dict]:
-    """BP-62: music is spotted, not wallpaper."""
+    """BP-62: music is spotted, not wallpaper; it fades in and out no faster than BP-62's fades (a faster fade is heard as
+    a cut; a sting is a one-shot hit and keeps its attack)."""
     music = sorted(timed.get("audio", {}).get("music", []), key=lambda m: m["start"])
     if not music:
         return []
@@ -181,7 +206,14 @@ def music_findings(timed: dict) -> list[dict]:
                 out.append({"rule": "BP-62", "severity": sev, "where": m.get("track", "music"),
                             "detail": f"music {edge} at {t:.2f}s is on no shot or segment boundary: spot it to a cut"})
         length = float(m["end"]) - float(m["start"])
-        if (m.get("kind") == "sting" or "sting" in str(m.get("track", ""))) and length > SR.T("BP-62", "sting_max_s"):
+        sting = m.get("kind") == "sting" or "sting" in str(m.get("track", ""))
+        for edge, key in (("in", "fade_in_s"), ("out", "fade_out_s")):
+            got = m.get(key, m.get("fade_s"))
+            if got is not None and not sting and float(got) + 1e-6 < SR.T("BP-62", key):
+                out.append({"rule": "BP-62", "severity": sev, "where": m.get("track", "music"),
+                            "detail": f"music fades {edge} over {float(got):g} s: at least {SR.T('BP-62', key):g} s, or it is "
+                                      "heard as a cut"})
+        if sting and length > SR.T("BP-62", "sting_max_s"):
             out.append({"rule": "BP-62", "severity": sev, "where": m.get("track", "music"),
                         "detail": f"sting of {length:.1f} s: a sting is a one-shot of at most {SR.T('BP-62', 'sting_max_s'):g} s"})
     if dur >= LONG_FORM_S:

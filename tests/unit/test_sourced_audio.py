@@ -169,12 +169,14 @@ def test_beat_share_cap_bp55():
     assert L.beat_share_findings(_timed(sfx=many)) == []  # no beats: nothing to share
 
 
-def test_same_sample_twice_in_a_row_bp57():
+def test_same_sample_twice_in_a_row_bp57(monkeypatch):
     sfx = [{"sound": "pop_in__v1", "start": 1.0, "end": 1.2}, {"sound": "pop_in__v1", "start": 2.0, "end": 2.2},
            {"sound": "whoosh", "start": 3.0, "end": 3.4}, {"sound": "pop_in__v1", "start": 4.0, "end": 4.2}]
     f = L.repeat_findings(_timed(sfx=sfx))
     assert len(f) == 1 and f[0]["rule"] == "BP-57" and "pop_in__v1" in f[0]["where"] and f[0]["severity"] == "REVIEW"
     cues = [{"sound": "blip", "start": 1.0, "end": 1.1}, {"sound": "blip", "start": 2.0, "end": 2.1}, {"sound": "pluck", "start": 3.0, "end": 3.1}]
+    assert L.repeat_findings(_timed(cues=cues)) == []  # the cue bus rotates BP-57's pitch variants: never the same sample
+    monkeypatch.setattr(L.CUES, "VARIANTS", (1.0,))  # a cue bus without variants: the run is identical samples again
     assert [x["where"] for x in L.repeat_findings(_timed(cues=cues))] == ["cues"]
     assert L.repeat_findings(_timed(sfx=sfx[2:3], cues=cues[1:])) == []
 
@@ -196,7 +198,7 @@ def test_music_is_spotted_on_boundaries_with_a_no_music_stretch_and_short_stings
 
 def test_al01_counts_layers_from_bp56():
     assert L.MAX_SFX_AT_ONCE == SR.T("BP-56", "same_class_max") and L.MAX_LAYERS == SR.T("BP-56", "layers_max")
-    assert L.MAX_BED_DB == -SR.T("BP-52", "bed_under_lu")
+    assert L.MAX_BED_DB == SR.T("BP-65", "bed_gain_max_db") and L.MAX_SFX_DB == SR.T("BP-65", "sfx_gain_max_db")
 
 
 # --- audio/seams BP-59, pause_pad BP-60, sfx_library BP-58 -----------------------------------------------------------------

@@ -870,3 +870,18 @@ treats RMS stats as REVIEW until then); the Short's mono phone check (BP-61); pa
 machine-checked; the `sfx_manifest` schema needs `kind` (PR #9 owns it); STORY_ENGINE AL-02/AL-03 wording is PR #9's file (PRODUCTION_SCRIPT's PV-40, PV-52 and
 PP-05 rows were brought in line here after CI caught the missing PV-52 row); the Syndicate Wars example now scores FAIL on pace (122 wpm) and hook-window stills (it stays as is, the
 creator's word). Overlaps with PR #9 listed in the PR description.
+
+## 2026-10-20 - Rule consistency after the merge: audio
+Rescan findings A R-01..R-03, R-19..R-23, R-29c/e/h, B audio rows and C 2/5/6/7 fixed. New registry entries: BP-49 (AL-02 band,
+hypothesis), BP-64 (beat-cue length and level, house FAIL, D-58; BP-58's one-shot floor does not apply to an earcon), BP-65 (AL-04
+pre-mix gain caps, hypothesis: a dBFS proxy, BP-52 stays LU on the stems), BP-66 (an effect over speech is synced or masking, house
+FAIL, the creator's 2026-10-16 note). Code: every duck reads BP-53 (assemble's `vduck 0.55` gone; the bed under a world sound dips by
+BP-53's floor, 6 dB, not the superseded 4); music fades 1 s in / 2 s out from BP-62 in timing, the mix and the Shorts, with a fade
+check in `layers.music_findings`; cue pitch variants are 1 +/- BP-57's jitter and cue runs are no BP-57 finding while the bus varies
+them; AL-02 has no lower bound on `/3` (the timed file now carries `script_schema`); the sped file (`finish/speed.py`) uses BP-63's
+codec; the scorecard caps BP-01 at the registry's severity (REVIEW: a hypothesis never FAILs, so a slow read no longer blocks gate 8 /
+PC-09 on its own) and FAILs only an effect that masks a word, not one synced to its word by BP-54. Every severity comes from the
+registry. Defaults applied (the creator may overturn): BP-53 covers every music duck under the voice. STORY_ENGINE AL rows, EDITING
+ED-03/ED-06, AUDIO_SYSTEM, IMPLEMENTATION_PLAN, QA_SPECIFICATION and three skills link the BP ids. Tests: tests/unit/test_rule_consistency_audio.py
+(18); test_scorecard, test_sourced_audio and test_sourced_narration now expect the registry's value (masking event moved into the word,
+cue runs varied, BP-01 severity). Nothing paid.

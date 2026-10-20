@@ -100,11 +100,11 @@ Rule of three: at most three transition kinds in one video `[ours: the hard cut,
 
 ### 3.1 Vocal chain (in this order)
 
-1. **Noise reduction**: 6-12 dB of broadband reduction at most; more makes the voice watery. Room tone from the take is kept at -55 to -60 dB under the words.
+1. **Noise reduction**: 6-12 dB of broadband reduction at most; more makes the voice watery. Room tone from the take is kept under the words `[ours: BP-60, pauses filled at the read's own floor, at most -60 dBFS]`.
 2. **EQ**: high-pass 80 Hz (female 100 Hz), cut 200-300 Hz by 2-3 dB if boxy, presence boost +2-3 dB at 3-5 kHz, air shelf +1-2 dB above 10 kHz only on clean voices.
-3. **Compressor**: ratio 2:1 to 3:1, attack 10-30 ms, release 80-150 ms, 3-6 dB gain reduction on peaks; target 6-9 dB loudness range for spoken explainers, 3-4 dB for sleep.
+3. **Compressor**: ratio 2:1 to 3:1, attack 10-30 ms, release 80-150 ms, 3-6 dB gain reduction on peaks; target 6-9 dB loudness range for spoken explainers, 3-4 dB for sleep `[ours: BP-59, the narration stem's range at most 7 LU; the mix's range is informative]`.
 4. **De-esser**: band 5-8 kHz, 3-6 dB of reduction on sibilants only.
-5. **Limiter**: true peak ceiling **-1 dBTP** (shorts: -1.5 dBTP, because platform transcoding adds overshoot).
+5. **Limiter**: true peak ceiling **-1 dBTP** (shorts: -1.5 dBTP, because platform transcoding adds overshoot) `[ours: BP-61, -1 dBTP on Shorts too, limiter at BP-50's -1.5]`.
 6. **Loudness**: integrated **-14 LUFS** for YouTube and shorts, -16 LUFS for podcast-style, -20 to -23 LUFS for sleep/ambient; short-term never above -9 LUFS.
 
 **Chunk matching (project rule `ED-01`)**: before joining separately generated clips, bring each to the same gated loudness (spread under 1.5 dB) and fade the edges 20-30 ms inside the silence; Episode 1 chunks spread 5.6 dB before this and the joins were audible.
@@ -120,8 +120,8 @@ Rule of three: at most three transition kinds in one video `[ours: the hard cut,
 | Vlog / action | -14, natural sound present | -18 | -10 | natural -20 |
 | Shorts | -14 | -22 to -18 | -14 | -28 |
 
-Ducking parameters: threshold at the voice level, reduction 6-9 dB, attack 20-30 ms, hold 80 ms, release 250-400 ms `[ours: music dips 9 dB, bed 4 dB under world sounds, 1 ms control grid]`.
-**One music at a time** (a handover is a crossfade of at most 3 s); a tick/clock loop counts as music and sits at least 6 dB lower `[ours: ED-03, PV-29]`. At most two background layers plus the voice.
+Ducking parameters: threshold at the voice level, reduction 6-9 dB, attack 20-30 ms, hold 80 ms, release 250-400 ms `[ours: BP-53 for every duck: music under the voice and under world sounds at the house 9 dB, attack 20 ms, hold 80 ms, release 280 ms; the bed under a world sound dips by the range's floor, 6 dB; 1 ms control grid]`.
+**One music at a time** (a handover is a crossfade of at most 3 s); a tick/clock loop counts as music and sits at least 6 dB lower `[ours: ED-03, PV-29]`. Layers at once stay within BP-56 `[ours: AL-01]`.
 
 ### 3.3 SFX and visual pairing
 
@@ -133,7 +133,7 @@ Ducking parameters: threshold at the voice level, reduction 6-9 dB, attack 20-30
 | Low boom / riser | dramatic or informational emphasis; riser ends exactly on the hit | boom -14 dB, riser -20 dB rising to -12 | boom 0.6-1.5 s, riser 1-3 s |
 | Ambience / room tone | location, atmosphere, joining edits | -35 to -28 dB, constant | continuous, crossfade 1.5 s |
 
-Rules: a sound starts with the picture event it belongs to (within one frame); SFX never sit on top of a spoken word, they use its gaps or dip the music; vary the sample for repeated events (three variants of a pop); never use the same whoosh twice in a row; leave 3-6 dB of headroom below the voice.
+Rules: a sound starts with the picture event it belongs to (within one frame) `[ours: BP-54, one frame is the target; never earlier than its early limit, never later than its late limit]`; SFX never mask a spoken word: an effect synced to its word lands on it, any other sound uses the gaps or dips the music `[ours: BP-66]`; vary the sample for repeated events (three variants of a pop); never use the same whoosh twice in a row; leave 3-6 dB of headroom below the voice.
 
 ---
 
@@ -155,8 +155,8 @@ Rules: a sound starts with the picture event it belongs to (within one frame); S
 | Over-editing: an effect on every cut | viewer notices the editor, fatigue | effects only where a beat needs one; keep calm scenes calm |
 | Jump cuts in ambient/docu | reads as a glitch in a continuous mood | dissolve or hold |
 | Text or graphics appearing with no sound | feels dead | pop/click at the appearance, or deliberately silent |
-| Music covering the voice; SFX painfully loud | viewers leave or mute | voice 14+ dB above music peaks `[ours: UR-32]`, SFX below voice |
-| Two music tracks plus a tick plus a bed together | muddy mix | one music, tick 6 dB under, two layers max `[ours: ED-03]` |
+| Music covering the voice; SFX painfully loud | viewers leave or mute | voice above music and bed by BP-52's distances (LU on the stems) `[ours: BP-52]`, SFX below voice |
+| Two music tracks plus a tick plus a bed together | muddy mix | one music, tick 6 dB under, layers within BP-56 `[ours: ED-03, BP-56]` |
 | Zoom that snaps back to 100% on the same picture | looks like a rendering error | continue the move or ease out `[ours: ED-02]`; the same framing twice in a row is the other fault `[ours: BP-30]` |
 | A cut in the middle of a zoom | jerk | rest at cuts `[ours: ED-08]` |
 | Chunks of different loudness joined as they came | audible seam | level and fade `[ours: ED-01]` |
@@ -180,11 +180,11 @@ Rules: a sound starts with the picture event it belongs to (within one frame); S
 
 **Audio**
 - [ ] Integrated loudness -14 LUFS (sleep -20 to -23), true peak at or below -1 dBTP, no clipped samples.
-- [ ] Voice 14+ dB above music in the same moment; no music-over-voice in the three loudest sections.
+- [ ] Voice over music and bed by BP-52's distances (LU on the stems); no music-over-voice in the three loudest sections.
 - [ ] Chunk joins: loudness spread under 1.5 dB, no click (listen to the three loudest joins with headphones).
 - [ ] Dropout scan (`audio/dropouts.py`): no silence run with speech level on either side; no word cut by a padded pause (ED-12).
-- [ ] One music at a time; the tick at least 6 dB below; no more than two background layers.
-- [ ] SFX never on a spoken word; each starts within one frame of its picture event.
+- [ ] One music at a time; the tick at least 6 dB below; layers at once within BP-56.
+- [ ] SFX never mask a spoken word (BP-66); each starts on its picture event inside BP-54's window (target: one frame).
 - [ ] Fade in 0.5 s and out 1.5 s at the ends; no silence over 1.5 s unless designed.
 
 **Picture and retention**

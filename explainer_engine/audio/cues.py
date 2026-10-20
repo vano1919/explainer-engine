@@ -5,7 +5,8 @@ deterministic: the same name gives the same samples), so a cue never needs a lib
 Why short, quiet and few kinds (evidence in docs/STORY_ENGINE.md, VB section): a 60 ms tone in sync with a visual change
 pulls attention to it ("pip and pop", Van der Burg et al. 2008), the benefit falls when every event carries a tone, and
 interface sounds should be "as brief as possible", "in moderation" and "just a few sounds that are easily distinguishable"
-(Google, conversation design: earcons). So: ten cues of 25-200 ms, at most -20 dB, never doubling a sound effect.
+(Google, conversation design: earcons). So: ten cues inside BP-64's length and level (an earcon, not a one-shot: BP-58's
+0.1 s floor is for stings and impacts), never doubling a sound effect; a repeated cue rotates BP-57's pitch jitter.
 """
 
 from __future__ import annotations
@@ -13,10 +14,12 @@ from __future__ import annotations
 import numpy as np
 
 from explainer_engine.audio import foley as F
+from explainer_engine.standards import sourced_rules as RULES  # SR is the sample rate here
 
 SR = F.SR
-MIN_MS, MAX_MS = 20, 250  # VB-08 duration bounds
-MAX_GAIN_DB, MIN_GAIN_DB, DEFAULT_GAIN_DB = -20.0, -36.0, -26.0
+MIN_MS, MAX_MS = RULES.T("BP-64", "cue_ms")  # VB-08 duration bounds (house, D-58)
+MIN_GAIN_DB, MAX_GAIN_DB = (float(x) for x in RULES.T("BP-64", "gain_db"))
+DEFAULT_GAIN_DB = float(RULES.T("BP-64", "default_gain_db"))
 NONE = "none"
 
 
@@ -68,7 +71,8 @@ BUILD = {  # name -> (generator, what it suits)
     "fall": (lambda: _sweep(900, 400, 0.15, 0.06), "down: less, loss, arrow down, a sad take"),
 }
 NAMES = tuple(BUILD) + (NONE,)
-VARIANTS = (1.0, 0.94, 1.06)  # VB-10: a reused sound takes the next slight pitch shift, so no two presses are identical
+_J = float(RULES.T("BP-57", "pitch_jitter"))
+VARIANTS = (1.0, round(1.0 - _J, 6), round(1.0 + _J, 6))  # BP-57 / VB-10: a reused sound takes the next pitch, never identical
 _CACHE: dict = {}
 
 

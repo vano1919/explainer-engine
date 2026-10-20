@@ -2016,13 +2016,12 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/qa/targets.py:gap_verdict",
-    "explainer_engine/audio/layers.py:AL-04"
+    "explainer_engine/qa/targets.py:gap_verdict"
    ],
    "supersedes": [
     "P-93 14 dB (confirmed, unit changes to LU)",
-    "AL-04 -15 dB peak (a pre-mix cap)",
-    "PRODUCTION_RULES:82 '20 dB under'",
+    "AL-04 -15 dB as the measure of this rule (the pre-mix gain cap stays as BP-65, a proxy)",
+    "PRODUCTION_RULES:83 '20 dB under'",
     "AUDIO_SYSTEM '10 dB'"
    ]
   },
@@ -2031,7 +2030,7 @@
    "area": "audio",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "Sidechain ducking of music under the voice is a dip, not a cut: depth 6-12 dB (house 9), attack 20-80 ms, release 250-700 ms, hold at least 50 ms; no gain step over 0.7 dB in a millisecond (the level JND). One canonical set of numbers, in code.",
+   "statement": "Sidechain ducking is a dip, not a cut: every duck in the mix (music under the voice, music and bed under a world sound) dips 6-12 dB (house 9; the bed under a world sound dips by the range's floor), attack 20-80 ms, release 250-700 ms, hold at least 50 ms; no gain step over 0.7 dB in a millisecond (the level JND). One canonical set of numbers, in code.",
    "thresholds": {
     "depth_db": [
      6.0,
@@ -2086,7 +2085,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/duck.py:BP-53"
+    "explainer_engine/audio/duck.py:BP-53",
+    "explainer_engine/production/assemble.py:vduck",
+    "explainer_engine/production/assemble.py:bduck"
    ],
    "supersedes": [
     "P-93 attack 50 / release 400",
@@ -2134,7 +2135,8 @@
    ],
    "enforced_by": [
     "explainer_engine/audio/layers.py:SYNC_EARLY",
-    "explainer_engine/production/timing.py:SFX_OFFSET"
+    "explainer_engine/production/timing.py:SFX_EARLY_MAX",
+    "explainer_engine/qa/scorecard.py:synced"
    ],
    "supersedes": [
     "AL-03 0.25 s window",
@@ -2147,7 +2149,7 @@
    "area": "audio",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "A sound that only duplicates the picture is redundancy (mickey-mousing): every effect carries a purpose (clarify, humour, transition, sync); at most one in two visual beats carries an audible non-cue effect; the 4-20 per minute band stays a hypothesis.",
+   "statement": "A sound that only duplicates the picture is redundancy (mickey-mousing): every effect carries a purpose (clarify, humour, transition, sync); at most one in two visual beats carries an audible non-cue effect; the 4-20 per minute band stays a hypothesis (BP-49).",
    "thresholds": {
     "purposes": [
      "clarify",
@@ -2199,7 +2201,7 @@
    ],
    "supersedes": [
     "P-94 purpose (confirmed)",
-    "AL-02 4-20/min (hypothesis)",
+    "AL-02 4-20/min as a rate gate (the band is hypothesis BP-49)",
     "AUDIO_SYSTEM one sfx per 6 s"
    ]
   },
@@ -2267,10 +2269,11 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/layers.py:BP-57"
+    "explainer_engine/audio/layers.py:BP-57",
+    "explainer_engine/audio/cues.py:VARIANTS"
    ],
    "supersedes": [
-    "the cue pitch variants of the scene rewrite PR (confirmed)"
+    "the cue pitch variants of the scene rewrite PR (1.0 / 0.94 / 1.06: now 1 +/- pitch_jitter)"
    ]
   },
   {
@@ -2391,7 +2394,7 @@
    ],
    "supersedes": [
     "ED-01 1.5 dB (confirmed)",
-    "seams clamp 6 dB",
+    "seams clamp 6 dB as a pass criterion (it stays the largest correction applied)",
     "targets lra 9"
    ]
   },
@@ -2556,11 +2559,15 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/layers.py:BP-62"
+    "explainer_engine/audio/layers.py:BP-62",
+    "explainer_engine/production/timing.py:MUSIC_FADE_IN",
+    "explainer_engine/production/shorts.py:music_filter"
    ],
    "supersedes": [
     "ED-03 (confirmed)",
-    "P-96 fades (confirmed)"
+    "P-96 fades (confirmed)",
+    "assemble/timing music fade 2.0 s in",
+    "shorts music fade-out 1.2 s"
    ]
   },
   {
@@ -2593,13 +2600,154 @@
    ],
    "enforced_by": [
     "explainer_engine/production/assemble.py:BP-63",
-    "explainer_engine/production/shorts.py:BP-63"
+    "explainer_engine/production/shorts.py:BP-63",
+    "explainer_engine/finish/speed.py:AUDIO_CODEC"
    ],
    "supersedes": [
     "P-15 (confirmed)",
     "Q-T19 (confirmed)",
-    "assemble mono 192k"
+    "assemble mono 192k",
+    "speed.py aac 192k (the sped file is the delivered file, ED-06)"
    ]
+  },
+  {
+   "id": "BP-49",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "AL-02 sound density: effects and beat cues together 4-20 events a minute on a video of at least 60 s. On a production_script/3 silence is the default (VB-08 inverted), so only the upper bound applies there; the cue share of it is VB-11's cue cap (cues only, stricter), and BP-55 caps the beats that carry an effect. No source names a rate: the band is the project's engineering hypothesis.",
+   "thresholds": {
+    "events_per_min": [
+     4.0,
+     20.0
+    ],
+    "min_video_s": 60.0
+   },
+   "sources": [
+    {
+     "type": "B",
+     "title": "Walter Murch, the Law of Two and a Half (Designing Sound)",
+     "url": "https://designingsound.org/2009/10/15/walter-murch-special-womb-tone-and-dense-clarityclear-density/"
+    },
+    {
+     "type": "A",
+     "title": "AIR Media-Tech: advanced retention editing (over-processing warning)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "Pixflow retention guide (every sentence with a zoom and a whoosh)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/layers.py:SFX_PER_MIN"
+   ],
+   "supersedes": [
+    "AL-02 4-20/min written in code (layers.py literal)"
+   ]
+  },
+  {
+   "id": "BP-64",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A beat cue (VB-08) is an earcon, not a one-shot: 20-250 ms long, at -36..-20 dB (default -26), from the ten procedural cues of audio/cues.py. BP-58's 0.1-5 s one-shot band is for stings and impacts and does not apply to beat cues.",
+   "thresholds": {
+    "cue_ms": [
+     20,
+     250
+    ],
+    "gain_db": [
+     -36.0,
+     -20.0
+    ],
+    "default_gain_db": -26.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Pip and pop: nonspatial auditory signals improve spatial visual search (Van der Burg et al. 2008, JEP:HPP 34(5))",
+     "url": "https://doi.org/10.1037/0096-1523.34.5.1053"
+    },
+    {
+     "type": "A",
+     "title": "Google conversation design: earcons",
+     "url": "https://developers.google.com/assistant/conversation-design/earcons"
+    },
+    {
+     "type": "A",
+     "title": "Synchronization and synchresis: avoiding mickey-mousing in sound design (Connor 2019)",
+     "url": "https://blog.animationstudies.org/synchronization-and-synchresis-avoiding-mickey-mousing-in-sound-design/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/cues.py:MIN_MS",
+    "explainer_engine/production/beats.py:VB-08"
+   ],
+   "supersedes": [
+    "cues.py docstring 25-200 ms",
+    "D-54 25-180 ms"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)"
+  },
+  {
+   "id": "BP-65",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "AL-04 pre-mix gain caps, in dBFS before ducking: an effect at most -8 dB, a bed at most -15 dB (also the default of a bed with no gain). A proxy that keeps BP-52 reachable; BP-52 itself is measured in LU on the stems (qa/targets.gap_verdict), never by these gains.",
+   "thresholds": {
+    "sfx_gain_max_db": -8.0,
+    "bed_gain_max_db": -15.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Preferred levels for background ducking (Torcoli et al., JAES 2019)",
+     "url": "https://www.audioblog.iis.fraunhofer.com/?p=4251"
+    },
+    {
+     "type": "A",
+     "title": "EBU Tech 3343-2023 Guidelines for production in accordance with R 128",
+     "url": "https://tech.ebu.ch/docs/tech/tech3343.pdf"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/layers.py:MAX_SFX_DB",
+    "explainer_engine/audio/layers.py:MAX_BED_DB",
+    "explainer_engine/production/timing.py:BED_DEFAULT_DB"
+   ],
+   "supersedes": [
+    "layers.MAX_BED_DB derived from BP-52's 15 LU (an LU distance used as a dBFS gain)"
+   ]
+  },
+  {
+   "id": "BP-66",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A sound effect over speech is either synced to its word (its onset inside BP-54's window of a word's onset: judged by BP-54 and passes) or it masks the word; a masking effect (a cut whoosh or any sound starting inside speech) FAILs the seven-point test's sound row.",
+   "thresholds": {},
+   "sources": [
+    {
+     "type": "A",
+     "title": "WCAG 2.2 Understanding SC 1.4.7 Low or No Background Audio",
+     "url": "https://www.w3.org/WAI/WCAG22/Understanding/low-or-no-background-audio.html"
+    },
+    {
+     "type": "A",
+     "title": "Preferred levels for background ducking (Torcoli et al., JAES 2019)",
+     "url": "https://www.audioblog.iis.fraunhofer.com/?p=4251"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/scorecard.py:BP-66"
+   ],
+   "supersedes": [
+    "scorecard check 2: any sound over a word FAILs"
+   ],
+   "decided": "the creator, 2026-10-16: a cut sound ends before the next word (docs/PRODUCTION_RULES.md feedback table)"
   }
  ]
 }
