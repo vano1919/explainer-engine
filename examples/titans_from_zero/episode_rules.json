@@ -1365,6 +1365,14 @@
       "script_sha256": "9d0e73c6d6a1fba28ed364c1d75d62fc9e1981593ab0d16c714617dffb73558f",
       "rulebook_version": 2,
       "scope": "pauses on S12, S15, S16 split"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-20",
+      "by": "vano1919 (ვანო), 2026-10-20: timing-only re-stamp (paid assets already approved)",
+      "script_sha256": "3ec425e15c4fd53b9a3ea5d5a3a09692830f6d9fc0f81a406b3776e76280afee",
+      "rulebook_version": 2,
+      "scope": "pauses S12/S16, S15 cut after Oh"
     }
   ]
 }

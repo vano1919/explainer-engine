@@ -1,11 +1,11 @@
 {
   "schema": "editorial_review/2",
-  "script_sha256": "9d0e73c6d6a1fba28ed364c1d75d62fc9e1981593ab0d16c714617dffb73558f",
+  "script_sha256": "3ec425e15c4fd53b9a3ea5d5a3a09692830f6d9fc0f81a406b3776e76280afee",
   "reviewer": "script-critic (Stage 7)",
   "reviewer_role": "independent_critic",
   "independent": true,
-  "reviewed_at": "2026-10-20 (round 10, timing-only re-bind)",
-  "verdict": "Round 10: timing only. Since round 9 (e31e3e34...): pause_after 0.5 added on S12 'You know how this kind of paper works.' and S15 'Five years after the bench...'; the S16 line was split at the full stop into 'Luck decided which envelope paid.' (pause_after 0.5) and 'Skill decided who was still standing when it did.' (pause_after 0.7), same words, same tags/tone/emotion/kind, visual beats divided between the two lines. Verified by git diff that nothing else changed. The split gives the first clause a half-second beat before the turn, which supports the deadpan landing; no finding is created or changed. Scores, verdict and R5-02..R5-07 carry forward unchanged: ACCEPTED with REVIEWs. Basis: data and estimate, no picture seen or voice heard. Hash bound to the current file; the script was not edited by this review.",
+  "reviewed_at": "2026-10-20 (round 11, timing-only re-bind)",
+  "verdict": "Round 11: timing only. Since round 10: S12 'You know how this kind of paper works.' pause_after 0.5 -> 1.1; S15 'Five years after the bench...' pause_after removed; S16 'Luck decided which envelope paid.' pause_after 0.5 -> 1.3; the S15 shot that began at 'Oh, the bench is still there.' now begins at 'the bench is still there.' (cut after 'Oh,'). Verified by git diff HEAD~1 that nothing else changed. The longer holds give the joke and the turn room to land; no finding is created or changed. Scores, verdict and R5-02..R5-07 carry forward: ACCEPTED with REVIEWs. Basis: data and estimate, no picture seen or voice heard. Hash bound to the current file; the script was not edited by this review.",
   "scores": {
     "factual_reliability": {
       "score": 4,
