@@ -452,7 +452,13 @@
       "card": "Grant Cardone as our caricature: bald, trim beard, tight suit, a phone pressed to his ear",
       "props": [
         "call list"
-      ]
+      ],
+      "reference": {
+        "first_picture": true,
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20",
+        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+      }
     },
     "hormozi": {
       "names": [
@@ -462,7 +468,13 @@
       "card": "Alex Hormozi as our caricature: very muscular, shaved head, beard, a tight black T-shirt",
       "props": [
         "gym clipboard"
-      ]
+      ],
+      "reference": {
+        "first_picture": true,
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20",
+        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+      }
     },
     "zuckerberg": {
       "names": [
@@ -472,7 +484,13 @@
       "card": "Mark Zuckerberg as our caricature: short curly hair, grey T-shirt, a laptop in a public library",
       "props": [
         "laptop"
-      ]
+      ],
+      "reference": {
+        "first_picture": true,
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20",
+        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+      }
     },
     "bezos": {
       "names": [
@@ -518,6 +536,12 @@
           "https://en.wikipedia.org/wiki/Jeff_Bezos",
           "manner as generally described in published interviews; to be checked by the creator, not independently fetched"
         ]
+      },
+      "reference": {
+        "first_picture": true,
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20",
+        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
       }
     },
     "vance": {
@@ -574,6 +598,12 @@
         "avoid": [
           "shouting"
         ]
+      },
+      "reference": {
+        "first_picture": true,
+        "approved_by": "vano1919 (ვანო)",
+        "approved_at": "2026-10-20",
+        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
       }
     }
   },
@@ -1384,16 +1414,6 @@
           "intent": "reveal",
           "visual_beats": [
             {
-              "at": "Nobody pays",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "nobody pays for parts"
-            },
-            {
               "at": "thing exists",
               "kind": "expression",
               "expression": "smug",
@@ -1418,16 +1438,6 @@
               "expression": "surprised",
               "why": "Musk is surprised that someone will pay [Then I will]",
               "who": "musk"
-            },
-            {
-              "at": "Forty dollars",
-              "kind": "text",
-              "text": "FORTY DOLLARS",
-              "why": "the offer: forty dollars",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "tone": "flat, unhurried",
@@ -1446,16 +1456,6 @@
               "kind": "expression",
               "expression": "doubtful",
               "why": "Musk doubts forty dollars is anything [Forty dollars]"
-            },
-            {
-              "at": "one wheel",
-              "kind": "label",
-              "text": "ONE WHEEL",
-              "pos": [
-                0.4,
-                0.65
-              ],
-              "why": "forty dollars buys only one wheel"
             }
           ],
           "tone": "dry",
@@ -1469,16 +1469,6 @@
           "to": "musk",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "ten percent",
-              "kind": "text",
-              "text": "TEN PERCENT",
-              "why": "ten percent of everything",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "everything you ever build",
               "kind": "expression",
@@ -1534,16 +1524,6 @@
               "kind": "expression",
               "expression": "amused",
               "why": "O'Leary enjoys challenging Trump [sell me some]"
-            },
-            {
-              "at": "an envelope",
-              "kind": "label",
-              "text": "ENVELOPE",
-              "pos": [
-                0.3,
-                0.65
-              ],
-              "why": "he has an envelope for Trump too"
             },
             {
               "at": "envelope for you too",
@@ -1631,16 +1611,6 @@
           "to": "oleary",
           "intent": "deflect",
           "visual_beats": [
-            {
-              "at": "Forever",
-              "kind": "text",
-              "text": "FOREVER",
-              "why": "forever, the word he questions",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "long word",
               "kind": "expression",
@@ -1858,9 +1828,9 @@
             "z0": 1.0,
             "z1": 1.032
           },
-          "purpose": "Musk answers; cut mid-line so the voice leads the picture",
+          "purpose": "Musk answers; the cut falls between his two bubble pieces",
           "cut": {
-            "why": "L-cut: Musk's voice starts under O'Leary's face"
+            "why": "cut between Musk's two bubble pieces: his face arrives for the second"
           },
           "heroes_ok": true
         },
@@ -1933,7 +1903,7 @@
           },
           "purpose": "Trump butts in: a pattern break from the A/B pair",
           "cut": {
-            "why": "a third voice breaks the alternation"
+            "why": "a third speaker breaks the alternation"
           },
           "heroes_ok": true
         },
@@ -2328,6 +2298,37 @@
           "kind": "transition"
         },
         {
+          "text": "Three cards, three answers. Would any screen say yes to you?",
+          "visual_beats": [
+            {
+              "at": "Three cards",
+              "kind": "expression",
+              "expression": "worried",
+              "who": "cardone",
+              "why": "Cardone, three declined cards in, braces for the next [Three cards]"
+            },
+            {
+              "at": "yes to you",
+              "kind": "symbol",
+              "symbol": "question",
+              "pos": [
+                0.85,
+                0.25
+              ],
+              "why": "the question turns to the viewer: would any screen say yes [yes to you]"
+            }
+          ],
+          "kind": "transition",
+          "tags": [
+            "deadpan"
+          ],
+          "emphasis": [
+            "you"
+          ],
+          "tone": "dry, direct to the viewer",
+          "emotion": "wry"
+        },
+        {
           "text": "Right. A loan was only ever a stranger's trust with interest on top. And nobody trusts them for a cent.",
           "visual_beats": [
             {
@@ -2593,6 +2594,43 @@
               "strength": 0.3
             }
           ]
+        },
+        {
+          "at": "Three cards, three answers",
+          "type": "C",
+          "picture": {
+            "id": "s03_three_cards",
+            "engine": "gemini",
+            "subject": "a bald trim-bearded man in a tight suit fans three declined bank cards in his fist at a counter, a red refusal screen glowing beside him, his worried eyes turned to the viewer as if asking the question back",
+            "heroes": [
+              "cardone"
+            ],
+            "speakers": {
+              "cardone": [
+                0.5,
+                0.4
+              ]
+            },
+            "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
+            "prompt": "tight cinematic insert, a bald trim-bearded man in a tight suit fans three declined bank cards in his fist at a counter, a red refusal screen glowing beside him, his worried eyes turned to the viewer as if asking the question back. One named hero: Grant Cardone as our caricature: bald, trim beard, tight suit, a phone pressed to his ear, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, flat grey overcast city daylight on wet pavement, hard cold shadows between towers, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
+          },
+          "motion": {
+            "kind": "pull",
+            "z0": 1.07,
+            "z1": 1.0
+          },
+          "purpose": "three refusals in a row, then the question turned on the viewer",
+          "cut": {
+            "why": "insert: the tally of the three answers"
+          },
+          "insert": true,
+          "accents": [
+            {
+              "kind": "wobble",
+              "strength": 0.3
+            }
+          ],
+          "heroes_ok": true
         },
         {
           "at": "A loan was only ever",
@@ -2901,85 +2939,9 @@
               "expression": "confused",
               "why": "Musk is confused: I sold him an hour [I sold him]",
               "who": "musk"
-            },
-            {
-              "at": "an hour",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.85,
-                0.2
-              ],
-              "why": "an hour of his evening"
             }
           ],
           "tone": "smooth, confident",
-          "emotion": "smug",
-          "kind": "transition",
-          "voiced": false
-        },
-        {
-          "text": "It's the same scooter.",
-          "speaker": "musk",
-          "to": "belfort",
-          "intent": "deflect",
-          "visual_beats": [
-            {
-              "at": "same scooter",
-              "kind": "symbol",
-              "symbol": "equals",
-              "pos": [
-                0.82,
-                0.25
-              ],
-              "why": "it's the same scooter"
-            },
-            {
-              "at": "same scooter",
-              "kind": "expression",
-              "expression": "deadpan",
-              "why": "Musk insists, flat: the same scooter [same scooter]"
-            }
-          ],
-          "tone": "quiet, puzzled",
-          "emotion": "guarded",
-          "kind": "transition",
-          "voiced": false
-        },
-        {
-          "text": "Not to him. He rode it before he paid.",
-          "speaker": "belfort",
-          "to": "musk",
-          "intent": "press",
-          "visual_beats": [
-            {
-              "at": "Not to him",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "not to him: he rode it first"
-            },
-            {
-              "at": "rode it before he paid",
-              "kind": "text",
-              "text": "RIDE, THEN PAY",
-              "why": "he rode it before he paid",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
-              "at": "rode it",
-              "kind": "expression",
-              "expression": "amused",
-              "why": "Belfort is pleased with the order of things [rode it]"
-            }
-          ],
-          "tone": "smooth",
           "emotion": "smug",
           "kind": "transition",
           "voiced": false
@@ -2990,16 +2952,6 @@
           "to": "belfort",
           "intent": "question",
           "visual_beats": [
-            {
-              "at": "gave it away",
-              "kind": "symbol",
-              "symbol": "question",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "so you gave it away first?"
-            },
             {
               "at": "gave it away",
               "kind": "expression",
@@ -3018,16 +2970,6 @@
           "to": "musk",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "Give a little first",
-              "kind": "text",
-              "text": "GIVE FIRST",
-              "why": "give a little first",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "People hate owing you",
               "kind": "expression",
@@ -3070,16 +3012,6 @@
               "kind": "expression",
               "expression": "determined",
               "why": "Belfort names his half [Half]"
-            },
-            {
-              "at": "You build",
-              "kind": "text",
-              "text": "YOU BUILD, I SELL",
-              "why": "you build, I sell",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "tone": "fast, eager",
@@ -3122,16 +3054,6 @@
           "intent": "concede",
           "visual_beats": [
             {
-              "at": "forty-five each",
-              "kind": "text",
-              "text": "FORTY-FIVE EACH",
-              "why": "forty-five each, split evenly",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
               "at": "I won't even ask",
               "kind": "expression",
               "expression": "joyful",
@@ -3149,26 +3071,6 @@
           "to": "belfort",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "One rule",
-              "kind": "text",
-              "text": "ONE RULE",
-              "why": "one rule for Belfort",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
-              "at": "never promise",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "you never promise what I haven't built"
-            },
             {
               "at": "never promise",
               "kind": "expression",
@@ -3452,7 +3354,7 @@
           },
           "purpose": "Musk's face as the sale is explained; cut inside Belfort's line",
           "cut": {
-            "why": "L-cut: the picture trails Belfort's first words"
+            "why": "cut on the second bubble piece: Musk's face takes the sale"
           },
           "heroes_ok": true,
           "accents": [
@@ -3463,7 +3365,7 @@
           ]
         },
         {
-          "at": "He rode it before he paid",
+          "at": "Give a little first",
           "type": "B",
           "picture": {
             "id": "s04_ots_bel",
@@ -3491,45 +3393,9 @@
             "z0": 1.0,
             "z1": 1.048
           },
-          "purpose": "Belfort's proof, said to the viewer",
+          "purpose": "Belfort states the rule, said straight to the viewer's side of the table",
           "cut": {
-            "why": "L-cut: the picture trails 'Not to him'"
-          },
-          "heroes_ok": true
-        },
-        {
-          "at": "Give a little first",
-          "type": "B",
-          "picture": {
-            "id": "s04_ts",
-            "engine": "gemini",
-            "subject": "two-shot beside the scooter, the compact man leans in with open hands, the tall man stands with folded arms, a negotiation without a table, clear empty upper third",
-            "heroes": [
-              "musk",
-              "belfort"
-            ],
-            "speakers": {
-              "musk": [
-                0.35,
-                0.4
-              ],
-              "belfort": [
-                0.68,
-                0.4
-              ]
-            },
-            "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
-            "prompt": "medium cinematic shot, two-shot beside the scooter, the compact man leans in with open hands, the tall man stands with folded arms, a negotiation without a table, clear empty upper third. Two named heroes: Elon Musk as our caricature: tall, broad shoulders, short dark hair, tired eyes, black T-shirt, grease on his hands; Jordan Belfort as our caricature: compact, slicked hair, wide grin, a sharp suit that has seen better days, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, low amber late-afternoon sun across a supermarket parking lot, long shadows, cold blue shade under the cars, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
-          },
-          "motion": {
-            "kind": "pan",
-            "z0": 1.06,
-            "z1": 1.06,
-            "dx": 0.059
-          },
-          "purpose": "the two-shot breaks the alternation as the rule is stated",
-          "cut": {
-            "why": "pattern break: both men"
+            "why": "the speaker on the rule"
           },
           "heroes_ok": true
         },
@@ -3558,7 +3424,27 @@
         {
           "at": "One rule. You never promise",
           "type": "B",
-          "picture": "s04_ts",
+          "picture": {
+            "id": "s04_ts",
+            "engine": "gemini",
+            "subject": "two-shot beside the scooter, the compact man leans in with open hands, the tall man stands with folded arms, a negotiation without a table, clear empty upper third",
+            "heroes": [
+              "musk",
+              "belfort"
+            ],
+            "speakers": {
+              "musk": [
+                0.35,
+                0.4
+              ],
+              "belfort": [
+                0.68,
+                0.4
+              ]
+            },
+            "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
+            "prompt": "medium cinematic shot, two-shot beside the scooter, the compact man leans in with open hands, the tall man stands with folded arms, a negotiation without a table, clear empty upper third. Two named heroes: Elon Musk as our caricature: tall, broad shoulders, short dark hair, tired eyes, black T-shirt, grease on his hands; Jordan Belfort as our caricature: compact, slicked hair, wide grin, a sharp suit that has seen better days, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, low amber late-afternoon sun across a supermarket parking lot, long shadows, cold blue shade under the cars, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
+          },
           "motion": {
             "kind": "push",
             "z0": 1.0,
@@ -3568,7 +3454,6 @@
           "cut": {
             "why": "listener on 'Me? Never.'"
           },
-          "reuse": "reuse",
           "heroes_ok": true,
           "accents": [
             {
@@ -3708,16 +3593,6 @@
           "intent": "press",
           "visual_beats": [
             {
-              "at": "richer",
-              "kind": "symbol",
-              "symbol": "arrow_up",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "the rich get richer"
-            },
-            {
               "at": "Write that down",
               "kind": "expression",
               "expression": "determined",
@@ -3753,16 +3628,6 @@
           "to": "trump",
           "intent": "concede",
           "visual_beats": [
-            {
-              "at": "don't have any",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "I don't have any"
-            },
             {
               "at": "don't have any",
               "kind": "expression",
@@ -3808,16 +3673,6 @@
           "intent": "deflect",
           "visual_beats": [
             {
-              "at": "In a year",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.85,
-                0.2
-              ],
-              "why": "in a year they'll beg"
-            },
-            {
               "at": "beg to lend",
               "kind": "expression",
               "expression": "determined",
@@ -3859,16 +3714,6 @@
               "expression": "doubtful",
               "why": "Kiyosaki doubts the banks came back first [The banks never]",
               "who": "kiyosaki"
-            },
-            {
-              "at": "never came back",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.5,
-                0.3
-              ],
-              "why": "the banks never came back"
             }
           ],
           "tone": "boastful, quick",
@@ -3933,16 +3778,6 @@
               "kind": "expression",
               "expression": "deadpan",
               "why": "Kiyosaki answers flat: cameras don't pay rent [Cameras]"
-            },
-            {
-              "at": "don't pay rent",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "cameras don't pay rent"
             }
           ],
           "tone": "dry",
@@ -4586,6 +4421,30 @@
           "kind": "transition"
         },
         {
+          "text": "Five more names. Ask yourself which one gets paid first.",
+          "visual_beats": [
+            {
+              "at": "gets paid first",
+              "kind": "symbol",
+              "symbol": "question",
+              "pos": [
+                0.5,
+                0.2
+              ],
+              "why": "which one gets paid first [gets paid first]"
+            }
+          ],
+          "kind": "transition",
+          "tags": [
+            "curious"
+          ],
+          "emphasis": [
+            "paid"
+          ],
+          "tone": "quick teaser",
+          "emotion": "anticipation"
+        },
+        {
           "text": "Across town, Alex Hormozi walks into dying gyms and offers to fill them. He gets paid only from new members, cash first.",
           "visual_beats": [
             {
@@ -4915,6 +4774,33 @@
           ]
         },
         {
+          "at": "Five more names",
+          "type": "C",
+          "picture": {
+            "id": "s06_five_jars",
+            "engine": "gemini",
+            "subject": "a workbench lined with five empty cash jars in a row under the work lamp, one coin dropping into the first jar while the other four stay bare",
+            "people": false,
+            "prompt": "tight cinematic insert, a workbench lined with five empty cash jars in a row under the work lamp, one coin dropping into the first jar while the other four stay bare, a single hanging work lamp over a cluttered workbench, amber pool of light, deep teal shadows, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
+          },
+          "motion": {
+            "kind": "push",
+            "z0": 1.0,
+            "z1": 1.07
+          },
+          "purpose": "five jars, one coin: which name gets paid first",
+          "cut": {
+            "why": "insert: the question before the five new names"
+          },
+          "insert": true,
+          "accents": [
+            {
+              "kind": "wobble",
+              "strength": 0.3
+            }
+          ]
+        },
+        {
           "at": "Across town, Alex Hormozi",
           "type": "B",
           "picture": {
@@ -5195,30 +5081,10 @@
           "intent": "press",
           "visual_beats": [
             {
-              "at": "Two minutes",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.85,
-                0.2
-              ],
-              "why": "two minutes on the clock"
-            },
-            {
               "at": "They come for me",
               "kind": "expression",
               "expression": "smug",
               "why": "Trump is sure they come for him [They come for me]"
-            },
-            {
-              "at": "not homework",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "they come for me, not homework"
             }
           ],
           "tone": "dry, boastful",
@@ -5232,26 +5098,6 @@
           "to": "room",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "Lesson one",
-              "kind": "text",
-              "text": "LESSON ONE",
-              "why": "lesson one begins",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
-              "at": "not an asset",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "your house is not an asset"
-            },
             {
               "at": "asset",
               "kind": "expression",
@@ -5271,31 +5117,6 @@
           "to": "kiyosaki",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "losing them",
-              "kind": "symbol",
-              "symbol": "arrow_down",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "you're losing them",
-              "cue": {
-                "sound": "fall",
-                "event": "impact",
-                "why": "the live count drops on screen: nine hundred gone"
-              }
-            },
-            {
-              "at": "Two thousand",
-              "kind": "text",
-              "text": "TWO THOUSAND GONE",
-              "why": "two thousand viewers gone",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "Two thousand",
               "kind": "expression",
@@ -5816,16 +5637,6 @@
           "intent": "question",
           "visual_beats": [
             {
-              "at": "by Christmas",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.85,
-                0.2
-              ],
-              "why": "the Christmas deadline"
-            },
-            {
               "at": "Christmas",
               "kind": "expression",
               "expression": "worried",
@@ -5849,16 +5660,6 @@
               "kind": "expression",
               "expression": "determined",
               "why": "Musk is honest: fifty good ones [Fifty]"
-            },
-            {
-              "at": "good ones",
-              "kind": "text",
-              "text": "FIFTY GOOD ONES",
-              "why": "fifty good ones",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "tone": "quiet, honest",
@@ -5872,16 +5673,6 @@
           "to": "cuban",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "Five hundred",
-              "kind": "text",
-              "text": "FIVE HUNDRED",
-              "why": "five hundred is the shock",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "Five hundred",
               "kind": "accent",
@@ -5958,26 +5749,6 @@
           "to": "belfort",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "twentieth of December",
-              "kind": "text",
-              "text": "DECEMBER TWENTIETH",
-              "why": "the twentieth of December",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
-              "at": "never walk in",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "or you never walk in here again"
-            },
             {
               "at": "never walk in",
               "kind": "expression",
@@ -6294,7 +6065,7 @@
           },
           "purpose": "Musk takes the ultimatum; the question and the yes land on his face",
           "cut": {
-            "why": "J-cut: the picture goes to Musk before the ultimatum ends"
+            "why": "cut inside Cuban's bubble run: the picture reaches Musk before he answers"
           },
           "heroes_ok": true
         },
@@ -6435,16 +6206,6 @@
               "expression": "deadpan",
               "why": "Belfort takes the accusation: you promised [You promised]",
               "who": "belfort"
-            },
-            {
-              "at": "haven't built",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "what I haven't built"
             }
           ],
           "tone": "quiet, firm",
@@ -6458,16 +6219,6 @@
           "to": "musk",
           "intent": "deflect",
           "visual_beats": [
-            {
-              "at": "said yes",
-              "kind": "symbol",
-              "symbol": "check",
-              "pos": [
-                0.82,
-                0.22
-              ],
-              "why": "you said yes"
-            },
             {
               "at": "I heard you",
               "kind": "expression",
@@ -6510,16 +6261,6 @@
               "expression": "doubtful",
               "why": "Musk doubts it: that's how big orders work [big orders]",
               "who": "musk"
-            },
-            {
-              "at": "Promise, then build",
-              "kind": "text",
-              "text": "PROMISE, THEN BUILD",
-              "why": "promise, then build",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "tone": "easy, selling",
@@ -6862,7 +6603,7 @@
           },
           "purpose": "Musk seethes at 'I heard you'",
           "cut": {
-            "why": "L-cut: Musk's face at the retort"
+            "why": "cut on the bubble: Musk's face at the retort"
           },
           "heroes_ok": true,
           "accents": [
@@ -7191,16 +6932,6 @@
               "expression": "confused",
               "why": "Kiyosaki is confused by the show's title [How to Lose]",
               "who": "kiyosaki"
-            },
-            {
-              "at": "Lose a Billion",
-              "kind": "label",
-              "text": "LOSE A BILLION",
-              "pos": [
-                0.5,
-                0.25
-              ],
-              "why": "the show: How to Lose a Billion"
             }
           ],
           "tone": "grand, bright",
@@ -7220,16 +6951,6 @@
               "expression": "smug",
               "why": "Trump is ready for the question [what will you own]",
               "who": "trump"
-            },
-            {
-              "at": "exactly",
-              "kind": "symbol",
-              "symbol": "question",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "what will you own, exactly"
             }
           ],
           "tone": "earnest, probing",
@@ -7243,16 +6964,6 @@
           "to": "kiyosaki",
           "intent": "deflect",
           "visual_beats": [
-            {
-              "at": "The audience",
-              "kind": "symbol",
-              "symbol": "arrow_up",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "the audience is what he owns"
-            },
             {
               "at": "paperwork",
               "kind": "expression",
@@ -7271,16 +6982,6 @@
           "to": "trump",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "isn't an asset",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "an audience isn't an asset"
-            },
             {
               "at": "isn't an asset",
               "kind": "expression",
@@ -7322,70 +7023,6 @@
           "voiced": false
         },
         {
-          "text": "A car is a liability.",
-          "speaker": "kiyosaki",
-          "to": "trump",
-          "intent": "deflect",
-          "visual_beats": [
-            {
-              "at": "A car is a liability",
-              "kind": "expression",
-              "expression": "smug",
-              "why": "Kiyosaki gets his rule out: a car is a liability [A car is a liability]"
-            },
-            {
-              "at": "liability",
-              "kind": "symbol",
-              "symbol": "arrow_down",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "a car is a liability"
-            }
-          ],
-          "tone": "earnest, lecturing",
-          "emotion": "stubborn",
-          "kind": "transition",
-          "voiced": false
-        },
-        {
-          "text": "Not when somebody else pays for it.",
-          "speaker": "trump",
-          "to": "kiyosaki",
-          "intent": "reveal",
-          "visual_beats": [
-            {
-              "at": "Not when",
-              "kind": "expression",
-              "expression": "smug",
-              "why": "Trump turns the rule against him: not when somebody else pays [Not when]"
-            },
-            {
-              "at": "somebody else pays",
-              "kind": "symbol",
-              "symbol": "check",
-              "pos": [
-                0.82,
-                0.22
-              ],
-              "why": "somebody else pays for it"
-            },
-            {
-              "at": "pays for it",
-              "kind": "expression",
-              "expression": "sad",
-              "why": "Kiyosaki is beaten by his own rule [pays for it]",
-              "who": "kiyosaki"
-            }
-          ],
-          "pause_after": 0.5,
-          "tone": "breezy, smug",
-          "emotion": "amused",
-          "kind": "transition",
-          "voiced": false
-        },
-        {
           "text": "There's a seat in the back. Season one needs a man who lost everything.",
           "speaker": "trump",
           "to": "kiyosaki",
@@ -7394,7 +7031,7 @@
             {
               "at": "There's a seat",
               "kind": "expression",
-              "expression": "joyful",
+              "expression": "smug",
               "why": "Trump offers: there's a seat in the back [There's a seat]"
             },
             {
@@ -7409,19 +7046,9 @@
             {
               "at": "needs a man",
               "kind": "expression",
-              "expression": "doubtful",
+              "expression": "angry",
               "why": "Kiyosaki hears: a man who lost everything [needs a man]",
               "who": "kiyosaki"
-            },
-            {
-              "at": "lost everything",
-              "kind": "text",
-              "text": "LOST EVERYTHING",
-              "why": "a man who lost everything",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "tone": "soft, smooth",
@@ -7435,16 +7062,6 @@
           "to": "trump",
           "intent": "decide",
           "visual_beats": [
-            {
-              "at": "not a lesson",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "I'm not a lesson"
-            },
             {
               "at": "I teach them",
               "kind": "expression",
@@ -7695,7 +7312,7 @@
           "heroes_ok": true
         },
         {
-          "at": "Not when somebody else pays",
+          "at": "It paid for this car.",
           "type": "B",
           "picture": "s10_ots_k",
           "motion": {
@@ -7703,7 +7320,7 @@
             "z0": 1.059,
             "z1": 1.0
           },
-          "purpose": "Kiyosaki takes the hit",
+          "purpose": "Kiyosaki takes the hit of the car",
           "cut": {
             "why": "listener on the jab"
           },
@@ -7717,7 +7334,7 @@
           ]
         },
         {
-          "at": "Season one needs",
+          "at": "There's a seat in the back.",
           "type": "B",
           "picture": {
             "id": "s10_seat",
@@ -7997,93 +7614,16 @@
           "kind": "transition"
         },
         {
-          "text": "Those cells came from the same box as Cuban's.",
+          "text": "Those cells came from the same box as Cuban's. Two hundred skipped the heat test.",
           "speaker": "musk",
           "to": "belfort",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "same box",
-              "kind": "label",
-              "text": "SAME BOX",
-              "pos": [
-                0.5,
-                0.3
-              ],
-              "why": "the same box as Cuban's"
-            },
             {
               "at": "same box",
               "kind": "expression",
               "expression": "surprised",
               "why": "Belfort starts to see where this goes [same box]",
-              "who": "belfort"
-            }
-          ],
-          "tone": "quiet, flat",
-          "emotion": "grim",
-          "kind": "transition",
-          "voiced": false
-        },
-        {
-          "text": "Wait, Cuban's have run for two years. They're fine.",
-          "speaker": "belfort",
-          "to": "musk",
-          "intent": "deflect",
-          "visual_beats": [
-            {
-              "at": "They're fine",
-              "kind": "symbol",
-              "symbol": "check",
-              "pos": [
-                0.82,
-                0.22
-              ],
-              "why": "they're fine, two years"
-            },
-            {
-              "at": "They're fine",
-              "kind": "expression",
-              "expression": "determined",
-              "why": "Belfort insists: they're fine [They're fine]"
-            }
-          ],
-          "tone": "quick, strained",
-          "emotion": "denial",
-          "kind": "transition",
-          "voiced": false
-        },
-        {
-          "text": "Two hundred of them never had the heat test.",
-          "speaker": "musk",
-          "to": "belfort",
-          "intent": "reveal",
-          "visual_beats": [
-            {
-              "at": "Two hundred",
-              "kind": "text",
-              "text": "TWO HUNDRED UNTESTED",
-              "why": "two hundred of them never had the heat test",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
-              "at": "never had the heat test",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "never had the heat test"
-            },
-            {
-              "at": "never had",
-              "kind": "expression",
-              "expression": "scared",
-              "why": "Belfort is scared: never had the heat test [never had]",
               "who": "belfort"
             }
           ],
@@ -8121,16 +7661,6 @@
               "kind": "expression",
               "expression": "determined",
               "why": "Musk: I told you [I told you]"
-            },
-            {
-              "at": "parts for fifty",
-              "kind": "text",
-              "text": "PARTS FOR FIFTY",
-              "why": "parts for fifty",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "tone": "quiet, tired",
@@ -8144,16 +7674,6 @@
           "to": "musk",
           "intent": "deflect",
           "visual_beats": [
-            {
-              "at": "quietly",
-              "kind": "symbol",
-              "symbol": "arrow_down",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "you said it quietly"
-            },
             {
               "at": "quietly",
               "kind": "expression",
@@ -8202,16 +7722,6 @@
               "kind": "expression",
               "expression": "scared",
               "why": "Belfort fears being finished [we're finished]"
-            },
-            {
-              "at": "finished",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "we're finished if Cuban hears"
             }
           ],
           "tone": "quiet, tight",
@@ -8225,16 +7735,6 @@
           "to": "belfort",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "worse than finished",
-              "kind": "symbol",
-              "symbol": "arrow_down",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "worse than finished"
-            },
             {
               "at": "worse than finished",
               "kind": "expression",
@@ -8449,57 +7949,6 @@
           "heroes_ok": true
         },
         {
-          "at": "Wait, Cuban's have run",
-          "type": "B",
-          "picture": {
-            "id": "s11_ots_musk",
-            "engine": "gemini",
-            "subject": "over the slick-haired man's shoulder in the burnt garage, the tall tired man faces the viewer, soot on his black T-shirt, grim and certain, clear empty upper third",
-            "heroes": [
-              "musk",
-              "belfort"
-            ],
-            "speakers": {
-              "musk": [
-                0.55,
-                0.4
-              ],
-              "belfort": [
-                0.1,
-                0.52
-              ]
-            },
-            "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
-            "prompt": "medium cinematic shot, over the slick-haired man's shoulder in the burnt garage, the tall tired man faces the viewer, soot on his black T-shirt, grim and certain, clear empty upper third. Two named heroes: Elon Musk as our caricature: tall, broad shoulders, short dark hair, tired eyes, black T-shirt, grease on his hands; Jordan Belfort as our caricature: compact, slicked hair, wide grin, a sharp suit that has seen better days, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, deep blue pre-dawn half-light with grey ash drifting and a faint orange glow low in the wreckage, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
-          },
-          "motion": {
-            "kind": "push",
-            "z0": 1.0,
-            "z1": 1.036
-          },
-          "purpose": "Musk takes Belfort's denial",
-          "cut": {
-            "why": "reply"
-          },
-          "heroes_ok": true
-        },
-        {
-          "at": "Two hundred of them never",
-          "type": "B",
-          "picture": "s11_ots_bel",
-          "motion": {
-            "kind": "pull",
-            "z0": 1.036,
-            "z1": 1.0
-          },
-          "purpose": "Belfort learns it: untested",
-          "cut": {
-            "why": "listener on the reveal"
-          },
-          "reuse": "reuse",
-          "heroes_ok": true
-        },
-        {
           "at": "You never told me that.",
           "type": "B",
           "picture": {
@@ -8538,7 +7987,27 @@
         {
           "at": "You said it quietly.",
           "type": "B",
-          "picture": "s11_ots_musk",
+          "picture": {
+            "id": "s11_ots_musk",
+            "engine": "gemini",
+            "subject": "over the slick-haired man's shoulder in the burnt garage, the tall tired man faces the viewer, soot on his black T-shirt, grim and certain, clear empty upper third",
+            "heroes": [
+              "musk",
+              "belfort"
+            ],
+            "speakers": {
+              "musk": [
+                0.55,
+                0.4
+              ],
+              "belfort": [
+                0.1,
+                0.52
+              ]
+            },
+            "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
+            "prompt": "medium cinematic shot, over the slick-haired man's shoulder in the burnt garage, the tall tired man faces the viewer, soot on his black T-shirt, grim and certain, clear empty upper third. Two named heroes: Elon Musk as our caricature: tall, broad shoulders, short dark hair, tired eyes, black T-shirt, grease on his hands; Jordan Belfort as our caricature: compact, slicked hair, wide grin, a sharp suit that has seen better days, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, deep blue pre-dawn half-light with grey ash drifting and a faint orange glow low in the wreckage, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
+          },
           "motion": {
             "kind": "push",
             "z0": 1.0,
@@ -8546,7 +8015,7 @@
           },
           "purpose": "Musk's cold answer",
           "cut": {
-            "why": "L-cut: Musk's face"
+            "why": "cut on the bubble: Musk's face"
           },
           "reuse": "reuse",
           "heroes_ok": true
@@ -8809,16 +8278,6 @@
               "kind": "expression",
               "expression": "doubtful",
               "why": "Belfort doubts: what's the catch [What's the catch]"
-            },
-            {
-              "at": "catch",
-              "kind": "symbol",
-              "symbol": "question",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "what's the catch"
             }
           ],
           "tone": "quick, wary",
@@ -8876,16 +8335,6 @@
           "to": "vance",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "Two hundred riders",
-              "kind": "text",
-              "text": "TWO HUNDRED RIDERS",
-              "why": "two hundred riders",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "Two hundred",
               "kind": "expression",
@@ -8980,26 +8429,6 @@
           ],
           "visual_beats": [
             {
-              "at": "once",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.15,
-                0.2
-              ],
-              "why": "I signed paper like that once"
-            },
-            {
-              "at": "in a cell",
-              "kind": "text",
-              "text": "IN A CELL",
-              "why": "I paid for it in a cell",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
               "at": "in a cell",
               "kind": "expression",
               "expression": "doubtful",
@@ -9051,21 +8480,6 @@
           "to": "vance",
           "intent": "decide",
           "visual_beats": [
-            {
-              "at": "not signing",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "I'm not signing",
-              "cue": {
-                "sound": "chime",
-                "event": "reveal",
-                "why": "Belfort turns: he refuses the paper"
-              }
-            },
             {
               "at": "not signing",
               "kind": "expression",
@@ -9323,7 +8737,7 @@
           },
           "purpose": "Belfort feels it in his past",
           "cut": {
-            "why": "L-cut: Belfort's face before the answer"
+            "why": "cut on the bubble: Belfort's face before the answer"
           },
           "reuse": "reuse",
           "heroes_ok": true
@@ -9527,30 +8941,10 @@
           "visual_beats": [
             {
               "at": "skipped a test",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "two hundred batteries skipped a test"
-            },
-            {
-              "at": "skipped a test",
               "kind": "expression",
               "expression": "surprised",
               "why": "Cuban takes it in: skipped a test [skipped a test]",
               "who": "cuban"
-            },
-            {
-              "at": "We want them back",
-              "kind": "text",
-              "text": "WE WANT THEM BACK",
-              "why": "we want them back",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "tone": "steady, honest",
@@ -9584,16 +8978,6 @@
           "intent": "reveal",
           "visual_beats": [
             {
-              "at": "not",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "probably not, he says"
-            },
-            {
               "at": "I don't sell",
               "kind": "expression",
               "expression": "curious",
@@ -9613,16 +8997,6 @@
           "to": "belfort",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "Who pays",
-              "kind": "symbol",
-              "symbol": "question",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "who pays for two hundred new ones"
-            },
             {
               "at": "Who pays",
               "kind": "expression",
@@ -9696,30 +9070,10 @@
             },
             {
               "at": "once before",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.15,
-                0.2
-              ],
-              "why": "I did it once before"
-            },
-            {
-              "at": "once before",
               "kind": "expression",
               "expression": "worried",
               "why": "Belfort worries: once before [once before]",
               "who": "belfort"
-            },
-            {
-              "at": "Christmas Eve",
-              "kind": "text",
-              "text": "CHRISTMAS EVE",
-              "why": "on a Christmas Eve",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "tone": "quiet, steady",
@@ -9734,31 +9088,11 @@
           "intent": "reveal",
           "visual_beats": [
             {
-              "at": "Nobody has ever",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "nobody has ever given money back"
-            },
-            {
               "at": "come in here",
               "kind": "expression",
               "expression": "surprised",
               "why": "Belfort is surprised: nobody has ever come in here [come in here]",
               "who": "belfort"
-            },
-            {
-              "at": "money back",
-              "kind": "text",
-              "text": "MONEY BACK",
-              "why": "give me money back",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "tone": "flat, moved",
@@ -9814,31 +9148,11 @@
           "intent": "decide",
           "visual_beats": [
             {
-              "at": "Fix them",
-              "kind": "symbol",
-              "symbol": "check",
-              "pos": [
-                0.82,
-                0.22
-              ],
-              "why": "fix them, he orders"
-            },
-            {
               "at": "bring me next",
               "kind": "expression",
               "expression": "determined",
               "why": "Cuban: bring me next year's number [bring me next]",
               "who": "cuban"
-            },
-            {
-              "at": "A real one",
-              "kind": "text",
-              "text": "A REAL ONE",
-              "why": "a real one",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "tone": "blunt, warm underneath",
@@ -10111,9 +9425,9 @@
             "z0": 1.0,
             "z1": 1.053
           },
-          "purpose": "Musk takes the whole cost",
+          "purpose": "Musk takes the whole cost; the shot holds on his face after the bubble",
           "cut": {
-            "why": "L-cut: Musk's voice leads"
+            "why": "cut on the bubble: Musk's face takes the vow"
           },
           "heroes_ok": true
         },
@@ -10699,16 +10013,6 @@
               "expression": "deadpan",
               "why": "Bezos listens flat: bury it [ask us to bury it]",
               "who": "bezos"
-            },
-            {
-              "at": "bury it",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "most buyers ask us to bury it"
             }
           ],
           "tone": "quiet, wry",
@@ -10728,21 +10032,6 @@
               "expression": "joyful",
               "why": "Belfort lights up at double [offering double]",
               "who": "belfort"
-            },
-            {
-              "at": "double",
-              "kind": "symbol",
-              "symbol": "arrow_up",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "offering double what they would",
-              "cue": {
-                "sound": "pluck",
-                "event": "reveal",
-                "why": "the offer that changes the price of honesty"
-              }
             }
           ],
           "tone": "genial, unhurried",
@@ -10756,16 +10045,6 @@
           "to": "belfort",
           "intent": "aside",
           "visual_beats": [
-            {
-              "at": "Double",
-              "kind": "text",
-              "text": "DOUBLE",
-              "why": "double is the word",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "Double",
               "kind": "expression",
@@ -10784,16 +10063,6 @@
           "to": "bezos",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "partnership",
-              "kind": "symbol",
-              "symbol": "plus",
-              "pos": [
-                0.6,
-                0.3
-              ],
-              "why": "make it a partnership"
-            },
             {
               "at": "buy lunch",
               "kind": "expression",
@@ -11276,26 +10545,6 @@
           "intent": "press",
           "visual_beats": [
             {
-              "at": "Ten percent",
-              "kind": "text",
-              "text": "TEN PERCENT",
-              "why": "ten percent again",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
-              "at": "Remember",
-              "kind": "symbol",
-              "symbol": "question",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "remember what he signed?"
-            },
-            {
               "at": "Remember",
               "kind": "expression",
               "expression": "worried",
@@ -11319,16 +10568,6 @@
               "kind": "expression",
               "expression": "deadpan",
               "why": "Musk answers flat: a burnt garage [Of a burnt garage]"
-            },
-            {
-              "at": "burnt garage",
-              "kind": "symbol",
-              "symbol": "arrow_down",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "a burnt garage is worth little"
             }
           ],
           "tone": "quiet, wary",
@@ -11342,16 +10581,6 @@
           "to": "musk",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "Fires included",
-              "kind": "text",
-              "text": "FIRES INCLUDED",
-              "why": "fires included in ten percent",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "Fires included",
               "kind": "expression",
@@ -11382,16 +10611,6 @@
           "visual_beats": [
             {
               "at": "lucky",
-              "kind": "text",
-              "text": "LUCKY",
-              "why": "you got lucky",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
-              "at": "lucky",
               "kind": "expression",
               "expression": "amused",
               "why": "Belfort teases: lucky [lucky]"
@@ -11408,16 +10627,6 @@
           "to": "belfort",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "didn't pick him",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "I didn't pick him"
-            },
             {
               "at": "pick him",
               "kind": "expression",
@@ -11524,16 +10733,6 @@
           "visual_beats": [
             {
               "at": "Eight",
-              "kind": "symbol",
-              "symbol": "question",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "eight, not nine?"
-            },
-            {
-              "at": "Eight",
               "kind": "expression",
               "expression": "doubtful",
               "why": "Belfort doubts the count: eight? [Eight]"
@@ -11551,21 +10750,6 @@
           "intent": "reveal",
           "visual_beats": [
             {
-              "at": "Nine offered",
-              "kind": "text",
-              "text": "NINE OFFERED",
-              "why": "nine offered, one refused",
-              "pos": [
-                0.5,
-                0.2
-              ],
-              "cue": {
-                "sound": "chime",
-                "event": "reveal",
-                "why": "the biggest turn: nine offered, one refused"
-              }
-            },
-            {
               "at": "One man read",
               "kind": "expression",
               "expression": "surprised",
@@ -11580,16 +10764,6 @@
                 0.5
               ],
               "why": "rings the last line from the first day"
-            },
-            {
-              "at": "said no",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "and said no"
             }
           ],
           "tone": "flat, unhurried",
@@ -11634,16 +10808,6 @@
               "expression": "worried",
               "why": "Musk hears who doesn't [who doesn't]",
               "who": "musk"
-            },
-            {
-              "at": "doesn't",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "a man who doesn't read"
             }
           ],
           "pause_after": 0.8,
@@ -11687,26 +10851,6 @@
           "intent": "reveal",
           "visual_beats": [
             {
-              "at": "paid back my forty",
-              "kind": "symbol",
-              "symbol": "check",
-              "pos": [
-                0.82,
-                0.22
-              ],
-              "why": "most paid back my forty"
-            },
-            {
-              "at": "Three of them",
-              "kind": "text",
-              "text": "THREE PAID EVERYTHING",
-              "why": "three of them paid for everything",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
               "at": "Three of them",
               "kind": "expression",
               "expression": "surprised",
@@ -11730,16 +10874,6 @@
               "kind": "expression",
               "expression": "deadpan",
               "why": "Musk asks flat: it was luck [it was luck]"
-            },
-            {
-              "at": "luck",
-              "kind": "symbol",
-              "symbol": "question",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "so it was luck?"
             }
           ],
           "tone": "quiet, low",
@@ -11758,16 +10892,6 @@
               "kind": "expression",
               "expression": "smug",
               "why": "O'Leary, smug: I made sure [I made sure]"
-            },
-            {
-              "at": "owned all eight",
-              "kind": "text",
-              "text": "OWNED ALL EIGHT",
-              "why": "I owned all eight",
-              "pos": [
-                0.5,
-                0.2
-              ]
             },
             {
               "at": "all eight",
@@ -11948,7 +11072,7 @@
           },
           "purpose": "Belfort's grin outstays its welcome",
           "cut": {
-            "why": "L-cut: Belfort's face leads"
+            "why": "cut on the bubble: Belfort's face takes the grin"
           },
           "heroes_ok": true,
           "accents": [
@@ -12194,107 +11318,6 @@
           "kind": "transition"
         },
         {
-          "text": "The ones who could build or sell with their own hands were back within months. The ones who lived on other people's trust are still waiting.",
-          "visual_beats": [
-            {
-              "at": "back within months",
-              "kind": "symbol",
-              "symbol": "check",
-              "pos": [
-                0.82,
-                0.22
-              ],
-              "why": "the builders were back within months"
-            },
-            {
-              "at": "other people's trust",
-              "kind": "text",
-              "text": "OTHER PEOPLE'S TRUST",
-              "pos": [
-                0.5,
-                0.2
-              ],
-              "why": "the ones who lived on other people's trust"
-            },
-            {
-              "at": "still waiting",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.85,
-                0.2
-              ],
-              "why": "they are still waiting"
-            },
-            {
-              "at": "still waiting",
-              "kind": "expression",
-              "expression": "sad",
-              "who": "kiyosaki",
-              "why": "Kiyosaki is one still waiting [still waiting]"
-            }
-          ],
-          "tags": [
-            "softly"
-          ],
-          "emphasis": [
-            "waiting"
-          ],
-          "tone": "quiet, wry",
-          "emotion": "wistful",
-          "kind": "transition"
-        },
-        {
-          "text": "And the one who never built or sold anything spread forty dollars across eight of them.",
-          "visual_beats": [
-            {
-              "at": "the one who never built",
-              "kind": "highlight",
-              "pos": [
-                0.3,
-                0.5
-              ],
-              "why": "rings O'Leary, the one who never built or sold"
-            },
-            {
-              "at": "never built or sold anything",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "never built or sold anything"
-            },
-            {
-              "at": "spread forty dollars",
-              "kind": "expression",
-              "expression": "amused",
-              "why": "O'Leary spread forty dollars [spread forty dollars]",
-              "who": "oleary"
-            },
-            {
-              "at": "eight of them",
-              "kind": "label",
-              "text": "EIGHT ENVELOPES",
-              "pos": [
-                0.6,
-                0.6
-              ],
-              "why": "across eight of them"
-            }
-          ],
-          "tags": [
-            "mischievously"
-          ],
-          "emphasis": [
-            "eight"
-          ],
-          "tone": "wry, quick",
-          "emotion": "amused",
-          "kind": "transition"
-        },
-        {
           "text": "Luck decided which envelope paid. Skill decided who was still standing when it did.",
           "visual_beats": [
             {
@@ -12394,7 +11417,43 @@
           }
         },
         {
-          "at": "The ones who could build",
+          "at": "Luck decided which envelope paid.",
+          "type": "B",
+          "picture": {
+            "id": "s16_waiting",
+            "engine": "gemini",
+            "subject": "the grey-haired tanned man sits alone in the old Toyota in a motel lot, a clock on its dashboard, still waiting for a check that does not come, a pointing finger resting on the wheel, clear empty upper third",
+            "heroes": [
+              "kiyosaki"
+            ],
+            "speakers": {
+              "kiyosaki": [
+                0.45,
+                0.4
+              ]
+            },
+            "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
+            "prompt": "medium cinematic shot, the grey-haired tanned man sits alone in the old Toyota in a motel lot, a clock on its dashboard, still waiting for a check that does not come, a pointing finger resting on the wheel, clear empty upper third. One named hero: Robert Kiyosaki as our caricature: grey hair, tanned, open-collar shirt, a pointing finger, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, low late-afternoon gold light slanting down a marble hallway, long warm shadows, cold blue shade in the corners, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
+          },
+          "motion": {
+            "kind": "push",
+            "z0": 1.0,
+            "z1": 1.04
+          },
+          "purpose": "luck decided which envelope paid: the man on trust is still waiting for his",
+          "cut": {
+            "why": "the first half of the verdict"
+          },
+          "heroes_ok": true,
+          "accents": [
+            {
+              "kind": "wobble",
+              "strength": 0.3
+            }
+          ]
+        },
+        {
+          "at": "Skill decided who was still standing",
           "type": "B",
           "picture": {
             "id": "s16_hands",
@@ -12418,103 +11477,14 @@
             "prompt": "medium cinematic shot, the tall tired man in black and the compact slick-haired man side by side in a bright workshop, one holding a scooter battery, one holding a phone, both smiling and back at work within months, clear empty upper third. Two named heroes: Elon Musk as our caricature: tall, broad shoulders, short dark hair, tired eyes, black T-shirt, grease on his hands; Jordan Belfort as our caricature: compact, slicked hair, wide grin, a sharp suit that has seen better days, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, low late-afternoon gold light slanting down a marble hallway, long warm shadows, cold blue shade in the corners, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
           },
           "motion": {
-            "kind": "pan",
-            "z0": 1.06,
-            "z1": 1.06,
-            "dx": 0.064
-          },
-          "purpose": "the hands-on skills are back within months",
-          "cut": {
-            "why": "the first answer"
-          },
-          "heroes_ok": true
-        },
-        {
-          "at": "The ones who lived",
-          "type": "B",
-          "picture": {
-            "id": "s16_waiting",
-            "engine": "gemini",
-            "subject": "the grey-haired tanned man sits alone in the old Toyota in a motel lot, a clock on its dashboard, still waiting for a check that does not come, a pointing finger resting on the wheel, clear empty upper third",
-            "heroes": [
-              "kiyosaki"
-            ],
-            "speakers": {
-              "kiyosaki": [
-                0.45,
-                0.4
-              ]
-            },
-            "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
-            "prompt": "medium cinematic shot, the grey-haired tanned man sits alone in the old Toyota in a motel lot, a clock on its dashboard, still waiting for a check that does not come, a pointing finger resting on the wheel, clear empty upper third. One named hero: Robert Kiyosaki as our caricature: grey hair, tanned, open-collar shirt, a pointing finger, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, low late-afternoon gold light slanting down a marble hallway, long warm shadows, cold blue shade in the corners, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
-          },
-          "motion": {
-            "kind": "push",
-            "z0": 1.0,
-            "z1": 1.07
-          },
-          "purpose": "the ones who lived on trust are still waiting",
-          "cut": {
-            "why": "the second answer"
-          },
-          "heroes_ok": true,
-          "accents": [
-            {
-              "kind": "wobble",
-              "strength": 0.3
-            }
-          ]
-        },
-        {
-          "at": "And the one who never built",
-          "type": "B",
-          "picture": {
-            "id": "s16_envelopes",
-            "engine": "gemini",
-            "subject": "the bald man in round glasses at the courthouse bench, eight white envelopes fanned in his hand and a single twenty-dollar bill in his pocket, a calm half-smile, clear empty upper third",
-            "heroes": [
-              "oleary"
-            ],
-            "speakers": {
-              "oleary": [
-                0.45,
-                0.4
-              ]
-            },
-            "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
-            "prompt": "medium cinematic shot, the bald man in round glasses at the courthouse bench, eight white envelopes fanned in his hand and a single twenty-dollar bill in his pocket, a calm half-smile, clear empty upper third. One named hero: Kevin O'Leary as our caricature: bald, round glasses, dark suit, a calm half-smile, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, low late-afternoon gold light slanting down a marble hallway, long warm shadows, cold blue shade in the corners, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
-          },
-          "motion": {
-            "kind": "push",
-            "z0": 1.0,
-            "z1": 1.087
-          },
-          "purpose": "O'Leary spread forty dollars across eight",
-          "cut": {
-            "why": "the third answer"
-          },
-          "heroes_ok": true,
-          "accents": [
-            {
-              "kind": "wobble",
-              "strength": 0.3
-            }
-          ]
-        },
-        {
-          "at": "Skill decided who was still standing",
-          "type": "B",
-          "picture": "s16_envelopes",
-          "motion": {
             "kind": "push",
             "z0": 1.0,
             "z1": 1.041
           },
-          "purpose": "luck decided which, skill who was left standing",
+          "purpose": "skill decided who was left standing: the builders back at work",
           "cut": {
-            "why": "the verdict"
+            "why": "the second half of the verdict"
           },
-          "reuse": "reframe",
           "heroes_ok": true
         },
         {
@@ -12564,29 +11534,22 @@
     {
       "track": "sneaky_pizzicato__v1",
       "from": "<start>",
-      "to": "Year one. Mark Cuban runs",
+      "to": "In the parking lot, Musk",
       "gain_db": -26,
       "fade_s": 2.0
     },
     {
       "track": "clockwork_loop__v1",
       "from": "In the parking lot, Musk",
-      "to": "Year two. A black car",
-      "gain_db": -32,
-      "fade_s": 2.0
-    },
-    {
-      "track": "clockwork_loop__v1",
-      "from": "Year three. Two in the morning",
-      "to": "The next morning, Cuban's",
-      "gain_db": -32,
+      "to": "Year five. Cuban's riders",
+      "gain_db": -31,
       "fade_s": 2.0
     },
     {
       "track": "sneaky_pizzicato__v1",
       "from": "Year five. Cuban's riders",
       "to": "Five years after the bench",
-      "gain_db": -26,
+      "gain_db": -27,
       "fade_s": 2.0
     },
     {
@@ -12963,16 +11926,6 @@
           "intent": "reveal",
           "visual_beats": [
             {
-              "at": "Nobody pays",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "nobody pays for parts"
-            },
-            {
               "at": "thing exists",
               "kind": "expression",
               "expression": "smug",
@@ -13023,16 +11976,6 @@
               "expression": "surprised",
               "why": "Musk is surprised that someone will pay [Then I will]",
               "who": "musk"
-            },
-            {
-              "at": "Forty dollars",
-              "kind": "text",
-              "text": "FORTY DOLLARS",
-              "why": "the offer: forty dollars",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "voiced": false
@@ -13048,16 +11991,6 @@
               "kind": "expression",
               "expression": "doubtful",
               "why": "Musk doubts forty dollars is anything [Forty dollars]"
-            },
-            {
-              "at": "one wheel",
-              "kind": "label",
-              "text": "ONE WHEEL",
-              "pos": [
-                0.4,
-                0.65
-              ],
-              "why": "forty dollars buys only one wheel"
             }
           ],
           "voiced": false
@@ -13068,16 +12001,6 @@
           "to": "musk",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "ten percent",
-              "kind": "text",
-              "text": "TEN PERCENT",
-              "why": "ten percent of everything",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "everything you ever build",
               "kind": "expression",
@@ -13119,16 +12042,6 @@
           "to": "oleary",
           "intent": "deflect",
           "visual_beats": [
-            {
-              "at": "Forever",
-              "kind": "text",
-              "text": "FOREVER",
-              "why": "forever, the word he questions",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "long word",
               "kind": "expression",
@@ -13640,16 +12553,6 @@
           "visual_beats": [
             {
               "at": "same scooter",
-              "kind": "symbol",
-              "symbol": "equals",
-              "pos": [
-                0.82,
-                0.25
-              ],
-              "why": "it's the same scooter"
-            },
-            {
-              "at": "same scooter",
               "kind": "expression",
               "expression": "deadpan",
               "why": "Musk insists, flat: the same scooter [same scooter]"
@@ -13663,26 +12566,6 @@
           "to": "musk",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "Not to him",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "not to him: he rode it first"
-            },
-            {
-              "at": "rode it before he paid",
-              "kind": "text",
-              "text": "RIDE, THEN PAY",
-              "why": "he rode it before he paid",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "rode it",
               "kind": "expression",
@@ -13700,16 +12583,6 @@
           "visual_beats": [
             {
               "at": "gave it away",
-              "kind": "symbol",
-              "symbol": "question",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "so you gave it away first?"
-            },
-            {
-              "at": "gave it away",
               "kind": "expression",
               "expression": "curious",
               "why": "Musk starts to see it [gave it away]"
@@ -13723,16 +12596,6 @@
           "to": "musk",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "Give a little first",
-              "kind": "text",
-              "text": "GIVE FIRST",
-              "why": "give a little first",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "People hate owing you",
               "kind": "expression",
@@ -13892,16 +12755,6 @@
           "intent": "press",
           "visual_beats": [
             {
-              "at": "richer",
-              "kind": "symbol",
-              "symbol": "arrow_up",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "the rich get richer"
-            },
-            {
               "at": "Write that down",
               "kind": "expression",
               "expression": "determined",
@@ -13933,16 +12786,6 @@
           "visual_beats": [
             {
               "at": "don't have any",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "I don't have any"
-            },
-            {
-              "at": "don't have any",
               "kind": "expression",
               "expression": "sad",
               "why": "Kiyosaki admits he has none [don't have any]"
@@ -13972,16 +12815,6 @@
           "to": "trump",
           "intent": "deflect",
           "visual_beats": [
-            {
-              "at": "In a year",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.85,
-                0.2
-              ],
-              "why": "in a year they'll beg"
-            },
             {
               "at": "beg to lend",
               "kind": "expression",
@@ -14021,16 +12854,6 @@
               "expression": "doubtful",
               "why": "Kiyosaki doubts the banks came back first [The banks never]",
               "who": "kiyosaki"
-            },
-            {
-              "at": "never came back",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.5,
-                0.3
-              ],
-              "why": "the banks never came back"
             }
           ],
           "voiced": false
@@ -14085,16 +12908,6 @@
               "kind": "expression",
               "expression": "deadpan",
               "why": "Kiyosaki answers flat: cameras don't pay rent [Cameras]"
-            },
-            {
-              "at": "don't pay rent",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "cameras don't pay rent"
             }
           ],
           "voiced": false
@@ -14183,16 +12996,6 @@
               "pos": [
                 0.5,
                 0.12
-              ]
-            },
-            {
-              "at": "four thousand",
-              "kind": "symbol",
-              "why": "the count jumps up [four thousand]",
-              "symbol": "arrow_up",
-              "pos": [
-                0.85,
-                0.3
               ]
             }
           ]
@@ -14410,16 +13213,6 @@
           "intent": "question",
           "visual_beats": [
             {
-              "at": "by Christmas",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.85,
-                0.2
-              ],
-              "why": "the Christmas deadline"
-            },
-            {
               "at": "Christmas",
               "kind": "expression",
               "expression": "worried",
@@ -14440,16 +13233,6 @@
               "kind": "expression",
               "expression": "determined",
               "why": "Musk is honest: fifty good ones [Fifty]"
-            },
-            {
-              "at": "good ones",
-              "kind": "text",
-              "text": "FIFTY GOOD ONES",
-              "why": "fifty good ones",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "voiced": false
@@ -14460,16 +13243,6 @@
           "to": "cuban",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "Five hundred",
-              "kind": "text",
-              "text": "FIVE HUNDRED",
-              "why": "five hundred is the shock",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "Five hundred",
               "kind": "accent",
@@ -14541,26 +13314,6 @@
           "to": "belfort",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "twentieth of December",
-              "kind": "text",
-              "text": "DECEMBER TWENTIETH",
-              "why": "the twentieth of December",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
-              "at": "never walk in",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "or you never walk in here again"
-            },
             {
               "at": "never walk in",
               "kind": "expression",
@@ -14870,16 +13623,6 @@
               "kind": "expression",
               "expression": "doubtful",
               "why": "Belfort doubts: what's the catch [What's the catch]"
-            },
-            {
-              "at": "catch",
-              "kind": "symbol",
-              "symbol": "question",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "what's the catch"
             }
           ],
           "voiced": false
@@ -14931,16 +13674,6 @@
           "to": "vance",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "Two hundred riders",
-              "kind": "text",
-              "text": "TWO HUNDRED RIDERS",
-              "why": "two hundred riders",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "Two hundred",
               "kind": "expression",
@@ -15026,26 +13759,6 @@
           ],
           "visual_beats": [
             {
-              "at": "once",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.15,
-                0.2
-              ],
-              "why": "I signed paper like that once"
-            },
-            {
-              "at": "in a cell",
-              "kind": "text",
-              "text": "IN A CELL",
-              "why": "I paid for it in a cell",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
               "at": "in a cell",
               "kind": "expression",
               "expression": "doubtful",
@@ -15091,21 +13804,6 @@
           "to": "vance",
           "intent": "decide",
           "visual_beats": [
-            {
-              "at": "not signing",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "I'm not signing",
-              "cue": {
-                "sound": "chime",
-                "event": "reveal",
-                "why": "Belfort turns: he refuses the paper"
-              }
-            },
             {
               "at": "not signing",
               "kind": "expression",
@@ -15318,30 +14016,10 @@
           "visual_beats": [
             {
               "at": "skipped a test",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "two hundred batteries skipped a test"
-            },
-            {
-              "at": "skipped a test",
               "kind": "expression",
               "expression": "surprised",
               "why": "Cuban takes it in: skipped a test [skipped a test]",
               "who": "cuban"
-            },
-            {
-              "at": "We want them back",
-              "kind": "text",
-              "text": "WE WANT THEM BACK",
-              "why": "we want them back",
-              "pos": [
-                0.5,
-                0.2
-              ]
             }
           ],
           "voiced": false
@@ -15368,16 +14046,6 @@
           "to": "cuban",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "not",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "probably not, he says"
-            },
             {
               "at": "I don't sell",
               "kind": "expression",
@@ -15409,16 +14077,6 @@
           "to": "belfort",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "Who pays",
-              "kind": "symbol",
-              "symbol": "question",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "who pays for two hundred new ones"
-            },
             {
               "at": "Who pays",
               "kind": "expression",
@@ -15605,16 +14263,6 @@
           "intent": "press",
           "visual_beats": [
             {
-              "at": "Ten percent",
-              "kind": "text",
-              "text": "TEN PERCENT",
-              "why": "ten percent again",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
-            {
               "at": "Remember",
               "kind": "expression",
               "expression": "worried",
@@ -15635,16 +14283,6 @@
               "kind": "expression",
               "expression": "deadpan",
               "why": "Musk answers flat: a burnt garage [Of a burnt garage]"
-            },
-            {
-              "at": "burnt garage",
-              "kind": "symbol",
-              "symbol": "arrow_down",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "a burnt garage is worth little"
             }
           ],
           "voiced": false
@@ -15655,16 +14293,6 @@
           "to": "musk",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "Fires included",
-              "kind": "text",
-              "text": "FIRES INCLUDED",
-              "why": "fires included in ten percent",
-              "pos": [
-                0.5,
-                0.2
-              ]
-            },
             {
               "at": "Fires included",
               "kind": "expression",
@@ -15723,16 +14351,6 @@
           "to": "belfort",
           "intent": "reveal",
           "visual_beats": [
-            {
-              "at": "didn't pick him",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "I didn't pick him"
-            },
             {
               "at": "pick him",
               "kind": "expression",
