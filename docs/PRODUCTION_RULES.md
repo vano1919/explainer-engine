@@ -33,6 +33,13 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    when `python -m explainer_engine.qa.short_format <file>` passes (vertical 9:16, at most 3 min; `production.shorts` refuses
    to hand on any other file), and its link is given as `youtube.com/shorts/<id>`, never `youtu.be`. Unchanged: never public (the creator clicks Public), the creator sets the thumbnail in Studio, sign-in is a fresh
    link per upload session (`publish auth-url` / `auth-finish`), and a piece that fails a test is fixed, not uploaded.
+10. **Pictures and audio are approved together and run in parallel** (creator, 2026-10-20: "once the script is approved, approve
+   the pictures and the audio together and start them together: the batch makes the pictures wait for nothing"). Right after the
+   creator approves the finished script (OR-17), Claude asks ONE question that covers every paid asset of the video: the paint
+   plans (provider per batch, D-50), the narration, the sound effects and the music, with one cost table and the caps they need.
+   On the yes, the Gemini batch is submitted first (it takes minutes to hours) and the voice and sounds are made while it runs.
+   Every step keeps its own estimate, ledger entry and gate; a cap at 80 % still stops and asks. Assets that depend on an earlier
+   OK (a hero's first picture before that hero's later pictures and face sheet) are a second, smaller question.
 
 ## 2. The gates, in order (a video does not skip one)
 
@@ -71,6 +78,7 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-16 | Write for an expressive read; mysterious, curious, funny | plain documentary prose | SCRIPTING_SPEC §8 | `narration-script` skill |
 | 2026-10-16 | The read is slow and monotone; the question is not asked like a question; stress on wrong words; add hmm / oh / eh where natural; study similar videos; write a big rules skill | wh-question hook falls; ellipses slow; no stressed word; no interjections; no open loops | N-01..N-10 | `narration_lint`, skill |
 | 2026-10-19 | Upload whatever video or Short passes every test right away, not everything together | Shorts waited for the long video and the whole batch | standing order 9 | `publish stage --only <id>` (per-piece state in `publish/youtube_state.json`) |
+| 2026-10-20 | Approve pictures and audio together after the script and start them together | the Titans pictures were asked for only after the voice was recorded, and the batch waited | standing order 10 | the orchestrator's single paid-assets question; each step's own gate |
 | 2026-10-16 | Humour must never touch the facts; credible science | joke-driven rewrites risk false statements | SCRIPTING_SPEC §8.1, UR-21 | skill, editorial review |
 | 2026-10-16 | Pictures too generic: no named heroes, no fear, clichés of the primitive; real figures by name in every topic | prompts described places; B shots faceless; idle sprite poses; empty plates | UR-16..UR-21 (D-40) | `check_stakes`, `stakes.json`, skill `shot-visuals` |
 | 2026-10-16 | The man seen from behind and the main hero are different kinds of people; everything must be one world | UR-07 asked for natural proportions next to caricatures; two generators | UR-22; style bridge | `check_stakes`, `look.figure_style` |

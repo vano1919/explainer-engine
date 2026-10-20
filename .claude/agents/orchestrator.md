@@ -31,6 +31,9 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
    and `production validate` (PV-33..PV-36, PV-44, PV-48); at most two critic rounds, then creator approval #1.
    Before approval #1: `python -m explainer_engine.qa.engagement <script>`; every weak beat revised or answered.
    After approval #1: `standards gate --at script_lock` (the agent re-checks what the script changed and stamps).
+   Then ONE paid-assets question (PRODUCTION_RULES standing order 10): every paint plan with its price at each provider,
+   the narration, the sounds and the music in one cost table; on the yes submit the Gemini batch first and make the audio while it
+   runs (phases 4 and 5 in parallel). Each step keeps its own gate and ledger entry.
 4. **Phase 3, one-item tests**: first `standards gate --at paid_assets` (no open REVIEW/ADAPT/BLOCK, fresh sources); then the first read chunk and first picture; check them (listen for drift with `audio/voice_check`,
    look at the picture and run the likeness judge). Only then phase 4.
 5. **Phase 4, voice**: `estimate_only` first, reserve in the ledger, one chunk at a time, record each; level, `production words`.

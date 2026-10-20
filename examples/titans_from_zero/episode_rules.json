@@ -1341,6 +1341,14 @@
       "script_sha256": "a2f32dfdc41208a1d0771535ef446a944a54713bf05a5736a8270d0a5e0d5370",
       "rulebook_version": 2,
       "scope": "rulebook v2 re-checked by the episode-standards-director 2026-10-20 after D-62 (RK-01/RK-02 removed, ER-03/04/07, roles); script v5 approved, PV-55 clean"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-20",
+      "by": "vano1919 (ვანო), 2026-10-20 18:06: chose 'Nano Banana batch' for B1 on the decision card",
+      "script_sha256": "2a2254ed3cf6339506acbb4c776d1125c3d26a7701e3dbdbedfcaef220906c0b",
+      "rulebook_version": 2,
+      "scope": "re-checked after the script's face sheets (VB-09) and five Belfort expression remaps; no words, people, assets sources or rules changed, so no rule of the rulebook is touched"
     }
   ]
 }

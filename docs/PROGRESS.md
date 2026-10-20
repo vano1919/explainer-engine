@@ -1085,3 +1085,12 @@ bubble gaps in the measured middle of a pause with digital zeros; word times are
 is filled with the read's room tone (BP-60). Titans: face sheets (VB-09) for the nine heroes with expression beats; Belfort's
 14 expressions cut to 12 (curious -> surprised, confused -> doubtful in S12, S13, S15 and the Shorts SH07, SH09), Cardone
 +determined, O'Leary and Cuban +deadpan. Tests: `test_silent_lines.py` (+1, the gap is room tone), `test_reference_collage.py` (+1).
+
+## 2026-10-20 - Pictures and audio approved together (standing order 10); paint preflight honours REVIEW
+
+The creator: after the script's yes, approve the pictures and the audio together and start them together, since the Gemini batch
+waits for nothing. `docs/PRODUCTION_RULES.md` standing order 10 + feedback row, the orchestrator's phase 3 asks one paid-assets
+question and runs phases 4 and 5 in parallel. `paint.preflight` refused on the editorial review's REVIEW items (EG-22 "for the
+creator"), against D-60 (FAIL blocks, REVIEW is the creator's call; the ElevenLabs hook already filtered); it now blocks on FAIL
+only. Titans B1: 67 of 106 pictures submitted on Nano Banana batch, the rest wait for the creator at the run's 80 % cap line.
+Test: `test_storytelling_rules.py::test_paid_pictures_block_on_editorial_fail_not_review`.

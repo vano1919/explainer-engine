@@ -102,7 +102,7 @@ def preflight(plan: dict, doc: dict, dirs: list[Path], run: Run, script_path: Pa
         eg = EG.check(script_path, Path(script_path).with_name("editorial_review.json"))
     else:
         eg = EG.contract_findings(doc)
-    why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in eg]
+    why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in eg if f.get("severity", "FAIL") == "FAIL"]  # REVIEW = the creator's call (D-60)
     rules_path = Path(script_path).with_name("episode_rules.json") if script_path else None
     if rules_path and rules_path.exists():  # OR-12 (D-51): no paid picture before the rulebook's paid_assets checkpoint passes
         from explainer_engine.standards import rulebook as R

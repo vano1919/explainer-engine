@@ -139,3 +139,22 @@ def test_paid_audio_waits_for_the_script_approval(tmp_path, monkeypatch):
     assert "OR-17" in hook.decide("mcp__ElevenLabs__creative_generate_speech", call, tmp_path)
     SA.approve(script, "vano", "2026-10-20")
     assert "OR-17" not in (hook.decide("mcp__ElevenLabs__creative_generate_speech", call, tmp_path) or "")
+
+
+def test_paid_pictures_block_on_editorial_fail_not_review(monkeypatch):
+    """D-60: an integrated FAIL blocks paid pictures; a REVIEW is the creator's call and must not (it did, 2026-10-20)."""
+    from explainer_engine.production import editorial_gate as EG
+    d = mini()
+    d["schema"] = "production_script/3"
+
+    class Run:
+        path = "run"
+
+        def approved(self, *_):
+            return True
+
+    plan = {"id": "p1", "hash": "h", "items": [], "provider": "gemini"}
+    monkeypatch.setattr(EG, "contract_findings", lambda doc: [EG.finding("EG-22", "x", "for the creator", "REVIEW")])
+    assert not any(w.startswith("EG-22") for w in PA.preflight(plan, d, [], Run()))
+    monkeypatch.setattr(EG, "contract_findings", lambda doc: [EG.finding("EG-22", "x", "blocking")])
+    assert any(w.startswith("EG-22") for w in PA.preflight(plan, d, [], Run()))
