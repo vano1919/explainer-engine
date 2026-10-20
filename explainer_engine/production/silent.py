@@ -89,8 +89,9 @@ def has_silent(doc: dict) -> bool:
 
 def insert(doc: dict, voiced_words: list[dict], pcm, sr: int):
     """The full word list (one entry per token of ``script.tokens(doc)``) and the read with a quiet gap for every silent
-    line. ``voiced_words`` are the aligned words of ``voiced_doc(doc)``. Each gap opens in the middle of the pause
-    between the voiced words around it, so no voiced sound is cut."""
+    line. ``voiced_words`` are the aligned words of ``voiced_doc(doc)``. Each gap opens at the quietest spot of the pause
+    between the voiced words around it (``pause_pad.quiet_point``) and is filled with the read's own room tone, so no
+    voiced sound is cut and no gap reads as a dropout (ED-12, BP-60)."""
     import numpy as np
 
     from explainer_engine.production import script as S
@@ -105,39 +106,53 @@ def insert(doc: dict, voiced_words: list[dict], pcm, sr: int):
     for t in toks:
         count[(t["seg"], t["line"])] = count.get((t["seg"], t["line"]), 0) + 1
     # pass 1: original-time insert point for every run of silent lines
+    from explainer_engine.audio import pause_pad as PP
+    pcm = np.asarray(pcm)
+    total = len(pcm) / sr
     j, prev_e, runs = 0, 0.0, []
     for key in order:
         line = doc["segments"][key[0]]["lines"][key[1]]
         n = count[key]
         if voiced(line):
-            if runs and runs[-1]["at"] is None:
-                nxt_s = voiced_words[j]["s"]
-                runs[-1]["at"] = (prev_e + nxt_s) / 2 if nxt_s > prev_e else prev_e
+            if runs and runs[-1]["at"] is None:  # the quietest spot of the pause, as pause_pad finds it (word times are off
+                nxt_s = voiced_words[j]["s"]     # by 0.1-0.2 s: the measured middle can be inside a word, ED-12)
+                lo, hi = max(0.0, prev_e - PP.SEARCH), min(total, nxt_s + PP.SEARCH)
+                mid = (prev_e + nxt_s) / 2 if nxt_s > prev_e else prev_e
+                runs[-1]["at"] = PP.quiet_point(pcm, sr, lo, hi, mid)[0] if hi > lo else mid
             prev_e = voiced_words[j + n - 1]["e"]
             j += n
         elif runs and runs[-1]["at"] is None:
             runs[-1]["lines"].append(key)
         else:
             runs.append({"at": None, "lines": [key]})
-    total = len(pcm) / sr
     for r in runs:
         if r["at"] is None:
             r["at"] = min(total, prev_e + 0.2)
     # pass 2: the new pcm and the full word list
     pieces_pcm, cursor, shift = [], 0, 0.0
     lens = {}
-    for r in runs:
+    src = pcm.astype(pcm.dtype, copy=True)
+    f = max(1, int(PP.FADE_MS / 1000 * sr))
+    for r in runs:  # entered and left on a short fade (no click, no clipped consonant)
+        i = int(round(r["at"] * sr))
+        n0, n1 = min(f, i), min(f, len(src) - i)
+        if n0:
+            src[i - n0:i] *= np.linspace(1, 0, n0).astype(src.dtype)
+        if n1:
+            src[i:i + n1] *= np.linspace(0, 1, n1).astype(src.dtype)
+    fill_db = min(PP.noise_floor_db(pcm, sr), PP.FILL_MAX_DB)  # room tone, never digital zero (BP-60, ED-12)
+    for n, r in enumerate(runs):
         k = int(round(r["at"] * sr))
-        pieces_pcm.append(np.asarray(pcm[cursor:k]))
+        pieces_pcm.append(src[cursor:k])
         dur = sum(seconds(doc["segments"][a]["lines"][b]) for a, b in r["lines"])
-        pieces_pcm.append(np.zeros(int(round(dur * sr)), dtype=np.asarray(pcm).dtype))
+        pieces_pcm.append(PP.room_tone(int(round(dur * sr)), fill_db, 1000 + n, src.dtype))
         cursor = k
         r["shift_before"], r["seconds"] = shift, dur
         shift += dur
         for key in r["lines"]:
             lens[key] = r
-    pieces_pcm.append(np.asarray(pcm[cursor:]))
-    out_pcm = np.concatenate(pieces_pcm) if pieces_pcm else np.asarray(pcm)
+    pieces_pcm.append(src[cursor:])
+    out_pcm = np.concatenate(pieces_pcm) if pieces_pcm else pcm
 
     def shifted(w: dict, t0: float) -> dict:
         add = sum(r["seconds"] for r in runs if r["at"] <= t0 + 1e-9)

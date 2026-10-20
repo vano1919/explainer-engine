@@ -52,7 +52,27 @@ def test_insert_opens_a_gap_and_times_the_bubble_words():
     assert words[4]["s"] >= words[3]["e"]
     assert words[-1]["s"] >= silent[-1]["e"]  # the voice after the bubble moved on by the gap
     k = int(round((words[3]["e"] + 0.05) * sr))
-    assert np.allclose(out[k:k + int(0.2 * sr)], 0.0)  # silence where the bubble is read
+    seg = out[k:k + int(0.2 * sr)]
+    rms_db = 20 * np.log10(np.sqrt(np.mean(seg.astype(np.float64) ** 2)) + 1e-12)
+    assert rms_db < -46 and np.any(seg != 0)  # room tone where the bubble is read, never digital zero (ED-12)
+
+
+def test_gap_opens_at_the_quiet_spot_not_the_measured_middle():
+    """Word times are off by 0.1-0.2 s: the gap goes where the read is really quiet, not into a consonant (ED-12)."""
+    d = doc()
+    sr = 1000
+    voiced = []
+    t = 0.1
+    for tk in S.tokens(SIL.voiced_doc(d)):
+        voiced.append({"w": tk["w"], "s": round(t, 3), "e": round(t + 0.3, 3)})
+        t += 0.4
+    pcm = np.full(int((t + 0.5) * sr), 0.5, dtype=np.float32)
+    e3, s4 = voiced[3]["e"], voiced[4]["s"]
+    q = int(round((e3 + 0.02) * sr))  # the real pause sits early in the gap, the middle still rings
+    pcm[q - 10:q + 10] = 0.0
+    out, words = SIL.insert(d, voiced, pcm, sr)
+    k = int(round((words[4]["s"] - SIL.LEAD_S) * sr))
+    assert abs(k - q) <= 15
 
 
 def test_real_person_never_voiced():

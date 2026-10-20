@@ -1075,3 +1075,13 @@ six named caricatures of `hero_caricatures_v1.jpg` (Nano Banana 2, $0.05; style 
 `cast.<id>.reference` and `look.environment`. For the five other characters he declined a separate collage ("not worth
 drawing just to show"): `reference.first_picture: true` (schema anyOf) makes PV-47 a REVIEW until the hero's first scene
 picture, OK'd on the contact sheet, is recorded as `picture`. Test: `tests/unit/test_reference_collage.py` (+1).
+
+## 2026-10-20 - Titans: hero references in every paint prompt, quiet bubble gaps, face sheets
+
+`compile.hero_refs`: a Gemini picture of a named hero now carries that hero's approved reference picture (and the episode's
+world when no hero is drawn), so no face is painted from the prompt alone (invariant 6, OR-16). `silent.insert` opened the
+bubble gaps in the measured middle of a pause with digital zeros; word times are 0.1-0.2 s off, so 14 gaps cut into sound
+(ED-12). The gap now opens at `pause_pad.quiet_point` (the quietest 10 ms within `SEARCH` of the pause) on a 10 ms fade and
+is filled with the read's room tone (BP-60). Titans: face sheets (VB-09) for the nine heroes with expression beats; Belfort's
+14 expressions cut to 12 (curious -> surprised, confused -> doubtful in S12, S13, S15 and the Shorts SH07, SH09), Cardone
++determined, O'Leary and Cuban +deadpan. Tests: `test_silent_lines.py` (+1, the gap is room tone), `test_reference_collage.py` (+1).

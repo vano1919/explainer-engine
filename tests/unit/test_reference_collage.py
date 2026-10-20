@@ -80,3 +80,16 @@ def test_a_waived_collage_draws_the_first_scene_picture_and_waits_for_the_creato
     d["cast"]["vito"]["reference"] = {"first_picture": True, "approved_at": "2026-10-20"}
     assert [f["severity"] for f in RA.check(d)] == ["FAIL"]
     assert S.schema_errors(d)
+
+
+def test_a_gemini_picture_of_a_hero_is_painted_against_the_heros_approved_reference():
+    from explainer_engine.production import compile as C
+    d = copy.deepcopy(BASE)
+    d["cast"]["vito"]["reference"] = REC
+    d["look"]["style_refs"] = ["v13_table"]
+    assert C.hero_refs(d, {"heroes": ["vito"]}, ["v13_table"]) == ["v13_table", "p_vito"]
+    assert C.hero_refs(d, {"heroes": []}, ["v13_table"]) == ["v13_table"]
+    d["cast"]["vito"]["reference"] = {"first_picture": True, "approved_by": "c", "approved_at": "2026-10-20"}
+    assert C.hero_refs(d, {"heroes": ["vito"]}, []) == []  # no approved picture yet and no world pick: nothing
+    d["look"]["environment"] = dict(REC, picture="v13_table")
+    assert C.hero_refs(d, {"heroes": ["vito"]}, []) == ["v13_table"]  # the approved world's look instead

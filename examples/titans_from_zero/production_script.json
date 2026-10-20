@@ -175,6 +175,24 @@
         "picture": "p_musk",
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20"
+      },
+      "face_sheet": {
+        "id": "musk_faces_v1",
+        "ref": "p_musk",
+        "set": [
+          "neutral",
+          "joyful",
+          "sad",
+          "scared",
+          "angry",
+          "surprised",
+          "determined",
+          "doubtful",
+          "worried",
+          "confused",
+          "curious",
+          "deadpan"
+        ]
       }
     },
     "belfort": {
@@ -228,6 +246,24 @@
         "picture": "p_belfort",
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20"
+      },
+      "face_sheet": {
+        "id": "belfort_faces_v1",
+        "ref": "p_belfort",
+        "set": [
+          "neutral",
+          "joyful",
+          "sad",
+          "scared",
+          "angry",
+          "surprised",
+          "smug",
+          "amused",
+          "determined",
+          "deadpan",
+          "worried",
+          "doubtful"
+        ]
       }
     },
     "oleary": {
@@ -282,6 +318,23 @@
         "picture": "p_oleary",
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20"
+      },
+      "face_sheet": {
+        "id": "oleary_faces_v1",
+        "ref": "p_oleary",
+        "set": [
+          "neutral",
+          "joyful",
+          "sad",
+          "scared",
+          "angry",
+          "surprised",
+          "curious",
+          "determined",
+          "smug",
+          "amused",
+          "deadpan"
+        ]
       }
     },
     "trump": {
@@ -335,6 +388,22 @@
         "picture": "p_trump",
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20"
+      },
+      "face_sheet": {
+        "id": "trump_faces_v1",
+        "ref": "p_trump",
+        "set": [
+          "neutral",
+          "joyful",
+          "sad",
+          "scared",
+          "angry",
+          "surprised",
+          "smug",
+          "doubtful",
+          "amused",
+          "deadpan"
+        ]
       }
     },
     "kiyosaki": {
@@ -389,6 +458,24 @@
         "picture": "p_kiyosaki",
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20"
+      },
+      "face_sheet": {
+        "id": "kiyosaki_faces_v1",
+        "ref": "p_kiyosaki",
+        "set": [
+          "neutral",
+          "joyful",
+          "sad",
+          "scared",
+          "angry",
+          "surprised",
+          "confused",
+          "determined",
+          "worried",
+          "doubtful",
+          "curious",
+          "deadpan"
+        ]
       }
     },
     "cuban": {
@@ -442,6 +529,22 @@
         "picture": "p_cuban",
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20"
+      },
+      "face_sheet": {
+        "id": "cuban_faces_v1",
+        "ref": "p_cuban",
+        "set": [
+          "neutral",
+          "joyful",
+          "sad",
+          "scared",
+          "angry",
+          "surprised",
+          "curious",
+          "determined",
+          "smug",
+          "deadpan"
+        ]
       }
     },
     "cardone": {
@@ -458,6 +561,20 @@
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20",
         "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+      },
+      "face_sheet": {
+        "id": "cardone_faces_v1",
+        "ref": "s03_bank",
+        "set": [
+          "neutral",
+          "joyful",
+          "sad",
+          "scared",
+          "angry",
+          "surprised",
+          "worried",
+          "determined"
+        ]
       }
     },
     "hormozi": {
@@ -542,6 +659,20 @@
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20",
         "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+      },
+      "face_sheet": {
+        "id": "bezos_faces_v1",
+        "ref": "s06_books",
+        "set": [
+          "neutral",
+          "joyful",
+          "sad",
+          "scared",
+          "angry",
+          "surprised",
+          "deadpan",
+          "amused"
+        ]
       }
     },
     "vance": {
@@ -604,6 +735,22 @@
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20",
         "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+      },
+      "face_sheet": {
+        "id": "vance_faces_v1",
+        "ref": "s12_ash",
+        "set": [
+          "neutral",
+          "joyful",
+          "sad",
+          "scared",
+          "angry",
+          "surprised",
+          "smug",
+          "deadpan",
+          "amused",
+          "doubtful"
+        ]
       }
     }
   },
@@ -8252,7 +8399,7 @@
             {
               "at": "rich by Friday",
               "kind": "expression",
-              "expression": "curious",
+              "expression": "surprised",
               "why": "Belfort hears rich by Friday [rich by Friday]",
               "who": "belfort"
             }
@@ -9044,7 +9191,7 @@
             {
               "at": "With what",
               "kind": "expression",
-              "expression": "confused",
+              "expression": "doubtful",
               "why": "Belfort asks: With what? [With what]"
             }
           ],
@@ -10630,7 +10777,7 @@
             {
               "at": "pick him",
               "kind": "expression",
-              "expression": "confused",
+              "expression": "surprised",
               "why": "Belfort is confused: I didn't pick him [pick him]",
               "who": "belfort"
             }
@@ -13600,7 +13747,7 @@
             {
               "at": "rich by Friday",
               "kind": "expression",
-              "expression": "curious",
+              "expression": "surprised",
               "why": "Belfort hears rich by Friday [rich by Friday]",
               "who": "belfort"
             }
@@ -14354,7 +14501,7 @@
             {
               "at": "pick him",
               "kind": "expression",
-              "expression": "confused",
+              "expression": "doubtful",
               "why": "Belfort is confused: I didn't pick him [pick him]",
               "who": "belfort"
             }
