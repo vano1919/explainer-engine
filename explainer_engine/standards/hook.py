@@ -8,7 +8,7 @@ Wired in ``.claude/settings.json`` (matcher ``mcp__ElevenLabs__creative_.*``). C
 * A paid audio generation (speech, sound effect, music) needs ``generations_count`` 1 (the connector's default is 4, four
   times the credits; EL-10), the active episode's rulebook ``paid_assets`` checkpoint to pass, and no FAIL from the editorial
   gate (OR-10: ``production/editorial_gate.check`` on the script and its ``editorial_review.json``).
-* New music or sound effects also need a recorded library search (OR-17, D-61: ``python -m explainer_engine.assets_reuse``):
+* New music or sound effects also need a recorded library search (OR-18, D-63: ``python -m explainer_engine.assets_reuse``):
   the reusable library is looked at first, and new is generated only when nothing there fits.
 * The active episode is named in ``.claude/active_episode.json``: ``{"episode": "<folder with episode_rules.json>"}``. An
   ``"override": "<the creator's reason>"`` lets a paid call through without the gate (voice auditions before a rulebook
@@ -71,8 +71,8 @@ def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
         return None
     folder = root / cfg.get("episode", "")
     kind = _sound_kind(tool, tool_input)
-    if kind and not _has_lookup(folder, kind):  # OR-17 (D-61): the library is searched before new music or sounds are paid for
-        return (f"OR-17: search the sound library first and record the search: python -m explainer_engine.assets_reuse "
+    if kind and not _has_lookup(folder, kind):  # OR-18 (D-63): the library is searched before new music or sounds are paid for
+        return (f"OR-18: search the sound library first and record the search: python -m explainer_engine.assets_reuse "
                 f"{cfg.get('episode', '<episode>')} --kind {kind} --tags <tags> --decide reuse|generate_new; "
                 "generate new only when nothing in the library fits")
     rules = folder / "episode_rules.json"

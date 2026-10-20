@@ -1,7 +1,7 @@
-"""Register an already-generated sound into the reusable library (D-34, D-61): the ElevenLabs connector's music and
+"""Register an already-generated sound into the reusable library (D-34, D-63): the ElevenLabs connector's music and
 sound effects arrive as MP3/stereo files, this converts them to the library's 16-bit mono WAV (ffmpeg) and records id,
 tags, source (model, prompt, cost), licence and review through ``sfx_library.add``, so future episodes find them by
-tags instead of paying again (OR-17).
+tags instead of paying again (OR-18).
 
     python -m explainer_engine.audio.register <file.mp3|wav> --name heist_tension --category music --tags tense,heist
         [--take 1] [--loop | --one-shot] [--model eleven_music_v2_5] [--prompt "..."] [--cost-usd 0.5]

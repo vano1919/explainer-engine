@@ -1,4 +1,4 @@
-"""Library first (OR-17, D-61): the lookup record and the ElevenLabs hook's refusal of unsearched music/SFX."""
+"""Library first (OR-18, D-63): the lookup record and the ElevenLabs hook's refusal of unsearched music/SFX."""
 
 from __future__ import annotations
 
@@ -55,7 +55,7 @@ def test_hook_refuses_music_generation_without_a_recorded_search(tmp_path):
     root = _root_with_episode(tmp_path)
     call = {"node_type": "music-generation", "generations_count": 1}
     reason = hook.decide("mcp__ElevenLabs__creative_generate_in_flow", call, root)
-    assert reason and "OR-17" in reason
+    assert reason and "OR-18" in reason
     AR.record(root / "ep", kind="music", tags=["tense"], matches=[], decision="generate_new")
     reason = hook.decide("mcp__ElevenLabs__creative_generate_in_flow", call, root)
     assert reason and "OR-11" in reason  # past the library gate; the rulebook gate still stands

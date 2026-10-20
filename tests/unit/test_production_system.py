@@ -87,7 +87,7 @@ def test_hook_runs_the_rulebook_gate_and_logs_overrides(tmp_path):
     rules = json.loads(RULES.read_text(encoding="utf-8"))
     root = _ep(tmp_path, rules, {"episode": "ep"})
     call = {"generations_count": 1, "node_type": "music"}
-    assert "OR-17" in hook.decide("mcp__ElevenLabs__creative_generate_in_flow", call, root)  # the library is searched first
+    assert "OR-18" in hook.decide("mcp__ElevenLabs__creative_generate_in_flow", call, root)  # the library is searched first
     from explainer_engine import assets_reuse
     assets_reuse.record(root / "ep", kind="music", tags=["test"], matches=[], decision="generate_new")
     assert "paid_assets" in hook.decide("mcp__ElevenLabs__creative_generate_in_flow", call, root)  # not stamped yet

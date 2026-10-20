@@ -137,7 +137,7 @@ def cmd_plan(a) -> int:
         items = items[:a.limit]
     plan = P.make(a.id, doc["episode"]["id"], items, provider=a.provider, model=a.model, size=a.size, batch=a.batch,
                   purpose=a.purpose or "", reusable=a.reusable)
-    from explainer_engine.imagegen import picture_library as PL  # OR-17 (D-61): the library is looked at before new is painted
+    from explainer_engine.imagegen import picture_library as PL  # OR-18 (D-63): the library is looked at before new is painted
     for it in plan["items"]:
         found = PL.find_for_prompt(it["prompt"])
         if found:

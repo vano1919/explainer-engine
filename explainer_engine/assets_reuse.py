@@ -1,4 +1,4 @@
-"""Library first (OR-17, D-61, the creator 2026-10-20): before any new background music, sound effect or reusable
+"""Library first (OR-18, D-63, the creator 2026-10-20): before any new background music, sound effect or reusable
 picture is generated, the libraries are searched and the search is recorded in the episode's ``asset_reuse.json``.
 The ElevenLabs hook (``standards/hook.py``) refuses a paid music or sound-effect call for an episode without such a
 record, and ``paint plan`` lists a prompt's library matches on the plan (PP-08). New is generated only when nothing
@@ -58,7 +58,7 @@ def record(episode_dir: Path, *, kind: str, tags: list[str], matches: list[dict]
 
 
 def has_lookup(episode_dir: Path, kind: str) -> bool:
-    """Whether the episode recorded at least one decided library search of this kind (what the hook checks, OR-17)."""
+    """Whether the episode recorded at least one decided library search of this kind (what the hook checks, OR-18)."""
     return any(e.get("kind") == kind and e.get("decision") in ("reuse", "generate_new")
                for e in load_record(episode_dir).get("lookups", []))
 
@@ -80,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
         entry = record(Path(a.episode), kind=a.kind, tags=tags, matches=matches, decision=a.decide, why=a.why)
         print(f"recorded: {entry['decision']} ({Path(a.episode) / RECORD_NAME})")
     else:
-        print("nothing recorded (pass --decide reuse|generate_new); a paid music/sfx call needs the record (OR-17)")
+        print("nothing recorded (pass --decide reuse|generate_new); a paid music/sfx call needs the record (OR-18)")
     return 0
 
 

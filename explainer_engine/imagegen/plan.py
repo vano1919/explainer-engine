@@ -145,7 +145,7 @@ def check(plan: dict, doc: dict | None = None) -> list[dict]:
                 add("PP-06", it["id"], "the script's prompt changed since the plan was made: make the plan again")
     if not plan.get("purpose", "").strip():
         add("PP-07", plan["id"], "say what the batch is for (the creator's rule: every paid call states its purpose)", "REVIEW")
-    for it in plan["items"]:  # OR-17 (D-61): the picture library had matches when the plan was made; the creator decides
+    for it in plan["items"]:  # OR-18 (D-63): the picture library had matches when the plan was made; the creator decides
         if it.get("library"):
             add("PP-08", it["id"], "the picture library may already have this: " + ", ".join(it["library"]) +
                 " (fetch with python -m explainer_engine.imagegen.picture_library fetch, or say in the approval why not)",

@@ -1,4 +1,4 @@
-"""Registering connector-generated sounds into the library (D-61): conversion, loop defaults, source and licence record."""
+"""Registering connector-generated sounds into the library (D-63): conversion, loop defaults, source and licence record."""
 
 from __future__ import annotations
 

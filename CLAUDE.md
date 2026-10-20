@@ -99,8 +99,8 @@ explainer_engine/standards/ rulebook.py (episode_rules.json: check, gate, stamp,
 explainer_engine/research/ fan_brief.py (crossover fan brief), hypotheses.py (story premises compared, HY rules)
 explainer_engine/qa/      scorecard.py, engagement.py (anti-boredom gate, ENG), targets.py (the one set of loudness numbers)
 explainer_engine/imagegen/ gemini.py (client, batch tier), routing.py (tiers draft/standard/premium, D-52),
-                          picture_library.py (reusable pictures: tags, add/find/fetch, D-61)
-explainer_engine/assets_reuse.py  library first (OR-17, D-61): search + record before any new music/SFX/reusable picture;
+                          picture_library.py (reusable pictures: tags, add/find/fetch, D-63)
+explainer_engine/assets_reuse.py  library first (OR-18, D-63): search + record before any new music/SFX/reusable picture;
                           the hook refuses a paid music/SFX call without the record; audio/register.py saves new takes
 .claude/settings.json     PreToolUse hook on the ElevenLabs connector -> standards/hook.py (pictures refused, one take, rulebook gate)
 explainer_engine/schemas/ versioned JSON Schemas (rights_manifest, fan_brief, episode_rules, production_script, ...)

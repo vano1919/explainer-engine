@@ -1,4 +1,4 @@
-"""The reusable picture library (D-61): register, find by tags, prompt matches (PP-08), fetch, validate."""
+"""The reusable picture library (D-63): register, find by tags, prompt matches (PP-08), fetch, validate."""
 
 from __future__ import annotations
 

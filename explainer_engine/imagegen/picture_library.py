@@ -1,6 +1,6 @@
-"""The reusable picture library (D-61): channel assets — props, backgrounds, textures, character art, thumbnail parts —
+"""The reusable picture library (D-63): channel assets — props, backgrounds, textures, character art, thumbnail parts —
 stored once in ``assets/pictures/library/``, described in ``manifest.json`` and found by tags, so an episode looks here
-before any paid paint (OR-17). Episode-bound pictures (a scene of one story) do not belong here; they live in the
+before any paid paint (OR-18). Episode-bound pictures (a scene of one story) do not belong here; they live in the
 episode's picture folders.
 
 Layout: ``<root>/manifest.json`` and ``<root>/<kind>/<id>.<ext>`` (png, jpg or webp; the files are committed like the
