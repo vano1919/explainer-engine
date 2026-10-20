@@ -2,11 +2,11 @@
   "schema": "explainer.episode_rules",
   "version": 1,
   "episode_id": "titans_from_zero",
-  "rulebook_version": 1,
-  "status": "provisional",
+  "rulebook_version": 2,
+  "status": "final",
   "identity": {
     "topic": "What If 10 Business Titans Went Broke? Five Years to Prove It Wasn't Luck: ten real living business people lose everything on one courthouse bench and must earn without credit for five years",
-    "format": "production_script/3 dialogue mini-film, about 13 minutes, 2D hand-drawn caricatures, narrator plus voiced heroes, 10 Shorts",
+    "format": "production_script/3 dialogue mini-film, about 13 minutes, 2D hand-drawn caricatures; the narrator and the invented Vance are voiced, the real people speak in speech bubbles (D-62); 10 Shorts",
     "audience": "US general audience, adults and teens, English; viewers who follow business personalities and argue about whether the rich earned it",
     "audience_value": "the viewer finally sees the skill-versus-luck argument played out instead of asserted, with each titan's public persona tested by one concrete problem",
     "central_question": "Strip ten famous fortunes down to what is inside their heads and take away every lender: was their money ever skill, or was it luck?",
@@ -47,7 +47,7 @@
         "metadata",
         "qa"
       ],
-      "requirement": "Disclosure follows the treatment: the episode is fully drawn 2D animation of an obviously invented situation, so YouTube's altered/synthetic label is not required by itself. It becomes required (Studio Attributes, 'AI use': Yes; API status.containsSyntheticMedia) the moment any picture, voice or Short could be mistaken for a real recording or photograph of one of the real people.",
+      "requirement": "Disclosure follows the treatment: the episode is fully drawn 2D animation of an obviously invented situation and no real person's voice is synthesised (D-62), so YouTube's altered/synthetic label is not required by itself. It becomes required (Studio Attributes, 'AI use': Yes; API status.containsSyntheticMedia) the moment any picture, thumbnail or Short could be mistaken for a real photograph or recording of one of the real people.",
       "sources": [
         {
           "url": "https://support.google.com/youtube/answer/14328491",
@@ -128,7 +128,7 @@
         "script",
         "qa"
       ],
-      "requirement": "No ElevenLabs generation speaks as an elected official or a political candidate. Donald Trump (the sitting US president) is drawn and named, but his lines are not synthesised as his speech (RK-01); the same holds for any official or candidate a later revision adds.",
+      "requirement": "No synthetic voice speaks as a real living person (D-62): every line of the seven speaking real people (Trump, Musk, Belfort, O'Leary, Kiyosaki, Cuban, Bezos) carries voiced: false and reaches the viewer only as a drawn speech bubble, in the long video and in every Short; no ElevenLabs or other generation reads, hums, laughs or murmurs for them. Only the narrator and the invented Vance are voiced. This holds for any real person, official or candidate a later revision adds, until the provider grants a fiction/parody permission or the person consents (D-62's revisit conditions).",
       "sources": [
         {
           "url": "https://elevenlabs.io/use-policy",
@@ -137,6 +137,13 @@
           "verified": true,
           "baseline_id": "B-10",
           "note": "re-read 2026-10-20, page 'Last updated 09 October 2026' (V-51): s.3 no 'cloning, synthesizing, or impersonating the voice, identity, or likeness of any living individual' without 'explicit and informed consent or other valid authorization', no false endorsement; s.4 'Impersonating political candidates or elected officials without authorization'; s.10 disclose AI where law requires or not doing so would materially mislead. No parody, satire or fiction carve-out on the page."
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/DECISIONS_AND_OPEN_QUESTIONS.md",
+          "checked": "2026-10-20",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "D-62, creator 2026-10-20: real living people speak only in speech bubbles, never through a synthetic voice; PV-55 (production/silent.py) fails any voiced line of a cast member marked real_person"
         }
       ]
     },
@@ -151,7 +158,7 @@
         "voice",
         "qa"
       ],
-      "requirement": "Voices of the other living people are ElevenLabs library voices only: no clone, no voice designed from their recordings, no prompt, tag or setting that names them or asks for their accent, catchphrase cadence or vocal quirks; emotion tags only. Whether they are voiced at all waits for the creator's decision on RK-02; a test read of each cast voice is heard before the full read, and a voice that a listener could take for the real person is replaced.",
+      "requirement": "The two voiced cast members (narrator 'Brad - Warm, Trusted Storyteller', Vance 'Silas - Weathered Villain') are ElevenLabs library voices: no clone, no voice design, no prompt, tag or setting that names a real person or asks for a real person's accent, cadence or quirks; emotion tags only. The real people's cast.*.voice.style texts are documentation of who they are and are never sent to a provider. A test read of each voiced cast member is heard before the full read.",
       "sources": [
         {
           "url": "https://elevenlabs.io/use-policy",
@@ -278,14 +285,15 @@
         "image",
         "qa"
       ],
-      "requirement": "No photograph of the real people (press, agency, social media, stills) is a generator input, reference upload or tracing source: those photographs belong to their photographers. Caricatures are painted from the cast cards and our own hero references (D-55); a picture that drifts into photo-realism or into a recognisable press photo's pose and framing is repainted.",
+      "requirement": "The real people are drawn as clearly recognisable caricatures of the named person (the creator, 2026-10-20): recognisable through exaggerated public features and props in the channel's drawn style (cast cards), never a realistic lookalike or a portrait that could pass as a photograph. No photograph of them (press, agency, social media, stills) is a generator input, reference upload or tracing source: those photographs belong to their photographers. Caricatures are painted from the cast cards and our own hero references (D-55); a picture that drifts into photo-realism or into a recognisable press photo's pose and framing is repainted. If an image provider refuses a named person, the prompt is not reworded to slip past the refusal (Google policy 2.3); the batch goes back to the creator for another provider or route. ElevenLabs image tools are never used for the real people (its s.3 covers likeness; the session hook refuses pictures).",
       "sources": [
         {
           "url": "https://policies.google.com/terms/generative-ai/use-policy",
-          "checked": "2026-10-17",
+          "checked": "2026-10-20",
           "kind": "provider_terms",
           "verified": true,
-          "baseline_id": "B-11"
+          "baseline_id": "B-11",
+          "note": "re-read 2026-10-20, 'Last modified: December 17, 2024' (V-57): 4.2 no impersonating a living or dead individual without explicit disclosure in order to deceive; 2.3 no circumventing safety filters; 1.6 no biometrics without legally required consent; no clause on public figures, no parody carve-out"
         },
         {
           "url": "https://www.copyright.gov/fair-use/",
@@ -300,6 +308,14 @@
           "kind": "project_invariant",
           "verified": true,
           "note": "invariants 5 and 6: no copied protected IP; one drawn identity"
+        },
+        {
+          "url": "https://elevenlabs.io/use-policy",
+          "checked": "2026-10-20",
+          "kind": "provider_terms",
+          "verified": true,
+          "baseline_id": "B-10",
+          "note": "s.3 'voice, identity, or likeness of any living individual' (V-51)"
         }
       ]
     },
@@ -370,7 +386,7 @@
         "sound",
         "qa"
       ],
-      "requirement": "Every music track and generated sound has a licence record before final_qa. Music comes from ElevenLabs or a per-track verified free library (D-52); the two Lyria tracks in the plan are outside D-52 and need the creator's decision (RK-17).",
+      "requirement": "Every music track and generated sound has a licence record before final_qa. Music comes from ElevenLabs or a per-track verified free library (D-52); the two Lyria tracks in the plan are used only if the Gemini terms for Lyria output are read and recorded first, otherwise ElevenLabs music replaces them (RK-17).",
       "sources": [
         {
           "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/DECISIONS_AND_OPEN_QUESTIONS.md",
@@ -544,7 +560,7 @@
   "risks": [
     {
       "id": "RK-01",
-      "element": "Donald Trump's spoken lines (S02 x1, S05 x6, S07 x3, S10 x6; Shorts SH02 x1, SH05 x5) synthesised by ElevenLabs with the library voice 'Flint'",
+      "element": "Donald Trump's spoken lines (19 in segments and Shorts) synthesised by ElevenLabs with the library voice 'Flint'",
       "category": "synthetic_voice",
       "source_type": "original",
       "status": "BLOCK",
@@ -567,16 +583,24 @@
         "voice_imitated": false,
         "estate_or_publicity_check": "living; publicity questions under the law of his domicile (Florida) and New York; none read for this person beyond NY s.51 (V-54)"
       },
-      "evidence": "ElevenLabs Prohibited Use Policy, last updated 09 October 2026, read 2026-10-20 (V-51): section 4 lists 'Impersonating political candidates or elected officials without authorization'; section 3 forbids 'synthesizing, or impersonating the voice, identity, or likeness of any living individual' without explicit, informed consent. No parody or fiction exception appears on the page. Donald Trump is the sitting (47th) US president (cast.trump.voice.traits.documented). The casting text in production_script.json describes his own vocal signature ('loud, raspy, nasal new york voice ... stressing a word then repeating it, sing-song rises and sudden hushed asides') and the voice was picked without samples (creator 2026-10-20), so nobody has yet heard whether it reads as an impression.",
+      "evidence": "ElevenLabs Prohibited Use Policy, last updated 09 October 2026, read 2026-10-20 (V-51): section 4 lists 'Impersonating political candidates or elected officials without authorization'; section 3 forbids 'synthesizing, or impersonating the voice, identity, or likeness of any living individual' without explicit, informed consent. No parody or fiction exception appears on the page. Donald Trump is the sitting (47th) US president. The standards director rated this BLOCK on 2026-10-20. The creator first chose to keep the voiced lines (thread 2026-10-20 15:18 UTC); that choice was superseded the same day by D-62. Re-checked 2026-10-20 against production_script.json: all 19 Trump lines (S02 1, S05 5, S07 3, S10 6, SH05 4) carry voiced: false, cast.trump.voice has no voice_id, PV-55 reports nothing.",
       "rationale": "Generating speech that is attributed to a named sitting elected official, with a voice cast from a description of his real voice, is what the provider's section 4 names as prohibited, and it carries no exception for an obviously fictional cartoon. This is a provider-terms constraint, not a legal finding: the drawn satire itself is not the problem (RK-03 is PASS), only producing his speech through ElevenLabs. Using the service against its terms risks the account the whole channel's narration depends on.",
-      "mitigation": "Keep Trump in the story, drawn and named, and keep every one of his lines' content and timing; change only how they reach the ear. Options for the creator, smallest first: (a) the narrator carries Trump's lines as reported speech in the narrator's own voice ('Trump says the banks never came back first. The cameras did.'); (b) his lines appear as drawn speech bubbles on screen with a non-vocal sound cue; (c) a human performer (the creator or a hired actor) records them outside ElevenLabs, with his or her consent and a recorded decision on the impression question. The script change for (a) or (b) is a re-approval of the affected lines (OR-17). Removed when the script no longer routes a Trump speaker line to ElevenLabs.",
+      "mitigation": "Applied: option (b). Trump stays drawn and named and keeps every line's content and timing; his lines are speech bubbles (D-62, production/silent.py), no synthetic voice. Reopened only if a revision routes a real person's line to a voice.",
       "dependencies": [
         "script (S02, S05, S07, S10, SH02, SH05 speaker attribution)",
         "voice (cast.trump.voice unused)",
         "edit (lip and expression beats on his lines)",
         "shorts",
         "creator re-approval (OR-17)"
-      ]
+      ],
+      "decision": {
+        "by": "creator",
+        "date": "2026-10-20",
+        "answer": "D-62: real living people speak only in speech bubbles, never through a synthetic voice; Trump's lines are voiced: false. Supersedes the same day's earlier choice to keep his voiced lines.",
+        "evidence": "docs/DECISIONS_AND_OPEN_QUESTIONS.md D-62 (decided by creator 2026-10-20, titans thread); provider terms V-51"
+      },
+      "removed": true,
+      "resolved": "2026-10-20: D-62 applied in production_script.json; no Trump line is voiced (PV-55 clean); the edit shows his lines as bubbles and his mouth never lip-syncs a voice."
     },
     {
       "id": "RK-02",
@@ -591,16 +615,24 @@
       "jurisdictions": [
         "US"
       ],
-      "evidence": "ElevenLabs Prohibited Use Policy (09 Oct 2026, read 2026-10-20, V-51) s.3: no 'cloning, synthesizing, or impersonating the voice, identity, or likeness of any living individual' without explicit, informed consent; no parody or fiction carve-out; no consent exists from any of the six. The voices are library voices, not clones (cast.*.voice.voice_id; PV-10 checks pass), chosen by type and picked without samples (creator 2026-10-20), and the read sends only emotion tags. But several casting texts describe the person's own vocal signature: Musk 'halts and restarts mid-sentence ... a faint south african flavour', O'Leary 'Canadian-English ... flat as a ledger', Kiyosaki 'a Hawaiian-island looseness', Belfort 'new york ... salesman's rolling patter'. YouTube's impersonation policy (2801947, re-read 2026-10-20) bars an AI voice that falsely implies a person authorises the content and weighs parody on removal requests.",
+      "evidence": "ElevenLabs Prohibited Use Policy (09 Oct 2026, read 2026-10-20, V-51) s.3: no 'cloning, synthesizing, or impersonating the voice, identity, or likeness of any living individual' without explicit, informed consent; no parody or fiction carve-out; no consent exists from any of the six. Several casting texts describe the person's own vocal signature (Musk, O'Leary, Kiyosaki, Belfort). The creator first chose to keep the six voiced (thread 2026-10-20 15:18 UTC); superseded the same day by D-62. Re-checked 2026-10-20 against production_script.json: Musk 39, Belfort 34, O'Leary 21, Kiyosaki 16, Cuban 12 and Bezos 2 lines all carry voiced: false (segments and Shorts), none of the six has a voice_id, PV-55 reports nothing.",
       "rationale": "Whether a non-cloned library voice speaking invented lines as a named living person is 'synthesizing ... the identity' of that person under the provider's terms is genuinely unclear: the words cover it on a broad reading, the drawn and obviously fictional treatment argues against deception, and the page gives no example either way. The casting texts aimed at each person's recognisable sound push towards impression. Neither the provider's intent nor the audible result is known yet, so the creator must decide before credits are spent.",
-      "mitigation": "Question for the creator (or ElevenLabs support in writing): (a) keep the six library voices, audition each on one line first, replace any voice that a listener could take for the real person, and accept the remaining provider-terms risk in a recorded decision; (b) voice only the invented Vance and the narrator, and carry the real people's lines as the narrator's reported speech or as speech bubbles (the same treatment as RK-01, consistent across the cast); (c) ask ElevenLabs support for a written answer on named real people in clearly fictional animation before any read. Keep every line's content in all three.",
+      "mitigation": "Applied: option (b), consistent with RK-01. The six stay drawn and named and keep every line's content; their lines are speech bubbles, only Vance and the narrator are voiced.",
       "dependencies": [
         "voice",
         "script (if b)",
         "edit",
         "shorts",
         "creator decision"
-      ]
+      ],
+      "decision": {
+        "by": "creator",
+        "date": "2026-10-20",
+        "answer": "D-62: no synthetic voice of any real living person; the six heroes' lines are voiced: false and shown as speech bubbles. Supersedes the same day's earlier choice to keep their library voices.",
+        "evidence": "docs/DECISIONS_AND_OPEN_QUESTIONS.md D-62 (decided by creator 2026-10-20, titans thread); provider terms V-51"
+      },
+      "removed": true,
+      "resolved": "2026-10-20: D-62 applied; no line of the six is voiced (PV-55 clean)."
     },
     {
       "id": "RK-03",
@@ -630,7 +662,7 @@
         "estate_or_publicity_check": "living; publicity questions under the law of his domicile (Florida) and New York; none read for this person beyond NY s.51 (V-54)"
       },
       "evidence": "Premise and every event are invented in an obviously impossible frame (ten titans bankrupt on one Monday); the only real fact he states is C-03 (six corporate bankruptcy filings; PolitiFact, NBC); no politics (scenario 'Trump does not mention politics'); drawn 2D caricature (cast card). Hustler v. Falwell (V-53): a public figure cannot recover for a parody that 'could not reasonably be understood as describing actual facts'. Georgia: opinion has absolute privilege (Art. 4), defamation needs a substantially false fact (Art. 1(e)).",
-      "rationale": "No material issue found in the depiction itself: it is drawn, comic and plainly invented, it ends with him succeeding, and the one real fact is sourced. The open problem is only his synthesised voice (RK-01)."
+      "rationale": "No material issue found in the depiction itself: it is drawn, comic and plainly invented, it ends with him succeeding, and the one real fact is sourced. His lines are speech bubbles, not a synthetic voice (D-62, RK-01)."
     },
     {
       "id": "RK-04",
@@ -746,7 +778,7 @@
         "estate_or_publicity_check": "living; publicity law of the person's domicile not read beyond NY s.51 (V-54) and the unread California 3344"
       },
       "evidence": "Invented, flattering-to-neutral role; no real deal, show or company named.",
-      "rationale": "No material issue found in the depiction; his voice is part of RK-02."
+      "rationale": "No material issue found in the depiction; he speaks only in speech bubbles (D-62, RK-02), so no voice question remains."
     },
     {
       "id": "RK-08",
@@ -873,14 +905,20 @@
       "jurisdictions": [
         "US"
       ],
-      "evidence": "Vance is invented (cast.vance: grey suit, grey tie, grey smile; voice 'Silas - Weathered Villain'), but the surname is that of the sitting US Vice President, JD Vance, and the same video stars the sitting president; S12 and Short SH07 put the name on screen ('holds out a card. Vance.').",
+      "evidence": "Vance is invented (cast.vance: grey suit, grey tie, grey smile; voice 'Silas - Weathered Villain'), but the surname is that of the sitting US Vice President, JD Vance, and the same video stars the sitting president; S12 and Short SH07 put the name on screen ('holds out a card. Vance.'). Re-checked 2026-10-20 after D-62: Vance is now one of only two voiced characters; his voice 'Silas' is a library voice whose style names no person and describes no real official's voice, and his card (grey suit, grey tie, grey smile) does not resemble one, so the creator's decision still holds as recorded.",
       "rationale": "US viewers in 2026 are likely to hear the name as a wink at the Vice President, which would turn the story's only fraudster into an implied real official proposing a cover-up: that pulls the episode into politics (ER-08, advertiser suitability), invites a reading of false implication about a real person, and puts an ElevenLabs voice on a character some will read as an elected official (ER-03). The name was chosen creatively and the drawing does not resemble him, so how strongly viewers make the link is uncertain; the creator decides.",
-      "mitigation": "Recommended: rename the invented buyer to a surname with no prominent living public figure behind it (one word in S12, SH07 and cast.vance; a re-approval of those lines under OR-17). Alternative: keep 'Vance' with a recorded decision that the link is acceptable, and keep his drawing far from any real official.",
+      "mitigation": "Decided (creator 2026-10-20): keep 'Vance' as written; his drawing and voice stay far from any real official (ER-08). Options that were offered: Recommended: rename the invented buyer to a surname with no prominent living public figure behind it (one word in S12, SH07 and cast.vance; a re-approval of those lines under OR-17). Alternative: keep 'Vance' with a recorded decision that the link is acceptable, and keep his drawing far from any real official.",
       "dependencies": [
         "script (S12, SH07, cast.vance.names)",
         "image (card text)",
         "creator decision"
-      ]
+      ],
+      "decision": {
+        "by": "creator",
+        "date": "2026-10-20",
+        "answer": "Keep the name Vance as written; he is an invented character and nothing in the script ties him to any real person.",
+        "evidence": "vano1919 (ვანო), thread 2026-10-20 15:18 UTC"
+      }
     },
     {
       "id": "RK-13",
@@ -913,26 +951,27 @@
       "jurisdictions": [
         "US"
       ],
-      "evidence": "The Shorts' metadata is not written yet; each ends with 'Watch the full video'; SH03 shows Trump's card declined and Kiyosaki refused credit.",
+      "evidence": "The Shorts' metadata is not written yet; each ends with 'Watch the full video'; SH03 shows Trump's card declined and Kiyosaki refused credit. The real people's lines in the Shorts are bubbles too (PV-55 checks Shorts lines), so no Short carries a synthetic voice of a real person.",
       "rationale": "Drawn and comic, the Shorts cannot pass as news, and ER-06 puts the what-if framing in each Short's own title or first description line; with that, no material issue found. QA checks it at final_qa."
     },
     {
       "id": "RK-15",
-      "element": "Caricature pictures of ten living people (cast cards, hero references, thumbnail)",
+      "element": "Clearly recognisable caricatures of ten living people (cast cards, hero references, thumbnail; the creator 2026-10-20: recognisable caricatures of those people, not lookalikes)",
       "category": "image",
       "source_type": "original",
       "status": "PASS",
       "rules": [
         "ER-07",
         "ER-01",
+        "ER-05",
         "ER-14"
       ],
       "jurisdictions": [
         "US",
         "GE"
       ],
-      "evidence": "No picture of this episode exists yet; cards describe exaggerated features and props (cast.*.card); Google's generative AI policy (B-11) bars impersonation 'in order to deceive' and IP or privacy violations.",
-      "rationale": "Drawn caricatures in the channel's one style are the D-40 practice and deceive nobody; the material risk is a press photograph used as input, which ER-07 excludes. No material issue found under ER-07.",
+      "evidence": "No picture of this episode exists yet; cards describe exaggerated features and props (cast.*.card). Google generative AI policy re-read 2026-10-20 (B-11, V-57): it bars impersonating a person 'in order to deceive' (4.2), circumventing safety filters (2.3) and IP or privacy violations; it has no clause against depicting public figures. YouTube 14328491 lists fully animated content as not needing the label; 2801947 targets a likeness that falsely implies authorisation. Hustler v. Falwell (V-53) protects parody not reasonably understood as fact.",
+      "rationale": "Being recognisable is the point of a caricature and is what makes the satire readable; the risk lies elsewhere: a realistic lookalike that could pass as a photo (deception, disclosure), a press photograph used as input (the photographer's copyright), a use that sells something (ER-05), or mockery of intrinsic attributes (ER-14). With drawn exaggeration in the channel's one style and ER-07's no-photo rule, no material issue found.",
       "license": {
         "asset_path": "examples/titans_from_zero pictures (not yet painted)",
         "provider": "Gemini or pod (the creator picks per batch, D-50)",
@@ -947,7 +986,7 @@
     },
     {
       "id": "RK-16",
-      "element": "Narrator voice 'Brad - Warm, Trusted Storyteller' (ElevenLabs library) and the invented Vance's voice 'Silas'",
+      "element": "Narrator voice 'Brad - Warm, Trusted Storyteller' and the invented Vance's voice 'Silas' (ElevenLabs library), the only voiced cast after D-62",
       "category": "synthetic_voice",
       "source_type": "original",
       "status": "PASS",
@@ -974,7 +1013,7 @@
       ],
       "evidence": "assets/audio/library/manifest.json: source 'lyria-3-clip-preview' generated 2026-10-16 with the creator's Gemini key, licence status 'generated_terms_unverified', 'commercial-use terms not yet checked'. D-52 allows music from ElevenLabs or a per-track verified free library; Lyria is neither.",
       "rationale": "The tracks are free to reuse (already paid) but their commercial terms were never read and their source sits outside the creator's own music rule, so using them is the creator's call, not a pipeline default.",
-      "mitigation": "Question for the creator: (a) replace both with ElevenLabs music of the same description (instrumental pizzicato sneak; ticking clockwork loop), licence record per V-28; or (b) keep the Lyria tracks as a recorded exception to D-52 after the Gemini API terms for Lyria output are read and recorded here.",
+      "mitigation": "Decided (orchestrator 2026-10-20, applying D-52): ElevenLabs music replaces both tracks unless the Gemini terms for Lyria output are read and recorded here first. Options that were offered: Question for the creator: (a) replace both with ElevenLabs music of the same description (instrumental pizzicato sneak; ticking clockwork loop), licence record per V-28; or (b) keep the Lyria tracks as a recorded exception to D-52 after the Gemini API terms for Lyria output are read and recorded here.",
       "dependencies": [
         "music",
         "edit",
@@ -990,6 +1029,12 @@
         "restrictions": "not verified; SynthID watermark per TMR notes",
         "verified": "not_verified",
         "evidence": "manifest licence.status generated_terms_unverified"
+      },
+      "decision": {
+        "by": "orchestrator",
+        "date": "2026-10-20",
+        "answer": "Music is decided at the music step, before final_qa: ElevenLabs music replaces the two Lyria tracks unless the Gemini/Lyria terms are read and allow it (D-52). The paid narration read does not depend on it.",
+        "evidence": "D-52"
       }
     },
     {
@@ -1032,6 +1077,25 @@
       ],
       "evidence": "S11: 'Nobody is hurt'; no injury or blood shown; politics excluded (ER-08). YouTube advertiser-friendly guidelines (B-16): non-graphic events with context can earn ads.",
       "rationale": "A non-graphic property fire with no injuries and a politics-free comedy are not the content those guidelines restrict; no material issue found."
+    },
+    {
+      "id": "RK-20",
+      "element": "Speech bubbles carrying the invented lines of seven real people (Trump, Musk, Belfort, O'Leary, Kiyosaki, Cuban, Bezos) in the long video and the Shorts (D-62)",
+      "category": "real_person",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-02",
+        "ER-03",
+        "ER-06",
+        "ER-14"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "evidence": "D-62 and PV-55: 143 real-person lines carry voiced: false and become bubbles (production/silent.py, one sentence per bubble, BP-84 words, BP-27 hold). The words are the same invented dialogue already assessed in RK-03..RK-09; the description's notice says every line of dialogue is invented and nobody named took part (ER-06). YouTube 2801947 targets a likeness or voice that falsely implies authorisation or a fake speech passed off as real; Hustler v. Falwell (V-53); Georgia Arts. 1(e), 4 (V-55).",
+      "rationale": "A drawn speech bubble over a caricature is the oldest form of satirical cartoon and cannot be taken for a recording of the person, so moving the lines from a voice to bubbles removes the provider-terms problem without adding a new one. No material issue found, provided the bubble texts stay the approved lines (ER-02) and contain no political content (ER-08)."
     }
   ],
   "platform": {
@@ -1056,12 +1120,12 @@
     ],
     "community_guidelines": [
       "harassment (B-22): jokes aim at choices in the story, not intrinsic attributes (ER-14)",
-      "impersonation and privacy (B-03, B-04): drawn caricatures, no cloned voice, no implied authorisation; the what-if framing in every title (ER-06)"
+      "impersonation and privacy (B-03, B-04): drawn caricatures, no synthetic voice of any real person (D-62), no implied authorisation; the what-if framing in every title (ER-06)"
     ],
     "disclosure": {
       "realistic_synthetic_content": false,
       "required": false,
-      "reason": "Fully drawn 2D animation of an obviously invented situation; no photograph, footage or realistic rendering of any real person; the voices are library voices, not the people's own. YouTube lists fantasy and fully animated content as not requiring the label (14328491, re-read 2026-10-20). If a resolution of RK-01/RK-02 leaves any voice a listener could take for the real person, the label becomes required (ER-01).",
+      "reason": "Fully drawn 2D animation of an obviously invented situation; no photograph, footage or realistic rendering of any real person; the only synthetic voices are the narrator and the invented Vance, and the real people speak in drawn speech bubbles (D-62). YouTube lists fantasy and fully animated content as not requiring the label (14328491, re-read 2026-10-20). If a picture, thumbnail or Short of a real person could pass as a photograph, the label becomes required (ER-01).",
       "ai_uses": [
         "ideation_or_script",
         "stylised_imagery",
@@ -1086,9 +1150,10 @@
     "mechanism": "a courthouse bench as the starting gun: paired rivals (Musk and Belfort, Trump and Kiyosaki) play out five years in dialogue scenes cut by time stamps, a chain of broken promises leads to a fire and a cover-up offer, and a framing character returns at the end to reveal who really won",
     "visual_invariants": [
       "one drawn universe (UR-22) in the channel's hand-drawn style",
-      "each titan keeps one fixed caricature design and prop from the first frame to the last (cast cards, D-55)",
+      "each titan keeps one fixed, clearly recognisable caricature design and prop from the first frame to the last (cast cards, D-55)",
       "caricature, never photo-realism, for every real person (ER-01, ER-07)",
-      "the same courthouse bench opens and closes the film"
+      "the same courthouse bench opens and closes the film",
+      "a real person's words appear only as speech bubbles that never cover a face and never repeat (D-62, BUBBLE-4/5); only the narrator and Vance are heard"
     ],
     "may_vary": [
       "light per period (world.day_arc: courthouse morning to pre-dawn ash)",
@@ -1161,60 +1226,67 @@
       },
       "script": {
         "must": [
-          "Trump's lines are not routed to an ElevenLabs voice (RK-01, ER-03): use the creator's chosen option (narrator's reported speech, speech bubbles, or a human performer)",
-          "apply the creator's RK-02 and RK-12 decisions with the least change to wording and timing",
+          "every line of a real living person carries voiced: false and stays a speech bubble (D-62, ER-03, PV-55); only the narrator and Vance speak aloud",
+          "keep the creator's RK-12 decision ('Vance' as written); a bubble line keeps one sentence per bubble so it splits cleanly (BP-84)",
           "no line about politics, office holders or elections (ER-08)",
           "no new invented wrongdoing beyond the approved story; no real company, fund, lawsuit or product of the ten is named (ER-02)",
           "no spoken disclaimer (SC-11); the what-if framing lives in titles and descriptions (ER-06)",
           "any changed line goes back to the creator for approval (OR-17)"
         ],
         "machine_checks": [
-          "python -m explainer_engine.production.validate (PV-10, PV-32, PV-48)",
+          "python -m explainer_engine.production validate (PV-10, PV-32, PV-48, PV-55)",
           "python -m explainer_engine.qa.engagement production_script.json"
         ]
       },
       "voice": {
         "must": [
-          "no ElevenLabs generation for a Trump speaker line (ER-03, RK-01 BLOCK)",
-          "for the six real people only after the creator's RK-02 decision; library voices only, no clone, no voice design, no tag or prompt naming or describing the person (ER-04)",
-          "audition each real-person voice on one line before the full read; replace any voice a listener could take for the real person",
+          "read only the narrator and Vance (ER-03, ER-04); never generate audio for a line with voiced: false or a real person's speaker, in the long video, the Shorts or a re-read, and no laugh, grunt or murmur standing for a real person",
+          "library voices only; no clone, no voice design, no tag or prompt naming or describing a real person; the real people's cast voice.style texts are never sent to the provider (ER-04)",
+          "Vance's read is the 'Silas' library voice as cast and never imitates a real official (RK-12, ER-08)",
           "generations_count 1, estimate first (EL-10)",
           "English"
         ],
         "human_review": [
-          "the creator listens to the audition lines of every real-person voice"
+          "the creator hears the first narrator chunk and the first Vance line before the full read"
         ],
         "fallbacks": [
-          "narrator's reported speech for any line whose voice is withdrawn"
+          "a line whose speaker is unclear stays silent and goes back to the script role"
         ]
       },
       "image": {
         "must": [
-          "caricatures from the cast cards and our hero references only; no photograph of the real people as input, reference or tracing source (ER-07)",
-          "no photo-realism for any real person; repaint any drift (ER-01)",
+          "each real person is a clearly recognisable caricature of that person in the channel's drawn style, built from the cast card and our hero references; never a realistic lookalike (ER-07, ER-01)",
+          "no photograph of the real people as input, reference or tracing source (ER-07)",
+          "if a provider refuses a named person, do not reword the prompt to get past the refusal; return the batch to the creator (ER-07, Google policy 2.3)",
+          "never ElevenLabs image tools for a real person (ER-07)",
           "Vance never resembles a real official (ER-08)",
+          "bubble space: leave room near each speaking face so a bubble never covers it (BUBBLE-4)",
           "the universe thread in every prompt (UR-22); English text only"
         ],
         "human_review": [
-          "contact sheet: does any face read as a photograph or a known press photo?"
+          "contact sheet: is each of the ten recognisable as a caricature of the named person, and does no face read as a photograph, a realistic lookalike or a known press photo?"
+        ],
+        "fallbacks": [
+          "a refused or photo-like picture is repainted from the card on another provider of the creator's choice (D-50)"
         ]
       },
       "music": {
         "must": [
-          "use the Lyria tracks only after the creator's RK-17 decision; otherwise ElevenLabs music described by its own qualities, with a licence record (ER-10)"
+          "ElevenLabs music described by its own qualities, with a licence record (ER-10); the Lyria tracks only after their Gemini terms are read and recorded in RK-17"
         ]
       },
       "sound": {
         "must": [
           "own procedural or ElevenLabs-generated sound only, licence record per generated item (ER-10)",
-          "no siren-and-scream spectacle on the fire; nobody is hurt (RK-19)"
+          "no siren-and-scream spectacle on the fire; nobody is hurt (RK-19)",
+          "the bubble pop is a non-vocal sound; no generated vocal effect stands for a real person (ER-03)"
         ]
       },
       "edit": {
         "must": [
           "keep the one drawn universe and the fixed caricature designs (UR-22, D-55)",
           "no real footage, photo or news clip of any of the ten (ER-11)",
-          "if Trump's lines become bubbles or reported speech, his mouth does not lip-sync a synthetic voice"
+          "real people's lines are bubbles: their mouths never lip-sync audio, a bubble never covers a face and a text is never shown twice (D-62, BUBBLE-4/5)"
         ]
       },
       "metadata": {
@@ -1229,21 +1301,24 @@
       "qa": {
         "must": [
           "re-run the gate at final_qa; check ER-01, ER-05, ER-06 on the real metadata of the video and every Short",
-          "listen for any voice that sounds like the real person (ER-04)",
-          "check that no Trump line is voiced by ElevenLabs (ER-03)"
+          "the only voices in the mix of the video and the Shorts are the narrator and Vance; no audio exists for a voiced: false line (ER-03, PV-55)",
+          "listen that neither voiced character sounds like a real person or official (ER-04)",
+          "contact sheet: recognisable caricature, never photo-like (ER-07)"
         ],
         "machine_checks": [
           "python -m explainer_engine.standards gate examples/titans_from_zero/episode_rules.json --at final_qa",
-          "python -m explainer_engine.qa.publish_check"
+          "python -m explainer_engine.qa.publish_check",
+          "python -m explainer_engine.production validate (PV-55)"
         ]
       }
     },
     "escalation": [
       "any new real person, official or candidate added to the script",
       "a removal request, privacy complaint or legal letter from any person depicted (RR-13 procedure)",
-      "ElevenLabs refuses a generation or answers the RK-02 question",
+      "ElevenLabs refuses a generation, or an image provider refuses a named person",
       "a picture or voice that could pass as real (turns the disclosure on)",
-      "any script change touching S02, S05, S07, S10, S12 or the Shorts"
+      "any script change touching S02, S05, S07, S10, S12 or the Shorts",
+      "any request to voice a real person (D-62 reopens only on provider permission or the person's consent)"
     ],
     "reuse": [
       "caricature references of the ten may be reused in later episodes only under the same rules (ER-05, ER-07); never in merchandise or ads",
