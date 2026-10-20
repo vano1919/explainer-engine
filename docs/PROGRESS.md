@@ -1126,3 +1126,9 @@ Titans S02 "Elon Musk. Musk signs.": Whisper heard one "Musk", the aligner inter
 insert point, so the shot "Musk signs" started 40 s early and every S02 cut after it failed CUT-1/RHYTHM-2. `silent.insert` now
 gives every voiced word of a line that follows a gap in script order at least that gap's shift, and never a start before the
 insert point. Test: `test_silent_lines.py::test_a_missed_word_after_the_gap_never_lands_before_it`.
+
+## 2026-10-20 - Titans timing: three short shots get a breath (PV-24)
+
+After the real read three cuts failed: S12 "You know how this kind of paper works." (2.25 s shot), S15 "Oh, the bench is still
+there." (cut with no pause) and S16 "Luck decided which envelope paid." (2.36 s). Fix on the timing only, no new words:
+`pause_after` 0.5 on the S12 and S15 lines, and the S16 line split at its full stop with a 0.5 s pause (visual beats divided).
