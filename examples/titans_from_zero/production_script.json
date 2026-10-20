@@ -1607,8 +1607,8 @@
             ],
             "speakers": {
               "oleary": [
-                0.2,
-                0.46
+                0.353,
+                0.424
               ],
               "trump": [
                 0.4,
@@ -1619,8 +1619,8 @@
                 0.46
               ],
               "belfort": [
-                0.76,
-                0.46
+                0.837,
+                0.407
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -1721,8 +1721,8 @@
             ],
             "speakers": {
               "musk": [
-                0.55,
-                0.42
+                0.67,
+                0.283
               ],
               "oleary": [
                 0.1,
@@ -1825,16 +1825,16 @@
             ],
             "speakers": {
               "musk": [
-                0.46,
-                0.4
+                0.256,
+                0.395
               ],
               "oleary": [
-                0.25,
-                0.4
+                0.615,
+                0.311
               ],
               "belfort": [
-                0.76,
-                0.42
+                0.833,
+                0.308
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -1874,8 +1874,8 @@
                 0.3
               ],
               "belfort": [
-                0.52,
-                0.5
+                0.608,
+                0.497
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -2343,8 +2343,8 @@
             ],
             "speakers": {
               "kiyosaki": [
-                0.3,
-                0.4
+                0.493,
+                0.387
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -2373,8 +2373,8 @@
             ],
             "speakers": {
               "trump": [
-                0.4,
-                0.35
+                0.676,
+                0.397
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -2799,12 +2799,12 @@
             ],
             "speakers": {
               "musk": [
-                0.5,
-                0.4
+                0.416,
+                0.417
               ],
               "belfort": [
-                0.84,
-                0.45
+                0.91,
+                0.588
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -2861,12 +2861,12 @@
             ],
             "speakers": {
               "belfort": [
-                0.6,
-                0.38
+                0.378,
+                0.417
               ],
               "musk": [
-                0.25,
-                0.4
+                0.717,
+                0.286
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -2902,8 +2902,8 @@
             ],
             "speakers": {
               "belfort": [
-                0.7,
-                0.45
+                0.866,
+                0.435
               ],
               "musk": [
                 0.2,
@@ -2937,8 +2937,8 @@
             ],
             "speakers": {
               "belfort": [
-                0.35,
-                0.38
+                0.228,
+                0.416
               ],
               "musk": [
                 0.8,
@@ -3022,8 +3022,8 @@
             ],
             "speakers": {
               "musk": [
-                0.55,
-                0.42
+                0.639,
+                0.336
               ],
               "belfort": [
                 0.1,
@@ -3057,8 +3057,8 @@
             ],
             "speakers": {
               "musk": [
-                0.35,
-                0.4
+                0.701,
+                0.29
               ],
               "belfort": [
                 0.68,
@@ -3370,12 +3370,12 @@
             ],
             "speakers": {
               "kiyosaki": [
-                0.42,
-                0.52
+                0.231,
+                0.402
               ],
               "trump": [
-                0.58,
-                0.52
+                0.32,
+                0.38
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -3446,12 +3446,12 @@
             ],
             "speakers": {
               "kiyosaki": [
-                0.28,
-                0.4
+                0.413,
+                0.501
               ],
               "trump": [
-                0.72,
-                0.4
+                0.845,
+                0.561
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -3496,8 +3496,8 @@
             ],
             "speakers": {
               "trump": [
-                0.38,
-                0.4
+                0.51,
+                0.475
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -3574,8 +3574,8 @@
             ],
             "speakers": {
               "kiyosaki": [
-                0.4,
-                0.4
+                0.633,
+                0.53
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -4284,8 +4284,8 @@
             ],
             "speakers": {
               "cardone": [
-                0.45,
-                0.4
+                0.551,
+                0.368
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -4498,12 +4498,12 @@
             ],
             "speakers": {
               "trump": [
-                0.4,
-                0.42
+                0.303,
+                0.464
               ],
               "kiyosaki": [
-                0.85,
-                0.5
+                0.878,
+                0.657
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -4539,12 +4539,12 @@
             ],
             "speakers": {
               "kiyosaki": [
-                0.62,
-                0.4
+                0.277,
+                0.349
               ],
               "trump": [
-                0.28,
-                0.42
+                0.616,
+                0.348
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -4573,8 +4573,8 @@
             ],
             "speakers": {
               "kiyosaki": [
-                0.45,
-                0.4
+                0.679,
+                0.454
               ],
               "trump": [
                 0.9,
@@ -4643,12 +4643,12 @@
             ],
             "speakers": {
               "kiyosaki": [
-                0.22,
-                0.62
+                0.445,
+                0.765
               ],
               "trump": [
-                0.78,
-                0.62
+                0.577,
+                0.741
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -4679,8 +4679,8 @@
             ],
             "speakers": {
               "trump": [
-                0.5,
-                0.4
+                0.639,
+                0.404
               ],
               "kiyosaki": [
                 0.1,
@@ -4714,12 +4714,12 @@
             ],
             "speakers": {
               "trump": [
-                0.55,
-                0.4
+                0.678,
+                0.322
               ],
               "kiyosaki": [
-                0.12,
-                0.5
+                0.044,
+                0.351
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -4953,16 +4953,16 @@
             ],
             "speakers": {
               "cuban": [
-                0.5,
-                0.35
+                0.669,
+                0.462
               ],
               "musk": [
                 0.28,
                 0.45
               ],
               "belfort": [
-                0.72,
-                0.45
+                0.444,
+                0.505
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -5082,8 +5082,8 @@
                 0.52
               ],
               "musk": [
-                0.78,
-                0.5
+                0.221,
+                0.349
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -5114,8 +5114,8 @@
             ],
             "speakers": {
               "musk": [
-                0.5,
-                0.4
+                0.599,
+                0.413
               ],
               "cuban": [
                 0.1,
@@ -5536,8 +5536,8 @@
                 0.42
               ],
               "belfort": [
-                0.7,
-                0.45
+                0.619,
+                0.502
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -5573,8 +5573,8 @@
             ],
             "speakers": {
               "musk": [
-                0.55,
-                0.42
+                0.665,
+                0.348
               ],
               "belfort": [
                 0.1,
@@ -5608,8 +5608,8 @@
             ],
             "speakers": {
               "musk": [
-                0.33,
-                0.4
+                0.594,
+                0.317
               ],
               "belfort": [
                 0.68,
@@ -5659,8 +5659,8 @@
             ],
             "speakers": {
               "belfort": [
-                0.45,
-                0.4
+                0.392,
+                0.521
               ],
               "musk": [
                 0.9,
@@ -6059,8 +6059,8 @@
             ],
             "speakers": {
               "trump": [
-                0.55,
-                0.4
+                0.662,
+                0.382
               ],
               "kiyosaki": [
                 0.1,
@@ -6129,8 +6129,8 @@
             ],
             "speakers": {
               "trump": [
-                0.35,
-                0.4
+                0.451,
+                0.401
               ],
               "kiyosaki": [
                 0.72,
@@ -6164,12 +6164,12 @@
             ],
             "speakers": {
               "trump": [
-                0.67,
-                0.4
+                0.242,
+                0.368
               ],
               "kiyosaki": [
-                0.33,
-                0.4
+                0.804,
+                0.47
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -6222,8 +6222,8 @@
             ],
             "speakers": {
               "kiyosaki": [
-                0.45,
-                0.4
+                0.537,
+                0.465
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -6575,12 +6575,12 @@
             ],
             "speakers": {
               "musk": [
-                0.35,
-                0.55
+                0.737,
+                0.544
               ],
               "belfort": [
-                0.62,
-                0.55
+                0.836,
+                0.593
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -6652,8 +6652,8 @@
             ],
             "speakers": {
               "musk": [
-                0.55,
-                0.4
+                0.403,
+                0.496
               ],
               "belfort": [
                 0.1,
@@ -6717,8 +6717,8 @@
             ],
             "speakers": {
               "belfort": [
-                0.45,
-                0.4
+                0.649,
+                0.403
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -7200,16 +7200,16 @@
             ],
             "speakers": {
               "vance": [
-                0.4,
-                0.4
+                0.295,
+                0.352
               ],
               "musk": [
-                0.2,
-                0.48
+                0.69,
+                0.363
               ],
               "belfort": [
-                0.7,
-                0.48
+                0.798,
+                0.421
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -7245,8 +7245,8 @@
             ],
             "speakers": {
               "belfort": [
-                0.45,
-                0.4
+                0.631,
+                0.456
               ],
               "vance": [
                 0.9,
@@ -7286,12 +7286,12 @@
             ],
             "speakers": {
               "vance": [
-                0.55,
-                0.4
+                0.7,
+                0.31
               ],
               "musk": [
-                0.1,
-                0.52
+                0.29,
+                0.316
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -7899,8 +7899,8 @@
             ],
             "speakers": {
               "belfort": [
-                0.45,
-                0.4
+                0.515,
+                0.556
               ],
               "cuban": [
                 0.9,
@@ -7979,8 +7979,8 @@
             ],
             "speakers": {
               "belfort": [
-                0.35,
-                0.45
+                0.433,
+                0.362
               ],
               "musk": [
                 0.65,
@@ -8516,8 +8516,8 @@
             ],
             "speakers": {
               "cardone": [
-                0.4,
-                0.38
+                0.568,
+                0.385
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -8586,8 +8586,8 @@
             ],
             "speakers": {
               "trump": [
-                0.4,
-                0.38
+                0.503,
+                0.444
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -8621,8 +8621,8 @@
             ],
             "speakers": {
               "kiyosaki": [
-                0.35,
-                0.4
+                0.263,
+                0.473
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -8689,8 +8689,8 @@
             ],
             "speakers": {
               "belfort": [
-                0.45,
-                0.4
+                0.628,
+                0.483
               ],
               "bezos": [
                 0.9,
@@ -8725,16 +8725,16 @@
             ],
             "speakers": {
               "bezos": [
-                0.3,
-                0.4
+                0.45,
+                0.512
               ],
               "belfort": [
-                0.55,
-                0.42
+                0.626,
+                0.523
               ],
               "musk": [
-                0.8,
-                0.38
+                0.296,
+                0.343
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -9299,8 +9299,8 @@
             ],
             "speakers": {
               "oleary": [
-                0.15,
-                0.5
+                0.253,
+                0.379
               ],
               "belfort": [
                 0.5,
@@ -9583,8 +9583,8 @@
             ],
             "speakers": {
               "kiyosaki": [
-                0.45,
-                0.4
+                0.349,
+                0.452
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -9620,12 +9620,12 @@
             ],
             "speakers": {
               "musk": [
-                0.3,
-                0.42
+                0.4,
+                0.461
               ],
               "belfort": [
-                0.7,
-                0.42
+                0.642,
+                0.528
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
