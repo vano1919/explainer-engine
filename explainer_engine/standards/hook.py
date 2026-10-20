@@ -8,6 +8,8 @@ Wired in ``.claude/settings.json`` (matcher ``mcp__ElevenLabs__creative_.*``). C
 * A paid audio generation (speech, sound effect, music) needs ``generations_count`` 1 (the connector's default is 4, four
   times the credits; EL-10), the active episode's rulebook ``paid_assets`` checkpoint to pass, and no FAIL from the editorial
   gate (OR-10: ``production/editorial_gate.check`` on the script and its ``editorial_review.json``).
+* New music or sound effects also need a recorded library search (OR-17, D-61: ``python -m explainer_engine.assets_reuse``):
+  the reusable library is looked at first, and new is generated only when nothing there fits.
 * The active episode is named in ``.claude/active_episode.json``: ``{"episode": "<folder with episode_rules.json>"}``. An
   ``"override": "<the creator's reason>"`` lets a paid call through without the gate (voice auditions before a rulebook
   exists); it never lifts the picture rule or the one-take rule, and every override is logged to ``jobs/gate_overrides.jsonl``.
@@ -24,6 +26,24 @@ PICTURE_TOOLS = {"creative_generate_image", "creative_generate_video", "creative
 PICTURE_NODES = {"image-generation", "video-generation", "image-transform", "avatar", "dubbing-video"}
 PAID_TOOLS = {"creative_generate_speech", "creative_generate_in_flow", "creative_run_flow_nodes", "creative_design_voice"}
 ONE_TAKE = {"creative_generate_speech", "creative_generate_in_flow"}
+
+
+def _sound_kind(tool: str, tool_input: dict) -> str | None:
+    """'music' or 'sfx' when the call generates them (the node type or model says so); None for speech and the rest."""
+    text = " ".join(str(tool_input.get(k) or "") for k in ("node_type", "model", "model_id")).lower()
+    if "music" in text:
+        return "music"
+    if "sound" in text or "sfx" in text:
+        return "sfx"
+    return None
+
+
+def _has_lookup(folder: Path, kind: str) -> bool:
+    try:
+        from explainer_engine.assets_reuse import has_lookup
+        return has_lookup(folder, kind)
+    except Exception:
+        return False  # a broken record never waves money through
 
 
 def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
@@ -50,6 +70,11 @@ def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
                                 "override": cfg["override"], "episode": cfg.get("episode")}) + "\n")
         return None
     folder = root / cfg.get("episode", "")
+    kind = _sound_kind(tool, tool_input)
+    if kind and not _has_lookup(folder, kind):  # OR-17 (D-61): the library is searched before new music or sounds are paid for
+        return (f"OR-17: search the sound library first and record the search: python -m explainer_engine.assets_reuse "
+                f"{cfg.get('episode', '<episode>')} --kind {kind} --tags <tags> --decide reuse|generate_new; "
+                "generate new only when nothing in the library fits")
     rules = folder / "episode_rules.json"
     if not rules.exists():
         return f"OR-11: {rules} does not exist"

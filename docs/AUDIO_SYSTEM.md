@@ -122,6 +122,12 @@ model and prompt, Lyria prompt), estimated cost, licence status and review. Rule
 - Gemini TTS must be called with an output-token cap (25 tokens per second of audio): one uncapped call produced 458 s.
   Plain instructions are spoken aloud; use bracketed tags (`[sighs heavily]`) for non-verbal sounds.
 - Procedural foley is a placeholder level of quality; replacing a sound means adding take `v2` and rejecting `v1`.
+- **Library first (OR-17, D-61):** before any new music or sound effect is generated, the library is searched and the
+  search recorded (`python -m explainer_engine.assets_reuse`); the ElevenLabs hook refuses a paid music/SFX call without
+  the record. What the connector does generate is registered back with
+  `python -m explainer_engine.audio.register <file> --name ... --category music|foley|vocal --tags ... --model ...
+  --prompt "..." --cost-usd ...` (MP3/stereo is converted to the library's mono WAV; `--one-shot` for stings, music
+  defaults to a loop). Media backup: HF `datasets/vano1919/tmr-artifacts/library/audio/`.
 - The analyst (Dirkus) is silent: his vocal sounds are reactions, never speech. The companion (Tick) makes mechanical sounds.
 
 ## Checks run on every mix

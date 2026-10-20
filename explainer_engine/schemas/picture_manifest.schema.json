@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "picture_manifest.schema.json",
+  "title": "Reusable picture library manifest (version 1)",
+  "type": "object",
+  "required": ["version", "items"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {"const": 1},
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "file", "kind", "tags", "width", "height", "sha256", "source", "licence", "review"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9_]+__v[0-9]+$"},
+          "file": {"type": "string", "pattern": "^[a-z_]+/[a-z0-9_]+__v[0-9]+\\.(png|jpg|jpeg|webp)$"},
+          "kind": {"enum": ["prop", "background", "texture", "character", "thumbnail_part"]},
+          "tags": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z0-9_]+$"}},
+          "width": {"type": "integer", "minimum": 1},
+          "height": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "source": {
+            "type": "object",
+            "required": ["kind"],
+            "additionalProperties": false,
+            "properties": {
+              "kind": {"enum": ["gemini", "pod", "local", "elevenlabs", "canva", "drawn", "third_party"]},
+              "model": {"type": "string"},
+              "prompt": {"type": "string"},
+              "episode": {"type": "string", "description": "the episode whose budget paid for it; empty for channel assets"},
+              "generated": {"type": "string"},
+              "cost_usd_estimate": {"type": "number", "minimum": 0}
+            }
+          },
+          "licence": {
+            "type": "object",
+            "required": ["status", "note"],
+            "additionalProperties": false,
+            "properties": {
+              "status": {"enum": ["own_drawn", "generated_terms_unverified", "generated_terms_verified", "licensed", "cc0"]},
+              "note": {"type": "string", "minLength": 1}
+            }
+          },
+          "review": {
+            "type": "object",
+            "required": ["machine", "human"],
+            "additionalProperties": false,
+            "properties": {
+              "machine": {"type": "string"},
+              "human": {"enum": ["not_looked", "approved", "rejected"]}
+            }
+          }
+        }
+      }
+    }
+  }
+}

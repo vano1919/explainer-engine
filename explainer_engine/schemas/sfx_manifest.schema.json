@@ -33,7 +33,7 @@
             "required": ["kind"],
             "additionalProperties": false,
             "properties": {
-              "kind": {"enum": ["procedural", "gemini_tts", "lyria", "recorded", "third_party"]},
+              "kind": {"enum": ["procedural", "gemini_tts", "lyria", "elevenlabs", "recorded", "third_party"]},
               "model": {"type": "string"},
               "prompt": {"type": "string"},
               "seed": {"type": "integer"},

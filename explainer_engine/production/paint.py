@@ -137,6 +137,11 @@ def cmd_plan(a) -> int:
         items = items[:a.limit]
     plan = P.make(a.id, doc["episode"]["id"], items, provider=a.provider, model=a.model, size=a.size, batch=a.batch,
                   purpose=a.purpose or "", reusable=a.reusable)
+    from explainer_engine.imagegen import picture_library as PL  # OR-17 (D-61): the library is looked at before new is painted
+    for it in plan["items"]:
+        found = PL.find_for_prompt(it["prompt"])
+        if found:
+            it["library"] = [m["id"] for m in found[:5]]
     if a.faces:
         plan["faces_saving"] = FACES.saving(doc, items, plan["estimate_usd"] / len(items) if items else 0.0)
     dest = write_json_atomic(out / "plans" / f"{a.id}.json", plan)
