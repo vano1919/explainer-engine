@@ -139,3 +139,14 @@ def test_a_missed_word_after_the_gap_never_lands_before_it():
     after = words[words.index(silent[-1]) + 1:]
     assert after and all(w["s"] >= silent[-1]["e"] for w in after)
     assert [w["s"] for w in words] == sorted(w["s"] for w in words)
+
+
+def test_the_narrator_reports_the_exchange_bubbles_are_only_an_accent():
+    """D-63: the creator found bubble-only dialogue unread and boring; one accent bubble per scene is allowed, two FAIL."""
+    d = doc()
+    assert SIL.check_reported_dialogue(d) == []  # one silent line: an accent
+    d["segments"][0]["lines"].append({"text": "Fine.", "speaker": "musk", "voiced": False})
+    assert SIL.check_reported_dialogue(d) and "D-63" in SIL.check_reported_dialogue(d)[0]
+    d["segments"][0]["lines"][-1] = {"text": "Musk shrugs and says fine."}
+    assert SIL.check_reported_dialogue(d) == []
+

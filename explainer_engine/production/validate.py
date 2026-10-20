@@ -361,6 +361,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     from explainer_engine.production import silent as _sil
     for why in _sil.check_real_people(doc):
         _f(out, "PV-55", "lines", why)
+    for why in _sil.check_reported_dialogue(doc):  # PV-56 (D-63): the narrator reports the exchange
+        _f(out, "PV-56", "lines", why)
     # PV-54 the time counter (ED-15)
     for why in GFX.check_counter(doc.get("counter", []), [sg["id"] for sg in doc["segments"]]):
         _f(out, "PV-54", "counter", why)

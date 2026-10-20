@@ -244,6 +244,23 @@ def check_real_people(doc: dict) -> list[str]:
     return out
 
 
+MAX_ACCENT_BUBBLES = 1  # D-63 (creator 2026-10-20): "nobody reads the text"; a bubble survives only as one accent per scene
+
+
+def check_reported_dialogue(doc: dict) -> list[str]:
+    """PV-56 (D-63): the narrator tells what the real people said ("he asks...", "the other answers..."); a scene keeps at
+    most MAX_ACCENT_BUBBLES silent line, as an accent. Binds a production_script/3 that has real people in its cast."""
+    if doc.get("schema") != "production_script/3":
+        return []
+    out = []
+    for seg in doc["segments"]:
+        silent = [k for k, line in enumerate(seg["lines"], 1) if not voiced(line)]
+        if len(silent) > MAX_ACCENT_BUBBLES:
+            out.append(f"{seg['id']}: {len(silent)} bubble lines (lines {silent[:6]}); the narrator reports the exchange and "
+                       f"a scene keeps at most {MAX_ACCENT_BUBBLES} bubble as an accent (D-63)")
+    return out
+
+
 def check_duplicates(shots: list[dict]) -> list[dict]:
     """BUBBLE-5: the same text is never on screen twice at once, and a text is not popped again in the next shot."""
     out = []

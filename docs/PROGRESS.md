@@ -1132,3 +1132,11 @@ insert point. Test: `test_silent_lines.py::test_a_missed_word_after_the_gap_neve
 After the real read three cuts failed: S12 "You know how this kind of paper works." (2.25 s shot), S15 "Oh, the bench is still
 there." (cut with no pause) and S16 "Luck decided which envelope paid." (2.36 s). Fix on the timing only, no new words:
 `pause_after` 0.5 on the S12 and S15 lines, and the S16 line split at its full stop with a 0.5 s pause (visual beats divided).
+
+## 2026-10-20 - The narrator tells the dialogue (D-63, PV-56)
+
+The creator on the first titans preview: bubble-only dialogue is unread and boring, and a bubble glitched across a cut into a
+face close-up. D-63: the narrator reports each exchange, the speaker's face is held in its mood at its end, then a slow move on;
+real people stay unvoiced (D-62). PV-56 FAILs a segment with more than one silent line. The titans script fails it until its
+dialogue scenes are rewritten (S02 first, as a two-minute re-render for the creator).
+Test: `test_silent_lines.py::test_the_narrator_reports_the_exchange_bubbles_are_only_an_accent`.

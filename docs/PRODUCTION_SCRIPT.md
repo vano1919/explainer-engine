@@ -88,6 +88,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-53 | approval #1 of the finished script (`scripting/script_approval.py`, [OR-17](ORCHESTRATION.md)): on a `production_script/3`, `episode.script_approval` records `approved_by`, `approved_at` (YYYY-MM-DD) and the `sha256` of every word said (segments and Shorts, with speakers); missing, or a line changed after the approval, is a FAIL before any paid step (paint preflight, the ElevenLabs hook, gate 0.9 of `production_gate`); earlier schemas get no finding |
 | PV-54 | the time counter ([ED-15](EDITING.md)): every `counter` entry names an existing segment, entries follow the segment order, each label is 1-14 characters and differs from the one before (`graphics.check_counter`); a FAIL otherwise |
 | PV-55 | silent lines ([D-62](DECISIONS_AND_OPEN_QUESTIONS.md)): a speaker whose cast traits say `real_person` has no voiced line in the video or a Short (`"voiced": false`, shown as bubbles), and a silent line names its speaker (`production/silent.py`); a FAIL otherwise |
+| PV-56 | reported dialogue ([D-63](DECISIONS_AND_OPEN_QUESTIONS.md)): the narrator tells the exchange; a segment holds at most `silent.MAX_ACCENT_BUBBLES` silent line (`production/silent.check_reported_dialogue`); a FAIL otherwise |
 
 ## Paint plans (PP-xx; audit 2026-10-19; `imagegen/plan.py`, `production/paint.py`)
 
