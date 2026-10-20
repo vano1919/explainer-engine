@@ -120,3 +120,22 @@ def test_crowded_frame_reports_a_covered_face():
     faces = [BUB.head_box((x, y), frame) for x in range(100, 1900, 150) for y in range(150, 1080, 200)]
     b = BUB.Bubble("Give me a week.", (960.0, 600.0), 1.0, 4.0, frame, faces=faces)
     assert b.covers_face
+
+
+def test_a_missed_word_after_the_gap_never_lands_before_it():
+    """Titans "Elon Musk. Musk signs.": the recogniser missed the second "Musk", its interpolated time fell before the
+    insert point and the shot "Musk signs" was cut 40 s too early. A word of a line after the gap starts after the gap."""
+    d = doc()
+    sr = 1000
+    voiced = []
+    t = 0.1
+    for tk in S.tokens(SIL.voiced_doc(d)):
+        voiced.append({"w": tk["w"], "s": round(t, 3), "e": round(t + 0.3, 3)})
+        t += 0.4
+    voiced[4] = dict(voiced[4], s=voiced[3]["e"] - 0.01, e=voiced[3]["e"])  # "He" interpolated onto "cold."
+    pcm = np.full(int((t + 0.5) * sr), 0.5, dtype=np.float32)
+    out, words = SIL.insert(d, voiced, pcm, sr)
+    silent = [w for w in words if w.get("silent")]
+    after = words[words.index(silent[-1]) + 1:]
+    assert after and all(w["s"] >= silent[-1]["e"] for w in after)
+    assert [w["s"] for w in words] == sorted(w["s"] for w in words)

@@ -154,9 +154,13 @@ def insert(doc: dict, voiced_words: list[dict], pcm, sr: int):
     pieces_pcm.append(src[cursor:])
     out_pcm = np.concatenate(pieces_pcm) if pieces_pcm else pcm
 
-    def shifted(w: dict, t0: float) -> dict:
-        add = sum(r["seconds"] for r in runs if r["at"] <= t0 + 1e-9)
-        return dict(w, s=round(w["s"] + add, 3), e=round(w["e"] + add, 3))
+    def shifted(w: dict, t0: float, after: list[dict]) -> dict:
+        """A word of a line that follows a gap in script order never lands before that gap's end: a word the recogniser
+        missed is only interpolated and can sit just before the insert point (Titans "Elon Musk. Musk signs.")."""
+        add = sum(r["seconds"] for r in runs if r["at"] <= t0 + 1e-9 or r in after)
+        floor = max([r["at"] for r in after], default=0.0)
+        s0 = max(w["s"], floor)
+        return dict(w, s=round(s0 + add, 3), e=round(max(w["e"], s0) + add, 3))
 
     words, j = [], 0
     starts = {}
@@ -165,13 +169,16 @@ def insert(doc: dict, voiced_words: list[dict], pcm, sr: int):
         for key in r["lines"]:
             starts[key] = t
             t += seconds(doc["segments"][key[0]]["lines"][key[1]])
+    passed: list[dict] = []
     for key in order:
         line = doc["segments"][key[0]]["lines"][key[1]]
         n = count[key]
         if voiced(line):
-            words += [shifted(w, w["s"]) for w in voiced_words[j:j + n]]
+            words += [shifted(w, w["s"], passed) for w in voiced_words[j:j + n]]
             j += n
             continue
+        if not any(r is lens[key] for r in passed):
+            passed.append(lens[key])
         t = starts[key]
         for p in plan_n(line, n):
             step = p["seconds"] / max(1, p["tokens"])

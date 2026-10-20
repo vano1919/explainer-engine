@@ -1119,3 +1119,10 @@ The manifest schema records an ElevenLabs take: source kind `elevenlabs`, `cost_
 `kind` (one_shot / loop). Titans added two music loops (`eleven_music_v2_5`, 899.8 credits each), `battery_hiss__v1` (5) and
 nine 30 s ambience loops (`amb_*__v1`, 99.99 each, estimated 330); ten Shorts narrator takes (2,352 credits). WAVs stay out of git.
 Test: `test_sfx_library.py::test_elevenlabs_take_with_kind_and_credits_validates`.
+
+## 2026-10-20 - A word the recogniser missed never lands before a bubble gap (D-62)
+
+Titans S02 "Elon Musk. Musk signs.": Whisper heard one "Musk", the aligner interpolated the second just before the silent run's
+insert point, so the shot "Musk signs" started 40 s early and every S02 cut after it failed CUT-1/RHYTHM-2. `silent.insert` now
+gives every voiced word of a line that follows a gap in script order at least that gap's shift, and never a start before the
+insert point. Test: `test_silent_lines.py::test_a_missed_word_after_the_gap_never_lands_before_it`.
