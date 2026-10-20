@@ -1,0 +1,2605 @@
+{
+ "version": 1,
+ "about": "The sourced production rules (docs/SOURCED_RULES.md). Source types: A article/official page/study, B book, C YouTube video or vlog. binding = two or more types and enforced in code; hypothesis = one type, REVIEW only, the project's existing number; house = the creator's dated decision.",
+ "rules": [
+  {
+   "id": "BP-01",
+   "area": "narration",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Heard pace is measured on the finished read: target 170 wpm, accepted 155-185; one band everywhere (five studies agree 170 is the YouTube norm; one source type, so the project's own number stays).",
+   "thresholds": {
+    "wpm_target": 170,
+    "wpm_min": 155,
+    "wpm_max": 185,
+    "wpm_fail_below": 150,
+    "wpm_fail_above": 200
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How Video Production Affects Student Engagement (Guo, Kim, Rubin, L@S 2014, PDF)",
+     "url": "https://up.csail.mit.edu/other-pubs/las2014-pguo-engagement.pdf"
+    },
+    {
+     "type": "A",
+     "title": "Does Talking Faster Help YouTube Videos? 1,290 Videos Say No (Prepublish)",
+     "url": "https://prepublish.ai/guides/does-talking-faster-help-youtube",
+     "note": "vendor; medians only"
+    },
+    {
+     "type": "A",
+     "title": "Do Your Ads Talk Too Fast to Your Audio Audience? (Rodero 2020, JAR summary)",
+     "url": "https://thearf.org/access-knowledge-2/publications/journal-of-advertising-research/do-your-ads-talk-too-fast-to-your-audio-audience-how-speech-rates-of-audio-commercials-influence-cognitive-and-physiological-outcomes/"
+    },
+    {
+     "type": "A",
+     "title": "Radio news: how the pace of broadcasts affects what audiences remember (on Rodero 2015)",
+     "url": "https://journalistsresource.org/?p=48675"
+    },
+    {
+     "type": "A",
+     "title": "Reading Rate and Most Efficient Listening Rate Are Highly Similar (Kuperman et al. 2021)",
+     "url": "https://experts.mcmaster.ca/scholarly-works/2127220"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/validate.py:BP-01",
+    "explainer_engine/qa/scorecard.py:BP-01",
+    "explainer_engine/qa/engagement.py:BP-01"
+   ],
+   "supersedes": [
+    "PRODUCTION_RULES gate 2 160-185",
+    "EL-04 150-165",
+    "NARRATION_AND_LANGUAGE_GUIDE 155",
+    "scorecard 150-180",
+    "P-32 1050 words/7 min",
+    "scene-writer 150"
+   ]
+  },
+  {
+   "id": "BP-02",
+   "area": "narration",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A finishing speed-up of the whole video stays under the tempo just-noticeable difference and is re-checked: at most 1.08 (the creator's own ceiling), offered at 1.05 and 1.08; the rhythm, pace and shot checks run again on the sped file's clock.",
+   "thresholds": {
+    "max_tempo": 1.08,
+    "rates": [
+     1.05,
+     1.08
+    ],
+    "jnd_share": 0.1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "What is the Just Noticeable Difference for tempo in speech? (Quene 2004)",
+     "url": "https://utrecht-main-test.atmire.com/items/471274bf-00ac-4f4d-a15d-be76bf079c46"
+    },
+    {
+     "type": "A",
+     "title": "Time-Compressed Speech Perception with Speech and Noise Maskers (Brungart & Iyer 2007, PDF)",
+     "url": "https://www.isca-archive.org/interspeech_2007/brungart07_interspeech.pdf"
+    },
+    {
+     "type": "A",
+     "title": "ElevenLabs docs: Text to Speech product guide (speed 0.7-1.2)",
+     "url": "https://elevenlabs.io/docs/eleven-creative/playground/text-to-speech"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/finish/speed.py:BP-02",
+    "explainer_engine/production/shorts.py:BP-02"
+   ],
+   "supersedes": [
+    "ED-06 1.05-1.15",
+    "PRODUCTION_RULES:95 never speed",
+    "speed.py 1.5"
+   ],
+   "decided": "the creator, 2026-10-16: at most 1.08 on a Short; 2026-10-17: never speed the voice itself"
+  },
+  {
+   "id": "BP-03",
+   "area": "narration",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "The first spoken sentence is the hook, in one of four forms YouTube names (a question, a cold-open incident line, a claim with a number, or a preview of what the viewer will see); never a greeting, the channel name, 'today we look at' or 'subscribe'. Branding, if any, comes after the hook.",
+   "thresholds": {
+    "hook_forms": [
+     "question",
+     "cold_open",
+     "claim_with_number",
+     "preview"
+    ],
+    "max_cold_open_words": 14
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "YouTube Creator Playbook tips: the first 15 seconds (YouTube Official Blog, 2011)",
+     "url": "https://blog.youtube/creator-and-artist-stories/youtube-creator-playbook-tips-first-15"
+    },
+    {
+     "type": "A",
+     "title": "Four tips to hook your viewers on YouTube (YouTube Official Blog, 2014)",
+     "url": "https://blog.youtube/creator-and-artist-stories/four-tips-to-hook-your-viewers-on/"
+    },
+    {
+     "type": "A",
+     "title": "Measure key moments for audience retention (YouTube Help 9314415)",
+     "url": "https://support.google.com/youtube/answer/9314415"
+    },
+    {
+     "type": "C",
+     "title": "YouTube Shorts deep dive: Creator Insider video with Todd Sherman and Jenny Hoyos (blog page naming the video)",
+     "url": "https://blog.youtube/creator-and-artist-stories/youtube-shorts-deep-dive/"
+    },
+    {
+     "type": "C",
+     "title": "Meet MrBeast's Secret YouTube Consultant (Paddy Galloway interview), video summary",
+     "url": "https://videohighlight.com/v/AX3dEGjBg6w"
+    },
+    {
+     "type": "B",
+     "title": "Made to Stick (Heath & Heath), gap theory, quoted",
+     "url": "https://www.theologyofwork.org/the-high-calling/unexpected-journey/"
+    },
+    {
+     "type": "B",
+     "title": "Storyworthy (M. Dicks), reader notes and summaries",
+     "url": "https://calv.info/bookshelf/storyworthy"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-01",
+    "explainer_engine/edit/shot_rules.py:GREETINGS"
+   ],
+   "supersedes": [
+    "N-01 yes/no question only",
+    "UR-01 question by 5 s",
+    "P-30 premise by 10 s",
+    "story-architect question by 0:15"
+   ]
+  },
+  {
+   "id": "BP-04",
+   "area": "narration",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "The 30-second contract: within the first 85 words (30 s at 170 wpm) the script confirms the title's promise and opens one named gap (a question or a 'but/until' turn); the central answer is held back until the last tenth.",
+   "thresholds": {
+    "contract_words": 85,
+    "answer_after_share": 0.9
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Measure key moments for audience retention (YouTube Help 9314415)",
+     "url": "https://support.google.com/youtube/answer/9314415"
+    },
+    {
+     "type": "B",
+     "title": "Made to Stick (Heath & Heath), gap theory, quoted",
+     "url": "https://www.theologyofwork.org/the-high-calling/unexpected-journey/"
+    },
+    {
+     "type": "C",
+     "title": "Meet MrBeast's Secret YouTube Consultant (Paddy Galloway interview), video summary",
+     "url": "https://videohighlight.com/v/AX3dEGjBg6w"
+    },
+    {
+     "type": "B",
+     "title": "Storyworthy (M. Dicks), reader notes and summaries",
+     "url": "https://calv.info/bookshelf/storyworthy"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-11",
+    "explainer_engine/qa/engagement.py:ENG-5"
+   ],
+   "supersedes": [
+    "ST-11 (confirmed)",
+    "ENG-1 question in the opening two lines"
+   ]
+  },
+  {
+   "id": "BP-05",
+   "area": "narration",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "No context before the tension: a sentence in the first 30 s that is pure background (a date, a definition, a biography line) carries no stake and goes after the gap sentence.",
+   "thresholds": {
+    "window_words": 85
+   },
+   "sources": [
+    {
+     "type": "C",
+     "title": "Meet MrBeast's Secret YouTube Consultant (Paddy Galloway interview), video summary",
+     "url": "https://videohighlight.com/v/AX3dEGjBg6w"
+    },
+    {
+     "type": "A",
+     "title": "YouTube Creator Playbook tips: the first 15 seconds (YouTube Official Blog, 2011)",
+     "url": "https://blog.youtube/creator-and-artist-stories/youtube-creator-playbook-tips-first-15"
+    },
+    {
+     "type": "B",
+     "title": "Storyworthy (M. Dicks), reader notes and summaries",
+     "url": "https://calv.info/bookshelf/storyworthy"
+    }
+   ],
+   "enforced_by": [
+    ".claude/skills/narration-script/SKILL.md",
+    ".claude/agents/script-critic.md"
+   ],
+   "supersedes": [
+    "(new, companion to ST-11)"
+   ]
+  },
+  {
+   "id": "BP-06",
+   "area": "narration",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "Sentences for the ear: median at most 12 words, no sentence over 20 (REVIEW) or over 25 (FAIL), one idea per sentence; fragments are allowed.",
+   "thresholds": {
+    "median_max": 12,
+    "max_words": 20,
+    "hard_max_words": 25
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "News Writing for Television and Radio (UF/IFAS WC193)",
+     "url": "https://ask.ifas.ufl.edu/publication/WC193"
+    },
+    {
+     "type": "B",
+     "title": "Sound Reporting: The NPR Guide to Audio Journalism and Production (J. Kern), quoted by JEA",
+     "url": "https://jea.org/digital-media/writing-for-broadcast-how-to-sound-like-a-real-person"
+    },
+    {
+     "type": "B",
+     "title": "Sports Broadcasting, 'Tips for writing for broadcast' (K. Hull, Human Kinetics excerpt)",
+     "url": "https://us.humankinetics.com/blogs/excerpt/tips-for-writing-for-broadcast"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-05"
+   ],
+   "supersedes": [
+    "N-05 under 22",
+    "P-35 8-18",
+    "NARRATION_AND_LANGUAGE_GUIDE 28",
+    "DW-06 25"
+   ]
+  },
+  {
+   "id": "BP-07",
+   "area": "narration",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Spoken register: contractions (never the -'ve forms, which the ear mishears), active voice (passive sentences at most 10 %), 'you' to one listener at least once per 100 words, present tense where it is true.",
+   "thresholds": {
+    "passive_share_max": 0.1,
+    "you_per_words": 100,
+    "banned_contractions": [
+     "would've",
+     "could've",
+     "should've",
+     "might've",
+     "must've"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "News Writing for Television and Radio (UF/IFAS WC193)",
+     "url": "https://ask.ifas.ufl.edu/publication/WC193"
+    },
+    {
+     "type": "B",
+     "title": "Sound Reporting: The NPR Guide to Audio Journalism and Production (J. Kern), quoted by JEA",
+     "url": "https://jea.org/digital-media/writing-for-broadcast-how-to-sound-like-a-real-person"
+    },
+    {
+     "type": "B",
+     "title": "Sports Broadcasting, 'Tips for writing for broadcast' (K. Hull, Human Kinetics excerpt)",
+     "url": "https://us.humankinetics.com/blogs/excerpt/tips-for-writing-for-broadcast"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-12"
+   ],
+   "supersedes": [
+    "DW-10 (confirmed)"
+   ]
+  },
+  {
+   "id": "BP-08",
+   "area": "narration",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Numbers for the ear: at most one numeral per sentence, rounded unless the exact figure is the point, and every number that matters is also shown on screen.",
+   "thresholds": {
+    "numerals_per_sentence_max": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "News Writing for Television and Radio (UF/IFAS WC193)",
+     "url": "https://ask.ifas.ufl.edu/publication/WC193"
+    },
+    {
+     "type": "B",
+     "title": "Sound Reporting: The NPR Guide to Audio Journalism and Production (J. Kern), quoted by JEA",
+     "url": "https://jea.org/digital-media/writing-for-broadcast-how-to-sound-like-a-real-person"
+    },
+    {
+     "type": "B",
+     "title": "Sports Broadcasting, 'Tips for writing for broadcast' (K. Hull, Human Kinetics excerpt)",
+     "url": "https://us.humankinetics.com/blogs/excerpt/tips-for-writing-for-broadcast"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-13",
+    "explainer_engine/qa/engagement.py:ENG-3"
+   ],
+   "supersedes": [
+    "ED-10 data visuals (confirmed)"
+   ]
+  },
+  {
+   "id": "BP-09",
+   "area": "narration",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Humour sits beside the fact, never inside the example that explains it; the first laugh comes inside the first 45 s; density stays at most one verbal joke per 60 s (no evidence supports more).",
+   "thresholds": {
+    "first_joke_by_s": 45,
+    "jokes_per_60s_max": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Is Using Humor in the Classroom Beneficial or Detrimental? (Bolkan et al. 2018, NCA summary)",
+     "url": "https://www.natcom.org/publications-library/using-humor-classroom-beneficial-or-detrimental-student-learning/"
+    },
+    {
+     "type": "A",
+     "title": "All kidding aside: humor increases learning (Hackathorn et al. 2011, PDF)",
+     "url": "https://files.eric.ed.gov/fulltext/EJ956757.pdf"
+    },
+    {
+     "type": "A",
+     "title": "How Many Jokes a Page Should a Comedy Screenplay Have? (No Film School)",
+     "url": "https://nofilmschool.com/how-many-jokes-per-page"
+    },
+    {
+     "type": "A",
+     "title": "Top tips for using humor in explainer videos (simpleshow)",
+     "url": "https://simpleshow.com/blog/mysimpleshows-top-tips-for-using-humor-in-explainer-videos/"
+    },
+    {
+     "type": "B",
+     "title": "Storyworthy (M. Dicks), reader notes and summaries",
+     "url": "https://calv.info/bookshelf/storyworthy"
+    }
+   ],
+   "enforced_by": [
+    ".claude/skills/narration-script/SKILL.md",
+    ".claude/agents/performance-director.md",
+    ".claude/agents/script-critic.md"
+   ],
+   "supersedes": [
+    "P-05 1 joke/60 s (confirmed)",
+    "SS one joke per beat",
+    "narration-script 20 % share"
+   ]
+  },
+  {
+   "id": "BP-10",
+   "area": "narration",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "No pause before a punch line (performers do not pause there); emphasis comes from the text (one stressed word, an ellipsis, a tag), never from a hold over one second.",
+   "thresholds": {
+    "max_hold_s": 1.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Timing in the Performance of Jokes (Attardo & Pickering 2011)",
+     "url": "https://lair.etamu.edu/chssa-faculty-publications/8"
+    },
+    {
+     "type": "A",
+     "title": "ElevenLabs docs: Text to Speech best practices",
+     "url": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices"
+    },
+    {
+     "type": "A",
+     "title": "Audio Tags 101: directing emotional TTS in Eleven v3",
+     "url": "https://elevenlabs.io/blog/v3-audiotags"
+    },
+    {
+     "type": "B",
+     "title": "Storyworthy (M. Dicks), reader notes and summaries",
+     "url": "https://calv.info/bookshelf/storyworthy"
+    }
+   ],
+   "enforced_by": [
+    ".claude/agents/performance-director.md",
+    "explainer_engine/scripting/narration_lint.py:N-03"
+   ],
+   "supersedes": [
+    "PF-03 reveal pause 0.5 (confirmed as rewritten)",
+    "P-53 reveal pause 0.9",
+    "performance-director 0.3-0.8"
+   ]
+  },
+  {
+   "id": "BP-11",
+   "area": "shorts",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "A Short's hook is spoken from the first second: the first word starts within 1.0 s of frame 0, the hook is complete by 3.0 s and at most 14 words; one question, or one statement that raises several.",
+   "thresholds": {
+    "first_word_by_s": 1.0,
+    "hook_done_by_s": 3.0,
+    "hook_max_words": 14
+   },
+   "sources": [
+    {
+     "type": "C",
+     "title": "YouTube Shorts deep dive: Creator Insider video with Todd Sherman and Jenny Hoyos (blog page naming the video)",
+     "url": "https://blog.youtube/creator-and-artist-stories/youtube-shorts-deep-dive/"
+    },
+    {
+     "type": "A",
+     "title": "How Jenny Hoyos gets 10M views per YouTube Short (vidIQ)",
+     "url": "https://vidiq.com/blog/post/how-jenny-hoyos-gets-10m-views-per-youtube-short/"
+    },
+    {
+     "type": "A",
+     "title": "Creators on the Rise: Jenny Hoyos (Tubefilter)",
+     "url": "https://www.tubefilter.com/?p=176194"
+    },
+    {
+     "type": "A",
+     "title": "Creator Science #167: Jenny Hoyos (transcript page)",
+     "url": "https://creatorscience.com/podcast/jenny-hoyos/"
+    },
+    {
+     "type": "B",
+     "title": "Hook Point: How to Stand Out in a 3-Second World (B. Kane)",
+     "url": "https://archive.org/details/hookpointhowtost0000kane"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/validate.py:PV-28",
+    "explainer_engine/production/shorts.py:BP-11"
+   ],
+   "supersedes": [
+    "SH-01 (confirmed)",
+    "SS-07 (confirmed)",
+    "SH-04 fact opener (a statement that raises questions counts)"
+   ]
+  },
+  {
+   "id": "BP-12",
+   "area": "shorts",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A Short's word budget follows its length band at 170 wpm with 10 % slack: 15-30 s is 40-90 words, 45-75 s is 125-215 words; the estimate uses the heard pace of BP-01.",
+   "thresholds": {
+    "bands_s": [
+     [
+      15,
+      30
+     ],
+     [
+      45,
+      75
+     ]
+    ],
+    "words_per_s": 2.8333,
+    "slack": 0.1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "AI Voice Generator for YouTube Shorts Narration (VoxBooster)",
+     "url": "https://voxbooster.com/blog/ai-voice-generator-youtube-shorts-narration",
+     "note": "vendor"
+    },
+    {
+     "type": "C",
+     "title": "YouTube Shorts deep dive: Creator Insider video with Todd Sherman and Jenny Hoyos (blog page naming the video)",
+     "url": "https://blog.youtube/creator-and-artist-stories/youtube-shorts-deep-dive/"
+    },
+    {
+     "type": "A",
+     "title": "Creator Science #167: Jenny Hoyos (transcript page)",
+     "url": "https://creatorscience.com/podcast/jenny-hoyos/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/validate.py:PV-28"
+   ],
+   "supersedes": [
+    "PV-28 40-130 words",
+    "P-11 25-60 s",
+    "SH-01 25-50 s",
+    "shorts skills 20-45 s",
+    "validate bands 32/42 s"
+   ]
+  },
+  {
+   "id": "BP-13",
+   "area": "shorts",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Burned captions on a Short read at adult subtitle speed: at most 20 characters per second, at least 0.3 s per word, blocks of 2-6 words held 1.5-7 s, in sync within 0.5 s of the word, at most 42 characters per line.",
+   "thresholds": {
+    "cps_max": 20,
+    "s_per_word_min": 0.3,
+    "block_s": [
+     1.5,
+     7.0
+    ],
+    "block_words_max": 6,
+    "sync_max_s": 0.5,
+    "chars_per_line_max": 42
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Netflix English Timed Text Style Guide",
+     "url": "https://partnerhelp.netflixstudios.com/hc/en-us/articles/217350977-English-Timed-Text-Style-Guide"
+    },
+    {
+     "type": "A",
+     "title": "BBC Subtitling Guidelines (secondary copy)",
+     "url": "https://clevercast.com/bbc-subtitling-guidelines"
+    },
+    {
+     "type": "A",
+     "title": "Best Caption Style for YouTube Shorts (Blitzcut)",
+     "url": "https://blitzcutai.com/blog/best-caption-style-youtube-shorts-2026",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "16 hacks to make YouTube Shorts go viral (AIR)",
+     "url": "https://air.io/en/youtube-hacks/17-hacks-to-make-youtube-shorts-go-viral",
+     "note": "vendor"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/shorts.py:BP-13"
+   ],
+   "supersedes": [
+    "P-18 (confirmed)",
+    "P-103 one word lit"
+   ]
+  },
+  {
+   "id": "BP-14",
+   "area": "narration",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "ElevenLabs request hygiene: chunks at most 5,000 characters (the safe limit both model pages agree on), previous_text and next_text carried across chunks, pauses by tags and punctuation only (no SSML on v3/v4), speed within 0.9-1.1.",
+   "thresholds": {
+    "chunk_chars_max": 5000,
+    "speed_range": [
+     0.9,
+     1.1
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "ElevenLabs docs: Text to Speech capabilities (limits, previous_text/next_text)",
+     "url": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech"
+    },
+    {
+     "type": "A",
+     "title": "ElevenLabs docs: Text to Speech best practices",
+     "url": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices"
+    },
+    {
+     "type": "A",
+     "title": "ElevenLabs docs: Text to Speech product guide (speed 0.7-1.2)",
+     "url": "https://elevenlabs.io/docs/eleven-creative/playground/text-to-speech"
+    },
+    {
+     "type": "A",
+     "title": "SSML explained: ElevenLabs support (v3/v4 pause tags)",
+     "url": "https://elevenlabs.io/blog/ssml-tags-explained"
+    },
+    {
+     "type": "A",
+     "title": "ElevenLabs docs: Models (character limits)",
+     "url": "https://elevenlabs.io/docs/overview/models"
+    }
+   ],
+   "enforced_by": [
+    ".claude/skills/elevenlabs-voice/SKILL.md"
+   ],
+   "supersedes": [
+    "EL-03 400-900 chars (a house preference inside this limit)"
+   ]
+  },
+  {
+   "id": "BP-15",
+   "area": "narration",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "No press-release lines: narration never announces a date, a release, a price or a feature list the way a company's statement would ('comes out on 15 November', 'is now available', 'launches worldwide'); the fact lives in the claim map, the line in the story. Sources are cited in the claim map and the description, never spoken.",
+   "thresholds": {
+    "phrases": [
+     "comes out on",
+     "is coming out on",
+     "will be released on",
+     "is scheduled for release",
+     "releases on",
+     "is now available",
+     "available now",
+     "launches on",
+     "launching on",
+     "officially announced",
+     "according to the official",
+     "the company announced",
+     "press release",
+     "as reported by"
+    ]
+   },
+   "sources": [
+    {
+     "type": "C",
+     "title": "Meet MrBeast's Secret YouTube Consultant (Paddy Galloway interview), video summary",
+     "url": "https://videohighlight.com/v/AX3dEGjBg6w"
+    },
+    {
+     "type": "B",
+     "title": "Storyworthy (M. Dicks), reader notes and summaries",
+     "url": "https://calv.info/bookshelf/storyworthy"
+    },
+    {
+     "type": "A",
+     "title": "News Writing for Television and Radio (UF/IFAS WC193)",
+     "url": "https://ask.ifas.ufl.edu/publication/WC193"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-14",
+    ".claude/skills/narration-script/SKILL.md",
+    "explainer_engine/standards/policy_baseline.json"
+   ],
+   "supersedes": [
+    "ER-07 / RK-08 / RK-16 / RR-10 / SR-04 source-citing narration"
+   ],
+   "decided": "the creator, 2026-10-19 (after the Syndicate Wars review)"
+  },
+  {
+   "id": "BP-20",
+   "area": "motion",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "A camera move on a still keeps its scale within 1.00-1.15 (a push at most 1.10 by default); accents (punch) are exempt but their stack never exceeds 1.15 x 1.18.",
+   "thresholds": {
+    "scale_min": 1.0,
+    "scale_max": 1.15,
+    "push_default_max": 1.1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to Use the Ken Burns Effect on Images (Frameo)",
+     "url": "https://frameo.ai/blog/use-ken-burns-effect-images/"
+    },
+    {
+     "type": "A",
+     "title": "What Is the Ken Burns Effect (ShortGenius)",
+     "url": "https://shortgenius.com/blog/what-is-the-ken-burns-effect"
+    },
+    {
+     "type": "A",
+     "title": "Twelve basic principles of animation (Thomas & Johnston, cited)",
+     "url": "https://en.wikipedia.org/wiki/Twelve_basic_principles_of_animation"
+    },
+    {
+     "type": "B",
+     "title": "The Illusion of Life: Disney Animation (Thomas & Johnston)",
+     "url": "https://books.google.com/books?vid=ISBN9780786860708"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/shot_rules.py:MAX_ZOOM",
+    "explainer_engine/production/continuity.py:ZMAX",
+    "explainer_engine/edit/motion_lint.py:BP-20"
+   ],
+   "supersedes": [
+    "UR-13 1.15 (confirmed)",
+    "ED-02 1.25",
+    "continuity.ZMAX 1.25"
+   ]
+  },
+  {
+   "id": "BP-21",
+   "area": "motion",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Scale rate: a push or pull changes scale by 0.5-3 % per second; over 5 %/s reads rushed and is allowed only as a punch accent.",
+   "thresholds": {
+    "rate_min_per_s": 0.005,
+    "rate_max_per_s": 0.03,
+    "rushed_per_s": 0.05
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to Use the Ken Burns Effect on Images (Frameo)",
+     "url": "https://frameo.ai/blog/use-ken-burns-effect-images/"
+    },
+    {
+     "type": "A",
+     "title": "What Is the Ken Burns Effect (ShortGenius)",
+     "url": "https://shortgenius.com/blog/what-is-the-ken-burns-effect"
+    },
+    {
+     "type": "A",
+     "title": "Smooth camera movement in After Effects (demotion)",
+     "url": "https://trydemotion.com/blog/after-effects-motion-techniques"
+    },
+    {
+     "type": "A",
+     "title": "Twelve basic principles of animation (Thomas & Johnston, cited)",
+     "url": "https://en.wikipedia.org/wiki/Twelve_basic_principles_of_animation"
+    },
+    {
+     "type": "B",
+     "title": "The Illusion of Life: Disney Animation (Thomas & Johnston)",
+     "url": "https://books.google.com/books?vid=ISBN9780786860708"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/motion_lint.py:BP-21"
+   ],
+   "supersedes": [
+    "(new: UR-13 had a range, no rate)"
+   ]
+  },
+  {
+   "id": "BP-22",
+   "area": "motion",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "Pan speed: a pan covers at most one seventh of the frame width per second (the judder rule); the house default stays 1.2 %/s.",
+   "thresholds": {
+    "pan_max_width_per_s": 0.143,
+    "pan_default_width_per_s": 0.012
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Camera Panning Speed (RED 101)",
+     "url": "https://www.reddigitalcinema.com/red-101/camera-panning-speed"
+    },
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "Twelve basic principles of animation (Thomas & Johnston, cited)",
+     "url": "https://en.wikipedia.org/wiki/Twelve_basic_principles_of_animation"
+    },
+    {
+     "type": "B",
+     "title": "The Illusion of Life: Disney Animation (Thomas & Johnston)",
+     "url": "https://books.google.com/books?vid=ISBN9780786860708"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/motion_lint.py:BP-22"
+   ],
+   "supersedes": [
+    "UR-13 (confirmed, adds the cap)"
+   ]
+  },
+  {
+   "id": "BP-23",
+   "area": "motion",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Every camera move is eased in and out; a linear move fails; a brisk move keeps a readable hold of at least 0.25 s at each end.",
+   "thresholds": {
+    "end_hold_min_s": 0.25
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to Use the Ken Burns Effect on Images (Frameo)",
+     "url": "https://frameo.ai/blog/use-ken-burns-effect-images/"
+    },
+    {
+     "type": "A",
+     "title": "Smooth camera movement in After Effects (demotion)",
+     "url": "https://trydemotion.com/blog/after-effects-motion-techniques"
+    },
+    {
+     "type": "A",
+     "title": "Twelve basic principles of animation (Thomas & Johnston, cited)",
+     "url": "https://en.wikipedia.org/wiki/Twelve_basic_principles_of_animation"
+    },
+    {
+     "type": "B",
+     "title": "The Illusion of Life: Disney Animation (Thomas & Johnston)",
+     "url": "https://books.google.com/books?vid=ISBN9780786860708"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/accents.py:_ease_out",
+    "explainer_engine/edit/motion_lint.py:BP-23"
+   ],
+   "supersedes": [
+    "(code already eased; now a lint)"
+   ]
+  },
+  {
+   "id": "BP-24",
+   "area": "motion",
+   "status": "house",
+   "severity": "REVIEW",
+   "statement": "No camera shake as a move (the creator's UR-13). A shake exists only as an accent on an impact beat (a blow, a fall, a collision, an explosion), decaying within 1.0 s, peak at most 7 % of frame height, never on a dialogue-only shot.",
+   "thresholds": {
+    "decay_max_s": 1.0,
+    "amplitude_max_h": 0.07,
+    "impact_words": [
+     "hit",
+     "hits",
+     "crash",
+     "crashes",
+     "explode",
+     "explodes",
+     "explosion",
+     "blast",
+     "slam",
+     "slams",
+     "fall",
+     "falls",
+     "collapse",
+     "collapses",
+     "smash",
+     "smashes",
+     "punch",
+     "punches",
+     "shot",
+     "shots",
+     "bang",
+     "quake",
+     "collision",
+     "crack",
+     "strike",
+     "strikes"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to Simulate Camera Shake in After Effects (School of Motion)",
+     "url": "https://www.schoolofmotion.com/blog/how-to-simulate-camera-shake-adobe-after-effects"
+    },
+    {
+     "type": "A",
+     "title": "Shake Effect After Effects Tutorial (Boris FX)",
+     "url": "https://borisfx.com/blog/shake-effect-after-effects-tutorial/"
+    },
+    {
+     "type": "A",
+     "title": "After Effects Camera Shake Effect, 3 methods compared (DJordan Media)",
+     "url": "https://djordanmedia.com/blogs/news/after-effects-camera-shake-effect"
+    },
+    {
+     "type": "C",
+     "title": "Add Camera Impact Shakes in After Effects (video)",
+     "url": "https://www.youtube.com/watch?v=6nB0tNM42Y8",
+     "note": "title verified only"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/accents.py:SHAKE_S",
+    "explainer_engine/edit/motion_lint.py:BP-24"
+   ],
+   "supersedes": [
+    "UR-13 no camera shake",
+    "AL-03 shake accent"
+   ],
+   "decided": "the creator, 2026-10-16 (UR-13); the accent stays only where the story hits"
+  },
+  {
+   "id": "BP-25",
+   "area": "motion",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Whip-ins and flash-ins are motivated transitions (a story turn), never a signature: at least 45 s apart.",
+   "thresholds": {
+    "entry_min_gap_s": 45
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Whip Pans: when and why filmmakers use them (CineD)",
+     "url": "https://www.cined.com/?p=415623"
+    },
+    {
+     "type": "A",
+     "title": "Create a whip-pan using built-in effects in Premiere Pro (PremiumBeat)",
+     "url": "https://www.premiumbeat.com/blog/create-whip-pan-using-built-effects-premiere-pro/"
+    },
+    {
+     "type": "C",
+     "title": "How to Make a Kurzgesagt Video in 1200 Hours (Kurzgesagt)",
+     "url": "https://www.youtube.com/watch?v=uFk0mgljtns"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/motion_lint.py:ENTRY_MIN_GAP"
+   ],
+   "supersedes": [
+    "MO-04 (confirmed)",
+    "ED-04 (confirmed)"
+   ]
+  },
+  {
+   "id": "BP-26",
+   "area": "motion",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Flash safety: every full-frame luminance step of 10 % or more counts as a flash; at most 3 flashes in any 1 s window, no saturated red flashes; a flash_in is 2 frames at most 80 % white.",
+   "thresholds": {
+    "flashes_per_s_max": 3,
+    "flash_frames": 2,
+    "flash_white_max": 0.8
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "WCAG 2.2 Understanding SC 2.3.1 Three Flashes or Below Threshold",
+     "url": "https://www.w3.org/WAI/WCAG22/Understanding/three-flashes-or-below-threshold.html"
+    },
+    {
+     "type": "A",
+     "title": "ASA ruling Citroen UK (quotes Ofcom's flashing-image conditions)",
+     "url": "https://www.asa.org.uk/rulings/citroen-uk-ltd-a11-164759.html"
+    },
+    {
+     "type": "A",
+     "title": "Rec. ITU-R BT.1702: reduction of photosensitive epileptic seizures",
+     "url": "https://www.itu.int/rec/R-REC-BT.1702/en"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/motion_lint.py:BP-26",
+    "explainer_engine/production/accents.py:FLASH_WHITE"
+   ],
+   "supersedes": [
+    "(new)"
+   ]
+  },
+  {
+   "id": "BP-27",
+   "area": "text",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A popped label holds at least max(0.83 s, 0.375 s x words) and at most 7 s; P-71's 1.5 + 0.3 n s satisfies the floor.",
+   "thresholds": {
+    "hold_min_s": 0.83,
+    "s_per_word": 0.375,
+    "hold_max_s": 7.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Netflix Timed Text Style Guide: General Requirements",
+     "url": "https://partnerhelp.netflixstudios.com/hc/en-us/articles/219375728-Timed-Text-Style-Guide-General-Requirements"
+    },
+    {
+     "type": "A",
+     "title": "Netflix Timed Text Style Guide: Subtitle Timing Guidelines",
+     "url": "https://partnerhelp.netflixstudios.com/hc/en-us/articles/360051554394-Timed-Text-Style-Guide-Subtitle-Timing-Guidelines"
+    },
+    {
+     "type": "A",
+     "title": "BBC Subtitling Guidelines (secondary copy)",
+     "url": "https://clevercast.com/bbc-subtitling-guidelines"
+    },
+    {
+     "type": "A",
+     "title": "Captioning Key: Presentation Rate (DCMP)",
+     "url": "https://dcmp.org/learn/captioningkey/601"
+    },
+    {
+     "type": "A",
+     "title": "How many words do we read per minute? (Brysbaert 2019, meta-analysis)",
+     "url": "https://www.gwern.net/doc/psychology/linguistics/2019-brysbaert.pdf"
+    },
+    {
+     "type": "A",
+     "title": "Effects of the duration of expressions on the recognition of microexpressions (Shen 2012)",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3296074/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/accents.py:text_hold",
+    "explainer_engine/edit/motion_lint.py:BP-27"
+   ],
+   "supersedes": [
+    "P-71 (confirmed, adds the cap)",
+    "UR-31 bubbles max(1.4, 0.3 n)",
+    "editing-style 1.2 s"
+   ]
+  },
+  {
+   "id": "BP-28",
+   "area": "text",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "On-screen text in 16:9 stays inside the central 90 % (vertical) x 75 % (horizontal) of the frame, never over a face or a mouth, and reads at 4.5:1 contrast (3:1 when at least 24 px).",
+   "thresholds": {
+    "safe_x": [
+     0.125,
+     0.875
+    ],
+    "safe_y": [
+     0.05,
+     0.95
+    ],
+    "contrast_min": 4.5,
+    "contrast_large_min": 3.0,
+    "large_px": 24
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "BBC Subtitling Guidelines (secondary copy)",
+     "url": "https://clevercast.com/bbc-subtitling-guidelines"
+    },
+    {
+     "type": "A",
+     "title": "Netflix Timed Text Style Guide: General Requirements",
+     "url": "https://partnerhelp.netflixstudios.com/hc/en-us/articles/219375728-Timed-Text-Style-Guide-General-Requirements"
+    },
+    {
+     "type": "A",
+     "title": "WCAG 2.1 Understanding SC 1.4.3 Contrast (Minimum)",
+     "url": "https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/motion_lint.py:BP-28",
+    "explainer_engine/design/palette.py",
+    ".claude/skills/shot-visuals/SKILL.md"
+   ],
+   "supersedes": [
+    "(new)"
+   ]
+  },
+  {
+   "id": "BP-29",
+   "area": "shorts",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A Short keeps captions, labels, stat cards and the hero's face inside the ad safe zone of a 1080 x 1920 frame: x 48-888 px, y 288-1248 px; the face centre sits in the middle third vertically.",
+   "thresholds": {
+    "safe_x_px": [
+     48,
+     888
+    ],
+    "safe_y_px": [
+     288,
+     1248
+    ],
+    "frame": [
+     1080,
+     1920
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Vertical video ad safe zone (Google Ads Help 9128498)",
+     "url": "https://support.google.com/google-ads/answer/9128498?hl=en"
+    },
+    {
+     "type": "A",
+     "title": "YouTube Shorts safe zone (reprint of Google's values)",
+     "url": "https://www.socialync.io/tools/safe-zones/youtube-shorts"
+    },
+    {
+     "type": "A",
+     "title": "YouTube Shorts, Reels and TikTok safe zones (reap.video)",
+     "url": "https://reap.video/blog/short-form-video-safe-zones",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "Get started creating YouTube Shorts (YouTube Help 10059070)",
+     "url": "https://support.google.com/youtube/answer/10059070"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/shorts.py:BP-29"
+   ],
+   "supersedes": [
+    "P-102 140 px right margin",
+    "shorts.py MarginV 430 / L-R 90"
+   ]
+  },
+  {
+   "id": "BP-30",
+   "area": "editing",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Cut continuity: across a hard cut the hero or focal point stays within 10 % of the frame of its previous position unless the cut opens a new scene; the shot size changes by a full step (never the same framing of the same picture twice in a row); a direction change over 90 degrees needs a neutral picture between.",
+   "thresholds": {
+    "focal_shift_max": 0.1,
+    "direction_change_max_deg": 90
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "Walter Murch's Rule of Six (StudioBinder)",
+     "url": "https://www.studiobinder.com/blog/walter-murch-rule-of-six/"
+    },
+    {
+     "type": "A",
+     "title": "What is the 180 Degree Rule in Film? (StudioBinder)",
+     "url": "https://www.studiobinder.com/blog/what-is-the-180-degree-rule/"
+    },
+    {
+     "type": "B",
+     "title": "In the Blink of an Eye (W. Murch)",
+     "url": "https://books.google.com/books?vid=ISBN9781879505629"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/continuity.py:BP-30",
+    ".claude/agents/edit-planner.md",
+    ".claude/skills/editing-style/SKILL.md"
+   ],
+   "supersedes": [
+    "(new)"
+   ]
+  },
+  {
+   "id": "BP-31",
+   "area": "editing",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "A dissolve marks elapsed time or a change of place only: it is allowed on a period boundary (time jump) and nowhere else; every other transition is a hard cut (whips and flashes count as cuts for the share).",
+   "thresholds": {
+    "dissolve_s": 1.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "What is a Dissolve in Film (StudioBinder)",
+     "url": "https://www.studiobinder.com/blog/what-is-a-dissolve-in-film-definition/"
+    },
+    {
+     "type": "C",
+     "title": "How to Make a Kurzgesagt Video in 1200 Hours (Kurzgesagt)",
+     "url": "https://www.youtube.com/watch?v=uFk0mgljtns"
+    },
+    {
+     "type": "B",
+     "title": "In the Blink of an Eye (W. Murch)",
+     "url": "https://books.google.com/books?vid=ISBN9781879505629"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/motion_lint.py:BP-31",
+    "explainer_engine/edit/shot_rules.py:DISSOLVE_SECONDS"
+   ],
+   "supersedes": [
+    "UR-14 (its 90 % figure stays a house convention: nobody measurable states it)",
+    "ED-04 period only",
+    "P-76 wipe / lid-open"
+   ]
+  },
+  {
+   "id": "BP-32",
+   "area": "faces",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "An expression change lands 1-3 frames before the word it answers, never after it; a head or body change 4-6 frames before.",
+   "thresholds": {
+    "lead_frames": [
+     1,
+     3
+    ],
+    "lag_max_frames": 0,
+    "body_lead_frames": [
+     4,
+     6
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Lip sync: ITU-R BT.1359 tolerance windows",
+     "url": "https://www.forasoft.com/learn/audio-for-video/articles-audio/lip-sync-itu-r-bt-1359-tolerance-windows"
+    },
+    {
+     "type": "A",
+     "title": "Lip sync animation techniques every character animator should know",
+     "url": "https://www.highonfilms.com/lip-sync-animation-techniques-every-character-animator-should-know/"
+    },
+    {
+     "type": "A",
+     "title": "Lip Sync Book (animation-school notes quoting Thomas & Johnston)",
+     "url": "https://brianlemay.com/Pages/animationschool/animation/lipsyncbook/lipsync.html"
+    },
+    {
+     "type": "B",
+     "title": "The Illusion of Life: Disney Animation (Thomas & Johnston)",
+     "url": "https://books.google.com/books?vid=ISBN9780786860708"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/accents.py:EXPR_LEAD_FRAMES",
+    "explainer_engine/edit/motion_lint.py:BP-32"
+   ],
+   "supersedes": [
+    "(new: beats aligned to word_start with no lead)"
+   ]
+  },
+  {
+   "id": "BP-33",
+   "area": "faces",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "An expression holds at least 0.5 s and a mouth shape at least 2 frames; two expression changes on the same hero are at least 0.5 s apart.",
+   "thresholds": {
+    "hold_min_s": 0.5,
+    "mouth_min_frames": 2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Effects of the duration of expressions on the recognition of microexpressions (Shen 2012)",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3296074/"
+    },
+    {
+     "type": "A",
+     "title": "Lip Sync Book (animation-school notes quoting Thomas & Johnston)",
+     "url": "https://brianlemay.com/Pages/animationschool/animation/lipsyncbook/lipsync.html"
+    },
+    {
+     "type": "B",
+     "title": "The Illusion of Life: Disney Animation (Thomas & Johnston)",
+     "url": "https://books.google.com/books?vid=ISBN9780786860708"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/motion_lint.py:BP-33"
+   ],
+   "supersedes": [
+    "VB expression change about every second (confirmed, adds a floor)"
+   ]
+  },
+  {
+   "id": "BP-34",
+   "area": "faces",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A keyed close-up matches its backdrop (anti-sticker): the same light direction, a colour temperature within tolerance, no halo over 2 px, a contact shadow sampled from the backdrop's darks, shared grain.",
+   "thresholds": {
+    "halo_px_max": 2,
+    "luma_tolerance": 0.18,
+    "warmth_tolerance": 0.12
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Why your image cutouts still look pasted on (Eggradients)",
+     "url": "https://www.eggradients.com/blog/image-cutouts"
+    },
+    {
+     "type": "A",
+     "title": "10-step guide: blend images and create composites (tutvid)",
+     "url": "https://tutvid.com/?p=9007"
+    },
+    {
+     "type": "C",
+     "title": "Intro to Photoshop Compositing for Beginners (PHLEARN video course)",
+     "url": "https://phlearn.com/tutorial/beginners-guide-compositing/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/faces.py:BP-34",
+    ".claude/skills/shot-visuals/SKILL.md"
+   ],
+   "supersedes": [
+    "faces.BORDER_KEYED (key border only)"
+   ]
+  },
+  {
+   "id": "BP-35",
+   "area": "motion",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Parallax on a still uses at least three depth layers moving toward the subject, foreground faster than mid, both eased; a parallax shot counts as alive.",
+   "thresholds": {
+    "layers_min": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to create a parallax effect in After Effects (AEJuice)",
+     "url": "https://aejuice.com/blog/how-to-create-a-parallax-effect-in-after-effects"
+    },
+    {
+     "type": "A",
+     "title": "How to animate still photos in After Effects (No Film School on Joe Fellows)",
+     "url": "https://nofilmschool.com/2013/11/tutorial-how-to-animate-still-photos-in-after-effects"
+    },
+    {
+     "type": "C",
+     "title": "How to create motion in still photographs using the parallax effect (Joe Fellows, feature)",
+     "url": "https://laughingsquid.com/how-to-create-motion-in-still-photographs-using-the-parallax-effect/"
+    }
+   ],
+   "enforced_by": [
+    ".claude/skills/editing-style/SKILL.md",
+    ".claude/agents/edit-planner.md"
+   ],
+   "supersedes": [
+    "MO-06 (confirmed)"
+   ],
+   "note": "no CPU parallax in assemble.py yet: a rule for the planner, not a gate"
+  },
+  {
+   "id": "BP-40",
+   "area": "rhythm",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "Section-aware rhythm: in the first 30 s something changes on screen at least every 5 s (FAIL); in the body a still longer than 20 s is REVIEW and longer than 40 s is FAIL; the average stays at most 10 pictures a minute (the creator) with one burst of 5-10 cuts allowed per 2-3 min; every change carries new information.",
+   "thresholds": {
+    "hook_window_s": 30,
+    "hook_max_still_s": 5,
+    "body_review_still_s": 20,
+    "body_fail_still_s": 40,
+    "pictures_per_min_max": 10,
+    "burst_cuts": [
+     5,
+     10
+    ],
+    "burst_every_s": [
+     120,
+     180
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "What MrBeast's former retention strategist Mario Joos taught us about editing (Vidpros)",
+     "url": "https://vidpros.com/retention-editing-what-you-can-learn-from-mario-joos/"
+    },
+    {
+     "type": "B",
+     "title": "The YouTube Formula (D. Eves)",
+     "url": "https://www.shortform.com/pdf/the-youtube-formula-pdf-derral-eves"
+    },
+    {
+     "type": "C",
+     "title": "A brutally honest conversation with MrBeast (video summary)",
+     "url": "https://videohighlight.com/v/9IQ_ldV9z_A"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/board.py:RHYTHM-3",
+    "explainer_engine/edit/board.py:MAX_PER_MIN"
+   ],
+   "supersedes": [
+    "UR-31 flat 9 s",
+    "MO-01 5 s",
+    "VB-01 3-6 s pictures",
+    "PRODUCTION_RULES planning 13-14 pictures/min"
+   ]
+  },
+  {
+   "id": "BP-41",
+   "area": "rhythm",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "One scripted pattern interrupt in the 25-35 s window (a cut with a new element: an insert, a text pop or a music change).",
+   "thresholds": {
+    "window_s": [
+     25,
+     35
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "Paddy Galloway on the Colin and Samir Show (Publish Press)",
+     "url": "https://news.thepublishpress.com/p/youtube-pays-youtubers-to-stay-on-youtube"
+    },
+    {
+     "type": "C",
+     "title": "A brutally honest conversation with MrBeast (video summary)",
+     "url": "https://videohighlight.com/v/9IQ_ldV9z_A"
+    },
+    {
+     "type": "B",
+     "title": "The YouTube Formula (D. Eves)",
+     "url": "https://www.shortform.com/pdf/the-youtube-formula-pdf-derral-eves"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/board.py:BP-41",
+    ".claude/agents/edit-planner.md"
+   ],
+   "supersedes": [
+    "(new)"
+   ]
+  },
+  {
+   "id": "BP-42",
+   "area": "story",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A forward-pointing line (an open question or a promise) at least every 150 s, and near 3:00 and 6:00 in an 8-12 min video; over 180 s without one is REVIEW.",
+   "thresholds": {
+    "microhook_every_s": 150,
+    "review_gap_s": 180,
+    "rehook_at_s": [
+     180,
+     360
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "YouTube viewer retention strategy (TubeBuddy)",
+     "url": "https://www.tubebuddy.com/blog/youtube-viewer-retention-to-increase-watch-time/"
+    },
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "How to succeed in MrBeast production (memo text, mirrored)",
+     "url": "https://www.alexanderjarvis.com/memo-how-to-succeed-in-mrbeast-production/"
+    },
+    {
+     "type": "C",
+     "title": "How MrBeast made YouTube's greatest video (video summary)",
+     "url": "https://videohighlight.com/v/L4rXidEr248"
+    },
+    {
+     "type": "B",
+     "title": "Made to Stick (Heath & Heath), notes",
+     "url": "https://www.ybrikman.com/blog/2015/01/18/made-to-stick/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/engagement.py:ENG-7"
+   ],
+   "supersedes": [
+    "ENG-6 260 words (confirmed)"
+   ]
+  },
+  {
+   "id": "BP-43",
+   "area": "story",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "The ending is abrupt: no recap or goodbye in the last 10 % ('to recap', 'thanks for watching', 'and lastly', 'don't forget to subscribe'); the last sentence is an open question or a pointer to one next video, and narration continues at least 15 s under the end screen.",
+   "thresholds": {
+    "last_share": 0.1,
+    "end_screen_narration_min_s": 15,
+    "lexicon": [
+     "to recap",
+     "in summary",
+     "to sum up",
+     "thanks for watching",
+     "thank you for watching",
+     "and lastly",
+     "don't forget to subscribe",
+     "see you next time",
+     "goodbye",
+     "that's all for today",
+     "hit the like button"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "How to succeed in MrBeast production (memo text, mirrored)",
+     "url": "https://www.alexanderjarvis.com/memo-how-to-succeed-in-mrbeast-production/"
+    },
+    {
+     "type": "B",
+     "title": "YouTube Secrets (Cannell & Travis)",
+     "url": "https://www.shortform.com/blog/youtube-secrets/"
+    },
+    {
+     "type": "C",
+     "title": "How MrBeast made YouTube's greatest video (video summary)",
+     "url": "https://videohighlight.com/v/L4rXidEr248"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/engagement.py:ENG-8"
+   ],
+   "supersedes": [
+    "ENG-5 (confirmed)",
+    "N-02 last beat teases the next episode (confirmed)",
+    "SR-03"
+   ]
+  },
+  {
+   "id": "BP-44",
+   "area": "shorts",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A Short's premise stays open until its last 15 %: the sentence that answers the hook starts at or after 85 % of the estimated read; lines 2-3 foreshadow (a promise marker) inside 3 s of the hook; the ending is a loop or a pointer, never a sign-off.",
+   "thresholds": {
+    "payoff_after_share": 0.85,
+    "foreshadow_by_s": 3.0,
+    "signoff_lexicon": [
+     "thanks for watching",
+     "subscribe",
+     "see you",
+     "goodbye",
+     "like and"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "16 hacks to make YouTube Shorts go viral (AIR)",
+     "url": "https://air.io/en/youtube-hacks/17-hacks-to-make-youtube-shorts-go-viral",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "Creator Science #167: Jenny Hoyos (transcript page)",
+     "url": "https://creatorscience.com/podcast/jenny-hoyos/"
+    },
+    {
+     "type": "C",
+     "title": "Shorts Genius Shares Everything She Knows (Jenny Hoyos interview), summary",
+     "url": "https://videohighlight.com/v/As7abwNhG7Y"
+    },
+    {
+     "type": "C",
+     "title": "The secret to telling a great story in less than 60 seconds (Jenny Hoyos, TEDNext 2024)",
+     "url": "https://www.ted.com/talks/145078"
+    },
+    {
+     "type": "B",
+     "title": "Made to Stick (Heath & Heath), notes",
+     "url": "https://www.ybrikman.com/blog/2015/01/18/made-to-stick/"
+    },
+    {
+     "type": "B",
+     "title": "YouTube Secrets (Cannell & Travis)",
+     "url": "https://www.shortform.com/blog/youtube-secrets/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/validate.py:PV-28",
+    ".claude/agents/shorts-writer.md",
+    ".claude/skills/shorts-for-video/SKILL.md"
+   ],
+   "supersedes": [
+    "SH-01 (adds payoff position)",
+    "PV-34 loop/pointer (confirmed)"
+   ]
+  },
+  {
+   "id": "BP-45",
+   "area": "shorts",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A Short changes on screen at least every 5 s, with at least 3 events per 10 s, each on new information; the 1.5 s beat metronome is not a Shorts rule (no source supports it).",
+   "thresholds": {
+    "max_still_s": 5.0,
+    "events_per_10s_min": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "16 hacks to make YouTube Shorts go viral (AIR)",
+     "url": "https://air.io/en/youtube-hacks/17-hacks-to-make-youtube-shorts-go-viral",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "How to get more views on YouTube Shorts in 2026 (vidIQ)",
+     "url": "https://vidiq.com/blog/post/get-more-views-youtube-shorts/"
+    },
+    {
+     "type": "A",
+     "title": "What MrBeast's former retention strategist Mario Joos taught us about editing (Vidpros)",
+     "url": "https://vidpros.com/retention-editing-what-you-can-learn-from-mario-joos/"
+    },
+    {
+     "type": "B",
+     "title": "The YouTube Formula (D. Eves)",
+     "url": "https://www.shortform.com/pdf/the-youtube-formula-pdf-derral-eves"
+    },
+    {
+     "type": "C",
+     "title": "Shorts Genius Shares Everything She Knows (Jenny Hoyos interview), summary",
+     "url": "https://videohighlight.com/v/As7abwNhG7Y"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/validate.py:PV-34"
+   ],
+   "supersedes": [
+    "SS-08 (confirmed)",
+    "SS-09 1.5 s beats on Shorts"
+   ]
+  },
+  {
+   "id": "BP-46",
+   "area": "shorts",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Short lines read at grade 6 or under (Flesch-Kincaid) and at most 14 words per line.",
+   "thresholds": {
+    "grade_max": 6.0,
+    "line_words_max": 14
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Creator Science #167: Jenny Hoyos (transcript page)",
+     "url": "https://creatorscience.com/podcast/jenny-hoyos/"
+    },
+    {
+     "type": "C",
+     "title": "Shorts Genius Shares Everything She Knows (Jenny Hoyos interview), summary",
+     "url": "https://videohighlight.com/v/As7abwNhG7Y"
+    },
+    {
+     "type": "A",
+     "title": "16 hacks to make YouTube Shorts go viral (AIR)",
+     "url": "https://air.io/en/youtube-hacks/17-hacks-to-make-youtube-shorts-go-viral",
+     "note": "vendor"
+    },
+    {
+     "type": "B",
+     "title": "Made to Stick (Heath & Heath), notes",
+     "url": "https://www.ybrikman.com/blog/2015/01/18/made-to-stick/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/validate.py:PV-28"
+   ],
+   "supersedes": [
+    "PV-28 14-word hook (extended to every line)"
+   ]
+  },
+  {
+   "id": "BP-47",
+   "area": "publishing",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Posting the set: the first Short within 3 days of the video, then at most one a day, the ten spread over at least 14 days (about five a month lifts long-form views; 35+ a month does not).",
+   "thresholds": {
+    "first_within_days": 3,
+    "per_day_max": 1,
+    "spread_days_min": 14
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "YouTube views rising, watch time falling (Metricool study, 799,718 videos)",
+     "url": "https://www.netinfluencer.com/youtube-views-are-rising-but-watch-time-and-ad-revenue-are-falling-study-finds/"
+    },
+    {
+     "type": "A",
+     "title": "How often should you post Shorts (AIR)",
+     "url": "https://air.io/en/youtube-hacks/how-often-should-you-post-shorts-to-grow-faster",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "16 hacks to make YouTube Shorts go viral (AIR)",
+     "url": "https://air.io/en/youtube-hacks/17-hacks-to-make-youtube-shorts-go-viral",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "Search & discovery tips - Shorts (YouTube Help 11914225)",
+     "url": "https://support.google.com/youtube/answer/11914225?hl=en&co=YOUTUBE._YTVideoType%3Dshorts"
+    },
+    {
+     "type": "C",
+     "title": "Shorts Genius Shares Everything She Knows (Jenny Hoyos interview), summary",
+     "url": "https://videohighlight.com/v/As7abwNhG7Y"
+    }
+   ],
+   "enforced_by": [
+    ".claude/skills/shorts-for-video/SKILL.md",
+    "explainer_engine/publish/plan.py:BP-47"
+   ],
+   "supersedes": [
+    "SS-03 posted within three days"
+   ]
+  },
+  {
+   "id": "BP-48",
+   "area": "publishing",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Re-edit triggers read from Studio after publishing: Intro (still watching at 30 s) under 50 % reworks the first 30 s (target 60 %); a Short whose 'chose to view' is under 70 % reworks frame 0 and line 1; a drop of 15 points before 3 s is the hook, a steeper mid-curve is pacing, a drop in the last 15 % is a late payoff; a Short under 30 s with AVD under its length has no loop.",
+   "thresholds": {
+    "intro_target": 0.6,
+    "intro_review_below": 0.5,
+    "chose_to_view_min": 0.7,
+    "hook_drop_pts": 15,
+    "short_apv_min": 0.9,
+    "long_short_apv_min": 0.65
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Measure key moments for audience retention (YouTube Help 9314415)",
+     "url": "https://support.google.com/youtube/answer/9314415"
+    },
+    {
+     "type": "A",
+     "title": "Content tab analytics tips - Shorts (YouTube Help 12942217)",
+     "url": "https://support.google.com/youtube/answer/12942217?hl=en&co=YOUTUBE._YTVideoType%3Dshorts"
+    },
+    {
+     "type": "A",
+     "title": "Understand your YouTube content performance (YouTube Help 12220281)",
+     "url": "https://support.google.com/youtube/answer/12220281?hl=en-GB&co=GENIE.Platform%3DAndroid"
+    },
+    {
+     "type": "A",
+     "title": "YouTube audience retention: what's a good rate (vidIQ)",
+     "url": "https://vidiq.com/blog/post/increase-audience-retention-youtube/"
+    },
+    {
+     "type": "A",
+     "title": "16 hacks to make YouTube Shorts go viral (AIR)",
+     "url": "https://air.io/en/youtube-hacks/17-hacks-to-make-youtube-shorts-go-viral",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "Creator Science #167: Jenny Hoyos (transcript page)",
+     "url": "https://creatorscience.com/podcast/jenny-hoyos/"
+    },
+    {
+     "type": "C",
+     "title": "Shorts Genius Shares Everything She Knows (Jenny Hoyos interview), summary",
+     "url": "https://videohighlight.com/v/As7abwNhG7Y"
+    },
+    {
+     "type": "C",
+     "title": "6 tips for better audience retention (Matt Koval, YouTube Creators)",
+     "url": "https://videohighlight.com/v/b8RT5w-QISY"
+    }
+   ],
+   "enforced_by": [
+    "docs/PUBLISHING_AND_ANALYTICS.md"
+   ],
+   "supersedes": [
+    "(new)"
+   ]
+  },
+  {
+   "id": "BP-50",
+   "area": "audio",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "Integrated loudness of the long-form mix: -14 LUFS (YouTube publishes no number; louder is turned down, quieter is never lifted), PASS -15..-13, REVIEW to -16, FAIL outside; true peak at most -1.0 dBTP after the codec, limiter at -1.5. Both are measured on the delivered file and the verdict is recorded next to the number.",
+   "thresholds": {
+    "lufs": -14.0,
+    "pass_band": [
+     -15.0,
+     -13.0
+    ],
+    "allowed": [
+     -16.0,
+     -13.0
+    ],
+    "true_peak_max": -1.0,
+    "limiter_tp": -1.5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Control video volume on your device (YouTube Help 14106294)",
+     "url": "https://support.google.com/youtube/answer/14106294"
+    },
+    {
+     "type": "A",
+     "title": "YouTube recommended upload encoding settings (Help 1722171)",
+     "url": "https://support.google.com/youtube/answer/1722171"
+    },
+    {
+     "type": "A",
+     "title": "EBU R 128-2023 Loudness normalisation and permitted maximum level",
+     "url": "https://tech.ebu.ch/docs/r/r128.pdf"
+    },
+    {
+     "type": "A",
+     "title": "How to edit a video to achieve good audio loudness on YouTube (Youlean)",
+     "url": "https://youlean.co/?p=30813"
+    },
+    {
+     "type": "A",
+     "title": "Netflix loudness delivery spec discussed (Production Expert)",
+     "url": "https://www.production-expert.com/home-page/2018/8/23/has-netflix-turned-the-clock-back-10-years-or-is-their-new-loudness-delivery-spec-a-stroke-of-genius"
+    },
+    {
+     "type": "C",
+     "title": "Understanding how to loudness normalize your audio for video (video)",
+     "url": "https://www.youtube.com/watch?v=lHNhxGojFRU"
+    },
+    {
+     "type": "C",
+     "title": "How to improve your podcast, Bullaki with Curtis Judd (video, transcript)",
+     "url": "https://bullaki.com/projects/videos/how-to-improve-your-podcast-with-curtis-judd/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/targets.py:BP-50",
+    "explainer_engine/production/assemble.py:BP-50"
+   ],
+   "supersedes": [
+    "P-90 (confirmed)",
+    "P-91 (confirmed)",
+    "PRODUCTION_RULES section 6 '-16 to -12'",
+    "AUDIO_SYSTEM"
+   ]
+  },
+  {
+   "id": "BP-51",
+   "area": "audio",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Dialogue is the anchor: programme loudness minus the narration stem's loudness stays at most 5 LU (REVIEW above 4 LU); the effects stem never runs louder than the narration.",
+   "thresholds": {
+    "ldr_max_lu": 5.0,
+    "ldr_review_lu": 4.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "EBU Tech 3343-2023 Guidelines for production in accordance with R 128",
+     "url": "https://tech.ebu.ch/docs/tech/tech3343.pdf"
+    },
+    {
+     "type": "A",
+     "title": "CALM Act best practices summary (NAB, ATSC A/85 digest)",
+     "url": "https://www.nab.org/documents/resources/CALMBestPractices.pdf"
+    },
+    {
+     "type": "A",
+     "title": "Netflix loudness delivery spec discussed (Production Expert)",
+     "url": "https://www.production-expert.com/home-page/2018/8/23/has-netflix-turned-the-clock-back-10-years-or-is-their-new-loudness-delivery-spec-a-stroke-of-genius"
+    },
+    {
+     "type": "A",
+     "title": "Dialog loudness normalization for cinematic content (Auphonic)",
+     "url": "https://auphonic.com/blog/2020/10/08/dialog-loudness-normalization/"
+    },
+    {
+     "type": "B",
+     "title": "Soundtrack Success: A Digital Storyteller's Guide to Audio-Post Production (Open Library search-inside, p. 342)",
+     "url": "https://openlibrary.org/search/inside?q=Soundtrack%20Success%3A%20A%20Digital%20Storyteller%27s%20Guide%20to%20Audio-Post%20Production"
+    },
+    {
+     "type": "B",
+     "title": "5.1 Surround Sound (Open Library search-inside, p. 286)",
+     "url": "https://openlibrary.org/search/inside?q=5.1%20Surround%20Sound"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/targets.py:ldr_verdict"
+   ],
+   "supersedes": [
+    "(new)"
+   ]
+  },
+  {
+   "id": "BP-52",
+   "area": "audio",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "Background under speech, measured in LU on the stems while the narrator speaks: music at least 10 LU under the voice, the ambience bed at least 15 LU under it, the combined background at least 14 LU under (non-experts want 4 LU more); RMS dB is not the unit.",
+   "thresholds": {
+    "music_under_lu": 10.0,
+    "bed_under_lu": 15.0,
+    "combined_under_lu": 14.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "WCAG 2.2 Understanding SC 1.4.7 Low or No Background Audio",
+     "url": "https://www.w3.org/WAI/WCAG22/Understanding/low-or-no-background-audio.html"
+    },
+    {
+     "type": "A",
+     "title": "Preferred levels for background ducking (Torcoli et al., JAES 2019)",
+     "url": "https://www.audioblog.iis.fraunhofer.com/?p=4251"
+    },
+    {
+     "type": "A",
+     "title": "How to mix audio for YouTube videos (IRPR)",
+     "url": "https://sounddesign.irpr.agency/guides/how-to-mix-audio-for-youtube/",
+     "note": "vendor"
+    },
+    {
+     "type": "B",
+     "title": "Music Editing for Motion Pictures (Open Library search-inside, p. 194)",
+     "url": "https://openlibrary.org/search/inside?q=Music%20Editing%20for%20Motion%20Pictures"
+    },
+    {
+     "type": "C",
+     "title": "How to mix a voice over with music (video)",
+     "url": "https://www.youtube.com/watch?v=-w5TAKLrHTI"
+    },
+    {
+     "type": "C",
+     "title": "Sidechain compression: duck music with voice over (video)",
+     "url": "https://www.youtube.com/watch?v=A75rS9oXOeM"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/targets.py:gap_verdict",
+    "explainer_engine/audio/layers.py:AL-04"
+   ],
+   "supersedes": [
+    "P-93 14 dB (confirmed, unit changes to LU)",
+    "AL-04 -15 dB peak (a pre-mix cap)",
+    "PRODUCTION_RULES:82 '20 dB under'",
+    "AUDIO_SYSTEM '10 dB'"
+   ]
+  },
+  {
+   "id": "BP-53",
+   "area": "audio",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Sidechain ducking of music under the voice is a dip, not a cut: depth 6-12 dB (house 9), attack 20-80 ms, release 250-700 ms, hold at least 50 ms; no gain step over 0.7 dB in a millisecond (the level JND). One canonical set of numbers, in code.",
+   "thresholds": {
+    "depth_db": [
+     6.0,
+     12.0
+    ],
+    "house_depth_db": 9.0,
+    "attack_ms": [
+     20,
+     80
+    ],
+    "release_ms": [
+     250,
+     700
+    ],
+    "hold_ms_min": 50,
+    "max_step_db_per_ms": 0.7,
+    "house_attack_ms": 20,
+    "house_release_ms": 280,
+    "house_hold_ms": 80
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "The just-noticeable difference in speech-to-noise ratio (McShefferty 2015)",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4335553"
+    },
+    {
+     "type": "A",
+     "title": "Audio ducking for clear dialogue (CapCut guide)",
+     "url": "https://www.capcut.com/create/audio-ducking-for-clear-dialogue-in-video",
+     "note": "vendor"
+    },
+    {
+     "type": "A",
+     "title": "Auto Duck (Audacity manual)",
+     "url": "https://manual.audacityteam.org/man/auto_duck.html"
+    },
+    {
+     "type": "B",
+     "title": "Sound Recording Handbook (Open Library search-inside, p. 628)",
+     "url": "https://openlibrary.org/search/inside?q=Sound%20Recording%20Handbook"
+    },
+    {
+     "type": "C",
+     "title": "How to mix a voice over with music (video)",
+     "url": "https://www.youtube.com/watch?v=-w5TAKLrHTI"
+    },
+    {
+     "type": "C",
+     "title": "Sidechain compression: duck music with voice over (video)",
+     "url": "https://www.youtube.com/watch?v=A75rS9oXOeM"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/duck.py:BP-53"
+   ],
+   "supersedes": [
+    "P-93 attack 50 / release 400",
+    "UR-32 4 dB / 20/80/280",
+    "assemble vduck 0.55"
+   ]
+  },
+  {
+   "id": "BP-54",
+   "area": "audio",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "Picture-synced effects land on the frame; early is worse than late: onset within one frame of the visual event, FAIL when earlier than 45 ms or later than 125 ms; a miss that cannot be avoided goes late, never early.",
+   "thresholds": {
+    "early_max_ms": 45,
+    "late_max_ms": 125,
+    "frame_ms": 33
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Rec. ITU-R BT.1359-1 Relative timing of sound and vision",
+     "url": "https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.1359-1-199811-I!!PDF-E.pdf"
+    },
+    {
+     "type": "A",
+     "title": "Perceived synchrony for realistic and dynamic audiovisual events (Eg & Behne 2015)",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4451240"
+    },
+    {
+     "type": "B",
+     "title": "Sound for Film and Television (Open Library search-inside, p. 278)",
+     "url": "https://openlibrary.org/search/inside?q=Sound%20for%20Film%20and%20Television"
+    },
+    {
+     "type": "B",
+     "title": "Sound for Digital Video (Open Library search-inside, p. 334)",
+     "url": "https://openlibrary.org/search/inside?q=Sound%20for%20Digital%20Video"
+    },
+    {
+     "type": "B",
+     "title": "Audio Post-Production in Video and Film (Open Library search-inside, p. 262)",
+     "url": "https://openlibrary.org/search/inside?q=Audio%20Post-Production%20in%20Video%20and%20Film"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/layers.py:SYNC_EARLY",
+    "explainer_engine/production/timing.py:SFX_OFFSET"
+   ],
+   "supersedes": [
+    "AL-03 0.25 s window",
+    "Q-T06 one frame",
+    "SFX_OFFSET -0.05"
+   ]
+  },
+  {
+   "id": "BP-55",
+   "area": "audio",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "A sound that only duplicates the picture is redundancy (mickey-mousing): every effect carries a purpose (clarify, humour, transition, sync); at most one in two visual beats carries an audible non-cue effect; the 4-20 per minute band stays a hypothesis.",
+   "thresholds": {
+    "purposes": [
+     "clarify",
+     "humour",
+     "transition",
+     "sync"
+    ],
+    "beats_with_sfx_share_max": 0.5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Mickey Mousing (Wikipedia, citing Cooke)",
+     "url": "https://en.wikipedia.org/wiki/Mickey_Mousing"
+    },
+    {
+     "type": "A",
+     "title": "Sound design examples: how audio makes motion feel alive (Motion agency)",
+     "url": "https://www.motiontheagency.com/blog/sound-design-examples-before-after-in-motion"
+    },
+    {
+     "type": "B",
+     "title": "A History of Film Music (Open Library search-inside, p. 594)",
+     "url": "https://openlibrary.org/search/inside?q=A%20History%20of%20Film%20Music"
+    },
+    {
+     "type": "B",
+     "title": "Unheard Melodies: Narrative Film Music (Open Library search-inside, p. 210)",
+     "url": "https://openlibrary.org/search/inside?q=Unheard%20Melodies%3A%20Narrative%20Film%20Music"
+    },
+    {
+     "type": "B",
+     "title": "Tunes for 'Toons: Music and the Hollywood Cartoon (Open Library search-inside, p. 258)",
+     "url": "https://openlibrary.org/search/inside?q=Tunes%20for%20%27Toons%3A%20Music%20and%20the%20Hollywood%20Cartoon"
+    },
+    {
+     "type": "C",
+     "title": "Basic sound design for animation in 90 s (video)",
+     "url": "https://www.youtube.com/watch?v=rzOkHC5tZyA"
+    },
+    {
+     "type": "C",
+     "title": "Sound design in animation explained (video)",
+     "url": "https://www.youtube.com/watch?v=LR53Mb4mFyc"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/layers.py:BP-55"
+   ],
+   "supersedes": [
+    "P-94 purpose (confirmed)",
+    "AL-02 4-20/min (hypothesis)",
+    "AUDIO_SYSTEM one sfx per 6 s"
+   ]
+  },
+  {
+   "id": "BP-56",
+   "area": "audio",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Simultaneity, not rate, is the limit: at most 2 effects of one class at once, at most 5 layers in all including the voice, music and bed.",
+   "thresholds": {
+    "same_class_max": 2,
+    "layers_max": 5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Designing a movie for sound (filmsound.org)",
+     "url": "http://filmsound.org/articles/designing_for_sound.htm"
+    },
+    {
+     "type": "A",
+     "title": "Rules and anarchy: Murch's rule of two-and-a-half",
+     "url": "https://wrightonfilm.com/2010/10/28/rules-and-anarchy/"
+    },
+    {
+     "type": "B",
+     "title": "Music Editing for Motion Pictures (Open Library search-inside, p. 194)",
+     "url": "https://openlibrary.org/search/inside?q=Music%20Editing%20for%20Motion%20Pictures"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/layers.py:AL-01"
+   ],
+   "supersedes": [
+    "AL-01 (confirmed)",
+    "ED-03 two background layers"
+   ]
+  },
+  {
+   "id": "BP-57",
+   "area": "audio",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "No identical sample twice in a row: the same asset never plays consecutively within its type; a repeated event takes another variant (at least 3) or a deterministic pitch jitter of 5 % and a gain jitter of up to 1.5 dB; a cue counts as an asset.",
+   "thresholds": {
+    "variants_min": 3,
+    "pitch_jitter": 0.05,
+    "gain_jitter_db": 1.5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Loop (IRPR glossary)",
+     "url": "https://sounddesign.irpr.agency/glossary/loop-audio/"
+    },
+    {
+     "type": "B",
+     "title": "Quick Guide to Dance Music (Open Library search-inside, p. 70)",
+     "url": "https://openlibrary.org/search/inside?q=Quick%20Guide%20to%20Dance%20Music"
+    },
+    {
+     "type": "C",
+     "title": "How to sound design a video, step by step (video)",
+     "url": "https://www.youtube.com/watch?v=Wcxw3BPSt3A"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/layers.py:BP-57"
+   ],
+   "supersedes": [
+    "the cue pitch variants of the scene rewrite PR (confirmed)"
+   ]
+  },
+  {
+   "id": "BP-58",
+   "area": "audio",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "One-shots for discrete events, loops for beds: a sting or impact is a one-shot of 0.1-5 s; a bed loop is at least 20 s with a verified seam (no step over 0.7 dB at the join) and no transient within 1 s of it; the manifest says which is which.",
+   "thresholds": {
+    "one_shot_s": [
+     0.1,
+     5.0
+    ],
+    "loop_min_s": 20.0,
+    "seam_step_db_max": 0.7,
+    "seam_clear_s": 1.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "One-shot (IRPR glossary)",
+     "url": "https://sounddesign.irpr.agency/glossary/one-shot/"
+    },
+    {
+     "type": "A",
+     "title": "Loop (IRPR glossary)",
+     "url": "https://sounddesign.irpr.agency/glossary/loop-audio/"
+    },
+    {
+     "type": "A",
+     "title": "Sound effects capabilities (ElevenLabs docs)",
+     "url": "https://elevenlabs.io/docs/capabilities/sound-effects"
+    },
+    {
+     "type": "A",
+     "title": "Stinger: short sound accents explained (Morphic glossary)",
+     "url": "https://morphic.com/ai-glossary/stinger"
+    },
+    {
+     "type": "A",
+     "title": "What are stingers in sound design? (RouteNote)",
+     "url": "https://licensing.routenote.com/blog/?p=6759"
+    },
+    {
+     "type": "B",
+     "title": "Unheard Melodies: Narrative Film Music (Open Library search-inside, p. 210)",
+     "url": "https://openlibrary.org/search/inside?q=Unheard%20Melodies%3A%20Narrative%20Film%20Music"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/sfx_library.py:BP-58",
+    "explainer_engine/schemas/sfx_manifest.schema.json"
+   ],
+   "supersedes": [
+    "(new; PR #9 adds the manifest loop flag)"
+   ]
+  },
+  {
+   "id": "BP-59",
+   "area": "audio",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "Narration consistency: chunk-to-chunk loudness after levelling within 1.5 dB and no join step over 1 LU; every sentence within +3/-5 LU of the narration median; the narration stem's loudness range at most 7 LU (the mix's LRA is informative, not a gate).",
+   "thresholds": {
+    "chunk_spread_db_max": 1.5,
+    "join_step_lu_max": 1.0,
+    "sentence_window_lu": [
+     -5.0,
+     3.0
+    ],
+    "stem_lra_max": 7.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "EBU Tech 3343-2023 Guidelines for production in accordance with R 128",
+     "url": "https://tech.ebu.ch/docs/tech/tech3343.pdf"
+    },
+    {
+     "type": "A",
+     "title": "ACX audio submission requirements",
+     "url": "https://help.acx.com/s/article/acx-audio-submission-requirements"
+    },
+    {
+     "type": "A",
+     "title": "CALM Act best practices summary (NAB, ATSC A/85 digest)",
+     "url": "https://www.nab.org/documents/resources/CALMBestPractices.pdf"
+    },
+    {
+     "type": "A",
+     "title": "Netflix loudness delivery spec discussed (Production Expert)",
+     "url": "https://www.production-expert.com/home-page/2018/8/23/has-netflix-turned-the-clock-back-10-years-or-is-their-new-loudness-delivery-spec-a-stroke-of-genius"
+    },
+    {
+     "type": "A",
+     "title": "Dialog loudness normalization for cinematic content (Auphonic)",
+     "url": "https://auphonic.com/blog/2020/10/08/dialog-loudness-normalization/"
+    },
+    {
+     "type": "A",
+     "title": "The just-noticeable difference in speech-to-noise ratio (McShefferty 2015)",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4335553"
+    },
+    {
+     "type": "C",
+     "title": "How to improve your podcast, Bullaki with Curtis Judd (video, transcript)",
+     "url": "https://bullaki.com/projects/videos/how-to-improve-your-podcast-with-curtis-judd/"
+    },
+    {
+     "type": "C",
+     "title": "ACX standards: what they are and how to achieve them (video)",
+     "url": "https://www.youtube.com/watch?v=gwenlAlW3Cc"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/seams.py:BP-59",
+    "explainer_engine/qa/targets.py:stem_lra_max"
+   ],
+   "supersedes": [
+    "ED-01 1.5 dB (confirmed)",
+    "seams clamp 6 dB",
+    "targets lra 9"
+   ]
+  },
+  {
+   "id": "BP-60",
+   "area": "audio",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Pauses are room tone, not digital zero (filled at the read's own floor, at most -60 dBFS RMS); breaths are lowered, never cut; de-essing is light (4-10 kHz, attack under 1 ms, release about 10 ms, no sibilant pulled more than 6 dB).",
+   "thresholds": {
+    "pause_fill_dbfs_max": -60.0,
+    "deess_band_hz": [
+     4000,
+     10000
+    ],
+    "deess_max_db": 6.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "ACX audio submission requirements",
+     "url": "https://help.acx.com/s/article/acx-audio-submission-requirements"
+    },
+    {
+     "type": "A",
+     "title": "Techniques for vocal de-essing (Sound On Sound)",
+     "url": "https://www.soundonsound.com/techniques/techniques-vocal-de-essing"
+    },
+    {
+     "type": "A",
+     "title": "5 techniques for dialogue editing in film and TV (Production Expert)",
+     "url": "https://www.production-expert.com/production-expert-1/5-techniques-for-dialogue-editing-in-film-and-tv"
+    },
+    {
+     "type": "B",
+     "title": "Dialogue Editing for Motion Pictures (Open Library search-inside, p. 454)",
+     "url": "https://openlibrary.org/search/inside?q=Dialogue%20Editing%20for%20Motion%20Pictures"
+    },
+    {
+     "type": "B",
+     "title": "The Sound On Sound Book of Recording and Production Techniques (Open Library search-inside, p. 206)",
+     "url": "https://openlibrary.org/search/inside?q=The%20Sound%20On%20Sound%20Book%20of%20Recording%20and%20Production%20Techniques"
+    },
+    {
+     "type": "B",
+     "title": "Soundtrack Success: A Digital Storyteller's Guide to Audio-Post Production (Open Library search-inside, p. 342)",
+     "url": "https://openlibrary.org/search/inside?q=Soundtrack%20Success%3A%20A%20Digital%20Storyteller%27s%20Guide%20to%20Audio-Post%20Production"
+    },
+    {
+     "type": "B",
+     "title": "Pro Tools 6 Overdrive! (Open Library search-inside, p. 302)",
+     "url": "https://openlibrary.org/search/inside?q=Pro%20Tools%206%20Overdrive%21"
+    },
+    {
+     "type": "C",
+     "title": "ACX standards: what they are and how to achieve them (video)",
+     "url": "https://www.youtube.com/watch?v=gwenlAlW3Cc"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/pause_pad.py:BP-60"
+   ],
+   "supersedes": [
+    "ED-12 (confirmed)",
+    "P-92 voice shaping (named numbers)"
+   ]
+  },
+  {
+   "id": "BP-61",
+   "area": "audio",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "Shorts loudness follows the short-form rules: integrated -14 LUFS, max short-term loudness at most integrated + 5 LU, true peak -1 dBTP, no loudness-range gate under two minutes; the voice is high-passed and the mix checked on a mono phone render because a phone carries nothing under 200 Hz.",
+   "thresholds": {
+    "lufs": -14.0,
+    "max_short_term_above_lu": 5.0,
+    "true_peak_max": -1.0,
+    "phone_hpf_hz": 200
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "EBU R 128-2023 Loudness normalisation and permitted maximum level",
+     "url": "https://tech.ebu.ch/docs/r/r128.pdf"
+    },
+    {
+     "type": "A",
+     "title": "EBU R 128 s1-2020 Loudness parameters for short-form content",
+     "url": "https://tech.ebu.ch/docs/r/r128s1.pdf"
+    },
+    {
+     "type": "A",
+     "title": "EBU Tech 3343-2023 Guidelines for production in accordance with R 128",
+     "url": "https://tech.ebu.ch/docs/tech/tech3343.pdf"
+    },
+    {
+     "type": "A",
+     "title": "How to edit a video to achieve good audio loudness on YouTube (Youlean)",
+     "url": "https://youlean.co/?p=30813"
+    },
+    {
+     "type": "A",
+     "title": "Phone speaker measurement (Notebookcheck review)",
+     "url": "https://www.notebookcheck.net/Our-review-reveals-where-the-German-alternative-to-the-Samsung-Galaxy-A57-falls-short.1376130.0.html"
+    },
+    {
+     "type": "C",
+     "title": "How to improve your podcast, Bullaki with Curtis Judd (video, transcript)",
+     "url": "https://bullaki.com/projects/videos/how-to-improve-your-podcast-with-curtis-judd/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/targets.py:short",
+    "explainer_engine/production/shorts.py:BP-61"
+   ],
+   "supersedes": [
+    "P-101 (lra dropped for Shorts)"
+   ]
+  },
+  {
+   "id": "BP-62",
+   "area": "audio",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "Music is spotted, not wallpaper: every music start and stop sits on a declared scene or beat boundary; at least one planned no-music stretch of 10 s per long video; a sting is a one-shot of at most 5 s on a turn; music fades 1 s in and 2 s out.",
+   "thresholds": {
+    "no_music_stretch_min_s": 10.0,
+    "sting_max_s": 5.0,
+    "fade_in_s": 1.0,
+    "fade_out_s": 2.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Spot the film: 5 composer tips (C. Caliendo)",
+     "url": "https://christophercaliendo.com/spot-the-film-5-composer-tips-every-filmmaker-should-know-about-scoringfilmmakers-spot-the-film/"
+    },
+    {
+     "type": "A",
+     "title": "How to spot a film for sound (IRPR guide)",
+     "url": "https://sounddesign.irpr.agency/guides/how-to-spot-a-film-for-sound/"
+    },
+    {
+     "type": "A",
+     "title": "What are stingers in sound design? (RouteNote)",
+     "url": "https://licensing.routenote.com/blog/?p=6759"
+    },
+    {
+     "type": "B",
+     "title": "Sound Design for Low & No Budget Films (Open Library search-inside, p. 286)",
+     "url": "https://openlibrary.org/search/inside?q=Sound%20Design%20for%20Low%20%26%20No%20Budget%20Films"
+    },
+    {
+     "type": "B",
+     "title": "Reel Music: Exploring 100 Years of Film Music (Open Library search-inside, p. 550)",
+     "url": "https://openlibrary.org/search/inside?q=Reel%20Music%3A%20Exploring%20100%20Years%20of%20Film%20Music"
+    },
+    {
+     "type": "C",
+     "title": "Scoring with silence: when films say no to music (video essay)",
+     "url": "https://www.youtube.com/watch?v=AK3uk543UDk"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/layers.py:BP-62"
+   ],
+   "supersedes": [
+    "ED-03 (confirmed)",
+    "P-96 fades (confirmed)"
+   ]
+  },
+  {
+   "id": "BP-63",
+   "area": "audio",
+   "status": "binding",
+   "severity": "FAIL",
+   "statement": "The delivered file carries stereo AAC-LC at 384 kbps, 48 kHz (YouTube's recommended upload settings); mono 192 kbps is not a delivery.",
+   "thresholds": {
+    "channels": 2,
+    "aac_kbps": 384,
+    "sample_rate": 48000
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "YouTube recommended upload encoding settings (Help 1722171)",
+     "url": "https://support.google.com/youtube/answer/1722171"
+    },
+    {
+     "type": "A",
+     "title": "How to edit a video to achieve good audio loudness on YouTube (Youlean)",
+     "url": "https://youlean.co/?p=30813"
+    },
+    {
+     "type": "C",
+     "title": "Understanding how to loudness normalize your audio for video (video)",
+     "url": "https://www.youtube.com/watch?v=lHNhxGojFRU"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/assemble.py:BP-63",
+    "explainer_engine/production/shorts.py:BP-63"
+   ],
+   "supersedes": [
+    "P-15 (confirmed)",
+    "Q-T19 (confirmed)",
+    "assemble mono 192k"
+   ]
+  }
+ ]
+}

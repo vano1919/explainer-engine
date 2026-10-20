@@ -30,8 +30,8 @@ short, similar chunks and from keeping what was already good.
 |---|---|
 | EL-01 | **Voice first.** The voice's character limits what tags can do (a calm voice cannot reliably shout). Pick it by listening to one sample of the same 300-character text, never by description. Keep one voice per series. |
 | EL-02 | **Test before the batch.** One chunk (300-900 characters) from the middle of the script, listened to by the creator or by `voice_check`, before 24 chunks are paid. A flat or odd test costs 600 credits; a flat batch costs 15,000. |
-| EL-03 | **Chunk 400-900 characters, at paragraph/beat ends**, same size class across chunks (very short prompts under ~250 characters are inconsistent; very long ones drift in the second half; 3P). Never cut mid-sentence. |
-| EL-04 | **Punctuation is the direction.** Comma = breath, period = full stop, `...` = a held thought (use rarely, each one slows the read), `—` = a short beat. No ellipsis inside a question. Over-use of pauses makes the read slow (Episode 1 read at 120 wpm; target 150-165). |
+| EL-03 | **Chunk 400-900 characters, at paragraph/beat ends** (a house preference inside BP-14's chunk limit), same size class across chunks (very short prompts under ~250 characters are inconsistent; very long ones drift in the second half; 3P). Never cut mid-sentence. |
+| EL-04 | **Punctuation is the direction.** Comma = breath, period = full stop, `...` = a held thought (use rarely, each one slows the read), `—` = a short beat. No ellipsis inside a question. Over-use of pauses makes the read slow (Episode 1 read at 120 wpm; the target is BP-01's heard pace). |
 | EL-05 | **Tags: few, plain, where delivery changes.** `[curious]`, `[softly]`, `[slowly]`, `[dramatically]`, `[mischievously]`; a tag holds until the next one, so one at a beat start, two stacked at most. Describe how it is spoken, not what the speaker does (`[grinning]` is not performed). Tags cost credits (a tag of 11 characters is 11 credits). |
 | EL-06 | **Capitals sparingly**: one stressed word per sentence, last in the sentence (narration-script N-04). |
 | EL-07 | **Numbers, names, pronunciation.** On v4 keep numbers as written in the script's normal form; for a name the voice will misread, put IPA between slashes in the displayed text (`/ˈɡœbɛkli ˈtɛpɛ/`) and test that one sentence first. |
@@ -39,7 +39,7 @@ short, similar chunks and from keeping what was already good.
 | EL-09 | **Do not pay twice for the same words.** A Short's script is written for the Short (SH-02), but any line that already exists in the main read is cut out of it (inside pauses, UR-12; `words.json` gives the times) instead of being read again. PV-28 reports a Short whose new text passes 400 characters (REVIEW). |
 | EL-10 | **Estimate, then call once.** `estimate_only` first, record it in the ledger, then one generation per chunk with `generations_count: 1`. Never repeat a call to "retry" (it charges again). Max 3 failures per chunk (OR-04). |
 | EL-11 | **Download immediately** (links expire, 7200 s) and re-poll the status for fresh links if they did; write each chunk to disk and into the ledger as soon as it is paid (OR-03). |
-| EL-12 | **Check every chunk when it arrives, before the next is paid.** Loudness within 1.5 dB of the others (ED-01), no clipped start/end, words match the script (coverage), timbre within the drift check (`audio/voice_check`), reading speed 155-185 wpm (target 170, P-52). A bad first chunk stops the batch. |
+| EL-12 | **Check every chunk when it arrives, before the next is paid.** Loudness within 1.5 dB of the others (ED-01), no clipped start/end, words match the script (coverage), timbre within the drift check (`audio/voice_check`), reading speed inside the BP-01 band (P-52). A bad first chunk stops the batch. |
 
 ## Pre-flight (all free, before a paid call)
 
@@ -60,3 +60,15 @@ is listened to by a human before any re-read is bought, because most are natural
 - Reading the whole Day 1 twice to replace a drifting voice without first testing one chunk with the new voice settings.
 - Reading before the script's last edit: change the text first, read once.
 - Heavy tag stacking and long ellipsis chains: slow, unstable, and charged per character.
+
+## Sourced rules (docs/SOURCED_RULES.md)
+
+The numbers that bind a read live only in the registry (`explainer_engine/standards/sourced_rules.json`). A number changes
+there, with its sources, never here.
+
+- BP-01: the heard pace (EL-04, EL-12) is one band everywhere, measured on the finished read; the target and the accepted band
+  are BP-01's, read by `validate` (PV-52), the scorecard and the engagement gate.
+- BP-14: chunks at most 5,000 characters (EL-03's 400-900 is a house preference inside that limit); `previous_text` and
+  `next_text` carried across chunks wherever the API exposes them (the connector does not, V-29: then same-size consecutive
+  chunks stand in); pauses by tags and punctuation only, no SSML on v3/v4; speed within 0.9-1.1 (the connector has no speed
+  knob on v4, so the text sets the pace and any speed-up happens in finishing under BP-02).

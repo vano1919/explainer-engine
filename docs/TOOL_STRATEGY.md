@@ -19,7 +19,7 @@ history of D-19/D-36; they are no longer used.
 | Motion | code (Remotion): layered parallax, camera, pose tweens, bobbing, squash, glow, particles, mouth swaps on phoneme timings | image models make stills; motion in code is free, deterministic and re-renderable | $0 | D-10, D-27 |
 | Explaining parts (arrows, labels, notebook doodles) | code-drawn SVG on top of the painted layers | text must be exact and editable | $0 | D-27 |
 | Research and scripts | Claude Code sessions (D-13); the 7B/27B on RunPod is not used for scripts | quality of facts and imagination matters most | $0 per token | D-13; TMR's 7B needed many repairs (INCIDENTS_RUNPOD) |
-| Narration | Kokoro local (D-12) | — | $0 | D-12 |
+| Narration | ElevenLabs (D-39, D-52; Kokoro of D-12 retired) | — | credits per read, estimated first (skill `elevenlabs-voice`) | D-39 |
 | Optional signature motion (e.g. a walk loop) | Veo, only after the kit test, only for reusable loops | expensive | about $0.96 per 8 s loop in TMR, re-check | TMR `videogen.py` |
 
 ## Rules

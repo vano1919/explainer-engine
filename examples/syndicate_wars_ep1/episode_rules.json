@@ -213,7 +213,7 @@
     },
     {
       "id": "ER-07",
-      "requirement": "GTA VI information is labelled item by item: official (Rockstar pages, trailers), press-reported leak (only what reputable press reported, worded as 'reported', never confirmed), community speculation, or our inference. Nothing unlabelled; unreleased gameplay is never stated as fact; GTA IV/V elements (Bleeter, LifeInvader, BAWSAQ, LCN, Lester Crest) are labelled as earlier-game references.",
+      "requirement": "GTA VI information is labelled item by item: official (Rockstar pages, trailers), press-reported leak (only what reputable press reported, worded as 'reported', never confirmed), community speculation, or our inference. Nothing unlabelled (the labels live in the claim map and the description; the narration never reads a source out, BP-15); unreleased gameplay is never stated as fact; GTA IV/V elements (Bleeter, LifeInvader, BAWSAQ, LCN, Lester Crest) are labelled as earlier-game references.",
       "applies_to": [
         "script",
         "research",
@@ -1008,7 +1008,7 @@
       "status": "ADAPT",
       "evidence": "Manifest commentary_target is now a full sentence; RR-14 and V-38 (secondary summary of Warhol v. Goldsmith and Campbell v. Acuff-Rose) say commentary or parody about the source is stronger than a new adventure sharing its purpose.",
       "rationale": "The brief's own stress is that viewers see four bosses in GTA 6, which is the weak adventure case unless every act tests a named GTA VI system, so the script must be built as that test rather than as a story set in Leonida.",
-      "mitigation": "Build every act around one GTA VI system (wanted level, phone cameras, social media, money) and say which source (official, reported, speculation) supports the system; the bosses stay the stars, the system is the argument.",
+      "mitigation": "Build every act around one GTA VI system (wanted level, phone cameras, social media, money) and record in the claim map which source (official, reported, speculation) supports the system, never in the narration (BP-15); the bosses stay the stars, the system is the argument.",
       "dependencies": [
         "script",
         "research"
@@ -1221,7 +1221,7 @@
           "Yakuza boss competent and invented; every outcome argued from the boss's own history or canon",
           "recap under 20 % of narration (RR-05)",
           "leak-derived items are spoken as 'reported', never confirmed; speculation and inference are said as such",
-          "every act tests one named GTA VI system and says whether the source is official, reported or speculation (ER-18)",
+          "every act tests one named GTA VI system; the claim map says whether its source is official, reported or speculation (ER-18); the narration never reads a source out (BP-15)",
           "'filming civilians' may be called official only after C-30 is confirmed by a private trailer watch; otherwise every GTA VI system line is 'GTA V's version', 'reported' or speculation (claim map script_use)",
           "no spoken or captioned claim about Capone's soup-kitchen or Public Enemy dates beyond the claim map (C-19, C-20); no indictment count"
         ],

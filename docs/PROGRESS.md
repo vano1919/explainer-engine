@@ -808,3 +808,41 @@ collage approval, cost shown, creator's OK); vidIQ outlier pass not run (credits
 2026-10-19 thumbnail drafts v2 (nano-banana 2K, $0.107; thumbnails today about $0.40 in all): Vito and Shelby seen only from behind, dressed in the films' look on the creator's order (tuxedo and slicked grey hair at a long table; undercut, flat cap, long coat by a canal). This overrides Syndicate Wars ER-04/RK-05/RK-06 ("no production costume combination") for back views; faces stay invented (RK-07). The episode rulebook on systemic/next-video must record the change (episode-standards-director) before the thumbnail is used. Files in project-files explainer-engine/thumbnail_motif.
 
 2026-10-19 thumbnail is the creator's job (creator): `publish stage` no longer sends a thumbnail unless publish.json `thumbnail.upload` is true; the Studio checklist says "YOUR thumbnail set in Studio"; `publish thumbnail` stays as the paid draft maker. Test `test_thumbnail_is_sent_only_when_publish_json_allows_it`; THUMBNAIL_RULES.md and PUBLISHING_AND_ANALYTICS.md updated.
+
+## 2026-10-20 - System audit and the sourced rules (D-59; branch claude/system-audit-sourced-rules-3i81ai, draft PR to next-video)
+The creator (2026-10-19): no production rule is law; find the contradictions between the rules first, then research best practice
+with verifiable sources (two of three types per change), then put the rules into Python, the skills and the agents. Done in that order:
+(1) four audit passes (narration, audio, editing/motion, governance) over CLAUDE.md, the docs, the validators, the skills and the agents
+found 211 contradictions (`docs/research/SYSTEM_AUDIT_2026-10-19.md`; the shared folder `SYSTEM_AUDIT_2026-10-19/` has the four research
+files too), the worst being gates that never ran on the D-43 flow (seven-point test, loudness/true peak, `check_shots`, PC-08) and numbers
+restated in 3-7 places (pace 150-185, pictures per minute 10 vs 13-14, zoom 1.15 vs 1.25, bed "20 dB" vs 14 vs 10 vs -15, Shorts length
+in four bands). (2) Research of 209 fetched sources (narration 40, audio 63, motion/text 51, retention/Shorts 55; every URL opened, nothing
+from a snippet; books verified through quoting pages or Open Library search-inside; videos through oEmbed/transcript pages).
+(3) The registry `explainer_engine/standards/sourced_rules.json` (BP-01..63, 54 rules: 43 binding, 8 hypotheses, 3 house) with
+`standards/sourced_rules.py` (`T`, `check`, `render`, `write`), the generated `docs/SOURCED_RULES.md`, `docs_lint` home `BP`,
+`tests/unit/test_sourced_rules.py` (registry ↔ table ↔ code). Validators now read `SR.T(...)`: `narration_lint` N-01 (four hook forms,
+greeting FAILs), N-05 (median 12 / 20 / FAIL 25), new N-11..N-14 (30-s contract, register, numerals, press-release lines FAIL);
+`validate` PV-12 forwards REVIEWs, PV-28 Shorts bands/hook/sign-off/readability, PV-34 from BP-45, new PV-52 pace band, PV-40 pod allowed
+when the plan names it; `shorts.py` leading-silence trim, hook spoken within 1 s (BP-11 refusal), caption and safe-zone report rows,
+tempo cap 1.08, stereo 384k export and a loudness check of the final file; `engagement` ENG-7 (microhook every 150 s), ENG-8 (abrupt
+ending); `scorecard` pace band + a CLI on the episode folder (`python -m explainer_engine.qa.scorecard <episode>`) + LU/LDR rows;
+`speed.py` rates 1.05/1.08; `motion_lint.check_sourced` BP-20..33 (scale range and rate, pan cap, easing, shake only on impact, flash
+safety, text holds and safe area, dissolve only on a period boundary, expression lead and hold); `continuity.ZMAX` 1.15 + BP-30;
+`board` section-aware RHYTHM-3 (5 s hook / 20 s REVIEW / 40 s FAIL) + BP-41 interrupt; `fill_holds` stops stacking on beats;
+`faces.composite_match` (anti-sticker) and the expression lead; `accents` flash 2 frames at 80 %, text hold cap; `targets` profiles from
+BP-50/61, `ldr_verdict`, LU `gap_verdict`, `measure_file`; `assemble` measures loudness + true peak + dialogue anchor and refuses a final
+render on FAIL, stereo 384k mux; `duck`, `layers` (asymmetric sync 45/125 ms, BP-55/57/62), `seams` (1.5 dB gate), `pause_pad` (room
+tone), `sfx_library` (one-shot vs loop); `publish_check` PC-08 FAIL + PC-09 (final_qa stamp, scorecard); `production_gate` gates 8/9 read
+them; `plan.py` PP-05 is a REVIEW (D-50: the creator picks the provider); `hook.py` denies a paid call on an editorial FAIL (OR-10);
+`publish/plan.py` posting spread (BP-47). Skills and agents carry a "Sourced rules" section (narration-script, shorts-for-video,
+elevenlabs-voice, editing-style, video-editing-architect, shot-visuals; performance-director, script-critic, shorts-writer, edit-planner,
+orchestrator, episode-standards-director); docs link BP ids instead of numbers (VIDEO_PARAMETER_SPEC, AUDIO_SYSTEM, UNIVERSAL_RULE_BASE,
+QA_SPECIFICATION, ORCHESTRATION, PRODUCTION_RULES, NARRATION_AND_LANGUAGE_GUIDE, PUBLISHING_AND_ANALYTICS, RIGHTS, EPISODE_STANDARDS);
+CLAUDE.md invariant 2 reworded, 3 retired, 6 reworded; Kokoro rows marked superseded.
+Tests: 541 passed, 1 skipped (new: test_sourced_rules 7, test_sourced_narration 18, test_sourced_motion 21, test_sourced_audio 27);
+docs_lint 0; registry check 0. Nothing paid, nothing uploaded.
+Not done / for the next PR: BP-52 in LU on real mixes needs BS.1770 stem measurements in `build_audio` (PR #9's region; the scorecard
+treats RMS stats as REVIEW until then); the Short's mono phone check (BP-61); payoff position (BP-04/BP-44) is a writer/critic rule, not
+machine-checked; the `sfx_manifest` schema needs `kind` (PR #9 owns it); STORY_ENGINE AL-02/AL-03 and PRODUCTION_SCRIPT PP-05/PV-40
+wording are PR #9's files; the Syndicate Wars example now scores FAIL on pace (122 wpm) and hook-window stills (it stays as is, the
+creator's word). Overlaps with PR #9 listed in the PR description.

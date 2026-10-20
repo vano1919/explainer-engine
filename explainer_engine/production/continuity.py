@@ -1,11 +1,15 @@
 """Zoom continuity (ED-02): consecutive shots of the same picture continue one camera move instead of snapping back to the
 default view. Each timed shot gets ``render_motion`` (what the assembler draws); the script's ``motion`` stays what the board
-rules (UR-13) judge. State is (zoom, horizontal centre offset as a share of the picture width)."""
+rules (UR-13) judge. State is (zoom, horizontal centre offset as a share of the picture width). ``findings`` also carries
+BP-30 (docs/SOURCED_RULES.md): the same framing of the same picture twice in a row is a REVIEW."""
 from __future__ import annotations
 
-ZMAX = 1.25  # the camera never pushes past this on one picture
+from explainer_engine.standards import sourced_rules as SR
+
+ZMAX = SR.T("BP-20", "scale_max")  # the camera never pushes past this on one picture (a punch accent stacks on top, exempt)
 STEP = 0.04  # growth of a continued shot when the script gave none
 TOL = 0.005
+SAME_ZOOM = 0.02  # BP-30: two framings are the same when their zooms differ by less than this and their crops by TOL
 
 
 def start_state(m: dict) -> tuple[float, float]:
@@ -62,7 +66,8 @@ def warp(u: float, ein: bool, eout: bool) -> float:
 
 
 def findings(shots: list[dict]) -> list[dict]:
-    """ZOOM-1: the camera state at a cut inside one picture must be the same on both sides."""
+    """ZOOM-1: the camera state at a cut inside one picture must be the same on both sides. BP-30: a shot that ends where the
+    shot before it ended (same crop, zoom within SAME_ZOOM) shows the same framing of the same picture twice in a row."""
     out = []
     for a, b in zip(shots, shots[1:]):
         if a["picture"] != b["picture"] or "render_motion" not in a or "render_motion" not in b:
@@ -72,4 +77,10 @@ def findings(shots: list[dict]) -> list[dict]:
         if abs(za - zb) > TOL or abs(xa - xb) > TOL:
             out.append({"rule": "ED-02 ZOOM-1", "severity": "FAIL", "where": b["id"],
                         "detail": f"zoom snaps from {za:.3f} to {zb:.3f} (offset {xa:.3f} to {xb:.3f}) on the same picture"})
+            continue
+        ze, xe = end_state(b["render_motion"])
+        if abs(ze - za) < SAME_ZOOM and abs(xe - xa) <= TOL:
+            out.append({"rule": "BP-30", "severity": SR.rule("BP-30").get("severity", "REVIEW"), "where": b["id"],
+                        "detail": f"same framing twice in a row: {b['id']} ends at zoom {ze:.3f} where {a['id']} ended "
+                                  f"({za:.3f}) on the same picture; a cut changes the shot size by a full step"})
     return out

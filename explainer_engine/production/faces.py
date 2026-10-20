@@ -7,7 +7,8 @@ scene's own picture, zoomed in and blurred, with the keyed close-up of the curre
     cast.<id>.face_sheet = {"id": "einstein_faces_v1", "ref": "<the hero's reference picture>", "set": [10 expressions]}
     cast.<id>.expressions = {expression: file}    optional; a painted sheet file is otherwise <sheet id>_<expression>.png
 
-    lint(doc, dirs)          VB-09 findings: set size and base expressions, beats inside the set, a reference, the key
+    lint(doc, dirs)          VB-09 findings: set size and base expressions, beats inside the set, a reference, the key;
+                             with painted files also BP-34 (docs/SOURCED_RULES.md): the close-up against its backdrop
     to_paint(doc)            paint-plan items for the close-ups not painted yet (``paint plan --faces``)
     saving(doc, items, usd)  what the sheet costs against a full picture for every face change (in the plan)
     composite(...)           the dialogue frame: blurred zoomed environment + keyed close-up (free, deterministic)
@@ -20,6 +21,9 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageFilter
+
+from explainer_engine.production import accents as ACC
+from explainer_engine.standards import sourced_rules as SR
 
 SET_MIN, SET_TARGET, SET_MAX = 8, 10, 12
 # the five basic emotions the enum has (Ekman's six without disgust) and the resting face: every sheet has them
@@ -144,6 +148,82 @@ def border_keyed(im: Image.Image) -> float:
     return float((edge < 0.5).mean())
 
 
+# --- BP-34: the keyed close-up against its backdrop (anti-sticker) ---------------------------------------------------------
+_LUMA = np.array([0.2126, 0.7152, 0.0722])
+_FRINGE_ALPHA = 0.98  # a pixel of the cut-out that is not fully opaque, or still green-tinted, is key fringe
+_FRINGE_GREEN = 0.02
+
+
+def _stats(rgb: np.ndarray) -> tuple[float, float]:
+    """(mean luma, mean warmth R - B) of float RGB pixels, the measures of qa/scorecard.picture_stats."""
+    if rgb.size == 0:
+        return 0.0, 0.0
+    return float((rgb @ _LUMA).mean()), float((rgb[..., 0] - rgb[..., 2]).mean())
+
+
+def _erode(m: np.ndarray) -> np.ndarray:
+    p = np.pad(m, 1, constant_values=False)
+    return m & p[:-2, 1:-1] & p[2:, 1:-1] & p[1:-1, :-2] & p[1:-1, 2:]
+
+
+def halo_px(im: Image.Image, max_px: int | None = None) -> int:
+    """Width in pixels of the key fringe round the cut-out: rings from its border inward that are mostly half-keyed or
+    green-tinted pixels (the rim the key leaves when the painter's green bled into the hero). Stops at ``max_px`` + 1."""
+    max_px = SR.T("BP-34", "halo_px_max") if max_px is None else max_px
+    rgba = np.asarray(im.convert("RGBA"), dtype=np.float32) / 255
+    r, g, b = rgba[..., 0], rgba[..., 1], rgba[..., 2]
+    dom = g - np.maximum(r, b)
+    alpha = np.asarray(keyed(im).getchannel("A"), dtype=np.float32) / 255
+    cur = alpha > 0.02
+    fringe = cur & ((alpha < _FRINGE_ALPHA) | (dom > _FRINGE_GREEN))
+    width = 0
+    for _ in range(int(max_px) + 1):
+        inner = _erode(cur)
+        ring = cur & ~inner
+        if not ring.any() or fringe[ring].mean() <= 0.5:
+            break
+        width += 1
+        cur = inner
+    return width
+
+
+def composite_match(close_up: Path, backdrop: Path) -> dict:
+    """BP-34 measures: the keyed close-up's own pixels against the picture it is composited over: the difference in mean
+    luma and in warmth (R - B, as qa/scorecard.picture_stats measures pictures), and the key fringe in px."""
+    im = Image.open(close_up)
+    k = np.asarray(keyed(im), dtype=np.float32) / 255
+    face = k[k[..., 3] > 0.5][:, :3]
+    back = np.asarray(Image.open(backdrop).convert("RGB"), dtype=np.float32) / 255
+    fl, fw = _stats(face)
+    bl, bw = _stats(back)
+    return {"d_luma": round(fl - bl, 4), "d_warm": round(fw - bw, 4), "halo_px": halo_px(im)}
+
+
+def match_findings(pairs: dict[tuple[Path, Path], str]) -> list[dict]:
+    """BP-34 findings for (close-up file, backdrop file) -> where it is used; files that cannot be read are skipped. The
+    rule id is the registry's own (not a PV-44 VB finding)."""
+    out: list[dict] = []
+    sev = SR.rule("BP-34").get("severity", "REVIEW")
+    lt, wt, hp = SR.T("BP-34", "luma_tolerance"), SR.T("BP-34", "warmth_tolerance"), SR.T("BP-34", "halo_px_max")
+
+    def add(where, detail):
+        out.append({"rule": "BP-34", "severity": sev, "where": where, "detail": detail})
+
+    for (cu, bd), where in pairs.items():
+        try:
+            m = composite_match(cu, bd)
+        except (OSError, ValueError):
+            continue
+        if abs(m["d_luma"]) > lt or abs(m["d_warm"]) > wt:
+            add(where, f"{cu.name} over {bd.name} reads as a sticker: luma differs by {m['d_luma']:+.2f} (tolerance {lt}), "
+                       f"warmth by {m['d_warm']:+.2f} (tolerance {wt}); grade the close-up to the backdrop's light and colour "
+                       "temperature")
+        if m["halo_px"] > hp:
+            add(where, f"{cu.name}: a key halo about {m['halo_px']} px wide round the hero (at most {hp} px); repaint with a "
+                       "flat key or tighten the key")
+    return out
+
+
 def lint(doc: dict, dirs: list[Path] | None = None) -> list[dict]:
     from explainer_engine.production import beats as BEATS
     out: list[dict] = []
@@ -185,6 +265,13 @@ def lint(doc: dict, dirs: list[Path] | None = None) -> list[dict]:
                 elif border_keyed(Image.open(p)) < BORDER_KEYED:
                     BEATS._f(out, "VB-09", "REVIEW", where, f"{p.name}: the background is not a flat key green at the "
                              f"edges (under {BORDER_KEYED:.0%} keys out); repaint it or the cut-out keeps a halo")
+            pairs: dict[tuple[Path, Path], str] = {}  # BP-34: each painted close-up against each picture it is used over
+            for e, pic, w in used.get(who, []):
+                cu = BEATS.find_file(file_name(who, hero, e), dirs)
+                bd = BEATS.find_file(f"{pic}.png", dirs) if pic else None
+                if cu is not None and bd is not None:
+                    pairs.setdefault((cu, bd), w)
+            out += match_findings(pairs)
     return out
 
 
@@ -241,9 +328,11 @@ def _side(b: dict, order: list[str]) -> float:
 
 def composite(frame: Image.Image, faces: list[dict], f: int, fps: int, order: list[str]) -> Image.Image:
     """The dialogue frame at ``f``: the environment (``frame``) zoomed and blurred behind the current close-up. Cross-fades
-    in and out over EASE_S at the ends of the shot's face span; each change swaps the close-up with a small pop."""
+    in and out over EASE_S at the ends of the shot's face span; each change swaps the close-up with a small pop, landing
+    accents.EXPR_LEAD_FRAMES before the beat's word (BP-32: the face answers just before the word, never after it)."""
     if not faces:
         return frame
+    faces = [dict(b, start_frame=b["start_frame"] - ACC.EXPR_LEAD_FRAMES) for b in faces]
     s0 = min(b["start_frame"] for b in faces)
     s1 = max(b["end_frame"] for b in faces)
     ease = EASE_S * fps

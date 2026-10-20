@@ -13,6 +13,7 @@ one-line answer. Two passes:
 from __future__ import annotations
 
 import difflib
+import json
 import re
 from pathlib import Path
 
@@ -26,7 +27,9 @@ from explainer_engine.production import continuity
 from explainer_engine.production import graphics as GFX
 from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
+from explainer_engine.qa import engagement as ENG
 from explainer_engine.scripting import narration_lint, story_lint
+from explainer_engine.standards import sourced_rules as SR
 
 STOP = set("""a an the and or but so of to in on at for with by from into onto over under than then that this these those
 it its it's is are was were be been being has have had do does did not no nor as if when while who whom which what where why how
@@ -36,8 +39,17 @@ REAL_PERSON_VOICE = re.compile(r"\b(sound(s|ing)? like|in the voice of|imitat\w*
 NAME_LIKE = re.compile(r"\b[A-Z][a-z]+ [A-Z][a-z]+\b")
 POINTER = re.compile(r"\b(full (story|video|episode)|whole (story|video)|on the channel|the video|this episode|watch)\b", re.I)
 DUP_SIMILAR = 0.97
-SHORT_WPM = 170  # heard pace of a Short read (P-52, D-49)
-SHORT_EVENTS_PER_10S = 3  # SS-08: observed 3-6 in breakout Shorts (vidIQ 2026-10-19), 1.4 in Episode 1's
+# The numbers below come from the sourced rules registry (docs/SOURCED_RULES.md), never from this file.
+SHORT_WPM = SR.T("BP-01", "wpm_target")  # heard pace of a Short read (BP-01; P-52, D-49)
+WPM_MIN, WPM_MAX = SR.T("BP-01", "wpm_min"), SR.T("BP-01", "wpm_max")  # BP-01: the one pace band everywhere
+SHORT_EVENTS_PER_10S = SR.T("BP-45", "events_per_10s_min")  # SS-08 / BP-45: breakouts show 3-6, Episode 1's showed 1.4
+SHORT_MAX_STILL_S = SR.T("BP-45", "max_still_s")  # BP-45: a Short changes on screen at least this often
+HOOK_MAX_WORDS = SR.T("BP-11", "hook_max_words")  # BP-11 (SH-01)
+SHORT_BANDS_S = SR.T("BP-12", "bands_s")  # BP-12: the two length bands of a set (SS-06)
+SHORT_WORDS_PER_S, SHORT_SLACK = SR.T("BP-12", "words_per_s"), SR.T("BP-12", "slack")
+SHORT_WORD_BANDS = [(lo * SHORT_WORDS_PER_S * (1 - SHORT_SLACK), hi * SHORT_WORDS_PER_S * (1 + SHORT_SLACK)) for lo, hi in SHORT_BANDS_S]
+SIGNOFF = [p.lower() for p in SR.T("BP-44", "signoff_lexicon")]  # BP-44: never a sign-off
+LINE_WORDS_MAX, GRADE_MAX = SR.T("BP-46", "line_words_max"), SR.T("BP-46", "grade_max")  # BP-46: Short lines read at grade 6
 STATEMENT_HOOK_STYLES = {"anti_intuition", "pov_you"}  # may open with one statement instead of a question (SS-05)
 REF_EDIT_SOFT = {"UR-22", "UR-26"}  # look thread and light key: carried by the reference picture of a pod_ref edit (PV-11)
 
@@ -248,6 +260,12 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     v = doc["voice"]
     if REAL_PERSON_VOICE.search(v["style"]) or NAME_LIKE.search(v["style"]):
         _f(out, "PV-10", "voice", "the voice style must describe the sound, never a real person to imitate or clone")
+    # PV-52 / BP-01: the script's planned pace band lies inside the heard-pace band (one band everywhere; the estimated
+    # read, the word budgets and the Shorts bands all assume it)
+    lo_wpm, hi_wpm = v["pace_wpm"]
+    if lo_wpm < WPM_MIN or hi_wpm > WPM_MAX:
+        _f(out, "PV-52 BP-01", "voice", f"pace_wpm {lo_wpm}-{hi_wpm} lies outside the heard-pace band {WPM_MIN}-{WPM_MAX} wpm "
+           f"(target {SHORT_WPM}, BP-01): plan the read inside the band or say why this voice is slower", "REVIEW")
     # PV-32 voiced dialogue (D-45): a speaking hero is in the cast and has a voice of their own, described, never imitated
     spoken = [(seg["id"], ln) for seg in doc["segments"] for ln in seg["lines"]]
     spoken += [(sh["id"], ln) for sh in doc.get("shorts", []) for ln in sh["lines"]]
@@ -321,20 +339,48 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     for per in doc.get("periods", []):
         if doc.get("graphics") and not seen.get(per["id"]):
             _f(out, "PV-31", per["id"], "no data visual in this period (ED-10)", "REVIEW")
-    # PV-28 shorts: a question or "did you know" hook in 3 s, whole-picture references, own length
+    # PV-28 shorts: the hook per BP-11 (one question, or one statement that raises several, at most HOOK_MAX_WORDS words),
+    # whole-picture references, the word budget per BP-12, the open premise per BP-44, readability per BP-46
     pic_ids = set(S.pictures(doc)[0])
     for sh in doc.get("shorts", []):
         hook = sh["hook"].strip()
         statement_ok = sh.get("style") in STATEMENT_HOOK_STYLES  # creator 2026-10-19 (SS-05)
         one_sentence = len(re.findall(r"[.!?](?:\s|$)", hook)) <= 1
-        if len(hook.split()) > 14 or not (hook.endswith("?") or (statement_ok and one_sentence)):
-            _f(out, "PV-28", sh["id"], "the hook must be one question of at most 14 words (SH-01)"
-               + ("; this style may open with one statement (SS-05)" if statement_ok else ""))
+        if len(hook.split()) > HOOK_MAX_WORDS:
+            _f(out, "PV-28", sh["id"], f"the hook is {len(hook.split())} words; at most {HOOK_MAX_WORDS} (SH-01, BP-11)")
+        if not hook.endswith("?"):
+            if not one_sentence:
+                _f(out, "PV-28", sh["id"], "the hook is one question or one statement, not several sentences (SH-01, BP-11)")
+            elif not statement_ok:
+                _f(out, "PV-28", sh["id"], "a statement hook must raise a question (SH-04): say which, or make it a question "
+                   "(BP-11; the styles anti_intuition and pov_you open with a statement by design, SS-05)", "REVIEW")
         if sh["lines"][0]["text"].strip() != hook:
             _f(out, "PV-28", sh["id"], "the first line must be the hook")
         words = sum(len(l["text"].split()) for l in sh["lines"])
-        if not 40 <= words <= 130:
-            _f(out, "PV-28", sh["id"], f"{words} words: a Short is 40-130 words (about 20-55 s)", "REVIEW")
+        if not any(a <= words <= b for a, b in SHORT_WORD_BANDS):
+            bands = " or ".join(f"{a:.0f}-{b:.0f} words ({lo}-{hi} s)" for (a, b), (lo, hi) in zip(SHORT_WORD_BANDS, SHORT_BANDS_S))
+            _f(out, "PV-28", sh["id"], f"{words} words: a Short's budget is {bands} at {SHORT_WPM} wpm (BP-12)", "REVIEW")
+        # BP-44: the premise stays open. The line that answers the hook cannot be told apart mechanically from the lines
+        # around it (payoff_after_share is the shorts-writer's and the script-critic's reading); the code checks the two
+        # ends it can see: lines 2-3 foreshadow with a promise marker, the last line never signs off.
+        last_text = sh["lines"][-1]["text"].lower().replace("’", "'")
+        for phrase in SIGNOFF:
+            if phrase in last_text:
+                _f(out, "PV-28", sh["id"], f"the last line signs off ({phrase!r}): a Short ends on a loop or a pointer, never a "
+                   "sign-off (BP-44)")
+        foreshadow = " ".join(l["text"] for l in sh["lines"][1:3])
+        if foreshadow and not ENG.PROMISE.search(foreshadow):
+            _f(out, "PV-28", sh["id"], "lines 2-3 carry no promise marker (will, by the end, watch, until, but, turns out, wait): "
+               "foreshadow the payoff inside 3 s of the hook (BP-44)", "REVIEW")
+        # BP-46: every line short, the whole Short at grade GRADE_MAX or under
+        for k, l in enumerate(sh["lines"], 1):
+            if len(l["text"].split()) > LINE_WORDS_MAX:
+                _f(out, "PV-28", sh["id"], f"line {k} has {len(l['text'].split())} words; at most {LINE_WORDS_MAX} per Short line "
+                   "(BP-46)", "REVIEW")
+        grade = fk_grade(" ".join(l["text"] for l in sh["lines"]))
+        if grade > GRADE_MAX:
+            _f(out, "PV-28", sh["id"], f"reads at grade {grade:.1f} (Flesch-Kincaid); Short lines stay at grade {GRADE_MAX:g} or "
+               "under (BP-46): shorter words, shorter sentences", "REVIEW")
         main = re.sub(r"\W+", " ", S.narration_text(doc).lower())
         new = sum(len(l["text"]) for l in sh["lines"][1:] if re.sub(r"\W+", " ", l["text"].lower()).strip() not in main)
         if new > 400:
@@ -378,15 +424,18 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             _f(out, "PV-34", sh["id"], "a loop ending must run into the first line (shared words or an unfinished last line) (SS-04)", "REVIEW")
         if end == "pointer" and not POINTER.search(last):
             _f(out, "PV-34", sh["id"], "ending 'pointer' but the last line does not point to the video (SS-04)", "REVIEW")
-    # PV-34 continued (D-49): two length bands, the first cut inside the hook, enough visual events (SS-06..SS-08)
+    # PV-34 continued (D-49): two length bands (BP-12), the first cut inside the hook, enough visual events (SS-06..SS-08, BP-45)
     def _short_seconds(sh):
         return sum(len(x["text"].split()) for x in sh["lines"]) / SHORT_WPM * 60
+    (b1_lo, b1_hi), (b2_lo, b2_hi) = SHORT_BANDS_S
     if len(shorts) >= 6:
         secs = [_short_seconds(sh) for sh in shorts]
-        short_band, long_band = sum(s <= 32 for s in secs), sum(s >= 42 for s in secs)
+        short_band = sum(s <= b1_hi * (1 + SHORT_SLACK) for s in secs)
+        long_band = sum(s >= b2_lo * (1 - SHORT_SLACK) for s in secs)
         if short_band < 3 or long_band < 3:
-            _f(out, "PV-34", "shorts", f"{short_band} Short(s) of 15-30 s and {long_band} of 45-75 s (estimated at {SHORT_WPM} wpm): "
-               "a set spans both bands, at least 3 each, so the channel's own data decides the length (SS-06)", "REVIEW")
+            _f(out, "PV-34", "shorts", f"{short_band} Short(s) of {b1_lo}-{b1_hi} s and {long_band} of {b2_lo}-{b2_hi} s (estimated at "
+               f"{SHORT_WPM} wpm, BP-12): a set spans both bands, at least 3 each, so the channel's own data decides the length (SS-06)",
+               "REVIEW")
     for sh in shorts:
         hook_words = content_words(sh["hook"])
         shots = sh.get("shots", [])
@@ -397,20 +446,29 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         events = len(shots) + sum(len(x.get("accents", [])) + len(x.get("bubbles", [])) for x in shots)
         if secs >= 10 and events / secs * 10 < SHORT_EVENTS_PER_10S:
             _f(out, "PV-34", sh["id"], f"{events / secs * 10:.1f} visual events every 10 s (shots + accents + bubbles): "
-               f"the breakouts show 3-6, ours showed 1.4; plan at least {SHORT_EVENTS_PER_10S} (SS-08)", "REVIEW")
+               f"the breakouts show 3-6, ours showed 1.4; plan at least {SHORT_EVENTS_PER_10S} (SS-08, BP-45)", "REVIEW")
+        # BP-45 max_still_s on the Short's estimated read: no picture holds longer than SHORT_MAX_STILL_S
+        if len(shots) >= 1 and not [f for f in out if f["where"] == sh["id"] and f["severity"] == "FAIL"]:
+            sd = BEATS.short_doc(doc, sh)
+            timed = T.time_script(sd, short_words(sd))
+            if not timed["problems"]:
+                for row in timed["shots"]:
+                    if row["end"] - row["start"] > SHORT_MAX_STILL_S:
+                        _f(out, "PV-34", sh["id"], f"shot {row['id']} holds {row['end'] - row['start']:.1f} s on the estimated read: "
+                           f"a Short changes on screen at least every {SHORT_MAX_STILL_S:g} s (BP-45)", "REVIEW")
     # PV-33 the story layer (ST rules, scripting/story_lint.py)
     for f in story_lint.lint(doc):
         _f(out, "PV-33 " + f["rule"], f["where"], f["detail"], f["severity"])
     if doc["episode"].get("rulebook"):  # scripts written to an episode rulebook (D-51/D-52)
-        out += rulebook_era_findings(doc)
+        out += rulebook_era_findings(doc, picture_dirs)
     out += canva_findings(doc)
     out += BEATS.lint(doc)  # PV-44 visual beats: reasons, words, numbers, faces (VB-00, VB-03, VB-04, VB-06)
     out += FACES.lint(doc, picture_dirs)  # PV-44 expression sheets (VB-09)
     out += short_beat_findings(doc)  # PV-44 on every Short (SS-09)
-    # PV-12 narration lint on what the voice gets
+    # PV-12 narration lint on what the voice gets: FAILs block, REVIEWs are forwarded too (audit 2026-10-19 A6: they
+    # never reached the validator before; the BP numbers behind N-01, N-05, N-11..N-14 live in the sourced rules)
     for f in narration_lint.lint(S.tts_text(doc)):
-        if f["severity"] == "FAIL":
-            _f(out, "PV-12", f.get("where", "-"), f"{f['rule']}: {f['detail']}")
+        _f(out, "PV-12", f.get("where", "-"), f"{f['rule']}: {f['detail']}", f["severity"])
     # board on the estimated read (rhythm, state, heroes, bubbles)
     if not [x for x in out if x["severity"] == "FAIL" and x["rule"] in ("PV-03", "PV-04")]:
         timed = T.time_script(doc, estimated_words(doc))
@@ -440,8 +498,30 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
 
 
 def short_words(sd: dict) -> dict:
-    """The estimated read of a Short (``short_doc``) at the Shorts' heard pace (SHORT_WPM, as PV-34)."""
+    """The estimated read of a Short (``short_doc``) at the Shorts' heard pace (SHORT_WPM = BP-01's target, as PV-34)."""
     return estimated_words(dict(sd, voice=dict(sd["voice"], pace_wpm=[SHORT_WPM, SHORT_WPM])))
+
+
+def syllables(word: str) -> int:
+    """Syllables of one English word by vowel groups (a silent final -e dropped, -le kept); at least one. Good enough for a
+    Flesch-Kincaid grade on short lines; no dependency."""
+    w = re.sub(r"[^a-z]", "", word.lower())
+    if not w:
+        return 0
+    groups = len(re.findall(r"[aeiouy]+", w))
+    if w.endswith("e") and not w.endswith(("le", "ee", "ye")) and groups > 1:
+        groups -= 1
+    return max(1, groups)
+
+
+def fk_grade(text: str) -> float:
+    """Flesch-Kincaid grade level of ``text`` (BP-46): 0.39 x words per sentence + 11.8 x syllables per word - 15.59."""
+    sents = [s for s in re.split(r"(?<=[.!?])\s+", text.strip()) if re.search(r"[A-Za-z0-9]", s)]
+    ws = re.findall(r"[A-Za-z0-9][A-Za-z0-9'’-]*", text)
+    if not ws or not sents:
+        return 0.0
+    syl = sum(syllables(w) for w in ws)
+    return 0.39 * len(ws) / len(sents) + 11.8 * syl / len(ws) - 15.59
 
 
 def short_beat_findings(doc: dict) -> list[dict]:
@@ -496,7 +576,19 @@ def canva_findings(doc: dict) -> list[dict]:
     return out
 
 
-def rulebook_era_findings(doc: dict) -> list[dict]:
+def _pod_planned(doc: dict, picture_dirs: list[Path] | None = None) -> set[str]:
+    """Picture ids a paint plan with provider ``pod`` names (``<pictures>/plans/*.json``, written by ``paint plan``)."""
+    plans = list(doc.get("_plans") or [])
+    for d in picture_dirs or []:
+        for f in sorted(Path(d).glob("plans/*.json")):
+            try:
+                plans.append(json.loads(f.read_text(encoding="utf-8")))
+            except (OSError, ValueError):
+                continue
+    return {it["id"] for pl in plans if pl.get("provider") == "pod" for it in pl.get("items", [])}
+
+
+def rulebook_era_findings(doc: dict, picture_dirs: list[Path] | None = None) -> list[dict]:
     """PV-39..PV-42 for scripts written to an episode rulebook (older scripts keep their rules unchanged)."""
     from explainer_engine.imagegen import routing
     out: list[dict] = []
@@ -509,12 +601,14 @@ def rulebook_era_findings(doc: dict) -> list[dict]:
         _f(out, "PV-39", segs[0]["id"], "the first beat is not a hook or a question", "REVIEW")
     if segs[-1].get("job") not in (None, "payoff"):
         _f(out, "PV-39", segs[-1]["id"], "the last beat is not a payoff", "REVIEW")
-    pics, _ = S.pictures(doc)  # PV-40 every painted picture goes to the Gemini batch tier, premium only with a reason
-    painted = [p for p in pics.values() if p.get("uses") and not p.get("file")]
+    pics, _ = S.pictures(doc)  # PV-40 the creator picks the provider per batch (D-50 supersedes D-52's "Gemini only"): a pod
+    painted = [p for p in pics.values() if p.get("uses") and not p.get("file")]  # engine needs a paint plan that names the pod
+    planned = _pod_planned(doc, picture_dirs)
     for p in painted:
         eng = C.engine_of(doc, p)
-        if eng == "pod_text":
-            _f(out, "PV-40", p["id"], "pod pictures are no longer made (D-52): engine gemini or pod_ref, batch tier")
+        if eng == "pod_text" and p["id"] not in planned:
+            _f(out, "PV-40", p["id"], "a pod picture without a paint plan naming it: `paint plan --provider pod` first, then the "
+               "creator's provider choice (D-50); else engine gemini or pod_ref", "REVIEW")
         if routing.tier_of(p) == "premium" and not (p.get("tier_reason") or "").strip():
             _f(out, "PV-40", p["id"], "a premium picture needs tier_reason (reused across videos, or a reveal that must "
                "hold several references)")

@@ -15,8 +15,9 @@ Read it before starting any video; update the feedback log (section 3) whenever 
 4. **Money is never a surprise.** Estimate before every paid call, state units, price and caps in the request, wait for a yes,
    stop at 80 % of any cap, finish with nothing running and the balance reported ([TOOL_STRATEGY](TOOL_STRATEGY.md),
    [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md), CLAUDE.md invariants 1-2).
-5. **Pictures are painted by Gemini on the batch tier, on the tier the picture needs** (draft, standard, premium; D-52,
-   which supersedes the pod routing of D-36). Audio comes from ElevenLabs only.
+5. **The creator picks the picture provider for every batch** (D-50: paint plan -> approve -> run; on Gemini the tiers draft,
+   standard, premium pick the model, D-52). Narration and sound effects come from ElevenLabs; music from ElevenLabs or a per-track
+   verified free library (D-52); free procedural cues are allowed (D-54).
 6. **Look at the output before reporting it.** Open the contact sheet, listen to the test read, composite a sample; a green test
    is not acceptance (CLAUDE_EXECUTION_GUIDE step 5).
 7. **Say what was and was not verified.** No legal or factual guarantee the sources do not give; a creator decision is recorded
@@ -42,7 +43,7 @@ action. Gates 3-7 spend money and need the creator's yes first.
 |---|---|---|---|
 | 0 | **Topic and claims** | research dossier, claim map, the episode rulebook (provisional, then final before the script; gate row `R`), rights check; the source/claim contract and independent editorial gate pass, then the creator approves the script (approval #1) | [SCRIPTING_SPEC](SCRIPTING_SPEC.md) §1-5, crossover skill, `rights/ip_check.py` |
 | 1 | **Script for the ear** | hook is a yes/no question by 5 s; short sentences; one stress word; open loop at every beat end; interjections where a person would say them; named heroes with archetype lines; humour from the situation; `narration_tts.txt` + plain `narration.txt` | skill `narration-script`, `scripting/narration_lint.py` 0 FAIL |
-| 2 | **Voice test read** | first 45-60 s only (estimate first), the creator listens; then the full read, pace 160-185 wpm (target 170, P-52) | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) (D-39), `audio/scribe_words.py`, `audio/pause_pad.py` |
+| 2 | **Voice test read** | first 45-60 s only (estimate first), the creator listens; then the full read, pace per BP-01 (one band for every document) | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) (D-39), `audio/scribe_words.py`, `audio/pause_pad.py` |
 | 3 | **Shot plan** | every shot has `stakes`, type A/B/C in rhythm, named heroes with emotional poses in every B, friction per beat, palette and one emotion per shot, figure style on every person/hand prompt, plates without people; cuts placed by the solver inside punctuated pauses | skill `shot-visuals`, [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) UR-01..UR-22, `edit/shot_rules.check_shots` 0 FAIL |
 | 4 | **Style bridge** | 6 test pictures, a sprite and a pod-painted hand and crowd in one frame, approved once per episode | UR-22, `look.style_bridge.approved` |
 | 5 | **Sprites** | every hero and pose of the plan exists (sprite bank), keyed and graded | `sprite_needs.md`, `look.pose_bank`, [ASSET_SYSTEM](ASSET_SYSTEM.md) |
@@ -104,10 +105,12 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 
 ## 4. Planning numbers for a video length (measured on Day 1, 2026-10-16)
 
+Measurements, not rules: the binding numbers are the BP rules of [SOURCED_RULES](SOURCED_RULES.md) (D-59).
+
 | | 8 min | 10 min | 12 min | Source |
 |---|---|---|---|---|
-| words at 170 wpm | about 1,360 | about 1,700 | about 2,040 | v3/v4 test reads 155-168 wpm; the first read was 140; target raised to 170 by D-49 |
-| shots at 3.85 s | about 125 | about 155 | about 187 | Day 1: 46 shots in 177 s |
+| words at the BP-01 target pace | about 1,360 | about 1,700 | about 2,040 | v3/v4 test reads 155-168 wpm; the first read was 140; target raised to 170 by D-49 |
+| shots at 3.85 s (a Day 1 measurement, not a target: BP-40 caps the average at 10 pictures a minute) | about 125 | about 155 | about 187 | Day 1: 46 shots in 177 s |
 | unique pictures at 0.85 per shot | about 115 | about 140 | about 170 | Day 1: 42 pictures for 46 shots |
 | pod time at 22.7 s per picture | about 45 min | about 55 min | about 65 min | 35 pictures in 793 s on an RTX 4090 |
 | pod cost at $0.89/h | about $0.7-0.9 | about $0.9-1.1 | about $1.1-1.4 | add about $0.1 boot; limit = pictures x 30 s x 1.25 |
@@ -132,12 +135,15 @@ and charged 998 on 2026-10-16; sound effects were estimated at 55 and charged 17
 
 ## 6. The seven-point test (creator, 2026-10-16: every video passes all seven; a failure is investigated, never waved through)
 
+Run on a production script with `python -m explainer_engine.qa.scorecard <episode folder>` (D-59: before this the test had no command line on
+the D-43 flow and ran only on the legacy day folders). The numbers it checks are the BP rules.
+
 `explainer_engine/qa/scorecard.py` gathers the evidence; the creator decides the rows marked "creator decides".
 
 | # | Check | What is measured or looked at |
 |---|---|---|
-| 1 | Narration tone and its sync with the video | words per minute (160-185, target 170), every cut inside a punctuated pause (UR-12), questions per minute; the creator listens for tone, stress and question intonation |
-| 2 | Sound effects and their sync | no sound event on a spoken word, voice at least 14 dB above bed + music, loudness -16 to -12 LUFS; the creator listens: natural and helpful, not cartoon placeholders |
+| 1 | Narration tone and its sync with the video | words per minute (BP-01), every cut inside a punctuated pause (UR-12), questions per minute; the creator listens for tone, stress and question intonation |
+| 2 | Sound effects and their sync | a synced effect lands on its frame, never early (BP-54); a cue on a word is a designed cue, a whoosh on a word is not; background under the voice per BP-52 (LU on the stems); loudness and true peak per BP-50; the creator listens: natural and helpful, not cartoon placeholders |
 | 3 | Pictures fit the topic and its world | the visual judge (adults, no object from the world's `absent` list, no people in plates, one light, mood), 0 FAIL |
 | 4 | Pictures fit the topic's cliché expectations | the era codex `cliches` and screen codes; the creator looks: does it read as the genre the audience knows |
 | 5 | Pictures fit each other | luma, saturation and warmth outliers across the episode, one engine, one look thread, one grade; side-by-side sheet |

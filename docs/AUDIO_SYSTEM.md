@@ -1,15 +1,35 @@
 # Audio system
 
 Python mixes all audio; the renderer produces silent video (RENDERING_ARCHITECTURE, D-11). Targets: P-90 to P-97
-(D-08). Louder is not better: levels are validated against measurements of the rendered file.
+(D-08), every number now read from the sourced rules BP-50..BP-63 ([SOURCED_RULES](SOURCED_RULES.md)) through
+`qa/targets.py`. Louder is not better: levels are validated against measurements of the rendered file.
 
-## Chain
-narration script -> `speakable()` text (pronunciations) -> Kokoro clips (cached per text + full delivery) with phoneme
-timings -> `audio.words.json` (word ids, start/end, estimated flag) -> timeline reflow (scenes follow real durations)
--> mix: voice shaping (low-cut, de-ess, soft limit; copied from TMR `mix.shape_voice`), music bed with ducking, SFX
-bus -> loudness measurement (ebur128) -> gate -> final audio muxed once into the video.
-Narration: 24 kHz mono from Kokoro, resampled to 48 kHz; stereo output with centred voice; mixes stream in blocks (no
-full-length float buffers; 16 GB RAM).
+## Chain (ElevenLabs, D-39 / D-52)
+narration script -> ElevenLabs read in chunks (skill `elevenlabs-voice`) -> word timings on the exact audio
+(`audio/local_words.py` / Scribe, aligned by `audio/scribe_words.py`) -> `audio/seams.py` (chunks levelled, BP-59) ->
+`audio/pause_pad.py` (pauses as room tone, BP-60) -> `words.json` -> `production time` (shots, beats, cues on the words) ->
+`production/assemble.py` mix: voice levelled, beds and music ducked under the voice and under every world sound
+(`audio/duck.py`, BP-53), effects and cues on their frames (BP-54) -> loudness normalised, measured with ebur128 and judged
+(BP-50, BP-51) -> stereo AAC export (BP-63) -> `assemble_report.json`. Kokoro (D-12) was the free draft route and is retired;
+`audio/timings.py` and `audio/visemes.py` are its leftovers.
+
+## Levels (the gates, one home each)
+| what | rule | where it runs |
+|---|---|---|
+| integrated loudness and true peak of the long mix, measured on the delivered file | BP-50 | `assemble` (a final render stops on a FAIL), scorecard check 2 |
+| dialogue anchor: the mix at most a few LU over the narration stem | BP-51 | `assemble` (`ldr_lu`), scorecard |
+| music, ambience bed and their sum under the voice, in LU on the stems | BP-52 | `qa/targets.gap_verdict`, `audio/layers.py` AL-04 pre-mix caps |
+| sidechain duck: depth, attack, release, hold, no step over the level JND | BP-53 | `audio/duck.py` |
+| picture-synced sound on its frame, never early | BP-54 | `audio/layers.py` AL-03, `production/timing.py` SFX_OFFSET |
+| effects carry a purpose; at most one beat in two carries one | BP-55 | `audio/layers.py`, PV-41 |
+| simultaneity: effects of one class at once, layers in all | BP-56 | `audio/layers.py` AL-01 |
+| no identical sample twice in a row | BP-57 | `audio/layers.py` |
+| one-shots and loops, verified seams | BP-58 | `audio/sfx_library.py lint` |
+| narration consistency: chunk spread, join step, stem range | BP-59 | `audio/seams.py`, `qa/targets.stem_lra_verdict` |
+| pauses as room tone, light de-essing | BP-60 | `audio/pause_pad.py` |
+| Shorts: integrated, short-term cap, true peak, no LRA gate, measured on the FINAL Short | BP-61 | `production/shorts.py` |
+| music spotted on boundaries, a planned no-music stretch, short stings, its fades | BP-62 | `audio/layers.py` |
+| delivery: stereo AAC at the bitrate and rate of the upload settings | BP-63 | `assemble.AUDIO_CODEC` (video and Shorts) |
 
 ## Final narrator: ElevenLabs (D-39)
 The final narration is an ElevenLabs library voice (never a clone, never a famous-person voice), generated through the
@@ -21,8 +41,8 @@ punctuation and each dash as its own token, so `words.json` keeps the marks the 
 (`audio/pause_pad.py`): ElevenLabs reads a comma, dash or ellipsis in 0.05-0.1 s, too short to cut in (a cut needs
 0.05 s from both words), and then the first-30-seconds rule (UR-02) has no legal layout. A punctuated gap under 0.26 s
 gets silence inserted in its middle; no word is touched, later words move by the inserted time, and `words.json` is
-rewritten on the padded audio the mix uses (Day 1: 41 gaps, +6.7 s on 170.6 s). Kokoro stays the free draft and
-the fallback when ElevenLabs is unavailable.
+rewritten on the padded audio the mix uses (Day 1: 41 gaps, +6.7 s on 170.6 s), and the inserted pause is room tone at the
+read's own floor (BP-60). ElevenLabs is the only narration route (D-52); Kokoro is retired.
 
 ## ElevenLabs only (D-52): what the connector really exposes (read with `creative_get_model_schema`, 2026-10-17, V-29)
 | Use | Model | Parameters the tool accepts | Notes |
@@ -67,10 +87,11 @@ spec -> timed render -> `base.wav` + `words.json` -> alteration -> `narration.wa
 spread, pace, level of both, the timing check). WAVs are not committed.
 
 ## Music, ambience, silence
-One music state per scene group, ducked to at least 10 dB under speech (attack 50 ms, release 400 ms); procedural
-(TMR `music_synth` approach, new energetic palettes) or CC0/licensed beds with per-file records; no commercial tracks and
-no AI-music-as-the-main-focus (disclosure trigger, V-02). Planned silence (a held beat) is declared in the storyboard;
-unintended silence over 1.5 s (0.8 s Shorts) fails.
+One music state per scene group, spotted on scene or beat boundaries with a planned no-music stretch (BP-62), ducked under
+speech to the LU floors of BP-52 with the dip of BP-53; ElevenLabs music or a per-track verified free library (D-52) with
+per-file records; no commercial tracks and no AI-music-as-the-main-focus (disclosure trigger, V-02). Planned silence (a held
+beat) is declared in the storyboard; an inserted pause is room tone, never digital zero (BP-60); unintended silence (P-95)
+has no scanner yet beyond `audio/dropouts.py`.
 
 ## Audio event contract (v1; schema in Phase 3)
 ```json
@@ -80,10 +101,10 @@ unintended silence over 1.5 s (0.8 s Shorts) fails.
    "fade_in_ms": 5, "fade_out_ms": 40, "priority": 2, "duck_music_db": 0, "overlap": "mix|replace|skip",
    "purpose": "clarify|humour|transition|sync", "license_id": "L-0004", "if_missing": "fail"}]}
 ```
-Rules: SFX only where they clarify an action, reinforce a joke or aid comprehension; at most about one per 6 s on average
-(REVIEW above); every asset has a licence record; `if_missing` is `fail` for narration-critical sounds and `skip` only for
-decorative ones, and a skip is logged in the QA report. Sync check: rendered SFX start within one frame of the
-anchor word.
+Rules: SFX only where they clarify an action, reinforce a joke or aid comprehension (the purposes and the beat share of
+BP-55; the old "one per 6 s" was a hypothesis and is retired); every asset has a licence record; `if_missing` is `fail` for
+narration-critical sounds and `skip` only for decorative ones, and a skip is logged in the QA report. Sync check: a rendered
+SFX lands on its frame inside the window of BP-54 (never early).
 
 ## Reusable sound library (D-34)
 `assets/audio/library/manifest.json` (schema `explainer_engine/schemas/sfx_manifest.schema.json`) lists every sound: id
@@ -100,7 +121,8 @@ model and prompt, Lyria prompt), estimated cost, licence status and review. Rule
 - The analyst (Dirkus) is silent: his vocal sounds are reactions, never speech. The companion (Tick) makes mechanical sounds.
 
 ## Checks run on every mix
-Numbers: one definition in `explainer_engine/qa/targets.py` (P-90, P-91, P-93, P-101), used by the mixer, the Shorts renderer and the scorecard.
-Peak and true peak; integrated loudness; clipping; silence map; voice-to-music gap while speaking; click detection at
-clip joins; speech does not overlap itself; measured pace against the target; ASR word error where available; level
-jumps between scenes. Reports go to the review bundle ([QA_SPECIFICATION](QA_SPECIFICATION.md)).
+Numbers: one definition in `explainer_engine/qa/targets.py`, read from BP-50..BP-63, used by the mixer, the Shorts renderer
+and the scorecard. Integrated loudness and true peak with their verdicts; the dialogue anchor; the voice-to-background gap
+while speaking (LU on the stems); the duck's largest step; clipping; click detection at clip joins; the chunk spread and
+join steps; measured pace against the target; level jumps between scenes. Reports go to `assemble_report.json`,
+`scorecard.json` and the review bundle ([QA_SPECIFICATION](QA_SPECIFICATION.md)); `production_gate` gate 8 reads them.

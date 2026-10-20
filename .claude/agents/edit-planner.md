@@ -24,3 +24,14 @@ For each segment:
    from the beat-writer (send it back), not from you.
 5. Run `python -m explainer_engine.production validate <script>`: 0 FAIL; the PV-35 (MO) and PV-24 RHYTHM REVIEWs on the
    estimated read answered or fixed, 0 PV-44 FAIL. Report events a minute, the kinds used and the alive share.
+
+## Sourced rules (docs/SOURCED_RULES.md)
+
+These supersede the cadence numbers above ("pictures every 3-6 s"); the validators read them from the registry (D-59).
+
+- BP-30: across a hard cut the focal point stays within 10 % of the frame; never the same framing of the same picture twice
+  in a row (change the shot size by a full step); a direction change over 90 degrees needs a neutral picture between.
+- BP-35: parallax on a still uses at least three depth layers moving toward the subject, foreground faster, eased; it counts as alive.
+- BP-40: in the first 30 s something changes at least every 5 s (FAIL); in the body a still over 20 s is REVIEW, over 40 s FAIL;
+  at most 10 pictures a minute on average, one burst of 5-10 cuts per 2-3 min; every change carries new information.
+- BP-41: one scripted pattern interrupt in the 25-35 s window: a cut with a new element (an insert, a text pop or a music change).

@@ -1,6 +1,7 @@
 """``publish stage``: upload an episode's long video and its Shorts as unlisted (or private), never public (D-57).
 
-Order: the publish checklist (PC rules) must have no FAIL and the plan no FAIL -> the token's channel must be the one in
+Order: the publish checklist (PC rules, read on the episode folder: approval #2, the rulebook's final_qa stamp and the
+scorecard, invariant 4) must have no FAIL and the plan no FAIL -> the token's channel must be the one in
 ``EXPLAINER_YT_CHANNEL`` -> the long video -> its thumbnail -> each Short, whose description links the long video. Every video
 id is written to ``<episode>/publish/youtube_state.json`` the moment the API returns it, keyed by the file's sha256, so a
 second run never uploads the same file twice; an interrupted upload resumes from its session (``.sessions.json``, gitignored).
@@ -63,8 +64,8 @@ def _count(state: dict, uploads: int = 0, units: int = 0) -> None:
 def gate(episode: Path, stage: dict) -> list[str]:
     """Why staging must not start (empty when it may)."""
     pub, doc = P.load_episode(episode)
-    problems = [f"{f['rule']} {f['where']}: {f['detail']}" for f in publish_check.check(pub, doc or None)
-                if f["severity"] == "FAIL"]
+    problems = [f"{f['rule']} {f['where']}: {f['detail']}" for f in publish_check.check(pub, doc or None, Path(episode))
+                if f["severity"] == "FAIL"]  # PC-08 approval and PC-09 (final_qa stamp, scorecard) read the episode folder
     problems += [f"{f['item']} {f['field']}: {f['detail']}" for f in stage["findings"] if f["severity"] == "FAIL"]
     return problems
 

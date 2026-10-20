@@ -49,7 +49,7 @@ def test_unrecorded_decisions_are_reviews_not_silence():
     p.pop("approval")
     p["mid_roll"] = "undecided"
     p["description"] = "no links"
-    assert {"PC-07", "PC-08"} <= rules(p, "REVIEW")
+    assert "PC-07" in rules(p, "REVIEW") and "PC-08" in rules(p, "FAIL")  # invariant 4: no approval is a FAIL, not a note
 
 
 def test_a_bad_shape_is_a_schema_fail():

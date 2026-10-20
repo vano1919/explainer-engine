@@ -213,6 +213,7 @@
       "GE"
     ],
     "elevenlabs_plan": "Creator",
-    "elevenlabs_music_terms": "Creator: individual use only; commercial use allowed except film, TV, radio and studio games; streaming distribution permitted; no attribution (Music Terms, updated 2026-10-09, V-28). Monetised YouTube use and Content ID are not addressed by the terms."
+    "elevenlabs_music_terms": "Creator: individual use only; commercial use allowed except film, TV, radio and studio games; streaming distribution permitted; no attribution (Music Terms, updated 2026-10-09, V-28). Monetised YouTube use and Content ID are not addressed by the terms.",
+    "sources_in_narration": "Never (BP-15, the creator 2026-10-19): a claim's source and its label (official / reported / speculation / inference) live in the claim map and the video description; the narration never reads a source, a release date, a price or a feature list out loud. Supersedes the source-citing wording of ER-07 / RK-08 / RK-16 / RR-10 / SR-04."
   }
 }

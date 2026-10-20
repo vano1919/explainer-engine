@@ -14,6 +14,8 @@ import math
 import re
 from pathlib import Path
 
+from explainer_engine.standards import sourced_rules as SR
+
 STAKES_FILE = Path(__file__).with_name("stakes.json")
 MOODS_FILE = Path(__file__).with_name("moods.json")
 DURATIONS = {"A": (5.0, 7.0), "B": (3.5, 5.0), "C": (2.5, 4.0)}  # UR-11
@@ -22,12 +24,12 @@ FIRST_SLACK = 1.0  # a shot in the first 30 s stays within its minimum + this
 FIRST_MIN_SHOTS = 6
 HOOK_SECONDS = 5.0  # UR-01
 FIRST_SOUND = 1.0
-MAX_ZOOM = 1.15  # UR-13
+MAX_ZOOM = SR.T("BP-20", "scale_max")  # UR-13 / BP-20
 A_ZOOM = (1.05, 1.08)
-A_PAN_PER_5S = 0.06  # share of the frame width
-B_PUSH_MAX = 1.10
+A_PAN_PER_5S = SR.T("BP-22", "pan_default_width_per_s") * 5  # share of the frame width (BP-22's house default)
+B_PUSH_MAX = SR.T("BP-20", "push_default_max")
 C_PULL_MAX = 1.08
-DISSOLVE_SECONDS = 1.0  # UR-14
+DISSOLVE_SECONDS = SR.T("BP-31", "dissolve_s")  # UR-14 / BP-31
 DISSOLVE_SHARE = 0.10
 EDGE = 0.05  # UR-12: a cut keeps this far from both words
 CUT_MARKS = ",.:;?!—…"
@@ -36,7 +38,7 @@ BANNED = re.compile(r"\b(hyper-?realistic|photo-?realistic|realistic|lifelike|na
 FACE_WORDS = re.compile(r"\b(face|faces|portrait|eyes|smil(e|es|ing)|grin(s|ning)?|looking at (the )?camera)\b", re.I)
 FACE_NEGATIONS = re.compile(r"\b(no (visible )?faces?|faceless|faces? (hidden|not visible|turned away)|without faces?)\b",
                             re.I)
-GREETINGS = re.compile(r"\b(welcome|hello|hi|hey|today'?s video|in this video|subscribe)\b", re.I)
+GREETINGS = re.compile(r"\b(welcome|hello|hi|hey|today'?s video|in this video|subscribe)\b", re.I)  # BP-03: never the hook
 
 
 def load_stakes(path: Path = STAKES_FILE) -> dict:

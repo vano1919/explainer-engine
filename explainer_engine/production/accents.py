@@ -7,7 +7,7 @@ Every accent is a pure function of the frame number, so a frame renders the same
 * camera accents change the crop: ``punch`` (a snap zoom-in on the word, held), ``shake`` (a decaying jolt),
   ``wobble`` (a slow breathing scale over the whole shot, the cheapest "alive" motion);
 * picture accents are drawn on the finished frame: ``whip_in`` (the shot enters with a blurred slide over the last
-  frame of the shot before), ``flash_in`` (a smash cut: three frames of white), ``pop_text`` (up to four words pop in
+  frame of the shot before), ``flash_in`` (a smash cut: FLASH_FRAMES frames of white, BP-26), ``pop_text`` (up to four words pop in
   with an overshoot and fade out), ``slam_text`` (large words slam down from twice their size with a jolt).
 
 ``timing`` resolves each accent's phrase to frames (``resolve``); ``assemble`` asks ``camera`` for the crop and
@@ -20,16 +20,24 @@ import math
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
+from explainer_engine.standards import sourced_rules as SR
+
 CAMERA = {"punch", "shake", "wobble"}
 ENTRY = {"whip_in", "flash_in"}  # they belong to the start of their shot
 TEXT = {"pop_text", "slam_text"}
 PUNCH_IN, PUNCH_ZOOM = 0.12, 0.18  # seconds to reach the punch, extra zoom at strength 1
-SHAKE_S, SHAKE_AMP = 0.45, 0.018  # length, amplitude as a share of the frame at strength 1
+# BP-24 (house): a shake decays within decay_max_s and peaks under amplitude_max_h of the frame; today's values sit inside
+SHAKE_S = min(0.45, SR.T("BP-24", "decay_max_s"))  # length at strength 1
+SHAKE_AMP = min(0.018, SR.T("BP-24", "amplitude_max_h"))  # amplitude as a share of the frame at strength 1
 WOBBLE_PERIOD, WOBBLE_AMP = 2.4, 0.015
-WHIP_S, FLASH_FRAMES = 0.22, 3
+WHIP_S = 0.22
+FLASH_FRAMES = int(SR.T("BP-26", "flash_frames"))  # BP-26: a flash_in is this many frames ...
+FLASH_WHITE = float(SR.T("BP-26", "flash_white_max"))  # ... at most this share of white on its first frame
 POP_S, TEXT_FADE = 0.25, 0.15
-TEXT_HOLD_BASE, TEXT_HOLD_PER_WORD = 1.5, 0.3  # P-71: a label holds 1.5 s + 0.3 s a word (D-49)
+TEXT_HOLD_BASE, TEXT_HOLD_PER_WORD = 1.5, 0.3  # P-71: a label holds 1.5 s + 0.3 s a word (D-49); BP-27 bounds it below
 SLAM_S = 0.12
+_LEAD_LO, _LEAD_HI = SR.T("BP-32", "lead_frames")
+EXPR_LEAD_FRAMES = (int(_LEAD_LO) + int(_LEAD_HI)) // 2  # BP-32: a keyed close-up changes this many frames before its word
 
 
 def resolve(accents: list[dict], shot_start: float, shot_end: float, word_start, fps: int) -> list[dict]:
@@ -47,8 +55,12 @@ def resolve(accents: list[dict], shot_start: float, shot_end: float, word_start,
 
 
 def text_hold(text: str, kind: str = "pop_text") -> float:
-    """Seconds a popped or slammed word stays readable (P-71); a slam holds a little longer."""
-    return TEXT_HOLD_BASE + TEXT_HOLD_PER_WORD * max(1, len(text.split())) + (0.6 if kind == "slam_text" else 0.0)
+    """Seconds a popped or slammed word stays readable (P-71); a slam holds a little longer. BP-27 bounds it: at least
+    max(hold_min_s, s_per_word x words), at most hold_max_s (P-71's 1.5 + 0.3 n stays inside for up to four words)."""
+    n = max(1, len(text.split()))
+    hold = TEXT_HOLD_BASE + TEXT_HOLD_PER_WORD * n + (0.6 if kind == "slam_text" else 0.0)
+    floor = max(SR.T("BP-27", "hold_min_s"), SR.T("BP-27", "s_per_word") * n)
+    return min(SR.T("BP-27", "hold_max_s"), max(floor, hold))
 
 
 def _ease_out(u: float) -> float:
@@ -123,9 +135,9 @@ def draw(frame: Image.Image, accents: list[dict], f: int, fps: int, f0: int, f1:
             canvas.paste(previous.filter(ImageFilter.BoxBlur(blur)), (off - W, 0))  # the old shot leaves to the left
             canvas.paste(frame.filter(ImageFilter.BoxBlur(blur)), (off, 0))  # the new one arrives from the right
             frame = canvas
-        elif k == "flash_in" and 0 <= f - f0 < FLASH_FRAMES:
+        elif k == "flash_in" and 0 <= f - f0 < FLASH_FRAMES:  # BP-26: FLASH_WHITE on the first frame, fading over FLASH_FRAMES
             white = Image.new("RGB", frame.size, (255, 252, 244))
-            frame = Image.blend(white, frame, (f - f0 + 1) / (FLASH_FRAMES + 1))
+            frame = Image.blend(frame, white, FLASH_WHITE * (1 - (f - f0) / FLASH_FRAMES))
         elif k in TEXT and a["text"]:
             end = min((f1 - a["start_frame"]) / fps, text_hold(a["text"], k))
             if not 0 <= t < end:

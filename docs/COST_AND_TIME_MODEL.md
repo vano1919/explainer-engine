@@ -28,13 +28,13 @@ only for a question that would change a title or topic.
 
 ## Cost classes
 One-time development: Node.js LTS, Remotion (free for this use, V-04), fonts, CC0 sound effects: $0. Per video (lean,
-local): $0 money; Kokoro runs on the CPU; renders on the CPU. Recurring monthly: $0. Optional paid: cloud TTS (only if
-the listening test rejects Kokoro; price re-checked at that time, not assumed), extra generated assets.
+local): renders on the CPU. Narration is ElevenLabs credits (D-39, D-52; estimated and logged before every read; Kokoro of
+D-12 is retired). Recurring monthly: the ElevenLabs plan. Optional paid: extra generated assets.
 Scenarios: lean (all local, hand-built SVG) = baseline; normal (a few generated reusable assets within the cap);
 higher quality (a paid voice, more generated props) needs approval and a monthly line.
 
 ## Machine time [estimates; replaced by measurements in Phases 4-6]
-Kokoro about 2-3x real time on this CPU (TMR measurement); 7 min of narration about 15-20 min. Scene rendering: unknown
+an ElevenLabs read returns in well under real time; word timings (local Whisper) about real time. Scene rendering: unknown
 until the benchmark; the gate is a 10-minute episode in under 2 hours. Disk: a 7-minute 1080p30 episode's scene files plus
 final about 1-2 GB (estimate); jobs are cleaned by the protected-run rule.
 

@@ -54,13 +54,20 @@ def test_a_gemini_plan_takes_its_model_and_size_from_the_tier(tmp_path, monkeypa
 
 # --- ElevenLabs gate hook ---
 
-def _ep(tmp_path: Path, rules: dict | None = None, cfg: dict | None = None) -> Path:
+def _ep(tmp_path: Path, rules: dict | None = None, cfg: dict | None = None, editorial: str = "pass") -> Path:
+    """An episode folder for the hook: the rulebook, a script with its editorial contract and an independent review that matches
+    it (OR-10 blocks a paid call on an editorial FAIL; ``editorial="fail"`` leaves the script without its contract)."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent))
+    from test_editorial_gate import valid_doc, valid_review
     (tmp_path / ".claude").mkdir(exist_ok=True)
     ep = tmp_path / "ep"
     ep.mkdir(exist_ok=True)
     if rules is not None:
         (ep / "episode_rules.json").write_text(json.dumps(rules), encoding="utf-8")
-        (ep / "production_script.json").write_text("{}", encoding="utf-8")
+        script = ep / "production_script.json"
+        script.write_text(json.dumps(valid_doc() if editorial == "pass" else {}), encoding="utf-8")
+        (ep / "editorial_review.json").write_text(json.dumps(valid_review(script)), encoding="utf-8")
     if cfg is not None:
         (tmp_path / ".claude/active_episode.json").write_text(json.dumps(cfg), encoding="utf-8")
     return tmp_path
@@ -83,6 +90,8 @@ def test_hook_runs_the_rulebook_gate_and_logs_overrides(tmp_path):
     assert "paid_assets" in hook.decide("mcp__ElevenLabs__creative_generate_in_flow", call, root)  # not stamped yet
     R.stamp(root / "ep/episode_rules.json", "paid_assets", by="t", scope="all", script=root / "ep/production_script.json")
     assert hook.decide("mcp__ElevenLabs__creative_generate_in_flow", call, root) is None
+    (root / "ep/production_script.json").write_text("{}", encoding="utf-8")  # OR-10: the editorial gate now fails (and the stamp is stale)
+    assert "OR-1" in hook.decide("mcp__ElevenLabs__creative_generate_in_flow", call, root)
     _ep(tmp_path, None, {"episode": "nowhere", "override": "creator: three voice auditions, 2026-10-17"})
     assert hook.decide("mcp__ElevenLabs__creative_generate_speech", {"generations_count": 1}, root) is None
     assert "voice auditions" in (root / "jobs/gate_overrides.jsonl").read_text(encoding="utf-8")
@@ -204,8 +213,11 @@ def test_audio_targets_are_shared_and_never_looser_than_before():
     assert targets.loudness_verdict(-15.5) == "REVIEW"
     assert targets.loudness_verdict(-12.5) == "FAIL"       # P-90 allowed range ends at -13
     assert targets.true_peak_verdict(-0.8) == "FAIL"
-    assert targets.gap_verdict(-20, -33) == "FAIL" and targets.gap_verdict(-20, -34) == "PASS"
-    assert targets.loudnorm("short") == targets.loudnorm("long") == "loudnorm=I=-14:TP=-1.5:LRA=9"
+    assert targets.gap_verdict(-20, -33) == "FAIL" and targets.gap_verdict(-20, -34) == "PASS"  # BP-52 combined floor, in LU
+    from explainer_engine.standards import sourced_rules as SR
+    lufs, tp = SR.T("BP-50", "lufs"), SR.T("BP-50", "limiter_tp")
+    assert targets.loudnorm("long") == f"loudnorm=I={lufs:g}:TP={tp:g}:LRA={SR.T('BP-59', 'stem_lra_max'):g}"
+    assert targets.loudnorm("short") == f"loudnorm=I={lufs:g}:TP={tp:g}"  # BP-61: no loudness-range term for a Short
     for path in ("explainer_engine/production/assemble.py", "explainer_engine/production/shorts.py"):
         assert "loudnorm=I=" not in (ROOT / path).read_text(encoding="utf-8"), path
 
@@ -216,11 +228,13 @@ def test_scorecard_reads_the_shared_targets():
               "phase": "d", "sentences": [0], "motion": {"kind": "static", "z0": 1.0, "z1": 1.0}, "picture": "p",
               "palette": [], "face": "none", "stakes": "x y z w v u t"}]
     look = {"cast": [], "style_suffix": ""}
-    good = {"voice_rms_db": -20, "bed_rms_db": -40, "music_rms_db": -40, "lufs": -14.2, "true_peak": -1.2}
+    good = {"voice_lu": -20, "bed_lu": -40, "music_lu": -40, "lufs": -14.2, "true_peak": -1.2}  # LU on the stems (BP-52)
     row2 = scorecard.score(shots, w, "Is it? yes.", look, audio=good, sound_events=[])[1]
     assert row2["status"] == "PASS" and any("-15 to -13" in e for e in row2["evidence"])
-    for bad in ({"lufs": -12.0}, {"true_peak": -0.5}, {"music_rms_db": -30}):
+    for bad in ({"lufs": -12.0}, {"true_peak": -0.5}, {"music_lu": -30}):
         assert scorecard.score(shots, w, "Is it? yes.", look, audio={**good, **bad}, sound_events=[])[1]["status"] == "FAIL"
+    old_units = {"voice_rms_db": -20, "bed_rms_db": -40, "music_rms_db": -40, "lufs": -14.2}  # RMS dB is not the unit: REVIEW
+    assert scorecard.score(shots, w, "Is it? yes.", look, audio=old_units, sound_events=[])[1]["status"] == "REVIEW"
 
 
 # --- disclosure ---

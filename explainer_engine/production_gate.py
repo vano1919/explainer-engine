@@ -130,11 +130,58 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
         add(6, "pictures", "WAIT", f"{len(have)} of {len(used)} pictures exist", "contact sheet looked at after each batch")
     else:
         add(6, "pictures", "PASS", f"all {len(used)} pictures exist", "review the contact sheet by eye")
-    for n, name, hint in ((7, "animatic and render", "production run, after gates 0-6"),
-                          (8, "QA", "technical and editorial QA, the publish checklist"),
-                          (9, "approval #2", "the creator's recorded approval")):
-        add(n, name, "WAIT", hint)
+    add(7, "animatic and render", "WAIT", "production run, after gates 0-6")
+    add(8, "QA", *qa_state(day))
+    add(9, "approval #2", *approval_state(day))
     return out
+
+
+def _find(day: Path, name: str) -> Path | None:
+    for p in (day / name, day / "render" / name):
+        if p.exists():
+            return p
+    return next(iter(sorted(day.glob(f"**/{name}"))), None)
+
+
+def qa_state(day: Path) -> tuple[str, str, str]:
+    """Gate 8 from what QA writes: ``assemble_report.json`` (the mix's verdicts, BP-50 / BP-51) and ``scorecard.json`` (the
+    seven-point test). Missing = WAIT, any FAIL = BLOCKED."""
+    rep, card = _find(day, "assemble_report.json"), _find(day, "scorecard.json")
+    if rep is None and card is None:
+        return "WAIT", "no assemble_report.json and no scorecard.json", "render, then python -m explainer_engine.qa.scorecard <folder>"
+    problems, notes = [], []
+    if rep is None:
+        notes.append("no assemble_report.json")
+    else:
+        audio = (_json(rep) or {}).get("audio", {})
+        for key in ("loudness_verdict", "true_peak_verdict", "ldr_verdict"):
+            if audio.get(key) == "FAIL":
+                problems.append(key.replace("_verdict", ""))
+        notes.append(f"mix {audio.get('lufs', '?')} LUFS {audio.get('loudness_verdict', 'unjudged')}, "
+                     f"true peak {audio.get('true_peak', '?')} {audio.get('true_peak_verdict', 'unjudged')}")
+    if card is None:
+        notes.append("no scorecard.json")
+    else:
+        rows = (_json(card) or {}).get("rows", [])
+        bad = [f"{r['id']} {r['name']}" for r in rows if r.get("status") == "FAIL"]
+        problems += bad
+        notes.append(f"scorecard {len(rows)} rows, {len(bad)} FAIL, {sum(r.get('status') == 'REVIEW' for r in rows)} REVIEW")
+    if problems:
+        return "BLOCKED", "; ".join(notes), "fix: " + ", ".join(problems)
+    if rep is None or card is None:
+        return "WAIT", "; ".join(notes), "render and run the scorecard"
+    return "PASS", "; ".join(notes), "the creator watches the whole video once (rows marked 'creator decides')"
+
+
+def approval_state(day: Path) -> tuple[str, str, str]:
+    """Gate 9: the creator's recorded approval #2 in ``publish.json`` (PC-08, invariant 4)."""
+    pub = _json(day / "publish.json")
+    if pub is None:
+        return "WAIT", "no publish.json", "write the publish/1 package (qa/publish_check), then the creator's approval"
+    ok = pub.get("approval") or {}
+    if ok.get("by") and ok.get("ref"):
+        return "PASS", f"approved by {ok['by']} ({ok['ref']})", "publish stage (unlisted, D-57); public is the creator's click"
+    return "WAIT", "publish.json has no approval {by, ref}", "the creator's recorded approval #2 (PC-08)"
 
 
 def gates(day: Path, look_path: Path | None = None, run_path: Path | None = None) -> list[dict]:

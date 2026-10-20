@@ -10,7 +10,18 @@ from __future__ import annotations
 
 import numpy as np
 
+from explainer_engine.standards import sourced_rules as SR
+
 CTRL_HZ = 1000  # one control value per millisecond
+# BP-53: ducking is a dip, not a cut. The house numbers come from the registry (house_depth_db 9, attack 20 ms, release
+# 280 ms, hold 80 ms) and sit inside its sourced ranges (depth 6-12 dB, attack 20-80 ms, release 250-700 ms, hold >= 50 ms);
+# no gain step may exceed max_step_db_per_ms (the level JND). Change the registry, never these lines.
+_T = SR.rule("BP-53")["thresholds"]
+DEPTH_DB = float(_T["house_depth_db"])
+ATTACK_MS = float(min(max(_T["house_attack_ms"], _T["attack_ms"][0]), _T["attack_ms"][1]))
+RELEASE_MS = float(min(max(_T["house_release_ms"], _T["release_ms"][0]), _T["release_ms"][1]))
+HOLD_MS = float(max(_T["house_hold_ms"], _T["hold_ms_min"]))
+MAX_STEP_DB_PER_MS = float(_T["max_step_db_per_ms"])
 
 
 def control_level(side: np.ndarray, sr: int) -> np.ndarray:
@@ -22,8 +33,8 @@ def control_level(side: np.ndarray, sr: int) -> np.ndarray:
     return pad.reshape(n, hop).max(axis=1)
 
 
-def duck_gain(side: np.ndarray, sr: int, n: int | None = None, *, depth_db: float = 9.0, threshold: float = 0.02,
-              knee: float = 4.0, attack_ms: float = 20.0, release_ms: float = 280.0, hold_ms: float = 80.0) -> np.ndarray:
+def duck_gain(side: np.ndarray, sr: int, n: int | None = None, *, depth_db: float = DEPTH_DB, threshold: float = 0.02,
+              knee: float = 4.0, attack_ms: float = ATTACK_MS, release_ms: float = RELEASE_MS, hold_ms: float = HOLD_MS) -> np.ndarray:
     """Gain curve (linear, length `n` or len(side)) that lowers another track while `side` sounds.
 
     `threshold` is the sidechain level (linear peak) where the dip starts; at `knee` x threshold it is full depth."""
@@ -55,3 +66,12 @@ def max_step_db_per_ms(gain: np.ndarray, sr: int) -> float:
     db = 20 * np.log10(np.maximum(gain, 1e-9))
     hop = max(1, sr // CTRL_HZ)
     return float(np.abs(db[hop:] - db[:-hop]).max()) if len(db) > hop else 0.0
+
+
+def step_finding(gain: np.ndarray, sr: int) -> dict | None:
+    """BP-53: the finding when a duck curve steps faster than the ear's level JND (None when it is a dip, not a cut)."""
+    step = max_step_db_per_ms(gain, sr)
+    if step <= MAX_STEP_DB_PER_MS:
+        return None
+    return {"rule": "BP-53", "severity": "REVIEW", "where": "music duck",
+            "detail": f"gain steps {step:.2f} dB in a millisecond (at most {MAX_STEP_DB_PER_MS:g}): a dip heard as a cut"}

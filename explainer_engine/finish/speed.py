@@ -1,12 +1,16 @@
 """Speed as a finishing step (ED-06): the finished video is time-compressed (picture and sound together, pitch kept), the
-voice is never re-synthesised. ``excerpts`` makes short samples of 1.05 / 1.10 / 1.15 of the same places for the creator to
-compare; ``retime`` makes the full file at the chosen rate. ffmpeg only, no cost."""
+voice is never re-synthesised. ``excerpts`` makes short samples of the BP-02 rates of the same places for the creator to
+compare; ``retime`` makes the full file at the chosen rate, never above BP-02's ceiling (the tempo just-noticeable
+difference; docs/SOURCED_RULES.md). ffmpeg only, no cost."""
 from __future__ import annotations
 
 import subprocess
 from pathlib import Path
 
-RATES = (1.05, 1.10, 1.15)
+from explainer_engine.standards import sourced_rules as SR
+
+RATES = tuple(SR.T("BP-02", "rates"))  # BP-02: the rates offered to the creator
+MAX_RATE = SR.T("BP-02", "max_tempo")  # BP-02: the creator's ceiling, under the tempo JND
 
 
 def _filter(rate: float) -> str:
@@ -15,8 +19,9 @@ def _filter(rate: float) -> str:
 
 def retime(src: Path, dst: Path, rate: float, *, start: float | None = None, length: float | None = None,
            crf: int = 18, scale: str | None = None) -> Path:
-    if not 1.0 < rate <= 1.5:
-        raise ValueError("rate must be above 1.0 and at most 1.5 (atempo stays clean in that range)")
+    if not 1.0 < rate <= MAX_RATE:
+        raise ValueError(f"rate must be above 1.0 and at most {MAX_RATE} (BP-02: a speed-up stays under the tempo "
+                         "just-noticeable difference; the rhythm and pace checks run again on the sped file)")
     cut = (["-ss", f"{start}"] if start is not None else []) + (["-t", f"{length}"] if length is not None else [])
     graph = _filter(rate) if not scale else f"[0:v]scale={scale},setpts=PTS/{rate},fps=30[v];[0:a]atempo={rate}[a]"
     part = dst.with_suffix(".part.mp4")

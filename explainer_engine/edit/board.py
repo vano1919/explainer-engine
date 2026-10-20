@@ -11,8 +11,10 @@ both:
 * a picture's heroes must fit its line: when the line names heroes and the picture's heroes are all others, FAIL
   (HERO-1: Franklin's hand lifting Einstein's glasses);
 * one picture may carry several lines through speech bubbles (``finish/bubbles.py``), so a dialogue is one held picture;
-* rhythm: at most MAX_PER_MIN pictures a minute, no shot under MIN_SHOT, and something must change on screen (a cut or a
-  bubble) at least every MAX_STILL seconds.
+* rhythm (BP-40, docs/SOURCED_RULES.md): at most MAX_PER_MIN pictures a minute, no shot under MIN_SHOT, and something must
+  change on screen (a cut, a bubble or an accent) often enough for the section: inside the hook window a still longer than
+  HOOK_STILL is a FAIL; in the body a still longer than BODY_REVIEW is a REVIEW and longer than BODY_FAIL a FAIL;
+* a pattern interrupt (BP-41): something changes inside the INTERRUPT window of the first minute, else a REVIEW.
 
     python -m explainer_engine.edit.board <board.json> <words.json> [--out timed.json]
 """
@@ -25,11 +27,16 @@ import sys
 from pathlib import Path
 
 from explainer_engine.edit import shot_rules as R
+from explainer_engine.standards import sourced_rules as SR
 
-MAX_PER_MIN = 10.0  # v5 had 14.3; the creator: pictures change too often
+MAX_PER_MIN = float(SR.T("BP-40", "pictures_per_min_max"))  # v5 had 14.3; the creator: pictures change too often
 MIN_SHOT = 2.5
 MIN_INSERT = 2.0
-MAX_STILL = 9.0  # seconds without a cut or a new bubble
+HOOK_WINDOW = float(SR.T("BP-40", "hook_window_s"))  # BP-40: the first seconds, where a still is judged hardest
+HOOK_STILL = float(SR.T("BP-40", "hook_max_still_s"))  # a still inside the hook window longer than this FAILs
+BODY_REVIEW = float(SR.T("BP-40", "body_review_still_s"))  # a still in the body longer than this is a REVIEW ...
+BODY_FAIL = float(SR.T("BP-40", "body_fail_still_s"))  # ... and longer than this a FAIL
+INTERRUPT = [float(x) for x in SR.T("BP-41", "window_s")]  # BP-41: a change must land inside this window
 STATE_GRACE = 0.3  # a thing may appear this long before its word (the cut sits in the pause before it)
 BUBBLE_LEAD = 0.12
 
@@ -97,6 +104,25 @@ def named_heroes(text: str, heroes: dict[str, list[str]]) -> set[str]:
     return {h for h, names in heroes.items() if any(f" {n.lower()} " in low for n in names)}
 
 
+def change_times(shots: list[dict], duration: float) -> list[float]:
+    """When something changes on screen: every cut, every bubble, every accent but the wobble, and the end."""
+    times = {s["start"] for s in shots} | {b["start"] for s in shots for b in s.get("bubbles", [])}
+    times |= {a["start"] for s in shots for a in s.get("accents", []) if a.get("kind") != "wobble"}
+    return sorted(times | {duration})
+
+
+def still_excess(a: float, b: float) -> tuple[float, float]:
+    """A still from ``a`` to ``b`` split by section (BP-40): (its length inside the hook window, its length in the body)."""
+    return max(0.0, min(b, HOOK_WINDOW) - a), max(0.0, b - max(a, HOOK_WINDOW))
+
+
+def still_too_long(a: float, b: float, hook_limit: float | None = None, body_limit: float | None = None) -> bool:
+    """True when a still from ``a`` to ``b`` breaks its section's limit (the hook's FAIL line, the body's REVIEW line)."""
+    hook, body = still_excess(a, b)
+    return hook > (HOOK_STILL if hook_limit is None else hook_limit) + 1e-6 \
+        or body > (BODY_REVIEW if body_limit is None else body_limit) + 1e-6
+
+
 def check(board: dict, timed: dict) -> list[dict]:
     words_by_shot = [s["text"] for s in timed["shots"]]
     pics, heroes = board["pictures"], board.get("heroes", {})
@@ -144,10 +170,20 @@ def check(board: dict, timed: dict) -> list[dict]:
     rate = weight / (max(dur, 60.0) / 60.0) if dur else 0.0  # a clip under a minute is measured as a minute
     if rate > MAX_PER_MIN:
         add("RHYTHM-1", "-", f"{rate:.1f} pictures a minute > {MAX_PER_MIN}")
-    changes = sorted({s["start"] for s in shots} | {b["start"] for s in shots for b in s["bubbles"]} | {dur})
-    for a, b in zip(changes, changes[1:]):
-        if b - a > MAX_STILL:
-            add("RHYTHM-3", "-", f"nothing changes on screen from {a:.1f} to {b:.1f} s ({b - a:.1f} s > {MAX_STILL})")
+    changes = change_times(shots, dur)
+    for a, b in zip(changes, changes[1:]):  # RHYTHM-3 is section-aware (BP-40): the hook window, then the body
+        hook, body = still_excess(a, b)
+        if hook > HOOK_STILL + 1e-6:
+            add("RHYTHM-3", "-", f"nothing changes on screen from {a:.1f} to {b:.1f} s inside the first {HOOK_WINDOW:.0f} s "
+                                 f"({hook:.1f} s > {HOOK_STILL:.0f}; BP-40)")
+        if body > BODY_FAIL + 1e-6:
+            add("RHYTHM-3", "-", f"nothing changes on screen from {a:.1f} to {b:.1f} s ({body:.1f} s > {BODY_FAIL:.0f}; BP-40)")
+        elif body > BODY_REVIEW + 1e-6:
+            add("RHYTHM-3", "-", f"nothing changes on screen from {a:.1f} to {b:.1f} s ({body:.1f} s > {BODY_REVIEW:.0f}; BP-40)",
+                "REVIEW")
+    if dur >= INTERRUPT[1] and not any(INTERRUPT[0] <= t <= INTERRUPT[1] for t in changes[1:-1]):
+        add("BP-41", "-", f"no cut, bubble or accent between {INTERRUPT[0]:.0f} and {INTERRUPT[1]:.0f} s: script one pattern "
+                          "interrupt there (an insert, a text pop or a music change)", "REVIEW")
     return out
 
 

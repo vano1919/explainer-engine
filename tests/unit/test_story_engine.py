@@ -254,23 +254,24 @@ def test_a_set_of_shorts_needs_several_styles():
 
 
 def test_statement_hooks_only_for_anti_intuition_and_pov_you():
-    """SS-05 (creator 2026-10-19): two styles may open with one statement; every other style keeps the question."""
+    """SS-05 (creator 2026-10-19): two styles open with one statement by design; in every other style a statement hook is a
+    REVIEW that must say which question it raises (SH-04, BP-11: one question, or one statement that raises several)."""
     d = mini()
     hook = "Don't go to the lifeboats."
     sh = {"id": "SH01", "hook": hook, "style": "anti_intuition", "shots": [{"at": "Don't", "picture": "valley", "crop_x": 0.5}],
           "lines": [{"text": hook}, {"text": "Everyone else will go there first."}, {"text": "Full story on the channel."}]}
     d["shorts"] = [sh]
-    hook_fail = lambda: [f for f in V.check_script(d) if f["rule"] == "PV-28" and "hook must be" in f["detail"]]
-    assert not hook_fail()
+    hook_found = lambda: [f for f in V.check_script(d) if f["rule"] == "PV-28" and "hook" in f["detail"] and "BP-11" in f["detail"]]
+    assert not hook_found()
     sh["style"] = "pov_you"
-    assert not hook_fail()
+    assert not hook_found()
     sh["style"] = "fact_bomb"
-    assert hook_fail() and hook_fail()[0]["severity"] == "FAIL"
+    assert hook_found() and hook_found()[0]["severity"] == "REVIEW" and "SH-04" in hook_found()[0]["detail"]
     sh["style"] = "pov_you"
     sh["hook"] = sh["lines"][0]["text"] = "You wake up. The sea is gone."
-    assert hook_fail(), "two statements are not one hook"
+    assert hook_found() and hook_found()[0]["severity"] == "FAIL", "two statements are not one hook"
     sh["hook"] = sh["lines"][0]["text"] = "You wake up on a ship that has drifted far beyond every map anyone ever drew."
-    assert hook_fail(), "more than 14 words"
+    assert hook_found() and hook_found()[0]["severity"] == "FAIL", "more than the BP-11 word cap"
 
 
 # --- stage guard ---------------------------------------------------------------------------------------------------------
