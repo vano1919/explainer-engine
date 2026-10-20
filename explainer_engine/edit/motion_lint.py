@@ -4,7 +4,9 @@ Episode 1 (measured 2026-10-19 on its production script): 217 shots, a picture c
 change the same kind (161 pushes, 54 pans, zoom at most 1.08), 89 of the changes a reframe of the same picture, no
 transition but the cut, 8 bubbles and 11 data visuals in 18 minutes. The rate was fine; the sameness read as a
 slideshow. These rules measure *events* (anything new the eye gets: a new picture, a reframe, an accent, a bubble, a
-data visual, a card) and their *variety*, not only the cut rate. The MO findings are REVIEW: the creator judges the cut.
+data visual, a card, a visual beat) and their *variety*, not only the cut rate. The MO findings are REVIEW: the creator judges
+the cut. MO-01's still limits are BP-40's, section by section (the hook window, then the body's REVIEW line; the board's RHYTHM-3
+gates the same events); MO-02..MO-07 read BP-83 (a hypothesis) and MO-05's word cap BP-38.
 ``check_sourced`` adds the sourced motion, text and face rules (BP-20..BP-33, docs/SOURCED_RULES.md): their thresholds come
 from the registry and their severity is the registry's (a hypothesis or house rule never FAILs).
 
@@ -20,14 +22,19 @@ from collections import Counter
 from explainer_engine.production import accents as ACC
 from explainer_engine.standards import sourced_rules as SR
 
-MAX_GAP = 5.0            # MO-01: seconds without any new visual event
-WINDOW, MIN_KINDS = 60.0, 3   # MO-02: kinds of event inside every minute
-MAX_PLAIN_RUN = 4        # MO-03: consecutive shots that are only a camera move
+HOOK_WINDOW = float(SR.T("BP-40", "hook_window_s"))  # MO-01 = BP-40: inside the hook window ...
+HOOK_MAX_GAP = float(SR.T("BP-40", "hook_max_still_s"))  # ... seconds without any new visual event
+MAX_GAP = float(SR.T("BP-40", "body_review_still_s"))  # ... and in the body (its REVIEW line)
+WINDOW, MIN_KINDS = float(SR.T("BP-83", "window_s")), int(SR.T("BP-83", "kinds_min"))  # MO-02: kinds of event a minute
+MAX_PLAIN_RUN = int(SR.T("BP-83", "plain_run_max"))  # MO-03: consecutive shots that are only a camera move
 ENTRY_MIN_GAP = SR.T("BP-25", "entry_min_gap_s")  # MO-04 / BP-25: seconds between two whips or flashes
-TEXT_MIN_GAP = 12.0      # MO-05: seconds between two pop/slam words
-MIN_ALIVE = 0.5          # MO-06: share of shots with something moving besides the camera
-HOLD_SIMILAR, MAX_SIMILAR_RUN = 0.15, 3  # MO-07: consecutive shots holding within ±15 % of each other read as a metronome
-HOLD_CV = 0.2            # MO-07: a segment of 5+ shots whose hold lengths barely vary is a slideshow rhythm
+TEXT_MIN_GAP = float(SR.T("BP-83", "text_min_gap_s"))  # MO-05: seconds between two pop/slam words
+MAX_WORDS = int(SR.T("BP-38", "max_words"))  # MO-05: words in one pop/slam (the beats' VB-04 cap)
+MIN_ALIVE = float(SR.T("BP-83", "alive_share_min"))  # MO-06: share of shots with something moving besides the camera
+HOLD_SIMILAR = float(SR.T("BP-83", "hold_similar"))  # MO-07: consecutive holds this close read as a metronome ...
+MAX_SIMILAR_RUN = int(SR.T("BP-83", "similar_run_max"))  # ... when more than this many in a row
+HOLD_CV = float(SR.T("BP-83", "hold_cv_min"))  # MO-07: a segment of CV_FROM+ shots whose holds vary less is a slideshow
+CV_FROM = int(SR.T("BP-83", "cv_from_shots"))
 ENTRY = {"whip_in", "flash_in"}
 TEXT = {"pop_text", "slam_text"}
 
@@ -266,18 +273,21 @@ def _expressions(add, timed: dict, fps: int) -> None:
 
 def check(timed: dict) -> list[dict]:
     out: list[dict] = []
+    mo = SR.rule("BP-83").get("severity", "REVIEW")  # MO-02..MO-07: a hypothesis, REVIEW
 
-    def add(rule, where, detail):
-        out.append({"rule": rule, "severity": "REVIEW", "where": where, "detail": detail})
+    def add(rule, where, detail, sev=None):
+        out.append({"rule": rule, "severity": sev or mo, "where": where, "detail": detail})
 
     out += check_sourced(timed)  # BP-20..33 (docs/SOURCED_RULES.md); the MO rules follow
     ev = events(timed)
     dur = timed["duration"]
     times = [0.0] + [t for t, _ in ev] + [dur]
-    for a, b in zip(times, times[1:]):
-        if b - a > MAX_GAP:
-            add("MO-01", f"{a:.1f}s", f"{b - a:.1f} s with nothing new on screen: add an accent, a bubble, a reframe or a visual "
-                f"(at most {MAX_GAP:.0f} s)")
+    for a, b in zip(times, times[1:]):  # MO-01 on BP-40's section limits (REVIEW; RHYTHM-3 on the board is the gate)
+        hook, body = max(0.0, min(b, HOOK_WINDOW) - a), max(0.0, b - max(a, HOOK_WINDOW))
+        if hook > HOOK_MAX_GAP + 1e-6 or body > MAX_GAP + 1e-6:
+            limit = HOOK_MAX_GAP if hook > HOOK_MAX_GAP + 1e-6 else MAX_GAP
+            add("MO-01", f"{a:.1f}s", f"{b - a:.1f} s with nothing new on screen: add an accent, a bubble, a reframe, a visual or "
+                f"a beat (at most {limit:.0f} s {'in the hook' if limit == HOOK_MAX_GAP else 'in the body'}, BP-40)", "REVIEW")
     t = 0.0
     while t + WINDOW <= dur + 1e-6:
         kinds = {k for x, k in ev if t <= x < t + WINDOW}
@@ -312,8 +322,8 @@ def check(timed: dict) -> list[dict]:
                 if last_text is not None and a["start"] - last_text < TEXT_MIN_GAP:
                     add("MO-05", s["id"], f"words pop {a['start'] - last_text:.0f} s after the last ones (at least {TEXT_MIN_GAP:.0f} s): "
                         "on-screen words are for the one word that matters")
-                if len(a.get("text", "").split()) > 4:
-                    add("MO-05", s["id"], "more than four words on screen")
+                if len(a.get("text", "").split()) > MAX_WORDS:
+                    add("MO-05", s["id"], f"more than {MAX_WORDS} words on screen (BP-38)")
                 last_text = a["start"]
     m = measure(timed)
     if timed["shots"] and m["alive_share"] < MIN_ALIVE:
@@ -332,7 +342,7 @@ def check(timed: dict) -> list[dict]:
     for seg, _, h in holds:
         by_seg.setdefault(seg, []).append(h)
     for seg, hs in by_seg.items():
-        if len(hs) >= 5:
+        if len(hs) >= CV_FROM:
             mean = sum(hs) / len(hs)
             cv = (sum((h - mean) ** 2 for h in hs) / len(hs)) ** 0.5 / max(mean, 1e-6)
             if cv < HOLD_CV:

@@ -443,19 +443,24 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             _f(out, "PV-34", sh["id"], "the first cut is not inside the hook line: the second shot starts on a word of the hook "
                "(about 2 s in), the first still never holds past it (SS-07)", "REVIEW")
         secs = _short_seconds(sh)
-        events = len(shots) + sum(len(x.get("accents", [])) + len(x.get("bubbles", [])) for x in shots)
+        bp45 = SR.rule("BP-45").get("severity", "REVIEW")
+        # an event is what BP-40 counts as a change on screen (board.change_times): shots, accents, bubbles and the Short's
+        # visual beats (SS-09 gives every Short line its beats; an accent beat lives on its line, not in the shot's accents)
+        beats = sum(len(x.get("visual_beats", [])) for x in sh["lines"])
+        events = len(shots) + sum(len(x.get("accents", [])) + len(x.get("bubbles", [])) for x in shots) + beats
         if secs >= 10 and events / secs * 10 < SHORT_EVENTS_PER_10S:
-            _f(out, "PV-34", sh["id"], f"{events / secs * 10:.1f} visual events every 10 s (shots + accents + bubbles): "
-               f"the breakouts show 3-6, ours showed 1.4; plan at least {SHORT_EVENTS_PER_10S} (SS-08, BP-45)", "REVIEW")
-        # BP-45 max_still_s on the Short's estimated read: no picture holds longer than SHORT_MAX_STILL_S
+            _f(out, "PV-34", sh["id"], f"{events / secs * 10:.1f} visual events every 10 s (shots + accents + bubbles + visual "
+               f"beats): the breakouts show 3-6, ours showed 1.4; plan at least {SHORT_EVENTS_PER_10S} (SS-08, BP-45)", bp45)
+        # BP-45 max_still_s on the Short's estimated read: nothing stays unchanged on screen longer than SHORT_MAX_STILL_S
         if len(shots) >= 1 and not [f for f in out if f["where"] == sh["id"] and f["severity"] == "FAIL"]:
             sd = BEATS.short_doc(doc, sh)
             timed = T.time_script(sd, short_words(sd))
             if not timed["problems"]:
-                for row in timed["shots"]:
-                    if row["end"] - row["start"] > SHORT_MAX_STILL_S:
-                        _f(out, "PV-34", sh["id"], f"shot {row['id']} holds {row['end'] - row['start']:.1f} s on the estimated read: "
-                           f"a Short changes on screen at least every {SHORT_MAX_STILL_S:g} s (BP-45)", "REVIEW")
+                changes = B.change_times(timed["shots"], timed["duration"], timed)
+                for a, b in zip(changes, changes[1:]):
+                    if b - a > SHORT_MAX_STILL_S + 1e-6:
+                        _f(out, "PV-34", sh["id"], f"nothing changes on screen from {a:.1f} to {b:.1f} s on the estimated read "
+                           f"({b - a:.1f} s): a Short changes on screen at least every {SHORT_MAX_STILL_S:g} s (BP-45)", bp45)
     # PV-33 the story layer (ST rules, scripting/story_lint.py)
     for f in story_lint.lint(doc):
         _f(out, "PV-33 " + f["rule"], f["where"], f["detail"], f["severity"])
@@ -640,26 +645,29 @@ def board_findings(timed: dict, doc: dict) -> list[dict]:
     pics = timed["pictures"]
     board = {"pictures": pics, "heroes": S.hero_names(doc), "_event_times": timed["events"]}
     shots = [dict(s, id=s["id"]) for s in timed["shots"]]
-    found = B.check(board, {"shots": shots, "duration": timed["duration"]})
+    # the visual beats, data visuals and cards ride along: they are changes on screen for RHYTHM-3 and BP-41 (BP-40)
+    found = B.check(board, {"shots": shots, "duration": timed["duration"], "visual_beats": timed.get("visual_beats", []),
+                            "visuals": timed.get("visuals", []), "cards": timed.get("cards", [])})
     return [{"rule": "PV-24 " + f["rule"], "severity": f["severity"], "where": f["shot"], "detail": f["detail"]} for f in found]
 
 
 TICKS = ("clockwork_loop",)  # music beds that are a tick: they sit well under every other track (ED-03)
-TICK_MAX_DB = -25.0
-MAX_CROSSFADE = 3.0
+TICK_MAX_DB = float(SR.T("BP-86", "tick_max_db"))  # ED-03 / BP-86 (the creator's house numbers)
+MAX_CROSSFADE = float(SR.T("BP-86", "crossfade_max_s"))
 
 
 def music_findings(music: list[dict]) -> list[dict]:
     """PV-29 / ED-03: one music at a time (a handover may overlap by a crossfade), and a tick stays quiet."""
     out: list[dict] = []
+    sev = SR.rule("BP-86").get("severity", "REVIEW")
     ms = sorted(music, key=lambda m: m["start"])
     for a, b in zip(ms, ms[1:]):
         over = a["end"] - b["start"]
         if over > MAX_CROSSFADE + 1e-6:
-            _f(out, "PV-29", b["track"], f"two music tracks together for {over:.1f} s ({a['track']} and {b['track']}); a crossfade is at most {MAX_CROSSFADE:.0f} s")
+            _f(out, "PV-29", b["track"], f"two music tracks together for {over:.1f} s ({a['track']} and {b['track']}); a crossfade is at most {MAX_CROSSFADE:.0f} s (BP-86)", sev)
     for m in ms:
         if m["track"].startswith(TICKS) and m["gain_db"] > TICK_MAX_DB:
-            _f(out, "PV-29", m["track"], f"the tick is at {m['gain_db']} dB; it must be {TICK_MAX_DB} dB or lower")
+            _f(out, "PV-29", m["track"], f"the tick is at {m['gain_db']} dB; it must be {TICK_MAX_DB} dB or lower (BP-86)", sev)
     return out
 
 

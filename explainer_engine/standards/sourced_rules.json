@@ -153,7 +153,8 @@
    ],
    "enforced_by": [
     "explainer_engine/scripting/narration_lint.py:N-01",
-    "explainer_engine/edit/shot_rules.py:GREETINGS"
+    "explainer_engine/edit/shot_rules.py:GREETINGS",
+    "explainer_engine/edit/shot_rules.py:HOOK_FORMS"
    ],
    "supersedes": [
     "N-01 yes/no question only",
@@ -688,11 +689,12 @@
    "area": "motion",
    "status": "binding",
    "severity": "FAIL",
-   "statement": "A camera move on a still keeps its scale within 1.00-1.15 (a push at most 1.10 by default); accents (punch) are exempt but their stack never exceeds 1.15 x 1.18.",
+   "statement": "A camera move on a still keeps its scale within 1.00-1.15 (a push at most 1.10 by default); accents (punch) are exempt but their stack never exceeds 1.15 x 1.18 (punch_max; a punch's strength is at most 1 in the schema). The blurred backdrop behind a dialogue close-up (production/faces.ZOOM) is a fixed framing behind the inset, not a camera move: this rule does not govern it.",
    "thresholds": {
     "scale_min": 1.0,
     "scale_max": 1.15,
-    "push_default_max": 1.1
+    "push_default_max": 1.1,
+    "punch_max": 1.18
    },
    "sources": [
     {
@@ -719,7 +721,9 @@
    "enforced_by": [
     "explainer_engine/edit/shot_rules.py:MAX_ZOOM",
     "explainer_engine/production/continuity.py:ZMAX",
-    "explainer_engine/edit/motion_lint.py:BP-20"
+    "explainer_engine/edit/motion_lint.py:BP-20",
+    "explainer_engine/production/accents.py:PUNCH_ZOOM",
+    "explainer_engine/production/fill_holds.py:alt_motion"
    ],
    "supersedes": [
     "UR-13 1.15 (confirmed)",
@@ -856,7 +860,7 @@
    "area": "motion",
    "status": "house",
    "severity": "REVIEW",
-   "statement": "No camera shake as a move (the creator's UR-13). A shake exists only as an accent on an impact beat (a blow, a fall, a collision, an explosion), decaying within 1.0 s, peak at most 7 % of frame height, never on a dialogue-only shot.",
+   "statement": "No camera shake as a move (the creator's UR-13). A shake exists only as an accent on an impact beat (a blow, a fall, a collision, an explosion), decaying within 1.0 s, peak at most 7 % of frame height, never on a dialogue-only shot. The house shake (0.45 s, 1.8 % at strength 1) sits inside both caps.",
    "thresholds": {
     "decay_max_s": 1.0,
     "amplitude_max_h": 0.07,
@@ -887,7 +891,9 @@
      "crack",
      "strike",
      "strikes"
-    ]
+    ],
+    "house_decay_s": 0.45,
+    "house_amplitude_h": 0.018
    },
    "sources": [
     {
@@ -1037,7 +1043,8 @@
    ],
    "enforced_by": [
     "explainer_engine/production/accents.py:text_hold",
-    "explainer_engine/edit/motion_lint.py:BP-27"
+    "explainer_engine/edit/motion_lint.py:BP-27",
+    "explainer_engine/finish/bubbles.py:check_bubbles"
    ],
    "supersedes": [
     "P-71 (confirmed, adds the cap)",
@@ -1083,7 +1090,7 @@
    ],
    "enforced_by": [
     "explainer_engine/edit/motion_lint.py:BP-28",
-    "explainer_engine/design/palette.py",
+    "explainer_engine/design/palette.py:TEXT_MIN",
     ".claude/skills/shot-visuals/SKILL.md"
    ],
    "supersedes": [
@@ -1146,10 +1153,11 @@
    "area": "editing",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "Cut continuity: across a hard cut the hero or focal point stays within 10 % of the frame of its previous position unless the cut opens a new scene; the shot size changes by a full step (never the same framing of the same picture twice in a row); a direction change over 90 degrees needs a neutral picture between.",
+   "statement": "Cut continuity: across a hard cut the hero or focal point stays within 10 % of the frame of its previous position unless the cut opens a new scene; the shot size changes by a full step (never the same framing of the same picture twice in a row); a direction change over 90 degrees needs a neutral picture between. Code checks the same framing (two zooms within same_framing_zoom_tol, an engineering tolerance); the focal shift and the direction change are the planner's (edit-planner, editing-style), because the script carries no focal point or screen direction per shot.",
    "thresholds": {
     "focal_shift_max": 0.1,
-    "direction_change_max_deg": 90
+    "direction_change_max_deg": 90,
+    "same_framing_zoom_tol": 0.02
    },
    "sources": [
     {
@@ -1294,10 +1302,12 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/edit/motion_lint.py:BP-33"
+    "explainer_engine/edit/motion_lint.py:BP-33",
+    "explainer_engine/production/beats.py:FACE_FLICKER"
    ],
    "supersedes": [
-    "VB expression change about every second (confirmed, adds a floor)"
+    "VB expression change about every second (confirmed, adds a floor)",
+    "VB-02 flicker 0.7 s"
    ]
   },
   {
@@ -1372,11 +1382,160 @@
    "note": "no CPU parallax in assemble.py yet: a rule for the planner, not a gate"
   },
   {
+   "id": "BP-36",
+   "area": "rhythm",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Visual-beat cadence while the narrator speaks (VB-01, production/beats.py). On production_script/3 pace follows new information: a narration stretch with nothing new on screen (a cut, bubble, accent, data visual, card or visual beat) longer than 8 s is REVIEW and longer than 15 s FAIL. On /2 the metronome: a beat about every 1.5 s, REVIEW over 2 s, FAIL over 3 s, a segment mean over 1.8 s REVIEW. A stricter, narration-only rule nested inside BP-40 (the whole video's still limits, counted on the same events): in the hook window BP-40's still limit is the stricter one, in the body this rule's FAIL is. Shorts follow BP-45 instead.",
+   "thresholds": {
+    "gap_review_s": 8.0,
+    "gap_fail_s": 15.0,
+    "v2_target_s": 1.5,
+    "v2_gap_review_s": 2.0,
+    "v2_gap_fail_s": 3.0,
+    "v2_mean_max_s": 1.8
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "What MrBeast's former retention strategist Mario Joos taught us about editing (Vidpros)",
+     "url": "https://vidpros.com/retention-editing-what-you-can-learn-from-mario-joos/"
+    },
+    {
+     "type": "A",
+     "title": "Retention editing 'beastification' may be at an end (Gigazine on the Washington Post piece)",
+     "url": "https://gigazine.net/gsc_news/en/20240403-retention-editing-beastification-may-be-end"
+    },
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:GAP_FAIL_3",
+    "explainer_engine/production/beats.py:check_timed"
+   ],
+   "supersedes": [
+    "VB-01 /3 8/15 s literals",
+    "VB-01 /2 1.5/2/3/1.8 s literals",
+    "VB-01 guidance 'hook every 3-8 s, body every 10-25 s'"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19)"
+  },
+  {
+   "id": "BP-37",
+   "area": "faces",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Expression cadence on a dialogue line (VB-02, production/beats.py): every spoken dialogue line carries at least one expression change (FAIL without). On /3 changes follow reactions, not a clock: REVIEW over 4 s without a change, FAIL over 6 s. On /2 the metronome: a change about every 1 s, REVIEW over 1.5 s, FAIL over 2 s. Two changes of one face closer than BP-33's hold are flicker (BP-33 owns that floor).",
+   "thresholds": {
+    "changes_per_line_min": 1,
+    "gap_review_s": 4.0,
+    "gap_fail_s": 6.0,
+    "v2_target_s": 1.0,
+    "v2_gap_review_s": 1.5,
+    "v2_gap_fail_s": 2.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Kuleshov effect: how an editor shapes an actor's performance (Artlist)",
+     "url": "https://artlist.io/blog/kuleshov-effect-or-how-an-editor-shapes-and-strengthens-an-actors-performance/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:FACE_FAIL_3"
+   ],
+   "supersedes": [
+    "VB-02 /3 4/6 s literals",
+    "VB-02 /2 1/1.5/2 s literals",
+    "VB-02 flicker 0.7 s (BP-33's hold wins)"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19)"
+  },
+  {
+   "id": "BP-38",
+   "area": "text",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Words a visual beat puts on screen (VB-04): a text or label beat shows at most 4 words; a bars chart has 2-3 bars (ED-10). MO-05 reads the same word cap for a pop_text or slam_text accent (REVIEW, BP-83).",
+   "thresholds": {
+    "max_words": 4,
+    "bars": [
+     2,
+     3
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:MAX_WORDS",
+    "explainer_engine/edit/motion_lint.py:MAX_WORDS"
+   ],
+   "supersedes": [
+    "VB-04 MAX_WORDS literal",
+    "motion_lint MO-05 inline 4"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19)"
+  },
+  {
+   "id": "BP-39",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Cue spacing (VB-08): a cue within 0.15 s of a sound effect, or under one that is playing, doubles it (the effect is the beat's sound); two cues closer than 0.25 s stack into one noise; one dialogue line carries at most one cued expression change (the big take).",
+   "thresholds": {
+    "cover_s": 0.15,
+    "min_gap_s": 0.25,
+    "take_cues_per_line_max": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Sync Effects (Netflix Backlot)",
+     "url": "https://backlothelp.netflix.com/hc/en-us/articles/115000533952-Sync-Effects"
+    },
+    {
+     "type": "A",
+     "title": "Transition sound design that strengthens commercial video editing (Beverly Boy)",
+     "url": "https://beverlyboy.com/blog/transition-sound-design-that-strengthens-commercial-video-editing"
+    },
+    {
+     "type": "A",
+     "title": "Transition effect sounds in video edits (Sonilo)",
+     "url": "https://sonilo.com/blog/guides/transition-effect-sound-video-edits"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:CUE_MIN_GAP"
+   ],
+   "supersedes": [
+    "VB-08 CUE_COVER / CUE_MIN_GAP literals"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19)"
+  },
+  {
    "id": "BP-40",
    "area": "rhythm",
    "status": "binding",
    "severity": "FAIL",
-   "statement": "Section-aware rhythm: in the first 30 s something changes on screen at least every 5 s (FAIL); in the body a still longer than 20 s is REVIEW and longer than 40 s is FAIL; the average stays at most 10 pictures a minute (the creator) with one burst of 5-10 cuts allowed per 2-3 min; every change carries new information.",
+   "statement": "Section-aware rhythm: in the first 30 s something changes on screen at least every 5 s (FAIL); in the body a still longer than 20 s is REVIEW and longer than 40 s is FAIL; the average stays at most 10 pictures a minute (the creator) with one burst of 5-10 cuts allowed per 2-3 min; every change carries new information. A change is anything new on screen: a cut, a bubble, an accent (not the wobble), a data visual, a card or a visual beat (default of 2026-10-20: a beat counts; the creator may overturn it).",
    "thresholds": {
     "hook_window_s": 30,
     "hook_max_still_s": 5,
@@ -1423,7 +1582,9 @@
    ],
    "enforced_by": [
     "explainer_engine/edit/board.py:RHYTHM-3",
-    "explainer_engine/edit/board.py:MAX_PER_MIN"
+    "explainer_engine/edit/board.py:MAX_PER_MIN",
+    "explainer_engine/edit/motion_lint.py:MO-01",
+    "explainer_engine/edit/board.py:change_times"
    ],
    "supersedes": [
     "UR-31 flat 9 s",
@@ -1437,7 +1598,7 @@
    "area": "rhythm",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "One scripted pattern interrupt in the 25-35 s window (a cut with a new element: an insert, a text pop or a music change).",
+   "statement": "One scripted pattern interrupt in the 25-35 s window (a cut with a new element: an insert, a text pop, a visual beat or a music change).",
    "thresholds": {
     "window_s": [
      25,
@@ -1662,7 +1823,7 @@
    "area": "shorts",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "A Short changes on screen at least every 5 s, with at least 3 events per 10 s, each on new information; the 1.5 s beat metronome is not a Shorts rule (no source supports it).",
+   "statement": "A Short changes on screen at least every 5 s, with at least 3 events per 10 s (shots, accents, bubbles and visual beats, as BP-40 counts them), each on new information; the 1.5 s beat metronome is not a Shorts rule (no source supports it), so VB-01's cadence does not run on a Short.",
    "thresholds": {
     "max_still_s": 5.0,
     "events_per_10s_min": 3
@@ -1696,7 +1857,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/production/validate.py:PV-34"
+    "explainer_engine/production/validate.py:PV-34",
+    "explainer_engine/production/beats.py:short_doc"
    ],
    "supersedes": [
     "SS-08 (confirmed)",
@@ -1853,6 +2015,43 @@
    ],
    "supersedes": [
     "(new)"
+   ]
+  },
+  {
+   "id": "BP-49",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "AL-02 sound density: effects and beat cues together 4-20 events a minute on a video of at least 60 s. On a production_script/3 silence is the default (VB-08 inverted), so only the upper bound applies there; the cue share of it is VB-11's cue cap (cues only, stricter), and BP-55 caps the beats that carry an effect. No source names a rate: the band is the project's engineering hypothesis.",
+   "thresholds": {
+    "events_per_min": [
+     4.0,
+     20.0
+    ],
+    "min_video_s": 60.0
+   },
+   "sources": [
+    {
+     "type": "B",
+     "title": "Walter Murch, the Law of Two and a Half (Designing Sound)",
+     "url": "https://designingsound.org/2009/10/15/walter-murch-special-womb-tone-and-dense-clarityclear-density/"
+    },
+    {
+     "type": "A",
+     "title": "AIR Media-Tech: advanced retention editing (over-processing warning)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "Pixflow retention guide (every sentence with a zoom and a whoosh)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/layers.py:SFX_PER_MIN"
+   ],
+   "supersedes": [
+    "AL-02 4-20/min written in code (layers.py literal)"
    ]
   },
   {
@@ -2611,43 +2810,6 @@
    ]
   },
   {
-   "id": "BP-49",
-   "area": "audio",
-   "status": "hypothesis",
-   "severity": "REVIEW",
-   "statement": "AL-02 sound density: effects and beat cues together 4-20 events a minute on a video of at least 60 s. On a production_script/3 silence is the default (VB-08 inverted), so only the upper bound applies there; the cue share of it is VB-11's cue cap (cues only, stricter), and BP-55 caps the beats that carry an effect. No source names a rate: the band is the project's engineering hypothesis.",
-   "thresholds": {
-    "events_per_min": [
-     4.0,
-     20.0
-    ],
-    "min_video_s": 60.0
-   },
-   "sources": [
-    {
-     "type": "B",
-     "title": "Walter Murch, the Law of Two and a Half (Designing Sound)",
-     "url": "https://designingsound.org/2009/10/15/walter-murch-special-womb-tone-and-dense-clarityclear-density/"
-    },
-    {
-     "type": "A",
-     "title": "AIR Media-Tech: advanced retention editing (over-processing warning)",
-     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
-    },
-    {
-     "type": "A",
-     "title": "Pixflow retention guide (every sentence with a zoom and a whoosh)",
-     "url": "https://pixflow.net/blog/?p=93140"
-    }
-   ],
-   "enforced_by": [
-    "explainer_engine/audio/layers.py:SFX_PER_MIN"
-   ],
-   "supersedes": [
-    "AL-02 4-20/min written in code (layers.py literal)"
-   ]
-  },
-  {
    "id": "BP-64",
    "area": "audio",
    "status": "house",
@@ -2748,6 +2910,278 @@
     "scorecard check 2: any sound over a word FAILs"
    ],
    "decided": "the creator, 2026-10-16: a cut sound ends before the next word (docs/PRODUCTION_RULES.md feedback table)"
+  },
+  {
+   "id": "BP-80",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Repeated cues (VB-10, production_script/3): the same cue sound on two consecutive cues is REVIEW; the same sound 3 times inside 30 s FAILs (a repeated sound is a tic, not a mark). The mixer's pitch variants (BP-57) vary the sample, they do not excuse a repeat of meaning.",
+   "thresholds": {
+    "window_s": 30.0,
+    "fail_count": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Repetitive game audio, the machine-gun effect (IRPR)",
+     "url": "https://sounddesign.irpr.agency/solutions/game-audio-repetitive/"
+    },
+    {
+     "type": "A",
+     "title": "How to fix Unity SFX sounding identical every play (Bugnet)",
+     "url": "https://bugnet.io/blog/how-to-fix-unity-sfx-sounds-identical-every-play-no-variation"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:CUE_REPEAT_FAIL"
+   ],
+   "supersedes": [
+    "VB-10 CUE_REPEAT_WINDOW / CUE_REPEAT_FAIL literals"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)"
+  },
+  {
+   "id": "BP-81",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Cue density (VB-11, production_script/3): over 8 cues a minute is REVIEW and over 14 FAIL (measured on a read of at least 30 s); more than 3 cues inside any 10 s is REVIEW; one line carries at most one emphasis cue (thud, chime, rise, fall), more FAILs. This rule owns the cue layer; the sound-event band that counts effects and cues together is BP-55's.",
+   "thresholds": {
+    "per_min_review": 8.0,
+    "per_min_fail": 14.0,
+    "measured_from_s": 30.0,
+    "burst_max": 3,
+    "burst_window_s": 10.0,
+    "emphasis_per_line_max": 1,
+    "emphasis_cues": [
+     "thud",
+     "chime",
+     "rise",
+     "fall"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Walter Murch special: womb tone and dense clarity, the law of two and a half (Designing Sound)",
+     "url": "https://designingsound.org/2009/10/15/walter-murch-special-womb-tone-and-dense-clarityclear-density/"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    },
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:CUE_PER_MIN_FAIL"
+   ],
+   "supersedes": [
+    "VB-11 CUE_PER_MIN_OK / CUE_PER_MIN_FAIL / CUE_BURST literals"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)"
+  },
+  {
+   "id": "BP-82",
+   "area": "rhythm",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Beat variety (VB-05, VB-07): more than 3 beats of one kind in a row, more than half of a segment's beats (from 4 beats) as words, or more than 2 beat overlays on screen at once is REVIEW. The numbers are an engineering hypothesis; the channel's retention decides.",
+   "thresholds": {
+    "same_kind_run_max": 3,
+    "word_share_max": 0.5,
+    "word_share_from_beats": 4,
+    "overlays_max": 2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:MAX_OVERLAYS"
+   ],
+   "supersedes": [
+    "VB-05 / VB-07 literals"
+   ]
+  },
+  {
+   "id": "BP-83",
+   "area": "motion",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Motion variety (MO-02..MO-07, edit/motion_lint.py): every 60 s shows at least 3 kinds of visual event; at most 4 shots in a row are only a camera move; two pop or slam words at least 12 s apart; at least half of the shots move besides the camera; more than 3 shot holds in a row within 15 % of each other, or a segment of 5+ shots whose holds vary by under 0.2 of their mean, is a metronome. All REVIEW: the numbers are an engineering hypothesis (the sources back variance, not these values). MO-01's still limit is BP-40.",
+   "thresholds": {
+    "window_s": 60.0,
+    "kinds_min": 3,
+    "plain_run_max": 4,
+    "text_min_gap_s": 12.0,
+    "alive_share_min": 0.5,
+    "hold_similar": 0.15,
+    "similar_run_max": 3,
+    "hold_cv_min": 0.2,
+    "cv_from_shots": 5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "David Bordwell's statistical analysis of film tempo (16:9)",
+     "url": "https://16-9.dk/?p=24578"
+    },
+    {
+     "type": "A",
+     "title": "Rhythmic editing: how cut timing controls the audience (FilmDaft)",
+     "url": "https://filmdaft.com/rhythmic-editing-how-cut-timing-controls-the-audience/"
+    },
+    {
+     "type": "A",
+     "title": "Pacing and rhythm in editing (ProVideo Coalition)",
+     "url": "https://www.provideocoalition.com/pacing-and-rhythm-in-editing/"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/motion_lint.py:HOLD_CV"
+   ],
+   "supersedes": [
+    "MO-02..MO-07 literals"
+   ]
+  },
+  {
+   "id": "BP-84",
+   "area": "rhythm",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Storyboard floors (D-42, UR-31): no shot shorter than 2.5 s, an insert 2.0 s (RHYTHM-2); a speech bubble is a line of at most 14 words and 26 characters a line (BUBBLE-1). How long a bubble stays on screen is BP-27's hold.",
+   "thresholds": {
+    "min_shot_s": 2.5,
+    "min_insert_s": 2.0,
+    "bubble_words_max": 14,
+    "bubble_chars_per_line": 26
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How many shots are in the average movie? (Stephen Follows)",
+     "url": "https://stephenfollows.com/many-shots-average-movie/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/board.py:MIN_SHOT",
+    "explainer_engine/finish/bubbles.py:MAX_WORDS"
+   ],
+   "supersedes": [
+    "board MIN_SHOT / MIN_INSERT literals",
+    "bubbles MAX_WORDS / MAX_CHARS literals"
+   ],
+   "decided": "the creator, 2026-10-16: pictures follow the story, one held picture carries a dialogue with bubbles (D-42, UR-31)"
+  },
+  {
+   "id": "BP-85",
+   "area": "editing",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "The Universal Rule Base shot plan (D-37, edit/shot_rules.py): shot lengths A 5-7 s, B 3.5-5 s, C 2.5-4 s (UR-11); in the first 30 s at least 6 shots, each within its minimum + 1 s (UR-02); a sound event by 1 s (UR-01); an A shot holds one zoom in 1.05-1.08, a C shot pulls from at most 1.08 (UR-13, inside BP-20); at most 10 % of the transitions are dissolves (UR-14, the hard-cut convention BP-31 names); a cut keeps 0.05 s from both words (UR-12); at most 15 % of the B shots faceless and a stakes line of at least 5 words (UR-16, UR-17). The hook's form is BP-03, not a question by 5 s.",
+   "thresholds": {
+    "a_shot_s": [
+     5.0,
+     7.0
+    ],
+    "b_shot_s": [
+     3.5,
+     5.0
+    ],
+    "c_shot_s": [
+     2.5,
+     4.0
+    ],
+    "first_window_s": 30.0,
+    "first_slack_s": 1.0,
+    "first_min_shots": 6,
+    "first_sound_s": 1.0,
+    "a_zoom": [
+     1.05,
+     1.08
+    ],
+    "c_pull_max": 1.08,
+    "dissolve_share_max": 0.1,
+    "cut_edge_s": 0.05,
+    "faceless_share_max": 0.15,
+    "stakes_words_min": 5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "What is a Dissolve in Film (StudioBinder)",
+     "url": "https://www.studiobinder.com/blog/what-is-a-dissolve-in-film-definition/"
+    },
+    {
+     "type": "C",
+     "title": "How to Make a Kurzgesagt Video in 1200 Hours (Kurzgesagt)",
+     "url": "https://www.youtube.com/watch?v=uFk0mgljtns"
+    },
+    {
+     "type": "A",
+     "title": "How to Use the Ken Burns Effect on Images (Frameo)",
+     "url": "https://frameo.ai/blog/use-ken-burns-effect-images/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/shot_rules.py:DURATIONS",
+    "explainer_engine/edit/shot_rules.py:DISSOLVE_SHARE"
+   ],
+   "supersedes": [
+    "shot_rules UR literals",
+    "UR-01 HOOK_SECONDS 5.0 (BP-03 owns the hook)"
+   ],
+   "decided": "the creator, 2026-10-16: the Universal Rule Base binds every video (D-37)"
+  },
+  {
+   "id": "BP-86",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "One music at a time (ED-03, PV-29): two music tracks overlap only in a crossfade of at most 3 s, and the tick (clockwork_loop, a music bed) is set at -25 dB or lower. The creator's notes on the first full cut of Episode 1 (two music tracks plus the tick plus a bed under the voice); the loudness under the voice is BP-52's.",
+   "thresholds": {
+    "crossfade_max_s": 3.0,
+    "tick_max_db": -25.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Spot the film: 5 composer tips (C. Caliendo)",
+     "url": "https://christophercaliendo.com/spot-the-film-5-composer-tips-every-filmmaker-should-know-about-scoringfilmmakers-spot-the-film/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/validate.py:TICK_MAX_DB",
+    "explainer_engine/production/validate.py:MAX_CROSSFADE"
+   ],
+   "supersedes": [
+    "PV-29 TICK_MAX_DB / MAX_CROSSFADE literals"
+   ],
+   "decided": "the creator, 2026-10-17: notes on the first full cut of Episode 1 (docs/EDITING.md ED-03)"
   }
  ]
 }

@@ -9,7 +9,7 @@ from explainer_engine.standards import sourced_rules as SR
 ZMAX = SR.T("BP-20", "scale_max")  # the camera never pushes past this on one picture (a punch accent stacks on top, exempt)
 STEP = 0.04  # growth of a continued shot when the script gave none
 TOL = 0.005
-SAME_ZOOM = 0.02  # BP-30: two framings are the same when their zooms differ by less than this and their crops by TOL
+SAME_ZOOM = SR.T("BP-30", "same_framing_zoom_tol")  # BP-30: the same framing = zooms this close and crops within TOL
 
 
 def start_state(m: dict) -> tuple[float, float]:

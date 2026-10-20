@@ -17,6 +17,12 @@ from explainer_engine.production import script as S
 from explainer_engine.production import timing as T
 from explainer_engine.production import validate as V
 from explainer_engine.scripting import stage_guard as G
+from explainer_engine.standards import sourced_rules as SR
+
+
+def HOUSE(bp: str) -> str:  # noqa: N802  the severity the registry holds for a registered number (a JSON switch)
+    return SR.rule(bp)["severity"]
+
 
 from test_production_script import ROOT, mini, words_for
 
@@ -129,7 +135,7 @@ def test_vb03_off_topic_payload_is_a_review():
 def test_vb04_words_and_numbers_need_a_claim():
     d = beats_doc()
     d["segments"][0]["lines"][0]["visual_beats"][1]["text"] = "THE LONG COLD DARK NIGHT"
-    assert _vb(BEATS.lint(d), "VB-04", "FAIL")
+    assert _vb(BEATS.lint(d), "VB-04", HOUSE("BP-38"))
     d = beats_doc()
     d["segments"][1]["lines"][2]["visual_beats"][2] = _b("hundred", "chart", "a hundred tired faces", "blip", chart="counter",
                                                         values=[0, 100], labels=["faces"], claim="C-01")
@@ -165,8 +171,8 @@ def test_vb01_gap_while_the_narrator_speaks():
     d["segments"][0]["lines"][1]["visual_beats"] = d["segments"][0]["lines"][1]["visual_beats"][:1]  # only "not even"
     d["segments"][0]["shots"] = d["segments"][0]["shots"][:2]  # and no reframe on the line (mini's BP-40 filler)
     found = BEATS.check_timed(_timed(d), d)
-    assert _vb(found, "VB-01", "FAIL")
-    assert not _vb(BEATS.check_timed(_timed(beats_doc()), beats_doc()), "VB-01", "FAIL")
+    assert _vb(found, "VB-01", HOUSE("BP-36"))
+    assert not _vb(BEATS.check_timed(_timed(beats_doc()), beats_doc()), "VB-01", HOUSE("BP-36"))
 
 
 def _long_dialogue(changes):
@@ -181,7 +187,7 @@ def _long_dialogue(changes):
 def test_vb02_face_changes_about_once_a_second_in_dialogue():
     one = [_b("Oh.", "expression", "oh: he sees it", "chime", expression="surprised")]
     d = _long_dialogue(one)
-    assert _vb(BEATS.check_timed(_timed(d), d), "VB-02", "FAIL")
+    assert _vb(BEATS.check_timed(_timed(d), d), "VB-02", HOUSE("BP-37"))
     q = {"sound": "none", "why": "a quiet face change"}
     many = [dict(_b(at, "expression", f"{at} {why}", expression=e), cue=q) for at, e, why in [
         ("lens", "curious", "he looks at it"), ("hold", "determined", "he tries it"), ("just so", "doubtful", "careful angle"),
@@ -191,7 +197,7 @@ def test_vb02_face_changes_about_once_a_second_in_dialogue():
     d = _long_dialogue([one[0]] + many)
     d["segments"][1]["lines"][1]["visual_beats"][0]["cue"] = q
     found = BEATS.check_timed(_timed(d), d)
-    assert not _vb(found, "VB-02", "FAIL"), _vb(found, "VB-02")
+    assert not _vb(found, "VB-02", HOUSE("BP-37")), _vb(found, "VB-02")
     same = copy.deepcopy(d)
     same["segments"][1]["lines"][1]["visual_beats"][2]["expression"] = "curious"  # curious twice in a row is not a change
     assert any("stays curious" in f["detail"] for f in _vb(BEATS.check_timed(_timed(same), same), "VB-02"))
@@ -234,13 +240,13 @@ def test_vb08_every_beat_has_a_cue_and_none_needs_a_reason():
 def test_vb08_cue_never_doubles_an_effect_and_cues_never_stack():
     d = beats_doc()
     d["segments"][1]["audio"]["sfx"].append({"at": "takes off", "sound": "pop", "gain_db": -20, "max_s": 0.4})
-    found = _vb(BEATS.check_timed(_timed(d), d), "VB-08", "FAIL")
+    found = _vb(BEATS.check_timed(_timed(d), d), "VB-08", HOUSE("BP-39"))
     assert any("doubles a sound effect" in f["detail"] for f in found)
     d["segments"][1]["lines"][0]["visual_beats"][0]["cue"] = {"sound": "none", "why": "the pop effect sounds here"}
     assert not any("doubles" in f["detail"] for f in _vb(BEATS.check_timed(_timed(d), d), "VB-08"))
     d = beats_doc()
     d["segments"][0]["lines"][1]["visual_beats"][2]["at"] = "bravest"  # two cues on one word
-    assert any("stack" in f["detail"] for f in _vb(BEATS.check_timed(_timed(d), d), "VB-08", "FAIL"))
+    assert any("stack" in f["detail"] for f in _vb(BEATS.check_timed(_timed(d), d), "VB-08", HOUSE("BP-39")))
 
 
 def test_vb08_quiet_faces_and_one_take_a_line():
@@ -250,7 +256,7 @@ def test_vb08_quiet_faces_and_one_take_a_line():
     assert found and found[0]["severity"] == "REVIEW"
     d["segments"][1]["lines"][1]["visual_beats"][1]["expression"] = "joyful"
     d["segments"][1]["lines"][1]["visual_beats"][1]["at"] = "lens"
-    assert any("expression cues on one" in f["detail"] for f in _vb(BEATS.check_timed(_timed(d, 0.5), d), "VB-08", "FAIL"))
+    assert any("expression cues on one" in f["detail"] for f in _vb(BEATS.check_timed(_timed(d, 0.5), d), "VB-08", HOUSE("BP-39")))
 
 
 def test_cues_are_in_the_timed_audio_and_the_mix():

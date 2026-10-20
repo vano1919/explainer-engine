@@ -42,15 +42,22 @@ def test_schema_takes_beats_on_short_lines():
     assert not S.schema_errors(short_doc_with_beats())
 
 
-def test_a_short_with_its_beats_passes_and_a_long_gap_fails():
+def test_a_short_with_its_beats_passes_and_a_long_gap_is_bp45s():
+    """A Short's pace is BP-45 (a change at least every max_still_s, beats counted), not VB-01's 1.5 s metronome, which
+    BP-45 superseded for Shorts (2026-10-20: this test pinned VB-01 /2 FAIL before; the gap is now PV-34 BP-45 at the
+    registry's severity)."""
+    from explainer_engine.standards import sourced_rules as SR
     d = short_doc_with_beats()
     assert not _short(V.short_beat_findings(d), "FAIL"), _short(V.short_beat_findings(d), "FAIL")
-    assert not _short(V.check_script(C.compile_doc(d)), "FAIL")
+    found = V.check_script(C.compile_doc(d))
+    assert not _short(found, "FAIL")
+    assert not [f for f in found if f["rule"] == "PV-34" and f["where"] == "SH01" and "nothing changes" in f["detail"]]
     gap = copy.deepcopy(d)
     gap["shorts"][0]["lines"][1].pop("visual_beats")  # "Nobody knows, not even the bravest ..." holds one picture
-    fails = _short(V.short_beat_findings(gap), "FAIL")
-    assert any(f["rule"] == "PV-44 VB-01" and f["where"].startswith("SH01 line ") for f in fails), fails
-    assert _short(V.check_script(C.compile_doc(gap)), "FAIL")  # the validator runs it
+    assert not [f for f in V.short_beat_findings(gap) if f["rule"] == "PV-44 VB-01"]  # no metronome on a Short
+    found = V.check_script(C.compile_doc(gap))  # the validator runs BP-45 on the Short's estimated read
+    hold = [f for f in found if f["rule"] == "PV-34" and f["where"] == "SH01" and "nothing changes" in f["detail"]]
+    assert hold and hold[0]["severity"] == SR.rule("BP-45")["severity"], hold
 
 
 def test_a_short_without_beats_fails_on_v2_and_is_quiet_on_a_legacy_script():

@@ -1,6 +1,9 @@
 """Visual beats (VB rules, docs/STORY_ENGINE.md; the creator, 2026-10-19): something new happens on screen about every
 1.5 s, tied to what the narrator says at that instant, and in dialogue the speaking face changes its expression about once
-a second. The picture still changes every 3-6 s (PV-24 RHYTHM); the beats live between the cuts.
+a second. How often the picture itself changes is BP-40 (pictures a minute, still limits by section; PV-24 RHYTHM); the
+beats live between the cuts and count as changes there too. Every cadence number here is read from the sourced rules
+(docs/SOURCED_RULES.md: VB-01 BP-36, VB-02 BP-37 with BP-33's flicker floor, VB-04 BP-38, VB-08 spacing BP-39, VB-10 BP-80,
+VB-11 BP-81, VB-05/VB-07 BP-82) and each check takes its severity from its rule.
 
 Beats are written WITH the words (stage 2b, agent ``beat-writer``), one list per line (``lines[].visual_beats``), each landing on
 a phrase of its own line (``at``) plus an optional ``offset`` in seconds: never a clock time, the read decides (D-43).
@@ -35,28 +38,41 @@ from explainer_engine.audio import cues as CUES
 from explainer_engine.finish import bubbles as BUB
 from explainer_engine.production import accents as ACC
 from explainer_engine.production import script as S
+from explainer_engine.standards import sourced_rules as SR
 
 LEGACY = "production_script/1"  # beats optional (one VB-00 REVIEW); /2 makes every VB rule binding
 SCENE_SCHEMA = "production_script/3"  # the 2026-10-19 rewrite: metronomes retired, cues opt-in and event-bound (D-58)
-TARGET, GAP_OK, GAP_FAIL, MEAN_OK = 1.5, 2.0, 3.0, 1.8  # VB-01 on /2: seconds between visual events while the narrator speaks
-GAP_OK_3, GAP_FAIL_3 = 8.0, 15.0  # VB-01 on /3: pace follows new information (MO-01's 5 s still REVIEWs); only real dead air blocks
-FACE_TARGET, FACE_OK, FACE_FAIL = 1.0, 1.5, 2.0  # VB-02 on /2: seconds between expression changes on a dialogue line
-FACE_OK_3, FACE_FAIL_3, FACE_FLICKER = 4.0, 6.0, 0.7  # VB-02 on /3: reaction-driven changes; two changes of one face under 0.7 s flicker
+# VB-01 on /2 (BP-36): seconds between visual events while the narrator speaks (the metronome)
+TARGET, GAP_OK, GAP_FAIL, MEAN_OK = (float(SR.T("BP-36", k)) for k in ("v2_target_s", "v2_gap_review_s", "v2_gap_fail_s",
+                                                                         "v2_mean_max_s"))
+# VB-01 on /3 (BP-36): pace follows new information; only real dead air blocks. Nested inside BP-40 (the whole video's still
+# limits on the same events): in the hook window BP-40 is the stricter one, in the body this one is
+GAP_OK_3, GAP_FAIL_3 = float(SR.T("BP-36", "gap_review_s")), float(SR.T("BP-36", "gap_fail_s"))
+# VB-02 (BP-37): seconds between expression changes on a dialogue line, /2 metronome and /3 reactions
+FACE_TARGET, FACE_OK, FACE_FAIL = (float(SR.T("BP-37", k)) for k in ("v2_target_s", "v2_gap_review_s", "v2_gap_fail_s"))
+FACE_OK_3, FACE_FAIL_3 = float(SR.T("BP-37", "gap_review_s")), float(SR.T("BP-37", "gap_fail_s"))
+FACE_FLICKER = float(SR.T("BP-33", "hold_min_s"))  # two changes of one face closer than BP-33's hold are flicker
 CUE_EVENTS = ("reveal", "impact", "transition", "build", "diegetic", "take", "place")  # VB-08 on /3: a cue names its story event
-CUE_REPEAT_WINDOW, CUE_REPEAT_FAIL = 30.0, 3  # VB-10: the same sound twice in a row REVIEWs; 3+ inside 30 s FAILs on /3
-CUE_PER_MIN_OK, CUE_PER_MIN_FAIL, CUE_BURST = 8.0, 14.0, 3  # VB-11: cues a minute (and >3 in any 10 s REVIEWs)
-EMPHASIS_CUES = {"thud", "chime", "rise", "fall"}  # VB-11: at most one per line on /3
-MAX_WORDS = 4  # VB-04: words on screen in one beat (as MO-05)
-MAX_SAME_RUN, MAX_WORD_SHARE = 3, 0.5  # VB-05 variety
-MAX_OVERLAYS = 2  # VB-07: beat overlays on screen at once
+CUE_REPEAT_WINDOW, CUE_REPEAT_FAIL = float(SR.T("BP-80", "window_s")), int(SR.T("BP-80", "fail_count"))  # VB-10
+CUE_PER_MIN_OK, CUE_PER_MIN_FAIL = float(SR.T("BP-81", "per_min_review")), float(SR.T("BP-81", "per_min_fail"))  # VB-11
+CUE_BURST, CUE_BURST_WINDOW = int(SR.T("BP-81", "burst_max")), float(SR.T("BP-81", "burst_window_s"))  # VB-11 bursts
+CUE_DENSITY_FROM = float(SR.T("BP-81", "measured_from_s"))  # VB-11: a read shorter than this has no per-minute rate
+EMPHASIS_CUES = set(SR.T("BP-81", "emphasis_cues"))  # VB-11: at most EMPHASIS_PER_LINE per line on /3
+EMPHASIS_PER_LINE = int(SR.T("BP-81", "emphasis_per_line_max"))
+MAX_WORDS = int(SR.T("BP-38", "max_words"))  # VB-04: words on screen in one beat (MO-05 reads the same cap)
+BARS = tuple(int(x) for x in SR.T("BP-38", "bars"))  # VB-04: bars in a bars chart
+MAX_SAME_RUN, MAX_WORD_SHARE = int(SR.T("BP-82", "same_kind_run_max")), float(SR.T("BP-82", "word_share_max"))  # VB-05
+WORD_SHARE_FROM = int(SR.T("BP-82", "word_share_from_beats"))
+MAX_OVERLAYS = int(SR.T("BP-82", "overlays_max"))  # VB-07: beat overlays on screen at once
 HOLD = {"prop": 2.0, "symbol": 1.2, "highlight": 1.3, "chart": 2.6}
 PICTURE_BOUND = {"label", "highlight", "expression"}  # they point into the picture, so they end with their shot
 EXPR_TAIL = 0.3  # an expression stays this long after its line's last word
 EXPRESSIONS = ("neutral", "curious", "surprised", "joyful", "amused", "smug", "confused", "doubtful", "worried", "scared",
                "angry", "sad", "determined", "deadpan")
 TAKES = {"surprised", "scared", "angry", "joyful"}  # VB-08: the only expression changes that may carry a cue (one a line)
-CUE_COVER = 0.15  # a cue within this of an effect, or under a playing effect, doubles it: the effect is the beat's sound
-CUE_MIN_GAP = 0.25  # two cues closer than this stack into one noise
+CUE_COVER = float(SR.T("BP-39", "cover_s"))  # a cue within this of an effect, or under a playing effect, doubles it
+CUE_MIN_GAP = float(SR.T("BP-39", "min_gap_s"))  # two cues closer than this stack into one noise
+TAKE_CUES = int(SR.T("BP-39", "take_cues_per_line_max"))  # cued expression changes on one dialogue line
 OVERLAY = {"text", "label", "prop", "chart", "highlight", "symbol"}
 FACE_HOLD, FACE_POP, FACE_EASE, POP_S = 0.10, 0.04, 0.25, 0.18
 TEXT_SCALE, MARK_R = 1.15, 0.075  # beat words about 0.09 of the frame height; emotion mark radius (share of the height)
@@ -85,8 +101,17 @@ def scene_rules(doc: dict) -> bool:
     return doc.get("schema") == SCENE_SCHEMA
 
 
-def _sev(doc: dict, fail: bool) -> str:
-    return "FAIL" if fail and binding(doc) else "REVIEW"
+def _sev(doc: dict, fail: bool, bp: str | None = None) -> str:
+    """The severity of a hard case: REVIEW on a legacy /1 script, else the rule's own severity in the registry (``bp``: a
+    house rule FAILs, a hypothesis never does), or FAIL for a structural check that has no number of its own."""
+    if not (fail and binding(doc)):
+        return "REVIEW"
+    return SR.rule(bp).get("severity", "REVIEW") if bp else "FAIL"
+
+
+def is_short(doc: dict) -> bool:
+    """A Short's script (``short_doc``): its pace is BP-45's, so VB-01's narration cadence does not run on it."""
+    return bool(doc.get("short"))
 
 
 def _f(out, rule, sev, where, detail):
@@ -114,7 +139,7 @@ def short_doc(doc: dict, short: dict) -> dict:
     pics, _ = S.pictures(doc)
     shots = [{"at": x["at"], "picture": x["picture"], "type": "A", "crop_x": x["crop_x"], "zoom": x.get("zoom", 1.0),
               "motion": {"kind": "push", "z0": 1.0, "z1": SHORT_PUSH}} for x in short["shots"]]
-    return {"schema": doc.get("schema"), "episode": doc["episode"], "voice": doc["voice"], "cast": doc.get("cast", {}),
+    return {"schema": doc.get("schema"), "short": short["id"], "episode": doc["episode"], "voice": doc["voice"], "cast": doc.get("cast", {}),
             "library": {k: {kk: vv for kk, vv in v.items() if kk not in ("id", "source", "first_use", "uses")}
                         for k, v in pics.items()},
             "segments": [{"id": short["id"], "beat": "short", "light_beat": 1, "lines": short["lines"], "shots": shots}]}
@@ -163,13 +188,13 @@ def lint(doc: dict) -> list[dict]:
                 elif not words and not (_stems(b.get("why", "")) & here):
                     _f(out, "VB-03", "REVIEW", where, "the reason names nothing of this line: quote the word the beat shows")
                 if b["kind"] in ("text", "label") and len(b["text"].split()) > MAX_WORDS:
-                    _f(out, "VB-04", _sev(doc, True), where, f"{len(b['text'].split())} words on screen; at most {MAX_WORDS}")
+                    _f(out, "VB-04", _sev(doc, True, "BP-38"), where, f"{len(b['text'].split())} words on screen; at most {MAX_WORDS}")
                 shows_number = re.search(r"\d", words) or b["kind"] == "chart"
                 if shows_number and not (b.get("claim") or line.get("claims")):
                     _f(out, "VB-04", _sev(doc, True), where, "a number on screen without a claim id (invariant 5): put the claim "
                        "on the beat or its line")
-                if b["kind"] == "chart" and b.get("chart") == "bars" and not 2 <= len(b["values"]) <= 3:
-                    _f(out, "VB-04", _sev(doc, True), where, "bars need 2-3 values")
+                if b["kind"] == "chart" and b.get("chart") == "bars" and not BARS[0] <= len(b["values"]) <= BARS[1]:
+                    _f(out, "VB-04", _sev(doc, True, "BP-38"), where, f"bars need {BARS[0]}-{BARS[1]} values")
                 if b["kind"] == "expression":
                     who = b.get("who") or line.get("speaker")
                     if not who:
@@ -306,29 +331,29 @@ def _cue_findings(timed: dict, doc: dict, beats: list[dict], out: list[dict]) ->
         where = f"{b['segment']} line {b['line']}"
         name = (b.get("cue") or {}).get("sound", CUES.NONE)
         if name != CUES.NONE and covered(b["start"]):
-            _f(out, "VB-08", _sev(doc, True), where, f"cue {name!r} at {b['start']:.1f}s doubles a sound effect: the effect is "
+            _f(out, "VB-08", _sev(doc, True, "BP-39"), where, f"cue {name!r} at {b['start']:.1f}s doubles a sound effect: the effect is "
                "this beat's sound, set the cue to 'none'")
         elif name == CUES.NONE and b["kind"] not in ("expression",) and not covered(b["start"]) and not scene_rules(doc):
             _f(out, "VB-08", _sev(doc, True), where, f"a {b['kind']} beat at {b['start']:.1f}s makes no sound: every addition "
                "gets a short cue unless an effect already sounds there")
     for a, c in zip(cues, cues[1:]):
         if c["start"] - a["start"] < CUE_MIN_GAP:
-            _f(out, "VB-08", _sev(doc, True), f"{c['segment']} line {c['line']}", f"two cues {c['start'] - a['start']:.2f} s apart "
+            _f(out, "VB-08", _sev(doc, True, "BP-39"), f"{c['segment']} line {c['line']}", f"two cues {c['start'] - a['start']:.2f} s apart "
                f"stack into noise (at least {CUE_MIN_GAP} s)")
     for c in cues:
         t = c["start"] + 1e-3
         n = 1 + min(1, L._active(music, t)) + min(1, L._active(beds, t)) + L._active(sfx, t) + L._active(cues, t)
         if n > L.MAX_LAYERS:
             _f(out, "VB-08", _sev(doc, True), f"{c['segment']} line {c['line']}", f"{n} layers at {c['start']:.1f}s with the cue "
-               f"(at most {L.MAX_LAYERS}: voice, music, bed, one effect or cue)")
+               f"(at most {L.MAX_LAYERS} in all, BP-56: voice, music, bed and effects or cues)")
     cued: dict = {}
     for b in beats:
         if b["kind"] == "expression" and (b.get("cue") or {}).get("sound", CUES.NONE) != CUES.NONE:
             cued.setdefault((b["segment"], b["line"]), []).append(b)
     for (sid, ln), bs in cued.items():
-        if len(bs) > 1:
-            _f(out, "VB-08", _sev(doc, True), f"{sid} line {ln}", f"{len(bs)} expression cues on one dialogue line: at most one "
-               "(the big take), the rest of the face changes are silent")
+        if len(bs) > TAKE_CUES:
+            _f(out, "VB-08", _sev(doc, True, "BP-39"), f"{sid} line {ln}", f"{len(bs)} expression cues on one dialogue line: at "
+               f"most {TAKE_CUES} (the big take), the rest of the face changes are silent")
     if scene_rules(doc):
         # VB-10 a repeated sound stops meaning anything; VB-11 density: silence is the baseline a cue stands out of (D-58)
         last_name = None
@@ -339,36 +364,37 @@ def _cue_findings(timed: dict, doc: dict, beats: list[dict], out: list[dict]) ->
             times.append(c["start"])
             recent[c["sound"]] = times
             if len(times) == CUE_REPEAT_FAIL:
-                _f(out, "VB-10", "FAIL", where, f"{c['sound']!r} sounds {len(times)} times inside {CUE_REPEAT_WINDOW:.0f} s: a "
+                _f(out, "VB-10", _sev(doc, True, "BP-80"), where, f"{c['sound']!r} sounds {len(times)} times inside {CUE_REPEAT_WINDOW:.0f} s: a "
                    "repeated cue is a tic, not a mark; vary the sound or keep only the one on the turn")
             elif c["sound"] == last_name and len(times) < CUE_REPEAT_FAIL:
                 _f(out, "VB-10", "REVIEW", where, f"{c['sound']!r} twice in a row: two neighbouring story events should not "
                    "sound the same")
             last_name = c["sound"]
         dur = float(timed.get("duration") or 0.0)
-        if dur >= 30 and cues:
+        if dur >= CUE_DENSITY_FROM and cues:
             per_min = len(cues) / dur * 60
             if per_min > CUE_PER_MIN_FAIL:
-                _f(out, "VB-11", "FAIL", "audio", f"{per_min:.0f} cues a minute (cap {CUE_PER_MIN_FAIL:.0f}): a sound exists "
+                _f(out, "VB-11", _sev(doc, True, "BP-81"), "audio", f"{per_min:.0f} cues a minute (cap {CUE_PER_MIN_FAIL:.0f}): a sound exists "
                    "only for a story event; a track this dense marks nothing")
             elif per_min > CUE_PER_MIN_OK:
                 _f(out, "VB-11", "REVIEW", "audio", f"{per_min:.0f} cues a minute (aim under {CUE_PER_MIN_OK:.0f})")
         ts = [c["start"] for c in cues]
         burst_flagged = set()
         for c in cues:
-            n = sum(1 for t in ts if c["start"] - 10.0 < t <= c["start"])
+            n = sum(1 for t in ts if c["start"] - CUE_BURST_WINDOW < t <= c["start"])
             if n > CUE_BURST and (c["segment"], c["line"]) not in burst_flagged:
                 burst_flagged.add((c["segment"], c["line"]))
-                _f(out, "VB-11", "REVIEW", f"{c['segment']} line {c['line']}", f"{n} cues inside 10 s around {c['start']:.1f}s "
+                _f(out, "VB-11", "REVIEW", f"{c['segment']} line {c['line']}", f"{n} cues inside {CUE_BURST_WINDOW:.0f} s around "
+                   f"{c['start']:.1f}s "
                    f"(at most {CUE_BURST}): the moments stop standing out")
         emph: dict = {}
         for c in cues:
             if c["sound"] in EMPHASIS_CUES:
                 emph.setdefault((c["segment"], c["line"]), []).append(c["sound"])
         for (sid, ln), names in emph.items():
-            if len(names) > 1:
-                _f(out, "VB-11", "FAIL", f"{sid} line {ln}", f"{len(names)} emphasis cues ({', '.join(names)}) on one line: one "
-                   "line gets at most one emphasis, the voice carries the rest")
+            if len(names) > EMPHASIS_PER_LINE:
+                _f(out, "VB-11", _sev(doc, True, "BP-81"), f"{sid} line {ln}", f"{len(names)} emphasis cues ({', '.join(names)}) "
+                   f"on one line: one line gets at most {EMPHASIS_PER_LINE} emphasis, the voice carries the rest")
 
 
 # --- cadence on a timed script -------------------------------------------------------------------------------------------
@@ -390,6 +416,8 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
     pts = [0.0] + times + [timed["duration"]]
     narr = _windows(timed, False)
     gap_ok, gap_fail = (GAP_OK_3, GAP_FAIL_3) if scene_rules(doc) else (GAP_OK, GAP_FAIL)
+    if is_short(doc):  # BP-45 owns a Short's pace (PV-34): the 1.5 s metronome is not a Shorts rule
+        pts = []
     for a, b in zip(pts, pts[1:]):
         gap = b - a
         if gap <= gap_ok:
@@ -397,7 +425,7 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
         ln = next((w for w in narr if w["start"] < b and w["end"] > a), None)
         if ln is None:
             continue
-        sev = _sev(doc, True) if gap > gap_fail else "REVIEW"
+        sev = _sev(doc, True, "BP-36") if gap > gap_fail else "REVIEW"
         if scene_rules(doc):
             # /3: the metronome is retired; pace follows new information (D-58), only real dead air is flagged
             _f(out, "VB-01", sev, f"{ln['segment']} line {ln['line']} {a:.1f}s",
@@ -407,7 +435,7 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
             _f(out, "VB-01", sev, f"{ln['segment']} line {ln['line']} {a:.1f}s",
                f"{gap:.1f} s with nothing new on screen while the narrator speaks; a beat about every {TARGET} s "
                f"(REVIEW over {GAP_OK} s, FAIL over {GAP_FAIL} s)")
-    if not scene_rules(doc):
+    if not scene_rules(doc) and not is_short(doc):
         by_seg: dict = {}
         for w in narr:
             s = by_seg.setdefault(w["segment"], [0.0, 0])
@@ -441,22 +469,22 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
         where = f"{ln['segment']} line {ln['line']}"
         if not changes:
             if scene_rules(doc):
-                _f(out, "VB-02", _sev(doc, True), where, f"a dialogue line ({ln['duration']:.1f} s) with no expression change: "
+                _f(out, "VB-02", _sev(doc, True, "BP-37"), where, f"a dialogue line ({ln['duration']:.1f} s) with no expression change: "
                    "the listener's face is where the line lands (Kuleshov); at least one reaction on every spoken line")
             else:
-                _f(out, "VB-02", _sev(doc, True), where, f"a dialogue line ({ln['duration']:.1f} s) with no expression change: the "
+                _f(out, "VB-02", _sev(doc, True, "BP-37"), where, f"a dialogue line ({ln['duration']:.1f} s) with no expression change: the "
                    f"face carries the line, about one change every {FACE_TARGET:.0f} s")
             continue
         p = [ln["start"]] + changes + [ln["end"]]
         worst = max(y - x for x, y in zip(p, p[1:]))
         if scene_rules(doc):
             if worst > face_fail:
-                _f(out, "VB-02", _sev(doc, True), where, f"{worst:.1f} s without an expression change in dialogue (FAIL over "
+                _f(out, "VB-02", _sev(doc, True, "BP-37"), where, f"{worst:.1f} s without an expression change in dialogue (FAIL over "
                    f"{face_fail:.0f} s): a listener reacts when a line lands, not on a clock")
             elif worst > face_ok:
                 _f(out, "VB-02", "REVIEW", where, f"{worst:.1f} s without an expression change (REVIEW over {face_ok:.0f} s)")
         elif worst > FACE_FAIL:
-            _f(out, "VB-02", _sev(doc, True), where, f"{worst:.1f} s without an expression change in dialogue (FAIL over "
+            _f(out, "VB-02", _sev(doc, True, "BP-37"), where, f"{worst:.1f} s without an expression change in dialogue (FAIL over "
                f"{FACE_FAIL} s, target {FACE_TARGET:.0f} s)")
         elif worst > FACE_OK:
             _f(out, "VB-02", "REVIEW", where, f"{worst:.1f} s without an expression change (target {FACE_TARGET:.0f} s, "
@@ -486,7 +514,7 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
             if run == MAX_SAME_RUN + 1:
                 _f(out, "VB-05", "REVIEW", sid, f"{run} {y} beats in a row: vary the kind (text, prop, chart, highlight, symbol, "
                    "accent)")
-        if len(kinds) >= 4 and sum(k in ("text", "label") for k in kinds) / len(kinds) > MAX_WORD_SHARE:
+        if len(kinds) >= WORD_SHARE_FROM and sum(k in ("text", "label") for k in kinds) / len(kinds) > MAX_WORD_SHARE:
             _f(out, "VB-05", "REVIEW", sid, f"{sum(k in ('text', 'label') for k in kinds)} of {len(kinds)} beats are words: "
                f"at most {MAX_WORD_SHARE:.0%}; show the thing instead")
     ov = sorted((b["start"], b["end"], b["segment"]) for b in beats if b["kind"] in OVERLAY)

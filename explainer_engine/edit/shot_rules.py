@@ -5,6 +5,10 @@ time_jump, place_change, palette, prompt, face, sound}]`` with times in seconds 
 the narration's ``[{w, s, e}]`` (``audio/timings.align`` shifted to the programme clock). ``look`` is the episode's
 look file (style suffix, cast names, palette per phase). Every finding names its rule; ``FAIL`` blocks, ``REVIEW``
 goes to the creator. ``solve_cuts`` places cuts only inside narration pauses (UR-12).
+
+The numbers are the creator's house set of the Universal Rule Base (BP-85, D-37) and the sourced motion rules (BP-20, BP-22,
+BP-31); the hook's form is BP-03 (one of its four forms, never a greeting), not a question by 5 s. Each numeric check takes its
+rule's severity from the registry (docs/SOURCED_RULES.md).
 """
 
 from __future__ import annotations
@@ -18,20 +22,20 @@ from explainer_engine.standards import sourced_rules as SR
 
 STAKES_FILE = Path(__file__).with_name("stakes.json")
 MOODS_FILE = Path(__file__).with_name("moods.json")
-DURATIONS = {"A": (5.0, 7.0), "B": (3.5, 5.0), "C": (2.5, 4.0)}  # UR-11
-FIRST_WINDOW = 30.0  # UR-02
-FIRST_SLACK = 1.0  # a shot in the first 30 s stays within its minimum + this
-FIRST_MIN_SHOTS = 6
-HOOK_SECONDS = 5.0  # UR-01
-FIRST_SOUND = 1.0
+DURATIONS = {k: tuple(float(x) for x in SR.T("BP-85", f"{k.lower()}_shot_s")) for k in "ABC"}  # UR-11 (BP-85)
+FIRST_WINDOW = float(SR.T("BP-85", "first_window_s"))  # UR-02
+FIRST_SLACK = float(SR.T("BP-85", "first_slack_s"))  # a shot in the first window stays within its minimum + this
+FIRST_MIN_SHOTS = int(SR.T("BP-85", "first_min_shots"))
+HOOK_FORMS = set(SR.T("BP-03", "hook_forms"))  # UR-01 / BP-03: the first sentence takes one of these forms
+FIRST_SOUND = float(SR.T("BP-85", "first_sound_s"))
 MAX_ZOOM = SR.T("BP-20", "scale_max")  # UR-13 / BP-20
-A_ZOOM = (1.05, 1.08)
+A_ZOOM = tuple(float(x) for x in SR.T("BP-85", "a_zoom"))
 A_PAN_PER_5S = SR.T("BP-22", "pan_default_width_per_s") * 5  # share of the frame width (BP-22's house default)
 B_PUSH_MAX = SR.T("BP-20", "push_default_max")
-C_PULL_MAX = 1.08
+C_PULL_MAX = float(SR.T("BP-85", "c_pull_max"))
 DISSOLVE_SECONDS = SR.T("BP-31", "dissolve_s")  # UR-14 / BP-31
-DISSOLVE_SHARE = 0.10
-EDGE = 0.05  # UR-12: a cut keeps this far from both words
+DISSOLVE_SHARE = float(SR.T("BP-85", "dissolve_share_max"))  # the hard-cut convention BP-31 names, the creator's (BP-85)
+EDGE = float(SR.T("BP-85", "cut_edge_s"))  # UR-12: a cut keeps this far from both words
 CUT_MARKS = ",.:;?!—…"
 BANNED = re.compile(r"\b(hyper-?realistic|photo-?realistic|realistic|lifelike|natural proportions|photo(graph|graphy)?|"
                     r"unreal( engine)?|octane|3d render|cinematic photography|documentary|film still)\b", re.I)
@@ -156,6 +160,12 @@ def apply_cuts(shots: list[dict], cuts: list[float], end: float) -> list[dict]:
     return [dict(s, start=round(bounds[i], 3), end=round(bounds[i + 1], 3)) for i, s in enumerate(shots)]
 
 
+def hook_form(sentence: str) -> str | None:
+    """BP-03's form of a first sentence (the narration lint's own classifier, imported late: it imports this module)."""
+    from explainer_engine.scripting import narration_lint
+    return narration_lint.hook_form(sentence)
+
+
 def _first_sentence(words: list[dict]) -> list[dict]:
     out = []
     for w in words:
@@ -174,6 +184,7 @@ def check_shots(shots: list[dict], words: list[dict], look: dict, moods: dict | 
     def add(rule: str, shot: str, detail: str, severity: str = "FAIL") -> None:
         found.append({"rule": rule, "shot": shot, "severity": severity, "detail": detail})
 
+    house = SR.rule("BP-85").get("severity", "REVIEW")  # the numeric UR checks: the creator's house set
     if not shots:
         add("UR-03", "-", "no shots")
         return found
@@ -187,25 +198,26 @@ def check_shots(shots: list[dict], words: list[dict], look: dict, moods: dict | 
     if not (first["type"] == "C" or (first["type"] == "A" and moving)):
         add("UR-01", first["id"], f"opens on a {'static ' if not moving else ''}{first['type']} shot; needs C or a moving A")
     if words:
-        lead = _first_sentence(words)
-        if not lead[-1]["w"].rstrip("\"'”’)").endswith("?") and not any(w["w"].endswith("?") and w["e"] <= HOOK_SECONDS
-                                                                        for w in words):
-            add("UR-01", first["id"], f"no question asked in the first {HOOK_SECONDS:.0f} s")
-        if GREETINGS.search(" ".join(w["w"] for w in lead)):
-            add("UR-01", first["id"], "the first sentence greets instead of asking")
+        lead = " ".join(w["w"] for w in _first_sentence(words))
+        bp03 = SR.rule("BP-03").get("severity", "REVIEW")
+        if GREETINGS.search(lead):
+            add("UR-01", first["id"], "the first sentence greets instead of hooking (BP-03)", bp03)
+        elif hook_form(lead) not in HOOK_FORMS:
+            add("UR-01", first["id"], "the first sentence is none of BP-03's hook forms (a question, a short cold-open line, a "
+                                      "claim with a number, a preview of what the viewer will see)", bp03)
         sound = first.get("sound_at")
         if words[0]["s"] > FIRST_SOUND and (sound is None or sound > FIRST_SOUND):
-            add("UR-01", first["id"], f"no sound event in the first {FIRST_SOUND:.0f} s")
+            add("UR-01", first["id"], f"no sound event in the first {FIRST_SOUND:.0f} s", house)
 
     # UR-02 first 30 s
     early = [s for s in shots if s["start"] < FIRST_WINDOW]
     if shots[-1]["end"] >= FIRST_WINDOW and len(early) < FIRST_MIN_SHOTS:
-        add("UR-02", "-", f"{len(early)} shots start in the first {FIRST_WINDOW:.0f} s; needs >= {FIRST_MIN_SHOTS}")
+        add("UR-02", "-", f"{len(early)} shots start in the first {FIRST_WINDOW:.0f} s; needs >= {FIRST_MIN_SHOTS}", house)
     for s in early:
         d = s["end"] - s["start"]
         cap = DURATIONS.get(s["type"], (0.0, 0.0))[0] + FIRST_SLACK
         if s["type"] in DURATIONS and d > cap + 1e-6:
-            add("UR-02", s["id"], f"{s['type']} shot of {d:.2f} s in the first {FIRST_WINDOW:.0f} s (max {cap:.1f})")
+            add("UR-02", s["id"], f"{s['type']} shot of {d:.2f} s in the first {FIRST_WINDOW:.0f} s (max {cap:.1f})", house)
 
     prev = None
     run = 1
@@ -280,10 +292,10 @@ def check_shots(shots: list[dict], words: list[dict], look: dict, moods: dict | 
         lo, hi = DURATIONS[s["type"]]
         last = i == len(shots) - 1
         if d < lo - 1e-6 or (d > hi + 1e-6 and not (last and s.get("tail"))):
-            add("UR-11", sid, f"{s['type']} shot of {d:.2f} s (allowed {lo}-{hi})")
+            add("UR-11", sid, f"{s['type']} shot of {d:.2f} s (allowed {lo}-{hi})", house)
         # UR-12 cuts in pauses
         if i > 0 and words and not cut_ok(s["start"], words):
-            add("UR-12", sid, f"cut at {s['start']:.3f} s is not inside a punctuated pause")
+            add("UR-12", sid, f"cut at {s['start']:.3f} s is not inside a punctuated pause", house)
         # UR-13 motion
         m = s.get("motion") or {}
         kind, z0, z1 = m.get("kind", "static"), float(m.get("z0", 1.0)), float(m.get("z1", m.get("z0", 1.0)))
@@ -298,13 +310,13 @@ def check_shots(shots: list[dict], words: list[dict], look: dict, moods: dict | 
             elif dx > A_PAN_PER_5S * max(d, 1e-6) / 5.0 + 1e-9:
                 add("UR-13", sid, f"pan {dx:.3f} of the width in {d:.1f} s is too fast")
             if not (A_ZOOM[0] - 1e-9 <= z0 <= A_ZOOM[1] + 1e-9 and abs(z1 - z0) < 1e-6):
-                add("UR-13", sid, f"A shot zoom {z0:.2f}->{z1:.2f}; hold one zoom in {A_ZOOM}")
+                add("UR-13", sid, f"A shot zoom {z0:.2f}->{z1:.2f}; hold one zoom in {A_ZOOM}", house)
         elif s["type"] == "B":
             if kind != "push" or not z1 > z0 or z1 > B_PUSH_MAX + 1e-9:
                 add("UR-13", sid, f"B shot {kind} {z0:.2f}->{z1:.2f}; needs a slow push-in to <= {B_PUSH_MAX}")
         else:
             if kind not in ("static", "pull") or z1 > z0 + 1e-9 or z0 > C_PULL_MAX + 1e-9 or dx > 0:
-                add("UR-13", sid, f"C shot {kind} {z0:.2f}->{z1:.2f}; needs static or a pull-out from <= {C_PULL_MAX}")
+                add("UR-13", sid, f"C shot {kind} {z0:.2f}->{z1:.2f}; needs static or a pull-out from <= {C_PULL_MAX}", house)
         # UR-14 transitions
         if i > 0:
             tr = s.get("transition", "cut")
@@ -322,14 +334,14 @@ def check_shots(shots: list[dict], words: list[dict], look: dict, moods: dict | 
             add("UR-15", sid, f"sound {snd!r} is not in the sound library")
         prev = s
     if len(shots) > 1 and dissolves / (len(shots) - 1) > DISSOLVE_SHARE + 1e-9:
-        add("UR-14", "-", f"{dissolves} of {len(shots) - 1} transitions are dissolves (max {DISSOLVE_SHARE:.0%})")
+        add("UR-14", "-", f"{dissolves} of {len(shots) - 1} transitions are dissolves (max {DISSOLVE_SHARE:.0%})", house)
     if int(look.get("rule_base", 1)) >= 2:
         found += check_stakes(shots, look)
     return found
 
 
-FACELESS_SHARE = 0.15  # UR-17: at most this share of the B shots may be faceless, each with a written reason
-MIN_STAKES_WORDS = 5
+FACELESS_SHARE = float(SR.T("BP-85", "faceless_share_max"))  # UR-17: at most this share of the B shots faceless, with a reason
+MIN_STAKES_WORDS = int(SR.T("BP-85", "stakes_words_min"))
 
 
 def check_stakes(shots: list[dict], look: dict, stakes: dict | None = None) -> list[dict]:
@@ -349,13 +361,14 @@ def check_stakes(shots: list[dict], look: dict, stakes: dict | None = None) -> l
     faceless = [s for s in b_shots if s.get("face") == "faceless"]
     if b_shots and len(faceless) / len(b_shots) > FACELESS_SHARE + 1e-9:
         add("UR-17", "-", f"{len(faceless)} of {len(b_shots)} B shots are faceless (max {FACELESS_SHARE:.0%}): the heroes "
-                          "must be seen, not hidden behind anonymous backs")
+                          "must be seen, not hidden behind anonymous backs", SR.rule("BP-85").get("severity", "REVIEW"))
     for s in shots:
         sid = s["id"]
         # UR-16 stakes in the plan and in the prompt
         text = str(s.get("stakes", "")).strip()
         if len(text.split()) < MIN_STAKES_WORDS:
-            add("UR-16", sid, f"no `stakes` line (>= {MIN_STAKES_WORDS} words): what is at risk in this frame?")
+            add("UR-16", sid, f"no `stakes` line (>= {MIN_STAKES_WORDS} words): what is at risk in this frame?",
+                SR.rule("BP-85").get("severity", "REVIEW"))
         prompt = s.get("prompt")
         if prompt:
             passive = has_word(prompt, stakes["passive"])

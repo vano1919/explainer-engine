@@ -25,10 +25,11 @@ from explainer_engine.standards import sourced_rules as SR
 CAMERA = {"punch", "shake", "wobble"}
 ENTRY = {"whip_in", "flash_in"}  # they belong to the start of their shot
 TEXT = {"pop_text", "slam_text"}
-PUNCH_IN, PUNCH_ZOOM = 0.12, 0.18  # seconds to reach the punch, extra zoom at strength 1
-# BP-24 (house): a shake decays within decay_max_s and peaks under amplitude_max_h of the frame; today's values sit inside
-SHAKE_S = min(0.45, SR.T("BP-24", "decay_max_s"))  # length at strength 1
-SHAKE_AMP = min(0.018, SR.T("BP-24", "amplitude_max_h"))  # amplitude as a share of the frame at strength 1
+PUNCH_IN = 0.12  # seconds to reach the punch
+PUNCH_ZOOM = SR.T("BP-20", "punch_max") - 1.0  # extra zoom at strength 1 (the schema caps strength at 1): BP-20's punch stack
+# BP-24 (house): a shake decays within decay_max_s and peaks under amplitude_max_h of the frame; the house shake sits inside
+SHAKE_S = min(SR.T("BP-24", "house_decay_s"), SR.T("BP-24", "decay_max_s"))  # length at strength 1
+SHAKE_AMP = min(SR.T("BP-24", "house_amplitude_h"), SR.T("BP-24", "amplitude_max_h"))  # share of the frame at strength 1
 WOBBLE_PERIOD, WOBBLE_AMP = 2.4, 0.015
 WHIP_S = 0.22
 FLASH_FRAMES = int(SR.T("BP-26", "flash_frames"))  # BP-26: a flash_in is this many frames ...

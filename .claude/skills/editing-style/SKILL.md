@@ -19,7 +19,7 @@ documentary pacing, so the numbers for those come from our own measurements (the
 |---|---|---|
 | **Narrated montage** | time passes, many small proofs (Year 1 to Year 100) | a change on screen inside the section's window (BP-40), hard cuts inside pauses, the period dissolve once at the start of each period (BP-31) |
 | **Held tableau + bubbles** | a conversation, a joke, a hero decision | one picture held as long as BP-40 allows its section, speech bubbles, slow push continued across the beat (BP-20, BP-21) |
-| **J-cut / L-cut** | a reveal or a question hook | the next sound (bed, sting) starts 0.4 s before the picture, the old sound rings 0.4 s after (BED_LEAD) |
+| **J-cut / L-cut** | a reveal, a question hook, dialogue coverage | in a dialogue scene the audio leads or trails the picture by ED-14's J/L offset on about a third of the cuts (planned on the cuts); a location bed is a separate, shorter pre-lap: `production/timing.BED_LEAD` starts it just before its anchor word, which is not a J/L cut |
 | **Slow dissolve** | a time jump or a change of place | the period dissolve only (BP-31), nothing else dissolves |
 | **Fade from / to black** | start, end, the Year 100 silence | 1 s in, 1.5 s out |
 | **Match cut** | a object that returns (the grain, the pot, the fire) | the next shot opens on the same object at the same screen position |
