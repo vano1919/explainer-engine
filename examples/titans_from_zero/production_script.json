@@ -5572,22 +5572,6 @@
           "heroes_ok": true
         },
         {
-          "at": "Musk says that's how fires work",
-          "type": "B",
-          "picture": "s09_ots_musk",
-          "motion": {
-            "kind": "push",
-            "z0": 1.0,
-            "z1": 1.06
-          },
-          "purpose": "Musk's last word, his face held",
-          "cut": {
-            "why": "conclusion on the last speaker"
-          },
-          "reuse": "reuse",
-          "heroes_ok": true
-        },
-        {
           "at": "Belfort laughs",
           "type": "B",
           "picture": {

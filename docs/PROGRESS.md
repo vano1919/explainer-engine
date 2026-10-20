@@ -1250,3 +1250,9 @@ decision; `/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/long_res
 characters. A new line written after a former run is read right after that run's take: `splice_read pieces` takes
 `a.wav+b.wav` (`splice_read.join`, 0.6 s apart). The QA loop removed shots that broke BP-92 / CUT-1 / RHYTHM-2.
 Test: `test_two_takes_at_one_point_are_read_back_to_back`.
+
+## 2026-10-20 — The face lean glides (QA loop, PX-CUT-EXTRA)
+
+The loop's pixel check found two cuts the plan does not have (titans 99.8 s and 125.9 s): an expression beat leaned the
+crop 10 % plus a 4 % pop toward the face in a quarter second, which reads as a jump (CC-06). `beats.FACE_*`: 6 %, no pop,
+over 1.2 s. Test: `test_the_face_lean_never_jumps_like_a_cut`.

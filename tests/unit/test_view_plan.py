@@ -141,3 +141,15 @@ def test_timing_plan_marks_every_shot_with_views():
     FACES.plan_shots(shots, [_expr("a", 10, 110)], cast, FPS)
     assert shots[0]["views"] and shots[0]["views"][-1]["end_frame"] == 120
     assert any(v["who"] == "a" for v in shots[0]["views"])
+
+
+def test_the_face_lean_never_jumps_like_a_cut():
+    """PX-CUT-EXTRA on titans at 99.8 s: the lean zoomed 14 % in a quarter second on an expression beat; now it glides."""
+    from explainer_engine.production import beats as B
+    W, H, fps = 1920, 1080, 30
+    box = (0.0, 0.0, float(W), float(H))
+    beat = {"start_frame": 30, "end_frame": 150, "face": (0.3, 0.4), "shot": "SH1"}
+    widths = [B.face_camera(box, W, H, [beat], f, fps) for f in range(0, 220)]
+    zoom = [W / (b[2] - b[0]) for b in widths]
+    assert max(abs(a - b) for a, b in zip(zoom, zoom[1:])) < 0.006   # under 0.6 % a frame: a move, never a cut
+    assert max(zoom) <= 1 + B.FACE_HOLD + B.FACE_POP + 1e-9
