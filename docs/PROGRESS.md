@@ -1101,3 +1101,9 @@ The creator: "paint the faces only as the script needs them". `faces.needed(doc)
 Shorts' expression beats show, plus `neutral` (the resting face between beats); `to_paint` and the VB-09 "not painted yet"
 REVIEW cover only those. A sheet's `set` still defines the hero's range (D-55 unchanged); the faces nobody uses yet are painted
 by the episode that first shows them. Titans: 93 template close-ups -> 65 needed ($2.45 -> $1.71). Tests: `test_face_sheets.py` (+1, 3 updated).
+
+## 2026-10-20 - Dialogue frame chosen: blurred scene + big face, blur 0.024
+
+Four dialogue-frame variants on S12 "What's the catch?" (`conversation_variants_v1.jpg`: blurred backdrop + big face, sharp scene
++ comic face panel, two faces, painted scene only). The creator chose the first "with a slightly more blurred background":
+`faces.BLUR` 0.014 -> 0.024 (`conversation_blur_v2.jpg` compares 0.014 / 0.024 / 0.034). Test: `test_face_sheets.py` (+1).

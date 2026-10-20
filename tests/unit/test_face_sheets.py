@@ -181,3 +181,9 @@ def test_needed_faces_include_the_shorts_and_skip_unused_template_faces():
     assert FACES.needed(d)["einstein"] == {"neutral", "curious", "surprised", "smug"}
     ids = {i["expression"] for i in FACES.to_paint(d)}
     assert ids == {"neutral", "curious", "surprised", "smug"} and "sad" not in ids
+
+
+def test_dialogue_backdrop_blur_is_the_creators_choice():
+    """The creator 2026-10-20 chose the blurred backdrop + big close-up, with the background blurred a little more (0.014 was
+    too sharp: the other heroes read as a second focus)."""
+    assert FACES.BLUR == 0.024 and FACES.FACE_H >= 0.9
