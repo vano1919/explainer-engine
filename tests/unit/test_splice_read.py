@@ -29,3 +29,20 @@ def test_the_schema_marks_a_new_narrator_line_and_only_with_a_boolean():
     assert not [e for e in S.schema_errors(doc) if "new_read" in e]
     line["new_read"] = "yes"
     assert any("new_read" in e or "yes" in e for e in S.schema_errors(doc))
+
+
+def test_two_takes_at_one_point_are_read_back_to_back(tmp_path):
+    import shutil
+    import wave
+    import numpy as np
+    import pytest
+    if not shutil.which("ffmpeg"):
+        pytest.skip("ffmpeg")
+    sr = 24000
+    for name, n in (("a.wav", sr), ("b.wav", sr // 2)):
+        with wave.open(str(tmp_path / name), "wb") as w:
+            w.setnchannels(1), w.setsampwidth(2), w.setframerate(sr)
+            w.writeframes((np.full(n, 0.5) * 32767).astype("<i2").tobytes())
+    x = SR.join([tmp_path / "a.wav", tmp_path / "b.wav"], 48000)
+    assert abs(len(x) - int((1.0 + SR.JOIN_GAP + 0.5) * 48000)) < 50   # resampled to the read's rate, one pause between
+    assert abs(x[int(1.3 * 48000)]) < 1e-6

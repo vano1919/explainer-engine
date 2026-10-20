@@ -237,10 +237,15 @@ def lint(doc: dict) -> list[dict]:
                 if not reacted:
                     _f(out, "SC-05", where, "a reveal lands and nobody reacts: the next beat is another character's "
                        "line or a listener's expression (DW-05, Kuleshov: show the face the line affects)", "REVIEW")
-        if len(present) >= 2 and (best_run < MIN_EXCHANGE or len(best_speakers) < MIN_EXCHANGE_SPEAKERS):
+        # D-63 / BP-70: the narrator may report the exchange instead (the creator, 2026-10-20 21:14/21:17)
+        from explainer_engine.scripting.story_lint import reported_turns
+        told = [h for ln in lines if not ln.get("speaker") for h in reported_turns(ln["text"], cast, sorted(present))]
+        reported = len(told) >= MIN_EXCHANGE and len(set(told)) >= MIN_EXCHANGE_SPEAKERS
+        if len(present) >= 2 and not reported and (best_run < MIN_EXCHANGE or len(best_speakers) < MIN_EXCHANGE_SPEAKERS):
             _f(out, "SC-05", sid, f"no real exchange: the longest unbroken run is {best_run} character line(s) "
                f"({len(best_speakers)} speaker(s)); a scene plays at least {MIN_EXCHANGE} character lines in a row, "
-               f"{MIN_EXCHANGE_SPEAKERS} voices, no narrator inside (BP-70)", sev("BP-70"))
+               f"{MIN_EXCHANGE_SPEAKERS} voices, no narrator inside, or the narrator reports at least {MIN_EXCHANGE} turns "
+               f"of {MIN_EXCHANGE_SPEAKERS} named speakers (found {len(told)}; BP-70)", sev("BP-70"))
         silent = present - speakers_seen - {b.get("who") for ln in lines for b in (ln.get("visual_beats") or [])
                                             if b["kind"] == "expression"}
         if silent:

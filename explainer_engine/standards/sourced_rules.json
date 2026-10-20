@@ -406,9 +406,10 @@
    "area": "narration",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "No pause before a punch line (performers do not pause there); emphasis comes from the text (one stressed word, an ellipsis, a tag), never from a hold over one second. The hold limit governs the narrator's pauses (a narration line's pause_after); a scripted silence inside a dialogue scene is a scene device, not a narration hold.",
+   "statement": "No pause before a punch line (performers do not pause there); emphasis comes from the text (one stressed word, an ellipsis, a tag), never from a hold over one second. The hold limit governs the narrator's pauses (a narration line's pause_after); a scripted silence inside a dialogue scene is a scene device, not a narration hold. Exempt: the last narration line of a segment before a change of place or time (BP-31's scene boundary) may hold a breath up to boundary_breath_max_s; longer is a REVIEW (NR-07: naming the jump is sourced, the seconds are a hypothesis).",
    "thresholds": {
-    "max_hold_s": 1.0
+    "max_hold_s": 1.0,
+    "boundary_breath_max_s": 1.5
    },
    "sources": [
     {
@@ -430,17 +431,41 @@
      "type": "B",
      "title": "Storyworthy (M. Dicks), reader notes and summaries",
      "url": "https://calv.info/bookshelf/storyworthy"
+    },
+    {
+     "type": "A",
+     "title": "Time Transitions in Radio Drama (Palermo, RuyaSonic)",
+     "url": "https://ruyasonic.com/wrt_time_transitions.htm"
+    },
+    {
+     "type": "A",
+     "title": "What It Really Takes to Get from Here to There (Gavaler, Hooded Utilitarian, 2016)",
+     "url": "https://www.hoodedutilitarian.com/?p=67985"
+    },
+    {
+     "type": "B",
+     "title": "Visual Language (R. Horn, 1998)",
+     "url": "https://openlibrary.org/books/OL8719810M",
+     "note": "Open Library snippet"
+    },
+    {
+     "type": "B",
+     "title": "Understanding Comics (S. McCloud), via The Language of Comics (Varnum & Gibbons)",
+     "url": "https://openlibrary.org/books/OL8752676M",
+     "note": "Open Library snippet quoting McCloud"
     }
    ],
    "enforced_by": [
     ".claude/agents/performance-director.md",
-    "explainer_engine/scripting/narration_lint.py:MAX_HOLD_S"
+    "explainer_engine/scripting/narration_lint.py:MAX_HOLD_S",
+    "explainer_engine/scripting/narration_lint.py:BREATH_MAX_S"
    ],
    "supersedes": [
     "PF-03 reveal pause 0.5 (confirmed as rewritten)",
     "P-53 reveal pause 0.9",
     "performance-director 0.3-0.8"
-   ]
+   ],
+   "decided": "the creator, 2026-10-20 21:14, confirmed 21:17: conversations are told by the narrator, who need not repeat what is written; what matters is that the listener understands the story; after the conversation, slowly to a new shot (NR-07: a scene-boundary breath is a transition, not a narration hold)"
   },
   {
    "id": "BP-11",
@@ -3044,11 +3069,29 @@
    "area": "scenes",
    "status": "house",
    "severity": "FAIL",
-   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)",
-   "statement": "A real exchange (SC-05): a scene with two or more present plays at least one unbroken run of 4 character lines from at least 2 speakers, no narrator inside.",
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the creator, 2026-10-20 21:14, confirmed 21:17: conversations are told by the narrator, who need not repeat what is written; what matters is that the listener understands the story; after the conversation, slowly to a new shot (NR-01: a reported exchange counts)",
+   "statement": "A real exchange (SC-05): a scene with two or more present plays at least one unbroken run of 4 character lines from at least 2 speakers, no narrator inside; or the narrator reports it (D-63): the scene's narrator lines report at least as many turns (a present hero named, or he/she, with a reporting verb of speech_verbs) from at least as many named speakers.",
    "thresholds": {
     "min_exchange_lines": 4,
-    "min_exchange_speakers": 2
+    "min_exchange_speakers": 2,
+    "speech_verbs": [
+     "says",
+     "asks",
+     "tells",
+     "answers",
+     "replies",
+     "insists",
+     "offers",
+     "teases",
+     "adds",
+     "warns",
+     "admits",
+     "promises",
+     "argues",
+     "agrees",
+     "objects",
+     "explains"
+    ]
    },
    "sources": [
     {
@@ -3065,10 +3108,38 @@
      "type": "A",
      "title": "Pixar's 22 rules of storytelling (rule 13: passive characters are poison)",
      "url": "https://laughingsquid.com/22-rules-of-storytelling-by-pixar-storyboard-artist/"
+    },
+    {
+     "type": "A",
+     "title": "Speech presentation checksheet, after Leech & Short (Lancaster University stylistics)",
+     "url": "https://lancaster.ac.uk/fass/projects/stylistics/topic9/11checksheet.htm"
+    },
+    {
+     "type": "B",
+     "title": "Style in Fiction (G. Leech & M. Short)",
+     "url": "https://lancaster.ac.uk/fass/projects/stylistics/topic9/11checksheet.htm",
+     "note": "read through the Lancaster checksheet"
+    },
+    {
+     "type": "A",
+     "title": "Narrative Theory, 3.4 Narrative Time: Duration (J. A. Garcia Landa, after Genette)",
+     "url": "https://personal.unizar.es/garciala/publicaciones/structuralnarratology/3.Story/3.4.Duration.html"
+    },
+    {
+     "type": "B",
+     "title": "Narrative Discourse (G. Genette)",
+     "url": "https://personal.unizar.es/garciala/publicaciones/structuralnarratology/3.Story/3.4.Duration.html",
+     "note": "read through Garcia Landa"
+    },
+    {
+     "type": "A",
+     "title": "The Civil War (miniseries) (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/The_Civil_War_(miniseries)"
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/scene_lint.py:MIN_EXCHANGE"
+    "explainer_engine/scripting/scene_lint.py:MIN_EXCHANGE",
+    "explainer_engine/scripting/story_lint.py:reported_turns"
    ],
    "supersedes": []
   },
@@ -3988,6 +4059,65 @@
    ],
    "supersedes": [],
    "decided": "the creator, 2026-10-20 21:14 (titans QA loop, CC-01..CC-08, research RX-01..RX-14): after an exchange the hero's mood is held, then a slow move to the next scene"
+  },
+  {
+   "id": "BP-95",
+   "area": "story",
+   "status": "binding",
+   "severity": "REVIEW",
+   "statement": "The speaker comes first (ST-15, NR-02): a narrator line that reports speech names the speaker before his words (\"Musk says it is how fires work\"), never after them (\"That is how fires work, says Musk\"). REVIEW: a heuristic on a trailing reporting clause.",
+   "thresholds": {},
+   "sources": [
+    {
+     "type": "A",
+     "title": "News Writing for Television and Radio (Telg & Lundy, UF/IFAS WC193)",
+     "url": "https://ask.ifas.ufl.edu/publication/WC193"
+    },
+    {
+     "type": "A",
+     "title": "Broadcast Reporting and News Writing (American Society of News Editors, 2016)",
+     "url": "https://www.schooljournalism.org/wp-content/uploads/2016/03/Broadcast-Reporting-and-News-Writing.pdf"
+    },
+    {
+     "type": "B",
+     "title": "Broadcast Newswriting: the RTDNA Reference Guide (M. Block, 2011)",
+     "url": "https://openlibrary.org/books/OL24858200M",
+     "note": "Open Library snippet"
+    },
+    {
+     "type": "B",
+     "title": "Writing and Reporting the News (Lanson & Stephens, 2008)",
+     "url": "https://openlibrary.org/search/inside?q=%22attribution%20should%20come%20first%22",
+     "note": "Open Library snippet"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:ST-15"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-10-20 21:14, confirmed 21:17: conversations are told by the narrator, who need not repeat what is written; what matters is that the listener understands the story; after the conversation, slowly to a new shot"
+  },
+  {
+   "id": "BP-96",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Two voices per reported exchange line (ST-16, NR-04): one narrator line reports at most speakers_max named speakers; a third person enters as an action or a reaction, or in the next exchange.",
+   "thresholds": {
+    "speakers_max": 2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "ACX Guest Post: Wendy Lindstrom on Writing For Audio (ACX, 2013)",
+     "url": "https://www.acx.com/mp/blog/acx-guest-post-wendy-lindstrom-on-writing-for-audio"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:ST-16"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-10-20 21:14, confirmed 21:17: conversations are told by the narrator, who need not repeat what is written; what matters is that the listener understands the story; after the conversation, slowly to a new shot"
   }
  ]
 }

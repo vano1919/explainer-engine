@@ -57,7 +57,7 @@ exits on Capone's fear -> N: "The order to find the cameraman goes out that nigh
   at high tension).
 - The scripted silence beat: after the hardest question or on the turn, a stage beat `(beat — no answer)` worth
   1.5-3 s in the mix (normal inter-line gaps are ~0.4-0.8 s). 1-2 per scene; silence is a reply. This is a scene device,
-  not a narration hold: BP-10's one-second hold limit governs the narrator's pauses (N-15), and a speaker line's
+  not a narration hold: BP-10's hold limit governs the narrator's pauses (N-15), and a speaker line's
   `pause_after` is not held to it.
 - Nobody speaks twice in a row unless the other's non-response is itself a scripted beat.
 
@@ -180,5 +180,10 @@ into fear, shown by a silence beat and a quieter repeat of his own question.
 ## Real people in a scene (D-63, creator 2026-10-20)
 
 When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood, then a slow move to the next shot, never a cut straight into other people's talk.
+
+A reported exchange is a real exchange (SC-05, BP-70, D-65, the creator 2026-10-20 21:14/21:17): at least BP-70's turns of two named speakers told by
+the narrator ("O'Leary asks ... Musk says ..."); name the speaker before his words (ST-15, BP-95) and report at most two
+speakers in one line (ST-16, BP-96). The narrator need not repeat what is written on screen; what matters is that the listener
+follows the story. After the conversation, the picture moves slowly to a new shot.
 
 Frame every exchange (ST-14, BP-90, D-64, the creator 2026-10-20 21:14): a narrator setup that names who talks and what idea or want brings them there, then the exchange, then a narrator conclusion that says what came of it, and only then the next exchange: never two exchanges chained. The narrator gives the context whenever a conversation needs it. The establishing shot of the scene shows its cast (BP-91); a bubble, when the scene keeps one, is a key phrase within BP-84's cap that the narrator has just told.

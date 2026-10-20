@@ -1231,3 +1231,22 @@ camera jumps, so the old close-up backdrop zoom (CC-06 cause 1) is seen only by 
 enforced by `core/ledger.Run.reserve_allowance` (refuses above it, and the run's own cap with its 80 % stop still applies).
 Tests: `tests/unit/test_pixels.py`, `test_qa_loop.py`, `test_face_points.py`, and new cases in `test_frame_review.py`,
 `test_ledger.py`.
+
+## 2026-10-20 — Narrated exchanges count, a scene change breathes: D-65 (the creator, 21:14, confirmed 21:17)
+
+From the long storytelling research (`titans_from_zero/qa_loop/long_research_storytelling.md`, "Contradictions found",
+NR-01..NR-12). BP-70 (SC-05) is met by an unbroken run of hero lines as before, or by narrator lines that report at least as
+many turns from as many named present speakers (`story_lint.reported_turns`: a name or he/she with a reporting verb of
+BP-70's `speech_verbs`). BP-10 (N-15) exempts the last narration line of a segment before a change of place or time: a breath
+up to `boundary_breath_max_s`, REVIEW above (NR-07: the naming is sourced, the seconds a hypothesis). New REVIEW checks in
+`scripting/story_lint.py`: ST-15 the speaker before his words (BP-95, NR-02) and ST-16 at most two reported speakers a line
+(BP-96, NR-04, a hypothesis). Skills dialogue-scenes, narration-script and agents performance-director, scene-writer,
+script-critic link the ids. Test: `tests/unit/test_d65_reported_exchange.py`.
+
+## 2026-10-20 — Titans v2 narration; splice points take joined takes
+
+The narrator passages follow the long research (speaker first, at most 2 speakers an exchange, every exchange ends on a
+decision; `/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/long_research_storytelling.md`), 3,794 new
+characters. A new line written after a former run is read right after that run's take: `splice_read pieces` takes
+`a.wav+b.wav` (`splice_read.join`, 0.6 s apart). The QA loop removed shots that broke BP-92 / CUT-1 / RHYTHM-2.
+Test: `test_two_takes_at_one_point_are_read_back_to_back`.

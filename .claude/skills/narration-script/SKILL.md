@@ -177,7 +177,10 @@ never here.
 - BP-09: humour sits beside the fact, never inside the example that explains it; the first laugh inside the first 45 s; at
   most one verbal joke per 60 s.
 - BP-10: no pause before a punch line; emphasis from the text (one stressed word, an ellipsis, a tag), never a hold over
-  1 second (N-04; N-15 checks each narration line's `pause_after`; a dialogue scene's scripted silence is a scene device).
+  its limit (N-04; N-15 checks each narration line's `pause_after`; a dialogue scene's scripted silence is a scene device;
+  the last line before a change of place or time may breathe within BP-10's boundary band, D-65, the creator 2026-10-20 21:14/21:17).
+- Reported speech (D-65, the creator 2026-10-20 21:14/21:17): the speaker's name before his words ("Musk says ...", BP-95), at most two speakers
+  reported in one line (BP-96). The narrator need not repeat what is on screen; the listener must follow the story.
 - BP-16: at most one ellipsis per beat; two is a REVIEW, more than two a FAIL (N-03).
 - BP-17: at least one question per 150 words (N-06) and about one interjection per 60 words, at least one (N-07).
 - BP-18: no ellipsis inside a question, and a wh-question of at most 12 words (N-10).

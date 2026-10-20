@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -22,6 +23,7 @@ import numpy as np
 from explainer_engine.core.store import write_text_atomic
 
 FADE_MS = 10
+JOIN_GAP = 0.6  # s between two takes read at one point (a sentence pause, BP-10)
 
 
 def points(old_doc: dict, read_dir: Path) -> list[dict]:
@@ -53,6 +55,16 @@ def cut(pcm: np.ndarray, sr: int, at: list[float]) -> list[np.ndarray]:
     return out
 
 
+def join(paths: list[Path], sr: int, gap: float = JOIN_GAP) -> np.ndarray:
+    """Takes read one after another with a short silence between them (``a.wav+b.wav`` on the command line)."""
+    out = []
+    for i, p in enumerate(paths):  # any format ffmpeg reads, decoded at the read's rate (mono, float)
+        raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(p), "-ac", "1", "-ar", str(sr), "-f", "f32le", "-"],
+                             capture_output=True, check=True).stdout
+        out += ([np.zeros(int(gap * sr))] if i else []) + [np.frombuffer(raw, dtype="<f4").astype(np.float64)]
+    return np.concatenate(out)
+
+
 def pieces(pts: list[dict], read_dir: Path, takes: list[Path], out: Path) -> list[Path]:
     from explainer_engine.audio import voice_layer
     if len(takes) != len(pts):
@@ -66,8 +78,13 @@ def pieces(pts: list[dict], read_dir: Path, takes: list[Path], out: Path) -> lis
         voice_layer.write_wav(p, sl, sr)
         files.append(p)
         if k < len(takes):
-            t = out / f"take_{k:03d}{takes[k].suffix}"
-            shutil.copyfile(takes[k], t)
+            parts = str(takes[k]).split("+")
+            if len(parts) == 1:
+                t = out / f"take_{k:03d}{takes[k].suffix}"
+                shutil.copyfile(takes[k], t)
+            else:  # "a.wav+b.wav": a new line written after a former run (no run of its own) is read right after that run's take
+                t = out / f"take_{k:03d}.wav"
+                voice_layer.write_wav(t, join([Path(x) for x in parts], sr), sr)
             files.append(t)
     write_text_atomic(out / "pieces.json", json.dumps([str(f) for f in files], indent=1))
     return files

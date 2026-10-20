@@ -1483,7 +1483,7 @@
           "kind": "transition"
         },
         {
-          "text": "O'Leary has an idea: buy a piece of every future on this bench, cheap, today. Musk can build anything, but nobody pays for parts before the thing exists. So O'Leary offers forty dollars, for ten percent of everything Musk will ever build. Forever. Trump scoffs, and gets an envelope too. And Musk, with no other offer in the building, goes very quiet.",
+          "text": "O'Leary has an idea: buy a piece of every future on this bench, cheap, today. Musk can build anything, but nobody pays for parts before the thing exists. So O'Leary offers forty dollars, for ten percent of everything Musk will ever build. Forever. Down the bench, Trump snorts, and O'Leary hands him an envelope too. And Musk, with no other offer in the building, goes very quiet.",
           "tags": [
             "mischievously"
           ],
@@ -1760,7 +1760,7 @@
           "heroes_ok": true
         },
         {
-          "at": "Trump scoffs",
+          "at": "Down the bench, Trump snorts",
           "type": "B",
           "picture": {
             "id": "s02_ol_trump",
@@ -2828,27 +2828,6 @@
           ]
         },
         {
-          "at": "For six hours he has",
-          "type": "A",
-          "picture": "s04_lot",
-          "motion": {
-            "kind": "push",
-            "z0": 1.0,
-            "z1": 1.063
-          },
-          "purpose": "six hours of explaining a battery to nobody",
-          "cut": {
-            "why": "the failing pitch"
-          },
-          "reuse": "reframe",
-          "accents": [
-            {
-              "kind": "wobble",
-              "strength": 0.3
-            }
-          ]
-        },
-        {
           "at": "Belfort watches from the curb",
           "type": "B",
           "picture": {
@@ -3204,7 +3183,7 @@
           "kind": "transition"
         },
         {
-          "text": "Kiyosaki preaches that debt is how the rich get richer. Trump asks to borrow some. Kiyosaki has none. Banks forget, he insists. But Trump's companies went to bankruptcy court six times, and he knows who comes back first. Not the banks. The cameras.",
+          "text": "Kiyosaki says debt is how the rich get richer. Trump asks to borrow some. Kiyosaki has none. He insists banks forget. Trump says his companies went to bankruptcy court six times, and the banks never came back first. The cameras did.",
           "tags": [
             "mischievously"
           ],
@@ -3399,7 +3378,7 @@
           ]
         },
         {
-          "at": "Kiyosaki preaches",
+          "at": "Kiyosaki says debt",
           "type": "B",
           "picture": {
             "id": "s05_ots_k",
@@ -3469,7 +3448,7 @@
           "heroes_ok": true
         },
         {
-          "at": "But Trump's companies",
+          "at": "Trump says his companies",
           "type": "B",
           "picture": "s05_ots_k",
           "motion": {
@@ -3513,27 +3492,6 @@
             "why": "the stage"
           },
           "heroes_ok": true,
-          "accents": [
-            {
-              "kind": "wobble",
-              "strength": 0.3
-            }
-          ]
-        },
-        {
-          "at": "Eleven strangers watch him",
-          "type": "A",
-          "picture": "s05_pool_chair",
-          "motion": {
-            "kind": "push",
-            "z0": 1.0,
-            "z1": 1.073
-          },
-          "purpose": "eleven watchers for a state-dinner sandwich",
-          "cut": {
-            "why": "the joke"
-          },
-          "reuse": "reframe",
           "accents": [
             {
               "kind": "wobble",
@@ -3651,7 +3609,7 @@
         ],
         "sfx": [
           {
-            "at": "The cameras.",
+            "at": "The cameras did.",
             "sound": "landing_thud__v1",
             "gain_db": -18,
             "purpose": "the punch-in lands"
@@ -4874,7 +4832,7 @@
           "kind": "transition"
         },
         {
-          "text": "He asks how many they can make by Christmas. Musk says fifty good ones. Belfort says five hundred, and calls Musk's caution a medical condition. Cuban wants five hundred by December twentieth, or they never come back. He looks at Musk. And Musk hears himself say yes.",
+          "text": "He asks how many they can make by Christmas. Musk says fifty good ones. Before he can finish, Belfort holds up five fingers. Five hundred. Cuban wants five hundred by December twentieth, or they never come back. And Musk hears himself say yes.",
           "tags": [
             "curious"
           ],
@@ -5026,7 +4984,7 @@
           "heroes_ok": true
         },
         {
-          "at": "Belfort says five hundred",
+          "at": "Before he can finish",
           "type": "B",
           "picture": {
             "id": "s08_bel_musk",
@@ -5101,7 +5059,7 @@
           "heroes_ok": true
         },
         {
-          "at": "He looks at Musk",
+          "at": "And Musk hears himself",
           "type": "B",
           "picture": {
             "id": "s08_musk",
@@ -5132,30 +5090,13 @@
           "motion": {
             "kind": "push",
             "z0": 1.0,
-            "z1": 1.05
+            "z1": 1.064
           },
-          "purpose": "Musk's face held as he says yes",
+          "purpose": "Musk's face held as he says yes, and as Cuban signs the biggest order",
           "cut": {
             "why": "conclusion on the man who must build it"
           },
-          "heroes_ok": true
-        },
-        {
-          "at": "Cuban signs.",
-          "type": "B",
-          "picture": "s08_musk",
-          "motion": {
-            "kind": "push",
-            "z0": 1.0,
-            "z1": 1.064
-          },
-          "purpose": "the biggest order signed",
-          "cut": {
-            "why": "insert on the signature"
-          },
-          "reuse": "reframe",
           "heroes_ok": true,
-          "insert": true,
           "accents": [
             {
               "kind": "wobble",
@@ -5211,7 +5152,7 @@
         ],
         "sfx": [
           {
-            "at": "says five hundred",
+            "at": "Five hundred. Cuban",
             "sound": "landing_thud__v2",
             "gain_db": -18,
             "purpose": "the punch-in lands"
@@ -5266,7 +5207,7 @@
           "kind": "transition"
         },
         {
-          "text": "Belfort promised what Musk hasn't built. Musk only said yes because Belfort already had. Belfort shrugs. Promise, then build: that's how big orders work. That's how fires work, says Musk.",
+          "text": "Musk says Belfort promised what he hasn't built. Belfort says Musk said yes. Musk says only because Belfort already had. Belfort shrugs: promise, then build, that's how big orders work. Musk says that's how fires work.",
           "tags": [
             "softly"
           ],
@@ -5476,7 +5417,7 @@
           "kind": "transition"
         },
         {
-          "text": "Cuban pays. Belfort frames the receipt. Three hundred cheap cells are left over on a garage shelf.",
+          "text": "Cuban pays. Belfort frames the receipt.",
           "visual_beats": [
             {
               "at": "Cuban pays",
@@ -5496,17 +5437,17 @@
                 0.5
               ],
               "why": "rings the receipt Belfort frames"
-            },
-            {
-              "at": "garage shelf",
-              "kind": "highlight",
-              "pos": [
-                0.78,
-                0.6
-              ],
-              "why": "rings the garage shelf with the leftover cells"
             }
           ],
+          "tags": [
+            "softly"
+          ],
+          "tone": "low, ominous",
+          "emotion": "dread",
+          "kind": "transition"
+        },
+        {
+          "text": "Three hundred cheap cells are left over on a garage shelf.",
           "tags": [
             "softly"
           ],
@@ -5561,7 +5502,7 @@
           ]
         },
         {
-          "at": "Belfort promised what",
+          "at": "Musk says Belfort promised",
           "type": "B",
           "picture": {
             "id": "s09_ots_musk",
@@ -5631,7 +5572,7 @@
           "heroes_ok": true
         },
         {
-          "at": "That's how fires work",
+          "at": "Musk says that's how fires work",
           "type": "B",
           "picture": "s09_ots_musk",
           "motion": {
@@ -5781,29 +5722,6 @@
           "cut": {
             "why": "the delivery"
           }
-        },
-        {
-          "at": "Three hundred cheap cells",
-          "type": "B",
-          "picture": {
-            "id": "s09_shelf",
-            "engine": "gemini",
-            "subject": "one continuous full-frame painting, back in the garage, the compact slick-haired man proudly hangs a framed receipt on the wall while behind him on a bare shelf sit three hundred cheap battery cells in a dull row, nobody looking at them, clear empty upper third",
-            "heroes": [
-              "belfort"
-            ],
-            "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
-            "prompt": "medium cinematic shot, one continuous full-frame painting, back in the garage, the compact slick-haired man proudly hangs a framed receipt on the wall while behind him on a bare shelf sit three hundred cheap battery cells in a dull row, nobody looking at them, clear empty upper third. One named hero: Jordan Belfort as our caricature: compact, slicked hair, wide grin, a sharp suit that has seen better days, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, sodium streetlamp orange against a deep blue dusk sky, long shadows on cracked asphalt, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
-          },
-          "motion": {
-            "kind": "push",
-            "z0": 1.0,
-            "z1": 1.044
-          },
-          "purpose": "the planted shelf of leftover cells",
-          "cut": {
-            "why": "plant the shelf"
-          }
         }
       ],
       "drama": {
@@ -5911,7 +5829,7 @@
           "kind": "transition"
         },
         {
-          "text": "A network wants Trump for a show called How to Lose a Billion. Kiyosaki asks what he'll own. The audience, says Trump, and the audience paid for this car. There's a seat in the back for a man who lost everything. Kiyosaki teaches the lesson; he isn't one. Trump shrugs.",
+          "text": "A network wants Trump for a show called How to Lose a Billion. Kiyosaki asks what he'll own. Trump says the audience, and the audience paid for this car. There's a seat in the back for a man who lost everything. Kiyosaki says he teaches the lesson; he isn't one. Trump shrugs.",
           "tags": [
             "curious"
           ],
@@ -6152,7 +6070,7 @@
           "heroes_ok": true
         },
         {
-          "at": "Kiyosaki teaches the lesson",
+          "at": "Kiyosaki says he teaches",
           "type": "B",
           "picture": {
             "id": "s10_ts",
@@ -6416,7 +6334,7 @@
           "kind": "transition"
         },
         {
-          "text": "The cells on that shelf came from the same box as Cuban's. Two hundred of those skipped the heat test. Belfort never knew. Musk told him, quietly. Belfort never listens when it's quiet, Musk says. If Cuban hears, they're finished. If a rider's scooter burns, they're worse than finished.",
+          "text": "The cells on that shelf came from the same box as Cuban's. Two hundred skipped the heat test. Belfort never knew. Musk says he told him, quietly; Belfort never listens when it's quiet. Belfort says if Cuban hears, they're finished. Musk says if a rider's scooter burns, they're worse than finished.",
           "tags": [
             "softly"
           ],
@@ -6546,23 +6464,6 @@
           ]
         },
         {
-          "at": "On the shelf",
-          "type": "A",
-          "picture": "s11_dark",
-          "motion": {
-            "kind": "push",
-            "z0": 1.0,
-            "z1": 1.053
-          },
-          "purpose": "one cell starts to hiss",
-          "cut": {
-            "why": "insert on the cell"
-          },
-          "reuse": "reframe",
-          "heroes_ok": true,
-          "insert": true
-        },
-        {
           "at": "By the time the fire trucks arrive",
           "type": "A",
           "picture": {
@@ -6640,7 +6541,7 @@
           "heroes_ok": true
         },
         {
-          "at": "Musk told him, quietly",
+          "at": "Musk says he told him",
           "type": "B",
           "picture": {
             "id": "s11_ots_musk",
@@ -6675,7 +6576,7 @@
           "heroes_ok": true
         },
         {
-          "at": "If Cuban hears",
+          "at": "Belfort says if Cuban hears",
           "type": "B",
           "picture": {
             "id": "s11_cuban",
@@ -7082,7 +6983,7 @@
           "kind": "transition"
         },
         {
-          "text": "That's exactly why he won't sign this one.",
+          "text": "Belfort says that's exactly why he won't sign this one.",
           "tags": [
             "dramatically"
           ],
@@ -7099,7 +7000,7 @@
               "kind": "expression",
               "who": "belfort",
               "expression": "determined",
-              "why": "Belfort won't sign this one: he turns down the fortune; his determined face held as Vance gives up"
+              "why": "Belfort says he won't sign this one: he turns down the fortune; his determined face held as Vance gives up"
             }
           ],
           "new_read": true
@@ -7322,22 +7223,6 @@
             "why": "same frame, closer"
           },
           "reuse": "reframe",
-          "heroes_ok": true
-        },
-        {
-          "at": "You know how this kind of paper works.",
-          "type": "B",
-          "picture": "s12_ots_bel",
-          "motion": {
-            "kind": "pull",
-            "z0": 1.038,
-            "z1": 1.0
-          },
-          "purpose": "Belfort feels it in his past",
-          "cut": {
-            "why": "cut on the bubble: Belfort's face before the answer"
-          },
-          "reuse": "reuse",
           "heroes_ok": true
         },
         {
@@ -8421,7 +8306,7 @@
           "kind": "transition"
         },
         {
-          "text": "It's Jeff Bezos. Other buyers asked them to bury that report. Bezos offers double, because they didn't. Musk just repeats the word. Double. Belfort makes it a partnership, and lets Bezos buy lunch. Bezos buys lunch.",
+          "text": "It's Jeff Bezos. He says other buyers asked them to bury that report, so he offers double. Musk just mouths the word. Double. Belfort makes it a partnership, and lets Bezos buy lunch. Bezos buys lunch.",
           "tags": [
             "curious"
           ],
@@ -8431,7 +8316,6 @@
           "emphasis": [
             "double"
           ],
-          "pause_after": 0.6,
           "visual_beats": [
             {
               "at": "Bezos buys lunch",
@@ -8441,6 +8325,21 @@
               "why": "Bezos takes the counter-offer with a smile; held before the jump back to the courthouse"
             }
           ],
+          "new_read": true,
+          "pause_after": 0.4
+        },
+        {
+          "text": "Within a year, the garage behind the motel is a factory, and the factory is theirs.",
+          "tags": [
+            "warmly"
+          ],
+          "tone": "warm, settling, a release",
+          "emotion": "satisfaction",
+          "kind": "transition",
+          "emphasis": [
+            "theirs"
+          ],
+          "pause_after": 0.8,
           "new_read": true
         }
       ],
@@ -8677,7 +8576,7 @@
           "reveal": "Jeff Bezos walks in"
         },
         {
-          "at": "Other buyers asked them",
+          "at": "He says other buyers",
           "type": "B",
           "picture": {
             "id": "s14_ots_bel",
@@ -8712,7 +8611,7 @@
           "heroes_ok": true
         },
         {
-          "at": "Musk just repeats",
+          "at": "Musk just mouths",
           "type": "B",
           "picture": {
             "id": "s14_three",
@@ -8895,7 +8794,7 @@
           "kind": "transition"
         },
         {
-          "text": "He's here for his ten percent. Musk asks: of a burnt garage? Of everything, fires included. It's in the envelope. Belfort says O'Leary got lucky with Musk. O'Leary says he didn't pick him.",
+          "text": "He's here for his ten percent. Musk asks: of a burnt garage? O'Leary says of everything, fires included. It's in the envelope. Belfort grins at the lucky pick. O'Leary says he didn't pick anyone.",
           "tags": [
             "mischievously"
           ],
@@ -8908,11 +8807,11 @@
           "pause_after": 0.4,
           "visual_beats": [
             {
-              "at": "didn't pick him",
+              "at": "didn't pick anyone",
               "kind": "expression",
               "who": "oleary",
               "expression": "smug",
-              "why": "O'Leary's quiet hint lands; his smug face held while Belfort's grin freezes"
+              "why": "O'Leary's quiet hint that he didn't pick anyone; his smug face held while Belfort's grin freezes"
             }
           ],
           "new_read": true
@@ -9053,7 +8952,7 @@
           "kind": "transition"
         },
         {
-          "text": "Most envelopes paid back the forty. Three paid for everything. Musk calls it luck. O'Leary agrees: luck chose the three. He just made sure he owned all eight.",
+          "text": "Most envelopes paid back the forty. Three paid for everything. Musk calls it luck. O'Leary agrees: luck chose the three. He just made sure he owned all eight. He shuts the briefcase and keeps waiting.",
           "tags": [
             "deadpan"
           ],
@@ -9174,7 +9073,7 @@
           "heroes_ok": true
         },
         {
-          "at": "Of everything, fires included",
+          "at": "O'Leary says of everything",
           "type": "B",
           "picture": {
             "id": "s15_ts_om",
@@ -9209,7 +9108,7 @@
           "heroes_ok": true
         },
         {
-          "at": "Belfort says O'Leary got lucky",
+          "at": "Belfort grins at the lucky pick",
           "type": "B",
           "picture": {
             "id": "s15_ots_bel",

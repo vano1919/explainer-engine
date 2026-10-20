@@ -32,7 +32,8 @@ You did not write this script. Read only the script (the full `production_script
    - **dialogue**: each line follows from the line before it and the speaker's knowledge, wants and speech bible
      (`cast.<id>.speech`); would silence, a reaction or a deflection serve better? Is every exchange framed by the
      narrator, setup -> exchange -> conclusion, never two chained (ST-14, BP-90, D-64)? Does the narrator give the context
-     whenever a conversation needs it?
+     whenever a conversation needs it? Can the listener tell who says what (speaker before his words, BP-95; two voices a
+     line, BP-96)?
    - **visual**: each shot and beat against its instant: does it add, duplicate, contradict or reveal too early? Do the
      entrances and reveals get the frame the scene header promises? Does the establishing shot show the scene's cast
      (BP-91)? Is any beat or prop there only because a rule asked for one (BP-93: a beat needs a word)? Does a bubble do

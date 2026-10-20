@@ -49,4 +49,5 @@ Return the segment's lines only.
 
 When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood, then a slow move to the next shot, never a cut straight into other people's talk.
 
-Frame every exchange (ST-14, BP-90, D-64): narrator setup (who talks, named before his first line, and what brings them there), the exchange, narrator conclusion (what came of it); a segment never ends or opens on a hero line, so two exchanges never touch. A bubble line, when the scene keeps one, is a key phrase within BP-84's cap.
+A reported exchange counts as the scene's exchange (SC-05, BP-70, D-65, the creator 2026-10-20 21:14/21:17): name the speaker before his words (BP-95),
+at most two speakers reported in one line (BP-96). Frame every exchange (ST-14, BP-90, D-64): narrator setup (who talks, named before his first line, and what brings them there), the exchange, narrator conclusion (what came of it); a segment never ends or opens on a hero line, so two exchanges never touch. A bubble line, when the scene keeps one, is a key phrase within BP-84's cap.
