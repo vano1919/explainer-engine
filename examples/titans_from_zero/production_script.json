@@ -12976,5 +12976,3968 @@
    "fade_s": 2.0
   }
  ],
- "graphics": []
+ "graphics": [],
+ "shorts": [
+  {
+   "id": "SH01",
+   "style": "cold_open_cliffhanger",
+   "ending": "cliffhanger",
+   "hook": "What happens when ten fortunes vanish by lunch?",
+   "lines": [
+    {
+     "text": "What happens when ten fortunes vanish by lunch?",
+     "tags": [
+      "curious"
+     ],
+     "visual_beats": [
+      {
+       "at": "ten fortunes",
+       "kind": "text",
+       "why": "ten fortunes are the stake of the whole story [ten fortunes]",
+       "text": "TEN FORTUNES",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "vanish",
+       "kind": "accent",
+       "why": "the fortunes vanish: a punch of the picture [vanish]",
+       "effect": "punch",
+       "strength": 0.6
+      }
+     ]
+    },
+    {
+     "text": "Ten men sit shoulder to shoulder on one wooden bench.",
+     "visual_beats": [
+      {
+       "at": "Ten men",
+       "kind": "highlight",
+       "why": "rings the ten men on the bench [Ten men]",
+       "pos": [
+        0.5,
+        0.55
+       ]
+      },
+      {
+       "at": "one wooden bench",
+       "kind": "label",
+       "why": "names the one wooden bench [one wooden bench]",
+       "text": "THE BENCH",
+       "pos": [
+        0.5,
+        0.75
+       ]
+      }
+     ]
+    },
+    {
+     "text": "By lunch, a clerk will turn it all into paperwork.",
+     "visual_beats": [
+      {
+       "at": "By lunch",
+       "kind": "symbol",
+       "why": "by lunch: the clock [By lunch]",
+       "symbol": "clock",
+       "pos": [
+        0.85,
+        0.2
+       ]
+      },
+      {
+       "at": "paperwork",
+       "kind": "accent",
+       "why": "paperwork: the clerk's stamp lands [paperwork]",
+       "effect": "punch",
+       "strength": 0.6
+      }
+     ]
+    },
+    {
+     "text": "Nobody will lend them a dollar.",
+     "visual_beats": [
+      {
+       "at": "Nobody",
+       "kind": "symbol",
+       "why": "nobody will lend: a cross [Nobody]",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ]
+      },
+      {
+       "at": "a dollar",
+       "kind": "text",
+       "why": "not even one dollar [a dollar]",
+       "text": "NOT ONE DOLLAR",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ]
+    },
+    {
+     "text": "They walk out with one thing: whatever is inside their heads.",
+     "visual_beats": [
+      {
+       "at": "one thing",
+       "kind": "text",
+       "text": "ONE THING",
+       "why": "they walk out with one thing",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "inside their heads",
+       "kind": "highlight",
+       "pos": [
+        0.5,
+        0.3
+       ],
+       "why": "rings the heads: whatever is inside them"
+      }
+     ],
+     "emphasis": [
+      "heads"
+     ],
+     "pause_after": 0.5
+    },
+    {
+     "text": "And one of them is about to sell his future for forty dollars.",
+     "visual_beats": [
+      {
+       "at": "sell his future",
+       "kind": "text",
+       "why": "he sells his future [sell his future]",
+       "text": "HIS FUTURE",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "forty dollars",
+       "kind": "highlight",
+       "why": "rings the stack of envelopes, the forty dollars [forty dollars]",
+       "pos": [
+        0.5,
+        0.6
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Part two is the full video.",
+     "visual_beats": [
+      {
+       "at": "full video",
+       "kind": "label",
+       "why": "points to the full video [full video]",
+       "text": "FULL VIDEO",
+       "pos": [
+        0.5,
+        0.8
+       ]
+      }
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "What happens when",
+     "picture": "s01_hall",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "ten fortunes vanish",
+     "picture": "s01_ten",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Ten men sit shoulder",
+     "picture": "s01_pair",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "By lunch a clerk",
+     "picture": "s01_stamp",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Nobody will lend them",
+     "picture": "s01_musk_steps",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "They walk out with",
+     "picture": "s01_dollar",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "And one of them",
+     "picture": "s01_envelope",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Part two is the",
+     "picture": "s01_hall",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH02",
+   "style": "dialogue_clash",
+   "ending": "question",
+   "hook": "Is forty dollars worth ten percent forever?",
+   "lines": [
+    {
+     "text": "Is forty dollars worth ten percent forever?",
+     "tags": [
+      "curious"
+     ],
+     "visual_beats": [
+      {
+       "at": "forty dollars",
+       "kind": "highlight",
+       "why": "rings the man who pays forty dollars [forty dollars]",
+       "pos": [
+        0.36,
+        0.4
+       ]
+      },
+      {
+       "at": "forever?",
+       "kind": "symbol",
+       "why": "forever: an open question [forever]",
+       "symbol": "question",
+       "pos": [
+        0.82,
+        0.22
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Watch what a broke engineer signs for one wheel.",
+     "visual_beats": [
+      {
+       "at": "Watch",
+       "kind": "symbol",
+       "why": "watch: attention on the deal [Watch]",
+       "symbol": "exclaim",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      },
+      {
+       "at": "one wheel",
+       "kind": "highlight",
+       "why": "rings the man who gets one wheel [one wheel]",
+       "pos": [
+        0.62,
+        0.42
+       ]
+      }
+     ]
+    },
+    {
+     "text": "You can still build things?",
+     "speaker": "oleary",
+     "to": "musk",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "build things",
+       "kind": "expression",
+       "expression": "curious",
+       "why": "O'Leary appraises: can he still build things? [build things]"
+      }
+     ],
+     "emphasis": [
+      "things"
+     ]
+    },
+    {
+     "text": "I can build anything. That isn't the problem.",
+     "speaker": "musk",
+     "to": "oleary",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "build anything",
+       "kind": "expression",
+       "expression": "determined",
+       "why": "Musk is sure he can build anything [build anything]"
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "problem"
+     ]
+    },
+    {
+     "text": "Nobody pays for the parts before the thing exists.",
+     "speaker": "musk",
+     "to": "oleary",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "Nobody pays",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "nobody pays for parts"
+      },
+      {
+       "at": "thing exists",
+       "kind": "expression",
+       "expression": "smug",
+       "why": "O'Leary hears the weak point and smells a deal [thing exists]",
+       "who": "oleary"
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "exists"
+     ]
+    },
+    {
+     "text": "Then I will. Forty dollars.",
+     "speaker": "oleary",
+     "to": "musk",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "Then I will",
+       "kind": "expression",
+       "expression": "surprised",
+       "why": "Musk is surprised that someone will pay [Then I will]",
+       "who": "musk"
+      },
+      {
+       "at": "Forty dollars",
+       "kind": "text",
+       "text": "FORTY DOLLARS",
+       "why": "the offer: forty dollars",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ],
+     "emphasis": [
+      "dollars"
+     ]
+    },
+    {
+     "text": "Forty dollars buys one wheel.",
+     "speaker": "musk",
+     "to": "oleary",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "Forty dollars",
+       "kind": "expression",
+       "expression": "doubtful",
+       "why": "Musk doubts forty dollars is anything [Forty dollars]"
+      },
+      {
+       "at": "one wheel",
+       "kind": "label",
+       "text": "ONE WHEEL",
+       "pos": [
+        0.4,
+        0.65
+       ],
+       "why": "forty dollars buys only one wheel"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "wheel"
+     ]
+    },
+    {
+     "text": "And ten percent of everything you ever build. Forever.",
+     "speaker": "oleary",
+     "to": "musk",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "ten percent",
+       "kind": "text",
+       "text": "TEN PERCENT",
+       "why": "ten percent of everything",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "everything you ever build",
+       "kind": "expression",
+       "expression": "worried",
+       "why": "Musk sees how much he is giving up [everything you ever build]",
+       "who": "musk"
+      },
+      {
+       "at": "Forever.",
+       "kind": "accent",
+       "effect": "punch",
+       "why": "Forever: the blow of the line",
+       "strength": 0.8,
+       "cue": {
+        "sound": "thud",
+        "event": "impact",
+        "why": "the punchline of the deal: forever"
+       }
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "Forever"
+     ],
+     "pause_after": 0.6
+    },
+    {
+     "text": "Ten percent for forty? I've sold air for more.",
+     "speaker": "trump",
+     "to": "room",
+     "intent": "banter",
+     "visual_beats": [
+      {
+       "at": "sold air",
+       "kind": "expression",
+       "expression": "smug",
+       "why": "Trump boasts he has sold air for more [sold air]"
+      }
+     ],
+     "tags": [
+      "excited"
+     ],
+     "emphasis": [
+      "air"
+     ]
+    },
+    {
+     "text": "Well, then sell me some. I've got an envelope for you too.",
+     "speaker": "oleary",
+     "to": "trump",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "sell me some",
+       "kind": "expression",
+       "expression": "amused",
+       "why": "O'Leary enjoys challenging Trump [sell me some]"
+      },
+      {
+       "at": "an envelope",
+       "kind": "label",
+       "text": "ENVELOPE",
+       "pos": [
+        0.3,
+        0.65
+       ],
+       "why": "he has an envelope for Trump too"
+      },
+      {
+       "at": "envelope for you too",
+       "kind": "expression",
+       "expression": "doubtful",
+       "why": "Trump realises he is next [envelope for you too]",
+       "who": "trump"
+      }
+     ],
+     "emphasis": [
+      "too"
+     ]
+    },
+    {
+     "text": "Why would I sign that?",
+     "speaker": "musk",
+     "to": "oleary",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "Why would",
+       "kind": "expression",
+       "expression": "doubtful",
+       "why": "Musk resists signing [Why would]"
+      }
+     ],
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "sign"
+     ]
+    },
+    {
+     "text": "Because forty is more than anyone else in this building is offering.",
+     "speaker": "oleary",
+     "to": "musk",
+     "intent": "decide",
+     "visual_beats": [
+      {
+       "at": "anyone else",
+       "kind": "expression",
+       "expression": "sad",
+       "why": "Musk hears that nobody else offers anything [anyone else]",
+       "who": "musk"
+      }
+     ],
+     "emphasis": [
+      "offering"
+     ]
+    },
+    {
+     "text": "Forever is a long word in a contract.",
+     "speaker": "belfort",
+     "to": "oleary",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "Forever",
+       "kind": "text",
+       "text": "FOREVER",
+       "why": "forever, the word he questions",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "long word",
+       "kind": "expression",
+       "expression": "smug",
+       "why": "Belfort reads the clause like a pro [long word]"
+      }
+     ],
+     "tags": [
+      "mischievously"
+     ],
+     "emphasis": [
+      "long"
+     ]
+    },
+    {
+     "text": "It's a short one in a bankruptcy.",
+     "speaker": "oleary",
+     "to": "belfort",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "short one",
+       "kind": "expression",
+       "expression": "smug",
+       "why": "O'Leary has the better answer [short one]"
+      },
+      {
+       "at": "bankruptcy",
+       "kind": "expression",
+       "expression": "amused",
+       "why": "Belfort enjoys being beaten [bankruptcy]",
+       "who": "belfort"
+      }
+     ],
+     "emphasis": [
+      "short"
+     ],
+     "pause_after": 0.5
+    },
+    {
+     "text": "Would you have signed? Watch the full video.",
+     "visual_beats": [
+      {
+       "at": "signed",
+       "kind": "symbol",
+       "why": "would you have signed: a question [signed]",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      },
+      {
+       "at": "full video",
+       "kind": "label",
+       "why": "points to the full video [full video]",
+       "text": "FULL VIDEO",
+       "pos": [
+        0.5,
+        0.8
+       ]
+      }
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Is forty dollars",
+     "picture": "s02_ts",
+     "crop_x": 0.36,
+     "zoom": 1.0
+    },
+    {
+     "at": "ten percent forever",
+     "picture": "s02_wide",
+     "crop_x": 0.62,
+     "zoom": 1.0
+    },
+    {
+     "at": "Watch what a broke",
+     "picture": "s02_ts",
+     "crop_x": 0.62,
+     "zoom": 1.0
+    },
+    {
+     "at": "You can still build",
+     "picture": "s02_ots_ol",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    },
+    {
+     "at": "I can build anything",
+     "picture": "s02_ots_ol",
+     "crop_x": 0.9,
+     "zoom": 1.3
+    },
+    {
+     "at": "Nobody pays for the",
+     "picture": "s02_ots_ol",
+     "crop_x": 0.9,
+     "zoom": 1.0
+    },
+    {
+     "at": "Then I will Forty",
+     "picture": "s02_ots_ol",
+     "crop_x": 0.45,
+     "zoom": 1.3
+    },
+    {
+     "at": "Forty dollars buys one",
+     "picture": "s02_ots_musk",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "And ten percent of",
+     "picture": "s02_ots_musk",
+     "crop_x": 0.1,
+     "zoom": 1.0
+    },
+    {
+     "at": "Ten percent for forty",
+     "picture": "s02_ots_trump",
+     "crop_x": 0.4,
+     "zoom": 1.0
+    },
+    {
+     "at": "Well then sell me",
+     "picture": "s02_ol_trump",
+     "crop_x": 0.33,
+     "zoom": 1.0
+    },
+    {
+     "at": "Why would I sign",
+     "picture": "s02_ots_musk",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "Because forty is more",
+     "picture": "s02_ots_musk",
+     "crop_x": 0.1,
+     "zoom": 1.3
+    },
+    {
+     "at": "Forever is a long",
+     "picture": "s02_ol_bel",
+     "crop_x": 0.33,
+     "zoom": 1.0
+    },
+    {
+     "at": "It's a short one",
+     "picture": "s02_ol_bel",
+     "crop_x": 0.65,
+     "zoom": 1.0
+    },
+    {
+     "at": "Would you have signed",
+     "picture": "s02_stands",
+     "crop_x": 0.4,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH03",
+   "style": "anti_intuition",
+   "ending": "pointer",
+   "hook": "Nobody lends to a ruined billionaire.",
+   "lines": [
+    {
+     "text": "Nobody lends to a ruined billionaire.",
+     "tags": [
+      "curious"
+     ],
+     "visual_beats": [
+      {
+       "at": "Nobody",
+       "kind": "symbol",
+       "why": "nobody lends: a cross [Nobody]",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      },
+      {
+       "at": "ruined billionaire",
+       "kind": "text",
+       "why": "the ruined billionaire [ruined billionaire]",
+       "text": "RUINED",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ]
+    },
+    {
+     "text": "The banker types a name, but the screen says no.",
+     "visual_beats": [
+      {
+       "at": "types a name",
+       "kind": "text",
+       "why": "the banker types the name [types a name]",
+       "text": "TYPES HIS NAME",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "the screen says no",
+       "kind": "highlight",
+       "why": "rings the banker's screen [the screen says no]",
+       "pos": [
+        0.5,
+        0.5
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Robert Kiyosaki asks for a credit card. Same screen. Same slide.",
+     "visual_beats": [
+      {
+       "at": "Robert Kiyosaki",
+       "kind": "highlight",
+       "pos": [
+        0.3,
+        0.5
+       ],
+       "why": "rings Robert Kiyosaki asking for a card"
+      },
+      {
+       "at": "Same screen",
+       "kind": "symbol",
+       "symbol": "equals",
+       "pos": [
+        0.82,
+        0.25
+       ],
+       "why": "same screen, same slide"
+      },
+      {
+       "at": "Same slide",
+       "kind": "expression",
+       "expression": "confused",
+       "why": "Kiyosaki cannot believe the same answer [Same slide]",
+       "who": "kiyosaki"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "slide"
+     ]
+    },
+    {
+     "text": "Donald Trump taps his card at a coffee cart, and the machine beeps twice.",
+     "visual_beats": [
+      {
+       "at": "taps his card",
+       "kind": "highlight",
+       "pos": [
+        0.6,
+        0.55
+       ],
+       "why": "rings the card tapping the reader"
+      },
+      {
+       "at": "beeps",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "the machine beeps: declined",
+       "cue": {
+        "sound": "blip",
+        "event": "diegetic",
+        "why": "the card reader's beep, visible on screen"
+       }
+      },
+      {
+       "at": "beeps twice",
+       "kind": "expression",
+       "expression": "surprised",
+       "why": "Trump is startled by the double beep [beeps twice]",
+       "who": "trump"
+      }
+     ],
+     "tags": [
+      "mischievously"
+     ],
+     "emphasis": [
+      "twice"
+     ],
+     "pause_after": 0.5
+    },
+    {
+     "text": "A loan was only ever a stranger's trust. But nobody trusts them now.",
+     "visual_beats": [
+      {
+       "at": "stranger's trust",
+       "kind": "text",
+       "why": "a loan is a stranger's trust [stranger's trust]",
+       "text": "A STRANGER'S TRUST",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "nobody",
+       "kind": "symbol",
+       "why": "nobody trusts them: a cross [nobody]",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ]
+      }
+     ]
+    },
+    {
+     "text": "So the only money left is money they make today. Watch the full video.",
+     "visual_beats": [
+      {
+       "at": "money they make today",
+       "kind": "text",
+       "why": "only today's money is left [money they make today]",
+       "text": "TODAY ONLY",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "full video",
+       "kind": "label",
+       "why": "points to the full video [full video]",
+       "text": "FULL VIDEO",
+       "pos": [
+        0.5,
+        0.8
+       ]
+      }
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Nobody lends",
+     "picture": "s03_street",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "ruined billionaire",
+     "picture": "s03_bank",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "The banker types a",
+     "picture": "s03_bank",
+     "crop_x": 0.5,
+     "zoom": 1.3
+    },
+    {
+     "at": "Robert Kiyosaki asks for",
+     "picture": "s03_kiyosaki_card",
+     "crop_x": 0.3,
+     "zoom": 1.0
+    },
+    {
+     "at": "Donald Trump taps his",
+     "picture": "s03_cart",
+     "crop_x": 0.4,
+     "zoom": 1.0
+    },
+    {
+     "at": "A loan was only",
+     "picture": "s03_trust",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "So the only money",
+     "picture": "s03_hands_mouths",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH04",
+   "style": "myth_buster",
+   "ending": "pointer",
+   "hook": "Does the better scooter always win the sale?",
+   "lines": [
+    {
+     "text": "Does the better scooter always win the sale?",
+     "tags": [
+      "curious"
+     ],
+     "visual_beats": [
+      {
+       "at": "better scooter",
+       "kind": "text",
+       "why": "the myth: the better product wins [better scooter]",
+       "text": "BETTER WINS?",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "sale?",
+       "kind": "symbol",
+       "why": "does it win the sale: a question [sale]",
+       "symbol": "question",
+       "pos": [
+        0.82,
+        0.22
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Musk built a great scooter. Nobody will stop for it.",
+     "visual_beats": [
+      {
+       "at": "great scooter",
+       "kind": "highlight",
+       "why": "rings the scooter Musk built [great scooter]",
+       "pos": [
+        0.5,
+        0.6
+       ]
+      },
+      {
+       "at": "Nobody",
+       "kind": "symbol",
+       "why": "nobody stops: a cross [Nobody]",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Then Belfort lets a rider take one free lap.",
+     "visual_beats": [
+      {
+       "at": "free lap",
+       "kind": "text",
+       "why": "the free lap [free lap]",
+       "text": "ONE FREE LAP",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ]
+    },
+    {
+     "text": "The rider pays cash.",
+     "visual_beats": [
+      {
+       "at": "pays cash",
+       "kind": "accent",
+       "effect": "punch",
+       "why": "the rider pays cash: it worked",
+       "strength": 0.4
+      }
+     ],
+     "emphasis": [
+      "cash"
+     ]
+    },
+    {
+     "text": "It's the same scooter.",
+     "speaker": "musk",
+     "to": "belfort",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "same scooter",
+       "kind": "symbol",
+       "symbol": "equals",
+       "pos": [
+        0.82,
+        0.25
+       ],
+       "why": "it's the same scooter"
+      },
+      {
+       "at": "same scooter",
+       "kind": "expression",
+       "expression": "deadpan",
+       "why": "Musk insists, flat: the same scooter [same scooter]"
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "same"
+     ]
+    },
+    {
+     "text": "Not to him. He rode it before he paid.",
+     "speaker": "belfort",
+     "to": "musk",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "Not to him",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "not to him: he rode it first"
+      },
+      {
+       "at": "rode it before he paid",
+       "kind": "text",
+       "text": "RIDE, THEN PAY",
+       "why": "he rode it before he paid",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "rode it",
+       "kind": "expression",
+       "expression": "amused",
+       "why": "Belfort is pleased with the order of things [rode it]"
+      }
+     ],
+     "emphasis": [
+      "paid"
+     ]
+    },
+    {
+     "text": "So you gave it away first.",
+     "speaker": "musk",
+     "to": "belfort",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "gave it away",
+       "kind": "symbol",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ],
+       "why": "so you gave it away first?"
+      },
+      {
+       "at": "gave it away",
+       "kind": "expression",
+       "expression": "curious",
+       "why": "Musk starts to see it [gave it away]"
+      }
+     ],
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "first"
+     ]
+    },
+    {
+     "text": "Give a little first. People hate owing you.",
+     "speaker": "belfort",
+     "to": "musk",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "Give a little first",
+       "kind": "text",
+       "text": "GIVE FIRST",
+       "why": "give a little first",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "People hate owing you",
+       "kind": "expression",
+       "expression": "doubtful",
+       "why": "Musk weighs: people hate owing you [People hate owing you]",
+       "who": "musk"
+      }
+     ],
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "owing"
+     ]
+    },
+    {
+     "text": "Watch the full video.",
+     "visual_beats": [
+      {
+       "at": "full video",
+       "kind": "label",
+       "why": "points to the full video [full video]",
+       "text": "FULL VIDEO",
+       "pos": [
+        0.5,
+        0.8
+       ]
+      }
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Does the better",
+     "picture": "s04_lot",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "scooter always win",
+     "picture": "s04_lap",
+     "crop_x": 0.7,
+     "zoom": 1.0
+    },
+    {
+     "at": "Musk built a great",
+     "picture": "s04_lot",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Then Belfort lets a",
+     "picture": "s04_lap",
+     "crop_x": 0.7,
+     "zoom": 1.0
+    },
+    {
+     "at": "The rider pays cash",
+     "picture": "s04_three",
+     "crop_x": 0.35,
+     "zoom": 1.0
+    },
+    {
+     "at": "It's the same scooter",
+     "picture": "s04_ots_musk",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "Not to him He",
+     "picture": "s04_ots_musk",
+     "crop_x": 0.1,
+     "zoom": 1.3
+    },
+    {
+     "at": "So you gave it",
+     "picture": "s04_ots_bel",
+     "crop_x": 0.9,
+     "zoom": 1.0
+    },
+    {
+     "at": "Give a little first",
+     "picture": "s04_ts",
+     "crop_x": 0.68,
+     "zoom": 1.0
+    },
+    {
+     "at": "Watch the full video",
+     "picture": "s04_ts",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH05",
+   "style": "countdown_hud",
+   "ending": "cliffhanger",
+   "hook": "How do eleven viewers become four thousand?",
+   "lines": [
+    {
+     "text": "How do eleven viewers become four thousand?",
+     "tags": [
+      "curious"
+     ],
+     "visual_beats": [
+      {
+       "at": "eleven viewers",
+       "kind": "text",
+       "why": "the HUD counter starts at eleven [eleven viewers]",
+       "text": "ELEVEN WATCHING",
+       "pos": [
+        0.5,
+        0.12
+       ]
+      },
+      {
+       "at": "four thousand?",
+       "kind": "text",
+       "why": "the goal on the counter [four thousand]",
+       "text": "FOUR THOUSAND?",
+       "pos": [
+        0.5,
+        0.22
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Watch the count at the top.",
+     "visual_beats": [
+      {
+       "at": "count at the top",
+       "kind": "text",
+       "why": "the HUD counter sits at the top [count at the top]",
+       "text": "LIVE COUNT",
+       "pos": [
+        0.5,
+        0.12
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Two broke men share one cheap motel room.",
+     "visual_beats": [
+      {
+       "at": "Two broke men",
+       "kind": "highlight",
+       "why": "rings the two men in the room [Two broke men]",
+       "pos": [
+        0.5,
+        0.55
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Debt is how the rich get richer. Write that down.",
+     "speaker": "kiyosaki",
+     "to": "trump",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "richer",
+       "kind": "symbol",
+       "symbol": "arrow_up",
+       "pos": [
+        0.85,
+        0.22
+       ],
+       "why": "the rich get richer"
+      },
+      {
+       "at": "Write that down",
+       "kind": "expression",
+       "expression": "determined",
+       "why": "Kiyosaki is sure: write that down [Write that down]"
+      }
+     ],
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "richer"
+     ]
+    },
+    {
+     "text": "Fantastic. Lend me some.",
+     "speaker": "trump",
+     "to": "kiyosaki",
+     "intent": "banter",
+     "visual_beats": [
+      {
+       "at": "Lend me some",
+       "kind": "expression",
+       "expression": "smug",
+       "why": "Trump grins: lend me some [Lend me some]"
+      }
+     ],
+     "tags": [
+      "sarcastic"
+     ],
+     "emphasis": [
+      "some"
+     ]
+    },
+    {
+     "text": "Well, I don't have any.",
+     "speaker": "kiyosaki",
+     "to": "trump",
+     "intent": "concede",
+     "visual_beats": [
+      {
+       "at": "don't have any",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "I don't have any"
+      },
+      {
+       "at": "don't have any",
+       "kind": "expression",
+       "expression": "sad",
+       "why": "Kiyosaki admits he has none [don't have any]"
+      }
+     ],
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "any"
+     ],
+     "pause_after": 0.5
+    },
+    {
+     "text": "Then you don't own the thing you're selling.",
+     "speaker": "trump",
+     "to": "kiyosaki",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "you're selling",
+       "kind": "expression",
+       "expression": "worried",
+       "why": "Kiyosaki is caught: the thing you're selling [you're selling]",
+       "who": "kiyosaki"
+      },
+      {
+       "at": "selling",
+       "kind": "accent",
+       "effect": "punch",
+       "why": "selling: the hit of the line",
+       "strength": 0.5
+      }
+     ],
+     "tags": [
+      "dramatically"
+     ],
+     "emphasis": [
+      "selling"
+     ]
+    },
+    {
+     "text": "Banks forget. In a year they'll beg to lend us.",
+     "speaker": "kiyosaki",
+     "to": "trump",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "In a year",
+       "kind": "symbol",
+       "symbol": "clock",
+       "pos": [
+        0.85,
+        0.2
+       ],
+       "why": "in a year they'll beg"
+      },
+      {
+       "at": "beg to lend",
+       "kind": "expression",
+       "expression": "determined",
+       "why": "Kiyosaki clings to his theory: they'll beg to lend [beg to lend]"
+      }
+     ],
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "beg"
+     ]
+    },
+    {
+     "text": "My companies went to bankruptcy court six times. The banks never came back first.",
+     "speaker": "trump",
+     "to": "kiyosaki",
+     "intent": "reveal",
+     "claims": [
+      "C-03"
+     ],
+     "visual_beats": [
+      {
+       "at": "six times",
+       "kind": "chart",
+       "chart": "counter",
+       "values": [
+        6
+       ],
+       "unit": "TIMES",
+       "claim": "C-03",
+       "pos": [
+        0.8,
+        0.25
+       ],
+       "why": "bankruptcy court six times"
+      },
+      {
+       "at": "The banks never",
+       "kind": "expression",
+       "expression": "doubtful",
+       "why": "Kiyosaki doubts the banks came back first [The banks never]",
+       "who": "kiyosaki"
+      },
+      {
+       "at": "never came back",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.5,
+        0.3
+       ],
+       "why": "the banks never came back"
+      }
+     ],
+     "tags": [
+      "excited"
+     ],
+     "emphasis": [
+      "first"
+     ]
+    },
+    {
+     "text": "The cameras.",
+     "speaker": "trump",
+     "to": "kiyosaki",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "The cameras",
+       "kind": "highlight",
+       "pos": [
+        0.7,
+        0.5
+       ],
+       "why": "rings the phone camera that came back"
+      },
+      {
+       "at": "cameras",
+       "kind": "expression",
+       "expression": "confused",
+       "why": "Kiyosaki is confused by the cameras [cameras]",
+       "who": "kiyosaki"
+      }
+     ],
+     "tags": [
+      "dramatically"
+     ],
+     "emphasis": [
+      "cameras"
+     ]
+    },
+    {
+     "text": "Cameras don't pay rent.",
+     "speaker": "kiyosaki",
+     "to": "trump",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "Cameras",
+       "kind": "expression",
+       "expression": "deadpan",
+       "why": "Kiyosaki answers flat: cameras don't pay rent [Cameras]"
+      },
+      {
+       "at": "don't pay rent",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "cameras don't pay rent"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "rent"
+     ]
+    },
+    {
+     "text": "Watch.",
+     "speaker": "trump",
+     "to": "kiyosaki",
+     "intent": "decide",
+     "visual_beats": [
+      {
+       "at": "Watch",
+       "kind": "expression",
+       "expression": "amused",
+       "why": "Trump: Watch. [Watch]"
+      }
+     ],
+     "tags": [
+      "mischievously"
+     ],
+     "emphasis": [
+      "Watch"
+     ]
+    },
+    {
+     "text": "Trump props his phone by the empty pool and goes live.",
+     "visual_beats": [
+      {
+       "at": "phone",
+       "kind": "highlight",
+       "why": "rings the phone that goes live [phone]",
+       "pos": [
+        0.4,
+        0.55
+       ]
+      },
+      {
+       "at": "goes live",
+       "kind": "text",
+       "why": "the stream goes live [goes live]",
+       "text": "LIVE",
+       "pos": [
+        0.85,
+        0.15
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Eleven strangers watch him eat with a knife and fork.",
+     "visual_beats": [
+      {
+       "at": "Eleven strangers",
+       "kind": "text",
+       "why": "the count shows eleven [Eleven strangers]",
+       "text": "ELEVEN WATCHING",
+       "pos": [
+        0.5,
+        0.12
+       ]
+      },
+      {
+       "at": "knife and fork",
+       "kind": "highlight",
+       "why": "rings the knife and fork [knife and fork]",
+       "pos": [
+        0.5,
+        0.6
+       ]
+      }
+     ]
+    },
+    {
+     "text": "By midnight, eleven is four thousand.",
+     "visual_beats": [
+      {
+       "at": "By midnight",
+       "kind": "symbol",
+       "why": "midnight: the clock [By midnight]",
+       "symbol": "clock",
+       "pos": [
+        0.85,
+        0.2
+       ]
+      },
+      {
+       "at": "four thousand",
+       "kind": "text",
+       "why": "the count shows four thousand [four thousand]",
+       "text": "FOUR THOUSAND",
+       "pos": [
+        0.5,
+        0.12
+       ]
+      },
+      {
+       "at": "four thousand",
+       "kind": "symbol",
+       "why": "the count jumps up [four thousand]",
+       "symbol": "arrow_up",
+       "pos": [
+        0.85,
+        0.3
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Then Kiyosaki calls the bank. Watch the full video.",
+     "visual_beats": [
+      {
+       "at": "Kiyosaki",
+       "kind": "highlight",
+       "why": "rings Kiyosaki on the phone [Kiyosaki]",
+       "pos": [
+        0.4,
+        0.5
+       ]
+      },
+      {
+       "at": "full video",
+       "kind": "label",
+       "why": "points to the full video [full video]",
+       "text": "FULL VIDEO",
+       "pos": [
+        0.5,
+        0.8
+       ]
+      }
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "How do eleven",
+     "picture": "s05_pool_chair",
+     "crop_x": 0.38,
+     "zoom": 1.0
+    },
+    {
+     "at": "viewers become four thousand",
+     "picture": "s05_counter",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Watch the count at",
+     "picture": "s05_motel",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Two broke men share",
+     "picture": "s05_room",
+     "crop_x": 0.28,
+     "zoom": 1.0
+    },
+    {
+     "at": "Debt is how the",
+     "picture": "s05_ots_k",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    },
+    {
+     "at": "Fantastic Lend me some",
+     "picture": "s05_ots_t",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Well I don't have",
+     "picture": "s05_ots_t",
+     "crop_x": 0.1,
+     "zoom": 1.3
+    },
+    {
+     "at": "Then you don't own",
+     "picture": "s05_ots_k",
+     "crop_x": 0.9,
+     "zoom": 1.0
+    },
+    {
+     "at": "Banks forget In a",
+     "picture": "s05_ots_k",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    },
+    {
+     "at": "My companies went to",
+     "picture": "s05_room",
+     "crop_x": 0.72,
+     "zoom": 1.0
+    },
+    {
+     "at": "The cameras",
+     "picture": "s05_room",
+     "crop_x": 0.72,
+     "zoom": 1.3
+    },
+    {
+     "at": "Cameras don't pay rent",
+     "picture": "s05_room",
+     "crop_x": 0.28,
+     "zoom": 1.0
+    },
+    {
+     "at": "Watch",
+     "picture": "s05_room",
+     "crop_x": 0.72,
+     "zoom": 1.3
+    },
+    {
+     "at": "Trump props his phone",
+     "picture": "s05_pool_chair",
+     "crop_x": 0.38,
+     "zoom": 1.0
+    },
+    {
+     "at": "Eleven strangers watch him",
+     "picture": "s05_pool_chair",
+     "crop_x": 0.38,
+     "zoom": 1.0
+    },
+    {
+     "at": "By midnight eleven is",
+     "picture": "s05_counter",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Then Kiyosaki calls the",
+     "picture": "s05_voicemail",
+     "crop_x": 0.4,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH06",
+   "style": "pov_you",
+   "ending": "question",
+   "hook": "You just promised five hundred scooters.",
+   "lines": [
+    {
+     "text": "You just promised five hundred scooters.",
+     "tags": [
+      "curious"
+     ],
+     "visual_beats": [
+      {
+       "at": "five hundred",
+       "kind": "text",
+       "why": "the number you promised [five hundred]",
+       "text": "FIVE HUNDRED",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "scooters",
+       "kind": "highlight",
+       "why": "rings you in the office [scooters]",
+       "pos": [
+        0.28,
+        0.55
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Mark Cuban will sign, but first he asks you.",
+     "visual_beats": [
+      {
+       "at": "Mark Cuban",
+       "kind": "label",
+       "why": "names Mark Cuban [Mark Cuban]",
+       "text": "MARK CUBAN",
+       "pos": [
+        0.5,
+        0.3
+       ]
+      },
+      {
+       "at": "asks you",
+       "kind": "symbol",
+       "why": "he asks you a question [asks you]",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      }
+     ]
+    },
+    {
+     "text": "How many can you make by Christmas?",
+     "speaker": "cuban",
+     "to": "musk",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "by Christmas",
+       "kind": "symbol",
+       "symbol": "clock",
+       "pos": [
+        0.85,
+        0.2
+       ],
+       "why": "the Christmas deadline"
+      },
+      {
+       "at": "Christmas",
+       "kind": "expression",
+       "expression": "worried",
+       "why": "Musk feels the Christmas deadline [Christmas]",
+       "who": "musk"
+      }
+     ],
+     "emphasis": [
+      "Christmas"
+     ]
+    },
+    {
+     "text": "Fifty. Fifty good ones.",
+     "speaker": "musk",
+     "to": "cuban",
+     "intent": "concede",
+     "visual_beats": [
+      {
+       "at": "Fifty",
+       "kind": "expression",
+       "expression": "determined",
+       "why": "Musk is honest: fifty good ones [Fifty]"
+      },
+      {
+       "at": "good ones",
+       "kind": "text",
+       "text": "FIFTY GOOD ONES",
+       "why": "fifty good ones",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "good"
+     ]
+    },
+    {
+     "text": "Five hundred.",
+     "speaker": "belfort",
+     "to": "cuban",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "Five hundred",
+       "kind": "text",
+       "text": "FIVE HUNDRED",
+       "why": "five hundred is the shock",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "Five hundred",
+       "kind": "accent",
+       "effect": "punch",
+       "why": "five hundred: the shock",
+       "strength": 0.6
+      },
+      {
+       "at": "Five hundred",
+       "kind": "expression",
+       "expression": "surprised",
+       "why": "Musk is shocked by five hundred [Five hundred]",
+       "who": "musk",
+       "offset": 0.3
+      }
+     ],
+     "tags": [
+      "excited"
+     ],
+     "emphasis": [
+      "hundred"
+     ]
+    },
+    {
+     "text": "We have parts for fifty.",
+     "speaker": "musk",
+     "to": "belfort",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "parts",
+       "kind": "expression",
+       "expression": "worried",
+       "why": "Musk: we have parts for fifty [parts]"
+      },
+      {
+       "at": "fifty",
+       "kind": "expression",
+       "expression": "deadpan",
+       "why": "Belfort ignores it [fifty]",
+       "who": "belfort"
+      }
+     ],
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "fifty"
+     ]
+    },
+    {
+     "text": "He's modest. It's a condition.",
+     "speaker": "belfort",
+     "to": "cuban",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "modest",
+       "kind": "expression",
+       "expression": "smug",
+       "why": "Belfort smooths it: he's modest [modest]"
+      },
+      {
+       "at": "condition",
+       "kind": "expression",
+       "expression": "angry",
+       "why": "Musk bristles at: It's a condition [condition]",
+       "who": "musk"
+      }
+     ],
+     "tags": [
+      "mischievously"
+     ],
+     "emphasis": [
+      "condition"
+     ]
+    },
+    {
+     "text": "Five hundred by the twentieth of December, or you never walk in here again.",
+     "speaker": "cuban",
+     "to": "belfort",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "twentieth of December",
+       "kind": "text",
+       "text": "DECEMBER TWENTIETH",
+       "why": "the twentieth of December",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "never walk in",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "or you never walk in here again"
+      },
+      {
+       "at": "never walk in",
+       "kind": "expression",
+       "expression": "determined",
+       "why": "Cuban draws the line [never walk in]"
+      }
+     ],
+     "emphasis": [
+      "never"
+     ]
+    },
+    {
+     "text": "Can you?",
+     "speaker": "cuban",
+     "to": "musk",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "Can you",
+       "kind": "expression",
+       "expression": "scared",
+       "why": "Musk is cornered: Can you? [Can you]",
+       "who": "musk"
+      }
+     ],
+     "emphasis": [
+      "Can"
+     ]
+    },
+    {
+     "text": "Yes.",
+     "speaker": "musk",
+     "to": "cuban",
+     "intent": "concede",
+     "visual_beats": [
+      {
+       "at": "Yes",
+       "kind": "accent",
+       "effect": "punch",
+       "why": "Yes: Musk says yes to a number he cannot build",
+       "strength": 0.7,
+       "cue": {
+        "sound": "thud",
+        "event": "impact",
+        "why": "the turn: Musk accepts an impossible order"
+       }
+      },
+      {
+       "at": "Yes",
+       "kind": "expression",
+       "expression": "sad",
+       "why": "Musk's face as he says Yes [Yes]"
+      },
+      {
+       "at": "Yes",
+       "kind": "expression",
+       "expression": "joyful",
+       "why": "Belfort lights up at Yes [Yes]",
+       "who": "belfort",
+       "offset": 0.2
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "pause_after": 0.8
+    },
+    {
+     "text": "You said yes. Now watch what it costs, in the full video.",
+     "visual_beats": [
+      {
+       "at": "yes",
+       "kind": "symbol",
+       "why": "you said yes: a check [yes]",
+       "symbol": "check",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      },
+      {
+       "at": "full video",
+       "kind": "label",
+       "why": "points to the full video [full video]",
+       "text": "FULL VIDEO",
+       "pos": [
+        0.5,
+        0.8
+       ]
+      }
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "You just promised",
+     "picture": "s08_office",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "five hundred scooters",
+     "picture": "s08_three",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Mark Cuban will sign",
+     "picture": "s08_ots_cuban",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "How many can you",
+     "picture": "s08_three",
+     "crop_x": 0.3,
+     "zoom": 1.0
+    },
+    {
+     "at": "Fifty Fifty good ones",
+     "picture": "s08_three",
+     "crop_x": 0.5,
+     "zoom": 1.3
+    },
+    {
+     "at": "Five hundred",
+     "picture": "s08_bel_musk",
+     "crop_x": 0.35,
+     "zoom": 1.0
+    },
+    {
+     "at": "We have parts for",
+     "picture": "s08_bel_musk",
+     "crop_x": 0.68,
+     "zoom": 1.0
+    },
+    {
+     "at": "He's modest It's a",
+     "picture": "s08_bel_musk",
+     "crop_x": 0.35,
+     "zoom": 1.3
+    },
+    {
+     "at": "Five hundred by the",
+     "picture": "s08_ots_cuban",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "Can you",
+     "picture": "s08_musk",
+     "crop_x": 0.1,
+     "zoom": 1.0
+    },
+    {
+     "at": "Yes",
+     "picture": "s08_musk",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "You said yes Now",
+     "picture": "s08_musk",
+     "crop_x": 0.5,
+     "zoom": 1.3
+    }
+   ]
+  },
+  {
+   "id": "SH07",
+   "style": "would_you",
+   "ending": "question",
+   "hook": "Would you sign to be rich by Friday?",
+   "lines": [
+    {
+     "text": "Would you sign to be rich by Friday?",
+     "tags": [
+      "curious"
+     ],
+     "visual_beats": [
+      {
+       "at": "rich",
+       "kind": "symbol",
+       "why": "rich: a plus [rich]",
+       "symbol": "plus",
+       "pos": [
+        0.85,
+        0.25
+       ]
+      },
+      {
+       "at": "Friday?",
+       "kind": "text",
+       "why": "the deadline is Friday [Friday]",
+       "text": "BY FRIDAY",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Two days after the fire, a man in grey steps over the ashes.",
+     "visual_beats": [
+      {
+       "at": "a man in grey",
+       "kind": "highlight",
+       "why": "rings the man in the grey suit [a man in grey]",
+       "pos": [
+        0.4,
+        0.5
+       ]
+      },
+      {
+       "at": "ashes",
+       "kind": "highlight",
+       "why": "rings the ashes of the garage [ashes]",
+       "pos": [
+        0.5,
+        0.75
+       ]
+      }
+     ]
+    },
+    {
+     "text": "He will make you an offer.",
+     "visual_beats": [
+      {
+       "at": "offer",
+       "kind": "symbol",
+       "why": "the offer: a plus [offer]",
+       "symbol": "plus",
+       "pos": [
+        0.85,
+        0.25
+       ]
+      }
+     ]
+    },
+    {
+     "text": "His name is Vance. He buys companies before their bad week.",
+     "visual_beats": [
+      {
+       "at": "Vance",
+       "kind": "label",
+       "why": "names Vance [Vance]",
+       "text": "VANCE",
+       "pos": [
+        0.4,
+        0.3
+       ]
+      },
+      {
+       "at": "bad week",
+       "kind": "symbol",
+       "why": "the bad week: a cross [bad week]",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ]
+      }
+     ]
+    },
+    {
+     "text": "I'll buy the company today. You're both rich by Friday.",
+     "speaker": "vance",
+     "to": "belfort",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "I'll buy the company",
+       "kind": "expression",
+       "expression": "smug",
+       "why": "Vance offers: I'll buy the company [I'll buy the company]",
+       "who": "vance"
+      },
+      {
+       "at": "rich by Friday",
+       "kind": "text",
+       "text": "RICH BY FRIDAY",
+       "why": "you're both rich by Friday",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "rich by Friday",
+       "kind": "expression",
+       "expression": "curious",
+       "why": "Belfort hears rich by Friday [rich by Friday]",
+       "who": "belfort"
+      }
+     ],
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "Friday"
+     ]
+    },
+    {
+     "text": "What's the catch?",
+     "speaker": "belfort",
+     "to": "vance",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "What's the catch",
+       "kind": "expression",
+       "expression": "doubtful",
+       "why": "Belfort doubts: what's the catch [What's the catch]"
+      },
+      {
+       "at": "catch",
+       "kind": "symbol",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ],
+       "why": "what's the catch"
+      }
+     ],
+     "tags": [
+      "curious"
+     ],
+     "emphasis": [
+      "catch"
+     ]
+    },
+    {
+     "text": "The fire was old wiring in an old garage. Nothing to do with batteries.",
+     "speaker": "vance",
+     "to": "belfort",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "old wiring",
+       "kind": "label",
+       "text": "OLD WIRING",
+       "pos": [
+        0.5,
+        0.3
+       ],
+       "why": "the fire was old wiring"
+      },
+      {
+       "at": "Nothing to do with batteries",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "nothing to do with batteries"
+      },
+      {
+       "at": "Nothing to do",
+       "kind": "expression",
+       "expression": "doubtful",
+       "why": "Musk doubts: nothing to do with batteries [Nothing to do]",
+       "who": "musk"
+      }
+     ],
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "batteries"
+     ]
+    },
+    {
+     "text": "Two hundred riders are sitting on those batteries.",
+     "speaker": "musk",
+     "to": "vance",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "Two hundred riders",
+       "kind": "text",
+       "text": "TWO HUNDRED RIDERS",
+       "why": "two hundred riders",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "Two hundred",
+       "kind": "expression",
+       "expression": "determined",
+       "why": "Musk presses: two hundred riders [Two hundred]"
+      },
+      {
+       "at": "sitting on",
+       "kind": "expression",
+       "expression": "deadpan",
+       "why": "Vance hears it flat: sitting on those batteries [sitting on]",
+       "who": "vance"
+      }
+     ],
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "sitting"
+     ]
+    },
+    {
+     "text": "And they'll be fine. Probably.",
+     "speaker": "vance",
+     "to": "musk",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "Probably",
+       "kind": "text",
+       "text": "PROBABLY",
+       "why": "probably, the key word",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "Probably",
+       "kind": "expression",
+       "expression": "amused",
+       "why": "Vance: they'll be fine. Probably. [Probably]",
+       "who": "vance"
+      },
+      {
+       "at": "Probably",
+       "kind": "expression",
+       "expression": "angry",
+       "why": "Musk hears probably [Probably]",
+       "who": "musk",
+       "offset": 0.4
+      }
+     ],
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "Probably"
+     ]
+    },
+    {
+     "text": "You know how this kind of paper works.",
+     "speaker": "vance",
+     "to": "belfort",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "this kind of paper",
+       "kind": "expression",
+       "expression": "worried",
+       "why": "Belfort knows how this kind of paper works [this kind of paper]",
+       "who": "belfort"
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "paper"
+     ]
+    },
+    {
+     "text": "Yeah, I signed paper like that once. I paid for it in a cell.",
+     "speaker": "belfort",
+     "to": "vance",
+     "intent": "reveal",
+     "claims": [
+      "C-05"
+     ],
+     "visual_beats": [
+      {
+       "at": "once",
+       "kind": "symbol",
+       "symbol": "clock",
+       "pos": [
+        0.15,
+        0.2
+       ],
+       "why": "I signed paper like that once"
+      },
+      {
+       "at": "in a cell",
+       "kind": "text",
+       "text": "IN A CELL",
+       "why": "I paid for it in a cell",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "in a cell",
+       "kind": "expression",
+       "expression": "doubtful",
+       "why": "Vance hears in a cell [in a cell]",
+       "who": "vance"
+      }
+     ],
+     "tags": [
+      "sighs"
+     ],
+     "emphasis": [
+      "cell"
+     ]
+    },
+    {
+     "text": "Then you know it works.",
+     "speaker": "vance",
+     "to": "belfort",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "it works",
+       "kind": "symbol",
+       "symbol": "check",
+       "pos": [
+        0.82,
+        0.22
+       ],
+       "why": "then you know it works"
+      },
+      {
+       "at": "it works",
+       "kind": "expression",
+       "expression": "smug",
+       "why": "Vance: then you know it works [it works]"
+      }
+     ],
+     "tags": [
+      "warmly"
+     ],
+     "emphasis": [
+      "works"
+     ]
+    },
+    {
+     "text": "That's why I'm not signing.",
+     "speaker": "belfort",
+     "to": "vance",
+     "intent": "decide",
+     "visual_beats": [
+      {
+       "at": "not signing",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "I'm not signing",
+       "cue": {
+        "sound": "chime",
+        "event": "reveal",
+        "why": "Belfort turns: he refuses the paper"
+       }
+      },
+      {
+       "at": "not signing",
+       "kind": "expression",
+       "expression": "determined",
+       "why": "Belfort: that's why I'm not signing [not signing]"
+      },
+      {
+       "at": "not signing",
+       "kind": "expression",
+       "expression": "surprised",
+       "why": "Vance is surprised: not signing [not signing]",
+       "who": "vance",
+       "offset": 0.3
+      }
+     ],
+     "tags": [
+      "excited"
+     ],
+     "emphasis": [
+      "signing"
+     ],
+     "pause_after": 0.6
+    },
+    {
+     "text": "Would you? Watch the full video.",
+     "visual_beats": [
+      {
+       "at": "Would you",
+       "kind": "symbol",
+       "why": "would you sign: a question [Would you]",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      },
+      {
+       "at": "full video",
+       "kind": "label",
+       "why": "points to the full video [full video]",
+       "text": "FULL VIDEO",
+       "pos": [
+        0.5,
+        0.8
+       ]
+      }
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Would you sign",
+     "picture": "s12_ash",
+     "crop_x": 0.4,
+     "zoom": 1.0
+    },
+    {
+     "at": "rich by Friday",
+     "picture": "s12_ots_vance",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "Two days after the",
+     "picture": "s12_ash",
+     "crop_x": 0.4,
+     "zoom": 1.0
+    },
+    {
+     "at": "He will make you",
+     "picture": "s12_ots_vance",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "His name is Vance",
+     "picture": "s12_ots_vm",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "I'll buy the company",
+     "picture": "s12_ots_bel",
+     "crop_x": 0.9,
+     "zoom": 1.0
+    },
+    {
+     "at": "What's the catch",
+     "picture": "s12_ots_bel",
+     "crop_x": 0.45,
+     "zoom": 1.3
+    },
+    {
+     "at": "The fire was old",
+     "picture": "s12_ots_vm",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "Two hundred riders are",
+     "picture": "s12_ots_vm",
+     "crop_x": 0.1,
+     "zoom": 1.0
+    },
+    {
+     "at": "And they'll be fine",
+     "picture": "s12_ots_vm",
+     "crop_x": 0.55,
+     "zoom": 1.3
+    },
+    {
+     "at": "You know how this",
+     "picture": "s12_ots_bel",
+     "crop_x": 0.9,
+     "zoom": 1.0
+    },
+    {
+     "at": "Yeah I signed paper",
+     "picture": "s12_ots_bel",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    },
+    {
+     "at": "Then you know it",
+     "picture": "s12_ts",
+     "crop_x": 0.68,
+     "zoom": 1.0
+    },
+    {
+     "at": "That's why I'm not",
+     "picture": "s12_ts",
+     "crop_x": 0.33,
+     "zoom": 1.3
+    },
+    {
+     "at": "Would you Watch the",
+     "picture": "s12_call",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH08",
+   "style": "loop",
+   "ending": "loop",
+   "hook": "Who pays when a battery skips its test?",
+   "lines": [
+    {
+     "text": "Who pays when a battery skips its test?",
+     "tags": [
+      "curious"
+     ],
+     "visual_beats": [
+      {
+       "at": "Who pays",
+       "kind": "symbol",
+       "why": "who pays: a question [Who pays]",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      },
+      {
+       "at": "battery",
+       "kind": "highlight",
+       "why": "rings the battery [battery]",
+       "pos": [
+        0.5,
+        0.6
+       ]
+      },
+      {
+       "at": "skips its test",
+       "kind": "symbol",
+       "why": "the test is skipped: a cross [skips its test]",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.3
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Wait. Two men walk into Cuban's warehouse.",
+     "visual_beats": [
+      {
+       "at": "Wait",
+       "kind": "symbol",
+       "why": "wait: something is wrong [Wait]",
+       "symbol": "exclaim",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      },
+      {
+       "at": "Cuban's warehouse",
+       "kind": "label",
+       "why": "names Cuban's warehouse [Cuban's warehouse]",
+       "text": "CUBAN'S WAREHOUSE",
+       "pos": [
+        0.5,
+        0.3
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Two hundred of your batteries skipped a test. We want them back.",
+     "speaker": "belfort",
+     "to": "cuban",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "skipped a test",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "two hundred batteries skipped a test"
+      },
+      {
+       "at": "skipped a test",
+       "kind": "expression",
+       "expression": "surprised",
+       "why": "Cuban takes it in: skipped a test [skipped a test]",
+       "who": "cuban"
+      },
+      {
+       "at": "We want them back",
+       "kind": "text",
+       "text": "WE WANT THEM BACK",
+       "why": "we want them back",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ],
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "back"
+     ]
+    },
+    {
+     "text": "Are they bad?",
+     "speaker": "cuban",
+     "to": "musk",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "bad",
+       "kind": "expression",
+       "expression": "worried",
+       "why": "Musk fears the answer: are they bad? [bad]",
+       "who": "musk"
+      }
+     ],
+     "emphasis": [
+      "bad"
+     ]
+    },
+    {
+     "text": "Probably not. I don't sell probably.",
+     "speaker": "musk",
+     "to": "cuban",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "not",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "probably not, he says"
+      },
+      {
+       "at": "I don't sell",
+       "kind": "expression",
+       "expression": "curious",
+       "why": "Cuban hears: I don't sell probably [I don't sell]",
+       "who": "cuban"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "sell"
+     ],
+     "pause_after": 0.5
+    },
+    {
+     "text": "Who pays for two hundred new ones?",
+     "speaker": "cuban",
+     "to": "belfort",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "Who pays",
+       "kind": "symbol",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ],
+       "why": "who pays for two hundred new ones"
+      },
+      {
+       "at": "Who pays",
+       "kind": "expression",
+       "expression": "worried",
+       "why": "Belfort worries about who pays [Who pays]",
+       "who": "belfort"
+      }
+     ],
+     "emphasis": [
+      "pays"
+     ]
+    },
+    {
+     "text": "We pay for them ourselves.",
+     "visual_beats": [
+      {
+       "at": "pay for them",
+       "kind": "expression",
+       "why": "Musk takes the cost on himself [pay for them]",
+       "expression": "determined",
+       "who": "musk"
+      },
+      {
+       "at": "ourselves",
+       "kind": "accent",
+       "why": "ourselves: the vow lands [ourselves]",
+       "effect": "punch",
+       "strength": 0.4
+      }
+     ],
+     "speaker": "musk",
+     "to": "cuban",
+     "intent": "decide"
+    },
+    {
+     "text": "Watch who pays next, in the full video.",
+     "visual_beats": [
+      {
+       "at": "who pays next",
+       "kind": "symbol",
+       "why": "who pays next: a question [who pays next]",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      },
+      {
+       "at": "full video",
+       "kind": "label",
+       "why": "points to the full video [full video]",
+       "text": "FULL VIDEO",
+       "pos": [
+        0.5,
+        0.8
+       ]
+      }
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Who pays when",
+     "picture": "s13_rows",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "battery skips its test",
+     "picture": "s13_test",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Wait Two men walk",
+     "picture": "s13_rows",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Two hundred of your",
+     "picture": "s13_ots_cuban",
+     "crop_x": 0.1,
+     "zoom": 1.0
+    },
+    {
+     "at": "Are they bad",
+     "picture": "s13_ts",
+     "crop_x": 0.32,
+     "zoom": 1.0
+    },
+    {
+     "at": "Probably not I don't",
+     "picture": "s13_ts",
+     "crop_x": 0.68,
+     "zoom": 1.3
+    },
+    {
+     "at": "Who pays for two",
+     "picture": "s13_ots_bel",
+     "crop_x": 0.9,
+     "zoom": 1.0
+    },
+    {
+     "at": "We pay for them",
+     "picture": "s13_ots_musk",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "Watch who pays next",
+     "picture": "s13_cuban_close",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH09",
+   "style": "fact_bomb",
+   "ending": "pointer",
+   "hook": "How many envelopes did O'Leary get signed?",
+   "lines": [
+    {
+     "text": "How many envelopes did O'Leary get signed?",
+     "tags": [
+      "curious"
+     ],
+     "visual_beats": [
+      {
+       "at": "How many",
+       "kind": "symbol",
+       "why": "how many: a question [How many]",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      },
+      {
+       "at": "signed?",
+       "kind": "text",
+       "why": "the count of signed envelopes [signed]",
+       "text": "HOW MANY?",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Five years later, O'Leary will collect.",
+     "visual_beats": [
+      {
+       "at": "Five years later",
+       "kind": "text",
+       "why": "five years have passed [Five years later]",
+       "text": "FIVE YEARS LATER",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Ten percent. Remember?",
+     "speaker": "oleary",
+     "to": "musk",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "Ten percent",
+       "kind": "text",
+       "text": "TEN PERCENT",
+       "why": "ten percent again",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "Remember",
+       "kind": "expression",
+       "expression": "worried",
+       "why": "Musk remembers: ten percent [Remember]",
+       "who": "musk"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "Remember"
+     ]
+    },
+    {
+     "text": "Of a burnt garage?",
+     "speaker": "musk",
+     "to": "oleary",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "Of a burnt garage",
+       "kind": "expression",
+       "expression": "deadpan",
+       "why": "Musk answers flat: a burnt garage [Of a burnt garage]"
+      },
+      {
+       "at": "burnt garage",
+       "kind": "symbol",
+       "symbol": "arrow_down",
+       "pos": [
+        0.85,
+        0.22
+       ],
+       "why": "a burnt garage is worth little"
+      }
+     ],
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "burnt"
+     ]
+    },
+    {
+     "text": "Of everything. Fires included. Read the envelope.",
+     "speaker": "oleary",
+     "to": "musk",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "Fires included",
+       "kind": "text",
+       "text": "FIRES INCLUDED",
+       "why": "fires included in ten percent",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "Fires included",
+       "kind": "expression",
+       "expression": "scared",
+       "why": "Musk is scared: fires included [Fires included]",
+       "who": "musk"
+      },
+      {
+       "at": "the envelope",
+       "kind": "highlight",
+       "pos": [
+        0.3,
+        0.6
+       ],
+       "why": "rings the envelope to read"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "envelope"
+     ]
+    },
+    {
+     "text": "Well, you got lucky with him.",
+     "speaker": "belfort",
+     "to": "oleary",
+     "intent": "banter",
+     "visual_beats": [
+      {
+       "at": "lucky",
+       "kind": "text",
+       "text": "LUCKY",
+       "why": "you got lucky",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "lucky",
+       "kind": "expression",
+       "expression": "amused",
+       "why": "Belfort teases: lucky [lucky]"
+      }
+     ],
+     "tags": [
+      "mischievously"
+     ],
+     "emphasis": [
+      "lucky"
+     ]
+    },
+    {
+     "text": "I didn't pick him.",
+     "speaker": "oleary",
+     "to": "belfort",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "didn't pick him",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "I didn't pick him"
+      },
+      {
+       "at": "pick him",
+       "kind": "expression",
+       "expression": "confused",
+       "why": "Belfort is confused: I didn't pick him [pick him]",
+       "who": "belfort"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "pick"
+     ],
+     "pause_after": 0.5
+    },
+    {
+     "text": "Belfort's grin stays on a second too long.",
+     "visual_beats": [
+      {
+       "at": "a second too long",
+       "kind": "expression",
+       "expression": "deadpan",
+       "why": "Belfort's grin sticks: a second too long [a second too long]",
+       "who": "belfort"
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "long"
+     ]
+    },
+    {
+     "text": "Belfort opens his briefcase.",
+     "visual_beats": [
+      {
+       "at": "briefcase",
+       "kind": "highlight",
+       "why": "rings the briefcase [briefcase]",
+       "pos": [
+        0.5,
+        0.6
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Eight?",
+     "speaker": "belfort",
+     "to": "oleary",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "Eight",
+       "kind": "symbol",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ],
+       "why": "eight, not nine?"
+      },
+      {
+       "at": "Eight",
+       "kind": "expression",
+       "expression": "doubtful",
+       "why": "Belfort doubts the count: eight? [Eight]"
+      }
+     ],
+     "tags": [
+      "nervous"
+     ],
+     "emphasis": [
+      "Eight"
+     ]
+    },
+    {
+     "text": "Nine offered. One man read to the last line and said no.",
+     "speaker": "oleary",
+     "to": "belfort",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "Nine offered",
+       "kind": "text",
+       "text": "NINE OFFERED",
+       "why": "nine offered, one refused",
+       "pos": [
+        0.5,
+        0.2
+       ],
+       "cue": {
+        "sound": "chime",
+        "event": "reveal",
+        "why": "the biggest turn: nine offered, one refused"
+       }
+      },
+      {
+       "at": "One man read",
+       "kind": "expression",
+       "expression": "surprised",
+       "why": "Belfort realises it was him: one man read [One man read]",
+       "who": "belfort"
+      },
+      {
+       "at": "the last line",
+       "kind": "highlight",
+       "pos": [
+        0.5,
+        0.5
+       ],
+       "why": "rings the last line from the first day"
+      },
+      {
+       "at": "said no",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "and said no"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "no"
+     ]
+    },
+    {
+     "text": "I read contracts.",
+     "speaker": "belfort",
+     "to": "oleary",
+     "intent": "banter",
+     "visual_beats": [
+      {
+       "at": "I read contracts",
+       "kind": "expression",
+       "expression": "smug",
+       "why": "Belfort proud: I read contracts [I read contracts]"
+      }
+     ],
+     "tags": [
+      "excited"
+     ],
+     "emphasis": [
+      "read"
+     ]
+    },
+    {
+     "text": "Then you went into business with a man who doesn't.",
+     "speaker": "oleary",
+     "to": "belfort",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "business with a man",
+       "kind": "expression",
+       "expression": "worried",
+       "why": "Belfort is rattled: a man who doesn't [business with a man]",
+       "who": "belfort"
+      },
+      {
+       "at": "who doesn't",
+       "kind": "expression",
+       "expression": "worried",
+       "why": "Musk hears who doesn't [who doesn't]",
+       "who": "musk"
+      },
+      {
+       "at": "doesn't",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "a man who doesn't read"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "doesn't"
+     ],
+     "pause_after": 0.8
+    },
+    {
+     "text": "Musk looks at the floor. Belfort looks at Musk.",
+     "visual_beats": [
+      {
+       "at": "looks at the floor",
+       "kind": "expression",
+       "expression": "sad",
+       "why": "Musk looks at the floor [looks at the floor]",
+       "who": "musk"
+      },
+      {
+       "at": "looks at Musk",
+       "kind": "expression",
+       "expression": "sad",
+       "why": "Belfort looks at Musk [looks at Musk]",
+       "who": "belfort",
+       "offset": 0.2
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "floor"
+     ]
+    },
+    {
+     "text": "Most of these paid back my forty. Three of them paid for everything.",
+     "speaker": "oleary",
+     "to": "musk",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "paid back my forty",
+       "kind": "symbol",
+       "symbol": "check",
+       "pos": [
+        0.82,
+        0.22
+       ],
+       "why": "most paid back my forty"
+      },
+      {
+       "at": "Three of them",
+       "kind": "text",
+       "text": "THREE PAID EVERYTHING",
+       "why": "three of them paid for everything",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "Three of them",
+       "kind": "expression",
+       "expression": "surprised",
+       "why": "Musk is surprised: three of them paid [Three of them]",
+       "who": "musk"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "everything"
+     ]
+    },
+    {
+     "text": "So it was luck.",
+     "speaker": "musk",
+     "to": "oleary",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "it was luck",
+       "kind": "expression",
+       "expression": "deadpan",
+       "why": "Musk asks flat: it was luck [it was luck]"
+      },
+      {
+       "at": "luck",
+       "kind": "symbol",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ],
+       "why": "so it was luck?"
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "luck"
+     ]
+    },
+    {
+     "text": "Luck chose the three. I made sure I owned all eight.",
+     "speaker": "oleary",
+     "to": "musk",
+     "intent": "decide",
+     "visual_beats": [
+      {
+       "at": "I made sure",
+       "kind": "expression",
+       "expression": "smug",
+       "why": "O'Leary, smug: I made sure [I made sure]"
+      },
+      {
+       "at": "owned all eight",
+       "kind": "text",
+       "text": "OWNED ALL EIGHT",
+       "why": "I owned all eight",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "all eight",
+       "kind": "expression",
+       "expression": "sad",
+       "why": "Musk sinks: all eight [all eight]",
+       "who": "musk"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "eight"
+     ],
+     "pause_after": 0.5
+    },
+    {
+     "text": "Watch the full video.",
+     "visual_beats": [
+      {
+       "at": "full video",
+       "kind": "label",
+       "why": "points to the full video [full video]",
+       "text": "FULL VIDEO",
+       "pos": [
+        0.5,
+        0.8
+       ]
+      }
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "How many envelopes",
+     "picture": "s15_eight",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "O'Leary get signed",
+     "picture": "s15_bench",
+     "crop_x": 0.3,
+     "zoom": 1.0
+    },
+    {
+     "at": "Five years later O'Leary",
+     "picture": "s15_bench",
+     "crop_x": 0.3,
+     "zoom": 1.3
+    },
+    {
+     "at": "Ten percent Remember",
+     "picture": "s15_ots_musk",
+     "crop_x": 0.1,
+     "zoom": 1.0
+    },
+    {
+     "at": "Of a burnt garage",
+     "picture": "s15_ots_musk",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "Of everything Fires included",
+     "picture": "s15_ots_musk",
+     "crop_x": 0.1,
+     "zoom": 1.3
+    },
+    {
+     "at": "Well you got lucky",
+     "picture": "s15_ots_bel",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    },
+    {
+     "at": "I didn't pick him",
+     "picture": "s15_ots_bel",
+     "crop_x": 0.9,
+     "zoom": 1.0
+    },
+    {
+     "at": "Belfort's grin stays on",
+     "picture": "s15_ots_bel",
+     "crop_x": 0.45,
+     "zoom": 1.3
+    },
+    {
+     "at": "Belfort opens his briefcase",
+     "picture": "s15_eight",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Eight",
+     "picture": "s15_ots_bel",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    },
+    {
+     "at": "Nine offered One man",
+     "picture": "s15_ots_bel",
+     "crop_x": 0.9,
+     "zoom": 1.0
+    },
+    {
+     "at": "I read contracts",
+     "picture": "s15_ots_bel",
+     "crop_x": 0.45,
+     "zoom": 1.3
+    },
+    {
+     "at": "Then you went into",
+     "picture": "s15_three",
+     "crop_x": 0.15,
+     "zoom": 1.0
+    },
+    {
+     "at": "Musk looks at the",
+     "picture": "s15_three",
+     "crop_x": 0.15,
+     "zoom": 1.0
+    },
+    {
+     "at": "Most of these paid",
+     "picture": "s15_three",
+     "crop_x": 0.15,
+     "zoom": 1.3
+    },
+    {
+     "at": "So it was luck",
+     "picture": "s15_ots_musk",
+     "crop_x": 0.55,
+     "zoom": 1.0
+    },
+    {
+     "at": "Luck chose the three",
+     "picture": "s15_ots_musk",
+     "crop_x": 0.1,
+     "zoom": 1.0
+    },
+    {
+     "at": "Watch the full video",
+     "picture": "s15_eight",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    }
+   ]
+  },
+  {
+   "id": "SH10",
+   "style": "ranked_three",
+   "ending": "question",
+   "hook": "Who won the five years after the bench?",
+   "lines": [
+    {
+     "text": "Who won the five years after the bench?",
+     "tags": [
+      "curious"
+     ],
+     "visual_beats": [
+      {
+       "at": "Who won",
+       "kind": "symbol",
+       "why": "who won: a question [Who won]",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      },
+      {
+       "at": "five years",
+       "kind": "text",
+       "why": "five years of the story [five years]",
+       "text": "FIVE YEARS",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Three kinds of men left the bench. Watch how they rank.",
+     "visual_beats": [
+      {
+       "at": "Three kinds",
+       "kind": "text",
+       "why": "three kinds of men [Three kinds]",
+       "text": "THREE KINDS",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "rank",
+       "kind": "symbol",
+       "why": "ranking: arrow up [rank]",
+       "symbol": "arrow_up",
+       "pos": [
+        0.85,
+        0.3
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Third: men who ran on trust. They waited years.",
+     "visual_beats": [
+      {
+       "at": "Third",
+       "kind": "text",
+       "why": "third place [Third]",
+       "text": "THIRD",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "waited years",
+       "kind": "symbol",
+       "why": "they wait years: a clock [waited years]",
+       "symbol": "clock",
+       "pos": [
+        0.85,
+        0.22
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Second: men with their own hands. Back within months.",
+     "visual_beats": [
+      {
+       "at": "Second",
+       "kind": "text",
+       "why": "second place [Second]",
+       "text": "SECOND",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "own hands",
+       "kind": "highlight",
+       "why": "rings the hands at work [own hands]",
+       "pos": [
+        0.5,
+        0.6
+       ]
+      }
+     ]
+    },
+    {
+     "text": "First: the man who spread forty dollars across eight of them.",
+     "visual_beats": [
+      {
+       "at": "First",
+       "kind": "text",
+       "why": "first place [First]",
+       "text": "FIRST",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "eight of them",
+       "kind": "highlight",
+       "why": "rings the envelopes [eight of them]",
+       "pos": [
+        0.5,
+        0.6
+       ]
+      }
+     ]
+    },
+    {
+     "text": "Luck decided which envelope paid. Skill decided who was still standing when it did.",
+     "visual_beats": [
+      {
+       "at": "Luck decided",
+       "kind": "text",
+       "text": "LUCK",
+       "why": "luck decided which envelope paid",
+       "pos": [
+        0.3,
+        0.2
+       ]
+      },
+      {
+       "at": "Skill decided",
+       "kind": "text",
+       "text": "SKILL",
+       "why": "skill decided who was standing",
+       "pos": [
+        0.7,
+        0.2
+       ]
+      },
+      {
+       "at": "still standing",
+       "kind": "symbol",
+       "symbol": "arrow_up",
+       "pos": [
+        0.85,
+        0.22
+       ],
+       "why": "still standing when it did"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "standing"
+     ],
+     "pause_after": 0.7
+    },
+    {
+     "text": "So if you sat on that bench tomorrow, which envelope would be yours?",
+     "visual_beats": [
+      {
+       "at": "that bench",
+       "kind": "highlight",
+       "pos": [
+        0.5,
+        0.72
+       ],
+       "why": "rings that bench, tomorrow"
+      },
+      {
+       "at": "which envelope",
+       "kind": "symbol",
+       "symbol": "question",
+       "pos": [
+        0.85,
+        0.22
+       ],
+       "why": "which envelope would be yours"
+      }
+     ],
+     "tags": [
+      "curious"
+     ],
+     "emphasis": [
+      "yours"
+     ]
+    },
+    {
+     "text": "Watch the full video.",
+     "visual_beats": [
+      {
+       "at": "full video",
+       "kind": "label",
+       "why": "points to the full video [full video]",
+       "text": "FULL VIDEO",
+       "pos": [
+        0.5,
+        0.8
+       ]
+      }
+     ]
+    }
+   ],
+   "shots": [
+    {
+     "at": "Who won the",
+     "picture": "s16_steps",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "five years after the bench",
+     "picture": "s16_envelopes",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    },
+    {
+     "at": "Three kinds of men",
+     "picture": "s16_steps",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Third men who ran",
+     "picture": "s16_waiting",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    },
+    {
+     "at": "Second men with their",
+     "picture": "s16_hands",
+     "crop_x": 0.3,
+     "zoom": 1.0
+    },
+    {
+     "at": "First the man who",
+     "picture": "s16_envelopes",
+     "crop_x": 0.45,
+     "zoom": 1.0
+    },
+    {
+     "at": "Luck decided which envelope",
+     "picture": "s16_envelopes",
+     "crop_x": 0.45,
+     "zoom": 1.3
+    },
+    {
+     "at": "So if you sat",
+     "picture": "s16_card",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    },
+    {
+     "at": "Watch the full video",
+     "picture": "s16_card",
+     "crop_x": 0.5,
+     "zoom": 1.0
+    }
+   ]
+  }
+ ]
 }
