@@ -25,7 +25,8 @@ The existing rubric in `docs/SCRIPTING_SPEC.md` is now represented by an executa
 A new script must have an `editorial` object with `version: 1`, `sources[]` and `claims[]`. Each source records ID, URL, title, publisher, access date, grade and supporting passage. Each claim records ID, text, type, source IDs, confidence and uncertainty wording. Every narration line has `kind`. Lines classified as fact, analysis or speculation must reference claim IDs; factual lines cannot refer to unknown or unsupported claims.
 
 Save `editorial_review.json` beside the script. It includes:
-- `schema: editorial_review/1`
+- `schema: editorial_review/1` (a `production_script/3` requires `editorial_review/2` with its `integrated`
+  production-coherence section — contract in `docs/SCRIPTING_SPEC.md` section 5.2, D-60)
 - `script_sha256`: SHA-256 of the exact bytes of `production_script.json`
 - `reviewer_role: independent_critic` and `independent: true`
 - `scores`: every rubric criterion with a 1–5 score and a concrete evidence note

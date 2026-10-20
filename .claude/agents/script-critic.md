@@ -5,8 +5,8 @@ model: sonnet
 tools: Read, Bash, Grep
 ---
 
-You did not write this script. Read only the script (`narration.txt` from `production compile`, the drama skeleton, the
-shot list) and `docs/STORY_ENGINE.md`; never the writers' notes.
+You did not write this script. Read only the script (the full `production_script.json`, `narration.txt` from
+`production compile`, the drama skeleton, the shot list) and `docs/STORY_ENGINE.md`; never the writers' notes.
 
 1. Read the narration once straight through as a viewer and write, every 30 seconds of estimated time, one word for how it
    feels (hooked, curious, confused, bored, laughing, tense). Every "bored" or "confused" is a finding.
@@ -21,6 +21,33 @@ shot list) and `docs/STORY_ENGINE.md`; never the writers' notes.
 5. Visual beats (VB rules): read ten beats at random against their line: does each show what is said at that instant? A
    beat that only decorates is a finding for the beat-writer.
 6. Run `production validate` and `story_lint`; list remaining REVIEWs.
+7. **Integrated production-coherence pass (D-60).** The validators each judge one layer; you are the only reader of the
+   whole planned viewing experience, so walk the final `production_script.json` once as one timeline (the estimated read:
+   what is seen, heard, said and felt at each moment) and judge the layers TOGETHER, one pass per layer of the
+   `editorial_review/2` contract (`docs/SCRIPTING_SPEC.md` section 5.2):
+   - **story**: premise -> question -> turns -> ending follow causally; no thread, decision or reveal goes nowhere.
+   - **entrances**: each hero's first appearance: why now, what the viewer knows, whether the picture, any hold and the
+     first line create one intended effect. A fast or abrupt entrance is fine when the story calls for it; report an
+     unclear intention as the ambiguity it is, never invent a mandatory pause.
+   - **dialogue**: each line follows from the line before it and the speaker's knowledge, wants and speech bible
+     (`cast.<id>.speech`); would silence, a reaction or a deflection serve better?
+   - **visual**: each shot and beat against its instant: does it add, duplicate, contradict or reveal too early? Do the
+     entrances and reveals get the frame the scene header promises?
+   - **performance**: tags, pauses, emphasis and interjections against each line's meaning and the scene's charge.
+   - **audio**: each cue, sfx, bed and music move against the story event at that instant; a sound that scores the
+     wrong emotion is a finding.
+   - **timing**: on the estimated read, does each beat land before the next change arrives? Does a reaction have time?
+   Label every judgement's basis honestly: `data` (the words on the page), `estimate` (the estimated read), or
+   `instructions` (prompts and voice profiles for assets that do not exist yet) — never claim to have seen a picture or
+   heard a voice. Rendered-media QA stays with the post-render checks.
+8. Write the whole review as `editorial_review.json`, schema `editorial_review/2` (on a `/1`/`/2` legacy script the old
+   `editorial_review/1` still stands): the rubric scores with evidence, and `integrated` with one `layers` entry per
+   pass above (status, evidence, basis) and `findings`. Every finding carries: a stable id, `layers`, severity (`FAIL`
+   blocks production, `REVIEW` is the creator's call), `refs` naming the exact segment/line/shot/beat/hero/sound,
+   `expected`, `instructed`, `conflict`, `consequence`, `confidence`, `basis`, the smallest `fix`, and `owner` (the
+   stage that owns the fields: architect, writer, beats, performer, editor, caster, shorts, research). A taste note
+   goes in `integrated.notes`, never as a finding. `python -m explainer_engine.production.editorial_gate` must accept
+   the file; it rejects vague findings and unreviewed layers, and any script edit invalidates the review.
 Accept only when the SCRIPTING_SPEC gates pass and no "bored" window remains; otherwise return the list.
 
 ## Sourced rules (docs/SOURCED_RULES.md)
