@@ -16,23 +16,23 @@ Input (and you read nothing else of the script): the segment's lines as the scen
 claim ids the segment may use.
 
 For each line:
-1. Place beats where NEW INFORMATION lands, not on a clock (VB-01 on /3). Section guidance: in the hook and the climax
-   a visual event every 3-8 s; in the body every 10-25 s; one pattern interrupt at 25-35 s of the hook. Never leave the
-   screen without anything new for more than 8 s while the narrator speaks (REVIEW; over 15 s FAIL; MO-01's 5 s dead-air
-   REVIEW still stands). A sentence that adds nothing new needs no beat; a reveal earns several.
+1. Place beats where NEW INFORMATION lands, not on a clock (VB-01 on /3). Section guidance: the hook's change interval and the body's
+   still limits are BP-40's (a visual beat counts as a change; RHYTHM-3 gates them, MO-01 is their REVIEW band); one
+   pattern interrupt in BP-41's window. VB-01 nests a stricter narration-only rule inside them: never leave the screen
+   without anything new past BP-36's REVIEW and FAIL gaps while the narrator speaks. Shorts follow BP-45 instead. A sentence that adds nothing new needs no beat; a reveal earns several.
 2. Choose each beat from what is said at that instant (the skill's visual-choice table: a concrete noun as a prop or
    label, a number as a counter or bars with its claim, "no/not" as a cross, a name as a ring). Write `at` (words of
    THIS line), an `offset` only when a beat must land in a pause, and `why` (at least three words, quoting the word it
    shows).
 3. Faces (VB-02 on /3): every dialogue line gets at least one `expression` change (none at all is a FAIL), placed on
-   the reaction-worthy words — the reveal, the risk, the punchline — not once a second. A gap over 4 s without a change
-   is a REVIEW, over 6 s a FAIL; two changes of ONE face less than 0.7 s apart are a flicker (REVIEW). On a line with
+   the reaction-worthy words — the reveal, the risk, the punchline — not once a second. A gap without a change past BP-37's
+   REVIEW and FAIL gaps is a finding; two changes of ONE face closer than BP-33's floor are a flicker (REVIEW). On a line with
    intent `reveal`, prefer the LISTENER's face (`who` != the speaker): the reaction is where the line lands.
 4. Cues are OPT-IN (VB-08 on /3): the default beat is silent. Write a `cue` only when a named story event earns it, and
    give the cue its required `event`: reveal | impact | transition | build | diegetic | take | place (the event grammar
-   is in the skill `visual-beats`). A cue with no event is a FAIL. Keep density at or under ~8 cues a minute (VB-11;
-   over 8 REVIEW, over 14 FAIL, more than 3 in any 10 s REVIEW), never the same sound on two consecutive cues (VB-10),
-   and at most one emphasis sound (thud, chime, rise or fall) per line (VB-11 FAIL).
+   is in the skill `visual-beats`). A cue with no event is a FAIL. Keep density inside BP-81 (VB-11: cues a minute and
+   the burst cap), never the same sound on two consecutive cues (VB-10, BP-80), and at most BP-81's emphasis sounds
+   (thud, chime, rise or fall) per line.
 5. Run `python -m explainer_engine.scripting.stage_guard beats before.json after.json` (0 violations) and
    `python -m explainer_engine.production validate <script>`: 0 PV-44 FAIL on the /3 semantics (estimated read); answer
    each REVIEW in one line. Return a table: line, beats, kinds, cues with their events, longest silent-screen gap.

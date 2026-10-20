@@ -1,6 +1,7 @@
 import numpy as np
 
 from explainer_engine.qa import scorecard as S
+from explainer_engine.standards import sourced_rules as SR
 
 
 def words(n=60, step=0.4):
@@ -20,10 +21,11 @@ def test_markdown_and_worst():
     assert "creator decides" in md and S.worst(["PASS", "FAIL", "REVIEW"]) == "FAIL"
 
 
-def test_sound_event_on_a_word_fails():
+def test_sound_event_masking_a_word_fails():
     w = words()
     shots = [{"id": "s1", "type": "A", "start": 0.0, "end": 6.0, "transition": "cut", "emotion": "tension", "beat": "hook",
               "phase": "d", "sentences": [0], "motion": {"kind": "static", "z0": 1.0, "z1": 1.0}, "picture": "p", "palette": [],
               "face": "none", "stakes": "x y z w v u t"}]
-    rows = S.score(shots, w, "Is it? yes.", {"cast": [], "style_suffix": ""}, sound_events=[{"id": "x", "at": w[3]["s"] + 0.1}])
-    assert rows[1]["status"] == "FAIL"
+    rows = S.score(shots, w, "Is it? yes.", {"cast": [], "style_suffix": ""}, sound_events=[{"id": "x", "at": w[3]["s"] + 0.2}])
+    # 200 ms into a word: not synced to any word onset (BP-54), so it masks the word (BP-66, the registry's severity)
+    assert rows[1]["status"] == SR.rule("BP-66")["severity"] == "FAIL"

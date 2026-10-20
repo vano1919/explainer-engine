@@ -47,7 +47,9 @@ DESCRIBE = {  # what the painter is asked for: the face's muscles, not a mood wo
 }
 KEY_LO, KEY_HI = 0.06, 0.22  # green dominance (g - max(r, b)) from where a pixel starts to key out to where it is gone
 BORDER_KEYED = 0.85  # a painted close-up's frame edge must be at least this share key green (else the key leaves a halo)
-ZOOM, BLUR, DIM = 1.3, 0.014, 0.82  # the environment behind a close-up: zoom about the face, blur (share of the height), dim
+# the environment behind a close-up: zoom about the face, blur (share of the height), dim. ZOOM is a fixed framing of the
+# blurred backdrop behind the keyed inset, not a camera move on a still, so BP-20's scale window does not govern it (BP-20)
+ZOOM, BLUR, DIM = 1.3, 0.014, 0.82
 FACE_H, EASE_S, POP_S, POP = 0.94, 0.22, 0.16, 0.035  # close-up height (share of the frame), cross-fade in/out, swap pop
 PORTRAIT_W = 2.0  # in a 9:16 Short the 16:9 close-up is at most this many frame widths wide, its middle (the hero) centred
 _PALETTE = Path(__file__).resolve().parents[1] / "design" / "palette.json"

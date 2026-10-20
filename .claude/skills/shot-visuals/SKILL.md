@@ -20,7 +20,7 @@ feel what the line says (fear, panic, shock, a joke landing), and must show *who
 | Seen by the creator | Cause | Rule that now stops it |
 |---|---|---|
 | "too generic, a nature photo set" | prompts described places (meadow, river, hills), not what is at risk | UR-16: `stakes` line + a cue word in every prompt; passive words banned |
-| "no heroes, anonymous backs" | B shots were faceless "from behind" by default; plates were empty by design | UR-17: named heroes with emotional poses; faceless <= 15 % with a reason |
+| "no heroes, anonymous backs" | B shots were faceless "from behind" by default; plates were empty by design | UR-17: named heroes with emotional poses; faceless within BP-85's share, with a reason |
 | no fear, no nervousness | mood clause was the only emotion; scenes were sunny and quiet | stakes cue words (storm, wind, shivering, hunger, danger) in the subject itself |
 | stray people in "empty" plates | the prompt said "empty of people": the model paints what it reads | UR-20: a plate prompt never contains a people word |
 | idle sprites in a pretty meadow | the only sprite poses were standing with a prop | UR-17: emotional poses (panic, shock, argue, shiver, exhausted...) from the pose bank |

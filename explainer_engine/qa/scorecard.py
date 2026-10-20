@@ -26,9 +26,12 @@ from ..edit import shot_rules as R
 from ..standards import sourced_rules as SR
 from . import targets
 
-# BP-01: the one heard-pace band (PASS inside, FAIL outside the fail bounds, REVIEW between)
+# BP-01: the one heard-pace band (PASS inside, REVIEW between, the registry's severity outside the fail bounds: BP-01 is a
+# hypothesis, so that is REVIEW until a second source type makes it binding; D-59 "hypothesis = REVIEW only")
 WPM_TARGET, WPM_MIN, WPM_MAX = SR.T("BP-01", "wpm_target"), SR.T("BP-01", "wpm_min"), SR.T("BP-01", "wpm_max")
 WPM_FAIL_BELOW, WPM_FAIL_ABOVE = SR.T("BP-01", "wpm_fail_below"), SR.T("BP-01", "wpm_fail_above")
+# BP-54: a sound effect whose onset sits inside this window of a word's onset is synced to that word (it lands on its frame)
+SYNC_EARLY_S, SYNC_LATE_S = SR.T("BP-54", "early_max_ms") / 1000, SR.T("BP-54", "late_max_ms") / 1000
 
 LUMA = np.array([0.2126, 0.7152, 0.0722])
 
@@ -60,13 +63,32 @@ def worst(statuses):
     return "FAIL" if "FAIL" in statuses else "REVIEW" if "REVIEW" in statuses else "PASS"
 
 
+def severity(rule_id: str) -> str:
+    """A rule's severity as the registry holds it; a hypothesis never FAILs (D-59)."""
+    r = SR.rule(rule_id)
+    sev = r.get("severity", "REVIEW")
+    return "REVIEW" if r["status"] == "hypothesis" and sev == "FAIL" else sev
+
+
 def pace_verdict(wpm: float) -> str:
     """BP-01 on the measured heard pace."""
     if WPM_MIN <= wpm <= WPM_MAX:
         return "PASS"
     if wpm < WPM_FAIL_BELOW or wpm > WPM_FAIL_ABOVE:
-        return "FAIL"
+        return severity("BP-01")
     return "REVIEW"
+
+
+def synced(event: dict, words: list[dict]) -> bool:
+    """BP-54: the effect starts on a word (inside the sync window of that word's onset): it lands with its event."""
+    return any(-SYNC_EARLY_S <= event["at"] - w["s"] <= SYNC_LATE_S for w in words)
+
+
+def masking(sound_events: list[dict], words: list[dict]) -> list[dict]:
+    """BP-66: the effects that overlap a spoken word without being synced to a word (a cut whoosh, a sound starting inside
+    speech). A synced effect is judged by BP-54 and its level by AL-04 / BP-52, not here."""
+    return [e for e in sound_events if not synced(e, words)
+            and any(w["s"] < e["at"] + e.get("dur", 0.0) and e["at"] < w["e"] for w in words)]
 
 
 def score(shots, words, text, look, *, pic_stats=None, judge=None, audio=None, sound_events=None, timed_findings=None) -> list[dict]:
@@ -79,7 +101,7 @@ def score(shots, words, text, look, *, pic_stats=None, judge=None, audio=None, s
     dur = words[-1]["e"] - words[0]["s"] if words else 0.0
     wpm = n_words / dur * 60 if dur else 0.0
     ev = [f"{n_words} words in {dur:.1f} s = {wpm:.0f} wpm (BP-01: target {WPM_TARGET}, accepted {WPM_MIN}-{WPM_MAX}, "
-          f"FAIL below {WPM_FAIL_BELOW} or above {WPM_FAIL_ABOVE})"]
+          f"{severity('BP-01')} below {WPM_FAIL_BELOW} or above {WPM_FAIL_ABOVE})"]
     st = pace_verdict(wpm) if dur else "REVIEW"
     cuts = [s["start"] for s in shots[1:]]
     bad_cuts = [c for c in cuts if not R.cut_ok(c, words)]
@@ -95,11 +117,12 @@ def score(shots, words, text, look, *, pic_stats=None, judge=None, audio=None, s
         ev.append("no sound events recorded")
         st = "REVIEW"
     else:
-        masked = [e for e in sound_events
-                  if any(w["s"] < e["at"] + e.get("dur", 0.0) and e["at"] < w["e"] for w in words)]  # the sound overlaps a word
-        ev.append(f"{len(sound_events)} sound events, {len(masked)} land on a spoken word")
+        n_sync = sum(1 for e in sound_events if synced(e, words))
+        masked = masking(sound_events, words)
+        ev.append(f"{len(sound_events)} sound events: {n_sync} synced to their word (BP-54), {len(masked)} mask a spoken word "
+                  "(BP-66)" + (": " + ", ".join(f"{e.get('id', '?')} at {e['at']:.2f}s" for e in masked[:6]) if masked else ""))
         if masked:
-            st = "FAIL"
+            st = worst([st, severity("BP-66")])
     if audio:  # the measured mix is judged whether or not effects were placed (BP-50..BP-52, BP-61)
         ev, st = audio_rows(audio, ev, st)
     ev.append("does the sound feel natural and helpful: the creator listens")
@@ -139,7 +162,8 @@ def score(shots, words, text, look, *, pic_stats=None, judge=None, audio=None, s
                          f"{hard:.0%} hard cuts", *[f"{f['rule']} {f['shot']}: {f['detail']}" for f in fails][:8]]))
 
     loops = sum(1 for s in re.split(r"(?<=[.?!])\s+", text) if s.strip().endswith("?"))
-    ev = [f"hook is a question by 5 s: {'yes' if R.pauses_from_words(words) and words[0]['s'] < 1 else 'check'}",
+    ev = [f"speech starts at {words[0]['s']:.1f} s; the hook takes one of BP-03's forms: the creator watches" if words
+          else "no words: the hook is not measured",
           f"{loops} questions, {len(shots) / (dur / 60):.0f} shots per minute",
           "fun, interesting, easy to follow, makes you stay: the creator watches the whole video once, no pausing"]
     rows.append(row(7, "the whole video: fun, interesting, easy to follow, sticky", "REVIEW", ev, human=True))

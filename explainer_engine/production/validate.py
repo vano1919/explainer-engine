@@ -45,6 +45,7 @@ WPM_MIN, WPM_MAX = SR.T("BP-01", "wpm_min"), SR.T("BP-01", "wpm_max")  # BP-01: 
 SHORT_EVENTS_PER_10S = SR.T("BP-45", "events_per_10s_min")  # SS-08 / BP-45: breakouts show 3-6, Episode 1's showed 1.4
 SHORT_MAX_STILL_S = SR.T("BP-45", "max_still_s")  # BP-45: a Short changes on screen at least this often
 HOOK_MAX_WORDS = SR.T("BP-11", "hook_max_words")  # BP-11 (SH-01)
+HOOK_DONE_BY_S = SR.T("BP-11", "hook_done_by_s")  # BP-11: the hook's last word ends by this on the Short's estimated read
 SHORT_BANDS_S = SR.T("BP-12", "bands_s")  # BP-12: the two length bands of a set (SS-06)
 SHORT_WORDS_PER_S, SHORT_SLACK = SR.T("BP-12", "words_per_s"), SR.T("BP-12", "slack")
 SHORT_WORD_BANDS = [(lo * SHORT_WORDS_PER_S * (1 - SHORT_SLACK), hi * SHORT_WORDS_PER_S * (1 + SHORT_SLACK)) for lo, hi in SHORT_BANDS_S]
@@ -260,12 +261,15 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     v = doc["voice"]
     if REAL_PERSON_VOICE.search(v["style"]) or NAME_LIKE.search(v["style"]):
         _f(out, "PV-10", "voice", "the voice style must describe the sound, never a real person to imitate or clone")
-    # PV-52 / BP-01: the script's planned pace band lies inside the heard-pace band (one band everywhere; the estimated
-    # read, the word budgets and the Shorts bands all assume it)
-    lo_wpm, hi_wpm = v["pace_wpm"]
-    if lo_wpm < WPM_MIN or hi_wpm > WPM_MAX:
-        _f(out, "PV-52 BP-01", "voice", f"pace_wpm {lo_wpm}-{hi_wpm} lies outside the heard-pace band {WPM_MIN}-{WPM_MAX} wpm "
-           f"(target {SHORT_WPM}, BP-01): plan the read inside the band or say why this voice is slower", "REVIEW")
+    # PV-52 / BP-01: the heard pace of the estimated read lies inside BP-01's band. Heard pace is words / duration with the
+    # pauses (BP-01's one definition); voice.pace_wpm is the voice's speaking rate, which the estimate times the words at
+    # before it adds the punctuation and held pauses, so a pace_wpm inside the band can still estimate a slower heard read.
+    heard = heard_wpm(estimated_words(doc))
+    if heard is not None and not WPM_MIN <= heard <= WPM_MAX:
+        lo_wpm, hi_wpm = v["pace_wpm"]
+        _f(out, "PV-52 BP-01", "voice", f"the estimated read is heard at {heard:.0f} wpm (pace_wpm {lo_wpm}-{hi_wpm} plus the "
+           f"punctuation and held pauses), outside the heard-pace band {WPM_MIN}-{WPM_MAX} wpm (target {SHORT_WPM}, BP-01): "
+           "change pace_wpm or the pauses, or say why this voice is slower", SR.rule("BP-01").get("severity", "REVIEW"))
     # PV-32 voiced dialogue (D-45): a speaking hero is in the cast and has a voice of their own, described, never imitated
     spoken = [(seg["id"], ln) for seg in doc["segments"] for ln in seg["lines"]]
     spoken += [(sh["id"], ln) for sh in doc.get("shorts", []) for ln in sh["lines"]]
@@ -356,6 +360,14 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
                    "(BP-11; the styles anti_intuition and pov_you open with a statement by design, SS-05)", "REVIEW")
         if sh["lines"][0]["text"].strip() != hook:
             _f(out, "PV-28", sh["id"], "the first line must be the hook")
+        else:  # BP-11: the hook is complete by HOOK_DONE_BY_S (the tighter bound at 170 wpm). On the estimated read it is a
+            # REVIEW, as every timing guess here is (RHYTHM below); the real read decides with BP-11's severity in shorts.py
+            end = hook_end_s(doc, sh)
+            if end is not None and end > HOOK_DONE_BY_S:
+                fit = int(HOOK_DONE_BY_S * SHORT_WPM / 60)
+                _f(out, "PV-28", sh["id"], f"the hook ends at {end:.1f} s on the estimated read ({SHORT_WPM} wpm); it is complete by "
+                   f"{HOOK_DONE_BY_S:g} s (about {fit} words fit; BP-11): shorten it, or the real read stops the Short's render",
+                   "REVIEW")
         words = sum(len(l["text"].split()) for l in sh["lines"])
         if not any(a <= words <= b for a, b in SHORT_WORD_BANDS):
             bands = " or ".join(f"{a:.0f}-{b:.0f} words ({lo}-{hi} s)" for (a, b), (lo, hi) in zip(SHORT_WORD_BANDS, SHORT_BANDS_S))
@@ -425,11 +437,9 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         if end == "pointer" and not POINTER.search(last):
             _f(out, "PV-34", sh["id"], "ending 'pointer' but the last line does not point to the video (SS-04)", "REVIEW")
     # PV-34 continued (D-49): two length bands (BP-12), the first cut inside the hook, enough visual events (SS-06..SS-08, BP-45)
-    def _short_seconds(sh):
-        return sum(len(x["text"].split()) for x in sh["lines"]) / SHORT_WPM * 60
     (b1_lo, b1_hi), (b2_lo, b2_hi) = SHORT_BANDS_S
     if len(shorts) >= 6:
-        secs = [_short_seconds(sh) for sh in shorts]
+        secs = [short_seconds(sh) for sh in shorts]
         short_band = sum(s <= b1_hi * (1 + SHORT_SLACK) for s in secs)
         long_band = sum(s >= b2_lo * (1 - SHORT_SLACK) for s in secs)
         if short_band < 3 or long_band < 3:
@@ -442,20 +452,25 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
         if len(shots) >= 2 and not content_words(shots[1].get("at", "")) & hook_words:
             _f(out, "PV-34", sh["id"], "the first cut is not inside the hook line: the second shot starts on a word of the hook "
                "(about 2 s in), the first still never holds past it (SS-07)", "REVIEW")
-        secs = _short_seconds(sh)
-        events = len(shots) + sum(len(x.get("accents", [])) + len(x.get("bubbles", [])) for x in shots)
+        secs = short_seconds(sh)
+        bp45 = SR.rule("BP-45").get("severity", "REVIEW")
+        # an event is what BP-40 counts as a change on screen (board.change_times): shots, accents, bubbles and the Short's
+        # visual beats (SS-09 gives every Short line its beats; an accent beat lives on its line, not in the shot's accents)
+        beats = sum(len(x.get("visual_beats", [])) for x in sh["lines"])
+        events = len(shots) + sum(len(x.get("accents", [])) + len(x.get("bubbles", [])) for x in shots) + beats
         if secs >= 10 and events / secs * 10 < SHORT_EVENTS_PER_10S:
-            _f(out, "PV-34", sh["id"], f"{events / secs * 10:.1f} visual events every 10 s (shots + accents + bubbles): "
-               f"the breakouts show 3-6, ours showed 1.4; plan at least {SHORT_EVENTS_PER_10S} (SS-08, BP-45)", "REVIEW")
-        # BP-45 max_still_s on the Short's estimated read: no picture holds longer than SHORT_MAX_STILL_S
+            _f(out, "PV-34", sh["id"], f"{events / secs * 10:.1f} visual events every 10 s (shots + accents + bubbles + visual "
+               f"beats): the breakouts show 3-6, ours showed 1.4; plan at least {SHORT_EVENTS_PER_10S} (SS-08, BP-45)", bp45)
+        # BP-45 max_still_s on the Short's estimated read: nothing stays unchanged on screen longer than SHORT_MAX_STILL_S
         if len(shots) >= 1 and not [f for f in out if f["where"] == sh["id"] and f["severity"] == "FAIL"]:
             sd = BEATS.short_doc(doc, sh)
             timed = T.time_script(sd, short_words(sd))
             if not timed["problems"]:
-                for row in timed["shots"]:
-                    if row["end"] - row["start"] > SHORT_MAX_STILL_S:
-                        _f(out, "PV-34", sh["id"], f"shot {row['id']} holds {row['end'] - row['start']:.1f} s on the estimated read: "
-                           f"a Short changes on screen at least every {SHORT_MAX_STILL_S:g} s (BP-45)", "REVIEW")
+                changes = B.change_times(timed["shots"], timed["duration"], timed)
+                for a, b in zip(changes, changes[1:]):
+                    if b - a > SHORT_MAX_STILL_S + 1e-6:
+                        _f(out, "PV-34", sh["id"], f"nothing changes on screen from {a:.1f} to {b:.1f} s on the estimated read "
+                           f"({b - a:.1f} s): a Short changes on screen at least every {SHORT_MAX_STILL_S:g} s (BP-45)", bp45)
     # PV-33 the story layer (ST rules, scripting/story_lint.py)
     for f in story_lint.lint(doc):
         _f(out, "PV-33 " + f["rule"], f["where"], f["detail"], f["severity"])
@@ -470,8 +485,11 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     out += FACES.lint(doc, picture_dirs)  # PV-44 expression sheets (VB-09)
     out += short_beat_findings(doc)  # PV-44 on every Short (SS-09)
     # PV-12 narration lint on what the voice gets: FAILs block, REVIEWs are forwarded too (audit 2026-10-19 A6: they
-    # never reached the validator before; the BP numbers behind N-01, N-05, N-11..N-14 live in the sourced rules)
-    for f in narration_lint.lint(S.tts_text(doc)):
+    # never reached the validator before; the BP numbers behind the N rules live in the sourced rules). N-14 runs on the
+    # narrator's lines only (doc_findings): a hero may name a date inside a scene, and on /3 SC-07 (PV-48) reads the same
+    # BP-15 lexicon on those lines, so N-14 is not repeated there. N-15: a narration hold over BP-10's limit.
+    from explainer_engine.scripting import scene_lint as _scene
+    for f in narration_lint.lint(S.tts_text(doc), press=False) + narration_lint.doc_findings(doc, press=not _scene.binding(doc)):
         _f(out, "PV-12", f.get("where", "-"), f"{f['rule']}: {f['detail']}", f["severity"])
     # board on the estimated read (rhythm, state, heroes, bubbles)
     if not [x for x in out if x["severity"] == "FAIL" and x["rule"] in ("PV-03", "PV-04")]:
@@ -501,9 +519,36 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     return out
 
 
+def heard_wpm(read: dict) -> float | None:
+    """BP-01's heard pace of a read (``words.json`` shape): spoken words per minute of the whole read, pauses included."""
+    n = sum(1 for w in read["words"] if re.search(r"[A-Za-z0-9]", w["w"]))
+    return n / read["duration"] * 60 if read["duration"] and n else None
+
+
+def short_seconds(sh: dict) -> float:
+    """BP-12: a Short's estimated length, its words at BP-01's heard pace (SHORT_WPM). The one duration every Short check
+    uses: the word budget's bands, PV-34's length bands, and the estimated read below (``short_words``) all agree with it."""
+    return sum(len(x["text"].split()) for x in sh["lines"]) / SHORT_WPM * 60
+
+
 def short_words(sd: dict) -> dict:
-    """The estimated read of a Short (``short_doc``) at the Shorts' heard pace (SHORT_WPM = BP-01's target, as PV-34)."""
-    return estimated_words(dict(sd, voice=dict(sd["voice"], pace_wpm=[SHORT_WPM, SHORT_WPM])))
+    """The estimated read of a Short (``short_doc``): its shape from ``estimated_words`` (word lengths, punctuation, held
+    pauses), scaled so that it lasts exactly ``short_seconds`` (BP-12's heard-pace definition)."""
+    est = estimated_words(dict(sd, voice=dict(sd["voice"], pace_wpm=[SHORT_WPM, SHORT_WPM])))
+    total = short_seconds({"lines": [ln for seg in sd["segments"] for ln in seg["lines"]]})
+    k = total / est["duration"] if est["duration"] else 1.0
+    words = [dict(w, s=round(w["s"] * k, 3), e=round(w["e"] * k, 3)) for w in est["words"]]
+    return {"words": words, "duration": round(total, 3), "estimated": True}
+
+
+def hook_end_s(doc: dict, sh: dict) -> float | None:
+    """BP-11: when the hook (the Short's first line) ends on the Short's estimated read (``short_words``), or None."""
+    try:
+        read = short_words({"voice": doc["voice"], "segments": [{"id": sh["id"], "lines": sh["lines"]}]})
+    except (ValueError, KeyError, IndexError):
+        return None
+    n = len(S.script_tokens(sh["lines"][0]["text"]))
+    return read["words"][n - 1]["e"] if 0 < n <= len(read["words"]) else None
 
 
 def syllables(word: str) -> int:
@@ -640,26 +685,29 @@ def board_findings(timed: dict, doc: dict) -> list[dict]:
     pics = timed["pictures"]
     board = {"pictures": pics, "heroes": S.hero_names(doc), "_event_times": timed["events"]}
     shots = [dict(s, id=s["id"]) for s in timed["shots"]]
-    found = B.check(board, {"shots": shots, "duration": timed["duration"]})
+    # the visual beats, data visuals and cards ride along: they are changes on screen for RHYTHM-3 and BP-41 (BP-40)
+    found = B.check(board, {"shots": shots, "duration": timed["duration"], "visual_beats": timed.get("visual_beats", []),
+                            "visuals": timed.get("visuals", []), "cards": timed.get("cards", [])})
     return [{"rule": "PV-24 " + f["rule"], "severity": f["severity"], "where": f["shot"], "detail": f["detail"]} for f in found]
 
 
 TICKS = ("clockwork_loop",)  # music beds that are a tick: they sit well under every other track (ED-03)
-TICK_MAX_DB = -25.0
-MAX_CROSSFADE = 3.0
+TICK_MAX_DB = float(SR.T("BP-86", "tick_max_db"))  # ED-03 / BP-86 (the creator's house numbers)
+MAX_CROSSFADE = float(SR.T("BP-86", "crossfade_max_s"))
 
 
 def music_findings(music: list[dict]) -> list[dict]:
     """PV-29 / ED-03: one music at a time (a handover may overlap by a crossfade), and a tick stays quiet."""
     out: list[dict] = []
+    sev = SR.rule("BP-86").get("severity", "REVIEW")
     ms = sorted(music, key=lambda m: m["start"])
     for a, b in zip(ms, ms[1:]):
         over = a["end"] - b["start"]
         if over > MAX_CROSSFADE + 1e-6:
-            _f(out, "PV-29", b["track"], f"two music tracks together for {over:.1f} s ({a['track']} and {b['track']}); a crossfade is at most {MAX_CROSSFADE:.0f} s")
+            _f(out, "PV-29", b["track"], f"two music tracks together for {over:.1f} s ({a['track']} and {b['track']}); a crossfade is at most {MAX_CROSSFADE:.0f} s (BP-86)", sev)
     for m in ms:
         if m["track"].startswith(TICKS) and m["gain_db"] > TICK_MAX_DB:
-            _f(out, "PV-29", m["track"], f"the tick is at {m['gain_db']} dB; it must be {TICK_MAX_DB} dB or lower")
+            _f(out, "PV-29", m["track"], f"the tick is at {m['gain_db']} dB; it must be {TICK_MAX_DB} dB or lower (BP-86)", sev)
     return out
 
 

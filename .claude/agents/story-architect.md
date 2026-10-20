@@ -30,9 +30,10 @@ Procedure:
    the top of the skeleton). Lay the segments on it: each segment gets `function`, `turn` (BUT or THEREFORE, never
    "and then"), `stakes`, `shift` ("safe -> hunted"), `need`, `opens`/`closes`, `claim_share` (fact / reasoned /
    invented), and a one-sentence `beat` that says what happens, who wants what, what goes wrong. Place the
-   midpoint/reversal segment at 40-60 % of the script's planned words (ST-12), and leave no stretch between the hook
-   and the resolution longer than ~150 s (at 2.5 words/s) without a turn-function segment or a "but" (ST-13). Stakes
-   strictly escalate; the central question is never answered before ~85 %; the final image mirrors the opening's.
+   midpoint/reversal segment at 40-60 % of the script's planned words (ST-12, BP-75), and leave no stretch between the
+   hook and the resolution longer than 150 s (BP-76; words at BP-01's heard pace, 170 wpm) without a turn-function segment
+   or a "but" (ST-13). Stakes strictly escalate; the central question is answered only in the last tenth (BP-04: the
+   resolution segment starts after 90 % of the words, ENG-5); the final image mirrors the opening's.
 4. For every segment that will have dialogue, write its `scene` header (SC-01, skill `dialogue-scenes`): place, time,
    `present` (cast ids), why_now, pov, want, obstacle_want (they must differ, SC-03), value, open_charge != close_charge
    (SC-02), `turn` naming the turning beat AND the scene's conflict mode (balanced / asymmetric / indirect / comic /

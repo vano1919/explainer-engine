@@ -37,6 +37,7 @@ MAX_TEMPO = SR.T("BP-02", "max_tempo")  # BP-02: the creator's ceiling on a Shor
 DEFAULT_TEMPO = SR.T("BP-02", "rates")[0]  # BP-02: the first offered rate is the default --tempo
 LEAD_SILENCE_KEEP_S = 0.1  # BP-11: the leading silence of the read is trimmed to about this, so the hook starts by first_word_by_s
 FIRST_WORD_BY_S = SR.T("BP-11", "first_word_by_s")
+HOOK_DONE_BY_S = SR.T("BP-11", "hook_done_by_s")  # BP-11: the hook's last word ends by this (the tighter bound at 170 wpm)
 SCREEN = "sc_"  # production/select_screen.py's stat cards: text across the whole 16:9 width, never cropped to 9:16
 SCREEN_MARGIN = 0.03  # share of the Short's width left on each side of a fitted card
 CAP_FONT_PX, CAP_MARGIN_LR, CAP_MARGIN_V = 76, 90, 430  # the ASS caption style (unchanged; BP-29 only reports how it sits)
@@ -71,14 +72,22 @@ def prepare_audio(src: Path, out: Path, tempo: float) -> tuple[Path, list[dict]]
     return wav, drift
 
 
-def hook_timing(words: list[dict]) -> dict:
-    """BP-11: the first word starts within FIRST_WORD_BY_S of frame 0 (FAIL otherwise; the render stops)."""
+def hook_timing(words: list[dict], hook_words: int | None = None) -> dict:
+    """BP-11 on the real read: the first word starts within FIRST_WORD_BY_S of frame 0 and, when ``hook_words`` (the hook
+    line's token count) is given, the hook's last word ends by HOOK_DONE_BY_S. A miss carries BP-11's severity (binding
+    FAIL: the render stops)."""
     start = float(words[0]["s"]) if words else None
-    ok = start is not None and start <= FIRST_WORD_BY_S
+    end = float(words[hook_words - 1]["e"]) if hook_words and 0 < hook_words <= len(words) else None
+    why = []
+    if start is None or start > FIRST_WORD_BY_S:
+        why.append(f"the first word starts at {start} s, after {FIRST_WORD_BY_S} s: trim the read or re-cut the hook")
+    if end is not None and end > HOOK_DONE_BY_S:
+        why.append(f"the hook ends at {end:.2f} s, after {HOOK_DONE_BY_S} s: shorten the hook or re-read it")
     return {"first_word_s": None if start is None else round(start, 2), "limit_s": FIRST_WORD_BY_S,
-            "severity": "PASS" if ok else "FAIL",
-            "detail": "the hook is spoken from the first second (BP-11)" if ok else
-            f"the first word starts at {start} s, after {FIRST_WORD_BY_S} s (BP-11): trim the read or re-cut the hook"}
+            "hook_end_s": None if end is None else round(end, 2), "hook_limit_s": HOOK_DONE_BY_S,
+            "severity": SR.rule("BP-11").get("severity", "REVIEW") if why else "PASS",
+            "detail": ("; ".join(why) + " (BP-11)") if why else "the hook is spoken from the first second and complete by "
+            f"{HOOK_DONE_BY_S:g} s (BP-11)"}
 
 
 def caption_blocks(words: list[dict]) -> list[dict]:
@@ -277,12 +286,19 @@ def ass_captions(words: list[dict], path: Path) -> None:
     path.write_text(head + "\n".join(rows) + "\n", encoding="utf-8")
 
 
+def music_filter(duration: float) -> str:
+    """The Short's music under the voice (input 2 over input 1): BP-62's fades, in at the start and out at the end."""
+    f_in, f_out = float(SR.T("BP-62", "fade_in_s")), float(SR.T("BP-62", "fade_out_s"))
+    return (f"[2:a]volume=0.10,afade=t=in:st=0:d={f_in:.2f},afade=t=out:st={max(0.0, duration - f_out):.2f}:d={f_out:.2f}[m];"
+            "[1:a][m]amix=inputs=2:duration=first:normalize=0[a]")
+
+
 def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path], music: Path | None, tempo: float) -> Path:
     short = next(s for s in doc["shorts"] if s["id"] == short_id)
     out.mkdir(parents=True, exist_ok=True)
     wav, drift = prepare_audio(audio, out, tempo)
     aligned = short_words(short, wav, out)
-    hook = hook_timing(aligned["words"])
+    hook = hook_timing(aligned["words"], len(scribe_words.script_tokens(short["lines"][0]["text"])))
     if hook["severity"] == "FAIL":  # BP-11: a Short whose hook is not spoken from the first second is never handed on
         (out / "report.json").write_text(json.dumps({"timbre_review": drift, "hook_timing": hook}, indent=1), encoding="utf-8")
         raise SystemExit(f"{short_id}: {hook['detail']}")
@@ -296,7 +312,7 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
     ass_captions(aligned["words"], out / "cap.ass")
     final = out / f"{short_id}.mp4"
     inputs = ["-i", str(silent), "-i", str(voice)]
-    fc = "[2:a]volume=0.10,afade=t=out:st=%.2f:d=1.2[m];[1:a][m]amix=inputs=2:duration=first:normalize=0[a]" % max(0.0, duration - 1.2)
+    fc = music_filter(duration)  # BP-62 fades
     if music:
         # only a track the library marks loopable is tiled; a one-shot plays once and the fade-out covers the rest
         loop_args = ["-stream_loop", "-1"] if ASM.Sounds([]).loopable(music.stem) else []

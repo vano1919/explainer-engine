@@ -7,7 +7,7 @@
    "area": "narration",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Heard pace is measured on the finished read: target 170 wpm, accepted 155-185; one band everywhere (five studies agree 170 is the YouTube norm; one source type, so the project's own number stays).",
+   "statement": "Heard pace is measured on the finished read: words divided by the read's duration, pauses included; target 170 wpm, accepted 155-185; one band everywhere (five studies agree 170 is the YouTube norm; one source type, so the project's own number stays). Every estimate uses this one definition: a Short's length and ST-13's turn cadence are its words at the target; the long video's estimated read times each word at the script's voice.pace_wpm (the voice's speaking rate) and adds the punctuation and held pauses, and PV-52 compares the heard pace of that estimate (words / estimated duration) with the band.",
    "thresholds": {
     "wpm_target": 170,
     "wpm_min": 155,
@@ -46,7 +46,8 @@
    "enforced_by": [
     "explainer_engine/production/validate.py:BP-01",
     "explainer_engine/qa/scorecard.py:BP-01",
-    "explainer_engine/qa/engagement.py:BP-01"
+    "explainer_engine/qa/engagement.py:BP-01",
+    "explainer_engine/scripting/story_lint.py:WORDS_PER_S"
    ],
    "supersedes": [
     "PRODUCTION_RULES gate 2 160-185",
@@ -153,7 +154,9 @@
    ],
    "enforced_by": [
     "explainer_engine/scripting/narration_lint.py:N-01",
-    "explainer_engine/edit/shot_rules.py:GREETINGS"
+    "explainer_engine/edit/shot_rules.py:GREETINGS",
+    "explainer_engine/edit/shot_rules.py:HOOK_FORMS",
+    "explainer_engine/scripting/narration_lint.py:HOOK_FORMS"
    ],
    "supersedes": [
     "N-01 yes/no question only",
@@ -196,7 +199,7 @@
    ],
    "enforced_by": [
     "explainer_engine/scripting/narration_lint.py:N-11",
-    "explainer_engine/qa/engagement.py:ENG-5"
+    "explainer_engine/qa/engagement.py:ANSWER_AFTER_SHARE"
    ],
    "supersedes": [
     "ST-11 (confirmed)",
@@ -403,7 +406,7 @@
    "area": "narration",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "No pause before a punch line (performers do not pause there); emphasis comes from the text (one stressed word, an ellipsis, a tag), never from a hold over one second.",
+   "statement": "No pause before a punch line (performers do not pause there); emphasis comes from the text (one stressed word, an ellipsis, a tag), never from a hold over one second. The hold limit governs the narrator's pauses (a narration line's pause_after); a scripted silence inside a dialogue scene is a scene device, not a narration hold.",
    "thresholds": {
     "max_hold_s": 1.0
    },
@@ -431,7 +434,7 @@
    ],
    "enforced_by": [
     ".claude/agents/performance-director.md",
-    "explainer_engine/scripting/narration_lint.py:N-03"
+    "explainer_engine/scripting/narration_lint.py:MAX_HOLD_S"
    ],
    "supersedes": [
     "PF-03 reveal pause 0.5 (confirmed as rewritten)",
@@ -444,7 +447,7 @@
    "area": "shorts",
    "status": "binding",
    "severity": "FAIL",
-   "statement": "A Short's hook is spoken from the first second: the first word starts within 1.0 s of frame 0, the hook is complete by 3.0 s and at most 14 words; one question, or one statement that raises several.",
+   "statement": "A Short's hook is spoken from the first second: the first word starts within 1.0 s of frame 0, the hook is complete by 3.0 s and at most 14 words; one question, or one statement that raises several. At BP-01's 170 wpm about 8 words fit in 3 s (14 words take about 4.9 s), so the time bound is the tighter one: both are checked, the word count on the script and the end of the hook's last word on the Short's estimated read (PV-28) and on its real read (production/shorts.py).",
    "thresholds": {
     "first_word_by_s": 1.0,
     "hook_done_by_s": 3.0,
@@ -479,7 +482,8 @@
    ],
    "enforced_by": [
     "explainer_engine/production/validate.py:PV-28",
-    "explainer_engine/production/shorts.py:BP-11"
+    "explainer_engine/production/shorts.py:BP-11",
+    "explainer_engine/production/shorts.py:HOOK_DONE_BY_S"
    ],
    "supersedes": [
     "SH-01 (confirmed)",
@@ -492,7 +496,7 @@
    "area": "shorts",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "A Short's word budget follows its length band at 170 wpm with 10 % slack: 15-30 s is 40-90 words, 45-75 s is 125-215 words; the estimate uses the heard pace of BP-01.",
+   "statement": "A Short's word budget is its length band at BP-01's heard pace (170 wpm, 2.8333 words a second) with 10 % slack at both ends: 15-30 s is about 38-93 words and 45-75 s about 115-234 words (the vendor table behind it reads 160-180 wpm, 30 s = 80-90 words, 60 s = 160-180 words, all inside). A Short's estimated length is its words at this pace (production/validate.short_seconds), the one duration every Short check uses.",
    "thresholds": {
     "bands_s": [
      [
@@ -526,7 +530,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/production/validate.py:PV-28"
+    "explainer_engine/production/validate.py:PV-28",
+    "explainer_engine/production/validate.py:short_seconds"
    ],
    "supersedes": [
     "PV-28 40-130 words",
@@ -637,7 +642,7 @@
    "area": "narration",
    "status": "house",
    "severity": "FAIL",
-   "statement": "No press-release lines: narration never announces a date, a release, a price or a feature list the way a company's statement would ('comes out on 15 November', 'is now available', 'launches worldwide'); the fact lives in the claim map, the line in the story. Sources are cited in the claim map and the description, never spoken.",
+   "statement": "No press-release lines: narration never announces a date, a release, a price or a feature list the way a company's statement would ('comes out on 15 November', 'is now available', 'launches worldwide'); the fact lives in the claim map, the line in the story. Sources are cited in the claim map and the description, never spoken. One lexicon (phrases and patterns) serves N-14 and SC-07, checked on the narrator's lines only: a hero may name a date inside a scene as stakes or ammunition (SC-07). The patterns (SC-07's announcement register) bind from production_script/3 on; a /1 or /2 script keeps its old contract (D-58: its rules asked the narration to cite sources) and gets the phrases only.",
    "thresholds": {
     "phrases": [
      "comes out on",
@@ -653,7 +658,18 @@
      "according to the official",
      "the company announced",
      "press release",
-     "as reported by"
+     "as reported by",
+     "launches worldwide"
+    ],
+    "patterns": [
+     "\\b\\w+'s (page|site|website) (says|gives|names|lists|confirms)\\b",
+     "\\b(announced|announcement|press release)\\b",
+     "\\brelease date\\b",
+     "\\bis set to (release|launch|come out)\\b",
+     "\\bcoming (january|february|march|april|may|june|july|august|september|october|november|december)\\b",
+     "\\baccording to [^.?!]{0,40}\\b(page|site|website|trailer)\\b",
+     "\\bthe trailer (shows|confirms|reveals)\\b",
+     "\\blaunch(es|ing)? (worldwide|globally)\\b"
     ]
    },
    "sources": [
@@ -676,23 +692,120 @@
    "enforced_by": [
     "explainer_engine/scripting/narration_lint.py:N-14",
     ".claude/skills/narration-script/SKILL.md",
-    "explainer_engine/standards/policy_baseline.json"
+    "explainer_engine/standards/policy_baseline.json",
+    "explainer_engine/scripting/narration_lint.py:press_release",
+    "explainer_engine/scripting/scene_lint.py:SC-07"
    ],
    "supersedes": [
-    "ER-07 / RK-08 / RK-16 / RR-10 / SR-04 source-citing narration"
+    "ER-07 / RK-08 / RK-16 / RR-10 / SR-04 source-citing narration",
+    "SC-07 PRESS_RELEASE regex list (scene_lint)"
    ],
    "decided": "the creator, 2026-10-19 (after the Syndicate Wars review)"
+  },
+  {
+   "id": "BP-16",
+   "area": "narration",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-16: the first reads were slow, ellipses everywhere (narration-script skill, 'What the creator heard wrong')",
+   "statement": "At most one ellipsis per beat (N-03): each '...' is a held pause, used only before the beat's one reveal; two in a beat is a REVIEW, more than two a FAIL. For speed: full stops, dashes and fragments (BP-10: emphasis comes from the text).",
+   "thresholds": {
+    "ellipses_per_beat_max": 1,
+    "ellipses_fail_over": 2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "ElevenLabs docs: Prompting Eleven v3/v4 (ellipses add pauses and weight)",
+     "url": "https://elevenlabs.io/docs/best-practices/prompting"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-03"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-17",
+   "area": "narration",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Conversational colour: at least one question per 150 words (N-06; about one a minute at BP-01's pace, a floor: the four what-if transcripts ask one every 20-30 s) and interjections where a person would say them, at least one and about one per 60 words (N-07). The numbers are the project's own.",
+   "thresholds": {
+    "words_per_question": 150,
+    "words_per_interjection": 60
+   },
+   "sources": [
+    {
+     "type": "C",
+     "title": "vidIQ transcript aeKrIhktzqU (one of the four Stone Age what-if videos in the narration-script skill, read 2026-10-16)",
+     "url": "https://www.youtube.com/watch?v=aeKrIhktzqU",
+     "note": "patterns only: a question every 20-30 s, interjections at real moments"
+    },
+    {
+     "type": "C",
+     "title": "vidIQ transcript BTNUK1SCoo4 (one of the four Stone Age what-if videos in the narration-script skill, read 2026-10-16)",
+     "url": "https://www.youtube.com/watch?v=BTNUK1SCoo4",
+     "note": "patterns only: a question every 20-30 s, interjections at real moments"
+    },
+    {
+     "type": "C",
+     "title": "vidIQ transcript vS5BmHsuvvk (one of the four Stone Age what-if videos in the narration-script skill, read 2026-10-16)",
+     "url": "https://www.youtube.com/watch?v=vS5BmHsuvvk",
+     "note": "patterns only: a question every 20-30 s, interjections at real moments"
+    },
+    {
+     "type": "C",
+     "title": "vidIQ transcript agRKo_sEb4I (one of the four Stone Age what-if videos in the narration-script skill, read 2026-10-16)",
+     "url": "https://www.youtube.com/watch?v=agRKo_sEb4I",
+     "note": "patterns only: a question every 20-30 s, interjections at real moments"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-06",
+    "explainer_engine/scripting/narration_lint.py:N-07"
+   ],
+   "supersedes": [
+    "NARRATION_AND_LANGUAGE_GUIDE at most one rhetorical question per section"
+   ]
+  },
+  {
+   "id": "BP-18",
+   "area": "narration",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A question keeps its contour: no ellipsis inside a question, and a wh-question of at most 12 words (wh-questions fall in pitch, yes/no questions rise; a long one falls before it lands) (N-10). The word cap is the project's own.",
+   "thresholds": {
+    "wh_question_max_words": 12
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Hedberg et al., the intonation of yes/no and wh-questions (CLA 2010)",
+     "url": "https://cla-acl.artsci.utoronto.ca/pdfs/actes-2010/CLA2010_Hedberg_et_al.pdf"
+    },
+    {
+     "type": "A",
+     "title": "Yes/no question intonation (Pronuncian)",
+     "url": "https://pronuncian.com/yes-no-question-intonation"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-10"
+   ],
+   "supersedes": []
   },
   {
    "id": "BP-20",
    "area": "motion",
    "status": "binding",
    "severity": "FAIL",
-   "statement": "A camera move on a still keeps its scale within 1.00-1.15 (a push at most 1.10 by default); accents (punch) are exempt but their stack never exceeds 1.15 x 1.18.",
+   "statement": "A camera move on a still keeps its scale within 1.00-1.15 (a push at most 1.10 by default); accents (punch) are exempt but their stack never exceeds 1.15 x 1.18 (punch_max; a punch's strength is at most 1 in the schema). The blurred backdrop behind a dialogue close-up (production/faces.ZOOM) is a fixed framing behind the inset, not a camera move: this rule does not govern it.",
    "thresholds": {
     "scale_min": 1.0,
     "scale_max": 1.15,
-    "push_default_max": 1.1
+    "push_default_max": 1.1,
+    "punch_max": 1.18
    },
    "sources": [
     {
@@ -719,7 +832,9 @@
    "enforced_by": [
     "explainer_engine/edit/shot_rules.py:MAX_ZOOM",
     "explainer_engine/production/continuity.py:ZMAX",
-    "explainer_engine/edit/motion_lint.py:BP-20"
+    "explainer_engine/edit/motion_lint.py:BP-20",
+    "explainer_engine/production/accents.py:PUNCH_ZOOM",
+    "explainer_engine/production/fill_holds.py:alt_motion"
    ],
    "supersedes": [
     "UR-13 1.15 (confirmed)",
@@ -856,7 +971,7 @@
    "area": "motion",
    "status": "house",
    "severity": "REVIEW",
-   "statement": "No camera shake as a move (the creator's UR-13). A shake exists only as an accent on an impact beat (a blow, a fall, a collision, an explosion), decaying within 1.0 s, peak at most 7 % of frame height, never on a dialogue-only shot.",
+   "statement": "No camera shake as a move (the creator's UR-13). A shake exists only as an accent on an impact beat (a blow, a fall, a collision, an explosion), decaying within 1.0 s, peak at most 7 % of frame height, never on a dialogue-only shot. The house shake (0.45 s, 1.8 % at strength 1) sits inside both caps.",
    "thresholds": {
     "decay_max_s": 1.0,
     "amplitude_max_h": 0.07,
@@ -887,7 +1002,9 @@
      "crack",
      "strike",
      "strikes"
-    ]
+    ],
+    "house_decay_s": 0.45,
+    "house_amplitude_h": 0.018
    },
    "sources": [
     {
@@ -1037,7 +1154,8 @@
    ],
    "enforced_by": [
     "explainer_engine/production/accents.py:text_hold",
-    "explainer_engine/edit/motion_lint.py:BP-27"
+    "explainer_engine/edit/motion_lint.py:BP-27",
+    "explainer_engine/finish/bubbles.py:check_bubbles"
    ],
    "supersedes": [
     "P-71 (confirmed, adds the cap)",
@@ -1083,7 +1201,7 @@
    ],
    "enforced_by": [
     "explainer_engine/edit/motion_lint.py:BP-28",
-    "explainer_engine/design/palette.py",
+    "explainer_engine/design/palette.py:TEXT_MIN",
     ".claude/skills/shot-visuals/SKILL.md"
    ],
    "supersedes": [
@@ -1146,10 +1264,11 @@
    "area": "editing",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "Cut continuity: across a hard cut the hero or focal point stays within 10 % of the frame of its previous position unless the cut opens a new scene; the shot size changes by a full step (never the same framing of the same picture twice in a row); a direction change over 90 degrees needs a neutral picture between.",
+   "statement": "Cut continuity: across a hard cut the hero or focal point stays within 10 % of the frame of its previous position unless the cut opens a new scene; the shot size changes by a full step (never the same framing of the same picture twice in a row); a direction change over 90 degrees needs a neutral picture between. Code checks the same framing (two zooms within same_framing_zoom_tol, an engineering tolerance); the focal shift and the direction change are the planner's (edit-planner, editing-style), because the script carries no focal point or screen direction per shot.",
    "thresholds": {
     "focal_shift_max": 0.1,
-    "direction_change_max_deg": 90
+    "direction_change_max_deg": 90,
+    "same_framing_zoom_tol": 0.02
    },
    "sources": [
     {
@@ -1294,10 +1413,12 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/edit/motion_lint.py:BP-33"
+    "explainer_engine/edit/motion_lint.py:BP-33",
+    "explainer_engine/production/beats.py:FACE_FLICKER"
    ],
    "supersedes": [
-    "VB expression change about every second (confirmed, adds a floor)"
+    "VB expression change about every second (confirmed, adds a floor)",
+    "VB-02 flicker 0.7 s"
    ]
   },
   {
@@ -1372,11 +1493,160 @@
    "note": "no CPU parallax in assemble.py yet: a rule for the planner, not a gate"
   },
   {
+   "id": "BP-36",
+   "area": "rhythm",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Visual-beat cadence while the narrator speaks (VB-01, production/beats.py). On production_script/3 pace follows new information: a narration stretch with nothing new on screen (a cut, bubble, accent, data visual, card or visual beat) longer than 8 s is REVIEW and longer than 15 s FAIL. On /2 the metronome: a beat about every 1.5 s, REVIEW over 2 s, FAIL over 3 s, a segment mean over 1.8 s REVIEW. A stricter, narration-only rule nested inside BP-40 (the whole video's still limits, counted on the same events): in the hook window BP-40's still limit is the stricter one, in the body this rule's FAIL is. Shorts follow BP-45 instead.",
+   "thresholds": {
+    "gap_review_s": 8.0,
+    "gap_fail_s": 15.0,
+    "v2_target_s": 1.5,
+    "v2_gap_review_s": 2.0,
+    "v2_gap_fail_s": 3.0,
+    "v2_mean_max_s": 1.8
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "What MrBeast's former retention strategist Mario Joos taught us about editing (Vidpros)",
+     "url": "https://vidpros.com/retention-editing-what-you-can-learn-from-mario-joos/"
+    },
+    {
+     "type": "A",
+     "title": "Retention editing 'beastification' may be at an end (Gigazine on the Washington Post piece)",
+     "url": "https://gigazine.net/gsc_news/en/20240403-retention-editing-beastification-may-be-end"
+    },
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:GAP_FAIL_3",
+    "explainer_engine/production/beats.py:check_timed"
+   ],
+   "supersedes": [
+    "VB-01 /3 8/15 s literals",
+    "VB-01 /2 1.5/2/3/1.8 s literals",
+    "VB-01 guidance 'hook every 3-8 s, body every 10-25 s'"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19)"
+  },
+  {
+   "id": "BP-37",
+   "area": "faces",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Expression cadence on a dialogue line (VB-02, production/beats.py): every spoken dialogue line carries at least one expression change (FAIL without). On /3 changes follow reactions, not a clock: REVIEW over 4 s without a change, FAIL over 6 s. On /2 the metronome: a change about every 1 s, REVIEW over 1.5 s, FAIL over 2 s. Two changes of one face closer than BP-33's hold are flicker (BP-33 owns that floor).",
+   "thresholds": {
+    "changes_per_line_min": 1,
+    "gap_review_s": 4.0,
+    "gap_fail_s": 6.0,
+    "v2_target_s": 1.0,
+    "v2_gap_review_s": 1.5,
+    "v2_gap_fail_s": 2.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Kuleshov effect: how an editor shapes an actor's performance (Artlist)",
+     "url": "https://artlist.io/blog/kuleshov-effect-or-how-an-editor-shapes-and-strengthens-an-actors-performance/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:FACE_FAIL_3"
+   ],
+   "supersedes": [
+    "VB-02 /3 4/6 s literals",
+    "VB-02 /2 1/1.5/2 s literals",
+    "VB-02 flicker 0.7 s (BP-33's hold wins)"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19)"
+  },
+  {
+   "id": "BP-38",
+   "area": "text",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Words a visual beat puts on screen (VB-04): a text or label beat shows at most 4 words; a bars chart has 2-3 bars (ED-10). MO-05 reads the same word cap for a pop_text or slam_text accent (REVIEW, BP-83).",
+   "thresholds": {
+    "max_words": 4,
+    "bars": [
+     2,
+     3
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:MAX_WORDS",
+    "explainer_engine/edit/motion_lint.py:MAX_WORDS"
+   ],
+   "supersedes": [
+    "VB-04 MAX_WORDS literal",
+    "motion_lint MO-05 inline 4"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19)"
+  },
+  {
+   "id": "BP-39",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Cue spacing (VB-08): a cue within 0.15 s of a sound effect, or under one that is playing, doubles it (the effect is the beat's sound); two cues closer than 0.25 s stack into one noise; one dialogue line carries at most one cued expression change (the big take).",
+   "thresholds": {
+    "cover_s": 0.15,
+    "min_gap_s": 0.25,
+    "take_cues_per_line_max": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Sync Effects (Netflix Backlot)",
+     "url": "https://backlothelp.netflix.com/hc/en-us/articles/115000533952-Sync-Effects"
+    },
+    {
+     "type": "A",
+     "title": "Transition sound design that strengthens commercial video editing (Beverly Boy)",
+     "url": "https://beverlyboy.com/blog/transition-sound-design-that-strengthens-commercial-video-editing"
+    },
+    {
+     "type": "A",
+     "title": "Transition effect sounds in video edits (Sonilo)",
+     "url": "https://sonilo.com/blog/guides/transition-effect-sound-video-edits"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:CUE_MIN_GAP"
+   ],
+   "supersedes": [
+    "VB-08 CUE_COVER / CUE_MIN_GAP literals"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19); the /2 metronome numbers from D-54 (2026-10-19)"
+  },
+  {
    "id": "BP-40",
    "area": "rhythm",
    "status": "binding",
    "severity": "FAIL",
-   "statement": "Section-aware rhythm: in the first 30 s something changes on screen at least every 5 s (FAIL); in the body a still longer than 20 s is REVIEW and longer than 40 s is FAIL; the average stays at most 10 pictures a minute (the creator) with one burst of 5-10 cuts allowed per 2-3 min; every change carries new information.",
+   "statement": "Section-aware rhythm: in the first 30 s something changes on screen at least every 5 s (FAIL); in the body a still longer than 20 s is REVIEW and longer than 40 s is FAIL; the average stays at most 10 pictures a minute (the creator) with one burst of 5-10 cuts allowed per 2-3 min; every change carries new information. A change is anything new on screen: a cut, a bubble, an accent (not the wobble), a data visual, a card or a visual beat (default of 2026-10-20: a beat counts; the creator may overturn it).",
    "thresholds": {
     "hook_window_s": 30,
     "hook_max_still_s": 5,
@@ -1423,7 +1693,9 @@
    ],
    "enforced_by": [
     "explainer_engine/edit/board.py:RHYTHM-3",
-    "explainer_engine/edit/board.py:MAX_PER_MIN"
+    "explainer_engine/edit/board.py:MAX_PER_MIN",
+    "explainer_engine/edit/motion_lint.py:MO-01",
+    "explainer_engine/edit/board.py:change_times"
    ],
    "supersedes": [
     "UR-31 flat 9 s",
@@ -1437,7 +1709,7 @@
    "area": "rhythm",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "One scripted pattern interrupt in the 25-35 s window (a cut with a new element: an insert, a text pop or a music change).",
+   "statement": "One scripted pattern interrupt in the 25-35 s window (a cut with a new element: an insert, a text pop, a visual beat or a music change).",
    "thresholds": {
     "window_s": [
      25,
@@ -1589,6 +1861,7 @@
     }
    ],
    "enforced_by": [
+    "explainer_engine/qa/engagement.py:END_SCREEN_MIN_S",
     "explainer_engine/qa/engagement.py:ENG-8"
    ],
    "supersedes": [
@@ -1662,7 +1935,7 @@
    "area": "shorts",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "A Short changes on screen at least every 5 s, with at least 3 events per 10 s, each on new information; the 1.5 s beat metronome is not a Shorts rule (no source supports it).",
+   "statement": "A Short changes on screen at least every 5 s, with at least 3 events per 10 s (shots, accents, bubbles and visual beats, as BP-40 counts them), each on new information; the 1.5 s beat metronome is not a Shorts rule (no source supports it), so VB-01's cadence does not run on a Short.",
    "thresholds": {
     "max_still_s": 5.0,
     "events_per_10s_min": 3
@@ -1696,7 +1969,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/production/validate.py:PV-34"
+    "explainer_engine/production/validate.py:PV-34",
+    "explainer_engine/production/beats.py:short_doc"
    ],
    "supersedes": [
     "SS-08 (confirmed)",
@@ -1853,6 +2127,43 @@
    ],
    "supersedes": [
     "(new)"
+   ]
+  },
+  {
+   "id": "BP-49",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "AL-02 sound density: effects and beat cues together 4-20 events a minute on a video of at least 60 s. On a production_script/3 silence is the default (VB-08 inverted), so only the upper bound applies there; the cue share of it is VB-11's cue cap (cues only, stricter), and BP-55 caps the beats that carry an effect. No source names a rate: the band is the project's engineering hypothesis.",
+   "thresholds": {
+    "events_per_min": [
+     4.0,
+     20.0
+    ],
+    "min_video_s": 60.0
+   },
+   "sources": [
+    {
+     "type": "B",
+     "title": "Walter Murch, the Law of Two and a Half (Designing Sound)",
+     "url": "https://designingsound.org/2009/10/15/walter-murch-special-womb-tone-and-dense-clarityclear-density/"
+    },
+    {
+     "type": "A",
+     "title": "AIR Media-Tech: advanced retention editing (over-processing warning)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "Pixflow retention guide (every sentence with a zoom and a whoosh)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/layers.py:SFX_PER_MIN"
+   ],
+   "supersedes": [
+    "AL-02 4-20/min written in code (layers.py literal)"
    ]
   },
   {
@@ -2016,13 +2327,12 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/qa/targets.py:gap_verdict",
-    "explainer_engine/audio/layers.py:AL-04"
+    "explainer_engine/qa/targets.py:gap_verdict"
    ],
    "supersedes": [
     "P-93 14 dB (confirmed, unit changes to LU)",
-    "AL-04 -15 dB peak (a pre-mix cap)",
-    "PRODUCTION_RULES:82 '20 dB under'",
+    "AL-04 -15 dB as the measure of this rule (the pre-mix gain cap stays as BP-65, a proxy)",
+    "PRODUCTION_RULES:83 '20 dB under'",
     "AUDIO_SYSTEM '10 dB'"
    ]
   },
@@ -2031,7 +2341,7 @@
    "area": "audio",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "Sidechain ducking of music under the voice is a dip, not a cut: depth 6-12 dB (house 9), attack 20-80 ms, release 250-700 ms, hold at least 50 ms; no gain step over 0.7 dB in a millisecond (the level JND). One canonical set of numbers, in code.",
+   "statement": "Sidechain ducking is a dip, not a cut: every duck in the mix (music under the voice, music and bed under a world sound) dips 6-12 dB (house 9; the bed under a world sound dips by the range's floor), attack 20-80 ms, release 250-700 ms, hold at least 50 ms; no gain step over 0.7 dB in a millisecond (the level JND). One canonical set of numbers, in code.",
    "thresholds": {
     "depth_db": [
      6.0,
@@ -2086,7 +2396,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/duck.py:BP-53"
+    "explainer_engine/audio/duck.py:BP-53",
+    "explainer_engine/production/assemble.py:vduck",
+    "explainer_engine/production/assemble.py:bduck"
    ],
    "supersedes": [
     "P-93 attack 50 / release 400",
@@ -2134,7 +2446,8 @@
    ],
    "enforced_by": [
     "explainer_engine/audio/layers.py:SYNC_EARLY",
-    "explainer_engine/production/timing.py:SFX_OFFSET"
+    "explainer_engine/production/timing.py:SFX_EARLY_MAX",
+    "explainer_engine/qa/scorecard.py:synced"
    ],
    "supersedes": [
     "AL-03 0.25 s window",
@@ -2147,7 +2460,7 @@
    "area": "audio",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "A sound that only duplicates the picture is redundancy (mickey-mousing): every effect carries a purpose (clarify, humour, transition, sync); at most one in two visual beats carries an audible non-cue effect; the 4-20 per minute band stays a hypothesis.",
+   "statement": "A sound that only duplicates the picture is redundancy (mickey-mousing): every effect carries a purpose (clarify, humour, transition, sync); at most one in two visual beats carries an audible non-cue effect; the 4-20 per minute band stays a hypothesis (BP-49).",
    "thresholds": {
     "purposes": [
      "clarify",
@@ -2199,7 +2512,7 @@
    ],
    "supersedes": [
     "P-94 purpose (confirmed)",
-    "AL-02 4-20/min (hypothesis)",
+    "AL-02 4-20/min as a rate gate (the band is hypothesis BP-49)",
     "AUDIO_SYSTEM one sfx per 6 s"
    ]
   },
@@ -2267,10 +2580,11 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/layers.py:BP-57"
+    "explainer_engine/audio/layers.py:BP-57",
+    "explainer_engine/audio/cues.py:VARIANTS"
    ],
    "supersedes": [
-    "the cue pitch variants of the scene rewrite PR (confirmed)"
+    "the cue pitch variants of the scene rewrite PR (1.0 / 0.94 / 1.06: now 1 +/- pitch_jitter)"
    ]
   },
   {
@@ -2391,7 +2705,7 @@
    ],
    "supersedes": [
     "ED-01 1.5 dB (confirmed)",
-    "seams clamp 6 dB",
+    "seams clamp 6 dB as a pass criterion (it stays the largest correction applied)",
     "targets lra 9"
    ]
   },
@@ -2556,11 +2870,15 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/audio/layers.py:BP-62"
+    "explainer_engine/audio/layers.py:BP-62",
+    "explainer_engine/production/timing.py:MUSIC_FADE_IN",
+    "explainer_engine/production/shorts.py:music_filter"
    ],
    "supersedes": [
     "ED-03 (confirmed)",
-    "P-96 fades (confirmed)"
+    "P-96 fades (confirmed)",
+    "assemble/timing music fade 2.0 s in",
+    "shorts music fade-out 1.2 s"
    ]
   },
   {
@@ -2593,13 +2911,637 @@
    ],
    "enforced_by": [
     "explainer_engine/production/assemble.py:BP-63",
-    "explainer_engine/production/shorts.py:BP-63"
+    "explainer_engine/production/shorts.py:BP-63",
+    "explainer_engine/finish/speed.py:AUDIO_CODEC"
    ],
    "supersedes": [
     "P-15 (confirmed)",
     "Q-T19 (confirmed)",
-    "assemble mono 192k"
+    "assemble mono 192k",
+    "speed.py aac 192k (the sped file is the delivered file, ED-06)"
    ]
+  },
+  {
+   "id": "BP-64",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A beat cue (VB-08) is an earcon, not a one-shot: 20-250 ms long, at -36..-20 dB (default -26), from the ten procedural cues of audio/cues.py. BP-58's 0.1-5 s one-shot band is for stings and impacts and does not apply to beat cues.",
+   "thresholds": {
+    "cue_ms": [
+     20,
+     250
+    ],
+    "gain_db": [
+     -36.0,
+     -20.0
+    ],
+    "default_gain_db": -26.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Pip and pop: nonspatial auditory signals improve spatial visual search (Van der Burg et al. 2008, JEP:HPP 34(5))",
+     "url": "https://doi.org/10.1037/0096-1523.34.5.1053"
+    },
+    {
+     "type": "A",
+     "title": "Google conversation design: earcons",
+     "url": "https://developers.google.com/assistant/conversation-design/earcons"
+    },
+    {
+     "type": "A",
+     "title": "Synchronization and synchresis: avoiding mickey-mousing in sound design (Connor 2019)",
+     "url": "https://blog.animationstudies.org/synchronization-and-synchresis-avoiding-mickey-mousing-in-sound-design/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/cues.py:MIN_MS",
+    "explainer_engine/production/beats.py:VB-08"
+   ],
+   "supersedes": [
+    "cues.py docstring 25-200 ms",
+    "D-54 25-180 ms"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)"
+  },
+  {
+   "id": "BP-65",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "AL-04 pre-mix gain caps, in dBFS before ducking: an effect at most -8 dB, a bed at most -15 dB (also the default of a bed with no gain). A proxy that keeps BP-52 reachable; BP-52 itself is measured in LU on the stems (qa/targets.gap_verdict), never by these gains.",
+   "thresholds": {
+    "sfx_gain_max_db": -8.0,
+    "bed_gain_max_db": -15.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Preferred levels for background ducking (Torcoli et al., JAES 2019)",
+     "url": "https://www.audioblog.iis.fraunhofer.com/?p=4251"
+    },
+    {
+     "type": "A",
+     "title": "EBU Tech 3343-2023 Guidelines for production in accordance with R 128",
+     "url": "https://tech.ebu.ch/docs/tech/tech3343.pdf"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/layers.py:MAX_SFX_DB",
+    "explainer_engine/audio/layers.py:MAX_BED_DB",
+    "explainer_engine/production/timing.py:BED_DEFAULT_DB"
+   ],
+   "supersedes": [
+    "layers.MAX_BED_DB derived from BP-52's 15 LU (an LU distance used as a dBFS gain)"
+   ]
+  },
+  {
+   "id": "BP-66",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A sound effect over speech is either synced to its word (its onset inside BP-54's window of a word's onset: judged by BP-54 and passes) or it masks the word; a masking effect (a cut whoosh or any sound starting inside speech) FAILs the seven-point test's sound row.",
+   "thresholds": {},
+   "sources": [
+    {
+     "type": "A",
+     "title": "WCAG 2.2 Understanding SC 1.4.7 Low or No Background Audio",
+     "url": "https://www.w3.org/WAI/WCAG22/Understanding/low-or-no-background-audio.html"
+    },
+    {
+     "type": "A",
+     "title": "Preferred levels for background ducking (Torcoli et al., JAES 2019)",
+     "url": "https://www.audioblog.iis.fraunhofer.com/?p=4251"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/qa/scorecard.py:BP-66"
+   ],
+   "supersedes": [
+    "scorecard check 2: any sound over a word FAILs"
+   ],
+   "decided": "the creator, 2026-10-16: a cut sound ends before the next word (docs/PRODUCTION_RULES.md feedback table)"
+  },
+  {
+   "id": "BP-70",
+   "area": "scenes",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)",
+   "statement": "A real exchange (SC-05): a scene with two or more present plays at least one unbroken run of 4 character lines from at least 2 speakers, no narrator inside.",
+   "thresholds": {
+    "min_exchange_lines": 4,
+    "min_exchange_speakers": 2
+   },
+   "sources": [
+    {
+     "type": "B",
+     "title": "Story (R. McKee): scene analysis, Story p.257 (via Evergreen State College)",
+     "url": "https://archives.evergreen.edu/webpages/curricular/2009-2010/writingmatters/2009/10/06/assignment-4-scene-analysis/index.html"
+    },
+    {
+     "type": "A",
+     "title": "Beat (filmmaking), Wikipedia: Casablanca's model scene runs about 11 beats",
+     "url": "https://en.wikipedia.org/wiki/Beat_(filmmaking)"
+    },
+    {
+     "type": "A",
+     "title": "Pixar's 22 rules of storytelling (rule 13: passive characters are poison)",
+     "url": "https://laughingsquid.com/22-rules-of-storytelling-by-pixar-storyboard-artist/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/scene_lint.py:MIN_EXCHANGE"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-71",
+   "area": "scenes",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)",
+   "statement": "One honesty beat (SC-08): invention disclaimers sit in at most 2 segments (the beat plus one callback); on-screen labels and the description carry the rest (ST-09).",
+   "thresholds": {
+    "disclaimer_segments_max": 2
+   },
+   "sources": [
+    {
+     "type": "B",
+     "title": "Story (R. McKee): Do Your Scenes Turn? (mckeestory.com)",
+     "url": "https://mckeestory.com/do-your-scenes-turn/"
+    },
+    {
+     "type": "A",
+     "title": "Advanced retention editing: cutting patterns (AIR Media-Tech)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/scene_lint.py:MAX_DISCLAIMER_SEGMENTS"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-72",
+   "area": "scenes",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)",
+   "statement": "Turn caps (SC-09, DW-06): a spoken turn is at most 35 words (split it or give the summary to the narrator), and a scene has at most one speech of 25 words or more, at its peak.",
+   "thresholds": {
+    "turn_words_max": 35,
+    "speech_words": 25,
+    "speeches_per_scene_max": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Are movies becoming more simplistic? (Stephen Follows): line verbosity falls for 80 years",
+     "url": "https://stephenfollows.com/p/are-movies-becoming-more-simplistic"
+    },
+    {
+     "type": "C",
+     "title": "Tarantino and Jackson on the rhythm of conversation (MovieMaker interview)",
+     "url": "https://www.moviemaker.com/first-draft-mastering-the-art-of-conversation/"
+    },
+    {
+     "type": "C",
+     "title": "Sorkin on interruptions and dialogue as music (No Film School)",
+     "url": "https://nofilmschool.com/interruptions-dialogue"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/scene_lint.py:MAX_TURN_WORDS"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-73",
+   "area": "scenes",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Jabs, not interviews (SC-09, DW-12): the default spoken turn is 5-15 words (over 15 is a REVIEW unless it is the scene's one speech); more than 3 question-turns in a row read as an interview.",
+   "thresholds": {
+    "turn_words_review": 15,
+    "qa_chain_max": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Are movies becoming more simplistic? (Stephen Follows): line verbosity falls for 80 years",
+     "url": "https://stephenfollows.com/p/are-movies-becoming-more-simplistic"
+    },
+    {
+     "type": "A",
+     "title": "Ten quick dialogue hacks (ScriptShadow)",
+     "url": "https://scriptshadow.net/ten-quick-dialogue-hacks/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/scene_lint.py:REVIEW_TURN_WORDS",
+    "explainer_engine/scripting/scene_lint.py:MAX_QA_CHAIN"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-74",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Questions are answered within seconds unless declared (ST-11): the curiosity a question opens boosts memory for the next 2-4 s and is gone by 6-8 s, so 3 or more questions in one segment that opens no loop are stacked, not answered.",
+   "thresholds": {
+    "stacked_questions_min": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Murphy et al. 2020, curiosity and memory for what follows a question",
+     "url": "https://hmlpubs.faculty.ucdavis.edu/wp-content/uploads/sites/214/2022/05/2020_Murphy.pdf"
+    },
+    {
+     "type": "A",
+     "title": "Frede et al. 2026, partial knowledge gaps and reading (Journal of Cognition)",
+     "url": "https://journalofcognition.org/articles/10.5334/joc.501"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:MAX_UNANSWERED_QUESTIONS"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-75",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The midpoint sits mid-story (ST-12): on a script of 8 or more segments the midpoint/reversal segment's centre falls at 40-60 % of the script's words (a write-time proxy for the clock; the channel's retention decides).",
+   "thresholds": {
+    "midpoint_share": [
+     0.4,
+     0.6
+    ],
+    "min_segments": 8
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "The three-act structure for YouTube storytelling that retains (Autonolab)",
+     "url": "https://blog.autonolab.com/blog/2025-08-21-the-three-act-structure-for-youtube-storytelling-that-retains/"
+    },
+    {
+     "type": "B",
+     "title": "Save the Cat (B. Snyder): beat sheet by percent of runtime (via FilmDaft)",
+     "url": "https://filmdaft.com/save-the-cat-beat-sheet/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:MIDPOINT_BAND"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-76",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Turns arrive on a cadence (ST-13): between the hook and the resolution no stretch longer than 150 s passes without a turn (a reversal, midpoint, crisis, twist or climax, or a BUT join); the seconds are words at BP-01's heard pace.",
+   "thresholds": {
+    "turn_gap_s": 150
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "The three-act structure for YouTube storytelling that retains (Autonolab)",
+     "url": "https://blog.autonolab.com/blog/2025-08-21-the-three-act-structure-for-youtube-storytelling-that-retains/"
+    },
+    {
+     "type": "A",
+     "title": "True crime YouTube video ideas (Subscribr): a reveal about every 2 minutes",
+     "url": "https://subscribr.ai/p/true-crime-youtube-video-ideas"
+    },
+    {
+     "type": "B",
+     "title": "Save the Cat (B. Snyder): beat sheet by percent of runtime (via FilmDaft)",
+     "url": "https://filmdaft.com/save-the-cat-beat-sheet/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:TURN_GAP_S"
+   ],
+   "supersedes": [
+    "ST-13 2.5 words/s (story_lint, STORY_ENGINE, story-architect)"
+   ]
+  },
+  {
+   "id": "BP-77",
+   "area": "rights",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-16 (D-26): crossover analysis episodes only under the RR rules; the quote and recap limits are P-120 / P-122 (no source gives a safe percentage)",
+   "statement": "Quotes and recap in a crossover episode (RR-04, RR-05): at most 6 quotes, each at most 2 sentences and 40 words, analysed and attributed; the recap is at most 20 % of the narration words (over 20 % REVIEW, over 35 % FAIL).",
+   "thresholds": {
+    "quotes_max": 6,
+    "quote_words_max": 40,
+    "quote_sentences_max": 2,
+    "recap_share_review": 0.2,
+    "recap_share_fail": 0.35
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "YouTube Help: fair use on YouTube",
+     "url": "https://support.google.com/youtube/answer/9783148"
+    },
+    {
+     "type": "A",
+     "title": "US Copyright Office: fair use (17 U.S.C. 107; no safe percentage)",
+     "url": "https://www.copyright.gov/fair-use/"
+    },
+    {
+     "type": "A",
+     "title": "Warner Bros. v. RDR Books (S.D.N.Y. 2008), USCO fair use summary",
+     "url": "https://www.copyright.gov/fair-use/summaries/warnerbros-rdrbooks-sdny2008.pdf"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/rights/ip_check.py:MAX_QUOTES",
+    "explainer_engine/rights/ip_check.py:RECAP_FAIL"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-80",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Repeated cues (VB-10, production_script/3): the same cue sound on two consecutive cues is REVIEW; the same sound 3 times inside 30 s FAILs (a repeated sound is a tic, not a mark). The mixer's pitch variants (BP-57) vary the sample, they do not excuse a repeat of meaning.",
+   "thresholds": {
+    "window_s": 30.0,
+    "fail_count": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Repetitive game audio, the machine-gun effect (IRPR)",
+     "url": "https://sounddesign.irpr.agency/solutions/game-audio-repetitive/"
+    },
+    {
+     "type": "A",
+     "title": "How to fix Unity SFX sounding identical every play (Bugnet)",
+     "url": "https://bugnet.io/blog/how-to-fix-unity-sfx-sounds-identical-every-play-no-variation"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:CUE_REPEAT_FAIL"
+   ],
+   "supersedes": [
+    "VB-10 CUE_REPEAT_WINDOW / CUE_REPEAT_FAIL literals"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)"
+  },
+  {
+   "id": "BP-81",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Cue density (VB-11, production_script/3): over 8 cues a minute is REVIEW and over 14 FAIL (measured on a read of at least 30 s); more than 3 cues inside any 10 s is REVIEW; one line carries at most one emphasis cue (thud, chime, rise, fall), more FAILs. This rule owns the cue layer; the sound-event band that counts effects and cues together is BP-55's.",
+   "thresholds": {
+    "per_min_review": 8.0,
+    "per_min_fail": 14.0,
+    "measured_from_s": 30.0,
+    "burst_max": 3,
+    "burst_window_s": 10.0,
+    "emphasis_per_line_max": 1,
+    "emphasis_cues": [
+     "thud",
+     "chime",
+     "rise",
+     "fall"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Walter Murch special: womb tone and dense clarity, the law of two and a half (Designing Sound)",
+     "url": "https://designingsound.org/2009/10/15/walter-murch-special-womb-tone-and-dense-clarityclear-density/"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    },
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:CUE_PER_MIN_FAIL"
+   ],
+   "supersedes": [
+    "VB-11 CUE_PER_MIN_OK / CUE_PER_MIN_FAIL / CUE_BURST literals"
+   ],
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)"
+  },
+  {
+   "id": "BP-82",
+   "area": "rhythm",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Beat variety (VB-05, VB-07): more than 3 beats of one kind in a row, more than half of a segment's beats (from 4 beats) as words, or more than 2 beat overlays on screen at once is REVIEW. The numbers are an engineering hypothesis; the channel's retention decides.",
+   "thresholds": {
+    "same_kind_run_max": 3,
+    "word_share_max": 0.5,
+    "word_share_from_beats": 4,
+    "overlays_max": 2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/beats.py:MAX_OVERLAYS"
+   ],
+   "supersedes": [
+    "VB-05 / VB-07 literals"
+   ]
+  },
+  {
+   "id": "BP-83",
+   "area": "motion",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Motion variety (MO-02..MO-07, edit/motion_lint.py): every 60 s shows at least 3 kinds of visual event; at most 4 shots in a row are only a camera move; two pop or slam words at least 12 s apart; at least half of the shots move besides the camera; more than 3 shot holds in a row within 15 % of each other, or a segment of 5+ shots whose holds vary by under 0.2 of their mean, is a metronome. All REVIEW: the numbers are an engineering hypothesis (the sources back variance, not these values). MO-01's still limit is BP-40.",
+   "thresholds": {
+    "window_s": 60.0,
+    "kinds_min": 3,
+    "plain_run_max": 4,
+    "text_min_gap_s": 12.0,
+    "alive_share_min": 0.5,
+    "hold_similar": 0.15,
+    "similar_run_max": 3,
+    "hold_cv_min": 0.2,
+    "cv_from_shots": 5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "David Bordwell's statistical analysis of film tempo (16:9)",
+     "url": "https://16-9.dk/?p=24578"
+    },
+    {
+     "type": "A",
+     "title": "Rhythmic editing: how cut timing controls the audience (FilmDaft)",
+     "url": "https://filmdaft.com/rhythmic-editing-how-cut-timing-controls-the-audience/"
+    },
+    {
+     "type": "A",
+     "title": "Pacing and rhythm in editing (ProVideo Coalition)",
+     "url": "https://www.provideocoalition.com/pacing-and-rhythm-in-editing/"
+    },
+    {
+     "type": "A",
+     "title": "YouTube video retention editing (Pixflow)",
+     "url": "https://pixflow.net/blog/?p=93140"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/motion_lint.py:HOLD_CV"
+   ],
+   "supersedes": [
+    "MO-02..MO-07 literals"
+   ]
+  },
+  {
+   "id": "BP-84",
+   "area": "rhythm",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "Storyboard floors (D-42, UR-31): no shot shorter than 2.5 s, an insert 2.0 s (RHYTHM-2); a speech bubble is a line of at most 14 words and 26 characters a line (BUBBLE-1). How long a bubble stays on screen is BP-27's hold.",
+   "thresholds": {
+    "min_shot_s": 2.5,
+    "min_insert_s": 2.0,
+    "bubble_words_max": 14,
+    "bubble_chars_per_line": 26
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How many shots are in the average movie? (Stephen Follows)",
+     "url": "https://stephenfollows.com/many-shots-average-movie/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/board.py:MIN_SHOT",
+    "explainer_engine/finish/bubbles.py:MAX_WORDS"
+   ],
+   "supersedes": [
+    "board MIN_SHOT / MIN_INSERT literals",
+    "bubbles MAX_WORDS / MAX_CHARS literals"
+   ],
+   "decided": "the creator, 2026-10-16: pictures follow the story, one held picture carries a dialogue with bubbles (D-42, UR-31)"
+  },
+  {
+   "id": "BP-85",
+   "area": "editing",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "The Universal Rule Base shot plan (D-37, edit/shot_rules.py): shot lengths A 5-7 s, B 3.5-5 s, C 2.5-4 s (UR-11); in the first 30 s at least 6 shots, each within its minimum + 1 s (UR-02); a sound event by 1 s (UR-01); an A shot holds one zoom in 1.05-1.08, a C shot pulls from at most 1.08 (UR-13, inside BP-20); at most 10 % of the transitions are dissolves (UR-14, the hard-cut convention BP-31 names); a cut keeps 0.05 s from both words (UR-12); at most 15 % of the B shots faceless and a stakes line of at least 5 words (UR-16, UR-17). The hook's form is BP-03, not a question by 5 s.",
+   "thresholds": {
+    "a_shot_s": [
+     5.0,
+     7.0
+    ],
+    "b_shot_s": [
+     3.5,
+     5.0
+    ],
+    "c_shot_s": [
+     2.5,
+     4.0
+    ],
+    "first_window_s": 30.0,
+    "first_slack_s": 1.0,
+    "first_min_shots": 6,
+    "first_sound_s": 1.0,
+    "a_zoom": [
+     1.05,
+     1.08
+    ],
+    "c_pull_max": 1.08,
+    "dissolve_share_max": 0.1,
+    "cut_edge_s": 0.05,
+    "faceless_share_max": 0.15,
+    "stakes_words_min": 5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "How to edit videos so viewers don't drop off at minute 8 (AIR)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    },
+    {
+     "type": "A",
+     "title": "What is a Dissolve in Film (StudioBinder)",
+     "url": "https://www.studiobinder.com/blog/what-is-a-dissolve-in-film-definition/"
+    },
+    {
+     "type": "C",
+     "title": "How to Make a Kurzgesagt Video in 1200 Hours (Kurzgesagt)",
+     "url": "https://www.youtube.com/watch?v=uFk0mgljtns"
+    },
+    {
+     "type": "A",
+     "title": "How to Use the Ken Burns Effect on Images (Frameo)",
+     "url": "https://frameo.ai/blog/use-ken-burns-effect-images/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/shot_rules.py:DURATIONS",
+    "explainer_engine/edit/shot_rules.py:DISSOLVE_SHARE"
+   ],
+   "supersedes": [
+    "shot_rules UR literals",
+    "UR-01 HOOK_SECONDS 5.0 (BP-03 owns the hook)"
+   ],
+   "decided": "the creator, 2026-10-16: the Universal Rule Base binds every video (D-37)"
+  },
+  {
+   "id": "BP-86",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "One music at a time (ED-03, PV-29): two music tracks overlap only in a crossfade of at most 3 s, and the tick (clockwork_loop, a music bed) is set at -25 dB or lower. The creator's notes on the first full cut of Episode 1 (two music tracks plus the tick plus a bed under the voice); the loudness under the voice is BP-52's.",
+   "thresholds": {
+    "crossfade_max_s": 3.0,
+    "tick_max_db": -25.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Spot the film: 5 composer tips (C. Caliendo)",
+     "url": "https://christophercaliendo.com/spot-the-film-5-composer-tips-every-filmmaker-should-know-about-scoringfilmmakers-spot-the-film/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/production/validate.py:TICK_MAX_DB",
+    "explainer_engine/production/validate.py:MAX_CROSSFADE"
+   ],
+   "supersedes": [
+    "PV-29 TICK_MAX_DB / MAX_CROSSFADE literals"
+   ],
+   "decided": "the creator, 2026-10-17: notes on the first full cut of Episode 1 (docs/EDITING.md ED-03)"
   }
  ]
 }

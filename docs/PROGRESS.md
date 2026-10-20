@@ -870,3 +870,96 @@ treats RMS stats as REVIEW until then); the Short's mono phone check (BP-61); pa
 machine-checked; the `sfx_manifest` schema needs `kind` (PR #9 owns it); STORY_ENGINE AL-02/AL-03 wording is PR #9's file (PRODUCTION_SCRIPT's PV-40, PV-52 and
 PP-05 rows were brought in line here after CI caught the missing PV-52 row); the Syndicate Wars example now scores FAIL on pace (122 wpm) and hook-window stills (it stays as is, the
 creator's word). Overlaps with PR #9 listed in the PR description.
+
+## 2026-10-20 - Rule consistency after the merge: audio
+Rescan findings A R-01..R-03, R-19..R-23, R-29c/e/h, B audio rows and C 2/5/6/7 fixed. New registry entries: BP-49 (AL-02 band,
+hypothesis), BP-64 (beat-cue length and level, house FAIL, D-58; BP-58's one-shot floor does not apply to an earcon), BP-65 (AL-04
+pre-mix gain caps, hypothesis: a dBFS proxy, BP-52 stays LU on the stems), BP-66 (an effect over speech is synced or masking, house
+FAIL, the creator's 2026-10-16 note). Code: every duck reads BP-53 (assemble's `vduck 0.55` gone; the bed under a world sound dips by
+BP-53's floor, 6 dB, not the superseded 4); music fades 1 s in / 2 s out from BP-62 in timing, the mix and the Shorts, with a fade
+check in `layers.music_findings`; cue pitch variants are 1 +/- BP-57's jitter and cue runs are no BP-57 finding while the bus varies
+them; AL-02 has no lower bound on `/3` (the timed file now carries `script_schema`); the sped file (`finish/speed.py`) uses BP-63's
+codec; the scorecard caps BP-01 at the registry's severity (REVIEW: a hypothesis never FAILs, so a slow read no longer blocks gate 8 /
+PC-09 on its own) and FAILs only an effect that masks a word, not one synced to its word by BP-54. Every severity comes from the
+registry. Defaults applied (the creator may overturn): BP-53 covers every music duck under the voice. STORY_ENGINE AL rows, EDITING
+ED-03/ED-06, AUDIO_SYSTEM, IMPLEMENTATION_PLAN, QA_SPECIFICATION and three skills link the BP ids. Tests: tests/unit/test_rule_consistency_audio.py
+(18); test_scorecard, test_sourced_audio and test_sourced_narration now expect the registry's value (masking event moved into the word,
+cue runs varied, BP-01 severity). Nothing paid.
+
+## 2026-10-20 - Rule consistency after the merge: picture / motion / visual beats
+
+What changed (the D-59 audit's findings for pictures, motion and visual beats; one number, one home):
+- Registry: new BP-36 (VB-01 cadence), BP-37 (VB-02 faces), BP-38 (VB-04 text words, bars), BP-39 (VB-08 cue spacing),
+  BP-80 (VB-10 repeats), BP-81 (VB-11 cue density) as house FAIL rules (the creator, 2026-10-20: PR #9's scene-rewrite
+  limits stop an episode, numbers from D-58); BP-82 (VB-05/07) and BP-83 (MO-02..07) as hypotheses (REVIEW only); BP-84
+  (shot floors, bubble words: D-42/UR-31), BP-85 (UR-01..17 storyboard numbers: D-37) and BP-86 (PV-29 crossfade and tick:
+  ED-03) as house rules. BP-20/24/27/28/30/33/40/41/45 amended (statements and `enforced_by`); SOURCED_RULES.md regenerated.
+- Code reads every number and severity from the registry: `production/beats.py`, `edit/board.py`, `edit/motion_lint.py`,
+  `edit/shot_rules.py`, `production/validate.py` (PV-24, PV-29, PV-34), `fill_holds.py`, `accents.py`, `continuity.py`,
+  `finish/bubbles.py`, `design/palette.py`. No check carries a literal FAIL/REVIEW where a rule exists.
+- `board.change_times` counts visual beats, data visuals and cards (C-1): a dialogue held on one picture with an
+  expression change per line passes RHYTHM-3 and BP-41; the synthetic /3 script went from 1 FAIL (base) and 3 FAIL
+  (hook by beats) to 0 FAIL on `production time` and `validate`. MO-01 is section-aware (hook / body of BP-40).
+- Shorts: VB-01's cadence does not run on a Short; BP-45 owns its pace and PV-34 counts beats as events (C-11).
+- UR-01 checks BP-03's hook forms instead of the superseded "question by 5 s"; BUBBLE-2 uses BP-27's hold (a hypothesis,
+  so REVIEW; it supersedes UR-31's `max(1.4, 0.3 n)`).
+- `python -m explainer_engine.edit.board` on a production script now exits 2 with "not a storyboard ... production time"
+  instead of `KeyError: 'shots'`.
+- Docs, skills and agents link the BP ids instead of restating 1.25 zoom, 3-6 s pictures, every 9 s, 3-frame flash,
+  1.6 s pop hold, 8/15 s and 4/6/0.7 s cadences, "a sound on every accent", 14 framings, the 1.5 s Shorts metronome
+  (SS-09), the J/L 0.4 s lead (a bed pre-lap, not ED-14's J/L cut) and the 40/20 tone mix (BP-09). MO-07's hold variance
+  and BP-40's still limits are documented as satisfiable together.
+
+Defaults applied: a visual beat is an on-screen change; a binding BP rule wins over a house or doc number; a hypothesis
+never FAILs.
+
+Tests: new `tests/unit/test_rule_consistency_motion.py` (registry pins, severity read from JSON, C-1, Shorts, bubbles,
+PV-29, the board CLI error). Expectations moved to the registry: `test_short_beats` (VB-01 FAIL on a Short -> BP-45),
+`test_shot_rules` (UR-01 question by 5 s -> BP-03 forms; the v3 cold open passes), severity reads in `test_visual_beats`,
+`test_scene_system`, `test_shot_rules`. Full suite: 574 passed.
+
+## 2026-10-20 - Rule consistency after the merge: narration, story, scenes, Shorts text
+
+The D-59 rescan (A R-13..R-15, R-24..R-26, R-29 narration lines; B tables 1-3 narration rows; C-3, C-4, C-9, C-10, C-12) fixed for
+narration, story, scene and Shorts-text rules. Every number now lives in `standards/sourced_rules.json` and every check of this group
+takes its severity from the registry entry (`sev(...)`), so a FAIL/REVIEW decision is a JSON edit.
+
+- New registry entries: BP-16 (N-03 ellipses, house FAIL), BP-17 (N-06/N-07 question and interjection density), BP-18 (N-10 wh-question
+  length), BP-70 (SC-05 exchange), BP-71 (SC-08 disclaimers), BP-72 (SC-09 turn and speech caps), BP-73 (SC-09 jab review and DW-12 Q&A
+  chain), BP-74..BP-76 (ST-11..ST-13), BP-77 (rights quote and recap limits of `rights/ip_check.py`). PR #9's scene limits (BP-70..72)
+  are house FAIL as the creator confirmed on 2026-10-20. BP-01, BP-03, BP-04, BP-10, BP-11, BP-12, BP-15 and BP-43 got statements and
+  `enforced_by` rows that match the code.
+- C-3: one pace. ST-13, engagement, the Short length and PV-52 all use BP-01's heard pace; PV-52 now compares the heard pace of the
+  estimated read (pace_wpm plus pauses), not the configured speaking rate.
+- C-4: one press-release lexicon (BP-15 phrases + patterns, "launches worldwide" added) shared by N-14 and SC-07, on narrator lines only
+  (`narration_lint.doc_findings`); a hero may name a date in a scene. Default applied: /1 and /2 scripts get the phrases only (D-58 keeps
+  their contract); the patterns bind from /3.
+- C-9: BP-11's hook word cap and its 3 s hook end are both checked (PV-28 on the estimated read as REVIEW, `shorts.hook_timing` on the
+  real read at the registry severity); the registry states that at 170 wpm the time bound is the tighter one (about 8 words).
+- C-10: one Short duration, `validate.short_seconds`; `short_words` scales the estimated read to it. BP-12's statement now quotes the
+  bands its thresholds compute (38-93 and 115-234 words).
+- C-12: ENG-3 counts a chart beat with values, or a text beat with the number, as shown. ENG-5 reads BP-04's `answer_after_share`;
+  ENG-8 reads BP-43's `end_screen_narration_min_s`.
+- Defaults applied: BP-10 governs narration holds (new N-15 on a narration line's `pause_after`); a silence beat inside a dialogue scene
+  is a scene device. The EG-18 rubric numbers in `editorial_gate.py` are named process constants (SCRIPTING_SPEC section 5), outside the
+  registry. Humour share (old 20 %) now points to BP-09's joke density in the docs and skills.
+- Docs, skills and agents point at the BP ids instead of restating numbers (NARRATION_AND_LANGUAGE_GUIDE, PRODUCTION_RULES,
+  UNIVERSAL_RULE_BASE UR-01, STORY_ENGINE ST/SC/DW/SS rows, PRODUCTION_SCRIPT PV-12/PV-28/PV-52, ORCHESTRATION, EPISODE_STANDARDS,
+  VIDEO_PARAMETER_SPEC P-05; skills narration-script, shorts-for-video, story-engine, dialogue-scenes, elevenlabs-voice; agents
+  scene-writer, story-architect, shorts-writer, orchestrator).
+- Tests: `tests/unit/test_rule_consistency_narration.py` (26 tests; severities read from the registry, severity-switch tests flip the
+  JSON). Two older tests changed only their expectations for the new definitions: `test_sourced_narration.py::test_pv52` (heard pace)
+  and `test_eng8` (its pointer now sits more than BP-43's end-screen time before the end). The synthetic /3 script shows the effect: a
+  date in a hero's mouth no longer FAILs, "launches worldwide" on a narrator line FAILs SC-07, the base script's estimate is heard at
+  150 wpm (PV-52 REVIEW), a 10-word Short hook ends at 3.1 s (PV-28 REVIEW), and the three Short durations agree.
+
+## 2026-10-20 - Rule consistency after the merge: integration
+The three groups above were merged rule by rule (registry 54 -> 80 rules; `sourced_rules check` 0 findings) and their
+cross-group handoffs applied: VB-08's cue-length check takes BP-64's severity (`beats.py`), PV-34 uses the one Short duration
+(`validate.short_seconds`), edit-planner and the visual-beats skill cite BP-49 and BP-64, EDITING ED-03 links BP-86,
+SCRIPTING_SPEC's "question by 5 s" follows BP-03, UR-03's "no withheld payoff" now reads with BP-04. `test_short_beats`' held
+line was lengthened so it still outlasts BP-45's still limit at BP-01's heard pace (the Short read got faster; the check is
+unchanged). The creator's decision (2026-10-20, decision card): PR #9's own gating numbers stay FAIL, as house rules. Re-run
+of the free end-to-end probes on the merged result: the synthetic /3 base and hook-by-beats scripts validate and time with 0 FAIL
+(before: 1 and 3 FAIL); the deliberately broken variants still FAIL on their own rule (VB-08, VB-10, RHYTHM-1/2). Syndicate
+Wars' scorecard has no FAIL left from a hypothesis (pace 122 wpm is a REVIEW). Tests 618 passed; docs_lint 0. Nothing paid.

@@ -16,7 +16,7 @@ defaults to pass. A deterministic FAIL cannot be overridden by an assertion.
 | Q-T07 | silence, clipping, loudness, true peak | P-90, P-91, P-95 |
 | Q-T08 | voice-to-background gap while speaking | the LU floors of BP-52 on the stems (music, bed, their sum) |
 | Q-T09 | captions | no overlap, <= 2 lines, timing +/- 100 ms, inside safe area |
-| Q-T10 | text safe margins and label size | P-64, 10 % margins |
+| Q-T10 | text safe margins and label size | P-64; the text safe area and contrast of [BP-28](SOURCED_RULES.md) |
 | Q-T11 | palette and font lint of every SVG and frame text | tokens only |
 | Q-T12 | Shorts present for planned Shorts; duration <= 180 s (V-25), house length P-11 | P-11 |
 | Q-T13 | thumbnail present, size, format | P-17 |
@@ -86,7 +86,7 @@ Help 1311392). A "no" is a finding for the owner stage.
 | Rulebook compliance | Q-E15 (`standards gate --at final_qa`), Q-E13 |
 | Narration | Q-E05, Q-T18, PV-20, `voice_check`, ED-01, ED-12 |
 | Visuals | Q-E06, Q-E11, `visual_judge`, PV-24, PV-40 |
-| Audio | Q-T07, Q-T08, PV-29, PV-41, `qa/targets.py` |
+| Audio | Q-T07, Q-T08, PV-29, PV-36 (AL-01..AL-04 and the BP audio rules in `audio/layers.py`), PV-41, `qa/targets.py`, scorecard check 2 (BP-54 sync, [BP-66](SOURCED_RULES.md) masking) |
 | Editing | Q-T17, Q-E07, ED-01..ED-12, captions Q-T09, Q-T10 |
 | Assets and provenance | Q-T16, ES-09, the run ledger (`core/ledger.py`) |
 | Originality and engagement | Q-E16, ES-13, ES-14 |
@@ -112,5 +112,6 @@ file and writes `visual_review.json` (`visual_review/1`: a boolean per question,
 `python -m explainer_engine.qa.sheet_review apply <script> <visual_review.json>` gives PASS / FAIL / REVIEW per picture. A FAIL means a
 repaint in a new approved paint plan. `GeminiClient.judge` stays for the creator's explicit request only and reserves in the ledger.
 
-Two camera limits differ on purpose until the creator decides: `production/continuity.ZMAX` 1.25 (the furthest push on one
-picture in the D-43 script) and `edit/shot_rules.MAX_ZOOM` 1.15 (UR-13, the storyboard rule). Neither was changed by the audit.
+Both camera limits read [BP-20](SOURCED_RULES.md): `production/continuity.ZMAX` (the furthest push on one picture in the D-43
+script) and `edit/shot_rules.MAX_ZOOM` (UR-13, the storyboard rule); the old 1.25 / 1.15 split was settled by D-59, and a test
+pins the schema's zoom window to the same rule.

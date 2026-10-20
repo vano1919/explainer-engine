@@ -1,12 +1,14 @@
 """Speed as a finishing step (ED-06): the finished video is time-compressed (picture and sound together, pitch kept), the
 voice is never re-synthesised. ``excerpts`` makes short samples of the BP-02 rates of the same places for the creator to
 compare; ``retime`` makes the full file at the chosen rate, never above BP-02's ceiling (the tempo just-noticeable
-difference; docs/SOURCED_RULES.md). ffmpeg only, no cost."""
+difference; docs/SOURCED_RULES.md). The sped file is the delivered file (ED-06), so its sound is BP-63's delivery codec.
+ffmpeg only, no cost."""
 from __future__ import annotations
 
 import subprocess
 from pathlib import Path
 
+from explainer_engine.production.assemble import AUDIO_CODEC  # BP-63: stereo AAC at the delivery bitrate and rate
 from explainer_engine.standards import sourced_rules as SR
 
 RATES = tuple(SR.T("BP-02", "rates"))  # BP-02: the rates offered to the creator
@@ -26,8 +28,8 @@ def retime(src: Path, dst: Path, rate: float, *, start: float | None = None, len
     graph = _filter(rate) if not scale else f"[0:v]scale={scale},setpts=PTS/{rate},fps=30[v];[0:a]atempo={rate}[a]"
     part = dst.with_suffix(".part.mp4")
     subprocess.run(["ffmpeg", "-v", "error", "-y", *cut, "-i", str(src), "-filter_complex", graph, "-map", "[v]", "-map", "[a]",
-                    "-c:v", "libx264", "-crf", str(crf), "-preset", "medium", "-pix_fmt", "yuv420p", "-c:a", "aac",
-                    "-b:a", "192k", str(part)], check=True)
+                    "-c:v", "libx264", "-crf", str(crf), "-preset", "medium", "-pix_fmt", "yuv420p", *AUDIO_CODEC,
+                    str(part)], check=True)
     part.replace(dst)
     return dst
 

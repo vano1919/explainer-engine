@@ -11,7 +11,12 @@ CRITERIA = (
     "spoken_naturalness", "visual_potential", "humour_fit", "pacing_potential", "source_coverage",
     "title_thumbnail_alignment", "shorts_potential",
 )
+# EG-18: the rubric gate of docs/SCRIPTING_SPEC.md section 5 on a reviewer's 1-5 scores. These are process thresholds on a
+# person's judgement, not a measurement of the video, so they are engineering constants outside the BP registry (like the
+# episode rulebook's process numbers); the spec is their one home and changes there first.
 REQUIRED_MINIMUMS = {"factual_reliability": 4, "source_coverage": 4, "title_thumbnail_alignment": 4}
+MIN_SCORE = 3  # no other criterion below this
+MIN_MEAN = 3.8  # the mean of all criteria
 CONTENT_KINDS = {"fact", "analysis", "speculation", "joke", "transition"}
 CLAIM_TYPES = {"fact", "estimate", "interpretation", "allegation", "speculation"}
 CONFIDENCE = {"verified", "corroborated", "single-source", "unverified"}
@@ -202,11 +207,11 @@ def review_findings(script_path: Path | str, review_path: Path | str) -> list[di
             if values[criterion] < minimum:
                 out.append(finding("EG-18", criterion, f"score {values[criterion]}/5 is below required {minimum}/5"))
         for criterion, score in values.items():
-            if criterion not in REQUIRED_MINIMUMS and score < 3:
-                out.append(finding("EG-18", criterion, f"score {score}/5 is below required 3/5"))
+            if criterion not in REQUIRED_MINIMUMS and score < MIN_SCORE:
+                out.append(finding("EG-18", criterion, f"score {score}/5 is below required {MIN_SCORE}/5"))
         mean = sum(values.values()) / len(values)
-        if mean < 3.8:
-            out.append(finding("EG-18", "mean", f"mean score {mean:.2f}/5 is below required 3.80/5"))
+        if mean < MIN_MEAN:
+            out.append(finding("EG-18", "mean", f"mean score {mean:.2f}/5 is below required {MIN_MEAN:.2f}/5"))
     return out
 
 

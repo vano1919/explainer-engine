@@ -28,7 +28,7 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
    `story-architect` -> `scene-writer` (one segment per call) -> `beat-writer` (the visual beats and cues of every line, skill
    `visual-beats`, D-54; PV-44 fails a /2 script without them) -> `performance-director` -> `edit-planner` -> `voice-caster` ->
    `shorts-writer` -> `script-critic`, each followed by `python -m explainer_engine.scripting.stage_guard <stage> before after`
-   and `production validate` (PV-33..PV-36); at most two critic rounds, then creator approval #1.
+   and `production validate` (PV-33..PV-36, PV-44, PV-48); at most two critic rounds, then creator approval #1.
    Before approval #1: `python -m explainer_engine.qa.engagement <script>`; every weak beat revised or answered.
    After approval #1: `standards gate --at script_lock` (the agent re-checks what the script changed and stamps).
 4. **Phase 3, one-item tests**: first `standards gate --at paid_assets` (no open REVIEW/ADAPT/BLOCK, fresh sources); then the first read chunk and first picture; check them (listen for drift with `audio/voice_check`,

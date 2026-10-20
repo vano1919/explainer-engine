@@ -5,9 +5,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from explainer_engine.standards import sourced_rules as SR
+
 PALETTE_PATH = Path(__file__).with_name("palette.json")
-TEXT_MIN = 4.5          # WCAG 2.x AA, normal text
-LARGE_TEXT_MIN = 3.0    # AA, text of 24 px bold or larger
+TEXT_MIN = SR.T("BP-28", "contrast_min")  # WCAG 2.x AA, normal text (BP-28)
+LARGE_TEXT_MIN = SR.T("BP-28", "contrast_large_min")  # AA, large text (BP-28's large_px and up)
 GRAPHIC_MIN = 3.0       # AA 1.4.11, meaningful graphics
 
 

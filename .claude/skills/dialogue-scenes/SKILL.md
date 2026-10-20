@@ -56,7 +56,9 @@ exits on Capone's fear -> N: "The order to find the cameraman goes out that nigh
   **interruption** (line A ends mid-clause on a dash — line B starts with a gap of at most 0.1 s; 0-2 per scene, only
   at high tension).
 - The scripted silence beat: after the hardest question or on the turn, a stage beat `(beat — no answer)` worth
-  1.5-3 s in the mix (normal inter-line gaps are ~0.4-0.8 s). 1-2 per scene; silence is a reply.
+  1.5-3 s in the mix (normal inter-line gaps are ~0.4-0.8 s). 1-2 per scene; silence is a reply. This is a scene device,
+  not a narration hold: BP-10's one-second hold limit governs the narrator's pauses (N-15), and a speaker line's
+  `pause_after` is not held to it.
 - Nobody speaks twice in a row unless the other's non-response is itself a scripted beat.
 
 ## Deflection (DW-12): Stein's five moves
@@ -162,5 +164,6 @@ into fear, shown by a silence beat and a quieter repeat of his own question.
 - SC-06 no greeting opener, no wrap-up closer.
 - SC-07 no press-release register in narration; dates and specs only inside a scene as stakes.
 - SC-08 one honesty beat (plus at most one callback), never a stack.
-- SC-09 line lengths: >35 words FAIL, >15 REVIEW unless the scene's one speech, one >=25-word turn per scene, <=3 "?" runs.
+- SC-09 line lengths (BP-72, BP-73): >35 words FAIL, >15 REVIEW unless the scene's one speech, one >=25-word turn per scene,
+  <=3 "?" runs.
 - SC-10 surface_topic and real_subject declared; no line states the real subject verbatim.

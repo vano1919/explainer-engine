@@ -13,22 +13,23 @@ Evidence for the /3 numbers: `docs/research/STORYTELLING_EDITING_2026-10-19.md`.
 For each segment:
 1. Mark the visual beats on the words: a new picture on each new idea; a reframe or an accent on the operative word of a
    reveal ("could be WRONG"); a data visual for every number. On /3 pace by new information, not a metronome, and vary
-   the hold lengths (MO-07): never more than 3 consecutive holds within 15 % of each other, and a segment of 5 or more
-   shots keeps a spread (hold-length CV at least 0.2).
+   the hold lengths (MO-07, BP-83): no long run of near-equal holds, and a long segment keeps a spread of hold lengths.
+   Long and short holds may alternate inside BP-40's still limits; the two rules are satisfiable together.
 2. On a dialogue segment follow the ED-14 coverage grammar on its `scene` header: open the scene on an
    establishing/two-shot for 2-4 s; show the LISTENER's reaction on every 2nd-4th line and on news, insult or
    revelation; never more than 4 strict A/B alternations without a pattern break (a two-shot, an insert, a reaction);
    let audio lead or trail the picture by 0.5-2 s (J/L) on about a third of the scene's cuts, so picture changes do not
    all land on sentence starts.
 3. Give every shot something besides the camera: `wobble` on a held picture, `punch` on the surprise word, `shake` on an
-   impact, `pop_text`/`slam_text` for the one word that matters (at most four words), bubbles for reactions. Whips and
+   impact, `pop_text`/`slam_text` for the one word that matters (BP-38's word cap), bubbles for reactions. Whips and
    flashes only open a segment whose `drama.turn` is BUT or whose function is a reversal, twist or climax.
-4. Sound: every accent and every on-screen action has its effect (whoosh on a whip, hit on a slam, tick on a counter);
+4. Sound: a hard move (whip, slam, flash, shake, punch) has its effect, on its frame (AL-03, BP-54); any other on-screen
+   action gets one only with a purpose, at most one beat in two (BP-55);
    the ambience bed belongs to the LOCATION (one bed per place, reused on returns, pre-lapped at the boundary). Music is
    one track per story chapter (2-4 changes per 10 minutes), changed only when the emotion changes, with ONE planned
    full dropout of 0.5-2 s before the biggest reveal, broken by an intentional sound; music drops to a drone for the
-   crisis line. Layers: voice + at most one music + one bed + effects; effects AND cues together stay at 4-20 events a
-   minute (AL rules, AL-02).
+   crisis line. Layers: voice + at most one music + one bed + effects; effects AND cues together stay inside AL-02's band ([BP-49](../../docs/SOURCED_RULES.md); on /3 only its upper bound, VB-11 caps the cues alone)
+   (on /3 only its upper bound; VB-11 caps the cues alone).
 5. The lines already carry their `visual_beats` (stage 2b): plan pictures around them, never a second accent or pop on a
    beat's word; for a dialogue line pick a picture whose `speakers` point shows the speaking face (VB-06). You may move
    a beat (`pos`) to fit the picture, never change what it shows; on /3 a cue is the beat-writer's, bound to its `event`
@@ -39,7 +40,7 @@ For each segment:
 
 ## Sourced rules (docs/SOURCED_RULES.md)
 
-The validators read these from the registry (D-59); the 4-20 events a minute above is a hypothesis (BP-55, REVIEW only).
+The validators read these from the registry (D-59); AL-02's events-a-minute band is an audio rule (AUDIO_SYSTEM.md).
 
 - BP-30: across a hard cut the focal point stays within 10 % of the frame; never the same framing of the same picture twice
   in a row (change the shot size by a full step); a direction change over 90 degrees needs a neutral picture between.
