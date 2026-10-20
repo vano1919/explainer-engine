@@ -1140,3 +1140,23 @@ face close-up. D-63: the narrator reports each exchange, the speaker's face is h
 real people stay unvoiced (D-62). PV-56 FAILs a segment with more than one silent line. The titans script fails it until its
 dialogue scenes are rewritten (S02 first, as a two-minute re-render for the creator).
 Test: `test_silent_lines.py::test_the_narrator_reports_the_exchange_bubbles_are_only_an_accent`.
+
+## 2026-10-20 - Claude watches every render first: qa/frame_review (standing order 12)
+
+The creator, on the first Titans preview: a bubble stayed across a cut into a face close-up, one speaker's words sat on another
+hero's face, faces swapped every 1-2 s, a ring sat on empty wall: "why can't you watch and evaluate it yourself?".
+`python -m explainer_engine.qa.frame_review <timed.json> <video> [--from --to] --out DIR` (free: ffmpeg + PIL) lists the moments
+that matter (cuts +-0.15 s, bubble start/middle/end, beat starts, face-frame changes, dissolve midpoints), pulls each frame at
+480 px, writes labelled contact sheets (FAIL tiles red, REVIEW amber) and `review.json`, and checks the timeline as the renderer
+draws it (`faces.composite`'s lead and ease): FR-BUBBLE-CUT / FR-BUBBLE-FACE / FR-BUBBLE-WHO / FR-RING-FACE / FR-RING-HERO FAIL;
+FR-FACE-RATE, FR-FACE-HOLD (BP-33), FR-FACE-GHOST, FR-TEXT-CUT, FR-RING-LOOK, FR-BUBBLE-TAIL REVIEW; BP-50 loudness of the range
+through `qa/targets`. Exit 1 on FAIL. `docs/PRODUCTION_RULES.md` standing order 12 + feedback row; the orchestrator's render step.
+Titans 0-123 s (`jobs/titans_from_zero/render/review/frame_review_v1`): 17 FAIL, all in S02's dialogue and its rings.
+Test: `tests/unit/test_frame_review.py` (7).
+
+## 2026-10-20 — Splice the read around new narrator passages (D-63)
+
+`production/splice_read.py`: `points` aligns the old script's voiced lines on the existing read and lists, for each run of
+bubble lines, the second where its gap opened (`silent.insert_points`, pass 1 of `silent.insert` split out); `pieces` cuts
+`read.wav` there on 10 ms fades and interleaves the new narrator takes in script order, for `production words`. Only the
+new passages are paid for. Titans: 19 runs. Test: `tests/unit/test_splice_read.py`.

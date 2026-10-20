@@ -87,17 +87,14 @@ def has_silent(doc: dict) -> bool:
     return any(not voiced(ln) for s in doc["segments"] for ln in s["lines"])
 
 
-def insert(doc: dict, voiced_words: list[dict], pcm, sr: int):
-    """The full word list (one entry per token of ``script.tokens(doc)``) and the read with a quiet gap for every silent
-    line. ``voiced_words`` are the aligned words of ``voiced_doc(doc)``. Each gap opens at the quietest spot of the pause
-    between the voiced words around it (``pause_pad.quiet_point``) and is filled with the read's own room tone, so no
-    voiced sound is cut and no gap reads as a dropout (ED-12, BP-60)."""
+def insert_points(doc: dict, voiced_words: list[dict], pcm, sr: int) -> list[dict]:
+    """Pass 1 of ``insert``: for every run of consecutive silent lines, ``{"at": seconds of the voiced read, "lines":
+    [(seg, line), ...]}``; the gap opens at the quietest spot of the pause around it (ED-12). ``splice_read`` uses the same
+    points to put a narrator passage where a run of bubbles was (D-63)."""
     import numpy as np
 
     from explainer_engine.production import script as S
-    toks, vtoks = S.tokens(doc), S.tokens(voiced_doc(doc))
-    if len(vtoks) != len(voiced_words):
-        raise ValueError(f"voiced words {len(voiced_words)} != voiced tokens {len(vtoks)}")
+    toks = S.tokens(doc)
     order: list[tuple[int, int]] = []
     for t in toks:
         if not order or order[-1] != (t["seg"], t["line"]):
@@ -128,6 +125,30 @@ def insert(doc: dict, voiced_words: list[dict], pcm, sr: int):
     for r in runs:
         if r["at"] is None:
             r["at"] = min(total, prev_e + 0.2)
+    return runs
+
+
+def insert(doc: dict, voiced_words: list[dict], pcm, sr: int):
+    """The full word list (one entry per token of ``script.tokens(doc)``) and the read with a quiet gap for every silent
+    line. ``voiced_words`` are the aligned words of ``voiced_doc(doc)``. Each gap opens at the quietest spot of the pause
+    between the voiced words around it (``pause_pad.quiet_point``) and is filled with the read's own room tone, so no
+    voiced sound is cut and no gap reads as a dropout (ED-12, BP-60)."""
+    import numpy as np
+
+    from explainer_engine.production import script as S
+    toks, vtoks = S.tokens(doc), S.tokens(voiced_doc(doc))
+    if len(vtoks) != len(voiced_words):
+        raise ValueError(f"voiced words {len(voiced_words)} != voiced tokens {len(vtoks)}")
+    order: list[tuple[int, int]] = []
+    for t in toks:
+        if not order or order[-1] != (t["seg"], t["line"]):
+            order.append((t["seg"], t["line"]))
+    count = {}
+    for t in toks:
+        count[(t["seg"], t["line"])] = count.get((t["seg"], t["line"]), 0) + 1
+    from explainer_engine.audio import pause_pad as PP
+    runs = insert_points(doc, voiced_words, pcm, sr)
+    pcm = np.asarray(pcm)
     # pass 2: the new pcm and the full word list
     pieces_pcm, cursor, shift = [], 0, 0.0
     lens = {}

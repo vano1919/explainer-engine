@@ -44,6 +44,13 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    join them and show me; I will watch and tell you what and how"). The render runs in chunks (ED-13, RULE-R1): Claude
    renders only the first two (`assemble --chunks 0:2`), joins them into one preview file, looks at it, sends it to the creator
    and waits. His notes become rules (with a test, OR-09) before the remaining chunks are rendered.
+12. **Claude watches every render before the creator does** (creator, 2026-10-20: "why can't you watch and evaluate it
+   yourself?", after the first Titans preview showed a bubble on the wrong face, faces swapping every 1-2 s and rings on empty
+   wall). Before any render, preview or part is shown to the creator, Claude runs
+   `python -m explainer_engine.qa.frame_review <timed.json> <video> --from S --to S --out <dir>` on it, opens every contact
+   sheet it writes and looks at each frame itself, fixes what it finds (timing, beats, bubbles, pictures) and re-renders. A FAIL
+   is never shown; each REVIEW is either fixed or named to the creator with its sheet. The checks and their thresholds live in
+   `explainer_engine/qa/frame_review.py` (loudness: BP-50 through `qa/targets.py`).
 
 ## 2. The gates, in order (a video does not skip one)
 
@@ -85,6 +92,7 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-20 | Approve pictures and audio together after the script and start them together | the Titans pictures were asked for only after the voice was recorded, and the batch waited | standing order 10 | the orchestrator's single paid-assets question; each step's own gate |
 | 2026-10-20 | Dialogue frame: the blurred scene with the big face (variant A of four), the background a little more blurred | at blur 0.014 the other heroes behind the face still read as a second focus | `faces.BLUR` 0.024 | `test_face_sheets.py::test_dialogue_backdrop_blur_is_the_creators_choice` |
 | 2026-10-20 | Render the first two parts, join them and show me before the rest | a whole video was rendered before the creator saw any of it | standing order 11 | the orchestrator's render phase |
+| 2026-10-20 | The first preview had errors Claude should have seen itself: a bubble across a cut into a face close-up, one speaker's words on another's face, faces swapping every 1-2 s, rings on empty wall | nothing looked at the rendered frames; the bubble layout and the close-ups were checked separately, never together on the timeline | standing order 12 | `qa/frame_review.py` (exit 1 on FAIL), `tests/unit/test_frame_review.py` |
 | 2026-10-16 | Humour must never touch the facts; credible science | joke-driven rewrites risk false statements | SCRIPTING_SPEC §8.1, UR-21 | skill, editorial review |
 | 2026-10-16 | Pictures too generic: no named heroes, no fear, clichés of the primitive; real figures by name in every topic | prompts described places; B shots faceless; idle sprite poses; empty plates | UR-16..UR-21 (D-40) | `check_stakes`, `stakes.json`, skill `shot-visuals` |
 | 2026-10-16 | The man seen from behind and the main hero are different kinds of people; everything must be one world | UR-07 asked for natural proportions next to caricatures; two generators | UR-22; style bridge | `check_stakes`, `look.figure_style` |
