@@ -560,7 +560,8 @@
         "first_picture": true,
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20",
-        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet First picture s03_bank (B1, first_pictures_v1.jpg) OK'd by vano1919 (ვანო) 2026-10-20 18:41 on the paid-assets card; copied to p_cardone.",
+        "picture": "p_cardone"
       },
       "face_sheet": {
         "id": "cardone_faces_v1",
@@ -590,7 +591,8 @@
         "first_picture": true,
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20",
-        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet First picture s06_gym (B1, first_pictures_v1.jpg) OK'd by vano1919 (ვანო) 2026-10-20 18:41 on the paid-assets card; copied to p_hormozi.",
+        "picture": "p_hormozi"
       }
     },
     "zuckerberg": {
@@ -606,7 +608,8 @@
         "first_picture": true,
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20",
-        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet First picture s06_library (B1, first_pictures_v1.jpg) OK'd by vano1919 (ვანო) 2026-10-20 18:41 on the paid-assets card; copied to p_zuckerberg.",
+        "picture": "p_zuckerberg"
       }
     },
     "bezos": {
@@ -658,7 +661,8 @@
         "first_picture": true,
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20",
-        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet First picture s06_books (B1, first_pictures_v1.jpg) OK'd by vano1919 (ვანო) 2026-10-20 18:41 on the paid-assets card; copied to p_bezos.",
+        "picture": "p_bezos"
       },
       "face_sheet": {
         "id": "bezos_faces_v1",
@@ -734,7 +738,8 @@
         "first_picture": true,
         "approved_by": "vano1919 (ვანო)",
         "approved_at": "2026-10-20",
-        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet"
+        "note": "the creator waived a separate collage ('not worth drawing just to show'): drawn first in its scene in the approved style of pictures/hero_caricatures_v1.jpg; that picture becomes the reference after his OK on the contact sheet First picture s12_ash (B1, first_pictures_v1.jpg) OK'd by vano1919 (ვანო) 2026-10-20 18:41 on the paid-assets card; copied to p_vance.",
+        "picture": "p_vance"
       },
       "face_sheet": {
         "id": "vance_faces_v1",
@@ -15056,6 +15061,46 @@
       "engine": "existing",
       "heroes": [
         "cuban"
+      ],
+      "shows": []
+    },
+    "p_vance": {
+      "file": "pictures/p_vance.jpg",
+      "engine": "existing",
+      "heroes": [
+        "vance"
+      ],
+      "shows": []
+    },
+    "p_cardone": {
+      "file": "pictures/p_cardone.jpg",
+      "engine": "existing",
+      "heroes": [
+        "cardone"
+      ],
+      "shows": []
+    },
+    "p_hormozi": {
+      "file": "pictures/p_hormozi.jpg",
+      "engine": "existing",
+      "heroes": [
+        "hormozi"
+      ],
+      "shows": []
+    },
+    "p_zuckerberg": {
+      "file": "pictures/p_zuckerberg.jpg",
+      "engine": "existing",
+      "heroes": [
+        "zuckerberg"
+      ],
+      "shows": []
+    },
+    "p_bezos": {
+      "file": "pictures/p_bezos.jpg",
+      "engine": "existing",
+      "heroes": [
+        "bezos"
       ],
       "shows": []
     }
