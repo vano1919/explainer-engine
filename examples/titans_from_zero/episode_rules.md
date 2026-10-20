@@ -59,3 +59,5 @@ Disclosure required: no (Fully drawn 2D animation of an obviously invented situa
 
 ## Checks
 
+- 2026-10-20 script_lock by vano1919 (ვანო), 2026-10-20 17:40: 'დააფიქსირე ტიტანების წესები და ჩაწერე მთხრობლისა და ვენსის ხმა': rulebook v2 re-checked by the episode-standards-director 2026-10-20 after D-62 (RK-01/RK-02 removed, ER-03/04/07, roles); script v5 approved, PV-55 clean
+- 2026-10-20 paid_assets by vano1919 (ვანო), 2026-10-20 17:40: 'დააფიქსირე ტიტანების წესები და ჩაწერე მთხრობლისა და ვენსის ხმა': rulebook v2 re-checked by the episode-standards-director 2026-10-20 after D-62 (RK-01/RK-02 removed, ER-03/04/07, roles); script v5 approved, PV-55 clean

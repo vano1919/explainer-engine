@@ -1325,5 +1325,22 @@
       "Shorts reuse the long video's own pictures and audio only"
     ]
   },
-  "checks": []
+  "checks": [
+    {
+      "checkpoint": "script_lock",
+      "date": "2026-10-20",
+      "by": "vano1919 (ვანო), 2026-10-20 17:40: 'დააფიქსირე ტიტანების წესები და ჩაწერე მთხრობლისა და ვენსის ხმა'",
+      "script_sha256": "a2f32dfdc41208a1d0771535ef446a944a54713bf05a5736a8270d0a5e0d5370",
+      "rulebook_version": 2,
+      "scope": "rulebook v2 re-checked by the episode-standards-director 2026-10-20 after D-62 (RK-01/RK-02 removed, ER-03/04/07, roles); script v5 approved, PV-55 clean"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-20",
+      "by": "vano1919 (ვანო), 2026-10-20 17:40: 'დააფიქსირე ტიტანების წესები და ჩაწერე მთხრობლისა და ვენსის ხმა'",
+      "script_sha256": "a2f32dfdc41208a1d0771535ef446a944a54713bf05a5736a8270d0a5e0d5370",
+      "rulebook_version": 2,
+      "scope": "rulebook v2 re-checked by the episode-standards-director 2026-10-20 after D-62 (RK-01/RK-02 removed, ER-03/04/07, roles); script v5 approved, PV-55 clean"
+    }
+  ]
 }
