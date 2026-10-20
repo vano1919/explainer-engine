@@ -17,7 +17,9 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md), CLAUDE.md invariants 1-2).
 5. **The creator picks the picture provider for every batch** (D-50: paint plan -> approve -> run; on Gemini the tiers draft,
    standard, premium pick the model, D-52). Narration and sound effects come from ElevenLabs; music from ElevenLabs or a per-track
-   verified free library (D-52); free procedural cues are allowed (D-54).
+   verified free library (D-52); free procedural cues are allowed (D-54). **Library first** (creator 2026-10-20): background music,
+   sound effects and reusable pictures are searched in the reusable libraries before anything new is generated, and new takes are
+   registered back (OR-18, D-63; enforced by the ElevenLabs hook and PP-08).
 6. **Look at the output before reporting it.** Open the contact sheet, listen to the test read, composite a sample; a green test
    is not acceptance (CLAUDE_EXECUTION_GUIDE step 5).
 7. **Say what was and was not verified.** No legal or factual guarantee the sources do not give; a creator decision is recorded

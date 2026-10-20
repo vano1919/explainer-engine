@@ -991,3 +991,18 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-20 — Library first: reusable assets looked up before any new generation (D-63, OR-18)
+- The creator's rule (2026-10-20): a local library of background music and reusable objects; new is generated only when
+  nothing there fits; what this session's episodes created is kept.
+- Built: `imagegen/picture_library.py` + `assets/pictures/library/manifest.json` + `schemas/picture_manifest.schema.json`
+  (props, backgrounds, textures, character art, thumbnail parts; tags, source, prompt, cost, licence, the creator's look);
+  `audio/register.py` (connector MP3/stereo → the sound library's mono WAV, source `elevenlabs`, loop/one-shot);
+  `assets_reuse.py` (search both libraries + record the search in the episode's `asset_reuse.json`).
+- Enforced: `standards/hook.py` refuses a paid ElevenLabs music/SFX call without a recorded search (OR-18); `paint plan`
+  lists a prompt's picture-library matches on the plan and `imagegen/plan.py` reports them as PP-08 (REVIEW).
+- Docs: D-63 (decision log), OR-18 (ORCHESTRATION), PP-08 (PRODUCTION_SCRIPT), AUDIO_SYSTEM and ASSET_SYSTEM library
+  sections, PRODUCTION_RULES standing order 5, CLAUDE.md layout. Media backup home: HF `tmr-artifacts/library/`.
+- Tests: `test_assets_reuse.py`, `test_picture_library.py`, `test_audio_register.py`; the hook test now records a
+  search before reaching the rulebook gate. Full suite green locally.
+- Next: the titans thread registers its generated music/ambience with `audio/register.py` when its paid run finishes.

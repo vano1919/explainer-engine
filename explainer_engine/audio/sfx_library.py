@@ -74,7 +74,7 @@ def load_manifest(root: Path) -> dict:
 
 
 def add(root: Path, *, name: str, take: int, category: str, tags: list[str], samples: np.ndarray, rate: int,
-        source: dict, licence: dict, machine_review: str = "none") -> dict:
+        source: dict, licence: dict, machine_review: str = "none", loop: bool | None = None) -> dict:
     """Store one sound (normalised) and register it. Replaces an entry with the same id."""
     root = Path(root)
     item_id = f"{name}__v{take}"
@@ -87,6 +87,8 @@ def add(root: Path, *, name: str, take: int, category: str, tags: list[str], sam
     entry = {"id": item_id, "file": rel, "category": category, "tags": sorted(set(tags)), **measure(stored, rate),
              "sha256": hashlib.sha256(data).hexdigest(), "source": source, "licence": licence,
              "review": {"machine": machine_review, "human": "not_listened"}}
+    if loop is not None:
+        entry["loop"] = loop
     manifest = load_manifest(root)
     manifest["items"] = [i for i in manifest["items"] if i["id"] != item_id] + [entry]
     manifest["items"].sort(key=lambda i: i["id"])
