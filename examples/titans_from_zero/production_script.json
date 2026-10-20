@@ -12870,6 +12870,21 @@
           ]
         },
         {
+          "text": "Kevin O'Leary slides along the bench to Elon Musk.",
+          "visual_beats": [
+            {
+              "at": "Kevin O'Leary",
+              "kind": "label",
+              "why": "rings Kevin O'Leary [Kevin O'Leary]",
+              "pos": [
+                0.5,
+                0.3
+              ],
+              "text": "KEVIN O'LEARY"
+            }
+          ]
+        },
+        {
           "text": "You can still build things?",
           "speaker": "oleary",
           "to": "musk",
@@ -12924,6 +12939,35 @@
             }
           ],
           "voiced": false
+        },
+        {
+          "text": "Nobody else on the bench has offered him anything.",
+          "visual_beats": [
+            {
+              "at": "Nobody else",
+              "kind": "symbol",
+              "why": "nobody else offers a thing [Nobody else]",
+              "pos": [
+                0.85,
+                0.25
+              ],
+              "symbol": "cross"
+            }
+          ]
+        },
+        {
+          "text": "O'Leary takes a white envelope from under his arm.",
+          "visual_beats": [
+            {
+              "at": "white envelope",
+              "kind": "highlight",
+              "why": "rings white envelope [white envelope]",
+              "pos": [
+                0.3,
+                0.6
+              ]
+            }
+          ]
         },
         {
           "text": "Then I will. Forty dollars.",
@@ -13016,82 +13060,16 @@
           "voiced": false
         },
         {
-          "text": "Ten percent for forty? I've sold air for more.",
-          "speaker": "trump",
-          "to": "room",
-          "intent": "banter",
+          "text": "Musk signs. O'Leary moves along. Belfort reads his envelope to the last line.",
           "visual_beats": [
             {
-              "at": "sold air",
-              "kind": "expression",
-              "expression": "smug",
-              "why": "Trump boasts he has sold air for more [sold air]"
+              "at": "Musk signs",
+              "kind": "accent",
+              "why": "Musk signs: the stamp of the deal [Musk signs]",
+              "effect": "punch",
+              "strength": 0.5
             }
-          ],
-          "voiced": false
-        },
-        {
-          "text": "Well, then sell me some. I've got an envelope for you too.",
-          "speaker": "oleary",
-          "to": "trump",
-          "intent": "press",
-          "visual_beats": [
-            {
-              "at": "sell me some",
-              "kind": "expression",
-              "expression": "amused",
-              "why": "O'Leary enjoys challenging Trump [sell me some]"
-            },
-            {
-              "at": "an envelope",
-              "kind": "label",
-              "text": "ENVELOPE",
-              "pos": [
-                0.3,
-                0.65
-              ],
-              "why": "he has an envelope for Trump too"
-            },
-            {
-              "at": "envelope for you too",
-              "kind": "expression",
-              "expression": "doubtful",
-              "why": "Trump realises he is next [envelope for you too]",
-              "who": "trump"
-            }
-          ],
-          "voiced": false
-        },
-        {
-          "text": "Why would I sign that?",
-          "speaker": "musk",
-          "to": "oleary",
-          "intent": "question",
-          "visual_beats": [
-            {
-              "at": "Why would",
-              "kind": "expression",
-              "expression": "doubtful",
-              "why": "Musk resists signing [Why would]"
-            }
-          ],
-          "voiced": false
-        },
-        {
-          "text": "Because forty is more than anyone else in this building is offering.",
-          "speaker": "oleary",
-          "to": "musk",
-          "intent": "decide",
-          "visual_beats": [
-            {
-              "at": "anyone else",
-              "kind": "expression",
-              "expression": "sad",
-              "why": "Musk hears that nobody else offers anything [anyone else]",
-              "who": "musk"
-            }
-          ],
-          "voiced": false
+          ]
         },
         {
           "text": "Forever is a long word in a contract.",
@@ -13127,8 +13105,8 @@
             {
               "at": "short one",
               "kind": "expression",
-              "expression": "smug",
-              "why": "O'Leary has the better answer [short one]"
+              "expression": "deadpan",
+              "why": "O'Leary delivers the line flat [short one]"
             },
             {
               "at": "bankruptcy",
@@ -13187,6 +13165,12 @@
           "zoom": 1.0
         },
         {
+          "at": "Kevin O'Leary slides along",
+          "picture": "s02_wide",
+          "crop_x": 0.62,
+          "zoom": 1.0
+        },
+        {
           "at": "You can still build",
           "picture": "s02_ots_ol",
           "crop_x": 0.45,
@@ -13202,6 +13186,18 @@
           "at": "Nobody pays for the",
           "picture": "s02_ots_ol",
           "crop_x": 0.9,
+          "zoom": 1.0
+        },
+        {
+          "at": "Nobody else on the",
+          "picture": "s02_ots_musk",
+          "crop_x": 0.55,
+          "zoom": 1.0
+        },
+        {
+          "at": "O'Leary takes a white",
+          "picture": "s02_ots_ol",
+          "crop_x": 0.45,
           "zoom": 1.0
         },
         {
@@ -13223,25 +13219,7 @@
           "zoom": 1.0
         },
         {
-          "at": "Ten percent for forty",
-          "picture": "s02_ots_trump",
-          "crop_x": 0.4,
-          "zoom": 1.0
-        },
-        {
-          "at": "Well then sell me",
-          "picture": "s02_ol_trump",
-          "crop_x": 0.33,
-          "zoom": 1.0
-        },
-        {
-          "at": "Why would I sign",
-          "picture": "s02_ots_musk",
-          "crop_x": 0.55,
-          "zoom": 1.0
-        },
-        {
-          "at": "Because forty is more",
+          "at": "Musk signs O'Leary moves",
           "picture": "s02_ots_musk",
           "crop_x": 0.1,
           "zoom": 1.3
@@ -13932,27 +13910,19 @@
           "voiced": false
         },
         {
-          "text": "Then you don't own the thing you're selling.",
-          "speaker": "trump",
-          "to": "kiyosaki",
-          "intent": "reveal",
+          "text": "The motel wants its rent by tomorrow.",
           "visual_beats": [
             {
-              "at": "you're selling",
-              "kind": "expression",
-              "expression": "worried",
-              "why": "Kiyosaki is caught: the thing you're selling [you're selling]",
-              "who": "kiyosaki"
-            },
-            {
-              "at": "selling",
-              "kind": "accent",
-              "effect": "punch",
-              "why": "selling: the hit of the line",
-              "strength": 0.5
+              "at": "rent",
+              "kind": "text",
+              "why": "rent is due tomorrow [rent]",
+              "pos": [
+                0.5,
+                0.2
+              ],
+              "text": "RENT DUE"
             }
-          ],
-          "voiced": false
+          ]
         },
         {
           "text": "Banks forget. In a year they'll beg to lend us.",
@@ -14022,6 +13992,20 @@
             }
           ],
           "voiced": false
+        },
+        {
+          "text": "Trump looks at his phone.",
+          "visual_beats": [
+            {
+              "at": "phone",
+              "kind": "highlight",
+              "why": "rings phone [phone]",
+              "pos": [
+                0.7,
+                0.5
+              ]
+            }
+          ]
         },
         {
           "text": "The cameras.",
@@ -14240,9 +14224,9 @@
           "zoom": 1.3
         },
         {
-          "at": "Then you don't own",
-          "picture": "s05_ots_k",
-          "crop_x": 0.9,
+          "at": "The motel wants its",
+          "picture": "s05_motel",
+          "crop_x": 0.5,
           "zoom": 1.0
         },
         {
@@ -14253,6 +14237,12 @@
         },
         {
           "at": "My companies went to",
+          "picture": "s05_room",
+          "crop_x": 0.72,
+          "zoom": 1.0
+        },
+        {
+          "at": "Trump looks at his",
           "picture": "s05_room",
           "crop_x": 0.72,
           "zoom": 1.0
@@ -14360,6 +14350,18 @@
           ]
         },
         {
+          "text": "He has heard about the scooters that never break down.",
+          "visual_beats": [
+            {
+              "at": "never break down",
+              "kind": "accent",
+              "effect": "punch",
+              "strength": 0.4,
+              "why": "scooters that never break down: the claim lands [never break down]"
+            }
+          ]
+        },
+        {
           "text": "How many can you make by Christmas?",
           "speaker": "cuban",
           "to": "musk",
@@ -14444,6 +14446,20 @@
           "voiced": false
         },
         {
+          "text": "Musk looks at his hands. Then at Belfort.",
+          "visual_beats": [
+            {
+              "at": "Musk looks",
+              "kind": "highlight",
+              "why": "rings Musk looks [Musk looks]",
+              "pos": [
+                0.35,
+                0.5
+              ]
+            }
+          ]
+        },
+        {
           "text": "We have parts for fifty.",
           "speaker": "musk",
           "to": "belfort",
@@ -14466,26 +14482,16 @@
           "voiced": false
         },
         {
-          "text": "He's modest. It's a condition.",
-          "speaker": "belfort",
-          "to": "cuban",
-          "intent": "deflect",
+          "text": "Cuban doesn't blink.",
           "visual_beats": [
             {
-              "at": "modest",
+              "at": "blink",
               "kind": "expression",
-              "expression": "smug",
-              "why": "Belfort smooths it: he's modest [modest]"
-            },
-            {
-              "at": "condition",
-              "kind": "expression",
-              "expression": "angry",
-              "why": "Musk bristles at: It's a condition [condition]",
-              "who": "musk"
+              "expression": "deadpan",
+              "who": "cuban",
+              "why": "Cuban does not blink [blink]"
             }
-          ],
-          "voiced": false
+          ]
         },
         {
           "text": "Five hundred by the twentieth of December, or you never walk in here again.",
@@ -14619,6 +14625,12 @@
           "zoom": 1.0
         },
         {
+          "at": "He has heard about",
+          "picture": "s08_office",
+          "crop_x": 0.6,
+          "zoom": 1.0
+        },
+        {
           "at": "How many can you",
           "picture": "s08_three",
           "crop_x": 0.3,
@@ -14637,16 +14649,22 @@
           "zoom": 1.0
         },
         {
+          "at": "Musk looks at his",
+          "picture": "s08_musk",
+          "crop_x": 0.5,
+          "zoom": 1.0
+        },
+        {
           "at": "We have parts for",
           "picture": "s08_bel_musk",
           "crop_x": 0.68,
           "zoom": 1.0
         },
         {
-          "at": "He's modest It's a",
-          "picture": "s08_bel_musk",
-          "crop_x": 0.35,
-          "zoom": 1.3
+          "at": "Cuban doesn't blink",
+          "picture": "s08_ots_cuban",
+          "crop_x": 0.55,
+          "zoom": 1.0
         },
         {
           "at": "Five hundred by the",
@@ -15330,6 +15348,20 @@
           "voiced": false
         },
         {
+          "text": "Cuban looks along the rows of scooters.",
+          "visual_beats": [
+            {
+              "at": "rows",
+              "kind": "highlight",
+              "why": "rings rows [rows]",
+              "pos": [
+                0.5,
+                0.6
+              ]
+            }
+          ]
+        },
+        {
           "text": "Who pays for two hundred new ones?",
           "speaker": "cuban",
           "to": "belfort",
@@ -15354,6 +15386,18 @@
             }
           ],
           "voiced": false
+        },
+        {
+          "text": "Belfort opens his mouth to make a pitch. For once, he closes it.",
+          "visual_beats": [
+            {
+              "at": "closes it",
+              "kind": "accent",
+              "why": "he closes it: the pitch dies [closes it]",
+              "effect": "punch",
+              "strength": 0.4
+            }
+          ]
         },
         {
           "text": "We pay for them ourselves.",
@@ -15442,9 +15486,21 @@
           "zoom": 1.3
         },
         {
+          "at": "Cuban looks along the",
+          "picture": "s13_rows",
+          "crop_x": 0.5,
+          "zoom": 1.0
+        },
+        {
           "at": "Who pays for two",
           "picture": "s13_ots_bel",
           "crop_x": 0.9,
+          "zoom": 1.0
+        },
+        {
+          "at": "Belfort opens his mouth",
+          "picture": "s13_ts",
+          "crop_x": 0.32,
           "zoom": 1.0
         },
         {
@@ -15587,6 +15643,24 @@
           "voiced": false
         },
         {
+          "text": "Belfort's grin stays on a second too long.",
+          "visual_beats": [
+            {
+              "at": "a second too long",
+              "kind": "expression",
+              "expression": "deadpan",
+              "why": "Belfort's grin sticks: a second too long [a second too long]",
+              "who": "belfort"
+            }
+          ],
+          "tags": [
+            "softly"
+          ],
+          "emphasis": [
+            "long"
+          ]
+        },
+        {
           "text": "Well, you got lucky with him.",
           "speaker": "belfort",
           "to": "oleary",
@@ -15627,24 +15701,6 @@
           ],
           "pause_after": 0.5,
           "voiced": false
-        },
-        {
-          "text": "Belfort's grin stays on a second too long.",
-          "visual_beats": [
-            {
-              "at": "a second too long",
-              "kind": "expression",
-              "expression": "deadpan",
-              "why": "Belfort's grin sticks: a second too long [a second too long]",
-              "who": "belfort"
-            }
-          ],
-          "tags": [
-            "softly"
-          ],
-          "emphasis": [
-            "long"
-          ]
         },
         {
           "text": "How many envelopes did he get signed? Watch the full video.",
@@ -15719,6 +15775,12 @@
           "zoom": 1.3
         },
         {
+          "at": "Belfort's grin stays on",
+          "picture": "s15_ots_bel",
+          "crop_x": 0.45,
+          "zoom": 1.3
+        },
+        {
           "at": "Well you got lucky",
           "picture": "s15_ots_bel",
           "crop_x": 0.45,
@@ -15729,12 +15791,6 @@
           "picture": "s15_ots_bel",
           "crop_x": 0.9,
           "zoom": 1.0
-        },
-        {
-          "at": "Belfort's grin stays on",
-          "picture": "s15_ots_bel",
-          "crop_x": 0.45,
-          "zoom": 1.3
         },
         {
           "at": "How many envelopes did",
