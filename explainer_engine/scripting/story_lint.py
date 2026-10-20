@@ -6,7 +6,9 @@ want; facts and basic human needs must be balanced. The rules turn screenwriting
 to: one dramatic question, causality between beats (but / therefore, never "and then"), heroes with a want and a
 flaw, rising stakes with a turn of value in every segment, open loops that are paid off, set-ups with pay-offs, the
 needs the episode serves, and what is fact, reasoning or invention. Structure FAILs (a loop that does not exist, a
-pay-off before its plant); craft is REVIEW (the creator judges the story).
+pay-off before its plant); craft is REVIEW (the creator judges the story). The numbers and severities of ST-11, ST-12
+and ST-13 live in the sourced rules registry (BP-74..BP-76, docs/SOURCED_RULES.md); ST-13 turns words into seconds at
+BP-01's heard pace, the one pace every estimate uses.
 
     python -m explainer_engine.scripting.story_lint production_script.json
 """
@@ -18,15 +20,24 @@ import re
 import sys
 from pathlib import Path
 
+from explainer_engine.standards import sourced_rules as SR
+
 MIN_NEEDS = 3
-MAX_UNANSWERED_QUESTIONS = 3  # ST-11 (D-49)
+MAX_UNANSWERED_QUESTIONS = SR.T("BP-74", "stacked_questions_min")  # ST-11 (D-49)
 MAX_AND_THEN_SHARE = 0.0
 TURN_FUNCS = {"reversal", "midpoint", "crisis", "twist", "climax"}
 OPENERS = {"cold_open", "hook"}
 AND_THEN = re.compile(r"^\s*(and then|after that|next,|then,|also,)", re.I)
 SCENE_SCHEMA = "production_script/3"  # the 2026-10-19 scene rewrite: a missing drama is a FAIL, ST-12/ST-13 apply
-MIDPOINT_BAND = (0.40, 0.60)  # ST-12: the midpoint/reversal sits at 40-60 % of the script's words
-TURN_GAP_S, WORDS_PER_S = 150.0, 2.5  # ST-13: a turn at least every ~150 s, estimated at 2.5 words/s
+MIDPOINT_BAND = tuple(SR.T("BP-75", "midpoint_share"))  # ST-12: the midpoint/reversal sits at 40-60 % of the words
+MIDPOINT_MIN_SEGMENTS = SR.T("BP-75", "min_segments")
+TURN_GAP_S = SR.T("BP-76", "turn_gap_s")  # ST-13: a turn at least this often
+WORDS_PER_S = SR.T("BP-01", "wpm_target") / 60  # ST-13: words become seconds at BP-01's heard pace
+
+
+def sev(rule_id: str) -> str:
+    """A registered rule's severity is the registry's (BP-74..BP-76)."""
+    return SR.rule(rule_id).get("severity", "REVIEW")
 
 
 def _f(out, rule, where, detail, sev="REVIEW"):
@@ -148,7 +159,8 @@ def lint(doc: dict) -> list[dict]:
     for i, (sid, d) in enumerate(sd):
         qs = sum(1 for ln in segs[i].get("lines", []) if ln["text"].rstrip().endswith("?"))
         if qs >= MAX_UNANSWERED_QUESTIONS and not (d or {}).get("opens"):
-            _f(out, "ST-11", sid, f"{qs} questions in one segment that opens no loop: answer each within a few seconds or declare the loop")
+            _f(out, "ST-11", sid, f"{qs} questions in one segment that opens no loop: answer each within a few seconds or declare the "
+               "loop (BP-74)", sev("BP-74"))
     # ST-10 the ending pays the promise
     end = drama.get("ending")
     if not end:
@@ -157,7 +169,7 @@ def lint(doc: dict) -> list[dict]:
     # Word counts stand in for the clock at write time (the read decides later); both are craft, so REVIEW.
     seg_words = [sum(len(ln["text"].split()) for ln in s.get("lines", [])) for s in segs]
     total = sum(seg_words)
-    if total and len(segs) >= 8:
+    if total and len(segs) >= MIDPOINT_MIN_SEGMENTS:
         cum = 0.0
         mid_shares = []
         for (sid, d), w in zip(sd, seg_words):
@@ -168,7 +180,7 @@ def lint(doc: dict) -> list[dict]:
         if mid_shares and not any(MIDPOINT_BAND[0] <= at <= MIDPOINT_BAND[1] for _, at in mid_shares):
             sid, at = min(mid_shares, key=lambda x: abs(x[1] - 0.5))
             _f(out, "ST-12", sid, f"the midpoint/reversal sits at {at:.0%} of the words (aim "
-               f"{MIDPOINT_BAND[0]:.0%}-{MIDPOINT_BAND[1]:.0%}): the pivot belongs mid-story")
+               f"{MIDPOINT_BAND[0]:.0%}-{MIDPOINT_BAND[1]:.0%}, BP-75): the pivot belongs mid-story", sev("BP-75"))
     if total:
         gap_words, gap_from = 0.0, None
         budget = TURN_GAP_S * WORDS_PER_S
@@ -180,8 +192,9 @@ def lint(doc: dict) -> list[dict]:
             gap_from = gap_from or sid
             gap_words += w
             if gap_words > budget:
-                _f(out, "ST-13", f"{gap_from}..{sid}", f"about {gap_words / WORDS_PER_S:.0f} s without a turn (a BUT, "
-                   f"reversal, midpoint, crisis, twist or climax): something must change at least every {TURN_GAP_S:.0f} s")
+                _f(out, "ST-13", f"{gap_from}..{sid}", f"about {gap_words / WORDS_PER_S:.0f} s at {WORDS_PER_S * 60:g} wpm "
+                   f"without a turn (a BUT, reversal, midpoint, crisis, twist or climax): something must change at least every "
+                   f"{TURN_GAP_S:g} s (BP-76)", sev("BP-76"))
                 gap_words, gap_from = 0.0, None
     return out
 

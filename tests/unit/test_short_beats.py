@@ -54,6 +54,9 @@ def test_a_short_with_its_beats_passes_and_a_long_gap_is_bp45s():
     assert not [f for f in found if f["rule"] == "PV-34" and f["where"] == "SH01" and "nothing changes" in f["detail"]]
     gap = copy.deepcopy(d)
     gap["shorts"][0]["lines"][1].pop("visual_beats")  # "Nobody knows, not even the bravest ..." holds one picture
+    gap["shorts"][0]["lines"][1]["text"] += " Every hour of the dark takes another one of them away."  # longer than max_still_s
+    # at BP-01's heard pace (the one Short duration, validate.short_seconds; 2026-10-20 the read got faster and the old line
+    # no longer outlasted BP-45's still limit)
     assert not [f for f in V.short_beat_findings(gap) if f["rule"] == "PV-44 VB-01"]  # no metronome on a Short
     found = V.check_script(C.compile_doc(gap))  # the validator runs BP-45 on the Short's estimated read
     hold = [f for f in found if f["rule"] == "PV-34" and f["where"] == "SH01" and "nothing changes" in f["detail"]]

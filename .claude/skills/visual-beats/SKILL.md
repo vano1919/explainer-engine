@@ -88,7 +88,7 @@ type is FOR:
 The subtractive test decides every cue: does the moment feel more connected with the sound than without it? No ->
 delete it. Density and repetition (VB-10, VB-11): cues a minute over the video and the burst cap are BP-81's,
 never the same cue sound on two consecutive cues (REVIEW; the repeat window and count are BP-80's), and emphasis sounds
-(thud, chime, rise, fall) at most BP-81's count per line. Cues count toward AL-02's sound events a minute. Duration and level rules stay: 20-250 ms, -36..-20 dB, never within BP-39's cover time of an effect
+(thud, chime, rise, fall) at most BP-81's count per line. Cues count toward AL-02's sound events a minute (BP-49). Duration and level rules stay: BP-64's 20-250 ms, -36..-20 dB, never within BP-39's cover time of an effect
 (the effect is the beat's sound), two cues at least BP-39's gap apart, within BP-56's layer cap (AL-01).
 
 The mixer auto-varies playback: `audio/cues.py` renders 3 deterministic pitch variants per sound (1.0 / 0.94 / 1.06)

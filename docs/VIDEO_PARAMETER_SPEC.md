@@ -18,7 +18,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | P-02 | audience_setting | not_made_for_kids | enum | official guidance (V-03, D-17) | H/F | packaging | upload checklist item |
 | P-03 | collision types | you_in_era, past_meets_present, era_meets_era, world_what_if, how_it_worked, money_across_eras, myth_vs_record | subset | the "worlds collide" positioning (D-25) | M/P | topic intake | topic must name a type and only public-domain or factual worlds |
 | P-04 | third-party fictional worlds | allowed only as analysis episodes under RR-01..RR-13 (D-26) | rights check PASS | IP rules (V-07..V-12) | M/F | rights manifest | `rights/ip_check.py`: any FAIL blocks the package |
-| P-05 | humour budget | <= 1 verbal joke / 60 s | 0-2 | tone, taste | L/C | script QA | flag only (review, never auto-edit) |
+| P-05 | humour budget | <= 1 verbal joke / 60 s | see BP-09 | tone, taste | L/C | script QA | flag only (review, never auto-edit) |
 | P-06 | editorial boundaries | no advice, no medical/legal claims, no real-person claims without a source | list | risk rules | H/F | claim map | claim reviewer + checklist |
 | P-07 | cadence (cycle 1) | 1 long-form / 2 weeks + 2 Shorts / week | measured later | own hours, not competitors (D-06, SE-26) | L/P | time log | reviewed after 3 long-forms |
 

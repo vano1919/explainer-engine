@@ -7,7 +7,7 @@
    "area": "narration",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Heard pace is measured on the finished read: target 170 wpm, accepted 155-185; one band everywhere (five studies agree 170 is the YouTube norm; one source type, so the project's own number stays).",
+   "statement": "Heard pace is measured on the finished read: words divided by the read's duration, pauses included; target 170 wpm, accepted 155-185; one band everywhere (five studies agree 170 is the YouTube norm; one source type, so the project's own number stays). Every estimate uses this one definition: a Short's length and ST-13's turn cadence are its words at the target; the long video's estimated read times each word at the script's voice.pace_wpm (the voice's speaking rate) and adds the punctuation and held pauses, and PV-52 compares the heard pace of that estimate (words / estimated duration) with the band.",
    "thresholds": {
     "wpm_target": 170,
     "wpm_min": 155,
@@ -46,7 +46,8 @@
    "enforced_by": [
     "explainer_engine/production/validate.py:BP-01",
     "explainer_engine/qa/scorecard.py:BP-01",
-    "explainer_engine/qa/engagement.py:BP-01"
+    "explainer_engine/qa/engagement.py:BP-01",
+    "explainer_engine/scripting/story_lint.py:WORDS_PER_S"
    ],
    "supersedes": [
     "PRODUCTION_RULES gate 2 160-185",
@@ -154,7 +155,8 @@
    "enforced_by": [
     "explainer_engine/scripting/narration_lint.py:N-01",
     "explainer_engine/edit/shot_rules.py:GREETINGS",
-    "explainer_engine/edit/shot_rules.py:HOOK_FORMS"
+    "explainer_engine/edit/shot_rules.py:HOOK_FORMS",
+    "explainer_engine/scripting/narration_lint.py:HOOK_FORMS"
    ],
    "supersedes": [
     "N-01 yes/no question only",
@@ -197,7 +199,7 @@
    ],
    "enforced_by": [
     "explainer_engine/scripting/narration_lint.py:N-11",
-    "explainer_engine/qa/engagement.py:ENG-5"
+    "explainer_engine/qa/engagement.py:ANSWER_AFTER_SHARE"
    ],
    "supersedes": [
     "ST-11 (confirmed)",
@@ -404,7 +406,7 @@
    "area": "narration",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "No pause before a punch line (performers do not pause there); emphasis comes from the text (one stressed word, an ellipsis, a tag), never from a hold over one second.",
+   "statement": "No pause before a punch line (performers do not pause there); emphasis comes from the text (one stressed word, an ellipsis, a tag), never from a hold over one second. The hold limit governs the narrator's pauses (a narration line's pause_after); a scripted silence inside a dialogue scene is a scene device, not a narration hold.",
    "thresholds": {
     "max_hold_s": 1.0
    },
@@ -432,7 +434,7 @@
    ],
    "enforced_by": [
     ".claude/agents/performance-director.md",
-    "explainer_engine/scripting/narration_lint.py:N-03"
+    "explainer_engine/scripting/narration_lint.py:MAX_HOLD_S"
    ],
    "supersedes": [
     "PF-03 reveal pause 0.5 (confirmed as rewritten)",
@@ -445,7 +447,7 @@
    "area": "shorts",
    "status": "binding",
    "severity": "FAIL",
-   "statement": "A Short's hook is spoken from the first second: the first word starts within 1.0 s of frame 0, the hook is complete by 3.0 s and at most 14 words; one question, or one statement that raises several.",
+   "statement": "A Short's hook is spoken from the first second: the first word starts within 1.0 s of frame 0, the hook is complete by 3.0 s and at most 14 words; one question, or one statement that raises several. At BP-01's 170 wpm about 8 words fit in 3 s (14 words take about 4.9 s), so the time bound is the tighter one: both are checked, the word count on the script and the end of the hook's last word on the Short's estimated read (PV-28) and on its real read (production/shorts.py).",
    "thresholds": {
     "first_word_by_s": 1.0,
     "hook_done_by_s": 3.0,
@@ -480,7 +482,8 @@
    ],
    "enforced_by": [
     "explainer_engine/production/validate.py:PV-28",
-    "explainer_engine/production/shorts.py:BP-11"
+    "explainer_engine/production/shorts.py:BP-11",
+    "explainer_engine/production/shorts.py:HOOK_DONE_BY_S"
    ],
    "supersedes": [
     "SH-01 (confirmed)",
@@ -493,7 +496,7 @@
    "area": "shorts",
    "status": "binding",
    "severity": "REVIEW",
-   "statement": "A Short's word budget follows its length band at 170 wpm with 10 % slack: 15-30 s is 40-90 words, 45-75 s is 125-215 words; the estimate uses the heard pace of BP-01.",
+   "statement": "A Short's word budget is its length band at BP-01's heard pace (170 wpm, 2.8333 words a second) with 10 % slack at both ends: 15-30 s is about 38-93 words and 45-75 s about 115-234 words (the vendor table behind it reads 160-180 wpm, 30 s = 80-90 words, 60 s = 160-180 words, all inside). A Short's estimated length is its words at this pace (production/validate.short_seconds), the one duration every Short check uses.",
    "thresholds": {
     "bands_s": [
      [
@@ -527,7 +530,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/production/validate.py:PV-28"
+    "explainer_engine/production/validate.py:PV-28",
+    "explainer_engine/production/validate.py:short_seconds"
    ],
    "supersedes": [
     "PV-28 40-130 words",
@@ -638,7 +642,7 @@
    "area": "narration",
    "status": "house",
    "severity": "FAIL",
-   "statement": "No press-release lines: narration never announces a date, a release, a price or a feature list the way a company's statement would ('comes out on 15 November', 'is now available', 'launches worldwide'); the fact lives in the claim map, the line in the story. Sources are cited in the claim map and the description, never spoken.",
+   "statement": "No press-release lines: narration never announces a date, a release, a price or a feature list the way a company's statement would ('comes out on 15 November', 'is now available', 'launches worldwide'); the fact lives in the claim map, the line in the story. Sources are cited in the claim map and the description, never spoken. One lexicon (phrases and patterns) serves N-14 and SC-07, checked on the narrator's lines only: a hero may name a date inside a scene as stakes or ammunition (SC-07). The patterns (SC-07's announcement register) bind from production_script/3 on; a /1 or /2 script keeps its old contract (D-58: its rules asked the narration to cite sources) and gets the phrases only.",
    "thresholds": {
     "phrases": [
      "comes out on",
@@ -654,7 +658,18 @@
      "according to the official",
      "the company announced",
      "press release",
-     "as reported by"
+     "as reported by",
+     "launches worldwide"
+    ],
+    "patterns": [
+     "\\b\\w+'s (page|site|website) (says|gives|names|lists|confirms)\\b",
+     "\\b(announced|announcement|press release)\\b",
+     "\\brelease date\\b",
+     "\\bis set to (release|launch|come out)\\b",
+     "\\bcoming (january|february|march|april|may|june|july|august|september|october|november|december)\\b",
+     "\\baccording to [^.?!]{0,40}\\b(page|site|website|trailer)\\b",
+     "\\bthe trailer (shows|confirms|reveals)\\b",
+     "\\blaunch(es|ing)? (worldwide|globally)\\b"
     ]
    },
    "sources": [
@@ -677,12 +692,108 @@
    "enforced_by": [
     "explainer_engine/scripting/narration_lint.py:N-14",
     ".claude/skills/narration-script/SKILL.md",
-    "explainer_engine/standards/policy_baseline.json"
+    "explainer_engine/standards/policy_baseline.json",
+    "explainer_engine/scripting/narration_lint.py:press_release",
+    "explainer_engine/scripting/scene_lint.py:SC-07"
    ],
    "supersedes": [
-    "ER-07 / RK-08 / RK-16 / RR-10 / SR-04 source-citing narration"
+    "ER-07 / RK-08 / RK-16 / RR-10 / SR-04 source-citing narration",
+    "SC-07 PRESS_RELEASE regex list (scene_lint)"
    ],
    "decided": "the creator, 2026-10-19 (after the Syndicate Wars review)"
+  },
+  {
+   "id": "BP-16",
+   "area": "narration",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-16: the first reads were slow, ellipses everywhere (narration-script skill, 'What the creator heard wrong')",
+   "statement": "At most one ellipsis per beat (N-03): each '...' is a held pause, used only before the beat's one reveal; two in a beat is a REVIEW, more than two a FAIL. For speed: full stops, dashes and fragments (BP-10: emphasis comes from the text).",
+   "thresholds": {
+    "ellipses_per_beat_max": 1,
+    "ellipses_fail_over": 2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "ElevenLabs docs: Prompting Eleven v3/v4 (ellipses add pauses and weight)",
+     "url": "https://elevenlabs.io/docs/best-practices/prompting"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-03"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-17",
+   "area": "narration",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Conversational colour: at least one question per 150 words (N-06; about one a minute at BP-01's pace, a floor: the four what-if transcripts ask one every 20-30 s) and interjections where a person would say them, at least one and about one per 60 words (N-07). The numbers are the project's own.",
+   "thresholds": {
+    "words_per_question": 150,
+    "words_per_interjection": 60
+   },
+   "sources": [
+    {
+     "type": "C",
+     "title": "vidIQ transcript aeKrIhktzqU (one of the four Stone Age what-if videos in the narration-script skill, read 2026-10-16)",
+     "url": "https://www.youtube.com/watch?v=aeKrIhktzqU",
+     "note": "patterns only: a question every 20-30 s, interjections at real moments"
+    },
+    {
+     "type": "C",
+     "title": "vidIQ transcript BTNUK1SCoo4 (one of the four Stone Age what-if videos in the narration-script skill, read 2026-10-16)",
+     "url": "https://www.youtube.com/watch?v=BTNUK1SCoo4",
+     "note": "patterns only: a question every 20-30 s, interjections at real moments"
+    },
+    {
+     "type": "C",
+     "title": "vidIQ transcript vS5BmHsuvvk (one of the four Stone Age what-if videos in the narration-script skill, read 2026-10-16)",
+     "url": "https://www.youtube.com/watch?v=vS5BmHsuvvk",
+     "note": "patterns only: a question every 20-30 s, interjections at real moments"
+    },
+    {
+     "type": "C",
+     "title": "vidIQ transcript agRKo_sEb4I (one of the four Stone Age what-if videos in the narration-script skill, read 2026-10-16)",
+     "url": "https://www.youtube.com/watch?v=agRKo_sEb4I",
+     "note": "patterns only: a question every 20-30 s, interjections at real moments"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-06",
+    "explainer_engine/scripting/narration_lint.py:N-07"
+   ],
+   "supersedes": [
+    "NARRATION_AND_LANGUAGE_GUIDE at most one rhetorical question per section"
+   ]
+  },
+  {
+   "id": "BP-18",
+   "area": "narration",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A question keeps its contour: no ellipsis inside a question, and a wh-question of at most 12 words (wh-questions fall in pitch, yes/no questions rise; a long one falls before it lands) (N-10). The word cap is the project's own.",
+   "thresholds": {
+    "wh_question_max_words": 12
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Hedberg et al., the intonation of yes/no and wh-questions (CLA 2010)",
+     "url": "https://cla-acl.artsci.utoronto.ca/pdfs/actes-2010/CLA2010_Hedberg_et_al.pdf"
+    },
+    {
+     "type": "A",
+     "title": "Yes/no question intonation (Pronuncian)",
+     "url": "https://pronuncian.com/yes-no-question-intonation"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/narration_lint.py:N-10"
+   ],
+   "supersedes": []
   },
   {
    "id": "BP-20",
@@ -1750,6 +1861,7 @@
     }
    ],
    "enforced_by": [
+    "explainer_engine/qa/engagement.py:END_SCREEN_MIN_S",
     "explainer_engine/qa/engagement.py:ENG-8"
    ],
    "supersedes": [
@@ -2910,6 +3022,254 @@
     "scorecard check 2: any sound over a word FAILs"
    ],
    "decided": "the creator, 2026-10-16: a cut sound ends before the next word (docs/PRODUCTION_RULES.md feedback table)"
+  },
+  {
+   "id": "BP-70",
+   "area": "scenes",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)",
+   "statement": "A real exchange (SC-05): a scene with two or more present plays at least one unbroken run of 4 character lines from at least 2 speakers, no narrator inside.",
+   "thresholds": {
+    "min_exchange_lines": 4,
+    "min_exchange_speakers": 2
+   },
+   "sources": [
+    {
+     "type": "B",
+     "title": "Story (R. McKee): scene analysis, Story p.257 (via Evergreen State College)",
+     "url": "https://archives.evergreen.edu/webpages/curricular/2009-2010/writingmatters/2009/10/06/assignment-4-scene-analysis/index.html"
+    },
+    {
+     "type": "A",
+     "title": "Beat (filmmaking), Wikipedia: Casablanca's model scene runs about 11 beats",
+     "url": "https://en.wikipedia.org/wiki/Beat_(filmmaking)"
+    },
+    {
+     "type": "A",
+     "title": "Pixar's 22 rules of storytelling (rule 13: passive characters are poison)",
+     "url": "https://laughingsquid.com/22-rules-of-storytelling-by-pixar-storyboard-artist/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/scene_lint.py:MIN_EXCHANGE"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-71",
+   "area": "scenes",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)",
+   "statement": "One honesty beat (SC-08): invention disclaimers sit in at most 2 segments (the beat plus one callback); on-screen labels and the description carry the rest (ST-09).",
+   "thresholds": {
+    "disclaimer_segments_max": 2
+   },
+   "sources": [
+    {
+     "type": "B",
+     "title": "Story (R. McKee): Do Your Scenes Turn? (mckeestory.com)",
+     "url": "https://mckeestory.com/do-your-scenes-turn/"
+    },
+    {
+     "type": "A",
+     "title": "Advanced retention editing: cutting patterns (AIR Media-Tech)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that-keep-viewers-past-minute-8"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/scene_lint.py:MAX_DISCLAIMER_SEGMENTS"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-72",
+   "area": "scenes",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-20: PR #9's scene-rewrite limits stop an episode (FAIL), confirmed after the D-59 audit; numbers from D-58 (2026-10-19)",
+   "statement": "Turn caps (SC-09, DW-06): a spoken turn is at most 35 words (split it or give the summary to the narrator), and a scene has at most one speech of 25 words or more, at its peak.",
+   "thresholds": {
+    "turn_words_max": 35,
+    "speech_words": 25,
+    "speeches_per_scene_max": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Are movies becoming more simplistic? (Stephen Follows): line verbosity falls for 80 years",
+     "url": "https://stephenfollows.com/p/are-movies-becoming-more-simplistic"
+    },
+    {
+     "type": "C",
+     "title": "Tarantino and Jackson on the rhythm of conversation (MovieMaker interview)",
+     "url": "https://www.moviemaker.com/first-draft-mastering-the-art-of-conversation/"
+    },
+    {
+     "type": "C",
+     "title": "Sorkin on interruptions and dialogue as music (No Film School)",
+     "url": "https://nofilmschool.com/interruptions-dialogue"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/scene_lint.py:MAX_TURN_WORDS"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-73",
+   "area": "scenes",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Jabs, not interviews (SC-09, DW-12): the default spoken turn is 5-15 words (over 15 is a REVIEW unless it is the scene's one speech); more than 3 question-turns in a row read as an interview.",
+   "thresholds": {
+    "turn_words_review": 15,
+    "qa_chain_max": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Are movies becoming more simplistic? (Stephen Follows): line verbosity falls for 80 years",
+     "url": "https://stephenfollows.com/p/are-movies-becoming-more-simplistic"
+    },
+    {
+     "type": "A",
+     "title": "Ten quick dialogue hacks (ScriptShadow)",
+     "url": "https://scriptshadow.net/ten-quick-dialogue-hacks/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/scene_lint.py:REVIEW_TURN_WORDS",
+    "explainer_engine/scripting/scene_lint.py:MAX_QA_CHAIN"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-74",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Questions are answered within seconds unless declared (ST-11): the curiosity a question opens boosts memory for the next 2-4 s and is gone by 6-8 s, so 3 or more questions in one segment that opens no loop are stacked, not answered.",
+   "thresholds": {
+    "stacked_questions_min": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Murphy et al. 2020, curiosity and memory for what follows a question",
+     "url": "https://hmlpubs.faculty.ucdavis.edu/wp-content/uploads/sites/214/2022/05/2020_Murphy.pdf"
+    },
+    {
+     "type": "A",
+     "title": "Frede et al. 2026, partial knowledge gaps and reading (Journal of Cognition)",
+     "url": "https://journalofcognition.org/articles/10.5334/joc.501"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:MAX_UNANSWERED_QUESTIONS"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-75",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The midpoint sits mid-story (ST-12): on a script of 8 or more segments the midpoint/reversal segment's centre falls at 40-60 % of the script's words (a write-time proxy for the clock; the channel's retention decides).",
+   "thresholds": {
+    "midpoint_share": [
+     0.4,
+     0.6
+    ],
+    "min_segments": 8
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "The three-act structure for YouTube storytelling that retains (Autonolab)",
+     "url": "https://blog.autonolab.com/blog/2025-08-21-the-three-act-structure-for-youtube-storytelling-that-retains/"
+    },
+    {
+     "type": "B",
+     "title": "Save the Cat (B. Snyder): beat sheet by percent of runtime (via FilmDaft)",
+     "url": "https://filmdaft.com/save-the-cat-beat-sheet/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:MIDPOINT_BAND"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-76",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Turns arrive on a cadence (ST-13): between the hook and the resolution no stretch longer than 150 s passes without a turn (a reversal, midpoint, crisis, twist or climax, or a BUT join); the seconds are words at BP-01's heard pace.",
+   "thresholds": {
+    "turn_gap_s": 150
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "The three-act structure for YouTube storytelling that retains (Autonolab)",
+     "url": "https://blog.autonolab.com/blog/2025-08-21-the-three-act-structure-for-youtube-storytelling-that-retains/"
+    },
+    {
+     "type": "A",
+     "title": "True crime YouTube video ideas (Subscribr): a reveal about every 2 minutes",
+     "url": "https://subscribr.ai/p/true-crime-youtube-video-ideas"
+    },
+    {
+     "type": "B",
+     "title": "Save the Cat (B. Snyder): beat sheet by percent of runtime (via FilmDaft)",
+     "url": "https://filmdaft.com/save-the-cat-beat-sheet/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:TURN_GAP_S"
+   ],
+   "supersedes": [
+    "ST-13 2.5 words/s (story_lint, STORY_ENGINE, story-architect)"
+   ]
+  },
+  {
+   "id": "BP-77",
+   "area": "rights",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-16 (D-26): crossover analysis episodes only under the RR rules; the quote and recap limits are P-120 / P-122 (no source gives a safe percentage)",
+   "statement": "Quotes and recap in a crossover episode (RR-04, RR-05): at most 6 quotes, each at most 2 sentences and 40 words, analysed and attributed; the recap is at most 20 % of the narration words (over 20 % REVIEW, over 35 % FAIL).",
+   "thresholds": {
+    "quotes_max": 6,
+    "quote_words_max": 40,
+    "quote_sentences_max": 2,
+    "recap_share_review": 0.2,
+    "recap_share_fail": 0.35
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "YouTube Help: fair use on YouTube",
+     "url": "https://support.google.com/youtube/answer/9783148"
+    },
+    {
+     "type": "A",
+     "title": "US Copyright Office: fair use (17 U.S.C. 107; no safe percentage)",
+     "url": "https://www.copyright.gov/fair-use/"
+    },
+    {
+     "type": "A",
+     "title": "Warner Bros. v. RDR Books (S.D.N.Y. 2008), USCO fair use summary",
+     "url": "https://www.copyright.gov/fair-use/summaries/warnerbros-rdrbooks-sdny2008.pdf"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/rights/ip_check.py:MAX_QUOTES",
+    "explainer_engine/rights/ip_check.py:RECAP_FAIL"
+   ],
+   "supersedes": []
   },
   {
    "id": "BP-80",

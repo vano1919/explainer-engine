@@ -7,7 +7,8 @@ description: Write and cut the YouTube Shorts that advertise a Crossworld Theori
 
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role edit` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
-Rules: `docs/ORCHESTRATION.md` SH-01..SH-04. A Short is a trailer with its own text, never a cut of the long video's read.
+Rules: `docs/ORCHESTRATION.md` SH-01..SH-04. A Short is a trailer with its own hook, order and ending; its body lines may be
+the video's own lines and audio (SS-09, EL-09), never a cut-down of the long video's read in its order.
 
 1. Pick the scene by surprise and clarity without context (a question the viewer wants answered, a visible reversal).
 2. **Hook** (BP-11: spoken from the first second, complete inside the hook window, inside the word cap): one question, or one
@@ -30,23 +31,28 @@ Rules: `docs/ORCHESTRATION.md` SH-01..SH-04. A Short is a trailer with its own t
    anti_intuition, countdown_hud, dialogue_clash, fact_bomb, pov_you, myth_buster, ranked_three, loop, would_you) and an
    `ending` (cliffhanger, loop, question, pointer); 10 Shorts use at least 6 styles, never the same style twice in a row.
    Tricks: on-screen text with the hook from frame 0, the on-screen change cadence of BP-45, word-highlight captions, a HUD
-   counter for steps, a sound on every pop, the long video's exact title said aloud; related-video link and pinned comment
+   counter for steps, a sound on a pop only when it has a purpose (BP-55: at most one beat in two carries an effect), the
+   long video's exact title said aloud; related-video link and pinned comment
    are set at upload by hand. The agent `shorts-writer` writes the set. `anti_intuition` and `pov_you` may open with one
    statement inside the BP-11 word cap instead of a question (SS-05). D-49 (`docs/research/PARAMETER_AUDIT_2026-10-19.md`,
    section 6 has the recipe per style): the hook's words on frame 0 and the first cut inside the hook line (SS-07), the
    visual-event floor of BP-45 (SS-08), the set in the two length bands of BP-12 (SS-06), posted on the BP-47 schedule
    (SS-03: the first within days of the video, the rest spread).
-   Every Short carries the video's visual-beat layer with its cues (SS-09): the beat-writer gives the Short's own lines beats.
+   Every Short carries the video's visual-beat layer (SS-09): the beat-writer gives the Short's own lines beats, on new
+   information and at BP-45's pace, never a 1.5 s metronome; cues stay opt-in and event-bound as on /3 (VB-08).
 
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 The numbers that bind a Short live only in the registry (`explainer_engine/standards/sourced_rules.json`); `production validate`
 (PV-28, PV-34) and `production/shorts.py` read them from there. A number changes there, with its sources, never here.
 
-- BP-11: the hook is spoken from the first second (the first word within 1.0 s of frame 0; `shorts.py` refuses a later start),
-  complete by 3.0 s and at most 14 words; one question, or one statement that raises several (PV-28).
-- BP-12: the word budget follows the length band at the heard pace with 10 % slack: 15-30 s is about 38-94 words, 45-75 s about
-  115-234 words; a set spans both bands (PV-28, PV-34).
+- BP-11: the hook is spoken from the first second (the first word within 1.0 s of frame 0) and complete by 3.0 s, at most 14
+  words; one question, or one statement that raises several. At 170 wpm about 8 words fit in 3 s, so the time is the tighter
+  bound: PV-28 checks the words (FAIL) and the hook's end on the estimated read (REVIEW); `shorts.py` refuses a real read
+  whose first word starts late or whose hook ends after 3.0 s.
+- BP-12: the word budget follows the length band at BP-01's heard pace with 10 % slack: 15-30 s is about 38-93 words, 45-75 s
+  about 115-234 words; a set spans both bands (PV-28, PV-34). A Short's estimated length is its words at that pace
+  (`validate.short_seconds`), the one duration every Short check uses.
 - BP-44: the premise stays open until the last 15 %: the sentence that answers the hook starts at or after 85 % of the read;
   lines 2-3 foreshadow with a promise marker inside 3 s of the hook; the ending is a loop or a pointer, never a sign-off
   ("thanks for watching", "subscribe", "see you", "goodbye", "like and") (PV-28).

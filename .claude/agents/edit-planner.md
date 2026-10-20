@@ -28,7 +28,7 @@ For each segment:
    the ambience bed belongs to the LOCATION (one bed per place, reused on returns, pre-lapped at the boundary). Music is
    one track per story chapter (2-4 changes per 10 minutes), changed only when the emotion changes, with ONE planned
    full dropout of 0.5-2 s before the biggest reveal, broken by an intentional sound; music drops to a drone for the
-   crisis line. Layers: voice + at most one music + one bed + effects; effects AND cues together stay inside AL-02's band
+   crisis line. Layers: voice + at most one music + one bed + effects; effects AND cues together stay inside AL-02's band ([BP-49](../../docs/SOURCED_RULES.md); on /3 only its upper bound, VB-11 caps the cues alone)
    (on /3 only its upper bound; VB-11 caps the cues alone).
 5. The lines already carry their `visual_beats` (stage 2b): plan pictures around them, never a second accent or pop on a
    beat's word; for a dialogue line pick a picture whose `speakers` point shows the speaking face (VB-06). You may move

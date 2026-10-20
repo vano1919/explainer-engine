@@ -37,11 +37,11 @@ them in order and stops at the first failed gate.
 - Heroes: each speaking hero has a want and a flaw (ST-04); the lead also a need and a change. Opposites talk best: the
   theorist and the hands-on one, the optimist and the cynic.
 - One of the three beat templates of `docs/STORY_ENGINE.md` (A three-act/7-point default, B Save-the-Cat compressed,
-  C mystery reveal ladder), recorded in `drama`; the midpoint at 40-60 % of the words (ST-12), a turn at least every
-  ~150 s (ST-13). Every join is BUT or THEREFORE (ST-02).
+  C mystery reveal ladder), recorded in `drama`; the midpoint in BP-75's word-share band (ST-12), a turn at least every
+  BP-76 gap at BP-01's heard pace (ST-13). Every join is BUT or THEREFORE (ST-02).
 - Every dialogue segment gets its `scene` header (SC-01): place, present, why_now, opposing wants, value and charges,
   the turn with its conflict mode, the exit, surface_topic and real_subject (skill `dialogue-scenes`).
-- Loops and set-ups are written before lines: L01 the dramatic question, a smaller loop opened every 2-3 minutes, a
+- Loops and set-ups are written before lines: L01 the dramatic question, a forward-pointing line or smaller loop at least every BP-42 interval (150 s), a
   set-up planted in the first third that decides the end (ST-05, ST-06).
 - Needs: pick at least three from curiosity, stakes, humour, wonder, fear, identity, justice, belonging, competence,
   surprise, and give each a segment (ST-08). Objectivity is labelled per segment (ST-09); on /3 the spoken disclaimer
@@ -56,8 +56,8 @@ consequence. Scene and dialogue rules SC-01..SC-10 and DW-01..DW-13 in `docs/STO
 in `narration-script`.
 
 ## 2b. Visual beats (beat-writer), same segment, before the next one is written
-While the segment's words are fresh, the beat-writer marks a beat wherever NEW information lands (hook/climax every
-3-8 s, body every 10-25 s, never 8 s of nothing-new under narration) and at least one reaction-driven expression change
+While the segment's words are fresh, the beat-writer marks a beat wherever NEW information lands (within the still
+limits of BP-40 and VB-01's /3 cadence; skill `visual-beats` has the numbers) and at least one reaction-driven expression change
 per dialogue line — the listener's face on the line that lands. Cues are OPT-IN: silent by default, a cue only with its
 story `event`, density and repetition capped (VB-10/VB-11; skill `visual-beats`). It never changes a word; if the
 writer later rewrites a line, run 2b again for that line (PV-44 finds beats whose phrase is gone).
@@ -72,7 +72,8 @@ Written per segment on the frozen words, with the accent vocabulary of `producti
 accent has an effect (AL-03). On a dialogue scene follow the ED-14 coverage grammar (`docs/EDITING.md`): open on an
 establishing/two-shot 2-4 s, cut to the LISTENER on every 2nd-4th line and on news/insult/revelation, never more than
 4 strict A/B alternations without a pattern break, J/L offsets of 0.5-2 s on about a third of scene cuts, hold-length
-variance (MO-07), one music track per story chapter and ONE planned dropout of 0.5-2 s before the biggest reveal,
+variance (MO-07), one music track per story chapter and ONE planned dropout of 0.5-2 s before the biggest reveal (not BP-62's
+no-music stretch: plan that one as well),
 broken by an intentional sound. Read the PV-35 report: events a minute, kinds per minute, alive share.
 
 ## 5. Voices (voice-caster)

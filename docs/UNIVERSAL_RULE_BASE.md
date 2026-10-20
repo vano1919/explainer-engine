@@ -35,9 +35,9 @@ cast sprites, props, thumbnails).
 
 | ID | Rule | Check |
 |---|---|---|
-| UR-01 | **Hook, 0–5 s.** The first shot is a C (extreme close-up) or a moving A. The first sentence opens on one of the hook forms of [BP-03](SOURCED_RULES.md) (the old "question by 5 s" was superseded by D-59); no greeting, no channel name. A sound event in the first second. | [code] shot 1 type and motion, `shot_rules.hook_form` of the first sentence, greeting words, first word or `sound_at` ≤ 1 s |
+| UR-01 | **Hook, 0–5 s.** The first shot is a C (extreme close-up) or a moving A. The first sentence is the hook in one of the forms of [BP-03](SOURCED_RULES.md) (a question about the episode's concrete stake, a cold-open line, a claim with a number, a preview); no greeting, no channel name. A sound event in the first second. | [code] shot 1 type and motion, the first sentence's hook form (`scripting/narration_lint.hook_form`), greeting words, first word or `sound_at` ≤ 1 s |
 | UR-02 | **First 30 s are fast.** The opening window, its shot count and its slack over each type's minimum are [BP-85](SOURCED_RULES.md)'s. | [code] |
-| UR-03 | **Logical arc.** Beats run in story order; each beat names its time and place. Every shot belongs to a beat and shows what the narration says over it; no unrelated mood picture. Answer early, deepen after (no withheld payoff, SE-21). Shots are contiguous. | [code] beat and sentence ids present, no gaps; [editorial] relevance |
+| UR-03 | **Logical arc.** Beats run in story order; each beat names its time and place. Every shot belongs to a beat and shows what the narration says over it; no unrelated mood picture. Answer the opening question early, deepen after (SE-21); the episode's final payoff still lands at the end, after [BP-04](SOURCED_RULES.md)'s share. Shots are contiguous. | [code] beat and sentence ids present, no gaps; [editorial] relevance |
 
 ## B. Shot grammar
 

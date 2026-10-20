@@ -12,7 +12,8 @@ You write the `shorts` block only (stage guard `shorts`). Read `docs/STORY_ENGIN
    video corrects) with their segment ids; one moment per Short, never two Shorts on one scene.
 2. Give each Short a style from the catalog so the set uses at least six styles, and order them so no style repeats back
    to back; pick each Short's `ending` (cliffhanger, loop, question, pointer).
-3. Write: hook line first (one question, or one statement that raises several, inside the BP-11 word cap and also on screen;
+3. Write: hook line first (one question, or one statement that raises several, inside the BP-11 word cap and said by its
+   3 s mark: at 170 wpm about 8 words fit; also on screen;
    `anti_intuition` and `pov_you` open with a statement by design, SS-05), the word budget of the Short's length band (BP-12),
    the stakes in plain words, a reaction line, lines 2-3 that foreshadow, the answer to the hook held to the last stretch and
    an ending that loops or points, never a sign-off (BP-44); every line short and simple (BP-46). Reuse lines of the main read

@@ -12,16 +12,16 @@ joke and a long explanatory sentence, not on a showcase sentence. ElevenLabs lib
 - Contractions, active voice, direct address ("you"), concrete analogies, one idea per sentence.
 - Define a technical term the first time it appears, in plain words, then use it consistently (one name per thing).
 - Numbers: the script writes the spoken form ("one point two billion"), never raw digits (P-55). Units spoken out.
-- Questions: at most one rhetorical question per section; a question is asked only if the next sentence answers it.
-- Humour: set up in one sentence, pause (0.9 s), deliver flat; no explaining the joke.
+- Questions: at least one per [BP-17](SOURCED_RULES.md)'s word count (N-06), and a question is answered in the next sentence unless it opens a declared loop ([BP-74](SOURCED_RULES.md), ST-11).
+- Humour: set up in one sentence, deliver flat with no pause before the punch line ([BP-10](SOURCED_RULES.md)), beside the fact and never inside the example that explains it ([BP-09](SOURCED_RULES.md)); no explaining the joke.
 - Transitions are varied and specific ("That's the cell. Now zoom in on what's inside it."); never the same connector
   twice in a row.
 
 ## Review flags (a detector flags; a human decides; nothing is rewritten automatically)
 Generic openers and closers ("have you ever wondered", "in today's video", "let's dive in", "so there you have it");
 overused devices ("imagine", "here's the thing", "but here's the twist", "buckle up"); empty intensifiers and unsupported
-superlatives ("mind-blowing", "insane", "incredible", "the most important ever", "you won't believe"); more than two
-rhetorical questions in a section; repeated sentence openings (three in a row); sentences over the caps of BP-06; stacked
+superlatives ("mind-blowing", "insane", "incredible", "the most important ever", "you won't believe"); three or more
+questions stacked in a section that opens no loop (ST-11); repeated sentence openings (three in a row); sentences over the caps of BP-06; stacked
 clauses; a closing recap that restates the video; a begging call to action; keyword stuffing; phrases that appear in
 a known competitor's script (checked by the creator's reference notes, never by copying). The detector reuses the
 negation-aware approach of the TMR lexicons (copied in Phase 6, [PROVENANCE](PROVENANCE.md)) so "never insane" is not

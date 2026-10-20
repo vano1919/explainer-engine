@@ -111,10 +111,16 @@ def test_pv12_forwards_narration_reviews_as_reviews():
 
 
 def test_pv52_pace_band_from_bp01():
+    """PV-52 compares the estimated read's HEARD pace (words / duration, pauses included: BP-01's definition) with the band;
+    pace_wpm is the voice's speaking rate the estimate starts from (C-3 of the 2026-10-20 rescan)."""
     d = mini()
     d["voice"]["pace_wpm"] = [SR.T("BP-01", "wpm_min") - 10, SR.T("BP-01", "wpm_max")]
-    assert pv(d, "PV-52 BP-01", "", "REVIEW")
-    d["voice"]["pace_wpm"] = [SR.T("BP-01", "wpm_min"), SR.T("BP-01", "wpm_max")]
+    assert V.heard_wpm(V.estimated_words(d)) < SR.T("BP-01", "wpm_min")
+    assert pv(d, "PV-52 BP-01", "", SR.rule("BP-01")["severity"])
+    for rate in range(150, 221, 5):  # the speaking rate at which this script is heard inside the band
+        d["voice"]["pace_wpm"] = [rate, rate]
+        if SR.T("BP-01", "wpm_min") <= V.heard_wpm(V.estimated_words(d)) <= SR.T("BP-01", "wpm_max"):
+            break
     assert not pv(d, "PV-52 BP-01")
     assert V.SHORT_WPM == SR.T("BP-01", "wpm_target")
 
@@ -196,7 +202,8 @@ def test_eng8_abrupt_ending_from_bp43():
                                                  _seg(2, "They walk on. " * 30), _seg(3, "The coins changed.", job="payoff")]}
     f = [x for x in engagement.check(doc) if x["rule"] == "ENG-8"]
     assert f and f[0]["severity"] == "REVIEW" and "neither" in f[0]["detail"]
-    doc["segments"][2]["lines"] = [{"text": "Which coin? That is the next episode."}]
+    # the pointer to the next video comes early enough that the narration runs on under the end screen (BP-43)
+    doc["segments"][2]["lines"] = [{"text": "That is the next episode. " + "They walk on. " * 16 + "Which coin?"}]
     assert not [x for x in engagement.check(doc) if x["rule"] == "ENG-8"]
     doc["segments"][2]["lines"] = [{"text": f"{SR.T('BP-43', 'lexicon')[0].capitalize()}: the coins changed. Which coin?"}]
     f = [x for x in engagement.check(doc) if x["rule"] == "ENG-8"]

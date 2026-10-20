@@ -211,8 +211,8 @@ def lint(doc: dict) -> list[dict]:
                         if b["kind"] == "expression" and b["expression"] not in TAKES:
                             _f(out, "VB-08", "REVIEW", where, f"a cue on a quiet expression ({b['expression']}): only a big "
                                f"take ({', '.join(sorted(TAKES))}) may sound, the voice carries the rest")
-                        if not CUES.MIN_MS <= CUES.length_ms(cue["sound"], cue.get("max_ms")) <= CUES.MAX_MS:
-                            _f(out, "VB-08", "FAIL", where, f"cue {cue['sound']!r} lasts "
+                        if not CUES.MIN_MS <= CUES.length_ms(cue["sound"], cue.get("max_ms")) <= CUES.MAX_MS:  # BP-64
+                            _f(out, "VB-08", _sev(doc, True, "BP-64"), where, f"cue {cue['sound']!r} lasts "
                                f"{CUES.length_ms(cue['sound'], cue.get('max_ms')):.0f} ms; a cue is {CUES.MIN_MS}-{CUES.MAX_MS} ms")
                 elif cue is None:
                     _f(out, "VB-08", _sev(doc, True), where, "no cue: every beat names its short sound (audio/cues.py) or "
@@ -223,7 +223,7 @@ def lint(doc: dict) -> list[dict]:
                     _f(out, "VB-08", "REVIEW", where, f"a cue on a quiet expression ({b['expression']}): only a big take "
                        f"({', '.join(sorted(TAKES))}) may sound, the voice carries the rest")
                 elif cue["sound"] != CUES.NONE and not CUES.MIN_MS <= CUES.length_ms(cue["sound"], cue.get("max_ms")) <= CUES.MAX_MS:
-                    _f(out, "VB-08", _sev(doc, True), where, f"cue {cue['sound']!r} lasts {CUES.length_ms(cue['sound'], cue.get('max_ms')):.0f} "
+                    _f(out, "VB-08", _sev(doc, True, "BP-64"), where, f"cue {cue['sound']!r} lasts {CUES.length_ms(cue['sound'], cue.get('max_ms')):.0f} "
                        f"ms; a cue is {CUES.MIN_MS}-{CUES.MAX_MS} ms")
                 if b["kind"] == "prop" and not b.get("asset"):
                     _f(out, "VB-06", "REVIEW", where, f"prop {b['thing']!r} has no cut-out (asset): it is drawn as a word sticker")
