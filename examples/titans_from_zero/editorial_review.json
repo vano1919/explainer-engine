@@ -1,429 +1,431 @@
 {
- "schema": "editorial_review/2",
- "script_sha256": "a2f32dfdc41208a1d0771535ef446a944a54713bf05a5736a8270d0a5e0d5370",
- "reviewer": "script-critic (Stage 7)",
- "reviewer_role": "independent_critic",
- "independent": true,
- "reviewed_at": "2026-10-20 (round 6, after R5-01 fix and creator script_approval re-serialisation)",
- "verdict": "Round 6: R5-01 closed (S15 L9 now 'O'Leary opens his briefcase.' in the line and its shot anchor; the listener no longer hears Belfort). Script re-read at the changed spots after the approval re-serialisation; validate and story_lint results unchanged (46 FAIL all PV-05 unmade sounds / VB-09 unpainted face sheets, belonging to paid stages; story_lint 0 FAIL, 2 REVIEW). Remaining findings are REVIEWs only. Earlier verdict stands: ACCEPTED with REVIEWs. No FAIL, no blocker, no bored or confused window. Round 4's eleven findings: six are closed (overlay echoes on silent lines: the 111 beats on silent lines are now expressions plus one label; the L-cut notes are reworded, none left; S11 L4-L6 merged into one exchange; the S16 recap is cut to two lines and the last line is the open question; VB-07 on SH05/SH06 cleared; the 'Yes.' has its own thud on the beat and a 0.8 s pause after it), three are partly closed (music now runs under S08, S10, S13 but S15 is bare by plan; S04 still explains its sale in L7-L8; S06 and S03 each got one 'you' line but the heard track still goes from S06 L5 to S16 L3 with no address), one stays open by the creator's rule (Vance's voice contrast, no audition), one is now a smaller variant. One new defect found: S15 L9 'He opens his briefcase' follows Belfort's grin, so a listener who does not look hears the wrong man (one word to fix, not blocking). The film plays about 14.0 min (estimate), 38 % of it silent bubbles (5.3 min), longest silent run 40 s (S02, unchanged), the others 33 s or less. Hash bound to the current file; the script was not edited by this review.",
- "scores": {
-  "factual_reliability": {
-   "score": 4,
-   "evidence": "Opened 2026-10-20: C-01 liquisearch.com: 'living with his then girlfriend Kim at the back of an old Toyota for several months' (his book, per the page); C-03 politifact: 'Trump has actually filed Chapter 11 six times' and nbcnews: 'there were actually six'; C-05 biography.com: 'In 1999, Belfort pleaded guilty to securities fraud and money laundering ... only served 22 months'; C-02 houstonchronicle: 'last hour of the last day ... 6 p.m., Christmas Eve, 2008' (spoken line says only 'on a Christmas Eve'; the 'last cash' wording rests on cleantechnica, which still returns 403, so it is unverified and not spoken). The Toyota make is one secondary page and the book was not read: stated honestly in editorial C-01. The rest is declared invented in claim_map.md."
+  "schema": "editorial_review/2",
+  "script_sha256": "2a2254ed3cf6339506acbb4c776d1125c3d26a7701e3dbdbedfcaef220906c0b",
+  "reviewer": "script-critic (Stage 7)",
+  "reviewer_role": "independent_critic",
+  "independent": true,
+  "reviewed_at": "2026-10-20 (round 7, after face sheets and five Belfort expression remaps)",
+  "verdict": "Round 7: the only changes since round 6 are nine cast.<hero>.face_sheet records (same 12-expression set each) and five Belfort expression beats remapped (S12 L2 curious->surprised, S13 L7 confused->doubtful, S15 L7 confused->surprised, SH07 L5 curious->surprised, SH09 L8 confused->doubtful); words, bubbles, edit plan and approval hash unchanged. Each remap now matches its line better (the offer 'rich by Friday' = surprise, 'With what?' = doubt, 'I didn't pick him' = surprise), and all five expressions exist in the face-sheet set, so VB-09 FAILs are gone. No score and no verdict changes: ACCEPTED with REVIEWs. validate: 37 FAIL, all PV-05 (sounds not made yet, paid stage); story_lint 0 FAIL, 2 REVIEW. One small finding (TFZ-R7-01, stale 'why' on S15 L7 and SH09 L8) was raised and is RESOLVED: both beats now read surprised with why 'Belfort is caught off guard: I didn't pick him [pick him]', same face in film and Short. Earlier REVIEWs R5-02..R5-07 stand. Hash bound to the current file; the script was not edited by this review.",
+  "scores": {
+    "factual_reliability": {
+      "score": 4,
+      "evidence": "Opened 2026-10-20: C-01 liquisearch.com: 'living with his then girlfriend Kim at the back of an old Toyota for several months' (his book, per the page); C-03 politifact: 'Trump has actually filed Chapter 11 six times' and nbcnews: 'there were actually six'; C-05 biography.com: 'In 1999, Belfort pleaded guilty to securities fraud and money laundering ... only served 22 months'; C-02 houstonchronicle: 'last hour of the last day ... 6 p.m., Christmas Eve, 2008' (spoken line says only 'on a Christmas Eve'; the 'last cash' wording rests on cleantechnica, which still returns 403, so it is unverified and not spoken). The Toyota make is one secondary page and the book was not read: stated honestly in editorial C-01. The rest is declared invented in claim_map.md."
+    },
+    "clarity": {
+      "score": 4,
+      "evidence": "Speaker identity rests on the bubble tail and speaker positions per shot (S02 L10 Trump cuts in as a third speaker). New snag: S15 L8 'Belfort's grin stays on a second too long.' is followed by S15 L9 'He opens his briefcase. Eight signed envelopes.'; the picture (s15 shot 2 'a briefcase on his knee', O'Leary) is right, the ear hears Belfort. Callbacks S04 L11 'a man with envelopes' (S02) and S08 L6 'parts for fifty' (S11 L6 repeats it) are 3-4 minutes apart but are now restated nearby. The van/cells snag stays small: S09 L12 'Three hundred cheap cells ... on a garage shelf' is narrated, then paid in S11 L2."
+    },
+    "story_coherence": {
+      "score": 5,
+      "evidence": "Chain intact: S04 L14 'Me? Never.' -> S08 L5 'Five hundred.' -> S09 L10 'He skips it on the last two hundred.' -> S11 L2 'starts to hiss' -> S12 L10 'That's why I'm not signing.' -> S13 L8 'With everything.' -> S14 L10-L11 'Most buyers ask us to bury it.' / 'That's why I'm offering double' -> S15 L17 'I made sure I owned all eight.' -> S16 L2. S11 now hands Belfort the skipped test in one exchange (L4 -> L5 'You never told me that.'), which tightens the crisis. Every loop answered (L03 S15, L09 S09, L10 S11)."
+    },
+    "hook": {
+      "score": 4,
+      "evidence": "Unchanged: image by 0:05 ('Ten men sit on it ... none of them looks at the others'), stakes by 0:30 ('nobody will lend them a dollar after today'), question at S01 L7 'Five years will show if it was ever skill.', hook-bait S01 L8 'for forty dollars' at ~0:50, first laugh ~0:15 (S01 L3 'fixes his tie in the black screen of his phone'). S01 L1 (15 words) is the only set-up sentence (BP-05 passes in spirit)."
+    },
+    "relevance": {
+      "score": 4,
+      "evidence": "S03 L5 'A loan was only ever a stranger's trust with interest on top' and the S16 L5 verdict change how a viewer sees credit and luck; S13 L4 'I don't sell probably.' is a usable rule."
+    },
+    "originality": {
+      "score": 4,
+      "evidence": "Own framing: ten fortunes erased on one bench, forty-dollar envelopes (S02 L9 'ten percent of everything you ever build. Forever.'), and the owner of eight (S15 L17 'I made sure I owned all eight.'). Cast and tropes (Shark Tank, Wolf of Wall Street) are familiar."
+    },
+    "spoken_naturalness": {
+      "score": 4,
+      "evidence": "Bubble lines are short: longest S08 L8 'Five hundred by the twentieth of December, or you never walk in here again.' (14 words). Punch lines survive as text: S02 L16 'It's a short one in a bankruptcy.', S11 L8 'You never listen when it's quiet.', S15 L17 'Luck chose the three. I made sure I owned all eight.' Heard lines read as speech: S03 L5 'Would any screen say yes to you?' then S03 L6 'Right.'; S06 L4 'Ask yourself which one gets paid first.' Voice-dependent comedy (Musk halts, Belfort rolls) now rests on line length and the 111 expression beats on silent lines. Basis: data."
+    },
+    "visual_potential": {
+      "score": 4,
+      "evidence": "Every silent line still has an expression beat; the overlay echo is gone (silent lines carry 111 expression, 7 accent, 6 highlight, 1 label, 1 chart; was 30 text, 50 symbol). S08 L10 'Yes.' has accent+thud, a sad Musk and a joyful Belfort on the same word; S13 shot 'We do.' 'holds on his face after the bubble'. Remaining: S15 L9 has four highlight/accent beats in a row (VB-05) and five VB-03 reasons name nothing of their line. Judged on instructions, no picture exists yet."
+    },
+    "humour_fit": {
+      "score": 4,
+      "evidence": "Humour grows from the people: S05 L13 'eat a vending machine sandwich with a knife and fork, like a state dinner', S13 L13 'Belfort calls it the executive menu', S15 L6-L7 'you got lucky with him' / 'I didn't pick him.' S04-S05 (3:00-4:50 est.) carry 5+ verbal jokes in ~110 s, above BP-09's one per 60 s; mostly situational, the creator's call."
+    },
+    "pacing_potential": {
+      "score": 4,
+      "evidence": "Estimate (BP-27): 14.0 min, silent 316 s = 38 %. Silent runs: S02 62-101 s (40 s, unchanged, right after the hook), S04 200-233 (33), S05 244-275 (31), S10 484-513 (28), S11 545-570 (24), S08 402-423 (22), S07 364-385 (20); all later runs 26 s or less. Voice and reading alternate every scene; no two long runs touch. Dips: S06 roster (4:53-5:54, now with one question), S10. Climax S12 gains from Vance as the only heard character voice."
+    },
+    "source_coverage": {
+      "score": 4,
+      "evidence": "production_script.json now carries editorial v1 with 10 sources and 4 claims (C-01, C-02, C-03, C-05), all marked corroborated, with uncertainty stated (Toyota one page, book unread; Trump 'six' counts corporate filings). Four of six re-opened here; cleantechnica 403."
+    },
+    "title_thumbnail_alignment": {
+      "score": 4,
+      "evidence": "Title 'What If 10 Business Titans Went Broke? Five Years to Prove It Wasn't Luck' is paid across S03-S14 (broke, five years, who rises) and answered in S15 L16-L17 / S16 L5. It promises 'wasn't luck' while the verdict is 'Luck decided which envelope paid. Skill decided who was still standing', a nuanced but fair answer. No thumbnail exists yet."
+    },
+    "shorts_potential": {
+      "score": 4,
+      "evidence": "SH03 now 'Nobody lends to a broke business titan.'; SH09 ends 'How many envelopes did he get signed? Watch the full video.' (twist withheld, though 'Fires included' hints the fire); SH10 ends 'First: the one nobody on that bench saw coming. Who was it?' (verdict withheld). Hooks stay distinct: SH02, SH06, SH07, SH08."
+    }
   },
-  "clarity": {
-   "score": 4,
-   "evidence": "Speaker identity rests on the bubble tail and speaker positions per shot (S02 L10 Trump cuts in as a third speaker). New snag: S15 L8 'Belfort's grin stays on a second too long.' is followed by S15 L9 'He opens his briefcase. Eight signed envelopes.'; the picture (s15 shot 2 'a briefcase on his knee', O'Leary) is right, the ear hears Belfort. Callbacks S04 L11 'a man with envelopes' (S02) and S08 L6 'parts for fifty' (S11 L6 repeats it) are 3-4 minutes apart but are now restated nearby. The van/cells snag stays small: S09 L12 'Three hundred cheap cells ... on a garage shelf' is narrated, then paid in S11 L2."
-  },
-  "story_coherence": {
-   "score": 5,
-   "evidence": "Chain intact: S04 L14 'Me? Never.' -> S08 L5 'Five hundred.' -> S09 L10 'He skips it on the last two hundred.' -> S11 L2 'starts to hiss' -> S12 L10 'That's why I'm not signing.' -> S13 L8 'With everything.' -> S14 L10-L11 'Most buyers ask us to bury it.' / 'That's why I'm offering double' -> S15 L17 'I made sure I owned all eight.' -> S16 L2. S11 now hands Belfort the skipped test in one exchange (L4 -> L5 'You never told me that.'), which tightens the crisis. Every loop answered (L03 S15, L09 S09, L10 S11)."
-  },
-  "hook": {
-   "score": 4,
-   "evidence": "Unchanged: image by 0:05 ('Ten men sit on it ... none of them looks at the others'), stakes by 0:30 ('nobody will lend them a dollar after today'), question at S01 L7 'Five years will show if it was ever skill.', hook-bait S01 L8 'for forty dollars' at ~0:50, first laugh ~0:15 (S01 L3 'fixes his tie in the black screen of his phone'). S01 L1 (15 words) is the only set-up sentence (BP-05 passes in spirit)."
-  },
-  "relevance": {
-   "score": 4,
-   "evidence": "S03 L5 'A loan was only ever a stranger's trust with interest on top' and the S16 L5 verdict change how a viewer sees credit and luck; S13 L4 'I don't sell probably.' is a usable rule."
-  },
-  "originality": {
-   "score": 4,
-   "evidence": "Own framing: ten fortunes erased on one bench, forty-dollar envelopes (S02 L9 'ten percent of everything you ever build. Forever.'), and the owner of eight (S15 L17 'I made sure I owned all eight.'). Cast and tropes (Shark Tank, Wolf of Wall Street) are familiar."
-  },
-  "spoken_naturalness": {
-   "score": 4,
-   "evidence": "Bubble lines are short: longest S08 L8 'Five hundred by the twentieth of December, or you never walk in here again.' (14 words). Punch lines survive as text: S02 L16 'It's a short one in a bankruptcy.', S11 L8 'You never listen when it's quiet.', S15 L17 'Luck chose the three. I made sure I owned all eight.' Heard lines read as speech: S03 L5 'Would any screen say yes to you?' then S03 L6 'Right.'; S06 L4 'Ask yourself which one gets paid first.' Voice-dependent comedy (Musk halts, Belfort rolls) now rests on line length and the 111 expression beats on silent lines. Basis: data."
-  },
-  "visual_potential": {
-   "score": 4,
-   "evidence": "Every silent line still has an expression beat; the overlay echo is gone (silent lines carry 111 expression, 7 accent, 6 highlight, 1 label, 1 chart; was 30 text, 50 symbol). S08 L10 'Yes.' has accent+thud, a sad Musk and a joyful Belfort on the same word; S13 shot 'We do.' 'holds on his face after the bubble'. Remaining: S15 L9 has four highlight/accent beats in a row (VB-05) and five VB-03 reasons name nothing of their line. Judged on instructions, no picture exists yet."
-  },
-  "humour_fit": {
-   "score": 4,
-   "evidence": "Humour grows from the people: S05 L13 'eat a vending machine sandwich with a knife and fork, like a state dinner', S13 L13 'Belfort calls it the executive menu', S15 L6-L7 'you got lucky with him' / 'I didn't pick him.' S04-S05 (3:00-4:50 est.) carry 5+ verbal jokes in ~110 s, above BP-09's one per 60 s; mostly situational, the creator's call."
-  },
-  "pacing_potential": {
-   "score": 4,
-   "evidence": "Estimate (BP-27): 14.0 min, silent 316 s = 38 %. Silent runs: S02 62-101 s (40 s, unchanged, right after the hook), S04 200-233 (33), S05 244-275 (31), S10 484-513 (28), S11 545-570 (24), S08 402-423 (22), S07 364-385 (20); all later runs 26 s or less. Voice and reading alternate every scene; no two long runs touch. Dips: S06 roster (4:53-5:54, now with one question), S10. Climax S12 gains from Vance as the only heard character voice."
-  },
-  "source_coverage": {
-   "score": 4,
-   "evidence": "production_script.json now carries editorial v1 with 10 sources and 4 claims (C-01, C-02, C-03, C-05), all marked corroborated, with uncertainty stated (Toyota one page, book unread; Trump 'six' counts corporate filings). Four of six re-opened here; cleantechnica 403."
-  },
-  "title_thumbnail_alignment": {
-   "score": 4,
-   "evidence": "Title 'What If 10 Business Titans Went Broke? Five Years to Prove It Wasn't Luck' is paid across S03-S14 (broke, five years, who rises) and answered in S15 L16-L17 / S16 L5. It promises 'wasn't luck' while the verdict is 'Luck decided which envelope paid. Skill decided who was still standing', a nuanced but fair answer. No thumbnail exists yet."
-  },
-  "shorts_potential": {
-   "score": 4,
-   "evidence": "SH03 now 'Nobody lends to a broke business titan.'; SH09 ends 'How many envelopes did he get signed? Watch the full video.' (twist withheld, though 'Fires included' hints the fire); SH10 ends 'First: the one nobody on that bench saw coming. Who was it?' (verdict withheld). Hooks stay distinct: SH02, SH06, SH07, SH08."
-  }
- },
- "critical_blockers": [],
- "required_revisions": [],
- "story_page": "story_page.md",
- "viewer_read": [
-  {
-   "at": "0:00-0:30",
-   "feel": "hooked",
-   "why": "S01 bench, Trump's tie in the phone"
-  },
-  {
-   "at": "0:30-1:00",
-   "feel": "curious",
-   "why": "S01 L7-L8 gap and forty dollars"
-  },
-  {
-   "at": "1:00-1:30",
-   "feel": "curious",
-   "why": "S02 first bubble at ~1:02, 40 s read while the convention is learned"
-  },
-  {
-   "at": "1:30-2:00",
-   "feel": "laughing",
-   "why": "S02 L10 'I've sold air for more.' (read)"
-  },
-  {
-   "at": "2:00-2:30",
-   "feel": "curious",
-   "why": "S03 three refusals, voice only"
-  },
-  {
-   "at": "2:30-3:00",
-   "feel": "curious",
-   "why": "S03 L5 'Would any screen say yes to you?' answered at once"
-  },
-  {
-   "at": "3:00-3:30",
-   "feel": "laughing",
-   "why": "S04 narrated free lap, 'The rider pays cash.'"
-  },
-  {
-   "at": "3:30-4:00",
-   "feel": "curious, reading",
-   "why": "S04 L6-L14 33 s run; L7-L8 explain the sale again"
-  },
-  {
-   "at": "4:00-4:30",
-   "feel": "laughing",
-   "why": "S05 'Fantastic. Lend me some.'"
-  },
-  {
-   "at": "4:30-5:00",
-   "feel": "curious",
-   "why": "S05 L12-L14 live stream, voicemail"
-  },
-  {
-   "at": "5:00-5:30",
-   "feel": "curious",
-   "why": "S06 'Ask yourself which one gets paid first.' gives the roster a job"
-  },
-  {
-   "at": "5:30-6:00",
-   "feel": "dipping",
-   "why": "S06 L5-L8 four brisk intros in a row, voice only"
-  },
-  {
-   "at": "6:00-6:30",
-   "feel": "laughing",
-   "why": "S07 Kiyosaki steps in, 'They need to hear me.'"
-  },
-  {
-   "at": "6:30-7:00",
-   "feel": "tense",
-   "why": "S08 ultimatum read, music under it"
-  },
-  {
-   "at": "7:00-7:30",
-   "feel": "tense",
-   "why": "S08 'Yes.' with thud, S09 'That's how fires work.'"
-  },
-  {
-   "at": "7:30-8:00",
-   "feel": "tense",
-   "why": "S09 skipped test, narrated"
-  },
-  {
-   "at": "8:00-8:30",
-   "feel": "curious",
-   "why": "S10 28 s read, music under it, heroes absent"
-  },
-  {
-   "at": "8:30-9:00",
-   "feel": "tense",
-   "why": "S11 hiss, fire"
-  },
-  {
-   "at": "9:00-9:30",
-   "feel": "tense",
-   "why": "S11 L4-L10 blame read, shorter than before"
-  },
-  {
-   "at": "9:30-10:00",
-   "feel": "hooked",
-   "why": "S12 Vance is the first heard character voice"
-  },
-  {
-   "at": "10:00-10:30",
-   "feel": "hooked",
-   "why": "S12 'That's why I'm not signing.'"
-  },
-  {
-   "at": "10:30-11:00",
-   "feel": "curious",
-   "why": "S13 warehouse, 26 s read"
-  },
-  {
-   "at": "11:00-11:30",
-   "feel": "warm",
-   "why": "S13 'We do.' / 'Nobody has ever come in here to give me money back.'"
-  },
-  {
-   "at": "11:30-12:00",
-   "feel": "laughing",
-   "why": "S13 executive menu, S14 year five"
-  },
-  {
-   "at": "12:00-12:30",
-   "feel": "curious",
-   "why": "S14 list of fates"
-  },
-  {
-   "at": "12:30-13:00",
-   "feel": "hooked",
-   "why": "S14 Bezos 'That's why I'm offering double', S15 bench"
-  },
-  {
-   "at": "13:00-13:30",
-   "feel": "tense",
-   "why": "S15 eight envelopes (no music), 'Eight?'"
-  },
-  {
-   "at": "13:30-14:00",
-   "feel": "settled, then a question",
-   "why": "S15 L17, S16 verdict and last question"
-  }
- ],
- "checked_sources": [
-  {
-   "id": "C-01",
-   "url": "https://liquisearch.com/robert_kiyosaki/life_and_career",
-   "result": "supported (secondary): 'living with his then girlfriend Kim at the back of an old Toyota for several months'; spoken S10 L13 adds the invented detail 'which seat folds flat'"
-  },
-  {
-   "id": "C-02",
-   "url": "https://preview-prod.w.houstonchronicle.com/business/technology/article/success-was-once-fleeting-for-billionaire-founder-5278880.php",
-   "result": "partly: 'in the last hour of the last day ... 6 p.m., Christmas Eve, 2008' supports the date (S13 L8); 'With everything' (last cash) rests on cleantechnica.com, 403 on 2026-10-20, unverified"
-  },
-  {
-   "id": "C-03",
-   "url": "https://api.politifact.com/factchecks/2016/jun/21/hillary-clinton/yep-donald-trumps-companies-have-declared-bankrupt",
-   "result": "supported: 'Trump has actually filed Chapter 11 six times'; nbcnews 'there were actually six' (S05 L7)"
-  },
-  {
-   "id": "C-05",
-   "url": "https://www.biography.com/crime/jordan-belfort",
-   "result": "supported: 'In 1999, Belfort pleaded guilty to securities fraud and money laundering ... only served 22 months' (S12 L8); 'paper like that' is a story analogy"
-  }
- ],
- "validators": {
-  "production validate": "46 FAIL, 41 REVIEW; every FAIL is PV-05 (37 sounds and tracks not made yet) or VB-09 (9 face sheets not painted), both belong to the paid stages. No PV-47 FAIL now; no N-12 at 438 but 448 words, no VB-07.",
-  "story_lint": "0 FAIL, 2 REVIEW (ST-11 S13 and S15, each question answered by the next speaker at once)",
-  "remaining REVIEWs": "PV-12 N-02 x14 (beats end closed), N-05 p12.s1 (22 words), N-12 448 words without 'you', N-06 2 questions in 1360 words, PV-33 x2, PV-44 VB-03 x5, VB-02 S11 L4 and S12 L8, VB-05 S10 and S15, PV-36 BP-62 x2, PV-24 RHYTHM-2 SH135, PV-08 SH135/SH136, PV-32 musk/vance and cuban/bezos (moot, silent), PV-38, PV-47 x5 (heroes drawn first)",
-  "editorial_gate": "run after writing; see the report"
- },
- "integrated": {
-  "layers": {
-   "story": {
-    "status": "inspected",
-    "basis": "data",
-    "evidence": "Walked S01-S16 as one timeline. Premise (S01 L2-L7) -> question 'skill or luck' (S01 L7) -> deal (S02) -> street (S03) -> partnership by a free lap (S04) -> attention as money (S05, S07) -> promise broken (S08 L5) -> skipped test (S09 L10) -> fire (S11) -> temptation and refusal (S12) -> repair (S13) -> reward (S14) -> the envelopes (S15) -> verdict (S16 L2). Every plant pays: envelopes S02->S15, 'Me? Never.' S04->S08, cells S09->S11, 'Probably.' S12 L6->S13 L4. All plot facts are also narrated (S09 L10, S12 L12, S14 L1-L8) so a viewer who skips bubbles keeps the plot. Findings: TFZ-R5-01, -03, -04."
-   },
-   "entrances": {
-    "status": "inspected",
-    "basis": "data",
-    "evidence": "Heroes are named by the narrator before they speak (S02 L1-L2 O'Leary, S02 L14 Belfort, S05 L1, S08 L1-L2 Cuban, S12 L1 'Vance.'). Vance arrives by action ('steps over the ashes, careful of his shoes, and holds out a card') and then speaks: a deliberate change of sound at ~9:40, strong only if his voice differs from Brad's (TFZ-R5-06). Bezos enters at S14 L8 'One viewer read every page after him.' - why-now is clear, the name is only on the label."
-   },
-   "dialogue": {
-    "status": "inspected",
-    "basis": "data",
-    "evidence": "Lines follow from the line before: S11 L4 'Those cells came from the same box...' -> L5 'You never told me that.' -> L6 'I told you we had parts for fifty.' -> L7 'You said it quietly.' -> L8 'You never listen when it's quiet.' (a clean five-line turn; L9-L10 then raise the stakes). Speech bible respected: Musk short and halting (S08 L6 'We have parts for fifty.'), Belfort long and closing (S04 L10-L12), O'Leary price tags (S02 L13), Vance polite and exact (S12 L9 'Then you know it works.'). Weak: S04 L7 'So you gave it away first.' + L8 'Give a little first.' say the same thing twice after the picture already showed it (TFZ-R5-03); S10 L5-L6 repeat the asset joke (TFZ-R5-04). Silence would serve S04 L7."
-   },
-   "visual": {
-    "status": "inspected",
-    "basis": "instructions",
-    "evidence": "Shots change every 4-6 s in dialogue scenes and each cut reason names a bubble boundary, none an L-cut. Silent lines now carry expressions, not echo overlays. The entrance frames the headers promise exist: S15 shot 2 (O'Leary on the bench, briefcase on his knee) and shot 6 (eight envelopes fanned) support the reveal; S12 'Vance' gets his card shot. Remaining: S15 L9 stacks highlight/accent beats (VB-05) and five reasons are generic (VB-03) (TFZ-R5-07). No picture exists; judged on instructions."
-   },
-   "performance": {
-    "status": "inspected",
-    "basis": "instructions",
-    "evidence": "Silent lines carry tone/emotion only (nothing is voiced), the acting rests on expression beats (S08 L10 sad Musk + joyful Belfort on 'Yes.'). Voiced lines: narrator tags per line (S09 L10 'dread', S15 L9 'tension' with emphasis 'Eight'), Vance warmly/pressing (S12 L2, L7). The S12 L8 long Belfort bubble has one expression beat for 4.4 s (VB-02). Instructions only, no voice exists."
-   },
-   "audio": {
-    "status": "inspected",
-    "basis": "instructions",
-    "evidence": "Music now runs sneaky_pizzicato__v1 <start>..S09 L1 at -26 dB (covers S08 and S10 reads), clockwork_loop__v1 S09..S14 at -31 dB (covers the fire S11, the call S12, the warehouse S13), pizzicato again S14 and S16; S15 has no music by plan until 'Ten men walked out'. sfx on pivots: S08 L5 and L10 thud, S11 L2 hiss, S13 L6 tock. Two points: the dropout covers all of S15 (17 lines), not only the reveal at L9, and the comic pizzicato returns under the S16 verdict (TFZ-R5-05). Two music ends sit on no cut (PV-36). Instructions only."
-   },
-   "timing": {
-    "status": "inspected",
-    "basis": "estimate",
-    "evidence": "Estimate at 175 wpm, BP-27 holds: 14.0 min; midpoint ~7:00 is S08 L10 'Yes.' (pause_after 0.8 s plus thud). 'We do.' (S13 L6) has a hold on the shot. Silent runs 40/33/31/28/24/22/20 s then <=26 s; no two long runs touch. A reaction has time at the pivots (S08, S13); the exchange S15 L10-L17 (four bubbles, 12 s) is dense but its last line is the thesis and is followed by S16 narration. Basis: estimate."
-   }
-  },
-  "findings": [
-   {
-    "id": "TFZ-R5-02",
-    "layers": [
-     "dialogue",
-     "timing"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S06 L5",
-     "S11 L12",
-     "S14 L8",
-     "S16 L3"
-    ],
-    "expected": "The heard track speaks to the viewer now and then, since the dialogue that used to do it is read, not heard.",
-    "instructed": "BP-07 'you' every 100 words, BP-17 a question every 150 words. Round 5 added S03 L5 'Would any screen say yes to you?' and S06 L4 'Ask yourself...'.",
-    "conflict": "validate still reports 'N-12: 448 words in a row without you' and 'N-06: 2 questions in 1360 words'; the next narrator address after S06 L4 is S16 L3, about 7 minutes of heard story.",
-    "consequence": "A viewer glancing away between S07 and S15 hears a narrated report with no address and no question; mild drift risk in S10 and S13 (estimate).",
-    "confidence": "medium",
-    "basis": "data",
-    "fix": "One short question or 'you' line in the middle, e.g. at S11 L12 (what would you do with two hundred batteries and no money) or S14 L8; under 20 words.",
-    "owner": "writer"
-   },
-   {
-    "id": "TFZ-R5-03",
-    "layers": [
-     "dialogue",
-     "timing"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S04 L7",
-     "S04 L8",
-     "S04 L6",
-     "belfort",
-     "musk"
-    ],
-    "expected": "The sale is shown (S04 L3-L5), one bubble names the lesson, the deal follows.",
-    "instructed": "SC-12 / BP-74: no explaining what the picture showed.",
-    "conflict": "S04 L6 'I sold him an hour of his evening.', L7 'So you gave it away first.' and L8 'Give a little first. People hate owing you.' say the same lesson three times; the run is 33 s (S04 L6-L14).",
-    "consequence": "The first 10 s of the 33 s read restate the rider's lap; a dip near 3:30 (estimate, curious-reading).",
-    "confidence": "medium",
-    "basis": "estimate",
-    "fix": "Drop S04 L7 (silence works: Musk's face on L6) and let L8 answer L6 directly.",
-    "owner": "writer"
-   },
-   {
-    "id": "TFZ-R5-04",
-    "layers": [
-     "story",
-     "timing"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S10 L3",
-     "S10 L4",
-     "S10 L5",
-     "S10 L6",
-     "trump",
-     "kiyosaki"
-    ],
-    "expected": "S10 is Kiyosaki's choice of pride over the show, a short breather before the fire.",
-    "instructed": "Every scene turns something the question needs (ST checklist).",
-    "conflict": "S10 L3-L6 are two asset/audience exchanges for one joke; Musk and Belfort are absent for the 28 s read (484-513 s).",
-    "consequence": "Low-grade dip at ~8:00; music now helps, the heroes of the main line are still off screen (estimate).",
-    "confidence": "low",
-    "basis": "estimate",
-    "fix": "Merge L3-L6 into one exchange ('And what will you own?' / 'The audience.' / 'An audience isn't an asset.' / 'It paid for this car.') and keep L7-L8.",
-    "owner": "architect"
-   },
-   {
-    "id": "TFZ-R5-05",
-    "layers": [
-     "audio",
-     "timing"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S15",
-     "S16 L1",
-     "sneaky_pizzicato__v1",
-     "clockwork_loop__v1"
-    ],
-    "expected": "Music withdraws for the reveal and returns for the answer with the emotion of that answer.",
-    "instructed": "music[]: pizzicato 'Year five. Cuban's riders' to 'Five years after the bench', nothing in S15, pizzicato from S16 'Ten men walked out' at -28 dB. PV-36: the pizzicato end at 430.98 s and the clockwork end at 690.82 s sit on no cut.",
-    "conflict": "The dropout is planned 'before the reveal' but starts at S15 L1 and covers 17 lines, including four bubble exchanges (L3-L7) that need a pulse; the 'sneaky' pizzicato under the S16 verdict scores mischief while the text is a sober answer.",
-    "consequence": "The courthouse return plays on a bare hall bed for 66 s; the verdict arrives on a comic track (estimate).",
-    "confidence": "low",
-    "basis": "instructions",
-    "fix": "Start the dropout at S15 L9 'He opens his briefcase' (the reveal), spot the two music ends to the nearest cut, and put a quieter held note (or the clockwork track at -34 dB) under S16 L1-L3.",
-    "owner": "editor"
-   },
-   {
-    "id": "TFZ-R5-06",
-    "layers": [
-     "audio",
-     "dialogue",
-     "entrances"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S12 L2",
-     "S12 L4",
-     "S12 L6",
-     "S12 L7",
-     "S12 L9",
-     "vance",
-     "narrator"
-    ],
-    "expected": "Vance, the one heard character, sounds clearly unlike the narrator.",
-    "instructed": "cast.vance.voice 'Silas - Weathered Villain' (smooth, quiet, even, cold) against narrator 'Brad - Warm, Trusted Storyteller' (warm, quick, wry), both middle-aged American male, picked without samples (creator's rule, caster audition not done).",
-    "conflict": "The effect depends on a contrast nobody has heard; PV-32 flags musk/vance and cuban/bezos but both pairs are silent now.",
-    "consequence": "Either a strong change of sound at ~9:40 or a narrator who seems to speak the villain; unknown until the first free sample (instructions only).",
-    "confidence": "low",
-    "basis": "instructions",
-    "fix": "At the first take, read S12 L2 and L7 in both voices and keep Silas only if the pitch and tempo differ clearly from Brad; drop the moot PV-32 pairs from the check.",
-    "owner": "caster"
-   },
-   {
-    "id": "TFZ-R5-07",
-    "layers": [
-     "visual"
-    ],
-    "severity": "REVIEW",
-    "refs": [
-     "S02 L5",
-     "S05 L8",
-     "S13 L6",
-     "S13 L7",
-     "S11 L4",
-     "S12 L8",
-     "S15 L9",
-     "S10"
-    ],
-    "expected": "Each beat shows what its line says at that instant and names the word it shows; no frame goes 4 s without a change.",
-    "instructed": "validate: VB-03 on S02 L5 b1, S05 L8 b1, S13 L6 b1 and b2, S13 L7 b1 ('the reason names nothing of this line'); VB-02 S11 L4 4.0 s and S12 L8 4.4 s; VB-05 four highlights in a row in S10 and S15 (S15 L9: briefcase, Trump, Cuban, Musk).",
-    "conflict": "Generic reasons hide whether the beat shows the word; two long bubbles hold one face for 4+ s; four rings in a row read as a list, not a reveal.",
-    "consequence": "Small: a flat face during Belfort's S12 L8 confession and a cluttered S15 L9 reveal at ~13:00 (instructions).",
-    "confidence": "medium",
-    "basis": "instructions",
-    "fix": "Quote the shown word in the five reasons; add a second expression beat at 'paid for it' (S12 L8) and at 'skipped' (S11 L4); change two of the S15 L9 highlights to one prop beat (envelopes fan).",
-    "owner": "beats"
-   }
+  "critical_blockers": [],
+  "required_revisions": [],
+  "story_page": "story_page.md",
+  "viewer_read": [
+    {
+      "at": "0:00-0:30",
+      "feel": "hooked",
+      "why": "S01 bench, Trump's tie in the phone"
+    },
+    {
+      "at": "0:30-1:00",
+      "feel": "curious",
+      "why": "S01 L7-L8 gap and forty dollars"
+    },
+    {
+      "at": "1:00-1:30",
+      "feel": "curious",
+      "why": "S02 first bubble at ~1:02, 40 s read while the convention is learned"
+    },
+    {
+      "at": "1:30-2:00",
+      "feel": "laughing",
+      "why": "S02 L10 'I've sold air for more.' (read)"
+    },
+    {
+      "at": "2:00-2:30",
+      "feel": "curious",
+      "why": "S03 three refusals, voice only"
+    },
+    {
+      "at": "2:30-3:00",
+      "feel": "curious",
+      "why": "S03 L5 'Would any screen say yes to you?' answered at once"
+    },
+    {
+      "at": "3:00-3:30",
+      "feel": "laughing",
+      "why": "S04 narrated free lap, 'The rider pays cash.'"
+    },
+    {
+      "at": "3:30-4:00",
+      "feel": "curious, reading",
+      "why": "S04 L6-L14 33 s run; L7-L8 explain the sale again"
+    },
+    {
+      "at": "4:00-4:30",
+      "feel": "laughing",
+      "why": "S05 'Fantastic. Lend me some.'"
+    },
+    {
+      "at": "4:30-5:00",
+      "feel": "curious",
+      "why": "S05 L12-L14 live stream, voicemail"
+    },
+    {
+      "at": "5:00-5:30",
+      "feel": "curious",
+      "why": "S06 'Ask yourself which one gets paid first.' gives the roster a job"
+    },
+    {
+      "at": "5:30-6:00",
+      "feel": "dipping",
+      "why": "S06 L5-L8 four brisk intros in a row, voice only"
+    },
+    {
+      "at": "6:00-6:30",
+      "feel": "laughing",
+      "why": "S07 Kiyosaki steps in, 'They need to hear me.'"
+    },
+    {
+      "at": "6:30-7:00",
+      "feel": "tense",
+      "why": "S08 ultimatum read, music under it"
+    },
+    {
+      "at": "7:00-7:30",
+      "feel": "tense",
+      "why": "S08 'Yes.' with thud, S09 'That's how fires work.'"
+    },
+    {
+      "at": "7:30-8:00",
+      "feel": "tense",
+      "why": "S09 skipped test, narrated"
+    },
+    {
+      "at": "8:00-8:30",
+      "feel": "curious",
+      "why": "S10 28 s read, music under it, heroes absent"
+    },
+    {
+      "at": "8:30-9:00",
+      "feel": "tense",
+      "why": "S11 hiss, fire"
+    },
+    {
+      "at": "9:00-9:30",
+      "feel": "tense",
+      "why": "S11 L4-L10 blame read, shorter than before"
+    },
+    {
+      "at": "9:30-10:00",
+      "feel": "hooked",
+      "why": "S12 Vance is the first heard character voice"
+    },
+    {
+      "at": "10:00-10:30",
+      "feel": "hooked",
+      "why": "S12 'That's why I'm not signing.'"
+    },
+    {
+      "at": "10:30-11:00",
+      "feel": "curious",
+      "why": "S13 warehouse, 26 s read"
+    },
+    {
+      "at": "11:00-11:30",
+      "feel": "warm",
+      "why": "S13 'We do.' / 'Nobody has ever come in here to give me money back.'"
+    },
+    {
+      "at": "11:30-12:00",
+      "feel": "laughing",
+      "why": "S13 executive menu, S14 year five"
+    },
+    {
+      "at": "12:00-12:30",
+      "feel": "curious",
+      "why": "S14 list of fates"
+    },
+    {
+      "at": "12:30-13:00",
+      "feel": "hooked",
+      "why": "S14 Bezos 'That's why I'm offering double', S15 bench"
+    },
+    {
+      "at": "13:00-13:30",
+      "feel": "tense",
+      "why": "S15 eight envelopes (no music), 'Eight?'"
+    },
+    {
+      "at": "13:30-14:00",
+      "feel": "settled, then a question",
+      "why": "S15 L17, S16 verdict and last question"
+    }
   ],
-  "notes": [
-   "Predicted dips (estimate), none bored or confused: 1:02-1:42 first 40 s silent run (S02) while the bubble convention is learned; 3:30 S04 L7-L8; 5:30 S06 roster; 8:00 S10 reading with the heroes absent. Everything else is curious, laughing, tense or hooked.",
-   "Closed since round 4 (checked on data): D62-01 echoes (silent lines hold only expression, 1 label, 1 chart); D62-03 ('Yes.' accent + thud cue + 0.8 s pause; 'We do.' shot holds); D62-04 (no 'L-cut' or 'voice starts' left in the script); D62-06 (S11 L4-L5 merged); D62-09 (S16 is 3 lines, the last an open question, no recap lexicon; ENG-8 passes); D62-11 (VB-07 gone). Partly: D62-02 -> R5-05, D62-05 -> R5-03, D62-07 -> R5-04, D62-08 -> R5-02. Open by rule: D62-10 -> R5-06.",
-   "The ending: S16 L1 'Ten men walked out of this building with nothing but what they knew.' L2 the answer, L3 'which envelope would be yours?' ends on an open question and has no recap or goodbye (BP-43). The script has no line pointing to a next video, so there is no end-screen narration to measure (ENG-8 silent); the creator decides whether an end card follows.",
-   "Humour (BP-09): S04-S05 still carry 5+ verbal jokes in ~110 s; situational, the creator's call. First laugh ~0:15, inside 45 s.",
-   "Claim pass (2026-10-20, re-opened): C-01 supported (liquisearch.com page returned 200: 'back of an old Toyota for several months'; Toyota make is one page, the book not read; S10 L10-L11 add 'which seat folds flat', invented and declared). C-03 supported (politifact 200: 'filed Chapter 11 six times'; S05 L7 says 'my companies', which matches the corporate count). C-05 supported (biography.com 200: 'served 22 months'; S12 L8 'I paid for it in a cell' is Belfort's own idiom, not a number). C-02 partly (houstonchronicle 200: 'last hour of the last day ... Christmas Eve, 2008'; the 'With everything' / last-cash wording rests on cleantechnica.com, which answered 403 again: unverified, and S13 L8 is spoken as Musk's own memory in the invented scene). Every other fact is declared invented in claim_map.md.",
-   "Visual beats read (ten, at random): S02 L9 expression (Musk wary) fits; S04 L11 label 'O'LEARY'S TEN PERCENT' adds the callback; S05 L9 smug Trump fits; S08 L5 accent punch + shocked Musk on 'Five hundred' fits; S08 L10 sad Musk/joyful Belfort on 'Yes' fits; S09 L6 cold Musk on 'fires' fits; S11 L8 fits; S13 L6 reason generic (VB-03); S15 L9 highlights on 'Trump' and 'Cuban' ring names the narrator lists (decorates, duplicates); S12 L8 one beat for a long confession (thin).",
-   "Taste: Vance as the only heard character may be the film's best device; the 41 % to 38 % silent share is the right size for a mini-film with readable bubbles.",
-   "Process note: the reviewer ran `production compile` without --out, which re-saves the script in place (S.save). Compared with the coordinator's snapshot b1.json the saved file differs only in five cast.<hero>.reference records and one removed visual beat in S06 L4 (both most likely the last edits that were already in the file); the byte size fell from 569809 to 485848 because of re-serialisation. The review is bound to the file as it stands now."
-  ]
- }
+  "checked_sources": [
+    {
+      "id": "C-01",
+      "url": "https://liquisearch.com/robert_kiyosaki/life_and_career",
+      "result": "supported (secondary): 'living with his then girlfriend Kim at the back of an old Toyota for several months'; spoken S10 L13 adds the invented detail 'which seat folds flat'"
+    },
+    {
+      "id": "C-02",
+      "url": "https://preview-prod.w.houstonchronicle.com/business/technology/article/success-was-once-fleeting-for-billionaire-founder-5278880.php",
+      "result": "partly: 'in the last hour of the last day ... 6 p.m., Christmas Eve, 2008' supports the date (S13 L8); 'With everything' (last cash) rests on cleantechnica.com, 403 on 2026-10-20, unverified"
+    },
+    {
+      "id": "C-03",
+      "url": "https://api.politifact.com/factchecks/2016/jun/21/hillary-clinton/yep-donald-trumps-companies-have-declared-bankrupt",
+      "result": "supported: 'Trump has actually filed Chapter 11 six times'; nbcnews 'there were actually six' (S05 L7)"
+    },
+    {
+      "id": "C-05",
+      "url": "https://www.biography.com/crime/jordan-belfort",
+      "result": "supported: 'In 1999, Belfort pleaded guilty to securities fraud and money laundering ... only served 22 months' (S12 L8); 'paper like that' is a story analogy"
+    }
+  ],
+  "validators": {
+    "production validate": "37 FAIL, 41 REVIEW; every FAIL is PV-05 (sounds and tracks not made yet, paid stage). VB-09 is gone (face sheets recorded). Same REVIEWs as round 6 (N-12 448 words, N-06, VB-03, VB-02, VB-05, PV-47 and others).",
+    "story_lint": "0 FAIL, 2 REVIEW (ST-11 S13 and S15, each question answered by the next speaker at once)",
+    "remaining REVIEWs": "PV-12 N-02 x14 (beats end closed), N-05 p12.s1 (22 words), N-12 448 words without 'you', N-06 2 questions in 1360 words, PV-33 x2, PV-44 VB-03 x5, VB-02 S11 L4 and S12 L8, VB-05 S10 and S15, PV-36 BP-62 x2, PV-24 RHYTHM-2 SH135, PV-08 SH135/SH136, PV-32 musk/vance and cuban/bezos (moot, silent), PV-38, PV-47 x5 (heroes drawn first)",
+    "editorial_gate": "run after writing; see the report"
+  },
+  "integrated": {
+    "layers": {
+      "story": {
+        "status": "inspected",
+        "basis": "data",
+        "evidence": "Walked S01-S16 as one timeline. Premise (S01 L2-L7) -> question 'skill or luck' (S01 L7) -> deal (S02) -> street (S03) -> partnership by a free lap (S04) -> attention as money (S05, S07) -> promise broken (S08 L5) -> skipped test (S09 L10) -> fire (S11) -> temptation and refusal (S12) -> repair (S13) -> reward (S14) -> the envelopes (S15) -> verdict (S16 L2). Every plant pays: envelopes S02->S15, 'Me? Never.' S04->S08, cells S09->S11, 'Probably.' S12 L6->S13 L4. All plot facts are also narrated (S09 L10, S12 L12, S14 L1-L8) so a viewer who skips bubbles keeps the plot. Findings: TFZ-R5-01, -03, -04."
+      },
+      "entrances": {
+        "status": "inspected",
+        "basis": "data",
+        "evidence": "Heroes are named by the narrator before they speak (S02 L1-L2 O'Leary, S02 L14 Belfort, S05 L1, S08 L1-L2 Cuban, S12 L1 'Vance.'). Vance arrives by action ('steps over the ashes, careful of his shoes, and holds out a card') and then speaks: a deliberate change of sound at ~9:40, strong only if his voice differs from Brad's (TFZ-R5-06). Bezos enters at S14 L8 'One viewer read every page after him.' - why-now is clear, the name is only on the label."
+      },
+      "dialogue": {
+        "status": "inspected",
+        "basis": "data",
+        "evidence": "Lines follow from the line before: S11 L4 'Those cells came from the same box...' -> L5 'You never told me that.' -> L6 'I told you we had parts for fifty.' -> L7 'You said it quietly.' -> L8 'You never listen when it's quiet.' (a clean five-line turn; L9-L10 then raise the stakes). Speech bible respected: Musk short and halting (S08 L6 'We have parts for fifty.'), Belfort long and closing (S04 L10-L12), O'Leary price tags (S02 L13), Vance polite and exact (S12 L9 'Then you know it works.'). Weak: S04 L7 'So you gave it away first.' + L8 'Give a little first.' say the same thing twice after the picture already showed it (TFZ-R5-03); S10 L5-L6 repeat the asset joke (TFZ-R5-04). Silence would serve S04 L7."
+      },
+      "visual": {
+        "status": "inspected",
+        "basis": "instructions",
+        "evidence": "Shots change every 4-6 s in dialogue scenes and each cut reason names a bubble boundary, none an L-cut. Silent lines now carry expressions, not echo overlays. The entrance frames the headers promise exist: S15 shot 2 (O'Leary on the bench, briefcase on his knee) and shot 6 (eight envelopes fanned) support the reveal; S12 'Vance' gets his card shot. Remaining: S15 L9 stacks highlight/accent beats (VB-05) and five reasons are generic (VB-03) (TFZ-R5-07). No picture exists; judged on instructions."
+      },
+      "performance": {
+        "status": "inspected",
+        "basis": "instructions",
+        "evidence": "Silent lines carry tone/emotion only (nothing is voiced), the acting rests on expression beats (S08 L10 sad Musk + joyful Belfort on 'Yes.'). Voiced lines: narrator tags per line (S09 L10 'dread', S15 L9 'tension' with emphasis 'Eight'), Vance warmly/pressing (S12 L2, L7). The S12 L8 long Belfort bubble has one expression beat for 4.4 s (VB-02). Instructions only, no voice exists."
+      },
+      "audio": {
+        "status": "inspected",
+        "basis": "instructions",
+        "evidence": "Music now runs sneaky_pizzicato__v1 <start>..S09 L1 at -26 dB (covers S08 and S10 reads), clockwork_loop__v1 S09..S14 at -31 dB (covers the fire S11, the call S12, the warehouse S13), pizzicato again S14 and S16; S15 has no music by plan until 'Ten men walked out'. sfx on pivots: S08 L5 and L10 thud, S11 L2 hiss, S13 L6 tock. Two points: the dropout covers all of S15 (17 lines), not only the reveal at L9, and the comic pizzicato returns under the S16 verdict (TFZ-R5-05). Two music ends sit on no cut (PV-36). Instructions only."
+      },
+      "timing": {
+        "status": "inspected",
+        "basis": "estimate",
+        "evidence": "Estimate at 175 wpm, BP-27 holds: 14.0 min; midpoint ~7:00 is S08 L10 'Yes.' (pause_after 0.8 s plus thud). 'We do.' (S13 L6) has a hold on the shot. Silent runs 40/33/31/28/24/22/20 s then <=26 s; no two long runs touch. A reaction has time at the pivots (S08, S13); the exchange S15 L10-L17 (four bubbles, 12 s) is dense but its last line is the thesis and is followed by S16 narration. Basis: estimate."
+      }
+    },
+    "findings": [
+      {
+        "id": "TFZ-R5-02",
+        "layers": [
+          "dialogue",
+          "timing"
+        ],
+        "severity": "REVIEW",
+        "refs": [
+          "S06 L5",
+          "S11 L12",
+          "S14 L8",
+          "S16 L3"
+        ],
+        "expected": "The heard track speaks to the viewer now and then, since the dialogue that used to do it is read, not heard.",
+        "instructed": "BP-07 'you' every 100 words, BP-17 a question every 150 words. Round 5 added S03 L5 'Would any screen say yes to you?' and S06 L4 'Ask yourself...'.",
+        "conflict": "validate still reports 'N-12: 448 words in a row without you' and 'N-06: 2 questions in 1360 words'; the next narrator address after S06 L4 is S16 L3, about 7 minutes of heard story.",
+        "consequence": "A viewer glancing away between S07 and S15 hears a narrated report with no address and no question; mild drift risk in S10 and S13 (estimate).",
+        "confidence": "medium",
+        "basis": "data",
+        "fix": "One short question or 'you' line in the middle, e.g. at S11 L12 (what would you do with two hundred batteries and no money) or S14 L8; under 20 words.",
+        "owner": "writer"
+      },
+      {
+        "id": "TFZ-R5-03",
+        "layers": [
+          "dialogue",
+          "timing"
+        ],
+        "severity": "REVIEW",
+        "refs": [
+          "S04 L7",
+          "S04 L8",
+          "S04 L6",
+          "belfort",
+          "musk"
+        ],
+        "expected": "The sale is shown (S04 L3-L5), one bubble names the lesson, the deal follows.",
+        "instructed": "SC-12 / BP-74: no explaining what the picture showed.",
+        "conflict": "S04 L6 'I sold him an hour of his evening.', L7 'So you gave it away first.' and L8 'Give a little first. People hate owing you.' say the same lesson three times; the run is 33 s (S04 L6-L14).",
+        "consequence": "The first 10 s of the 33 s read restate the rider's lap; a dip near 3:30 (estimate, curious-reading).",
+        "confidence": "medium",
+        "basis": "estimate",
+        "fix": "Drop S04 L7 (silence works: Musk's face on L6) and let L8 answer L6 directly.",
+        "owner": "writer"
+      },
+      {
+        "id": "TFZ-R5-04",
+        "layers": [
+          "story",
+          "timing"
+        ],
+        "severity": "REVIEW",
+        "refs": [
+          "S10 L3",
+          "S10 L4",
+          "S10 L5",
+          "S10 L6",
+          "trump",
+          "kiyosaki"
+        ],
+        "expected": "S10 is Kiyosaki's choice of pride over the show, a short breather before the fire.",
+        "instructed": "Every scene turns something the question needs (ST checklist).",
+        "conflict": "S10 L3-L6 are two asset/audience exchanges for one joke; Musk and Belfort are absent for the 28 s read (484-513 s).",
+        "consequence": "Low-grade dip at ~8:00; music now helps, the heroes of the main line are still off screen (estimate).",
+        "confidence": "low",
+        "basis": "estimate",
+        "fix": "Merge L3-L6 into one exchange ('And what will you own?' / 'The audience.' / 'An audience isn't an asset.' / 'It paid for this car.') and keep L7-L8.",
+        "owner": "architect"
+      },
+      {
+        "id": "TFZ-R5-05",
+        "layers": [
+          "audio",
+          "timing"
+        ],
+        "severity": "REVIEW",
+        "refs": [
+          "S15",
+          "S16 L1",
+          "sneaky_pizzicato__v1",
+          "clockwork_loop__v1"
+        ],
+        "expected": "Music withdraws for the reveal and returns for the answer with the emotion of that answer.",
+        "instructed": "music[]: pizzicato 'Year five. Cuban's riders' to 'Five years after the bench', nothing in S15, pizzicato from S16 'Ten men walked out' at -28 dB. PV-36: the pizzicato end at 430.98 s and the clockwork end at 690.82 s sit on no cut.",
+        "conflict": "The dropout is planned 'before the reveal' but starts at S15 L1 and covers 17 lines, including four bubble exchanges (L3-L7) that need a pulse; the 'sneaky' pizzicato under the S16 verdict scores mischief while the text is a sober answer.",
+        "consequence": "The courthouse return plays on a bare hall bed for 66 s; the verdict arrives on a comic track (estimate).",
+        "confidence": "low",
+        "basis": "instructions",
+        "fix": "Start the dropout at S15 L9 'He opens his briefcase' (the reveal), spot the two music ends to the nearest cut, and put a quieter held note (or the clockwork track at -34 dB) under S16 L1-L3.",
+        "owner": "editor"
+      },
+      {
+        "id": "TFZ-R5-06",
+        "layers": [
+          "audio",
+          "dialogue",
+          "entrances"
+        ],
+        "severity": "REVIEW",
+        "refs": [
+          "S12 L2",
+          "S12 L4",
+          "S12 L6",
+          "S12 L7",
+          "S12 L9",
+          "vance",
+          "narrator"
+        ],
+        "expected": "Vance, the one heard character, sounds clearly unlike the narrator.",
+        "instructed": "cast.vance.voice 'Silas - Weathered Villain' (smooth, quiet, even, cold) against narrator 'Brad - Warm, Trusted Storyteller' (warm, quick, wry), both middle-aged American male, picked without samples (creator's rule, caster audition not done).",
+        "conflict": "The effect depends on a contrast nobody has heard; PV-32 flags musk/vance and cuban/bezos but both pairs are silent now.",
+        "consequence": "Either a strong change of sound at ~9:40 or a narrator who seems to speak the villain; unknown until the first free sample (instructions only).",
+        "confidence": "low",
+        "basis": "instructions",
+        "fix": "At the first take, read S12 L2 and L7 in both voices and keep Silas only if the pitch and tempo differ clearly from Brad; drop the moot PV-32 pairs from the check.",
+        "owner": "caster"
+      },
+      {
+        "id": "TFZ-R5-07",
+        "layers": [
+          "visual"
+        ],
+        "severity": "REVIEW",
+        "refs": [
+          "S02 L5",
+          "S05 L8",
+          "S13 L6",
+          "S13 L7",
+          "S11 L4",
+          "S12 L8",
+          "S15 L9",
+          "S10"
+        ],
+        "expected": "Each beat shows what its line says at that instant and names the word it shows; no frame goes 4 s without a change.",
+        "instructed": "validate: VB-03 on S02 L5 b1, S05 L8 b1, S13 L6 b1 and b2, S13 L7 b1 ('the reason names nothing of this line'); VB-02 S11 L4 4.0 s and S12 L8 4.4 s; VB-05 four highlights in a row in S10 and S15 (S15 L9: briefcase, Trump, Cuban, Musk).",
+        "conflict": "Generic reasons hide whether the beat shows the word; two long bubbles hold one face for 4+ s; four rings in a row read as a list, not a reveal.",
+        "consequence": "Small: a flat face during Belfort's S12 L8 confession and a cluttered S15 L9 reveal at ~13:00 (instructions).",
+        "confidence": "medium",
+        "basis": "instructions",
+        "fix": "Quote the shown word in the five reasons; add a second expression beat at 'paid for it' (S12 L8) and at 'skipped' (S11 L4); change two of the S15 L9 highlights to one prop beat (envelopes fan).",
+        "owner": "beats"
+      }
+    ],
+    "notes": [
+      "Predicted dips (estimate), none bored or confused: 1:02-1:42 first 40 s silent run (S02) while the bubble convention is learned; 3:30 S04 L7-L8; 5:30 S06 roster; 8:00 S10 reading with the heroes absent. Everything else is curious, laughing, tense or hooked.",
+      "Closed since round 4 (checked on data): D62-01 echoes (silent lines hold only expression, 1 label, 1 chart); D62-03 ('Yes.' accent + thud cue + 0.8 s pause; 'We do.' shot holds); D62-04 (no 'L-cut' or 'voice starts' left in the script); D62-06 (S11 L4-L5 merged); D62-09 (S16 is 3 lines, the last an open question, no recap lexicon; ENG-8 passes); D62-11 (VB-07 gone). Partly: D62-02 -> R5-05, D62-05 -> R5-03, D62-07 -> R5-04, D62-08 -> R5-02. Open by rule: D62-10 -> R5-06.",
+      "The ending: S16 L1 'Ten men walked out of this building with nothing but what they knew.' L2 the answer, L3 'which envelope would be yours?' ends on an open question and has no recap or goodbye (BP-43). The script has no line pointing to a next video, so there is no end-screen narration to measure (ENG-8 silent); the creator decides whether an end card follows.",
+      "Humour (BP-09): S04-S05 still carry 5+ verbal jokes in ~110 s; situational, the creator's call. First laugh ~0:15, inside 45 s.",
+      "Claim pass (2026-10-20, re-opened): C-01 supported (liquisearch.com page returned 200: 'back of an old Toyota for several months'; Toyota make is one page, the book not read; S10 L10-L11 add 'which seat folds flat', invented and declared). C-03 supported (politifact 200: 'filed Chapter 11 six times'; S05 L7 says 'my companies', which matches the corporate count). C-05 supported (biography.com 200: 'served 22 months'; S12 L8 'I paid for it in a cell' is Belfort's own idiom, not a number). C-02 partly (houstonchronicle 200: 'last hour of the last day ... Christmas Eve, 2008'; the 'With everything' / last-cash wording rests on cleantechnica.com, which answered 403 again: unverified, and S13 L8 is spoken as Musk's own memory in the invented scene). Every other fact is declared invented in claim_map.md.",
+      "Visual beats read (ten, at random): S02 L9 expression (Musk wary) fits; S04 L11 label 'O'LEARY'S TEN PERCENT' adds the callback; S05 L9 smug Trump fits; S08 L5 accent punch + shocked Musk on 'Five hundred' fits; S08 L10 sad Musk/joyful Belfort on 'Yes' fits; S09 L6 cold Musk on 'fires' fits; S11 L8 fits; S13 L6 reason generic (VB-03); S15 L9 highlights on 'Trump' and 'Cuban' ring names the narrator lists (decorates, duplicates); S12 L8 one beat for a long confession (thin).",
+      "Taste: Vance as the only heard character may be the film's best device; the 41 % to 38 % silent share is the right size for a mini-film with readable bubbles.",
+      "Process note: the reviewer ran `production compile` without --out, which re-saves the script in place (S.save). Compared with the coordinator's snapshot b1.json the saved file differs only in five cast.<hero>.reference records and one removed visual beat in S06 L4 (both most likely the last edits that were already in the file); the byte size fell from 569809 to 485848 because of re-serialisation. The review is bound to the file as it stands now.",
+      "Round 7 checked on data: git diff of the script between the approved commit 112ab5a and the working file shows only the nine face_sheet additions and five expression changes; no scores change. validators: validate 37 FAIL (all PV-05) / 41 REVIEW; story_lint 0 FAIL / 2 REVIEW. The reviewer did not run compile.",
+      "TFZ-R7-01 resolved (checked on data): S15 L7 and SH09 L8 expression surprised, why 'Belfort is caught off guard: I didn't pick him [pick him]'. S13 L7 VB-03 remains inside R5-07."
+    ]
+  }
 }

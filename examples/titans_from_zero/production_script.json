@@ -10778,7 +10778,7 @@
               "at": "pick him",
               "kind": "expression",
               "expression": "surprised",
-              "why": "Belfort is confused: I didn't pick him [pick him]",
+              "why": "Belfort is caught off guard: I didn't pick him [pick him]",
               "who": "belfort"
             }
           ],
@@ -14501,8 +14501,8 @@
             {
               "at": "pick him",
               "kind": "expression",
-              "expression": "doubtful",
-              "why": "Belfort is confused: I didn't pick him [pick him]",
+              "expression": "surprised",
+              "why": "Belfort is caught off guard: I didn't pick him [pick him]",
               "who": "belfort"
             }
           ],
