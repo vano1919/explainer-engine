@@ -87,3 +87,21 @@ def test_faces_swapping_faster_than_the_window_allows_are_a_review():
     found = FR.check(_timed([_shot("SH1", 0.0, 6.0)], beats))
     assert "FR-FACE-RATE" in _rules(found, "REVIEW")
     assert not _rules(found)
+
+
+def test_a_planned_shot_is_read_from_its_view_plan_like_the_renderer():
+    # the old eased path: ann's close-up eases in under a bubble that started on the scene (FAIL). The same shot with the view
+    # plan timing writes (shots[].views, production/faces.views): ann's close-up holds the whole shot, so the bubble starts
+    # and ends on one frame, over its own speaker, and nothing cross-fades near the cut (no FR-FACE-GHOST)
+    shot = _shot("SH1", 0.0, 4.0, bubbles=[("ann", "You can still build things?", 0.3, 2.0)])
+    beats = [_face("SH1", "ann", "curious", 1.2, 4.0)]
+    assert "FR-BUBBLE-FACE" in _rules(FR.check(_timed([shot], beats)))
+    planned = dict(shot, views=[{"start_frame": 0, "end_frame": 120, "who": "ann"}])
+    found = FR.check(_timed([planned], beats))
+    assert not _rules(found) and not _rules(found, "REVIEW") & {"FR-FACE-GHOST", "FR-BUBBLE-WHO"}
+    views = planned["views"]
+    assert FR.face_at(beats, 0, FPS, views) == ("ann", "curious")  # the view shows the expression it is about to need
+    scene = [{"start_frame": 0, "end_frame": 60, "who": None}, {"start_frame": 60, "end_frame": 120, "who": "ann"}]
+    assert FR.face_at(beats, 59, FPS, scene) is None and FR.face_at(beats, 60, FPS, scene) == ("ann", "curious")
+    _, runs = FR.face_track(_timed([dict(shot, views=scene)], beats), None)
+    assert [r["start_frame"] for r in runs] == [0, 60]  # the face frame changes exactly where the view does

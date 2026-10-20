@@ -1204,3 +1204,30 @@ link the BP ids. Tests: `tests/unit/test_d64_editing_rules.py`; updated to the n
 words), `test_silent_lines.py` (the 15-word accent now FAILs, its 4-word key phrase passes), `test_story_engine.py` (MO-06
 INFO). On the titans script: 6 new FAIL (BUBBLE-1 on a Short bubble, PV-56 on S12's 14-word bubble, PV-57 on S03, S11,
 S14, S16) and VB-12 REVIEWs on the beats of hero lines; the script is not changed here.
+
+## 2026-10-20 — The QA loop: review after every two rendered chunks, data + pixels, classed for a fix (standing order 12)
+
+`qa/frame_review.py` now follows the renderer: a shot's `views` (the view plan `production/faces.views` writes through timing)
+decide which face fills each frame (`faces.view_at` / `faces.face_in_view`); FR-FACE-GHOST and the own-close-up FR-BUBBLE-WHO
+REVIEW no longer apply to a planned shot; an old timed file keeps the old eased mirror. On the Titans preview's own timing:
+17 FAIL (as frame_review_v1); on `timed_planned.json`: 0 FAIL. `--pixels` adds `qa/pixels.py`, free (PySceneDetect, OpenCV
+ORB + YuNet, ImageHash, ffmpeg freezedetect / blackdetect): PX-CUT-EXTRA and PX-FROZEN FAIL (objective: a cut the plan does not
+have, a still picture while the plan moves it), PX-CUT-MISSING, PX-CAM-JUMP (RX-11 (a)), PX-JUMP-CUT (BP-30's tolerance, RX-11
+(b)), PX-BLACK, PX-BUBBLE-FACE REVIEW; every invented number sits in one HYPOTHESIS block. `qa/face_points.py` measures the
+heroes' faces on the painted pictures (YuNet; who is who by OpenCV SFace against each hero's face sheet, else left-to-right
+order) and writes `face_points.json`; FP-OFF REVIEW past 0.08 of the width (hypothesis); `--apply` rewrites only the matches
+SFace named. On titans (report only, script unchanged): 143 declared points in 75 pictures, 113 matched to a painted face (95
+named by SFace), 30 without a face (backs in over-the-shoulder shots, or missed), **70 more than 0.08 of the width off, 59 of
+them confidently** (`jobs/titans_from_zero/render/review/face_points/`); s02_signing declares O'Leary left of Musk, he is drawn
+in the middle. `qa/loop.py` (`python -m explainer_engine.qa.loop <script> --read DIR --out DIR --chunks A:B`) times, assembles
+the chunk pair, joins it with its mix, runs the frame review with pixels and the face points, classes each finding systemic
+(same rule on 2+ shots, range-wide, or pixels against clean plan data) or script with its owner file, counts iterations and
+stops after 5 on one finding; it edits nothing. On the old chunks 0-1 (0-123.3 s): the 17 data FAIL of v1 (all systemic), and
+the pixel checks found **no** pixel defect: all 18 planned cuts seen, 2 extra cuts both planned (the SH004 punch, a face-frame
+change in SH015), 9 still stretches all at eased move ends the plan holds, no camera jump beyond the planned punches, no
+same-picture jump cut, no bubble over a face (16 of 18 bubbles located). Limit: frames on a close-up are not measured for
+camera jumps, so the old close-up backdrop zoom (CC-06 cause 1) is seen only by the data checks. Paid allowance (the creator):
+`config/spend_caps.json` `allowances.qa_loop` = 2,000 ElevenLabs credits per run for re-reads of lines the loop changed,
+enforced by `core/ledger.Run.reserve_allowance` (refuses above it, and the run's own cap with its 80 % stop still applies).
+Tests: `tests/unit/test_pixels.py`, `test_qa_loop.py`, `test_face_points.py`, and new cases in `test_frame_review.py`,
+`test_ledger.py`.

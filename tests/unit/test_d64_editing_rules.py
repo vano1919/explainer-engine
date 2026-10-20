@@ -160,6 +160,12 @@ def test_a_closer_shot_shows_part_of_the_establishing_view():
     revealed = _cast_doc(["cuban"])
     revealed["segments"][0]["shots"][1]["reveal"] = "cuban"  # a deliberate reveal, named after the picture
     assert V.establishing_cast(revealed) == []
+    pair = _cast_doc(["cuban", "trump"])
+    pair["library"]["wide"]["heroes"] = ["musk"]
+    pair["segments"][0]["shots"][1]["reveal"] = "Cuban and Trump at work"  # one reveal text may name several heroes
+    assert V.establishing_cast(pair) == []
+    pair["segments"][0]["shots"][1]["reveal"] = "Cuban at work"
+    assert "trump" in V.establishing_cast(pair)[0][1]
 
 
 # --- BP-92: a camera move never resets -----------------------------------------------------------------------------------

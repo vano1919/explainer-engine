@@ -51,6 +51,16 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    sheet it writes and looks at each frame itself, fixes what it finds (timing, beats, bubbles, pictures) and re-renders. A FAIL
    is never shown; each REVIEW is either fixed or named to the creator with its sheet. The checks and their thresholds live in
    `explainer_engine/qa/frame_review.py` (loudness: BP-50 through `qa/targets.py`).
+   **The QA loop runs this after every two rendered chunks** (creator, 2026-10-20):
+   `python -m explainer_engine.qa.loop <script> --read <read dir> --out <dir> --chunks A:B --pics <dir>` times the script,
+   renders only chunks A:B, joins them, runs the frame review with the free pixel checks (`qa/pixels.py`: an unplanned cut
+   or a frozen picture FAIL; camera jumps, jump cuts, black, a bubble over a face REVIEW) and the face-point check
+   (`qa/face_points.py`, REVIEW), and writes `loop_report.json`: every finding classed *systemic* (fix the code, with a
+   focused test) or *script* (fix the script), with the file that owns it. The loop never edits anything itself; the session
+   fixes the owners and runs the same command again until no FAIL is left. A finding still there after 5 iterations stops
+   the loop: report it to the creator. Its only paid allowance: at most 2,000 ElevenLabs credits per run, on its own, for
+   re-reads of script lines it changed (`config/spend_caps.json` `allowances.qa_loop`, enforced by
+   `core/ledger.Run.reserve_allowance` inside the run's ElevenLabs cap).
 
 ## 2. The gates, in order (a video does not skip one)
 

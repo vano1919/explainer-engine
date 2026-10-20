@@ -2493,7 +2493,8 @@
           "cut": {
             "why": "the two ways left to earn"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "reveal": "Musk's hands and Belfort's mouth, the two skills"
         },
         {
           "at": "Jordan Belfort has a phone",
@@ -6600,7 +6601,8 @@
               "kind": "wobble",
               "strength": 0.3
             }
-          ]
+          ],
+          "reveal": "Musk and Belfort at the ruin of their garage"
         },
         {
           "at": "The cells on that shelf",
@@ -7025,7 +7027,7 @@
           "pause_after": 1.1
         },
         {
-          "text": "Yeah, I signed paper like that once. I paid for it in a cell.",
+          "text": "Signed one once. Prison.",
           "speaker": "belfort",
           "to": "vance",
           "intent": "reveal",
@@ -7034,10 +7036,10 @@
           ],
           "visual_beats": [
             {
-              "at": "in a cell",
+              "at": "Prison",
               "kind": "expression",
               "expression": "doubtful",
-              "why": "Vance hears in a cell [in a cell]",
+              "why": "Vance hears prison [Prison]",
               "who": "vance"
             }
           ],
@@ -7339,7 +7341,7 @@
           "heroes_ok": true
         },
         {
-          "at": "Yeah, I signed paper like that once.",
+          "at": "Signed one once.",
           "type": "B",
           "picture": {
             "id": "s12_ots_vance",
@@ -8534,7 +8536,7 @@
             {
               "at": "people pick up",
               "who": "cardone",
-              "text": "Hello! Yes, I have a minute.",
+              "text": "Got a minute?",
               "kind": "speech",
               "hold": 2.4
             }
@@ -8671,7 +8673,8 @@
               "kind": "wobble",
               "strength": 0.3
             }
-          ]
+          ],
+          "reveal": "Jeff Bezos walks in"
         },
         {
           "at": "Other buyers asked them",
@@ -9637,7 +9640,8 @@
           "cut": {
             "why": "the second half of the verdict"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "reveal": "Musk and Belfort, still standing"
         },
         {
           "at": "So if you sat on that bench",

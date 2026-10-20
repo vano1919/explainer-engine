@@ -2,11 +2,12 @@
 2026-10-20: "why can't you watch and evaluate it yourself?"). Free and local: ffmpeg + PIL, no paid call.
 
     python -m explainer_engine.qa.frame_review <timed.json> <video.mp4> [--from S --to S] [--offset S]
-                                               [--pictures DIR ...] --out DIR
+                                               [--pictures DIR ...] [--pixels] --out DIR
 
 1. The moments that matter inside the range, read from ``timed.json`` (``production/timing``): every cut (0.15 s before and
    after), every bubble's start / middle / end, every visual beat's start, every change of the dialogue face frame
-   (``production/faces.composite``: the keyed close-up over the blurred scene), every dissolve's midpoint. Each moment's frame
+   (``production/faces.composite``: the keyed close-up over the blurred scene; a shot's ``views`` when timing wrote them,
+   the renderer's view plan, else the old eased span), every dissolve's midpoint. Each moment's frame
    is pulled from the video (``WIDTH`` px wide), labelled with its time and what it is, and laid out on contact sheets
    (``sheet_NN.jpg``) that Claude opens and looks at, every one, before anything is shown to the creator.
 2. Deterministic checks on the timing data, the same timeline the renderer draws (FR rules, the repo's FAIL / REVIEW):
@@ -23,9 +24,12 @@
    FR-RING-LOOK     REVIEW  every other ring: the timing data carries no prop points, so it is checked on the sheet
    FR-FACE-RATE     REVIEW  more than ``SWAP_MAX`` face-frame changes in ``SWAP_WINDOW_S``
    FR-FACE-HOLD     REVIEW  a face shown shorter than BP-33's hold
-   FR-FACE-GHOST    REVIEW  a close-up cross-fading within ``GHOST_S`` of a cut (the hero shows twice right after it)
+   FR-FACE-GHOST    REVIEW  a close-up cross-fading within ``GHOST_S`` of a cut (the hero shows twice right after it); only
+                            for a shot without a view plan (a planned close-up cuts with its view, never cross-fades)
    FR-TEXT-CUT      REVIEW  a screen-bound mark (text, symbol, prop, chart) carried across a cut into another picture
    FR-LOUDNESS      BP-50 verdict on the rendered range (``qa/targets``)
+3. With ``--pixels``: the pixel checks of ``qa/pixels`` (PX rules) on the video itself, compared with the same plan: an
+   unplanned cut or a frozen picture FAIL, camera jumps, jump cuts, black stretches and bubbles over faces REVIEW.
 
 Exit 1 on any FAIL. ``review.json`` in ``--out`` lists every moment, every finding and the sheets.
 """
@@ -93,12 +97,19 @@ def close_up_beats(timed: dict, s: dict, picture_dirs: list[Path] | None) -> lis
     return sorted(beats, key=lambda b: b["start_frame"])
 
 
-def face_at(faces: list[dict], f: int, fps: int) -> tuple[str, str] | None:
+def face_at(faces: list[dict], f: int, fps: int, views: list[dict] | None = None) -> tuple[str, str] | None:
     """(hero, expression) of the close-up filling frame ``f`` of a shot whose close-up beats are ``faces``, or None when the
-    scene is on screen. Mirrors faces.composite: the span is eased in and out over EASE_S, a change lands EXPR_LEAD_FRAMES
-    before its word."""
+    scene is on screen. Mirrors faces.composite: with the shot's view plan (``views``, ``shots[].views`` written by timing)
+    exactly the view at ``f`` (faces.view_at) and its hero's face (faces.face_in_view); without one (an older timed file and
+    its render) the old path: the span eased in and out over EASE_S, a change landing EXPR_LEAD_FRAMES before its word."""
     if not faces:
         return None
+    if views is not None:
+        v = FACES.view_at(views, f)
+        if v is None or v["who"] is None:
+            return None
+        b = FACES.face_in_view(faces, v, f)
+        return None if b is None else (b.get("who"), b.get("expression"))
     lead = ACC.EXPR_LEAD_FRAMES
     ease = FACES.EASE_S * fps
     s0 = min(b["start_frame"] for b in faces) - lead
@@ -119,7 +130,7 @@ def face_track(timed: dict, picture_dirs: list[Path] | None) -> tuple[dict, list
     for s in timed["shots"]:
         faces = per_shot[s["id"]]
         for f in range(s["start_frame"], s["end_frame"]):
-            st = face_at(faces, f, fps)
+            st = face_at(faces, f, fps, s.get("views"))
             if runs and runs[-1]["face"] == st and runs[-1]["end_frame"] == f:
                 runs[-1]["end_frame"] = f + 1
             else:
@@ -163,7 +174,7 @@ def check(timed: dict, picture_dirs: list[Path] | None = None, t_from: float | N
                 _f(out, "FR-BUBBLE-TAIL", "REVIEW", where, f"{b['who']} has no face point in {s['picture']}: the tail points at "
                    "a default spot of the frame", b["start"])
             f0, f1 = max(b["start_frame"], s["start_frame"]), min(b["end_frame"], s["end_frame"])
-            seen = [face_at(faces, f, fps) for f in range(f0, f1)]
+            seen = [face_at(faces, f, fps, s.get("views")) for f in range(f0, f1)]
             if not seen:
                 continue
             changes = [f0 + i for i in range(1, len(seen)) if seen[i] != seen[i - 1]
@@ -177,7 +188,7 @@ def check(timed: dict, picture_dirs: list[Path] | None = None, t_from: float | N
                 first = next(f0 + i for i, st in enumerate(seen) if st is not None and st[0] != b.get("who"))
                 _f(out, "FR-BUBBLE-WHO", "FAIL", where, f"{b.get('who')}'s words over {', '.join(others)}'s close-up from "
                    f"{first / fps:.2f} s: show the speaker's face while he speaks, or end the close-up first", first / fps)
-            elif any(st is not None for st in seen):
+            elif any(st is not None for st in seen) and not s.get("views"):  # planned: laid out at the close-up's mouth
                 first = next(f0 + i for i, st in enumerate(seen) if st is not None)
                 _f(out, "FR-BUBBLE-WHO", "REVIEW", where, f"bubble over {b.get('who')}'s own close-up from {first / fps:.2f} s: "
                    "its tail is laid out on the scene, check where it points", first / fps)
@@ -192,9 +203,11 @@ def check(timed: dict, picture_dirs: list[Path] | None = None, t_from: float | N
         where = f"{s['id']} {b['kind']} {b.get('at', '')!r}"
         faces = per_shot[s["id"]]
         e = max(b["end_frame"], b["start_frame"] + 1)
-        on_face = [f for f in range(max(b["start_frame"], s["start_frame"]), min(e, s["end_frame"])) if face_at(faces, f, fps)]
+        vs = s.get("views")
+        on_face = [f for f in range(max(b["start_frame"], s["start_frame"]), min(e, s["end_frame"]))
+                   if face_at(faces, f, fps, vs)]
         if on_face:
-            _f(out, "FR-RING-FACE", "FAIL", where, f"drawn over {face_at(faces, on_face[0], fps)[0]}'s close-up at "
+            _f(out, "FR-RING-FACE", "FAIL", where, f"drawn over {face_at(faces, on_face[0], fps, vs)[0]}'s close-up at "
                f"{on_face[0] / fps:.2f} s: it points into a picture that is not on screen", on_face[0] / fps)
         if b["kind"] != "highlight":
             continue
@@ -234,8 +247,8 @@ def check(timed: dict, picture_dirs: list[Path] | None = None, t_from: float | N
     ease = FACES.EASE_S * fps
     for s in shots:
         faces = per_shot[s["id"]]
-        if not faces or not _in(s["start"], s["end"], t_from, t_to):
-            continue
+        if not faces or s.get("views") or not _in(s["start"], s["end"], t_from, t_to):
+            continue  # a planned shot's close-up cuts in and out with its view inside the shot: no cross-fade to ghost
         s0 = min(b["start_frame"] for b in faces) - ACC.EXPR_LEAD_FRAMES
         s1 = max(b["end_frame"] for b in faces)
         f0, f1, g = s["start_frame"], s["end_frame"] - 1, GHOST_S * fps
@@ -397,7 +410,7 @@ def loudness(video: Path, t_from: float | None, t_to: float | None, offset: floa
 
 
 def run(timed_path: Path, video: Path, out: Path, t_from: float | None = None, t_to: float | None = None,
-        offset: float = 0.0, picture_dirs: list[Path] | None = None, frames: bool = True) -> dict:
+        offset: float = 0.0, picture_dirs: list[Path] | None = None, frames: bool = True, pixels: bool = False) -> dict:
     import json
     timed = json.loads(Path(timed_path).read_text(encoding="utf-8"))
     if picture_dirs is None:
@@ -418,10 +431,17 @@ def run(timed_path: Path, video: Path, out: Path, t_from: float | None = None, t
             _f(findings, "FR-LOUDNESS", sev, "range", f"{loud['lufs']} LUFS on the rendered range (BP-50)")
         elif "error" in loud:
             _f(findings, "FR-LOUDNESS", "REVIEW", "range", loud["error"])
+    px: dict = {}
+    if pixels:
+        from explainer_engine.qa import pixels as PX
+        px = PX.check_video(timed, Path(video), offset, picture_dirs)
+        findings += [f for f in px["findings"]
+                     if "t" not in f or ((t_from is None or f["t"] >= t_from) and (t_to is None or f["t"] < t_to))]
     report = {"schema": SCHEMA, "timed": str(timed_path), "video": str(video), "from": t_from, "to": t_to, "offset": offset,
               "picture_dirs": [str(p) for p in picture_dirs] if picture_dirs else None,
               "counts": {s: sum(1 for f in findings if f["severity"] == s) for s in ("FAIL", "REVIEW")},
               "findings": findings, "loudness": loud, "sheets": sheets, "moments": ms,
+              "pixels": {k: px[k] for k in ("skipped", "measured", "frames")} if px else None,
               "looked_at": False}  # Claude sets it after opening every sheet (standing order 12)
     write_json_atomic(out / "review.json", report)
     return report
@@ -437,8 +457,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--pictures", action="append", type=Path, help="picture folders (default <job>/pictures): which close-ups "
                    "are painted")
     p.add_argument("--out", required=True, type=Path)
+    p.add_argument("--pixels", action="store_true", help="also the pixel checks of qa/pixels on the video (free, slower)")
     a = p.parse_args(argv)
-    r = run(Path(a.timed), Path(a.video), a.out, a.t_from, a.t_to, a.offset, a.pictures)
+    r = run(Path(a.timed), Path(a.video), a.out, a.t_from, a.t_to, a.offset, a.pictures, pixels=a.pixels)
     print(f"frame review: {len(r['moments'])} moments, {len(r['sheets'])} sheets, {r['counts']['FAIL']} FAIL, "
           f"{r['counts']['REVIEW']} REVIEW; loudness {r['loudness'].get('lufs')} LUFS "
           f"({r['loudness'].get('loudness_verdict', '-')})")

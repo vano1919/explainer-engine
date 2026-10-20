@@ -89,9 +89,10 @@ def establishing_cast(doc: dict) -> list[tuple[str, str]]:
                 continue
             told = " " + re.sub(r"[^a-z0-9' ]", " ", " ".join(ln["text"] for ln in lines[:li + 1]
                                                                 if not ln.get("speaker")).lower()) + " "
-            revealed = str(s.get("reveal", "")).lower()  # a deliberate reveal of the hero (the shot's ``reveal``) is no stranger
-            new = sorted(h for h in heroes - est if revealed not in {h, *names.get(h, [h])}
-                         and not any(f" {n} " in told or f" {n}'s " in told for n in names.get(h, [h])))
+            # a deliberate reveal (the shot's ``reveal`` text names the hero, e.g. "Musk and Belfort at work") is no stranger
+            revealed = " " + re.sub(r"[^a-z0-9' ]", " ", str(s.get("reveal") or "").lower()) + " "
+            new = sorted(h for h in heroes - est
+                         if not any(f" {n}{s} " in txt for n in names.get(h, [h]) + [h] for s in ("", "'s") for txt in (told, revealed)))
             if new:
                 out.append((f"{sh_seg['id']} {pid}", f"shows {', '.join(new)}, who is not in the establishing view of this "
                             f"segment ({', '.join(sorted(est))}) and not named by the narrator before: the closer shots are "
