@@ -90,11 +90,11 @@
     {
       "id": "B-10",
       "kind": "provider_terms",
-      "checked": "2026-10-17",
-      "verified_in": "V-22",
+      "checked": "2026-10-20",
+      "verified_in": "V-51",
       "verified": true,
       "url": "https://elevenlabs.io/use-policy",
-      "statement": "ElevenLabs: no impersonating the voice, identity or likeness of a living person without explicit, informed consent; deceased people where reasonably likely to cause harm or infringing post-mortem rights; no false endorsement, sponsorship or affiliation; disclose AI where law requires or where not doing so would materially mislead; do not remove watermarks."
+      "statement": "ElevenLabs Prohibited Use Policy, 'Last updated 09 October 2026' (re-read 2026-10-20): s.3 no 'cloning, synthesizing, or impersonating the voice, identity, or likeness of any living individual' without explicit, informed consent or other valid authorization; deceased people where reasonably likely to cause harm or infringing post-mortem rights; no false endorsement, sponsorship or affiliation; s.4 no 'Impersonating political candidates or elected officials without authorization' and no political campaigning without prior written consent; s.9 no use of a person's voice or likeness without authorization (publicity rights); s.10 disclose AI where law requires or where not doing so would materially mislead; do not remove watermarks. No parody, satire or fiction exception appears on the page. Earlier reading 2026-10-17: V-22."
     },
     {
       "id": "B-11",
@@ -197,6 +197,55 @@
       "verified": false,
       "url": "https://group.banijay.com/wp-content/uploads/2024/06/BanijayUKacquiresCMPProductions.pdf",
       "statement": "Banijay UK acquired Caryn Mandabach Productions (Peaky Blinders producer), announced 2024-06-06, with the back catalogue and future series, spin-offs and brand ventures including the Netflix film (company renamed Garrison Drama). Source: a search summary of the Banijay press release and trade outlets (Deadline, Advanced Television, IBC, Televisual). The Banijay pages returned 503 and were not opened: not verified first-hand."
+    },
+    {
+      "id": "B-22",
+      "kind": "platform_policy",
+      "checked": "2026-10-20",
+      "verified_in": "V-52",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/2802268",
+      "statement": "YouTube harassment and cyberbullying: no threats or stalking of an identifiable individual, no prolonged insults or slurs based on intrinsic attributes, no mocking of an identifiable person's death or serious injury; impersonation includes using AI to copy a person's voice or likeness to suggest the channel is theirs; debate about people in power and educational, documentary, scientific or artistic content (scripted satire, comedy) may be excepted, but this 'is not a pass to harass someone'. No update date on the page."
+    },
+    {
+      "id": "B-23",
+      "kind": "law",
+      "checked": "2026-10-20",
+      "verified_in": "V-53",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.law.cornell.edu/supremecourt/text/485/46",
+      "statement": "Hustler Magazine v. Falwell, 485 U.S. 46 (1988): a public figure cannot recover for intentional infliction of emotional distress from a parody without a false statement of fact made with actual malice; a parody that 'could not reasonably be understood as describing actual facts' fails as a claim; caricature and political cartoons are a long tradition of 'scorn and ridicule and satire'. One case; defamation and false light remain state law, case by case."
+    },
+    {
+      "id": "B-24",
+      "kind": "law",
+      "checked": "2026-10-20",
+      "verified_in": "V-54",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.nysenate.gov/legislation/laws/CVR/51",
+      "statement": "New York Civil Rights Law s.51 (revision of 2024-05-03): a living person whose 'name, portrait, picture, likeness or voice' is used in New York 'for advertising purposes or for the purposes of trade' without written consent may sue for an injunction and damages (exemplary damages when knowing). The statute text does not define 'trade'; court readings (newsworthiness, fiction) were not read."
+    },
+    {
+      "id": "B-25",
+      "kind": "law",
+      "checked": "2026-10-20",
+      "verified_in": "V-55",
+      "verified": true,
+      "jurisdiction": "GE",
+      "url": "https://matsne.gov.ge/en/document/view/33208",
+      "statement": "Law of Georgia on Freedom of Speech and Expression (24/06/2004, consolidated 26/06/2025): defamation is 'a statement containing a substantially false fact inflicting harm' (Art. 1(e)); 'Thought shall be protected by an absolute privilege' (Art. 4(1)), thought being a value judgement, comment or opinion (Art. 1(b)); for public figures the plaintiff names the false facts, and good faith with reasonable verification excludes liability (Art. 14); freedom of arts and creativity (Art. 3(2)(f)). No parody or fiction provision. English text read through a fetch summary; the 2025 amendment was not compared."
+    },
+    {
+      "id": "B-26",
+      "kind": "law",
+      "checked": "2026-10-20",
+      "verified_in": "V-56",
+      "verified": false,
+      "jurisdiction": "US",
+      "url": "https://www.blackburn.senate.gov/2026/6/blackburn-coons-bipartisan-bill-to-protect-individuals-and-creators-from-deepfakes-passes-senate-judiciary-committee",
+      "statement": "Federal NO FAKES Act (S.4591 / H.R.8915, reintroduced 2026-05-20): a federal right against unauthorised digital replicas of voice and likeness with notice-and-takedown; the sponsor's release of 2026-06-18 says it passed the Senate Judiciary Committee unanimously and excludes some replicas on First Amendment grounds (not listed). Not law on the evidence found; congress.gov returned 403, so the status rests on the release and bill trackers. California Civil Code 3344 (living persons' publicity) returned a bot check on 2026-10-20 and was not read."
     }
   ],
   "channel": {

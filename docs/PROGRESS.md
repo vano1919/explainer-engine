@@ -1045,3 +1045,14 @@ cast speech/voice/face sheets and the variant collages (PV-46, PV-32, VB-09, PV-
 - Voices re-cast without samples (creator: samples cost credits): from free `creative_list_voices` searches sorted by
   last year's usage, the most used voice that fits each hero's documented type (VC-02, no soundalikes).
 - Tests: `tests/unit/test_graphics.py` (+3). Nothing paid.
+
+## 2026-10-20 - Titans from Zero: episode rulebook v1 (provisional); paid_assets does not pass
+
+`examples/titans_from_zero/episode_rules.json` (+ generated `episode_rules.md`) by the episode-standards-director: 16 rules,
+19 risks for ten living people in an invented what-if. Sources re-read today: ElevenLabs use policy (09 Oct 2026 version,
+V-51: s.4 now names "impersonating ... elected officials"), YouTube 14328491, 2801947, 2802268 (V-52), Hustler v. Falwell
+(V-53), NY Civil Rights Law s.51 (V-54), Georgia's Law on Freedom of Speech and Expression (V-55); NO FAKES Act status and
+California 3344 not verified (V-56). Baseline: B-10 re-dated, B-22..B-26 added. Result: provisional check 0 FAIL; the
+`paid_assets` gate FAILs on RK-01 BLOCK (Trump's lines voiced by ElevenLabs, provider s.4) and three creator decisions
+(RK-02 the six other real people's synthesised voices, RK-12 the invented buyer's name "Vance", RK-17 Lyria music outside
+D-52). No stamp, nothing paid. Tests: the existing `tests/unit/test_episode_rules.py` baseline test covers the new rows.

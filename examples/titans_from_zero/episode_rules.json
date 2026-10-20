@@ -1,0 +1,1254 @@
+{
+  "schema": "explainer.episode_rules",
+  "version": 1,
+  "episode_id": "titans_from_zero",
+  "rulebook_version": 1,
+  "status": "provisional",
+  "identity": {
+    "topic": "What If 10 Business Titans Went Broke? Five Years to Prove It Wasn't Luck: ten real living business people lose everything on one courthouse bench and must earn without credit for five years",
+    "format": "production_script/3 dialogue mini-film, about 13 minutes, 2D hand-drawn caricatures, narrator plus voiced heroes, 10 Shorts",
+    "audience": "US general audience, adults and teens, English; viewers who follow business personalities and argue about whether the rich earned it",
+    "audience_value": "the viewer finally sees the skill-versus-luck argument played out instead of asserted, with each titan's public persona tested by one concrete problem",
+    "central_question": "Strip ten famous fortunes down to what is inside their heads and take away every lender: was their money ever skill, or was it luck?",
+    "unique_angle": "credit is the hidden variable: people who can build or sell with their own hands recover, people whose deals ran on other people's trust stall, and the real winner is the one who bought a small piece of everyone for forty dollars",
+    "tone": "dry, fast situational comedy with real stakes; a documentary of events happening now (D-61)",
+    "emotional_arc": "schadenfreude on the bench, curiosity at the first hustles, dread as the promise of 500 outruns the parts, shock at the fire, respect at Belfort's refusal, satisfaction at the honest win, and a twist that reframes everything",
+    "stakes": "riders' safety and the heroes' last dollar against a buyer offering riches for silence",
+    "payoff": "luck decided which envelope paid; skill decided who was still standing when it did, and the man who never built anything owns a piece of eight of them",
+    "beyond_a_summary": "it is not a list of billionaire origin stories: it is an invented controlled experiment (same start, no credit) that isolates one mechanism, trust as capital, and lets the viewer watch it decide outcomes",
+    "viewer_takeaway": {
+      "understand": "a loan is a stranger's trust with interest on top; without it, only what you can make or sell today counts, and a diversified small stake can beat a heroic single bet",
+      "feel": "the pull of the cover-up offer and the relief when the one man with a fraud conviction refuses it",
+      "question": "which of the ten would I have been, and would I have signed O'Leary's envelope?",
+      "remember": "forty dollars, ten percent, forever, and the man who read the envelope to the last line"
+    }
+  },
+  "jurisdictions": {
+    "relevant": [
+      "US",
+      "GE"
+    ],
+    "creator_location": "GE",
+    "confirmed_by_creator": true,
+    "basis": "US: YouTube's operator, the main market (D-52) and the residence of most of the people depicted; GE: the creator's residence (confirmed 2026-10-17, ES-15). Kevin O'Leary is Canadian; Canada is not a named market, so no Canadian rule is applied (noted as a gap)."
+  },
+  "rules": [
+    {
+      "id": "ER-01",
+      "strength": "mandatory",
+      "applies_to": [
+        "video",
+        "shorts",
+        "upload"
+      ],
+      "roles": [
+        "image",
+        "voice",
+        "metadata",
+        "qa"
+      ],
+      "requirement": "Disclosure follows the treatment: the episode is fully drawn 2D animation of an obviously invented situation, so YouTube's altered/synthetic label is not required by itself. It becomes required (Studio Attributes, 'AI use': Yes; API status.containsSyntheticMedia) the moment any picture, voice or Short could be mistaken for a real recording or photograph of one of the real people.",
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/14328491",
+          "checked": "2026-10-20",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-01",
+          "note": "re-read 2026-10-20: disclose when a real person is made to appear to say or do what they did not, realistically; fantasy and fully animated content are not required; no update date on the page"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/2801895",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-03"
+        }
+      ]
+    },
+    {
+      "id": "ER-02",
+      "strength": "mandatory",
+      "applies_to": [
+        "script",
+        "shorts",
+        "description",
+        "thumbnail"
+      ],
+      "roles": [
+        "research",
+        "script",
+        "metadata",
+        "qa"
+      ],
+      "requirement": "The ten real business people appear only as our drawn caricatures inside an obviously invented what-if. Their invented actions stay inside the story; nothing invented is presented as something they really said, did or believe outside it. Real-history echoes are limited to claim-map facts (C-01, C-02, C-03, C-05) and are spoken as the hero's own memory, in wording no stronger than the sources. No new real-world wrongdoing, illness, family matter or private fact about any of them is added.",
+      "sources": [
+        {
+          "url": "https://www.law.cornell.edu/supremecourt/text/485/46",
+          "checked": "2026-10-20",
+          "kind": "law",
+          "verified": true,
+          "baseline_id": "B-23",
+          "note": "US; Hustler Magazine v. Falwell, 485 U.S. 46 (1988), read 2026-10-20 (V-53)"
+        },
+        {
+          "url": "https://matsne.gov.ge/en/document/view/33208",
+          "checked": "2026-10-20",
+          "kind": "law",
+          "verified": true,
+          "baseline_id": "B-25",
+          "note": "GE; Law of Georgia on Freedom of Speech and Expression (2004, consolidated 26/06/2025), English text read 2026-10-20 through a fetch summary (V-55); the 2025 amendment's content was not compared"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/2801895",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-03"
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/CLAUDE.md",
+          "checked": "2026-10-20",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "invariant 5: no unsupported claims"
+        }
+      ],
+      "uncertainty": "False light is not recognised in every US state and the people live in several states; the reading rests on the 'not reasonably understood as actual facts' line (Hustler, V-53) and Georgia's absolute privilege for opinion (Art. 4) plus its falsity test (Art. 1(e), Art. 14). Not legal advice."
+    },
+    {
+      "id": "ER-03",
+      "strength": "mandatory",
+      "applies_to": [
+        "voice",
+        "shorts"
+      ],
+      "roles": [
+        "voice",
+        "script",
+        "qa"
+      ],
+      "requirement": "No ElevenLabs generation speaks as an elected official or a political candidate. Donald Trump (the sitting US president) is drawn and named, but his lines are not synthesised as his speech (RK-01); the same holds for any official or candidate a later revision adds.",
+      "sources": [
+        {
+          "url": "https://elevenlabs.io/use-policy",
+          "checked": "2026-10-20",
+          "kind": "provider_terms",
+          "verified": true,
+          "baseline_id": "B-10",
+          "note": "re-read 2026-10-20, page 'Last updated 09 October 2026' (V-51): s.3 no 'cloning, synthesizing, or impersonating the voice, identity, or likeness of any living individual' without 'explicit and informed consent or other valid authorization', no false endorsement; s.4 'Impersonating political candidates or elected officials without authorization'; s.10 disclose AI where law requires or not doing so would materially mislead. No parody, satire or fiction carve-out on the page."
+        }
+      ]
+    },
+    {
+      "id": "ER-04",
+      "strength": "mandatory",
+      "applies_to": [
+        "voice",
+        "shorts"
+      ],
+      "roles": [
+        "voice",
+        "qa"
+      ],
+      "requirement": "Voices of the other living people are ElevenLabs library voices only: no clone, no voice designed from their recordings, no prompt, tag or setting that names them or asks for their accent, catchphrase cadence or vocal quirks; emotion tags only. Whether they are voiced at all waits for the creator's decision on RK-02; a test read of each cast voice is heard before the full read, and a voice that a listener could take for the real person is replaced.",
+      "sources": [
+        {
+          "url": "https://elevenlabs.io/use-policy",
+          "checked": "2026-10-20",
+          "kind": "provider_terms",
+          "verified": true,
+          "baseline_id": "B-10",
+          "note": "re-read 2026-10-20, page 'Last updated 09 October 2026' (V-51): s.3 no 'cloning, synthesizing, or impersonating the voice, identity, or likeness of any living individual' without 'explicit and informed consent or other valid authorization', no false endorsement; s.4 'Impersonating political candidates or elected officials without authorization'; s.10 disclose AI where law requires or not doing so would materially mislead. No parody, satire or fiction carve-out on the page."
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/2801947",
+          "checked": "2026-10-20",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-04",
+          "note": "re-read 2026-10-20: AI voice or likeness that falsely implies a person owns, authorises or endorses the content is impersonation; disclosure does not excuse it; parody and satire are weighed on removal"
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/CLAUDE.md",
+          "checked": "2026-10-20",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "PV-10 / VC-01: describe the sound, never a person to imitate"
+        }
+      ]
+    },
+    {
+      "id": "ER-05",
+      "strength": "mandatory",
+      "applies_to": [
+        "thumbnail",
+        "title",
+        "description",
+        "sponsor",
+        "merch"
+      ],
+      "roles": [
+        "metadata",
+        "image",
+        "qa"
+      ],
+      "requirement": "No endorsement or commercial use of a likeness: no real person's name, face or voice in a sponsor read, product placement, call to action, merchandise or advertisement; the title, thumbnail and description never suggest that anyone named took part, approved or recommends anything. Our own caricatures may appear in the thumbnail as the story's characters.",
+      "sources": [
+        {
+          "url": "https://www.nysenate.gov/legislation/laws/CVR/51",
+          "checked": "2026-10-20",
+          "kind": "law",
+          "verified": true,
+          "baseline_id": "B-24",
+          "note": "US (New York); Civil Rights Law s.51, revision of 2024-05-03, read 2026-10-20 (V-54)"
+        },
+        {
+          "url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=3344",
+          "checked": "2026-10-20",
+          "kind": "law",
+          "verified": false,
+          "note": "US (California) Civil Code 3344 (living persons): the page returned 403 / a bot check on 2026-10-20 and was NOT read; cited only as the place to check"
+        },
+        {
+          "url": "https://elevenlabs.io/use-policy",
+          "checked": "2026-10-20",
+          "kind": "provider_terms",
+          "verified": true,
+          "baseline_id": "B-10",
+          "note": "re-read 2026-10-20, page 'Last updated 09 October 2026' (V-51): s.3 no 'cloning, synthesizing, or impersonating the voice, identity, or likeness of any living individual' without 'explicit and informed consent or other valid authorization', no false endorsement; s.4 'Impersonating political candidates or elected officials without authorization'; s.10 disclose AI where law requires or not doing so would materially mislead. No parody, satire or fiction carve-out on the page."
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/2801947",
+          "checked": "2026-10-20",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-04",
+          "note": "re-read 2026-10-20: AI voice or likeness that falsely implies a person owns, authorises or endorses the content is impersonation; disclosure does not excuse it; parody and satire are weighed on removal"
+        }
+      ],
+      "uncertainty": "New York s.51 covers 'advertising purposes or purposes of trade'; whether a monetised fictional video is 'trade' is decided by courts (an obviously fictional satire is the stronger case; a fictionalised account presented as true is the weak one). California 3344 was not read."
+    },
+    {
+      "id": "ER-06",
+      "strength": "mandatory",
+      "applies_to": [
+        "title",
+        "description",
+        "shorts metadata"
+      ],
+      "roles": [
+        "metadata",
+        "qa"
+      ],
+      "requirement": "The invention is disclosed outside the story (D-61, BP-88): the long video's title keeps 'What If'; its description opens with the fictional-story notice (platform.metadata.notices); every Short's own title or first description line carries the what-if framing, because a Short is watched without the long video's title. The narration stays immersive (no spoken disclaimer, SC-11).",
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/DECISIONS_AND_OPEN_QUESTIONS.md",
+          "checked": "2026-10-20",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "D-61, creator 2026-10-20: the disclosure lives in the title and the description"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/2801895",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-03"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/2801947",
+          "checked": "2026-10-20",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-04",
+          "note": "re-read 2026-10-20: AI voice or likeness that falsely implies a person owns, authorises or endorses the content is impersonation; disclosure does not excuse it; parody and satire are weighed on removal"
+        }
+      ]
+    },
+    {
+      "id": "ER-07",
+      "strength": "mandatory",
+      "applies_to": [
+        "pictures",
+        "thumbnail"
+      ],
+      "roles": [
+        "image",
+        "qa"
+      ],
+      "requirement": "No photograph of the real people (press, agency, social media, stills) is a generator input, reference upload or tracing source: those photographs belong to their photographers. Caricatures are painted from the cast cards and our own hero references (D-55); a picture that drifts into photo-realism or into a recognisable press photo's pose and framing is repainted.",
+      "sources": [
+        {
+          "url": "https://policies.google.com/terms/generative-ai/use-policy",
+          "checked": "2026-10-17",
+          "kind": "provider_terms",
+          "verified": true,
+          "baseline_id": "B-11"
+        },
+        {
+          "url": "https://www.copyright.gov/fair-use/",
+          "checked": "2026-10-17",
+          "kind": "law",
+          "verified": true,
+          "baseline_id": "B-05"
+        },
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/CLAUDE.md",
+          "checked": "2026-10-20",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "invariants 5 and 6: no copied protected IP; one drawn identity"
+        }
+      ]
+    },
+    {
+      "id": "ER-08",
+      "strength": "mandatory",
+      "applies_to": [
+        "script",
+        "pictures",
+        "metadata"
+      ],
+      "roles": [
+        "script",
+        "image",
+        "metadata",
+        "qa"
+      ],
+      "requirement": "No politics: no line, picture, tag or description refers to elections, parties, policies, the presidency or any office holder; the invented buyer never resembles or names a real official.",
+      "sources": [
+        {
+          "url": "https://elevenlabs.io/use-policy",
+          "checked": "2026-10-20",
+          "kind": "provider_terms",
+          "verified": true,
+          "baseline_id": "B-10",
+          "note": "re-read 2026-10-20, page 'Last updated 09 October 2026' (V-51): s.3 no 'cloning, synthesizing, or impersonating the voice, identity, or likeness of any living individual' without 'explicit and informed consent or other valid authorization', no false endorsement; s.4 'Impersonating political candidates or elected officials without authorization'; s.10 disclose AI where law requires or not doing so would materially mislead. No parody, satire or fiction carve-out on the page."
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/6162278",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-16"
+        }
+      ]
+    },
+    {
+      "id": "ER-09",
+      "strength": "mandatory",
+      "applies_to": [
+        "claim map",
+        "description"
+      ],
+      "roles": [
+        "research",
+        "metadata"
+      ],
+      "requirement": "Every real-history line maps to a claim with a source in the claim map (BP-15: never spoken); by final_qa C-01 (the Toyota detail rests on one Wikipedia-mirror page) and C-05 (encyclopaedia pages) are upgraded to a primary or reputable source (Kiyosaki's own book or site, a court or DOJ record for Belfort), or the wording is reduced to what the sources carry.",
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/CLAUDE.md",
+          "checked": "2026-10-20",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "invariant 5; ES-19 source quality"
+        }
+      ]
+    },
+    {
+      "id": "ER-10",
+      "strength": "mandatory",
+      "applies_to": [
+        "music",
+        "sound"
+      ],
+      "roles": [
+        "music",
+        "sound",
+        "qa"
+      ],
+      "requirement": "Every music track and generated sound has a licence record before final_qa. Music comes from ElevenLabs or a per-track verified free library (D-52); the two Lyria tracks in the plan are outside D-52 and need the creator's decision (RK-17).",
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/DECISIONS_AND_OPEN_QUESTIONS.md",
+          "checked": "2026-10-20",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "D-52: audio sources; Q-T16 licence register"
+        },
+        {
+          "url": "https://elevenlabs.io/music-terms",
+          "checked": "2026-10-17",
+          "kind": "provider_terms",
+          "verified": true,
+          "note": "V-28: Creator plan, commercial use allowed except film/TV/radio/studio games; monetised YouTube and Content ID not addressed"
+        }
+      ]
+    },
+    {
+      "id": "ER-11",
+      "strength": "mandatory",
+      "applies_to": [
+        "video"
+      ],
+      "roles": [
+        "script",
+        "edit",
+        "qa"
+      ],
+      "requirement": "Originality (ES-13): the video carries its own invented story, dialogue and drawn proof; it reads no text the channel did not write and uses no third-party footage, photo or clip of the real people.",
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/1311392",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-02"
+        }
+      ]
+    },
+    {
+      "id": "ER-12",
+      "strength": "mandatory",
+      "applies_to": [
+        "description"
+      ],
+      "roles": [
+        "metadata"
+      ],
+      "requirement": "Notices say only what is true: the fictional-story notice informs viewers; no 'fair use', 'no infringement intended', 'parody protected' or 'entertainment only' text is added.",
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/9783148",
+          "checked": "2026-10-16",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-12"
+        }
+      ]
+    },
+    {
+      "id": "ER-13",
+      "strength": "mandatory",
+      "applies_to": [
+        "everything the viewer sees or hears"
+      ],
+      "roles": [
+        "script",
+        "voice",
+        "metadata",
+        "image"
+      ],
+      "requirement": "Everything the viewer sees or hears is English for the US audience.",
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/CLAUDE.md",
+          "checked": "2026-10-20",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "creator 2026-10-17: Georgian only for talking to the creator"
+        }
+      ]
+    },
+    {
+      "id": "ER-14",
+      "strength": "mandatory",
+      "applies_to": [
+        "script",
+        "shorts",
+        "thumbnail",
+        "comments"
+      ],
+      "roles": [
+        "script",
+        "image",
+        "metadata",
+        "qa"
+      ],
+      "requirement": "Humour targets the heroes' choices inside the story, never intrinsic attributes (age, ethnicity, body, family, health); no mocking of a real injury or death; no line invites viewers to target a real person.",
+      "sources": [
+        {
+          "url": "https://support.google.com/youtube/answer/2802268",
+          "checked": "2026-10-20",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-22",
+          "note": "read 2026-10-20 (V-52); no update date on the page"
+        }
+      ]
+    },
+    {
+      "id": "ER-15",
+      "strength": "recommended",
+      "applies_to": [
+        "script",
+        "pictures",
+        "shorts"
+      ],
+      "roles": [
+        "script",
+        "image",
+        "edit"
+      ],
+      "requirement": "Anti-monotony: keep what separates this episode from stone_age_ep1 (a crowd of famous real people stripped of their advantage): dialogue scenes between paired rivals, a causal chain of promises, a single invented antagonist and a portfolio twist instead of an explainer verdict.",
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/EPISODE_STANDARDS.md",
+          "checked": "2026-10-20",
+          "kind": "creative_heuristic",
+          "verified": true,
+          "note": "ES-14 anti-monotony; docs/episodes.json"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/1311392",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-02"
+        }
+      ]
+    },
+    {
+      "id": "ER-16",
+      "strength": "recommended",
+      "applies_to": [
+        "script",
+        "description"
+      ],
+      "roles": [
+        "script",
+        "metadata"
+      ],
+      "requirement": "No line is financial advice: the heroes' money theories (debt as a gift, other people's money) stay character lines that the story tests; no real stock, coin, course or product is recommended.",
+      "sources": [
+        {
+          "url": "https://github.com/vano1919/explainer-engine/blob/main/CLAUDE.md",
+          "checked": "2026-10-20",
+          "kind": "project_invariant",
+          "verified": true,
+          "note": "invariant 5"
+        },
+        {
+          "url": "https://support.google.com/youtube/answer/6162278",
+          "checked": "2026-10-17",
+          "kind": "platform_policy",
+          "verified": true,
+          "baseline_id": "B-16"
+        }
+      ]
+    }
+  ],
+  "risks": [
+    {
+      "id": "RK-01",
+      "element": "Donald Trump's spoken lines (S02 x1, S05 x6, S07 x3, S10 x6; Shorts SH02 x1, SH05 x5) synthesised by ElevenLabs with the library voice 'Flint'",
+      "category": "synthetic_voice",
+      "source_type": "original",
+      "status": "BLOCK",
+      "rules": [
+        "ER-03",
+        "ER-04"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "person": {
+        "name": "Donald Trump",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": false,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "living; publicity questions under the law of his domicile (Florida) and New York; none read for this person beyond NY s.51 (V-54)"
+      },
+      "evidence": "ElevenLabs Prohibited Use Policy, last updated 09 October 2026, read 2026-10-20 (V-51): section 4 lists 'Impersonating political candidates or elected officials without authorization'; section 3 forbids 'synthesizing, or impersonating the voice, identity, or likeness of any living individual' without explicit, informed consent. No parody or fiction exception appears on the page. Donald Trump is the sitting (47th) US president (cast.trump.voice.traits.documented). The casting text in production_script.json describes his own vocal signature ('loud, raspy, nasal new york voice ... stressing a word then repeating it, sing-song rises and sudden hushed asides') and the voice was picked without samples (creator 2026-10-20), so nobody has yet heard whether it reads as an impression.",
+      "rationale": "Generating speech that is attributed to a named sitting elected official, with a voice cast from a description of his real voice, is what the provider's section 4 names as prohibited, and it carries no exception for an obviously fictional cartoon. This is a provider-terms constraint, not a legal finding: the drawn satire itself is not the problem (RK-03 is PASS), only producing his speech through ElevenLabs. Using the service against its terms risks the account the whole channel's narration depends on.",
+      "mitigation": "Keep Trump in the story, drawn and named, and keep every one of his lines' content and timing; change only how they reach the ear. Options for the creator, smallest first: (a) the narrator carries Trump's lines as reported speech in the narrator's own voice ('Trump says the banks never came back first. The cameras did.'); (b) his lines appear as drawn speech bubbles on screen with a non-vocal sound cue; (c) a human performer (the creator or a hired actor) records them outside ElevenLabs, with his or her consent and a recorded decision on the impression question. The script change for (a) or (b) is a re-approval of the affected lines (OR-17). Removed when the script no longer routes a Trump speaker line to ElevenLabs.",
+      "dependencies": [
+        "script (S02, S05, S07, S10, SH02, SH05 speaker attribution)",
+        "voice (cast.trump.voice unused)",
+        "edit (lip and expression beats on his lines)",
+        "shorts",
+        "creator re-approval (OR-17)"
+      ]
+    },
+    {
+      "id": "RK-02",
+      "element": "ElevenLabs-synthesised dialogue of six other living people: Elon Musk (Spence), Jordan Belfort (Callum), Kevin O'Leary (Jackson), Robert Kiyosaki (Bill), Mark Cuban (Roger), Jeff Bezos (Eric)",
+      "category": "synthetic_voice",
+      "source_type": "original",
+      "status": "REVIEW",
+      "rules": [
+        "ER-04",
+        "ER-05"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "evidence": "ElevenLabs Prohibited Use Policy (09 Oct 2026, read 2026-10-20, V-51) s.3: no 'cloning, synthesizing, or impersonating the voice, identity, or likeness of any living individual' without explicit, informed consent; no parody or fiction carve-out; no consent exists from any of the six. The voices are library voices, not clones (cast.*.voice.voice_id; PV-10 checks pass), chosen by type and picked without samples (creator 2026-10-20), and the read sends only emotion tags. But several casting texts describe the person's own vocal signature: Musk 'halts and restarts mid-sentence ... a faint south african flavour', O'Leary 'Canadian-English ... flat as a ledger', Kiyosaki 'a Hawaiian-island looseness', Belfort 'new york ... salesman's rolling patter'. YouTube's impersonation policy (2801947, re-read 2026-10-20) bars an AI voice that falsely implies a person authorises the content and weighs parody on removal requests.",
+      "rationale": "Whether a non-cloned library voice speaking invented lines as a named living person is 'synthesizing ... the identity' of that person under the provider's terms is genuinely unclear: the words cover it on a broad reading, the drawn and obviously fictional treatment argues against deception, and the page gives no example either way. The casting texts aimed at each person's recognisable sound push towards impression. Neither the provider's intent nor the audible result is known yet, so the creator must decide before credits are spent.",
+      "mitigation": "Question for the creator (or ElevenLabs support in writing): (a) keep the six library voices, audition each on one line first, replace any voice that a listener could take for the real person, and accept the remaining provider-terms risk in a recorded decision; (b) voice only the invented Vance and the narrator, and carry the real people's lines as the narrator's reported speech or as speech bubbles (the same treatment as RK-01, consistent across the cast); (c) ask ElevenLabs support for a written answer on named real people in clearly fictional animation before any read. Keep every line's content in all three.",
+      "dependencies": [
+        "voice",
+        "script (if b)",
+        "edit",
+        "shorts",
+        "creator decision"
+      ]
+    },
+    {
+      "id": "RK-03",
+      "element": "Donald Trump depicted bankrupt, livestreaming from a motel and hosting 'How to Lose a Billion' (S01, S03, S05, S07, S10, S14), drawn caricature",
+      "category": "real_person",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-02",
+        "ER-05",
+        "ER-08"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Donald Trump",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": false,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "living; publicity questions under the law of his domicile (Florida) and New York; none read for this person beyond NY s.51 (V-54)"
+      },
+      "evidence": "Premise and every event are invented in an obviously impossible frame (ten titans bankrupt on one Monday); the only real fact he states is C-03 (six corporate bankruptcy filings; PolitiFact, NBC); no politics (scenario 'Trump does not mention politics'); drawn 2D caricature (cast card). Hustler v. Falwell (V-53): a public figure cannot recover for a parody that 'could not reasonably be understood as describing actual facts'. Georgia: opinion has absolute privilege (Art. 4), defamation needs a substantially false fact (Art. 1(e)).",
+      "rationale": "No material issue found in the depiction itself: it is drawn, comic and plainly invented, it ends with him succeeding, and the one real fact is sourced. The open problem is only his synthesised voice (RK-01)."
+    },
+    {
+      "id": "RK-04",
+      "element": "Elon Musk skips a battery heat test on 200 units and the leftover cells burn a garage (S09, S11); his Christmas Eve 2008 memory (S13, C-02)",
+      "category": "defamation",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-02"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Elon Musk",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": false,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "living; publicity law of the person's domicile not read beyond NY s.51 (V-54) and the unread California 3344"
+      },
+      "evidence": "Invented negligence inside the invented business (no Tesla, SpaceX or real product is named); nobody is hurt (S11); he recalls the units and pays (S13). C-02 is his own public account (cleantechnica quoting his posts, Houston Chronicle). Hustler (V-53); Georgia Arts. 1(e), 4, 14 (V-55).",
+      "rationale": "A reasonable viewer cannot take a scooter-garage fire in a bankrupt-billionaires fable as a report about Musk's real companies, and the arc ends in responsibility, not blame; no material issue found."
+    },
+    {
+      "id": "RK-05",
+      "element": "Jordan Belfort's real conviction recalled ('I signed paper like that once. I paid for it in a cell', S12, SH07; C-05) and his invented over-promising (S08)",
+      "category": "defamation",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-02",
+        "ER-09"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Jordan Belfort",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": true,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "living; publicity law of the person's domicile not read beyond NY s.51 (V-54) and the unread California 3344"
+      },
+      "evidence": "He pleaded guilty in 1999 and served 22 months (C-05: biography.com, Wikipedia; a primary court or DOJ record is not yet in the claim map, ER-09). In the story he refuses the fraudulent offer.",
+      "rationale": "The criminal reference is substantially true and spoken by him as memory; the invented conduct is a salesman's over-promise followed by a refusal to commit fraud, so the story shows him better than his record, not worse. No material issue found; the source upgrade is a research task."
+    },
+    {
+      "id": "RK-06",
+      "element": "Robert Kiyosaki fails out of pride, preaches 'debt is a gift', walks to an old Toyota he once slept in with Kim (S05, S07, S10, S14; C-01)",
+      "category": "real_person",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-02",
+        "ER-09",
+        "ER-16"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Robert Kiyosaki",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": false,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "living; publicity law of the person's domicile not read beyond NY s.51 (V-54) and the unread California 3344"
+      },
+      "evidence": "C-01 is his own published account (You Can Choose to Be Rich), corroborated for homelessness by several secondary pages; the Toyota make rests on one Wikipedia-mirror page (liquisearch) and the book was not read; a search on 2026-10-20 found no primary page. His debt views are paraphrases of his public teaching, voiced as a character and tested by the story.",
+      "rationale": "Being the hero who does not adapt is an opinion the story argues, not a statement of fact; the car memory is his own story. No material issue found; the weak Toyota source is a research item (ER-09)."
+    },
+    {
+      "id": "RK-07",
+      "element": "Kevin O'Leary as the frame character who buys 10% stakes for $40 and wins (S02, S15)",
+      "category": "real_person",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-02",
+        "ER-05"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Kevin O'Leary",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": false,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "living; publicity law of the person's domicile not read beyond NY s.51 (V-54) and the unread California 3344"
+      },
+      "evidence": "Invented, flattering-to-neutral role; no real deal, show or company named.",
+      "rationale": "No material issue found in the depiction; his voice is part of RK-02."
+    },
+    {
+      "id": "RK-08",
+      "element": "Mark Cuban as the demanding customer (S06, S08, S13, S14)",
+      "category": "real_person",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-02"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Mark Cuban",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": false,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "living; publicity law of the person's domicile not read beyond NY s.51 (V-54) and the unread California 3344"
+      },
+      "evidence": "Invented, fair-minded role; no real company named.",
+      "rationale": "No material issue found."
+    },
+    {
+      "id": "RK-09",
+      "element": "Jeff Bezos as the buyer who reads the fire report and pays double (S06, S14)",
+      "category": "real_person",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-02"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Jeff Bezos",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": false,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "living; publicity law of the person's domicile not read beyond NY s.51 (V-54) and the unread California 3344"
+      },
+      "evidence": "Invented, positive role; no Amazon or real company named.",
+      "rationale": "No material issue found."
+    },
+    {
+      "id": "RK-10",
+      "element": "Grant Cardone, unvoiced: 'His deals run on other people's money. His name can't raise it anymore' (S06), later a salesman for the heroes (S14)",
+      "category": "defamation",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-02"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Grant Cardone",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": false,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "living; publicity law of the person's domicile not read beyond NY s.51 (V-54) and the unread California 3344"
+      },
+      "evidence": "The line sits inside the premise that nobody lends to any of the ten (S01 'nobody will lend them a dollar after today'); raising other people's money is how he publicly describes his own business; no real fund, lawsuit or investor is named.",
+      "rationale": "Read in context it describes the invented bankruptcy, not his real fund's standing; he ends the story employed and successful. No material issue found; the script must not add a reference to real litigation or investors (ER-02)."
+    },
+    {
+      "id": "RK-11",
+      "element": "Alex Hormozi and Mark Zuckerberg, unvoiced background successes (S06, S14)",
+      "category": "real_person",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-02"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "person": {
+        "name": "Alex Hormozi; Mark Zuckerberg",
+        "living": true,
+        "public_figure": true,
+        "realistic": false,
+        "obviously_fictional": true,
+        "implies_endorsement": false,
+        "criminal_or_sensitive_conduct": false,
+        "false_statement_of_fact": false,
+        "voice_imitated": false,
+        "estate_or_publicity_check": "living; publicity law of the person's domicile not read beyond NY s.51 (V-54) and the unread California 3344"
+      },
+      "evidence": "One or two narrated lines each, positive and invented; no real company named.",
+      "rationale": "No material issue found."
+    },
+    {
+      "id": "RK-12",
+      "element": "The invented buyer 'Vance', who proposes hiding the fire's cause (S12, SH07)",
+      "category": "defamation",
+      "source_type": "original",
+      "status": "REVIEW",
+      "rules": [
+        "ER-08",
+        "ER-02"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "evidence": "Vance is invented (cast.vance: grey suit, grey tie, grey smile; voice 'Silas - Weathered Villain'), but the surname is that of the sitting US Vice President, JD Vance, and the same video stars the sitting president; S12 and Short SH07 put the name on screen ('holds out a card. Vance.').",
+      "rationale": "US viewers in 2026 are likely to hear the name as a wink at the Vice President, which would turn the story's only fraudster into an implied real official proposing a cover-up: that pulls the episode into politics (ER-08, advertiser suitability), invites a reading of false implication about a real person, and puts an ElevenLabs voice on a character some will read as an elected official (ER-03). The name was chosen creatively and the drawing does not resemble him, so how strongly viewers make the link is uncertain; the creator decides.",
+      "mitigation": "Recommended: rename the invented buyer to a surname with no prominent living public figure behind it (one word in S12, SH07 and cast.vance; a re-approval of those lines under OR-17). Alternative: keep 'Vance' with a recorded decision that the link is acceptable, and keep his drawing far from any real official.",
+      "dependencies": [
+        "script (S12, SH07, cast.vance.names)",
+        "image (card text)",
+        "creator decision"
+      ]
+    },
+    {
+      "id": "RK-13",
+      "element": "Real people's names and caricature faces in the title, thumbnail, description and Shorts (implied endorsement, publicity)",
+      "category": "endorsement",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-05",
+        "ER-06",
+        "ER-01"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "evidence": "The title names nobody ('What If 10 Business Titans Went Broke?'). NY Civil Rights Law s.51 (V-54) reaches use of a living person's 'name, portrait, picture, likeness or voice' for 'advertising purposes or for the purposes of trade'; no merchandise, sponsor or product uses a likeness here. YouTube 2801947: no AI likeness implying the person authorises the content. NO FAKES Act (S.4591) is not law on the evidence available (V-56, unverified). Georgia: Civil Code image rights were not read.",
+      "rationale": "An expressive satire that names people to tell its story and promotes only itself is not the advertising or merchandising use these rules target, provided ER-05 and ER-06 hold in the metadata, which is not written yet; no material issue found under those conditions. A fictionalised account presented as true would be the weak case, which ER-06 prevents."
+    },
+    {
+      "id": "RK-14",
+      "element": "Shorts watched alone (SH02, SH03, SH05, SH07 show real people in invented scenes without the long video's title)",
+      "category": "misleading_fact",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-06",
+        "ER-01"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "evidence": "The Shorts' metadata is not written yet; each ends with 'Watch the full video'; SH03 shows Trump's card declined and Kiyosaki refused credit.",
+      "rationale": "Drawn and comic, the Shorts cannot pass as news, and ER-06 puts the what-if framing in each Short's own title or first description line; with that, no material issue found. QA checks it at final_qa."
+    },
+    {
+      "id": "RK-15",
+      "element": "Caricature pictures of ten living people (cast cards, hero references, thumbnail)",
+      "category": "image",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-07",
+        "ER-01",
+        "ER-14"
+      ],
+      "jurisdictions": [
+        "US",
+        "GE"
+      ],
+      "evidence": "No picture of this episode exists yet; cards describe exaggerated features and props (cast.*.card); Google's generative AI policy (B-11) bars impersonation 'in order to deceive' and IP or privacy violations.",
+      "rationale": "Drawn caricatures in the channel's one style are the D-40 practice and deceive nobody; the material risk is a press photograph used as input, which ER-07 excludes. No material issue found under ER-07.",
+      "license": {
+        "asset_path": "examples/titans_from_zero pictures (not yet painted)",
+        "provider": "Gemini or pod (the creator picks per batch, D-50)",
+        "owner": "the channel (placeholder until painted)",
+        "basis": "generated_under_provider_terms",
+        "scope": "this episode, its Shorts and thumbnail",
+        "attribution": "none",
+        "restrictions": "no photo of the real people as input (ER-07)",
+        "verified": "not_verified",
+        "evidence": "provider terms B-11 (2026-10-17)"
+      }
+    },
+    {
+      "id": "RK-16",
+      "element": "Narrator voice 'Brad - Warm, Trusted Storyteller' (ElevenLabs library) and the invented Vance's voice 'Silas'",
+      "category": "synthetic_voice",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-04"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "evidence": "Library voices chosen by type; voice.style describes a sound and names no person (PV-10).",
+      "rationale": "Neither voice stands for a real person; no material issue found."
+    },
+    {
+      "id": "RK-17",
+      "element": "Music: Lyria tracks sneaky_pizzicato__v1 and clockwork_loop__v1 (assets/audio/library)",
+      "category": "music",
+      "source_type": "original",
+      "status": "REVIEW",
+      "rules": [
+        "ER-10"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "evidence": "assets/audio/library/manifest.json: source 'lyria-3-clip-preview' generated 2026-10-16 with the creator's Gemini key, licence status 'generated_terms_unverified', 'commercial-use terms not yet checked'. D-52 allows music from ElevenLabs or a per-track verified free library; Lyria is neither.",
+      "rationale": "The tracks are free to reuse (already paid) but their commercial terms were never read and their source sits outside the creator's own music rule, so using them is the creator's call, not a pipeline default.",
+      "mitigation": "Question for the creator: (a) replace both with ElevenLabs music of the same description (instrumental pizzicato sneak; ticking clockwork loop), licence record per V-28; or (b) keep the Lyria tracks as a recorded exception to D-52 after the Gemini API terms for Lyria output are read and recorded here.",
+      "dependencies": [
+        "music",
+        "edit",
+        "creator decision"
+      ],
+      "license": {
+        "asset_path": "assets/audio/library/music/sneaky_pizzicato__v1.wav; assets/audio/library/music/clockwork_loop__v1.wav",
+        "provider": "Google Gemini API, Lyria (lyria-3-clip-preview)",
+        "owner": "not verified (placeholder)",
+        "basis": "generated_under_provider_terms",
+        "scope": "not verified",
+        "attribution": "not verified",
+        "restrictions": "not verified; SynthID watermark per TMR notes",
+        "verified": "not_verified",
+        "evidence": "manifest licence.status generated_terms_unverified"
+      }
+    },
+    {
+      "id": "RK-18",
+      "element": "Sound: own procedural effects (buckle_click, pencil_scribble, tick, tock, whooshes, thuds) and ElevenLabs-generated ambience beds and battery_hiss still to be made",
+      "category": "sound",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-10"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "evidence": "Library manifest: the procedural items are 'own_procedural'; the amb_* beds and battery_hiss__v1 are not in the library yet and follow D-52 (ElevenLabs sound effects).",
+      "rationale": "Own or provider-generated sound with no third-party recording; no material issue found. The generated items get their licence record when made (ER-10).",
+      "license": {
+        "asset_path": "assets/audio/library (procedural) + amb_* and battery_hiss__v1 (to be generated)",
+        "provider": "own code; ElevenLabs sound effects",
+        "owner": "the channel",
+        "basis": "generated_under_provider_terms",
+        "scope": "this episode and later reuse",
+        "attribution": "none",
+        "verified": "not_verified",
+        "evidence": "manifest licence.status own_procedural for the procedural items"
+      }
+    },
+    {
+      "id": "RK-19",
+      "element": "The garage fire (S11) and a sitting president in a comedy (advertiser suitability)",
+      "category": "other",
+      "source_type": "original",
+      "status": "PASS",
+      "rules": [
+        "ER-08",
+        "ER-14"
+      ],
+      "jurisdictions": [
+        "US"
+      ],
+      "evidence": "S11: 'Nobody is hurt'; no injury or blood shown; politics excluded (ER-08). YouTube advertiser-friendly guidelines (B-16): non-graphic events with context can earn ads.",
+      "rationale": "A non-graphic property fire with no injuries and a politics-free comedy are not the content those guidelines restrict; no material issue found."
+    }
+  ],
+  "platform": {
+    "original_contribution": [
+      "an invented, controlled what-if (same bench, no credit, five years) that tests the skill-versus-luck question through a causal chain of promises, a fire and a refused cover-up, written as original dialogue scenes",
+      "the portfolio twist: O'Leary's forty-dollar envelopes turn the verdict into an argument about diversification versus heroics, stated as the story's own reasoning (S16)",
+      "real-history echoes placed as the heroes' memories with sourced claims (C-01, C-02, C-03, C-05)",
+      "all pictures drawn as our caricatures in the channel's one style, no footage or photographs"
+    ],
+    "reuse_risk": {
+      "third_party_footage_seconds": 0,
+      "reads_external_text": false,
+      "template_shared_with": [
+        "stone_age_ep1"
+      ],
+      "note": "stone_age_ep1 also drops a crowd of famous real people into a situation that removes their advantage; the mechanism (dialogue scenes, trust as capital, a portfolio twist) and the outcome differ (ER-15)"
+    },
+    "advertiser_suitability": [
+      "the fire is non-graphic and nobody is hurt (RK-19); keep it out of the first 7 s and the thumbnail as a flame spectacle",
+      "no politics anywhere (ER-08); a sitting president appears only as a comic business character",
+      "money theories are character lines, never advice (ER-16)"
+    ],
+    "community_guidelines": [
+      "harassment (B-22): jokes aim at choices in the story, not intrinsic attributes (ER-14)",
+      "impersonation and privacy (B-03, B-04): drawn caricatures, no cloned voice, no implied authorisation; the what-if framing in every title (ER-06)"
+    ],
+    "disclosure": {
+      "realistic_synthetic_content": false,
+      "required": false,
+      "reason": "Fully drawn 2D animation of an obviously invented situation; no photograph, footage or realistic rendering of any real person; the voices are library voices, not the people's own. YouTube lists fantasy and fully animated content as not requiring the label (14328491, re-read 2026-10-20). If a resolution of RK-01/RK-02 leaves any voice a listener could take for the real person, the label becomes required (ER-01).",
+      "ai_uses": [
+        "ideation_or_script",
+        "stylised_imagery",
+        "synthetic_voice"
+      ],
+      "upload_action": "none required as treated; the creator may set Studio Attributes 'AI use': Yes voluntarily, and must if ER-01's condition is met (publish.json disclosure -> status.containsSyntheticMedia)",
+      "submitted": false
+    },
+    "content_id": "no third-party media; generated music (RK-17) cannot rule out a false match",
+    "made_for_kids": false,
+    "metadata": {
+      "credits": [],
+      "notices": [
+        {
+          "text": "A fictional what-if story told with drawn caricatures. The events and every line of dialogue are invented; the real people shown did not take part, did not say these words and do not endorse this channel.",
+          "purpose": "tells viewers the story and dialogue are invented and that nobody named took part, so the caricatures are not mistaken for reporting or for endorsement (ER-06, D-61)"
+        }
+      ]
+    }
+  },
+  "creative": {
+    "mechanism": "a courthouse bench as the starting gun: paired rivals (Musk and Belfort, Trump and Kiyosaki) play out five years in dialogue scenes cut by time stamps, a chain of broken promises leads to a fire and a cover-up offer, and a framing character returns at the end to reveal who really won",
+    "visual_invariants": [
+      "one drawn universe (UR-22) in the channel's hand-drawn style",
+      "each titan keeps one fixed caricature design and prop from the first frame to the last (cast cards, D-55)",
+      "caricature, never photo-realism, for every real person (ER-01, ER-07)",
+      "the same courthouse bench opens and closes the film"
+    ],
+    "may_vary": [
+      "light per period (world.day_arc: courthouse morning to pre-dawn ash)",
+      "shot size and angle per beat, reaction close-ups in dialogue",
+      "time-stamp cards (week 1, month 6, year 1...), counters for viewers and envelopes",
+      "inset screens: livestream counts, the fire report pages"
+    ],
+    "pacing": [
+      "the bench and the forty-dollar offer inside the first 30 s",
+      "a turn every scene: a sale, a broken promise, a fire, a refusal",
+      "a held silence after the fire and before Belfort's refusal",
+      "the envelope reveal as the last turn, then a five-line verdict and an open question"
+    ],
+    "memorable_moments": [
+      {
+        "kind": "reveal",
+        "what": "eight signed envelopes in O'Leary's briefcase; the one man who read to the last line"
+      },
+      {
+        "kind": "contrast",
+        "what": "Musk explains a battery for six hours; Belfort sells one free lap in thirty seconds"
+      },
+      {
+        "kind": "visual_proof",
+        "what": "the livestream counter: eleven, four thousand, then dropping as Kiyosaki lectures"
+      },
+      {
+        "kind": "callback",
+        "what": "'Me? Never.' broken at 'Five hundred'; 'probably' from Vance becomes Musk's 'I don't sell probably'"
+      },
+      {
+        "kind": "humour",
+        "what": "a vending machine sandwich eaten with a knife and fork like a state dinner"
+      }
+    ],
+    "avoid_patterns": [
+      {
+        "pattern": "a crowd of famous real people stripped of their advantage, ending in an explainer verdict about materials and population",
+        "seen_in": "stone_age_ep1"
+      },
+      {
+        "pattern": "a character-select stat screen with star ratings (no stat cards on /3, BP-87)",
+        "seen_in": "syndicate_wars"
+      },
+      {
+        "pattern": "a spoken honesty beat repeated through the film ('Invented, remember')",
+        "seen_in": "syndicate_wars (superseded by D-61)"
+      }
+    ],
+    "channel_identity": "worlds collide as an economic experiment: famous people meet a world without credit, in the channel's one drawn universe"
+  },
+  "execution": {
+    "roles": {
+      "research": {
+        "inputs": [
+          "claim_map.md",
+          "production_script.json editorial"
+        ],
+        "outputs": [
+          "claim_map.md with upgraded sources"
+        ],
+        "must": [
+          "upgrade C-01 (Toyota detail) and C-05 to primary or reputable sources by final_qa, or narrow the wording (ER-09)",
+          "no new real-world fact about any of the ten without a claim and source (ER-02)",
+          "never cite a model-written report or a mirror page as a source (ES-19)"
+        ],
+        "human_review": [
+          "the creator confirms the wording of any real-history line that changes"
+        ]
+      },
+      "script": {
+        "must": [
+          "Trump's lines are not routed to an ElevenLabs voice (RK-01, ER-03): use the creator's chosen option (narrator's reported speech, speech bubbles, or a human performer)",
+          "apply the creator's RK-02 and RK-12 decisions with the least change to wording and timing",
+          "no line about politics, office holders or elections (ER-08)",
+          "no new invented wrongdoing beyond the approved story; no real company, fund, lawsuit or product of the ten is named (ER-02)",
+          "no spoken disclaimer (SC-11); the what-if framing lives in titles and descriptions (ER-06)",
+          "any changed line goes back to the creator for approval (OR-17)"
+        ],
+        "machine_checks": [
+          "python -m explainer_engine.production.validate (PV-10, PV-32, PV-48)",
+          "python -m explainer_engine.qa.engagement production_script.json"
+        ]
+      },
+      "voice": {
+        "must": [
+          "no ElevenLabs generation for a Trump speaker line (ER-03, RK-01 BLOCK)",
+          "for the six real people only after the creator's RK-02 decision; library voices only, no clone, no voice design, no tag or prompt naming or describing the person (ER-04)",
+          "audition each real-person voice on one line before the full read; replace any voice a listener could take for the real person",
+          "generations_count 1, estimate first (EL-10)",
+          "English"
+        ],
+        "human_review": [
+          "the creator listens to the audition lines of every real-person voice"
+        ],
+        "fallbacks": [
+          "narrator's reported speech for any line whose voice is withdrawn"
+        ]
+      },
+      "image": {
+        "must": [
+          "caricatures from the cast cards and our hero references only; no photograph of the real people as input, reference or tracing source (ER-07)",
+          "no photo-realism for any real person; repaint any drift (ER-01)",
+          "Vance never resembles a real official (ER-08)",
+          "the universe thread in every prompt (UR-22); English text only"
+        ],
+        "human_review": [
+          "contact sheet: does any face read as a photograph or a known press photo?"
+        ]
+      },
+      "music": {
+        "must": [
+          "use the Lyria tracks only after the creator's RK-17 decision; otherwise ElevenLabs music described by its own qualities, with a licence record (ER-10)"
+        ]
+      },
+      "sound": {
+        "must": [
+          "own procedural or ElevenLabs-generated sound only, licence record per generated item (ER-10)",
+          "no siren-and-scream spectacle on the fire; nobody is hurt (RK-19)"
+        ]
+      },
+      "edit": {
+        "must": [
+          "keep the one drawn universe and the fixed caricature designs (UR-22, D-55)",
+          "no real footage, photo or news clip of any of the ten (ER-11)",
+          "if Trump's lines become bubbles or reported speech, his mouth does not lip-sync a synthetic voice"
+        ]
+      },
+      "metadata": {
+        "must": [
+          "the description opens with the fictional-story notice (platform.metadata.notices, ER-06)",
+          "every Short's title or first description line carries the what-if framing (ER-06)",
+          "no title, thumbnail text or tag implies anyone named took part, approves or recommends (ER-05); no sponsor or product near a real person's likeness",
+          "no fair use or 'no infringement intended' text (ER-12); no politics tags (ER-08)",
+          "claim sources go in the description, never in the narration (BP-15)"
+        ]
+      },
+      "qa": {
+        "must": [
+          "re-run the gate at final_qa; check ER-01, ER-05, ER-06 on the real metadata of the video and every Short",
+          "listen for any voice that sounds like the real person (ER-04)",
+          "check that no Trump line is voiced by ElevenLabs (ER-03)"
+        ],
+        "machine_checks": [
+          "python -m explainer_engine.standards gate examples/titans_from_zero/episode_rules.json --at final_qa",
+          "python -m explainer_engine.qa.publish_check"
+        ]
+      }
+    },
+    "escalation": [
+      "any new real person, official or candidate added to the script",
+      "a removal request, privacy complaint or legal letter from any person depicted (RR-13 procedure)",
+      "ElevenLabs refuses a generation or answers the RK-02 question",
+      "a picture or voice that could pass as real (turns the disclosure on)",
+      "any script change touching S02, S05, S07, S10, S12 or the Shorts"
+    ],
+    "reuse": [
+      "caricature references of the ten may be reused in later episodes only under the same rules (ER-05, ER-07); never in merchandise or ads",
+      "Shorts reuse the long video's own pictures and audio only"
+    ]
+  },
+  "checks": []
+}
