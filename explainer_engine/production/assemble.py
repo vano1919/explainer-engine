@@ -517,6 +517,18 @@ def chunk_look(first: bool, last: bool, seconds: float) -> str:
     return f
 
 
+def render_code() -> str:
+    """The hash of the code that draws a frame: a fix in the renderer must redraw the chunks, not reuse the old ones (the QA
+    loop of 2026-10-20 re-reviewed chunks drawn before the face-lean fix and found the same jump again)."""
+    mods = (__file__, ACC.__file__, BEATS.__file__, FACES.__file__, continuity.__file__, GFX.__file__, BUB.__file__,
+            grade.__module__ and __import__(grade.__module__, fromlist=["_"]).__file__, RULES.__file__,
+            str(Path(RULES.__file__).with_name("sourced_rules.json")))
+    h = hashlib.sha1()
+    for m in mods:
+        h.update(Path(m).read_bytes())
+    return h.hexdigest()
+
+
 def plan_stamp(timed: dict, size: tuple[int, int], crf: int, grade_key: str | None, bounds: list, pics: dict, dirs: list[Path]) -> str:
     """What the chunks on disk were made from: the timing, the size, the picture files. A change anywhere starts the chunks over."""
     files = []
@@ -526,7 +538,7 @@ def plan_stamp(timed: dict, size: tuple[int, int], crf: int, grade_key: str | No
             st = p.stat()
             files.append([pid, p.name, st.st_size, st.st_mtime_ns])
     body = {"timed": {k: v for k, v in timed.items() if k != "findings"}, "size": list(size), "crf": crf, "grade": grade_key,
-            "bounds": bounds, "pictures": files, "look": LOOK, "version": 1}
+            "bounds": bounds, "pictures": files, "look": LOOK, "version": 1, "code": render_code()}
     return hashlib.sha1(json.dumps(body, sort_keys=True, default=str).encode()).hexdigest()
 
 

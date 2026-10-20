@@ -1256,3 +1256,8 @@ Test: `test_two_takes_at_one_point_are_read_back_to_back`.
 The loop's pixel check found two cuts the plan does not have (titans 99.8 s and 125.9 s): an expression beat leaned the
 crop 10 % plus a 4 % pop toward the face in a quarter second, which reads as a jump (CC-06). `beats.FACE_*`: 6 %, no pop,
 over 1.2 s. Test: `test_the_face_lean_never_jumps_like_a_cut`.
+
+## 2026-10-20 — A renderer fix redraws the chunks
+
+`assemble.plan_stamp` now carries `render_code()`, a hash of the modules that draw a frame; before, a code fix kept the
+chunks drawn by the old code (the loop's third pass re-reviewed the same jump). Test: `test_a_renderer_change_redraws_the_chunks`.

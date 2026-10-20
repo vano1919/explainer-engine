@@ -153,3 +153,12 @@ def test_the_face_lean_never_jumps_like_a_cut():
     zoom = [W / (b[2] - b[0]) for b in widths]
     assert max(abs(a - b) for a, b in zip(zoom, zoom[1:])) < 0.006   # under 0.6 % a frame: a move, never a cut
     assert max(zoom) <= 1 + B.FACE_HOLD + B.FACE_POP + 1e-9
+
+
+def test_a_renderer_change_redraws_the_chunks(monkeypatch):
+    """The chunk stamp carries the renderer's code: a fixed renderer never reuses chunks drawn before the fix."""
+    from explainer_engine.production import assemble as A
+    timed = {"shots": [], "fps": 30}
+    a = A.plan_stamp(timed, (1280, 720), 18, None, [], {}, [])
+    monkeypatch.setattr(A, "render_code", lambda: "changed")
+    assert A.plan_stamp(timed, (1280, 720), 18, None, [], {}, []) != a
