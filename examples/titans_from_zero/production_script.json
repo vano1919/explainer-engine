@@ -19,8 +19,8 @@
   "name": "Leo Ashcraft - Late-Night Radio Host",
   "style": "a warm, quick, slightly wry storyteller with a low voice, curious and never solemn",
   "pace_wpm": [
-   155,
-   185
+   160,
+   190
   ],
   "candidates": [
    {
@@ -800,7 +800,8 @@
       "bench"
      ],
      "tone": "quick, scene-setting",
-     "emotion": "curious"
+     "emotion": "curious",
+     "kind": "transition"
     },
     {
      "text": "Ten men sit on it, shoulder to shoulder, and none of them looks at the others.",
@@ -829,7 +830,8 @@
       "others"
      ],
      "tone": "dry",
-     "emotion": "wry"
+     "emotion": "wry",
+     "kind": "transition"
     },
     {
      "text": "Donald Trump fixes his tie in the black screen of his phone. Robert Kiyosaki is telling the guard that debt is a gift.",
@@ -870,7 +872,8 @@
       "gift"
      ],
      "tone": "wry aside",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "On Friday they owned towers, rockets, studios and stores. By lunch, a clerk will turn all of it into paperwork.",
@@ -906,9 +909,9 @@
      "emphasis": [
       "paperwork"
      ],
-     "pause_after": 0.5,
      "tone": "brisk then flat",
-     "emotion": "wry"
+     "emotion": "wry",
+     "kind": "transition"
     },
     {
      "text": "But nobody will lend them a dollar after today. Not a bank, not a friend, not the man beside them.",
@@ -950,7 +953,8 @@
       "dollar"
      ],
      "tone": "flat, matter of fact",
-     "emotion": "uneasy"
+     "emotion": "uneasy",
+     "kind": "transition"
     },
     {
      "text": "They walk out with one thing: whatever is inside their heads.",
@@ -978,9 +982,9 @@
      "emphasis": [
       "heads"
      ],
-     "pause_after": 0.5,
      "tone": "plain",
-     "emotion": "quiet"
+     "emotion": "quiet",
+     "kind": "transition"
     },
     {
      "text": "Well, you'd think that's enough to start again. Five years will show if it was ever skill.",
@@ -1023,7 +1027,8 @@
       "skill"
      ],
      "tone": "teasing",
-     "emotion": "curious"
+     "emotion": "curious",
+     "kind": "transition"
     },
     {
      "text": "And the best deal of those five years is about to be made on this bench, for forty dollars.",
@@ -1062,7 +1067,8 @@
       "dollars"
      ],
      "tone": "quick teaser",
-     "emotion": "anticipation"
+     "emotion": "anticipation",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -1335,7 +1341,8 @@
       "tags"
      ],
      "tone": "dry, observing",
-     "emotion": "curious"
+     "emotion": "curious",
+     "kind": "transition"
     },
     {
      "text": "Then he slides along the bench to Elon Musk.",
@@ -1354,7 +1361,8 @@
       "slides"
      ],
      "tone": "quick",
-     "emotion": "tension"
+     "emotion": "tension",
+     "kind": "transition"
     },
     {
      "text": "You can still build things?",
@@ -1373,7 +1381,8 @@
       "things"
      ],
      "tone": "flat, unhurried",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "I can build anything. That isn't the problem.",
@@ -1395,7 +1404,8 @@
       "problem"
      ],
      "tone": "quiet, tired",
-     "emotion": "guarded"
+     "emotion": "guarded",
+     "kind": "transition"
     },
     {
      "text": "So what is?",
@@ -1414,7 +1424,8 @@
       "what"
      ],
      "tone": "flat",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "Nobody pays for the parts before the thing exists.",
@@ -1447,7 +1458,8 @@
       "exists"
      ],
      "tone": "quiet, factual",
-     "emotion": "frustrated"
+     "emotion": "frustrated",
+     "kind": "transition"
     },
     {
      "text": "Then I will. Forty dollars.",
@@ -1477,7 +1489,8 @@
       "dollars"
      ],
      "tone": "flat, unhurried",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "Forty dollars buys one wheel.",
@@ -1509,7 +1522,8 @@
       "wheel"
      ],
      "tone": "dry",
-     "emotion": "wary"
+     "emotion": "wary",
+     "kind": "transition"
     },
     {
      "text": "And ten percent of everything you ever build. Forever.",
@@ -1555,7 +1569,8 @@
      ],
      "pause_after": 0.6,
      "tone": "flat, almost kind, then silence",
-     "emotion": "cold calm"
+     "emotion": "cold calm",
+     "kind": "transition"
     },
     {
      "text": "Ten percent for forty? I've sold air for more.",
@@ -1577,7 +1592,8 @@
       "air"
      ],
      "tone": "boastful, quick",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "joke"
     },
     {
      "text": "Well, then sell me some. I've got an envelope for you too.",
@@ -1613,7 +1629,8 @@
       "too"
      ],
      "tone": "flat, unhurried",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "Why would I sign that?",
@@ -1635,7 +1652,8 @@
       "sign"
      ],
      "tone": "quiet, wary",
-     "emotion": "doubt"
+     "emotion": "doubt",
+     "kind": "transition"
     },
     {
      "text": "Because forty is more than anyone else in this building is offering.",
@@ -1655,7 +1673,8 @@
       "offering"
      ],
      "tone": "flat, reasonable",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "Musk signs. O'Leary moves one seat along and holds out the next envelope to Jordan Belfort.",
@@ -1684,7 +1703,8 @@
       "signs"
      ],
      "tone": "quiet, wry",
-     "emotion": "foreboding"
+     "emotion": "foreboding",
+     "kind": "transition"
     },
     {
      "text": "Forever is a long word in a contract.",
@@ -1716,7 +1736,8 @@
       "long"
      ],
      "tone": "smooth, teasing",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "It's a short one in a bankruptcy.",
@@ -1743,7 +1764,8 @@
      ],
      "pause_after": 0.5,
      "tone": "dry",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "Belfort reads it to the last line, folds it, and hands it back. O'Leary stands, a thick stack of white envelopes under his arm.",
@@ -1774,7 +1796,8 @@
       "envelopes"
      ],
      "tone": "quiet",
-     "emotion": "foreboding"
+     "emotion": "foreboding",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -2265,7 +2288,8 @@
       "lesson"
      ],
      "tone": "quick",
-     "emotion": "curious"
+     "emotion": "curious",
+     "kind": "transition"
     },
     {
      "text": "Grant Cardone asks a bank for a small loan. The banker types his name, reads the screen, and slides the form back.",
@@ -2303,7 +2327,8 @@
       "back"
      ],
      "tone": "flat, brisk",
-     "emotion": "tension"
+     "emotion": "tension",
+     "kind": "transition"
     },
     {
      "text": "Robert Kiyosaki asks for a credit card. Same screen. Same slide.",
@@ -2342,7 +2367,8 @@
       "slide"
      ],
      "tone": "deadpan",
-     "emotion": "wry"
+     "emotion": "wry",
+     "kind": "transition"
     },
     {
      "text": "Donald Trump taps his card at a coffee cart, and the machine beeps twice.",
@@ -2385,20 +2411,13 @@
      "emphasis": [
       "twice"
      ],
-     "pause_after": 0.5,
      "tone": "wry",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
-     "text": "Right, here's what you learn fast on that street. A loan was only ever a stranger's trust with interest on top. And nobody trusts them for a cent.",
+     "text": "Right. A loan was only ever a stranger's trust with interest on top. And nobody trusts them for a cent.",
      "visual_beats": [
-      {
-       "at": "learn fast",
-       "kind": "accent",
-       "effect": "punch",
-       "why": "learn fast: the lesson lands",
-       "strength": 0.4
-      },
       {
        "at": "A loan",
        "kind": "text",
@@ -2437,7 +2456,8 @@
       "cent"
      ],
      "tone": "plain, truth-telling",
-     "emotion": "grim"
+     "emotion": "grim",
+     "kind": "transition"
     },
     {
      "text": "So the only money they can touch is money they make today, with their hands or with their mouths.",
@@ -2475,7 +2495,8 @@
       "mouths"
      ],
      "tone": "brisk",
-     "emotion": "determined"
+     "emotion": "determined",
+     "kind": "transition"
     },
     {
      "text": "Musk has forty dollars and a parts list. Jordan Belfort has a phone with no numbers in it.",
@@ -2491,14 +2512,14 @@
        ]
       },
       {
-       "at": "parts list",
+       "at": "a parts list",
        "kind": "label",
        "text": "PARTS LIST",
        "pos": [
         0.35,
         0.65
        ],
-       "why": "the parts list"
+       "why": "Musk's only asset: a parts list"
       },
       {
        "at": "Jordan Belfort",
@@ -2527,7 +2548,8 @@
       "numbers"
      ],
      "tone": "quick teaser",
-     "emotion": "anticipation"
+     "emotion": "anticipation",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -2661,22 +2683,6 @@
      ]
     },
     {
-     "at": "Right, here's what you learn",
-     "type": "B",
-     "picture": "s03_cart",
-     "motion": {
-      "kind": "pull",
-      "z0": 1.041,
-      "z1": 1.0
-     },
-     "purpose": "the lesson, said to a street corner of ruined men",
-     "cut": {
-      "why": "from three failures to the rule"
-     },
-     "reuse": "reframe",
-     "heroes_ok": true
-    },
-    {
      "at": "A loan was only ever",
      "type": "C",
      "picture": {
@@ -2730,7 +2736,7 @@
      "heroes_ok": true
     },
     {
-     "at": "Musk has forty dollars",
+     "at": "Jordan Belfort has a phone",
      "type": "B",
      "picture": {
       "id": "s03_pair",
@@ -2767,9 +2773,6 @@
     "shift": "hopeful -> shut out",
     "need": "stakes",
     "claim_share": "reasoned",
-    "closes": [
-     "L03"
-    ],
     "opens": [
      "L04"
     ]
@@ -2782,14 +2785,6 @@
       "sound": "amb_city_street_noon__v1",
       "gain_db": -27,
       "purpose": "the sidewalk outside at noon: traffic and no safety net"
-     }
-    ],
-    "sfx": [
-     {
-      "at": "learn fast",
-      "sound": "pop_in__v1",
-      "gain_db": -22,
-      "purpose": "a soft accent on the beat's word"
      }
     ]
    }
@@ -2839,7 +2834,8 @@
       "broken"
      ],
      "tone": "quick",
-     "emotion": "curious"
+     "emotion": "curious",
+     "kind": "transition"
     },
     {
      "text": "For six hours he has explained its battery to everyone who walks by. Nobody stops.",
@@ -2882,7 +2878,8 @@
       "stops"
      ],
      "tone": "flat",
-     "emotion": "wry"
+     "emotion": "wry",
+     "kind": "transition"
     },
     {
      "text": "Belfort watches from the curb with a hot dog. Then he takes the handlebars without asking.",
@@ -2918,7 +2915,8 @@
       "handlebars"
      ],
      "tone": "quick, amused",
-     "emotion": "mischief"
+     "emotion": "mischief",
+     "kind": "transition"
     },
     {
      "text": "He never mentions the battery. He lets a delivery rider take one free lap of the lot, then names three times Musk's price.",
@@ -2958,7 +2956,8 @@
       "price"
      ],
      "tone": "quick",
-     "emotion": "admiring"
+     "emotion": "admiring",
+     "kind": "transition"
     },
     {
      "text": "The rider pays cash.",
@@ -2975,7 +2974,8 @@
       "cash"
      ],
      "tone": "short, flat",
-     "emotion": "wry"
+     "emotion": "wry",
+     "kind": "transition"
     },
     {
      "text": "You were selling a battery. I sold him an hour of his evening.",
@@ -3008,7 +3008,8 @@
       "evening"
      ],
      "tone": "smooth, confident",
-     "emotion": "smug"
+     "emotion": "smug",
+     "kind": "transition"
     },
     {
      "text": "It's the same scooter.",
@@ -3040,7 +3041,8 @@
       "same"
      ],
      "tone": "quiet, puzzled",
-     "emotion": "guarded"
+     "emotion": "guarded",
+     "kind": "transition"
     },
     {
      "text": "Not to him. He rode it before he paid.",
@@ -3079,7 +3081,8 @@
       "paid"
      ],
      "tone": "smooth",
-     "emotion": "smug"
+     "emotion": "smug",
+     "kind": "transition"
     },
     {
      "text": "So you gave it away first.",
@@ -3111,7 +3114,8 @@
       "first"
      ],
      "tone": "quiet, thinking",
-     "emotion": "wary"
+     "emotion": "wary",
+     "kind": "transition"
     },
     {
      "text": "Give a little first. People hate owing you.",
@@ -3144,7 +3148,8 @@
       "owing"
      ],
      "tone": "warm, persuasive",
-     "emotion": "charming"
+     "emotion": "charming",
+     "kind": "transition"
     },
     {
      "text": "What do you want?",
@@ -3166,7 +3171,8 @@
       "want"
      ],
      "tone": "quiet, wary",
-     "emotion": "guarded"
+     "emotion": "guarded",
+     "kind": "transition"
     },
     {
      "text": "Half. You build, I sell.",
@@ -3198,7 +3204,8 @@
       "sell"
      ],
      "tone": "fast, eager",
-     "emotion": "eager"
+     "emotion": "eager",
+     "kind": "transition"
     },
     {
      "text": "Ten percent already belongs to a man with envelopes.",
@@ -3230,7 +3237,8 @@
       "envelopes"
      ],
      "tone": "tired, flat",
-     "emotion": "reluctant"
+     "emotion": "reluctant",
+     "kind": "transition"
     },
     {
      "text": "Okay, then forty-five each. I won't even ask.",
@@ -3262,7 +3270,8 @@
       "ask"
      ],
      "tone": "playful, quick",
-     "emotion": "eager"
+     "emotion": "eager",
+     "kind": "transition"
     },
     {
      "text": "One rule. You never promise what I haven't built.",
@@ -3304,7 +3313,8 @@
       "promise"
      ],
      "tone": "firm, quiet",
-     "emotion": "serious"
+     "emotion": "serious",
+     "kind": "transition"
     },
     {
      "text": "Me? Never.",
@@ -3335,7 +3345,8 @@
      ],
      "pause_after": 0.5,
      "tone": "innocent, quick",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "They shake hands. Neither of them lets go first.",
@@ -3348,13 +3359,6 @@
         0.6
        ],
        "why": "rings the handshake"
-      },
-      {
-       "at": "lets go first",
-       "kind": "accent",
-       "effect": "shake",
-       "why": "neither lets go first: the grip holds",
-       "strength": 0.3
       }
      ],
      "tags": [
@@ -3364,7 +3368,8 @@
       "first"
      ],
      "tone": "quiet, wry",
-     "emotion": "foreboding"
+     "emotion": "foreboding",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -3833,7 +3838,8 @@
       "cheapest"
      ],
      "tone": "easy, wry",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "Debt is how the rich get richer. Write that down.",
@@ -3865,7 +3871,8 @@
       "richer"
      ],
      "tone": "earnest, lecturing",
-     "emotion": "sincere"
+     "emotion": "sincere",
+     "kind": "transition"
     },
     {
      "text": "Fantastic. Lend me some.",
@@ -3887,7 +3894,8 @@
       "some"
      ],
      "tone": "boastful, dry",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "joke"
     },
     {
      "text": "Well, I don't have any.",
@@ -3918,9 +3926,9 @@
      "emphasis": [
       "any"
      ],
-     "pause_after": 0.5,
      "tone": "deflated, quick",
-     "emotion": "embarrassed"
+     "emotion": "embarrassed",
+     "kind": "transition"
     },
     {
      "text": "Then you don't own the thing you're selling.",
@@ -3950,7 +3958,8 @@
       "selling"
      ],
      "tone": "grand, pointed",
-     "emotion": "triumphant"
+     "emotion": "triumphant",
+     "kind": "transition"
     },
     {
      "text": "Banks forget. In a year they'll beg to lend us.",
@@ -3982,7 +3991,8 @@
       "beg"
      ],
      "tone": "earnest, hopeful",
-     "emotion": "stubborn"
+     "emotion": "stubborn",
+     "kind": "transition"
     },
     {
      "text": "My companies went to bankruptcy court six times. The banks never came back first.",
@@ -4033,7 +4043,8 @@
       "first"
      ],
      "tone": "boastful, quick",
-     "emotion": "proud"
+     "emotion": "proud",
+     "kind": "fact"
     },
     {
      "text": "So who did?",
@@ -4052,7 +4063,8 @@
       "who"
      ],
      "tone": "puzzled",
-     "emotion": "curious"
+     "emotion": "curious",
+     "kind": "transition"
     },
     {
      "text": "The cameras.",
@@ -4084,7 +4096,8 @@
       "cameras"
      ],
      "tone": "grand, short",
-     "emotion": "smug"
+     "emotion": "smug",
+     "kind": "transition"
     },
     {
      "text": "Cameras don't pay rent.",
@@ -4116,7 +4129,8 @@
       "rent"
      ],
      "tone": "dry",
-     "emotion": "irritated"
+     "emotion": "irritated",
+     "kind": "transition"
     },
     {
      "text": "Watch.",
@@ -4138,7 +4152,8 @@
       "Watch"
      ],
      "tone": "breezy",
-     "emotion": "confident"
+     "emotion": "confident",
+     "kind": "transition"
     },
     {
      "text": "Trump props his phone on a plastic chair by the empty pool and goes live.",
@@ -4172,7 +4187,8 @@
       "live"
      ],
      "tone": "quick",
-     "emotion": "anticipation"
+     "emotion": "anticipation",
+     "kind": "transition"
     },
     {
      "text": "Eleven strangers watch him eat a vending machine sandwich with a knife and fork, like a state dinner.",
@@ -4211,7 +4227,8 @@
       "dinner"
      ],
      "tone": "deadpan",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "By midnight, eleven is four thousand. Kiyosaki calls the bank again and gets the voicemail.",
@@ -4260,9 +4277,9 @@
      "emphasis": [
       "voicemail"
      ],
-     "pause_after": 0.5,
      "tone": "wry, quick",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -4647,7 +4664,8 @@
       "solder"
      ],
      "tone": "easy, scene-setting",
-     "emotion": "calm"
+     "emotion": "calm",
+     "kind": "transition"
     },
     {
      "text": "Musk sleeps on a folding cot beside the workbench and rebuilds thirty scooters a month. Every one leaves with Belfort.",
@@ -4685,7 +4703,8 @@
       "leaves"
      ],
      "tone": "quick",
-     "emotion": "steady"
+     "emotion": "steady",
+     "kind": "transition"
     },
     {
      "text": "Belfort never says lithium. If you deliver food for a living, he sells you one more delivery an hour.",
@@ -4728,7 +4747,8 @@
       "hour"
      ],
      "tone": "wry",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "Across town, Alex Hormozi walks into dying gyms and offers to fill them. He gets paid only from new members, cash first.",
@@ -4767,7 +4787,8 @@
       "first"
      ],
      "tone": "quick",
-     "emotion": "brisk"
+     "emotion": "brisk",
+     "kind": "transition"
     },
     {
      "text": "Mark Zuckerberg sits in a public library writing code that finds broken shop websites. Then he fixes them for a fee.",
@@ -4806,7 +4827,8 @@
       "fee"
      ],
      "tone": "quick",
-     "emotion": "brisk"
+     "emotion": "brisk",
+     "kind": "transition"
     },
     {
      "text": "Mark Cuban rents one bicycle to a kid who delivers lunch. Then two bicycles. Then twenty.",
@@ -4849,7 +4871,8 @@
       "twenty"
      ],
      "tone": "building, quick",
-     "emotion": "rising"
+     "emotion": "rising",
+     "kind": "transition"
     },
     {
      "text": "Jeff Bezos sells used books off a folding table and writes down every title that sells twice.",
@@ -4887,7 +4910,8 @@
       "twice"
      ],
      "tone": "quick",
-     "emotion": "brisk"
+     "emotion": "brisk",
+     "kind": "transition"
     },
     {
      "text": "But Grant Cardone, making a hundred calls a day, gets a hundred hang-ups.",
@@ -4926,13 +4950,23 @@
      "emphasis": [
       "hang-ups"
      ],
-     "pause_after": 0.5,
      "tone": "wry, deflating",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
-     "text": "His plan pools other people's money into a building. And the one thing his name can't raise anymore is their trust.",
+     "text": "His deals run on other people's money. His name can't raise it anymore.",
      "visual_beats": [
+      {
+       "at": "other people's money",
+       "kind": "text",
+       "text": "OTHER PEOPLE'S MONEY",
+       "pos": [
+        0.5,
+        0.2
+       ],
+       "why": "his deals run on other people's money"
+      },
       {
        "at": "can't raise",
        "kind": "symbol",
@@ -4947,28 +4981,19 @@
        "at": "anymore",
        "kind": "expression",
        "expression": "worried",
-       "why": "Cardone feels his name can't raise anymore [anymore]",
-       "who": "cardone"
-      },
-      {
-       "at": "their trust",
-       "kind": "text",
-       "text": "THEIR TRUST",
-       "why": "the one thing missing: their trust",
-       "pos": [
-        0.5,
-        0.2
-       ]
+       "who": "cardone",
+       "why": "Cardone feels his name can't raise it anymore [anymore]"
       }
      ],
      "tags": [
       "softly"
      ],
      "emphasis": [
-      "trust"
+      "anymore"
      ],
      "tone": "quiet, plain",
-     "emotion": "uneasy"
+     "emotion": "uneasy",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -5199,29 +5224,6 @@
        "strength": 0.3
       }
      ]
-    },
-    {
-     "at": "His plan pools",
-     "type": "B",
-     "picture": "s06_calls",
-     "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.088
-     },
-     "purpose": "the thing his name can no longer raise: trust",
-     "cut": {
-      "why": "insert on trust"
-     },
-     "reuse": "reframe",
-     "heroes_ok": true,
-     "insert": true,
-     "accents": [
-      {
-       "kind": "wobble",
-       "strength": 0.3
-      }
-     ]
     }
    ],
    "drama": {
@@ -5295,7 +5297,8 @@
       "glass"
      ],
      "tone": "wry, amused",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "Uh-oh. One night, Kiyosaki steps into the frame.",
@@ -5322,7 +5325,8 @@
       "frame"
      ],
      "tone": "teasing, low",
-     "emotion": "foreboding"
+     "emotion": "foreboding",
+     "kind": "transition"
     },
     {
      "text": "Mind if I teach them something useful?",
@@ -5351,7 +5355,8 @@
       "useful"
      ],
      "tone": "earnest, polite",
-     "emotion": "hopeful"
+     "emotion": "hopeful",
+     "kind": "transition"
     },
     {
      "text": "Two minutes. They come for me, not homework.",
@@ -5392,9 +5397,9 @@
      "emphasis": [
       "homework"
      ],
-     "pause_after": 0.5,
      "tone": "dry, boastful",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "Lesson one. Your house is not an asset.",
@@ -5437,7 +5442,8 @@
       "asset"
      ],
      "tone": "earnest, lecturing",
-     "emotion": "sincere"
+     "emotion": "sincere",
+     "kind": "transition"
     },
     {
      "text": "You're losing them. Nine hundred gone. Two thousand.",
@@ -5485,7 +5491,8 @@
       "thousand"
      ],
      "tone": "quick, relishing",
-     "emotion": "gleeful"
+     "emotion": "gleeful",
+     "kind": "transition"
     },
     {
      "text": "They need to hear this.",
@@ -5507,7 +5514,8 @@
       "this"
      ],
      "tone": "earnest, strained",
-     "emotion": "stubborn"
+     "emotion": "stubborn",
+     "kind": "transition"
     },
     {
      "text": "They need to hear me.",
@@ -5535,9 +5543,9 @@
      "emphasis": [
       "me"
      ],
-     "pause_after": 0.5,
      "tone": "flat, final",
-     "emotion": "smug"
+     "emotion": "smug",
+     "kind": "transition"
     },
     {
      "text": "Trump turns the phone. Kiyosaki is out of the picture, and the count climbs back in seconds.",
@@ -5586,7 +5594,8 @@
       "seconds"
      ],
      "tone": "flat, wry",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -5701,7 +5710,7 @@
      "heroes_ok": true
     },
     {
-     "at": "They come for",
+     "at": "Two minutes.",
      "type": "B",
      "picture": {
       "id": "s07_ots_t",
@@ -5959,7 +5968,8 @@
       "chairs"
      ],
      "tone": "easy, scene-setting",
-     "emotion": "calm"
+     "emotion": "calm",
+     "kind": "transition"
     },
     {
      "text": "He has heard about the scooters that never break down.",
@@ -5986,7 +5996,8 @@
       "down"
      ],
      "tone": "quick",
-     "emotion": "curious"
+     "emotion": "curious",
+     "kind": "transition"
     },
     {
      "text": "How many can you make by Christmas?",
@@ -6016,7 +6027,8 @@
       "Christmas"
      ],
      "tone": "blunt, quick",
-     "emotion": "businesslike"
+     "emotion": "businesslike",
+     "kind": "transition"
     },
     {
      "text": "Fifty. Fifty good ones.",
@@ -6048,7 +6060,8 @@
       "good"
      ],
      "tone": "quiet, honest",
-     "emotion": "guarded"
+     "emotion": "guarded",
+     "kind": "transition"
     },
     {
      "text": "Five hundred.",
@@ -6078,8 +6091,7 @@
        "kind": "expression",
        "expression": "surprised",
        "why": "Musk is shocked by five hundred [Five hundred]",
-       "who": "musk",
-       "offset": 0.3
+       "who": "musk"
       }
      ],
      "tags": [
@@ -6089,7 +6101,8 @@
       "hundred"
      ],
      "tone": "fast, bright",
-     "emotion": "eager"
+     "emotion": "eager",
+     "kind": "transition"
     },
     {
      "text": "We have parts for fifty.",
@@ -6118,7 +6131,8 @@
       "fifty"
      ],
      "tone": "quiet, alarmed",
-     "emotion": "worried"
+     "emotion": "worried",
+     "kind": "transition"
     },
     {
      "text": "He's modest. It's a condition.",
@@ -6147,7 +6161,8 @@
       "condition"
      ],
      "tone": "smooth, quick",
-     "emotion": "smug"
+     "emotion": "smug",
+     "kind": "transition"
     },
     {
      "text": "Five hundred by the twentieth of December, or you never walk in here again.",
@@ -6186,7 +6201,8 @@
       "never"
      ],
      "tone": "flat, hard",
-     "emotion": "firm"
+     "emotion": "firm",
+     "kind": "transition"
     },
     {
      "text": "Can you?",
@@ -6206,7 +6222,8 @@
       "Can"
      ],
      "tone": "blunt",
-     "emotion": "firm"
+     "emotion": "firm",
+     "kind": "transition"
     },
     {
      "text": "Yes.",
@@ -6237,8 +6254,7 @@
        "kind": "expression",
        "expression": "joyful",
        "why": "Belfort lights up at Yes [Yes]",
-       "who": "belfort",
-       "offset": 0.2
+       "who": "belfort"
       }
      ],
      "tags": [
@@ -6246,7 +6262,8 @@
      ],
      "pause_after": 0.8,
      "tone": "quiet, one breath",
-     "emotion": "resigned"
+     "emotion": "resigned",
+     "kind": "transition"
     },
     {
      "text": "Cuban signs. It is the biggest order either of them has seen in a year.",
@@ -6286,7 +6303,8 @@
       "year"
      ],
      "tone": "measured, uneasy",
-     "emotion": "foreboding"
+     "emotion": "foreboding",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -6335,22 +6353,6 @@
        "strength": 0.3
       }
      ]
-    },
-    {
-     "at": "He has heard about",
-     "type": "A",
-     "picture": "s08_office",
-     "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.041
-     },
-     "purpose": "Cuban has heard of the scooters",
-     "cut": {
-      "why": "his appetite"
-     },
-     "reuse": "reframe",
-     "heroes_ok": true
     },
     {
      "at": "How many can you make",
@@ -6636,7 +6638,8 @@
       "start"
      ],
      "tone": "quiet",
-     "emotion": "tension"
+     "emotion": "tension",
+     "kind": "transition"
     },
     {
      "text": "You promised what I haven't built.",
@@ -6669,7 +6672,8 @@
       "built"
      ],
      "tone": "quiet, firm",
-     "emotion": "angry, held in"
+     "emotion": "angry, held in",
+     "kind": "transition"
     },
     {
      "text": "Look, you said yes. I heard you.",
@@ -6701,7 +6705,8 @@
       "heard"
      ],
      "tone": "quick, defensive",
-     "emotion": "defensive"
+     "emotion": "defensive",
+     "kind": "transition"
     },
     {
      "text": "Because you'd already said it.",
@@ -6723,7 +6728,8 @@
       "said"
      ],
      "tone": "quiet, hard",
-     "emotion": "tense"
+     "emotion": "tense",
+     "kind": "transition"
     },
     {
      "text": "That's how big orders work. Promise, then build.",
@@ -6731,6 +6737,13 @@
      "to": "musk",
      "intent": "reveal",
      "visual_beats": [
+      {
+       "at": "big orders",
+       "kind": "expression",
+       "expression": "doubtful",
+       "why": "Musk doubts it: that's how big orders work [big orders]",
+       "who": "musk"
+      },
       {
        "at": "Promise, then build",
        "kind": "text",
@@ -6740,13 +6753,6 @@
         0.5,
         0.2
        ]
-      },
-      {
-       "at": "Promise, then build",
-       "kind": "expression",
-       "expression": "doubtful",
-       "why": "Musk doubts: promise, then build [Promise, then build]",
-       "who": "musk"
       }
      ],
      "tags": [
@@ -6756,7 +6762,8 @@
       "build"
      ],
      "tone": "easy, selling",
-     "emotion": "confident"
+     "emotion": "confident",
+     "kind": "transition"
     },
     {
      "text": "That's how fires work.",
@@ -6792,7 +6799,8 @@
      ],
      "pause_after": 0.8,
      "tone": "flat, very low",
-     "emotion": "cold"
+     "emotion": "cold",
+     "kind": "transition"
     },
     {
      "text": "Belfort laughs. Then he sees Musk isn't laughing, and stops.",
@@ -6819,7 +6827,8 @@
       "stops"
      ],
      "tone": "quiet",
-     "emotion": "unease"
+     "emotion": "unease",
+     "kind": "transition"
     },
     {
      "text": "For eleven weeks the garage lights never go off.",
@@ -6848,7 +6857,8 @@
       "never"
      ],
      "tone": "quick montage",
-     "emotion": "driven"
+     "emotion": "driven",
+     "kind": "transition"
     },
     {
      "text": "The good cells won't arrive before Christmas, so Musk orders cheap ones from a seller he has never met.",
@@ -6891,7 +6901,8 @@
       "met"
      ],
      "tone": "measured",
-     "emotion": "foreboding"
+     "emotion": "foreboding",
+     "kind": "transition"
     },
     {
      "text": "A heat test takes a day per batch. He skips it on the last two hundred.",
@@ -6934,7 +6945,8 @@
       "skips"
      ],
      "tone": "quiet, plain",
-     "emotion": "dread"
+     "emotion": "dread",
+     "kind": "transition"
     },
     {
      "text": "On the nineteenth of December, five hundred scooters roll into Cuban's warehouse. One day early.",
@@ -6974,7 +6986,8 @@
       "early"
      ],
      "tone": "brisk, bright",
-     "emotion": "relief"
+     "emotion": "relief",
+     "kind": "transition"
     },
     {
      "text": "Cuban pays. Belfort frames the receipt. Three hundred cheap cells are left over on a garage shelf.",
@@ -7015,7 +7028,8 @@
       "shelf"
      ],
      "tone": "low, ominous",
-     "emotion": "dread"
+     "emotion": "dread",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -7313,6 +7327,9 @@
     "claim_share": "reasoned",
     "opens": [
      "L10"
+    ],
+    "closes": [
+     "L09"
     ]
    },
    "scene": {
@@ -7402,7 +7419,8 @@
       "waits"
      ],
      "tone": "easy",
-     "emotion": "curious"
+     "emotion": "curious",
+     "kind": "transition"
     },
     {
      "text": "A network wants a show. How to Lose a Billion. Season one.",
@@ -7435,7 +7453,8 @@
       "Billion"
      ],
      "tone": "grand, bright",
-     "emotion": "excited"
+     "emotion": "excited",
+     "kind": "transition"
     },
     {
      "text": "And what will you own, exactly?",
@@ -7468,7 +7487,8 @@
       "own"
      ],
      "tone": "earnest, probing",
-     "emotion": "suspicious"
+     "emotion": "suspicious",
+     "kind": "transition"
     },
     {
      "text": "The audience. The rest is paperwork.",
@@ -7500,7 +7520,8 @@
       "paperwork"
      ],
      "tone": "grand, dismissive",
-     "emotion": "confident"
+     "emotion": "confident",
+     "kind": "transition"
     },
     {
      "text": "An audience isn't an asset.",
@@ -7532,7 +7553,8 @@
       "asset"
      ],
      "tone": "earnest, lecturing",
-     "emotion": "sincere"
+     "emotion": "sincere",
+     "kind": "transition"
     },
     {
      "text": "It paid for this car.",
@@ -7564,7 +7586,8 @@
       "car"
      ],
      "tone": "pleased, quick",
-     "emotion": "smug"
+     "emotion": "smug",
+     "kind": "transition"
     },
     {
      "text": "A car is a liability.",
@@ -7596,7 +7619,8 @@
       "liability"
      ],
      "tone": "earnest, lecturing",
-     "emotion": "stubborn"
+     "emotion": "stubborn",
+     "kind": "transition"
     },
     {
      "text": "Not when somebody else pays for it.",
@@ -7636,7 +7660,8 @@
      ],
      "pause_after": 0.5,
      "tone": "breezy, smug",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "There's a seat in the back. Season one needs a man who lost everything.",
@@ -7684,7 +7709,8 @@
       "everything"
      ],
      "tone": "soft, smooth",
-     "emotion": "tempting"
+     "emotion": "tempting",
+     "kind": "transition"
     },
     {
      "text": "I'm not a lesson. I teach them.",
@@ -7716,7 +7742,8 @@
       "teach"
      ],
      "tone": "flat, proud",
-     "emotion": "stubborn"
+     "emotion": "stubborn",
+     "kind": "transition"
     },
     {
      "text": "Well, suit yourself.",
@@ -7735,18 +7762,12 @@
       "yourself"
      ],
      "tone": "breezy, shrugging",
-     "emotion": "unbothered"
+     "emotion": "unbothered",
+     "kind": "transition"
     },
     {
      "text": "The car pulls away. Kiyosaki carries his bag to an old Toyota at the far end of the lot.",
      "visual_beats": [
-      {
-       "at": "pulls away",
-       "kind": "accent",
-       "effect": "shake",
-       "why": "the car pulls away",
-       "strength": 0.3
-      },
       {
        "at": "old Toyota",
        "kind": "highlight",
@@ -7764,7 +7785,8 @@
       "Toyota"
      ],
      "tone": "quiet",
-     "emotion": "melancholy"
+     "emotion": "melancholy",
+     "kind": "transition"
     },
     {
      "text": "He slept in one once, a long time ago, with Kim. He still knows which seat folds flat.",
@@ -7816,7 +7838,8 @@
       "flat"
      ],
      "tone": "quiet, wry",
-     "emotion": "melancholy"
+     "emotion": "melancholy",
+     "kind": "fact"
     }
    ],
    "shots": [
@@ -8181,7 +8204,8 @@
       "dark"
      ],
      "tone": "low, quiet",
-     "emotion": "dread"
+     "emotion": "dread",
+     "kind": "transition"
     },
     {
      "text": "On the shelf, one of the three hundred leftover cells starts to hiss.",
@@ -8198,8 +8222,8 @@
       {
        "at": "starts to hiss",
        "kind": "accent",
-       "effect": "shake",
-       "why": "the cell starts to hiss",
+       "effect": "punch",
+       "why": "the cell starts to hiss: the camera leans in",
        "strength": 0.3
       }
      ],
@@ -8210,7 +8234,8 @@
       "hiss"
      ],
      "tone": "whisper",
-     "emotion": "dread"
+     "emotion": "dread",
+     "kind": "transition"
     },
     {
      "text": "By the time the fire trucks arrive, the garage is a black box without a roof. Nobody is hurt. Everything else is gone.",
@@ -8258,7 +8283,8 @@
      ],
      "pause_after": 0.8,
      "tone": "quiet, slow",
-     "emotion": "shock"
+     "emotion": "shock",
+     "kind": "transition"
     },
     {
      "text": "Those cells came from the same box as Cuban's.",
@@ -8291,7 +8317,8 @@
       "same"
      ],
      "tone": "quiet, flat",
-     "emotion": "grim"
+     "emotion": "grim",
+     "kind": "transition"
     },
     {
      "text": "Wait, Cuban's have run for two years. They're fine.",
@@ -8323,7 +8350,8 @@
       "fine"
      ],
      "tone": "quick, strained",
-     "emotion": "denial"
+     "emotion": "denial",
+     "kind": "transition"
     },
     {
      "text": "Two hundred of them never had the heat test.",
@@ -8366,7 +8394,8 @@
       "test"
      ],
      "tone": "quiet, flat",
-     "emotion": "grim"
+     "emotion": "grim",
+     "kind": "transition"
     },
     {
      "text": "You never told me that.",
@@ -8388,7 +8417,8 @@
       "told"
      ],
      "tone": "quiet, strained",
-     "emotion": "dread"
+     "emotion": "dread",
+     "kind": "transition"
     },
     {
      "text": "I told you we had parts for fifty.",
@@ -8420,7 +8450,8 @@
       "fifty"
      ],
      "tone": "quiet, tired",
-     "emotion": "grim"
+     "emotion": "grim",
+     "kind": "transition"
     },
     {
      "text": "You said it quietly.",
@@ -8452,7 +8483,8 @@
       "quietly"
      ],
      "tone": "quiet, defensive",
-     "emotion": "dread"
+     "emotion": "dread",
+     "kind": "transition"
     },
     {
      "text": "You never listen when it's quiet.",
@@ -8480,9 +8512,9 @@
      "emphasis": [
       "quiet"
      ],
-     "pause_after": 0.6,
      "tone": "flat, very low",
-     "emotion": "cold"
+     "emotion": "cold",
+     "kind": "transition"
     },
     {
      "text": "If Cuban hears this, we're finished.",
@@ -8514,7 +8546,8 @@
       "finished"
      ],
      "tone": "quiet, tight",
-     "emotion": "fear"
+     "emotion": "fear",
+     "kind": "transition"
     },
     {
      "text": "If a rider's scooter burns, we're worse than finished.",
@@ -8547,7 +8580,8 @@
       "worse"
      ],
      "tone": "quiet, grave",
-     "emotion": "fear"
+     "emotion": "fear",
+     "kind": "transition"
     },
     {
      "text": "Belfort looks at the black shelf for a long time. He doesn't answer.",
@@ -8575,9 +8609,10 @@
      "emphasis": [
       "answer"
      ],
-     "pause_after": 0.6,
+     "pause_after": 1.0,
      "tone": "very quiet",
-     "emotion": "dread"
+     "emotion": "dread",
+     "kind": "transition"
     },
     {
      "text": "Replacing two hundred batteries would cost more than they have left.",
@@ -8620,7 +8655,8 @@
       "left"
      ],
      "tone": "low, plain",
-     "emotion": "dread"
+     "emotion": "dread",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -8931,7 +8967,7 @@
     "need": "fear",
     "claim_share": "invented",
     "closes": [
-     "L09"
+     "L10"
     ]
    },
    "scene": {
@@ -8973,9 +9009,9 @@
     "sfx": [
      {
       "at": "starts to hiss.",
-      "sound": "cloth_rustle__v3",
+      "sound": "battery_hiss__v1",
       "gain_db": -24,
-      "purpose": "the cell hisses"
+      "purpose": "the leftover cell hisses: a dry electrical fizz, the first sign of the fire (to make: one take, short, not in the library yet)"
      },
      {
       "at": "never listen",
@@ -8992,7 +9028,7 @@
    "light_beat": 12,
    "lines": [
     {
-     "text": "Two days later, a man in a grey suit steps over the ashes. His name is Vance, and he buys companies before their bad week.",
+     "text": "Two days later, a man in a grey suit steps over the ashes, careful of his shoes, and holds out a card. Vance.",
      "visual_beats": [
       {
        "at": "Two days later",
@@ -9005,34 +9041,34 @@
        "why": "two days later"
       },
       {
-       "at": "Vance",
+       "at": "a man in a grey suit",
+       "kind": "highlight",
+       "pos": [
+        0.5,
+        0.45
+       ],
+       "why": "rings the man in the grey suit stepping over the ashes"
+      },
+      {
+       "at": "holds out a card",
        "kind": "label",
        "text": "VANCE",
        "pos": [
         0.5,
         0.3
        ],
-       "why": "names the man in the grey suit"
-      },
-      {
-       "at": "bad week",
-       "kind": "symbol",
-       "symbol": "exclaim",
-       "pos": [
-        0.85,
-        0.25
-       ],
-       "why": "he buys before their bad week"
+       "why": "the card he holds out names him: Vance"
       }
      ],
      "tags": [
-      "dramatically"
+      "cautiously"
      ],
      "emphasis": [
-      "week"
+      "shoes"
      ],
-     "tone": "bright, quick",
-     "emotion": "tension"
+     "tone": "measured, wry",
+     "emotion": "tension",
+     "kind": "transition"
     },
     {
      "text": "I'll buy the company today. You're both rich by Friday.",
@@ -9072,7 +9108,8 @@
       "Friday"
      ],
      "tone": "smooth, inviting",
-     "emotion": "tempting"
+     "emotion": "tempting",
+     "kind": "transition"
     },
     {
      "text": "What's the catch?",
@@ -9104,7 +9141,8 @@
       "catch"
      ],
      "tone": "quick, wary",
-     "emotion": "suspicious"
+     "emotion": "suspicious",
+     "kind": "transition"
     },
     {
      "text": "The fire was old wiring in an old garage. Nothing to do with batteries.",
@@ -9147,7 +9185,8 @@
       "batteries"
      ],
      "tone": "smooth, reassuring",
-     "emotion": "tempting"
+     "emotion": "tempting",
+     "kind": "transition"
     },
     {
      "text": "Two hundred riders are sitting on those batteries.",
@@ -9186,7 +9225,8 @@
       "sitting"
      ],
      "tone": "firm, quiet",
-     "emotion": "urgent"
+     "emotion": "urgent",
+     "kind": "transition"
     },
     {
      "text": "And they'll be fine. Probably.",
@@ -9194,6 +9234,13 @@
      "to": "musk",
      "intent": "deflect",
      "visual_beats": [
+      {
+       "at": "they'll be fine",
+       "kind": "expression",
+       "expression": "angry",
+       "why": "Musk hears they'll be fine and goes hard [they'll be fine]",
+       "who": "musk"
+      },
       {
        "at": "Probably",
        "kind": "text",
@@ -9210,14 +9257,6 @@
        "expression": "amused",
        "why": "Vance: they'll be fine. Probably. [Probably]",
        "who": "vance"
-      },
-      {
-       "at": "Probably",
-       "kind": "expression",
-       "expression": "angry",
-       "why": "Musk hears probably [Probably]",
-       "who": "musk",
-       "offset": 0.4
       }
      ],
      "tags": [
@@ -9227,7 +9266,8 @@
       "Probably"
      ],
      "tone": "smooth, light",
-     "emotion": "tempting"
+     "emotion": "tempting",
+     "kind": "transition"
     },
     {
      "text": "You know how this kind of paper works.",
@@ -9250,7 +9290,8 @@
       "paper"
      ],
      "tone": "low, confiding",
-     "emotion": "pressing"
+     "emotion": "pressing",
+     "kind": "transition"
     },
     {
      "text": "Yeah, I signed paper like that once. I paid for it in a cell.",
@@ -9296,7 +9337,8 @@
       "cell"
      ],
      "tone": "low, then steady",
-     "emotion": "pained"
+     "emotion": "pained",
+     "kind": "fact"
     },
     {
      "text": "Then you know it works.",
@@ -9328,7 +9370,8 @@
       "works"
      ],
      "tone": "smooth, patient",
-     "emotion": "pressing"
+     "emotion": "pressing",
+     "kind": "transition"
     },
     {
      "text": "That's why I'm not signing.",
@@ -9362,8 +9405,7 @@
        "kind": "expression",
        "expression": "surprised",
        "why": "Vance is surprised: not signing [not signing]",
-       "who": "vance",
-       "offset": 0.3
+       "who": "vance"
       }
      ],
      "tags": [
@@ -9374,7 +9416,8 @@
      ],
      "pause_after": 0.6,
      "tone": "firm, rising",
-     "emotion": "resolve"
+     "emotion": "resolve",
+     "kind": "transition"
     },
     {
      "text": "Vance leaves his card on the burnt workbench.",
@@ -9396,7 +9439,8 @@
       "workbench"
      ],
      "tone": "quiet",
-     "emotion": "tension"
+     "emotion": "tension",
+     "kind": "transition"
     },
     {
      "text": "Belfort picks up his phone and does something he has never done in a sale. He calls the buyer to tell him what's wrong.",
@@ -9411,6 +9455,13 @@
        "why": "rings the phone Belfort picks up"
       },
       {
+       "at": "does something",
+       "kind": "expression",
+       "expression": "worried",
+       "who": "belfort",
+       "why": "Belfort knows what it costs: does something he never has [does something]"
+      },
+      {
        "at": "never done in a sale",
        "kind": "symbol",
        "symbol": "cross",
@@ -9423,9 +9474,9 @@
       {
        "at": "calls the buyer",
        "kind": "expression",
-       "expression": "joyful",
-       "why": "Belfort calls the buyer, relieved [calls the buyer]",
-       "who": "belfort"
+       "expression": "determined",
+       "who": "belfort",
+       "why": "Belfort calls the buyer anyway, set on telling the truth [calls the buyer]"
       },
       {
        "at": "what's wrong",
@@ -9445,7 +9496,8 @@
       "wrong"
      ],
      "tone": "urgent, building",
-     "emotion": "resolve"
+     "emotion": "resolve",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -9455,7 +9507,7 @@
      "picture": {
       "id": "s12_ash",
       "engine": "gemini",
-      "subject": "two days after the fire, a man in a grey suit with a grey tie and a thin grey smile steps carefully over the ashes of the burnt garage toward a burnt workbench, the tall tired man in black and the compact slick-haired man waiting among the cinders, clear empty upper third",
+      "subject": "two days after the fire, a man in a grey suit with a grey tie and a thin grey smile steps carefully over the ashes of the burnt garage, lifting his polished shoes, and holds out a business card to the tall tired man in black and the compact slick-haired man waiting among the cinders by a burnt workbench, clear empty upper third",
       "heroes": [
        "vance",
        "musk",
@@ -9476,7 +9528,7 @@
        ]
       },
       "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
-      "prompt": "wide cinematic establishing shot, two days after the fire, a man in a grey suit with a grey tie and a thin grey smile steps carefully over the ashes of the burnt garage toward a burnt workbench, the tall tired man in black and the compact slick-haired man waiting among the cinders, clear empty upper third. Named heroes: Vance, an invented buyer of failing companies: grey suit, grey tie, grey smile; Elon Musk as our caricature: tall, broad shoulders, short dark hair, tired eyes, black T-shirt, grease on his hands; Jordan Belfort as our caricature: compact, slicked hair, wide grin, a sharp suit that has seen better days, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, flat grey daylight falling through a roofless black ceiling onto ash and a scorched workbench, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
+      "prompt": "wide cinematic establishing shot, two days after the fire, a man in a grey suit with a grey tie and a thin grey smile steps carefully over the ashes of the burnt garage, lifting his polished shoes, and holds out a business card to the tall tired man in black and the compact slick-haired man waiting among the cinders by a burnt workbench, clear empty upper third. Named heroes: Vance, an invented buyer of failing companies: grey suit, grey tie, grey smile; Elon Musk as our caricature: tall, broad shoulders, short dark hair, tired eyes, black T-shirt, grease on his hands; Jordan Belfort as our caricature: compact, slicked hair, wide grin, a sharp suit that has seen better days, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, flat grey daylight falling through a roofless black ceiling onto ash and a scorched workbench, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
      },
      "motion": {
       "kind": "pull",
@@ -9797,7 +9849,8 @@
       "rows"
      ],
      "tone": "easy, scene-setting",
-     "emotion": "calm"
+     "emotion": "calm",
+     "kind": "transition"
     },
     {
      "text": "Two hundred of your batteries skipped a test. We want them back.",
@@ -9840,7 +9893,8 @@
       "back"
      ],
      "tone": "steady, honest",
-     "emotion": "tense"
+     "emotion": "tense",
+     "kind": "transition"
     },
     {
      "text": "Are they bad?",
@@ -9860,7 +9914,8 @@
       "bad"
      ],
      "tone": "blunt, quick",
-     "emotion": "businesslike"
+     "emotion": "businesslike",
+     "kind": "transition"
     },
     {
      "text": "Probably not. I don't sell probably.",
@@ -9894,7 +9949,8 @@
      ],
      "pause_after": 0.5,
      "tone": "quiet, flat",
-     "emotion": "firm"
+     "emotion": "firm",
+     "kind": "transition"
     },
     {
      "text": "Who pays for two hundred new ones?",
@@ -9924,7 +9980,8 @@
       "pays"
      ],
      "tone": "blunt",
-     "emotion": "businesslike"
+     "emotion": "businesslike",
+     "kind": "transition"
     },
     {
      "text": "We do.",
@@ -9953,7 +10010,8 @@
       "do"
      ],
      "tone": "quiet, even",
-     "emotion": "resolve"
+     "emotion": "resolve",
+     "kind": "transition"
     },
     {
      "text": "With what?",
@@ -9975,7 +10033,8 @@
       "what"
      ],
      "tone": "quick, worried",
-     "emotion": "worry"
+     "emotion": "worry",
+     "kind": "transition"
     },
     {
      "text": "With everything. I did it once before, on a Christmas Eve.",
@@ -10027,7 +10086,8 @@
       "everything"
      ],
      "tone": "quiet, steady",
-     "emotion": "resolve"
+     "emotion": "resolve",
+     "kind": "fact"
     },
     {
      "text": "Nobody has ever come in here to give me money back.",
@@ -10070,7 +10130,8 @@
       "back"
      ],
      "tone": "flat, moved",
-     "emotion": "surprise"
+     "emotion": "surprise",
+     "kind": "transition"
     },
     {
      "text": "Belfort opens his mouth to make a pitch. For once, he closes it.",
@@ -10110,7 +10171,8 @@
      ],
      "pause_after": 0.5,
      "tone": "wry, quick",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "Fix them. Then bring me next year's number. A real one.",
@@ -10150,10 +10212,11 @@
       "real"
      ],
      "tone": "blunt, warm underneath",
-     "emotion": "approval"
+     "emotion": "approval",
+     "kind": "transition"
     },
     {
-     "text": "They spend every dollar on two hundred new batteries, and Musk tests each one twice, on camera.",
+     "text": "They spend every dollar on two hundred new batteries, and Musk tests each one twice, on camera. Then they post the fire report online, every page.",
      "visual_beats": [
       {
        "at": "every dollar",
@@ -10183,6 +10246,16 @@
         0.2
        ],
        "why": "rings the camera filming the tests"
+      },
+      {
+       "at": "the fire report",
+       "kind": "label",
+       "text": "FIRE REPORT",
+       "pos": [
+        0.5,
+        0.55
+       ],
+       "why": "they post the fire report online, every page"
       }
      ],
      "tags": [
@@ -10192,7 +10265,8 @@
       "twice"
      ],
      "tone": "brisk, warm",
-     "emotion": "relief"
+     "emotion": "relief",
+     "kind": "transition"
     },
     {
      "text": "For three months they eat from the motel vending machine. Belfort calls it the executive menu.",
@@ -10242,7 +10316,8 @@
      ],
      "pause_after": 0.5,
      "tone": "wry, quick",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -10469,19 +10544,19 @@
      "picture": {
       "id": "s13_test",
       "engine": "gemini",
-      "subject": "the tall tired man in black tests a new battery pack on a bench while a camera on a tripod records, a rack of two hundred new packs behind him each with a tick on a card, an empty cash box on the floor, clear empty upper third",
+      "subject": "the tall tired man in black tests a new battery pack on a bench while a camera on a tripod records, a rack of two hundred new packs behind him each with a tick on a card, an empty cash box on the floor, a thick printed fire report open beside a laptop on the bench, ready to go online, clear empty upper third",
       "heroes": [
        "musk"
       ],
       "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
-      "prompt": "medium cinematic shot, the tall tired man in black tests a new battery pack on a bench while a camera on a tripod records, a rack of two hundred new packs behind him each with a tick on a card, an empty cash box on the floor, clear empty upper third. One named hero: Elon Musk as our caricature: tall, broad shoulders, short dark hair, tired eyes, black T-shirt, grease on his hands, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, flat hard fluorescent warehouse light, long cool green-white rows, no soft shadows, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
+      "prompt": "medium cinematic shot, the tall tired man in black tests a new battery pack on a bench while a camera on a tripod records, a rack of two hundred new packs behind him each with a tick on a card, an empty cash box on the floor, a thick printed fire report open beside a laptop on the bench, ready to go online, clear empty upper third. One named hero: Elon Musk as our caricature: tall, broad shoulders, short dark hair, tired eyes, black T-shirt, grease on his hands, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, flat hard fluorescent warehouse light, long cool green-white rows, no soft shadows, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
      },
      "motion": {
       "kind": "push",
       "z0": 1.0,
       "z1": 1.07
      },
-     "purpose": "every dollar on new batteries, tested twice on camera",
+     "purpose": "every dollar into tested batteries and the fire report made public",
      "cut": {
       "why": "the cost made visible"
      },
@@ -10537,7 +10612,6 @@
     "need": "belonging",
     "claim_share": "fact",
     "closes": [
-     "L10",
      "L11"
     ]
    },
@@ -10634,7 +10708,8 @@
       "burned"
      ],
      "tone": "bright, quick",
-     "emotion": "satisfied"
+     "emotion": "satisfied",
+     "kind": "transition"
     },
     {
      "text": "Belfort's whole pitch is one sentence now. Ours burned once. That's why they don't.",
@@ -10676,7 +10751,8 @@
       "don't"
      ],
      "tone": "pleased, quick",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "Grant Cardone works their phones. Same calls as year one. Now people pick up, because the name on the box means something.",
@@ -10722,7 +10798,8 @@
       "means"
      ],
      "tone": "quick",
-     "emotion": "satisfied"
+     "emotion": "satisfied",
+     "kind": "transition"
     },
     {
      "text": "Hormozi runs sixty gyms on cash. Zuckerberg sold his little website robot and vanished into a bigger one.",
@@ -10773,7 +10850,8 @@
       "bigger"
      ],
      "tone": "dry, quick",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "Trump is filming season four of How to Lose a Billion. Last season he read their fire report on air, page by page.",
@@ -10822,7 +10900,8 @@
       "page"
      ],
      "tone": "wry, quick",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "He called it the only honest paper in America. Ratings doubled.",
@@ -10863,7 +10942,8 @@
      ],
      "pause_after": 0.5,
      "tone": "flat",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "And Kiyosaki is in the motel lobby, explaining to the night clerk why debt is a gift. The clerk has heard it before.",
@@ -10912,26 +10992,30 @@
       "before"
      ],
      "tone": "dry",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "One viewer read every page after him. Then he walked into their office.",
      "visual_beats": [
       {
        "at": "One viewer",
-       "kind": "highlight",
+       "kind": "label",
+       "text": "JEFF BEZOS",
        "pos": [
-        0.3,
-        0.5
+        0.35,
+        0.3
        ],
-       "why": "rings the one viewer who read every page"
+       "why": "names the one viewer who read every page: Jeff Bezos"
       },
       {
-       "at": "walked into",
-       "kind": "accent",
-       "effect": "shake",
-       "why": "he walked into their office",
-       "strength": 0.3
+       "at": "their office",
+       "kind": "highlight",
+       "pos": [
+        0.5,
+        0.5
+       ],
+       "why": "rings him walking into their office"
       }
      ],
      "tags": [
@@ -10941,7 +11025,8 @@
       "office"
      ],
      "tone": "building, curious",
-     "emotion": "anticipation"
+     "emotion": "anticipation",
+     "kind": "transition"
     },
     {
      "text": "I read your fire report. All of it.",
@@ -10973,7 +11058,8 @@
       "All"
      ],
      "tone": "bright, genial",
-     "emotion": "pleased"
+     "emotion": "pleased",
+     "kind": "transition"
     },
     {
      "text": "Most buyers ask us to bury it.",
@@ -11006,7 +11092,8 @@
       "bury"
      ],
      "tone": "quiet, wry",
-     "emotion": "wary"
+     "emotion": "wary",
+     "kind": "transition"
     },
     {
      "text": "That's why I'm offering double what they would.",
@@ -11044,7 +11131,8 @@
       "double"
      ],
      "tone": "genial, unhurried",
-     "emotion": "pleased"
+     "emotion": "pleased",
+     "kind": "transition"
     },
     {
      "text": "Double.",
@@ -11073,7 +11161,8 @@
       "softly"
      ],
      "tone": "quiet, stunned",
-     "emotion": "disbelief"
+     "emotion": "disbelief",
+     "kind": "transition"
     },
     {
      "text": "Make it a partnership, and you can buy lunch.",
@@ -11111,9 +11200,9 @@
      "emphasis": [
       "lunch"
      ],
-     "pause_after": 0.5,
      "tone": "quick, cheeky",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -11280,22 +11369,6 @@
        "strength": 0.3
       }
      ]
-    },
-    {
-     "at": "He called it",
-     "type": "B",
-     "picture": "s14_trump",
-     "motion": {
-      "kind": "pull",
-      "z0": 1.052,
-      "z1": 1.0
-     },
-     "purpose": "'only honest paper': ratings doubled",
-     "cut": {
-      "why": "reframe on the quote"
-     },
-     "reuse": "reframe",
-     "heroes_ok": true
     },
     {
      "at": "And Kiyosaki is in the motel lobby",
@@ -11539,7 +11612,8 @@
       "same"
      ],
      "tone": "easy, steady",
-     "emotion": "anticipation"
+     "emotion": "anticipation",
+     "kind": "transition"
     },
     {
      "text": "Oh, the bench is still there. So is Kevin O'Leary.",
@@ -11577,7 +11651,8 @@
       "still"
      ],
      "tone": "wry",
-     "emotion": "foreboding"
+     "emotion": "foreboding",
+     "kind": "transition"
     },
     {
      "text": "Ten percent. Remember?",
@@ -11620,7 +11695,8 @@
       "Remember"
      ],
      "tone": "flat, unhurried",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "Of a burnt garage?",
@@ -11652,7 +11728,8 @@
       "burnt"
      ],
      "tone": "quiet, wary",
-     "emotion": "unease"
+     "emotion": "unease",
+     "kind": "transition"
     },
     {
      "text": "Of everything. Fires included. Read the envelope.",
@@ -11694,7 +11771,8 @@
       "envelope"
      ],
      "tone": "flat, unhurried",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "Well, you got lucky with him.",
@@ -11726,7 +11804,8 @@
       "lucky"
      ],
      "tone": "light, teasing",
-     "emotion": "smug"
+     "emotion": "smug",
+     "kind": "joke"
     },
     {
      "text": "I didn't pick him.",
@@ -11760,7 +11839,8 @@
      ],
      "pause_after": 0.5,
      "tone": "flat, quiet",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "Belfort's grin stays on a second too long.",
@@ -11780,7 +11860,8 @@
       "long"
      ],
      "tone": "quiet, wry",
-     "emotion": "foreboding"
+     "emotion": "foreboding",
+     "kind": "transition"
     },
     {
      "text": "He opens his briefcase. Eight signed envelopes. Trump. Kiyosaki. Cardone. Hormozi. Cuban. Bezos. Zuckerberg. Musk.",
@@ -11842,7 +11923,8 @@
       "Eight"
      ],
      "tone": "measured, building",
-     "emotion": "tension"
+     "emotion": "tension",
+     "kind": "transition"
     },
     {
      "text": "Eight?",
@@ -11874,7 +11956,8 @@
       "Eight"
      ],
      "tone": "quick, thin",
-     "emotion": "shock"
+     "emotion": "shock",
+     "kind": "transition"
     },
     {
      "text": "Nine offered. One man read to the last line and said no.",
@@ -11931,7 +12014,8 @@
       "no"
      ],
      "tone": "flat, unhurried",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "I read contracts.",
@@ -11953,7 +12037,8 @@
       "read"
      ],
      "tone": "proud, quick",
-     "emotion": "smug"
+     "emotion": "smug",
+     "kind": "joke"
     },
     {
      "text": "Then you went into business with a man who doesn't.",
@@ -11994,7 +12079,8 @@
      ],
      "pause_after": 0.8,
      "tone": "flat, unhurried",
-     "emotion": "cold calm"
+     "emotion": "cold calm",
+     "kind": "transition"
     },
     {
      "text": "Musk looks at the floor. Belfort looks at Musk.",
@@ -12007,12 +12093,11 @@
        "who": "musk"
       },
       {
-       "at": "looks at Musk",
+       "at": "Belfort looks",
        "kind": "expression",
        "expression": "sad",
        "why": "Belfort looks at Musk [looks at Musk]",
-       "who": "belfort",
-       "offset": 0.2
+       "who": "belfort"
       }
      ],
      "tags": [
@@ -12022,7 +12107,8 @@
       "floor"
      ],
      "tone": "quiet",
-     "emotion": "tension"
+     "emotion": "tension",
+     "kind": "transition"
     },
     {
      "text": "Most of these paid back my forty. Three of them paid for everything.",
@@ -12065,7 +12151,8 @@
       "everything"
      ],
      "tone": "flat, unhurried",
-     "emotion": "cool"
+     "emotion": "cool",
+     "kind": "transition"
     },
     {
      "text": "So it was luck.",
@@ -12097,7 +12184,8 @@
       "luck"
      ],
      "tone": "quiet, low",
-     "emotion": "deflated"
+     "emotion": "deflated",
+     "kind": "transition"
     },
     {
      "text": "Luck chose the three. I made sure I owned all eight.",
@@ -12137,7 +12225,8 @@
      ],
      "pause_after": 0.5,
      "tone": "flat, final",
-     "emotion": "cold calm"
+     "emotion": "cold calm",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -12456,7 +12545,8 @@
     "claim_share": "invented",
     "closes": [
      "L01",
-     "L12"
+     "L12",
+     "L03"
     ]
    },
    "scene": {
@@ -12545,37 +12635,48 @@
       "nothing"
      ],
      "tone": "easy, reflective",
-     "emotion": "calm"
+     "emotion": "calm",
+     "kind": "transition"
     },
     {
-     "text": "The ones whose skill ran on other people's trust waited years for it. Some are still waiting.",
+     "text": "The ones who could build or sell with their own hands were back within months. The ones who lived on other people's trust are still waiting.",
      "visual_beats": [
+      {
+       "at": "back within months",
+       "kind": "symbol",
+       "symbol": "check",
+       "pos": [
+        0.82,
+        0.22
+       ],
+       "why": "the builders were back within months"
+      },
       {
        "at": "other people's trust",
        "kind": "text",
        "text": "OTHER PEOPLE'S TRUST",
-       "why": "skill that ran on other people's trust",
        "pos": [
         0.5,
         0.2
-       ]
+       ],
+       "why": "the ones who lived on other people's trust"
       },
       {
-       "at": "waited years",
+       "at": "still waiting",
        "kind": "symbol",
        "symbol": "clock",
        "pos": [
         0.85,
         0.2
        ],
-       "why": "waited years for it"
+       "why": "they are still waiting"
       },
       {
        "at": "still waiting",
        "kind": "expression",
        "expression": "sad",
-       "why": "Kiyosaki is one still waiting [still waiting]",
-       "who": "kiyosaki"
+       "who": "kiyosaki",
+       "why": "Kiyosaki is one still waiting [still waiting]"
       }
      ],
      "tags": [
@@ -12585,53 +12686,8 @@
       "waiting"
      ],
      "tone": "quiet, wry",
-     "emotion": "wistful"
-    },
-    {
-     "text": "The ones who could build or sell with their own hands were back within months.",
-     "visual_beats": [
-      {
-       "at": "build",
-       "kind": "expression",
-       "expression": "joyful",
-       "why": "Musk, back within months: could build [build]",
-       "who": "musk"
-      },
-      {
-       "at": "sell",
-       "kind": "expression",
-       "expression": "joyful",
-       "why": "Belfort, back within months: could sell [sell]",
-       "who": "belfort"
-      },
-      {
-       "at": "their own hands",
-       "kind": "highlight",
-       "pos": [
-        0.5,
-        0.65
-       ],
-       "why": "rings their own hands"
-      },
-      {
-       "at": "back within months",
-       "kind": "symbol",
-       "symbol": "check",
-       "pos": [
-        0.82,
-        0.22
-       ],
-       "why": "back within months"
-      }
-     ],
-     "tags": [
-      "warmly"
-     ],
-     "emphasis": [
-      "months"
-     ],
-     "tone": "bright, quick",
-     "emotion": "satisfied"
+     "emotion": "wistful",
+     "kind": "transition"
     },
     {
      "text": "And the one who never built or sold anything spread forty dollars across eight of them.",
@@ -12680,7 +12736,8 @@
       "eight"
      ],
      "tone": "wry, quick",
-     "emotion": "amused"
+     "emotion": "amused",
+     "kind": "transition"
     },
     {
      "text": "Luck decided which envelope paid. Skill decided who was still standing when it did.",
@@ -12724,7 +12781,8 @@
      ],
      "pause_after": 0.7,
      "tone": "even, final",
-     "emotion": "settled"
+     "emotion": "settled",
+     "kind": "transition"
     },
     {
      "text": "So if you sat on that bench tomorrow, which envelope would be yours?",
@@ -12756,7 +12814,8 @@
       "yours"
      ],
      "tone": "warm, direct to the viewer",
-     "emotion": "curious"
+     "emotion": "curious",
+     "kind": "transition"
     }
    ],
    "shots": [
@@ -12778,42 +12837,6 @@
      "cut": {
       "why": "return to the opening image"
      }
-    },
-    {
-     "at": "The ones whose skill ran",
-     "type": "B",
-     "picture": {
-      "id": "s16_waiting",
-      "engine": "gemini",
-      "subject": "the grey-haired tanned man sits alone in the old Toyota in a motel lot, a clock on its dashboard, still waiting for a check that does not come, a pointing finger resting on the wheel, clear empty upper third",
-      "heroes": [
-       "kiyosaki"
-      ],
-      "speakers": {
-       "kiyosaki": [
-        0.45,
-        0.4
-       ]
-      },
-      "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
-      "prompt": "medium cinematic shot, the grey-haired tanned man sits alone in the old Toyota in a motel lot, a clock on its dashboard, still waiting for a check that does not come, a pointing finger resting on the wheel, clear empty upper third. One named hero: Robert Kiyosaki as our caricature: grey hair, tanned, open-collar shirt, a pointing finger, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, low late-afternoon gold light slanting down a marble hallway, long warm shadows, cold blue shade in the corners, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
-     },
-     "motion": {
-      "kind": "push",
-      "z0": 1.0,
-      "z1": 1.07
-     },
-     "purpose": "trust-dependent skills wait years",
-     "cut": {
-      "why": "the first answer"
-     },
-     "heroes_ok": true,
-     "accents": [
-      {
-       "kind": "wobble",
-       "strength": 0.3
-      }
-     ]
     },
     {
      "at": "The ones who could build",
@@ -12847,9 +12870,45 @@
      },
      "purpose": "the hands-on skills are back within months",
      "cut": {
-      "why": "the second answer"
+      "why": "the first answer"
      },
      "heroes_ok": true
+    },
+    {
+     "at": "The ones who lived",
+     "type": "B",
+     "picture": {
+      "id": "s16_waiting",
+      "engine": "gemini",
+      "subject": "the grey-haired tanned man sits alone in the old Toyota in a motel lot, a clock on its dashboard, still waiting for a check that does not come, a pointing finger resting on the wheel, clear empty upper third",
+      "heroes": [
+       "kiyosaki"
+      ],
+      "speakers": {
+       "kiyosaki": [
+        0.45,
+        0.4
+       ]
+      },
+      "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
+      "prompt": "medium cinematic shot, the grey-haired tanned man sits alone in the old Toyota in a motel lot, a clock on its dashboard, still waiting for a check that does not come, a pointing finger resting on the wheel, clear empty upper third. One named hero: Robert Kiyosaki as our caricature: grey hair, tanned, open-collar shirt, a pointing finger, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, low late-afternoon gold light slanting down a marble hallway, long warm shadows, cold blue shade in the corners, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "purpose": "the ones who lived on trust are still waiting",
+     "cut": {
+      "why": "the second answer"
+     },
+     "heroes_ok": true,
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
     },
     {
      "at": "And the one who never built",
@@ -12957,6 +13016,13 @@
   {
    "track": "clockwork_loop__v1",
    "from": "In the parking lot, Musk",
+   "to": "Year two. A black car",
+   "gain_db": -32,
+   "fade_s": 2.0
+  },
+  {
+   "track": "clockwork_loop__v1",
+   "from": "Year three. Two in the morning",
    "to": "The next morning, Cuban's",
    "gain_db": -32,
    "fade_s": 2.0
@@ -12964,7 +13030,7 @@
   {
    "track": "sneaky_pizzicato__v1",
    "from": "Year five. Cuban's riders",
-   "to": "a second too long",
+   "to": "Five years after the bench",
    "gain_db": -26,
    "fade_s": 2.0
   },
@@ -13702,10 +13768,10 @@
    "id": "SH03",
    "style": "anti_intuition",
    "ending": "pointer",
-   "hook": "Nobody lends to a ruined billionaire.",
+   "hook": "Nobody lends to a broke business titan.",
    "lines": [
     {
-     "text": "Nobody lends to a ruined billionaire.",
+     "text": "Nobody lends to a broke business titan.",
      "tags": [
       "curious"
      ],
@@ -13721,10 +13787,10 @@
        ]
       },
       {
-       "at": "ruined billionaire",
+       "at": "broke business titan",
        "kind": "text",
-       "why": "the ruined billionaire [ruined billionaire]",
-       "text": "RUINED",
+       "why": "the broke business titan [broke titan]",
+       "text": "BROKE TITAN",
        "pos": [
         0.5,
         0.2
@@ -13837,27 +13903,45 @@
      "pause_after": 0.5
     },
     {
-     "text": "A loan was only ever a stranger's trust. But nobody trusts them now.",
+     "text": "A loan was only ever a stranger's trust with interest on top.",
      "visual_beats": [
       {
-       "at": "stranger's trust",
+       "at": "A loan",
        "kind": "text",
-       "why": "a loan is a stranger's trust [stranger's trust]",
-       "text": "A STRANGER'S TRUST",
+       "text": "A LOAN IS TRUST",
+       "why": "a loan was only a stranger's trust",
        "pos": [
         0.5,
         0.2
        ]
       },
       {
-       "at": "nobody",
+       "at": "interest on top",
        "kind": "symbol",
-       "why": "nobody trusts them: a cross [nobody]",
+       "symbol": "plus",
+       "pos": [
+        0.8,
+        0.3
+       ],
+       "why": "trust plus interest on top"
+      }
+     ]
+    },
+    {
+     "text": "And nobody trusts them for a cent.",
+     "emphasis": [
+      "cent"
+     ],
+     "visual_beats": [
+      {
+       "at": "nobody trusts",
+       "kind": "symbol",
        "symbol": "cross",
        "pos": [
         0.85,
         0.25
-       ]
+       ],
+       "why": "nobody trusts them for a cent"
       }
      ]
     },
@@ -13895,7 +13979,7 @@
      "zoom": 1.0
     },
     {
-     "at": "ruined billionaire",
+     "at": "broke business titan",
      "picture": "s03_bank",
      "crop_x": 0.5,
      "zoom": 1.0
@@ -13923,6 +14007,12 @@
      "picture": "s03_trust",
      "crop_x": 0.5,
      "zoom": 1.0
+    },
+    {
+     "at": "And nobody trusts them",
+     "picture": "s03_street",
+     "crop_x": 0.5,
+     "zoom": 1.3
     },
     {
      "at": "So the only money",
@@ -14915,8 +15005,7 @@
        "kind": "expression",
        "expression": "surprised",
        "why": "Musk is shocked by five hundred [Five hundred]",
-       "who": "musk",
-       "offset": 0.3
+       "who": "musk"
       }
      ],
      "tags": [
@@ -15064,8 +15153,7 @@
        "kind": "expression",
        "expression": "joyful",
        "why": "Belfort lights up at Yes [Yes]",
-       "who": "belfort",
-       "offset": 0.2
+       "who": "belfort"
       }
      ],
      "tags": [
@@ -15214,7 +15302,7 @@
       {
        "at": "a man in grey",
        "kind": "highlight",
-       "why": "rings the man in the grey suit [a man in grey]",
+       "why": "rings the man in the grey suit [grey suit]",
        "pos": [
         0.4,
         0.5
@@ -15247,27 +15335,17 @@
      ]
     },
     {
-     "text": "His name is Vance. He buys companies before their bad week.",
+     "text": "He holds out a card with one name on it. Vance.",
      "visual_beats": [
       {
-       "at": "Vance",
+       "at": "holds out a card",
        "kind": "label",
-       "why": "names Vance [Vance]",
        "text": "VANCE",
        "pos": [
-        0.4,
+        0.45,
         0.3
-       ]
-      },
-      {
-       "at": "bad week",
-       "kind": "symbol",
-       "why": "the bad week: a cross [bad week]",
-       "symbol": "cross",
-       "pos": [
-        0.85,
-        0.25
-       ]
+       ],
+       "why": "the card he holds out names him: Vance"
       }
      ]
     },
@@ -15424,6 +15502,13 @@
      "intent": "deflect",
      "visual_beats": [
       {
+       "at": "they'll be fine",
+       "kind": "expression",
+       "expression": "angry",
+       "why": "Musk hears they'll be fine and goes hard [they'll be fine]",
+       "who": "musk"
+      },
+      {
        "at": "Probably",
        "kind": "text",
        "text": "PROBABLY",
@@ -15439,14 +15524,6 @@
        "expression": "amused",
        "why": "Vance: they'll be fine. Probably. [Probably]",
        "who": "vance"
-      },
-      {
-       "at": "Probably",
-       "kind": "expression",
-       "expression": "angry",
-       "why": "Musk hears probably [Probably]",
-       "who": "musk",
-       "offset": 0.4
       }
      ],
      "tags": [
@@ -15583,8 +15660,7 @@
        "kind": "expression",
        "expression": "surprised",
        "why": "Vance is surprised: not signing [not signing]",
-       "who": "vance",
-       "offset": 0.3
+       "who": "vance"
       }
      ],
      "tags": [
@@ -15647,10 +15723,10 @@
      "zoom": 1.0
     },
     {
-     "at": "His name is Vance",
-     "picture": "s12_ots_vm",
-     "crop_x": 0.55,
-     "zoom": 1.0
+     "at": "He holds out a",
+     "picture": "s12_ash",
+     "crop_x": 0.45,
+     "zoom": 1.3
     },
     {
      "at": "I'll buy the company",
@@ -16010,29 +16086,19 @@
    "id": "SH09",
    "style": "fact_bomb",
    "ending": "pointer",
-   "hook": "How many envelopes did O'Leary get signed?",
+   "hook": "What can forty dollars buy in five years?",
    "lines": [
     {
-     "text": "How many envelopes did O'Leary get signed?",
+     "text": "What can forty dollars buy in five years?",
      "tags": [
       "curious"
      ],
      "visual_beats": [
       {
-       "at": "How many",
-       "kind": "symbol",
-       "why": "how many: a question [How many]",
-       "symbol": "question",
-       "pos": [
-        0.85,
-        0.22
-       ]
-      },
-      {
-       "at": "signed?",
+       "at": "forty dollars",
        "kind": "text",
-       "why": "the count of signed envelopes [signed]",
-       "text": "HOW MANY?",
+       "why": "forty dollars is the stake [forty dollars]",
+       "text": "FORTY DOLLARS",
        "pos": [
         0.5,
         0.2
@@ -16044,14 +16110,14 @@
      "text": "Five years later, O'Leary will collect.",
      "visual_beats": [
       {
-       "at": "Five years later",
-       "kind": "text",
-       "why": "five years have passed [Five years later]",
-       "text": "FIVE YEARS LATER",
+       "at": "O'Leary",
+       "kind": "label",
+       "text": "KEVIN O'LEARY",
        "pos": [
-        0.5,
-        0.2
-       ]
+        0.3,
+        0.3
+       ],
+       "why": "names O'Leary on his bench [O'Leary]"
       }
      ]
     },
@@ -16164,16 +16230,6 @@
      "visual_beats": [
       {
        "at": "lucky",
-       "kind": "text",
-       "text": "LUCKY",
-       "why": "you got lucky",
-       "pos": [
-        0.5,
-        0.2
-       ]
-      },
-      {
-       "at": "lucky",
        "kind": "expression",
        "expression": "amused",
        "why": "Belfort teases: lucky [lucky]"
@@ -16237,301 +16293,27 @@
      ]
     },
     {
-     "text": "Belfort opens his briefcase.",
+     "text": "How many envelopes did he get signed? Watch the full video.",
      "visual_beats": [
       {
-       "at": "briefcase",
-       "kind": "highlight",
-       "why": "rings the briefcase [briefcase]",
-       "pos": [
-        0.5,
-        0.6
-       ]
-      }
-     ]
-    },
-    {
-     "text": "Eight?",
-     "speaker": "belfort",
-     "to": "oleary",
-     "intent": "question",
-     "visual_beats": [
-      {
-       "at": "Eight",
+       "at": "How many envelopes",
        "kind": "symbol",
+       "why": "how many envelopes: a question [envelopes]",
        "symbol": "question",
        "pos": [
         0.85,
         0.22
-       ],
-       "why": "eight, not nine?"
+       ]
       },
       {
-       "at": "Eight",
-       "kind": "expression",
-       "expression": "doubtful",
-       "why": "Belfort doubts the count: eight? [Eight]"
-      }
-     ],
-     "tags": [
-      "nervous"
-     ],
-     "emphasis": [
-      "Eight"
-     ]
-    },
-    {
-     "text": "Nine offered. One man read to the last line and said no.",
-     "speaker": "oleary",
-     "to": "belfort",
-     "intent": "reveal",
-     "visual_beats": [
-      {
-       "at": "Nine offered",
-       "kind": "text",
-       "text": "NINE OFFERED",
-       "why": "nine offered, one refused",
-       "pos": [
-        0.5,
-        0.2
-       ],
-       "cue": {
-        "sound": "chime",
-        "event": "reveal",
-        "why": "the biggest turn: nine offered, one refused"
-       }
-      },
-      {
-       "at": "One man read",
-       "kind": "expression",
-       "expression": "surprised",
-       "why": "Belfort realises it was him: one man read [One man read]",
-       "who": "belfort"
-      },
-      {
-       "at": "the last line",
+       "at": "get signed",
        "kind": "highlight",
+       "why": "rings the closed briefcase on his knee [signed]",
        "pos": [
-        0.5,
-        0.5
-       ],
-       "why": "rings the last line from the first day"
-      },
-      {
-       "at": "said no",
-       "kind": "symbol",
-       "symbol": "cross",
-       "pos": [
-        0.85,
-        0.25
-       ],
-       "why": "and said no"
-      }
-     ],
-     "tags": [
-      "deadpan"
-     ],
-     "emphasis": [
-      "no"
-     ]
-    },
-    {
-     "text": "I read contracts.",
-     "speaker": "belfort",
-     "to": "oleary",
-     "intent": "banter",
-     "visual_beats": [
-      {
-       "at": "I read contracts",
-       "kind": "expression",
-       "expression": "smug",
-       "why": "Belfort proud: I read contracts [I read contracts]"
-      }
-     ],
-     "tags": [
-      "excited"
-     ],
-     "emphasis": [
-      "read"
-     ]
-    },
-    {
-     "text": "Then you went into business with a man who doesn't.",
-     "speaker": "oleary",
-     "to": "belfort",
-     "intent": "reveal",
-     "visual_beats": [
-      {
-       "at": "business with a man",
-       "kind": "expression",
-       "expression": "worried",
-       "why": "Belfort is rattled: a man who doesn't [business with a man]",
-       "who": "belfort"
-      },
-      {
-       "at": "who doesn't",
-       "kind": "expression",
-       "expression": "worried",
-       "why": "Musk hears who doesn't [who doesn't]",
-       "who": "musk"
-      },
-      {
-       "at": "doesn't",
-       "kind": "symbol",
-       "symbol": "cross",
-       "pos": [
-        0.85,
-        0.25
-       ],
-       "why": "a man who doesn't read"
-      }
-     ],
-     "tags": [
-      "deadpan"
-     ],
-     "emphasis": [
-      "doesn't"
-     ],
-     "pause_after": 0.8
-    },
-    {
-     "text": "Musk looks at the floor. Belfort looks at Musk.",
-     "visual_beats": [
-      {
-       "at": "looks at the floor",
-       "kind": "expression",
-       "expression": "sad",
-       "why": "Musk looks at the floor [looks at the floor]",
-       "who": "musk"
-      },
-      {
-       "at": "looks at Musk",
-       "kind": "expression",
-       "expression": "sad",
-       "why": "Belfort looks at Musk [looks at Musk]",
-       "who": "belfort",
-       "offset": 0.2
-      }
-     ],
-     "tags": [
-      "softly"
-     ],
-     "emphasis": [
-      "floor"
-     ]
-    },
-    {
-     "text": "Most of these paid back my forty. Three of them paid for everything.",
-     "speaker": "oleary",
-     "to": "musk",
-     "intent": "reveal",
-     "visual_beats": [
-      {
-       "at": "paid back my forty",
-       "kind": "symbol",
-       "symbol": "check",
-       "pos": [
-        0.82,
-        0.22
-       ],
-       "why": "most paid back my forty"
-      },
-      {
-       "at": "Three of them",
-       "kind": "text",
-       "text": "THREE PAID EVERYTHING",
-       "why": "three of them paid for everything",
-       "pos": [
-        0.5,
-        0.2
+        0.3,
+        0.62
        ]
       },
-      {
-       "at": "Three of them",
-       "kind": "expression",
-       "expression": "surprised",
-       "why": "Musk is surprised: three of them paid [Three of them]",
-       "who": "musk"
-      }
-     ],
-     "tags": [
-      "deadpan"
-     ],
-     "emphasis": [
-      "everything"
-     ]
-    },
-    {
-     "text": "So it was luck.",
-     "speaker": "musk",
-     "to": "oleary",
-     "intent": "press",
-     "visual_beats": [
-      {
-       "at": "it was luck",
-       "kind": "expression",
-       "expression": "deadpan",
-       "why": "Musk asks flat: it was luck [it was luck]"
-      },
-      {
-       "at": "luck",
-       "kind": "symbol",
-       "symbol": "question",
-       "pos": [
-        0.85,
-        0.22
-       ],
-       "why": "so it was luck?"
-      }
-     ],
-     "tags": [
-      "softly"
-     ],
-     "emphasis": [
-      "luck"
-     ]
-    },
-    {
-     "text": "Luck chose the three. I made sure I owned all eight.",
-     "speaker": "oleary",
-     "to": "musk",
-     "intent": "decide",
-     "visual_beats": [
-      {
-       "at": "I made sure",
-       "kind": "expression",
-       "expression": "smug",
-       "why": "O'Leary, smug: I made sure [I made sure]"
-      },
-      {
-       "at": "owned all eight",
-       "kind": "text",
-       "text": "OWNED ALL EIGHT",
-       "why": "I owned all eight",
-       "pos": [
-        0.5,
-        0.2
-       ]
-      },
-      {
-       "at": "all eight",
-       "kind": "expression",
-       "expression": "sad",
-       "why": "Musk sinks: all eight [all eight]",
-       "who": "musk"
-      }
-     ],
-     "tags": [
-      "deadpan"
-     ],
-     "emphasis": [
-      "eight"
-     ],
-     "pause_after": 0.5
-    },
-    {
-     "text": "Watch the full video.",
-     "visual_beats": [
       {
        "at": "full video",
        "kind": "label",
@@ -16547,14 +16329,14 @@
    ],
    "shots": [
     {
-     "at": "How many envelopes",
-     "picture": "s15_eight",
-     "crop_x": 0.5,
+     "at": "What can forty",
+     "picture": "s15_bench",
+     "crop_x": 0.3,
      "zoom": 1.0
     },
     {
-     "at": "O'Leary get signed",
-     "picture": "s15_bench",
+     "at": "dollars buy in five years",
+     "picture": "s15_ts_om",
      "crop_x": 0.3,
      "zoom": 1.0
     },
@@ -16601,64 +16383,10 @@
      "zoom": 1.3
     },
     {
-     "at": "Belfort opens his briefcase",
-     "picture": "s15_eight",
-     "crop_x": 0.5,
-     "zoom": 1.0
-    },
-    {
-     "at": "Eight",
-     "picture": "s15_ots_bel",
-     "crop_x": 0.45,
-     "zoom": 1.0
-    },
-    {
-     "at": "Nine offered One man",
-     "picture": "s15_ots_bel",
-     "crop_x": 0.9,
-     "zoom": 1.0
-    },
-    {
-     "at": "I read contracts",
-     "picture": "s15_ots_bel",
-     "crop_x": 0.45,
+     "at": "How many envelopes did",
+     "picture": "s15_bench",
+     "crop_x": 0.3,
      "zoom": 1.3
-    },
-    {
-     "at": "Then you went into",
-     "picture": "s15_three",
-     "crop_x": 0.15,
-     "zoom": 1.0
-    },
-    {
-     "at": "Musk looks at the",
-     "picture": "s15_three",
-     "crop_x": 0.15,
-     "zoom": 1.0
-    },
-    {
-     "at": "Most of these paid",
-     "picture": "s15_three",
-     "crop_x": 0.15,
-     "zoom": 1.3
-    },
-    {
-     "at": "So it was luck",
-     "picture": "s15_ots_musk",
-     "crop_x": 0.55,
-     "zoom": 1.0
-    },
-    {
-     "at": "Luck chose the three",
-     "picture": "s15_ots_musk",
-     "crop_x": 0.1,
-     "zoom": 1.0
-    },
-    {
-     "at": "Watch the full video",
-     "picture": "s15_eight",
-     "crop_x": 0.5,
-     "zoom": 1.0
     }
    ]
   },
@@ -16670,9 +16398,6 @@
    "lines": [
     {
      "text": "Who won the five years after the bench?",
-     "tags": [
-      "curious"
-     ],
      "visual_beats": [
       {
        "at": "Who won",
@@ -16697,7 +16422,41 @@
      ]
     },
     {
-     "text": "Three kinds of men left the bench. Watch how they rank.",
+     "text": "Ten men walked out of this building with nothing but what they knew.",
+     "visual_beats": [
+      {
+       "at": "Ten men",
+       "kind": "text",
+       "text": "TEN MEN",
+       "why": "ten men walked out",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      },
+      {
+       "at": "nothing but",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.85,
+        0.25
+       ],
+       "why": "with nothing but what they knew"
+      },
+      {
+       "at": "what they knew",
+       "kind": "highlight",
+       "pos": [
+        0.5,
+        0.3
+       ],
+       "why": "rings what they knew, in their heads"
+      }
+     ]
+    },
+    {
+     "text": "Three kinds of men. Watch how they rank.",
      "visual_beats": [
       {
        "at": "Three kinds",
@@ -16722,7 +16481,7 @@
      ]
     },
     {
-     "text": "Third: men who ran on trust. They waited years.",
+     "text": "Third: the ones who lived on other people's trust.",
      "visual_beats": [
       {
        "at": "Third",
@@ -16735,19 +16494,18 @@
        ]
       },
       {
-       "at": "waited years",
-       "kind": "symbol",
-       "why": "they wait years: a clock [waited years]",
-       "symbol": "clock",
+       "at": "other people's trust",
+       "kind": "highlight",
+       "why": "rings the man still waiting on trust [trust]",
        "pos": [
-        0.85,
-        0.22
+        0.45,
+        0.4
        ]
       }
      ]
     },
     {
-     "text": "Second: men with their own hands. Back within months.",
+     "text": "Second: the ones who could build or sell with their own hands.",
      "visual_beats": [
       {
        "at": "Second",
@@ -16771,7 +16529,7 @@
      ]
     },
     {
-     "text": "First: the man who spread forty dollars across eight of them.",
+     "text": "First: the one nobody on that bench saw coming.",
      "visual_beats": [
       {
        "at": "First",
@@ -16784,91 +16542,29 @@
        ]
       },
       {
-       "at": "eight of them",
+       "at": "saw coming",
        "kind": "highlight",
-       "why": "rings the envelopes [eight of them]",
+       "why": "rings the lone envelope on the bench [bench]",
        "pos": [
         0.5,
-        0.6
+        0.62
        ]
       }
      ]
     },
     {
-     "text": "Luck decided which envelope paid. Skill decided who was still standing when it did.",
+     "text": "Who was it? Watch the full video.",
      "visual_beats": [
       {
-       "at": "Luck decided",
-       "kind": "text",
-       "text": "LUCK",
-       "why": "luck decided which envelope paid",
-       "pos": [
-        0.3,
-        0.2
-       ]
-      },
-      {
-       "at": "Skill decided",
-       "kind": "text",
-       "text": "SKILL",
-       "why": "skill decided who was standing",
-       "pos": [
-        0.7,
-        0.2
-       ]
-      },
-      {
-       "at": "still standing",
+       "at": "Who was it",
        "kind": "symbol",
-       "symbol": "arrow_up",
-       "pos": [
-        0.85,
-        0.22
-       ],
-       "why": "still standing when it did"
-      }
-     ],
-     "tags": [
-      "deadpan"
-     ],
-     "emphasis": [
-      "standing"
-     ],
-     "pause_after": 0.7
-    },
-    {
-     "text": "So if you sat on that bench tomorrow, which envelope would be yours?",
-     "visual_beats": [
-      {
-       "at": "that bench",
-       "kind": "highlight",
-       "pos": [
-        0.5,
-        0.72
-       ],
-       "why": "rings that bench, tomorrow"
-      },
-      {
-       "at": "which envelope",
-       "kind": "symbol",
+       "why": "who was it: watch for the answer [Who was it]",
        "symbol": "question",
        "pos": [
         0.85,
         0.22
-       ],
-       "why": "which envelope would be yours"
-      }
-     ],
-     "tags": [
-      "curious"
-     ],
-     "emphasis": [
-      "yours"
-     ]
-    },
-    {
-     "text": "Watch the full video.",
-     "visual_beats": [
+       ]
+      },
       {
        "at": "full video",
        "kind": "label",
@@ -16891,53 +16587,210 @@
     },
     {
      "at": "five years after the bench",
-     "picture": "s16_envelopes",
-     "crop_x": 0.45,
-     "zoom": 1.0
-    },
-    {
-     "at": "Three kinds of men",
-     "picture": "s16_steps",
+     "picture": "s16_card",
      "crop_x": 0.5,
      "zoom": 1.0
     },
     {
-     "at": "Third men who ran",
+     "at": "Ten men walked out",
+     "picture": "s16_steps",
+     "crop_x": 0.5,
+     "zoom": 1.3
+    },
+    {
+     "at": "Three kinds of men",
+     "picture": "s16_steps",
+     "crop_x": 0.3,
+     "zoom": 1.0
+    },
+    {
+     "at": "Third the ones who",
      "picture": "s16_waiting",
      "crop_x": 0.45,
      "zoom": 1.0
     },
     {
-     "at": "Second men with their",
+     "at": "Second the ones who",
      "picture": "s16_hands",
      "crop_x": 0.3,
      "zoom": 1.0
     },
     {
-     "at": "First the man who",
-     "picture": "s16_envelopes",
-     "crop_x": 0.45,
-     "zoom": 1.0
-    },
-    {
-     "at": "Luck decided which envelope",
-     "picture": "s16_envelopes",
-     "crop_x": 0.45,
+     "at": "First the one nobody",
+     "picture": "s16_card",
+     "crop_x": 0.5,
      "zoom": 1.3
     },
     {
-     "at": "So if you sat",
-     "picture": "s16_card",
-     "crop_x": 0.5,
-     "zoom": 1.0
-    },
-    {
-     "at": "Watch the full video",
-     "picture": "s16_card",
-     "crop_x": 0.5,
+     "at": "Who was it Watch",
+     "picture": "s16_steps",
+     "crop_x": 0.7,
      "zoom": 1.0
     }
    ]
   }
- ]
+ ],
+ "editorial": {
+  "version": 1,
+  "sources": [
+   {
+    "id": "SRC-01",
+    "url": "https://liquisearch.com/robert_kiyosaki/life_and_career",
+    "title": "Robert Kiyosaki - Life and Career",
+    "publisher": "LiquiSearch (Wikipedia mirror)",
+    "published_at": null,
+    "accessed_at": "2026-10-20",
+    "grade": "C",
+    "passage": "\"In his book You can Choose to be Rich, Kiyosaki said that after his bankruptcy he became homeless, and was living with his then girlfriend Kim at the back of an old Toyota for several months before starting their own business from the ground up.\"",
+    "notes": "Older Wikipedia text citing Kiyosaki's own book; the current Wikipedia article no longer carries the passage. The only source naming the Toyota."
+   },
+   {
+    "id": "SRC-02",
+    "url": "https://dspace.krok.edu.ua/bitstreams/31f28422-3055-4dc0-a1e0-21a8e3400035/download",
+    "title": "Student paper on Robert Kiyosaki (KROK University repository, Ukrainian)",
+    "publisher": "KROK University",
+    "published_at": null,
+    "accessed_at": "2026-10-20",
+    "grade": "C",
+    "passage": "\"Як згадувала дружина бізнесмена Кім, найважчим у житті виявився 1985 рік. Грошей не було, ночувати доводилось у машині чи у знайомих.\" (Kim recalled 1985 as the hardest year: no money, nights in a car or with friends.)",
+    "notes": "Read first-hand from the PDF text; independent of SRC-01; names a car, not the make."
+   },
+   {
+    "id": "SRC-03",
+    "url": "https://www.thefamouspeople.com/profiles/robert-toru-kiyosaki-2706.php",
+    "title": "Robert Kiyosaki Biography",
+    "publisher": "The Famous People",
+    "published_at": null,
+    "accessed_at": "2026-10-20",
+    "grade": "C",
+    "passage": "His T-shirt business dissolved in 1985 and his bank debts left him \"homeless and penniless\"; Kim is named as his wife.",
+    "notes": "Per the earlier claim check; no car."
+   },
+   {
+    "id": "SRC-04",
+    "url": "https://cleantechnica.com/2021/08/23/elon-musk-i-gave-tesla-the-last-of-my-remaining-cash-in-its-darkest-hour/",
+    "title": "Elon Musk: I Gave Tesla The \"Last Of My Remaining Cash\" In Its Darkest Hour",
+    "publisher": "CleanTechnica",
+    "published_at": "2021-08-23",
+    "accessed_at": "2026-10-20",
+    "grade": "B",
+    "passage": "Musk (@elonmusk, 2021-06-21): \"Tesla financing round closed at 6pm Dec 24th 2008\" ... \"last hour of [the] last day possible or payroll would've bounced two days later\" ... \"I gave Tesla last of my remaining cash from PayPal.\" ... \"Didn't even own a house or anything sellable.\"",
+    "notes": "Quotes Musk's own posts; his account, not an audit."
+   },
+   {
+    "id": "SRC-05",
+    "url": "https://preview-prod.w.houstonchronicle.com/business/technology/article/success-was-once-fleeting-for-billionaire-founder-5278880.php",
+    "title": "Success was once fleeting for billionaire founder of Tesla",
+    "publisher": "Houston Chronicle",
+    "published_at": "2014-02-28",
+    "accessed_at": "2026-10-20",
+    "grade": "B",
+    "passage": "\"We closed the financing round at the end of 2008 in the last hour of the last day\" ... \"We would have gone bankrupt a few days after Christmas.\"",
+    "notes": ""
+   },
+   {
+    "id": "SRC-06",
+    "url": "https://www.levelfields.ai/news/the-christmas-tesla-nearly-went-bankrupt",
+    "title": "The Christmas Tesla Nearly Went Bankrupt",
+    "publisher": "LevelFields",
+    "published_at": "2025-12-03",
+    "accessed_at": "2026-10-20",
+    "grade": "C",
+    "passage": "\"If that round hadn't closed on Christmas Eve, Tesla would have died.\" ... Musk \"poured nearly all of his PayPal fortune into Tesla and SpaceX.\"",
+    "notes": ""
+   },
+   {
+    "id": "SRC-07",
+    "url": "https://api.politifact.com/factchecks/2016/jun/21/hillary-clinton/yep-donald-trumps-companies-have-declared-bankrupt",
+    "title": "Yep, Donald Trump's companies have declared bankruptcy...more than four times",
+    "publisher": "PolitiFact",
+    "published_at": "2016-06-21",
+    "accessed_at": "2026-10-20",
+    "grade": "B",
+    "passage": "\"Trump has actually filed Chapter 11 six times, four times within two years in the 1990s, once more in 2004 and once more in 2009.\"",
+    "notes": ""
+   },
+   {
+    "id": "SRC-08",
+    "url": "https://www.nbcnews.com/news/us-news/trump-bankruptcy-math-doesn-t-add-n598376",
+    "title": "Trump Bankruptcy Math Doesn't Add Up",
+    "publisher": "NBC News",
+    "published_at": "2016-06-24",
+    "accessed_at": "2026-10-20",
+    "grade": "B",
+    "passage": "\"He and his rivals have talked about four Chapter 11 filings, but there were actually six.\" ... \"Some may be referring to the three 1992 filings as a single bankruptcy.\"",
+    "notes": ""
+   },
+   {
+    "id": "SRC-09",
+    "url": "https://www.biography.com/crime/jordan-belfort",
+    "title": "Jordan Belfort: Biography, Stockbroker, 'Wolf of Wall Street,' Crimes",
+    "publisher": "Biography.com",
+    "published_at": null,
+    "accessed_at": "2026-10-20",
+    "grade": "B",
+    "passage": "\"In 1999, Belfort pleaded guilty to securities fraud and money laundering.\" ... \"He served 22 months in jail.\"",
+    "notes": "Page updated 2026-07-09."
+   },
+   {
+    "id": "SRC-10",
+    "url": "https://en.wikipedia.org/wiki/Jordan_Belfort",
+    "title": "Jordan Belfort",
+    "publisher": "Wikipedia",
+    "published_at": null,
+    "accessed_at": "2026-10-20",
+    "grade": "C",
+    "passage": "Pleaded guilty in 1999 to fraud and related crimes; \"Belfort served 22 months of the sentence at the Taft Correctional Institution.\"",
+    "notes": ""
+   }
+  ],
+  "claims": [
+   {
+    "id": "C-01",
+    "text": "After his business failed (1985), Kiyosaki and Kim were homeless and slept in a car for a time; by his own account in You Can Choose to Be Rich, an old Toyota.",
+    "type": "fact",
+    "source_ids": [
+     "SRC-01",
+     "SRC-02",
+     "SRC-03"
+    ],
+    "confidence": "corroborated",
+    "uncertainty": "Homelessness and the car rest on the Kiyosakis' own accounts, retold by two independent secondary pages; the Toyota make is named by one page only; the book itself was not read."
+   },
+   {
+    "id": "C-02",
+    "text": "Musk says Tesla's rescue round closed on Christmas Eve 2008, in the last hour possible, and that he put in the last of his own cash.",
+    "type": "fact",
+    "source_ids": [
+     "SRC-04",
+     "SRC-05",
+     "SRC-06"
+    ],
+    "confidence": "corroborated",
+    "uncertainty": "Musk's own account; the exact amounts differ between reports and are not spoken."
+   },
+   {
+    "id": "C-03",
+    "text": "Trump's companies filed for Chapter 11 six times (1991, three in 1992, 2004, 2009); corporate, not personal.",
+    "type": "fact",
+    "source_ids": [
+     "SRC-07",
+     "SRC-08"
+    ],
+    "confidence": "corroborated",
+    "uncertainty": "Four when the three 1992 filings are counted as one; the line says his companies, not he."
+   },
+   {
+    "id": "C-05",
+    "text": "Belfort pleaded guilty to securities fraud and money laundering in 1999 and served 22 months.",
+    "type": "fact",
+    "source_ids": [
+     "SRC-09",
+     "SRC-10"
+    ],
+    "confidence": "corroborated",
+    "uncertainty": ""
+   }
+  ]
+ }
 }
