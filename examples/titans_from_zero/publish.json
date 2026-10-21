@@ -75,11 +75,16 @@
   "shorts": [
     {
       "id": "CS01",
-      "title": "$40 for 10% of Musk. Forever.",
+      "title": "$40 for a tenth of Musk. Forever.",
       "description": "Broke on a courthouse bench, Musk gets one offer: forty dollars for ten percent of everything, forever. A fictional what-if story with drawn caricatures; the real people did not take part or say these words.",
       "tags": [
         "Elon Musk",
         "Kevin O'Leary"
+      ],
+      "seconds": 65,
+      "audio": [
+        "own_voice",
+        "library"
       ]
     },
     {
@@ -89,6 +94,11 @@
       "tags": [
         "Elon Musk",
         "Jordan Belfort"
+      ],
+      "seconds": 65,
+      "audio": [
+        "own_voice",
+        "library"
       ]
     },
     {
@@ -98,6 +108,11 @@
       "tags": [
         "Donald Trump",
         "Robert Kiyosaki"
+      ],
+      "seconds": 65,
+      "audio": [
+        "own_voice",
+        "library"
       ]
     },
     {
@@ -108,6 +123,11 @@
         "Elon Musk",
         "Mark Cuban",
         "Jordan Belfort"
+      ],
+      "seconds": 65,
+      "audio": [
+        "own_voice",
+        "library"
       ]
     },
     {
@@ -117,6 +137,11 @@
       "tags": [
         "Jordan Belfort",
         "Elon Musk"
+      ],
+      "seconds": 65,
+      "audio": [
+        "own_voice",
+        "library"
       ]
     }
   ],

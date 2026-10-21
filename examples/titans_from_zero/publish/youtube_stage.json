@@ -12,31 +12,32 @@
   "synthetic_media": false,
   "items": [
     {
-      "id": "long",
-      "kind": "long",
-      "file": "examples/titans_from_zero/../../jobs/titans_from_zero/full_v3/render/video.mp4",
+      "id": "CS01",
+      "kind": "short",
+      "file": "examples/titans_from_zero/../../jobs/titans_from_zero/clip_shorts/final/CS01.mp4",
       "thumbnail": null,
       "body": {
         "snippet": {
-          "title": "What If 10 Business Titans Went Broke? Five Years to Prove It Wasn't Luck",
-          "description": "A fictional what-if story told with drawn caricatures. The events and every line of dialogue are invented; the real people shown did not take part, did not say these words and do not endorse this channel.\n\nOne Monday morning, ten famous business titans lose everything and end up on the same courthouse bench. No money, no credit, no bank that takes their call. They get five years to find out whether their fortunes were skill or luck.\n\nWhat is real: the story is invented, but three lines echo things that were reported or that the people have told about themselves.\n- Robert Kiyosaki and his wife Kim have said they were homeless for a short time in 1985 and slept in a car (in Kim's telling, an old Toyota). Sources: https://globalwomanmagazine.com/kim-kiyosaki-a-man-is-not-a-financial-plan/ | https://archives.starbulletin.com/2000/07/10/features/story1.html\n- Donald Trump's companies went to bankruptcy court six times, counting each corporate filing (four if the three 1992 filings count as one). Sources: https://api.politifact.com/factchecks/2016/jun/21/hillary-clinton/yep-donald-trumps-companies-have-declared-bankrupt | https://www.nbcnews.com/news/us-news/trump-bankruptcy-math-doesn-t-add-n598376\n- Jordan Belfort was convicted of securities fraud and sentenced to four years in prison. Sources: https://fortune.com/2018/05/16/wolf-of-wall-street-jordan-belfort | https://www.biography.com/crime/jordan-belfort\n\nEverything else, from the forty-dollar envelopes to the scooters, the fire and the man in grey, is our story. The characters' money theories are part of that story, not financial advice. All pictures were made for this video with AI image tools in the channel's drawn style; the narrator's voice is AI-generated.\n\nChapters\n0:00 Ten titans, one bench\n1:02 Forty dollars, forever\n2:04 Nobody lends them a dollar\n2:48 Week 1: a scooter in a parking lot\n3:40 The motel by the highway\n4:45 Month 6: the garage\n5:43 Month 9: the live show\n6:45 Year 1: five hundred by Christmas\n8:10 Year 2: the black car\n9:08 Year 3: two in the morning\n9:56 The man in grey\n10:53 Everything in\n12:04 Year 5: the score\n13:18 Back to the bench",
+          "title": "$40 for a tenth of Musk. Forever.",
+          "description": "Broke on a courthouse bench, Musk gets one offer: forty dollars for ten percent of everything, forever. A fictional what-if story with drawn caricatures; the real people did not take part or say these words.\n\nFull video: What If 10 Business Titans Went Broke? Five Years to Prove It Wasn't Luck\nhttps://youtu.be/XW8BfJdw1No\n\n#shorts #ElonMusk #KevinOLeary",
           "tags": [
+            "Elon Musk",
+            "Kevin O'Leary",
             "what if",
             "business titans",
             "billionaires",
             "billionaires go broke",
             "skill or luck",
             "starting from zero",
-            "Elon Musk",
             "Jordan Belfort",
-            "Kevin O'Leary",
             "Mark Cuban",
             "Robert Kiyosaki",
             "Jeff Bezos",
             "entrepreneurship",
             "animated story",
             "2D animation",
-            "storytelling"
+            "storytelling",
+            "shorts"
           ],
           "categoryId": "24",
           "defaultLanguage": "en",
@@ -52,18 +53,5 @@
       }
     }
   ],
-  "findings": [
-    {
-      "item": "long",
-      "severity": "REVIEW",
-      "field": "title",
-      "detail": "73 characters; feeds cut long titles, target about 70 (TN-14)"
-    },
-    {
-      "item": "long",
-      "severity": "REVIEW",
-      "field": "publish_date",
-      "detail": "no Short has a publish_date: plan the set (first within 3 days of the video, at most 1 a day, over at least 14 days, BP-47)"
-    }
-  ]
+  "findings": []
 }

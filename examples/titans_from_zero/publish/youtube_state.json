@@ -13,11 +13,20 @@
       "privacy_requested": "unlisted",
       "confirmed_by": "vano1919 (ვანო), project thread 2026-10-21 17:42: 'კარგია ატვირთე ყველაფერი ან ლისთიდ'",
       "staged_at": "2026-10-21T18:11:44Z"
+    },
+    "CS01": {
+      "video_id": "b9GMOBeadyk",
+      "sha256": "472b5ba63332c605cfa0d7464aeb264514f83c5c90da5a466596205ac741f53f",
+      "file": "CS01.mp4",
+      "title": "$40 for a tenth of Musk. Forever.",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "vano1919 (ვანო) in the thread 2026-10-21 18:21/18:32: upload the Shorts; five Shorts cut from the video",
+      "staged_at": "2026-10-21T18:45:28Z"
     }
   },
   "quota": {
     "day": "2026-10-21",
-    "uploads": 1,
-    "units": 2
+    "uploads": 2,
+    "units": 4
   }
 }
