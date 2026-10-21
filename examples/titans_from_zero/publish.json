@@ -1,0 +1,102 @@
+{
+  "schema": "publish/1",
+  "title": "What If 10 Business Titans Went Broke? Five Years to Prove It Wasn't Luck",
+  "description": "A fictional what-if story told with drawn caricatures. The events and every line of dialogue are invented; the real people shown did not take part, did not say these words and do not endorse this channel.\n\nOne Monday morning, ten famous business titans lose everything and end up on the same courthouse bench. No money, no credit, no bank that takes their call. They get five years to find out whether their fortunes were skill or luck.\n\nWhat is real: the story is invented, but three lines echo things that were reported or that the people have told about themselves.\n- Robert Kiyosaki and his wife Kim have said they were homeless for a short time in 1985 and slept in a car (in Kim's telling, an old Toyota). Sources: https://globalwomanmagazine.com/kim-kiyosaki-a-man-is-not-a-financial-plan/ | https://archives.starbulletin.com/2000/07/10/features/story1.html\n- Donald Trump's companies went to bankruptcy court six times, counting each corporate filing (four if the three 1992 filings count as one). Sources: https://api.politifact.com/factchecks/2016/jun/21/hillary-clinton/yep-donald-trumps-companies-have-declared-bankrupt | https://www.nbcnews.com/news/us-news/trump-bankruptcy-math-doesn-t-add-n598376\n- Jordan Belfort was convicted of securities fraud and sentenced to four years in prison. Sources: https://fortune.com/2018/05/16/wolf-of-wall-street-jordan-belfort | https://www.biography.com/crime/jordan-belfort\n\nEverything else, from the forty-dollar envelopes to the scooters, the fire and the man in grey, is our story. The characters' money theories are part of that story, not financial advice. All pictures were made for this video with AI image tools in the channel's drawn style; the narrator's voice is AI-generated.",
+  "duration_s": 885.87,
+  "chapters": [
+    {
+      "t": "0:00",
+      "title": "Ten titans, one bench"
+    },
+    {
+      "t": "1:02",
+      "title": "Forty dollars, forever"
+    },
+    {
+      "t": "2:04",
+      "title": "Nobody lends them a dollar"
+    },
+    {
+      "t": "2:48",
+      "title": "Week 1: a scooter in a parking lot"
+    },
+    {
+      "t": "3:40",
+      "title": "The motel by the highway"
+    },
+    {
+      "t": "4:45",
+      "title": "Month 6: the garage"
+    },
+    {
+      "t": "5:43",
+      "title": "Month 9: the live show"
+    },
+    {
+      "t": "6:45",
+      "title": "Year 1: five hundred by Christmas"
+    },
+    {
+      "t": "8:10",
+      "title": "Year 2: the black car"
+    },
+    {
+      "t": "9:08",
+      "title": "Year 3: two in the morning"
+    },
+    {
+      "t": "9:56",
+      "title": "The man in grey"
+    },
+    {
+      "t": "10:53",
+      "title": "Everything in"
+    },
+    {
+      "t": "12:04",
+      "title": "Year 5: the score"
+    },
+    {
+      "t": "13:18",
+      "title": "Back to the bench"
+    }
+  ],
+  "audience": "not_made_for_kids",
+  "disclosure": {
+    "decision": "not_needed",
+    "reason": "episode_rules.json ER-01 and platform.disclosure: fully drawn 2D caricatures of an obviously invented situation; no photograph, footage or realistic rendering of any real person; no real person's voice is synthesised (the one narrator is an ElevenLabs library voice, D-68); background music, not AI music as the main focus. YouTube Help 14328491 lists fully animated content as not requiring the label. The creator may still tick 'AI use' voluntarily in Studio.",
+    "photoreal_pictures": false,
+    "real_person_realistic": false,
+    "real_event_altered": false,
+    "ai_music_main": false
+  },
+  "mid_roll": "undecided",
+  "self_certification_answered": false,
+  "shorts": [],
+  "files": {
+    "video": "../../jobs/titans_from_zero/full_v3/render/video.mp4"
+  },
+  "approval": {
+    "by": "vano1919 (ვანო)",
+    "ref": "project thread, 2026-10-21 17:42, after watching the final long video (full_v3): 'კარგია ატვირთე ყველაფერი ან ლისთიდ' ('good, upload everything unlisted')",
+    "at": "2026-10-21 17:42"
+  },
+  "tags": [
+    "what if",
+    "business titans",
+    "billionaires",
+    "billionaires go broke",
+    "skill or luck",
+    "starting from zero",
+    "Elon Musk",
+    "Jordan Belfort",
+    "Kevin O'Leary",
+    "Mark Cuban",
+    "Robert Kiyosaki",
+    "Jeff Bezos",
+    "entrepreneurship",
+    "animated story",
+    "2D animation",
+    "storytelling"
+  ]
+}

@@ -1337,3 +1337,15 @@ planned cut (wide -> face close-up read as PX-CUT-EXTRA on six shots; `tests/uni
 re-anchored on the performed quotes and, where they restate one, carry its own words (BP-84 four words). Editorial
 review rounds 12-14 (one FAIL fixed: the first recap gave away O'Leary's envelopes), ER-03/RK-20 rewritten for D-68 on
 the creator's card (12:05).
+
+## 2026-10-21 - Titans final_qa: provider terms read, licences verified, C-01/C-05 upgraded
+
+The episode-standards-director read the current terms first-hand and recorded them (policy baseline B-27..B-29,
+MARKET_RESEARCH V-58..V-60): Gemini API Additional Terms (Google won't claim ownership of generated content; no clause on
+monetisation, music or preview models), ElevenLabs Terms of Service and ElevenCreative Exhibit 4 (sound effects in video on a
+paid plan, never standalone or as a library), ElevenLabs Music Terms (Creator: online commercial use except film, TV, radio
+and Studio Games). Titans rulebook v3: RK-15 and RK-18 licences verified (PASS); RK-17 corrected (the two music tracks in the
+mix are ElevenLabs Music takes made 2026-10-20, not Lyria), licence verified, still REVIEW for Content ID with the creator's
+2026-10-17 decision. Claim map C-01 (Kim Kiyosaki's own interviews, Honolulu Star-Bulletin 2000) and C-05 (Bloomberg via
+Fortune 2018) upgraded with narrowed wording; the script is unchanged. Description: sources updated, "our own drawings"
+corrected to "made with AI image tools". final_qa stamped (0 FAIL). No code changed, so no new test; docs_lint clean.

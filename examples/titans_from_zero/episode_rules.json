@@ -2,7 +2,7 @@
   "schema": "explainer.episode_rules",
   "version": 1,
   "episode_id": "titans_from_zero",
-  "rulebook_version": 2,
+  "rulebook_version": 3,
   "status": "final",
   "identity": {
     "topic": "What If 10 Business Titans Went Broke? Five Years to Prove It Wasn't Luck: ten real living business people lose everything on one courthouse bench and must earn without credit for five years",
@@ -316,6 +316,13 @@
           "verified": true,
           "baseline_id": "B-10",
           "note": "s.3 'voice, identity, or likeness of any living individual' (V-51)"
+        },
+        {
+          "url": "https://ai.google.dev/gemini-api/terms",
+          "checked": "2026-10-21",
+          "kind": "provider_terms",
+          "verified": true,
+          "note": "B-27/V-58: Google won't claim ownership of generated content; same or similar content may be generated for others; the user is responsible for its use"
         }
       ]
     },
@@ -363,7 +370,7 @@
         "research",
         "metadata"
       ],
-      "requirement": "Every real-history line maps to a claim with a source in the claim map (BP-15: never spoken); by final_qa C-01 (the Toyota detail rests on one Wikipedia-mirror page) and C-05 (encyclopaedia pages) are upgraded to a primary or reputable source (Kiyosaki's own book or site, a court or DOJ record for Belfort), or the wording is reduced to what the sources carry.",
+      "requirement": "Every real-history line maps to a claim with a source in the claim map (BP-15: never spoken). C-01 and C-05 were upgraded at final_qa (2026-10-21): C-01 rests on Kim Kiyosaki's own interviews (Global Woman 2015: 'an old beat-up Toyota'; Lange Money Hour 2009) and Robert Kiyosaki in the Honolulu Star-Bulletin (2000); C-05 on Bloomberg via Fortune (2018: convicted, sentenced to four years). The claim map's wording is narrowed to what these carry; a detail only an encyclopaedia carries (22 months served, the 1999 plea date) is labelled secondary.",
       "sources": [
         {
           "url": "https://github.com/vano1919/explainer-engine/blob/main/CLAUDE.md",
@@ -386,7 +393,7 @@
         "sound",
         "qa"
       ],
-      "requirement": "Every music track and generated sound has a licence record before final_qa. Music comes from ElevenLabs or a per-track verified free library (D-52); the two Lyria tracks in the plan are used only if the Gemini terms for Lyria output are read and recorded first, otherwise ElevenLabs music replaces them (RK-17).",
+      "requirement": "Every music track and generated sound has a licence record before final_qa. Music comes from ElevenLabs or a per-track verified free library (D-52). The two planned Lyria tracks were replaced before the render by ElevenLabs Music takes of the same names (sneaky_pizzicato__v1, clockwork_loop__v1, eleven_music_v2_5, 2026-10-20); no Lyria audio is in the final mix (RK-17).",
       "sources": [
         {
           "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/DECISIONS_AND_OPEN_QUESTIONS.md",
@@ -397,10 +404,24 @@
         },
         {
           "url": "https://elevenlabs.io/music-terms",
-          "checked": "2026-10-17",
+          "checked": "2026-10-21",
           "kind": "provider_terms",
           "verified": true,
-          "note": "V-28: Creator plan, commercial use allowed except film/TV/radio/studio games; monetised YouTube and Content ID not addressed"
+          "note": "B-29/V-60: Creator plan, all online and offline commercial use except film, TV, radio and Studio Games; no attribution; monetised YouTube and Content ID not addressed; 'film' undefined"
+        },
+        {
+          "url": "https://elevenlabs.io/terms-of-use",
+          "checked": "2026-10-21",
+          "kind": "provider_terms",
+          "verified": true,
+          "note": "B-28/V-59: paid plans may use the Services commercially; the user retains rights in Output; Output may not be unique"
+        },
+        {
+          "url": "https://elevenlabs.io/creative-terms",
+          "checked": "2026-10-21",
+          "kind": "provider_terms",
+          "verified": true,
+          "note": "B-28/V-59: Sound Effects Exhibit 4 s.2: use in video and other productions, commercially where the plan permits; never standalone or as a sound library"
         }
       ]
     },
@@ -970,18 +991,23 @@
         "US",
         "GE"
       ],
-      "evidence": "No picture of this episode exists yet; cards describe exaggerated features and props (cast.*.card). Google generative AI policy re-read 2026-10-20 (B-11, V-57): it bars impersonating a person 'in order to deceive' (4.2), circumventing safety filters (2.3) and IP or privacy violations; it has no clause against depicting public figures. YouTube 14328491 lists fully animated content as not needing the label; 2801947 targets a likeness that falsely implies authorisation. Hustler v. Falwell (V-53) protects parody not reasonably understood as fact.",
+      "evidence": "The pictures exist (109 picture entries with engine 'gemini' in the final production script, plus the cards built from the approved references). Gemini API Additional Terms re-read 2026-10-21 (B-27, V-58): 'Google won't claim ownership over that content'; Google 'may generate the same or similar content for others'; the user is 'responsible for your use of generated content'; use is 'for professional or business purposes'. The batch tier bills per picture, so the account uses Paid Services. Google generative AI policy re-read 2026-10-20 (B-11, V-57): no impersonating a person 'in order to deceive' (4.2), no circumventing safety filters (2.3), no IP or privacy violations; no clause against depicting public figures. YouTube 14328491 lists fully animated content as not needing the label; 2801947 targets a likeness that falsely implies authorisation. Hustler v. Falwell (V-53) protects parody not reasonably understood as fact.",
       "rationale": "Being recognisable is the point of a caricature and is what makes the satire readable; the risk lies elsewhere: a realistic lookalike that could pass as a photo (deception, disclosure), a press photograph used as input (the photographer's copyright), a use that sells something (ER-05), or mockery of intrinsic attributes (ER-14). With drawn exaggeration in the channel's one style and ER-07's no-photo rule, no material issue found.",
       "license": {
-        "asset_path": "examples/titans_from_zero pictures (not yet painted)",
-        "provider": "Gemini or pod (the creator picks per batch, D-50)",
-        "owner": "the channel (placeholder until painted)",
+        "asset_path": "jobs/titans_from_zero/pictures (scene pictures and face sheets: Gemini batch, gemini-nano-banana-2.1 2K, seven batches 2026-10-20) and examples/titans_from_zero/pictures (style collage: Gemini 3 Pro Image; hero_caricatures_v1 and the p_<hero> references: Nano Banana 2); the intro and recap cards are composed locally from those references (design/cards.py)",
+        "provider": "Google Gemini API (paid batch tier; models gemini-nano-banana-2.1, Nano Banana 2, Gemini 3 Pro Image)",
+        "owner": "the channel as between it and Google (Google won't claim ownership, B-27); whether purely generated pictures carry any copyright is a question of law not assessed here, and Google may generate similar pictures for others",
         "basis": "generated_under_provider_terms",
-        "scope": "this episode, its Shorts and thumbnail",
-        "attribution": "none",
-        "restrictions": "no photo of the real people as input (ER-07)",
-        "verified": "not_verified",
-        "evidence": "provider terms B-11 (2026-10-17)"
+        "scope": "this episode, its Shorts and thumbnail, and later reuse of the hero references; commercial (monetised YouTube) use is not restricted by the terms read",
+        "attribution": "none required by the terms",
+        "restrictions": "Prohibited Use Policy (B-11): no deceptive impersonation, no bypassing safety filters; no photo of the real people as input (ER-07); the user answers for the use of generated content (B-27)",
+        "territories": "available regions only (Additional Terms 'Use Restrictions'); no territorial limit on output use stated",
+        "term": "not limited by the terms read",
+        "monetization": "not restricted by the terms read; no clause on monetisation",
+        "modification": "not restricted",
+        "redistribution": "not restricted for output; the user is responsible for its use by anyone it is shared with",
+        "verified": "2026-10-21",
+        "evidence": "ai.google.dev/gemini-api/terms read 2026-10-21 (B-27, V-58); policies.google.com/terms/generative-ai/use-policy 2026-10-20 (B-11, V-57); batch records jobs/titans_from_zero/pictures/_gemini/batches/*.json"
       }
     },
     {
@@ -1001,7 +1027,7 @@
     },
     {
       "id": "RK-17",
-      "element": "Music: Lyria tracks sneaky_pizzicato__v1 and clockwork_loop__v1 (assets/audio/library)",
+      "element": "Music: ElevenLabs Music takes sneaky_pizzicato__v1 and clockwork_loop__v1 (eleven_music_v2_5, generated 2026-10-20; they replaced the planned Lyria tracks of the same names)",
       "category": "music",
       "source_type": "original",
       "status": "REVIEW",
@@ -1011,9 +1037,9 @@
       "jurisdictions": [
         "US"
       ],
-      "evidence": "assets/audio/library/manifest.json: source 'lyria-3-clip-preview' generated 2026-10-16 with the creator's Gemini key, licence status 'generated_terms_unverified', 'commercial-use terms not yet checked'. D-52 allows music from ElevenLabs or a per-track verified free library; Lyria is neither.",
-      "rationale": "The tracks are free to reuse (already paid) but their commercial terms were never read and their source sits outside the creator's own music rule, so using them is the creator's call, not a pipeline default.",
-      "mitigation": "Decided (orchestrator 2026-10-20, applying D-52): ElevenLabs music replaces both tracks unless the Gemini terms for Lyria output are read and recorded here first. Options that were offered: Question for the creator: (a) replace both with ElevenLabs music of the same description (instrumental pizzicato sneak; ticking clockwork loop), licence record per V-28; or (b) keep the Lyria tracks as a recorded exception to D-52 after the Gemini API terms for Lyria output are read and recorded here.",
+      "evidence": "assets/audio/library/manifest.json: both items have source kind 'elevenlabs', model 'eleven_music_v2_5', generated 2026-10-20, generation ids YlavI0DN0pW8HpH1i5oF and 3vc1uQYurhzxVUwBj9we, sha256 equal to the WAVs on disk (checked 2026-10-21); the only Lyria item left in the library is not in the production script. The creator's plan is Creator (D-52, confirmed 2026-10-17). Music Terms re-read 2026-10-21 (B-29, V-60): Creator 'All online and offline commercial use permitted, except film, TV, radio, and Studio Games', streaming distribution permitted, 'No Attribution Required', 'For Individual Use Only'; Media Rights include synchronising Output 'in timed relation to audiovisual content'; the user retains rights in Output (s.2.2); Output may not be unique (ToS, B-28). YouTube monetisation and Content ID are not mentioned and 'film' is not defined.",
+      "rationale": "The terms clearly allow online commercial use of the music in a video on the Creator plan, without attribution, so the licence itself is verified. Two doubts remain that the terms do not settle: a Content ID match on a monetised upload cannot be ruled out because outputs are not unique and YouTube is not mentioned, and 'film' is undefined, although a 13-minute online video reads as online use rather than a film release. Those are the creator's call at the final review, as he decided for the channel on 2026-10-17, so the item stays REVIEW rather than PASS.",
+      "mitigation": "Lyria replaced by ElevenLabs Music before the render (done 2026-10-20). Keep the generation records (ids, prompts, hashes) to answer a Content ID claim; the track sits under narration at -26..-31 dB, not as the main focus; music is not distributed on its own (Music Terms 4.2). Open question for the creator before going public: accept the residual Content ID risk of ElevenLabs Music on a monetised upload, or keep the video unmonetised until a first claim-free upload shows how it behaves.",
       "dependencies": [
         "music",
         "edit",
@@ -1021,25 +1047,30 @@
       ],
       "license": {
         "asset_path": "assets/audio/library/music/sneaky_pizzicato__v1.wav; assets/audio/library/music/clockwork_loop__v1.wav",
-        "provider": "Google Gemini API, Lyria (lyria-3-clip-preview)",
-        "owner": "not verified (placeholder)",
+        "provider": "ElevenLabs Music (eleven_music_v2_5), the creator's Creator plan",
+        "owner": "the creator, as between him and ElevenLabs (Music Terms s.2.2, ToS s.4(c)(ii)); outputs may not be unique",
         "basis": "generated_under_provider_terms",
-        "scope": "not verified",
-        "attribution": "not verified",
-        "restrictions": "not verified; SynthID watermark per TMR notes",
-        "verified": "not_verified",
-        "evidence": "manifest licence.status generated_terms_unverified"
+        "scope": "online and offline commercial use except film, TV, radio and Studio Games (Creator, Exhibit A); individual use only",
+        "attribution": "none required on Creator",
+        "restrictions": "no film, TV, radio or Studio Games; no music library made available to third parties (s.4.2); follow the platform's AI-disclosure rules (s.4.4); no prompt naming artists, songs or labels (s.2.1)",
+        "territories": "not limited by the terms read",
+        "term": "Output stays under the plan in effect when it was created (s.1.5)",
+        "monetization": "commercial use permitted; YouTube monetisation and Content ID not addressed (REVIEW)",
+        "modification": "permitted (synchronisation, editing)",
+        "redistribution": "inside the video only; not as standalone tracks or a library",
+        "verified": "2026-10-21",
+        "evidence": "elevenlabs.io/music-terms and elevenlabs.io/terms-of-use read 2026-10-21 (B-29/V-60, B-28/V-59); manifest generation records"
       },
       "decision": {
-        "by": "orchestrator",
-        "date": "2026-10-20",
-        "answer": "Music is decided at the music step, before final_qa: ElevenLabs music replaces the two Lyria tracks unless the Gemini/Lyria terms are read and allow it (D-52). The paid narration read does not depend on it.",
-        "evidence": "D-52"
+        "by": "creator",
+        "date": "2026-10-17",
+        "answer": "The creator's conservative option of 2026-10-17 (recorded in syndicate_wars_ep1 RK-14 and D-52): music only from ElevenLabs eleven_music_v2_5 or a per-track verified free library; ElevenLabs' silence on monetised YouTube and Content ID stays his REVIEW item at final review. Applied by the orchestrator 2026-10-20: the Lyria tracks were replaced by ElevenLabs Music. The creator approved the finished video, this music included, for unlisted upload on 2026-10-21 17:42; the Content ID question is asked again before he makes it public.",
+        "evidence": "D-52; examples/syndicate_wars_ep1/episode_rules.json RK-14; examples/titans_from_zero/publish.json approval"
       }
     },
     {
       "id": "RK-18",
-      "element": "Sound: own procedural effects (buckle_click, pencil_scribble, tick, tock, whooshes, thuds) and ElevenLabs-generated ambience beds and battery_hiss still to be made",
+      "element": "Sound: own procedural effects (buckle_click, cloth_rustle, footstep_stone, jump_whoosh, landing_thud, pencil_scribble, pop_in, tick) and ElevenLabs sound effects (battery_hiss__v1 and nine amb_* ambience loops, eleven_text_to_sound_v2, generated 2026-10-20)",
       "category": "sound",
       "source_type": "original",
       "status": "PASS",
@@ -1049,17 +1080,23 @@
       "jurisdictions": [
         "US"
       ],
-      "evidence": "Library manifest: the procedural items are 'own_procedural'; the amb_* beds and battery_hiss__v1 are not in the library yet and follow D-52 (ElevenLabs sound effects).",
-      "rationale": "Own or provider-generated sound with no third-party recording; no material issue found. The generated items get their licence record when made (ER-10).",
+      "evidence": "Library manifest: the procedural items are 'own_procedural'; battery_hiss__v1 (generation F3u32A2ZihKS1BSSK92U) and the nine amb_*__v1 loops are 'elevenlabs' / 'eleven_text_to_sound_v2' on the creator's Creator plan (paid; D-52, confirmed 2026-10-17). ElevenLabs ToS re-read 2026-10-21 (B-28, V-59): a Paid User 'may use the Services for commercial purposes'; 'you retain all rights in and to your Output'. ElevenCreative Terms Exhibit 4 (Sound Effects) s.2: Output may be incorporated 'into films, trailers, advertising, video, games, applications, and other productions ... for commercial purposes only where your plan permits commercial use', never on a standalone basis or 'as part of any sound, sample, effects, or music library'. The WAVs stay out of git (.gitignore *.wav) and are used only inside the mix.",
+      "rationale": "Own code or provider-generated sound with no third-party recording, used inside the video as the terms allow on a paid plan; the library is internal and never published, so the standalone-library restriction is respected. A Content ID match on a short effect is possible because outputs are not unique, but nothing in the use creates a material issue.",
       "license": {
-        "asset_path": "assets/audio/library (procedural) + amb_* and battery_hiss__v1 (to be generated)",
-        "provider": "own code; ElevenLabs sound effects",
-        "owner": "the channel",
+        "asset_path": "assets/audio/library/foley/battery_hiss__v1.wav and the nine amb_*__v1 loops (ElevenLabs); the procedural items of assets/audio/library (own code)",
+        "provider": "own code (procedural); ElevenLabs Sound Effects (eleven_text_to_sound_v2), Creator plan",
+        "owner": "the channel for the procedural items; the creator as between him and ElevenLabs for the generated ones (ToS s.4(c)(ii)); generated outputs may not be unique",
         "basis": "generated_under_provider_terms",
-        "scope": "this episode and later reuse",
+        "scope": "inside this episode, its Shorts and later videos, commercial use permitted on the paid plan",
         "attribution": "none",
-        "verified": "not_verified",
-        "evidence": "manifest licence.status own_procedural for the procedural items"
+        "restrictions": "only combined with other material; never sold, licensed or shared as isolated files, samples or a sound library (Exhibit 4 s.2); Prohibited Use Policy (B-10)",
+        "territories": "not limited by the terms read",
+        "term": "not limited by the terms read",
+        "monetization": "commercial use permitted on a paid plan; Content ID not addressed",
+        "modification": "permitted",
+        "redistribution": "inside productions only",
+        "verified": "2026-10-21",
+        "evidence": "elevenlabs.io/terms-of-use and elevenlabs.io/creative-terms read 2026-10-21 (B-28, V-59); manifest generation records and licence status own_procedural"
       }
     },
     {
@@ -1272,7 +1309,7 @@
       },
       "music": {
         "must": [
-          "ElevenLabs music described by its own qualities, with a licence record (ER-10); the Lyria tracks only after their Gemini terms are read and recorded in RK-17"
+          "ElevenLabs music described by its own qualities, with a licence record (ER-10); no Lyria audio (RK-17)"
         ]
       },
       "sound": {
@@ -1397,6 +1434,14 @@
       "script_sha256": "d4684b70785360aee7f2fb44617499f4c1c47bb61a3711b92c65aeefb65976dc",
       "rulebook_version": 2,
       "scope": "Round 13 technical fixes only (S11 sfx anchor, S13 claim_share label); spoken words unchanged (script approval hash holds)."
+    },
+    {
+      "checkpoint": "final_qa",
+      "date": "2026-10-21",
+      "by": "episode-standards-director (session 01MmSiAw)",
+      "script_sha256": "eb778dd55a2a888f17672d4d991267368f5003979cec2eccf6e1c9df4b302a00",
+      "rulebook_version": 3,
+      "scope": "rulebook v3. QA loop: 0 FAIL on all 14 chunks (jobs/titans_from_zero/full_v3.{0,2,4,6,8,10,12}.log; the 12:14 run's verdict is FIX only because its chunk files were already joined, its findings are 0 FAIL / 35 REVIEW); full-video pixel check 0 FAIL, 21 REVIEW over 26,576 frames (jobs/titans_from_zero/full_v3/pixels_full.txt). Terms read first-hand 2026-10-21 and recorded (B-27..B-29, V-58..V-60): Gemini API Additional Terms (Google won't claim ownership of generated content; similar output possible; user responsible; no monetisation, music or preview-model clause), ElevenLabs ToS + ElevenCreative Exhibit 4 (paid plan commercial use; sound effects inside productions, never standalone or as a library), ElevenLabs Music Terms (Creator: online commercial use except film/TV/radio/Studio Games, no attribution). RK-15 and RK-18 licences verified (PASS). RK-17: the two tracks are ElevenLabs Music (eleven_music_v2_5, 2026-10-20; manifest hashes match the WAVs), not Lyria; no Lyria audio in the mix; licence verified, stays REVIEW with the creator's 2026-10-17 decision (Content ID and undefined 'film' not addressed by the terms; asked again before public). ER-09: C-01 upgraded to Kim Kiyosaki's own interviews + Honolulu Star-Bulletin 2000, C-05 to Bloomberg via Fortune 2018; claim map wording narrowed, script unchanged; description sources updated and its pictures sentence corrected to say AI image tools. Open: ES-14 template REVIEW (stone_age_ep1) and ER-05's unread California 3344 page, both unchanged since script_lock."
     }
   ]
 }

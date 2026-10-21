@@ -1,0 +1,100 @@
+{
+ "audio": {
+  "sfx": [
+   {
+    "sound": "landing_thud__v1",
+    "start": 37.68,
+    "seconds": 0.3
+   },
+   {
+    "sound": "pop_in__v1",
+    "start": 61.46,
+    "seconds": 0.1
+   },
+   {
+    "sound": "pencil_scribble__v1",
+    "start": 100.509,
+    "seconds": 0.7
+   },
+   {
+    "sound": "buckle_click__v1",
+    "start": 194.319,
+    "seconds": 0.18
+   },
+   {
+    "sound": "cloth_rustle__v1",
+    "start": 218.556,
+    "seconds": 0.45
+   },
+   {
+    "sound": "landing_thud__v1",
+    "start": 245.707,
+    "seconds": 0.3
+   },
+   {
+    "sound": "footstep_stone__v1",
+    "start": 353.325,
+    "seconds": 0.14
+   },
+   {
+    "sound": "landing_thud__v2",
+    "start": 425.413,
+    "seconds": 0.3
+   },
+   {
+    "sound": "jump_whoosh__v1",
+    "start": 481.134,
+    "seconds": 0.28
+   },
+   {
+    "sound": "jump_whoosh__v2",
+    "start": 518.344,
+    "seconds": 0.28
+   },
+   {
+    "sound": "battery_hiss__v1",
+    "start": 556.767,
+    "seconds": 1.0
+   },
+   {
+    "sound": "tick__v1",
+    "start": 577.69,
+    "seconds": 0.12
+   },
+   {
+    "sound": "footstep_stone__v1",
+    "start": 772.715,
+    "seconds": 0.14
+   },
+   {
+    "sound": "landing_thud__v2",
+    "start": 841.585,
+    "seconds": 0.3
+   }
+  ],
+  "cues": 4,
+  "music_dip_max_step_db_per_ms": 0.439,
+  "voice_duck_max_step_db_per_ms": 0.417,
+  "voice_rms_db": -26.22,
+  "bed_rms_db": -50.79,
+  "music_rms_db": -54.69,
+  "lufs": -14.2,
+  "lra": 2.9,
+  "true_peak": -1.5,
+  "max_short_term": -12.5,
+  "voice_lufs": -26.9,
+  "loudness_verdict": "PASS",
+  "true_peak_verdict": "PASS",
+  "ldr_lu": 12.7,
+  "ldr_verdict": "REVIEW"
+ },
+ "pictures": [],
+ "video": "jobs/titans_from_zero/full_v3/render/video.mp4",
+ "chunks": {
+  "count": 14,
+  "reused": 0,
+  "left": []
+ },
+ "frames_written": 3485,
+ "frames_planned": 26576
+}
