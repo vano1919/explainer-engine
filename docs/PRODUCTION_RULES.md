@@ -33,6 +33,9 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    when `python -m explainer_engine.qa.short_format <file>` passes (vertical 9:16, at most 3 min; `production.shorts` refuses
    to hand on any other file), and its link is given as `youtube.com/shorts/<id>`, never `youtu.be`. Unchanged: never public (the creator clicks Public), the creator sets the thumbnail in Studio, sign-in is a fresh
    link per upload session (`publish auth-url` / `auth-finish`), and a piece that fails a test is fixed, not uploaded.
+10. **A two-part sample before the rest** (creator, 2026-10-21): after the script approval, voice and pictures are paid for
+   the first two parts only, stitched into one sample the creator watches; his notes are fixed and only his recorded word
+   opens the rest ([OR-19](ORCHESTRATION.md), gate 6.5 below, `production/sample.py`).
 
 ## 2. The gates, in order (a video does not skip one)
 
@@ -48,6 +51,7 @@ action. Gates 3-7 spend money and need the creator's yes first.
 | 4 | **Style bridge** | 6 test pictures, a sprite and a pod-painted hand and crowd in one frame, approved once per episode | UR-22, `look.style_bridge.approved` |
 | 5 | **Sprites** | every hero and pose of the plan exists (sprite bank), keyed and graded | `sprite_needs.md`, `look.pose_bank`, [ASSET_SYSTEM](ASSET_SYSTEM.md) |
 | 6 | **Pictures (pod)** | limit = units x measured seconds x margin; approval with price and caps; pushed even on failure; contact sheet reviewed by eye, bad pictures repainted | TMR `cloud/lint_manifest.py` (`picture_budget`, `fatal_before_push`), `cloud/job_speeds.json`, runbook R6 |
+| 6.5 | **Two-part sample** | the sample's voice and pictures (first two segments, [OR-19](ORCHESTRATION.md)) are rendered and stitched; the creator watches, his notes are fixed and re-rendered; his recorded word (`production.sample approve`, bound to the script's sha256) opens paid generation for the rest | `production/sample.py`, PP-09, the ElevenLabs hook, gate 6.5 |
 | 7 | **Full read and timings** | one paid read of the final text; Scribe words, coverage >= 97 %, pauses padded, `words.json` on the audio the mix uses; shot cuts recomputed | D-39, UR-12, `build_shots.py` 0 FAIL |
 | 8 | **Animatic and render** | GPU compositor (D-32), motion per UR-13, transitions UR-14, sound UR-15 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) |
 | 9 | **Seven-point test, QA and approval #2** | every video passes all seven checks of section 6 (`qa/scorecard.py`), then technical and editorial QA; each piece that passes is staged unlisted at once (standing order 9: the creator's standing approval for unlisted staging); approval #2 is the creator's own click to Public | section 6, [QA_SPECIFICATION](QA_SPECIFICATION.md) |
@@ -59,7 +63,8 @@ the creator picks the provider for every batch) and the picture files (6). Day f
 the legacy reading of `shots.json` and `look.json`.
 
 Order matters: no paid read, picture or music before the rulebook's `paid_assets` checkpoint passes (OR-12); a script is not paid-read before gate 1 is clean; pictures are not painted before the style bridge (gate 4) and
-the sprite plan (gate 5); the full read waits for the creator's yes on the test read.
+the sprite plan (gate 5); the full read waits for the creator's yes on the test read; and past the sample's own assets,
+nothing is paid before the creator's word on the stitched two-part sample (gate 6.5, [OR-19](ORCHESTRATION.md)).
 
 ## 3. Feedback log (every creator note, its cause, its rule, what enforces it)
 
@@ -101,6 +106,7 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-16 | Episode 1 is one whole video: what happens to the 100 minds after a day, a week, a month, a year, 10 years, 100 years, then compare with the real record; lean on real science and logic, be creative; periods do not get equal time; a hook closes every period; tone: scientific what-if, 20 % humour, 40 % drama, 40 % doubt and telling (the humour share is superseded by BP-09's joke density, D-59) | the earlier plan treated Day 1 as a separate video and gave every period the same length | SR-01..SR-08, PV-27, skills `science-grounding`, `time-jump-episode` | [ORCHESTRATION](ORCHESTRATION.md), `validate` PV-27 |
 | 2026-10-16 | Shorts advertise the video: a 3-second question hook, then the most surprising scene, own text and script, 9:16 crops that keep faces on the heroes | Shorts had no template | SH-01..SH-04, PV-28, skill `shorts-for-video` | `validate` PV-28 |
 | 2026-10-16 | Run alone overnight in phases so mistakes show early; hard stops that lose nothing; Gemini for this video's pictures with a US$6 new cap; reuse pictures where the story fits and plan it in the script | long unattended runs had no ledger; pods failed four times | OR-01..OR-09, D-44, agent `orchestrator`, SR-08 | `core/ledger.py`, `tests/unit/test_ledger.py` |
+| 2026-10-21 | After the script, do not generate the whole video's audio and pictures any more: make the first two parts, I watch, I correct with my notes, and only then generate the audio and pictures of the rest | the Syndicate Wars and titans flows paid for full voice and picture batches before the creator saw one rendered frame; his notes then cost re-reads and repaints | [OR-19](ORCHESTRATION.md), gate 6.5, PP-09 | `production/sample.py`, `paint.preflight`, the ElevenLabs hook, `production_gate`, `tests/unit/test_sample_gate.py` |
 | 2026-10-17 | The 2K render kept dying (five times) and the video was not finished; fix it, and write the rule so it does not happen again | a long render was started as a detached process (`setsid nohup`) with no tool task attached; the sandbox stopped the machine after the session went quiet, and every process died with it (timing matched the creator's messages; not proven by a log) | RULE-R1: a render longer than ~10 minutes runs as a tracked background task of the session (never `setsid`, never a detached `nohup`); it is written in chunks (ED-13); each run draws its own chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once; the session keeps a wake-up timer while it runs and says so in plain words; a stale `.assemble.lock` is removed only after its pid is confirmed gone | ED-13, `assemble --chunks`, `tests/unit/test_chunked_render.py`; the rule itself is procedural (OR-09) |
 
 ## 4. Planning numbers for a video length (measured on Day 1, 2026-10-16)

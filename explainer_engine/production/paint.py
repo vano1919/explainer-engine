@@ -110,6 +110,9 @@ def preflight(plan: dict, doc: dict, dirs: list[Path], run: Run, script_path: Pa
                 if f["severity"] == "FAIL"]
     elif doc["episode"].get("rulebook"):
         why.append("OR-11 the script names a rulebook but there is no episode_rules.json next to it")
+    if script_path:  # OR-19 (D-64): before the creator's sample approval a plan paints only the sample's pictures
+        from explainer_engine.production import sample as SMP
+        why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in SMP.check_plan(plan, doc, Path(script_path))]
     if not run.approved(plan["id"], plan["hash"]):
         why.append(f"PP-02 plan {plan['id']} ({plan['hash']}) has no approval in {run.path}: ask the creator, then `paint approve`")
     return why
@@ -128,6 +131,10 @@ def cmd_plan(a) -> int:
                                   ": close-ups on chroma green, painted once and reused in every scene and episode (VB-09)")
     else:
         items = pending(to_paint(doc), out, run)
+    if a.sample:  # OR-19: the two-part sample's pictures only
+        from explainer_engine.production import sample as SMP
+        keep = SMP.scope_pictures(doc, folder=path.parent)
+        items = [i for i in items if i["id"] in keep]
     if a.only:
         want = set(a.only.split(","))
         items = [i for i in items if i["id"] in want]
@@ -318,6 +325,7 @@ def main(argv: list[str] | None = None) -> int:
     q.add_argument("--tier", choices=sorted(routing.TIERS), help="Gemini: model and size from the tier (D-52 routing)")
     q.add_argument("--run", help="the run ledger, to skip pictures already painted from the same prompt")
     q.add_argument("--only")
+    q.add_argument("--sample", action="store_true", help="the two-part sample's pictures only (OR-19)")
     q.add_argument("--first", action="store_true", help="one picture only (OR-01: the test before the batch)")
     q.add_argument("--limit", type=int)
     q.add_argument("--purpose")

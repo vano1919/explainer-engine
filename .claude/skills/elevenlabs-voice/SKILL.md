@@ -43,6 +43,9 @@ short, similar chunks and from keeping what was already good.
 
 ## Pre-flight (all free, before a paid call)
 
+0. Sample first ([OR-19](../../../docs/ORCHESTRATION.md)): until the creator approves the stitched two-part sample
+   (`python -m explainer_engine.production.sample status <episode>`), only the sample segments' chunks are read — the hook
+   refuses the rest, the Shorts' reads included. Chunk the sample's text so no chunk runs past the sample.
 1. `narration_lint` 0 FAIL on `narration_tts.txt`.
 2. Chunk plan from `tts_chunks` (900-character cap), characters counted with tags.
 3. Cost = characters x 1 credit; compare with the ledger cap (stop at 80%).
