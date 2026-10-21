@@ -1290,3 +1290,8 @@ picture). Tests: `tests/unit/test_reported_bubbles.py`. (3) Word slams: `slam_te
 (S01, with a 0.8 s pause after its line) and FOREVER (S02). Tests: `tests/unit/test_word_slam.py`. Research for the next
 editing steps (dialogue, text and graphics, multi-variant editing):
 `/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/research_edit_{dialogue,text_graphics,variants}.md`.
+Loop pass 1 on parts 1-2: 0 FAIL; the slams were cut by the next shot after ~0.8 s and seven bubbles near a shot end were
+cut under BP-27's hold (BUBBLE-2). The slam lines now carry a 1.0 s `pause_after` (S02's line split after "Forever." so
+the pause lands there) and the seven bubbles start on an earlier narration word. Note: `words` on the whole spliced read
+padded +73 s against +26 s per piece (one long transcription measures shorter gaps, so pause_pad widens more): run `words`
+on the pieces in order.

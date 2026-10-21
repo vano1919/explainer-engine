@@ -1037,7 +1037,7 @@
           "tone": "brisk then flat",
           "emotion": "wry",
           "kind": "transition",
-          "pause_after": 0.8
+          "pause_after": 1.0
         },
         {
           "text": "But nobody will lend them a dollar after today. Not a bank, not a friend, not the man beside them.",
@@ -1447,7 +1447,7 @@
           "kind": "transition"
         },
         {
-          "text": "O'Leary has an idea: buy a piece of every future on this bench, cheap, today. Musk can build anything, but nobody pays for parts before the thing exists. So O'Leary offers forty dollars, for ten percent of everything Musk will ever build. Forever. Down the bench, Trump snorts, and O'Leary hands him an envelope too. And Musk, with no other offer in the building, goes very quiet.",
+          "text": "O'Leary has an idea: buy a piece of every future on this bench, cheap, today. Musk can build anything, but nobody pays for parts before the thing exists. So O'Leary offers forty dollars, for ten percent of everything Musk will ever build. Forever.",
           "tags": [
             "mischievously"
           ],
@@ -1457,7 +1457,19 @@
           "emphasis": [
             "Forever"
           ],
-          "pause_after": 0.5,
+          "pause_after": 1.0,
+          "visual_beats": [],
+          "new_read": true
+        },
+        {
+          "text": "Down the bench, Trump snorts, and O'Leary hands him an envelope too. And Musk, with no other offer in the building, goes very quiet.",
+          "tags": [
+            "mischievously"
+          ],
+          "tone": "dry, then hushed",
+          "emotion": "foreboding",
+          "kind": "transition",
+          "emphasis": [],
           "visual_beats": [
             {
               "at": "goes very quiet",
@@ -4678,7 +4690,7 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "not an asset",
+              "at": "Lesson one",
               "who": "kiyosaki",
               "text": "Not an asset!",
               "kind": "shout",
@@ -4759,7 +4771,7 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "very thin",
+              "at": "Trump's smile",
               "who": "trump",
               "text": "Wrap it up.",
               "kind": "speech",
@@ -5726,7 +5738,7 @@
               "reported": true
             },
             {
-              "at": "how fires work",
+              "at": "Musk says that's",
               "who": "musk",
               "text": "That's how fires work.",
               "kind": "speech",
@@ -7314,7 +7326,7 @@
           ],
           "bubbles": [
             {
-              "at": "the catch",
+              "at": "Belfort asks for",
               "who": "belfort",
               "text": "What's the catch?",
               "kind": "speech",
@@ -7822,7 +7834,7 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "want them back",
+              "at": "two hundred of his",
               "who": "belfort",
               "text": "We want them back.",
               "kind": "speech",
@@ -8009,7 +8021,7 @@
               "reported": true
             },
             {
-              "at": "A real one",
+              "at": "next year's number",
               "who": "cuban",
               "text": "A real number.",
               "kind": "speech",
@@ -9288,7 +9300,7 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "burnt garage",
+              "at": "Musk asks",
               "who": "musk",
               "text": "Of a burnt garage?",
               "kind": "speech",
