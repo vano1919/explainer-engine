@@ -106,6 +106,14 @@ def layout(speaker: tuple[float, float], size: tuple[int, int], frame: tuple[int
     cands = [place(0.10, lift), place(0.22, lift), place(-0.10, lift), place(0.30, lift - 0.10), place(0.30, 0.0),
              place(-0.30, 0.0), place(0.10, lift + 0.12), place(0.30, lift + 0.12), place(0.42, lift + 0.20),
              place(-0.42, lift + 0.20), place(0.0, lift + 0.30), place(0.45, -0.25), place(-0.45, -0.25)]
+    cands += [place(dx / 100, dy) for dy in (lift, lift - 0.10, 0.0, -0.15, -0.25) for dx in range(-45, 46, 3)]  # a finer sweep, last
+    others = [((f[0] + f[2]) / 2, (f[1] + f[3]) / 2) for f in faces if not overlaps(f, head)]
+
+    def nearer_other(c) -> bool:  # a bubble closer to another face than to its speaker reads as his (the creator 2026-10-21)
+        cx, cy = c[0] + w / 2, c[1] + h / 2
+        return any(math.dist((cx, cy), o) < math.dist((cx, cy), (sx, sy - 0.1 * FH)) for o in others)
+
+    cands = sorted(cands, key=nearer_other)  # stable: the old order among the bubbles that read as the speaker's
     for boxes in ([head, *faces, *avoid], [head, *faces], list(avoid)):  # faces and bubbles; else faces; else bubbles
         free = next((c for c in cands if not hits(*c, boxes)), None)
         if free:

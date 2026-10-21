@@ -185,3 +185,12 @@ def test_without_the_face_model_the_face_check_is_skipped_not_failed(tmp_path, m
     r = PX.check_video(_timed(shots), video, BASE / FPS)
     assert any("YuNet" in s for s in r["skipped"])
     assert not [f for f in r["findings"] if f["severity"] == "FAIL"]
+
+
+def test_a_word_slam_is_planned_so_its_dim_and_blur_are_no_camera_jump():
+    """BP-97: the slam blurs and dims the picture in its first frames; the camera check skips its hold (titans 28.7 s)."""
+    acc = [{"kind": "slam_text", "start": 11.0, "start_frame": BASE + 30, "strength": 0.6, "text": "PAPERWORK",
+            "pos": [0.5, 0.5]}]
+    plan = PX.planned(_timed([_shot("SH001", "A", BASE, BASE + 120, accents=acc)]))
+    skip = PX._skip_frames(plan, {})
+    assert {BASE + 30, BASE + 31, BASE + 45} <= skip

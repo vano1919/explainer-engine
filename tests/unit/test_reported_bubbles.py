@@ -39,3 +39,18 @@ def test_the_schema_takes_the_reported_flag_and_nothing_else_new():
     sh["bubbles"][0]["reported"] = True
     sh["bubbles"][0]["mood"] = "x"
     assert S.schema_errors(doc)
+
+
+def test_a_bubble_sits_nearer_its_speaker_than_the_hero_beside_him():
+    """titans SH015 101 s: O'Leary's bubble landed by Belfort's face and read as Belfort's line (the frame's numbers)."""
+    import math
+    from explainer_engine.finish import bubbles as BUB
+    FW, FH = 1920, 1080
+    speaker = (1195, 323)
+    faces = [(317, 160, 605, 462), (1051, 63, 1339, 366), (1497, 60, 1785, 362)]  # Musk, O'Leary himself, Belfort
+    _, (w, h) = BUB.draw_bubble("Short one. In bankruptcy.", FH)
+    x, y = BUB.layout(speaker, (w, h), (FW, FH), faces=faces)
+    c = (x + w / 2, y + h / 2)
+    mine = math.dist(c, (speaker[0], speaker[1] - 0.1 * FH))
+    assert all(mine <= math.dist(c, ((f[0] + f[2]) / 2, (f[1] + f[3]) / 2)) for f in (faces[0], faces[2]))
+    assert not any(BUB.overlaps((x, y, x + w, y + h), f) for f in faces)

@@ -1295,3 +1295,8 @@ cut under BP-27's hold (BUBBLE-2). The slam lines now carry a 1.0 s `pause_after
 the pause lands there) and the seven bubbles start on an earlier narration word. Note: `words` on the whole spliced read
 padded +73 s against +26 s per piece (one long transcription measures shorter gaps, so pause_pad widens more): run `words`
 on the pieces in order.
+Loop pass 2: O'Leary's bubble (SH015) landed by Belfort's face and read as Belfort's line. `bubbles.layout` now prefers a
+spot nearer its speaker than any other face and sweeps a finer grid (also below the face) after the old candidates. Test:
+`test_a_bubble_sits_nearer_its_speaker_than_the_hero_beside_him`. The pixel check counted the slam's dim and blur as a
+92 px camera step; a `slam_text` hold is now a planned change (`pixels.planned` pops). Test:
+`test_a_word_slam_is_planned_so_its_dim_and_blur_are_no_camera_jump`.

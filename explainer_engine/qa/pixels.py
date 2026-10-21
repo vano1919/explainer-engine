@@ -124,6 +124,9 @@ def planned(timed: dict, picture_dirs: list[Path] | None = None) -> dict:
     pops += [(b["end_frame"] - pad, b["end_frame"]) for s in shots for b in s.get("bubbles") or []]
     pops += [(b["start_frame"], b["start_frame"] + pad) for b in timed.get("visual_beats", []) if b["kind"] != "expression"]
     pops += [(b["end_frame"] - pad, b["end_frame"]) for b in timed.get("visual_beats", []) if b["kind"] != "expression"]
+    from explainer_engine.production import accents as ACC  # BP-97: a slam blurs and dims the whole picture, entry and exit
+    pops += [(a["start_frame"], min(s["end_frame"], a["start_frame"] + round(ACC.text_hold(a["text"], a["kind"]) * fps) + 1))
+             for s in shots for a in s.get("accents") or [] if a["kind"] == "slam_text"]
     return {"cuts": cuts, "soft": soft, "snaps": snaps, "dissolves": dissolves, "close": close, "fades": fades,
             "pops": pops}
 
