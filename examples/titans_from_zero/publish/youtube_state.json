@@ -1,0 +1,23 @@
+{
+  "schema": "youtube_state/1",
+  "channel": {
+    "id": "UCndsNlyExB-jKRB9hs283BQ",
+    "title": "CrossWorld Chronicles"
+  },
+  "items": {
+    "long": {
+      "video_id": "XW8BfJdw1No",
+      "sha256": "41bd5b42ede9abb3a11c9e4ae73c963ad641c3a7660f7c508288753abf929c58",
+      "file": "video.mp4",
+      "title": "What If 10 Business Titans Went Broke? Five Years to Prove It Wasn't Luck",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "vano1919 (ვანო), project thread 2026-10-21 17:42: 'კარგია ატვირთე ყველაფერი ან ლისთიდ'",
+      "staged_at": "2026-10-21T18:11:44Z"
+    }
+  },
+  "quota": {
+    "day": "2026-10-21",
+    "uploads": 1,
+    "units": 2
+  }
+}
