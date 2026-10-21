@@ -954,6 +954,16 @@
               "asset": "icon:users",
               "why": "ten men on one bench",
               "text": "TEN MEN"
+            },
+            {
+              "at": "none",
+              "kind": "symbol",
+              "symbol": "cross",
+              "pos": [
+                0.85,
+                0.25
+              ],
+              "why": "none of them looks at the others"
             }
           ],
           "emphasis": [

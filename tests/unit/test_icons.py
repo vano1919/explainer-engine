@@ -45,3 +45,18 @@ def test_an_icon_prop_draws_its_row_and_caption_and_a_missing_icon_fails():
            "visual_beats": [{"at": "forty dollars", "kind": "prop", "thing": "money", "asset": "icon:no-such-icon",
                              "why": "the forty dollars he has"}]}]}], "cast": {}}
     assert any("VB-06" in f["rule"] and f["severity"] == "FAIL" for f in B.lint(doc))
+
+
+def test_a_drawn_prop_ends_with_its_shot_and_a_symbol_may_cross_the_cut():
+    from explainer_engine.production import script as S
+    doc = {"schema": "production_script/3", "episode": {"id": "x"},
+           "segments": [{"id": "S01", "lines": [{"text": "He has forty dollars and no time.", "visual_beats": [
+               {"at": "forty dollars", "kind": "prop", "thing": "money", "asset": "icon:cash", "why": "his forty dollars"},
+               {"at": "no time", "kind": "symbol", "symbol": "question", "why": "no time left"}]}], "shots": []}]}
+    toks = S.tokens(doc)
+    words = [{"w": t["w"], "s": 0.5 + i * 0.4, "e": 0.8 + i * 0.4} for i, t in enumerate(toks)]
+    shots = [{"id": "T1", "picture": "p", "start": 0.0, "end": 2.0, "accents": []},
+             {"id": "T2", "picture": "q", "start": 2.0, "end": 10.0, "accents": []}]
+    out = B.resolve(doc, toks, words, lambda i: i, shots, 30, 10.0, [])
+    prop = next(b for b in out if b["kind"] == "prop")
+    assert prop["shot"] == "T1" and prop["end"] == 2.0  # FORTY BUCKS does not ride into the next scene

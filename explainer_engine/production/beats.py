@@ -329,7 +329,7 @@ def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict
             end = b["start"]
         else:
             end = b["start"] + max(HOLD[kind], icon_hold(b.get("asset")))
-        if kind in PICTURE_BOUND:
+        if kind in PICTURE_BOUND or str(b.get("asset", "")).startswith(ICON_PREFIX):  # a drawn prop belongs to its scene
             end = min(end, b["_shot_end"])
         b["end"] = round(max(b["start"], min(end, duration)), 3)
         b["end_frame"] = int(round(b["end"] * fps))

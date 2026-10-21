@@ -1311,3 +1311,7 @@ until the row is complete, `icon_hold`); a missing icon is a VB-06 FAIL. Titans 
 towers, the clerk's stamp, no dollar, the brain, five years, forty bucks, price tags, a piece of every future, the
 envelope, the signature, the bankruptcy gavel, the last line, the loan and the dead card); numbers are written as words
 (VB-04). Tests: `tests/unit/test_icons.py`.
+Loop pass on the icons (parts 1-2): 0 FAIL. Moving the "Ten men" beat off "none" left 5.3 s without a change in the first
+30 s (RHYTHM-3), so the cross on "none" is back after the sticker. The sheets showed FORTY BUCKS and the gavel riding into
+the next scene: a drawn prop now ends with its shot, like a label (`beats.resolve`). Test:
+`test_a_drawn_prop_ends_with_its_shot_and_a_symbol_may_cross_the_cut`.
