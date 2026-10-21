@@ -1771,17 +1771,7 @@
           "cut": {
             "why": "the narrator opens the exchange on the man with the idea"
           },
-          "heroes_ok": true,
-          "bubbles": [
-            {
-              "at": "buy a piece",
-              "who": "oleary",
-              "text": "Every future. Cheap.",
-              "kind": "speech",
-              "hold": 1.95,
-              "reported": true
-            }
-          ]
+          "heroes_ok": true
         },
         {
           "at": "Nobody pays for parts",
@@ -1835,9 +1825,9 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "forty dollars, for",
+              "at": "Forty dollars. Ten percent",
               "who": "oleary",
-              "text": "Forty bucks. Ten percent.",
+              "text": "Forty dollars. Ten percent.",
               "kind": "speech",
               "hold": 2.4,
               "reported": true
@@ -1960,7 +1950,7 @@
           ],
           "bubbles": [
             {
-              "at": "forever is a long",
+              "at": "Forever's a long word",
               "who": "belfort",
               "text": "Forever's a long word.",
               "kind": "speech",
@@ -3133,7 +3123,7 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "a taste first",
+              "at": "let him taste it first",
               "who": "belfort",
               "text": "Taste first.",
               "kind": "speech",
@@ -3178,9 +3168,9 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "wants half",
+              "at": "I want half",
               "who": "belfort",
-              "text": "Half. Mine.",
+              "text": "I want half.",
               "kind": "speech",
               "hold": 1.5,
               "reported": true
@@ -3754,9 +3744,9 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "borrow some",
+              "at": "Lend me some",
               "who": "trump",
-              "text": "Lend me some?",
+              "text": "Lend me some.",
               "kind": "speech",
               "hold": 1.95,
               "reported": true
@@ -6163,7 +6153,7 @@
               "reported": true
             },
             {
-              "at": "Musk said yes",
+              "at": "You said yes",
               "who": "belfort",
               "text": "You said yes.",
               "kind": "speech",
@@ -6216,7 +6206,7 @@
               "reported": true
             },
             {
-              "at": "Musk says that's",
+              "at": "That's how fires",
               "who": "musk",
               "text": "That's how fires work.",
               "kind": "speech",
@@ -6777,15 +6767,15 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "what he'll own",
+              "at": "what will you own",
               "who": "kiyosaki",
-              "text": "What do you own?",
+              "text": "What will you own?",
               "kind": "speech",
               "hold": 2.4,
               "reported": true
             },
             {
-              "at": "the audience, and",
+              "at": "The audience. The audience",
               "who": "trump",
               "text": "The audience.",
               "kind": "speech",
@@ -6865,7 +6855,7 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "teaches the lesson",
+              "at": "I teach the lesson",
               "who": "kiyosaki",
               "text": "I teach the lesson.",
               "kind": "speech",
@@ -7360,7 +7350,7 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "told him",
+              "at": "I told you",
               "who": "musk",
               "text": "I told you.",
               "kind": "speech",
@@ -7401,7 +7391,7 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "they're finished",
+              "at": "we're finished. Musk",
               "who": "belfort",
               "text": "We're finished.",
               "kind": "speech",
@@ -7982,7 +7972,7 @@
           ],
           "bubbles": [
             {
-              "at": "Belfort asks for",
+              "at": "What's the catch",
               "who": "belfort",
               "text": "What's the catch?",
               "kind": "speech",
@@ -8591,7 +8581,7 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "two hundred of his",
+              "at": "We want them back",
               "who": "belfort",
               "text": "We want them back.",
               "kind": "speech",
@@ -8601,60 +8591,7 @@
           ]
         },
         {
-          "at": "Are they bad?",
-          "type": "B",
-          "picture": {
-            "id": "s13_ts",
-            "engine": "gemini",
-            "subject": "two-shot between rows of scooters: the dark-haired man in a T-shirt asks with a hard look, the tall tired man in black answers with his chin up, an honest man holding a cold truth, clear empty upper third",
-            "heroes": [
-              "cuban",
-              "musk"
-            ],
-            "speakers": {
-              "cuban": [
-                0.32,
-                0.4
-              ],
-              "musk": [
-                0.68,
-                0.4
-              ]
-            },
-            "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
-            "prompt": "medium cinematic shot, two-shot between rows of scooters: the dark-haired man in a T-shirt asks with a hard look, the tall tired man in black answers with his chin up, an honest man holding a cold truth, clear empty upper third. Two named heroes: Mark Cuban as our caricature: dark hair, T-shirt and jeans, arms crossed, a warehouse office with no chairs; Elon Musk as our caricature: tall, broad shoulders, short dark hair, tired eyes, black T-shirt, grease on his hands, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, flat hard fluorescent warehouse light, long cool green-white rows, no soft shadows, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
-          },
-          "motion": {
-            "kind": "push",
-            "z0": 1.0,
-            "z1": 1.05
-          },
-          "purpose": "Cuban and Musk: probably is not good enough",
-          "cut": {
-            "why": "the question between them"
-          },
-          "heroes_ok": true,
-          "bubbles": [
-            {
-              "at": "Probably not",
-              "who": "musk",
-              "text": "Probably not.",
-              "kind": "speech",
-              "hold": 1.5,
-              "reported": true
-            },
-            {
-              "at": "doesn't sell probably",
-              "who": "musk",
-              "text": "I don't sell probably.",
-              "kind": "speech",
-              "hold": 2.4,
-              "reported": true
-            }
-          ]
-        },
-        {
-          "at": "They'll pay with everything",
+          "at": "Belfort says",
           "type": "B",
           "picture": {
             "id": "s13_ots_musk",
@@ -8686,7 +8623,25 @@
           "cut": {
             "why": "the cost, on the man who pays it"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "Probably not",
+              "who": "belfort",
+              "text": "Probably not.",
+              "kind": "speech",
+              "hold": 1.5,
+              "reported": true
+            },
+            {
+              "at": "But I don't sell",
+              "who": "musk",
+              "text": "I don't sell probably.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Cuban has never seen",
@@ -9656,7 +9611,7 @@
               "reported": true
             },
             {
-              "at": "offers double",
+              "at": "So I'll pay double",
               "who": "bezos",
               "text": "I'll pay double.",
               "kind": "speech",
@@ -10373,9 +10328,9 @@
           "heroes_ok": true,
           "bubbles": [
             {
-              "at": "calls it luck",
+              "at": "Musk says it",
               "who": "musk",
-              "text": "Just luck.",
+              "text": "Luck.",
               "kind": "speech",
               "hold": 1.5,
               "reported": true
@@ -13370,13 +13325,13 @@
         },
         {
           "at": "Are they bad",
-          "picture": "s13_ts",
+          "picture": "s13_ots_musk",
           "crop_x": 0.32,
           "zoom": 1.0
         },
         {
           "at": "Probably not I don't",
-          "picture": "s13_ts",
+          "picture": "s13_ots_musk",
           "crop_x": 0.68,
           "zoom": 1.3
         },
@@ -13394,7 +13349,7 @@
         },
         {
           "at": "Belfort opens his mouth",
-          "picture": "s13_ts",
+          "picture": "s13_ots_musk",
           "crop_x": 0.32,
           "zoom": 1.0
         },
