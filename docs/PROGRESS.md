@@ -992,7 +992,7 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
 
-## 2026-10-21 — The two-part sample gate (D-64, OR-19; branch `claude/project-thread-i9ftf6`)
+## 2026-10-21 — The two-part sample gate (D-67, OR-19; branch `claude/project-thread-i9ftf6`)
 
 - The creator (2026-10-21): after the script, stop generating the whole video's audio and pictures; make the first two
   parts, he watches, corrects, and only then is the rest generated. It stages the 2026-10-20 combined images-and-audio
@@ -1005,6 +1005,6 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
   gate 6.5 between the pictures and the render.
 - Docs: PRODUCTION_RULES standing order 10 + gate 6.5 + feedback-log row, ORCHESTRATION OR-19, PRODUCTION_SCRIPT PP-09,
   CLAUDE.md pipeline line, the orchestrator agent and the elevenlabs-voice skill; decision
-  [D-64](DECISIONS_AND_OPEN_QUESTIONS.md) (decision ids 61-63 are claimed by the open PR #14 / #15 branches).
+  [D-67](DECISIONS_AND_OPEN_QUESTIONS.md) (decision ids 61-66 are claimed by the open PR #14 / #15 branches).
 - Tests: `tests/unit/test_sample_gate.py` (9: scope, shared pictures, in/out-of-scope reads, PP-09, sha binding,
   hook wiring, gate row and CLI, `paint plan --sample`). Nothing paid; no renders claimed.

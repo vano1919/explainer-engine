@@ -1,4 +1,4 @@
-"""The two-part sample gate (OR-19, D-64; creator 2026-10-21): paid voice and pictures run for the SAMPLE first.
+"""The two-part sample gate (OR-19, D-67; creator 2026-10-21): paid voice and pictures run for the SAMPLE first.
 
 After the creator approves the script and the combined estimate (images + audio, 2026-10-20), paid generation covers only
 the sample: the first two segments' voice and pictures, painted and read in parallel, rendered and stitched into one piece

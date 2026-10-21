@@ -67,7 +67,7 @@ def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
         if ef:
             return "OR-10: the editorial gate fails: " + "; ".join(
                 f"{f['rule']} {f['where']}: {f['detail']}" for f in ef[:3]) + (f" (+{len(ef) - 3} more)" if len(ef) > 3 else "")
-    from explainer_engine.production import sample as SMP  # OR-19 (D-64): paid reads stay inside the two-part sample
+    from explainer_engine.production import sample as SMP  # OR-19 (D-67): paid reads stay inside the two-part sample
     return SMP.hook_speech(tool, tool_input, folder)
 
 

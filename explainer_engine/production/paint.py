@@ -110,7 +110,7 @@ def preflight(plan: dict, doc: dict, dirs: list[Path], run: Run, script_path: Pa
                 if f["severity"] == "FAIL"]
     elif doc["episode"].get("rulebook"):
         why.append("OR-11 the script names a rulebook but there is no episode_rules.json next to it")
-    if script_path:  # OR-19 (D-64): before the creator's sample approval a plan paints only the sample's pictures
+    if script_path:  # OR-19 (D-67): before the creator's sample approval a plan paints only the sample's pictures
         from explainer_engine.production import sample as SMP
         why += [f"{f['rule']} {f['where']}: {f['detail']}" for f in SMP.check_plan(plan, doc, Path(script_path))]
     if not run.approved(plan["id"], plan["hash"]):

@@ -1,4 +1,4 @@
-"""The two-part sample gate (OR-19, D-64; creator 2026-10-21): after the script approval, paid voice and pictures run for
+"""The two-part sample gate (OR-19, D-67; creator 2026-10-21): after the script approval, paid voice and pictures run for
 the first two segments only; the creator watches the stitched sample and his recorded word opens the rest."""
 
 from __future__ import annotations
