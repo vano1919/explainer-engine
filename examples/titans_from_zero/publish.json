@@ -72,9 +72,57 @@
   },
   "mid_roll": "undecided",
   "self_certification_answered": false,
-  "shorts": [],
+  "shorts": [
+    {
+      "id": "CS01",
+      "title": "$40 for 10% of Musk. Forever.",
+      "description": "Broke on a courthouse bench, Musk gets one offer: forty dollars for ten percent of everything, forever. A fictional what-if story with drawn caricatures; the real people did not take part or say these words.",
+      "tags": [
+        "Elon Musk",
+        "Kevin O'Leary"
+      ]
+    },
+    {
+      "id": "CS02",
+      "title": "Musk built it. Belfort sold it.",
+      "description": "Six hours, zero sales. Then Jordan Belfort takes the handlebars. A fictional what-if story with drawn caricatures; the real people did not take part or say these words.",
+      "tags": [
+        "Elon Musk",
+        "Jordan Belfort"
+      ]
+    },
+    {
+      "id": "CS03",
+      "title": "Kiyosaki crashed Trump's live show",
+      "description": "A hundred thousand viewers, two minutes, one lesson too many. A fictional what-if story with drawn caricatures; the real people did not take part or say these words.",
+      "tags": [
+        "Donald Trump",
+        "Robert Kiyosaki"
+      ]
+    },
+    {
+      "id": "CS04",
+      "title": "The promise Musk said never to make",
+      "description": "Fifty good scooters, or five hundred by Christmas? A fictional what-if story with drawn caricatures; the real people did not take part or say these words.",
+      "tags": [
+        "Elon Musk",
+        "Mark Cuban",
+        "Jordan Belfort"
+      ]
+    },
+    {
+      "id": "CS05",
+      "title": "Rich by Friday. Would you sign?",
+      "description": "After the fire, a man in grey offers to buy everything. There is one catch. A fictional what-if story with drawn caricatures; the real people did not take part or say these words.",
+      "tags": [
+        "Jordan Belfort",
+        "Elon Musk"
+      ]
+    }
+  ],
   "files": {
-    "video": "../../jobs/titans_from_zero/full_v3/render/video.mp4"
+    "video": "../../jobs/titans_from_zero/full_v3/render/video.mp4",
+    "shorts_dir": "../../jobs/titans_from_zero/clip_shorts/final"
   },
   "approval": {
     "by": "vano1919 (ვანო)",
@@ -109,5 +157,6 @@
       "pictures/p_musk.jpg",
       "pictures/p_zuckerberg.jpg"
     ]
-  }
+  },
+  "shorts_from": "publish"
 }

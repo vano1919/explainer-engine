@@ -292,3 +292,13 @@ def test_no_code_path_names_public_or_update():
     assert "privacyStatus\": \"public" not in src and "'public'" not in src
     assert "videos.update" not in src.replace("no ``videos.update``", "")
     assert "/videos?" not in src.replace("{UPLOAD}/videos?", "")  # the only videos write is the resumable insert
+
+
+def test_shorts_cut_from_the_long_video_come_from_publish_json(tmp_path):
+    cut = [{"id": "CS01", "title": "Forty dollars, forever", "description": "One envelope.", "tags": ["musk"]}]
+    stage = P.build(episode(tmp_path, pub={**PUB, "shorts_from": "publish", "shorts": cut}))
+    ids = [it["id"] for it in stage["items"]]
+    assert ids[1:] == ["CS01"]  # the script's SH01/SH02 are not staged
+    cs = stage["items"][1]
+    assert cs["body"]["snippet"]["title"] == "Forty dollars, forever" and cs["file"].endswith("CS01.mp4")
+    assert "One envelope." in cs["body"]["snippet"]["description"] and "#shorts" in cs["body"]["snippet"]["description"]

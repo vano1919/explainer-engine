@@ -217,7 +217,9 @@ def build(episode: Path, *, privacy: str = "unlisted", video: Path | None = None
     findings += field_findings(LONG_ID, pub["title"], desc)
     link = LONG_LINK.format(id=long_id) if long_id else PENDING_LINK
     overrides = {s["id"]: s for s in pub.get("shorts") or []}
-    for short in doc.get("shorts") or []:
+    # Shorts cut from the finished long video (production/clip_shorts.py) are not in the script: publish.json lists them
+    source = pub.get("shorts") if pub.get("shorts_from") == "publish" else doc.get("shorts")
+    for short in source or []:
         sid = short["id"]
         short = {**short, **{k: v for k, v in (overrides.get(sid) or {}).items() if k in ("title", "description", "tags")}}
         title = short_title(short)

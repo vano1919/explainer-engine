@@ -1357,3 +1357,13 @@ corrected to "made with AI image tools". final_qa stamped (0 FAIL). No code chan
   Test: `tests/unit/test_youtube_publish.py::test_a_draft_thumbnail_is_cheap_and_never_replaces_the_final`.
 - Titans `publish.json` got its `thumbnail` block (Trump, Musk, Zuckerberg broke on black, "SKILL OR LUCK?"). The draft
   was not painted: Gemini answered 429 RESOURCE_EXHAUSTED (prepaid credits depleted).
+
+## 2026-10-21 — Shorts cut from the finished long video
+
+- The creator dropped the ten scripted Shorts (their old reads lack the dialogue after D-68) and asked for five Shorts cut
+  from the long video's best moments: the video's own opening, one moment, a shared outro line that points to the full
+  video and leads back into the opening question, so the Short loops; 15 % faster; no new read besides that one line.
+- `production/clip_shorts.py` (plan.json -> 1080x1920: blurred fill, the 16:9 frame with a 6 % side crop, title band,
+  word captions, "full video" label; the last frame is the first). Test: `tests/unit/test_clip_shorts.py`.
+- `publish/plan.py`: `"shorts_from": "publish"` stages the Shorts listed in publish.json instead of the script's.
+  Test: `test_youtube_publish.py::test_shorts_cut_from_the_long_video_come_from_publish_json`.
