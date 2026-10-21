@@ -1278,3 +1278,15 @@ in s02_wide). On titans: 82 rings and labels, 25 name a hero, 5 are not drawn (c
 20 dropped (`jobs/titans_from_zero/render/review/prop_points/`). Validate after `--apply`: still 8 FAIL (PV-45, PV-47, known),
 one new REVIEW (VB-05: four symbol beats in a row in S09 once its labels went). Tests: `tests/unit/test_prop_points.py`
 (fake detector), `test_a_label_naming_a_hero_points_at_his_face_point`.
+
+## 2026-10-21 — Told conversations keep bubbles; word slams; the COURTHOUSE tag holds still (D-66)
+
+The creator's notes on sample v2. (1) The S01 label "COURTHOUSE" sat at x 0.5 and `beats.draw` picked its side from the
+camera-moved point, so the tag flipped left and right every frame; the side now comes from the picture spot. Test:
+`test_a_label_at_the_centre_keeps_its_side_while_the_camera_drifts`. (2) A told turn shows its key phrase in a bubble over the
+speaker (shot `bubbles[].reported`, schema field added; 49 on titans, each at most four words, the speaker in the shot's
+picture). Tests: `tests/unit/test_reported_bubbles.py`. (3) Word slams: `slam_text` dims and softens the picture behind the word
+(BP-97, house, the creator's call), PV-58 keeps them to one a scene, three words and first tellings; titans gets PAPERWORK
+(S01, with a 0.8 s pause after its line) and FOREVER (S02). Tests: `tests/unit/test_word_slam.py`. Research for the next
+editing steps (dialogue, text and graphics, multi-variant editing):
+`/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/research_edit_{dialogue,text_graphics,variants}.md`.

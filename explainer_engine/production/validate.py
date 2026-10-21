@@ -63,6 +63,23 @@ def _f(out, rule, where, detail, sev="FAIL"):
     out.append({"rule": rule, "severity": sev, "where": where, "detail": detail})
 
 
+def word_slams(doc: dict) -> list[tuple[str, str]]:
+    """PV-58 (BP-97, D-66): a word slam is one to three words, one a scene, never the same word twice."""
+    most, seen, out = int(SR.T("BP-97", "words_max")), {}, []
+    for seg in doc["segments"]:
+        slams = [a for sh in seg.get("shots", []) for a in sh.get("accents", []) if a.get("kind") == "slam_text"]
+        if len(slams) > 1:
+            out.append((seg["id"], f"{len(slams)} word slams in one scene: a slam is rare or it is not a slam (BP-97)"))
+        for a in slams:
+            word = str(a.get("text", "")).strip().lower()
+            if len(word.split()) > most:
+                out.append((seg["id"], f"slam {a.get('text')!r} has {len(word.split())} words; at most {most} (BP-97)"))
+            if word in seen:
+                out.append((seg["id"], f"slam {a.get('text')!r} again (first in {seen[word]}): only its first telling (BP-97)"))
+            seen.setdefault(word, seg["id"])
+    return out
+
+
 def establishing_cast(doc: dict) -> list[tuple[str, str]]:
     """PV-57 (BP-91, RX-09; the creator 2026-10-20 21:14): in a segment the first shot that shows heroes is the establishing
     view; a later shot shows only heroes of that view, or a newcomer the narrator has named in the segment up to the line the
@@ -404,6 +421,9 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # PV-57 the establishing cast is the scene's cast (BP-91, RX-09)
     for where, why in establishing_cast(doc):
         _f(out, "PV-57", where, why, SR.rule("BP-91").get("severity", "REVIEW"))
+    # PV-58 word slams (BP-97)
+    for where, why in word_slams(doc):
+        _f(out, "PV-58", where, why, SR.rule("BP-97").get("severity", "REVIEW"))
     # PV-54 the time counter (ED-15)
     for why in GFX.check_counter(doc.get("counter", []), [sg["id"] for sg in doc["segments"]]):
         _f(out, "PV-54", "counter", why)

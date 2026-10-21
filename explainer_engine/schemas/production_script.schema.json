@@ -905,6 +905,10 @@
                           "shout",
                           "thought"
                         ]
+                      },
+                      "reported": {
+                        "type": "boolean",
+                        "description": "the key phrase of a turn the narrator tells in his own words (creator 2026-10-21: a reported exchange keeps its bubbles)"
                       }
                     }
                   }

@@ -1029,13 +1029,6 @@
                 0.22
               ],
               "why": "by lunch it all falls into paperwork"
-            },
-            {
-              "at": "paperwork",
-              "kind": "accent",
-              "effect": "punch",
-              "why": "paperwork: the clerk's stamp lands",
-              "strength": 0.6
             }
           ],
           "emphasis": [
@@ -1043,7 +1036,8 @@
           ],
           "tone": "brisk then flat",
           "emotion": "wry",
-          "kind": "transition"
+          "kind": "transition",
+          "pause_after": 0.8
         },
         {
           "text": "But nobody will lend them a dollar after today. Not a bank, not a friend, not the man beside them.",
@@ -1279,7 +1273,14 @@
           "cut": {
             "why": "insert on the stamp"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "accents": [
+            {
+              "kind": "slam_text",
+              "at": "paperwork",
+              "text": "PAPERWORK"
+            }
+          ]
         },
         {
           "at": "But nobody will lend",
@@ -1660,7 +1661,17 @@
           "cut": {
             "why": "the narrator opens the exchange on the man with the idea"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "buy a piece",
+              "who": "oleary",
+              "text": "Every future. Cheap.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Musk can build anything",
@@ -1711,7 +1722,24 @@
             "why": "back to the buyer for the price"
           },
           "reuse": "reuse",
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "forty dollars, for",
+              "who": "oleary",
+              "text": "Forty bucks. Ten percent.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            }
+          ],
+          "accents": [
+            {
+              "kind": "slam_text",
+              "at": "Forever",
+              "text": "FOREVER"
+            }
+          ]
         },
         {
           "at": "Down the bench, Trump snorts",
@@ -1747,7 +1775,17 @@
           "cut": {
             "why": "a third man, the same bench"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "Trump snorts",
+              "who": "trump",
+              "text": "Ha!",
+              "kind": "shout",
+              "hold": 1.4,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "And Musk, with no other offer",
@@ -1808,6 +1846,24 @@
             {
               "kind": "wobble",
               "strength": 0.3
+            }
+          ],
+          "bubbles": [
+            {
+              "at": "forever is a long",
+              "who": "belfort",
+              "text": "Forever's a long word.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            },
+            {
+              "at": "short one",
+              "who": "oleary",
+              "text": "Short one. In bankruptcy.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
             }
           ]
         },
@@ -2926,7 +2982,17 @@
           "cut": {
             "why": "the seller explains"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "a taste first",
+              "who": "belfort",
+              "text": "Taste first.",
+              "kind": "speech",
+              "hold": 1.5,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Now he wants half",
@@ -2961,7 +3027,25 @@
           "cut": {
             "why": "the ask lands on Musk"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "wants half",
+              "who": "belfort",
+              "text": "Half. Mine.",
+              "kind": "speech",
+              "hold": 1.5,
+              "reported": true
+            },
+            {
+              "at": "never promise",
+              "who": "musk",
+              "text": "Don't promise. Build.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Belfort looks deeply offended",
@@ -2996,7 +3080,17 @@
           "cut": {
             "why": "conclusion: both in frame"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "deeply offended",
+              "who": "belfort",
+              "text": "Me?!",
+              "kind": "shout",
+              "hold": 1.4,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "They shake hands",
@@ -3350,7 +3444,17 @@
           "cut": {
             "why": "the talker first"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "debt is how",
+              "who": "kiyosaki",
+              "text": "Debt makes you rich.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Trump asks to borrow",
@@ -3385,7 +3489,25 @@
           "cut": {
             "why": "the room, both of them"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "borrow some",
+              "who": "trump",
+              "text": "Lend me some?",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            },
+            {
+              "at": "has none",
+              "who": "kiyosaki",
+              "text": "I have none.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Trump says his companies",
@@ -3401,7 +3523,25 @@
             "why": "conclusion on the winner of the argument"
           },
           "reuse": "reuse",
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "six times",
+              "who": "trump",
+              "text": "Six times. Still here.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            },
+            {
+              "at": "The cameras did",
+              "who": "trump",
+              "text": "Cameras came back.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Trump props his phone",
@@ -4482,7 +4622,25 @@
           "cut": {
             "why": "the setup on the newcomer"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "something useful",
+              "who": "kiyosaki",
+              "text": "Something useful, folks!",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            },
+            {
+              "at": "two minutes",
+              "who": "trump",
+              "text": "Two minutes.",
+              "kind": "speech",
+              "hold": 1.5,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Lesson one",
@@ -4517,7 +4675,17 @@
           "cut": {
             "why": "both in frame for the lesson"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "not an asset",
+              "who": "kiyosaki",
+              "text": "Not an asset!",
+              "kind": "shout",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "The count starts falling",
@@ -4588,7 +4756,17 @@
           "cut": {
             "why": "conclusion on the host who is losing"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "very thin",
+              "who": "trump",
+              "text": "Wrap it up.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Trump turns the phone.",
@@ -4912,7 +5090,25 @@
           "cut": {
             "why": "the three at one table"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "by Christmas",
+              "who": "cuban",
+              "text": "How many by Christmas?",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            },
+            {
+              "at": "fifty good ones",
+              "who": "musk",
+              "text": "Fifty good ones.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Before he can finish",
@@ -4947,7 +5143,17 @@
           "cut": {
             "why": "the overpromise"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "five fingers",
+              "who": "belfort",
+              "text": "Five hundred!",
+              "kind": "shout",
+              "hold": 1.5,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Cuban wants five hundred",
@@ -4987,7 +5193,17 @@
           "cut": {
             "why": "the buyer sets the stakes"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "December twentieth",
+              "who": "cuban",
+              "text": "By December twentieth.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "And Musk hears himself",
@@ -5032,6 +5248,16 @@
             {
               "kind": "wobble",
               "strength": 0.3
+            }
+          ],
+          "bubbles": [
+            {
+              "at": "say yes",
+              "who": "musk",
+              "text": "...Yes.",
+              "kind": "speech",
+              "hold": 1.4,
+              "reported": true
             }
           ]
         }
@@ -5436,7 +5662,25 @@
           "cut": {
             "why": "the setup on the angry partner"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "promised what",
+              "who": "musk",
+              "text": "We haven't built them!",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            },
+            {
+              "at": "Musk said yes",
+              "who": "belfort",
+              "text": "You said yes.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Belfort shrugs",
@@ -5471,7 +5715,25 @@
           "cut": {
             "why": "both at the van"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "promise, then build",
+              "who": "belfort",
+              "text": "Promise, then build.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            },
+            {
+              "at": "how fires work",
+              "who": "musk",
+              "text": "That's how fires work.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Belfort laughs",
@@ -5908,7 +6170,25 @@
           "cut": {
             "why": "the doubter"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "what he'll own",
+              "who": "kiyosaki",
+              "text": "What do you own?",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            },
+            {
+              "at": "the audience, and",
+              "who": "trump",
+              "text": "The audience.",
+              "kind": "speech",
+              "hold": 1.5,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "There's a seat in the back",
@@ -5978,7 +6258,17 @@
           "cut": {
             "why": "conclusion on the one who says no"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "teaches the lesson",
+              "who": "kiyosaki",
+              "text": "I teach the lesson.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "The car pulls away.",
@@ -6422,7 +6712,17 @@
           "cut": {
             "why": "the other side"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "told him",
+              "who": "musk",
+              "text": "I told you.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Belfort says if Cuban hears",
@@ -6453,7 +6753,17 @@
           "cut": {
             "why": "the fear, pictured; conclusion on the one who must answer"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "they're finished",
+              "who": "belfort",
+              "text": "We're finished.",
+              "kind": "speech",
+              "hold": 1.5,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Belfort looks at the black shelf",
@@ -7001,6 +7311,16 @@
               "kind": "wobble",
               "strength": 0.3
             }
+          ],
+          "bubbles": [
+            {
+              "at": "the catch",
+              "who": "belfort",
+              "text": "What's the catch?",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
           ]
         },
         {
@@ -7052,7 +7372,17 @@
             "why": "same frame, closer"
           },
           "reuse": "reframe",
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "two hundred riders",
+              "who": "musk",
+              "text": "Two hundred riders.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Signed one once.",
@@ -7124,7 +7454,17 @@
           "cut": {
             "why": "the turn: both faces"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "won't sign this one",
+              "who": "belfort",
+              "text": "Not signing this one.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Belfort picks up his phone",
@@ -7479,7 +7819,17 @@
           "cut": {
             "why": "the setup: the bad news"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "want them back",
+              "who": "belfort",
+              "text": "We want them back.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Are they bad?",
@@ -7514,7 +7864,25 @@
           "cut": {
             "why": "the question between them"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "Probably not",
+              "who": "musk",
+              "text": "Probably not.",
+              "kind": "speech",
+              "hold": 1.5,
+              "reported": true
+            },
+            {
+              "at": "doesn't sell probably",
+              "who": "musk",
+              "text": "I don't sell probably.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "They'll pay with everything",
@@ -7630,7 +7998,25 @@
             "why": "conclusion on Cuban"
           },
           "reuse": "reuse",
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "fix them",
+              "who": "cuban",
+              "text": "Fix them.",
+              "kind": "speech",
+              "hold": 1.5,
+              "reported": true
+            },
+            {
+              "at": "A real one",
+              "who": "cuban",
+              "text": "A real number.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "They spend every dollar",
@@ -8409,7 +8795,25 @@
           "cut": {
             "why": "Bezos across the desk"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "bury that report",
+              "who": "bezos",
+              "text": "They said bury it.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            },
+            {
+              "at": "offers double",
+              "who": "bezos",
+              "text": "I'll pay double.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Musk just mouths",
@@ -8449,7 +8853,17 @@
           "cut": {
             "why": "conclusion: the deal made"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "buy lunch",
+              "who": "belfort",
+              "text": "You're buying lunch.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         }
       ],
       "drama": {
@@ -8871,7 +9285,17 @@
           "cut": {
             "why": "the setup: what he came for"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "burnt garage",
+              "who": "musk",
+              "text": "Of a burnt garage?",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "O'Leary says of everything",
@@ -8906,7 +9330,17 @@
           "cut": {
             "why": "the contract itself"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "fires included",
+              "who": "oleary",
+              "text": "Fires included.",
+              "kind": "speech",
+              "hold": 1.5,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "Belfort grins at the lucky pick",
@@ -8941,7 +9375,25 @@
           "cut": {
             "why": "conclusion on the hint"
           },
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "lucky pick",
+              "who": "belfort",
+              "text": "Lucky pick, huh?",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            },
+            {
+              "at": "didn't pick anyone",
+              "who": "oleary",
+              "text": "I picked nobody.",
+              "kind": "speech",
+              "hold": 1.95,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "O'Leary opens his briefcase.",
@@ -9039,7 +9491,17 @@
             "why": "the last question"
           },
           "reuse": "reuse",
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "calls it luck",
+              "who": "musk",
+              "text": "Just luck.",
+              "kind": "speech",
+              "hold": 1.5,
+              "reported": true
+            }
+          ]
         },
         {
           "at": "O'Leary agrees",
@@ -9055,7 +9517,17 @@
             "why": "conclusion on the winner"
           },
           "reuse": "reuse",
-          "heroes_ok": true
+          "heroes_ok": true,
+          "bubbles": [
+            {
+              "at": "owned all eight",
+              "who": "oleary",
+              "text": "I owned all eight.",
+              "kind": "speech",
+              "hold": 2.4,
+              "reported": true
+            }
+          ]
         }
       ],
       "drama": {

@@ -90,6 +90,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-55 | silent lines ([D-62](DECISIONS_AND_OPEN_QUESTIONS.md)): a speaker whose cast traits say `real_person` has no voiced line in the video or a Short (`"voiced": false`, shown as bubbles), and a silent line names its speaker (`production/silent.py`); a FAIL otherwise |
 | PV-56 | reported dialogue ([D-63](DECISIONS_AND_OPEN_QUESTIONS.md)): the narrator tells the exchange; a segment holds at most `silent.MAX_ACCENT_BUBBLES` silent line (`production/silent.check_reported_dialogue`); a FAIL otherwise |
 | PV-57 | the establishing cast ([BP-91](SOURCED_RULES.md), [D-64](DECISIONS_AND_OPEN_QUESTIONS.md)): in a segment of a `production_script/3` the first shot whose picture has `heroes` is the establishing view; a later shot shows only heroes of that view, or a newcomer the narrator has named in the segment up to the line the shot opens on, or the hero the shot's `reveal` names (`validate.establishing_cast`); the rule's severity otherwise. PV-56 also holds the one accent bubble to [BP-84](SOURCED_RULES.md)'s word cap |
+| PV-58 | word slams ([BP-97](SOURCED_RULES.md), [D-66](DECISIONS_AND_OPEN_QUESTIONS.md)): a shot accent `slam_text` is at most the rule's words, one a segment, and never the same word twice (`validate.word_slams`); the picture dims and softens behind it while it holds (`accents.SLAM_DIM`); the rule's severity |
 
 ## Paint plans (PP-xx; audit 2026-10-19; `imagegen/plan.py`, `production/paint.py`)
 
