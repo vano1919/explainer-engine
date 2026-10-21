@@ -991,3 +991,20 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-21 — The two-part sample gate (D-67, OR-19; branch `claude/project-thread-i9ftf6`)
+
+- The creator (2026-10-21): after the script, stop generating the whole video's audio and pictures; make the first two
+  parts, he watches, corrects, and only then is the rest generated. It stages the 2026-10-20 combined images-and-audio
+  approval (one estimate, one provider choice stay) into sample first, rest on his recorded word.
+- New `explainer_engine/production/sample.py`: the sample scope (first two segments, widenable in `sample_approval.json`),
+  the sample's pictures and in-scope reads, and the approval record bound to the script's sha256 (`status` / `approve` CLI).
+- Enforced in code: `paint.preflight` refuses a plan with pictures outside the sample before the approval (PP-09;
+  `paint plan --sample` keeps a plan inside it; `reusable` plans and face sheets stay allowed), the ElevenLabs hook
+  refuses a paid read whose text is not inside the sample segments (Shorts included), and `production_gate` shows
+  gate 6.5 between the pictures and the render.
+- Docs: PRODUCTION_RULES standing order 10 + gate 6.5 + feedback-log row, ORCHESTRATION OR-19, PRODUCTION_SCRIPT PP-09,
+  CLAUDE.md pipeline line, the orchestrator agent and the elevenlabs-voice skill; decision
+  [D-67](DECISIONS_AND_OPEN_QUESTIONS.md) (decision ids 61-66 are claimed by the open PR #14 / #15 branches).
+- Tests: `tests/unit/test_sample_gate.py` (9: scope, shared pictures, in/out-of-scope reads, PP-09, sha binding,
+  hook wiring, gate row and CLI, `paint plan --sample`). Nothing paid; no renders claimed.

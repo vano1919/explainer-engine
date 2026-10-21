@@ -100,6 +100,7 @@ generate images (Anthropic: "an image understanding model only"); it prepares th
 | PP-05 | Gemini on one episode's own pictures (a plan not marked `reusable` and without `episode.gemini_exception`) is a REVIEW note for the creator, never a refusal: the provider choice per batch is the decision (D-50 supersedes the 2026-10-11 "reusable only" rule) |
 | PP-06 | every item is a picture of the script and its prompt is still the script's prompt |
 | PP-07 | the plan says what the batch is for (REVIEW) |
+| PP-09 | before the creator's sample approval (`sample_approval.json`, [OR-19](ORCHESTRATION.md)) a plan paints only pictures a sample segment uses; plans marked `reusable` and face sheets stay allowed; `paint plan --sample` keeps a plan inside the sample |
 
 `paint run` also refuses a script with any PV FAIL (it runs `validate` with the picture folders), reserves every picture in
 the ledger before its call, records it with its prompt hash, repaints a picture only when its prompt changed (in a new plan),
