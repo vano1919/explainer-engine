@@ -128,7 +128,7 @@
         "script",
         "qa"
       ],
-      "requirement": "No synthetic voice speaks as a real living person (D-62): every line of the seven speaking real people (Trump, Musk, Belfort, O'Leary, Kiyosaki, Cuban, Bezos) carries voiced: false and reaches the viewer only as a drawn speech bubble, in the long video and in every Short; no ElevenLabs or other generation reads, hums, laughs or murmurs for them. Only the narrator and the invented Vance are voiced. This holds for any real person, official or candidate a later revision adds, until the provider grants a fiction/parody permission or the person consents (D-62's revisit conditions).",
+      "requirement": "No synthetic voice speaks AS a real living person (D-62, as narrowed by D-68 on 2026-10-21): the seven real people (Trump, Musk, Belfort, O'Leary, Kiyosaki, Cuban, Bezos) are never given a voice of their own, a clone, a sound-alike, an accent or a cadence of theirs. Their invented words reach the viewer only as short quotes told by the one narrator in the narrator's own library voice (the speaker named before the quote, attitude not impression; no delivery tag names a person, accent or way of speaking of a real person), or as a drawn speech bubble (the Shorts until they are rebuilt). This holds for any real person a later revision adds, until the provider grants a fiction/parody permission or the person consents (D-62's revisit conditions).",
       "sources": [
         {
           "url": "https://elevenlabs.io/use-policy",
@@ -1080,7 +1080,7 @@
     },
     {
       "id": "RK-20",
-      "element": "Speech bubbles carrying the invented lines of seven real people (Trump, Musk, Belfort, O'Leary, Kiyosaki, Cuban, Bezos) in the long video and the Shorts (D-62)",
+      "element": "The invented lines of seven real people (Trump, Musk, Belfort, O'Leary, Kiyosaki, Cuban, Bezos), told as short quotes by the one narrator in his own voice (D-68) and as speech bubbles in the Shorts (D-62)",
       "category": "real_person",
       "source_type": "original",
       "status": "PASS",
@@ -1094,8 +1094,8 @@
         "US",
         "GE"
       ],
-      "evidence": "D-62 and PV-55: 143 real-person lines carry voiced: false and become bubbles (production/silent.py, one sentence per bubble, BP-84 words, BP-27 hold). The words are the same invented dialogue already assessed in RK-03..RK-09; the description's notice says every line of dialogue is invented and nobody named took part (ER-06). YouTube 2801947 targets a likeness or voice that falsely implies authorisation or a fake speech passed off as real; Hustler v. Falwell (V-53); Georgia Arts. 1(e), 4 (V-55).",
-      "rationale": "A drawn speech bubble over a caricature is the oldest form of satirical cartoon and cannot be taken for a recording of the person, so moving the lines from a voice to bubbles removes the provider-terms problem without adding a new one. No material issue found, provided the bubble texts stay the approved lines (ER-02) and contain no political content (ER-08)."
+      "evidence": "D-62 and PV-55: 143 real-person lines carry voiced: false and become bubbles (production/silent.py, one sentence per bubble, BP-84 words, BP-27 hold). The words are the same invented dialogue already assessed in RK-03..RK-09; the description's notice says every line of dialogue is invented and nobody named took part (ER-06). YouTube 2801947 targets a likeness or voice that falsely implies authorisation or a fake speech passed off as real; Hustler v. Falwell (V-53); Georgia Arts. 1(e), 4 (V-55). 2026-10-21 (D-68): the creator moved every line to the one narrator; the narrator's library voice is nobody's likeness, the speaker is named before each quote, and the 23 delivery tags used name no person, accent or cadence (round-12 review TFZ-R12-09).",
+      "rationale": "A drawn speech bubble over a caricature is the oldest form of satirical cartoon and cannot be taken for a recording of the person, so moving the lines from a voice to bubbles removes the provider-terms problem without adding a new one. No material issue found, provided the bubble texts stay the approved lines (ER-02) and contain no political content (ER-08). Under D-68 the same holds for the narrator's told quotes: V-51 bars synthesizing a living person's voice or likeness, and a narrator reporting invented words in his own voice is neither; the description's notice (ER-06) still says every line is invented."
     }
   ],
   "platform": {
@@ -1373,6 +1373,30 @@
       "script_sha256": "3ec425e15c4fd53b9a3ea5d5a3a09692830f6d9fc0f81a406b3776e76280afee",
       "rulebook_version": 2,
       "scope": "pauses S12/S16, S15 cut after Oh"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-21",
+      "by": "claude (session 01MmSiAw)",
+      "script_sha256": "9aefd098231401b8f4fa808154e3d8bc031b22b823cf66a57c902f23510b42cc",
+      "rulebook_version": 2,
+      "scope": "D-68 one narrator: RK-01/RK-02 hold (no living person voiced, Brad reads every line), ER-05 unchanged (fiction framing kept), RK-15 cards reuse the approved references; creator approved the text and the recording 2026-10-21 10:07"
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-21",
+      "by": "claude (session 01MmSiAw)",
+      "script_sha256": "a4502e47c06a998a0ba7528585484c26115232fa7ddd8e8c9da6d17d94ac6acd",
+      "rulebook_version": 2,
+      "scope": "Round 12: ER-03 and RK-20 rewritten for D-68 (creator card 2026-10-21 12:05): narrator tells the real people's invented words as quotes in his own voice; no voice, clone, accent or cadence of theirs; tags name no person. Script fixes R12-01/02/04/06/07/08; RK-01/RK-02 hold."
+    },
+    {
+      "checkpoint": "paid_assets",
+      "date": "2026-10-21",
+      "by": "claude (session 01MmSiAw)",
+      "script_sha256": "d4684b70785360aee7f2fb44617499f4c1c47bb61a3711b92c65aeefb65976dc",
+      "rulebook_version": 2,
+      "scope": "Round 13 technical fixes only (S11 sfx anchor, S13 claim_share label); spoken words unchanged (script approval hash holds)."
     }
   ]
 }

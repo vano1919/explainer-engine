@@ -12,9 +12,9 @@
     },
     "notes": "writers' room stages 1-2 (story, scenes, lines); beats, performance, edit, voices and Shorts follow on these frozen words after the creator's approval of the script",
     "script_approval": {
-      "approved_by": "vano1919 (ვანო)",
-      "approved_at": "2026-10-20",
-      "sha256": "da58aab8cfd34874db193256638bcda78193bfcd13fd834c51d6886d1ca69fba"
+      "approved_by": "vano1919 (ვანო), decision card 2026-10-21 12:05: round-12 fixes + ER-03",
+      "approved_at": "2026-10-21",
+      "sha256": "2bebb883a59c74b2c8cbc2dee2d6c6799f337ba9b75a2225da10583b7cd61e8e"
     }
   },
   "voice": {
@@ -915,7 +915,7 @@
           "visual_beats": []
         },
         {
-          "text": "No money. No names. No bank that takes their call. Five years to climb back, or to prove it was always luck.",
+          "text": "No money. No names. No bank that takes their call.",
           "tags": [
             "dramatically"
           ],
@@ -932,14 +932,6 @@
               "thing": "no money, no names, no bank",
               "asset": "icon:cash-off+user-off+building-bank",
               "why": "no money, no names, no bank: named one by one"
-            },
-            {
-              "at": "Five years",
-              "kind": "prop",
-              "thing": "five years to climb back",
-              "asset": "icon:hourglass",
-              "why": "five years to climb back",
-              "text": "FIVE YEARS"
             }
           ]
         },
@@ -3558,7 +3550,7 @@
           "visual_beats": []
         },
         {
-          "text": "Musk builds, Belfort sells, and they split it down the middle. Trump found an audience. Kiyosaki found a voicemail. O'Leary owns a slice of all of them. And Cardone is still waiting for a bank to say yes.",
+          "text": "Musk builds, Belfort sells, and they split it down the middle. Trump found an audience. Kiyosaki found a voicemail. O'Leary keeps his envelopes, and waits. And Cardone is still waiting for a bank to say yes.",
           "tags": [
             "wryly"
           ],
@@ -3606,7 +3598,7 @@
               "why": "rings the row the narrator names: found a voicemail"
             },
             {
-              "at": "O'Leary owns",
+              "at": "O'Leary keeps",
               "kind": "highlight",
               "pos": [
                 0.587,
@@ -4894,7 +4886,7 @@
           ]
         },
         {
-          "text": "Next: one big order, and a promise nobody can keep.",
+          "text": "Next: one big order, and the one promise Musk said never to make.",
           "tags": [
             "ominously"
           ],
@@ -7120,7 +7112,7 @@
           "kind": "transition"
         },
         {
-          "text": "The cells on that shelf came from the same box as Cuban's. Two hundred skipped the heat test. Belfort never knew. Musk says, \"I told you. Quietly.\" Belfort never listens when it's quiet. He says, \"If Cuban hears this, we're finished.\" Musk shakes his head. \"If a rider's scooter burns, we're worse than finished.\"",
+          "text": "The cells on that shelf came from the same box as Cuban's. Two hundred skipped the heat test. Belfort never knew. Musk says, \"I told you. Quietly. You never listen when it's quiet.\" Belfort says, \"If Cuban hears this, we're finished.\" Musk shakes his head. \"If a rider's scooter burns, we're worse than finished.\"",
           "tags": [
             "suspenseful"
           ],
@@ -7509,7 +7501,7 @@
             "purpose": "the leftover cell hisses: a dry electrical fizz, the first sign of the fire (to make: one take, short, not in the library yet)"
           },
           {
-            "at": "never listens",
+            "at": "never listen when",
             "sound": "tick__v1",
             "gain_db": -22,
             "purpose": "a soft accent on the beat's word"
@@ -7615,7 +7607,7 @@
           "new_read": true
         },
         {
-          "text": "\"The fire was old wiring in an old garage. Nothing to do with batteries.\"",
+          "text": "Vance spreads his hands. \"The fire was old wiring in an old garage. Nothing to do with batteries.\"",
           "visual_beats": [
             {
               "at": "Nothing to do with batteries",
@@ -8253,7 +8245,7 @@
           "kind": "transition"
         },
         {
-          "text": "Belfort stands in front of Cuban with no pitch at all. \"Two hundred of your batteries skipped a test. We want them back.\" Cuban asks, \"Are they bad?\" \"Probably not.\" Musk steps in. \"But I don't sell probably.\" They'll pay with everything they have. Cuban has never seen anyone walk in to give money back.",
+          "text": "Belfort stands in front of Cuban with no pitch at all. \"Two hundred of your batteries skipped a test. We want them back.\" Cuban asks, \"Are they bad?\" Belfort says, \"Probably not.\" Musk steps in. \"But I don't sell probably.\" They'll pay with everything they have. Cuban has never seen anyone walk in to give money back.",
           "tags": [
             "matter of fact"
           ],
@@ -8263,9 +8255,7 @@
           "emphasis": [
             "probably"
           ],
-          "claims": [
-            "C-02"
-          ],
+          "claims": [],
           "pause_after": 0.4,
           "visual_beats": [
             {
@@ -8888,7 +8878,7 @@
         "stakes": "they give up all their cash to keep one customer's trust",
         "shift": "broke -> trusted",
         "need": "belonging",
-        "claim_share": "fact",
+        "claim_share": "invented",
         "closes": [
           "L11"
         ]
@@ -14245,7 +14235,7 @@
         },
         {
           "icon": "mail",
-          "text": "owns a slice of all of them",
+          "text": "keeps his envelopes, and waits",
           "picture": "p_oleary"
         },
         {
@@ -14259,7 +14249,7 @@
       "id": "card_recap_2",
       "kind": "recap",
       "title": "Month nine: the score",
-      "next": "one big order",
+      "next": "one big order, one promise",
       "tone": "teal",
       "rows": [
         {
