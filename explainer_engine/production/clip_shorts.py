@@ -164,10 +164,10 @@ def render(plan: dict, clip: dict, root: Path) -> dict:
     # the 16:9 programme at normal speed: card held over the fade-in, the opening, the moment, the card under the outro
     fc = (f"[0:v]trim={card_at}:{intro['src_end']},setpts=PTS-STARTPTS,fps={FPS}[iv];"
           f"[1:v]loop=-1:1,trim=0:{card_at},setpts=PTS-STARTPTS,fps={FPS}[ih];"
-          f"[0:v]trim={mid['src_start']}:{mid['src_end']},setpts=PTS-STARTPTS,fps={FPS}[mv];"
+          f"[4:v]setpts=PTS-STARTPTS,fps={FPS}[mv];"
           f"[1:v]loop=-1:1,trim=0:{d_out},setpts=PTS-STARTPTS,fps={FPS}[ov];"
           f"[0:a]atrim=0:{intro['src_end']},asetpts=PTS-STARTPTS,afade=t=out:st={intro['src_end'] - 0.12}:d=0.12[ia];"
-          f"[0:a]atrim={mid['src_start']}:{mid['src_end']},asetpts=PTS-STARTPTS,afade=t=in:d=0.12,"
+          "[4:a]asetpts=PTS-STARTPTS,afade=t=in:d=0.12,"
           f"afade=t=out:st={mid['src_end'] - mid['src_start'] - 0.3}:d=0.3[ma];"
           f"[2:a]aformat=sample_rates=48000:channel_layouts=stereo,apad,atrim=0:{d_out}[ovo];"
           f"[3:a]aformat=sample_rates=48000:channel_layouts=stereo,atrim=0:{d_out},volume=0.06,"
@@ -175,8 +175,10 @@ def render(plan: dict, clip: dict, root: Path) -> dict:
           "[ovo][om]amix=inputs=2:duration=first:normalize=0[oa];"
           "[ih][iv][mv][ov]concat=n=4:v=1:a=0[v];[ia][ma][oa]concat=n=3:v=0:a=1[a]")
     prog = out / "programme.mp4"
-    _run(["ffmpeg", "-v", "error", "-y", "-i", str(video), "-loop", "1", "-i", str(card), "-i", plan["outro"],
-          "-i", plan["music"], "-filter_complex", fc, "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-crf", "16",
+    # the moment is its own seeked input: trimming it from input 0 would buffer every frame before it (OOM at 3 min)
+    _run(["ffmpeg", "-v", "error", "-y", "-t", f"{intro['src_end']}", "-i", str(video), "-loop", "1", "-i", str(card),
+          "-i", plan["outro"], "-i", plan["music"], "-ss", f"{mid['src_start']}", "-t", f"{mid['src_end'] - mid['src_start']}",
+          "-i", str(video), "-filter_complex", fc, "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-crf", "16",
           "-preset", "fast", "-pix_fmt", "yuv420p", "-c:a", "pcm_s16le", str(prog).replace(".mp4", ".mov")])
     prog = Path(str(prog).replace(".mp4", ".mov"))
     words = caption_words(parts, long_words, outro_words, tempo)
