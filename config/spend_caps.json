@@ -4,6 +4,15 @@
     "runpod_usd": 3.0,
     "gemini_usd": 10.0
   },
+  "allowances": {
+    "_doc": "Spending a tool may do on its own, without asking first: a ceiling inside the run's own cap of that service (never a raise of it; the cap's 80 % stop still applies). Enforced by core/ledger.Run.reserve_allowance.",
+    "qa_loop": {
+      "service": "elevenlabs_credits",
+      "per_run": 2000,
+      "for": "re-reads of script lines the QA loop changed (explainer_engine/qa/loop.py)",
+      "decided": "the creator, 2026-10-20"
+    }
+  },
   "runpod": {
     "per_pod_usd": 1.0,
     "per_24h_usd": 1.5,

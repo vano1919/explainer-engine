@@ -90,20 +90,20 @@
     {
       "id": "B-10",
       "kind": "provider_terms",
-      "checked": "2026-10-17",
-      "verified_in": "V-22",
+      "checked": "2026-10-20",
+      "verified_in": "V-51",
       "verified": true,
       "url": "https://elevenlabs.io/use-policy",
-      "statement": "ElevenLabs: no impersonating the voice, identity or likeness of a living person without explicit, informed consent; deceased people where reasonably likely to cause harm or infringing post-mortem rights; no false endorsement, sponsorship or affiliation; disclose AI where law requires or where not doing so would materially mislead; do not remove watermarks."
+      "statement": "ElevenLabs Prohibited Use Policy, 'Last updated 09 October 2026' (re-read 2026-10-20): s.3 no 'cloning, synthesizing, or impersonating the voice, identity, or likeness of any living individual' without explicit, informed consent or other valid authorization; deceased people where reasonably likely to cause harm or infringing post-mortem rights; no false endorsement, sponsorship or affiliation; s.4 no 'Impersonating political candidates or elected officials without authorization' and no political campaigning without prior written consent; s.9 no use of a person's voice or likeness without authorization (publicity rights); s.10 disclose AI where law requires or where not doing so would materially mislead; do not remove watermarks. No parody, satire or fiction exception appears on the page. Earlier reading 2026-10-17: V-22."
     },
     {
       "id": "B-11",
       "kind": "provider_terms",
-      "checked": "2026-10-17",
-      "verified_in": "V-23",
+      "checked": "2026-10-20",
+      "verified_in": "V-57",
       "verified": true,
       "url": "https://policies.google.com/terms/generative-ai/use-policy",
-      "statement": "Google generative AI (Gemini, Veo): no violating others' IP or privacy rights; no impersonating a living or dead individual without explicit disclosure in order to deceive; no claiming generated content was made solely by a human in order to deceive."
+      "statement": "Google generative AI prohibited use policy, 'Last modified: December 17, 2024' (re-read 2026-10-20): no violating others' IP or privacy rights, no using personal data or biometrics without legally required consent (1.6); no circumventing abuse protections or safety filters (2.3); no 'Impersonating an individual (living or dead) without explicit disclosure, in order to deceive' (4.2); no claiming generated content was made solely by a human in order to deceive (4.5). No clause on depicting public figures and no parody or satire carve-out; Google 'may make exceptions ... based on educational, documentary, scientific, or artistic considerations'. Earlier reading 2026-10-17: V-23."
     },
     {
       "id": "B-12",
@@ -197,6 +197,82 @@
       "verified": false,
       "url": "https://group.banijay.com/wp-content/uploads/2024/06/BanijayUKacquiresCMPProductions.pdf",
       "statement": "Banijay UK acquired Caryn Mandabach Productions (Peaky Blinders producer), announced 2024-06-06, with the back catalogue and future series, spin-offs and brand ventures including the Netflix film (company renamed Garrison Drama). Source: a search summary of the Banijay press release and trade outlets (Deadline, Advanced Television, IBC, Televisual). The Banijay pages returned 503 and were not opened: not verified first-hand."
+    },
+    {
+      "id": "B-22",
+      "kind": "platform_policy",
+      "checked": "2026-10-20",
+      "verified_in": "V-52",
+      "verified": true,
+      "url": "https://support.google.com/youtube/answer/2802268",
+      "statement": "YouTube harassment and cyberbullying: no threats or stalking of an identifiable individual, no prolonged insults or slurs based on intrinsic attributes, no mocking of an identifiable person's death or serious injury; impersonation includes using AI to copy a person's voice or likeness to suggest the channel is theirs; debate about people in power and educational, documentary, scientific or artistic content (scripted satire, comedy) may be excepted, but this 'is not a pass to harass someone'. No update date on the page."
+    },
+    {
+      "id": "B-23",
+      "kind": "law",
+      "checked": "2026-10-20",
+      "verified_in": "V-53",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.law.cornell.edu/supremecourt/text/485/46",
+      "statement": "Hustler Magazine v. Falwell, 485 U.S. 46 (1988): a public figure cannot recover for intentional infliction of emotional distress from a parody without a false statement of fact made with actual malice; a parody that 'could not reasonably be understood as describing actual facts' fails as a claim; caricature and political cartoons are a long tradition of 'scorn and ridicule and satire'. One case; defamation and false light remain state law, case by case."
+    },
+    {
+      "id": "B-24",
+      "kind": "law",
+      "checked": "2026-10-20",
+      "verified_in": "V-54",
+      "verified": true,
+      "jurisdiction": "US",
+      "url": "https://www.nysenate.gov/legislation/laws/CVR/51",
+      "statement": "New York Civil Rights Law s.51 (revision of 2024-05-03): a living person whose 'name, portrait, picture, likeness or voice' is used in New York 'for advertising purposes or for the purposes of trade' without written consent may sue for an injunction and damages (exemplary damages when knowing). The statute text does not define 'trade'; court readings (newsworthiness, fiction) were not read."
+    },
+    {
+      "id": "B-25",
+      "kind": "law",
+      "checked": "2026-10-20",
+      "verified_in": "V-55",
+      "verified": true,
+      "jurisdiction": "GE",
+      "url": "https://matsne.gov.ge/en/document/view/33208",
+      "statement": "Law of Georgia on Freedom of Speech and Expression (24/06/2004, consolidated 26/06/2025): defamation is 'a statement containing a substantially false fact inflicting harm' (Art. 1(e)); 'Thought shall be protected by an absolute privilege' (Art. 4(1)), thought being a value judgement, comment or opinion (Art. 1(b)); for public figures the plaintiff names the false facts, and good faith with reasonable verification excludes liability (Art. 14); freedom of arts and creativity (Art. 3(2)(f)). No parody or fiction provision. English text read through a fetch summary; the 2025 amendment was not compared."
+    },
+    {
+      "id": "B-26",
+      "kind": "law",
+      "checked": "2026-10-20",
+      "verified_in": "V-56",
+      "verified": false,
+      "jurisdiction": "US",
+      "url": "https://www.blackburn.senate.gov/2026/6/blackburn-coons-bipartisan-bill-to-protect-individuals-and-creators-from-deepfakes-passes-senate-judiciary-committee",
+      "statement": "Federal NO FAKES Act (S.4591 / H.R.8915, reintroduced 2026-05-20): a federal right against unauthorised digital replicas of voice and likeness with notice-and-takedown; the sponsor's release of 2026-06-18 says it passed the Senate Judiciary Committee unanimously and excludes some replicas on First Amendment grounds (not listed). Not law on the evidence found; congress.gov returned 403, so the status rests on the release and bill trackers. California Civil Code 3344 (living persons' publicity) returned a bot check on 2026-10-20 and was not read."
+    },
+    {
+      "id": "B-27",
+      "kind": "provider_terms",
+      "checked": "2026-10-21",
+      "verified_in": "V-58",
+      "verified": true,
+      "url": "https://ai.google.dev/gemini-api/terms",
+      "statement": "Gemini API Additional Terms of Service, 'Effective March 23, 2026', page 'Last updated 2026-04-28 UTC' (read first-hand 2026-10-21). 'Use of Generated Content': 'Some of our Services allow you to generate original content. Google won't claim ownership over that content. You acknowledge that Google may generate the same or similar content for others and that we reserve all rights to do so.' ... 'You're responsible for your use of generated content, and for the use of that content by anyone you share it with.' 'Use Restrictions': 'Use of Google AI Studio and Gemini API is for developers building with Google AI models for professional or business purposes, not for consumer use.' Paid Services: 'Your access to Gemini API is a \"Paid Service\" only when accessing the API through a Cloud Project associated with an active billing account'; unpaid use lets Google use prompts and responses to improve its products. 'Disclaimers': 'The Services include experimental technology ... Use discretion before relying on, publishing, or otherwise using content provided by the Services.' No clause on commercial use, monetisation, attribution, music, Lyria or preview models. The Google APIs Terms of Service (developers.google.com/terms, 'Last modified: November 9, 2021') s.4(c) says users do not acquire rights 'in our APIs or the content that is accessed through our APIs'; the Additional Terms' generated-content clause is the one on output. Model naming (ai.google.dev/gemini-api/docs/models, updated 2026-10-21): 'Preview: Points to a preview model which may be used for production.' Lyria page (docs/music-generation, updated 2026-10-01): 'All generated audio includes a SynthID audio watermark'; no output-licence clause. Whether purely generated images or music have any copyright owner is a question of law these terms do not answer."
+    },
+    {
+      "id": "B-28",
+      "kind": "provider_terms",
+      "checked": "2026-10-21",
+      "verified_in": "V-59",
+      "verified": true,
+      "url": "https://elevenlabs.io/terms-of-use",
+      "statement": "ElevenLabs Terms of Service, 'Last Updated: 09 October 2026' (read first-hand 2026-10-21): s.2(c) '(i) if you access or use our Services free of charge (such a user, a \"Free User\"), you may only use the Services for non-commercial purposes; (ii) if you access or use our Services through a paid subscription plan (such a user, a \"Paid User\"), you may use the Services for commercial purposes'; s.4(c)(ii) 'Except as expressly set forth herein, as between you and ElevenLabs, you retain all rights in and to your Output'; s.4(k) 'You are responsible for reviewing Output before use or distribution'; Output 'may not be unique across users, as the Services may produce the same or similar Output for you and a third party'. ElevenCreative Terms ('Last updated: 09 October 2026', elevenlabs.io/creative-terms) Exhibit 4 Sound Effects s.2: 'You may use, reproduce, modify, distribute, publicly perform, and display Output, including by incorporating it into films, trailers, advertising, video, games, applications, and other productions, subject to the Underlying ElevenLabs Agreement and the Prohibited Use Policy, and for commercial purposes only where your plan permits commercial use. You may exercise those rights only in respect of Output combined with other material, and you may not sell, resell, license, sublicense, distribute, or otherwise commercially exploit Output, or any part of it, on a standalone basis, or make Output available as isolated audio files or samples, or as part of any sound, sample, effects, or music library or other collection of sounds.' Nothing on YouTube monetisation or Content ID."
+    },
+    {
+      "id": "B-29",
+      "kind": "provider_terms",
+      "checked": "2026-10-21",
+      "verified_in": "V-60",
+      "verified": true,
+      "url": "https://elevenlabs.io/music-terms",
+      "statement": "ElevenLabs Music Terms, 'Last updated: 09 October 2026' (re-read first-hand 2026-10-21; earlier reading V-28): s.2.2 'as between you and ElevenLabs, you retain any and all rights in and to your Input and Output'; s.3.1 'you are responsible for reviewing Output for clearance before using, publishing, or distributing it'; s.4.1 'You may use Output in accordance with the Media Rights for your plan, as set out in Exhibit A'; s.4.2 no Music Library 'unless ... storing Output for your own internal use where it is not made available to third parties'; s.4.4 platform AI-disclosure rules apply; s.4.8(d) 'Media Rights' includes 'the right to synchronize Output in timed relation to audiovisual content'. Exhibit A, Creator column: 'For Individual Use Only'; Music Streaming Distribution 'Permitted'; Media Rights 'All online and offline commercial use permitted, except film, TV, radio, and Studio Games'; 'No Attribution Required'. 'Film' is not defined; YouTube monetisation and Content ID are not mentioned."
     }
   ],
   "channel": {
@@ -213,7 +289,7 @@
       "GE"
     ],
     "elevenlabs_plan": "Creator",
-    "elevenlabs_music_terms": "Creator: individual use only; commercial use allowed except film, TV, radio and studio games; streaming distribution permitted; no attribution (Music Terms, updated 2026-10-09, V-28). Monetised YouTube use and Content ID are not addressed by the terms.",
+    "elevenlabs_music_terms": "Creator: individual use only; online and offline commercial use permitted except film, TV, radio and Studio Games; streaming distribution permitted; no attribution (Music Terms, updated 2026-10-09, re-read 2026-10-21, B-29/V-60). Monetised YouTube use and Content ID are not addressed by the terms; 'film' is not defined.",
     "sources_in_narration": "Never (BP-15, the creator 2026-10-19): a claim's source and its label (official / reported / speculation / inference) live in the claim map and the video description; the narration never reads a source, a release date, a price or a feature list out loud. Supersedes the source-citing wording of ER-07 / RK-08 / RK-16 / RR-10 / SR-04."
   }
 }

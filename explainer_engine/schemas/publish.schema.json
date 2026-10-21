@@ -20,6 +20,7 @@
                                   "real_event_altered": {"type": "boolean"}, "ai_music_main": {"type": "boolean"}}},
     "mid_roll": {"enum": ["off", "on", "undecided"]},
     "self_certification_answered": {"type": "boolean"},
+    "shorts_from": {"enum": ["script", "publish"], "description": "publish: stage the Shorts listed here (cut from the long video, production/clip_shorts.py) instead of the script's"},
     "shorts": {"type": "array", "items": {"type": "object", "required": ["id", "seconds", "audio"], "additionalProperties": false,
                "properties": {"id": {"type": "string"}, "seconds": {"type": "number", "exclusiveMinimum": 0},
                               "audio": {"type": "array", "items": {"enum": ["own_voice", "library", "procedural", "licensed", "third_party"]}},

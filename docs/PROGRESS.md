@@ -991,3 +991,379 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-20 - Strict storytelling rules 1 and 2, and approval #1 recorded in code (D-61)
+
+The creator's brief for the next episode ("titans from zero") set two general rules and asked that the order scenario ->
+yes -> full script -> yes -> paid is a rule. Check before the change: next-video (0520c68) holds every branch and PR of
+the repo (no open PR, no branch with commits next-video lacks; main differs only by merge commits); OR-15 / PV-45 already
+bound the scenario, but approval #1 of the finished script was prose only (PRODUCTION_RULES gate 0, EPISODE_STANDARDS
+`script_lock`), never recorded or checked before a paid step.
+
+- Show, don't tell: SC-12 in `scripting/scene_lint.py` (PV-48 on `/3`), lexicons in [BP-87](SOURCED_RULES.md): a narrator
+  line linking a hero to a trait, a rating or a biography line is a FAIL; ratings or stat cards on screen too (`sc_`
+  pictures of `select_screen.py`). Heroes judging each other inside a scene stay allowed.
+- Full immersion: SC-11, [BP-88](SOURCED_RULES.md): a meta frame ("this is a simulation", "as an AI", "in this
+  hypothetical story", "none of this happened") is a FAIL in any line, Short or on-screen text; a hedge on the story
+  ("we cannot know for sure") in narration. [BP-71](SOURCED_RULES.md)'s spoken honesty beat goes from 2 segments to 0;
+  SC-08's pattern no longer fires on the plain verb "invented". The disclosure lives in the title and the description.
+- Approval #1: `scripting/script_approval.py` (PV-53, [OR-17](ORCHESTRATION.md)): `episode.script_approval` (who, date,
+  sha256 of every word said, Shorts included) is required on `/3` by paint preflight, the ElevenLabs hook and gate 0.9 of
+  `production_gate`; tags, pictures and files may change after the yes, words may not. Schema field added.
+- Skills dialogue-scenes, story-engine, narration-script; agents scene-writer, story-architect, script-critic,
+  shorts-writer. `/1` and `/2` scripts keep their contract (Syndicate Wars unchanged).
+- Tests: `tests/unit/test_storytelling_rules.py` (10). Nothing paid.
+
+## 2026-10-20 - The critic's passing review comes with a one-page story in Georgian (BP-89, EG-23)
+
+The creator: when the critic's review passes, it also writes the whole story on one page in Georgian and shows why it is a
+well-told story and not a string of phrases. House rule [BP-89](SOURCED_RULES.md) (thresholds: one page in words, share of
+Georgian letters, a "why" heading); `production/editorial_gate.py` EG-23 refuses an `editorial_review/2` of a `/3` script
+without `story_page` (file next to the review), which also keeps gate 0.5 of `production_gate` closed. Agent script-critic
+step 9, skill story-engine, STORY_ENGINE stage 7 row, SCRIPTING_SPEC 5.2. `/1` and `/2` scripts unchanged. Tests:
+`tests/unit/test_story_page.py` (4), the integrated-review fixtures write a page. First page: Titans from Zero.
+
+## 2026-10-20 - Titans from Zero: stage 4 (edit and sound plan) and a present-day New York era
+
+`edit-planner` pass over S01..S16 of `examples/titans_from_zero/production_script.json` (words, tags and beats untouched;
+`stage_guard editor`: 0 violations). Shots, motion, accents, bubbles, beds, sfx and `music` are planned; `graphics` stay empty
+(the only claim rows are C-01..C-05, the story's numbers are invented, so a data visual would break invariant 5).
+`world` is now a resolvable spec (the string `host` could not be resolved once shots exist): this needed the codex era
+`modern_new_york` (14 eras; light keys for the courthouse, street, lot, motel, garage, warehouse, burnt garage and factory
+office) in `explainer_engine/world/eras.json`; `tests/unit/test_world_architecture.py` pins 14 eras and one light key per beat.
+Nothing painted, nothing paid. Open owners: sound files (WAVs are gitignored; nine ambience beds are not in the manifest),
+cast speech/voice/face sheets and the variant collages (PV-46, PV-32, VB-09, PV-47).
+
+## 2026-10-20 - A time counter in the corner (ED-15, PV-54)
+
+- The creator took one note from an outside review of the titans script: a persistent day/year counter on screen. New
+  top-level `counter` (editor-owned in `stage_guard`): segment + label; `timing.py` turns it into `counters` (first shot
+  of the segment to the next label), `assemble.overlays` draws `graphics.counter` (a top-left chip, 0.4 s flip, hidden
+  under a period card). `validate` PV-54 runs `graphics.check_counter`. Docs: ED-15 in EDITING, PV-54 in PRODUCTION_SCRIPT.
+- titans_from_zero: DAY 1 (S01), WEEK 1 (S04), MONTH 6, MONTH 9, YEAR 1, YEAR 2, YEAR 3, YEAR 5 (S14). S05's period
+  stays day1 for the story, the counter keeps WEEK 1 so the clock never runs backwards on screen.
+- Voices re-cast without samples (creator: samples cost credits): from free `creative_list_voices` searches sorted by
+  last year's usage, the most used voice that fits each hero's documented type (VC-02, no soundalikes).
+- Tests: `tests/unit/test_graphics.py` (+3). Nothing paid.
+
+## 2026-10-20 - Titans from Zero: episode rulebook v1 (provisional); paid_assets does not pass
+
+`examples/titans_from_zero/episode_rules.json` (+ generated `episode_rules.md`) by the episode-standards-director: 16 rules,
+19 risks for ten living people in an invented what-if. Sources re-read today: ElevenLabs use policy (09 Oct 2026 version,
+V-51: s.4 now names "impersonating ... elected officials"), YouTube 14328491, 2801947, 2802268 (V-52), Hustler v. Falwell
+(V-53), NY Civil Rights Law s.51 (V-54), Georgia's Law on Freedom of Speech and Expression (V-55); NO FAKES Act status and
+California 3344 not verified (V-56). Baseline: B-10 re-dated, B-22..B-26 added. Result: provisional check 0 FAIL; the
+`paid_assets` gate FAILs on RK-01 BLOCK (Trump's lines voiced by ElevenLabs, provider s.4) and three creator decisions
+(RK-02 the six other real people's synthesised voices, RK-12 the invented buyer's name "Vance", RK-17 Lyria music outside
+D-52). No stamp, nothing paid. Tests: the existing `tests/unit/test_episode_rules.py` baseline test covers the new rows.
+
+## 2026-10-20 - Real people speak in bubbles (D-62, PV-55, BUBBLE-4/5)
+
+The creator's call after RK-01/RK-02: real living people keep their names but are never voiced. A line with
+`"voiced": false` is shown as speech bubbles (`production/silent.py`): one sentence per bubble, BP-84 words, BP-27 hold;
+`production words` aligns the read against the voiced lines only and opens a quiet gap for each silent run, so words.json,
+beats and shots keep one entry per token. PV-55 FAILs a voiced line of a real living person (`production_script/3`;
+`traits.living: false` exempts the dead). The creator also asked for stable bubbles: BUBBLE-4 FAILs a bubble over any face
+(every speaker's face, at the bubble's start and end crop), BUBBLE-5 FAILs a cut inside a bubble and the same text shown
+twice. Titans: 149 lines silent, edit plan re-cut (no BUBBLE/CUT FAIL left), Shorts re-balanced (narrator lines break
+silent runs). Tests: `tests/unit/test_silent_lines.py` (8). Nothing paid; the script needs the creator's re-approval.
+
+## 2026-10-20 - Titans: style and six hero references picked; collage waivable per hero (OR-16)
+
+The creator picked a synthesis of tiles 1 and 3 of `examples/titans_from_zero/pictures/style_collage_v1.jpg` and OK'd the
+six named caricatures of `hero_caricatures_v1.jpg` (Nano Banana 2, $0.05; style collage Gemini 3 Pro, $0.13), recorded as
+`cast.<id>.reference` and `look.environment`. For the five other characters he declined a separate collage ("not worth
+drawing just to show"): `reference.first_picture: true` (schema anyOf) makes PV-47 a REVIEW until the hero's first scene
+picture, OK'd on the contact sheet, is recorded as `picture`. Test: `tests/unit/test_reference_collage.py` (+1).
+
+## 2026-10-20 - Titans: hero references in every paint prompt, quiet bubble gaps, face sheets
+
+`compile.hero_refs`: a Gemini picture of a named hero now carries that hero's approved reference picture (and the episode's
+world when no hero is drawn), so no face is painted from the prompt alone (invariant 6, OR-16). `silent.insert` opened the
+bubble gaps in the measured middle of a pause with digital zeros; word times are 0.1-0.2 s off, so 14 gaps cut into sound
+(ED-12). The gap now opens at `pause_pad.quiet_point` (the quietest 10 ms within `SEARCH` of the pause) on a 10 ms fade and
+is filled with the read's room tone (BP-60). Titans: face sheets (VB-09) for the nine heroes with expression beats; Belfort's
+14 expressions cut to 12 (curious -> surprised, confused -> doubtful in S12, S13, S15 and the Shorts SH07, SH09), Cardone
++determined, O'Leary and Cuban +deadpan. Tests: `test_silent_lines.py` (+1, the gap is room tone), `test_reference_collage.py` (+1).
+
+## 2026-10-20 - Pictures and audio approved together (standing order 10); paint preflight honours REVIEW
+
+The creator: after the script's yes, approve the pictures and the audio together and start them together, since the Gemini batch
+waits for nothing. `docs/PRODUCTION_RULES.md` standing order 10 + feedback row, the orchestrator's phase 3 asks one paid-assets
+question and runs phases 4 and 5 in parallel. `paint.preflight` refused on the editorial review's REVIEW items (EG-22 "for the
+creator"), against D-60 (FAIL blocks, REVIEW is the creator's call; the ElevenLabs hook already filtered); it now blocks on FAIL
+only. Titans B1: 67 of 106 pictures submitted on Nano Banana batch, the rest wait for the creator at the run's 80 % cap line.
+Test: `test_storytelling_rules.py::test_paid_pictures_block_on_editorial_fail_not_review`.
+
+## 2026-10-20 - Face sheets painted only as needed (VB-09)
+
+The creator: "paint the faces only as the script needs them". `faces.needed(doc)` = the expressions the film's and the
+Shorts' expression beats show, plus `neutral` (the resting face between beats); `to_paint` and the VB-09 "not painted yet"
+REVIEW cover only those. A sheet's `set` still defines the hero's range (D-55 unchanged); the faces nobody uses yet are painted
+by the episode that first shows them. Titans: 93 template close-ups -> 65 needed ($2.45 -> $1.71). Tests: `test_face_sheets.py` (+1, 3 updated).
+
+## 2026-10-20 - Dialogue frame chosen: blurred scene + big face, blur 0.024
+
+Four dialogue-frame variants on S12 "What's the catch?" (`conversation_variants_v1.jpg`: blurred backdrop + big face, sharp scene
++ comic face panel, two faces, painted scene only). The creator chose the first "with a slightly more blurred background":
+`faces.BLUR` 0.014 -> 0.024 (`conversation_blur_v2.jpg` compares 0.014 / 0.024 / 0.034). Test: `test_face_sheets.py` (+1).
+
+## 2026-10-20 - Standing order 11: the first two parts are shown before the rest is rendered
+
+The creator: render the first two parts, join them, show him, and only then the rest; his notes become rules first.
+`docs/PRODUCTION_RULES.md` standing order 11 + feedback row; the orchestrator's render step follows it.
+
+## 2026-10-20 - ElevenLabs takes in the sound library (Titans audio)
+
+The manifest schema records an ElevenLabs take: source kind `elevenlabs`, `cost_credits`, `generation_id`, and the BP-58
+`kind` (one_shot / loop). Titans added two music loops (`eleven_music_v2_5`, 899.8 credits each), `battery_hiss__v1` (5) and
+nine 30 s ambience loops (`amb_*__v1`, 99.99 each, estimated 330); ten Shorts narrator takes (2,352 credits). WAVs stay out of git.
+Test: `test_sfx_library.py::test_elevenlabs_take_with_kind_and_credits_validates`.
+
+## 2026-10-20 - A word the recogniser missed never lands before a bubble gap (D-62)
+
+Titans S02 "Elon Musk. Musk signs.": Whisper heard one "Musk", the aligner interpolated the second just before the silent run's
+insert point, so the shot "Musk signs" started 40 s early and every S02 cut after it failed CUT-1/RHYTHM-2. `silent.insert` now
+gives every voiced word of a line that follows a gap in script order at least that gap's shift, and never a start before the
+insert point. Test: `test_silent_lines.py::test_a_missed_word_after_the_gap_never_lands_before_it`.
+
+## 2026-10-20 - Titans timing: three short shots get a breath (PV-24)
+
+After the real read three cuts failed: S12 "You know how this kind of paper works." (2.25 s shot), S15 "Oh, the bench is still
+there." (cut with no pause) and S16 "Luck decided which envelope paid." (2.36 s). Fix on the timing only, no new words:
+`pause_after` 0.5 on the S12 and S15 lines, and the S16 line split at its full stop with a 0.5 s pause (visual beats divided).
+
+## 2026-10-20 - The narrator tells the dialogue (D-63, PV-56)
+
+The creator on the first titans preview: bubble-only dialogue is unread and boring, and a bubble glitched across a cut into a
+face close-up. D-63: the narrator reports each exchange, the speaker's face is held in its mood at its end, then a slow move on;
+real people stay unvoiced (D-62). PV-56 FAILs a segment with more than one silent line. The titans script fails it until its
+dialogue scenes are rewritten (S02 first, as a two-minute re-render for the creator).
+Test: `test_silent_lines.py::test_the_narrator_reports_the_exchange_bubbles_are_only_an_accent`.
+
+## 2026-10-20 - Claude watches every render first: qa/frame_review (standing order 12)
+
+The creator, on the first Titans preview: a bubble stayed across a cut into a face close-up, one speaker's words sat on another
+hero's face, faces swapped every 1-2 s, a ring sat on empty wall: "why can't you watch and evaluate it yourself?".
+`python -m explainer_engine.qa.frame_review <timed.json> <video> [--from --to] --out DIR` (free: ffmpeg + PIL) lists the moments
+that matter (cuts +-0.15 s, bubble start/middle/end, beat starts, face-frame changes, dissolve midpoints), pulls each frame at
+480 px, writes labelled contact sheets (FAIL tiles red, REVIEW amber) and `review.json`, and checks the timeline as the renderer
+draws it (`faces.composite`'s lead and ease): FR-BUBBLE-CUT / FR-BUBBLE-FACE / FR-BUBBLE-WHO / FR-RING-FACE / FR-RING-HERO FAIL;
+FR-FACE-RATE, FR-FACE-HOLD (BP-33), FR-FACE-GHOST, FR-TEXT-CUT, FR-RING-LOOK, FR-BUBBLE-TAIL REVIEW; BP-50 loudness of the range
+through `qa/targets`. Exit 1 on FAIL. `docs/PRODUCTION_RULES.md` standing order 12 + feedback row; the orchestrator's render step.
+Titans 0-123 s (`jobs/titans_from_zero/render/review/frame_review_v1`): 17 FAIL, all in S02's dialogue and its rings.
+Test: `tests/unit/test_frame_review.py` (7).
+
+## 2026-10-20 — Splice the read around new narrator passages (D-63)
+
+`production/splice_read.py`: `points` aligns the old script's voiced lines on the existing read and lists, for each run of
+bubble lines, the second where its gap opened (`silent.insert_points`, pass 1 of `silent.insert` split out); `pieces` cuts
+`read.wav` there on 10 ms fades and interleaves the new narrator takes in script order, for `production words`. Only the
+new passages are paid for. Titans: 19 runs. Test: `tests/unit/test_splice_read.py`.
+
+## 2026-10-20 — Loudness lands on the target (BP-50)
+
+Single-pass loudnorm left the titans preview at -16.5 LUFS (FAIL; input range 19.9 LU). `qa/targets.normalise_file` runs
+the loudnorm, measures, then trims by the gap with a static gain and an oversampled (4x) limiter at the limiter ceiling,
+up to two rounds; `production/assemble.py` uses it. The same mix now measures -14.8 LUFS / -1.5 dBTP (PASS / PASS).
+Test: `test_a_wide_range_mix_is_trimmed_onto_the_long_target`.
+
+## 2026-10-20 — One view plan per shot: close-ups, bubbles and the camera follow what is on screen (CC-01, CC-03, CC-06)
+
+Static analysis of the Titans 0-123 s preview (`/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/static_analysis.md`).
+Causes: `faces.composite` put a close-up in and out of the frame whenever an expression beat came (24 face-frame runs in
+61.7-123 s, median 1.7 s, 14 under BP-84's 2.0 s insert floor), eased the blurred backdrop 1.0 -> 1.3 -> 1.0 at each edge (the
+"zoom reset"), and let it run up to the cut; bubbles were laid out once on the scene and drawn over whatever the composite
+showed (a speaker's words on another hero's close-up, a tail into blur); `assemble.beats_for_shot` keyed face points by
+`id()` of a copy, so no expression ever had its face point; a held punch, a wobble and the face lean did not return to rest
+at a cut inside one picture (SH069 -> SH070); the face lean switched pivot in one frame.
+Fix: `faces.views` (the shot's view plan: scene or one hero's close-up; never past the cut; a bubble never crosses a view
+change and only shows on the scene or its speaker's own close-up; views under BP-84's insert floor absorbed), written by
+timing into `shots[].views` (`faces.plan_shots`); the composite cuts in and out with its view; `assemble.shot_bubbles` lays
+each bubble out on its view (on a close-up at the mouth measured on the keyed silhouette, `faces.mouth_and_head`);
+`assemble.rest_weight` eases accents and the face lean to rest at a same-picture cut; the face lean glides between speakers;
+`beats.fit_to_views` centres a ring that names a hero on his face point, keeps rings and labels off close-ups and ends a word
+with its shot when it stays readable (BP-27). The preview's plan: 13 views in 61.7-123 s, none under 2.2 s, 0 of the frame
+review's 17 FAIL causes left (`jobs/titans_from_zero/render/review/static/timed_planned.json`). Test: `tests/unit/test_view_plan.py`.
+
+## 2026-10-20 — The research becomes rules: D-64 (the creator's call of 21:14, RX-01..RX-14)
+
+The titans QA loop's research (`titans_from_zero/qa_loop/research_editing_rules.md`, A + B sources per rule; the C videos
+could not be watched) and static analysis, settled by the creator's dated call ([D-64](DECISIONS_AND_OPEN_QUESTIONS.md),
+recorded as `house` next to the sources in `standards/sourced_rules.json`). Changed: BP-84's bubble cap now reads BP-38's
+word cap (a bubble is an accent; the PV-56 accent line too; a shipped `/1` gets a REVIEW); BP-31 allows a dissolve at every
+change of place or time (timing marks `place_change` where the segment's scene place or time changes) and gains a length
+band; BP-37's per-line minimum is 0 and the rule REVIEW; BP-36 and BP-40 count a visual beat only when it is tied to a
+narration word (`/3`); BP-83's MO-06 is reported only (INFO). New: BP-90 / ST-14 (setup, exchange, conclusion, never
+chained; the speaker-naming part REVIEW), BP-91 / PV-57 (the establishing cast), BP-92 (moves never reset:
+`continuity.chain` pulls out by one step at most and rests at a turn; a run that returns to its start framing FAILs),
+BP-93 / VB-12 (a beat needs a word), BP-94 (the held mood after an exchange, a hypothesis). Skills editing-style,
+visual-beats, dialogue-scenes, video-editing-architect and agents beat-writer, edit-planner, scene-writer, script-critic
+link the BP ids. Tests: `tests/unit/test_d64_editing_rules.py`; updated to the new sourced values:
+`test_rule_consistency_motion.py` (BP-83 without `alive_share_min`, the bubble cap from BP-38, the BUBBLE-1/2 test at 4
+words), `test_silent_lines.py` (the 15-word accent now FAILs, its 4-word key phrase passes), `test_story_engine.py` (MO-06
+INFO). On the titans script: 6 new FAIL (BUBBLE-1 on a Short bubble, PV-56 on S12's 14-word bubble, PV-57 on S03, S11,
+S14, S16) and VB-12 REVIEWs on the beats of hero lines; the script is not changed here.
+
+## 2026-10-20 — The QA loop: review after every two rendered chunks, data + pixels, classed for a fix (standing order 12)
+
+`qa/frame_review.py` now follows the renderer: a shot's `views` (the view plan `production/faces.views` writes through timing)
+decide which face fills each frame (`faces.view_at` / `faces.face_in_view`); FR-FACE-GHOST and the own-close-up FR-BUBBLE-WHO
+REVIEW no longer apply to a planned shot; an old timed file keeps the old eased mirror. On the Titans preview's own timing:
+17 FAIL (as frame_review_v1); on `timed_planned.json`: 0 FAIL. `--pixels` adds `qa/pixels.py`, free (PySceneDetect, OpenCV
+ORB + YuNet, ImageHash, ffmpeg freezedetect / blackdetect): PX-CUT-EXTRA and PX-FROZEN FAIL (objective: a cut the plan does not
+have, a still picture while the plan moves it), PX-CUT-MISSING, PX-CAM-JUMP (RX-11 (a)), PX-JUMP-CUT (BP-30's tolerance, RX-11
+(b)), PX-BLACK, PX-BUBBLE-FACE REVIEW; every invented number sits in one HYPOTHESIS block. `qa/face_points.py` measures the
+heroes' faces on the painted pictures (YuNet; who is who by OpenCV SFace against each hero's face sheet, else left-to-right
+order) and writes `face_points.json`; FP-OFF REVIEW past 0.08 of the width (hypothesis); `--apply` rewrites only the matches
+SFace named. On titans (report only, script unchanged): 143 declared points in 75 pictures, 113 matched to a painted face (95
+named by SFace), 30 without a face (backs in over-the-shoulder shots, or missed), **70 more than 0.08 of the width off, 59 of
+them confidently** (`jobs/titans_from_zero/render/review/face_points/`); s02_signing declares O'Leary left of Musk, he is drawn
+in the middle. `qa/loop.py` (`python -m explainer_engine.qa.loop <script> --read DIR --out DIR --chunks A:B`) times, assembles
+the chunk pair, joins it with its mix, runs the frame review with pixels and the face points, classes each finding systemic
+(same rule on 2+ shots, range-wide, or pixels against clean plan data) or script with its owner file, counts iterations and
+stops after 5 on one finding; it edits nothing. On the old chunks 0-1 (0-123.3 s): the 17 data FAIL of v1 (all systemic), and
+the pixel checks found **no** pixel defect: all 18 planned cuts seen, 2 extra cuts both planned (the SH004 punch, a face-frame
+change in SH015), 9 still stretches all at eased move ends the plan holds, no camera jump beyond the planned punches, no
+same-picture jump cut, no bubble over a face (16 of 18 bubbles located). Limit: frames on a close-up are not measured for
+camera jumps, so the old close-up backdrop zoom (CC-06 cause 1) is seen only by the data checks. Paid allowance (the creator):
+`config/spend_caps.json` `allowances.qa_loop` = 2,000 ElevenLabs credits per run for re-reads of lines the loop changed,
+enforced by `core/ledger.Run.reserve_allowance` (refuses above it, and the run's own cap with its 80 % stop still applies).
+Tests: `tests/unit/test_pixels.py`, `test_qa_loop.py`, `test_face_points.py`, and new cases in `test_frame_review.py`,
+`test_ledger.py`.
+
+## 2026-10-20 — Narrated exchanges count, a scene change breathes: D-65 (the creator, 21:14, confirmed 21:17)
+
+From the long storytelling research (`titans_from_zero/qa_loop/long_research_storytelling.md`, "Contradictions found",
+NR-01..NR-12). BP-70 (SC-05) is met by an unbroken run of hero lines as before, or by narrator lines that report at least as
+many turns from as many named present speakers (`story_lint.reported_turns`: a name or he/she with a reporting verb of
+BP-70's `speech_verbs`). BP-10 (N-15) exempts the last narration line of a segment before a change of place or time: a breath
+up to `boundary_breath_max_s`, REVIEW above (NR-07: the naming is sourced, the seconds a hypothesis). New REVIEW checks in
+`scripting/story_lint.py`: ST-15 the speaker before his words (BP-95, NR-02) and ST-16 at most two reported speakers a line
+(BP-96, NR-04, a hypothesis). Skills dialogue-scenes, narration-script and agents performance-director, scene-writer,
+script-critic link the ids. Test: `tests/unit/test_d65_reported_exchange.py`.
+
+## 2026-10-20 — Titans v2 narration; splice points take joined takes
+
+The narrator passages follow the long research (speaker first, at most 2 speakers an exchange, every exchange ends on a
+decision; `/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/long_research_storytelling.md`), 3,794 new
+characters. A new line written after a former run is read right after that run's take: `splice_read pieces` takes
+`a.wav+b.wav` (`splice_read.join`, 0.6 s apart). The QA loop removed shots that broke BP-92 / CUT-1 / RHYTHM-2.
+Test: `test_two_takes_at_one_point_are_read_back_to_back`.
+
+## 2026-10-20 — The face lean glides (QA loop, PX-CUT-EXTRA)
+
+The loop's pixel check found two cuts the plan does not have (titans 99.8 s and 125.9 s): an expression beat leaned the
+crop 10 % plus a 4 % pop toward the face in a quarter second, which reads as a jump (CC-06). `beats.FACE_*`: 6 %, no pop,
+over 1.2 s. Test: `test_the_face_lean_never_jumps_like_a_cut`.
+
+## 2026-10-20 — A renderer fix redraws the chunks
+
+`assemble.plan_stamp` now carries `render_code()`, a hash of the modules that draw a frame; before, a code fix kept the
+chunks drawn by the old code (the loop's third pass re-reviewed the same jump). Test: `test_a_renderer_change_redraws_the_chunks`.
+
+## 2026-10-21 — Prop rings and labels land on what the picture shows (CC-03)
+
+The beat-writer writes a ring's or label's `pos` without seeing the picture; on titans most rings and labels whose phrase names
+no hero were template guesses ([0.5, 0.72]) on empty wall or floor. `qa/prop_points.py` (free, local, CPU): OWLv2
+(`google/owlv2-base-patch16-ensemble`, Apache-2.0, `transformers` + CPU `torch`) looks for each prop beat's phrase in the
+picture its timed shot shows (a verb phrase first as its thing: "reads the screen" -> "screen"); a find at `SCORE_MIN` (0.23,
+hypothesis, tuned by eye on the titans sheets) moves `pos` to the box centre, a pos already in a find stays, a label naming the
+place the whole picture shows stays, a ring found nowhere (or only as the whole picture) is dropped (RX-12, BP-93: a ring on
+nothing is worse than no ring). Writes `prop_points.json` and contact sheets (old pos -> found box); `--apply` rewrites the
+script with 2-space JSON. `check` gives PB-OFF / PB-NONE REVIEW; `qa/loop.py` runs it beside the face points and classes it as
+the script's. Without the model the tool skips and says so. `beats.fit_to_views` now snaps a label naming a hero (in its phrase
+or only its tag) to his face point as rings snap (the S02 label "KEVIN O'LEARY" pointed at an empty wall; it now sits on him
+in s02_wide). On titans: 82 rings and labels, 25 name a hero, 5 are not drawn (close-ups), 52 measured: 13 kept, 19 moved,
+20 dropped (`jobs/titans_from_zero/render/review/prop_points/`). Validate after `--apply`: still 8 FAIL (PV-45, PV-47, known),
+one new REVIEW (VB-05: four symbol beats in a row in S09 once its labels went). Tests: `tests/unit/test_prop_points.py`
+(fake detector), `test_a_label_naming_a_hero_points_at_his_face_point`.
+
+## 2026-10-21 — Told conversations keep bubbles; word slams; the COURTHOUSE tag holds still (D-66)
+
+The creator's notes on sample v2. (1) The S01 label "COURTHOUSE" sat at x 0.5 and `beats.draw` picked its side from the
+camera-moved point, so the tag flipped left and right every frame; the side now comes from the picture spot. Test:
+`test_a_label_at_the_centre_keeps_its_side_while_the_camera_drifts`. (2) A told turn shows its key phrase in a bubble over the
+speaker (shot `bubbles[].reported`, schema field added; 49 on titans, each at most four words, the speaker in the shot's
+picture). Tests: `tests/unit/test_reported_bubbles.py`. (3) Word slams: `slam_text` dims and softens the picture behind the word
+(BP-97, house, the creator's call), PV-58 keeps them to one a scene, three words and first tellings; titans gets PAPERWORK
+(S01, with a 0.8 s pause after its line) and FOREVER (S02). Tests: `tests/unit/test_word_slam.py`. Research for the next
+editing steps (dialogue, text and graphics, multi-variant editing):
+`/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/research_edit_{dialogue,text_graphics,variants}.md`.
+Loop pass 1 on parts 1-2: 0 FAIL; the slams were cut by the next shot after ~0.8 s and seven bubbles near a shot end were
+cut under BP-27's hold (BUBBLE-2). The slam lines now carry a 1.0 s `pause_after` (S02's line split after "Forever." so
+the pause lands there) and the seven bubbles start on an earlier narration word. Note: `words` on the whole spliced read
+padded +73 s against +26 s per piece (one long transcription measures shorter gaps, so pause_pad widens more): run `words`
+on the pieces in order.
+Loop pass 2: O'Leary's bubble (SH015) landed by Belfort's face and read as Belfort's line. `bubbles.layout` now prefers a
+spot nearer its speaker than any other face and sweeps a finer grid (also below the face) after the old candidates. Test:
+`test_a_bubble_sits_nearer_its_speaker_than_the_hero_beside_him`. The pixel check counted the slam's dim and blur as a
+92 px camera step; a `slam_text` hold is now a planned change (`pixels.planned` pops). Test:
+`test_a_word_slam_is_planned_so_its_dim_and_blur_are_no_camera_jump`.
+
+## 2026-10-21 — Drawn props from the text: line-icon stickers
+
+The creator on sample v3: the telling is fine, the picture needs drawn things that follow from the words (not new photos;
+not only rings and arrows). `explainer_engine/design/icons.py` reads 50 vendored Tabler line icons (`assets/icons/tabler`,
+MIT, licence kept) and draws each as a paper sticker in the house ink; a prop beat with `asset: "icon:a+b+c"` shows them
+in a row, each drawn on in turn as the narrator names it, with an optional word caption (`beats.draw`; the beat holds
+until the row is complete, `icon_hold`); a missing icon is a VB-06 FAIL. Titans S01-S03 get 14 of them (ten men, the
+towers, the clerk's stamp, no dollar, the brain, five years, forty bucks, price tags, a piece of every future, the
+envelope, the signature, the bankruptcy gavel, the last line, the loan and the dead card); numbers are written as words
+(VB-04). Tests: `tests/unit/test_icons.py`.
+Loop pass on the icons (parts 1-2): 0 FAIL. Moving the "Ten men" beat off "none" left 5.3 s without a change in the first
+30 s (RHYTHM-3), so the cross on "none" is back after the sticker. The sheets showed FORTY BUCKS and the gavel riding into
+the next scene: a drawn prop now ends with its shot, like a label (`beats.resolve`). Test:
+`test_a_drawn_prop_ends_with_its_shot_and_a_symbol_may_cross_the_cut`.
+
+## 2026-10-21 — One narrator for every voice, an intro card and four chapter recaps (D-68)
+
+The creator on sample v4 (08:59): the direction is right, more drama; every voice must be the one narrator; the told
+dialogue re-recorded in that voice, performed "the way he would say it"; the video opens on a dark card with the question;
+a short recap after each chapter with signs and text; and meaningful signs where they were missing. Research (10 rules,
+sources): `/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/research_narrated_dialogue.md`, summarised in the
+`narration-script` skill. Titans: 24 told lines rewritten as short performed quotes with the speaker named first, S12's
+voiced lines (Vance, Belfort) become the narrator's, no line keeps a `speaker`; `design/cards.py` draws the intro card
+(the ten heads cut from the approved `p_<hero>` references round the YuNet face) and four recap boards (week one, month
+nine, year two, year three), each rung row by row as the narrator names it; schema `cards` and `lines[].card`; 56 more
+drawn props across S04-S16. Validate: 0 FAIL. Tests: `tests/unit/test_story_cards.py`.
+
+**2026-10-21: titans re-recorded with one narrator, full render.** 22 Brad takes (eleven_v4, one generation each, 6,625
+of the creator's 7,000 credits) spliced into the old read (`jobs/.../read_v3/build.py`; S15's roll call re-read: the old
+take named five of the eight). Two systemic fixes found on the full render: `audio/seams.duration` now measures an MP3 by
+its decoded samples (ffprobe's container length counts the encoder padding, and 22 takes drifted the word timings 0.7 s
+late by the end; `tests/unit/test_seams.py`); `qa/pixels.planned` counts every view change of a shot's view plan as a
+planned cut (wide -> face close-up read as PX-CUT-EXTRA on six shots; `tests/unit/test_pixels.py`). Told-turn bubbles
+re-anchored on the performed quotes and, where they restate one, carry its own words (BP-84 four words). Editorial
+review rounds 12-14 (one FAIL fixed: the first recap gave away O'Leary's envelopes), ER-03/RK-20 rewritten for D-68 on
+the creator's card (12:05).
+
+## 2026-10-21 - Titans final_qa: provider terms read, licences verified, C-01/C-05 upgraded
+
+The episode-standards-director read the current terms first-hand and recorded them (policy baseline B-27..B-29,
+MARKET_RESEARCH V-58..V-60): Gemini API Additional Terms (Google won't claim ownership of generated content; no clause on
+monetisation, music or preview models), ElevenLabs Terms of Service and ElevenCreative Exhibit 4 (sound effects in video on a
+paid plan, never standalone or as a library), ElevenLabs Music Terms (Creator: online commercial use except film, TV, radio
+and Studio Games). Titans rulebook v3: RK-15 and RK-18 licences verified (PASS); RK-17 corrected (the two music tracks in the
+mix are ElevenLabs Music takes made 2026-10-20, not Lyria), licence verified, still REVIEW for Content ID with the creator's
+2026-10-17 decision. Claim map C-01 (Kim Kiyosaki's own interviews, Honolulu Star-Bulletin 2000) and C-05 (Bloomberg via
+Fortune 2018) upgraded with narrowed wording; the script is unchanged. Description: sources updated, "our own drawings"
+corrected to "made with AI image tools". final_qa stamped (0 FAIL). No code changed, so no new test; docs_lint clean.
+
+## 2026-10-21 — thumbnail draft tier
+
+- `publish thumbnail --tier draft|standard|premium`: the creator asked for a cheap try before the premium thumbnail. A
+  non-premium try is written as `thumbnail_<tier>.jpg` beside the final file and never replaces it; the tier is logged.
+  Test: `tests/unit/test_youtube_publish.py::test_a_draft_thumbnail_is_cheap_and_never_replaces_the_final`.
+- Titans `publish.json` got its `thumbnail` block (Trump, Musk, Zuckerberg broke on black, "SKILL OR LUCK?"). The draft
+  was not painted: Gemini answered 429 RESOURCE_EXHAUSTED (prepaid credits depleted).
+
+## 2026-10-21 — Shorts cut from the finished long video
+
+- The creator dropped the ten scripted Shorts (their old reads lack the dialogue after D-68) and asked for five Shorts cut
+  from the long video's best moments: the video's own opening, one moment, a shared outro line that points to the full
+  video and leads back into the opening question, so the Short loops; 15 % faster; no new read besides that one line.
+- `production/clip_shorts.py` (plan.json -> 1080x1920: blurred fill, the 16:9 frame with a 6 % side crop, title band,
+  word captions, "full video" label; the last frame is the first). Test: `tests/unit/test_clip_shorts.py`.
+- `publish/plan.py`: `"shorts_from": "publish"` stages the Shorts listed in publish.json instead of the script's.
+  Test: `test_youtube_publish.py::test_shorts_cut_from_the_long_video_come_from_publish_json`.

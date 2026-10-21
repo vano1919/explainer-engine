@@ -157,11 +157,14 @@ def _shot(i, start, end, pic, accents=()):
 def test_motion_rules_flag_a_slideshow_and_clear_with_accents():
     plain = _timed([_shot(i, i * 4.0, i * 4.0 + 4.0, f"p{i}") for i in range(8)], 32.0)
     rules = {f["rule"] for f in M.check(plain)}
-    assert {"MO-03", "MO-06"} <= rules
+    assert "MO-03" in rules
+    mo6 = [f for f in M.check(plain) if f["rule"] == "MO-06"]  # D-64: the motion share is reported only, no target
+    assert [f["severity"] for f in mo6] == ["INFO"] and "0%" in mo6[0]["detail"]
     alive = copy.deepcopy(plain)
     for s in alive["shots"]:
         s["accents"] = [{"kind": "punch", "start": s["start"] + 2.0}]
-    assert not {"MO-03", "MO-06"} & {f["rule"] for f in M.check(alive)}
+    assert "MO-03" not in {f["rule"] for f in M.check(alive)}
+    assert [f["detail"][:4] for f in M.check(alive) if f["rule"] == "MO-06"] == ["100%"]
     gap = _timed([_shot(1, 0.0, 12.0, "p1")], 12.0)
     assert any(f["rule"] == "MO-01" for f in M.check(gap))
 

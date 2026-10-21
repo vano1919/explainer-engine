@@ -30,7 +30,6 @@ MAX_PLAIN_RUN = int(SR.T("BP-83", "plain_run_max"))  # MO-03: consecutive shots 
 ENTRY_MIN_GAP = SR.T("BP-25", "entry_min_gap_s")  # MO-04 / BP-25: seconds between two whips or flashes
 TEXT_MIN_GAP = float(SR.T("BP-83", "text_min_gap_s"))  # MO-05: seconds between two pop/slam words
 MAX_WORDS = int(SR.T("BP-38", "max_words"))  # MO-05: words in one pop/slam (the beats' VB-04 cap)
-MIN_ALIVE = float(SR.T("BP-83", "alive_share_min"))  # MO-06: share of shots with something moving besides the camera
 HOLD_SIMILAR = float(SR.T("BP-83", "hold_similar"))  # MO-07: consecutive holds this close read as a metronome ...
 MAX_SIMILAR_RUN = int(SR.T("BP-83", "similar_run_max"))  # ... when more than this many in a row
 HOLD_CV = float(SR.T("BP-83", "hold_cv_min"))  # MO-07: a segment of CV_FROM+ shots whose holds vary less is a slideshow
@@ -47,7 +46,7 @@ def events(timed: dict) -> list[tuple[float, str]]:
         ev.append((s["start"], "reframe" if s["picture"] == prev else "picture"))
         prev = s["picture"]
         for a in s.get("accents", []):
-            if a["kind"] != "wobble":
+            if a["kind"] != "wobble" and a.get("anchored", True):  # BP-93: an accent an untied beat made is no change
                 ev.append((a["start"], a["kind"]))
         for b in s.get("bubbles", []):
             ev.append((b["start"], "bubble"))
@@ -56,7 +55,7 @@ def events(timed: dict) -> list[tuple[float, str]]:
     for c in timed.get("cards", []):
         ev.append((c["start"], "card"))
     for b in timed.get("visual_beats", []):  # VB rules: the lines' visual beats (an accent beat is already a shot accent)
-        if b["kind"] != "accent":
+        if b["kind"] != "accent" and b.get("anchored", True):  # BP-93: only a beat tied to a narration word is new
             ev.append((b["start"], "beat_" + b["kind"]))
     return sorted(ev)
 
@@ -114,8 +113,9 @@ def check_sourced(timed: dict) -> list[dict]:
     * BP-26 counts ``flash_in`` starts in any 1 s window (whip_in has no white frame, slam_text only jolts).
     * BP-27 measures a popped word's hold as the render does (accents.text_hold, cut by the shot's end) and a text/label
       beat's end - start; BP-28 reads the accent's or beat's ``pos`` (shares of the frame).
-    * BP-31: a dissolve must open a period: ``time_jump`` / ``place_change`` on the shot, a card starting with it, or a
-      ``period`` field that changes.
+    * BP-31: a dissolve must open a scene: ``time_jump`` / ``place_change`` on the shot (timing sets ``place_change`` where
+      the segment's scene place or time changes), a card starting with it, or a ``period`` field that changes; it lasts
+      dissolve_s to dissolve_max_s (the creator, 2026-10-20 21:14, RX-08).
     * BP-32/33 read the expression beats (``visual_beats`` kind expression): the word is start - offset, the close-up is
       drawn accents.EXPR_LEAD_FRAMES early (production/faces.composite), the hold is end - start. Mouth shapes are not in
       the data (no lip sync in this pipeline), so BP-33's mouth floor is not checked.
@@ -135,7 +135,7 @@ def check_sourced(timed: dict) -> list[dict]:
     amp_max, decay_max = SR.T("BP-24", "amplitude_max_h"), SR.T("BP-24", "decay_max_s")
     hold_min, s_per_word, hold_max = SR.T("BP-27", "hold_min_s"), SR.T("BP-27", "s_per_word"), SR.T("BP-27", "hold_max_s")
     safe_x, safe_y = SR.T("BP-28", "safe_x"), SR.T("BP-28", "safe_y")
-    dissolve_s = SR.T("BP-31", "dissolve_s")
+    dissolve_s, dissolve_max = SR.T("BP-31", "dissolve_s"), SR.T("BP-31", "dissolve_max_s")
     period_starts = {round(float(c["start"]), 3) for c in timed.get("cards", [])}
     flashes: list[float] = []
     prev = None
@@ -175,11 +175,11 @@ def check_sourced(timed: dict) -> list[dict]:
             opens = bool(s.get("time_jump") or s.get("place_change")) or round(float(s["start"]), 3) in period_starts \
                 or ("period" in s and s.get("period") != prev.get("period"))
             if not opens:
-                add("BP-31", _sev("BP-31"), sid, "dissolve inside a period: a dissolve marks a time jump or a change of "
-                    "place; everything else is a hard cut")
-            if float(s.get("transition_seconds", dissolve_s)) > dissolve_s + 1e-6:
-                add("BP-31", "REVIEW", sid, f"dissolve of {float(s['transition_seconds']):.2f} s (the house dissolve is "
-                    f"{dissolve_s:.1f} s)")
+                add("BP-31", _sev("BP-31"), sid, "dissolve inside a scene: a dissolve marks a change of time or place; "
+                    "inside a scene every transition is a hard cut")
+            ts = float(s.get("transition_seconds", dissolve_s))
+            if not dissolve_s - 1e-6 <= ts <= dissolve_max + 1e-6:
+                add("BP-31", "REVIEW", sid, f"dissolve of {ts:.2f} s (a dissolve lasts {dissolve_s:g}-{dissolve_max:g} s)")
         words = set(_WORD.findall(str(s.get("text", "")).lower()))
         for a in s.get("accents", []):
             k = a["kind"]
@@ -271,6 +271,26 @@ def _expressions(add, timed: dict, fps: int) -> None:
                 add("BP-33", _sev("BP-33"), where, f"{b.get('expression')} holds {hold:.2f} s (at least {hold_min:.1f} s)")
 
 
+def exchange_holds(timed: dict) -> list[dict]:
+    """BP-94 (a hypothesis, REVIEW): after a segment's last hero line the picture holds the hero's mood at least hold_min_s
+    before the next cut, under the narrator's conclusion (RX-07)."""
+    hold = float(SR.T("BP-94", "hold_min_s"))
+    out = []
+    last: dict = {}
+    for ln in timed.get("lines", []):
+        if ln.get("speaker"):
+            last[ln["segment"]] = ln
+    cuts = sorted(float(s["start"]) for s in timed["shots"])
+    for seg, ln in last.items():
+        end = float(ln["end"])
+        nxt = next((c for c in cuts if c > end - 1e-6), None)
+        if nxt is not None and nxt - end < hold - 1e-6:
+            out.append({"rule": "BP-94", "severity": SR.rule("BP-94").get("severity", "REVIEW"), "where": f"{seg} line {ln['line']}",
+                        "detail": f"a cut {nxt - end:.1f} s after the exchange's last line: hold the hero's mood at least "
+                                  f"{hold:g} s under the narrator's conclusion, then move slowly to the next scene (BP-94)"})
+    return out
+
+
 def check(timed: dict) -> list[dict]:
     out: list[dict] = []
     mo = SR.rule("BP-83").get("severity", "REVIEW")  # MO-02..MO-07: a hypothesis, REVIEW
@@ -326,9 +346,10 @@ def check(timed: dict) -> list[dict]:
                     add("MO-05", s["id"], f"more than {MAX_WORDS} words on screen (BP-38)")
                 last_text = a["start"]
     m = measure(timed)
-    if timed["shots"] and m["alive_share"] < MIN_ALIVE:
-        add("MO-06", "video", f"only {m['alive_share']:.0%} of shots have motion besides the camera (accent or bubble); "
-            f"at least {MIN_ALIVE:.0%}")
+    if timed["shots"]:  # MO-06 is reported only (BP-83: the creator, 2026-10-20 21:14; a target pushed accents onto plain shots)
+        add("MO-06", "video", f"{m['alive_share']:.0%} of shots have motion besides the camera (accent, bubble or beat); "
+            "reported only, no target (BP-83)", "INFO")
+    out += exchange_holds(timed)
     # MO-07 rhythm follows content, not a clock: a run of near-equal holds, or a whole segment of them, is a metronome
     holds = [(s["segment"], s["id"], s["end"] - s["start"]) for s in timed["shots"] if "end" in s and "start" in s]
     same_run = 1

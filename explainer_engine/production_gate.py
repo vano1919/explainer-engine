@@ -85,6 +85,13 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
     ef = [f for f in eg if f["severity"] == "FAIL"]
     add(0.5, "editorial quality", "BLOCKED" if ef else "WAIT" if eg else "PASS", f"{len(ef)} FAIL, {len(eg) - len(ef)} REVIEW (EG rules)",
         "add editorial v1 and editorial_review.json: python -m explainer_engine.production.editorial_gate" if eg else "approved for production")
+    from .scripting import script_approval as _sa  # 0.9: the creator approved this finished script (approval #1, OR-17)
+    if doc.get("schema") == _sa.BINDING:
+        sa = _sa.check(doc)
+        add(0.9, "approval #1 (script)", "WAIT" if sa else "PASS",
+            sa[0]["detail"] if sa else f"approved by {doc['episode']['script_approval']['approved_by']} "
+            f"({doc['episode']['script_approval']['approved_at']})",
+            "send the finished script to the creator; nothing paid before the yes" if sa else "")
     lint = narration_lint.lint(_ps.tts_text(doc))
     lf = [f for f in lint if f["severity"] == "FAIL"]
     add(1, "script for the ear", "BLOCKED" if lf else "PASS", f"{len(lf)} FAIL, {len(lint) - len(lf)} REVIEW (narration_lint)",

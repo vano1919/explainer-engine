@@ -45,6 +45,17 @@ The validators read these from the registry (D-59); AL-02's events-a-minute band
 - BP-30: across a hard cut the focal point stays within 10 % of the frame; never the same framing of the same picture twice
   in a row (change the shot size by a full step); a direction change over 90 degrees needs a neutral picture between.
 - BP-35: parallax on a still uses at least three depth layers moving toward the subject, foreground faster, eased; it counts as alive.
+- BP-31: a dissolve only at a change of place or time, inside its length band; a hard cut inside a scene.
+- BP-92: a camera move never resets.
 - BP-40: in the first 30 s something changes at least every 5 s (FAIL); in the body a still over 20 s is REVIEW, over 40 s FAIL;
   at most 10 pictures a minute on average, one burst of 5-10 cuts per 2-3 min; every change carries new information.
 - BP-41: one scripted pattern interrupt in the 25-35 s window: a cut with a new element (an insert, a text pop or a music change).
+
+## Real people in a scene (D-63, creator 2026-10-20)
+
+When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood (BP-94), then a slow move to the next shot, never a cut straight into other people's talk; at a change of place or time that move may be BP-31's dissolve.
+
+Also (D-64, the creator 2026-10-20 21:14): the first shot of a segment shows every hero its later shots show, unless the
+narrator names the newcomer first (PV-57, BP-91); a cut back to the same picture continues its move and a run of shots
+on one picture never returns to its start framing (BP-92); a bubble is at most one accent of BP-84's size; accents
+and props only where the narration names something (BP-93); the motion share (MO-06) is reported, not a target (BP-83).

@@ -266,8 +266,39 @@ def test_thumbnail_estimate_is_free_and_generation_needs_approval(tmp_path):
     assert T.check_text("one two three four five") and not T.check_text("WHO FALLS FIRST?")
 
 
+def test_a_draft_thumbnail_is_cheap_and_never_replaces_the_final(tmp_path):
+    ep = episode(tmp_path)
+    lines = []
+    assert T.run(ep, tier="draft", log=lines.append) == 0
+    assert any("gemini-nano-banana-2.1 at 1K" in l for l in lines)
+    names = []
+
+    class Paid:
+        def generate(self, name, prompt, **kw):
+            names.append(name)
+            from PIL import Image
+            out = ep / "raw.png"
+            Image.new("RGB", (1376, 768), (40, 40, 60)).save(out)
+            return out
+
+    assert T.run(ep, generate=True, approved_by="vano1919, thread", tier="draft", client=Paid(), log=lambda s: None) == 0
+    assert names == ["thumbnail_raw_draft"]
+    assert (ep / "publish" / "thumbnail_draft.jpg").exists() and not (ep / "publish" / "thumbnail.jpg").exists()
+    assert json.loads((ep / "publish" / "thumbnail_log.json").read_text(encoding="utf-8"))[-1]["tier"] == "draft"
+
+
 def test_no_code_path_names_public_or_update():
     src = "\n".join(p.read_text(encoding="utf-8") for p in Path(P.__file__).parent.glob("*.py"))
     assert "privacyStatus\": \"public" not in src and "'public'" not in src
     assert "videos.update" not in src.replace("no ``videos.update``", "")
     assert "/videos?" not in src.replace("{UPLOAD}/videos?", "")  # the only videos write is the resumable insert
+
+
+def test_shorts_cut_from_the_long_video_come_from_publish_json(tmp_path):
+    cut = [{"id": "CS01", "title": "Forty dollars, forever", "description": "One envelope.", "tags": ["musk"]}]
+    stage = P.build(episode(tmp_path, pub={**PUB, "shorts_from": "publish", "shorts": cut}))
+    ids = [it["id"] for it in stage["items"]]
+    assert ids[1:] == ["CS01"]  # the script's SH01/SH02 are not staged
+    cs = stage["items"][1]
+    assert cs["body"]["snippet"]["title"] == "Forty dollars, forever" and cs["file"].endswith("CS01.mp4")
+    assert "One envelope." in cs["body"]["snippet"]["description"] and "#shorts" in cs["body"]["snippet"]["description"]

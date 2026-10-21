@@ -29,7 +29,7 @@ them in order and stops at the first failed gate.
 | 4 | `edit-planner` | shots, motion, accents, bubbles, graphics, beds, sfx, music; ED-14 coverage per scene (establish -> listener reactions -> <=4 A/B alternations, J/L 0.5-2 s, one music per chapter, one planned dropout) | `stage_guard editor`, `validate`: PV-24, PV-35, PV-36 |
 | 5 | `voice-caster` | `voice`, `cast.<id>.voice` (traits, candidates) | `stage_guard caster`, PV-10, PV-32 |
 | 6 | `shorts-writer` | `shorts` (10, at least 6 styles) | `stage_guard shorts`, PV-28, PV-34 |
-| 7 | `script-critic` (fresh context) | findings only, each to its owner stage; writes `editorial_review.json` (`editorial_review/2` on /3: the integrated production-coherence pass, D-60) | SCRIPTING_SPEC gates + `production.editorial_gate` (EG), no "bored" window; at most 2 rounds |
+| 7 | `script-critic` (fresh context) | findings only, each to its owner stage; writes `editorial_review.json` (`editorial_review/2` on /3: the integrated production-coherence pass, D-60) | SCRIPTING_SPEC gates + `production.editorial_gate` (EG), no "bored" window; at most 2 rounds; a passing review comes with `story_page.md` (Georgian, one page, the whole story and why it is well told, BP-89, EG-23) |
 | - | creator approval #1 | | nothing is paid before it |
 
 ## 1. The skeleton first (story-architect)
@@ -44,8 +44,9 @@ them in order and stops at the first failed gate.
 - Loops and set-ups are written before lines: L01 the dramatic question, a forward-pointing line or smaller loop at least every BP-42 interval (150 s), a
   set-up planted in the first third that decides the end (ST-05, ST-06).
 - Needs: pick at least three from curiosity, stakes, humour, wonder, fear, identity, justice, belonging, competence,
-  surprise, and give each a segment (ST-08). Objectivity is labelled per segment (ST-09); on /3 the spoken disclaimer
-  lives in ONE honesty beat (SC-08).
+  surprise, and give each a segment (ST-08). Objectivity is labelled per segment (ST-09); on /3 nothing spoken says the
+  story is invented (SC-08, SC-11): the title and the description carry it. Show, don't tell (SC-12): heroes are what
+  they do. When the script is finished, the creator reads and approves it (OR-17) before anything is paid.
 
 ## 2. Scenes (scene-writer), one segment per call
 Input is small on purpose: the skeleton (one line per segment), this segment's drama AND its `scene` header, the cast

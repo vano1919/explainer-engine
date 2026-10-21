@@ -83,7 +83,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | P-73 | easing | in-out cubic; entrances out-back, overshoot about 1.1, 12-18 frames; every camera move eased per BP-23 | enum, see BP-23 | natural motion | M/C | vocabulary | enum, motion_lint |
 | P-74 | lip-sync lead | 1 frame (30 ms) | 0-2 | matches TMR viseme finding | M/C | timings | sync test |
 | P-75 | idle motion | blink every 4-8 s in silence, slow sway | | life without distraction | M/C | visemes | seeded, deterministic |
-| P-76 | transitions | hard cut by default; a dissolve only on a period boundary (BP-31); wipe and lid-open reveal retired | see BP-31 | purposeful change | M/C | | motion_lint |
+| P-76 | transitions | hard cut by default; a dissolve only at a change of place or time (BP-31, D-64); wipe and lid-open reveal retired | see BP-31 | purposeful change | M/C | | motion_lint |
 | P-77 | missing-asset fallback | named placeholder, job stops at QA | | never silent | H/F | | QA FAIL |
 | P-78 | reduced motion | static hold variant noted per scene where practical | | accessibility | L/C | | note present |
 

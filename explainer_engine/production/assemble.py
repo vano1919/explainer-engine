@@ -255,11 +255,16 @@ def look_filter(duration: float) -> str:
 
 
 def overlays(frame: Image.Image, f: int, fps: int, timed: dict) -> Image.Image:
-    """ED-09 period cards and ED-10 data visuals on one finished frame."""
+    """ED-09 period cards, ED-15 the time counter and ED-10 data visuals on one finished frame."""
+    carded = False
     for c in timed.get("cards", []):
         t = (f - c["start_frame"]) / fps
         if 0 <= t <= GFX.card_length():
             frame = GFX.card(frame, c, t, c["of"], c["index"])
+            carded = True
+    for c in timed.get("counters", []):
+        if c["start_frame"] <= f < c["end_frame"] and not carded:  # a card names the period itself
+            frame = GFX.counter(frame, c["label"], (f - c["start_frame"]) / fps, c.get("prev"))
     for g in timed.get("visuals", []):
         if g["start_frame"] <= f < g["end_frame"]:
             frame = GFX.visual(frame, g, (f - g["start_frame"]) / fps, g["hold"])
@@ -319,6 +324,83 @@ def picture_image(pid: str, pics: dict, dirs: list[Path], final: bool, report: l
     return None
 
 
+def close_beats(sb: list[dict] | None, s: dict) -> list[dict]:
+    """The shot's expression beats that the render turns into a close-up (VB-09: a painted sheet face)."""
+    return [b for b in sb or [] if b.get("kind") == "expression" and b.get("close_up") and b.get("shot") == s["id"]]
+
+
+def shot_views(s: dict, sb: list[dict] | None, fps: int) -> list[dict]:
+    """What each frame of shot ``s`` shows (faces.views): the timed file's ``views`` when timing wrote them, else the plan
+    made here from the painted close-ups and the shot's bubbles (older timed files)."""
+    if s.get("views"):
+        return s["views"]
+    return FACES.views(close_beats(sb, s), s["start_frame"], s["end_frame"], fps, bubbles=s.get("bubbles") or [])
+
+
+def shot_bubbles(s: dict, pic: dict, size: tuple[int, int], out: tuple[int, int], sb: list[dict] | None = None,
+                 fps: int = 30, order: list[str] | None = None) -> list:
+    """The bubbles of one shot, each laid out once on the view it is shown on (faces.views: a bubble never crosses a change
+    of the face frame, the creator 2026-10-20, CC-01): on the scene above the speaker's mouth point, clear of every hero's
+    face, with the faces taken at the bubble's start AND end so a camera drift under a still bubble never slides a face
+    beneath it; on the speaker's own close-up at the close-up's mouth, clear of its head. A bubble of an older timed file
+    that still crosses a view change ends with its view (never on a frame it was not laid out for); on another hero's
+    close-up its tail points off screen to the speaker's side."""
+    W, H = size
+    OW, OH = out
+    f0, f1 = s["start_frame"], s["end_frame"]
+    speakers = pic.get("speakers", {})
+    close = close_beats(sb, s)
+    vs = shot_views(s, sb, fps) if close or s.get("views") else [{"start_frame": f0, "end_frame": f1, "who": None}]
+    bubbles = []
+    for b in s["bubbles"]:
+        bf0 = b["start_frame"]
+        v = FACES.view_at(vs, min(max(bf0, f0), f1 - 1)) or {"start_frame": f0, "end_frame": f1, "who": None}
+        bf1 = min(b["end_frame"], v["end_frame"], f1)
+        end = b["end"] if bf1 == b["end_frame"] else bf1 / fps
+        beat = FACES.face_in_view(close, v, bf0) if v["who"] is not None else None
+        if beat is not None:
+            mouth, head = FACES.mouth_and_head(beat, order or sorted({x.get("who") for x in close}), (OW, OH))
+            if v["who"] == b["who"]:
+                sp = mouth
+            else:  # another hero's close-up (only an older timed file): the speaker is off screen on his side
+                sx = speakers.get(b["who"], [0.5, 0.4])[0]
+                sp = (0.0 if sx < 0.5 else float(OW), OH * 0.42)
+            faces = [head]
+        else:
+            faces = []
+            for fr in (bf0, max(bf0, bf1 - 1)):
+                u = (fr - f0) / max(1, f1 - f0 - 1)
+                box = motion_box(s.get("render_motion", s["motion"]), W, H, min(max(u, 0.0), 1.0))
+                faces += [BUB.head_box(to_frame(pt, box, W, H, OW, OH), (OW, OH)) for who, pt in speakers.items()]
+            u = (bf0 - f0) / max(1, f1 - f0 - 1)
+            box = motion_box(s.get("render_motion", s["motion"]), W, H, min(max(u, 0.0), 1.0))
+            sp = to_frame(speakers.get(b["who"], [0.5, 0.4]), box, W, H, OW, OH)
+        bubbles.append(BUB.Bubble(b["text"], sp, b["start"], end, (OW, OH), kind=b.get("kind", "speech"),
+                                  avoid=[x.box for x in bubbles if x.end > b["start"]], faces=faces))
+    return bubbles
+
+
+def bubble_findings(timed: dict, size: tuple[int, int] = (1920, 1080), picture_dirs: list[Path] | None = None) -> list[dict]:
+    """BUBBLE-4 before any render: every bubble laid out as the render will lay it out, none over a face (FAIL). With
+    ``picture_dirs`` the painted close-ups are known, so a bubble on a close-up view is laid out on the close-up."""
+    out = []
+    pics = timed.get("pictures", {})
+    hero_faces = hero_faces_of(timed)
+    beats = timed.get("visual_beats", [])
+    for s in timed["shots"]:
+        if not s.get("bubbles"):
+            continue
+        p = pics.get(s["picture"], {})
+        aspect = p.get("aspect") or 16 / 9
+        W = 2048
+        sb = beats_for_shot(beats, s, pics, hero_faces, picture_dirs) if picture_dirs and beats else []
+        for b in shot_bubbles(s, p, (W, round(W / aspect)), size, sb, timed.get("fps", 30), sorted(hero_faces)):
+            if b.covers_face:
+                out.append({"rule": "BUBBLE-4", "severity": "FAIL", "where": s["id"],
+                            "detail": f"bubble {b.text[:36]!r} would cover a face: re-frame the shot or move the speaker"})
+    return out
+
+
 def to_frame(pt, box, W, H, OW, OH):
     x0, y0, x1, y1 = box
     return ((pt[0] * W - x0) / (x1 - x0) * OW, (pt[1] * H - y0) / (y1 - y0) * OH)
@@ -337,34 +419,62 @@ def beats_for_shot(all_beats: list[dict], s: dict, pics: dict, hero_faces: dict,
     face point of the shot's picture and, when the hero's sheet is painted, the close-up (VB-09)."""
     on = [b for b in all_beats if b["start_frame"] < s["end_frame"] and max(b["end_frame"], b["start_frame"] + 1) > s["start_frame"]
           and (b["kind"] not in BEATS.PICTURE_BOUND or b["shot"] == s["id"])]
-    face = {id(b): b for b in BEATS.faces(on, pics)}
-    on = [dict(b, face=face[id(b)]["face"]) if id(b) in face else b for b in on]
+    # the face point of each expression in its picture; keyed by (frame, hero), since BEATS.faces returns copies (keyed by
+    # id() of the copy it never matched, so the face focus and the close-up's side never saw a face, QA 2026-10-20)
+    face = {(b["start_frame"], b.get("who")): b["face"] for b in BEATS.faces(on, pics)}
+    on = [dict(b, face=face[(b["start_frame"], b.get("who"))]) if b["kind"] == "expression"
+          and (b["start_frame"], b.get("who")) in face else b for b in on]
     keyed = {(b["start_frame"], b["who"]): b["close_up"] for b in FACES.sheet_beats(on, hero_faces, picture_dirs)}
     return [dict(b, close_up=keyed[(b["start_frame"], b["who"])]) if b["kind"] == "expression"
             and (b["start_frame"], b.get("who")) in keyed else b for b in on]
+
+
+ACCENT_REST_S = 0.3  # engineering: a camera accent eases to rest over this before (and after) a cut inside one picture
+
+
+def rest_weight(s: dict, f: int, fps: int) -> float:
+    """1 inside a shot; easing to 0 at an edge where the same picture continues (ED-02: the next shot starts from this
+    shot's plain move, so a held punch, a wobble or the face lean must be back at rest there, never snap; CC-06)."""
+    rm = s.get("render_motion") or {}
+    n = max(1, round(ACCENT_REST_S * fps))
+    k = 1.0
+    if rm.get("eout") is False:
+        k = min(k, BEATS._ease((s["end_frame"] - 1 - f) / n))
+    if rm.get("ein") is False:
+        k = min(k, BEATS._ease((f - s["start_frame"]) / n))
+    return k
 
 
 def finish_frame(im: Image.Image, box, s: dict, f: int, fps: int, size: tuple[int, int], sb: list[dict], hero_faces: dict,
                  face_order: list[str], picture_dirs: list[Path], bubbles: list | None = None,
                  before: Image.Image | None = None) -> Image.Image:
     """One frame of shot ``s`` from its picture and the crop ``box`` of the shot's own move: the face focus (VB-02), the
-    accents (MO), the close-ups (VB-09), the bubbles and the visual beats. The long video and the Shorts both draw here."""
+    accents (MO), the close-ups (VB-09) as the shot's view plan says (faces.views), the bubbles and the visual beats. The
+    long video and the Shorts both draw here. Camera additions (face lean, accents) rest at a cut inside one picture."""
     f0, f1 = s["start_frame"], s["end_frame"]
     W, H = im.size
-    if sb:  # VB-02: the speaking face is the focus; each expression change pops toward it
-        box = BEATS.face_camera(box, W, H, [b for b in sb if b.get("face") is not None and b["shot"] == s["id"]], f, fps)
+    k = rest_weight(s, f, fps)
+    close = close_beats(sb, s)
+    vs = shot_views(s, sb, fps) if close else None
+    v = FACES.view_at(vs, f) if vs else None
+    on_close = v is not None and v["who"] is not None
+    if sb and not on_close:  # VB-02: the speaking face is the focus; each expression change pops toward it
+        lean = BEATS.face_camera(box, W, H, [b for b in sb if b.get("face") is not None and b["shot"] == s["id"]], f, fps)
+        box = tuple(a + (b - a) * k for a, b in zip(box, lean))
     acc = s.get("accents", [])
     if acc:  # MO rules (D-48): punch, shake, wobble move the crop; whips, flashes and words are drawn
-        box = ACC.apply_camera(box, W, H, *ACC.camera(acc, f, fps, f0))
+        z, dx, dy = ACC.camera(acc, f, fps, f0)
+        box = ACC.apply_camera(box, W, H, 1 + (z - 1) * k, dx * k, dy * k)
     frame = im.resize(size, Image.BICUBIC, box=box)
     if acc:
         frame = ACC.draw(frame, acc, f, fps, f0, f1, before, BUB.FONT)
-    if sb:  # VB-09: in dialogue the speaking hero's keyed close-up over the scene, zoomed and blurred
-        frame = FACES.composite(frame, [b for b in sb if b.get("close_up") and b["shot"] == s["id"]], f, fps, face_order)
+    if close:  # VB-09: the view's keyed close-up over the scene, zoomed and blurred; it cuts in and out with its view
+        frame = FACES.composite(frame, close, f, fps, face_order, vs)
     if bubbles:
         frame = BUB.composite(frame, bubbles, f / fps)
-    if sb:
-        frame = BEATS.draw(frame, sb, f, fps, box, (W, H), hero_faces, picture_dirs)
+    if sb:  # a mark that points into the picture (ring, label, face mark) is not drawn while a close-up fills the frame
+        frame = BEATS.draw(frame, [b for b in sb if not (on_close and b["kind"] in BEATS.PICTURE_BOUND)], f, fps, box, (W, H),
+                           hero_faces, picture_dirs)
     return frame
 
 
@@ -407,6 +517,18 @@ def chunk_look(first: bool, last: bool, seconds: float) -> str:
     return f
 
 
+def render_code() -> str:
+    """The hash of the code that draws a frame: a fix in the renderer must redraw the chunks, not reuse the old ones (the QA
+    loop of 2026-10-20 re-reviewed chunks drawn before the face-lean fix and found the same jump again)."""
+    mods = (__file__, ACC.__file__, BEATS.__file__, BEATS.ICONS.__file__, FACES.__file__, continuity.__file__, GFX.__file__, BUB.__file__,
+            grade.__module__ and __import__(grade.__module__, fromlist=["_"]).__file__, RULES.__file__,
+            str(Path(RULES.__file__).with_name("sourced_rules.json")))
+    h = hashlib.sha1()
+    for m in mods:
+        h.update(Path(m).read_bytes())
+    return h.hexdigest()
+
+
 def plan_stamp(timed: dict, size: tuple[int, int], crf: int, grade_key: str | None, bounds: list, pics: dict, dirs: list[Path]) -> str:
     """What the chunks on disk were made from: the timing, the size, the picture files. A change anywhere starts the chunks over."""
     files = []
@@ -416,7 +538,7 @@ def plan_stamp(timed: dict, size: tuple[int, int], crf: int, grade_key: str | No
             st = p.stat()
             files.append([pid, p.name, st.st_size, st.st_mtime_ns])
     body = {"timed": {k: v for k, v in timed.items() if k != "findings"}, "size": list(size), "crf": crf, "grade": grade_key,
-            "bounds": bounds, "pictures": files, "look": LOOK, "version": 1}
+            "bounds": bounds, "pictures": files, "look": LOOK, "version": 1, "code": render_code()}
     return hashlib.sha1(json.dumps(body, sort_keys=True, default=str).encode()).hexdigest()
 
 
@@ -505,8 +627,7 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
     with wave.open(str(raw), "wb") as w:
         w.setnchannels(1), w.setsampwidth(2), w.setframerate(SR)
         w.writeframes((np.clip(audio, -1, 1) * 32767).astype("<i2").tobytes())
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(raw), "-af", targets.loudnorm("long"), "-ar", str(SR),
-                    "-ac", "1", str(out / "audio.wav")], check=True)
+    targets.normalise_file(raw, out / "audio.wav", "long", SR)
     # BP-50: integrated loudness and true peak are measured on the normalised mix and judged, never only stored; BP-51: the
     # narration stem's loudness against the mix (two ebur128 runs, free)
     stats.update(measure_delivery(out / "audio.wav", narration_wav, "long"))
@@ -558,14 +679,10 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         im = cache[pid]
         W, H = im.size
         f0, f1 = s["start_frame"], s["end_frame"]
-        speakers = pics.get(pid, {}).get("speakers", {})
-        bubbles = []
-        for b in s["bubbles"]:
-            u = (b["start_frame"] - f0) / max(1, f1 - f0 - 1)
-            box = motion_box(s.get("render_motion", s["motion"]), W, H, min(max(u, 0.0), 1.0))
-            sp = to_frame(speakers.get(b["who"], [0.5, 0.4]), box, W, H, OW, OH)
-            bubbles.append(BUB.Bubble(b["text"], sp, b["start"], b["end"], (OW, OH), kind=b.get("kind", "speech"),
-                                      avoid=[x.box for x in bubbles if x.end > b["start"]]))
+        bubbles = shot_bubbles(s, pics.get(pid, {}), (W, H), (OW, OH), beats_of.get(k) or [], fps, face_order)
+        for b in bubbles:
+            if b.covers_face:
+                report.append(f"{s['id']}: bubble {b.text[:30]!r} covers a face (BUBBLE-4)")
         return im, bubbles
 
     def draw(k: int, im: Image.Image, bubbles: list, f: int, before: Image.Image | None = None) -> Image.Image:

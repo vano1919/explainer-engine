@@ -94,6 +94,21 @@ def engine_of(doc: dict, pic: dict) -> str:
     return pic.get("engine", "existing" if pic.get("file") else (doc.get("look", {}).get("default_engine") or "gemini"))
 
 
+def hero_refs(doc: dict, pic: dict, style: list[str]) -> list[str]:
+    """The style references plus the approved reference picture of every hero the picture draws (invariant 6, OR-16):
+    a Gemini picture of a hero is painted against that hero's chosen face, never from the prompt alone."""
+    from explainer_engine.imagegen.gemini import MAX_REFERENCES
+    out = list(style)
+    for who in pic.get("heroes", []):
+        ref = ((doc.get("cast", {}).get(who) or {}).get("reference") or {}).get("picture")
+        if ref and ref not in out and ref in doc.get("library", {}):
+            out.append(ref)
+    env = ((doc.get("look") or {}).get("environment") or {}).get("picture")
+    if not out and env in doc.get("library", {}):  # a picture with no hero still carries the approved world's look
+        out.append(env)
+    return out[:MAX_REFERENCES]
+
+
 def jobs(doc: dict) -> tuple[list[dict], dict]:
     """(Gemini pictures, pod job) for every used picture that has no file yet."""
     pics, _ = S.pictures(doc)
@@ -104,7 +119,7 @@ def jobs(doc: dict) -> tuple[list[dict], dict]:
             continue
         eng = engine_of(doc, pic)
         if eng == "gemini":
-            gemini.append({"id": pid, "prompt": pic["prompt"], "refs": refs, "first_use": pic["first_use"],
+            gemini.append({"id": pid, "prompt": pic["prompt"], "refs": hero_refs(doc, pic, refs), "first_use": pic["first_use"],
                            "tier": pic.get("tier", "standard")})
         elif eng == "pod_ref":
             pod.append({"id": pid, "seed": 600 + len(pod) * 11, "refs": [f"{r}.png" for r in pic.get("refs", [])],

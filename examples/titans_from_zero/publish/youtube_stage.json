@@ -1,0 +1,57 @@
+{
+  "schema": "youtube_stage/1",
+  "episode": "examples/titans_from_zero",
+  "privacy": "unlisted",
+  "settings": {
+    "category": "Entertainment",
+    "language": "en",
+    "location": "United States",
+    "made_for_kids": false,
+    "paid_promotion": false
+  },
+  "synthetic_media": false,
+  "items": [
+    {
+      "id": "CS05",
+      "kind": "short",
+      "file": "examples/titans_from_zero/../../jobs/titans_from_zero/clip_shorts/final/CS05.mp4",
+      "thumbnail": null,
+      "body": {
+        "snippet": {
+          "title": "Rich by Friday. Would you sign?",
+          "description": "After the fire, a man in grey offers to buy everything. There is one catch. A fictional what-if story with drawn caricatures; the real people did not take part or say these words.\n\nFull video: What If 10 Business Titans Went Broke? Five Years to Prove It Wasn't Luck\nhttps://youtu.be/XW8BfJdw1No\n\n#shorts #JordanBelfort #ElonMusk",
+          "tags": [
+            "Jordan Belfort",
+            "Elon Musk",
+            "what if",
+            "business titans",
+            "billionaires",
+            "billionaires go broke",
+            "skill or luck",
+            "starting from zero",
+            "Kevin O'Leary",
+            "Mark Cuban",
+            "Robert Kiyosaki",
+            "Jeff Bezos",
+            "entrepreneurship",
+            "animated story",
+            "2D animation",
+            "storytelling",
+            "shorts"
+          ],
+          "categoryId": "24",
+          "defaultLanguage": "en",
+          "defaultAudioLanguage": "en"
+        },
+        "status": {
+          "privacyStatus": "unlisted",
+          "selfDeclaredMadeForKids": false,
+          "containsSyntheticMedia": false,
+          "embeddable": true,
+          "license": "youtube"
+        }
+      }
+    }
+  ],
+  "findings": []
+}

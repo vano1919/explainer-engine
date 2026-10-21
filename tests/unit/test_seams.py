@@ -29,3 +29,16 @@ def test_chain_has_gain_and_edge_fades(tmp_path):
     tone(p, "0.2")
     f = seams.chain(0, p, -2.5, 0.3)
     assert "volume=-2.500dB" in f and "afade=t=in" in f and "afade=t=out" in f and "pad_dur=0.3" in f
+
+
+def test_duration_of_an_mp3_is_its_decoded_length(tmp_path):
+    """Offsets of spliced takes come from duration(): an MP3's container length overstates it by the encoder padding."""
+    p = tmp_path / "take.mp3"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "sine=f=220:d=2", "-c:a", "libmp3lame", str(p)],
+                   check=True)
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(p), "-ac", "1", "-ar", "48000", "-f", "s16le", "-"],
+                         capture_output=True, check=True).stdout
+    probe = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of",
+                                  "default=nw=1:nk=1", str(p)], capture_output=True, text=True, check=True).stdout)
+    assert abs(seams.duration(p) - len(raw) / 2 / 48000) < 1e-6
+    assert seams.duration(p) < probe

@@ -59,15 +59,15 @@ Cut on the pause, not on the word `[ours: UR-12]`; leave 80-120 ms of room each 
 
 | Transition | Parameters | Meaning | Use |
 |---|---|---|---|
-| **Hard cut** | 0 frames | same time, same place | default, 85-95% of all transitions `[ours: every cut is hard except the period dissolve, BP-31]` |
-| **Dissolve** | 12-24 frames (0.4-0.8 s) action; 1-2 s time jump `[ours: BP-31, period starts only]`; 3-6 s ambient | time passes, mood shifts | at most 10% of transitions `[ours: period boundaries only, BP-31]`; never across a spoken sentence |
+| **Hard cut** | 0 frames | same time, same place | default, 85-95% of all transitions `[ours: every cut is hard except the scene-boundary dissolve, BP-31]` |
+| **Dissolve** | 12-24 frames (0.4-0.8 s) action; 1-2 s time jump `[ours: BP-31, a change of place or time only]`; 3-6 s ambient | time passes, mood shifts | at most 10% of transitions `[ours: period boundaries only, BP-31]`; never across a spoken sentence |
 | **Dip to black/white** | 0.5-1.5 s in, hold 0.2 s, out | chapter end, shock, silence | start and end of a piece `[ours: 1 s in, 1.5 s out]` |
 | **Whip pan** | 6-10 frames of blur, matched by a whoosh | energy, place change in action | vlogs, shorts, tech reviews; never in docu/sleep `[ours: an entry accent that opens a story turn, BP-25; it counts as a cut]` |
 | **Mask transition** | an object (door, hand, tree) wipes the frame 10-20 frames | clever place/time link | when a real foreground object exists; otherwise it looks fake |
 | **Push / zoom transition** | 8-14 frames, 1.15x to 1.3x scale with blur | continues the zoom language across a cut | shorts, tutorials `[ours: not used; BP-20 caps the scale]` |
 | **Match move** | next shot starts with the same motion direction and speed | smooth link between different pictures | the zoom/pan of the outgoing shot ends at the speed the next one starts |
 
-Rule of three: at most three transition kinds in one video `[ours: the hard cut, the period dissolve, black; BP-31]`.
+Rule of three: at most three transition kinds in one video `[ours: the hard cut, the scene-boundary dissolve, black; BP-31]`.
 
 ### 2.3 Typography and motion graphics
 
@@ -162,7 +162,7 @@ Rules: a sound starts with the picture event it belongs to (within one frame) `[
 | Chunks of different loudness joined as they came | audible seam | level and fade `[ours: ED-01]` |
 | Template 3D/glitch transitions on serious topics | cheapens the subject | cut or dissolve |
 | Cutting inside a sentence on a half-word | clipped syllable | cut in the pause |
-| Held picture past the still limit `[ours: BP-40, a visual beat counts as a change]` | attention drops | bubble, re-frame or cut |
+| Held picture past the still limit `[ours: BP-40; only a beat tied to a narration word counts, BP-93]` | attention drops | bubble, re-frame or cut |
 
 ---
 
@@ -192,7 +192,9 @@ Rules: a sound starts with the picture event it belongs to (within one frame) `[
 - [ ] A visible change inside the section's window (BP-40) and the 25-35 s pattern interrupt (BP-41).
 - [ ] Open loop at the end of every chapter or period.
 - [ ] No zoom snap (same picture), no cut in the middle of a move.
-- [ ] Transitions: hard cuts, the period dissolve only (BP-31), black at the ends; whips and flashes spaced (BP-25).
+- [ ] Transitions: hard cuts, the scene-boundary dissolve only (BP-31), black at the ends; whips and flashes spaced (BP-25).
+- [ ] Every exchange: narrator setup, exchange, narrator conclusion (BP-90), the mood held before the cut (BP-94).
+- [ ] The establishing shot shows the scene's cast (BP-91); camera moves never reset (BP-92).
 - [ ] Grade, grain and vignette constant across the whole video; skin tones and the hero's colours stay in the same range.
 - [ ] Brightest and darkest frames checked; no frame flashes (within BP-26's flash cap) for sleep/ambient or any viewer-safety concern.
 
@@ -216,6 +218,8 @@ Where this database and the project disagree, the registry wins (D-59); the `[ou
 - BP-26: at most 3 flashes in any second, no saturated red; a flash_in is 2 frames at most 80 % white.
 - BP-30: the focal point moves at most 10 % of the frame across a hard cut; never the same framing of the same picture twice
   in a row; a direction change over 90 degrees needs a neutral picture between.
-- BP-31: a dissolve (1 s) only on a period boundary; every other transition is a hard cut (whips and flashes count as cuts).
+- BP-31: a dissolve only at a change of place or time, inside BP-31's length band; every other transition is a hard cut
+  (whips and flashes count as cuts).
+- BP-92: a camera move never resets (continue the move across a same-picture cut; never back to the run's start framing).
 - BP-40: first 30 s a change every 5 s (FAIL); body still over 20 s REVIEW, over 40 s FAIL; at most 10 pictures a minute;
   one burst of 5-10 cuts per 2-3 min.

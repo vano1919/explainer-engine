@@ -390,3 +390,16 @@ def test_episode1_opening_with_beats_meets_the_cadence():
     assert not [f for f in found if f["severity"] == "FAIL"], [f for f in found if f["severity"] == "FAIL"]
     m = BEATS.measure(timed)
     assert m["narration_gap_mean"] <= BEATS.MEAN_OK and m["beats"] == 49
+
+
+def test_a_label_at_the_centre_keeps_its_side_while_the_camera_drifts():
+    """creator 2026-10-21: the COURTHOUSE tag (pos x 0.5) jumped left and right every frame as the camera moved."""
+    frame = Image.new("RGB", (640, 360), (0, 0, 0))
+    b = dict(kind="label", text="COURTHOUSE", pos=[0.5, 0.3], start=0.0, end=2.0, start_frame=0, end_frame=60,
+             shot="SH001")
+    sides = []
+    for dx in (-2, -1, 1, 2):  # the pan box a pixel or two either side of the spot
+        out = np.asarray(BEATS.draw(frame, [b], 20, 30, (dx, 0, 640 + dx, 360), (640, 360), {}, [])).astype(int)
+        cols = np.nonzero(out.sum(axis=(0, 2)))[0]
+        sides.append((cols.min() + cols.max()) / 2 > 320)
+    assert len(set(sides)) == 1

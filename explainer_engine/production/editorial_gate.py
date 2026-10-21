@@ -6,6 +6,8 @@ import json
 import sys
 from pathlib import Path
 
+from explainer_engine.standards import sourced_rules as SR
+
 CRITERIA = (
     "factual_reliability", "clarity", "story_coherence", "hook", "relevance", "originality",
     "spoken_naturalness", "visual_potential", "humour_fit", "pacing_potential", "source_coverage",
@@ -295,6 +297,34 @@ def integrated_findings(report: dict, doc: dict) -> list[dict]:
     return out
 
 
+def story_page_findings(report: dict, review_path: Path) -> list[dict]:
+    """EG-23 (BP-89, the creator 2026-10-20): a /2 review of a /3 script carries `story_page`, a one-page Georgian
+    retelling of the whole story with a section on why it is a well-told story, written next to the review."""
+    name = report.get("story_page")
+    if not isinstance(name, str) or not name.strip():
+        return [finding("EG-23", "story_page", "the passing review also writes story_page.md: the whole story on one page "
+                        "in Georgian and why it is a well-told story, not a string of phrases (BP-89)")]
+    page = Path(review_path).parent / name
+    try:
+        text = page.read_text(encoding="utf-8")
+    except OSError:
+        return [finding("EG-23", "story_page", f"story page not found: {page}")]
+    out = []
+    words = len(text.split())
+    lo, hi = SR.T("BP-89", "words_min"), SR.T("BP-89", "words_max")
+    if not lo <= words <= hi:
+        out.append(finding("EG-23", "story_page", f"{words} words; one page is {lo}-{hi} words (BP-89)"))
+    letters = [c for c in text if c.isalpha()]
+    share = sum("\u10d0" <= c <= "\u10ff" for c in letters) / max(1, len(letters))
+    if share < SR.T("BP-89", "georgian_share_min"):
+        out.append(finding("EG-23", "story_page", f"the page is for the creator and is written in Georgian ({share:.0%} "
+                           "Georgian letters)"))
+    if SR.T("BP-89", "why_heading") not in text:
+        out.append(finding("EG-23", "story_page", "the page needs its section on why the story works "
+                           f"(a heading with '{SR.T('BP-89', 'why_heading')}')"))
+    return out
+
+
 def review_findings(script_path: Path | str, review_path: Path | str) -> list[dict]:
     path = Path(review_path)
     try:
@@ -314,6 +344,8 @@ def review_findings(script_path: Path | str, review_path: Path | str) -> list[di
                            "review must be editorial_review/2 with its integrated section (D-60)"))
     if report.get("schema") == "editorial_review/2":
         out += integrated_findings(report, doc)
+        if doc.get("schema") == SCENE_SCHEMA:
+            out += story_page_findings(report, path)
     if report.get("script_sha256") != script_hash(script_path):
         out.append(finding("EG-13", "script_sha256", "review is stale or belongs to a different script; review the exact current file"))
     if report.get("reviewer_role") != "independent_critic" or report.get("independent") is not True:
