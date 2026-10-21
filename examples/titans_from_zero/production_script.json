@@ -931,7 +931,11 @@
               "kind": "prop",
               "thing": "no money, no names, no bank",
               "asset": "icon:cash-off+user-off+building-bank",
-              "why": "no money, no names, no bank: named one by one"
+              "why": "no money, no names, no bank: named one by one",
+              "pos": [
+                0.5,
+                0.9
+              ]
             }
           ]
         },
@@ -1960,7 +1964,7 @@
             {
               "at": "short one",
               "who": "oleary",
-              "text": "Short one. In bankruptcy.",
+              "text": "A short one.",
               "kind": "speech",
               "hold": 2.4,
               "reported": true
@@ -3178,7 +3182,7 @@
             {
               "at": "never promise",
               "who": "musk",
-              "text": "Don't promise. Build.",
+              "text": "Never promise.",
               "kind": "speech",
               "hold": 1.95,
               "reported": true
@@ -3701,7 +3705,7 @@
             {
               "at": "debt is how",
               "who": "kiyosaki",
-              "text": "Debt makes you rich.",
+              "text": "The rich get richer.",
               "kind": "speech",
               "hold": 2.4,
               "reported": true
@@ -3780,7 +3784,7 @@
             {
               "at": "six times",
               "who": "trump",
-              "text": "Six times. Still here.",
+              "text": "Bankruptcy court six times.",
               "kind": "speech",
               "hold": 2.4,
               "reported": true
@@ -3788,7 +3792,7 @@
             {
               "at": "The cameras did",
               "who": "trump",
-              "text": "Cameras came back.",
+              "text": "The cameras did.",
               "kind": "speech",
               "hold": 1.95,
               "reported": true
@@ -6147,7 +6151,7 @@
             {
               "at": "promised what",
               "who": "musk",
-              "text": "We haven't built them!",
+              "text": "What we haven't built.",
               "kind": "speech",
               "hold": 2.4,
               "reported": true
@@ -8117,7 +8121,7 @@
             {
               "at": "won't sign this one",
               "who": "belfort",
-              "text": "Not signing this one.",
+              "text": "Won't sign this one.",
               "kind": "speech",
               "hold": 2.4,
               "reported": true
@@ -8735,7 +8739,7 @@
             {
               "at": "next year's number",
               "who": "cuban",
-              "text": "A real number.",
+              "text": "A real one.",
               "kind": "speech",
               "hold": 1.95,
               "reported": true
@@ -9663,7 +9667,7 @@
             {
               "at": "buy lunch",
               "who": "belfort",
-              "text": "You're buying lunch.",
+              "text": "And you buy lunch.",
               "kind": "speech",
               "hold": 1.95,
               "reported": true
@@ -10214,7 +10218,7 @@
             {
               "at": "lucky pick",
               "who": "belfort",
-              "text": "Lucky pick, huh?",
+              "text": "Lucky pick, Kevin.",
               "kind": "speech",
               "hold": 1.95,
               "reported": true
@@ -10222,7 +10226,7 @@
             {
               "at": "didn't pick anyone",
               "who": "oleary",
-              "text": "I picked nobody.",
+              "text": "I didn't pick anyone.",
               "kind": "speech",
               "hold": 1.95,
               "reported": true

@@ -94,6 +94,16 @@ def test_an_unplanned_cut_fails_and_a_planned_one_passes(tmp_path):
     assert not PX.check_cuts(cuts, PX.planned(_timed(planned)), FPS, BASE, 90)
 
 
+def test_a_view_plans_cut_from_the_wide_to_a_close_up_is_planned(tmp_path):
+    # one shot, two views: the wide (A) until frame 330, then the face close-up (B); the face track has no run for the wide
+    sh = _shot("SH1", "A", BASE, BASE + 60)
+    sh["views"] = [{"start_frame": BASE, "end_frame": BASE + 30}, {"start_frame": BASE + 30, "end_frame": BASE + 60}]
+    video = _video(tmp_path / "v.mp4", _render([sh], lambda f, box, s: ("B", box) if f >= BASE + 30 else None))
+    assert not PX.check_cuts(PX.detect_cuts(video), PX.planned(_timed([sh])), FPS, BASE, 60)
+    del sh["views"]
+    assert _rules(PX.check_cuts(PX.detect_cuts(video), PX.planned(_timed([sh])), FPS, BASE, 60)) == {"PX-CUT-EXTRA"}
+
+
 def test_a_camera_jump_inside_a_shot_is_a_review_and_a_smooth_push_is_clean(tmp_path):
     push = {"kind": "push", "z0": 1.1, "z1": 1.16}
     shots = [_shot("SH1", "A", BASE, BASE + 60, push)]

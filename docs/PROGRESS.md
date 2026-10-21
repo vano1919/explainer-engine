@@ -1327,3 +1327,13 @@ voiced lines (Vance, Belfort) become the narrator's, no line keeps a `speaker`; 
 (the ten heads cut from the approved `p_<hero>` references round the YuNet face) and four recap boards (week one, month
 nine, year two, year three), each rung row by row as the narrator names it; schema `cards` and `lines[].card`; 56 more
 drawn props across S04-S16. Validate: 0 FAIL. Tests: `tests/unit/test_story_cards.py`.
+
+**2026-10-21: titans re-recorded with one narrator, full render.** 22 Brad takes (eleven_v4, one generation each, 6,625
+of the creator's 7,000 credits) spliced into the old read (`jobs/.../read_v3/build.py`; S15's roll call re-read: the old
+take named five of the eight). Two systemic fixes found on the full render: `audio/seams.duration` now measures an MP3 by
+its decoded samples (ffprobe's container length counts the encoder padding, and 22 takes drifted the word timings 0.7 s
+late by the end; `tests/unit/test_seams.py`); `qa/pixels.planned` counts every view change of a shot's view plan as a
+planned cut (wide -> face close-up read as PX-CUT-EXTRA on six shots; `tests/unit/test_pixels.py`). Told-turn bubbles
+re-anchored on the performed quotes and, where they restate one, carry its own words (BP-84 four words). Editorial
+review rounds 12-14 (one FAIL fixed: the first recap gave away O'Leary's envelopes), ER-03/RK-20 rewritten for D-68 on
+the creator's card (12:05).

@@ -108,6 +108,9 @@ def planned(timed: dict, picture_dirs: list[Path] | None = None) -> dict:
              "dissolve": s.get("transition") == "dissolve"} for p, s in zip(shots, shots[1:])]
     _, runs = FR.face_track(timed, picture_dirs)
     soft = [r["start_frame"] for p, r in zip(runs, runs[1:]) if p["shot"] == r["shot"]]
+    # every view change of a shot's view plan is planned too: the face track has no run for a wide view without a face, so
+    # wide -> close-up (D-55's dialogue frame) used to read as a cut nobody planned (titans full render, 2026-10-21)
+    soft += [v["start_frame"] for s in shots for v in (s.get("views") or [])[1:] if "start_frame" in v]
     close = set()
     for r in runs:
         if r["face"] is not None:
