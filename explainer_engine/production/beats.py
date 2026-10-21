@@ -846,6 +846,7 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
             continue
         kind = b["kind"]
         px, py = b.get("pos") or DEFAULT_POS.get(kind, (0.5, 0.5))
+        side = -1 if px > 0.5 else 1  # from the picture spot, never the moving camera: a spot at 0.5 flipped every frame
         if kind in ("label", "highlight"):  # a spot of the picture: follow the camera
             px, py = _to_frame((px, py), box, W, H, OW, OH)
             px, py = px / OW, py / OH
@@ -857,7 +858,7 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
             d = ImageDraw.Draw(lay)
             frame = ACC._text_layer(frame, b["text"], (px, py), sc * TEXT_SCALE, a / 255, BUB.SHOUT_FONT, big=False)
         elif kind == "label":
-            tx, ty = x + (-1 if px > 0.5 else 1) * U * 0.16, max(U * 0.08, y - U * 0.14)
+            tx, ty = x + side * U * 0.16, max(U * 0.08, y - U * 0.14)
             d.line([(x, y), (tx, ty)], fill=PAPER + (a,), width=max(2, U // 220))
             d.ellipse([x - U * 0.008, y - U * 0.008, x + U * 0.008, y + U * 0.008], fill=CORAL + (a,))
             _tag(d, b["text"], tx, ty, U * 0.06 * min(sc, 1.05), a)
