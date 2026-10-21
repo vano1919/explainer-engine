@@ -22,11 +22,47 @@
       "privacy_requested": "unlisted",
       "confirmed_by": "vano1919 (ვანო) in the thread 2026-10-21 18:21/18:32: upload the Shorts; five Shorts cut from the video",
       "staged_at": "2026-10-21T18:45:28Z"
+    },
+    "CS02": {
+      "video_id": "00zW8gXF2Sc",
+      "sha256": "c25ae4a5105cf09e8f3c1b7a2088148aa9f08d88ebae6551f66d9c15f4b45bd3",
+      "file": "CS02.mp4",
+      "title": "Musk built it. Belfort sold it.",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "vano1919 (ვანო) in the thread 2026-10-21 18:21/18:32: upload the Shorts; five Shorts cut from the video",
+      "staged_at": "2026-10-21T18:52:04Z"
+    },
+    "CS03": {
+      "video_id": "HOVbn13cqcI",
+      "sha256": "dd6f70560b9deac4da11885f4978938286d3a72b666f91d76de1e71126c76f15",
+      "file": "CS03.mp4",
+      "title": "Kiyosaki crashed Trump's live show",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "vano1919 (ვანო) in the thread 2026-10-21 18:21/18:32: upload the Shorts; five Shorts cut from the video",
+      "staged_at": "2026-10-21T18:59:24Z"
+    },
+    "CS04": {
+      "video_id": "ZBBZyTSucVo",
+      "sha256": "bba3c18f5b346ec6ee315fc0594ca2832d81fe92f0104756b213eea7e0e7c3dd",
+      "file": "CS04.mp4",
+      "title": "The promise Musk said never to make",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "vano1919 (ვანო) in the thread 2026-10-21 18:21/18:32: upload the Shorts; five Shorts cut from the video",
+      "staged_at": "2026-10-21T18:59:27Z"
+    },
+    "CS05": {
+      "video_id": "K6bRRvj0KXU",
+      "sha256": "ac2fe42f33df72d58c197ffa4ec13c8864bb6a55bf57e634c96e2902a2195fd8",
+      "file": "CS05.mp4",
+      "title": "Rich by Friday. Would you sign?",
+      "privacy_requested": "unlisted",
+      "confirmed_by": "vano1919 (ვანო) in the thread 2026-10-21 18:21/18:32: upload the Shorts; five Shorts cut from the video",
+      "staged_at": "2026-10-21T18:59:29Z"
     }
   },
   "quota": {
     "day": "2026-10-21",
-    "uploads": 2,
-    "units": 4
+    "uploads": 6,
+    "units": 12
   }
 }
