@@ -1315,3 +1315,15 @@ Loop pass on the icons (parts 1-2): 0 FAIL. Moving the "Ten men" beat off "none"
 30 s (RHYTHM-3), so the cross on "none" is back after the sticker. The sheets showed FORTY BUCKS and the gavel riding into
 the next scene: a drawn prop now ends with its shot, like a label (`beats.resolve`). Test:
 `test_a_drawn_prop_ends_with_its_shot_and_a_symbol_may_cross_the_cut`.
+
+## 2026-10-21 — One narrator for every voice, an intro card and four chapter recaps (D-68)
+
+The creator on sample v4 (08:59): the direction is right, more drama; every voice must be the one narrator; the told
+dialogue re-recorded in that voice, performed "the way he would say it"; the video opens on a dark card with the question;
+a short recap after each chapter with signs and text; and meaningful signs where they were missing. Research (10 rules,
+sources): `/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/research_narrated_dialogue.md`, summarised in the
+`narration-script` skill. Titans: 24 told lines rewritten as short performed quotes with the speaker named first, S12's
+voiced lines (Vance, Belfort) become the narrator's, no line keeps a `speaker`; `design/cards.py` draws the intro card
+(the ten heads cut from the approved `p_<hero>` references round the YuNet face) and four recap boards (week one, month
+nine, year two, year three), each rung row by row as the narrator names it; schema `cards` and `lines[].card`; 56 more
+drawn props across S04-S16. Validate: 0 FAIL. Tests: `tests/unit/test_story_cards.py`.

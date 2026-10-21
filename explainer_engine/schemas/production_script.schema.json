@@ -806,6 +806,10 @@
                     "$ref": "#/$defs/beat"
                   },
                   "description": "VB rules: the visual beats of this line (stage 2b, beat-writer), in the order they land"
+                },
+                "card": {
+                  "type": "boolean",
+                  "description": "a line read over a story card (intro or chapter recap, design/cards.py)"
                 }
               }
             }
@@ -1830,6 +1834,98 @@
               },
               "uncertainty": {
                 "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "cards": {
+      "type": "array",
+      "description": "story cards drawn by design/cards.py (the creator 2026-10-21): the dark title card that opens the episode and the chapter recap boards; each is a picture (engine existing) a shot plays",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "title"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^card_[a-z0-9_]+$"
+          },
+          "kind": {
+            "enum": [
+              "title",
+              "recap"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 3
+          },
+          "tone": {
+            "enum": [
+              "night",
+              "coral",
+              "teal",
+              "blue",
+              "amber"
+            ]
+          },
+          "line": {
+            "type": "string"
+          },
+          "next": {
+            "type": "string"
+          },
+          "heroes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "picture",
+                "name"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "picture": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "prefer_x": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "icon",
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "picture": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "prefer_x": {
+                  "type": "number"
+                }
               }
             }
           }

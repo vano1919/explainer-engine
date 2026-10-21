@@ -190,3 +190,20 @@ never here.
   the story; sources are cited in the claim map and the description, never spoken (N-14, FAIL). The same lexicon also holds
   the announcement-register patterns of SC-07 ("X's page says", "announced", "release date", "launches worldwide"),
   checked on narrator lines only: a hero may name a date inside a scene.
+
+## One narrator tells the dialogue (D-68, creator 2026-10-21)
+
+In a narrated episode nobody speaks in a voice of their own: the narrator performs every character's words. The creator
+wants them "not monotone, the way he would say it". Rules, each with its sources, in
+`/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/research_narrated_dialogue.md`:
+
+1. Name the speaker before the quote ("Musk says, ...", or an action beat: "Musk grips the wheel. ..."): a listener
+   cannot look back. A tag after the quote is fine only when the speaker is already plain.
+2. Paraphrase the setup; quote only the strongest words, short ("Forty dollars. Ten percent. Forever.").
+3. Tell characters apart by attitude, never pitch or accent; never imitate a real living person's voice.
+4. Write the attitude into the words first; a v4 tag before the quote only sharpens it, and its colour carries
+   forward, so go back to the narrator's own tone after the quote (the line's `tone` names each turn).
+5. Keep one attitude per character for the whole video, and at most two speakers in one told exchange.
+
+Story cards (`design/cards.py`): the intro asks the episode's question over the heroes' heads; a recap names where each
+hero stands, then one NEXT line that opens the coming chapter (a hook, never a summary of the end).
