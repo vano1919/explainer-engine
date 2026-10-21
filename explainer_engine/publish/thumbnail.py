@@ -2,7 +2,7 @@
 
 Without ``--generate`` it prints the prompt and the price and spends nothing. With ``--generate --approved-by '<who, where>'``
 it paints ONE picture (Gemini 3 Pro Image at 2K, the ``premium`` tier of ``imagegen/routing.py``, from the cache when the same
-request was paid before), sets the words with our own font (a model's lettering is not trusted), checks the TN rules that a
+request was paid before; ``--tier draft`` paints a cheap try first, written as ``thumbnail_draft.jpg`` beside the final file), sets the words with our own font (a model's lettering is not trusted), checks the TN rules that a
 machine can check (docs/THUMBNAIL_RULES.md) and writes ``<episode>/publish/thumbnail.jpg`` (1280x720, under 2 MB so
 every upload path takes it). The creator's OK is recorded in ``publish/thumbnail_log.json``.
 
@@ -106,11 +106,11 @@ def compose(picture: Path, text: str, out: Path, side: str = "left") -> Path:
         quality -= 8
 
 
-def run(episode: Path, *, generate: bool = False, approved_by: str = "", client=None, log=print) -> int:
+def run(episode: Path, *, generate: bool = False, approved_by: str = "", tier: str = TIER, client=None, log=print) -> int:
     episode = Path(episode)
     pub, _ = load_episode(episode)
     thumb = pub.get("thumbnail") or {}
-    model, size = route(TIER)
+    model, size = route(tier)
     refs = [episode / r for r in thumb.get("refs") or []]
     missing = [str(r) for r in refs if not r.exists()]
     text_problems = check_text(thumb.get("text") or "")
@@ -120,7 +120,7 @@ def run(episode: Path, *, generate: bool = False, approved_by: str = "", client=
         log(str(exc))
         return 1
     cost = estimate(model, size, 1, len(refs))
-    log(f"model {model} at {size} (tier {TIER}), {len(refs)} reference picture(s): {cost:.3f} USD for one picture "
+    log(f"model {model} at {size} (tier {tier}), {len(refs)} reference picture(s): {cost:.3f} USD for one picture "
         "(free when the same request is in the cache)")
     log(f"prompt: {p}")
     log(f"headline: {thumb.get('text')!r}")
@@ -140,16 +140,18 @@ def run(episode: Path, *, generate: bool = False, approved_by: str = "", client=
     if client is None:
         from explainer_engine.imagegen.gemini import GeminiClient
         client = GeminiClient(out_dir / "thumbnail_gemini", cap_usd=max(1.0, cost * 2))
-    painted = client.generate("thumbnail_raw", p, model=model, size=size, aspect="16:9",
+    painted = client.generate("thumbnail_raw" if tier == TIER else f"thumbnail_raw_{tier}", p, model=model, size=size, aspect="16:9",
                               refs=[r.read_bytes() for r in refs])
     final = episode / (thumb.get("file") or "publish/thumbnail.jpg")
+    if tier != TIER:  # a cheaper try sits beside the final file and never replaces it
+        final = final.with_name(f"{final.stem}_{tier}{final.suffix}")
     compose(painted, thumb["text"], final, thumb.get("text_side", "left"))
     problems = check_image(final)
     for t in problems:
         log(f"FAIL   {t}")
     logp = out_dir / "thumbnail_log.json"
     rows = json.loads(logp.read_text(encoding="utf-8")) if logp.exists() else []
-    rows.append({"at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "model": model, "size": size,
+    rows.append({"at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "tier": tier, "model": model, "size": size,
                  "usd_estimate": cost, "approved_by": approved_by, "file": str(final.relative_to(episode)), "prompt": p})
     write_json_atomic(logp, rows)
     log(f"thumbnail: {final} (look at it before staging; TN-10 human checks in docs/THUMBNAIL_RULES.md)")

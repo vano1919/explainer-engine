@@ -1349,3 +1349,11 @@ mix are ElevenLabs Music takes made 2026-10-20, not Lyria), licence verified, st
 2026-10-17 decision. Claim map C-01 (Kim Kiyosaki's own interviews, Honolulu Star-Bulletin 2000) and C-05 (Bloomberg via
 Fortune 2018) upgraded with narrowed wording; the script is unchanged. Description: sources updated, "our own drawings"
 corrected to "made with AI image tools". final_qa stamped (0 FAIL). No code changed, so no new test; docs_lint clean.
+
+## 2026-10-21 — thumbnail draft tier
+
+- `publish thumbnail --tier draft|standard|premium`: the creator asked for a cheap try before the premium thumbnail. A
+  non-premium try is written as `thumbnail_<tier>.jpg` beside the final file and never replaces it; the tier is logged.
+  Test: `tests/unit/test_youtube_publish.py::test_a_draft_thumbnail_is_cheap_and_never_replaces_the_final`.
+- Titans `publish.json` got its `thumbnail` block (Trump, Musk, Zuckerberg broke on black, "SKILL OR LUCK?"). The draft
+  was not painted: Gemini answered 429 RESOURCE_EXHAUSTED (prepaid credits depleted).

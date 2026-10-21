@@ -98,5 +98,16 @@
     "animated story",
     "2D animation",
     "storytelling"
-  ]
+  ],
+  "thumbnail": {
+    "file": "publish/thumbnail.jpg",
+    "text": "SKILL OR LUCK?",
+    "text_side": "left",
+    "concept": "Our own drawn caricatures of three of the video's titans, Donald Trump, Elon Musk and Mark Zuckerberg, standing together on the right two thirds of the frame against a plain pitch-black background, lit hard from above like a spotlight. All three are broke, as in the video: worn, patched, ill-fitting old clothes, stubble, tired eyes, Musk holding up an empty turned-out pocket, Trump clutching a crumpled paper coffee cup, Zuckerberg in a frayed hoodie. Each face shows one clear expression: Trump defiant, Musk calm and sure, Zuckerberg worried. Faces large and readable",
+    "refs": [
+      "pictures/p_trump.jpg",
+      "pictures/p_musk.jpg",
+      "pictures/p_zuckerberg.jpg"
+    ]
+  }
 }
