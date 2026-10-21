@@ -948,14 +948,12 @@
           "text": "Ten men sit on it, shoulder to shoulder, and none of them looks at the others.",
           "visual_beats": [
             {
-              "at": "none",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
-              "why": "none of them looks at the others"
+              "at": "Ten men",
+              "kind": "prop",
+              "thing": "ten men",
+              "asset": "icon:users",
+              "why": "ten men on one bench",
+              "text": "TEN MEN"
             }
           ],
           "emphasis": [
@@ -1011,24 +1009,18 @@
           "text": "On Friday they owned towers, rockets, studios and stores. By lunch, a clerk will turn all of it into paperwork.",
           "visual_beats": [
             {
-              "at": "On Friday",
-              "kind": "text",
-              "text": "FRIDAY: OWNED IT ALL",
-              "why": "on Friday they owned towers, rockets, studios and stores",
-              "pos": [
-                0.5,
-                0.2
-              ]
+              "at": "towers",
+              "kind": "prop",
+              "thing": "towers, rockets, studios, stores",
+              "asset": "icon:building-skyscraper+rocket+movie+building-store",
+              "why": "what they owned on Friday, named one by one"
             },
             {
-              "at": "By lunch",
-              "kind": "symbol",
-              "symbol": "arrow_down",
-              "pos": [
-                0.85,
-                0.22
-              ],
-              "why": "by lunch it all falls into paperwork"
+              "at": "a clerk",
+              "kind": "prop",
+              "thing": "the clerk's stamp",
+              "asset": "icon:rubber-stamp",
+              "why": "a clerk turns it all into paperwork"
             }
           ],
           "emphasis": [
@@ -1043,24 +1035,11 @@
           "text": "But nobody will lend them a dollar after today. Not a bank, not a friend, not the man beside them.",
           "visual_beats": [
             {
-              "at": "nobody",
-              "kind": "symbol",
-              "symbol": "cross",
-              "pos": [
-                0.85,
-                0.25
-              ],
+              "at": "lend them a dollar",
+              "kind": "prop",
+              "thing": "no loan",
+              "asset": "icon:cash-off",
               "why": "nobody will lend them a dollar"
-            },
-            {
-              "at": "Not a bank",
-              "kind": "text",
-              "text": "NOT A BANK",
-              "why": "not a bank, not a friend",
-              "pos": [
-                0.5,
-                0.2
-              ]
             },
             {
               "at": "the man beside them",
@@ -1094,6 +1073,13 @@
                 0.5,
                 0.2
               ]
+            },
+            {
+              "at": "inside their heads",
+              "kind": "prop",
+              "thing": "what is in their heads",
+              "asset": "icon:brain",
+              "why": "the one thing they keep: what is in their heads"
             }
           ],
           "emphasis": [
@@ -1118,13 +1104,11 @@
             },
             {
               "at": "Five years",
-              "kind": "symbol",
-              "symbol": "clock",
-              "pos": [
-                0.15,
-                0.2
-              ],
-              "why": "five years: the clock the episode runs on"
+              "kind": "prop",
+              "thing": "five years",
+              "asset": "icon:calendar",
+              "why": "five years will show it",
+              "text": "FIVE YEARS"
             },
             {
               "at": "ever skill",
@@ -1165,6 +1149,14 @@
               "effect": "punch",
               "why": "the hook's payoff lands on forty dollars",
               "strength": 0.6
+            },
+            {
+              "at": "forty dollars",
+              "kind": "prop",
+              "thing": "forty dollars",
+              "asset": "icon:cash",
+              "why": "the deal is for forty dollars",
+              "text": "FORTY BUCKS"
             }
           ],
           "tags": [
@@ -1414,6 +1406,13 @@
                 0.4
               ],
               "why": "names Kevin O'Leary at the far end"
+            },
+            {
+              "at": "price tags",
+              "kind": "prop",
+              "thing": "price tags",
+              "asset": "icon:tag",
+              "why": "he reads them like price tags"
             }
           ],
           "tags": [
@@ -1458,7 +1457,15 @@
             "Forever"
           ],
           "pause_after": 1.0,
-          "visual_beats": [],
+          "visual_beats": [
+            {
+              "at": "a piece of every future",
+              "kind": "prop",
+              "thing": "a piece of every future",
+              "asset": "icon:chart-pie",
+              "why": "he wants a piece of every future"
+            }
+          ],
           "new_read": true
         },
         {
@@ -1471,6 +1478,13 @@
           "kind": "transition",
           "emphasis": [],
           "visual_beats": [
+            {
+              "at": "an envelope",
+              "kind": "prop",
+              "thing": "an envelope",
+              "asset": "icon:mail",
+              "why": "O'Leary hands Trump an envelope too"
+            },
             {
               "at": "goes very quiet",
               "kind": "expression",
@@ -1490,6 +1504,13 @@
               "effect": "punch",
               "why": "Musk signs: the signature lands",
               "strength": 0.4
+            },
+            {
+              "at": "Musk signs",
+              "kind": "prop",
+              "thing": "Musk's signature",
+              "asset": "icon:signature",
+              "why": "Musk signs the deal"
             },
             {
               "at": "Jordan Belfort",
@@ -1530,6 +1551,13 @@
               "who": "belfort",
               "expression": "amused",
               "why": "Belfort enjoys being beaten at his own game; held to the end of the exchange"
+            },
+            {
+              "at": "bankruptcy",
+              "kind": "prop",
+              "thing": "the bankruptcy court",
+              "asset": "icon:gavel",
+              "why": "a short word in a bankruptcy court"
             }
           ],
           "new_read": true
@@ -1537,6 +1565,13 @@
         {
           "text": "Belfort reads it to the last line, folds it, and hands it back. O'Leary stands, a thick stack of white envelopes under his arm.",
           "visual_beats": [
+            {
+              "at": "reads it to the last line",
+              "kind": "prop",
+              "thing": "the contract",
+              "asset": "icon:file-text",
+              "why": "Belfort reads the contract to the last line"
+            },
             {
               "at": "stack of white envelopes",
               "kind": "highlight",
@@ -2018,6 +2053,14 @@
               "why": "rings Grant Cardone at the bank"
             },
             {
+              "at": "small loan",
+              "kind": "prop",
+              "thing": "a bank loan",
+              "asset": "icon:building-bank",
+              "why": "Cardone asks a bank for a small loan",
+              "text": "LOAN?"
+            },
+            {
               "at": "reads the screen",
               "kind": "highlight",
               "pos": [
@@ -2055,6 +2098,13 @@
                 0.5
               ],
               "why": "rings Robert Kiyosaki asking for a card"
+            },
+            {
+              "at": "credit card",
+              "kind": "prop",
+              "thing": "a refused credit card",
+              "asset": "icon:credit-card-off",
+              "why": "Kiyosaki asks for a credit card and is refused"
             },
             {
               "at": "Same screen",

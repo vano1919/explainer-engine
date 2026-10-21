@@ -35,6 +35,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 from explainer_engine.audio import cues as CUES
+from explainer_engine.design import icons as ICONS
 from explainer_engine.finish import bubbles as BUB
 from explainer_engine.production import accents as ACC
 from explainer_engine.production import script as S
@@ -79,6 +80,8 @@ OVERLAY = {"text", "label", "prop", "chart", "highlight", "symbol"}
 FACE_HOLD, FACE_POP, FACE_EASE, POP_S = 0.06, 0.0, 1.2, 0.18  # a slow lean, no pop: a 14 % zoom in 0.25 s read as a cut (PX-CUT-EXTRA, CC-06, BP-92)
 FACE_GLIDE_S = 0.6  # engineering: the face lean moves its pivot to the next speaker over this (a switch jumped, CC-06)
 TEXT_SCALE, MARK_R = 1.15, 0.075  # beat words about 0.09 of the frame height; emotion mark radius (share of the height)
+ICON_PREFIX = "icon:"  # prop asset "icon:a+b": drawn line icons (design/icons.py), one sticker or a row
+ICON_H, ICON_ROW_H = 0.22, 0.16  # sticker height as a share of the frame's short side: one alone, or each of a row
 DEFAULT_POS = {"text": (0.5, 0.16), "label": (0.5, 0.5), "prop": (0.8, 0.3), "chart": (0.8, 0.24), "symbol": (0.86, 0.2)}
 _PALETTE = Path(__file__).resolve().parents[1] / "design" / "palette.json"
 _STOP = set("""a an the and or but so of to in on at for with by from into than then that this these those it its is are was
@@ -253,9 +256,21 @@ def lint(doc: dict) -> list[dict]:
                 elif cue["sound"] != CUES.NONE and not CUES.MIN_MS <= CUES.length_ms(cue["sound"], cue.get("max_ms")) <= CUES.MAX_MS:
                     _f(out, "VB-08", _sev(doc, True, "BP-64"), where, f"cue {cue['sound']!r} lasts {CUES.length_ms(cue['sound'], cue.get('max_ms')):.0f} "
                        f"ms; a cue is {CUES.MIN_MS}-{CUES.MAX_MS} ms")
+                if b["kind"] == "prop" and str(b.get("asset", "")).startswith(ICON_PREFIX):
+                    missing = [n for n in b["asset"][len(ICON_PREFIX):].split("+") if n not in ICONS.available()]
+                    if missing or not b["asset"][len(ICON_PREFIX):]:
+                        _f(out, "VB-06", "FAIL", where, f"prop icon(s) {missing or b['asset']!r} not in assets/icons/tabler")
                 if b["kind"] == "prop" and not b.get("asset"):
                     _f(out, "VB-06", "REVIEW", where, f"prop {b['thing']!r} has no cut-out (asset): it is drawn as a word sticker")
     return out
+
+
+def icon_hold(asset) -> float:
+    """An icon row stays until every icon is drawn and then a reading moment (engineering: 1.2 s, the symbol's hold)."""
+    if not str(asset or "").startswith(ICON_PREFIX):
+        return 0.0
+    n = len([x for x in asset[len(ICON_PREFIX):].split("+") if x])
+    return n * ICONS.STAGGER_S + ICONS.DRAW_S + HOLD["symbol"]
 
 
 def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict], fps: int, duration: float,
@@ -313,7 +328,7 @@ def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict
         elif kind == "accent":
             end = b["start"]
         else:
-            end = b["start"] + HOLD[kind]
+            end = b["start"] + max(HOLD[kind], icon_hold(b.get("asset")))
         if kind in PICTURE_BOUND:
             end = min(end, b["_shot_end"])
         b["end"] = round(max(b["start"], min(end, duration)), 3)
@@ -870,6 +885,18 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
             _symbol(d, b["symbol"], x, y, U * 0.085 * sc, a)
         elif kind == "chart":
             _chart(d, b, x, y, U, t, a)
+        elif kind == "prop" and str(b.get("asset", "")).startswith(ICON_PREFIX):  # drawn on from line icons (design/icons)
+            names = b["asset"][len(ICON_PREFIX):]
+            h = int(U * (ICON_H if "+" not in names else ICON_ROW_H))
+            row = ICONS.strip(names, h, t)
+            if row is not None:
+                if a < 255:
+                    row = row.copy()
+                    row.putalpha(row.getchannel("A").point(lambda v: v * a // 255))
+                rx = int(min(max(x - row.width / 2, OW * 0.03), OW * 0.97 - row.width))
+                lay.alpha_composite(row, (rx, int(y - h / 2)))
+                if b.get("text"):  # a caption under the row: "$40", "10 %"
+                    _tag(d, b["text"], rx + row.width / 2, y + h / 2 + U * 0.05, U * 0.055, a)
         elif kind == "prop":
             im = _sprite(find_file(b.get("asset"), dirs))
             if im is None:

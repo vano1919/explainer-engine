@@ -1300,3 +1300,14 @@ spot nearer its speaker than any other face and sweeps a finer grid (also below 
 `test_a_bubble_sits_nearer_its_speaker_than_the_hero_beside_him`. The pixel check counted the slam's dim and blur as a
 92 px camera step; a `slam_text` hold is now a planned change (`pixels.planned` pops). Test:
 `test_a_word_slam_is_planned_so_its_dim_and_blur_are_no_camera_jump`.
+
+## 2026-10-21 — Drawn props from the text: line-icon stickers
+
+The creator on sample v3: the telling is fine, the picture needs drawn things that follow from the words (not new photos;
+not only rings and arrows). `explainer_engine/design/icons.py` reads 50 vendored Tabler line icons (`assets/icons/tabler`,
+MIT, licence kept) and draws each as a paper sticker in the house ink; a prop beat with `asset: "icon:a+b+c"` shows them
+in a row, each drawn on in turn as the narrator names it, with an optional word caption (`beats.draw`; the beat holds
+until the row is complete, `icon_hold`); a missing icon is a VB-06 FAIL. Titans S01-S03 get 14 of them (ten men, the
+towers, the clerk's stamp, no dollar, the brain, five years, forty bucks, price tags, a piece of every future, the
+envelope, the signature, the bankruptcy gavel, the last line, the loan and the dead card); numbers are written as words
+(VB-04). Tests: `tests/unit/test_icons.py`.

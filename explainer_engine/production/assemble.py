@@ -520,7 +520,7 @@ def chunk_look(first: bool, last: bool, seconds: float) -> str:
 def render_code() -> str:
     """The hash of the code that draws a frame: a fix in the renderer must redraw the chunks, not reuse the old ones (the QA
     loop of 2026-10-20 re-reviewed chunks drawn before the face-lean fix and found the same jump again)."""
-    mods = (__file__, ACC.__file__, BEATS.__file__, FACES.__file__, continuity.__file__, GFX.__file__, BUB.__file__,
+    mods = (__file__, ACC.__file__, BEATS.__file__, BEATS.ICONS.__file__, FACES.__file__, continuity.__file__, GFX.__file__, BUB.__file__,
             grade.__module__ and __import__(grade.__module__, fromlist=["_"]).__file__, RULES.__file__,
             str(Path(RULES.__file__).with_name("sourced_rules.json")))
     h = hashlib.sha1()
