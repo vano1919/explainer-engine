@@ -163,3 +163,18 @@ def test_a_renderer_change_redraws_the_chunks(monkeypatch):
     a = A.plan_stamp(timed, (1280, 720), 18, None, [], {}, [])
     monkeypatch.setattr(A, "render_code", lambda: "changed")
     assert A.plan_stamp(timed, (1280, 720), 18, None, [], {}, []) != a
+
+
+def test_a_label_naming_a_hero_points_at_his_face_point():
+    """The S02 label "KEVIN O'LEARY" pointed at an empty wall (CC-03): a label naming a hero, in its phrase or only in its
+    tag, snaps to his face point the way a ring does; a label naming nobody keeps its pos."""
+    shots = [{"id": "SH001", "picture": "duo", "start": 0.0, "end": 4.0, "start_frame": 0, "end_frame": 120, "visual_beats": 3}]
+    pics = {"duo": {"speakers": {"musk": [0.62, 0.42], "oleary": [0.3, 0.4]}}}
+    by_phrase = {"kind": "label", "at": "Kevin O'Leary", "text": "KEVIN O'LEARY", "pos": [0.18, 0.4], "shot": "SH001",
+                 "segment": "S02", "line": 1, "start": 0.5, "end": 1.8, "start_frame": 15, "end_frame": 54}
+    by_tag = dict(by_phrase, at="the shark", text="O'LEARY", pos=[0.9, 0.2])
+    prop = dict(by_phrase, at="the contract", text="CONTRACT", pos=[0.5, 0.7])
+    out = BEATS.fit_to_views(shots, [by_phrase, by_tag, prop], pics, {"musk": {}, "oleary": {}}, FPS, [])
+    assert len(out) == 3
+    assert by_phrase["pos"] == [0.3, 0.4] and by_phrase["on_hero"] == "oleary"
+    assert by_tag["pos"] == [0.3, 0.4] and prop["pos"] == [0.5, 0.7] and "on_hero" not in prop

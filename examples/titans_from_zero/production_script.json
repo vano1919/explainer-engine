@@ -928,8 +928,8 @@
               "at": "wooden bench",
               "kind": "highlight",
               "pos": [
-                0.5,
-                0.72
+                0.377,
+                0.821
               ],
               "why": "rings the one long wooden bench"
             }
@@ -947,15 +947,6 @@
         {
           "text": "Ten men sit on it, shoulder to shoulder, and none of them looks at the others.",
           "visual_beats": [
-            {
-              "at": "Ten men",
-              "kind": "highlight",
-              "pos": [
-                0.5,
-                0.55
-              ],
-              "why": "rings the ten men shoulder to shoulder"
-            },
             {
               "at": "none",
               "kind": "symbol",
@@ -1109,15 +1100,6 @@
                 0.5,
                 0.2
               ]
-            },
-            {
-              "at": "inside their heads",
-              "kind": "highlight",
-              "pos": [
-                0.5,
-                0.3
-              ],
-              "why": "rings the heads: whatever is inside them"
             }
           ],
           "emphasis": [
@@ -1182,16 +1164,6 @@
                 0.72
               ],
               "why": "rings this bench, where the deal happens"
-            },
-            {
-              "at": "forty dollars",
-              "kind": "text",
-              "text": "FORTY DOLLARS",
-              "why": "the price of the best deal: forty dollars",
-              "pos": [
-                0.5,
-                0.2
-              ]
             },
             {
               "at": "forty dollars",
@@ -1441,15 +1413,6 @@
                 0.4
               ],
               "why": "names Kevin O'Leary at the far end"
-            },
-            {
-              "at": "price tags",
-              "kind": "highlight",
-              "pos": [
-                0.55,
-                0.55
-              ],
-              "why": "rings the others he is pricing like price tags"
             }
           ],
           "tags": [
@@ -1562,20 +1525,11 @@
           "text": "Belfort reads it to the last line, folds it, and hands it back. O'Leary stands, a thick stack of white envelopes under his arm.",
           "visual_beats": [
             {
-              "at": "last line",
-              "kind": "highlight",
-              "pos": [
-                0.5,
-                0.5
-              ],
-              "why": "rings the last line Belfort reads"
-            },
-            {
               "at": "stack of white envelopes",
               "kind": "highlight",
               "pos": [
-                0.3,
-                0.6
+                0.167,
+                0.734
               ],
               "why": "rings the thick stack of white envelopes"
             }
@@ -1650,12 +1604,12 @@
             ],
             "speakers": {
               "oleary": [
-                0.36,
-                0.4
+                0.418,
+                0.405
               ],
               "musk": [
-                0.62,
-                0.42
+                0.693,
+                0.382
               ]
             },
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
@@ -1999,8 +1953,8 @@
               "at": "reads the screen",
               "kind": "highlight",
               "pos": [
-                0.65,
-                0.4
+                0.769,
+                0.653
               ],
               "why": "rings the screen the banker reads"
             },
@@ -2069,8 +2023,8 @@
               "at": "taps his card",
               "kind": "highlight",
               "pos": [
-                0.6,
-                0.55
+                0.492,
+                0.717
               ],
               "why": "rings the card tapping the reader"
             },
@@ -2199,8 +2153,8 @@
               "at": "their hands",
               "kind": "highlight",
               "pos": [
-                0.3,
-                0.7
+                0.383,
+                0.732
               ],
               "why": "rings the hands, the first way to earn"
             },
@@ -2208,8 +2162,8 @@
               "at": "their mouths",
               "kind": "highlight",
               "pos": [
-                0.7,
-                0.4
+                0.732,
+                0.477
               ],
               "why": "rings the mouths, the second way to earn"
             }
@@ -2233,16 +2187,6 @@
                 0.3,
                 0.2
               ]
-            },
-            {
-              "at": "a parts list",
-              "kind": "label",
-              "text": "PARTS LIST",
-              "pos": [
-                0.35,
-                0.65
-              ],
-              "why": "Musk's only asset: a parts list"
             },
             {
               "at": "Jordan Belfort",
@@ -2313,7 +2257,13 @@
               "cardone"
             ],
             "costume": "wearing the clothes in their cards, rumpled business suits or T-shirts and jeans",
-            "prompt": "medium cinematic shot, at a bank teller's glass window a bald trim-bearded man in a tight suit, a call list in his fist, leans in with false confidence while the banker behind the glass types his name, reads the red screen and slides the loan form back under the glass, clear empty upper third. One named hero: Grant Cardone as our caricature: bald, trim beard, tight suit, a phone pressed to his ear, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, flat grey overcast city daylight on wet pavement, hard cold shadows between towers, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo"
+            "prompt": "medium cinematic shot, at a bank teller's glass window a bald trim-bearded man in a tight suit, a call list in his fist, leans in with false confidence while the banker behind the glass types his name, reads the red screen and slides the loan form back under the glass, clear empty upper third. One named hero: Grant Cardone as our caricature: bald, trim beard, tight suit, a phone pressed to his ear, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, wearing the clothes in their cards, rumpled business suits or T-shirts and jeans, flat grey overcast city daylight on wet pavement, hard cold shadows between towers, city haze, fluorescent hum, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo",
+            "speakers": {
+              "cardone": [
+                0.386,
+                0.29
+              ]
+            }
           },
           "motion": {
             "kind": "push",
@@ -2582,8 +2532,8 @@
               "at": "one good scooter",
               "kind": "highlight",
               "pos": [
-                0.5,
-                0.62
+                0.585,
+                0.724
               ],
               "why": "rings the one good scooter built from three broken ones"
             }
@@ -2610,16 +2560,6 @@
                 0.2
               ],
               "why": "six hours of explaining"
-            },
-            {
-              "at": "battery",
-              "kind": "label",
-              "text": "BATTERY",
-              "pos": [
-                0.35,
-                0.6
-              ],
-              "why": "the battery he explains to everyone"
             },
             {
               "at": "Nobody stops",
@@ -2649,8 +2589,8 @@
               "at": "hot dog",
               "kind": "highlight",
               "pos": [
-                0.2,
-                0.7
+                0.327,
+                0.583
               ],
               "why": "rings the hot dog Belfort holds at the curb"
             },
@@ -3169,8 +3109,8 @@
               "at": "Two men",
               "kind": "highlight",
               "pos": [
-                0.5,
-                0.55
+                0.289,
+                0.607
               ],
               "why": "rings the two men sharing the cheapest room"
             }
@@ -3215,8 +3155,8 @@
               "at": "his phone",
               "kind": "highlight",
               "pos": [
-                0.45,
-                0.5
+                0.862,
+                0.753
               ],
               "why": "rings the phone propped on the chair"
             },
@@ -3663,8 +3603,8 @@
               "at": "folding cot",
               "kind": "highlight",
               "pos": [
-                0.3,
-                0.65
+                0.62,
+                0.771
               ],
               "why": "rings the folding cot beside the workbench"
             },
@@ -3898,15 +3838,6 @@
                 0.5
               ],
               "why": "rings Jeff Bezos at the folding table"
-            },
-            {
-              "at": "every title",
-              "kind": "highlight",
-              "pos": [
-                0.65,
-                0.55
-              ],
-              "why": "rings the list of titles he writes down"
             },
             {
               "at": "sells twice",
@@ -4324,8 +4255,8 @@
               "at": "crystal glass",
               "kind": "highlight",
               "pos": [
-                0.5,
-                0.6
+                0.29,
+                0.637
               ],
               "why": "rings the crystal glass of cereal"
             }
@@ -4398,8 +4329,8 @@
               "at": "the phone",
               "kind": "highlight",
               "pos": [
-                0.5,
-                0.5
+                0.945,
+                0.411
               ],
               "why": "rings the phone Trump turns"
             },
@@ -5274,8 +5205,8 @@
               "at": "garage lights",
               "kind": "highlight",
               "pos": [
-                0.5,
-                0.2
+                0.741,
+                0.434
               ],
               "why": "rings the garage lights that never go off"
             }
@@ -5301,16 +5232,6 @@
               "why": "the good cells won't arrive"
             },
             {
-              "at": "cheap ones",
-              "kind": "label",
-              "text": "CHEAP CELLS",
-              "pos": [
-                0.3,
-                0.6
-              ],
-              "why": "cheap cells from a stranger"
-            },
-            {
               "at": "never met",
               "kind": "symbol",
               "symbol": "question",
@@ -5334,16 +5255,6 @@
         {
           "text": "A heat test takes a day per batch. He skips it on the last two hundred.",
           "visual_beats": [
-            {
-              "at": "heat test",
-              "kind": "label",
-              "text": "HEAT TEST",
-              "pos": [
-                0.3,
-                0.5
-              ],
-              "why": "the heat test"
-            },
             {
               "at": "a day per batch",
               "kind": "symbol",
@@ -5428,15 +5339,6 @@
                 0.22
               ],
               "why": "Cuban pays the order"
-            },
-            {
-              "at": "the receipt",
-              "kind": "highlight",
-              "pos": [
-                0.3,
-                0.5
-              ],
-              "why": "rings the receipt Belfort frames"
             }
           ],
           "tags": [
@@ -5842,8 +5744,8 @@
               "at": "old Toyota",
               "kind": "highlight",
               "pos": [
-                0.2,
-                0.7
+                0.622,
+                0.606
               ],
               "why": "rings the old Toyota at the far end of the lot"
             }
@@ -5873,16 +5775,6 @@
                 0.2
               ],
               "why": "a long time ago"
-            },
-            {
-              "at": "with Kim",
-              "kind": "label",
-              "text": "WITH KIM",
-              "pos": [
-                0.5,
-                0.35
-              ],
-              "why": "he slept in it with Kim"
             },
             {
               "at": "He still knows",
@@ -6242,15 +6134,6 @@
           "text": "On the shelf, one of the three hundred leftover cells starts to hiss.",
           "visual_beats": [
             {
-              "at": "one of the three hundred",
-              "kind": "highlight",
-              "pos": [
-                0.78,
-                0.6
-              ],
-              "why": "rings one of the leftover cells on the shelf"
-            },
-            {
               "at": "starts to hiss",
               "kind": "accent",
               "effect": "punch",
@@ -6271,15 +6154,6 @@
         {
           "text": "By the time the fire trucks arrive, the garage is a black box without a roof. Nobody is hurt. Everything else is gone.",
           "visual_beats": [
-            {
-              "at": "black box",
-              "kind": "highlight",
-              "pos": [
-                0.5,
-                0.5
-              ],
-              "why": "rings the black box the garage became"
-            },
             {
               "at": "Nobody is hurt",
               "kind": "symbol",
@@ -6343,15 +6217,6 @@
         {
           "text": "Belfort looks at the black shelf for a long time. He doesn't answer.",
           "visual_beats": [
-            {
-              "at": "black shelf",
-              "kind": "highlight",
-              "pos": [
-                0.78,
-                0.6
-              ],
-              "why": "rings the black shelf Belfort stares at"
-            },
             {
               "at": "doesn't answer",
               "kind": "expression",
@@ -6711,8 +6576,8 @@
               "at": "a man in a grey suit",
               "kind": "highlight",
               "pos": [
-                0.5,
-                0.45
+                0.287,
+                0.612
               ],
               "why": "rings the man in the grey suit stepping over the ashes"
             },
@@ -6794,16 +6659,6 @@
           "to": "belfort",
           "intent": "press",
           "visual_beats": [
-            {
-              "at": "old wiring",
-              "kind": "label",
-              "text": "OLD WIRING",
-              "pos": [
-                0.5,
-                0.3
-              ],
-              "why": "the fire was old wiring"
-            },
             {
               "at": "Nothing to do with batteries",
               "kind": "symbol",
@@ -6991,17 +6846,7 @@
         },
         {
           "text": "Vance leaves his card on the burnt workbench.",
-          "visual_beats": [
-            {
-              "at": "his card",
-              "kind": "highlight",
-              "pos": [
-                0.5,
-                0.65
-              ],
-              "why": "rings the card Vance leaves on the workbench"
-            }
-          ],
+          "visual_beats": [],
           "tags": [
             "softly"
           ],
@@ -7379,15 +7224,6 @@
                 0.5,
                 0.2
               ]
-            },
-            {
-              "at": "in rows",
-              "kind": "highlight",
-              "pos": [
-                0.5,
-                0.65
-              ],
-              "why": "rings the scooters standing in rows"
             }
           ],
           "tags": [
@@ -7433,8 +7269,8 @@
               "at": "opens his mouth",
               "kind": "highlight",
               "pos": [
-                0.5,
-                0.35
+                0.525,
+                0.611
               ],
               "why": "rings the mouth that opens to pitch"
             },
@@ -7517,20 +7353,10 @@
               "at": "on camera",
               "kind": "highlight",
               "pos": [
-                0.8,
-                0.2
+                0.738,
+                0.655
               ],
               "why": "rings the camera filming the tests"
-            },
-            {
-              "at": "the fire report",
-              "kind": "label",
-              "text": "FIRE REPORT",
-              "pos": [
-                0.5,
-                0.55
-              ],
-              "why": "they post the fire report online, every page"
             }
           ],
           "tags": [
@@ -8268,15 +8094,6 @@
                 0.3
               ],
               "why": "names the one viewer who read every page: Jeff Bezos"
-            },
-            {
-              "at": "their office",
-              "kind": "highlight",
-              "pos": [
-                0.5,
-                0.5
-              ],
-              "why": "rings him walking into their office"
             }
           ],
           "tags": [
@@ -8712,8 +8529,8 @@
               "at": "the bench",
               "kind": "highlight",
               "pos": [
-                0.5,
-                0.72
+                0.712,
+                0.664
               ],
               "why": "rings the bench from the first day"
             },
@@ -9322,15 +9139,6 @@
                 0.25
               ],
               "why": "with nothing but what they knew"
-            },
-            {
-              "at": "what they knew",
-              "kind": "highlight",
-              "pos": [
-                0.5,
-                0.3
-              ],
-              "why": "rings what they knew, in their heads"
             }
           ],
           "tags": [

@@ -917,8 +917,9 @@ def named_heroes(at: str, cast: dict) -> list[str]:
 def fit_to_views(shots: list[dict], beats: list[dict], pics: dict, cast: dict, fps: int, problems: list[dict]) -> list[dict]:
     """The timed beats made to fit what the frame shows (frame review 2026-10-20, CC-04):
 
-    * a ring (``highlight``) whose phrase names a hero is centred on his face point in the shot's picture (FR-RING-HERO:
-      the script's ``pos`` missed the face by most of the ring's radius);
+    * a ring (``highlight``) or a ``label`` whose phrase (a label: or its tag) names a hero is centred on his face point in
+      the shot's picture (FR-RING-HERO: the script's ``pos`` missed the face by most of the ring's radius; the S02 label
+      "KEVIN O'LEARY" pointed at an empty wall). Rings and labels naming no hero are props: ``qa/prop_points`` finds them;
     * a mark that points into the picture (ring, label) is kept only on the scene: trimmed to the scene frames of its
       shot's ``views`` (faces.views), dropped with a REVIEW when a close-up covers all of it (FR-RING-FACE);
     * a word, symbol, prop or chart that would run past its shot's cut ends with the shot when it stays readable there
@@ -932,9 +933,11 @@ def fit_to_views(shots: list[dict], beats: list[dict], pics: dict, cast: dict, f
         if s is None:
             keep.append(b)
             continue
-        if b["kind"] == "highlight":
+        if b["kind"] in ("highlight", "label"):
             speakers = (pics.get(s["picture"], {}) or {}).get("speakers") or {}
             named = [w for w in named_heroes(b.get("at", ""), cast) if w in speakers]
+            if b["kind"] == "label" and not named:  # a label may name the hero only in its tag ("KEVIN O'LEARY")
+                named = [w for w in named_heroes(b.get("text", ""), cast) if w in speakers]
             if len(named) == 1:
                 b["pos"] = list(speakers[named[0]])
                 b["on_hero"] = named[0]

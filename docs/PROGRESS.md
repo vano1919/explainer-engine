@@ -1261,3 +1261,20 @@ over 1.2 s. Test: `test_the_face_lean_never_jumps_like_a_cut`.
 
 `assemble.plan_stamp` now carries `render_code()`, a hash of the modules that draw a frame; before, a code fix kept the
 chunks drawn by the old code (the loop's third pass re-reviewed the same jump). Test: `test_a_renderer_change_redraws_the_chunks`.
+
+## 2026-10-21 — Prop rings and labels land on what the picture shows (CC-03)
+
+The beat-writer writes a ring's or label's `pos` without seeing the picture; on titans most rings and labels whose phrase names
+no hero were template guesses ([0.5, 0.72]) on empty wall or floor. `qa/prop_points.py` (free, local, CPU): OWLv2
+(`google/owlv2-base-patch16-ensemble`, Apache-2.0, `transformers` + CPU `torch`) looks for each prop beat's phrase in the
+picture its timed shot shows (a verb phrase first as its thing: "reads the screen" -> "screen"); a find at `SCORE_MIN` (0.23,
+hypothesis, tuned by eye on the titans sheets) moves `pos` to the box centre, a pos already in a find stays, a label naming the
+place the whole picture shows stays, a ring found nowhere (or only as the whole picture) is dropped (RX-12, BP-93: a ring on
+nothing is worse than no ring). Writes `prop_points.json` and contact sheets (old pos -> found box); `--apply` rewrites the
+script with 2-space JSON. `check` gives PB-OFF / PB-NONE REVIEW; `qa/loop.py` runs it beside the face points and classes it as
+the script's. Without the model the tool skips and says so. `beats.fit_to_views` now snaps a label naming a hero (in its phrase
+or only its tag) to his face point as rings snap (the S02 label "KEVIN O'LEARY" pointed at an empty wall; it now sits on him
+in s02_wide). On titans: 82 rings and labels, 25 name a hero, 5 are not drawn (close-ups), 52 measured: 13 kept, 19 moved,
+20 dropped (`jobs/titans_from_zero/render/review/prop_points/`). Validate after `--apply`: still 8 FAIL (PV-45, PV-47, known),
+one new REVIEW (VB-05: four symbol beats in a row in S09 once its labels went). Tests: `tests/unit/test_prop_points.py`
+(fake detector), `test_a_label_naming_a_hero_points_at_his_face_point`.

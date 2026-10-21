@@ -14,7 +14,8 @@ the code when a problem is systemic and the script when it is the script's, re-r
    ``qa/frame_review`` on it: the data checks (FR rules) and the pixel checks (``qa/pixels``, PX rules).
 4. Every finding is classified: **systemic** (the code: the same rule on ``SYSTEMIC_MIN_SHOTS`` or more shots, a range-wide
    finding, or the pixels contradicting a shot whose plan data is clean) or **script** (one shot's data, or a picture's
-   declared face point that ``qa/face_points`` finds away from the painted face, FP-OFF), with the owner file
+   declared face point that ``qa/face_points`` finds away from the painted face, FP-OFF; a prop ring or label that
+   ``qa/prop_points`` finds away from its thing, PB-OFF, or whose thing it finds nowhere, PB-NONE), with the owner file
    to fix. The loop never edits code or the script: it writes ``<out>/loop_report.json`` and stops, the session fixes the
    owners and runs the same command again.
 5. Iterations are counted in the report. A finding still there after ``MAX_ITERATIONS`` runs stops the loop (exit 3): stop
@@ -66,6 +67,9 @@ OWNERS = {
     "FP-OFF": {"code": "explainer_engine/qa/face_points.py (detection / matching)",
                "script": "pictures.<id>.speakers in the script (python -m explainer_engine.qa.face_points <script> --apply "
                          "rewrites the confident ones)"},
+    "PB-": {"code": "explainer_engine/qa/prop_points.py (detection, SCORE_MIN)",
+            "script": "the beat's pos in the script (python -m explainer_engine.qa.prop_points <script> --apply moves the found "
+                      "ones and removes the ones found nowhere)"},
     "PX-BUBBLE": {"code": "explainer_engine/production/assemble.py (shot_bubbles) + finish/bubbles.py",
                   "script": "pictures.<id>.speakers in the script (the speaker's point)"},
 }
@@ -103,6 +107,8 @@ def classify(findings: list[dict]) -> list[dict]:
         n = len(shots_by_rule.get(f["rule"], ()))
         if f.get("source") == "face_points":
             cls, why = "script", "a declared face point of a picture: the script's data (the painted face is elsewhere)"
+        elif f.get("source") == "prop_points":
+            cls, why = "script", "a prop ring or label written without seeing the picture: the beat's pos (CC-03)"
         elif f["shot"] is None:
             cls, why = "systemic", "a range-wide finding (no single shot)"
         elif f.get("source") == "pixels" and f["shot"] not in data_shots:
@@ -242,6 +248,10 @@ def run(script: Path, read: Path | None, out: Path, chunks: tuple[int, int], *, 
         fp = FP.measure(doc, [Path(x) for x in pics])
         fp["pictures"] = {k: v for k, v in fp.get("pictures", {}).items() if k in used}
         findings += FP.check(doc, [Path(x) for x in pics], fp)
+        # the prop rings and labels against the things the detector finds in their pictures (REVIEW only, CC-03)
+        from explainer_engine.qa import prop_points as PB
+        pb = PB.measure(doc, timed, [Path(x) for x in pics], only_pictures=used)
+        findings += PB.check(pb)
     rows = classify(findings)
     st = streaks(prev, rows)
     stuck = sorted(s for s, n in st.items() if n >= MAX_ITERATIONS)
