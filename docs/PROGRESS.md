@@ -1125,3 +1125,17 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
   image per direction (2 x 2 environments + the line-up strip). Tests `tests/unit/test_universe_boards.py` (8).
 - Not done, by the brief's own rule: no board generated (the creator paused paid work until he tops up), no architecture
   change, no asset library, no episode. Waiting on his card: which candidate and how many takes.
+
+## 2026-10-22 — The muse: simple and beautiful, emotion and physics good (the creator, 13:51; nothing paid)
+- Research [research/ANIMATION_TOOLS_2026-10-22](research/ANIMATION_TOOLS_2026-10-22.md): the three reference shows' principles
+  (three-stroke shapes, on-model with rationed exaggeration, no black line and background as a character, silhouette and negative
+  space, long holds and snaps, silence, part rigs across worlds), the twelve principles as functions, the tools with licences read
+  on their LICENSE files (Rhubarb MIT, AnimatedDrawings MIT, SAM 2 Apache-2.0, pymunk MIT, rembg MIT with a paid default model,
+  ToonCrafter unclear weights). Skill `.claude/skills/animated-universe/SKILL.md`.
+- Built: `production/rig.py`, a cut-out rig in numpy + PIL: pieces with pivots and a parent tree, eased keyframe cycles (idle, walk,
+  run, point, react, fall), follow-through springs for secondary pieces, area-preserving bounded squash and stretch from vertical
+  speed, closed-form drop-and-bounce physics, four mouth shapes from word timings, flip, and a 20-second proof-of-concept clip from
+  code-drawn pieces over three parallax layers (`rig demo`; 1280x720 in 12 s). Frames are a pure function of their number.
+  Tests `tests/unit/test_rig.py` (10). Looked at: the walk, the point at the sign, the talk, the jump with stretch and squash.
+- Not done: the `rig` beat kind in `assemble.finish_frame`, Rhubarb and pymunk in `tools/`, pieces cut from a painted character
+  (waits for the creator's choice of direction), the five proposed house rules are not in the registry (D-59 needs sources).
