@@ -16,7 +16,14 @@ What the ice-age test (draft PR #20) could not do and this does:
 The world stays the AI's: the plate is a painted picture we already paid for; the snowfall and the swaying trees are
 code over it (free, deterministic, exact). Every frame is a pure function of its time.
 
-    python -m explainer_engine.production.bend_rig demo --out jobs/bend_poc --plate <plate.png> [--fps 24]
+* **the face is the image model's, the body is ours** (the creator, 2026-10-22 18:47): ``--heads`` takes a folder of
+  painted ``head_<expression>.png`` pictures of one face; the expression timeline picks the picture, the rig carries it,
+  the hands take its skin colour; without the folder the head is drawn by code;
+* **a turn is three drawings**: side, front (the feet step round to their own sides), the other side;
+* **the walk rolls heel -> sole -> toes**, the torso pitches with each step, the arms trail the legs and the head nods
+  on a spring, so the gait does not move in lock-step.
+
+    python -m explainer_engine.production.bend_rig demo --out jobs/bend_poc --plate <plate.png> [--heads <dir>] [--fps 24]
     python -m explainer_engine.production.bend_rig check
 """
 from __future__ import annotations
@@ -43,6 +50,7 @@ REACH = (THIGH + SHIN) * 0.985  # hips never pull a planted leg fully straight
 TORSO, NECK = 0.27 * B, 0.13 * B
 UPPER, FORE = 0.16 * B, 0.15 * B
 HEAD = 0.15 * B
+FRONT_HIP = 0.055 * B          # half the hips' width in the front drawing
 LINE = 0.016 * B               # the ink line, bold and loose (Wild Ink)
 SS = 2                         # supersampling of the character layer
 SIDES = ("L", "R")
@@ -113,7 +121,7 @@ class Pose:
     look: tuple = (0.0, 0.0)
     blink: float = 0.0                # 0 open .. 1 shut
     squash: float = 1.0               # upper body, about the hips (volume kept)
-    flip: float = 1.0                 # horizontal scale during a turn (1 = normal)
+    front: bool = False               # the front drawing (the middle of a turn)
     wound: bool = False
     scarf: float = 0.0                # the scarf tail's angle, degrees (follow-through)
 
@@ -130,28 +138,74 @@ class Gait:
     swing: float = 24.0
     elbow: float = 12.0
     dip: float = 0.0        # extra hip drop while the injured foot is planted (limp)
+    strike: float = 16.0    # heel strike: the toe up (degrees) as the foot lands, rolling down onto the sole
+    toe_off: float = 28.0   # toe-off: the heel rises (degrees) as the foot leaves, rolling over the toes
+    sway: float = 2.0       # torso pitch wave, twice a cycle (degrees)
 
 
-WALK = Gait(0.62, (0.62, 0.62), lift=0.07, hip=0.435, lean=4, swing=24, elbow=14)
-RUN = Gait(0.86, (0.36, 0.36), lift=0.16, hip=0.415, bob=0.04, lean=15, swing=48, elbow=82)
-LIMP = Gait(0.40, (0.72, 0.46), lift=0.045, hip=0.425, lean=9, swing=8, elbow=24, dip=0.03)
+WALK = Gait(0.62, (0.64, 0.64), lift=0.06, hip=0.435, lean=4, swing=26, elbow=14)
+RUN = Gait(0.86, (0.38, 0.38), lift=0.16, hip=0.415, bob=0.04, lean=15, swing=48, elbow=82, strike=0.0, toe_off=34.0,
+           sway=3.0)
+LIMP = Gait(0.40, (0.72, 0.46), lift=0.045, hip=0.425, lean=9, swing=8, elbow=24, dip=0.03, strike=8.0, toe_off=14.0,
+            sway=1.0)
+HEEL = (-0.045 * B, ANKLE)   # the heel's ground point, in the foot's own frame (forward, down) from the ankle
+TOE = (0.10 * B, ANKLE)      # the toes' ground point
+ROLL = (0.16, 0.22)          # share of the stance spent on the heel strike and on the toe-off
+
+
+def roll_ankle(pivot: tuple, local: tuple, pitch: float, f: int) -> tuple:
+    """Where the ankle is when the foot pivots on one of its ground points by ``pitch`` (toe down positive)."""
+    a = math.radians(pitch)
+    vx, vy = -local[0], -local[1]
+    rx, ry = vx * math.cos(a) - vy * math.sin(a), vx * math.sin(a) + vy * math.cos(a)
+    return (pivot[0] + f * rx, pivot[1] + ry)
+
+
+def _grounded(foot: tuple) -> bool:
+    return foot[3] or foot[1] >= ANK - 0.03 * B
 
 
 def gait_foot(g: Gait, i: int, phase: float, x_ref: float, f: int) -> tuple:
-    """(x, y, pitch, contact) of foot ``i`` at gait ``phase``: planted at the hips' mid-stance position, then a swing
-    eased to the next plant with a lift arc; phase comes from the distance travelled, so speed changes never slide."""
+    """(x, y, pitch, contact) of foot ``i`` at gait ``phase``. The stance rolls heel -> sole -> toes: the heel lands
+    with the toe up and the foot rolls down about the heel, the sole is planted flat (contact) at the hips' mid-stance
+    position, then the heel rises about the toes; the swing carries the ankle from that toe-off to the next heel strike
+    with a lift arc. Phase comes from the distance travelled, so speed changes never slide a foot."""
     s_px = g.stride * B
     beta = g.stance[i]
     phi = phase + g.offset[i]
     n = math.floor(phi)
     u = phi - n
-    plant = x_ref + f * (n + beta / 2 - g.offset[i]) * s_px
+
+    def plant(k):
+        return x_ref + f * (k + beta / 2 - g.offset[i]) * s_px
+
+    def strike_pose(k, r):  # r 0..1 through the heel strike
+        x = plant(k)
+        a = -g.strike * (1 - ease(r))
+        return roll_ankle((x + f * HEEL[0], GROUND), HEEL, a, f) + (a,)
+
+    def toe_pose(k, r):  # r 0..1 through the toe-off
+        x = plant(k)
+        a = g.toe_off * ease(r)
+        return roll_ankle((x + f * TOE[0], GROUND), TOE, a, f) + (a,)
+
+    hs, to = ROLL
     if u < beta:
-        return (plant, ANK, 0.0, True)
-    s = (u - beta) / (1 - beta)
-    x = plant + f * s_px * ease(s)
-    y = ANK - g.lift * B * math.sin(math.pi * s)
-    pitch = -28.0 * math.sin(math.pi * min(1.0, s * 1.4)) if s < 0.7 else 12.0 * math.sin(math.pi * (s - 0.7) / 0.3)
+        r = u / beta
+        if r < hs and g.strike:
+            x, y, a = strike_pose(n, r / hs)
+            return (x, y, a, False)
+        if r > 1 - to and g.toe_off:
+            x, y, a = toe_pose(n, (r - (1 - to)) / to)
+            return (x, y, a, False)
+        return (plant(n), ANK, 0.0, True)
+    sw = (u - beta) / (1 - beta)
+    x0, y0, a0 = toe_pose(n, 1.0) if g.toe_off else (plant(n), ANK, 0.0)
+    x1, y1, a1 = strike_pose(n + 1, 0.0) if g.strike else (plant(n + 1), ANK, 0.0)
+    e = ease(sw)
+    x = lerp(x0, x1, e)
+    y = lerp(y0, y1, e) - g.lift * B * math.sin(math.pi * sw)
+    pitch = lerp(a0, a1, ease(min(1.0, sw * 1.6)))
     return (x, y, pitch, False)
 
 
@@ -169,7 +223,7 @@ def reach_clamp(hip: tuple, feet: dict) -> tuple:
     y = hip[1]
     for side in SIDES:
         fx, fy, _, contact = feet[side]
-        if contact:
+        if _grounded(feet[side]):
             dx = fx - hip[0]
             y = max(y, fy - math.sqrt(max(0.0, REACH * REACH - dx * dx)))
     return (hip[0], y)
@@ -257,13 +311,18 @@ class Loco:
             want = lerp(gait_hip_height(self.g, p, feet), want, ease((t - self.t1) / 0.35))
         hip = reach_clamp((hx, want), feet)
         lean = self.g.lean if moving else lerp(self.g.lean, 2.0, ease((t - self.t1) / 0.35))
+        if moving:
+            lean += self.g.sway * math.sin(4 * math.pi * (p + 0.1))
         if self.g.dip and feet[INJURED][3]:
             lean += 6.0
         arms = {}
+        s_px = self.g.stride * B
+        lag = p - 0.07  # the arms follow the legs a little late (overlap), never in lock-step
         for k, s in enumerate(SIDES):
-            d = (feet[s][0] - hx) * self.f / (self.g.stride * B / 2)
+            fl = gait_foot(self.g, k, lag, self.x_ref, self.f)[0]
+            d = (fl - (self.x_ref + self.f * lag * s_px)) * self.f / (s_px / 2)
             a = -self.g.swing * max(-1.2, min(1.2, d)) * (1.0 if moving else 1 - ease((t - self.t1) / 0.4))
-            e = self.g.elbow
+            e = self.g.elbow + 0.45 * max(0.0, a)
             if self.entry_arms and t < self.t0 + 0.3:
                 u = ease((t - self.t0) / 0.3)
                 a, e = lerp(self.entry_arms[0], a, u), lerp(self.entry_arms[1], e, u)
@@ -362,12 +421,19 @@ def skeleton(p: Pose) -> dict:
     head = (neck[0] + hd[0] * NECK * sq, neck[1] + hd[1] * NECK * sq)
     sh = shoulder_of(p)
     j = {"hip": p.hip, "neck": neck, "head": head, "shoulder": sh, "head_angle": p.torso + p.head}
-    for s in SIDES:
+    for k, s in enumerate(SIDES):
         fx, fy, pitch, contact = p.feet[s]
-        knee, ankle = ik2(p.hip, (fx, fy), THIGH, SHIN, f)
-        j["knee_" + s], j["ankle_" + s], j["pitch_" + s] = knee, ankle, pitch
+        side = (-1 if p.feet[s][0] <= p.feet[SIDES[1 - k]][0] else 1) if p.front else 0
+        hip = (p.hip[0] + side * FRONT_HIP, p.hip[1]) if p.front else p.hip
+        knee, ankle = ik2(hip, (fx, fy), THIGH, SHIN, side if p.front else f)  # front: knees bow out
+        j["hip_" + s], j["knee_" + s], j["ankle_" + s], j["pitch_" + s] = hip, knee, ankle, pitch
         arm = p.arms[s]
-        if arm[0] == "fk":
+        if p.front:
+            shs = (sh[0] + side * 0.10 * B, sh[1] + 0.02 * B)
+            elbow = (shs[0] + side * 0.05 * B, shs[1] + UPPER * 0.95)
+            hand = (elbow[0] + side * 0.01 * B, elbow[1] + FORE * 0.98)
+            j["shoulder_" + s] = shs
+        elif arm[0] == "fk":
             elbow, hand = fk_arm(sh, f, arm[1], arm[2])
         else:
             elbow, hand = ik2(sh, (arm[1], arm[2]), UPPER, FORE, -f)
@@ -488,13 +554,15 @@ def scene() -> Scene:
             {INJURED: ("ik", xi + (0.06 if lead == INJURED else -0.02) * B, GROUND - 0.25 * B),
              SIDES[1 - SIDES.index(INJURED)]: fk(-10, 20)}),
     ]
-    # the turn: a quick squash, a flip, an unsquash (four frames each way at 24 fps)
+    # the turn: anticipation on the side drawing, the front drawing while the feet step round, the other side
     t_turn0 = k[-1].t + 0.05
-    t_turn1 = t_turn0 + 0.34
+    t_turn1 = t_turn0 + 0.55
     before_turn = keyed_pose(k, k[-1].t, 1, shoulder_of)
-    stand2 = before_turn.feet
-    limp_t0 = t_turn1 + 0.12
     hip2 = before_turn.hip
+    # each foot steps to its own side of the hips (the one already on the left stays left: the legs never cross)
+    left = min(SIDES, key=lambda s: before_turn.feet[s][0])
+    stand2 = {s: (hip2[0] + (-1 if s == left else 1) * 0.075 * B, ANK, 0.0, True) for s in SIDES}
+    limp_t0 = t_turn1 + 0.05
     ph2 = entry_phase(LIMP, -1, hip2[0], stand2)
     duration = 15.0
 
@@ -510,7 +578,7 @@ def scene() -> Scene:
         (3.35 + 0.35, t_run, "idle", (hip_stand, stand1)),
         (t_run, tj, "loco", run),
         (tj, k[-1].t, "keys", k),
-        (k[-1].t, limp_t0, "turn", (before_turn, t_turn0, t_turn1)),
+        (k[-1].t, limp_t0, "turn", (before_turn, t_turn0, t_turn1, stand2)),
         (limp_t0, duration, "loco", limp),
     ]
     events = [(tj, "takeoff", hx), (t_land, "land", xl), (t_land + 0.58, "impact", xi)]
@@ -542,39 +610,58 @@ def _raw_pose(sc: Scene, t: float) -> Pose:
         p.arms = {s: ("fk", lerp(0.0, -35.0, u), lerp(12.0, 40.0, u)) for s in SIDES}
         return p
     if kind == "turn":
-        before, ta, tb = obj
+        before, ta, tb, after = obj
         p = replace(before, feet=dict(before.feet), arms=dict(before.arms))
         if t < ta:
             return p
-        mid = (ta + tb) / 2
-        if t < mid:
-            p.flip = lerp(1.0, 0.18, ease((t - ta) / (mid - ta)))
-        else:
-            p.facing = -1
-            p.flip = lerp(0.18, 1.0, ease((t - mid) / (tb - mid)))
-        p.squash = 1.0 - 0.08 * math.sin(math.pi * min(1.0, (t - ta) / (tb - ta)))
-        if t >= mid:
-            # mirrored arms keep the hand on the knee
-            p.arms = {s: ("fk", 10.0, 20.0) for s in SIDES}
-            p.torso, p.head = 10.0, 6.0
+        r = (t - ta) / (tb - ta)
+        if r < 0.18:  # anticipation: sink and lean back on the side drawing
+            u = ease(r / 0.18)
+            p.squash = 1.0 - 0.07 * u
+            p.torso = lerp(before.torso, 4.0, u)
+            p.hip = (p.hip[0], p.hip[1] + 0.02 * B * u)
+            return p
+        if r < 0.68:  # the front drawing; the feet step round to their new places
+            u = ease((r - 0.18) / 0.5)
+            feet = {}
+            for s in SIDES:
+                a, b = before.feet[s], after[s]
+                lift = 0.05 * B * math.sin(math.pi * u)
+                feet[s] = (lerp(a[0], b[0], u), lerp(a[1], b[1], u) - lift, 0.0, u >= 1.0)
+            p.feet, p.front, p.torso, p.head = feet, True, 0.0, 0.0
+            p.hip = (p.hip[0], GROUND - 0.44 * B + 0.02 * B * (1 - u))  # legs nearly straight: no knock knees
+            p.squash = 1.0 + 0.04 * math.sin(math.pi * u)
+            return p
+        u = ease((r - 0.68) / 0.32)  # the other side: overshoot a touch, settle
+        p.facing, p.feet = -1, dict(after)
+        p.torso, p.head = lerp(-4.0, 9.0, u), lerp(0.0, 6.0, u)
+        p.squash = 1.0 + 0.03 * (1 - u)
+        p.arms = {s: ("fk", lerp(4.0, 10.0, u), lerp(10.0, 20.0, u)) for s in SIDES}
+        p.hip = reach_clamp((p.hip[0], GROUND - 0.425 * B), p.feet)
         return p
     raise ValueError(kind)
 
 
-def _scarf_table(sc: Scene) -> np.ndarray:
-    """Follow-through: the scarf tail is a damped spring driven by the hips' horizontal speed (240 Hz from t = 0)."""
-    n = int(sc.duration * 240) + 2
-    xs = np.array([_raw_pose(sc, i / 240.0).hip[0] for i in range(n)])
-    v = np.gradient(xs) * 240.0
-    ang, w = 0.0, 0.0
-    out = np.empty(n)
-    for i in range(n):
-        target = max(-70.0, min(70.0, v[i] / B * 38.0))
-        acc = 70.0 * (target - ang) - 9.0 * w
-        w += acc / 240.0
+def _spring(targets: np.ndarray, k: float, c: float) -> np.ndarray:
+    ang, w = float(targets[0]), 0.0
+    out = np.empty(len(targets))
+    for i, tgt in enumerate(targets):
+        w += (k * (tgt - ang) - c * w) / 240.0
         ang += w / 240.0
         out[i] = ang
     return out
+
+
+def _scarf_table(sc: Scene) -> np.ndarray:
+    """Follow-through (240 Hz from t = 0): row 0 the scarf tail, a damped spring on the hips' horizontal speed; row 1 the
+    head's nod, a stiffer spring on their vertical speed (the head lags each step's dip, so the walk breathes)."""
+    n = int(sc.duration * 240) + 2
+    hips = np.array([_raw_pose(sc, i / 240.0).hip for i in range(n)])
+    vx = np.gradient(hips[:, 0]) * 240.0
+    vy = np.gradient(hips[:, 1]) * 240.0
+    scarf = _spring(np.clip(vx / B * 38.0, -70, 70), 70.0, 9.0)
+    nod = _spring(np.clip(vy / B * 9.0, -7, 7), 160.0, 14.0)
+    return np.stack([scarf, nod])
 
 
 def pose_at(t: float) -> Pose:
@@ -589,7 +676,10 @@ def pose_at(t: float) -> Pose:
     if expr == "dazed":
         p.blink = max(p.blink, 0.45)
     p.wound = t >= sc.wound_at
-    p.scarf = float(np.interp(t, np.arange(len(sc.scarf)) / 240.0, sc.scarf))
+    grid = np.arange(sc.scarf.shape[1]) / 240.0
+    p.scarf = float(np.interp(t, grid, sc.scarf[0]))
+    if not p.front:
+        p.head += float(np.interp(t, grid, sc.scarf[1]))
     return p
 
 
@@ -658,7 +748,7 @@ def _local(origin, angle_deg, f, q):
 
 def draw_leg(cv: Canvas, j: dict, s: str, far: bool, f: int, wound: bool):
     col, boot = (_shade(TROUSERS), _shade(BOOTS)) if far else (TROUSERS, BOOTS)
-    hip, knee, ank = j["hip"], j["knee_" + s], j["ankle_" + s]
+    hip, knee, ank = j["hip_" + s], j["knee_" + s], j["ankle_" + s]
     cv.caps([(hip, knee, 0.050 * B, 0.042 * B), (knee, ank, 0.042 * B, 0.034 * B)], col,
             shade=None if far else (-f * 0.4, 0.9))
     if wound and s == INJURED:
@@ -677,12 +767,12 @@ def draw_leg(cv: Canvas, j: dict, s: str, far: bool, f: int, wound: bool):
     cv.poly(pts, boot)
 
 
-def draw_arm(cv: Canvas, j: dict, s: str, far: bool, f: int):
+def draw_arm(cv: Canvas, j: dict, s: str, far: bool, f: int, skin: tuple = SKIN):
     col = _shade(JACKET) if far else JACKET
     sh, el, ha = j["shoulder"], j["elbow_" + s], j["hand_" + s]
     cv.caps([(sh, el, 0.040 * B, 0.035 * B), (el, ha, 0.035 * B, 0.029 * B)], col,
             shade=None if far else (-f * 0.4, 0.9))
-    cv.ellipse(ha, 0.032 * B, 0.030 * B, _shade(SKIN) if far else SKIN)
+    cv.ellipse(ha, 0.032 * B, 0.030 * B, _shade(skin) if far else skin)
 
 
 MOUTHS = {
@@ -743,18 +833,88 @@ def draw_head(cv: Canvas, j: dict, p: Pose):
         cv.line([L(mx - 0.04, my + 0.004), L(mx + 0.035, my + 0.0)], LINE * 0.5)
 
 
-def draw_character(p: Pose) -> tuple[Image.Image, tuple[int, int]]:
-    """The hero on a transparent layer and where its top-left goes on the frame."""
+# the painted head sheet: one picture per expression, all of the same face (the hybrid's route B)
+SHEET_FOR = {"neutral": "happy", "happy": "happy", "eager": "happy", "shock": "scared", "dazed": "scared",
+             "pain": "angry", "brave": "angry"}
+HEAD_H = 0.42 * B              # crown to the bottom of the neck stump
+
+
+@lru_cache(maxsize=2)
+def load_heads(folder: str | None) -> dict | None:
+    """``head_<name>.png`` (RGBA, the neck stump at the bottom centre) for the names in SHEET_FOR; None = drawn head."""
+    if not folder:
+        return None
+    heads = {}
+    for name in set(SHEET_FOR.values()):
+        path = Path(folder) / f"head_{name}.png"
+        if path.exists():
+            heads[name] = Image.open(path).convert("RGBA")
+    return heads or None
+
+
+@lru_cache(maxsize=2)
+def _sheet_skin(folder: str) -> tuple:
+    a = np.asarray(next(iter(load_heads(folder).values()))).reshape(-1, 4).astype(int)
+    m = (a[:, 3] > 220) & (a[:, 0] > 120) & (a[:, 0] > a[:, 1] + 25) & (a[:, 1] > a[:, 2])
+    return tuple(int(v) for v in np.median(a[m, :3], axis=0)) if m.any() else SKIN
+
+
+def paste_head(cv: Canvas, j: dict, p: Pose, folder: str):
+    heads = load_heads(folder)
+    img = heads.get(SHEET_FOR.get(p.expr, "happy")) or next(iter(heads.values()))
+    h = HEAD_H * SS
+    w = img.width * h / img.height
+    img = img.resize((max(2, int(round(w))), max(2, int(round(h)))), Image.LANCZOS)
+    if p.facing < 0 and not p.front:
+        img = img.transpose(Image.FLIP_LEFT_RIGHT)
+    side = int(round(h * 2))
+    pad = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+    pad.alpha_composite(img, (int(round(side / 2 - img.width / 2)), int(round(side / 2 - img.height))))
+    ang = 0.0 if p.front else j["head_angle"] * 0.55
+    pad = pad.rotate(-ang * p.facing, resample=Image.BICUBIC)
+    neck = j["neck"]
+    fwd = 0.0 if p.front else p.facing * 0.025 * B
+    ax, ay = cv.p((neck[0] + fwd, neck[1] + 0.035 * B))
+    cv.img.alpha_composite(pad, (int(round(ax - side / 2)), int(round(ay - side / 2))))
+
+
+def draw_front(cv: Canvas, j: dict, p: Pose, heads: str | None):
+    """The front drawing: legs apart with the boots turned out, the jacket square to camera, arms at the sides."""
+    for s in SIDES:
+        draw_leg(cv, j, s, False, -1 if j["hip_" + s][0] < j["hip"][0] else 1, p.wound)
+    hip, neck = j["hip"], j["neck"]
+    cv.caps([(hip, neck, 0.115 * B, 0.105 * B)], JACKET, shade=(0.5, 0.85))
+    cv.line([lerp2(hip, neck, 0.25), lerp2(hip, neck, 0.95)], LINE * 0.6)
+    skin = _sheet_skin(heads) if heads else SKIN
+    for s in SIDES:
+        sh, el, ha = j["shoulder_" + s], j["elbow_" + s], j["hand_" + s]
+        cv.caps([(sh, el, 0.040 * B, 0.035 * B), (el, ha, 0.035 * B, 0.029 * B)], JACKET)
+        cv.ellipse(ha, 0.032 * B, 0.030 * B, skin)
+    if heads:
+        paste_head(cv, j, p, heads)
+    else:
+        draw_head(cv, j, replace(p, facing=1))
+    cv.caps([((neck[0] - 0.07 * B, neck[1] + 0.01 * B), (neck[0] + 0.07 * B, neck[1] + 0.01 * B), 0.032 * B, 0.032 * B)],
+            SCARF)
+
+
+def draw_character(p: Pose, heads: str | None = None) -> tuple[Image.Image, tuple[int, int]]:
+    """The hero on a transparent layer and where its top-left goes on the frame. ``heads`` = a folder of painted head
+    pictures (the face from the image model, the body from the rig); without it the head is drawn by code."""
     j = skeleton(p)
     pts = [v for k, v in j.items() if isinstance(v, tuple)]
     xs, ys = [q[0] for q in pts], [q[1] for q in pts]
-    m = 0.32 * B
+    m = 0.36 * B
     x0, y0 = int(math.floor(min(xs) - m)), int(math.floor(min(ys) - m))
     x1, y1 = int(math.ceil(max(xs) + m)), int(math.ceil(max(ys) + m))
     cv = Canvas(x0, y0, x1 - x0, y1 - y0)
+    if p.front:
+        draw_front(cv, j, p, heads)
+        return cv.img.resize((x1 - x0, y1 - y0), Image.LANCZOS), (x0, y0)
     f = p.facing
     near, far = ("L", "R") if f > 0 else ("R", "L")
-    draw_arm(cv, j, far, True, f)
+    skin = _sheet_skin(heads) if heads else SKIN
+    draw_arm(cv, j, far, True, f, skin)
     draw_leg(cv, j, far, True, f, p.wound)
     draw_leg(cv, j, near, False, f, p.wound)
     # the scarf tail behind the body, then the puffy jacket over the hips
@@ -767,23 +927,22 @@ def draw_character(p: Pose) -> tuple[Image.Image, tuple[int, int]]:
     hip = j["hip"]
     cv.caps([(hip, neck, 0.088 * B, 0.080 * B)], JACKET, shade=(-f * 0.5, 0.85))
     cv.line([lerp2(hip, neck, 0.35), lerp2(hip, neck, 0.95)], LINE * 0.6)  # the zip
-    cv.caps([((neck[0] - 0.035 * B, neck[1] + 0.012 * B), (neck[0] + 0.04 * B, neck[1] + 0.005 * B),
-              0.03 * B, 0.03 * B)], SCARF)
+
+    def head():
+        if heads:
+            paste_head(cv, j, p, heads)
+        else:
+            draw_head(cv, j, p)
+        cv.caps([((neck[0] - 0.035 * B, neck[1] + 0.012 * B), (neck[0] + 0.04 * B, neck[1] + 0.005 * B),
+                  0.03 * B, 0.03 * B)], SCARF)  # the collar covers the neck stump
+
     if p.torso > 40:  # lying or falling: the near arm goes under the head, never across the face
-        draw_arm(cv, j, near, False, f)
-        draw_head(cv, j, p)
+        draw_arm(cv, j, near, False, f, skin)
+        head()
     else:
-        draw_head(cv, j, p)
-        draw_arm(cv, j, near, False, f)
-    img = cv.img.resize((x1 - x0, y1 - y0), Image.LANCZOS)
-    if p.flip < 0.999:
-        w, h = img.size
-        nw = max(2, int(round(w * p.flip)))
-        cx = p.hip[0] - x0
-        img2 = Image.new("RGBA", img.size, (0, 0, 0, 0))
-        img2.paste(img.resize((nw, h), Image.LANCZOS), (int(round(cx - cx * p.flip)), 0))
-        img = img2
-    return img, (x0, y0)
+        head()
+        draw_arm(cv, j, near, False, f, skin)
+    return cv.img.resize((x1 - x0, y1 - y0), Image.LANCZOS), (x0, y0)
 
 
 # --- the world: the painted plate + code-made weather ------------------------------------------------------------------
@@ -882,12 +1041,12 @@ def draw_shadows(base: Image.Image, p: Pose):
     return Image.fromarray(out.clip(0, 255).astype(np.uint8))
 
 
-def render_frame(t: float, plate_path: str | None = None) -> Image.Image:
+def render_frame(t: float, plate_path: str | None = None, heads: str | None = None) -> Image.Image:
     p = pose_at(t)
     frame = Image.fromarray(world_at(t, plate_path)).convert("RGBA")
     draw_snow(frame, t, front=False)
     frame = draw_shadows(frame.convert("RGB"), p).convert("RGBA")
-    char, (x0, y0) = draw_character(p)
+    char, (x0, y0) = draw_character(p, heads)
     _paste(frame, char, x0, y0)
     draw_snow(frame, t, front=True)
     return frame.convert("RGB")
@@ -911,7 +1070,7 @@ def events(fps: int = 24) -> list[dict]:
         t = i / fps
         p = pose_at(t)
         for s in SIDES:
-            if p.feet[s][3] and not prev.feet[s][3]:
+            if _grounded(p.feet[s]) and not _grounded(prev.feet[s]):
                 out.append({"t": round(t, 4), "kind": "step", "x": p.feet[s][0],
                             "loud": 1.0 if t < 3.6 or t > sc.turn[1] else 1.3})
         prev = p
@@ -993,7 +1152,7 @@ def check(fps: int = 24) -> dict:
                 findings.append({"rule": "BR-2", "t": t, "what": f"foot {s} {ay - ANK:.1f} px under the snow"})
             if p.feet[s][3] and math.hypot(ax - p.feet[s][0], ay - p.feet[s][1]) > 2.0:
                 findings.append({"rule": "BR-3", "t": t, "what": f"planted foot {s} not reached"})
-            for a, b, ln in (("hip", "knee_" + s, THIGH), ("knee_" + s, "ankle_" + s, SHIN)):
+            for a, b, ln in (("hip_" + s, "knee_" + s, THIGH), ("knee_" + s, "ankle_" + s, SHIN)):
                 if abs(math.dist(j[a], j[b]) - ln) > 0.5:
                     findings.append({"rule": "BR-4", "t": t, "what": f"{a}-{b} length changed"})
             if prev_p and not turning and p.feet[s][3] and prev_p.feet[s][3]:
@@ -1014,7 +1173,7 @@ def check(fps: int = 24) -> dict:
     for i in range(1, n):
         t = i / fps
         p = pose_at(t)
-        if any(p.feet[s][3] and not prev.feet[s][3] for s in SIDES) and round(t, 4) not in steps:
+        if any(_grounded(p.feet[s]) and not _grounded(prev.feet[s]) for s in SIDES) and round(t, 4) not in steps:
             findings.append({"rule": "BR-7", "t": t, "what": "a footfall without its sound"})
         prev = p
     return {"verdict": "PASS" if not findings else "FAIL", "frames": n, "fps": fps, "findings": findings[:200],
@@ -1029,7 +1188,7 @@ def loudness(path: Path) -> float:
     return float(vals[-1])
 
 
-def demo(out: Path, plate: str | None, fps: int = 24, crf: int = 18) -> dict:
+def demo(out: Path, plate: str | None, fps: int = 24, crf: int = 18, heads: str | None = None) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     sc = scene()
     n = int(sc.duration * fps)
@@ -1042,7 +1201,7 @@ def demo(out: Path, plate: str | None, fps: int = 24, crf: int = 18) -> dict:
     stills = {}
     for i in range(n):
         t = i / fps
-        img = render_frame(t, plate)
+        img = render_frame(t, plate, heads)
         proc.stdin.write(img.tobytes())
         for st in sheet_times:
             if abs(st - t) < 0.5 / fps:
@@ -1082,11 +1241,12 @@ def main(argv=None) -> int:
     d.add_argument("--out", type=Path, required=True)
     d.add_argument("--plate", default=None)
     d.add_argument("--fps", type=int, default=24)
+    d.add_argument("--heads", default=None, help="folder of painted head_<expression>.png pictures")
     c = sub.add_parser("check")
     c.add_argument("--fps", type=int, default=24)
     a = ap.parse_args(argv)
     if a.cmd == "demo":
-        r = demo(a.out, a.plate, a.fps)
+        r = demo(a.out, a.plate, a.fps, heads=a.heads)
     else:
         r = check(a.fps)
     print(json.dumps({k: v for k, v in r.items() if k != "events"}, indent=1)[:4000])

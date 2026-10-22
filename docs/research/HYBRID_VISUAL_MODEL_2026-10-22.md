@@ -173,3 +173,21 @@ new spend); the snowfall and the trees bending in the wind are code.
 Files: project files `explainer-engine/hybrid_model_2026-10-22/bend_poc/` and
 https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/hybrid_model_2026-10-22/bend_poc
 (`bend_poc.mp4`, `bend_poc_frames.jpg`, `bend_poc_check.json`, `ice_plate_clean.png`).
+
+### 8.1 Version 2: a painted face on the rig's body (2026-10-22 18:47, the creator's call)
+
+The creator: the body can be drawn by code, the face is hard, so let the image model paint the faces (one picture with
+several variants) and let us build the body. Done free with faces already paid for: three expressions of one man cut
+from the Wild Ink board (happy, scared, angry/pain; the fourth head on the board is another man), backgrounds removed,
+`--heads <dir>` puts the matching picture on the rig by the expression timeline. Also from his notes: the turn is now
+three drawings (side, front with the feet stepping round, the other side) instead of a squash-flip; the walk rolls
+heel-sole-toes, the torso pitches with each step, the arms trail the legs and the head nods on a spring. `check`:
+0 findings on 360 frames; 12 tests; -14.2 LUFS.
+
+What a real face sheet needs (learned here): the board heads are about 100 px and front-facing, so they are soft at
+1080p and look at the camera while the body walks in profile; grey paper stays between hair strands after the cut. A
+production sheet should be one 2k picture of one face on a flat chroma background, side view and front view, 6-8
+expressions plus 4-5 mouth shapes made by editing one approved head (so the face never drifts), no blink needed if the
+eyes are drawn as separate layers.
+
+Files: `bend_poc_v2.mp4`, `bend_poc_v2_frames.jpg`, `bend_poc_v2_check.json` and `heads/` next to the version 1 files.

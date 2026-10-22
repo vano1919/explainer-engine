@@ -1012,3 +1012,11 @@ on the scarf, code-made snowfall and tree sway over the ice test's plate (crowd 
 impacts read from the poses. `check` (BR-1..BR-7) passes on all 432 frames; `tests/unit/test_bend_rig.py` (10). Result and
 what it does not solve (style seam, one view): [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md)
 section 8. Nothing paid.
+
+## 2026-10-22 - Hybrid model PoC v2: painted faces on the rig, a real turn, a softer walk
+
+The creator: faces from the image model, bodies from us; fix the turn; the walk is a bit robotic. `bend_rig --heads`
+(painted head per expression, hands in its skin colour), the turn as side -> front -> side with the feet stepping to
+their own sides, heel-to-toe roll in every gait (footfall sound at the heel strike), torso pitch wave, arms lagging the
+legs, head nod spring. `check` 0 findings; `tests/unit/test_bend_rig.py` 12. Faces reused from the Wild Ink board,
+nothing paid. Notes on what a real face sheet needs: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md) 8.1.

@@ -91,3 +91,22 @@ def test_a_frame_is_a_pure_function_of_its_time():
     b = np.asarray(R.render_frame(6.1))
     assert a.shape == (R.FRAME_H, R.FRAME_W, 3) and np.array_equal(a, b)
     assert not np.array_equal(a, np.asarray(R.render_frame(6.2)))
+
+
+def test_the_turn_passes_through_a_front_drawing_with_uncrossed_legs():
+    sc = R.scene()
+    ta, tb = sc.turn
+    fronts = [R.pose_at(ta + k * (tb - ta) / 20) for k in range(21)]
+    fronts = [p for p in fronts if p.front]
+    assert len(fronts) >= 6
+    for p in fronts:
+        j = R.skeleton(p)
+        left = min(R.SIDES, key=lambda s: j["hip_" + s][0])
+        right = R.SIDES[1 - R.SIDES.index(left)]
+        assert j["ankle_" + left][0] < j["ankle_" + right][0]
+    assert R.pose_at(tb + 0.01).facing == -1 and R.pose_at(ta - 0.01).facing == 1
+
+
+def test_the_walk_rolls_heel_to_toe():
+    pitches = [R.gait_foot(R.WALK, 0, k / 200, 0.0, 1)[2] for k in range(200)]
+    assert min(pitches) < -10 and max(pitches) > 20  # toe up at the strike, heel up at the toe-off
