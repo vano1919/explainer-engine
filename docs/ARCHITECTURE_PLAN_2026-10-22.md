@@ -141,6 +141,11 @@ QA findings; then the readiness report that separates done / documented only / n
   watchdog rules + GitHub Actions cron and kill-all, the phone commands, the fifteen recovery scenarios, the `end_pod` fix.
   Not yet: the Cloudflare Worker runner (needs the account), pushing the job record from inside the pod (the TMR conductor
   side), the Modal/fal adapters (stage D).
-- **Documented only (until their stage runs)**: stages C-H in section 3 except what the audit lists as existing.
+- **Done (stage C, 2026-10-22)**: `world/bible.py` + `bible.json` v1.0 (draft; pinned parts, drift check, bump, recorded approval),
+  `schemas/world_bible.schema.json`; `explainer_engine/assets/library.py` + `assets/library.json` (nine records from the existing
+  generation ledgers), `schemas/asset_library.schema.json`; world.json and paint plans cite the version, plans name their library
+  references, reusable plans register their pictures; rules WB-01..WB-10 in [WORLD_BIBLE](WORLD_BIBLE.md). Not built: embedding
+  search (SigLIP-2 / DINOv2, with the stage D pilot); the creator's approval of a bible version (needs the pilot's anchors).
+- **Documented only (until their stage runs)**: stages D-H in section 3 except what the audit lists as existing.
 - **Needs the creator**: the four questions above; any paid call; a Cloudflare, BFL, fal or Modal account; raising a cap in
   `config/spend_caps.json`.

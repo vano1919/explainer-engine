@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asset_library.schema.json",
+  "title": "Reusable asset library (schema version 1): one record per channel asset with provenance, licence, hash, lineage and approval",
+  "type": "object",
+  "required": ["schema", "items"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "asset_library/1"},
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "file", "sha256", "bytes", "tags", "description", "bible_version", "made_with", "licence",
+                     "approval", "lineage", "origin"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z]+\\.[a-z0-9_]+(\\.[a-z0-9_]+)?$", "description": "<kind>.<name>[.<variant>] (P-66)"},
+          "kind": {"enum": ["reference", "anchor", "sheet", "sprite", "picture", "plate", "prop", "collage", "lora", "prompt", "sound", "music", "font"]},
+          "file": {"type": "string", "minLength": 1, "description": "path relative to the repository root"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "bytes": {"type": "integer", "minimum": 1},
+          "width": {"type": "integer", "minimum": 1},
+          "height": {"type": "integer", "minimum": 1},
+          "tags": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z0-9_]+$"}},
+          "description": {"type": "string"},
+          "bible_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+$", "description": "the World Bible version the asset was made under"},
+          "made_with": {
+            "type": "object",
+            "required": ["provider", "model", "model_version", "prompt", "params", "seed", "refs", "lora", "cost_usd"],
+            "additionalProperties": false,
+            "properties": {
+              "provider": {"type": "string", "description": "gemini, bfl, fal, pod, local, elevenlabs, drawn, procedural, third_party or empty"},
+              "model": {"type": "string"},
+              "model_version": {"type": "string"},
+              "prompt": {"type": "string"},
+              "params": {"type": "object"},
+              "seed": {"type": ["integer", "null"]},
+              "refs": {"type": "array", "items": {"type": "string"}, "description": "asset ids given as references"},
+              "unresolved_refs": {"type": "array", "items": {"type": "string"}, "description": "reference files that were not library assets"},
+              "lora": {"type": ["string", "null"], "description": "asset id of the LoRA used"},
+              "cost_usd": {"type": "number", "minimum": 0}
+            }
+          },
+          "licence": {
+            "type": "object",
+            "required": ["status", "note"],
+            "additionalProperties": false,
+            "properties": {
+              "status": {"enum": ["own_drawn", "own_procedural", "generated_terms_unverified", "generated_terms_verified", "licensed", "ofl", "cc0"]},
+              "note": {"type": "string", "minLength": 1}
+            }
+          },
+          "approval": {
+            "type": "object",
+            "required": ["status", "by", "at", "note"],
+            "additionalProperties": false,
+            "properties": {
+              "status": {"enum": ["not_looked", "approved", "rejected", "superseded"]},
+              "by": {"type": ["string", "null"]},
+              "at": {"type": ["string", "null"]},
+              "note": {"type": "string"}
+            }
+          },
+          "lineage": {
+            "type": "object",
+            "required": ["parent"],
+            "additionalProperties": false,
+            "properties": {
+              "parent": {"type": ["string", "null"], "description": "the asset this one was derived from"}
+            }
+          },
+          "origin": {
+            "type": "object",
+            "required": ["episode", "created", "source"],
+            "additionalProperties": false,
+            "properties": {
+              "episode": {"type": "string", "description": "the episode whose budget paid for it; empty for channel work"},
+              "created": {"type": "string"},
+              "source": {"type": "string", "description": "where the record came from: a paint plan id, a ledger line, sound_library:<id>, picture_library:<id>"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

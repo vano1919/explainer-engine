@@ -74,6 +74,8 @@ def make(plan_id: str, episode: str, items: list[dict], *, provider: str, model:
             "created": time.strftime("%Y-%m-%dT%H:%M:%S")}
     plan["estimate_usd"] = estimate(plan)
     plan["hash"] = plan_hash(plan)
+    from explainer_engine.world import bible
+    plan["bible"] = bible.cite()  # the World Bible version the pictures are made under (WB-04); not part of the hash
     return plan
 
 

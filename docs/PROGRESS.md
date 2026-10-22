@@ -1066,3 +1066,22 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
   GraphQL balance retirement (early 2027) noted with a revisit date. The audit's finding: the leak was 2026-10-15..19, before
   D-56; nothing billed since. The creator's two one-time actions: the `RUNPOD_API_KEY` repository secret (watchdog) and
   RunPod's low-balance e-mail alert. Overlaps PR #19 (the audit thread's `check` additions): whoever lands second rebases.
+
+## 2026-10-22 — Stage C: World Bible and asset library (D-70; the master brief, thread "წარმოების არქიტექტურა და ვიზუალი")
+- `explainer_engine/world/bible.py` + `bible.json` v1.0 (draft) + `schemas/world_bible.schema.json`: the look v2 thread, the era
+  codex and the palette pinned by hash under one version; camera language, graphics style (the narrated-style black opening card
+  and chapter recap cards), era-change rules, characters (none permanent, the creator 2026-10-22), motion default (stills +
+  2.5D parallax), banned drift, anchors (empty until the pilot), changelog. `check` fails on a part edited without `bump`;
+  `approve --by` is refused on drift and records who and when.
+- `explainer_engine/assets/library.py` + `assets/library.json` + `schemas/asset_library.schema.json`: one record per reusable
+  asset (id P-66, file + sha256, tags, bible version, provider/model/version/prompt/params/seed/refs/LoRA/cost, licence,
+  approval, lineage, origin); `register` warns about duplicates (same bytes, same recipe, shared tags) and never vetoes;
+  `find`, `approve`, `derive`, `children`, `verify` (reports, never deletes), `ids_for_files`, `record_painted`. Seeded with
+  the eight scientists_v0 sprites and their analyst reference from the generation ledgers, all `superseded` by look v2.
+- Wired in: `world.resolver.resolve` writes `bible`; `imagegen.plan.make` writes `bible` (outside the hash); `paint plan` records
+  `assets` (which references are library assets); a reusable plan's painted pictures are registered (`paint.shelve`, sync and batch).
+- Docs: [WORLD_BIBLE](WORLD_BIBLE.md) (WB-01..WB-10, `docs_lint` home), INDEX row; ASSET_SYSTEM, VISUAL_WORLD_ARCHITECTURE and
+  CREATIVE_STYLE_BIBLE point at the code. Tests: `tests/unit/test_world_bible.py` (9), `tests/unit/test_asset_library.py` (9).
+- Not built (said plainly): embedding search; the Cloudflare runner; PR #15's picture library is referenced by `origin.source`,
+  not duplicated. Nothing paid; no pod.
+
