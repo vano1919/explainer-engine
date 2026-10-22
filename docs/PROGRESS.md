@@ -1020,3 +1020,11 @@ The creator: faces from the image model, bodies from us; fix the turn; the walk 
 their own sides, heel-to-toe roll in every gait (footfall sound at the heel strike), torso pitch wave, arms lagging the
 legs, head nod spring. `check` 0 findings; `tests/unit/test_bend_rig.py` 12. Faces reused from the Wild Ink board,
 nothing paid. Notes on what a real face sheet needs: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md) 8.1.
+
+## 2026-10-22 - Hybrid model PoC v3: the body's paint from the picture (Sheet)
+
+The creator's Wild Ink cave reference as the world's style; question answered (what is reachable in motion, which
+tools are missing, 3/4 views). Free, his choice: `bend_rig.Sheet` carries painted parts (`parts.json`: picture, bone,
+half-widths per part) onto the rig's bones by a similarity, outline stays the rig's; Einstein cut from the reference
+with GrabCut walks, falls, turns and limps with his paint. 14 tests, `check` 0 findings. What a real parts sheet must
+be: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md) 8.2.

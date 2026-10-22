@@ -23,6 +23,12 @@ code over it (free, deterministic, exact). Every frame is a pure function of its
 * **the walk rolls heel -> sole -> toes**, the torso pitches with each step, the arms trail the legs and the head nods
   on a spring, so the gait does not move in lock-step.
 
+* **the body's paint is the image model's too** (the creator, 2026-10-22 19:16, after the Wild Ink cave reference):
+  ``parts.json`` in the heads folder names a painted picture and, per part, its painted bone and half-widths
+  (``Sheet``); the rig carries each part's paint by a similarity onto its own bone, so a limb bends over two bones and
+  keeps its paint, the ink outline stays the rig's, mirrored for the other facing. Parts cut from one painted pose
+  are a stop-gap: a production sheet paints every part straight and separate (the research doc, section 8.2).
+
     python -m explainer_engine.production.bend_rig demo --out jobs/bend_poc --plate <plate.png> [--heads <dir>] [--fps 24]
     python -m explainer_engine.production.bend_rig check
 """
@@ -727,6 +733,26 @@ class Canvas:
                 o1 = (p1[0] + lx * r1 * 0.45, p1[1] + ly * r1 * 0.45)
                 self.d.polygon(_capsule(self.p(o0), self.p(o1), r0 * 0.5 * SS, r1 * 0.5 * SS), fill=_shade(color, 0.86))
 
+    def tex_caps(self, segs, sheet: "Sheet", far: bool, f: int, width=LINE):
+        """Segments [(p0, p1, part)] as one ink shape whose fills are the painted parts of ``sheet``: each part's picture
+        is carried by a similarity from its painted bone onto the rig's bone (mirrored for facing -1), so a limb bends over
+        two bones and keeps its paint. Outlines first, then the fills, so the joints have no seam."""
+        shapes = []
+        for p0, p1, part in segs:
+            r0, r1 = sheet.radii(part, p0, p1)
+            shapes.append((p0, p1, r0, r1, part))
+        for p0, p1, r0, r1, _ in shapes:
+            self.d.polygon(_capsule(self.p(p0), self.p(p1), (r0 + width) * SS, (r1 + width) * SS), fill=INK)
+        for p0, p1, r0, r1, part in shapes:
+            mask = Image.new("L", self.img.size, 0)
+            ImageDraw.Draw(mask).polygon(_capsule(self.p(p0), self.p(p1), r0 * SS, r1 * SS), fill=255)
+            tex = sheet.warp(part, self.p(p0), self.p(p1), f, self.img.size)
+            base = Image.new("RGBA", self.img.size, sheet.base[part] + (255,))
+            base.alpha_composite(tex)
+            if far:
+                base = Image.merge("RGBA", [c.point(lambda v: int(v * 0.78)) for c in base.split()[:3]] + [base.split()[3]])
+            self.img.paste(base, (0, 0), mask)
+
     def poly(self, pts, color, width=LINE):
         self.d.polygon([self.p(q) for q in pts], fill=color, outline=INK, width=max(1, int(width * SS)))
 
@@ -746,11 +772,65 @@ def _local(origin, angle_deg, f, q):
     return (origin[0] + x * math.cos(a) - y * math.sin(a) * f, origin[1] + x * math.sin(a) * f + y * math.cos(a))
 
 
-def draw_leg(cv: Canvas, j: dict, s: str, far: bool, f: int, wound: bool):
+class Sheet:
+    """The painted parts of one character (the hybrid's route B): ``parts.json`` next to the head pictures names the
+    source picture and, per part, the painted bone ``p0 -> p1`` (source px) and its half-widths ``r`` at both ends.
+    The rig carries each part by a similarity from the painted bone onto its own bone, so the paint follows the bend."""
+
+    PARTS = ("torso", "upper_arm", "fore_arm", "thigh", "shin")
+
+    def __init__(self, folder: str):
+        spec = json.loads((Path(folder) / "parts.json").read_text(encoding="utf-8"))
+        self.src = Image.open(Path(folder) / spec["source"]).convert("RGBA")
+        self.parts = {k: spec["parts"][k] for k in self.PARTS}
+        self.foot = tuple(spec.get("foot_rgb", SKIN))
+        # each part's own colour, under the paint where the picture has no pixels (the cut-out's edge)
+        a = np.asarray(self.src)
+        self.base = {}
+        for k, q in self.parts.items():
+            box = Image.new("L", self.src.size, 0)
+            ImageDraw.Draw(box).polygon(_capsule(q["p0"], q["p1"], q["r"][0], q["r"][1]), fill=255)
+            m = (np.asarray(box) > 0) & (a[:, :, 3] > 200)
+            self.base[k] = tuple(int(v) for v in np.median(a[m][:, :3], axis=0)) if m.any() else SKIN
+
+    def radii(self, part: str, p0: tuple, p1: tuple) -> tuple:
+        """Half-widths of the part on the rig: the painted ones scaled with the bone, or ``rig_r`` (shares of B) when
+        the picture's part is narrower than the rig's (a strip of paint is then stretched across)."""
+        q = self.parts[part]
+        if "rig_r" in q:
+            return q["rig_r"][0] * B, q["rig_r"][1] * B
+        k = math.dist(p0, p1) / max(1e-6, math.dist(q["p0"], q["p1"]))
+        return q["r"][0] * k, q["r"][1] * k
+
+    def warp(self, part: str, c0: tuple, c1: tuple, f: int, size: tuple) -> Image.Image:
+        """The source picture mapped so the part's painted bone lands on ``c0 -> c1`` (layer px) and its painted
+        half-width on the rig's; ``f`` < 0 mirrors."""
+        q = self.parts[part]
+        s0, s1 = q["p0"], q["p1"]
+        ls, lc = max(1e-6, math.dist(s0, s1)), max(1e-6, math.dist(c0, c1))
+        rs, rc = q["r"][0], self.radii(part, (0.0, 0.0), (lc / SS, 0.0))[0] * SS
+        src = np.array([s0, s1, [s0[0] - (s1[1] - s0[1]) * rs / ls, s0[1] + (s1[0] - s0[0]) * rs / ls]], float)
+        dst = np.array([c0, c1, [c0[0] - f * (c1[1] - c0[1]) * rc / lc, c0[1] + f * (c1[0] - c0[0]) * rc / lc]], float)
+        A = np.c_[dst, np.ones(3)]
+        coef = np.linalg.solve(A, src)  # layer (x, y, 1) -> source (x, y), per column
+        a, d = coef[:, 0], coef[:, 1]
+        return self.src.transform(size, Image.AFFINE, (a[0], a[1], a[2], d[0], d[1], d[2]), resample=Image.BILINEAR)
+
+
+@lru_cache(maxsize=2)
+def load_sheet(folder: str | None) -> Sheet | None:
+    return Sheet(folder) if folder and (Path(folder) / "parts.json").exists() else None
+
+
+def draw_leg(cv: Canvas, j: dict, s: str, far: bool, f: int, wound: bool, sheet: Sheet | None = None):
     col, boot = (_shade(TROUSERS), _shade(BOOTS)) if far else (TROUSERS, BOOTS)
     hip, knee, ank = j["hip_" + s], j["knee_" + s], j["ankle_" + s]
-    cv.caps([(hip, knee, 0.050 * B, 0.042 * B), (knee, ank, 0.042 * B, 0.034 * B)], col,
-            shade=None if far else (-f * 0.4, 0.9))
+    if sheet:
+        cv.tex_caps([(hip, knee, "thigh"), (knee, ank, "shin")], sheet, far, f)
+        boot = _shade(sheet.foot) if far else sheet.foot
+    else:
+        cv.caps([(hip, knee, 0.050 * B, 0.042 * B), (knee, ank, 0.042 * B, 0.034 * B)], col,
+                shade=None if far else (-f * 0.4, 0.9))
     if wound and s == INJURED:
         # a torn trouser knee with a red scrape: data on the part, drawn at the knee
         kx, ky = knee
@@ -767,12 +847,26 @@ def draw_leg(cv: Canvas, j: dict, s: str, far: bool, f: int, wound: bool):
     cv.poly(pts, boot)
 
 
-def draw_arm(cv: Canvas, j: dict, s: str, far: bool, f: int, skin: tuple = SKIN):
+def draw_arm(cv: Canvas, j: dict, s: str, far: bool, f: int, skin: tuple = SKIN, sheet: Sheet | None = None,
+             shoulder: str = "shoulder"):
     col = _shade(JACKET) if far else JACKET
-    sh, el, ha = j["shoulder"], j["elbow_" + s], j["hand_" + s]
-    cv.caps([(sh, el, 0.040 * B, 0.035 * B), (el, ha, 0.035 * B, 0.029 * B)], col,
-            shade=None if far else (-f * 0.4, 0.9))
+    sh, el, ha = j[shoulder], j["elbow_" + s], j["hand_" + s]
+    if sheet:
+        cv.tex_caps([(sh, el, "upper_arm"), (el, ha, "fore_arm")], sheet, far, f)
+    else:
+        cv.caps([(sh, el, 0.040 * B, 0.035 * B), (el, ha, 0.035 * B, 0.029 * B)], col,
+                shade=None if far else (-f * 0.4, 0.9))
     cv.ellipse(ha, 0.032 * B, 0.030 * B, _shade(skin) if far else skin)
+
+
+def draw_torso(cv: Canvas, j: dict, f: int, front: bool, sheet: Sheet | None):
+    hip, neck = j["hip"], j["neck"]
+    if sheet:
+        cv.tex_caps([(hip, neck, "torso")], sheet, False, 1 if front else f)
+        return
+    r0, r1 = (0.115 * B, 0.105 * B) if front else (0.088 * B, 0.080 * B)
+    cv.caps([(hip, neck, r0, r1)], JACKET, shade=(0.5, 0.85) if front else (-f * 0.5, 0.85))
+    cv.line([lerp2(hip, neck, 0.25 if front else 0.35), lerp2(hip, neck, 0.95)], LINE * 0.6)  # the zip
 
 
 MOUTHS = {
@@ -880,22 +974,21 @@ def paste_head(cv: Canvas, j: dict, p: Pose, folder: str):
 
 def draw_front(cv: Canvas, j: dict, p: Pose, heads: str | None):
     """The front drawing: legs apart with the boots turned out, the jacket square to camera, arms at the sides."""
+    sheet = load_sheet(heads)
     for s in SIDES:
-        draw_leg(cv, j, s, False, -1 if j["hip_" + s][0] < j["hip"][0] else 1, p.wound)
-    hip, neck = j["hip"], j["neck"]
-    cv.caps([(hip, neck, 0.115 * B, 0.105 * B)], JACKET, shade=(0.5, 0.85))
-    cv.line([lerp2(hip, neck, 0.25), lerp2(hip, neck, 0.95)], LINE * 0.6)
+        draw_leg(cv, j, s, False, -1 if j["hip_" + s][0] < j["hip"][0] else 1, p.wound, sheet)
+    neck = j["neck"]
+    draw_torso(cv, j, 1, True, sheet)
     skin = _sheet_skin(heads) if heads else SKIN
     for s in SIDES:
-        sh, el, ha = j["shoulder_" + s], j["elbow_" + s], j["hand_" + s]
-        cv.caps([(sh, el, 0.040 * B, 0.035 * B), (el, ha, 0.035 * B, 0.029 * B)], JACKET)
-        cv.ellipse(ha, 0.032 * B, 0.030 * B, skin)
+        draw_arm(cv, j, s, False, -1 if j["shoulder_" + s][0] < j["shoulder"][0] else 1, skin, sheet, "shoulder_" + s)
     if heads:
         paste_head(cv, j, p, heads)
     else:
         draw_head(cv, j, replace(p, facing=1))
-    cv.caps([((neck[0] - 0.07 * B, neck[1] + 0.01 * B), (neck[0] + 0.07 * B, neck[1] + 0.01 * B), 0.032 * B, 0.032 * B)],
-            SCARF)
+    if not sheet:
+        cv.caps([((neck[0] - 0.07 * B, neck[1] + 0.01 * B), (neck[0] + 0.07 * B, neck[1] + 0.01 * B), 0.032 * B,
+                  0.032 * B)], SCARF)
 
 
 def draw_character(p: Pose, heads: str | None = None) -> tuple[Image.Image, tuple[int, int]]:
@@ -914,34 +1007,35 @@ def draw_character(p: Pose, heads: str | None = None) -> tuple[Image.Image, tupl
     f = p.facing
     near, far = ("L", "R") if f > 0 else ("R", "L")
     skin = _sheet_skin(heads) if heads else SKIN
-    draw_arm(cv, j, far, True, f, skin)
-    draw_leg(cv, j, far, True, f, p.wound)
-    draw_leg(cv, j, near, False, f, p.wound)
-    # the scarf tail behind the body, then the puffy jacket over the hips
+    sheet = load_sheet(heads)
+    draw_arm(cv, j, far, True, f, skin, sheet)
+    draw_leg(cv, j, far, True, f, p.wound, sheet)
+    draw_leg(cv, j, near, False, f, p.wound, sheet)
     neck = j["neck"]
-    a = math.radians(max(-70.0, min(70.0, p.scarf)))
-    lift = max(0.0, math.sin(abs(a)))  # the faster the run, the higher the tail flies behind
-    t1 = (neck[0] - f * 0.10 * B * (0.4 + 0.6 * lift), neck[1] + 0.05 * B + 0.06 * B * (1 - lift))
-    t2 = (t1[0] - f * 0.09 * B * (0.3 + 0.7 * lift), t1[1] + 0.08 * B * (1 - lift) + 0.01 * B)
-    cv.caps([(neck, t1, 0.026 * B, 0.022 * B), (t1, t2, 0.022 * B, 0.018 * B)], SCARF)
-    hip = j["hip"]
-    cv.caps([(hip, neck, 0.088 * B, 0.080 * B)], JACKET, shade=(-f * 0.5, 0.85))
-    cv.line([lerp2(hip, neck, 0.35), lerp2(hip, neck, 0.95)], LINE * 0.6)  # the zip
+    if not sheet:
+        # the scarf tail behind the body, then the puffy jacket over the hips
+        a = math.radians(max(-70.0, min(70.0, p.scarf)))
+        lift = max(0.0, math.sin(abs(a)))  # the faster the run, the higher the tail flies behind
+        t1 = (neck[0] - f * 0.10 * B * (0.4 + 0.6 * lift), neck[1] + 0.05 * B + 0.06 * B * (1 - lift))
+        t2 = (t1[0] - f * 0.09 * B * (0.3 + 0.7 * lift), t1[1] + 0.08 * B * (1 - lift) + 0.01 * B)
+        cv.caps([(neck, t1, 0.026 * B, 0.022 * B), (t1, t2, 0.022 * B, 0.018 * B)], SCARF)
+    draw_torso(cv, j, f, False, sheet)
 
     def head():
         if heads:
             paste_head(cv, j, p, heads)
         else:
             draw_head(cv, j, p)
-        cv.caps([((neck[0] - 0.035 * B, neck[1] + 0.012 * B), (neck[0] + 0.04 * B, neck[1] + 0.005 * B),
-                  0.03 * B, 0.03 * B)], SCARF)  # the collar covers the neck stump
+        if not sheet:
+            cv.caps([((neck[0] - 0.035 * B, neck[1] + 0.012 * B), (neck[0] + 0.04 * B, neck[1] + 0.005 * B),
+                      0.03 * B, 0.03 * B)], SCARF)  # the collar covers the neck stump
 
     if p.torso > 40:  # lying or falling: the near arm goes under the head, never across the face
-        draw_arm(cv, j, near, False, f, skin)
+        draw_arm(cv, j, near, False, f, skin, sheet)
         head()
     else:
         head()
-        draw_arm(cv, j, near, False, f, skin)
+        draw_arm(cv, j, near, False, f, skin, sheet)
     return cv.img.resize((x1 - x0, y1 - y0), Image.LANCZOS), (x0, y0)
 
 

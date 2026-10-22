@@ -110,3 +110,54 @@ def test_the_turn_passes_through_a_front_drawing_with_uncrossed_legs():
 def test_the_walk_rolls_heel_to_toe():
     pitches = [R.gait_foot(R.WALK, 0, k / 200, 0.0, 1)[2] for k in range(200)]
     assert min(pitches) < -10 and max(pitches) > 20  # toe up at the strike, heel up at the toe-off
+
+
+def _sheet(tmp_path):
+    """A synthetic painted sheet: one picture with a flat colour per part, bones drawn inside each patch."""
+    import json
+    from PIL import Image, ImageDraw
+    src = Image.new("RGBA", (400, 400), (0, 0, 0, 0))
+    d = ImageDraw.Draw(src)
+    cols = {"torso": (200, 40, 40), "upper_arm": (40, 200, 40), "fore_arm": (40, 40, 200), "thigh": (200, 200, 40),
+            "shin": (40, 200, 200)}
+    parts = {}
+    for k, (name, c) in enumerate(cols.items()):
+        x = 20 + k * 75
+        d.rectangle([x, 50, x + 60, 350], fill=c + (255,))
+        parts[name] = {"p0": [x + 30, 330], "p1": [x + 30, 70], "r": [28, 26]}
+    parts["torso"]["rig_r"] = [0.088, 0.080]
+    src.save(tmp_path / "sheet.png")
+    head = Image.new("RGBA", (80, 120), (0, 0, 0, 0))
+    ImageDraw.Draw(head).ellipse([5, 5, 75, 95], fill=(238, 186, 146, 255))
+    head.save(tmp_path / "head_happy.png")
+    (tmp_path / "parts.json").write_text(json.dumps({"source": "sheet.png", "parts": parts, "foot_rgb": [1, 2, 3]}))
+    return str(tmp_path)
+
+
+def test_a_painted_part_lands_on_the_rig_bone_and_keeps_its_paint(tmp_path):
+    folder = _sheet(tmp_path)
+    sheet = R.load_sheet(folder)
+    assert sheet.base["torso"] == (200, 40, 40) and sheet.foot == (1, 2, 3)
+    # the shin's painted half-width scales with the bone; the torso's is the rig's own
+    r_shin = sheet.radii("shin", (0.0, 0.0), (130.0, 0.0))
+    assert abs(r_shin[0] - 28 * 130 / 260) < 1e-9
+    assert sheet.radii("torso", (0.0, 0.0), (113.0, 0.0)) == (0.088 * R.B, 0.080 * R.B)
+    # the picture's bone midpoint lands on the rig bone's midpoint, whichever way the hero faces
+    for f in (1, -1):
+        tex = sheet.warp("fore_arm", (100.0, 300.0), (220.0, 180.0), f, (400, 400))
+        assert tex.getpixel((160, 240))[:3] == (40, 40, 200)
+        assert tex.getpixel((20, 20))[3] == 0
+
+
+def test_a_sheet_character_is_drawn_from_its_paint(tmp_path):
+    folder = _sheet(tmp_path)
+    p = R.pose_at(2.5)
+    img, _ = R.draw_character(p, folder)
+    a = np.asarray(img)
+    opaque = a[a[:, :, 3] > 200][:, :3].astype(int)
+    assert len(opaque) > 1000
+    reds = ((opaque[:, 0] > 150) & (opaque[:, 1] < 90) & (opaque[:, 2] < 90)).sum()   # the torso's paint
+    assert reds > 500
+    assert not np.any(np.all(opaque == R.JACKET, axis=1))  # nothing of the code-drawn jacket
+    front, _ = R.draw_character(R.pose_at(sum(R.scene().turn) / 2), folder)
+    assert np.asarray(front)[:, :, 3].max() == 255

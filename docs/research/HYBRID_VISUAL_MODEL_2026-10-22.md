@@ -191,3 +191,24 @@ expressions plus 4-5 mouth shapes made by editing one approved head (so the face
 eyes are drawn as separate layers.
 
 Files: `bend_poc_v2.mp4`, `bend_poc_v2_frames.jpg`, `bend_poc_v2_check.json` and `heads/` next to the version 1 files.
+
+### 8.2 Version 3: the body's paint from the picture too (2026-10-22 19:16, the creator's "უფასო ტესტი")
+
+The creator sent a Wild Ink cave scene as the style reference for the world (environment, body and face shapes and
+colours; not that scene) and asked whether this level is reachable and which tools are missing, 3/4 scenes included.
+Answer given: in stills the level is already there (the picture is the model's); in motion every view (side, front, 3/4)
+must be a painted sheet because a 2D rig cannot invent drawing (occlusion, perspective); free camera and perspective
+turns stay out. Tools to add: textured parts in the rig (done below), per-view sheets from one character reference
+(paid, 8-10 pictures per hero), a code mesh warp for 3/4 bodies (Live2D's principle, headless), a style-harmonising
+grade, and pose-conditioned painting of rare key poses (the rig's skeleton drives the model; ControlNet-type on fal).
+
+Done free, his choice: `Sheet` in `bend_rig.py`. `parts.json` names a painted picture and, per part, the painted bone
+(`p0 -> p1`, source px) and its half-widths; the rig maps each part's paint onto its own bone by a similarity (mirrored
+for the other facing), the capsule outline stays the rig's ink, a part narrower than the rig's (`rig_r`) is stretched
+across. Einstein was cut from the reference with GrabCut (OpenCV) and his tunic, arm skin and head placed on the rig:
+the paint follows the knee and elbow bends, the fall and the front turn. `check` 0 findings; 14 tests.
+
+Learned: a figure painted in one 3/4 pose is a poor parts source (the arm crosses the tunic, the hair hangs over the
+shoulder, the legs are cropped), so three bones had to be moved by hand and the torso is a stretched strip of fur. The
+production sheet must paint every part straight, separate and complete, with the hidden overlap under each joint, on a
+flat chroma, one view per sheet. Files: `bend_poc_v3*` and `einstein_parts/` next to the earlier versions.
