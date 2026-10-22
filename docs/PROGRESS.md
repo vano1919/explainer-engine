@@ -1102,4 +1102,6 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
 - 12:01 first live attempt: $0, every account refused (BFL 403 Not authenticated, fal 403 locked: exhausted balance); account
   errors now stop a candidate after one call. 12:26 the creator asked for style variants first: `pilot styles` (six looks, one
   scene, Klein + Seedream, $0.29, own approval) added with a test; waiting for his card and the account top-ups.
-
+- 2026-10-22 12:35, stage D style step: the creator's mix replaces the six generic looks (`imagegen/pilot.py` QUALITIES +
+  STYLES: volume, clean design, cinematic, comic faces in six blends, no work named in a prompt, `BANNED_NAMES` guard and test);
+  estimate $0.294 unchanged, new hash 32fbe1f4c423fffc. Nothing paid.

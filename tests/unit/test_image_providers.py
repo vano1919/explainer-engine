@@ -264,6 +264,11 @@ def test_style_step_prices_six_looks_and_needs_its_own_approval(tmp_path, monkey
     sp = pilot.style_plan()
     assert [len(c["styles"]) for c in sp["candidates"]] == [6, 6] and sp["usd"] == pytest.approx(6 * 0.009 + 6 * 0.04)
     assert all(st["prompt"].endswith("no logo") and "Mira" in st["prompt"] for c in sp["candidates"] for st in c["styles"])
+    assert not [n for c in sp["candidates"] for st in c["styles"] for n in pilot.BANNED_NAMES if n in st["prompt"].lower()]
+    monkeypatch.setattr(pilot, "STYLES", pilot.STYLES + [("bad", "bad", "in the style of SpongeBob")])
+    with pytest.raises(ValueError, match="no_names"):
+        pilot.style_plan()
+    monkeypatch.setattr(pilot, "STYLES", pilot.STYLES[:-1])
     with pytest.raises(ValueError, match="editor"):
         pilot.style_plan(["fal:qwen-image-edit-2511:1K_wide"])
     ledger = Run.open(tmp_path / "run.json", caps={"bfl_usd": 1.0, "fal_usd": 1.0})

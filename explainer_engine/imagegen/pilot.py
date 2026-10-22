@@ -46,15 +46,27 @@ SHOTS = [
 ]
 # The style step (the creator, 2026-10-22: "show me style variants to approve"): one scene, six looks, one take each, on the
 # two text-to-image candidates; the creator picks the look the model comparison then runs in (OR-16: one collage per choice).
+# The six looks are the creator's own mix of reference qualities (below).
 STYLE_SCENE = f"{HEROES} arguing over a telegram inside {ROOM}; Mira stands left by the window, Teo sits right at the desk, medium shot"
+# The creator's mix (2026-10-22 12:31): the volume and character acting of a big-studio animal comedy, the clean repeatable
+# character design of an adult sci-fi cartoon, the composition and cinematic environments of a stylised samurai series, the
+# comedic squash-and-stretch faces of an undersea cartoon. Six blends of those QUALITIES, described in our own words: no
+# show, studio, artist or character is named in a prompt (look_v2 "no_names", RIGHTS_AND_FAIR_USE, invariant 5).
+QUALITIES = {
+    "volume": "soft rounded 3D-like volumes with exaggerated body shapes, strong personality in every pose",
+    "clean_design": "clean simple consistent character designs with uniform line weight, easy to redraw from any angle",
+    "cinematic": "bold graphic cinematic composition, wide framing with strong silhouettes, negative space, stylised flat-colour environments",
+    "elastic_faces": "rubbery squash-and-stretch faces with big comedic expressions and readable mouth shapes",
+}
 STYLES = [
-    ("anime_cel", "anime cel", "modern TV anime cel style: clean thin line art, flat cel shading with one shadow tone, bright saturated colours, expressive eyes on adult faces"),
-    ("anime_painted", "anime, painted bg", "anime feature-film style: cel-shaded characters over richly painted detailed backgrounds, warm cinematic light"),
-    ("ink_graphic_novel", "graphic-novel ink", "cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted background, one thick dark outline"),
-    ("ink_watercolour", "ink + watercolour", "ink line drawing with loose watercolour washes, visible paper texture, soft glowing light"),
-    ("cartoon_25d", "colourful 2.5D cartoon", "colourful 2.5D cartoon style: soft rounded volumes, gentle gradients, layered depth, crisp outlines, vibrant palette"),
-    ("retro_90s_anime", "90s anime", "1990s hand-painted cel anime look: slightly grainy, muted film palette, hand-inked lines, dramatic rim light"),
+    ("mix_volume_cinematic", "volume + cinematic", f"{QUALITIES['volume']}; {QUALITIES['cinematic']}; warm saturated palette"),
+    ("mix_volume_faces", "volume + comic faces", f"{QUALITIES['volume']}; {QUALITIES['elastic_faces']}; bright playful palette"),
+    ("mix_clean_cinematic", "clean design + cinematic", f"{QUALITIES['clean_design']}; {QUALITIES['cinematic']}; limited bold palette with one accent colour"),
+    ("mix_clean_faces", "clean design + comic faces", f"{QUALITIES['clean_design']}; {QUALITIES['elastic_faces']}; flat bright colours, thin dark outlines"),
+    ("mix_all_four", "all four, balanced", f"{QUALITIES['volume']}; {QUALITIES['clean_design']}; {QUALITIES['cinematic']}; {QUALITIES['elastic_faces']}"),
+    ("mix_cinematic_dark", "cinematic, dramatic", f"{QUALITIES['cinematic']}; {QUALITIES['volume']}; dramatic single key light, deep shadows, moody palette"),
 ]
+BANNED_NAMES = ("madagascar", "rick", "morty", "samurai jack", "spongebob", "dreamworks", "nickelodeon", "cartoon network", "adult swim", "tartakovsky", "hillenburg")
 STYLE_CANDIDATES = ["bfl:flux-3-image-klein:1k", "fal:seedream-4.5-t2i:2K_wide"]
 NO_TEXT = ", no text, no letters, no logo"
 
@@ -120,8 +132,12 @@ def style_plan(candidates: list[str] | None = None) -> dict:
         usd = klass.PRICES[c["model"]][c["size"]]
         if klass.MAX_REFS.get(c["model"], 0) and c["model"] in EDIT_ONLY:
             raise ValueError(f"{c['model']} is an editor; the style step needs a text-to-image model")
-        rows.append({**c, "service": klass.service, "usd_each": usd, "usd": round(usd * len(STYLES), 4),
-                     "styles": [{"style": sid, "title": t, "prompt": f"{STYLE_SCENE}, {look}{NO_TEXT}"} for sid, t, look in STYLES]})
+        styles = [{"style": sid, "title": t, "prompt": f"{STYLE_SCENE}, {look}{NO_TEXT}"} for sid, t, look in STYLES]
+        for st in styles:
+            hit = [n for n in BANNED_NAMES if n in st["prompt"].lower()]
+            if hit:
+                raise ValueError(f"style {st['style']} names {hit}: describe the quality, never the work (no_names)")
+        rows.append({**c, "service": klass.service, "usd_each": usd, "usd": round(usd * len(STYLES), 4), "styles": styles})
     p = {"schema": "pilot_style_plan/1", "candidates": rows, "usd": round(sum(r["usd"] for r in rows), 4), "by_service": {},
          "created": time.strftime("%Y-%m-%dT%H:%M:%S")}
     for r in rows:
