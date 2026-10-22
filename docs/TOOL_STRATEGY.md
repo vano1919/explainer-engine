@@ -127,6 +127,10 @@ prices bfl and fal rows next to Gemini's; `paint run` paints through the adapter
 Seedream 4.5 2K + Qwen-Edit 1344x768), `run` refused without the creator's approval of the plan hash on the ledger
 (`Run.approve("pilot", ...)`), results.json per take (cost, seconds, seed, refusal or error), a collage per candidate for the
 creator (OR-16). Not computed by code: SigLIP-2 / DINOv2 similarity (model download; the creator's 1-5 decides).
+Style step first (the creator, 2026-10-22): `pilot styles-estimate` / `pilot styles --approved-by --ref` paints one scene in
+six looks (anime cel, anime with painted backgrounds, graphic-novel ink, ink + watercolour, colourful 2.5D cartoon, 1990s
+anime) on Klein and Seedream 4.5 text-to-image, $0.29, its own approval hash, one numbered sheet per model; the model
+comparison then runs in the look the creator picks. Account errors (401/402/403) stop a candidate after one call.
 Not built: a Modal/Replicate adapter, the Illustrious pod leg (RunPod balance), the batch tier outside Gemini.
 
 ## Kit test (before any full kit)

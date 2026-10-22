@@ -1099,4 +1099,7 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
 - Tests: `tests/unit/test_image_providers.py` (12: BFL and fal flows with fake HTTP, moderation and 402 refunds, lost answer,
   timeout, missing key, cache key, pilot plan/hash, refused without approval, cap stop, CLI estimate). PP-01 names the providers.
 - Waiting on the creator: the decision card (run the pilot ~$2; with or without the Illustrious pod).
+- 12:01 first live attempt: $0, every account refused (BFL 403 Not authenticated, fal 403 locked: exhausted balance); account
+  errors now stop a candidate after one call. 12:26 the creator asked for style variants first: `pilot styles` (six looks, one
+  scene, Klein + Seedream, $0.29, own approval) added with a test; waiting for his card and the account top-ups.
 

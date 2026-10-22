@@ -44,6 +44,20 @@ SHOTS = [
     ("s5_era", "era jump, same style", f"{HEROES} standing in a 1969 mission control room, rows of green consoles, cigarette haze, same drawing style and faces as the reference", "ref", "s1_sheet"),
     ("s6_sign", "legible sign text", "a wooden shop sign hanging over the telegraph office door that reads exactly 'WESTERN UNION' in painted serif letters, rain-wet, same style", "ref", "s2_room"),
 ]
+# The style step (the creator, 2026-10-22: "show me style variants to approve"): one scene, six looks, one take each, on the
+# two text-to-image candidates; the creator picks the look the model comparison then runs in (OR-16: one collage per choice).
+STYLE_SCENE = f"{HEROES} arguing over a telegram inside {ROOM}; Mira stands left by the window, Teo sits right at the desk, medium shot"
+STYLES = [
+    ("anime_cel", "anime cel", "modern TV anime cel style: clean thin line art, flat cel shading with one shadow tone, bright saturated colours, expressive eyes on adult faces"),
+    ("anime_painted", "anime, painted bg", "anime feature-film style: cel-shaded characters over richly painted detailed backgrounds, warm cinematic light"),
+    ("ink_graphic_novel", "graphic-novel ink", "cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted background, one thick dark outline"),
+    ("ink_watercolour", "ink + watercolour", "ink line drawing with loose watercolour washes, visible paper texture, soft glowing light"),
+    ("cartoon_25d", "colourful 2.5D cartoon", "colourful 2.5D cartoon style: soft rounded volumes, gentle gradients, layered depth, crisp outlines, vibrant palette"),
+    ("retro_90s_anime", "90s anime", "1990s hand-painted cel anime look: slightly grainy, muted film palette, hand-inked lines, dramatic rim light"),
+]
+STYLE_CANDIDATES = ["bfl:flux-3-image-klein:1k", "fal:seedream-4.5-t2i:2K_wide"]
+NO_TEXT = ", no text, no letters, no logo"
+
 DEFAULT_CANDIDATES = ["bfl:flux-3-image-klein:1k", "fal:seedream-4.5:2K_wide", "fal:qwen-image-edit-2511:1K_wide"]
 EDIT_ONLY = {"qwen-image-edit-2511"}
 T2I_FOR = {"seedream-4.5": "seedream-4.5-t2i"}  # the model a candidate uses for a shot without a source
@@ -95,6 +109,93 @@ def table(p: dict) -> str:
     lines.append(f"{'total':42} {'':>14} {p['usd']:>8.3f}   per service: " + ", ".join(f"{k} {v:.2f}" for k, v in p["by_service"].items()))
     lines.append(f"plan hash {p['hash']}; three-fold rerun margin {p['usd'] * 3:.2f}; the card's ceiling 15.00")
     return "\n".join(lines)
+
+
+def style_plan(candidates: list[str] | None = None) -> dict:
+    """The style step priced before sending: one picture per style per candidate; its own hash and approval."""
+    rows = []
+    for spec in candidates or STYLE_CANDIDATES:
+        c = parse(spec)
+        klass = providers.cls(c["provider"])
+        usd = klass.PRICES[c["model"]][c["size"]]
+        if klass.MAX_REFS.get(c["model"], 0) and c["model"] in EDIT_ONLY:
+            raise ValueError(f"{c['model']} is an editor; the style step needs a text-to-image model")
+        rows.append({**c, "service": klass.service, "usd_each": usd, "usd": round(usd * len(STYLES), 4),
+                     "styles": [{"style": sid, "title": t, "prompt": f"{STYLE_SCENE}, {look}{NO_TEXT}"} for sid, t, look in STYLES]})
+    p = {"schema": "pilot_style_plan/1", "candidates": rows, "usd": round(sum(r["usd"] for r in rows), 4), "by_service": {},
+         "created": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    for r in rows:
+        p["by_service"][r["service"]] = round(p["by_service"].get(r["service"], 0.0) + r["usd"], 4)
+    p["hash"] = hashlib.sha256(json.dumps([[(r["provider"], r["model"], r["size"]) for r in rows], STYLE_SCENE, STYLES], sort_keys=True).encode()).hexdigest()[:16]
+    return p
+
+
+def run_styles(p: dict, out: Path, ledger: Run, *, factory=providers.get, log=print) -> dict:
+    """Paint the style step (refused without the creator's approval of its hash) and build one sheet per candidate."""
+    out = Path(out)
+    if not ledger.approved("styles", p["hash"]):
+        raise PermissionError(f"the style plan {p['hash']} has no recorded approval on {ledger.path}")
+    path = out / "styles.json"
+    res = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {"schema": "pilot_styles/1", "plan_hash": p["hash"], "candidates": {}}
+    stopped = None
+    for c in p["candidates"]:
+        cdir = out / "styles" / c["id"]
+        cdir.mkdir(parents=True, exist_ok=True)
+        prov = factory(c["provider"], root=cdir / "_raw", run=ledger)
+        rec = res["candidates"].setdefault(c["id"], {"provider": c["provider"], "model": c["model"], "size": c["size"], "styles": {}})
+        for st in c["styles"]:
+            if rec["styles"].get(st["style"], {}).get("file"):
+                continue
+            try:
+                r = prov.generate(f"style_{st['style']}", st["prompt"], model=c["model"], size=c["size"], seed=1)
+                (cdir / f"{st['style']}.png").write_bytes(r.data)
+                rec["styles"][st["style"]] = {"file": f"{st['style']}.png", "seconds": r.seconds, "seed": r.seed,
+                                              "usd": r.usd_settled if r.usd_settled is not None else r.usd_estimated}
+                log(f"{c['id']} {st['style']}: {r.seconds}s")
+            except CapReached as exc:
+                stopped = str(exc)
+                break
+            except AccountError as exc:
+                rec["styles"][st["style"]] = {"error": "account", "detail": str(exc)[:200]}
+                log(f"{c['id']}: account unusable: {str(exc)[:160]}")
+                break
+            except (ProviderError, ChargeUncertain) as exc:
+                rec["styles"][st["style"]] = {"error": "failed", "detail": str(exc)[:200]}
+            write_json_atomic(path, res)
+        write_json_atomic(path, res)
+        if stopped:
+            break
+    res["stopped"] = stopped
+    write_json_atomic(path, res)
+    return res
+
+
+def style_sheet(out: Path, candidate_id: str, *, cell: tuple[int, int] = (480, 270)) -> Path:
+    """Six looks side by side, numbered 1-6 with their names: the creator answers with a number (OR-16)."""
+    from PIL import Image, ImageDraw
+    out = Path(out)
+    rec = json.loads((out / "styles.json").read_text(encoding="utf-8"))["candidates"][candidate_id]
+    w, h = cell
+    cols, label = 3, 24
+    rows = (len(STYLES) + cols - 1) // cols
+    sheet = Image.new("RGB", (w * cols, label + (h + label) * rows), (20, 20, 20))
+    d = ImageDraw.Draw(sheet)
+    d.text((8, 5), f"{rec['provider']} {rec['model']} {rec['size']}: one scene, six looks", fill=(230, 230, 230))
+    for i, (sid, title, _look) in enumerate(STYLES):
+        x, y = (i % cols) * w, label + (i // cols) * (h + label)
+        info = rec["styles"].get(sid, {})
+        f = out / "styles" / candidate_id / (info.get("file") or "-")
+        if info.get("file") and f.exists():
+            im = Image.open(f).convert("RGB")
+            im.thumbnail((w - 4, h - 4))
+            sheet.paste(im, (x + 2, y + 2))
+        else:
+            d.rectangle([x + 2, y + 2, x + w - 2, y + h - 2], outline=(90, 90, 90))
+            d.text((x + 10, y + 10), (info.get("error") or "missing")[:40], fill=(220, 120, 120))
+        d.text((x + 6, y + h + 4), f"{i + 1}. {title}", fill=(240, 220, 120))
+    path = out / f"styles_{candidate_id}.png"
+    sheet.save(path)
+    return path
 
 
 def run(p: dict, out: Path, ledger: Run, *, factory=providers.get, log=print, only: list[str] | None = None) -> dict:
@@ -200,6 +301,12 @@ def collage(out: Path, candidate_id: str, *, cell: tuple[int, int] = (320, 180))
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
+    for name in ("styles-estimate", "styles"):
+        s = sub.add_parser(name)
+        if name == "styles":
+            s.add_argument("--out", required=True)
+            s.add_argument("--approved-by", default="")
+            s.add_argument("--ref", default="")
     for name in ("estimate", "run", "collage"):
         s = sub.add_parser(name)
         s.add_argument("--takes", type=int, default=4)
@@ -211,6 +318,28 @@ def main(argv: list[str] | None = None) -> int:
             s.add_argument("--ref", default="", help="where the creator said yes (message id or date and words)")
             s.add_argument("--only", default="", help="comma-separated candidate ids")
     a = ap.parse_args(argv)
+    if a.cmd in ("styles-estimate", "styles"):
+        sp = style_plan()
+        for r in sp["candidates"]:
+            print(f"{r['provider']}:{r['model']}:{r['size']:10} {len(r['styles'])} looks x ${r['usd_each']:.3f} = ${r['usd']:.3f}")
+        print(f"total ${sp['usd']:.3f}, hash {sp['hash']}")
+        if a.cmd == "styles-estimate":
+            print("nothing is sent: `pilot styles --approved-by --ref` records the creator's yes on this hash first")
+            return 0
+        out = Path(a.out)
+        out.mkdir(parents=True, exist_ok=True)
+        write_json_atomic(out / "style_plan.json", sp)
+        ledger = Run.open(out / "styles_run.json", caps={s_: round(v * 3, 2) for s_, v in sp["by_service"].items()}, styles=sp["hash"])
+        if a.approved_by and a.ref:
+            ledger.approve("styles", sp["hash"], by=a.approved_by, ref=a.ref, provider=",".join(sorted({c["provider"] for c in sp["candidates"]})), usd=sp["usd"])
+        try:
+            res = run_styles(sp, out, ledger)
+        except PermissionError as exc:
+            print("refused:", exc)
+            return 2
+        for cid in res["candidates"]:
+            print(cid, "->", style_sheet(out, cid))
+        return 3 if res.get("stopped") else 0
     p = plan([c for c in a.candidates.split(",") if c], takes=a.takes)
     if a.cmd == "estimate":
         print(table(p))

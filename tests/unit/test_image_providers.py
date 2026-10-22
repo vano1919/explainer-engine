@@ -256,3 +256,27 @@ def test_an_account_error_stops_the_candidate_after_one_call(tmp_path, monkeypat
                     log=lambda *a: None)
     rec = res["candidates"]["bfl_flux_3_image_klein_1k"]
     assert len(calls) == 1 and "403" in rec["account_error"] and rec["failures"] == 1 and ledger.spent("bfl_usd") == 0.0
+
+
+def test_style_step_prices_six_looks_and_needs_its_own_approval(tmp_path, monkeypatch):
+    """The creator, 2026-10-22: show style variants first. One scene, six looks, one take, on the two t2i candidates."""
+    monkeypatch.setenv("EXPLAINER_IMAGE_CACHE", str(tmp_path / "cache"))
+    sp = pilot.style_plan()
+    assert [len(c["styles"]) for c in sp["candidates"]] == [6, 6] and sp["usd"] == pytest.approx(6 * 0.009 + 6 * 0.04)
+    assert all(st["prompt"].endswith("no logo") and "Mira" in st["prompt"] for c in sp["candidates"] for st in c["styles"])
+    with pytest.raises(ValueError, match="editor"):
+        pilot.style_plan(["fal:qwen-image-edit-2511:1K_wide"])
+    ledger = Run.open(tmp_path / "run.json", caps={"bfl_usd": 1.0, "fal_usd": 1.0})
+    ledger.approve("pilot", pilot.plan()["hash"], by="x", ref="y", provider="bfl", usd=1)  # the model pilot's yes is not the style step's
+    with pytest.raises(PermissionError):
+        pilot.run_styles(sp, tmp_path / "out", ledger, factory=lambda name, **kw: FakeProvider(name, **kw), log=lambda *a: None)
+    ledger.approve("styles", sp["hash"], by="ვანო", ref="card", provider="bfl,fal", usd=sp["usd"])
+    FakeProvider.made.clear()
+    res = pilot.run_styles(sp, tmp_path / "out", ledger, factory=lambda name, **kw: FakeProvider(name, **kw), log=lambda *a: None)
+    assert len(FakeProvider.made) == 12 and res["stopped"] is None
+    assert ledger.spent("bfl_usd") == pytest.approx(0.054) and ledger.spent("fal_usd") == pytest.approx(0.24)
+    sheet = pilot.style_sheet(tmp_path / "out", "bfl_flux_3_image_klein_1k")
+    assert Image.open(sheet).size == (480 * 3, 24 + (270 + 24) * 2)
+    FakeProvider.made.clear()
+    pilot.run_styles(sp, tmp_path / "out", ledger, factory=lambda name, **kw: FakeProvider(name, **kw), log=lambda *a: None)
+    assert FakeProvider.made == []  # painted once, never again
