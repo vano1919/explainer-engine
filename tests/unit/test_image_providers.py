@@ -285,3 +285,25 @@ def test_style_step_prices_six_looks_and_needs_its_own_approval(tmp_path, monkey
     FakeProvider.made.clear()
     pilot.run_styles(sp, tmp_path / "out", ledger, factory=lambda name, **kw: FakeProvider(name, **kw), log=lambda *a: None)
     assert FakeProvider.made == []  # painted once, never again
+
+
+def test_gemini_depleted_credits_are_an_account_error(tmp_path):
+    """2026-10-22 14:19: a 402 "prepayment credits are depleted" was sent ten times (all refused, $0); now the first one stops."""
+    from explainer_engine.imagegen import gemini as G
+    from explainer_engine.imagegen.providers.base import AccountError
+    from explainer_engine.imagegen.providers.gemini_adapter import Gemini
+
+    class Client:
+        spent = 0.0
+
+        def __init__(self, msg):
+            self.msg = msg
+
+        def generate(self, *a, **k):
+            raise G.GeminiError(self.msg)
+
+    with pytest.raises(AccountError):
+        Gemini(tmp_path, client=Client("gemini-nano-banana-2.1: HTTP 402: credits depleted")).generate("x", "p", model="gemini-nano-banana-2.1", size="2K")
+    with pytest.raises(ProviderError) as e:
+        Gemini(tmp_path, client=Client("gemini-nano-banana-2.1: HTTP 500: busy")).generate("x", "p", model="gemini-nano-banana-2.1", size="2K")
+    assert not isinstance(e.value, AccountError)

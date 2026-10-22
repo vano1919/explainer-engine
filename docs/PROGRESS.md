@@ -1149,3 +1149,7 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
   and is never given his picture as an input; the lint caught "wobbly" (a look v2 child cue) and it was replaced.
   Estimate on Gemini Nano Banana 2.1 2K, 5 directions x 2 takes: $0.50 (3.1 Flash $1.01). BFL still answers "Not authenticated",
   fal is locked. Tests `tests/unit/test_universe_boards.py` (10). Waiting on his card.
+- 14:19 the approved run (card cmsg_01Hnu5zB86sjUj5GtTgaUkPWCTKFFQJ2XNiT2NW3zgjnPx, Nano Banana 2.1, $0.50): $0 spent, every request
+  refused with Gemini HTTP 402 "prepayment credits are depleted". The adapter sent all ten because a Gemini 402 was a plain provider
+  error; `providers/gemini_adapter.py` now raises `AccountError` on 401/402/403, so the first one stops the candidate (test added).
+  The approval stays bound to plan hash 807c365090475447 in `jobs/universe/2026-10-22_grid/run.json`; a rerun after a top-up paints it.
