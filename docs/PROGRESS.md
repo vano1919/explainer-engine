@@ -1074,5 +1074,5 @@ be: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md)
 - The pod placed on an L40S at $0.79/h (no A40 free), so the $2.85 ceiling ends it after 216 min: the watchdog stops
   training at 100 min (800 steps, a checkpoint every 100) and the clips stop at 180 min (`schedule_fits`).
 - Narration: one ElevenLabs take, 1,522 credits, 113.7 s; word times by faster-whisper; 16 segments.
-- Tests: `tests/unit/test_aivideo_shotplan.py` (9). The rig cartoon route (bend_rig, ice_short, physics2d, mocap, gaits,
-  pymunk) and its four test files are removed in a separate commit so the creator can review or revert it alone.
+- Tests: `tests/unit/test_aivideo_shotplan.py` (9). Proposed for removal on the creator's word (not done): the rig cartoon
+  route (production/bend_rig, ice_short, physics2d, mocap, gaits.json, pymunk) and its four test files.
