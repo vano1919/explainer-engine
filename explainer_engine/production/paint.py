@@ -37,6 +37,7 @@ from explainer_engine.core.ledger import CapReached, Run
 from explainer_engine.core.store import write_json_atomic
 from explainer_engine.imagegen import plan as P
 from explainer_engine.imagegen import routing
+from explainer_engine.imagegen.providers.base import ProviderError
 from explainer_engine.imagegen.gemini import ChargeUncertain, GeminiClient, GeminiError, open_batches
 from explainer_engine.production import compile as C
 from explainer_engine.production import faces as FACES
@@ -65,6 +66,22 @@ def as_jpeg(png: bytes, quality: int = 90) -> bytes:
     b = io.BytesIO()
     Image.open(io.BytesIO(png)).convert("RGB").save(b, "JPEG", quality=quality)
     return b.getvalue()
+
+
+def reference_assets(items: list[dict], doc: dict, dirs: list[Path]) -> dict:
+    """{reference as the plan names it: asset library id} for every reference whose bytes are a library asset (WB-04),
+    so the plan says which channel assets its pictures lean on; references outside the library are simply absent."""
+    paths = {}
+    for it in items:
+        for ref in it.get("refs", []):
+            name = (doc.get("library", {}).get(ref.removesuffix(".png")) or {}).get("file") or f"{ref.removesuffix('.png')}.png"
+            for d in dirs:
+                if (d / name).exists():
+                    paths.setdefault(ref, d / name)
+                    break
+    from explainer_engine.assets import library as L
+    by_name = L.ids_for_files(list(paths.values()))
+    return {ref: by_name[p.name] for ref, p in paths.items() if p.name in by_name}
 
 
 def to_paint(doc: dict) -> list[dict]:
@@ -120,8 +137,8 @@ def cmd_plan(a) -> int:
     doc = S.load(path)
     out = Path(a.out)
     run = Run.open(a.run) if a.run else None
+    found = [path.parent / d for d in doc.get("picture_dirs", [])] + [out]
     if a.faces:
-        found = [path.parent / d for d in doc.get("picture_dirs", [])] + [out]
         items = pending(FACES.to_paint(doc, found), out, run)
         a.reusable = True  # a sheet is the channel's asset: every later scene and episode reuses it
         a.purpose = a.purpose or ("expression sheets of " + ", ".join(sorted({i["who"] for i in items})) +
@@ -139,6 +156,7 @@ def cmd_plan(a) -> int:
                   purpose=a.purpose or "", reusable=a.reusable)
     if a.faces:
         plan["faces_saving"] = FACES.saving(doc, items, plan["estimate_usd"] / len(items) if items else 0.0)
+    plan["assets"] = reference_assets(items, doc, found)
     dest = write_json_atomic(out / "plans" / f"{a.id}.json", plan)
     print(f"plan {a.id}: {len(items)} pictures, {plan['provider']} {plan['model'] or ''} {plan['size'] or ''}"
           f"{' batch' if a.batch else ''}, estimate ${plan['estimate_usd']:.3f}, hash {plan['hash']} -> {dest}")
@@ -192,6 +210,10 @@ def cmd_run(a) -> int:
               f"Run it there with {a.plan}; record each picture with its hash in {run.path}.")
         return 0
     client = GeminiClient(out / "_gemini", cap_usd=1e9, run=run)
+    adapter = None
+    if P.PROVIDERS[plan["provider"]].get("adapter"):  # bfl / fal: one adapter, the same ledger (D-70 stage D)
+        from explainer_engine.imagegen import providers
+        adapter = providers.get(plan["provider"], root=out / f"_{plan['provider']}", run=run)
     open_items = open_batches(out / "_gemini")
     todo = []
     for it in pending(plan["items"], out, run):
@@ -204,8 +226,11 @@ def cmd_run(a) -> int:
     print(f"{len(todo)} pictures to paint; spent so far ${run.spent('gemini_usd'):.3f} of cap "
           f"{run.data['caps'].get('gemini_usd')} (stop at 80 %)")
     if plan.get("batch"):
+        if adapter is not None:
+            print("refused: the batch tier is Gemini's; make the plan without --batch for", plan["provider"])
+            return 2
         return _run_batch(a, todo, doc, dirs, out, run, client, plan)
-    stats = {"painted": 0, "failed": 0, "stop": None}
+    stats = {"painted": 0, "failed": 0, "stop": None, "keys": []}
 
     def one(it: dict) -> None:
         key = it["id"]
@@ -213,11 +238,19 @@ def cmd_run(a) -> int:
             return
         try:
             refs = [ref_bytes(dirs, doc, r.removesuffix(".png")) for r in it["refs"]]
-            p = client.generate(key, it["prompt"], model=plan["model"], size=plan["size"], refs=refs)
-            (out / f"{key}.png").write_bytes(Path(p).read_bytes())
-            run.done("pictures", key, file=f"{key}.png", plan=plan["id"], hash=P.item_hash(it),
-                     usd=P.price("gemini", plan["model"], plan["size"], len(refs)))
+            if adapter is not None:
+                res = adapter.generate(key, it["prompt"], model=plan["model"], size=plan["size"], refs=refs)
+                (out / f"{key}.png").write_bytes(res.data)
+                usd = res.usd_settled if res.usd_settled is not None else res.usd_estimated
+                run.done("pictures", key, file=f"{key}.png", plan=plan["id"], hash=P.item_hash(it), usd=usd, seed=res.seed,
+                         model_version=res.model_version)
+            else:
+                p = client.generate(key, it["prompt"], model=plan["model"], size=plan["size"], refs=refs)
+                (out / f"{key}.png").write_bytes(Path(p).read_bytes())
+                run.done("pictures", key, file=f"{key}.png", plan=plan["id"], hash=P.item_hash(it),
+                         usd=P.price("gemini", plan["model"], plan["size"], len(refs)))
             stats["painted"] += 1
+            stats["keys"].append(key)
             print("painted", key, f"${run.spent('gemini_usd'):.3f}", flush=True)
         except CapReached as exc:
             stats["stop"] = str(exc)
@@ -226,13 +259,14 @@ def cmd_run(a) -> int:
             stats["failed"] += 1
             run.fail(key, f"charge uncertain: {exc}")
             print("uncertain", key, str(exc)[:120], flush=True)
-        except (GeminiError, FileNotFoundError) as exc:
+        except (GeminiError, ProviderError, FileNotFoundError) as exc:
             stats["failed"] += 1
             more = run.fail(key, str(exc))
             print("failed", key, "(may be tried again)" if more else f"(stopped after {MAX_FAILURES})", str(exc)[:120], flush=True)
 
     with ThreadPoolExecutor(max_workers=max(1, a.workers)) as pool:
         list(pool.map(one, todo))
+    shelve(plan, out, stats["keys"])
     if stats["stop"]:
         run.phase("5_pictures", "STOPPED", stats["stop"])
         return 3
@@ -240,19 +274,33 @@ def cmd_run(a) -> int:
     return 0 if not stats["failed"] else 1
 
 
+def shelve(plan: dict, out: Path, painted: list[str]) -> None:
+    """A reusable plan's pictures (face sheets, channel assets) go into the asset library with their provenance (WB-10)."""
+    if not (plan.get("reusable") and painted):
+        return
+    from explainer_engine.assets import library as L
+    recs = L.record_painted(plan, out, painted)
+    if recs:
+        print(f"library: {len(recs)} picture(s) registered as channel assets ({', '.join(r['id'] for r in recs[:4])}"
+              f"{', ...' if len(recs) > 4 else ''}); the creator's look is still owed (approval not_looked)")
+
+
 def _record(res: dict, plan: dict, out: Path, run: Run, batch: str) -> int:
     by_id = {i["id"]: i for i in plan["items"]}
     failed = 0
+    painted = []
     for item, val in res["items"].items():
         if isinstance(val, Path):
             (out / f"{item}.png").write_bytes(val.read_bytes())
             run.done("pictures", item, file=f"{item}.png", batch=batch, plan=plan["id"],
                      hash=P.item_hash(by_id[item]) if item in by_id else None)
+            painted.append(item)
             print("painted", item, flush=True)
         else:
             failed += 1
             run.fail(item, str(val))
             print("failed", item, str(val)[:100], flush=True)
+    shelve(plan, out, painted)
     return failed
 
 

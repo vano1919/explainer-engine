@@ -2,7 +2,9 @@
   "_doc": "The creator's money ceilings, enforced in code (explainer_engine/core/spend_caps.py, D-56). A run ledger may set lower caps, never higher; a pod is refused when it would pass any RunPod line. Raise a number only on the creator's word.",
   "per_episode": {
     "runpod_usd": 3.0,
-    "gemini_usd": 10.0
+    "gemini_usd": 10.0,
+    "bfl_usd": 3.0,
+    "fal_usd": 9.0
   },
   "runpod": {
     "per_pod_usd": 1.0,
@@ -10,6 +12,8 @@
     "max_hours_per_pod": 2.0,
     "max_price_per_hour": 0.95,
     "min_balance_left_usd": 0.25,
-    "keep_stopped_pods": []
-  }
+    "keep_stopped_pods": [],
+    "keep_network_volumes": []
+  },
+  "_pilot": "stage D pilot (D-70, the creator's card 2026-10-22, ceiling $15): bfl_usd 3 + fal_usd 9 + runpod_usd 3; each paid run still posts its estimate first"
 }

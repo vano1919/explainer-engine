@@ -42,6 +42,7 @@ HOMES = {
     "ES": "EPISODE_STANDARDS.md",
     "TN": "THUMBNAIL_RULES.md",
     "BP": "SOURCED_RULES.md",  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
+    "WB": "WORLD_BIBLE.md",  # the World Bible and the asset library (D-70 stage C, 2026-10-22)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))
 ID = re.compile(rf"\b({_PREFIX})-([TE]?\d{{2,3}})\b")

@@ -44,18 +44,95 @@ conductor ended. A pod's end is STOP; deletion only on the creator's word (`--on
 --yes`). `cost` settles the ledger with RunPod's billed amount. Session hooks (`.claude/settings.json`, `cloud/hooks.py`) run
 `check` at session start and refuse to end a turn while something bills that nobody approved or guards.
 
-RunPod facts behind it (docs.runpod.io API reference and pricing, read 2026-10-19):
+RunPod facts behind it (docs.runpod.io API reference v2 and pricing, read 2026-10-19 and 2026-10-22):
+- The manager speaks **REST v2** (`api.runpod.io/v2`) since 2026-10-22: REST v1 (`rest.runpod.io/v1`) is deprecated and
+  retired on 2026-11-15. The balance still comes from GraphQL `myself`; GraphQL `podStop`/`podTerminate` are the fallbacks.
 - Billing is per second for compute and disks. A stopped pod still bills its volume at $0.20/GB/month (running: $0.10 for
   container and volume): the stopped 60 GB preflight pod cost $0.40/day for three days (billing API, 2026-10-17..19).
 - At a $0 balance RunPod stops pods; pods without a network volume are terminated and their data is lost. Deploying needs at
   least one hour of credits.
 - `POST /pods` has no idempotency key and no TTL: a retried create can rent a second pod, so the manager never re-POSTs after
-  an unclear answer (only after a 429) and finds the pod by its unique name instead.
-- `GET /pods/{id}`: `desiredStatus` RUNNING/EXITED/TERMINATED, `costPerHr`, `lastStartedAt`, `publicIp`/`portMappings` empty
-  while initialising, 404 when gone. `GET /pods` filters by `name`, `desiredStatus`. `GET /billing/pods` (hour buckets,
-  `grouping=podId`) gives the billed `amount` and `timeBilledMs`, disks of stopped pods included.
-- No documented rate limit for the REST API; 429 and 5xx are retried with backoff. Stop on an already stopped pod is not
-  documented, so stop and delete check the state first and count only what GET shows afterwards.
+  an unclear answer (only after a 429) and finds the pod by its unique name instead. v2 takes ONE `gpu.id` per request (no
+  list of types), so the manager tries the pool's cards one by one and moves on only after a clear refusal; a pod is born
+  `PROVISIONING` with `cost` 0, so the money clock runs on the card ceiling until the real price shows.
+- `GET /pods/{id}`: `status` PROVISIONING/STARTING/RUNNING/EXITED/ERROR/TERMINATED, `cost` $/h, `runtime` (uptime, GPU
+  utilisation, mapped `ports`) only while RUNNING, `disk` and `mounts.persistent.size` for the disks, 404 when gone. `GET /pods`
+  is paginated (`pagination.nextCursor`) with no name filter. `POST /pods/{id}/action` `{"action": "stop"|"start"|
+  "terminate"}`; `DELETE /pods/{id}` answers 204. `GET /billing/pods?bucketSize=hour` gives `records[].totalAmount` per hour
+  (no billed seconds), disks of stopped pods included. `GET /pods/{id}/logs` streams server-sent events (`runpod logs <pod>`).
+- Rate limits arrive as `RateLimit` headers and 429 with `Retry-After` (v2 quotas are per minute/hour/day window, no published
+  numbers); the manager waits `Retry-After` when given, else backs off. Stop on an already stopped pod is not documented, so
+  stop and delete check the state first and count only what GET shows afterwards. A pod in `ERROR` is stopped by the guard
+  and listed by `check`; its disk is the creator's decision like any stopped one.
+- Independent validation (thread "RunPod validation", 2026-10-22, report in the project files) added: the account bills with
+  no pod through **network volumes** (`GET /network-volumes`, $0.07/GB/month), **global volumes** (`GET /global-volumes`) and
+  **serverless endpoints** with min workers > 0 (`GET /serverless`); `check`, the watchdog and the 24 h ceiling now cover them,
+  and the 24 h figure comes from the aggregate `GET /billing` (every resource), not from pods alone. `POST /pods` answering
+  **402** means no balance: no other card is tried. The GraphQL `myself` balance is the only balance source and **GraphQL
+  retires in early 2027** with no v2 balance endpoint (openapi.json, 2026-10-22): revisit by 2026-12; fallback = the creator's
+  top-ups reconciled against `billing_total` deltas. At **$0 balance RunPod terminates pods without a network volume** and
+  their data is gone: the creator should set RunPod's low-balance e-mail alert (the only native alert; v2 has no webhooks).
+  Inside a pod only a RESTRICTED key (`tools/runpod/pod_api_key.txt`, scope pods:write) is injected for the boot self-stop;
+  without it the guard's boot deadline does the stopping. The Bash hook also refuses `runpodctl create|start` and
+  `PATCH /v2/pods/{id}` (a pod edit resets the container: everything outside /workspace is lost).
+- The lost-money audit (thread "RunPod-ის დაკარგული თანხა", 2026-10-22): the $8 → $0.97 drop happened 2026-10-15..19, before
+  D-56 ($2.31 TMR pods on 10-15, $5.34 pods on 10-16, $1.05 the stopped 60 GB preflight disk 10-17..19); $0.00 billed since
+  2026-10-19 and the account is clean. Billing rows lag up to an hour (hour buckets).
+
+## The Guardian: job record, watchdog, phone commands (master brief 2026-10-22, stage B)
+
+Built 2026-10-22 after the creator's balance fell from ~$8 to $0.95 with "nothing paid running" (project chat, 09:13); every
+part is tested against a fake RunPod (`tests/unit/test_cloud_guardian.py`, the brief's fifteen recovery scenarios) and none
+of it spends money.
+
+- **Job record** (`explainer_engine/cloud/jobs.py`): `jobs/cloud/<slug>/job-NNN_<date>/{state.json, events.jsonl,
+  heartbeat.json}`. States QUEUED → PROVISIONING → STARTING → MODEL_LOADING → READY → RUNNING → CHECKPOINTING → UPLOADING →
+  SUCCEEDED, with FAILED, RETRYING, STALLED, STOPPING, STOPPED, RECOVERY_REQUIRED; only the listed transitions are legal.
+  `create` makes the record and the guard writes it on every look (`jobs.observe`: the pod's status and the conductor's
+  status line become job states; a heartbeat means progress - the status line changed, the stage changed or the GPU is busy -
+  never just "the API answered"). `jobs.stall` says when a state is quiet past its measured limit; the guard then marks
+  STALLED and pushes, and stops the pod only when every recorded output is in the store (`safe_to_release`); with unstored
+  outputs it marks RECOVERY_REQUIRED and leaves the pod to a person. A finished job with the same inputs is not run again.
+- **Durable store** (`cloud/store.py`, from TMR): `store_job` pushes the record and the output folders with a sha256 sidecar
+  and verifies size + hash before an output counts as stored. Backends: the HF dataset `vano1919/tmr-artifacts` or a folder
+  (`EXPLAINER_STORE_LOCAL`; a mounted R2 bucket later). Damaged files (torn JSON, empty PNG, cut MP4) are never pushed.
+- **Incident log** (`cloud/incidents.py` + `incidents.json`, 22 known incidents from TMR's prose log with fingerprint
+  provider/resource/stage/error class, cause, fix in code, cost): the guard, the watchdog and `create` append what they saw to
+  `tools/runpod/incidents.jsonl`; `doctor` names the known cause and fix and how often the fingerprint was seen.
+- **Watchdog outside the session** (`cloud/watchdog.py`, `.github/workflows/watchdog.yml`): pure rules over what RunPod shows,
+  no session file needed: a live pod past the lifetime in its name or without one is stopped; a pod in ERROR, a stopped disk, a
+  stand-alone network volume and a serverless endpoint with min workers > 0 are reported with their $/day; at the 24 h ceiling
+  every live pod is stopped; a balance under the floor is reported. GitHub Actions runs it every 30 minutes and "Run workflow"
+  with `kill_all` is the creator's STOP ALL from GitHub Mobile (stops, never deletes). **Setup the creator does once**: add the
+  repository secret `RUNPOD_API_KEY` (and `NTFY_TOPIC` for pushes) under Settings → Secrets and variables → Actions. A
+  Cloudflare Worker (cron every 5 min) is the second runner once the account exists.
+- **Phone commands** (`python -m explainer_engine.cloud status | logs <job|pod> | doctor [text] | budget | incidents [grep] |
+  stop-all --yes`): what bills now, what changed since the last look, the last confirmed sign of life per job, ceilings against
+  the last 24 h and the balance, known causes and fixes. No invented percentages. `check` (and the session hooks) now also list
+  network volumes and idle serverless workers, the two ways an account bills with no pod at all.
+
+## Image providers behind one interface and the model pilot (master brief 2026-10-22, stage D)
+
+`explainer_engine/imagegen/providers/`: `base.ImageProvider` (prices, reference limits and model versions as class data;
+`estimate` before any call; the run ledger reserves the money, `settle` records what the provider itself bills; one cache keyed by
+provider + model + prompt + size + seed + reference bytes, so a paid picture is never bought twice; a lost answer is
+`ChargeUncertain`, never retried or refunded; keys only from environment variables, never printed). Adapters: `bfl.py` (FLUX 3
+Image Klein, `POST /v1/flux-3-image-klein`, header `x-key`, poll only the returned `polling_url`, Ready / Error / moderation
+states, the signed picture URL lives 10 minutes), `fal.py` (queue API, `Authorization: Key`, `status_url` + `response_url` from
+the answer, Seedream 4.5 text-to-image and edit, Qwen-Image-Edit-2511), `gemini_adapter.py` (the existing client). `paint plan`
+prices bfl and fal rows next to Gemini's; `paint run` paints through the adapter with the same ledger. Caps: `config/spend_caps.json`
+`bfl_usd` 3, `fal_usd` 9 (the creator's card, 2026-10-22; ceiling $15 with RunPod's 3).
+
+`imagegen/pilot.py`: six shots x four takes per candidate, priced before anything is sent (`estimate`: $1.92 for Klein 1k +
+Seedream 4.5 2K + Qwen-Edit 1344x768), `run` refused without the creator's approval of the plan hash on the ledger
+(`Run.approve("pilot", ...)`), results.json per take (cost, seconds, seed, refusal or error), a collage per candidate for the
+creator (OR-16). Not computed by code: SigLIP-2 / DINOv2 similarity (model download; the creator's 1-5 decides).
+Style step first (the creator, 2026-10-22): `pilot styles-estimate` / `pilot styles --approved-by --ref` paints one scene in
+six looks, blended from the creator's four reference qualities (12:31: soft 3D-like volume and character acting, clean
+repeatable character design, cinematic composition and stylised environments, rubbery comic faces); the prompts describe the
+qualities only and `style_plan` refuses a prompt that names a show, studio or artist (invariant 5) on Klein and Seedream 4.5 text-to-image, $0.29, its own approval hash, one numbered sheet per model; the model
+comparison then runs in the look the creator picks. Account errors (401/402/403) stop a candidate after one call.
+Not built: a Modal/Replicate adapter, the Illustrious pod leg (RunPod balance), the batch tier outside Gemini.
 
 ## Kit test (before any full kit)
 1. Gemini, 1K: base traveller from the creator's reference 02 on flat green, then 8 poses and 4 expressions

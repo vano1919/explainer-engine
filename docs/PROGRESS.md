@@ -991,3 +991,121 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-22 - Stage A of the master brief: repo audit and tooling research (D-70)
+
+The creator's master brief (2026-10-22, thread "წარმოების არქიტექტურა და ვიზუალი") asks for a model- and provider-agnostic
+production system with one visual world, an Infrastructure Guardian and continuous QA, in stages A-H. Stage A done, nothing
+paid:
+
+- Repo audit ([research/REPO_AUDIT_2026-10-22](research/REPO_AUDIT_2026-10-22.md)): what exists and is tested (pod manager,
+  ledger, caps, paint plans, face sheets, chunked assembler, deterministic QA), what exists untested or unused (`core/store`,
+  `core/jobs`), what is documented only (asset record, licence register, style distance, world schema, Remotion, `paint
+  --estimate`) and the Guardian gaps: the guard dies with the sandbox and `check()` then treats a live pod as fine, no durable
+  copy of pod outputs in this repo, no state history or incident log, Gemini hard-wired behind a provider table, a cache key
+  that differs between sync and batch, a latent `end_pod` NameError, three unreconciled balance drops.
+- Tooling research with dated sources ([TOOLING_RESEARCH](TOOLING_RESEARCH.md) + three appendices): RunPod REST v1 retires
+  2026-11-15 (`cloud/runpod.py` uses it); Veo preview, Sora, Hume, PlayHT and OpenAI TTS are gone or ending; FLUX 3 Image
+  Klein ($0.009 per image, 10 refs, open weights), Seedream 4.5 and Qwen-Image-Edit-2511 are the picture pilot candidates,
+  Illustrious/Animagine the anime anchor; stills + 2.5D parallax stay the motion default, Wan 2.6 / Kling 3.0 only for hero
+  shots; ElevenLabs stays, with `/with-timestamps` replacing Scribe on the narration track; hosted per-output APIs beat pods
+  for bursts; Cloudflare Worker cron + R2 (free) for a watchdog that outlives the session; GitHub cron only as backup.
+- Plan ([ARCHITECTURE_PLAN_2026-10-22](ARCHITECTURE_PLAN_2026-10-22.md)) and decision [D-70](DECISIONS_AND_OPEN_QUESTIONS.md)
+  (approval gate). Stage B (Guardian: REST v2 port, job record with history and heartbeat, durable copy before any stop,
+  incident log, external watchdog, phone status and kill-switch, 15 mocked recovery scenarios) is next and needs no paid call.
+- Four questions for the creator are in the plan's section 4 (the pilot and its ceiling, the Cloudflare/Modal accounts, the
+  motion default, characters between episodes). Tests 603 collected, `test_runpod.py` 27 passed; docs_lint 0.
+
+## 2026-10-22 - Stage B, item 1: the pod manager speaks RunPod REST v2
+
+RunPod retires REST v1 on 2026-11-15; `explainer_engine/cloud/runpod.py` used it. Ported to v2 (`api.runpod.io/v2`, facts in
+[TOOL_STRATEGY](TOOL_STRATEGY.md) "Money control for RunPod"), nothing paid, no pod touched:
+
+- `norm()` flattens a v2 pod (`status`, `cost`, `disk`, `mounts.persistent.size`, `runtime.ports`/`gpus`) into the record
+  the module and the session files already used, so the guard, the money clock, `check`, `sweep` and `settle` keep their logic.
+- `create()` tries the pool's cards one `gpu.id` per POST (v2 has no type list) and moves on only after a clear refusal;
+  a lost answer is still never followed by a second POST. A pod born `PROVISIONING` reports `cost` 0: the session's price
+  falls back to the card ceiling until the pod reports its price, so the money clock never runs on $0/h.
+- `stop`/`start` use `POST /pods/{id}/action` (GraphQL fallback kept), `DELETE` accepts 204, `pods()` reads every page,
+  `billing()` sums `records[].totalAmount` (v2 has no billed seconds: the ledger item records `billed_buckets`), new
+  `logs()` reads the server-sent events (`runpod logs <pod>`); `status` shows uptime and GPU utilisation.
+- `ERROR` is a state now: the guard stops such a pod, `check` and `sweep` list its disk like a stopped one.
+- `end_pod` no longer has the latent `NameError` when every stop attempt fails: it records `close_status` UNSTOPPED and pushes
+  "GUARD GAVE UP".
+- `cloud/hooks.py` also refuses raw v2 pod starts (`POST /v2/pods`, `action` start/restart, the Python SDK's `create_pod`).
+- Tests: `tests/unit/test_runpod.py` rewritten against a v2-shaped fake (36 tests: pagination, next card after a refusal,
+  v2 body, ceiling price while PROVISIONING, ERROR handling, SSE logs, the UNSTOPPED path, v2 hook bypasses).
+
+## 2026-10-22 - Stage B, items 2-8: the Infrastructure Guardian (no paid call)
+
+Prompted twice: the master brief (stage B) and the creator's report at 09:13 that the RunPod balance fell from ~$8 to $0.95
+while every thread said nothing paid was running (a separate thread audits the account). What now exists, all against a fake
+RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for the design.
+
+- `cloud/jobs.py`: the job record (state.json + events.jsonl + heartbeat.json), the brief's fifteen states with legal
+  transitions, `observe` (pod status + conductor line -> job state; a heartbeat only on progress), `stall` (per-state limits
+  from the measured incidents, or the stage's own budget), outputs with sha256 and `safe_to_release`, "same inputs, finished:
+  not run again". `create` writes the record (`--job <slug>`), the guard follows it, `end_pod` closes it.
+- `cloud/store.py` (from TMR, provenance row): push with damage checks and a sha256 sidecar, verify by size + hash, `store_job`.
+- `cloud/incidents.py` + `incidents.json`: 22 known incidents with fingerprints; `classify`, `match`, `repeats`, `record`,
+  `doctor`. The guard, the watchdog and a failed `create` record what they saw.
+- `cloud/watchdog.py` + `.github/workflows/watchdog.yml`: session-independent rules (expired or unnamed live pod -> stop; ERROR,
+  stopped disks, network volumes, idle serverless workers -> report; 24 h ceiling -> stop all; balance floor -> report; stalled
+  job -> stop only with every output stored), cron every 30 min, `kill_all` button for GitHub Mobile. Needs the repository
+  secret `RUNPOD_API_KEY` (the creator adds it; the workflow says so and exits 0 without it).
+- `python -m explainer_engine.cloud status|logs|doctor|budget|incidents|stop-all`.
+- `runpod.check` lists stand-alone network volumes ($0.07/GB/month) and serverless endpoints with min workers > 0: the two
+  ways an account bills with no pod.
+- Tests: `tests/unit/test_cloud_guardian.py` (22: the record, the mapping, stalls, store, incidents, scenarios 1-15 of the brief,
+  the create CLI); `test_runpod.py` 37.
+- Folded in the independent RunPod validation (another thread, 09:24) and the lost-money audit (09:25): the whole-account
+  `GET /billing` for the 24 h ceiling; network volumes, global volumes and serverless endpoints in `check`, the watchdog and
+  `delete-volume <id> --yes`; an unreadable listing is a PROBLEM, not silence; 402 stops the card loop; `Retry-After` is
+  honoured; only a restricted key enters a pod; hooks refuse `runpodctl create|start` and `PATCH /v2/pods`; scenarios 16
+  (stopped pod cannot restart) and 17 (balance hits $0 mid-job: RECOVERY_REQUIRED with the unstored outputs visible);
+  GraphQL balance retirement (early 2027) noted with a revisit date. The audit's finding: the leak was 2026-10-15..19, before
+  D-56; nothing billed since. The creator's two one-time actions: the `RUNPOD_API_KEY` repository secret (watchdog) and
+  RunPod's low-balance e-mail alert. Overlaps PR #19 (the audit thread's `check` additions): whoever lands second rebases.
+
+## 2026-10-22 — Stage C: World Bible and asset library (D-70; the master brief, thread "წარმოების არქიტექტურა და ვიზუალი")
+- `explainer_engine/world/bible.py` + `bible.json` v1.0 (draft) + `schemas/world_bible.schema.json`: the look v2 thread, the era
+  codex and the palette pinned by hash under one version; camera language, graphics style (the narrated-style black opening card
+  and chapter recap cards), era-change rules, characters (none permanent, the creator 2026-10-22), motion default (stills +
+  2.5D parallax), banned drift, anchors (empty until the pilot), changelog. `check` fails on a part edited without `bump`;
+  `approve --by` is refused on drift and records who and when.
+- `explainer_engine/assets/library.py` + `assets/library.json` + `schemas/asset_library.schema.json`: one record per reusable
+  asset (id P-66, file + sha256, tags, bible version, provider/model/version/prompt/params/seed/refs/LoRA/cost, licence,
+  approval, lineage, origin); `register` warns about duplicates (same bytes, same recipe, shared tags) and never vetoes;
+  `find`, `approve`, `derive`, `children`, `verify` (reports, never deletes), `ids_for_files`, `record_painted`. Seeded with
+  the eight scientists_v0 sprites and their analyst reference from the generation ledgers, all `superseded` by look v2.
+- Wired in: `world.resolver.resolve` writes `bible`; `imagegen.plan.make` writes `bible` (outside the hash); `paint plan` records
+  `assets` (which references are library assets); a reusable plan's painted pictures are registered (`paint.shelve`, sync and batch).
+- Docs: [WORLD_BIBLE](WORLD_BIBLE.md) (WB-01..WB-10, `docs_lint` home), INDEX row; ASSET_SYSTEM, VISUAL_WORLD_ARCHITECTURE and
+  CREATIVE_STYLE_BIBLE point at the code. Tests: `tests/unit/test_world_bible.py` (9), `tests/unit/test_asset_library.py` (9).
+- Not built (said plainly): embedding search; the Cloudflare runner; PR #15's picture library is referenced by `origin.source`,
+  not duplicated. Nothing paid; no pod.
+
+## 2026-10-22 — Stage D code: image providers behind one interface, the model pilot (D-70; nothing paid)
+- `imagegen/providers/` (`base.py`, `bfl.py`, `fal.py`, `gemini_adapter.py`): estimate before any call, ledger reserve / refund /
+  settle, cache by request incl. reference bytes and seed, `ChargeUncertain` never retried, keys only from `BFL_API_KEY` /
+  `FAL_KEY` / `GEMINI_API_KEY`. Endpoints, fields, states and prices read on 2026-10-22 from docs.bfl.ml and fal.ai (module docstrings).
+- `imagegen/plan.py`: `bfl` and `fal` providers (adapter rows in `options`, prices from the adapters); `production/paint.py`
+  `run` paints through the adapter (same ledger, same failure handling; batch stays Gemini's).
+- `imagegen/pilot.py`: the six-shot pilot (sheet, two heroes in a room, reverse angle as an edit, expression change as an edit,
+  era jump, legible sign) x 4 takes on Klein 1k, Seedream 4.5 2K and Qwen-Image-Edit 1344x768: estimate $1.92 (the card said
+  ~$2.26 with Qwen at a larger size); `run` refused without `Run.approve("pilot", hash)`; results.json per take; collage per
+  candidate. Editors start shots without a source from a blank canvas, recorded as such.
+- `config/spend_caps.json`: `bfl_usd` 3.0, `fal_usd` 9.0 (the creator's card of 2026-10-22, ceiling $15 with RunPod's 3).
+- Tests: `tests/unit/test_image_providers.py` (12: BFL and fal flows with fake HTTP, moderation and 402 refunds, lost answer,
+  timeout, missing key, cache key, pilot plan/hash, refused without approval, cap stop, CLI estimate). PP-01 names the providers.
+- Waiting on the creator: the decision card (run the pilot ~$2; with or without the Illustrious pod).
+- 12:01 first live attempt: $0, every account refused (BFL 403 Not authenticated, fal 403 locked: exhausted balance); account
+  errors now stop a candidate after one call. 12:26 the creator asked for style variants first: `pilot styles` (six looks, one
+  scene, Klein + Seedream, $0.29, own approval) added with a test; waiting for his card and the account top-ups.
+- 2026-10-22 12:35, stage D style step: the creator's mix replaces the six generic looks (`imagegen/pilot.py` QUALITIES +
+  STYLES: volume, clean design, cinematic, comic faces in six blends, no work named in a prompt, `BANNED_NAMES` guard and test);
+  estimate $0.294 unchanged, new hash 32fbe1f4c423fffc. Nothing paid.
+- 2026-10-22 13:20, D-70 stage F code (free, while the pilot waits for the accounts): `production/parallax.py` +
+  `production/depth.py` (2.5D parallax, `motion.parallax` up to 2 % of the width, depth map next to the picture), drawn in
+  `assemble.finish_frame`, depth maps in the chunk stamp; Scene Package schema fields; `production/segment_hash.py` (per-segment
+  hashes, stale list CLI, PV-59 / PV-60 wired into `validate.check_script`). Tests `tests/unit/test_scene_package.py` (9).

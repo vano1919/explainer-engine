@@ -53,7 +53,8 @@ def resolve(spec: dict, codex: dict | None = None) -> dict:
         arc.append({"beat": step["beat"], "light": step["light"], "clause": lights[step["light"]],
                     "not_yet": list(step.get("not_yet", []))})
     absent = list(host_era["absent"])
-    return {"version": 1, "topic": spec["topic"], "host": {**host, "palette_words": host_era["palette_words"],
+    from explainer_engine.world import bible
+    return {"version": 1, "bible": bible.cite(), "topic": spec["topic"], "host": {**host, "palette_words": host_era["palette_words"],
             "atmosphere": host_era["atmosphere"], "material_culture": host_era["production_design"],
             "costume": host_era["costume"]}, "visitors": visitors, "light_owner": owner, "light_keys": lights,
             "day_arc": arc, "grade": host_era["grade"] if owner == "host" else eras[visitors[0]["era"]]["grade"],
