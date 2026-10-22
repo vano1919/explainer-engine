@@ -1059,3 +1059,20 @@ be: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md)
   is a candidate for close-up inserts driven by the rig. Research doc 8.4.
 - Next: the creator's read of v2 (old vs new), then the remaining plan stages (secondary motion on soft parts, a 3/4 mesh
   warp, more mocap clips: jump, land, get-up).
+
+## 2026-10-22 - AI-video route: night run (Wan 2.2 style LoRA + a 2-minute test video), rig cartoon retired
+
+- The creator (22:19): the rig cartoon v2 is "so bad there is no hope"; new route (plan doc, 22:26): photo style LoRA
+  keyframes -> Wan 2.2 14B first/last-frame clips with a style video LoRA -> SeedVR2 -> montage. 22:41: no permanent heroes
+  and no character LoRAs ever. 22:45/22:54: yes to every stage and cost within the RunPod balance; full pod authority;
+  audio at most 3,000 ElevenLabs credits; 22:50: by morning trained models, a new 2-minute test video, tests for the new
+  production and the unneeded tests gone. Script approval (OR-15) waived by him for this test only.
+- New `explainer_engine/aivideo/`: `shotplan.py` (shots.json and timeline checks, keyframe references, montage plan,
+  money schedule) and `pod/` (launch.py through the one pod manager + ledger + guard, pod.sh stage clock with self-stop,
+  kf.py FLUX.2 klein + photo LoRA keyframes, clips.py Wan 2.2 I2V FLF2V + lightx2v 4-step + style LoRA in fp8 layerwise
+  casting, wan_lora.yaml ai-toolkit wan22_14b, watchdog.py, montage.py).
+- The pod placed on an L40S at $0.79/h (no A40 free), so the $2.85 ceiling ends it after 216 min: the watchdog stops
+  training at 100 min (800 steps, a checkpoint every 100) and the clips stop at 180 min (`schedule_fits`).
+- Narration: one ElevenLabs take, 1,522 credits, 113.7 s; word times by faster-whisper; 16 segments.
+- Tests: `tests/unit/test_aivideo_shotplan.py` (9). The rig cartoon route (bend_rig, ice_short, physics2d, mocap, gaits,
+  pymunk) and its four test files are removed in a separate commit so the creator can review or revert it alone.
