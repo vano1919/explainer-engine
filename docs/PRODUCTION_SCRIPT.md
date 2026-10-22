@@ -93,7 +93,7 @@ generate images (Anthropic: "an image understanding model only"); it prepares th
 
 | Id | Rule |
 |---|---|
-| PP-01 | a plan is a `paint_plan/1` file with a known provider (`gemini`, `pod`, `local`); there is no default provider |
+| PP-01 | a plan is a `paint_plan/1` file with a known provider (`gemini`, `bfl`, `fal` through `imagegen/providers`; `pod`, `local` as hand-offs); there is no default provider |
 | PP-02 | the plan's hash covers its pictures, prompts, references, provider, model, size and tier; `paint run` needs an approval of exactly that hash in the run ledger (`Run.approve`: who, and which message); an edited plan loses its approval |
 | PP-03 | the provider can take the batch: a listed price for the model and size, no more references than the provider takes |
 | PP-04 | every item has a compiled prompt (`production compile --write`) |

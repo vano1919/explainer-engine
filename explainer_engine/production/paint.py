@@ -37,6 +37,7 @@ from explainer_engine.core.ledger import CapReached, Run
 from explainer_engine.core.store import write_json_atomic
 from explainer_engine.imagegen import plan as P
 from explainer_engine.imagegen import routing
+from explainer_engine.imagegen.providers.base import ProviderError
 from explainer_engine.imagegen.gemini import ChargeUncertain, GeminiClient, GeminiError, open_batches
 from explainer_engine.production import compile as C
 from explainer_engine.production import faces as FACES
@@ -209,6 +210,10 @@ def cmd_run(a) -> int:
               f"Run it there with {a.plan}; record each picture with its hash in {run.path}.")
         return 0
     client = GeminiClient(out / "_gemini", cap_usd=1e9, run=run)
+    adapter = None
+    if P.PROVIDERS[plan["provider"]].get("adapter"):  # bfl / fal: one adapter, the same ledger (D-70 stage D)
+        from explainer_engine.imagegen import providers
+        adapter = providers.get(plan["provider"], root=out / f"_{plan['provider']}", run=run)
     open_items = open_batches(out / "_gemini")
     todo = []
     for it in pending(plan["items"], out, run):
@@ -221,6 +226,9 @@ def cmd_run(a) -> int:
     print(f"{len(todo)} pictures to paint; spent so far ${run.spent('gemini_usd'):.3f} of cap "
           f"{run.data['caps'].get('gemini_usd')} (stop at 80 %)")
     if plan.get("batch"):
+        if adapter is not None:
+            print("refused: the batch tier is Gemini's; make the plan without --batch for", plan["provider"])
+            return 2
         return _run_batch(a, todo, doc, dirs, out, run, client, plan)
     stats = {"painted": 0, "failed": 0, "stop": None, "keys": []}
 
@@ -230,10 +238,17 @@ def cmd_run(a) -> int:
             return
         try:
             refs = [ref_bytes(dirs, doc, r.removesuffix(".png")) for r in it["refs"]]
-            p = client.generate(key, it["prompt"], model=plan["model"], size=plan["size"], refs=refs)
-            (out / f"{key}.png").write_bytes(Path(p).read_bytes())
-            run.done("pictures", key, file=f"{key}.png", plan=plan["id"], hash=P.item_hash(it),
-                     usd=P.price("gemini", plan["model"], plan["size"], len(refs)))
+            if adapter is not None:
+                res = adapter.generate(key, it["prompt"], model=plan["model"], size=plan["size"], refs=refs)
+                (out / f"{key}.png").write_bytes(res.data)
+                usd = res.usd_settled if res.usd_settled is not None else res.usd_estimated
+                run.done("pictures", key, file=f"{key}.png", plan=plan["id"], hash=P.item_hash(it), usd=usd, seed=res.seed,
+                         model_version=res.model_version)
+            else:
+                p = client.generate(key, it["prompt"], model=plan["model"], size=plan["size"], refs=refs)
+                (out / f"{key}.png").write_bytes(Path(p).read_bytes())
+                run.done("pictures", key, file=f"{key}.png", plan=plan["id"], hash=P.item_hash(it),
+                         usd=P.price("gemini", plan["model"], plan["size"], len(refs)))
             stats["painted"] += 1
             stats["keys"].append(key)
             print("painted", key, f"${run.spent('gemini_usd'):.3f}", flush=True)
@@ -244,7 +259,7 @@ def cmd_run(a) -> int:
             stats["failed"] += 1
             run.fail(key, f"charge uncertain: {exc}")
             print("uncertain", key, str(exc)[:120], flush=True)
-        except (GeminiError, FileNotFoundError) as exc:
+        except (GeminiError, ProviderError, FileNotFoundError) as exc:
             stats["failed"] += 1
             more = run.fail(key, str(exc))
             print("failed", key, "(may be tried again)" if more else f"(stopped after {MAX_FAILURES})", str(exc)[:120], flush=True)

@@ -111,6 +111,24 @@ of it spends money.
   the last 24 h and the balance, known causes and fixes. No invented percentages. `check` (and the session hooks) now also list
   network volumes and idle serverless workers, the two ways an account bills with no pod at all.
 
+## Image providers behind one interface and the model pilot (master brief 2026-10-22, stage D)
+
+`explainer_engine/imagegen/providers/`: `base.ImageProvider` (prices, reference limits and model versions as class data;
+`estimate` before any call; the run ledger reserves the money, `settle` records what the provider itself bills; one cache keyed by
+provider + model + prompt + size + seed + reference bytes, so a paid picture is never bought twice; a lost answer is
+`ChargeUncertain`, never retried or refunded; keys only from environment variables, never printed). Adapters: `bfl.py` (FLUX 3
+Image Klein, `POST /v1/flux-3-image-klein`, header `x-key`, poll only the returned `polling_url`, Ready / Error / moderation
+states, the signed picture URL lives 10 minutes), `fal.py` (queue API, `Authorization: Key`, `status_url` + `response_url` from
+the answer, Seedream 4.5 text-to-image and edit, Qwen-Image-Edit-2511), `gemini_adapter.py` (the existing client). `paint plan`
+prices bfl and fal rows next to Gemini's; `paint run` paints through the adapter with the same ledger. Caps: `config/spend_caps.json`
+`bfl_usd` 3, `fal_usd` 9 (the creator's card, 2026-10-22; ceiling $15 with RunPod's 3).
+
+`imagegen/pilot.py`: six shots x four takes per candidate, priced before anything is sent (`estimate`: $1.92 for Klein 1k +
+Seedream 4.5 2K + Qwen-Edit 1344x768), `run` refused without the creator's approval of the plan hash on the ledger
+(`Run.approve("pilot", ...)`), results.json per take (cost, seconds, seed, refusal or error), a collage per candidate for the
+creator (OR-16). Not computed by code: SigLIP-2 / DINOv2 similarity (model download; the creator's 1-5 decides).
+Not built: a Modal/Replicate adapter, the Illustrious pod leg (RunPod balance), the batch tier outside Gemini.
+
 ## Kit test (before any full kit)
 1. Gemini, 1K: base traveller from the creator's reference 02 on flat green, then 8 poses and 4 expressions
    (13 pictures + about 30 % retries, about $1.20).

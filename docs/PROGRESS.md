@@ -1085,3 +1085,18 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
 - Not built (said plainly): embedding search; the Cloudflare runner; PR #15's picture library is referenced by `origin.source`,
   not duplicated. Nothing paid; no pod.
 
+## 2026-10-22 — Stage D code: image providers behind one interface, the model pilot (D-70; nothing paid)
+- `imagegen/providers/` (`base.py`, `bfl.py`, `fal.py`, `gemini_adapter.py`): estimate before any call, ledger reserve / refund /
+  settle, cache by request incl. reference bytes and seed, `ChargeUncertain` never retried, keys only from `BFL_API_KEY` /
+  `FAL_KEY` / `GEMINI_API_KEY`. Endpoints, fields, states and prices read on 2026-10-22 from docs.bfl.ml and fal.ai (module docstrings).
+- `imagegen/plan.py`: `bfl` and `fal` providers (adapter rows in `options`, prices from the adapters); `production/paint.py`
+  `run` paints through the adapter (same ledger, same failure handling; batch stays Gemini's).
+- `imagegen/pilot.py`: the six-shot pilot (sheet, two heroes in a room, reverse angle as an edit, expression change as an edit,
+  era jump, legible sign) x 4 takes on Klein 1k, Seedream 4.5 2K and Qwen-Image-Edit 1344x768: estimate $1.92 (the card said
+  ~$2.26 with Qwen at a larger size); `run` refused without `Run.approve("pilot", hash)`; results.json per take; collage per
+  candidate. Editors start shots without a source from a blank canvas, recorded as such.
+- `config/spend_caps.json`: `bfl_usd` 3.0, `fal_usd` 9.0 (the creator's card of 2026-10-22, ceiling $15 with RunPod's 3).
+- Tests: `tests/unit/test_image_providers.py` (12: BFL and fal flows with fake HTTP, moderation and 402 refunds, lost answer,
+  timeout, missing key, cache key, pilot plan/hash, refused without approval, cap stop, CLI estimate). PP-01 names the providers.
+- Waiting on the creator: the decision card (run the pilot ~$2; with or without the Illustrious pod).
+

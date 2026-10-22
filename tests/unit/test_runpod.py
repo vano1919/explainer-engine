@@ -565,7 +565,7 @@ def test_the_ledger_refuses_a_cap_above_the_creators_ceiling_and_fills_missing_o
     from explainer_engine.core.spend_caps import OverCeiling
     with pytest.raises(OverCeiling):
         Run.open(tmp_path / "a.json", caps={"runpod_usd": 50.0})
-    assert Run.open(tmp_path / "b.json", caps={"gemini_usd": 2.0}).data["caps"] == {"gemini_usd": 2.0, "runpod_usd": 3.0}
+    assert Run.open(tmp_path / "b.json", caps={"gemini_usd": 2.0}).data["caps"] == {"gemini_usd": 2.0, "runpod_usd": 3.0, "bfl_usd": 3.0, "fal_usd": 9.0}
 
 
 def test_hooks_block_bypasses_and_a_turn_that_leaves_a_stray(env, monkeypatch, capsys):

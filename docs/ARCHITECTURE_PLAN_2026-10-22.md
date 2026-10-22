@@ -146,6 +146,10 @@ QA findings; then the readiness report that separates done / documented only / n
   generation ledgers), `schemas/asset_library.schema.json`; world.json and paint plans cite the version, plans name their library
   references, reusable plans register their pictures; rules WB-01..WB-10 in [WORLD_BIBLE](WORLD_BIBLE.md). Not built: embedding
   search (SigLIP-2 / DINOv2, with the stage D pilot); the creator's approval of a bible version (needs the pilot's anchors).
-- **Documented only (until their stage runs)**: stages D-H in section 3 except what the audit lists as existing.
+- **Done (stage D code, 2026-10-22, nothing paid yet)**: `imagegen/providers/` (interface + bfl, fal, gemini adapters, mocked
+  tests), `paint plan|run` on bfl and fal, `imagegen/pilot.py` (six shots x four takes, approval-bound run, collage), caps
+  `bfl_usd` / `fal_usd`; API facts read from the vendors' pages on 2026-10-22 ([TOOL_STRATEGY](TOOL_STRATEGY.md)). The paid run
+  waits for the creator's card; the embedding scores are not computed by code.
+- **Documented only (until their stage runs)**: stages E-H in section 3 except what the audit lists as existing.
 - **Needs the creator**: the four questions above; any paid call; a Cloudflare, BFL, fal or Modal account; raising a cap in
   `config/spend_caps.json`.
