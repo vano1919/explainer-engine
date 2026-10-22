@@ -1105,3 +1105,7 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
 - 2026-10-22 12:35, stage D style step: the creator's mix replaces the six generic looks (`imagegen/pilot.py` QUALITIES +
   STYLES: volume, clean design, cinematic, comic faces in six blends, no work named in a prompt, `BANNED_NAMES` guard and test);
   estimate $0.294 unchanged, new hash 32fbe1f4c423fffc. Nothing paid.
+- 2026-10-22 13:20, D-70 stage F code (free, while the pilot waits for the accounts): `production/parallax.py` +
+  `production/depth.py` (2.5D parallax, `motion.parallax` up to 2 % of the width, depth map next to the picture), drawn in
+  `assemble.finish_frame`, depth maps in the chunk stamp; Scene Package schema fields; `production/segment_hash.py` (per-segment
+  hashes, stale list CLI, PV-53 / PV-54 wired into `validate.check_script`). Tests `tests/unit/test_scene_package.py` (9).

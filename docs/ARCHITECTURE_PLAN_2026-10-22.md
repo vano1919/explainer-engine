@@ -150,6 +150,13 @@ QA findings; then the readiness report that separates done / documented only / n
   tests), `paint plan|run` on bfl and fal, `imagegen/pilot.py` (six shots x four takes, approval-bound run, collage), caps
   `bfl_usd` / `fal_usd`; API facts read from the vendors' pages on 2026-10-22 ([TOOL_STRATEGY](TOOL_STRATEGY.md)). The paid run
   waits for the creator's card; the embedding scores are not computed by code.
-- **Documented only (until their stage runs)**: stages E-H in section 3 except what the audit lists as existing.
+- **Done (stage F code, 2026-10-22, free)**: 2.5D parallax as a motion option (`motion.parallax`, `production/parallax.py`,
+  drawn in `assemble.finish_frame` for the long video and the Shorts; depth maps by `production/depth.py`, Depth-Anything V2
+  Small copied from TMR, chosen over the plan's Depth-Anything-3 BASE because it already runs on the CPU in TMR under Apache-2.0;
+  a picture without a map stays flat and the render report says so; a new map restarts the chunks); Scene Package fields
+  `bible`, `segments[].asset_ids`, `new_assets`, `review` in `production_script.schema.json`; per-segment hashes and the stale
+  list (`production/segment_hash.py`), PV-53 / PV-54 in [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md). Not done: the depth model
+  download (`tools/depth`, ~99 MB, free) and a look at real parallax frames; PR #17's staging merge waits for the creator.
+- **Documented only (until their stage runs)**: stages E, G, H in section 3 except what the audit lists as existing.
 - **Needs the creator**: the four questions above; any paid call; a Cloudflare, BFL, fal or Modal account; raising a cap in
   `config/spend_caps.json`.

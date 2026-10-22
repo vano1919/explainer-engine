@@ -28,6 +28,7 @@ from explainer_engine.production import accents as ACC
 from explainer_engine.production import beats as BEATS
 from explainer_engine.production import faces as FACES
 from explainer_engine.production import continuity
+from explainer_engine.production import parallax as PAR
 from explainer_engine.production import graphics as GFX
 from explainer_engine.finish import bubbles as BUB
 from explainer_engine.finish.grade import grade
@@ -346,9 +347,10 @@ def beats_for_shot(all_beats: list[dict], s: dict, pics: dict, hero_faces: dict,
 
 def finish_frame(im: Image.Image, box, s: dict, f: int, fps: int, size: tuple[int, int], sb: list[dict], hero_faces: dict,
                  face_order: list[str], picture_dirs: list[Path], bubbles: list | None = None,
-                 before: Image.Image | None = None) -> Image.Image:
-    """One frame of shot ``s`` from its picture and the crop ``box`` of the shot's own move: the face focus (VB-02), the
-    accents (MO), the close-ups (VB-09), the bubbles and the visual beats. The long video and the Shorts both draw here."""
+                 before: Image.Image | None = None, depth=None) -> Image.Image:
+    """One frame of shot ``s`` from its picture and the crop ``box`` of the shot's own move: the 2.5D parallax (stage F,
+    ``motion.parallax`` + a depth map), the face focus (VB-02), the accents (MO), the close-ups (VB-09), the bubbles and the
+    visual beats. The long video and the Shorts both draw here."""
     f0, f1 = s["start_frame"], s["end_frame"]
     W, H = im.size
     if sb:  # VB-02: the speaking face is the focus; each expression change pops toward it
@@ -357,6 +359,9 @@ def finish_frame(im: Image.Image, box, s: dict, f: int, fps: int, size: tuple[in
     if acc:  # MO rules (D-48): punch, shake, wobble move the crop; whips, flashes and words are drawn
         box = ACC.apply_camera(box, W, H, *ACC.camera(acc, f, fps, f0))
     frame = im.resize(size, Image.BICUBIC, box=box)
+    if depth is not None and PAR.amount(s["motion"]) > 0:
+        u = (f - f0) / max(1, f1 - f0 - 1)
+        frame = PAR.shift(frame, depth, box, (W, H), u, PAR.amount(s["motion"]), PAR.direction(s["motion"]))
     if acc:
         frame = ACC.draw(frame, acc, f, fps, f0, f1, before, BUB.FONT)
     if sb:  # VB-09: in dialogue the speaking hero's keyed close-up over the scene, zoomed and blurred
@@ -415,6 +420,9 @@ def plan_stamp(timed: dict, size: tuple[int, int], crf: int, grade_key: str | No
         if p:
             st = p.stat()
             files.append([pid, p.name, st.st_size, st.st_mtime_ns])
+            dm = p.with_name(p.stem + ".depth.png")  # a depth map made later changes the parallax shots
+            if dm.exists():
+                files.append([pid, dm.name, dm.stat().st_size, dm.stat().st_mtime_ns])
     body = {"timed": {k: v for k, v in timed.items() if k != "findings"}, "size": list(size), "crf": crf, "grade": grade_key,
             "bounds": bounds, "pictures": files, "look": LOOK, "version": 1}
     return hashlib.sha1(json.dumps(body, sort_keys=True, default=str).encode()).hexdigest()
@@ -537,6 +545,7 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
     cache: dict = {}
     all_beats = timed.get("visual_beats", [])
     hero_faces = hero_faces_of(timed)
+    depths: dict = {}  # the depth map of the picture in memory (stage F parallax)
     face_order = sorted(hero_faces)
 
     def prep(k: int):
@@ -555,6 +564,11 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
                 im = Image.fromarray((grade(np.asarray(im, dtype=np.float64) / 255.0, params, seed=seed) * 255).astype(np.uint8))
             cache.clear()  # one picture in memory at a time (8 GB machines)
             cache[pid] = im
+            depths.clear()
+            if PAR.amount(s["motion"]) > 0:
+                depths[pid] = PAR.load(find_picture(pid, pics, picture_dirs))
+                if depths[pid] is None:
+                    report.append(f"{pid}: parallax asked, no depth map (python -m explainer_engine.production.depth): flat")
         im = cache[pid]
         W, H = im.size
         f0, f1 = s["start_frame"], s["end_frame"]
@@ -575,7 +589,7 @@ def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Pa
         u = (f - f0) / max(1, f1 - f0 - 1)
         box = motion_box(s.get("render_motion", s["motion"]), W, H, u)
         frame = finish_frame(im, box, s, f, fps, (OW, OH), beats_of.get(k) or [], hero_faces, face_order, picture_dirs,
-                             bubbles, before)
+                             bubbles, before, depths.get(s["picture"]))
         return overlays(frame, f, fps, timed)
 
     beats_of = {k: beats_for_shot(all_beats, s, pics, hero_faces, picture_dirs) for k, s in enumerate(shots)} if all_beats else {}

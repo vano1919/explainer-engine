@@ -15,6 +15,7 @@ Source: `vano1919/tmr-video-script-engine` at commit `d88ba8f` (2026-10-15), sam
 | `explainer_engine/audio/envelope.py` | `tmr_engine/render/character.py` | `beak` → `mouth`; logic unchanged |
 | `setup.ps1` | `setup.ps1` | Python venv + requirements only (Kokoro, Node and Remotion arrive in their phases) |
 | `explainer_engine/cloud/store.py` | TMR `cloud/store.py` at `1c33878` | the durable store of the Guardian (2026-10-22): stdlib backend switch (`EXPLAINER_STORE_LOCAL` folder or the HF dataset), sha256 sidecar on every push, `verify` reports and never deletes, `store_job` for the job record; env names `EXPLAINER_STORE_*` |
+| `explainer_engine/production/depth.py` | TMR `tmr_engine/render/depth.py` at `1c34e27` | env `EXPLAINER_DEPTH_DIR`; maps sit next to any picture (not only graded backdrops); a `main` CLI for files and folders (D-70 stage F parallax) |
 
 Tests adapted from `tests/unit/test_timings.py`, `test_celestial.py` (viseme part), `test_character.py` and
 `test_housekeeping.py` live in `tests/unit/test_audio_timing.py` and `tests/unit/test_core.py`.
