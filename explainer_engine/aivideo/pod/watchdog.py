@@ -1,10 +1,10 @@
-"""Night-run watchdog (started once by kf.py --smoke). The pod's money ceiling ($2.85 at $0.79/h) ends the session at about
-02:52 UTC, earlier than pod.sh's stage clock assumed, so: stop training at TRAIN_END (checkpoints are saved every 100 steps),
+"""Night-run watchdog (started once by kf.py --smoke). The pod's money ceiling ($2.7 at up to $0.79/h) ends the session after
+about 205 min, earlier than pod.sh's stage clock assumed, so: stop training at TRAIN_END (checkpoints are saved every 100 steps),
 and upload the upscaled clips shortly before the guard stops the pod."""
 import os, subprocess, time
-POD_START = 1792711008
-TRAIN_END = POD_START + 100 * 60          # 00:57 UTC
-UP_AT = (POD_START + 205 * 60, POD_START + 213 * 60)  # 02:42 and 02:50 UTC
+POD_START = int(open("/workspace/T0").read())  # written by pod.sh
+TRAIN_END = POD_START + 95 * 60
+UP_AT = (POD_START + 188 * 60, POD_START + 197 * 60)
 def wait(t):
     while time.time() < t:
         time.sleep(20)

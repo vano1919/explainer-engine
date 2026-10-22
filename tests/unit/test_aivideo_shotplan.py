@@ -57,9 +57,9 @@ def test_montage_plan_holds_keyframe_before_short_clip_and_marks_gaps():
 
 
 def test_night_schedule_fits_the_money_ceiling():
-    # pod $0.79/h, ceiling $2.85: training stops at 100 min, clips at 180, the last upload at 205 (watchdog.py)
-    assert sp.affordable_minutes(2.85, 0.79) == 216
-    assert sp.schedule_fits([100, 180, 205], 2.85, 0.79)
+    # pod up to $0.79/h, ceiling $2.7: training stops at 95 min, clips at 170, the first late upload at 188 (watchdog.py)
+    assert sp.affordable_minutes(2.7, 0.79) == 205
+    assert sp.schedule_fits([95, 170, 188], 2.7, 0.79)
     assert not sp.schedule_fits([160, 225, 375], 2.85, 0.79)  # pod.sh's own clock, written for a $0.35 A40
 
 
@@ -67,7 +67,7 @@ def test_pod_code_follows_the_rules():
     pod = os.path.join(os.path.dirname(sp.__file__), "pod")
     launch = open(os.path.join(pod, "launch.py"), encoding="utf-8").read()
     assert "preflight_create" in launch and "guard_detached" in launch and "Run.open" in launch  # invariant 1 + ledger
-    assert "volumeInGb" in launch  # popped: no network/volume disk that bills while stopped
+    assert "volume=0" in launch  # container disk only: no volume that bills while stopped (a missing key gave 20 GB)
     sh = open(os.path.join(pod, "pod.sh"), encoding="utf-8").read()
     assert "stopself" in sh and "fatal" in sh
     for f in ("pod.sh", "kf.py", "clips.py", "launch.py", "watchdog.py", "montage.py"):

@@ -3,7 +3,7 @@
 set -x
 mkdir -p /workspace/out /workspace/code
 exec > /workspace/out/pod.log 2>&1
-T0=$(date +%s)
+T0=$(date +%s); echo $T0 > /workspace/T0
 H=vano1919/tmr-artifacts; P=night_run_2026-10-22
 export HF_HOME=/workspace/hf HF_HUB_ENABLE_HF_TRANSFER=1 PYTHONUNBUFFERED=1
 stopself(){ curl -fsS -m 30 -X POST -H "Authorization: Bearer $RUNPOD_API_KEY" "https://rest.runpod.io/v1/pods/$RUNPOD_POD_ID/stop"; }
@@ -26,11 +26,13 @@ fatal(){ echo "FATAL $1"; up; stopself; sleep 900; exit 1; }
 
 stage setup
 nvidia-smi || true; free -g || true; df -h /workspace || true
-mv /usr/local/cuda/compat /usr/local/cuda/compat.off 2>/dev/null || true
-rm -f /etc/ld.so.conf.d/*compat* 2>/dev/null; ldconfig 2>/dev/null || true
-export LD_LIBRARY_PATH=$(echo "$LD_LIBRARY_PATH" | tr ':' '\n' | grep -v compat | paste -sd:)
-python -c "import torch,sys;sys.exit(0 if torch.cuda.is_available() else 1)" 2>/dev/null || pip install -q --no-deps --force-reinstall torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128 --break-system-packages
-python -c "import torch,sys;sys.exit(0 if torch.cuda.is_available() else 1)" 2>/dev/null || pip install -q --no-deps --force-reinstall torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126 --break-system-packages
+# datacenter GPUs (A40, L40S) need the image's CUDA forward-compat libs on an older driver; consumer cards fail with them (804)
+if ! python -c "import torch,sys;sys.exit(0 if torch.cuda.is_available() else 1)" 2>/dev/null; then
+  mv /usr/local/cuda/compat /usr/local/cuda/compat.off 2>/dev/null || true
+  rm -f /etc/ld.so.conf.d/*compat* 2>/dev/null; ldconfig 2>/dev/null || true
+  export LD_LIBRARY_PATH=$(echo "$LD_LIBRARY_PATH" | tr ':' '\n' | grep -v compat | paste -sd:)
+fi
+python -c "import torch,sys;sys.exit(0 if torch.cuda.is_available() else 1)" 2>/dev/null || pip install -q --force-reinstall torch==2.8.0 torchvision==0.23.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128 --break-system-packages
 python -c "import torch;print('cuda ok',torch.cuda.is_available(),torch.version.cuda,torch.cuda.get_device_name(0))" || fatal "CUDA BROKEN"
 pip install -q -U "huggingface_hub[hf_transfer]" --break-system-packages || pip install -q -U "huggingface_hub[hf_transfer]" || true
 # the code lives on HF and is fetched again before every stage, so a fix uploaded at night reaches the running pod

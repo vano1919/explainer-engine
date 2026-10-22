@@ -3,7 +3,7 @@ import base64, json, sys
 from explainer_engine.cloud import runpod as rp
 from explainer_engine.core.ledger import Run
 
-MAX_USD, MAX_H = 2.85, 7.5  # stays under 80 % of the ledger cap 3.6 (the ledger's stop rule)
+MAX_USD, MAX_H = 2.7, 7.5  # under 80 % of the ledger cap 3.6 (the ledger's stop rule), minus ~$0.12 of the first try
 CAP = 3.6
 LEDGER = "/mnt/project-files/explainer-engine/hybrid_model_2026-10-22/night_run/night_run_ledger.json"
 POD_SH = "/mnt/project-files/explainer-engine/hybrid_model_2026-10-22/night_run/pod/pod.sh"
@@ -13,8 +13,8 @@ if why:
     raise SystemExit("refused: " + "; ".join(why))
 run = Run.open(LEDGER, caps={"runpod_usd": CAP}, purpose="night run: Wan 2.2 style LoRA + 2-min test video (ვანო 22:50-22:54)")
 run.reserve("runpod_usd", MAX_USD, item="pod:pending")
-body = rp.create_body(rp.pod_name("ee-night", MAX_H), "default", min_ram=40)
-body.pop("volumeInGb", None); body.pop("volumeMountPath", None)
+body = rp.create_body(rp.pod_name("ee-night", MAX_H), "default", min_ram=40, volume=0)  # container disk only: nothing bills once stopped
+body.pop("volumeMountPath", None)
 body.update(imageName="ostris/aitoolkit:latest", containerDiskInGb=200, ports=["22/tcp"], gpuTypePriority="custom")
 URL = "https://huggingface.co/datasets/vano1919/tmr-artifacts/resolve/main/night_run_2026-10-22/code/pod.sh"
 body["dockerStartCmd"] = ["bash", "-c", 'mkdir -p /workspace; curl -fsSL -H "Authorization: Bearer $HF_TOKEN" ' + URL +

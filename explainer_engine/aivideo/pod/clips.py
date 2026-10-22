@@ -14,7 +14,8 @@ shots_path, kfdir, out = a[1], a[2], a[3]
 res = int(a[a.index("--res") + 1]) if "--res" in a else 480
 smoke = "--smoke" in a
 deadline = float(a[a.index("--deadline") + 1]) if "--deadline" in a else 1e18
-deadline = min(deadline, 1792711008 + 180 * 60)  # 02:17 UTC: the money ceiling ends the pod near 02:52 (watchdog.py)
+if os.path.exists("/workspace/T0"):  # the money ceiling ends the pod ~205 min after its start (watchdog.py)
+    deadline = min(deadline, int(open("/workspace/T0").read()) + 170 * 60)
 style = a[a.index("--style") + 1: a.index("--style") + 3] if "--style" in a else None
 sstr = float(a[a.index("--style-strength") + 1]) if "--style-strength" in a else 1.0
 os.makedirs(out, exist_ok=True)
