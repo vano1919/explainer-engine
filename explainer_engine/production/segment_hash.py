@@ -62,8 +62,8 @@ def stale(old: dict, new: dict) -> dict:
 
 
 def check(doc: dict, library: dict | None = None) -> list[dict]:
-    """PV-53: a segment's ``asset_ids`` are records of the asset library and the script's ``bible`` version exists.
-    PV-54: an approved segment review was given on the segment as it is now (its ``review.hash`` is the current edit hash)."""
+    """PV-59: a segment's ``asset_ids`` are records of the asset library and the script's ``bible`` version exists.
+    PV-60: an approved segment review was given on the segment as it is now (its ``review.hash`` is the current edit hash)."""
     out = []
     used = [(seg["id"], a) for seg in doc["segments"] for a in seg.get("asset_ids", [])]
     if used:
@@ -73,20 +73,20 @@ def check(doc: dict, library: dict | None = None) -> list[dict]:
         known = {r["id"] for r in library.get("items", [])}
         for sid, a in used:
             if a not in known:
-                out.append({"rule": "PV-53", "severity": "FAIL", "where": sid, "detail": f"asset {a} is not in the asset library"})
+                out.append({"rule": "PV-59", "severity": "FAIL", "where": sid, "detail": f"asset {a} is not in the asset library"})
     if doc.get("bible"):
         from explainer_engine.world import bible as B
         if doc["bible"]["version"] not in B.versions():
-            out.append({"rule": "PV-53", "severity": "FAIL", "where": "bible",
+            out.append({"rule": "PV-59", "severity": "FAIL", "where": "bible",
                         "detail": f"world bible version {doc['bible']['version']} never existed (known: {B.versions()})"})
     now = hashes(doc)
     for seg in doc["segments"]:
         r = seg.get("review")
         if r and r["status"] == "approved":
             if not r.get("by"):
-                out.append({"rule": "PV-54", "severity": "FAIL", "where": seg["id"], "detail": "an approved review needs a name (by)"})
+                out.append({"rule": "PV-60", "severity": "FAIL", "where": seg["id"], "detail": "an approved review needs a name (by)"})
             if r.get("hash") != now[seg["id"]]["edit"]:
-                out.append({"rule": "PV-54", "severity": "REVIEW", "where": seg["id"],
+                out.append({"rule": "PV-60", "severity": "REVIEW", "where": seg["id"],
                             "detail": "the segment changed after its review: show it again (python -m explainer_engine.production"
                                       ".segment_hash <script> prints the current hashes)"})
     return out

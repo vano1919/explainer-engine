@@ -155,7 +155,7 @@ QA findings; then the readiness report that separates done / documented only / n
   Small copied from TMR, chosen over the plan's Depth-Anything-3 BASE because it already runs on the CPU in TMR under Apache-2.0;
   a picture without a map stays flat and the render report says so; a new map restarts the chunks); Scene Package fields
   `bible`, `segments[].asset_ids`, `new_assets`, `review` in `production_script.schema.json`; per-segment hashes and the stale
-  list (`production/segment_hash.py`), PV-53 / PV-54 in [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md). Not done: the depth model
+  list (`production/segment_hash.py`), PV-59 / PV-60 in [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md). Not done: the depth model
   download (`tools/depth`, ~99 MB, free) and a look at real parallax frames; PR #17's staging merge waits for the creator.
 - **Documented only (until their stage runs)**: stages E, G, H in section 3 except what the audit lists as existing.
 - **Needs the creator**: the four questions above; any paid call; a Cloudflare, BFL, fal or Modal account; raising a cap in

@@ -1,4 +1,4 @@
-"""D-70 stage F: 2.5D parallax from a depth map, per-segment hashes (only what changed is made again), PV-53/PV-54."""
+"""D-70 stage F: 2.5D parallax from a depth map, per-segment hashes (only what changed is made again), PV-59/PV-60."""
 import copy
 import json
 from pathlib import Path
@@ -88,7 +88,7 @@ def test_pv53_asset_ids_and_bible_version():
     doc = copy.deepcopy(DOC)
     doc["segments"][0]["asset_ids"] = ["sheet.mira", "sprite.sci_newton"]
     found = SH.check(doc, library={"items": [{"id": "sprite.sci_newton"}]})
-    assert [(f["rule"], f["where"]) for f in found] == [("PV-53", "S01")] and "sheet.mira" in found[0]["detail"]
+    assert [(f["rule"], f["where"]) for f in found] == [("PV-59", "S01")] and "sheet.mira" in found[0]["detail"]
     doc["bible"] = {"version": "9.9"}
     assert any(f["where"] == "bible" for f in SH.check(doc, library={"items": [{"id": "sheet.mira"}, {"id": "sprite.sci_newton"}]}))
 
@@ -99,7 +99,7 @@ def test_pv54_review_is_given_on_the_current_segment():
     doc["segments"][0]["review"] = {"status": "approved", "by": "ვანო", "hash": h}
     assert SH.check(doc) == []
     doc["segments"][0]["lines"][0]["text"] = "The wire sings."
-    assert [(f["rule"], f["severity"]) for f in SH.check(doc)] == [("PV-54", "REVIEW")]
+    assert [(f["rule"], f["severity"]) for f in SH.check(doc)] == [("PV-60", "REVIEW")]
     doc["segments"][0]["review"] = {"status": "approved", "hash": SH.hashes(doc)["S01"]["edit"]}
     assert [f["severity"] for f in SH.check(doc)] == ["FAIL"]
 

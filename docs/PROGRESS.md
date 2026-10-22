@@ -1108,4 +1108,4 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
 - 2026-10-22 13:20, D-70 stage F code (free, while the pilot waits for the accounts): `production/parallax.py` +
   `production/depth.py` (2.5D parallax, `motion.parallax` up to 2 % of the width, depth map next to the picture), drawn in
   `assemble.finish_frame`, depth maps in the chunk stamp; Scene Package schema fields; `production/segment_hash.py` (per-segment
-  hashes, stale list CLI, PV-53 / PV-54 wired into `validate.check_script`). Tests `tests/unit/test_scene_package.py` (9).
+  hashes, stale list CLI, PV-59 / PV-60 wired into `validate.check_script`). Tests `tests/unit/test_scene_package.py` (9).
