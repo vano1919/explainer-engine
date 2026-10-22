@@ -1,12 +1,12 @@
 # from vano1919/tmr-video-script-engine@f0abe62:cloud/rp.py
-"""RunPod pod manager: create, wait, guard, stop, sweep and settle the cost. stdlib only.
+"""RunPod pod manager: create, wait, guard, stop, sweep and settle the cost. stdlib only. REST v2 (api.runpod.io/v2).
 
     python -m explainer_engine.cloud.runpod check | balance | list | sweep [--dry-run] [--delete --yes]
     python -m explainer_engine.cloud.runpod create --yes --max-usd X --max-hours H [--gpu default|cheap|big] [--boot <manifest>]
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
-    python -m explainer_engine.cloud.runpod status|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
+    python -m explainer_engine.cloud.runpod status|logs|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
 
-What TMR's rp.py did and what changed here (docs/TOOL_STRATEGY.md "Money control for RunPod" has the facts from RunPod's API reference, checked 2026-10-19):
+What TMR's rp.py did and what changed here (docs/TOOL_STRATEGY.md "Money control for RunPod" has the facts from RunPod's API reference):
 * one HTTP layer with retries (429, 5xx, timeouts, no network) for reads and for stop/delete; ``POST /pods`` is never re-sent
   blindly: RunPod has no idempotency key, so after an unclear answer the pod is looked up by its unique name and adopted (a
   blind retry is how a request is billed twice);
@@ -21,6 +21,14 @@ What TMR's rp.py did and what changed here (docs/TOOL_STRATEGY.md "Money control
 * ``create`` refuses past the creator's ceilings in ``config/spend_caps.json`` (per pod, per 24 h of RunPod billing incl.
   stopped disks, per episode via the ledger, balance left) and while the account has a stray pod or an unkept stopped disk;
   ``check`` lists what bills now and is run by the session hooks (``hooks.py``) at the start and end of every turn.
+
+REST v2 (docs.runpod.io/api-reference-v2, read 2026-10-22; v1 is retired on 2026-11-15): pods are ``GET /pods`` (paginated
+``{pods, pagination{nextCursor, hasNextPage}}``, no name filter), ``GET /pods/{id}`` (``status`` PROVISIONING/STARTING/RUNNING/
+EXITED/ERROR/TERMINATED, ``cost`` $/h, ``runtime`` with ``uptime``, ``gpus[].util``, ``ports[]`` only while RUNNING, ``disk``,
+``mounts.persistent.size``), ``POST /pods`` (one ``gpu.id`` per request; 201 with status PROVISIONING), ``POST /pods/{id}/action``
+``{"action": start|stop|restart|terminate}``, ``DELETE /pods/{id}`` (204), ``GET /pods/{id}/logs`` (server-sent events),
+``GET /billing/pods`` (``records[].totalAmount`` per bucket; no billed seconds). The balance still comes from GraphQL ``myself``.
+``norm()`` turns a v2 pod into the flat record the rest of this module and the session files use.
 """
 from __future__ import annotations
 
@@ -41,7 +49,7 @@ from explainer_engine.core import spend_caps
 
 ROOT = Path(__file__).resolve().parents[2]
 RP = ROOT / "tools" / "runpod"
-BASE = "https://rest.runpod.io/v1"
+BASE = "https://api.runpod.io/v2"
 GQL = "https://api.runpod.io/graphql"
 UA = "explainer-engine"
 IMAGE = os.environ.get("TMR_POD_IMAGE", "ghcr.io/vano1919/tmr-pod:latest")  # TMR's baked image (TMR cloud/Dockerfile)
@@ -56,6 +64,7 @@ CONTAINER_GB, VOLUME_GB = 80, 150
 GB_MONTH_RUNNING, GB_MONTH_STOPPED, HOURS_PER_MONTH = 0.10, 0.20, 730.0
 BOOT_MINUTES = 10  # the pod must answer (status page or ssh port) within this long, else it never booted
 GONE = ("TERMINATED",)
+ENDED = ("EXITED", "ERROR")  # not billing compute; ERROR is reported to the creator (its disk may still bill)
 
 
 class RunPodError(RuntimeError):
@@ -90,8 +99,25 @@ def _urllib(method, url, body, headers, timeout):
         return e.code, e.read().decode(errors="replace")
 
 
+def norm(pod):
+    """A v2 pod as the flat record this module keeps: id, name, status, costPerHr, volumeInGb, containerDiskInGb, publicIp,
+    portMappings, startedAt, gpu, util (GPU utilisation 0-100 or None), uptime. A record that is already flat passes through."""
+    if pod is None or "status" not in pod or "costPerHr" in pod:
+        return pod
+    rt = pod.get("runtime") or {}
+    ports = rt.get("ports") or []
+    public = {str(p.get("private")): p.get("public") for p in ports if p.get("public")}
+    gpus = rt.get("gpus") or []
+    mounts = pod.get("mounts") or {}
+    return {"id": pod["id"], "name": pod.get("name", ""), "status": pod.get("status"), "costPerHr": pod.get("cost") or 0.0,
+            "volumeInGb": ((mounts.get("persistent") or {}).get("size") or 0), "containerDiskInGb": pod.get("disk") or 0,
+            "publicIp": next((p.get("ip") for p in ports if p.get("ip")), None), "portMappings": public or None,
+            "startedAt": pod.get("startedAt"), "gpu": (pod.get("gpu") or {}).get("id"),
+            "util": (max(g.get("util") or 0 for g in gpus) if gpus else None), "uptime": rt.get("uptime")}
+
+
 class Api:
-    """RunPod REST + GraphQL. ``transport(method, url, body, headers, timeout) -> (status, text)``; it raises OSError (incl.
+    """RunPod REST v2 + GraphQL. ``transport(method, url, body, headers, timeout) -> (status, text)``; it raises OSError (incl.
     timeouts) when no answer came. Reads, stop and delete are retried with backoff; create is not."""
 
     def __init__(self, key=None, *, base=BASE, gql=GQL, transport=_urllib, sleep=time.sleep, retries=4, timeout=60):
@@ -130,28 +156,71 @@ class Api:
 
     # --- pods ------------------------------------------------------------------------------------------------------
     def pod(self, pid):
-        """The pod record, or None when RunPod no longer knows it."""
+        """The pod record (flat, ``norm``), or None when RunPod no longer knows it."""
         try:
             p = self.request("GET", f"/pods/{pid}")
         except NotFound:
             return None
-        return None if not p or p.get("desiredStatus") in GONE else p
+        return None if not p or p.get("status") in GONE else norm(p)
 
-    def pods(self, **filters):
-        q = "&".join(f"{k}={urllib.parse.quote(str(v))}" for k, v in filters.items())
-        return self.request("GET", "/pods" + ("?" + q if q else "")) or []
+    def pods(self):
+        """Every pod of the account (all pages), flat. v2 has no name filter: callers filter."""
+        out, cursor = [], None
+        while True:
+            q = "?limit=1000" + (f"&cursor={urllib.parse.quote(cursor)}" if cursor else "")
+            page = self.request("GET", "/pods" + q) or {}
+            rows = page.get("pods") if isinstance(page, dict) else page
+            out += [norm(p) for p in rows or []]
+            pg = page.get("pagination") if isinstance(page, dict) else None
+            cursor = (pg or {}).get("nextCursor")
+            if not pg or not pg.get("hasNextPage") or not cursor:
+                return out
+
+    def action(self, pid, what):
+        """``POST /pods/{id}/action``: start, stop, restart or terminate."""
+        return self.request("POST", f"/pods/{pid}/action", {"action": what})
 
     def balance(self):
         return self.graphql("query { myself { clientBalance currentSpendPerHr spendLimit } }")["myself"]
 
     def billing(self, pid, start, end=None):
         """RunPod's billed amount (compute and disks, stopped pods included) for one pod, or the whole account when ``pid``
-        is None, since ``start`` (epoch s): (usd, billed seconds). Hour buckets; the newest hour can lag."""
-        iso = lambda t: time.strftime("%Y-%m-%dT%H:00:00Z", time.gmtime(t))  # noqa: E731
-        q = f"/billing/pods?bucketSize=hour&grouping=podId&startTime={iso(start)}" + (f"&podId={pid}" if pid else "")
-        q += f"&endTime={time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(end or time.time() + 3600))}"
-        rows = [r for r in self.request("GET", q) or [] if pid is None or r.get("podId") in (None, pid)]
-        return round(sum(float(r.get("amount") or 0) for r in rows), 4), round(sum(int(r.get("timeBilledMs") or 0) for r in rows) / 1000)
+        is None, since ``start`` (epoch s): (usd, hour buckets with a charge). Hour buckets; the newest hour can lag."""
+        iso = lambda t: time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(t))  # noqa: E731
+        q = f"/billing/pods?bucketSize=hour&startTime={iso(start - start % 3600)}&endTime={iso(end or time.time() + 3600)}"
+        q += f"&podId={pid}" if pid else ""
+        page = self.request("GET", q) or {}
+        rows = page.get("records", []) if isinstance(page, dict) else page
+        rows = [r for r in rows if pid is None or r.get("podId") in (None, pid)]
+        usd = sum(float(r.get("totalAmount", r.get("amount")) or 0) for r in rows)
+        return round(usd, 4), sum(1 for r in rows if float(r.get("totalAmount", r.get("amount")) or 0) > 0)
+
+    def logs(self, pid, tail=100, seconds=5, opener=None):
+        """The last ``tail`` log lines (``GET /pods/{id}/logs``, server-sent events; the stream never ends, so it is read for
+        ``seconds`` at most). Returns ``[(ts, source, line), ...]``."""
+        url = f"{self.base}/pods/{pid}/logs?tail={int(tail)}"
+        req = urllib.request.Request(url, headers={**self._headers(), "Accept": "text/event-stream"})
+        out, end = [], time.time() + seconds
+        try:
+            with (opener or urllib.request.urlopen)(req, timeout=seconds) as r:
+                while time.time() < end and len(out) < tail:
+                    raw = r.readline()
+                    if not raw:
+                        break
+                    line = raw.decode(errors="replace").strip()
+                    if line.startswith("data:"):
+                        try:
+                            ev = json.loads(line[5:].strip())
+                            out.append((ev.get("ts", ""), ev.get("source", ""), ev.get("line", "")))
+                        except ValueError:
+                            out.append(("", "", line[5:].strip()))
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                raise NotFound(f"GET /pods/{pid}/logs: 404", 404) from e
+            raise RunPodError(f"GET /pods/{pid}/logs: HTTP {e.code}", e.code) from e
+        except OSError:
+            pass  # the stream paused: what was read is the answer
+        return out
 
 
 # --- names, money -------------------------------------------------------------------------------------------------
@@ -174,6 +243,7 @@ def expired(name, now=None):
 
 def disk_per_hour(pod, running=True):
     """Dollars per hour for the pod's disks: what a stopped pod keeps costing."""
+    pod = norm(pod) or {}
     vol, cont = float(pod.get("volumeInGb") or 0), float(pod.get("containerDiskInGb") or 0)
     gb_usd = (vol + cont) * GB_MONTH_RUNNING if running else vol * GB_MONTH_STOPPED
     return gb_usd / HOURS_PER_MONTH
@@ -206,9 +276,13 @@ def sess_read(pid):
     return json.loads(p.read_text()) if p.exists() else None
 
 
-def new_session(pod, *, max_usd, max_hours, on_cap="stop", ledger=None, now=None, status_token="", boot_minutes=BOOT_MINUTES):
+def new_session(pod, *, max_usd, max_hours, on_cap="stop", ledger=None, now=None, status_token="", boot_minutes=BOOT_MINUTES,
+                price_ceiling=None):
+    """``price_ceiling`` stands in while a PROVISIONING pod reports cost 0: the money clock must never run on $0/h."""
+    pod = norm(pod)
     now = time.time() if now is None else now
-    return sess_write({"pod": pod["id"], "name": pod.get("name", ""), "started": now, "price": pod.get("costPerHr"),
+    return sess_write({"pod": pod["id"], "name": pod.get("name", ""), "started": now,
+                       "price": pod.get("costPerHr") or price_ceiling or 0.0,
                        "pod_shape": {"volumeInGb": pod.get("volumeInGb"), "containerDiskInGb": pod.get("containerDiskInGb")},
                        "max_usd": max_usd, "max_hours": max_hours, "until": until_of(pod.get("name")) or now + max_hours * 3600,
                        "boot_deadline": now + boot_minutes * 60, "on_cap": on_cap, "ledger": ledger, "status_token": status_token,
@@ -217,12 +291,12 @@ def new_session(pod, *, max_usd, max_hours, on_cap="stop", ledger=None, now=None
 
 # --- verified lifecycle ---------------------------------------------------------------------------------------------
 def wait_status(api, pid, want, *, timeout=180, poll=5, clock=time.time, sleep=time.sleep):
-    """Poll until desiredStatus is in ``want`` ("GONE" = deleted). Returns the status seen; raises TimeoutError."""
+    """Poll until status is in ``want`` ("GONE" = deleted). Returns the status seen; raises TimeoutError."""
     end = clock() + timeout
     while True:
         try:
             p = api.pod(pid)
-            st = "GONE" if p is None else p.get("desiredStatus")
+            st = "GONE" if p is None else p.get("status")
             if st in want:
                 return st
         except Unclear:
@@ -233,15 +307,16 @@ def wait_status(api, pid, want, *, timeout=180, poll=5, clock=time.time, sleep=t
 
 
 def stop(api, pid, *, timeout=180, **kw):
-    """Idempotent, verified stop: done when GET shows EXITED or the pod is gone. REST first, GraphQL podStop second."""
+    """Idempotent, verified stop: done when GET shows EXITED (or ERROR: nothing to stop) or the pod is gone. REST ``action
+    stop`` first, GraphQL podStop second."""
     p = api.pod(pid)
-    if p is None or p.get("desiredStatus") == "EXITED":
-        return "GONE" if p is None else "EXITED"
+    if p is None or p.get("status") in ENDED:
+        return "GONE" if p is None else p.get("status")
     errors = []
     for how in ("rest", "graphql"):
         try:
             if how == "rest":
-                api.request("POST", f"/pods/{pid}/stop")
+                api.action(pid, "stop")
             else:
                 api.graphql('mutation { podStop(input: {podId: "%s"}) { id desiredStatus } }' % pid)
         except NotFound:
@@ -250,7 +325,7 @@ def stop(api, pid, *, timeout=180, **kw):
             errors.append(str(e))
             continue  # this way was refused: try the next one at once
         try:
-            return wait_status(api, pid, ("EXITED", "GONE"), timeout=timeout, **kw)
+            return wait_status(api, pid, ENDED + ("GONE",), timeout=timeout, **kw)
         except TimeoutError as e:
             errors.append(str(e))
     raise RunPodError(f"pod {pid} is still running after stop: " + "; ".join(errors)[:400])
@@ -270,37 +345,32 @@ def delete(api, pid, *, timeout=180, **kw):
 
 
 def find_by_name(api, name):
-    return [p for p in api.pods(name=name) if p.get("name") == name and p.get("desiredStatus") not in GONE]
+    return [p for p in api.pods() if p.get("name") == name and p.get("status") not in GONE]
 
 
-def create(api, body, *, max_price, sleep=time.sleep, lookups=6):
-    """POST /pods once. After an unclear answer (timeout, 5xx) the pod is looked up by its unique name instead of POSTing
-    again: a second POST could rent a second pod. A card dearer than ``max_price`` is deleted at once (nothing is on it)."""
+def create(api, body, *, max_price, sleep=time.sleep, lookups=6, gpus=None):
+    """POST /pods once per GPU type. After an unclear answer (timeout, 5xx) the pod is looked up by its unique name instead
+    of POSTing again: a second POST could rent a second pod. A clear refusal (4xx: no capacity for that card) moves on to the
+    next type of the pool; after an unclear answer with no pod found, nothing more is tried. A card dearer than ``max_price``
+    is deleted at once (nothing is on it)."""
+    gpus = gpus or [body["gpu"]["id"]]
     pod, err = None, None
-    for wait in (10, 30, 60, None):
+    for gpu in gpus:
+        req = {**body, "gpu": {**body["gpu"], "id": gpu}}
         try:
-            pod = api.request("POST", "/pods", body, retry=False)
-            break
+            pod = _post_once(api, req, sleep)
         except Unclear as e:
             err = e
-            if e.status != 429 or wait is None:  # 429 = refused before anything happened: the only safe re-POST
-                break
-            sleep(wait)
+            pod = _find_after_unclear(api, body["name"], sleep, lookups, err)
+            break  # found or not, a lost answer is never followed by another POST
+        except RunPodError as e:
+            err = e  # refused before anything happened (no capacity, bad request): the next card
+            continue
+        if pod is not None:
+            break
     if pod is None:
-        for _ in range(lookups):
-            sleep(10)
-            try:
-                found = find_by_name(api, body["name"])
-            except Unclear:
-                continue
-            if len(found) > 1:
-                raise RunPodError(f"{len(found)} pods named {body['name']}: check and stop them by hand") from err
-            if found:
-                pod = found[0]
-                break
-        if pod is None:
-            raise RunPodError(f"create: no clear answer and no pod named {body['name']} appeared; nothing is billing "
-                              f"(run sweep to be sure): {err}") from err
+        raise RunPodError(f"create: no pod could be made for {gpus}: {err}") from err
+    pod = norm(pod)
     price = float(pod.get("costPerHr") or 0)
     if price > max_price:
         delete(api, pod["id"])
@@ -308,9 +378,35 @@ def create(api, body, *, max_price, sleep=time.sleep, lookups=6):
     return pod
 
 
+def _post_once(api, body, sleep):
+    for wait in (10, 30, 60, None):
+        try:
+            return api.request("POST", "/pods", body, retry=False)
+        except Unclear as e:
+            if e.status != 429 or wait is None:  # 429 = refused before anything happened: the only safe re-POST
+                raise
+            sleep(wait)
+
+
+def _find_after_unclear(api, name, sleep, lookups, err):
+    for _ in range(lookups):
+        sleep(10)
+        try:
+            found = find_by_name(api, name)
+        except Unclear:
+            continue
+        if len(found) > 1:
+            raise RunPodError(f"{len(found)} pods named {name}: check and stop them by hand") from err
+        if found:
+            return found[0]
+    raise RunPodError(f"create: no clear answer and no pod named {name} appeared; nothing is billing "
+                      f"(run sweep to be sure): {err}") from err
+
+
 def ready(pod):
-    """Ports are mapped and the pod has a public address: the container is up (empty while initialising)."""
-    return bool(pod and pod.get("desiredStatus") == "RUNNING" and pod.get("publicIp") and pod.get("portMappings"))
+    """The pod runs and its ports are mapped (v2: ``runtime.ports`` with a public port): the container is up."""
+    pod = norm(pod)
+    return bool(pod and pod.get("status") == "RUNNING" and pod.get("portMappings"))
 
 
 def wait_ready(api, pid, *, timeout=BOOT_MINUTES * 60, poll=10, clock=time.time, sleep=time.sleep, probe=None):
@@ -327,18 +423,20 @@ def wait_ready(api, pid, *, timeout=BOOT_MINUTES * 60, poll=10, clock=time.time,
         if ready(p) and (probe is None or probe(p)):
             return p
         if clock() >= end:
-            raise TimeoutError(f"pod {pid} not ready after {timeout} s (status {p.get('desiredStatus')}, ip {p.get('publicIp')})")
+            raise TimeoutError(f"pod {pid} not ready after {timeout} s (status {p.get('status')}, ip {p.get('publicIp')})")
         sleep(poll)
 
 
 # --- guard ----------------------------------------------------------------------------------------------------------
 def guard_check(sess, pod, now, conductor=None):
-    """One look: (action, why). action is "ok", "end" (nothing left to guard) or "stop" (a cap or the boot deadline).
-    ``conductor`` is the first line of the pod's status page ("STATUS DONE ...") or None when it did not answer."""
+    """One look: (action, why). action is "ok", "end" (nothing left to guard) or "stop" (a cap, the boot deadline or an
+    ERROR state). ``conductor`` is the first line of the pod's status page ("STATUS DONE ...") or None when it did not answer."""
     if pod is None:
         return "end", "pod is gone"
-    if pod.get("desiredStatus") != "RUNNING":
-        return "end", f"pod is {pod.get('desiredStatus')}"
+    if pod.get("status") == "ERROR":
+        return "stop", "the pod is in ERROR: stopping it; the creator decides about its disk"
+    if pod.get("status") not in ("RUNNING", "PROVISIONING", "STARTING"):
+        return "end", f"pod is {pod.get('status')}"
     spent = spent_estimate(sess, now, pod)
     if spent >= sess["max_usd"]:
         return "stop", f"money cap: ${spent} of ${sess['max_usd']}"
@@ -374,9 +472,11 @@ def notify(title, text, priority="urgent"):
         return False
 
 
-def end_pod(api, sess, why, *, push=notify, sleep=time.sleep):
-    """Stop (or with the creator's ``on_cap: delete``, delete) and never give up: a failed attempt is pushed and retried."""
-    for attempt in range(1, 1000):
+def end_pod(api, sess, why, *, push=notify, sleep=time.sleep, attempts=1000):
+    """Stop (or with the creator's ``on_cap: delete``, delete) and never give up: a failed attempt is pushed and retried.
+    When every attempt failed the session says so (``close_status`` "UNSTOPPED") and the loud push stands."""
+    st = "UNSTOPPED"
+    for attempt in range(1, attempts):
         try:
             st = delete(api, sess["pod"]) if sess.get("on_cap") == "delete" else stop(api, sess["pod"])
             break
@@ -387,15 +487,17 @@ def end_pod(api, sess, why, *, push=notify, sleep=time.sleep):
     sess.update(closed=time.time(), close_why=why, close_status=st)
     sess_write(sess)
     disk = disk_per_hour(sess.get("pod_shape") or {}, running=False) * 24
-    tail = f"; its disk bills ${disk:.2f}/day until deleted" if st == "EXITED" else ""
-    push("Guard ended the pod", f"{sess['pod']} {st}: {why}; estimate ${spent_estimate(sess, time.time())}{tail}", "high")
+    tail = f"; its disk bills ${disk:.2f}/day until deleted" if st in ENDED else ""
+    push("Guard ended the pod" if st != "UNSTOPPED" else "GUARD GAVE UP: THE POD MAY STILL BILL",
+         f"{sess['pod']} {st}: {why}; estimate ${spent_estimate(sess, time.time())}{tail}", "high" if st != "UNSTOPPED" else "urgent")
     return st
 
 
-def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=status_page, poll=30, report_min=10, log=print):
+def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=status_page, poll=30, report_min=10, log=print,
+          on_look=None):
     """Watch one pod until it is gone or stopped; stop it at a cap, at the end of its approved lifetime, when it never booted,
     or when its conductor ended. A blind API is never a reason to stop guarding; the local money clock keeps running and a
-    cap reached while blind still triggers the stop attempts."""
+    cap reached while blind still triggers the stop attempts. ``on_look(pod, action, why)`` lets a job record follow along."""
     sess = sess_read(pid)
     if not sess:
         raise SystemExit(f"no session for {pid}: create it with this tool, or `adopt` it with its caps")
@@ -409,7 +511,10 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
             blind += 1
             if blind in (4, 20):
                 push("Guard is blind", f"cannot reach RunPod for {blind * poll} s; {pid} may still be billing")
-            pod = {"id": pid, "desiredStatus": "RUNNING", "costPerHr": sess.get("price")}  # assume the worst
+            pod = {"id": pid, "status": "RUNNING", "costPerHr": sess.get("price")}  # assume the worst
+        if pod and pod.get("costPerHr") and pod["costPerHr"] != sess.get("price"):
+            sess["price"] = pod["costPerHr"]  # a PROVISIONING pod reported no price; now it does
+            sess_write(sess)
         conductor = None
         if pod and blind == 0 and sess.get("status_token"):
             try:
@@ -426,6 +531,8 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
             sess["ended"] = now
             sess_write(sess)
         action, why = guard_check(sess, pod, now, conductor)
+        if on_look:
+            on_look(pod, action, why)
         if why != last_line:
             log(f"{time.strftime('%H:%M:%S')} {pid}: {action} {why}")
             last_line = why
@@ -464,41 +571,43 @@ def sweep(api, *, dry=False, delete_exited=False, now=None):
     now = time.time() if now is None else now
     rows = {"stopped": [], "failed": [], "running_ok": [], "exited": [], "deleted": []}
     for p in api.pods():
-        st, pid = p.get("desiredStatus"), p["id"]
+        st, pid = p.get("status"), p["id"]
         label = f"{pid} {p.get('name')} ${p.get('costPerHr')}/h"
         try:
-            if st == "RUNNING" and expired(p.get("name"), now):
+            if st in ("RUNNING", "PROVISIONING", "STARTING") and expired(p.get("name"), now):
                 if not dry:
                     stop(api, pid)
                 rows["stopped"].append(label)
-            elif st == "RUNNING":
+            elif st in ("RUNNING", "PROVISIONING", "STARTING"):
                 rows["running_ok"].append(label)
-            elif st == "EXITED":
+            elif st in ENDED:
                 day = disk_per_hour(p, running=False) * 24
                 if delete_exited and not dry:
                     delete(api, pid)
                     rows["deleted"].append(f"{label} (disk ${day:.2f}/day)")
                 else:
-                    rows["exited"].append(f"{pid} {p.get('name')}: disk {p.get('volumeInGb')} GB = ${day:.2f}/day")
+                    rows["exited"].append(f"{pid} {p.get('name')}: disk {p.get('volumeInGb')} GB = ${day:.2f}/day"
+                                          + (" (ERROR state)" if st == "ERROR" else ""))
         except (RunPodError, TimeoutError) as e:
             rows["failed"].append(f"{label}: {str(e)[:120]}")
     return rows
 
 
 def settle(api, pid, ledger_path=None):
-    """RunPod's billed amount for the pod's session, written over the reservation in the run ledger (``runpod_usd``)."""
+    """RunPod's billed amount for the pod's session, written over the reservation in the run ledger (``runpod_usd``).
+    Returns (usd, billed hour buckets); v2 billing has no billed seconds."""
     sess = sess_read(pid) or {}
-    usd, secs = api.billing(pid, sess.get("started") or time.time() - 86400)
+    usd, buckets = api.billing(pid, sess.get("started") or time.time() - 86400)
     ledger_path = ledger_path or sess.get("ledger")
     if ledger_path:
         from explainer_engine.core.ledger import Run
         run = Run.open(ledger_path)
         run.settle("runpod_usd", f"pod:{pid}", usd)
-        run.done("pods", pid, cost={"runpod_usd": usd}, billed_s=secs, source="runpod billing", name=sess.get("name"))
+        run.done("pods", pid, cost={"runpod_usd": usd}, billed_buckets=buckets, source="runpod billing", name=sess.get("name"))
     if sess:
-        sess.update(billed_usd=usd, billed_s=secs, settled=time.time())
+        sess.update(billed_usd=usd, billed_buckets=buckets, settled=time.time())
         sess_write(sess)
-    return usd, secs
+    return usd, buckets
 
 
 class PodSession:
@@ -547,24 +656,29 @@ def live_guard(pid):
 
 def check(api, now=None):
     """The account as it bills now: problems (anything spending money that nobody approved or guards) and info lines.
-    Run at the start and end of every session and after every pod job; the session hooks run it (cloud/hooks.py)."""
+    Run at the start and end of every session and after every pod job; the session hooks run it (cloud/hooks.py).
+    A live pod without a session on this machine (the sandbox was recycled, or the pod was made elsewhere) is a problem:
+    nobody here guards it."""
     now = time.time() if now is None else now
     keep = set(spend_caps.runpod().get("keep_stopped_pods", []))
     problems, info = [], []
     for p in api.pods():
-        st, pid, name = p.get("desiredStatus"), p["id"], p.get("name")
-        if st == "RUNNING":
+        st, pid, name = p.get("status"), p["id"], p.get("name")
+        if st in ("RUNNING", "PROVISIONING", "STARTING"):
             sess = sess_read(pid)
-            line = f"{pid} {name} RUNNING ${p.get('costPerHr')}/h"
+            line = f"{pid} {name} {st} ${p.get('costPerHr')}/h"
             if expired(name, now):
                 problems.append(f"{line}: no approved lifetime left; stop it (`runpod sweep`)")
-            elif sess and not sess.get("closed") and not live_guard(pid):
+            elif sess is None:
+                problems.append(f"{line}: no session here guards it (made elsewhere, or this machine restarted); "
+                                f"`runpod adopt {pid} --max-usd X --max-hours H` or stop it")
+            elif not sess.get("closed") and not live_guard(pid):
                 problems.append(f"{line}: its guard is not running here; `runpod guard {pid}` or stop it")
             else:
                 info.append(f"{line}, approved until {time.strftime('%H:%M UTC', time.gmtime(until_of(name)))}")
-        elif st == "EXITED":
+        elif st in ENDED:
             day = disk_per_hour(p, running=False) * 24
-            line = f"{pid} {name} STOPPED, disk {p.get('volumeInGb')} GB bills ${day:.2f}/day"
+            line = f"{pid} {name} {'STOPPED' if st == 'EXITED' else 'in ERROR'}, disk {p.get('volumeInGb')} GB bills ${day:.2f}/day"
             (info if pid in keep else problems).append(line + ("" if pid in keep else
                                                                "; delete it with the creator's word (`runpod delete <pod> --yes`) or list it in keep_stopped_pods"))
     try:
@@ -617,24 +731,24 @@ def pod_env(status_token):
 
 def boot_cmd(manifest, branch):
     """The pod fetches TMR's bootstrap.sh and runs the manifest itself; PID 1 then stays alive (a returning start command
-    restarts the container in a loop, TMR 2026-10-11). A failed boot stops the pod (stop, not delete: the creator's rule)."""
+    restarts the container in a loop, TMR 2026-10-11). A failed boot stops the pod (stop, not delete: the creator's rule).
+    v2 ``cmd`` is the container CMD in exec form."""
     url = f"https://raw.githubusercontent.com/{BOOT_REPO}/{branch}/cloud/bootstrap.sh"
-    stop_self = ('curl -fsS -m 30 -X POST -H "Authorization: Bearer $RUNPOD_API_KEY" '
-                 '"https://rest.runpod.io/v1/pods/$RUNPOD_POD_ID/stop" >/dev/null 2>&1')
+    stop_self = ('curl -fsS -m 30 -X POST -H "Authorization: Bearer $RUNPOD_API_KEY" -H "Content-Type: application/json" '
+                 '-d \'{"action":"stop"}\' "https://api.runpod.io/v2/pods/$RUNPOD_POD_ID/action" >/dev/null 2>&1')
     return ["bash", "-lc", 'set -o pipefail; curl -fsSL -H "Authorization: token $GITHUB_TOKEN" '
             f'{url} | bash -s -- {manifest} || {{ {stop_self}; }}; tail -f /dev/null']
 
 
 def create_body(name, gpu="default", *, volume=VOLUME_GB, min_ram=None, boot=None, status_token=""):
-    body = {"name": name, "imageName": IMAGE, "gpuTypeIds": GPUS[gpu], "cloudType": "SECURE", "gpuCount": 1,
-            "interruptible": False, "containerDiskInGb": CONTAINER_GB, "volumeInGb": volume, "volumeMountPath": "/workspace",
-            "ports": ["22/tcp", "8888/http"], "env": pod_env(status_token), "allowedCudaVersions": CUDA_VERSIONS}
-    if gpu != "default":
-        body["gpuTypePriority"] = "custom"
+    """The v2 ``POST /pods`` body for the FIRST card of the pool; ``create()`` swaps ``gpu.id`` for the next cards."""
+    body = {"name": name, "image": IMAGE, "gpu": {"id": GPUS[gpu][0], "count": 1, "allowedCudaVersions": CUDA_VERSIONS},
+            "cloud": "SECURE", "disk": CONTAINER_GB, "mounts": {"persistent": {"size": volume, "path": "/workspace"}},
+            "ports": ["22/tcp", "8888/http"], "env": pod_env(status_token)}
     if min_ram:
-        body["minRAMPerGPU"] = int(min_ram)
+        body["gpu"]["minRamPerGpu"] = int(min_ram)
     if boot:
-        body["dockerStartCmd"] = boot_cmd(boot, os.environ.get("TMR_BRANCH") or "main")
+        body["cmd"] = boot_cmd(boot, os.environ.get("TMR_BRANCH") or "main")
     return body
 
 
@@ -662,7 +776,7 @@ def main(argv=None, api=None):
             raise SystemExit(1)
     elif cmd == "list":
         for p in api.pods():
-            print(p["id"], p.get("name"), p.get("desiredStatus"), f"${p.get('costPerHr')}/h", f"{p.get('volumeInGb')} GB")
+            print(p["id"], p.get("name"), p.get("status"), f"${p.get('costPerHr')}/h", f"{p.get('volumeInGb')} GB", p.get("gpu") or "")
     elif cmd == "sweep":
         if "--delete" in rest and "--yes" not in rest:
             raise SystemExit("refused: deleting stopped pods needs --yes (the creator's word)")
@@ -694,14 +808,14 @@ def main(argv=None, api=None):
         body = create_body(name, gpu, volume=_opt(rest, "--volume", VOLUME_GB, int), min_ram=_opt(rest, "--min-ram"),
                            boot=_opt(rest, "--boot"), status_token=token)
         try:
-            pod = create(api, body, max_price=MAX_PRICE[gpu])
+            pod = create(api, body, max_price=MAX_PRICE[gpu], gpus=GPUS[gpu])
         except RunPodError:
             Run.open(ledger).settle("runpod_usd", "pod:pending", 0.0)
             raise
         Run.open(ledger).rename_reservation("pod:pending", f"pod:{pod['id']}")
         new_session(pod, max_usd=max_usd, max_hours=max_hours, on_cap=_opt(rest, "--on-cap", "stop"), ledger=ledger,
-                    status_token=token if body.get("dockerStartCmd") else "")
-        print("pod", pod["id"], name, f"${pod.get('costPerHr')}/h")
+                    status_token=token if body.get("cmd") else "", price_ceiling=MAX_PRICE[gpu])
+        print("pod", pod["id"], name, f"${pod.get('costPerHr')}/h", pod.get("gpu") or "")
         if "--no-guard" not in rest:
             print("guard pid", guard_detached(pod["id"]), f"log tools/runpod/sessions/{pod['id']}.guard.log")
     elif cmd in ("adopt", "start") and not (_opt(rest, "--max-usd") and _opt(rest, "--max-hours")):
@@ -711,15 +825,19 @@ def main(argv=None, api=None):
         if p is None:
             raise SystemExit(f"{pid}: no such pod")
         new_session(p, max_usd=_opt(rest, "--max-usd", None, float), max_hours=_opt(rest, "--max-hours", None, float),
-                    on_cap=_opt(rest, "--on-cap", "stop"), status_token=_opt(rest, "--status-token", ""))
+                    on_cap=_opt(rest, "--on-cap", "stop"), status_token=_opt(rest, "--status-token", ""),
+                    price_ceiling=max(MAX_PRICE.values()))
         print("guard pid", guard_detached(pid))
     elif cmd == "status":
         p = api.pod(pid)
         sess = sess_read(pid)
-        print("GONE" if p is None else f"{p.get('desiredStatus')} ${p.get('costPerHr')}/h ip {p.get('publicIp')} "
-              f"ports {p.get('portMappings')} started {p.get('lastStartedAt')}")
+        print("GONE" if p is None else f"{p.get('status')} ${p.get('costPerHr')}/h {p.get('gpu') or ''} ip {p.get('publicIp')} "
+              f"ports {p.get('portMappings')} started {p.get('startedAt')} up {p.get('uptime')} s gpu util {p.get('util')}")
         if sess and p:
             print(f"estimate ${spent_estimate(sess, time.time(), p)} of ${sess['max_usd']}")
+    elif cmd == "logs":
+        for ts, source, line in api.logs(pid, tail=_opt(rest, "--tail", 100, int)):
+            print(ts, source, line)
     elif cmd == "wait-ready":
         print("ready", wait_ready(api, pid, timeout=_opt(rest, "--timeout", BOOT_MINUTES * 60, int)).get("publicIp"))
     elif cmd == "guard":
@@ -733,18 +851,18 @@ def main(argv=None, api=None):
                                gpu=_opt(rest, "--gpu", "default"), ignore=pid)
         if why:
             raise SystemExit("refused, the pod stays stopped:\n  " + "\n  ".join(why))
-        api.request("POST", f"/pods/{pid}/start")
+        api.action(pid, "start")
         p = wait_ready(api, pid)
         new_session(p, max_usd=_opt(rest, "--max-usd", None, float), max_hours=_opt(rest, "--max-hours", None, float),
-                    on_cap=_opt(rest, "--on-cap", "stop"))
+                    on_cap=_opt(rest, "--on-cap", "stop"), price_ceiling=MAX_PRICE[_opt(rest, "--gpu", "default")])
         print("started", pid, "guard pid", guard_detached(pid))
     elif cmd == "delete":
         if "--yes" not in rest:
             raise SystemExit("refused: delete needs --yes (the creator's word); the volume is lost")
         print(pid, delete(api, pid))
     elif cmd == "cost":
-        usd, secs = settle(api, pid, _opt(rest, "--ledger"))
-        print(f"{pid}: billed ${usd} for {secs} s (RunPod billing; the newest hour may still grow)")
+        usd, buckets = settle(api, pid, _opt(rest, "--ledger"))
+        print(f"{pid}: billed ${usd} over {buckets} hour bucket(s) (RunPod billing; the newest hour may still grow)")
     else:
         raise SystemExit(__doc__)
 

@@ -21,7 +21,7 @@ Nothing was generated, rented or paid for during this research. The decision thi
 
 | Fact | Consequence for the repo |
 |---|---|
-| RunPod REST **v1 is retired on 2026-11-15**; v2 is "beta" and adds `status`, `cost`, `runtime.gpus[].util`, SSE logs, `/v2/billing/pods` | `explainer_engine/cloud/runpod.py` targets `rest.runpod.io/v1`: it stops working in three weeks unless ported (stage B, first item) |
+| RunPod REST **v1 is retired on 2026-11-15**; v2 is "beta" and adds `status`, `cost`, `runtime.gpus[].util`, SSE logs, `/v2/billing/pods` | `explainer_engine/cloud/runpod.py` targeted `rest.runpod.io/v1`; ported to v2 on 2026-10-22 (stage B, first item; facts in [TOOL_STRATEGY](TOOL_STRATEGY.md)) |
 | Veo 3.1 preview endpoints on the Gemini API shut down 2026-10-22; Sora 2 API shut down 2026-09-24; Hume Octave TTS ends 2026-11-13; PlayHT closed 2025-12-31; OpenAI `tts-1`/`gpt-4o-mini-tts` end 2027-01-06 | none of these may be adopted; `docs/TOOL_STRATEGY.md`'s Veo row is history |
 | FLUX 3 Image Klein (BFL, 2026-10-15): open weights 5.6B, 10 references, bounding-box edits, API $0.009 per 1K image, FLUX Kommunity License (commercial outputs under US$5M revenue; LoRA derivatives clause ambiguous) | the cheapest multi-reference editor; one week old, anime quality unmeasured |
 | Nano Banana 2.1 (Google, GA 2026-10-06): $0.0336 per 1K image standard / $0.0168 batch, 14 references, no seed, SynthID on every image | the creator's "too expensive" verdict was on Nano Banana Pro ($0.134); 2.1 is four times cheaper but keeps the watermark and the no-seed posture |

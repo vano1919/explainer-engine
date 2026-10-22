@@ -2,7 +2,8 @@
 
     session-start  prints what bills on the RunPod account (stray pods, stopped disks, 24 h billing, balance)
     stop           refuses to end a turn while something bills that nobody approved or guards (exit 2 tells Claude why)
-    pre-bash       refuses pod starts that bypass the guarded manager (TMR's rp.py create/start, raw POST /pods)
+    pre-bash       refuses pod starts that bypass the guarded manager (TMR's rp.py create/start, raw POST /pods on REST v1 or
+                   v2, a v2 ``action`` start/restart, the GraphQL deploy mutations, the Python SDK's create_pod/resume_pod)
 No key or no network: the hooks say so and never block (a broken check must not lock the session).
 """
 from __future__ import annotations
@@ -13,9 +14,11 @@ import sys
 
 from explainer_engine.cloud import runpod as R
 
-BYPASS = [re.compile(p) for p in (r"rp\.py\s+(create|start|adopt)\b", r"/v1/pods/?['\"]?\s*(-X\s*POST|--request\s+POST)",
-                                   r"-X\s*POST[^|;&]*rest\.runpod\.io/v1/pods/?(['\"\s]|$)",
-                                   r"rest\.runpod\.io/v1/pods/\w+/start", r"podFindAndDeployOnDemand|podRentInterruptible|podResume")]
+BYPASS = [re.compile(p) for p in (r"rp\.py\s+(create|start|adopt)\b", r"/v[12]/pods/?['\"]?\s*(-X\s*POST|--request\s+POST)",
+                                   r"-X\s*POST[^|;&]*(rest|api)\.runpod\.io/v[12]/pods/?(['\"\s]|$)",
+                                   r"rest\.runpod\.io/v1/pods/\w+/start",
+                                   r"(?s)(?=.*/v2/pods/\w+/action)(?=.*['\"]action['\"]\s*:\s*['\"](start|restart)['\"])",
+                                   r"podFindAndDeployOnDemand|podRentInterruptible|podResume", r"runpod\.(create_pod|resume_pod)\(")]
 
 
 def _stdin():

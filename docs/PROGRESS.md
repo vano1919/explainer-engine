@@ -1015,3 +1015,23 @@ paid:
   incident log, external watchdog, phone status and kill-switch, 15 mocked recovery scenarios) is next and needs no paid call.
 - Four questions for the creator are in the plan's section 4 (the pilot and its ceiling, the Cloudflare/Modal accounts, the
   motion default, characters between episodes). Tests 603 collected, `test_runpod.py` 27 passed; docs_lint 0.
+
+## 2026-10-22 - Stage B, item 1: the pod manager speaks RunPod REST v2
+
+RunPod retires REST v1 on 2026-11-15; `explainer_engine/cloud/runpod.py` used it. Ported to v2 (`api.runpod.io/v2`, facts in
+[TOOL_STRATEGY](TOOL_STRATEGY.md) "Money control for RunPod"), nothing paid, no pod touched:
+
+- `norm()` flattens a v2 pod (`status`, `cost`, `disk`, `mounts.persistent.size`, `runtime.ports`/`gpus`) into the record
+  the module and the session files already used, so the guard, the money clock, `check`, `sweep` and `settle` keep their logic.
+- `create()` tries the pool's cards one `gpu.id` per POST (v2 has no type list) and moves on only after a clear refusal;
+  a lost answer is still never followed by a second POST. A pod born `PROVISIONING` reports `cost` 0: the session's price
+  falls back to the card ceiling until the pod reports its price, so the money clock never runs on $0/h.
+- `stop`/`start` use `POST /pods/{id}/action` (GraphQL fallback kept), `DELETE` accepts 204, `pods()` reads every page,
+  `billing()` sums `records[].totalAmount` (v2 has no billed seconds: the ledger item records `billed_buckets`), new
+  `logs()` reads the server-sent events (`runpod logs <pod>`); `status` shows uptime and GPU utilisation.
+- `ERROR` is a state now: the guard stops such a pod, `check` and `sweep` list its disk like a stopped one.
+- `end_pod` no longer has the latent `NameError` when every stop attempt fails: it records `close_status` UNSTOPPED and pushes
+  "GUARD GAVE UP".
+- `cloud/hooks.py` also refuses raw v2 pod starts (`POST /v2/pods`, `action` start/restart, the Python SDK's `create_pod`).
+- Tests: `tests/unit/test_runpod.py` rewritten against a v2-shaped fake (36 tests: pagination, next card after a refusal,
+  v2 body, ceiling price while PROVISIONING, ERROR handling, SSE logs, the UNSTOPPED path, v2 hook bypasses).

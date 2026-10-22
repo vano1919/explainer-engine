@@ -11,7 +11,7 @@ approval gate. Nothing paid runs before the creator's word; stage B needs no pai
 
 | Responsibility in the brief | Today | Gap |
 |---|---|---|
-| Cloud Job Manager | `cloud/runpod.py`: create/guard/stop/sweep/cost/check, verified stop and delete, no blind re-POST, ledger reservation, 27 fake-API tests | targets RunPod **REST v1, retired 2026-11-15**; one provider; no job state history |
+| Cloud Job Manager | `cloud/runpod.py`: create/guard/stop/sweep/cost/check/logs, verified stop and delete, no blind re-POST, ledger reservation, 36 fake-API tests; **ported to REST v2 on 2026-10-22** (v1 is retired 2026-11-15) | one provider; no job state history |
 | Infrastructure Watchdog independent of pod and session | the guard is a detached process on the Claude sandbox; it dies with the container and `check()` then reports a live pod as fine | nothing watches a pod when the session is gone; no heartbeat, no incident log, no inbound events |
 | Durable storage of results | none in this repo; TMR `cloud/store.py` pushes to the HF dataset from inside the pod | a sole copy on the pod disk is the documented cause of two lost picture runs |
 | Incident history | prose in TMR `docs/INCIDENTS_RUNPOD.md`, `docs/PROGRESS.md`, [RISK_REGISTER](RISK_REGISTER.md) R-29 | no fingerprints, no machine-readable record, three unreconciled balance drops |

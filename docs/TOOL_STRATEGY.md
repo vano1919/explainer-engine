@@ -44,18 +44,25 @@ conductor ended. A pod's end is STOP; deletion only on the creator's word (`--on
 --yes`). `cost` settles the ledger with RunPod's billed amount. Session hooks (`.claude/settings.json`, `cloud/hooks.py`) run
 `check` at session start and refuse to end a turn while something bills that nobody approved or guards.
 
-RunPod facts behind it (docs.runpod.io API reference and pricing, read 2026-10-19):
+RunPod facts behind it (docs.runpod.io API reference v2 and pricing, read 2026-10-19 and 2026-10-22):
+- The manager speaks **REST v2** (`api.runpod.io/v2`) since 2026-10-22: REST v1 (`rest.runpod.io/v1`) is deprecated and
+  retired on 2026-11-15. The balance still comes from GraphQL `myself`; GraphQL `podStop`/`podTerminate` are the fallbacks.
 - Billing is per second for compute and disks. A stopped pod still bills its volume at $0.20/GB/month (running: $0.10 for
   container and volume): the stopped 60 GB preflight pod cost $0.40/day for three days (billing API, 2026-10-17..19).
 - At a $0 balance RunPod stops pods; pods without a network volume are terminated and their data is lost. Deploying needs at
   least one hour of credits.
 - `POST /pods` has no idempotency key and no TTL: a retried create can rent a second pod, so the manager never re-POSTs after
-  an unclear answer (only after a 429) and finds the pod by its unique name instead.
-- `GET /pods/{id}`: `desiredStatus` RUNNING/EXITED/TERMINATED, `costPerHr`, `lastStartedAt`, `publicIp`/`portMappings` empty
-  while initialising, 404 when gone. `GET /pods` filters by `name`, `desiredStatus`. `GET /billing/pods` (hour buckets,
-  `grouping=podId`) gives the billed `amount` and `timeBilledMs`, disks of stopped pods included.
-- No documented rate limit for the REST API; 429 and 5xx are retried with backoff. Stop on an already stopped pod is not
-  documented, so stop and delete check the state first and count only what GET shows afterwards.
+  an unclear answer (only after a 429) and finds the pod by its unique name instead. v2 takes ONE `gpu.id` per request (no
+  list of types), so the manager tries the pool's cards one by one and moves on only after a clear refusal; a pod is born
+  `PROVISIONING` with `cost` 0, so the money clock runs on the card ceiling until the real price shows.
+- `GET /pods/{id}`: `status` PROVISIONING/STARTING/RUNNING/EXITED/ERROR/TERMINATED, `cost` $/h, `runtime` (uptime, GPU
+  utilisation, mapped `ports`) only while RUNNING, `disk` and `mounts.persistent.size` for the disks, 404 when gone. `GET /pods`
+  is paginated (`pagination.nextCursor`) with no name filter. `POST /pods/{id}/action` `{"action": "stop"|"start"|
+  "terminate"}`; `DELETE /pods/{id}` answers 204. `GET /billing/pods?bucketSize=hour` gives `records[].totalAmount` per hour
+  (no billed seconds), disks of stopped pods included. `GET /pods/{id}/logs` streams server-sent events (`runpod logs <pod>`).
+- Rate limits arrive as `RateLimit` headers and 429 with `Retry-After`; 429 and 5xx are retried with backoff. Stop on an
+  already stopped pod is not documented, so stop and delete check the state first and count only what GET shows afterwards.
+  A pod in `ERROR` is stopped by the guard and listed by `check`; its disk is the creator's decision like any stopped one.
 
 ## Kit test (before any full kit)
 1. Gemini, 1K: base traveller from the creator's reference 02 on flat green, then 8 poses and 4 expressions
