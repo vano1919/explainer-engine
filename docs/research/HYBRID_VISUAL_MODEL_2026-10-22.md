@@ -147,3 +147,29 @@ zones, the rig extended with two-bone limbs, a test sheet clip (walk, run, jump,
 point, talk) over one existing plate with code-made cloud and foliage motion, checked by the ice test's frame checks and a
 neighbour-frame sheet. Output: a 15-20 s clip + frame sheet. Optional comparison: the same hero in Synfig with its
 skeleton deformation. Nothing paid in either.
+
+## 8. Result of the PoC (2026-10-22, the creator's "კი")
+
+`explainer_engine/production/bend_rig.py` + `tests/unit/test_bend_rig.py` (10 tests). A 15-second shot, 1920x1080, 24 fps,
+rendered on the CPU in about 2.5 minutes, nothing paid: one code-drawn hero (route A of section 5, Wild Ink line and
+bulging eyes) walks in, stops, looks up, crouches, runs, jumps, trips on the landing, falls on his belly, scrapes the right
+knee (a torn trouser and a red scrape appear at the impact frame), pushes up, kneels, stands, holds the knee, turns with a
+squash-and-flip, and limps away. The plate is the ice test's own Seedream picture with the crowd painted out (reused, no
+new spend); the snowfall and the trees bending in the wind are code.
+
+- Bending: legs and arms are one ink shape over two bones (outlines first, fills after), so knees and elbows have no seam
+  or hole at any angle; the wound is a decal on the part, the limp is the gait with a shorter, dipping, slower stance.
+- Feet: the gait phase comes from the distance the hips travelled; planted feet hold one world position, knees come from
+  inverse kinematics, the hips' bob from what the legs can reach; entering a gait, a foot the gait wants elsewhere steps
+  there instead of sliding.
+- Sound: footsteps, takeoff, landing and impact are read from the poses (stereo, -14.3 LUFS, peak -2.2 dBFS).
+- `python -m explainer_engine.production.bend_rig check`: BR-1 foot slide, BR-2 under the snow, BR-3 planted foot reached,
+  BR-4 bone lengths, BR-5 joint jumps, BR-6 in frame, BR-7 every footfall has its sound: 432 frames, 0 findings.
+- Not solved here: the style seam (the hero is flat vector next to a painterly plate; a paper texture in screen space would
+  "swim", so it needs a texture fixed to each part); one side view only (the turn is a flip); the hero is drawn by code,
+  so his appeal is below the painted boards. Next: the same rig with the face and outfit taken from a creator-approved
+  painted sheet (route B), and a texture per part.
+
+Files: project files `explainer-engine/hybrid_model_2026-10-22/bend_poc/` and
+https://huggingface.co/datasets/vano1919/tmr-artifacts/tree/main/explainer-engine/hybrid_model_2026-10-22/bend_poc
+(`bend_poc.mp4`, `bend_poc_frames.jpg`, `bend_poc_check.json`, `ice_plate_clean.png`).

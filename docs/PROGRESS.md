@@ -1002,3 +1002,13 @@ motion by code on the plate; the ice test's leg defect comes from parts cut out 
 as parts (SVG body + painted face set) and joints must bend. Synfig, Blender Grease Pencil, OpenToonz, Godot, Rive, Spine,
 Live2D, Moho and Lottie compared for AI control, headless render, deformation and licence. Documents only; nothing paid;
 no code or rule changed.
+
+## 2026-10-22 - Hybrid model PoC: a bending rig on a painted plate
+
+After the research above the creator said "კი" to the free PoC. `production/bend_rig.py` (numpy + PIL): two-bone limbs
+drawn as one ink shape (no knee or elbow seam), inverse-kinematics feet planted by the distance travelled (no slide), hips
+clamped by reach, a keyed fall/get-up, a squash-and-flip turn, a scrape decal and an antalgic limp as data, follow-through
+on the scarf, code-made snowfall and tree sway over the ice test's plate (crowd painted out, no new spend), footsteps and
+impacts read from the poses. `check` (BR-1..BR-7) passes on all 432 frames; `tests/unit/test_bend_rig.py` (10). Result and
+what it does not solve (style seam, one view): [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md)
+section 8. Nothing paid.
