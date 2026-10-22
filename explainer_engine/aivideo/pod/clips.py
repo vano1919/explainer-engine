@@ -14,10 +14,19 @@ shots_path, kfdir, out = a[1], a[2], a[3]
 res = int(a[a.index("--res") + 1]) if "--res" in a else 480
 smoke = "--smoke" in a
 deadline = float(a[a.index("--deadline") + 1]) if "--deadline" in a else 1e18
-if os.path.exists("/workspace/T0"):  # the money ceiling ends the pod ~205 min after its start (watchdog.py)
-    deadline = min(deadline, int(open("/workspace/T0").read()) + 170 * 60)
+if os.path.exists("/workspace/T0"):  # the money ceiling ends the pod ~182 min after its start (watchdog.py)
+    deadline = min(deadline, int(open("/workspace/T0").read()) + 150 * 60)
 style = a[a.index("--style") + 1: a.index("--style") + 3] if "--style" in a else None
-sstr = float(a[a.index("--style-strength") + 1]) if "--style-strength" in a else 1.0
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import fixhub, glob
+fixhub.ensure()
+if not style and not smoke:  # the stage looked before the hot-fixed training finished: take the newest pair now
+    hi = sorted(glob.glob("/workspace/out/train/wldnk_wan22_v1/*_high_noise.safetensors"), key=os.path.getmtime)
+    lo = sorted(glob.glob("/workspace/out/train/wldnk_wan22_v1/*_low_noise.safetensors"), key=os.path.getmtime)
+    if hi and lo:
+        style = [hi[-1], lo[-1]]
+        print("style LoRA found late", style, flush=True)
+sstr = float(a[a.index("--style-strength") + 1]) if "--style-strength" in a else 0.8
 os.makedirs(out, exist_ok=True)
 data = json.load(open(shots_path))
 W, H = (832, 480) if res == 480 else (1280, 720)

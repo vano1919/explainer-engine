@@ -3,7 +3,7 @@ import base64, json, sys
 from explainer_engine.cloud import runpod as rp
 from explainer_engine.core.ledger import Run
 
-MAX_USD, MAX_H = 2.7, 7.5  # under 80 % of the ledger cap 3.6 (the ledger's stop rule), minus ~$0.12 of the first try
+MAX_USD, MAX_H = 2.4, 7.5  # under 80 % of the ledger cap 3.6 (the ledger's stop rule), minus ~$0.45 of tries 1-2
 CAP = 3.6
 LEDGER = "/mnt/project-files/explainer-engine/hybrid_model_2026-10-22/night_run/night_run_ledger.json"
 POD_SH = "/mnt/project-files/explainer-engine/hybrid_model_2026-10-22/night_run/pod/pod.sh"

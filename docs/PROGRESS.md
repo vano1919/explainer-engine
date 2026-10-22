@@ -1075,6 +1075,9 @@ be: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md)
   training at 95 min (800 steps, a checkpoint every 100) and the clips stop at 170 min (`schedule_fits`). The first try
   (~8 min) died on two setup faults, now fixed: a body without `volumeInGb` got a 20 GB volume on /workspace, and
   removing the CUDA forward-compat libs breaks torch on a datacenter card with driver 550 (they stay unless torch fails).
+  Try 2 (~22 min) ran every stage in 21 min without doing anything: pod.sh's `pip install -U huggingface_hub` pulled 2.2,
+  which transformers refuses, and the smoke failures did not stop it. Now the hub is pinned below 2 (`fixhub.py` heals a
+  running pod), a failed smoke is fatal, and the ceiling of the next try is $2.4 (training to 85 min, clips to 150).
 - Narration: one ElevenLabs take, 1,522 credits, 113.7 s; word times by faster-whisper; 16 segments.
 - Tests: `tests/unit/test_aivideo_shotplan.py` (9). Proposed for removal on the creator's word (not done): the rig cartoon
   route (production/bend_rig, ice_short, physics2d, mocap, gaits.json, pymunk) and its four test files.

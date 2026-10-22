@@ -57,9 +57,9 @@ def test_montage_plan_holds_keyframe_before_short_clip_and_marks_gaps():
 
 
 def test_night_schedule_fits_the_money_ceiling():
-    # pod up to $0.79/h, ceiling $2.7: training stops at 95 min, clips at 170, the first late upload at 188 (watchdog.py)
-    assert sp.affordable_minutes(2.7, 0.79) == 205
-    assert sp.schedule_fits([95, 170, 188], 2.7, 0.79)
+    # pod up to $0.79/h, ceiling $2.4: training stops at 85 min, clips at 150, the first late upload at 165 (watchdog.py)
+    assert sp.affordable_minutes(2.4, 0.79) == 182
+    assert sp.schedule_fits([85, 150, 165], 2.4, 0.79)
     assert not sp.schedule_fits([160, 225, 375], 2.85, 0.79)  # pod.sh's own clock, written for a $0.35 A40
 
 
@@ -70,6 +70,8 @@ def test_pod_code_follows_the_rules():
     assert "volume=0" in launch  # container disk only: no volume that bills while stopped (a missing key gave 20 GB)
     sh = open(os.path.join(pod, "pod.sh"), encoding="utf-8").read()
     assert "stopself" in sh and "fatal" in sh
+    assert 'huggingface_hub[hf_transfer]<2"' in sh  # hub 2.x breaks transformers: it killed try 2's smoke and training
+    assert '|| fatal "SMOKE KF"' in sh and '|| fatal "SMOKE CLIPS"' in sh  # a failed smoke ends the pod, not the night
     for f in ("pod.sh", "kf.py", "clips.py", "launch.py", "watchdog.py", "montage.py"):
         txt = open(os.path.join(pod, f), encoding="utf-8").read()
         assert "hf_" not in txt.replace("hf_transfer", "").replace("hf_hub", "").replace("hf_whoami", ""), f  # no tokens

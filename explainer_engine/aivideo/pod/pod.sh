@@ -34,7 +34,7 @@ if ! python -c "import torch,sys;sys.exit(0 if torch.cuda.is_available() else 1)
 fi
 python -c "import torch,sys;sys.exit(0 if torch.cuda.is_available() else 1)" 2>/dev/null || pip install -q --force-reinstall torch==2.8.0 torchvision==0.23.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128 --break-system-packages
 python -c "import torch;print('cuda ok',torch.cuda.is_available(),torch.version.cuda,torch.cuda.get_device_name(0))" || fatal "CUDA BROKEN"
-pip install -q -U "huggingface_hub[hf_transfer]" --break-system-packages || pip install -q -U "huggingface_hub[hf_transfer]" || true
+pip install -q -U "huggingface_hub[hf_transfer]<2" --break-system-packages || pip install -q -U "huggingface_hub[hf_transfer]<2" || true
 # the code lives on HF and is fetched again before every stage, so a fix uploaded at night reaches the running pod
 getcode(){ python - <<'PY'
 from huggingface_hub import HfApi, hf_hub_download
@@ -74,9 +74,9 @@ stage smoke
 for i in $(seq 1 80); do [ -f /workspace/dl/ALL_DONE ] && break; sleep 15; done
 getcode; cd /workspace/code
 mkdir -p /workspace/smoke/kf
-timeout 900 python kf.py shots.json none /workspace/out/smoke_kf --smoke > /workspace/out/smoke_kf.log 2>&1; echo "SMOKE KF EXIT $?"
+timeout 900 python kf.py shots.json none /workspace/out/smoke_kf --smoke > /workspace/out/smoke_kf.log 2>&1 || fatal "SMOKE KF"
 cp "$(ls /workspace/ds/*.jpg | head -1)" /workspace/smoke/kf/c01_first.png
-timeout 1500 python clips.py shots.json /workspace/smoke/kf /workspace/out/smoke_clips --res 480 --smoke > /workspace/out/smoke_clips.log 2>&1; echo "SMOKE CLIPS EXIT $?"
+timeout 1500 python clips.py shots.json /workspace/smoke/kf /workspace/out/smoke_clips --res 480 --smoke > /workspace/out/smoke_clips.log 2>&1 || fatal "SMOKE CLIPS"
 python -c "import torch,gc;gc.collect();torch.cuda.empty_cache()"
 up
 

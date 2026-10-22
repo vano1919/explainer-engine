@@ -13,6 +13,32 @@ if smoke and not os.path.exists("/workspace/watchdog.started"):  # one detached 
     open("/workspace/watchdog.started", "w").write(str(time.time()))
     subprocess.Popen(["nohup", "python", os.path.join(os.path.dirname(os.path.abspath(__file__)), "watchdog.py")],
                      stdout=open("/workspace/out/watchdog.log", "a"), stderr=subprocess.STDOUT, start_new_session=True)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import fixhub
+fixhub.ensure()
+import glob, subprocess
+TRAIN_DIR = "/workspace/out/train/wldnk_wan22_v1"
+if not smoke and not glob.glob(TRAIN_DIR + "/*_low_noise.safetensors"):
+    # night hot fix: the train stage died on the hub version; train here first (watchdog.py stops it at T0+95 min)
+    print("training the Wan style LoRA before the keyframes", flush=True)
+    import threading
+
+    def _logs():  # the stage's own upload loop is gone: send the training log every 10 minutes
+        from huggingface_hub import HfApi
+        while True:
+            time.sleep(600)
+            try:
+                HfApi().upload_folder(folder_path="/workspace/out", path_in_repo="night_run_2026-10-22",
+                                      repo_id="vano1919/tmr-artifacts", repo_type="dataset",
+                                      allow_patterns=["*.log", "*.txt", "train/**/*.safetensors"])
+            except Exception as e:
+                print("log upload failed", e, flush=True)
+    threading.Thread(target=_logs, daemon=True).start()
+    with open("/workspace/out/train2.log", "a") as lg:
+        subprocess.run(["python", "run.py", "/workspace/code/wan_lora.yaml"], cwd="/app/ai-toolkit", stdout=lg,
+                       stderr=subprocess.STDOUT)
+    subprocess.run(["python", "-c", "import torch;torch.cuda.empty_cache()"])
+    print("training ended", glob.glob(TRAIN_DIR + "/*.safetensors"), flush=True)
 strength = float(sys.argv[sys.argv.index("--strength") + 1]) if "--strength" in sys.argv else 1.0
 os.makedirs(out, exist_ok=True)
 data = json.load(open(shots_path))
