@@ -248,3 +248,50 @@ sheet are a slightly different drawing from the turnaround body (one sheet per h
 is better); a near layer that is a full rock frame cannot be tiled, so foreground rocks must be painted as separate
 props; the face sheets' hat colour differed from the turnaround's once (green vs grey), so a hero's colours must be
 fixed in one reference first. Voice: lines are captions in this cut; the ElevenLabs take waits for the creator's word.
+
+### 8.4 Physics and montage, version 2 (2026-10-22 20:32-21:50, the creator's option "0+1 + paid ≈$0.50")
+
+The creator (20:32): ignore the visuals here; the physics and the editing are completely off from reality. The frame-by-frame
+audit and the plan are in the Claude Doc "ფიზიკა და მონტაჟი: ანალიზი და გეგმა"; he chose stages 0+1 (free) plus the stage 2
+paid test (one 5 s clip on fal).
+
+Stage 0+1, free, in code (`production/physics2d.py`, `production/mocap.py`, `production/gaits.json`, `ice_short.py` rewritten):
+- Bodies instead of eased keys (pymunk, MIT): the terrain is a profile of slopes along a lane that bends away from the camera;
+  the sled is a box with mass and friction dragged on a rope (a slide joint) by the hand, the arm that holds it gives (a
+  damped spring, ~400 N/m, so the gait's bob does not yank the sled every step); the sled coasts over the lip, slides down
+  the 10-degree slope and taps Dev's heel (simulated contact, 10 px/s), is freed when the heel lifts, runs down with real
+  gravity; Dev's trip is a ragdoll from the rig's skeleton (jointed bodies, angle limits, muscle tone fading in 0.35 s, a
+  reach reflex of the shoulders), and the get-up starts from where the ragdoll came to rest. Every contact, takeoff and
+  landing is an event; sounds come from the events and the simulated speeds.
+- Gait from motion capture: `mocap.py` parses a BVH clip (CMU Graphics Lab Motion Capture Database, free for any use; the
+  cgspeed BVH conversion), runs forward kinematics, projects onto the body's own sagittal plane, detects contacts by foot
+  stillness and measures each cycle: stride, stance shares, swing arc, hip height and bob, lean, sway, arm swing, elbow,
+  heel-strike and toe-off pitch, in leg lengths so they retarget to the rig's shorter cartoon legs. Measured on 07_01 (walk),
+  07_12 (brisk walk), 09_01 (run), 02_03 (jog) -> `gaits.json`; `bend_rig.measured("walk")` and `("run")` drive Dev.
+  The measured walk has a longer stride (0.78 vs the hand-made 0.62 body heights), a 58-degree toe-off, stance 0.58/0.55;
+  the run stance 0.29 with a flight phase and a 13-degree lean.
+- The camera as an operator: per shot a critically damped second-order follow with lead room from the subject's speed, a slow
+  push-in, a fit zoom; ten shots with reaction shots on the lines and cuts on actions. Rule BR-10 now means "the camera
+  stopped dead while its subjects moved".
+- Checks: BR-3/4/5/7/8/9/10/11/12/13 and IS-1 (scoped to the shot's subjects): 0 findings on the full 30 s and on the clip.
+  Tests: `test_physics2d.py` (terrain, flat vs slope, the taut rope and the giving arm, the heel bump, ragdoll bone lengths,
+  the operator never dead-stops), `test_mocap.py` (BVH parse and FK, a synthetic walk's cycles, the rig's measured gaits
+  never slide), `test_ice_short.py` (projection, inverse, lane, terrain); the whole suite 671 passed.
+
+Stage 2, paid (fal, the card's ≈$0.50; ledger `jobs/ice_cartoon/job-002_2026-10-22/run.json`):
+- Wan 2.2 Animate ("move", 480p, $0.04/s): the fall clip was refused by fal's content checker before generation ($0); the
+  walk clip (0.5-5.5 s) generated for $0.20. Result: unusable. The model expects a person filling the frame; from a small
+  2.5D cartoon figure it extracted no pose and painted a smeared portrait of the reference (file
+  `hybrid_model_2026-10-22/ice_cartoon/v2/fal_wan_animate_walk.mp4` + sheet).
+- Kling 2.6 Motion Control ($0.07/s): refused the reference image's aspect ratio (fixed by padding), then refused the fall
+  clip ("no complete upper body detected in the video"); the third try on the close-up clip (8.6-13.6 s, Dev filling the
+  frame for 2.8 s) generated for $0.35 (`v2/fal_kling_motion_control_close.mp4` + sheet, 1136x1824, 30 fps). Result: the
+  hero stays ON MODEL (Dev's design, cape, tie, hair, the Wild Ink line, as drawn in the reference), the arms-out "Behold"
+  and the wide pose are followed, the face acts (a grin). It paints the hero alone on the reference's plain background, in
+  the reference's portrait orientation; after the cut to the wide shot (3.4 s) it kept a small figure walking on a blank
+  snowfield, so one shot per call. The sound and the plate are ours to add.
+- Verdict: motion-transfer models are built for full-frame humans. Wan 2.2 Animate gives nothing from a small 2.5D figure.
+  Kling 2.6 Motion Control re-animates our hero from ONE reference picture when the hero fills the frame, and keeps the
+  style: a real tool for close-up inserts (a reaction, a gesture, a face acting) driven by our rig's motion as the
+  reference video, composited onto our plates (a chroma or plain reference background keys out). Cost $0.07/s, one shot per
+  call, portrait or landscape by the reference. Wide and medium shots, physics, contacts and continuity stay with the rig.

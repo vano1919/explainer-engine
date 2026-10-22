@@ -184,6 +184,8 @@ class Pose:
     view: str = "side"                # "side" | "three_quarter": the body turned toward the camera (a 2.5D shot)
     wound: bool = False
     scarf: float = 0.0                # the scarf tail's angle, degrees (follow-through)
+    expr_from: str | None = None      # the expression being left (a painted head crossfades over a few frames)
+    expr_mix: float = 1.0             # 0 = still expr_from .. 1 = expr
 
 
 @dataclass(frozen=True)
@@ -201,6 +203,7 @@ class Gait:
     strike: float = 16.0    # heel strike: the toe up (degrees) as the foot lands, rolling down onto the sole
     toe_off: float = 28.0   # toe-off: the heel rises (degrees) as the foot leaves, rolling over the toes
     sway: float = 2.0       # torso pitch wave, twice a cycle (degrees)
+    arc: tuple = ()         # measured swing arc: the ankle's height (body heights) over the swing's progress; () = a sine
 
 
 WALK = Gait(0.62, (0.64, 0.64), lift=0.06, hip=0.435, lean=4, swing=26, elbow=14)
@@ -208,6 +211,16 @@ RUN = Gait(0.86, (0.38, 0.38), lift=0.16, hip=0.415, bob=0.04, lean=15, swing=48
            sway=3.0)
 LIMP = Gait(0.40, (0.72, 0.46), lift=0.045, hip=0.425, lean=9, swing=8, elbow=24, dip=0.03, strike=8.0, toe_off=14.0,
             sway=1.0)
+
+
+@lru_cache(maxsize=None)
+def measured(name: str) -> Gait:
+    """A gait measured from motion capture (``production/mocap.py`` -> ``gaits.json``): walk, brisk_walk, run, jog.
+    Lengths were retargeted to this rig's leg; the hips' natural bob then comes out of ``reach_clamp``."""
+    table = json.loads(Path(__file__).with_name("gaits.json").read_text())
+    kw = dict(table["gaits"][name]["gait"])
+    kw["stance"], kw["offset"], kw["arc"] = tuple(kw["stance"]), tuple(kw["offset"]), tuple(kw["arc"])
+    return Gait(**kw)
 HEEL = (-0.045 * B, ANKLE)   # the heel's ground point, in the foot's own frame (forward, down) from the ankle
 TOE = (0.10 * B, ANKLE)      # the toes' ground point
 ROLL = (0.16, 0.22)          # share of the stance spent on the heel strike and on the toe-off
@@ -264,7 +277,13 @@ def gait_foot(g: Gait, i: int, phase: float, x_ref: float, f: int) -> tuple:
     x1, y1, a1 = strike_pose(n + 1, 0.0) if g.strike else (plant(n + 1), ANK, 0.0)
     e = ease(sw)
     x = lerp(x0, x1, e)
-    y = lerp(y0, y1, e) - g.lift * B * math.sin(math.pi * sw)
+    if g.arc:
+        # the measured arc minus the straight line between its ends (those ends are the toe-off and the strike above)
+        grid = np.linspace(0.0, 1.0, len(g.arc))
+        base = lerp(g.arc[0], g.arc[-1], e)
+        y = lerp(y0, y1, e) - max(0.0, float(np.interp(e, grid, g.arc)) - base) * B
+    else:
+        y = lerp(y0, y1, e) - g.lift * B * math.sin(math.pi * sw)
     pitch = lerp(a0, a1, ease(min(1.0, sw * 1.6)))
     return (x, y, pitch, False)
 
@@ -1117,7 +1136,14 @@ def _sheet_skin(folder: str) -> tuple:
 
 def paste_head(cv: Canvas, j: dict, p: Pose, folder: str):
     heads = load_heads(folder)
-    img = head_picture(heads, p.expr, "front" if p.front else p.view)
+    view = "front" if p.front else p.view
+    img = head_picture(heads, p.expr, view)
+    if p.expr_from and p.expr_from != p.expr and p.expr_mix < 1.0:
+        # a change of expression crosses over 2-3 frames instead of popping (the creator's montage notes, 2026-10-22)
+        old = head_picture(heads, p.expr_from, view)
+        if old.size != img.size:
+            old = old.resize(img.size, Image.LANCZOS)
+        img = Image.blend(old, img, max(0.0, min(1.0, p.expr_mix)))
     h = HEAD_H * SS
     w = img.width * h / img.height
     img = img.resize((max(2, int(round(w))), max(2, int(round(h)))), Image.LANCZOS)

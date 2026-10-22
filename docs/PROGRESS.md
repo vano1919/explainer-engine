@@ -1040,3 +1040,22 @@ be: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md)
   poses, checks). Research doc section 8.3.
 - Tests: `test_bend_rig.py` (3/4 view, build swap, cut part on its bone) and `test_ice_short.py` (camera ground line,
   depth scaling, captions).
+
+## 2026-10-22 - Ice Age test cartoon v2: physics, mocap gait, operator camera (stages 0+1 + the paid stage 2 test)
+
+- The creator (20:32): the physics and the montage are off; plan first (the Claude Doc), then his choice (card 20:47): stages
+  0+1 free + the ≈$0.50 fal test.
+- New `production/physics2d.py` (pymunk: terrain, lane, sled on a rope with a giving arm, ragdoll with muscle tone, follow-
+  through, camera operator), `production/mocap.py` + `gaits.json` (CMU BVH -> measured gaits, retargeted by leg length;
+  `bend_rig.measured`), `ice_short.py` rewritten on them (10 shots, events -> sounds, checks 0 findings).
+- Tests: `test_physics2d.py` 7, `test_mocap.py` 3, `test_ice_short.py` 6; `python -m pytest -q` -> 671 passed, 1 skipped.
+- Rendered: `hybrid_model_2026-10-22/ice_cartoon/v2/` (30 s with the earlier voice takes, the 5 s fall clip, old-vs-new
+  sheet). Nothing new paid for pictures or voice.
+- Paid (fal, approved on the card): Wan 2.2 Animate $0.20 on the walk clip (unusable: smeared, no pose from a small cartoon
+  figure); refusals before generation cost $0. Kling 2.6 Motion Control $0.35 on the close-up clip: Dev re-animated on
+  model from one reference picture, following the rig's gesture and acting with the face. Total $0.55; ledger
+  `jobs/ice_cartoon/job-002_2026-10-22/run.json` (cap 0.75).
+- Learned: motion-transfer models need a hero filling the frame; wide 2.5D shots give them nothing; Kling Motion Control
+  is a candidate for close-up inserts driven by the rig. Research doc 8.4.
+- Next: the creator's read of v2 (old vs new), then the remaining plan stages (secondary motion on soft parts, a 3/4 mesh
+  warp, more mocap clips: jump, land, get-up).
