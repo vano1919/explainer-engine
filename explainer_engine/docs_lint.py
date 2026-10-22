@@ -26,6 +26,7 @@ HOMES = {
     # the rule families added since D-23 (audit 2026-10-19 H4: branches reused PV-32..36 and OR-10 for different rules)
     "PV": "PRODUCTION_SCRIPT.md",
     "PP": "PRODUCTION_SCRIPT.md",
+    "CS": "PRODUCTION_SCRIPT.md",  # scene continuity of the painted pictures (D-69)
     "PC": "QA_SPECIFICATION.md",
     "ED": "EDITING.md",
     "OR": "ORCHESTRATION.md",

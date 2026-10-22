@@ -33,7 +33,15 @@ PROVIDERS = {
 
 
 def item_hash(item: dict) -> str:
-    return hashlib.sha256(json.dumps([item["id"], item["prompt"], sorted(item.get("refs", []))]).encode()).hexdigest()[:16]
+    """What one painted picture is made from. A continuity correction (D-69, CS-10/CS-11) is part of it, so a rejected
+    picture is painted again, from a new plan the creator approves."""
+    core = [item["id"], item["prompt"], sorted(item.get("refs", []))] + ([item["correction"]] if item.get("correction") else [])
+    return hashlib.sha256(json.dumps(core).encode()).hexdigest()[:16]
+
+
+def full_prompt(item: dict) -> str:
+    """The text sent to the painter: the script's compiled prompt plus the open continuity correction, if any."""
+    return item["prompt"] + (" " + item["correction"] if item.get("correction") else "")
 
 
 def plan_hash(plan: dict) -> str:
@@ -67,8 +75,8 @@ def make(plan_id: str, episode: str, items: list[dict], *, provider: str, model:
          batch: bool = False, purpose: str = "", reusable: bool = False) -> dict:
     if provider not in PROVIDERS:
         raise ValueError(f"unknown provider {provider!r}; known: {sorted(PROVIDERS)}")
-    items = [{"id": i["id"], "prompt": i["prompt"], "refs": list(i.get("refs", [])), "first_use": i.get("first_use")}
-             for i in items]
+    items = [dict({"id": i["id"], "prompt": i["prompt"], "refs": list(i.get("refs", [])), "first_use": i.get("first_use")},
+                  **({"correction": i["correction"]} if i.get("correction") else {})) for i in items]
     plan = {"schema": SCHEMA, "id": plan_id, "episode": episode, "provider": provider, "model": model, "size": size,
             "batch": batch, "purpose": purpose, "reusable": reusable, "items": items,
             "created": time.strftime("%Y-%m-%dT%H:%M:%S")}
@@ -115,9 +123,13 @@ def check(plan: dict, doc: dict | None = None) -> list[dict]:
             price("gemini", plan.get("model"), plan.get("size"), 0, plan.get("batch", False))
         except ValueError as exc:
             add("PP-03", plan["id"], str(exc))
+    most = prov["max_refs"]
+    if plan["provider"] == "gemini" and plan.get("model"):  # the model's own slots (D-69, CS-08)
+        most = min(most, gemini.ref_limits(plan["model"])["total"])
     for it in plan["items"]:
-        if len(it.get("refs", [])) > prov["max_refs"]:
-            add("PP-03", it["id"], f"{len(it['refs'])} references; {plan['provider']} takes at most {prov['max_refs']}")
+        if len(it.get("refs", [])) > most:
+            add("PP-03", it["id"], f"{len(it['refs'])} references; {plan['provider']} {plan.get('model') or ''} takes at "
+                                   f"most {most}")
         if not it.get("prompt", "").strip():
             add("PP-04", it["id"], "empty prompt: run `production compile --write` first")
     # PP-05 (D-50 supersedes D-19's "Gemini only for reusable assets"): the creator picks the provider per batch and the

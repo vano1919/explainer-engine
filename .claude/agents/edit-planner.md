@@ -34,7 +34,13 @@ For each segment:
    beat's word; for a dialogue line pick a picture whose `speakers` point shows the speaking face (VB-06). You may move
    a beat (`pos`) to fit the picture, never change what it shows; on /3 a cue is the beat-writer's, bound to its `event`
    (VB-08) — a cue that collides with your effect goes back to the beat-writer, never gets silenced by you.
-6. Run `python -m explainer_engine.production validate <script>`: 0 FAIL; the PV-35 (MO, incl. MO-07) and PV-24 RHYTHM
+6. Stage every scene's pictures as ONE room (D-69, CS rules in docs/PRODUCTION_SCRIPT.md, the skill `shot-visuals`
+   "One scene, one room"): segment `staging` with the `roster`, each person's `positions` (left to right in the wide
+   shot), `layout` and `fixed` details; the master frame is the first wide picture and lists every roster member in its
+   `heroes`; later shots change the camera (`framing`) and name who must be seen, never the room or the seats; `change`
+   for an action under the same camera; `cut_away` for a picture of another place; a following segment in the same room
+   says `continues: true`. `python -m explainer_engine.production.staging plan <script>` shows the scenes and shot kinds.
+7. Run `python -m explainer_engine.production validate <script>`: 0 FAIL (CS-01..CS-03 included); the PV-35 (MO, incl. MO-07) and PV-24 RHYTHM
    REVIEWs on the estimated read answered or fixed, 0 PV-44 FAIL. Report events a minute, the kinds used, the alive
    share and the scenes' coverage (establish, listener cuts, longest A/B run, J/L share).
 
