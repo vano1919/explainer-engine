@@ -10,6 +10,7 @@
     "max_hours_per_pod": 2.0,
     "max_price_per_hour": 0.95,
     "min_balance_left_usd": 0.25,
-    "keep_stopped_pods": []
+    "keep_stopped_pods": [],
+    "keep_network_volumes": []
   }
 }

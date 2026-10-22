@@ -14,6 +14,7 @@ Source: `vano1919/tmr-video-script-engine` at commit `d88ba8f` (2026-10-15), sam
 | `explainer_engine/audio/visemes.py` | `tmr_engine/render/visemes.py` | owl sprites, moods and `OwlTrack` removed; timing logic unchanged |
 | `explainer_engine/audio/envelope.py` | `tmr_engine/render/character.py` | `beak` → `mouth`; logic unchanged |
 | `setup.ps1` | `setup.ps1` | Python venv + requirements only (Kokoro, Node and Remotion arrive in their phases) |
+| `explainer_engine/cloud/store.py` | TMR `cloud/store.py` at `1c33878` | the durable store of the Guardian (2026-10-22): stdlib backend switch (`EXPLAINER_STORE_LOCAL` folder or the HF dataset), sha256 sidecar on every push, `verify` reports and never deletes, `store_job` for the job record; env names `EXPLAINER_STORE_*` |
 
 Tests adapted from `tests/unit/test_timings.py`, `test_celestial.py` (viseme part), `test_character.py` and
 `test_housekeeping.py` live in `tests/unit/test_audio_timing.py` and `tests/unit/test_core.py`.

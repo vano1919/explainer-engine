@@ -5,6 +5,7 @@
     python -m explainer_engine.cloud.runpod create --yes --max-usd X --max-hours H [--gpu default|cheap|big] [--boot <manifest>]
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
     python -m explainer_engine.cloud.runpod status|logs|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
+    python -m explainer_engine.cloud.runpod delete-volume <network volume id> --yes
 
 What TMR's rp.py did and what changed here (docs/TOOL_STRATEGY.md "Money control for RunPod" has the facts from RunPod's API reference):
 * one HTTP layer with retries (429, 5xx, timeouts, no network) for reads and for stop/delete; ``POST /pods`` is never re-sent
@@ -60,8 +61,9 @@ GPUS = {"default": ["NVIDIA GeForce RTX 4090"],
 MAX_PRICE = {"default": 0.95, "cheap": 0.90, "big": 0.95}  # $/h per card, the creator's ceilings (TMR 2026-10-10/11/16)
 CUDA_VERSIONS = ["12.8", "12.9", "13.0"]
 CONTAINER_GB, VOLUME_GB = 80, 150
-# disk prices, docs.runpod.io/pods/pricing (2026-10-19): running $0.10/GB/month (container + volume), stopped volume $0.20
-GB_MONTH_RUNNING, GB_MONTH_STOPPED, HOURS_PER_MONTH = 0.10, 0.20, 730.0
+# disk prices, docs.runpod.io/pods/pricing (2026-10-19): running $0.10/GB/month (container + volume), stopped volume $0.20;
+# a stand-alone network volume $0.07/GB/month (docs.runpod.io/storage/network-volumes, read 2026-10-22; $0.05 above 1 TB)
+GB_MONTH_RUNNING, GB_MONTH_STOPPED, GB_MONTH_NETWORK_VOLUME, HOURS_PER_MONTH = 0.10, 0.20, 0.07, 730.0
 BOOT_MINUTES = 10  # the pod must answer (status page or ssh port) within this long, else it never booted
 GONE = ("TERMINATED",)
 ENDED = ("EXITED", "ERROR")  # not billing compute; ERROR is reported to the creator (its disk may still bill)
@@ -91,12 +93,13 @@ def api_key():
 
 
 def _urllib(method, url, body, headers, timeout):
+    """(status, text, response headers). A transport may return only (status, text)."""
     req = urllib.request.Request(url, body, headers, method=method)
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
-            return r.status, r.read().decode()
+            return r.status, r.read().decode(), dict(r.headers)
     except urllib.error.HTTPError as e:
-        return e.code, e.read().decode(errors="replace")
+        return e.code, e.read().decode(errors="replace"), dict(e.headers or {})
 
 
 def norm(pod):
@@ -129,19 +132,24 @@ class Api:
 
     def request(self, method, path, body=None, *, retry=True, url=None):
         data = json.dumps(body).encode() if body is not None else (b"{}" if method == "POST" else None)
-        last = None
+        last, wait = None, None
         for attempt in range(self.retries + 1 if retry else 1):
             if attempt:
-                self.sleep(min(60, 2 ** attempt))
+                self.sleep(min(60, wait or 2 ** attempt))  # a 429 names its own wait (Retry-After); v2 quotas are per window
             try:
-                status, text = self.transport(method, url or self.base + path, data, self._headers(), self.timeout)
+                status, text, *rest = self.transport(method, url or self.base + path, data, self._headers(), self.timeout)
             except OSError as e:
                 last = Unclear(f"{method} {path}: no answer ({e})")
                 continue
+            hdrs = {k.lower(): v for k, v in (rest[0] or {}).items()} if rest and isinstance(rest[0], dict) else {}
             if status == 404:
                 raise NotFound(f"{method} {path}: 404", 404)
             if status == 429 or status >= 500:
                 last = Unclear(f"{method} {path}: HTTP {status} {text[:200]}", status)
+                try:
+                    wait = int(float(hdrs.get("retry-after", ""))) if status == 429 else None
+                except ValueError:
+                    wait = None
                 continue
             if status >= 400:
                 raise RunPodError(f"{method} {path}: HTTP {status} {text[:300]}", status)
@@ -163,25 +171,64 @@ class Api:
             return None
         return None if not p or p.get("status") in GONE else norm(p)
 
-    def pods(self):
-        """Every pod of the account (all pages), flat. v2 has no name filter: callers filter."""
+    def _pages(self, path, key):
+        """Every row of a cursor-paginated v2 listing (``{<key>: [...], pagination{nextCursor, hasNextPage}}``)."""
         out, cursor = [], None
         while True:
             q = "?limit=1000" + (f"&cursor={urllib.parse.quote(cursor)}" if cursor else "")
-            page = self.request("GET", "/pods" + q) or {}
-            rows = page.get("pods") if isinstance(page, dict) else page
-            out += [norm(p) for p in rows or []]
+            page = self.request("GET", path + q) or {}
+            rows = page.get(key, page.get("items")) if isinstance(page, dict) else page
+            out += list(rows or [])
             pg = page.get("pagination") if isinstance(page, dict) else None
             cursor = (pg or {}).get("nextCursor")
             if not pg or not pg.get("hasNextPage") or not cursor:
                 return out
 
+    def pods(self):
+        """Every pod of the account (all pages), flat. v2 has no name filter: callers filter."""
+        return [norm(p) for p in self._pages("/pods", "pods")]
+
     def action(self, pid, what):
         """``POST /pods/{id}/action``: start, stop, restart or terminate."""
         return self.request("POST", f"/pods/{pid}/action", {"action": what})
 
+    def network_volumes(self):
+        """Stand-alone network volumes (``GET /network-volumes``): they bill ($0.07/GB/month) with no pod at all."""
+        return [{"id": v.get("id"), "name": v.get("name", ""), "size": v.get("size") or 0, "dataCenter": v.get("dataCenter")}
+                for v in self._pages("/network-volumes", "networkVolumes")]
+
+    def global_volumes(self):
+        """Global volumes (``GET /global-volumes``): listed so nothing bills unseen; their price is not modelled here."""
+        return [{"id": v.get("id"), "name": v.get("name", "")} for v in self._pages("/global-volumes", "globalVolumes")]
+
+    def endpoints(self):
+        """Serverless endpoints (``GET /serverless``): one with ``workersMin`` > 0 bills while idle."""
+        return [{"id": e.get("id"), "name": e.get("name", ""), "workersMin": e.get("workersMin") or 0,
+                 "workersMax": e.get("workersMax") or 0} for e in self._pages("/serverless", "endpoints")]
+
+    def delete_network_volume(self, vid):
+        try:
+            self.request("DELETE", f"/network-volumes/{vid}")
+        except NotFound:
+            pass
+        return "GONE"
+
     def balance(self):
+        """GraphQL ``myself``: the only balance source. RunPod retires GraphQL in early 2027 and v2 has no balance endpoint
+        (openapi.json read 2026-10-22): revisit by 2026-12; the fallback is the creator's top-ups reconciled against
+        ``billing_total`` deltas (docs/TOOL_STRATEGY.md)."""
         return self.graphql("query { myself { clientBalance currentSpendPerHr spendLimit } }")["myself"]
+
+    def billing_total(self, start, end=None):
+        """What the WHOLE account billed since ``start`` (``GET /billing``: pods, serverless, storage, clusters), in USD, and
+        the itemised totals. Hour buckets; the newest hour can lag up to an hour."""
+        iso = lambda t: time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(t))  # noqa: E731
+        page = self.request("GET", f"/billing?bucketSize=hour&startTime={iso(start - start % 3600)}&endTime={iso(end or time.time() + 3600)}") or {}
+        totals = ((page.get("metadata") or {}).get("totals") or {}) if isinstance(page, dict) else {}
+        if "totalAmount" in totals:
+            return round(float(totals["totalAmount"] or 0), 4), totals
+        rows = page.get("records", []) if isinstance(page, dict) else page
+        return round(sum(float(r.get("totalAmount") or 0) for r in rows), 4), totals
 
     def billing(self, pid, start, end=None):
         """RunPod's billed amount (compute and disks, stopped pods included) for one pod, or the whole account when ``pid``
@@ -277,8 +324,9 @@ def sess_read(pid):
 
 
 def new_session(pod, *, max_usd, max_hours, on_cap="stop", ledger=None, now=None, status_token="", boot_minutes=BOOT_MINUTES,
-                price_ceiling=None):
-    """``price_ceiling`` stands in while a PROVISIONING pod reports cost 0: the money clock must never run on $0/h."""
+                price_ceiling=None, job=None):
+    """``price_ceiling`` stands in while a PROVISIONING pod reports cost 0: the money clock must never run on $0/h.
+    ``job`` is the job record's directory (``cloud/jobs.py``) the guard writes to."""
     pod = norm(pod)
     now = time.time() if now is None else now
     return sess_write({"pod": pod["id"], "name": pod.get("name", ""), "started": now,
@@ -286,7 +334,18 @@ def new_session(pod, *, max_usd, max_hours, on_cap="stop", ledger=None, now=None
                        "pod_shape": {"volumeInGb": pod.get("volumeInGb"), "containerDiskInGb": pod.get("containerDiskInGb")},
                        "max_usd": max_usd, "max_hours": max_hours, "until": until_of(pod.get("name")) or now + max_hours * 3600,
                        "boot_deadline": now + boot_minutes * 60, "on_cap": on_cap, "ledger": ledger, "status_token": status_token,
-                       "answered": False, "ended": None})
+                       "answered": False, "ended": None, "job": str(job) if job else None})
+
+
+def _job_of(sess):
+    """The job record a session belongs to, or None (adopted pods and pods made before the record existed)."""
+    if not sess or not sess.get("job"):
+        return None
+    try:
+        from explainer_engine.cloud.jobs import Job
+        return Job(sess["job"])
+    except (OSError, ValueError):
+        return None
 
 
 # --- verified lifecycle ---------------------------------------------------------------------------------------------
@@ -364,8 +423,10 @@ def create(api, body, *, max_price, sleep=time.sleep, lookups=6, gpus=None):
             pod = _find_after_unclear(api, body["name"], sleep, lookups, err)
             break  # found or not, a lost answer is never followed by another POST
         except RunPodError as e:
-            err = e  # refused before anything happened (no capacity, bad request): the next card
-            continue
+            err = e
+            if e.status in (401, 402):  # no balance or no valid key: no card will do (RunPod docs); stop the loop
+                raise RunPodError(f"create refused for every card: {e}", e.status) from e
+            continue  # refused before anything happened (no capacity for this card, 400): the next card
         if pod is not None:
             break
     if pod is None:
@@ -486,6 +547,17 @@ def end_pod(api, sess, why, *, push=notify, sleep=time.sleep, attempts=1000):
             sleep(30)
     sess.update(closed=time.time(), close_why=why, close_status=st)
     sess_write(sess)
+    job = _job_of(sess)
+    if job is not None:
+        from explainer_engine.cloud import incidents, jobs as J
+        if st == "UNSTOPPED":
+            job.move("RECOVERY_REQUIRED", f"the guard could not stop the pod: {why}", force=True)
+        elif job.state["state"] in J.LIVE:  # FAILED / SUCCEEDED / RECOVERY_REQUIRED keep their meaning; the pod is just off
+            job.move("STOPPED" if st != "ERROR" else "RECOVERY_REQUIRED", f"guard: {why}", force=True)
+        else:
+            job.event("pod", f"guard ended the pod ({st}): {why}")
+        incidents.record(incidents.fingerprint("runpod", "pod", job.state.get("stage") or "any", text=why), f"guard ended {sess['pod']}: {why}",
+                         cause=why, fix="stopped by the guard" if st != "UNSTOPPED" else "", source="guard", job=job.state["id"])
     disk = disk_per_hour(sess.get("pod_shape") or {}, running=False) * 24
     tail = f"; its disk bills ${disk:.2f}/day until deleted" if st in ENDED else ""
     push("Guard ended the pod" if st != "UNSTOPPED" else "GUARD GAVE UP: THE POD MAY STILL BILL",
@@ -501,6 +573,9 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
     sess = sess_read(pid)
     if not sess:
         raise SystemExit(f"no session for {pid}: create it with this tool, or `adopt` it with its caps")
+    job = _job_of(sess)
+    if job is not None:
+        from explainer_engine.cloud import jobs as J
     blind, last_report, last_line = 0, 0.0, None
     while True:
         now = clock()
@@ -531,6 +606,27 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
             sess["ended"] = now
             sess_write(sess)
         action, why = guard_check(sess, pod, now, conductor)
+        if job is not None and blind == 0:
+            moved = J.observe(job, pod, ready(pod), conductor, now=now)
+            if moved in ("FAILED", "RECOVERY_REQUIRED"):
+                from explainer_engine.cloud import incidents
+                incidents.record(incidents.fingerprint("runpod", "pod", job.state.get("stage") or "any", text=job.state["reason"]),
+                                 f"{pid}: {job.state['reason']}", cause=job.state["reason"], source="guard", job=job.state["id"])
+                push("Pod job " + moved, f"{pid} {job.state['id']}: {job.state['reason']}", "urgent")
+            if action == "ok":
+                stalled = J.stall(job, now)
+                if stalled and job.state["state"] != "STALLED":
+                    job.move("STALLED", stalled, now=now, force=True)
+                    push("Pod job stalled", f"{pid} {job.state['id']}: {stalled}", "high")
+                elif job.state["state"] == "STALLED":
+                    hb = job.last_heartbeat()
+                    quiet = now - (hb["ts"] if hb else job.state["since"])
+                    if quiet > 2 * J.STALL_AFTER.get("RUNNING", 1800):  # a stall that never recovers is an idle pod
+                        if job.safe_to_release():
+                            action, why = "stop", f"job stalled for {quiet / 60:.0f} min and every output is stored"
+                        elif job.state["state"] != "RECOVERY_REQUIRED":
+                            job.move("RECOVERY_REQUIRED", f"stalled {quiet / 60:.0f} min with unstored outputs", now=now, force=True)
+                            push("Pod job needs a hand", f"{pid}: stalled with unstored outputs; not stopped", "urgent")
         if on_look:
             on_look(pod, action, why)
         if why != last_line:
@@ -654,6 +750,14 @@ def live_guard(pid):
         return False
 
 
+def _quiet(call):
+    """(rows, error text): a listing that fails is reported as a problem by the caller, never a crash and never silence."""
+    try:
+        return call() or [], ""
+    except (RunPodError, OSError, ValueError, TypeError, KeyError) as e:
+        return [], f"{type(e).__name__}: {str(e)[:60]}"
+
+
 def check(api, now=None):
     """The account as it bills now: problems (anything spending money that nobody approved or guards) and info lines.
     Run at the start and end of every session and after every pod job; the session hooks run it (cloud/hooks.py).
@@ -681,13 +785,30 @@ def check(api, now=None):
             line = f"{pid} {name} {'STOPPED' if st == 'EXITED' else 'in ERROR'}, disk {p.get('volumeInGb')} GB bills ${day:.2f}/day"
             (info if pid in keep else problems).append(line + ("" if pid in keep else
                                                                "; delete it with the creator's word (`runpod delete <pod> --yes`) or list it in keep_stopped_pods"))
+    # the three ways an account bills with no pod: network volumes, global volumes, serverless workers kept on
+    keep_nv = set(spend_caps.runpod().get("keep_network_volumes", []))
+    for what, call in (("network volume", api.network_volumes), ("global volume", api.global_volumes), ("serverless endpoint", api.endpoints)):
+        rows, err = _quiet(call)
+        if err:
+            problems.append(f"{what}s could not be listed ({err}): check them in the console; they bill without a pod")
+        for r in rows:
+            if what == "network volume":
+                day = float(r["size"]) * GB_MONTH_NETWORK_VOLUME / HOURS_PER_MONTH * 24
+                line = f"{r['id']} {r['name']} network volume {r['size']} GB bills ${day:.2f}/day with no pod"
+                (info if r["id"] in keep_nv else problems).append(line + ("" if r["id"] in keep_nv else
+                                                                    "; `runpod delete-volume <id> --yes` or list it in keep_network_volumes"))
+            elif what == "global volume":
+                (info if r["id"] in keep_nv else problems).append(f"{r['id']} {r['name']} global volume exists (price not modelled here); "
+                                                                  "delete it in the console or list it in keep_network_volumes")
+            elif r["workersMin"] > 0:
+                problems.append(f"{r['id']} {r['name']} serverless endpoint keeps {r['workersMin']} worker(s) on while idle: set min workers 0")
     try:
-        usd, _ = api.billing(None, now - 86400)
+        usd, _ = api.billing_total(now - 86400)
         bal = api.balance()
-        info.append(f"billed in the last 24 h ${usd:.2f} of ${spend_caps.runpod()['per_24h_usd']}; balance ${float(bal['clientBalance']):.2f}, "
-                    f"spending ${float(bal.get('currentSpendPerHr') or 0):.3f}/h now")
+        info.append(f"billed in the last 24 h ${usd:.2f} of ${spend_caps.runpod()['per_24h_usd']} (every resource; the newest hour may lag); "
+                    f"balance ${float(bal['clientBalance']):.2f}, spending ${float(bal.get('currentSpendPerHr') or 0):.3f}/h now")
     except RunPodError as e:
-        info.append(f"billing not read: {str(e)[:80]}")
+        problems.append(f"billing or balance not read ({str(e)[:80]}): the 24 h ceiling cannot be checked")
     return {"problems": problems, "info": info}
 
 
@@ -703,9 +824,9 @@ def preflight_create(api, *, max_usd, max_hours, gpu, now=None, ignore=None):
         why.append(f"--max-hours {max_hours} is above max_hours_per_pod {c['max_hours_per_pod']}")
     if MAX_PRICE[gpu] > c["max_price_per_hour"] + 1e-9:
         why.append(f"the {gpu} card ceiling ${MAX_PRICE[gpu]}/h is above max_price_per_hour {c['max_price_per_hour']}")
-    usd, _ = api.billing(None, now - 86400)
+    usd, _ = api.billing_total(now - 86400)
     if usd + max_usd > c["per_24h_usd"] + 1e-9:
-        why.append(f"billed ${usd:.2f} in the last 24 h + this pod's ${max_usd} passes per_24h_usd {c['per_24h_usd']}")
+        why.append(f"billed ${usd:.2f} in the last 24 h (every resource) + this pod's ${max_usd} passes per_24h_usd {c['per_24h_usd']}")
     bal = float(api.balance()["clientBalance"])
     if bal - max_usd < c["min_balance_left_usd"]:
         why.append(f"balance ${bal:.2f} - ${max_usd} leaves less than min_balance_left_usd {c['min_balance_left_usd']}")
@@ -722,7 +843,11 @@ def secret(name, env):
 
 
 def pod_env(status_token):
+    """What the pod gets. ``RUNPOD_API_KEY`` inside the pod is only the RESTRICTED key (``tools/runpod/pod_api_key.txt`` or
+    ``RUNPOD_POD_API_KEY``, scope pods:write): the boot command's self-stop needs it; without it the self-stop is a no-op
+    and the guard's boot deadline does the stopping. The account key never goes into a pod."""
     env = {"STATUS_TOKEN": status_token, "NTFY_TOPIC": secret("ntfy_topic.txt", "NTFY_TOPIC"),
+           "RUNPOD_API_KEY": secret("pod_api_key.txt", "RUNPOD_POD_API_KEY"),
            "HEARTBEAT_URL": secret("heartbeat_url.txt", "HEARTBEAT_URL"), "HF_TOKEN": secret("hf_token.txt", "HF_TOKEN"),
            "GITHUB_TOKEN": secret("github_token.txt", "GITHUB_TOKEN_RO") or secret("github_token.txt", "GITHUB_TOKEN"),
            "PUBLIC_KEY": secret("id_ed25519.pub", "RUNPOD_PUBLIC_KEY"), "TMR_BRANCH": os.environ.get("TMR_BRANCH", "")}
@@ -801,21 +926,32 @@ def main(argv=None, api=None):
         why = preflight_create(api, max_usd=max_usd, max_hours=max_hours, gpu=gpu)
         if why:
             raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(why))
+        from explainer_engine.cloud.jobs import Job
         from explainer_engine.core.ledger import Run
         Run.open(ledger).reserve("runpod_usd", max_usd, item="pod:pending")  # refuses past 80 % of the episode's cap
         token = secrets.token_urlsafe(16)
-        name = pod_name(_opt(rest, "--name", "ee-" + gpu), max_hours)
+        base = _opt(rest, "--name", "ee-" + gpu)
+        name = pod_name(base, max_hours)
         body = create_body(name, gpu, volume=_opt(rest, "--volume", VOLUME_GB, int), min_ram=_opt(rest, "--min-ram"),
                            boot=_opt(rest, "--boot"), status_token=token)
+        job = Job.create(ROOT / "jobs" / "cloud", _opt(rest, "--job", base), kind="pod", provider="runpod", ledger=ledger,
+                         caps={"max_usd": max_usd, "max_hours": max_hours}, reuse_finished=False,
+                         inputs={"gpu": gpu, "boot": _opt(rest, "--boot"), "volume": body["mounts"]["persistent"]["size"]})
+        job.move("PROVISIONING", "POST /pods")
         try:
             pod = create(api, body, max_price=MAX_PRICE[gpu], gpus=GPUS[gpu])
-        except RunPodError:
+        except RunPodError as e:
             Run.open(ledger).settle("runpod_usd", "pod:pending", 0.0)
+            job.move("FAILED", f"create: {str(e)[:200]}")
+            from explainer_engine.cloud import incidents
+            incidents.record(incidents.fingerprint("runpod", "pod", "create", text=str(e)), f"create failed: {str(e)[:200]}",
+                             cause=str(e)[:200], fix="", source="create", job=job.state["id"])
             raise
         Run.open(ledger).rename_reservation("pod:pending", f"pod:{pod['id']}")
+        job.attach(pod["id"], gpu=pod.get("gpu"), price=pod.get("costPerHr"), name=name)
         new_session(pod, max_usd=max_usd, max_hours=max_hours, on_cap=_opt(rest, "--on-cap", "stop"), ledger=ledger,
-                    status_token=token if body.get("cmd") else "", price_ceiling=MAX_PRICE[gpu])
-        print("pod", pod["id"], name, f"${pod.get('costPerHr')}/h", pod.get("gpu") or "")
+                    status_token=token if body.get("cmd") else "", price_ceiling=MAX_PRICE[gpu], job=job.dir)
+        print("pod", pod["id"], name, f"${pod.get('costPerHr')}/h", pod.get("gpu") or "", "job", job.state["id"])
         if "--no-guard" not in rest:
             print("guard pid", guard_detached(pod["id"]), f"log tools/runpod/sessions/{pod['id']}.guard.log")
     elif cmd in ("adopt", "start") and not (_opt(rest, "--max-usd") and _opt(rest, "--max-hours")):
@@ -860,6 +996,10 @@ def main(argv=None, api=None):
         if "--yes" not in rest:
             raise SystemExit("refused: delete needs --yes (the creator's word); the volume is lost")
         print(pid, delete(api, pid))
+    elif cmd == "delete-volume":
+        if "--yes" not in rest:
+            raise SystemExit("refused: delete-volume needs --yes (the creator's word); the data is lost")
+        print(pid, api.delete_network_volume(pid))
     elif cmd == "cost":
         usd, buckets = settle(api, pid, _opt(rest, "--ledger"))
         print(f"{pid}: billed ${usd} over {buckets} hour bucket(s) (RunPod billing; the newest hour may still grow)")

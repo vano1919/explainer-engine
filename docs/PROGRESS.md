@@ -1035,3 +1035,34 @@ RunPod retires REST v1 on 2026-11-15; `explainer_engine/cloud/runpod.py` used it
 - `cloud/hooks.py` also refuses raw v2 pod starts (`POST /v2/pods`, `action` start/restart, the Python SDK's `create_pod`).
 - Tests: `tests/unit/test_runpod.py` rewritten against a v2-shaped fake (36 tests: pagination, next card after a refusal,
   v2 body, ceiling price while PROVISIONING, ERROR handling, SSE logs, the UNSTOPPED path, v2 hook bypasses).
+
+## 2026-10-22 - Stage B, items 2-8: the Infrastructure Guardian (no paid call)
+
+Prompted twice: the master brief (stage B) and the creator's report at 09:13 that the RunPod balance fell from ~$8 to $0.95
+while every thread said nothing paid was running (a separate thread audits the account). What now exists, all against a fake
+RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for the design.
+
+- `cloud/jobs.py`: the job record (state.json + events.jsonl + heartbeat.json), the brief's fifteen states with legal
+  transitions, `observe` (pod status + conductor line -> job state; a heartbeat only on progress), `stall` (per-state limits
+  from the measured incidents, or the stage's own budget), outputs with sha256 and `safe_to_release`, "same inputs, finished:
+  not run again". `create` writes the record (`--job <slug>`), the guard follows it, `end_pod` closes it.
+- `cloud/store.py` (from TMR, provenance row): push with damage checks and a sha256 sidecar, verify by size + hash, `store_job`.
+- `cloud/incidents.py` + `incidents.json`: 22 known incidents with fingerprints; `classify`, `match`, `repeats`, `record`,
+  `doctor`. The guard, the watchdog and a failed `create` record what they saw.
+- `cloud/watchdog.py` + `.github/workflows/watchdog.yml`: session-independent rules (expired or unnamed live pod -> stop; ERROR,
+  stopped disks, network volumes, idle serverless workers -> report; 24 h ceiling -> stop all; balance floor -> report; stalled
+  job -> stop only with every output stored), cron every 30 min, `kill_all` button for GitHub Mobile. Needs the repository
+  secret `RUNPOD_API_KEY` (the creator adds it; the workflow says so and exits 0 without it).
+- `python -m explainer_engine.cloud status|logs|doctor|budget|incidents|stop-all`.
+- `runpod.check` lists stand-alone network volumes ($0.07/GB/month) and serverless endpoints with min workers > 0: the two
+  ways an account bills with no pod.
+- Tests: `tests/unit/test_cloud_guardian.py` (22: the record, the mapping, stalls, store, incidents, scenarios 1-15 of the brief,
+  the create CLI); `test_runpod.py` 37.
+- Folded in the independent RunPod validation (another thread, 09:24) and the lost-money audit (09:25): the whole-account
+  `GET /billing` for the 24 h ceiling; network volumes, global volumes and serverless endpoints in `check`, the watchdog and
+  `delete-volume <id> --yes`; an unreadable listing is a PROBLEM, not silence; 402 stops the card loop; `Retry-After` is
+  honoured; only a restricted key enters a pod; hooks refuse `runpodctl create|start` and `PATCH /v2/pods`; scenarios 16
+  (stopped pod cannot restart) and 17 (balance hits $0 mid-job: RECOVERY_REQUIRED with the unstored outputs visible);
+  GraphQL balance retirement (early 2027) noted with a revisit date. The audit's finding: the leak was 2026-10-15..19, before
+  D-56; nothing billed since. The creator's two one-time actions: the `RUNPOD_API_KEY` repository secret (watchdog) and
+  RunPod's low-balance e-mail alert. Overlaps PR #19 (the audit thread's `check` additions): whoever lands second rebases.

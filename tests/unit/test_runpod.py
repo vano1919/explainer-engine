@@ -16,6 +16,8 @@ class FakeRunPod:
         self.pods = {p["id"]: dict(p) for p in pods}
         self.calls, self.faults, self.stop_takes, self.n = [], [], stop_takes, 0
         self.billing, self.page_size, self.refuse_gpus, self.new_status = [], page_size, set(), "RUNNING"
+        self.volumes, self.global_volumes, self.endpoints, self.other_billing = [], [], [], 0.0
+        self.headers = {}  # response headers for the next answers (Retry-After)
 
     def __call__(self, method, url, body, headers, timeout):
         path = url.split("runpod.io", 1)[-1].replace("/v2", "", 1) if "runpod.io" in url else url
@@ -28,7 +30,7 @@ class FakeRunPod:
                 if what == "timeout-after":
                     self._handle(method, path, body)
                     raise TimeoutError("timed out")
-                return what, "boom"
+                return what, "boom", dict(self.headers)
         return self._handle(method, path, body)
 
     def _handle(self, method, path, body):
@@ -45,6 +47,19 @@ class FakeRunPod:
             return 200, json.dumps({"data": {}})
         if path.startswith("/billing/pods"):
             return 200, json.dumps({"records": self.billing, "metadata": {}})
+        if path.startswith("/billing?"):  # the aggregate: every resource of the account
+            total = sum(float(r.get("totalAmount") or 0) for r in self.billing) + self.other_billing
+            return 200, json.dumps({"records": [], "metadata": {"totals": {"totalAmount": total}, "recordCount": 0}})
+        if path.startswith("/network-volumes?"):
+            return 200, json.dumps({"networkVolumes": self.volumes, "pagination": {"nextCursor": None, "hasNextPage": False}})
+        if path.startswith("/network-volumes/") and method == "DELETE":
+            vid = path.split("/")[2]
+            self.volumes = [v for v in self.volumes if v["id"] != vid]
+            return 204, ""
+        if path.startswith("/global-volumes?"):
+            return 200, json.dumps({"globalVolumes": self.global_volumes, "pagination": {"nextCursor": None, "hasNextPage": False}})
+        if path.startswith("/serverless?"):
+            return 200, json.dumps({"endpoints": self.endpoints, "pagination": {"nextCursor": None, "hasNextPage": False}})
         if path.startswith("/pods?") or path == "/pods":
             if method == "POST":
                 if data["gpu"]["id"] in self.refuse_gpus:
@@ -463,6 +478,61 @@ def test_check_flags_stopped_disks_unless_the_creator_keeps_them(env, tmp_path, 
     assert len(R.check(api, now=1000)["problems"]) == 1
 
 
+def test_check_sees_network_volumes_global_volumes_and_idle_serverless_workers(env, tmp_path, monkeypatch):
+    fake, api = env
+    fake.volumes = [{"id": "nv1", "name": "models", "size": 100, "dataCenter": "EU-RO-1"}]
+    fake.global_volumes = [{"id": "gsb_1", "name": "shared"}]
+    fake.endpoints = [{"id": "ep1", "name": "sdxl", "workersMin": 1, "workersMax": 3}, {"id": "ep2", "name": "ok", "workersMin": 0}]
+    res = R.check(api, now=1000)
+    assert any("nv1 models network volume 100 GB bills $0.23/day" in p for p in res["problems"])
+    assert any("gsb_1 shared global volume exists" in p for p in res["problems"])
+    assert any("ep1 sdxl serverless endpoint keeps 1 worker" in p for p in res["problems"]) and len(res["problems"]) == 3
+    fake.faults = [("GET", "/network-volumes", 404)]  # a listing that cannot be read is a PROBLEM, never silence
+    assert any("network volumes could not be listed" in p for p in R.check(api, now=1000)["problems"])
+    caps = json.loads(R.spend_caps.PATH.read_text())
+    caps["runpod"]["keep_network_volumes"] = ["nv1", "gsb_1"]
+    (tmp_path / "caps.json").write_text(json.dumps(caps))
+    monkeypatch.setenv("EXPLAINER_SPEND_CAPS", str(tmp_path / "caps.json"))
+    assert len(R.check(api, now=1000)["problems"]) == 1  # only the serverless workers
+    with pytest.raises(SystemExit, match="--yes"):
+        R.main(["delete-volume", "nv1"], api=api)
+    R.main(["delete-volume", "nv1", "--yes"], api=api)
+    assert fake.volumes == []
+
+
+def test_the_24h_ceiling_counts_every_resource_not_only_pods(env):
+    fake, api = env
+    fake.other_billing = 1.4  # serverless + storage billed while no pod existed
+    assert api.billing(None, 10**6 - 86400)[0] == 0 and api.billing_total(10**6 - 86400)[0] == 1.4
+    assert any("per_24h_usd" in w for w in R.preflight_create(api, max_usd=0.5, max_hours=1.0, gpu="default", now=10**6))
+    assert any("billed in the last 24 h $1.40" in i for i in R.check(api, now=10**6)["info"])
+
+
+def test_a_429_with_retry_after_is_waited_out_and_a_402_stops_the_card_loop(env):
+    fake, api = env
+    fake.pods["a"] = pod()
+    waits = []
+    api.sleep = waits.append
+    fake.headers = {"Retry-After": "7"}
+    fake.faults = [("GET", "/pods/a", 429)]
+    assert api.pod("a")["id"] == "a" and waits == [7]
+    fake.refuse_gpus = set(R.GPUS["cheap"])
+    fake.faults = [("POST", "/pods", 402)]
+    with pytest.raises(R.RunPodError, match="every card"):
+        R.create(api, R.create_body("ee-x-until-9999999999", "cheap"), max_price=0.95, gpus=R.GPUS["cheap"])
+    assert sum(1 for c in fake.calls if c == ("POST", "/pods")) == 1  # no balance: the other cards are not tried
+
+
+def test_the_pod_gets_only_a_restricted_key_and_only_when_one_exists(monkeypatch, tmp_path):
+    monkeypatch.setattr(R, "RP", tmp_path)
+    for var in ("RUNPOD_POD_API_KEY", "NTFY_TOPIC", "HF_TOKEN", "GITHUB_TOKEN", "GITHUB_TOKEN_RO", "RUNPOD_PUBLIC_KEY", "HEARTBEAT_URL"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setenv("RUNPOD_API_KEY", "the-account-key")
+    assert "RUNPOD_API_KEY" not in R.pod_env("t")  # the account key never goes into a pod
+    monkeypatch.setenv("RUNPOD_POD_API_KEY", "pods-write-only")
+    assert R.pod_env("t")["RUNPOD_API_KEY"] == "pods-write-only"
+
+
 def test_logs_reads_server_sent_events(env):
     fake, api = env
 
@@ -507,11 +577,14 @@ def test_hooks_block_bypasses_and_a_turn_that_leaves_a_stray(env, monkeypatch, c
                 'curl -X POST https://api.runpod.io/v2/pods -d @b.json', 'curl https://api.runpod.io/v2/pods -X POST',
                 """curl -X POST https://api.runpod.io/v2/pods/abc/action -d '{"action":"start"}'""",
                 """curl -d '{"action": "restart"}' -X POST https://api.runpod.io/v2/pods/abc/action""",
-                "python -c 'import runpod; runpod.create_pod(\"x\", \"img\", \"NVIDIA RTX A5000\")'"):
+                "python -c 'import runpod; runpod.create_pod(\"x\", \"img\", \"NVIDIA RTX A5000\")'",
+                "runpodctl create pod --gpuType 'NVIDIA RTX A5000'", "runpodctl start pod abc --bid 0.3",
+                "curl -X PATCH https://api.runpod.io/v2/pods/abc -d '{\"disk\": 20}'", "curl https://api.runpod.io/v2/pods/abc -X PATCH -d @b.json"):
         assert H.pre_bash({"tool_input": {"command": cmd}}) == 2, cmd
     for cmd in ("python -m explainer_engine.cloud.runpod create --yes --max-usd 0.5", "curl -X POST https://rest.runpod.io/v1/pods/abc/stop",
                 """curl -X POST https://api.runpod.io/v2/pods/abc/action -d '{"action":"stop"}'""",
-                "curl https://api.runpod.io/v2/pods/abc", "python cloud/rp.py sweep", "pytest -q tests/unit/test_runpod.py"):
+                "curl https://api.runpod.io/v2/pods/abc", "python cloud/rp.py sweep", "pytest -q tests/unit/test_runpod.py",
+                "runpodctl get pod", "runpodctl stop pod abc"):
         assert H.pre_bash({"tool_input": {"command": cmd}}) == 0, cmd
     monkeypatch.setattr(H, "_check", lambda: R.check(api, now=1000))
     assert H.stop({}) == 0

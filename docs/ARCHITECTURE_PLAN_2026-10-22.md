@@ -133,7 +133,14 @@ QA findings; then the readiness report that separates done / documented only / n
 
 ## 5. Done, documented only, needs access or approval (as of 2026-10-22)
 
-- **Done (stage A)**: repo audit; dated tooling research with sources; this plan; decision D-70 opened.
-- **Documented only (until their stage runs)**: everything in sections 2-3 above except what the audit lists as existing.
+- **Done (stage A)**: repo audit; dated tooling research with sources; this plan; decision D-70 opened. The creator approved
+  all stages on 2026-10-22 09:03 (pilot option: three models, ceiling $15; Cloudflare account yes; motion default; no
+  permanent characters).
+- **Done (stage B, 2026-10-22)**: items 1-8 in code and tests ([TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian"): REST v2 port,
+  job record with history and heartbeat, durable store with verification, stall detection, incident log (22 seeded), the
+  watchdog rules + GitHub Actions cron and kill-all, the phone commands, the fifteen recovery scenarios, the `end_pod` fix.
+  Not yet: the Cloudflare Worker runner (needs the account), pushing the job record from inside the pod (the TMR conductor
+  side), the Modal/fal adapters (stage D).
+- **Documented only (until their stage runs)**: stages C-H in section 3 except what the audit lists as existing.
 - **Needs the creator**: the four questions above; any paid call; a Cloudflare, BFL, fal or Modal account; raising a cap in
   `config/spend_caps.json`.

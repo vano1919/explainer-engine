@@ -18,7 +18,9 @@ BYPASS = [re.compile(p) for p in (r"rp\.py\s+(create|start|adopt)\b", r"/v[12]/p
                                    r"-X\s*POST[^|;&]*(rest|api)\.runpod\.io/v[12]/pods/?(['\"\s]|$)",
                                    r"rest\.runpod\.io/v1/pods/\w+/start",
                                    r"(?s)(?=.*/v2/pods/\w+/action)(?=.*['\"]action['\"]\s*:\s*['\"](start|restart)['\"])",
-                                   r"podFindAndDeployOnDemand|podRentInterruptible|podResume", r"runpod\.(create_pod|resume_pod)\(")]
+                                   r"podFindAndDeployOnDemand|podRentInterruptible|podResume", r"runpod\.(create_pod|resume_pod)\(",
+                                   r"runpodctl\s+(create|start)\b", r"(-X\s*PATCH|--request\s+PATCH)[^|;&]*/v2/pods/",
+                                   r"/v2/pods/\w+['\"]?\s*(-X\s*PATCH|--request\s+PATCH)")]  # PATCH resets the pod: data outside /workspace is lost
 
 
 def _stdin():
