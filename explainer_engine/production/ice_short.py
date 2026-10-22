@@ -139,7 +139,7 @@ def _rig_x(world_x: float, size: float) -> float:
 
 # the times of the story
 T_STOP = 5.0          # Dev arrives
-T_LINE1 = 7.4         # "Behold! The first sled of the Ice Age."
+T_LINE1 = 6.8         # "Behold! The first sled of the Ice Age." (the take is 3.4 s)
 T_LINE2 = 10.4        # Marta: "It's a suitcase."
 T_THROW = 11.6        # Dev throws up his arms: the rope drops
 T_SLIDE = 12.0        # the sled starts to slide
@@ -292,7 +292,7 @@ def cast(assets: str) -> dict:
         mend = mwalk.feet(t_help - 0.6 + mwalk.settle + 0.01)
         mxe = mwalk.x(t_help - 0.6)
     marta = Actor("marta", str(a / "marta"), marta_b, SIZES["marta"], [], look=[(0.0, "neutral"), (T_LINE1 + 0.8, "unimpressed"),
-        (T_LINE2, "talk"), (T_LINE2 + 0.9, "smirk"), (T_SLIDE + 0.6, "worried"), (t_help - 0.2, "smile"), (t_help + 2.2, "smirk"),
+        (T_LINE2, "talk"), (T_LINE2 + 1.2, "smirk"), (T_SLIDE + 0.6, "worried"), (t_help - 0.2, "smile"), (t_help + 2.2, "smirk"),
         (T_LINE3, "talk"), (T_LINE3 + 0.8, "smirk")],
         views=[(0.0, "three_quarter", -1), (T_SLIDE + 1.6, "three_quarter", 1), (t_walk0, "side", 1), (t_help - 0.4, "three_quarter", -1),
                (t_help + 2.3, "three_quarter", 1)],
@@ -655,7 +655,7 @@ def make_audio(path: Path, assets: str, voice: Path | None = None, fps: int = 24
                 m = min(len(v), n - i0)
                 out[i0:i0 + m, 0] += v[:m] * 1.4
                 out[i0:i0 + m, 1] += v[:m] * 1.4
-    out = np.tanh(3.0 * out / (np.abs(out).max() + 1e-9)) / math.tanh(3.0) * 0.7
+    out = out / (np.abs(out).max() + 1e-9) * 0.9   # peak only: the render levels to -14 LUFS with a limiter
     with wave.open(str(path), "wb") as wf:
         wf.setnchannels(2)
         wf.setsampwidth(2)
