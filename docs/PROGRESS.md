@@ -991,3 +991,27 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-22 - Stage A of the master brief: repo audit and tooling research (D-70)
+
+The creator's master brief (2026-10-22, thread "წარმოების არქიტექტურა და ვიზუალი") asks for a model- and provider-agnostic
+production system with one visual world, an Infrastructure Guardian and continuous QA, in stages A-H. Stage A done, nothing
+paid:
+
+- Repo audit ([research/REPO_AUDIT_2026-10-22](research/REPO_AUDIT_2026-10-22.md)): what exists and is tested (pod manager,
+  ledger, caps, paint plans, face sheets, chunked assembler, deterministic QA), what exists untested or unused (`core/store`,
+  `core/jobs`), what is documented only (asset record, licence register, style distance, world schema, Remotion, `paint
+  --estimate`) and the Guardian gaps: the guard dies with the sandbox and `check()` then treats a live pod as fine, no durable
+  copy of pod outputs in this repo, no state history or incident log, Gemini hard-wired behind a provider table, a cache key
+  that differs between sync and batch, a latent `end_pod` NameError, three unreconciled balance drops.
+- Tooling research with dated sources ([TOOLING_RESEARCH](TOOLING_RESEARCH.md) + three appendices): RunPod REST v1 retires
+  2026-11-15 (`cloud/runpod.py` uses it); Veo preview, Sora, Hume, PlayHT and OpenAI TTS are gone or ending; FLUX 3 Image
+  Klein ($0.009 per image, 10 refs, open weights), Seedream 4.5 and Qwen-Image-Edit-2511 are the picture pilot candidates,
+  Illustrious/Animagine the anime anchor; stills + 2.5D parallax stay the motion default, Wan 2.6 / Kling 3.0 only for hero
+  shots; ElevenLabs stays, with `/with-timestamps` replacing Scribe on the narration track; hosted per-output APIs beat pods
+  for bursts; Cloudflare Worker cron + R2 (free) for a watchdog that outlives the session; GitHub cron only as backup.
+- Plan ([ARCHITECTURE_PLAN_2026-10-22](ARCHITECTURE_PLAN_2026-10-22.md)) and decision [D-70](DECISIONS_AND_OPEN_QUESTIONS.md)
+  (approval gate). Stage B (Guardian: REST v2 port, job record with history and heartbeat, durable copy before any stop,
+  incident log, external watchdog, phone status and kill-switch, 15 mocked recovery scenarios) is next and needs no paid call.
+- Four questions for the creator are in the plan's section 4 (the pilot and its ceiling, the Cloudflare/Modal accounts, the
+  motion default, characters between episodes). Tests 603 collected, `test_runpod.py` 27 passed; docs_lint 0.

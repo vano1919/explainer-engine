@@ -30,6 +30,8 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [PUBLISHING_AND_ANALYTICS](PUBLISHING_AND_ANALYTICS.md) | cadence, first cycle, candidates, metrics, learning loop | |
 | [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md) | budgets, estimates, spend ledger, hours | |
 | [TOOL_STRATEGY](TOOL_STRATEGY.md) | which tool makes which asset, costs, kit test, RunPod money rules | |
+| [TOOLING_RESEARCH](TOOLING_RESEARCH.md) | dated candidate models, providers, storage and watchdogs with sources (stage A of the 2026-10-22 brief); appendices in `research/TOOLING_*_2026-10-22.md` and `research/REPO_AUDIT_2026-10-22.md` | |
+| [ARCHITECTURE_PLAN_2026-10-22](ARCHITECTURE_PLAN_2026-10-22.md) | the master brief's stages A-H on the real code: Guardian, World Bible, asset library, provider adapters, pilots; the creator's open questions; D-70 | |
 | [RISK_REGISTER](RISK_REGISTER.md) | risks and mitigations | R- |
 | [RIGHTS_AND_FAIR_USE](RIGHTS_AND_FAIR_USE.md) | rights rules for crossover episodes of fictional worlds | RR- |
 | [EPISODE_STANDARDS](EPISODE_STANDARDS.md) | the per-episode rulebook (`episode_rules.json`): legal, platform and creative rules of one video, risk statuses PASS/ADAPT/REVIEW/BLOCK, checkpoints and rechecks; D-51 | ES- |
