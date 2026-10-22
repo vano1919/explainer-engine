@@ -1,7 +1,8 @@
 # from vano1919/tmr-video-script-engine@f0abe62:cloud/rp.py
 """RunPod pod manager: create, wait, guard, stop, sweep and settle the cost. stdlib only.
 
-    python -m explainer_engine.cloud.runpod check | balance | list | sweep [--dry-run] [--delete --yes]
+    python -m explainer_engine.cloud.runpod check (alias: doctor) | balance | list | sweep [--dry-run] [--delete --yes]
+    python -m explainer_engine.cloud.runpod delete-volume <volume id> --yes
     python -m explainer_engine.cloud.runpod create --yes --max-usd X --max-hours H [--gpu default|cheap|big] [--boot <manifest>]
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
     python -m explainer_engine.cloud.runpod status|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
@@ -21,6 +22,9 @@ What TMR's rp.py did and what changed here (docs/TOOL_STRATEGY.md "Money control
 * ``create`` refuses past the creator's ceilings in ``config/spend_caps.json`` (per pod, per 24 h of RunPod billing incl.
   stopped disks, per episode via the ledger, balance left) and while the account has a stray pod or an unkept stopped disk;
   ``check`` lists what bills now and is run by the session hooks (``hooks.py``) at the start and end of every turn.
+* ``check`` covers every billing category, not only pods (added 2026-10-22, after the balance questions of 10-19/10-22):
+  network volumes ($0.07/GB/month even when nothing uses them) and serverless endpoints with always-on workers are
+  PROBLEM lines too, so no category can bill invisibly; ``delete-volume`` removes a volume on the creator's word.
 """
 from __future__ import annotations
 
@@ -54,6 +58,7 @@ CUDA_VERSIONS = ["12.8", "12.9", "13.0"]
 CONTAINER_GB, VOLUME_GB = 80, 150
 # disk prices, docs.runpod.io/pods/pricing (2026-10-19): running $0.10/GB/month (container + volume), stopped volume $0.20
 GB_MONTH_RUNNING, GB_MONTH_STOPPED, HOURS_PER_MONTH = 0.10, 0.20, 730.0
+GB_MONTH_NETWORK = 0.07  # network volume, docs.runpod.io/storage/network-volumes (2026-10-22): $0.07/GB/month under 1 TB
 BOOT_MINUTES = 10  # the pod must answer (status page or ssh port) within this long, else it never booted
 GONE = ("TERMINATED",)
 
@@ -143,6 +148,22 @@ class Api:
 
     def balance(self):
         return self.graphql("query { myself { clientBalance currentSpendPerHr spendLimit } }")["myself"]
+
+    def network_volumes(self):
+        return self.request("GET", "/networkvolumes") or []
+
+    def serverless_endpoints(self):
+        return self.request("GET", "/endpoints") or []
+
+    def delete_network_volume(self, vid):
+        """Verified delete: done when the volume no longer appears in the list."""
+        try:
+            self.request("DELETE", f"/networkvolumes/{vid}")
+        except (NotFound, Unclear):
+            pass
+        if any(v.get("id") == vid for v in self.network_volumes()):
+            raise RunPodError(f"{vid}: still listed after DELETE; it may still bill")
+        return "DELETED"
 
     def billing(self, pid, start, end=None):
         """RunPod's billed amount (compute and disks, stopped pods included) for one pod, or the whole account when ``pid``
@@ -567,6 +588,21 @@ def check(api, now=None):
             line = f"{pid} {name} STOPPED, disk {p.get('volumeInGb')} GB bills ${day:.2f}/day"
             (info if pid in keep else problems).append(line + ("" if pid in keep else
                                                                "; delete it with the creator's word (`runpod delete <pod> --yes`) or list it in keep_stopped_pods"))
+    keep_nv = set(spend_caps.runpod().get("keep_network_volumes", []))
+    try:
+        for v in api.network_volumes():
+            vid, gb = v.get("id"), float(v.get("size") or 0)
+            line = f"{vid} {v.get('name')} NETWORK VOLUME {gb:g} GB bills ${gb * GB_MONTH_NETWORK * 24 / HOURS_PER_MONTH:.2f}/day"
+            (info if vid in keep_nv else problems).append(line + ("" if vid in keep_nv else
+                                                                  "; delete it with the creator's word (`runpod delete-volume <id> --yes`) or list it in keep_network_volumes"))
+        for ep in api.serverless_endpoints():
+            line = f"{ep.get('id')} {ep.get('name')} SERVERLESS ENDPOINT workersMin={ep.get('workersMin')}"
+            if int(ep.get("workersMin") or 0) > 0:
+                problems.append(line + ": always-on workers bill constantly; set workersMin 0 or remove it in the console")
+            else:
+                info.append(line + " (bills only while a job runs)")
+    except RunPodError as e:  # unreadable = possibly billing invisibly, so a PROBLEM, not an info line
+        problems.append(f"network volumes/endpoints not read ({str(e)[:80]}); the account may bill invisibly, check again")
     try:
         usd, _ = api.billing(None, now - 86400)
         bal = api.balance()
@@ -652,7 +688,7 @@ def main(argv=None, api=None):
     api = api or Api()
     if cmd == "balance":
         print(json.dumps(api.balance()))
-    elif cmd == "check":  # start and end of every session, after every pod job (D-56)
+    elif cmd in ("check", "doctor"):  # start and end of every session, after every pod job (D-56)
         res = check(api)
         for line in res["problems"]:
             print("PROBLEM", line)
@@ -742,6 +778,10 @@ def main(argv=None, api=None):
         if "--yes" not in rest:
             raise SystemExit("refused: delete needs --yes (the creator's word); the volume is lost")
         print(pid, delete(api, pid))
+    elif cmd == "delete-volume":
+        if "--yes" not in rest:
+            raise SystemExit("refused: delete-volume needs --yes (the creator's word); the data is lost")
+        print(pid, api.delete_network_volume(pid))
     elif cmd == "cost":
         usd, secs = settle(api, pid, _opt(rest, "--ledger"))
         print(f"{pid}: billed ${usd} for {secs} s (RunPod billing; the newest hour may still grow)")

@@ -991,3 +991,18 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-22 — The balance question answered from billing; `check` covers every billing category (D-56 extended)
+The creator asked where the balance went ($8 → $0.97) and for a guarantee before topping up. Read-only audit of the
+account (GraphQL + `GET /billing/pods`, 12 days back): **nothing bills now** (0 pods, 0 network volumes, 0 endpoints,
+$0/h) and **$0.00 billed since 2026-10-19** — the balance is unchanged since the D-56 cleanup. The drop happened
+2026-10-15..19: $2.31 (10-15, TMR pods) + $5.34 (10-16, the approved stone-age pictures pod $0.20, `tmr-lab` $1.83,
+TMR preflight `etkpzxh16v1ksm` $1.24, rest small) + $1.05 (10-17..19, that preflight pod's stopped 60 GB disk at
+$0.40/day, found and deleted 10-19). No charge was hidden in another category (`/billing/networkvolumes` empty).
+Gap closed here: `check` only looked at pods, so a network volume ($0.07/GB/month even unused) or a serverless endpoint
+with always-on workers could bill invisibly. Now `check` (alias `doctor`) lists both as PROBLEM lines (keep lists:
+`keep_network_volumes` next to `keep_stopped_pods`), an unreadable volumes/endpoints list is itself a PROBLEM
+(fail loud, not blind), and `delete-volume <id> --yes` deletes one on the creator's word, verified against the list.
+The session hooks and `preflight_create` inherit all of it through `check`. Tests: `tests/unit/test_runpod.py` (30;
+volume + endpoint flagged, keep list, loud failure, verified delete, the alias); suite 641 passed, docs_lint 0.
+The Guardian thread (stage B) got the findings so the watchdog covers volumes/endpoints too. Nothing paid; no pod started.
