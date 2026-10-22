@@ -991,3 +991,14 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-22 - Research: the hybrid visual model (AI world, rigged characters)
+
+The creator asked whether AI should only paint and move the environment while characters (wounded ones and hard poses
+included) are drawn and rigged with classic tools that AI drives. Answer and sources in
+[HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md): yes, split by "must be exact and repeatable"
+(body, joints, cycles, wounds, physics: code-driven rig) vs "may vary" (plates, one atmospheric shot: AI); ambient nature
+motion by code on the plate; the ice test's leg defect comes from parts cut out of one painted pose, so parts must be made
+as parts (SVG body + painted face set) and joints must bend. Synfig, Blender Grease Pencil, OpenToonz, Godot, Rive, Spine,
+Live2D, Moho and Lottie compared for AI control, headless render, deformation and licence. Documents only; nothing paid;
+no code or rule changed.

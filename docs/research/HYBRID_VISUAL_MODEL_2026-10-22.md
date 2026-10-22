@@ -1,0 +1,149 @@
+# The hybrid visual model: AI for the world, classic rigs for the characters (2026-10-22)
+
+The creator's question (2026-10-22 17:48): should AI only paint and move the environment (backgrounds, clouds, water,
+trees), while the characters, especially hard ones (wounded, a specific pose), are drawn and rigged with classic tools that
+AI controls? Research only, nothing paid, no architecture change. Context: the Wild Ink style is chosen; the cut-out rig
+`production/rig.py` and the 10-second ice-age test live in draft PR #20; the test's audit (project files,
+`animation_universe_2026-10-22/ice_test/AUDIT_ice_shot_ka.md`) found that the image models do not give a character in
+parts, so the legs read as separate pieces and the joints are rough (items 5 and 8). Sources were read on 2026-10-22; a
+claim the sources did not confirm is marked "not verified".
+
+## მოკლედ (ქართულად)
+
+**დიახ, ჰიბრიდი სწორი გზაა, ერთი შესწორებით:** ზღვარი არ გადის "ფონი AI / პერსონაჟი კლასიკური"-ზე, არამედ
+"რა უნდა იყოს ზუსტი და განმეორებადი"-ზე. AI-ს ვანდობთ იმას, სადაც შემთხვევითობა არ გვაზიანებს (ფონის ნახატი,
+ერთჯერადი ატმოსფერული კადრი, პერსონაჟის **დიზაინის** პირველი ესკიზი); კოდს და კლასიკურ რიგს ვანდობთ იმას, რაც ყოველ
+ჯერზე ერთნაირი უნდა იყოს (პერსონაჟის სხეული, სახსრები, ნაბიჯი, ჭრილობა, ფიზიკა, ხმასთან სინქრონი). ყინულის ტესტის
+ფეხების პრობლემა რენდერერის ბრალი არ არის: ერთი დახატული პოზიდან ნაწილები ამოიჭრა, მუხლის და დაფარული ნაწილების ნახატი
+არ არსებობდა. გამოსავალი: პერსონაჟი **თავიდანვე ნაწილებად** უნდა შეიქმნას (ნაწილების ფურცელი, დაფარული კიდეებით და
+მოხრის ზონებით) და სახსრები უნდა **იღუნებოდეს** (mesh deformation), არა მხოლოდ ბრუნავდეს. ღრუბლები, წყალი, ხეები
+ძირითადად უფასოდ და დეტერმინისტულად მოძრაობს კოდით (ფენები, ნიღბები, ქარის რხევა); ფასიანი image-to-video მხოლოდ
+იშვიათი ატმოსფერული კადრისთვის. გარე პროგრამებიდან (Synfig, Blender Grease Pencil, Godot, Rive, Spine, Live2D, Moho)
+არცერთი არ სჯობს ჩვენს რიგს ღრუბელში, უთავო რენდერში და ტესტებში; Blender Grease Pencil ინახება სარეზერვოდ, თუ 3/4
+შემობრუნება და რთული დეფორმაცია დაგვჭირდება. შემდეგი უფასო ნაბიჯი (შენი თანხმობით): ერთი გმირის PoC, კოდით დახატული
+SVG ნაწილები Wild Ink-ის ხაზით + მოხრადი ფეხები + ტესტ-ფურცელი (სიარული, სირბილი, ხტომა, დაცემა, დაჭრილის კოჭლობა).
+
+## 1. The verdict
+
+Yes, with one correction. The useful line is not "background = AI, character = classic"; it is **"what must be exact and
+repeatable" vs "what may vary"**:
+
+| Layer | Who makes it | Why |
+|---|---|---|
+| Background plates (places, skies, terrain) | AI image model, in the chosen style, from the World Bible | variation is welcome, nothing has to match frame to frame; already our flow (paint plan, provider per batch) |
+| Ambient motion of nature (clouds, water, foliage, fire, snow, dust) | **code** on the plate: layers, masks, flow, wind, particles | free, loops exactly, deterministic, no style drift; the TMR engine's "living pictures" already do this for fire |
+| One atmospheric hero shot per episode (a storm, a flood) | AI image-to-video, only when code cannot do it | paid, can drift and morph; judged per usable second |
+| Character design (look, face, outfit) | AI, once, as a sheet in the style, chosen by the creator (invariant 6) | AI is good at appeal, bad at consistent anatomy over time |
+| Character body, joints, cycles, acting, wounds, props, lip-sync | **classic rig driven by code** (Claude writes the data, not a prompt) | must be identical every time; physics and timing must be measurable (the ice test's foot-slide and pop-in checks) |
+
+This is the direction PR #20 already started (`rig.py`: rule 4 of its research doc, "a prompt never asks a picture for
+motion"); the hybrid makes it explicit and adds the missing piece: **how the character's parts are made**.
+
+## 2. Why the ice test's legs failed (the real cause)
+
+From the audit (items 5 and 8) and the code: the figures were whole Seedream stickers or pieces cut from one painted pose.
+A cut-out rig needs, for every joint, (a) a pivot at the joint, (b) hidden artwork under the overlap so a rotation does not
+open a hole, (c) a front/back layer order, and (d) either a drawn knee or a bend zone. A single painted pose has none of
+these, and no image model gives them reliably: the creator's master brief says the same (C4: "do not let image
+segmentation cut every hard pose automatically without a check"). So the cure is upstream (the parts) and in the joint
+(bend, not only rotate), not a better renderer.
+
+## 3. AI for backgrounds and dynamic elements
+
+| Element | Free code method (recommended default) | AI video alternative | Risks of the AI route |
+|---|---|---|---|
+| Clouds, sky | 2-3 cloud layers cut from the plate (or painted on their own), slow parallax drift, wrap-around for a loop; depth from `production/depth.py` (PR #18) | Wan 2.2 first-last-frame (same frame twice for a loop; community workaround, not documented) ([RunComfy](https://www.runcomfy.com/comfyui-workflows/wan-2-2-flf2v-first-last-frame-video-generation), [ComfyUI wiki, Fun InP Apache-2.0](https://comfyui-wiki.com/en/tutorial/advanced/video/wan2.2/wan2-2-fun-inp)) | loop seam, style softening |
+| Water | mask the water region, scrolling flow/ripple displacement + highlight sparkle; exact loop by period | same | "boiling" texture, flicker ([Eurographics 2021: flicker tires the viewer](https://diglib7.eg.org/bitstream/handle/10.1111/cgf14398/v40i7pp021-032.pdf)) |
+| Trees, grass | foliage mask, per-region sine sway with wind gusts (low frequency + small high frequency), anchored at the trunk/root | same | trunks bend like rubber, leaves morph |
+| Fire, smoke, snow, dust | particles + the TMR flame mask (`tmr_engine/render/motion.py`: fire = flames only; v1 swayed lit walls, so the mask matters) | same | flame shapes drift out of style |
+| Whole establishing shot with camera move | 2.5D parallax (PR #18 `production/parallax.py`) + the above | Veo/Kling/Wan clip (TMR `videogen.py` makes an 8 s Veo loop with the same first and last frame) | cost per usable second, morphing; vendors themselves advise slow camera moves and simple backgrounds ([Magic Hour](https://magichour.ai/templates/details/cmonzc6ks02a82e0yy97ji1yt-background-morph)) |
+
+Precedent: Netflix Japan's short *The Dog & the Boy* (2023) used an image model for the backgrounds while the characters
+stayed hand-drawn, the same split; it drew a backlash from artists over credit ("AI + Human") and labour, and critics said
+the backgrounds still looked poor ([Cartoon Brew](https://cartoonbrew.com/tech/netflix-japan-ai-dog-and-boy-225631.html),
+[Wikipedia](https://en.wikipedia.org/wiki/The_Dog_%26_the_Boy)). Lesson for us: the split works technically; the plates
+must be judged and fixed (our paint plan + review), and disclosure follows our per-video checklist.
+
+## 4. Classic tools that AI can drive
+
+What "AI controls a classic tool" means in practice: Claude writes the tool's file or script (XML, JSON, Python, Lua) and a
+headless command renders it in the cloud. The tool must therefore have (1) a text format or API, (2) a headless render,
+(3) frames that are a function of time (our chunked render, RULE-R1), (4) a licence that lets us publish the output.
+
+| Tool | AI-drivable? | Headless cloud render | Bend / mesh deform | Licence / cost | Fit for us |
+|---|---|---|---|---|---|
+| **Our `production/rig.py`** (numpy + PIL) | yes: Python data | yes (already, 1.7x real time at 720p) | rotation only today; mesh bend is the gap | ours | **keep as the renderer**; add bend zones |
+| **Synfig** | `.sif` is XML; Python plug-ins since 1.5 for import/export ([1.5.0 notes](https://synfig.readthedocs.io/en/latest/releases/development/1.5.0.html)) | yes, the `synfig` CLI renders without a display ([Wikipedia](https://en.wikipedia.org/wiki/Synfig)); exact flags not verified | yes, Skeleton Deformation layer ([docs](https://synfig.readthedocs.io/en/latest/tools/skeleton.html)) | GPL-3 CLI ([Arch package](https://archlinux.org/packages/extra-testing/x86_64/synfig/)); free | the strongest outside candidate for a deform PoC; a second render path to maintain |
+| **Blender Grease Pencil** | yes: `bpy`; community MCP servers exist, including one that runs scripts in headless Blender ([Glama list](https://glama.ai/mcp/servers/@cwahlfeldt/blender-mcp/blob/35855a186923dbdfdebaff1edb1dfcc76b58ee0c/README.md)) | yes in principle; older Grease Pencil headless crashes were reported ([T85546](https://developer.blender.org/T85546)), v3 not verified | yes (armatures, real 3D turns, lighting) | GPL app, "what you create with Blender is your sole property" ([blender.org](https://www.blender.org/about/license/)); free | the backup when we need 3/4 turns, perspective, heavy deformation; heavy (GPU pod, big install) |
+| **OpenToonz** | ToonzScript (QtScript) from the menu; command-line scripts only in the Morevna fork ([docs](https://opentoonz.readthedocs.io/ja/latest/toonzscript.html), [Morevna 1.3](https://morevnaproject.org/2019/03/23/opentoonz-morevna-edition-1-3-0-released)) | not verified | yes | open source; licence not verified in this pass | weak for automation |
+| **Godot** | yes: scenes are text, GDScript | `--write-movie` + `--fixed-fps`, non-real-time ([docs](https://godot.readthedocs.io/en/4.0/tutorials/animation/creating_movies.html)); headless not verified | Skeleton2D + polygons; users call it "incomplete" in 4.4 ([forum](https://forum.godotengine.org/t/state-of-skeleton2d-in-godot-bone-2d-rigging-cutout-animations/65393)) | MIT | possible, no gain over our rig |
+| **Rive** | runtime state machines; the editor is the authoring tool | no official headless video; Cloud Renderer is a paid editor feature; docs point to Remotion/Revideo ([Rive docs](https://rive.app/docs/runtimes/react/rendering-to-a-bitmap)) | yes | paid editor plans | no |
+| **Spine** | JSON skeletons | through runtimes | yes, meshes + weights | using the runtimes needs a Spine Editor licence ([runtime licence](https://raw.github.com/EsotericSoftware/spine-runtimes/master/LICENSE)) | no (licence, GUI authoring) |
+| **Live2D Cubism** | GUI editor; SDK | SDK render | yes, excellent face/body deform | small business under 10 M yen sales exempt; videos exported from the editor need no contract ([Live2D](https://live2d.com/en/?p=586)) | good for talking busts, but authoring is manual |
+| **Moho** | Lua scripts; a community MohoMCP plug-in ([README](https://cdn.jsdelivr.net/gh/Kveto/MohoMCP@master/README.md)) | CLI render exists with limits ([forum](https://www.lostmarble.com/forum/viewtopic.php?p=213392)) | yes (smart bones) | paid, Windows/macOS | no for the cloud |
+| **Lottie** (python-lottie + rlottie) | yes: JSON | frames via rlottie, then ffmpeg ([rlottie-python](https://pypi.org/project/rlottie-python/1.1.0)) | limited | licences not verified | only for UI-like graphics |
+
+Toon Boom Harmony was not researched in this pass (paid, desktop).
+
+Verdict: no outside tool beats our own rig on the things this project needs most (cloud, headless, chunked, tested, free).
+The one capability we lack, **bending joints**, is a small addition to the rig (a two-bone limb drawn as one stroke or a
+mesh warp of the limb piece), not a reason to adopt a second application. Synfig is the cheapest outside comparison if
+the creator wants one; Blender Grease Pencil is the escalation for turns and perspective.
+
+## 5. Making the character's parts (the missing step)
+
+| Route | How | Quality | Risk |
+|---|---|---|---|
+| **A. Parts drawn by code (SVG)** | Claude writes each part as vector shapes with Wild Ink line weight, colours from `design/palette.json`, pivots and overlap built in; rendered through cairo/skia into the rig | crisp, perfectly consistent, bends cleanly (a limb is a stroke along two bones) | flatter than the painted plates; needs a shading pass (one shadow tone + rim light) to sit in the painterly world |
+| **B. AI parts sheet** | the creator-approved character art is re-painted as a "parts sheet": every part separate on flat chroma, with hidden overlap areas and a knee/elbow drawn, then cleaned and (optionally) vectorised | painterly, matches the plates | needs repaints until parts line up; the model invents differences between parts |
+| **C. Automatic decomposition** | Qwen-Image-Layered splits an image into RGBA layers (Apache-2.0, 20B, recommended 640 px bucket, 3-8 layers; hidden-region completion not stated) ([model card](https://huggingface.co/Qwen/Qwen-Image-Layered)); Bunraku (2026 preprint) turns one illustration into a Live2D rig with completed hidden regions, but code and weights are not stated as released ([alphaxiv](https://www.alphaxiv.org/abs/2607.27348)) | promising research | low resolution, layers are by object not by joint, needs a GPU pod; Bunraku not usable yet |
+| **D. Joint finder** | Meta AnimatedDrawings' pose estimator finds joints on a drawn figure (MIT, archived) ([InfoQ](https://www.infoq.com/news/2023/04/meta-animated-drawings/)) | helps place pivots on B | archived, old Python |
+
+Recommendation: **A for the body (limbs, torso, hands), B for the head and face set** (where the painterly appeal and
+expressions matter most and parts are few), C watched, not adopted. This matches the master brief's C4 parts list (head,
+torso, pelvis, upper/lower limbs, hands, feet, eyes, brows, mouths; hidden artwork under joints; pivots at the joints).
+
+**Wounded or unusual characters** become data, not prompts: a wound is a decal layer on a part (bandage, torn sleeve,
+bruise tone; kept cartoon, no gore), a limp is a cycle variant (shorter stance on one side, slower recovery), an arm in a
+sling is a part swap with that arm's joints locked. Every variant is reusable for the next episode.
+
+## 6. Quality, efficiency, risks
+
+**Advantages**
+- Identity is stable by construction (invariant 6): the same parts every frame, every episode.
+- Physics and timing are measurable, so the ice test's checks (pop-in, foot slide, static drift, sound on contact) can
+  gate every render; frame = function of its number fits the chunked render.
+- Cost per usable second for character shots tends to zero after the one-off parts work; paid image-to-video is kept to
+  the rare shot where its per-usable-second price is justified.
+- Policy: YouTube's July 2025 update demonetises "mass-produced and repetitious" content while allowing AI that enhances
+  original work ([CineD](https://cined.com/youtube-set-to-crack-down-on-ai-slop-with-monetization-policy-update),
+  [Plagiarism Today](https://www.plagiarismtoday.com/2025/07/08/youtube-targets-inauthentic-content/)); an original rig and
+  hand-authored acting is the stronger side of that line.
+
+**Risks**
+- **Style seam** (the biggest): a flat rigged figure on a painterly plate looks like a sticker. Mitigation: one palette for
+  both, the plate's key light applied to the figure (shadow side + rim), contact shadows, matching line weight, a grade
+  over the composite; judge it on the first PoC frame sheet before anything else.
+- **Setup per character**: parts, pivots, bend zones and a test sheet (neutral, walk, run, reach, bend, jump, land, fall,
+  turn, interaction, extreme face; master brief C4) take a few hours of Claude's work per new build; then reuse.
+- **Limits of 2D cut-out**: turns, foreshortening, hands touching objects look artificial; plan shots around them (side
+  and 3/4 views, cut on the turn, insert close-ups), escalate to Blender only if a story needs it.
+- **AI-written animation can be wrong without anyone seeing it** (the ice test). Mitigation: automatic verification after
+  every render; research shows the loop works: MoVer verified LLM-made SVG motion against predicates, 58.8 % right first
+  time, 93.6 % with up to 50 correction rounds ([arXiv 2502.13372](https://arxiv.org/abs/2502.13372)); Apple's Keyframer
+  found people describe motion best when decomposed per element ([arXiv 2402.06071](https://arxiv.org/abs/2402.06071v1)).
+- **Ambient code motion can look mechanical**: sum two frequencies, add gusts, never animate everything at once (the
+  limited-animation rule of PR #20's research doc).
+
+**Efficiency (rough, to be measured in the PoC)**
+- Code-made ambient motion and rigged acting: $0 per shot, CPU render (the rig PoC: 20 s clip in 12 s at 720p).
+- AI plates: unchanged from today's paint plans.
+- AI image-to-video: only per creator-approved shot with an estimate first (invariant 2).
+
+## 7. Proposed next step (free, needs the creator's word)
+
+One hero in Wild Ink, built by route A (+ the face from an existing approved picture if one fits): SVG parts with bend
+zones, the rig extended with two-bone limbs, a test sheet clip (walk, run, jump, land, fall, turn by cut, a wounded limp,
+point, talk) over one existing plate with code-made cloud and foliage motion, checked by the ice test's frame checks and a
+neighbour-frame sheet. Output: a 15-20 s clip + frame sheet. Optional comparison: the same hero in Synfig with its
+skeleton deformation. Nothing paid in either.
