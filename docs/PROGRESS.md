@@ -1109,3 +1109,19 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
   `production/depth.py` (2.5D parallax, `motion.parallax` up to 2 % of the width, depth map next to the picture), drawn in
   `assemble.finish_frame`, depth maps in the chunk stamp; Scene Package schema fields; `production/segment_hash.py` (per-segment
   hashes, stale list CLI, PV-59 / PV-60 wired into `validate.check_script`). Tests `tests/unit/test_scene_package.py` (9).
+
+## 2026-10-22 — Four candidate animated universes (the creator's brief of 13:23; nothing paid)
+- The creator asked for ONE original, reusable animated universe decided before production, compared on four concept boards
+  (the same four environments per board), with feasibility, an asset-library plan and a proof of concept of real animation.
+  Written as [research/ANIMATION_UNIVERSE_2026-10-22](research/ANIMATION_UNIVERSE_2026-10-22.md): philosophy, the honest
+  present/proposed capability table (stills + Ken Burns, PR #18 parallax, face sheets and bubbles exist; a cut-out rig and
+  cycles do not), four directions (Paper Stage, Ink and Cel, Soft Volume, Poster Graphic), the comparison, a recommendation
+  (Ink and Cel first, Paper Stage second; the choice is the creator's), the shared / variant / unique asset table, the
+  test path through the existing gates, and the five-step rig proof of concept (`production/rig.py`, ~$0.05).
+- Code: `explainer_engine/imagegen/universe_boards.py` on PR #18's provider adapters: `prompts` (20 ready prompts, the same
+  scenes in every direction, no other work named, no look-v2 child cues or banned words, `lint`), `estimate` ($0.18 for all
+  four boards on FLUX 3 Image Klein 1k; Seedream $0.80; Gemini $1.34), `run` refused without the creator's approval of the
+  plan hash, cached and recorded per picture, account errors stop a candidate after one call; `board` composes ONE labelled
+  image per direction (2 x 2 environments + the line-up strip). Tests `tests/unit/test_universe_boards.py` (8).
+- Not done, by the brief's own rule: no board generated (the creator paused paid work until he tops up), no architecture
+  change, no asset library, no episode. Waiting on his card: which candidate and how many takes.
