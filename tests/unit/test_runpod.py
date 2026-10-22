@@ -14,7 +14,7 @@ class FakeRunPod:
     def __init__(self, pods=(), stop_takes=0):
         self.pods = {p["id"]: dict(p) for p in pods}
         self.calls, self.faults, self.stop_takes, self.n = [], [], stop_takes, 0
-        self.billing = []
+        self.billing, self.volumes, self.endpoints = [], [], []
 
     def __call__(self, method, url, body, headers, timeout):
         path = url.split("runpod.io", 1)[-1].replace("/v1", "", 1) if "runpod.io" in url else url
@@ -44,6 +44,14 @@ class FakeRunPod:
             return 200, json.dumps({"data": {}})
         if path.startswith("/billing/pods"):
             return 200, json.dumps(self.billing)
+        if path == "/networkvolumes":
+            return 200, json.dumps(self.volumes)
+        if path.startswith("/networkvolumes/"):
+            if method == "DELETE":
+                self.volumes = [v for v in self.volumes if v["id"] != path.split("/")[2]]
+                return 200, ""
+        if path == "/endpoints":
+            return 200, json.dumps(self.endpoints)
         if path.startswith("/pods?") or path == "/pods":
             if method == "POST":
                 self.n += 1
@@ -341,6 +349,44 @@ def test_check_flags_stopped_disks_unless_the_creator_keeps_them(env, tmp_path, 
     (tmp_path / "caps.json").write_text(json.dumps(caps))
     monkeypatch.setenv("EXPLAINER_SPEND_CAPS", str(tmp_path / "caps.json"))
     assert len(R.check(api, now=1000)["problems"]) == 1
+
+
+def test_check_flags_network_volumes_and_always_on_endpoints(env, tmp_path, monkeypatch):
+    fake, api = env
+    fake.volumes = [{"id": "nv1", "name": "left-behind", "size": 60}]
+    fake.endpoints = [{"id": "ep1", "name": "painter", "workersMin": 1}]
+    res = R.check(api, now=1000)
+    assert len(res["problems"]) == 2
+    assert "NETWORK VOLUME 60 GB bills $0.14/day" in res["problems"][0]
+    assert "always-on workers" in res["problems"][1]
+    caps = json.loads(R.spend_caps.PATH.read_text())
+    caps["runpod"]["keep_network_volumes"] = ["nv1"]
+    (tmp_path / "caps.json").write_text(json.dumps(caps))
+    monkeypatch.setenv("EXPLAINER_SPEND_CAPS", str(tmp_path / "caps.json"))
+    fake.endpoints[0]["workersMin"] = 0
+    res = R.check(api, now=1000)
+    assert not res["problems"]
+    assert any("NETWORK VOLUME" in line for line in res["info"])
+    assert any("bills only while a job runs" in line for line in res["info"])
+
+
+def test_check_goes_loud_when_volumes_cannot_be_read(env):
+    fake, api = env
+    fake.faults = [("GET", "/networkvolumes", 401)]
+    res = R.check(api, now=1000)
+    assert any("may bill invisibly" in p for p in res["problems"])
+
+
+def test_delete_volume_needs_the_creators_word_and_is_verified(env, capsys):
+    fake, api = env
+    fake.volumes = [{"id": "nv1", "name": "x", "size": 60}]
+    with pytest.raises(SystemExit, match="--yes"):
+        R.main(["delete-volume", "nv1"], api=api)
+    assert fake.volumes  # nothing was deleted
+    R.main(["delete-volume", "nv1", "--yes"], api=api)
+    assert fake.volumes == []
+    R.main(["doctor"], api=api)  # the alias runs the same clean check
+    assert "ok" in capsys.readouterr().out
 
 
 def test_the_ledger_refuses_a_cap_above_the_creators_ceiling_and_fills_missing_ones(tmp_path):
