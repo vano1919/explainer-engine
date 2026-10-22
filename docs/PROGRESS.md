@@ -1109,3 +1109,47 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
   `production/depth.py` (2.5D parallax, `motion.parallax` up to 2 % of the width, depth map next to the picture), drawn in
   `assemble.finish_frame`, depth maps in the chunk stamp; Scene Package schema fields; `production/segment_hash.py` (per-segment
   hashes, stale list CLI, PV-59 / PV-60 wired into `validate.check_script`). Tests `tests/unit/test_scene_package.py` (9).
+
+## 2026-10-22 — Four candidate animated universes (the creator's brief of 13:23; nothing paid)
+- The creator asked for ONE original, reusable animated universe decided before production, compared on four concept boards
+  (the same four environments per board), with feasibility, an asset-library plan and a proof of concept of real animation.
+  Written as [research/ANIMATION_UNIVERSE_2026-10-22](research/ANIMATION_UNIVERSE_2026-10-22.md): philosophy, the honest
+  present/proposed capability table (stills + Ken Burns, PR #18 parallax, face sheets and bubbles exist; a cut-out rig and
+  cycles do not), four directions (Paper Stage, Ink and Cel, Soft Volume, Poster Graphic), the comparison, a recommendation
+  (Ink and Cel first, Paper Stage second; the choice is the creator's), the shared / variant / unique asset table, the
+  test path through the existing gates, and the five-step rig proof of concept (`production/rig.py`, ~$0.05).
+- Code: `explainer_engine/imagegen/universe_boards.py` on PR #18's provider adapters: `prompts` (20 ready prompts, the same
+  scenes in every direction, no other work named, no look-v2 child cues or banned words, `lint`), `estimate` ($0.18 for all
+  four boards on FLUX 3 Image Klein 1k; Seedream $0.80; Gemini $1.34), `run` refused without the creator's approval of the
+  plan hash, cached and recorded per picture, account errors stop a candidate after one call; `board` composes ONE labelled
+  image per direction (2 x 2 environments + the line-up strip). Tests `tests/unit/test_universe_boards.py` (8).
+- Not done, by the brief's own rule: no board generated (the creator paused paid work until he tops up), no architecture
+  change, no asset library, no episode. Waiting on his card: which candidate and how many takes.
+
+## 2026-10-22 — The muse: simple and beautiful, emotion and physics good (the creator, 13:51; nothing paid)
+- Research [research/ANIMATION_TOOLS_2026-10-22](research/ANIMATION_TOOLS_2026-10-22.md): the three reference shows' principles
+  (three-stroke shapes, on-model with rationed exaggeration, no black line and background as a character, silhouette and negative
+  space, long holds and snaps, silence, part rigs across worlds), the twelve principles as functions, the tools with licences read
+  on their LICENSE files (Rhubarb MIT, AnimatedDrawings MIT, SAM 2 Apache-2.0, pymunk MIT, rembg MIT with a paid default model,
+  ToonCrafter unclear weights). Skill `.claude/skills/animated-universe/SKILL.md`.
+- Built: `production/rig.py`, a cut-out rig in numpy + PIL: pieces with pivots and a parent tree, eased keyframe cycles (idle, walk,
+  run, point, react, fall), follow-through springs for secondary pieces, area-preserving bounded squash and stretch from vertical
+  speed, closed-form drop-and-bounce physics, four mouth shapes from word timings, flip, and a 20-second proof-of-concept clip from
+  code-drawn pieces over three parallax layers (`rig demo`; 1280x720 in 12 s). Frames are a pure function of their number.
+  Tests `tests/unit/test_rig.py` (10). Looked at: the walk, the point at the sign, the talk, the jump with stretch and squash.
+- Not done: the `rig` beat kind in `assemble.finish_frame`, Rhubarb and pymunk in `tools/`, pieces cut from a painted character
+  (waits for the creator's choice of direction), the five proposed house rules are not in the registry (D-59 needs sources).
+
+## 2026-10-22 — Boards as one picture with four places; the creator's reference as a fifth direction (nothing paid yet)
+- The creator (14:15): one reference picture per world with four places, then a 10-second test shot ("100 people end up in the
+  ice age") in a less primitive look than the code-drawn rig figure; he attached his own reference picture.
+- `imagegen/universe_boards.py`: `--mode grid` asks for ONE picture of a 2 x 2 grid (city, Mars, prehistoric, drowned future) per
+  direction, labelled by `grid_board`; `--directions` picks a subset; a fifth direction `wild_ink` describes his reference's
+  qualities in our own words (uneven heavy ink line, bulging eyes, rubbery mouths, painterly plates, neon accents for the strange)
+  and is never given his picture as an input; the lint caught "wobbly" (a look v2 child cue) and it was replaced.
+  Estimate on Gemini Nano Banana 2.1 2K, 5 directions x 2 takes: $0.50 (3.1 Flash $1.01). BFL still answers "Not authenticated",
+  fal is locked. Tests `tests/unit/test_universe_boards.py` (10). Waiting on his card.
+- 14:19 the approved run (card cmsg_01Hnu5zB86sjUj5GtTgaUkPWCTKFFQJ2XNiT2NW3zgjnPx, Nano Banana 2.1, $0.50): $0 spent, every request
+  refused with Gemini HTTP 402 "prepayment credits are depleted". The adapter sent all ten because a Gemini 402 was a plain provider
+  error; `providers/gemini_adapter.py` now raises `AccountError` on 401/402/403, so the first one stops the candidate (test added).
+  The approval stays bound to plan hash 807c365090475447 in `jobs/universe/2026-10-22_grid/run.json`; a rerun after a top-up paints it.
