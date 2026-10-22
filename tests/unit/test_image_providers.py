@@ -238,3 +238,21 @@ def test_pilot_cli_estimate_sends_nothing(capsys):
     assert pilot.main(["estimate", "--takes", "1"]) == 0
     out = capsys.readouterr().out
     assert "nothing is sent" in out and "0.480" in out  # 6 shots x (0.009 + 0.04 + 0.031)
+
+
+def test_an_account_error_stops_the_candidate_after_one_call(tmp_path, monkeypatch):
+    """Live 2026-10-22: BFL answered 403 Not authenticated, fal 403 'User is locked: exhausted balance'. One call, not 24."""
+    monkeypatch.setenv("EXPLAINER_IMAGE_CACHE", str(tmp_path / "cache"))
+    monkeypatch.setenv("BFL_API_KEY", "k")
+    calls = []
+
+    def locked(method, url, body, headers):
+        calls.append(url)
+        return 403, b'{"detail":"Not authenticated"}'
+    p = pilot.plan(["bfl:flux-3-image-klein:1k"], takes=4)
+    ledger = Run.open(tmp_path / "run.json", caps={"bfl_usd": 1.0})
+    ledger.approve("pilot", p["hash"], by="x", ref="y", provider="bfl", usd=p["usd"])
+    res = pilot.run(p, tmp_path / "out", ledger, factory=lambda name, **kw: providers.get(name, http=locked, sleep=lambda s: None, **kw),
+                    log=lambda *a: None)
+    rec = res["candidates"]["bfl_flux_3_image_klein_1k"]
+    assert len(calls) == 1 and "403" in rec["account_error"] and rec["failures"] == 1 and ledger.spent("bfl_usd") == 0.0

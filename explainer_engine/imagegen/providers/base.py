@@ -26,6 +26,10 @@ class ProviderError(RuntimeError):
     pass
 
 
+class AccountError(ProviderError):
+    """The account cannot be used at all (bad key, no balance, locked): every later request would fail the same way."""
+
+
 @dataclass
 class Result:
     data: bytes
@@ -113,7 +117,9 @@ class ImageProvider:
     def _json(self, method: str, url: str, body: dict | None = None, *, headers: dict | None = None, ok=(200,)) -> dict:
         status, raw = self.http(method, url, body, headers or {})
         if status == 402:
-            raise ProviderError(f"{self.name}: HTTP 402, no credits left on the account; nothing more is sent")
+            raise AccountError(f"{self.name}: HTTP 402, no credits left on the account; nothing more is sent")
+        if status in (401, 403):
+            raise AccountError(f"{self.name}: HTTP {status} (key or account): {raw[:200].decode('utf-8', 'replace')}")
         if status == 429:
             raise ProviderError(f"{self.name}: HTTP 429 rate limited; try again later")
         if status not in ok:

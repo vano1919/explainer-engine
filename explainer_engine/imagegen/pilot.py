@@ -28,7 +28,7 @@ from pathlib import Path
 from explainer_engine.core.ledger import CapReached, Run
 from explainer_engine.core.store import write_json_atomic
 from explainer_engine.imagegen import providers
-from explainer_engine.imagegen.providers.base import ChargeUncertain, ProviderError
+from explainer_engine.imagegen.providers.base import AccountError, ChargeUncertain, ProviderError
 
 STYLE = ("colourful hand-drawn 2D animation illustration, clean confident ink lines, flat cel shading with soft painted light, "
          "expressive adult faces, consistent character design, one artist's hand throughout, no text unless asked, no logo")
@@ -112,6 +112,7 @@ def run(p: dict, out: Path, ledger: Run, *, factory=providers.get, log=print, on
         cdir.mkdir(parents=True, exist_ok=True)
         prov = factory(c["provider"], root=cdir / "_raw", run=ledger)
         rec = results["candidates"].setdefault(c["id"], {"provider": c["provider"], "model": c["model"], "size": c["size"], "takes": {}})
+        rec.pop("account_error", None)
         for s in c["shots"]:
             for take in range(1, p["takes"] + 1):
                 key = f"{s['shot']}_t{take}"
@@ -139,6 +140,11 @@ def run(p: dict, out: Path, ledger: Run, *, factory=providers.get, log=print, on
                     stopped = str(exc)
                     log("STOP:", stopped)
                     break
+                except AccountError as exc:
+                    rec["takes"][key] = {"error": "account", "detail": str(exc)[:200]}
+                    rec["account_error"] = str(exc)[:200]
+                    log(f"{c['id']}: account unusable, skipping this candidate: {str(exc)[:160]}")
+                    break
                 except ChargeUncertain as exc:
                     rec["takes"][key] = {"error": "charge uncertain", "detail": str(exc)[:200]}
                     log(f"{c['id']} {key}: uncertain charge, not retried")
@@ -146,12 +152,12 @@ def run(p: dict, out: Path, ledger: Run, *, factory=providers.get, log=print, on
                     rec["takes"][key] = {"error": "refused" if "Moderated" in str(exc) or "nsfw" in str(exc).lower() else "failed", "detail": str(exc)[:200]}
                     log(f"{c['id']} {key}: {rec['takes'][key]['error']}: {str(exc)[:120]}")
                 write_json_atomic(out / "results.json", results)
-            if stopped:
+            if stopped or rec.get("account_error"):
                 break
         rec["usd"] = round(sum(t.get("usd", 0.0) for t in rec["takes"].values()), 4)
         rec["seconds"] = round(sum(t.get("seconds", 0.0) for t in rec["takes"].values()), 1)
         rec["refusals"] = sum(1 for t in rec["takes"].values() if t.get("error") == "refused")
-        rec["failures"] = sum(1 for t in rec["takes"].values() if t.get("error") in ("failed", "charge uncertain"))
+        rec["failures"] = sum(1 for t in rec["takes"].values() if t.get("error") in ("failed", "charge uncertain", "account"))
         write_json_atomic(out / "results.json", results)
         if stopped:
             break
