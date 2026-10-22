@@ -40,7 +40,7 @@ def test_same_scenes_in_every_direction_and_distinct_cores():
         for r, (slot, _title, scene) in zip(rows, UB.ENVIRONMENTS):
             assert r["prompt"].startswith(scene) and d["core"] in r["prompt"] and r["prompt"].endswith(UB.NO_TEXT)
     cores = [d["core"] for d in UB.DIRECTIONS]
-    assert len(set(cores)) == 4 and len({d["id"] for d in UB.DIRECTIONS}) == 4
+    assert len(set(cores)) == 5 and len({d["id"] for d in UB.DIRECTIONS}) == 5
     for d in UB.DIRECTIONS:  # the brief's feasibility questions are answered for every direction
         assert set(d["production"]) == {"characters", "expressions", "environments", "dimension", "camera", "closeups", "settings", "fragile", "fit"}
 
@@ -55,12 +55,12 @@ def test_prompts_name_no_other_work_and_carry_no_child_cues():
 
 def test_plan_prices_every_picture_and_binds_a_hash():
     p = UB.plan(takes=1)
-    assert p["usd"] == pytest.approx(20 * 0.009) and p["by_service"] == {"bfl_usd": 0.18}
-    assert len(p["candidates"][0]["boards"]) == 4 and all(len(b["pictures"]) == 5 for b in p["candidates"][0]["boards"])
+    assert p["usd"] == pytest.approx(25 * 0.009) and p["by_service"] == {"bfl_usd": 0.225}
+    assert len(p["candidates"][0]["boards"]) == 5 and all(len(b["pictures"]) == 5 for b in p["candidates"][0]["boards"])
     assert p["hash"] == UB.plan(takes=1)["hash"] and p["hash"] != UB.plan(takes=2)["hash"]
     two = UB.plan(["bfl:flux-3-image-klein:1k", "fal:seedream-4.5-t2i:2K_wide"], takes=2)
-    assert two["by_service"] == {"bfl_usd": 0.36, "fal_usd": 1.6}
-    assert "40" in UB.table(two) and two["hash"] in UB.table(two)
+    assert two["by_service"] == {"bfl_usd": 0.45, "fal_usd": 2.0}
+    assert "50" in UB.table(two) and two["hash"] in UB.table(two)
     with pytest.raises(ValueError):
         UB.plan(["bfl:flux-3-image-klein"])
 
@@ -92,8 +92,8 @@ def test_run_paints_every_board_records_failures_and_composes_labelled_boards(tm
 
     res = UB.run(p, tmp_path, ledger, factory=factory, log=lambda *a: None)
     rec = res["candidates"]["bfl_flux_3_image_klein_1k"]
-    assert len(rec["pictures"]) == 20 and rec["failures"] == 1 and rec["pictures"]["ink_cel_C_t1"]["error"] == "refused"
-    assert rec["usd"] == pytest.approx(19 * 0.009) and ledger.spent("bfl_usd") == pytest.approx(19 * 0.009)
+    assert len(rec["pictures"]) == 25 and rec["failures"] == 1 and rec["pictures"]["ink_cel_C_t1"]["error"] == "refused"
+    assert rec["usd"] == pytest.approx(24 * 0.009) and ledger.spent("bfl_usd") == pytest.approx(24 * 0.009)
     assert all(c[4] == {"aspect_ratio": "16:9"} and c[3] == 1 for c in made[0].calls)
     assert (tmp_path / "bfl_flux_3_image_klein_1k" / "paper_stage_A_t1.png").exists()
     # the second run paints nothing that exists (the failed one is retried) and the results file keeps its records
@@ -127,7 +127,34 @@ def test_an_account_error_stops_that_candidate_after_one_call(tmp_path):
 def test_cli_estimate_and_prompts_send_nothing(capsys):
     assert UB.main(["estimate"]) == 0
     out = capsys.readouterr().out
-    assert "nothing is sent" in out and "0.180" in out
+    assert "nothing is sent" in out and "0.225" in out
     assert UB.main(["prompts"]) == 0
     out = capsys.readouterr().out
-    assert out.count("[A] modern city") == 4 and "Paper Stage" in out
+    assert out.count("[A] modern city") == 5 and "Paper Stage" in out and "Wild Ink" in out
+
+
+def test_grid_mode_is_one_picture_per_direction_with_the_four_places(tmp_path):
+    p = UB.plan(["gemini:gemini-nano-banana-2.1:2K"], takes=2, mode="grid")
+    assert p["usd"] == pytest.approx(5 * 2 * 0.0504) and p["mode"] == "grid"
+    for b in p["candidates"][0]["boards"]:
+        (pic,) = b["pictures"]
+        assert pic["slot"] == "G" and "2 x 2 grid" in pic["prompt"]
+        assert all(scene in pic["prompt"] for _s, _t, scene in UB.ENVIRONMENTS)
+        assert UB.lint(pic["prompt"]) == []
+    assert p["hash"] != UB.plan(["gemini:gemini-nano-banana-2.1:2K"], takes=2)["hash"]
+    one = UB.plan(["gemini:gemini-nano-banana-2.1:2K"], mode="grid", directions=["wild_ink", "ink_cel"])
+    assert [b["direction"] for b in one["candidates"][0]["boards"]] == ["wild_ink", "ink_cel"]
+    with pytest.raises(ValueError):
+        UB.plan(mode="grid", directions=["nope"])
+    ledger = Run.open(tmp_path / "run.json", caps={"bfl_usd": 1.0})
+    g = UB.plan(mode="grid", directions=["ink_cel"])
+    ledger.approve("boards", g["hash"], by="ვანო", ref="card", provider="bfl", usd=g["usd"])
+    UB.run(g, tmp_path, ledger, factory=lambda name, **kw: FakeProvider(**kw), log=lambda *a: None)
+    out = UB.board(tmp_path, "bfl_flux_3_image_klein_1k", "ink_cel")
+    assert out.name == "board_ink_cel_bfl_flux_3_image_klein_1k_t1.png" and Image.open(out).width == 1600
+
+
+def test_the_creators_reference_is_used_for_its_qualities_only():
+    wild = next(d for d in UB.DIRECTIONS if d["id"] == "wild_ink")
+    assert "never as an input image" in wild["production"]["fit"]
+    assert UB.lint(wild["core"]) == []

@@ -1139,3 +1139,13 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
   Tests `tests/unit/test_rig.py` (10). Looked at: the walk, the point at the sign, the talk, the jump with stretch and squash.
 - Not done: the `rig` beat kind in `assemble.finish_frame`, Rhubarb and pymunk in `tools/`, pieces cut from a painted character
   (waits for the creator's choice of direction), the five proposed house rules are not in the registry (D-59 needs sources).
+
+## 2026-10-22 — Boards as one picture with four places; the creator's reference as a fifth direction (nothing paid yet)
+- The creator (14:15): one reference picture per world with four places, then a 10-second test shot ("100 people end up in the
+  ice age") in a less primitive look than the code-drawn rig figure; he attached his own reference picture.
+- `imagegen/universe_boards.py`: `--mode grid` asks for ONE picture of a 2 x 2 grid (city, Mars, prehistoric, drowned future) per
+  direction, labelled by `grid_board`; `--directions` picks a subset; a fifth direction `wild_ink` describes his reference's
+  qualities in our own words (uneven heavy ink line, bulging eyes, rubbery mouths, painterly plates, neon accents for the strange)
+  and is never given his picture as an input; the lint caught "wobbly" (a look v2 child cue) and it was replaced.
+  Estimate on Gemini Nano Banana 2.1 2K, 5 directions x 2 takes: $0.50 (3.1 Flash $1.01). BFL still answers "Not authenticated",
+  fal is locked. Tests `tests/unit/test_universe_boards.py` (10). Waiting on his card.

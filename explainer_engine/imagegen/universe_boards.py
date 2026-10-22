@@ -1,4 +1,4 @@
-"""Four candidate animated universes, one concept board each (the creator's brief of 2026-10-22, "Define the Original
+"""Candidate animated universes (four, plus the creator's own reference as a fifth), one concept board each (the creator's brief of 2026-10-22, "Define the Original
 Animation Universe Before Production", deliverables 2, 3 and 6): the same four environments (A a modern city street, B a Mars
 outpost, C a prehistoric river camp, D a drowned alternate-future city) and the same three-character line-up are painted in
 each direction, so the boards compare DIRECTIONS and nothing else. The four directions differ in shape language, line,
@@ -137,15 +137,51 @@ DIRECTIONS = [
             "fit": "fits the palette rule (colours only from palette.json) and the drawn text objects of the bible best",
         },
     },
+    {
+        "id": "wild_ink",
+        "name": "Wild Ink",
+        "idea": "the creator's reference picture (2026-10-22 14:15), its qualities only: a loose uneven ink line, bulging eyes, painterly worlds",
+        "core": ("loose hand-inked cartoon illustration, a thick, uneven, energetic dark ink outline that varies in weight, big round "
+                 "bulging white eyes with small dark pupils, rubbery expressive mouths with visible teeth and tongue, adult "
+                 "characters with lanky or stocky exaggerated bodies, scraggly hair drawn in quick strokes, backgrounds painted "
+                 "loosely with visible brush texture and watercolour bleeding, saturated colours with glowing neon accents for "
+                 "anything strange or magical, one key light per scene, comedic but able to turn tense"),
+        "production": {
+            "characters": "a standard cut-out rig, like Ink and Cel; the uneven line hides small seams between pieces",
+            "expressions": "10-12 faces (the bulging eyes do most of the acting) + 6 mouths; big mouths need teeth/tongue variants",
+            "environments": "painterly plates are rich but each is a painting; props reuse well, plates less (texture shows repeats)",
+            "dimension": "2D cut-outs over painted plates; layer parallax works on separated plates",
+            "camera": "angles from 3 drawn views; strong in medium shots and reactions",
+            "closeups": "excellent and funny: the face is the show",
+            "settings": "very flexible for weird and sci-fi; serious history needs the comedy dialled down in the faces",
+            "fragile": "the line weight and the eye style drift between generations; the look sits close to famous adult cartoons, "
+                       "so every design must stay original (no borrowed motifs, no recognisable characters)",
+            "fit": "same production path as Ink and Cel; the creator's reference picture is used for its qualities only, never as an input image",
+        },
+    },
 ]
 # look v2's guards are reused as a plain word list test (the resolver checks real prompts; the boards are a candidate set)
 BANNED_NAMES = ("madagascar", "rick", "morty", "samurai jack", "spongebob", "shrek", "dreamworks", "nickelodeon", "cartoon network",
                 "adult swim", "pixar", "disney", "ghibli", "tartakovsky", "hillenburg")
 DEFAULT_CANDIDATES = ["bfl:flux-3-image-klein:1k"]
-ALT_CANDIDATES = {"seedream": "fal:seedream-4.5-t2i:2K_wide", "gemini": "gemini:gemini-3.1-flash-image:1K"}
+ALT_CANDIDATES = {"seedream": "fal:seedream-4.5-t2i:2K_wide", "gemini": "gemini:gemini-3.1-flash-image:1K",
+                  "nano21": "gemini:gemini-nano-banana-2.1:2K"}
 
 
-def prompts(direction: dict) -> list[dict]:
+GRID = ("one image divided into a 2 x 2 grid of four panels with thin white gutters, the same art style and the same drawing hand "
+        "in all four panels: top-left panel, {A}; top-right panel, {B}; bottom-left panel, {C}; bottom-right panel, {D}")
+
+
+def grid_prompt(direction: dict) -> dict:
+    """ONE picture with the four places A-D as panels (the creator, 2026-10-22 14:15: one reference picture per world with
+    four places): one generation keeps the four panels in one hand, and costs one picture."""
+    scenes = {slot: scene for slot, _t, scene in ENVIRONMENTS}
+    return {"slot": "G", "title": "four places in one picture", "prompt": f"{GRID.format(**scenes)}; {direction['core']}{NO_TEXT}"}
+
+
+def prompts(direction: dict, mode: str = "tiles") -> list[dict]:
+    if mode == "grid":
+        return [grid_prompt(direction)]
     """The five pictures of one board: A-D environments and the line-up, each prompt = scene + the direction's core."""
     rows = [{"slot": slot, "title": title, "prompt": f"{scene}; {direction['core']}{NO_TEXT}"} for slot, title, scene in ENVIRONMENTS]
     rows.append({"slot": "L", "title": "character line-up", "prompt": f"{LINEUP}; {direction['core']}{NO_TEXT}"})
@@ -169,7 +205,7 @@ def parse(spec: str) -> dict:
     return {"provider": parts[0], "model": parts[1], "size": parts[2], "id": "_".join(parts).replace(".", "_").replace("-", "_")}
 
 
-def plan(candidates: list[str] | None = None, *, takes: int = 1) -> dict:
+def plan(candidates: list[str] | None = None, *, takes: int = 1, mode: str = "tiles", directions: list[str] | None = None) -> dict:
     """Every picture priced before anything is sent; the hash binds the creator's approval to exactly this plan."""
     rows = []
     for spec in candidates or DEFAULT_CANDIDATES:
@@ -177,8 +213,8 @@ def plan(candidates: list[str] | None = None, *, takes: int = 1) -> dict:
         klass = providers.cls(c["provider"])
         usd = klass.PRICES[c["model"]][c["size"]]
         boards = []
-        for d in DIRECTIONS:
-            pics = prompts(d)
+        for d in _dirs(directions):
+            pics = prompts(d, mode)
             for p in pics:
                 bad = lint(p["prompt"])
                 if bad:
@@ -186,22 +222,32 @@ def plan(candidates: list[str] | None = None, *, takes: int = 1) -> dict:
             boards.append({"direction": d["id"], "name": d["name"], "pictures": pics, "usd": round(usd * len(pics) * takes, 4)})
         rows.append({**c, "service": klass.service, "usd_each": usd, "takes": takes, "boards": boards,
                      "usd": round(sum(b["usd"] for b in boards), 4), "prices_checked": klass.PRICES_CHECKED})
-    p = {"schema": "universe_boards_plan/1", "takes": takes, "candidates": rows, "usd": round(sum(r["usd"] for r in rows), 4),
+    p = {"schema": "universe_boards_plan/1", "takes": takes, "mode": mode, "candidates": rows, "usd": round(sum(r["usd"] for r in rows), 4),
          "by_service": {}, "created": time.strftime("%Y-%m-%dT%H:%M:%S")}
     for r in rows:
         p["by_service"][r["service"]] = round(p["by_service"].get(r["service"], 0.0) + r["usd"], 4)
     p["hash"] = hashlib.sha256(json.dumps([takes, [(r["provider"], r["model"], r["size"]) for r in rows],
-                                           [[q["prompt"] for q in prompts(d)] for d in DIRECTIONS]], sort_keys=True).encode()).hexdigest()[:16]
+                                           [[q["prompt"] for q in prompts(d, mode)] for d in _dirs(directions)]], sort_keys=True).encode()).hexdigest()[:16]
     return p
 
 
+def _dirs(ids: list[str] | None) -> list[dict]:
+    if not ids:
+        return DIRECTIONS
+    known = {d["id"]: d for d in DIRECTIONS}
+    bad = [i for i in ids if i not in known]
+    if bad:
+        raise ValueError(f"unknown direction(s) {bad}; known: {sorted(known)}")
+    return [known[i] for i in ids]
+
+
 def table(p: dict) -> str:
-    n = len(DIRECTIONS) * (len(ENVIRONMENTS) + 1)
+    n = sum(len(b["pictures"]) for b in p["candidates"][0]["boards"]) if p["candidates"] else 0
     lines = [f"{'candidate':42} {'pictures':>9} {'usd each':>9} {'usd':>8}"]
     for r in p["candidates"]:
         lines.append(f"{r['provider'] + ':' + r['model'] + ':' + r['size']:42} {n * r['takes']:>9} {r['usd_each']:>9.4f} {r['usd']:>8.3f}")
     lines.append(f"{'total':42} {'':>9} {'':>9} {p['usd']:>8.3f}   per service: " + ", ".join(f"{k} {v:.2f}" for k, v in p["by_service"].items()))
-    lines.append(f"plan hash {p['hash']}; {len(DIRECTIONS)} boards x {len(ENVIRONMENTS) + 1} pictures x {p['takes']} take(s); "
+    lines.append(f"plan hash {p['hash']}; {len(p['candidates'][0]['boards'])} boards, {p.get('mode', 'tiles')} mode, {p['takes']} take(s); "
                  f"three-fold rerun margin {p['usd'] * 3:.2f}")
     return "\n".join(lines)
 
@@ -273,6 +319,8 @@ def board(out: Path, candidate_id: str, direction_id: str, *, take: int = 1, cel
     res = json.loads((out / "results.json").read_text(encoding="utf-8"))
     rec = res["candidates"][candidate_id]
     d = next(x for x in DIRECTIONS if x["id"] == direction_id)
+    if f"{direction_id}_G_t{take}" in rec["pictures"]:
+        return grid_board(out, candidate_id, d, rec, take)
     w, h = cell
     label, strip = 26, h
     sheet = Image.new("RGB", (2 * w, label * 2 + 2 * (h + label) + strip + label), (18, 18, 18))
@@ -301,6 +349,31 @@ def board(out: Path, candidate_id: str, direction_id: str, *, take: int = 1, cel
     return path
 
 
+def grid_board(out: Path, candidate_id: str, d: dict, rec: dict, take: int, width: int = 1600) -> Path:
+    """The one grid picture with a title band and the four place letters drawn at the quadrant corners."""
+    from PIL import Image, ImageDraw
+    info = rec["pictures"].get(f"{d['id']}_G_t{take}", {})
+    f = out / candidate_id / (info.get("file") or "-")
+    band = 34
+    if info.get("file") and f.exists():
+        im = Image.open(f).convert("RGB")
+        im = im.resize((width, int(im.height * width / im.width)))
+    else:
+        im = Image.new("RGB", (width, width * 9 // 16), (30, 30, 30))
+        ImageDraw.Draw(im).text((20, 20), (info.get("error") or "missing")[:60], fill=(220, 120, 120))
+    sheet = Image.new("RGB", (im.width, im.height + band), (18, 18, 18))
+    sheet.paste(im, (0, band))
+    dr = ImageDraw.Draw(sheet)
+    dr.text((10, 10), f"{d['name']}: {d['idea']}", fill=(235, 235, 235))
+    W, H = im.size
+    for (slot, title, _), (x, y) in zip(ENVIRONMENTS, ((0, 0), (W // 2, 0), (0, H // 2), (W // 2, H // 2))):
+        dr.rectangle((x + 8, band + y + 8, x + 8 + 9 * (len(title) + 3), band + y + 30), fill=(18, 18, 18))
+        dr.text((x + 14, band + y + 13), f"{slot}. {title}", fill=(240, 220, 120))
+    path = out / f"board_{d['id']}_{candidate_id}_t{take}.png"
+    sheet.save(path)
+    return path
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -308,6 +381,8 @@ def main(argv: list[str] | None = None) -> int:
     for name in ("estimate", "run", "board"):
         s = sub.add_parser(name)
         s.add_argument("--takes", type=int, default=1)
+        s.add_argument("--mode", choices=("tiles", "grid"), default="tiles", help="grid = ONE picture with the four places")
+        s.add_argument("--directions", default="", help="comma-separated direction ids (default: all)")
         s.add_argument("--candidates", default=",".join(DEFAULT_CANDIDATES),
                        help=f"provider:model:size, comma-separated; alternatives {ALT_CANDIDATES}")
         if name != "estimate":
@@ -323,7 +398,8 @@ def main(argv: list[str] | None = None) -> int:
             for q in prompts(d):
                 print(f"\n[{q['slot']}] {q['title']}\n{q['prompt']}")
         return 0
-    p = plan([c for c in a.candidates.split(",") if c], takes=a.takes)
+    dirs = [x for x in a.directions.split(",") if x] or None
+    p = plan([c for c in a.candidates.split(",") if c], takes=a.takes, mode=a.mode, directions=dirs)
     if a.cmd == "estimate":
         print(table(p))
         print("nothing is sent: `universe_boards run --approved-by --ref` records the creator's yes on this hash first")
@@ -333,7 +409,7 @@ def main(argv: list[str] | None = None) -> int:
     write_json_atomic(out / "plan.json", p)
     if a.cmd == "board":
         for c in p["candidates"]:
-            for d in DIRECTIONS:
+            for d in _dirs(dirs):
                 for t in range(1, c["takes"] + 1):
                     print(board(out, c["id"], d["id"], take=t))
         return 0
@@ -348,8 +424,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     for cid, rec in res["candidates"].items():
         print(f"{cid}: ${rec.get('usd', 0):.3f}, failures {rec.get('failures', 0)}")
-        for d in DIRECTIONS:
-            print("  ", board(out, cid, d["id"]))
+        for d in _dirs(dirs):
+            for t in range(1, p["takes"] + 1):
+                print("  ", board(out, cid, d["id"], take=t))
     print("spent:", {s: ledger.spent(s) for s in p["by_service"]}, "stopped:" if res.get("stopped") else "", res.get("stopped") or "")
     return 3 if res.get("stopped") else 0
 
