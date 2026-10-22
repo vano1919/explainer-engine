@@ -39,6 +39,7 @@ import json
 import math
 import subprocess
 import wave
+from contextlib import contextmanager
 from dataclasses import dataclass, field, replace
 from functools import lru_cache
 from pathlib import Path
@@ -55,8 +56,11 @@ THIGH, SHIN = 0.21 * B, 0.21 * B
 REACH = (THIGH + SHIN) * 0.985  # hips never pull a planted leg fully straight
 TORSO, NECK = 0.27 * B, 0.13 * B
 UPPER, FORE = 0.16 * B, 0.15 * B
+STAND = 0.435                  # hip height of a standing hero, in body heights
 HEAD = 0.15 * B
 FRONT_HIP = 0.055 * B          # half the hips' width in the front drawing
+TQ_HIP, TQ_SHOULDER = 0.035 * B, 0.055 * B  # the three-quarter drawing: how far each side's hip and shoulder sit apart
+TQ_BACK = 0.014 * B            # ... and how much higher the far side's foot and shoulder sit (it is further away)
 LINE = 0.016 * B               # the ink line, bold and loose (Wild Ink)
 SS = 2                         # supersampling of the character layer
 SIDES = ("L", "R")
@@ -114,6 +118,55 @@ def fk_arm(shoulder: tuple, facing: int, angle: float, elbow: float) -> tuple[tu
     return e, (e[0] + facing * math.sin(b) * FORE, e[1] + math.cos(b) * FORE)
 
 
+# --- a character's build: bone lengths in body heights ------------------------------------------------------------------
+@dataclass(frozen=True)
+class Build:
+    """One character's proportions (a cartoon cast has short-legged and long-legged heroes). ``use_build`` makes them the
+    rig's bones while that character is posed and drawn; the default is the PoC hero's."""
+    thigh: float = 0.21
+    shin: float = 0.21
+    torso: float = 0.27
+    neck: float = 0.13
+    upper: float = 0.16
+    fore: float = 0.15
+    head_h: float = 0.42     # the painted head picture's height (crown to the neck stump)
+
+    @property
+    def stand(self) -> float:
+        return (self.thigh + self.shin) * 0.435 / 0.42
+
+    def gait(self, g: "Gait") -> "Gait":
+        """The same gait for these legs: stride, lift and hip height scale with the leg length."""
+        k = (self.thigh + self.shin) / 0.42
+        return replace(g, stride=g.stride * k, lift=g.lift * k, hip=g.hip * k, bob=g.bob * k, dip=g.dip * k)
+
+
+DEFAULT_BUILD = Build()
+
+
+def load_build(folder: str | None) -> Build | None:
+    """A character folder's build (``build`` in its ``parts_side.json``), or None."""
+    path = Path(folder) / "parts_side.json" if folder else None
+    if not path or not path.exists():
+        return None
+    spec = json.loads(path.read_text(encoding="utf-8")).get("build")
+    return Build(**spec) if spec else None
+
+
+@contextmanager
+def use_build(b: Build | None):
+    """Pose and draw with ``b``'s bones (module constants swapped for the duration; single-threaded)."""
+    g = globals()
+    keep = {k: g[k] for k in ("THIGH", "SHIN", "REACH", "TORSO", "NECK", "UPPER", "FORE", "STAND", "HEAD_H")}
+    if b is not None:
+        g.update(THIGH=b.thigh * B, SHIN=b.shin * B, REACH=(b.thigh + b.shin) * B * 0.985, TORSO=b.torso * B,
+                 NECK=b.neck * B, UPPER=b.upper * B, FORE=b.fore * B, STAND=b.stand, HEAD_H=b.head_h * B)
+    try:
+        yield
+    finally:
+        g.update(keep)
+
+
 # --- the pose ----------------------------------------------------------------------------------------------------------
 @dataclass
 class Pose:
@@ -128,6 +181,7 @@ class Pose:
     blink: float = 0.0                # 0 open .. 1 shut
     squash: float = 1.0               # upper body, about the hips (volume kept)
     front: bool = False               # the front drawing (the middle of a turn)
+    view: str = "side"                # "side" | "three_quarter": the body turned toward the camera (a 2.5D shot)
     wound: bool = False
     scarf: float = 0.0                # the scarf tail's angle, degrees (follow-through)
 
@@ -312,7 +366,7 @@ class Loco:
         p = self.phase(tt)
         hx = self.x(tt)
         moving = t <= self.t1
-        want = gait_hip_height(self.g, p, feet) if moving else GROUND - 0.435 * B
+        want = gait_hip_height(self.g, p, feet) if moving else GROUND - STAND * B
         if not moving:
             want = lerp(gait_hip_height(self.g, p, feet), want, ease((t - self.t1) / 0.35))
         hip = reach_clamp((hx, want), feet)
@@ -412,6 +466,11 @@ def _dir(angle: float, f: int) -> tuple:
     return (f * math.sin(a), -math.cos(a))
 
 
+def near_side(f: int) -> str:
+    """The side nearer the camera in a side or three-quarter drawing."""
+    return "L" if f > 0 else "R"
+
+
 def shoulder_of(p: Pose) -> tuple:
     d = _dir(p.torso, p.facing)
     return (p.hip[0] + d[0] * (TORSO - 0.03 * B) * p.squash, p.hip[1] + d[1] * (TORSO - 0.03 * B) * p.squash)
@@ -427,14 +486,28 @@ def skeleton(p: Pose) -> dict:
     head = (neck[0] + hd[0] * NECK * sq, neck[1] + hd[1] * NECK * sq)
     sh = shoulder_of(p)
     j = {"hip": p.hip, "neck": neck, "head": head, "shoulder": sh, "head_angle": p.torso + p.head}
+    tq = p.view == "three_quarter" and not p.front
+    near = near_side(f)
     for k, s in enumerate(SIDES):
         fx, fy, pitch, contact = p.feet[s]
         side = (-1 if p.feet[s][0] <= p.feet[SIDES[1 - k]][0] else 1) if p.front else 0
         hip = (p.hip[0] + side * FRONT_HIP, p.hip[1]) if p.front else p.hip
+        if tq:
+            # the near side sits behind the body's middle, the far side ahead of it and a little higher (further away)
+            back = 0.0 if s == near else TQ_BACK
+            hip = (p.hip[0] + (-f if s == near else f) * TQ_HIP, p.hip[1] - back)
+            fy -= back
         knee, ankle = ik2(hip, (fx, fy), THIGH, SHIN, side if p.front else f)  # front: knees bow out
         j["hip_" + s], j["knee_" + s], j["ankle_" + s], j["pitch_" + s] = hip, knee, ankle, pitch
         arm = p.arms[s]
-        if p.front:
+        if tq:
+            shs = (sh[0] + (-f if s == near else f) * TQ_SHOULDER, sh[1] - (0.0 if s == near else TQ_BACK))
+            j["shoulder_" + s] = shs
+            if arm[0] == "fk":
+                elbow, hand = fk_arm(shs, f, arm[1], arm[2])
+            else:
+                elbow, hand = ik2(shs, (arm[1], arm[2]), UPPER, FORE, -f)
+        elif p.front:
             shs = (sh[0] + side * 0.10 * B, sh[1] + 0.02 * B)
             elbow = (shs[0] + side * 0.05 * B, shs[1] + UPPER * 0.95)
             hand = (elbow[0] + side * 0.01 * B, elbow[1] + FORE * 0.98)
@@ -753,6 +826,17 @@ class Canvas:
                 base = Image.merge("RGBA", [c.point(lambda v: int(v * 0.78)) for c in base.split()[:3]] + [base.split()[3]])
             self.img.paste(base, (0, 0), mask)
 
+    def cut_parts(self, segs, sheet: "Sheet", far: bool, f: int):
+        """Segments [(p0, p1, part)] drawn as the sheet's painted cut-outs, in order (a later part overlaps the joint)."""
+        for p0, p1, part in segs:
+            if part not in sheet.parts:
+                continue
+            layer = sheet.place(part, self.p(p0), self.p(p1), f, self.img.size)
+            if far:
+                r, g, b, a = layer.split()
+                layer = Image.merge("RGBA", [c.point(lambda v: int(v * 0.8)) for c in (r, g, b)] + [a])
+            self.img.alpha_composite(layer)
+
     def poly(self, pts, color, width=LINE):
         self.d.polygon([self.p(q) for q in pts], fill=color, outline=INK, width=max(1, int(width * SS)))
 
@@ -779,11 +863,18 @@ class Sheet:
 
     PARTS = ("torso", "upper_arm", "fore_arm", "thigh", "shin")
 
-    def __init__(self, folder: str):
-        spec = json.loads((Path(folder) / "parts.json").read_text(encoding="utf-8"))
+    def __init__(self, folder: str, name: str = "parts.json"):
+        spec = json.loads((Path(folder) / name).read_text(encoding="utf-8"))
         self.src = Image.open(Path(folder) / spec["source"]).convert("RGBA")
-        self.parts = {k: spec["parts"][k] for k in self.PARTS}
+        self.mode = spec.get("mode", "fill")
+        self.parts = {k: spec["parts"][k] for k in self.PARTS + ("foot",) if k in spec["parts"]}
         self.foot = tuple(spec.get("foot_rgb", SKIN))
+        if self.mode == "cut":
+            # every part is its own painted cut-out (the picture's alpha inside the part's region), carried whole: the
+            # painting keeps its outline, the rig only moves it; widths scale with the figure (``height`` = crown to sole)
+            self.k = B / float(spec["height"])
+            self.cuts = {k: self._cut(q) for k, q in self.parts.items()}
+            return
         # each part's own colour, under the paint where the picture has no pixels (the cut-out's edge)
         a = np.asarray(self.src)
         self.base = {}
@@ -792,6 +883,40 @@ class Sheet:
             ImageDraw.Draw(box).polygon(_capsule(q["p0"], q["p1"], q["r"][0], q["r"][1]), fill=255)
             m = (np.asarray(box) > 0) & (a[:, :, 3] > 200)
             self.base[k] = tuple(int(v) for v in np.median(a[m][:, :3], axis=0)) if m.any() else SKIN
+
+    def _cut(self, q: dict) -> tuple:
+        mask = Image.new("L", self.src.size, 0)
+        d = ImageDraw.Draw(mask)
+        if "poly" in q:
+            for poly in (q["poly"] if isinstance(q["poly"][0][0], (list, tuple)) else [q["poly"]]):
+                d.polygon([tuple(v) for v in poly], fill=255)
+        else:
+            (x0, y0), (x1, y1) = q["p0"], q["p1"]
+            ln = max(1e-6, math.hypot(x1 - x0, y1 - y0))
+            e0, e1 = q.get("ext", (0, 0))
+            ux, uy = (x1 - x0) / ln, (y1 - y0) / ln
+            d.polygon(_capsule((x0 - ux * e0, y0 - uy * e0), (x1 + ux * e1, y1 + uy * e1), q["r"][0], q["r"][1]), fill=255)
+        a = self.src.copy()
+        a.putalpha(Image.fromarray(np.minimum(np.asarray(a.getchannel("A")), np.asarray(mask))))
+        box = a.getbbox() or (0, 0, 1, 1)
+        return a.crop(box), box[:2]
+
+    def place(self, part: str, c0: tuple, c1: tuple, f: int, size: tuple) -> Image.Image:
+        """The part's cut-out on a layer of ``size``: its painted bone lands on ``c0 -> c1`` (layer px); along the bone
+        it stretches to the rig's length, across it keeps the figure's scale; ``f`` < 0 mirrors."""
+        q = self.parts[part]
+        img, (ox, oy) = self.cuts[part]
+        s0, s1 = np.array(q["p0"], float) - (ox, oy), np.array(q["p1"], float) - (ox, oy)
+        c0, c1 = np.array(c0, float), np.array(c1, float)
+        us = (s1 - s0) / max(1e-6, np.linalg.norm(s1 - s0))
+        uc = (c1 - c0) / max(1e-6, np.linalg.norm(c1 - c0))
+        ns, nc = np.array([-us[1], us[0]]), np.array([-uc[1], uc[0]]) * f
+        kp = self.k * SS
+        src = np.array([s0, s1, s0 + ns * 100.0])
+        dst = np.array([c0, c1, c0 + nc * 100.0 * kp])
+        coef = np.linalg.solve(np.c_[dst, np.ones(3)], src)
+        a, d = coef[:, 0], coef[:, 1]
+        return img.transform(size, Image.AFFINE, (a[0], a[1], a[2], d[0], d[1], d[2]), resample=Image.BICUBIC)
 
     def radii(self, part: str, p0: tuple, p1: tuple) -> tuple:
         """Half-widths of the part on the rig: the painted ones scaled with the bone, or ``rig_r`` (shares of B) when
@@ -817,14 +942,25 @@ class Sheet:
         return self.src.transform(size, Image.AFFINE, (a[0], a[1], a[2], d[0], d[1], d[2]), resample=Image.BILINEAR)
 
 
-@lru_cache(maxsize=2)
-def load_sheet(folder: str | None) -> Sheet | None:
-    return Sheet(folder) if folder and (Path(folder) / "parts.json").exists() else None
+@lru_cache(maxsize=8)
+def load_sheet(folder: str | None, view: str = "side") -> Sheet | None:
+    """``parts_<view>.json`` (side, front, three_quarter) when the folder has one, else ``parts.json``."""
+    if not folder:
+        return None
+    for name in (f"parts_{view}.json", "parts.json"):
+        if (Path(folder) / name).exists():
+            return Sheet(folder, name)
+    return None
 
 
 def draw_leg(cv: Canvas, j: dict, s: str, far: bool, f: int, wound: bool, sheet: Sheet | None = None):
     col, boot = (_shade(TROUSERS), _shade(BOOTS)) if far else (TROUSERS, BOOTS)
     hip, knee, ank = j["hip_" + s], j["knee_" + s], j["ankle_" + s]
+    pitch = j["pitch_" + s]
+    if sheet and sheet.mode == "cut":
+        toe = _local(ank, pitch, f, (0.10 * B, 0.03 * B))
+        cv.cut_parts([(hip, knee, "thigh"), (ank, toe, "foot"), (knee, ank, "shin")], sheet, far, f)
+        return
     if sheet:
         cv.tex_caps([(hip, knee, "thigh"), (knee, ank, "shin")], sheet, far, f)
         boot = _shade(sheet.foot) if far else sheet.foot
@@ -851,6 +987,9 @@ def draw_arm(cv: Canvas, j: dict, s: str, far: bool, f: int, skin: tuple = SKIN,
              shoulder: str = "shoulder"):
     col = _shade(JACKET) if far else JACKET
     sh, el, ha = j[shoulder], j["elbow_" + s], j["hand_" + s]
+    if sheet and sheet.mode == "cut":
+        cv.cut_parts([(sh, el, "upper_arm"), (el, ha, "fore_arm")], sheet, far, f)
+        return
     if sheet:
         cv.tex_caps([(sh, el, "upper_arm"), (el, ha, "fore_arm")], sheet, far, f)
     else:
@@ -859,12 +998,16 @@ def draw_arm(cv: Canvas, j: dict, s: str, far: bool, f: int, skin: tuple = SKIN,
     cv.ellipse(ha, 0.032 * B, 0.030 * B, _shade(skin) if far else skin)
 
 
-def draw_torso(cv: Canvas, j: dict, f: int, front: bool, sheet: Sheet | None):
+def draw_torso(cv: Canvas, j: dict, f: int, front: bool, sheet: Sheet | None, view: str = "side"):
     hip, neck = j["hip"], j["neck"]
+    if sheet and sheet.mode == "cut":
+        cv.cut_parts([(hip, neck, "torso")], sheet, False, 1 if front else f)
+        return
     if sheet:
         cv.tex_caps([(hip, neck, "torso")], sheet, False, 1 if front else f)
         return
-    r0, r1 = (0.115 * B, 0.105 * B) if front else (0.088 * B, 0.080 * B)
+    r0, r1 = (0.115 * B, 0.105 * B) if front else (0.104 * B, 0.096 * B) if view == "three_quarter" else \
+        (0.088 * B, 0.080 * B)
     cv.caps([(hip, neck, r0, r1)], JACKET, shade=(0.5, 0.85) if front else (-f * 0.5, 0.85))
     cv.line([lerp2(hip, neck, 0.25 if front else 0.35), lerp2(hip, neck, 0.95)], LINE * 0.6)  # the zip
 
@@ -933,17 +1076,36 @@ SHEET_FOR = {"neutral": "happy", "happy": "happy", "eager": "happy", "shock": "s
 HEAD_H = 0.42 * B              # crown to the bottom of the neck stump
 
 
-@lru_cache(maxsize=2)
+VIEWS = ("side", "three_quarter", "front")
+
+
+@lru_cache(maxsize=4)
 def load_heads(folder: str | None) -> dict | None:
-    """``head_<name>.png`` (RGBA, the neck stump at the bottom centre) for the names in SHEET_FOR; None = drawn head."""
+    """``head_<name>.png`` (RGBA, the neck stump at the bottom centre, drawn facing right) for the names in SHEET_FOR,
+    plus ``head_<name>_<view>.png`` per drawing when the sheet has them (keys ``name`` and ``name/view``); None = the
+    head is drawn by code. The names come from SHEET_FOR and from the files themselves (a sheet may name more)."""
     if not folder:
         return None
     heads = {}
-    for name in set(SHEET_FOR.values()):
-        path = Path(folder) / f"head_{name}.png"
-        if path.exists():
-            heads[name] = Image.open(path).convert("RGBA")
+    for path in sorted(Path(folder).glob("head_*.png")):
+        stem = path.stem[5:]
+        for v in VIEWS:
+            if stem.endswith("_" + v):
+                heads[stem[:-len(v) - 1] + "/" + v] = Image.open(path).convert("RGBA")
+                break
+        else:
+            heads[stem] = Image.open(path).convert("RGBA")
     return heads or None
+
+
+def head_picture(heads: dict, expr: str, view: str) -> Image.Image:
+    """The expression's picture for this drawing: its own view, else the plain one, else any of the face."""
+    name = SHEET_FOR.get(expr, expr)
+    for key in (f"{expr}/{view}", f"{name}/{view}", expr, name):
+        if key in heads:
+            return heads[key]
+    same_view = [v for k, v in heads.items() if k.endswith("/" + view)]
+    return (same_view or list(heads.values()))[0]
 
 
 @lru_cache(maxsize=2)
@@ -955,7 +1117,7 @@ def _sheet_skin(folder: str) -> tuple:
 
 def paste_head(cv: Canvas, j: dict, p: Pose, folder: str):
     heads = load_heads(folder)
-    img = heads.get(SHEET_FOR.get(p.expr, "happy")) or next(iter(heads.values()))
+    img = head_picture(heads, p.expr, "front" if p.front else p.view)
     h = HEAD_H * SS
     w = img.width * h / img.height
     img = img.resize((max(2, int(round(w))), max(2, int(round(h)))), Image.LANCZOS)
@@ -974,7 +1136,7 @@ def paste_head(cv: Canvas, j: dict, p: Pose, folder: str):
 
 def draw_front(cv: Canvas, j: dict, p: Pose, heads: str | None):
     """The front drawing: legs apart with the boots turned out, the jacket square to camera, arms at the sides."""
-    sheet = load_sheet(heads)
+    sheet = load_sheet(heads, "front")
     for s in SIDES:
         draw_leg(cv, j, s, False, -1 if j["hip_" + s][0] < j["hip"][0] else 1, p.wound, sheet)
     neck = j["neck"]
@@ -1005,10 +1167,12 @@ def draw_character(p: Pose, heads: str | None = None) -> tuple[Image.Image, tupl
         draw_front(cv, j, p, heads)
         return cv.img.resize((x1 - x0, y1 - y0), Image.LANCZOS), (x0, y0)
     f = p.facing
-    near, far = ("L", "R") if f > 0 else ("R", "L")
+    near = near_side(f)
+    far = SIDES[1 - SIDES.index(near)]
     skin = _sheet_skin(heads) if heads else SKIN
-    sheet = load_sheet(heads)
-    draw_arm(cv, j, far, True, f, skin, sheet)
+    sheet = load_sheet(heads, p.view)
+    tq = p.view == "three_quarter"
+    draw_arm(cv, j, far, True, f, skin, sheet, "shoulder_" + far if tq else "shoulder")
     draw_leg(cv, j, far, True, f, p.wound, sheet)
     draw_leg(cv, j, near, False, f, p.wound, sheet)
     neck = j["neck"]
@@ -1019,7 +1183,7 @@ def draw_character(p: Pose, heads: str | None = None) -> tuple[Image.Image, tupl
         t1 = (neck[0] - f * 0.10 * B * (0.4 + 0.6 * lift), neck[1] + 0.05 * B + 0.06 * B * (1 - lift))
         t2 = (t1[0] - f * 0.09 * B * (0.3 + 0.7 * lift), t1[1] + 0.08 * B * (1 - lift) + 0.01 * B)
         cv.caps([(neck, t1, 0.026 * B, 0.022 * B), (t1, t2, 0.022 * B, 0.018 * B)], SCARF)
-    draw_torso(cv, j, f, False, sheet)
+    draw_torso(cv, j, f, False, sheet, p.view)
 
     def head():
         if heads:
@@ -1031,11 +1195,11 @@ def draw_character(p: Pose, heads: str | None = None) -> tuple[Image.Image, tupl
                       0.03 * B, 0.03 * B)], SCARF)  # the collar covers the neck stump
 
     if p.torso > 40:  # lying or falling: the near arm goes under the head, never across the face
-        draw_arm(cv, j, near, False, f, skin, sheet)
+        draw_arm(cv, j, near, False, f, skin, sheet, "shoulder_" + near if tq else "shoulder")
         head()
     else:
         head()
-        draw_arm(cv, j, near, False, f, skin, sheet)
+        draw_arm(cv, j, near, False, f, skin, sheet, "shoulder_" + near if tq else "shoulder")
     return cv.img.resize((x1 - x0, y1 - y0), Image.LANCZOS), (x0, y0)
 
 

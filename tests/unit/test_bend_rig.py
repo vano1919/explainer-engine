@@ -161,3 +161,55 @@ def test_a_sheet_character_is_drawn_from_its_paint(tmp_path):
     assert not np.any(np.all(opaque == R.JACKET, axis=1))  # nothing of the code-drawn jacket
     front, _ = R.draw_character(R.pose_at(sum(R.scene().turn) / 2), folder)
     assert np.asarray(front)[:, :, 3].max() == 255
+
+
+def test_three_quarter_moves_the_far_side_back_and_keeps_the_bones():
+    p = R.pose_at(2.5)
+    side = R.skeleton(p)
+    p.view = "three_quarter"
+    tq = R.skeleton(p)
+    near = R.near_side(p.facing)
+    far = R.SIDES[1 - R.SIDES.index(near)]
+    # the near hip moves back, the far one forward, and the far side sits a little higher (further away)
+    assert (tq["hip_" + near][0] - side["hip_" + near][0]) * p.facing < 0
+    assert (tq["hip_" + far][0] - side["hip_" + far][0]) * p.facing > 0
+    assert tq["hip_" + far][1] < tq["hip_" + near][1]
+    for s in R.SIDES:
+        assert abs(math.dist(tq["hip_" + s], tq["knee_" + s]) - R.THIGH) < 1e-6
+        assert abs(math.dist(tq["knee_" + s], tq["ankle_" + s]) - R.SHIN) < 1e-6
+
+
+def test_a_build_swaps_the_bones_only_while_it_is_used():
+    short = R.Build(thigh=0.135, shin=0.135, torso=0.38)
+    before = (R.THIGH, R.SHIN, R.STAND)
+    with R.use_build(short):
+        assert abs(R.THIGH - 0.135 * R.B) < 1e-9 and abs(R.STAND - short.stand) < 1e-9
+        g = short.gait(R.WALK)
+        assert abs(g.stride - R.WALK.stride * 0.27 / 0.42) < 1e-9
+    assert (R.THIGH, R.SHIN, R.STAND) == before
+
+
+def _cut_sheet(tmp_path):
+    import json
+    from PIL import Image, ImageDraw
+    src = Image.new("RGBA", (200, 400), (0, 0, 0, 0))
+    ImageDraw.Draw(src).rectangle([90, 100, 110, 300], fill=(10, 200, 10, 255))
+    src.save(tmp_path / "turn.png")
+    parts = {"thigh": {"p0": [100, 100], "p1": [100, 300], "r": [12, 12]}}
+    (tmp_path / "parts_side.json").write_text(json.dumps({"mode": "cut", "source": "turn.png", "height": 400,
+                                                          "parts": parts}))
+    return R.Sheet(str(tmp_path), "parts_side.json")
+
+
+def test_a_cut_part_follows_its_bone_and_keeps_the_figure_width(tmp_path):
+    sheet = _cut_sheet(tmp_path)
+    assert sheet.mode == "cut"
+    for f in (1, -1):
+        layer = np.asarray(sheet.place("thigh", (100.0, 50.0), (300.0, 50.0), f, (400, 120)))
+        on = np.argwhere(layer[:, :, 3] > 128)
+        # the painted bone lies along the rig bone (horizontal here), its length stretched to the bone's
+        assert 95 <= on[:, 1].min() <= 106 and 294 <= on[:, 1].max() <= 305
+        # across, the paint keeps the figure's scale: 21 source px wide -> 21 * B / height layer px
+        width = on[:, 0].max() - on[:, 0].min() + 1
+        assert abs(width - 21 * sheet.k * R.SS) <= 3
+        assert abs(on[:, 0].mean() - 50) < 2

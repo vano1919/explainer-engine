@@ -1028,3 +1028,15 @@ tools are missing, 3/4 views). Free, his choice: `bend_rig.Sheet` carries painte
 half-widths per part) onto the rig's bones by a similarity, outline stays the rig's; Einstein cut from the reference
 with GrabCut walks, falls, turns and limps with his paint. 14 tests, `check` 0 findings. What a real parts sheet must
 be: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md) 8.2.
+
+## 2026-10-22 - Hybrid model: a 30-second Ice Age test cartoon in 2.5D
+
+- The creator (19:35, 19:38): a spacious world, faces, clothes and expressions from the image model in the reference's
+  style, a 30 s cartoon with heroes, our rig for the bodies; Klein approved with a $1.5 ceiling; assets reusable for the
+  Ice Age episode. Eleven Klein pictures, $0.154 (ledger `jobs/ice_cartoon/job-001_2026-10-22/run.json`).
+- `production/bend_rig.py`: `Sheet` mode `cut` (painted cut-outs carried whole on the bones), the `three_quarter` view,
+  per-character `Build` (`use_build`, `load_build`), heads per expression and view (`head_picture`).
+- `production/ice_short.py`: the 2.5D shot (layers, camera keys, depth scaling, sled physics, rope, snow, sounds from the
+  poses, checks). Research doc section 8.3.
+- Tests: `test_bend_rig.py` (3/4 view, build swap, cut part on its bone) and `test_ice_short.py` (camera ground line,
+  depth scaling, captions).

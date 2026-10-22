@@ -212,3 +212,39 @@ Learned: a figure painted in one 3/4 pose is a poor parts source (the arm crosse
 shoulder, the legs are cropped), so three bones had to be moved by hand and the torso is a stretched strip of fur. The
 production sheet must paint every part straight, separate and complete, with the hidden overlap under each joint, on a
 flat chroma, one view per sheet. Files: `bend_poc_v3*` and `einstein_parts/` next to the earlier versions.
+
+### 8.3 The 30-second test cartoon: an Ice Age valley in 2.5D (2026-10-22 19:35-19:38, the creator's call)
+
+The creator asked for a more spacious world, faces, clothes and expressions made by the image model in the reference's
+style, and a 30 s cartoon with heroes; the body is still drawn by our rig. Klein was approved with a $1.5 ceiling and the
+pictures were asked to be reusable for the next episode (a hundred people dropped into the Ice Age).
+
+Paid: eleven Klein 2k pictures with the reference as the only style reference, $0.154 in the ledger
+(`jobs/ice_cartoon/job-001_2026-10-22/run.json`): the valley in three layers (far sky and glaciers; the middle snowfield
+on chroma; the near rock frame on chroma), a camp under a rock overhang, two original heroes as side/3-4/front turnarounds
+(Dev, an office worker in a blanket cape; Marta, a hiker of 65), six expressions each in 3/4 and in profile, and a
+suitcase sled. All on chroma green so they key cleanly and go to the asset library as they are.
+
+Free, in code:
+- `bend_rig.Sheet` mode `cut`: each part is the painting's own cut-out (alpha inside a polygon or capsule) carried whole
+  by an affine map: along the bone it stretches to the rig's length, across it keeps the figure's scale, mirrored for
+  the other facing. Feet are cut parts too. The outline is the painter's, not the rig's.
+- The `three_quarter` view: the near hip and shoulder move back, the far ones forward and a little higher; the turnaround's
+  3/4 drawing supplies the torso and the 3/4 face sheet the heads.
+- `Build`: per-character bone lengths (Marta's legs are a third shorter than Dev's), swapped in while that hero is posed
+  and drawn; gaits scale with the leg.
+- `production/ice_short.py`: the 2.5D shot. Far layer at a fifth of the pan, middle layer with the camera, foreground
+  rocks 1.35x faster; an object at depth d is drawn 1/d the size and nearer the horizon, so the sled shrinks away into
+  the valley. Camera keys, soft shadows, snowfall, a snow burst at the fall, rope physics as a sagging curve, footstep,
+  rope, hiss and impact sounds from the poses, -14 LUFS. `check` per hero: planted feet, reached feet, bone lengths,
+  joint jumps, footfall sounds, heroes in frame.
+
+Story (English on screen): Dev drags the sled he made from a suitcase, "Behold! The first sled of the Ice Age."; Marta:
+"It's a suitcase."; he throws up his arms, lets go, the sled slides off; he chases it, trips into the snow; she walks
+down, helps him up; "Great plan."
+
+Learned: the turnaround's limbs come out cleanly when the painting shows them apart; the heads from a separate face
+sheet are a slightly different drawing from the turnaround body (one sheet per hero with body and expressions together
+is better); a near layer that is a full rock frame cannot be tiled, so foreground rocks must be painted as separate
+props; the face sheets' hat colour differed from the turnaround's once (green vs grey), so a hero's colours must be
+fixed in one reference first. Voice: lines are captions in this cut; the ElevenLabs take waits for the creator's word.
