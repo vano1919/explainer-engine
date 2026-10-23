@@ -231,3 +231,59 @@ def test_yaml_string_learning_rate_is_read():
     """PyYAML reads ``lr: 1e-4`` (no dot) as a string; v4's real config has it."""
     f = audit.check_config(_cfg(train={"steps": 1500, "lr": "1e-4"}), "style")["findings"]
     assert "LT-10" not in rules(f)
+
+
+# ---- footage (FS-xx) -------------------------------------------------------------------------------------------------
+
+def _synthetic_video(path, *, seconds=12, fps=24, size=(320, 180)):
+    """Three shots: a fixed camera with a moving square, a hard cut to a panning scene, a cut to a static scene."""
+    import cv2
+    w, h = size
+    out = cv2.VideoWriter(str(path), cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))
+    rng = np.random.default_rng(0)
+    bg1 = rng.integers(40, 200, (h, w, 3), dtype=np.uint8)
+    bg2 = rng.integers(40, 200, (h, w * 2, 3), dtype=np.uint8)
+    bg3 = np.full((h, w, 3), 90, dtype=np.uint8)
+    n = seconds * fps
+    for i in range(n):
+        t = i / n
+        if t < 0.4:
+            fr = bg1.copy()
+            x = int(20 + (w - 80) * (i / (0.4 * n)))
+            fr[60:120, x:x + 40] = (250, 30, 30)
+        elif t < 0.75:
+            off = int((i - 0.4 * n) / (0.35 * n) * w)
+            fr = bg2[:, off:off + w].copy()
+        else:
+            fr = bg3.copy()
+        out.write(fr)
+    out.release()
+
+
+def test_footage_split_measure_classify(tmp_path):
+    pytest.importorskip("scenedetect")
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    _synthetic_video(raw / "testshow_1999.mp4")
+    from explainer_engine.training import footage
+    rep = footage.index(raw, tmp_path / "work")
+    assert rep["files"][0]["show"] == "testshow" and rules(rep["findings"], "FAIL") == set()
+    shots = footage.split(tmp_path / "work")
+    assert 2 <= len(shots) <= 4
+    shots = footage.measure(tmp_path / "work")
+    kinds = [footage.classify(s) for s in shots]
+    assert "pair" in kinds and "clip" in kinds and "static" in kinds, [(s["camera"], s["motion"]) for s in shots]
+    bal = footage.balance(shots)
+    assert "FS-04" in rules(bal["findings"], "WARN")  # one show only: nothing held out
+    made = footage.pairs(tmp_path / "work", tmp_path / "pairs")
+    assert made and (tmp_path / "pairs" / "train" / "control" / made[0]["name"]).exists()
+    clip = footage.clips(tmp_path / "work", tmp_path / "clips", max_per_show=2)
+    assert clip and clip[0]["frames"] == 89
+    assert not rules(audit.audit_video(clip)["findings"], "FAIL")
+
+
+def test_motion_caption_names_banned():
+    from explainer_engine.training import footage
+    f = footage.caption_findings_motion(["a girl leaps over a log, cloak trailing", "Aladdin runs in Disney style"],
+                                        banned=["aladdin"])
+    assert len(rules(f, "FAIL")) == 1 and "caption 1" in f[0]["msg"]

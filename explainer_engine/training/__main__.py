@@ -7,6 +7,8 @@
            [--image ostris/aitoolkit:latest --boot-minutes 25]
     python -m explainer_engine.training cost --log <train.log> --price 0.59 --cap 1.8 [--spent 0.5] [--prompts 6
            --sec-per-sample 79 --save-every 250 --boot-minutes 0]
+    python -m explainer_engine.training footage-index|footage-split|footage-measure|footage-balance|footage-pairs|footage-clips ...
+           (see training/footage.py)
     python -m explainer_engine.training judge-style --samples <dir> --refs <dir> --config <cfg.yaml> [--train <dir>...]
            [--cache <dir>] [--out judge.json]
 """
@@ -116,6 +118,33 @@ def main(argv=None):
             Path(_opt(rest, "--out")).write_text(json.dumps(rep, indent=1, default=str), encoding="utf-8")
         _print(rep)
         return 1 if dec["action"] == "STOP_FAIL" else 0
+    if cmd.startswith("footage-"):
+        from . import footage
+        p = _pos(rest)
+        sub = cmd[len("footage-"):]
+        if sub == "index":
+            return _done(footage.index(p[0], _opt(rest, "--out", p[0])))
+        if sub == "split":
+            shots = footage.split(p[0], min_len_s=float(_opt(rest, "--min-len", 0)) or None)
+            print(json.dumps({"shots": len(shots), "dups": sum(1 for s in shots if s["dup_of"])}))
+            return 0
+        if sub == "measure":
+            shots = footage.measure(p[0])
+            from collections import Counter
+            print(json.dumps(dict(Counter(footage.classify(s) for s in shots))))
+            return 0
+        if sub == "balance":
+            shots = json.loads((Path(p[0]) / "shots.json").read_text(encoding="utf-8"))
+            return _done(footage.balance(shots, heldout=_opt(rest, "--heldout")))
+        if sub == "pairs":
+            made = footage.pairs(p[0], _opt(rest, "--out"), heldout=_opt(rest, "--heldout"))
+            print(json.dumps({"pairs": len(made)}))
+            return 0
+        if sub == "clips":
+            made = footage.clips(p[0], _opt(rest, "--out"), heldout=_opt(rest, "--heldout"),
+                                 max_per_show=int(_opt(rest, "--max-per-show", 0)) or None)
+            print(json.dumps({"clips": len(made)}))
+            return 0
     print(__doc__)
     return 2
 

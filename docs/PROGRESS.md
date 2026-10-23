@@ -1014,3 +1014,6 @@ built on researched testing practice, and for step-by-step control of the runnin
   judge: step 250 progress 0.55, step 500 0.42 (the close-up fell back to semi-photo, confirmed by eye) -> v3@250 is the
   best v3. v4 config PASS; projection ≈$1.8 vs its $1.65 cap (expect a stop near step 1300).
 - Tests: `tests/unit/test_lora_training.py` (19). Nothing paid in this thread.
+- 15:00 Footage plan (ვანო 14:51): `training/footage.py` (FS-00..FS-07: probe, shot split, camera/motion measure, show
+  balance and held-out, master-frame pairs, 89-frame clips, motion-caption name ban) + 2 tests on a synthetic video;
+  the plan with costs (first full cycle ≈$55-75) in project files `FOOTAGE_PLAN_2026-10-23_ka.md`; both threads briefed.

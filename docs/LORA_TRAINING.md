@@ -106,3 +106,24 @@ the existing editing rules (BP-/ED-) and the edit-planner agent: free, testable,
 - Benchmarks: `plan_review_2026-10-23/benchmark_10shot.json`, `shot_schema_v1.json` (project files).
 - Results: HF `vano1919/tmr-artifacts/lora_plan_2026-10-22/train_<run>/` (config, samples, checkpoints, logs) and the
   judge's `judge.json` next to them.
+
+## 6. Footage into training material (FS-, 2026-10-23)
+
+The creator's 2D footage (ვანო 14:51: films and season collages, ~3 h; the plan in Georgian: project files
+`lora_plan_2026-10-22/FOOTAGE_PLAN_2026-10-23_ka.md`) feeds both LoRAs through `training/footage.py` (free, CPU: ffmpeg,
+OpenCV, PySceneDetect). The photo LoRA learns scene STABILITY from pairs of the same shot (never the world's style); the
+motion LoRA learns MOVEMENT from short clips, starting from our own stills.
+
+| ID | Rule | Enforced by |
+|---|---|---|
+| FS-00 | Every file probed: >= 720p, >= 23 fps, progressive; show name from the file stem | `footage.index` WARN |
+| FS-01 | Shots by hard-cut detection, >= 2 s; a shot repeated in a collage (dHash) counts once | `footage.split` |
+| FS-02 | Camera shift (phase correlation, p90) and motion (median residual) per shot; `pair` = fixed camera (<= 1 % shift) + motion; `clip` = motion; `static`/`dup` out | `footage.measure`, `classify` |
+| FS-03 | No show over 30 % of usable footage (one style cannot settle) | `footage.balance` WARN |
+| FS-04 | One whole show held out for the judge (3+ shows) | `footage.balance` |
+| FS-05 | Motion captions carry no character, show or studio names and no style words | `caption_findings_motion` FAIL |
+| FS-06 | Pairs: control = the shot's master frame, target = 2.5-4 s later, a second pair for long shots, both from the master (never chained) | `footage.pairs` |
+| FS-07 | Clips: 89 frames @ 24 fps from the shot start, 768x448 (LTX bucket), `audit-video` 0 FAIL | `footage.clips` |
+| LT-34 | Video: the mid-clip frame keeps the first frame's style (distance <= the no-LoRA distance + 0.02) | judge (planned) |
+| LT-44 | Edit: palette ΔE plate->output <= 1.5 x the training pairs' median | judge (planned) |
+| LT-45 | Edit: style leakage on our wldnk plates <= the no-LoRA distance + 0.02; two FAILs = STOP_KEEP_BEST | judge (planned) |
