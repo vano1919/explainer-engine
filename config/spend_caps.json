@@ -1,15 +1,16 @@
 {
   "_doc": "The creator's money ceilings, enforced in code (explainer_engine/core/spend_caps.py, D-56). A run ledger may set lower caps, never higher; a pod is refused when it would pass any RunPod line. Raise a number only on the creator's word.",
   "per_episode": {
-    "runpod_usd": 3.0,
+    "runpod_usd": 9.0,
     "gemini_usd": 10.0
   },
   "runpod": {
-    "per_pod_usd": 1.0,
-    "per_24h_usd": 1.5,
-    "max_hours_per_pod": 2.0,
+    "per_pod_usd": 3.6,
+    "per_24h_usd": 5.0,
+    "max_hours_per_pod": 8.0,
     "max_price_per_hour": 0.95,
     "min_balance_left_usd": 0.25,
     "keep_stopped_pods": []
-  }
+  },
+  "_raised": "2026-10-22 23:10 by the creator's word (ვანო 22:45 'yes to all costs' + 22:54 'whole RunPod balance for photo/video training and the test video; full pod authority'): per pod $3.6 / 8 h, 24 h $5, episode $9."
 }

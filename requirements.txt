@@ -5,4 +5,6 @@ pytest>=7.0
 kokoro-onnx>=0.4  # narration (audio/narrate.py); the timed model goes in tools/kokoro (docs/AUDIO_SYSTEM.md)
 # added in their phases: Node 20 LTS + Remotion (Phase 4, render/)
 pillow>=10.0  # finish/bubbles.py (speech bubbles), assemblers
+pymunk>=7.0   # production/physics2d.py (sled, rope, ragdoll; the hybrid model test cartoon)
+# optional: fal-client (the stage 2 motion-transfer test, paid, by the creator's card only)
 # optional: faster-whisper (audio/local_words.py, free word times)

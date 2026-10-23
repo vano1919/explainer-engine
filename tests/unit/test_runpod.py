@@ -200,8 +200,10 @@ def test_create_cli_reserves_in_the_ledger_writes_a_session_and_names_the_lifeti
     assert Run.open(ledger).data["reserved"]["pod:p1"]["amount"] == 0.5
     body_cmd = fake.pods["p1"]["name"]
     assert R.until_of(body_cmd) and not R.expired(body_cmd)
+    from explainer_engine.core import spend_caps
+    over = str(spend_caps.runpod()["per_pod_usd"] + 0.5)  # read, not restated: the creator raises it by his word
     with pytest.raises(SystemExit, match="per_pod_usd"):  # the creator's ceiling, config/spend_caps.json
-        R.main(["create", "--yes", "--max-usd", "2.0", "--max-hours", "1", "--ledger", str(ledger)], api=api)
+        R.main(["create", "--yes", "--max-usd", over, "--max-hours", "1", "--ledger", str(ledger)], api=api)
     with pytest.raises(CapReached):  # 0.5 + 0.4 passes 80 % of the episode's $1
         R.main(["create", "--yes", "--max-usd", "0.4", "--max-hours", "1", "--ledger", str(ledger)], api=api)
     with pytest.raises(SystemExit, match="--ledger"):
@@ -322,8 +324,11 @@ def test_create_is_refused_past_the_24h_billing_the_balance_or_with_a_stray_disk
     fake, api = env
     ok = dict(max_usd=0.5, max_hours=1.0, gpu="default", now=10**6)
     assert R.preflight_create(api, **ok) == []
-    assert any("max_hours_per_pod" in w for w in R.preflight_create(api, **{**ok, "max_hours": 3}))
-    fake.billing = [{"amount": 1.2, "podId": "old"}]  # stopped disks count: RunPod bills them per pod
+    from explainer_engine.core import spend_caps
+    too_long = spend_caps.runpod()["max_hours_per_pod"] + 1
+    assert any("max_hours_per_pod" in w for w in R.preflight_create(api, **{**ok, "max_hours": too_long}))
+    day = spend_caps.runpod()["per_24h_usd"]
+    fake.billing = [{"amount": day - 0.3, "podId": "old"}]  # stopped disks count: RunPod bills them per pod
     assert any("per_24h_usd" in w for w in R.preflight_create(api, **ok))
     fake.billing = []
     fake.pods["ex"] = pod("ex", "x", "EXITED", volumeInGb=60)
@@ -347,7 +352,9 @@ def test_the_ledger_refuses_a_cap_above_the_creators_ceiling_and_fills_missing_o
     from explainer_engine.core.spend_caps import OverCeiling
     with pytest.raises(OverCeiling):
         Run.open(tmp_path / "a.json", caps={"runpod_usd": 50.0})
-    assert Run.open(tmp_path / "b.json", caps={"gemini_usd": 2.0}).data["caps"] == {"gemini_usd": 2.0, "runpod_usd": 3.0}
+    from explainer_engine.core import spend_caps
+    want = {"gemini_usd": 2.0, "runpod_usd": spend_caps.episode_ceiling("runpod_usd")}
+    assert Run.open(tmp_path / "b.json", caps={"gemini_usd": 2.0}).data["caps"] == want
 
 
 def test_hooks_block_bypasses_and_a_turn_that_leaves_a_stray(env, monkeypatch, capsys):
