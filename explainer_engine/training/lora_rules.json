@@ -116,6 +116,7 @@
   "luma_drift_max": 0.08,
   "part_keep_min": 0.45,
   "layout_gap_max": 1.0,
-  "ink_max": 50
+  "ink_max": 50,
+  "sharp_keep_min": 0.65
  }
 }

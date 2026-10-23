@@ -162,6 +162,7 @@ def analyse(frames, fps, regions=None):
     m["edges_end_vs_start"] = round(float(pf["edges"][-1] / max(pf["edges"][0], 1e-6)), 3)
     m["edges_min_vs_start"] = round(float(pf["edges"].min() / max(pf["edges"][0], 1e-6)), 3)
     m["sharp_end_vs_start"] = round(float(pf["sharp"][-1] / max(pf["sharp"][0], 1e-6)), 3)
+    m["sharp_min_vs_start"] = round(float(pf["sharp"].min() / max(pf["sharp"][0], 1e-6)), 3)
     m["sat_end_minus_start"] = round(float(pf["sat"][-1] - pf["sat"][0]), 4)
     m["luma_end_minus_start"] = round(float(pf["luma"][-1] - pf["luma"][0]), 4)
     m["rhythm"] = rhythm(speed, fps)
@@ -202,6 +203,9 @@ def judge(m, ref=None):
                                           f"{m['breaks_at_second']} (things appear, melt or swap)"))
     if m["edges_min_vs_start"] < Q.get("edges_keep_min", 0.7):
         f.append(finding("LT-53", "FAIL", f"line art falls to {m['edges_min_vs_start']} x frame 0 (melting / blur)"))
+    if m.get("sharp_min_vs_start", 1) < Q.get("sharp_keep_min", 0.65):
+        f.append(finding("LT-53", "REVIEW", f"detail falls to {m['sharp_min_vs_start']} x frame 0 (soft, ghosting or "
+                                            f"translucent people: the 20 s max-length test faded two heroes out)"))
     if abs(m["sat_end_minus_start"]) > Q.get("sat_drift_max", 0.08) or abs(m["luma_end_minus_start"]) > Q.get("luma_drift_max", 0.08):
         f.append(finding("LT-54", "REVIEW", f"colour drift: saturation {m['sat_end_minus_start']:+}, brightness "
                                             f"{m['luma_end_minus_start']:+} (fine when the scene asks for it)"))

@@ -1031,3 +1031,9 @@ built on researched testing practice, and for step-by-step control of the runnin
 - Weak spots stated in the module: hands and faces are judged by eye on `--sheet` (LT-58); the box tracker follows ink
   outlines but can still lose a fast character, so LT-55 is REVIEW only.
 - Tests: 3 synthetic line-art clips (clean PASS; melting + brightness pop; lost legs + an invented figure vs its layout).
+- 23:55 Hard multi-shot test (4 heroes, a 30-person crowd, 10 s) and max length from one photo (plain LTX-2.5 distilled,
+  1920x1088, 10/15/20 s render in 5/8/11 min on an A40, no OOM). IC: identity and stability hold for 10 s, but motion
+  follows our too-timid warp layouts (hold share 1.0); a stronger warp bends faces, so warps cannot carry acting. Plain
+  I2V acts well; by length: 10 s clean (detail x0.75), 15 s a duplicated girl appears in the bus window and the bus
+  changes, 20 s two heroes turn translucent (detail x0.57) and "Static camera" is ignored at every length. New LT-53
+  REVIEW on detail loss catches the 20 s ghosting; cartoon norm (120 shots): hold share p50 0.77.

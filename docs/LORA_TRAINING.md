@@ -57,7 +57,7 @@ How every LoRA of the channel is trained and judged: the photo style LoRA (Qwen-
 | LT-50 | Video QA of any generated shot (`video-qa`, ვანო 2026-10-23 22:32): a PASS lists morph p95, line keep and flicker | house | `video_qa.judge` |
 | LT-51 | Brightness pop between two frames <= 0.06 (mean luma, 0..1) | house (VBench flicker idea) | FAIL |
 | LT-52 | Morphing: the optical-flow warp residual per second <= 0.05; the first second over it = where a long shot breaks (max-length test) | method + house | FAIL |
-| LT-53 | Line art never falls under 0.7 x frame 0's edge density (melting, blur) | house | FAIL |
+| LT-53 | Line art never falls under 0.7 x frame 0's edge density (melting, blur): FAIL; detail (Laplacian variance) under 0.65 x frame 0: REVIEW (ghosting, translucent people) | house (max-length test 2026-10-23) | FAIL / REVIEW |
 | LT-54 | Colour drift: saturation and brightness within ±0.08 (0..1) of frame 0 | house | REVIEW |
 | LT-55 | A tracked character keeps its head and legs (outline density next to dark ink in the box's top/bottom >= 0.45 x frame 0 for 6 frames); median-flow tracking is weak, so REVIEW only | hypothesis | REVIEW |
 | LT-56 | Fast-motion speed (p90, frame widths/s) inside the creator's cartoons' p10..p90 (`footage-rhythm`) | house (his 7.5 h of footage as the norm) | REVIEW |
