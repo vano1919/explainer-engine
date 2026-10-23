@@ -129,7 +129,7 @@ for i, s in enumerate(shots):
             W, H = 832, 480
             log["switched_to_480_at"] = s["id"]
     dst = os.path.join(out, f"{s['id']}.mp4")
-    if os.path.exists(dst):
+    if os.path.exists(dst) or os.path.isdir(os.path.join(out, f"{s['id']}_frames")):
         continue
     if time.time() > deadline:
         log["stopped_at_deadline"] = s["id"]; break
@@ -144,7 +144,15 @@ for i, s in enumerate(shots):
         kw["last_image"] = fit(Image.open(f1))
     try:
         frames = pipe(**kw).frames[0]
-        export_to_video(frames, dst, fps=16)
+        fd = os.path.join(out, f"{s['id']}_frames")  # frames first: an mp4 writer failure must never lose a clip
+        os.makedirs(fd, exist_ok=True)
+        for k, fr in enumerate(frames):
+            im = fr if isinstance(fr, Image.Image) else Image.fromarray((np.clip(fr, 0, 1) * 255).astype("uint8"))
+            im.save(os.path.join(fd, f"{k:03d}.jpg"), quality=95)
+        try:
+            export_to_video(frames, dst, fps=16)
+        except Exception as e:
+            log.setdefault("mp4_errors", {})[s["id"]] = repr(e)[:200]
         log["clips"][s["id"]] = {"seconds": round(time.time() - t, 1), "flf": "last_image" in kw, "res": f"{W}x{H}",
                                  "prompt": emb[s["id"]][1]}
         done_secs.append(time.time() - t)
@@ -153,4 +161,6 @@ for i, s in enumerate(shots):
         torch.cuda.empty_cache()
     json.dump(log, open(os.path.join(out, "clips_report.json"), "w"), indent=1)
 json.dump(log, open(os.path.join(out, "clips_report.json"), "w"), indent=1)
-print("CLIPS DONE", len([f for f in os.listdir(out) if f.endswith(".mp4")]))
+n = len([f for f in os.listdir(out) if f.endswith("_frames")])
+print("CLIPS DONE", n)
+sys.exit(0 if n else 1)  # no clip at all is a failure, also in the smoke test

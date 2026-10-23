@@ -1081,3 +1081,11 @@ be: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md)
 - Narration: one ElevenLabs take, 1,522 credits, 113.7 s; word times by faster-whisper; 16 segments.
 - Tests: `tests/unit/test_aivideo_shotplan.py` (9). Proposed for removal on the creator's word (not done): the rig cartoon
   route (production/bend_rig, ice_short, physics2d, mocap, gaits.json, pymunk) and its four test files.
+- Try 3 (L40S, 2 h 32 min, ~$2.0): the Wan 2.2 style LoRA trained 800 steps in 32 min (`wldnk_wan22_v1`, HF
+  `night_run_2026-10-22/train/`), 38 keyframes with the photo LoRA (`wldnk_style_v1`, 1250 steps, from the LoRA thread);
+  every clip was drawn and lost: diffusers' mp4 writer needs imageio-ffmpeg. Frames now go to disk first; zero clips fails.
+- Try 4 (A40, $0.06) died in setup (torch half-replaced by a pip that could not uninstall debian's numpy): install beside.
+- Try 5 (clips only, `pod_clips.sh` + `launch_clips.py`, $0.69/h, ~$0.31): c01 at 720p (285 s), then 480p (97 s each)
+  until the deadline: 9 of 16 clips. The night ledger stops at 80 % of $3.6; ~$2.85 billed in all.
+- Seen in the clips: the style holds; motion is small; where first and last keyframes differ in layout, FLF2V cross-fades
+  (ghosted faces in c03, c06). Next: last frame = a small edit of the first (same layout), or plain I2V with a motion prompt.

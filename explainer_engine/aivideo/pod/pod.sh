@@ -27,12 +27,15 @@ fatal(){ echo "FATAL $1"; up; stopself; sleep 900; exit 1; }
 stage setup
 nvidia-smi || true; free -g || true; df -h /workspace || true
 # datacenter GPUs (A40, L40S) need the image's CUDA forward-compat libs on an older driver; consumer cards fail with them (804)
+python -c "import torch;torch.zeros(1).cuda();print('first cuda check ok')" 2>&1 | tail -3
 if ! python -c "import torch,sys;sys.exit(0 if torch.cuda.is_available() else 1)" 2>/dev/null; then
   mv /usr/local/cuda/compat /usr/local/cuda/compat.off 2>/dev/null || true
   rm -f /etc/ld.so.conf.d/*compat* 2>/dev/null; ldconfig 2>/dev/null || true
   export LD_LIBRARY_PATH=$(echo "$LD_LIBRARY_PATH" | tr ':' '\n' | grep -v compat | paste -sd:)
 fi
-python -c "import torch,sys;sys.exit(0 if torch.cuda.is_available() else 1)" 2>/dev/null || pip install -q --force-reinstall torch==2.8.0 torchvision==0.23.0 torchaudio==2.8.0 --index-url https://download.pytorch.org/whl/cu128 --break-system-packages
+python -c "import torch;print('torch check', torch.__version__, torch.cuda.is_available())" || true
+# a pip that must uninstall debian's numpy aborts halfway (try 4: torch half-replaced): never uninstall, install beside
+python -c "import torch,sys;sys.exit(0 if torch.cuda.is_available() else 1)" 2>/dev/null || pip install -q --ignore-installed torch==2.8.0 torchvision==0.23.0 --index-url https://download.pytorch.org/whl/cu128 --break-system-packages
 python -c "import torch;print('cuda ok',torch.cuda.is_available(),torch.version.cuda,torch.cuda.get_device_name(0))" || fatal "CUDA BROKEN"
 pip install -q -U "huggingface_hub[hf_transfer]<2" --break-system-packages || pip install -q -U "huggingface_hub[hf_transfer]<2" || true
 # the code lives on HF and is fetched again before every stage, so a fix uploaded at night reaches the running pod

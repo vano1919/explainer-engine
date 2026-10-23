@@ -76,3 +76,14 @@ def test_pod_code_follows_the_rules():
         txt = open(os.path.join(pod, f), encoding="utf-8").read()
         assert "hf_" not in txt.replace("hf_transfer", "").replace("hf_hub", "").replace("hf_whoami", ""), f  # no tokens
     assert "lora" not in json.dumps(SHOTS["characters"]).lower()  # no character LoRAs (the creator, 2026-10-22)
+
+
+def test_clips_keep_frames_before_the_mp4_and_fail_on_none():
+    pod = os.path.join(os.path.dirname(sp.__file__), "pod")
+    clips = open(os.path.join(pod, "clips.py"), encoding="utf-8").read()
+    # try 3 drew every clip and lost them all to a missing mp4 writer: frames go to disk first
+    assert clips.index("_frames") < clips.index("export_to_video(frames")
+    assert "sys.exit(0 if n else 1)" in clips
+    for f in ("pod.sh", "pod_clips.sh"):
+        sh = open(os.path.join(pod, f), encoding="utf-8").read()
+        assert "--ignore-installed torch" in sh  # try 4: a pip that uninstalls debian numpy left torch half-replaced
