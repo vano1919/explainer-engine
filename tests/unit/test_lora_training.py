@@ -136,6 +136,8 @@ def test_cost_projection_and_80_percent():
     assert rules(audit.spend_findings(p, 3.0)) == {"LT-14"} and audit.spend_findings(p, 3.0)[0]["status"] == "INFO"
     assert rules(audit.spend_findings(p, 1.0), "FAIL") == {"LT-14"}
     assert judge.log_progress("x:  40%|####| 500/1250 [53:28<1:05:07,  5.21s/it, lr: 1e-4]") == (500, 1250, 5.21)
+    log = "x:  20%|##| 250/1250 [29:15<1:42:38,  6.16s/it, lr: 1e-4]\rGenerating Samples:  14%| | 1/7 [00:47<04:46, 47.70s/it]"
+    assert judge.log_progress(log) == (250, 1250, 6.16)  # a sample bar is not a training step
 
 
 # ---- judge -----------------------------------------------------------------------------------------------------------

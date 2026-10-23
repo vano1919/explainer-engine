@@ -228,7 +228,8 @@ LOG_STEP = re.compile(r"(\d+)/(\d+) \[[^\]]*?([\d.]+)s/it")
 
 def log_progress(text):
     """Last 'N/M [... X s/it' of an ai-toolkit / tqdm log -> (done, total, sec_per_step) or None."""
-    hits = LOG_STEP.findall(text.replace("\r", "\n"))
+    lines = [ln for ln in text.replace("\r", "\n").splitlines() if "Generating" not in ln and "Sampl" not in ln]
+    hits = LOG_STEP.findall("\n".join(lines))  # sample progress bars ("1/7 ... 47s/it") are not training steps
     if not hits:
         return None
     d, t, s = hits[-1]
