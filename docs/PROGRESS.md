@@ -1017,3 +1017,17 @@ built on researched testing practice, and for step-by-step control of the runnin
 - 15:00 Footage plan (ვანო 14:51): `training/footage.py` (FS-00..FS-07: probe, shot split, camera/motion measure, show
   balance and held-out, master-frame pairs, 89-frame clips, motion-caption name ban) + 2 tests on a synthetic video;
   the plan with costs (first full cycle ≈$55-75) in project files `FOOTAGE_PLAN_2026-10-23_ka.md`; both threads briefed.
+
+## 2026-10-23 - Video QA in code: morphing, melting, flicker, lost parts, layout fidelity, cartoon rhythm (LT-50..LT-59)
+
+- ვანო 22:32 (Tbilisi 02:32): "write it in code, watch hands, faces and the usual AI mistakes, measure every parameter,
+  use the hours of cartoons as the norm; B's IC video has no feet". `training/video_qa.py` + CLI `video-qa`,
+  `footage-rhythm`; thresholds in `lora_rules.json` "video_qa" (house starting values).
+- Measured on the first IC test (A/B, 5 s, 1920x1088): all four clips PASS flicker/morph/lines (morph p95 0.009-0.015);
+  the B_ic defect is not visible in global numbers. Cause found by eye: our bend-rig layout smeared the scientist's legs
+  into shadow and left a dark ghost where he stood; the IC render followed the layout and drew a second caveman there.
+  LT-59 (layout fidelity per grid cell) flags exactly that area from 2.4 s. Lesson: an IC shot is only as good as its
+  layout; layouts need a clean plate behind moving people and rigid legs.
+- Weak spots stated in the module: hands and faces are judged by eye on `--sheet` (LT-58); the box tracker follows ink
+  outlines but can still lose a fast character, so LT-55 is REVIEW only.
+- Tests: 3 synthetic line-art clips (clean PASS; melting + brightness pop; lost legs + an invented figure vs its layout).

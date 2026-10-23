@@ -299,3 +299,59 @@ def test_launch_gate_catches_wrong_run():
     assert len(rules(f, "FAIL")) == 1 and sum(x["rule"] == "LT-16" for x in f) == 2
     cfg["config"]["name"] = "wldnk_qwen_v4"
     assert not audit.check_launch(cfg, run_name="v4", dataset="dataset_style_v7", cfg_path="trainq4/cfg.yaml")["findings"]
+
+
+# ---- video QA (LT-50..LT-59) -----------------------------------------------------------------------------------------
+
+def _drawn_clip(n=72, *, melt_from=None, pop_at=None, legs_off_from=None, extra_from=None):
+    """Line-art test shot at 320x180: a hatched backdrop and a walking outlined figure (head box over a body with legs)."""
+    import cv2
+    frames = []
+    for i in range(n):
+        f = np.full((180, 320, 3), 200, np.uint8)
+        for x in range(0, 320, 16):
+            cv2.line(f, (x, 0), (x + 40, 180), (60, 60, 60), 1)
+        x = 60 + i
+        cv2.rectangle(f, (x, 40), (x + 30, 70), (20, 20, 20), 2)             # head
+        cv2.rectangle(f, (x - 5, 72), (x + 35, 120), (20, 20, 20), 2)        # body
+        if legs_off_from is None or i < legs_off_from:
+            for k in range(6):
+                cv2.line(f, (x + 3 * k, 122), (x + 3 * k - 4, 160), (20, 20, 20), 2)
+        if extra_from is not None and i >= extra_from:                        # a figure the layout never had
+            for k in range(8):
+                cv2.circle(f, (280, 140), 6 + 4 * k, (10, 10, 10), 2)
+        if melt_from is not None and i >= melt_from:
+            f = cv2.GaussianBlur(f, (0, 0), 0.5 + (i - melt_from) * 0.25)
+        if pop_at is not None and i == pop_at:
+            f = np.clip(f.astype(int) + 60, 0, 255).astype(np.uint8)
+        frames.append(f)
+    return np.stack(frames)
+
+
+def _qa_rules(found):
+    return {f["rule"] for f in found if f["status"] != "PASS"}
+
+
+def test_video_qa_clean_shot_passes():
+    from explainer_engine.training import video_qa
+    m = video_qa.analyse(_drawn_clip(), 24.0)
+    assert _qa_rules(video_qa.judge(m)) == set() and m["breaks_at_second"] is None
+
+
+def test_video_qa_melting_and_flicker():
+    from explainer_engine.training import video_qa
+    melt = video_qa.judge(video_qa.analyse(_drawn_clip(melt_from=24), 24.0))
+    assert "LT-53" in _qa_rules(melt)
+    pop = video_qa.judge(video_qa.analyse(_drawn_clip(pop_at=30), 24.0))
+    assert "LT-51" in _qa_rules(pop)
+
+
+def test_video_qa_lost_legs_and_invented_content():
+    from explainer_engine.training import video_qa
+    clip = _drawn_clip(legs_off_from=30)
+    m = video_qa.analyse(clip, 24.0, regions=[{"label": "walker", "box": [55 / 320, 38 / 180, 100 / 320, 165 / 180]}])
+    assert m["regions"]["walker"]["legs_lost_at_s"] is not None and m["regions"]["walker"]["head_lost_at_s"] is None
+    layout = _drawn_clip()
+    lf = video_qa.layout_fidelity(_drawn_clip(extra_from=24), layout, fps=24.0)
+    assert lf["cells"] and all(c["render"] == "gains" for c in lf["cells"]) and lf["cells"][0]["at_s"] >= 0.9
+    assert video_qa.layout_fidelity(layout, layout, fps=24.0)["cells"] == []

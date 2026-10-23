@@ -11,6 +11,9 @@
            (see training/footage.py)
     python -m explainer_engine.training judge-style --samples <dir> --refs <dir> --config <cfg.yaml> [--train <dir>...]
            [--cache <dir>] [--out judge.json]
+    python -m explainer_engine.training video-qa <clip.mp4> [--layout <layout.mp4>] [--regions <regions.json>]
+           [--ref <rhythm.json>] [--sheet <sheet.jpg>] [--out <qa.json>]
+    python -m explainer_engine.training footage-rhythm <work dir> --out <rhythm.json> [--per-show 40]
 """
 from __future__ import annotations
 
@@ -118,6 +121,23 @@ def main(argv=None):
             Path(_opt(rest, "--out")).write_text(json.dumps(rep, indent=1, default=str), encoding="utf-8")
         _print(rep)
         return 1 if dec["action"] == "STOP_FAIL" else 0
+    if cmd in ("video-qa", "footage-rhythm"):
+        from . import video_qa
+        p = _pos(rest)
+        if cmd == "footage-rhythm":
+            ref = video_qa.footage_rhythm(p[0], per_show=int(_opt(rest, "--per-show", 40)))
+            Path(_opt(rest, "--out")).write_text(json.dumps(ref, indent=1), encoding="utf-8")
+            _print(ref)
+            return 0
+        load = lambda o: json.loads(Path(_opt(rest, o)).read_text(encoding="utf-8")) if _opt(rest, o) else None  # noqa: E731
+        regions = load("--regions")
+        m, findings = video_qa.qa_file(p[0], regions=regions, ref=load("--ref"), layout=_opt(rest, "--layout"))
+        if _opt(rest, "--sheet"):
+            m["sheet"] = video_qa.review_sheet(p[0], _opt(rest, "--sheet"), regions)
+        rep = {"clip": p[0], "metrics": m, "findings": findings}
+        if _opt(rest, "--out"):
+            Path(_opt(rest, "--out")).write_text(json.dumps(rep, indent=1), encoding="utf-8")
+        return _done(rep)
     if cmd.startswith("footage-"):
         from . import footage
         p = _pos(rest)

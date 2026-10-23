@@ -54,6 +54,16 @@ How every LoRA of the channel is trained and judged: the photo style LoRA (Qwen-
 | LT-41 | Set/camera drift on the frame's outer band under 2x the training pairs' | house (critic 2026-10-23: chained edits float) | FAIL |
 | LT-42 | The output really changes (>= 0.25 x the training pairs' change): not a copy of the input | method | FAIL |
 | LT-43 | Character identity (cosine of character crops) >= 0.85 | hypothesis | FAIL |
+| LT-50 | Video QA of any generated shot (`video-qa`, ვანო 2026-10-23 22:32): a PASS lists morph p95, line keep and flicker | house | `video_qa.judge` |
+| LT-51 | Brightness pop between two frames <= 0.06 (mean luma, 0..1) | house (VBench flicker idea) | FAIL |
+| LT-52 | Morphing: the optical-flow warp residual per second <= 0.05; the first second over it = where a long shot breaks (max-length test) | method + house | FAIL |
+| LT-53 | Line art never falls under 0.7 x frame 0's edge density (melting, blur) | house | FAIL |
+| LT-54 | Colour drift: saturation and brightness within ±0.08 (0..1) of frame 0 | house | REVIEW |
+| LT-55 | A tracked character keeps its head and legs (outline density next to dark ink in the box's top/bottom >= 0.45 x frame 0 for 6 frames); median-flow tracking is weak, so REVIEW only | hypothesis | REVIEW |
+| LT-56 | Fast-motion speed (p90, frame widths/s) inside the creator's cartoons' p10..p90 (`footage-rhythm`) | house (his 7.5 h of footage as the norm) | REVIEW |
+| LT-57 | Hold share >= the cartoons' p10: always-moving "floaty" AI motion | house | REVIEW |
+| LT-58 | Hands and faces are judged by eye on the `--sheet` (a crop of each tracked head and middle band per second); detectors are trained on photos | method | sheet |
+| LT-59 | IC shots follow their layout: a grid cell where the render gains or loses lines (x2) the layout does not, for 0.5 s, is invented or lost content (B_ic: a second caveman drawn into the layout's ghost) | house | REVIEW |
 
 Numbers marked house/hypothesis are starting values; a change needs a run's evidence in [PROGRESS](PROGRESS.md).
 
