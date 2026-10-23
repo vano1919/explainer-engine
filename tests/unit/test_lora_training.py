@@ -287,3 +287,13 @@ def test_motion_caption_names_banned():
     f = footage.caption_findings_motion(["a girl leaps over a log, cloak trailing", "Aladdin runs in Disney style"],
                                         banned=["aladdin"])
     assert len(rules(f, "FAIL")) == 1 and "caption 1" in f[0]["msg"]
+
+
+def test_launch_gate_catches_wrong_run():
+    """2026-10-23: v4's first pod loaded v3's cfg.yaml from the launcher's old path ($0.38 lost)."""
+    cfg = _cfg(datasets=[{"folder_path": "/workspace/ds/dataset_style_v7/his", "num_repeats": 5}])
+    cfg["config"]["name"] = "wldnk_qwen_v3"
+    f = audit.check_launch(cfg, run_name="v4", dataset="dataset_style_v7", cfg_path="trainq3/cfg.yaml")["findings"]
+    assert len(rules(f, "FAIL")) == 1 and sum(x["rule"] == "LT-16" for x in f) == 2
+    cfg["config"]["name"] = "wldnk_qwen_v4"
+    assert not audit.check_launch(cfg, run_name="v4", dataset="dataset_style_v7", cfg_path="trainq4/cfg.yaml")["findings"]

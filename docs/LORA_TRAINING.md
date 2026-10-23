@@ -36,6 +36,7 @@ How every LoRA of the channel is trained and judged: the photo style LoRA (Qwen-
 | LT-13 | Cached text embeddings make caption dropout a no-op | source (guides) | WARN |
 | LT-14 | Projected cost (steps left x measured s/step + samples + boot) under the cap; at 80 % stop and ask | invariant 2 | `project_cost`, `spend_findings` |
 | LT-15 | The ai-toolkit image needs `boot_minutes >= 25` or the guard kills it before boot | house (2026-10-23 08:24) | FAIL |
+| LT-16 | Launch: the config name, dataset folders and the launcher's cfg/pod.sh source paths all carry this run's name and dataset version | house (v4's first pod ran v3's config, 2026-10-23, $0.38) | `audit.check_launch` FAIL |
 | LT-20 | Style progress = per-prompt move from the base sample (step 0, same seed) toward the creator's pictures; 0 = base, 1 = as close as his pictures are to each other | method (fixed prompt+seed comparison; CLIP/CSD style similarity) | `judge.score_run` |
 | LT-21 | After 500 steps a progress under 0.10 is STOP_FAIL (trigger, captions or LR are wrong) | house (v2) | `judge.decide` |
 | LT-22 | Prompt adherence (CLIP text-image) may not fall more than 0.03 below the base: "prompt ignored" | source (overfitting signs) | flag |

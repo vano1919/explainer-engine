@@ -9,6 +9,8 @@ You run pods for the `lora-coordinator`. Read `docs/LORA_TRAINING.md`, the money
 
 - Before: `python -m explainer_engine.cloud.runpod check` (nothing stray billing); the run ledger with the coordinator's cap
   (`core/ledger.Run`); `boot_minutes=25` for `ostris/aitoolkit` (LT-15); GPU and price from the coordinator.
+- Before launch: `audit.check_launch(cfg, run_name=..., dataset=..., cfg_path=..., pod_sh=...)` 0 FAIL (LT-16: the
+  launcher must load THIS run's config and dataset, not the previous run's paths).
 - Launch only through the pod manager (`preflight_create`, ledger reserve, `create`, `new_session`, `guard_detached`);
   checkpoints, samples, `train.log` and `pod.log` sync to HF `vano1919/tmr-artifacts/lora_plan_2026-10-22/train_<run>/`.
 - While it runs: every ~10 min read the HF `train.log`; report step, s/step and

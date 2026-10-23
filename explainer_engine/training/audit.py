@@ -340,3 +340,24 @@ def spend_findings(projection, cap_usd):
 def verdict(findings):
     st = {x["status"] for x in findings}
     return "FAIL" if "FAIL" in st else "WARN" if "WARN" in st else "PASS"
+
+
+def check_launch(cfg, *, run_name, dataset=None, cfg_path=None, pod_sh=None):
+    """LT-16: what the pod will load is this run's (2026-10-23: v4's first pod ran v3's cfg.yaml, $0.38 lost). The config
+    name must carry the run name, the dataset folders the expected dataset version, and the launcher's source paths the
+    run name too."""
+    v = config_view(cfg)
+    name = str(cfg.get("config", {}).get("name") or (cfg.get("config", {}).get("process") or [{}])[0].get("name") or
+               cfg.get("meta", {}).get("name") or "")
+    f = []
+    if run_name.lower() not in name.lower():
+        f.append(finding("LT-16", "FAIL", f"config name '{name}' does not carry the run name '{run_name}'"))
+    if dataset:
+        folders = [str(x.get("folder_path", "")) for x in _aitk_process(cfg).get("datasets", [])] or \
+                  [str(cfg.get("data", {}).get("preprocessed_data_root", ""))]
+        if not any(dataset.lower() in fo.lower() for fo in folders):
+            f.append(finding("LT-16", "FAIL", f"dataset folders {folders} do not name '{dataset}'"))
+    for label, p in (("cfg", cfg_path), ("pod.sh", pod_sh)):
+        if p and run_name.lower() not in str(p).lower():
+            f.append(finding("LT-16", "FAIL", f"launcher {label} source '{p}' is not this run's ({run_name})"))
+    return {"run": run_name, "name": name, "view": {k: v[k] for k in ("steps", "repeats")}, "findings": f}
