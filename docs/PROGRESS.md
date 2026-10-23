@@ -991,3 +991,26 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-23 - LoRA training control: protocol, tools and four agents (D-72)
+
+ვანო asked for a coordinator / multi-agent system for the three LoRAs (photo style, image-edit next pose, video motion),
+built on researched testing practice, and for step-by-step control of the running trainings.
+
+- Research (sources in [LORA_TRAINING](LORA_TRAINING.md) section 3): judge checkpoints by fixed-seed samples, not loss;
+  overfitting = same background/pose whatever the prompt, prompt words ignored, colour burn, unasked objects; held-out
+  prompts and a no-trigger probe; video with vs without the LoRA, temporal metrics only together with motion amount.
+- Code `explainer_engine/training/` (free, local): `audit.py` (LT-01..LT-15: captions, trigger, shared phrases and
+  words, duplicates, resolution, the creator's weighted share, edit-pair matching, LTX clip frames/sizes; config check of
+  ai-toolkit and ltx-trainer YAML; cost projection), `judge.py` (LT-20..LT-43: style progress per prompt from the base
+  toward the creator's pictures, adherence, memorisation, sameness, trigger leakage, the CONTINUE/STOP decision; video
+  motion/jitter/keyframe; edit drift/change; tqdm log parser), `embed.py` (CLIP ViT-B-32 on CPU, cached; needs torch +
+  open_clip_torch, not in requirements). CLI `python -m explainer_engine.training`.
+- Agents `lora-coordinator`, `lora-dataset-auditor`, `lora-run-operator`, `lora-checkpoint-judge`; skill
+  `lora-training`; docs_lint home `LT` -> LORA_TRAINING.md.
+- Applied to the live runs: dataset v7 audit FAILed on 12 pictures under 512 px (504x278 in the creator's folder) and
+  22 crops reusing their full image's caption -> the photo thread dropped them before v4 (his share 54 %). v3 config:
+  cached text embeddings made caption dropout a no-op, no no-trigger probe, samples ≈20 % of the run -> fixed in v4. v3
+  judge: step 250 progress 0.55, step 500 0.42 (the close-up fell back to semi-photo, confirmed by eye) -> v3@250 is the
+  best v3. v4 config PASS; projection ≈$1.8 vs its $1.65 cap (expect a stop near step 1300).
+- Tests: `tests/unit/test_lora_training.py` (19). Nothing paid in this thread.

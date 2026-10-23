@@ -1,0 +1,51 @@
+{
+ "version": 1,
+ "about": "Numbers for the LoRA training control (docs/LORA_TRAINING.md, LT-xx). kind: source = published guide/doc/paper (see sources in the doc), house = our own measured lesson (dated), hypothesis = a starting value to calibrate on our runs. A number changes only with a new run's evidence written into docs/PROGRESS.md.",
+ "dataset": {
+  "trigger": "wldnk style",
+  "caption_words_min": 6,
+  "caption_words_max": 70,
+  "shared_ngram_words": 4,
+  "shared_ngram_warn_share": 0.2,
+  "shared_ngram_fail_share": 0.45,
+  "word_warn_share": 0.35,
+  "near_duplicate_hamming": 4,
+  "short_side_warn_px": 768,
+  "short_side_fail_px": 512,
+  "creator_share_min": 0.5,
+  "size": {"style": [20, 300], "edit": [60, 2000], "video": [10, 300]},
+  "video_frames_mod": 8,
+  "video_dims_mod": 32
+ },
+ "config": {
+  "rank": {"style": [16, 64], "edit": [16, 64], "video": [16, 64]},
+  "lr_warn": [5e-05, 0.0002],
+  "lr_fail_above": 0.0005,
+  "save_every_max": 250,
+  "sample_prompts_min": 4,
+  "heldout_share_min": 0.5,
+  "heldout_seen_words_max": 0.6,
+  "boot_minutes_aitoolkit": 25
+ },
+ "judge": {
+  "min_steps_for_fail": 500,
+  "progress_fail_below": 0.1,
+  "adherence_drop_max": 0.03,
+  "memorization_cos": 0.95,
+  "collapse_margin": 0.05,
+  "plateau_gain_min": 0.03,
+  "plateau_window": 2,
+  "trigger_off_keep_min": 0.85,
+  "spend_stop_share": 0.8
+ },
+ "video": {
+  "dynamic_keep_min": 0.7,
+  "jitter_rise_max": 1.2,
+  "keyframe_drop_max": 0.02
+ },
+ "edit": {
+  "background_drift_max_x": 2.0,
+  "change_min_x": 0.25,
+  "identity_min": 0.85
+ }
+}
