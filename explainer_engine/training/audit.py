@@ -357,7 +357,8 @@ def check_launch(cfg, *, run_name, dataset=None, cfg_path=None, pod_sh=None):
                   [str(cfg.get("data", {}).get("preprocessed_data_root", ""))]
         if not any(dataset.lower() in fo.lower() for fo in folders):
             f.append(finding("LT-16", "FAIL", f"dataset folders {folders} do not name '{dataset}'"))
+    tags = {run_name.lower()} | set(re.findall(r"\d+", run_name))  # "v4" matches "trainq4/cfg.yaml" too
     for label, p in (("cfg", cfg_path), ("pod.sh", pod_sh)):
-        if p and run_name.lower() not in str(p).lower():
+        if p and not any(re.search(rf"(?<![0-9]){re.escape(t)}(?![0-9])", str(p).lower()) for t in tags):
             f.append(finding("LT-16", "FAIL", f"launcher {label} source '{p}' is not this run's ({run_name})"))
     return {"run": run_name, "name": name, "view": {k: v[k] for k in ("steps", "repeats")}, "findings": f}
