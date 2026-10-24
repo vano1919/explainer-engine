@@ -51,6 +51,8 @@ def check(prompt: str) -> list[dict]:
 
 def main(argv: list[str]) -> int:
     items = json.loads(Path(argv[0]).read_text(encoding="utf-8"))
+    if isinstance(items, dict):      # the composer's prompts.json: {"sheets": [...], "shots": [...], "gate": [...]}
+        items = items.get("sheets", []) + items.get("shots", [])
     bad = 0
     for it in items:
         if it.get("kind") != "keyframe" and it.get("lora") != "style":

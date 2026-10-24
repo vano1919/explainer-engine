@@ -22,3 +22,13 @@ def test_the_bus_prompt_fails():
     details = " ".join(f["detail"] for f in found)
     assert "style tail is missing" in details and "words" in details and "flat grey daylight" in details
     assert [f["severity"] for f in sp.check(ERAS)] == ["FAIL"]          # the eras prompt lacks only the tail
+
+
+def test_the_cli_reads_the_composers_dict(tmp_path):
+    import json
+    f = tmp_path / "prompts.json"
+    f.write_text(json.dumps({"sheets": [{"id": "sheet.a", "kind": "keyframe", "prompt": sp.with_tail(ERAS)}],
+                             "shots": [{"id": "S1.first", "kind": "keyframe", "prompt": BUS}], "gate": [{"id": "x"}]}))
+    assert sp.main([str(f)]) == 1
+    f.write_text(json.dumps({"sheets": [], "shots": [{"id": "S1.first", "kind": "keyframe", "prompt": sp.with_tail(ERAS)}]}))
+    assert sp.main([str(f)]) == 0
