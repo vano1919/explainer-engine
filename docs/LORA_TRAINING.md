@@ -64,6 +64,9 @@ How every LoRA of the channel is trained and judged: the photo style LoRA (Qwen-
 | LT-57 | Hold share >= the cartoons' p10: always-moving "floaty" AI motion | house | REVIEW |
 | LT-58 | Hands and faces are judged by eye on the `--sheet` (a crop of each tracked head and middle band per second); detectors are trained on photos | method | sheet |
 | LT-59 | IC shots follow their layout: a grid cell where the render gains or loses lines (x2) the layout does not, for 0.5 s, is invented or lost content (B_ic: a second caveman drawn into the layout's ghost) | house | REVIEW |
+| LT-60 | Continuity across a cut (`shot-identity`, ვანო 2026-10-24 07:17): the set's palette distance (hue x saturation + brightness histograms, ink dropped) between shot A's last frame and shot B's first <= 0.08 (two scenes of the eras test measure 0.09, one clip's first vs last 0.002..0.006) | house (eras test 2026-10-24) | REVIEW |
+| LT-61 | Across a cut the line weight stays within x0.7..x1.4 (share of ink pixels): a thicker or thinner drawing, or lost outlines | house | REVIEW |
+| LT-62 | Each named hero's box keeps its colours across the cut (palette distance <= 0.15 on its box: clothes, skin, hair); whether it is the same face is for the eye (LT-58) or CLIP (LT-43) | house | REVIEW |
 
 Numbers marked house/hypothesis are starting values; a change needs a run's evidence in [PROGRESS](PROGRESS.md).
 

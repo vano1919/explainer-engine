@@ -1,4 +1,4 @@
-"""Video QA for generated shots (docs/LORA_TRAINING.md LT-50..LT-58, ვანო 2026-10-23 22:32: "write it in code; watch hands,
+"""Video QA for generated shots (docs/LORA_TRAINING.md LT-50..LT-62, ვანო 2026-10-23 22:32: "write it in code; watch hands,
 faces, the usual AI mistakes; measure every parameter, fix where it is weak; use the hours of cartoons as the norm").
 
 Free, CPU: numpy + OpenCV (CLIP from ``embed.py`` only when asked). What the numbers can and cannot see:
@@ -15,6 +15,7 @@ Free, CPU: numpy + OpenCV (CLIP from ``embed.py`` only when asked). What the num
     python -m explainer_engine.training video-qa <clip.mp4> [--layout layout.mp4] [--regions regions.json] [--ref rhythm.json]
            [--sheet out.jpg] [--out qa.json]
     python -m explainer_engine.training footage-rhythm <work dir> --out rhythm.json [--per-show 40]
+    python -m explainer_engine.training shot-identity <a.mp4> [<b.mp4>] [--heroes heroes.json] [--out id.json]
 """
 from __future__ import annotations
 
@@ -347,3 +348,84 @@ def layout_fidelity(out_frames, layout_frames, *, grid=(6, 4), fps=24.0):
                 cells.append({"cell": [i, j], "at_s": t0, "gap_max": round(float(gap[:, j, i].max()), 2),
                               "render": "gains" if ra[:, j, i].max() > -ra[:, j, i].min() else "loses"})
     return {"cells": cells, "gap_p95": round(float(np.percentile(gap, 95)), 3)}
+
+
+# ---- continuity between shots (LT-60..LT-62, ვანო 2026-10-24 07:17: "does anything check consistency between the frames
+# of the video, or is the scene LoRA drawing the stills right enough?") -----------------------------------------------
+# A scene is cut from several <= 10 s shots (the max-length test), so the join between two shots is where the look can
+# jump: the set's palette, the line weight and a hero's colours. Numbers only: whether it is the same person is for the
+# eye (LT-58 sheet) or CLIP (LT-43 identity) on the pod.
+
+def _palette(f, box=None):
+    """Colour signature of the painted pixels (ink dropped): hue x saturation bins (grey collapsed to one bin, hue is
+    noise without saturation) plus a brightness histogram; two halves of 0.5 each, so the distance is in 0..1."""
+    import cv2
+    if box is not None:
+        h, w = f.shape[:2]
+        x0, y0, x1, y1 = box
+        f = f[int(max(0, y0 * h)):int(min(h, y1 * h)), int(max(0, x0 * w)):int(min(w, x1 * w))]
+    if f.size == 0:
+        return np.zeros(45)
+    hsv = cv2.cvtColor(np.ascontiguousarray(f), cv2.COLOR_RGB2HSV)
+    g = _gray(f)
+    keep = g >= Q.get("ink_max", 50)
+    hue, sat = hsv[..., 0][keep].astype(int), hsv[..., 1][keep].astype(int)
+    hs = np.zeros(1 + 12 * 3)
+    grey = sat < 32
+    hs[0] = grey.sum()
+    idx = 1 + (hue[~grey] * 12 // 180) * 3 + np.minimum((sat[~grey] - 32) * 3 // 224, 2)
+    np.add.at(hs, idx, 1)
+    lum = np.histogram(g[keep], bins=8, range=(0, 256))[0].astype(float)
+    hs = hs / max(hs.sum(), 1) * 0.5
+    lum = lum / max(lum.sum(), 1) * 0.5
+    return np.concatenate([hs, lum])
+
+
+def _dist(a, b):
+    """1 - Bhattacharyya coefficient of two normalised histograms: 0 identical, 1 disjoint."""
+    return round(float(1.0 - np.sqrt(a * b).sum()), 4)
+
+
+def shot_identity(frame_a, frame_b, heroes=None):
+    """A's last frame against B's first frame (or one shot's first against its last): set palette distance, brightness
+    and saturation gaps, line-weight and detail ratios, and for each hero {label, a: box, b: box} the palette distance
+    of its box (what a hero wears and what colour its skin and hair are)."""
+    import cv2
+    pa = per_frame([frame_a, frame_b])
+    m = {"palette_dist": _dist(_palette(frame_a), _palette(frame_b)),
+         "luma_gap": round(float(pa["luma"][1] - pa["luma"][0]), 4),
+         "sat_gap": round(float(pa["sat"][1] - pa["sat"][0]), 4),
+         "edges_ratio": round(float(pa["edges"][1] / max(pa["edges"][0], 1e-6)), 3),
+         "sharp_ratio": round(float(pa["sharp"][1] / max(pa["sharp"][0], 1e-6)), 3)}
+    ink = [float((_gray(f) < Q.get("ink_max", 50)).mean()) for f in (frame_a, frame_b)]
+    m["ink_ratio"] = round(ink[1] / max(ink[0], 1e-6), 3)        # share of ink pixels: the line weight (edges miss it)
+    ga, gb = (cv2.GaussianBlur(_gray(f), (0, 0), 4).astype(np.float32) for f in (frame_a, frame_b))
+    m["backdrop_corr"] = round(float(np.corrcoef(ga.ravel(), gb.ravel())[0, 1]), 3)   # same camera and set: near 1 (information only)
+    m["heroes"] = {h["label"]: _dist(_palette(frame_a, h["a"]), _palette(frame_b, h.get("b", h["a"]))) for h in heroes or []}
+    return m
+
+
+def judge_identity(m, what="shot A -> shot B"):
+    f = []
+    if m["palette_dist"] > Q.get("palette_dist_max", 0.08):
+        f.append(finding("LT-60", "REVIEW", f"{what}: the set's palette moves {m['palette_dist']} (> "
+                                            f"{Q.get('palette_dist_max', 0.08)}): different light, colours or style"))
+    lo, hi = Q.get("line_ratio", [0.7, 1.4])
+    if not lo <= m["ink_ratio"] <= hi:
+        f.append(finding("LT-61", "REVIEW", f"{what}: ink x{m['ink_ratio']} (outside {lo}..{hi}): a thicker or thinner "
+                                            f"drawing, or lost outlines"))
+    for lab, d in m["heroes"].items():
+        if d > Q.get("hero_palette_max", 0.15):
+            f.append(finding("LT-62", "REVIEW", f"{what}: {lab}'s colours move {d} (> {Q.get('hero_palette_max', 0.15)}): "
+                                                f"clothes, skin or hair changed"))
+    return f or [finding("LT-60", "PASS", f"{what}: palette {m['palette_dist']}, ink x{m['ink_ratio']}, "
+                                          f"backdrop corr {m['backdrop_corr']}")]
+
+
+def identity_file(a, b=None, heroes=None):
+    """Two clips: A's last frame vs B's first. One clip: its first frame vs its last (identity drift inside a shot)."""
+    fa = read_video(a)[0]
+    fb = read_video(b)[0] if b else fa
+    what = "shot A -> shot B" if b else "first -> last frame"
+    m = shot_identity(fa[-1] if b else fa[0], fb[0] if b else fa[-1], heroes)
+    return m, judge_identity(m, what)

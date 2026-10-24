@@ -303,17 +303,21 @@ def test_launch_gate_catches_wrong_run():
 
 # ---- video QA (LT-50..LT-59) -----------------------------------------------------------------------------------------
 
-def _drawn_clip(n=72, *, melt_from=None, pop_at=None, legs_off_from=None, extra_from=None):
-    """Line-art test shot at 320x180: a hatched backdrop and a walking outlined figure (head box over a body with legs)."""
+def _drawn_clip(n=72, *, melt_from=None, pop_at=None, legs_off_from=None, extra_from=None, backdrop=(200, 200, 200),
+                shirt=None, line=2):
+    """Line-art test shot at 320x180: a hatched backdrop and a walking outlined figure (head box over a body with legs);
+    ``shirt`` fills the body, ``backdrop`` paints the set, ``line`` is the ink width."""
     import cv2
     frames = []
     for i in range(n):
-        f = np.full((180, 320, 3), 200, np.uint8)
+        f = np.full((180, 320, 3), backdrop, np.uint8)
         for x in range(0, 320, 16):
             cv2.line(f, (x, 0), (x + 40, 180), (60, 60, 60), 1)
         x = 60 + i
-        cv2.rectangle(f, (x, 40), (x + 30, 70), (20, 20, 20), 2)             # head
-        cv2.rectangle(f, (x - 5, 72), (x + 35, 120), (20, 20, 20), 2)        # body
+        if shirt:
+            cv2.rectangle(f, (x - 5, 72), (x + 35, 120), shirt, -1)
+        cv2.rectangle(f, (x, 40), (x + 30, 70), (20, 20, 20), line)          # head
+        cv2.rectangle(f, (x - 5, 72), (x + 35, 120), (20, 20, 20), line)     # body
         if legs_off_from is None or i < legs_off_from:
             for k in range(6):
                 cv2.line(f, (x + 3 * k, 122), (x + 3 * k - 4, 160), (20, 20, 20), 2)
@@ -355,3 +359,19 @@ def test_video_qa_lost_legs_and_invented_content():
     lf = video_qa.layout_fidelity(_drawn_clip(extra_from=24), layout, fps=24.0)
     assert lf["cells"] and all(c["render"] == "gains" for c in lf["cells"]) and lf["cells"][0]["at_s"] >= 0.9
     assert video_qa.layout_fidelity(layout, layout, fps=24.0)["cells"] == []
+
+
+def test_shot_identity_across_a_cut():
+    """LT-60..62 (ვანო 2026-10-24 07:17): the join between two shots keeps the set's palette, the line weight and the
+    hero's colours; a recoloured set, a thicker drawing or a new shirt is caught, the same drawing passes."""
+    from explainer_engine.training import video_qa
+    a = _drawn_clip(shirt=(40, 90, 200))
+    hero = [{"label": "walker", "a": [125 / 320, 38 / 180, 170 / 320, 165 / 180], "b": [55 / 320, 38 / 180, 100 / 320, 165 / 180]}]
+    same = video_qa.shot_identity(a[-1], _drawn_clip(shirt=(40, 90, 200))[0], hero)
+    assert _qa_rules(video_qa.judge_identity(same)) == set() and same["heroes"]["walker"] < 0.01
+    recolour = video_qa.judge_identity(video_qa.shot_identity(a[-1], _drawn_clip(backdrop=(90, 140, 60), shirt=(40, 90, 200))[0], hero))
+    assert "LT-60" in _qa_rules(recolour)
+    thick = video_qa.judge_identity(video_qa.shot_identity(a[-1], _drawn_clip(shirt=(40, 90, 200), line=5)[0], hero))
+    assert "LT-61" in _qa_rules(thick)
+    shirt = video_qa.judge_identity(video_qa.shot_identity(a[-1], _drawn_clip(shirt=(220, 40, 40))[0], hero))
+    assert _qa_rules(shirt) == {"LT-62"}

@@ -1040,3 +1040,17 @@ built on researched testing practice, and for step-by-step control of the runnin
 - 00:20 (2026-10-24) IC conditioning strength 0.6 and 0.4 (hoping the model adds acting): the render turns into the grey
   clay layout and still does not act; Layout-To-Render needs strength 1.0, and acting must come from the layout itself.
   LT-54 now FAILs a saturation loss over 0.2. Night video tests ≈$2.5 (4 pods, all stopped).
+
+## 2026-10-24 - Continuity across a cut in code (LT-60..LT-62) and the eras clips
+
+- ვანო 07:17 UTC: "does anything check consistency between the frames of the video, or is the scene LoRA drawing the
+  stills right enough?" Answer: a scene is cut from several <= 10 s shots (max-length test), so the join between shots is
+  where the look jumps; nothing measured that. `video_qa.shot_identity` + CLI `shot-identity <a.mp4> [<b.mp4>]
+  [--heroes]`: A's last frame vs B's first (or one clip's first vs last): the set's palette distance (hue x saturation
+  + brightness histograms, ink dropped), ink share ratio (line weight; edge density misses it, a 5 px line has the same
+  edge count as a 2 px one), each named hero's box palette. REVIEW only (LT-60 palette > 0.08, LT-61 ink outside
+  x0.7..1.4, LT-62 hero > 0.15); whether it is the same face stays with the eye (LT-58) or CLIP (LT-43).
+  Measured: the two finished eras clips drift 0.002-0.006 inside 10 s; school vs wild west scenes measure 0.09 and
+  ink x2.6 (flagged). Test: synthetic cut (same drawing PASS; recoloured set, thicker ink, new shirt each flagged).
+- Guard lesson (07:12): pod scripts that never send a status ping are STOPPED by a live guard at the boot deadline
+  (default 25 min); the first eras pod died after 2 of 5 clips (~$0.3 lost). New pods get `boot_minutes` >= the job.

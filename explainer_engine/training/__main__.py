@@ -14,6 +14,7 @@
     python -m explainer_engine.training video-qa <clip.mp4> [--layout <layout.mp4>] [--regions <regions.json>]
            [--ref <rhythm.json>] [--sheet <sheet.jpg>] [--out <qa.json>]
     python -m explainer_engine.training footage-rhythm <work dir> --out <rhythm.json> [--per-show 40]
+    python -m explainer_engine.training shot-identity <a.mp4> [<b.mp4>] [--heroes <heroes.json>] [--out <id.json>]
 """
 from __future__ import annotations
 
@@ -121,9 +122,16 @@ def main(argv=None):
             Path(_opt(rest, "--out")).write_text(json.dumps(rep, indent=1, default=str), encoding="utf-8")
         _print(rep)
         return 1 if dec["action"] == "STOP_FAIL" else 0
-    if cmd in ("video-qa", "footage-rhythm"):
+    if cmd in ("video-qa", "footage-rhythm", "shot-identity"):
         from . import video_qa
         p = _pos(rest)
+        if cmd == "shot-identity":
+            heroes = json.loads(Path(_opt(rest, "--heroes")).read_text(encoding="utf-8")) if _opt(rest, "--heroes") else None
+            m, findings = video_qa.identity_file(p[0], p[1] if len(p) > 1 else None, heroes)
+            rep = {"clips": p, "metrics": m, "findings": findings}
+            if _opt(rest, "--out"):
+                Path(_opt(rest, "--out")).write_text(json.dumps(rep, indent=1), encoding="utf-8")
+            return _done(rep)
         if cmd == "footage-rhythm":
             ref = video_qa.footage_rhythm(p[0], per_show=int(_opt(rest, "--per-show", 40)))
             Path(_opt(rest, "--out")).write_text(json.dumps(ref, indent=1), encoding="utf-8")

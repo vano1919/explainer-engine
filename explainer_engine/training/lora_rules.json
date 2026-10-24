@@ -118,6 +118,9 @@
   "layout_gap_max": 1.0,
   "ink_max": 50,
   "sharp_keep_min": 0.65,
-  "sat_loss_fail": 0.2
+  "sat_loss_fail": 0.2,
+  "palette_dist_max": 0.08,
+  "hero_palette_max": 0.15,
+  "line_ratio": [0.7, 1.4]
  }
 }
