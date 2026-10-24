@@ -33,6 +33,31 @@ LAYOUT = re.compile(r"\b(close-up|full[- ]body shot|wide shot|medium shot|eye le
                     r"in the (center|centre) of the frame)\b", re.I)
 
 
+# other media or art styles fight the LoRA's look (they are never allowed in a style-LoRA prompt, LT-66)
+STYLE_CLASH = re.compile(r"\b(photo(graph)?|photoreal\w*|realistic|hyper-?real\w*|3d|cgi|render(ed|ing)?|anime|manga|pixar|"
+                         r"disney|watercolou?r|oil painting|pixel art|unreal engine|octane|cinematic|in the style of)\b", re.I)
+
+# LT-66: the absolutes. No episode look, scene, thread or test run changes them; only the creator's word does, and then
+# this table, its test (tests/unit/test_style_prompt.py) and docs/LORA_TRAINING.md change together.
+NEGATIVE = "text, lettering, letters, words, watermark, signature, photo, 3d render"
+INFERENCE = {"base": "Qwen/Qwen-Image-2512", "lora": "wldnk_style_v1.0", "lora_weight": 1.0, "dtype": "bfloat16",
+             "size": [1280, 720], "steps": 24, "true_cfg": 4.0}
+ABSOLUTES = (
+    ("A1", "the prompt starts with the trigger 'wldnk style', once"),
+    ("A2", f"the style LoRA {INFERENCE['lora']} at weight 1.0, only on {INFERENCE['base']} in bf16, 24 steps, true_cfg 4; "
+           "never inside an Edit model"),
+    ("A3", "the negative prompt is exactly NEGATIVE"),
+    ("A4", f"at most {MAX_WORDS} words: a place, an action at its peak, a reaction, caricature body words, a light source, "
+           "one or two props"),
+    ("A5", "no caption tail"),
+    ("A6", "no camera, shot size, position, measurement or number in the words: layout lives in boxes and composition"),
+    ("A7", "every figure's full tag is said once"),
+    ("A8", "no other medium or art style (photo, 3d, anime, watercolour, cinematic ...)"),
+    ("A9", "an episode look adds colour and light words only; it never replaces A1-A8"),
+    ("A10", "every picture is compared with the approved eras sheet before the creator sees it (KG-22)"),
+)
+
+
 def shaped(prompt: str) -> str:
     """The approved shape's opening: the trigger first, once. (The caption tail is no longer added, LT-65.)"""
     p = prompt.strip().rstrip(".")
@@ -53,6 +78,9 @@ def check(prompt: str) -> list[dict]:
         out.append({"rule": "LT-65", "severity": "FAIL", "detail": f"{n} words; the approved prompts have {MAX_WORDS} at most"})
     if STYLE_TAIL in prompt:
         out.append({"rule": "LT-65", "severity": "REVIEW", "detail": "the caption tail over-caricatures and adds long-nosed extras"})
+    m = STYLE_CLASH.search(prompt)
+    if m:
+        out.append({"rule": "LT-66", "severity": "FAIL", "detail": f"'{m.group(0)}' names another medium or style (A8)"})
     m = DULL.search(prompt)
     if m:
         out.append({"rule": "LT-65", "severity": "REVIEW", "detail": f"'{m.group(0)}' washes the colours out"})

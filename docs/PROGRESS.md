@@ -1196,3 +1196,12 @@ What was done:
 - The first CPU test with the composition test's assets. It composed a WS, a MWS, a reuse crop and a 90-figure crowd. Two
   real defects were caught: a plate with the wrong horizon for close shots (AC-05), and a cut-out carrying a block of snow
   (AC-15).
+
+## 2026-10-25 03:20 Tbilisi: episode look (AC-16..AC-19) and the prompt absolutes (LT-66)
+- ვანო asked for an episode-level colour layer that keeps colours consistent between the episode's pictures when places
+  and countries change, without changing the style LoRA's look, and for the list of prompting absolutes.
+- `qa/style_prompt.py`: `ABSOLUTES` (A1..A10), `NEGATIVE`, `INFERENCE`; other media or art styles in a prompt now FAIL
+  (LT-66). `compose/episode_look.py`: the look file measured from the approved key frame, a 10-word colour-and-light
+  phrase added to every prompt (the prompt still passes the 40-word rule), colour drift as REVIEW, and a bounded grade
+  (at most 0.35, originals kept). Tests: `tests/unit/test_episode_look.py` (absolutes frozen, clash, phrase, apply,
+  drift and grade). Nothing paid; the drift threshold is calibrated on the first episode.
