@@ -1,0 +1,55 @@
+# The watchdog outside the Claude session (master brief 2026-10-22, stage B; explainer_engine/cloud/watchdog.py).
+# Every 30 minutes: stop any RunPod pod past the lifetime in its name or without one, report ERROR pods, stopped disks,
+# network volumes, the 24 h billing against config/spend_caps.json and the balance. "Run workflow" with kill_all = true
+# (GitHub Mobile works) is the creator's STOP ALL button: every live pod is stopped, nothing is deleted.
+#
+# Needs one repository secret: RUNPOD_API_KEY (Settings -> Secrets and variables -> Actions). Optional: NTFY_TOPIC for
+# the push to the creator's phone. Without the key the run says so and exits 0.
+name: RunPod watchdog
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+    inputs:
+      kill_all:
+        description: "STOP ALL: stop every live pod now (never deletes)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runpod-watchdog
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+      NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Stop every live pod (the creator's STOP ALL)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.kill_all }}
+        run: |
+          if [ -z "$RUNPOD_API_KEY" ]; then echo "no RUNPOD_API_KEY secret: nothing can be checked"; exit 0; fi
+          python -m explainer_engine.cloud.watchdog --kill-all --yes
+      - name: Watchdog pass (stop expired pods, report what bills)
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.kill_all) }}
+        run: |
+          if [ -z "$RUNPOD_API_KEY" ]; then echo "no RUNPOD_API_KEY secret: nothing can be checked"; exit 0; fi
+          python -m explainer_engine.cloud.watchdog --apply || echo "::warning::the watchdog found something that needs a hand (see the log)"
+      - name: What bills now
+        if: ${{ always() }}
+        run: |
+          if [ -z "$RUNPOD_API_KEY" ]; then exit 0; fi
+          python -m explainer_engine.cloud.runpod check || true

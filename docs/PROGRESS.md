@@ -991,3 +991,21 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-24 - Money per job, one pod manager on REST v2, pods stop themselves (D-74)
+- Why: the RunPod loss strategy (creator's "Ok", 2026-10-24): about $4-5 lost from 10-22 to 10-24, the largest share
+  finished pods idling in `tail -f /dev/null`; the pod-management code was split across unmerged PRs (#18 Guardian and
+  watchdog on REST v2, #22 LT-17/LT-19 on REST v1) and REST v1 retires 2026-11-15.
+- Done: one `explainer_engine/cloud/runpod.py` on REST v2 with PR #18's Guardian (`jobs`, `store`, `incidents`,
+  `watchdog`, `.github/workflows/watchdog.yml`) and #22's heartbeat (LT-17) and bad-host check (LT-19); new: pods stop
+  themselves when their job ends and at a dead-man timer (`self_stop_sh`, `dead_man_sh`, `script_cmd`, `boot_cmd`), the
+  heartbeat's DONE/FAILED stops the pod from the guard, `lint_pod_script` refuses an idle tail without a self-stop, cards
+  are picked by the job's estimated cost from the live catalog (`pick_gpus`, `runpod cards --vram GB --ref-hours H`,
+  `create --vram/--ref-hours/--script/--script-url/--heartbeat`), and the preflight checks the job against its approved
+  money and time. `config/spend_caps.json`: `max_price_per_hour` 3.0 is only the runaway ceiling; the caps the creator
+  approved on 2026-10-23 stay; `bfl_usd`/`fal_usd` lines from #18.
+- Tests: `tests/unit/test_runpod.py` uses fixed test ceilings (the live file no longer moves the asserted limits) and
+  adds the self-stop, DONE stop, card-picking and per-job preflight cases. Not yet verified: that the key a pod gets can
+  stop that pod (one cheap guarded pod, ≈$0.01, before the next paid run relies on it).
+- Next: the RUNPOD_API_KEY repository secret and a merge to main make the watchdog run (scheduled workflows run only on
+  the default branch).
