@@ -1076,3 +1076,10 @@ the guard pushed a false "silent" alert while the pod trained normally. `lint_po
 rewrite a heartbeat file every pass (`date > out/beat.txt; up`); test `test_a_pod_script_must_upload_its_log_before_its_first_heavy_step`.
 Video LoRA v1 dataset: 83 of 150 cartoon clips kept after the cut, live-action, credits and graphics filters and an eye check
 of every clip; motion-only captions written off the pod (no paid captioner).
+
+## 2026-10-24 — LT-18: test videos have no upscale; one take, a new one only on a failed check
+
+ვანო's rules for the 1-minute test film: no upscale in test videos (they measure logic), each shot made once and checked, a new
+take only when the check fails; release resolution 2K. The test film is made in three variants: 24 fps, 12 fps ("on twos") and
+a third with ~20 % less-animated shots (still + camera). Docs: project files lora_plan_2026-10-24/.
+
