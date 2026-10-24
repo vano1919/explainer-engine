@@ -41,9 +41,10 @@ def test_the_worked_example_is_clean_and_valid():
 def test_keyframe_starts_with_the_trigger_and_shows_the_start_not_the_peak():
     p = prompts(doc())["S01-02.first"]
     assert p["kind"] == "keyframe" and p["prompt"].startswith("wldnk style, full-body shot at eye level")
-    assert "squints at the empty white horizon" in p["prompt"]
+    assert "squints at the far snowy horizon" in p["prompt"]
     assert "throws both hands up" not in p["prompt"]  # the peak is the video's job
-    assert "on the left, facing right" in p["prompt"] and "Only these 4 people" in p["prompt"]
+    assert "the old man with round glasses and a red scarf on the left" in p["prompt"]
+    assert p["prompt"].endswith(F.STYLE_TAIL) and len(p["prompt"].split()) <= F.KEYFRAME_WORDS_MAX  # LT-65
     assert "cartoon" not in p["neg"].lower()  # KP-09
 
 
@@ -211,20 +212,37 @@ def test_vague_relations_fail():
     assert ("KP-33", "S01-02") not in found(d)
 
 
-def test_composition_is_written_into_keyframe_and_cut_prompts_only():
-    ps = prompts(doc())
-    k = ps["S01-02.first"]["prompt"]
-    assert "sitting on the bottom step of the bus door, filling about a third of the frame height" in k
-    assert "The yellow city bus stands behind the four of them." in k
-    assert "Empty space at the top of the frame, where his hands will go." in k
-    assert "filling most of the frame height" in ps["S01-04.first"]["prompt"]
-    assert "frame height" not in ps["S01-02.last"]["prompt"]  # a next pose never re-frames (KP-07)
+def test_composition_goes_to_the_gate_card_and_the_cut_prompt_not_the_keyframe_words():
+    # LT-65: a keyframe is the trigger, a short scene and the style tail; supports, heights, relations and free space are
+    # the gate card's layout (for boxes or a blockout); a cut (Edit, scene LoRA) still writes them
     d = doc()
-    b = shot(d, "S01-02")["blocking"][0]
+    ps = prompts(d)
+    k = ps["S01-02.first"]["prompt"]
+    assert "frame height" not in k and "Empty space" not in k
+    card = {c["id"]: c for c in F.gate_cards(d)}["S01-02.first"]
+    assert any(p["on"] == "sitting on the bottom step of the bus door" and p["height"] == "third" for p in card["people"])
+    assert "the yellow city bus stands behind the four of them" in card["relations"] and card["lead_room"]["side"] == "above"
+    assert "filling most of the frame height" in ps["S01-04.first"]["prompt"]  # S01-04 is a cut
+    assert "frame height" not in ps["S01-02.last"]["prompt"]  # a next pose never re-frames (KP-07)
+    b = shot(d, "S01-04")["blocking"][0]
     b.pop("height")
     b["height_pct"] = 55
-    k = prompts(d)["S01-02.first"]["prompt"]
+    k = prompts(d)["S01-04.first"]["prompt"]
     assert "filling about half of the frame height" in k and "%" not in k and "55" not in k  # numbers get drawn (KP-32)
+
+
+def test_keyframes_and_sheets_carry_the_style_tail_and_name_each_figure_once():
+    d = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
+    style = [p for p in F.compose(d) + F.sheet_prompts(d) if p.get("lora") == "style"]
+    assert style and all(p["prompt"].endswith(F.STYLE_TAIL) for p in style)
+    assert all(len(p["prompt"].split()) <= F.KEYFRAME_WORDS_MAX for p in style)
+    for p in style:  # LY-09: a repeated tag drew a twin
+        assert all(p["prompt"].count(c["tag"]) <= 1 for c in d["cast"].values())
+    s = next(s for s in d["shots"] if s["source"] == "keyframe" and len(s.get("blocking", [])) >= 4)
+    k = F.keyframe_prompt(d, s)
+    assert all(F._core(F._tag(d, b["who"])) in k for b in s["blocking"])  # everyone is placed, briefly if need be
+    d["style"]["tail"] = "other tail"
+    assert ("LT-65" in {f["rule"] for f in F.style_check(d)}) is False  # the doc's own tail is used throughout
 
 
 def test_each_prompt_names_its_lora_and_the_gate_gets_a_card():
@@ -386,7 +404,7 @@ def test_a_partly_visible_figure_is_written_and_counted_without_support():
     s["blocking"].append({"who": "mammoth", "where": "right", "facing": "left", "partial": "the trunk"})
     assert "KP-31" not in rules(d, "FAIL")
     k = prompts(d)["S01-02.first"]["prompt"]
-    assert "Only the trunk of the woolly mammoth with a broken left tusk reaches into the frame on the right." in k
+    assert "only the trunk of the woolly mammoth" in k and "on the right" in k
     card = {c["id"]: c for c in F.gate_cards(d)}["S01-02.first"]
     assert card["people"][-1]["partial"] == "the trunk"
 

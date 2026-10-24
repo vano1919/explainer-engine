@@ -1144,7 +1144,7 @@
    ],
    "action": {
     "who": "bars",
-    "start": "rides slowly up the slope toward the tents",
+    "start": "rides up toward the tents",
     "peak": "pulls his horse up hard",
     "settle": "sits the horse still in front of the generals"
    },

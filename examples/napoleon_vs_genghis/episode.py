@@ -252,7 +252,7 @@ def write(ep):
                     "bars": ("right", "left", "sitting astride a short shaggy horse", "holds the reins low"),
                     "brun": ("center_back", "right", GRASS, "leans on his musket")})
     sh("WS", 4, "A lone rider comes to the emperor's tents.", mode="establish", who=["murat", "napoleon", "kemal", "bars"],
-       act=("bars", "rides slowly up the slope toward the tents", "pulls his horse up hard",
+       act=("bars", "rides up toward the tents", "pulls his horse up hard",
             "sits the horse still in front of the generals"),
        rel=["the white tents stand behind the French generals"], lead=("left", "where he rides in"),
        height={"bars": "third"}, foley=["hooves slowing on turf", "a horse snorting"])

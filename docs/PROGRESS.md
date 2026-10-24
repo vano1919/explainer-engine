@@ -1191,3 +1191,15 @@ bible's "one place per scene" now allows cutaways, template D's hook runs 0:00-0
 cutaways and silent beats), D-55 kept for still-picture episodes only; `supersedes` fields on BP-105/106/107/112;
 agents story-architect, scene-writer and edit-planner told the episode rules. No conflict: BP-70's four-line exchange
 equals BP-113's cap; BP-31, BP-03, ED-14's listener reactions. Decision D-74.
+
+
+## 2026-10-24 — Keyframe and sheet prompts in the style LoRA's training shape (PR #22's style-tail rule, LY-09)
+
+The LoRA thread found the style faded in composed keyframes: same pod, LoRA and seeds, the approved 31-word eras prompt
+drew the look and the 337-word composed bus prompt a flat grey generic cartoon; every v5 caption ends with one style tail
+the composer never sent. Done: `keyframe_prompt` and `sheet_prompts` write `wldnk style, <scene>, <tail>` in at most 90
+words (`STYLE_TAIL`, `KEYFRAME_WORDS_MAX`; a card may set `style.tail`); each tag once, a gaze as a direction, figures
+past the budget placed by their tag's head phrase; heights, supports, relations and free space stay in the gate card
+(for EliGen boxes or a blockout) and in cut prompts; `film_shots check` runs `style_check` (missing tail FAIL, over 90
+words REVIEW, PR #22's `qa/style_prompt.check` when present). The bus example's "flat grey daylight" and "empty white"
+plain words replaced. Tests in `tests/unit/test_film_shots.py`.

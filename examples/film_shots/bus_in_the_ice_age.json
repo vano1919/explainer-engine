@@ -22,7 +22,7 @@
    "id": "S01-01", "scene": "S01", "mode": "establish", "seconds": 4, "source": "keyframe",
    "beat": "The world is wrong before anyone knows it: a city bus where no road has ever been.",
    "frame": {"size": "EWS", "angle": "high", "camera": "push_in", "camera_end": "the bus in the middle of the frame",
-             "place": "road", "light": "flat grey daylight",
+             "place": "road", "light": "pale cold daylight under a low grey sky",
              "relations": ["the yellow city bus stands on the open snow, its wheels sunk up to the hubs"]},
    "narration": "The 7:40 express left on time. The town it was heading for won't be built for another twelve thousand years.",
    "sound": {"ambience": "wind hissing over open snow", "foley": ["the bus engine ticking as it cools"]}
@@ -30,7 +30,7 @@
   {
    "id": "S01-02", "scene": "S01", "mode": "scene", "seconds": 5, "source": "keyframe", "last_frame": true,
    "beat": "Walter sees it first, and the others see him lose it.",
-   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "light": "flat grey daylight",
+   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "light": "pale cold daylight under a low grey sky",
              "relations": ["the yellow city bus stands behind the four of them"],
              "lead_room": {"side": "above", "for": "where his hands will go"}},
    "blocking": [
@@ -42,7 +42,7 @@
     {"who": "bo", "where": "right", "facing": "left", "pose": "rubs his hands together for warmth",
      "on": "standing in snow up to his ankles", "height": "two_thirds"}
    ],
-   "action": {"who": "walter", "start": "squints at the empty white horizon",
+   "action": {"who": "walter", "start": "squints at the far snowy horizon",
               "peak": "throws both hands up above his head",
               "settle": "holds both hands high, frozen, mouth wide open",
               "face": "his eyes bulge behind his glasses and his jaw drops"},
@@ -53,7 +53,7 @@
   {
    "id": "S01-03", "scene": "S01", "mode": "scene", "seconds": 5, "source": "cut", "master": "S01-02",
    "beat": "He wants the road back; she wants him calm before the others panic.",
-   "frame": {"size": "MS", "angle": "eye", "camera": "static", "place": "road_close", "light": "flat grey daylight",
+   "frame": {"size": "MS", "angle": "eye", "camera": "static", "place": "road_close", "light": "pale cold daylight under a low grey sky",
              "lead_room": {"side": "below", "for": "where his finger will jab"}},
    "blocking": [
     {"who": "walter", "where": "left", "facing": "dee", "on": "standing on the packed snow", "height": "most"},
@@ -72,7 +72,7 @@
    "id": "S01-04", "scene": "S01", "mode": "scene", "seconds": 5, "source": "cut", "master": "S01-02",
    "beat": "Her calm turns into the first admission that something is truly wrong.",
    "frame": {"size": "OTS", "over": "walter", "angle": "eye", "camera": "push_in", "camera_end": "her face",
-             "place": "road_close", "light": "flat grey daylight",
+             "place": "road_close", "light": "pale cold daylight under a low grey sky",
              "relations": ["the yellow city bus stands behind her"], "lead_room": {"side": "none"}},
    "blocking": [
     {"who": "walter", "where": "left_front", "facing": "dee", "on": "standing on the packed snow", "height": "most"},
@@ -89,7 +89,7 @@
   {
    "id": "S01-05", "scene": "S01", "mode": "insert", "seconds": 3, "source": "keyframe",
    "beat": "No signal: nobody is coming to help.",
-   "frame": {"size": "INSERT", "angle": "high", "camera": "static", "place": "road_close", "light": "flat grey daylight"},
+   "frame": {"size": "INSERT", "angle": "high", "camera": "static", "place": "road_close", "light": "pale cold daylight under a low grey sky"},
    "action": {"who": "kim", "start": "a yellow-gloved thumb hovers over a dark phone screen",
               "peak": "the thumb taps the screen hard three times",
               "settle": "the screen stays black"},
@@ -99,7 +99,7 @@
    "id": "S01-06", "scene": "S01", "mode": "scene", "seconds": 5, "source": "nextpose", "master": "S01-02",
    "last_frame": true,
    "beat": "The turn: something enormous is behind them.",
-   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "light": "flat grey daylight"},
+   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "light": "pale cold daylight under a low grey sky"},
    "blocking": [
     {"who": "walter", "where": "left", "facing": "right", "pose": "stands with his hands on his head"},
     {"who": "dee", "where": "center", "facing": "walter", "pose": "stands with her arms folded"},
