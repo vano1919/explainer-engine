@@ -1083,3 +1083,15 @@ of every clip; motion-only captions written off the pod (no paid captioner).
 take only when the check fails; release resolution 2K. The test film is made in three variants: 24 fps, 12 fps ("on twos") and
 a third with ~20 % less-animated shots (still + camera). Docs: project files lora_plan_2026-10-24/.
 
+## 2026-10-24 — KP: how animated-shot prompts are written (SHOT_PROMPTS.md, `scripting/shot_prompt_lint.py`)
+
+ვანო (15:35 Tbilisi): analyse the frame prompts of all iterations, single out my own mistakes, write rules and give them to the
+scenario agents. Corpus: the IC, max-length and eras LTX prompts, the scene LoRA samples, the zero-shot next poses, the video
+LoRA validation set, the running chain test. Findings: bare role words painted strangers (KP-01), the base model hands an action
+to the figure already posed for it (KP-02), exit verbs emptied the farm shot (KP-03), no camera sentence (KP-04), a moving train
+smeared the heroes (KP-05), over 10 s breaks (KP-06), framing words re-frame next poses (KP-07), and every LTX test ran with the
+stock negative prompt that names our style ("cartoonish rendering", "exaggerated expressions"; KP-09). Most mistakes were mine
+(table in the doc). The lint FAILs/REVIEWs these on the real prompts (test `tests/unit/test_shot_prompt_lint.py`); the
+story-architect, edit-planner and the skill `shot-visuals` now write shots to KP. The lint also found two vague prompts in the running chain test
+("the woman by the rock", "the cave man on the left"); both rewritten on HF before the pod read its code.
+
