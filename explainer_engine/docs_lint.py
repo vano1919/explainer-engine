@@ -41,7 +41,8 @@ HOMES = {
     "VB": "STORY_ENGINE.md",
     "ES": "EPISODE_STANDARDS.md",
     "TN": "THUMBNAIL_RULES.md",
-    "BP": "SOURCED_RULES.md",  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
+    "BP": "SOURCED_RULES.md",
+    "VT": "VAULT.md",  # the vault: nothing we made is lost (D-73, 2026-10-24)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))
 ID = re.compile(rf"\b({_PREFIX})-([TE]?\d{{2,3}})\b")

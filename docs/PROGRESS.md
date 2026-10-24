@@ -991,3 +991,24 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-24 - The vault: nothing we made is lost (D-73)
+
+The creator asked for a thread that makes sure none of the work is ever lost and all of it stays in his hands. Inventory
+(2026-10-24 09:30 UTC): the primary copy is the private HF dataset `vano1919/tmr-artifacts` (owned by vano1919; 9 290 files,
+47.8 GB); the approved style LoRA `wldnk_style_v1.0` matches its sha256 `b384ad49…` (same bytes as `train_qwen_v5` step 1750),
+the fallback matches step 1250; the Wan 2.2 LoRA (all checkpoints), every Qwen style run, datasets v1-v7, references and the
+scene LoRA's redrawn pairs are there. RunPod holds no data: the 12 stopped pods have 0 GB disks and no network volume
+exists; the one running pod is the scene LoRA training (not touched). Single point of failure: HF alone, and code only on
+GitHub branches of 9 open PRs.
+
+- `explainer_engine/vault.py` (stdlib): `snapshot` (HF tree API with sha256/blob ids -> `docs/VAULT_MANIFEST.json`, critical
+  rows by `config/vault.json`), `verify` (exit 1 on MISSING/CHANGED), `pull` (the second copy on any disk, hash-checked,
+  `.part` swapped in only after its hash matches, identical bytes copied instead of downloaded, re-runs download nothing),
+  `check-uploaded` (a pod proves its outputs are on HF before it stops), `lint_pod_script` (VT-01/02).
+- On HF: tag `vault-2026-10-24` pins today's state; `vault/code/` holds git bundles of both repositories, every branch.
+- Docs: [VAULT](VAULT.md) (VT-01..VT-05, restore), decision [D-73](DECISIONS_AND_OPEN_QUESTIONS.md), INDEX row; docs_lint knows VT-.
+- Tests: `tests/unit/test_vault.py` (8: paging, critical marking, loss and change caught, upload check, empty output, pull
+  re-check and twins, a corrupt download never overwrites, the lint). Nothing paid, nothing deleted.
+- Open: the second copy's place is the creator's call (his PC: `vault pull --dest <folder>`, ~6.8 GB); the pod-script lint is
+  wired into `runpod.lint_pod_script` when PR #22 (which adds that function) merges.
