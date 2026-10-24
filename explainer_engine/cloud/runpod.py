@@ -231,6 +231,8 @@ HEARTBEAT_EVERY_S = 300
 SILENT_ALERT_MIN = 20
 HEAVY_STEP = re.compile(r"snapshot_download|hf_hub_download|from_pretrained|pip install|git clone|\brun\.py\b|"
                         r"\bpython3?\s+(?!-)\S+\.py\b")
+CUDA_PROBE = re.compile(r"\bpython3?\s+-c\b.*\bcuda\b")
+BAD_HOST = "BAD_HOST"  # a pod script writes this into its heartbeat file when its GPU check fails or hangs
 UPLOAD_LOOP = re.compile(r"while\s+true;\s*do\s+sleep\s+(\d+);[^\n]*?\b(up|upload|upload_folder|hf\s+upload)\b[^\n]*?done\s*\)?\s*&")
 
 
@@ -255,6 +257,12 @@ def lint_pod_script(text):
         # guard reads a live pod as silent (scene LoRA pod, 2026-10-24: stages.txt froze for the 2 h training stage)
         out.append("the upload loop must rewrite its heartbeat file every pass (`date > out/beat.txt; up`): an unchanged "
                    "file is not re-uploaded and looks silent")
+    for i, ln in enumerate(lines):
+        if CUDA_PROBE.search(ln) and not ln.lstrip().startswith(("#", "timeout ")):
+            # chain pod 2026-10-24: `python -c "...torch.cuda.get_device_name(0)"` on a driver-550 host never returned;
+            # the upload loop kept the pod "alive" for 12 min ($0.6) while nothing ran
+            out.append(f"line {i + 1} touches CUDA without `timeout` ({ln.strip()[:60]}): a bad host hangs there; wrap it "
+                       f"(`timeout 120 python -c ...`) and on failure write {BAD_HOST} to the heartbeat file so the guard stops the pod")
     return out
 
 
@@ -276,9 +284,23 @@ def hf_heartbeat(spec, *, fetch=None):
     return _dt.datetime.fromisoformat(date.replace("Z", "+00:00")).timestamp()
 
 
-def heartbeat_step(sess, now, *, beat=hf_heartbeat, push=None):
+def hf_text(spec, *, fetch=None):
+    """The text of a small HF file "datasets/<owner>/<repo>:<path>" (the heartbeat file)."""
+    kind_repo, path = spec.split(":", 1)
+    url = f"https://huggingface.co/{kind_repo}/resolve/main/{path}"
+    if fetch is None:
+        def fetch(url):
+            tok = os.environ.get("HF_TOKEN", "")
+            req = urllib.request.Request(url, headers={"User-Agent": UA, **({"Authorization": f"Bearer {tok}"} if tok else {})})
+            return urllib.request.urlopen(req, timeout=20).read(4096).decode("utf-8", "replace")
+    return fetch(url)
+
+
+def heartbeat_step(sess, now, *, beat=hf_heartbeat, push=None, text=hf_text):
     """One heartbeat look for the guard: a fresh upload marks the pod as answered; a long silence after it pushes an alert
-    (never a stop). Returns "alive", "silent", "waiting" or None (no heartbeat configured / unreadable)."""
+    (never a stop). A heartbeat that says BAD_HOST (the pod's own GPU check failed or hung) returns "bad_host": the guard
+    stops that pod, which cannot stop itself. Returns "alive", "silent", "waiting", "bad_host" or None (no heartbeat
+    configured / unreadable)."""
     if not sess.get("heartbeat"):
         return None
     try:
@@ -289,7 +311,15 @@ def heartbeat_step(sess, now, *, beat=hf_heartbeat, push=None):
         changed = not sess.get("answered") or sess.get("heartbeat_at") != t
         sess.update(answered=True, heartbeat_at=t)
         if changed:
+            try:
+                said = text(sess["heartbeat"])
+            except Exception:  # noqa: BLE001 - the date alone still proves life
+                said = ""
+            if BAD_HOST in said:
+                sess["bad_host"] = said.strip()[:200]
             sess_write(sess)
+    if sess.get("bad_host"):
+        return "bad_host"
     if sess.get("heartbeat_at") is None:
         return "waiting"
     if now - sess["heartbeat_at"] > SILENT_ALERT_MIN * 60:
@@ -360,9 +390,15 @@ def find_by_name(api, name):
     return [p for p in api.pods(name=name) if p.get("name") == name and p.get("desiredStatus") not in GONE]
 
 
-def create(api, body, *, max_price, sleep=time.sleep, lookups=6):
+def create(api, body, *, max_price, sleep=time.sleep, lookups=6, any_cuda=False):
     """POST /pods once. After an unclear answer (timeout, 5xx) the pod is looked up by its unique name instead of POSTing
-    again: a second POST could rent a second pod. A card dearer than ``max_price`` is deleted at once (nothing is on it)."""
+    again: a second POST could rent a second pod. A card dearer than ``max_price`` is deleted at once (nothing is on it).
+    The body must keep ``allowedCudaVersions`` (chain pod 2026-10-24: without the filter RunPod gave a driver-550 host,
+    CUDA 12.4, to a CUDA 13 image and its first GPU call never returned); ``any_cuda=True`` only with a CUDA probe in the
+    pod script (``lint_pod_script``)."""
+    if not body.get("allowedCudaVersions") and not any_cuda:
+        raise RunPodError("create: the body has no allowedCudaVersions; an old-driver host can hang a new image (keep "
+                          f"{CUDA_VERSIONS}, or pass any_cuda=True when the pod script probes CUDA with a timeout)")
     pod, err = None, None
     for wait in (10, 30, 60, None):
         try:
@@ -511,7 +547,9 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
             sess_write(sess)
         if sess.get("heartbeat") and now - last_beat >= 120:
             last_beat = now
-            heartbeat_step(sess, now, push=push)
+            if heartbeat_step(sess, now, push=push) == "bad_host" and not sess.get("ended"):
+                end_pod(api, sess, f"the pod reported a bad host: {sess['bad_host'][:80]}", push=push, sleep=sleep)
+                return "bad host"
         if conductor and conductor.startswith(("STATUS DONE", "STATUS STOPPED", "STATUS CAPPED")) and not sess.get("ended"):
             sess["ended"] = now
             sess_write(sess)

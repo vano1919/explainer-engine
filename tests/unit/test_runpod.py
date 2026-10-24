@@ -454,7 +454,7 @@ def test_a_fresh_upload_is_the_pods_answer_and_silence_only_alerts(env):
     running = pod("hb")
     assert R.heartbeat_step(sess, 60, beat=lambda spec: None) == "waiting"
     assert "boot" in R.guard_check(sess, running, R.BOOT_MINUTES * 60 + 1)[1]       # no upload by the deadline: stop
-    assert R.heartbeat_step(sess, 600, beat=lambda spec: 500.0) == "alive" and sess["answered"]
+    assert R.heartbeat_step(sess, 600, beat=lambda spec: 500.0, text=lambda spec: "11:52:18") == "alive" and sess["answered"]
     assert R.guard_check(sess, running, R.BOOT_MINUTES * 60 + 1)[0] == "ok"         # the upload lifted the deadline
     pushed = []
     late = 500 + R.SILENT_ALERT_MIN * 60 + 1
@@ -463,3 +463,43 @@ def test_a_fresh_upload_is_the_pods_answer_and_silence_only_alerts(env):
     assert R.guard_check({**sess, "max_usd": 99}, running, late)[0] == "ok"           # silence is not a reason to stop
     assert R.heartbeat_step(sess, late + 30, beat=lambda spec: 500.0, push=lambda *a: pushed.append(a)) == "silent"
     assert len(pushed) == 1                                                           # one alert per silent spell
+
+
+CHAIN_SH = """set -x
+( while true; do sleep 240; date -u +%H:%M:%S > /workspace/out/beat.txt; up; done ) &
+nvidia-smi || true
+python -c "import torch;print('cuda ok',torch.cuda.is_available(),torch.cuda.get_device_name(0))" || { echo "CUDA BROKEN"; up; }
+pip install -q -U peft || true
+"""
+
+
+def test_a_cuda_check_without_a_timeout_is_refused():
+    """Chain pod 2026-10-24: the bare CUDA check never returned on a driver-550 host; the loop kept it "alive" 12 min ($0.6)."""
+    bad = R.lint_pod_script(CHAIN_SH)
+    assert len(bad) == 1 and "without `timeout`" in bad[0] and R.BAD_HOST in bad[0]
+    fixed = CHAIN_SH.replace('python -c "import torch', 'timeout 120 python -c "import torch')
+    assert R.lint_pod_script(fixed) == []
+
+
+def test_a_pod_that_reports_a_bad_host_is_stopped_by_its_guard(env):
+    sess = R.new_session(pod("bh"), max_usd=1.0, max_hours=2.0, now=0, heartbeat="datasets/o/r:log/beat.txt")
+    assert R.heartbeat_step(sess, 300, beat=lambda spec: 250.0, text=lambda spec: "11:52:18") == "alive"
+    said = "BAD_HOST cuda check rc=124 driver 550.54.15"
+    assert R.heartbeat_step(sess, 600, beat=lambda spec: 550.0, text=lambda spec: said) == "bad_host"
+    assert sess["bad_host"] == said
+    assert R.heartbeat_step(sess, 900, beat=lambda spec: 550.0, text=lambda spec: "") == "bad_host"   # it stays bad
+    seen = {}
+    assert R.hf_text("datasets/o/r:log/beat.txt", fetch=lambda u: seen.setdefault("url", u) and "x") == "x"
+    assert seen["url"] == "https://huggingface.co/datasets/o/r/resolve/main/log/beat.txt"
+
+
+def test_create_refuses_a_body_without_the_cuda_filter(env):
+    """Every launcher of 2026-10-23..24 popped allowedCudaVersions for stock; one got a CUDA 12.4 host for a CUDA 13 image."""
+    fake, api = env
+    body = R.create_body("ee-x-until-9999999999")
+    body.pop("allowedCudaVersions")
+    with pytest.raises(R.RunPodError, match="allowedCudaVersions"):
+        R.create(api, body, max_price=0.95, sleep=lambda s: None)
+    assert not fake.pods
+    assert R.create(api, body, max_price=0.95, sleep=lambda s: None, any_cuda=True)["id"] == "p1"
+

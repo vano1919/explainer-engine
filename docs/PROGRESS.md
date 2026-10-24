@@ -1095,3 +1095,14 @@ stock negative prompt that names our style ("cartoonish rendering", "exaggerated
 story-architect, edit-planner and the skill `shot-visuals` now write shots to KP. The lint also found two vague prompts in the running chain test
 ("the woman by the rock", "the cave man on the left"); both rewritten on HF before the pod read its code.
 
+## 2026-10-24 — LT-19: a pod's GPU check has a timeout; a bad host stops itself through the guard
+
+ვანო (16:20 Tbilisi): find why the chain-test pod hung and fix it if it was avoidable. Cause: my launchers dropped the
+`allowedCudaVersions` filter (for stock), so RunPod gave a driver-550 host (native CUDA 12.4, compat 13.0) to the CUDA 13
+aitoolkit image; the pod's `python -c "...torch.cuda.get_device_name(0)"` printed "cuda ok" and never returned. The background
+upload loop kept the heartbeat fresh, so the guard saw a live pod for 12 min (≈$0.6) until I read the log. The relaunch got a
+driver-595 host (CUDA 13.2) and ran normally. Fixes: `lint_pod_script` refuses a CUDA call without `timeout`; a failed probe
+writes BAD_HOST to the heartbeat and the guard stops that pod (`hf_text`, `heartbeat_step` -> "bad_host"); `create` refuses a
+body without the CUDA filter unless `any_cuda=True`. Tests: `test_a_cuda_check_without_a_timeout_is_refused`,
+`test_a_pod_that_reports_a_bad_host_is_stopped_by_its_guard`, `test_create_refuses_a_body_without_the_cuda_filter`.
+
