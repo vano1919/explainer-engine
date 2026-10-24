@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "film_shots.schema.json",
-  "title": "Film shot cards (version 1): the animated shots of an approved script, from which every picture, video and sound prompt is composed (docs/SHOT_PROMPTS.md, KP-15..KP-30)",
+  "title": "Film shot cards (version 1): the animated shots of an approved script, from which every picture, video and sound prompt is composed (docs/SHOT_PROMPTS.md, KP-15..KP-34)",
   "type": "object",
   "required": ["schema", "episode", "style", "cast", "places", "shots"],
   "additionalProperties": false,
@@ -16,7 +16,10 @@
         "who": {"type": "string", "description": "a cast id"},
         "where": {"$ref": "#/$defs/where"},
         "facing": {"type": "string", "description": "camera, left, right, away, or a cast id this person looks at"},
-        "pose": {"type": "string", "description": "the visible pose in the shot's FIRST frame (the start of the action)"}
+        "pose": {"type": "string", "description": "the visible pose in the shot's FIRST frame (the start of the action)"},
+        "on": {"type": "string", "description": "what the person stands, sits or lies on, as a phrase: 'standing on the packed snow', 'sitting on the bus step' (KP-31)"},
+        "height": {"enum": ["quarter", "third", "half", "two_thirds", "most"], "description": "how much of the frame height the figure fills (KP-32)"},
+        "height_pct": {"type": "integer", "minimum": 5, "maximum": 100, "description": "the same as a number, for the words-vs-numbers test; wins over height in the prompt when set"}
       }
     }
   },
@@ -78,7 +81,17 @@
               "over": {"type": "string", "description": "OTS: the cast id whose shoulder is in the foreground"},
               "place": {"type": "string", "description": "a key of places"},
               "light": {"type": "string"},
-              "crosses_line": {"type": "boolean", "description": "true only when the shot means to cross the 180-degree line"}
+              "crosses_line": {"type": "boolean", "description": "true only when the shot means to cross the 180-degree line"},
+              "relations": {"type": "array", "items": {"$ref": "#/$defs/text"},
+                            "description": "unambiguous relations between things in the picture, one sentence each: 'a living woolly mammoth stands behind the boulder' (KP-33)"},
+              "lead_room": {
+                "type": "object",
+                "required": ["side"],
+                "additionalProperties": false,
+                "description": "the free space the action moves into (KP-34); side none = the action stays in place",
+                "properties": {"side": {"enum": ["left", "right", "above", "below", "none"]},
+                               "for": {"type": "string", "description": "what the space is for: 'where he will fall'"}}
+              }
             }
           },
           "blocking": {"type": "array", "items": {"$ref": "#/$defs/person"}},

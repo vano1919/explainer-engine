@@ -19,7 +19,7 @@ the length); the `edit-planner` and the skill `shot-visuals` write the prompts. 
 | Kind | Model | Shape |
 |---|---|---|
 | `keyframe` | Qwen-Image-2512 + style LoRA | `wldnk style, ` + who (by what they look like) + the one action + where + light |
-| `nextpose` | Qwen-Image-Edit-2511 + scene LoRA (+ style LoRA), image = the MASTER | `nextpose, a later frame of the same continuous animated shot, same camera: ` + one actor's change, the others' small reaction + "Same characters, same camera ..." |
+| `nextpose` | Qwen-Image-Edit-2511 + scene LoRA only (never the style LoRA: on Edit-2511 it broke the style and merged the heroes, LoRA thread test 2026-10-24), image = the MASTER | `nextpose, a later frame of the same continuous animated shot, same camera: ` + one actor's change, the others' small reaction + "Same characters, same camera ..." |
 | `cut` | the same edit model, images = master + hero sheet | a new shot size or angle of the SAME place and time, the heroes as on the sheet |
 | `video` | LTX-2.5 (image = the keyframe) | one fixed style sentence; the actor and the action with a start, peak and settle; the others' reaction; "everyone stays in frame"; ONE camera sentence; at most three sounds |
 
@@ -102,7 +102,7 @@ this page; "ours" means our own tests of 2026-10-22..24.
 | keep | KP-12 | it is anticipation, action and follow-through (Thomas and Johnston); the first frame shows the start (KP-16) |
 | keep, now in code | KP-13 | KP-19 |
 
-### Rules KP-15..KP-30 (the shot card)
+### Rules KP-15..KP-34 (the shot card)
 
 | ID | Rule | Evidence | Kind | Check |
 |---|---|---|---|---|
@@ -122,12 +122,19 @@ this page; "ours" means our own tests of 2026-10-22..24.
 | KP-28 | **Every shot says what it does for the story** (`beat`, one sentence) and its `mode`: scene, narrated, establish or insert. A shot without a beat is not drawn | the creator: the story is the goal, pictures are the means (2026-10-20) | house | [schema] FAIL |
 | KP-29 | **Pin what the story needs, free what the model does well.** Pinned: who, where, gaze, the one action's three poses, the face, the line, the camera, the sounds. Free: secondary motion (hair, cloth, breath, blinks), the background's life, the exact timing inside the shot, the acting between the poses, the crowd. Never script a limb-by-limb path or more than one action chain per actor; never write "do not move" or "exactly" for acting | ice age and IC tests (over-constrained layouts froze); LTX guides (overloaded scenes break) | house + source | [editorial] |
 | KP-30 | **Prompts are composed, not typed**: the keyframe, next pose, cut and video prompts of a shot come from its card (`film_shots compose`), so the same tag, side, pose and line appear in every model's grammar; a hand-written prompt passes the same lint | the eras and scene tests mixed hand-written variants of one shot | house | [code] `film_shots check` |
+| KP-31 | **Everyone stands on something.** On a drawn first frame (keyframe, cut) every person in the blocking has `on`, a phrase that names the surface ("standing on the packed snow", "sitting on the bottom step of the bus door") | the creator 2026-10-24: composition in every picture prompt; floating and merged figures in the style-LoRA masters | house | [code] FAIL |
+| KP-32 | **The lead figure has a size**: `height` (a quarter, a third, half, two thirds, most of the frame height) on the actor, or the first person when nobody acts. `height_pct` writes the same as a number for the words-vs-numbers test; until that test, words are the default (numbers are not documented for Qwen-Image) | the creator 2026-10-24; the keyframe gate measures it | house | [code] FAIL |
+| KP-33 | **Relations the picture can draw one way only**: each `frame.relations` sentence says behind, in front of, on top of, under, to the left of...; "by", "near", "beside", "next to" or "with" alone FAIL ("a woolly mammoth by the boulder" drew a mammoth-shaped boulder) | the LoRA thread's master test 2026-10-24 | house | [code] FAIL |
+| KP-34 | **Free space for the action**: a drawn first frame with an action has `frame.lead_room` (left, right, above, below, or none when the action stays in place), so the video does not move a hand or a body out of the frame | the creator 2026-10-24; KP-03 (everyone stays in frame) | house | [code] FAIL |
 
 ## The shot card (`film_shots/1`)
 
 Schema: [`explainer_engine/schemas/film_shots.schema.json`](../explainer_engine/schemas/film_shots.schema.json); worked
 example: [`examples/film_shots/bus_in_the_ice_age.json`](../examples/film_shots/bus_in_the_ice_age.json) (the scene LoRA's
 bus test, rewritten as six cards: establish, master, cut, over-the-shoulder, insert, next pose; 0 FAIL, 0 REVIEW).
+Every composed prompt names its LoRA (`lora`: `style` on Qwen-Image-2512, `scene` on Edit-2511), and `compose` also writes
+one `gate` card per drawn first frame (keyframe, cut: the people by tag, side, height and support with the lead marked
+`actor`, the relations, the free space) for the keyframe gate of PR #22.
 
 | Field | Says | Written by |
 |---|---|---|
@@ -135,7 +142,8 @@ bus test, rewritten as six cards: establish, master, cut, over-the-shoulder, ins
 | `places` | each place once, as visible words | story-architect |
 | `beat`, `mode`, `scene` | what the shot does for the story; scene, narrated, establish or insert | story-architect |
 | `frame` (`size`, `angle`, `camera`, `camera_end`, `over`, `place`, `light`, `crosses_line`) | the frame | edit-planner |
-| `blocking[]` (`who`, `where`, `facing`, `pose`) | who stands where, looking where, in the first frame | edit-planner |
+| `blocking[]` (`who`, `where`, `facing`, `pose`, `on`, `height`, `height_pct`) | who stands where, looking where, on what, how big, in the first frame | edit-planner |
+| `frame.relations[]`, `frame.lead_room` (`side`, `for`) | how things in the picture stand to each other; the free space the action moves into | edit-planner |
 | `action` (`who`, `start`, `peak`, `settle`, `face`) | the one action, present-tense verb phrases; the face as cues | scene-writer, performance-director |
 | `reactions[]` | the others' one small verb each | scene-writer |
 | `dialogue` (`who`, `to`, `text`, `delivery`, `language`) | the line (from the script's line), how it is said | scene-writer, performance-director |

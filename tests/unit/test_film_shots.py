@@ -186,3 +186,52 @@ def test_numbers_come_from_the_sourced_rules():
     assert F.SPEECH_WPS == sourced_rules.T("BP-100", "words_per_second")
     assert F.CLOSE_FACES_MAX == sourced_rules.T("BP-101", "close_faces_max")
     assert F.SAME_SIZE_RUN_MAX == sourced_rules.T("BP-103", "same_size_run_max")
+
+
+def test_composition_fields_are_required_on_drawn_first_frames():
+    d = doc()
+    s = shot(d, "S01-02")
+    del s["blocking"][1]["on"]
+    del s["blocking"][0]["height"]
+    del s["frame"]["lead_room"]
+    got = found(d, "FAIL")
+    assert {("KP-31", "S01-02"), ("KP-32", "S01-02"), ("KP-34", "S01-02")} <= got
+    d = doc()
+    shot(d, "S01-02")["blocking"][1]["on"] = "the snow"  # names no surface relation
+    assert ("KP-31", "S01-02") in found(d, "FAIL")
+    d = doc()  # a next pose keeps the master's layout: its cards carry no on / height / lead_room
+    assert not any(r.startswith("KP-3") and w == "S01-06" for r, w in found(d))
+
+
+def test_vague_relations_fail():
+    d = doc()
+    shot(d, "S01-02")["frame"]["relations"] = ["a woolly mammoth by the boulder"]
+    assert ("KP-33", "S01-02") in found(d, "FAIL")
+    shot(d, "S01-02")["frame"]["relations"] = ["a living woolly mammoth stands behind the boulder"]
+    assert ("KP-33", "S01-02") not in found(d)
+
+
+def test_composition_is_written_into_keyframe_and_cut_prompts_only():
+    ps = prompts(doc())
+    k = ps["S01-02.first"]["prompt"]
+    assert "sitting on the bottom step of the bus door, filling about a third of the frame height" in k
+    assert "The yellow city bus stands behind the four of them." in k
+    assert "Empty space at the top of the frame, where his hands will go." in k
+    assert "filling most of the frame height" in ps["S01-04.first"]["prompt"]
+    assert "frame height" not in ps["S01-02.last"]["prompt"]  # a next pose never re-frames (KP-07)
+    d = doc()
+    shot(d, "S01-02")["blocking"][0]["height_pct"] = 55
+    assert "filling about 55 % of the frame height" in prompts(d)["S01-02.first"]["prompt"]
+
+
+def test_each_prompt_names_its_lora_and_the_gate_gets_a_card():
+    ps = prompts(doc())
+    assert ps["S01-02.first"]["lora"] == "style"
+    assert {ps[i]["lora"] for i in ("S01-02.last", "S01-03.first", "S01-06.first")} == {"scene"}  # never style in Edit
+    cards = {c["id"]: c for c in F.gate_cards(doc())}
+    assert "S01-06.first" not in cards  # a next pose is checked against its master
+    c = cards["S01-02.first"]
+    assert [p["actor"] for p in c["people"]] == [True, False, False, False]
+    assert c["people"][2] == {"tag": "the pink-haired girl in the yellow hoodie", "where": "center_back",
+                              "height": "third", "on": "sitting on the bottom step of the bus door", "actor": False}
+    assert c["lead_room"]["side"] == "above" and c["relations"]

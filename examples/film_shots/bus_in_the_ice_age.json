@@ -22,19 +22,25 @@
    "id": "S01-01", "scene": "S01", "mode": "establish", "seconds": 4, "source": "keyframe",
    "beat": "The world is wrong before anyone knows it: a city bus where no road has ever been.",
    "frame": {"size": "EWS", "angle": "high", "camera": "push_in", "camera_end": "the bus in the middle of the frame",
-             "place": "road", "light": "flat grey daylight"},
+             "place": "road", "light": "flat grey daylight",
+             "relations": ["the yellow city bus stands on the open snow, its wheels sunk up to the hubs"]},
    "narration": "The 7:40 express left on time. The town it was heading for won't be built for another twelve thousand years.",
    "sound": {"ambience": "wind hissing over open snow", "foley": ["the bus engine ticking as it cools"]}
   },
   {
    "id": "S01-02", "scene": "S01", "mode": "scene", "seconds": 5, "source": "keyframe", "last_frame": true,
    "beat": "Walter sees it first, and the others see him lose it.",
-   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "light": "flat grey daylight"},
+   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "light": "flat grey daylight",
+             "relations": ["the yellow city bus stands behind the four of them"],
+             "lead_room": {"side": "above", "for": "where his hands will go"}},
    "blocking": [
-    {"who": "walter", "where": "left", "facing": "right"},
-    {"who": "dee", "where": "center", "facing": "walter", "pose": "stands with her hands in her jacket pockets"},
-    {"who": "kim", "where": "center_back", "facing": "camera", "pose": "stands with headphones on her ears"},
-    {"who": "bo", "where": "right", "facing": "left", "pose": "rubs his hands together for warmth"}
+    {"who": "walter", "where": "left", "facing": "right", "on": "standing on the packed snow", "height": "two_thirds"},
+    {"who": "dee", "where": "center", "facing": "walter", "pose": "stands with her hands in her jacket pockets",
+     "on": "standing on the packed snow", "height": "two_thirds"},
+    {"who": "kim", "where": "center_back", "facing": "camera", "pose": "sits hunched with headphones on her ears",
+     "on": "sitting on the bottom step of the bus door", "height": "third"},
+    {"who": "bo", "where": "right", "facing": "left", "pose": "rubs his hands together for warmth",
+     "on": "standing in snow up to his ankles", "height": "two_thirds"}
    ],
    "action": {"who": "walter", "start": "squints at the empty white horizon",
               "peak": "throws both hands up above his head",
@@ -47,10 +53,12 @@
   {
    "id": "S01-03", "scene": "S01", "mode": "scene", "seconds": 5, "source": "cut", "master": "S01-02",
    "beat": "He wants the road back; she wants him calm before the others panic.",
-   "frame": {"size": "MS", "angle": "eye", "camera": "static", "place": "road_close", "light": "flat grey daylight"},
+   "frame": {"size": "MS", "angle": "eye", "camera": "static", "place": "road_close", "light": "flat grey daylight",
+             "lead_room": {"side": "below", "for": "where his finger will jab"}},
    "blocking": [
-    {"who": "walter", "where": "left", "facing": "dee"},
-    {"who": "dee", "where": "right", "facing": "walter", "pose": "stands with her arms folded"}
+    {"who": "walter", "where": "left", "facing": "dee", "on": "standing on the packed snow", "height": "most"},
+    {"who": "dee", "where": "right", "facing": "walter", "pose": "stands with her arms folded",
+     "on": "standing on the packed snow", "height": "most"}
    ],
    "action": {"who": "walter", "start": "lowers his hands slowly",
               "peak": "jabs a finger down at the snow at his feet, eyebrows shooting up",
@@ -64,10 +72,11 @@
    "id": "S01-04", "scene": "S01", "mode": "scene", "seconds": 5, "source": "cut", "master": "S01-02",
    "beat": "Her calm turns into the first admission that something is truly wrong.",
    "frame": {"size": "OTS", "over": "walter", "angle": "eye", "camera": "push_in", "camera_end": "her face",
-             "place": "road_close", "light": "flat grey daylight"},
+             "place": "road_close", "light": "flat grey daylight",
+             "relations": ["the yellow city bus stands behind her"], "lead_room": {"side": "none"}},
    "blocking": [
-    {"who": "walter", "where": "left_front", "facing": "dee"},
-    {"who": "dee", "where": "right", "facing": "walter"}
+    {"who": "walter", "where": "left_front", "facing": "dee", "on": "standing on the packed snow", "height": "most"},
+    {"who": "dee", "where": "right", "facing": "walter", "on": "standing on the packed snow", "height": "two_thirds"}
    ],
    "action": {"who": "dee", "start": "looks past him at the bus",
               "peak": "jerks her thumb back at the bus behind her",

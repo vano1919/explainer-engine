@@ -4,7 +4,7 @@ A shot card says what the shot is for (``beat``), the frame (size, angle, camera
 looks where (``blocking``), the one action with its start, peak and settle, the others' reactions, the line spoken (or
 the narrator's line over it) and the sound. ``compose`` writes every prompt from those fields, so the keyframe, the next
 pose, the cut and the video always say the same thing in each model's own grammar; ``check`` runs the card rules
-(KP-15..KP-30, docs/SHOT_PROMPTS.md) and then the prompt lint (KP-01..KP-14) on what it composed.
+(KP-15..KP-34, docs/SHOT_PROMPTS.md) and then the prompt lint (KP-01..KP-14) on what it composed.
 
     python -m explainer_engine.scripting.film_shots check <film_shots.json>
     python -m explainer_engine.scripting.film_shots compose <film_shots.json> [--out prompts.json]
@@ -50,6 +50,12 @@ NEG_KEYFRAME = ("text, watermark, logo, signature, extra people, duplicated pers
                 "extra limbs, blurry face, low resolution")
 NEG_VIDEO = ("text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, "
              "deformed hands, extra fingers, flicker, still image")
+HEIGHTS = {"quarter": "a quarter", "third": "a third", "half": "half", "two_thirds": "two thirds", "most": "most"}
+# KP-33: a relation the picture can draw one way only; "by the boulder" can be any side, or the boulder itself
+CLEAR = re.compile(r"\b(?:behind|in front of|on top of|on|under|beneath|inside|above|below|against|to the (?:left|right) of|"
+                   r"in the (?:fore|back)ground|holds?|holding|rides?|riding)\b", re.I)
+VAGUE = re.compile(r"\b(?:by|near|beside|next to|with|around|close to)\b", re.I)
+SUPPORT = re.compile(r"\b(?:on|in|against|at|astride|inside|over)\b", re.I)
 BARE = re.compile(r"(?:the|a|an|one)?\s*(?:old|young|little|tall|short|big|small)?\s*(?:woman|man|girl|boy|person|guy|lady|"
                   r"kid|child|caveman|cavewoman|stranger|figure)", re.I)
 STOP = set("a an the and or but of to in on at by for with from his her their its it he she they them this that is are was "
@@ -85,13 +91,61 @@ def _facing(doc: dict, facing: str) -> str:
     return plain.get(facing) or f"looking at {_tag(doc, facing)}"
 
 
-def _people(doc: dict, shot: dict, *, actor_pose: str | None) -> list[str]:
+def _height(p: dict) -> str:
+    if p.get("height_pct"):
+        return f"filling about {p['height_pct']} % of the frame height"
+    if p.get("height") == "most":
+        return "filling most of the frame height"
+    return f"filling about {HEIGHTS[p['height']]} of the frame height" if p.get("height") else ""
+
+
+def _people(doc: dict, shot: dict, *, actor_pose: str | None, layout: bool = False) -> list[str]:
+    """Each person by tag, side, gaze and pose; with ``layout`` (a drawn first frame) also what they stand on and how
+    much of the frame height they fill (KP-31, KP-32)."""
     action = shot.get("action") or {}
     out = []
     for p in shot.get("blocking", []):
         pose = actor_pose if p["who"] == action.get("who") and actor_pose else p.get("pose") or "stands"
-        out.append(_end(f"{_cap(_tag(doc, p['who']))}, {WHERE[p['where']]}, {_facing(doc, p['facing'])}, {pose}"))
+        bits = [_cap(_tag(doc, p["who"])), WHERE[p["where"]], _facing(doc, p["facing"])]
+        bits += [] if layout and p.get("on") and pose == "stands" else [pose]  # "stands, standing on the snow"
+        if layout:
+            bits += [x for x in (p.get("on", ""), _height(p)) if x]
+        out.append(_end(", ".join(bits)))
     return out
+
+
+def _layout(shot: dict) -> list[str]:
+    """The relations between things and the free space the action moves into (KP-33, KP-34)."""
+    f = shot["frame"]
+    out = [_end(_cap(r)) for r in f.get("relations", [])]
+    room = f.get("lead_room") or {}
+    why = f", {room['for']}" if room.get("for") else ""
+    if room.get("side") in ("left", "right"):
+        out.append(_end(f"Empty space on the {room['side']} side of the frame{why}"))
+    elif room.get("side") in ("above", "below"):
+        out.append(_end(f"Empty space at the {'top' if room['side'] == 'above' else 'bottom'} of the frame{why}"))
+    return out
+
+
+def _lead(shot: dict) -> str | None:
+    """The figure the frame is built around: the actor, else the first person in the blocking."""
+    who = (shot.get("action") or {}).get("who")
+    people = [p["who"] for p in shot.get("blocking", [])]
+    return who if who in people else (people[0] if people else None)
+
+
+def gate_card(doc: dict, shot: dict) -> dict:
+    """What the keyframe gate (PR #22, qa/keyframe_gate.py) checks a drawn first frame against: the people by tag,
+    side, height and support (the lead marked ``actor``), the relations and the free space."""
+    f, lead = shot["frame"], _lead(shot)
+    people = [{"tag": _tag(doc, p["who"]), "where": p["where"], "height": p.get("height"), "on": p.get("on"),
+               "actor": p["who"] == lead} for p in shot.get("blocking", [])]
+    return {"id": f"{shot['id']}.first", "kind": shot["source"], "size": f["size"], "people": people,
+            "relations": list(f.get("relations", [])), "lead_room": dict(f.get("lead_room") or {})}
+
+
+def gate_cards(doc: dict) -> list[dict]:
+    return [gate_card(doc, s) for s in doc["shots"] if s["source"] in ("keyframe", "cut")]
 
 
 def _where(shot: dict, who: str) -> str:
@@ -122,9 +176,10 @@ def keyframe_prompt(doc: dict, shot: dict) -> str:
     if f["size"] == "OTS" and f.get("over"):
         head += f", past the shoulder of {_tag(doc, f['over'])} in the foreground"
     action = shot.get("action") or {}
-    parts = [_end(head)] + _people(doc, shot, actor_pose=action.get("start"))
+    parts = [_end(head)] + _people(doc, shot, actor_pose=action.get("start"), layout=True)
     if action and not any(p["who"] == action.get("who") for p in shot.get("blocking", [])):
         parts.append(_end(_cap(action["start"])))
+    parts += _layout(shot)
     n = len(shot.get("blocking", []))
     if n and f["size"] not in WIDE:
         parts.append(f"Only these {n} {'person is' if n == 1 else 'people are'} in the picture.")
@@ -155,7 +210,8 @@ def cut_prompt(doc: dict, shot: dict) -> str:
     over = f", past the shoulder of {_tag(doc, f['over'])}" if f["size"] == "OTS" and f.get("over") else ""
     action = shot.get("action") or {}
     parts = [f"The same place, light and characters as in the first image, now {_a(_frame(shot))}{over}."]
-    parts += _people(doc, shot, actor_pose=action.get("start"))
+    parts += _people(doc, shot, actor_pose=action.get("start"), layout=True)
+    parts += _layout(shot)
     parts.append("Every character looks exactly as on their character sheet.")
     return " ".join(parts)
 
@@ -211,16 +267,17 @@ def compose(doc: dict) -> list[dict]:
     for shot in doc["shots"]:
         sid, src = shot["id"], shot["source"]
         if src == "keyframe":
-            out.append({"id": f"{sid}.first", "kind": "keyframe", "prompt": keyframe_prompt(doc, shot),
+            out.append({"id": f"{sid}.first", "kind": "keyframe", "lora": "style", "prompt": keyframe_prompt(doc, shot),
                         "neg": style.get("neg_keyframe", NEG_KEYFRAME)})
         elif src == "nextpose":
             out.append({"id": f"{sid}.first", "kind": "nextpose", "source": "master", "master": shot.get("master"),
-                        "prompt": nextpose_prompt(doc, shot, end=False)})
+                        "lora": "scene", "prompt": nextpose_prompt(doc, shot, end=False)})
         else:
-            out.append({"id": f"{sid}.first", "kind": "cut", "master": shot.get("master"), "prompt": cut_prompt(doc, shot)})
+            out.append({"id": f"{sid}.first", "kind": "cut", "master": shot.get("master"), "lora": "scene",
+                        "prompt": cut_prompt(doc, shot)})
         if shot.get("last_frame"):
             out.append({"id": f"{sid}.last", "kind": "nextpose", "source": "master",
-                        "master": sid if src == "keyframe" else shot.get("master"),
+                        "master": sid if src == "keyframe" else shot.get("master"), "lora": "scene",
                         "prompt": nextpose_prompt(doc, shot, end=True)})
         out.append({"id": f"{sid}.video", "kind": "video", "seconds": shot["seconds"], "exit": bool(shot.get("exit")),
                     "mode": shot["mode"], "people": len(shot.get("blocking", [])),
@@ -234,7 +291,7 @@ def _words(text: str) -> set[str]:
 
 
 def check(doc: dict) -> list[dict]:
-    """The card rules (KP-15..KP-30) and then the prompt lint on the composed prompts. A schema error stops here."""
+    """The card rules (KP-15..KP-34) and then the prompt lint on the composed prompts. A schema error stops here."""
     out: list[dict] = []
 
     def add(rule: str, sev: str, where: str, detail: str) -> None:
@@ -315,6 +372,22 @@ def check(doc: dict) -> list[dict]:
             if said and seen and len(said & seen) / len(said) >= 0.5:
                 add("KP-20", "REVIEW", sid, "the narration says what the picture shows: give the narrator what the heroes "
                                             "cannot know, let the picture show the rest")
+        # KP-31..KP-34: a drawn first frame (keyframe or cut) states its composition
+        if shot["source"] in ("keyframe", "cut") and shot.get("blocking"):
+            for p in shot["blocking"]:
+                if not p.get("on"):
+                    add("KP-31", "FAIL", sid, f"{p['who']}: what does the figure stand or sit on? ('standing on the packed snow')")
+                elif not SUPPORT.search(p["on"]):
+                    add("KP-31", "FAIL", sid, f"{p['who']}: '{p['on']}' names no surface ('standing on ...', 'sitting in ...')")
+            lead = next(p for p in shot["blocking"] if p["who"] == _lead(shot))
+            if not (lead.get("height") or lead.get("height_pct")):
+                add("KP-32", "FAIL", sid, f"{lead['who']}: how much of the frame height does the figure fill?")
+            if action and not f.get("lead_room"):
+                add("KP-34", "FAIL", sid, "where is the free space the action moves into? (lead_room; side none if it stays)")
+        for r in f.get("relations", []):
+            if not CLEAR.search(r):
+                why = "a vague relation" if VAGUE.search(r) else "no relation"
+                add("KP-33", "FAIL", sid, f"'{r}': {why}; say behind, in front of, on top of, under, to the left of ...")
         # KP-27: next poses and cuts come from a keyframe master of the same scene
         if shot["source"] in ("nextpose", "cut"):
             m = by_id.get(shot.get("master", ""))
@@ -369,7 +442,7 @@ def main(argv: list[str]) -> int:
             print("\n".join(errors))
             return 1
         prompts = compose(doc)
-        text = json.dumps({"shots": prompts}, ensure_ascii=False, indent=1)
+        text = json.dumps({"shots": prompts, "gate": gate_cards(doc)}, ensure_ascii=False, indent=1)
         if "--out" in argv:
             from explainer_engine.core.store import write_text_atomic
 

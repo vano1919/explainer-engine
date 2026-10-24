@@ -1111,3 +1111,14 @@ no score music, no story names, no quality words, no "smooth motion", the change
 `examples/film_shots/bus_in_the_ice_age.json` (0 FAIL, 0 REVIEW) and `tests/unit/test_film_shots.py`. Agents story-architect,
 scene-writer, performance-director, edit-planner and the skill shot-visuals write their fields of the card. The narrator-and-
 scene structure waits for the documentaries ვანო will send (16:05).
+
+
+## 2026-10-24 — KP-31..KP-34: composition in every picture prompt (shot cards)
+
+ვანო (18:53 Tbilisi, LoRA thread): every picture prompt must state its composition, the sizes of the bodies and the space.
+Done: the shot card gains `blocking[].on` (what each person stands or sits on), `blocking[].height` (a quarter .. most of the
+frame height; `height_pct` as a number for the words-vs-numbers test), `frame.relations[]` and `frame.lead_room`; the
+composer writes them into keyframe and cut prompts (never into a next pose, which keeps the master's layout); KP-31..KP-34
+FAIL when they are missing or vague ("by the boulder"); every composed prompt names its LoRA (`style` / `scene`, never the
+style LoRA on Edit-2511) and `compose` writes one gate card per drawn first frame for the keyframe gate (PR #22). The worked
+example passes (0 FAIL, 0 REVIEW); tests in `tests/unit/test_film_shots.py`.

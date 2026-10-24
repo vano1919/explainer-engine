@@ -41,7 +41,7 @@ For each segment:
    `python -m explainer_engine.scripting.shot_prompt_lint <shots.json>`: 0 FAIL before any paid render.
    Since 2026-10-24 the prompts are composed, not typed (KP-30): write one shot card per shot in `film_shots.json`
    (`film_shots/1`, docs/SHOT_PROMPTS.md "The shot card"): your fields are `frame` (size, angle, camera with
-   `camera_end`, place, light), `blocking` (each person's screen side, gaze and first-frame pose), `sound` (at most three,
+   `camera_end`, place, light), `blocking` (each person's screen side, gaze, first-frame pose, what they stand or sit on and how much of the frame height they fill; KP-31, KP-32), `relations` and `lead_room` on the frame (KP-33, KP-34), `sound` (at most three,
    a visible source each, no score music, KP-21) and `source`/`master`/`last_frame`. Follow the cartoons' grammar (KP-26):
    open a scene wide, cut in to singles and over-the-shoulder reverses, keep screen sides, a close shot on the turn, no
    more than three shots of one size in a row, a static camera unless the move is the event, at most two people in a
