@@ -264,29 +264,47 @@ def keyframe_prompt(doc: dict, shot: dict) -> str:
     where = where if re.match(r"(?:inside|in|on|at|under|by)\b", where) else "of " + where
     first = [_frame(shot) + (f" past the shoulder of {_tag(doc, f['over'])}" if f["size"] == "OTS" and f.get("over")
                              and f["over"] != lead else "") + " " + where]
-    must = [_person_short(doc, shot, p, action.get("start")) for p in people if p["who"] == lead]
-    if action and not any(p["who"] == action.get("who") for p in people):
-        must.append(action["start"])
     others = [p for p in people if p["who"] != lead and not (f["size"] == "OTS" and p["who"] == f.get("over"))]
-    extra = [(_person_short(doc, shot, p, action.get("start")), _person_short(doc, shot, p, None, brief=True))
-             for p in others]
-    extra += [(f["light"], None)] if f.get("light") else []
+    # each piece has levels from bare to full; the prompt starts at the barest that keeps everyone counted and is
+    # raised step by step while it fits (the light, the lead, everyone's side, the others in full, the place, the relations)
+    pieces: list[list[str]] = []
+    for p in people:
+        if p["who"] == lead:
+            pieces.append([f"{_core(_tag(doc, lead))} {WHERE[p['where']]}", _person_short(doc, shot, p, action.get("start"))])
+    if action and not any(p["who"] == action.get("who") for p in people):
+        pieces.append([action["start"]])
+    lead_n = len(pieces)
+    for p in others:
+        core = _core(_tag(doc, p["who"]))
+        core = f"only {p['partial']} of {core}" if p.get("partial") else core
+        pieces.append([core, _person_short(doc, shot, p, None, brief=True), _person_short(doc, shot, p, action.get("start"))])
+    light = len(pieces)
+    pieces.append(["", f["light"]] if f.get("light") else [""])
     rest = place[len(_short(place)):].strip(" ,")
-    extra += [(rest, None)] if rest else []
-    extra += [(r, None) for r in f.get("relations", [])]
-    parts = first + must
+    pieces += [["", x] for x in ([rest] if rest else []) + list(f.get("relations", []))]
+    level = [1 if i < lead_n and len(pc) == 1 else 0 for i, pc in enumerate(pieces)]
+    level = [0 if len(pc) == 1 else lv for pc, lv in zip(pieces, level)]
     budget = KEYFRAME_WORDS_MAX - len(f"{doc['style']['trigger']}, , {tail}".split())
-    # everyone in the blocking is placed (briefly if need be) before the light, the rest of the place and the relations
-    briefs = [b for _, b in extra if b]
-    for e, brief in extra:
-        reserve = len(" ".join(b for b in briefs[1:] if b).split()) if brief else len(" ".join(briefs).split())
-        if len(", ".join(parts + [e]).split()) + reserve <= budget:
-            parts.append(e)
-        elif brief:
-            parts.append(brief)
-        if brief:
-            briefs.pop(0)
-    return f"{doc['style']['trigger']}, {', '.join(parts)}, {tail}"
+
+    def text() -> str:
+        return ", ".join(first + [pc[lv] for pc, lv in zip(pieces, level) if pc[lv]])
+
+    def raise_to(i: int, lv: int) -> None:
+        old = level[i]
+        if lv < len(pieces[i]) and lv > old:
+            level[i] = lv
+            if len(text().split()) > budget:
+                level[i] = old
+
+    order = [(light, 1)] + [(i, 1) for i in range(lead_n)] + [(i, 1) for i in range(lead_n, light)]  # the light carries the look
+    order += [(i, 2) for i in range(lead_n, light)] + [(i, 1) for i in range(light + 1, len(pieces))]
+    for i, lv in order:
+        raise_to(i, lv)
+    out = text()
+    if len(out.split()) > budget and light > lead_n:  # too many figures even bare: count the rest
+        out = ", ".join(first + [pc[lv] for pc, lv in zip(pieces[:lead_n], level[:lead_n])]
+                        + [f"{len(others)} more figures around"] + ([f["light"]] if level[light] else []))
+    return f"{doc['style']['trigger']}, {out}, {tail}"
 
 
 def nextpose_prompt(doc: dict, shot: dict, *, end: bool) -> str:

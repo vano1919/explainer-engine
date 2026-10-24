@@ -404,7 +404,7 @@ def test_a_partly_visible_figure_is_written_and_counted_without_support():
     s["blocking"].append({"who": "mammoth", "where": "right", "facing": "left", "partial": "the trunk"})
     assert "KP-31" not in rules(d, "FAIL")
     k = prompts(d)["S01-02.first"]["prompt"]
-    assert "only the trunk of the woolly mammoth" in k and "on the right" in k
+    assert "only the trunk of the woolly mammoth" in k  # its side is the gate card's when words run out
     card = {c["id"]: c for c in F.gate_cards(d)}["S01-02.first"]
     assert card["people"][-1]["partial"] == "the trunk"
 
@@ -451,3 +451,18 @@ def test_the_shot_list_puts_every_prompt_under_its_shot():
     assert "Teaser: the clip of X10" in text and "First frame" in text and "Video (" in text
     assert text.count("\n### ") == len(d["shots"])
     assert "Only these 1 " not in json.dumps(F.compose(d))
+
+
+def test_a_crowded_keyframe_stays_in_the_word_limit_and_keeps_its_light():
+    d = doc()
+    s = shot(d, "S01-02")
+    for i, w in enumerate(["left_front", "right_front"]):
+        d["cast"][f"x{i}"] = {"tag": f"the very tall stranger number {i} in a long patched green coat with a wide hat"}
+        s["blocking"].append({"who": f"x{i}", "where": w, "facing": "camera", "on": "standing in the snow", "height": "half"})
+    d["cast"]["mammoth"] = {"tag": "the woolly mammoth with a broken left tusk and frost on its long brown fur"}
+    s["blocking"].append({"who": "mammoth", "where": "center_back", "facing": "left", "on": "standing on the hill",
+                          "height": "third"})
+    k = F.keyframe_prompt(d, s)
+    assert len(k.split()) <= F.KEYFRAME_WORDS_MAX and k.endswith(F.STYLE_TAIL)
+    assert s["frame"]["light"] in k  # the light carries the look
+    assert all(F._core(F._tag(d, b["who"])) in k for b in s["blocking"])  # everyone still counted

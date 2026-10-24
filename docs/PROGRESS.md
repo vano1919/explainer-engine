@@ -1288,3 +1288,7 @@ the shape it was trained on. New rules:
 Follow-up: PR #22's head (5049711, `qa/style_prompt.py`) merged into this branch; the composer now takes `STYLE_TAIL` and
 the 90-word limit from it and `film_shots check` runs its `check` (washed-out light words REVIEW); the Napoleon cards' grey
 and flat lights recoloured (0 FAIL, 0 REVIEW).
+Follow-up 2: the keyframe words are built by levels (bare tag head -> with side -> full), raised in order light, lead,
+sides, others in full, the rest of the place, relations, so a crowded shot (the 1-minute film's six figures came to 101
+words) stays at 90 and keeps its light; the 1-minute film card recoloured ("flat grey daylight", "empty white") and its
+"a living woolly mammoth" relations named by tag (0 FAIL, 0 REVIEW).

@@ -116,7 +116,7 @@ sheet is what every keyframe, pose and clip is checked against (invariant 6).
 
 **Master keyframe (Qwen-Image-2512 + style LoRA)** `{"id": "S04-01.first", "kind": "keyframe", "lora": "style"}`
 
-> wldnk style, wide shot at eye level of a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap on the right, rides up toward the tents, the tall marshal on the left, the short general in the center, the mameluke rider in the background on the left, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+> wldnk style, wide shot at eye level of a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap on the right, rides up toward the tents, the tall marshal on the left, the short general in the center, the mameluke rider, warm late afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
 
 **Cut, new size of the master (Edit-2511 + scene LoRA)** `{"id": "S04-07.first", "kind": "cut", "lora": "scene", "master": "S04-01"}`
 
