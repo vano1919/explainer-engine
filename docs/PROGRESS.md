@@ -1037,3 +1037,6 @@ built on researched testing practice, and for step-by-step control of the runnin
   I2V acts well; by length: 10 s clean (detail x0.75), 15 s a duplicated girl appears in the bus window and the bus
   changes, 20 s two heroes turn translucent (detail x0.57) and "Static camera" is ignored at every length. New LT-53
   REVIEW on detail loss catches the 20 s ghosting; cartoon norm (120 shots): hold share p50 0.77.
+- 00:20 (2026-10-24) IC conditioning strength 0.6 and 0.4 (hoping the model adds acting): the render turns into the grey
+  clay layout and still does not act; Layout-To-Render needs strength 1.0, and acting must come from the layout itself.
+  LT-54 now FAILs a saturation loss over 0.2. Night video tests ≈$2.5 (4 pods, all stopped).

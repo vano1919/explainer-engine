@@ -206,7 +206,10 @@ def judge(m, ref=None):
     if m.get("sharp_min_vs_start", 1) < Q.get("sharp_keep_min", 0.65):
         f.append(finding("LT-53", "REVIEW", f"detail falls to {m['sharp_min_vs_start']} x frame 0 (soft, ghosting or "
                                             f"translucent people: the 20 s max-length test faded two heroes out)"))
-    if abs(m["sat_end_minus_start"]) > Q.get("sat_drift_max", 0.08) or abs(m["luma_end_minus_start"]) > Q.get("luma_drift_max", 0.08):
+    if m["sat_end_minus_start"] < -Q.get("sat_loss_fail", 0.2):
+        f.append(finding("LT-54", "FAIL", f"colour lost ({m['sat_end_minus_start']:+} saturation): an IC render copying its grey "
+                                          f"layout (conditioning strength under 1.0, test 2026-10-24)"))
+    elif abs(m["sat_end_minus_start"]) > Q.get("sat_drift_max", 0.08) or abs(m["luma_end_minus_start"]) > Q.get("luma_drift_max", 0.08):
         f.append(finding("LT-54", "REVIEW", f"colour drift: saturation {m['sat_end_minus_start']:+}, brightness "
                                             f"{m['luma_end_minus_start']:+} (fine when the scene asks for it)"))
     for lab, r in (m.get("regions") or {}).items():

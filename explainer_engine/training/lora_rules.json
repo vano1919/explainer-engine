@@ -117,6 +117,7 @@
   "part_keep_min": 0.45,
   "layout_gap_max": 1.0,
   "ink_max": 50,
-  "sharp_keep_min": 0.65
+  "sharp_keep_min": 0.65,
+  "sat_loss_fail": 0.2
  }
 }
