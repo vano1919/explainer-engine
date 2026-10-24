@@ -11,14 +11,14 @@ Code: `explainer_engine/qa/keyframe_gate.py`, tested by `tests/unit/test_keyfram
 ## The flow
 
 1. A shot card (film_shots) becomes a master. The master is drawn with Qwen-Image-2512 and the style LoRA, in 3 variants.
-2. Each variant goes to the gate (KG-01..KG-13).
+2. Each variant goes to the gate (KG-01..KG-13, KG-17..KG-21), then to Claude's table (KG-22).
 3. A passing variant goes on. Next poses are drawn from it with Qwen-Image-Edit-2511 and the scene LoRA only, and every pose
    goes through the gate again.
 4. A failing shot is drawn again with a new seed, at most 3 times (KG-14). After that the prompt is fixed.
 5. Every picture writes one line to `qa_log.jsonl`. The session's `summary` turns those lines into actions (KG-15).
 
-The questions go to a vision model as one numbered list (`vlm_prompt`). Qwen2.5-VL-7B is already on the training pod, so
-this is free. Claude reads a sample of the same pictures and answers the same questions; where the two disagree, the
+The questions go to Qwen2.5-VL-72B (AWQ) one at a time (`single_prompt`, KG-20); the 7B with one numbered list proved
+unreliable on the film tests. Claude then fills the same questions for every picture (KG-22); where the two disagree, the
 disagreement is itself logged.
 
 ## Rules
@@ -39,6 +39,11 @@ disagreement is itself logged.
 | KG-12 | the actor's arms and hands are fully inside a master, in a full shot or wider (MS, MCU, CU and ECU cut the arms by design) | yes | yes | IC layouts with cut limbs froze (KP-12); film test v2 failed a close-up for it |
 | KG-13 | next pose or cut: the same drawing style as the first image | yes | yes | style LoRA inside Edit changed the look (2026-10-24) |
 | KG-17 | no measurement lines, arrows, rulers, percentages or numbers drawn over the picture | no | yes | film test v2: a prompt with numbers drew them in 6 of 10 pictures, and the soft text check (KG-10) noticed only 2 |
+| KG-18 | two figures are not look-alikes (same hair colour or same clothes), asked when the card has two or more | no | yes | the pink-haired girl drawn twice in all 10 bus pictures (2026-10-24); a per-figure count alone let it through |
+| KG-19 | each figure has its sheet marks (`marks`: round glasses, a red scarf) | yes | yes | asset test: the old man lost his glasses and the gate said nothing |
+| KG-21 | the world's absent things are absent (`absent`: a road, a car, a building in the ice age); objects are counted (`things`: one bus) | no / the count | yes | asset test: three buses; a mammoth in a car's trunk on asphalt |
+| KG-20 | **The judge is Qwen2.5-VL-72B (AWQ) and every question is asked on its own** (`VLM_MODEL`, `single_prompt`) | - | - | the 7B with one numbered list missed a second mammoth, three buses and the twins, and failed correct clothes |
+| KG-22 | **Claude's own table before the creator sees a picture** (`keyframe_gate table`): every gate question plus the style row against the approved eras sheet, filled with what the picture shows; a picture is never shown with "looks fine" | - | - | ვანო 2026-10-24 23:29 Tbilisi: "you think it's fine", while every bus picture had a twin |
 | KG-14 | **At most 3 tries per shot.** Then the prompt is fixed, never an endless redraw | - | - | ვანო: regenerate only on a fail; spend nothing blind |
 | KG-15 | **The cause is measured, not guessed.** The same prompt is drawn without the LoRA, and with the LoRA on another seed, on 2-3 pictures per new error type. If the base model also makes the error, the fix is the prompt: a lint rule and a test, which is free and always tried first. If only the LoRA makes it, on both seeds, the cause is the LoRA: such cases are collected, and at 15 of one type a retraining with passing pictures of that case is proposed to the creator (paid), followed by a re-run of the old test sheet. If the other seed is clean, it was chance | - | - | KP-14; a LoRA always retrains as a whole, so the added data aims at the weak part and the old sheet guards the rest |
 | KG-16 | **A LoRA loads only into the base it was trained on.** The style LoRA goes only into Qwen-Image-2512 (masters, hero sheets); the scene LoRA only into Edit-2511 (poses, cuts) (`check_stack`) | - | - | the style-weight test 2026-10-24: the style LoRA inside Edit swapped identities at every weight, and with the scene LoRA at 0.8 it gave junk; Edit with the scene LoRA alone kept a wldnk master's style in 4 of 4 poses |
@@ -87,3 +92,4 @@ computes the layout from real sizes and the camera, and Claude only names the th
 | LY-06 | **The relative prompt:** every figure compared with the lead in words ("about twice as tall as", "about 11 metres behind", "about 5 metres higher up") | [code] |
 | LY-07 | **EliGen boxes** come from the same layout | [code] |
 | LY-08 | **The blockout:** grey figures on a ground gradient, nearer = lighter. It is a depth-like control picture for a ControlNet (depth / soft edge), the "simple figures first, our style after" path | [code] |
+| LY-09 | **Every figure's full tag is said once per prompt.** Later mentions use "the" + its noun (`short`); `repeated_tags` FAILs a prompt that repeats a full tag | [code] |

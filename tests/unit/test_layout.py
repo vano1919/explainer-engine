@@ -57,7 +57,12 @@ def test_technical_relative_and_eligen_come_from_one_layout():
     tech = L.technical(lay)
     assert tech.startswith("The old man") and "35 % ± 5 % of the frame height" in tech and "centred 22 % from the left" in tech
     rel = L.relative(lay)
-    assert f"{MAMMOTH} is about twice as tall as {OLD} and stands about 11 metres behind {OLD}, about 5 metres higher up" in rel
+    assert "the mammoth is about twice as tall as the man and stands about 11 metres behind the man, about 5 metres higher up" in rel
+    # LY-09: the full tags are said once, in the people sentences; the relative block names each figure by its noun
+    assert MAMMOTH not in rel and OLD not in rel
+    assert L.repeated_tags(f"{OLD}, left. {MAMMOTH}, behind. " + rel, [OLD, MAMMOTH]) == []
+    assert [f["where"] for f in L.repeated_tags(f"{OLD}, left. {OLD} looks up.", [OLD, MAMMOTH])] == [OLD]
+    assert L.short(OLD, [OLD, "the young man in a blue coat"]) == OLD     # two men: the noun alone is ambiguous
     assert "about one and a half times as tall as" in rel or "about twice as tall as" in rel
     boxes = L.eligen(lay)
     assert len(boxes) == 4 and all(0 <= v <= 1 for b in boxes for v in b["box"])

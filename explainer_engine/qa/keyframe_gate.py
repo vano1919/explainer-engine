@@ -1,4 +1,4 @@
-"""Keyframe gate (KG-01..KG-17, docs/KEYFRAME_GATE.md): every picture of an animated shot is checked before the next step
+"""Keyframe gate (KG-01..KG-22, docs/KEYFRAME_GATE.md): every picture of an animated shot is checked before the next step
 uses it, every check is logged with its cause, and the log says what to fix: a prompt rule or a LoRA. stdlib only.
 
 ვანო (2026-10-24 18:53 Tbilisi): the system draws a picture, checks its logic, the world's physics and whether a video can
@@ -10,6 +10,7 @@ A shot here is ``{"id", "kind": keyframe|nextpose|cut, "people": [{"tag", "where
 the pod, free) as one numbered list; its numbered answers come back to ``verdict``.
 
     python -m explainer_engine.qa.keyframe_gate questions <shot.json>     # the numbered questions for one shot
+    python -m explainer_engine.qa.keyframe_gate table <cards.json>       # Claude's review table, filled before showing
     python -m explainer_engine.qa.keyframe_gate summary <qa_log.jsonl>    # error counts by cause and the fix for each
 """
 
@@ -24,6 +25,9 @@ from pathlib import Path
 KINDS = ("keyframe", "nextpose", "cut")
 MAX_TRIES = 3          # KG-14: three seeds, then the prompt is fixed, never an endless redraw
 RETRAIN_AT = 15        # KG-15: cases of one error type on one LoRA before a retraining is proposed (house, 2026-10-24)
+# KG-20: the 7B missed a second mammoth, three buses and a twin; the 72B (AWQ, ~41 GB) fits the 80 GB card once the image
+# model is unloaded, and every question is asked on its own (`single_prompt`): one long numbered list let answers drift
+VLM_MODEL = "Qwen/Qwen2.5-VL-72B-Instruct-AWQ"
 
 # KG-16: which base model each of our LoRAs was trained on; a LoRA is loaded only into its own base
 LORA_BASE = {
@@ -65,8 +69,18 @@ def questions(shot: dict) -> list[dict]:
             out.append(_q("KG-04", f"Does {tag} take up at least {HEIGHT.get(p['height'], p['height'])} of the picture's height?", "yes", hard=False))
         if p.get("on"):
             out.append(_q("KG-05", f"Is {tag} resting on {p['on']}, not floating in the air?", "yes"))
+        for mark in p.get("marks", []):   # KG-19: the sheet's marks (asset test: the old man lost his round glasses)
+            out.append(_q("KG-19", f"Does {tag} have {mark}?", "yes"))
     for rel in shot.get("relations", []):
         out.append(_q("KG-06", f"Is this true in the picture: {rel}?", "yes"))
+    # KG-18: a twin is the commonest error (the pink-haired girl drawn twice in all 10 bus pictures, 2026-10-24)
+    if len(people) > 1:
+        out.append(_q("KG-18", "Are two of the people or animals look-alikes, with the same hair colour or the same clothes?",
+                      "no"))
+    for thing in shot.get("things", []):   # KG-01 for objects: a bus is one bus (asset test: three buses)
+        out.append(_q("KG-01", f"How many {thing['plural']} are in the picture? Answer with a number.", thing.get("count", 1)))
+    for x in shot.get("absent", []):       # KG-21: the world's absent things (asset test: a road and a car in the ice age)
+        out.append(_q("KG-21", f"Is there {x} anywhere in the picture?", "no"))
     out += [
         _q("KG-07", "Does any person, animal or object float in the air without a visible reason?", "no"),
         _q("KG-08", "Does any person have a wrong number of arms, legs or fingers, or an object stuck inside the face or "
@@ -93,6 +107,20 @@ def vlm_prompt(qs: list[dict]) -> str:
     lines = [f"{i}. {q['q']}" for i, q in enumerate(qs, 1)]
     return ("Look at the picture carefully and answer every question. Reply with one line per question in the form "
             "'<number>. yes', '<number>. no' or '<number>. <a number>'.\n" + "\n".join(lines))
+
+
+def single_prompt(q: dict) -> str:
+    """KG-20: one question per call, answered with one word or one number."""
+    kind = "a number" if isinstance(q["expect"], int) else "yes or no"
+    return f"Look at the whole picture carefully, corner to corner. {q['q']} Answer with {kind} only."
+
+
+def review_table(card: dict, image: str) -> str:
+    """KG-22: Claude's own read of a picture before the creator sees it: every gate question as a row to fill with what
+    the picture shows, plus the style row against the approved eras sheet. A picture is shown only with its filled table."""
+    rows = [f"| {q['code']} | {q['q']} | {q['expect']} | |" for q in questions(card)]
+    rows.append("| KG-22 | Same line, texture, colour depth and detail as the approved eras sheet? | yes | |")
+    return (f"### {card['id']} · `{image}`\n\n| ID | Check | Expected | Seen |\n|---|---|---|---|\n" + "\n".join(rows) + "\n")
 
 
 def parse_answers(text: str, n: int) -> list[str | None]:
@@ -204,6 +232,10 @@ def main(argv: list[str]) -> int:
     cmd, path = argv[0], argv[1]
     if cmd == "questions":
         print(vlm_prompt(questions(json.loads(Path(path).read_text(encoding="utf-8")))))
+        return 0
+    if cmd == "table":
+        cards = json.loads(Path(path).read_text(encoding="utf-8"))
+        print("\n".join(review_table(c, c.get("image", "")) for c in (cards if isinstance(cards, list) else [cards])))
         return 0
     if cmd == "summary":
         print(json.dumps(summary(read_log(path)), indent=1, ensure_ascii=False))

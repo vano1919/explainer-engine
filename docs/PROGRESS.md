@@ -1154,3 +1154,24 @@ in use. They were not all in use. Test v2 composed its prompts at PR #24 08f2bf6
 words, no "a/an" before a cast noun, partial figures). The asset test writes its prompts by hand. LT-63 makes every run start
 from the newest heads, take its prompts from the composer, and record its commits. LT-64 lists the rules he approved, which
 apply in every next iteration.
+
+## 2026-10-24 23:45 Tbilisi: why the style faded, and a stricter picture check
+
+ვანო saw the film pictures lose the approved style and repeat the same girl. The negative-prompt run already held the cause.
+On one pod, with one LoRA file and seeds 7 and 8, the approved eras prompt drew the approved look. The film's bus prompt drew
+a flat, round, grey cartoon. The two prompts differ in shape:
+- the eras prompt is 31 words, has caricature words and a fire;
+- the bus prompt is 337 words, has no caricature word, says "flat grey daylight", and repeats every full tag up to 9 times.
+
+All 164 training captions end with one style tail, and the composer never sent it. The LoRA is not broken; the prompts left
+the shape it was trained on. New rules:
+- LT-65 (`qa/style_prompt.py`): the tail, at most 90 words, no grey light.
+- LY-09 (`layout.short`, `repeated_tags`): a full tag is said once.
+- KG-18..KG-22 (`keyframe_gate`):
+  - look-alike twins;
+  - sheet marks such as glasses;
+  - objects counted, so one bus is one bus;
+  - absent things (a road in the ice age);
+  - the 72B judge, one question per call;
+  - my own filled table for every picture before the creator sees it.
+

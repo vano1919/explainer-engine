@@ -14,6 +14,7 @@ A spec is ``{"id", "size": EWS|WS|MWS|MS|MCU|CU, "angle"?: eye|low|high, "items"
 from __future__ import annotations
 
 import json
+import re
 import math
 import sys
 from pathlib import Path
@@ -148,10 +149,28 @@ def _ratio(r: float) -> str:
     return f"about {round(r)} times as tall as"
 
 
+def short(tag: str, tags: list[str]) -> str:
+    """LY-09: the second mention of a figure: 'the' + its noun ('the old man with round glasses' -> 'the man'), so the
+    full tag is said once; when two figures share the noun the full tag stays (and `repeated_tags` flags it)."""
+    noun = lambda t: re.split(r"\s+(?:with|in|on|beside|wearing|holding|from)\s+|,", t.strip(), maxsplit=1)[0].split()[-1].lower()
+    n = noun(tag)
+    return f"the {n}" if sum(noun(t) == n for t in tags) == 1 else tag
+
+
+def repeated_tags(prompt: str, tags: list[str]) -> list[dict]:
+    """LY-09: a full tag said more than once is read as another figure (all 10 bus pictures drew a twin, 2026-10-24)."""
+    low = prompt.lower()
+    return [{"rule": "LY-09", "severity": "FAIL", "where": t, "detail": f"full tag said {low.count(t.lower())} times"}
+            for t in tags if low.count(t.lower()) > 1]
+
+
 def relative(layout: dict) -> str:
-    """LY-06: every figure compared with the lead (or the biggest thing near it): proportions and distance in words."""
+    """LY-06: every figure compared with the lead (or the biggest thing near it): proportions and distance in words. Every
+    figure is named by its short form (LY-09): the full tags are already in the prompt's people sentences."""
     items = layout["items"]
+    tags = [i["tag"] for i in items]
     lead = next(i for i in items if i["lead"])
+    ref = short(lead["tag"], tags)
     parts = []
     for it in items:
         if it is lead:
@@ -163,8 +182,11 @@ def relative(layout: dict) -> str:
                  f"about {n} metre{'s' if n != 1 else ''} {'behind' if gap > 0 else 'in front of'}")
         e = float(it.get("elev", 0))
         raised = "" if not e else f", about {round(e)} metres higher up" if e >= 1 else ", slightly higher up"
-        parts.append(f"{it['tag']} is {_ratio(real)} {lead['tag']} and stands {where} {lead['tag']}{raised}")
-    return "; ".join(parts) + "." if parts else ""
+        name = short(it["tag"], tags)
+        place = f"stands {where} {ref}"
+        parts.append(f"{name} is {_ratio(real)} {ref} and {place}{raised}")
+    text = "; ".join(parts)
+    return text[:1].upper() + text[1:] + "." if parts else ""
 
 
 def eligen(layout: dict) -> list[dict]:

@@ -115,3 +115,24 @@ def test_film_test_v2_cases():
     close = dict(ICE, size="CU")
     assert "KG-12" not in {q["code"] for q in kg.questions(close)}
     assert "KG-12" in {q["code"] for q in kg.questions(dict(ICE, size="WS"))}
+
+
+def test_twins_marks_things_and_the_world_are_asked_one_by_one():
+    """KG-18..KG-22 (2026-10-24): the pink-haired girl drawn twice, the old man without his glasses, three buses, a road in
+    the ice age; every question goes to the 72B on its own, and Claude fills the same rows before the creator sees it."""
+    card = dict(ICE, people=[dict(ICE["people"][0], marks=["round glasses"]), ICE["people"][1]],
+                things=[{"plural": "buses", "count": 1}], absent=["a road, a car or a building"])
+    qs = kg.questions(card)
+    by = {q["code"]: q for q in qs}
+    assert by["KG-18"]["expect"] == "no" and "look-alikes" in by["KG-18"]["q"]
+    assert by["KG-19"]["q"] == "Does the cave man with a torch have round glasses?"
+    assert any(q["q"] == "How many buses are in the picture? Answer with a number." and q["expect"] == 1 for q in qs)
+    assert by["KG-21"]["q"] == "Is there a road, a car or a building anywhere in the picture?"
+    assert kg.verdict(qs, answers(qs, {"KG-18": "yes"}))["status"] == "FAIL"
+    assert kg.verdict(qs, answers(qs, {"KG-21": "yes"}))["status"] == "FAIL"
+    assert kg.single_prompt(by["KG-18"]).endswith("Answer with yes or no only.")
+    assert "Answer with a number only." in kg.single_prompt(qs[0])
+    assert "72B" in kg.VLM_MODEL
+    assert "KG-18" not in {q["code"] for q in kg.questions(dict(ICE, people=ICE["people"][:1]))}   # one figure, no twin
+    table = kg.review_table(card, "master_S01.jpg")
+    assert table.count("\n| KG-") == len(qs) + 1 and "eras sheet" in table
