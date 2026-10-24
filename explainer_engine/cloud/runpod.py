@@ -250,6 +250,11 @@ def lint_pod_script(text):
                    f"({lines[heavy].strip()[:60]}): start it before")
     if every > HEARTBEAT_EVERY_S:
         out.append(f"the upload loop sleeps {every} s > {HEARTBEAT_EVERY_S} s")
+    if ">" not in lines[first].split("while", 1)[1]:
+        # an upload skips unchanged files, so a heartbeat file the loop never rewrites keeps its old commit date and the
+        # guard reads a live pod as silent (scene LoRA pod, 2026-10-24: stages.txt froze for the 2 h training stage)
+        out.append("the upload loop must rewrite its heartbeat file every pass (`date > out/beat.txt; up`): an unchanged "
+                   "file is not re-uploaded and looks silent")
     return out
 
 

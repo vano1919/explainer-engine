@@ -1069,3 +1069,10 @@ built on researched testing practice, and for step-by-step control of the runnin
   HF upload = the answer that lifts the boot deadline; silence = an alert, never a stop). 5 tests, one on the very script
   that lost the money.
 
+## 2026-10-24 — LT-17 follow-up: the heartbeat file must change
+
+The scene LoRA pod's heartbeat (`stages.txt`) froze for the whole training stage, because an HF upload skips unchanged files;
+the guard pushed a false "silent" alert while the pod trained normally. `lint_pod_script` now also requires the upload loop to
+rewrite a heartbeat file every pass (`date > out/beat.txt; up`); test `test_a_pod_script_must_upload_its_log_before_its_first_heavy_step`.
+Video LoRA v1 dataset: 83 of 150 cartoon clips kept after the cut, live-action, credits and graphics filters and an eye check
+of every clip; motion-only captions written off the pod (no paid captioner).

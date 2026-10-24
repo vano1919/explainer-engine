@@ -416,9 +416,12 @@ python run.py /workspace/cfg.yaml > /workspace/train.log 2>&1
 def test_a_pod_script_must_upload_its_log_before_its_first_heavy_step():
     """The 2026-10-24 training script uploaded nothing until its caption stage ended: 72 min of silence, stopped (≈$1.3)."""
     bad = R.lint_pod_script(OLD_TRAIN_SH)
-    assert len(bad) == 1 and "after the first heavy step at line 4" in bad[0]
-    fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n", "nvidia-smi || true\n( while true; do sleep 240; up; done ) & EARLY=$!\n")
+    assert len(bad) == 2 and "after the first heavy step at line 4" in bad[0] and "rewrite" in bad[1]
+    fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n",
+                                 "nvidia-smi || true\n( while true; do sleep 240; date > out/beat.txt; up; done ) & EARLY=$!\n")
     assert R.lint_pod_script(fixed) == []
+    frozen = fixed.replace("date > out/beat.txt; ", "")   # uploads, but its heartbeat file never changes: reads as silent
+    assert "rewrite its heartbeat file" in R.lint_pod_script(frozen)[0]
     assert "no background upload loop" in R.lint_pod_script("stage setup\npip install x\n")[0]
     slow = fixed.replace("sleep 240", "sleep 900")
     assert "sleeps 900 s" in R.lint_pod_script(slow)[0]
@@ -428,7 +431,7 @@ def test_preflight_refuses_a_pod_script_without_a_heartbeat(env):
     _, api = env
     ok = dict(max_usd=0.5, max_hours=1.0, gpu="default", now=10**6)
     assert any(w.startswith("pod script:") for w in R.preflight_create(api, **ok, script=OLD_TRAIN_SH))
-    fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n", "nvidia-smi || true\n( while true; do sleep 240; up; done ) &\n")
+    fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n", "nvidia-smi || true\n( while true; do sleep 240; date > b; up; done ) &\n")
     assert R.preflight_create(api, **ok, script=fixed) == []
 
 

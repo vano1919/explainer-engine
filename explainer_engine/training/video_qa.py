@@ -42,7 +42,7 @@ def read_video(path, *, width=SMALL, max_frames=None):
     h = int(round(j["height"] * w / j["width"] / 2)) * 2
     cmd = ["ffmpeg", "-v", "error", "-i", str(path), "-vf", f"scale={w}:{h}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"]
     if max_frames:
-        cmd[3:3] = ["-frames:v", str(max_frames)]
+        cmd[5:5] = ["-frames:v", str(max_frames)]   # an output option: after -i
     raw = subprocess.run(cmd, capture_output=True, check=True).stdout
     return np.frombuffer(raw, np.uint8).reshape(-1, h, w, 3), fps
 
