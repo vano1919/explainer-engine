@@ -991,3 +991,217 @@ dread as a win, a resolution that contradicts the midpoint, a cut before the rea
 - Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
   on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
   contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
+
+## 2026-10-23 - LoRA training control: protocol, tools and four agents (D-72)
+
+ვანო asked for a coordinator / multi-agent system for the three LoRAs (photo style, image-edit next pose, video motion),
+built on researched testing practice, and for step-by-step control of the running trainings.
+
+- Research (sources in [LORA_TRAINING](LORA_TRAINING.md) section 3): judge checkpoints by fixed-seed samples, not loss;
+  overfitting = same background/pose whatever the prompt, prompt words ignored, colour burn, unasked objects; held-out
+  prompts and a no-trigger probe; video with vs without the LoRA, temporal metrics only together with motion amount.
+- Code `explainer_engine/training/` (free, local): `audit.py` (LT-01..LT-15: captions, trigger, shared phrases and
+  words, duplicates, resolution, the creator's weighted share, edit-pair matching, LTX clip frames/sizes; config check of
+  ai-toolkit and ltx-trainer YAML; cost projection), `judge.py` (LT-20..LT-43: style progress per prompt from the base
+  toward the creator's pictures, adherence, memorisation, sameness, trigger leakage, the CONTINUE/STOP decision; video
+  motion/jitter/keyframe; edit drift/change; tqdm log parser), `embed.py` (CLIP ViT-B-32 on CPU, cached; needs torch +
+  open_clip_torch, not in requirements). CLI `python -m explainer_engine.training`.
+- Agents `lora-coordinator`, `lora-dataset-auditor`, `lora-run-operator`, `lora-checkpoint-judge`; skill
+  `lora-training`; docs_lint home `LT` -> LORA_TRAINING.md.
+- Applied to the live runs: dataset v7 audit FAILed on 12 pictures under 512 px (504x278 in the creator's folder) and
+  22 crops reusing their full image's caption -> the photo thread dropped them before v4 (his share 54 %). v3 config:
+  cached text embeddings made caption dropout a no-op, no no-trigger probe, samples ≈20 % of the run -> fixed in v4. v3
+  judge: step 250 progress 0.55, step 500 0.42 (the close-up fell back to semi-photo, confirmed by eye) -> v3@250 is the
+  best v3. v4 config PASS; projection ≈$1.8 vs its $1.65 cap (expect a stop near step 1300).
+- Tests: `tests/unit/test_lora_training.py` (19). Nothing paid in this thread.
+- 15:00 Footage plan (ვანო 14:51): `training/footage.py` (FS-00..FS-07: probe, shot split, camera/motion measure, show
+  balance and held-out, master-frame pairs, 89-frame clips, motion-caption name ban) + 2 tests on a synthetic video;
+  the plan with costs (first full cycle ≈$55-75) in project files `FOOTAGE_PLAN_2026-10-23_ka.md`; both threads briefed.
+
+## 2026-10-23 - Video QA in code: morphing, melting, flicker, lost parts, layout fidelity, cartoon rhythm (LT-50..LT-59)
+
+- ვანო 22:32 (Tbilisi 02:32): "write it in code, watch hands, faces and the usual AI mistakes, measure every parameter,
+  use the hours of cartoons as the norm; B's IC video has no feet". `training/video_qa.py` + CLI `video-qa`,
+  `footage-rhythm`; thresholds in `lora_rules.json` "video_qa" (house starting values).
+- Measured on the first IC test (A/B, 5 s, 1920x1088): all four clips PASS flicker/morph/lines (morph p95 0.009-0.015);
+  the B_ic defect is not visible in global numbers. Cause found by eye: our bend-rig layout smeared the scientist's legs
+  into shadow and left a dark ghost where he stood; the IC render followed the layout and drew a second caveman there.
+  LT-59 (layout fidelity per grid cell) flags exactly that area from 2.4 s. Lesson: an IC shot is only as good as its
+  layout; layouts need a clean plate behind moving people and rigid legs.
+- Weak spots stated in the module: hands and faces are judged by eye on `--sheet` (LT-58); the box tracker follows ink
+  outlines but can still lose a fast character, so LT-55 is REVIEW only.
+- Tests: 3 synthetic line-art clips (clean PASS; melting + brightness pop; lost legs + an invented figure vs its layout).
+- 23:55 Hard multi-shot test (4 heroes, a 30-person crowd, 10 s) and max length from one photo (plain LTX-2.5 distilled,
+  1920x1088, 10/15/20 s render in 5/8/11 min on an A40, no OOM). IC: identity and stability hold for 10 s, but motion
+  follows our too-timid warp layouts (hold share 1.0); a stronger warp bends faces, so warps cannot carry acting. Plain
+  I2V acts well; by length: 10 s clean (detail x0.75), 15 s a duplicated girl appears in the bus window and the bus
+  changes, 20 s two heroes turn translucent (detail x0.57) and "Static camera" is ignored at every length. New LT-53
+  REVIEW on detail loss catches the 20 s ghosting; cartoon norm (120 shots): hold share p50 0.77.
+- 00:20 (2026-10-24) IC conditioning strength 0.6 and 0.4 (hoping the model adds acting): the render turns into the grey
+  clay layout and still does not act; Layout-To-Render needs strength 1.0, and acting must come from the layout itself.
+  LT-54 now FAILs a saturation loss over 0.2. Night video tests ≈$2.5 (4 pods, all stopped).
+
+## 2026-10-24 - Continuity across a cut in code (LT-60..LT-62) and the eras clips
+
+- ვანო 07:17 UTC: "does anything check consistency between the frames of the video, or is the scene LoRA drawing the
+  stills right enough?" Answer: a scene is cut from several <= 10 s shots (max-length test), so the join between shots is
+  where the look jumps; nothing measured that. `video_qa.shot_identity` + CLI `shot-identity <a.mp4> [<b.mp4>]
+  [--heroes]`: A's last frame vs B's first (or one clip's first vs last): the set's palette distance (hue x saturation
+  + brightness histograms, ink dropped), ink share ratio (line weight; edge density misses it, a 5 px line has the same
+  edge count as a 2 px one), each named hero's box palette. REVIEW only (LT-60 palette > 0.08, LT-61 ink outside
+  x0.7..1.4, LT-62 hero > 0.15); whether it is the same face stays with the eye (LT-58) or CLIP (LT-43).
+  Measured: the two finished eras clips drift 0.002-0.006 inside 10 s; school vs wild west scenes measure 0.09 and
+  ink x2.6 (flagged). Test: synthetic cut (same drawing PASS; recoloured set, thicker ink, new shirt each flagged).
+- Guard lesson (07:12): pod scripts that never send a status ping are STOPPED by a live guard at the boot deadline
+  (default 25 min); the first eras pod died after 2 of 5 clips (~$0.3 lost). New pods get `boot_minutes` >= the job.
+- 08:27 UTC ვანო's full video report (50 criteria + advice; copy in project files
+  `lora_plan_2026-10-22/VIDEO_LORA_REPORT_vano_2026-10-24_ka.md`) -> `training/video_criteria.json` (VQ-01..50: 22 code,
+  27 eye, 1 n/a) + LORA_TRAINING section 7 with the taken / not-taken table (DLoRAL, flow/LPIPS losses and two-stage
+  training not taken, with reasons; lower video LR + warm-up, RS-LoRA at rank >= 64, "a frame of a video" captions and
+  the animate-the-pair gate taken). Linked shots need no training: LTX-2.5 start + end keyframes + video conditioning.
+  Eras clips' root causes written there (farm = my prompt; wildwest = length; ice_age = anchor bias on a crowd).
+- 08:55 UTC ვანო: "find what caused the $1.3 loss and teach the system". Causes: (1) I read the REST pod record's
+  `runtime: null` / `machine: {}` as "no machine"; the working eras pod showed the same, so it is no signal; a training pod
+  that was running was stopped after 72 min (≈$1.3); (2) the same record never satisfies `ready()` (no IP, no ports) for
+  script pods, so the guard killed the eras pod at its 25-min boot deadline (≈$0.3); (3) the pod scripts uploaded nothing
+  before their first long stage. Fix in code (LT-17): `runpod.lint_pod_script` (an upload loop <= 300 s before the first
+  heavy step; `preflight_create(script=...)` refuses otherwise), `hf_heartbeat` + `heartbeat_step` in the guard (a fresh
+  HF upload = the answer that lifts the boot deadline; silence = an alert, never a stop). 5 tests, one on the very script
+  that lost the money.
+
+## 2026-10-24 — LT-17 follow-up: the heartbeat file must change
+
+The scene LoRA pod's heartbeat (`stages.txt`) froze for the whole training stage, because an HF upload skips unchanged files;
+the guard pushed a false "silent" alert while the pod trained normally. `lint_pod_script` now also requires the upload loop to
+rewrite a heartbeat file every pass (`date > out/beat.txt; up`); test `test_a_pod_script_must_upload_its_log_before_its_first_heavy_step`.
+Video LoRA v1 dataset: 83 of 150 cartoon clips kept after the cut, live-action, credits and graphics filters and an eye check
+of every clip; motion-only captions written off the pod (no paid captioner).
+
+## 2026-10-24 — LT-18: test videos have no upscale; one take, a new one only on a failed check
+
+ვანო's rules for the 1-minute test film: no upscale in test videos (they measure logic), each shot made once and checked, a new
+take only when the check fails; release resolution 2K. The test film is made in three variants: 24 fps, 12 fps ("on twos") and
+a third with ~20 % less-animated shots (still + camera). Docs: project files lora_plan_2026-10-24/.
+
+## 2026-10-24 — KP: how animated-shot prompts are written (SHOT_PROMPTS.md, `scripting/shot_prompt_lint.py`)
+
+ვანო (15:35 Tbilisi): analyse the frame prompts of all iterations, single out my own mistakes, write rules and give them to the
+scenario agents. Corpus: the IC, max-length and eras LTX prompts, the scene LoRA samples, the zero-shot next poses, the video
+LoRA validation set, the running chain test. Findings: bare role words painted strangers (KP-01), the base model hands an action
+to the figure already posed for it (KP-02), exit verbs emptied the farm shot (KP-03), no camera sentence (KP-04), a moving train
+smeared the heroes (KP-05), over 10 s breaks (KP-06), framing words re-frame next poses (KP-07), and every LTX test ran with the
+stock negative prompt that names our style ("cartoonish rendering", "exaggerated expressions"; KP-09). Most mistakes were mine
+(table in the doc). The lint FAILs/REVIEWs these on the real prompts (test `tests/unit/test_shot_prompt_lint.py`); the
+story-architect, edit-planner and the skill `shot-visuals` now write shots to KP. The lint also found two vague prompts in the running chain test
+("the woman by the rock", "the cave man on the left"); both rewritten on HF before the pod read its code.
+
+## 2026-10-24 — LT-19: a pod's GPU check has a timeout; a bad host stops itself through the guard
+
+ვანო (16:20 Tbilisi): find why the chain-test pod hung and fix it if it was avoidable. Cause: my launchers dropped the
+`allowedCudaVersions` filter (for stock), so RunPod gave a driver-550 host (native CUDA 12.4, compat 13.0) to the CUDA 13
+aitoolkit image; the pod's `python -c "...torch.cuda.get_device_name(0)"` printed "cuda ok" and never returned. The background
+upload loop kept the heartbeat fresh, so the guard saw a live pod for 12 min (≈$0.6) until I read the log. The relaunch got a
+driver-595 host (CUDA 13.2) and ran normally. Fixes: `lint_pod_script` refuses a CUDA call without `timeout`; a failed probe
+writes BAD_HOST to the heartbeat and the guard stops that pod (`hf_text`, `heartbeat_step` -> "bad_host"); `create` refuses a
+body without the CUDA filter unless `any_cuda=True`. Tests: `test_a_cuda_check_without_a_timeout_is_refused`,
+`test_a_pod_that_reports_a_bad_host_is_stopped_by_its_guard`, `test_create_refuses_a_body_without_the_cuda_filter`.
+
+
+## 2026-10-24 — KG: keyframe gate, cause log, a LoRA only on its own base
+
+ვანო (18:53 Tbilisi): check every picture's logic, physics and video use before the scene LoRA takes it; redraw on a fail;
+record what was right and wrong and whose fault (prompt, style LoRA, scene LoRA); fix only the weak part. Cause of today's
+wrong-style pictures: the chain-test masters and the hero sheet were BFL night-run pictures, and the style LoRA was loaded into
+Edit-2511 (a different base); the one wldnk master (ice age) kept its style through Edit + the scene LoRA alone. New
+[KEYFRAME_GATE](KEYFRAME_GATE.md) (KG-01..KG-16, new docs_lint family KG) and `qa/keyframe_gate.py`: questions from the shot
+card for the pod's VLM, verdict (hard FAIL / soft REVIEW), at most 3 tries, `blame` (base without LoRA + another seed), the
+`qa_log.jsonl` summary (prompt rule first; a LoRA retraining candidate at 15 cases of one type), and `check_stack` (style LoRA
+only on Qwen-Image-2512, scene LoRA only on Edit-2511). The approved 20-era sheet read by Claude: 1 logic error of 20 (underwater dome) and the ice-age
+mammoth, which the prompt asked for as a rock painting; both prompts were ambiguous. Test: `tests/unit/test_keyframe_gate.py` (7).
+
+## 2026-10-24 — LY: shot layout from real sizes and the camera
+
+ვანო (19:34 Tbilisi): give exact sizes with ± in one prompt variant and relative proportions in the other, make sure the system
+writing the numbers makes no mistakes, and look at drawing simple figures first and our style after. New
+`scripting/layout.py` (LY-01..LY-08 in [KEYFRAME_GATE](KEYFRAME_GATE.md), docs_lint family LY): a table of real heights with
+references, the shot size sets the lead's frame share, perspective places every other figure (height = f·H/z, horizon by
+angle, `elev` for a hill), checks FAIL a figure outside the frame or hidden behind a nearer one, and one layout writes the
+technical prompt (± 5 %), the relative prompt (ratios and metres in words), EliGen boxes and a grey blockout for a ControlNet.
+On its first run it caught the scenario's mammoth 100 % hidden behind the bus. Test: `tests/unit/test_layout.py` (5).
+
+## 2026-10-24 21:40 Tbilisi: film picture test v2, and three gate fixes (KG-01, KG-12, KG-17)
+
+ვანო said "run everything" at 19:50. Test v2 drew 60 pictures of the 1-minute film on one pod for $1.94 (≈$0.7 of it was the
+pod idle after the end: I checked too late). The results are in [KEYFRAME_GATE](KEYFRAME_GATE.md), "Film test v2". The gate
+made errors in both directions:
+- It missed a second mammoth: the total count was 5 of 6.
+- It noticed drawn rulers in only 2 of 6 pictures.
+- It failed a close-up for cut-off arms.
+
+Fixes in `qa/keyframe_gate.py`, tested in `test_film_test_v2_cases`:
+- KG-01 now also asks per card figure how many times it appears.
+- KG-17 (hard) asks for measurement lines and numbers.
+- KG-12 is skipped in MS and closer shots.
+
+The prompt-text fixes (name a figure once, then a short name; no numbers in the text) belong to the shot prompts (PR #24)
+and were sent there.
+
+
+## 2026-10-24 22:30 Tbilisi: LT-63 newest code and rules, LT-64 the creator's approved rules
+
+ვანო noticed that the pod fixes (LT-17, LT-19) sit only in PR #22 and asked whether the other threads' newest rules are
+in use. They were not all in use. Test v2 composed its prompts at PR #24 08f2bf6, before that thread's b991562 (sizes in
+words, no "a/an" before a cast noun, partial figures). The asset test writes its prompts by hand. LT-63 makes every run start
+from the newest heads, take its prompts from the composer, and record its commits. LT-64 lists the rules he approved, which
+apply in every next iteration.
+
+## 2026-10-24 23:45 Tbilisi: why the style faded, and a stricter picture check
+
+ვანო saw the film pictures lose the approved style and repeat the same girl. The negative-prompt run already held the cause.
+On one pod, with one LoRA file and seeds 7 and 8, the approved eras prompt drew the approved look. The film's bus prompt drew
+a flat, round, grey cartoon. The two prompts differ in shape:
+- the eras prompt is 31 words, has caricature words and a fire;
+- the bus prompt is 337 words, has no caricature word, says "flat grey daylight", and repeats every full tag up to 9 times.
+
+All 164 training captions end with one style tail, and the composer never sent it. The LoRA is not broken; the prompts left
+the shape it was trained on. New rules:
+- LT-65 (`qa/style_prompt.py`): the tail, at most 90 words, no grey light.
+- LY-09 (`layout.short`, `repeated_tags`): a full tag is said once.
+- KG-18..KG-22 (`keyframe_gate`):
+  - look-alike twins;
+  - sheet marks such as glasses;
+  - objects counted, so one bus is one bus;
+  - absent things (a road in the ice age);
+  - the 72B judge, one question per call;
+  - my own filled table for every picture before the creator sees it.
+
+
+## 2026-10-25 03:30 Tbilisi: shots composed from reusable assets (AC-01..AC-15), LT-65 without the tail
+
+ვანო's plan (02:19): the style LoRA draws only assets, code composes the shots (micro scenes and battles), assets are reused.
+He asked to make the system ready before any generation, starting with the free part.
+
+What was done:
+- A free analysis of why the style faded (https://claude.ai/artifact/BCfwRAUtF34g9xcS1bjk6D). The v5 training samples drew
+  the film's own heroes in the approved look from short story prompts without the tail. LT-65 now asks for that shape
+  (at most 40 words, no layout words). The tail is flagged.
+- `explainer_engine/compose/`:
+  - `library` (records, mirrored views, the list of what must be drawn, cut-out check);
+  - `frame` (perspective placement, horizon match, contact shadow, haze, depth order);
+  - `crowd` (scatter by ground area, clone check);
+  - `reuse` (same setup → crop, zoom limit 1.6x, teasers);
+  - `style_score` (DINOv2 against his photos and a same-place control, REVIEW only).
+- The cartoon footage was measured for the planner: shot median 3.2 s, ≈20 % return to an earlier setup, camera still in
+  ≈2/3 of shots.
+- The first CPU test with the composition test's assets. It composed a WS, a MWS, a reuse crop and a 90-figure crowd. Two
+  real defects were caught: a plate with the wrong horizon for close shots (AC-05), and a cut-out carrying a block of snow
+  (AC-15).
+
+## 2026-10-25 03:20 Tbilisi: episode look (AC-16..AC-19) and the prompt absolutes (LT-66)
+- ვანო asked for an episode-level colour layer that keeps colours consistent between the episode's pictures when places
+  and countries change, without changing the style LoRA's look, and for the list of prompting absolutes.
+- `qa/style_prompt.py`: `ABSOLUTES` (A1..A10), `NEGATIVE`, `INFERENCE`; other media or art styles in a prompt now FAIL
+  (LT-66). `compose/episode_look.py`: the look file measured from the approved key frame, a 10-word colour-and-light
+  phrase added to every prompt (the prompt still passes the 40-word rule), colour drift as REVIEW, and a bounded grade
+  (at most 0.35, originals kept). Tests: `tests/unit/test_episode_look.py` (absolutes frozen, clash, phrase, apply,
+  drift and grade). Nothing paid; the drift threshold is calibrated on the first episode.

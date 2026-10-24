@@ -74,8 +74,22 @@ class FakeRunPod:
         return 400, "?"
 
 
+# Fixed ceilings for the tests, so the asserted limits do not move when the creator raises the live config/spend_caps.json.
+TEST_CAPS = {"per_episode": {"runpod_usd": 3.0, "gemini_usd": 10.0},
+             "runpod": {"per_pod_usd": 1.0, "per_24h_usd": 1.5, "max_hours_per_pod": 2.0, "max_price_per_hour": 0.95,
+                        "min_balance_left_usd": 0.25, "keep_stopped_pods": []}}
+
+
 @pytest.fixture
-def env(tmp_path, monkeypatch):
+def caps_file(tmp_path, monkeypatch):
+    p = tmp_path / "test_caps.json"
+    p.write_text(json.dumps(TEST_CAPS))
+    monkeypatch.setenv("EXPLAINER_SPEND_CAPS", str(p))
+    return p
+
+
+@pytest.fixture
+def env(tmp_path, monkeypatch, caps_file):
     monkeypatch.setattr(R, "RP", tmp_path)
     monkeypatch.setattr(R.time, "sleep", lambda s: None)
     fake = FakeRunPod()
@@ -343,7 +357,7 @@ def test_check_flags_stopped_disks_unless_the_creator_keeps_them(env, tmp_path, 
     assert len(R.check(api, now=1000)["problems"]) == 1
 
 
-def test_the_ledger_refuses_a_cap_above_the_creators_ceiling_and_fills_missing_ones(tmp_path):
+def test_the_ledger_refuses_a_cap_above_the_creators_ceiling_and_fills_missing_ones(tmp_path, caps_file):
     from explainer_engine.core.spend_caps import OverCeiling
     with pytest.raises(OverCeiling):
         Run.open(tmp_path / "a.json", caps={"runpod_usd": 50.0})
@@ -379,3 +393,113 @@ def test_the_money_hooks_are_wired_into_the_session_settings(monkeypatch):
     monkeypatch.delenv("RUNPOD_API_KEY", raising=False)
     monkeypatch.setattr(R, "RP", R.ROOT / "no-such-dir")
     assert H._check() is None and H.stop({}) == 0  # no key: report nothing, never block
+
+
+# ---- heartbeat (2026-10-24: a working training pod stopped as "stuck", a rendering pod killed at its boot deadline) ----
+
+OLD_TRAIN_SH = """set -x
+stage setup
+nvidia-smi || true
+pip install -q -U "huggingface_hub[hf_transfer]<2" || true
+stage download
+python - <<'PY'
+from huggingface_hub import snapshot_download as s
+PY
+stage caption
+python /workspace/dl/caption_pairs.py /workspace/ds
+stage train
+( while true; do sleep 300; up; done ) & LOOP=$!
+python run.py /workspace/cfg.yaml > /workspace/train.log 2>&1
+"""
+
+
+def test_a_pod_script_must_upload_its_log_before_its_first_heavy_step():
+    """The 2026-10-24 training script uploaded nothing until its caption stage ended: 72 min of silence, stopped (≈$1.3)."""
+    bad = R.lint_pod_script(OLD_TRAIN_SH)
+    assert len(bad) == 2 and "after the first heavy step at line 4" in bad[0] and "rewrite" in bad[1]
+    fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n",
+                                 "nvidia-smi || true\n( while true; do sleep 240; date > out/beat.txt; up; done ) & EARLY=$!\n")
+    assert R.lint_pod_script(fixed) == []
+    frozen = fixed.replace("date > out/beat.txt; ", "")   # uploads, but its heartbeat file never changes: reads as silent
+    assert "rewrite its heartbeat file" in R.lint_pod_script(frozen)[0]
+    assert "no background upload loop" in R.lint_pod_script("stage setup\npip install x\n")[0]
+    slow = fixed.replace("sleep 240", "sleep 900")
+    assert "sleeps 900 s" in R.lint_pod_script(slow)[0]
+
+
+def test_preflight_refuses_a_pod_script_without_a_heartbeat(env):
+    _, api = env
+    ok = dict(max_usd=0.5, max_hours=1.0, gpu="default", now=10**6)
+    assert any(w.startswith("pod script:") for w in R.preflight_create(api, **ok, script=OLD_TRAIN_SH))
+    fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n", "nvidia-smi || true\n( while true; do sleep 240; date > b; up; done ) &\n")
+    assert R.preflight_create(api, **ok, script=fixed) == []
+
+
+def test_hf_heartbeat_reads_the_files_last_commit():
+    seen = {}
+
+    def fetch(url, data):
+        seen.update(url=url, data=data)
+        return [{"path": "run/log/stages.txt", "lastCommit": {"date": "2026-10-24T08:00:00.000Z"}}]
+    t = R.hf_heartbeat("datasets/vano1919/tmr-artifacts:run/log/stages.txt", fetch=fetch)
+    assert seen["url"].endswith("/api/datasets/vano1919/tmr-artifacts/paths-info/main") and seen["data"]["paths"] == "run/log/stages.txt"
+    assert t == 1792828800.0
+    assert R.hf_heartbeat("datasets/a/b:missing.txt", fetch=lambda u, d: []) is None
+
+
+def test_a_fresh_upload_is_the_pods_answer_and_silence_only_alerts(env):
+    """REST shows runtime null, no IP and no ports for running script pods, so ``ready()`` never lifts the boot deadline:
+    the eras pod was stopped mid-render at 25 min. A fresh upload now counts as the answer; silence never stops a pod."""
+    sess = R.new_session(pod("hb"), max_usd=1.0, max_hours=2.0, now=0, heartbeat="datasets/o/r:log/stages.txt")
+    running = pod("hb")
+    assert R.heartbeat_step(sess, 60, beat=lambda spec: None) == "waiting"
+    assert "boot" in R.guard_check(sess, running, R.BOOT_MINUTES * 60 + 1)[1]       # no upload by the deadline: stop
+    assert R.heartbeat_step(sess, 600, beat=lambda spec: 500.0, text=lambda spec: "11:52:18") == "alive" and sess["answered"]
+    assert R.guard_check(sess, running, R.BOOT_MINUTES * 60 + 1)[0] == "ok"         # the upload lifted the deadline
+    pushed = []
+    late = 500 + R.SILENT_ALERT_MIN * 60 + 1
+    assert R.heartbeat_step(sess, late, beat=lambda spec: 500.0, push=lambda *a: pushed.append(a)) == "silent"
+    assert pushed and "silence alone is not proof" in pushed[0][1]
+    assert R.guard_check({**sess, "max_usd": 99}, running, late)[0] == "ok"           # silence is not a reason to stop
+    assert R.heartbeat_step(sess, late + 30, beat=lambda spec: 500.0, push=lambda *a: pushed.append(a)) == "silent"
+    assert len(pushed) == 1                                                           # one alert per silent spell
+
+
+CHAIN_SH = """set -x
+( while true; do sleep 240; date -u +%H:%M:%S > /workspace/out/beat.txt; up; done ) &
+nvidia-smi || true
+python -c "import torch;print('cuda ok',torch.cuda.is_available(),torch.cuda.get_device_name(0))" || { echo "CUDA BROKEN"; up; }
+pip install -q -U peft || true
+"""
+
+
+def test_a_cuda_check_without_a_timeout_is_refused():
+    """Chain pod 2026-10-24: the bare CUDA check never returned on a driver-550 host; the loop kept it "alive" 12 min ($0.6)."""
+    bad = R.lint_pod_script(CHAIN_SH)
+    assert len(bad) == 1 and "without `timeout`" in bad[0] and R.BAD_HOST in bad[0]
+    fixed = CHAIN_SH.replace('python -c "import torch', 'timeout 120 python -c "import torch')
+    assert R.lint_pod_script(fixed) == []
+
+
+def test_a_pod_that_reports_a_bad_host_is_stopped_by_its_guard(env):
+    sess = R.new_session(pod("bh"), max_usd=1.0, max_hours=2.0, now=0, heartbeat="datasets/o/r:log/beat.txt")
+    assert R.heartbeat_step(sess, 300, beat=lambda spec: 250.0, text=lambda spec: "11:52:18") == "alive"
+    said = "BAD_HOST cuda check rc=124 driver 550.54.15"
+    assert R.heartbeat_step(sess, 600, beat=lambda spec: 550.0, text=lambda spec: said) == "bad_host"
+    assert sess["bad_host"] == said
+    assert R.heartbeat_step(sess, 900, beat=lambda spec: 550.0, text=lambda spec: "") == "bad_host"   # it stays bad
+    seen = {}
+    assert R.hf_text("datasets/o/r:log/beat.txt", fetch=lambda u: seen.setdefault("url", u) and "x") == "x"
+    assert seen["url"] == "https://huggingface.co/datasets/o/r/resolve/main/log/beat.txt"
+
+
+def test_create_refuses_a_body_without_the_cuda_filter(env):
+    """Every launcher of 2026-10-23..24 popped allowedCudaVersions for stock; one got a CUDA 12.4 host for a CUDA 13 image."""
+    fake, api = env
+    body = R.create_body("ee-x-until-9999999999")
+    body.pop("allowedCudaVersions")
+    with pytest.raises(R.RunPodError, match="allowedCudaVersions"):
+        R.create(api, body, max_price=0.95, sleep=lambda s: None)
+    assert not fake.pods
+    assert R.create(api, body, max_price=0.95, sleep=lambda s: None, any_cuda=True)["id"] == "p1"
+

@@ -79,6 +79,16 @@ picture appears on its words (PV-04), does not show a thing before the story mak
 never shows a forbidden prop (PV-07), and that no prompt repeats (PV-06). One held picture may carry a whole exchange through speech
 bubbles instead of a new picture per sentence (UR-31).
 
+## Animated shots (keyframe -> next pose -> LTX video, 2026-10-24)
+The rules and the mistakes they come from are in `docs/SHOT_PROMPTS.md` (KP-01..KP-14); check with
+`python -m explainer_engine.scripting.shot_prompt_lint <shots.json>`. In short:
+- Name every acting person by what the picture shows ("the nurse in the purple jacket"); a bare "the woman" paints a stranger.
+- One actor first, one big action (start, peak, settle, body parts), the others react small; acting heroes large in frame.
+- Video: "everyone stays in frame" unless the story wants an exit; one camera sentence; at most 10 s; at most three sounds.
+- Next pose: from the master, poses only, no framing word; a new framing is a cut with the hero sheet.
+- The negative prompt never names our style (LTX's stock negative says "cartoonish rendering", "exaggerated expressions").
+- A test prompt passes the lint; a failing sample is compared with step 0 before a LoRA is blamed.
+
 ## Procedure
 1. Beat by beat, from the narration: who does what, what can go wrong, which emotion. Write `stakes` first.
 2. Types and order by UR-04/05; durations and cuts by the solver (UR-11/12) on the real `words.json`.

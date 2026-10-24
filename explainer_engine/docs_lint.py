@@ -41,7 +41,12 @@ HOMES = {
     "VB": "STORY_ENGINE.md",
     "ES": "EPISODE_STANDARDS.md",
     "TN": "THUMBNAIL_RULES.md",
-    "BP": "SOURCED_RULES.md",  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
+    "BP": "SOURCED_RULES.md",
+    "KP": "SHOT_PROMPTS.md",  # prompts of animated shots: keyframe, next pose, cut, video (2026-10-24)
+    "KG": "KEYFRAME_GATE.md",
+    "LY": "KEYFRAME_GATE.md",  # shot layout from real sizes and the camera (2026-10-24)  # keyframe gate: picture checks, cause log, LoRA/base pairing (2026-10-24)
+    "AC": "ASSET_COMPOSE.md",  # shots composed from reusable assets (2026-10-25)
+    "LT": "LORA_TRAINING.md",  # LoRA training control (D-72, 2026-10-23)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))
 ID = re.compile(rf"\b({_PREFIX})-([TE]?\d{{2,3}})\b")

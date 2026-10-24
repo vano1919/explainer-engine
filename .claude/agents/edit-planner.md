@@ -34,7 +34,12 @@ For each segment:
    beat's word; for a dialogue line pick a picture whose `speakers` point shows the speaking face (VB-06). You may move
    a beat (`pos`) to fit the picture, never change what it shows; on /3 a cue is the beat-writer's, bound to its `event`
    (VB-08) — a cue that collides with your effect goes back to the beat-writer, never gets silenced by you.
-6. Run `python -m explainer_engine.production validate <script>`: 0 FAIL; the PV-35 (MO, incl. MO-07) and PV-24 RHYTHM
+6. Animated shots (keyframe, next pose, cut, LTX video): write each prompt in the shape of `docs/SHOT_PROMPTS.md` (KP-01..KP-14):
+   people named by visible traits, one actor named first, an action with a start, peak and settle, "everyone stays in
+   frame", ONE camera sentence, at most three sounds, the same style sentence in every shot, next poses drawn from the master
+   with no framing word, a negative prompt that never names our own style (never LTX's stock negative). Run
+   `python -m explainer_engine.scripting.shot_prompt_lint <shots.json>`: 0 FAIL before any paid render.
+7. Run `python -m explainer_engine.production validate <script>`: 0 FAIL; the PV-35 (MO, incl. MO-07) and PV-24 RHYTHM
    REVIEWs on the estimated read answered or fixed, 0 PV-44 FAIL. Report events a minute, the kinds used, the alive
    share and the scenes' coverage (establish, listener cuts, longest A/B run, J/L share).
 

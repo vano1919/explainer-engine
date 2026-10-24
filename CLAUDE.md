@@ -112,6 +112,8 @@ explainer_engine/scripting/ story_lint, stage_guard, claims.py (claim_map.md -> 
 explainer_engine/qa/      visual_judge (questions), sheet_review.py (Claude answers them, free), publish_check.py (PC-xx)
 explainer_engine/publish/ YouTube staging (D-57): plan.py (insert bodies), stage.py (unlisted upload, state, quota),
                           youtube.py (stdlib API client, never public), thumbnail.py (Gemini premium, TN rules), auth.py
+explainer_engine/training/ LoRA training control (D-72, docs/LORA_TRAINING.md LT-xx): audit, config check, cost, checkpoint
+                          judge; agents lora-coordinator/-dataset-auditor/-run-operator/-checkpoint-judge, skill lora-training
 explainer_engine/world/   resolver (UR-22..27 prompt lint), look_v2.json; edit/, finish/, research/, rights/ as named
 jobs/                     job output (gitignored): jobs/<slug>/job-NNN_<date>/{state.json, artifacts/...}
 ```
