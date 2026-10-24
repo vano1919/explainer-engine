@@ -1,4 +1,4 @@
-"""KG-01..KG-16 (docs/KEYFRAME_GATE.md) on the real cases of 2026-10-24: the ambiguous mammoth, glasses in an eye, the style
+"""KG-01..KG-17 (docs/KEYFRAME_GATE.md) on the real cases of 2026-10-24: the ambiguous mammoth, glasses in an eye, the style
 LoRA loaded into the edit model."""
 
 import pytest
@@ -100,3 +100,18 @@ def test_a_lora_loads_only_into_its_own_base_model():
         kg.check_stack("Qwen/Qwen-Image-Edit-2511", {"wldnk_scene_v1": 1.0, "wldnk_style_v1.0": 0.2})
     with pytest.raises(ValueError, match="unknown LoRA"):
         kg.check_stack("Qwen/Qwen-Image-2512", {"someone_else": 1.0})
+
+
+def test_film_test_v2_cases():
+    """The 1-minute film test (2026-10-24): one figure drawn twice that the total count missed, rulers drawn from numeric prompts, and a
+    close-up failed for cut-off arms."""
+    qs = kg.questions(ICE)
+    twice = [q for q in qs if q["code"] == "KG-01" and "How many times does the cave woman in green fur" in q["q"]]
+    assert len(twice) == 1 and twice[0]["expect"] == 1
+    got = answers(qs)
+    got[qs.index(twice[0])] = "2"
+    assert kg.verdict(qs, got)["status"] == "FAIL"       # the total was right (the VLM said 5 of 6), the per-figure count is not
+    assert kg.verdict(qs, answers(qs, {"KG-17": "yes"}))["status"] == "FAIL"
+    close = dict(ICE, size="CU")
+    assert "KG-12" not in {q["code"] for q in kg.questions(close)}
+    assert "KG-12" in {q["code"] for q in kg.questions(dict(ICE, size="WS"))}

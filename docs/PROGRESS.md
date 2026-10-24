@@ -1128,3 +1128,29 @@ references, the shot size sets the lead's frame share, perspective places every 
 angle, `elev` for a hill), checks FAIL a figure outside the frame or hidden behind a nearer one, and one layout writes the
 technical prompt (± 5 %), the relative prompt (ratios and metres in words), EliGen boxes and a grey blockout for a ControlNet.
 On its first run it caught the scenario's mammoth 100 % hidden behind the bus. Test: `tests/unit/test_layout.py` (5).
+
+## 2026-10-24 21:40 Tbilisi: film picture test v2, and three gate fixes (KG-01, KG-12, KG-17)
+
+ვანო said "run everything" at 19:50. Test v2 drew 60 pictures of the 1-minute film on one pod for $1.94 (≈$0.7 of it was the
+pod idle after the end: I checked too late). The results are in [KEYFRAME_GATE](KEYFRAME_GATE.md), "Film test v2". The gate
+made errors in both directions:
+- It missed a second mammoth: the total count was 5 of 6.
+- It noticed drawn rulers in only 2 of 6 pictures.
+- It failed a close-up for cut-off arms.
+
+Fixes in `qa/keyframe_gate.py`, tested in `test_film_test_v2_cases`:
+- KG-01 now also asks per card figure how many times it appears.
+- KG-17 (hard) asks for measurement lines and numbers.
+- KG-12 is skipped in MS and closer shots.
+
+The prompt-text fixes (name a figure once, then a short name; no numbers in the text) belong to the shot prompts (PR #24)
+and were sent there.
+
+
+## 2026-10-24 22:30 Tbilisi: LT-63 newest code and rules, LT-64 the creator's approved rules
+
+ვანო noticed that the pod fixes (LT-17, LT-19) sit only in PR #22 and asked whether the other threads' newest rules are
+in use. They were not all in use. Test v2 composed its prompts at PR #24 08f2bf6, before that thread's b991562 (sizes in
+words, no "a/an" before a cast noun, partial figures). The asset test writes its prompts by hand. LT-63 makes every run start
+from the newest heads, take its prompts from the composer, and record its commits. LT-64 lists the rules he approved, which
+apply in every next iteration.

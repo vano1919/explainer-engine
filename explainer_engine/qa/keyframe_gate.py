@@ -1,4 +1,4 @@
-"""Keyframe gate (KG-01..KG-16, docs/KEYFRAME_GATE.md): every picture of an animated shot is checked before the next step
+"""Keyframe gate (KG-01..KG-17, docs/KEYFRAME_GATE.md): every picture of an animated shot is checked before the next step
 uses it, every check is logged with its cause, and the log says what to fix: a prompt rule or a LoRA. stdlib only.
 
 ვანო (2026-10-24 18:53 Tbilisi): the system draws a picture, checks its logic, the world's physics and whether a video can
@@ -38,6 +38,9 @@ WHERE = {"left": "left side", "center": "center", "right": "right side", "left_b
          "left_front": "left side, in the foreground", "right_front": "right side, in the foreground"}
 
 
+# KG-12 asks for whole arms only where the body is in the frame: a close shot cuts the arms by design (test v2: a CU failed)
+CLOSE = {"MS", "MCU", "CU", "ECU"}
+
 HEIGHT = {"quarter": "a quarter", "third": "a third", "half": "half", "two_thirds": "two thirds", "most": "most"}
 
 
@@ -54,6 +57,8 @@ def questions(shot: dict) -> list[dict]:
     for p in people:
         tag = p["tag"]
         out.append(_q("KG-02", f"Is there {tag} in the picture?", "yes"))
+        # KG-01 per figure: the total missed a second mammoth (counted 5 of 6); one figure drawn twice is the commonest error
+        out.append(_q("KG-01", f"How many times does {tag} appear in the picture? Answer with a number.", 1))
         if p.get("where"):
             out.append(_q("KG-03", f"Is {tag} on the {WHERE.get(p['where'], p['where'])} of the picture?", "yes"))
         if p.get("height"):
@@ -68,13 +73,14 @@ def questions(shot: dict) -> list[dict]:
                     "eyes?", "no"),
         _q("KG-09", "Is any animal or object ambiguous, so that it could be a carving, a painting or a real thing?", "no"),
         _q("KG-10", "Is there any written text, letters or a sign with words?", "no", hard=False),
+        _q("KG-17", "Are there measurement lines, arrows, rulers, percentages or numbers drawn over the picture?", "no"),
     ]
     actor = next((p for p in people if p.get("actor")), None)
     room = (shot.get("lead_room") or {}).get("side") or shot.get("free_space")      # film_shots `lead_room` (KP-34)
     if actor and room and room != "none":
         side = {"above": "space above", "below": "space below"}.get(room, f"space on the {room}")
         out.append(_q("KG-11", f"Is there empty {side} of {actor['tag']} to move into?", "yes"))
-    if actor and shot.get("limbs", True) and shot["kind"] == "keyframe":
+    if actor and shot.get("limbs", True) and shot["kind"] == "keyframe" and shot.get("size") not in CLOSE:
         out.append(_q("KG-12", f"Are both arms and hands of {actor['tag']} fully inside the picture?", "yes"))
     if shot["kind"] in ("nextpose", "cut"):
         out.append(_q("KG-13", "Compared with the first image, is the drawing style (line, colour, texture) the same?",
