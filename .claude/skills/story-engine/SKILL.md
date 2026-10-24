@@ -11,6 +11,8 @@ and, for the /3 scene system, `docs/research/STORYTELLING_EDITING_2026-10-19.md`
 The output is ONE `production_script.json` (D-43): text, voices, pictures and prompts, sounds and the edit, written
 before anything is paid for (project rule 1). New episodes are `production_script/3`; a `/2` keeps its old contract.
 
+For historically grounded docudrama episodes, read `docs/research/DOCUDRAMA_REFERENCE_LIBRARY.md` before story planning. It is an offline-first reference pack with original structural analyses and an original demonstration scene because the runtime may not have external-web access. Use its fully inspected source notes as craft evidence; do not treat partial subtitle listings as analyzed transcripts, do not depend on opening its external URLs, and do not copy full copyrighted scripts into prompts or the repository. Preserve the existing engine and propose the smallest tested change only if the source analysis reveals a real gap.
+
 ## Why stages (and why a mid-size model can do it)
 
 A single prompt that writes story, dialogue, tags, shots and sounds at once loses the story: the technical layer crowds
