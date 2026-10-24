@@ -1193,7 +1193,7 @@ agents story-architect, scene-writer and edit-planner told the episode rules. No
 equals BP-113's cap; BP-31, BP-03, ED-14's listener reactions. Decision D-74.
 
 
-## 2026-10-24 — Keyframe and sheet prompts in the style LoRA's training shape (PR #22's style-tail rule, LY-09)
+## 2026-10-24 — Keyframe and sheet prompts in the style LoRA's training shape (LT-65, LY-09)
 
 The LoRA thread found the style faded in composed keyframes: same pod, LoRA and seeds, the approved 31-word eras prompt
 drew the look and the 337-word composed bus prompt a flat grey generic cartoon; every v5 caption ends with one style tail
@@ -1203,3 +1203,88 @@ past the budget placed by their tag's head phrase; heights, supports, relations 
 (for EliGen boxes or a blockout) and in cut prompts; `film_shots check` runs `style_check` (missing tail FAIL, over 90
 words REVIEW, PR #22's `qa/style_prompt.check` when present). The bus example's "flat grey daylight" and "empty white"
 plain words replaced. Tests in `tests/unit/test_film_shots.py`.
+
+## 2026-10-24 — LT-19: a pod's GPU check has a timeout; a bad host stops itself through the guard
+
+ვანო (16:20 Tbilisi): find why the chain-test pod hung and fix it if it was avoidable. Cause: my launchers dropped the
+`allowedCudaVersions` filter (for stock), so RunPod gave a driver-550 host (native CUDA 12.4, compat 13.0) to the CUDA 13
+aitoolkit image; the pod's `python -c "...torch.cuda.get_device_name(0)"` printed "cuda ok" and never returned. The background
+upload loop kept the heartbeat fresh, so the guard saw a live pod for 12 min (≈$0.6) until I read the log. The relaunch got a
+driver-595 host (CUDA 13.2) and ran normally. Fixes: `lint_pod_script` refuses a CUDA call without `timeout`; a failed probe
+writes BAD_HOST to the heartbeat and the guard stops that pod (`hf_text`, `heartbeat_step` -> "bad_host"); `create` refuses a
+body without the CUDA filter unless `any_cuda=True`. Tests: `test_a_cuda_check_without_a_timeout_is_refused`,
+`test_a_pod_that_reports_a_bad_host_is_stopped_by_its_guard`, `test_create_refuses_a_body_without_the_cuda_filter`.
+
+
+## 2026-10-24 — KG: keyframe gate, cause log, a LoRA only on its own base
+
+ვანო (18:53 Tbilisi): check every picture's logic, physics and video use before the scene LoRA takes it; redraw on a fail;
+record what was right and wrong and whose fault (prompt, style LoRA, scene LoRA); fix only the weak part. Cause of today's
+wrong-style pictures: the chain-test masters and the hero sheet were BFL night-run pictures, and the style LoRA was loaded into
+Edit-2511 (a different base); the one wldnk master (ice age) kept its style through Edit + the scene LoRA alone. New
+[KEYFRAME_GATE](KEYFRAME_GATE.md) (KG-01..KG-16, new docs_lint family KG) and `qa/keyframe_gate.py`: questions from the shot
+card for the pod's VLM, verdict (hard FAIL / soft REVIEW), at most 3 tries, `blame` (base without LoRA + another seed), the
+`qa_log.jsonl` summary (prompt rule first; a LoRA retraining candidate at 15 cases of one type), and `check_stack` (style LoRA
+only on Qwen-Image-2512, scene LoRA only on Edit-2511). The approved 20-era sheet read by Claude: 1 logic error of 20 (underwater dome) and the ice-age
+mammoth, which the prompt asked for as a rock painting; both prompts were ambiguous. Test: `tests/unit/test_keyframe_gate.py` (7).
+
+## 2026-10-24 — LY: shot layout from real sizes and the camera
+
+ვანო (19:34 Tbilisi): give exact sizes with ± in one prompt variant and relative proportions in the other, make sure the system
+writing the numbers makes no mistakes, and look at drawing simple figures first and our style after. New
+`scripting/layout.py` (LY-01..LY-08 in [KEYFRAME_GATE](KEYFRAME_GATE.md), docs_lint family LY): a table of real heights with
+references, the shot size sets the lead's frame share, perspective places every other figure (height = f·H/z, horizon by
+angle, `elev` for a hill), checks FAIL a figure outside the frame or hidden behind a nearer one, and one layout writes the
+technical prompt (± 5 %), the relative prompt (ratios and metres in words), EliGen boxes and a grey blockout for a ControlNet.
+On its first run it caught the scenario's mammoth 100 % hidden behind the bus. Test: `tests/unit/test_layout.py` (5).
+
+## 2026-10-24 21:40 Tbilisi: film picture test v2, and three gate fixes (KG-01, KG-12, KG-17)
+
+ვანო said "run everything" at 19:50. Test v2 drew 60 pictures of the 1-minute film on one pod for $1.94 (≈$0.7 of it was the
+pod idle after the end: I checked too late). The results are in [KEYFRAME_GATE](KEYFRAME_GATE.md), "Film test v2". The gate
+made errors in both directions:
+- It missed a second mammoth: the total count was 5 of 6.
+- It noticed drawn rulers in only 2 of 6 pictures.
+- It failed a close-up for cut-off arms.
+
+Fixes in `qa/keyframe_gate.py`, tested in `test_film_test_v2_cases`:
+- KG-01 now also asks per card figure how many times it appears.
+- KG-17 (hard) asks for measurement lines and numbers.
+- KG-12 is skipped in MS and closer shots.
+
+The prompt-text fixes (name a figure once, then a short name; no numbers in the text) belong to the shot prompts (PR #24)
+and were sent there.
+
+
+## 2026-10-24 22:30 Tbilisi: LT-63 newest code and rules, LT-64 the creator's approved rules
+
+ვანო noticed that the pod fixes (LT-17, LT-19) sit only in PR #22 and asked whether the other threads' newest rules are
+in use. They were not all in use. Test v2 composed its prompts at PR #24 08f2bf6, before that thread's b991562 (sizes in
+words, no "a/an" before a cast noun, partial figures). The asset test writes its prompts by hand. LT-63 makes every run start
+from the newest heads, take its prompts from the composer, and record its commits. LT-64 lists the rules he approved, which
+apply in every next iteration.
+
+## 2026-10-24 23:45 Tbilisi: why the style faded, and a stricter picture check
+
+ვანო saw the film pictures lose the approved style and repeat the same girl. The negative-prompt run already held the cause.
+On one pod, with one LoRA file and seeds 7 and 8, the approved eras prompt drew the approved look. The film's bus prompt drew
+a flat, round, grey cartoon. The two prompts differ in shape:
+- the eras prompt is 31 words, has caricature words and a fire;
+- the bus prompt is 337 words, has no caricature word, says "flat grey daylight", and repeats every full tag up to 9 times.
+
+All 164 training captions end with one style tail, and the composer never sent it. The LoRA is not broken; the prompts left
+the shape it was trained on. New rules:
+- LT-65 (`qa/style_prompt.py`): the tail, at most 90 words, no grey light.
+- LY-09 (`layout.short`, `repeated_tags`): a full tag is said once.
+- KG-18..KG-22 (`keyframe_gate`):
+  - look-alike twins;
+  - sheet marks such as glasses;
+  - objects counted, so one bus is one bus;
+  - absent things (a road in the ice age);
+  - the 72B judge, one question per call;
+  - my own filled table for every picture before the creator sees it.
+
+
+Follow-up: PR #22's head (5049711, `qa/style_prompt.py`) merged into this branch; the composer now takes `STYLE_TAIL` and
+the 90-word limit from it and `film_shots check` runs its `check` (washed-out light words REVIEW); the Napoleon cards' grey
+and flat lights recoloured (0 FAIL, 0 REVIEW).

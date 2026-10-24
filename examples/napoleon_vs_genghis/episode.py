@@ -174,9 +174,9 @@ def write(ep):
             act=("infantry", "a French musket and a Mongol bow lie crossed on the grass",
                  "a gust of wind shakes the bowstring", "the bowstring settles and hums"),
             narr="So what happens when the man who conquered Europe meets the man who conquered Asia?",
-            place="steppe", light="pale morning light", src="keyframe")
+            place="steppe", light="soft gold morning light", src="keyframe")
     ep.shot("EWS", 4, "Title beat: the two armies, a valley apart.", mode="establish", tier="hold", who=["infantry", "riders"],
-            place="steppe", light="pale morning light", src="keyframe", cam="push_in",
+            place="steppe", light="soft gold morning light", src="keyframe", cam="push_in",
             end="the gap of empty grass between the two armies in the middle of the frame",
             rel=["the French columns stand on the left of the valley", "the Mongol riders stand on the right of the valley"],
             where={"infantry": "left_back", "riders": "right_back"}, facing={"infantry": "right", "riders": "left"},
@@ -232,12 +232,12 @@ def write(ep):
             narr="He promoted men for what they did, not for their fathers.", claims=["C11"],
             lead=("left", "where he looks"))
     ep.shot("INSERT", 4, "Two weapons side by side, two philosophies.", mode="insert", tier="light", place="steppe",
-            light="pale morning light", src="keyframe",
+            light="soft gold morning light", src="keyframe",
             act=("infantry", "a heavy supply wagon wheel sinks in soft mud",
                  "a horse's hoof stamps down beside it and lifts away", "the wheel stays stuck in the mud"),
             foley=["mud sucking at a wheel"])
     ep.shot("EWS", 4, "The gap between the armies closes.", mode="narrated", tier="hold", who=["infantry", "riders"],
-            place="steppe", light="pale morning light", src="keyframe", cam="push_in",
+            place="steppe", light="soft gold morning light", src="keyframe", cam="push_in",
             end="the two armies small on each side of the empty valley",
             lead=("none", ""),
             rel=["the French columns stand on the left of the valley", "the Mongol riders stand on the right of the valley"],
@@ -338,7 +338,7 @@ def write(ep):
             "his moustache twitches"),
        line=("brun", "self", "Wherever it is, I hope it has bread.", "a grumble under his breath"), lead=("none", ""))
     # ---- 5. bridge (2:45-3:15) ----------------------------------------------------------------------------------
-    ep.scene("S05", "wagons", light="flat grey evening light", ambience="wind over open grass, a wagon creaking",
+    ep.scene("S05", "wagons", light="dim violet evening light", ambience="wind over open grass, a wagon creaking",
              stage={"napoleon": ("center", "camera", "standing on the tent's wooden floor", ""),
                     "murat": ("center", "right", "sitting astride a big bay horse", ""),
                     "cavalry": ("center_back", "right", "sitting on horses in the grass", "")})
@@ -348,7 +348,7 @@ def write(ep):
     sh("INSERT", 4, "An empty sack.", mode="insert",
        act=("infantry", "an empty flour sack hangs from a soldier's hand", "the hand shakes the sack upside down",
             "a little white dust falls onto the grass"), narr="On this steppe, there were no farms.")
-    sh("INSERT", 4, "Only grass.", mode="insert", src="keyframe", place="steppe", light="flat grey evening light",
+    sh("INSERT", 4, "Only grass.", mode="insert", src="keyframe", place="steppe", light="dim violet evening light",
        act=("cavalry", "a French cavalry horse tears up a mouthful of grass", "the horse lifts its head, chewing",
             "the horse stands chewing in the wind"), narr="Only grass. And grass feeds horses, not men.")
     sh("MS", 5, "The emperor's impatience.", mode="narrated", who=["napoleon"], place="tent", light="warm candlelight",
@@ -833,7 +833,7 @@ def write(ep):
        act=("napoleon", "stares at the smoke", "drops the reins from his hands", "sits with empty hands",
             "his mouth falls open and his eyes go flat"), lead=("none", ""))
     # ---- 11. turning point (10:45-11:15): the won field ---------------------------------------------------------
-    ep.scene("S11", "valley", light="grey light through drifting smoke", ambience="wind, a single crow, silence",
+    ep.scene("S11", "valley", light="smoky amber light through drifting smoke", ambience="wind, a single crow, silence",
              stage={"napoleon": ("left", "right", GRASS, ""), "brun": ("right", "left", GRASS, ""), "murat": ("right", "left", GRASS, "")})
     sh("WS", 5, "One still frame: the winner on his field.", mode="establish", tier="hold", who=["napoleon"],
        cam="push_in", end="the general small and alone in the middle of the frame",
@@ -857,11 +857,11 @@ def write(ep):
        act=("murat", "walks up beside the emperor", "pulls off his plumed hat", "holds the hat at his side"),
        line=("murat", "napoleon", "They never wanted the field, Sire.", "subdued, for once"), lead=("none", ""))
     sh("EWS", 4, "The wagons, burned to their ribs.", mode="establish", tier="hold", who=[], place="wagons",
-       light="grey light through drifting smoke", src="keyframe", cam="pull_out",
+       light="smoky amber light through drifting smoke", src="keyframe", cam="pull_out",
        end="the rows of burnt wagon frames small on the steppe",
        rel=["thin smoke rises above the burnt wagon frames"])
     # ---- 12. fallout (11:15-12:00) -------------------------------------------------------------------------------
-    ep.scene("S12", "valley", light="cold grey evening light", ambience="wind over open grass",
+    ep.scene("S12", "valley", light="cold blue evening light", ambience="wind over open grass",
              stage={"riders": ("right", "left", "sitting on horses in the grass", ""),
                     "infantry": ("left", "right", "sitting on the burnt grass", ""),
                     "napoleon": ("right", "left", GRASS, ""), "murat": ("left", "right", GRASS, ""),
@@ -954,7 +954,7 @@ def write(ep):
        facing={"napoleon": "genghis", "kemal": "napoleon"},
        act=("kemal", "steps close to the emperor", "drops his voice and bends his head", "stays bent close"),
        line=("kemal", "napoleon", "Sire. The men are eating grass.", "very quiet"), lead=("none", ""))
-    sh("MS", 3, "Outside, they are.", tier="light", who=["brun", "drummer"], place="wagons", light="cold grey light",
+    sh("MS", 3, "Outside, they are.", tier="light", who=["brun", "drummer"], place="wagons", light="cold blue light",
        src="keyframe", where={"brun": "left", "drummer": "right"}, facing={"brun": "drummer", "drummer": "brun"},
        on={"brun": "sitting on the burnt grass", "drummer": "sitting on the burnt grass"},
        act=("brun", "sits in the ash beside a cold fire", "pulls up a fistful of grass and chews it",
@@ -975,7 +975,7 @@ def write(ep):
                        "the felt flap swings shut behind him"),
        lead=("left", "the door"), height={"napoleon": "third"}, foley=["felt flapping"])
     sh("WS", 4, "The price, paid: two guns go to the khan.", mode="establish", who=["gunners", "riders"], place="steppe",
-       light="pale morning light", src="keyframe", where={"gunners": "left", "riders": "right"},
+       light="soft gold morning light", src="keyframe", where={"gunners": "left", "riders": "right"},
        facing={"gunners": "right", "riders": "right"},
        on={"gunners": GRASS, "riders": "sitting on horses on the grass"},
        exit=True, act=("riders", "loop ropes round two bronze cannons", "drag the cannons away across the grass",
@@ -983,7 +983,7 @@ def write(ep):
        lead=("right", "where they drag them"), height={"gunners": "third", "riders": "third"},
        foley=["wheels creaking", "ropes straining"])
     # ---- 14. the answer (13:30-14:30) ----------------------------------------------------------------------------
-    ep.scene("S14", "valley", light="pale morning light", ambience="wind, then a city's distant bells",
+    ep.scene("S14", "valley", light="soft gold morning light", ambience="wind, then a city's distant bells",
              stage={"infantry": ("left", "right", GRASS, ""), "riders": ("right", "left", "sitting on horses on the skyline", ""),
                     "napoleon": ("center", "right", "sitting astride a white horse", ""),
                     "brun": ("center", "right", "standing in the snow", ""),
@@ -1005,10 +1005,10 @@ def write(ep):
             "rides on with the arm still raised"),
        narr="Then the fog came back, and the army marched into it.", claims=["I01"],
        rel=["the column of infantry marches behind the general"], lead=("right", "the fog"), height={"napoleon": "third"})
-    sh("EWS", 4, "Moscow, on the right day.", mode="establish", tier="hold", who=[], place="moscow", light="pale morning light",
+    sh("EWS", 4, "Moscow, on the right day.", mode="establish", tier="hold", who=[], place="moscow", light="soft gold morning light",
        src="keyframe", cam="push_in", end="the onion domes filling the frame",
        narr="It came out on the road to Moscow, on the fourteenth of September, 1812.", claims=["C02"])
-    sh("MS", 4, "An empty city.", mode="narrated", who=["brun"], place="moscow", light="pale morning light",
+    sh("MS", 4, "An empty city.", mode="narrated", who=["brun"], place="moscow", light="soft gold morning light",
        on={"brun": "standing on a wooden street"},
        act=("brun", "walks into an empty wooden street", "stops and swings round, looking at the shut windows",
             "stands with his musket lowered"),
@@ -1024,12 +1024,12 @@ def write(ep):
        src="keyframe", on={"napoleon": "standing at a tall window"},
        act=("napoleon", "stands at a tall window", "drops a folded letter onto the sill", "stares out at the flames"),
        narr="The tsar refused to talk.", claims=["C12"], lead=("right", "the window"))
-    sh("WS", 4, "The retreat.", mode="narrated", who=["infantry"], place="fog", light="grey snow light", src="keyframe",
+    sh("WS", 4, "The retreat.", mode="narrated", who=["infantry"], place="fog", light="cold blue snow light", src="keyframe",
        on={"infantry": "standing in deep snow"},
        act=("infantry", "trudge through falling snow", "stumble and pull each other up", "march on, bent over"),
        narr="About five weeks later, Napoleon marched out, and the long retreat began.", claims=["C12"],
        lead=("left", "where they march"), height={"infantry": "third"}, foley=["boots in snow"])
-    sh("MS", 4, "The uncertain count.", mode="narrated", tier="light", who=["brun"], place="fog", light="grey snow light",
+    sh("MS", 4, "The uncertain count.", mode="narrated", tier="light", who=["brun"], place="fog", light="cold blue snow light",
        on={"brun": "standing in deep snow"},
        act=("brun", "stands in the snow", "lifts snow off his bearskin and shakes it off", "stands still"),
        narr="How many came home is still argued over. The counts do not agree.", lead=("none", ""))
@@ -1056,7 +1056,7 @@ def write(ep):
        narr="On this channel, a hundred geniuses are already waiting for you in the Stone Age.", claims=["CH1"],
        lead=("none", ""), height={"geniuses": "third"})
     sh("WS", 5, "Coming: the Ice Age.", mode="narrated", tier="light", who=["stranded"], place="iceage",
-       light="cold grey light", src="keyframe",
+       light="cold blue light", src="keyframe",
        act=("stranded", "huddle together on the snow", "raise their arms against a gust of snow", "huddle closer"),
        narr="Next: a hundred people dropped into the Ice Age. And worlds all the way to the future.",
        claims=["CH1"], lead=("none", ""), height={"stranded": "third"})

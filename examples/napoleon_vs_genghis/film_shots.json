@@ -601,7 +601,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "steppe",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "lead_room": {
      "side": "none"
     }
@@ -630,7 +630,7 @@
     "angle": "eye",
     "camera": "push_in",
     "place": "steppe",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "camera_end": "the gap of empty grass between the two armies in the middle of the frame",
     "relations": [
      "the French columns stand on the left of the valley",
@@ -1025,7 +1025,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "steppe",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "lead_room": {
      "side": "none"
     }
@@ -1056,7 +1056,7 @@
     "angle": "eye",
     "camera": "push_in",
     "place": "steppe",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "camera_end": "the two armies small on each side of the empty valley",
     "relations": [
      "the French columns stand on the left of the valley",
@@ -2190,7 +2190,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "wagons",
-    "light": "flat grey evening light",
+    "light": "dim violet evening light",
     "relations": [
      "the covered wagons stand in a long line on the grass"
     ]
@@ -2219,7 +2219,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "wagons",
-    "light": "flat grey evening light",
+    "light": "dim violet evening light",
     "lead_room": {
      "side": "none"
     }
@@ -2249,7 +2249,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "steppe",
-    "light": "flat grey evening light",
+    "light": "dim violet evening light",
     "lead_room": {
      "side": "none"
     }
@@ -7342,7 +7342,7 @@
     "angle": "eye",
     "camera": "push_in",
     "place": "valley",
-    "light": "grey light through drifting smoke",
+    "light": "smoky amber light through drifting smoke",
     "camera_end": "the general small and alone in the middle of the frame",
     "relations": [
      "smoke drifts behind the general"
@@ -7374,7 +7374,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "valley",
-    "light": "grey light through drifting smoke",
+    "light": "smoky amber light through drifting smoke",
     "lead_room": {
      "side": "none"
     }
@@ -7418,7 +7418,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "valley",
-    "light": "grey light through drifting smoke",
+    "light": "smoky amber light through drifting smoke",
     "lead_room": {
      "side": "below",
      "for": "where the crumbs fall"
@@ -7470,7 +7470,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "valley",
-    "light": "grey light through drifting smoke",
+    "light": "smoky amber light through drifting smoke",
     "lead_room": {
      "side": "none"
     }
@@ -7521,7 +7521,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "valley",
-    "light": "grey light through drifting smoke",
+    "light": "smoky amber light through drifting smoke",
     "lead_room": {
      "side": "none"
     }
@@ -7572,7 +7572,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "valley",
-    "light": "grey light through drifting smoke",
+    "light": "smoky amber light through drifting smoke",
     "lead_room": {
      "side": "none"
     }
@@ -7610,7 +7610,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "valley",
-    "light": "grey light through drifting smoke",
+    "light": "smoky amber light through drifting smoke",
     "lead_room": {
      "side": "none"
     }
@@ -7661,7 +7661,7 @@
     "angle": "eye",
     "camera": "pull_out",
     "place": "wagons",
-    "light": "grey light through drifting smoke",
+    "light": "smoky amber light through drifting smoke",
     "camera_end": "the rows of burnt wagon frames small on the steppe",
     "relations": [
      "thin smoke rises above the burnt wagon frames"
@@ -7684,7 +7684,7 @@
     "angle": "eye",
     "camera": "pan_left",
     "place": "valley",
-    "light": "cold grey evening light",
+    "light": "cold blue evening light",
     "camera_end": "the empty valley under the evening sky",
     "relations": [
      "dropped lances and arrows lie on the trampled grass"
@@ -7708,7 +7708,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "mgcamp",
-    "light": "cold grey evening light",
+    "light": "cold blue evening light",
     "lead_room": {
      "side": "left",
      "for": "where they ride in"
@@ -7750,7 +7750,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "mgcamp",
-    "light": "cold grey evening light",
+    "light": "cold blue evening light",
     "lead_room": {
      "side": "right",
      "for": "the herd"
@@ -7793,7 +7793,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "wagons",
-    "light": "cold grey evening light",
+    "light": "cold blue evening light",
     "lead_room": {
      "side": "none"
     }
@@ -7831,7 +7831,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "wagons",
-    "light": "cold grey evening light",
+    "light": "cold blue evening light",
     "lead_room": {
      "side": "none"
     }
@@ -7910,7 +7910,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "camp",
-    "light": "cold grey evening light",
+    "light": "cold blue evening light",
     "lead_room": {
      "side": "left",
      "for": "where he rides in"
@@ -7951,7 +7951,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "camp",
-    "light": "cold grey evening light",
+    "light": "cold blue evening light",
     "lead_room": {
      "side": "none"
     }
@@ -8002,7 +8002,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "camp",
-    "light": "cold grey evening light",
+    "light": "cold blue evening light",
     "lead_room": {
      "side": "none"
     }
@@ -8804,7 +8804,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "wagons",
-    "light": "cold grey light",
+    "light": "cold blue light",
     "lead_room": {
      "side": "none"
     }
@@ -9068,7 +9068,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "steppe",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "lead_room": {
      "side": "right",
      "for": "where they drag them"
@@ -9124,7 +9124,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "valley",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "lead_room": {
      "side": "right",
      "for": "where they aim"
@@ -9163,7 +9163,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "valley",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "lead_room": {
      "side": "right",
      "for": "where the smoke rolls"
@@ -9208,7 +9208,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "ridge",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "lead_room": {
      "side": "above",
      "for": "where the bows rise"
@@ -9247,7 +9247,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "fog",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "relations": [
      "the column of infantry marches behind the general"
     ],
@@ -9299,7 +9299,7 @@
     "angle": "eye",
     "camera": "push_in",
     "place": "moscow",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "camera_end": "the onion domes filling the frame"
    },
    "tier": "hold",
@@ -9323,7 +9323,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "moscow",
-    "light": "pale morning light",
+    "light": "soft gold morning light",
     "lead_room": {
      "side": "right",
      "for": "the empty street"
@@ -9510,7 +9510,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "fog",
-    "light": "grey snow light",
+    "light": "cold blue snow light",
     "lead_room": {
      "side": "left",
      "for": "where they march"
@@ -9555,7 +9555,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "fog",
-    "light": "grey snow light",
+    "light": "cold blue snow light",
     "lead_room": {
      "side": "none"
     }
@@ -9746,7 +9746,7 @@
     "angle": "eye",
     "camera": "static",
     "place": "iceage",
-    "light": "cold grey light",
+    "light": "cold blue light",
     "lead_room": {
      "side": "none"
     }

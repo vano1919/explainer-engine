@@ -22,6 +22,7 @@ import re
 import sys
 from pathlib import Path
 
+from explainer_engine.qa import style_prompt
 from explainer_engine.scripting import shot_prompt_lint as lint
 from explainer_engine.standards import sourced_rules
 
@@ -72,11 +73,9 @@ CAMERA = {"static": "Static camera.", "push_in": "The camera pushes in slowly", 
           "pan_left": "The camera pans left", "pan_right": "The camera pans right", "tilt_up": "The camera tilts up",
           "tilt_down": "The camera tilts down", "follow": "The camera follows {actor}",
           "truck_left": "The camera trucks left", "truck_right": "The camera trucks right"}
-# LT-65 (PR #22, qa/style_prompt.py): every v5 training caption of the style LoRA ends with this tail, and a keyframe or
-# sheet prompt without it drew a flat grey generic cartoon; the whole prompt stays at most KEYFRAME_WORDS_MAX words
-STYLE_TAIL = ("lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold "
-              "uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents")
-KEYFRAME_WORDS_MAX = 90
+# LT-65 (docs/LORA_TRAINING.md, qa/style_prompt.py): a style-LoRA prompt keeps its training captions' shape, tail and length
+STYLE_TAIL = style_prompt.STYLE_TAIL
+KEYFRAME_WORDS_MAX = style_prompt.MAX_WORDS
 NEXTPOSE = "nextpose, a later frame of the same continuous animated shot, same camera: "
 NEG_KEYFRAME = ("text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, "
                 "extra limbs, blurry face, low resolution")
@@ -601,12 +600,8 @@ def check(doc: dict) -> list[dict]:
 
 def style_check(doc: dict) -> list[dict]:
     """LT-65: a style-LoRA prompt (keyframe or hero sheet) ends with the training captions' tail and stays at most
-    KEYFRAME_WORDS_MAX words; PR #22's ``qa/style_prompt.check`` runs too where that module is present."""
+    KEYFRAME_WORDS_MAX words, and passes ``qa/style_prompt.check`` (washed-out light words REVIEW)."""
     tail = doc["style"].get("tail", STYLE_TAIL)
-    try:
-        from explainer_engine.qa import style_prompt
-    except ImportError:
-        style_prompt = None
     out = []
     for p in [*sheet_prompts(doc), *compose(doc)]:
         if p.get("lora") != "style":
@@ -618,10 +613,8 @@ def style_check(doc: dict) -> list[dict]:
         if n > KEYFRAME_WORDS_MAX:
             out.append({"rule": "LT-65", "severity": "REVIEW", "where": p["id"],
                         "detail": f"{n} words: at most {KEYFRAME_WORDS_MAX}; shorten the lead's pose or the place"})
-        if style_prompt is not None:
-            for f in style_prompt.check(p["prompt"]):
-                out.append({"rule": f.get("rule", "LT-65"), "severity": f.get("severity", "REVIEW"), "where": p["id"],
-                            "detail": f.get("detail", str(f))})
+        for f in style_prompt.check(p["prompt"]) if tail == STYLE_TAIL else []:
+            out.append({"rule": f["rule"], "severity": f["severity"], "where": p["id"], "detail": f["detail"]})
     return out
 
 
