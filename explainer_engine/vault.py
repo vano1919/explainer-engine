@@ -30,6 +30,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config" / "vault.json"
 HUB = "https://huggingface.co"
 CHUNK = 1 << 20
+SELF = "vault/VAULT_MANIFEST"  # the manifest copies on the primary are rewritten by every snapshot: never listed in one
 
 
 class VaultError(RuntimeError):
@@ -125,7 +126,7 @@ def is_critical(path, cfg):
 def snapshot(cfg, files, now=None):
     now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now or time.time()))
     rows = [{"path": p, "size": m["size"], "sha256": m["sha256"], "blob": m["blob"], "critical": is_critical(p, cfg)}
-            for p, m in sorted(files.items())]
+            for p, m in sorted(files.items()) if not p.startswith(SELF)]
     crit = [r for r in rows if r["critical"]]
     return {"schema": "vault_manifest/1", "primary": cfg["primary"], "taken": now,
             "totals": {"files": len(rows), "bytes": sum(r["size"] or 0 for r in rows),

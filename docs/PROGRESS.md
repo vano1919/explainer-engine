@@ -1007,8 +1007,12 @@ GitHub branches of 9 open PRs.
   `.part` swapped in only after its hash matches, identical bytes copied instead of downloaded, re-runs download nothing),
   `check-uploaded` (a pod proves its outputs are on HF before it stops), `lint_pod_script` (VT-01/02).
 - On HF: tag `vault-2026-10-24` pins today's state; `vault/code/` holds git bundles of both repositories, every branch.
+- 636 project files (1 GB: night-run and ice-cartoon assets, Titans voice and narrator cuts, kf_v2, dataset_style_v7 extras,
+  ic_test, the eras clips, eval sheets) and the creator's uploads (his reference photos) existed only in the project files:
+  now on HF `project_files/` (tag `vault-2026-10-24b`); 147 HF download-cache stubs (`.cache/`) skipped. Totals: 9 979 files,
+  49.3 GB; critical 4 197 files, 8.1 GB. The snapshot never lists its own manifest copies (`vault/VAULT_MANIFEST*`).
 - Docs: [VAULT](VAULT.md) (VT-01..VT-05, restore), decision [D-73](DECISIONS_AND_OPEN_QUESTIONS.md), INDEX row; docs_lint knows VT-.
 - Tests: `tests/unit/test_vault.py` (8: paging, critical marking, loss and change caught, upload check, empty output, pull
   re-check and twins, a corrupt download never overwrites, the lint). Nothing paid, nothing deleted.
-- Open: the second copy's place is the creator's call (his PC: `vault pull --dest <folder>`, ~6.8 GB); the pod-script lint is
+- Open: the second copy's place is the creator's call (his PC: `vault pull --dest <folder>`, ~8.1 GB); the pod-script lint is
   wired into `runpod.lint_pod_script` when PR #22 (which adds that function) merges.

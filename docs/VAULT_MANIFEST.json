@@ -1,12 +1,12 @@
 {
 "schema": "vault_manifest/1",
 "primary": "datasets/vano1919/tmr-artifacts",
-"taken": "2026-10-24T09:36:39Z",
+"taken": "2026-10-24T09:42:51Z",
 "totals": {
-"files": 9292,
-"bytes": 47967374715,
-"critical_files": 3510,
-"critical_bytes": 6796112492
+"files": 9979,
+"bytes": 49301817803,
+"critical_files": 4197,
+"critical_bytes": 8130553642
 },
 "files": [
 {
@@ -20255,9 +20255,9 @@
 },
 {
 "path": "motion_lora/code/launch_ltx_train.py",
-"size": 2954,
+"size": 3095,
 "sha256": null,
-"blob": "6c3a374d5d781ce9f1e5c7216e5fd646ff2c478b",
+"blob": "4dee00f602e4484e7a28f641f999954a6f690f76",
 "critical": true
 },
 {
@@ -20276,9 +20276,9 @@
 },
 {
 "path": "motion_lora/code/pod_ltx_train.sh",
-"size": 8449,
+"size": 8459,
 "sha256": null,
-"blob": "a5003ab99860738376329f475d7f4cac7f35d22f",
+"blob": "e371461ff4451f24fb0ef45e4bbeb7e34ae4fd19",
 "critical": true
 },
 {
@@ -20993,6 +20993,4458 @@
 "size": 306807568,
 "sha256": "247ecd174878df127d2290b5fa74fd197af551efd980d048394472631acf2d26",
 "blob": "80d2f063160f1d8873238241efda1ff2afd6f8e0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/AUDIT_2026-10-19/A1_youtube_policy_sources.md",
+"size": 26750,
+"sha256": null,
+"blob": "740d1931db089346cc1e491f0cd0ad5585c96c30",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/AUDIT_2026-10-19/A2_image_providers.md",
+"size": 24707,
+"sha256": null,
+"blob": "4e7ca21ff3290092e43e1677ee09df12ca0cf6e1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/AUDIT_2026-10-19/A3_engineering_review.md",
+"size": 40173,
+"sha256": null,
+"blob": "82e48c6c964010579833dcaee6b9ef44396e7073",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/AUDIT_2026-10-19/AUDIT_2026-10-19.md",
+"size": 33717,
+"sha256": null,
+"blob": "e6e9e26b601cd965e386686723b287b232b56104",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/HANDOFF_2026-10-19.md",
+"size": 16710,
+"sha256": null,
+"blob": "2a1b9de97fda160a06d307995daf8caa43862ae8",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/INTEGRATED_REVIEW_2026-10-20.md",
+"size": 19467,
+"sha256": null,
+"blob": "c52be89f2d18e98092af6815d86e6ad64a2de882",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/PARAMETER_AUDIT_2026-10-19_ka.md",
+"size": 27090,
+"sha256": null,
+"blob": "4d392a17e4cdd6cdb3a21ec326352b30782ef81d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/SYSTEM_AUDIT_2026-10-19/RULE_CONTRADICTIONS.md",
+"size": 20443,
+"sha256": null,
+"blob": "37ebc7a6fbbb36bf4e2deba5882929391e11ce8e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/SYSTEM_AUDIT_2026-10-19/SOURCED_RULES.md",
+"size": 62859,
+"sha256": null,
+"blob": "8204515fa9cab73f1a955df3df6a2ed5e4be7bae",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/SYSTEM_AUDIT_2026-10-19/rescan_2026-10-20/A_rules_crosscheck.md",
+"size": 37373,
+"sha256": null,
+"blob": "772ac2e191783984473fbd029b1082c4477cfb31",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/SYSTEM_AUDIT_2026-10-19/rescan_2026-10-20/B_numbers.md",
+"size": 39435,
+"sha256": null,
+"blob": "5fc5d1308ddb0160520b66110e310488326c11e8",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/SYSTEM_AUDIT_2026-10-19/rescan_2026-10-20/C_e2e.md",
+"size": 18440,
+"sha256": null,
+"blob": "5a244396a9e79f7263e614e05598c6253bcd0779",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/SYSTEM_AUDIT_2026-10-19/research/audio_mix.md",
+"size": 42737,
+"sha256": null,
+"blob": "ccda74927bb2e58ba2a0ea264a7816c2e8a7bc8d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/SYSTEM_AUDIT_2026-10-19/research/motion_text.md",
+"size": 39907,
+"sha256": null,
+"blob": "6146925600fc312340020d9f580e4bf73d12d88c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/SYSTEM_AUDIT_2026-10-19/research/narration.md",
+"size": 35229,
+"sha256": null,
+"blob": "148bc1b9f628dcab586f8cbfefb5e4bdf4a296b9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/SYSTEM_AUDIT_2026-10-19/research/retention_shorts.md",
+"size": 42685,
+"sha256": null,
+"blob": "9d2564df6c7dc19a7954cff3de9a29dc955fb2ee",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/THUMBNAIL_RESEARCH_2026-10-19.md",
+"size": 36282,
+"sha256": null,
+"blob": "5797056bd105dbc9e9ab446fedab03a09e59cfec",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/VIDEO_PLAN_8-12min.md",
+"size": 18638,
+"sha256": null,
+"blob": "061f30233235470f711fc1280ae4f35b8aa17361",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ANIMATION_TOOLS_2026-10-22.md",
+"size": 9413,
+"sha256": null,
+"blob": "1e5ecbc8388a5941ee41be17c54b8a5d948142c6",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ANIMATION_UNIVERSE_2026-10-22.md",
+"size": 21194,
+"sha256": null,
+"blob": "9b2d9db7b8cdd33f9e069be28be52ff258d6eca0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/GEGMA_ka.md",
+"size": 18002,
+"sha256": null,
+"blob": "1091a2ff83154e8cb8b87a94201133916ebb6449",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/board_prompts.txt",
+"size": 16505,
+"sha256": null,
+"blob": "1ce013b508ef93c3127e09e9a5b92a06d2c027b2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ice_test/AUDIT_ice_shot_ka.md",
+"size": 12407,
+"sha256": null,
+"blob": "bffd6540f4a4e67a92a71a905f68685658db38a0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ice_test/ice_shot.mp4",
+"size": 7425783,
+"sha256": "391303fda0693e7c15f9f07b909352c18355f95b1d912953514db6a2a77c112a",
+"blob": "d2af3f388ed15ba91fc5349adf5347feb3a3f769",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ice_test/ice_shot_frames.jpg",
+"size": 278097,
+"sha256": "c1e0d25e251d499ebcd4dbea4a0b16333304cce75015239fe101e1add0ebd367",
+"blob": "3d96714fe37c1275357d943f6a1d9288e1308226",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ice_test/ice_shot_v2.mp4",
+"size": 6010865,
+"sha256": "cd3d3f611173b165a7697df1751b200b68d7aecb83675da0c655a69d8f37b761",
+"blob": "150b410a8d286d9b22db5540fef8be48f4206f3a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ice_test/ice_shot_v2_check.json",
+"size": 39,
+"sha256": null,
+"blob": "5e170b123c66b1f664c56bd582ddfe43e4b4033b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ice_test/ice_shot_v2_frames.jpg",
+"size": 290688,
+"sha256": "8d47c379f1fa6345a9832757c86dcc38716564a3a662bbe7be815520f53bb889",
+"blob": "795301c407fbf854b8914395f8cb89d9acc95918",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ice_test/ice_test_round2.jpg",
+"size": 697780,
+"sha256": "98461ead431bb57a67a616b457d72e7579d3dc9a4df6db268e09bcd10ec073c3",
+"blob": "e11ae2a49c41abfcd94a1e0e7029608edf83d920",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ice_test/ice_test_seedream_t1.jpg",
+"size": 619719,
+"sha256": "c7761be41d207708defe873025f5ab042b4b6e2d76f78169a15be1aa40337fb9",
+"blob": "04d122301ed02f8b17779d278340308a6f1709c0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/ice_test/ice_test_seedream_t2.jpg",
+"size": 571668,
+"sha256": "03b9fab2c8311482037d0eeb2b461dbeaf58d6cd5ccf5a79d2d6c4161742098f",
+"blob": "c834b6e5c84d1c6adfaf858bef57c023b562a40d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/rig_poc/rig_poc.json",
+"size": 374,
+"sha256": null,
+"blob": "dbecfa1e6bc38e7204d9e2b1c170500117b83bb6",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/rig_poc/rig_poc.mp4",
+"size": 528909,
+"sha256": "fe33d4e6e2e9139b966509893bc3de18b6d9c25cf6407b0d3b84accffa4e46fe",
+"blob": "8b3c254d5494d4499552a10e720661cb7ff9e4fa",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/rig_poc/rig_poc_frames.jpg",
+"size": 191198,
+"sha256": "376121cd796d1fccc83a80c6e9d1061c325b6fc9f1d342a6f3607d0366b46e74",
+"blob": "0ff7ef96dfd47da284f1eb057bc5fdd24b511c14",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/rig_poc/rig_poc_sheet.jpg",
+"size": 126657,
+"sha256": "408301b301339af894f7ddf6b15be13666a4153ccd18205a9a56322da31f27cb",
+"blob": "ea3098e78327978c1675a5bc6f2164a6790a39b2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_bold_poster_t1.jpg",
+"size": 711517,
+"sha256": "e06243074998103c24f52cb369e7df1d7878e61b73dcf06b064aed16e343db18",
+"blob": "e2d18998858bdbc082dda8a26bf9f2486c08fc23",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_bold_poster_t2.jpg",
+"size": 745949,
+"sha256": "ec34f55b65ef915e9289775006f1e5143a425d71bae5f878e937168ddea3b206",
+"blob": "f182309ea0e25b72044f2602d820299d28c79582",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_ink_cel_t1.jpg",
+"size": 802415,
+"sha256": "22743641fe9d69f56858592fecf1b8acad84803e7c4a53f3323755a40b374623",
+"blob": "06ba8164d7076021b6bbf3eaf9eb90bbf01dea35",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_ink_cel_t2.jpg",
+"size": 834344,
+"sha256": "748b67c05b58ce89d05e2d22ab53bdf8d2be8ff54cf3ed0908b0dd8604e12eda",
+"blob": "eed77de2f01d233c33000d88eb58ed53d6066591",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_paper_stage_t1.jpg",
+"size": 651025,
+"sha256": "ac4aa3068ffaf3a64ae28e120653265642f4402bb023d7e0bd343ebff3ec15bc",
+"blob": "4cef66b2c25181796116a0faa39e3d272b5e2c06",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_paper_stage_t2.jpg",
+"size": 665333,
+"sha256": "ab6695d512bc197116892fa1622395e481fb15ba100970cd9e7676823653a94d",
+"blob": "4dd309be5a926f976800565d4502207b1e5f54f3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_poster_graphic_t1.jpg",
+"size": 652299,
+"sha256": "3f43d95f45b9d2f17a4bdcd36f91b9384ee03bccf8a63e7d2440907ae56396b2",
+"blob": "fdba4fbb9be87aab7bd6c00dfaeb491b391a40ec",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_poster_graphic_t2.jpg",
+"size": 664022,
+"sha256": "261dd3be177821ba5569aa5f3b96ab78951e539077a0fa3b19ad373a2086d661",
+"blob": "836aaaf177f3ed08434c9b1ec625128ef4aa9475",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_shape_caricature_t1.jpg",
+"size": 717434,
+"sha256": "d7707695040cc715554325a89291bdaccc7490f9415511180a931167b14b5d89",
+"blob": "049cf967cee71177dbc0b16c3476eb7cb12219f7",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_shape_caricature_t2.jpg",
+"size": 739125,
+"sha256": "a148d8db92d286da5e63335a4c76dfa6d3397343ed89257de3ebd56d386d19b7",
+"blob": "500689e3251beffa9844730b9b4df7b06f50994d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_soft_volume_t1.jpg",
+"size": 622999,
+"sha256": "03d33d54f1996c4967238329d1a1b52af23ec95301f3e3e840b5993ea1ca9644",
+"blob": "22a8e96bc7b18fe0a449416bb0ff47492732599c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_soft_volume_t2.jpg",
+"size": 641691,
+"sha256": "94b961fd217b6de3d835879e99c7d6d94063ee253b65a46713b56826802e874a",
+"blob": "9d48300ad5358c197b92ba7505e15249906289fa",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_sunny_rubber_seedream_t1.jpg",
+"size": 646470,
+"sha256": "a2698226aad6a807f659414ad88d0b2150517792dd5378b625d5f64089d5fc14",
+"blob": "f03356e77c7342f96870fa85f6269dd84c39cd46",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_sunny_rubber_seedream_t2.jpg",
+"size": 620955,
+"sha256": "be658a540f919236f5e4607cde7191112f8f77cd3f538396055ab0482085ab2c",
+"blob": "c4035cadc193f1876ec09c5e0ed4040725759098",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_sunny_rubber_t1.jpg",
+"size": 682491,
+"sha256": "8c28d3a27bc821d805519252756a8bea6b4dd4ff3bee5858498d0f43fbaecb3b",
+"blob": "663ec5cc73b46ce1caf664ff7d5fc602a35097c3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_sunny_rubber_t2.jpg",
+"size": 717476,
+"sha256": "6effe96e17c9ec2c659aded136dcedb0d1ab40bb2f3bd7e26b0e23574893e464",
+"blob": "e76280ce109da98bdd12af0aae317bdf87748b08",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_warm_geometry_seedream_t1.jpg",
+"size": 599368,
+"sha256": "6e060443eb7489c4cf126fb12c1a546abf130a9de07f04f2be31c3a366ecbca7",
+"blob": "d757e0ba955366074eb81a536fbba22beca13302",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_warm_geometry_seedream_t2.jpg",
+"size": 595307,
+"sha256": "88a8a0f52865eac3e558f9f585e92bf65222f0030d1229aec5ef5f11c35f0e39",
+"blob": "d3bd81dbb66498490d71129e7193a9185e1d8967",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_warm_geometry_t1.jpg",
+"size": 588469,
+"sha256": "938be1589a607101667b5352e0963c175aa7fad453f0c35c155b703f2141a26d",
+"blob": "d7628f410ffbcfa408a56420bc8d5e04343f97f3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_warm_geometry_t2.jpg",
+"size": 587832,
+"sha256": "c2cad3d6cd04db12cdc7a4c1c5ea153359d82efe93c842313e61ae73bc7c74f8",
+"blob": "11c115cb6ad716ed04a65ff9adadaabffce2b288",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_wild_ink_t1.jpg",
+"size": 928313,
+"sha256": "77821e1d093d3c76c9ec0c897cb9be075dfc1a16ffe3769f8882a689bb95a364",
+"blob": "944528608e208e4854ceae2266950a9de83a4afd",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/animation_universe_2026-10-22/worlds/world_wild_ink_t2.jpg",
+"size": 986062,
+"sha256": "601779bf18d658ac666e3fb12ad99470c41a0501029666f0d1d179e51ddf18f5",
+"blob": "91d5aa5d3ccf39f762f56cb835acf0db2453e82f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/ARCHITECTURE_PLAN_2026-10-22.md",
+"size": 14470,
+"sha256": null,
+"blob": "2323c81a814268750e8535ae2d94d5b2b5584597",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/REPO_AUDIT_2026-10-22.md",
+"size": 15950,
+"sha256": null,
+"blob": "215d321d651f528d159bd64359385a09aaeb82e7",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/RUNPOD_VALIDATION_2026-10-22.md",
+"size": 8138,
+"sha256": null,
+"blob": "96da8ea21678be2b9832b7e614fe1bde73746905",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/TOOLING_IMAGE_2026-10-22.md",
+"size": 45891,
+"sha256": null,
+"blob": "67134f7b65e301a028a8e71a27adbb64d26df79f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/TOOLING_INFRA_2026-10-22.md",
+"size": 47656,
+"sha256": null,
+"blob": "bac6920f90e82222a359db82381f6d9097473fa5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/TOOLING_RESEARCH.md",
+"size": 15132,
+"sha256": null,
+"blob": "6c702695445c902928e2b918a74c707e00c95019",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/TOOLING_VIDEO_VOICE_2026-10-22.md",
+"size": 43294,
+"sha256": null,
+"blob": "f4d1330b7d9ac4f0a52b99d4eb09a21f999f2b2c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/TOOL_STRATEGY.md",
+"size": 19761,
+"sha256": null,
+"blob": "28f5559b894603e21ce29e0fe79786191e903c16",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/WORLD_BIBLE.md",
+"size": 6197,
+"sha256": null,
+"blob": "de3d1d8c05f4edc1f7a73c9f7d462c69a7b491f4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/parallax_test_depth.png",
+"size": 31953,
+"sha256": "9ae170f5f2bd2e7ca46f4371272e8467f4d681c0b2bd4df7eb86f3d32925adfe",
+"blob": "91beeedf17eac51316a9b8c3fbc4899375e6eb15",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/architecture_2026-10-22/parallax_test_ends.png",
+"size": 1505178,
+"sha256": "7bc377f0b67ebbbe17a0f2615cbeca063db128b7476a615f693bc2fc0885a1d4",
+"blob": "06e7c7b10f0ac4527096b09d3936afd5f1279156",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/disco_1970s_base.mp4",
+"size": 14879843,
+"sha256": "6cb8e01f3dc33cae007a303c6be23d28d80399e0a9139f3c6a490e48c3e0c220",
+"blob": "d25c5e5d76b457df417c91b825bdc2a42a275014",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/disco_1970s_qa.json",
+"size": 1033,
+"sha256": null,
+"blob": "49ead37373c6e9a1dbf11b876cf28960c501bcec",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/farm_storm_base.mp4",
+"size": 17502918,
+"sha256": "ec7969c67377ab8a5cca064738e82d92585dac140722774c44fc5e7444ab3db4",
+"blob": "f59356e8dd84b24c187d800e94d57c82d7608d49",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/farm_storm_qa.json",
+"size": 1033,
+"sha256": null,
+"blob": "d4e12307e97c75286a75b2eeb99abd76cc773a1c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/ice_age_tribe_base.mp4",
+"size": 6053768,
+"sha256": "ed87f6dc186f659779d9f12b9d31a4a00f659a941b60b5e4799b583231246238",
+"blob": "294aba7fca92a63e1555ccb72b2c744269a74e55",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/ice_age_tribe_qa.json",
+"size": 843,
+"sha256": null,
+"blob": "70b399565996767cefd2a50c60aa7113a55888f4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/school_class_base.mp4",
+"size": 10791123,
+"sha256": "aeb3f821d8937927126452ae0d62cc829e0b9ff7589c9706d199f7bc2337674e",
+"blob": "0a5414387dfafca17d24077a0244daa9c66de756",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/school_class_qa.json",
+"size": 855,
+"sha256": null,
+"blob": "77b8bd01142e0e4aac1aed432ceab17960df2ac7",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/strip_disco_1970s.jpg",
+"size": 141126,
+"sha256": "8c1dd54c9b319cb172028206c72943b7ff93f2e13a0d3ac72e5461a723d25466",
+"blob": "a0e307e3022d04fe384c7281d10597308ba3c966",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/strip_farm_storm.jpg",
+"size": 130947,
+"sha256": "034e3f1bc2681aa5a17786bc31fbbb277c54ddae0523c1a4c703c96b37745c5a",
+"blob": "1bbe4dbb30413fa8d20741f124c547a2ecd24f43",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/strip_ice_age_tribe.jpg",
+"size": 140662,
+"sha256": "bcea0246e45b43c10f7d43aa767744ea6d24c12fddfea054b4a7e7b4f9f4ccf3",
+"blob": "720570aa653718af8fc535c60abd2b3c25c6ed61",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/strip_school_class.jpg",
+"size": 165172,
+"sha256": "45d343739bdecddefddc57cd1894c050b72931b4582f1c21760f01f1edba238e",
+"blob": "aa14a4d11be4426706cdca6a6f37478cb2bcabd0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/strip_wildwest_train.jpg",
+"size": 122552,
+"sha256": "089cd5378862cfb2628b2a76c1c0dcba997bce90d7f7658156d826c3b6fb53e9",
+"blob": "0dbf25e484baa4f5ade3fe66b4a908daae6e0a84",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/wildwest_train_base.mp4",
+"size": 14209068,
+"sha256": "d7aa61697ad572ccc773542b286441635f775aebcc5ddbc037afb6544334dfc8",
+"blob": "e43b4d2c8ad85733d4898240b4f12cfbadc6e56d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/eras_video_2026-10-24/wildwest_train_qa.json",
+"size": 1038,
+"sha256": null,
+"blob": "648c8706e262942763437ce48f08c31a5a10a609",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/AI_VIDEO_PLAN_LORA_TO_4K_2026-10-22_ka.md",
+"size": 26058,
+"sha256": null,
+"blob": "eaf14f494aa159ebff969d75df55ede0f37630a4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ANIMATION_PLAN_FOR_LORA_2026-10-22_ka.md",
+"size": 29249,
+"sha256": null,
+"blob": "af14b6eed8483dbf6ab2345cc6b24b00ce703d68",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/HYBRID_VISUAL_MODEL_2026-10-22.md",
+"size": 18956,
+"sha256": null,
+"blob": "2a5d2fc38384c19ff42dead68f58fbdd9920f9d1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/RUNPOD_PLAN_10USD_2026-10-22_ka.md",
+"size": 9915,
+"sha256": null,
+"blob": "96343e6659cb2c122fdb6a485cdf72458e4d9636",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/bend_poc/bend_poc_v3.mp4",
+"size": 4455819,
+"sha256": "e6031553ffcc22b70beb07ea9cb390b7a9a561937d63d59485c35d8dfa2c174a",
+"blob": "9b24d5f60b984b3ebc626e25bad3da60123efa9f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/bend_poc/bend_poc_v3_close.jpg",
+"size": 187899,
+"sha256": "1a664a62887fc8d261576ef56c9b43794fa6f123af9afab98a0a1a02daf7eb6e",
+"blob": "be6334a5c3785c6a219c557691edeae6a51bf363",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/bend_poc/bend_poc_v3_frames.jpg",
+"size": 761881,
+"sha256": "749b63e024c42946829d504b3c880fb35aa390ad15d5de1b02f46fa8f5a9e399",
+"blob": "7e892305eb8b4956b71c0c001418f1426ffa6b5d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/bend_poc/einstein_parts/head_happy.png",
+"size": 675631,
+"sha256": "37a9b0e74038294c53ce057972af0d74c7bfab6b057e512c7eeaad6988370202",
+"blob": "dac1791045c820f0501c2a5b888894959c9782ff",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/bend_poc/einstein_parts/ref_cut.png",
+"size": 6915725,
+"sha256": "20bf6cb2ece7c47902b09fb877a6b585796be1375d2a9eed4a06f181b61e4994",
+"blob": "3b50a21cf2d5cb3181de7aaca78c48a0688b28d4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_neutral_front.png",
+"size": 312315,
+"sha256": "6ddced0013a79f128f46f9c23489fca5223cbaad0afb6e7eeb45d37ed55febb2",
+"blob": "b2a1ffc79d306c66d68a1aba42255d485dec22f9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_neutral_side.png",
+"size": 607086,
+"sha256": "18df0f60d1b0d37b34e9fab2bdde780f8469fcf869647c309b60ae647f36062f",
+"blob": "934fda840b7f3690758d167150d9ec7ce343b29d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_neutral_three_quarter.png",
+"size": 566710,
+"sha256": "435fc510281e030632bba54e7815514f874bb4717167dfee83be6d05c8bdd132",
+"blob": "9429ad2d0f1ecaf326bb087ca67a88792274b053",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_pain_side.png",
+"size": 613956,
+"sha256": "8c370b5027e0105bd80e3b8e95bf07a80bb9897bc7544161131d7738d474811f",
+"blob": "4400319c7e1a13d3032222b6a06966e570d1ee96",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_pain_three_quarter.png",
+"size": 607906,
+"sha256": "b3915e6852297943facec8bb2f43a3c2ee8290a8878edef97146f3fc0d1267fc",
+"blob": "ba37717edddaab399b815759cbf2c41138630469",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_proud_side.png",
+"size": 604343,
+"sha256": "de16c93b877fa26e1831cf1e07d1831d836a44d42207b61e8e8fe6e7f0ded57a",
+"blob": "95c2fa5daa127609fe7440e3e3d0b8c86d703cb9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_proud_three_quarter.png",
+"size": 622912,
+"sha256": "6e1aa357dfd3940e16a94d09ba6da1a25ba70a823eb12a50ec39fd4ac5eb906f",
+"blob": "417c61e7499535d609d1df8b6354ec171cb2fec3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_scared_side.png",
+"size": 616872,
+"sha256": "84a17ea8e0396dd7ad31c10be62485f0395fd52193f7b71ff5c4206cd7a94771",
+"blob": "49903a9b91d084b6dd13958af19e5acb7b70c3e2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_scared_three_quarter.png",
+"size": 608832,
+"sha256": "3e82d9e42861360152505b8b30780a2505084f73645926a9f6e9b73986581350",
+"blob": "584e4dc05f2acee56e95c067dae2cec283b3f51e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_sheepish_side.png",
+"size": 600610,
+"sha256": "ba24fe598f39b5c0b27e51f4f8b6b23881cdd37c85d585d34e78254b32781618",
+"blob": "9089e973f3b091dc0fcebcb21116a4d4c137250a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_sheepish_three_quarter.png",
+"size": 592066,
+"sha256": "2353ea0df103a54abbf92cb685a961d56ffb029216fc841c1b0ebddc0eee1dc3",
+"blob": "576a2aa4a66e4ecc2ea990f08f6d18fd47bfae2e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_shock_side.png",
+"size": 601699,
+"sha256": "9d72bbd05f3ea569f0b4d22e40813be278a902dd9ca815030b2398ee3a055e35",
+"blob": "e5a5151b51a1604bdd91620a4e2505e446ffb66f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/head_shock_three_quarter.png",
+"size": 599601,
+"sha256": "f95616e791f29f27f3af5b25ba7e79d6cd236ea69cb11ab2cd524627cd1ffbb1",
+"blob": "7fd789ad2a43a3b3f6eef6953ccd72831c26346b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/parts_front.json",
+"size": 1455,
+"sha256": null,
+"blob": "bdd931c408f70d880da55f3e4955077dd2c1da46",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/parts_side.json",
+"size": 1699,
+"sha256": null,
+"blob": "bda9ccd4741983e3906cddeab29273f3aa4495f5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/parts_three_quarter.json",
+"size": 1488,
+"sha256": null,
+"blob": "e80ce47124871830fcd1ead63263f7df5da7bc5a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev/turn.png",
+"size": 3126113,
+"sha256": "1998f088c03f421e54d40985b9469088173337c7aabe1aafe6568be6b41df706",
+"blob": "1de15b226bd21dbc34559255a37a1ea17dd981b6",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev_faces_side_t1.png",
+"size": 4076548,
+"sha256": "d0edaffadaa47de2f85e936bafff32ad3e1dc8b162615f9ea84dedbcb435207e",
+"blob": "d4950b10094351ac909002016270c9810ef65826",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev_faces_t1.png",
+"size": 5738613,
+"sha256": "8c0a6efa53236980fe8dadcdcfe1f2e0fddfcd0b1e85ba99396df2e1db9c5614",
+"blob": "662646305302802a97b487178c335f83448f481f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/dev_turn_t1.png",
+"size": 3296883,
+"sha256": "8feb292f69198c78affcd04aa8b64071e40cd76496cb8d572649bfa7e195ae20",
+"blob": "e84fcde3aa50af9016cb94f8ed4a61f216e2e884",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_neutral_side.png",
+"size": 718737,
+"sha256": "0947d117944e9d8c23a41ca4e64e13875c98d87b8f31550504907147f3c4f2d0",
+"blob": "91f43cab150bbe69350d87ed134903098d573abb",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_neutral_three_quarter.png",
+"size": 602445,
+"sha256": "6781c4eebb8b71c95fd1ef3911dee40723c19660c164dea92eb0c5b954171565",
+"blob": "0865ef2fa732664a96b9d0c82b342a0ce4976f4c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_smile_side.png",
+"size": 721723,
+"sha256": "b09d9b672de166b787e805c761026dc4c4cf123b2aaad9be19d2edd573dc4bec",
+"blob": "d3c6e596008c078ff1f0b899861725d04c881c1f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_smile_three_quarter.png",
+"size": 597284,
+"sha256": "bfbc2499798113586f82250046d668a236da8ac1e143d0e61ce51923f949e98c",
+"blob": "f292b50e9025208e390a7948c8261827f89c4c8d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_smirk_side.png",
+"size": 739302,
+"sha256": "92483bca7c77fe2da1b44e45a862e24c91dd2ee14c9d176c4bcaa4c690e50feb",
+"blob": "b3c58d2313510164bc4fdfe617f01c2681207b5d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_smirk_three_quarter.png",
+"size": 596601,
+"sha256": "cd29680c88dec495c809ac8c261b87d27f533e794179a1a6015ecfd540dc94a6",
+"blob": "8e588f35f8d342d3b50f0b09b69b88bdfdb231bf",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_talk_side.png",
+"size": 732301,
+"sha256": "8549a0aa0c56dd06f8dd0e8f6450bc24a73582217aca267c9c2fee1b85281686",
+"blob": "1a3009c5330679cb1a4b8d4c2bec8f21c5577b0e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_talk_three_quarter.png",
+"size": 595076,
+"sha256": "b067654b831b60db2aae5cc154c8045d0dd4c541eac2d8605159009e1413a50e",
+"blob": "fad68e4b2f3c39f4341b276b86e4dd864819a883",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_unimpressed_side.png",
+"size": 726399,
+"sha256": "63549fb1c1f0a36a13be7cf9c21fd8483f9902cfd462676de799f0ba8eabef14",
+"blob": "d83f8c202d80be14b7a5550375d23e519b4f2a53",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_unimpressed_three_quarter.png",
+"size": 602352,
+"sha256": "4b6dfda98b1da519ef5ca48a530a22a606d739b883e2bdad7fadc111a39abef7",
+"blob": "7728f2f823bc50bd884fa52c56c7f89787f375bc",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_worried_side.png",
+"size": 712047,
+"sha256": "7a8af10737cb4a75d308490d71c658a36fb6f3babc7bc164a2f6eda9e502ef2a",
+"blob": "0bec901251988be635b8bcd401eaff5b335c760d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/head_worried_three_quarter.png",
+"size": 623828,
+"sha256": "455f8a0a6dd336bfca52797ef9ef7ace2319b50790bcc01c23b04e73cbcd39e5",
+"blob": "b907f2ca77a804ca2e25421739fdd97f6f68ddb9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/parts_side.json",
+"size": 1605,
+"sha256": null,
+"blob": "d1c6c3c3434dc5d9f794da59ff79fbd6a25f5182",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/parts_three_quarter.json",
+"size": 1458,
+"sha256": null,
+"blob": "5762c10f18180efa80e251223e43162edd2de083",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta/turn.png",
+"size": 4014146,
+"sha256": "c950fb37364615e0afc3975ca4078d4ceb5e7d22c0f81a2ee871466163e5d4b2",
+"blob": "9bba7fd6d88e98a9387d8adcaf4099a8b585b8d1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta_faces_side_t1.png",
+"size": 4624080,
+"sha256": "21dc63309cd26d21964d5ba2cb7c102f9b84582863ac2ec061253bfafb5e7102",
+"blob": "45c3510b7b8a454ecaab54d49d35e1f000c79314",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta_faces_t1.png",
+"size": 4055020,
+"sha256": "c3a4f5528fc63d5fa1080ff18ea476f75b8fea6769129d77346067ee07cf5a32",
+"blob": "6c09ea878ced43a392a99a51284da81876b49264",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/marta_turn_t1.png",
+"size": 4142722,
+"sha256": "d3bcca0d968e929151c8eafc12167768d940a2e6cc8d362386c062812f16c9fa",
+"blob": "744cdaf5e295d9e305e7debabcd5ce685f5f8980",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/prop_sled_t1.png",
+"size": 3390242,
+"sha256": "8e3a2849cbc543fec062fb81e593ba5091402982dc6f300ab7d0beef94e034c7",
+"blob": "9972aae27bbd4f76ce8c1b368d69ed5f0b3ca0cf",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/voice/l1.mp3",
+"size": 76937,
+"sha256": "411c072994a0231a77163f66f2bb5ec4e10625f8cb260a95e201ac4c73cb386d",
+"blob": "1a0a7beb2278a25efec1ee2cade3252e3ca2b26a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/voice/l2.mp3",
+"size": 41410,
+"sha256": "274db6e981a55c0b400ef66c12d705c0f0b340ea7c40c67d4911e8396b377b1f",
+"blob": "4cce6abfda09b6af36a6bf7e602158c8ad0cfea2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/voice/l3.mp3",
+"size": 37231,
+"sha256": "a0a6a8891eb0a312d464f8e0121341a486b921810cde57c0bce7ab4e69c3d40e",
+"blob": "2f2c7faf0e00abd9326b3e1f4a4f40cd854a0f8a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/voice/line_1.wav",
+"size": 335582,
+"sha256": "be396f43832b33135658d7b5566832c0c9b12e3312291ff22a6874a800ed28c2",
+"blob": "e1dd52234536415535df18dc038bf1fc62aed229",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/voice/line_2.wav",
+"size": 120484,
+"sha256": "3f59241067a798facdca2d31c2419741989d2332d23fc247ac88a0d1c6c408aa",
+"blob": "a808c7a9c45a045d4c769fb84b3e12bef93ec53f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/voice/line_3.wav",
+"size": 87792,
+"sha256": "3e3353e9620f817874e4444603ab17e109be21a2b057dabaab52d3ece972230a",
+"blob": "c08e23fb5feca385f915b0671c98c468b589d49d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/world/camp.png",
+"size": 7375237,
+"sha256": "7df289633457ab4e07a5eb7c3feaec3462fc5b6ad029646af4576617a9ba1229",
+"blob": "d17af33e68b3f6c816b6299f7fda8b70cacbbd96",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/world/far.png",
+"size": 7601618,
+"sha256": "f768eb2bd2a88c609d57f51d60f864a39c6b8b1f3d8ed809d616d539546068d0",
+"blob": "d6605994e1d9d34453709e8812b5836334fad1fa",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/world/mid.png",
+"size": 7593977,
+"sha256": "c28b1dbf6713a89819aafe267b57ca607f488b611f5cb8d45898d091e904f212",
+"blob": "c710b7709c7091e52fa34da863d32894e9ba2de9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/world/near.png",
+"size": 4006589,
+"sha256": "c6753516f5c61585b667e7df3cd108e7a57a3957d0808bb856f7cc46f2b184d9",
+"blob": "661865615782901c1c72a1a1b3a56d36e42aff75",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/world/sled_side.png",
+"size": 1316271,
+"sha256": "89be8f0b7db2d903cfb483c630263a2b6f4514803cfc6ffd850a7b28ed9ddbc6",
+"blob": "5347a97d1ed92c0c678eeb2ce0ab6e079d19a8e5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/world/sled_tq.png",
+"size": 1590898,
+"sha256": "3c6eecbd7d5edf3f43eb807bdedefa87443e65dd7031829282fde408890b42e9",
+"blob": "52e160053492233e15b62a238adea4bdfdcdf88e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/world_camp_t1.png",
+"size": 7375237,
+"sha256": "7df289633457ab4e07a5eb7c3feaec3462fc5b6ad029646af4576617a9ba1229",
+"blob": "d17af33e68b3f6c816b6299f7fda8b70cacbbd96",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/world_far_t1.png",
+"size": 7601618,
+"sha256": "f768eb2bd2a88c609d57f51d60f864a39c6b8b1f3d8ed809d616d539546068d0",
+"blob": "d6605994e1d9d34453709e8812b5836334fad1fa",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/world_mid_t1.png",
+"size": 7662348,
+"sha256": "05b523aee00ce8e224312feb93e59ecfdffab9b0b1b1ed8d3d375234975fe7f8",
+"blob": "eef7b5e91c5587ae91e0fd3bbec7b66dcb391d23",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/assets/world_near_t1.png",
+"size": 4072285,
+"sha256": "9f5ccea000d4f0550a7d26870987fd46deb76926aebd04ab49c6f497d3f43dce",
+"blob": "891734461f5326225dd74ba0f411933fd04950d5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/ice_cartoon_30s.mp4",
+"size": 26184142,
+"sha256": "fc996ff2bbd091cff8ec1f0418832c1b2e1dd5915005614774fe314ed8b40018",
+"blob": "9a02e74922dc0f1140418548fde9b530792449d2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/ice_cartoon_30s_check.json",
+"size": 713,
+"sha256": null,
+"blob": "5af4b72f8bb5900eb92610398c78379817b13222",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/ice_cartoon_30s_frames.jpg",
+"size": 957580,
+"sha256": "0061b0564743b40e900cfa34b906b46da7d92a4a20150eef2c9c59d10db4ee27",
+"blob": "ce7efae4b84204f08bac7b1f088f26bad5cadba5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/v2/fal_kling_motion_control_close.mp4",
+"size": 13349880,
+"sha256": "b4379f605bcad7568a37f39248f9379cf147fbf085bfd32c8614ed14fc40acb7",
+"blob": "dd4246275632e30d4375f59c9c16bc591ed7793f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/v2/fal_kling_motion_control_close_sheet.jpg",
+"size": 366870,
+"sha256": "2ba73b8c3a471a396fa58238b3ad4fa15e7227362c14d6a7f9b6cd01b49d1e70",
+"blob": "766606834023f6f9a44e6506c0a3f593c8bf4468",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/v2/fal_wan_animate_walk.mp4",
+"size": 1908206,
+"sha256": "9a836319bbc0c02e864fd2eba287b19a526de29e3b7da3dc5d6be9a2d2334f9b",
+"blob": "0444a8e05dc6071c2a45ee88b18f20e75031e330",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/v2/fal_wan_animate_walk_sheet.jpg",
+"size": 392242,
+"sha256": "21fa771da285fb36496f6ff1c96928b55cf2df710c64c0bf862447a9cefc3182",
+"blob": "138e5993f3092e6ad55e66f6948e4f185ff85074",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/v2/fall_clip_5s.mp4",
+"size": 5164259,
+"sha256": "f7c79a31022d2630f01451c21dbb346f18a37c16e1e57b1e448e444d53295e27",
+"blob": "5f1463fd1aa56afc6741af8c26fbeae651e21607",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/v2/fall_clip_5s_frames.jpg",
+"size": 901856,
+"sha256": "b31a485159c510ce7a87adff56ba09390a67ff8f4ff64fe878e942fdbaaf5a60",
+"blob": "5d4db464805b08f4eaeaa0f439ca8e2da95a5298",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/v2/ice_cartoon_30s_v2.mp4",
+"size": 26280765,
+"sha256": "5c4eefa11b149f51079a3d96a26df05ee6514cf1b389b4d6140a6a1d71d64cd1",
+"blob": "eb82a900f1863a4eb3cf4c65ba70a60b5acfbd3b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/v2/ice_cartoon_30s_v2_check.json",
+"size": 460,
+"sha256": null,
+"blob": "382d6599178f661f6c717cfaf0d27cade8743126",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/v2/ice_cartoon_30s_v2_frames.jpg",
+"size": 853502,
+"sha256": "6cad9283e7720d32533f0bce98c496cf232658428edaae95faf080058bb7e1d1",
+"blob": "a03f360b8016526ad93732329d422d15baf74154",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/ice_cartoon/v2/old_vs_new.jpg",
+"size": 976347,
+"sha256": "33d065d5fb455772caf41d3ad8e0fbce01c8ecbe438e1ae97f9ea83cf0fa9a53",
+"blob": "8862f0eaf7503243759785f44a63ac5692609008",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/motion_lora/pod/launch_ltx_train.py",
+"size": 2731,
+"sha256": null,
+"blob": "6a94909af17b3301f60f4a142aa3d3ed243923a5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/motion_lora/pod/make_cfg.py",
+"size": 2528,
+"sha256": null,
+"blob": "0d66803fc487bab0b50161f3770e0e661a5efd4f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/motion_lora/pod/pod_ltx_train.sh",
+"size": 7710,
+"sha256": null,
+"blob": "c72ea701bff5778aba5e729089f5f1c19cfe2cb3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/montage.py",
+"size": 5058,
+"sha256": null,
+"blob": "4f15f21a86194bcfb868004964e4c80ab35d6125",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/narration.mp3",
+"size": 1836963,
+"sha256": "446accf3b84822f4e858d415eb7c4d3649470a369ab924bb83b089f12d40891d",
+"blob": "7b55102ccede70e179335273dd7b76dcd71448e6",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/narration.txt",
+"size": 1523,
+"sha256": null,
+"blob": "8e80be6a4ce0085d587b71726d750713cbbc3e51",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/narration_words.json",
+"size": 11014,
+"sha256": null,
+"blob": "f3035c11082e6200e892f547e9f201a06e031dab",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/night_run_ledger.json",
+"size": 2403,
+"sha256": null,
+"blob": "f5d284c5d6c043d99a1b7011a5109590830b87a9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/out/clip_frames.jpg",
+"size": 335411,
+"sha256": "9708091539824f24220c0f2f6357bc6431d49cc3bd7d73e044c3baf2c24f4ddc",
+"blob": "d962eddba50be93056301ca9df9fb41ef413f36d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/out/ice_age_test_1080p.mp4",
+"size": 58652890,
+"sha256": "0cd6c6f78823b141a92fcb94b5792134d81ac94beb13755c83b2f7b741f47cb2",
+"blob": "d0bd9cbccd66e0abef2ceff917552ad8e4484263",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/out/ice_age_test_4k.mp4",
+"size": 184279219,
+"sha256": "349c4ac56aff29054e03221e50fea6e8e6ccb9324e1e90359c7c6377d3026fff",
+"blob": "8a698c0950741c23e8c898f0e1697edfdffb50b5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/out/ice_age_test_4k.mp4.json",
+"size": 993,
+"sha256": null,
+"blob": "4a2092f8c3f787330e0876b4247f703a0ef7aba4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/out/keyframes_first.jpg",
+"size": 779411,
+"sha256": "288f2509a388d41dc27a601be4d14ddbbbb8be0f13a141cea671b5c0c5072b8c",
+"blob": "088364bfa7b3564c54177108d3d5a851a554bd1b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/pod/launch.py",
+"size": 2612,
+"sha256": null,
+"blob": "26d9093ff86e0e069eeffc830da8b8dc927f9fcb",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/pod/launch_clips.py",
+"size": 3255,
+"sha256": null,
+"blob": "cf2b0f861ab4a515aa915badcb06f3b0edce0b58",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/hybrid_model_2026-10-22/night_run/timeline.json",
+"size": 956,
+"sha256": null,
+"blob": "a74fdaf3b549aeabf79264911a85d50a0a14b33b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/ideas/future_video_concepts_2026-10-19.md",
+"size": 11219,
+"sha256": null,
+"blob": "4572979f444f91822ebe02f8797845da870a31e4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/ideas/future_video_concepts_v2_wild_2026-10-19.md",
+"size": 11155,
+"sha256": null,
+"blob": "c1a53cff15e496cfe8bd000b4980e3194b17a16c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/integrated_review_2026-10-20.diff",
+"size": 73234,
+"sha256": null,
+"blob": "8d62ecfb10ccf71a0c60a2b12b5764c2b3ca955f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/AUDIO_PLAN_2026-10-24_ka.md",
+"size": 3944,
+"sha256": null,
+"blob": "5d554921827c2bd643b496444b4720831875be5a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/COST_OPTIMIZATION_2026-10-23_ka.md",
+"size": 11533,
+"sha256": null,
+"blob": "9712efca3473c70f07d37139a7aa109baa637823",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/FOOTAGE_PLAN_2026-10-23_ka.md",
+"size": 22160,
+"sha256": null,
+"blob": "c12bd0b4209fd14667b7155b3866b0825be58510",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/LORA_PLAN_2026-10-22_ka.md",
+"size": 27854,
+"sha256": null,
+"blob": "4ea0fac3f3752239603a9967dae83590e24c9f1c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/MONEY_VS_QUALITY_2026-10-23_ka.md",
+"size": 9136,
+"sha256": null,
+"blob": "0d681fb83c9ee942a52c2f3973b8b0c888e94cb3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/VIDEO_LORA_REPORT_vano_2026-10-24_ka.md",
+"size": 12184,
+"sha256": null,
+"blob": "d2b67c78fcf9769c9630f30d0ce91201988efddd",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/WHAT_LTX_KNOWS_2026-10-23_ka.md",
+"size": 12869,
+"sha256": null,
+"blob": "a95bc7e05b4774d93e05f1a10209aded12acca61",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_asian_cave_r0.jpg",
+"size": 330159,
+"sha256": "9c1935cace2b7f25208c30374b93bcf4c14f3ceee3bc847c6fb85139cc9c1600",
+"blob": "d9bf7378c9f4907eab4737b73f4a6ac6c03d5b69",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_asian_cave_r1.jpg",
+"size": 330261,
+"sha256": "156b3f547eefbeb1c89d9e2015b6fd706ac18bf09e6ffc95dcd479f05fa3e819",
+"blob": "24fcdadf9d20101778b3655e999684b7fee6c22f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_asian_cave_r2.jpg",
+"size": 266203,
+"sha256": "fe9664b1768caace6c1cc4b72251a175c87e75bf9b975111cb9562fd690cb161",
+"blob": "f17269504b5566dc50fa629fda2f99f488d60049",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_egypt_r0.jpg",
+"size": 276965,
+"sha256": "cd0e36b950b8cd5d8549b33bb3c9c919b918e440d64e62ef76c55bb22dffd2c3",
+"blob": "9b50c3c3d927280cb298153508ab7c81ffa17144",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_egypt_r1.jpg",
+"size": 277217,
+"sha256": "739991f12e93a660b449e6296396a1479a4ced98693faee55db96f4f6a520762",
+"blob": "e5a01ef6a8b98113471d75cd55dcc263d3ae7946",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_egypt_r2.jpg",
+"size": 235990,
+"sha256": "7b358d85af2a360ed8f16e134d81c71a9bc49122a53c81460c5537e3e8d47c93",
+"blob": "42a7b3167bc131c9fff1aaf5e53e5c7c3c72e014",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_factory_portal_r0.jpg",
+"size": 1869028,
+"sha256": "c2165fdba5dc45758de5f7d66a1a80a7d242df2a4b48abdbe4dfb4452e74c498",
+"blob": "bb3069ae5d406c7462e7e8c8fcec852bbb1506b1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_factory_portal_r1.jpg",
+"size": 1868388,
+"sha256": "72f5f4c702de3f0bbc3b97db09863927baac3f9a0d95ce969c68c33eeea6a116",
+"blob": "82c928a992c0adca0b23169c16ca21c81876db18",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_factory_portal_r2.jpg",
+"size": 1416306,
+"sha256": "0610177389687718a03a6fcfe6211ed29e4c4f75e29cdd07b0bd9e9a88ee1490",
+"blob": "a0ad0e353ca3177311c17b7cfa2a7a070dde8c94",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior0_r0.jpg",
+"size": 101497,
+"sha256": "3e12385bcd7ac2ed0b98accbbae728d3172be15c3f2acfe0a096ad8206766928",
+"blob": "038370688ed3302613097b2ae86ece4555a8af2c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior0_r1.jpg",
+"size": 101558,
+"sha256": "474f1dc5e1ef3db236bf0520014280560266bacf4fe2594e129a98b3216254d2",
+"blob": "93b9d19b45648221539181155e6233eaa0803425",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior0_r2.jpg",
+"size": 75832,
+"sha256": "f5615a6475141085d2b1ef3c210d39e1868317cc43cd94cdf6d519b19b39b064",
+"blob": "6aad224f73a0f34e813d14b47197b87e585c8509",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior1_r0.jpg",
+"size": 114507,
+"sha256": "adf27b468777157df36d0a03d567e3e17d395848938c4dc5bb56b77faf2a6058",
+"blob": "1c9e9160bf4fcfab52c83352c3e0bed0ee717005",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior1_r1.jpg",
+"size": 114555,
+"sha256": "ba15a0a57c848a4f1e51e819e858460bc685566c7d35418fd2b7d0f5895d4010",
+"blob": "49591fb00d1d53083195a9938846c91923ef7fe4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior1_r2.jpg",
+"size": 85658,
+"sha256": "b2f53d04372443d25f895bc4499ea9ba0b25ddc989a50d0b80bd7cb1fab66d7c",
+"blob": "260108d1024d280e55e69dde45aafc6466df6c6f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior2_r0.jpg",
+"size": 107925,
+"sha256": "46bddd5e99a74ec0ed1999c7d32e9d418146ab82f92e27589dea36cac3e90a58",
+"blob": "2d5803815c0af4ba6ba5d4954bb1c85eb277105c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior2_r1.jpg",
+"size": 107947,
+"sha256": "292fc1d599fbd2c5b17c7845ea59ce1d627e1f43baecf6cac4add12c52a535de",
+"blob": "984f29ccb396873f87c4f0e08b5d8121c8056850",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior2_r2.jpg",
+"size": 79318,
+"sha256": "c5b97c7230545f1ace25f0b111b1ec7fca90e51a4c1179f918994dfb8d54b9d0",
+"blob": "b1da90740786daafe4cb400095eab791cec33274",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior3_r0.jpg",
+"size": 100924,
+"sha256": "a15b867dedde89e9bcbb881f8851688d33a1c432ca307efd8649f103da6bb44a",
+"blob": "f53d147f07d238e868b5e7df178cad9f752f2ae9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior3_r1.jpg",
+"size": 101024,
+"sha256": "46bd0e599915b384923f19d46f10280b338d76b7e5a1a7a4a8450c4d69314c00",
+"blob": "ec81822b2b02a4f3faa823f83d8f6d99335ae555",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_interior3_r2.jpg",
+"size": 76783,
+"sha256": "84b5884682de0ef58814a512803ac4fc7a83563c72bef58041538a976a1b333b",
+"blob": "127e3927bb04cd6f129d13fac0a56087ae72135a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_underwater_r0.jpg",
+"size": 360085,
+"sha256": "e5c32f5e97ffa8dc877014a83a125567a304d6b4c6cf7245e453a4f10971530f",
+"blob": "244fad9213c305e924f07f37d9ec40aa2700a44a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_underwater_r1.jpg",
+"size": 360144,
+"sha256": "aa06028854b52bfabf572de9fe459b557177327bdfae73b537bf0843a6d80fe7",
+"blob": "ddf814fc0dff045f2c84b81fd3bf056f135693f3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_underwater_r2.jpg",
+"size": 284260,
+"sha256": "d832d774fed2590c4d082c283855b7c8caab9bea60f0eda8c45c96d5af392492",
+"blob": "d4706e649df7e613d9ae7b8fde8f803de4606a58",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_wild_west_r0.jpg",
+"size": 322649,
+"sha256": "3d4f641fe915c89e695e2da792e6b7ac8764ae7b463283b7f60f7501210e4c23",
+"blob": "fdd3a577b7e3d7544dab17613f0727bf22762839",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_wild_west_r1.jpg",
+"size": 322870,
+"sha256": "8c12e9c4807d0da5501f505b14998dce15ccd5bcf0abec395a84aa4b0ce5099c",
+"blob": "7f25ac4609d4b9bc5136112805cebd79e4ded863",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_wild_west_r2.jpg",
+"size": 261298,
+"sha256": "a09ccd97331275a48ec95d784ae9012d40eb554a63365b2dd727d7bcb0304b5e",
+"blob": "dfe0ac6a8c529c1fe6a8a0dc096c8393f8cad38b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_world_map_r0.jpg",
+"size": 424871,
+"sha256": "505450e121a3a19956d594e03b6c1045c1d1a5f53a6d33984c96a1de97b37958",
+"blob": "ebfc9fe245f8a54785b3030fd72e95307d67b9df",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_world_map_r1.jpg",
+"size": 424848,
+"sha256": "71861ccdd4a8b915a0d09bcd85fc60214e74595b03d467061a43edb4dacb8041",
+"blob": "29e0a1b882fcd9c38e47dec7425211a472d843ac",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v4/ref3_world_map_r2.jpg",
+"size": 318323,
+"sha256": "e4ea1fc5a677856ad3cf065f966f0cb9717de2d3ebc71376f537050217f1e4ca",
+"blob": "e1c46951ddba16861d716f458564f73073f0a44e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_arcade_1980s.jpg",
+"size": 1280711,
+"sha256": "9c223b9afcb61aff379628cf65d1bc39a6c3a65c07b5766c9c6464346d698a3a",
+"blob": "d8eb7dc09cedce485ca21c27a15c7eb80af9e040",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_arctic_station.jpg",
+"size": 1262017,
+"sha256": "5a2f97af6583bf4382ac864d2446ac835ad817961b90c08c65467b9173001baf",
+"blob": "193ff9415a70f987b05424ca9816b3d47aa6a779",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_china_silk.jpg",
+"size": 1308594,
+"sha256": "fd0e8688bd4120b26620cc788bf38a42c718c3b58afe7e009714a6589678aeeb",
+"blob": "38c6a00f03d493ba1a490ca6c22bf8cd6d71cf57",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_crusade_desert.jpg",
+"size": 1288610,
+"sha256": "1b2fb6b5da03555342773a8bef9c03ba058ebe03a0fabf8053359c7a187f6735",
+"blob": "b1d977e2b1156b6843a6bb50e65974bb381437fc",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_egypt_market.jpg",
+"size": 1475018,
+"sha256": "dec40292f7ca1bb600b67946cc97986af44976414f7793b05c2b6a100c17270e",
+"blob": "f21d301322255be80908b0de0693f05e89493cc4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_fantasy_tavern.jpg",
+"size": 1331941,
+"sha256": "d2c7e1e1ebf7b8987c2433fd7560c7d980347b2b285ae03058d92bb18d297942",
+"blob": "39115d904b0d91169598a3c97bd1b6ef750ee7ad",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_farm_storm.jpg",
+"size": 1272051,
+"sha256": "a0fce8645bed99afb92bea62d98be2e0d22c286732540f656104bb5099f44e50",
+"blob": "ed48a3e472567a172cf8fbb599430383415364f9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_greek_agora.jpg",
+"size": 1432173,
+"sha256": "27ce06fca5bf2f15ce7b66699b9d11c27ac3e5f91b9fa2b846eb29a584cd6b5c",
+"blob": "480c4d7a63a9ffd18288a76ad800fb57f18b1a51",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_ice_age_tribe.jpg",
+"size": 1332084,
+"sha256": "627694017e7025460bf0d8f619532f4bb7f574bce5e5e59b4f366146d05d6fdc",
+"blob": "b8bd9bb3123d561acf607b2a3a6ee37509b48fe1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_lab_explosion.jpg",
+"size": 1187887,
+"sha256": "254eb9a343b1fd20c9b3fa1527b8a362bdb6cb44306aee20df566c95c2bbad63",
+"blob": "c8cfbe85ea7d53e5ebb95e9a20f3e45e5b4e135b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_mars_desert.jpg",
+"size": 1211158,
+"sha256": "5bc8b13dda6c61a97d3f6e30d6d83ee9c770c35c6685df7e97f913a47cc88991",
+"blob": "e22863aef24fb333982d150a4e7cfd15ba56b380",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_marsbase_f3.jpg",
+"size": 1271447,
+"sha256": "d638c23587ae4c39e00d88faa26926d1d79dd7c635cc42b0b10f3e99ef0e7612",
+"blob": "4d7f6dbcc73c03b00fa468ab498ff5bcdd91cc0e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_medieval_castle.jpg",
+"size": 1361739,
+"sha256": "8ed27fe3d0ebd9718865e01457769d0a28e0517d5c79dae3032e28a69d8b40a2",
+"blob": "8a165dcb17feb78f087bc371eb49472b7a4e92c5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_night_camp.jpg",
+"size": 1205068,
+"sha256": "a4dd2b3a01aaaa4966f3ef7ab9e55edd017b4fbe46bb9c51a2a623153f3398fc",
+"blob": "1f7d6c7bcd94bfb620787d89a128dc743316bdec",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_paris_1900.jpg",
+"size": 1314034,
+"sha256": "5d3bb139ca1ce9d465c3e8f48786252bdaf38a04eb2826a653004802594d3da2",
+"blob": "805e5fe0b446b6125bf17486bfbe46262e9c4ed0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_pirate_deck.jpg",
+"size": 1266477,
+"sha256": "9eb066ae21945d7a8b8181160fef79f9cb489a6e20758a293d9c9d4733579ae3",
+"blob": "152dcd6384d746574af1e64eea20a9ecf1ce8549",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_renaissance_studio.jpg",
+"size": 1321863,
+"sha256": "baadb9882d07b3b831ea78ebec18b2495c9f4d5a6eb0157b48a57cf74709a4ee",
+"blob": "97932783c3fe2f158231310219137e1b9fdbc28c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_rome_bath.jpg",
+"size": 1246418,
+"sha256": "ec06652b12acb14187a8b47e91fa92f788a36ecddf380dc69b4bfd99a9b4f3d2",
+"blob": "40463593c168b74f925733ad3967c8b802f9f659",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_school_class.jpg",
+"size": 1341958,
+"sha256": "54fcbf507223e3ae07439dca412e25696f62c4a8b414945db394abe206ea8e18",
+"blob": "3a324661c99d7437009961f253055163f1ba76a3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_space_station.jpg",
+"size": 1394667,
+"sha256": "68c37504d94002908d5f07a3a1565014ee2850e0c5e3fed42aff07d01b2e866f",
+"blob": "42d6dc4e681af26c8f70b450b45061afbc9ec089",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_stoneage_hunt.jpg",
+"size": 1222626,
+"sha256": "c99b112b2223837f0f2fff24cd2324735ae15857867001af0ed4d0fad5e0eeff",
+"blob": "e9d222db732b9d4dc316da03dbdcf26fcac85c7a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_underwater_city.jpg",
+"size": 1296195,
+"sha256": "30913e3482118d39d7ffc096c073d0b3aafa1f54fe2dfd0b9867ce9b32ee3241",
+"blob": "e81d6a94c86af6907e00fcdbad9a60c964d2d326",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_ussr_queue.jpg",
+"size": 1442609,
+"sha256": "499ac92329cdc8388bab294d98ebdec60f28d63be7cc42f56a0541de5c9a66d1",
+"blob": "a9f566de5007dbdc583af8d211db99583a90f68d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/bfl_viking_feast.jpg",
+"size": 1399995,
+"sha256": "ad591c12d6ce9ba402613383389924e7e7d2f3c40c6acc1404e7efd1d65ad957",
+"blob": "1e67bd22920094630702e5ab43b6447095c884cd",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/gen_div_act_fall_s7.jpg",
+"size": 784815,
+"sha256": "2ce8d690735ccef779c95386d7f4427ea84d09ba1148b7c44d7dafbb40f7bb05",
+"blob": "91531aa0ce2f35731847d984f976fc80f428bbe5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/gen_div_int_lab_s7.jpg",
+"size": 724744,
+"sha256": "cba7341733afc302b6c3e7a66b2a7d439ff958e5716c7ba79148b94f88c2a327",
+"blob": "950d67374c06589da55c9c47a72a4c53c1f0e32e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/gen_div_int_spaceship_s21.jpg",
+"size": 692236,
+"sha256": "d396369b3d474010dcdc427739fc2ce82d46892b7863f8a448602d554eadabeb",
+"blob": "2805168c941c8e53fc511e107730ad4d32da037c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/gen_div_water_underwater_s7.jpg",
+"size": 827824,
+"sha256": "d936e7b52c1e2e2afec6993a1da37e7fb7502741db293880409553078a573719",
+"blob": "85ef6a9224056103980e510a8c600f4ea9d6dd8e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/gen_env_ai_olympus_night.jpg",
+"size": 528483,
+"sha256": "f6a1dccc7650d2ef855386566c0ae5f680d1fd7830261f9644753f4e5cc1aaa4",
+"blob": "1efcfcfcf0dedfad419bb1bb7c88ed7749862d6e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/gen_env_beach_wide.jpg",
+"size": 455485,
+"sha256": "3ad6fad7fb1897f8bd7a517d0bb404a441a5ad6250c0f3cf4c0b9594c27cd5dd",
+"blob": "4d4c071f80080ef5d4a177f8f65a6837c9be6192",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/gen_env_cave_street.jpg",
+"size": 460115,
+"sha256": "62a2014022c5567889f7986c0f76e5ab001525e5d7158aeb243d219c8c826462",
+"blob": "790b6a6876bbc9be7c6de49d42e8a48c04a319ce",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/gen_env_city_street.jpg",
+"size": 616402,
+"sha256": "b3166fb3db8664d633c2c65b3c6789314821669b10e4d90ef7b121e818e53bdb",
+"blob": "504e295a5e8a1b9c52ffc59d48828a191253457c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/gen_env_forest_wide.jpg",
+"size": 569053,
+"sha256": "17724e89531751e8e0c57ef66d0e009e85ce8452c5d87b489e14da8e81d175b6",
+"blob": "5a6f2089a0ab47567225ae2d5909f132355a8bba",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_k/gen_env_medieval_street.jpg",
+"size": 645574,
+"sha256": "f8368caf3cc03f05fc4569e54822cc3e78ae3759e2e6c9b4bee751cf46625c49",
+"blob": "1acabe8b9c8c9ff92b4dd3470c6901de33324062",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_l/bfl_desert_caravan.jpg",
+"size": 1363269,
+"sha256": "82c805a82a561881fc214c5bb90db4f03013a645b402c35d1acd9c4a62a56066",
+"blob": "75d28c7eeca7f00a45ab869e7d323e164ee2713f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_l/bfl_dino_valley.jpg",
+"size": 1387030,
+"sha256": "bcdcd6d7148f05b4c20b275b97953e1c76e5228a84a02f948b058beebf3c5e70",
+"blob": "a8b95ef66477f8a354211e493e33125fcca5a9ff",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_l/bfl_future_city.jpg",
+"size": 1276721,
+"sha256": "4d88aa328a07dca900f797c7056f51599f5a6a4d84ba8849e90d027d2a5bcb21",
+"blob": "5cbbc7aa897ab4a3170df03f3e732ba7c63f2690",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_l/bfl_hospital.jpg",
+"size": 1169020,
+"sha256": "a0c67d6b172e7c696d992fc419fa9319dde636c70dadaf297337e8d9d77f7253",
+"blob": "d8244a48d8054a06caf3042227f3745a2050f42f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_l/bfl_japan_dojo.jpg",
+"size": 1182681,
+"sha256": "684a65c6fad48889c1ed036924162e449b1bfd0521202614064c191c5306ec98",
+"blob": "d371c119182ee69aec8fe3e7b45f3bad1384a4ab",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_l/bfl_office70s_f3.jpg",
+"size": 1122275,
+"sha256": "b9e32e75233442d0a28311f1e2adba15b51e0df6550803ab7ebdf3334109296c",
+"blob": "ecb656618bfec0148ec0a1de5cd5ffbbe0b549db",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_l/bfl_victorian_street.jpg",
+"size": 1271042,
+"sha256": "55a5236e74d9d9fa5719e96e7ebc2d9b3bee0b439f008fbf6c081c01094757fc",
+"blob": "db91321d749f1074a42443b4b7fdbe421c96b319",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_l/gen_div_int_submarine_s7.jpg",
+"size": 754229,
+"sha256": "d115a8fbfab2fcadc7a3e43d85cd356740813d88678bd9b3078216dbc7d23d7e",
+"blob": "ea4313f5232ad62415e7896d61107a043aa5c7f0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/aux_l/gen_env_fantasy_battle_night.jpg",
+"size": 623613,
+"sha256": "2a998d6b87dcb7359d25f0560c1339bef2641e2045245408800ba8ef81f882bd",
+"blob": "2c861fa3640c013c37f3fdda3e30228cd8b9f7fc",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/bfl.jpg",
+"size": 2861716,
+"sha256": "67ad65cbef2437edb964377a8f63f53a907c8b95edc33b358d151e8a3abc11a9",
+"blob": "c99e850208c5ef20dea2ef2d177967e45493df2e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/gen.jpg",
+"size": 1819561,
+"sha256": "6e28255b6ee22f0f8c8f34f04a84e385950ff4cf975c9ce7e494bd0f4f00ea78",
+"blob": "b989d637396e51bf6689f46ac852ee2a7a45abe0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his.jpg",
+"size": 2273129,
+"sha256": "7f95affc697a60b805d5eb46e0e5c6246e311e4cfe272ed200036ce65d97a129",
+"blob": "38ab1aa5cf9a717a2e121ea67fc5cdefda999177",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his00.jpg",
+"size": 739421,
+"sha256": "8dde0b78c3b32a62210c72f2754b81210c5d78e862a86ba1317cdc6192a4d919",
+"blob": "2afc16fc78cbc4040d22322917e8ee292e10d5f5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his01.jpg",
+"size": 1127206,
+"sha256": "17997f9c1ac58e96542b5422cb9256aae42e3669c61faee0bd9b851eef5f07f1",
+"blob": "1712fc50eae232bd405e1a6e24751012bea147ea",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his03.jpg",
+"size": 1308201,
+"sha256": "45a68f178938c9e7807c4430bc8ee897d6e42f03fd794f7a3b377a6031496d0c",
+"blob": "fa4e95249590c693b57544abf7eb5bc7f60d32f1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his04.jpg",
+"size": 564364,
+"sha256": "95fc8c1134eed49adfc9cc02fe70ca79a623966317e151e278d645d40e6ea154",
+"blob": "efa69b50765b5a18f9ddb989756c31905a775c08",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his05.jpg",
+"size": 682467,
+"sha256": "9fc6bf24e86d4697d68a0ce16eed736e8f88131f0005a48e2cf1e4519c22b819",
+"blob": "f892271e940f5b13004883d9e3383f2013a3384d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his06.jpg",
+"size": 1409768,
+"sha256": "88511472afdc177ee480d0ca5c6582311297cf623ba2014ba265ee2e0acd6393",
+"blob": "c8b56d806221b3461108d386e1e9c8ecd3f48f49",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his07.jpg",
+"size": 1328399,
+"sha256": "4267a6aa6443c44bb74d97e32fc3e834ac6df263b285c4acf091989d2acc92b3",
+"blob": "55cc72c74f576a9d0a9148a0992004675d880e29",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his08.jpg",
+"size": 1359687,
+"sha256": "0074ca24b0a135a305e8f2eb79f98337cb0b21fdae53996104458fad10634de7",
+"blob": "6901e6be3357eca5b8120a75a91e5977db961564",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his09.jpg",
+"size": 1187413,
+"sha256": "1e74a4dc8741382306e9d636757ac9333c7853a4a6dada86e9d83a6c04f3d426",
+"blob": "ca75cda79229ddbfe9188473da2d11542da91776",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his10.jpg",
+"size": 1291781,
+"sha256": "00e72fac706cfb6d3628cce73cad6c35d8321ae5e52bbf7742a1527354ed1acb",
+"blob": "7381ed283bf79bc1a6e52396c09d3fdee963b266",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his11.jpg",
+"size": 1415402,
+"sha256": "a2624ed51d307831639d6ad6fc11a9983e315b6d943b03ebe5755a1ba2e8beb9",
+"blob": "c36a9becdf57646ef3adc8f1a6bc477e8786c1d3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his12.jpg",
+"size": 1030255,
+"sha256": "8eafd218a9695179d0d041f6205c68e71bf56c4620fbcb1eb8900934ce2a66b8",
+"blob": "a1a9dd408bbe9a21c76bf31b753cc7a67419d794",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his13.jpg",
+"size": 329256,
+"sha256": "c5f17c106a88b06f03ab12683f9ed0d5adb55a47f1f6093e0c2de0bc8dd1c3c7",
+"blob": "0047de51c90bbcbf97ae53c7dfb8bae71c5de17c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his14.jpg",
+"size": 276808,
+"sha256": "f240f09a2a908a51fcf8d8b91288eb4c3d16d6ab267daf511058478e0c4dbd2a",
+"blob": "06e3c7b081dd28115c974652c6eaa9818ef87d5e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his15.jpg",
+"size": 1109580,
+"sha256": "660844c0de74fab8bb3d35fb22ae5dccdf303afb3281698b19c1f6b385dbd026",
+"blob": "77af30a9792d8dbe9b5dfa91fde68d71303d6178",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his20.jpg",
+"size": 359033,
+"sha256": "0edf9741661ea16effef00da37ff22477bdf99c3d97f0e1ca60e39066cbdf8ec",
+"blob": "dddaf3b2a90d0990b3d47bb4f79792ef53f5db08",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his21.jpg",
+"size": 321723,
+"sha256": "6ef7309fdf4633b90c7a790039e71dd3f4293961c3dc478bb9e7d7d0f25d790b",
+"blob": "bc1942ec563a583d050d345afa8976e2eb744b0d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/his/his23.jpg",
+"size": 1071886,
+"sha256": "48ed7b70762be230601a9bda0c0080cae9c818f7f06220f342d31136957d0b18",
+"blob": "9404d4ae34a2b25f811ec91fc754e7a4d0de9d44",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/dataset_style_v7/review_verdicts.py",
+"size": 22417,
+"sha256": null,
+"blob": "e2c9cd641f19cb795c11178bb2c6cb72be0886d5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/diverse/klein_vs_flux3_test.jpg",
+"size": 547176,
+"sha256": "1063a2cb62146422a45af8869ce90211b697dd3f887c4d6b7aca7ac73bd20df2",
+"blob": "88f3db30046fbba6322910948f48699f9bd70c95",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/eras_video_ledger.json",
+"size": 833,
+"sha256": null,
+"blob": "84b15c8433428b1e38f20694f3d0dfa0498de7e3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/eras_video_ledger2.json",
+"size": 805,
+"sha256": null,
+"blob": "c9f2dd4f2a8c06c1092c56f92794324c0db430d2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/A_first.png",
+"size": 491630,
+"sha256": "4caed33c1ac20620f4fb6f95ea9e5bf85e414cebfba6c381de77742981f08f29",
+"blob": "a007091cfb5bf993889c96258b7871095f36018b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/A_layout_strip.jpg",
+"size": 41975,
+"sha256": "f69d8275b2de141dc6203cf6be711bff268fad759a9fe21d92ecc30a61ffc894",
+"blob": "3c1aa1d58a1a601395ef83805571e6a352c82f62",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/B_first.png",
+"size": 1063830,
+"sha256": "5b2034d0e089e02c3563362b4ee07b99123ed1b4f51c50309d77bd7e88cf2b39",
+"blob": "eb14d247c9d022439edf587474b93ecd15e93cea",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/B_layout_strip.jpg",
+"size": 65804,
+"sha256": "ea98a2932dda6541fb336e5fed04f1ec7429f6bb9063b78bff94058feae574f0",
+"blob": "0066bc15294989ac2cc2fe54bf1b76359e2c68a9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/NIGHT_VIDEO_TESTS_2026-10-24.jpg",
+"size": 2689484,
+"sha256": "9687447bfbaefc713181d23b1582af24b29d08f3e7deeb8177b86793d9e1954f",
+"blob": "daed4c15e36f122a20c18ec6a6fe797eced00658",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/NIGHT_VIDEO_TESTS_2026-10-24_ka.md",
+"size": 5864,
+"sha256": null,
+"blob": "5c17be205c157a9a3a0c0ed188337c0c3d789ef6",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results/A_base.mp4",
+"size": 1868468,
+"sha256": "a807bc3101f6c0a6753b695964ec6fe4af34abb0dd9664937f4e6b56dd22341c",
+"blob": "7d028ce6e142a625ffa9402e2a7086340e240152",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results/A_ic.mp4",
+"size": 1707461,
+"sha256": "75313355d82056b3ede72530115b26f8c27248319e0ea559c1776d631f273558",
+"blob": "4c7be587ce2ea689f95d86d6893a56b4ca1d7b35",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results/A_side.mp4",
+"size": 680729,
+"sha256": "d2ae608966ca732bb7384418e60c3322d4104462c27c6abc5d8767d077f7a2b7",
+"blob": "34df72dab76a86e531fbedea34da64f5d3a77947",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results/B_base.mp4",
+"size": 1873657,
+"sha256": "991775738c010f68c3f63bcfe03aaa90acde709e42da620b7ec52843c58b2667",
+"blob": "f7a74806fcb446f3ebcd4840bbb74eb3a5331a30",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results/B_ic.mp4",
+"size": 1996644,
+"sha256": "3247b3542543b52eb7f0f981d443b7327fb3979d32e4b4a22ba1e67eade94528",
+"blob": "5537fe765559f717f5262ffb11ee48c8e11145b9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results/B_side.mp4",
+"size": 778210,
+"sha256": "60db10f0976c348ee7a05cec702491c3f9bd61debbc4363e9387f34c8a8be871",
+"blob": "a6d88924496a669a9beaf2ede9455a775073c90c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results/collage_ic_test.jpg",
+"size": 1100034,
+"sha256": "88ae3fc7fe3097216c1c49e13aeefd36dda30b2a945e36c2ebe44018fde6bf44",
+"blob": "5aac7a63de7ad1f52ae6f1eeca959480dfc313ff",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/C_ic.mp4",
+"size": 1512206,
+"sha256": "cdd5db8e6e1f57bc4f08834bc369e0306a0c26eb8ce1d5a847013491d5bef8b5",
+"blob": "29707c43b9d3e270410454c2618ec196207febee",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/C_ic_qa.json",
+"size": 818,
+"sha256": null,
+"blob": "c64aa603bf0a2f25fa82d6ef5513544288de81e9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/M_base.mp4",
+"size": 1850558,
+"sha256": "40338460e581d816cabf6d9b4eb2d3c7b1dfe0261aa50b172e96e689fa04023d",
+"blob": "9820857b8675248b0d6846dc69e7a86199790926",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/M_base_qa.json",
+"size": 739,
+"sha256": null,
+"blob": "4a4a81bcfbc03526bf11c6b865fa4ec1953ada45",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/M_ic.mp4",
+"size": 1806547,
+"sha256": "955ce165972b62f34ed7b494e07bcb0ee96105f9025a52ae5a8bb78635e0be85",
+"blob": "5fb583b2afa342df226db3a0c5748ab7ad5126f3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/M_ic_qa.json",
+"size": 790,
+"sha256": null,
+"blob": "c77751c0001c1858b4e24a7582908cf6e2c9488c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/W10_ic.mp4",
+"size": 6300092,
+"sha256": "1f0300108fb22a289d94d0e670c051a361fbf8a4cb2083b1cd83171c323628e5",
+"blob": "e7c3dba83548d644e89d1f12f7d37a98f5af813e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/W10_ic_qa.json",
+"size": 846,
+"sha256": null,
+"blob": "25a9b7dd8927760064bfe04ba243dd3f589716a9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/W_ic.mp4",
+"size": 3131112,
+"sha256": "127619290dfaf7d767426350c66060c40742339de4f40400e4061e4e4816570f",
+"blob": "9ec9abd64d1c90bc5cc21cd8cca558bbebc061d0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/W_ic_qa.json",
+"size": 787,
+"sha256": null,
+"blob": "96a8932e7769ce9fddf153392220943d6944b08c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results2/collage_hard_test.jpg",
+"size": 1308744,
+"sha256": "9764d1e0a1c4308289bf996a44baa952a94922be74768bd235457b997b2543fd",
+"blob": "f5ab9c9bf784d9b45c02bc0e9271001ed01f371c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results3_maxlen/L241_base.mp4",
+"size": 6331612,
+"sha256": "8ed70a321122d459c3f326ec57365512b4f857f19e0231111f4993683e94b4de",
+"blob": "7655c08682915aee2413fd6084284d76fcf95592",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results3_maxlen/L241_qa.json",
+"size": 815,
+"sha256": null,
+"blob": "641f3e16358ac66fc0ca09bac51dc424a883d12b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results3_maxlen/L361_base.mp4",
+"size": 7357274,
+"sha256": "014741c7012cd794f94acbc1b57788908d2f90194a036cdf49dc065a09d20aa6",
+"blob": "c6b32c536e43e7b866136f9e293941c21451e017",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results3_maxlen/L361_qa.json",
+"size": 851,
+"sha256": null,
+"blob": "89fbe8ef01c11f8f6684e822692cf3ba1bf67a13",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results3_maxlen/L481_base.mp4",
+"size": 8442257,
+"sha256": "512f3b66bb1b5c4ecb06335507d96848fd5918f3cb78c4e2ba21ce8b66b1e523",
+"blob": "a6c046b074624c889d2d1718a3184a4141a332ea",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results3_maxlen/L481_qa.json",
+"size": 908,
+"sha256": null,
+"blob": "7179aaa50d80e0b8c1e896561ef248495545f0d8",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results3_maxlen/l361_end.jpg",
+"size": 146487,
+"sha256": "7f280da8bd189266d0f5146b9775a92d24c02cd8b2679cc6eb64a3accb3047e7",
+"blob": "90f04434f06557e8d8289e0edfb0d7f28a7a3934",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results3_maxlen/l481_end.jpg",
+"size": 149763,
+"sha256": "3e6be55fc13e4ba2b37c3c538c6a683bffd776dbe12c7511d031b05edece1041",
+"blob": "b1d8678b41c0618f4baf8a537e951db4d539dde4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results3_maxlen/maxlen.jpg",
+"size": 343598,
+"sha256": "16923d91a92f49d7fdbf096e772461e6c29f59745bec2924ff0de6d03ede0b90",
+"blob": "0b639cd29f57ae74cb474a564243479190beb9c8",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results4_cond/M_base_s.jpg",
+"size": 119133,
+"sha256": "7588dec9df8044bc2867550ad1c0f1e5049a38c7e25d2083bad25b22dc4dfdc0",
+"blob": "a7e57b40cc867a9b82d941caf7b1e5226b7c36e1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results4_cond/M_c04_ic.mp4",
+"size": 1500572,
+"sha256": "76bf51caf7db2a3063f2c62fc987d7290a79d33542ebd530841de420749772da",
+"blob": "5bf44f964f085e8c231a1322396e5bd0e26484a4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results4_cond/M_c04_ic_s.jpg",
+"size": 93564,
+"sha256": "6a6324ccfb491b757a00c3f9db5614dd95a58a93a1837de1783716239b6810b6",
+"blob": "ca632e8bd923463627483d2e514bf5116e4a8a11",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results4_cond/M_c04_qa.json",
+"size": 1039,
+"sha256": null,
+"blob": "239b3c79b24bc205b198f6bd9de151c9a9b9a64d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results4_cond/M_c06_ic.mp4",
+"size": 1569027,
+"sha256": "66e80f8bcf77ada9649c30cd3a381a36cb9f85fb6bb9f801c454924d3a0252da",
+"blob": "64eec6897bdb72067b379d46da1fee24b6660d6d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results4_cond/M_c06_ic_s.jpg",
+"size": 93618,
+"sha256": "7fc5772f18ca22fc5ef41451fcde7fbc89b91a53fd511d7bc5edf3e47ee59426",
+"blob": "e5803a616b068f401f98b7798093f796b0df4d1d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results4_cond/M_c06_qa.json",
+"size": 1044,
+"sha256": null,
+"blob": "1da705bd55cf20e83cfae32753ad7fa28230bb5f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results4_cond/M_ic_s.jpg",
+"size": 121291,
+"sha256": "c67b94fab477c5264f8a279de8d03a35e0feb2d617c0ec7d6e843e715f5683cc",
+"blob": "fee896d4a54979430431f669c32578662b3a4673",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/results4_cond/cond.jpg",
+"size": 324516,
+"sha256": "85415fb03374df10b06c650bcdfd982c26ac85d311bd8fe2582921e3105bc12a",
+"blob": "a4cfd2dec5f687f7ab5b2afdc51dbffdac588f49",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test/tools/make_layouts.py",
+"size": 4219,
+"sha256": null,
+"blob": "c4b6ccd1933a58eaa2e28925adc097e79f3c539e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test2/launch_ic4.py",
+"size": 2289,
+"sha256": null,
+"blob": "34166d88fcb58194406f7140fad50279a5056278",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test2/make_layouts2.py",
+"size": 6997,
+"sha256": null,
+"blob": "97070b071581babe90153d7f55aac30ed56547d3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test_ledger.json",
+"size": 375,
+"sha256": null,
+"blob": "1148fbf7ab8921cfa05d630b97425ef8df063e31",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test_ledger_run2.json",
+"size": 375,
+"sha256": null,
+"blob": "f7390f43f937f81e56714ecc9b5fe739839d6b30",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test_ledger_run3.json",
+"size": 375,
+"sha256": null,
+"blob": "3ac26cc196f173ab3490958a0b842adbab202c20",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test_ledger_run4.json",
+"size": 389,
+"sha256": null,
+"blob": "c7a64a9119562d936810391d3264dd26b22f2092",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test_ledger_run5_maxlen.json",
+"size": 377,
+"sha256": null,
+"blob": "a8ce4ebb5a14daa8f9c84754937c4560d5cdebc7",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/ic_test_ledger_run6_cond.json",
+"size": 406,
+"sha256": null,
+"blob": "2d7a7a5ec910007d45018564f1ab24833195c9b9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c01_first.png",
+"size": 2804384,
+"sha256": "e12d749df53e1d1c3d0f98af2b36e20dbf0f1db9aaf217d8c1c11a713ae162ff",
+"blob": "87d487f7ad1c18c76bc0b9a561c56497975d3c49",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c01_last.png",
+"size": 3033038,
+"sha256": "0e8bbfde204c546e1d7fe799caa22312dbdf7de2c9b287895a1c504a0ed70673",
+"blob": "d09208397ec4a8b451d7834c712fd24fccab8c69",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c02_first.png",
+"size": 2253584,
+"sha256": "be157003a3e6685a6058a0df94ce4a6bd8bea836e4208e4be29ef430aad63e80",
+"blob": "012c05ea688c0844aa4d4588c6d0c0967aa07f4d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c02_last.png",
+"size": 2040779,
+"sha256": "c000fc419ab050383d738ca8e9bb4df5deed6877eb6ee9e62d160499dc56eb65",
+"blob": "3cef32e0c678fee59bb5dccc6239c00fa3ac19b4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c03_first.png",
+"size": 2815732,
+"sha256": "f552c465bc221bebd84633cf8afd7ee78d5c27fb1168a9fb6fb87918256adae9",
+"blob": "83f31a151d33e7a987fcd5dc56e66487a442d27a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c03_last.png",
+"size": 3062056,
+"sha256": "7c32aae75203698c20067f69e1f2d4440166421c4274bcec28830b817e4a0685",
+"blob": "463b0ed47d2b9a74394f0d1c71549e0d2ffb973c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c04_first.png",
+"size": 2013795,
+"sha256": "54dd4751b54a47d76e80e7e3377bb2d146e1663c85bcdd254cf1870b6bbdb34e",
+"blob": "e869948214464bfa3cf0861df4e242a67e57d7f8",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c04_last.png",
+"size": 2318653,
+"sha256": "1ada38d2b77ecd38a1e0f771bbfd0e019301ee22664aeea3d3b82afb4f09d5bd",
+"blob": "3ece09e76871ca112bf70402930be88c36200001",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c05_first.png",
+"size": 2267892,
+"sha256": "85ad5eb7841610888f2a19d951e04314d3458e1d3a55a4d07d76476b6b92446d",
+"blob": "03e555538462d435bab8e6f2888b88bebe2a93f9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c05_last.png",
+"size": 1811668,
+"sha256": "289755e826e8947bf88a333598f74eefbc1ab529023b44ff02e0601f5018d031",
+"blob": "ab988b8212434effd9cecc0644cc2f0052f43db4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c06_first.png",
+"size": 2007008,
+"sha256": "58fead09da1c1d9b9baa5f1971d4590e6b367dd2e78b6b096f6dbdd14eb01073",
+"blob": "22f84f5fbe7fd027b0a6bb21de92fbe41c2b7e56",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c06_last.png",
+"size": 1767517,
+"sha256": "31f763a42b2cedbc7f1e3d557c6df48e696c3608ac8fa88b72a9d006c34b6e55",
+"blob": "8e67f4c5208df63b55cf81d3a2fa070fedb62a4a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c07_first.png",
+"size": 2791348,
+"sha256": "bcc00179c99bc0292c456301ce648b9c8de791ef61165c6828d7c5cb1665a2a2",
+"blob": "4ea8e97b5e501a67c0a8d99bcf59290d1ddeae80",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c07_last.png",
+"size": 3642068,
+"sha256": "ec9eff6da6326b6e1c9d811269db1cf8f4bbd17e9359f686f7e8098cb3136780",
+"blob": "a3ff5416a2a493b3dd95c543f8bc1c51e80d419e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c08_first.png",
+"size": 1725985,
+"sha256": "8138e4f8b6f883ff9177182345585e5cdc5bb9d3e575a3eb1350c66e9d8d612a",
+"blob": "d7f6938b08c8bbaa040b0903c972bd2c8350991b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c08_last.png",
+"size": 1762728,
+"sha256": "6aeba41f395f48716e1a88fa9f5d7d3a7f75f8d8f9fdc56aa49c202b5044b09c",
+"blob": "ea02b019534f88fb403cc2555c60e8d8e7db0540",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c09_first.png",
+"size": 2587054,
+"sha256": "a29ebb3db6f2c12bb76d6b6d0eaa89d6899cbf8c31c37387e1b800c1dce362af",
+"blob": "7e7b6e947ab7e3eaaffd3f094434c08eeca5b958",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c09_last.png",
+"size": 2453454,
+"sha256": "f460a43d52085f091e665b66a86285e17ca19c822544ab82ea897ea638bcacda",
+"blob": "a16831d9745ba3e2cca033d073a675b16fc62c7d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c10_first.png",
+"size": 2232809,
+"sha256": "51f4147ae42789579acbf38688d62f159d766d987ca7236413f0809f50463e28",
+"blob": "507a9bf941ef86a5e9e8272889fa263f82dea700",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c10_last.png",
+"size": 2365878,
+"sha256": "b154b90e4bd77e548fc3930dd77217da0d292478830f804e999fca51207623fc",
+"blob": "35d99fa2aaad0bce3cbfba7f0cf47cd98f51b7d2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c11_first.png",
+"size": 2824494,
+"sha256": "e6e609c13655f8f294519a84f2a93001218b1a2ff013a8a343dad548f0d15081",
+"blob": "1a899bc06eb0577e974ba97cd1137b88f386844c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c11_last.png",
+"size": 2687917,
+"sha256": "edb319a914282494e6ea93138670b827cb630890d0af09f958b51dcfbe43b17d",
+"blob": "3cbb0590c2adc7987ad35a079433eddfe437824c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c12_first.png",
+"size": 2449249,
+"sha256": "b0148d2e692fde42768200101e34b90a0a118487d0819f58c4ba40563511ba16",
+"blob": "2601d162bc7e3e604541ebcdf88b41ed0f6d4eb3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c12_last.png",
+"size": 2452132,
+"sha256": "9ab496ff1a30abf74614ae34c87345eca13dbd487acf59c6a9afa3c1e533b972",
+"blob": "28aa3fc61ade036cf2de3f991e461b028a7cdf7f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c13_first.png",
+"size": 3339486,
+"sha256": "57790b254c1466b1a5d4406c01ff672a5169e4e1e847b1fbf8ddb5fb011f39d9",
+"blob": "1d7e28a436e7b0434e1abddf94d1c3ce8741fb7d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c13_last.png",
+"size": 3186893,
+"sha256": "048eeeecfa256c31594f4d1d699cd8b2be34949d655f6a504379b7b7b7a58e8e",
+"blob": "aeed79873e99ad93190ee02827f7e223fa58e349",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c14_first.png",
+"size": 2802644,
+"sha256": "b14210e519f0ffb42eec95bb471e5a10520e74cb4af053aef4a86fc904ef811c",
+"blob": "55ccc1ad319912a0ec29188e863f644409d71221",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c14_last.png",
+"size": 2248770,
+"sha256": "2334f903c7701a60118e1954249efa43ce7d50823e992967ef7a2e6e0ea86630",
+"blob": "158eef8c25fe18157df9d82139a8899afcaac9f3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c15_first.png",
+"size": 2494704,
+"sha256": "69d0694539d4efaa2b9f3ac3bd68328c4112aa9f6c498198eaf24a2cd8ec1d1a",
+"blob": "9ccfb0f4456fb0ed051ce724272d5e11f52df3ed",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c15_last.png",
+"size": 1631052,
+"sha256": "0aeeba6fc4e5075552d7ede08742524ab5cea7f8869b3fb2fcf7c2bd305bcaf6",
+"blob": "2527b661306410740eee45954043e82fda957709",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c16_first.png",
+"size": 2739060,
+"sha256": "2b70b5cf5beea5816b896ea3520d8f7b87ed2679a075a37653c54e0e07639542",
+"blob": "4d5c8fc551f46f6a1a78d920c4a8a7c9b04eb765",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/c16_last.png",
+"size": 2469318,
+"sha256": "ae0c54581c241566a92e6d6d3916954aaa219f267fd2b01b69c7e819145b1c03",
+"blob": "bc2f6d7726d1eb42c0418c14c33ed44e14370cd9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/kf_v2/pairs_sheet.jpg",
+"size": 992797,
+"sha256": "2f1fdd0cacc2d2ba952d5134fdd5a09f518635a7afff063a357802a474a15e8d",
+"blob": "105b987a12513565a5b9ba7fd8eece79eb3dd83f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/nextpose_zeroshot_code/launch_np.py",
+"size": 2288,
+"sha256": null,
+"blob": "dfc30eddb8e6d2710286ab29c850a94c97ce5920",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/nextpose_zeroshot_code/make_cfg.py",
+"size": 1747,
+"sha256": null,
+"blob": "1483cf8d8887b096e36cc8c9110f8767beb5ec89",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/nextpose_zeroshot_ledger.json",
+"size": 397,
+"sha256": null,
+"blob": "8d86ca9d2b474475ce34d08d9e90a00d2bb7710b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/pairs_sheet_0.jpg",
+"size": 394695,
+"sha256": "40913c08ed457e5f91a77d3545d7b626461bd4436f2a097c725bd463e5dddf7f",
+"blob": "e23ea2f1b6660f326913d3f452f74c795aeed319",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/pairs_sheet_1.jpg",
+"size": 439384,
+"sha256": "caa0cb8f3b5fd159bea251def22c2d8914a08a368026212df1cca17a46330c0d",
+"blob": "10c649ea520b4d26f967149ebc2af142ac9f1aa3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/pairs_sheet_2.jpg",
+"size": 392363,
+"sha256": "f84374cdcde657ba5cc2e8a21c5b392607d60df83512a98ef6a36d2a1bc8ad6c",
+"blob": "6beed91dd32171b8315e34b833bcb88259d4aef4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/pairs_sheet_3.jpg",
+"size": 383295,
+"sha256": "fd46f8e38b395c5c3c23c0cf44f075ebd92fb51aab1f1ec4a47aa84e7b0fd881",
+"blob": "39834235a75d9a45d410708025f206e14dee954c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/references_v2/up_0abe0f7f-image.jpg",
+"size": 4484512,
+"sha256": "82637f111dddfba2d84b6f372710fcc2951291b6e221c8e3934fc9f3a4b2b299",
+"blob": "99ef8578e1b8092b2979a8d99eb23b65526bbffa",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/references_v2/up_3e425c1d-image.jpg",
+"size": 4422924,
+"sha256": "34a5c0eab2a2a58d15459594b91903e338d22cc98cbfff9b97ad74312d6cb927",
+"blob": "636006cce89a9ae5e36fcf05eb92e18930fb6b9f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/references_v2/up_59c63eba-image.jpg",
+"size": 925288,
+"sha256": "ae0f103fd135590f75285291f9fbb0f685106d364ee53aca920cf1ad7034c4fc",
+"blob": "c829d3e2b2f78965320161afffd69e3610358e3c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/research/research_A_github_projects.md",
+"size": 28964,
+"sha256": null,
+"blob": "db8f7277510341414b69633ff867e4345c9af40d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/research/research_B_trainers.md",
+"size": 32017,
+"sha256": null,
+"blob": "3076e24efb022091e852692a05ce68244dc9326e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/research/research_C_dataset.md",
+"size": 35585,
+"sha256": null,
+"blob": "b1462411840c5b52c68680ec8776403f46c63206",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/research/research_D_runpod.md",
+"size": 20773,
+"sha256": null,
+"blob": "417d4a25708afc1a804c604aacca287e72bb3fcc",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/scene_lora_run1_redraw_ledger.json",
+"size": 391,
+"sha256": null,
+"blob": "b7eaaa533fbebaf999a723a0bf41040ab9d6963a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/scene_lora_run2_train_ledger.json",
+"size": 716,
+"sha256": null,
+"blob": "1df3bfc304d05873553284b11fbeb7db97c3706f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/spend_log.jsonl",
+"size": 75128,
+"sha256": null,
+"blob": "7df9d00c9f1e2b104d61e6011473dea1b2407bdf",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train/NOTES.md",
+"size": 1422,
+"sha256": null,
+"blob": "454ed307f859ea3316fea66026d07beeab6b09b3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train/cfg.yaml",
+"size": 1821,
+"sha256": null,
+"blob": "6d26558700b2a0a1b2d11ec4c378f0929e136dca",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train/launch.py",
+"size": 2773,
+"sha256": null,
+"blob": "cc41e78c58304cbfd4d301cced3dace59848bca2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train/pod.sh",
+"size": 2725,
+"sha256": null,
+"blob": "37bef0efd9b7a8803dd66d82f25f668fb8951cc8",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train/watch.py",
+"size": 1046,
+"sha256": null,
+"blob": "d4806e714d5d0a68411b7e9542952b5f01f2e728",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/bfl_his_refs_26.jpg",
+"size": 753245,
+"sha256": "408725e7e64015c9605c8db8c6bc608e6fc43f3a3211598f252a8d8013a2e9a4",
+"blob": "2dc2d581272abe5a2b558f736b72fc86f1de49bf",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/bfl_test_his_refs.jpg",
+"size": 843076,
+"sha256": "bf0ace2e7c7942e308ddbef86d12703fe5a979d11aa9fa607ce0ca40283bda1a",
+"blob": "a3007b5b68d9974bdea69be90c556c58d4223234",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/eras_v5_1750_bf16.jpg",
+"size": 1808097,
+"sha256": "d9d7e2da6c380ac5a4d60f7da6a66ef099d67811e50bb9ae6d59344979b6164a",
+"blob": "c001adf023e8438fd94e282975295397a4737b8f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/grid_0_1250.jpg",
+"size": 1717681,
+"sha256": "0ee7a7f0ed08e28f2741c290e0756614b369c4727738f912128b240c06d9c9b6",
+"blob": "dd86aba3b2656ad82ca8b6c0c650a543bf689a7f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/pose_zeroshot_sheet.jpg",
+"size": 1104802,
+"sha256": "237f3112161ab41677a8b7334c11e7abc6bdf2fccf00136f02eaecb87e1b014f",
+"blob": "72944219b15dba1904000c6ecb306c3ee86232cc",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/step0_vs_250.jpg",
+"size": 709622,
+"sha256": "1b9641f7913184aae81fd80f0acfbaacf41169c89c162335d13ee69cc0a3b01a",
+"blob": "a7d7cb6edd17176ca6ee588035d97d4bb97eb084",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/steps_0_250_500.jpg",
+"size": 698086,
+"sha256": "359fa78775335c56e41e03c418795a3608db4f116392159da70bc2a7a4b47011",
+"blob": "22dadf4aa66b86654f9d031c4b84838f9b52f4d5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/v1_steps_0_250_500_750.jpg",
+"size": 949223,
+"sha256": "2cfadfad0d3eba058cb0529ef72a36c343161160c3816acf251fa94c8f7b59ae",
+"blob": "f38a00e20c91b582edc815ab66f6969e1ce8d037",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/v3_step0_vs_250.jpg",
+"size": 479618,
+"sha256": "538817891210191e54af4467a00031f2e4c45155d184d181257e119b765c9020",
+"blob": "254c2add22f96ca6d9ba761618efa05bebd20e3a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/v4_250_vs_v3_250.jpg",
+"size": 808129,
+"sha256": "f9690fc227dcd1b82eafbbeefb582897e07e90e8fc8ab9ae9d4f52e0c57ecb16",
+"blob": "9a12804751953f4f66f17aaf95f6e48aee673907",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/v4_steps_0_250_500_750.jpg",
+"size": 1029747,
+"sha256": "d77bcb5348443c1d97076d4086d43fe1211b46e7bab3def1e37ec58fcb8bc235",
+"blob": "7d2d6d62e05b845605ff646e34cca7cfbdfb56e6",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_eval/vs_his.jpg",
+"size": 806587,
+"sha256": "8b4c767b7b7e2566e3feaa350a319ac1535e051bf0588e0223d98ad52fe0705a",
+"blob": "d26fc59301b06103e4c3b3a3d3ce24e738b7d13b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v1_run.json",
+"size": 589,
+"sha256": null,
+"blob": "9d37a558b59c195738e76bdf422a77b0cde1bd63",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v2_run.json",
+"size": 509,
+"sha256": null,
+"blob": "13c2ebd949457e0c01bf2abb34bdf70ff96eabb1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v3_run.json",
+"size": 772,
+"sha256": null,
+"blob": "4410a3105ba49b17eaacf24255fe3cccc10ade78",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v4_eval_code/eval.py",
+"size": 4141,
+"sha256": null,
+"blob": "305898b7b35b09aed9dd354a970afc6af610177a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v4_eval_code/eval_cfg.json",
+"size": 6396,
+"sha256": null,
+"blob": "70769803b24061d40031c84b449c079d3ce7662f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v4_eval_code/pod.sh",
+"size": 2084,
+"sha256": null,
+"blob": "3a178973c4c50722d019a24038f6a96ab42fd139",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v4_eval_run.json",
+"size": 2214,
+"sha256": null,
+"blob": "12acd509665b2302f21b82f23d9eea15d0b489a1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v4_run.json",
+"size": 1127,
+"sha256": null,
+"blob": "1bcb9f1c3a724858e5e4549696ca38fe1da15ba8",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v5_eval_run.json",
+"size": 689,
+"sha256": null,
+"blob": "7bd355e95942cdf47ef17d1368b8d3ceb8fa0e66",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_qwen_v5_run.json",
+"size": 751,
+"sha256": null,
+"blob": "dd25cbd4950bc05e9b5b97717d6803c44a4b2f4b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792709369967__000000000_0.jpg.jpg",
+"size": 42445,
+"sha256": "04ae6195eaadeea7a41a3a54ae4352baffe2d934ea1be42507f540ee672835ce",
+"blob": "705dbaa37bc1c607c7605ef6216af3b3df1d89fe",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792709387896__000000000_1.jpg.jpg",
+"size": 20287,
+"sha256": "6b2dcf5e474dc300a8a0470a88d871688b9831bc031ad097103766a99517b18c",
+"blob": "021b4631f89acbd25b42bd198ee1c6baeab99163",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792709405860__000000000_2.jpg.jpg",
+"size": 31432,
+"sha256": "cd2c4d47a55cb147c36e1592ba2b1404285267991d0539a901d7f61abac9a293",
+"blob": "d759f0b464632b93ad89efa76c909a5cbbae9b5e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792709423875__000000000_3.jpg.jpg",
+"size": 46299,
+"sha256": "e467145eaccca756f1ed05538580f86a255d1195ed70c28315eef45dce91dc1d",
+"blob": "5641df871a147a043358da2b150c21da2ff9dc1b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792709441872__000000000_4.jpg.jpg",
+"size": 26996,
+"sha256": "6624a64cf6438633ac562cdd12aea867196bb394f64b6cb548e1640de3f10441",
+"blob": "84894e9c31cf8a41e4c3115bb5d713d1d2fa44aa",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792709459888__000000000_5.jpg.jpg",
+"size": 27595,
+"sha256": "423a9823a38fb14e2b52e3b93d7705f97f366e682be590a20f37c2aecdb52cf5",
+"blob": "f2e9b1b4493598768dd7c11008a29efa517ecc61",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710017341__000000250_0.jpg.jpg",
+"size": 47974,
+"sha256": "3e3802fd08d0a3fd5e656506fc87272e4cc5cc0814636ec3c8313f2c3fb79316",
+"blob": "f36b4c81ffacdc572033da2add91f24b22ef30b3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710035315__000000250_1.jpg.jpg",
+"size": 46961,
+"sha256": "778b53c9666e9f8c197423e067882798fe5f9243a2d23ff0a5372c9bc22fddb9",
+"blob": "11106afe562752c2d791615673126e077cf18bde",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710053278__000000250_2.jpg.jpg",
+"size": 46457,
+"sha256": "d18b72b6f7ad27ca671aa602dc748652de3922e3eb32412a533ee423aec90f71",
+"blob": "e41322421aa70482806911189aa1bb6821e7449f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710071261__000000250_3.jpg.jpg",
+"size": 52469,
+"sha256": "6f0e4e011b587548a8329368f28a9d2875e854803f3f16bb4e2e3c0851f409fd",
+"blob": "3d6974d5b75a261475bcf459e47f940433f00abc",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710089245__000000250_4.jpg.jpg",
+"size": 48956,
+"sha256": "d4afcf23e72cef6d1db3b1ed3f00e5408a702c01f45662c5cb0f50ebd2266b48",
+"blob": "d3967034d4ef6829a706421da3ab774b8f69ed87",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710107224__000000250_5.jpg.jpg",
+"size": 45596,
+"sha256": "533095c9c5e610e55702967af1c73df94a2b87199cbb61934654f9ec0878dfe7",
+"blob": "03c95915281c0133ddc18dc9af67fd21f0288740",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710666317__000000500_0.jpg.jpg",
+"size": 44642,
+"sha256": "56a184ca8bab5cfe703c79574b2ae23efda1a4ab826af13153d81b5083bb2b55",
+"blob": "5080f620133b68a36bfd26f22349b0ab7f78d2c3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710684328__000000500_1.jpg.jpg",
+"size": 36741,
+"sha256": "d210ac12711efd078c53ec4ccf97f5e06fe90d05d1c14cf12825ad1f64076d3c",
+"blob": "eb3a98a2bf144ff19a40b7b52c7f5a369db98705",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710702342__000000500_2.jpg.jpg",
+"size": 45950,
+"sha256": "100847898592b6e04dbbc7fdae381cce578402dfec31ca6902a137aaadc0dd81",
+"blob": "9c95f75f694eb28a70303a9de0f7c81a3f6eb809",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710720318__000000500_3.jpg.jpg",
+"size": 46794,
+"sha256": "d8c359f7148381e3d91ce141c9a6a0db8d5286c6cfa1f33c08de8025eeaa9802",
+"blob": "04dea8231fd28da0481ed7d759912a46c3c4ee43",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710743411__000000500_4.jpg.jpg",
+"size": 48382,
+"sha256": "413fe3a26d2524141a18e0add4eeb4fd73bae5481c78485e2e4e7337f6b469fb",
+"blob": "4927036b6dc13640a64c93213dda48854fa70f9c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792710766122__000000500_5.jpg.jpg",
+"size": 44822,
+"sha256": "a1d0ec59492efafde52971b7081ae591b0df3e13f57422b0f822c9c3fa3c9f40",
+"blob": "df5e94ae6b2c17407a64593f87c4057e95b7bcae",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792711412322__000000750_0.jpg.jpg",
+"size": 42167,
+"sha256": "8c8f39f951df7c5d93401cb066bb796f40fa473e00bdece1cd4861b09baf62d6",
+"blob": "071a038637439e3ae3b69bf0066bb7fd2bd52aff",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792711431295__000000750_1.jpg.jpg",
+"size": 26391,
+"sha256": "1863c1ebfbbb5a8db1a82e5a598df6fb9456386ba6bf1faab53131183621d14a",
+"blob": "7a71e909002fbf27eead6973d30c2e9050c2ed49",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792711450222__000000750_2.jpg.jpg",
+"size": 40983,
+"sha256": "eee59d0c298a8b111523857b913f84e1c01648dd8f1d2614ff7e1b426099602d",
+"blob": "09fdb97b2eac22b938e68040e3559935fb94a386",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792711469098__000000750_3.jpg.jpg",
+"size": 47536,
+"sha256": "82e6aa337afcf7517666a55404f9c8e21da9acb1d28283387c60a44da11783e7",
+"blob": "19f42bcbb2c7ee7cfdd1e70dba59d35b3dad57ea",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792711487921__000000750_4.jpg.jpg",
+"size": 43886,
+"sha256": "124554b2511a201f250e449cebc439bcf497e1a733d77bf8941e806c0883cf7f",
+"blob": "ae3dff83f5b62dbaa196f19e2bc43e2d33465f1d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792711506706__000000750_5.jpg.jpg",
+"size": 41197,
+"sha256": "4d8c415da026cedc32d58266decbf98391820529ede9681068a03bf258646329",
+"blob": "3972fddeadc1c29ec7bc61e2e03356b2efd914a9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712068456__000001000_0.jpg.jpg",
+"size": 46247,
+"sha256": "795e031328f48e04d4057b9e502ca38971089a83fbc1e57ef96cd68d9d67d55c",
+"blob": "0c5ff83b67d2f49e9b86e136e2011c0352b5255f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712086417__000001000_1.jpg.jpg",
+"size": 34186,
+"sha256": "efaeef6cd4bd7dfd67a6c9a7b6cda59f38ef5b637bae16c60d690f66ae99a21c",
+"blob": "e2de3f279791c9cfbe4704667d425bbf9c6cb091",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712104395__000001000_2.jpg.jpg",
+"size": 45113,
+"sha256": "a652e39feab9d6ba2fc99b2bfce0b68fbb12f33bb152c9c63cc32ecc2014fee6",
+"blob": "439c9e992d4a8dc83f9a90860e98bd7f9e95894e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712122354__000001000_3.jpg.jpg",
+"size": 44647,
+"sha256": "d43b5c4fe8d1b7934d7ed77ec7f4f8f9a1b0f421075b13657be76a7d31f1e7f1",
+"blob": "2aaec28e3d2a91fcde73d40721c4a381ed004199",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712140314__000001000_4.jpg.jpg",
+"size": 46348,
+"sha256": "2ab3852b327c14a7710b5435267ab876ca07228889d0dc40aec83665ccb70af9",
+"blob": "50c058e8401a8e3338eb577f965d29b2b44bcd5f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712158271__000001000_5.jpg.jpg",
+"size": 44820,
+"sha256": "f305853906656d6d6c5b6a08e93d4e6e31d8537bc7d1a9d7f76b12a03b243ef9",
+"blob": "36fddf116e0274a766fc9d2c2f744b90603a40eb",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712707034__000001250_0.jpg.jpg",
+"size": 50731,
+"sha256": "f9319cf291af42736316b1020b031d35d448a70531d8757942af1f27163f7e5d",
+"blob": "ab394b13cb6c846232ed5e3a8aaacc2d575e377a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712725011__000001250_1.jpg.jpg",
+"size": 33213,
+"sha256": "e29fbe1d8ecb253503bd3ebb89f929f26d36b9487ebf10abbd7f7f93dba83eda",
+"blob": "c1cac7ed3f04d17eb62e7c19378c2d0f869ec08f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712742992__000001250_2.jpg.jpg",
+"size": 48797,
+"sha256": "2c48ea1a94f1fcb780d6300e6b4a9fec90de9ca61bcbbc4adf1a9130074867df",
+"blob": "c09147472d4840879334a9906fdab869440e396b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712760970__000001250_3.jpg.jpg",
+"size": 55267,
+"sha256": "705edb0d9cc9526cdf8c7dd7ea0ebbc0aba4daf65fba5e70c5e1e3695df1141a",
+"blob": "c9556599b6035ec3f088a3daba9103ba5f757d26",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712778967__000001250_4.jpg.jpg",
+"size": 45833,
+"sha256": "ba0d7de312787b0f4e1e64e298534bdb74fd1522257bc91bf58d27abf5539005",
+"blob": "859009c8907b5245e8c46ae4f59eff02d09f38bd",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/.thumbs/1792712796947__000001250_5.jpg.jpg",
+"size": 54182,
+"sha256": "d958302177a19a6b60de0638c00cda4337a941c162f8a205b00a016d1b5e3cba",
+"blob": "2e89290c55bd6f321ee198a025b36558c52dbcf1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792709369967__000000000_0.jpg",
+"size": 116471,
+"sha256": "33f1397dfd06f97ad2b15bd7f6c8b8a3ec9134ba6264d611de3eb5de7dfb4de2",
+"blob": "b2ea58aa1dcd40b0241ef0b2e12e36c7b2c4976d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792709387896__000000000_1.jpg",
+"size": 52852,
+"sha256": "3bbf4ecf5d40845c6130d818bacc5cbb26450d3ba84aa2b9ff2bac7ba19527ef",
+"blob": "8619e4dff124846e5126ee72a289999ba1f3ae08",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792709405860__000000000_2.jpg",
+"size": 96381,
+"sha256": "dc7fb110333b3fd7fc797c84a48daf8aa109b3e9a431057c35913a50a9fb4cde",
+"blob": "36f6d17daadd164ff93ad5542bfc7c94eb8e47b0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792709423875__000000000_3.jpg",
+"size": 147883,
+"sha256": "53c8535095702a196a54ff9e1fd581b7c24d522dde05c292d1a18aeabdb3cd12",
+"blob": "f33bb4d58485df2596a9c398f630ff91397ae137",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792709441872__000000000_4.jpg",
+"size": 56937,
+"sha256": "6f2ba0dff4107523c9a2c1dc33776de38ec9cc53dc9109cdc5c9e0bd9cb2318b",
+"blob": "1502d3ca6882abacbddaea3290c28d65cee41fdf",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792709459888__000000000_5.jpg",
+"size": 77563,
+"sha256": "c42a147d12799846c410c6279a661056a33f09f52c225e0c926d7faf9474a464",
+"blob": "b0fd30b276711bfd7d3892cdc0100d2da5af4f74",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710017341__000000250_0.jpg",
+"size": 127921,
+"sha256": "a5cd3a536f26fb877d46ee5dff3899b1d25151dc1b0c67199e7ac4254b9c4078",
+"blob": "5a1edc47fa99f6bc4662e011e7d1fa1058e955f2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710035315__000000250_1.jpg",
+"size": 138259,
+"sha256": "fd4e3634b04f50761078cc57672c5ba07078f4d5d538997ad07ef433973af6b3",
+"blob": "9a258c1757a2bad1dc61350737b87675c1a9b8d4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710053278__000000250_2.jpg",
+"size": 134047,
+"sha256": "9fa09652123862e80be6289fe8e4c9e9a5189c74b4ecf2b8117908f9595123d7",
+"blob": "266da0f7103b1b68a5e538516d998ceab20021a6",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710071261__000000250_3.jpg",
+"size": 159224,
+"sha256": "04a9ede00a2e7e979a49e3fe6d2b17cc563572c0aa85948d58687d3be9bd6bc5",
+"blob": "d6a1bbbc97fd30832f65eafaf2c487a322bf4c5b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710089245__000000250_4.jpg",
+"size": 109915,
+"sha256": "96d81035024da67819595ed02f15fa82a74f5659cbb1fa76e73aa830d528c1aa",
+"blob": "c18046a4d15efbde3330695d9074c80b69da207b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710107224__000000250_5.jpg",
+"size": 150900,
+"sha256": "f8208779aa5a1199bf7c6ad8038e7c40fd3b4c5093fe60830e1f534e4060cfb0",
+"blob": "a9f52f57d48756f264d936373782b4d2158cb599",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710666317__000000500_0.jpg",
+"size": 118085,
+"sha256": "61fff6c4ab8387ab61ac6c99394cef857f0d28c098e0169c3c616716bd0689ac",
+"blob": "f6ced5546f981367ad2af069dafb79fc42697dbf",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710684328__000000500_1.jpg",
+"size": 99157,
+"sha256": "54b892a5575c7b74c28e7dd2c171069db5d808754443006955c11250e1dde01e",
+"blob": "3bc93cfb3607651cefe3a0d94f016711ef284f5e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710702342__000000500_2.jpg",
+"size": 131897,
+"sha256": "e56cd0ca64fd0b06b9dbeefc1b7a7b52137dd950daba26682133bdac4e789548",
+"blob": "866a72468a8c95a141370b0106d88a3bbd58046c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710720318__000000500_3.jpg",
+"size": 140401,
+"sha256": "3fc091217fdc687071bf13c875db0d081e912ec949d021c5f5ac0a2cf570375f",
+"blob": "578564d7577476ac54fada0e7afd59d2ffc6165c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710743411__000000500_4.jpg",
+"size": 97987,
+"sha256": "82a364440effaea87492ca938bec3a3f0c63fe285765975897acd04504507e49",
+"blob": "4add08254ab6f234d261e01ce11491edc34689ca",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792710766122__000000500_5.jpg",
+"size": 134897,
+"sha256": "0f608072671e2461d334ed66dfa6199f17a876be0609aec5e8dbc71de2120ff1",
+"blob": "aa1e652e5283a6eb0a8a6d4849bc8e00259b8b59",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792711412322__000000750_0.jpg",
+"size": 109743,
+"sha256": "564fe5f41fd507734a8d815b1cc411c0368fabcd95cb0530770ce043cb145c25",
+"blob": "cab8ff43c434684b10d841a15d4ae236adc91a50",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792711431295__000000750_1.jpg",
+"size": 67202,
+"sha256": "b51d8590b93b613af465edf0614aacedc24df8054e8cec7c7b1c97fb2b93e2e1",
+"blob": "7a843c40923cd230af3b9cb21a6b3f255b3cb33a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792711450222__000000750_2.jpg",
+"size": 110924,
+"sha256": "90870e868a998892bb126ec5987cb923b96c11af6bb79cb1b65f6aae88a27a19",
+"blob": "a13e5c627ec7eae376e1ab0e0f7e699bc93a7770",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792711469098__000000750_3.jpg",
+"size": 142890,
+"sha256": "bb14c3ca83c6631df0e85d9bcbd3038a1bbab79a231abd4afdd6973066d3ee7e",
+"blob": "cf49512390b9e707c09e89e0f14fa34b2a71adf9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792711487921__000000750_4.jpg",
+"size": 91754,
+"sha256": "e124e6c51cd7964f48a2aa2e3b09de272e14602f8c0435c9339d5fe3d7af62b8",
+"blob": "17524e488d2fd287e5760ffc3a2c3a01e4ff771c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792711506706__000000750_5.jpg",
+"size": 127607,
+"sha256": "b42a99c249d01284133867873d0edd2dc2836f964c9d5ef58acb42052fd56973",
+"blob": "569a53288c71543cc6a00e26eb3d2078df875585",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712068456__000001000_0.jpg",
+"size": 131197,
+"sha256": "cb1c2a6c26a81c2eb269d99afda16c2570e672653750208d3a0172e38665d983",
+"blob": "02d8dad0e22d29e46a7e615e6c6a3f095fd0c16d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712086417__000001000_1.jpg",
+"size": 97991,
+"sha256": "32a7ddadfa6a1ff81bffb3f601b3dee670972964746f83730f51df12d472d165",
+"blob": "d8e6d01dc7772c34106c1441fb775b5ecc5661fe",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712104395__000001000_2.jpg",
+"size": 133719,
+"sha256": "155bc6277f6a124556331c28082c428eef0725237d1438b73281c683aa6a5fa4",
+"blob": "f400845e24e216c18dbca3fd218c26e62838c3ca",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712122354__000001000_3.jpg",
+"size": 141000,
+"sha256": "76c85b3f7b860794157f4b19a9e24ea655631739e7d74088fbfb1ae3d0839aab",
+"blob": "7597e6cd38d3d6d2a5e281433686f9b96cfa8e45",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712140314__000001000_4.jpg",
+"size": 102415,
+"sha256": "1ea12bb5412b2c72b37a87425a93bee0901763b7b4aca19a31ad695a1bab63db",
+"blob": "2a2f7985d9f253ca67cd55f380394f1c13c5a198",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712158271__000001000_5.jpg",
+"size": 147623,
+"sha256": "489ef6786401ca5ea3d4d1b9d28bd5d4eb369e2cb3cd13951f9ac3a57bd5c957",
+"blob": "7856eafb112b783695f97eba450a82ad6f20563d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712707034__000001250_0.jpg",
+"size": 153996,
+"sha256": "f5b4c32649558b723fca4ea7184cf3ae509bd1f65e8bbfe69ab82537409d6d3d",
+"blob": "67b9d236325f04980cc59da72eb79eb8a57e68be",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712725011__000001250_1.jpg",
+"size": 103861,
+"sha256": "ca293aeca262aaad502d45a27ae4914c70c39b9269b62dbd8dcc9242a88d083e",
+"blob": "4376d9a49aea12de07e14cbd88b09f2e7cc1cb28",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712742992__000001250_2.jpg",
+"size": 146896,
+"sha256": "3063e0f166244547d6d2a3f1adfbe7b4ac69794fc4bb3cbec396d5a3a432682e",
+"blob": "fdf2486caf383f54c81c38d1a4ab1f595543da75",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712760970__000001250_3.jpg",
+"size": 175980,
+"sha256": "24a0597fec64acb52b362b480bdf5c42bd07f7a0f32edc31824430cb028fbf6f",
+"blob": "92fa4a6b727ef8595c4386f4e0a490b277805c15",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712778967__000001250_4.jpg",
+"size": 121852,
+"sha256": "83a401f61273d8b28eb586f90ce53e32b574fa1382881bb8e1cb33d902b2b63e",
+"blob": "89a2adb12991b5a624d1295d082d0aeaed63fdfd",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_eval/dl/lora_plan_2026-10-22/train_style_v1/output/samples/1792712796947__000001250_5.jpg",
+"size": 186506,
+"sha256": "6c357491551edcd685e7f723e5af20713023237c74a597b7ddb6d29cf10553d2",
+"blob": "8cfd93c7ee730fdd5fb42157454cd0880adc8f5e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/train_style_v1_run.json",
+"size": 1298,
+"sha256": null,
+"blob": "c6b781d71d04bc4e93e15805263405a582fa34f9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/lora_plan_2026-10-22/video_lora_v1_ledger.json",
+"size": 379,
+"sha256": null,
+"blob": "6a7f8a4d62c6ceca15e782509f9c0431e4fbe44f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/plan_review_2026-10-23/benchmark_10shot.json",
+"size": 1706,
+"sha256": null,
+"blob": "ed235698f9489b6634a3547b7cff1d2b4feeb981",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/plan_review_2026-10-23/plan_review.html",
+"size": 28357,
+"sha256": null,
+"blob": "22b5500670b5983e37be3d9870169e7e34dc8cec",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/plan_review_2026-10-23/shot_schema_v1.json",
+"size": 1259,
+"sha256": null,
+"blob": "185f5060380c90b9a05c26d3dfcfb980135f01b4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/research_driven_2026-10-19.diff",
+"size": 37076,
+"sha256": null,
+"blob": "6c9f3223599a80bea82aefe9b01d2470772a4011",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/scripts_export/1_stone_age_100_geniuses.md",
+"size": 18792,
+"sha256": null,
+"blob": "643bde3dbfc946e362b6dac87e99fd8d9e5e84a0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/scripts_export/2_syndicate_wars.md",
+"size": 25535,
+"sha256": null,
+"blob": "f1e32620fb9e11d9abf7175d7f98fe4929ed6d95",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/scripts_export/3_titans_went_broke.md",
+"size": 25857,
+"sha256": null,
+"blob": "a8ae0bb5cae32e9a477ae46e0a57d036273c93c7",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/storytelling_research/RULE_CONFLICTS_2026-10-19.md",
+"size": 4714,
+"sha256": null,
+"blob": "9ec1e13fd93b0a635b00744357a2016d159933a4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/storytelling_research/audio_cues.md",
+"size": 25869,
+"sha256": null,
+"blob": "4ffa62d8e43d776aaa6f1177376e57c5adf394a0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/storytelling_research/dialogue_craft.md",
+"size": 32991,
+"sha256": null,
+"blob": "254f2c796f4ad8f311a55678e25fa2989a2d97eb",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/storytelling_research/editing_psychology.md",
+"size": 33218,
+"sha256": null,
+"blob": "b8abfe6ee5dbf994237b61659d88478d6057ff3f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/storytelling_research/internal_system_audit.md",
+"size": 27093,
+"sha256": null,
+"blob": "c9d83fc08c6f9a396dfb5b4edc69580be750e93a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/storytelling_research/story_structure.md",
+"size": 35694,
+"sha256": null,
+"blob": "32942f791eb59ba40a84669266101357a9e681f8",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/storytelling_research/youtube_editing_practice.md",
+"size": 26487,
+"sha256": null,
+"blob": "ded9b3ec1ab45c90e445725ef0c565b32757e4d1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/storytelling_research/სთორითელინგის და მონტაჟის კვლევა.md",
+"size": 34421,
+"sha256": null,
+"blob": "f318646a220442f6e8df9c9faa98fb4c4bf52609",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/gta6_official_facts_2026-10-19.md",
+"size": 2241,
+"sha256": null,
+"blob": "6d2af737adfd880110c05cf6d831226fc2d67cf2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/face_sheets_v1.jpg",
+"size": 470644,
+"sha256": "9ad8cabf57c7d923680d1973c7e4228fe35b1a8b3d73c97e82e65f4ace910dee",
+"blob": "337db2372dbe554f9ec6031292dafdd5dd668d42",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/accent/mizuno_hideo.mp3",
+"size": 51821,
+"sha256": "3f23bb5dcd9372e5fbd60ed5736e7ed80c49d977bf94271e0dfea849303f17f1",
+"blob": "76adb1589d75aac585945f49695fa97e65aad4f7",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/accent/shelby_dan.mp3",
+"size": 33849,
+"sha256": "3d356449cd34d8c29ef0c8925f253f57dab7b6907a9feaf527b650c590fbb4cb",
+"blob": "b93b92d31b46a5eb1a2eb359bcbc6da7bba1eeef",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/accent/shelby_robert.mp3",
+"size": 33849,
+"sha256": "afe04db70e1f91498e97fa27387f432641a02bf11ef09d72f5327451dcf12e86",
+"blob": "dca39ff28df4054619d7f3a3b27d817467bef995",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/capone_1.mp3",
+"size": 75645,
+"sha256": "7f2ab5ae8cbde6c65cd42277cfd41bdbe72b354095ba2cfef609ad82cf8c43d2",
+"blob": "c088cfda8d6c77a8f7c20919968aa5b212f197d5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/capone_2.mp3",
+"size": 63106,
+"sha256": "f9e22391ef60e958e481659df4b2c799dd23b13958658eebc2e31098a932c7a5",
+"blob": "afe8ba0044e0e05a6c71a81e347d99c22502c8e8",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/capone_3.mp3",
+"size": 64360,
+"sha256": "46af70dde8e9112fd0faaed379c518e8c48887fb9ce15d598c43186016cd7420",
+"blob": "09f0b61da7f0f8fd3e9f2250e222e71419c341f4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/mizuno_1.mp3",
+"size": 40954,
+"sha256": "c4b653111ae9bbbcca8214ebba96594b75b7c98dc5b6fca84379005b7939adde",
+"blob": "51a1e96fc08a2a1c2c0c7dcfa76a239f30dfd429",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/mizuno_2.mp3",
+"size": 37610,
+"sha256": "21f2284eb0ea46a82e7f986a327ad44056b64083321d53508589125fee8a6543",
+"blob": "09ed67504dc5c720eb38d8e9bccf2ea7c09af0e4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/mizuno_3.mp3",
+"size": 45134,
+"sha256": "c2f12ee740a6a2ec5c440465ade8e780f1a78ba6d791b7efb1093212f43837ac",
+"blob": "b415235603fb77230d54bd4ee9befbabe73c6a89",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/shelby_1.mp3",
+"size": 36357,
+"sha256": "828179c6593a159f2b2823f1368f89966570b9b45f8dae4d0ec9fffb68baa3f1",
+"blob": "0c8116ef638aeb5efcb29e0e29ee3b997453f592",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/shelby_2.mp3",
+"size": 42626,
+"sha256": "e198a811ac353ba3beeaf237955fa8ebd4b97148b078177e1aaa50dd2c227396",
+"blob": "0c4298c1bdffaf88247d1a30bbe58ceca741b3c2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/shelby_3.mp3",
+"size": 35103,
+"sha256": "f315a57ad1de794f2e1d009f65cd8beb31b0cef4bee85fafabd000cd261268e7",
+"blob": "b0d1ebf3c5fa23287b5b7b26cc1c58761382cfe1",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/vito_1.mp3",
+"size": 53493,
+"sha256": "0eef29632449f0547291e684fb33495d50e50c29423717bb10c41ab976629d6c",
+"blob": "cd69da47d96cc7c4ab96e11d4340691bacf05f3b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/vito_2.mp3",
+"size": 63106,
+"sha256": "a50e0fee65ed893d94520367ceb45a097e94d51dfe11cf89060295c5248c7b3b",
+"blob": "8e3f3232ca214d1015b4d4dd74e8f6bfebd6eef2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/options/vito_3.mp3",
+"size": 59344,
+"sha256": "274db097a122972b1ac9230a930134dc436c9aa50d17fa4b9e5115f1100f638c",
+"blob": "122740a2f27a30682473b67aa440943c39da2198",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/test_all_bosses.mp3",
+"size": 816165,
+"sha256": "d492ea4e9d0849c07a74f29db8b3071a9ca5c240601dd4146847f091b87b94fe",
+"blob": "98482024f033775e07c6a86a9fc8224522eccb9f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/test_capone.mp3",
+"size": 255055,
+"sha256": "785363dc78c2fe0aa2208348a53ad4f5835d87fba3b7cf88b294b96b0ddf6abb",
+"blob": "ae6bba012cbe5f14c1528d1845e4abc7522d937c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/test_mizuno.mp3",
+"size": 211691,
+"sha256": "34f91535231b7deb505251f92ade9afd504409359c6131eb844b1ff1943ca461",
+"blob": "23814407f07a27317512d93c5d60ed62634f0e1f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/test_shelby.mp3",
+"size": 173553,
+"sha256": "e5018f06b8e5bdc32ed8b34cd8625985020b878285eee3e9873f57dea5beb22c",
+"blob": "f94805ff3f711fb9ef5103da7f8a337ed235335a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/review/voice_test/test_vito.mp3",
+"size": 136981,
+"sha256": "e0ab66cab2d1045aebdcb31cef1ba8f37cc6000353c8706821dd530a90d44c07",
+"blob": "55a1b3750d29f615112cb90aa087d16f18d3343a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/syndicate_wars/scenario_dialogue_v1.md",
+"size": 6966,
+"sha256": null,
+"blob": "0d6f45ab4989462f90f248f14119c716b5896430",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/cache/0787c9f292ab5175e8c5ae8a.png",
+"size": 2577907,
+"sha256": "5e84e05138d73b5547702d1666f4f334ca535427908db0d12eb2756d2cdb3370",
+"blob": "a170b3f83c6f0485f4a25311a06bca2d3fb0d234",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/cache/88af04e819f7586934277960.png",
+"size": 3303963,
+"sha256": "b439708c2009e68a488890904c7c2270c0aff3a303f85a14e541997780a64218",
+"blob": "743dd3d47858c4e08333f80609ebe0392c54fe9d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/cache/8b09311a225cdeadfd6aff6b.png",
+"size": 2563853,
+"sha256": "fda046ee2571330da05d353642974bbf03c98dcc307d9bfdd25aab3f28369555",
+"blob": "1b73d24d327c5d6aecffa7e031f2d86b7ecdadd4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/cache/bb4e6b50963f05a347ab0e7e.png",
+"size": 2299596,
+"sha256": "1833fd18566e8ca9a577fa31ca0fb320ce27241bdcc5b840bb013d78cd28ac1f",
+"blob": "ceb7059bfa9a0e12b294eca6ad01bff92efd4794",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/cache/d0a75ad2e12f7cfc9c316549.png",
+"size": 2662533,
+"sha256": "907f096f05a5dde4e60dbefc199b90da53fbc96ee56e176ccdf6e0545298a0cb",
+"blob": "20045db72cdd058b51e332f454d34e90efdbefda",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/cache/ffdab817259a23650e0023df.png",
+"size": 2535660,
+"sha256": "5ca9a7de670a0b55b377dd4f7087864364e301dedbc1625a8a158926f2479d55",
+"blob": "448991c05942bfcb4a9d52eaab9621e756371b3f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/short_cover_9x16.png",
+"size": 2662533,
+"sha256": "907f096f05a5dde4e60dbefc199b90da53fbc96ee56e176ccdf6e0545298a0cb",
+"blob": "20045db72cdd058b51e332f454d34e90efdbefda",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/short_cover_v2_9x16.png",
+"size": 2535660,
+"sha256": "5ca9a7de670a0b55b377dd4f7087864364e301dedbc1625a8a158926f2479d55",
+"blob": "448991c05942bfcb4a9d52eaab9621e756371b3f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/short_cover_v2_text.jpg",
+"size": 470495,
+"sha256": "59f1d8685699fc9b94b4dc35600bc20ba79c487990c509dca5adf1c479a90226",
+"blob": "f02b1bb65e0bebbed8c94a5c3971af480da01544",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/silhouette_collage.png",
+"size": 2299596,
+"sha256": "1833fd18566e8ca9a577fa31ca0fb320ce27241bdcc5b840bb013d78cd28ac1f",
+"blob": "ceb7059bfa9a0e12b294eca6ad01bff92efd4794",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/spend_log.jsonl",
+"size": 1938,
+"sha256": null,
+"blob": "6eb13920374ba3a9765363da3d9476d49022a8bd",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/thumb_draft_16x9.png",
+"size": 2577907,
+"sha256": "5e84e05138d73b5547702d1666f4f334ca535427908db0d12eb2756d2cdb3370",
+"blob": "a170b3f83c6f0485f4a25311a06bca2d3fb0d234",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/thumb_v2_16x9.png",
+"size": 2563853,
+"sha256": "fda046ee2571330da05d353642974bbf03c98dcc307d9bfdd25aab3f28369555",
+"blob": "1b73d24d327c5d6aecffa7e031f2d86b7ecdadd4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/thumb_v2_text.jpg",
+"size": 300619,
+"sha256": "6c215274c12ddbf1e90d8d2323a27261a376c15ffe7079cd7cb528465b5c0d60",
+"blob": "c3120be64f26e646b43e572609b0351e722a3c32",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/thumbnail_niche_sheet1_2026-10-19.jpg",
+"size": 564892,
+"sha256": "0a800a91c2a4b4d9fa31b0128b0fe786e5ae9767c9fcbc174a93cd16efc76e19",
+"blob": "302c4a465c432e5b10165ba6ed4899a2d24ba125",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/thumbnail_niche_sheet2_2026-10-19.jpg",
+"size": 551564,
+"sha256": "77bdd2f4b20c850b6434a9356503442c2438e661df3189016f31ed451fd64de0",
+"blob": "10dca79b0b78800c3f6574c67f007d8ee36cadad",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/thumbnail_motif/woman_collage.png",
+"size": 3303963,
+"sha256": "b439708c2009e68a488890904c7c2270c0aff3a303f85a14e541997780a64218",
+"blob": "743dd3d47858c4e08333f80609ebe0392c54fe9d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/B1_review.md",
+"size": 5536,
+"sha256": null,
+"blob": "785524fbcda20808475cc5aae0028d47ac574b24",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/B1_sheet_1.jpg",
+"size": 1464117,
+"sha256": "f7fcb0bfe801b165859d894335ed6629eb8f54e5f01134482b1d58529d72b283",
+"blob": "497817eea5fffdcca81a388c8331b5475d743e16",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/B1_sheet_2.jpg",
+"size": 1451368,
+"sha256": "d816ef1259fa12400127d6c4468f2535272e8740885dc8feedd03ad0f49f227b",
+"blob": "4ce8a20ee53c39d42f8be68024248a0de3f4caa3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/B1_sheet_3.jpg",
+"size": 1495648,
+"sha256": "c21631093ecc99f76a1603f5b16ae444d1103312ed536d3b89d3be8b3bb4b385",
+"blob": "5b0543383a94e21c7659d6c5d7720866f0d2987e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/B2_sheet.jpg",
+"size": 1222684,
+"sha256": "fea406634b6d467e6ddde580253cdc6aaf6c24f845294e9431e80800894d6792",
+"blob": "b265a6bef535e300c50aa2f591fa2b2e854afb4f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/build_script.py",
+"size": 36811,
+"sha256": null,
+"blob": "869a4e1e0301b3fdfab5b04a55ceb86098a45623",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/claim_map.md",
+"size": 1687,
+"sha256": null,
+"blob": "fbf9254259c00b615e7f242fa2da1800bfe62b0f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/conversation_blur_v2.jpg",
+"size": 292517,
+"sha256": "9d509f78c5b3b98e958b46975bb30e0ece293607e47907249041906a1667ab45",
+"blob": "17315701990d7379bafbedc5968ed0ec304ae25b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/conversation_variants_v1.jpg",
+"size": 454027,
+"sha256": "9eed2f35afbe7f0c7d2fb77e4076c75b99a2428b55add94412350ed48fe8d6e0",
+"blob": "fe8ffac42b9b874e9f79752ffdb3524bc29ee785",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/editorial_review.json",
+"size": 29368,
+"sha256": null,
+"blob": "9cf9175f32a8b0bb06b56f890b9b0c5f47255707",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/episode_rules.md",
+"size": 18638,
+"sha256": null,
+"blob": "466643c8363bcbac8714103be08ed0370544641a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/faces_v1.jpg",
+"size": 897888,
+"sha256": "ba9f1415befb909e1fa695919117e677ebb8cfe7d29aa160b56d68bdb7fc0b0d",
+"blob": "3e0f06cd1ad07767d63a4f9c9c09812543d74a3a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/fictional_cast_draft.md",
+"size": 4197,
+"sha256": null,
+"blob": "bbbeff8b8af9af5b8f46389b1f471ce7c42e86c3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/first_pictures_v1.jpg",
+"size": 678478,
+"sha256": "ad25d4b39d3bced51198c54b373382459b61fcd97d884975cd1f279258802aad",
+"blob": "b7511921e17e861451e29d80c4c630c1d3c595d2",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/hero_caricatures_v1.png",
+"size": 3461664,
+"sha256": "6e1596baa98b2080319c6f77dbd824d1ac094fc69ab75746ef730f301da3ee58",
+"blob": "5801436bf97f598559e1c164127b754c292bd34e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/one_narrator/card_intro.jpg",
+"size": 150496,
+"sha256": "bf6cb0cc6c0fbd03bf4b11f902dc600d47fe750970e54d092d7a7d9dd553a14a",
+"blob": "437a7e56f9f2e8bdf9fc5a0ae09c7ee7c566f62f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/one_narrator/card_recap_1.jpg",
+"size": 130975,
+"sha256": "cd48fcfbbd76079ca42c4d2409564b461eb4b3fbd0f65c06a8b66b9b29039bc1",
+"blob": "7950334102db234f125f0e5f7e4a24c957d10921",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/one_narrator/card_recap_2.jpg",
+"size": 135855,
+"sha256": "f716590a6be251e50e2960a1d0f38802e5fa3773c5d79e47b641b10d11defa5f",
+"blob": "c93e341bb4f54b948bbb1e23fd4aae700c9b9d51",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/one_narrator/card_recap_3.jpg",
+"size": 124079,
+"sha256": "0a71869289628c3fcb715c74464447e41f8f4628f451ddea96fcc5b80ef8f26b",
+"blob": "28b7e5b2cc1f8791c48886898ceaf88e276d1019",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/one_narrator/card_recap_4.jpg",
+"size": 90438,
+"sha256": "715fce305835de917d9698a3315ff0f8a30419c891f3cab26a411c3b300bc038",
+"blob": "d591b3bf521ca43019fff601c7d9754df2bb2f10",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/one_narrator/new_lines.md",
+"size": 7591,
+"sha256": null,
+"blob": "8d42e7df1b3cd5afe3f53154c4a3b8b4c9a29fc9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/one_narrator/titans_full_v3_720p.mp4",
+"size": 114582072,
+"sha256": "4e160f7ee6cc54672f61725e20485ac241ce2bf48b0fb57831ea4397fd5df782",
+"blob": "07ea4429abe474ad9b575daa358aaebfdd96886f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/paid_assets_estimate.md",
+"size": 10489,
+"sha256": null,
+"blob": "90db53c5bb1a43f3df90146e9bf2061d1907761d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/preview/parts_1_2_frames.jpg",
+"size": 324137,
+"sha256": "bc5ff6c3d981100d5e66867d318e38f5c166d329cb9457b2d6caf16a82bcca8a",
+"blob": "6b8a4f722c6eb3f67263115781e4fe44744d34ae",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/preview/titans_parts_1_2_720p.mp4",
+"size": 14587896,
+"sha256": "0fef95ac4da317255b37f5e2a5a903159340c0f9384d02bc17a9108e09fc458f",
+"blob": "c06077d3d2fcbabb1374970506a983adee012055",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/production_script.json",
+"size": 574717,
+"sha256": null,
+"blob": "d92794aaba773bc8b6f038289f789574e5efa747",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/qa_loop/creator_concerns_2026-10-20.md",
+"size": 2014,
+"sha256": null,
+"blob": "a7b920c5efc6b946d15b7f86926d56a67e78505e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/qa_loop/long_research_storytelling.md",
+"size": 44536,
+"sha256": null,
+"blob": "c79cee873464a507a4a62d7202963f66bb5d626e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/qa_loop/new_narration_v1.md",
+"size": 10095,
+"sha256": null,
+"blob": "1339047b72d2d391a1940a32ad10992dda062718",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/qa_loop/research_edit_dialogue.md",
+"size": 27689,
+"sha256": null,
+"blob": "a7c151fe95ea605a248db11761c241f56927a73e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/qa_loop/research_edit_text_graphics.md",
+"size": 29637,
+"sha256": null,
+"blob": "54a8df9f84231965bfd980a37be8fbbe563f8946",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/qa_loop/research_edit_variants.md",
+"size": 41558,
+"sha256": null,
+"blob": "831b83b57ea99a393aac51d93839a6f4093209f9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/qa_loop/research_editing_rules.md",
+"size": 41410,
+"sha256": null,
+"blob": "5a932daf3e76c98da3e7419f5435593eb64d0fd4",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/qa_loop/research_narrated_dialogue.md",
+"size": 16225,
+"sha256": null,
+"blob": "a2077296b11ca420eb8ff81ae0a38388d301f56e",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/qa_loop/static_analysis.md",
+"size": 12951,
+"sha256": null,
+"blob": "353c654e6ab0843b8ecb7e48dd5b7c6a13bdaa28",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/review/S02_reported_speech_v1.md",
+"size": 1598,
+"sha256": null,
+"blob": "c59ba4b5048a4f30208df56184b5af4924d46daf",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/review_v1.md",
+"size": 12414,
+"sha256": null,
+"blob": "3932ed2b514f9b501b16dc247bc50300f62d23a8",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/scenario_v1.md",
+"size": 14038,
+"sha256": null,
+"blob": "8d1cbdf51bf55ce728328f8b17095581a02ce01b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/scenario_v2.md",
+"size": 14067,
+"sha256": null,
+"blob": "f46ea27ffd8f002d41827ba6d9cf33ac0607b830",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/scenario_v3.md",
+"size": 13970,
+"sha256": null,
+"blob": "a72a5f419485a8b90e14f774c8e692abde64a64b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/script_v1.md",
+"size": 14558,
+"sha256": null,
+"blob": "ff977bca6485c70825ba0145f8d845c20778f9d3",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/script_v2.md",
+"size": 15116,
+"sha256": null,
+"blob": "1906679625e1cc1fecf2ef7ab341bfda9ad3457d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/script_v3.md",
+"size": 15393,
+"sha256": null,
+"blob": "013dfa174c075f541e1ca53b9fc82c5d50bf51d0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/script_v4.md",
+"size": 14457,
+"sha256": null,
+"blob": "aa08f3a29a0e8b03b99f0305759f9ecfad117500",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/script_v5.md",
+"size": 21034,
+"sha256": null,
+"blob": "ceefdc1a0732fa2caed3a598793ff787c25f087b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/story_page.md",
+"size": 12488,
+"sha256": null,
+"blob": "6de90701c524206725501eca0b69822ad82a9b82",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/style_collage_v1.png",
+"size": 3191386,
+"sha256": "fb36327bcde81ac3417ecb65343e5bb075e345bc2e23616f743a00963e91d56f",
+"blob": "7b35e3840b82d5eb7fa3935efd92b7fd8576a3a9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/thumbnail/titans_thumbnail_draft.jpg",
+"size": 213947,
+"sha256": "aa7ed9ca9efdb90ba5eeb27f343febe1697b0af559e92754c800b7495863832a",
+"blob": "98aefe9c66b34020ea1f64f39b75f1b96af49edb",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T01.mp3",
+"size": 761972,
+"sha256": "b032be052773fe847c6ff791898a6b517fadb3c7a79017a3b6521b10f6709694",
+"blob": "181b19cd2ee04fa43daa305a02dc20183085415c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T02.mp3",
+"size": 376613,
+"sha256": "b613bf54b1c3cb1fe274469c61caa26081dc3a30840d67fde95e70d56e0eb42a",
+"blob": "1e8b32014c893a5f9169ac4ee49165f0e27b4892",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T03.mp3",
+"size": 713071,
+"sha256": "26c386ab28594ff8dacf2fc9b2251444961c89a68b5e911ac68c836162a8ddf7",
+"blob": "d640e685d126021b214c8a2badb4ad3e43c018a9",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T04.mp3",
+"size": 490716,
+"sha256": "2aa4f33de7a43e99544aa4fb12d7d278375c48a2d3696a85cd7bb5ee6868872f",
+"blob": "1c118dc274d7ffc4d85c584db8adb556eaf6760b",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T05.mp3",
+"size": 390824,
+"sha256": "678e0396b82c93267347702a3f2b4ae407f986592db30206a60f3229cec60681",
+"blob": "bef38c15d0e027bab8a1515e9287afa386a6d4a5",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T06.mp3",
+"size": 916617,
+"sha256": "d036feece00f294ad11af0121ff356c1763a00aefe4c075e8db6e2cd16bdd9f5",
+"blob": "be4f7afbf9b563cc93192b45900b5d6f8f2bdf36",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T07.mp3",
+"size": 505763,
+"sha256": "0923bf648e5916db4768f40f5730fa2631600ed57263843b62131d0e9aa070e2",
+"blob": "6c2155eed72e4f71ae7ab071b5ac32b46d4e3d29",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T08.mp3",
+"size": 788721,
+"sha256": "206cd22f1e4c23c57fa7bda9a255d69500e41a081c5be1538e22496a9c5e045a",
+"blob": "db03348ef52ffeb66af55a203e719c041cf12d30",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T09.mp3",
+"size": 552156,
+"sha256": "1cb8cd0c338633d48e99557bde643f2c7d1832351e032724f40bcee9ab221f97",
+"blob": "e67ee197840016c63833f3b6235e577e23da3f11",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T10.mp3",
+"size": 260003,
+"sha256": "8114e3e97be7adc116b31e29a823d1922fc258d11f5060b224f0f88898f9f510",
+"blob": "c84c3cc375b91d5e0944609282c8b6e2fa9d211d",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T11.mp3",
+"size": 560933,
+"sha256": "d88582d1635f61fdda899aa174408788791670d1b4b1b1f47a56454e5a822e1f",
+"blob": "d56d8c81d6fd47ac2cd58b4973b396eddeac4bea",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T12.mp3",
+"size": 796244,
+"sha256": "fb1bff7b9f8939039840f9140af64652e7e002d55014d0028c962b3cef985c98",
+"blob": "27e595ec194c2924d07061d3cf3b2f09963d7c1f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/T13.mp3",
+"size": 657064,
+"sha256": "dc89b7e5ff9ac04a14467dc78c7a3e78a459cae373417bf29b47cfa70d5a1e2b",
+"blob": "3775eba691c7076166b4d707439852ed5f26e869",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/shorts/SH01.mp3",
+"size": 274213,
+"sha256": "690b8dc0d2da56947a543da230d52d72e9c9f9963d1960347c0307dd41782f9c",
+"blob": "a08692472f79057bb35ff7bf0c16294ca672d381",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/shorts/SH02.mp3",
+"size": 390824,
+"sha256": "8fb168b35abeabe3e87ecd8419bb407a5be60c2577ca210e026cf8ee671926c1",
+"blob": "a31fa75f01b80a7e4c0438cc3d892f52c5766b8f",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/shorts/SH03.mp3",
+"size": 187278,
+"sha256": "03aa2ec4f548699f4dd9e732ae5a9aa90961e3b01f7bbf2fce22645f675f9898",
+"blob": "769c96ad34f0565e4cc75fdcbb8a10d60ab83ba0",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/shorts/SH04.mp3",
+"size": 187278,
+"sha256": "e0db1f7dad9be226d4aff275e2a7a2496b29edda506459a89225b0dc258caef6",
+"blob": "838eb8d3af934f8067d5fff47b15b11a9f46370c",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/shorts/SH05.mp3",
+"size": 371598,
+"sha256": "b0de86d0d334d22092e27d8bc89fd67bb8e75f73ee6f42215bb35b743202748b",
+"blob": "f27f270ed46a70ed56f325accbe0743430222602",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/shorts/SH06.mp3",
+"size": 256241,
+"sha256": "6d34f7f9ad7c5ca9d12fc58b29af8e8a69068aa8745b8c7bc77cc58565148b3a",
+"blob": "5ba941a96a574be1965924ae894559292711659a",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/shorts/SH07.mp3",
+"size": 243284,
+"sha256": "36ab87d479b4a1795439a1014037ae8c1e809684bd72c591f2717303ac6ed341",
+"blob": "17d92465cfc1d81b5922ec85033d2463334b40ee",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/shorts/SH08.mp3",
+"size": 193547,
+"sha256": "b3aac5e87d4bb61e781f65b028d383edd93fe970d8941687abcb7d5069e2374b",
+"blob": "9b447a51a1fde7645812d829d48e459eca024f03",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/shorts/SH09.mp3",
+"size": 168052,
+"sha256": "9ea7c25adf588f12e36fed1d53984576627ee70a905de68814e7808d1dbe3b96",
+"blob": "8b738ad469f867ba834ed8477a585457e5233dee",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice/shorts/SH10.mp3",
+"size": 313920,
+"sha256": "791c51028ebf57145e4d63e2ac8c605923bce7aa9178ce764aed4a361707ad09",
+"blob": "f428208a811f6ae2afb333c98425c9ac5218e098",
+"critical": true
+},
+{
+"path": "project_files/explainer-engine/titans_from_zero/voice_generations.json",
+"size": 1028,
+"sha256": null,
+"blob": "9e625ae6268921f4b3b035e2f024cb70c84c9089",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/1387f203-de4b-4f6b-aa3f-63a13e87c790",
+"size": 4478741,
+"sha256": "5fe8dd8a0db3dbadc5a3cdc9c181a543a296c4e9bb23f1b11dd653cff54f4106",
+"blob": "fbdcc14c6413c8ecb5ef79abb127f5f2fd039756",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/179e03a2-9968-4655-837b-3c0a8e2119fb",
+"size": 4478741,
+"sha256": "5fe8dd8a0db3dbadc5a3cdc9c181a543a296c4e9bb23f1b11dd653cff54f4106",
+"blob": "fbdcc14c6413c8ecb5ef79abb127f5f2fd039756",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/1834de97-3b7a-4dae-92f1-3a96f5ed6763",
+"size": 17560,
+"sha256": null,
+"blob": "7fbe10be70b89e363ca5dc21fc83dc41cb78194c",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/2b7ec53e-6267-4e34-b4a8-9b68e4838f56",
+"size": 1034583,
+"sha256": "ec3e4bce1d7715c1f86d50ce66a1769aab5ee6673070c0af1fad0a755813dd42",
+"blob": "1265bc82cdfcd29a42ba4b2fef8112503877f220",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/33b89d5f-1bd8-430e-95b1-8fb5f705ef3f",
+"size": 277200,
+"sha256": "6ba300e5b2989c1a3fcdce7a49c18866accc5406285d651487b0aa6fa81dfc25",
+"blob": "f61d5da84957f4db17f1552ea7c512c65913353b",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/3a939d07-0cac-4d59-a9f5-e9fa38021ae6",
+"size": 4478741,
+"sha256": "5fe8dd8a0db3dbadc5a3cdc9c181a543a296c4e9bb23f1b11dd653cff54f4106",
+"blob": "fbdcc14c6413c8ecb5ef79abb127f5f2fd039756",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/477e6de9-4d54-45c8-82ba-11caac9b382d",
+"size": 181203,
+"sha256": "d3ad267b087be437277153afc87da782657b7f31182fa6f0585b5631903f1c4c",
+"blob": "7d088cc6388e407fd5e86d4447676879d60efab0",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/53fa65ad-5ea8-4507-8a67-195f8ff2ef76",
+"size": 242578,
+"sha256": "771f20b5043973218ab8853fea8fa3eb9268e63c4345410625fb706fb46ae9fe",
+"blob": "d224fa52d0a35f683544aff6d4fbd0adc8f20bb9",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/5dbcc890-7ece-40a1-9b23-692d54984d72",
+"size": 3431016,
+"sha256": "50f44d68c42981f9f36eee03434582070cd596db0e027cf2792ecee3a153449b",
+"blob": "a425a221d322fdfcc94b849d7c40824bb76b4ac1",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/6703ee82-7130-4325-ba65-aab42a23b1e4",
+"size": 201715,
+"sha256": "f3112164602654806e5595d14bbbd1aa1bcef31c8e9b57968255cf59ddce4821",
+"blob": "b7881b264b151b8fd26092cf838efb30cd611b1f",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/68a46386-5fb7-497d-817d-c330acd43053",
+"size": 4417153,
+"sha256": "fbd4319400a32a44d693e5d09c8caf94e4e9cfdbf4241a436baf2281ab383886",
+"blob": "212055c4a41a25edbd13a2c08f9c1db9b199da97",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/7018ef47-3849-44a7-953c-ab2ab7e2f0c6",
+"size": 286697,
+"sha256": "4813afe286744ac0caa53ac0e4c04cbddae4abc5bb4d6493a7025bf3fcb5b235",
+"blob": "67b8533728e03f88f4a83f54e096f5c396878a1b",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/872b542c-7d27-40b0-adca-f92578692040",
+"size": 87395,
+"sha256": null,
+"blob": "62e56c3e49b7e33dcc50215567ba1346e0320d1e",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/8d5146fb-ccee-4955-8b4d-cfcd6bfa04fa",
+"size": 104531,
+"sha256": null,
+"blob": "2c720660a24c768209d7462610c136112a83fb71",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/9c13ddd2-14f1-4ec9-83ca-3ded1be1088c",
+"size": 215512,
+"sha256": "f0a14cee9d4036a5a2ccf0743915e1430bbef069aaacc4205d939de35a4afc14",
+"blob": "820414dc7db029af54be42960f3266f7e0863aa6",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/a9973746-90fc-4fba-8a06-e726ba4f5f33",
+"size": 21611,
+"sha256": null,
+"blob": "c1582582603921ca774cae15a24eb217f30619db",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/af7a4885-1998-41ac-bee4-64923ce15339",
+"size": 925288,
+"sha256": "ae0f103fd135590f75285291f9fbb0f685106d364ee53aca920cf1ad7034c4fc",
+"blob": "c829d3e2b2f78965320161afffd69e3610358e3c",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/bd7cab45-c61d-4c41-a762-aa2b99b57da1",
+"size": 150210,
+"sha256": "4ac253ae9d43a907e995a3c33da8580a604a2f661d69d9e3b2474826f0cfed4a",
+"blob": "30f885e8d04eccd03e830359062ab4e35455eec6",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/bf318d1d-7c88-432c-b642-49d6b4532afa",
+"size": 212788,
+"sha256": "d61e74a8fed21fc05b66aec0e768d892ece3c9a90bceaf68b1722d52fae2f695",
+"blob": "1fb27315b0a79b9b64150c225d0417a7bf6e2f88",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/cd498593-09e7-4893-89b0-9ab178f36b9b",
+"size": 108142,
+"sha256": "6eb3c9c263cb111123d1b020ae340046f2699a79d4f3cab96ce576e3ad0c905e",
+"blob": "121bea5819335c5e454e648562da7b1d7aec412b",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/d1af5484-6b1b-4568-811d-4ae75019f023",
+"size": 211506,
+"sha256": "22fad737650f26508c9835a8c9a344120db3a6304e7f032e1a7d26f590bcf644",
+"blob": "3ce499a20dd029193b15d51b64f0c4ea7f15fe22",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/e112fc4a-c01e-46bb-9821-896d06677c5f",
+"size": 3342705,
+"sha256": "e3bc073303535c9cf6fb5b48ef8b8792104d03bed6689ac3a7dfc00029adf0d5",
+"blob": "0b2f708eb584e406bb40fc7763c69e4ff03c3466",
+"critical": true
+},
+{
+"path": "project_files/uploads/hearth/f46997ef-c089-4ff3-879e-624ee15a6d54",
+"size": 4417153,
+"sha256": "fbd4319400a32a44d693e5d09c8caf94e4e9cfdbf4241a436baf2281ab383886",
+"blob": "212055c4a41a25edbd13a2c08f9c1db9b199da97",
 "critical": true
 },
 {
@@ -23943,6 +28395,13 @@
 "critical": true
 },
 {
+"path": "scene_lora_2026-10-24/train_code/launch_scene2.py",
+"size": 2705,
+"sha256": null,
+"blob": "729b0da714a602745181ea93affcd8b2d2df789a",
+"critical": true
+},
+{
 "path": "scene_lora_2026-10-24/train_code/pod_train.sh",
 "size": 3291,
 "sha256": null,
@@ -23951,9 +28410,9 @@
 },
 {
 "path": "scene_lora_2026-10-24/train_v1/log/pod.log",
-"size": 21923,
+"size": 22470,
 "sha256": null,
-"blob": "0a73217477e69d71aaa6b729524c8cd39076b1f0",
+"blob": "9f60f8e7588b9792c42148a06e37a3cfcdb06075",
 "critical": true
 },
 {
@@ -24531,6 +28990,20 @@
 "critical": true
 },
 {
+"path": "scene_lora_2026-10-24/train_v1/output/samples/.thumbs/1792834776598__000000250_0.jpg.jpg",
+"size": 39609,
+"sha256": "2ed2cac202a896871f600cb06430bb68570ab6f98faf1478f1f6ee243903ee38",
+"blob": "6323c46143a45224548e9a23e5c4c9b49f4c16bc",
+"critical": true
+},
+{
+"path": "scene_lora_2026-10-24/train_v1/output/samples/.thumbs/1792834837312__000000250_1.jpg.jpg",
+"size": 31289,
+"sha256": "aad52328ee251aad8602711bf1e67c782e7e43a94f1e1a054d761e3d06cc6640",
+"blob": "f97075622edee346a2b9a5784370509469cf32f6",
+"critical": true
+},
+{
 "path": "scene_lora_2026-10-24/train_v1/output/samples/1792832735632__000000000_0.jpg",
 "size": 112467,
 "sha256": "c4be302b2ca39c608283503c103b8f09d468bd379b654d3a31cde876c9e60753",
@@ -24559,10 +29032,31 @@
 "critical": true
 },
 {
+"path": "scene_lora_2026-10-24/train_v1/output/samples/1792834776598__000000250_0.jpg",
+"size": 121928,
+"sha256": "21e9ca455c882fc998f212dd4ffaa5baee7314f271d4e103ce7cbd25216b779d",
+"blob": "6555027014fd627042255f141190cd7a52e5e18b",
+"critical": true
+},
+{
+"path": "scene_lora_2026-10-24/train_v1/output/samples/1792834837312__000000250_1.jpg",
+"size": 80769,
+"sha256": "7759ddec28f9a93cb5a90bf1a7f3e42a4508d8e01c19d827ee9882fb33bd0db8",
+"blob": "8182997990df6bdf95cdd20769a97856e28c201e",
+"critical": true
+},
+{
+"path": "scene_lora_2026-10-24/train_v1/output/wldnk_scene_v1_000000250.safetensors",
+"size": 295144552,
+"sha256": "a3ec7aa9d8fbbf8879774420dcf8289b208d3e21dd746bc1fae35d27851780f2",
+"blob": "86429219b1c1706aab12b23d2db0e5b224c4ebe0",
+"critical": true
+},
+{
 "path": "scene_lora_2026-10-24/train_v1/train.log",
-"size": 330367,
+"size": 335636,
 "sha256": null,
-"blob": "f7327fd6ab6ed36cf3e21334ac0b6801108d5832",
+"blob": "df49647e18404769ece1d6228543d70b1a44cd96",
 "critical": true
 },
 {
@@ -24577,6 +29071,321 @@
 "size": 71394298,
 "sha256": "e0d0bfee00ba6be17f73d01cb0d85370908ef291bf47029f969aa1c2e6390e0d",
 "blob": "18d7586ad76bd16639c1e3e38a6298ae7f0d486f",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/caps_a.json",
+"size": 4389,
+"sha256": null,
+"blob": "2ec2770105b987343631c677e36f3341402e3be8",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/caps_b.json",
+"size": 4003,
+"sha256": null,
+"blob": "ff6891f12708dd3bbf8b177d80284b027263b59b",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/caps_c.json",
+"size": 3672,
+"sha256": null,
+"blob": "fa76008be345308c23e65cac524250d214a8be84",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/caps_d.json",
+"size": 2266,
+"sha256": null,
+"blob": "45d5750a295d892915f75cfecbd44ab835c83213",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c00.jpg",
+"size": 547039,
+"sha256": "a760852cb4ae545f83604222b3649880dc564dd8d33ca7f828553f90a4c3a5ad",
+"blob": "cdf143d3fd568acf5aff96502180358ea4b7031f",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c01.jpg",
+"size": 635362,
+"sha256": "bb22c5d180141db18feac27cb1db1bb9b8de6f96ef4845796bf372f201349943",
+"blob": "08b7c40a1f7aecef884fe0488272e146538233a7",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c02.jpg",
+"size": 646789,
+"sha256": "7f4a27942d4803aee0942252c435db269a8aae00a704f391e1ce4cbdd5ed2af8",
+"blob": "7eaa661afb5f465e94072afd75984652cbf980ba",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c03.jpg",
+"size": 630921,
+"sha256": "c5a7ab8f3082b3caa594183f4b4c7cc927c706ff5c0f226592885b3b2b966321",
+"blob": "ae7ad38be52f883fbf865fe31f9465a9559a013b",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c04.jpg",
+"size": 700095,
+"sha256": "11adf2be9faa8a690fb447e93f2c0652784aa2c0f5c8651d07db73f5776ebb67",
+"blob": "82244879b1fc6d2347ea9e3f01390020f3561d2e",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c05.jpg",
+"size": 633938,
+"sha256": "d2c301a88ebd884a82a2dc383956c1b76d10dd8d89d5f74f81779a7a68bb36e7",
+"blob": "a061837f46f1056551a7e0bf16a1701f87b05e58",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c06.jpg",
+"size": 627618,
+"sha256": "bb52ba6b0f5891911556ccddced5d57093912df5694e6a004c2897482fd82635",
+"blob": "75e9bdac2650f74231eb78bd34ddb30fd1871788",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c07.jpg",
+"size": 702120,
+"sha256": "5e2ed1ae1d9eec815c2be37b4a9f44457f4a5a0957147f737ea76a0d906376b7",
+"blob": "73c212bf2fbfa5fe2cc991aa20208802d1804e9b",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c08.jpg",
+"size": 670866,
+"sha256": "f2fd6e41a2ac06768f081c38caa93f2f1a34a4e70c0c5ca81071de438c85e063",
+"blob": "fc7e333c5022391f73b1103aab165eebbc9d9558",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c09.jpg",
+"size": 609658,
+"sha256": "7cc15a6e7ac521d04d0743e343ce12903934510a9d1bec57f4691cef2f97ecd4",
+"blob": "c056437d5f95ca5c5de855770bce4d4ec13660e3",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c10.jpg",
+"size": 606550,
+"sha256": "ed20b67de79eb80ee4622f85dbff8bb452caed48b52f1eb610ca6ff81773b260",
+"blob": "ff6329b236f6505035e0f74ad94637208e46941d",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/capsheets/c11.jpg",
+"size": 195865,
+"sha256": "fb3dd3bcafa54836506d9d7c9d12cc1e0669687ab18f6d37a1900ff3fe6fd26e",
+"blob": "ae38247721c5d5da39c747bfac7aaa622b847c33",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/clips_cut.json",
+"size": 37948,
+"sha256": null,
+"blob": "176c28da89eb759707c800535632f80205d7209f",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/clips_cut2.json",
+"size": 45597,
+"sha256": null,
+"blob": "0c448af39cc759b7f9057cbd0fef333843107eba",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/clips_cut3.json",
+"size": 53525,
+"sha256": null,
+"blob": "b9f924719e13091b9495059dea363b32ffa87f57",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/clips_final.json",
+"size": 36101,
+"sha256": null,
+"blob": "1847c15cd2cb0fca54f76ef5e8640ef1de6b0a0a",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/clips_keep.json",
+"size": 39737,
+"sha256": null,
+"blob": "e8780134e2978464f886a71e90a1ba02f5de8c1a",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/clips_qa.json",
+"size": 37319,
+"sha256": null,
+"blob": "398e6fcd6f66f8536efe573b8e78a1d9d7c2a536",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/clips_raw.json",
+"size": 19935,
+"sha256": null,
+"blob": "d6cd3144cfc8dca29d5e1c415f4beedd5ebde544",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/cut2.py",
+"size": 758,
+"sha256": null,
+"blob": "de3078d355915853713f677c90ee570234364659",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/cut3.py",
+"size": 840,
+"sha256": null,
+"blob": "c0d00701dc8bf7ab6fff51c5d1f07f2673fe3fcd",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/cut_filter.py",
+"size": 883,
+"sha256": null,
+"blob": "c3267b3a9a535f4bfeadec062a85404ce1527730",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/cuts4.json",
+"size": 12795,
+"sha256": null,
+"blob": "5ea9a8a6746190a6d631c5bc14e2d6bb68617653",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/dataset.json",
+"size": 20603,
+"sha256": null,
+"blob": "4dcf37bf040d8af25517a3b660c0771b8f945022",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/flat.json",
+"size": 5420,
+"sha256": null,
+"blob": "af66d4f2a8b6610bac75e950e35f973ecb99450d",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/low_flat.jpg",
+"size": 1367102,
+"sha256": "992ea93a754c667baebe9d11463db06fe2e6ef2c1cea3ddbf0c017d78a316969",
+"blob": "2fd4b79796b8f1af21bc1f3ca903d7bb0fded7ae",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/make_clips.py",
+"size": 1969,
+"sha256": null,
+"blob": "e0718bb81f332b567b09f79744a4e55ee6d65036",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/qa_clips.py",
+"size": 952,
+"sha256": null,
+"blob": "82cc21260930f0d6e35c75e1db0d7c5a9a57084b",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/sheet_kept.jpg",
+"size": 215877,
+"sha256": "f4d3e644ca6b69ecf4e259c4fec18577bfb304340e1ab410e44922770743759b",
+"blob": "d143efdf9f9260736dbb57c071e42f545ba4015c",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/spikes.json",
+"size": 9502,
+"sha256": null,
+"blob": "00613edc0b5ac508fa81d37cf1b8bdc741700070",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/spikes_0.jpg",
+"size": 1093833,
+"sha256": "772f4d71cb82824b5935e72c189339d80dffac656ec28949ffdb6a1be3c48bde",
+"blob": "42fc4c0d9927c1e398e6b79f6f5e458548cd36bc",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/spikes_1.jpg",
+"size": 1183882,
+"sha256": "9ebe21430da6b358cf0fbdf92d4be01cc3fe19ccdfd071813ea76a358fbfda0f",
+"blob": "3a818f67e7b058f2a0f2197a258e4a09da6f2cc2",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/spikes_2.jpg",
+"size": 1195916,
+"sha256": "3dfa12fce4952fb598881ba7ad901166068a55c383e18a42fe00a87fa2503584",
+"blob": "49197e56ef145bd4bc9754fb4e0f42d32f5d6b5a",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/spikes_3.jpg",
+"size": 920486,
+"sha256": "204b0ebe524982a9a53633d1d642009aa8cc9934797f3c6bd64b667a32e12fab",
+"blob": "724a23af5f09cf97b68098e27941b339f23bde65",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/val/disco_1970s.png",
+"size": 832897,
+"sha256": "62ac4ccccdba8df33832a4ad44f21da17a965e0b1211c8744ababe8eb6f98d2b",
+"blob": "6d2b685c36d3a299a832811e6acae061cb5a327f",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/val/farm_storm.png",
+"size": 822177,
+"sha256": "73b0777244cce9a0b25340ece9de3d2d0e9496bba23fc0371fa5ebf9cf225f6b",
+"blob": "a8b2c72510b313f4d33ca7bafb7f0bc8e9ff9b0c",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/val/ice_age_tribe.png",
+"size": 770031,
+"sha256": "2f6f52e9d203a7cf09cde844fee3f712f6fe80c5fb02917ec79a893ff8067547",
+"blob": "efed4d836cc774daeff4bcb21c235b5af77afee7",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/val/school_class.png",
+"size": 802170,
+"sha256": "b01dc21ead192eb559ddc75e8d174cfee37f0a6c030c0cd59b0eb641e546cee1",
+"blob": "ebeee1a502934ffb7537afff872bfed0ccf16f00",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/val/sheet.jpg",
+"size": 1036020,
+"sha256": "bd482fb6f4679390b4088af367531567ca6d535a300f0053cbe60969fddd103a",
+"blob": "6f4f17ca7ba9a48194f36bfce8bcacc6c5918c1d",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/val/val_samples.json",
+"size": 2111,
+"sha256": null,
+"blob": "3c6d2af304a2aef0493f4109217b341611c7e7e1",
+"critical": true
+},
+{
+"path": "video_lora_2026-10-24/prep/val/wildwest_train.png",
+"size": 710743,
+"sha256": "ccf8927de6a07ff79b8eb53460c46f6051177c501a8c5680c7bd168e9e77424b",
+"blob": "57cb3c3700d14d391c6dd34cbba3f1d15c76f71b",
 "critical": true
 }
 ],

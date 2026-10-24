@@ -57,6 +57,8 @@ def test_snapshot_marks_critical_and_verify_catches_loss_and_change():
     crit = {r["path"] for r in m["files"] if r["critical"]}
     assert crit == {"lora/final/w.safetensors", "lora/final/cfg.yaml", "data/a.txt", "lora/final/copy.safetensors"}
     assert m["totals"]["files"] == 5
+    with_self = dict(FILES, **{"vault/VAULT_MANIFEST_full_x.json": b"{}"})
+    assert V.snapshot(CFG, V.remote_files("datasets/me/art", tok="", get=FakeHub(with_self).get), now=0)["totals"]["files"] == 5
     assert V.verify(m, V.remote_files("datasets/me/art", tok="", get=hub.get)) == []
     later = dict(FILES)
     del later["lora/old/w250.safetensors"]

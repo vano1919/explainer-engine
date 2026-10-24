@@ -13,7 +13,7 @@ the list with hashes: `docs/VAULT_MANIFEST.json` (critical rows only; the full l
 | Primary: Hugging Face dataset `vano1919/tmr-artifacts` (private) | everything: weights, datasets, footage, videos, pod code | the creator's HF account | pods, sessions, project files |
 | Pinned revision: HF tag `vault-<date>` | the primary as it was that day | same | an accidental delete or overwrite on `main` (the history keeps the bytes) |
 | Code: GitHub `vano1919/explainer-engine`, `vano1919/tmr-video-script-engine` + git bundles of every branch on HF `vault/code/` | all code, open PRs included | the creator | a deleted branch, a lost GitHub repo |
-| Second copy: the creator's own disk (`vault pull`) | the critical set (~6.6 GB on 2026-10-24) | the creator, offline | the loss of the HF account or token |
+| Second copy: the creator's own disk (`vault pull`) | the critical set (~8.1 GB on 2026-10-24) | the creator, offline | the loss of the HF account or token |
 | Not a copy: RunPod pods and volumes, session scratchpads, project files | working space only | | nothing: anything there must reach HF first |
 
 ## Rules
@@ -32,7 +32,7 @@ the list with hashes: `docs/VAULT_MANIFEST.json` (critical rows only; the full l
 python -m explainer_engine.vault snapshot                    # re-list HF with hashes -> docs/VAULT_MANIFEST.json
 python -m explainer_engine.vault verify                      # PASS when every manifest row is still on HF, same hash
 python -m explainer_engine.vault pull --dest D:\wldnk_vault  # the second copy (critical set); re-run = re-check, downloads only what changed
-python -m explainer_engine.vault pull --dest D:\wldnk_vault --all   # everything (~48 GB on 2026-10-24)
+python -m explainer_engine.vault pull --dest D:\wldnk_vault --all   # everything (~49 GB on 2026-10-24)
 python -m explainer_engine.vault check-uploaded output --to scene_lora_2026-10-24/train_v1/output   # on a pod, before it stops
 ```
 
