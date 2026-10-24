@@ -41,7 +41,7 @@ def test_every_bp_id_cited_in_code_or_claude_exists():
     for folder in (ROOT / "explainer_engine", ROOT / ".claude", ROOT / "docs"):
         for p in folder.rglob("*"):
             if p.suffix in {".py", ".md", ".json"} and p.name != "sourced_rules.json":
-                cited |= set(re.findall(r"\bBP-\d{2}\b", p.read_text(encoding="utf-8", errors="ignore")))
+                cited |= set(re.findall(r"\bBP-\d{2,3}\b", p.read_text(encoding="utf-8", errors="ignore")))
     assert cited - ids == set(), f"undefined BP ids cited: {sorted(cited - ids)}"
 
 

@@ -38,7 +38,8 @@ about 6 labels on screen; title cards at most 6 words.
 
 ## Backgrounds and scene continuity
 A small set of recurring places (kitchen, shop, street, workshop, lab bench, night sky) built from reusable props.
-Warm paper background by default; `night` for dark topics. One place per scene; props keep their size and colour across
+Warm paper background by default; `night` for dark topics. One home place per scene; a cutaway to another place shows what the talk is about while it is said (KP-42,
+[BP-112](SOURCED_RULES.md); the creator 2026-10-24). Props keep their size and colour across
 scenes of an episode. Diagrams use `mechanism_teal` flows over simple shapes; real numbers are written, never implied.
 
 ## Hooks (D-07)

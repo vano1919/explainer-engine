@@ -29,7 +29,7 @@ DOC = ROOT / "docs" / "SOURCED_RULES.md"
 BEGIN, END = "<!-- sourced-rules:begin -->", "<!-- sourced-rules:end -->"
 TYPES = {"A": "article", "B": "book", "C": "video"}
 STATUSES = {"binding", "hypothesis", "house"}
-ID = re.compile(r"^BP-\d{2}$")
+ID = re.compile(r"^BP-\d{2,3}$")  # BP-100 onwards since 2026-10-24
 
 
 @lru_cache(maxsize=1)

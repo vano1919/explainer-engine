@@ -402,3 +402,22 @@ def test_stacked_questions_outside_a_loop_are_flagged():
     assert any(f["rule"] == "ST-11" and f["where"] == seg["id"] for f in SL.lint(d))
     seg["drama"]["opens"] = [d["drama"]["loops"][0]["id"]]
     assert not any(f["rule"] == "ST-11" for f in SL.lint(d))
+
+
+def test_template_d_docudrama_rules():
+    d = storied()
+    assert not [f for f in SL.lint(d) if f["rule"] in ("ST-14", "ST-15", "ST-16")]  # templates A-C: unchanged
+    d["drama"]["template"] = "D"
+    assert not S.schema_errors(d)
+    assert _st(d, "ST-16", "REVIEW")  # all narrator: outside BP-105's share
+    d["segments"][0]["lines"][0]["text"] = " ".join(["word"] * 300)  # ~106 s of narration at 170 wpm
+    assert _st(d, "ST-14", "REVIEW")
+    d = storied()
+    d["drama"]["template"] = "D"
+    first, last = d["segments"][0]["lines"][0], d["segments"][1]["lines"][0]
+    first.update(speaker="einstein", text=" ".join(["fire"] * 40))
+    last.update(speaker="franklin", text="Then take the glasses.")
+    d["segments"][1]["drama"]["function"] = "climax"
+    assert _st(d, "ST-15", "REVIEW")  # the central scene is shorter than scene S01
+    first["text"], last["text"] = last["text"], first["text"]
+    assert not _st(d, "ST-15")

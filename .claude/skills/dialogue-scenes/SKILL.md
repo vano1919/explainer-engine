@@ -42,8 +42,10 @@ scene still works; repeat until it doesn't. End within 1-2 lines of the turn, on
 
 `NARRATOR 2-4 sentences (where / when / why-now, ending on the pressure) -> SCENE 5-12 beats with a turn, exiting on
 the complication -> NARRATOR 1-2 sentences (the consequence + the next pressure)`. The narrator NEVER restates the
-scene's turn and never quotes a character. Target ~40-60 % narration by words, a played scene every 60-90 s (a
-labelled hypothesis — the research doc says so; the channel's retention decides).
+scene's turn and never quotes a character. The narrator's share is [BP-105](../../../docs/SOURCED_RULES.md)'s (25-45 % for
+template D; the old ~40-60 % is superseded). A scene may run 2-4 minutes, but no more than [BP-112](../../../docs/SOURCED_RULES.md)'s
+seconds stay in one place: cut away to the plan carried out, its cost or the other side moving (KP-42), and no more than
+[BP-113](../../../docs/SOURCED_RULES.md)'s lines in a row without a silent reaction, an insert or a cutaway (KP-43).
 
 Short example: N: "By lunch the clip has a million views. In the back room, Enzo is waiting." -> the scene plays and
 exits on Capone's fear -> N: "The order to find the cameraman goes out that night. It comes back without a name."

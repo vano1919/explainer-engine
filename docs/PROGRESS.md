@@ -1095,6 +1095,115 @@ stock negative prompt that names our style ("cartoonish rendering", "exaggerated
 story-architect, edit-planner and the skill `shot-visuals` now write shots to KP. The lint also found two vague prompts in the running chain test
 ("the woman by the rock", "the cave man on the left"); both rewritten on HF before the pod read its code.
 
+
+## 2026-10-24 — KP-15..KP-30: shot cards and composed prompts (`scripting/film_shots.py`, `film_shots/1`)
+
+ვანო (15:50 Tbilisi): check the new prompt rules against how our photo models and local LoRAs read a prompt, which technical
+terms help and which are missing; describe the frame, its drama, the spoken text, the tone and the sound so the picture, video
+and audio prompts help the storytelling; keep the balance so shots are not boring or over-constrained; study his cartoons.
+Done: an audit of KP-01..KP-14 per model (Qwen-Image-2512 + style LoRA, Qwen-Image-Edit-2511 + scene LoRA, LTX-2.5 with audio;
+official guides and our tests), 120 cartoon shots labelled by hand plus the camera measure of 3312
+(`docs/research/SHOT_GRAMMAR_FOOTAGE_2026-10-24.md`), the shot card schema `film_shots/1`, a composer that writes the
+keyframe, next pose, cut and video prompts from one card, rules KP-15..KP-30 in code (tags, start-peak-settle with the
+first frame at the start, faces as cues, quoted lines that fit the clip, at most two faces close, narrated shots silent,
+no score music, no story names, no quality words, no "smooth motion", the change only, scene grammar), BP-100..BP-103
+(hypotheses, REVIEW; the registry's id pattern now takes three digits), the worked example
+`examples/film_shots/bus_in_the_ice_age.json` (0 FAIL, 0 REVIEW) and `tests/unit/test_film_shots.py`. Agents story-architect,
+scene-writer, performance-director, edit-planner and the skill shot-visuals write their fields of the card. The narrator-and-
+scene structure waits for the documentaries ვანო will send (16:05).
+
+
+## 2026-10-24 — KP-31..KP-34: composition in every picture prompt (shot cards)
+
+ვანო (18:53 Tbilisi, LoRA thread): every picture prompt must state its composition, the sizes of the bodies and the space.
+Done: the shot card gains `blocking[].on` (what each person stands or sits on), `blocking[].height` (a quarter .. most of the
+frame height; `height_pct` as a number for the words-vs-numbers test), `frame.relations[]` and `frame.lead_room`; the
+composer writes them into keyframe and cut prompts (never into a next pose, which keeps the master's layout); KP-31..KP-34
+FAIL when they are missing or vague ("by the boulder"); every composed prompt names its LoRA (`style` / `scene`, never the
+style LoRA on Edit-2511) and `compose` writes one gate card per drawn first frame for the keyframe gate (PR #22). The worked
+example passes (0 FAIL, 0 REVIEW); tests in `tests/unit/test_film_shots.py`.
+
+
+## 2026-10-24 — Template D: the 15-minute historical docudrama (STORY_ENGINE, ST-14..ST-16)
+
+ვანო (20:22 Tbilisi) brought back another AI's report on the ten structure variants of one 15-minute animated docudrama
+(narrator plus talking characters). Done: its 16-segment timeline is template D in `docs/STORY_ENGINE.md` (three acts,
+narrator and scene in turns, a question at every scene's end, modules for war / rivalry / invention), with one change:
+its "subscribe" outro breaks BP-43, so the last 10 s point to the next video. `drama.template` (A-D, optional) is new in
+the schema; on D, `scripting/story_lint.py` checks ST-14 (no narration block over BP-104's 90 s), ST-15 (the central scene
+is the longest scene) and ST-16 (the narrator's share in BP-105's 25-45 %), all hypotheses, REVIEW. The summary and what
+was not verified (its 65-84 % and effect-size figures): `docs/research/DOCUDRAMA_CONSTITUTION_2026-10-24.md`. Agent
+story-architect picks D for history episodes. Test: `tests/unit/test_story_engine.py::test_template_d_docudrama_rules`.
+
+
+
+## 2026-10-24 — Script engine v1 and the first episode on it (Napoleon vs Genghis Khan)
+
+ვანო (20:56 Tbilisi): one full 15-minute episode prompt (Napoleon's army falls through time onto the steppe of Genghis
+Khan), with zero improvisation: where a rule was missing, research it and write it first. Done: `docs/SCRIPT_ENGINE.md`
+(the pipeline topic -> claim map -> template D -> shot cards -> composed prompts; ZI-01..ZI-06; the variants in use while
+tests run; the writer's brief). New episode rules on the cards under `"engine": "script_engine/1"`: KP-35 shot rhythm,
+KP-36 clip length and key poses, KP-37 animation tiers (hold / light / full; a line on a hold or light shot FAILs), KP-38
+camera moves, KP-39 narration blocks and share on the cards, KP-40 the outro as a channel pointer (the creator's call:
+worlds on the channel, worlds coming, subscribe so as not to miss them), ZI-02 a claim behind every number, ZI-03 a tier
+on every shot. Numbers BP-106..BP-110 (the creator's cartoons measured: 11-17 shots a minute, still pictures on 5-10 % of
+the time, which replaces the critic's 40 %; night tests: clips of at most 10 s), evidence in
+`docs/research/SCRIPT_ENGINE_V1_2026-10-24.md`. The composer now writes tier, model, fps and LTX's 8k+1 frame count on
+every video prompt, hero-sheet prompts for named heroes, and draws a cut's last frame from the cut itself; `film_shots
+script` writes the readable script with claim ids. Template D's last segment is now the 15 s channel pointer. The
+episode: `examples/napoleon_vs_genghis/` (204 shots, 15:00, narrator 45 %, 0 FAIL, 0 REVIEW; PROMPT_PACKAGE.md for review).
+Tests in `tests/unit/test_film_shots.py`.
+
+
+## 2026-10-24 — Picture test v2 findings in the composer (KP-32, KP-33)
+
+The LoRA thread's 1-minute film picture test v2 (Qwen-Image-2512 + style LoRA, 2 seeds, words against numbers). Done: the
+prompt never carries a size as a number (numbers were drawn as rulers and percentages in 6 of 10 pictures and sized the
+figure no better), `height_pct` becomes the nearest word and stays for the gate; KP-33 FAILs a relation that puts "a" or "an"
+before a cast member's noun ("a living woolly mammoth ... behind the bus" drew two mammoths in 4 of 4); a figure cut by the
+frame edge is `blocking[].partial` ("the trunk"), written as such, counted by the gate card, without support or height.
+The repeated-tag hypothesis (one figure drawn twice) is a variant to test in `docs/SCRIPT_ENGINE.md`, not a rule. Tests in
+`tests/unit/test_film_shots.py`.
+
+
+## 2026-10-24 — Script engine v2: the cold open, strategy shown in action, AI acting (KP-41..KP-43)
+
+ვანო asked where the picture prompts are, whether the episode needs more action, and how to control AI acting (the
+parley fails as "a podcast" if the faces fail); he forwarded another model's review to read. Checked against the cards
+(`docs/research/SCRIPT_ENGINE_V2_2026-10-24.md`): the first clash came at 3:13, the yurt was 95 s in one place with nine
+lines in a row, the camp raid was only smoke. Done: KP-41 teasers in the first 10 s cut from later shots (`teaser_of`,
+`compose` writes `kind: reuse`, nothing drawn), KP-42 at most 90 s in one place before a cutaway, KP-43 at most four
+lines in a row and an acting check plus a mouth-hiding fallback on every full-tier line (`qa`, `acting`, `fallback`);
+BP-111..BP-113. `film_shots shotlist` writes the script with every prompt under its shot. The episode: three teasers,
+cutaways in S04, S06, S08, S09, S13, S10 cross-cut with the camp, still 15:00 (214 shots, narrator 44.9 %, 0 FAIL,
+0 REVIEW). Composer: "Only this figure is in the picture" (was "Only these 1 person"). Tests in
+`tests/unit/test_film_shots.py`.
+
+
+## 2026-10-24 — Conflicts between the script engine and older rules resolved (D-74)
+
+ვანო: this thread stabilises the script-writing system (no paid runs); where the new approach conflicts with old rules,
+the new one wins and the rules change. Reviewed docs, the registry, skills and agents
+(`docs/research/SCRIPT_ENGINE_V2_2026-10-24.md` section 4). Changed: BP-40 scoped to still-picture episodes (animated
+ones take BP-107's shot rate; ED-14 likewise), BP-43's "one next video" replaced by BP-106 under the engine, the
+`dialogue-scenes` skill's 40-60 % narration and "a scene every 60-90 s" replaced by BP-105/BP-112/BP-113, the style
+bible's "one place per scene" now allows cutaways, template D's hook runs 0:00-0:12 with teasers (rows 8, 10, 13 name the
+cutaways and silent beats), D-55 kept for still-picture episodes only; `supersedes` fields on BP-105/106/107/112;
+agents story-architect, scene-writer and edit-planner told the episode rules. No conflict: BP-70's four-line exchange
+equals BP-113's cap; BP-31, BP-03, ED-14's listener reactions. Decision D-74.
+
+
+## 2026-10-24 — Keyframe and sheet prompts in the style LoRA's training shape (LT-65, LY-09)
+
+The LoRA thread found the style faded in composed keyframes: same pod, LoRA and seeds, the approved 31-word eras prompt
+drew the look and the 337-word composed bus prompt a flat grey generic cartoon; every v5 caption ends with one style tail
+the composer never sent. Done: `keyframe_prompt` and `sheet_prompts` write `wldnk style, <scene>, <tail>` in at most 90
+words (`STYLE_TAIL`, `KEYFRAME_WORDS_MAX`; a card may set `style.tail`); each tag once, a gaze as a direction, figures
+past the budget placed by their tag's head phrase; heights, supports, relations and free space stay in the gate card
+(for EliGen boxes or a blockout) and in cut prompts; `film_shots check` runs `style_check` (missing tail FAIL, over 90
+words REVIEW, PR #22's `qa/style_prompt.check` when present). The bus example's "flat grey daylight" and "empty white"
+plain words replaced. Tests in `tests/unit/test_film_shots.py`.
+
 ## 2026-10-24 — LT-19: a pod's GPU check has a timeout; a bad host stops itself through the guard
 
 ვანო (16:20 Tbilisi): find why the chain-test pod hung and fix it if it was avoidable. Cause: my launchers dropped the
@@ -1176,6 +1285,14 @@ the shape it was trained on. New rules:
   - my own filled table for every picture before the creator sees it.
 
 
+Follow-up: PR #22's head (5049711, `qa/style_prompt.py`) merged into this branch; the composer now takes `STYLE_TAIL` and
+the 90-word limit from it and `film_shots check` runs its `check` (washed-out light words REVIEW); the Napoleon cards' grey
+and flat lights recoloured (0 FAIL, 0 REVIEW).
+Follow-up 2: the keyframe words are built by levels (bare tag head -> with side -> full), raised in order light, lead,
+sides, others in full, the rest of the place, relations, so a crowded shot (the 1-minute film's six figures came to 101
+words) stays at 90 and keeps its light; the 1-minute film card recoloured ("flat grey daylight", "empty white") and its
+"a living woolly mammoth" relations named by tag (0 FAIL, 0 REVIEW).
+
 ## 2026-10-25 03:30 Tbilisi: shots composed from reusable assets (AC-01..AC-15), LT-65 without the tail
 
 ვანო's plan (02:19): the style LoRA draws only assets, code composes the shots (micro scenes and battles), assets are reused.
@@ -1197,6 +1314,19 @@ What was done:
   real defects were caught: a plate with the wrong horizon for close shots (AC-05), and a cut-out carrying a block of snow
   (AC-15).
 
+## 2026-10-25 03:50 Tbilisi: the script engine's picture prompts follow the new LT-65 (moment shape, 40 words, no tail)
+
+- `film_shots.keyframe_prompt` is now `wldnk style, <the moment>`: the place's head, the lead with caricature body words
+  (`style.body`, default `BODY_WORDS`) and the action at its peak, one reaction, the light, then others briefly while words
+  remain. It stays within `style_prompt.MAX_WORDS` (40) and has no tail and no camera, size or position words. Sizes, sides,
+  heights, supports and counts stay on the gate card for the composition of assets (docs/ASSET_COMPOSE.md).
+- KP-16 under D-74: the composed first frame of the video keeps the start pose, and the style-LoRA moment shows the peak
+  with a reaction, as the approved eras pictures did.
+- Hero sheets use the same shape (`_sheet_text`, ≤40 words). `style_check` runs `qa/style_prompt.check` on every
+  style-LoRA prompt.
+- Napoleon vs Genghis (214 shots), the bus example and film_1min all pass with 0 FAIL / 0 REVIEW. Tests
+  `test_keyframe_tells_the_moment_at_its_peak_with_a_reaction_and_no_layout` and
+  `test_keyframes_and_sheets_keep_the_moment_shape_and_name_each_figure_once`.
 ## 2026-10-25 03:20 Tbilisi: episode look (AC-16..AC-19) and the prompt absolutes (LT-66)
 - ვანო asked for an episode-level colour layer that keeps colours consistent between the episode's pictures when places
   and countries change, without changing the style LoRA's look, and for the list of prompting absolutes.
@@ -1205,3 +1335,15 @@ What was done:
   phrase added to every prompt (the prompt still passes the 40-word rule), colour drift as REVIEW, and a bounded grade
   (at most 0.35, originals kept). Tests: `tests/unit/test_episode_look.py` (absolutes frozen, clash, phrase, apply,
   drift and grade). Nothing paid; the drift threshold is calibrated on the first episode.
+
+## 2026-10-25 03:20 Tbilisi: the script engine adds the episode look and keeps the LT-66 absolutes
+
+- `style.look` in the shot cards names the episode's look file (`episode_look/1`, read next to the cards by `film_shots.load`)
+  or gives its phrase and lights inline. A shot may name a light variant with `frame.look`. Every keyframe moment and hero
+  sheet then ends with the phrase through `episode_look.apply` (AC-17). The moment's word budget shrinks by the phrase, so
+  the whole prompt still passes `style_prompt.check` (40 words).
+- `style_check` FAILs a look phrase or variant with non-colour words or style words (AC-17), a variant the look lacks, and
+  any `neg_keyframe` other than `style_prompt.NEGATIVE` (LT-66 A3). Style-LoRA items now carry `neg` = NEGATIVE and
+  `inference` = `style_prompt.INFERENCE`. A8 caught "to take a photo" in film_1min S02-02, which now reads "to snap a picture".
+- Tests: `test_every_style_prompt_ends_with_the_episode_look_and_still_fits_lt65`,
+  `test_a_look_with_style_words_or_a_negative_of_its_own_fails_lt66`.
