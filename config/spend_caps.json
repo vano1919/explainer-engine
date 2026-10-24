@@ -10,7 +10,7 @@
     "max_hours_per_pod": 4.0,
     "max_price_per_hour": 1.5,
     "min_balance_left_usd": 0.25,
-    "keep_stopped_pods": ["5r50psn3elm6un", "usx3b1xb9w9dy4", 
+    "keep_stopped_pods": ["ifghvnsx95wmgb", "5r50psn3elm6un", "usx3b1xb9w9dy4", 
       "97vn2t443puxxl",
       "no7nu9x1t3fwye",
       "qz3oizd4j452kg",
