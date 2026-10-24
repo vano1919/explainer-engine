@@ -1175,3 +1175,24 @@ the shape it was trained on. New rules:
   - the 72B judge, one question per call;
   - my own filled table for every picture before the creator sees it.
 
+
+## 2026-10-25 03:30 Tbilisi: shots composed from reusable assets (AC-01..AC-15), LT-65 without the tail
+
+ვანო's plan (02:19): the style LoRA draws only assets, code composes the shots (micro scenes and battles), assets are reused.
+He asked to make the system ready before any generation, starting with the free part.
+
+What was done:
+- A free analysis of why the style faded (https://claude.ai/artifact/BCfwRAUtF34g9xcS1bjk6D). The v5 training samples drew
+  the film's own heroes in the approved look from short story prompts without the tail. LT-65 now asks for that shape
+  (at most 40 words, no layout words). The tail is flagged.
+- `explainer_engine/compose/`:
+  - `library` (records, mirrored views, the list of what must be drawn, cut-out check);
+  - `frame` (perspective placement, horizon match, contact shadow, haze, depth order);
+  - `crowd` (scatter by ground area, clone check);
+  - `reuse` (same setup → crop, zoom limit 1.6x, teasers);
+  - `style_score` (DINOv2 against his photos and a same-place control, REVIEW only).
+- The cartoon footage was measured for the planner: shot median 3.2 s, ≈20 % return to an earlier setup, camera still in
+  ≈2/3 of shots.
+- The first CPU test with the composition test's assets. It composed a WS, a MWS, a reuse crop and a 90-figure crowd. Two
+  real defects were caught: a plate with the wrong horizon for close shots (AC-05), and a cut-out carrying a block of snow
+  (AC-15).
