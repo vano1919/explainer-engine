@@ -25,7 +25,7 @@ disagreement is itself logged.
 
 | ID | Check | Expected | Hard | Evidence |
 |---|---|---|---|---|
-| KG-01 | number of people | the card's count | yes | busy masters invented people (scene LoRA samples, 2026-10-24) |
+| KG-01 | number of people and animals (cast members include animals, e.g. the mammoth) | the card's count | yes | busy masters invented people (scene LoRA samples, 2026-10-24) |
 | KG-02 | every card person is present | yes | yes | "the woman" painted a stranger (KP-01) |
 | KG-03 | every person on the card's screen side | yes | yes | the action went to the wrong hero (KP-02) |
 | KG-04 | the actor's height share of the frame | yes | no (REVIEW): how well a VLM judges this is unmeasured | small figures froze in video (KP-13) |

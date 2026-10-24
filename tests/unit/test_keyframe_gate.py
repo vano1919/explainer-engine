@@ -22,7 +22,7 @@ def answers(qs, override=None):
 def test_questions_come_from_the_card():
     qs = kg.questions(ICE)
     codes = [q["code"] for q in qs]
-    assert qs[0] == {"code": "KG-01", "q": "How many people are in the picture? Answer with a number.", "expect": 2,
+    assert qs[0] == {"code": "KG-01", "q": "How many people and animals are in the picture? Answer with a number.", "expect": 2,
                      "hard": True}
     assert codes.count("KG-02") == 2 and codes.count("KG-05") == 2
     assert any("living woolly mammoth stands behind the boulder" in q["q"] for q in qs)
@@ -52,7 +52,7 @@ def test_the_ambiguous_mammoth_and_glasses_in_the_eye_fail():
 def test_the_vision_model_round_trip():
     qs = kg.questions(ICE)
     prompt = kg.vlm_prompt(qs)
-    assert prompt.count("\n") == len(qs) and "1. How many people" in prompt
+    assert prompt.count("\n") == len(qs) and "1. How many people and animals" in prompt
     reply = "1. 2\n2. Yes, on the left.\n3) yes\n4: No\n" + "\n".join(f"{i}. maybe" for i in range(5, len(qs) + 1))
     got = kg.parse_answers(reply, len(qs))
     assert got[:4] == ["2", "yes", "yes", "no"] and got[4] is None

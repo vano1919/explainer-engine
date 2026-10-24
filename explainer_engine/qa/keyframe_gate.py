@@ -50,7 +50,7 @@ def questions(shot: dict) -> list[dict]:
     if shot.get("kind") not in KINDS:
         raise ValueError(f"kind must be one of {KINDS}")
     people = shot.get("people", [])
-    out = [_q("KG-01", "How many people are in the picture? Answer with a number.", len(people))]
+    out = [_q("KG-01", "How many people and animals are in the picture? Answer with a number.", len(people))]
     for p in people:
         tag = p["tag"]
         out.append(_q("KG-02", f"Is there {tag} in the picture?", "yes"))
