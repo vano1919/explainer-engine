@@ -133,7 +133,8 @@ def technical(layout: dict) -> str:
                          f"body cut by the bottom edge")
         else:
             parts.append(f"{tag}: {_pct(it['height'])} ± {_pct(TOL)} of the frame height, centred {_pct(it['cx'])} from "
-                         f"the left edge, feet {_pct(min(y1, 1.0))} from the top edge")
+                         f"the left edge, {'feet' if SIZES[it['kind']]['h'] >= SIZES[it['kind']]['w'] else 'bottom'} {_pct(min(y1, 1.0))} "
+                         f"from the top edge")
     return ". ".join(parts) + "."
 
 
@@ -160,7 +161,8 @@ def relative(layout: dict) -> str:
         n = abs(round(gap))
         where = ("beside" if abs(gap) < 1 else
                  f"about {n} metre{'s' if n != 1 else ''} {'behind' if gap > 0 else 'in front of'}")
-        raised = f", about {round(float(it['elev']))} metres higher up" if it.get("elev") else ""
+        e = float(it.get("elev", 0))
+        raised = "" if not e else f", about {round(e)} metres higher up" if e >= 1 else ", slightly higher up"
         parts.append(f"{it['tag']} is {_ratio(real)} {lead['tag']} and stands {where} {lead['tag']}{raised}")
     return "; ".join(parts) + "." if parts else ""
 
