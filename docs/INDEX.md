@@ -20,7 +20,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [ORCHESTRATION](ORCHESTRATION.md) | how an episode is run alone: phases, hard caps and stops (OR-), time-jump episode structure (SR-), Shorts (SH-) | OR-, SR-, SH- |
 | [EDITING](EDITING.md) | editing rules: chunk seams, zoom continuity, one music at a time, transitions and look, speed (ED-) | ED- |
 | [SOURCED_RULES](SOURCED_RULES.md) | the sourced production rules (BP-): every number a validator enforces, its sources (article, book, video), status (binding, hypothesis, house) and the code that enforces it; generated from `explainer_engine/standards/sourced_rules.json`; D-59 | BP- |
-| [LORA_TRAINING](LORA_TRAINING.md) | how the photo style, image-edit and video motion LoRAs are trained and judged: the G1-G6 protocol, dataset audit, config check, checkpoint judge, stop rules, research sources; own voice / editing feasibility; D-72 | LT- |
+| [LORA_TRAINING](LORA_TRAINING.md) | how the photo style, image-edit and video motion LoRAs are trained and judged: the G1-G6 protocol, dataset audit, config check, checkpoint judge, stop rules, research sources; own voice / editing feasibility; the creator's 50 video criteria (VQ-); D-72 | LT-, VQ- |
 | [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) | hook, arc, ABC shots, faces, mood (emotion, light, palette), durations, cuts, motion, transitions | UR- |
 | [STORYBOARD_SCHEMA](STORYBOARD_SCHEMA.md) | storyboard contract, animation vocabulary, timing rules | |
 | [ASSET_SYSTEM](ASSET_SYSTEM.md) | asset records, naming, licences, generation rules | |

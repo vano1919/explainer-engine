@@ -30,7 +30,7 @@ How every LoRA of the channel is trained and judged: the photo style LoRA (Qwen-
 | LT-06 | The creator's own pictures are at least 50 % of training exposures (images x repeats) | house (ვანო 2026-10-23; v1 drifted with >50 % generated) | FAIL |
 | LT-07 | Size: style 20-300 images; edit 60+ pairs; video 10-300 short coherent clips, frames-1 a multiple of 8 and width/height multiples of 32 (LTX) | source (ltx-trainer docs; RunComfy edit guide) | FAIL / WARN |
 | LT-08 | Edit pairs match by file name in every control folder | source (ai-toolkit edit layout) | FAIL |
-| LT-10 | Rank 16-64, learning rate 5e-5..2e-4 (FAIL above 5e-4): higher rank overfits sooner | source (ltx-trainer reference: rank 32, 1e-4; guides) | WARN / FAIL |
+| LT-10 | Rank 16-64, learning rate 5e-5..2e-4 (FAIL above 5e-4): higher rank overfits sooner; video LoRAs 3e-5..1e-4 with cosine + 5-10 % warm-up; rank >= 64 sets `use_rslora` | source (ltx-trainer reference: rank 32, 1e-4; guides; ვანო's report 2026-10-24, section 7.1) | WARN / FAIL |
 | LT-11 | A checkpoint and a sample set at least every 250 steps, all kept until judged | source (ltx-trainer `checkpoints.interval: 250`; "the best is often not the last") | FAIL / WARN |
 | LT-12 | 4+ fixed-seed sample prompts, half of them held out (content not in the captions), one without the trigger | source (held-out tests, trigger-off probe) | FAIL / WARN |
 | LT-13 | Cached text embeddings make caption dropout a no-op | source (guides) | WARN |
@@ -135,9 +135,93 @@ motion LoRA learns MOVEMENT from short clips, starting from our own stills.
 | FS-02 | Camera shift (phase correlation, p90) and motion (median residual) per shot; `pair` = fixed camera (<= 1 % shift) + motion; `clip` = motion; `static`/`dup` out | `footage.measure`, `classify` |
 | FS-03 | No show over 30 % of usable footage (one style cannot settle) | `footage.balance` WARN |
 | FS-04 | One whole show held out for the judge (3+ shows) | `footage.balance` |
-| FS-05 | Motion captions carry no character, show or studio names and no style words | `caption_findings_motion` FAIL |
+| FS-05 | Motion captions carry no character, show or studio names and no style words; a next-pose caption reads `nextpose, a later frame of the same continuous animated shot, same camera: <what changed>` (ვანო 2026-10-24: a frame of a video, not a photo) | `caption_findings_motion` FAIL |
 | FS-06 | Pairs: control = the shot's master frame, target = 2.5-4 s later, a second pair for long shots, both from the master (never chained) | `footage.pairs` |
 | FS-07 | Clips: 89 frames @ 24 fps from the shot start, 768x448 (LTX bucket), `audit-video` 0 FAIL | `footage.clips` |
 | LT-34 | Video: the mid-clip frame keeps the first frame's style (distance <= the no-LoRA distance + 0.02) | judge (planned) |
 | LT-44 | Edit: palette ΔE plate->output <= 1.5 x the training pairs' median | judge (planned) |
 | LT-45 | Edit: style leakage on our wldnk plates <= the no-LoRA distance + 0.02; two FAILs = STOP_KEEP_BEST | judge (planned) |
+
+## 7. The creator's 50 video criteria (VQ-01..VQ-50, ვანო 2026-10-24)
+
+Source: ვანო's report in project files `lora_plan_2026-10-22/VIDEO_LORA_REPORT_vano_2026-10-24_ka.md` (VBench / VBench-2.0
+based). The registry is `explainer_engine/training/video_criteria.json`; this table is generated from it
+(`tests/unit/test_lora_training.py` keeps the two together). `code` = an LT rule measures it, `eye` = the review sheet
+(LT-58) and the judge's look, `na` = not in our frames. Allowed in animation (his list): squash and stretch (VQ-25),
+follow-through (VQ-26), motion blur in fast motion, a small drift of leaves, clouds or water. Unacceptable: identity
+morphing, flicker, causality collapse, dynamic-degree collapse. Of the 50, 22 are measured in code, 27 by eye, 1 is n/a.
+Physics (VQ-21..30) is by eye only: a still cannot prove it, so every keyframe pair is proven by animating it (section 7.1).
+
+| ID | Criterion (ვანო) | Group | How we check | Rules |
+|---|---|---|---|---|
+| VQ-01 | resolution kept, no pixelation or blur | visual | code | LT-53 |
+| VQ-02 | lighting consistent with the scene geometry | visual | eye |  |
+| VQ-03 | contrast and dynamic range, no burnt or crushed zones | visual | code | LT-51, LT-54 |
+| VQ-04 | colour temperature stable across frames | visual | code | LT-54, LT-60 |
+| VQ-05 | edge sharpness between figures and set | visual | code | LT-53 |
+| VQ-06 | background keeps its structure | visual | code | LT-59 |
+| VQ-07 | texture fidelity (skin, cloth, metal, water) | visual | eye |  |
+| VQ-08 | no diffusion grain or denoising residue | visual | eye |  |
+| VQ-09 | compositional balance | visual | eye |  |
+| VQ-10 | anatomy correct in a still (hands, face, proportions) | visual | eye | LT-58 |
+| VQ-11 | no flicker between neighbouring frames | temporal | code | LT-51, LT-32 |
+| VQ-12 | subject identity kept over time | temporal | code | LT-52, LT-62, LT-43 |
+| VQ-13 | background does not drift or melt | temporal | code | LT-59, LT-41, LT-53 |
+| VQ-14 | motion smoothness, no stutter | temporal | code | LT-52, LT-32 |
+| VQ-15 | dynamic degree: real motion, not a camera over a still | temporal | code | LT-31, LT-57 |
+| VQ-16 | object permanence (leaves and returns the same) | temporal | code | LT-55 |
+| VQ-17 | micro-expressions develop naturally | temporal | eye | LT-58 |
+| VQ-18 | clothes and attributes stay | temporal | code | LT-62 |
+| VQ-19 | camera trajectory smooth and physical | temporal | eye |  |
+| VQ-20 | several subjects move independently and logically | temporal | eye |  |
+| VQ-21 | gravity | physics | eye |  |
+| VQ-22 | momentum kept, no instant stops | physics | eye |  |
+| VQ-23 | collision response | physics | eye |  |
+| VQ-24 | fluid, fire and smoke dynamics | physics | eye |  |
+| VQ-25 | squash and stretch is intentional (allowed in animation) | physics | eye |  |
+| VQ-26 | follow-through of hair and cloth (allowed, wanted) | physics | eye |  |
+| VQ-27 | arc motion | physics | eye |  |
+| VQ-28 | shadows move with the figure | physics | eye |  |
+| VQ-29 | reflections in sync | physics | eye |  |
+| VQ-30 | cloth physics | physics | eye |  |
+| VQ-31 | subject matches the prompt | semantics | eye | LT-22 |
+| VQ-32 | the asked action is completed | semantics | eye |  |
+| VQ-33 | style kept in detail | semantics | code | LT-34, LT-45 |
+| VQ-34 | spatial relations as asked | semantics | eye |  |
+| VQ-35 | figures interact without merging | semantics | eye | LT-58 |
+| VQ-36 | temporal narrative: beginning, middle, end | semantics | eye |  |
+| VQ-37 | attribute binding (the right colour on the right thing) | semantics | eye |  |
+| VQ-38 | text rendering in motion | semantics | na (no text in our frames; captions are added in the edit) |  |
+| VQ-39 | commonsense | semantics | eye |  |
+| VQ-40 | environment context (footprints in snow) | semantics | eye |  |
+| VQ-41 | overfitting: copies of the training set | lora | code | LT-23, LT-27 |
+| VQ-42 | underfitting: the LoRA is not felt | lora | code | LT-21 |
+| VQ-43 | concept bleeding onto the set or other figures | lora | code | LT-24, LT-44, LT-45 |
+| VQ-44 | trigger word isolation | lora | code | LT-25, LT-12 |
+| VQ-45 | no catastrophic forgetting (anatomy, prompts) | lora | code | LT-22 |
+| VQ-46 | works across buckets and aspect ratios | lora | eye |  |
+| VQ-47 | I2V leaves the first frame: new detail appears in motion | lora | code | LT-31, LT-33 |
+| VQ-48 | no motion suppression by the LoRA | lora | code | LT-31 |
+| VQ-49 | no geometry distortion in motion (spatial attention damage) | lora | code | LT-52, LT-32 |
+| VQ-50 | no jump cuts or temporal desync from the LoRA | lora | code | LT-51, LT-32 |
+
+### 7.1 Taken and not taken from his technical advice (evidence)
+
+| Advice | Decision | Why |
+|---|---|---|
+| Mixed photo + video data, never stills only, for the video LoRA | taken (already the plan) | the motion LoRA trains on his cartoon clips (FS-07); stills-only I2V training freezes motion (his report; LT-31 guards it) |
+| LR 3e-5..5e-5 for video DiTs, cosine + 5-10 % warm-up | taken for the video LoRA | ltx-trainer reference used 1e-4; his sources say lower for video; LT-10's video range becomes 3e-5..1e-4 with warm-up |
+| RS-LoRA at rank 64+ | taken as a rule | our ranks are 16-32; the style LoRA (rank 64) is frozen and good, so no re-train; any future rank >= 64 sets `use_rslora` |
+| Trigger isolation: caption only the subject, never the set or camera | taken for character/style captions; NOT for the scene LoRA | a next-pose caption must say what moves (the pose change is the lesson); the set is held by the control image, not the caption (FS-05, LT-02 keep set words out of every caption) |
+| "A frame of a video, not a photo" for the scene LoRA | taken (v2 captions + prompts) | FS-05 now: `nextpose, a later frame of the same continuous animated shot, same camera: <what changed>`; the gate is the animation test, not the still |
+| Keyframe pairs proven by animating them (start -> end through LTX) before they count | taken (gate G5 for the scene LoRA) | a still cannot show physics; `video-qa` + `shot-identity` on the animated pair; a pair that does not animate fails |
+| DLoRAL: separate temporal C-LoRA and spatial D-LoRA | not taken as such | LTX-2.5 uses joint spatio-temporal attention in one DiT (no separate temporal blocks to target); our split is already three LoRAs (style on the image model, pose on the edit model, motion on LTX) |
+| Optical-flow and LPIPS losses | not taken now | neither ai-toolkit nor ltx-trainer exposes them; a custom loss is a research project; the flow residual is measured after the fact instead (LT-52) |
+| Two-stage training (coarse 2000 steps, then fine 1e-5 + weight decay) | not now | our runs are <= 1000 steps on a $5-15 ceiling; a second stage doubles cost; reconsider after the first video LoRA's judge |
+| Previous/next shot (linked list) | taken, no training needed | LTX-2.5 `--image <start> 0 1.0` + `--image <end> N 1.0 guide` + `--video-conditioning <previous shot>` (ltx-pipelines args.py); LT-60..62 check the join; proven by one 3-shot test |
+
+Root causes of the five eras clips (2026-10-24, `eras_video_2026-10-24/`): farm_storm (cows run out of frame, the farmer
+vanishes) = the prompt asked for it on a static still, not the model (VQ-32 vs VQ-16: never prompt a hero out of frame);
+wildwest_train (heroes blur in the last 3 s) = the single-photo length limit (VQ-13, LT-53); ice_age_tribe (nearly frozen,
+hold 0.85) = first-frame anchor bias on a crowded still (VQ-15, VQ-47: the prompt must name one action per hero);
+disco_1970s and school_class act and keep identity (VQ-12, VQ-18 PASS).

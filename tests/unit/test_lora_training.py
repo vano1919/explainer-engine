@@ -2,6 +2,8 @@
 judge, on synthetic data (no GPU, no network)."""
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 from PIL import Image
@@ -375,3 +377,21 @@ def test_shot_identity_across_a_cut():
     assert "LT-61" in _qa_rules(thick)
     shirt = video_qa.judge_identity(video_qa.shot_identity(a[-1], _drawn_clip(shirt=(220, 40, 40))[0], hero))
     assert _qa_rules(shirt) == {"LT-62"}
+
+
+def test_video_criteria_registry_matches_the_rulebook():
+    """VQ-01..50 (ვანო 2026-10-24): every criterion has one home in docs/LORA_TRAINING.md and every LT rule a code
+    criterion points at exists in the rules table."""
+    import json
+    root = Path(__file__).resolve().parents[2]
+    reg = json.loads((root / "explainer_engine/training/video_criteria.json").read_text(encoding="utf-8"))
+    doc = (root / "docs/LORA_TRAINING.md").read_text(encoding="utf-8")
+    ids = [c["id"] for c in reg["criteria"]]
+    assert ids == [f"VQ-{i:02d}" for i in range(1, 51)]
+    for c in reg["criteria"]:
+        assert f"| {c['id']} |" in doc, c["id"]
+        assert c["check"] in ("code", "eye", "na")
+        if c["check"] == "code":
+            assert c.get("rules"), c["id"]
+        for r in c.get("rules", []):
+            assert f"| {r} |" in doc, (c["id"], r)

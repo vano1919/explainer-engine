@@ -28,10 +28,19 @@ audit (free) -> config check (free) -> cost projection (free) -> pod with ledger
 
 ## Video and edit LoRAs
 - Motion LoRA (LTX-2.5, ltx-trainer): clips `(F-1) % 8 == 0`, sizes /32, short coherent shots, captions describe the
-  movement without character names; rank 32, LR 1e-4, ~2,000 steps max, validation every 250 with first-frame
-  conditioning; judge with/without on `benchmark_10shot.json`; motion must not drop (LT-31), jitter must not rise (LT-32).
+  movement without character names; rank 32, LR 3e-5..1e-4 with cosine + 5-10 % warm-up (ვანო's report 2026-10-24,
+  LT-10), rank >= 64 only with `use_rslora`; ~2,000 steps max, validation every 250 with first-frame conditioning; judge
+  with/without on `benchmark_10shot.json`; motion must not drop (LT-31), jitter must not rise (LT-32). The creator's 50
+  criteria (VQ-01..50, `training/video_criteria.json`, LORA_TRAINING section 7) say what the judge looks at by eye.
+- Linked shots (ვანო 2026-10-24, "linked list"): no training; shot B = `--image <A's last frame> 0 1.0` +
+  `--image <B's end keyframe> N 1.0 guide` + `--video-conditioning <A>` in ltx-pipelines; `shot-identity A B` checks the
+  join (LT-60..62). Never prompt a hero out of frame on a single still (farm_storm 2026-10-24).
 - Next-pose edit LoRA (Qwen-Image-Edit-2511): only after the zero-shot test fails; pairs from one master plate, control
   and target by file name; judge drift of the set and camera (LT-41) and that the pose really changes (LT-42).
+  v1 (2026-10-24): 60 cartoon pairs redrawn into Wild Ink at strength 0.55 (0.7 invents objects) + 16 own pairs x2, so the
+  LoRA never pulls style toward the cartoons. Captions (v2 on): `nextpose, a later frame of the same continuous animated
+  shot, same camera: <what changed>` (FS-05): the LoRA learns "a frame of a video", not "a photo". A keyframe pair counts
+  only once it animates: start -> end through LTX, `video-qa` + `shot-identity` PASS (physics cannot be read off a still).
 
 ## Voice / editing
 Own TTS voice (Orpheus, F5-TTS, CosyVoice2, Chatterbox) is feasible with 2-5 h of clean transcribed narration; check the

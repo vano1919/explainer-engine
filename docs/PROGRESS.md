@@ -1054,3 +1054,9 @@ built on researched testing practice, and for step-by-step control of the runnin
   ink x2.6 (flagged). Test: synthetic cut (same drawing PASS; recoloured set, thicker ink, new shirt each flagged).
 - Guard lesson (07:12): pod scripts that never send a status ping are STOPPED by a live guard at the boot deadline
   (default 25 min); the first eras pod died after 2 of 5 clips (~$0.3 lost). New pods get `boot_minutes` >= the job.
+- 08:27 UTC ვანო's full video report (50 criteria + advice; copy in project files
+  `lora_plan_2026-10-22/VIDEO_LORA_REPORT_vano_2026-10-24_ka.md`) -> `training/video_criteria.json` (VQ-01..50: 22 code,
+  27 eye, 1 n/a) + LORA_TRAINING section 7 with the taken / not-taken table (DLoRAL, flow/LPIPS losses and two-stage
+  training not taken, with reasons; lower video LR + warm-up, RS-LoRA at rank >= 64, "a frame of a video" captions and
+  the animate-the-pair gate taken). Linked shots need no training: LTX-2.5 start + end keyframes + video conditioning.
+  Eras clips' root causes written there (farm = my prompt; wildwest = length; ice_age = anchor bias on a crowd).
