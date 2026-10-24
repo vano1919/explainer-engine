@@ -46,10 +46,11 @@ disagreement is itself logged.
 
 | Result | Pictures |
 |---|---|
-| Logic errors | 2 of 20: ice_age_tribe (the mammoth is ambiguous, KG-09), underwater_city (a man without breathing gear inside a water-filled dome with a giant fish, KG-07/KG-09) |
+| Logic errors | 1 of 20: underwater_city (a man without breathing gear in a water-filled dome with a giant fish, KG-07/KG-09; the prompt asked for "a fish-farmer feeding giant fish" in glass domes) |
+| Drawn as asked, but reads ambiguously | 1: ice_age_tribe. The prompt asked for "a woman painting mammoths on a rock", and the model painted that, but without visible paint or brush the mammoth reads as a carving or a real animal (KG-09). Correction 2026-10-24 19:55: this was first counted as a logic error before the prompt was read |
 | Weak but readable | 1: japan_dojo (unclear how many swords there are and who holds which) |
 | Garbled text (REVIEW) | 3: disco_1970s, jazz_1920s, ussr_queue |
 | Logical, but small crowded figures (limited motion, KP-13) | 3: ussr_queue, greek_agora, school_class |
 
-Both logic errors come from ambiguous prompts. That is why the composition fields on the card (relations, support, height,
+Both problem pictures do what their prompts said; the prompts were ambiguous. That is why the composition fields on the card (relations, support, height,
 free space) come first and a style LoRA retraining does not.

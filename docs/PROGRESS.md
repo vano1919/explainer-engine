@@ -1116,5 +1116,5 @@ Edit-2511 (a different base); the one wldnk master (ice age) kept its style thro
 [KEYFRAME_GATE](KEYFRAME_GATE.md) (KG-01..KG-16, new docs_lint family KG) and `qa/keyframe_gate.py`: questions from the shot
 card for the pod's VLM, verdict (hard FAIL / soft REVIEW), at most 3 tries, `blame` (base without LoRA + another seed), the
 `qa_log.jsonl` summary (prompt rule first; a LoRA retraining candidate at 15 cases of one type), and `check_stack` (style LoRA
-only on Qwen-Image-2512, scene LoRA only on Edit-2511). The approved 20-era sheet read by Claude: 2 logic errors of 20, both
-from ambiguous prompts. Test: `tests/unit/test_keyframe_gate.py` (7).
+only on Qwen-Image-2512, scene LoRA only on Edit-2511). The approved 20-era sheet read by Claude: 1 logic error of 20 (underwater dome) and the ice-age
+mammoth, which the prompt asked for as a rock painting; both prompts were ambiguous. Test: `tests/unit/test_keyframe_gate.py` (7).
