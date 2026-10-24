@@ -467,3 +467,35 @@ def test_a_crowded_keyframe_stays_in_the_word_limit_and_keeps_its_light():
     assert len(k.split()) <= F.MOMENT_WORDS_MAX and not style_prompt.check(k)
     assert s["frame"]["light"] in k  # the light carries the look
     assert all(k.count(c["tag"]) <= 1 for c in d["cast"].values())  # LY-09
+
+
+LOOK = {"phrase": "warm amber firelight with deep teal shadows", "lights": {"night": "deep indigo night with amber lamplit glow"}}
+
+
+def test_every_style_prompt_ends_with_the_episode_look_and_still_fits_lt65(tmp_path):
+    d = doc()
+    (tmp_path / "look.json").write_text(json.dumps({"schema": "episode_look/1", **LOOK}), encoding="utf-8")
+    d["style"]["look"] = "look.json"
+    shot(d, "S01-02")["frame"]["look"] = "night"
+    (tmp_path / "cards.json").write_text(json.dumps(d), encoding="utf-8")
+    d = F.load(tmp_path / "cards.json")  # AC-16: the look file is read next to the cards
+    assert not F.schema_errors(d) and not F.style_check(d)
+    style = [p for p in F.compose(d) + F.sheet_prompts(d) if p.get("lora") == "style"]
+    assert style and all(not style_prompt.check(p["prompt"]) for p in style)  # 40 words with the phrase (AC-17)
+    assert all(p["prompt"].endswith(LOOK["phrase"]) for p in style if p["id"] != "S01-02.first")
+    assert prompts(d)["S01-02.first"]["prompt"].endswith(LOOK["lights"]["night"])  # the scene's light variant
+    shot(d, "S01-02")["frame"]["look"] = "dawn"
+    assert "AC-17" in {f["rule"] for f in F.style_check(d)}  # a variant the look does not have
+    assert "AC-17" in rules(d, "FAIL")  # and the full check reports it instead of crashing
+
+
+def test_a_look_with_style_words_or_a_negative_of_its_own_fails_lt66():
+    d = doc()
+    d["style"]["look"] = {"phrase": "cinematic watercolour glow"}
+    assert "AC-17" in {f["rule"] for f in F.style_check(d) if f["severity"] == "FAIL"}
+    d = doc()
+    d["style"]["neg_keyframe"] = "text, extra fingers"
+    assert "LT-66" in {f["rule"] for f in F.style_check(d) if f["severity"] == "FAIL"}  # A3
+    assert prompts(doc())["S01-02.first"]["neg"] == style_prompt.NEGATIVE
+    shot(d := doc(), "S01-02")["action"]["peak"] = "takes a photo of the bus"
+    assert "LT-66" in {f["rule"] for f in F.style_check(d)}  # A8: another medium named in the moment

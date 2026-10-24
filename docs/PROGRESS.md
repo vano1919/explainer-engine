@@ -1327,3 +1327,23 @@ What was done:
 - Napoleon vs Genghis (214 shots), the bus example and film_1min all pass with 0 FAIL / 0 REVIEW. Tests
   `test_keyframe_tells_the_moment_at_its_peak_with_a_reaction_and_no_layout` and
   `test_keyframes_and_sheets_keep_the_moment_shape_and_name_each_figure_once`.
+## 2026-10-25 03:20 Tbilisi: episode look (AC-16..AC-19) and the prompt absolutes (LT-66)
+- ვანო asked for an episode-level colour layer that keeps colours consistent between the episode's pictures when places
+  and countries change, without changing the style LoRA's look, and for the list of prompting absolutes.
+- `qa/style_prompt.py`: `ABSOLUTES` (A1..A10), `NEGATIVE`, `INFERENCE`; other media or art styles in a prompt now FAIL
+  (LT-66). `compose/episode_look.py`: the look file measured from the approved key frame, a 10-word colour-and-light
+  phrase added to every prompt (the prompt still passes the 40-word rule), colour drift as REVIEW, and a bounded grade
+  (at most 0.35, originals kept). Tests: `tests/unit/test_episode_look.py` (absolutes frozen, clash, phrase, apply,
+  drift and grade). Nothing paid; the drift threshold is calibrated on the first episode.
+
+## 2026-10-25 03:20 Tbilisi: the script engine adds the episode look and keeps the LT-66 absolutes
+
+- `style.look` in the shot cards names the episode's look file (`episode_look/1`, read next to the cards by `film_shots.load`)
+  or gives its phrase and lights inline. A shot may name a light variant with `frame.look`. Every keyframe moment and hero
+  sheet then ends with the phrase through `episode_look.apply` (AC-17). The moment's word budget shrinks by the phrase, so
+  the whole prompt still passes `style_prompt.check` (40 words).
+- `style_check` FAILs a look phrase or variant with non-colour words or style words (AC-17), a variant the look lacks, and
+  any `neg_keyframe` other than `style_prompt.NEGATIVE` (LT-66 A3). Style-LoRA items now carry `neg` = NEGATIVE and
+  `inference` = `style_prompt.INFERENCE`. A8 caught "to take a photo" in film_1min S02-02, which now reads "to snap a picture".
+- Tests: `test_every_style_prompt_ends_with_the_episode_look_and_still_fits_lt65`,
+  `test_a_look_with_style_words_or_a_negative_of_its_own_fails_lt66`.

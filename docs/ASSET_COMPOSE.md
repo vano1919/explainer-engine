@@ -44,6 +44,10 @@ Code: `explainer_engine/compose/`. Tested by `tests/unit/test_compose.py`. Layou
 | AC-13 | A crop never enlarges a frame more than 1.6x of its render scale. Otherwise compose the shot, or render the source larger | FAIL | `reuse.check` |
 | AC-14 | **Style score:** DINOv2-small on 6 crops against the creator's 11 style photos, compared with a same-place control drawn in the LT-65 shape. More than 0.10 below the control is REVIEW. It is a measured hypothesis (one source type, D-59) and never fails a picture alone | REVIEW | `style_score` |
 | AC-15 | A cut-out is the figure alone: not cut by the picture's edge, and no patch of ground under the feet | FAIL | `library.check_cutout` |
+| AC-16 | **Episode look:** each episode has one look file (`episode_look/1`), measured from its approved key frame (Lab mean and spread, hue histogram, 6 palette colours) with one colour-and-light phrase and named light variants (night, interior ...). It sits on top of the style LoRA and never replaces it: the LT-66 absolutes stay as they are | FAIL without a look file once an episode has a key frame | `episode_look.make` |
+| AC-17 | The look phrase is at most 10 words of colour and light vocabulary only: no style or medium words (A8), no camera, size or number words (A6), not the trigger or the tail. It goes at the end of every style-LoRA prompt of the episode, and the whole prompt still passes LT-65/66 (40 words): scene words shrink, the absolutes never | FAIL | `episode_look.check_phrase`, `apply` |
+| AC-18 | **Colour drift:** each new picture's colour distance to the look (Lab mean shift in units of the look's spread, plus hue-histogram distance) above 0.35 is REVIEW. A hypothesis with one source type (D-59): calibrate on the first episode | REVIEW | `episode_look.drift` |
+| AC-19 | **Bounded grade:** a composed frame may be matched toward the look (Reinhard in Lab) at strength at most 0.35, lightness at half of it, so ink lines and drawing stay. The original file is kept; a grade never repaints | FAIL above 0.35 (the code caps it) | `episode_look.grade` |
 
 ## What the cartoons say (measured 2026-10-25, free)
 

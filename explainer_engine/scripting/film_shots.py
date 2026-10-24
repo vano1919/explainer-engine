@@ -22,6 +22,7 @@ import re
 import sys
 from pathlib import Path
 
+from explainer_engine.compose import episode_look
 from explainer_engine.qa import style_prompt
 from explainer_engine.scripting import shot_prompt_lint as lint
 from explainer_engine.standards import sourced_rules
@@ -80,8 +81,7 @@ CAMERA = {"static": "Static camera.", "push_in": "The camera pushes in slowly", 
 MOMENT_WORDS_MAX = style_prompt.MAX_WORDS
 BODY_WORDS = "thin-limbed and bulging-eyed"  # the caricature words a moment gives its lead (a card may set style.body)
 NEXTPOSE = "nextpose, a later frame of the same continuous animated shot, same camera: "
-NEG_KEYFRAME = ("text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, "
-                "extra limbs, blurry face, low resolution")
+NEG_KEYFRAME = style_prompt.NEGATIVE  # LT-66 A3: a style-LoRA picture's negative is exactly this, never per episode
 NEG_VIDEO = ("text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, "
              "deformed hands, extra fingers, flicker, still image")
 HEIGHTS = {"quarter": "a quarter", "third": "a third", "half": "half", "two_thirds": "two thirds", "most": "most"}
@@ -97,7 +97,28 @@ STOP = set("a an the and or but of to in on at by for with from his her their it
 
 
 def load(path: str | Path) -> dict:
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    """The cards; a ``style.look`` that names a look file (``episode_look/1``, AC-16) is read relative to them."""
+    doc = json.loads(Path(path).read_text(encoding="utf-8"))
+    look = doc.get("style", {}).get("look")
+    if isinstance(look, str):
+        doc["style"]["look"] = json.loads((Path(path).parent / look).read_text(encoding="utf-8"))
+    return doc
+
+
+def _look(doc: dict, prompt: str, light: str | None = None) -> str:
+    """AC-17: the episode's colour-and-light phrase (or the scene's named variant) at the end of a style-LoRA prompt,
+    through ``episode_look.apply`` so the words are never written by hand."""
+    look = doc["style"].get("look")
+    if not look:
+        return prompt
+    return episode_look.apply(prompt, look, light if light in look.get("lights", {}) else None)[0]  # unknown: AC-17 FAIL
+
+
+def _look_words(doc: dict, light: str | None = None) -> int:
+    look = doc["style"].get("look")
+    if not look:
+        return 0
+    return len((look["lights"][light] if light in look.get("lights", {}) else look["phrase"]).split())
 
 
 def schema_errors(doc: dict) -> list[str]:
@@ -269,7 +290,7 @@ def keyframe_prompt(doc: dict, shot: dict) -> str:
     light = len(pieces)
     pieces.append(["", f["light"]] if f.get("light") else [""])
     level = [0] * len(pieces)
-    budget = MOMENT_WORDS_MAX - len(doc["style"]["trigger"].split())
+    budget = MOMENT_WORDS_MAX - len(doc["style"]["trigger"].split()) - _look_words(doc, f.get("look"))  # AC-17
 
     def text() -> str:
         return ", ".join(x for x in (pc[lv] for pc, lv in zip(pieces, level)) if x).replace(",,", ",")
@@ -280,7 +301,7 @@ def keyframe_prompt(doc: dict, shot: dict) -> str:
             old, level[k] = level[k], lv
             if len(text().split()) > budget:
                 level[k] = old
-    return f"{doc['style']['trigger']}, {text()}"
+    return _look(doc, f"{doc['style']['trigger']}, {text()}", f.get("look"))
 
 
 def nextpose_prompt(doc: dict, shot: dict, *, end: bool) -> str:
@@ -373,7 +394,7 @@ def compose(doc: dict) -> list[dict]:
             continue
         if src == "keyframe":
             out.append({"id": f"{sid}.first", "kind": "keyframe", "lora": "style", "prompt": keyframe_prompt(doc, shot),
-                        "neg": style.get("neg_keyframe", NEG_KEYFRAME)})
+                        "neg": style_prompt.NEGATIVE, "inference": style_prompt.INFERENCE})
         elif src == "nextpose":
             out.append({"id": f"{sid}.first", "kind": "nextpose", "source": "master", "master": shot.get("master"),
                         "lora": "scene", "prompt": nextpose_prompt(doc, shot, end=False)})
@@ -423,9 +444,9 @@ def _sheet_text(doc: dict, tag: str) -> str:
               "each a little different in face and build"]
     out = head
     for x in pieces:
-        if len(f"{out}, {x}".split()) <= MOMENT_WORDS_MAX:
+        if len(f"{out}, {x}".split()) + _look_words(doc) <= MOMENT_WORDS_MAX:
             out = f"{out}, {x}"
-    return out
+    return _look(doc, out)
 
 
 def sheet_prompts(doc: dict) -> list[dict]:
@@ -439,7 +460,7 @@ def sheet_prompts(doc: dict) -> list[dict]:
         tag = c["tag"]
         out.append({"id": f"sheet.{cid}", "kind": "keyframe", "lora": "style",
                     "prompt": _sheet_text(doc, tag),
-                    "neg": doc["style"].get("neg_keyframe", NEG_KEYFRAME)})
+                    "neg": style_prompt.NEGATIVE, "inference": style_prompt.INFERENCE})
     return out
 
 
@@ -602,9 +623,22 @@ def check(doc: dict) -> list[dict]:
 
 
 def style_check(doc: dict) -> list[dict]:
-    """LT-65: every style-LoRA prompt (moment or hero sheet) passes ``qa/style_prompt.check``: the trigger first, at most
-    its word limit, no caption tail, no washed-out light, no camera or size words."""
+    """LT-65/LT-66: every style-LoRA prompt (moment or hero sheet) passes ``qa/style_prompt.check``: the trigger first, at
+    most its word limit, no caption tail, no washed-out light, no camera or size words, no other medium or art style; the
+    negative is exactly ``style_prompt.NEGATIVE`` (A3); the episode look's phrase and variants pass AC-17."""
     out = []
+    if doc["style"].get("neg_keyframe") not in (None, style_prompt.NEGATIVE):
+        out.append({"rule": "LT-66", "severity": "FAIL", "where": "style.neg_keyframe",
+                    "detail": "A3: the style LoRA's negative is exactly style_prompt.NEGATIVE"})
+    look = doc["style"].get("look")
+    if look:  # AC-17: the phrase and every light variant the shots name
+        names = ({s["frame"].get("look") for s in doc["shots"]} - {None}) & set(look.get("lights", {}))
+        out += [{"rule": f["rule"], "severity": f["severity"], "where": f"style.look.{n or 'phrase'}", "detail": f["detail"]}
+                for n in [None, *sorted(names)] for f in episode_look.check_phrase(look["lights"][n] if n else look["phrase"])]
+        out += [{"rule": "AC-17", "severity": "FAIL", "where": s["id"], "detail": f"no light variant '{s['frame']['look']}'"}
+                for s in doc["shots"] if s["frame"].get("look") and s["frame"]["look"] not in look.get("lights", {})]
+        if any(f["severity"] == "FAIL" for f in out):
+            return out
     for p in [*sheet_prompts(doc), *compose(doc)]:
         if p.get("lora") == "style":
             out += [{"rule": f["rule"], "severity": f["severity"], "where": p["id"], "detail": f["detail"]}

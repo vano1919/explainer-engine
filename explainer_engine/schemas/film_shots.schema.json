@@ -35,7 +35,13 @@
       "properties": {
         "trigger": {"$ref": "#/$defs/text", "description": "the style LoRA's trigger, first words of every keyframe prompt"},
         "video_sentence": {"$ref": "#/$defs/text", "description": "ONE fixed style sentence, first in every video prompt (KP-10)"},
-        "neg_keyframe": {"type": "string"},
+        "neg_keyframe": {"type": "string", "description": "LT-66 A3: only style_prompt.NEGATIVE itself is accepted"},
+        "body": {"type": "string", "description": "the caricature body words every moment gives its lead (LT-65)"},
+        "look": {"description": "AC-16: the episode look file (episode_look/1, path next to this file) or its phrase and lights",
+                 "oneOf": [{"type": "string"},
+                           {"type": "object", "required": ["phrase"],
+                            "properties": {"phrase": {"type": "string"},
+                                           "lights": {"type": "object", "additionalProperties": {"type": "string"}}}}]},
         "neg_video": {"type": "string"}
       }
     },
@@ -92,6 +98,7 @@
               "over": {"type": "string", "description": "OTS: the cast id whose shoulder is in the foreground"},
               "place": {"type": "string", "description": "a key of places"},
               "light": {"type": "string"},
+              "look": {"type": "string", "description": "a named light variant of the episode look (AC-17: night, interior ...)"},
               "crosses_line": {"type": "boolean", "description": "true only when the shot means to cross the 180-degree line"},
               "relations": {"type": "array", "items": {"$ref": "#/$defs/text"},
                             "description": "unambiguous relations between things in the picture, one sentence each: 'a living woolly mammoth stands behind the boulder' (KP-33)"},
