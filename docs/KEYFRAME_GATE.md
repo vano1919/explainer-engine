@@ -66,9 +66,9 @@ computes the layout from real sizes and the camera, and Claude only names the th
 | ID | Rule | Check |
 |---|---|---|
 | LY-01 | **Real heights come from one table** (`SIZES`), each with its reference: adult ~1.7 m, city bus ~3.0-3.2 m, woolly mammoth 2.7-3.4 m at the shoulder. Cartoon figures keep real heights | [code] |
-| LY-02 | **The shot size fixes the lead figure's share of the frame** (`LEAD_SHARE`: EWS 12 %, WS 35 %, MWS 82 %, MS ~1.9x cut by the frame ...). Every other figure follows by perspective: height = focal × real height / distance. The camera height and the horizon come from the angle | [code] |
+| LY-02 | **The shot size fixes the lead figure's share of the frame** (`LEAD_SHARE`: EWS 12 %, WS 35 %, MWS 82 %, MS ~1.9x cut by the frame ...). Every other figure follows by perspective: height = focal × real height / distance. The camera height and the horizon come from the angle; in a full shot or closer the camera is aimed at the lead (headroom `TOP`), so a full shot keeps the feet in the frame and a close-up is given by the head | [code] |
 | LY-03 | **A figure outside the frame FAILs**; one cut by the frame edge in a wide shot is REVIEW | [code] |
-| LY-04 | **A figure that cannot be seen or cannot act FAILs or is REVIEWed.** FAIL: more than 60 % hidden behind a nearer figure (the scenario's mammoth 6 m behind the bus was 100 % hidden until it was raised on the hill), or two figures at the same depth overlapping by more than half. REVIEW: smaller than 4 % of the frame height (KP-13) | [code] |
+| LY-04 | **A figure that cannot be seen or cannot act FAILs or is REVIEWed.** FAIL: more than 60 % hidden behind a nearer figure (the scenario's mammoth 6 m behind the bus was 100 % hidden until it was raised on the hill; the girl sitting on the bus step was hidden behind the nurse), or two figures at the same depth overlapping by more than half. REVIEW: smaller than 4 % of the frame height (KP-13) | [code] |
 | LY-05 | **The technical prompt:** every figure's height share ± 5 %, its centre and its feet in % of the frame | [code] |
 | LY-06 | **The relative prompt:** every figure compared with the lead in words ("about twice as tall as", "about 11 metres behind", "about 5 metres higher up") | [code] |
 | LY-07 | **EliGen boxes** come from the same layout | [code] |

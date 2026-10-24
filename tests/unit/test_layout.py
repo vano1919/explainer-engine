@@ -73,3 +73,15 @@ def test_blockout_is_nearer_lighter(tmp_path):
     assert at(OLD) > at(BUS) > 0
     mx0, my0, mx1, my1 = item(lay, MAMMOTH)["box"]
     assert 0 < im.getpixel((int((mx0 + mx1) / 2 * 1280), int((my0 + 0.1 * (my1 - my0)) * 720))) < at(BUS)
+
+
+def test_close_shots_frame_the_head_and_a_hidden_seated_girl_fails():
+    cu = L.solve({"size": "CU", "items": [{"tag": OLD, "kind": "old_adult", "where": "center", "lead": True}]})
+    assert cu["items"][0]["box"][1] == L.TOP["CU"]                             # headroom from the top, body cut below
+    assert "the head 70 % ± 5 % of the frame height" in L.technical(cu)
+    mws = L.solve({"size": "MWS", "items": [
+        {"tag": OLD, "kind": "old_adult", "where": "left", "lead": True},
+        {"tag": "the nurse", "kind": "adult", "where": "center"},
+        {"tag": "the pink-haired girl", "kind": "adult_sitting", "where": "center_back", "depth": 2.5, "elev": 0.4}]})
+    assert 0.85 < mws["items"][0]["box"][3] < 0.95                             # a full shot keeps the lead's feet in frame
+    assert any(f["where"] == "the pink-haired girl" and "hidden behind the nurse" in f["detail"] for f in L.check(mws))

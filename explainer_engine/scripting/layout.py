@@ -23,6 +23,7 @@ from pathlib import Path
 SIZES = {
     "adult": {"h": 1.72, "w": 0.55, "ref": "average adult height ~1.7 m (Wikipedia: Human height)"},
     "old_adult": {"h": 1.65, "w": 0.55, "ref": "adult height, a little stooped"},
+    "adult_sitting": {"h": 1.30, "w": 0.6, "ref": "seated adult, head ~1.3 m above the seat's floor"},
     "child": {"h": 1.20, "w": 0.40, "ref": "child of ~7 years ~1.2 m (WHO growth reference)"},
     "city_bus": {"h": 3.05, "w": 12.0, "ref": "12 m single-deck city bus, ~3.0-3.2 m tall (Wikipedia: Bus)"},
     "woolly_mammoth": {"h": 3.3, "w": 4.5, "ref": "woolly mammoth shoulder height 2.7-3.4 m (Wikipedia: Woolly mammoth)"},
@@ -34,7 +35,8 @@ SIZES = {
     "phone": {"h": 0.15, "w": 0.075, "ref": "smartphone ~15 cm"},
 }
 # LY-02: how big the LEAD figure is in each shot size, as a share of the frame height (its full height; >1 = cut by the frame)
-LEAD_SHARE = {"EWS": 0.12, "WS": 0.35, "MWS": 0.82, "MS": 1.9, "MCU": 2.8, "CU": 5.5}
+LEAD_SHARE = {"EWS": 0.12, "WS": 0.35, "MWS": 0.82, "MS": 1.9, "MCU": 2.8, "CU": 4.2}
+TOP = {"MWS": 0.08, "MS": 0.1, "MCU": 0.12, "CU": 0.15}   # headroom of the lead in close shots, share of the frame
 X = {"left": .22, "center": .5, "right": .78, "left_back": .3, "center_back": .5, "right_back": .7, "left_front": .18,
      "right_front": .82}
 DEPTH = {"front": 0.8, "mid": 1.0, "back": 1.7}
@@ -58,6 +60,11 @@ def solve(spec: dict) -> dict:
     cam_h = EYE.get(spec.get("angle", "eye"), 1.6)
     # a low camera tilts up (the horizon sinks in the frame), a high one tilts down (the horizon rises)
     horizon = {"eye": 0.5, "low": 0.68, "high": 0.3}[spec.get("angle", "eye")]
+    if spec["size"] not in ("EWS", "WS"):
+        # LY-02: in a full or closer shot the camera is aimed at the lead (tilted, as a camera operator frames), so the
+        # lead's head sits at a fixed headroom from the top edge instead of the level-camera horizon
+        lead_bottom = TOP[spec["size"]] + SIZES[lead["kind"]]["h"] * f / z0
+        horizon = lead_bottom - cam_h * f / z0
     out = []
     for it in items:
         size = SIZES[it["kind"]]
@@ -114,13 +121,19 @@ def _pct(v: float) -> str:
 
 
 def technical(layout: dict) -> str:
-    """LY-05: every figure as numbers with a tolerance."""
+    """LY-05: every figure as numbers with a tolerance; a figure taller than the frame is given by its head (~1/6 of a
+    cartoon figure's height)."""
     parts = []
     for it in layout["items"]:
         x0, y0, x1, y1 = it["box"]
-        parts.append(f"{it['tag'][0].upper() + it['tag'][1:]}: {_pct(min(it['height'], 1.0))} ± {_pct(TOL)} of the frame height"
-                     f"{' (cut by the frame)' if it['height'] > 1 else ''}, centred {_pct(it['cx'])} from the left edge, "
-                     f"feet {_pct(min(y1, 1.0))} from the top edge")
+        tag = it["tag"][0].upper() + it["tag"][1:]
+        if it["height"] > 1.0:
+            parts.append(f"{tag}: the head {_pct(min(it['height'] / 6, 0.9))} ± {_pct(TOL)} of the frame height, top of "
+                         f"the head {_pct(max(y0, 0))} from the top edge, centred {_pct(it['cx'])} from the left edge, the "
+                         f"body cut by the bottom edge")
+        else:
+            parts.append(f"{tag}: {_pct(it['height'])} ± {_pct(TOL)} of the frame height, centred {_pct(it['cx'])} from "
+                         f"the left edge, feet {_pct(min(y1, 1.0))} from the top edge")
     return ". ".join(parts) + "."
 
 
