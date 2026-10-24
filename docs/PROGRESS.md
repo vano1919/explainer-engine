@@ -1292,3 +1292,38 @@ Follow-up 2: the keyframe words are built by levels (bare tag head -> with side 
 sides, others in full, the rest of the place, relations, so a crowded shot (the 1-minute film's six figures came to 101
 words) stays at 90 and keeps its light; the 1-minute film card recoloured ("flat grey daylight", "empty white") and its
 "a living woolly mammoth" relations named by tag (0 FAIL, 0 REVIEW).
+
+## 2026-10-25 03:30 Tbilisi: shots composed from reusable assets (AC-01..AC-15), LT-65 without the tail
+
+ვანო's plan (02:19): the style LoRA draws only assets, code composes the shots (micro scenes and battles), assets are reused.
+He asked to make the system ready before any generation, starting with the free part.
+
+What was done:
+- A free analysis of why the style faded (https://claude.ai/artifact/BCfwRAUtF34g9xcS1bjk6D). The v5 training samples drew
+  the film's own heroes in the approved look from short story prompts without the tail. LT-65 now asks for that shape
+  (at most 40 words, no layout words). The tail is flagged.
+- `explainer_engine/compose/`:
+  - `library` (records, mirrored views, the list of what must be drawn, cut-out check);
+  - `frame` (perspective placement, horizon match, contact shadow, haze, depth order);
+  - `crowd` (scatter by ground area, clone check);
+  - `reuse` (same setup → crop, zoom limit 1.6x, teasers);
+  - `style_score` (DINOv2 against his photos and a same-place control, REVIEW only).
+- The cartoon footage was measured for the planner: shot median 3.2 s, ≈20 % return to an earlier setup, camera still in
+  ≈2/3 of shots.
+- The first CPU test with the composition test's assets. It composed a WS, a MWS, a reuse crop and a 90-figure crowd. Two
+  real defects were caught: a plate with the wrong horizon for close shots (AC-05), and a cut-out carrying a block of snow
+  (AC-15).
+
+## 2026-10-25 03:50 Tbilisi: the script engine's picture prompts follow the new LT-65 (moment shape, 40 words, no tail)
+
+- `film_shots.keyframe_prompt` is now `wldnk style, <the moment>`: the place's head, the lead with caricature body words
+  (`style.body`, default `BODY_WORDS`) and the action at its peak, one reaction, the light, then others briefly while words
+  remain. It stays within `style_prompt.MAX_WORDS` (40) and has no tail and no camera, size or position words. Sizes, sides,
+  heights, supports and counts stay on the gate card for the composition of assets (docs/ASSET_COMPOSE.md).
+- KP-16 under D-74: the composed first frame of the video keeps the start pose, and the style-LoRA moment shows the peak
+  with a reaction, as the approved eras pictures did.
+- Hero sheets use the same shape (`_sheet_text`, ≤40 words). `style_check` runs `qa/style_prompt.check` on every
+  style-LoRA prompt.
+- Napoleon vs Genghis (214 shots), the bus example and film_1min all pass with 0 FAIL / 0 REVIEW. Tests
+  `test_keyframe_tells_the_moment_at_its_peak_with_a_reaction_and_no_layout` and
+  `test_keyframes_and_sheets_keep_the_moment_shape_and_name_each_figure_once`.

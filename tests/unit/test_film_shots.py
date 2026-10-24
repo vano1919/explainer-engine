@@ -4,6 +4,7 @@ import copy
 import json
 from pathlib import Path
 
+from explainer_engine.qa import style_prompt
 from explainer_engine.scripting import film_shots as F
 from explainer_engine.scripting.shot_prompt_lint import check_shot
 
@@ -38,13 +39,14 @@ def test_the_worked_example_is_clean_and_valid():
     assert F.check(d) == []
 
 
-def test_keyframe_starts_with_the_trigger_and_shows_the_start_not_the_peak():
+def test_keyframe_tells_the_moment_at_its_peak_with_a_reaction_and_no_layout():
     p = prompts(doc())["S01-02.first"]
-    assert p["kind"] == "keyframe" and p["prompt"].startswith("wldnk style, full-body shot at eye level")
-    assert "squints at the far snowy horizon" in p["prompt"]
-    assert "throws both hands up" not in p["prompt"]  # the peak is the video's job
-    assert "the old man with round glasses and a red scarf on the left" in p["prompt"]
-    assert p["prompt"].endswith(F.STYLE_TAIL) and len(p["prompt"].split()) <= F.KEYFRAME_WORDS_MAX  # LT-65
+    assert p["kind"] == "keyframe" and p["prompt"].startswith("wldnk style, a snowy plain")  # LT-65: trigger, place
+    assert "the old man, thin-limbed and bulging-eyed, throws both hands up" in p["prompt"]  # body words, the peak
+    assert "the nurse turns her head toward him" in p["prompt"]  # someone's reaction
+    assert "cold blue morning light" in p["prompt"]
+    assert not style_prompt.check(p["prompt"])  # no tail, no camera/size/position, at most 40 words
+    assert "full-body" not in p["prompt"] and "on the left" not in p["prompt"]  # the layout is the gate card's
     assert "cartoon" not in p["neg"].lower()  # KP-09
 
 
@@ -231,18 +233,17 @@ def test_composition_goes_to_the_gate_card_and_the_cut_prompt_not_the_keyframe_w
     assert "filling about half of the frame height" in k and "%" not in k and "55" not in k  # numbers get drawn (KP-32)
 
 
-def test_keyframes_and_sheets_carry_the_style_tail_and_name_each_figure_once():
+def test_keyframes_and_sheets_keep_the_moment_shape_and_name_each_figure_once():
     d = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
     style = [p for p in F.compose(d) + F.sheet_prompts(d) if p.get("lora") == "style"]
-    assert style and all(p["prompt"].endswith(F.STYLE_TAIL) for p in style)
-    assert all(len(p["prompt"].split()) <= F.KEYFRAME_WORDS_MAX for p in style)
+    assert style and not [f for p in style for f in style_prompt.check(p["prompt"])]  # LT-65
     for p in style:  # LY-09: a repeated tag drew a twin
         assert all(p["prompt"].count(c["tag"]) <= 1 for c in d["cast"].values())
     s = next(s for s in d["shots"] if s["source"] == "keyframe" and len(s.get("blocking", [])) >= 4)
-    k = F.keyframe_prompt(d, s)
-    assert all(F._core(F._tag(d, b["who"])) in k for b in s["blocking"])  # everyone is placed, briefly if need be
-    d["style"]["tail"] = "other tail"
-    assert ("LT-65" in {f["rule"] for f in F.style_check(d)}) is False  # the doc's own tail is used throughout
+    card = {c["id"]: c for c in F.gate_cards(d)}[f"{s['id']}.first"]
+    assert len(card["people"]) == len(s["blocking"])  # everyone is placed and counted by the card, not the words
+    d["style"]["body"] = "a camera close-up"
+    assert "LT-65" in {f["rule"] for f in F.style_check(d)}  # a layout word in the moment is caught
 
 
 def test_each_prompt_names_its_lora_and_the_gate_gets_a_card():
@@ -404,7 +405,7 @@ def test_a_partly_visible_figure_is_written_and_counted_without_support():
     s["blocking"].append({"who": "mammoth", "where": "right", "facing": "left", "partial": "the trunk"})
     assert "KP-31" not in rules(d, "FAIL")
     k = prompts(d)["S01-02.first"]["prompt"]
-    assert "only the trunk of the woolly mammoth" in k  # its side is the gate card's when words run out
+    assert "the woolly mammoth with a broken left tusk" not in k and "right" not in k  # the card carries it
     card = {c["id"]: c for c in F.gate_cards(d)}["S01-02.first"]
     assert card["people"][-1]["partial"] == "the trunk"
 
@@ -463,6 +464,6 @@ def test_a_crowded_keyframe_stays_in_the_word_limit_and_keeps_its_light():
     s["blocking"].append({"who": "mammoth", "where": "center_back", "facing": "left", "on": "standing on the hill",
                           "height": "third"})
     k = F.keyframe_prompt(d, s)
-    assert len(k.split()) <= F.KEYFRAME_WORDS_MAX and k.endswith(F.STYLE_TAIL)
+    assert len(k.split()) <= F.MOMENT_WORDS_MAX and not style_prompt.check(k)
     assert s["frame"]["light"] in k  # the light carries the look
-    assert all(F._core(F._tag(d, b["who"])) in k for b in s["blocking"])  # everyone still counted
+    assert all(k.count(c["tag"]) <= 1 for c in d["cast"].values())  # LY-09

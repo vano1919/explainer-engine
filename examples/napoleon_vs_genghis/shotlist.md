@@ -7,7 +7,7 @@
 ### `0:00.0` S01-01 INSERT, 3 s, full: The march stops on one beat: something is wrong.
 - NARRATOR: In September 1812, Napoleon marched a hundred thousand men into a fog outside Moscow.
 - First frame (new picture, style LoRA):
-  > wldnk style, close insert shot at eye level of a dirt road through a birch forest swallowed by thick white fog, a wooden drumstick hangs above a French drum in the fog, cold white morning light, early morning, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a dirt road through a birch forest swallowed by thick white fog, the drumstick strikes the drum skin twice, cold white morning light
 - Video (ltx-2.5-dev, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. A wooden drumstick hangs above a French drum in the fog, then the drumstick strikes the drum skin twice, and the drumstick stops in mid-air, shaking. Nobody speaks. Static camera. We hear a slow marching drum in the fog and two sharp drum beats.
 
@@ -22,7 +22,7 @@
 
 ### `0:09.0` S01-05 EWS, 3 s, light: Reveal: an army no European has seen in six centuries.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sit still on their horses along the ridge, dawn light breaking through thin fog, thin fog lies in front of the ridge, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, raise their bows all at once, dawn light breaking through thin fog
 - Video (ltx-2.5-distilled, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, sit still on their horses along the ridge, then raise their bows all at once, and hold the bows high against the sky. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge and horses snorting.
 
@@ -32,21 +32,21 @@
 ### `0:12.0` S02-01 WS, 4 s, full: The columns stop, row after row.
 - NARRATOR: They came out of it in the year 1223.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a dirt road through a birch forest swallowed by thick white fog, the ranks of French infantry in dark blue coats with white crossbelts in the center, march out of the fog in long blue columns, cold white morning light, early morning, the fog bank rises behind the columns, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a dirt road through a birch forest swallowed by thick white fog, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, jerk to a halt, row after row, cold white morning light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, march out of the fog in long blue columns, then jerk to a halt, row after row, and stand frozen with muskets on their shoulders. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over open grass and boots stamping to a halt.
 
 ### `0:16.0` S02-02 MS, 4 s, light: The emperor sees what his army walked into.
 - NARRATOR: And the army waiting for them belonged to Genghis Khan.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a dirt road through a birch forest swallowed by thick white fog, the short general in a grey greatcoat and a black bicorne hat in the center, sits his white horse at the edge of the fog, cold white morning light, early morning, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a dirt road through a birch forest swallowed by thick white fog, the short general, thin-limbed and bulging-eyed, lifts a small brass telescope to his eye, cold white morning light
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, in the center, sits his white horse at the edge of the fog, then lifts a small brass telescope to his eye, and holds the telescope dead still. His brows pull together. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over open grass and a horse shifting its hooves.
 
 ### `0:20.0` S02-03 CU, 4 s, light: The khan, the man waiting on the other side.
 - NARRATOR: Napoleon will win the only battle the khan gives him.
 - First frame (new picture, style LoRA):
-  > wldnk style, close-up on the face at eye level of a long low grassy ridge on the open steppe, the tall khan with a long grey beard and a blue fur-trimmed robe in the center, sits his horse on the ridge, perfectly still, dawn light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the tall khan with a long grey beard and a blue fur-trimmed robe, thin-limbed and bulging-eyed, lifts his chin slowly toward the fog, dawn light
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall khan with a long grey beard and a blue fur-trimmed robe, in the center, sits his horse on the ridge, perfectly still, then lifts his chin slowly toward the fog, and narrows his eyes and holds them there. His mouth stays flat, his eyes do not blink. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge.
 
@@ -60,13 +60,13 @@
 ### `0:28.0` S02-05 INSERT, 4 s, light: Two kinds of war in two hands.
 - NARRATOR: So what happens when the man who conquered Europe meets the man who conquered Asia?
 - First frame (new picture, style LoRA):
-  > wldnk style, close insert shot at eye level of an endless open grass steppe under a huge pale sky, a French musket and a Mongol bow lie crossed on the grass, soft gold morning light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, a gust of wind shakes the bowstring, soft gold morning light
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. A French musket and a Mongol bow lie crossed on the grass, then a gust of wind shakes the bowstring, and the bowstring settles and hums. Nobody speaks. Static camera. We hear wind over open grass.
 
 ### `0:32.0` S02-06 EWS, 4 s, hold: Title beat: the two armies, a valley apart.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts in the background on the left, standing in the dry steppe grass, the line of Mongol horse archers, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, the line of Mongol horse archers, soft gold morning light
 - Video (camera, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. Everyone stays in frame. The camera pushes in slowly, ending on the gap of empty grass between the two armies in the middle of the frame. We hear wind over open grass.
 
@@ -76,7 +76,7 @@
 ### `0:36.0` S03-01 WS, 4 s, full: His method, shown as a drill.
 - NARRATOR: Napoleon had trained as an artillery officer.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a French army camp on the open steppe, the French gun crew in dark blue jackets beside a bronze cannon in the center, stand ready around the cannon, warm late afternoon light, white canvas tents, stacked muskets and bronze cannons, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a French army camp on the open steppe, the French gun crew in dark blue jackets beside a bronze cannon, thin-limbed and bulging-eyed, ram a cannonball down the barrel and jump clear, warm late afternoon light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The French gun crew in dark blue jackets beside a bronze cannon, in the center, stand ready around the cannon, then ram a cannonball down the barrel and jump clear, and freeze in their places beside the wheels. Nobody speaks. Everyone stays in frame. Static camera. We hear a busy army camp, distant shouted orders and a ramrod thumping.
 
@@ -97,47 +97,47 @@
 ### `0:47.0` S03-04 MS, 4 s, full: The infantry's reach is short.
 - NARRATOR: His muskets reached about a hundred.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a French army camp on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, stand in a line with muskets at the shoulder, warm late afternoon light, white canvas tents, stacked muskets and bronze cannons, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a French army camp on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, swing the muskets down and fire one volley, warm late afternoon light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, stand in a line with muskets at the shoulder, then swing the muskets down and fire one volley, and lower the muskets in a cloud of white smoke. Nobody speaks. Everyone stays in frame. Static camera. We hear a busy army camp, distant shouted orders and one musket volley.
 
 ### `0:51.0` S03-05 EWS, 4 s, hold: The other machine: a herd that is an army.
 - NARRATOR: Genghis Khan built his army to move.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sitting on horses in the grass, golden evening light, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, golden evening light
 - Video (camera, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. Everyone stays in frame. The camera pans right, ending on the herd stretching to the horizon. We hear horses grazing, a far-off horn and many hooves on turf.
 
 ### `0:55.0` S03-06 MWS, 4 s, full: A rider changes horses at a gallop's end.
 - NARRATOR: Every rider brought three or four horses.
 - First frame (new picture, style LoRA):
-  > wldnk style, full-body shot at eye level of a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, ride up beside a fresh spare horse, golden evening light, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, leap from one saddle onto the other horse, golden evening light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, ride up beside a fresh spare horse, then leap from one saddle onto the other horse, and sit the fresh horse, the tired one trotting beside. Nobody speaks. Everyone stays in frame. Static camera. We hear horses grazing, a far-off horn and a saddle creaking.
 
 ### `0:59.0` S03-07 MS, 4 s, full: The bow: drawn, released.
 - NARRATOR: His archers could drop an arrow four hundred metres away.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, nock arrows on short curved bows, golden evening light, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, pull the bows back and loose the arrows high, golden evening light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, nock arrows on short curved bows, then pull the bows back and loose the arrows high, and hold the bows up as the strings settle. Nobody speaks. Everyone stays in frame. Static camera. We hear horses grazing, a far-off horn and bowstrings snapping.
 
 ### `1:03.0` S03-08 MCU, 4 s, light: The khan's way of choosing men.
 - NARRATOR: He promoted men for what they did, not for their fathers.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium close-up from the chest up at eye level of a Mongol camp of round white felt yurts on the steppe, the tall khan with a long grey beard and a blue fur-trimmed robe in the center, watches something beyond the frame, golden evening light, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a Mongol camp of round white felt yurts on the steppe, the tall khan with a long grey beard and a blue fur-trimmed robe, thin-limbed and bulging-eyed, lifts his chin once, slowly, golden evening light
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall khan with a long grey beard and a blue fur-trimmed robe, in the center, watches something beyond the frame, then lifts his chin once, slowly, and keeps his chin raised. His eyes crease a little at the corners. Nobody speaks. Everyone stays in frame. Static camera. We hear horses grazing, a far-off horn.
 
 ### `1:07.0` S03-09 INSERT, 4 s, light: Two weapons side by side, two philosophies.
 - First frame (new picture, style LoRA):
-  > wldnk style, close insert shot at eye level of an endless open grass steppe under a huge pale sky, a heavy supply wagon wheel sinks in soft mud, soft gold morning light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, a horse's hoof stamps down beside it and lifts away, soft gold morning light
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. A heavy supply wagon wheel sinks in soft mud, then a horse's hoof stamps down beside it and lifts away, and the wheel stays stuck in the mud. Nobody speaks. Static camera. We hear wind over open grass and mud sucking at a wheel.
 
 ### `1:11.0` S03-10 EWS, 4 s, hold: The gap between the armies closes.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts in the background on the left, standing in the dry steppe grass, the line of Mongol horse archers, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, the line of Mongol horse archers, soft gold morning light
 - Video (camera, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. Everyone stays in frame. The camera pushes in slowly, ending on the two armies small on each side of the empty valley. We hear wind over open grass.
 
@@ -146,7 +146,7 @@
 
 ### `1:15.0` S04-01 WS, 4 s, full: A lone rider comes to the emperor's tents.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap on the right, rides up toward the tents, the tall marshal on the left, the short general in the center, the mameluke rider, warm late afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap, thin-limbed and bulging-eyed, pulls his horse up hard, the tall marshal, the short general, warm late afternoon light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young interpreter with a braided forelock and a green felt cap, on the right, rides up toward the tents, then pulls his horse up hard, and sits the horse still in front of the generals. Nobody speaks. Everyone stays in frame. Static camera. We hear flags snapping in the wind, a quiet camp, hooves slowing on turf and a horse snorting.
 
@@ -262,7 +262,7 @@
 
 ### `2:30.0` S04-17 EWS, 3 s, light: On the far ridge, riders watch the camp.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sit their horses along the far ridge, warm late afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, turn their heads together toward the camp, warm late afternoon light
 - Video (ltx-2.5-distilled, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, sit their horses along the far ridge, then turn their heads together toward the camp, and sit still, watching. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge and wind over the ridge.
 
@@ -299,7 +299,7 @@
 ### `2:51.0` S05-01 WS, 5 s, light: Wagons: the army's stomach.
 - NARRATOR: Napoleon's army ate from wagons, and from the farms along the road.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, dim violet evening light, the covered wagons stand in a long line on the grass, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long camp of covered supply wagons on the open steppe, dim violet evening light
 - Video (ltx-2.5-distilled, 121 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. Static camera. We hear wind over open grass, a wagon creaking and a harness jingling.
 
@@ -313,20 +313,20 @@
 ### `3:00.0` S05-03 INSERT, 4 s, full: Only grass.
 - NARRATOR: Only grass. And grass feeds horses, not men.
 - First frame (new picture, style LoRA):
-  > wldnk style, close insert shot at eye level of an endless open grass steppe under a huge pale sky, a French cavalry horse tears up a mouthful of grass, dim violet evening light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the horse lifts its head, chewing, dim violet evening light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. A French cavalry horse tears up a mouthful of grass, then the horse lifts its head, chewing, and the horse stands chewing in the wind. Nobody speaks. Static camera. We hear wind over open grass.
 
 ### `3:04.0` S05-04 MS, 5 s, full: The emperor's impatience.
 - NARRATOR: So he needed his battle, and he needed it fast.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat in the center, bends over the table between the candles, warm candlelight, a folding wooden table with two candles, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, slams his fist down on the table, warm candlelight
 - Video (ltx-2.5-dev, 121 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, in the center, bends over the table between the candles, then slams his fist down on the table, and leans on both fists, breathing hard. His brows crush down over his eyes. Nobody speaks. Everyone stays in frame. Static camera. We hear a candle guttering, canvas creaking and a fist on wood.
 
 ### `3:09.0` S05-05 WS, 4 s, full: Murat's cavalry rides out at dawn.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the tall marshal with long black curls and a white-plumed fur hat in the center, sits his horse at the head of the cavalry, the French cuirassiers in the background in the center, cold pink dawn light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the tall marshal, thin-limbed and bulging-eyed, raises his sabre high and points it at the horizon, the French cuirassiers, cold pink dawn light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall marshal with long black curls and a white-plumed fur hat, in the center, sits his horse at the head of the cavalry, then raises his sabre high and points it at the horizon, and holds the sabre pointed forward. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over open grass and sabre ringing.
 
@@ -335,7 +335,7 @@
 
 ### `3:13.0` S06-01 WS, 4 s, full: The camp Murat found is already gone.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the tall marshal with long black curls and a white-plumed fur hat in the center, rides into a ring of cold campfires, hard midday sun, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the tall marshal with long black curls and a white-plumed fur hat, thin-limbed and bulging-eyed, pulls up and twists round in the saddle, hard midday sun
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall marshal with long black curls and a white-plumed fur hat, in the center, rides into a ring of cold campfires, then pulls up and twists round in the saddle, and stares at the empty trampled grass. Nobody speaks. Everyone stays in frame. Static camera. We hear wind in dry grass, far-off hooves and a horse blowing.
 
@@ -354,14 +354,14 @@
 
 ### `3:24.0` S06-04 EWS, 4 s, full: They were watching all along, out of range.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sit their horses far away on the skyline, hard midday sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, raise their bows and loose a volley high, hard midday sun
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, sit their horses far away on the skyline, then raise their bows and loose a volley high, and hold the bows up against the sky. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge and many bowstrings at once.
 
 ### `3:28.0` S06-05 MS, 4 s, full: The column under arrows.
 - **BRUN**: "Down! Get down!"
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of an endless open grass steppe under a huge pale sky, the grey-moustached grenadier in a tall black bearskin cap in the center, looks up at the sky, the ranks of French infantry in the background in the center, hard midday sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the grey-moustached grenadier, thin-limbed and bulging-eyed, throws himself flat in the grass, the ranks of French infantry duck behind their packs, hard midday sun
 - Video (ltx-2.5-dev, 97 frames at 24 fps): Acting check: lips, peak, face; fallback insert_hands.
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The grey-moustached grenadier in a tall black bearskin cap, in the center, looks up at the sky, then throws himself flat in the grass, and lies flat with one arm over his head. The ranks of French infantry in dark blue coats with white crossbelts duck behind their packs. After a short pause, the grey-moustached grenadier in a tall black bearskin cap says to everyone in English, a bellow, in a gravelly, tired old soldier's voice with a French accent: "Down! Get down!" Everyone stays in frame. Static camera. We hear wind in dry grass, far-off hooves and arrows hissing down.
 
@@ -374,7 +374,7 @@
 ### `3:35.0` S06-07 MS, 4 s, full: How far?
 - **NAPOLEON**: "How far are they?"
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of an endless open grass steppe under a huge pale sky, the short general in a grey greatcoat and a black bicorne hat on the right, lowers his telescope, turned to the left, the mameluke rider on the left, hard midday sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, points the telescope at the ridge, the mameluke rider, hard midday sun
 - Video (ltx-2.5-dev, 97 frames at 24 fps): Acting check: lips, peak, face; fallback ots_on_listener.
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, on the right, lowers his telescope, then points the telescope at the ridge, and keeps it pointed. After a short pause, the short general in a grey greatcoat and a black bicorne hat says in English, calm, fast, in a quick, clipped, slightly hoarse man's voice with a French accent: "How far are they?" Everyone stays in frame. Static camera. We hear wind in dry grass, far-off hooves.
 
@@ -421,13 +421,13 @@
 
 ### `4:03.0` S06-14 WS, 4 s, full: The French charge.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the French cuirassiers in steel breastplates and brass helmets on big horses in the center, sit in a long line of big horses, hard midday sun, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the French cuirassiers in steel breastplates and brass helmets on big horses, thin-limbed and bulging-eyed, lunge forward together in a charge, hard midday sun
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The French cuirassiers in steel breastplates and brass helmets on big horses, in the center, sit in a long line of big horses, then lunge forward together in a charge, and thunder across the grass in a wall of steel. Nobody speaks. Everyone stays in frame. Static camera. We hear wind in dry grass, far-off hooves and hundreds of hooves.
 
 ### `4:07.0` S06-15 WS, 4 s, full: The Mongols turn away and shoot backwards.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, wheel their horses round, hard midday sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, twist in their saddles and loose arrows backward, hard midday sun
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, wheel their horses round, then twist in their saddles and loose arrows backward, and ride on, still twisting round. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge and bowstrings snapping.
 
@@ -459,7 +459,7 @@
 
 ### `4:28.0` S06-20 WS, 4 s, full: The guns come up.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the French gun crew in dark blue jackets beside a bronze cannon in the center, drag a bronze cannon up the slope by ropes, hard midday sun, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the French gun crew in dark blue jackets beside a bronze cannon, thin-limbed and bulging-eyed, heave the cannon wheels over the crest, hard midday sun
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The French gun crew in dark blue jackets beside a bronze cannon, in the center, drag a bronze cannon up the slope by ropes, then heave the cannon wheels over the crest, and set the cannon facing the ridge. Nobody speaks. Everyone stays in frame. Static camera. We hear wind in dry grass, far-off hooves, wheels grinding and ropes creaking.
 
@@ -515,7 +515,7 @@
 ### `4:57.0` S07-01 WS, 4 s, light: The camp at dusk, thinner already.
 - NARRATOR: Murat was the best cavalry commander in the army.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a French army camp on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, sit hunched around small campfires, blue dusk light with orange campfires, white canvas tents, stacked muskets and bronze cannons, the tents stand behind the campfires, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a French army camp on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, lift their tin cups and drink, blue dusk light with orange campfires
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, sit hunched around small campfires, then lift their tin cups and drink, and lower the cups slowly. Nobody speaks. Everyone stays in frame. Static camera. We hear campfires crackling, a horse coughing.
 
@@ -543,14 +543,14 @@
 ### `5:13.0` S07-05 WS, 4 s, full: On the hills, the Mongol remounts.
 - NARRATOR: Every Mongol rider had three more behind him.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, drive a big herd of spare horses over the hill, blue dusk light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, swing their whips over their heads, blue dusk light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, drive a big herd of spare horses over the hill, then swing their whips over their heads, and ride on beside the herd. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge, many hooves and a whip cracking.
 
 ### `5:17.0` S07-06 MS, 5 s, full: Brun shares the last biscuit.
 - **BRUN**: "Last biscuit. Half each, and don't argue."
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a French army camp on the open steppe, the grey-moustached grenadier in a tall black bearskin cap on the left, holds up a hard biscuit, the young drummer on the right, blue dusk light with orange campfires, white canvas tents, stacked muskets and bronze cannons, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a French army camp on the open steppe, the grey-moustached grenadier, thin-limbed and bulging-eyed, snaps the biscuit in two and pushes half into the drummer's hand, the young drummer, blue dusk light with orange campfires
 - Video (ltx-2.5-dev, 121 frames at 24 fps): Acting check: lips, peak, face; fallback ots_on_listener.
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The grey-moustached grenadier in a tall black bearskin cap, on the left, holds up a hard biscuit, then snaps the biscuit in two and pushes half into the drummer's hand, and keeps his own half in his fist. After a short pause, the grey-moustached grenadier in a tall black bearskin cap says in English, gruff, kind, in a gravelly, tired old soldier's voice with a French accent: "Last biscuit. Half each, and don't argue." Everyone stays in frame. Static camera. We hear campfires crackling, a horse coughing and a biscuit cracking.
 
@@ -578,21 +578,21 @@
 ### `5:34.0` S07-10 EWS, 4 s, hold: The camp shrinks into the dark.
 - NARRATOR: Each night, the French ate a little less.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a French army camp on the open steppe, blue dusk light with orange campfires, white canvas tents, stacked muskets and bronze cannons, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a French army camp on the open steppe, blue dusk light with orange campfires
 - Video (camera, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. The camera pulls out slowly, ending on the campfires small in a huge dark steppe. We hear campfires crackling, a horse coughing.
 
 ### `5:38.0` S07-11 WS, 4 s, full: Stragglers.
 - NARRATOR: Foragers who wandered off did not come back.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts in the center, wander out of the camp with empty sacks, blue dusk light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, stop and drop the sacks in the tall grass, blue dusk light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, wander out of the camp with empty sacks, then stop and drop the sacks in the tall grass, and stand looking around in the tall grass. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over open grass.
 
 ### `5:42.0` S07-12 MS, 4 s, full: Napoleon rages at a plan that will not work.
 - NARRATOR: And Napoleon could not find his battle.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat in the center, sits alone at the table, warm candlelight, a folding wooden table with two candles, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, hurls the candlestick off the table, warm candlelight
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, in the center, sits alone at the table, then hurls the candlestick off the table, and stands breathing hard. His face goes red and his teeth clench. Nobody speaks. Everyone stays in frame. Static camera. We hear a candle guttering, canvas creaking and a candlestick clattering.
 
@@ -601,7 +601,7 @@
 
 ### `5:46.0` S08-01 WS, 4 s, full: The scout who lost his horse.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level inside a large round felt yurt, the young scout with a scar on his cheek and a fox-fur hat in the center, pushes through the felt door, the stocky general on the left, the young interpreter in the background in the center, the tall khan on the right, warm firelight, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, inside a large round felt yurt, the young scout with a scar on his cheek and a fox-fur hat, thin-limbed and bulging-eyed, drops to his knees on the carpet, the stocky general, the young interpreter, warm firelight
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young scout with a scar on his cheek and a fox-fur hat, in the center, pushes through the felt door, then drops to his knees on the carpet, and kneels with his head bowed. Nobody speaks. Everyone stays in frame. Static camera. We hear a fire crackling, wind against felt and felt flapping.
 
@@ -674,7 +674,7 @@
 
 ### `6:33.0` S08-11 WS, 3 s, light: Out in the grass, his scouts count the wagons.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, the two Mongol scouts in brown felt coats with bows on their backs in the center, lie flat in the tall grass, blue dusk light, the covered wagons stand in a long line behind the tall grass, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long camp of covered supply wagons on the open steppe, the two Mongol scouts, thin-limbed and bulging-eyed, lift their heads and stare at the wagon line, blue dusk light
 - Video (ltx-2.5-distilled, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The two Mongol scouts in brown felt coats with bows on their backs, in the center, lie flat in the tall grass, then lift their heads and stare at the wagon line, and sink back down into the grass. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, a wagon creaking and grass rustling.
 
@@ -687,7 +687,7 @@
 
 ### `6:41.0` S08-13 EWS, 4 s, light: The French march: the fighting column ahead, the wagons falling behind.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts in the center, march in a long blue column, hazy afternoon light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, the column pulls away over a low rise, hazy afternoon light
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, march in a long blue column, then the column pulls away over a low rise, and the column marches on, small. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over open grass and far-off wagon wheels creaking.
 
@@ -724,7 +724,7 @@
 
 ### `7:07.0` S08-18 WS, 3 s, light: That night, riders slip out of the camp.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, lead their horses out between the yurts, blue moonlight, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, swing up into the saddles one by one, blue moonlight
 - Video (ltx-2.5-distilled, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, lead their horses out between the yurts, then swing up into the saddles one by one, and ride off into the dark in single file. Nobody speaks. Static camera. We hear horses grazing, a far-off horn and muffled hooves.
 
@@ -763,13 +763,13 @@
 ### `7:29.0` S09-01 EWS, 4 s, hold: Riders on the skyline, every day.
 - NARRATOR: For days, the khan gave Napoleon nothing to hit.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sitting on horses on the skyline, hazy afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, hazy afternoon light
 - Video (camera, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. Everyone stays in frame. The camera pans left, ending on the riders small on the right edge of the frame. We hear wind over the ridge.
 
 ### `7:33.0` S09-02 WS, 4 s, full: Shoot and gone.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sit their horses on the crest, hazy afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, swing their bows up and loose arrows high, hazy afternoon light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, sit their horses on the crest, then swing their bows up and loose arrows high, and hold the bows up as the arrows fly. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge.
 
@@ -783,7 +783,7 @@
 ### `7:41.0` S09-04 MS, 4 s, full: The chase wears the French down.
 - NARRATOR: Every day took them further from the fog.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of an endless open grass steppe under a huge pale sky, the grey-moustached grenadier in a tall black bearskin cap in the center, marches with his head down, hazy afternoon light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the grey-moustached grenadier in a tall black bearskin cap, thin-limbed and bulging-eyed, stumbles and catches himself on his musket, hazy afternoon light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The grey-moustached grenadier in a tall black bearskin cap, in the center, marches with his head down, then stumbles and catches himself on his musket, and marches on, limping. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, far-off hooves.
 
@@ -805,14 +805,14 @@
 ### `7:55.0` S09-07 INSERT, 4 s, full: A line drawn in the dust.
 - NARRATOR: He set a trap.
 - First frame (new picture, style LoRA):
-  > wldnk style, close insert shot at eye level inside a canvas campaign tent, a gloved finger draws a curving line in the dust on a wagon board, warm candlelight, a folding wooden table with two candles, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, inside a canvas campaign tent, the finger stabs down hard at the end of the line, warm candlelight
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. A gloved finger draws a curving line in the dust on a wagon board, then the finger stabs down hard at the end of the line, and the finger rests on the spot. Nobody speaks. Static camera. We hear a candle guttering, canvas creaking and a finger tapping wood.
 
 ### `7:59.0` S09-08 WS, 5 s, full: The bait: one division alone.
 - NARRATOR: One division as bait in an open valley. The guns hidden behind the hill.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, standing in the dry steppe grass, hazy afternoon light, bronze cannons stand hidden behind the low hill on the left, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, hazy afternoon light
 - Video (ltx-2.5-dev, 121 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses.
 
@@ -825,27 +825,27 @@
 
 ### `8:09.0` S09-10 MS, 3 s, light: Someone watches them hide the guns.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a shallow grassy valley between two low hills on the open steppe, the young scout with a scar on his cheek and a fox-fur hat in the center, lies flat in the tall grass on the far slope, hazy afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the young scout, thin-limbed and bulging-eyed, pushes the grass apart with both hands and stares, hazy afternoon light
 - Video (ltx-2.5-distilled, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young scout with a scar on his cheek and a fox-fur hat, in the center, lies flat in the tall grass on the far slope, then pushes the grass apart with both hands and stares, and lets the grass close again. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses and grass rustling.
 
 ### `8:12.0` S09-11 WS, 4 s, light: The wagons, nearly unguarded.
 - NARRATOR: The wagons stayed behind, with a handful of guards.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume in the center, sitting on a wagon step, hazy afternoon light, the covered wagons stand behind the drummer, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume, thin-limbed and bulging-eyed, hazy afternoon light
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, a wagon creaking.
 
 ### `8:16.0` S09-12 WS, 3 s, light: Far from the valley, riders walk their horses along a dry gully.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, lead their horses along the bottom of a dry gully, hazy afternoon light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, duck their heads below the rim, hazy afternoon light
 - Video (ltx-2.5-distilled, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, lead their horses along the bottom of a dry gully, then duck their heads below the rim, and walk on in single file. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, far-off hooves and hooves on dry earth.
 
 ### `8:19.0` S09-13 EWS, 4 s, light: The khan sees exactly that.
 - NARRATOR: The khan had been waiting for exactly that.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the tall khan with a long grey beard and a blue fur-trimmed robe in the center, sits his horse on the ridge, red evening light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the tall khan with a long grey beard and a blue fur-trimmed robe, thin-limbed and bulging-eyed, raises a hand and closes it into a fist, red evening light
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall khan with a long grey beard and a blue fur-trimmed robe, in the center, sits his horse on the ridge, then raises a hand and closes it into a fist, and lowers the fist slowly. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge.
 
@@ -854,32 +854,32 @@
 
 ### `8:23.0` S10-01 EWS, 4 s, full: At last, the khan comes.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the background on the right, appear along both hilltops, the ranks of French infantry, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, pour down the slopes in a brown flood, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the background on the right, appear along both hilltops, then pour down the slopes in a brown flood, and spread out across the valley floor. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses and a horn blast.
 
 ### `8:27.0` S10-02 MS, 4 s, full: The emperor's first order.
 - **NAPOLEON**: "Squares! Form squares!"
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a shallow grassy valley between two low hills on the open steppe, the short general in a grey greatcoat and a black bicorne hat in the center, sits his horse on the hill, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the short general, thin-limbed and bulging-eyed, stands in his stirrups and flings his arm up, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps): Acting check: lips, peak, face; fallback insert_hands.
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, in the center, sits his horse on the hill, then stands in his stirrups and flings his arm up, and holds the arm high. After a short pause, the short general in a grey greatcoat and a black bicorne hat says to everyone in English, a parade-ground shout, in a quick, clipped, slightly hoarse man's voice with a French accent: "Squares! Form squares!" Everyone stays in frame. Static camera. We hear wind, distant horns, horses.
 
 ### `8:31.0` S10-03 WS, 4 s, full: The square forms.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, hurry into a hollow square, bright afternoon sun, drifting gun smoke, the square stands on the open grass, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry, thin-limbed and bulging-eyed, slam their musket butts down with bayonets out, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, hurry into a hollow square, then slam their musket butts down with bayonets out, and kneel in four walls of bayonets. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses and bayonets clicking.
 
 ### `8:35.0` S10-04 MS, 3 s, light: At the wagons, the drummer hears hooves.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume in the center, sits on the wagon step polishing his drum, bright afternoon sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume, thin-limbed and bulging-eyed, jerks his head up toward the hills, bright afternoon sun
 - Video (ltx-2.5-distilled, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young drummer in a white shako with a red plume, in the center, sits on the wagon step polishing his drum, then jerks his head up toward the hills, and freezes with the cloth in his hand. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, a wagon creaking and far-off hooves growing louder.
 
 ### `8:38.0` S10-05 WS, 4 s, full: The arrow storm.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, ride past the square at a distance, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, swing their bows up and loose a dark cloud of arrows, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, ride past the square at a distance, then swing their bows up and loose a dark cloud of arrows, and ride on, reaching for more arrows. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses and hundreds of arrows hissing.
 
@@ -892,7 +892,7 @@
 ### `8:45.0` S10-07 MS, 4 s, full: Brun closes the gap.
 - **BRUN**: "Close up! Close the gap!"
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a shallow grassy valley between two low hills on the open steppe, the grey-moustached grenadier in a tall black bearskin cap in the center, stands in the square's front rank, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the grey-moustached grenadier, thin-limbed and bulging-eyed, grabs a soldier by the collar and pulls him into the gap, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps): Acting check: lips, peak, face; fallback insert_hands.
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The grey-moustached grenadier in a tall black bearskin cap, in the center, stands in the square's front rank, then grabs a soldier by the collar and pulls him into the gap, and holds him in place. After a short pause, the grey-moustached grenadier in a tall black bearskin cap says to everyone in English, a roar, in a gravelly, tired old soldier's voice with a French accent: "Close up! Close the gap!" Everyone stays in frame. Static camera. We hear wind, distant horns, horses.
 
@@ -905,7 +905,7 @@
 
 ### `8:54.0` S10-09 WS, 3 s, full: The camp guards fire one ragged volley.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, the handful of French camp guards in grey greatcoats with long muskets in the center, stand between two wagons with their muskets up, bright afternoon sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long camp of covered supply wagons on the open steppe, the handful of French camp guards, thin-limbed and bulging-eyed, fire a thin ragged volley in a puff of smoke, bright afternoon sun
 - Video (ltx-2.5-dev, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The handful of French camp guards in grey greatcoats with long muskets, in the center, stand between two wagons with their muskets up, then fire a thin ragged volley in a puff of smoke, and fumble with their ramrods to reload. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, a wagon creaking and a thin musket volley.
 
@@ -917,7 +917,7 @@
 
 ### `9:00.0` S10-11 EWS, 4 s, full: The heavy riders form for the charge.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, lower long lances in a line, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, kick their horses forward into a charge, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, lower long lances in a line, then kick their horses forward into a charge, and thunder toward the square. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses and a wall of hooves.
 
@@ -937,7 +937,7 @@
 
 ### `9:12.0` S10-14 MWS, 3 s, full: The front rank aims.
 - First frame (new picture, style LoRA):
-  > wldnk style, full-body shot at eye level of a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, aim their muskets over the bayonets, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry, thin-limbed and bulging-eyed, jerk their cheeks down onto the stocks, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, aim their muskets over the bayonets, then jerk their cheeks down onto the stocks, and hold their aim. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses.
 
@@ -950,13 +950,13 @@
 
 ### `9:18.0` S10-16 WS, 4 s, full: The volley at thirty metres.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, kneel behind their bayonets, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry, thin-limbed and bulging-eyed, fire one volley in a wall of white smoke, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, kneel behind their bayonets, then fire one volley in a wall of white smoke, and lower the muskets in the smoke. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses and one huge musket volley.
 
 ### `9:22.0` S10-17 WS, 4 s, full: The charge splits around the square.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, charge out of the smoke, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, swerve around the corners of the square and pull up hard, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, charge out of the smoke, then swerve around the corners of the square and pull up hard, and wheel away into the grass. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses.
 
@@ -970,13 +970,13 @@
 ### `9:30.0` S10-19 MS, 4 s, full: Now the trap closes.
 - **NAPOLEON**: "Now. Signal the guns."
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a shallow grassy valley between two low hills on the open steppe, the short general in a grey greatcoat and a black bicorne hat on the right, lowers his telescope, turned to the left, the mameluke rider, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the short general, thin-limbed and bulging-eyed, points at the crest behind them, the mameluke rider, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps): Acting check: lips, peak, face; fallback ots_on_listener.
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, on the right, lowers his telescope, then points at the crest behind them, and keeps the arm out. After a short pause, the short general in a grey greatcoat and a black bicorne hat says in English, calm, quick, in a quick, clipped, slightly hoarse man's voice with a French accent: "Now. Signal the guns." Everyone stays in frame. Static camera. We hear wind, distant horns, horses.
 
 ### `9:34.0` S10-20 WS, 4 s, full: The hidden guns roll over the crest.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the French gun crew in dark blue jackets beside a bronze cannon in the center, push a bronze cannon over the crest, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the French gun crew, thin-limbed and bulging-eyed, heave the wheels forward and swing the barrel down, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The French gun crew in dark blue jackets beside a bronze cannon, in the center, push a bronze cannon over the crest, then heave the wheels forward and swing the barrel down, and crouch beside the aimed cannon. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses and wheels grinding.
 
@@ -995,7 +995,7 @@
 
 ### `9:45.0` S10-23 EWS, 4 s, full: Six hundred metres: the Mongol mass breaks.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, mass together on the slope, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, break apart and scatter under a hail of shot, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, mass together on the slope, then break apart and scatter under a hail of shot, and spread out up the hill. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses and a crack of shot.
 
@@ -1008,14 +1008,14 @@
 
 ### `9:53.0` S10-25 WS, 4 s, full: Behind the hills, other riders reach the wagons.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, ride hard between the wagons, bright afternoon sun, drifting gun smoke, the covered wagons stand behind the riders, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long camp of covered supply wagons on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, hurl burning torches onto the canvas covers, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, ride hard between the wagons, then hurl burning torches onto the canvas covers, and wheel round as the canvas catches. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, a wagon creaking and fire roaring up.
 
 ### `9:57.0` S10-26 MS, 4 s, full: Petit runs through the fire, drumming the alarm.
 - **PETIT**: "Alarm! Alarm!"
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume in the center, runs between the burning wagons with his drum, orange firelight and smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long camp of covered supply wagons on the open steppe, the young drummer, thin-limbed and bulging-eyed, slams both sticks down on the drum as he runs, orange firelight and smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps): Acting check: lips, peak, face; fallback insert_hands.
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young drummer in a white shako with a red plume, in the center, runs between the burning wagons with his drum, then slams both sticks down on the drum as he runs, and stops and stares at the flames, sticks raised. After a short pause, the young drummer in a white shako with a red plume says to everyone in English, a cracked shout, in a thin, hungry teenage voice with a French accent: "Alarm! Alarm!" Everyone stays in frame. Static camera. We hear wind, a wagon creaking and a drum alarm.
 
@@ -1041,7 +1041,7 @@
 
 ### `10:14.0` S10-30 WS, 4 s, full: On the far ridge, the khan watches.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a long low grassy ridge on the open steppe, the tall khan with a long grey beard and a blue fur-trimmed robe on the right, sits his horse on the far ridge, the stocky general on the left, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the tall khan, thin-limbed and bulging-eyed, raises his open hand to hold his riders back, the stocky general, bright afternoon sun, drifting gun smoke
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall khan with a long grey beard and a blue fur-trimmed robe, on the right, sits his horse on the far ridge, then raises his open hand to hold his riders back, and keeps the hand raised. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge.
 
@@ -1083,7 +1083,7 @@
 
 ### `10:39.0` S10-36 EWS, 4 s, hold: Black smoke where the camp was.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of an endless open grass steppe under a huge pale sky, bright afternoon sun, low rolling hills on the horizon, black smoke columns rise behind the low hills, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, bright afternoon sun
 - Video (camera, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. The camera pushes in slowly, ending on the black smoke columns filling the sky. We hear wind over open grass.
 
@@ -1105,7 +1105,7 @@
 
 ### `10:51.0` S11-01 WS, 5 s, hold: One still frame: the winner on his field.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the short general in a grey greatcoat and a black bicorne hat in the center, standing in the dry steppe grass, smoky amber light through drifting smoke, smoke drifts behind the general, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, smoky amber light through drifting smoke
 - Video (camera, 121 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. Everyone stays in frame. The camera pushes in slowly, ending on the general small and alone in the middle of the frame. We hear wind, a single crow, silence.
 
@@ -1152,7 +1152,7 @@
 
 ### `11:22.0` S11-08 EWS, 4 s, hold: The wagons, burned to their ribs.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a long camp of covered supply wagons on the open steppe, smoky amber light through drifting smoke, thin smoke rises above the burnt wagon frames, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long camp of covered supply wagons on the open steppe, smoky amber light through drifting smoke
 - Video (camera, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. The camera pulls out slowly, ending on the rows of burnt wagon frames small on the steppe. We hear wind, a wagon creaking.
 
@@ -1162,14 +1162,14 @@
 ### `11:26.0` S12-01 EWS, 4 s, hold: The battlefield, quiet.
 - NARRATOR: On paper, it was a victory.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, cold blue evening light, dropped lances and arrows lie on the trampled grass, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, cold blue evening light
 - Video (camera, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. The camera pans left, ending on the empty valley under the evening sky. We hear wind over open grass.
 
 ### `11:30.0` S12-02 WS, 4 s, light: The Mongol losses are real.
 - NARRATOR: The khan left hundreds of riders in that valley.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, ride slowly into camp leading riderless horses, cold blue evening light, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, lift a wounded rider down from a saddle, cold blue evening light
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, ride slowly into camp leading riderless horses, then lift a wounded rider down from a saddle, and lay him on a felt blanket. Nobody speaks. Everyone stays in frame. Static camera. We hear horses grazing, a far-off horn.
 
@@ -1183,7 +1183,7 @@
 ### `11:39.0` S12-04 WS, 5 s, light: The French camp in ash.
 - NARRATOR: The French had lost what no battle wins back: their food.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, sit in the ash between the burnt wagons, cold blue evening light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long camp of covered supply wagons on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, lift empty tin plates and drop them, cold blue evening light
 - Video (ltx-2.5-distilled, 121 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, sit in the ash between the burnt wagons, then lift empty tin plates and drop them, and sit with empty hands. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, a wagon creaking.
 
@@ -1196,13 +1196,13 @@
 
 ### `11:48.0` S12-06 MCU, 4 s, light: The emperor, beaten by a won battle.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium close-up from the chest up at eye level inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat in the center, sits by one candle, one candle, a folding wooden table with two candles, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, drops his face into his hands, one candle
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, in the center, sits by one candle, then drops his face into his hands, and stays bent over. Nobody speaks. Everyone stays in frame. Static camera. We hear a candle guttering, canvas creaking.
 
 ### `11:52.0` S12-07 WS, 4 s, full: An invitation arrives.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap in the center, rides slowly into the camp, cold blue evening light, white canvas tents, stacked muskets and bronze cannons, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap, thin-limbed and bulging-eyed, raises a white felt banner on a pole, cold blue evening light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young interpreter with a braided forelock and a green felt cap, in the center, rides slowly into the camp, then raises a white felt banner on a pole, and sits holding the banner high. Nobody speaks. Everyone stays in frame. Static camera. We hear a busy army camp, distant shouted orders and a banner flapping.
 
@@ -1225,7 +1225,7 @@
 
 ### `12:06.0` S13-01 WS, 4 s, full: The emperor enters the khan's tent.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level inside a large round felt yurt, the short general in a grey greatcoat and a black bicorne hat on the left, ducks in through the low felt door, the mameluke rider in the center, the tall khan on the right, the young interpreter, warm firelight, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, inside a large round felt yurt, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, straightens up and pulls off his hat, the mameluke rider, the tall khan, warm firelight
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, on the left, ducks in through the low felt door, then straightens up and pulls off his hat, and stands holding the hat at his side. Nobody speaks. Everyone stays in frame. Static camera. We hear a fire crackling, wind against felt.
 
@@ -1336,7 +1336,7 @@
 
 ### `13:20.0` S13-16 MS, 3 s, light: Outside, they are.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level of a long camp of covered supply wagons on the open steppe, the grey-moustached grenadier in a tall black bearskin cap on the left, sits in the ash beside a cold fire, turned to the right, the young drummer on the right, cold blue light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long camp of covered supply wagons on the open steppe, the grey-moustached grenadier, thin-limbed and bulging-eyed, pulls up a fistful of grass and chews it, the young drummer watches him chew, cold blue light
 - Video (ltx-2.5-distilled, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The grey-moustached grenadier in a tall black bearskin cap, on the left, sits in the ash beside a cold fire, then pulls up a fistful of grass and chews it, and chews slowly, staring at nothing. The young drummer in a white shako with a red plume watches him chew. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, a wagon creaking.
 
@@ -1372,7 +1372,7 @@
 
 ### `13:43.0` S13-21 WS, 4 s, full: The price, paid: two guns go to the khan.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the line of Mongol horse archers in brown felt coats on short shaggy horses on the right, loop ropes round two bronze cannons, the French gun crew on the left, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, an endless open grass steppe under a huge pale sky, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, drag the cannons away across the grass, soft gold morning light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, on the right, loop ropes round two bronze cannons, then drag the cannons away across the grass, and ride off with the cannons rolling behind. The French gun crew in dark blue jackets beside a bronze cannon stand watching with their caps in their hands. Nobody speaks. Static camera. We hear wind over open grass, wheels creaking and ropes straining.
 
@@ -1382,7 +1382,7 @@
 ### `13:47.0` S14-01 WS, 5 s, light: The question again.
 - NARRATOR: So: can the man who conquered Europe beat the man who conquered Asia?
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, stand in a square on the grass, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, raise their muskets to the shoulder, soft gold morning light
 - Video (ltx-2.5-distilled, 121 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, stand in a square on the grass, then raise their muskets to the shoulder, and hold them steady. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, then a city's distant bells.
 
@@ -1396,21 +1396,21 @@
 ### `13:57.0` S14-03 EWS, 5 s, light: No, in a campaign.
 - NARRATOR: In a campaign, no. The khan never needed the battle. He needed the army's dinner.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sit their horses on the skyline, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, raise their bows all at once, soft gold morning light
 - Video (ltx-2.5-distilled, 121 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the center, sit their horses on the skyline, then raise their bows all at once, and hold the bows against the sky. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge.
 
 ### `14:02.0` S14-04 WS, 4 s, full: The fog comes back.
 - NARRATOR: Then the fog came back, and the army marched into it.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a dirt road through a birch forest swallowed by thick white fog, the short general in a grey greatcoat and a black bicorne hat in the center, rides at the head of the column, the ranks of French infantry on the left, soft gold morning light, early morning, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a dirt road through a birch forest swallowed by thick white fog, the short general, thin-limbed and bulging-eyed, raises his arm and points into the fog, the ranks of French infantry, soft gold morning light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, in the center, rides at the head of the column, then raises his arm and points into the fog, and rides on with the arm still raised. Nobody speaks. Everyone stays in frame. Static camera. We hear a slow marching drum in the fog.
 
 ### `14:06.0` S14-05 EWS, 4 s, hold: Moscow, on the right day.
 - NARRATOR: It came out on the road to Moscow, on the fourteenth of September, 1812.
 - First frame (new picture, style LoRA):
-  > wldnk style, extreme wide shot at eye level of a city of wooden houses and onion-domed churches burning at night, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a city of wooden houses and onion-domed churches burning at night, soft gold morning light
 - Video (camera, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. The camera pushes in slowly, ending on the onion domes filling the frame. We hear a city burning, timbers cracking.
 
@@ -1438,14 +1438,14 @@
 ### `14:22.0` S14-09 MCU, 4 s, light: The tsar refuses.
 - NARRATOR: The tsar refused to talk.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium close-up from the chest up at eye level of a city of wooden houses and onion-domed churches burning at night, the short general in a grey greatcoat and a black bicorne hat in the center, stands at a tall window, orange firelight, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a city of wooden houses and onion-domed churches burning at night, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, drops a folded letter onto the sill, orange firelight
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, in the center, stands at a tall window, then drops a folded letter onto the sill, and stares out at the flames. Nobody speaks. Everyone stays in frame. Static camera. We hear a city burning, timbers cracking.
 
 ### `14:26.0` S14-10 WS, 4 s, full: The retreat.
 - NARRATOR: About five weeks later, Napoleon marched out, and the long retreat began.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a dirt road through a birch forest swallowed by thick white fog, the ranks of French infantry in dark blue coats with white crossbelts in the center, trudge through falling snow, cold blue snow light, early morning, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a dirt road through a birch forest swallowed by thick white fog, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, stumble and pull each other up, cold blue snow light
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts, in the center, trudge through falling snow, then stumble and pull each other up, and march on, bent over. Nobody speaks. Everyone stays in frame. Static camera. We hear a slow marching drum in the fog and boots in snow.
 
@@ -1461,14 +1461,14 @@
 
 ### `14:34.0` S15-01 INSERT, 3 s, full: The drumstick stops, again.
 - First frame (new picture, style LoRA):
-  > wldnk style, close insert shot at eye level of a city of wooden houses and onion-domed churches burning at night, a wooden drumstick hangs above a French drum, orange firelight at night, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a city of wooden houses and onion-domed churches burning at night, the drumstick strikes the drum skin twice, orange firelight at night
 - Video (ltx-2.5-dev, 73 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. A wooden drumstick hangs above a French drum, then the drumstick strikes the drum skin twice, and the drumstick stops in mid-air, shaking. Nobody speaks. Static camera. We hear a city burning, a far drum and two drum beats.
 
 ### `14:37.0` S15-02 MCU, 4 s, light: He has seen this fire.
 - NARRATOR: He had seen a fire like this before.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium close-up from the chest up at eye level of a city of wooden houses and onion-domed churches burning at night, the short general in a grey greatcoat and a black bicorne hat in the center, watches the flames from the window, orange firelight at night, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a city of wooden houses and onion-domed churches burning at night, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, lifts his chin slowly, orange firelight at night
 - Video (ltx-2.5-distilled, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, in the center, watches the flames from the window, then lifts his chin slowly, and holds still. Nobody speaks. Everyone stays in frame. Static camera. We hear a city burning, a far drum.
 
@@ -1485,41 +1485,41 @@
 ### `14:46.0` S16-01 WS, 5 s, light: The channel: the Stone Age.
 - NARRATOR: On this channel, a hundred geniuses are already waiting for you in the Stone Age.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a rocky valley of the Stone Age with a cave mouth and a campfire, the crowd of modern people in bright jackets around a Stone Age campfire in the center, sit around the campfire, warm campfire light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a rocky valley of the Stone Age with a cave mouth and a campfire, the crowd of modern people, thin-limbed and bulging-eyed, lift burning sticks and wave them at the dark, warm campfire light
 - Video (ltx-2.5-distilled, 121 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The crowd of modern people in bright jackets around a Stone Age campfire, in the center, sit around the campfire, then lift burning sticks and wave them at the dark, and hold the sticks up. Nobody speaks. Everyone stays in frame. Static camera. We hear a crackling campfire.
 
 ### `14:51.0` S16-02 WS, 5 s, light: Coming: the Ice Age.
 - NARRATOR: Next: a hundred people dropped into the Ice Age. And worlds all the way to the future.
 - First frame (new picture, style LoRA):
-  > wldnk style, wide shot at eye level of a frozen Ice Age plain of snow and blue ice under a grey sky, the group of stranded travellers in winter coats on the Ice Age snow in the center, huddle together on the snow, cold blue light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, a frozen Ice Age plain of snow and blue ice under a grey sky, the group of stranded travellers, thin-limbed and bulging-eyed, raise their arms against a gust of snow, cold blue light
 - Video (ltx-2.5-distilled, 121 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The group of stranded travellers in winter coats on the Ice Age snow, in the center, huddle together on the snow, then raise their arms against a gust of snow, and huddle closer. Nobody speaks. Everyone stays in frame. Static camera. We hear an icy wind howling.
 
 ### `14:56.0` S16-03 MS, 4 s, full: The khan with a French cannonball: one last wink.
 - NARRATOR: Subscribe if you don't want to miss them.
 - First frame (new picture, style LoRA):
-  > wldnk style, medium shot from the waist up at eye level inside a large round felt yurt, the tall khan with a long grey beard and a blue fur-trimmed robe in the center, holds a heavy iron cannonball in one hand, warm firelight, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, inside a large round felt yurt, the tall khan with a long grey beard and a blue fur-trimmed robe, thin-limbed and bulging-eyed, tosses the cannonball up and catches it, warm firelight
 - Video (ltx-2.5-dev, 97 frames at 24 fps):
   > Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall khan with a long grey beard and a blue fur-trimmed robe, in the center, holds a heavy iron cannonball in one hand, then tosses the cannonball up and catches it, and weighs the ball in his palm. A slow smile spreads under his beard. Nobody speaks. Everyone stays in frame. Static camera. We hear a fire crackling, wind against felt.
 
 ## Hero sheets (the creator picks one variant each)
 
 - sheet.napoleon:
-  > wldnk style, a character collage of four variants of the short general in a grey greatcoat and a black bicorne hat, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, four variants of the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build
 - sheet.murat:
-  > wldnk style, a character collage of four variants of the tall marshal with long black curls and a white-plumed fur hat, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, four variants of the tall marshal with long black curls and a white-plumed fur hat, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build
 - sheet.kemal:
-  > wldnk style, a character collage of four variants of the mameluke rider in a white turban and a red embroidered vest, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, four variants of the mameluke rider in a white turban and a red embroidered vest, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build
 - sheet.brun:
-  > wldnk style, a character collage of four variants of the grey-moustached grenadier in a tall black bearskin cap, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, four variants of the grey-moustached grenadier in a tall black bearskin cap, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build
 - sheet.genghis:
-  > wldnk style, a character collage of four variants of the tall khan with a long grey beard and a blue fur-trimmed robe, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, four variants of the tall khan with a long grey beard and a blue fur-trimmed robe, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build
 - sheet.subutai:
-  > wldnk style, a character collage of four variants of the stocky general with a shaved head and bronze scale armour, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, four variants of the stocky general with a shaved head and bronze scale armour, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build
 - sheet.bars:
-  > wldnk style, a character collage of four variants of the young interpreter with a braided forelock and a green felt cap, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, four variants of the young interpreter with a braided forelock and a green felt cap, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build
 - sheet.bayan:
-  > wldnk style, a character collage of four variants of the young scout with a scar on his cheek and a fox-fur hat, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, four variants of the young scout with a scar on his cheek and a fox-fur hat, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build
 - sheet.drummer:
-  > wldnk style, a character collage of four variants of the young drummer in a white shako with a red plume, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+  > wldnk style, four variants of the young drummer in a white shako with a red plume, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build

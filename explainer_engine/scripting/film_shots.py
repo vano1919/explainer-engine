@@ -73,9 +73,12 @@ CAMERA = {"static": "Static camera.", "push_in": "The camera pushes in slowly", 
           "pan_left": "The camera pans left", "pan_right": "The camera pans right", "tilt_up": "The camera tilts up",
           "tilt_down": "The camera tilts down", "follow": "The camera follows {actor}",
           "truck_left": "The camera trucks left", "truck_right": "The camera trucks right"}
-# LT-65 (docs/LORA_TRAINING.md, qa/style_prompt.py): a style-LoRA prompt keeps its training captions' shape, tail and length
-STYLE_TAIL = style_prompt.STYLE_TAIL
-KEYFRAME_WORDS_MAX = style_prompt.MAX_WORDS
+# LT-65 (docs/LORA_TRAINING.md, qa/style_prompt.py; revised 2026-10-25): a style-LoRA prompt has the shape of the prompts
+# that drew the approved look: the trigger, then a short story of the moment (a place, an action at its peak, someone's
+# reaction, the bodies' caricature words, a light source), at most MOMENT_WORDS_MAX words, no camera, size or position
+# words (those are the layout's: boxes, the composition of assets, ASSET_COMPOSE.md). The caption tail is retired.
+MOMENT_WORDS_MAX = style_prompt.MAX_WORDS
+BODY_WORDS = "thin-limbed and bulging-eyed"  # the caricature words a moment gives its lead (a card may set style.body)
 NEXTPOSE = "nextpose, a later frame of the same continuous animated shot, same camera: "
 NEG_KEYFRAME = ("text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, "
                 "extra limbs, blurry face, low resolution")
@@ -223,8 +226,6 @@ def _short(text: str) -> str:
     return text.split(",")[0].strip()
 
 
-X_ORDER = {"left_front": 0, "left": 1, "left_back": 1, "center": 2, "center_back": 2, "right_back": 3, "right": 3,
-           "right_front": 4}
 
 
 def _core(tag: str) -> str:
@@ -232,79 +233,54 @@ def _core(tag: str) -> str:
     return re.split(r"\s+(?:with|in|on|beside|wearing|holding|from)\s+|,", tag.strip(), maxsplit=1)[0]
 
 
-def _person_short(doc: dict, shot: dict, p: dict, actor_pose: str | None, *, brief: bool = False) -> str:
-    action = shot.get("action") or {}
-    if brief:  # no words left for the whole tag: the figure is still counted and placed
-        core = _core(_tag(doc, p["who"]))
-        return f"only {p['partial']} of {core} {WHERE[p['where']]}" if p.get("partial") else f"{core} {WHERE[p['where']]}"
-    if p.get("partial"):
-        return f"only {p['partial']} of {_tag(doc, p['who'])} {WHERE[p['where']]}"
-    pose = actor_pose if p["who"] == action.get("who") and actor_pose else p.get("pose") or p.get("on") or "standing"
-    # a gaze at another figure is said as a direction: 'the man' would be a bare role word (KP-01), the tag a twin (LY-09)
-    target = next((q["where"] for q in shot.get("blocking", []) if q["who"] == p["facing"]), None)
-    side = (("right" if X_ORDER[target] > X_ORDER[p["where"]] else "left") if target and X_ORDER[target] != X_ORDER[p["where"]]
-            else None)
-    gaze = f", turned to the {side}" if side else ""
-    return f"{_tag(doc, p['who'])} {WHERE[p['where']]}, {pose}{gaze}"
-
-
 def keyframe_prompt(doc: dict, shot: dict) -> str:
-    """Qwen-Image-2512 + the style LoRA, in the shape the LoRA was trained on (LT-65, PR #22 qa/style_prompt.py):
-    ``<trigger>, <scene>, <style tail>`` in at most KEYFRAME_WORDS_MAX words. The scene says the shot size, the place,
-    the lead by tag with side and FIRST-frame pose (the start of the action), then, while words remain, the others (each
-    tag once, LY-09), the light, the rest of the place and the relations. Heights, supports and free space are not
-    words here: they are the gate card's layout (``prompts.json`` -> ``gate``), for the boxes or the blockout."""
+    """The moment for Qwen-Image-2512 + the style LoRA (LT-65): ``<trigger>, <place>, <lead> <body words> <action at its
+    peak>, <a reaction>, <light>`` in at most MOMENT_WORDS_MAX words, with no camera, size or position. The peak and a
+    reaction carry the mood the approved pictures had; the video's first frame in the START pose (KP-16) and the layout
+    (sides, heights, supports, free space: the gate card) come from the composition of assets, not from these words.
+    Each figure is named once (LY-09): the lead and the reacting figure by tag (the tag's head phrase when words run
+    out), the others by their head phrase while words remain."""
     f = shot["frame"]
-    tail = doc["style"].get("tail", STYLE_TAIL)
-    place = doc["places"].get(f["place"], f["place"])
+    place = _short(doc["places"].get(f["place"], f["place"]))
     action = shot.get("action") or {}
-    lead = _lead(shot)
+    body = doc["style"].get("body", BODY_WORDS)
     people = shot.get("blocking", [])
-    where = _short(place)
-    where = where if re.match(r"(?:inside|in|on|at|under|by)\b", where) else "of " + where
-    first = [_frame(shot) + (f" past the shoulder of {_tag(doc, f['over'])}" if f["size"] == "OTS" and f.get("over")
-                             and f["over"] != lead else "") + " " + where]
-    others = [p for p in people if p["who"] != lead and not (f["size"] == "OTS" and p["who"] == f.get("over"))]
-    # each piece has levels from bare to full; the prompt starts at the barest that keeps everyone counted and is
-    # raised step by step while it fits (the light, the lead, everyone's side, the others in full, the place, the relations)
-    pieces: list[list[str]] = []
+    lead = _lead(shot)
+    reacts = [r for r in shot.get("reactions", []) if r["who"] in {p["who"] for p in people} and r["who"] != lead]
+    # each piece runs from bare to full; pieces are raised in order while the moment fits
+    pieces: list[list[str]] = [[place]]
+    if lead:
+        tag = _tag(doc, lead)
+        doing = action.get("peak") if action.get("who") == lead else next(
+            (p.get("pose") for p in people if p["who"] == lead and p.get("pose")), None)
+        core = f"{_core(tag)}, {body}," if body else _core(tag)
+        full = f"{tag}, {body}," if body else tag
+        pieces.append([f"{_core(tag)} {doing}" if doing else _core(tag), f"{core} {doing}" if doing else core,
+                       f"{full} {doing}" if doing else full])
+    elif action.get("peak"):
+        pieces.append([action["peak"]])
+    for r in reacts[:1]:
+        pieces.append(["", f"{_core(_tag(doc, r['who']))} {r['does']}", f"{_tag(doc, r['who'])} {r['does']}"])
+    seen = {lead} | {r["who"] for r in reacts[:1]}
     for p in people:
-        if p["who"] == lead:
-            pieces.append([f"{_core(_tag(doc, lead))} {WHERE[p['where']]}", _person_short(doc, shot, p, action.get("start"))])
-    if action and not any(p["who"] == action.get("who") for p in people):
-        pieces.append([action["start"]])
-    lead_n = len(pieces)
-    for p in others:
-        core = _core(_tag(doc, p["who"]))
-        core = f"only {p['partial']} of {core}" if p.get("partial") else core
-        pieces.append([core, _person_short(doc, shot, p, None, brief=True), _person_short(doc, shot, p, action.get("start"))])
+        if p["who"] not in seen:
+            core = _core(_tag(doc, p["who"]))
+            pieces.append(["", f"only {p['partial']} of {core}" if p.get("partial") else core])
     light = len(pieces)
     pieces.append(["", f["light"]] if f.get("light") else [""])
-    rest = place[len(_short(place)):].strip(" ,")
-    pieces += [["", x] for x in ([rest] if rest else []) + list(f.get("relations", []))]
-    level = [1 if i < lead_n and len(pc) == 1 else 0 for i, pc in enumerate(pieces)]
-    level = [0 if len(pc) == 1 else lv for pc, lv in zip(pieces, level)]
-    budget = KEYFRAME_WORDS_MAX - len(f"{doc['style']['trigger']}, , {tail}".split())
+    level = [0] * len(pieces)
+    budget = MOMENT_WORDS_MAX - len(doc["style"]["trigger"].split())
 
     def text() -> str:
-        return ", ".join(first + [pc[lv] for pc, lv in zip(pieces, level) if pc[lv]])
+        return ", ".join(x for x in (pc[lv] for pc, lv in zip(pieces, level)) if x).replace(",,", ",")
 
-    def raise_to(i: int, lv: int) -> None:
-        old = level[i]
-        if lv < len(pieces[i]) and lv > old:
-            level[i] = lv
+    order = [(1, 1), (light, 1), (2, 1), (1, 2), (2, 2)] + [(k, 1) for k in range(3, light)]
+    for k, lv in order:
+        if k < len(pieces) and lv < len(pieces[k]) and lv > level[k]:
+            old, level[k] = level[k], lv
             if len(text().split()) > budget:
-                level[i] = old
-
-    order = [(light, 1)] + [(i, 1) for i in range(lead_n)] + [(i, 1) for i in range(lead_n, light)]  # the light carries the look
-    order += [(i, 2) for i in range(lead_n, light)] + [(i, 1) for i in range(light + 1, len(pieces))]
-    for i, lv in order:
-        raise_to(i, lv)
-    out = text()
-    if len(out.split()) > budget and light > lead_n:  # too many figures even bare: count the rest
-        out = ", ".join(first + [pc[lv] for pc, lv in zip(pieces[:lead_n], level[:lead_n])]
-                        + [f"{len(others)} more figures around"] + ([f["light"]] if level[light] else []))
-    return f"{doc['style']['trigger']}, {out}, {tail}"
+                level[k] = old
+    return f"{doc['style']['trigger']}, {text()}"
 
 
 def nextpose_prompt(doc: dict, shot: dict, *, end: bool) -> str:
@@ -440,6 +416,18 @@ def frames(seconds: float, fps: int = FPS) -> int:
     return 8 * -(-round(seconds * fps) // 8) + 1
 
 
+def _sheet_text(doc: dict, tag: str) -> str:
+    """A hero sheet in the moment shape (LT-65): the most of these pieces that fits MOMENT_WORDS_MAX words."""
+    head = f"{doc['style']['trigger']}, four variants of {tag}"
+    pieces = [doc["style"].get("body", BODY_WORDS), "side by side", "neutral faces", "warm studio light",
+              "each a little different in face and build"]
+    out = head
+    for x in pieces:
+        if len(f"{out}, {x}".split()) <= MOMENT_WORDS_MAX:
+            out = f"{out}, {x}"
+    return out
+
+
 def sheet_prompts(doc: dict) -> list[dict]:
     """A new hero's look is chosen by the creator from one collage of variants (invariant 6), drawn by Qwen-Image-2512
     with the style LoRA; the chosen variant becomes the hero sheet every keyframe and next pose is checked against.
@@ -450,10 +438,7 @@ def sheet_prompts(doc: dict) -> list[dict]:
             continue
         tag = c["tag"]
         out.append({"id": f"sheet.{cid}", "kind": "keyframe", "lora": "style",
-                    "prompt": f"{doc['style']['trigger']}, a character collage of four variants of {tag}, side by side, "
-                              "each full body from the front, arms relaxed, neutral face, the four differing only in face "
-                              "shape, build and costume colours, on a warm painted paper background, "
-                              + doc["style"].get("tail", STYLE_TAIL),
+                    "prompt": _sheet_text(doc, tag),
                     "neg": doc["style"].get("neg_keyframe", NEG_KEYFRAME)})
     return out
 
@@ -617,22 +602,13 @@ def check(doc: dict) -> list[dict]:
 
 
 def style_check(doc: dict) -> list[dict]:
-    """LT-65: a style-LoRA prompt (keyframe or hero sheet) ends with the training captions' tail and stays at most
-    KEYFRAME_WORDS_MAX words, and passes ``qa/style_prompt.check`` (washed-out light words REVIEW)."""
-    tail = doc["style"].get("tail", STYLE_TAIL)
+    """LT-65: every style-LoRA prompt (moment or hero sheet) passes ``qa/style_prompt.check``: the trigger first, at most
+    its word limit, no caption tail, no washed-out light, no camera or size words."""
     out = []
     for p in [*sheet_prompts(doc), *compose(doc)]:
-        if p.get("lora") != "style":
-            continue
-        n = len(p["prompt"].split())
-        if not p["prompt"].endswith(tail):
-            out.append({"rule": "LT-65", "severity": "FAIL", "where": p["id"],
-                        "detail": "a style-LoRA prompt without the training captions' tail draws a generic flat cartoon"})
-        if n > KEYFRAME_WORDS_MAX:
-            out.append({"rule": "LT-65", "severity": "REVIEW", "where": p["id"],
-                        "detail": f"{n} words: at most {KEYFRAME_WORDS_MAX}; shorten the lead's pose or the place"})
-        for f in style_prompt.check(p["prompt"]) if tail == STYLE_TAIL else []:
-            out.append({"rule": f["rule"], "severity": f["severity"], "where": p["id"], "detail": f["detail"]})
+        if p.get("lora") == "style":
+            out += [{"rule": f["rule"], "severity": f["severity"], "where": p["id"], "detail": f["detail"]}
+                    for f in style_prompt.check(p["prompt"])]
     return out
 
 

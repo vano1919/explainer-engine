@@ -112,11 +112,11 @@ sheet is what every keyframe, pose and clip is checked against (invariant 6).
 
 **Hero sheet (Qwen-Image-2512 + style LoRA)** `{"id": "sheet.napoleon", "kind": "keyframe", "lora": "style"}`
 
-> wldnk style, a character collage of four variants of the short general in a grey greatcoat and a black bicorne hat, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+> wldnk style, four variants of the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build
 
 **Master keyframe (Qwen-Image-2512 + style LoRA)** `{"id": "S04-01.first", "kind": "keyframe", "lora": "style"}`
 
-> wldnk style, wide shot at eye level of a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap on the right, rides up toward the tents, the tall marshal on the left, the short general in the center, the mameluke rider, warm late afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents
+> wldnk style, a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap, thin-limbed and bulging-eyed, pulls his horse up hard, the tall marshal, the short general, warm late afternoon light
 
 **Cut, new size of the master (Edit-2511 + scene LoRA)** `{"id": "S04-07.first", "kind": "cut", "lora": "scene", "master": "S04-01"}`
 

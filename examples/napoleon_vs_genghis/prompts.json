@@ -4,63 +4,63 @@
    "id": "sheet.napoleon",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a character collage of four variants of the short general in a grey greatcoat and a black bicorne hat, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, four variants of the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
    "id": "sheet.murat",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a character collage of four variants of the tall marshal with long black curls and a white-plumed fur hat, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, four variants of the tall marshal with long black curls and a white-plumed fur hat, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
    "id": "sheet.kemal",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a character collage of four variants of the mameluke rider in a white turban and a red embroidered vest, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, four variants of the mameluke rider in a white turban and a red embroidered vest, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
    "id": "sheet.brun",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a character collage of four variants of the grey-moustached grenadier in a tall black bearskin cap, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, four variants of the grey-moustached grenadier in a tall black bearskin cap, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
    "id": "sheet.genghis",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a character collage of four variants of the tall khan with a long grey beard and a blue fur-trimmed robe, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, four variants of the tall khan with a long grey beard and a blue fur-trimmed robe, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
    "id": "sheet.subutai",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a character collage of four variants of the stocky general with a shaved head and bronze scale armour, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, four variants of the stocky general with a shaved head and bronze scale armour, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
    "id": "sheet.bars",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a character collage of four variants of the young interpreter with a braided forelock and a green felt cap, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, four variants of the young interpreter with a braided forelock and a green felt cap, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
    "id": "sheet.bayan",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a character collage of four variants of the young scout with a scar on his cheek and a fox-fur hat, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, four variants of the young scout with a scar on his cheek and a fox-fur hat, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
    "id": "sheet.drummer",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a character collage of four variants of the young drummer in a white shako with a red plume, side by side, each full body from the front, arms relaxed, neutral face, the four differing only in face shape, build and costume colours, on a warm painted paper background, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, four variants of the young drummer in a white shako with a red plume, thin-limbed and bulging-eyed, side by side, neutral faces, warm studio light, each a little different in face and build",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   }
  ],
@@ -69,7 +69,7 @@
    "id": "S01-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, close insert shot at eye level of a dirt road through a birch forest swallowed by thick white fog, a wooden drumstick hangs above a French drum in the fog, cold white morning light, early morning, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a dirt road through a birch forest swallowed by thick white fog, the drumstick strikes the drum skin twice, cold white morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -121,7 +121,7 @@
    "id": "S01-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sit still on their horses along the ridge, dawn light breaking through thin fog, thin fog lies in front of the ridge, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, raise their bows all at once, dawn light breaking through thin fog",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -143,7 +143,7 @@
    "id": "S02-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a dirt road through a birch forest swallowed by thick white fog, the ranks of French infantry in dark blue coats with white crossbelts in the center, march out of the fog in long blue columns, cold white morning light, early morning, the fog bank rises behind the columns, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a dirt road through a birch forest swallowed by thick white fog, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, jerk to a halt, row after row, cold white morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -165,7 +165,7 @@
    "id": "S02-02.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a dirt road through a birch forest swallowed by thick white fog, the short general in a grey greatcoat and a black bicorne hat in the center, sits his white horse at the edge of the fog, cold white morning light, early morning, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a dirt road through a birch forest swallowed by thick white fog, the short general, thin-limbed and bulging-eyed, lifts a small brass telescope to his eye, cold white morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -187,7 +187,7 @@
    "id": "S02-03.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, close-up on the face at eye level of a long low grassy ridge on the open steppe, the tall khan with a long grey beard and a blue fur-trimmed robe in the center, sits his horse on the ridge, perfectly still, dawn light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the tall khan with a long grey beard and a blue fur-trimmed robe, thin-limbed and bulging-eyed, lifts his chin slowly toward the fog, dawn light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -231,7 +231,7 @@
    "id": "S02-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, close insert shot at eye level of an endless open grass steppe under a huge pale sky, a French musket and a Mongol bow lie crossed on the grass, soft gold morning light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, a gust of wind shakes the bowstring, soft gold morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -253,7 +253,7 @@
    "id": "S02-06.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts in the background on the left, standing in the dry steppe grass, the line of Mongol horse archers, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, the line of Mongol horse archers, soft gold morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -275,7 +275,7 @@
    "id": "S03-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a French army camp on the open steppe, the French gun crew in dark blue jackets beside a bronze cannon in the center, stand ready around the cannon, warm late afternoon light, white canvas tents, stacked muskets and bronze cannons, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a French army camp on the open steppe, the French gun crew in dark blue jackets beside a bronze cannon, thin-limbed and bulging-eyed, ram a cannonball down the barrel and jump clear, warm late afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -341,7 +341,7 @@
    "id": "S03-04.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a French army camp on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, stand in a line with muskets at the shoulder, warm late afternoon light, white canvas tents, stacked muskets and bronze cannons, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a French army camp on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, swing the muskets down and fire one volley, warm late afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -363,7 +363,7 @@
    "id": "S03-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sitting on horses in the grass, golden evening light, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, golden evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -385,7 +385,7 @@
    "id": "S03-06.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, full-body shot at eye level of a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, ride up beside a fresh spare horse, golden evening light, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, leap from one saddle onto the other horse, golden evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -407,7 +407,7 @@
    "id": "S03-07.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, nock arrows on short curved bows, golden evening light, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, pull the bows back and loose the arrows high, golden evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -429,7 +429,7 @@
    "id": "S03-08.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium close-up from the chest up at eye level of a Mongol camp of round white felt yurts on the steppe, the tall khan with a long grey beard and a blue fur-trimmed robe in the center, watches something beyond the frame, golden evening light, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the tall khan with a long grey beard and a blue fur-trimmed robe, thin-limbed and bulging-eyed, lifts his chin once, slowly, golden evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -451,7 +451,7 @@
    "id": "S03-09.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, close insert shot at eye level of an endless open grass steppe under a huge pale sky, a heavy supply wagon wheel sinks in soft mud, soft gold morning light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, a horse's hoof stamps down beside it and lifts away, soft gold morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -473,7 +473,7 @@
    "id": "S03-10.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts in the background on the left, standing in the dry steppe grass, the line of Mongol horse archers, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, the line of Mongol horse archers, soft gold morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -495,7 +495,7 @@
    "id": "S04-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap on the right, rides up toward the tents, the tall marshal on the left, the short general in the center, the mameluke rider, warm late afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap, thin-limbed and bulging-eyed, pulls his horse up hard, the tall marshal, the short general, warm late afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1027,7 +1027,7 @@
    "id": "S04-17.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sit their horses along the far ridge, warm late afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, turn their heads together toward the camp, warm late afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1174,7 +1174,7 @@
    "id": "S05-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, dim violet evening light, the covered wagons stand in a long line on the grass, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, dim violet evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1218,7 +1218,7 @@
    "id": "S05-03.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, close insert shot at eye level of an endless open grass steppe under a huge pale sky, a French cavalry horse tears up a mouthful of grass, dim violet evening light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the horse lifts its head, chewing, dim violet evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1240,7 +1240,7 @@
    "id": "S05-04.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat in the center, bends over the table between the candles, warm candlelight, a folding wooden table with two candles, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, slams his fist down on the table, warm candlelight",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1262,7 +1262,7 @@
    "id": "S05-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the tall marshal with long black curls and a white-plumed fur hat in the center, sits his horse at the head of the cavalry, the French cuirassiers in the background in the center, cold pink dawn light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the tall marshal, thin-limbed and bulging-eyed, raises his sabre high and points it at the horizon, the French cuirassiers, cold pink dawn light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1284,7 +1284,7 @@
    "id": "S06-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the tall marshal with long black curls and a white-plumed fur hat in the center, rides into a ring of cold campfires, hard midday sun, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the tall marshal with long black curls and a white-plumed fur hat, thin-limbed and bulging-eyed, pulls up and twists round in the saddle, hard midday sun",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1363,7 +1363,7 @@
    "id": "S06-04.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sit their horses far away on the skyline, hard midday sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, raise their bows and loose a volley high, hard midday sun",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1385,7 +1385,7 @@
    "id": "S06-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of an endless open grass steppe under a huge pale sky, the grey-moustached grenadier in a tall black bearskin cap in the center, looks up at the sky, the ranks of French infantry in the background in the center, hard midday sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the grey-moustached grenadier, thin-limbed and bulging-eyed, throws himself flat in the grass, the ranks of French infantry duck behind their packs, hard midday sun",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1441,7 +1441,7 @@
    "id": "S06-07.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of an endless open grass steppe under a huge pale sky, the short general in a grey greatcoat and a black bicorne hat on the right, lowers his telescope, turned to the left, the mameluke rider on the left, hard midday sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, points the telescope at the ridge, the mameluke rider, hard midday sun",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1670,7 +1670,7 @@
    "id": "S06-14.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the French cuirassiers in steel breastplates and brass helmets on big horses in the center, sit in a long line of big horses, hard midday sun, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the French cuirassiers in steel breastplates and brass helmets on big horses, thin-limbed and bulging-eyed, lunge forward together in a charge, hard midday sun",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1692,7 +1692,7 @@
    "id": "S06-15.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, wheel their horses round, hard midday sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, twist in their saddles and loose arrows backward, hard midday sun",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -1827,7 +1827,7 @@
    "id": "S06-20.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the French gun crew in dark blue jackets beside a bronze cannon in the center, drag a bronze cannon up the slope by ropes, hard midday sun, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the French gun crew in dark blue jackets beside a bronze cannon, thin-limbed and bulging-eyed, heave the cannon wheels over the crest, hard midday sun",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -2052,7 +2052,7 @@
    "id": "S07-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a French army camp on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, sit hunched around small campfires, blue dusk light with orange campfires, white canvas tents, stacked muskets and bronze cannons, the tents stand behind the campfires, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a French army camp on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, lift their tin cups and drink, blue dusk light with orange campfires",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -2152,7 +2152,7 @@
    "id": "S07-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, drive a big herd of spare horses over the hill, blue dusk light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, swing their whips over their heads, blue dusk light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -2174,7 +2174,7 @@
    "id": "S07-06.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a French army camp on the open steppe, the grey-moustached grenadier in a tall black bearskin cap on the left, holds up a hard biscuit, the young drummer on the right, blue dusk light with orange campfires, white canvas tents, stacked muskets and bronze cannons, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a French army camp on the open steppe, the grey-moustached grenadier, thin-limbed and bulging-eyed, snaps the biscuit in two and pushes half into the drummer's hand, the young drummer, blue dusk light with orange campfires",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -2310,7 +2310,7 @@
    "id": "S07-10.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a French army camp on the open steppe, blue dusk light with orange campfires, white canvas tents, stacked muskets and bronze cannons, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a French army camp on the open steppe, blue dusk light with orange campfires",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -2332,7 +2332,7 @@
    "id": "S07-11.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts in the center, wander out of the camp with empty sacks, blue dusk light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, stop and drop the sacks in the tall grass, blue dusk light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -2354,7 +2354,7 @@
    "id": "S07-12.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat in the center, sits alone at the table, warm candlelight, a folding wooden table with two candles, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, hurls the candlestick off the table, warm candlelight",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -2376,7 +2376,7 @@
    "id": "S08-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level inside a large round felt yurt, the young scout with a scar on his cheek and a fox-fur hat in the center, pushes through the felt door, the stocky general on the left, the young interpreter in the background in the center, the tall khan on the right, warm firelight, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, inside a large round felt yurt, the young scout with a scar on his cheek and a fox-fur hat, thin-limbed and bulging-eyed, drops to his knees on the carpet, the stocky general, the young interpreter, warm firelight",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -2706,7 +2706,7 @@
    "id": "S08-11.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, the two Mongol scouts in brown felt coats with bows on their backs in the center, lie flat in the tall grass, blue dusk light, the covered wagons stand in a long line behind the tall grass, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the two Mongol scouts, thin-limbed and bulging-eyed, lift their heads and stare at the wagon line, blue dusk light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -2763,7 +2763,7 @@
    "id": "S08-13.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts in the center, march in a long blue column, hazy afternoon light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, the column pulls away over a low rise, hazy afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -2925,7 +2925,7 @@
    "id": "S08-18.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, lead their horses out between the yurts, blue moonlight, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, swing up into the saddles one by one, blue moonlight",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3080,7 +3080,7 @@
    "id": "S09-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sitting on horses on the skyline, hazy afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, hazy afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3102,7 +3102,7 @@
    "id": "S09-02.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sit their horses on the crest, hazy afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, swing their bows up and loose arrows high, hazy afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3158,7 +3158,7 @@
    "id": "S09-04.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of an endless open grass steppe under a huge pale sky, the grey-moustached grenadier in a tall black bearskin cap in the center, marches with his head down, hazy afternoon light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the grey-moustached grenadier in a tall black bearskin cap, thin-limbed and bulging-eyed, stumbles and catches himself on his musket, hazy afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3244,7 +3244,7 @@
    "id": "S09-07.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, close insert shot at eye level inside a canvas campaign tent, a gloved finger draws a curving line in the dust on a wagon board, warm candlelight, a folding wooden table with two candles, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, inside a canvas campaign tent, the finger stabs down hard at the end of the line, warm candlelight",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3266,7 +3266,7 @@
    "id": "S09-08.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, standing in the dry steppe grass, hazy afternoon light, bronze cannons stand hidden behind the low hill on the left, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, hazy afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3310,7 +3310,7 @@
    "id": "S09-10.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a shallow grassy valley between two low hills on the open steppe, the young scout with a scar on his cheek and a fox-fur hat in the center, lies flat in the tall grass on the far slope, hazy afternoon light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the young scout, thin-limbed and bulging-eyed, pushes the grass apart with both hands and stares, hazy afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3332,7 +3332,7 @@
    "id": "S09-11.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume in the center, sitting on a wagon step, hazy afternoon light, the covered wagons stand behind the drummer, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume, thin-limbed and bulging-eyed, hazy afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3354,7 +3354,7 @@
    "id": "S09-12.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, lead their horses along the bottom of a dry gully, hazy afternoon light, low rolling hills on the horizon, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, duck their heads below the rim, hazy afternoon light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3376,7 +3376,7 @@
    "id": "S09-13.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the tall khan with a long grey beard and a blue fur-trimmed robe in the center, sits his horse on the ridge, red evening light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the tall khan with a long grey beard and a blue fur-trimmed robe, thin-limbed and bulging-eyed, raises a hand and closes it into a fist, red evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3398,7 +3398,7 @@
    "id": "S10-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the background on the right, appear along both hilltops, the ranks of French infantry, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, pour down the slopes in a brown flood, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3420,7 +3420,7 @@
    "id": "S10-02.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a shallow grassy valley between two low hills on the open steppe, the short general in a grey greatcoat and a black bicorne hat in the center, sits his horse on the hill, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the short general, thin-limbed and bulging-eyed, stands in his stirrups and flings his arm up, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3454,7 +3454,7 @@
    "id": "S10-03.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, hurry into a hollow square, bright afternoon sun, drifting gun smoke, the square stands on the open grass, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry, thin-limbed and bulging-eyed, slam their musket butts down with bayonets out, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3476,7 +3476,7 @@
    "id": "S10-04.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume in the center, sits on the wagon step polishing his drum, bright afternoon sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume, thin-limbed and bulging-eyed, jerks his head up toward the hills, bright afternoon sun",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3498,7 +3498,7 @@
    "id": "S10-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, ride past the square at a distance, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, swing their bows up and loose a dark cloud of arrows, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3542,7 +3542,7 @@
    "id": "S10-07.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a shallow grassy valley between two low hills on the open steppe, the grey-moustached grenadier in a tall black bearskin cap in the center, stands in the square's front rank, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the grey-moustached grenadier, thin-limbed and bulging-eyed, grabs a soldier by the collar and pulls him into the gap, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3610,7 +3610,7 @@
    "id": "S10-09.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, the handful of French camp guards in grey greatcoats with long muskets in the center, stand between two wagons with their muskets up, bright afternoon sun, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the handful of French camp guards, thin-limbed and bulging-eyed, fire a thin ragged volley in a puff of smoke, bright afternoon sun",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3654,7 +3654,7 @@
    "id": "S10-11.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, lower long lances in a line, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, kick their horses forward into a charge, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3744,7 +3744,7 @@
    "id": "S10-14.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, full-body shot at eye level of a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, aim their muskets over the bayonets, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry, thin-limbed and bulging-eyed, jerk their cheeks down onto the stocks, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3800,7 +3800,7 @@
    "id": "S10-16.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, kneel behind their bayonets, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry, thin-limbed and bulging-eyed, fire one volley in a wall of white smoke, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3822,7 +3822,7 @@
    "id": "S10-17.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, charge out of the smoke, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, swerve around the corners of the square and pull up hard, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3878,7 +3878,7 @@
    "id": "S10-19.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a shallow grassy valley between two low hills on the open steppe, the short general in a grey greatcoat and a black bicorne hat on the right, lowers his telescope, turned to the left, the mameluke rider, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the short general, thin-limbed and bulging-eyed, points at the crest behind them, the mameluke rider, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3912,7 +3912,7 @@
    "id": "S10-20.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the French gun crew in dark blue jackets beside a bronze cannon in the center, push a bronze cannon over the crest, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the French gun crew, thin-limbed and bulging-eyed, heave the wheels forward and swing the barrel down, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -3990,7 +3990,7 @@
    "id": "S10-23.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, mass together on the slope, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, break apart and scatter under a hail of shot, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4047,7 +4047,7 @@
    "id": "S10-25.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, ride hard between the wagons, bright afternoon sun, drifting gun smoke, the covered wagons stand behind the riders, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, hurl burning torches onto the canvas covers, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4069,7 +4069,7 @@
    "id": "S10-26.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume in the center, runs between the burning wagons with his drum, orange firelight and smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the young drummer, thin-limbed and bulging-eyed, slams both sticks down on the drum as he runs, orange firelight and smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4193,7 +4193,7 @@
    "id": "S10-30.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a long low grassy ridge on the open steppe, the tall khan with a long grey beard and a blue fur-trimmed robe on the right, sits his horse on the far ridge, the stocky general on the left, bright afternoon sun, drifting gun smoke, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the tall khan, thin-limbed and bulging-eyed, raises his open hand to hold his riders back, the stocky general, bright afternoon sun, drifting gun smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4382,7 +4382,7 @@
    "id": "S10-36.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of an endless open grass steppe under a huge pale sky, bright afternoon sun, low rolling hills on the horizon, black smoke columns rise behind the low hills, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, bright afternoon sun",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4460,7 +4460,7 @@
    "id": "S11-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the short general in a grey greatcoat and a black bicorne hat in the center, standing in the dry steppe grass, smoky amber light through drifting smoke, smoke drifts behind the general, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, smoky amber light through drifting smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4674,7 +4674,7 @@
    "id": "S11-08.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a long camp of covered supply wagons on the open steppe, smoky amber light through drifting smoke, thin smoke rises above the burnt wagon frames, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, smoky amber light through drifting smoke",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4696,7 +4696,7 @@
    "id": "S12-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, cold blue evening light, dropped lances and arrows lie on the trampled grass, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, cold blue evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4718,7 +4718,7 @@
    "id": "S12-02.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, ride slowly into camp leading riderless horses, cold blue evening light, horse herds grazing, cooking smoke rising, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, lift a wounded rider down from a saddle, cold blue evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4762,7 +4762,7 @@
    "id": "S12-04.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a long camp of covered supply wagons on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, sit in the ash between the burnt wagons, cold blue evening light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, lift empty tin plates and drop them, cold blue evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4806,7 +4806,7 @@
    "id": "S12-06.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium close-up from the chest up at eye level inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat in the center, sits by one candle, one candle, a folding wooden table with two candles, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, inside a canvas campaign tent, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, drops his face into his hands, one candle",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4828,7 +4828,7 @@
    "id": "S12-07.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap in the center, rides slowly into the camp, cold blue evening light, white canvas tents, stacked muskets and bronze cannons, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap, thin-limbed and bulging-eyed, raises a white felt banner on a pole, cold blue evening light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -4918,7 +4918,7 @@
    "id": "S13-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level inside a large round felt yurt, the short general in a grey greatcoat and a black bicorne hat on the left, ducks in through the low felt door, the mameluke rider in the center, the tall khan on the right, the young interpreter, warm firelight, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, inside a large round felt yurt, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, straightens up and pulls off his hat, the mameluke rider, the tall khan, warm firelight",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5421,7 +5421,7 @@
    "id": "S13-16.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level of a long camp of covered supply wagons on the open steppe, the grey-moustached grenadier in a tall black bearskin cap on the left, sits in the ash beside a cold fire, turned to the right, the young drummer on the right, cold blue light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the grey-moustached grenadier, thin-limbed and bulging-eyed, pulls up a fistful of grass and chews it, the young drummer watches him chew, cold blue light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5571,7 +5571,7 @@
    "id": "S13-21.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of an endless open grass steppe under a huge pale sky, the line of Mongol horse archers in brown felt coats on short shaggy horses on the right, loop ropes round two bronze cannons, the French gun crew on the left, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, drag the cannons away across the grass, soft gold morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5593,7 +5593,7 @@
    "id": "S14-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts in the center, stand in a square on the grass, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, raise their muskets to the shoulder, soft gold morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5638,7 +5638,7 @@
    "id": "S14-03.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses in the center, sit their horses on the skyline, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, raise their bows all at once, soft gold morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5660,7 +5660,7 @@
    "id": "S14-04.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a dirt road through a birch forest swallowed by thick white fog, the short general in a grey greatcoat and a black bicorne hat in the center, rides at the head of the column, the ranks of French infantry on the left, soft gold morning light, early morning, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a dirt road through a birch forest swallowed by thick white fog, the short general, thin-limbed and bulging-eyed, raises his arm and points into the fog, the ranks of French infantry, soft gold morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5682,7 +5682,7 @@
    "id": "S14-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, extreme wide shot at eye level of a city of wooden houses and onion-domed churches burning at night, soft gold morning light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a city of wooden houses and onion-domed churches burning at night, soft gold morning light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5794,7 +5794,7 @@
    "id": "S14-09.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium close-up from the chest up at eye level of a city of wooden houses and onion-domed churches burning at night, the short general in a grey greatcoat and a black bicorne hat in the center, stands at a tall window, orange firelight, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a city of wooden houses and onion-domed churches burning at night, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, drops a folded letter onto the sill, orange firelight",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5816,7 +5816,7 @@
    "id": "S14-10.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a dirt road through a birch forest swallowed by thick white fog, the ranks of French infantry in dark blue coats with white crossbelts in the center, trudge through falling snow, cold blue snow light, early morning, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a dirt road through a birch forest swallowed by thick white fog, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, stumble and pull each other up, cold blue snow light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5860,7 +5860,7 @@
    "id": "S15-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, close insert shot at eye level of a city of wooden houses and onion-domed churches burning at night, a wooden drumstick hangs above a French drum, orange firelight at night, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a city of wooden houses and onion-domed churches burning at night, the drumstick strikes the drum skin twice, orange firelight at night",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5882,7 +5882,7 @@
    "id": "S15-02.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium close-up from the chest up at eye level of a city of wooden houses and onion-domed churches burning at night, the short general in a grey greatcoat and a black bicorne hat in the center, watches the flames from the window, orange firelight at night, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a city of wooden houses and onion-domed churches burning at night, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, lifts his chin slowly, orange firelight at night",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5926,7 +5926,7 @@
    "id": "S16-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a rocky valley of the Stone Age with a cave mouth and a campfire, the crowd of modern people in bright jackets around a Stone Age campfire in the center, sit around the campfire, warm campfire light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a rocky valley of the Stone Age with a cave mouth and a campfire, the crowd of modern people, thin-limbed and bulging-eyed, lift burning sticks and wave them at the dark, warm campfire light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5948,7 +5948,7 @@
    "id": "S16-02.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, wide shot at eye level of a frozen Ice Age plain of snow and blue ice under a grey sky, the group of stranded travellers in winter coats on the Ice Age snow in the center, huddle together on the snow, cold blue light, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, a frozen Ice Age plain of snow and blue ice under a grey sky, the group of stranded travellers, thin-limbed and bulging-eyed, raise their arms against a gust of snow, cold blue light",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
@@ -5970,7 +5970,7 @@
    "id": "S16-03.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, medium shot from the waist up at eye level inside a large round felt yurt, the tall khan with a long grey beard and a blue fur-trimmed robe in the center, holds a heavy iron cannonball in one hand, warm firelight, lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents",
+   "prompt": "wldnk style, inside a large round felt yurt, the tall khan with a long grey beard and a blue fur-trimmed robe, thin-limbed and bulging-eyed, tosses the cannonball up and catches it, warm firelight",
    "neg": "text, watermark, logo, signature, extra people, duplicated person, extra fingers, deformed hands, extra limbs, blurry face, low resolution"
   },
   {
