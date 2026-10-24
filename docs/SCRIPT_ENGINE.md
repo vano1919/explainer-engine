@@ -3,7 +3,7 @@
 **What it is.** The one path from a topic to every prompt of an animated episode, with nothing left to improvise: each
 dimension of a prompt or a script is either set by a rule with a source or marked as a variant under test. ვანო asked for
 it on 2026-10-24 ("zero improvisation; where a rule is missing, research it, then write it"). The first episode written
-on it is [`examples/napoleon_vs_genghis/`](../examples/napoleon_vs_genghis/) (204 shots, 15:00, 0 FAIL, 0 REVIEW).
+on it is [`examples/napoleon_vs_genghis/`](../examples/napoleon_vs_genghis/) (214 shots, 15:00, 0 FAIL, 0 REVIEW).
 The evidence for the new numbers is [research/SCRIPT_ENGINE_V1_2026-10-24.md](research/SCRIPT_ENGINE_V1_2026-10-24.md).
 
 ## 1. The pipeline
@@ -12,8 +12,8 @@ The evidence for the new numbers is [research/SCRIPT_ENGINE_V1_2026-10-24.md](re
 |---|---|---|---|---|---|
 | 1 | Research | topic -> claim map (id, text, source, kind fact / estimate / invented) | invariant 5; ZI-02, ZI-04 | the `claims` block of the cards | - |
 | 2 | Skeleton | claim map -> the 16 segments of template D with their clock | [STORY_ENGINE.md](STORY_ENGINE.md) template D, ST-14..ST-16 | `scripting/story_lint.py` | creator (scenario, OR-15) |
-| 3 | Shot cards | skeleton -> `film_shots/1` cards: narration, dialogue, blocking, action, tier, claims | [SHOT_PROMPTS.md](SHOT_PROMPTS.md) KP-15..KP-40 | `python -m explainer_engine.scripting.film_shots check` | creator (script) |
-| 4 | Script | cards -> the readable script and the narrator's lines | ZI-01 | `film_shots script --out script.md` | - |
+| 3 | Shot cards | skeleton -> `film_shots/1` cards: narration, dialogue, blocking, action, tier, claims | [SHOT_PROMPTS.md](SHOT_PROMPTS.md) KP-15..KP-43 | `python -m explainer_engine.scripting.film_shots check` | creator (script) |
+| 4 | Script | cards -> the readable script and the narrator's lines; the shot list with every prompt under its shot | ZI-01 | `film_shots script --out script.md`, `film_shots shotlist --out shotlist.md` | - |
 | 5 | Prompts | cards -> hero-sheet, keyframe, next-pose, cut, last-frame and video prompts, gate cards | ZI-01, ZI-05, KP-01..KP-14 | `film_shots compose --out prompts.json` | creator picks each new hero from its sheet (invariant 6) |
 | 6 | Pictures | prompts -> sheets, masters (Qwen-Image-2512 + style LoRA), poses and cuts (Edit-2511 + scene LoRA) | ZI-06; the keyframe gate of PR #22 | gate cards in `prompts.json` | paint plan + provider (D-50) |
 | 7 | Clips | first (and last) frame + video prompt -> clip with native audio | ZI-03, ZI-06; KP-36, KP-37 | video QA of PR #22 | paid run approved first |
@@ -45,6 +45,7 @@ The evidence for the new numbers is [research/SCRIPT_ENGINE_V1_2026-10-24.md](re
 | Frame rate and frames | 24 fps, 8k + 1 frames covering the shot | 12 fps or 24 fps drawn on twos (the creator's three-variant test film) | `film_shots.frames`, LT-07 |
 | Clip size | test films 1280x704 (LTX sizes are multiples of 32), never upscaled; release clips upscaled to 2560x1440 | release clips rendered at 1920x1088 before the upscale | LT-18 |
 | Video prompt | one present-tense paragraph: the style sentence, the action start -> peak -> settle, the face, the reactions, the line in quotes with its voice, who stays in frame, one camera sentence, the sounds | - | KP-10..KP-12, KP-18, BP-102 |
+| Acting fallback (KP-43) | a line whose take fails the acting check twice: over the speaker's shoulder onto the listener (the line plays on the reaction), or the speaker's hands for a line said to the room | redraw the same shot a third time | `film_shots._acting` |
 | Dialogue audio | LTX native audio, the voice described in words on the cast card (`voice`) | audio-to-video conditioning on one voice take per hero | the cast cards |
 | Narrator | ElevenLabs, the script's narrator lines, first take | - | skill `elevenlabs-voice` |
 | Tier shares | hold at most 10 %, light about a sixth, full the rest | the critic's 40 / 35 / 25 % on the test film | BP-109 |
@@ -64,6 +65,11 @@ Every line points at a rule; nothing in it is new.
    (who stands where, on what, how large), one action with its start, peak and settle, the reactions, the line or the
    narrator's words, the sound, the tier and the claims. A spoken line fits its shot (BP-100); a scene opens wide (KP-26);
    the narrator never describes the picture (KP-20); a scene changes the situation (SC-02).
+   **Action, reaction, consequence**: judge a scene by that chain, not by its shot count. A plan is shown while it is
+   told (KP-42: the scouts at the wagons while the khan asks what the French eat), the other side's move runs in
+   parallel with the hero's win (cross-cutting: the camp burns while Napoleon smiles), the cost lands on screen (spent
+   horses, men eating grass), and the cold open shows pieces of the fight to come (KP-41). Talk never rests on AI faces
+   alone (KP-43).
 5. **Check.** `film_shots check` until 0 FAIL; every REVIEW left is answered in the package.
 6. **Compose.** `film_shots compose` and `film_shots script`; the package for the creator holds the skeleton, the script,
    the prompts, the variants in use (section 3) and the claim map.
@@ -75,4 +81,5 @@ Every line points at a rule; nothing in it is new.
 .venv\Scripts\python -m explainer_engine.scripting.film_shots check   examples\napoleon_vs_genghis\film_shots.json
 .venv\Scripts\python -m explainer_engine.scripting.film_shots compose examples\napoleon_vs_genghis\film_shots.json --out prompts.json
 .venv\Scripts\python -m explainer_engine.scripting.film_shots script  examples\napoleon_vs_genghis\film_shots.json --out script.md
+.venv\Scripts\python -m explainer_engine.scripting.film_shots shotlist examples\napoleon_vs_genghis\film_shots.json --out shotlist.md
 ```

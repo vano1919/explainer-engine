@@ -127,11 +127,12 @@ this page; "ours" means our own tests of 2026-10-22..24.
 | KP-33 | **Relations the picture can draw one way only**: each `frame.relations` sentence says behind, in front of, on top of, under, to the left of...; "by", "near", "beside", "next to" or "with" alone FAIL ("a woolly mammoth by the boulder" drew a mammoth-shaped boulder); a relation names a figure already in the picture with its tag and "the", never "a" or "an" before a cast member's noun ("a living woolly mammoth stands behind the bus" drew two mammoths in 4 of 4 pictures, test v2 2026-10-24) | the LoRA thread's master test 2026-10-24 | house | [code] FAIL |
 | KP-34 | **Free space for the action**: a drawn first frame with an action has `frame.lead_room` (left, right, above, below, or none when the action stays in place), so the video does not move a hand or a body out of the frame | the creator 2026-10-24; KP-03 (everyone stays in frame) | house | [code] FAIL |
 
-### Rules KP-35..KP-40 (the episode, under the script engine v1)
+### Rules KP-35..KP-43 (the episode, under the script engine v1)
 
 They run when the cards say `"engine": "script_engine/1"` ([SCRIPT_ENGINE.md](SCRIPT_ENGINE.md)); the numbers are BP-104..BP-110
 in [SOURCED_RULES.md](SOURCED_RULES.md), the evidence is
-[research/SCRIPT_ENGINE_V1_2026-10-24.md](research/SCRIPT_ENGINE_V1_2026-10-24.md).
+[research/SCRIPT_ENGINE_V1_2026-10-24.md](research/SCRIPT_ENGINE_V1_2026-10-24.md) and (KP-41..KP-43, BP-111..BP-113)
+[research/SCRIPT_ENGINE_V2_2026-10-24.md](research/SCRIPT_ENGINE_V2_2026-10-24.md).
 
 | ID | Rule | Why | Kind | Check |
 |---|---|---|---|---|
@@ -141,6 +142,9 @@ in [SOURCED_RULES.md](SOURCED_RULES.md), the evidence is
 | KP-38 | **Camera moves** on at most BP-110's share of shots; the rest say `static` | the cartoons: static camera on 81 % | hypothesis | [code] REVIEW |
 | KP-39 | **Narration blocks on the cards**: shots narrated with no line spoken between them last at most BP-104's block; the narrator's words fit the pictures under them (BP-01's top pace) and keep BP-105's share | template D (ST-14, ST-16) measured on the cards instead of the script | hypothesis | [code] REVIEW |
 | KP-40 | **The outro points to the channel**: a subscribe line in the last six shots names a world already on the channel and a world coming (the `channel` block) and why (not to miss them); a BP-43 sign-off FAILs | the creator 2026-10-24 (BP-106) | house | [code] FAIL |
+| KP-41 | **The cold open shows the fight to come**: in the first BP-111 seconds at least BP-111's count of shots are `teaser_of` a later action shot; a teaser is a piece of that shot's own clip (`compose` writes `kind: reuse`, nothing is drawn or rendered); a teaser that points at no later shot, or is longer than it, FAILs | the creator's forwarded review 2026-10-24: the first real clash came at 3:13; the cold open (an attention-grabbing scene from the middle, repeated when the story gets there) | hypothesis (the pointer rule: invariant) | [code] REVIEW / FAIL |
+| KP-42 | **Strategy shown in action**: at most BP-112's seconds in one place before a cutaway to another place shows what the talk is about while it is said: the plan carried out, its cost, the other side moving (cross-cutting); action, reaction, consequence, not more battle | the review: 5:03-8:19 was talk about plans; cross-cutting builds suspense and simultaneity | hypothesis | [code] REVIEW |
+| KP-43 | **AI acting is a risk**: at most BP-113's count of spoken lines in a row before a silent reaction, an insert or a cutaway; every full-tier line in a medium or closer shot carries an acting check (`qa: [acting]`: lips on the line, the peak, the face, no freeze) and a fallback that hides the mouth (over the speaker's shoulder onto the listener, or the speaker's hands); a take is redrawn only when the check fails, the fallback after a second failure | the creator 2026-10-24: 'the AI's acting is the critical vulnerability; if it fails the parley becomes a podcast' | house | [code] REVIEW; compose |
 
 ## The shot card (`film_shots/1`)
 

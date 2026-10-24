@@ -65,6 +65,12 @@
    "tag": "the young drummer in a white shako with a red plume",
    "voice": "a thin, hungry teenage voice with a French accent"
   },
+  "scouts": {
+   "tag": "the two Mongol scouts in brown felt coats with bows on their backs"
+  },
+  "guards": {
+   "tag": "the handful of French camp guards in grey greatcoats with long muskets"
+  },
   "geniuses": {
    "tag": "the crowd of modern people in bright jackets around a Stone Age campfire"
   },
@@ -247,6 +253,128 @@
   },
   {
    "id": "S01-02",
+   "scene": "S01",
+   "beat": "Teaser: a cannon blast breaks a mass of riders.",
+   "seconds": 2,
+   "mode": "establish",
+   "frame": {
+    "size": "EWS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "valley",
+    "light": "bright afternoon sun, drifting gun smoke",
+    "lead_room": {
+     "side": "right",
+     "for": "where they scatter"
+    }
+   },
+   "blocking": [
+    {
+     "who": "riders",
+     "where": "center",
+     "facing": "left",
+     "on": "sitting on horses on the hillside",
+     "height": "quarter"
+    }
+   ],
+   "action": {
+    "who": "riders",
+    "start": "mass together on the slope",
+    "peak": "break apart and scatter under a hail of shot",
+    "settle": "spread out up the hill"
+   },
+   "sound": {
+    "ambience": "wind, distant horns, horses",
+    "loudest": "a crack of shot"
+   },
+   "tier": "full",
+   "source": "keyframe",
+   "teaser_of": "S10-23"
+  },
+  {
+   "id": "S01-03",
+   "scene": "S01",
+   "beat": "Teaser: lances against a wall of bayonets.",
+   "seconds": 2,
+   "mode": "establish",
+   "frame": {
+    "size": "WS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "valley",
+    "light": "bright afternoon sun, drifting gun smoke",
+    "lead_room": {
+     "side": "right",
+     "for": "where they wheel"
+    }
+   },
+   "blocking": [
+    {
+     "who": "riders",
+     "where": "center",
+     "facing": "left",
+     "on": "sitting on horses on the hillside",
+     "height": "third"
+    }
+   ],
+   "action": {
+    "who": "riders",
+    "start": "charge out of the smoke",
+    "peak": "swerve around the corners of the square and pull up hard",
+    "settle": "wheel away into the grass"
+   },
+   "sound": {
+    "ambience": "wind, distant horns, horses"
+   },
+   "tier": "full",
+   "source": "keyframe",
+   "teaser_of": "S10-17"
+  },
+  {
+   "id": "S01-04",
+   "scene": "S01",
+   "beat": "Teaser: torches on the wagons.",
+   "seconds": 2,
+   "mode": "establish",
+   "frame": {
+    "size": "WS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "wagons",
+    "light": "bright afternoon sun, drifting gun smoke",
+    "relations": [
+     "the covered wagons stand behind the riders"
+    ],
+    "lead_room": {
+     "side": "right",
+     "for": "where they wheel"
+    }
+   },
+   "blocking": [
+    {
+     "who": "riders",
+     "where": "center",
+     "facing": "left",
+     "on": "sitting on horses on the hillside",
+     "height": "third"
+    }
+   ],
+   "action": {
+    "who": "riders",
+    "start": "ride hard between the wagons",
+    "peak": "hurl burning torches onto the canvas covers",
+    "settle": "wheel round as the canvas catches"
+   },
+   "sound": {
+    "ambience": "wind, a wagon creaking",
+    "loudest": "fire roaring up"
+   },
+   "tier": "full",
+   "source": "keyframe",
+   "teaser_of": "S10-25"
+  },
+  {
+   "id": "S01-05",
    "scene": "S01",
    "mode": "narrated",
    "beat": "Reveal: an army no European has seen in six centuries.",
@@ -613,7 +741,7 @@
     "settle": "keeps his hand flat on the bronze",
     "face": "the corner of his mouth lifts"
    },
-   "narration": "His method never changed: find the enemy army, force one big battle, destroy it.",
+   "narration": "His method: find the enemy army, force one big battle, destroy it.",
    "claims": [
     "C04"
    ],
@@ -877,7 +1005,7 @@
     "settle": "keeps his chin raised",
     "face": "his eyes crease a little at the corners"
    },
-   "narration": "And he promoted men for what they did, not who their fathers were.",
+   "narration": "He promoted men for what they did, not for their fathers.",
    "claims": [
     "C11"
    ],
@@ -1501,7 +1629,7 @@
    "scene": "S04",
    "mode": "scene",
    "beat": "The envoy's warning, with a history lesson inside it.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "OTS",
     "angle": "eye",
@@ -1551,8 +1679,7 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01",
-   "last_frame": true
+   "master": "S04-01"
   },
   {
    "id": "S04-12",
@@ -1814,6 +1941,47 @@
    "id": "S04-17",
    "scene": "S04",
    "mode": "establish",
+   "beat": "On the far ridge, riders watch the camp.",
+   "seconds": 3,
+   "frame": {
+    "size": "EWS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "ridge",
+    "light": "warm late afternoon light",
+    "lead_room": {
+     "side": "left",
+     "for": "the camp below"
+    }
+   },
+   "tier": "light",
+   "blocking": [
+    {
+     "who": "riders",
+     "where": "center",
+     "facing": "camera",
+     "on": "standing on the grass",
+     "height": "quarter"
+    }
+   ],
+   "action": {
+    "who": "riders",
+    "start": "sit their horses along the far ridge",
+    "peak": "turn their heads together toward the camp",
+    "settle": "sit still, watching"
+   },
+   "sound": {
+    "ambience": "wind over the ridge",
+    "foley": [
+     "wind over the ridge"
+    ]
+   },
+   "source": "keyframe"
+  },
+  {
+   "id": "S04-18",
+   "scene": "S04",
+   "mode": "establish",
    "beat": "The envoy rides off into the empty steppe.",
    "seconds": 4,
    "frame": {
@@ -1866,11 +2034,11 @@
     ]
    },
    "source": "cut",
-   "master": "S04-01",
+   "master": "S04-17",
    "exit": true
   },
   {
-   "id": "S04-18",
+   "id": "S04-19",
    "scene": "S04",
    "mode": "scene",
    "beat": "The order that starts the hunt.",
@@ -1920,45 +2088,7 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
-  },
-  {
-   "id": "S04-19",
-   "scene": "S04",
-   "mode": "scene",
-   "beat": "Murat is delighted.",
-   "seconds": 4,
-   "frame": {
-    "size": "MCU",
-    "angle": "eye",
-    "camera": "static",
-    "place": "camp",
-    "light": "warm late afternoon light",
-    "lead_room": {
-     "side": "none"
-    }
-   },
-   "tier": "light",
-   "blocking": [
-    {
-     "who": "murat",
-     "where": "center",
-     "facing": "right",
-     "on": "standing in the dry steppe grass",
-     "height": "most"
-    }
-   ],
-   "action": {
-    "who": "murat",
-    "start": "grins under his plumes",
-    "peak": "raises two fingers to his hat in a salute",
-    "settle": "holds the salute"
-   },
-   "sound": {
-    "ambience": "flags snapping in the wind, a quiet camp"
-   },
-   "source": "cut",
-   "master": "S04-01"
+   "master": "S04-17"
   },
   {
    "id": "S04-20",
@@ -1988,7 +2118,7 @@
    ],
    "action": {
     "who": "murat",
-    "start": "holds the salute",
+    "start": "grins under his plumes",
     "peak": "slaps his chest with his fist",
     "settle": "grins wide"
    },
@@ -2002,7 +2132,7 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-17"
   },
   {
    "id": "S04-21",
@@ -2047,7 +2177,7 @@
     "ambience": "flags snapping in the wind, a quiet camp"
    },
    "source": "cut",
-   "master": "S04-01"
+   "master": "S04-17"
   },
   {
    "id": "S05-01",
@@ -2066,7 +2196,7 @@
     ]
    },
    "tier": "light",
-   "narration": "Napoleon's army was built to be fed from wagons, and from the farms along the road.",
+   "narration": "Napoleon's army ate from wagons, and from the farms along the road.",
    "claims": [
     "C16"
    ],
@@ -2225,26 +2355,6 @@
     "foley": [
      "sabre ringing"
     ]
-   },
-   "source": "keyframe"
-  },
-  {
-   "id": "S05-06",
-   "scene": "S05",
-   "mode": "establish",
-   "beat": "Nothing out there. Or so it looks.",
-   "seconds": 4,
-   "frame": {
-    "size": "EWS",
-    "angle": "eye",
-    "camera": "pan_right",
-    "place": "steppe",
-    "light": "cold pink dawn light",
-    "camera_end": "an empty ridge on the far right of the frame"
-   },
-   "tier": "hold",
-   "sound": {
-    "ambience": "wind over open grass"
    },
    "source": "keyframe"
   },
@@ -2413,7 +2523,7 @@
    "scene": "S06",
    "mode": "scene",
    "beat": "The column under arrows.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -2506,7 +2616,7 @@
    "scene": "S06",
    "mode": "scene",
    "beat": "How far?",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -2557,7 +2667,7 @@
    "scene": "S06",
    "mode": "scene",
    "beat": "Too far.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -2661,6 +2771,36 @@
   {
    "id": "S06-10",
    "scene": "S06",
+   "mode": "insert",
+   "beat": "They keep falling.",
+   "seconds": 3,
+   "frame": {
+    "size": "INSERT",
+    "angle": "eye",
+    "camera": "static",
+    "place": "steppe",
+    "light": "hard midday sun",
+    "lead_room": {
+     "side": "none"
+    }
+   },
+   "tier": "full",
+   "action": {
+    "who": "riders",
+    "start": "an arrow drops out of the sky",
+    "peak": "the arrow slams into the turf beside a cannon wheel",
+    "settle": "the arrow quivers upright"
+   },
+   "sound": {
+    "ambience": "wind in dry grass, far-off hooves",
+    "loudest": "a hard thud"
+   },
+   "source": "cut",
+   "master": "S06-07"
+  },
+  {
+   "id": "S06-11",
+   "scene": "S06",
    "mode": "scene",
    "beat": "He does the arithmetic.",
    "seconds": 4,
@@ -2707,11 +2847,11 @@
    "master": "S06-07"
   },
   {
-   "id": "S06-11",
+   "id": "S06-12",
    "scene": "S06",
    "mode": "scene",
    "beat": "The reflex: charge.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -2759,7 +2899,7 @@
    "master": "S06-07"
   },
   {
-   "id": "S06-12",
+   "id": "S06-13",
    "scene": "S06",
    "mode": "scene",
    "beat": "Murat's favourite order.",
@@ -2807,7 +2947,7 @@
    "master": "S06-07"
   },
   {
-   "id": "S06-13",
+   "id": "S06-14",
    "scene": "S06",
    "mode": "establish",
    "beat": "The French charge.",
@@ -2846,7 +2986,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S06-14",
+   "id": "S06-15",
    "scene": "S06",
    "mode": "establish",
    "beat": "The Mongols turn away and shoot backwards.",
@@ -2887,7 +3027,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S06-15",
+   "id": "S06-16",
    "scene": "S06",
    "mode": "scene",
    "beat": "The French horses are spent.",
@@ -2925,10 +3065,10 @@
     ]
    },
    "source": "cut",
-   "master": "S06-14"
+   "master": "S06-15"
   },
   {
-   "id": "S06-16",
+   "id": "S06-17",
    "scene": "S06",
    "mode": "establish",
    "beat": "The Mongols' horses are not.",
@@ -2964,14 +3104,14 @@
     "ambience": "wind over the ridge"
    },
    "source": "nextpose",
-   "master": "S06-14"
+   "master": "S06-15"
   },
   {
-   "id": "S06-17",
+   "id": "S06-18",
    "scene": "S06",
    "mode": "scene",
    "beat": "Murat reports the impossible.",
-   "seconds": 6,
+   "seconds": 5,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -3019,15 +3159,14 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-14",
-   "last_frame": true
+   "master": "S06-15"
   },
   {
-   "id": "S06-18",
+   "id": "S06-19",
    "scene": "S06",
    "mode": "scene",
    "beat": "Napoleon changes the plan in one breath.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -3072,10 +3211,10 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-14"
+   "master": "S06-15"
   },
   {
-   "id": "S06-19",
+   "id": "S06-20",
    "scene": "S06",
    "mode": "establish",
    "beat": "The guns come up.",
@@ -3117,62 +3256,11 @@
    "source": "keyframe"
   },
   {
-   "id": "S06-20",
-   "scene": "S06",
-   "mode": "scene",
-   "beat": "The gun is ready.",
-   "seconds": 4,
-   "frame": {
-    "size": "MS",
-    "angle": "eye",
-    "camera": "static",
-    "place": "steppe",
-    "light": "hard midday sun",
-    "lead_room": {
-     "side": "none"
-    }
-   },
-   "tier": "full",
-   "blocking": [
-    {
-     "who": "kemal",
-     "where": "left",
-     "facing": "napoleon",
-     "on": "standing in the dry steppe grass",
-     "height": "most"
-    },
-    {
-     "who": "napoleon",
-     "where": "right",
-     "facing": "kemal",
-     "on": "standing in the dry steppe grass",
-     "height": "most"
-    }
-   ],
-   "action": {
-    "who": "kemal",
-    "start": "rides up beside him",
-    "peak": "points back at the cannon on the crest",
-    "settle": "lowers the arm"
-   },
-   "dialogue": {
-    "who": "kemal",
-    "to": "napoleon",
-    "text": "Sire, the gun is ready.",
-    "delivery": "brisk"
-   },
-   "sound": {
-    "ambience": "wind in dry grass, far-off hooves"
-   },
-   "source": "cut",
-   "master": "S06-19"
-  },
-  {
    "id": "S06-21",
    "scene": "S06",
    "mode": "scene",
    "beat": "The artillery officer lays the gun himself.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -3216,7 +3304,7 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-19"
+   "master": "S06-20"
   },
   {
    "id": "S06-22",
@@ -3261,7 +3349,7 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-19"
+   "master": "S06-20"
   },
   {
    "id": "S06-23",
@@ -3301,7 +3389,7 @@
     "loudest": "one cannon shot"
    },
    "source": "cut",
-   "master": "S06-19"
+   "master": "S06-20"
   },
   {
    "id": "S06-24",
@@ -3341,14 +3429,14 @@
     "loudest": "a far thud of earth"
    },
    "source": "cut",
-   "master": "S06-19"
+   "master": "S06-20"
   },
   {
    "id": "S06-25",
    "scene": "S06",
    "mode": "scene",
    "beat": "Napoleon's first smile on the steppe.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MCU",
     "angle": "eye",
@@ -3389,7 +3477,7 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-19"
+   "master": "S06-20"
   },
   {
    "id": "S06-26",
@@ -3433,7 +3521,49 @@
     "ambience": "wind in dry grass, far-off hooves"
    },
    "source": "cut",
-   "master": "S06-19"
+   "master": "S06-20"
+  },
+  {
+   "id": "S06-27",
+   "scene": "S06",
+   "mode": "establish",
+   "beat": "Out of range, they form again.",
+   "seconds": 3,
+   "frame": {
+    "size": "EWS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "ridge",
+    "light": "hard midday sun",
+    "lead_room": {
+     "side": "left",
+     "for": "where they wait"
+    }
+   },
+   "tier": "light",
+   "blocking": [
+    {
+     "who": "riders",
+     "where": "center",
+     "facing": "left",
+     "on": "sitting on horses on the far ridge",
+     "height": "quarter"
+    }
+   ],
+   "action": {
+    "who": "riders",
+    "start": "ride back over the far crest",
+    "peak": "wheel round into a new line, farther away",
+    "settle": "sit their horses in the new line"
+   },
+   "sound": {
+    "ambience": "wind over the ridge",
+    "foley": [
+     "far-off hooves"
+    ]
+   },
+   "source": "cut",
+   "master": "S06-20"
   },
   {
    "id": "S07-01",
@@ -3966,45 +4096,6 @@
    "source": "keyframe"
   },
   {
-   "id": "S07-13",
-   "scene": "S07",
-   "mode": "narrated",
-   "beat": "Someone is watching him look.",
-   "seconds": 4,
-   "frame": {
-    "size": "CU",
-    "angle": "eye",
-    "camera": "static",
-    "place": "camp",
-    "light": "blue dusk light with orange campfires",
-    "lead_room": {
-     "side": "left",
-     "for": "where he looks"
-    }
-   },
-   "tier": "light",
-   "blocking": [
-    {
-     "who": "napoleon",
-     "where": "center",
-     "facing": "camera",
-     "on": "sitting on a folding stool",
-     "height": "most"
-    }
-   ],
-   "action": {
-    "who": "napoleon",
-    "start": "stares at a fallen candle flame",
-    "peak": "lifts his eyes to the tent wall",
-    "settle": "holds the look"
-   },
-   "sound": {
-    "ambience": "campfires crackling, a horse coughing"
-   },
-   "source": "cut",
-   "master": "S07-12"
-  },
-  {
    "id": "S08-01",
    "scene": "S08",
    "mode": "establish",
@@ -4181,7 +4272,7 @@
    "scene": "S08",
    "mode": "scene",
    "beat": "Yes.",
-   "seconds": 4,
+   "seconds": 3,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -4192,7 +4283,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "light",
    "blocking": [
     {
      "who": "bayan",
@@ -4214,12 +4305,6 @@
     "start": "kneels in front of the khan",
     "peak": "drops his eyes to the carpet",
     "settle": "keeps his eyes down"
-   },
-   "dialogue": {
-    "who": "bayan",
-    "to": "genghis",
-    "text": "Yes, Khan.",
-    "delivery": "a whisper"
    },
    "sound": {
     "ambience": "a fire crackling, wind against felt"
@@ -4281,7 +4366,7 @@
    "scene": "S08",
    "mode": "scene",
    "beat": "The scout cannot believe it.",
-   "seconds": 4,
+   "seconds": 3,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -4292,7 +4377,7 @@
      "side": "none"
     }
    },
-   "tier": "full",
+   "tier": "light",
    "blocking": [
     {
      "who": "bayan",
@@ -4314,12 +4399,6 @@
     "start": "kneels in front of the khan",
     "peak": "drops his forehead to the carpet",
     "settle": "stays bowed low"
-   },
-   "dialogue": {
-    "who": "bayan",
-    "to": "genghis",
-    "text": "Thank you, Great Khan!",
-    "delivery": "breathless"
    },
    "sound": {
     "ambience": "a fire crackling, wind against felt"
@@ -4523,6 +4602,50 @@
   {
    "id": "S08-11",
    "scene": "S08",
+   "mode": "establish",
+   "beat": "Out in the grass, his scouts count the wagons.",
+   "seconds": 3,
+   "frame": {
+    "size": "WS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "wagons",
+    "light": "blue dusk light",
+    "relations": [
+     "the covered wagons stand in a long line behind the tall grass"
+    ],
+    "lead_room": {
+     "side": "right",
+     "for": "the wagons"
+    }
+   },
+   "tier": "light",
+   "blocking": [
+    {
+     "who": "scouts",
+     "where": "center",
+     "facing": "camera",
+     "on": "lying flat in the tall grass",
+     "height": "quarter"
+    }
+   ],
+   "action": {
+    "who": "scouts",
+    "start": "lie flat in the tall grass",
+    "peak": "lift their heads and stare at the wagon line",
+    "settle": "sink back down into the grass"
+   },
+   "sound": {
+    "ambience": "wind, a wagon creaking",
+    "foley": [
+     "grass rustling"
+    ]
+   },
+   "source": "keyframe"
+  },
+  {
+   "id": "S08-12",
+   "scene": "S08",
    "mode": "scene",
    "beat": "The idea lands.",
    "seconds": 5,
@@ -4563,10 +4686,54 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-11"
   },
   {
-   "id": "S08-12",
+   "id": "S08-13",
+   "scene": "S08",
+   "mode": "establish",
+   "beat": "The French march: the fighting column ahead, the wagons falling behind.",
+   "seconds": 4,
+   "frame": {
+    "size": "EWS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "steppe",
+    "light": "hazy afternoon light",
+    "relations": [
+     "the covered wagons trail far behind the column on the left"
+    ],
+    "lead_room": {
+     "side": "right",
+     "for": "where the column marches"
+    }
+   },
+   "tier": "light",
+   "blocking": [
+    {
+     "who": "infantry",
+     "where": "center",
+     "facing": "camera",
+     "on": "standing on the grass",
+     "height": "quarter"
+    }
+   ],
+   "action": {
+    "who": "infantry",
+    "start": "march in a long blue column",
+    "peak": "the column pulls away over a low rise",
+    "settle": "the column marches on, small"
+   },
+   "sound": {
+    "ambience": "wind over open grass",
+    "foley": [
+     "far-off wagon wheels creaking"
+    ]
+   },
+   "source": "keyframe"
+  },
+  {
+   "id": "S08-14",
    "scene": "S08",
    "mode": "scene",
    "beat": "Subutai offers the move that worked at the Kalka.",
@@ -4617,11 +4784,11 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01",
+   "master": "S08-13",
    "last_frame": true
   },
   {
-   "id": "S08-13",
+   "id": "S08-15",
    "scene": "S08",
    "mode": "scene",
    "beat": "The khan wants something cleverer.",
@@ -4669,10 +4836,10 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-13"
   },
   {
-   "id": "S08-14",
+   "id": "S08-16",
    "scene": "S08",
    "mode": "scene",
    "beat": "Subutai does not follow.",
@@ -4708,10 +4875,10 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-13"
   },
   {
-   "id": "S08-15",
+   "id": "S08-17",
    "scene": "S08",
    "mode": "scene",
    "beat": "The plan, in one sentence.",
@@ -4760,11 +4927,53 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01",
+   "master": "S08-13",
    "last_frame": true
   },
   {
-   "id": "S08-16",
+   "id": "S08-18",
+   "scene": "S08",
+   "mode": "establish",
+   "beat": "That night, riders slip out of the camp.",
+   "seconds": 3,
+   "frame": {
+    "size": "WS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "mgcamp",
+    "light": "blue moonlight",
+    "lead_room": {
+     "side": "left",
+     "for": "where they ride off"
+    }
+   },
+   "tier": "light",
+   "blocking": [
+    {
+     "who": "riders",
+     "where": "center",
+     "facing": "camera",
+     "on": "standing on the trampled grass beside their horses",
+     "height": "third"
+    }
+   ],
+   "action": {
+    "who": "riders",
+    "start": "lead their horses out between the yurts",
+    "peak": "swing up into the saddles one by one",
+    "settle": "ride off into the dark in single file"
+   },
+   "sound": {
+    "ambience": "horses grazing, a far-off horn",
+    "foley": [
+     "muffled hooves"
+    ]
+   },
+   "source": "keyframe",
+   "exit": true
+  },
+  {
+   "id": "S08-19",
    "scene": "S08",
    "mode": "scene",
    "beat": "And the guns: the khan collects talent.",
@@ -4805,10 +5014,10 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-18"
   },
   {
-   "id": "S08-17",
+   "id": "S08-20",
    "scene": "S08",
    "mode": "scene",
    "beat": "Whole?",
@@ -4856,10 +5065,10 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01"
+   "master": "S08-18"
   },
   {
-   "id": "S08-18",
+   "id": "S08-21",
    "scene": "S08",
    "mode": "scene",
    "beat": "The khan's creed.",
@@ -4909,11 +5118,11 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S08-01",
+   "master": "S08-18",
    "last_frame": true
   },
   {
-   "id": "S08-19",
+   "id": "S08-22",
    "scene": "S08",
    "mode": "establish",
    "beat": "Subutai goes to do it.",
@@ -4967,7 +5176,7 @@
     ]
    },
    "source": "cut",
-   "master": "S08-01",
+   "master": "S08-18",
    "exit": true
   },
   {
@@ -5329,6 +5538,47 @@
   {
    "id": "S09-10",
    "scene": "S09",
+   "mode": "scene",
+   "beat": "Someone watches them hide the guns.",
+   "seconds": 3,
+   "frame": {
+    "size": "MS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "valley",
+    "light": "hazy afternoon light",
+    "lead_room": {
+     "side": "left",
+     "for": "the hidden guns"
+    }
+   },
+   "tier": "light",
+   "blocking": [
+    {
+     "who": "bayan",
+     "where": "center",
+     "facing": "camera",
+     "on": "lying flat in the tall grass",
+     "height": "most"
+    }
+   ],
+   "action": {
+    "who": "bayan",
+    "start": "lies flat in the tall grass on the far slope",
+    "peak": "pushes the grass apart with both hands and stares",
+    "settle": "lets the grass close again"
+   },
+   "sound": {
+    "ambience": "wind, distant horns, horses",
+    "foley": [
+     "grass rustling"
+    ]
+   },
+   "source": "keyframe"
+  },
+  {
+   "id": "S09-11",
+   "scene": "S09",
    "mode": "establish",
    "beat": "The wagons, nearly unguarded.",
    "seconds": 4,
@@ -5359,7 +5609,48 @@
    "source": "keyframe"
   },
   {
-   "id": "S09-11",
+   "id": "S09-12",
+   "scene": "S09",
+   "mode": "establish",
+   "beat": "Far from the valley, riders walk their horses along a dry gully.",
+   "seconds": 3,
+   "frame": {
+    "size": "WS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "steppe",
+    "light": "hazy afternoon light",
+    "lead_room": {
+     "side": "right",
+     "for": "where they walk"
+    }
+   },
+   "tier": "light",
+   "blocking": [
+    {
+     "who": "riders",
+     "where": "center",
+     "facing": "left",
+     "on": "walking beside their horses in a dry gully",
+     "height": "third"
+    }
+   ],
+   "action": {
+    "who": "riders",
+    "start": "lead their horses along the bottom of a dry gully",
+    "peak": "duck their heads below the rim",
+    "settle": "walk on in single file"
+   },
+   "sound": {
+    "ambience": "wind, far-off hooves",
+    "foley": [
+     "hooves on dry earth"
+    ]
+   },
+   "source": "keyframe"
+  },
+  {
+   "id": "S09-13",
    "scene": "S09",
    "mode": "narrated",
    "beat": "The khan sees exactly that.",
@@ -5537,6 +5828,47 @@
   {
    "id": "S10-04",
    "scene": "S10",
+   "mode": "scene",
+   "beat": "At the wagons, the drummer hears hooves.",
+   "seconds": 3,
+   "frame": {
+    "size": "MS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "wagons",
+    "light": "bright afternoon sun",
+    "lead_room": {
+     "side": "right",
+     "for": "the hills"
+    }
+   },
+   "tier": "light",
+   "blocking": [
+    {
+     "who": "drummer",
+     "where": "center",
+     "facing": "camera",
+     "on": "sitting on a wagon step",
+     "height": "most"
+    }
+   ],
+   "action": {
+    "who": "drummer",
+    "start": "sits on the wagon step polishing his drum",
+    "peak": "jerks his head up toward the hills",
+    "settle": "freezes with the cloth in his hand"
+   },
+   "sound": {
+    "ambience": "wind, a wagon creaking",
+    "foley": [
+     "far-off hooves growing louder"
+    ]
+   },
+   "source": "keyframe"
+  },
+  {
+   "id": "S10-05",
+   "scene": "S10",
    "mode": "establish",
    "beat": "The arrow storm.",
    "seconds": 4,
@@ -5574,7 +5906,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-05",
+   "id": "S10-06",
    "scene": "S10",
    "mode": "insert",
    "beat": "Inside the square.",
@@ -5603,10 +5935,10 @@
     ]
    },
    "source": "cut",
-   "master": "S10-04"
+   "master": "S10-05"
   },
   {
-   "id": "S10-06",
+   "id": "S10-07",
    "scene": "S10",
    "mode": "scene",
    "beat": "Brun closes the gap.",
@@ -5653,7 +5985,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-07",
+   "id": "S10-08",
    "scene": "S10",
    "mode": "scene",
    "beat": "Steady.",
@@ -5694,10 +6026,49 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-06"
+   "master": "S10-07"
   },
   {
-   "id": "S10-08",
+   "id": "S10-09",
+   "scene": "S10",
+   "mode": "establish",
+   "beat": "The camp guards fire one ragged volley.",
+   "seconds": 3,
+   "frame": {
+    "size": "WS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "wagons",
+    "light": "bright afternoon sun",
+    "lead_room": {
+     "side": "right",
+     "for": "where the riders come"
+    }
+   },
+   "tier": "full",
+   "blocking": [
+    {
+     "who": "guards",
+     "where": "center",
+     "facing": "camera",
+     "on": "standing on the grass",
+     "height": "third"
+    }
+   ],
+   "action": {
+    "who": "guards",
+    "start": "stand between two wagons with their muskets up",
+    "peak": "fire a thin ragged volley in a puff of smoke",
+    "settle": "fumble with their ramrods to reload"
+   },
+   "sound": {
+    "ambience": "wind, a wagon creaking",
+    "loudest": "a thin musket volley"
+   },
+   "source": "keyframe"
+  },
+  {
+   "id": "S10-10",
    "scene": "S10",
    "mode": "scene",
    "beat": "A drum keeps the square together.",
@@ -5733,10 +6104,10 @@
     "loudest": "a fast drum roll"
    },
    "source": "cut",
-   "master": "S10-06"
+   "master": "S10-09"
   },
   {
-   "id": "S10-09",
+   "id": "S10-11",
    "scene": "S10",
    "mode": "establish",
    "beat": "The heavy riders form for the charge.",
@@ -5775,7 +6146,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-10",
+   "id": "S10-12",
    "scene": "S10",
    "mode": "scene",
    "beat": "Front rank, kneel.",
@@ -5816,10 +6187,10 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-09"
+   "master": "S10-11"
   },
   {
-   "id": "S10-11",
+   "id": "S10-13",
    "scene": "S10",
    "mode": "scene",
    "beat": "Hold.",
@@ -5860,10 +6231,10 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-09"
+   "master": "S10-11"
   },
   {
-   "id": "S10-12",
+   "id": "S10-14",
    "scene": "S10",
    "mode": "scene",
    "beat": "The front rank aims.",
@@ -5901,7 +6272,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-13",
+   "id": "S10-15",
    "scene": "S10",
    "mode": "scene",
    "beat": "Fire.",
@@ -5943,10 +6314,10 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-12"
+   "master": "S10-14"
   },
   {
-   "id": "S10-14",
+   "id": "S10-16",
    "scene": "S10",
    "mode": "establish",
    "beat": "The volley at thirty metres.",
@@ -5985,7 +6356,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-15",
+   "id": "S10-17",
    "scene": "S10",
    "mode": "establish",
    "beat": "The charge splits around the square.",
@@ -6023,7 +6394,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-16",
+   "id": "S10-18",
    "scene": "S10",
    "mode": "scene",
    "beat": "The veteran's joy.",
@@ -6064,14 +6435,14 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-15"
+   "master": "S10-17"
   },
   {
-   "id": "S10-17",
+   "id": "S10-19",
    "scene": "S10",
    "mode": "scene",
    "beat": "Now the trap closes.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -6118,7 +6489,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-18",
+   "id": "S10-20",
    "scene": "S10",
    "mode": "establish",
    "beat": "The hidden guns roll over the crest.",
@@ -6159,7 +6530,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-19",
+   "id": "S10-21",
    "scene": "S10",
    "mode": "scene",
    "beat": "Canister.",
@@ -6203,10 +6574,10 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-18"
+   "master": "S10-20"
   },
   {
-   "id": "S10-20",
+   "id": "S10-22",
    "scene": "S10",
    "mode": "scene",
    "beat": "Canister.",
@@ -6243,10 +6614,10 @@
     "loudest": "a cannon blast"
    },
    "source": "cut",
-   "master": "S10-18"
+   "master": "S10-20"
   },
   {
-   "id": "S10-21",
+   "id": "S10-23",
    "scene": "S10",
    "mode": "establish",
    "beat": "Six hundred metres: the Mongol mass breaks.",
@@ -6285,7 +6656,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-22",
+   "id": "S10-24",
    "scene": "S10",
    "mode": "scene",
    "beat": "This is how Europe learned.",
@@ -6327,10 +6698,97 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-21"
+   "master": "S10-23"
   },
   {
-   "id": "S10-23",
+   "id": "S10-25",
+   "scene": "S10",
+   "mode": "establish",
+   "beat": "Behind the hills, other riders reach the wagons.",
+   "seconds": 4,
+   "frame": {
+    "size": "WS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "wagons",
+    "light": "bright afternoon sun, drifting gun smoke",
+    "relations": [
+     "the covered wagons stand behind the riders"
+    ],
+    "lead_room": {
+     "side": "right",
+     "for": "where they wheel"
+    }
+   },
+   "tier": "full",
+   "blocking": [
+    {
+     "who": "riders",
+     "where": "center",
+     "facing": "left",
+     "on": "sitting on horses on the hillside",
+     "height": "third"
+    }
+   ],
+   "action": {
+    "who": "riders",
+    "start": "ride hard between the wagons",
+    "peak": "hurl burning torches onto the canvas covers",
+    "settle": "wheel round as the canvas catches"
+   },
+   "sound": {
+    "ambience": "wind, a wagon creaking",
+    "loudest": "fire roaring up"
+   },
+   "source": "keyframe"
+  },
+  {
+   "id": "S10-26",
+   "scene": "S10",
+   "mode": "scene",
+   "beat": "Petit runs through the fire, drumming the alarm.",
+   "seconds": 4,
+   "frame": {
+    "size": "MS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "wagons",
+    "light": "orange firelight and smoke",
+    "lead_room": {
+     "side": "right",
+     "for": "where he runs"
+    }
+   },
+   "tier": "full",
+   "blocking": [
+    {
+     "who": "drummer",
+     "where": "center",
+     "facing": "camera",
+     "on": "standing inside the square",
+     "height": "most"
+    }
+   ],
+   "action": {
+    "who": "drummer",
+    "start": "runs between the burning wagons with his drum",
+    "peak": "slams both sticks down on the drum as he runs",
+    "settle": "stops and stares at the flames, sticks raised"
+   },
+   "dialogue": {
+    "who": "drummer",
+    "to": "room",
+    "text": "Alarm! Alarm!",
+    "delivery": "a cracked shout"
+   },
+   "sound": {
+    "ambience": "wind, a wagon creaking",
+    "loudest": "a drum alarm"
+   },
+   "source": "keyframe"
+  },
+  {
+   "id": "S10-27",
    "scene": "S10",
    "mode": "scene",
    "beat": "Murat smells the kill.",
@@ -6379,14 +6837,14 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-21"
+   "master": "S10-26"
   },
   {
-   "id": "S10-24",
+   "id": "S10-28",
    "scene": "S10",
    "mode": "scene",
    "beat": "Napoleon has learned the khan's lesson.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -6431,10 +6889,10 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-21"
+   "master": "S10-26"
   },
   {
-   "id": "S10-25",
+   "id": "S10-29",
    "scene": "S10",
    "mode": "scene",
    "beat": "Murat hates it.",
@@ -6469,54 +6927,10 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-21"
+   "master": "S10-26"
   },
   {
-   "id": "S10-26",
-   "scene": "S10",
-   "mode": "scene",
-   "beat": "We had them.",
-   "seconds": 4,
-   "frame": {
-    "size": "MCU",
-    "angle": "eye",
-    "camera": "static",
-    "place": "valley",
-    "light": "bright afternoon sun, drifting gun smoke",
-    "lead_room": {
-     "side": "none"
-    }
-   },
-   "tier": "full",
-   "blocking": [
-    {
-     "who": "murat",
-     "where": "center",
-     "facing": "right",
-     "on": "sitting astride a big bay horse",
-     "height": "most"
-    }
-   ],
-   "action": {
-    "who": "murat",
-    "start": "grips his crushed hat",
-    "peak": "slams the hat against his saddle",
-    "settle": "breathes hard"
-   },
-   "dialogue": {
-    "who": "murat",
-    "to": "self",
-    "text": "We had them. We had them!",
-    "delivery": "through his teeth"
-   },
-   "sound": {
-    "ambience": "wind, distant horns, horses"
-   },
-   "source": "cut",
-   "master": "S10-21"
-  },
-  {
-   "id": "S10-27",
+   "id": "S10-30",
    "scene": "S10",
    "mode": "establish",
    "beat": "On the far ridge, the khan watches.",
@@ -6563,7 +6977,7 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-28",
+   "id": "S10-31",
    "scene": "S10",
    "mode": "scene",
    "beat": "Subutai sees a defeat.",
@@ -6612,10 +7026,10 @@
     "ambience": "wind over the ridge"
    },
    "source": "cut",
-   "master": "S10-27"
+   "master": "S10-30"
   },
   {
-   "id": "S10-29",
+   "id": "S10-32",
    "scene": "S10",
    "mode": "scene",
    "beat": "The khan sees the opposite.",
@@ -6665,11 +7079,11 @@
     "ambience": "wind over the ridge"
    },
    "source": "cut",
-   "master": "S10-27",
+   "master": "S10-30",
    "last_frame": true
   },
   {
-   "id": "S10-30",
+   "id": "S10-33",
    "scene": "S10",
    "mode": "scene",
    "beat": "The khan looks behind the French.",
@@ -6705,56 +7119,14 @@
     "ambience": "wind over the ridge"
    },
    "source": "cut",
-   "master": "S10-27"
+   "master": "S10-30"
   },
   {
-   "id": "S10-31",
-   "scene": "S10",
-   "mode": "establish",
-   "beat": "Behind the hills, other riders reach the wagons.",
-   "seconds": 4,
-   "frame": {
-    "size": "WS",
-    "angle": "eye",
-    "camera": "static",
-    "place": "wagons",
-    "light": "bright afternoon sun, drifting gun smoke",
-    "relations": [
-     "the covered wagons stand behind the riders"
-    ],
-    "lead_room": {
-     "side": "right",
-     "for": "where they wheel"
-    }
-   },
-   "tier": "full",
-   "blocking": [
-    {
-     "who": "riders",
-     "where": "center",
-     "facing": "left",
-     "on": "sitting on horses on the hillside",
-     "height": "third"
-    }
-   ],
-   "action": {
-    "who": "riders",
-    "start": "ride hard between the wagons",
-    "peak": "hurl burning torches onto the canvas covers",
-    "settle": "wheel round as the canvas catches"
-   },
-   "sound": {
-    "ambience": "wind, a wagon creaking",
-    "loudest": "fire roaring up"
-   },
-   "source": "keyframe"
-  },
-  {
-   "id": "S10-32",
+   "id": "S10-34",
    "scene": "S10",
    "mode": "scene",
    "beat": "Kemal sees it first.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -6799,10 +7171,10 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-31"
+   "master": "S10-30"
   },
   {
-   "id": "S10-33",
+   "id": "S10-35",
    "scene": "S10",
    "mode": "scene",
    "beat": "Napoleon turns.",
@@ -6844,10 +7216,10 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-31"
+   "master": "S10-30"
   },
   {
-   "id": "S10-34",
+   "id": "S10-36",
    "scene": "S10",
    "mode": "establish",
    "beat": "Black smoke where the camp was.",
@@ -6870,11 +7242,11 @@
    "source": "keyframe"
   },
   {
-   "id": "S10-35",
+   "id": "S10-37",
    "scene": "S10",
    "mode": "scene",
    "beat": "The name for it.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -6918,10 +7290,10 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-34"
+   "master": "S10-36"
   },
   {
-   "id": "S10-36",
+   "id": "S10-38",
    "scene": "S10",
    "mode": "scene",
    "beat": "The emperor understands.",
@@ -6957,7 +7329,7 @@
     "ambience": "wind, distant horns, horses"
    },
    "source": "cut",
-   "master": "S10-34"
+   "master": "S10-36"
   },
   {
    "id": "S11-01",
@@ -7232,7 +7604,7 @@
    "scene": "S11",
    "mode": "scene",
    "beat": "Murat says it at last.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -7280,38 +7652,6 @@
   },
   {
    "id": "S11-08",
-   "scene": "S11",
-   "mode": "insert",
-   "beat": "Ash.",
-   "seconds": 4,
-   "frame": {
-    "size": "INSERT",
-    "angle": "eye",
-    "camera": "static",
-    "place": "valley",
-    "light": "grey light through drifting smoke",
-    "lead_room": {
-     "side": "none"
-    }
-   },
-   "tier": "full",
-   "action": {
-    "who": "brun",
-    "start": "a burnt loaf sits in a rough hand",
-    "peak": "the fingers close and crush the loaf",
-    "settle": "black ash drifts away"
-   },
-   "sound": {
-    "ambience": "wind, a single crow, silence",
-    "foley": [
-     "crumbling crust"
-    ]
-   },
-   "source": "cut",
-   "master": "S11-01"
-  },
-  {
-   "id": "S11-09",
    "scene": "S11",
    "mode": "establish",
    "beat": "The wagons, burned to their ribs.",
@@ -7474,7 +7814,7 @@
     "peak": "lift empty tin plates and drop them",
     "settle": "sit with empty hands"
    },
-   "narration": "The French had lost the one thing a battle cannot win back: their food.",
+   "narration": "The French had lost what no battle wins back: their food.",
    "sound": {
     "ambience": "wind, a wagon creaking"
    },
@@ -8127,6 +8467,44 @@
    "id": "S13-09",
    "scene": "S13",
    "mode": "scene",
+   "beat": "The interpreter swallows.",
+   "seconds": 3,
+   "frame": {
+    "size": "MCU",
+    "angle": "eye",
+    "camera": "static",
+    "place": "yurt",
+    "light": "warm firelight",
+    "lead_room": {
+     "side": "none"
+    }
+   },
+   "tier": "light",
+   "blocking": [
+    {
+     "who": "bars",
+     "where": "center",
+     "facing": "left",
+     "on": "standing against the lattice wall",
+     "height": "most"
+    }
+   ],
+   "action": {
+    "who": "bars",
+    "start": "stands against the lattice wall",
+    "peak": "pulls his cap tight against his chest with both fists",
+    "settle": "holds the cap tight"
+   },
+   "sound": {
+    "ambience": "a fire crackling, wind against felt"
+   },
+   "source": "cut",
+   "master": "S13-01"
+  },
+  {
+   "id": "S13-10",
+   "scene": "S13",
+   "mode": "scene",
    "beat": "Then go.",
    "seconds": 5,
    "frame": {
@@ -8176,7 +8554,7 @@
    "master": "S13-01"
   },
   {
-   "id": "S13-10",
+   "id": "S13-11",
    "scene": "S13",
    "mode": "scene",
    "beat": "And a gift that is a price.",
@@ -8220,7 +8598,7 @@
    "master": "S13-01"
   },
   {
-   "id": "S13-11",
+   "id": "S13-12",
    "scene": "S13",
    "mode": "scene",
    "beat": "Napoleon asks the real question.",
@@ -8272,7 +8650,7 @@
    "master": "S13-01"
   },
   {
-   "id": "S13-12",
+   "id": "S13-13",
    "scene": "S13",
    "mode": "scene",
    "beat": "The price: the guns, and a teacher.",
@@ -8325,7 +8703,7 @@
    "last_frame": true
   },
   {
-   "id": "S13-13",
+   "id": "S13-14",
    "scene": "S13",
    "mode": "scene",
    "beat": "The longest silence of his life.",
@@ -8365,7 +8743,7 @@
    "master": "S13-01"
   },
   {
-   "id": "S13-14",
+   "id": "S13-15",
    "scene": "S13",
    "mode": "scene",
    "beat": "Kemal says what the men cannot.",
@@ -8416,7 +8794,57 @@
    "master": "S13-01"
   },
   {
-   "id": "S13-15",
+   "id": "S13-16",
+   "scene": "S13",
+   "mode": "scene",
+   "beat": "Outside, they are.",
+   "seconds": 3,
+   "frame": {
+    "size": "MS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "wagons",
+    "light": "cold grey light",
+    "lead_room": {
+     "side": "none"
+    }
+   },
+   "tier": "light",
+   "blocking": [
+    {
+     "who": "brun",
+     "where": "left",
+     "facing": "drummer",
+     "on": "sitting on the burnt grass",
+     "height": "most"
+    },
+    {
+     "who": "drummer",
+     "where": "right",
+     "facing": "brun",
+     "on": "sitting on the burnt grass",
+     "height": "most"
+    }
+   ],
+   "action": {
+    "who": "brun",
+    "start": "sits in the ash beside a cold fire",
+    "peak": "pulls up a fistful of grass and chews it",
+    "settle": "chews slowly, staring at nothing"
+   },
+   "reactions": [
+    {
+     "who": "drummer",
+     "does": "watches him chew"
+    }
+   ],
+   "sound": {
+    "ambience": "wind, a wagon creaking"
+   },
+   "source": "keyframe"
+  },
+  {
+   "id": "S13-17",
    "scene": "S13",
    "mode": "scene",
    "beat": "The choice.",
@@ -8469,11 +8897,11 @@
     ]
    },
    "source": "cut",
-   "master": "S13-01",
+   "master": "S13-16",
    "last_frame": true
   },
   {
-   "id": "S13-16",
+   "id": "S13-18",
    "scene": "S13",
    "mode": "scene",
    "beat": "The khan's smile.",
@@ -8508,10 +8936,10 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01"
+   "master": "S13-16"
   },
   {
-   "id": "S13-17",
+   "id": "S13-19",
    "scene": "S13",
    "mode": "scene",
    "beat": "The khan's last lesson.",
@@ -8560,11 +8988,11 @@
     "ambience": "a fire crackling, wind against felt"
    },
    "source": "cut",
-   "master": "S13-01",
+   "master": "S13-16",
    "last_frame": true
   },
   {
-   "id": "S13-18",
+   "id": "S13-20",
    "scene": "S13",
    "mode": "establish",
    "beat": "Napoleon takes his glove and goes.",
@@ -8625,8 +9053,64 @@
      "felt flapping"
     ]
    },
-   "source": "nextpose",
-   "master": "S13-01",
+   "source": "cut",
+   "master": "S13-16",
+   "exit": true
+  },
+  {
+   "id": "S13-21",
+   "scene": "S13",
+   "mode": "establish",
+   "beat": "The price, paid: two guns go to the khan.",
+   "seconds": 4,
+   "frame": {
+    "size": "WS",
+    "angle": "eye",
+    "camera": "static",
+    "place": "steppe",
+    "light": "pale morning light",
+    "lead_room": {
+     "side": "right",
+     "for": "where they drag them"
+    }
+   },
+   "tier": "full",
+   "blocking": [
+    {
+     "who": "gunners",
+     "where": "left",
+     "facing": "right",
+     "on": "standing in the dry steppe grass",
+     "height": "third"
+    },
+    {
+     "who": "riders",
+     "where": "right",
+     "facing": "right",
+     "on": "sitting on horses on the grass",
+     "height": "third"
+    }
+   ],
+   "action": {
+    "who": "riders",
+    "start": "loop ropes round two bronze cannons",
+    "peak": "drag the cannons away across the grass",
+    "settle": "ride off with the cannons rolling behind"
+   },
+   "reactions": [
+    {
+     "who": "gunners",
+     "does": "stand watching with their caps in their hands"
+    }
+   ],
+   "sound": {
+    "ambience": "wind over open grass",
+    "foley": [
+     "wheels creaking",
+     "ropes straining"
+    ]
+   },
+   "source": "keyframe",
    "exit": true
   },
   {
@@ -8757,7 +9241,7 @@
    "scene": "S14",
    "mode": "narrated",
    "beat": "The fog comes back.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -8809,7 +9293,7 @@
    "scene": "S14",
    "mode": "establish",
    "beat": "Moscow, on the right day.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "EWS",
     "angle": "eye",
@@ -8833,7 +9317,7 @@
    "scene": "S14",
    "mode": "narrated",
    "beat": "An empty city.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -8876,7 +9360,7 @@
    "scene": "S14",
    "mode": "scene",
    "beat": "Kemal sees the khan's move again.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -9020,7 +9504,7 @@
    "scene": "S14",
    "mode": "narrated",
    "beat": "The retreat.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "WS",
     "angle": "eye",
@@ -9065,7 +9549,7 @@
    "scene": "S14",
    "mode": "narrated",
    "beat": "The uncertain count.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MS",
     "angle": "eye",
@@ -9093,45 +9577,6 @@
     "settle": "stands still"
    },
    "narration": "How many came home is still argued over. The counts do not agree.",
-   "sound": {
-    "ambience": "a slow marching drum in the fog"
-   },
-   "source": "cut",
-   "master": "S14-10"
-  },
-  {
-   "id": "S14-12",
-   "scene": "S14",
-   "mode": "narrated",
-   "beat": "The lesson, waiting.",
-   "seconds": 4,
-   "frame": {
-    "size": "MCU",
-    "angle": "eye",
-    "camera": "static",
-    "place": "fog",
-    "light": "grey snow light",
-    "lead_room": {
-     "side": "left",
-     "for": "where he rides"
-    }
-   },
-   "tier": "light",
-   "blocking": [
-    {
-     "who": "napoleon",
-     "where": "center",
-     "facing": "right",
-     "on": "sitting astride a white horse",
-     "height": "most"
-    }
-   ],
-   "action": {
-    "who": "napoleon",
-    "start": "rides through the snow",
-    "peak": "lifts his collar against the wind",
-    "settle": "rides on, hunched"
-   },
    "sound": {
     "ambience": "a slow marching drum in the fog"
    },
@@ -9172,7 +9617,7 @@
    "scene": "S15",
    "mode": "narrated",
    "beat": "He has seen this fire.",
-   "seconds": 5,
+   "seconds": 4,
    "frame": {
     "size": "MCU",
     "angle": "eye",

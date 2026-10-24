@@ -1164,3 +1164,17 @@ before a cast member's noun ("a living woolly mammoth ... behind the bus" drew t
 frame edge is `blocking[].partial` ("the trunk"), written as such, counted by the gate card, without support or height.
 The repeated-tag hypothesis (one figure drawn twice) is a variant to test in `docs/SCRIPT_ENGINE.md`, not a rule. Tests in
 `tests/unit/test_film_shots.py`.
+
+
+## 2026-10-24 — Script engine v2: the cold open, strategy shown in action, AI acting (KP-41..KP-43)
+
+ვანო asked where the picture prompts are, whether the episode needs more action, and how to control AI acting (the
+parley fails as "a podcast" if the faces fail); he forwarded another model's review to read. Checked against the cards
+(`docs/research/SCRIPT_ENGINE_V2_2026-10-24.md`): the first clash came at 3:13, the yurt was 95 s in one place with nine
+lines in a row, the camp raid was only smoke. Done: KP-41 teasers in the first 10 s cut from later shots (`teaser_of`,
+`compose` writes `kind: reuse`, nothing drawn), KP-42 at most 90 s in one place before a cutaway, KP-43 at most four
+lines in a row and an acting check plus a mouth-hiding fallback on every full-tier line (`qa`, `acting`, `fallback`);
+BP-111..BP-113. `film_shots shotlist` writes the script with every prompt under its shot. The episode: three teasers,
+cutaways in S04, S06, S08, S09, S13, S10 cross-cut with the camp, still 15:00 (214 shots, narrator 44.9 %, 0 FAIL,
+0 REVIEW). Composer: "Only this figure is in the picture" (was "Only these 1 person"). Tests in
+`tests/unit/test_film_shots.py`.

@@ -389,3 +389,47 @@ def test_a_partly_visible_figure_is_written_and_counted_without_support():
     assert "Only the trunk of the woolly mammoth with a broken left tusk reaches into the frame on the right." in k
     card = {c["id"]: c for c in F.gate_cards(d)}["S01-02.first"]
     assert card["people"][-1]["partial"] == "the trunk"
+
+
+def test_the_cold_open_shows_pieces_of_later_shots():
+    d = _episode(doc(), n=16)
+    assert ("KP-41", "opening") in found(d, "REVIEW")
+    d["shots"][1]["teaser_of"], d["shots"][2]["teaser_of"] = "X10", "X11"
+    assert "KP-41" not in rules(d)
+    p = prompts(d)
+    assert p["X01.video"]["kind"] == "reuse" and p["X01.video"]["of"] == "X10.video" and "X01.first" not in p
+    assert "X01.first" not in {g["id"] for g in F.gate_cards(d)}
+    d["shots"][3]["teaser_of"] = "X00"  # an earlier shot is no teaser
+    assert ("KP-41", "X03") in found(d, "FAIL")
+
+
+def test_a_long_stay_in_one_place_needs_a_cutaway():
+    d = _episode(doc(), n=24)
+    for s in d["shots"]:
+        s["frame"]["place"] = "road"
+    assert "KP-42" in rules(d, "REVIEW")
+    d["shots"][12]["frame"]["place"] = "road_close"
+    assert "KP-42" not in rules(d)
+
+
+def test_a_run_of_spoken_lines_is_broken_and_acting_is_checked():
+    d = _episode(doc(), n=12)
+    talk = next(i for i, s in enumerate(d["shots"]) if s.get("dialogue"))
+    for k in range(1, F.TALK_RUN_MAX + 1):
+        s = copy.deepcopy(d["shots"][talk])
+        s["id"] = f"T{k}"
+        d["shots"].insert(talk + k, s)
+    assert "KP-43" in rules(d, "REVIEW")
+    acted = [p for p in F.compose(d) if p["kind"] == "video" and p.get("qa")]
+    assert acted and all(p["qa"] == ["acting"] and p["acting"]["lips"] and p["fallback"]["kind"] for p in acted)
+    d["shots"][talk]["tier"] = "light"
+    assert "acting" not in json.dumps(prompts(d)[f"{d['shots'][talk]['id']}.video"])
+
+
+def test_the_shot_list_puts_every_prompt_under_its_shot():
+    d = _episode(doc(), n=16)
+    d["shots"][1]["teaser_of"] = "X10"
+    text = F.shotlist(d)
+    assert "Teaser: the clip of X10" in text and "First frame" in text and "Video (" in text
+    assert text.count("\n### ") == len(d["shots"])
+    assert "Only these 1 " not in json.dumps(F.compose(d))

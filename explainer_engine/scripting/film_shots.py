@@ -5,12 +5,14 @@ looks where (``blocking``), the one action with its start, peak and settle, the 
 the narrator's line over it) and the sound. ``compose`` writes every prompt from those fields, so the keyframe, the next
 pose, the cut and the video always say the same thing in each model's own grammar; ``check`` runs the card rules
 (KP-15..KP-34, docs/SHOT_PROMPTS.md) and then the prompt lint (KP-01..KP-14) on what it composed. Cards marked
-``"engine": "script_engine/1"`` (docs/SCRIPT_ENGINE.md) also get the episode rules KP-35..KP-40 and ZI-02/ZI-03:
-rhythm, clip length, animation tiers, camera moves, narration blocks, the outro, and a claim behind every number.
+``"engine": "script_engine/1"`` (docs/SCRIPT_ENGINE.md) also get the episode rules KP-35..KP-43 and ZI-02/ZI-03:
+rhythm, clip length, animation tiers, camera moves, narration blocks, the outro, the cold open's teasers, cutaways out of
+one place, runs of spoken lines, and a claim behind every number.
 
     python -m explainer_engine.scripting.film_shots check <film_shots.json>
     python -m explainer_engine.scripting.film_shots compose <film_shots.json> [--out prompts.json]
     python -m explainer_engine.scripting.film_shots script <film_shots.json> [--out script.md]
+    python -m explainer_engine.scripting.film_shots shotlist <film_shots.json> [--out shotlist.md]   # script + prompts
 """
 
 from __future__ import annotations
@@ -44,6 +46,10 @@ NARRATOR_SHARE = tuple(sourced_rules.T("BP-105", "narrator_share"))
 NARRATION_WPM_MAX = sourced_rules.T("BP-01", "wpm_max")
 OUTRO_WORLDS_MIN = sourced_rules.T("BP-106", "worlds_on_min"), sourced_rules.T("BP-106", "worlds_coming_min")  # KP-40
 SIGN_OFF = [x.lower() for x in sourced_rules.T("BP-43", "lexicon")]
+TEASER_WINDOW_S = sourced_rules.T("BP-111", "teaser_window_s")  # KP-41
+TEASERS_MIN = sourced_rules.T("BP-111", "teasers_min")
+SAME_PLACE_MAX_S = sourced_rules.T("BP-112", "same_place_max_s")  # KP-42
+TALK_RUN_MAX = sourced_rules.T("BP-113", "talk_run_max")  # KP-43
 ENGINE = "script_engine/1"
 FPS = 24
 # the model each tier runs on (SCRIPT_ENGINE.md, "Variants in use"): hold = our camera code on the keyframe, no video model
@@ -188,7 +194,7 @@ def gate_card(doc: dict, shot: dict) -> dict:
 
 
 def gate_cards(doc: dict) -> list[dict]:
-    return [gate_card(doc, s) for s in doc["shots"] if s["source"] in ("keyframe", "cut")]
+    return [gate_card(doc, s) for s in doc["shots"] if s["source"] in ("keyframe", "cut") and not s.get("teaser_of")]
 
 
 def _where(shot: dict, who: str) -> str:
@@ -225,7 +231,7 @@ def keyframe_prompt(doc: dict, shot: dict) -> str:
     parts += _layout(shot)
     n = len(shot.get("blocking", []))
     if n and f["size"] not in WIDE:
-        parts.append(f"Only these {n} {'person is' if n == 1 else 'people are'} in the picture.")
+        parts.append("Only this figure is in the picture." if n == 1 else f"Only these {n} people are in the picture.")
     return " ".join(parts)
 
 
@@ -306,9 +312,17 @@ def compose(doc: dict) -> list[dict]:
     """Every prompt of every shot, in the prompt lint's shape (``shot_prompt_lint``): the first frame (keyframe, next
     pose or cut), the last frame when guided, and the video."""
     style = doc["style"]
+    by_id = {s["id"]: s for s in doc["shots"]}
     out: list[dict] = []
     for shot in doc["shots"]:
         sid, src = shot["id"], shot["source"]
+        if shot.get("teaser_of"):
+            # a teaser is a piece of its payoff's clip (KP-41): nothing new is drawn or rendered
+            of = by_id[shot["teaser_of"]]
+            start = round(max(0.0, (of["seconds"] - shot["seconds"]) / 2), 2)
+            out.append({"id": f"{sid}.video", "kind": "reuse", "of": f"{of['id']}.video", "seconds": shot["seconds"],
+                        "trim": [start, round(start + shot["seconds"], 2)]})
+            continue
         if src == "keyframe":
             out.append({"id": f"{sid}.first", "kind": "keyframe", "lora": "style", "prompt": keyframe_prompt(doc, shot),
                         "neg": style.get("neg_keyframe", NEG_KEYFRAME)})
@@ -329,8 +343,24 @@ def compose(doc: dict) -> list[dict]:
                     "tier": tier, "model": MODEL[tier], "fps": FPS, "frames": frames(shot["seconds"]),
                     "mode": shot["mode"], "people": len(shot.get("blocking", [])),
                     "diegetic_music": bool((shot.get("sound") or {}).get("diegetic_music")),
-                    "prompt": video_prompt(doc, shot), "neg": style.get("neg_video", NEG_VIDEO)})
+                    "prompt": video_prompt(doc, shot), "neg": style.get("neg_video", NEG_VIDEO),
+                    **_acting(doc, shot)})
     return out
+
+
+def _acting(doc: dict, shot: dict) -> dict:
+    """KP-43: a spoken line on a face is checked for acting (the mouth moves only on the line, the action's peak is
+    visible, the face reaches the card's face, the motion does not freeze); a take that fails twice is replaced by the
+    fallback, which hides the mouth: over the speaker's shoulder onto the listener, or the speaker's hands."""
+    d = shot.get("dialogue")
+    if not d or shot.get("tier", "full") != "full" or shot["frame"]["size"] not in CLOSE:
+        return {}
+    a = shot.get("action") or {}
+    checks = {"lips": d["text"], "peak": a.get("peak"), **({"face": a["face"]} if a.get("face") else {})}
+    listener = d.get("to") if d.get("to") in doc["cast"] else None
+    fallback = ({"kind": "ots_on_listener", "over": d["who"], "on": listener} if listener
+                else {"kind": "insert_hands", "who": d["who"], "does": a.get("peak")})
+    return {"qa": ["acting"], "acting": checks, "fallback": fallback}
 
 
 def frames(seconds: float, fps: int = FPS) -> int:
@@ -508,7 +538,7 @@ def check(doc: dict) -> list[dict]:
     if doc.get("engine") == ENGINE:
         out += episode_check(doc)
     # the composed prompts go through the prompt lint (KP-01..KP-14 and its KP-17..KP-25 checks), names included (KP-22)
-    for found in lint.check(compose(doc), names=names):
+    for found in lint.check([p for p in compose(doc) if p["kind"] != "reuse"], names=names):
         out.append(found)
     return out
 
@@ -589,6 +619,43 @@ def episode_check(doc: dict) -> list[dict]:
         if not NARRATOR_SHARE[0] <= share <= NARRATOR_SHARE[1]:
             add("KP-39", "REVIEW", "episode", f"the narrator has {share:.0%} of the words (aim {NARRATOR_SHARE[0]:.0%}-"
                                               f"{NARRATOR_SHARE[1]:.0%}, BP-105)")
+    # KP-41: the cold open shows pieces of the conflict to come, cut from the later shots themselves
+    by_id = {s["id"]: i for i, s in enumerate(shots)}
+    t, teasers = 0.0, 0
+    for i, s in enumerate(shots):
+        of = s.get("teaser_of")
+        if of:
+            if of not in by_id or by_id[of] <= i:
+                add("KP-41", "FAIL", s["id"], f"teaser_of '{of}' is not a later shot: a teaser is a piece of a shot to come")
+            elif s["seconds"] > shots[by_id[of]]["seconds"]:
+                add("KP-41", "FAIL", s["id"], f"the teaser is longer than its payoff {of}")
+            elif t < TEASER_WINDOW_S:
+                teasers += 1
+        t += s["seconds"]
+    if total >= 60 and teasers < TEASERS_MIN:
+        add("KP-41", "REVIEW", "opening", f"{teasers} teaser shot(s) in the first {TEASER_WINDOW_S:g} s: show at least "
+                                          f"{TEASERS_MIN} pieces of the conflict to come (teaser_of, BP-111)")
+    # KP-42: talk in one place is broken by a cutaway that shows what the talk is about
+    run: list[dict] = []
+    for s in [*shots, None]:
+        if s is not None and (not run or s["frame"]["place"] == run[-1]["frame"]["place"]):
+            run.append(s)
+            continue
+        secs = sum(r["seconds"] for r in run)
+        if secs > SAME_PLACE_MAX_S:
+            add("KP-42", "REVIEW", f"{run[0]['id']}..{run[-1]['id']}", f"{secs:.0f} s in '{run[0]['frame']['place']}' "
+                f"with no cutaway: show the plan or its cost while it is told (at most {SAME_PLACE_MAX_S:g} s, BP-112)")
+        run = [s] if s is not None else []
+    # KP-43: a run of spoken lines rests on the AI's acting; a reaction, an insert or a cutaway breaks it
+    talk: list[dict] = []
+    for s in [*shots, None]:
+        if s is not None and s.get("dialogue"):
+            talk.append(s)
+            continue
+        if len(talk) > TALK_RUN_MAX:
+            add("KP-43", "REVIEW", f"{talk[0]['id']}..{talk[-1]['id']}", f"{len(talk)} spoken lines in a row: after "
+                f"{TALK_RUN_MAX} put in a silent reaction, an insert or a cutaway (BP-113)")
+        talk = []
     # KP-40: the outro points to the channel's worlds; never a dry sign-off
     tail = " ".join(s.get("narration", "") for s in shots[-6:]).lower()
     for phrase in SIGN_OFF:
@@ -631,13 +698,55 @@ def script(doc: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def shotlist(doc: dict) -> str:
+    """The script with every prompt under its shot: what the creator reads to judge the pictures before anything is
+    drawn. The prompts are the composer's own (ZI-01), never retyped; a teaser names the clip it is cut from."""
+    prompts: dict[str, list[dict]] = {}
+    for p in compose(doc):
+        prompts.setdefault(p["id"].rsplit(".", 1)[0], []).append(p)
+    label = {"keyframe": "First frame (new picture, style LoRA)", "nextpose": "First frame (next pose of the master, scene LoRA)",
+             "cut": "First frame (cut from the master, scene LoRA)"}
+    lines = [f"# {doc['episode']}: shot list with prompts", ""]
+    t, scene = 0.0, None
+    for s in doc["shots"]:
+        if s["scene"] != scene:
+            scene = s["scene"]
+            lines += ["", f"## {scene}", ""]
+        clock = f"{int(t // 60)}:{t % 60:04.1f}"
+        f = s["frame"]
+        lines.append(f"\n### `{clock}` {s['id']} {f['size']}, {s['seconds']:g} s, {s.get('tier', 'full')}: {s['beat']}")
+        if s.get("dialogue"):
+            d = s["dialogue"]
+            lines.append(f"- **{(doc['cast'].get(d['who'], {}).get('name') or d['who']).upper()}**: \"{d['text']}\"")
+        if s.get("narration"):
+            lines.append(f"- NARRATOR: {s['narration']}")
+        for p in prompts.get(s["id"], []):
+            if p["kind"] == "reuse":
+                lines.append(f"- Teaser: the clip of {p['of'].split('.')[0]}, seconds {p['trim'][0]:g}-{p['trim'][1]:g} "
+                             "(nothing new is drawn)")
+            elif p["kind"] == "video":
+                extra = " Acting check: lips, peak, face; fallback " + p["fallback"]["kind"] + "." if p.get("qa") else ""
+                lines.append(f"- Video ({p['model']}, {p['frames']} frames at {p['fps']} fps):{extra}")
+                lines.append(f"  > {p['prompt']}")
+            else:
+                head = "Last frame (settle, scene LoRA)" if p["id"].endswith(".last") else label[p["kind"]]
+                lines.append(f"- {head}:")
+                lines.append(f"  > {p['prompt']}")
+        t += s["seconds"]
+    sheets = sheet_prompts(doc)
+    if sheets:
+        lines += ["", "## Hero sheets (the creator picks one variant each)", ""]
+        lines += [f"- {p['id']}:\n  > {p['prompt']}" for p in sheets]
+    return "\n".join(lines) + "\n"
+
+
 def main(argv: list[str]) -> int:
-    if len(argv) < 2 or argv[0] not in ("check", "compose", "script"):
+    if len(argv) < 2 or argv[0] not in ("check", "compose", "script", "shotlist"):
         print(__doc__)
         return 2
     doc = load(argv[1])
-    if argv[0] == "script":
-        text = script(doc)
+    if argv[0] in ("script", "shotlist"):
+        text = script(doc) if argv[0] == "script" else shotlist(doc)
         if "--out" in argv:
             from explainer_engine.core.store import write_text_atomic
 

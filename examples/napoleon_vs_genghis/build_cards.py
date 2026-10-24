@@ -26,6 +26,7 @@ class Episode:
         self.doc = dict(meta, shots=[])
         self.scene_id = None
         self.n = 0
+        self.keys: dict[str, str] = {}  # a payoff's key -> its shot id, for the teasers (KP-41)
 
     def scene(self, sid: str, place: str, *, light: str, stage: dict, ambience: str):
         """stage: cast id -> (where, facing, on, pose); the scene's standing layout, kept for screen sides (KP-26)."""
@@ -35,7 +36,7 @@ class Episode:
     def shot(self, size: str, seconds: float, beat: str, *, who=(), mode="scene", tier="full", act=None, line=None,
              narr=None, claims=(), cam="static", end=None, angle="eye", rel=(), lead=None, react=(), foley=(),
              loud=None, src=None, over=None, place=None, light=None, pose=None, where=None, on=None, facing=None,
-             height=None, exit=False, last=None):
+             height=None, exit=False, last=None, key=None):
         self.n += 1
         sid = f"{self.scene_id}-{self.n:02d}"
         pose, where, on, facing, height = pose or {}, where or {}, on or {}, facing or {}, height or {}
@@ -111,8 +112,28 @@ class Episode:
             s["last_frame"] = True
         if exit:
             s["exit"] = True
+        if key:
+            self.keys[key] = sid
         self.doc["shots"].append(s)
         return s
+
+    def teaser(self, of: str, seconds: float, beat: str):
+        """A cold-open piece of a later shot (KP-41): filled from that shot once the whole list is written."""
+        self.n += 1
+        s = {"id": f"{self.scene_id}-{self.n:02d}", "scene": self.scene_id, "beat": beat, "seconds": seconds, "_of": of}
+        self.doc["shots"].append(s)
+        return s
+
+    def resolve(self):
+        by_id = {s["id"]: s for s in self.doc["shots"]}
+        for s in self.doc["shots"]:
+            if "_of" not in s:
+                continue
+            of = by_id[self.keys[s.pop("_of")]]
+            for k in ("mode", "frame", "blocking", "action", "reactions", "sound", "tier"):
+                if k in of:
+                    s[k] = json.loads(json.dumps(of[k]))
+            s["source"], s["teaser_of"] = "keyframe", of["id"]
 
 
 def main() -> int:
@@ -120,6 +141,7 @@ def main() -> int:
 
     ep = Episode(episode.META)
     episode.write(ep)
+    ep.resolve()
     out = HERE / "film_shots.json"
     out.write_text(json.dumps(ep.doc, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     total = sum(s["seconds"] for s in ep.doc["shots"])

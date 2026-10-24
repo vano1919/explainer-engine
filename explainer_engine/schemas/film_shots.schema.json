@@ -153,6 +153,7 @@
           "source": {"enum": ["keyframe", "nextpose", "cut"],
                      "description": "how the first frame is drawn: a new keyframe, a next pose of the scene's master, or a cut (new size or angle) of the same scene"},
           "master": {"type": "string", "description": "nextpose / cut: the shot id whose keyframe is the scene's master"},
+          "teaser_of": {"type": "string", "description": "KP-41: this shot is a piece of a later shot's clip, shown in the cold open; nothing new is drawn or rendered"},
           "last_frame": {"type": "boolean", "description": "true: the settle pose is drawn too (a next pose of the master) and guides the clip's last frame"},
           "exit": {"type": "boolean"},
           "tier": {"enum": ["hold", "light", "full"],
