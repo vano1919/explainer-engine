@@ -963,3 +963,31 @@ unchanged). The creator's decision (2026-10-20, decision card): PR #9's own gati
 of the free end-to-end probes on the merged result: the synthetic /3 base and hook-by-beats scripts validate and time with 0 FAIL
 (before: 1 and 3 FAIL); the deliberately broken variants still FAIL on their own rule (VB-08, VB-10, RHYTHM-1/2). Syndicate
 Wars' scorecard has no FAIL left from a hypothesis (pace 122 wpm is a REVIEW). Tests 618 passed; docs_lint 0. Nothing paid.
+
+## 2026-10-20 - The integrated production-coherence review (D-60)
+
+The audit this thread ran traced the one gap the scene rewrite (D-58) and the sourced rules (D-59) left open: every
+deterministic validator judges one layer against its own rules, the script-critic's instructions sampled layers
+(10 random beats, the narration read) without a contract proving the whole plan was read together, and the
+`editorial_review/1` JSON carried only 13 broad scores — so a `/3` script could pass everything while its combined
+dialogue, visual, performance, audio and timing plan undermined its own story. Proven with seven fixtures that pass
+`check_script` with 0 FAIL yet carry a cross-layer defect (a reveal cut away from with a bright sting, a non-sequitur
+answer, an entrance whose narration contradicts the scene header, an elder in the scout's register, a chime scoring
+dread as a win, a resolution that contradicts the midpoint, a cut before the reaction lands).
+
+- The smallest implementation: `editorial_review/2` extends the existing independent review (no new agent, gate or data
+  model). `integrated.layers` — story, entrances, dialogue, visual, performance, audio, timing — each with evidence and
+  an honest basis (`data` / `estimate` / `instructions`: unrendered media is never claimed as seen); `integrated.findings`
+  machine-routable (exact refs that must name something of the script, expected vs instructed, conflict, consequence,
+  confidence, smallest fix, owner stage). FAIL blocks gate 0.5, paid narration (OR-10 hook) and paint preflight through
+  the existing `editorial_gate.check` call sites; REVIEW is the creator's call; taste lives in `notes` and never blocks.
+  New checks EG-19..EG-22 in `production/editorial_gate.py`; a `/3` script with a `/1` review is EG-19. `/1`/`/2`
+  scripts keep `editorial_review/1` byte-for-byte (their tests unchanged).
+- The judgement stays with the script-critic (stage 7, fresh context): its agent file now walks the seven layers as one
+  timeline and writes the `/2` review; the gate validates coverage, honesty and concreteness deterministically, so a
+  deliberate rapid entrance or an unconventional structure is never auto-rejected (both pinned by tests).
+- Docs: [SCRIPTING_SPEC](SCRIPTING_SPEC.md) section 5.2 (the contract), OR-10 row, STORY_ENGINE stage 7 row, the
+  story-engine skill, CHATGPT_WORKFLOW; decision [D-60](DECISIONS_AND_OPEN_QUESTIONS.md).
+- Tests: `tests/unit/test_integrated_review.py` (27: the gap fixtures, blocking and routing, stale-on-edit, fail-closed
+  on a missing/malformed/half-written review, a correction that breaks another layer caught on re-review, legacy
+  contract intact, gate 0.5 wiring, no-false-positive cases). Nothing paid; no renders claimed.
