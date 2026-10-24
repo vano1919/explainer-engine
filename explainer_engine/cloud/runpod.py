@@ -206,13 +206,95 @@ def sess_read(pid):
     return json.loads(p.read_text()) if p.exists() else None
 
 
-def new_session(pod, *, max_usd, max_hours, on_cap="stop", ledger=None, now=None, status_token="", boot_minutes=BOOT_MINUTES):
+def new_session(pod, *, max_usd, max_hours, on_cap="stop", ledger=None, now=None, status_token="", boot_minutes=BOOT_MINUTES,
+                heartbeat=None):
+    """``heartbeat`` = the HF file the pod's script uploads every few minutes ("datasets/<owner>/<repo>:<path>"); the guard
+    takes a fresh upload as the pod's sign of life (``hf_heartbeat``)."""
     now = time.time() if now is None else now
     return sess_write({"pod": pod["id"], "name": pod.get("name", ""), "started": now, "price": pod.get("costPerHr"),
                        "pod_shape": {"volumeInGb": pod.get("volumeInGb"), "containerDiskInGb": pod.get("containerDiskInGb")},
                        "max_usd": max_usd, "max_hours": max_hours, "until": until_of(pod.get("name")) or now + max_hours * 3600,
                        "boot_deadline": now + boot_minutes * 60, "on_cap": on_cap, "ledger": ledger, "status_token": status_token,
-                       "answered": False, "ended": None})
+                       "answered": False, "ended": None, "heartbeat": heartbeat})
+
+
+# --- heartbeat (2026-10-24, ≈$1.6 lost in one morning) ----------------------------------------------------------------
+# What went wrong: (1) the REST pod record shows ``runtime: null``, ``machine: {}`` and no public IP for running pods too,
+# so a training pod that was working was read as "never got a machine" and stopped after 72 min (≈$1.3); (2) the same
+# record never satisfies ``ready()`` for our script pods, so the guard stopped a rendering pod at its 25-minute boot
+# deadline (≈$0.3); (3) the pod scripts uploaded nothing before their first long stage, so nothing proved them alive.
+# The rule now: a pod's own upload is its only trusted sign of life. Every pod script starts a background upload loop
+# (<= HEARTBEAT_EVERY_S) before its first heavy step (``lint_pod_script``, refused by ``preflight_create``); the guard
+# reads the upload's time (``hf_heartbeat``), counts it as the answer that lifts the boot deadline, and on silence only
+# pushes an alert: silence is never a reason to stop (caps and the lifetime still stop).
+HEARTBEAT_EVERY_S = 300
+SILENT_ALERT_MIN = 20
+HEAVY_STEP = re.compile(r"snapshot_download|hf_hub_download|from_pretrained|pip install|git clone|\brun\.py\b|"
+                        r"\bpython3?\s+(?!-)\S+\.py\b")
+UPLOAD_LOOP = re.compile(r"while\s+true;\s*do\s+sleep\s+(\d+);[^\n]*?\b(up|upload|upload_folder|hf\s+upload)\b[^\n]*?done\s*\)?\s*&")
+
+
+def lint_pod_script(text):
+    """Problems of a pod start script (empty = fine): it must upload its log in the background at least every
+    HEARTBEAT_EVERY_S seconds, starting before its first heavy step (a download, an install, a model load, a training)."""
+    lines = text.splitlines()
+    heavy = next((i for i, ln in enumerate(lines) if HEAVY_STEP.search(ln) and not ln.lstrip().startswith("#")), None)
+    loops = [(i, int(m.group(1))) for i, ln in enumerate(lines) for m in [UPLOAD_LOOP.search(ln)] if m]
+    if not loops:
+        return [f"no background upload loop (`( while true; do sleep <= {HEARTBEAT_EVERY_S}; up; done ) &`): the pod would be "
+                "invisible until its first stage ends"]
+    out = []
+    first, every = loops[0]
+    if heavy is not None and first > heavy:
+        out.append(f"the upload loop starts at line {first + 1}, after the first heavy step at line {heavy + 1} "
+                   f"({lines[heavy].strip()[:60]}): start it before")
+    if every > HEARTBEAT_EVERY_S:
+        out.append(f"the upload loop sleeps {every} s > {HEARTBEAT_EVERY_S} s")
+    return out
+
+
+def hf_heartbeat(spec, *, fetch=None):
+    """Last commit time (epoch) of an HF file "datasets/<owner>/<repo>:<path>"; None while it does not exist yet."""
+    kind_repo, path = spec.split(":", 1)
+    url = f"https://huggingface.co/api/{kind_repo}/paths-info/main"
+    if fetch is None:
+        def fetch(url, data):
+            tok = os.environ.get("HF_TOKEN", "")
+            req = urllib.request.Request(url, urllib.parse.urlencode(data).encode(), method="POST",
+                                         headers={"User-Agent": UA, **({"Authorization": f"Bearer {tok}"} if tok else {})})
+            return json.loads(urllib.request.urlopen(req, timeout=20).read().decode())
+    rows = fetch(url, {"paths": path, "expand": "true"})
+    date = next((r.get("lastCommit", {}).get("date") for r in rows or [] if r.get("path") == path), None)
+    if not date:
+        return None
+    import datetime as _dt
+    return _dt.datetime.fromisoformat(date.replace("Z", "+00:00")).timestamp()
+
+
+def heartbeat_step(sess, now, *, beat=hf_heartbeat, push=None):
+    """One heartbeat look for the guard: a fresh upload marks the pod as answered; a long silence after it pushes an alert
+    (never a stop). Returns "alive", "silent", "waiting" or None (no heartbeat configured / unreadable)."""
+    if not sess.get("heartbeat"):
+        return None
+    try:
+        t = beat(sess["heartbeat"])
+    except Exception:  # noqa: BLE001 - HF unreachable: the money clock still works
+        return None
+    if t is not None and t >= sess["started"] - 60:
+        changed = not sess.get("answered") or sess.get("heartbeat_at") != t
+        sess.update(answered=True, heartbeat_at=t)
+        if changed:
+            sess_write(sess)
+    if sess.get("heartbeat_at") is None:
+        return "waiting"
+    if now - sess["heartbeat_at"] > SILENT_ALERT_MIN * 60:
+        if push and now - sess.get("silent_pushed", 0) > SILENT_ALERT_MIN * 60:
+            sess["silent_pushed"] = now
+            sess_write(sess)
+            push("Pod is silent", f"{sess['pod']}: no upload for {(now - sess['heartbeat_at']) / 60:.0f} min; read its last "
+                                  "log before stopping it (silence alone is not proof it is stuck)", "high")
+        return "silent"
+    return "alive"
 
 
 # --- verified lifecycle ---------------------------------------------------------------------------------------------
@@ -399,7 +481,7 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
     sess = sess_read(pid)
     if not sess:
         raise SystemExit(f"no session for {pid}: create it with this tool, or `adopt` it with its caps")
-    blind, last_report, last_line = 0, 0.0, None
+    blind, last_report, last_line, last_beat = 0, 0.0, None, 0.0
     while True:
         now = clock()
         try:
@@ -422,6 +504,9 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
         elif ready(pod) and not sess.get("answered") and not sess.get("status_token"):
             sess["answered"] = True  # no status page for this pod: mapped ports are the sign of life
             sess_write(sess)
+        if sess.get("heartbeat") and now - last_beat >= 120:
+            last_beat = now
+            heartbeat_step(sess, now, push=push)
         if conductor and conductor.startswith(("STATUS DONE", "STATUS STOPPED", "STATUS CAPPED")) and not sess.get("ended"):
             sess["ended"] = now
             sess_write(sess)
@@ -577,12 +662,13 @@ def check(api, now=None):
     return {"problems": problems, "info": info}
 
 
-def preflight_create(api, *, max_usd, max_hours, gpu, now=None, ignore=None):
-    """Every reason to refuse a new pod (empty = allowed): the creator's ceilings, the last 24 h of billing, the balance and
-    a clean account first (no stray pod, no unkept stopped disk)."""
+def preflight_create(api, *, max_usd, max_hours, gpu, now=None, ignore=None, script=None):
+    """Every reason to refuse a new pod (empty = allowed): the creator's ceilings, the last 24 h of billing, the balance,
+    a clean account first (no stray pod, no unkept stopped disk) and, with ``script`` (the pod's start script text), a
+    heartbeat upload loop before its first heavy step (``lint_pod_script``)."""
     now = time.time() if now is None else now
     c = spend_caps.runpod()
-    why = []
+    why = [f"pod script: {p}" for p in lint_pod_script(script)] if script is not None else []
     if max_usd > c["per_pod_usd"]:
         why.append(f"--max-usd {max_usd} is above per_pod_usd {c['per_pod_usd']}")
     if max_hours > c["max_hours_per_pod"]:

@@ -1060,3 +1060,12 @@ built on researched testing practice, and for step-by-step control of the runnin
   training not taken, with reasons; lower video LR + warm-up, RS-LoRA at rank >= 64, "a frame of a video" captions and
   the animate-the-pair gate taken). Linked shots need no training: LTX-2.5 start + end keyframes + video conditioning.
   Eras clips' root causes written there (farm = my prompt; wildwest = length; ice_age = anchor bias on a crowd).
+- 08:55 UTC ვანო: "find what caused the $1.3 loss and teach the system". Causes: (1) I read the REST pod record's
+  `runtime: null` / `machine: {}` as "no machine"; the working eras pod showed the same, so it is no signal; a training pod
+  that was running was stopped after 72 min (≈$1.3); (2) the same record never satisfies `ready()` (no IP, no ports) for
+  script pods, so the guard killed the eras pod at its 25-min boot deadline (≈$0.3); (3) the pod scripts uploaded nothing
+  before their first long stage. Fix in code (LT-17): `runpod.lint_pod_script` (an upload loop <= 300 s before the first
+  heavy step; `preflight_create(script=...)` refuses otherwise), `hf_heartbeat` + `heartbeat_step` in the guard (a fresh
+  HF upload = the answer that lifts the boot deadline; silence = an alert, never a stop). 5 tests, one on the very script
+  that lost the money.
+

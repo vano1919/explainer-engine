@@ -20,6 +20,9 @@ audit (free) -> config check (free) -> cost projection (free) -> pod with ledger
 - Boot: the aitoolkit image needs `boot_minutes=25`.
 
 ## Lessons that cost money
+- 2026-10-24 (≈$1.6): pods judged by the REST record (runtime null for every pod) and scripts silent until their
+  first stage ended. Now LT-17: every pod script uploads its log every <= 5 min from its first line, the launcher passes
+  `script=` to `preflight_create` and `heartbeat=` to `new_session`; stop a "stuck" pod only after reading its last log.
 - v1 (≈$1.05): >50 % generated pictures -> too round, warm, saturated. The creator's pictures must lead (LT-06).
 - v2 (≈$0.9, stopped at 572): one long style phrase in every caption -> the style bound to the phrase, not the trigger.
 - v3 (stopped at 500): best at 250 (progress 0.55) not 500 (0.42); at 500 the close-up fell back to semi-photo. The last

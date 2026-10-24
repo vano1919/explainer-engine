@@ -393,3 +393,70 @@ def test_the_money_hooks_are_wired_into_the_session_settings(monkeypatch):
     monkeypatch.delenv("RUNPOD_API_KEY", raising=False)
     monkeypatch.setattr(R, "RP", R.ROOT / "no-such-dir")
     assert H._check() is None and H.stop({}) == 0  # no key: report nothing, never block
+
+
+# ---- heartbeat (2026-10-24: a working training pod stopped as "stuck", a rendering pod killed at its boot deadline) ----
+
+OLD_TRAIN_SH = """set -x
+stage setup
+nvidia-smi || true
+pip install -q -U "huggingface_hub[hf_transfer]<2" || true
+stage download
+python - <<'PY'
+from huggingface_hub import snapshot_download as s
+PY
+stage caption
+python /workspace/dl/caption_pairs.py /workspace/ds
+stage train
+( while true; do sleep 300; up; done ) & LOOP=$!
+python run.py /workspace/cfg.yaml > /workspace/train.log 2>&1
+"""
+
+
+def test_a_pod_script_must_upload_its_log_before_its_first_heavy_step():
+    """The 2026-10-24 training script uploaded nothing until its caption stage ended: 72 min of silence, stopped (≈$1.3)."""
+    bad = R.lint_pod_script(OLD_TRAIN_SH)
+    assert len(bad) == 1 and "after the first heavy step at line 4" in bad[0]
+    fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n", "nvidia-smi || true\n( while true; do sleep 240; up; done ) & EARLY=$!\n")
+    assert R.lint_pod_script(fixed) == []
+    assert "no background upload loop" in R.lint_pod_script("stage setup\npip install x\n")[0]
+    slow = fixed.replace("sleep 240", "sleep 900")
+    assert "sleeps 900 s" in R.lint_pod_script(slow)[0]
+
+
+def test_preflight_refuses_a_pod_script_without_a_heartbeat(env):
+    _, api = env
+    ok = dict(max_usd=0.5, max_hours=1.0, gpu="default", now=10**6)
+    assert any(w.startswith("pod script:") for w in R.preflight_create(api, **ok, script=OLD_TRAIN_SH))
+    fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n", "nvidia-smi || true\n( while true; do sleep 240; up; done ) &\n")
+    assert R.preflight_create(api, **ok, script=fixed) == []
+
+
+def test_hf_heartbeat_reads_the_files_last_commit():
+    seen = {}
+
+    def fetch(url, data):
+        seen.update(url=url, data=data)
+        return [{"path": "run/log/stages.txt", "lastCommit": {"date": "2026-10-24T08:00:00.000Z"}}]
+    t = R.hf_heartbeat("datasets/vano1919/tmr-artifacts:run/log/stages.txt", fetch=fetch)
+    assert seen["url"].endswith("/api/datasets/vano1919/tmr-artifacts/paths-info/main") and seen["data"]["paths"] == "run/log/stages.txt"
+    assert t == 1792828800.0
+    assert R.hf_heartbeat("datasets/a/b:missing.txt", fetch=lambda u, d: []) is None
+
+
+def test_a_fresh_upload_is_the_pods_answer_and_silence_only_alerts(env):
+    """REST shows runtime null, no IP and no ports for running script pods, so ``ready()`` never lifts the boot deadline:
+    the eras pod was stopped mid-render at 25 min. A fresh upload now counts as the answer; silence never stops a pod."""
+    sess = R.new_session(pod("hb"), max_usd=1.0, max_hours=2.0, now=0, heartbeat="datasets/o/r:log/stages.txt")
+    running = pod("hb")
+    assert R.heartbeat_step(sess, 60, beat=lambda spec: None) == "waiting"
+    assert "boot" in R.guard_check(sess, running, R.BOOT_MINUTES * 60 + 1)[1]       # no upload by the deadline: stop
+    assert R.heartbeat_step(sess, 600, beat=lambda spec: 500.0) == "alive" and sess["answered"]
+    assert R.guard_check(sess, running, R.BOOT_MINUTES * 60 + 1)[0] == "ok"         # the upload lifted the deadline
+    pushed = []
+    late = 500 + R.SILENT_ALERT_MIN * 60 + 1
+    assert R.heartbeat_step(sess, late, beat=lambda spec: 500.0, push=lambda *a: pushed.append(a)) == "silent"
+    assert pushed and "silence alone is not proof" in pushed[0][1]
+    assert R.guard_check({**sess, "max_usd": 99}, running, late)[0] == "ok"           # silence is not a reason to stop
+    assert R.heartbeat_step(sess, late + 30, beat=lambda spec: 500.0, push=lambda *a: pushed.append(a)) == "silent"
+    assert len(pushed) == 1                                                           # one alert per silent spell
