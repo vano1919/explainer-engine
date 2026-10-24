@@ -83,19 +83,19 @@ length; the borders are guides, not a stopwatch. Evidence and what was not verif
 
 | # | Time | Segment (`function`) | What happens |
 |---|---|---|---|
-| 1 | 0:00-0:03 | hook (`cold_open`) | an action, a paradox or an odd detail at once; sound from the first frame; the first sentence is the hook (BP-03) |
-| 2 | 0:03-0:30 | information gap (`hook`) | the narrator states the surprising outcome or the paradox; no part of the answer |
+| 1 | 0:00-0:12 | hook (`cold_open`) | an action, a paradox or an odd detail at once; sound from the first frame; the first sentence is the hook (BP-03); 2-3 teasers cut from the later fight (KP-41, BP-111) |
+| 2 | 0:12-0:30 | information gap (`hook`) | the narrator states the surprising outcome or the paradox; no part of the answer |
 | 3 | 0:30-1:15 | orientation (`setup`) | narrator: where, when, who against whom (maps, diagrams, no extra text) |
 | 4 | 1:15-2:45 | scene 1 (`inciting`) | goals and stakes declared through conflict |
 | 5 | 2:45-3:15 | bridge | narrator: the result and the next question |
 | 6 | 3:15-5:00 | scene 2 (`escalation`) | the first plan fails; the hero must react |
 | 7 | 5:00-6:00 | new complication | narrator: the factor that changes the game |
-| 8 | 6:00-7:30 | scene 3 (`escalation`) | the other side acts; a new place marks the boundary |
+| 8 | 6:00-7:30 | scene 3 (`escalation`) | the other side acts; a new place marks the boundary; while a plan is told, its execution is shown (KP-42) |
 | 9 | 7:30-8:15 | preparation | narrator: the full size of the crisis; pressure rises; no spoiler |
-| 10 | 8:15-10:45 | central scene (`climax` or `crisis`) | the longest scene (ST-15), 2-3 escalations inside |
+| 10 | 8:15-10:45 | central scene (`climax` or `crisis`) | the longest scene (ST-15), 2-3 escalations inside; the other side's line cross-cut with the hero's (KP-42) |
 | 11 | 10:45-11:15 | turning point (`reversal`) | the choice, revelation or failure that changes the story; then silence or one still frame |
 | 12 | 11:15-12:00 | fallout | narrator: who lost and who won, never what we just saw |
-| 13 | 12:00-13:30 | scene 4, final choice | the hero's last act, slower, on dialogue; no new conflict |
+| 13 | 12:00-13:30 | scene 4, final choice | the hero's last act, slower, on dialogue; no new conflict; the power gap shown in a cutaway, the lines broken by silent reactions (KP-43) |
 | 14 | 13:30-14:30 | the answer (`resolution`) | the opening question answered fully; an uncertain fact is said to be uncertain |
 | 15 | 14:30-14:45 | callback (`button`) | the first image again with a new meaning |
 | 16 | 14:45-15:00 | channel pointer | the worlds already on the channel and the worlds coming, subscribe so as not to miss them (BP-106, KP-40); never a dry "subscribe" or a goodbye (BP-43); the narration runs on under the end screen |

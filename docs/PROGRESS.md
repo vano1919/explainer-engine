@@ -1178,3 +1178,16 @@ BP-111..BP-113. `film_shots shotlist` writes the script with every prompt under 
 cutaways in S04, S06, S08, S09, S13, S10 cross-cut with the camp, still 15:00 (214 shots, narrator 44.9 %, 0 FAIL,
 0 REVIEW). Composer: "Only this figure is in the picture" (was "Only these 1 person"). Tests in
 `tests/unit/test_film_shots.py`.
+
+
+## 2026-10-24 — Conflicts between the script engine and older rules resolved (D-74)
+
+ვანო: this thread stabilises the script-writing system (no paid runs); where the new approach conflicts with old rules,
+the new one wins and the rules change. Reviewed docs, the registry, skills and agents
+(`docs/research/SCRIPT_ENGINE_V2_2026-10-24.md` section 4). Changed: BP-40 scoped to still-picture episodes (animated
+ones take BP-107's shot rate; ED-14 likewise), BP-43's "one next video" replaced by BP-106 under the engine, the
+`dialogue-scenes` skill's 40-60 % narration and "a scene every 60-90 s" replaced by BP-105/BP-112/BP-113, the style
+bible's "one place per scene" now allows cutaways, template D's hook runs 0:00-0:12 with teasers (rows 8, 10, 13 name the
+cutaways and silent beats), D-55 kept for still-picture episodes only; `supersedes` fields on BP-105/106/107/112;
+agents story-architect, scene-writer and edit-planner told the episode rules. No conflict: BP-70's four-line exchange
+equals BP-113's cap; BP-31, BP-03, ED-14's listener reactions. Decision D-74.

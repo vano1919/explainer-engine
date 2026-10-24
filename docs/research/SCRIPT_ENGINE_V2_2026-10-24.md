@@ -50,3 +50,19 @@ The review's "more strategy shown through action, not more battle" is the rule K
    speaker onto the listener (the line plays on the reaction), or the speaker's hands for a line said to the room.
 4. **Not yet known**: how often LTX-2.5 passes the acting check on our style. The 1-minute film measures it; the parley
    of this episode is the first candidate to test, as a paid step with the creator's approval.
+
+## 4. Where the new approach met older rules (ვანო 2026-10-24: the new approach wins)
+
+| Older rule | Conflict with | Resolution (D-74) |
+|---|---|---|
+| BP-40: at most 10 pictures a minute; ED-14's image budget | BP-107: 11-17 shots a minute, measured on the creator's cartoons | BP-40 scoped to still-picture episodes; animated episodes use BP-107 (the 5 s rule of the first 30 s still holds) |
+| BP-43: the last sentence points to one next video | BP-106 / KP-40: the outro names the worlds on the channel and coming | BP-106 replaces the "one next video" part under the engine; BP-43's sign-off lexicon still FAILs |
+| Skill `dialogue-scenes`: ~40-60 % narration, a played scene every 60-90 s | BP-105 (25-45 %), template D's 2-4 minute scenes, BP-112 | the skill now points to BP-105, BP-112 and BP-113 |
+| Style bible: one place per scene | KP-42 cutaways | one home place per scene, cutaways allowed and expected |
+| Template D row 1: hook 0:00-0:03 | KP-41 teasers in the first 10 s | the hook runs 0:00-0:12 with 2-3 teasers; rows 8, 10, 13 name the cutaways and the silent beats |
+| D-55: expression sheets because the face changes about once a second | LTX acting from the hero sheet, KP-43 | D-55 stays for still-picture episodes |
+| BP-70: a real exchange has at least 4 unbroken lines | BP-113: at most 4 lines in a row | no conflict: the cap equals the minimum, said in both statements |
+
+Checked and not in conflict: BP-31 (cutaways are hard cuts), BP-03 (the first sentence is still the hook: a claim with
+a number, 14 words), ED-14's listener reaction every 2nd-4th line (KP-43 is the same idea in code), the critic's 40 %
+stills (already replaced by BP-109 in v1).

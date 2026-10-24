@@ -1646,7 +1646,7 @@
    "area": "rhythm",
    "status": "binding",
    "severity": "FAIL",
-   "statement": "Section-aware rhythm: in the first 30 s something changes on screen at least every 5 s (FAIL); in the body a still longer than 20 s is REVIEW and longer than 40 s is FAIL; the average stays at most 10 pictures a minute (the creator) with one burst of 5-10 cuts allowed per 2-3 min; every change carries new information. A change is anything new on screen: a cut, a bubble, an accent (not the wobble), a data visual, a card or a visual beat (default of 2026-10-20: a beat counts; the creator may overturn it).",
+   "statement": "Section-aware rhythm: in the first 30 s something changes on screen at least every 5 s (FAIL); in the body a still longer than 20 s is REVIEW and longer than 40 s is FAIL; the average stays at most 10 pictures a minute (the creator) with one burst of 5-10 cuts allowed per 2-3 min; every change carries new information. A change is anything new on screen: a cut, a bubble, an accent (not the wobble), a data visual, a card or a visual beat (default of 2026-10-20: a beat counts; the creator may overturn it). Scope (2026-10-24): still-picture episodes (production_script). An animated episode on shot cards (docs/SCRIPT_ENGINE.md) keeps the first-30-s rule but takes its shot rate from BP-107.",
    "thresholds": {
     "hook_window_s": 30,
     "hook_max_still_s": 5,
@@ -1813,7 +1813,7 @@
    "area": "story",
    "status": "binding",
    "severity": "FAIL",
-   "statement": "The ending is abrupt: no recap or goodbye in the last 10 % ('to recap', 'thanks for watching', 'and lastly', 'don't forget to subscribe'); the last sentence is an open question or a pointer to one next video, and narration continues at least 15 s under the end screen.",
+   "statement": "The ending is abrupt: no recap or goodbye in the last 10 % ('to recap', 'thanks for watching', 'and lastly', 'don't forget to subscribe'); the last sentence is an open question or a pointer to one next video, and narration continues at least 15 s under the end screen. Under the script engine the closing pointer is BP-106's channel pointer (the worlds on the channel and coming), which replaces 'one next video'; the lexicon still FAILs.",
    "thresholds": {
     "last_share": 0.1,
     "end_screen_narration_min_s": 15,
@@ -3707,7 +3707,9 @@
     "explainer_engine/scripting/story_lint.py:NARRATOR_SHARE",
     "explainer_engine/scripting/film_shots.py:NARRATOR_SHARE"
    ],
-   "supersedes": []
+   "supersedes": [
+    "dialogue-scenes '~40-60 % narration', for template D"
+   ]
   },
   {
    "id": "BP-106",
@@ -3729,7 +3731,9 @@
    "enforced_by": [
     "explainer_engine/scripting/film_shots.py:OUTRO_WORLDS_MIN"
    ],
-   "supersedes": [],
+   "supersedes": [
+    "BP-43 'a pointer to one next video', for episodes under the script engine"
+   ],
    "decided": "the creator, 2026-10-24: 'go to the channel, these worlds are there, these are planned; subscribe if you don't want to miss them'"
   },
   {
@@ -3764,7 +3768,9 @@
     "explainer_engine/scripting/film_shots.py:SHOTS_PER_MIN",
     "explainer_engine/scripting/film_shots.py:MEDIAN_SHOT_S"
    ],
-   "supersedes": []
+   "supersedes": [
+    "BP-40 pictures_per_min_max 10 and ED-14's image budget, for animated episodes"
+   ]
   },
   {
    "id": "BP-108",
@@ -3899,14 +3905,17 @@
    "enforced_by": [
     "explainer_engine/scripting/film_shots.py:SAME_PLACE_MAX_S"
    ],
-   "supersedes": []
+   "supersedes": [
+    "CREATIVE_STYLE_BIBLE 'one place per scene'",
+    "dialogue-scenes 'a played scene every 60-90 s'"
+   ]
   },
   {
    "id": "BP-113",
    "area": "film",
    "status": "house",
    "severity": "REVIEW",
-   "statement": "AI acting is a risk, not a given (KP-43): at most talk_run_max spoken lines in a row before a silent reaction, an insert or a cutaway; every full-tier line on a face is checked for acting (lips on the line, the peak gesture, the face, no freeze) and a take that fails twice is replaced by a fallback that hides the mouth.",
+   "statement": "AI acting is a risk, not a given (KP-43): at most talk_run_max spoken lines in a row before a silent reaction, an insert or a cutaway; every full-tier line on a face is checked for acting (lips on the line, the peak gesture, the face, no freeze) and a take that fails twice is replaced by a fallback that hides the mouth. The cap equals BP-70's minimum exchange, so a scene's one real exchange of four lines still fits; a fifth line needs a silent beat first.",
    "thresholds": {
     "talk_run_max": 4
    },

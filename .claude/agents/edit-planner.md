@@ -47,6 +47,10 @@ For each segment:
    more than three shots of one size in a row, a static camera unless the move is the event, at most two people in a
    medium or closer shot (KP-19). Then `python -m explainer_engine.scripting.film_shots check film_shots.json` (0 FAIL,
    every REVIEW answered) and `... compose film_shots.json --out prompts.json`; the paid steps read prompts.json only.
+   Episode rules there (D-74): a teaser is `teaser_of` its payoff and is cut from that clip (KP-41); at most BP-112's
+   seconds in one place without a cutaway (KP-42); at most BP-113's lines in a row before a silent reaction (light tier),
+   an insert or a cutaway, and every full-tier line on a face carries the acting check and its fallback (KP-43).
+   `film_shots shotlist --out shotlist.md` is what the creator reads: the script with every prompt under its shot.
 7. Run `python -m explainer_engine.production validate <script>`: 0 FAIL; the PV-35 (MO, incl. MO-07) and PV-24 RHYTHM
    REVIEWs on the estimated read answered or fixed, 0 PV-44 FAIL. Report events a minute, the kinds used, the alive
    share and the scenes' coverage (establish, listener cuts, longest A/B run, J/L share).

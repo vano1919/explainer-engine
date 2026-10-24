@@ -30,6 +30,9 @@ Write:
   questions back, silences or counterattacks per scene.
 - Subtext never spoken (SC-10): no line states the header's `real_subject` verbatim; the fight stays on the surface
   topic. Facts enter dialogue only as ammunition under the knowledge-state table (DW-13), ~1 fact per 2-3 beats.
+- Animated episodes (shot cards, D-74): no more than four lines in a row on faces (KP-43): after four, a silent
+  reaction, an insert or a cutaway; when a character explains a plan, write the shot of it being carried out next
+  to the line (KP-42).
 - Never press-release narration (SC-07): no "X's page says", "announced", "is set to release", "the trailer confirms".
   A date or spec appears only inside a scene as a stake. Never stack disclaimers (SC-08): the honesty beat lives in
   its ONE segment; outside it, don't re-label the invention.
