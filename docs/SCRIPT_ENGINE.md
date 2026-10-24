@@ -36,7 +36,8 @@ The evidence for the new numbers is [research/SCRIPT_ENGINE_V1_2026-10-24.md](re
 | Dimension | In use now | Alternative under test | Where it is set |
 |---|---|---|---|
 | Story structure | template D, 16 segments, 900 s | - | [STORY_ENGINE.md](STORY_ENGINE.md) |
-| Figure size in a picture prompt | words ("a third", "most of the frame height") | numbers (`height_pct`), test T1 of the LoRA thread | KP-32 |
+| Figure size in a picture prompt | words ("a third", "most of the frame height"); decided by test v2 2026-10-24 (numbers were drawn as rulers and sized no better) | - | KP-32 |
+| A hero's tag in one prompt | the full tag every time the hero is named | the full tag once, then a short name ("the old man"): one figure came out twice in 4 of 4 pictures where a tag repeated three times (test v2, a hypothesis) | `film_shots._people` |
 | Keyframe | Qwen-Image-2512 + `wldnk style` LoRA, bf16, 1280x720, 24 steps, true CFG 4 (the settings the frozen LoRA was judged at) | 1664x928 at 50 steps (the base model's own 16:9 default) | the LoRA thread's params file |
 | Next pose, cut, last frame | Qwen-Image-Edit-2511 + scene LoRA v1 (checkpoint 500-750), the training caption's prefix | - | KP-07, KP-08, KP-27 |
 | Video model by tier | `full` -> LTX-2.5 dev (acting, every line, every peak); `light` -> LTX-2.5 distilled (breath, glance, a turn of the head); `hold` -> no video model: the keyframe with our camera move | the cheaper model on `full` shots, after the 1-minute film | `film_shots.MODEL` |

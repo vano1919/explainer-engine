@@ -19,7 +19,8 @@
         "pose": {"type": "string", "description": "the visible pose in the shot's FIRST frame (the start of the action)"},
         "on": {"type": "string", "description": "what the person stands, sits or lies on, as a phrase: 'standing on the packed snow', 'sitting on the bus step' (KP-31)"},
         "height": {"enum": ["quarter", "third", "half", "two_thirds", "most"], "description": "how much of the frame height the figure fills (KP-32)"},
-        "height_pct": {"type": "integer", "minimum": 5, "maximum": 100, "description": "the same as a number, for the words-vs-numbers test; wins over height in the prompt when set"}
+        "height_pct": {"type": "integer", "minimum": 5, "maximum": 100, "description": "the same as a number, for the keyframe gate; the prompt says the nearest word, never the number (KP-32)"},
+        "partial": {"type": "string", "description": "only this part of the figure is in the frame ('the trunk', 'one hand'): written as such, counted by the gate, no support or height needed"}
       }
     }
   },

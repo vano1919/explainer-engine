@@ -220,8 +220,11 @@ def test_composition_is_written_into_keyframe_and_cut_prompts_only():
     assert "filling most of the frame height" in ps["S01-04.first"]["prompt"]
     assert "frame height" not in ps["S01-02.last"]["prompt"]  # a next pose never re-frames (KP-07)
     d = doc()
-    shot(d, "S01-02")["blocking"][0]["height_pct"] = 55
-    assert "filling about 55 % of the frame height" in prompts(d)["S01-02.first"]["prompt"]
+    b = shot(d, "S01-02")["blocking"][0]
+    b.pop("height")
+    b["height_pct"] = 55
+    k = prompts(d)["S01-02.first"]["prompt"]
+    assert "filling about half of the frame height" in k and "%" not in k and "55" not in k  # numbers get drawn (KP-32)
 
 
 def test_each_prompt_names_its_lora_and_the_gate_gets_a_card():
@@ -360,3 +363,29 @@ def test_the_napoleon_episode_is_clean_under_the_engine():
     assert ep["engine"] == F.ENGINE
     assert not F.check(ep)
     assert sum(s["seconds"] for s in ep["shots"]) == 900
+
+
+def test_a_relation_with_a_or_an_before_a_cast_noun_fails():
+    d = doc()
+    s = shot(d, "S01-02")
+    s["frame"]["relations"] = ["a yellow city bus stands behind the old man"]
+    assert "KP-33" not in rules(d, "FAIL")  # the bus is no cast member
+    d["cast"]["mammoth"] = {"tag": "the woolly mammoth with a broken left tusk"}
+    s["blocking"].append({"who": "mammoth", "where": "right_back", "facing": "left", "on": "standing on the hill",
+                          "height": "half"})
+    s["frame"]["relations"] = ["a living woolly mammoth stands on the hill behind the yellow city bus"]
+    assert ("KP-33", "S01-02") in found(d, "FAIL")
+    s["frame"]["relations"] = ["the woolly mammoth stands on the hill behind the yellow city bus"]
+    assert ("KP-33", "S01-02") not in found(d, "FAIL")
+
+
+def test_a_partly_visible_figure_is_written_and_counted_without_support():
+    d = doc()
+    d["cast"]["mammoth"] = {"tag": "the woolly mammoth with a broken left tusk"}
+    s = shot(d, "S01-02")
+    s["blocking"].append({"who": "mammoth", "where": "right", "facing": "left", "partial": "the trunk"})
+    assert "KP-31" not in rules(d, "FAIL")
+    k = prompts(d)["S01-02.first"]["prompt"]
+    assert "Only the trunk of the woolly mammoth with a broken left tusk reaches into the frame on the right." in k
+    card = {c["id"]: c for c in F.gate_cards(d)}["S01-02.first"]
+    assert card["people"][-1]["partial"] == "the trunk"

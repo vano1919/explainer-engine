@@ -112,12 +112,30 @@ def _facing(doc: dict, facing: str) -> str:
     return plain.get(facing) or f"looking at {_tag(doc, facing)}"
 
 
-def _height(p: dict) -> str:
+# KP-32: the size is said in words; a number in the prompt is drawn as rulers and percentages (test v2 2026-10-24: 6 of
+# 10 pictures) and does not size the figure better, so height_pct is turned into the nearest word and kept for the gate
+PCT_WORDS = ((30, "quarter"), (42, "third"), (58, "half"), (78, "two_thirds"), (101, "most"))
+
+
+def _height_word(p: dict) -> str | None:
+    if p.get("height"):
+        return p["height"]
     if p.get("height_pct"):
-        return f"filling about {p['height_pct']} % of the frame height"
-    if p.get("height") == "most":
+        return next(w for limit, w in PCT_WORDS if p["height_pct"] < limit)
+    return None
+
+
+def _height(p: dict) -> str:
+    word = _height_word(p)
+    if word == "most":
         return "filling most of the frame height"
-    return f"filling about {HEIGHTS[p['height']]} of the frame height" if p.get("height") else ""
+    return f"filling about {HEIGHTS[word]} of the frame height" if word else ""
+
+
+def _head_noun(tag: str) -> str:
+    """The noun a tag is about: 'the woolly mammoth with a broken left tusk' -> 'mammoth'."""
+    core = re.split(r"\s+(?:with|in|on|beside|wearing|holding|from)\s+|,", tag.strip(), maxsplit=1)[0]
+    return core.split()[-1].lower()
 
 
 def _people(doc: dict, shot: dict, *, actor_pose: str | None, layout: bool = False) -> list[str]:
@@ -126,6 +144,9 @@ def _people(doc: dict, shot: dict, *, actor_pose: str | None, layout: bool = Fal
     action = shot.get("action") or {}
     out = []
     for p in shot.get("blocking", []):
+        if p.get("partial"):  # only part of this figure is in the frame (an animal's trunk, a hand)
+            out.append(_end(f"Only {p['partial']} of {_tag(doc, p['who'])} reaches into the frame {WHERE[p['where']]}"))
+            continue
         pose = actor_pose if p["who"] == action.get("who") and actor_pose else p.get("pose") or "stands"
         bits = [_cap(_tag(doc, p["who"])), WHERE[p["where"]], _facing(doc, p["facing"])]
         bits += [] if layout and p.get("on") and pose == "stands" else [pose]  # "stands, standing on the snow"
@@ -159,8 +180,9 @@ def gate_card(doc: dict, shot: dict) -> dict:
     """What the keyframe gate (PR #22, qa/keyframe_gate.py) checks a drawn first frame against: the people by tag,
     side, height and support (the lead marked ``actor``), the relations and the free space."""
     f, lead = shot["frame"], _lead(shot)
-    people = [{"tag": _tag(doc, p["who"]), "where": p["where"], "height": p.get("height"), "on": p.get("on"),
-               "actor": p["who"] == lead} for p in shot.get("blocking", [])]
+    people = [{"tag": _tag(doc, p["who"]), "where": p["where"], "height": _height_word(p), "on": p.get("on"),
+               "actor": p["who"] == lead, **({"partial": p["partial"]} if p.get("partial") else {})}
+              for p in shot.get("blocking", [])]
     return {"id": f"{shot['id']}.first", "kind": shot["source"], "size": f["size"], "people": people,
             "relations": list(f.get("relations", [])), "lead_room": dict(f.get("lead_room") or {})}
 
@@ -423,6 +445,8 @@ def check(doc: dict) -> list[dict]:
         # KP-31..KP-34: a drawn first frame (keyframe or cut) states its composition
         if shot["source"] in ("keyframe", "cut") and shot.get("blocking"):
             for p in shot["blocking"]:
+                if p.get("partial"):
+                    continue  # a figure cut by the frame edge stands on nothing we see
                 if not p.get("on"):
                     add("KP-31", "FAIL", sid, f"{p['who']}: what does the figure stand or sit on? ('standing on the packed snow')")
                 elif not SUPPORT.search(p["on"]):
@@ -432,7 +456,15 @@ def check(doc: dict) -> list[dict]:
                 add("KP-32", "FAIL", sid, f"{lead['who']}: how much of the frame height does the figure fill?")
             if action and not f.get("lead_room"):
                 add("KP-34", "FAIL", sid, "where is the free space the action moves into? (lead_room; side none if it stays)")
+        heads = {_head_noun(cast[w]["tag"]): w for w in present if w in cast}
         for r in f.get("relations", []):
+            for m in re.finditer(r"\b(?:a|an|another|one)\s+((?:[\w-]+\s*){1,4})", r, re.I):
+                for word in m.group(1).lower().split():  # the article's noun phrase, up to four words
+                    noun = word if word in heads else word[:-1] if word.endswith("s") and word[:-1] in heads else None
+                    if noun:
+                        add("KP-33", "FAIL", sid, f"'{m.group(0).strip()}' in a relation draws a second {noun}: name the "
+                                                  f"one in the picture as '{_tag(doc, heads[noun])}'")
+                        break
             if not CLEAR.search(r):
                 why = "a vague relation" if VAGUE.search(r) else "no relation"
                 add("KP-33", "FAIL", sid, f"'{r}': {why}; say behind, in front of, on top of, under, to the left of ...")

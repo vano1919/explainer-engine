@@ -1153,3 +1153,14 @@ every video prompt, hero-sheet prompts for named heroes, and draws a cut's last 
 script` writes the readable script with claim ids. Template D's last segment is now the 15 s channel pointer. The
 episode: `examples/napoleon_vs_genghis/` (204 shots, 15:00, narrator 45 %, 0 FAIL, 0 REVIEW; PROMPT_PACKAGE.md for review).
 Tests in `tests/unit/test_film_shots.py`.
+
+
+## 2026-10-24 — Picture test v2 findings in the composer (KP-32, KP-33)
+
+The LoRA thread's 1-minute film picture test v2 (Qwen-Image-2512 + style LoRA, 2 seeds, words against numbers). Done: the
+prompt never carries a size as a number (numbers were drawn as rulers and percentages in 6 of 10 pictures and sized the
+figure no better), `height_pct` becomes the nearest word and stays for the gate; KP-33 FAILs a relation that puts "a" or "an"
+before a cast member's noun ("a living woolly mammoth ... behind the bus" drew two mammoths in 4 of 4); a figure cut by the
+frame edge is `blocking[].partial` ("the trunk"), written as such, counted by the gate card, without support or height.
+The repeated-tag hypothesis (one figure drawn twice) is a variant to test in `docs/SCRIPT_ENGINE.md`, not a rule. Tests in
+`tests/unit/test_film_shots.py`.
