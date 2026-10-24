@@ -43,6 +43,7 @@ HOMES = {
     "TN": "THUMBNAIL_RULES.md",
     "BP": "SOURCED_RULES.md",
     "KP": "SHOT_PROMPTS.md",  # prompts of animated shots: keyframe, next pose, cut, video (2026-10-24)
+    "KG": "KEYFRAME_GATE.md",  # keyframe gate: picture checks, cause log, LoRA/base pairing (2026-10-24)
     "LT": "LORA_TRAINING.md",  # LoRA training control (D-72, 2026-10-23)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))

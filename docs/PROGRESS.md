@@ -1106,3 +1106,15 @@ writes BAD_HOST to the heartbeat and the guard stops that pod (`hf_text`, `heart
 body without the CUDA filter unless `any_cuda=True`. Tests: `test_a_cuda_check_without_a_timeout_is_refused`,
 `test_a_pod_that_reports_a_bad_host_is_stopped_by_its_guard`, `test_create_refuses_a_body_without_the_cuda_filter`.
 
+
+## 2026-10-24 — KG: keyframe gate, cause log, a LoRA only on its own base
+
+ვანო (18:53 Tbilisi): check every picture's logic, physics and video use before the scene LoRA takes it; redraw on a fail;
+record what was right and wrong and whose fault (prompt, style LoRA, scene LoRA); fix only the weak part. Cause of today's
+wrong-style pictures: the chain-test masters and the hero sheet were BFL night-run pictures, and the style LoRA was loaded into
+Edit-2511 (a different base); the one wldnk master (ice age) kept its style through Edit + the scene LoRA alone. New
+[KEYFRAME_GATE](KEYFRAME_GATE.md) (KG-01..KG-16, new docs_lint family KG) and `qa/keyframe_gate.py`: questions from the shot
+card for the pod's VLM, verdict (hard FAIL / soft REVIEW), at most 3 tries, `blame` (base without LoRA + another seed), the
+`qa_log.jsonl` summary (prompt rule first; a LoRA retraining candidate at 15 cases of one type), and `check_stack` (style LoRA
+only on Qwen-Image-2512, scene LoRA only on Edit-2511). The approved 20-era sheet read by Claude: 2 logic errors of 20, both
+from ambiguous prompts. Test: `tests/unit/test_keyframe_gate.py` (7).
