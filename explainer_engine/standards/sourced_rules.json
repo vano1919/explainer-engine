@@ -3646,6 +3646,66 @@
     "explainer_engine/scripting/film_shots.py:SAME_SIZE_RUN_MAX"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-104",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Template D (historical docudrama, ST-14): an unbroken narration block (narrator lines with no character line between them) lasts at most 90 s at BP-01's heard pace; past that the scene comes back. The narrator carries the event boundaries (a jump in time, place, cause or goal), the scenes carry the action.",
+   "thresholds": {
+    "narration_block_max_s": 90
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Event perception: a mind-brain perspective (Zacks et al. 2007, Psychological Bulletin)",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/17338596/"
+    },
+    {
+     "type": "B",
+     "title": "Multimedia Learning, 3rd ed. (R. E. Mayer 2020): the segmenting principle",
+     "url": "https://doi.org/10.1017/9781316941355"
+    },
+    {
+     "type": "A",
+     "title": "CrossWorld docudrama constitution (the creator's research report, 2026-10-24)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-ubp4ge/docs/research/DOCUDRAMA_CONSTITUTION_2026-10-24.md"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:NARRATION_BLOCK_MAX_S"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-105",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Template D (historical docudrama, ST-16): the narrator has 25-45 % of the script's words, the dramatized scenes the rest (house aim 35-40 %; a political or personal rivalry sits near 25-30 %, a campaign higher). No study fixes the split; our retention data will move it.",
+   "thresholds": {
+    "narrator_share": [
+     0.25,
+     0.45
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "CrossWorld docudrama constitution (the creator's research report, 2026-10-24)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-ubp4ge/docs/research/DOCUDRAMA_CONSTITUTION_2026-10-24.md"
+    },
+    {
+     "type": "C",
+     "title": "The Food That Built America S1E1 and Roman Empire S1E1, timed from their subtitles (2026-10-24)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-ubp4ge/docs/research/DOCUDRAMA_CONSTITUTION_2026-10-24.md"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py:NARRATOR_SHARE"
+   ],
+   "supersedes": []
   }
  ]
 }

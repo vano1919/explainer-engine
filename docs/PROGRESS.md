@@ -1122,3 +1122,16 @@ composer writes them into keyframe and cut prompts (never into a next pose, whic
 FAIL when they are missing or vague ("by the boulder"); every composed prompt names its LoRA (`style` / `scene`, never the
 style LoRA on Edit-2511) and `compose` writes one gate card per drawn first frame for the keyframe gate (PR #22). The worked
 example passes (0 FAIL, 0 REVIEW); tests in `tests/unit/test_film_shots.py`.
+
+
+## 2026-10-24 — Template D: the 15-minute historical docudrama (STORY_ENGINE, ST-14..ST-16)
+
+ვანო (20:22 Tbilisi) brought back another AI's report on the ten structure variants of one 15-minute animated docudrama
+(narrator plus talking characters). Done: its 16-segment timeline is template D in `docs/STORY_ENGINE.md` (three acts,
+narrator and scene in turns, a question at every scene's end, modules for war / rivalry / invention), with one change:
+its "subscribe" outro breaks BP-43, so the last 10 s point to the next video. `drama.template` (A-D, optional) is new in
+the schema; on D, `scripting/story_lint.py` checks ST-14 (no narration block over BP-104's 90 s), ST-15 (the central scene
+is the longest scene) and ST-16 (the narrator's share in BP-105's 25-45 %), all hypotheses, REVIEW. The summary and what
+was not verified (its 65-84 % and effect-size figures): `docs/research/DOCUDRAMA_CONSTITUTION_2026-10-24.md`. Agent
+story-architect picks D for history episodes. Test: `tests/unit/test_story_engine.py::test_template_d_docudrama_rules`.
+

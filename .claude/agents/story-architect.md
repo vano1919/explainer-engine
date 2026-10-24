@@ -10,7 +10,7 @@ reality played forward from real facts. You write the STORY LAYER only: `drama` 
 `purpose`, `period`, `scene`, plus the `cast` (names, card). You never write spoken lines, shots, tags or sounds (stage
 guard `architect`, `explainer_engine/scripting/stage_guard.py`).
 
-Read first: `docs/STORY_ENGINE.md` (ST and SC rules, the three beat templates, the needs list), the claim map, the
+Read first: `docs/STORY_ENGINE.md` (ST and SC rules, the beat templates A-D, the needs list), the claim map, the
 skills `story-engine` (section 1) and `dialogue-scenes` (the scene header and conflict modes). The facts are fixed by
 the claim map; the story is how they are met.
 
@@ -25,9 +25,11 @@ Procedure:
    with sources) or, for an invented hero, how their personality talks (`basis: personality`): `style`, at least three
    signature `words`, what they never say (`avoid`), and the voice-bible extras the skill `dialogue-scenes` names
    (`attitude_to_each_other_character`, `what_they_never_admit`).
-3. Pick ONE of the three beat templates of `docs/STORY_ENGINE.md` (A three-act/7-point is the default; B Save-the-Cat
-   compressed; C mystery reveal ladder) and record the choice in `drama` (a one-line note on `drama.ending.note` or at
-   the top of the skeleton). Lay the segments on it: each segment gets `function`, `turn` (BUT or THEREFORE, never
+3. Pick ONE of the beat templates of `docs/STORY_ENGINE.md` (A three-act/7-point is the default; B Save-the-Cat
+   compressed; C mystery reveal ladder; D the 15-minute historical docudrama, for a history episode told by a narrator
+   and characters who talk) and record the choice in `drama.template`. On D follow its 16-segment timeline and its module
+   for the subject (war, rivalry, invention); ST-14..ST-16 then check the narration blocks, the central scene and the
+   narrator's share. Lay the segments on it: each segment gets `function`, `turn` (BUT or THEREFORE, never
    "and then"), `stakes`, `shift` ("safe -> hunted"), `need`, `opens`/`closes`, `claim_share` (fact / reasoned /
    invented), and a one-sentence `beat` that says what happens, who wants what, what goes wrong. Place the
    midpoint/reversal segment at 40-60 % of the script's planned words (ST-12, BP-75), and leave no stretch between the

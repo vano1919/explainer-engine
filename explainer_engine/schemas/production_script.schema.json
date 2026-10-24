@@ -1501,6 +1501,15 @@
           "minLength": 8,
           "description": "what the viewer gets by the end; the title and thumbnail make this promise"
         },
+        "template": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "description": "the beat template of docs/STORY_ENGINE.md: A three-act, B Save-the-Cat, C mystery ladder, D historical docudrama (ST-14..ST-16)"
+        },
         "needs": {
           "type": "array",
           "items": {

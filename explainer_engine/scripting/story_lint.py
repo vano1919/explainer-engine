@@ -1,4 +1,4 @@
-"""Story rules ST-01..ST-10 (docs/STORY_ENGINE.md, D-48) on a production script's story layer (``drama`` at the top,
+"""Story rules ST-01..ST-16 (docs/STORY_ENGINE.md, D-48) on a production script's story layer (``drama`` at the top,
 ``drama`` per segment). Free, run by ``production validate`` before any paid step.
 
 The creator's note on the first video (2026-10-19): the script told a less interesting story and missed what viewers
@@ -8,7 +8,8 @@ flaw, rising stakes with a turn of value in every segment, open loops that are p
 needs the episode serves, and what is fact, reasoning or invention. Structure FAILs (a loop that does not exist, a
 pay-off before its plant); craft is REVIEW (the creator judges the story). The numbers and severities of ST-11, ST-12
 and ST-13 live in the sourced rules registry (BP-74..BP-76, docs/SOURCED_RULES.md); ST-13 turns words into seconds at
-BP-01's heard pace, the one pace every estimate uses.
+BP-01's heard pace, the one pace every estimate uses. ST-14..ST-16 apply to template D, the historical docudrama
+(``drama.template`` "D"; BP-104, BP-105).
 
     python -m explainer_engine.scripting.story_lint production_script.json
 """
@@ -33,6 +34,10 @@ MIDPOINT_BAND = tuple(SR.T("BP-75", "midpoint_share"))  # ST-12: the midpoint/re
 MIDPOINT_MIN_SEGMENTS = SR.T("BP-75", "min_segments")
 TURN_GAP_S = SR.T("BP-76", "turn_gap_s")  # ST-13: a turn at least this often
 WORDS_PER_S = SR.T("BP-01", "wpm_target") / 60  # ST-13: words become seconds at BP-01's heard pace
+DOCUDRAMA = "D"  # template D, the historical docudrama (docs/STORY_ENGINE.md): ST-14..ST-16 apply
+NARRATION_BLOCK_MAX_S = SR.T("BP-104", "narration_block_max_s")  # ST-14
+NARRATOR_SHARE = tuple(SR.T("BP-105", "narrator_share"))  # ST-16
+CENTRAL_FUNCS = {"climax", "crisis", "midpoint"}  # ST-15: the central scene
 
 
 def sev(rule_id: str) -> str:
@@ -196,7 +201,45 @@ def lint(doc: dict) -> list[dict]:
                    f"without a turn (a BUT, reversal, midpoint, crisis, twist or climax): something must change at least every "
                    f"{TURN_GAP_S:g} s (BP-76)", sev("BP-76"))
                 gap_words, gap_from = 0.0, None
+    if drama.get("template") == DOCUDRAMA:
+        _docudrama(out, segs, sd, seg_words)
     return out
+
+
+def _docudrama(out: list, segs: list, sd: list, seg_words: list) -> None:
+    """Template D (the historical docudrama): narration blocks stay short (ST-14), the central scene is the longest
+    scene (ST-15) and the narrator keeps a share of the words (ST-16). All three are hypotheses, REVIEW."""
+    run, run_from, total_n, total = 0, None, 0, 0
+    for s in segs:
+        for ln in s.get("lines", []):
+            w = len(ln["text"].split())
+            total += w
+            if ln.get("speaker"):
+                run, run_from = 0, None
+                continue
+            total_n += w
+            run_from = run_from or s["id"]
+            run += w
+            if run / WORDS_PER_S > NARRATION_BLOCK_MAX_S:
+                _f(out, "ST-14", f"{run_from}..{s['id']}", f"the narrator talks about {run / WORDS_PER_S:.0f} s without a "
+                   f"character line: give the scene back within {NARRATION_BLOCK_MAX_S:g} s (BP-104)", sev("BP-104"))
+                run, run_from = 0, None
+    scenes = [(sid, d, w) for (sid, d), w, s in zip(sd, seg_words, segs)
+              if any(ln.get("speaker") for ln in s.get("lines", []))]
+    central = [x for x in scenes if x[1] and x[1]["function"] in CENTRAL_FUNCS]
+    if not central and scenes:
+        _f(out, "ST-15", "segments", "no central scene: one scene with dialogue is the climax, crisis or midpoint")
+    elif central:
+        top = max(central, key=lambda x: x[2])
+        longer = [x[0] for x in scenes if x[2] > top[2]]
+        if longer:
+            _f(out, "ST-15", top[0], f"the central scene is shorter than {', '.join(longer)}: it should be the longest scene, "
+               "with 2-3 escalations inside")
+    if total:
+        share = total_n / total
+        if not NARRATOR_SHARE[0] <= share <= NARRATOR_SHARE[1]:
+            _f(out, "ST-16", "lines", f"the narrator has {share:.0%} of the words (aim {NARRATOR_SHARE[0]:.0%}-"
+               f"{NARRATOR_SHARE[1]:.0%}, BP-105; a rivalry story may sit low, a campaign high)", sev("BP-105"))
 
 
 def main(argv: list[str] | None = None) -> int:
