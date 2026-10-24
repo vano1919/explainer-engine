@@ -1118,3 +1118,13 @@ card for the pod's VLM, verdict (hard FAIL / soft REVIEW), at most 3 tries, `bla
 `qa_log.jsonl` summary (prompt rule first; a LoRA retraining candidate at 15 cases of one type), and `check_stack` (style LoRA
 only on Qwen-Image-2512, scene LoRA only on Edit-2511). The approved 20-era sheet read by Claude: 1 logic error of 20 (underwater dome) and the ice-age
 mammoth, which the prompt asked for as a rock painting; both prompts were ambiguous. Test: `tests/unit/test_keyframe_gate.py` (7).
+
+## 2026-10-24 — LY: shot layout from real sizes and the camera
+
+ვანო (19:34 Tbilisi): give exact sizes with ± in one prompt variant and relative proportions in the other, make sure the system
+writing the numbers makes no mistakes, and look at drawing simple figures first and our style after. New
+`scripting/layout.py` (LY-01..LY-08 in [KEYFRAME_GATE](KEYFRAME_GATE.md), docs_lint family LY): a table of real heights with
+references, the shot size sets the lead's frame share, perspective places every other figure (height = f·H/z, horizon by
+angle, `elev` for a hill), checks FAIL a figure outside the frame or hidden behind a nearer one, and one layout writes the
+technical prompt (± 5 %), the relative prompt (ratios and metres in words), EliGen boxes and a grey blockout for a ControlNet.
+On its first run it caught the scenario's mammoth 100 % hidden behind the bus. Test: `tests/unit/test_layout.py` (5).

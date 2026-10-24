@@ -54,3 +54,22 @@ disagreement is itself logged.
 
 Both problem pictures do what their prompts said; the prompts were ambiguous. That is why the composition fields on the card (relations, support, height,
 free space) come first and a style LoRA retraining does not.
+
+## Layout: sizes computed, not guessed (LY-, `scripting/layout.py`)
+
+ვანო asked for this on 2026-10-24 (19:34 Tbilisi). One prompt variant gives exact sizes with a ± tolerance, the other gives
+relative proportions, and the system that writes the numbers must not make mistakes. A language model is weak at numbers
+and space. The known fix works in two stages: first the layout, then the picture made from that layout. In LLM-grounded
+Diffusion this raised spatial accuracy from 37 % to 77 % ([Lian et al. 2023](https://arxiv.org/pdf/2305.13655)). Here code
+computes the layout from real sizes and the camera, and Claude only names the things and where they stand.
+
+| ID | Rule | Check |
+|---|---|---|
+| LY-01 | **Real heights come from one table** (`SIZES`), each with its reference: adult ~1.7 m, city bus ~3.0-3.2 m, woolly mammoth 2.7-3.4 m at the shoulder. Cartoon figures keep real heights | [code] |
+| LY-02 | **The shot size fixes the lead figure's share of the frame** (`LEAD_SHARE`: EWS 12 %, WS 35 %, MWS 82 %, MS ~1.9x cut by the frame ...). Every other figure follows by perspective: height = focal × real height / distance. The camera height and the horizon come from the angle | [code] |
+| LY-03 | **A figure outside the frame FAILs**; one cut by the frame edge in a wide shot is REVIEW | [code] |
+| LY-04 | **A figure that cannot be seen or cannot act FAILs or is REVIEWed.** FAIL: more than 60 % hidden behind a nearer figure (the scenario's mammoth 6 m behind the bus was 100 % hidden until it was raised on the hill), or two figures at the same depth overlapping by more than half. REVIEW: smaller than 4 % of the frame height (KP-13) | [code] |
+| LY-05 | **The technical prompt:** every figure's height share ± 5 %, its centre and its feet in % of the frame | [code] |
+| LY-06 | **The relative prompt:** every figure compared with the lead in words ("about twice as tall as", "about 11 metres behind", "about 5 metres higher up") | [code] |
+| LY-07 | **EliGen boxes** come from the same layout | [code] |
+| LY-08 | **The blockout:** grey figures on a ground gradient, nearer = lighter. It is a depth-like control picture for a ControlNet (depth / soft edge), the "simple figures first, our style after" path | [code] |
