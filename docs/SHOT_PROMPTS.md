@@ -127,6 +127,21 @@ this page; "ours" means our own tests of 2026-10-22..24.
 | KP-33 | **Relations the picture can draw one way only**: each `frame.relations` sentence says behind, in front of, on top of, under, to the left of...; "by", "near", "beside", "next to" or "with" alone FAIL ("a woolly mammoth by the boulder" drew a mammoth-shaped boulder) | the LoRA thread's master test 2026-10-24 | house | [code] FAIL |
 | KP-34 | **Free space for the action**: a drawn first frame with an action has `frame.lead_room` (left, right, above, below, or none when the action stays in place), so the video does not move a hand or a body out of the frame | the creator 2026-10-24; KP-03 (everyone stays in frame) | house | [code] FAIL |
 
+### Rules KP-35..KP-40 (the episode, under the script engine v1)
+
+They run when the cards say `"engine": "script_engine/1"` ([SCRIPT_ENGINE.md](SCRIPT_ENGINE.md)); the numbers are BP-104..BP-110
+in [SOURCED_RULES.md](SOURCED_RULES.md), the evidence is
+[research/SCRIPT_ENGINE_V1_2026-10-24.md](research/SCRIPT_ENGINE_V1_2026-10-24.md).
+
+| ID | Rule | Why | Kind | Check |
+|---|---|---|---|---|
+| KP-35 | **Shot rhythm**: shots a minute and the median shot inside BP-107's band (episodes of a minute or more) | the creator's three reference cartoons, 3517 shots | hypothesis | [code] REVIEW |
+| KP-36 | **Clip length**: one clip at most BP-108's maximum; a longer shot that changes pose draws its last frame (`last_frame`) so a key pose lands every few seconds | night tests 2026-10-24: duplicates at 15 s, translucent heroes at 20 s | hypothesis | [code] REVIEW |
+| KP-37 | **Animation tiers**: every shot is `hold` (the keyframe with a camera move by our code), `light` (breath, glance, a turn of the head, on the fast model) or `full` (acting); holds at most BP-109's share; a spoken line on a hold or light shot FAILs (lips need the full model); an acted peak on a hold is REVIEW | the critic's 40 % still read as a slideshow; the cartoons hold a still on 5-10 % | hypothesis (the line rule: invariant) | [code] FAIL / REVIEW |
+| KP-38 | **Camera moves** on at most BP-110's share of shots; the rest say `static` | the cartoons: static camera on 81 % | hypothesis | [code] REVIEW |
+| KP-39 | **Narration blocks on the cards**: shots narrated with no line spoken between them last at most BP-104's block; the narrator's words fit the pictures under them (BP-01's top pace) and keep BP-105's share | template D (ST-14, ST-16) measured on the cards instead of the script | hypothesis | [code] REVIEW |
+| KP-40 | **The outro points to the channel**: a subscribe line in the last six shots names a world already on the channel and a world coming (the `channel` block) and why (not to miss them); a BP-43 sign-off FAILs | the creator 2026-10-24 (BP-106) | house | [code] FAIL |
+
 ## The shot card (`film_shots/1`)
 
 Schema: [`explainer_engine/schemas/film_shots.schema.json`](../explainer_engine/schemas/film_shots.schema.json); worked

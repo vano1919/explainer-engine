@@ -3674,7 +3674,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/story_lint.py:NARRATION_BLOCK_MAX_S"
+    "explainer_engine/scripting/story_lint.py:NARRATION_BLOCK_MAX_S",
+    "explainer_engine/scripting/film_shots.py:NARRATION_BLOCK_MAX_S"
    ],
    "supersedes": []
   },
@@ -3703,7 +3704,142 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/story_lint.py:NARRATOR_SHARE"
+    "explainer_engine/scripting/story_lint.py:NARRATOR_SHARE",
+    "explainer_engine/scripting/film_shots.py:NARRATOR_SHARE"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-106",
+   "area": "story",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "The outro is a channel pointer (KP-40): when the last narration asks the viewer to subscribe, it names at least one world already on the channel and at least one world that is coming, and says why to subscribe (not to miss them); never a dry call from BP-43's lexicon. The channel's worlds run from the Stone Age to the future.",
+   "thresholds": {
+    "worlds_on_min": 1,
+    "worlds_coming_min": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Script engine v1 research: the creator's cartoons measured, our night tests (2026-10-24)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-ubp4ge/docs/research/SCRIPT_ENGINE_V1_2026-10-24.md"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/film_shots.py:OUTRO_WORLDS_MIN"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-10-24: 'go to the channel, these worlds are there, these are planned; subscribe if you don't want to miss them'"
+  },
+  {
+   "id": "BP-107",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Shot rhythm of an animated episode (KP-35): shots_per_min shots a minute and a median shot of median_shot_s, the band of the creator's three reference cartoons (3517 shots measured 2026-10-24); the wider film norm agrees (average shot length about 4 s and falling).",
+   "thresholds": {
+    "shots_per_min": [
+     11,
+     17
+    ],
+    "median_shot_s": [
+     2.5,
+     4.5
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Script engine v1 research: the creator's cartoons measured, our night tests (2026-10-24)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-ubp4ge/docs/research/SCRIPT_ENGINE_V1_2026-10-24.md"
+    },
+    {
+     "type": "A",
+     "title": "Attention and the evolution of Hollywood film (Cutting, DeLong, Nothelfer 2010, Psychological Science)",
+     "url": "https://journals.sagepub.com/doi/10.1177/0956797610361679"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/film_shots.py:SHOTS_PER_MIN",
+    "explainer_engine/scripting/film_shots.py:MEDIAN_SHOT_S"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-108",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Clip length (KP-36): one video clip is at most clip_max_s (plain LTX from one picture was clean at 10 s, duplicated a person at 15 s and turned heroes translucent at 20 s; LTX-2.5 Pro renders 6, 8 or 10 s); a shot longer than keypose_after_s that changes pose draws its last frame, so a key pose lands every 2.5-4 s.",
+   "thresholds": {
+    "clip_max_s": 10.0,
+    "keypose_after_s": 5.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Script engine v1 research: the creator's cartoons measured, our night tests (2026-10-24)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-ubp4ge/docs/research/SCRIPT_ENGINE_V1_2026-10-24.md"
+    },
+    {
+     "type": "A",
+     "title": "How to use LTX-2.5: prompts and workflows (fal.ai)",
+     "url": "https://fal.ai/learn/tools/how-to-use-ltx-2-5"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/film_shots.py:CLIP_MAX_S",
+    "explainer_engine/scripting/film_shots.py:KEYPOSE_AFTER_S"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-109",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Animation tiers (KP-37): at most hold_share_max of the shots are a held picture with a camera move (the creator's cartoons hold a still on 5-10 % of the time; the critic's 40 % read as a slideshow); every spoken line and every peak is full.",
+   "thresholds": {
+    "hold_share_max": 0.1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Script engine v1 research: the creator's cartoons measured, our night tests (2026-10-24)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-ubp4ge/docs/research/SCRIPT_ENGINE_V1_2026-10-24.md"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/film_shots.py:HOLD_SHARE_MAX"
+   ],
+   "supersedes": [
+    "the critic's plan review 2026-10-23: 40 % still + camera"
+   ]
+  },
+  {
+   "id": "BP-110",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Camera moves (KP-38): at most camera_move_share_max of the shots move the camera; the creator's cartoons keep the camera still on 81 % of shots (moving 9-19 %) and LTX moves the camera on its own when it is not told to stay.",
+   "thresholds": {
+    "camera_move_share_max": 0.2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Script engine v1 research: the creator's cartoons measured, our night tests (2026-10-24)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-ubp4ge/docs/research/SCRIPT_ENGINE_V1_2026-10-24.md"
+    },
+    {
+     "type": "A",
+     "title": "How to use LTX-2.5: prompts and workflows (fal.ai)",
+     "url": "https://fal.ai/learn/tools/how-to-use-ltx-2-5"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/film_shots.py:CAMERA_MOVE_SHARE_MAX"
    ],
    "supersedes": []
   }

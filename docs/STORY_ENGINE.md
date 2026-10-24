@@ -97,8 +97,8 @@ length; the borders are guides, not a stopwatch. Evidence and what was not verif
 | 12 | 11:15-12:00 | fallout | narrator: who lost and who won, never what we just saw |
 | 13 | 12:00-13:30 | scene 4, final choice | the hero's last act, slower, on dialogue; no new conflict |
 | 14 | 13:30-14:30 | the answer (`resolution`) | the opening question answered fully; an uncertain fact is said to be uncertain |
-| 15 | 14:30-14:50 | callback (`button`) | the first image again with a new meaning |
-| 16 | 14:50-15:00 | pointer | the next video, never "subscribe" or a goodbye (BP-43), the narration running on under the end screen |
+| 15 | 14:30-14:45 | callback (`button`) | the first image again with a new meaning |
+| 16 | 14:45-15:00 | channel pointer | the worlds already on the channel and the worlds coming, subscribe so as not to miss them (BP-106, KP-40); never a dry "subscribe" or a goodbye (BP-43); the narration runs on under the end screen |
 
 Modules by subject: a war or campaign runs two storylines (each side in its own place, variant 6 of the study); a
 political or personal rivalry keeps the narrator low and escalates by words, blackmail or betrayal, on faces; an

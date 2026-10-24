@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "film_shots.schema.json",
-  "title": "Film shot cards (version 1): the animated shots of an approved script, from which every picture, video and sound prompt is composed (docs/SHOT_PROMPTS.md, KP-15..KP-34)",
+  "title": "Film shot cards (version 1): the animated shots of an approved script, from which every picture, video and sound prompt is composed (docs/SHOT_PROMPTS.md, KP-15..KP-40)",
   "type": "object",
   "required": ["schema", "episode", "style", "cast", "places", "shots"],
   "additionalProperties": false,
@@ -53,6 +53,16 @@
       }
     },
     "places": {"type": "object", "additionalProperties": {"$ref": "#/$defs/text"}},
+    "engine": {"const": "script_engine/1",
+               "description": "the cards follow the script engine v1 (docs/SCRIPT_ENGINE.md): the episode rules KP-35..KP-40 and ZI-02/ZI-03 apply"},
+    "claims": {"type": "object", "description": "the claim map: id -> the fact and its source (ZI-02)",
+               "additionalProperties": {"type": "object", "required": ["text", "source"], "additionalProperties": false,
+                                        "properties": {"text": {"$ref": "#/$defs/text"}, "source": {"$ref": "#/$defs/text"},
+                                                       "kind": {"enum": ["fact", "estimate", "invented"]}}}},
+    "channel": {"type": "object", "additionalProperties": false, "required": ["worlds_on", "worlds_coming"],
+                "description": "the outro's channel pointer (BP-106): worlds already on the channel and worlds coming",
+                "properties": {"worlds_on": {"type": "array", "items": {"$ref": "#/$defs/text"}, "minItems": 1},
+                               "worlds_coming": {"type": "array", "items": {"$ref": "#/$defs/text"}, "minItems": 1}}},
     "shots": {
       "type": "array",
       "minItems": 1,
@@ -143,7 +153,10 @@
                      "description": "how the first frame is drawn: a new keyframe, a next pose of the scene's master, or a cut (new size or angle) of the same scene"},
           "master": {"type": "string", "description": "nextpose / cut: the shot id whose keyframe is the scene's master"},
           "last_frame": {"type": "boolean", "description": "true: the settle pose is drawn too (a next pose of the master) and guides the clip's last frame"},
-          "exit": {"type": "boolean"}
+          "exit": {"type": "boolean"},
+          "tier": {"enum": ["hold", "light", "full"],
+                   "description": "the animation budget (KP-37): hold = the keyframe with a camera move by our code; light = a small move (breath, glance, turn of the head) on the fast model; full = the acting, every line and every peak"},
+          "claims": {"type": "array", "items": {"type": "string"}, "description": "claim ids of the facts the narration says (ZI-02)"}
         }
       }
     }

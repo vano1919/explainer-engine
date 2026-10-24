@@ -1135,3 +1135,21 @@ is the longest scene) and ST-16 (the narrator's share in BP-105's 25-45 %), all 
 was not verified (its 65-84 % and effect-size figures): `docs/research/DOCUDRAMA_CONSTITUTION_2026-10-24.md`. Agent
 story-architect picks D for history episodes. Test: `tests/unit/test_story_engine.py::test_template_d_docudrama_rules`.
 
+
+
+## 2026-10-24 — Script engine v1 and the first episode on it (Napoleon vs Genghis Khan)
+
+ვანო (20:56 Tbilisi): one full 15-minute episode prompt (Napoleon's army falls through time onto the steppe of Genghis
+Khan), with zero improvisation: where a rule was missing, research it and write it first. Done: `docs/SCRIPT_ENGINE.md`
+(the pipeline topic -> claim map -> template D -> shot cards -> composed prompts; ZI-01..ZI-06; the variants in use while
+tests run; the writer's brief). New episode rules on the cards under `"engine": "script_engine/1"`: KP-35 shot rhythm,
+KP-36 clip length and key poses, KP-37 animation tiers (hold / light / full; a line on a hold or light shot FAILs), KP-38
+camera moves, KP-39 narration blocks and share on the cards, KP-40 the outro as a channel pointer (the creator's call:
+worlds on the channel, worlds coming, subscribe so as not to miss them), ZI-02 a claim behind every number, ZI-03 a tier
+on every shot. Numbers BP-106..BP-110 (the creator's cartoons measured: 11-17 shots a minute, still pictures on 5-10 % of
+the time, which replaces the critic's 40 %; night tests: clips of at most 10 s), evidence in
+`docs/research/SCRIPT_ENGINE_V1_2026-10-24.md`. The composer now writes tier, model, fps and LTX's 8k+1 frame count on
+every video prompt, hero-sheet prompts for named heroes, and draws a cut's last frame from the cut itself; `film_shots
+script` writes the readable script with claim ids. Template D's last segment is now the 15 s channel pointer. The
+episode: `examples/napoleon_vs_genghis/` (204 shots, 15:00, narrator 45 %, 0 FAIL, 0 REVIEW; PROMPT_PACKAGE.md for review).
+Tests in `tests/unit/test_film_shots.py`.

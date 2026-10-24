@@ -235,3 +235,128 @@ def test_each_prompt_names_its_lora_and_the_gate_gets_a_card():
     assert c["people"][2] == {"tag": "the pink-haired girl in the yellow hoodie", "where": "center_back",
                               "height": "third", "on": "sitting on the bottom step of the bus door", "actor": False}
     assert c["lead_room"]["side"] == "above" and c["relations"]
+
+
+def _episode(d, n=12, seconds=4.0):
+    """The example's cards stretched to a minute of narrated holds and full scenes, under the script engine v1."""
+    base = copy.deepcopy(d["shots"])
+    d["engine"] = F.ENGINE
+    d["claims"] = {"C1": {"text": "The army crossed the Neman on 24 June 1812.", "source": "https://en.wikipedia.org/wiki/French_invasion_of_Russia"}}
+    d["channel"] = {"worlds_on": ["the Stone Age"], "worlds_coming": ["the Ice Age"]}
+    shots = []
+    for i in range(n):
+        s = copy.deepcopy(base[i % len(base)])
+        s["id"] = f"X{i:02d}"
+        s["seconds"] = seconds
+        s["tier"] = "full"
+        s["frame"]["camera"] = "push_in" if i == 0 else "static"
+        s["frame"].pop("camera_end", None)
+        if s.get("narration"):
+            s["claims"] = ["C1"]
+        if s["source"] != "keyframe":
+            s["master"] = f"X{(i // len(base)) * len(base):02d}"
+        shots.append(s)
+    d["shots"] = shots
+    return d
+
+
+def test_episode_rules_apply_only_under_the_engine():
+    d = doc()
+    d["shots"][0].pop("tier", None)
+    assert not rules(d) & {"ZI-02", "ZI-03", "KP-35", "KP-37"}
+    d = _episode(doc())
+    assert not rules(d) & {"KP-35", "KP-36", "KP-37", "KP-38", "KP-40", "ZI-02", "ZI-03"}
+    d["shots"][0].pop("tier")
+    assert "ZI-03" in rules(d, "FAIL")
+
+
+def test_a_number_needs_a_claim_and_the_claim_must_exist():
+    d = _episode(doc())
+    narrated = next(s for s in d["shots"] if s.get("narration"))
+    narrated["narration"] = "In 1812, half a million men marched east."
+    narrated.pop("claims")
+    assert "ZI-02" in rules(d, "FAIL")
+    narrated["claims"] = ["C1"]
+    assert "ZI-02" not in rules(d, "FAIL")
+    narrated["claims"] = ["C9"]
+    assert "ZI-02" in rules(d, "FAIL")
+
+
+def test_long_clips_holds_and_lines_on_holds():
+    d = _episode(doc())
+    talk = next(s for s in d["shots"] if s.get("dialogue"))
+    talk["tier"] = "light"
+    assert "KP-37" in rules(d, "FAIL")
+    talk["tier"] = "full"
+    talk["seconds"] = F.CLIP_MAX_S + 2
+    assert "KP-36" in rules(d, "REVIEW")
+    d = _episode(doc())
+    for s in d["shots"][:4]:
+        if not s.get("dialogue"):
+            s["tier"] = "hold"
+    assert "KP-37" in rules(d, "REVIEW")
+
+
+def test_rhythm_and_camera_moves():
+    d = _episode(doc(), n=6, seconds=12.0)  # 6 shots in 72 s = 5 a minute, median 12 s
+    msgs = [f["detail"] for f in F.check(d) if f["rule"] == "KP-35"]
+    assert len(msgs) == 2
+    d = _episode(doc())
+    for s in d["shots"]:
+        s["frame"]["camera"] = "push_in"
+    assert "KP-38" in rules(d, "REVIEW")
+
+
+def test_outro_points_to_the_channel_worlds():
+    d = _episode(doc())
+    last = d["shots"][-1]
+    last.pop("dialogue", None)
+    last["mode"] = "narrated"
+    last["tier"] = "light"
+    last["narration"] = "Subscribe so you never miss a world."
+    assert "KP-40" in rules(d, "FAIL")
+    last["narration"] = ("On the channel: the Stone Age is waiting. Next comes the Ice Age. Subscribe if you don't want "
+                         "to miss it.")
+    assert "KP-40" not in rules(d, "FAIL")
+    last["narration"] = "Thanks for watching."
+    assert "KP-40" in rules(d, "FAIL")
+
+
+def test_compose_carries_tier_model_and_ltx_frames():
+    assert F.frames(4.0) == 97 and F.frames(10.0) == 241 and F.frames(3.0) == 73
+    d = _episode(doc())
+    d["shots"][0]["tier"] = "hold"
+    video = [p for p in F.compose(d) if p["kind"] == "video"]
+    assert video[0]["model"] == "camera" and video[1]["model"] == F.MODEL["full"]
+    assert all((p["frames"] - 1) % 8 == 0 for p in video)
+
+
+def test_script_export_has_the_clock_lines_and_claims():
+    d = _episode(doc())
+    text = F.script(d)
+    assert text.startswith("# ") and "`0:00.0`" in text and "## Claims" in text and "C1" in text
+
+
+def test_a_cut_draws_its_last_frame_from_its_own_first_frame():
+    d = doc()
+    cut = next(s for s in d["shots"] if s["source"] == "cut")
+    cut["last_frame"] = True
+    last = prompts(d)[f"{cut['id']}.last"]
+    assert last["master"] == cut["id"]
+
+
+def test_sheet_prompts_for_named_heroes_only():
+    d = doc()
+    d["cast"]["crowd"] = {"tag": "the crowd of commuters in grey coats on the platform"}
+    sheets = F.sheet_prompts(d)
+    assert {s["id"] for s in sheets} == {f"sheet.{c}" for c, v in d["cast"].items() if v.get("name")}
+    assert all(s["prompt"].startswith(d["style"]["trigger"]) and s["lora"] == "style" for s in sheets)
+    assert not [f for f in F.lint.check(sheets, names=[c["name"] for c in d["cast"].values() if c.get("name")])
+                if f["severity"] == "FAIL"]
+
+
+def test_the_napoleon_episode_is_clean_under_the_engine():
+    ep = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
+    assert ep["engine"] == F.ENGINE
+    assert not F.check(ep)
+    assert sum(s["seconds"] for s in ep["shots"]) == 900
