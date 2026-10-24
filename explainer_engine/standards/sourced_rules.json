@@ -3542,6 +3542,110 @@
     "PV-29 TICK_MAX_DB / MAX_CROSSFADE literals"
    ],
    "decided": "the creator, 2026-10-17: notes on the first full cut of Episode 1 (docs/EDITING.md ED-03)"
+  },
+  {
+   "id": "BP-100",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A spoken line in a video clip (KP-18): at most words_per_second words a second of the clip after a settle of settle_s at each end (the face settles before the line and after it), so a 4 s shot carries about 7 words and a 10 s shot about 22. The model lip-syncs what fits; a longer line is split over two shots or given to the narrator.",
+   "thresholds": {
+    "words_per_second": 2.5,
+    "settle_s": 0.5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "LTX-2.5 prompting guide: multi-shot scenes, native audio (deAPI)",
+     "url": "https://deapi.ai/blog/ltx-2-5-prompting-guide-multi-shot-scenes-native-audio-and-prompts-that-actually-cut"
+    },
+    {
+     "type": "A",
+     "title": "How to use LTX-2.5: prompts and workflows (fal.ai)",
+     "url": "https://fal.ai/learn/tools/how-to-use-ltx-2-5"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/film_shots.py:SPEECH_WPS",
+    "explainer_engine/scripting/shot_prompt_lint.py:SPEECH_WPS"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-101",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Faces in a medium or closer shot (KP-19): at most close_faces_max people in an MS, MCU, CU, ECU or OTS shot; more faces merge in the video model, and the creator's cartoons show 2 or fewer people in 78 % of their shots (120 shots hand-labelled 2026-10-24, docs/research/SHOT_GRAMMAR_FOOTAGE_2026-10-24.md). A group is a wide; the acting is a medium.",
+   "thresholds": {
+    "close_faces_max": 2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "LTX-2.5 prompting guide: multi-shot scenes, native audio (deAPI)",
+     "url": "https://deapi.ai/blog/ltx-2-5-prompting-guide-multi-shot-scenes-native-audio-and-prompts-that-actually-cut"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/film_shots.py:CLOSE_FACES_MAX"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-102",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A video prompt is one present-tense paragraph of four to eight sentences (KP-25): video_words is its word range. Shorter prompts leave the action and the sound to chance; longer ones re-describe the picture, which drifts the identity in image-to-video.",
+   "thresholds": {
+    "video_words": [
+     30,
+     130
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Prompting guide for LTX-2 (Lightricks, official)",
+     "url": "https://docs.ltx.video/api-documentation/prompting-guide"
+    },
+    {
+     "type": "A",
+     "title": "LTX-2.5 prompting guide: multi-shot scenes, native audio (deAPI)",
+     "url": "https://deapi.ai/blog/ltx-2-5-prompting-guide-multi-shot-scenes-native-audio-and-prompts-that-actually-cut"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/shot_prompt_lint.py:VIDEO_WORDS"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-103",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Shot-size variety inside a scene (KP-26): more than same_size_run_max consecutive shots of one size is REVIEW. Two cuts of nearly the same size and angle read as a jump (the 30-degree rule); the creator's cartoons cut between medium (30 %), wide (20 %), medium close-up (18 %), full (17 %), insert (8 %), establishing (4 %) and close-up (3 %) shots.",
+   "thresholds": {
+    "same_size_run_max": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "30-degree rule (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/30-degree_rule"
+    },
+    {
+     "type": "A",
+     "title": "180-degree rule (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/180-degree_rule"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/film_shots.py:SAME_SIZE_RUN_MAX"
+   ],
+   "supersedes": []
   }
  ]
 }

@@ -1,0 +1,109 @@
+{
+ "schema": "film_shots/1",
+ "episode": "worked example: a city bus in the Ice Age (the scene LoRA's test set, rewritten as shot cards)",
+ "style": {
+  "trigger": "wldnk style",
+  "video_sentence": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves."
+ },
+ "cast": {
+  "walter": {"name": "Walter", "tag": "the old man with round glasses and a red scarf",
+             "voice": "a thin, cracked old man's voice"},
+  "dee": {"name": "Dee", "tag": "the nurse in the purple puffer jacket",
+          "voice": "a low, dry woman's voice"},
+  "kim": {"name": "Kim", "tag": "the pink-haired girl in the yellow hoodie"},
+  "bo": {"name": "Bo", "tag": "the bearded man in the green beanie and grey overalls"}
+ },
+ "places": {
+  "road": "a snowy plain with no road, a yellow city bus stuck to its wheels in the snow, pine trees far behind",
+  "road_close": "deep snow beside the yellow city bus"
+ },
+ "shots": [
+  {
+   "id": "S01-01", "scene": "S01", "mode": "establish", "seconds": 4, "source": "keyframe",
+   "beat": "The world is wrong before anyone knows it: a city bus where no road has ever been.",
+   "frame": {"size": "EWS", "angle": "high", "camera": "push_in", "camera_end": "the bus in the middle of the frame",
+             "place": "road", "light": "flat grey daylight"},
+   "narration": "The 7:40 express left on time. The town it was heading for won't be built for another twelve thousand years.",
+   "sound": {"ambience": "wind hissing over open snow", "foley": ["the bus engine ticking as it cools"]}
+  },
+  {
+   "id": "S01-02", "scene": "S01", "mode": "scene", "seconds": 5, "source": "keyframe", "last_frame": true,
+   "beat": "Walter sees it first, and the others see him lose it.",
+   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "light": "flat grey daylight"},
+   "blocking": [
+    {"who": "walter", "where": "left", "facing": "right"},
+    {"who": "dee", "where": "center", "facing": "walter", "pose": "stands with her hands in her jacket pockets"},
+    {"who": "kim", "where": "center_back", "facing": "camera", "pose": "stands with headphones on her ears"},
+    {"who": "bo", "where": "right", "facing": "left", "pose": "rubs his hands together for warmth"}
+   ],
+   "action": {"who": "walter", "start": "squints at the empty white horizon",
+              "peak": "throws both hands up above his head",
+              "settle": "holds both hands high, frozen, mouth wide open",
+              "face": "his eyes bulge behind his glasses and his jaw drops"},
+   "reactions": [{"who": "dee", "does": "turns her head toward him"},
+                 {"who": "kim", "does": "pulls her headphones down to her neck"}],
+   "sound": {"ambience": "wind hissing over open snow", "foley": ["boots crunching in the snow"]}
+  },
+  {
+   "id": "S01-03", "scene": "S01", "mode": "scene", "seconds": 5, "source": "cut", "master": "S01-02",
+   "beat": "He wants the road back; she wants him calm before the others panic.",
+   "frame": {"size": "MS", "angle": "eye", "camera": "static", "place": "road_close", "light": "flat grey daylight"},
+   "blocking": [
+    {"who": "walter", "where": "left", "facing": "dee"},
+    {"who": "dee", "where": "right", "facing": "walter", "pose": "stands with her arms folded"}
+   ],
+   "action": {"who": "walter", "start": "lowers his hands slowly",
+              "peak": "jabs a finger down at the snow at his feet, eyebrows shooting up",
+              "settle": "stares at her with his mouth open"},
+   "reactions": [{"who": "dee", "does": "raises one eyebrow and tightens her folded arms"}],
+   "dialogue": {"who": "walter", "to": "dee", "text": "There was a road. Right here!",
+                "delivery": "high and fast, close to cracking"},
+   "sound": {"ambience": "wind hissing over open snow"}
+  },
+  {
+   "id": "S01-04", "scene": "S01", "mode": "scene", "seconds": 5, "source": "cut", "master": "S01-02",
+   "beat": "Her calm turns into the first admission that something is truly wrong.",
+   "frame": {"size": "OTS", "over": "walter", "angle": "eye", "camera": "push_in", "camera_end": "her face",
+             "place": "road_close", "light": "flat grey daylight"},
+   "blocking": [
+    {"who": "walter", "where": "left_front", "facing": "dee"},
+    {"who": "dee", "where": "right", "facing": "walter"}
+   ],
+   "action": {"who": "dee", "start": "looks past him at the bus",
+              "peak": "jerks her thumb back at the bus behind her",
+              "settle": "lets her arm drop, lips pressed tight",
+              "face": "her brows pull together and her mouth goes flat"},
+   "dialogue": {"who": "dee", "to": "walter", "text": "Walter. Buses don't drive through glaciers.",
+                "delivery": "slow and flat, every word separate"},
+   "sound": {"ambience": "wind hissing over open snow"}
+  },
+  {
+   "id": "S01-05", "scene": "S01", "mode": "insert", "seconds": 3, "source": "keyframe",
+   "beat": "No signal: nobody is coming to help.",
+   "frame": {"size": "INSERT", "angle": "high", "camera": "static", "place": "road_close", "light": "flat grey daylight"},
+   "action": {"who": "kim", "start": "a yellow-gloved thumb hovers over a dark phone screen",
+              "peak": "the thumb taps the screen hard three times",
+              "settle": "the screen stays black"},
+   "sound": {"foley": ["three hard taps on glass"]}
+  },
+  {
+   "id": "S01-06", "scene": "S01", "mode": "scene", "seconds": 5, "source": "nextpose", "master": "S01-02",
+   "last_frame": true,
+   "beat": "The turn: something enormous is behind them.",
+   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "light": "flat grey daylight"},
+   "blocking": [
+    {"who": "walter", "where": "left", "facing": "right", "pose": "stands with his hands on his head"},
+    {"who": "dee", "where": "center", "facing": "walter", "pose": "stands with her arms folded"},
+    {"who": "kim", "where": "center_back", "facing": "camera", "pose": "holds her phone at her chest"},
+    {"who": "bo", "where": "right", "facing": "left"}
+   ],
+   "action": {"who": "bo", "start": "stares over the roof of the bus",
+              "peak": "spins around and points with both arms at something huge behind the bus",
+              "settle": "freezes, still pointing",
+              "face": "his eyes bulge and his beard trembles"},
+   "reactions": [{"who": "walter", "does": "turns his head where he points"},
+                 {"who": "dee", "does": "turns her head where he points"}],
+   "sound": {"ambience": "wind hissing over open snow", "loudest": "a deep trumpeting call far behind the bus"}
+  }
+ ]
+}

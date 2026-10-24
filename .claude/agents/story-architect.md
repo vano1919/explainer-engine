@@ -50,6 +50,9 @@ prop; never "the woman", "a man", KP-01), one big action with a start, a peak an
 reaction (KP-02), who stays in frame and who leaves on purpose (KP-03), the camera (KP-04), at most 10 s (KP-06), and the
 acting heroes large in the frame; a wide shot with a crowd carries only camera, weather and ambient motion (KP-13).
 An action that needs more is two shots.
+For the shot cards (`film_shots/1`, KP-15, KP-28) you write: each hero's ONE visible tag (two traits, distinct from the
+others, the same words everywhere; the story name never goes in a prompt, KP-22), each place once in visible words, and per
+shot its `beat` (what it does for the story) and `mode` (scene, narrated, establish, insert).
 
 Hard rules: never invent a fact (invented = the story's own fiction, labelled); a real person speaks only lines that fit
 the documented record of who they were (claim ids); no protected characters (RR rules); no "who would win".

@@ -1095,3 +1095,19 @@ stock negative prompt that names our style ("cartoonish rendering", "exaggerated
 story-architect, edit-planner and the skill `shot-visuals` now write shots to KP. The lint also found two vague prompts in the running chain test
 ("the woman by the rock", "the cave man on the left"); both rewritten on HF before the pod read its code.
 
+
+## 2026-10-24 — KP-15..KP-30: shot cards and composed prompts (`scripting/film_shots.py`, `film_shots/1`)
+
+ვანო (15:50 Tbilisi): check the new prompt rules against how our photo models and local LoRAs read a prompt, which technical
+terms help and which are missing; describe the frame, its drama, the spoken text, the tone and the sound so the picture, video
+and audio prompts help the storytelling; keep the balance so shots are not boring or over-constrained; study his cartoons.
+Done: an audit of KP-01..KP-14 per model (Qwen-Image-2512 + style LoRA, Qwen-Image-Edit-2511 + scene LoRA, LTX-2.5 with audio;
+official guides and our tests), 120 cartoon shots labelled by hand plus the camera measure of 3312
+(`docs/research/SHOT_GRAMMAR_FOOTAGE_2026-10-24.md`), the shot card schema `film_shots/1`, a composer that writes the
+keyframe, next pose, cut and video prompts from one card, rules KP-15..KP-30 in code (tags, start-peak-settle with the
+first frame at the start, faces as cues, quoted lines that fit the clip, at most two faces close, narrated shots silent,
+no score music, no story names, no quality words, no "smooth motion", the change only, scene grammar), BP-100..BP-103
+(hypotheses, REVIEW; the registry's id pattern now takes three digits), the worked example
+`examples/film_shots/bus_in_the_ice_age.json` (0 FAIL, 0 REVIEW) and `tests/unit/test_film_shots.py`. Agents story-architect,
+scene-writer, performance-director, edit-planner and the skill shot-visuals write their fields of the card. The narrator-and-
+scene structure waits for the documentaries ვანო will send (16:05).

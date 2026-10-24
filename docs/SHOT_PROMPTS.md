@@ -73,3 +73,105 @@ A worked video prompt (the video LoRA's validation set, written after the eras t
 - "Static camera." as its own sentence; a moving shot names the one move and what it follows.
 - Next poses drawn from the master with "same camera" and "nobody new appears and nobody disappears".
 - One fixed style sentence first, identical in every shot; sounds after the action, at most three.
+
+## How our three models read a prompt (audit, 2026-10-24)
+
+ვანო asked on 2026-10-24 (15:50 Tbilisi) to check these rules against what our models and our local LoRAs need, so that a
+prompt helps the story instead of causing a bad frame, without boring or over-constrained shots. Sources are at the end of
+this page; "ours" means our own tests of 2026-10-22..24.
+
+| Model | How it reads | Helps | Hurts |
+|---|---|---|---|
+| Qwen-Image-2512 + wldnk style LoRA (keyframe) | a 7B vision-language text encoder: long natural sentences, left/right/foreground placement, counts; true CFG 4, so the negative prompt acts; the LoRA learned captions `wldnk style, <what is visible>` | the trigger first, then plain visible content in caption grammar; shot size and angle words ("medium shot at eye level"); each person's screen side and gaze; "only these N people"; the FIRST pose of the action | style adjectives (the trigger carries the style, KP-10); bare role words (ours); the official negative's "oversaturated, over-smooth" against our bright flat colour; quality words (8k, masterpiece) |
+| Qwen-Image-Edit-2511 + scene LoRA (next pose, cut) | an instruction on top of the image(s); 2511 keeps identity in group shots better; the scene LoRA learned `nextpose, a later frame of the same continuous animated shot, same camera: <what changed>` | the exact training prefix; only the change; the actor by tag AND screen side (the model sees the picture, the side tells it which figure); the end pose as a visible state; "nobody new appears" | framing words in a next pose (KP-07); chained edits (KP-08); describing the whole scene again |
+| LTX-2.5 two-stage (video + native audio) | one present-tense paragraph; image-to-video: the picture already holds the place and the faces; stage 1 runs the dev model with CFG, so the negative acts there; the audio is generated with the picture from the same text | the action in time order (start, then peak, then settle); the face as visible cues; ONE camera sentence relative to the subject and how the frame ends; the spoken line in quotes with speaker, language and voice; a settle before and after the line; concrete sounds with a visible source, the sound sentence last; at most two faces close | re-describing the picture (identity drift); named emotions (neutral faces); labelled fields and shot lists; more than two faces in a close shot (merging); readable text; score music (the edit adds it); story names it cannot know; quality words |
+
+### Audit of KP-01..KP-14
+
+| Verdict | Rule | What changed |
+|---|---|---|
+| keep, sharpen | KP-01 | a person is named by two visible traits AND a screen side; each hero has ONE tag used word for word in every prompt (KP-15) |
+| keep | KP-02 | the screen side answers part of "the model picks the closest pose"; the clause counter now skips the formula sentences (camera, in frame, a quoted line) and counts one actor's start-peak-settle chain once |
+| keep | KP-03 | a shot with nobody in it (an establishing or insert shot) no longer asks for "stays in frame" |
+| keep, extend | KP-04 | a move names how the frame ends (`camera_end`); LTX completes a move it can see the end of |
+| keep | KP-05, KP-06, KP-08, KP-14 | |
+| keep, scope | KP-07 | true for next poses only: keyframes and cuts NEED the shot size and angle words |
+| keep, scope | KP-09 | the negative acts where CFG runs: Qwen-Image (true CFG 4) and LTX stage 1 (dev); a distilled-only LTX run (CFG 1) ignores it, so never rely on a negative there, write the wanted end state instead. House negatives: `film_shots.NEG_KEYFRAME`, `NEG_VIDEO` |
+| keep, fix the sentence | KP-10 | the bake-off style sentence asked for "smooth natural character motion", the floaty motion LT-57 measures (KP-24) |
+| keep | KP-11 | also counts a prose sound sentence ("We hear ..."), the form the LTX guides ask for |
+| keep | KP-12 | it is anticipation, action and follow-through (Thomas and Johnston); the first frame shows the start (KP-16) |
+| keep, now in code | KP-13 | KP-19 |
+
+### Rules KP-15..KP-30 (the shot card)
+
+| ID | Rule | Evidence | Kind | Check |
+|---|---|---|---|---|
+| KP-15 | **One visible identity tag per hero**, at least two traits ("the old man with round glasses and a red scarf"), distinct from every other tag, the same words in every prompt of the episode | KP-01's failures; LTX multi-shot guides: a returning character keeps the same identifying words | house + source | [code] FAIL bare or twin tag, REVIEW short |
+| KP-16 | **Start, peak, settle; the first frame shows the start.** The keyframe is drawn at the anticipation, the video moves through the peak, the settle is the end pose (and the guided last frame). A keyframe that already shows the peak leaves the clip nothing to do. The actor stands in the blocking | eras and IC tests: shots that began at their peak froze; LTX image-to-video guides: give the action a clear end state | house + source | [code] FAIL actor absent, REVIEW peak = settle or no big verb |
+| KP-17 | **Emotion as the lens sees it**: eyes, brows, mouth, shoulders, hands; never a bare feeling word | LTX-2 and LTX-2.5 guides: named emotions leave the face neutral | source | [code] REVIEW |
+| KP-18 | **The spoken line**: in quotes, one speaker per shot who stands in the frame, said to someone present (or the room), with language and voice; at most BP-100's words for the clip length after a settle at each end; the speaker in a medium or closer shot; a verb of speech without quoted words is a REVIEW (the model invents gibberish) | LTX guides (quotes, words per second, let the face settle); our eras clips | source | [code] FAIL speaker/listener absent, REVIEW length and size |
+| KP-19 | **Faces the model keeps apart**: at most BP-101's people in a medium or closer shot; nobody acts in a wide (KP-13) | LTX-2.5 guide: more than two faces merge; the creator's cartoons: 78 % of shots show two people or fewer, groups appear in wides | source + measured | [code] REVIEW |
+| KP-20 | **A narrated shot is silent in frame**: the narrator never talks over a sync line, the clip's prompt says "Nobody speaks", and the narration gives what the heroes cannot know instead of describing what the picture shows | the creator's SHOW DON'T TELL (2026-10-20); LTX fills an unspecified track with chatter | house | [code] FAIL both on one shot, REVIEW narration repeating the action |
+| KP-21 | **No score music in a clip**: music is the edit's (ED-03, one music at a time); a clip asks only for music with a visible source (`diegetic_music`) | ED-03; the eras clips peaked at 0 dB with music stacked on sounds | house | [code] REVIEW |
+| KP-22 | **No story names in prompts**: the models do not know "Walter"; the tag names him. A name said aloud inside a quoted line is fine | the bake-off prompts named "Walter" and "Tom" | house | [code] FAIL |
+| KP-23 | **No quality words, no readable text**: 8k, masterpiece, highly detailed do nothing; signs and captions are garbled and belong to the edit | LTX-2.5 guide; Qwen showcase (text works only as an exact quoted layout, which we never need) | source | [code] REVIEW |
+| KP-24 | **The style sentence never asks for smooth, fluid or natural motion**: our cartoons hold most frames between quick moves; plain LTX holds 0.10-0.33 against the cartoons' p10 of 0.26 | LT-57 measurements; the bake-off style sentence | hypothesis | [code] REVIEW |
+| KP-25 | **A video prompt describes the change only**, one paragraph within BP-102's words: no place description (the picture holds it), no shot lists or labels | LTX image-to-video guides: re-captioning drifts identity | source | [code] REVIEW |
+| KP-26 | **Shot grammar of a scene**: a scene with two or more people opens on a shot that shows where everyone is (wide or full), unless the opening close-up is a declared hook; no more than BP-103's shots of one size in a row; each person keeps their screen side (the 180-degree line) unless the shot says `crosses_line`; an exchange gets at least one close shot (MCU, CU or over-the-shoulder) | the creator's cartoons (120 shots, below); the 180- and 30-degree rules | measured + source | [code] REVIEW |
+| KP-27 | **Next poses and cuts come from the scene's keyframe master** (KP-08 for cards): `master` names a keyframe shot of the same scene | KP-08 | house | [code] FAIL |
+| KP-28 | **Every shot says what it does for the story** (`beat`, one sentence) and its `mode`: scene, narrated, establish or insert. A shot without a beat is not drawn | the creator: the story is the goal, pictures are the means (2026-10-20) | house | [schema] FAIL |
+| KP-29 | **Pin what the story needs, free what the model does well.** Pinned: who, where, gaze, the one action's three poses, the face, the line, the camera, the sounds. Free: secondary motion (hair, cloth, breath, blinks), the background's life, the exact timing inside the shot, the acting between the poses, the crowd. Never script a limb-by-limb path or more than one action chain per actor; never write "do not move" or "exactly" for acting | ice age and IC tests (over-constrained layouts froze); LTX guides (overloaded scenes break) | house + source | [editorial] |
+| KP-30 | **Prompts are composed, not typed**: the keyframe, next pose, cut and video prompts of a shot come from its card (`film_shots compose`), so the same tag, side, pose and line appear in every model's grammar; a hand-written prompt passes the same lint | the eras and scene tests mixed hand-written variants of one shot | house | [code] `film_shots check` |
+
+## The shot card (`film_shots/1`)
+
+Schema: [`explainer_engine/schemas/film_shots.schema.json`](../explainer_engine/schemas/film_shots.schema.json); worked
+example: [`examples/film_shots/bus_in_the_ice_age.json`](../examples/film_shots/bus_in_the_ice_age.json) (the scene LoRA's
+bus test, rewritten as six cards: establish, master, cut, over-the-shoulder, insert, next pose; 0 FAIL, 0 REVIEW).
+
+| Field | Says | Written by |
+|---|---|---|
+| `cast.<id>.tag`, `voice` | the visible identity tag (KP-15); how the voice sounds | story-architect (from the hero sheet), voice-caster |
+| `places` | each place once, as visible words | story-architect |
+| `beat`, `mode`, `scene` | what the shot does for the story; scene, narrated, establish or insert | story-architect |
+| `frame` (`size`, `angle`, `camera`, `camera_end`, `over`, `place`, `light`, `crosses_line`) | the frame | edit-planner |
+| `blocking[]` (`who`, `where`, `facing`, `pose`) | who stands where, looking where, in the first frame | edit-planner |
+| `action` (`who`, `start`, `peak`, `settle`, `face`) | the one action, present-tense verb phrases; the face as cues | scene-writer, performance-director |
+| `reactions[]` | the others' one small verb each | scene-writer |
+| `dialogue` (`who`, `to`, `text`, `delivery`, `language`) | the line (from the script's line), how it is said | scene-writer, performance-director |
+| `narration` | the narrator's words over a narrated shot | scene-writer |
+| `sound` (`ambience`, `foley[]`, `loudest`, `diegetic_music`) | at most three sounds with a visible source | edit-planner |
+| `source`, `master`, `last_frame`, `exit` | how the first frame is drawn; whether the settle pose guides the last frame | edit-planner |
+
+```
+python -m explainer_engine.scripting.film_shots check <film_shots.json>                   # 0 FAIL before any paid call
+python -m explainer_engine.scripting.film_shots compose <film_shots.json> --out prompts.json  # keyframe / nextpose / cut / video prompts
+python -m explainer_engine.scripting.shot_prompt_lint prompts.json                        # the same lint on any prompt file
+```
+
+## Shot grammar of the creator's cartoons (measured 2026-10-24)
+
+120 shots (Rick and Morty, Solar Opposites, Inside Job; 4 runs of 10 consecutive shots each) labelled by hand, plus the
+camera measure of all 3312 unique shots. Details and labels:
+[research/SHOT_GRAMMAR_FOOTAGE_2026-10-24.md](research/SHOT_GRAMMAR_FOOTAGE_2026-10-24.md).
+
+- Shot sizes: medium 30 %, wide 20 %, medium close-up 18 %, full 17 %, insert 8 %, establishing 4 %, close-up 3 %.
+- People: 1 in 38 % of shots, 2 in 40 %, none in 8 %, 3 or more in 15 % (almost all of those are wides).
+- Camera: static in 81 % of all shots; a move is an event (a reveal, a chase).
+- Dialogue: wide to show who is where, then singles and two-shots, over-the-shoulder reverses (16 % of shots), eye level.
+- Inserts (a phone, a prop, a hand) are 8 %: cheap shots with no face to keep, good for a beat of information.
+
+## Waiting
+
+The narrator-and-scene structure (a teaser, the narrator's set-up, scenes with dialogue, the narrator tying the meaning)
+waits for the documentaries the creator will send (2026-10-24, 16:05 Tbilisi): their shots and the narrator's share will be
+measured the same way before any rule is written.
+
+## Sources (audit 2026-10-24)
+
+- Lightricks, [Prompting guide for LTX-2](https://docs.ltx.video/api-documentation/prompting-guide) (official; six elements, one paragraph, quotes for dialogue)
+- deAPI, [LTX-2.5 prompting guide: multi-shot, native audio](https://deapi.ai/blog/ltx-2-5-prompting-guide-multi-shot-scenes-native-audio-and-prompts-that-actually-cut)
+- fal.ai, [How to use LTX-2.5](https://fal.ai/learn/tools/how-to-use-ltx-2-5)
+- Qwen, [Qwen-Image-2512 model card](https://huggingface.co/Qwen/Qwen-Image-2512) and [Qwen-Image-Edit-2511 model card](https://huggingface.co/Qwen/Qwen-Image-Edit-2511) (true CFG 4, placement by description)
+- F. Thomas and O. Johnston, *The Illusion of Life: Disney Animation* (1981): anticipation, staging, follow-through
+- [180-degree rule](https://en.wikipedia.org/wiki/180-degree_rule), [30-degree rule](https://en.wikipedia.org/wiki/30-degree_rule)
