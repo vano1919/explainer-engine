@@ -74,8 +74,22 @@ class FakeRunPod:
         return 400, "?"
 
 
+# Fixed ceilings for the tests, so the asserted limits do not move when the creator raises the live config/spend_caps.json.
+TEST_CAPS = {"per_episode": {"runpod_usd": 3.0, "gemini_usd": 10.0},
+             "runpod": {"per_pod_usd": 1.0, "per_24h_usd": 1.5, "max_hours_per_pod": 2.0, "max_price_per_hour": 0.95,
+                        "min_balance_left_usd": 0.25, "keep_stopped_pods": []}}
+
+
 @pytest.fixture
-def env(tmp_path, monkeypatch):
+def caps_file(tmp_path, monkeypatch):
+    p = tmp_path / "test_caps.json"
+    p.write_text(json.dumps(TEST_CAPS))
+    monkeypatch.setenv("EXPLAINER_SPEND_CAPS", str(p))
+    return p
+
+
+@pytest.fixture
+def env(tmp_path, monkeypatch, caps_file):
     monkeypatch.setattr(R, "RP", tmp_path)
     monkeypatch.setattr(R.time, "sleep", lambda s: None)
     fake = FakeRunPod()
@@ -343,7 +357,7 @@ def test_check_flags_stopped_disks_unless_the_creator_keeps_them(env, tmp_path, 
     assert len(R.check(api, now=1000)["problems"]) == 1
 
 
-def test_the_ledger_refuses_a_cap_above_the_creators_ceiling_and_fills_missing_ones(tmp_path):
+def test_the_ledger_refuses_a_cap_above_the_creators_ceiling_and_fills_missing_ones(tmp_path, caps_file):
     from explainer_engine.core.spend_caps import OverCeiling
     with pytest.raises(OverCeiling):
         Run.open(tmp_path / "a.json", caps={"runpod_usd": 50.0})
