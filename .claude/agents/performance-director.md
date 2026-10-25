@@ -20,6 +20,8 @@ Read `.claude/skills/narration-script/SKILL.md` (N rules), `.claude/skills/eleve
 - Interjections about one per 60 words, only as reactions; none inside a factual sentence.
 - Dialogue: each speaker's tags fit their character; the comic hero gets timing from the text (one stressed word, an
   ellipsis, a tag, BP-10), never a pause before the punchline; the stern one gets flat delivery (`[deadpan]`).
+- Animated shot cards (KP-17, KP-18): write each spoken line's `delivery` (pace, loudness, colour: "slow and flat, every word
+  separate") and the actor's `face` as what the lens sees (eyes, brows, mouth, shoulders), never a feeling word alone.
 Run `narration_lint` (PV-12): 0 FAIL. Return a table: line, tags, emphasis, pause, why (five words).
 
 ## Sourced rules (docs/SOURCED_RULES.md)

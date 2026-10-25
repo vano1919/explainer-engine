@@ -30,6 +30,9 @@ Write:
   questions back, silences or counterattacks per scene.
 - Subtext never spoken (SC-10): no line states the header's `real_subject` verbatim; the fight stays on the surface
   topic. Facts enter dialogue only as ammunition under the knowledge-state table (DW-13), ~1 fact per 2-3 beats.
+- Animated episodes (shot cards, D-77): no more than four lines in a row on faces (KP-43): after four, a silent
+  reaction, an insert or a cutaway; when a character explains a plan, write the shot of it being carried out next
+  to the line (KP-42).
 - Never press-release narration (SC-07): no "X's page says", "announced", "is set to release", "the trailer confirms".
   A date or spec appears only inside a scene as a stake. Full immersion (SC-08, SC-11, BP-88): no line says the
   story is invented, a simulation or hypothetical, and the narrator never hedges it ("we can't know for sure").
@@ -40,6 +43,12 @@ Write:
 - Narration between scenes stays the friendly guide (skill `narration-script`): short spoken sentences, contractions,
   the stressed word last. Length: the segment's word budget from the skeleton (words a minute of planned time at BP-01's heard
   pace, 170).
+
+Animated episodes (shot cards, docs/SHOT_PROMPTS.md KP-16..KP-20): for each shot you play, write `action` as three
+present-tense verb phrases (`start` = what the first frame shows, `peak` = the big move with body parts, `settle` = the pose
+it holds), `reactions` (one small verb each), the `dialogue` line copied from the script with `to`, and on a narrated shot
+the `narration` (what the heroes cannot know; never a description of the picture). A spoken line fits its shot (BP-100: about
+7 words in 4 s); a longer one is two shots or goes to the narrator. One speaker per shot.
 
 Then run `python -m explainer_engine.scripting.stage_guard writer before.json after.json` and
 `python -m explainer_engine.production validate <script>`: 0 FAIL for PV-12, PV-33 and PV-48 (scene_lint, SC-01..SC-10).

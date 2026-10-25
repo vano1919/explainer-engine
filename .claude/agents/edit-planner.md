@@ -39,6 +39,18 @@ For each segment:
    frame", ONE camera sentence, at most three sounds, the same style sentence in every shot, next poses drawn from the master
    with no framing word, a negative prompt that never names our own style (never LTX's stock negative). Run
    `python -m explainer_engine.scripting.shot_prompt_lint <shots.json>`: 0 FAIL before any paid render.
+   Since 2026-10-24 the prompts are composed, not typed (KP-30): write one shot card per shot in `film_shots.json`
+   (`film_shots/1`, docs/SHOT_PROMPTS.md "The shot card"): your fields are `frame` (size, angle, camera with
+   `camera_end`, place, light), `blocking` (each person's screen side, gaze, first-frame pose, what they stand or sit on and how much of the frame height they fill; KP-31, KP-32), `relations` and `lead_room` on the frame (KP-33, KP-34), `sound` (at most three,
+   a visible source each, no score music, KP-21) and `source`/`master`/`last_frame`. Follow the cartoons' grammar (KP-26):
+   open a scene wide, cut in to singles and over-the-shoulder reverses, keep screen sides, a close shot on the turn, no
+   more than three shots of one size in a row, a static camera unless the move is the event, at most two people in a
+   medium or closer shot (KP-19). Then `python -m explainer_engine.scripting.film_shots check film_shots.json` (0 FAIL,
+   every REVIEW answered) and `... compose film_shots.json --out prompts.json`; the paid steps read prompts.json only.
+   Episode rules there (D-77): a teaser is `teaser_of` its payoff and is cut from that clip (KP-41); at most BP-112's
+   seconds in one place without a cutaway (KP-42); at most BP-113's lines in a row before a silent reaction (light tier),
+   an insert or a cutaway, and every full-tier line on a face carries the acting check and its fallback (KP-43).
+   `film_shots shotlist --out shotlist.md` is what the creator reads: the script with every prompt under its shot.
 7. Stage every scene's pictures as ONE room (D-69, CS rules in docs/PRODUCTION_SCRIPT.md, the skill `shot-visuals`
    "One scene, one room"): segment `staging` with the `roster`, each person's `positions` (left to right in the wide
    shot), `layout` and `fixed` details; the master frame is the first wide picture and lists every roster member in its

@@ -57,10 +57,13 @@ The story layer is written before any line (stage 1). It is checked by `scriptin
 | ST-14 | **Every exchange is framed** ([D-64](DECISIONS_AND_OPEN_QUESTIONS.md)). A segment's hero lines (voiced or bubble) are one exchange: before it the narrator's setup names each speaker before his first line (REVIEW: a description may stand for a name) and says what brings them there, after it the narrator's conclusion says what came of it; a segment never ends or opens on a hero line, so two exchanges never touch. Counts and severity: [BP-90](SOURCED_RULES.md). | FAIL |
 | ST-15 | **The speaker comes first** ([D-65](DECISIONS_AND_OPEN_QUESTIONS.md)). A narrator line that reports speech names the speaker before his words ("Musk says it is how fires work"), never in a trailing tag ("..., says Musk"); a heuristic, [BP-95](SOURCED_RULES.md). | REVIEW |
 | ST-16 | **Two voices per reported line** ([D-65](DECISIONS_AND_OPEN_QUESTIONS.md)). One narrator line reports at most [BP-96](SOURCED_RULES.md)'s number of named speakers; a third enters as an action or in the next exchange (a hypothesis). | REVIEW |
+| ST-17 | **Short narration blocks** (template D). Narrator lines with no character line between them last at most [BP-104](SOURCED_RULES.md)'s block (words at [BP-01](SOURCED_RULES.md)'s heard pace); the narrator carries the jumps in time, place, cause or goal, the scenes carry the action. | REVIEW |
+| ST-18 | **The central scene is the longest scene** (template D). One scene with dialogue is the climax, crisis or midpoint, and no other scene has more words; it holds 2-3 escalations and the plan meets the unexpected inside it. | REVIEW |
+| ST-19 | **The narrator's share** (template D). The narrator has the share of the words [BP-105](SOURCED_RULES.md) gives; a political or personal rivalry sits low in it, a campaign high. | REVIEW |
 
 ### Story templates for an 8-12 minute what-if (D-58)
 
-The 2026-10-19 rewrite replaced the single beat grid with three templates over the same validator (ST-01..ST-13).
+The 2026-10-19 rewrite replaced the single beat grid with three templates (template D, added 2026-10-24, is for the 15-minute historical docudrama) over the same validator (ST-01..ST-13).
 The story architect picks one per episode, records the choice in a one-line note on `drama.ending.note` or at the top
 of the skeleton, and varies it across the channel. Times are for 10 minutes and scale with length.
 
@@ -74,6 +77,37 @@ all-is-lost ~75 %, break-into-three ~80 %, finale to the end. Suits episodes who
 
 **C. Mystery reveal ladder.** A cold open on a contradiction, then a reveal that reframes everything about every
 2:00; the chronology is written out straight before the suspense order is chosen. Suits analysis episodes (D-26).
+
+**D. Historical docudrama, 15 minutes (2026-10-24).** An animated docudrama: a narrator plus characters who talk to each
+other, shots of 3-5 s. Three acts at the macro level, narrator and scene taking turns at the micro level, and every scene
+ending on the next question. Set `drama.template` to "D"; ST-17..ST-19 then apply. Times are for 15:00 and scale with
+length; the borders are guides, not a stopwatch. Evidence and what was not verified:
+[research/DOCUDRAMA_CONSTITUTION_2026-10-24.md](research/DOCUDRAMA_CONSTITUTION_2026-10-24.md).
+
+| # | Time | Segment (`function`) | What happens |
+|---|---|---|---|
+| 1 | 0:00-0:12 | hook (`cold_open`) | an action, a paradox or an odd detail at once; sound from the first frame; the first sentence is the hook (BP-03); 2-3 teasers cut from the later fight (KP-41, BP-111) |
+| 2 | 0:12-0:30 | information gap (`hook`) | the narrator states the surprising outcome or the paradox; no part of the answer |
+| 3 | 0:30-1:15 | orientation (`setup`) | narrator: where, when, who against whom (maps, diagrams, no extra text) |
+| 4 | 1:15-2:45 | scene 1 (`inciting`) | goals and stakes declared through conflict |
+| 5 | 2:45-3:15 | bridge | narrator: the result and the next question |
+| 6 | 3:15-5:00 | scene 2 (`escalation`) | the first plan fails; the hero must react |
+| 7 | 5:00-6:00 | new complication | narrator: the factor that changes the game |
+| 8 | 6:00-7:30 | scene 3 (`escalation`) | the other side acts; a new place marks the boundary; while a plan is told, its execution is shown (KP-42) |
+| 9 | 7:30-8:15 | preparation | narrator: the full size of the crisis; pressure rises; no spoiler |
+| 10 | 8:15-10:45 | central scene (`climax` or `crisis`) | the longest scene (ST-18), 2-3 escalations inside; the other side's line cross-cut with the hero's (KP-42) |
+| 11 | 10:45-11:15 | turning point (`reversal`) | the choice, revelation or failure that changes the story; then silence or one still frame |
+| 12 | 11:15-12:00 | fallout | narrator: who lost and who won, never what we just saw |
+| 13 | 12:00-13:30 | scene 4, final choice | the hero's last act, slower, on dialogue; no new conflict; the power gap shown in a cutaway, the lines broken by silent reactions (KP-43) |
+| 14 | 13:30-14:30 | the answer (`resolution`) | the opening question answered fully; an uncertain fact is said to be uncertain |
+| 15 | 14:30-14:45 | callback (`button`) | the first image again with a new meaning |
+| 16 | 14:45-15:00 | channel pointer | the worlds already on the channel and the worlds coming, subscribe so as not to miss them (BP-106, KP-40); never a dry "subscribe" or a goodbye (BP-43); the narration runs on under the end screen |
+
+Modules by subject: a war or campaign runs two storylines (each side in its own place, variant 6 of the study); a
+political or personal rivalry keeps the narrator low and escalates by words, blackmail or betrayal, on faces; an
+invention, a money war or a mystery runs on questions, every scene a failed attempt that raises the next question and the
+turning point a eureka moment. The long video carries captions as a closed-caption track and burns no full narrator
+subtitles into the picture (the redundancy principle; the Shorts keep theirs, BP-13).
 
 Whichever template: stakes strictly escalate from sequence to sequence, the central question is answered only in the last
 tenth ([BP-04](SOURCED_RULES.md); ENG-5 checks where the resolution starts), and the final image mirrors the opening image's subject. The timings are **product hypotheses**:

@@ -88,6 +88,13 @@ The rules and the mistakes they come from are in `docs/SHOT_PROMPTS.md` (KP-01..
 - Next pose: from the master, poses only, no framing word; a new framing is a cut with the hero sheet.
 - The negative prompt never names our style (LTX's stock negative says "cartoonish rendering", "exaggerated expressions").
 - A test prompt passes the lint; a failing sample is compared with step 0 before a LoRA is blamed.
+- Since 2026-10-24 (KP-15..KP-34): prompts come from shot cards (`film_shots/1`, worked example
+  `examples/film_shots/bus_in_the_ice_age.json`), composed by `python -m explainer_engine.scripting.film_shots compose`.
+  Each hero has one visible tag, never a story name; every person has a screen side and a gaze; the keyframe shows the
+  START pose, the video goes start -> peak -> settle; the face as cues, not feelings; a line in quotes that fits the clip
+  (BP-100); no score music, quality words or readable text; at most two people in a medium or closer shot.
+- Precise but free (KP-29): pin who, where, gaze, the three poses, the face, the line, the camera and the sounds; leave
+  hair, cloth, blinks, breath, the background's life and the timing between poses to the model.
 
 ## One scene, one room (D-69, CS-01..CS-12 in docs/PRODUCTION_SCRIPT.md)
 A conversation is a set of shots of ONE room, not a new illustration per sentence. For every segment whose pictures play in
