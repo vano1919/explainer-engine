@@ -643,12 +643,17 @@ python run.py /workspace/cfg.yaml > /workspace/train.log 2>&1
 """
 
 
+VAULT_CHECK = "python -m explainer_engine.vault check-uploaded /workspace/out --to run/out\n"
+
+
 def test_a_pod_script_must_upload_its_log_before_its_first_heavy_step():
     """The 2026-10-24 training script uploaded nothing until its caption stage ended: 72 min of silence, stopped (≈$1.3)."""
     bad = R.lint_pod_script(OLD_TRAIN_SH)
-    assert len(bad) == 2 and "after the first heavy step at line 4" in bad[0] and "rewrite" in bad[1]
+    assert len(bad) == 3 and "after the first heavy step at line 4" in bad[0] and "rewrite" in bad[1]
+    assert bad[2].startswith("VT-01")  # D-73: the weights are proved on HF before the pod stops
     fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n",
                                  "nvidia-smi || true\n( while true; do sleep 240; date > out/beat.txt; up; done ) & EARLY=$!\n")
+    fixed += VAULT_CHECK
     assert R.lint_pod_script(fixed) == []
     frozen = fixed.replace("date > out/beat.txt; ", "")   # uploads, but its heartbeat file never changes: reads as silent
     assert "rewrite its heartbeat file" in R.lint_pod_script(frozen)[0]
@@ -662,6 +667,8 @@ def test_preflight_refuses_a_pod_script_without_a_heartbeat(env):
     ok = dict(max_usd=0.5, max_hours=1.0, gpu="cheap", now=10**6)
     assert any(w.startswith("pod script:") for w in R.preflight_create(api, **ok, script=OLD_TRAIN_SH))
     fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n", "nvidia-smi || true\n( while true; do sleep 240; date > b; up; done ) &\n")
+    assert any("VT-01" in w for w in R.preflight_create(api, **ok, script=fixed))
+    fixed += VAULT_CHECK
     assert R.preflight_create(api, **ok, script=fixed) == []
     assert any("tail -f /dev/null" in w for w in R.preflight_create(api, **ok, script=fixed + "tail -f /dev/null\n"))
 

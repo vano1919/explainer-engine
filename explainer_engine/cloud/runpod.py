@@ -451,6 +451,8 @@ def lint_pod_script(text):
     if any("tail -f /dev/null" in ln for ln in code) and not any(SELF_STOP.search(ln) for ln in code):
         out.append("the script idles in `tail -f /dev/null` and never stops its pod: end it with `self_stop_sh()` (writes DONE "
                    "or FAILED to the heartbeat file, then stops the pod); 2026-10-24 a finished test idled 31 min ($0.7)")
+    from explainer_engine import vault  # D-73 (VT-01/02): a training script proves its weights are on HF before it stops
+    out += vault.lint_pod_script(text)
     return out
 
 
