@@ -2226,3 +2226,6 @@ Morty frames, rank 16, Qwen-Image-2512, ≈$3, cap $4) now starts through `cloud
 config committed in `explainer_engine/training/pods/xworld_style_v1.{sh,yaml}`. `create --disk GB` sets the container disk
 (the Qwen download needs more than 80 GB). The pod script returns at the end instead of sleeping, so the pod stops itself.
 Tests: `tests/unit/test_reusable_first.py`, `test_runpod.py::test_create_cli_sets_the_container_disk`.
+- 00:45 Tbilisi: ვანო chose to delete the unused global volume wasteful_fuchsia_fish; `runpod delete-volume <id> --global
+  --yes` (new, verified by listing again; test `test_delete_volume_global_needs_the_word_and_verifies`) removed it. Pod
+  hrdpkuwoh6iyuz (L40, $0.69/h, job cap $3.2 = 80 % of the run's $4) started through `runpod create`, guard on.

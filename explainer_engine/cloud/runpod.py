@@ -8,7 +8,7 @@
            [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB]
     python -m explainer_engine.cloud.runpod cards --vram GB [--ref-hours H]   what the job would cost on each card now
     python -m explainer_engine.cloud.runpod status|logs|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
-    python -m explainer_engine.cloud.runpod delete-volume <network volume id> --yes
+    python -m explainer_engine.cloud.runpod delete-volume <network volume id> [--global] --yes
 
 What TMR's rp.py did and what changed here (docs/TOOL_STRATEGY.md "Money control for RunPod" has the facts from RunPod's API reference):
 * one HTTP layer with retries (429, 5xx, timeouts, no network) for reads and for stop/delete; ``POST /pods`` is never re-sent
@@ -208,6 +208,14 @@ class Api:
         """Serverless endpoints (``GET /serverless``): one with ``workersMin`` > 0 bills while idle."""
         return [{"id": e.get("id"), "name": e.get("name", ""), "workersMin": e.get("workersMin") or 0,
                  "workersMax": e.get("workersMax") or 0} for e in self._pages("/serverless", "endpoints")]
+
+    def delete_global_volume(self, vid):
+        """``DELETE /global-volumes/{id}``; verified by listing again (the creator's word only, the data is lost)."""
+        try:
+            self.request("DELETE", f"/global-volumes/{vid}")
+        except NotFound:
+            pass
+        return "STILL THERE" if any(v["id"] == vid for v in self.global_volumes()) else "GONE"
 
     def delete_network_volume(self, vid):
         try:
@@ -1024,7 +1032,7 @@ def check(api, now=None):
                                                                     "; `runpod delete-volume <id> --yes` or list it in keep_network_volumes"))
             elif what == "global volume":
                 (info if r["id"] in keep_nv else problems).append(f"{r['id']} {r['name']} global volume exists (price not modelled here); "
-                                                                  "delete it in the console or list it in keep_network_volumes")
+                                                                  "`runpod delete-volume <id> --global --yes` or list it in keep_network_volumes")
             elif r["workersMin"] > 0:
                 problems.append(f"{r['id']} {r['name']} serverless endpoint keeps {r['workersMin']} worker(s) on while idle: set min workers 0")
     try:
@@ -1271,7 +1279,7 @@ def main(argv=None, api=None):
     elif cmd == "delete-volume":
         if "--yes" not in rest:
             raise SystemExit("refused: delete-volume needs --yes (the creator's word); the data is lost")
-        print(pid, api.delete_network_volume(pid))
+        print(pid, api.delete_global_volume(pid) if "--global" in rest else api.delete_network_volume(pid))
     elif cmd == "cost":
         usd, buckets = settle(api, pid, _opt(rest, "--ledger"))
         print(f"{pid}: billed ${usd} over {buckets} hour bucket(s) (RunPod billing; the newest hour may still grow)")

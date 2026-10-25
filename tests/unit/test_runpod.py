@@ -57,6 +57,10 @@ class FakeRunPod:
             vid = path.split("/")[2]
             self.volumes = [v for v in self.volumes if v["id"] != vid]
             return 204, ""
+        if path.startswith("/global-volumes/") and method == "DELETE":
+            vid = path.split("/")[2]
+            self.global_volumes = [v for v in self.global_volumes if v["id"] != vid]
+            return 204, ""
         if path.startswith("/global-volumes?"):
             return 200, json.dumps({"globalVolumes": self.global_volumes, "pagination": {"nextCursor": None, "hasNextPage": False}})
         if path.startswith("/catalog/gpus"):
@@ -816,3 +820,12 @@ def test_preflight_refuses_a_job_whose_cheapest_card_passes_the_approved_money_o
     assert R.preflight_create(api, max_usd=0.7, picks=small, **{**ok, "max_hours": 2.0}) == []   # 2 h on the A40
     assert any("over the approved $0.5" in w for w in R.preflight_create(api, max_usd=0.5, picks=picks, **ok))
     assert any("no card" in w for w in R.preflight_create(api, max_usd=0.5, picks=[], **ok))
+
+
+def test_delete_volume_global_needs_the_word_and_verifies(env, capsys):
+    fake, api = env
+    fake.global_volumes = [{"id": "gsb_1", "name": "shared"}]
+    with pytest.raises(SystemExit, match="--yes"):
+        R.main(["delete-volume", "gsb_1", "--global"], api=api)
+    R.main(["delete-volume", "gsb_1", "--global", "--yes"], api=api)
+    assert fake.global_volumes == [] and "gsb_1 GONE" in capsys.readouterr().out
