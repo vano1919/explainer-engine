@@ -2217,3 +2217,12 @@ no rule changed until he decides.
   minute, median shot, cuts in the first 30 s, cut density at the "Most replayed" peaks vs lows (from yt-dlp's
   `.info.json` heatmap), and each channel's most-viewed videos against the rest. Test: `tests/unit/test_reference_study.py`.
   Next stages (shot descriptions, Whisper speakers and J/L cuts, script structure) once the references are in.
+
+## 2026-10-26 00:35 Tbilisi: reusable before fast (OR-21); xworld_style_v1 from the repo
+
+ვანო (00:33-00:34): "reusable vs speed: reusable every time ... if the cost is the same". Rule OR-21 in ORCHESTRATION and
+CLAUDE.md. A scratchpad pod launcher had been refused by the session's safety check; the xworld style LoRA (95 Rick and
+Morty frames, rank 16, Qwen-Image-2512, ≈$3, cap $4) now starts through `cloud/runpod.py create` with its pod script and
+config committed in `explainer_engine/training/pods/xworld_style_v1.{sh,yaml}`. `create --disk GB` sets the container disk
+(the Qwen download needs more than 80 GB). The pod script returns at the end instead of sleeping, so the pod stops itself.
+Tests: `tests/unit/test_reusable_first.py`, `test_runpod.py::test_create_cli_sets_the_container_disk`.

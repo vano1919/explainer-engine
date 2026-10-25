@@ -313,6 +313,19 @@ def test_create_cli_reserves_in_the_ledger_writes_a_session_and_names_the_lifeti
     assert len(fake.pods) == 1
 
 
+def test_create_cli_sets_the_container_disk(env, tmp_path, monkeypatch):
+    fake, api = env
+    monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)
+    seen = []
+    real = R.create
+    monkeypatch.setattr(R, "create", lambda api, body, **kw: seen.append(body) or real(api, body, **kw))
+    ledger = tmp_path / "run.json"
+    Run.open(ledger, caps={"runpod_usd": 1.0})
+    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--volume", "0", "--disk", "200", "--ledger", str(ledger)],
+           api=api)
+    assert seen[0]["disk"] == 200 and seen[0]["mounts"] == {}
+
+
 def test_a_provisioning_pod_without_a_price_runs_its_money_clock_on_the_ceiling(env, tmp_path, monkeypatch):
     fake, api = env
     monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)

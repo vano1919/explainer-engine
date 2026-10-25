@@ -5,7 +5,7 @@
     python -m explainer_engine.cloud.runpod create --yes --max-usd X --max-hours H [--gpu default|cheap|big] [--boot <manifest>]
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
            [--vram GB [--ref-hours H]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
-           [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I]
+           [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB]
     python -m explainer_engine.cloud.runpod cards --vram GB [--ref-hours H]   what the job would cost on each card now
     python -m explainer_engine.cloud.runpod status|logs|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
     python -m explainer_engine.cloud.runpod delete-volume <network volume id> --yes
@@ -1200,6 +1200,8 @@ def main(argv=None, api=None):
                            min_ram=_opt(rest, "--min-ram"), boot=_opt(rest, "--boot"), status_token=token,
                            image=_opt(rest, "--image"), script_url=script_url, lifetime_s=int(max_hours * 3600),
                            cloud=first["cloud"] if first else "SECURE")
+        if _opt(rest, "--disk"):  # container disk (GB): a model download larger than the default CONTAINER_GB
+            body["disk"] = _opt(rest, "--disk", None, int)
         job = Job.create(ROOT / "jobs" / "cloud", _opt(rest, "--job", base), kind="pod", provider="runpod", ledger=ledger,
                          caps={"max_usd": max_usd, "max_hours": max_hours}, reuse_finished=False,
                          inputs={"gpu": first["gpu"] if first else gpu, "boot": _opt(rest, "--boot"), "script": script_url,
