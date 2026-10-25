@@ -2250,3 +2250,14 @@ training as sequences is decided in the process. Changed together:
   scripts are marked retired; SHOT_PROMPTS and the lora-training skill carry a D-80 banner.
 - Tests: `test_keyframe_gate.py::test_only_the_2_1_stack`, `::test_old_loras_are_banned`, `test_episode_look`.
 - Cost of the mistake that led here: the xworld pod on 2512 (≈$0.15), stopped at 00:59.
+- 01:45 Tbilisi: the new D-80 material comes fresh from the video (ვანო: "we changed the training, are we using the same
+  frames?"). Only Rick and Morty footage on hand: the 2 h S1-3 compilation (1142 shots). Choices he left to Claude (01:44):
+  start with these 2 h; sequence material = shot -> next shot of the same scene plus start -> end of a shot where the pose
+  really changes; captions by Qwen-VL on a pod (plan first, OR-23), every caption checked by Claude, no character names;
+  10 % of scenes held out whole for the prompt-type test.
+- 02:40 Tbilisi: the xworld_v1 material is ready (free, from the 2 h video, every image checked by eye): 766 style frames,
+  357 shot -> next-shot pairs of one scene, 234 start -> end pairs inside a shot (a real pose change, still background),
+  28 whole scene chains held out (102 shots; 4 chains of 6-13 shots for the 6-frame prompt-type test) with a guard band.
+  Rejected: gore, readable text and credits, Nazi symbols, nudity, vomit, show-in-show art, split screens. HF:
+  `lora_plan_2026-10-26/dataset_xworld_v1/` (manifest.json; 1337 files) and `..._code/` (scripts + review records).
+  No captions yet: the Qwen-VL pod waits for the creator's OK of its plan (OR-23).
