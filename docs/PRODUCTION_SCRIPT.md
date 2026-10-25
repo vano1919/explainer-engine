@@ -107,6 +107,7 @@ generate images (Anthropic: "an image understanding model only"); it prepares th
 | PP-06 | every item is a picture of the script and its prompt is still the script's prompt |
 | PP-07 | the plan says what the batch is for (REVIEW) |
 | PP-08 | the picture library (OR-18, D-76) had matches for an item's prompt when the plan was made: the plan lists them on the item (`library`) and the creator's approval says why a stored picture is not used, or it is fetched instead of painted (REVIEW) |
+| PP-09 | before the creator's sample approval (`sample_approval.json`, [OR-19](ORCHESTRATION.md)) a plan paints only pictures a sample segment uses; plans marked `reusable` and face sheets stay allowed; `paint plan --sample` keeps a plan inside the sample |
 
 `paint run` also refuses a script with any PV FAIL (it runs `validate` with the picture folders), reserves every picture in
 the ledger before its call, records it with its prompt hash, repaints a picture only when its prompt changed (in a new plan),

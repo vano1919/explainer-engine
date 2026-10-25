@@ -137,7 +137,9 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
         add(6, "pictures", "WAIT", f"{len(have)} of {len(used)} pictures exist", "contact sheet looked at after each batch")
     else:
         add(6, "pictures", "PASS", f"all {len(used)} pictures exist", "review the contact sheet by eye")
-    add(7, "animatic and render", "WAIT", "production run, after gates 0-6")
+    from .production import sample as SMP  # 6.5: the creator's word on the stitched two-part sample (OR-19, D-67)
+    add(6.5, "two-part sample", *SMP.gate_row(day))
+    add(7, "animatic and render", "WAIT", "production run, after gates 0-6 and the sample approval (6.5)")
     add(8, "QA", *qa_state(day))
     add(9, "approval #2", *approval_state(day))
     return out

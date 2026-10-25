@@ -41,11 +41,15 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
 4. **Phase 3, one-item tests**: first `standards gate --at paid_assets` (no open REVIEW/ADAPT/BLOCK, fresh sources); then the first read chunk and first picture; check them (listen for drift with `audio/voice_check`,
    look at the picture and run the likeness judge). Only then phase 4.
 5. **Phase 4, voice**: `estimate_only` first, reserve in the ledger, one chunk at a time, record each; level, `production words`.
+   Until the creator's sample approval (OR-19) only the sample segments' chunks are read; the hook refuses the rest.
 6. **Phase 5, pictures**, one batch at a time (PP rules, docs/PRODUCTION_SCRIPT.md): `paint plan` (free; it prints the batch
    priced at every provider), then **ask the creator which provider to use for this batch and wait for the answer**; never
    pick one yourself and never paint ahead of the answer. Record the yes with `paint approve --by <creator> --ref <message>`,
    then `paint run` (on Gemini, `--tier` picks model and size, D-52). Gemini on one episode's pictures is the creator's call for that batch (D-50; PP-05 is a note, not a refusal). Contact sheet looked at (Claude reads it:
    `qa.sheet_review request` -> open every picture -> `visual_review.json` -> `qa.sheet_review apply`, 0 FAIL; no paid judge); repaint at most twice, each repaint in a new approved plan.
+   Until the creator's sample approval, plan with `--sample` (PP-09). Then the two-part sample (OR-19): render and stitch the
+   sample's parts, the creator watches, his notes are fixed and re-rendered, and his word is recorded with
+   `python -m explainer_engine.production.sample approve --by <creator> --ref <message>` before the rest is read or painted.
 7. **Phase 6**: sounds, `production time` (0 FAIL), `assemble` (a 720p preview, then the delivery resolution of P-12), `python -m explainer_engine.qa.scorecard <folder>` (gate 8; a FAIL stops), engagement gate again before the final render, `standards gate --at final_qa`.
 8. **Phase 7**: Shorts (9:16 crops around the heroes), metadata drafts (vidIQ within its cap). Nothing is uploaded.
 9. **Report** (OR-08) and commit/push everything to the branch; nothing running.

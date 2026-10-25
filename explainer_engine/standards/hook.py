@@ -11,6 +11,9 @@ Wired in ``.claude/settings.json`` (matcher ``mcp__ElevenLabs__creative_.*``). C
   ``production_script/3`` the creator's recorded approval of the finished script (OR-17, ``scripting/script_approval``).
 * New music or sound effects also need a recorded library search (OR-18, D-76: ``python -m explainer_engine.assets_reuse``):
   the reusable library is looked at first, and new is generated only when nothing there fits.
+  gate (OR-10: ``production/editorial_gate.check`` on the script and its ``editorial_review.json``).
+* Before the creator's sample approval (OR-19, ``production/sample.py``) a paid read must sit inside the two-part sample's
+  segments; the rest of the video's voice (and the Shorts') waits for his recorded word on the stitched sample.
 * The active episode is named in ``.claude/active_episode.json``: ``{"episode": "<folder with episode_rules.json>"}``. An
   ``"override": "<the creator's reason>"`` lets a paid call through without the gate (voice auditions before a rulebook
   exists); it never lifts the picture rule or the one-take rule, and every override is logged to ``jobs/gate_overrides.jsonl``.
@@ -96,7 +99,8 @@ def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
         if ef:
             return "OR-10: the editorial gate fails: " + "; ".join(
                 f"{f['rule']} {f['where']}: {f['detail']}" for f in ef[:3]) + (f" (+{len(ef) - 3} more)" if len(ef) > 3 else "")
-    return None
+    from explainer_engine.production import sample as SMP  # OR-19 (D-67): paid reads stay inside the two-part sample
+    return SMP.hook_speech(tool, tool_input, folder)
 
 
 def main() -> int:
