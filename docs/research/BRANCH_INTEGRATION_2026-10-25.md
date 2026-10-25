@@ -46,7 +46,7 @@ watchdog, D-74) is. Tests after the merge: 1106 passed, 2 skipped; `docs_lint` 0
 | BP-40 "a visual beat counts as a change" default (10-20 morning) | ვანო's 10-20 21:14 call: an untied beat is not a change; 10-24 scope note for animated episodes | both kept: his 21:14 wording plus the 10-24 scope |
 | Four candidate universes (10-22 morning) | D-71 Wild Ink (10-22) | Wild Ink. D-71 was cited in memory but never written; it is now in the decision log |
 
-**Open, needs ვანო's word (not decided by date):** ASSET_COMPOSE (10-25 02:19 Tbilisi: the style LoRA draws only assets,
+**Decided by ვანო, 2026-10-25 22:22 Tbilisi: "we are on D-75 now"; ASSET_COMPOSE is superseded.** The question was: ASSET_COMPOSE (10-25 02:19 Tbilisi: the style LoRA draws only assets,
 code composes every shot) and D-75 (10-25 20:11 Tbilisi: keyframes drawn from continuity cards and references). D-75 is
 newer but did not say the composer is out, and the composer run was rejected at 11:50 Tbilisi for flat panoramas and
 missing 360° heroes, not for the idea. Which one is the production route is his call.

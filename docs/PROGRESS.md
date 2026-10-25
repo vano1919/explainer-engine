@@ -2188,3 +2188,8 @@ rig route he retired on 2026-10-22 22:19 goes. Removed `production/bend_rig.py`,
 `mocap.py`, `gaits.json`, their four tests and the `pymunk` requirement; the history stays in git, PR #21 and
 research/HYBRID_VISUAL_MODEL_2026-10-22.md. `production/rig.py` (PR #20's cut-out rig, not part of the retired cartoon)
 stays. The merged PRs #14-#21 and #23-#25 are closed in favour of PR #22; their branches are kept.
+
+## 2026-10-25 22:22 Tbilisi: D-75 is the production route
+
+ვანო: "we are on D-75 now". Keyframes are drawn from continuity cards and references (SHOT_CONTINUITY); ASSET_COMPOSE
+(code-composed shots) is marked superseded and kept as history. Recorded in D-75 and the integration audit.

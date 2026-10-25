@@ -1,5 +1,9 @@
 # Shots composed from reusable assets
 
+**Superseded as the production route** (ვანო, 2026-10-25 22:22 Tbilisi: "we are on D-75 now"): keyframes are drawn
+from continuity cards and references ([SHOT_CONTINUITY](SHOT_CONTINUITY.md), [D-75](DECISIONS_AND_OPEN_QUESTIONS.md)).
+This page stays as history; its code may serve tests.
+
 ვანო set the plan on 2026-10-25 (02:19 and 02:21 Tbilisi):
 - the style LoRA draws only assets: empty backgrounds, every hero from the angles a scene needs, props, crowd units and
   effects;
