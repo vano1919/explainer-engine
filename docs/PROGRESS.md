@@ -1223,3 +1223,11 @@ What was done:
 - LT-67: pictures generated for training are drawn with the eras formula. LT-68: a picture joins a style set only with
   both gates passed, and generated pictures make up at most 40 % of the set.
 - 104 eras-formula prompts are ready for the 2512 + approved-LoRA generation (all pass `style_prompt.check`, 19-32 words).
+
+## 2026-10-25 18:30 Tbilisi - the 104-picture gate run
+- 104 pictures (2512 + approved LoRA, eras-formula prompts): 78 PASS, 12 FAIL, 14 REVIEW after both gates and a second look.
+  Failures: extra person or object (8), smooth vector (3), an ambiguous prompt word ("the cook ducks" drew a duck-billed cook) (1).
+- `blind_check.compare` was calibrated on them (KG-27): cast counting, scene-named floating effects, zero count = REVIEW.
+  The auto half of KG-23 is content-biased (buses, sea are not on the eras sheet): 9 in-style pictures scored <0.557 -> REVIEW by eye.
+- 2.1 LoRA "failure" cause (records): the test sampled with cfg 1.0 (training samples used 4) and VideoX-Fun `merge_lora`
+  skipped all 32 `img_mlp.gate_up` layers (ai-toolkit stores the fused [gate_layer; proj]). Fix tested in `infer21b.py`.

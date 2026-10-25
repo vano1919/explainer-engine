@@ -85,9 +85,18 @@ def _count(items: list[dict], kind: str) -> int | str:
     return total
 
 
-def compare(card: dict, desc: dict) -> dict:
+def _named_in_scene(text: str, scene: str) -> bool:
+    """KG-27: a floating thing the scene text itself names (steam, sparks, a flying hat) is meant to float."""
+    words = [w for w in re.findall(r"[a-z]{4,}", text.lower()) if w not in {"with", "from", "above", "near", "that"}]
+    scene = scene.lower()
+    return any(re.search(rf"\b{re.escape(w.rstrip('s'))}", scene) for w in words)
+
+
+def compare(card: dict, desc: dict, scene: str = "") -> dict:
     """KG-25: the description against the contract. FAIL = a hard mismatch; REVIEW = a "?" or something the code cannot
-    match, which gets a second, single-question look (KG-26) before anyone sees the picture."""
+    match, which gets a second, single-question look (KG-26) before anyone sees the picture. ``scene`` = the scene text:
+    a floating thing it names is meant to float (KG-27); a named thing counted 0 is a REVIEW (the describer may have used
+    another noun), never a FAIL."""
     fails, reviews = [], []
     items = list(desc.get("things", [])) + list(desc.get("animals", []))
     for t in card.get("things", []):
@@ -95,6 +104,8 @@ def compare(card: dict, desc: dict) -> dict:
         got = _count(items, kind)
         if got == "?":
             reviews.append({"code": "KG-25", "what": f"count of {t['name']}", "want": want, "got": "?"})
+        elif got == 0 and want:
+            reviews.append({"code": "KG-25", "what": f"count of {t['name']}", "want": want, "got": 0})
         elif got != want:
             fails.append({"code": "KG-25", "what": f"count of {t['name']}", "want": want, "got": got})
     for a in card.get("absent", []):
@@ -106,12 +117,19 @@ def compare(card: dict, desc: dict) -> dict:
             fails.append({"code": "KG-25", "what": f"absent {a}", "want": 0, "got": got})
     people = desc.get("people", [])
     want_people = len(card.get("people", []))
-    if want_people and len(people) != want_people:
-        fails.append({"code": "KG-25", "what": "number of people", "want": want_people, "got": len(people)})
+    if want_people:
+        # KG-27: the cast = the foreground people, plus animal characters (a monkey that steals the map is a cast member);
+        # people placed far in the back are scenery of the place, not cast
+        front = [x for x in people if "back" not in str(x.get("where", ""))]
+        animals = sum(a.get("count", 1) for a in desc.get("animals", []) if isinstance(a.get("count", 1), int))
+        if want_people not in (len(people), len(front), len(front) + animals, len(people) + animals):
+            fails.append({"code": "KG-25", "what": "number of people", "want": want_people, "got": len(people)})
     for flag, label in (("text", "written text"), ("overlays", "lines or numbers over the picture")):
         if desc.get(flag):
             reviews.append({"code": "KG-25", "what": label, "want": False, "got": True})
     for f in desc.get("floating", []):
+        if scene and _named_in_scene(f, scene):
+            continue
         fails.append({"code": "KG-25", "what": f"floating: {f}", "want": "supported", "got": "floating"})
     for f in desc.get("anatomy", []):
         fails.append({"code": "KG-25", "what": f"anatomy: {f}", "want": "whole", "got": f})

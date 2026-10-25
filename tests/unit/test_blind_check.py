@@ -64,3 +64,21 @@ def test_the_rules_hide_the_prompt_and_list_every_style_item():
     assert "NOT told what the picture was meant to show" in rules
     for k in bc.STYLE_SPEC:
         assert f'"{k}"' in rules
+
+
+def test_a_floating_thing_named_in_the_scene_text_is_meant_to_float_and_a_zero_count_is_a_review():
+    sc = "an astronaut falls past a rocket, sparks and steam from the engine"
+    r = bc.compare(CARD, desc(floating=["steam from the engine", "a floating lamp"]), scene=sc)
+    assert [f["what"] for f in r["fails"]] == ["floating: a floating lamp"]
+    r = bc.compare(CARD, desc(things=[]), scene=sc)
+    assert r["status"] == "REVIEW" and r["reviews"][0]["got"] == 0
+
+
+def test_the_cast_counts_foreground_people_and_animal_characters_not_far_scenery():
+    two = {"people": [{}, {}]}
+    monkey = desc(people=[{"look": "explorer", "where": "left"}], animals=[{"name": "monkey", "count": 1, "where": "right"}])
+    assert bc.compare(two, monkey)["status"] == "PASS"
+    far = desc(people=[{"look": "vendor", "where": "left"}, {"look": "child", "where": "right"},
+                       {"look": "shopper", "where": "right_back"}])
+    assert bc.compare(two, far)["status"] == "PASS"
+    assert bc.compare(two, desc(people=[{"where": "left"}, {"where": "center"}, {"where": "right"}]))["status"] == "FAIL"
