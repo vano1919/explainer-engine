@@ -87,11 +87,18 @@ def cmd_words(doc: dict, audio: list[Path], out: Path, transcript: Path | None) 
         write_text_atomic(out / "heard.json", json.dumps(res, indent=0))
         heard, source = res["words"], res["source"]
     pcm, sr = voice_layer.read_wav(wav)
-    aligned = scribe_words.align(S.narration_text(doc), heard, len(pcm) / sr)
+    from explainer_engine.production import silent as SIL
+    vdoc = SIL.voiced_doc(doc) if SIL.has_silent(doc) else doc  # D-62: the read holds the voiced lines only
+    aligned = scribe_words.align(S.narration_text(vdoc), heard, len(pcm) / sr)
+    if vdoc is not doc:  # a quiet gap for every silent line, its bubbles' words timed inside it
+        pcm, full = SIL.insert(doc, aligned["words"], pcm, sr)
+        aligned = dict(aligned, words=full)
     toks = S.tokens(doc)
     if S.has_dialogue(doc):  # D-45: each voice against its own turns, never against the other voices
         turns = []
         for tk, w in zip(toks, aligned["words"]):
+            if w.get("silent"):
+                continue
             who = S.speaker(doc["segments"][tk["seg"]]["lines"][tk["line"]])
             if turns and turns[-1][0] == who:
                 turns[-1][2] = w["e"]

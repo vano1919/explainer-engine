@@ -6,7 +6,7 @@ want; facts and basic human needs must be balanced. The rules turn screenwriting
 to: one dramatic question, causality between beats (but / therefore, never "and then"), heroes with a want and a
 flaw, rising stakes with a turn of value in every segment, open loops that are paid off, set-ups with pay-offs, the
 needs the episode serves, and what is fact, reasoning or invention. Structure FAILs (a loop that does not exist, a
-pay-off before its plant); craft is REVIEW (the creator judges the story). The numbers and severities of ST-11, ST-12
+pay-off before its plant); craft is REVIEW (the creator judges the story). ST-14 frames every exchange (BP-90). The numbers and severities of ST-11, ST-12
 and ST-13 live in the sourced rules registry (BP-74..BP-76, docs/SOURCED_RULES.md); ST-13 turns words into seconds at
 BP-01's heard pace, the one pace every estimate uses.
 
@@ -33,6 +33,10 @@ MIDPOINT_BAND = tuple(SR.T("BP-75", "midpoint_share"))  # ST-12: the midpoint/re
 MIDPOINT_MIN_SEGMENTS = SR.T("BP-75", "min_segments")
 TURN_GAP_S = SR.T("BP-76", "turn_gap_s")  # ST-13: a turn at least this often
 WORDS_PER_S = SR.T("BP-01", "wpm_target") / 60  # ST-13: words become seconds at BP-01's heard pace
+SETUP_MIN, CONCLUSION_MIN = SR.T("BP-90", "setup_lines_min"), SR.T("BP-90", "conclusion_lines_min")  # ST-14 (RX-03)
+SPEECH_VERBS = tuple(SR.T("BP-70", "speech_verbs"))  # reported speech (D-63): "Musk says...", "he asks..."
+REPORTED_SPEAKERS_MAX = SR.T("BP-96", "speakers_max")  # ST-16 (NR-04, a hypothesis)
+_VERB = "(?:" + "|".join(SPEECH_VERBS) + ")"
 
 
 def sev(rule_id: str) -> str:
@@ -196,6 +200,93 @@ def lint(doc: dict) -> list[dict]:
                    f"without a turn (a BUT, reversal, midpoint, crisis, twist or climax): something must change at least every "
                    f"{TURN_GAP_S:g} s (BP-76)", sev("BP-76"))
                 gap_words, gap_from = 0.0, None
+    out += exchanges(doc)
+    out += reported_speech(doc)
+    return out
+
+
+def _name_alt(names: list[str]) -> str:
+    return "|".join(re.escape(n) for n in sorted(names, key=len, reverse=True))
+
+
+def reported_turns(text: str, cast: dict, who: list[str] | None = None) -> list[str]:
+    """The turns a narrator line reports (BP-70, D-63): each "<name> <verb>" (``Musk says``, ``O'Leary asks``) is a turn of
+    that hero, each "he/she <verb>" a turn of the last hero named. ``who`` limits it to those cast ids (a scene's present)."""
+    ids = list(who or cast)
+    pats = [(h, _name_alt(list(cast.get(h, {}).get("names") or [h]))) for h in ids]
+    names = "|".join(f"(?P<h{i}>{p})" for i, (_, p) in enumerate(pats) if p)
+    if not names:
+        return []
+    verb = re.compile(rf"\s+(?:\w+ly\s+)?{_VERB}\b")
+    out, last = [], None
+    for m in re.finditer(rf"\b(?:{names}|(?P<pro>he|she))\b", text, re.I):
+        hit = next((pats[i][0] for i in range(len(pats)) if m.groupdict().get(f"h{i}")), None)
+        if not verb.match(text, m.end()):
+            last = hit or last  # a name without a verb: who "he" refers to next
+            continue
+        spk = hit or last
+        if spk:
+            out.append(spk)
+            last = spk
+    return out
+
+
+def _named(text: str, names: list[str]) -> bool:
+    low = " " + re.sub(r"[^a-z0-9' ]", " ", text.lower()) + " "
+    return any(f" {n.lower()} " in low or f" {n.lower()}'s " in low for n in names)
+
+
+def exchanges(doc: dict) -> list[dict]:
+    """ST-14 (BP-90, RX-03; the creator 2026-10-20 21:14): an exchange is framed. In each segment the hero lines (voiced or
+    bubble) are one exchange: before it at least SETUP_MIN narrator line, each speaker named by the narrator before his
+    first line; after it at least CONCLUSION_MIN narrator line. A segment that ends or opens on a hero line chains two
+    exchanges (no conclusion between them)."""
+    out: list[dict] = []
+    cast = doc.get("cast", {})
+    for seg in doc.get("segments", []):
+        lines = seg.get("lines", [])
+        hero = [k for k, ln in enumerate(lines) if ln.get("speaker")]
+        if not hero:
+            continue
+        first, last = hero[0], hero[-1]
+        setup = [ln for ln in lines[:first] if not ln.get("speaker")]
+        if len(setup) < SETUP_MIN:
+            _f(out, "ST-14", f"{seg['id']} line {first + 1}", "the exchange opens without the narrator's setup: first say who "
+               "talks and what idea or want brings them here (BP-90)", sev("BP-90"))
+        for who in dict.fromkeys(lines[k]["speaker"] for k in hero):
+            k0 = next(k for k in hero if lines[k]["speaker"] == who)
+            told = " ".join(ln["text"] for ln in lines[:k0] if not ln.get("speaker"))
+            if not _named(told, list(cast.get(who, {}).get("names") or [who])):
+                _f(out, "ST-14", f"{seg['id']} line {k0 + 1}", f"{who} speaks before the narrator names him: the setup names "
+                   "every speaker of the exchange (BP-90; REVIEW, a description may stand for the name)")
+        if sum(1 for ln in lines[last + 1:] if not ln.get("speaker")) < CONCLUSION_MIN:
+            _f(out, "ST-14", f"{seg['id']} line {last + 1}", "the exchange ends without the narrator's conclusion: say what came "
+               "of it before anything else happens, never chain two exchanges (BP-90)", sev("BP-90"))
+    return out
+
+
+_TRAILING = re.compile(r"[,!?]\s*(?:" + _VERB + r"\s+(?P<a>[A-Z][\w']*(?:\s[A-Z][\w']*)?|he|she)|(?P<b>[A-Z][\w']*(?:\s[A-Z][\w']*)?|"
+                       r"[Hh]e|[Ss]he)\s+" + _VERB + r")\s*[.!?]?\s*$")
+
+
+def reported_speech(doc: dict) -> list[dict]:
+    """ST-15 (BP-95, NR-02): a reported line names the speaker before his words, never in a trailing tag ("..., says Musk.").
+    ST-16 (BP-96, NR-04): one narrator line reports at most REPORTED_SPEAKERS_MAX named speakers. Both REVIEW heuristics."""
+    out: list[dict] = []
+    cast = doc.get("cast", {})
+    for seg in doc.get("segments", []):
+        for k, ln in enumerate(seg.get("lines", []), 1):
+            if ln.get("speaker"):
+                continue
+            where = f"{seg['id']} line {k}"
+            for sent in re.split(r"(?<=[.!?])\s+", ln["text"].strip()):
+                if _TRAILING.search(sent):
+                    _f(out, "ST-15", where, f"{sent[:60]!r}: the speaker comes after his words; a listener needs the name "
+                       "first (\"Musk says ...\", BP-95)", sev("BP-95"))
+            spk = set(reported_turns(ln["text"], cast))
+            if len(spk) > REPORTED_SPEAKERS_MAX:
+                _f(out, "ST-16", where, f"{len(spk)} speakers reported in one line ({', '.join(sorted(spk))}): at most "
+                   f"{REPORTED_SPEAKERS_MAX}; a third enters as an action or in the next exchange (BP-96)", sev("BP-96"))
     return out
 
 

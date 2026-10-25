@@ -66,7 +66,7 @@ end of every section pointing at the next problem. None of them sounds like a le
 
 ### Tone of the what-if episodes (creator 2026-10-16)
 - Scientific what-if: mostly drama and curious telling with honest doubt, humour in small doses (SR-07); the density and
-  placement of the jokes follow BP-09 (at most one verbal joke per 60 s, the first inside 45 s, beside the fact). Say what is established and what is argued ("the evidence says", "we can only reason"); doubt is part of the story, not a disclaimer. Each period ends on the question that opens the next (SR-03).
+  placement of the jokes follow BP-09 (at most one verbal joke per 60 s, the first inside 45 s, beside the fact). Ground the story in what is established, but never hedge the story itself ("we can only reason", "we cannot know for sure", "this is hypothetical" are SC-11 FAILs, BP-88): the narrator tells it as if it is happening now, and doubt lives in the heroes. Show, don't tell (SC-12, BP-87): never name a hero's trait, rating or biography; narrate what they do. Each period ends on the question that opens the next (SR-03).
 
 ### Pace
 - **N-03 At most one ellipsis per beat** (BP-16: two is a REVIEW, more a FAIL). Each `...` is a held pause; use it only before the one reveal of that beat.
@@ -177,7 +177,10 @@ never here.
 - BP-09: humour sits beside the fact, never inside the example that explains it; the first laugh inside the first 45 s; at
   most one verbal joke per 60 s.
 - BP-10: no pause before a punch line; emphasis from the text (one stressed word, an ellipsis, a tag), never a hold over
-  1 second (N-04; N-15 checks each narration line's `pause_after`; a dialogue scene's scripted silence is a scene device).
+  its limit (N-04; N-15 checks each narration line's `pause_after`; a dialogue scene's scripted silence is a scene device;
+  the last line before a change of place or time may breathe within BP-10's boundary band, D-65, the creator 2026-10-20 21:14/21:17).
+- Reported speech (D-65, the creator 2026-10-20 21:14/21:17): the speaker's name before his words ("Musk says ...", BP-95), at most two speakers
+  reported in one line (BP-96). The narrator need not repeat what is on screen; the listener must follow the story.
 - BP-16: at most one ellipsis per beat; two is a REVIEW, more than two a FAIL (N-03).
 - BP-17: at least one question per 150 words (N-06) and about one interjection per 60 words, at least one (N-07).
 - BP-18: no ellipsis inside a question, and a wh-question of at most 12 words (N-10).
@@ -187,3 +190,20 @@ never here.
   the story; sources are cited in the claim map and the description, never spoken (N-14, FAIL). The same lexicon also holds
   the announcement-register patterns of SC-07 ("X's page says", "announced", "release date", "launches worldwide"),
   checked on narrator lines only: a hero may name a date inside a scene.
+
+## One narrator tells the dialogue (D-68, creator 2026-10-21)
+
+In a narrated episode nobody speaks in a voice of their own: the narrator performs every character's words. The creator
+wants them "not monotone, the way he would say it". Rules, each with its sources, in
+`/mnt/project-files/explainer-engine/titans_from_zero/qa_loop/research_narrated_dialogue.md`:
+
+1. Name the speaker before the quote ("Musk says, ...", or an action beat: "Musk grips the wheel. ..."): a listener
+   cannot look back. A tag after the quote is fine only when the speaker is already plain.
+2. Paraphrase the setup; quote only the strongest words, short ("Forty dollars. Ten percent. Forever.").
+3. Tell characters apart by attitude, never pitch or accent; never imitate a real living person's voice.
+4. Write the attitude into the words first; a v4 tag before the quote only sharpens it, and its colour carries
+   forward, so go back to the narrator's own tone after the quote (the line's `tone` names each turn).
+5. Keep one attitude per character for the whole video, and at most two speakers in one told exchange.
+
+Story cards (`design/cards.py`): the intro asks the episode's question over the heroes' heads; a recap names where each
+hero stands, then one NEXT line that opens the coming chapter (a hook, never a summary of the end).

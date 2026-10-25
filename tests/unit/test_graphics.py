@@ -39,3 +39,31 @@ def test_validate_flags_a_period_without_a_visual():
     assert not [f for f in validate.check_script(doc) if f["rule"] in ("PV-30", "PV-31")]
     doc["graphics"] = [g for g in doc["graphics"] if g["id"] not in ("G10", "G11")]
     assert any(f["rule"] == "PV-31" and f["where"] == "compare" for f in validate.check_script(doc))
+
+
+def test_counter_chip_draws_in_the_corner_and_flips():
+    base = frame()
+    out = G.counter(base, "YEAR 2", 2.0, "YEAR 1")
+    diff = [(x, y) for x in range(0, 640, 8) for y in range(0, 360, 8) if out.getpixel((x, y)) != base.getpixel((x, y))]
+    assert diff and max(x for x, _ in diff) < 640 * 0.4 and max(y for _, y in diff) < 360 * 0.2  # a small top-left chip
+    assert G.counter(base, "YEAR 2", 0.1, "YEAR 1").tobytes() != out.tobytes()  # mid-flip differs from the settled chip
+
+
+def test_counter_checks():
+    segs = ["S01", "S02", "S03"]
+    assert G.check_counter([{"segment": "S01", "label": "DAY 1"}, {"segment": "S03", "label": "WEEK 1"}], segs) == []
+    assert G.check_counter([{"segment": "S09", "label": "DAY 1"}], segs)  # unknown segment
+    assert G.check_counter([{"segment": "S03", "label": "A"}, {"segment": "S01", "label": "B"}], segs)  # out of order
+    assert G.check_counter([{"segment": "S01", "label": "DAY 1"}, {"segment": "S02", "label": "DAY 1"}], segs)  # no change
+    assert G.check_counter([{"segment": "S01", "label": "THE FIFTEENTH YEAR"}], segs)  # too long
+
+
+def test_counter_spans_from_segment_to_next_label():
+    from explainer_engine.production import assemble
+    timed = {"cards": [], "visuals": [], "counters": [
+        {"label": "DAY 1", "start_frame": 0, "end_frame": 50, "prev": None},
+        {"label": "WEEK 1", "start_frame": 50, "end_frame": 100, "prev": "DAY 1"}]}
+    a = assemble.overlays(frame(), 10, 25, timed)
+    b = assemble.overlays(frame(), 90, 25, timed)
+    assert a.tobytes() != frame().tobytes() and a.tobytes() != b.tobytes()
+    assert assemble.overlays(frame(), 120, 25, timed).tobytes() == frame().tobytes()

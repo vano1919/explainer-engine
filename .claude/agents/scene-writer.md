@@ -31,8 +31,10 @@ Write:
 - Subtext never spoken (SC-10): no line states the header's `real_subject` verbatim; the fight stays on the surface
   topic. Facts enter dialogue only as ammunition under the knowledge-state table (DW-13), ~1 fact per 2-3 beats.
 - Never press-release narration (SC-07): no "X's page says", "announced", "is set to release", "the trailer confirms".
-  A date or spec appears only inside a scene as a stake. Never stack disclaimers (SC-08): the honesty beat lives in
-  its ONE segment; outside it, don't re-label the invention.
+  A date or spec appears only inside a scene as a stake. Full immersion (SC-08, SC-11, BP-88): no line says the
+  story is invented, a simulation or hypothetical, and the narrator never hedges it ("we can't know for sure").
+- Show, don't tell (SC-12, BP-87): the narrator never states a trait ("he is ruthless"), a rating or a biography; write
+  the action, the line, the mistake or the decision that shows it.
 - Each hero talks like their bible (DW-11): manner, signature moves, what they never admit; cover the names and the
   reader can still tell who speaks (DW-03). Every factual sentence carries its claim id.
 - Narration between scenes stays the friendly guide (skill `narration-script`): short spoken sentences, contractions,
@@ -42,3 +44,10 @@ Write:
 Then run `python -m explainer_engine.scripting.stage_guard writer before.json after.json` and
 `python -m explainer_engine.production validate <script>`: 0 FAIL for PV-12, PV-33 and PV-48 (scene_lint, SC-01..SC-10).
 Return the segment's lines only.
+
+## Real people in a scene (D-63, creator 2026-10-20)
+
+When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood, then a slow move to the next shot, never a cut straight into other people's talk.
+
+A reported exchange counts as the scene's exchange (SC-05, BP-70, D-65, the creator 2026-10-20 21:14/21:17): name the speaker before his words (BP-95),
+at most two speakers reported in one line (BP-96). Frame every exchange (ST-14, BP-90, D-64): narrator setup (who talks, named before his first line, and what brings them there), the exchange, narrator conclusion (what came of it); a segment never ends or opens on a hero line, so two exchanges never touch. A bubble line, when the scene keeps one, is a key phrase within BP-84's cap.

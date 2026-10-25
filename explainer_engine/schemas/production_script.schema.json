@@ -127,6 +127,23 @@
               "pattern": "^[0-9a-f]{64}$"
             }
           }
+        },
+        "script_approval": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "PV-53, OR-17: the creator approved this finished script (approval #1) before any paid step; sha256 binds the approval to every word said (scripting/script_approval.py)",
+          "properties": {
+            "approved_by": {
+              "type": "string"
+            },
+            "approved_at": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
         }
       }
     },
@@ -229,14 +246,7 @@
         },
         "environment": {
           "type": "object",
-          "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference",
-          "required": [
-            "collage",
-            "tile",
-            "picture",
-            "approved_by",
-            "approved_at"
-          ],
+          "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference; or, when the creator waived the collage, first_picture: the hero's first scene picture becomes the reference once the creator OKs it on the contact sheet",
           "additionalProperties": false,
           "properties": {
             "collage": {
@@ -257,8 +267,30 @@
             },
             "note": {
               "type": "string"
+            },
+            "first_picture": {
+              "const": true,
+              "description": "the creator waived the collage (2026-10-20): drawn first in its scene in the episode's approved style"
             }
-          }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "collage",
+                "tile",
+                "picture",
+                "approved_by",
+                "approved_at"
+              ]
+            },
+            {
+              "required": [
+                "first_picture",
+                "approved_by",
+                "approved_at"
+              ]
+            }
+          ]
         }
       }
     },
@@ -389,6 +421,10 @@
                   "real_person": {
                     "type": "boolean"
                   },
+                  "living": {
+                    "type": "boolean",
+                    "description": "a real person who is alive (D-62, PV-55: a living person's lines are never voiced)"
+                  },
                   "documented": {
                     "type": "array",
                     "items": {
@@ -511,14 +547,7 @@
           },
           "reference": {
             "type": "object",
-            "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference",
-            "required": [
-              "collage",
-              "tile",
-              "picture",
-              "approved_by",
-              "approved_at"
-            ],
+            "description": "the creator's pick from ONE variant collage (OR-16, PV-47): the chosen tile becomes the reference; or, when the creator waived the collage, first_picture: the hero's first scene picture becomes the reference once the creator OKs it on the contact sheet",
             "additionalProperties": false,
             "properties": {
               "collage": {
@@ -539,8 +568,30 @@
               },
               "note": {
                 "type": "string"
+              },
+              "first_picture": {
+                "const": true,
+                "description": "the creator waived the collage (2026-10-20): drawn first in its scene in the episode's approved style"
               }
-            }
+            },
+            "anyOf": [
+              {
+                "required": [
+                  "collage",
+                  "tile",
+                  "picture",
+                  "approved_by",
+                  "approved_at"
+                ]
+              },
+              {
+                "required": [
+                  "first_picture",
+                  "approved_by",
+                  "approved_at"
+                ]
+              }
+            ]
           }
         }
       }
@@ -698,6 +749,14 @@
                   "maxItems": 1,
                   "description": "the one word that carries the surprise (spoken in capitals)"
                 },
+                "voiced": {
+                  "type": "boolean",
+                  "description": "D-62 (PV-55): false = the line is never read by a voice; it is shown as speech bubbles, held for reading (BP-27). A real living person's lines are always false"
+                },
+                "new_read": {
+                  "type": "boolean",
+                  "description": "D-63: a narrator line written after the read was recorded (it replaces a run of silent lines); the audio step records only these and reuses the rest"
+                },
                 "pause_after": {
                   "type": "number",
                   "minimum": 0,
@@ -747,6 +806,10 @@
                     "$ref": "#/$defs/beat"
                   },
                   "description": "VB rules: the visual beats of this line (stage 2b, beat-writer), in the order they land"
+                },
+                "card": {
+                  "type": "boolean",
+                  "description": "a line read over a story card (intro or chapter recap, design/cards.py)"
                 }
               }
             }
@@ -846,6 +909,10 @@
                           "shout",
                           "thought"
                         ]
+                      },
+                      "reported": {
+                        "type": "boolean",
+                        "description": "the key phrase of a turn the narrator tells in his own words (creator 2026-10-21: a reported exchange keeps its bubbles)"
                       }
                     }
                   }
@@ -1329,6 +1396,10 @@
                   },
                   "maxItems": 1
                 },
+                "voiced": {
+                  "type": "boolean",
+                  "description": "D-62 (PV-55): false = the line is never read by a voice; it is shown as speech bubbles, held for reading (BP-27). A real living person's lines are always false"
+                },
                 "pause_after": {
                   "type": "number",
                   "minimum": 0,
@@ -1424,6 +1495,27 @@
               "pointer"
             ],
             "description": "SS-04: how the Short ends"
+          }
+        }
+      }
+    },
+    "counter": {
+      "type": "array",
+      "description": "ED-15 (PV-54): the on-screen time counter; from the first shot of each listed segment the corner shows its label until the next entry",
+      "items": {
+        "type": "object",
+        "required": [
+          "segment",
+          "label"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "segment": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 14
           }
         }
       }
@@ -1742,6 +1834,98 @@
               },
               "uncertainty": {
                 "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "cards": {
+      "type": "array",
+      "description": "story cards drawn by design/cards.py (the creator 2026-10-21): the dark title card that opens the episode and the chapter recap boards; each is a picture (engine existing) a shot plays",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "title"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^card_[a-z0-9_]+$"
+          },
+          "kind": {
+            "enum": [
+              "title",
+              "recap"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 3
+          },
+          "tone": {
+            "enum": [
+              "night",
+              "coral",
+              "teal",
+              "blue",
+              "amber"
+            ]
+          },
+          "line": {
+            "type": "string"
+          },
+          "next": {
+            "type": "string"
+          },
+          "heroes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "picture",
+                "name"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "picture": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "prefer_x": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "icon",
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "picture": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "prefer_x": {
+                  "type": "number"
+                }
               }
             }
           }

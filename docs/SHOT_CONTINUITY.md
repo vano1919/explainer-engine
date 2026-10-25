@@ -1,4 +1,4 @@
-# Shot continuity cards (CC-)
+# Shot continuity cards (CT-)
 
 How the shots of one scene are made to cut together. ვანო decided this on 2026-10-25 (20:11 and 20:17 Tbilisi). The base
 picture models already know how shots join, so we do not train continuity. We train only the style
@@ -61,20 +61,20 @@ One card per shot:
 
 | ID | Rule | Kind | Enforced by |
 |---|---|---|---|
-| CC-01 | The cards follow `continuity_card/1`. `where_when` has the BG-note shape "place / time", and shot ids are unique | house + H-B Layout Notes | `schema_findings` FAIL |
-| CC-02 | Every person on screen is in the cast registry, and every costume is one of the person's registered variants. The prompt copies the description verbatim; there is no per-shot description field | source (FLUX "held identically across shots"; model sheets) | FAIL |
-| CC-03 | Image 1 of every shot except the master is the scene's master frame (role `place`). The master is drawn and approved first | source (H-B "Match to BG 19"; anchor-shot practice) | FAIL |
-| CC-04 | `head_count` = named people + `extras`; the prompt says "Exactly N people" | hypothesis (extra people were our most common failure, KG-27) | FAIL |
-| CC-05 | References stay within the model's cap (`MODEL_REFS`). Every character reference is that person's model sheet. Every person on screen has a sheet among the references; a missing sheet is a REVIEW when the cap is full. The previous shot, when used, is the last reference | vendor (Qwen 1-3; Gemini 4-5 people) | FAIL / REVIEW |
-| CC-06 | Two or more people on screen need an axis. The camera stays on its side unless a reason is given (neutral shot, cutaway, insert, on-screen move) | source (180° rule; H-B Sc 28-30) | FAIL / REVIEW |
-| CC-07 | Two consecutive shots of the same people change size by at least one step or the angle by at least 30°, unless the cut is a time cut | source (30° rule; H-B "not so slightly different") | FAIL |
-| CC-08 | Every state difference from the previous shot appears in `changes` with a cause. This covers time, weather, light, set state, and each person's costume, flags and props; position and facing are compared only on the same camera side and size. A listed change that did not happen is a REVIEW | source (hook-ups; script supervisor) | FAIL / REVIEW |
-| CC-09 | A shot is drawn fresh from the original references, at most `MAX_CHAIN` (1) edit deep, and `derive_from` names an earlier shot | source (Banana100, FreqEdit, Agent Banana drift) | FAIL |
-| CC-10 | A shot shows only landmarks from its location's list | source (H-B BG continuity) | FAIL |
-| CC-11 | An eyeline points at a person in the cast or off-screen (left, right, down, up). A person who looks at someone on screen faces them | source (eyeline match; H-B eye direction) | FAIL / REVIEW |
-| CC-12 | On a match-on-action cut on the same camera side, a moving person keeps their screen direction | source (H-B Sc 28-30; match on action) | FAIL |
-| CC-13 | The keyframe prompt is assembled by `compose_prompt`, in a fixed order: style line, images by position with their role, size and angle, head count, each person (verbatim identity, costume, place, facing, eyeline, props, action), landmarks with sides, set state, time and light, changes, "Keep everything else the same" | source (research section 4 H) | code |
-| CC-14 | Every finished keyframe is asked the card's questions: head count, each person's side, facing, props and sheet match, the landmarks, light direction, and a new framing versus the previous shot. The answers feed the blind check's second look ([KEYFRAME_GATE](KEYFRAME_GATE.md) KG-) | house | `vision_questions` |
+| CT-01 | The cards follow `continuity_card/1`. `where_when` has the BG-note shape "place / time", and shot ids are unique | house + H-B Layout Notes | `schema_findings` FAIL |
+| CT-02 | Every person on screen is in the cast registry, and every costume is one of the person's registered variants. The prompt copies the description verbatim; there is no per-shot description field | source (FLUX "held identically across shots"; model sheets) | FAIL |
+| CT-03 | Image 1 of every shot except the master is the scene's master frame (role `place`). The master is drawn and approved first | source (H-B "Match to BG 19"; anchor-shot practice) | FAIL |
+| CT-04 | `head_count` = named people + `extras`; the prompt says "Exactly N people" | hypothesis (extra people were our most common failure, KG-27) | FAIL |
+| CT-05 | References stay within the model's cap (`MODEL_REFS`). Every character reference is that person's model sheet. Every person on screen has a sheet among the references; a missing sheet is a REVIEW when the cap is full. The previous shot, when used, is the last reference | vendor (Qwen 1-3; Gemini 4-5 people) | FAIL / REVIEW |
+| CT-06 | Two or more people on screen need an axis. The camera stays on its side unless a reason is given (neutral shot, cutaway, insert, on-screen move) | source (180° rule; H-B Sc 28-30) | FAIL / REVIEW |
+| CT-07 | Two consecutive shots of the same people change size by at least one step or the angle by at least 30°, unless the cut is a time cut | source (30° rule; H-B "not so slightly different") | FAIL |
+| CT-08 | Every state difference from the previous shot appears in `changes` with a cause. This covers time, weather, light, set state, and each person's costume, flags and props; position and facing are compared only on the same camera side and size. A listed change that did not happen is a REVIEW | source (hook-ups; script supervisor) | FAIL / REVIEW |
+| CT-09 | A shot is drawn fresh from the original references, at most `MAX_CHAIN` (1) edit deep, and `derive_from` names an earlier shot | source (Banana100, FreqEdit, Agent Banana drift) | FAIL |
+| CT-10 | A shot shows only landmarks from its location's list | source (H-B BG continuity) | FAIL |
+| CT-11 | An eyeline points at a person in the cast or off-screen (left, right, down, up). A person who looks at someone on screen faces them | source (eyeline match; H-B eye direction) | FAIL / REVIEW |
+| CT-12 | On a match-on-action cut on the same camera side, a moving person keeps their screen direction | source (H-B Sc 28-30; match on action) | FAIL |
+| CT-13 | The keyframe prompt is assembled by `compose_prompt`, in a fixed order: style line, images by position with their role, size and angle, head count, each person (verbatim identity, costume, place, facing, eyeline, props, action), landmarks with sides, set state, time and light, changes, "Keep everything else the same" | source (research section 4 H) | code |
+| CT-14 | Every finished keyframe is asked the card's questions: head count, each person's side, facing, props and sheet match, the landmarks, light direction, and a new framing versus the previous shot. The answers feed the blind check's second look ([KEYFRAME_GATE](KEYFRAME_GATE.md) KG-) | house | `vision_questions` |
 
 Video clips keep the prompt rules of [SHOT_PROMPTS](SHOT_PROMPTS.md) (KP-). LTX takes first and last frames only from the
 same setup.
@@ -91,6 +91,6 @@ style LoRA does not break what the base model already does. Variables, one at a 
    else the same."
 5. **Drawing:** fresh from the references (default) or edited from the previous shot (chain depth 1).
 
-ვანო rates every picture by eye on the four-level scale; the CC-14 questions are scored next to his vote. The winner
+ვანო rates every picture by eye on the four-level scale; the CT-14 questions are scored next to his vote. The winner
 becomes the default of `compose_prompt`. No numeric tolerance (colour distance, position drift) is set before it is
 measured on our own shots.

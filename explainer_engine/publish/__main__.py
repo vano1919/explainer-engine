@@ -34,6 +34,8 @@ def main(argv: list[str] | None = None) -> int:
     t.add_argument("episode")
     t.add_argument("--generate", action="store_true")
     t.add_argument("--approved-by", default="")
+    t.add_argument("--tier", choices=("draft", "standard", "premium"), default="premium",
+                   help="draft = a cheap try beside the final file; premium = the final thumbnail")
     a = sub.add_parser("auth", help="one-time sign-in on the creator's PC")
     a.add_argument("client_secret")
     sub.add_parser("auth-url", help="print the consent link (sign in on a phone)")
@@ -48,7 +50,8 @@ def main(argv: list[str] | None = None) -> int:
                          shorts_dir=args.shorts_dir, only=only, adopt=adopt)
     if args.cmd == "thumbnail":
         from explainer_engine.publish import thumbnail
-        return thumbnail.run(args.episode, generate=args.generate, approved_by=args.approved_by)
+        return thumbnail.run(args.episode, generate=args.generate, approved_by=args.approved_by,
+                             tier=args.tier)
     from explainer_engine.publish import auth
     if args.cmd == "auth-url":
         return auth.url_step()

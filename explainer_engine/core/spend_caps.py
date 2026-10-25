@@ -23,6 +23,15 @@ def episode_ceiling(service: str) -> float | None:
     return load().get("per_episode", {}).get(service)
 
 
+def allowance(name: str) -> dict:
+    """A tool's own spending allowance (``allowances.<name>``: service, per_run): a ceiling inside the run's cap of that
+    service, spent without asking first (the QA loop's re-reads, the creator 2026-10-20). Missing = no allowance."""
+    a = load().get("allowances", {}).get(name)
+    if not isinstance(a, dict) or "service" not in a or "per_run" not in a:
+        raise OverCeiling(f"no allowance {name!r} in config/spend_caps.json: spending needs the creator's yes")
+    return a
+
+
 def runpod() -> dict:
     return load()["runpod"]
 

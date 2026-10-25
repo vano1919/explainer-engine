@@ -20,9 +20,10 @@ def world():
     return resolver.resolve(SPEC)
 
 
-def test_codex_has_thirteen_eras_and_every_grade_exists():
+def test_codex_has_fourteen_eras_and_every_grade_exists():
     c = resolver.load_codex()
-    assert len(c["eras"]) == 13  # the 12 history/science eras + modern_neon_florida (Syndicate Wars, 2026-10-17)
+    # the 12 history/science eras + modern_neon_florida (Syndicate Wars, 2026-10-17) + modern_new_york (Titans from Zero, 2026-10-20)
+    assert len(c["eras"]) == 14
     assert all(e["grade"] in c["grades"] for e in c["eras"].values())
 
 
@@ -119,3 +120,17 @@ def test_modern_neon_florida_era_resolves_and_keeps_franchise_names_out_of_promp
                           "visitors": [], "day_arc": [{"beat": 1, "light": "neon_dusk"}]})
     assert w["grade"] == "neon_dusk" and "neon_dusk" in c["grades"]
     assert resolver.words_in("a Rockstar skyline, GTA logo", w["absent"]) == ["gta", "rockstar"]
+
+
+def test_modern_new_york_era_resolves_with_one_light_key_per_beat():
+    c = resolver.load_codex()
+    keys = c["eras"]["modern_new_york"]["light_keys"]
+    arc = [{"beat": i + 1, "light": k} for i, k in enumerate(keys)]
+    w = resolver.resolve({"topic": "t", "host": {"era": "modern_new_york", "place": "p", "when": "w"}, "visitors": [],
+                          "day_arc": arc})
+    assert w["grade"] == "cold_grey" and "cold_grey" in c["grades"]
+    # a light key never contains another one, so "exactly one light key per prompt" (UR-26) stays decidable
+    assert not [a for a in keys.values() for b in keys.values() if a != b and a in b]
+    p = prompt_v2.compose("B", "two bankrupt men on a courthouse bench", w, 1, people=True)
+    assert prompt_v2.lint(p, w, beat=1) == []
+

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "continuity_card/1",
-  "title": "Scene continuity cards (docs/SHOT_CONTINUITY.md, CC-)",
+  "title": "Scene continuity cards (docs/SHOT_CONTINUITY.md, CT-)",
   "type": "object",
   "required": ["schema", "scene_id", "model", "style_line", "location", "light", "cast", "shots"],
   "additionalProperties": false,

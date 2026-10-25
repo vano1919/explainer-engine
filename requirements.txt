@@ -6,4 +6,9 @@ kokoro-onnx>=0.4  # narration (audio/narrate.py); the timed model goes in tools/
 # added in their phases: Node 20 LTS + Remotion (Phase 4, render/)
 pillow>=10.0  # finish/bubbles.py (speech bubbles), assemblers
 # optional: faster-whisper (audio/local_words.py, free word times)
-opencv-python-headless>=4.8  # training/video_qa.py + footage.py (optical flow, edges; LT-50..59, FS-xx)
+# training/video_qa.py + footage.py (LT-50..59, FS-xx) and the QA loop's free pixel checks (qa/pixels.py, qa/face_points.py; YuNet + SFace
+# from opencv_zoo in tools/yunet)
+opencv-python-headless>=4.9
+scenedetect>=0.6
+scikit-image>=0.22
+imagehash>=4.3

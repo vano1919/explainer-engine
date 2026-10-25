@@ -54,14 +54,14 @@ def test_the_beat_numbers_are_the_registrys():
 def test_the_motion_board_and_shot_plan_numbers_are_the_registrys():
     assert (ML.HOOK_WINDOW, ML.HOOK_MAX_GAP, ML.MAX_GAP) == (
         SR.T("BP-40", "hook_window_s"), SR.T("BP-40", "hook_max_still_s"), SR.T("BP-40", "body_review_still_s"))
-    assert (ML.WINDOW, ML.MIN_KINDS, ML.MAX_PLAIN_RUN, ML.TEXT_MIN_GAP, ML.MIN_ALIVE, ML.HOLD_SIMILAR, ML.MAX_SIMILAR_RUN,
+    assert (ML.WINDOW, ML.MIN_KINDS, ML.MAX_PLAIN_RUN, ML.TEXT_MIN_GAP, ML.HOLD_SIMILAR, ML.MAX_SIMILAR_RUN,
             ML.HOLD_CV) == tuple(SR.T("BP-83", k) for k in ("window_s", "kinds_min", "plain_run_max", "text_min_gap_s",
-                                                            "alive_share_min", "hold_similar", "similar_run_max",
-                                                            "hold_cv_min"))
+                                                            "hold_similar", "similar_run_max", "hold_cv_min"))
+    assert "alive_share_min" not in SR.rule("BP-83")["thresholds"]  # MO-06 is reported only (D-64)
     assert (B.MIN_SHOT, B.MIN_INSERT) == (SR.T("BP-84", "min_shot_s"), SR.T("BP-84", "min_insert_s"))
     assert F.MIN_PART == B.MIN_SHOT and F.PULL_FROM == SR.T("BP-20", "push_default_max")
     assert F.PUSH_TO <= SR.T("BP-20", "push_default_max") and F.PULL_TO >= SR.T("BP-20", "scale_min")
-    assert (BUB.MAX_WORDS, BUB.MAX_CHARS) == (SR.T("BP-84", "bubble_words_max"), SR.T("BP-84", "bubble_chars_per_line"))
+    assert (BUB.MAX_WORDS, BUB.MAX_CHARS) == (SR.T("BP-38", "max_words"), SR.T("BP-84", "bubble_chars_per_line"))  # D-64
     assert R.DURATIONS == {k: tuple(SR.T("BP-85", f"{k.lower()}_shot_s")) for k in "ABC"}
     assert (R.FIRST_WINDOW, R.FIRST_SLACK, R.FIRST_MIN_SHOTS, R.FIRST_SOUND, R.C_PULL_MAX, R.DISSOLVE_SHARE, R.EDGE,
             R.FACELESS_SHARE, R.MIN_STAKES_WORDS) == tuple(SR.T("BP-85", k) for k in (
@@ -232,10 +232,11 @@ def test_vb01_does_not_run_on_a_short_and_short_events_count_beats():
 # --- R-11: bubbles hold BP-27's time ---------------------------------------------------------------------------------------
 
 def test_bubbles_read_bp27():
-    words = " ".join(["word"] * 14)
-    need = max(SR.T("BP-27", "hold_min_s"), SR.T("BP-27", "s_per_word") * 14)
+    n = int(SR.T("BP-38", "max_words"))  # a bubble is an accent of BP-38's words (BP-84, D-64; was 14 words)
+    words = " ".join(["word"] * n)
+    need = max(SR.T("BP-27", "hold_min_s"), SR.T("BP-27", "s_per_word") * n)
     assert BUB.check_bubbles([{"text": words, "start": 0.0, "end": need}]) == []
-    f = BUB.check_bubbles([{"text": words, "start": 0.0, "end": 0.3 * 14 + 0.01}])  # the superseded max(1.4, 0.3 n)
+    f = BUB.check_bubbles([{"text": words, "start": 0.0, "end": 0.3 * n + 0.01}])  # the superseded max(1.4, 0.3 n)
     assert [x["rule"] for x in f] == ["BUBBLE-2"] and f[0]["severity"] == sev("BP-27")
     f = BUB.check_bubbles([{"text": words + " more", "start": 0.0, "end": 9.0}])
     assert [x["rule"] for x in f] == ["BUBBLE-1"] and f[0]["severity"] == sev("BP-84")

@@ -37,6 +37,9 @@ FLASH_WHITE = float(SR.T("BP-26", "flash_white_max"))  # ... at most this share 
 POP_S, TEXT_FADE = 0.25, 0.15
 TEXT_HOLD_BASE, TEXT_HOLD_PER_WORD = 1.5, 0.3  # P-71: a label holds 1.5 s + 0.3 s a word (D-49); BP-27 bounds it below
 SLAM_S = 0.12
+# BP-97 (house, the creator 2026-10-21): a slammed word owns the frame: the picture behind it dims and softens while it holds
+SLAM_DIM = SR.T("BP-97", "dim")  # share of brightness taken from the picture at full strength
+SLAM_BLUR = SR.T("BP-97", "blur_h")  # blur radius as a share of the frame height
 _LEAD_LO, _LEAD_HI = SR.T("BP-32", "lead_frames")
 EXPR_LEAD_FRAMES = (int(_LEAD_LO) + int(_LEAD_HI)) // 2  # BP-32: a keyed close-up changes this many frames before its word
 
@@ -149,6 +152,9 @@ def draw(frame: Image.Image, accents: list[dict], f: int, fps: int, f0: int, f1:
                 scale = 0.6 + 0.52 * _ease_out(u) if u < 1 else 1.12 - 0.12 * min(1.0, (t - POP_S) / 0.1)
                 frame = _text_layer(frame, a["text"], a["pos"], scale, fade, font_path, big=False)
             else:
+                k = min(1.0, t / SLAM_S, fade)
+                back = frame.filter(ImageFilter.GaussianBlur(max(1.0, H * SLAM_BLUR * k)))
+                frame = Image.blend(frame, Image.eval(back, lambda v: int(v * (1 - SLAM_DIM))), k)
                 scale = 2.0 - 1.0 * _ease_out(t / SLAM_S)
                 frame = _text_layer(frame, a["text"], a["pos"], scale, fade * min(1.0, t / SLAM_S + 0.3), font_path, big=True)
     return frame

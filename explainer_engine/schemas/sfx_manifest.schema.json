@@ -20,6 +20,7 @@
           "category": {"enum": ["vocal", "foley", "music"]},
           "tags": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z0-9_]+$"}},
           "seconds": {"type": "number", "exclusiveMinimum": 0},
+          "kind": {"enum": ["one_shot", "loop"], "description": "BP-58: sfx_library.kind_of reads it before the loop flag"},
           "loop": {"type": "boolean",
                    "description": "true: made to tile seamlessly (beds, music loops); false: a one-shot that plays once. Missing means true (older manifests); assemble.Sounds.loopable reads it and a one-shot is never tiled."},
           "intended_seconds": {"type": "number", "exclusiveMinimum": 0,
@@ -33,12 +34,14 @@
             "required": ["kind"],
             "additionalProperties": false,
             "properties": {
-              "kind": {"enum": ["procedural", "gemini_tts", "lyria", "recorded", "third_party"]},
+              "kind": {"enum": ["procedural", "gemini_tts", "lyria", "elevenlabs", "recorded", "third_party"]},
               "model": {"type": "string"},
               "prompt": {"type": "string"},
               "seed": {"type": "integer"},
               "generated": {"type": "string"},
-              "cost_usd_estimate": {"type": "number", "minimum": 0}
+              "cost_usd_estimate": {"type": "number", "minimum": 0},
+              "cost_credits": {"type": "number", "minimum": 0, "description": "ElevenLabs credits charged for this take (D-52)"},
+              "generation_id": {"type": "string", "minLength": 1, "description": "the provider's generation id, to re-download or prove the take"}
             }
           },
           "licence": {

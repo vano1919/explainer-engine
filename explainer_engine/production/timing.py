@@ -17,6 +17,8 @@ from explainer_engine.audio import layers as L
 from explainer_engine.audio.scribe_words import norm
 from explainer_engine.edit import board as B
 from explainer_engine.production import accents as ACC, beats as BEATS, continuity, script as S
+from explainer_engine.production import faces as FACES
+from explainer_engine.production import silent as SIL
 from explainer_engine.standards import sourced_rules as SR
 
 BED_DEFAULT_DB = L.MAX_BED_DB  # a bed with no gain sits at the AL-04 cap (BP-65); it was -13 and broke the cap
@@ -121,18 +123,26 @@ def time_script(doc: dict, words_doc: dict) -> dict:
     for k, s in enumerate(out_shots):  # UR-14/ED-04: a period opens with a dissolve (a time jump), nothing else dissolves
         if k and s.get("transition", "cut") == "cut" and seg_period.get(s["segment"]) != seg_period.get(out_shots[k - 1]["segment"]):
             s["transition"], s["time_jump"], s["transition_seconds"] = "dissolve", True, 1.0
+    seg_scene = {sg["id"]: ((sg.get("scene") or {}).get("place"), (sg.get("scene") or {}).get("time")) for sg in doc["segments"]}
+    for k, s in enumerate(out_shots):  # BP-31: a change of place or time (a scene boundary) may open with a dissolve (RX-08)
+        if k and s["segment"] != out_shots[k - 1]["segment"] and seg_scene.get(s["segment"]) != seg_scene.get(out_shots[k - 1]["segment"]):
+            s["place_change"] = True
     continuity.chain(out_shots)  # ED-02: render_motion continues across shots of one picture
     total_frames = _frames(duration, fps)
     for k, s in enumerate(out_shots):
         nxt = out_shots[k + 1] if k + 1 < len(out_shots) else None
         s["end"] = nxt["start"] if nxt else round(duration, 3)
+    silent_bubbles, found = SIL.bubbles_for(doc, toks, words, wi, out_shots)
+    problems += found
+    for k, s in enumerate(out_shots):
+        nxt = out_shots[k + 1] if k + 1 < len(out_shots) else None
         s["duration"] = round(s["end"] - s["start"], 3)
         s["start_frame"] = _frames(s["start"], fps)
         s["end_frame"] = _frames(nxt["start"], fps) if nxt else total_frames
         s["frames"] = s["end_frame"] - s["start_frame"]
         tok_end = nxt["token"] if nxt else len(toks)
         s["text"] = " ".join(t["w"] for t in toks[s["token"]:tok_end])
-        bub, bc = [], s["token"]
+        bub, bc = list(silent_bubbles.get(k, [])), s["token"]  # D-62: a silent line's pieces, timed by its words
         for b in s.pop("_bubbles"):
             j = at_word(b["at"], bc, tok_end, s["id"] + " bubble")
             if j is None:
@@ -149,7 +159,10 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             bend = min(bend, s["end"] - 0.05)
             bub.append({"who": b["who"], "text": b["text"], "kind": b.get("kind", "speech"), "start": round(bstart, 3),
                         "end": round(bend, 3), "start_frame": _frames(bstart, fps), "end_frame": _frames(bend, fps)})
-        s["bubbles"] = bub
+        for b in bub:
+            b.setdefault("start_frame", _frames(b["start"], fps))
+            b.setdefault("end_frame", _frames(b["end"], fps))
+        s["bubbles"] = sorted(bub, key=lambda b: b["start"])
 
         def accent_start(phrase, lo=s["token"], hi=tok_end, where=s["id"]):
             j = at_word(phrase, lo, hi, where + " accent")
@@ -158,6 +171,9 @@ def time_script(doc: dict, words_doc: dict) -> dict:
         s["accents"] = ACC.resolve(s.pop("_accents"), s["start"], s["end"], accent_start, fps)  # MO rules (D-48)
         s.pop("_seg_hi")
     beats = BEATS.resolve(doc, toks, words, wi, out_shots, fps, duration, problems)  # VB rules: the lines' visual beats
+    # what each frame shows (close-up or scene, bound by the bubbles, BP-84's insert floor), then the beats fitted to it
+    FACES.plan_shots(out_shots, beats, doc.get("cast", {}), fps)
+    beats = BEATS.fit_to_views(out_shots, beats, pics, doc.get("cast", {}), fps, problems)
     # sound
     beds, sfx = [], []
     for si, seg in enumerate(doc["segments"]):
@@ -218,6 +234,18 @@ def time_script(doc: dict, words_doc: dict) -> dict:
             cards.append({"period": per["id"], "index": pi, "of": len(doc["periods"]), "title": card.get("title", per["id"].upper()),
                           "line": card.get("line", per.get("question", "")), "start": first["start"],
                           "start_frame": first["start_frame"] if "start_frame" in first else _frames(first["start"], fps)})
+    counters = []  # ED-15: the corner counter shows each label from the first shot of its segment to the next label
+    for c in doc.get("counter", []):
+        first = next((s for s in out_shots if s["segment"] == c["segment"]), None)
+        if first:
+            counters.append({"label": c["label"], "start": first["start"],
+                             "start_frame": first["start_frame"] if "start_frame" in first else _frames(first["start"], fps)})
+    counters.sort(key=lambda c: c["start_frame"])
+    for a, b in zip(counters, counters[1:] + [None]):
+        a["end_frame"] = b["start_frame"] if b else total_frames
+        a["prev"] = None
+    for a, b in zip(counters, counters[1:]):
+        b["prev"] = a["label"]
     events = {}
     for e in doc.get("story", {}).get("events", []):
         j = S.find_phrase(toks, e["at"], 0)
@@ -228,7 +256,7 @@ def time_script(doc: dict, words_doc: dict) -> dict:
     return {"schema": "production_timed/1", "script_schema": doc.get("schema"), "episode": doc["episode"]["id"], "fps": fps,
             "duration": round(duration, 3),
             "frames": total_frames, "text_match": share, "segments": segs, "lines": lines, "shots": out_shots,
-            "audio": {"beds": beds, "sfx": sfx, "music": music, "cues": cues}, "visuals": visuals, "cards": cards, "visual_beats": beats,
+            "audio": {"beds": beds, "sfx": sfx, "music": music, "cues": cues}, "visuals": visuals, "cards": cards, "counters": counters, "visual_beats": beats,
             "expressions": {h: c["expressions"] for h, c in doc.get("cast", {}).items() if c.get("expressions")},
             "face_sheets": {h: c["face_sheet"] for h, c in doc.get("cast", {}).items() if c.get("face_sheet")}, "events": events,
             "pictures": {k: {kk: vv for kk, vv in v.items() if kk not in ("source",)} for k, v in pics.items()},

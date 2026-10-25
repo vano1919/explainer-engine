@@ -15,6 +15,7 @@ import threading
 import time
 from pathlib import Path
 
+from explainer_engine.core import spend_caps
 from explainer_engine.core.spend_caps import check_caps
 from explainer_engine.core.store import write_json_atomic
 
@@ -24,6 +25,10 @@ MAX_FAILURES = 3
 
 class CapReached(RuntimeError):
     """A reservation would pass 80 % of a cap: stop this phase, report, wait for the creator."""
+
+
+class AllowanceReached(CapReached):
+    """A reservation under a tool's allowance (config/spend_caps.json ``allowances``) would pass it: the tool stops and asks."""
 
 
 class LedgerConflict(RuntimeError):
@@ -106,6 +111,28 @@ class Run:
         self.data["spent"][service] = self.spent(service) + amount
         self.data["reserved"][item or f"{service}#{len(self.data['reserved'])}"] = {"service": service, "amount": amount}
         self.save()
+
+    def reserve_allowance(self, name: str, amount: float, item: str, *, lines: list[str]) -> None:
+        """A charge a tool makes on its own under its allowance (``allowances.<name>`` in config/spend_caps.json, e.g. the QA
+        loop's re-reads of the script lines it changed, at most 2,000 ElevenLabs credits per run, the creator 2026-10-20).
+        Refuses (AllowanceReached) when the allowance's total for this run would pass ``per_run``, and when ``lines`` (what
+        the money is for) is empty; the reservation then goes through ``reserve``, so the service's own cap and its 80 %
+        stop still apply: the allowance is a ceiling inside the cap, never a raise of it."""
+        a = spend_caps.allowance(name)
+        if not lines:
+            raise ValueError(f"allowance {name}: name the changed lines the charge is for")
+        with self.lock:
+            used = self.data.setdefault("allowances", {}).setdefault(name, {"service": a["service"], "used": 0.0, "items": {}})
+            if used["used"] + amount > float(a["per_run"]) + 1e-9:
+                raise AllowanceReached(f"allowance {name}: {used['used'] + amount:g} {a['service']} would pass its "
+                                       f"{a['per_run']:g} per run (config/spend_caps.json); stop and ask the creator")
+            self._reserve(a["service"], amount, item)  # the cap and its 80 % stop; raises before anything is recorded
+            used["used"] += amount
+            used["items"][item] = {"amount": amount, "lines": list(lines), "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+            self.save()
+
+    def allowance_used(self, name: str) -> float:
+        return round((self.data.get("allowances", {}).get(name) or {}).get("used", 0.0), 6)
 
     def refund(self, service: str, amount: float) -> None:
         """A charge that provably did not happen (the provider refused before generating)."""

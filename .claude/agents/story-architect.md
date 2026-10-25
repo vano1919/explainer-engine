@@ -41,6 +41,8 @@ Procedure:
    succeed_complication | interrupted), surface_topic and real_subject (SC-10).
 5. Run `python -m explainer_engine.scripting.story_lint <script>`: 0 FAIL (on `/3` a missing `drama` is a FAIL, ST-00);
    answer every REVIEW in one line in `jobs/<slug>/story/review.md` or fix it.
+5b. Plan every hero's traits as choices, not statements (SC-12, BP-87): for each trait the bible names, one moment
+   where the hero acts on it (a spend, a refusal, a mistake). The skeleton never needs a narrator line that says it.
 6. Hand over: the premise table, the template choice, the skeleton (one line per segment) with its scene headers, the
    lint result. Stop for nothing else.
 

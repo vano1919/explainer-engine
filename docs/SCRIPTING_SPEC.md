@@ -95,7 +95,7 @@ of the script is rejected: generic advice is not a finding), `expected` (the int
 the spec says), `conflict`, `consequence` (for the viewer), `confidence` (high/medium/low), `basis`, the smallest `fix`,
 and `owner` — the stage that owns the fields (architect, writer, beats, performer, editor, caster, shorts, research), so
 each correction routes to its owner and the critic never rewrites. Subjective taste goes in `integrated.notes` (never
-blocks). The gate (`production.editorial_gate`, EG-19..EG-22) enforces the contract: a `/3` script with a `/1` review, a
+blocks). The gate (`production.editorial_gate`, EG-19..EG-23) enforces the contract (EG-23: a passing `/2` review of a `/3` script names its `story_page.md`, the whole story on one page in Georgian with why it is well told, [BP-89](SOURCED_RULES.md)): a `/3` script with a `/1` review, a
 missing or unevidenced layer, a vague finding, or a malformed review file never passes, and any script edit invalidates
 the review (EG-13), so a correction is always re-reviewed. The reviewer's instructions live in
 `.claude/agents/script-critic.md` (writers' room stage 7); tests: `tests/unit/test_integrated_review.py`.

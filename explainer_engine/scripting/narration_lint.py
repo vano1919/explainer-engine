@@ -80,6 +80,7 @@ WORDS_PER_INTERJECTION = SR.T("BP-17", "words_per_interjection")  # N-07 (hypoth
 WH_QUESTION_MAX_WORDS = SR.T("BP-18", "wh_question_max_words")  # N-10 (hypothesis, REVIEW)
 ELLIPSES_PER_BEAT, ELLIPSES_FAIL_OVER = SR.T("BP-16", "ellipses_per_beat_max"), SR.T("BP-16", "ellipses_fail_over")  # N-03
 MAX_HOLD_S = SR.T("BP-10", "max_hold_s")  # N-15: a narration hold never over this (BP-10)
+BREATH_MAX_S = SR.T("BP-10", "boundary_breath_max_s")  # N-15: ... except a breath before a change of place or time (NR-07)
 HOOK_FORMS = tuple(SR.T("BP-03", "hook_forms"))  # N-01: the forms, in the registry's order
 
 
@@ -275,7 +276,14 @@ def doc_findings(doc: dict, press: bool = True) -> list[dict]:
     not held to it. N-14 here uses BP-15's phrases only: it runs on /1 and /2 (D-58 keeps their contract), while a /3
     script's narrator lines get the whole lexicon from SC-07 (``validate`` passes ``press=False`` there)."""
     found: list[dict] = []
-    for seg in doc.get("segments", []):
+    segs = doc.get("segments", [])
+
+    def where_and_when(s: dict) -> tuple:
+        sc = s.get("scene") or {}
+        return s.get("period"), sc.get("place"), sc.get("time")
+    for si, seg in enumerate(segs):
+        jump = si + 1 < len(segs) and where_and_when(segs[si + 1]) != where_and_when(seg)  # BP-31's scene boundary
+        last_narr = max((k for k, ln in enumerate(seg.get("lines", []), 1) if not ln.get("speaker")), default=None)
         for k, ln in enumerate(seg.get("lines", []), 1):
             if ln.get("speaker"):
                 continue
@@ -285,6 +293,12 @@ def doc_findings(doc: dict, press: bool = True) -> list[dict]:
                 found.append({"rule": "N-14", "where": where, "severity": sev("BP-15"),
                               "detail": f"press-release line: {hit!r} (BP-15); the fact lives in the claim map, the line in the story"})
             hold = float(ln.get("pause_after", 0) or 0)
+            if jump and k == last_narr and k == len(seg["lines"]):  # a breath before the jump is a transition, not a hold
+                if hold > BREATH_MAX_S:
+                    found.append({"rule": "N-15", "where": where, "severity": "REVIEW",
+                                  "detail": f"a {hold:g} s breath before a change of place or time; at most {BREATH_MAX_S:g} s "
+                                            "(BP-10, a hypothesis: the dissolve and the sound carry the rest)"})
+                continue
             if hold > MAX_HOLD_S:
                 found.append({"rule": "N-15", "where": where, "severity": sev("BP-10"),
                               "detail": f"a {hold:g} s hold after a narration line; emphasis comes from the text, never a hold "

@@ -9,7 +9,8 @@ scene's own picture, zoomed in and blurred, with the keyed close-up of the curre
 
     lint(doc, dirs)          VB-09 findings: set size and base expressions, beats inside the set, a reference, the key;
                              with painted files also BP-34 (docs/SOURCED_RULES.md): the close-up against its backdrop
-    to_paint(doc)            paint-plan items for the close-ups not painted yet (``paint plan --faces``)
+    needed(doc)              the expressions the episode shows (film and Shorts beats) + neutral: only these are painted
+    to_paint(doc)            paint-plan items for the needed close-ups not painted yet (``paint plan --faces``)
     saving(doc, items, usd)  what the sheet costs against a full picture for every face change (in the plan)
     composite(...)           the dialogue frame: blurred zoomed environment + keyed close-up (free, deterministic)
 """
@@ -49,7 +50,8 @@ KEY_LO, KEY_HI = 0.06, 0.22  # green dominance (g - max(r, b)) from where a pixe
 BORDER_KEYED = 0.85  # a painted close-up's frame edge must be at least this share key green (else the key leaves a halo)
 # the environment behind a close-up: zoom about the face, blur (share of the height), dim. ZOOM is a fixed framing of the
 # blurred backdrop behind the keyed inset, not a camera move on a still, so BP-20's scale window does not govern it (BP-20)
-ZOOM, BLUR, DIM = 1.3, 0.014, 0.82
+# BLUR 0.014 -> 0.024: the creator 2026-10-20 picked the blurred-backdrop dialogue frame "with a slightly more blurred background"
+ZOOM, BLUR, DIM = 1.3, 0.024, 0.82
 FACE_H, EASE_S, POP_S, POP = 0.94, 0.22, 0.16, 0.035  # close-up height (share of the frame), cross-fade in/out, swap pop
 PORTRAIT_W = 2.0  # in a 9:16 Short the 16:9 close-up is at most this many frame widths wide, its middle (the hero) centred
 _PALETTE = Path(__file__).resolve().parents[1] / "design" / "palette.json"
@@ -111,17 +113,38 @@ def _used(doc: dict) -> dict[str, list[tuple[str, str, str]]]:
     return out
 
 
+def needed(doc: dict) -> dict[str, set[str]]:
+    """who -> the expressions this episode really shows (the film's and the Shorts' expression beats) plus ``neutral``, the
+    resting face of every close-up between beats. Only these are painted (the creator 2026-10-20: "faces only as needed";
+    Titans used 56 of 93 template close-ups). The rest of a sheet's ``set`` is painted by the episode that first uses it."""
+    out: dict[str, set[str]] = {}
+    for who, uses in _used(doc).items():
+        out.setdefault(who, set()).update(e for e, _, _ in uses if e)
+    shorts = doc.get("shorts")
+    items = shorts if isinstance(shorts, list) else (shorts or {}).get("items", (shorts or {}).get("set", []))
+    for sh in items if isinstance(items, list) else []:
+        for ln in sh.get("lines", []):
+            for b in ln.get("visual_beats", []):
+                who = b.get("who") or ln.get("speaker")
+                if b.get("kind") == "expression" and who and b.get("expression"):
+                    out.setdefault(who, set()).add(b["expression"])
+    for who in out:
+        out[who].add("neutral")
+    return out
+
+
 def to_paint(doc: dict, dirs: list[Path] | None = None) -> list[dict]:
-    """Paint-plan items for every close-up of every sheet that has no file yet (a file found in ``dirs`` is reused: a sheet
-    is painted once for the channel, not once per episode)."""
+    """Paint-plan items for every close-up the episode needs (``needed``) that has no file yet (a file found in ``dirs`` is
+    reused: a close-up is painted once for the channel, not once per episode)."""
     from explainer_engine.production import beats as BEATS
     style = doc.get("look", {}).get("style_refs", [])
+    need = needed(doc)
     items = []
     for who, hero in doc.get("cast", {}).items():
         sheet = hero.get("face_sheet")
         if not sheet:
             continue
-        for e in sheet.get("set", []):
+        for e in [e for e in sheet.get("set", []) if e in need.get(who, set())]:
             name = file_name(who, hero, e)
             if dirs is not None and BEATS.find_file(name, dirs):
                 continue
@@ -232,6 +255,7 @@ def lint(doc: dict, dirs: list[Path] | None = None) -> list[dict]:
     if not BEATS.has_beats(doc) and not BEATS.binding(doc):
         return out
     used = _used(doc)
+    need = needed(doc)
     for who, hero in doc.get("cast", {}).items():
         sheet = hero.get("face_sheet")
         if not sheet:
@@ -259,7 +283,7 @@ def lint(doc: dict, dirs: list[Path] | None = None) -> list[dict]:
                 BEATS._f(out, "VB-09", "FAIL", w, f"{who} {e!r} is not in the face sheet ({', '.join(s)}): use one of them "
                          "or add it to the sheet (and paint it)")
         if dirs is not None:
-            for e in s:
+            for e in [e for e in s if e in need.get(who, set())]:  # only the faces this episode shows must exist
                 p = BEATS.find_file(file_name(who, hero, e), dirs)
                 if p is None:
                     BEATS._f(out, "VB-09", "REVIEW", where, f"{e} is not painted yet ({file_name(who, hero, e)}): "
@@ -328,12 +352,161 @@ def _side(b: dict, order: list[str]) -> float:
     return 0.36 if order.index(b["who"]) % 2 == 0 else 0.64
 
 
-def composite(frame: Image.Image, faces: list[dict], f: int, fps: int, order: list[str]) -> Image.Image:
-    """The dialogue frame at ``f``: the environment (``frame``) zoomed and blurred behind the current close-up. Cross-fades
-    in and out over EASE_S at the ends of the shot's face span; each change swaps the close-up with a small pop, landing
-    accents.EXPR_LEAD_FRAMES before the beat's word (BP-32: the face answers just before the word, never after it)."""
+# BP-84 (house, the creator 2026-10-16): an insert holds at least this long. A close-up is an insert into the shot, so the
+# view plan never shows a close-up or a return to the scene for less (CC-03, 2026-10-20: face swaps every 1-2 s)
+MIN_VIEW_S = float(SR.T("BP-84", "min_insert_s"))
+
+
+def views(faces: list[dict], f0: int, f1: int, fps: int, min_s: float = MIN_VIEW_S,
+          bubbles: list[dict] = ()) -> list[dict]:
+    """What the frames [f0, f1) of one shot show: the scene (``who`` None) or one hero's close-up, as consecutive views.
+
+    1. Raw views start EXPR_LEAD_FRAMES before each close-up beat (BP-32), never before the shot and never after it (a
+       close-up never crosses a cut) and end with the shot's last expression.
+    2. Bubbles (the shot's speech, D-62) bind the frame: while a bubble is up the view does not change, and it is the
+       speaker's own close-up (when the raw plan shows him anywhere under the bubble) or the scene (both heroes on screen),
+       never another hero's close-up (the creator 2026-10-20, CC-01; frame review FR-BUBBLE-FACE and FR-BUBBLE-WHO).
+    3. Every view shorter than ``min_s`` (BP-84's insert floor) is absorbed: a short close-up becomes the scene; a short
+       stretch of scene joins the close-up before it (or after it) when no bubble of another speaker is up in it, else the
+       shorter neighbouring close-up becomes the scene too (CC-03: no face swaps every 1-2 s).
+    Expression changes of one hero inside one view are not views: they swap the face, they do not cut."""
+    if f1 <= f0:
+        return [{"start_frame": f0, "end_frame": f1, "who": None}]
+    n = f1 - f0
+    lab: list = [None] * n
+    fs = sorted((dict(b, start_frame=min(max(f0, b["start_frame"] - ACC.EXPR_LEAD_FRAMES), f1)) for b in faces),
+                key=lambda b: b["start_frame"])
+    if fs:
+        end = min(f1, max(b["end_frame"] for b in faces))
+        for i, b in enumerate(fs):
+            a = b["start_frame"]
+            z = fs[i + 1]["start_frame"] if i + 1 < len(fs) else max(a, end)
+            for f in range(a, z):
+                lab[f - f0] = b["who"]
+    speakers: list[set] = [set() for _ in range(n)]
+    for b in bubbles:
+        for f in range(max(f0, b["start_frame"]), min(f1, b["end_frame"])):
+            speakers[f - f0].add(b.get("who"))
+    k = 0
+    while k < n:  # each run of frames under bubbles (a cluster) gets one label
+        if not speakers[k]:
+            k += 1
+            continue
+        e = k
+        who: set = set()
+        while e < n and speakers[e]:
+            who |= speakers[e]
+            e += 1
+        one = next(iter(who)) if len(who) == 1 else None
+        keep = one if one is not None and one in lab[k:e] else None
+        for f in range(k, e):
+            lab[f] = keep
+        k = e
+
+    segs: list[list] = []
+    for i, w in enumerate(lab):
+        if segs and segs[-1][2] == w:
+            segs[-1][1] = f0 + i + 1
+        else:
+            segs.append([f0 + i, f0 + i + 1, w])
+
+    def merged(xs):
+        out = []
+        for x in xs:
+            if out and out[-1][2] == x[2]:
+                out[-1][1] = x[1]
+            else:
+                out.append(list(x))
+        return out
+
+    def allowed(seg, who) -> bool:
+        said = set().union(*speakers[seg[0] - f0:seg[1] - f0]) if seg[1] > seg[0] else set()
+        return not said or said == {who}
+
+    floor = round(min_s * fps)
+    for _ in range(4 * len(segs) + 4):  # each step turns a close-up into scene or removes a view: it ends
+        short = [i for i, x in enumerate(segs) if x[1] - x[0] < floor]
+        if len(segs) < 2 or not short:
+            break
+        i = short[0]
+        if segs[i][2] is not None:
+            segs[i][2] = None
+        else:
+            nb = [j for j in (i - 1, i + 1) if 0 <= j < len(segs)]
+            ok = next((j for j in nb if allowed(segs[i], segs[j][2])), None)
+            if ok is not None:
+                segs[i][2] = segs[ok][2]
+            else:
+                j = min(nb, key=lambda j: segs[j][1] - segs[j][0])
+                segs[j][2] = None
+        segs = merged(segs)
+    if len(segs) == 1 and segs[0][2] is not None and segs[0][1] - segs[0][0] < floor:
+        segs[0][2] = None  # a whole shot too short for an insert stays on the scene
+    return [{"start_frame": a, "end_frame": z, "who": w} for a, z, w in segs]
+
+
+def view_at(vs: list[dict], f: int) -> dict | None:
+    return next((v for v in vs if v["start_frame"] <= f < v["end_frame"]), None)
+
+
+def face_in_view(faces: list[dict], view: dict, f: int) -> dict | None:
+    """The beat whose close-up a view shows at frame ``f``: the hero's latest expression (word - lead) up to ``f``, else
+    the hero's first one in the view (a view extended to the shot's start shows the expression it is about to need)."""
+    mine = sorted((dict(b, start_frame=b["start_frame"] - ACC.EXPR_LEAD_FRAMES) for b in faces if b.get("who") == view["who"]),
+                  key=lambda b: b["start_frame"])
+    if not mine:
+        return None
+    cur = [b for b in mine if b["start_frame"] <= f]
+    return cur[-1] if cur else next((b for b in mine if b["start_frame"] >= view["start_frame"]), mine[0])
+
+
+def piece_box(b: dict, order: list[str], frame: tuple[int, int], face_size: tuple[int, int], pop: float = 0.0):
+    """(x, y, w, h) of the keyed close-up on a frame of ``frame`` size: FACE_H of the height, standing on the bottom edge, at
+    the hero's side (``_side``); in a 9:16 Short centred and at most PORTRAIT_W widths wide."""
+    OW, OH = frame
+    h = int(OH * FACE_H * (1 + pop))
+    portrait = OH > OW  # a Short (QA 2026-10-19: the 16:9 close-up was pinned to the left edge, the hero fell off frame)
+    if portrait:
+        h = min(h, int(PORTRAIT_W * OW * face_size[1] / max(1, face_size[0]) * (1 + pop)))
+    fw = max(1, int(face_size[0] * h / max(1, face_size[1])))
+    x = int(OW / 2 - fw / 2) if portrait else min(max(int(_side(b, order) * OW - fw / 2), 0), max(0, OW - fw))
+    return x, max(0, OH - h), fw, max(1, h)
+
+
+def mouth_and_head(b: dict, order: list[str], frame: tuple[int, int]) -> tuple[tuple[float, float], tuple]:
+    """Where a bubble's tail points on a close-up of hero ``b`` (the mouth, frame pixels) and the head box it must keep
+    clear of, measured on the keyed silhouette (``_profile``: the head's top and centre; the painters do not centre the
+    hero, QA 2026-10-20). The head is taken as 0.52 of the close-up's height from its top, the mouth at 0.82 of it."""
+    face = close_up(b["close_up"])
+    x, y, fw, h = piece_box(b, order, frame, face.size)
+    try:
+        _, y0, cx = _profile(face)
+        top = y + y0 * h / max(1, round(PROFILE_W * face.height / face.width))
+    except ValueError:
+        cx, top = 0.5, y + 0.08 * h
+    hx, hh = x + cx * fw, 0.52 * h
+    mouth = (hx, top + 0.82 * hh)
+    return mouth, (hx - 0.32 * hh, top, hx + 0.32 * hh, top + hh)
+
+
+def composite(frame: Image.Image, faces: list[dict], f: int, fps: int, order: list[str],
+              views_: list[dict] | None = None) -> Image.Image:
+    """The dialogue frame at ``f``: the environment (``frame``) zoomed and blurred behind the current close-up.
+
+    With ``views_`` (``views`` of the shot, what assemble passes): the frame shows exactly the view at ``f``; a close-up
+    cuts in and out with its view (no zoom ramp of the backdrop, which read as the camera resetting, CC-06) and never
+    outlives its shot. Without it (older callers): cross-fades in and out over EASE_S at the ends of the face span. Either
+    way each change swaps the close-up with a small pop, landing accents.EXPR_LEAD_FRAMES before the beat's word (BP-32)."""
     if not faces:
         return frame
+    if views_ is not None:
+        v = view_at(views_, f)
+        if v is None or v["who"] is None:
+            return frame
+        b = face_in_view(faces, v, f)
+        if b is None:
+            return frame
+        return _draw_close(frame, b, f, fps, order, 1.0, pop_on=True)
     faces = [dict(b, start_frame=b["start_frame"] - ACC.EXPR_LEAD_FRAMES) for b in faces]
     s0 = min(b["start_frame"] for b in faces)
     s1 = max(b["end_frame"] for b in faces)
@@ -345,6 +518,10 @@ def composite(frame: Image.Image, faces: list[dict], f: int, fps: int, order: li
         return frame
     cur = [b for b in faces if b["start_frame"] <= f]
     b = cur[-1] if cur else faces[0]
+    return _draw_close(frame, b, f, fps, order, w, pop_on=bool(cur))
+
+
+def _draw_close(frame: Image.Image, b: dict, f: int, fps: int, order: list[str], w: float, pop_on: bool) -> Image.Image:
     OW, OH = frame.size
     cx = (b["face"][0] if b.get("face") is not None else 0.5) * OW
     cy = (b["face"][1] if b.get("face") is not None else 0.45) * OH
@@ -353,21 +530,13 @@ def composite(frame: Image.Image, faces: list[dict], f: int, fps: int, order: li
     back = frame.resize((OW, OH), Image.BICUBIC, box=box).filter(ImageFilter.GaussianBlur(BLUR * OH * w))
     back = Image.eval(back, lambda v: int(v * (1 - (1 - DIM) * w)))
     face = close_up(b["close_up"])
-    pop = POP * np.sin(np.pi * min(max((f - b["start_frame"]) / (POP_S * fps), 0.0), 1.0)) if cur else 0.0
-    h = int(OH * FACE_H * (1 + pop))
-    portrait = OH > OW  # a Short (QA 2026-10-19: the 16:9 close-up was pinned to the left edge, the hero fell off frame)
-    if portrait:
-        h = min(h, int(PORTRAIT_W * OW * face.height / max(1, face.width) * (1 + pop)))
-    fw = max(1, int(face.width * h / max(1, face.height)))
-    piece = face.resize((fw, max(1, h)), Image.BICUBIC)
+    pop = POP * np.sin(np.pi * min(max((f - b["start_frame"]) / (POP_S * fps), 0.0), 1.0)) if pop_on else 0.0
+    x, y, fw, h = piece_box(b, order, (OW, OH), face.size, pop)
+    piece = face.resize((fw, h), Image.BICUBIC)
     if w < 1:
         piece.putalpha(piece.getchannel("A").point(lambda v: int(v * w)))
-    if portrait:
-        x = int(OW / 2 - fw / 2)
-    else:
-        x = min(max(int(_side(b, order) * OW - fw / 2), 0), max(0, OW - fw))
     out = back.convert("RGBA")
-    out.alpha_composite(piece, (x, max(0, OH - h)))
+    out.alpha_composite(piece, (x, y))
     return out.convert("RGB")
 
 
@@ -431,3 +600,13 @@ def same_framing(paths: list[Path], ref: Path) -> dict[Path, Image.Image]:
         canvas.paste(big, (-ox, -oy))
         out[p] = canvas
     return out
+
+
+def plan_shots(shots: list[dict], beats: list[dict], cast: dict, fps: int) -> None:
+    """Timing writes each shot's ``views`` (``views``) into the timed file, so the render, the frame review and the bubble
+    check read one plan. A close-up is planned for every expression of a hero whose face sheet (or ``expressions``) names a
+    file for it; a file not painted yet shows the scene at render time (a draft)."""
+    for s in shots:
+        close = [b for b in beats if b["kind"] == "expression" and b.get("shot") == s["id"] and b.get("who")
+                 and (cast.get(b["who"]) or {}).get("face_sheet") and file_name(b["who"], cast[b["who"]], b["expression"])]
+        s["views"] = views(close, s["start_frame"], s["end_frame"], fps, bubbles=s.get("bubbles") or [])

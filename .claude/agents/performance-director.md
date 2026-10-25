@@ -15,7 +15,8 @@ Read `.claude/skills/narration-script/SKILL.md` (N rules), `.claude/skills/eleve
   (`cast.<id>.voice.traits`) and the segment's `drama.shift`; never a stage direction.
 - One emphasis word per sentence, the surprise word, last in the sentence when it can be.
 - `pause_after` only after a reveal or after a joke's last word, never before a punch line and never a hold over BP-10's
-  limit; never two held pauses in a row.
+  limit; never two held pauses in a row. Exception (D-65, the creator 2026-10-20 21:14/21:17): the last narration line of a segment before a change of
+  place or time may hold a breath within BP-10's boundary band (the dissolve and the sound carry the jump).
 - Interjections about one per 60 words, only as reactions; none inside a factual sentence.
 - Dialogue: each speaker's tags fit their character; the comic hero gets timing from the text (one stressed word, an
   ellipsis, a tag, BP-10), never a pause before the punchline; the stern one gets flat delivery (`[deadpan]`).
@@ -24,6 +25,7 @@ Run `narration_lint` (PV-12): 0 FAIL. Return a table: line, tags, emphasis, paus
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 - BP-10: no pause before a punch line (performers do not pause there); emphasis comes from the text (one stressed word, an
-  ellipsis, a tag), never from a hold over 1.0 s; `pause_after` sits after a reveal or a joke's last word, never before it.
+  ellipsis, a tag), never from a hold over its limit; `pause_after` sits after a reveal or a joke's last word, never before
+  it; a scene-boundary breath has its own band (BP-10, NR-07).
 - BP-09: humour sits beside the fact, never inside the example that explains it; the first laugh inside the first 45 s; at most
   one verbal joke per 60 s (the writer's rule; the director keeps a joke's delivery dry rather than adding a second one).
