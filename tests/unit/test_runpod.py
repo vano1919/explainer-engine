@@ -829,3 +829,16 @@ def test_delete_volume_global_needs_the_word_and_verifies(env, capsys):
         R.main(["delete-volume", "gsb_1", "--global"], api=api)
     R.main(["delete-volume", "gsb_1", "--global", "--yes"], api=api)
     assert fake.global_volumes == [] and "gsb_1 GONE" in capsys.readouterr().out
+
+
+def test_create_cli_takes_a_longer_boot_deadline_for_slow_images(env, tmp_path, monkeypatch):
+    """2026-10-26: the caption pod's image fetch took > 10 min and the guard stopped it before boot (LT-15 needs 25)."""
+    fake, api = env
+    monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)
+    monkeypatch.setattr(R, "live_guard", lambda pid: True)
+    ledger = tmp_path / "run.json"
+    Run.open(ledger, caps={"runpod_usd": 1.0})
+    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "0.75", "--boot", "cloud/x.json", "--boot-minutes", "25",
+            "--ledger", str(ledger)], api=api)
+    sess = R.sess_read("p1")
+    assert sess["boot_deadline"] - sess["started"] == pytest.approx(25 * 60, abs=5)

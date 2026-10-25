@@ -5,7 +5,7 @@
     python -m explainer_engine.cloud.runpod create --yes --max-usd X --max-hours H [--gpu default|cheap|big] [--boot <manifest>]
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
            [--vram GB [--ref-hours H]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
-           [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB]
+           [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB] [--boot-minutes M]
     python -m explainer_engine.cloud.runpod cards --vram GB [--ref-hours H]   what the job would cost on each card now
     python -m explainer_engine.cloud.runpod status|logs|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
     python -m explainer_engine.cloud.runpod delete-volume <network volume id> [--global] --yes
@@ -1230,7 +1230,7 @@ def main(argv=None, api=None):
         job.attach(pod["id"], gpu=pod.get("gpu"), price=pod.get("costPerHr"), name=name)
         new_session(pod, max_usd=max_usd, max_hours=max_hours, on_cap=_opt(rest, "--on-cap", "stop"), ledger=ledger,
                     status_token=token if _opt(rest, "--boot") else "", price_ceiling=card_max, job=job.dir,
-                    heartbeat=_opt(rest, "--heartbeat"))
+                    heartbeat=_opt(rest, "--heartbeat"), boot_minutes=_opt(rest, "--boot-minutes", BOOT_MINUTES, float))
         print("pod", pod["id"], name, f"${pod.get('costPerHr')}/h", pod.get("gpu") or "", "job", job.state["id"])
         if "--no-guard" not in rest:
             print("guard pid", guard_detached(pod["id"]), f"log tools/runpod/sessions/{pod['id']}.guard.log")
