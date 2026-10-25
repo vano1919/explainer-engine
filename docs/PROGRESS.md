@@ -2180,3 +2180,11 @@ GitHub branches of 9 open PRs.
   variant; the example card uses `qwen_image_21`. Test: `test_no_edit_pass_on_an_earlier_shot`.
 - Open for ვანო: ASSET_COMPOSE (code composes) or D-75 (cards + references) as the production route; removal of the
   retired rig code; closing the merged PRs.
+
+## 2026-10-25 22:20 Tbilisi: the retired rig route removed
+
+ვანო ("მიდი გააკეთე", 22:18 Tbilisi, on the cleanup list of research/BRANCH_INTEGRATION_2026-10-25.md section 4): the
+rig route he retired on 2026-10-22 22:19 goes. Removed `production/bend_rig.py`, `ice_short.py`, `physics2d.py`,
+`mocap.py`, `gaits.json`, their four tests and the `pymunk` requirement; the history stays in git, PR #21 and
+research/HYBRID_VISUAL_MODEL_2026-10-22.md. `production/rig.py` (PR #20's cut-out rig, not part of the retired cartoon)
+stays. The merged PRs #14-#21 and #23-#25 are closed in favour of PR #22; their branches are kept.

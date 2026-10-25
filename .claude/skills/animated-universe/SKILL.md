@@ -29,7 +29,7 @@ No show, studio, artist or character of another work is ever named in a prompt (
   code; do not ask a prompt for them.
 - Squash and stretch is rationed: bounded, tied to real speed, at most one off-model beat per scene and it belongs to the
   story's turn. On-model the rest of the time.
-- Physics is real or absent: a dropped, swinging or floating thing uses `drop_y`, a `Spring` or pymunk; never a guessed
+- Physics is real or absent: a dropped, swinging or floating thing uses `drop_y` or a `Spring`; never a guessed
   curve, never "it just appears".
 - The mouth follows the narration's word timings (`mouth_at`); the narrator's acting lives in the face set and the pose.
 - Long holds are allowed and good: a held frame with sound is a beat. Each character gets its own timing scale.
