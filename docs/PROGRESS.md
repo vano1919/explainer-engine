@@ -1869,3 +1869,100 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
   refused with Gemini HTTP 402 "prepayment credits are depleted". The adapter sent all ten because a Gemini 402 was a plain provider
   error; `providers/gemini_adapter.py` now raises `AccountError` on 401/402/403, so the first one stops the candidate (test added).
   The approval stays bound to plan hash 807c365090475447 in `jobs/universe/2026-10-22_grid/run.json`; a rerun after a top-up paints it.
+## 2026-10-22 - Research: the hybrid visual model (AI world, rigged characters)
+
+The creator asked whether AI should only paint and move the environment while characters (wounded ones and hard poses
+included) are drawn and rigged with classic tools that AI drives. Answer and sources in
+[HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md): yes, split by "must be exact and repeatable"
+(body, joints, cycles, wounds, physics: code-driven rig) vs "may vary" (plates, one atmospheric shot: AI); ambient nature
+motion by code on the plate; the ice test's leg defect comes from parts cut out of one painted pose, so parts must be made
+as parts (SVG body + painted face set) and joints must bend. Synfig, Blender Grease Pencil, OpenToonz, Godot, Rive, Spine,
+Live2D, Moho and Lottie compared for AI control, headless render, deformation and licence. Documents only; nothing paid;
+no code or rule changed.
+
+## 2026-10-22 - Hybrid model PoC: a bending rig on a painted plate
+
+After the research above the creator said "კი" to the free PoC. `production/bend_rig.py` (numpy + PIL): two-bone limbs
+drawn as one ink shape (no knee or elbow seam), inverse-kinematics feet planted by the distance travelled (no slide), hips
+clamped by reach, a keyed fall/get-up, a squash-and-flip turn, a scrape decal and an antalgic limp as data, follow-through
+on the scarf, code-made snowfall and tree sway over the ice test's plate (crowd painted out, no new spend), footsteps and
+impacts read from the poses. `check` (BR-1..BR-7) passes on all 432 frames; `tests/unit/test_bend_rig.py` (10). Result and
+what it does not solve (style seam, one view): [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md)
+section 8. Nothing paid.
+
+## 2026-10-22 - Hybrid model PoC v2: painted faces on the rig, a real turn, a softer walk
+
+The creator: faces from the image model, bodies from us; fix the turn; the walk is a bit robotic. `bend_rig --heads`
+(painted head per expression, hands in its skin colour), the turn as side -> front -> side with the feet stepping to
+their own sides, heel-to-toe roll in every gait (footfall sound at the heel strike), torso pitch wave, arms lagging the
+legs, head nod spring. `check` 0 findings; `tests/unit/test_bend_rig.py` 12. Faces reused from the Wild Ink board,
+nothing paid. Notes on what a real face sheet needs: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md) 8.1.
+
+## 2026-10-22 - Hybrid model PoC v3: the body's paint from the picture (Sheet)
+
+The creator's Wild Ink cave reference as the world's style; question answered (what is reachable in motion, which
+tools are missing, 3/4 views). Free, his choice: `bend_rig.Sheet` carries painted parts (`parts.json`: picture, bone,
+half-widths per part) onto the rig's bones by a similarity, outline stays the rig's; Einstein cut from the reference
+with GrabCut walks, falls, turns and limps with his paint. 14 tests, `check` 0 findings. What a real parts sheet must
+be: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md) 8.2.
+
+## 2026-10-22 - Hybrid model: a 30-second Ice Age test cartoon in 2.5D
+
+- The creator (19:35, 19:38): a spacious world, faces, clothes and expressions from the image model in the reference's
+  style, a 30 s cartoon with heroes, our rig for the bodies; Klein approved with a $1.5 ceiling; assets reusable for the
+  Ice Age episode. Eleven Klein pictures, $0.154 (ledger `jobs/ice_cartoon/job-001_2026-10-22/run.json`).
+- `production/bend_rig.py`: `Sheet` mode `cut` (painted cut-outs carried whole on the bones), the `three_quarter` view,
+  per-character `Build` (`use_build`, `load_build`), heads per expression and view (`head_picture`).
+- `production/ice_short.py`: the 2.5D shot (layers, camera keys, depth scaling, sled physics, rope, snow, sounds from the
+  poses, checks). Research doc section 8.3.
+- Tests: `test_bend_rig.py` (3/4 view, build swap, cut part on its bone) and `test_ice_short.py` (camera ground line,
+  depth scaling, captions).
+
+## 2026-10-22 - Ice Age test cartoon v2: physics, mocap gait, operator camera (stages 0+1 + the paid stage 2 test)
+
+- The creator (20:32): the physics and the montage are off; plan first (the Claude Doc), then his choice (card 20:47): stages
+  0+1 free + the ≈$0.50 fal test.
+- New `production/physics2d.py` (pymunk: terrain, lane, sled on a rope with a giving arm, ragdoll with muscle tone, follow-
+  through, camera operator), `production/mocap.py` + `gaits.json` (CMU BVH -> measured gaits, retargeted by leg length;
+  `bend_rig.measured`), `ice_short.py` rewritten on them (10 shots, events -> sounds, checks 0 findings).
+- Tests: `test_physics2d.py` 7, `test_mocap.py` 3, `test_ice_short.py` 6; `python -m pytest -q` -> 671 passed, 1 skipped.
+- Rendered: `hybrid_model_2026-10-22/ice_cartoon/v2/` (30 s with the earlier voice takes, the 5 s fall clip, old-vs-new
+  sheet). Nothing new paid for pictures or voice.
+- Paid (fal, approved on the card): Wan 2.2 Animate $0.20 on the walk clip (unusable: smeared, no pose from a small cartoon
+  figure); refusals before generation cost $0. Kling 2.6 Motion Control $0.35 on the close-up clip: Dev re-animated on
+  model from one reference picture, following the rig's gesture and acting with the face. Total $0.55; ledger
+  `jobs/ice_cartoon/job-002_2026-10-22/run.json` (cap 0.75).
+- Learned: motion-transfer models need a hero filling the frame; wide 2.5D shots give them nothing; Kling Motion Control
+  is a candidate for close-up inserts driven by the rig. Research doc 8.4.
+- Next: the creator's read of v2 (old vs new), then the remaining plan stages (secondary motion on soft parts, a 3/4 mesh
+  warp, more mocap clips: jump, land, get-up).
+
+## 2026-10-22 - AI-video route: night run (Wan 2.2 style LoRA + a 2-minute test video), rig cartoon retired
+
+- The creator (22:19): the rig cartoon v2 is "so bad there is no hope"; new route (plan doc, 22:26): photo style LoRA
+  keyframes -> Wan 2.2 14B first/last-frame clips with a style video LoRA -> SeedVR2 -> montage. 22:41: no permanent heroes
+  and no character LoRAs ever. 22:45/22:54: yes to every stage and cost within the RunPod balance; full pod authority;
+  audio at most 3,000 ElevenLabs credits; 22:50: by morning trained models, a new 2-minute test video, tests for the new
+  production and the unneeded tests gone. Script approval (OR-15) waived by him for this test only.
+- New `explainer_engine/aivideo/`: `shotplan.py` (shots.json and timeline checks, keyframe references, montage plan,
+  money schedule) and `pod/` (launch.py through the one pod manager + ledger + guard, pod.sh stage clock with self-stop,
+  kf.py FLUX.2 klein + photo LoRA keyframes, clips.py Wan 2.2 I2V FLF2V + lightx2v 4-step + style LoRA in fp8 layerwise
+  casting, wan_lora.yaml ai-toolkit wan22_14b, watchdog.py, montage.py).
+- No A40 was free; the pod runs on an L40S at $0.79/h, so the $2.7 ceiling ends it after 205 min: the watchdog stops
+  training at 95 min (800 steps, a checkpoint every 100) and the clips stop at 170 min (`schedule_fits`). The first try
+  (~8 min) died on two setup faults, now fixed: a body without `volumeInGb` got a 20 GB volume on /workspace, and
+  removing the CUDA forward-compat libs breaks torch on a datacenter card with driver 550 (they stay unless torch fails).
+  Try 2 (~22 min) ran every stage in 21 min without doing anything: pod.sh's `pip install -U huggingface_hub` pulled 2.2,
+  which transformers refuses, and the smoke failures did not stop it. Now the hub is pinned below 2 (`fixhub.py` heals a
+  running pod), a failed smoke is fatal, and the ceiling of the next try is $2.4 (training to 85 min, clips to 150).
+- Narration: one ElevenLabs take, 1,522 credits, 113.7 s; word times by faster-whisper; 16 segments.
+- Tests: `tests/unit/test_aivideo_shotplan.py` (9). Proposed for removal on the creator's word (not done): the rig cartoon
+  route (production/bend_rig, ice_short, physics2d, mocap, gaits.json, pymunk) and its four test files.
+- Try 3 (L40S, 2 h 32 min, ~$2.0): the Wan 2.2 style LoRA trained 800 steps in 32 min (`wldnk_wan22_v1`, HF
+  `night_run_2026-10-22/train/`), 38 keyframes with the photo LoRA (`wldnk_style_v1`, 1250 steps, from the LoRA thread);
+  every clip was drawn and lost: diffusers' mp4 writer needs imageio-ffmpeg. Frames now go to disk first; zero clips fails.
+- Try 4 (A40, $0.06) died in setup (torch half-replaced by a pip that could not uninstall debian's numpy): install beside.
+- Try 5 (clips only, `pod_clips.sh` + `launch_clips.py`, $0.69/h, ~$0.31): c01 at 720p (285 s), then 480p (97 s each)
+  until the deadline: 9 of 16 clips. The night ledger stops at 80 % of $3.6; ~$2.85 billed in all.
+- Seen in the clips: the style holds; motion is small; where first and last keyframes differ in layout, FLF2V cross-fades
+  (ghosted faces in c03, c06). Next: last frame = a small edit of the first (same layout), or plain I2V with a motion prompt.

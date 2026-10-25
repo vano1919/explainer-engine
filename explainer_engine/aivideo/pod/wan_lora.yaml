@@ -1,0 +1,52 @@
+job: extension
+config:
+  name: "wldnk_wan22_v1"
+  process:
+    - type: "sd_trainer"
+      training_folder: "/workspace/out/train"
+      device: cuda:0
+      network:
+        type: "lora"
+        linear: 32
+        linear_alpha: 32
+      save:
+        dtype: float16
+        save_every: 100
+        max_step_saves_to_keep: 10
+      datasets:
+        - folder_path: "/workspace/ds"
+          caption_ext: "txt"
+          caption_dropout_rate: 0.05
+          num_frames: 1
+          resolution: [512, 768]
+      train:
+        batch_size: 1
+        steps: 800
+        gradient_accumulation: 1
+        train_unet: true
+        train_text_encoder: false
+        gradient_checkpointing: true
+        noise_scheduler: "flowmatch"
+        timestep_type: "linear"
+        optimizer: "adamw8bit"
+        lr: 1e-4
+        optimizer_params:
+          weight_decay: 1e-4
+        disable_sampling: true
+        dtype: bf16
+        switch_boundary_every: 10
+        cache_text_embeddings: true
+      model:
+        name_or_path: "ai-toolkit/Wan2.2-T2V-A14B-Diffusers-bf16"
+        arch: "wan22_14b"
+        quantize: true
+        qtype: "qfloat8"
+        quantize_te: true
+        qtype_te: "qfloat8"
+        low_vram: true
+        model_kwargs:
+          train_high_noise: true
+          train_low_noise: true
+meta:
+  name: "[name]"
+  version: "1.0"
