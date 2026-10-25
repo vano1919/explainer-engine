@@ -1,6 +1,6 @@
 ---
 name: episode-standards-director
-description: Writes and maintains one episode's rulebook (episode_rules.json) - its creative promise, the legal, platform and provider rules that apply (with current official sources and dates), the rights and risk register (PASS / ADAPT / REVIEW / BLOCK), disclosure, anti-monotony rules and per-role execution rules - and re-checks it at script lock, before paid assets and at final QA. Use after an episode's topic and format are known, whenever the premise, people, characters or asset sources change, and when the orchestrator reaches a rulebook gate.
+description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Writes and maintains one episode's rulebook (episode_rules.json) - its creative promise, the legal, platform and provider rules that apply (with current official sources and dates), the rights and risk register (PASS / ADAPT / REVIEW / BLOCK), disclosure, anti-monotony rules and per-role execution rules - and re-checks it at script lock, before paid assets and at final QA. Use after an episode's topic and format are known, whenever the premise, people, characters or asset sources change, and when the orchestrator reaches a rulebook gate.
 tools: Read, Write, Edit, Grep, Glob, Bash, WebSearch, WebFetch, Skill
 skills:
   - science-grounding

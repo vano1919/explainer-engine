@@ -14,7 +14,8 @@ This document is the canonical home of the ST, DW, PF, MO, AL, VC and SS rules. 
 [research/STORY_EDIT_VOICE_2026-10-19.md](research/STORY_EDIT_VOICE_2026-10-19.md); every parameter was then checked
 against studies, standards and official pages in [research/PARAMETER_AUDIT_2026-10-19.md](research/PARAMETER_AUDIT_2026-10-19.md)
 (D-49), which says per rule whether it holds, changed, or stays a hypothesis. The procedure is the skill
-`story-engine`, and each stage is an agent in `.claude/agents/`. The fields live in
+`story-engine`; each stage has a page in `.claude/agents/` that the main agent follows, and only the critic is spawned
+(OR-20). The fields live in
 [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md) (`drama`, `accents`, Short `style` and `ending`, `cast.<id>.voice.traits`),
 and the checks are PV-33..PV-36 there.
 
@@ -349,7 +350,7 @@ channel's retention decide.
 
 These are the stages and gates. How to run them is in the skill `story-engine`.
 
-| # | Stage (agent, `model: sonnet`) | Owns | Gate |
+| # | Stage (page the main agent follows; stage 7 is spawned, OR-20) | Owns | Gate |
 |---|---|---|---|
 | 1 | `story-architect` | `drama`, `cast`, segment skeleton, scene headers (`scene`, SC-01) | PV-33, PV-48 0 FAIL |
 | 2 | `scene-writer` (skill `dialogue-scenes`) | segment `lines` with `to` / `intent` | `stage_guard writer`, PV-12, PV-33, PV-48 |

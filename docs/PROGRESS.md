@@ -2180,3 +2180,14 @@ GitHub branches of 9 open PRs.
   variant; the example card uses `qwen_image_21`. Test: `test_no_edit_pass_on_an_earlier_shot`.
 - Open for ვანო: ASSET_COMPOSE (code composes) or D-75 (cards + references) as the production route; removal of the
   retired rig code; closing the merged PRs.
+
+## 2026-10-25 22:30 Tbilisi: one main agent and one critic (OR-20, D-79)
+
+ვანო said yes (22:21 Tbilisi) to one point of an outside AI review: one strong main agent and at most one independent
+critic. Review page of the three AI answers: https://claude.ai/artifact/4oP3AWRwrNJEj22WYXA2vd.
+- OR-20 / D-79: the main agent (`orchestrator`, `lora-coordinator` or the session) runs every stage itself from the stage
+  pages in `.claude/agents/`; the staged writing, `stage_guard` and every gate stay. Only `script-critic` and
+  `lora-checkpoint-judge` are spawned, with a fresh context. The orchestrator gets the `Agent` tool for its critic.
+- The eleven stage pages say so in their description; the story-engine skill, STORY_ENGINE, LORA_TRAINING and CLAUDE.md
+  follow. Counter recorded in D-79: one context grows longer and the stages lose the cheaper Sonnet model.
+- Test: `tests/unit/test_agent_roles.py`.

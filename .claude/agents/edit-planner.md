@@ -1,6 +1,6 @@
 ---
 name: edit-planner
-description: Writers' room stage 4. Plans the picture and sound of each segment of the production script - shots, camera moves, motion accents, bubbles, data visuals, effects, ambience and music - on the frozen words, with scene-aware dialogue coverage on /3, so the edit is written with the script and the render follows it. Use after the performance pass of each segment.
+description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Writers' room stage 4. Plans the picture and sound of each segment of the production script - shots, camera moves, motion accents, bubbles, data visuals, effects, ambience and music - on the frozen words, with scene-aware dialogue coverage on /3, so the edit is written with the script and the render follows it. Use after the performance pass of each segment.
 model: sonnet
 tools: Read, Edit, Bash, Grep, Glob
 ---
