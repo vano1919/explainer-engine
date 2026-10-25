@@ -2213,3 +2213,7 @@ new LoRA, grammar and transitions measured from downloaded references but no tra
 no rule changed until he decides.
 - 23:20 Tbilisi: plan v2 after ვანო's correction (the genre, any topic; no rights limits, his decision):
   https://claude.ai/artifact/Ajuy7VSeUuzLWDfU3Fyc4E, section 5 of the research file.
+- 23:40 Tbilisi: `research/reference_study.py` (first stage of the v2 analysis pipeline, free): cuts per video, shots per
+  minute, median shot, cuts in the first 30 s, cut density at the "Most replayed" peaks vs lows (from yt-dlp's
+  `.info.json` heatmap), and each channel's most-viewed videos against the rest. Test: `tests/unit/test_reference_study.py`.
+  Next stages (shot descriptions, Whisper speakers and J/L cuts, script structure) once the references are in.
