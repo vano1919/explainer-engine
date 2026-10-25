@@ -2261,3 +2261,6 @@ training as sequences is decided in the process. Changed together:
   Rejected: gore, readable text and credits, Nazi symbols, nudity, vomit, show-in-show art, split screens. HF:
   `lora_plan_2026-10-26/dataset_xworld_v1/` (manifest.json; 1337 files) and `..._code/` (scripts + review records).
   No captions yet: the Qwen-VL pod waits for the creator's OK of its plan (OR-23).
+- 03:05 Tbilisi: caption pod script `training/pods/caption_xworld_v1.{py,sh}` + `tests/unit/test_caption_xworld_v1.py`
+  (Qwen3-VL-8B-Instruct; 1336 descriptions + 665 change lines; no names, no trigger, resumable). Not started: the pod plan
+  goes to the creator first (OR-23).
