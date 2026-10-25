@@ -38,8 +38,7 @@ Procedure:
    - Image 1 is the master frame (place), then the model sheets of the people on screen, most important first.
    - Add the previous shot only when its exact state matters, and always last.
    - Stay within the model's cap.
-   - `derive_from` stays `original` unless a single small change on the same setup is cheaper. Never more than one
-     edit deep.
+   - `derive_from` is always `original`: no edit model and no img2img pass (D-78).
 7. **Run the check.**
    - `python -m explainer_engine.scripting.continuity check <cards.json>`.
    - Fix every FAIL in the card, never in the tool.

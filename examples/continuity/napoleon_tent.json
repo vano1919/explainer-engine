@@ -1,7 +1,7 @@
 {
   "schema": "continuity_card/1",
   "scene_id": "S04",
-  "model": "qwen_edit_2511",
+  "model": "qwen_image_21",
   "style_line": "wldnk style, rough ink line, gritty painted texture, warm earthy palette, big grotesque faces.",
   "location": {
     "id": "napoleon_tent",

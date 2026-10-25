@@ -69,7 +69,7 @@ One card per shot:
 | CT-06 | Two or more people on screen need an axis. The camera stays on its side unless a reason is given (neutral shot, cutaway, insert, on-screen move) | source (180° rule; H-B Sc 28-30) | FAIL / REVIEW |
 | CT-07 | Two consecutive shots of the same people change size by at least one step or the angle by at least 30°, unless the cut is a time cut | source (30° rule; H-B "not so slightly different") | FAIL |
 | CT-08 | Every state difference from the previous shot appears in `changes` with a cause. This covers time, weather, light, set state, and each person's costume, flags and props; position and facing are compared only on the same camera side and size. A listed change that did not happen is a REVIEW | source (hook-ups; script supervisor) | FAIL / REVIEW |
-| CT-09 | A shot is drawn fresh from the original references, at most `MAX_CHAIN` (1) edit deep, and `derive_from` names an earlier shot | source (Banana100, FreqEdit, Agent Banana drift) | FAIL |
+| CT-09 | A shot is drawn fresh from the original references: `MAX_CHAIN` is 0, so `derive_from` is `original` (no edit model, no img2img pass, [D-78](DECISIONS_AND_OPEN_QUESTIONS.md)) | source (Banana100, FreqEdit, Agent Banana drift) + the creator's rule | FAIL |
 | CT-10 | A shot shows only landmarks from its location's list | source (H-B BG continuity) | FAIL |
 | CT-11 | An eyeline points at a person in the cast or off-screen (left, right, down, up). A person who looks at someone on screen faces them | source (eyeline match; H-B eye direction) | FAIL / REVIEW |
 | CT-12 | On a match-on-action cut on the same camera side, a moving person keeps their screen direction | source (H-B Sc 28-30; match on action) | FAIL |
@@ -89,7 +89,8 @@ style LoRA does not break what the base model already does. Variables, one at a 
 3. **Identity text:** verbatim registry description (default) or a short cast tag only.
 4. **Change wording:** the full state alone, or the full state plus "Change from the previous shot: ... Keep everything
    else the same."
-5. **Drawing:** fresh from the references (default) or edited from the previous shot (chain depth 1).
+
+An edit of the previous shot is not a variable: D-78 forbids the edit pass.
 
 ვანო rates every picture by eye on the four-level scale; the CT-14 questions are scored next to his vote. The winner
 becomes the default of `compose_prompt`. No numeric tolerance (colour distance, position drift) is set before it is

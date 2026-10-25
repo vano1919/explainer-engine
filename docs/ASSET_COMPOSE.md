@@ -22,7 +22,7 @@ Code: `explainer_engine/compose/`. Tested by `tests/unit/test_compose.py`. Layou
 3. Each asset is drawn with Qwen-Image-2512 and the style LoRA in the LT-65 shape (bf16, 1280x720 or a tall plate),
    cut out (BiRefNet) and checked (AC-15, AC-14, KG-). It is shown to ვანო and approved (AC-02).
 4. `frame` composes each shot on the CPU (AC-05..AC-09), with crowds from `crowd` (AC-10, AC-11). A light repaint with the
-   style LoRA (img2img 0.30) evens the light. That repaint is the only paid step per shot, ≈$0.01.
+   style LoRA (img2img 0.30) evens the light (retired for keyframes by D-78, 2026-10-25 10:50 Tbilisi: no img2img pass). That repaint is the only paid step per shot, ≈$0.01.
 5. A `reuse` shot is a crop of an earlier frame (AC-13). Nothing new is drawn for it.
 
 ## Rules

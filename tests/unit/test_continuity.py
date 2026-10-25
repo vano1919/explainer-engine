@@ -123,6 +123,15 @@ def test_chain_depth(doc):
     assert "CT-09" in rules(cc.check(doc))
 
 
+def test_no_edit_pass_on_an_earlier_shot(doc):
+    """D-78 (ვანო 2026-10-25 10:50 Tbilisi): no edit model, no img2img pass; every shot is drawn from the references."""
+    assert cc.MAX_CHAIN == 0
+    doc["shots"][2]["derive_from"], doc["shots"][2]["chain_depth"] = "S04-02", 0
+    assert any(f["rule"] == "CT-09" and "D-78" in f["detail"] for f in cc.check(doc))
+    doc["shots"][2]["derive_from"] = "original"
+    assert "CT-09" not in rules(cc.check(doc))
+
+
 def test_landmarks_belong_to_the_location(doc):
     doc["shots"][1]["landmarks"].append({"id": "cannon", "side": "right"})
     assert "CT-10" in rules(cc.check(doc))

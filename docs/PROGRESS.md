@@ -2165,3 +2165,18 @@ GitHub branches of 9 open PRs.
   multi-hero keyframes, got short reactions in `episode.py`.
 - With three or four heroes, 40 words cannot hold every costume. Identity there comes from the hero sheets and the
   composition. Test: `test_a_four_hero_moment_names_everyone_and_gives_the_others_their_reactions`.
+
+## 2026-10-25 22:10 Tbilisi: all open branches in one place; D-71 and D-78 written; CT-09 forbids the edit pass
+
+ვანო: put the repository in order so the newest rules are in one place, and date every PR.
+- PRs #14-#21 and #23-#25 are merged into PR #22's branch (#19 as superseded by main's `check`). Every PR's dates,
+  the ID collisions (D-63 -> D-76, D-74 -> D-77, ST-14..16 -> ST-17..19; the first definer keeps the number) and the
+  rule conflicts with the current winner: [research/BRANCH_INTEGRATION_2026-10-25.md](research/BRANCH_INTEGRATION_2026-10-25.md).
+- Joins: OR-19's sample filter runs after D-69's staging plan; staged references build on `hero_refs`; both painters send
+  `P.full_prompt`; World Bible v1.1 (the modern_new_york era) and its tests follow the committed version; BP-40 keeps
+  ვანო's 2026-10-20 21:14 wording plus the 2026-10-24 scope; VT-01/02 run inside `runpod.lint_pod_script`.
+- D-71 (Wild Ink) and D-78 (no edit model, no img2img pass; ვანო 10:50 Tbilisi) were only in project memory; now in the
+  decision log. CT-09: `MAX_CHAIN` 0, a `derive_from` other than `original` FAILs; the continuity test loses its edit
+  variant; the example card uses `qwen_image_21`. Test: `test_no_edit_pass_on_an_earlier_shot`.
+- Open for ვანო: ASSET_COMPOSE (code composes) or D-75 (cards + references) as the production route; removal of the
+  retired rig code; closing the merged PRs.
