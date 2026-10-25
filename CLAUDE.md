@@ -10,6 +10,8 @@ narration + Scribe word timings → PIL/ffmpeg assembly
 technical + editorial QA → review bundle → **creator approval** → manual upload. Cloud-first (D-31). Start from `docs/INDEX.md`: every specification and every ID (D-, SE-, V-, P-, R-, Q-) has ONE canonical home —
 link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this). `docs/PLAN_2026-10-15.md` is history.
 
+**Rule one (creator, 2026-10-26, OR-22):** never take a system decision on an assumption (base model, LoRA and checkpoint, data, settings, test design, rule wording, spend); every detail his words do not settle is put to the creator first, also in auto mode. **Before every pod (OR-23):** a detailed plan item by item (purpose, model and checkpoint, data, every setting, outputs and HF paths, GPU and price, time and money caps, stop condition, what he sees, what follows), agreed before `runpod create`; never a general summary.
+
 ## Commands
 
 ```powershell

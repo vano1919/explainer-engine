@@ -2229,3 +2229,10 @@ Tests: `tests/unit/test_reusable_first.py`, `test_runpod.py::test_create_cli_set
 - 00:45 Tbilisi: ვანო chose to delete the unused global volume wasteful_fuchsia_fish; `runpod delete-volume <id> --global
   --yes` (new, verified by listing again; test `test_delete_volume_global_needs_the_word_and_verifies`) removed it. Pod
   hrdpkuwoh6iyuz (L40, $0.69/h, job cap $3.2 = 80 % of the run's $4) started through `runpod create`, guard on.
+
+## 2026-10-26 01:06 Tbilisi: rule one (OR-22) and a detailed plan before every pod (OR-23)
+
+ვანო (01:05): never take a system decision on an assumption, agree every detail with him, also in auto mode; (01:06) before
+every pod a detailed plan, not a general one. Rows OR-22 and OR-23 in ORCHESTRATION; CLAUDE.md carries both above the
+commands. Cause: the xworld style LoRA was started on Qwen-Image-2512 from an old rule against his newer 2.1 decision.
+Test: `tests/unit/test_agree_every_detail.py`.
