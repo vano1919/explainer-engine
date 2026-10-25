@@ -2236,3 +2236,17 @@ Tests: `tests/unit/test_reusable_first.py`, `test_runpod.py::test_create_cli_set
 every pod a detailed plan, not a general one. Rows OR-22 and OR-23 in ORCHESTRATION; CLAUDE.md carries both above the
 commands. Cause: the xworld style LoRA was started on Qwen-Image-2512 from an old rule against his newer 2.1 decision.
 Test: `tests/unit/test_agree_every_detail.py`.
+
+## 2026-10-26 01:20 Tbilisi: D-80, start from zero on Qwen-Image-2.1; old rules reconciled (LT-73)
+
+ვანო (01:02-01:04): the engine moved to Qwen-Image-2.1, visuals included; review every rule and resolve conflicts for the
+newest. His answers (01:15): every old LoRA banned everywhere, the new look is learned from Rick and Morty, style and scene
+sequence are taught together on 2.1 with the prompt types of the continuity research tested; whether the sequences enter
+training as sequences is decided in the process. Changed together:
+- D-80 (new), D-71 superseded, D-78 amended; LT-64, LT-69 rewritten; LT-65..LT-68 and KG-22/KG-23 suspended (written for the
+  banned look); KG-16, ZI-06, CT-09 for 2.1; LT-73 (a new decision rewrites every older rule it contradicts, same change).
+- Code: `keyframe_gate.RETIRED` (2512, Edit-2511) and `RETIRED_LORAS` (`wldnk_*`) refused by `check_stack`; `LORA_BASE`
+  holds only `xworld` on 2.1; `style_prompt.INFERENCE` has no LoRA until the creator rates the new one; the old flux/wan pod
+  scripts are marked retired; SHOT_PROMPTS and the lora-training skill carry a D-80 banner.
+- Tests: `test_keyframe_gate.py::test_only_the_2_1_stack`, `::test_old_loras_are_banned`, `test_episode_look`.
+- Cost of the mistake that led here: the xworld pod on 2512 (≈$0.15), stopped at 00:59.

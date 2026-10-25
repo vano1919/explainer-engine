@@ -1,4 +1,5 @@
-"""Keyframes for the night test video: FLUX.2 klein base 4B + the wldnk photo LoRA (diffusers Flux2KleinPipeline).
+"""RETIRED by D-80 (2026-10-26): it loads a banned wldnk LoRA; kept as history, never run.
+Keyframes for the night test video: FLUX.2 klein base 4B + the wldnk photo LoRA (diffusers Flux2KleinPipeline).
 Character sheets and plates first (text to image), then each shot's FIRST frame (references: the sheets of the
 characters in the shot + its plate) and LAST frame (an edit of the first frame). Writes /workspace/out/kf/*.png and
 kf/report.json. Usage: python kf.py SHOTS.json LORA.safetensors OUTDIR [--smoke] [--strength 1.0]"""

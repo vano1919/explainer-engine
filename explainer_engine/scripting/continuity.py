@@ -27,7 +27,7 @@ MODEL_REFS = {
     "flux2": {"refs": 10, "people": 10, "source": "BFL docs: up to 10 reference images"},
 }
 SIZES = ["EWS", "WS", "MWS", "MS", "MCU", "CU"]   # one step = a clear size change (CT-07); "insert" is its own kind
-MAX_CHAIN = 0          # CT-09: every shot fresh from the references; no edit pass (D-78; drift papers: Banana100, FreqEdit)
+MAX_CHAIN = 0          # CT-09: every shot from the references, never on a generated shot (D-78/D-80; Banana100, FreqEdit)
 MIN_ANGLE = 30         # CT-07: the 30-degree rule
 TRACKED = ("screen_pos", "depth", "facing", "costume", "flags", "props")   # CT-08: a person's state that must hook up
 
@@ -181,7 +181,7 @@ def check(doc: dict) -> list[dict]:
         if src != "original" and src not in ids[:ids.index(sid)]:
             add("CT-09", "FAIL", sid, f"derive_from {src!r} is not an earlier shot")
         elif src != "original" and MAX_CHAIN == 0:
-            add("CT-09", "FAIL", sid, f"derive_from {src!r}: no edit pass on an earlier shot (D-78); draw it from the references")
+            add("CT-09", "FAIL", sid, f"derive_from {src!r}: no edit pass on an earlier shot (D-78/D-80); draw it from the references")
         if any(r["role"] == "previous_shot" for r in refs) and refs[-1]["role"] != "previous_shot":
             add("CT-05", "FAIL", sid, "the previous shot, when used, is the last reference")
         if prev is None:

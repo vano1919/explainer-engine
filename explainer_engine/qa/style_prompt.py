@@ -1,4 +1,5 @@
-"""LT-65 (docs/LORA_TRAINING.md): a prompt for the style LoRA has the shape of the prompts that drew the approved look: the
+"""Suspended by D-80 (2026-10-26) for the new look: the shape below was measured on the banned wldnk look
+and is rewritten from the 2.1 prompt-type test. LT-65 (docs/LORA_TRAINING.md): a prompt for the style LoRA has the shape of the prompts that drew the approved look: the
 trigger, then a short story of the moment (a place, an action at its peak, someone's reaction, the bodies' caricature words,
 a light source, one or two props), at most 40 words, with no camera, sizes or positions in the words. stdlib only.
 
@@ -40,12 +41,12 @@ STYLE_CLASH = re.compile(r"\b(photo(graph)?|photoreal\w*|realistic|hyper-?real\w
 # LT-66: the absolutes. No episode look, scene, thread or test run changes them; only the creator's word does, and then
 # this table, its test (tests/unit/test_style_prompt.py) and docs/LORA_TRAINING.md change together.
 NEGATIVE = "text, lettering, letters, words, watermark, signature, photo, 3d render"
-INFERENCE = {"base": "Qwen/Qwen-Image-2512", "lora": "wldnk_style_v1.0", "lora_weight": 1.0, "dtype": "bfloat16",
-             "size": [1280, 720], "steps": 24, "true_cfg": 4.0}
+INFERENCE = {"base": "Qwen/Qwen-Image-2.1", "lora": None, "lora_weight": 1.0, "dtype": "bfloat16",
+             "size": [1280, 720], "steps": 30, "true_cfg": 4.0}  # D-80: one stack; no LoRA until the creator rates the new one
 ABSOLUTES = (
     ("A1", "the prompt starts with the trigger 'wldnk style', once"),
-    ("A2", f"the style LoRA {INFERENCE['lora']} at weight 1.0, only on {INFERENCE['base']} in bf16, 24 steps, true_cfg 4; "
-           "never inside an Edit model"),
+    ("A2", f"the creator-rated LoRA (none yet, D-80) at weight 1.0, only on {INFERENCE['base']} in bf16, 30 steps, true_cfg 4; "
+           "plain or in its edit mode with references (D-80)"),
     ("A3", "the negative prompt is exactly NEGATIVE"),
     ("A4", f"at most {MAX_WORDS} words: a place, an action at its peak, a reaction, caricature body words, a light source, "
            "one or two props"),

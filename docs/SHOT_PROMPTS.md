@@ -1,5 +1,7 @@
 # Shot prompts for animated shots
 
+> **Retired in part by [D-80](DECISIONS_AND_OPEN_QUESTIONS.md) (2026-10-26):** Qwen-Image-2512, Edit-2511 and every `wldnk_*` LoRA are banned; keyframes come from Qwen-Image-2.1 (draws and edits with references) with the new LoRA learned from Rick and Morty. Model rows and the `wldnk style` prompt shape below describe the banned stack; the new prompt rules come from the 2.1 prompt-type test.
+
 How the prompts of an animated shot are written: the keyframe (Qwen-Image-2512 + the style LoRA), the next pose of the same
 shot (Qwen-Image-Edit-2511 + the scene LoRA, from the master frame), a cut to a new angle of the same scene, and the video
 (LTX-2.5 with native audio). ვანო asked for it on 2026-10-24 (15:35 Tbilisi): "analyse the patterns and anti-patterns of the

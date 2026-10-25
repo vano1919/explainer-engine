@@ -31,10 +31,11 @@ VLM_MODEL = "Qwen/Qwen2.5-VL-72B-Instruct-AWQ"
 
 # KG-16: which base model each of our LoRAs was trained on; a LoRA is loaded only into its own base
 LORA_BASE = {
-    "wldnk_style": "Qwen/Qwen-Image-2512",
-    "wldnk_scene": "Qwen/Qwen-Image-Edit-2511",
-    "wldnk_qi21": "Qwen/Qwen-Image-2.1",      # 2026-10-25: one model draws and edits, so this LoRA serves both
+    "xworld": "Qwen/Qwen-Image-2.1",    # D-80: the new look (R&M) and the scene sequence, one LoRA
 }
+BASE = "Qwen/Qwen-Image-2.1"  # D-80: the one image stack
+RETIRED_LORAS = ("wldnk_",)  # D-80: every LoRA trained before 2026-10-26 (wldnk_style, _scene, _qi21, _wan22)
+RETIRED = {"Qwen/Qwen-Image-2512", "Qwen/Qwen-Image-Edit-2511"}
 
 
 # the film_shots screen places (scripting/film_shots.WHERE, PR #24) as a question can say them
@@ -219,14 +220,19 @@ def summary(records: list[dict], retrain_at: int = RETRAIN_AT) -> dict:
 
 
 def check_stack(model: str, loras: dict) -> None:
-    """KG-16: refuse a LoRA on a base it was not trained on (the style LoRA inside Edit-2511 broke style and faces)."""
+    """KG-16: refuse a retired base (D-80) and a LoRA on a base it was not trained on (the style LoRA inside Edit-2511
+    broke style and faces)."""
+    if model in RETIRED:
+        raise ValueError(f"{model} is retired (D-80): keyframes come from {BASE}, plain or in edit mode with references")
     for name in loras:
+        if name.startswith(RETIRED_LORAS):
+            raise ValueError(f"{name} is banned (D-80): every LoRA trained before 2026-10-26 is retired")
         base = next((b for prefix, b in LORA_BASE.items() if name.startswith(prefix)), None)
         if base is None:
             raise ValueError(f"unknown LoRA {name!r}: add its base model to LORA_BASE")
         if base != model:
-            raise ValueError(f"{name} was trained on {base}, not {model}: masters come from {LORA_BASE['wldnk_style']} "
-                             f"with the style LoRA, poses from {LORA_BASE['wldnk_scene']} with the scene LoRA only")
+            raise ValueError(f"{name} was trained on {base}, not {model}: keyframes come from {BASE} with a LoRA "
+                             f"trained on it (D-80)")
 
 
 def main(argv: list[str]) -> int:

@@ -1,4 +1,5 @@
-"""Clips for the night test video: Wan 2.2 I2V A14B (bf16 from ai-toolkit/Wan2.2-I2V-A14B-Diffusers-bf16, text encoder and
+"""RETIRED by D-80 (2026-10-26): it loads a banned wldnk LoRA; kept as history, never run.
+Clips for the night test video: Wan 2.2 I2V A14B (bf16 from ai-toolkit/Wan2.2-I2V-A14B-Diffusers-bf16, text encoder and
 VAE from Wan-AI/Wan2.2-I2V-A14B-Diffusers) with first AND last frame (diffusers last_image), the lightx2v 4-step distill
 LoRAs and, when it exists, our wldnk style LoRA (high + low noise files from ai-toolkit). LoRAs are fused into each expert
 on the GPU, then the expert is stored in fp8 (layerwise casting), so both experts fit a 48 GB card without a big CPU RAM.

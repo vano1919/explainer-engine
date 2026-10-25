@@ -77,29 +77,40 @@ def test_the_log_says_what_to_fix(tmp_path):
     qs = kg.questions(ICE)
     bad = kg.verdict(qs, answers(qs, {"KG-09": "yes"}))
     for i in range(kg.RETRAIN_AT):
-        kg.append_log(log, kg.record(ICE, model="Qwen/Qwen-Image-2512", loras={"wldnk_style_v1.0": 1.0}, seed=i,
+        kg.append_log(log, kg.record(ICE, model="Qwen/Qwen-Image-2.1", loras={"xworld_v1": 1.0}, seed=i,
                                      prompt="p", result=bad, image=f"{i}.png", cause={"KG-09": "lora"}))
-    kg.append_log(log, kg.record(ICE, model="Qwen/Qwen-Image-2512", loras={"wldnk_style_v1.0": 1.0}, seed=99, prompt="p",
+    kg.append_log(log, kg.record(ICE, model="Qwen/Qwen-Image-2.1", loras={"xworld_v1": 1.0}, seed=99, prompt="p",
                                  result=kg.verdict(qs, answers(qs, {"KG-06": "no"})), image="x.png",
                                  cause={"KG-06": "prompt"}))
-    kg.append_log(log, kg.record(ICE, model="Qwen/Qwen-Image-2512", loras={}, seed=7, prompt="p",
+    kg.append_log(log, kg.record(ICE, model="Qwen/Qwen-Image-2.1", loras={}, seed=7, prompt="p",
                                  result=kg.verdict(qs, answers(qs)), image="ok.png"))
     s = kg.summary(kg.read_log(log))
     assert s["pictures"] == kg.RETRAIN_AT + 2 and s["passed"] == 1
     todo = {a["code"]: a["do"] for a in s["actions"]}
     assert todo["KG-06"].startswith("prompt rule")
-    assert "retraining candidate for wldnk_style_v1.0" in todo["KG-09"]
+    assert "retraining candidate for xworld_v1" in todo["KG-09"]
     few = kg.summary(kg.read_log(log)[:3])
     assert {a["code"]: a["do"] for a in few["actions"]}["KG-09"].startswith("collect: 3/")
 
 
-def test_a_lora_loads_only_into_its_own_base_model():
-    kg.check_stack("Qwen/Qwen-Image-2512", {"wldnk_style_v1.0": 1.0})
-    kg.check_stack("Qwen/Qwen-Image-Edit-2511", {"wldnk_scene_v1_000000750": 1.0})
-    with pytest.raises(ValueError, match="trained on Qwen/Qwen-Image-2512"):
-        kg.check_stack("Qwen/Qwen-Image-Edit-2511", {"wldnk_scene_v1": 1.0, "wldnk_style_v1.0": 0.2})
+def test_only_the_2_1_stack():
+    """D-80: Qwen-Image-2.1 draws and edits; 2512 and Edit-2511 are retired; a LoRA loads only into its own base."""
+    kg.check_stack("Qwen/Qwen-Image-2.1", {"xworld_v1_000000500": 1.0})
+    kg.check_stack("Qwen/Qwen-Image-2.1", {})
+    for old in ("Qwen/Qwen-Image-2512", "Qwen/Qwen-Image-Edit-2511"):
+        with pytest.raises(ValueError, match="retired"):
+            kg.check_stack(old, {})
+    with pytest.raises(ValueError, match="trained on Qwen/Qwen-Image-2.1"):
+        kg.check_stack("black-forest-labs/FLUX.2", {"xworld_v1": 1.0})
     with pytest.raises(ValueError, match="unknown LoRA"):
-        kg.check_stack("Qwen/Qwen-Image-2512", {"someone_else": 1.0})
+        kg.check_stack("Qwen/Qwen-Image-2.1", {"someone_else": 1.0})
+
+
+def test_old_loras_are_banned():
+    """D-80 (ვანო 2026-10-26 01:15): every LoRA trained before 2026-10-26 is banned everywhere."""
+    for name in ("wldnk_style_v1.0", "wldnk_scene_v1_000000750", "wldnk_qi21_v1_000000500", "wldnk_wan22_v1"):
+        with pytest.raises(ValueError, match="banned"):
+            kg.check_stack("Qwen/Qwen-Image-2.1", {name: 1.0})
 
 
 def test_film_test_v2_cases():
