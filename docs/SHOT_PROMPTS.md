@@ -102,7 +102,7 @@ this page; "ours" means our own tests of 2026-10-22..24.
 | keep | KP-12 | it is anticipation, action and follow-through (Thomas and Johnston); the first frame shows the start (KP-16) |
 | keep, now in code | KP-13 | KP-19 |
 
-### Rules KP-15..KP-34 and KP-44 (the shot card)
+### Rules KP-15..KP-34, KP-44 and KP-45 (the shot card)
 
 | ID | Rule | Evidence | Kind | Check |
 |---|---|---|---|---|
@@ -127,6 +127,7 @@ this page; "ours" means our own tests of 2026-10-22..24.
 | KP-33 | **Relations the picture can draw one way only**: each `frame.relations` sentence says behind, in front of, on top of, under, to the left of...; "by", "near", "beside", "next to" or "with" alone FAIL ("a woolly mammoth by the boulder" drew a mammoth-shaped boulder); a relation names a figure already in the picture with its tag and "the", never "a" or "an" before a cast member's noun ("a living woolly mammoth stands behind the bus" drew two mammoths in 4 of 4 pictures, test v2 2026-10-24) | the LoRA thread's master test 2026-10-24 | house | [code] FAIL |
 | KP-34 | **Free space for the action**: a drawn first frame with an action has `frame.lead_room` (left, right, above, below, or none when the action stays in place), so the video does not move a hand or a body out of the frame | the creator 2026-10-24; KP-03 (everyone stays in frame) | house | [code] FAIL |
 | KP-44 | **Never name what must be absent.** No picture prompt of a frame (keyframe, next pose, cut, last frame, video) says a word of the world's `absent` or the frame's `frame.absent` (KG-21), not inside another name ("city bus") and not after "no" ("a plain with no road"); spoken lines in quotes are sound and are left out. Say it another way ("yellow bus", "an open snowy plain") | the LoRA thread 2026-10-25: the Qwen-Image-2.1 style LoRA drew a city behind "city bus" at steps 250 and 500, the base model at step 0 none | evidence (one test) | [code] REVIEW |
+| KP-45 | **Everyone in the moment, and someone reacts.** A keyframe moment names every figure of its blocking (at least by the tag's head; the gate counts them, KG-01/KG-02), and with two or more figures one of the others has a reaction or a pose. Words are spent in rounds within LT-65's 40: the lead with the action, the light's head, everyone by head, the full light, the others' reactions, the lead's first costume trait, the others' traits, then the lead's body words and full tags. With three or more heroes not every costume fits: identity there comes from the hero sheets and the composition (ASSET_COMPOSE) | the LoRA thread 2026-10-25: S04-01, S08-01 and S13-01 dropped a hero; eight multi-hero moments named the others without a verb or costume; the eras formula wants the second hero's reaction | evidence (one review) | [code] REVIEW |
 
 ### Rules KP-35..KP-43 (the episode, under the script engine v1)
 

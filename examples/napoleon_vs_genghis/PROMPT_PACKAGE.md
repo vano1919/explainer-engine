@@ -11,7 +11,7 @@
   `episode.py`) by the engine's composer; no prompt was typed by hand (rule ZI-01 of `docs/SCRIPT_ENGINE.md`).
 - `python -m explainer_engine.scripting.film_shots check film_shots.json` -> **214 shots, 0 FAIL, 0 REVIEW** under
   the card rules KP-15..KP-43, the prompt lint KP-01..KP-14 and the engine rules ZI-02/ZI-03.
-- Files: `film_shots.json` (the cards), `prompts.json` (9 hero sheets, 444 prompts, 207 gate
+- Files: `film_shots.json` (the cards), `prompts.json` (9 hero sheets, 444 prompts, 230 gate
   cards for the keyframe check), `script.md` (the readable script with claim ids), `shotlist.md` (the script with every picture and video prompt under its shot), this package.
 
 ## 1. The story
@@ -116,7 +116,7 @@ sheet is what every keyframe, pose and clip is checked against (invariant 6).
 
 **Master keyframe (Qwen-Image-2512 + style LoRA)** `{"id": "S04-01.first", "kind": "keyframe", "lora": "style"}`
 
-> wldnk style, a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap, thin-limbed and bulging-eyed, pulls his horse up hard, the tall marshal, the short general, warm late afternoon light
+> wldnk style, a French army camp on the open steppe, the young interpreter pulls his horse up hard, the short general raises one eyebrow, the mameluke rider leans in to listen, the tall marshal, warm late afternoon light
 
 **Cut, new size of the master (Edit-2511 + scene LoRA)** `{"id": "S04-07.first", "kind": "cut", "lora": "scene", "master": "S04-01"}`
 

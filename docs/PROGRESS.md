@@ -1368,3 +1368,16 @@ What was done:
   Spoken lines in quotes are left out.
 - The bus example and film_1min say "yellow bus" (tag, places, relations, things) and "an open snowy plain". "City"
   stays in `absent`. Test: `test_a_picture_word_that_names_an_absent_thing_is_flagged`.
+
+## 2026-10-25 19:40 Tbilisi: every hero in the moment, with a reaction (KP-45)
+
+- The LoRA thread checked the Napoleon prompts before round 2 of the 2.1 style-LoRA loop. Two issues: S04-01, S08-01
+  and S13-01 dropped a hero, and the multi-hero moments named the others with a bare head phrase and no verb.
+- `keyframe_prompt` now spends its 40 words in rounds, so every figure is named before any costume word.
+  `_trait` (the tag's first trait) and `_light_head` (the light source) are the middle levels. Others with a card
+  reaction come first.
+- New REVIEW rule KP-45 (`moment_check`): a figure missing from the moment's words, or two or more figures where nobody
+  but the lead does anything. It found five more Napoleon shots and film_1min S02-01. Those cards, and the eight
+  multi-hero keyframes, got short reactions in `episode.py`.
+- With three or four heroes, 40 words cannot hold every costume. Identity there comes from the hero sheets and the
+  composition. Test: `test_a_four_hero_moment_names_everyone_and_gives_the_others_their_reactions`.

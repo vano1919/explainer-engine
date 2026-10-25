@@ -42,8 +42,9 @@ def test_the_worked_example_is_clean_and_valid():
 def test_keyframe_tells_the_moment_at_its_peak_with_a_reaction_and_no_layout():
     p = prompts(doc())["S01-02.first"]
     assert p["kind"] == "keyframe" and p["prompt"].startswith("wldnk style, an open snowy plain")  # LT-65: trigger, place
-    assert "the old man, thin-limbed and bulging-eyed, throws both hands up" in p["prompt"]  # body words, the peak
-    assert "the nurse in the purple puffer jacket turns her head toward him" in p["prompt"]  # a reaction, by tag
+    assert "the old man with round glasses throws both hands up" in p["prompt"]  # a costume trait, the peak
+    assert "the nurse turns her head toward him" in p["prompt"]  # someone's reaction
+    assert "the pink-haired girl" in p["prompt"] and "the bearded man" in p["prompt"]  # everyone in the blocking
     assert "cold blue morning light" in p["prompt"]
     assert not style_prompt.check(p["prompt"])  # no tail, no camera/size/position, at most 40 words
     assert "full-body" not in p["prompt"] and "on the left" not in p["prompt"]  # the layout is the gate card's
@@ -465,7 +466,10 @@ def test_a_crowded_keyframe_stays_in_the_word_limit_and_keeps_its_light():
                           "height": "third"})
     k = F.keyframe_prompt(d, s)
     assert len(k.split()) <= F.MOMENT_WORDS_MAX and not style_prompt.check(k)
-    assert s["frame"]["light"] in k  # the light carries the look
+    assert F._light_head(s["frame"]["light"]) in k  # the light source carries the look, shortened when words are short
+    missing = [b["who"] for b in s["blocking"] if F._core(F._tag(d, b["who"])) not in k]
+    assert missing == ["mammoth"]  # seven figures do not fit in 40 words; the last one is left out ...
+    assert {(f["rule"], f["where"]) for f in F.moment_check(d)} >= {("KP-45", "S01-02.first")}  # ... and KP-45 says so
     assert all(k.count(c["tag"]) <= 1 for c in d["cast"].values())  # LY-09
 
 
@@ -535,3 +539,18 @@ def test_a_picture_word_that_names_an_absent_thing_is_flagged():
     d["absent"].append("a highway")
     shot(d, "S01-04")["dialogue"]["text"] = "Was there a highway here?"
     assert not [f for f in F.check(d) if f["rule"] == "KP-44"]  # a spoken line is sound, not a picture word
+
+
+def test_a_four_hero_moment_names_everyone_and_gives_the_others_their_reactions():
+    d = F.load(ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json")
+    for sid in ("S04-01", "S08-01", "S13-01"):  # the LoRA thread: these dropped a hero (KP-45)
+        s = next(x for x in d["shots"] if x["id"] == sid)
+        k = F.keyframe_prompt(d, s)
+        assert len(k.split()) <= F.MOMENT_WORDS_MAX and all(F._core(F._tag(d, b["who"])) in k for b in s["blocking"])
+        assert all(f"{F._core(F._tag(d, r['who']))} {r['does']}" in k for r in s["reactions"][:1])  # the first reaction
+    s = next(x for x in d["shots"] if x["id"] == "S06-07")  # two heroes: costume traits and the reaction
+    k = F.keyframe_prompt(d, s)
+    assert "the short general in a grey greatcoat points" in k and "the mameluke rider in a white turban squints" in k
+    assert not [f for f in F.check(d) if f["rule"] == "KP-45"]
+    del s["reactions"]
+    assert ("KP-45", "S06-07") in {(f["rule"], f["where"]) for f in F.moment_check(d)}  # nobody reacts

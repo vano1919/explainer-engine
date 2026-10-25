@@ -309,7 +309,7 @@
    "id": "S02-02.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a dirt road through a birch forest swallowed by thick white fog, the short general, thin-limbed and bulging-eyed, lifts a small brass telescope to his eye, cold white morning light",
+   "prompt": "wldnk style, a dirt road through a birch forest swallowed by thick white fog, the short general in a grey greatcoat, thin-limbed and bulging-eyed, lifts a small brass telescope to his eye, cold white morning light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -433,7 +433,7 @@
    "id": "S02-06.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, the line of Mongol horse archers, soft gold morning light",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry stand in silent rows, the line of Mongol horse archers wait on their shaggy horses, soft gold morning light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -460,7 +460,7 @@
    "mode": "establish",
    "people": 2,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. Everyone stays in frame. The camera pushes in slowly, ending on the gap of empty grass between the two armies in the middle of the frame. We hear wind over open grass.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts stand in silent rows; the line of Mongol horse archers in brown felt coats on short shaggy horses wait on their shaggy horses. Nobody speaks. Everyone stays in frame. The camera pushes in slowly, ending on the gap of empty grass between the two armies in the middle of the frame. We hear wind over open grass.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image"
   },
   {
@@ -613,7 +613,7 @@
    "id": "S03-06.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, leap from one saddle onto the other horse, golden evening light",
+   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses leap from one saddle onto the other horse, golden evening light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -647,7 +647,7 @@
    "id": "S03-07.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, pull the bows back and loose the arrows high, golden evening light",
+   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses pull the bows back and loose the arrows high, golden evening light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -749,7 +749,7 @@
    "id": "S03-10.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry in dark blue coats with white crossbelts, thin-limbed and bulging-eyed, the line of Mongol horse archers, soft gold morning light",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the ranks of French infantry march forward in step, the line of Mongol horse archers trot slowly closer, soft gold morning light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -776,14 +776,14 @@
    "mode": "narrated",
    "people": 2,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. Nobody speaks. Everyone stays in frame. The camera pushes in slowly, ending on the two armies small on each side of the empty valley. We hear wind over open grass.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The ranks of French infantry in dark blue coats with white crossbelts march forward in step; the line of Mongol horse archers in brown felt coats on short shaggy horses trot slowly closer. Nobody speaks. Everyone stays in frame. The camera pushes in slowly, ending on the two armies small on each side of the empty valley. We hear wind over open grass.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image"
   },
   {
    "id": "S04-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a French army camp on the open steppe, the young interpreter with a braided forelock and a green felt cap, thin-limbed and bulging-eyed, pulls his horse up hard, the tall marshal, the short general, warm late afternoon light",
+   "prompt": "wldnk style, a French army camp on the open steppe, the young interpreter pulls his horse up hard, the short general raises one eyebrow, the mameluke rider leans in to listen, the tall marshal, warm late afternoon light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -810,7 +810,7 @@
    "mode": "establish",
    "people": 4,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young interpreter with a braided forelock and a green felt cap, on the right, rides up toward the tents, then pulls his horse up hard, and sits the horse still in front of the generals. Nobody speaks. Everyone stays in frame. Static camera. We hear flags snapping in the wind, a quiet camp, hooves slowing on turf and a horse snorting.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young interpreter with a braided forelock and a green felt cap, on the right, rides up toward the tents, then pulls his horse up hard, and sits the horse still in front of the generals. The short general in a grey greatcoat and a black bicorne hat raises one eyebrow; the mameluke rider in a white turban and a red embroidered vest leans in to listen. Nobody speaks. Everyone stays in frame. Static camera. We hear flags snapping in the wind, a quiet camp, hooves slowing on turf and a horse snorting.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image"
   },
   {
@@ -1610,7 +1610,7 @@
    "id": "S05-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the tall marshal, thin-limbed and bulging-eyed, raises his sabre high and points it at the horizon, the French cuirassiers, cold pink dawn light",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the tall marshal raises his sabre high and points it at the horizon, the French cuirassiers in steel breastplates spur their big horses forward, cold pink dawn light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -1637,7 +1637,7 @@
    "mode": "narrated",
    "people": 2,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall marshal with long black curls and a white-plumed fur hat, in the center, sits his horse at the head of the cavalry, then raises his sabre high and points it at the horizon, and holds the sabre pointed forward. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over open grass and sabre ringing.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall marshal with long black curls and a white-plumed fur hat, in the center, sits his horse at the head of the cavalry, then raises his sabre high and points it at the horizon, and holds the sabre pointed forward. The French cuirassiers in steel breastplates and brass helmets on big horses spur their big horses forward. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over open grass and sabre ringing.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image"
   },
   {
@@ -1769,7 +1769,7 @@
    "id": "S06-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the grey-moustached grenadier, thin-limbed and bulging-eyed, throws himself flat in the grass, the ranks of French infantry duck behind their packs, hard midday sun",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the grey-moustached grenadier in a tall black bearskin cap throws himself flat in the grass, the ranks of French infantry duck behind their packs, hard midday sun",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -1837,7 +1837,7 @@
    "id": "S06-07.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, points the telescope at the ridge, the mameluke rider, hard midday sun",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the short general in a grey greatcoat points the telescope at the ridge, the mameluke rider in a white turban squints hard at the ridge, hard midday sun",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -1864,7 +1864,7 @@
    "mode": "scene",
    "people": 2,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, on the right, lowers his telescope, then points the telescope at the ridge, and keeps it pointed. After a short pause, the short general in a grey greatcoat and a black bicorne hat says in English, calm, fast, in a quick, clipped, slightly hoarse man's voice with a French accent: \"How far are they?\" Everyone stays in frame. Static camera. We hear wind in dry grass, far-off hooves.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, on the right, lowers his telescope, then points the telescope at the ridge, and keeps it pointed. The mameluke rider in a white turban and a red embroidered vest squints hard at the ridge. After a short pause, the short general in a grey greatcoat and a black bicorne hat says in English, calm, fast, in a quick, clipped, slightly hoarse man's voice with a French accent: \"How far are they?\" Everyone stays in frame. Static camera. We hear wind in dry grass, far-off hooves.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image",
    "qa": [
     "acting"
@@ -2642,7 +2642,7 @@
    "id": "S07-06.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a French army camp on the open steppe, the grey-moustached grenadier, thin-limbed and bulging-eyed, snaps the biscuit in two and pushes half into the drummer's hand, the young drummer, blue dusk light with orange campfires",
+   "prompt": "wldnk style, a French army camp on the open steppe, the grey-moustached grenadier snaps the biscuit in two and pushes half into the drummer's hand, the young drummer stares at his half, blue dusk light with orange campfires",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -2669,7 +2669,7 @@
    "mode": "scene",
    "people": 2,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The grey-moustached grenadier in a tall black bearskin cap, on the left, holds up a hard biscuit, then snaps the biscuit in two and pushes half into the drummer's hand, and keeps his own half in his fist. After a short pause, the grey-moustached grenadier in a tall black bearskin cap says in English, gruff, kind, in a gravelly, tired old soldier's voice with a French accent: \"Last biscuit. Half each, and don't argue.\" Everyone stays in frame. Static camera. We hear campfires crackling, a horse coughing and a biscuit cracking.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The grey-moustached grenadier in a tall black bearskin cap, on the left, holds up a hard biscuit, then snaps the biscuit in two and pushes half into the drummer's hand, and keeps his own half in his fist. The young drummer in a white shako with a red plume stares at his half. After a short pause, the grey-moustached grenadier in a tall black bearskin cap says in English, gruff, kind, in a gravelly, tired old soldier's voice with a French accent: \"Last biscuit. Half each, and don't argue.\" Everyone stays in frame. Static camera. We hear campfires crackling, a horse coughing and a biscuit cracking.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image",
    "qa": [
     "acting"
@@ -2892,7 +2892,7 @@
    "id": "S08-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, inside a large round felt yurt, the young scout with a scar on his cheek and a fox-fur hat, thin-limbed and bulging-eyed, drops to his knees on the carpet, the stocky general, the young interpreter, warm firelight",
+   "prompt": "wldnk style, inside a large round felt yurt, the young scout drops to his knees on the carpet, the stocky general with a shaved head frowns, the tall khan leans forward over the fire, the young interpreter, warm firelight",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -2919,7 +2919,7 @@
    "mode": "establish",
    "people": 4,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young scout with a scar on his cheek and a fox-fur hat, in the center, pushes through the felt door, then drops to his knees on the carpet, and kneels with his head bowed. Nobody speaks. Everyone stays in frame. Static camera. We hear a fire crackling, wind against felt and felt flapping.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The young scout with a scar on his cheek and a fox-fur hat, in the center, pushes through the felt door, then drops to his knees on the carpet, and kneels with his head bowed. The tall khan with a long grey beard and a blue fur-trimmed robe leans forward over the fire; the stocky general with a shaved head and bronze scale armour frowns. Nobody speaks. Everyone stays in frame. Static camera. We hear a fire crackling, wind against felt and felt flapping.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image"
   },
   {
@@ -3234,7 +3234,7 @@
    "id": "S08-11.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the two Mongol scouts, thin-limbed and bulging-eyed, lift their heads and stare at the wagon line, blue dusk light",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the two Mongol scouts in brown felt coats with bows on their backs lift their heads and stare at the wagon line, blue dusk light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -3934,7 +3934,7 @@
    "id": "S09-10.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the young scout, thin-limbed and bulging-eyed, pushes the grass apart with both hands and stares, hazy afternoon light",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the young scout with a scar on his cheek, thin-limbed and bulging-eyed, pushes the grass apart with both hands and stares, hazy afternoon light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4070,7 +4070,7 @@
    "id": "S10-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, pour down the slopes in a brown flood, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers pour down the slopes in a brown flood, the ranks of French infantry, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4097,14 +4097,14 @@
    "mode": "establish",
    "people": 2,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the background on the right, appear along both hilltops, then pour down the slopes in a brown flood, and spread out across the valley floor. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses and a horn blast.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The line of Mongol horse archers in brown felt coats on short shaggy horses, in the background on the right, appear along both hilltops, then pour down the slopes in a brown flood, and spread out across the valley floor. The ranks of French infantry in dark blue coats with white crossbelts brace their muskets. Nobody speaks. Everyone stays in frame. Static camera. We hear wind, distant horns, horses and a horn blast.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image"
   },
   {
    "id": "S10-02.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the short general, thin-limbed and bulging-eyed, stands in his stirrups and flings his arm up, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the short general in a grey greatcoat, thin-limbed and bulging-eyed, stands in his stirrups and flings his arm up, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4150,7 +4150,7 @@
    "id": "S10-03.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry, thin-limbed and bulging-eyed, slam their musket butts down with bayonets out, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts slam their musket butts down with bayonets out, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4218,7 +4218,7 @@
    "id": "S10-05.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, swing their bows up and loose a dark cloud of arrows, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers swing their bows up and loose a dark cloud of arrows, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4274,7 +4274,7 @@
    "id": "S10-07.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the grey-moustached grenadier, thin-limbed and bulging-eyed, grabs a soldier by the collar and pulls him into the gap, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the grey-moustached grenadier grabs a soldier by the collar and pulls him into the gap, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4354,7 +4354,7 @@
    "id": "S10-09.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the handful of French camp guards, thin-limbed and bulging-eyed, fire a thin ragged volley in a puff of smoke, bright afternoon sun",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the handful of French camp guards in grey greatcoats with long muskets fire a thin ragged volley in a puff of smoke, bright afternoon sun",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4410,7 +4410,7 @@
    "id": "S10-11.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, kick their horses forward into a charge, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers kick their horses forward into a charge, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4512,7 +4512,7 @@
    "id": "S10-14.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry, thin-limbed and bulging-eyed, jerk their cheeks down onto the stocks, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry in dark blue coats with white crossbelts jerk their cheeks down onto the stocks, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4580,7 +4580,7 @@
    "id": "S10-16.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry, thin-limbed and bulging-eyed, fire one volley in a wall of white smoke, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the ranks of French infantry fire one volley in a wall of white smoke, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4614,7 +4614,7 @@
    "id": "S10-17.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, swerve around the corners of the square and pull up hard, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers swerve around the corners of the square and pull up hard, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4682,7 +4682,7 @@
    "id": "S10-19.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the short general, thin-limbed and bulging-eyed, points at the crest behind them, the mameluke rider, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the short general in a grey greatcoat points at the crest behind them, the mameluke rider spins toward the gunners, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4709,7 +4709,7 @@
    "mode": "scene",
    "people": 2,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, on the right, lowers his telescope, then points at the crest behind them, and keeps the arm out. After a short pause, the short general in a grey greatcoat and a black bicorne hat says in English, calm, quick, in a quick, clipped, slightly hoarse man's voice with a French accent: \"Now. Signal the guns.\" Everyone stays in frame. Static camera. We hear wind, distant horns, horses.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, on the right, lowers his telescope, then points at the crest behind them, and keeps the arm out. The mameluke rider in a white turban and a red embroidered vest spins toward the gunners. After a short pause, the short general in a grey greatcoat and a black bicorne hat says in English, calm, quick, in a quick, clipped, slightly hoarse man's voice with a French accent: \"Now. Signal the guns.\" Everyone stays in frame. Static camera. We hear wind, distant horns, horses.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image",
    "qa": [
     "acting"
@@ -4728,7 +4728,7 @@
    "id": "S10-20.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the French gun crew, thin-limbed and bulging-eyed, heave the wheels forward and swing the barrel down, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the French gun crew heave the wheels forward and swing the barrel down, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4818,7 +4818,7 @@
    "id": "S10-23.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, break apart and scatter under a hail of shot, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a shallow grassy valley between two low hills on the open steppe, the line of Mongol horse archers break apart and scatter under a hail of shot, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4887,7 +4887,7 @@
    "id": "S10-25.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, hurl burning torches onto the canvas covers, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses hurl burning torches onto the canvas covers, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -4921,7 +4921,7 @@
    "id": "S10-26.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the young drummer, thin-limbed and bulging-eyed, slams both sticks down on the drum as he runs, orange firelight and smoke",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the young drummer in a white shako with a red plume slams both sticks down on the drum as he runs, orange firelight and smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -5057,7 +5057,7 @@
    "id": "S10-30.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the tall khan, thin-limbed and bulging-eyed, raises his open hand to hold his riders back, the stocky general, bright afternoon sun, drifting gun smoke",
+   "prompt": "wldnk style, a long low grassy ridge on the open steppe, the tall khan raises his open hand to hold his riders back, the stocky general grips his reins and waits, bright afternoon sun, drifting gun smoke",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -5084,7 +5084,7 @@
    "mode": "establish",
    "people": 2,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall khan with a long grey beard and a blue fur-trimmed robe, on the right, sits his horse on the far ridge, then raises his open hand to hold his riders back, and keeps the hand raised. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The tall khan with a long grey beard and a blue fur-trimmed robe, on the right, sits his horse on the far ridge, then raises his open hand to hold his riders back, and keeps the hand raised. The stocky general with a shaved head and bronze scale armour grips his reins and waits. Nobody speaks. Everyone stays in frame. Static camera. We hear wind over the ridge.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image"
   },
   {
@@ -5642,7 +5642,7 @@
    "id": "S12-02.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers, thin-limbed and bulging-eyed, lift a wounded rider down from a saddle, cold blue evening light",
+   "prompt": "wldnk style, a Mongol camp of round white felt yurts on the steppe, the line of Mongol horse archers in brown felt coats on short shaggy horses lift a wounded rider down from a saddle, cold blue evening light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -5890,7 +5890,7 @@
    "id": "S13-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, inside a large round felt yurt, the short general in a grey greatcoat and a black bicorne hat, thin-limbed and bulging-eyed, straightens up and pulls off his hat, the mameluke rider, the tall khan, warm firelight",
+   "prompt": "wldnk style, inside a large round felt yurt, the short general straightens up and pulls off his hat, the tall khan watches him without a smile, the young interpreter, the mameluke rider holds his hands behind his back, warm firelight",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -5917,7 +5917,7 @@
    "mode": "establish",
    "people": 4,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, on the left, ducks in through the low felt door, then straightens up and pulls off his hat, and stands holding the hat at his side. Nobody speaks. Everyone stays in frame. Static camera. We hear a fire crackling, wind against felt.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, on the left, ducks in through the low felt door, then straightens up and pulls off his hat, and stands holding the hat at his side. The tall khan with a long grey beard and a blue fur-trimmed robe watches him without a smile; the young interpreter with a braided forelock and a green felt cap freezes with his cap in his hands. Nobody speaks. Everyone stays in frame. Static camera. We hear a fire crackling, wind against felt.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image"
   },
   {
@@ -6405,7 +6405,7 @@
    "id": "S13-16.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the grey-moustached grenadier, thin-limbed and bulging-eyed, pulls up a fistful of grass and chews it, the young drummer watches him chew, cold blue light",
+   "prompt": "wldnk style, a long camp of covered supply wagons on the open steppe, the grey-moustached grenadier in a tall black bearskin cap pulls up a fistful of grass and chews it, the young drummer watches him chew, cold blue light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -6567,7 +6567,7 @@
    "id": "S13-21.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the line of Mongol horse archers in brown felt coats on short shaggy horses, thin-limbed and bulging-eyed, drag the cannons away across the grass, soft gold morning light",
+   "prompt": "wldnk style, an endless open grass steppe under a huge pale sky, the line of Mongol horse archers drag the cannons away across the grass, the French gun crew, soft gold morning light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -6692,7 +6692,7 @@
    "id": "S14-04.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a dirt road through a birch forest swallowed by thick white fog, the short general, thin-limbed and bulging-eyed, raises his arm and points into the fog, the ranks of French infantry, soft gold morning light",
+   "prompt": "wldnk style, a dirt road through a birch forest swallowed by thick white fog, the short general raises his arm and points into the fog, the ranks of French infantry stare into the fog, soft gold morning light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -6719,7 +6719,7 @@
    "mode": "narrated",
    "people": 2,
    "diegetic_music": false,
-   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, in the center, rides at the head of the column, then raises his arm and points into the fog, and rides on with the arm still raised. Nobody speaks. Everyone stays in frame. Static camera. We hear a slow marching drum in the fog.",
+   "prompt": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves. The short general in a grey greatcoat and a black bicorne hat, in the center, rides at the head of the column, then raises his arm and points into the fog, and rides on with the arm still raised. The ranks of French infantry in dark blue coats with white crossbelts stare into the fog. Nobody speaks. Everyone stays in frame. Static camera. We hear a slow marching drum in the fog.",
    "neg": "text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, deformed hands, extra fingers, flicker, still image"
   },
   {
@@ -7030,7 +7030,7 @@
    "id": "S16-01.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a rocky valley of the Stone Age with a cave mouth and a campfire, the crowd of modern people, thin-limbed and bulging-eyed, lift burning sticks and wave them at the dark, warm campfire light",
+   "prompt": "wldnk style, a rocky valley of the Stone Age with a cave mouth and a campfire, the crowd of modern people lift burning sticks and wave them at the dark, warm campfire light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",
@@ -7064,7 +7064,7 @@
    "id": "S16-02.first",
    "kind": "keyframe",
    "lora": "style",
-   "prompt": "wldnk style, a frozen Ice Age plain of snow and blue ice under a grey sky, the group of stranded travellers, thin-limbed and bulging-eyed, raise their arms against a gust of snow, cold blue light",
+   "prompt": "wldnk style, a frozen Ice Age plain of snow and blue ice under a grey sky, the group of stranded travellers in winter coats on the Ice Age snow raise their arms against a gust of snow, cold blue light",
    "neg": "text, lettering, letters, words, watermark, signature, photo, 3d render",
    "inference": {
     "base": "Qwen/Qwen-Image-2512",

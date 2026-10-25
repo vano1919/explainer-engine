@@ -291,50 +291,69 @@ def _core(tag: str) -> str:
     return re.split(r"\s+(?:with|in|on|beside|wearing|holding|from)\s+|,", tag.strip(), maxsplit=1)[0]
 
 
+def _trait(tag: str) -> str:
+    """A tag's head and first trait: 'the tall marshal with long black curls and a white-plumed fur hat' -> 'the tall
+    marshal with long black curls' (enough of the costume to match the hero sheet when words are short)."""
+    return re.split(r"\s+and\s+|,", tag.strip(), maxsplit=1)[0]
+
+
+def _light_head(light: str) -> str:
+    """'cold blue morning light under a low sky' -> 'cold blue morning light': the light source, which carries the look."""
+    m = re.match(r"(.*?\b(?:light|sun|sunlight|moonlight|firelight|glow|fog|haze|dusk|dawn))\b", light)
+    return m.group(1) if m else " ".join(light.split()[:4])
+
+
 def keyframe_prompt(doc: dict, shot: dict) -> str:
-    """The moment for Qwen-Image-2512 + the style LoRA (LT-65): ``<trigger>, <place>, <lead> <body words> <action at its
-    peak>, <a reaction>, <light>`` in at most MOMENT_WORDS_MAX words, with no camera, size or position. The peak and a
-    reaction carry the mood the approved pictures had; the video's first frame in the START pose (KP-16) and the layout
-    (sides, heights, supports, free space: the gate card) come from the composition of assets, not from these words.
-    Each figure is named once (LY-09): the lead and the reacting figure by tag (the tag's head phrase when words run
-    out), the others by their head phrase while words remain."""
+    """The moment for the style LoRA (LT-65): ``<trigger>, <place>, <lead> <body words> <action at its peak>, <the
+    others with their reactions>, <light>`` in at most MOMENT_WORDS_MAX words, with no camera, size or position. The peak
+    and the reactions carry the mood the approved pictures had; the video's first frame in the START pose (KP-16) and
+    the layout (sides, heights, supports, free space: the gate card) come from the composition of assets.
+    Every figure in the blocking is named, once (LY-09). Words are spent in rounds while the moment fits: everyone by
+    the light's head and everyone by the tag's head first (the gate counts them), the full light, then each other figure's reaction (the card's ``reactions``, else its pose),
+    then the lead's first costume trait, then the others' (``_trait``), then the lead's body words and full tags."""
     f = shot["frame"]
     place = _short(doc["places"].get(f["place"], f["place"]))
     action = shot.get("action") or {}
     body = doc["style"].get("body", BODY_WORDS)
     people = shot.get("blocking", [])
     lead = _lead(shot)
-    reacts = [r for r in shot.get("reactions", []) if r["who"] in {p["who"] for p in people} and r["who"] != lead]
-    # each piece runs from bare to full; pieces are raised in order while the moment fits
+    does = {r["who"]: r["does"] for r in shot.get("reactions", [])}
+    # each piece runs from bare (level 0) to full; rounds raise pieces while the moment fits
     pieces: list[list[str]] = [[place]]
     if lead:
         tag = _tag(doc, lead)
-        doing = action.get("peak") if action.get("who") == lead else next(
-            (p.get("pose") for p in people if p["who"] == lead and p.get("pose")), None)
-        core = f"{_core(tag)}, {body}," if body else _core(tag)
-        full = f"{tag}, {body}," if body else tag
-        pieces.append([f"{_core(tag)} {doing}" if doing else _core(tag), f"{core} {doing}" if doing else core,
-                       f"{full} {doing}" if doing else full])
+        doing = action.get("peak") if action.get("who") == lead else (
+            next((p.get("pose") for p in people if p["who"] == lead and p.get("pose")), None) or does.get(lead))
+        say = (lambda t, b=False: " ".join(x for x in [t + ("," if b and body else ""), (body + ",") if b and body else "",
+                                                       doing or ""] if x).rstrip(","))
+        pieces.append([say(_core(tag)), say(_core(tag)), say(_trait(tag)), say(_trait(tag), True), say(tag, True)])
     elif action.get("peak"):
         pieces.append([action["peak"]])
-    for r in reacts[:1]:
-        pieces.append(["", f"{_core(_tag(doc, r['who']))} {r['does']}", f"{_tag(doc, r['who'])} {r['does']}"])
-    seen = {lead} | {r["who"] for r in reacts[:1]}
-    for p in people:
-        if p["who"] not in seen:
-            core = _core(_tag(doc, p["who"]))
-            pieces.append(["", f"only {p['partial']} of {core}" if p.get("partial") else core])
+    others = sorted((p for p in people if p["who"] != lead), key=lambda p: p["who"] not in does)  # reactors first
+    first_other = len(pieces)
+    for p in others:
+        tag = _tag(doc, p["who"])
+        if p.get("partial"):
+            pieces.append(["", f"only {p['partial']} of {_core(tag)}"])
+            continue
+        verb = does.get(p["who"]) or p.get("pose") or ""
+        say = lambda t: f"{t} {verb}".strip()
+        pieces.append(["", _core(tag), say(_core(tag)), say(_trait(tag)), say(tag)])
     light = len(pieces)
-    pieces.append(["", f["light"]] if f.get("light") else [""])
+    pieces.append(["", _light_head(f["light"]), f["light"]] if f.get("light") else [""])
     level = [0] * len(pieces)
     budget = MOMENT_WORDS_MAX - len(doc["style"]["trigger"].split()) - _look_words(doc, f.get("look"))  # AC-17
 
     def text() -> str:
         return ", ".join(x for x in (pc[lv] for pc, lv in zip(pieces, level)) if x).replace(",,", ",")
 
-    order = [(1, 1), (light, 1), (2, 1), (1, 2), (2, 2)] + [(k, 1) for k in range(3, light)]
+    rest = range(first_other, light)
+    lead_k = [1] if first_other == 2 else []
+    order = ([(k, 1) for k in lead_k] + [(light, 1)] + [(k, 1) for k in rest] + [(light, 2)] + [(k, 2) for k in rest]
+             + [(k, 2) for k in lead_k] + [(k, 3) for k in rest] + [(k, 3) for k in lead_k]
+             + [(k, 4) for k in lead_k] + [(k, 4) for k in rest])
     for k, lv in order:
-        if k < len(pieces) and lv < len(pieces[k]) and lv > level[k]:
+        if lv < len(pieces[k]) and lv > level[k]:
             old, level[k] = level[k], lv
             if len(text().split()) > budget:
                 level[k] = old
@@ -657,6 +676,27 @@ def check(doc: dict) -> list[dict]:
         out.append(found)
     out += style_check(doc)
     out += absent_check(doc)
+    out += moment_check(doc)
+    return out
+
+
+def moment_check(doc: dict) -> list[dict]:
+    """KP-45: a keyframe moment names every figure of its blocking (the gate counts them, KG-01/KG-02) and, with two or
+    more figures, gives one of the others a reaction or pose (the eras formula: the second hero's reaction). The LoRA
+    thread 2026-10-25: S04-01, S08-01 and S13-01 dropped a hero; eight shots named the others with no verb."""
+    out = []
+    for shot in doc["shots"]:
+        if shot["source"] != "keyframe" or shot.get("teaser_of"):
+            continue
+        k, people, lead = keyframe_prompt(doc, shot), shot.get("blocking", []), _lead(shot)
+        for p in people:
+            if _core(_tag(doc, p["who"])) not in k:
+                out.append({"rule": "KP-45", "severity": "REVIEW", "where": f"{shot['id']}.first",
+                            "detail": f"{p['who']} is in the blocking but not in the moment's words"})
+        does = {r["who"] for r in shot.get("reactions", [])} | {p["who"] for p in people if p.get("pose")}
+        if len(people) >= 2 and not (does - {lead}):
+            out.append({"rule": "KP-45", "severity": "REVIEW", "where": shot["id"],
+                        "detail": "two or more figures and nobody but the lead does anything: give one a reaction"})
     return out
 
 

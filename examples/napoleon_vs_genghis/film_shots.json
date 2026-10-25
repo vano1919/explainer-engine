@@ -654,6 +654,16 @@
      "height": "quarter"
     }
    ],
+   "reactions": [
+    {
+     "who": "infantry",
+     "does": "stand in silent rows"
+    },
+    {
+     "who": "riders",
+     "does": "wait on their shaggy horses"
+    }
+   ],
    "sound": {
     "ambience": "wind over open grass"
    },
@@ -1083,6 +1093,16 @@
      "height": "quarter"
     }
    ],
+   "reactions": [
+    {
+     "who": "infantry",
+     "does": "march forward in step"
+    },
+    {
+     "who": "riders",
+     "does": "trot slowly closer"
+    }
+   ],
    "sound": {
     "ambience": "wind over open grass"
    },
@@ -1148,6 +1168,16 @@
     "peak": "pulls his horse up hard",
     "settle": "sits the horse still in front of the generals"
    },
+   "reactions": [
+    {
+     "who": "napoleon",
+     "does": "raises one eyebrow"
+    },
+    {
+     "who": "kemal",
+     "does": "leans in to listen"
+    }
+   ],
    "sound": {
     "ambience": "flags snapping in the wind, a quiet camp",
     "foley": [
@@ -2350,6 +2380,12 @@
     "peak": "raises his sabre high and points it at the horizon",
     "settle": "holds the sabre pointed forward"
    },
+   "reactions": [
+    {
+     "who": "cavalry",
+     "does": "spur their big horses forward"
+    }
+   ],
    "sound": {
     "ambience": "wind over open grass",
     "foley": [
@@ -2651,6 +2687,12 @@
     "peak": "points the telescope at the ridge",
     "settle": "keeps it pointed"
    },
+   "reactions": [
+    {
+     "who": "kemal",
+     "does": "squints hard at the ridge"
+    }
+   ],
    "dialogue": {
     "who": "napoleon",
     "to": "kemal",
@@ -3818,6 +3860,12 @@
     "peak": "snaps the biscuit in two and pushes half into the drummer's hand",
     "settle": "keeps his own half in his fist"
    },
+   "reactions": [
+    {
+     "who": "drummer",
+     "does": "stares at his half"
+    }
+   ],
    "dialogue": {
     "who": "brun",
     "to": "drummer",
@@ -4153,6 +4201,16 @@
     "peak": "drops to his knees on the carpet",
     "settle": "kneels with his head bowed"
    },
+   "reactions": [
+    {
+     "who": "genghis",
+     "does": "leans forward over the fire"
+    },
+    {
+     "who": "subutai",
+     "does": "frowns"
+    }
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt",
     "foley": [
@@ -5732,6 +5790,12 @@
     "peak": "pour down the slopes in a brown flood",
     "settle": "spread out across the valley floor"
    },
+   "reactions": [
+    {
+     "who": "infantry",
+     "does": "brace their muskets"
+    }
+   ],
    "sound": {
     "ambience": "wind, distant horns, horses",
     "loudest": "a horn blast"
@@ -6477,6 +6541,12 @@
     "peak": "points at the crest behind them",
     "settle": "keeps the arm out"
    },
+   "reactions": [
+    {
+     "who": "kemal",
+     "does": "spins toward the gunners"
+    }
+   ],
    "dialogue": {
     "who": "napoleon",
     "to": "kemal",
@@ -6971,6 +7041,12 @@
     "peak": "raises his open hand to hold his riders back",
     "settle": "keeps the hand raised"
    },
+   "reactions": [
+    {
+     "who": "subutai",
+     "does": "grips his reins and waits"
+    }
+   ],
    "sound": {
     "ambience": "wind over the ridge"
    },
@@ -8101,6 +8177,16 @@
     "peak": "straightens up and pulls off his hat",
     "settle": "stands holding the hat at his side"
    },
+   "reactions": [
+    {
+     "who": "genghis",
+     "does": "watches him without a smile"
+    },
+    {
+     "who": "bars",
+     "does": "freezes with his cap in his hands"
+    }
+   ],
    "sound": {
     "ambience": "a fire crackling, wind against felt"
    },
@@ -9279,6 +9365,12 @@
     "peak": "raises his arm and points into the fog",
     "settle": "rides on with the arm still raised"
    },
+   "reactions": [
+    {
+     "who": "infantry",
+     "does": "stare into the fog"
+    }
+   ],
    "narration": "Then the fog came back, and the army marched into it.",
    "claims": [
     "I01"
