@@ -1255,3 +1255,7 @@ What was done:
 - Job 0195 (2.1 with the creator's 7 pictures as references) hung on picture 9. The pod billed ~45 min ($1.1) with no work, and the
   creator was told only "stuck". New rule LT-71: every money event and main-work result is reported at once with $, options and a
   recommendation; worker jobs get time limits near their expected length.
+
+## 2026-10-25 21:10 Tbilisi: be critical (LT-72)
+- ვანო: ideas, his own included, are verified and answered with arguments, never agreed by default. The 2.1 move and the scene
+  LoRA were followed without a comparison against the approved option. LT-72.
