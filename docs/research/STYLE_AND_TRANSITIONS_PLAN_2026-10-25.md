@@ -51,3 +51,23 @@ the first conflict) -> T1 proposed rules with two source types and a test -> T2 
 
 Reference series: Oversimplified Napoleonic Wars 1-2; Epic History TV Napoleon seasons; Kings and Generals Napoleonic
 Wars; Simple History Napoleon episodes; Netflix Roman Empire and Rise of Empires: Ottoman (no statistics verified).
+
+## 5. Version 2 (2026-10-25 23:20 Tbilisi): the genre, not Napoleon; no rights limits
+
+ვანო: Napoleon only named the genre (documentary + dramatized scenes, any topic); downloading and the legal frame are his
+decision, so the plan carries no copyright limits. Section 3 is superseded. Plan v2 (Georgian):
+https://claude.ai/artifact/Ajuy7VSeUuzLWDfU3Fyc4E
+
+- Niche references (third-party trackers, approximate): The Infographics Show ≈15.5M subscribers, ≈6.9B views; fern ≈5.1M
+  since 2020 (3D "armchair documentaries"); Oversimplified ≈9.6M; Simple History ≈5.1M; Storybooth ≈4.6M (2020);
+  MrBallen ≈8.9M (2024); Rise of Empires: Ottoman ≈13.8M hours on Netflix in 2024 (FlixPatrol); Drunk History (premiere
+  907K viewers); Waltz with Bashir (≈$11.2M box office) and Flee (animated documentary films).
+- Download per channel: the three most-viewed and the two least-viewed of the last two years (contrast), with
+  `yt-dlp --write-info-json` so the `heatmap` ("Most replayed") curve comes along.
+- Analysis pipeline (free, CPU): shot boundaries and transition types, shot description in our 3312-shot schema, Whisper
+  speakers and J/L cuts, script structure (cold open, seconds to the first conflict, narrator share), the heatmap peaks
+  and drops matched to what is on screen, top vs bottom comparison.
+- Style: the film language (composition, camera, light, motion) comes from the references through structure maps
+  (depth/pose control) and motion transfer to LTX-2.5/Wan 2.2; the surface look is his choice: A Wild Ink (his photos and
+  👍 pictures), B a niche reference's look (trained on its frames), C a mix. D-78 must be checked for structure control.
+- Transitions: per-scene-type edit recipes from the measurements, then rules with two source types and a test.

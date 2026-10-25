@@ -2211,3 +2211,5 @@ https://claude.ai/artifact/MBSTqzFYrM1RRGrLhTYbfM and in `docs/research/STYLE_AN
 why our style training failed (self-generated data, the caption tail, untested model switch), a free baseline before any
 new LoRA, grammar and transitions measured from downloaded references but no training on their frames. Nothing paid;
 no rule changed until he decides.
+- 23:20 Tbilisi: plan v2 after ვანო's correction (the genre, any topic; no rights limits, his decision):
+  https://claude.ai/artifact/Ajuy7VSeUuzLWDfU3Fyc4E, section 5 of the research file.
