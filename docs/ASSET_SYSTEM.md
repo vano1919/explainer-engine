@@ -16,8 +16,12 @@ passed + date), `reuse_rights`, `fallback` (asset id), `tags`, `used_by`.
 - Colours only from `explainer_engine/design/palette.json`; fonts only OFL faces (Fredoka and Inter for titles and captions; Comic Neue Bold and Bangers for speech bubbles, D-42, in `assets/fonts/` with their OFL texts); a lint rejects other colours.
 - Characters: fixed silhouette, proportions, facial geometry, line weight, palette and expression/pose conventions
   (the Kit sheet). Never regenerate "an approximate Kit" per scene; poses are assembled from the parts (D-04).
-- Reuse search before creation: tags and kind are matched against the manifest (the TMR `picture_library` tag-overlap
-  idea is copied in Phase 6); a new asset is created only when nothing fits.
+- Reuse search before creation (OR-18, D-76): tags and kind are matched against the library manifests before anything
+  new is generated, and the search is recorded in the episode's `asset_reuse.json` (`python -m explainer_engine.assets_reuse`).
+  Raster channel assets live in the picture library `assets/pictures/library/` (`explainer_engine/imagegen/picture_library.py`:
+  `add`, `find`, `fetch`, `validate`; schema `picture_manifest.schema.json`; kinds prop, background, texture, character,
+  thumbnail_part), `paint plan` lists a prompt's matches on the plan (PP-08), and a new asset is created only when
+  nothing fits. Media backup: HF `datasets/vano1919/tmr-artifacts/library/pictures/`.
 - A missing asset has a named fallback; the job stops at QA rather than shipping a placeholder (P-77).
 - One-off assets are marked `reuse: new` and need a fallback; reusable assets are promoted after their first use.
 

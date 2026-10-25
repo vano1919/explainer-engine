@@ -1651,3 +1651,17 @@ corrected to "made with AI image tools". final_qa stamped (0 FAIL). No code chan
   word captions, "full video" label; the last frame is the first). Test: `tests/unit/test_clip_shorts.py`.
 - `publish/plan.py`: `"shorts_from": "publish"` stages the Shorts listed in publish.json instead of the script's.
   Test: `test_youtube_publish.py::test_shorts_cut_from_the_long_video_come_from_publish_json`.
+## 2026-10-20 — Library first: reusable assets looked up before any new generation (D-76, OR-18)
+- The creator's rule (2026-10-20): a local library of background music and reusable objects; new is generated only when
+  nothing there fits; what this session's episodes created is kept.
+- Built: `imagegen/picture_library.py` + `assets/pictures/library/manifest.json` + `schemas/picture_manifest.schema.json`
+  (props, backgrounds, textures, character art, thumbnail parts; tags, source, prompt, cost, licence, the creator's look);
+  `audio/register.py` (connector MP3/stereo → the sound library's mono WAV, source `elevenlabs`, loop/one-shot);
+  `assets_reuse.py` (search both libraries + record the search in the episode's `asset_reuse.json`).
+- Enforced: `standards/hook.py` refuses a paid ElevenLabs music/SFX call without a recorded search (OR-18); `paint plan`
+  lists a prompt's picture-library matches on the plan and `imagegen/plan.py` reports them as PP-08 (REVIEW).
+- Docs: D-76 (decision log), OR-18 (ORCHESTRATION), PP-08 (PRODUCTION_SCRIPT), AUDIO_SYSTEM and ASSET_SYSTEM library
+  sections, PRODUCTION_RULES standing order 5, CLAUDE.md layout. Media backup home: HF `tmr-artifacts/library/`.
+- Tests: `test_assets_reuse.py`, `test_picture_library.py`, `test_audio_register.py`; the hook test now records a
+  search before reaching the rulebook gate. Full suite green locally.
+- Next: the titans thread registers its generated music/ambience with `audio/register.py` when its paid run finishes.
