@@ -2272,3 +2272,9 @@ training as sequences is decided in the process. Changed together:
   `training/pods/xworld_v1.{sh,yaml}` + `xworld_v1_build.py` (style + pairs with control, trigger `xworld style` in every
   caption, rank 16, lr 1e-4, 2500 steps, 1024 px, every 250 steps); the 2512 `xworld_style_v1.{sh,yaml}` are deleted (D-80).
   `hrdpkuwoh6iyuz` (stopped, 0 GB, $0/day) is listed in keep_stopped_pods so `create` runs; deletion still waits for his word.
+- 02:40 Tbilisi (10-26): caption pod d0sxf4ya1gajsb stopped by the guard at the 10-minute boot deadline (slow tmr-pod image
+  pull); `runpod create --boot-minutes` added (test), second pod 682n7rxqdgqycp started 02:29 with 30 minutes. The first stays
+  stopped (0 GB, $0/day, in keep_stopped_pods); deletion waits for his word.
+- 02:45 Tbilisi: ვანო (02:37-02:38) raised the night limit to $9 (ledger `runpod_usd` cap 11.25, 80 % = 9), 15-minute checks,
+  saving at every milestone, full autonomy inside the plan, strange questions to the coordinator for a separate research
+  thread: LT-78.
