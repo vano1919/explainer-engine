@@ -26,6 +26,7 @@ from explainer_engine.production import compile as C
 from explainer_engine.production import continuity
 from explainer_engine.production import graphics as GFX
 from explainer_engine.production import script as S
+from explainer_engine.production import staging as STAGING
 from explainer_engine.production import timing as T
 from explainer_engine.qa import engagement as ENG
 from explainer_engine.scripting import narration_lint, story_lint
@@ -277,8 +278,9 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # PV-11 prompts fresh and clean; PV-06 duplicates
     world = C.world_of(doc)
     prompts = {}
+    staged = STAGING.plan(doc) if C._staged_doc(doc) else None
     for pid, p in used.items():
-        want = C.compose(doc, pid, p, world)
+        want = C.compose(doc, pid, p, world, staged)
         if want is None:
             continue
         if p.get("prompt") != want:
@@ -577,6 +579,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     if doc["episode"].get("rulebook"):  # scripts written to an episode rulebook (D-51/D-52)
         out += rulebook_era_findings(doc, picture_dirs)
     out += canva_findings(doc)
+    out += STAGING.lint(doc)  # CS-01..CS-07 scene continuity (D-69): one room, one master frame, the roster in it
     out += BEATS.lint(doc)  # PV-44 visual beats: reasons, words, numbers, faces (VB-00, VB-03, VB-04, VB-06)
     out += FACES.lint(doc, picture_dirs)  # PV-44 expression sheets (VB-09)
     out += short_beat_findings(doc)  # PV-44 on every Short (SS-09)

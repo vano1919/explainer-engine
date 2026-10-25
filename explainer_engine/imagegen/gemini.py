@@ -38,6 +38,19 @@ BATCH_URL = "https://generativelanguage.googleapis.com/v1beta/"
 BATCH_MAX_BYTES = 18_000_000  # inline requests must stay under 20 MB
 REFERENCE_USD = 0.0011  # one input picture at the Pro rate (the dearest listed)
 MAX_REFERENCES = 14
+# Reference slots per model (ai.google.dev/gemini-api/docs/image-generation, read 2026-10-22; the page's table was read as
+# text, its column order inferred): "characters" = faces the model keeps consistent, the rest are object (or style) images.
+# A model not listed keeps MAX_REFERENCES and no face limit beyond it.
+REF_LIMITS = {
+    "gemini-3-pro-image": {"total": 14, "objects": 6, "characters": 5, "style": 3},
+    "gemini-nano-banana-2.1": {"total": 14, "objects": 10, "characters": 4},
+    "gemini-3.1-flash-image": {"total": 14, "objects": 10, "characters": 4},
+    "gemini-3.1-flash-lite-image": {"total": 14, "objects": 14, "characters": 0},
+}
+
+
+def ref_limits(model: str) -> dict:
+    return REF_LIMITS.get(model, {"total": MAX_REFERENCES, "objects": MAX_REFERENCES, "characters": MAX_REFERENCES})
 JUDGE_USD = 0.0015  # one vision answer (judge)
 
 
@@ -312,19 +325,23 @@ class GeminiClient:
             meta_file.write_text(json.dumps(meta))
         return {"state": st["state"], "done": st["done"], "items": out}
 
-    def judge(self, image: bytes, question: str, *, model: str = "gemini-3.8-flash") -> str:
+    def judge(self, image: bytes, question: str, *, model: str = "gemini-3.8-flash", images: list[bytes] | None = None) -> str:
         """A vision answer as text (input price about $0.0015 per picture at $0.75 per million input tokens). Paid, so it is
-        reserved in the run ledger like a picture (audit 2026-10-19 H3); without a ledger the client's own cap applies."""
+        reserved in the run ledger like a picture (audit 2026-10-19 H3); without a ledger the client's own cap applies.
+        ``images``: more pictures after the first (a scene's master frame for the continuity review, D-69), each priced."""
+        more = list(images or [])
+        usd = JUDGE_USD * (1 + len(more))
         if self.run is not None:
-            self.run.reserve("gemini_usd", JUDGE_USD, item=f"judge:{hashlib.sha256(image).hexdigest()[:12]}")
-        elif self.spent + JUDGE_USD > self.cap * 0.8 + 1e-9:
-            raise GeminiError(f"stop: {self.spent + JUDGE_USD:.4f} USD would pass 80 % of the {self.cap} cap")
-        parts = [{"text": question}, {"inlineData": {"mimeType": "image/png", "data": base64.b64encode(image).decode()}}]
+            self.run.reserve("gemini_usd", usd, item=f"judge:{hashlib.sha256(image).hexdigest()[:12]}")
+        elif self.spent + usd > self.cap * 0.8 + 1e-9:
+            raise GeminiError(f"stop: {self.spent + usd:.4f} USD would pass 80 % of the {self.cap} cap")
+        parts = [{"text": question}] + [{"inlineData": {"mimeType": "image/png", "data": base64.b64encode(b).decode()}}
+                                        for b in [image] + more]
         data = self.post(model, {"contents": [{"parts": parts}],
                                  "generationConfig": {"temperature": 0, "responseMimeType": "application/json"}})
         for cand in data.get("candidates") or []:
             for part in (cand.get("content") or {}).get("parts") or []:
                 if "text" in part:
-                    self.spent += JUDGE_USD
+                    self.spent += usd
                     return part["text"]
         raise GeminiError(f"{model}: no text answer")

@@ -1681,3 +1681,30 @@ corrected to "made with AI image tools". final_qa stamped (0 FAIL). No code chan
   [D-67](DECISIONS_AND_OPEN_QUESTIONS.md) (decision ids 61-66 are claimed by the open PR #14 / #15 branches).
 - Tests: `tests/unit/test_sample_gate.py` (9: scope, shared pictures, in/out-of-scope reads, PP-09, sha binding,
   hook wiring, gate row and CLI, `paint plan --sample`). Nothing paid; no renders claimed.
+## 2026-10-22 - Scene continuity of the painted pictures (D-69)
+
+The titans episode showed five men on a bench of ten, then two other men in another room while the narration told one
+conversation. Traced in the code: `compile.jobs` gave every Gemini picture only the style references and `compose` wrote
+each prompt from its own subject; nothing carried the room, the seats or the roster from one picture to the next, and
+nothing compared a painted picture with them. Fixed inside the existing flow (same provider, model, size and paint gate):
+
+- Schema: optional segment `staging` (location, time, layout, fixed, roster, positions, master, scene_id, continues),
+  picture `framing` / `visible` / `partial` / `change` / `cut_away`, `look.continuity: auto`. Scripts without them compile
+  byte-for-byte as before (pinned by a test).
+- `production/staging.py`: scene ids (only a new place or time starts a scene), shot kinds (master, continue, action,
+  reframe, insert, cut_away, montage), references in priority order (master frame, previous shot for an edit, the visible
+  heroes' approved faces, style), the prompt's continuity block (KEEP UNCHANGED / THIS SHOT / MAY CHANGE, one single frame),
+  the script lint CS-01..CS-07 (in `validate`), the paint order and review gate CS-09, the review questions and verdicts
+  CS-10/CS-11 (per framing: a close-up is never failed for the people outside it), bounded repaints CS-12 (2 corrections,
+  then the creator), a free pixel hint for split screens.
+- `paint`: `plan --masters`; `plan --run` carries each rejected picture's correction (part of the item hash, so a repaint
+  needs a new approval); references trimmed to the model's slots (`gemini.REF_LIMITS`, Google's page read 2026-10-22: Nano
+  Banana 2.1 keeps 4 faces and 10 objects) and named (CS-08); `run` paints masters before the shots that take them and
+  holds a shot until its master PASSed. `GeminiClient.judge` takes extra images (the master), each priced.
+- Review: Claude's look is the default and free (`staging request` -> `continuity_review.json` -> `staging apply`); the
+  Gemini vision call (`staging judge`) needs the creator's `--yes` and a `--max-usd`.
+- Rules CS-01..CS-12 in [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md), decision [D-69](DECISIONS_AND_OPEN_QUESTIONS.md); the
+  skill `shot-visuals` and the agent `edit-planner` write `staging`; the stage guard gives `staging` to the editor.
+- Read on the titans script with `look.continuity: auto` (nothing painted): CS-02/CS-03 find the scenes whose master leaves
+  people out or whose pictures draw people outside the room (SC09, SC11, SC13-SC15), CS-05 the "ten men" bench with five named.
+- Tests: `tests/unit/test_scene_continuity.py` (27, mocked provider). Nothing paid.

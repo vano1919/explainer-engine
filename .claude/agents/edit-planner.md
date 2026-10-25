@@ -39,7 +39,13 @@ For each segment:
    frame", ONE camera sentence, at most three sounds, the same style sentence in every shot, next poses drawn from the master
    with no framing word, a negative prompt that never names our own style (never LTX's stock negative). Run
    `python -m explainer_engine.scripting.shot_prompt_lint <shots.json>`: 0 FAIL before any paid render.
-7. Run `python -m explainer_engine.production validate <script>`: 0 FAIL; the PV-35 (MO, incl. MO-07) and PV-24 RHYTHM
+7. Stage every scene's pictures as ONE room (D-69, CS rules in docs/PRODUCTION_SCRIPT.md, the skill `shot-visuals`
+   "One scene, one room"): segment `staging` with the `roster`, each person's `positions` (left to right in the wide
+   shot), `layout` and `fixed` details; the master frame is the first wide picture and lists every roster member in its
+   `heroes`; later shots change the camera (`framing`) and name who must be seen, never the room or the seats; `change`
+   for an action under the same camera; `cut_away` for a picture of another place; a following segment in the same room
+   says `continues: true`. `python -m explainer_engine.production.staging plan <script>` shows the scenes and shot kinds.
+8. Run `python -m explainer_engine.production validate <script>`: 0 FAIL (CS-01..CS-03 included); the PV-35 (MO, incl. MO-07) and PV-24 RHYTHM
    REVIEWs on the estimated read answered or fixed, 0 PV-44 FAIL. Report events a minute, the kinds used, the alive
    share and the scenes' coverage (establish, listener cuts, longest A/B run, J/L share).
 

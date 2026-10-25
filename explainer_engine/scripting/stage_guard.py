@@ -13,7 +13,7 @@ Stages and what they own:
   the same frozen words (stage 2b, agent ``beat-writer``); the Shorts' lines too (``shorts[].lines[].visual_beats``, SS-09)
 * ``performer``  the delivery: line ``tags``, ``emphasis``, ``tone``, ``emotion``, ``pause_after``; the text may only gain
   an interjection at its start (``INTERJECTIONS``)
-* ``editor``     the picture and sound: ``shots``, segment ``audio``, ``music``, ``graphics``, ``library``, ``story``,
+* ``editor``     the picture and sound: ``shots``, segment ``audio`` and ``staging`` (D-69), ``music``, ``graphics``, ``library``, ``story``,
   ``look``, ``picture_dirs``, ``sound_dirs``; of the beats only their ``pos`` (where on the frame), never what they show
 * ``caster``     the voices: ``voice`` and ``cast.<id>.voice`` (the architect owns the rest of ``cast``)
 * ``shorts``     the ``shorts`` block
@@ -36,7 +36,7 @@ STAGES = {
     "beats": {"top": set(), "seg": set(), "line": {"visual_beats"}},
     "performer": {"top": set(), "seg": set(), "line": set(LINE_DELIVERY) | {"text"}},
     "editor": {"top": {"music", "graphics", "counter", "library", "story", "look", "picture_dirs", "sound_dirs", "world"},
-               "seg": {"shots", "audio"}, "line": set()},
+               "seg": {"shots", "audio", "staging"}, "line": set()},
     "caster": {"top": {"voice"}, "seg": set(), "line": set(), "cast_voice": True},
     "shorts": {"top": {"shorts"}, "seg": set(), "line": set()},
 }

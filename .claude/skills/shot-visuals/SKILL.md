@@ -89,6 +89,18 @@ The rules and the mistakes they come from are in `docs/SHOT_PROMPTS.md` (KP-01..
 - The negative prompt never names our style (LTX's stock negative says "cartoonish rendering", "exaggerated expressions").
 - A test prompt passes the lint; a failing sample is compared with step 0 before a LoRA is blamed.
 
+## One scene, one room (D-69, CS-01..CS-12 in docs/PRODUCTION_SCRIPT.md)
+A conversation is a set of shots of ONE room, not a new illustration per sentence. For every segment whose pictures play in
+one place, write `staging`: `roster` (who is in the room; default `scene.present`), `positions` (each person's seat, left to
+right as the wide shot sees them), `layout` and `fixed` details, optionally `master`. The master frame is the first wide picture
+and lists EVERY roster member in its `heroes` (CS-02); a crowd counted in the subject ("ten men") names its heroes or says the
+rest are extras (CS-05). Vary the camera, never the room: `framing` (wide, medium, two_shot, over_shoulder, close, reaction,
+insert); for an over-the-shoulder shot list the facing hero first. Write `change` when the next shot keeps the camera and only
+an action changes (it is painted as an edit of the shot before). A picture of another place inside the segment is `cut_away`;
+a new place or time is a new segment with its own `staging` (a following segment in the same room says `continues: true`).
+Check with `python -m explainer_engine.production.staging plan <script>`; paint masters first (`paint plan --masters`), look at
+each painted picture next to its master (`staging request` -> `continuity_review.json` -> `staging apply`), then the shots.
+
 ## Procedure
 1. Beat by beat, from the narration: who does what, what can go wrong, which emotion. Write `stakes` first.
 2. Types and order by UR-04/05; durations and cuts by the solver (UR-11/12) on the real `words.json`.

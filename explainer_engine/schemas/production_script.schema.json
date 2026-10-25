@@ -291,6 +291,13 @@
               ]
             }
           ]
+        },
+        "continuity": {
+          "enum": [
+            "auto",
+            "off"
+          ],
+          "description": "D-69: auto stages every segment that has scene.place and no staging block"
         }
       }
     },
@@ -1300,6 +1307,61 @@
               "pattern": "^ER-[0-9]{2,3}$"
             },
             "description": "rulebook rules this beat must respect"
+          },
+          "staging": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "D-69 (CS rules, docs/PRODUCTION_SCRIPT.md): the scene state every picture of this continuous scene keeps; production/staging.py",
+            "properties": {
+              "scene_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "description": "the same id on consecutive segments = one continuous scene"
+              },
+              "continues": {
+                "type": "boolean",
+                "description": "continues the previous segment's scene (same room, same moment)"
+              },
+              "location": {
+                "type": "string",
+                "minLength": 3,
+                "description": "the place; left out = scene.place"
+              },
+              "time": {
+                "type": "string",
+                "description": "when; left out = scene.time"
+              },
+              "layout": {
+                "type": "string",
+                "description": "where things are in the room (the bench along the left wall, the doors behind it)"
+              },
+              "fixed": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "details every shot keeps (tall oak doors, a cold fluorescent strip)"
+              },
+              "roster": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true,
+                "description": "cast ids in the room; left out = scene.present, else everyone the scene's pictures draw"
+              },
+              "positions": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "cast id -> where they sit or stand, written left to right as the master frame sees them"
+              },
+              "master": {
+                "type": "string",
+                "description": "the picture id of the master frame; left out = the first wide picture with the whole roster"
+              }
+            }
           }
         }
       }
@@ -2081,6 +2143,43 @@
         "tier_reason": {
           "type": "string",
           "description": "premium only: why this picture needs the dearer model (PV-40)"
+        },
+        "framing": {
+          "enum": [
+            "wide",
+            "full",
+            "medium",
+            "two_shot",
+            "over_shoulder",
+            "close",
+            "reaction",
+            "insert"
+          ],
+          "description": "D-69: the camera on the staged scene; left out = read from the subject and the shot type (production/staging.py)"
+        },
+        "visible": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "description": "D-69 (CS-10): cast ids whose faces this shot must show; left out = heroes minus partial"
+        },
+        "partial": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "description": "D-69: cast ids seen only in part (a shoulder, a back); over_shoulder defaults to every hero after the first"
+        },
+        "change": {
+          "type": "string",
+          "description": "D-69: what this shot changes against the shot before (an action, a gesture); the room and the seats never change"
+        },
+        "cut_away": {
+          "type": "boolean",
+          "description": "D-69: a picture outside the staged room (another place, a screen, a memory): painted alone, no master frame"
         }
       }
     },

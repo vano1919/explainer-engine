@@ -16,6 +16,7 @@ from pathlib import Path
 
 from explainer_engine.edit import prompt_v2
 from explainer_engine.production import script as S
+from explainer_engine.production import staging as STAGING
 from explainer_engine.world import resolver
 
 POD_SUFFIX = (" Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted "
@@ -48,8 +49,9 @@ def subject_with_cast(doc: dict, pic: dict) -> tuple[str, bool]:
     return sub, people
 
 
-def compose(doc: dict, pid: str, pic: dict, world: dict | None = None) -> str | None:
-    """The prompt of one picture, or None for a picture that is not painted (engine existing)."""
+def compose(doc: dict, pid: str, pic: dict, world: dict | None = None, staged: dict | None = None) -> str | None:
+    """The prompt of one picture, or None for a picture that is not painted (engine existing). In a staged scene the
+    continuity block (production/staging.py) follows: ``staged`` is ``staging.plan(doc)``, computed once by the caller."""
     engine = pic.get("engine", "existing" if pic.get("file") else (doc.get("look", {}).get("default_engine") or "gemini"))
     if engine == "existing":
         return None
@@ -60,7 +62,14 @@ def compose(doc: dict, pid: str, pic: dict, world: dict | None = None) -> str | 
         return (pic.get("edit") or sub).strip() + POD_SUFFIX
     sub, people = subject_with_cast(doc, pic)
     hint = pic.get("costume") or (_visitor_costume(doc) if world["visitors"] else "")
-    return prompt_v2.compose(kind, sub, world, beat, people=people, costume_hint=hint if people else "")
+    prompt = prompt_v2.compose(kind, sub, world, beat, people=people, costume_hint=hint if people else "")
+    block = STAGING.prompt_block(doc, pid, staged) if _staged_doc(doc) else ""  # D-69: what stays, what this shot changes
+    return f"{prompt}. {block}" if block else prompt
+
+
+def _staged_doc(doc: dict) -> bool:
+    """A script that stages any scene (D-69); an unstaged script compiles exactly as before."""
+    return (doc.get("look") or {}).get("continuity") == "auto" or any("staging" in s for s in doc.get("segments", []))
 
 
 def _visitor_costume(doc: dict) -> str:
@@ -73,18 +82,19 @@ def compile_doc(doc: dict) -> dict:
     world = world_of(doc)
     out = json.loads(json.dumps(doc))
     pics, _ = S.pictures(out)
+    staged = STAGING.plan(out) if _staged_doc(out) else None
     for seg in out["segments"]:
         for shot in seg["shots"]:
             pic = shot["picture"]
             if isinstance(pic, dict):
-                p = compose(out, pic["id"], pic, world)
+                p = compose(out, pic["id"], pic, world, staged)
                 if p is None:
                     pic.pop("prompt", None)
                 else:
                     pic["prompt"] = p
     for pid, pic in out.get("library", {}).items():
         if pid in pics and pics[pid].get("uses"):
-            p = compose(out, pid, pic, world)
+            p = compose(out, pid, pic, world, staged)
             if p is not None:
                 pic["prompt"] = p
     return out
@@ -114,12 +124,14 @@ def jobs(doc: dict) -> tuple[list[dict], dict]:
     pics, _ = S.pictures(doc)
     gemini, pod = [], []
     refs = doc.get("look", {}).get("style_refs", [])
+    staged = STAGING.plan(doc) if _staged_doc(doc) else None
     for pid, pic in pics.items():
         if not pic.get("uses") or pic.get("file"):
             continue
         eng = engine_of(doc, pic)
         if eng == "gemini":
-            gemini.append({"id": pid, "prompt": pic["prompt"], "refs": hero_refs(doc, pic, refs), "first_use": pic["first_use"],
+            gemini.append({"id": pid, "prompt": pic["prompt"],
+                           "refs": STAGING.refs_for(doc, pid, hero_refs(doc, pic, refs), staged) if staged else hero_refs(doc, pic, refs), "first_use": pic["first_use"],
                            "tier": pic.get("tier", "standard")})
         elif eng == "pod_ref":
             pod.append({"id": pid, "seed": 600 + len(pod) * 11, "refs": [f"{r}.png" for r in pic.get("refs", [])],

@@ -25,6 +25,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 * `schema`: `production_script/3` (2026-10-19, D-58, the scene rewrite) adds the scene contract: a segment with dialogue carries `scene` (`place`, `present`, `pov`, `want`, `obstacle_want`, `value`, `open_charge`, `close_charge`, `exit`, and optional `time`, `why_now`, `turn`, `surface_topic`, `real_subject`, `mode`); every line (segments and Shorts) may say `to` (who it is said to) and `intent` (reveal, press, deflect, concede, question, banter, decide, aside); a beat's `cue` gains `event` (reveal, impact, transition, build, diegetic, take, place) — on `/3` a cue without an event FAILs and silence is the default (VB-08 inverted). SC-01..SC-10 ([STORY_ENGINE](STORY_ENGINE.md)) bind only `/3`; `/1` and `/2` keep their exact old behaviour.
 * `segments[]` (S01..): `drama` (function, turn, stakes, shift, need, opens, closes, claim_share), `lines[]` (text, tags, tone, emotion, one emphasised word, `pause_after`, claims, optional `speaker` = a cast id read in that hero's own `cast.<id>.voice`, D-45), `shots[]` (phrase `at`, type A/B/C,
   `accents` (punch, shake, whip_in, flash_in, pop_text, slam_text, wobble on a phrase), picture id or inline picture with `subject`/`engine`/`refs`/`edit`/`heroes`/`shows`/`props`/`speakers`, motion, bubbles), `audio` (`beds`, `sfx` on phrases).
+* Scene continuity (D-69): segment `staging` (location, time, layout, fixed, roster, positions, master, scene_id, continues) and picture `framing`/`visible`/`partial`/`change`/`cut_away`; `look.continuity`. See the CS rules below.
 * Engines: `existing` (a file), `gemini` (D-41 prompt, channel style refs), `pod_ref` (a reference edit, painted by the provider the creator picks for the batch, D-50), `pod_text` (no longer made, D-52), `canva` (filler made by hand, D-53).
 * Rulebook-era fields (D-51, D-52): `episode.rulebook`; segment `job`, `feel`, `rules`; shot `purpose`, `cut.why`; picture `tier`, `tier_reason`; bed and sound `purpose`, `yields_to`. Times are still never written by hand: anchors are phrases, durations come from the read.
 
@@ -114,6 +115,50 @@ the ledger before its call, records it with its prompt hash, repaints a picture 
 never sends an item of an open or lost batch again (`imagegen/gemini.open_batches`), never retries a request that timed out
 (`ChargeUncertain`: it may have been billed), and stops an item after three failures. The cache of paid pictures is shared by
 every output folder (`EXPLAINER_IMAGE_CACHE`).
+
+## Scene continuity (CS-xx; D-69; `production/staging.py`)
+
+Until D-69 every Gemini picture was painted from its own prompt and the style references: nothing told the painter that the
+next picture is the same room a second later, so the titans episode (2026-10-21) showed five men on a bench of ten, then two
+other men in another room, while the narration still told one conversation. A **staged scene** now carries its state and
+every picture of it is painted as a shot of that one room.
+
+* **Scene state** (segment `staging`, optional): `location` and `time` (default `scene.place` / `scene.time`), `layout`,
+  `fixed` details, `roster` (default `scene.present`), `positions` (the spatial map, left to right as the master frame sees
+  it), `master` (default: the first wide picture that shows the whole roster), `scene_id` / `continues` (join segments).
+  `look.continuity: "auto"` stages every segment with a `scene.place`; a script without either compiles exactly as before.
+* **Shot state** (picture, optional): `framing` (wide, full, medium, two_shot, over_shoulder, close, reaction, insert; default
+  read from the subject and the shot type), `visible` (faces this shot must show; default the heroes minus `partial`),
+  `partial` (a shoulder or a back; over_shoulder defaults to every hero after the first), `change` (what this shot changes),
+  `cut_away` (outside the room: painted alone). Speaker and listener come from the shot's bubble or its voiced line.
+* **Shot kinds** (`staging plan`): `master`; `continue` / `action` (the same camera on the same faces as the shot before, an
+  action stated in `change`: painted as an edit of that shot); `reframe` (another camera in the same room, painted against the
+  master); `insert`; `cut_away` / `montage` (unstaged, painted alone). Only a new place or time starts a new scene.
+* **Prompt** (`compile`): the D-41 prompt, then the continuity block: the scene id, which reference image is the master and
+  which the previous shot, KEEP UNCHANGED (place, layout, fixed details, light and palette, faces and clothes, the seating
+  left to right), THIS SHOT (framing, the faces it must show, who is seen only in part, speaker and listener, who is still in
+  the room outside the frame), MAY CHANGE (camera, expressions, gestures, the stated change; or, for an edit, only the stated
+  change), and one single full-frame picture, never a collage (unless the subject asks for a split frame).
+* **References** (`compile.jobs`): master frame, previous shot (edits only), the visible heroes' approved reference pictures
+  (`cast.<id>.reference`), then the style references; `paint plan` trims them to the model's slots, lowest priority first.
+* **Order and review**: `paint plan --masters` -> approve -> run -> `staging request` (Claude opens each picture and its master
+  and answers the questions, free) or `staging judge` (Gemini vision, paid, with `--yes` and `--max-usd`) -> `staging apply`
+  -> `paint plan --run` (the shots, and the corrections of rejected pictures) -> approve -> run -> review again.
+
+| Id | Rule |
+|---|---|
+| CS-01 | a staged scene is well formed: its roster and positions name cast ids, every position is in the roster, it has a master frame that is a picture shown in the scene |
+| CS-02 | the master frame shows everyone in the roster (its `heroes`); every later shot is painted against it |
+| CS-03 | a picture of a staged scene draws only heroes of its roster, unless it is marked `cut_away` |
+| CS-04 | the seats are written down: a room of three or more has `positions` for everyone, and a wide or full shot of the room that leaves roster members out says so (REVIEW) |
+| CS-05 | a subject that counts people ("ten men") names that many heroes, or says the rest are anonymous extras (REVIEW: the painter invents unnamed people anew in every picture) |
+| CS-06 | one continuous scene has one light beat (REVIEW) |
+| CS-07 | a `/3` dialogue segment with two or more new pictures is staged (REVIEW: unstaged pictures are painted without a master frame) |
+| CS-08 | a picture never takes more references than its model's slots (`imagegen/gemini.REF_LIMITS`, Google's image-generation page read 2026-10-22: Nano Banana 2.1 and 3.1 Flash Image keep 4 faces and 10 objects, 3 Pro Image 5 faces); `paint plan` names every dropped reference (REVIEW) |
+| CS-09 | a shot is painted only after the pictures it takes as references: its master (painted, and PASSED by the continuity review) and, for an edit, the shot before it (painted, not rejected); a waiting shot is never counted as a failure |
+| CS-10 | the continuity review asks only for the faces THIS framing must show (`visible`), so a close-up is never failed for the people outside it; a required face that is missing is a FAIL; the master shows the place and the staged order |
+| CS-11 | a continuation keeps the master's room (a different room without a scene change is a FAIL) and every picture is one single frame (a collage or split screen is a FAIL); seats, partial figures and the action are REVIEW. The free pixel hint (`seam_findings`) only flags straight full-height edges for the reviewer |
+| CS-12 | a rejected picture carries a targeted correction into its next paint plan (a new plan, a new approval); after `MAX_REPAINTS` (2) corrections a further failure stops it: it is never planned or painted again until the creator decides |
 
 ## Voice direction
 
