@@ -102,7 +102,7 @@ this page; "ours" means our own tests of 2026-10-22..24.
 | keep | KP-12 | it is anticipation, action and follow-through (Thomas and Johnston); the first frame shows the start (KP-16) |
 | keep, now in code | KP-13 | KP-19 |
 
-### Rules KP-15..KP-34 (the shot card)
+### Rules KP-15..KP-34 and KP-44 (the shot card)
 
 | ID | Rule | Evidence | Kind | Check |
 |---|---|---|---|---|
@@ -126,6 +126,7 @@ this page; "ours" means our own tests of 2026-10-22..24.
 | KP-32 | **The lead figure has a size**: `height` (a quarter, a third, half, two thirds, most of the frame height) on the actor, or the first person when nobody acts. `height_pct` is kept for the keyframe gate only: the prompt says the nearest word, never a number (test v2 of the 1-minute film, 2026-10-24: numbers were drawn as rulers, arrows and percentages in 6 of 10 pictures and did not size the figure better, height error 0.18 against 0.19). A figure cut by the frame edge has `partial` ("the trunk"): written as "Only the trunk of ... reaches into the frame", counted by the gate, no support or height | the creator 2026-10-24; the keyframe gate measures it | house | [code] FAIL |
 | KP-33 | **Relations the picture can draw one way only**: each `frame.relations` sentence says behind, in front of, on top of, under, to the left of...; "by", "near", "beside", "next to" or "with" alone FAIL ("a woolly mammoth by the boulder" drew a mammoth-shaped boulder); a relation names a figure already in the picture with its tag and "the", never "a" or "an" before a cast member's noun ("a living woolly mammoth stands behind the bus" drew two mammoths in 4 of 4 pictures, test v2 2026-10-24) | the LoRA thread's master test 2026-10-24 | house | [code] FAIL |
 | KP-34 | **Free space for the action**: a drawn first frame with an action has `frame.lead_room` (left, right, above, below, or none when the action stays in place), so the video does not move a hand or a body out of the frame | the creator 2026-10-24; KP-03 (everyone stays in frame) | house | [code] FAIL |
+| KP-44 | **Never name what must be absent.** No picture prompt of a frame (keyframe, next pose, cut, last frame, video) says a word of the world's `absent` or the frame's `frame.absent` (KG-21), not inside another name ("city bus") and not after "no" ("a plain with no road"); spoken lines in quotes are sound and are left out. Say it another way ("yellow bus", "an open snowy plain") | the LoRA thread 2026-10-25: the Qwen-Image-2.1 style LoRA drew a city behind "city bus" at steps 250 and 500, the base model at step 0 none | evidence (one test) | [code] REVIEW |
 
 ### Rules KP-35..KP-43 (the episode, under the script engine v1)
 

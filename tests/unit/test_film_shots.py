@@ -41,9 +41,9 @@ def test_the_worked_example_is_clean_and_valid():
 
 def test_keyframe_tells_the_moment_at_its_peak_with_a_reaction_and_no_layout():
     p = prompts(doc())["S01-02.first"]
-    assert p["kind"] == "keyframe" and p["prompt"].startswith("wldnk style, a snowy plain")  # LT-65: trigger, place
+    assert p["kind"] == "keyframe" and p["prompt"].startswith("wldnk style, an open snowy plain")  # LT-65: trigger, place
     assert "the old man, thin-limbed and bulging-eyed, throws both hands up" in p["prompt"]  # body words, the peak
-    assert "the nurse turns her head toward him" in p["prompt"]  # someone's reaction
+    assert "the nurse in the purple puffer jacket turns her head toward him" in p["prompt"]  # a reaction, by tag
     assert "cold blue morning light" in p["prompt"]
     assert not style_prompt.check(p["prompt"])  # no tail, no camera/size/position, at most 40 words
     assert "full-body" not in p["prompt"] and "on the left" not in p["prompt"]  # the layout is the gate card's
@@ -223,7 +223,7 @@ def test_composition_goes_to_the_gate_card_and_the_cut_prompt_not_the_keyframe_w
     assert "frame height" not in k and "Empty space" not in k
     card = {c["id"]: c for c in F.gate_cards(d)}["S01-02.first"]
     assert any(p["on"] == "sitting on the bottom step of the bus door" and p["height"] == "third" for p in card["people"])
-    assert "the yellow city bus stands behind the four of them" in card["relations"] and card["lead_room"]["side"] == "above"
+    assert "the yellow bus stands behind the four of them" in card["relations"] and card["lead_room"]["side"] == "above"
     assert "filling most of the frame height" in ps["S01-04.first"]["prompt"]  # S01-04 is a cut
     assert "frame height" not in ps["S01-02.last"]["prompt"]  # a next pose never re-frames (KP-07)
     b = shot(d, "S01-04")["blocking"][0]
@@ -387,14 +387,14 @@ def test_the_napoleon_episode_is_clean_under_the_engine():
 def test_a_relation_with_a_or_an_before_a_cast_noun_fails():
     d = doc()
     s = shot(d, "S01-02")
-    s["frame"]["relations"] = ["a yellow city bus stands behind the old man"]
+    s["frame"]["relations"] = ["a yellow bus stands behind the old man"]
     assert "KP-33" not in rules(d, "FAIL")  # the bus is no cast member
     d["cast"]["mammoth"] = {"tag": "the woolly mammoth with a broken left tusk"}
     s["blocking"].append({"who": "mammoth", "where": "right_back", "facing": "left", "on": "standing on the hill",
                           "height": "half"})
-    s["frame"]["relations"] = ["a living woolly mammoth stands on the hill behind the yellow city bus"]
+    s["frame"]["relations"] = ["a living woolly mammoth stands on the hill behind the yellow bus"]
     assert ("KP-33", "S01-02") in found(d, "FAIL")
-    s["frame"]["relations"] = ["the woolly mammoth stands on the hill behind the yellow city bus"]
+    s["frame"]["relations"] = ["the woolly mammoth stands on the hill behind the yellow bus"]
     assert ("KP-33", "S01-02") not in found(d, "FAIL")
 
 
@@ -507,18 +507,31 @@ def test_every_drawn_frame_gets_a_gate_card_with_exact_counts_and_absent_things(
     d = doc()
     d["absent"] = ["a city", "a paved road"]  # the world's (KG-21)
     s = shot(d, "S01-02")
-    s["frame"]["things"] = {"yellow city bus": 1, "spear": {"count": 2, "plural": "spears"}}
+    s["frame"]["things"] = {"yellow bus": 1, "spear": {"count": 2, "plural": "spears"}}
     s["frame"]["absent"] = ["a building", "a city"]
     assert not F.schema_errors(d)
     cards = {c["id"]: c for c in F.gate_cards(d)}
     c = cards["S01-02.first"]
-    assert c["things"][0] == {"name": "yellow city bus", "plural": "yellow city buses", "count": 1}
+    assert c["things"][0] == {"name": "yellow bus", "plural": "yellow buses", "count": 1}
     assert c["absent"] == ["a city", "a paved road", "a building"]  # once each
     qs = G.questions(c)
-    assert {"code": "KG-01", "q": "How many yellow city buses are in the picture? Answer with a number.", "expect": 1,
+    assert {"code": "KG-01", "q": "How many yellow buses are in the picture? Answer with a number.", "expect": 1,
             "hard": True} in qs  # one bus is one bus (the 2.1 style LoRA drew a second one and a city)
     assert sum(q["code"] == "KG-21" for q in qs) == 3
     last = cards["S01-02.last"]  # the guided last frame is checked too, against its own first frame
     assert last["kind"] == "nextpose" and last["master"] == "S01-02" and last["things"] == c["things"]
     assert all(G.questions(x) for x in cards.values())  # every card is one the gate can ask about
     assert {k for k in cards if k.endswith(".first")} == {f"{x['id']}.first" for x in d["shots"]}
+
+
+def test_a_picture_word_that_names_an_absent_thing_is_flagged():
+    d = doc()
+    assert not [f for f in F.check(d) if f["rule"] == "KP-44"]  # the example says "yellow bus" (KP-44)
+    d["places"]["road"] = "a yellow city bus stuck in the snow of an open plain"
+    found = [f for f in F.check(d) if f["rule"] == "KP-44"]
+    assert found and all(f["severity"] == "REVIEW" for f in found)
+    assert any(f["where"] == "S01-02.first" and "'city'" in f["detail"] for f in found)  # the LoRA drew the city
+    d = doc()
+    d["absent"].append("a highway")
+    shot(d, "S01-04")["dialogue"]["text"] = "Was there a highway here?"
+    assert not [f for f in F.check(d) if f["rule"] == "KP-44"]  # a spoken line is sound, not a picture word

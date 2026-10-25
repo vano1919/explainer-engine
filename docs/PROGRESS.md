@@ -1359,3 +1359,12 @@ What was done:
   for KG-13). A lead who exits is not expected in the last frame.
 - The bus example and film_1min count one yellow city bus on the plain and list a city, a building and a paved road
   as absent. Test: `test_every_drawn_frame_gets_a_gate_card_with_exact_counts_and_absent_things`.
+
+## 2026-10-25 16:45 Tbilisi: KP-44, never name what must be absent
+
+- The LoRA thread measured that the Qwen-Image-2.1 style LoRA draws a city behind "city bus": none at step 0, a city at
+  steps 250 and 500. `film_shots.absent_check` (KP-44, REVIEW) now flags any picture prompt that says a word of the
+  world's or the frame's `absent` things. It also catches "with no road", because models draw what is named after "no".
+  Spoken lines in quotes are left out.
+- The bus example and film_1min say "yellow bus" (tag, places, relations, things) and "an open snowy plain". "City"
+  stays in `absent`. Test: `test_a_picture_word_that_names_an_absent_thing_is_flagged`.

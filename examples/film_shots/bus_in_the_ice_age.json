@@ -15,24 +15,24 @@
  },
  "absent": ["a city", "a building", "a paved road"],
  "places": {
-  "road": "a snowy plain with no road, a yellow city bus stuck to its wheels in the snow, pine trees far behind",
-  "road_close": "deep snow beside the yellow city bus"
+  "road": "an open snowy plain, a yellow bus stuck to its wheels in the snow, pine trees far behind",
+  "road_close": "deep snow beside the yellow bus"
  },
  "shots": [
   {
    "id": "S01-01", "scene": "S01", "mode": "establish", "seconds": 4, "source": "keyframe",
-   "beat": "The world is wrong before anyone knows it: a city bus where no road has ever been.",
+   "beat": "The world is wrong before anyone knows it: a bus where no road has ever been.",
    "frame": {"size": "EWS", "angle": "high", "camera": "push_in", "camera_end": "the bus in the middle of the frame",
-             "place": "road", "things": {"yellow city bus": 1}, "light": "cold blue morning light under a low sky",
-             "relations": ["the yellow city bus stands on the open snow, its wheels sunk up to the hubs"]},
+             "place": "road", "things": {"yellow bus": 1}, "light": "cold blue morning light under a low sky",
+             "relations": ["the yellow bus stands on the open snow, its wheels sunk up to the hubs"]},
    "narration": "The 7:40 express left on time. The town it was heading for won't be built for another twelve thousand years.",
    "sound": {"ambience": "wind hissing over open snow", "foley": ["the bus engine ticking as it cools"]}
   },
   {
    "id": "S01-02", "scene": "S01", "mode": "scene", "seconds": 5, "source": "keyframe", "last_frame": true,
    "beat": "Walter sees it first, and the others see him lose it.",
-   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "things": {"yellow city bus": 1}, "light": "cold blue morning light under a low sky",
-             "relations": ["the yellow city bus stands behind the four of them"],
+   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "things": {"yellow bus": 1}, "light": "cold blue morning light under a low sky",
+             "relations": ["the yellow bus stands behind the four of them"],
              "lead_room": {"side": "above", "for": "where his hands will go"}},
    "blocking": [
     {"who": "walter", "where": "left", "facing": "right", "on": "standing on the packed snow", "height": "two_thirds"},
@@ -74,7 +74,7 @@
    "beat": "Her calm turns into the first admission that something is truly wrong.",
    "frame": {"size": "OTS", "over": "walter", "angle": "eye", "camera": "push_in", "camera_end": "her face",
              "place": "road_close", "light": "cold blue morning light under a low sky",
-             "relations": ["the yellow city bus stands behind her"], "lead_room": {"side": "none"}},
+             "relations": ["the yellow bus stands behind her"], "lead_room": {"side": "none"}},
    "blocking": [
     {"who": "walter", "where": "left_front", "facing": "dee", "on": "standing on the packed snow", "height": "most"},
     {"who": "dee", "where": "right", "facing": "walter", "on": "standing on the packed snow", "height": "two_thirds"}
@@ -100,7 +100,7 @@
    "id": "S01-06", "scene": "S01", "mode": "scene", "seconds": 5, "source": "nextpose", "master": "S01-02",
    "last_frame": true,
    "beat": "The turn: something enormous is behind them.",
-   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "things": {"yellow city bus": 1}, "light": "cold blue morning light under a low sky"},
+   "frame": {"size": "MWS", "angle": "eye", "camera": "static", "place": "road", "things": {"yellow bus": 1}, "light": "cold blue morning light under a low sky"},
    "blocking": [
     {"who": "walter", "where": "left", "facing": "right", "pose": "stands with his hands on his head"},
     {"who": "dee", "where": "center", "facing": "walter", "pose": "stands with her arms folded"},

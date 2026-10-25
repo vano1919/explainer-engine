@@ -656,6 +656,32 @@ def check(doc: dict) -> list[dict]:
     for found in lint.check([p for p in compose(doc) if p["kind"] != "reuse"], names=names):
         out.append(found)
     out += style_check(doc)
+    out += absent_check(doc)
+    return out
+
+
+def _absent_words(item: str) -> list[str]:
+    """'a paved road' -> ['paved', 'road']: the words of an absent thing a prompt must not say."""
+    return [w for w in re.findall(r"[a-z]+", item.lower()) if w not in STOP and len(w) > 2]
+
+
+def absent_check(doc: dict) -> list[dict]:
+    """KP-44: a picture prompt never says a word of what its frame must not show (the world's ``absent`` and
+    ``frame.absent``). Models draw what is named, also inside another name or after "no": the Qwen-Image-2.1 style LoRA
+    drew a city behind every "city bus" (base model at step 0 none, LoRA steps 250 and 500 did, 2026-10-25). Spoken
+    lines in quotes are left out: they are the line, not the picture."""
+    out, by_id = [], {s["id"]: s for s in doc["shots"]}
+    for p in compose(doc):
+        shot = by_id.get(p["id"].rsplit(".", 1)[0])
+        if not shot or p["kind"] == "reuse":
+            continue
+        seen = re.sub(r'"[^"]*"', "", p["prompt"])  # a spoken line in quotes is sound, not a picture word
+        for item in dict.fromkeys([*doc.get("absent", []), *shot["frame"].get("absent", [])]):
+            for w in _absent_words(item):
+                m = re.search(rf"\b{w}(e?s)?\b", seen, re.I)
+                if m:
+                    out.append({"rule": "KP-44", "severity": "REVIEW", "where": p["id"],
+                                "detail": f"'{m.group(0)}' names '{item}', which must be absent: say it another way"})
     return out
 
 
