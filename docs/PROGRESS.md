@@ -1231,3 +1231,22 @@ What was done:
   The auto half of KG-23 is content-biased (buses, sea are not on the eras sheet): 9 in-style pictures scored <0.557 -> REVIEW by eye.
 - 2.1 LoRA "failure" cause (records): the test sampled with cfg 1.0 (training samples used 4) and VideoX-Fun `merge_lora`
   skipped all 32 `img_mlp.gate_up` layers (ai-toolkit stores the fused [gate_layer; proj]). Fix tested in `infer21b.py`.
+
+## 2026-10-25 20:40 Tbilisi: style-only training and continuity cards (D-75, CC-01..CC-14, LT-69, LT-70)
+- ვანო: the base models already know how shots join, so all training goes to the style. For continuity, test which prompts
+  and references work best, with an agent whose output format rests on research.
+- The research covers 22 sources (`docs/research/SHOT_CONTINUITY_2026-10-25.md`):
+  - script supervisor sheets and the Hanna-Barbera Layout Notes (where/when on every BG, "Match to BG 19", hook-ups);
+  - the 180° and 30° rules, the eyeline match and match on action;
+  - Qwen, Gemini, FLUX and LTX docs (reference caps, refer by position, identical identity text);
+  - the drift papers (draw fresh from the originals).
+- `scripting/continuity.py` + `schemas/continuity_card.schema.json`:
+  - checks the cards (CC-01..CC-12);
+  - assembles each keyframe prompt (CC-13);
+  - writes the questions for the finished picture (CC-14).
+  - Example `examples/continuity/napoleon_tent.json`, test `tests/unit/test_continuity.py`.
+- New agent `shot-continuity-writer`.
+- `docs/SHOT_CONTINUITY.md` lists the five things the continuity test varies.
+- LT-69: only the style LoRA is trained.
+- LT-70: a generated picture becomes training data only with ვანო's 👍. The automatic gates only pre-sort; 13 of 70
+  DINO-passed frames got his 👍, and v2 got 12 of 12 👎.
