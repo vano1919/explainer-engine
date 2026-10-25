@@ -2278,3 +2278,7 @@ training as sequences is decided in the process. Changed together:
 - 02:45 Tbilisi: ვანო (02:37-02:38) raised the night limit to $9 (ledger `runpod_usd` cap 11.25, 80 % = 9), 15-minute checks,
   saving at every milestone, full autonomy inside the plan, strange questions to the coordinator for a separate research
   thread: LT-78.
+- 02:45 Tbilisi: 682n7rxqdgqycp was still fetching ghcr.io/vano1919/tmr-pod after 15 min (RunPod logs "still fetching
+  image"); stopped (kept, $0/day) and relaunched as 9iyvc4ute6ppwp on RTX A5000 community $0.16/h with the common
+  runpod/pytorch 2.4 image (cached on most hosts; the script installs transformers itself). Lesson: the big tmr-pod image
+  is not cached on community hosts; script pods that need only torch use runpod/pytorch.
