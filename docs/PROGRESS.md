@@ -1347,3 +1347,15 @@ What was done:
   `inference` = `style_prompt.INFERENCE`. A8 caught "to take a photo" in film_1min S02-02, which now reads "to snap a picture".
 - Tests: `test_every_style_prompt_ends_with_the_episode_look_and_still_fits_lt65`,
   `test_a_look_with_style_words_or_a_negative_of_its_own_fails_lt66`.
+
+## 2026-10-25 16:30 Tbilisi: gate cards for every drawn frame, with object counts and absent things
+
+- The LoRA thread found a gap, confirmed in code: `qa/keyframe_gate.py` asks about `things` (KG-01) and `absent` (KG-21),
+  but the shot cards had no such fields and `gate_cards` built cards for keyframes and cuts only. The Qwen-Image-2.1 style
+  LoRA then drew a second bus and a city for "city bus".
+- `film_shots/1` gains `frame.things` ({name: count}, or {name: {count, plural}}), `frame.absent` and a top-level `absent`
+  (the world's). `gate_card` passes them as the gate's `things` ({plural, count}) and `absent` (deduplicated).
+- `gate_cards` now covers every drawn frame: next-pose first frames and the guided last frames (`.last`, with `master`
+  for KG-13). A lead who exits is not expected in the last frame.
+- The bus example and film_1min count one yellow city bus on the plain and list a city, a building and a paved road
+  as absent. Test: `test_every_drawn_frame_gets_a_gate_card_with_exact_counts_and_absent_things`.

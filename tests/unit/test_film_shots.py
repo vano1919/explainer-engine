@@ -251,7 +251,7 @@ def test_each_prompt_names_its_lora_and_the_gate_gets_a_card():
     assert ps["S01-02.first"]["lora"] == "style"
     assert {ps[i]["lora"] for i in ("S01-02.last", "S01-03.first", "S01-06.first")} == {"scene"}  # never style in Edit
     cards = {c["id"]: c for c in F.gate_cards(doc())}
-    assert "S01-06.first" not in cards  # a next pose is checked against its master
+    assert cards["S01-06.first"]["kind"] == "nextpose" and cards["S01-06.first"]["master"] == "S01-02"  # KG-13 vs it
     c = cards["S01-02.first"]
     assert [p["actor"] for p in c["people"]] == [True, False, False, False]
     assert c["people"][2] == {"tag": "the pink-haired girl in the yellow hoodie", "where": "center_back",
@@ -499,3 +499,26 @@ def test_a_look_with_style_words_or_a_negative_of_its_own_fails_lt66():
     assert prompts(doc())["S01-02.first"]["neg"] == style_prompt.NEGATIVE
     shot(d := doc(), "S01-02")["action"]["peak"] = "takes a photo of the bus"
     assert "LT-66" in {f["rule"] for f in F.style_check(d)}  # A8: another medium named in the moment
+
+
+def test_every_drawn_frame_gets_a_gate_card_with_exact_counts_and_absent_things():
+    from explainer_engine.qa import keyframe_gate as G
+
+    d = doc()
+    d["absent"] = ["a city", "a paved road"]  # the world's (KG-21)
+    s = shot(d, "S01-02")
+    s["frame"]["things"] = {"yellow city bus": 1, "spear": {"count": 2, "plural": "spears"}}
+    s["frame"]["absent"] = ["a building", "a city"]
+    assert not F.schema_errors(d)
+    cards = {c["id"]: c for c in F.gate_cards(d)}
+    c = cards["S01-02.first"]
+    assert c["things"][0] == {"name": "yellow city bus", "plural": "yellow city buses", "count": 1}
+    assert c["absent"] == ["a city", "a paved road", "a building"]  # once each
+    qs = G.questions(c)
+    assert {"code": "KG-01", "q": "How many yellow city buses are in the picture? Answer with a number.", "expect": 1,
+            "hard": True} in qs  # one bus is one bus (the 2.1 style LoRA drew a second one and a city)
+    assert sum(q["code"] == "KG-21" for q in qs) == 3
+    last = cards["S01-02.last"]  # the guided last frame is checked too, against its own first frame
+    assert last["kind"] == "nextpose" and last["master"] == "S01-02" and last["things"] == c["things"]
+    assert all(G.questions(x) for x in cards.values())  # every card is one the gate can ask about
+    assert {k for k in cards if k.endswith(".first")} == {f"{x['id']}.first" for x in d["shots"]}

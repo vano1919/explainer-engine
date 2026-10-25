@@ -210,19 +210,56 @@ def _lead(shot: dict) -> str | None:
     return who if who in people else (people[0] if people else None)
 
 
-def gate_card(doc: dict, shot: dict) -> dict:
-    """What the keyframe gate (PR #22, qa/keyframe_gate.py) checks a drawn first frame against: the people by tag,
-    side, height and support (the lead marked ``actor``), the relations and the free space."""
+def _plural(name: str) -> str:
+    """'yellow city bus' -> 'yellow city buses' (the gate asks 'How many <plural> are in the picture?')."""
+    head, _, last = name.rpartition(" ")
+    if re.search(r"(s|x|z|ch|sh)$", last):
+        last += "es"
+    elif re.search(r"[^aeiou]y$", last):
+        last = last[:-1] + "ies"
+    else:
+        last += "s"
+    return f"{head} {last}".strip()
+
+
+def _things(f: dict) -> list[dict]:
+    """KG-01 for objects: ``frame.things`` {name: count} (or {name: {count, plural}}) -> the gate's {plural, count}."""
+    out = []
+    for name, v in (f.get("things") or {}).items():
+        v = v if isinstance(v, dict) else {"count": v}
+        out.append({"name": name, "plural": v.get("plural") or _plural(name), "count": v["count"]})
+    return out
+
+
+def gate_card(doc: dict, shot: dict, end: bool = False) -> dict:
+    """What the keyframe gate (PR #22, qa/keyframe_gate.py) checks a drawn frame against: the people by tag, side,
+    height and support (the lead marked ``actor``), the relations, the free space, the exact counts of things (KG-01:
+    one bus is one bus) and what must not be there (KG-21: the world's ``absent`` plus the frame's). ``end`` is the
+    guided last frame (the settle, a next pose); a lead who exits is not in it."""
     f, lead = shot["frame"], _lead(shot)
     people = [{"tag": _tag(doc, p["who"]), "where": p["where"], "height": _height_word(p), "on": p.get("on"),
                "actor": p["who"] == lead, **({"partial": p["partial"]} if p.get("partial") else {})}
-              for p in shot.get("blocking", [])]
-    return {"id": f"{shot['id']}.first", "kind": shot["source"], "size": f["size"], "people": people,
-            "relations": list(f.get("relations", [])), "lead_room": dict(f.get("lead_room") or {})}
+              for p in shot.get("blocking", []) if not (end and shot.get("exit") and p["who"] == lead)]
+    absent = list(dict.fromkeys([*doc.get("absent", []), *f.get("absent", [])]))
+    src = shot["source"]
+    card = {"id": f"{shot['id']}.{'last' if end else 'first'}", "kind": "nextpose" if end else src, "size": f["size"],
+            "people": people, "relations": list(f.get("relations", [])), "lead_room": dict(f.get("lead_room") or {}),
+            "things": _things(f), "absent": absent}
+    if end or src != "keyframe":  # KG-13 compares it with the picture it was edited from (as compose names it)
+        card["master"] = shot.get("master") if (src == "nextpose" or not end) else shot["id"]
+    return card
 
 
 def gate_cards(doc: dict) -> list[dict]:
-    return [gate_card(doc, s) for s in doc["shots"] if s["source"] in ("keyframe", "cut") and not s.get("teaser_of")]
+    """A card for every drawn frame: each first frame (keyframe, next pose, cut) and each guided last frame."""
+    out = []
+    for s in doc["shots"]:
+        if s.get("teaser_of"):
+            continue  # a teaser reuses its payoff's frames
+        out.append(gate_card(doc, s))
+        if s.get("last_frame"):
+            out.append(gate_card(doc, s, end=True))
+    return out
 
 
 def _where(shot: dict, who: str) -> str:
