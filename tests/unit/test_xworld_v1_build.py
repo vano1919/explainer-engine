@@ -67,3 +67,15 @@ def test_config_is_the_agreed_one():
     assert p["datasets"][1]["control_path"] == ["/workspace/ds/pairs/control"]
     sh = (POD / "xworld_v1.sh").read_text(encoding="utf-8")
     assert "captions_reviewed.jsonl" in sh and "BAD_HOST" in sh and "qwen_image_2" in sh
+
+
+def test_prompt_type_test_jobs_keep_d_and_t_first_and_chain_refs():
+    from explainer_engine.training.pods import xworld_v1_test as t
+    m = _man()
+    j = t.jobs(m, _caps(m))
+    assert len(j) == 2 * 5 * (2 * len(t.LORA_VARIANTS) + len(t.BASE_VARIANTS))   # 2 chains of 6+ frames here
+    assert [x["variant"] for x in j[:10]] == ["D"] * 10 and j[10]["variant"] == "T"
+    t_jobs = [x for x in j if x["variant"] == "T" and x["lora"] == "A" and x["chain"] == 0]
+    assert t_jobs[0]["refs"][0].startswith("real:") and t_jobs[1]["refs"] == [f"drawn:{t_jobs[0]['name']}"]
+    assert all(x["truth"] not in [r[5:] for r in x["refs"]] for x in j)   # the frame to draw is never given
+    assert "Change from the previous shot" not in t.prompt("V4", "a garage.", "Change from the previous shot: x.")
