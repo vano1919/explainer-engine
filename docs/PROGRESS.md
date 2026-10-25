@@ -2203,3 +2203,11 @@ critic. Review page of the three AI answers: https://claude.ai/artifact/4oP3AWRw
 - The eleven stage pages say so in their description; the story-engine skill, STORY_ENGINE, LORA_TRAINING and CLAUDE.md
   follow. Counter recorded in D-79: one context grows longer and the stages lose the cheaper Sonnet model.
 - Test: `tests/unit/test_agent_roles.py`.
+
+## 2026-10-25 23:30 Tbilisi: style learning and scene transitions, research and plan
+
+ვანო asked for one last, evidence-backed plan for the style and for scene transitions. Written up in Georgian at
+https://claude.ai/artifact/MBSTqzFYrM1RRGrLhTYbfM and in `docs/research/STYLE_AND_TRANSITIONS_PLAN_2026-10-25.md`:
+why our style training failed (self-generated data, the caption tail, untested model switch), a free baseline before any
+new LoRA, grammar and transitions measured from downloaded references but no training on their frames. Nothing paid;
+no rule changed until he decides.
