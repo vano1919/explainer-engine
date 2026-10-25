@@ -1250,3 +1250,8 @@ What was done:
 - LT-69: only the style LoRA is trained.
 - LT-70: a generated picture becomes training data only with ვანო's 👍. The automatic gates only pre-sort; 13 of 70
   DINO-passed frames got his 👍, and v2 got 12 of 12 👎.
+
+## 2026-10-25 21:05 Tbilisi: report money events at once (LT-71)
+- Job 0195 (2.1 with the creator's 7 pictures as references) hung on picture 9. The pod billed ~45 min ($1.1) with no work, and the
+  creator was told only "stuck". New rule LT-71: every money event and main-work result is reported at once with $, options and a
+  recommendation; worker jobs get time limits near their expected length.
