@@ -24,6 +24,11 @@ SCHEMA = "paint_plan/1"
 PROVIDERS = {
     "gemini": {"service": "gemini_usd", "paints_here": True, "max_refs": gemini.MAX_REFERENCES,
                "note": "Gemini API list prices (imagegen/gemini.py PRICES); SynthID in every picture, C2PA on some models"},
+    # hosted per-picture APIs behind imagegen/providers (D-70 stage D); prices live on the adapters, checked 2026-10-22
+    "bfl": {"service": "bfl_usd", "paints_here": True, "max_refs": 10, "adapter": True,
+            "note": "Black Forest Labs API (FLUX 3 Image Klein $0.009 at 1k); hosted terms, not the Kommunity weights licence"},
+    "fal": {"service": "fal_usd", "paints_here": True, "max_refs": 10, "adapter": True,
+            "note": "fal.ai queue (Seedream 4.5 $0.04 a picture; Qwen-Image-Edit-2511 $0.03 per MP, Apache-2.0, 1-3 inputs)"},
     "pod": {"service": "runpod_usd", "paints_here": False, "max_refs": 3,
             "usd_per_picture": round(22.7 / 3600 * 0.89, 4),  # measured: 22.7 s a picture on an RTX 4090 at $0.89/h (PRODUCTION_RULES 4)
             "boot_usd": 0.10, "note": "RunPod reference painter (D-42, TMR cloud/); a pod needs its own price and time cap (OR-06)"},
@@ -60,6 +65,12 @@ def price(provider: str, model: str | None, size: str | None, refs: int, batch: 
         except KeyError:
             raise ValueError(f"no {'batch ' if batch else ''}price for {model} at {size}") from None
         return base + refs * gemini.REFERENCE_USD
+    if PROVIDERS.get(provider, {}).get("adapter"):
+        from explainer_engine.imagegen import providers
+        try:
+            return providers.cls(provider).PRICES[model][size]
+        except KeyError:
+            raise ValueError(f"no price for {model} at {size} on {provider}") from None
     return PROVIDERS[provider]["usd_per_picture"]
 
 
@@ -82,6 +93,8 @@ def make(plan_id: str, episode: str, items: list[dict], *, provider: str, model:
             "created": time.strftime("%Y-%m-%dT%H:%M:%S")}
     plan["estimate_usd"] = estimate(plan)
     plan["hash"] = plan_hash(plan)
+    from explainer_engine.world import bible
+    plan["bible"] = bible.cite()  # the World Bible version the pictures are made under (WB-04); not part of the hash
     return plan
 
 
@@ -95,6 +108,11 @@ def options(items: list[dict]) -> list[dict]:
                     continue
                 usd = sum(price("gemini", model, size, len(i.get("refs", [])), batch) for i in items)
                 rows.append({"provider": "gemini", "model": model, "size": size, "batch": batch, "usd": round(usd, 4)})
+    from explainer_engine.imagegen import providers
+    for name in ("bfl", "fal"):
+        for model, sizes in providers.cls(name).PRICES.items():
+            for size, usd in sizes.items():
+                rows.append({"provider": name, "model": model, "size": size, "batch": False, "usd": round(usd * len(items), 4)})
     for name in ("pod", "local"):
         p = PROVIDERS[name]
         rows.append({"provider": name, "model": None, "size": None, "batch": False,

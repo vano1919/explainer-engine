@@ -1,0 +1,467 @@
+{
+  "schema": "asset_library/1",
+  "items": [
+    {
+      "id": "reference.analyst_idle",
+      "kind": "reference",
+      "file": "assets/characters/crossworld_cast_v0/analyst/a_idle.png",
+      "sha256": "f3d16a6e2bd13d3b678c535605dc72b9d5f342c1f7800aec53273ead265aef84",
+      "bytes": 753843,
+      "tags": [
+        "analyst",
+        "idle",
+        "look_v1",
+        "style_reference"
+      ],
+      "description": "the analyst's idle pose, the style reference (REF = ../a_idle.png in scientists_v0/gen_prompts.py) of the scientists_v0 sprites; look v1 (storybook grammar), superseded by look v2 (D-41)",
+      "bible_version": "1.0",
+      "made_with": {
+        "provider": "gemini",
+        "model": "gemini-3.1-flash-image",
+        "model_version": "",
+        "prompt": "",
+        "params": {},
+        "seed": null,
+        "refs": [],
+        "lora": null,
+        "cost_usd": 0.0
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "Gemini output; the provider's output terms were not verified in a record"
+      },
+      "approval": {
+        "status": "superseded",
+        "by": "ვანო (D-41, 2026-10-16)",
+        "at": "2026-10-16",
+        "note": "look v2 replaces the storybook grammar; kept for lineage, not for new pictures"
+      },
+      "lineage": {
+        "parent": null
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-10-22T10:30:00",
+        "source": "assets/characters/crossworld_cast_v0/generation_ledger_all.jsonl"
+      },
+      "width": 537,
+      "height": 859
+    },
+    {
+      "id": "sprite.sci_archimedes",
+      "kind": "sprite",
+      "file": "assets/characters/scientists_v0/sci_archimedes_keyed.png",
+      "sha256": "a990dec0266c8b8d19fc00793a05fc31b160dc47e03d160763b9515f89f603b9",
+      "bytes": 1474927,
+      "tags": [
+        "archimedes",
+        "caricature",
+        "hero",
+        "keyed",
+        "look_v1",
+        "scientist"
+      ],
+      "description": "full-body caricature sprite of Archimedes on chroma green, look v1 (1.6x head); the look v2 bible asks for adult proportions, so it is superseded and would be redrawn from a hero sheet",
+      "bible_version": "1.0",
+      "made_with": {
+        "provider": "gemini",
+        "model": "gemini-3.1-flash-image",
+        "model_version": "",
+        "prompt": "Painted storybook illustration, same art style, line quality and palette as the reference image (the reference is only a STYLE guide; do not copy its character). A friendly CARICATURE of the historical scientist Archimedes: head about 1.6x oversized, exaggerated but kind and instantly recognisable features from well-known historical portraits (hair, face shape, moustache, clothing of their era), expressive. Full body, standing, ancient Greek, curly beard, simple tunic, sandals, drawing a circle in the sand with a stick, holding a lever. Adult, dignified-comic, not childish. One figure only, feet visible, no text, no letters, no logo. Flat solid pure green #00FF00 background, no shadow on the background, no green on the figure.",
+        "params": {
+          "seconds": 8.7
+        },
+        "seed": null,
+        "refs": [
+          "reference.analyst_idle"
+        ],
+        "lora": null,
+        "cost_usd": 0.067
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "Gemini output; the provider's output terms were not verified in a record"
+      },
+      "approval": {
+        "status": "superseded",
+        "by": "ვანო (D-41, 2026-10-16)",
+        "at": "2026-10-16",
+        "note": "look v2 (adult proportions) replaces the 1.6x-head sprites"
+      },
+      "lineage": {
+        "parent": "reference.analyst_idle"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-10-22T10:30:00",
+        "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
+      },
+      "width": 896,
+      "height": 1200
+    },
+    {
+      "id": "sprite.sci_curie",
+      "kind": "sprite",
+      "file": "assets/characters/scientists_v0/sci_curie_keyed.png",
+      "sha256": "e44878c154f7076b7eb4f64dc7431f625836beb3deedfcd4eb9e781cc97726bd",
+      "bytes": 1123245,
+      "tags": [
+        "caricature",
+        "curie",
+        "hero",
+        "keyed",
+        "look_v1",
+        "scientist"
+      ],
+      "description": "full-body caricature sprite of Curie on chroma green, look v1 (1.6x head); the look v2 bible asks for adult proportions, so it is superseded and would be redrawn from a hero sheet",
+      "bible_version": "1.0",
+      "made_with": {
+        "provider": "gemini",
+        "model": "gemini-3.1-flash-image",
+        "model_version": "",
+        "prompt": "Painted storybook illustration, same art style, line quality and palette as the reference image (the reference is only a STYLE guide; do not copy its character). A friendly CARICATURE of the historical scientist Marie Curie: head about 1.6x oversized, exaggerated but kind and instantly recognisable features from well-known historical portraits (hair, face shape, moustache, clothing of their era), expressive. Full body, standing, dark hair tied back, plain dark long dress with apron, holding a glass flask glowing faintly, focused determined look. Adult, dignified-comic, not childish. One figure only, feet visible, no text, no letters, no logo. Flat solid pure green #00FF00 background, no shadow on the background, no green on the figure.",
+        "params": {
+          "seconds": 10.1
+        },
+        "seed": null,
+        "refs": [
+          "reference.analyst_idle"
+        ],
+        "lora": null,
+        "cost_usd": 0.067
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "Gemini output; the provider's output terms were not verified in a record"
+      },
+      "approval": {
+        "status": "superseded",
+        "by": "ვანო (D-41, 2026-10-16)",
+        "at": "2026-10-16",
+        "note": "look v2 (adult proportions) replaces the 1.6x-head sprites"
+      },
+      "lineage": {
+        "parent": "reference.analyst_idle"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-10-22T10:30:00",
+        "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
+      },
+      "width": 896,
+      "height": 1200
+    },
+    {
+      "id": "sprite.sci_darwin",
+      "kind": "sprite",
+      "file": "assets/characters/scientists_v0/sci_darwin_keyed.png",
+      "sha256": "7555b1ac09f5a8856a44772d6beb6a3e37106346e6d23aa5a60fcc0b42b00d6d",
+      "bytes": 1454353,
+      "tags": [
+        "caricature",
+        "darwin",
+        "hero",
+        "keyed",
+        "look_v1",
+        "scientist"
+      ],
+      "description": "full-body caricature sprite of Darwin on chroma green, look v1 (1.6x head); the look v2 bible asks for adult proportions, so it is superseded and would be redrawn from a hero sheet",
+      "bible_version": "1.0",
+      "made_with": {
+        "provider": "gemini",
+        "model": "gemini-3.1-flash-image",
+        "model_version": "",
+        "prompt": "Painted storybook illustration, same art style, line quality and palette as the reference image (the reference is only a STYLE guide; do not copy its character). A friendly CARICATURE of the historical scientist Charles Darwin: head about 1.6x oversized, exaggerated but kind and instantly recognisable features from well-known historical portraits (hair, face shape, moustache, clothing of their era), expressive. Full body, standing, huge white beard, bald forehead, dark frock coat, kneeling slightly with a magnifying lens examining a small beetle in his palm. Adult, dignified-comic, not childish. One figure only, feet visible, no text, no letters, no logo. Flat solid pure green #00FF00 background, no shadow on the background, no green on the figure.",
+        "params": {
+          "seconds": 9.1
+        },
+        "seed": null,
+        "refs": [
+          "reference.analyst_idle"
+        ],
+        "lora": null,
+        "cost_usd": 0.067
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "Gemini output; the provider's output terms were not verified in a record"
+      },
+      "approval": {
+        "status": "superseded",
+        "by": "ვანო (D-41, 2026-10-16)",
+        "at": "2026-10-16",
+        "note": "look v2 (adult proportions) replaces the 1.6x-head sprites"
+      },
+      "lineage": {
+        "parent": "reference.analyst_idle"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-10-22T10:30:00",
+        "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
+      },
+      "width": 896,
+      "height": 1200
+    },
+    {
+      "id": "sprite.sci_einstein",
+      "kind": "sprite",
+      "file": "assets/characters/scientists_v0/sci_einstein_keyed.png",
+      "sha256": "adf9cc7bd256efae367873ab6e9a4d17773dfc207972450cd7b3b17275583dba",
+      "bytes": 1459287,
+      "tags": [
+        "caricature",
+        "einstein",
+        "hero",
+        "keyed",
+        "look_v1",
+        "scientist"
+      ],
+      "description": "full-body caricature sprite of Einstein on chroma green, look v1 (1.6x head); the look v2 bible asks for adult proportions, so it is superseded and would be redrawn from a hero sheet",
+      "bible_version": "1.0",
+      "made_with": {
+        "provider": "gemini",
+        "model": "gemini-3.1-flash-image",
+        "model_version": "",
+        "prompt": "Painted storybook illustration, same art style, line quality and palette as the reference image (the reference is only a STYLE guide; do not copy its character). A friendly CARICATURE of the historical scientist Albert Einstein: head about 1.6x oversized, exaggerated but kind and instantly recognisable features from well-known historical portraits (hair, face shape, moustache, clothing of their era), expressive. Full body, standing, wild white hair, bushy moustache, rumpled cardigan, no socks, scribbling an equation in the air with a chalk stick, dreamy smile. Adult, dignified-comic, not childish. One figure only, feet visible, no text, no letters, no logo. Flat solid pure green #00FF00 background, no shadow on the background, no green on the figure.",
+        "params": {
+          "seconds": 11.1
+        },
+        "seed": null,
+        "refs": [
+          "reference.analyst_idle"
+        ],
+        "lora": null,
+        "cost_usd": 0.067
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "Gemini output; the provider's output terms were not verified in a record"
+      },
+      "approval": {
+        "status": "superseded",
+        "by": "ვანო (D-41, 2026-10-16)",
+        "at": "2026-10-16",
+        "note": "look v2 (adult proportions) replaces the 1.6x-head sprites"
+      },
+      "lineage": {
+        "parent": "reference.analyst_idle"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-10-22T10:30:00",
+        "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
+      },
+      "width": 896,
+      "height": 1200
+    },
+    {
+      "id": "sprite.sci_franklin",
+      "kind": "sprite",
+      "file": "assets/characters/scientists_v0/sci_franklin_keyed.png",
+      "sha256": "85435b59c5881a3f2eae6115f6ba2bb85ffd628c46ac1403b942d997566e056c",
+      "bytes": 1308550,
+      "tags": [
+        "caricature",
+        "franklin",
+        "hero",
+        "keyed",
+        "look_v1",
+        "scientist"
+      ],
+      "description": "full-body caricature sprite of Franklin on chroma green, look v1 (1.6x head); the look v2 bible asks for adult proportions, so it is superseded and would be redrawn from a hero sheet",
+      "bible_version": "1.0",
+      "made_with": {
+        "provider": "gemini",
+        "model": "gemini-3.1-flash-image",
+        "model_version": "",
+        "prompt": "Painted storybook illustration, same art style, line quality and palette as the reference image (the reference is only a STYLE guide; do not copy its character). A friendly CARICATURE of the historical scientist Benjamin Franklin: head about 1.6x oversized, exaggerated but kind and instantly recognisable features from well-known historical portraits (hair, face shape, moustache, clothing of their era), expressive. Full body, standing, long thin grey hair, round spectacles, 18th-century brown coat and breeches, holding a kite string, clever grin. Adult, dignified-comic, not childish. One figure only, feet visible, no text, no letters, no logo. Flat solid pure green #00FF00 background, no shadow on the background, no green on the figure.",
+        "params": {
+          "seconds": 8.9
+        },
+        "seed": null,
+        "refs": [
+          "reference.analyst_idle"
+        ],
+        "lora": null,
+        "cost_usd": 0.067
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "Gemini output; the provider's output terms were not verified in a record"
+      },
+      "approval": {
+        "status": "superseded",
+        "by": "ვანო (D-41, 2026-10-16)",
+        "at": "2026-10-16",
+        "note": "look v2 (adult proportions) replaces the 1.6x-head sprites"
+      },
+      "lineage": {
+        "parent": "reference.analyst_idle"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-10-22T10:30:00",
+        "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
+      },
+      "width": 896,
+      "height": 1200
+    },
+    {
+      "id": "sprite.sci_nansen",
+      "kind": "sprite",
+      "file": "assets/characters/scientists_v0/sci_nansen_keyed.png",
+      "sha256": "28545e3ba9c4776cdc2e12c5d192429b463f8d7cf1058c898eab69dfd14a58bb",
+      "bytes": 1550802,
+      "tags": [
+        "caricature",
+        "hero",
+        "keyed",
+        "look_v1",
+        "nansen",
+        "scientist"
+      ],
+      "description": "full-body caricature sprite of Nansen on chroma green, look v1 (1.6x head); the look v2 bible asks for adult proportions, so it is superseded and would be redrawn from a hero sheet",
+      "bible_version": "1.0",
+      "made_with": {
+        "provider": "gemini",
+        "model": "gemini-3.1-flash-image",
+        "model_version": "",
+        "prompt": "Painted storybook illustration, same art style, line quality and palette as the reference image (the reference is only a STYLE guide; do not copy its character). A friendly CARICATURE of the historical scientist Fridtjof Nansen: head about 1.6x oversized, exaggerated but kind and instantly recognisable features from well-known historical portraits (hair, face shape, moustache, clothing of their era), expressive. Full body, standing, Norwegian polar explorer, strong jaw, fur-trimmed hooded parka, snow goggles pushed up, carrying a coil of rope and an ice axe. Adult, dignified-comic, not childish. One figure only, feet visible, no text, no letters, no logo. Flat solid pure green #00FF00 background, no shadow on the background, no green on the figure.",
+        "params": {
+          "seconds": 9.8
+        },
+        "seed": null,
+        "refs": [
+          "reference.analyst_idle"
+        ],
+        "lora": null,
+        "cost_usd": 0.067
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "Gemini output; the provider's output terms were not verified in a record"
+      },
+      "approval": {
+        "status": "superseded",
+        "by": "ვანო (D-41, 2026-10-16)",
+        "at": "2026-10-16",
+        "note": "look v2 (adult proportions) replaces the 1.6x-head sprites"
+      },
+      "lineage": {
+        "parent": "reference.analyst_idle"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-10-22T10:30:00",
+        "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
+      },
+      "width": 896,
+      "height": 1200
+    },
+    {
+      "id": "sprite.sci_newton",
+      "kind": "sprite",
+      "file": "assets/characters/scientists_v0/sci_newton_keyed.png",
+      "sha256": "a7bfe90850e96e2d3b4c178747503b1bc686698f523e076d71f89b49ebc1224e",
+      "bytes": 1585521,
+      "tags": [
+        "caricature",
+        "hero",
+        "keyed",
+        "look_v1",
+        "newton",
+        "scientist"
+      ],
+      "description": "full-body caricature sprite of Newton on chroma green, look v1 (1.6x head); the look v2 bible asks for adult proportions, so it is superseded and would be redrawn from a hero sheet",
+      "bible_version": "1.0",
+      "made_with": {
+        "provider": "gemini",
+        "model": "gemini-3.1-flash-image",
+        "model_version": "",
+        "prompt": "Painted storybook illustration, same art style, line quality and palette as the reference image (the reference is only a STYLE guide; do not copy its character). A friendly CARICATURE of the historical scientist Isaac Newton: head about 1.6x oversized, exaggerated but kind and instantly recognisable features from well-known historical portraits (hair, face shape, moustache, clothing of their era), expressive. Full body, standing, long curly wig, 17th-century coat, holding a prism in one hand and looking at it intensely, an apple tucked under the other arm. Adult, dignified-comic, not childish. One figure only, feet visible, no text, no letters, no logo. Flat solid pure green #00FF00 background, no shadow on the background, no green on the figure.",
+        "params": {
+          "seconds": 9.0
+        },
+        "seed": null,
+        "refs": [
+          "reference.analyst_idle"
+        ],
+        "lora": null,
+        "cost_usd": 0.067
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "Gemini output; the provider's output terms were not verified in a record"
+      },
+      "approval": {
+        "status": "superseded",
+        "by": "ვანო (D-41, 2026-10-16)",
+        "at": "2026-10-16",
+        "note": "look v2 (adult proportions) replaces the 1.6x-head sprites"
+      },
+      "lineage": {
+        "parent": "reference.analyst_idle"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-10-22T10:30:00",
+        "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
+      },
+      "width": 896,
+      "height": 1200
+    },
+    {
+      "id": "sprite.sci_tesla",
+      "kind": "sprite",
+      "file": "assets/characters/scientists_v0/sci_tesla_keyed.png",
+      "sha256": "0a696011f80528dd4786ffc8fe83ba4b211d3ba21f9a62f07c08fd088b6b605e",
+      "bytes": 1207535,
+      "tags": [
+        "caricature",
+        "hero",
+        "keyed",
+        "look_v1",
+        "scientist",
+        "tesla"
+      ],
+      "description": "full-body caricature sprite of Tesla on chroma green, look v1 (1.6x head); the look v2 bible asks for adult proportions, so it is superseded and would be redrawn from a hero sheet",
+      "bible_version": "1.0",
+      "made_with": {
+        "provider": "gemini",
+        "model": "gemini-3.1-flash-image",
+        "model_version": "",
+        "prompt": "Painted storybook illustration, same art style, line quality and palette as the reference image (the reference is only a STYLE guide; do not copy its character). A friendly CARICATURE of the historical scientist Nikola Tesla: head about 1.6x oversized, exaggerated but kind and instantly recognisable features from well-known historical portraits (hair, face shape, moustache, clothing of their era), expressive. Full body, standing, tall thin, sharp moustache, slicked dark hair, long dark coat, holding a glowing bulb without wires in one hand, sparks around the other hand. Adult, dignified-comic, not childish. One figure only, feet visible, no text, no letters, no logo. Flat solid pure green #00FF00 background, no shadow on the background, no green on the figure.",
+        "params": {
+          "seconds": 9.3
+        },
+        "seed": null,
+        "refs": [
+          "reference.analyst_idle"
+        ],
+        "lora": null,
+        "cost_usd": 0.067
+      },
+      "licence": {
+        "status": "generated_terms_unverified",
+        "note": "Gemini output; the provider's output terms were not verified in a record"
+      },
+      "approval": {
+        "status": "superseded",
+        "by": "ვანო (D-41, 2026-10-16)",
+        "at": "2026-10-16",
+        "note": "look v2 (adult proportions) replaces the 1.6x-head sprites"
+      },
+      "lineage": {
+        "parent": "reference.analyst_idle"
+      },
+      "origin": {
+        "episode": "",
+        "created": "2026-10-22T10:30:00",
+        "source": "assets/characters/scientists_v0/generation_ledger.jsonl"
+      },
+      "width": 896,
+      "height": 1200
+    }
+  ]
+}

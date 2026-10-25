@@ -49,6 +49,8 @@ HOMES = {
     "AC": "ASSET_COMPOSE.md",  # shots composed from reusable assets (2026-10-25)
     "CT": "SHOT_CONTINUITY.md",  # continuity cards of the shots of one scene (D-75, 2026-10-25)
     "LT": "LORA_TRAINING.md",  # LoRA training control (D-72, 2026-10-23)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
+    "BP": "SOURCED_RULES.md",  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
+    "WB": "WORLD_BIBLE.md",  # the World Bible and the asset library (D-70 stage C, 2026-10-22)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))
 ID = re.compile(rf"\b({_PREFIX})-([TE]?\d{{2,3}})\b")

@@ -15,7 +15,8 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [VIDEO_PARAMETER_SPEC](VIDEO_PARAMETER_SPEC.md) | every parameter: default, range, evidence, validation | P- |
 | [PRODUCTION_RULES](PRODUCTION_RULES.md) | the gates every video passes in order, the creator's standing orders, the feedback log, planning numbers by length | |
 | [VISUAL_WORLD_ARCHITECTURE](VISUAL_WORLD_ARCHITECTURE.md) | how a topic's world and era are resolved and shown (era codex, look v2, anchored hybrid generation, grade, visual QA); proposal D-41 | |
-| [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md) | the one JSON per video (narration, voice, pictures and prompts, sounds, edit), its validation rules PV-01..PV-56, paint plans PP-xx, scene continuity CS-01..CS-12 (D-69) and the command line; D-43 | |
+| [WORLD_BIBLE](WORLD_BIBLE.md) | the versioned World Bible (`world/bible.json`) and the reusable asset library (`assets/library.json`): records, versions, approval, duplicate warnings; D-70 stage C | WB- |
+| [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md) | the one JSON per video (narration, voice, pictures and prompts, sounds, edit), its validation rules PV-01..PV-60, paint plans PP-xx, scene continuity CS-01..CS-12 (D-69) and the command line; D-43 | |
 | [STORY_ENGINE](STORY_ENGINE.md) | the writers' room for dialogue what-if episodes: story (ST-), scenes and dialogue (SC-, DW-), performance (PF-), motion and accents (MO-), sound layers (AL-), voice casting from traits (VC-), Shorts styles (SS-), visual beats and their cues, expression sheets (VB-); D-48, D-54, D-55, D-58 | ST-, SC-, DW-, PF-, MO-, AL-, VC-, SS-, VB- |
 | [DOCUDRAMA_REFERENCE_LIBRARY](research/DOCUDRAMA_REFERENCE_LIBRARY.md) | external historical docudrama transcript/subtitle references, access audit, and Claude research workflow | |
 | [ORCHESTRATION](ORCHESTRATION.md) | how an episode is run alone: phases, hard caps and stops (OR-), time-jump episode structure (SR-), Shorts (SH-) | OR-, SR-, SH- |
@@ -36,6 +37,8 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [PUBLISHING_AND_ANALYTICS](PUBLISHING_AND_ANALYTICS.md) | cadence, first cycle, candidates, metrics, learning loop | |
 | [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md) | budgets, estimates, spend ledger, hours | |
 | [TOOL_STRATEGY](TOOL_STRATEGY.md) | which tool makes which asset, costs, kit test, RunPod money rules | |
+| [TOOLING_RESEARCH](TOOLING_RESEARCH.md) | dated candidate models, providers, storage and watchdogs with sources (stage A of the 2026-10-22 brief); appendices in `research/TOOLING_*_2026-10-22.md` and `research/REPO_AUDIT_2026-10-22.md` | |
+| [ARCHITECTURE_PLAN_2026-10-22](ARCHITECTURE_PLAN_2026-10-22.md) | the master brief's stages A-H on the real code: Guardian, World Bible, asset library, provider adapters, pilots; the creator's open questions; D-70 | |
 | [RISK_REGISTER](RISK_REGISTER.md) | risks and mitigations | R- |
 | [RIGHTS_AND_FAIR_USE](RIGHTS_AND_FAIR_USE.md) | rights rules for crossover episodes of fictional worlds | RR- |
 | [EPISODE_STANDARDS](EPISODE_STANDARDS.md) | the per-episode rulebook (`episode_rules.json`): legal, platform and creative rules of one video, risk statuses PASS/ADAPT/REVIEW/BLOCK, checkpoints and rechecks; D-51 | ES- |

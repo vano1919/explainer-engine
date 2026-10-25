@@ -92,6 +92,8 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-56 | reported dialogue ([D-63](DECISIONS_AND_OPEN_QUESTIONS.md)): the narrator tells the exchange; a segment holds at most `silent.MAX_ACCENT_BUBBLES` silent line (`production/silent.check_reported_dialogue`); a FAIL otherwise |
 | PV-57 | the establishing cast ([BP-91](SOURCED_RULES.md), [D-64](DECISIONS_AND_OPEN_QUESTIONS.md)): in a segment of a `production_script/3` the first shot whose picture has `heroes` is the establishing view; a later shot shows only heroes of that view, or a newcomer the narrator has named in the segment up to the line the shot opens on, or the hero the shot's `reveal` names (`validate.establishing_cast`); the rule's severity otherwise. PV-56 also holds the one accent bubble to [BP-84](SOURCED_RULES.md)'s word cap |
 | PV-58 | word slams ([BP-97](SOURCED_RULES.md), [D-66](DECISIONS_AND_OPEN_QUESTIONS.md)): a shot accent `slam_text` is at most the rule's words, one a segment, and never the same word twice (`validate.word_slams`); the picture dims and softens behind it while it holds (`accents.SLAM_DIM`); the rule's severity |
+| PV-59 | Scene Package references (D-70 stage F): every `segments[].asset_ids` entry is a record of the asset library ([WORLD_BIBLE.md](WORLD_BIBLE.md) WB-06) and the script's `bible.version` is a version the World Bible has had; FAIL otherwise (`production/segment_hash.check`) |
+| PV-60 | a segment's `review` with `status: approved` names who approved (`by`, FAIL without) and carries the segment's edit hash at that moment (`production/segment_hash.hashes`); a segment edited after its review is a REVIEW that asks to show it again. `python -m explainer_engine.production.segment_hash <script> --against <older>` prints what a change makes stale (voice, pictures, edit), so only that is made again |
 
 ## Paint plans (PP-xx; audit 2026-10-19; `imagegen/plan.py`, `production/paint.py`)
 
@@ -100,7 +102,7 @@ generate images (Anthropic: "an image understanding model only"); it prepares th
 
 | Id | Rule |
 |---|---|
-| PP-01 | a plan is a `paint_plan/1` file with a known provider (`gemini`, `pod`, `local`); there is no default provider |
+| PP-01 | a plan is a `paint_plan/1` file with a known provider (`gemini`, `bfl`, `fal` through `imagegen/providers`; `pod`, `local` as hand-offs); there is no default provider |
 | PP-02 | the plan's hash covers its pictures, prompts, references, provider, model, size and tier; `paint run` needs an approval of exactly that hash in the run ledger (`Run.approve`: who, and which message); an edited plan loses its approval |
 | PP-03 | the provider can take the batch: a listed price for the model and size, no more references than the provider takes |
 | PP-04 | every item has a compiled prompt (`production compile --write`) |

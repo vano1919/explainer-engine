@@ -5,6 +5,8 @@ generic props; diagram parts; labels and icons; speech bubbles; transitions; thu
 vector first, every file with provenance and a licence.
 
 ## Asset record
+**Since 2026-10-22 the record lives in code:** `assets/library.json` through `explainer_engine/assets/library.py` ([WORLD_BIBLE](WORLD_BIBLE.md) WB-06..WB-10) carries id, file, hash, tags, bible version, model, prompt, seed, references, LoRA, licence, approval and lineage; the field list below is the earlier paper design and is kept for the fields the code does not have yet (format, viewBox, dependencies, fallback, used_by).
+
 `id` (P-66: `<kind>.<name>[.<variant>]`), `path`, `format` (svg first), `viewBox` or pixel size, `style` (stroke, palette
 tokens used), `dependencies` (parts, fonts), `origin` (original | generated | third_party), `creator`, `source`,
 `license`, `commercial_use` (yes/no/unknown: unknown blocks use), `variants`, `editable_layers`, `validation` (checks
@@ -37,6 +39,8 @@ usefulness, editability, time saved and cost. No-cost fallback when the budget i
 CC0 resources.
 
 ## Licence register
+The `licence` block of every library record ([WORLD_BIBLE](WORLD_BIBLE.md) WB-06) is the register for generated assets; `assets/LICENSES.json` below is still the plan for fonts and third-party files and does not exist yet.
+
 `docs/` plus `assets/LICENSES.json` (created in Phase 4): one entry per font, SFX, music or third-party file: name,
 source URL, licence, commercial-use status, access date, file hash. Commercial use is never inferred from availability
 online; "unknown" blocks the asset.

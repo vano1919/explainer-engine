@@ -620,6 +620,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     out += _speech.check(doc)
     from explainer_engine.scripting import reference_approval as _reference
     out += _reference.check(doc, picture_dirs[0].parent if picture_dirs else None)  # PV-47 variant collage first (OR-16)
+    from explainer_engine.production import segment_hash as _seg
+    out += _seg.check(doc)  # PV-59 Scene Package references, PV-60 segment review on the current text (D-70 stage F)
     return out
 
 
