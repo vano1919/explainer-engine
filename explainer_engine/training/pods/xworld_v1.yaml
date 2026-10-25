@@ -1,0 +1,68 @@
+# xworld_v1 (D-80): one LoRA on Qwen-Image-2.1 for the style and the scene sequence (LT-69). Agreed with ვანო 2026-10-26
+# 02:15 Tbilisi ("ყველა კი"): rank 16, lr 1e-4, 2500 steps, 1024 px, a checkpoint and samples every 250 steps (LT-11).
+# The trigger is inside every caption file (cached text embeddings, LT-13); @SAMPLES@ is filled by xworld_v1_build.py.
+job: extension
+config:
+  name: "xworld_v1"
+  process:
+    - type: 'diffusion_trainer'
+      training_folder: "/workspace/output"
+      device: cuda:0
+      trigger_word: "xworld style"   # also written into every caption file (LT-13: cached embeddings); never added twice
+      network:
+        type: "lora"
+        linear: 16
+        linear_alpha: 16
+      save:
+        dtype: float16
+        save_every: 250
+        max_step_saves_to_keep: 12
+      datasets:
+        - folder_path: "/workspace/ds/style"
+          caption_ext: "txt"
+          caption_dropout_rate: 0.0
+          num_repeats: 1
+          cache_latents_to_disk: true
+          resolution: [1024]
+        - folder_path: "/workspace/ds/pairs/target"
+          control_path: ["/workspace/ds/pairs/control"]
+          caption_ext: "txt"
+          caption_dropout_rate: 0.0
+          num_repeats: 1
+          cache_latents_to_disk: true
+          resolution: [1024]
+      train:
+        batch_size: 1
+        cache_text_embeddings: true
+        steps: 2500
+        gradient_accumulation: 1
+        timestep_type: "weighted"
+        content_or_style: "balanced"
+        train_unet: true
+        train_text_encoder: false
+        gradient_checkpointing: true
+        noise_scheduler: "flowmatch"
+        optimizer: "adamw8bit"
+        lr: 1e-4
+        dtype: bf16
+      model:
+        name_or_path: "Qwen/Qwen-Image-2.1"
+        arch: "qwen_image_2"
+        quantize: true
+        qtype: "qfloat8"
+        quantize_te: true
+        qtype_te: "qfloat8"
+      sample:
+        sampler: "flowmatch"
+        sample_every: 250
+        width: 1024
+        height: 576
+        samples: "@SAMPLES@"
+        neg: ""
+        seed: 42
+        walk_seed: false
+        guidance_scale: 4
+        sample_steps: 30
+meta:
+  name: "xworld_v1"
+  version: '1.0'

@@ -2264,3 +2264,11 @@ training as sequences is decided in the process. Changed together:
 - 03:05 Tbilisi: caption pod script `training/pods/caption_xworld_v1.{py,sh}` + `tests/unit/test_caption_xworld_v1.py`
   (Qwen3-VL-8B-Instruct; 1336 descriptions + 665 change lines; no names, no trigger, resumable). Not started: the pod plan
   goes to the creator first (OR-23).
+- 03:15 Tbilisi: ვანო "ყველა კი" (02:15) to the night plan and to the missing rules. Night ledger
+  `jobs/xworld_v1/night_2026-10-26/run.json` (runpod $8.75, 80 % = the agreed $7). Caption pod d0sxf4ya1gajsb (RTX 3090,
+  $0.22/h, cheaper than the A5000, none in stock with a volume; `--volume 0`) started 02:17. New rules LT-74 (VL captions read
+  before training), LT-75 (prompt-type test: measured against the real next frame, then eye, creator decides), LT-76 (held-out
+  never in training, refused by the build), LT-77 (six 2.1 training samples); LT-07 style size 20-1000. Training pod files
+  `training/pods/xworld_v1.{sh,yaml}` + `xworld_v1_build.py` (style + pairs with control, trigger `xworld style` in every
+  caption, rank 16, lr 1e-4, 2500 steps, 1024 px, every 250 steps); the 2512 `xworld_style_v1.{sh,yaml}` are deleted (D-80).
+  `hrdpkuwoh6iyuz` (stopped, 0 GB, $0/day) is listed in keep_stopped_pods so `create` runs; deletion still waits for his word.
