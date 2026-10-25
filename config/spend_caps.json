@@ -2,15 +2,20 @@
   "_doc": "The creator's money ceilings, enforced in code (explainer_engine/core/spend_caps.py, D-56). A run ledger may set lower caps, never higher; a pod is refused when it would pass any RunPod line. Raise a number only on the creator's word.",
   "per_episode": {
     "runpod_usd": 29.0,
-    "gemini_usd": 10.0
+    "gemini_usd": 10.0,
+    "bfl_usd": 3.0,
+    "fal_usd": 9.0
   },
   "runpod": {
     "per_pod_usd": 6.0,
     "per_24h_usd": 26.0,
     "max_hours_per_pod": 4.0,
-    "max_price_per_hour": 1.5,
+    "max_price_per_hour": 3.0,
     "min_balance_left_usd": 0.25,
-    "keep_stopped_pods": ["bbewaw04kw1o6l", "6vfmwgsw1y6o3n", "g1mgl27933w1vd", "owvwvotr0xvtv0", "fzdd49cgdd1hoe", "lx6h0v0l5z0hk9", "ebihl5zzzkql2z", "s69qbt42p72gdm", "toxcl7t2dyw633", "ifghvnsx95wmgb", "hjcnvhr5q4dtzc", "bv4dtilmiw9e4m", "o2beilxz11sd0t", "5r50psn3elm6un", "usx3b1xb9w9dy4", 
+    "keep_stopped_pods": [
+      "ifghvnsx95wmgb",
+      "5r50psn3elm6un",
+      "usx3b1xb9w9dy4",
       "97vn2t443puxxl",
       "no7nu9x1t3fwye",
       "qz3oizd4j452kg",
@@ -18,7 +23,28 @@
       "wwuw52woensdar",
       "5undsbjjk5bt5s",
       "8znq0e7cw7jfrf",
-      "kjcetunvhdd9xv", "v3has67uzsftsl", "jzjivnicxbgf45", "gdb5oc1h2dxax9", "o99z1nm8uifds4", "w5awi7a7uzhix4", "w0t3l04k6w3osj"
-    ]
-  }
+      "kjcetunvhdd9xv",
+      "v3has67uzsftsl",
+      "jzjivnicxbgf45",
+      "gdb5oc1h2dxax9",
+      "o99z1nm8uifds4",
+      "w5awi7a7uzhix4",
+      "w0t3l04k6w3osj",
+      "bbewaw04kw1o6l",
+      "6vfmwgsw1y6o3n",
+      "g1mgl27933w1vd",
+      "owvwvotr0xvtv0",
+      "fzdd49cgdd1hoe",
+      "lx6h0v0l5z0hk9",
+      "ebihl5zzzkql2z",
+      "s69qbt42p72gdm",
+      "toxcl7t2dyw633",
+      "hjcnvhr5q4dtzc",
+      "bv4dtilmiw9e4m",
+      "o2beilxz11sd0t",
+      "vrvketavqpk474"
+    ],
+    "keep_network_volumes": []
+  },
+  "_runpod_note": "2026-10-24 (the creator's OK on the strategy): money is capped per JOB (per_pod_usd, the guard stops there) and cards are picked by the job's estimated cost (runpod.pick_gpus); max_price_per_hour is only the runaway ceiling of one card."
 }
