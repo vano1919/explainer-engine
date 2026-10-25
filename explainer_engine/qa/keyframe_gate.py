@@ -33,6 +33,7 @@ VLM_MODEL = "Qwen/Qwen2.5-VL-72B-Instruct-AWQ"
 LORA_BASE = {
     "wldnk_style": "Qwen/Qwen-Image-2512",
     "wldnk_scene": "Qwen/Qwen-Image-Edit-2511",
+    "wldnk_qi21": "Qwen/Qwen-Image-2.1",      # 2026-10-25: one model draws and edits, so this LoRA serves both
 }
 
 

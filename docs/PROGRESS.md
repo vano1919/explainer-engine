@@ -1205,3 +1205,21 @@ What was done:
   phrase added to every prompt (the prompt still passes the 40-word rule), colour drift as REVIEW, and a bounded grade
   (at most 0.35, originals kept). Tests: `tests/unit/test_episode_look.py` (absolutes frozen, clash, phrase, apply,
   drift and grade). Nothing paid; the drift threshold is calibrated on the first episode.
+
+## 2026-10-25 16:50 Tbilisi: blind description check (KG-23..KG-27) and generated style pictures (LT-67, LT-68)
+- ვანო asked for a precise written style description that every picture is checked against, and for a describer agent
+  with fixed rules. The describer describes each picture without its prompt; the description is compared with the
+  scene's logic; a "?" gets a second look. The prompt writer gets matching rules, so the loop stays consistent.
+- `qa/blind_check.py`:
+  - `STYLE_SPEC` gives six items read off the approved eras sheet.
+  - `DESCRIBE_RULES` shows the describer the picture only.
+  - `compare` checks the description against the gate card: counted things, absent things with synonyms, people,
+    floating things, anatomy and style.
+  - `second_look` asks one question per doubtful item.
+  - `style_verdict` needs the DINOv2 score (at least 0.557 against the 20 eras cells) and every style item.
+  - Tests: `tests/unit/test_blind_check.py`, including the 2.1 LoRA's second small bus and the flat-vector frames that
+    passed on the score alone.
+- `keyframe_gate.LORA_BASE` adds the Qwen-Image-2.1 style LoRA (`wldnk_qi21`, one model that draws and edits).
+- LT-67: pictures generated for training are drawn with the eras formula. LT-68: a picture joins a style set only with
+  both gates passed, and generated pictures make up at most 40 % of the set.
+- 104 eras-formula prompts are ready for the 2512 + approved-LoRA generation (all pass `style_prompt.check`, 19-32 words).
