@@ -18,8 +18,9 @@ For historically grounded docudrama episodes, read `docs/research/DOCUDRAMA_REFE
 A single prompt that writes story, dialogue, tags, shots and sounds at once loses the story: the technical layer crowds
 out the plot. Each stage below gets a small, fixed input, writes only its own fields, and passes a free check before the
 next stage starts. `scripting/stage_guard.py` proves a later stage did not rewrite an earlier one (the words are frozen
-after stage 2). Every stage is an agent in `.claude/agents/` with `model: sonnet`; the orchestrator (or the session) runs
-them in order and stops at the first failed gate.
+after stage 2). Every stage has a page in `.claude/agents/`; the main agent (the orchestrator or the session) runs the stages
+itself in order, following each page, and stops at the first failed gate. Only stage 7, `script-critic`, is spawned
+as a separate agent with a fresh context (OR-20, D-79).
 
 | # | Stage (agent) | Writes | Gate (free) |
 |---|---|---|---|

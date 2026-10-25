@@ -4,8 +4,8 @@ Scope since 2026-10-25 (LT-69): only the photo style LoRA is trained; the sectio
 How every LoRA of the channel is trained and judged: the photo style LoRA (Qwen-Image-2512, ai-toolkit), the image-edit
 "next pose" LoRA (Qwen-Image-Edit-2511, paired data) and the video motion LoRA (LTX-2.5, ltx-trainer). Decision
 [D-72](DECISIONS_AND_OPEN_QUESTIONS.md). Code: `explainer_engine/training/` (numbers in `lora_rules.json`), tests
-`tests/unit/test_lora_training.py`. Agents: `lora-coordinator`, `lora-dataset-auditor`, `lora-run-operator`,
-`lora-checkpoint-judge` (`.claude/agents/`); skill `lora-training`. Pods only through `explainer_engine.cloud.runpod`
+`tests/unit/test_lora_training.py`. Pages: `lora-coordinator` (the main agent), `lora-dataset-auditor` and `lora-run-operator` (its checklists),
+`lora-checkpoint-judge` (the one spawned critic, OR-20) (`.claude/agents/`); skill `lora-training`. Pods only through `explainer_engine.cloud.runpod`
 (invariant 1); money ceilings only in `config/spend_caps.json`.
 
 ## 1. The protocol (one run)

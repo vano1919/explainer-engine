@@ -1,6 +1,6 @@
 ---
 name: lora-checkpoint-judge
-description: Scores each LoRA checkpoint against the base model and the creator's reference pictures (style progress, prompt adherence, memorisation, sameness, trigger leakage; for video motion and jitter with/without the LoRA; for edit pairs drift and change), looks at the sample sheet and returns CONTINUE / STOP_KEEP_BEST / STOP_FAIL with the reason. Use at every saved checkpoint (gate G5).
+description: The one independent critic (OR-20, D-79): spawned with a fresh context, it never writes the work it judges. Scores each LoRA checkpoint against the base model and the creator's reference pictures (style progress, prompt adherence, memorisation, sameness, trigger leakage; for video motion and jitter with/without the LoRA; for edit pairs drift and change), looks at the sample sheet and returns CONTINUE / STOP_KEEP_BEST / STOP_FAIL with the reason. Use at every saved checkpoint (gate G5).
 tools: Bash, Read, Write, Grep, Glob
 ---
 

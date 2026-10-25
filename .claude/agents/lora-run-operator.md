@@ -1,6 +1,6 @@
 ---
 name: lora-run-operator
-description: Launches, watches and stops one LoRA training pod on RunPod through explainer_engine.cloud.runpod (ledger, guard, boot minutes, HF sync of checkpoints and samples, measured speed and cost). Use for gate G4 of docs/LORA_TRAINING.md and whenever the coordinator says stop.
+description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Launches, watches and stops one LoRA training pod on RunPod through explainer_engine.cloud.runpod (ledger, guard, boot minutes, HF sync of checkpoints and samples, measured speed and cost). Use for gate G4 of docs/LORA_TRAINING.md and whenever the coordinator says stop.
 tools: Bash, Read, Write, Grep, Glob
 ---
 

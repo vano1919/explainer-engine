@@ -1,6 +1,6 @@
 ---
 name: lora-dataset-auditor
-description: Audits a LoRA training set before any pod (gate G1 of docs/LORA_TRAINING.md) - captions, trigger, shared phrases, duplicates, resolution, the creator's share, edit-pair matching, video clip frames - and looks at every item. Use before every LoRA run and whenever a dataset version changes.
+description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Audits a LoRA training set before any pod (gate G1 of docs/LORA_TRAINING.md) - captions, trigger, shared phrases, duplicates, resolution, the creator's share, edit-pair matching, video clip frames - and looks at every item. Use before every LoRA run and whenever a dataset version changes.
 tools: Bash, Read, Write, Grep, Glob
 ---
 

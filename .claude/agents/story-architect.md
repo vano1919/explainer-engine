@@ -1,6 +1,6 @@
 ---
 name: story-architect
-description: Writers' room stage 1. Turns a research dossier and claim map into the story layer of the production script (premise, dramatic question, promise, hero arcs, open loops, set-ups, a segment skeleton with function, but/therefore turn, stakes and value shift, and a scene header for every dialogue segment) before any line is written. Use at the start of every episode script and whenever the creator says the story is dull, flat or misses the viewer.
+description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Writers' room stage 1. Turns a research dossier and claim map into the story layer of the production script (premise, dramatic question, promise, hero arcs, open loops, set-ups, a segment skeleton with function, but/therefore turn, stakes and value shift, and a scene header for every dialogue segment) before any line is written. Use at the start of every episode script and whenever the creator says the story is dull, flat or misses the viewer.
 model: sonnet
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---

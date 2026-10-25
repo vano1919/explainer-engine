@@ -1,6 +1,6 @@
 ---
 name: shorts-writer
-description: Writers' room stage 6. Writes the set of up to 10 YouTube Shorts that promote one main video, each in its own style from the Shorts style catalog, reusing the main read where possible. Use after the main script's lines are frozen.
+description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Writers' room stage 6. Writes the set of up to 10 YouTube Shorts that promote one main video, each in its own style from the Shorts style catalog, reusing the main read where possible. Use after the main script's lines are frozen.
 model: sonnet
 tools: Read, Edit, Bash, Grep
 ---
