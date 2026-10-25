@@ -38,6 +38,8 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md) | budgets, estimates, spend ledger, hours | |
 | [TOOL_STRATEGY](TOOL_STRATEGY.md) | which tool makes which asset, costs, kit test, RunPod money rules | |
 | [TOOLING_RESEARCH](TOOLING_RESEARCH.md) | dated candidate models, providers, storage and watchdogs with sources (stage A of the 2026-10-22 brief); appendices in `research/TOOLING_*_2026-10-22.md` and `research/REPO_AUDIT_2026-10-22.md` | |
+| [research/ANIMATION_UNIVERSE_2026-10-22](research/ANIMATION_UNIVERSE_2026-10-22.md) | the creator's 2026-10-22 brief: four candidate animated universes, their concept boards (`imagegen/universe_boards.py`), feasibility, asset-library plan, rig proof of concept; the direction is the creator's choice | |
+| [research/ANIMATION_TOOLS_2026-10-22](research/ANIMATION_TOOLS_2026-10-22.md) | the reference shows' principles (simple shapes, silhouette, holds, one light), the free tools with licences (Rhubarb, AnimatedDrawings, SAM 2, pymunk), the rig proof of concept `production/rig.py`; skill `animated-universe` | |
 | [ARCHITECTURE_PLAN_2026-10-22](ARCHITECTURE_PLAN_2026-10-22.md) | the master brief's stages A-H on the real code: Guardian, World Bible, asset library, provider adapters, pilots; the creator's open questions; D-70 | |
 | [RISK_REGISTER](RISK_REGISTER.md) | risks and mitigations | R- |
 | [RIGHTS_AND_FAIR_USE](RIGHTS_AND_FAIR_USE.md) | rights rules for crossover episodes of fictional worlds | RR- |

@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 
 from explainer_engine.imagegen import gemini as G
-from explainer_engine.imagegen.providers.base import ImageProvider, ProviderError, Result
+from explainer_engine.imagegen.providers.base import AccountError, ImageProvider, ProviderError, Result
 
 
 class Gemini(ImageProvider):
@@ -34,6 +34,8 @@ class Gemini(ImageProvider):
         except G.ChargeUncertain:
             raise
         except G.GeminiError as exc:
+            if any(f"HTTP {c}" in str(exc) for c in (401, 402, 403)):  # depleted prepay or a bad key: every later call fails alike
+                raise AccountError(f"gemini: {exc}") from None
             raise ProviderError(f"gemini: {exc}") from None
         data = Path(p).read_bytes()
         cost = self.estimate(model, size, 1, len(refs))
