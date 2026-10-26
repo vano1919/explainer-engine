@@ -205,3 +205,48 @@ def people_words(s, sid, w=320, h=180):
         part = "left third" if cx < 1 / 3 else "right third" if cx > 2 / 3 else "middle third"
         out[p["id"]] = f"stands in the {part} of the picture and is about {int(round(100 * (ys.max() - ys.min() + 1) / h, -1))} percent of its height"
     return out
+
+
+# --- backdrop per panel (round 3a finding, 2026-10-27): the grid COPIES the turnaround panel by panel, so the panels of the turnaround are arranged
+# --- in the order of the grid, each cut to its shot's direction and field of view, and the model only adds the people -----------------------
+
+def _crop_box(s, sid, panel=PANEL):
+    """(view index, left, top, right, bottom) in the 1280x704 view picture of the crop that a shot sees: the direction offset and the narrower field of view."""
+    cam = S3.camera(s, s["shots"][sid])
+    i = view_index(s, sid)
+    d = (yaw_of(s, sid) - YAWS[i] + 180) % 360 - 180  # degrees right of the view's centre
+    vf = math.radians(cam["vfov"])
+    half_s = math.tan(vf / 2) * panel[0] / panel[1]  # tan of half the shot's horizontal field of view
+    fw = min(1.0, half_s / math.tan(math.radians(45)))  # share of the 90 degree view that the shot sees
+    cx = 0.5 + math.tan(math.radians(max(-45, min(45, d)))) / 2
+    pos, look = np.asarray(cam["pos"], float), np.asarray(cam["look_at"], float)
+    hd = float(np.linalg.norm((look - pos)[:2])) or 1.0
+    pitch = math.atan2(look[2] - pos[2], hd)
+    vview = math.radians(math.degrees(2 * math.atan(math.tan(math.radians(45)) * panel[1] / panel[0])))
+    cy = 0.5 - math.tan(pitch) / (2 * math.tan(vview / 2))
+    cx, cy = min(max(cx, fw / 2), 1 - fw / 2), min(max(cy, fw / 2), 1 - fw / 2)
+    return i, (cx - fw / 2) * panel[0], (cy - fw / 2) * panel[1], (cx + fw / 2) * panel[0], (cy + fw / 2) * panel[1]
+
+
+def plate_grid(turn, s, shot_ids, panel=PANEL):
+    """The 2x2 picture of one EMPTY backdrop per panel, cut from the turnaround picture ``turn`` (2x2 of the four direction views)."""
+    from PIL import Image
+    out = Image.new("RGB", (2 * panel[0], 2 * panel[1]), (255, 255, 255))
+    for k, sid in enumerate(shot_ids):
+        i, l, t, r, b = _crop_box(s, sid, panel)
+        vx, vy = (i % 2) * panel[0], (i // 2) * panel[1]
+        crop = turn.crop((int(vx + l), int(vy + t), int(vx + r), int(vy + b))).resize(panel)
+        out.paste(crop, ((k % 2) * panel[0], (k // 2) * panel[1]))
+    return out
+
+
+def plate_words(s, shot_ids, number):
+    """The paragraph for a +dpl cell: Image ``number`` holds the empty backdrop of every panel; the people are added where the ray cast puts them."""
+    out = [f"Image {number} is a 2x2 picture of the EMPTY backdrop of each of the four panels, in the same order, with no people. Draw the storyboard on it: keep every panel's "
+           "place, objects, horizon, camera and light exactly as in Image " + str(number) + ", and ADD the people of that panel into it, every person named for that panel, "
+           "the full number of them, in the same style."]
+    for i, sid in enumerate(shot_ids):
+        w = people_words(s, sid)
+        if w:
+            out.append(f"{ORDER[i].capitalize()} panel: " + "; ".join(f"the {n} {t}" for n, t in w.items()) + ".")
+    return " ".join(out)

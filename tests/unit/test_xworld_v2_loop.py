@@ -383,3 +383,30 @@ def test_layout_words_carry_no_debug_colour():
             cam, lm = R.layout_words(s, sid)
             text = (cam + " " + ", ".join(lm)).lower()
             assert not any(c in text for c in S3.COLOR_WORDS), (name, sid, text)
+
+
+def test_round_3b_backdrop_per_panel_and_config():
+    """Round 3b: +dpl cuts the turnaround picture into one empty backdrop per panel by the shot's direction; the config loads and its jobs are valid."""
+    import json
+    from pathlib import Path
+    from PIL import Image
+    from explainer_engine.training.pods import xworld_v2_cells as K
+    from explainer_engine.training.pods import xworld_v2_dirs as D
+    from explainer_engine.training.pods import xworld_v2_loop_run as R
+    from explainer_engine.training.pods import xworld_v2_s3 as S3
+    base = Path(R.__file__).resolve().parent / "stories/v2"
+    assert K.parse("X_g_n_0_0+dpl")["E"] == "dpl"
+    s = S3.load_set(base / "sets/rome.set.json")
+    ids = ("s1", "s2", "s3", "s4")
+    turn = Image.new("RGB", (2 * D.PANEL[0], 2 * D.PANEL[1]), (10, 20, 30))
+    g = D.plate_grid(turn, s, ids)
+    assert g.size == (2 * D.PANEL[0], 2 * D.PANEL[1])
+    for sid in ids:
+        i, l, t, r, b = D._crop_box(s, sid)
+        assert 0 <= i < 4 and 0 <= l < r <= D.PANEL[0] and 0 <= t < b <= D.PANEL[1]
+    words = D.plate_words(s, ids, 1)
+    assert words.startswith("Image 1 is a 2x2 picture of the EMPTY backdrop") and "ADD the people" in words
+    cfg = json.loads((Path(R.__file__).resolve().parent / "loop/round_3b.json").read_text(encoding="utf-8"))
+    for st in cfg["stages"]:
+        for row in st["rows"]:
+            assert row in cfg["rows"]

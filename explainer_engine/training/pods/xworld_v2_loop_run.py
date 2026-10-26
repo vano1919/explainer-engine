@@ -234,11 +234,10 @@ def sdedit(pipe, prompt, init, strength, seed, w, h, steps, cfg):
         from videox_fun.pipeline.pipeline_qwenimage21 import calculate_shift
     dev = pipe._execution_device
     gen = torch.Generator(device="cuda").manual_seed(seed)
-    x = pipe.image_processor.preprocess(init.convert("RGB"), width=w, height=h).unsqueeze(2).to(dev, torch.bfloat16)
+    x = pipe.image_processor.preprocess(init.convert("RGBA"), width=w, height=h).unsqueeze(2).to(dev, torch.bfloat16)  # the 2.1 VAE takes RGBA (round 3a pod error: expected 4 channels)
     with torch.no_grad():
         enc = pipe._encode_vae_image(x, gen)
-        c = pipe.transformer.config.in_channels
-        x0 = pipe._pack_latents(enc, 1, c, enc.shape[3], enc.shape[4])
+        x0 = pipe._pack_latents(enc, 1, enc.shape[1], enc.shape[3], enc.shape[4])
         k = max(1, int(round(strength * steps)))
         sig = np.linspace(1.0, 1 / steps, steps)[steps - k:]
         sc = pipe.scheduler.config
@@ -264,6 +263,8 @@ def cell_extras(sc, c, shot_ids):
     s = sets_of(sc)
     k = base_images(c) + 1
     out = []
+    if c["E"] == "dpl":
+        out.append(DR.plate_words(s, shot_ids, k)); k += 1
     if c["E"] in ("dir", "dsk"):
         out.append(DR.dir_words(s, shot_ids, k)); k += 1
     if c["E"] in ("sk", "dsk"):
@@ -522,12 +523,13 @@ def main(argv):
             c = K.parse(row)
             sheets = [Image.open(p2s / f"{n}_sheet_{r}.png").convert("RGB") for r in sc["cast"]]
             extras = []
-            if c["E"] in ("dir", "dsk"):
+            if c["E"] in ("dir", "dsk", "dpl"):
                 tp = sorted((outd / "TURN").glob(f"{n}_*_grid.png"))
                 if not tp:
                     say("skip", row, n, seed, "(no turnaround picture)")
                     continue
-                extras.append(Image.open(tp[0]).convert("RGB"))
+                turn = Image.open(tp[0]).convert("RGB")
+                extras.append(DR.plate_grid(turn, sets_of(sc), GRID_SHOTS.get(c["B"], L.SHOTS)) if c["E"] == "dpl" else turn)
             if c["E"] in ("sk", "dsk"):
                 extras.append(DR.sketch_canvas(sets_of(sc), GRID_SHOTS.get(c["B"], L.SHOTS)))
                 extras[-1].save(outd / row / f"{n}_{seed}_sketch.png")

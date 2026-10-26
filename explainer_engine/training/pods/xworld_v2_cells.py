@@ -17,8 +17,8 @@ import itertools
 import re
 
 LEVELS = {"A": ("g", "p"), "B": ("n", "e", "c", "s"), "C": ("0", "1"), "D": ("0", "1")}
-NAME = re.compile(r"^X_([gp])_([necs])_([01])_([01])(?:\+(dir|sk|dsk))?$")
-EXTRAS = ("", "dir", "sk", "dsk")  # E: extra pictures given to the cell (round 3a): none, the direction views, the line sketch, both
+NAME = re.compile(r"^X_([gp])_([necs])_([01])_([01])(?:\+(dir|sk|dsk|dpl))?$")
+EXTRAS = ("", "dir", "sk", "dsk", "dpl")  # E: extra pictures given to the cell (round 3a): none, the direction views, the line sketch, both; ``dpl`` = the direction views cut into one empty backdrop per panel
 COVERED = ("X_g_n_0_0",)  # round 2's S2Tp is exactly this cell (grid, text only, no layout, behind-first)
 
 

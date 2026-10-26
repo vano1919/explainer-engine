@@ -1,0 +1,128 @@
+{
+ "round": 3,
+ "scenes": [
+  "tent",
+  "rome",
+  "ship",
+  "tundra"
+ ],
+ "seeds": [
+  11
+ ],
+ "cfg": 2.5,
+ "rows": [
+  "TURN",
+  "X_g_n_0_0+dpl",
+  "PO55",
+  "PO70"
+ ],
+ "stages": [
+  {
+   "rows": [
+    "TURN"
+   ],
+   "scenes": [
+    "tent",
+    "rome",
+    "ship",
+    "tundra"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "X_g_n_0_0+dpl"
+   ],
+   "scenes": [
+    "tent",
+    "rome"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "X_g_n_0_0+dpl"
+   ],
+   "scenes": [
+    "ship",
+    "tundra"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "PO55",
+    "PO70"
+   ],
+   "scenes": [
+    "tent",
+    "rome"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "PO55",
+    "PO70"
+   ],
+   "scenes": [
+    "ship"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "X_g_n_0_0+dpl"
+   ],
+   "scenes": [
+    "tent",
+    "rome",
+    "ship"
+   ],
+   "seeds": [
+    23
+   ]
+  }
+ ],
+ "ensure_assets": [
+  "ship",
+  "tundra"
+ ],
+ "changes": [
+  {
+   "row": "X_g_n_0_0+dpl",
+   "cause": "reference",
+   "change": "round 3a showed the grid copies the turnaround picture panel by panel; now each panel is given the turnaround view of its own shot's direction, cut by the shot's field of view, as one empty backdrop per panel, and the model only adds the people",
+   "expected": "every panel keeps the place, horizon and landmark order of its own direction, so the four panels are one 360 degree space"
+  },
+  {
+   "row": "PO55",
+   "cause": "bug",
+   "change": "round 3a failed on the VAE channel count (it takes RGBA); the picture is now converted to RGBA before the encoder",
+   "expected": "the paintover runs and shows whether a shaded ray-cast plate at strength 0.55 holds the geometry"
+  },
+  {
+   "row": "PO70",
+   "cause": "bug",
+   "change": "as PO55 at strength 0.70",
+   "expected": "as PO55 with a looser hold"
+  },
+  {
+   "row": "TURN",
+   "cause": "reference",
+   "change": "re-drawn on this pod (same seed, same words) because the +dpl cell needs its picture on the disk",
+   "expected": "the same views as round 3a"
+  }
+ ],
+ "note": "Opus plan section 13, the stages are in the order the money cap cuts from the end; no VLM on the pod, the checks are by eye afterwards"
+}
