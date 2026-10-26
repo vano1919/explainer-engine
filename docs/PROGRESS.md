@@ -2432,3 +2432,9 @@ training as sequences is decided in the process. Changed together:
   lists every path, grounds each in known training methods and the project's goals). Row in docs/ORCHESTRATION.md, line in CLAUDE.md,
   test in `test_agree_every_detail.py`. Also: `runpod create --only <card id substring>` with `--vram` (the creator names the card when
   the cheapest is not his choice) and `per_pod_usd` 6.0 -> 6.9 in `config/spend_caps.json` (his +25 % for the xworld_v2 pod, 13:13-13:42).
+- 16:35 UTC 2026-10-26: the P2S reference test is prepared, no spend (the Opus thread's plan 16:17, ვანო's panorama question 16:14):
+  `training/pods/xworld_v2_p2s.py` (+ `_sheet.py`, `xworld_v2_p2s.sh`): tent and rome, seed 11, one checkpoint (2250), master only (P2F)
+  vs master + one model sheet per person (P2S, three images at most, named by position in the prompt; a fallback to two images is
+  logged) x cfg 4.0/2.5 x LoRA weight 1.0/0.7 = 64 cells + 2 masters + 4 sheets = 70 pictures; test `test_xworld_v2_p2s.py`.
+  Facts given to the thread: ai-toolkit's `qwen_image_2` arch takes up to three control images (`ctrl_img_1..3`), our drawing script
+  (VideoX-Fun `QwenImage21Pipeline`) has only ever been given one; the round tests run at true_cfg 4.0, 30 steps, LoRA weight 1.0.
