@@ -1,0 +1,184 @@
+{
+ "scene": "tundra",
+ "kind": "exterior",
+ "vfov": 45,
+ "far": 150.0,
+ "objects": [
+  {
+   "id": "stream",
+   "shape": "box",
+   "min": [
+    -12,
+    6,
+    0
+   ],
+   "max": [
+    -2.5,
+    70,
+    0.08
+   ],
+   "label": "the frozen stream",
+   "color": [
+    90,
+    150,
+    220
+   ]
+  },
+  {
+   "id": "boulder",
+   "shape": "box",
+   "min": [
+    3.6,
+    10,
+    0
+   ],
+   "max": [
+    5.6,
+    12.2,
+    1.9
+   ],
+   "label": "the big grey boulder",
+   "color": [
+    130,
+    130,
+    130
+   ]
+  },
+  {
+   "id": "hill",
+   "shape": "box",
+   "min": [
+    9,
+    18,
+    0
+   ],
+   "max": [
+    24,
+    48,
+    5
+   ],
+   "label": "the low rocky hill",
+   "color": [
+    140,
+    100,
+    60
+   ]
+  },
+  {
+   "id": "mountains",
+   "shape": "box",
+   "min": [
+    -90,
+    100,
+    0
+   ],
+   "max": [
+    90,
+    112,
+    28
+   ],
+   "label": "the mountains",
+   "color": [
+    80,
+    90,
+    130
+   ]
+  }
+ ],
+ "people": [
+  {
+   "id": "hunter",
+   "pos": [
+    4.0,
+    9.0
+   ],
+   "height": 1.1,
+   "radius": 0.3,
+   "color": [
+    235,
+    235,
+    235
+   ]
+  },
+  {
+   "id": "girl",
+   "pos": [
+    5.3,
+    9.1
+   ],
+   "height": 1.0,
+   "radius": 0.25,
+   "color": [
+    200,
+    200,
+    255
+   ]
+  }
+ ],
+ "axis": [
+  "hunter",
+  "girl"
+ ],
+ "shots": {
+  "s0": {
+   "cam": {
+    "pos": [
+     0,
+     0,
+     1.6
+    ],
+    "look_at": [
+     0,
+     40,
+     2.5
+    ]
+   }
+  },
+  "s1": {
+   "subject": "girl",
+   "size": "medium",
+   "from": [
+    5.3,
+    6.0
+   ],
+   "angle": "eye"
+  },
+  "s2": {
+   "cam": {
+    "pos": [
+     4.6,
+     7.4,
+     1.3
+    ],
+    "look_at": [
+     3.0,
+     40,
+     1.5
+    ]
+   }
+  },
+  "s3": {
+   "subject": "hunter",
+   "size": "close",
+   "from": [
+    3.2,
+    5.0
+   ],
+   "angle": "eye"
+  },
+  "s4": {
+   "cam": {
+    "pos": [
+     -1.5,
+     3.0,
+     0.6
+    ],
+    "look_at": [
+     4.5,
+     25,
+     1.0
+    ]
+   }
+  }
+ }
+}

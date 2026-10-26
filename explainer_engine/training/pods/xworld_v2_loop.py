@@ -72,6 +72,9 @@ ROWS = _Rows({
     "S2Ep": {"kind": "pure", "control": False, "grid": True, "note": "S2E with the behind line first in each panel (round 2, E9)"},
     "S2L": {"kind": "pure", "control": False, "grid": True, "note": "S2T + camera and left-to-right landmark words from the 3D ray cast (round 2)"},
     "M6": {"kind": "mix", "control": True, "grid": True, "note": "M4 with the control OFF (scale 0) and the panels 2-4 filled with noise: full regeneration under the mask (round 2)"},
+    "TURN": {"kind": "pure", "control": False, "grid": True, "note": "the empty place from four directions around the master camera (round 3a); an input of the +dir cells, not scored as a strategy"},
+    "PO55": {"kind": "po", "control": False, "grid": False, "note": "paintover: the shaded ray-cast plate of the empty place painted over at strength 0.55, then the people added by the edit pipeline (round 3a)"},
+    "PO70": {"kind": "po", "control": False, "grid": False, "note": "PO55 at strength 0.70 (round 3a)"},
     "M3": {"kind": "mix", "control": True, "grid": False, "note": "S3cA + pass B whose reference is the S2 panel (only if S3cAB loses identity)"},
 })
 
@@ -105,6 +108,9 @@ def check_round(cfg):
 
 
 def jobs(cfg):
+    if cfg.get("stages"):  # round 3a: jobs in the order of stages (the money cap cuts the end), each stage a small config of its own
+        base = {k: v for k, v in cfg.items() if k not in ("stages", "rows")}
+        return [j for st in cfg["stages"] for j in jobs(dict(base, **st))]
     """[{row, scene, seed, shot|None, kind}] the pictures a round draws: per-shot rows one per shot, grid rows one grid per scene and seed
     (its four panels are the shots), M5 only the small moves. Round 1 of the plan: 68 pictures."""
     out = []
@@ -114,9 +120,10 @@ def jobs(cfg):
                 if ROWS[row]["grid"]:
                     out.append({"row": row, "scene": scene, "seed": seed, "shot": None, "kind": "grid"})
                     continue
-                shots = SMALL_MOVES[scene] if row == "M5" else PAIR_SHOTS if ROWS[row]["kind"] == "cell" else cfg.get("shots", SHOTS)
+                shots = SMALL_MOVES[scene] if row == "M5" else PAIR_SHOTS if ROWS[row]["kind"] in ("cell", "po") else cfg.get("shots", SHOTS)
                 out += [{"row": row, "scene": scene, "seed": seed, "shot": s, "kind": "shot"} for s in shots]
-    return out
+    last = cfg.get("last_scenes", [])  # the scenes drawn last, so that a stop on the money cap loses them first (Opus plan 13)
+    return sorted(out, key=lambda j: j["scene"] in last)
 
 
 def picture_name(row, scene, seed, shot):

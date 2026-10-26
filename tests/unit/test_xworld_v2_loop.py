@@ -324,6 +324,48 @@ def test_heldout_ship_scene_and_no_scene_words_in_templates():
     assert ship["name"] == st["scene"] == "ship" and len(ship["shots"]) == 5
     assert {p["id"] for p in st["people"]} == set(ship["cast"])
     assert [r["name"] for r in R.load_scenes(base / "stories/v2")].count("ship") == 1
-    code = " ".join((base / f).read_text(encoding="utf-8").lower() for f in ("xworld_v2_loop_run.py", "xworld_v2_cells.py"))
+    code = " ".join((base / f).read_text(encoding="utf-8").lower() for f in ("xworld_v2_loop_run.py", "xworld_v2_cells.py", "xworld_v2_dirs.py"))
     for word in ("colosseum", "fountain", "baker", "legionary", "boulder", "napoleon", "lighthouse", "mast", "crates"):
         assert not re.search(r"\b" + word + r"\b", code), word
+
+
+def test_round_3a_extras_turnaround_sketch_paintover():
+    """Round 3a: the +dir/+sk/+dsk cells, the direction views, the sketch, the shaded plate, stages and the PO rows (no model)."""
+    from pathlib import Path
+    from PIL import Image
+    from explainer_engine.training.pods import xworld_v2_cells as K
+    from explainer_engine.training.pods import xworld_v2_dirs as D
+    from explainer_engine.training.pods import xworld_v2_loop_run as R
+    from explainer_engine.training.pods import xworld_v2_s3 as S3
+    base = Path(R.__file__).resolve().parent / "stories/v2"
+    assert K.parse("X_g_n_0_0+dsk")["E"] == "dsk" and K.parse("X_g_n_0_0")["E"] == "" and K.parse("X_g_n_0_0+zzz") is None
+    assert K.is_orthogonal(K.l16())  # the extras are not part of the L16
+    scs = {s["name"]: s for s in R.load_scenes(base)}
+    for name in ("tent", "rome", "ship", "tundra"):
+        s = S3.load_set(base / f"sets/{name}.set.json")
+        S3.check_set(s)
+        lm = D.view_landmarks(s)
+        assert len(lm) == 4 and lm[0], name  # the master direction always shows something
+        assert [D.view_index(s, "s0")] == [0]
+        sk = D.sketch_canvas(s, ("s0", "s1", "s2", "s3"), (320, 176))
+        assert sk.size == (640, 352)
+        plate = D.shaded_plate(s, "s2", 160, 88)
+        assert plate.size == (160, 88) and np.asarray(plate).std() > 1  # not a flat picture
+        assert D.turnaround_prompt(scs[name], s, "xworld style").count("panel, the view") == 4
+    sc = scs["rome"]
+    c = K.parse("X_g_n_0_0+dsk")
+    p = R.cell_prompt(sc, c)
+    assert "Image 1 is a 2x2 picture of the same empty place" in p and "Image 2 is a plain line sketch" in p
+    assert "Image 2 is a 2x2 picture" in R.cell_prompt(sc, K.parse("X_g_e_0_0+dir"))  # the reference image comes first
+    img = Image.new("RGB", (64, 36))
+    assert len(R.cell_refs(c, img, [], [img, img])) == 2
+    with pytest.raises(ValueError):
+        R.cell_refs(K.parse("X_g_e_0_0+dsk"), img, [], [img, img, img])
+    cfg = {"stages": [{"rows": ["TURN"], "scenes": ["rome"], "seeds": [11]},
+                      {"rows": ["PO55", "X_g_n_0_0+dir"], "scenes": ["rome", "ship"], "seeds": [11], "last_scenes": ["ship"]}]}
+    js = L.jobs(cfg)
+    assert [(j["row"], j["scene"], j["shot"]) for j in js] == [("TURN", "rome", None), ("PO55", "rome", "s2"), ("PO55", "rome", "s4"),
+                                                               ("X_g_n_0_0+dir", "rome", None), ("PO55", "ship", "s2"), ("PO55", "ship", "s4"), ("X_g_n_0_0+dir", "ship", None)]
+    pp, roles = R.po_people_prompt(sc, R.shot_of(sc, "s2"), R.sets_of(sc))
+    assert roles == ["baker"] and "Image 1 is the empty place" in pp and "model sheet of baker" in pp and "percent of its height" in pp
+    assert "no people" in R.po_plate_prompt(sc, R.shot_of(sc, "s2"))

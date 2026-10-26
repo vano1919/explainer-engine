@@ -6,6 +6,7 @@ hand-written strategy. Pure logic, no model: the names, the L16 design and the t
                s = model sheets of the people as the images
   C layout     0 = none            1 = the set's 3D ray cast in words (camera + landmarks left to right, per panel)
   D prompt     0 = the behind line first in each panel   1 = the same plus exact prop counts from the set ("exactly one table")
+  E extras     (round 3a, optional ``+dir`` / ``+sk`` / ``+dsk``) the direction-view picture of the empty place, the line sketch of the panels, both
 
 A row name is ``X_<A>_<B>_<C>_<D>``, for example ``X_g_e_1_0``. 2 x 4 x 2 x 2 = 32 cells; the design takes 16 of them (a half fraction of 2^5 with B
 coded by two bits: every main effect and every two-factor interaction is estimable, and any two factors meet in equal numbers).
@@ -16,7 +17,8 @@ import itertools
 import re
 
 LEVELS = {"A": ("g", "p"), "B": ("n", "e", "c", "s"), "C": ("0", "1"), "D": ("0", "1")}
-NAME = re.compile(r"^X_([gp])_([necs])_([01])_([01])$")
+NAME = re.compile(r"^X_([gp])_([necs])_([01])_([01])(?:\+(dir|sk|dsk))?$")
+EXTRAS = ("", "dir", "sk", "dsk")  # E: extra pictures given to the cell (round 3a): none, the direction views, the line sketch, both
 COVERED = ("X_g_n_0_0",)  # round 2's S2Tp is exactly this cell (grid, text only, no layout, behind-first)
 
 
@@ -27,7 +29,7 @@ def name(a, b, c, d):
 def parse(row):
     """{A, B, C, D} of a cell name, or None when the row is not a cell."""
     m = NAME.match(row)
-    return dict(zip("ABCD", m.groups())) if m else None
+    return dict(zip("ABCDE", [g or "" for g in m.groups()])) if m else None
 
 
 def spec(row):
@@ -36,7 +38,7 @@ def spec(row):
     if not c:
         return None
     return {"kind": "cell", "control": False, "grid": c["A"] == "g", "cell": c,
-            "note": f"cell: canvas {c['A']}, reference {c['B']}, layout {c['C']}, prompt {c['D']}"}
+            "note": f"cell: canvas {c['A']}, reference {c['B']}, layout {c['C']}, prompt {c['D']}" + (f", extra {c['E']}" if c["E"] else "")}
 
 
 def l16():

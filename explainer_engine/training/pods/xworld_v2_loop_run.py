@@ -25,6 +25,7 @@ import numpy as np
 
 if __package__:
     from . import xworld_v2_cells as K
+    from . import xworld_v2_dirs as DR
     from . import xworld_v2_loop as L
     from . import xworld_v2_s2x as X
     from . import xworld_v2_s3 as S3
@@ -34,6 +35,7 @@ if __package__:
     from .xworld_v1_test import TRIGGER
 else:
     import xworld_v2_cells as K
+    import xworld_v2_dirs as DR
     import xworld_v2_loop as L
     import xworld_v2_s2x as X
     import xworld_v2_s3 as S3
@@ -45,7 +47,8 @@ else:
 GRID_NOTE = ("The top-left panel is the established wide shot of this place; the other three panels are later shots of the same place "
              "and the same people, each from the camera its depth shows.")
 CONTROL_ROWS = ("S3cA", "M2", "M4", "M5", "M2E50", "M4E50", "M6")
-PLAIN_ROWS = ("S1", "S2T", "S2E", "S3cAB", "S2Tp", "S2Ep", "S2L")
+PLAIN_ROWS = ("S1", "S2T", "S2E", "S3cAB", "S2Tp", "S2Ep", "S2L", "TURN", "PO55", "PO70")
+PO_STRENGTH = {"PO55": 0.55, "PO70": 0.70}
 def load_scenes(scene_dir):
     """The scene cards of the folder plus the held-out ones (<folder>/heldout: never looked at while the methods are tuned)."""
     d = Path(scene_dir)
@@ -117,6 +120,10 @@ def prompts(sc, row, sid=None):
     """The text of one picture of a row (no model): per-shot rows take the shot id, grid rows the whole grid."""
     if K.parse(row):
         return cell_prompt(sc, K.parse(row), sid)
+    if row == "TURN":
+        return DR.turnaround_prompt(sc, sets_of(sc), TRIGGER)
+    if row in PO_STRENGTH:
+        return po_plate_prompt(sc, shot_of(sc, sid)) if sid else None
     test = [shot_of(sc, s) for s in L.SHOTS]
     if row == "S2T":
         return grid_prompt_for(sc, test)
@@ -179,6 +186,7 @@ def cell_prompt(sc, c, sid=None):
         ids = GRID_SHOTS.get(c["B"], L.SHOTS)
         shots = [shot_of(sc, s) for s in ids]
         body = " ".join(panel_line(sc, sh, X.ORDER[i], c) for i, sh in enumerate(shots))
+        body += cell_extras(sc, c, [sh["id"] for sh in shots])
         head = {
             "n": f"{TRIGGER}, a storyboard of 4 panels in a 2x2 grid separated by thin white borders, the same place, the same people with the same faces and clothes in every panel, four different camera shots.",
             "e": f"{TRIGGER}, Image 1 is this scene: the same place and the same {n} people with the same faces and clothes. Draw a four-panel storyboard in a 2x2 grid separated by thin white borders, continuing it.",
@@ -197,18 +205,87 @@ def cell_prompt(sc, c, sid=None):
     return f"{head} The place: {place} {cast} {left} {right}"
 
 
-def cell_refs(c, master, sheets):
+def po_plate_prompt(sc, shot):
+    """The text of the paintover plate: the EMPTY place as this shot's camera sees it (the people are added in the next step)."""
+    return (f"{TRIGGER}, {shot['size']} shot of an empty place with no people. The place: {sc['place']} "
+            f"{('Behind and around: ' + shot['layout']) if shot.get('layout') else ''}").strip()
+
+
+def po_people_prompt(sc, shot, s):
+    """The text that adds the people to a plate: image 1 = the painted empty place (kept), then one sheet per person; where each stands comes from the ray cast."""
+    roles = [r for r in shot.get("faces", []) if r in sc["cast"]][:2]
+    where = DR.people_words(s, shot["id"])
+    pos = " ".join(f"The person of the model sheet of {r} {where[r]}." for r in roles if r in where)
+    base = p2s_prompt(framed(sc, shot), sc["cast"], roles) if roles else p2s_plain("P2F", framed(sc, shot))
+    base = base.replace("Image 1 is the master frame of the place", "Image 1 is the empty place in exactly this camera view with every object where it must be")
+    base = base.replace("the place as in image 1", "the place and every object exactly where they are in image 1")
+    return f"{base} {pos}".strip(), roles
+
+
+def sdedit(pipe, prompt, init, strength, seed, w, h, steps, cfg):
+    """Paints over an init picture (SDEdit, flow matching): the init's latents are noised to the sigma the shortened schedule starts at, and the
+    normal pipeline denoises from there with the LoRA. Strength 1.0 = a full redraw, 0 = the init unchanged."""
+    import copy
+    import numpy as np
+    import torch
+    if __package__:
+        from videox_fun.pipeline.pipeline_qwenimage21 import calculate_shift
+    else:
+        from videox_fun.pipeline.pipeline_qwenimage21 import calculate_shift
+    dev = pipe._execution_device
+    gen = torch.Generator(device="cuda").manual_seed(seed)
+    x = pipe.image_processor.preprocess(init.convert("RGB"), width=w, height=h).unsqueeze(2).to(dev, torch.bfloat16)
+    with torch.no_grad():
+        enc = pipe._encode_vae_image(x, gen)
+        c = pipe.transformer.config.in_channels
+        x0 = pipe._pack_latents(enc, 1, c, enc.shape[3], enc.shape[4])
+        k = max(1, int(round(strength * steps)))
+        sig = np.linspace(1.0, 1 / steps, steps)[steps - k:]
+        sc = pipe.scheduler.config
+        mu = calculate_shift(x0.shape[1], sc.get("base_image_seq_len", 256), sc.get("max_image_seq_len", 4096), sc.get("base_shift", 0.5), sc.get("max_shift", 1.15))
+        sch = copy.deepcopy(pipe.scheduler)
+        sch.set_timesteps(sigmas=sig, device=dev, mu=mu)
+        s0 = float(sch.sigmas[0])
+        noise = torch.randn(x0.shape, generator=gen, device=dev, dtype=x0.dtype)
+        lat = (1 - s0) * x0 + s0 * noise
+        return pipe(prompt, image=None, negative_prompt="", height=h, width=w, generator=gen, num_inference_steps=len(sig),
+                    true_cfg_scale=cfg, latents=lat, sigmas=sig).images[0]
+
+
+def base_images(c):
+    """How many images the reference level B of a cell gives (the extras are numbered after them)."""
+    return {"n": 0, "e": 1, "c": 1, "s": 2 if c["A"] == "g" else 3}[c["B"]]
+
+
+def cell_extras(sc, c, shot_ids):
+    """The text that tells the prompt what the extra images are (E: dir, sk, dsk); they come after the reference images."""
+    if not c.get("E"):
+        return ""
+    s = sets_of(sc)
+    k = base_images(c) + 1
+    out = []
+    if c["E"] in ("dir", "dsk"):
+        out.append(DR.dir_words(s, shot_ids, k)); k += 1
+    if c["E"] in ("sk", "dsk"):
+        out.append(DR.sketch_words(k))
+    return " " + " ".join(out)
+
+
+def cell_refs(c, master, sheets, extras=()):
     """The images of a cell picture, at most three (Opus plan 10): n none, e the master, c the canvas with the master in its first panel,
     s the model sheets (on a pair canvas the pair canvas comes first)."""
     b = c["B"]
     if b == "n":
-        return []
-    if b == "e":
-        return [master.resize(L.PANEL)]
-    canvas = L.pair_canvas(master) if c["A"] == "p" else L.inpaint_canvas(master, fill="grey")[0]
-    if b == "c":
-        return [canvas]
-    return ([canvas] if c["A"] == "p" else []) + list(sheets)[:2]
+        base = []
+    elif b == "e":
+        base = [master.resize(L.PANEL)]
+    else:
+        canvas = L.pair_canvas(master) if c["A"] == "p" else L.inpaint_canvas(master, fill="grey")[0]
+        base = [canvas] if b == "c" else ([canvas] if c["A"] == "p" else []) + list(sheets)[:2]
+    out = base + list(extras)
+    if len(out) > 3:
+        raise ValueError(f"{len(out)} images in a cell: at most 3")
+    return out
 
 
 # --- inputs (free, the container) ------------------------------------------------------------------------------------------------
@@ -422,10 +499,33 @@ def main(argv):
         t.SEED = seed
         t0 = time.time()
         master = Image.open(p2s / f"{n}_11_s0.png").convert("RGB")
-        if K.parse(row):
+        if row in PO_STRENGTH:  # paintover (round 3a): the shaded ray-cast plate of the EMPTY place, painted over, then the people added by the edit pipeline
+            sid, st = j["shot"], PO_STRENGTH[row]
+            plate_path = outd / row / f"{n}_{seed}_{sid}_plate.png"
+            t.W, t.H = L.PANEL
+            plate = sdedit(p, prompts(sc, row, sid), DR.shaded_plate(sets_of(sc), sid), st, seed, *L.PANEL, t.STEPS, cf).convert("RGB")
+            plate.save(plate_path)
+            pr, roles = po_people_prompt(sc, shot_of(sc, sid), sets_of(sc))
+            refs = [plate] + [Image.open(p2s / f"{n}_sheet_{r}.png").convert("RGB") for r in roles]
+            t.draw(p, pr, refs).convert("RGB").save(outd / row / f"{n}_{seed}_{sid}.png")
+        elif row == "TURN":  # the empty place from four directions (round 3a), the master as Image 1
+            t.W, t.H = X.GRID_W, X.GRID_H
+            img = t.draw(p, prompts(sc, row), [master.resize(L.PANEL)]).convert("RGB")
+            img.save(outd / row / f"{n}_{seed}_grid.png")
+        elif K.parse(row):
             c = K.parse(row)
             sheets = [Image.open(p2s / f"{n}_sheet_{r}.png").convert("RGB") for r in sc["cast"]]
-            refs = cell_refs(c, master, sheets)
+            extras = []
+            if c["E"] in ("dir", "dsk"):
+                tp = sorted((outd / "TURN").glob(f"{n}_*_grid.png"))
+                if not tp:
+                    say("skip", row, n, seed, "(no turnaround picture)")
+                    continue
+                extras.append(Image.open(tp[0]).convert("RGB"))
+            if c["E"] in ("sk", "dsk"):
+                extras.append(DR.sketch_canvas(sets_of(sc), GRID_SHOTS.get(c["B"], L.SHOTS)))
+                extras[-1].save(outd / row / f"{n}_{seed}_sketch.png")
+            refs = cell_refs(c, master, sheets, extras)
             t.W, t.H = (X.GRID_W, X.GRID_H) if c["A"] == "g" else (2 * L.PANEL[0], L.PANEL[1])
             img = t.draw(p, prompts(sc, row, j["shot"]), refs).convert("RGB")
             if c["B"] == "c":
