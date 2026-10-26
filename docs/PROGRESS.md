@@ -2507,3 +2507,13 @@ training as sequences is decided in the process. Changed together:
   sheets and their ray-cast position in words); job `stages` (the money cap cuts the end), `last_scenes`, `ensure_assets` (master and sheets of a
   held-out place). Test `test_round_3a_extras_turnaround_sketch_paintover`. Deviation from the Opus plan 13: no VLM is on the pod, so the turnarounds
   are not checked or redrawn there (checked by eye afterwards), and both candidate cells are drawn on the held-out places (the pick is offline).
+
+## 2026-10-26 23:15 UTC (03:15 Tbilisi 10-27): round 3a results, view-by-position bug, round 3b (OR-26)
+
+- Round 3a (pod lmeb5qu5gdak0o, RTX PRO 6000 $1.69/h, stopped at about $1.0 of the $2.05 cap on Opus's word): TURN views are coherent in tent, rome, ship, tundra
+  (landmarks keep their order around the circle). The `+dir`/`+dsk` grids COPY the turnaround picture panel by panel: the background is consistent across
+  the four panels, but the view is chosen by the panel's position, not by the shot camera's yaw (code-class cause, `attribution.md`). Ship base and ship `+dsk` are coherent.
+- Paintover PO55/PO70 failed on the pod: the 2.1 VAE takes RGBA, the plate was encoded as RGB. Fixed in `sdedit` (RGBA, latent channels from the encoder output).
+- Round 3b (`loop/round_3b.json`, stages PO smoke, `+dpl` tent/rome, `+dpl` ship/tundra, PO tent/rome/ship, `+dpl` seed 23): new cell `X_g_n_0_0+dpl`;
+  `xworld_v2_dirs.plate_grid` cuts the turnaround picture into one EMPTY backdrop per panel by the shot's view index, yaw offset, pitch and field of view
+  (`_crop_box`); `plate_words` keeps the backdrop and adds the people. The turnaround pictures come from HF round_3a (no redraw). Test `test_round_3b_backdrop_per_panel_and_config`.
