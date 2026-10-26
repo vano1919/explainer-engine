@@ -19,6 +19,7 @@ writes <out>/<scene>_<form>_<shot>.png, jobs.json and scenes.log; drawn pictures
 from __future__ import annotations
 
 import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -41,6 +42,37 @@ MODES = {"round": ROUND_TESTS, "one": ONE_SCENE_TESTS}
 FIXED_REF = ("P2F", "P2R")  # forms whose every shot edits shot 0
 SEEDS = (11, 23)
 WEIGHT = 1.0  # ვანო 2026-10-26 12:13 Tbilisi: weight 1.0 once the system differs from the show (the v2 world)
+
+
+# E7-E9 (ვანო 2026-10-26 17:14; the Opus thread): a close-up or medium shot must not name parts that are out of frame (the cast text
+# names sandals and boots, and the model then draws feet where the hands are), the place behind the subject is stated, and an
+# over-the-shoulder shot says exactly who is in it. Used by the P2S, S2 and S3 prompts; the standard rows stay as they were.
+FOOT = re.compile(r",? (?:and )?(?:leather sandals|tall black riding boots|feet wrapped in hide)")
+LEGS = re.compile(r",? (?:and )?(?:white )?breeches")
+SHOULDER = re.compile(r"over (\w+)'s shoulder")
+
+
+def frame_desc(shot):
+    """The shot's description without the parts the camera cannot see (close: no footwear or legs; medium: no footwear)."""
+    d = shot["desc"]
+    if shot.get("size") in ("medium", "close"):
+        d = FOOT.sub("", d)
+    if shot.get("size") == "close":
+        d = LEGS.sub("", d)
+    return d
+
+
+def frame_extras(sc, shot):
+    """The 'behind' line (the card's layout sentence) and, in an over-the-shoulder shot, the exactly-two-people line."""
+    out = [f"Behind and around the subject: {shot['layout']}"] if shot.get("layout") else []
+    m = SHOULDER.search(shot.get("change") or "")
+    if m:
+        back = next((r for r in sc["cast"] if r.lower() == m.group(1).lower()), None)
+        front = next((r for r in shot.get("faces", []) if r != back), None)
+        if back and front:
+            out.append(f"Exactly two people are in the frame: {back}, seen from behind with his back to the camera ("
+                       f"{FOOT.sub('', sc['cast'][back]['look'])}), and {front} facing the camera.")
+    return " ".join(out)
 
 
 def prompt(form, shot):

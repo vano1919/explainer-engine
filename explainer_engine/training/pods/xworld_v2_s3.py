@@ -25,10 +25,10 @@ from pathlib import Path
 import numpy as np
 
 if __package__:
-    from .xworld_v2_scenes import SEEDS, load
+    from .xworld_v2_scenes import SEEDS, frame_desc, frame_extras, load
     from .xworld_v1_test import TRIGGER
 else:
-    from xworld_v2_scenes import SEEDS, load
+    from xworld_v2_scenes import SEEDS, frame_desc, frame_extras, load
     from xworld_v1_test import TRIGGER
 
 SCENES = ("tent", "rome")
@@ -257,7 +257,7 @@ def shot_prompt(sc, shot, s, ident, variant):
     if role:
         head += f" Image {nxt} is {role}'s model sheet: keep their face and clothes exactly."
         refs.append("sheet:" + role)
-    return f"{head} {shot['desc']} {shot.get('change') or ''}".strip(), refs
+    return f"{head} {frame_desc(shot)} {shot.get('change') or ''} {frame_extras(sc, shot)}".strip(), refs
 
 
 def layouts(s, outd):

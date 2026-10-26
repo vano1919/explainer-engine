@@ -2452,3 +2452,7 @@ training as sequences is decided in the process. Changed together:
   from the plan, reported: shots whose camera is a place, not a person (s0, wides) use `cam` {pos, look_at}; a subject camera may
   use `from` (a direction point) next to `side`/`ots`; the pod run uses cfg 2.5 (the P2S winner is not known on an unattended pod);
   Depth-Anything scoring is run after the pod on the saved `*_t.npy` layouts. Pod order: standard -> P2S -> S2 -> S3.
+- 17:35 UTC 2026-10-26 (ვანო 17:14 E7-E9, the Opus thread's fixes): P2S, S2 and S3 prompts (not the standard rows) now drop the
+  parts the camera cannot see (`xworld_v2_scenes.frame_desc`: close = no footwear or legs, medium = no footwear), add the card's
+  "behind" sentence and, in an over-the-shoulder shot, "exactly two people ... seen from behind" (`frame_extras`); collage titles carry
+  three more questions (anatomy, background, duplicates). Test in `test_xworld_v2_p2s.py`.

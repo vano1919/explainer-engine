@@ -34,7 +34,7 @@ def build(scene_dir, outd, label, tests=None):
         rows = rows_of(sc["name"], tests)
         sheet = Image.new("RGB", (PAD + len(ids) * (W + PAD), TOP + len(rows) * (H + 20 + PAD)), "white")
         d = ImageDraw.Draw(sheet)
-        d.text((PAD, 8), f"{label} - {sc['name']} ({sc['world']}); per row: did the camera move? is it the same place?", fill="black")
+        d.text((PAD, 8), f"{label} - {sc['name']} ({sc['world']}); per row: did the camera move? same place? anatomy correct? background correct? anyone duplicated?", fill="black")
         for r, (seed, form) in enumerate(rows):
             y = TOP + r * (H + 20 + PAD)
             score = summ.get(f"{form}/{sc['name']}")

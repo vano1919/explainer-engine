@@ -37,7 +37,7 @@ def sheet(outd, scene, title=""):
     cols = max(len(r[1]) for r in rows)
     img = Image.new("RGB", (cols * (W + 4), 24 + len(rows) * (H + 28)), "white")
     d = ImageDraw.Draw(img)
-    d.text((4, 4), f"{title} {scene}: per row did the camera move? same place? same face and clothes as the sheet?", fill="black")
+    d.text((4, 4), f"{title} {scene}: per row did the camera move? same place? same face and clothes as the sheet? anatomy correct? background correct? anyone duplicated?", fill="black")
     for i, (label, names) in enumerate(rows):
         y = 24 + i * (H + 28)
         d.text((4, y + 2), label, fill="black")

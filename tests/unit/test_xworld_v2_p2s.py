@@ -41,3 +41,17 @@ def test_the_sheet_has_a_row_per_cell_plus_the_reference_row():
 def test_the_pod_script_passes_the_pod_lint():
     from explainer_engine.cloud import runpod
     assert runpod.lint_pod_script((PODS / "xworld_v2_p2s.sh").read_text(encoding="utf-8")) == []
+
+
+def test_close_and_medium_prompts_drop_out_of_frame_parts_and_state_the_background_and_who_is_in_an_over_the_shoulder_shot():
+    from explainer_engine.training.pods.xworld_v2_scenes import frame_desc, frame_extras
+    scs = {s["name"]: s for s in load(PODS / "stories" / "v2")}
+    rome, tent = scs["rome"], scs["tent"]
+    close = next(s for s in rome["shots"] if s["size"] == "close")
+    assert "sandals" in close["desc"] and "sandals" not in frame_desc(close) and "balconies" in frame_extras(rome, close)
+    assert "sandals" in rome["shots"][0]["desc"] and frame_desc(rome["shots"][0]) == rome["shots"][0]["desc"]  # wide keeps it
+    ots = tent["shots"][1]
+    extra = frame_extras(tent, ots)
+    assert "Exactly two people" in extra and "bicorne" in extra and "riding boots" not in extra
+    j = [x for x in P.jobs([tent, rome]) if x["kind"] in P.REFS]
+    assert all("sandals" not in x["prompt"] and "riding boots" not in x["prompt"] for x in j if x["shot"] in {"s1", "s2"})

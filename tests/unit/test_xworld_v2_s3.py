@@ -92,7 +92,9 @@ def test_the_prompt_names_image_2_lists_only_visible_objects_left_to_right_and_u
                 assert (marker in prompt) if marker else ("Image 2 is a" not in prompt)
                 assert ("layout" in refs) == (v != "S1")
             vis = [o["id"] for o, _ in S.visible(s, ident, "objects")]
-            assert all(o["id"] in vis or o["label"] not in S.shot_prompt(sc, shot, s, ident, "S3d")[0] for o in s["objects"])
+            text = S.shot_prompt(sc, shot, s, ident, "S3d")[0]
+            sentence = text[text.index("Image 2 is a grey"):text.index("Image 2 is only a guide")]  # the layout sentence only
+            assert all(o["id"] in vis or o["label"] not in sentence for o in s["objects"])
 
 
 def test_s0_of_the_tent_puts_the_table_in_the_centre_third_and_the_entrance_in_the_right_third():

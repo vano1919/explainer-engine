@@ -19,11 +19,11 @@ import time
 from pathlib import Path
 
 if __package__:
-    from .xworld_v2_scenes import SEEDS, load
+    from .xworld_v2_scenes import SEEDS, frame_desc, load
     from .xworld_v1_story import face_problems
     from .xworld_v1_test import TRIGGER
 else:
-    from xworld_v2_scenes import SEEDS, load
+    from xworld_v2_scenes import SEEDS, frame_desc, load
     from xworld_v1_story import face_problems
     from xworld_v1_test import TRIGGER
 
@@ -39,7 +39,7 @@ def grid_prompt(sc):
     """One prompt for the whole canvas: the cast once, then the four panels in order."""
     shots = sc["shots"][:PANELS]
     cast = " ".join(f"{role}: {c['look']} {c['face']}" for role, c in sc["cast"].items())
-    panels = " ".join(f"{ORDER[i]} panel: {s['desc']} {s['layout']}" for i, s in enumerate(shots))
+    panels = " ".join(f"{ORDER[i]} panel: {frame_desc(s)} {s['layout']}" for i, s in enumerate(shots))
     return (f"{TRIGGER}, a storyboard of {PANELS} panels in a 2x2 grid separated by thin white borders, the same place, the same "
             f"people with the same faces and clothes in every panel, four different camera shots. {cast} {panels}")
 

@@ -21,11 +21,11 @@ import time
 from pathlib import Path
 
 if __package__:
-    from .xworld_v2_scenes import SEEDS, load, prompt
+    from .xworld_v2_scenes import SEEDS, frame_desc, frame_extras, load, prompt
     from .xworld_v1_story import face_problems
     from .xworld_v1_test import TRIGGER
 else:
-    from xworld_v2_scenes import SEEDS, load, prompt
+    from xworld_v2_scenes import SEEDS, frame_desc, frame_extras, load, prompt
     from xworld_v1_story import face_problems
     from xworld_v1_test import TRIGGER
 
@@ -40,6 +40,11 @@ SHEET = "character model sheet: front view, three-quarter view and side view of 
 
 def sheet_prompt(c):
     return f"{TRIGGER}, {SHEET} {c['look']} {c['face']}"
+
+
+def framed(sc, shot):
+    """The shot as the P2S rows draw it: no out-of-frame parts, the place behind the subject, who is in an over-the-shoulder shot."""
+    return dict(shot, desc=(frame_desc(shot) + " " + frame_extras(sc, shot)).strip())
 
 
 def p2s_prompt(shot, cast, roles):
@@ -77,7 +82,7 @@ def jobs(scenes, max_images=MAX_IMAGES):
                         roles = [r for r in s.get("faces", []) if r in sc["cast"]][:max_images - 1] if ref == "P2S" else []
                         out.append({"name": cell_name(sc["name"], ref, cfg, weight, s["id"]), "scene": sc["name"], "kind": ref,
                                     "cfg": cfg, "weight": weight, "shot": s["id"],
-                                    "prompt": p2s_prompt(s, sc["cast"], roles) if roles else prompt("P2F", s),
+                                    "prompt": p2s_prompt(framed(sc, s), sc["cast"], roles) if roles else prompt("P2F", framed(sc, s)),
                                     "refs": [s0] + [f"{sc['name']}_sheet_{r}" for r in roles]})
     head = [j for j in out if j["kind"] in ("master", "sheet")]
     cells = sorted((j for j in out if j["kind"] not in ("master", "sheet")), key=lambda j: -j["weight"])
