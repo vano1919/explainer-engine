@@ -163,14 +163,24 @@ def control_canvas(depths, panel=PANEL):
 
 
 def inpaint_canvas(master, panel=PANEL):
-    """M4: (image, mask). The master fills panel 1 (top-left), the other three are grey; the mask is white (regenerate) over panels 2-4."""
+    """M4: (image, mask). The master fills panel 1 (top-left), the other three the master's mean colour; the mask is white (regenerate) over panels 2-4."""
     from PIL import Image
     pw, ph = panel
-    img = Image.new("RGB", (2 * pw, 2 * ph), (128, 128, 128))
-    img.paste(master.convert("RGB").resize((pw, ph), Image.LANCZOS), (0, 0))
+    m = master.convert("RGB").resize((pw, ph), Image.LANCZOS)
+    mean = tuple(int(round(v)) for v in np.asarray(m, float).reshape(-1, 3).mean(axis=0))  # flat, so the VAE sees no edges to continue
+    img = Image.new("RGB", (2 * pw, 2 * ph), mean)
+    img.paste(m, (0, 0))
     mask = Image.new("L", (2 * pw, 2 * ph), 255)
     mask.paste(0, (0, 0, pw, ph))
     return img, mask
+
+
+def paste_back(result, master, panel=PANEL):
+    """M4 post step: the original master goes back into panel 1 (no drift); the three other panels are what the model drew."""
+    from PIL import Image
+    out = result.convert("RGB").copy()
+    out.paste(master.convert("RGB").resize(panel, Image.LANCZOS), (0, 0))
+    return out
 
 
 def panel_of(canvas, i, panel=PANEL):

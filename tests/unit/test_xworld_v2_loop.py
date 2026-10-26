@@ -49,6 +49,11 @@ def test_the_inpaint_canvas_keeps_the_master_in_panel_one_and_masks_the_other_th
     m = np.asarray(mask)
     assert m[:704, :1280].max() == 0 and (m[:704, 1280:] == 255).all() and (m[704:] == 255).all()
     assert abs(np.asarray(L.panel_of(img, 0))[..., 0].mean() - 200) < 2
+    flat = np.asarray(L.panel_of(img, 3))
+    assert flat.reshape(-1, 3).std(axis=0).max() < 1 and tuple(flat[0, 0]) == (200, 30, 30)  # the master's mean colour, no edges
+    drift = Image.new("RGB", (2560, 1408), (9, 9, 9))
+    back = L.paste_back(drift, master)
+    assert np.asarray(L.panel_of(back, 0))[0, 0].tolist() == [200, 30, 30] and np.asarray(L.panel_of(back, 1))[0, 0].tolist() == [9, 9, 9]
 
 
 def test_set_files_agree_with_their_masters_at_s0_and_a_moved_landmark_is_caught():
@@ -134,3 +139,45 @@ def test_the_attribution_file_has_one_line_per_failure_and_dry_writes_the_job_li
     assert md.count("| S1 |") == 2 and "strategy_limit" in md
     n = len(L.dry(ROUND1, tmp_path))
     assert n == 68 and (tmp_path / "jobs.json").exists()
+
+
+# --- the runner (no model) -------------------------------------------------------------------------------------------------------
+
+def _scenes_with_more():
+    from explainer_engine.training.pods import xworld_v2_loop_run as R
+    from explainer_engine.training.pods.xworld_v2_scenes import load
+    return R, [s for s in load(L.PODS / "stories" / "v2") if s["name"] in L.SCENES]
+
+
+def test_every_row_has_a_prompt_with_the_card_text_and_m4_names_the_established_wide_panel():
+    R, scenes = _scenes_with_more()
+    for sc in scenes:
+        for row in ("S2T", "S2E", "M2", "M4"):
+            p = R.prompts(sc, row)
+            assert X_cast(sc) in p and sc["place"] in p and p.count("panel:") == 4
+        assert "established wide shot" in R.prompts(sc, "M4") and "established wide shot" not in R.prompts(sc, "M2")
+        assert "Image 1 is this scene" in R.prompts(sc, "S2E") and "Image 1" not in R.prompts(sc, "S2T")
+        for sid in L.SHOTS:
+            assert R.prompts(sc, "S3cA", sid).startswith("xworld style") and R.prompts(sc, "S3cAB", sid)
+            assert R.prompts(sc, "S1", sid)  # a shot without a face (rome s3, a crowd) falls back to the plain edit prompt
+
+
+def X_cast(sc):
+    return " ".join(f"{r}: {c['look']} {c['face']}" for r, c in sc["cast"].items())
+
+
+def test_the_control_inputs_are_built_for_every_scene_without_a_model(tmp_path):
+    R, scenes = _scenes_with_more()
+    p2s = tmp_path / "p2s"; p2s.mkdir()
+    for sc in scenes:
+        Image.fromarray((np.random.default_rng(3).random((720, 1280, 3)) * 255).astype(np.uint8)).save(p2s / f"{sc['name']}_11_s0.png")
+    est = lambda img: np.random.default_rng(4).random((90, 160))
+    made = R.build_inputs({"rows": ["S3cA", "M2", "M4", "M5"]}, scenes, L.PODS / "stories" / "v2" / "sets", p2s, tmp_path / "in", est)
+    for n in L.SCENES:
+        for sid in L.SHOTS:
+            assert (tmp_path / "in" / f"{n}_{sid}_depth.png").exists()
+        assert Image.open(tmp_path / "in" / f"{n}_m2_control.png").size == (2560, 1408)
+        assert Image.open(tmp_path / "in" / f"{n}_m4_mask.png").size == (2560, 1408)
+        for sid in L.SMALL_MOVES[n]:
+            assert Image.open(tmp_path / "in" / f"M5_{n}_{sid}_holes.png").mode == "L"
+    assert len(made) == 2 * (4 + 4 + 3)  # per scene: 4 depths, 4 canvas files, 3 for the one small move
