@@ -49,6 +49,10 @@ ROWS = {
     "M5": {"kind": "mix", "control": True, "grid": False, "note": "master-warp for small moves, the holes in-painted"},
     "M2E50": {"kind": "mix", "control": True, "grid": True, "base": "M2", "end": 0.5, "note": "M2 with the control ended at 50 % of the steps (layout early, style late)"},
     "M4E50": {"kind": "mix", "control": True, "grid": True, "base": "M4", "end": 0.5, "note": "M4 with the control ended at 50 % of the steps"},
+    "S2Tp": {"kind": "pure", "control": False, "grid": True, "note": "S2T with the behind line first in each panel (round 2, E9)"},
+    "S2Ep": {"kind": "pure", "control": False, "grid": True, "note": "S2E with the behind line first in each panel (round 2, E9)"},
+    "S2L": {"kind": "pure", "control": False, "grid": True, "note": "S2T + camera and left-to-right landmark words from the 3D ray cast (round 2)"},
+    "M6": {"kind": "mix", "control": True, "grid": True, "note": "M4 with the control OFF (scale 0) and the panels 2-4 filled with noise: full regeneration under the mask (round 2)"},
     "M3": {"kind": "mix", "control": True, "grid": False, "note": "S3cA + pass B whose reference is the S2 panel (only if S3cAB loses identity)"},
 }
 
@@ -164,17 +168,31 @@ def control_canvas(depths, panel=PANEL):
     return img
 
 
-def inpaint_canvas(master, panel=PANEL):
-    """M4: (image, mask). The master fills panel 1 (top-left), the other three the master's mean colour; the mask is white (regenerate) over panels 2-4."""
+def inpaint_canvas(master, panel=PANEL, fill="flat"):
+    """M4: (image, mask). The master fills panel 1 (top-left), the other three the master's mean colour; the mask is white (regenerate) over panels 2-4.
+    fill="noise" (M6, round 2): the three panels are random noise, so nothing flat is left under the mask to be copied (the round 1 M4 fill survived)."""
     from PIL import Image
     pw, ph = panel
     m = master.convert("RGB").resize((pw, ph), Image.LANCZOS)
-    mean = tuple(int(round(v)) for v in np.asarray(m, float).reshape(-1, 3).mean(axis=0))  # flat, so the VAE sees no edges to continue
-    img = Image.new("RGB", (2 * pw, 2 * ph), mean)
+    if fill == "noise":
+        img = Image.fromarray(np.random.default_rng(0).integers(0, 256, (2 * ph, 2 * pw, 3), dtype=np.uint8))
+    else:
+        mean = tuple(int(round(v)) for v in np.asarray(m, float).reshape(-1, 3).mean(axis=0))  # flat, so the VAE sees no edges to continue
+        img = Image.new("RGB", (2 * pw, 2 * ph), mean)
     img.paste(m, (0, 0))
     mask = Image.new("L", (2 * pw, 2 * ph), 255)
     mask.paste(0, (0, 0, pw, ph))
     return img, mask
+
+
+def fill_survived(result, master, panel=PANEL, tol=6):
+    """Share of the regenerate area (panels 2-4) whose pixels still equal the master's mean colour within tol: the round 1 M4 bug measured.
+    result: the drawn grid (RGB array, 2x2 panels); master: the wide master (RGB). A value near 1 = the fill was copied, not regenerated."""
+    pw, ph = panel
+    res = np.asarray(result, float)[ph:, :, :]  # the bottom row of panels is the regenerate area
+    m = np.asarray(master.convert("RGB").resize((pw, ph)), float).reshape(-1, 3)
+    mean = m.mean(axis=0)
+    return float((np.abs(res.reshape(-1, 3) - mean).max(axis=1) <= tol).mean())
 
 
 def paste_back(result, master, panel=PANEL):

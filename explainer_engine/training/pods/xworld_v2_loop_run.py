@@ -42,8 +42,9 @@ else:
 
 GRID_NOTE = ("The top-left panel is the established wide shot of this place; the other three panels are later shots of the same place "
              "and the same people, each from the camera its depth shows.")
-CONTROL_ROWS = ("S3cA", "M2", "M4", "M5", "M2E50", "M4E50")
-PLAIN_ROWS = ("S1", "S2T", "S2E", "S3cAB")
+CONTROL_ROWS = ("S3cA", "M2", "M4", "M5", "M2E50", "M4E50", "M6")
+PLAIN_ROWS = ("S1", "S2T", "S2E", "S3cAB", "S2Tp", "S2Ep", "S2L")
+SETS_DIR = Path(__file__).resolve().parent / ("scenes/sets" if (Path(__file__).resolve().parent / "scenes/sets").exists() else "stories/v2/sets")
 
 
 def shot_of(sc, sid):
@@ -64,6 +65,46 @@ def edit_prompt_for(sc, shots):
             f"{X.panels_text(sc, shots)}")
 
 
+def panels_behind(sc, shots):
+    """The panels with the 'behind' line FIRST (round 2, S2Tp/S2Ep: E9, the background is named before the subject)."""
+    out = []
+    for i, s in enumerate(shots):
+        lay = f"Behind and around the subject: {s['layout']}" if s.get("layout") else ""
+        ex = frame_extras(sc, s).replace(lay, "").strip() if lay else frame_extras(sc, s)
+        out.append(f"{X.ORDER[i]} panel: {lay} {frame_desc(s)} {ex}".strip())
+    return " ".join(out)
+
+
+def sets_of(sc):
+    return S3.load_set(SETS_DIR / f"{sc['name']}.set.json")
+
+
+def layout_words(s, sid, w=320, h=180):
+    """(camera words, landmarks left to right) of one card shot from the set's 3D ray cast: the picture's own layout as words (S2L)."""
+    spec = s["shots"][sid]
+    cam = S3.camera(s, spec)
+    ident, _, _ = S3.render(s, cam, w, h)
+    xs = np.arange(ident.shape[1])[None, :].repeat(ident.shape[0], axis=0)
+    items = list(s["objects"]) + list(s["people"])
+    seen = []
+    for k, it in enumerate(items):
+        m = ident == k
+        if m.mean() >= S3.MIN_PIXELS:
+            seen.append((float(xs[m].mean()), f"{it['id'].replace('_', ' ')} ({S3.color_word(it['color'])})"))
+    cam_words = f"{spec.get('size', 'wide')} shot, {spec.get('angle', 'eye')} angle"
+    return cam_words, [n for _, n in sorted(seen)]
+
+
+def panels_layout(sc, shots):
+    """The S2L addition: per panel, the camera in words and the landmarks in the order the ray cast sees them from left to right."""
+    s = sets_of(sc)
+    out = []
+    for i, sh in enumerate(shots):
+        cam, lm = layout_words(s, sh["id"])
+        out.append(f"{X.ORDER[i]} panel camera: {cam}; from left to right in that panel: {', '.join(lm) if lm else 'no landmark'}.")
+    return " ".join(out)
+
+
 def prompts(sc, row, sid=None):
     """The text of one picture of a row (no model): per-shot rows take the shot id, grid rows the whole grid."""
     test = [shot_of(sc, s) for s in L.SHOTS]
@@ -71,7 +112,15 @@ def prompts(sc, row, sid=None):
         return grid_prompt_for(sc, test)
     if row == "S2E":
         return edit_prompt_for(sc, test)
+    if row == "S2Tp":
+        return grid_prompt_for(sc, test).replace(X.panels_text(sc, test), panels_behind(sc, test))
+    if row == "S2Ep":
+        return edit_prompt_for(sc, test).replace(X.panels_text(sc, test), panels_behind(sc, test))
+    if row == "S2L":
+        return grid_prompt_for(sc, test) + " " + panels_layout(sc, test)
     row = L.ROWS[row].get("base", row)
+    if row == "M6":  # M6 is the M4 prompt (round 2); only the control and the fill change
+        row = "M4"
     if row == "M2":
         return grid_prompt_for(sc, test)
     if row == "M4":
@@ -112,7 +161,10 @@ def build_inputs(cfg, scenes, sets_dir, p2s_dir, outd, estimator=None):
         L.control_canvas([depth(sid, *L.PANEL)[0] for sid in ("s0", "s1", "s2", "s3")]).save(outd / f"{n}_m4_control.png")
         img, mask = L.inpaint_canvas(master)
         img.save(outd / f"{n}_m4_image.png"); mask.save(outd / f"{n}_m4_mask.png")
-        made.update({f"{n}_m2_control.png": "M2", f"{n}_m4_control.png": "M4", f"{n}_m4_image.png": "M4", f"{n}_m4_mask.png": "M4"})
+        img6, mask6 = L.inpaint_canvas(master, fill="noise")
+        img6.save(outd / f"{n}_m6_image.png"); mask6.save(outd / f"{n}_m6_mask.png")
+        made.update({f"{n}_m2_control.png": "M2", f"{n}_m4_control.png": "M4", f"{n}_m4_image.png": "M4", f"{n}_m4_mask.png": "M4",
+                     f"{n}_m6_image.png": "M6", f"{n}_m6_mask.png": "M6"})
         if "M5" in cfg["rows"]:
             est = estimator or S3.depth_estimator()
             cam0 = S3.camera(s, s["shots"]["s0"])
@@ -267,6 +319,13 @@ def main(argv):
             elif row_ == "M2":
                 g = draw_control(p, prompts(sc, row), Image.open(inp / f"{n}_m2_control.png"), scale, cf, seed, 2560, 1408, end=end, say=say, fail_dir=outd / row)
                 cut_grid(g.convert("RGB"), L.SHOTS, outd, row, n, seed)
+            elif row == "M6":  # round 2: the control OFF (scale 0), the noise-filled canvas, the master kept in panel 1
+                master = Image.open(p2s / f"{n}_11_s0.png").convert("RGB")
+                g = draw_control(p, prompts(sc, row), Image.open(inp / f"{n}_m4_control.png"), 0.0, cf, seed, 2560, 1408,
+                                 Image.open(inp / f"{n}_m6_image.png").convert("RGB"), Image.open(inp / f"{n}_m6_mask.png").convert("L"),
+                                 say=say, fail_dir=outd / row)
+                say("M6 fill survived (copied share, before paste-back):", round(L.fill_survived(g.convert("RGB"), master), 3), n, seed)
+                cut_grid(L.paste_back(g.convert("RGB"), master), (None, "s1", "s2", "s3"), outd, row, n, seed)
             elif row_ == "M4":
                 master = Image.open(p2s / f"{n}_11_s0.png").convert("RGB")
                 g = draw_control(p, prompts(sc, row), Image.open(inp / f"{n}_m4_control.png"), scale, cf, seed, 2560, 1408,
@@ -288,10 +347,10 @@ def main(argv):
         t.SEED = seed
         t0 = time.time()
         master = Image.open(p2s / f"{n}_11_s0.png").convert("RGB")
-        if row == "S2T":
+        if row in ("S2T", "S2Tp", "S2L"):
             t.W, t.H = X.GRID_W, X.GRID_H
             cut_grid(t.draw(p, prompts(sc, row), []).convert("RGB"), L.SHOTS, outd, row, n, seed)
-        elif row == "S2E":
+        elif row in ("S2E", "S2Ep"):
             t.W, t.H = X.GRID_W, X.GRID_H
             cut_grid(t.draw(p, prompts(sc, row), [master.resize(L.PANEL)]).convert("RGB"), L.SHOTS, outd, row, n, seed)
         elif row == "S1":

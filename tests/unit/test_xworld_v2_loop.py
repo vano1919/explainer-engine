@@ -180,7 +180,7 @@ def test_the_control_inputs_are_built_for_every_scene_without_a_model(tmp_path):
         assert Image.open(tmp_path / "in" / f"{n}_m4_mask.png").size == (2560, 1408)
         for sid in L.SMALL_MOVES[n]:
             assert Image.open(tmp_path / "in" / f"M5_{n}_{sid}_holes.png").mode == "L"
-    assert len(made) == 2 * (4 + 4 + 3)  # per scene: 4 depths, 4 canvas files, 3 for the one small move
+    assert len(made) == 2 * (4 + 4 + 2 + 3)  # per scene: 4 depths, 4 canvas files, 2 noise-fill M6 files, 3 for the one small move
 
 
 def test_control_end_cuts_on_the_timestep_not_on_call_counts():
@@ -236,3 +236,37 @@ def test_connectedness_and_style_bars_against_s2t():
     assert L.connectedness({"s1": [np.array([1.0, 0.0])], "s2": []}) is None
     assert L.connected_ok(0.6, 0.5) is True and L.connected_ok(0.4, 0.5) is False and L.connected_ok(None, 0.5) is None
     assert L.style_ok(0.46, 0.5) is True and L.style_ok(0.4, 0.5) is False
+
+
+def test_noise_fill_is_not_flat_and_the_flat_fill_is_detected_as_copied():
+    master = Image.new("RGB", (1280, 704), (120, 90, 60))
+    img, mask = L.inpaint_canvas(master, fill="noise")
+    under = np.asarray(img, float)[704:, :, :].reshape(-1, 3)
+    assert under.std(axis=0).min() > 30  # no colour to copy under the mask
+    assert np.asarray(mask)[704:, :].min() == 255 and np.asarray(mask)[:704, :704].max() == 0
+    flat, _ = L.inpaint_canvas(master, fill="flat")
+    assert L.fill_survived(np.asarray(flat), master) == 1.0  # the round 1 bug: a copied fill scores 1
+    assert L.fill_survived(np.asarray(img), master) < 0.1
+
+
+def test_round_two_rows_and_the_one_change_each_rule():
+    cfg = {"round": 2, "rows": ["S2Tp", "S2Ep", "S2L", "M6"], "seeds": [11, 23], "scenes": ["tent", "rome"],
+           "changes": [{"row": r, "cause": c, "change": "x", "expected": "y"} for r, c in
+                       (("S2Tp", "prompt"), ("S2Ep", "prompt"), ("S2L", "strategy_limit"), ("M6", "strategy_setting"))]}
+    assert L.check_round(cfg) == []
+    assert len(L.jobs(cfg)) == 16  # 4 rows x 2 scenes x 2 seeds
+    assert all(L.ROWS[r]["grid"] for r in cfg["rows"])
+
+
+def test_round_two_prompts_put_the_behind_line_first_and_name_the_layout():
+    R = _run()
+    sc = {"name": "tent", "place": "A tent.", "cast": {"general": {"look": "tall", "face": "sharp"}},
+          "shots": [{"id": "s1", "desc": "a general at a map, wide.", "size": "medium", "layout": "a camp bed on the left.",
+                     "change": "", "faces": ["general"]}]}
+    shots = sc["shots"]
+    p = R.panels_behind(sc, shots)
+    assert p.startswith("top-left panel: Behind and around the subject: a camp bed on the left.")
+    assert p.count("camp bed") == 1  # moved, not duplicated
+    s = R.S3.load_set(R.SETS_DIR / "tent.set.json")
+    cam, lm = R.layout_words(s, "s2")
+    assert cam == "close shot, eye angle" and lm and all("(" in x for x in lm)
