@@ -2295,3 +2295,9 @@ training as sequences is decided in the process. Changed together:
   sheet_0-500.jpg`): by 500 the two new subjects (medieval market, cockpit) are drawn flat in the R&M line look; the
   held-out frames come close to the real ones; the no-trigger sample also goes flat (trigger bleed, expected with no
   caption dropout; watch it).
+- 06:20 Tbilisi: training done 02:16Z (TRAIN EXIT 0, 2500 steps, 1.3 s/step; billed $1.57 so far, guard estimate $3.24 of $4).
+  Ten checkpoints on HF `train_xworld_v1/output/` (250..2250 + final). Choice (`training/pods/xworld_v1_pick.py` + test, CLIP
+  held-out closeness, then eye): A = 2250 (held 0.901, best), B = 1500 (0.894, best at least 500 steps away); 2500 has
+  overfit flags (close crops, a ghosted double face in the edit sample, held 0.842). `test_xworld_v1/code/picks.json`
+  (with the reasons and all scores), sheets in `train_xworld_v1/review/`. Test pod ys4qcp04yp4nym (RTX PRO 6000
+  community $1.69/h, ostris/aitoolkit image, $1.5 cap) started 02:19Z; D/T run first.

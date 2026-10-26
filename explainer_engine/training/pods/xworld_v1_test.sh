@@ -35,7 +35,7 @@ s("vano1919/tmr-artifacts", repo_type="dataset", local_dir="/workspace/dl",
   allow_patterns=["lora_plan_2026-10-26/dataset_xworld_v1/manifest.json", "lora_plan_2026-10-26/dataset_xworld_v1/frames/*",
                   "lora_plan_2026-10-26/test_xworld_v1/code/*", "lora_plan_2026-10-26/caption_xworld_v1/captions_reviewed.jsonl"])
 picks = json.load(open("/workspace/dl/lora_plan_2026-10-26/test_xworld_v1/code/picks.json"))
-for k, f in picks.items():
+for k, f in ((k, picks[k]) for k in ("A", "B")):  # picks.json also carries "why" and "scores"
     p = d("vano1919/tmr-artifacts", f, repo_type="dataset")
     open(f"/workspace/lora_{k}.txt", "w").write(p)
 s("Qwen/Qwen-Image-2.1")
