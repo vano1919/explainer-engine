@@ -1,4 +1,4 @@
-# Started by: python -m explainer_engine.cloud.runpod create --script <this file> --script-url <its HF copy> (OR-21, OR-23).
+# Started by: python -m explainer_engine.cloud.runpod create --image ostris/aitoolkit:latest --script <this file> --script-url <its HF copy> (OR-21, OR-23).
 # Prompt-type test of xworld_v1 on held-out R&M scenes (D-80, LT-75); agreed by ვანო 2026-10-26 02:15 Tbilisi ("ყველა კი").
 # The two checkpoints come from code/picks.json (Claude picks them from the training samples before this pod starts).
 # Pictures and the log go to HF every 5 min; the pod stops when this returns.
@@ -6,6 +6,9 @@ set -x
 mkdir -p /workspace/out
 exec > /workspace/out/pod.log 2>&1
 export HF_HOME=/workspace/hf HF_HUB_ENABLE_HF_TRANSFER=1 PYTHONUNBUFFERED=1
+# runs on ostris/aitoolkit:latest (boots in ~2 min, torch cu128; the tmr-pod image hangs on community hosts): its system
+# Python refuses plain pip installs (PEP 668), so every pip call may write there
+export PIP_BREAK_SYSTEM_PACKAGES=1
 up(){ python - <<'PY'
 from huggingface_hub import HfApi
 try:
