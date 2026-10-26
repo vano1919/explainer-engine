@@ -58,6 +58,11 @@ stage s2
 O2=/workspace/out/s2
 ( cd $C && timeout 1500 /workspace/vx/bin/python xworld_v2_s2.py $C/scenes $O2 $D/output/$CKPT tent,rome 4.0 ); echo "S2 EXIT $?"
 ( cd $C && python xworld_v2_s2.py sheet $O2 ); echo "S2 DONE $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt
+up
+stage s3
+O3=/workspace/out/s3
+( cd $C && timeout 1200 /workspace/vx/bin/python xworld_v2_s3.py $C/scenes $O/ $O3 $D/output/$CKPT tent,rome 2.5 ); echo "S3 EXIT $?"
+echo "S3 DONE $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt
 kill $LOOP 2>/dev/null
 echo "DONE $(date -u +%H:%M:%S)" > /workspace/out/beat.txt; up
 python - <<PY

@@ -2447,3 +2447,8 @@ training as sequences is decided in the process. Changed together:
 - 17:10 UTC 2026-10-26 (ვანო 17:06): OR-26 "Opus plans, Sonnet works" (ORCHESTRATION, CLAUDE.md, test). S3 (3D layout) code is
   written from the Opus thread's plan, not from the working session's own design; 2.1 pipeline checked free: `image` is a list of
   any length, no depth/control input (depth would be one more reference image).
+- 17:45 UTC 2026-10-26 (OR-26): S3 layout test coded from the Opus plan (`xworld_v2_s3.py`, set files `stories/v2/sets/{tent,rome}.set.json`,
+  numpy ray caster, depth S3d and coloured blockout S3b, prompt builder, `spearman`; `test_xworld_v2_s3.py`, 9 tests). Deviations
+  from the plan, reported: shots whose camera is a place, not a person (s0, wides) use `cam` {pos, look_at}; a subject camera may
+  use `from` (a direction point) next to `side`/`ots`; the pod run uses cfg 2.5 (the P2S winner is not known on an unattended pod);
+  Depth-Anything scoring is run after the pod on the saved `*_t.npy` layouts. Pod order: standard -> P2S -> S2 -> S3.
