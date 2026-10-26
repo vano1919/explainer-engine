@@ -4,7 +4,7 @@
     python -m explainer_engine.cloud.runpod check | balance | list | sweep [--dry-run] [--delete --yes]
     python -m explainer_engine.cloud.runpod create --yes --max-usd X --max-hours H [--gpu default|cheap|big] [--boot <manifest>]
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
-           [--vram GB [--ref-hours H]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
+           [--vram GB [--ref-hours H] [--only <card id substring>]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
            [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB] [--boot-minutes M]
     python -m explainer_engine.cloud.runpod cards --vram GB [--ref-hours H]   what the job would cost on each card now
     python -m explainer_engine.cloud.runpod status|logs|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
@@ -331,6 +331,16 @@ def pick_gpus(api, *, vram_gb, ref_hours, clouds=("COMMUNITY", "SECURE"), min_cu
                          "est_usd": round(price * hours, 3), "availability": g["availability"]})
     rows.sort(key=lambda r: (r["est_usd"], AVAIL_RANK[r["availability"]]))
     return rows[:limit]
+
+
+def only_cards(picks, only):
+    """The creator names the card (2026-10-26): keep the picks whose id contains ``only``; none left is an error."""
+    if not only:
+        return picks
+    kept = [r for r in picks if only in r["gpu"]]
+    if not kept:
+        raise SystemExit(f"--only {only!r}: no card with stock matches")
+    return kept
 
 
 # --- names, money -------------------------------------------------------------------------------------------------
@@ -1192,6 +1202,7 @@ def main(argv=None, api=None):
         if _opt(rest, "--vram"):  # the cheapest job among the cards with stock now (the creator, 2026-10-24)
             picks = pick_gpus(api, vram_gb=_opt(rest, "--vram", None, float), ref_hours=_opt(rest, "--ref-hours", max_hours, float),
                               max_price=spend_caps.runpod()["max_price_per_hour"])
+            picks = only_cards(picks, _opt(rest, "--only"))
             for r in picks:
                 print(f"card  {r['gpu']} {r['cloud']} ${r['price']}/h x {r['hours']} h ≈ ${r['est_usd']} ({r['availability']})")
         why = preflight_create(api, max_usd=max_usd, max_hours=max_hours, gpu=gpu, script=script, picks=picks)

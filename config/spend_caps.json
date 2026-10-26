@@ -16,7 +16,7 @@
     }
   },
   "runpod": {
-    "per_pod_usd": 6.0,
+    "per_pod_usd": 6.9,
     "per_24h_usd": 26.0,
     "max_hours_per_pod": 5.0,
     "max_price_per_hour": 3.0,

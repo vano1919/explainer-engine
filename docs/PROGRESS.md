@@ -2428,3 +2428,7 @@ training as sequences is decided in the process. Changed together:
   dataset names its own (`test_reusable_first` now accepts one trigger per dataset, `test_xworld_v2_rounds` pins it). The
   build ran locally on the real data: 210 new + 342 pairs, all captions carry their trigger. Opus thread's stop rule: if at 1500
   no P2F or P2R scene shows a camera move in either seed, stop and show ვანო instead of going on to 3000.
+- 15:58 UTC 2026-10-26: OR-25 (ვანო to the planning thread, 15:57): evaluations are always direct; every plan is full scale (starts from the goal,
+  lists every path, grounds each in known training methods and the project's goals). Row in docs/ORCHESTRATION.md, line in CLAUDE.md,
+  test in `test_agree_every_detail.py`. Also: `runpod create --only <card id substring>` with `--vram` (the creator names the card when
+  the cheapest is not his choice) and `per_pod_usd` 6.0 -> 6.9 in `config/spend_caps.json` (his +25 % for the xworld_v2 pod, 13:13-13:42).

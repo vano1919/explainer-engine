@@ -30,3 +30,12 @@ def test_important_decisions_go_to_a_higher_model_thread_and_its_confirmation_st
         assert item in row, item
     claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
     assert "OR-24" in claude and claude.index("OR-24") < claude.index("## Commands")
+
+
+def test_evaluations_are_direct_and_plans_are_full_scale():
+    orch = (ROOT / "docs" / "ORCHESTRATION.md").read_text(encoding="utf-8")
+    row = next(l for l in orch.splitlines() if l.startswith("| OR-25 |"))
+    for item in ("direct", "full scale", "starts from the goal", "every path", "known training methods"):
+        assert item in row, item
+    claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    assert "OR-25" in claude and claude.index("OR-25") < claude.index("## Commands")

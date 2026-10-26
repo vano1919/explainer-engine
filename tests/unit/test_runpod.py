@@ -842,3 +842,11 @@ def test_create_cli_takes_a_longer_boot_deadline_for_slow_images(env, tmp_path, 
             "--ledger", str(ledger)], api=api)
     sess = R.sess_read("p1")
     assert sess["boot_deadline"] - sess["started"] == pytest.approx(25 * 60, abs=5)
+
+
+def test_only_cards_keeps_the_named_card_and_refuses_when_none_matches():
+    picks = [{"gpu": "NVIDIA A100-SXM4-80GB"}, {"gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"}]
+    assert R.only_cards(picks, None) == picks
+    assert R.only_cards(picks, "RTX PRO 6000") == [picks[1]]
+    with pytest.raises(SystemExit, match="no card with stock"):
+        R.only_cards(picks, "H100")

@@ -12,6 +12,7 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 
 **Rule one (creator, 2026-10-26, OR-22):** never take a system decision on an assumption (base model, LoRA and checkpoint, data, settings, test design, rule wording, spend); every detail his words do not settle is put to the creator first, also in auto mode. **Before every pod (OR-23):** a detailed plan item by item (purpose, model and checkpoint, data, every setting, outputs and HF paths, GPU and price, time and money caps, stop condition, what he sees, what follows), agreed before `runpod create`; never a general summary.
 **Higher thread decides (creator, 2026-10-26, OR-24):** before every important decision the working session (Sonnet) asks a separate thread on a higher model (Opus); that thread takes the main planning decisions and its confirmation of an OR-23 pod plan starts the pod. The coordinator passes it complete information (facts, numbers, files, open items) but no reasoning, so the answer is not biased.
+**Direct evaluations, full-scale plans (creator, 2026-10-26, OR-25):** an evaluation is direct, with the evidence; a plan starts from the goal, lists every path to it and grounds each in known training methods and the project's goals, not only the next step.
 
 ## Commands
 
