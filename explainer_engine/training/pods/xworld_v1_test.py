@@ -129,19 +129,22 @@ class Loras:
             n += 1
         return n
 
-    def use(self, key):
+    def use(self, key, weight=1.0):
+        """Merges LoRA `key` at `weight` (None = the base model); a different weight unmerges and merges again."""
         import torch
         from videox_fun.utils import merge_lora, unmerge_lora
-        if key == self.loaded:
+        want = (key, weight) if key else None
+        if want == self.loaded:
             return self.pipe
         dt = torch.bfloat16
         if self.loaded:
-            self.pipe = unmerge_lora(self.pipe, self.paths[self.loaded], 1.0, device="cuda", dtype=dt)
-            self.gate_up(self.paths[self.loaded], -1.0)
+            k, w = self.loaded
+            self.pipe = unmerge_lora(self.pipe, self.paths[k], w, device="cuda", dtype=dt)
+            self.gate_up(self.paths[k], -w)
         if key:
-            self.pipe = merge_lora(self.pipe, self.paths[key], 1.0, device="cuda", dtype=dt)
-            self.say("lora", key, self.paths[key], "gate_up fixed", self.gate_up(self.paths[key], 1.0))
-        self.loaded = key
+            self.pipe = merge_lora(self.pipe, self.paths[key], weight, device="cuda", dtype=dt)
+            self.say("lora", key, weight, self.paths[key], "gate_up fixed", self.gate_up(self.paths[key], weight))
+        self.loaded = want
         return self.pipe
 
 

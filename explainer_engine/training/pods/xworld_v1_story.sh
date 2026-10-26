@@ -1,6 +1,7 @@
 # Started by: python -m explainer_engine.cloud.runpod create --image ostris/aitoolkit:latest --script <this file> --script-url <its HF copy> (OR-21, OR-23).
 # Draws a story from frame 0 with xworld_v1 2250 (D form, xworld_v1_story.py); ვანო's brief 2026-10-26 10:32 Tbilisi.
 # STORY = the story's name: code and story file in lora_plan_2026-10-26/story_xworld_v1/<STORY>/code/, pictures to .../out/.
+# The copy uploaded to <STORY>/code/ has its STORY= line set to that story (the start command passes no env).
 # Pictures and the log go to HF every 5 min; the pod stops when this returns.
 STORY=${STORY:-napoleon_tent}
 set -x

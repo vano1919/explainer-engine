@@ -2326,3 +2326,9 @@ training as sequences is decided in the process. Changed together:
   master repeat it (no riders, no army). Base model = photoreal, no style. So D's success on R&M (real masters) does not
   carry to our drawn masters; next test (text-only shots with the same hero description, D without "Keep everything
   else the same.") put to ვანო.
+- 11:25 Tbilisi: ვანო: the faces look like the Rick and Morty boy; he chose option 1 (no retraining: lower LoRA weight +
+  faces described unlike the show's default face; "დაუწყე 1"). Story runs now carry a LoRA `weight` (`Loras.use(key,
+  weight)` unmerges and merges again on a change); story `stories/napoleon_faces.json`: two close-ups (general, officer),
+  each as before and with a face description, at weight 1.0 / 0.7 / 0.5 = 12 pictures from text. Pod udfnfnuo6eim89 (RTX
+  PRO 6000 community $1.69/h, cap $0.8 / 1 h, session-tracked guard); the stopped story pod wnrcpyh9f2xl2c joins
+  keep_stopped_pods (0 GB, delete on his word). Note: my "~$0.3" for option 1 was low; a pod's fixed setup is ~$0.35.

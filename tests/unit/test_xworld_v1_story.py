@@ -52,3 +52,16 @@ def test_story_prompts_keep_the_caption_shape():
         assert "Napoleon" not in s["desc"] and "Mongol" not in s["desc"]
         if s["master"]:
             assert s["change"].startswith("Change from the previous shot:")
+
+
+def test_faces_story_runs_each_shot_at_three_lora_weights_from_text():
+    s = json.loads((STORY.parent / "napoleon_faces.json").read_text(encoding="utf-8"))
+    todo = st.jobs(s)
+    assert len(todo) == 12 and all(x["ref"] is None for x in todo)
+    assert sorted({x["weight"] for x in todo}) == [0.5, 0.7, 1.0]
+    for sh in s["shots"]:
+        assert 50 <= len(sh["desc"].split()) <= 90, sh["id"]
+
+
+def test_weight_defaults_to_one():
+    assert {x["weight"] for x in st.jobs(_story())} == {1.0}

@@ -3,8 +3,8 @@
 A story file (stories/<name>.json) lists shots: a shot with "master": null is drawn from its description alone (frame 0 of a
 place); every other shot uses the prompt form that won the held-out test (LT-75: D = master + full description + change
 line + "Keep everything else the same.") with its master's DRAWN picture as the only reference. A run picks the LoRA (or
-null = the base model) and the shots; "text_master" lists masters that the run also draws from text alone, as a second
-branch (`<run>_t_<shot>`) for every shot built on them. Same sampler as the test (1280x720, 30 steps, true_cfg 4, seed 11).
+null = the base model), its "weight" (default 1.0) and the shots; "text_master" lists masters that the run also draws
+from text alone, as a second branch (`<run>_t_<shot>`) for every shot built on them. Same sampler as the test (1280x720, 30 steps, true_cfg 4, seed 11).
 
     python xworld_v1_story.py <story.json> <out dir> <lora A>
 """
@@ -42,7 +42,8 @@ def jobs(story):
                 else:
                     text = prompt("D", s["desc"], s["change"])
                     ref = f"{run['name']}_{tag if s['master'] == alt else ''}{s['master']}"
-                out.append({"name": name, "run": run["name"], "shot": i, "lora": run["lora"], "prompt": text, "ref": ref})
+                out.append({"name": name, "run": run["name"], "shot": i, "lora": run["lora"],
+                            "weight": run.get("weight", 1.0), "prompt": text, "ref": ref})
     return out
 
 
@@ -64,7 +65,7 @@ def main(argv):
             continue
         refs = [Image.open(outd / f"{j['ref']}.png").convert("RGB")] if j["ref"] else []
         t = time.time()
-        draw(loras.use(j["lora"]), j["prompt"], refs).convert("RGB").save(outd / f"{j['name']}.png")
+        draw(loras.use(j["lora"], j.get("weight", 1.0)), j["prompt"], refs).convert("RGB").save(outd / f"{j['name']}.png")
         say("made", j["name"], round(time.time() - t), "s")
 
 
