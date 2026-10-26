@@ -11,7 +11,6 @@
  ],
  "cfg": 2.5,
  "rows": [
-  "TURN",
   "X_g_n_0_0+dpl",
   "PO55",
   "PO70"
@@ -19,13 +18,10 @@
  "stages": [
   {
    "rows": [
-    "TURN"
+    "PO55"
    ],
    "scenes": [
-    "tent",
-    "rome",
-    "ship",
-    "tundra"
+    "tent"
    ],
    "seeds": [
     11
@@ -116,12 +112,6 @@
    "cause": "bug",
    "change": "as PO55 at strength 0.70",
    "expected": "as PO55 with a looser hold"
-  },
-  {
-   "row": "TURN",
-   "cause": "reference",
-   "change": "re-drawn on this pod (same seed, same words) because the +dpl cell needs its picture on the disk",
-   "expected": "the same views as round 3a"
   }
  ],
  "note": "Opus plan section 13, the stages are in the order the money cap cuts from the end; no VLM on the pod, the checks are by eye afterwards"

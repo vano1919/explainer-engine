@@ -9,7 +9,7 @@ exec > /workspace/out/pod.log 2>&1
 export HF_HOME=/workspace/hf HF_HUB_ENABLE_HF_TRANSFER=1 PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1
 export XW_GPU_MODE=${XW_GPU_MODE:-model_full_load}  # round 3a: a 80 GB card keeps everything loaded (about twice as fast as offload); load_pipeline falls back to offload on an error
 P=lora_plan_2026-10-26
-ROUND=${ROUND:-3a}
+ROUND=${ROUND:-3b}
 CKPT=${CKPT:-xworld_v2_000003000.safetensors}  # ვანო 16:32Z: the 3000 image test and P2S on ONE new pod; the training pod stops once 3000 is on HF
 stage(){ echo "=== STAGE $1 $(date -u +%H:%M:%S)"; echo "$1 $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt; }
 up(){ python - <<PY
@@ -52,6 +52,12 @@ up
 stage inputs
 O=/workspace/out/loop; IN=/workspace/out/inputs; M=$D/p2s/out/p2s; CFG=$C/loop/round_${ROUND}.json
 mkdir -p $O $IN
+# round 3b: the turnaround pictures of round 3a are inputs of the +dpl cells (same seed and words would draw the same pictures)
+python - <<PY
+from huggingface_hub import snapshot_download as s
+s("vano1919/tmr-artifacts", repo_type="dataset", local_dir="/workspace/t3a", allow_patterns=["$P/train_xworld_v2/loop/round_3a/out/loop/TURN/*"])
+PY
+mkdir -p $O/TURN; cp /workspace/t3a/$P/train_xworld_v2/loop/round_3a/out/loop/TURN/*_grid.png $O/TURN/ 2>/dev/null; ls $O/TURN
 ( cd $C && timeout 900 /workspace/vx/bin/python xworld_v2_loop_run.py inputs $CFG scenes scenes/more scenes/sets $M $IN ); echo "INPUTS EXIT $?"
 up
 stage draw
