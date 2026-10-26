@@ -36,3 +36,8 @@ def test_the_cells_come_in_weight_order_so_the_lora_weight_changes_once():
 def test_the_sheet_has_a_row_per_cell_plus_the_reference_row():
     rows = S.rows_of(_jobs(), "tent")
     assert len(rows) == 1 + 2 * len(P.CFGS) * len(P.WEIGHTS) and rows[0][0].startswith("master")
+
+
+def test_the_pod_script_passes_the_pod_lint():
+    from explainer_engine.cloud import runpod
+    assert runpod.lint_pod_script((PODS / "xworld_v2_p2s.sh").read_text(encoding="utf-8")) == []

@@ -48,4 +48,12 @@ O=/workspace/out/p2s
 ( cd $C && python xworld_v2_p2s_sheet.py $O "$CKPT" ); echo "P2S DONE $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt
 kill $LOOP 2>/dev/null
 echo "DONE $(date -u +%H:%M:%S)" > /workspace/out/beat.txt; up
+python - <<PY
+from huggingface_hub import snapshot_download as s
+s("vano1919/tmr-artifacts", repo_type="dataset", local_dir="/workspace/dl2", allow_patterns=["lora_plan_2026-10-26/train_xworld_v1/code/vault*"])
+PY
+mkdir -p /workspace/ee/explainer_engine /workspace/ee/config
+cp /workspace/dl2/$P/train_xworld_v1/code/vault.py /workspace/ee/explainer_engine/vault.py; touch /workspace/ee/explainer_engine/__init__.py
+cp /workspace/dl2/$P/train_xworld_v1/code/vault.json /workspace/ee/config/vault.json
+cd /workspace/ee && python -m explainer_engine.vault check-uploaded /workspace/out --to lora_plan_2026-10-26/train_xworld_v2/p2s/out --repo datasets/vano1919/tmr-artifacts
 # returns: the start command (runpod.script_cmd) stops the pod at once
