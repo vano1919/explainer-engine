@@ -1,7 +1,11 @@
-# xworld_v2 (D-80): one LoRA on Qwen-Image-2.1, the new world's look under `xworld style` + the show's sequence pairs under
-# `rm style` (ვანო 2026-10-26 13:26 Tbilisi, the round plan). Settings as xworld_v1 (rank 16, lr 1e-4, 1024 px); trained in
-# rounds of 750 steps: xworld_v2.sh sets train.steps to 750, 1500, 2250, 3000 and reruns, ai-toolkit resumes from the last
-# save. @SAMPLES@ is filled by xworld_v2_build.py.
+# xworld_v2 (D-80): one LoRA on Qwen-Image-2.1, the new world's look under `xworld style` + the show's cross-shot pairs, written as
+# cuts, under `rm style` (ვანო 2026-10-26 13:26 Tbilisi, the round plan; confirmed by the Opus thread 12:52). Settings as xworld_v1
+# (rank 16, lr 1e-4, 1024 px); trained in rounds of 750 steps: xworld_v2.sh sets train.steps to 750, 1500, 2250, 3000 and reruns,
+# ai-toolkit resumes from the last save. @SAMPLES@ is filled by xworld_v2_build.py.
+# Two triggers: a process-level trigger_word is injected into EVERY training prompt that lacks it (BaseSDTrainProcess
+# process_general_training_batch, add_if_not_present) and copied onto datasets without their own, so the pairs would become
+# "xworld style, rm style, ...". There is none here: each dataset names its own trigger (dataloader_mixins.get_caption), and the
+# caption files carry them as well (LT-13).
 job: extension
 config:
   name: "xworld_v2"
@@ -9,17 +13,18 @@ config:
     - type: 'diffusion_trainer'
       training_folder: "/workspace/output"
       device: cuda:0
-      # no trigger_word: each caption file starts with its own trigger (xworld style / rm style; LT-13)
+      # no process-level trigger_word (see above); the datasets below carry their own
       network:
         type: "lora"
         linear: 16
         linear_alpha: 16
       save:
         dtype: float16
-        save_every: 750
-        max_step_saves_to_keep: 12
+        save_every: 250   # review 2026-10-26: a checkpoint every 250 steps
+        max_step_saves_to_keep: 14
       datasets:
         - folder_path: "/workspace/ds/new"
+          trigger_word: "xworld style"
           caption_ext: "txt"
           caption_dropout_rate: 0.0
           num_repeats: 3   # xworld_v2_build.NEW_REPEATS
@@ -27,6 +32,7 @@ config:
           resolution: [1024]
         - folder_path: "/workspace/ds/pairs/target"
           control_path: ["/workspace/ds/pairs/control"]
+          trigger_word: "rm style"
           caption_ext: "txt"
           caption_dropout_rate: 0.0
           num_repeats: 1

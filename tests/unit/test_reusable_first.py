@@ -28,4 +28,7 @@ def test_every_training_config_has_its_pod_script():
     for cfg in PODS.glob("*.yaml"):
         assert cfg.with_suffix(".sh").exists(), cfg.name
         proc = yaml.safe_load(cfg.read_text(encoding="utf-8"))["config"]["process"][0]
-        assert proc["network"]["linear"] <= 16 and proc["trigger_word"], cfg.name
+        assert proc["network"]["linear"] <= 16, cfg.name
+        # a trigger: process-level, or one per dataset when there are two (ai-toolkit injects a process-level one into every
+        # training prompt, which would put `xworld style` onto the `rm style` pairs; xworld_v2.yaml)
+        assert proc.get("trigger_word") or all(d.get("trigger_word") for d in proc["datasets"]), cfg.name

@@ -2418,3 +2418,13 @@ training as sequences is decided in the process. Changed together:
   of the review's question: 270 of 357 change sentences name a camera and 261 a size or angle word. Still open for ვანო: R&M
   share (x3 = 35 %, or x5 = 25 %), test size, seed 23 and the rm-style control (in ROUND_TESTS, +~$0.1 and +$0.1 per
   checkpoint), the top-up; smoke run of 20 steps goes first on the same pod.
+- 13:20 UTC 2026-10-26 (OR-24 written; the Opus thread confirmed the round-1 plan 12:52 with three conditions): (1) money cap $5.5
+  (80 % = $4.4; the $4.3 estimate would otherwise hit the guard in the last test), the top-up must cover it and is ვანო's;
+  (2) `xworld_v2.sh` and `xworld_v2.yaml` are committed now (no longer `.draft`): 20-step smoke run, rounds of 750 steps to 3000,
+  a checkpoint every 250, `ROUND_TESTS` after each round, the vault check VT-01 last; (3) P2F/P2R ask "Cut to the next shot: <change
+  without its leading Cut to>", the same form as the pairs. Two-trigger answer found in ai-toolkit's source: a process-level
+  `trigger_word` is injected into EVERY training prompt (`process_general_training_batch`) and copied onto datasets without their
+  own, so `xworld style` would have been put in front of the `rm style` pairs; the config has no process-level one and each
+  dataset names its own (`test_reusable_first` now accepts one trigger per dataset, `test_xworld_v2_rounds` pins it). The
+  build ran locally on the real data: 210 new + 342 pairs, all captions carry their trigger. Opus thread's stop rule: if at 1500
+  no P2F or P2R scene shows a camera move in either seed, stop and show ვანო instead of going on to 3000.

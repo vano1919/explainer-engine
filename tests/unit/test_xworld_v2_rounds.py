@@ -24,6 +24,8 @@ def test_forms():
     assert p1[0]["ref"] == "tent_23_s0" and p1[1]["ref"] == p1[0]["name"]
     assert all(t["ref"] == f"{t['scene']}_{t['seed']}_s0" for t in todo if t["form"] == "P2F")
     assert "L." not in s.prompt("P2F", shot) and s.prompt("P2F", shot).startswith("xworld style, " + s.MASTER)
+    cut = {"desc": "D.", "layout": "L.", "change": "Cut to a close-up of his face: he frowns."}
+    assert s.prompt("P2F", cut) == f"xworld style, {s.MASTER} D. Cut to the next shot: a close-up of his face: he frowns. {s.KEEP}"
     assert s.prompt("P2R", shot).startswith("rm style, " + s.MASTER)
 
 
@@ -65,3 +67,13 @@ def test_new_place_pairs_are_dropped():
     cap = lambda c: b.cut_caption(f"xworld style, A room. Change from the previous shot: {c}")
     assert b.new_place(cap("The scene shifts to a doorway where two new figures appear."))
     assert not b.new_place(cap("The camera zooms in to a close-up and the other figure is no longer visible."))
+
+
+def test_two_triggers_are_per_dataset_not_process_wide():
+    import yaml
+    proc = yaml.safe_load((Path("explainer_engine/training/pods") / "xworld_v2.yaml").read_text(encoding="utf-8"))["config"]["process"][0]
+    assert "trigger_word" not in proc  # ai-toolkit would inject it into every training prompt, also the rm-style pairs
+    assert [d["trigger_word"] for d in proc["datasets"]] == ["xworld style", "rm style"]
+    assert proc["save"]["save_every"] == 250
+    sh = (Path("explainer_engine/training/pods") / "xworld_v2.sh").read_text(encoding="utf-8")
+    assert "vault check-uploaded" in sh and "xworld_v2_scenes.py $C/scenes $O $2 1.0 round" in sh and "SMOKE" in sh

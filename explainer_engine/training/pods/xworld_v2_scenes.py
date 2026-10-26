@@ -49,8 +49,9 @@ def prompt(form, shot):
         return f"{TRIGGER}, {MASTER} {d} {ch} {KEEP}"
     if form == "P2":
         return f"{TRIGGER}, {MASTER} {d} {lay} {ch} {KEEP}"
-    if form in FIXED_REF:
-        return f"{RM_TRIGGER if form == 'P2R' else TRIGGER}, {MASTER} {d} {ch} {KEEP}"
+    if form in FIXED_REF:  # the cut sentence as trained: "Cut to the next shot: <change>" (xworld_v2_build.cut_caption)
+        cut = ch[len("Cut to "):] if ch.startswith("Cut to ") else ch
+        return f"{RM_TRIGGER if form == 'P2R' else TRIGGER}, {MASTER} {d} Cut to the next shot: {cut} {KEEP}"
     raise ValueError(form)
 
 
