@@ -30,6 +30,7 @@ SCENES = ("tent", "rome")
 SEED = SEEDS[0]
 SCALES = (1.0, 0.6, 0.8)  # the first is the one every shot is drawn at; the others only on SWEEP_SHOT
 SWEEP_SHOT = {"tent": "s1", "rome": "s2"}
+CFG_PAIR = ("tent", "s1", 0.8, 1.0)  # (scene, shot, scale, cfg): the card's example runs at cfg 1.0, our LoRA at 2.5; one extra picture
 CONTROL_REPO, CONTROL_FILE = "alibaba-pai/Qwen-Image-2.1-Fun-Controlnet-Union", "Qwen-Image-2.1-Fun-Controlnet-Union.safetensors"
 CONTROL_CONFIG = "/workspace/VideoX-Fun/config/qwenimage21/qwenimage21_control.yaml"
 SAMPLE_PROMPT = f"{TRIGGER}, a small stone house on a green hill under a blue sky, bold black ink outlines."
@@ -76,7 +77,18 @@ def jobs(scenes):
                     continue
                 out.append({"name": f"{sc['name']}_{shot['id']}_A{scale}", "scene": sc["name"], "shot": shot["id"], "scale": scale,
                             "pass": "A"})
+    scene, shot, scale, cfg = CFG_PAIR
+    if any(sc["name"] == scene for sc in scenes):
+        out.append({"name": f"{scene}_{shot}_A{scale}_cfg{cfg}", "scene": scene, "shot": shot, "scale": scale, "cfg": cfg, "pass": "A"})
     return out + [dict(j, name=j["name"].replace("_A", "_B"), **{"pass": "B"}) for j in out if j["scale"] == SCALES[0]]
+
+
+def control_load_ok(missing, unexpected):
+    """The control branch loaded when no control key is missing in the model and none of the file's control keys is unexpected
+    (strict=False hides both; missing base keys are expected because the file holds only the control branch)."""
+    own = ("control_img_in", "control_blocks")
+    bad = [k for k in list(missing) + list(unexpected) if k.startswith(own)]
+    return not bad, bad
 
 
 def load_control_pipeline():
@@ -99,6 +111,7 @@ def load_control_pipeline():
         transformer_additional_kwargs=OmegaConf.to_container(cfg["transformer_additional_kwargs"])).to(dt)
     m, u = tr.load_state_dict(load_file(hf_hub_download(CONTROL_REPO, CONTROL_FILE)), strict=False)
     print("control weights: missing", len(m), "unexpected", len(u), flush=True)
+    tr.control_load = (list(m), list(u))
     pipe = QwenImage21ControlPipeline(
         vae=AutoencoderKLQwenImage21.from_pretrained(base, subfolder="vae").to(dt),
         text_encoder=Qwen3VLForConditionalGeneration.from_pretrained(base, subfolder="text_encoder", torch_dtype=dt),
@@ -123,6 +136,11 @@ def step0(pipe, tr, lora, outd, say, t):
     from safetensors import safe_open
     with safe_open(lora, framework="pt") as f:
         keys = list(f.keys())
+    cok, bad = control_load_ok(*tr.control_load)
+    say("STEP0 control branch: missing", len(tr.control_load[0]), "unexpected", len(tr.control_load[1]), "control keys not loaded", bad[:8])
+    if not cok:
+        say("STEP0 FAIL: control_img_in / control_blocks keys did not load (strict=False hid it); S3c stops")
+        return False
     ok, total, miss = match_report(keys, [n for n, _ in tr.named_modules()])
     say("STEP0 lora layers matched", ok, "of", total, "unmatched sample", miss[:8])
     if ok != total:
@@ -164,7 +182,7 @@ def main(argv):
             continue
         sc, sh = shots[(j["scene"], j["shot"])]
         t0 = time.time()
-        draw_control(p, pass_a_prompt(sc, sh), Image.open(s3_dir / f"{sc['name']}_{sh['id']}_depth.png").convert("RGB"), j["scale"], cfg
+        draw_control(p, pass_a_prompt(sc, sh), Image.open(s3_dir / f"{sc['name']}_{sh['id']}_depth.png").convert("RGB"), j["scale"], j.get("cfg", cfg)
                      ).convert("RGB").save(f)
         say("made", j["name"], round(time.time() - t0), "s")
     del pipe, tr, p
@@ -200,6 +218,8 @@ def sheet(outd):
             if any(f.exists() for f in ims):
                 rows.append([Image.open(f).convert("RGB").resize((480, 270)) for f in ims if f.exists()])
         sw = [outd / f"{scene}_{SWEEP_SHOT[scene]}_A{s}.png" for s in (0.6, 0.8)]
+        if scene == CFG_PAIR[0]:
+            sw.append(outd / f"{scene}_{CFG_PAIR[1]}_A{CFG_PAIR[2]}_cfg{CFG_PAIR[3]}.png")
         if any(f.exists() for f in sw):
             rows.append([Image.open(f).convert("RGB").resize((480, 270)) for f in sw if f.exists()])
     out = outd / "s3c_sheet.jpg"

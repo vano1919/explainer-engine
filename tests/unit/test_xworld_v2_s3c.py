@@ -24,9 +24,10 @@ def test_key_match_reads_both_key_styles_and_reports_every_miss():
 def test_picture_list_is_pass_a_at_full_scale_plus_one_sweep_shot_per_scene_then_pass_b_at_full_scale_only():
     j = C.jobs(_scenes())
     a = [x for x in j if x["pass"] == "A"]; b = [x for x in j if x["pass"] == "B"]
-    assert len(a) == 2 * 4 + 2 * 2 and len(b) == 2 * 4 and len(j) == 20
+    assert len(a) == 2 * 4 + 2 * 2 + 1 and len(b) == 2 * 4 and len(j) == 21  # + the cfg 1.0 vs 2.5 pair
     assert {x["scale"] for x in b} == {1.0} and j.index(b[0]) > j.index(a[-1])
     assert {x["shot"] for x in a if x["scale"] != 1.0} == set(C.SWEEP_SHOT.values())
+    assert [x["cfg"] for x in a if "cfg" in x] == [1.0]
     assert len({x["name"] for x in j}) == len(j)
 
 
@@ -52,3 +53,9 @@ def test_the_sheets_build_from_whatever_pictures_exist(tmp_path):
     for n in ("tent_s1_A1.0", "tent_s1_B1.0", "tent_s1_A0.6", "tent_s1_block", "tent_s1_S1"):
         Image.new("RGB", (64, 36), (10, 20, 30)).save(tmp_path / f"{n}.png")
     assert C.sheet(tmp_path).exists() and S3.sheet(tmp_path, ("tent",)).exists()
+
+
+def test_control_branch_load_check_fails_on_a_missing_or_unexpected_control_key_and_ignores_base_keys():
+    assert C.control_load_ok(["transformer_blocks.0.attn.to_q.weight"], [])[0]
+    assert not C.control_load_ok([], ["control_blocks.3.attn.to_q.weight"])[0]
+    assert not C.control_load_ok(["control_img_in.weight"], [])[0]
