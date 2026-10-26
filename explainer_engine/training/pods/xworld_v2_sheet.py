@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 
 if __package__:
-    from .xworld_v2_scenes import FORMS, ROUND_TESTS, SEEDS, load
+    from .xworld_v2_scenes import FORMS, MODES, ROUND_TESTS, SEEDS, load
 else:
-    from xworld_v2_scenes import FORMS, ROUND_TESTS, SEEDS, load
+    from xworld_v2_scenes import FORMS, MODES, ROUND_TESTS, SEEDS, load
 
 W, H, PAD, TOP = 384, 216, 6, 34
 
@@ -51,4 +51,4 @@ def build(scene_dir, outd, label, tests=None):
 
 
 if __name__ == "__main__":
-    print(build(*sys.argv[1:4], tests=ROUND_TESTS if len(sys.argv) > 4 and sys.argv[4] == "round" else None))
+    print(build(*sys.argv[1:4], tests=MODES.get(sys.argv[4]) if len(sys.argv) > 4 else None))

@@ -13,7 +13,7 @@ Every scene is drawn with each seed of SEEDS (review 2026-10-26: one seed cannot
 Shot 0 of a scene is drawn once from text (description + layout) and is the master of P1 and P2. People are described the
 way people picture their era (ვანო 13:26) plus an LT-79 face; every scene passes `face_problems`.
 
-    python xworld_v2_scenes.py <scene dir> <out dir> <lora .safetensors | base> [weight] [round]   (round = ROUND_TESTS only)
+    python xworld_v2_scenes.py <scene dir> <out dir> <lora .safetensors | base> [weight] [round|one]   (round = ROUND_TESTS only, one = ONE_SCENE_TESTS)
 writes <out>/<scene>_<form>_<shot>.png, jobs.json and scenes.log; drawn pictures are skipped on a rerun.
 """
 from __future__ import annotations
@@ -35,6 +35,9 @@ else:
 FORMS = ("P1", "P2", "P3", "P2F")
 # what a training round draws (reduced test, ვანო 2026-10-26): (form, scenes or None = all, seeds)
 ROUND_TESTS = (("P3", None, (11,)), ("P2F", None, (11, 23)), ("P2R", ("tent",), (11,)))
+# the short test (ვანო 2026-10-26 16:39: the aim is the best way, not round-to-round comparison): one scene (tundra, the decisive one; the Opus thread 16:39)
+ONE_SCENE_TESTS = (("P3", ("tundra",), (11,)), ("P2F", ("tundra",), (11, 23)))
+MODES = {"round": ROUND_TESTS, "one": ONE_SCENE_TESTS}
 FIXED_REF = ("P2F", "P2R")  # forms whose every shot edits shot 0
 SEEDS = (11, 23)
 WEIGHT = 1.0  # ვანო 2026-10-26 12:13 Tbilisi: weight 1.0 once the system differs from the show (the v2 world)
@@ -94,7 +97,7 @@ def main(argv):
     scene_dir, outd, lora = argv[:3]
     weight = float(argv[3]) if len(argv) > 3 else WEIGHT
     outd = Path(outd); outd.mkdir(parents=True, exist_ok=True)
-    todo = jobs(load(scene_dir), tests=ROUND_TESTS if len(argv) > 4 and argv[4] == "round" else None)
+    todo = jobs(load(scene_dir), tests=MODES.get(argv[4]) if len(argv) > 4 else None)
     (outd / "jobs.json").write_text(json.dumps(todo, indent=1, ensure_ascii=False), encoding="utf-8")
     say = t.logger(outd, "scenes.log")
     pipe, tr = t.load_pipeline()

@@ -42,16 +42,22 @@ timeout 900 /workspace/vx/bin/pip install -q -U peft "git+https://github.com/hug
      func_timeout "imageio[ffmpeg]" opencv-python-headless scikit-image beautifulsoup4 decord librosa albumentations \
   && cd VideoX-Fun && /workspace/vx/bin/python -c "from videox_fun.pipeline import QwenImage21Pipeline; print('videox import ok')" ) \
   || { echo "VIDEOX FAILED"; up; exit 1; }
+( cd /workspace/VideoX-Fun && grep -rn "depth\|control_image\|def __call__" videox_fun/pipeline/pipeline_qwenimage21.py 2>/dev/null | head -30 > /workspace/out/pipeline_inputs.txt; ls videox_fun/pipeline | grep -i qwen >> /workspace/out/pipeline_inputs.txt )
 up
 stage round_test
 R=/workspace/out/round_${CKPT:12:4}
-( cd $C && timeout 1800 /workspace/vx/bin/python xworld_v2_scenes.py $C/scenes $R $D/output/$CKPT 1.0 round ); echo "SCENES EXIT $?"
-( cd $C && python xworld_v2_sheet.py $C/scenes $R "step ${CKPT:12:4}" round ); echo "ROUND DONE $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt
+( cd $C && timeout 1800 /workspace/vx/bin/python xworld_v2_scenes.py $C/scenes $R $D/output/$CKPT 1.0 one ); echo "SCENES EXIT $?"
+( cd $C && python xworld_v2_sheet.py $C/scenes $R "step ${CKPT:12:4}" one ); echo "ROUND DONE $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt
 up
 stage p2s
 O=/workspace/out/p2s
 ( cd $C && timeout 3000 /workspace/vx/bin/python xworld_v2_p2s.py $C/scenes $O $D/output/$CKPT ); echo "P2S EXIT $?"
 ( cd $C && python xworld_v2_p2s_sheet.py $O "$CKPT" ); echo "P2S DONE $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt
+up
+stage s2
+O2=/workspace/out/s2
+( cd $C && timeout 1500 /workspace/vx/bin/python xworld_v2_s2.py $C/scenes $O2 $D/output/$CKPT tent,rome 4.0 ); echo "S2 EXIT $?"
+( cd $C && python xworld_v2_s2.py sheet $O2 ); echo "S2 DONE $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt
 kill $LOOP 2>/dev/null
 echo "DONE $(date -u +%H:%M:%S)" > /workspace/out/beat.txt; up
 python - <<PY

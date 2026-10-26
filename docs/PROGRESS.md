@@ -2438,3 +2438,9 @@ training as sequences is decided in the process. Changed together:
   logged) x cfg 4.0/2.5 x LoRA weight 1.0/0.7 = 64 cells + 2 masters + 4 sheets = 70 pictures; test `test_xworld_v2_p2s.py`.
   Facts given to the thread: ai-toolkit's `qwen_image_2` arch takes up to three control images (`ctrl_img_1..3`), our drawing script
   (VideoX-Fun `QwenImage21Pipeline`) has only ever been given one; the round tests run at true_cfg 4.0, 30 steps, LoRA weight 1.0.
+- 16:50 UTC 2026-10-26 (ვანო 16:39: 3000 test on a separate pod, one scene standard + the methods; the Opus thread's scope): the
+  separate pod (`xworld_v2_p2s.sh`, checkpoint 3000) now runs (1) a free look at the pipeline inputs (3 images, depth) ->
+  `pipeline_inputs.txt`, (2) the short standard test `xworld_v2_scenes.py ... one` = tundra, P3 seed 11 + P2F seeds 11 and 23,
+  (3) P2S on tent and rome at LoRA weight 1.0, cfg 4.0 vs 2.5 (the 0.7 axis dropped: the aim is the best way, not a comparison;
+  32 cells), (4) S2 `xworld_v2_s2.py`: a 2x2 storyboard grid per scene, cut into panels (gutter search), each panel cleaned
+  as an edit of itself; the first grid is logged GATE before the clean-ups. Tests: `test_xworld_v2_p2s.py`, `test_xworld_v2_s2.py`.

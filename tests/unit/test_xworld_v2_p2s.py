@@ -16,7 +16,7 @@ def test_the_grid_is_two_scenes_four_sheets_and_sixty_four_cells():
     j = _jobs()
     assert sum(x["kind"] == "master" for x in j) == 2 and sum(x["kind"] == "sheet" for x in j) == 4
     cells = [x for x in j if x["kind"] in P.REFS]
-    assert len(cells) == 2 * len(P.REFS) * len(P.CFGS) * len(P.WEIGHTS) * 4 == 64
+    assert len(cells) == 2 * len(P.REFS) * len(P.CFGS) * len(P.WEIGHTS) * 4 == 32
     assert {x["cfg"] for x in cells} == set(P.CFGS) and {x["weight"] for x in cells} == set(P.WEIGHTS)
 
 

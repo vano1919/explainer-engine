@@ -31,7 +31,7 @@ else:
 
 REFS = ("P2F", "P2S")
 CFGS = (4.0, 2.5)
-WEIGHTS = (1.0, 0.7)
+WEIGHTS = (1.0,)  # the Opus thread 16:39: the aim is the best option, the 0.7 axis is dropped
 SCENES = ("tent", "rome")
 SEED = SEEDS[0]
 MAX_IMAGES = 3  # the arch takes up to three reference images (ai-toolkit GenerateImageConfig ctrl_img_1..3)
