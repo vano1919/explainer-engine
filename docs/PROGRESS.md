@@ -2332,3 +2332,9 @@ training as sequences is decided in the process. Changed together:
   each as before and with a face description, at weight 1.0 / 0.7 / 0.5 = 12 pictures from text. Pod udfnfnuo6eim89 (RTX
   PRO 6000 community $1.69/h, cap $0.8 / 1 h, session-tracked guard); the stopped story pod wnrcpyh9f2xl2c joins
   keep_stopped_pods (0 GB, delete on his word). Note: my "~$0.3" for option 1 was low; a pod's fixed setup is ~$0.35.
+- 11:40 Tbilisi: faces pod udfnfnuo6eim89 drew the 12 close-ups in 10 min and stopped itself (guard ~$0.28 of $0.8).
+  Sheets `story_xworld_v1/napoleon_faces/review/faces0-1.jpg`. Without a face description the general keeps the show's
+  default face (round head, dot eyes) at 1.0 and 0.7, less so at 0.5. WITH the face description (square fleshy face, hooded
+  eyes, hooked nose / long narrow face, cheekbones, almond eyes) both men become our own designs at every weight; 0.7
+  keeps the flat cartoon line, 0.5 turns darker and more painterly; at 0.7/0.5 the officer drifts from close-up to medium
+  shot. Proposal to ვანო: weight 0.7 + a written face for every person (a composer rule with a test).
