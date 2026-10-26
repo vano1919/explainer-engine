@@ -1,7 +1,7 @@
 # xworld_v2 (D-80): one LoRA on Qwen-Image-2.1, the new world's look under `xworld style` + the show's sequence pairs under
 # `rm style` (ვანო 2026-10-26 13:26 Tbilisi, the round plan). Settings as xworld_v1 (rank 16, lr 1e-4, 1024 px); trained in
 # rounds of 750 steps: xworld_v2.sh sets train.steps to 750, 1500, 2250, 3000 and reruns, ai-toolkit resumes from the last
-# save. @SAMPLES@ and @NEW_REPEATS@ are filled by xworld_v2_build.py.
+# save. @SAMPLES@ is filled by xworld_v2_build.py.
 job: extension
 config:
   name: "xworld_v2"
@@ -22,7 +22,7 @@ config:
         - folder_path: "/workspace/ds/new"
           caption_ext: "txt"
           caption_dropout_rate: 0.0
-          num_repeats: @NEW_REPEATS@
+          num_repeats: 3   # xworld_v2_build.NEW_REPEATS
           cache_latents_to_disk: true
           resolution: [1024]
         - folder_path: "/workspace/ds/pairs/target"

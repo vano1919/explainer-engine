@@ -1,3 +1,5 @@
+# DRAFT (2026-10-26): the round-training plan is being revised after the independent review; before it runs it needs the
+# VT-01 vault check at the end and a trigger rule for two triggers (test_reusable_first). Not a committed pod script yet.
 # Started by: python -m explainer_engine.cloud.runpod create --image ostris/aitoolkit:latest --script <this file>
 #   --script-url <its HF copy> (OR-21, OR-23; LT-15 boot 30 min).
 # xworld_v2 (D-80; ვანო 2026-10-26 13:26 Tbilisi, the round plan): round 0 tests the base model, then four training rounds of

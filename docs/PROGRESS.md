@@ -2385,3 +2385,8 @@ training as sequences is decided in the process. Changed together:
   `xworld_v2_scenes.py` (P1 = LT-75 D, P2 = D + camera/layout, P3 = text only), `xworld_v2_judge.py` (Qwen3-VL questions:
   checks, same place, shot size, era), `xworld_v2_sheet.py`, scenes `stories/v2/{tent,tundra,rome}.json`. On HF:
   `dataset_xworld_v2/`, `train_xworld_v2/code/`.
+- 14:05 Tbilisi: independent review (https://claude.ai/artifact/MVN9UQUnyQekPj2rRt24v2): the R&M pairs are not prior
+  preservation, the 234 within-shot pairs teach a still camera, no multi-person style images, thin test. ვანო chose round 0
+  first (base model, `xworld_v2_round0.sh`: P1/P2/P3/P2F x seeds 11, 23). `xworld_v2.sh`/`.yaml` are `.draft` until the
+  revised training plan: they still lack the VT-01 vault check and a two-trigger answer to `test_reusable_first`
+  (CI failed on them, run 40302908548). Round-0 pod: no 80 GB card free (8 tries 13:55-14:00); 48 GB / 1.5 h put to ვანო.

@@ -67,8 +67,8 @@ def build(v1, v1_caps, v2, scene_dir, out, template, cfg_out):
         shutil.copy(v1 / ctrl, out / "pairs/control" / f"{name}.png")
     tent = json.loads((Path(scene_dir) / "tent.json").read_text(encoding="utf-8"))
     smp = samples(v2m, tent)
-    cfg = Path(template).read_text(encoding="utf-8").replace("\"@SAMPLES@\"", json.dumps(smp, ensure_ascii=False)) \
-        .replace("@NEW_REPEATS@", str(NEW_REPEATS))
+    cfg = Path(template).read_text(encoding="utf-8").replace("\"@SAMPLES@\"", json.dumps(smp, ensure_ascii=False))
+    assert f"num_repeats: {NEW_REPEATS} " in cfg, "the template's repeats differ from NEW_REPEATS"
     Path(cfg_out).write_text(cfg, encoding="utf-8")
     n = {"new": len(v2m["train"]), "pairs": len(pr)}
     print("built", n, flush=True)
