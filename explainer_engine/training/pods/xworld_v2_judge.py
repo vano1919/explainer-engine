@@ -34,7 +34,7 @@ def questions(scenes, outd):
         for k, q in enumerate(shot["checks"]):
             out.append(dict(base, key=f"check{k}", images=[img], text=q + YES, want="yes"))
         if j["shot"] != "s0":
-            out.append(dict(base, key="same_place", images=[str(Path(outd) / f"{j['scene']}_s0.png"), img], text=SAME,
+            out.append(dict(base, key="same_place", images=[str(Path(outd) / f"{j['scene']}_{j['seed']}_s0.png"), img], text=SAME,
                             want="yes"))
         out.append(dict(base, key="size", images=[img], text=SIZE, want=shot["size"]))
         out.append(dict(base, key="era", images=[img], text=ERA, want=sc[j["scene"]]["era"]))

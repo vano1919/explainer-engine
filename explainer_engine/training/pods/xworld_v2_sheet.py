@@ -1,4 +1,4 @@
-"""Contact sheets of one xworld_v2 round test: one sheet per scene, a row per prompt form (P1, P2, P3), shot 0 first in every
+"""Contact sheets of one xworld_v2 round test: one sheet per scene, a row per seed and prompt form, shot 0 first in every
 row, the round's VL score of each form written beside it. PIL only, so it runs on the pod and locally.
 
     python xworld_v2_sheet.py <scene dir> <round out dir> <label>   ->  <round dir>/sheet_<scene>.jpg
@@ -10,9 +10,9 @@ import sys
 from pathlib import Path
 
 if __package__:
-    from .xworld_v2_scenes import FORMS, load
+    from .xworld_v2_scenes import FORMS, SEEDS, load
 else:
-    from xworld_v2_scenes import FORMS, load
+    from xworld_v2_scenes import FORMS, SEEDS, load
 
 W, H, PAD, TOP = 384, 216, 6, 34
 
@@ -24,15 +24,16 @@ def build(scene_dir, outd, label):
     made = []
     for sc in load(scene_dir):
         ids = [s["id"] for s in sc["shots"]]
-        sheet = Image.new("RGB", (PAD + len(ids) * (W + PAD), TOP + len(FORMS) * (H + 20 + PAD)), "white")
+        rows = [(seed, form) for seed in SEEDS for form in FORMS]
+        sheet = Image.new("RGB", (PAD + len(ids) * (W + PAD), TOP + len(rows) * (H + 20 + PAD)), "white")
         d = ImageDraw.Draw(sheet)
         d.text((PAD, 8), f"{label} - {sc['name']} ({sc['world']})", fill="black")
-        for r, form in enumerate(FORMS):
+        for r, (seed, form) in enumerate(rows):
             y = TOP + r * (H + 20 + PAD)
             score = summ.get(f"{form}/{sc['name']}")
-            d.text((PAD, y), f"{form}" + (f"  VL {score:.2f}" if score is not None else ""), fill="black")
+            d.text((PAD, y), f"seed {seed} {form}" + (f"  VL {score:.2f}" if score is not None else ""), fill="black")
             for c, sid in enumerate(ids):
-                p = outd / (f"{sc['name']}_s0.png" if sid == "s0" else f"{sc['name']}_{form}_{sid}.png")
+                p = outd / (f"{sc['name']}_{seed}_s0.png" if sid == "s0" else f"{sc['name']}_{seed}_{form}_{sid}.png")
                 if p.exists():
                     with Image.open(p) as im:
                         sheet.paste(im.convert("RGB").resize((W, H)), (PAD + c * (W + PAD), y + 16))

@@ -10,7 +10,7 @@ def test_three_worlds_five_shots_and_faces():
     assert sorted(x["world"] for x in scenes) == ["exterior", "interior", "urban"]
     assert all(len(x["shots"]) == 5 and x["era"] for x in scenes)
     todo = s.jobs(scenes)  # raises on an LT-79 face problem
-    assert len(todo) == 3 * (1 + 4 * 3)
+    assert len(todo) == 3 * 2 * (1 + 4 * 4)
 
 
 def test_forms():
@@ -20,8 +20,9 @@ def test_forms():
     assert s.prompt("P3", shot) == "xworld style, D. L."
     todo = s.jobs(s.load(SCENES))
     assert all(t["ref"] is None for t in todo if t["form"] in ("P3", "all"))
-    p1 = [t for t in todo if t["form"] == "P1" and t["scene"] == "tent"]
-    assert p1[0]["ref"] == "tent_s0" and p1[1]["ref"] == p1[0]["name"]
+    p1 = [t for t in todo if t["form"] == "P1" and t["scene"] == "tent" and t["seed"] == 23]
+    assert p1[0]["ref"] == "tent_23_s0" and p1[1]["ref"] == p1[0]["name"]
+    assert all(t["ref"] == f"{t['scene']}_{t['seed']}_s0" for t in todo if t["form"] == "P2F")
 
 
 def test_judge_questions_and_scoring(tmp_path):

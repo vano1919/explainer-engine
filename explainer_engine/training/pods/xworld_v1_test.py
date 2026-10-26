@@ -19,6 +19,7 @@ Pictures: 1280x720, 30 steps, true_cfg 4 (the training sampler's guidance), seed
 from __future__ import annotations
 
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -97,8 +98,14 @@ def load_pipeline():
         text_encoder=Qwen3VLForConditionalGeneration.from_pretrained(base, subfolder="text_encoder", torch_dtype=dt),
         processor=Qwen3VLProcessor.from_pretrained(base, subfolder="processor"), transformer=tr,
         scheduler=FlowMatchEulerDiscreteScheduler.from_pretrained(base, subfolder="scheduler"))
-    apply_gpu_memory_mode(pipe, "model_cpu_offload", "cuda", dt,
-                          exclude_module_name=["img_in", "txt_in", "time_text_embed", "modulation"])
+    # XW_GPU_MODE=model_full_load keeps everything on a big card (~2x faster than offload, 2026-10-26 v2 round test)
+    mode = os.environ.get("XW_GPU_MODE", "model_cpu_offload")
+    try:
+        apply_gpu_memory_mode(pipe, mode, "cuda", dt, exclude_module_name=["img_in", "txt_in", "time_text_embed", "modulation"])
+    except Exception as e:  # an unknown mode or too little memory: the tested offload path
+        print("gpu mode", mode, "failed:", e, "-> model_cpu_offload", flush=True)
+        apply_gpu_memory_mode(pipe, "model_cpu_offload", "cuda", dt,
+                              exclude_module_name=["img_in", "txt_in", "time_text_embed", "modulation"])
     return pipe, tr
 
 

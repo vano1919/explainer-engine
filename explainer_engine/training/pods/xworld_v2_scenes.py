@@ -5,6 +5,8 @@ description gives each shot best:
   P1  the form that won the 10-26 held-out test (LT-75 "D"): previous drawn shot + full description + change + keep line
   P2  P1 + where the camera stands, what is left / right / behind, the light, the shot size (the shot's "layout")
   P3  every shot from text alone: full description + layout, no picture (answers "D copies a drawn master")
+  P2F P2 with shot 0 as the picture of every shot (a fixed previous frame: no chained errors; review 2026-10-26)
+Every scene is drawn with each seed of SEEDS (review 2026-10-26: one seed cannot tell a form from luck).
 Shot 0 of a scene is drawn once from text (description + layout) and is the master of P1 and P2. People are described the
 way people picture their era (ვანო 13:26) plus an LT-79 face; every scene passes `face_problems`.
 
@@ -25,7 +27,8 @@ else:
     from xworld_v1_story import face_problems
     from xworld_v1_test import KEEP, MASTER, TRIGGER
 
-FORMS = ("P1", "P2", "P3")
+FORMS = ("P1", "P2", "P3", "P2F")
+SEEDS = (11, 23)
 WEIGHT = 1.0  # ვანო 2026-10-26 12:13 Tbilisi: weight 1.0 once the system differs from the show (the v2 world)
 
 
@@ -36,28 +39,31 @@ def prompt(form, shot):
         return f"{TRIGGER}, {d} {lay}"
     if form == "P1":
         return f"{TRIGGER}, {MASTER} {d} {ch} {KEEP}"
-    if form == "P2":
+    if form in ("P2", "P2F"):
         return f"{TRIGGER}, {MASTER} {d} {lay} {ch} {KEEP}"
     raise ValueError(form)
 
 
-def jobs(scenes):
-    """[{name, scene, form, shot, prompt, ref}] in drawing order; ref = the name of the drawn previous shot, or None."""
+def jobs(scenes, seeds=SEEDS):
+    """[{name, scene, seed, form, shot, prompt, ref}] in drawing order; ref = the name of a drawn picture, or None."""
     out = []
     for sc in scenes:
         bad = face_problems(sc)
         if bad:
             raise ValueError(f"{sc['name']}: " + "; ".join(bad))
         first = sc["shots"][0]
-        out.append({"name": f"{sc['name']}_s0", "scene": sc["name"], "form": "all", "shot": first["id"],
-                    "prompt": prompt("P1", first), "ref": None})
-        for form in FORMS:
-            prev = f"{sc['name']}_s0"
-            for s in sc["shots"][1:]:
-                name = f"{sc['name']}_{form}_{s['id']}"
-                out.append({"name": name, "scene": sc["name"], "form": form, "shot": s["id"], "prompt": prompt(form, s),
-                            "ref": None if form == "P3" else prev})
-                prev = name
+        for seed in seeds:
+            s0 = f"{sc['name']}_{seed}_s0"
+            out.append({"name": s0, "scene": sc["name"], "seed": seed, "form": "all", "shot": first["id"],
+                        "prompt": prompt("P1", first), "ref": None})
+            for form in FORMS:
+                prev = s0
+                for s in sc["shots"][1:]:
+                    name = f"{sc['name']}_{seed}_{form}_{s['id']}"
+                    ref = None if form == "P3" else s0 if form == "P2F" else prev
+                    out.append({"name": name, "scene": sc["name"], "seed": seed, "form": form, "shot": s["id"],
+                                "prompt": prompt(form, s), "ref": ref})
+                    prev = name
     return out
 
 
@@ -68,25 +74,26 @@ def load(scene_dir):
 def main(argv):
     from PIL import Image
     if __package__:
-        from .xworld_v1_test import Loras, draw, load_pipeline, logger
+        from . import xworld_v1_test as t
     else:
-        from xworld_v1_test import Loras, draw, load_pipeline, logger
+        import xworld_v1_test as t
     scene_dir, outd, lora = argv[:3]
     weight = float(argv[3]) if len(argv) > 3 else WEIGHT
     outd = Path(outd); outd.mkdir(parents=True, exist_ok=True)
     todo = jobs(load(scene_dir))
     (outd / "jobs.json").write_text(json.dumps(todo, indent=1, ensure_ascii=False), encoding="utf-8")
-    say = logger(outd, "scenes.log")
-    pipe, tr = load_pipeline()
-    loras = Loras(pipe, tr, {} if lora == "base" else {"R": lora}, say)
+    say = t.logger(outd, "scenes.log")
+    pipe, tr = t.load_pipeline()
+    loras = t.Loras(pipe, tr, {} if lora == "base" else {"R": lora}, say)
     p = loras.use(None if lora == "base" else "R", weight)
     for j in todo:
         if (outd / f"{j['name']}.png").exists():
             continue
         refs = [Image.open(outd / f"{j['ref']}.png").convert("RGB")] if j["ref"] else []
-        t = time.time()
-        draw(p, j["prompt"], refs).convert("RGB").save(outd / f"{j['name']}.png")
-        say("made", j["name"], round(time.time() - t), "s")
+        t0 = time.time()
+        t.SEED = j["seed"]  # draw() reads the module's seed
+        t.draw(p, j["prompt"], refs).convert("RGB").save(outd / f"{j['name']}.png")
+        say("made", j["name"], round(time.time() - t0), "s")
 
 
 if __name__ == "__main__":
