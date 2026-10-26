@@ -23,13 +23,47 @@ from pathlib import Path
 
 from explainer_engine.training.pods.xworld_v1_story import FACE_PARTS_MIN, face_parts, show_traits
 
-STYLE = ("Flat 2D adult TV cartoon character design, one person, full body from head to shoes, standing in a relaxed "
-         "three-quarter pose, centred, on a plain warm off-white paper background with nothing else in the picture and no "
-         "text. Bold clean black ink outlines of even medium-thick weight, flat saturated cel colours with one soft shadow "
-         "tone, a few fine hatch lines in hair, beard and fabric folds. Colour palette: rich navy blue, crimson red, golden "
-         "yellow, ochre orange, forest green, burgundy, warm skin tones, cream and charcoal black. Eyes are almond-shaped "
-         "with dark irises and clearly drawn upper eyelids.")
-MODEL, SIZE, ASPECT = "flux-3-image-klein", "1k", "3:4"
+# One shared style core for every picture of the new world; each kind (person, place, object) has its own fixed frame
+# sentence in front, so pictures differ only by subject. A person, a place and an object are never in one picture
+# (ვანო 2026-10-26 12:11 Tbilisi: places without people, people without things beyond what they wear or hold).
+CORE = ("Bold clean black ink outlines of even medium-thick weight, flat saturated cel colours with one soft shadow "
+        "tone, a few fine hatch lines in hair, beard and fabric folds. Colour palette: rich navy blue, crimson red, golden "
+        "yellow, ochre orange, forest green, burgundy, warm skin tones, cream and charcoal black.")
+FRAMES = {
+    "person": ("Flat 2D adult TV cartoon character design, one person, full body from head to shoes, standing in a relaxed "
+               "three-quarter pose, centred, on a plain warm off-white paper background with nothing else in the picture "
+               "and no text."),
+    "place": ("Flat 2D adult TV cartoon background painting, an empty location with no people, no animals and no text, "
+              "seen as a wide establishing shot."),
+    "object": ("Flat 2D adult TV cartoon prop design, one single object, centred, on a plain warm off-white paper "
+               "background with nothing else in the picture, no people, no hands and no text."),
+}
+EYES_NOTE = "Eyes are almond-shaped with dark irises and clearly drawn upper eyelids."
+STYLE = f"{FRAMES['person']} {CORE} {EYES_NOTE}"
+STYLES = {"person": STYLE, "place": f"{FRAMES['place']} {CORE}".replace(", a few fine hatch lines in hair, beard and fabric folds", ", a few fine hatch lines on wood, stone and fabric"),
+          "object": f"{FRAMES['object']} {CORE}".replace(", a few fine hatch lines in hair, beard and fabric folds", ", a few fine hatch lines on wood, metal and fabric")}
+ASPECTS = {"person": "3:4", "place": "16:9", "object": "1:1"}
+
+# Sample places and objects (ვანო 12:11: "show me some examples" before the whole world)
+PLACES = [
+    ("p000", "A Roman street at noon: stone paving, a fountain, shuttered shops with awnings, laundry lines, a temple at the end."),
+    ("p001", "Inside a large canvas army tent at night: a map table with wooden figures, a hanging brass lantern, a folded cot, an iron-bound chest."),
+    ("p002", "A wide green meadow at dawn seen from a grassy hilltop: distant blue hills, a winding river, morning mist, a pale orange sky."),
+    ("p003", "A Stone Age cave interior: a crackling fire, painted animals on the rock wall, furs on the floor, the cave mouth showing a snowy valley."),
+    ("p004", "A starship cockpit: two empty pilot seats, glowing control panels, a curved window onto a ringed planet and stars."),
+    ("p005", "A Renaissance painter's workshop: easels with half-finished canvases, jars of pigment, a tall window, wooden beams."),
+]
+OBJECTS = [
+    ("o000", "An antique brass spyglass, extended, with leather grip bands."),
+    ("o001", "A wooden campaign map table with a rolled map, brass dividers and small carved army figures on it."),
+    ("o002", "A Roman two-wheeled racing chariot with red painted panels and bronze fittings."),
+    ("o003", "A Stone Age flint-tipped spear leaning on a large rough stone, with a bone necklace hanging from it."),
+    ("o004", "A chunky retro-futuristic ray gun with brass coils and a glowing green glass tank."),
+    ("o005", "A medieval blacksmith's anvil on a tree stump, with tongs and a glowing horseshoe."),
+]
+
+
+MODEL, SIZE = "flux-3-image-klein", "1k"
 REF_NOTE = "Image 1 shows only the drawing style and colour palette to use; draw a new, different person."
 KEY_ENV = ("BFL_API_kay", "BFL_API_KEY")  # 2026-10-26: the first answers 403 "Not authenticated", the second works
 
@@ -121,7 +155,9 @@ def cast(seed: int = 26):
 
 
 def prompt(c, ref=False):
-    return f"{STYLE} {REF_NOTE + ' ' if ref else ''}Character: {c['desc']}"
+    kind = c.get("kind", "person")
+    label = {"person": "Character", "place": "Location", "object": "Object"}[kind]
+    return f"{STYLES[kind]} {REF_NOTE + ' ' if ref else ''}{label}: {c['desc']}"
 
 
 def problems(people=None):
@@ -161,12 +197,15 @@ def draw(out, ids, ref=None, ledger=None, key_env=None):
     p = BFL(out, run=run, key=key)
     refs = [Path(ref).read_bytes()] if ref else []
     people = {c["id"]: c for c in cast()}
+    people.update({i: {"id": i, "kind": "place", "desc": d} for i, d in PLACES})
+    people.update({i: {"id": i, "kind": "object", "desc": d} for i, d in OBJECTS})
     rows = []
     for i in ids:
         c = people[i]
         name = f"{i}{'_ref' if ref else ''}"
+        kind = c.get("kind", "person")
         r = p.generate(name, prompt(c, bool(ref)), model=MODEL, size=SIZE, refs=refs, seed=1000 + int(i[1:]),
-                       extra={"aspect_ratio": ASPECT, "safety_tolerance": 2})
+                       extra={"aspect_ratio": ASPECTS[kind], "safety_tolerance": 2})
         rows.append({"name": name, "id": i, "usd": r.usd_settled if r.usd_settled is not None else r.usd, "cached": r.cached})
         print(name, rows[-1]["usd"], flush=True)
     return rows

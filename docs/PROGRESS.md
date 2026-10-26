@@ -2353,3 +2353,11 @@ training as sequences is decided in the process. Changed together:
   `jobs/xworld_v1/cast_2026-10-26/ledger.json`; HF `cast_xworld_v2/test4/`): text only matches his palette and line with
   our own faces; with his picture as reference Klein copies his four figures (bicorne Napoleon instead of a grenadier,
   his Renaissance man instead of a woman painter), so no reference.
+- 12:20 Tbilisi: ვანო 12:11: new world = places without people, objects without people, people without extra things, each
+  kind alone; samples first, then the whole world on the BFL credit; and check how such training behaves. `cast/sheet.py`
+  now has one style CORE + a fixed frame per kind (person / place / object; the person prompt is unchanged), 6 sample
+  places + 6 objects: 12 pictures $0.108 (HF `cast_xworld_v2/world_samples/`): all in his palette and line, places empty,
+  objects alone. Research + our records put to him: one trigger over R&M frames + new pictures would blend the two looks
+  (R&M dominates by count); proposal = two triggers in one LoRA (R&M sequence data keeps its own style word, the new world
+  takes `xworld style`), creator-picked synthetic pictures as the minority, caption dropout; weight back to 1.0 on v2 if
+  faces come out our own (his 12:13 note).
