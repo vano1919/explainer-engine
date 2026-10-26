@@ -2463,3 +2463,15 @@ training as sequences is decided in the process. Changed together:
   (`control_img_in` + 16 `control_blocks`, strict=False on the base transformer, so the base LoRA keys should match), `config_path` must be
   qwenimage21_control.yaml. Deviation: the scale sweep (0.6/0.8) is only drawn on one shot per scene because an unattended pod cannot judge
   it; 20 pictures. The pod needs ვანო's OR-23 yes.
+- 19:30 UTC 2026-10-26 (3000 test done on pod kohifcge91ujw9, $1.71): S2 wins (a real cut and one place and cast in all four panels, both scenes),
+  P2S ≈ P2F (tent cuts, rome does not), S3 as a reference image fails (Spearman of the result equals S1's: rome 0.32-0.52, tent -0.21-0.34; pass bar 0.6);
+  collages in project files `xworld_v2/round3000/`. S3c pods 1 and 2 stopped in under 2 minutes: (1) my own mistake, the install block of
+  `xworld_v2_s3c.sh` was pasted twice (second `git clone` aborted); (2) step 0 counted the 32 fused `img_mlp.gate_up` layers as unmatched
+  although `Loras.gate_up` fills them (the 10-25 lesson): `match_report` now counts a gate_up layer as matched when `gate_layer` and
+  `proj` both exist. Tests added for both. Cost of the two failed boots ≈ $0.1.
+- 19:40 UTC 2026-10-26 (OR-26, Opus relay 19:20 UTC: test A, eight shots as two grids): `xworld_v2_s2x.py` + `stories/v2/more/{tent,rome}.json`
+  (shots s5-s8, text built from the card's cast), grids g1 (shots 0-3), g2t (4-7, text only) and g2e (4-7 as an edit of grid 1's wide
+  panel), 2560x1408, seeds 11 and 23, 12 grids; free measures (`measure`: panels cut, grain ratio to g1, faces per panel and cross-grid identity when the
+  YuNet/SFace models exist), sheet per scene and seed. Choices reported: grid 1 now also carries the place sentence and the `frame_extras` line
+  (the winning S2 grid had neither), and `SHOULDER` accepts "over the X's shoulder" (before, only "over X's"), so rome s4 and the new s8 get the
+  "exactly two people" line. Test `test_xworld_v2_s2x.py`. No pod until ვანო's OR-23 yes.

@@ -22,6 +22,9 @@
     "max_price_per_hour": 3.0,
     "min_balance_left_usd": 0.25,
     "keep_stopped_pods": [
+      "emvtki74neqpl7",
+      "63fp4qmydpquex",
+      "kohifcge91ujw9",
       "ifghvnsx95wmgb",
       "5r50psn3elm6un",
       "usx3b1xb9w9dy4",

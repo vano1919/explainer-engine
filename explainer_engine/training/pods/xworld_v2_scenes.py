@@ -49,7 +49,7 @@ WEIGHT = 1.0  # ვანო 2026-10-26 12:13 Tbilisi: weight 1.0 once the syste
 # over-the-shoulder shot says exactly who is in it. Used by the P2S, S2 and S3 prompts; the standard rows stay as they were.
 FOOT = re.compile(r",? (?:and )?(?:leather sandals|tall black riding boots|feet wrapped in hide)")
 LEGS = re.compile(r",? (?:and )?(?:white )?breeches")
-SHOULDER = re.compile(r"over (\w+)'s shoulder")
+SHOULDER = re.compile(r"over (?:the )?(\w+)'s shoulder")
 
 
 def frame_desc(shot):

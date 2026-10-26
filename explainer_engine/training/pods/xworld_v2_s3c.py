@@ -47,8 +47,17 @@ def match_report(lora_keys, module_names):
     """(matched, total, unmatched) of the LoRA's layers against a transformer's module names. Pass only at 100 %."""
     mods = {norm(m) for m in module_names}
     layers = sorted({norm(k) for k in lora_keys if re.search(r"lora_(A|B|down|up)\.weight$", k)})
-    miss = [x for x in layers if x not in mods]
+    miss = [x for x in layers if x not in mods and not _fused_gate_up(x, mods)]
     return len(layers) - len(miss), len(layers), miss
+
+
+def _fused_gate_up(layer, mods):
+    """ai-toolkit trains img_mlp.gate_up as one layer; the model has gate_layer and proj, and Loras.gate_up (xworld_v1_test) adds
+    the delta to both. So a gate_up layer is matched when both halves exist (the first S3c pod stopped on 32 of these, 2026-10-26)."""
+    if not layer.endswith("_img_mlp_gate_up"):
+        return False
+    base = layer[:-len("gate_up")]
+    return base + "gate_layer" in mods and base + "proj" in mods
 
 
 def pass_a_prompt(sc, shot):

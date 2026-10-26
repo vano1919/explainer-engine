@@ -1,0 +1,47 @@
+{
+ "name": "tent",
+ "shots": [
+  {
+   "id": "s5",
+   "size": "medium",
+   "faces": [
+    "napoleon"
+   ],
+   "pre": "Medium shot inside the same tent at eye level, from the camp-bed side, a reverse angle: Napoleon alone at the table.",
+   "post": "He leans on the table with both hands and studies the map.",
+   "layout": "The camera stands by the camp bed on the left wall and looks across the tent at the table; the entrance flap is behind the camera, the lantern hangs above the table.",
+   "change": null
+  },
+  {
+   "id": "s6",
+   "size": "close",
+   "faces": [],
+   "pre": "Close-up insert of the large map on the wooden table inside the same tent: a man's finger rests on a town.",
+   "post": "The lantern light falls on the map and the finger.",
+   "layout": "The camera looks straight down at the table from above; only the map, the finger and the table edge are in the picture.",
+   "change": null
+  },
+  {
+   "id": "s7",
+   "size": "wide",
+   "faces": [
+    "general"
+   ],
+   "pre": "Wide shot inside the same tent from the back of the tent: the general comes in through the entrance flap holding a letter.",
+   "post": "Napoleon stands at the table with his back half turned to the entrance.",
+   "layout": "The camera stands at the back of the tent opposite the entrance; the entrance flap is in the right wall, the camp bed on the left wall, the table in the middle, the lantern above it.",
+   "change": null
+  },
+  {
+   "id": "s8",
+   "size": "medium",
+   "faces": [
+    "napoleon"
+   ],
+   "pre": "Medium shot over the general's shoulder inside the same tent: Napoleon reads the letter.",
+   "post": "He holds the letter in both hands and frowns.",
+   "layout": "The camera stands behind the general's right shoulder; Napoleon faces the camera across the table; the camp bed is behind him.",
+   "change": "Cut to a medium shot over the general's shoulder: Napoleon reads the letter."
+  }
+ ]
+}

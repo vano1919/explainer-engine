@@ -47,16 +47,6 @@ timeout 900 /workspace/vx/bin/pip install -q -U peft "git+https://github.com/hug
   || { echo "VIDEOX FAILED"; up; exit 1; }
 ( cd /workspace/VideoX-Fun && grep -rn "depth\|control_image\|def __call__" videox_fun/pipeline/pipeline_qwenimage21.py 2>/dev/null | head -30 > /workspace/out/pipeline_inputs.txt; ls videox_fun/pipeline | grep -i qwen >> /workspace/out/pipeline_inputs.txt )
 up
-stage install
-python -m venv --system-site-packages /workspace/vx
-timeout 900 /workspace/vx/bin/pip install -q -U peft "git+https://github.com/huggingface/diffusers" || true
-( cd /workspace && timeout 600 git clone -q --depth 1 https://github.com/aigc-apps/VideoX-Fun.git \
-  && timeout 900 /workspace/vx/bin/pip install -q einops timm tomesd torchdiffeq torchsde omegaconf SentencePiece ftfy \
-     func_timeout "imageio[ffmpeg]" opencv-python-headless scikit-image beautifulsoup4 decord librosa albumentations \
-  && cd VideoX-Fun && /workspace/vx/bin/python -c "from videox_fun.pipeline import QwenImage21Pipeline; print('videox import ok')" ) \
-  || { echo "VIDEOX FAILED"; up; exit 1; }
-( cd /workspace/VideoX-Fun && grep -rn "depth\|control_image\|def __call__" videox_fun/pipeline/pipeline_qwenimage21.py 2>/dev/null | head -30 > /workspace/out/pipeline_inputs.txt; ls videox_fun/pipeline | grep -i qwen >> /workspace/out/pipeline_inputs.txt )
-up
 up
 stage s3c
 O=/workspace/out/s3c
