@@ -410,3 +410,6 @@ def test_round_3b_backdrop_per_panel_and_config():
     for st in cfg["stages"]:
         for row in st["rows"]:
             assert row in cfg["rows"]
+    from explainer_engine.training.pods import xworld_v2_loop as L
+    assert L.check_round(cfg) == []  # the pod refuses a config with a problem (round 3b first try, 3 minutes of a paid pod)
+    assert L.check_round(json.loads((Path(R.__file__).resolve().parent / "loop/round_3a.json").read_text(encoding="utf-8"))) == []

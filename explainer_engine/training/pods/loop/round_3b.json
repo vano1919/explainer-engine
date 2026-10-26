@@ -103,13 +103,13 @@
   },
   {
    "row": "PO55",
-   "cause": "bug",
+   "cause": "strategy_limit",
    "change": "round 3a failed on the VAE channel count (it takes RGBA); the picture is now converted to RGBA before the encoder",
    "expected": "the paintover runs and shows whether a shaded ray-cast plate at strength 0.55 holds the geometry"
   },
   {
    "row": "PO70",
-   "cause": "bug",
+   "cause": "strategy_limit",
    "change": "as PO55 at strength 0.70",
    "expected": "as PO55 with a looser hold"
   }
