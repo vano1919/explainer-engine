@@ -2318,3 +2318,11 @@ training as sequences is decided in the process. Changed together:
   `tests/unit/test_xworld_v1_story.py`; `xworld_v1_test.py` now shares `load_pipeline`, `Loras`, `draw`, `logger`.
   Story `stories/napoleon_tent.json`: 9 shots (tent A0-A4, outside B0-B3), 17 pictures (LoRA 2250: 9 + B from text 4; base
   4). Code on HF `story_xworld_v1/napoleon_tent/code/`. Pod plan put to ვანო (OR-23); not started.
+- 11:00 Tbilisi: story pod wnrcpyh9f2xl2c (RTX PRO 6000 community $1.69/h) drew all 17 pictures in 13 min and stopped
+  itself (STORY EXIT 0; guard estimate ~$0.39 of $1.2; the session-tracked guard ran to the end this time). Sheets
+  `story_xworld_v1/napoleon_tent/review/row0-3.jpg`. Result: frame 0 from text is in the new style with an invented hero
+  (A0, t_B0); the D form with a DRAWN master mostly copies the master: A1 adds the officer, but A2-A4 stay the master (no
+  close-ups, no exit); outside from the tent master stays inside the tent and gets colour noise; B1-B3 from the text
+  master repeat it (no riders, no army). Base model = photoreal, no style. So D's success on R&M (real masters) does not
+  carry to our drawn masters; next test (text-only shots with the same hero description, D without "Keep everything
+  else the same.") put to ვანო.
