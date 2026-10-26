@@ -22,11 +22,17 @@ from pathlib import Path
 
 import numpy as np
 
+if __package__:
+    from . import xworld_v2_cells as K
+else:
+    import xworld_v2_cells as K
+
 PODS = Path(__file__).parent
 PANEL = (1280, 704)  # w, h of one panel (both /64); a 2x2 canvas is 2560x1408
 SCENES = ("tent", "rome")
 SHOTS = ("s1", "s2", "s3", "s4")
 SEEDS = (11, 23)
+PAIR_SHOTS = ("s2", "s4")  # a 1x2 pair cell draws these two target shots (Opus plan 10: the same units are scored on the grids)
 SMALL_MOVES = {"tent": ("s2",), "rome": ("s2",)}  # push-ins: the only shots M5 (master-warp) is tried on
 CONTROL_BAR, OTHER_BAR = 0.75, 0.6  # geometry Spearman bars of the plan
 PLATE_MAX = 0.6  # a real cut: SSIM of the background against the master is below this
@@ -38,7 +44,20 @@ CAUSES = ("3d_code", "strategy_setting", "strategy_limit", "frozen_plate", "prom
           "model_data")
 MAX_ROUNDS, NO_PROGRESS_ROUNDS = 4, 3
 
-ROWS = {
+class _Rows(dict):
+    """The strategy registry; a factor-cell row name (X_g_e_1_0, see xworld_v2_cells) is resolved on demand, so every combination is a row."""
+
+    def __missing__(self, key):
+        s = K.spec(key)
+        if s is None:
+            raise KeyError(key)
+        return s
+
+    def __contains__(self, key):
+        return dict.__contains__(self, key) or K.parse(key) is not None
+
+
+ROWS = _Rows({
     "S1": {"kind": "pure", "control": False, "grid": False, "note": "edit from the master + sheets (P2S); control row of round 1 only"},
     "S2T": {"kind": "pure", "control": False, "grid": True, "note": "2x2 grid, text only, O1 prompt fixes"},
     "S2E": {"kind": "pure", "control": False, "grid": True, "note": "2x2 grid, edit with the wide panel as Image 1 (test A)"},
@@ -54,7 +73,7 @@ ROWS = {
     "S2L": {"kind": "pure", "control": False, "grid": True, "note": "S2T + camera and left-to-right landmark words from the 3D ray cast (round 2)"},
     "M6": {"kind": "mix", "control": True, "grid": True, "note": "M4 with the control OFF (scale 0) and the panels 2-4 filled with noise: full regeneration under the mask (round 2)"},
     "M3": {"kind": "mix", "control": True, "grid": False, "note": "S3cA + pass B whose reference is the S2 panel (only if S3cAB loses identity)"},
-}
+})
 
 
 # --- the round config ------------------------------------------------------------------------------------------------------------
@@ -95,7 +114,7 @@ def jobs(cfg):
                 if ROWS[row]["grid"]:
                     out.append({"row": row, "scene": scene, "seed": seed, "shot": None, "kind": "grid"})
                     continue
-                shots = SMALL_MOVES[scene] if row == "M5" else cfg.get("shots", SHOTS)
+                shots = SMALL_MOVES[scene] if row == "M5" else PAIR_SHOTS if ROWS[row]["kind"] == "cell" else cfg.get("shots", SHOTS)
                 out += [{"row": row, "scene": scene, "seed": seed, "shot": s, "kind": "shot"} for s in shots]
     return out
 
@@ -174,7 +193,9 @@ def inpaint_canvas(master, panel=PANEL, fill="flat"):
     from PIL import Image
     pw, ph = panel
     m = master.convert("RGB").resize((pw, ph), Image.LANCZOS)
-    if fill == "noise":
+    if fill == "grey":
+        img = Image.new("RGB", (2 * pw, 2 * ph), (128, 128, 128))
+    elif fill == "noise":
         img = Image.fromarray(np.random.default_rng(0).integers(0, 256, (2 * ph, 2 * pw, 3), dtype=np.uint8))
     else:
         mean = tuple(int(round(v)) for v in np.asarray(m, float).reshape(-1, 3).mean(axis=0))  # flat, so the VAE sees no edges to continue
@@ -183,6 +204,25 @@ def inpaint_canvas(master, panel=PANEL, fill="flat"):
     mask = Image.new("L", (2 * pw, 2 * ph), 255)
     mask.paste(0, (0, 0, pw, ph))
     return img, mask
+
+
+def pair_canvas(master, panel=PANEL):
+    """1x2 pair canvas for the cells with a canvas reference: the master in the left panel, neutral grey on the right (2560x704)."""
+    from PIL import Image
+    pw, ph = panel
+    img = Image.new("RGB", (2 * pw, ph), (128, 128, 128))
+    img.paste(master.convert("RGB").resize((pw, ph), Image.LANCZOS), (0, 0))
+    return img
+
+
+def grey_copied(result, kind, panel=PANEL, tol=6):
+    """Share of the area the model had to draw (grid: the three panels but the top-left; pair: the right panel) that is still the neutral grey of
+    the reference canvas. A high value (> 0.5) = the reference was copied, a SETUP_FAIL, not a strategy failure (Opus plan 10, B=c)."""
+    res = np.asarray(result, float)
+    pw, ph = panel
+    parts = [res[:, pw:, :]] if kind == "p" else [res[:ph, pw:, :], res[ph:, :, :]]
+    px = np.concatenate([x.reshape(-1, 3) for x in parts])
+    return float((np.abs(px - 128).max(axis=1) <= tol).mean())
 
 
 def fill_survived(result, master, panel=PANEL, tol=6):

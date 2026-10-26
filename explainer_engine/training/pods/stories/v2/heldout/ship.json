@@ -1,0 +1,98 @@
+{
+ "name": "ship",
+ "world": "exterior",
+ "place": "A wooden merchant sailing ship at sea at early morning: a long plank deck with low wooden railings on both sides, stacked cargo crates and barrels on the left, a big wooden steering wheel on the right near the stern, one tall mast with furled sails ahead, and a small green island with a white lighthouse on the horizon far ahead.",
+ "cast": {
+  "captain": {
+   "look": "A sea captain as people picture old sailing-ship captains: a tall man in a long dark blue coat with brass buttons, a black tricorn hat, high leather boots, a brass spyglass in his belt.",
+   "face": "He has a long weathered face, deep-set grey eyes, bushy white eyebrows, a hooked nose, a thick white beard and a scar across his left cheek."
+  },
+  "sailor": {
+   "look": "A young deck sailor as people picture old sailors: a striped red and white shirt, loose canvas trousers, a red headscarf, bare feet, a coil of rope over his shoulder.",
+   "face": "He has a round freckled face, wide-set green eyes, thin light eyebrows, a small snub nose, a gap-toothed grin and short messy ginger hair."
+  }
+ },
+ "shots": [
+  {
+   "id": "s0",
+   "size": "wide",
+   "faces": [
+    "captain",
+    "sailor"
+   ],
+   "desc": "A wooden merchant sailing ship at sea at early morning: a long plank deck with low wooden railings on both sides, stacked cargo crates and barrels on the left, a big wooden steering wheel on the right near the stern, one tall mast with furled sails ahead, and a small green island with a white lighthouse on the horizon far ahead. Wide shot at eye level. The captain stands at the wheel and the sailor stands by the crates. A sea captain as people picture old sailing-ship captains: a tall man in a long dark blue coat with brass buttons, a black tricorn hat, high leather boots, a brass spyglass in his belt. He has a long weathered face, deep-set grey eyes, bushy white eyebrows, a hooked nose, a thick white beard and a scar across his left cheek. A young deck sailor as people picture old sailors: a striped red and white shirt, loose canvas trousers, a red headscarf, bare feet, a coil of rope over his shoulder. He has a round freckled face, wide-set green eyes, thin light eyebrows, a small snub nose, a gap-toothed grin and short messy ginger hair.",
+   "layout": "The camera looks along the deck towards the bow; the crates are on the left, the steering wheel on the right, the mast in the middle and the island far ahead; the sun is low on the right.",
+   "change": null,
+   "checks": [
+    "Are there stacked crates on the left?",
+    "Can you see a ship's wheel?",
+    "Is there a small island far away?"
+   ]
+  },
+  {
+   "id": "s1",
+   "size": "medium",
+   "faces": [
+    "sailor"
+   ],
+   "desc": "Medium shot beside the same cargo crates on the deck: the sailor grabs an apple from an open crate and bites it. A young deck sailor as people picture old sailors: a striped red and white shirt, loose canvas trousers, a red headscarf, bare feet, a coil of rope over his shoulder. He has a round freckled face, wide-set green eyes, thin light eyebrows, a small snub nose, a gap-toothed grin and short messy ginger hair.",
+   "layout": "The camera stands beside the crates; the sailor is on the right of the picture, the crates on the left.",
+   "change": "Cut to a medium shot: the sailor grabs an apple from the crate.",
+   "checks": [
+    "Is a sailor holding an apple?",
+    "Are there crates beside him?",
+    "Is he wearing a headscarf?"
+   ]
+  },
+  {
+   "id": "s2",
+   "size": "close",
+   "faces": [
+    "captain"
+   ],
+   "desc": "Close-up of the captain's face at the same steering wheel: he shouts angrily. A sea captain as people picture old sailing-ship captains: a tall man in a long dark blue coat with brass buttons, a black tricorn hat, high leather boots, a brass spyglass in his belt. He has a long weathered face, deep-set grey eyes, bushy white eyebrows, a hooked nose, a thick white beard and a scar across his left cheek.",
+   "layout": "The camera is in front of the wheel at his eye level; the railing and the sea are behind him.",
+   "change": "Cut to a close-up of the captain: he shouts angrily.",
+   "checks": [
+    "Is this a close-up of one face?",
+    "Is the man shouting or angry?",
+    "Does the man have a white beard?"
+   ]
+  },
+  {
+   "id": "s3",
+   "size": "wide",
+   "faces": [],
+   "desc": "Wide shot of the same deck from the crates side: a crowd of sailors in striped shirts gathers around the steering wheel, the apple sailor in the middle.",
+   "layout": "The camera stands by the crates and looks across the deck at the steering wheel; the island is now on the left edge of the picture.",
+   "change": "Cut to a wide shot from the crates: a crowd of sailors gathers around the wheel.",
+   "checks": [
+    "Is there a crowd of sailors?",
+    "Are they wearing striped shirts?",
+    "Are there crates in the foreground or nearby?"
+   ]
+  },
+  {
+   "id": "s4",
+   "size": "medium",
+   "faces": [
+    "sailor"
+   ],
+   "desc": "Medium shot at the same steering wheel: the sailor hands the captain a coin and smiles sheepishly. A young deck sailor as people picture old sailors: a striped red and white shirt, loose canvas trousers, a red headscarf, bare feet, a coil of rope over his shoulder. He has a round freckled face, wide-set green eyes, thin light eyebrows, a small snub nose, a gap-toothed grin and short messy ginger hair.",
+   "layout": "The camera is behind the captain, over his shoulder; the sailor faces the camera; the deck is behind him.",
+   "change": "Cut to a medium shot over the captain's shoulder: the sailor hands over a coin.",
+   "checks": [
+    "Is a sailor handing over a coin?",
+    "Is the shot taken over someone's shoulder?",
+    "Is there a wheel nearby?"
+   ]
+  }
+ ],
+ "era": [
+  "ship",
+  "age of sail",
+  "sailing",
+  "maritime",
+  "seafaring"
+ ]
+}

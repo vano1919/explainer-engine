@@ -24,6 +24,7 @@ from pathlib import Path
 import numpy as np
 
 if __package__:
+    from . import xworld_v2_cells as K
     from . import xworld_v2_loop as L
     from . import xworld_v2_s2x as X
     from . import xworld_v2_s3 as S3
@@ -32,6 +33,7 @@ if __package__:
     from .xworld_v2_scenes import frame_desc, frame_extras, load
     from .xworld_v1_test import TRIGGER
 else:
+    import xworld_v2_cells as K
     import xworld_v2_loop as L
     import xworld_v2_s2x as X
     import xworld_v2_s3 as S3
@@ -44,6 +46,12 @@ GRID_NOTE = ("The top-left panel is the established wide shot of this place; the
              "and the same people, each from the camera its depth shows.")
 CONTROL_ROWS = ("S3cA", "M2", "M4", "M5", "M2E50", "M4E50", "M6")
 PLAIN_ROWS = ("S1", "S2T", "S2E", "S3cAB", "S2Tp", "S2Ep", "S2L")
+def load_scenes(scene_dir):
+    """The scene cards of the folder plus the held-out ones (<folder>/heldout: never looked at while the methods are tuned)."""
+    d = Path(scene_dir)
+    return load(d) + (load(d / "heldout") if (d / "heldout").is_dir() else [])
+
+
 SETS_DIR = Path(__file__).resolve().parent / ("scenes/sets" if (Path(__file__).resolve().parent / "scenes/sets").exists() else "stories/v2/sets")
 
 
@@ -65,13 +73,13 @@ def edit_prompt_for(sc, shots):
             f"{X.panels_text(sc, shots)}")
 
 
-def panels_behind(sc, shots):
+def panels_behind(sc, shots, labels=None):
     """The panels with the 'behind' line FIRST (round 2, S2Tp/S2Ep: E9, the background is named before the subject)."""
     out = []
     for i, s in enumerate(shots):
         lay = f"Behind and around the subject: {s['layout']}" if s.get("layout") else ""
         ex = frame_extras(sc, s).replace(lay, "").strip() if lay else frame_extras(sc, s)
-        out.append(f"{X.ORDER[i]} panel: {lay} {frame_desc(s)} {ex}".strip())
+        out.append(f"{(labels or X.ORDER)[i]} panel: {lay} {frame_desc(s)} {ex}".strip())
     return " ".join(out)
 
 
@@ -107,6 +115,8 @@ def panels_layout(sc, shots):
 
 def prompts(sc, row, sid=None):
     """The text of one picture of a row (no model): per-shot rows take the shot id, grid rows the whole grid."""
+    if K.parse(row):
+        return cell_prompt(sc, K.parse(row), sid)
     test = [shot_of(sc, s) for s in L.SHOTS]
     if row == "S2T":
         return grid_prompt_for(sc, test)
@@ -134,6 +144,71 @@ def prompts(sc, row, sid=None):
         roles = [r for r in s.get("faces", []) if r in sc["cast"]][:2]
         return p2s_prompt(framed(sc, s), sc["cast"], roles) if roles else p2s_plain("P2F", framed(sc, s))
     raise KeyError(row)
+
+
+# --- factor cells (round 3 and 4, xworld_v2_cells.py) -------------------------------------------------------------------------------
+
+def object_ids(s, sid, w=320, h=180):
+    """The set's objects (not people) the camera of this shot sees, left to right: the D=1 prop list."""
+    ident, _, _ = S3.render(s, S3.camera(s, s["shots"][sid]), w, h)
+    return [it["id"] for it, _ in S3.visible(s, ident, "objects")]
+
+
+def panel_line(sc, shot, label, c):
+    """One panel's text in a cell: the behind line first, then (C=1) the ray-cast camera and landmarks, then (D=1) the prop counts."""
+    out = panels_behind(sc, [shot], [label])
+    if c["C"] == "1" or c["D"] == "1":
+        s = sets_of(sc)
+        if c["C"] == "1":
+            cam, lm = layout_words(s, shot["id"])
+            out += f" Camera: {cam}; from left to right in this panel: {', '.join(lm) if lm else 'no landmark'}."
+        if c["D"] == "1":
+            out += " " + K.prop_counts(object_ids(s, shot["id"]))
+    return out
+
+
+GRID_SHOTS = {"c": ("s0", "s1", "s2", "s3")}  # an in-context grid holds the master in panel 1, so it draws s1..s3 only (as M4)
+PAIR_LABELS = ("right",)
+
+
+def cell_prompt(sc, c, sid=None):
+    """The text of a cell picture (no model). A grid cell takes the four panels, a pair cell the one target shot ``sid`` (left panel = the master s0)."""
+    n = len(sc["cast"])
+    place, cast = sc["place"], X.cast_text(sc)
+    if c["A"] == "g":
+        ids = GRID_SHOTS.get(c["B"], L.SHOTS)
+        shots = [shot_of(sc, s) for s in ids]
+        body = " ".join(panel_line(sc, sh, X.ORDER[i], c) for i, sh in enumerate(shots))
+        head = {
+            "n": f"{TRIGGER}, a storyboard of 4 panels in a 2x2 grid separated by thin white borders, the same place, the same people with the same faces and clothes in every panel, four different camera shots.",
+            "e": f"{TRIGGER}, Image 1 is this scene: the same place and the same {n} people with the same faces and clothes. Draw a four-panel storyboard in a 2x2 grid separated by thin white borders, continuing it.",
+            "c": f"{TRIGGER}, Image 1 is a storyboard of 4 panels in a 2x2 grid: its top-left panel is final and the other three panels are still grey. Draw the whole storyboard: keep the top-left panel as it is and fill the three grey panels with later shots of the same place and the same {n} people with the same faces and clothes.",
+            "s": f"{TRIGGER}, the images are the model sheets of the {n} people. Draw a storyboard of 4 panels in a 2x2 grid separated by thin white borders: the same place, and these people with exactly these faces and clothes in every panel, four different camera shots.",
+        }[c["B"]]
+        return f"{head} The place: {place} {cast} {body}"
+    left = panel_line(sc, shot_of(sc, "s0"), "left", dict(c, C="0", D="0"))
+    right = panel_line(sc, shot_of(sc, sid), "right", c)
+    head = {
+        "n": f"{TRIGGER}, a pair of two panels side by side separated by a thin white border: the left panel is the established wide shot, the right panel is another shot of the same place and the same {n} people with the same faces and clothes.",
+        "e": f"{TRIGGER}, Image 1 is the established wide shot of this scene: the same place and the same {n} people with the same faces and clothes. Draw a pair of two panels side by side separated by a thin white border: the left panel is that wide shot, the right panel is another shot of the same scene.",
+        "c": f"{TRIGGER}, Image 1 is a pair of two panels: its left panel is final and the right panel is still grey. Draw the whole pair: keep the left panel as it is and fill the right panel with another shot of the same place and the same {n} people with the same faces and clothes.",
+        "s": f"{TRIGGER}, Image 1 is a pair of two panels whose left panel is final and whose right panel is grey; the other images are the model sheets of the people. Draw the whole pair: keep the left panel and fill the right panel with another shot of the same place and these people with exactly these faces and clothes.",
+    }[c["B"]]
+    return f"{head} The place: {place} {cast} {left} {right}"
+
+
+def cell_refs(c, master, sheets):
+    """The images of a cell picture, at most three (Opus plan 10): n none, e the master, c the canvas with the master in its first panel,
+    s the model sheets (on a pair canvas the pair canvas comes first)."""
+    b = c["B"]
+    if b == "n":
+        return []
+    if b == "e":
+        return [master.resize(L.PANEL)]
+    canvas = L.pair_canvas(master) if c["A"] == "p" else L.inpaint_canvas(master, fill="grey")[0]
+    if b == "c":
+        return [canvas]
+    return ([canvas] if c["A"] == "p" else []) + list(sheets)[:2]
 
 
 # --- inputs (free, the container) ------------------------------------------------------------------------------------------------
@@ -278,7 +353,7 @@ def main(argv):
     if bad:
         raise SystemExit("REFUSED: " + "; ".join(bad))
     outd, inp, p2s = Path(outd), Path(inp), Path(p2s)
-    scenes = [s for s in load(scene_dir) if s["name"] in cfg.get("scenes", L.SCENES)]  # round 1: the card shots s0..s4 only
+    scenes = [s for s in load_scenes(scene_dir) if s["name"] in cfg.get("scenes", L.SCENES)]  # round 1: the card shots s0..s4 only
     (outd).mkdir(parents=True, exist_ok=True)
     for r in cfg["rows"]:
         (outd / r).mkdir(exist_ok=True)
@@ -340,14 +415,30 @@ def main(argv):
     pipe, tr = t.load_pipeline()  # --- plain phase
     p = t.Loras(pipe, tr, {"R": lora}, say).use("R", 1.0)
     t.CFG = cf
-    for j in todo(PLAIN_ROWS):
+    for j in [x for x in jobs if x["row"] in PLAIN_ROWS or K.parse(x["row"])]:
         if exists(j):
             continue
         sc, n, seed, row = by[j["scene"]], j["scene"], j["seed"], j["row"]
         t.SEED = seed
         t0 = time.time()
         master = Image.open(p2s / f"{n}_11_s0.png").convert("RGB")
-        if row in ("S2T", "S2Tp", "S2L"):
+        if K.parse(row):
+            c = K.parse(row)
+            sheets = [Image.open(p2s / f"{n}_sheet_{r}.png").convert("RGB") for r in sc["cast"]]
+            refs = cell_refs(c, master, sheets)
+            t.W, t.H = (X.GRID_W, X.GRID_H) if c["A"] == "g" else (2 * L.PANEL[0], L.PANEL[1])
+            img = t.draw(p, prompts(sc, row, j["shot"]), refs).convert("RGB")
+            if c["B"] == "c":
+                gs = L.grey_copied(img, c["A"])
+                say("cell", row, n, seed, "grey copied share", round(gs, 3))
+                if gs > 0.5:  # the reference was copied: a SETUP_FAIL of this cell, never a strategy failure
+                    (outd / row / "SETUP_FAIL.json").write_text(json.dumps({"reason": f"grey panels copied ({gs:.2f})"}), encoding="utf-8")
+            if c["A"] == "g":
+                cut_grid(img, GRID_SHOTS.get(c["B"], L.SHOTS) if c["B"] != "c" else (None, "s1", "s2", "s3"), outd, row, n, seed)
+            else:
+                img.save(outd / row / f"{n}_{seed}_{j['shot']}_pair.png")
+                img.crop((L.PANEL[0], 0, 2 * L.PANEL[0], L.PANEL[1])).save(outd / row / f"{n}_{seed}_{j['shot']}.png")
+        elif row in ("S2T", "S2Tp", "S2L"):
             t.W, t.H = X.GRID_W, X.GRID_H
             cut_grid(t.draw(p, prompts(sc, row), []).convert("RGB"), L.SHOTS, outd, row, n, seed)
         elif row in ("S2E", "S2Ep"):
@@ -376,7 +467,7 @@ def main(argv):
 def inputs_main(argv):
     cfg_path, scene_dir, more_dir, sets_dir, p2s, outd = argv[:6]
     cfg = json.loads(Path(cfg_path).read_text(encoding="utf-8"))
-    scenes = [s for s in load(scene_dir) if s["name"] in cfg.get("scenes", L.SCENES)]  # round 1: the card shots s0..s4 only
+    scenes = [s for s in load_scenes(scene_dir) if s["name"] in cfg.get("scenes", L.SCENES)]  # round 1: the card shots s0..s4 only
     print(len(build_inputs(cfg, scenes, sets_dir, p2s, outd)), "input files")
 
 

@@ -270,3 +270,60 @@ def test_round_two_prompts_put_the_behind_line_first_and_name_the_layout():
     s = R.S3.load_set(R.SETS_DIR / "tent.set.json")
     cam, lm = R.layout_words(s, "s2")
     assert cam == "close shot, eye angle" and lm and all("(" in x for x in lm)
+
+
+def test_a_factor_cell_is_a_row_and_the_l16_design_is_orthogonal():
+    from explainer_engine.training.pods import xworld_v2_cells as K
+    assert "X_g_e_1_0" in L.ROWS and "X_q_e_1_0" not in L.ROWS
+    assert L.ROWS["X_p_s_0_1"]["grid"] is False and L.ROWS["X_g_c_1_0"]["grid"] is True
+    cells = K.l16()
+    assert len(cells) == 16 and len(set(cells)) == 16 and K.is_orthogonal(cells)
+    left = K.design()
+    assert len(left) == 15 and "X_g_n_0_0" not in left  # round 2's S2Tp
+    assert K.draws(left) == (28, 64)  # pair cells draw s2 and s4 only
+    cfg = {"round": 3, "rows": left[:2], "seeds": [11], "scenes": ["tent"],
+           "changes": [{"row": r, "cause": "prompt", "change": "cell", "expected": "main effect"} for r in left[:2]]}
+    assert L.check_round(cfg) == []
+    js = L.jobs({"rows": ["X_p_e_0_0"], "seeds": [11], "scenes": ["tent"]})
+    assert [j["shot"] for j in js] == ["s2", "s4"]  # a pair draws its two target shots (Opus plan 10), one picture per shot
+
+
+def test_cell_prompts_refs_and_the_grey_copy_check():
+    R = _run()
+    from explainer_engine.training.pods import xworld_v2_cells as K
+    from explainer_engine.training.pods.xworld_v2_scenes import load
+    sc = next(s for s in load(R.__file__.rsplit("/", 1)[0] + "/stories/v2") if s["name"] == "tent")
+    g = R.cell_prompt(sc, K.parse("X_g_n_1_1"))
+    assert "Camera:" in g and "exactly one" in g and g.count("-left panel:") + g.count("-right panel:") + g.count("bottom-left panel:") + g.count("bottom-right panel:") >= 4 and "Behind and around the subject" in g
+    assert "Camera:" not in R.cell_prompt(sc, K.parse("X_g_n_0_0"))
+    pair = R.cell_prompt(sc, K.parse("X_p_c_0_1"), "s4")
+    assert "left panel:" in pair and "right panel:" in pair and "grey" in pair and "exactly one" in pair
+    master = Image.new("RGB", (1280, 704), (90, 70, 50))
+    sheets = [Image.new("RGB", (64, 64)), Image.new("RGB", (64, 64))]
+    assert R.cell_refs(K.parse("X_g_n_0_0"), master, sheets) == []
+    assert len(R.cell_refs(K.parse("X_g_e_0_0"), master, sheets)) == 1
+    assert len(R.cell_refs(K.parse("X_g_s_0_0"), master, sheets)) == 2
+    ps = R.cell_refs(K.parse("X_p_s_0_0"), master, sheets)
+    assert len(ps) == 3 and ps[0].size == (2560, 704)  # the pair canvas is Image 1 (at most three images)
+    cv = R.cell_refs(K.parse("X_g_c_0_0"), master, sheets)[0]
+    assert cv.size == (2560, 1408) and np.asarray(cv)[900, 1900].tolist() == [128, 128, 128]
+    grey = Image.new("RGB", (2560, 704), (128, 128, 128)); grey.paste(master, (0, 0))
+    assert L.grey_copied(grey, "p") > 0.99
+    assert L.grey_copied(np.random.default_rng(1).integers(0, 255, (704, 2560, 3), dtype=np.uint8), "p") < 0.05
+
+
+def test_heldout_ship_scene_and_no_scene_words_in_templates():
+    """General logic (ვანო 2026-10-26): the held-out place loads, and no scene's own words sit in the method code."""
+    import json
+    import re
+    from pathlib import Path
+    from explainer_engine.training.pods import xworld_v2_loop_run as R
+    base = Path(R.__file__).resolve().parent
+    ship = json.loads((base / "stories/v2/heldout/ship.json").read_text(encoding="utf-8"))
+    st = json.loads((base / "stories/v2/sets/ship.set.json").read_text(encoding="utf-8"))
+    assert ship["name"] == st["scene"] == "ship" and len(ship["shots"]) == 5
+    assert {p["id"] for p in st["people"]} == set(ship["cast"])
+    assert [r["name"] for r in R.load_scenes(base / "stories/v2")].count("ship") == 1
+    code = " ".join((base / f).read_text(encoding="utf-8").lower() for f in ("xworld_v2_loop_run.py", "xworld_v2_cells.py"))
+    for word in ("colosseum", "fountain", "baker", "legionary", "boulder", "napoleon", "lighthouse", "mast", "crates"):
+        assert not re.search(r"\b" + word + r"\b", code), word
