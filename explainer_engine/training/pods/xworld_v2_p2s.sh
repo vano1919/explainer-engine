@@ -1,13 +1,14 @@
 # Started by: python -m explainer_engine.cloud.runpod create --image ostris/aitoolkit:latest --script <this file> --script-url <its HF copy>
 #   --heartbeat datasets/vano1919/tmr-artifacts:lora_plan_2026-10-26/train_xworld_v2/p2s/out/beat.txt (OR-21, OR-23, OR-24, OR-25).
-# The P2S reference test (xworld_v2_p2s.py): master + model sheets vs master only, cfg 4.0 vs 2.5, LoRA weight 1.0 vs 0.7, on ONE
+# FIRST the regular image test of the same checkpoint (xworld_v2_scenes.py round, as after every training round), THEN
+# the P2S reference test (xworld_v2_p2s.py): master + model sheets vs master only, cfg 4.0 vs 2.5, LoRA weight 1.0 vs 0.7, on ONE
 # checkpoint of the xworld_v2 run (CKPT below, from HF). No training. Everything goes to HF every 5 min and at the end.
 set -x
 mkdir -p /workspace/out
 exec > /workspace/out/pod.log 2>&1
 export HF_HOME=/workspace/hf HF_HUB_ENABLE_HF_TRANSFER=1 PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1
 P=lora_plan_2026-10-26
-CKPT=${CKPT:-xworld_v2_000002250.safetensors}
+CKPT=${CKPT:-xworld_v2_000003000.safetensors}  # ვანო 16:32Z: the 3000 image test and P2S on ONE new pod; the training pod stops once 3000 is on HF
 stage(){ echo "=== STAGE $1 $(date -u +%H:%M:%S)"; echo "$1 $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt; }
 up(){ python - <<'PY'
 from huggingface_hub import HfApi
@@ -41,6 +42,11 @@ timeout 900 /workspace/vx/bin/pip install -q -U peft "git+https://github.com/hug
      func_timeout "imageio[ffmpeg]" opencv-python-headless scikit-image beautifulsoup4 decord librosa albumentations \
   && cd VideoX-Fun && /workspace/vx/bin/python -c "from videox_fun.pipeline import QwenImage21Pipeline; print('videox import ok')" ) \
   || { echo "VIDEOX FAILED"; up; exit 1; }
+up
+stage round_test
+R=/workspace/out/round_${CKPT:12:4}
+( cd $C && timeout 1800 /workspace/vx/bin/python xworld_v2_scenes.py $C/scenes $R $D/output/$CKPT 1.0 round ); echo "SCENES EXIT $?"
+( cd $C && python xworld_v2_sheet.py $C/scenes $R "step ${CKPT:12:4}" round ); echo "ROUND DONE $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt
 up
 stage p2s
 O=/workspace/out/p2s
