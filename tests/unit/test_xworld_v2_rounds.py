@@ -36,12 +36,16 @@ def test_judge_questions_and_scoring(tmp_path):
     assert j.summary(rows)["P1"] == 0.5
 
 
-def test_build_swaps_pair_trigger_and_samples():
+def test_build_writes_cut_pairs_and_drops_inshot_pairs():
     v1m = {"train": {"single": [{"img": "frames/0001.png"}], "scene_pairs": [{"a": "frames/0001.png", "b": "frames/0002.png"}],
-                     "inshot_pairs": []}, "hold_out": {"chains": [], "guard_shots": []}}
-    caps = {"d:frames/0001.png": "a", "d:frames/0002.png": "b.", "c:frames/0001.png>frames/0002.png": "cut."}
+                     "inshot_pairs": [{"a": "frames/0002.png", "b": "frames/0003.png"}]},
+           "hold_out": {"chains": [], "guard_shots": []}}
+    caps = {"d:frames/0001.png": "a", "d:frames/0002.png": "A room.", "d:frames/0003.png": "A room again.",
+            "c:frames/0001.png>frames/0002.png": "Change from the previous shot: the camera zooms in.",
+            "c:frames/0002.png>frames/0003.png": "Change from the previous shot: a hand moves."}
     pr = b.pairs(v1m, caps)
-    assert len(pr) == 1 and pr[0][3].startswith("rm style, b")
+    assert len(pr) == 1 and pr[0][0] == "p0000"  # the in-shot pair is left out
+    assert pr[0][3] == f"rm style, {b.MASTER} A room. {b.CUT} the camera zooms in. {b.KEEP}"
     held = {i: f"xworld style, held {i}" for i in b.SAMPLE_HELD}
     smp = b.samples({"hold_out": held}, s.load(SCENES)[0] if s.load(SCENES)[0]["name"] == "tent" else s.load(SCENES)[1])
     assert smp[-1]["prompt"].startswith("rm style, held c007") and smp[-2]["prompt"] == "held c007"

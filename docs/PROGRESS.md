@@ -2401,3 +2401,11 @@ training as sequences is decided in the process. Changed together:
   colourfulness 35 -> 66. P2F already starts 3.8x above shot 0 after one edit pass. Ratios against shot 0 and against the
   same round-0 frame are the metric, never a fixed threshold. Old archives removed from project files after an HF backup
   check (lora_plan_2026-10-22, hybrid_model_2026-10-22).
+- 12:45 UTC 2026-10-26 (ვანო 12:33 "yes, rewrite"): the independent round-1 review (`/mnt/project-files/xworld_v2/ROUND1_REVIEW_2026-10-26.md`:
+  base-model edits never cut, chained edits fall into noise by shot 3, the 357 cut pairs are the only cut teacher; keep R&M 36 %
+  x3, reduced test P3 + P2F, rm-style control, 20-step smoke run) is the base of round 1. `xworld_v2_build.pairs` now keeps only
+  the 357 cross-shot pairs and writes each caption in the P2F test form under `rm style` (master sentence, description,
+  "Cut to the next shot: <change>", keep line; `cut_caption`, test `test_xworld_v2_rounds.py`). Seen in the real captions: some
+  change sentences describe a new place ("the scene shifts to a doorway"), which fights the master sentence "keep its landmarks";
+  the cut teaches framing, the place-keeping comes from the pairs where only the camera moves. Not yet decided by ვანო: R&M
+  share (25 % x5 or 36 % x3, review prefers 36 %), test size, top-up; no pod before his approval.

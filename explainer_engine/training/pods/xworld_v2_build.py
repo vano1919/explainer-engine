@@ -1,7 +1,7 @@
 """Builds the xworld_v2 training folders and config on the pod (D-80; ვანო 2026-10-26 13:26 Tbilisi, the round plan):
 * ``new/``: the 210 new-world pictures (xworld_v2_data.py), captions ``xworld style, ...``, repeated NEW_REPEATS times;
-* ``pairs/target`` + ``pairs/control``: the 591 sequence pairs of xworld_v1 (shot -> next shot, start -> end of a shot)
-  with their reviewed captions, but under ``rm style``: they keep the base model's sense of cutting and moving a scene
+* ``pairs/target`` + ``pairs/control``: the 357 cross-shot pairs of xworld_v1 (shot -> next shot; the 234 within-shot ones are dropped)
+  with their reviewed captions written as cuts (cut_caption), under ``rm style``: they keep the base model's sense of cutting and moving a scene
   (regularization) while the show's look stays on its own trigger. The show's single frames are left out.
 Sample prompts: five held-out new-world pictures, the tent scene's first shot, and one held-out person again without a
 trigger and with ``rm style`` (does the look stay apart?).
@@ -17,9 +17,11 @@ from pathlib import Path
 
 if __package__:
     from .xworld_v1_build import load_captions, plan
+    from .xworld_v1_test import KEEP, MASTER
     from .xworld_v2_data import RM_TRIGGER, TRIGGER
 else:
     from xworld_v1_build import load_captions, plan
+    from xworld_v1_test import KEEP, MASTER
     from xworld_v2_data import RM_TRIGGER, TRIGGER
 
 NEW_REPEATS = 3
@@ -27,13 +29,26 @@ SAMPLE_HELD = ["c007", "c062", "p012", "p065", "o009"]
 SIZES = {"c": (768, 1024), "p": (1024, 576), "o": (1024, 1024)}
 
 
+CHANGE_V1 = "Change from the previous shot:"
+CUT = "Cut to the next shot:"
+
+
+def cut_caption(text):
+    """A v1 pair caption `xworld style, <description>. Change from the previous shot: <change>` in the form the round test
+    asks with (P2F: the master sentence, the description, the cut, the keep line), under rm style (ვანო 2026-10-26 12:33:
+    the 357 cut pairs are the only ones that can teach a cut, so they are written like the prompt that uses them)."""
+    assert text.startswith(TRIGGER + ", ") and CHANGE_V1 in text, text[:80]
+    desc, change = text[len(TRIGGER) + 2:].split(CHANGE_V1, 1)
+    return f"{RM_TRIGGER}, {MASTER} {desc.strip()} {CUT} {change.strip()} {KEEP}"
+
+
 def pairs(v1_manifest, caps):
-    """The v1 pair items with the show's trigger swapped for RM_TRIGGER."""
+    """The 357 cross-shot v1 pair items (the 234 within-shot pairs teach a still camera: review 2026-10-26), written as cuts."""
+    cut = len(v1_manifest["train"]["scene_pairs"])
     out = []
     for kind, name, img, ctrl, text in plan(v1_manifest, caps):
-        if kind == "pair":
-            assert text.startswith(TRIGGER + ", ")
-            out.append((name, img, ctrl, RM_TRIGGER + text[len(TRIGGER):]))
+        if kind == "pair" and int(name[1:]) < cut:  # plan() numbers scene_pairs first, then inshot_pairs
+            out.append((name, img, ctrl, cut_caption(text)))
     return out
 
 
