@@ -19,6 +19,7 @@ import json
 import os
 import random
 import sys
+import time
 from pathlib import Path
 
 from explainer_engine.training.pods.xworld_v1_story import FACE_PARTS_MIN, face_parts, show_traits
@@ -359,9 +360,16 @@ def world(out, ids, *, budget_usd, tries=3, workers=6, key=None, generate=None, 
             name = i if t == 0 else f"{i}_t{t}"
             try:
                 usd = generate(name, it, 1000 + int(i[1:]) + 100000 * t)
-            except Exception as e:  # a refused or failed request: recorded, the next seed is tried
+            except Exception as e:  # a refused or failed request: recorded and printed, the next seed is tried
+                err = {"name": name, "id": i, "kind": it["kind"], "try": t, "verdict": "ERROR",
+                       "why": [f"{type(e).__name__}: {str(e)[:200]}"]}
                 with lock:
-                    rows.append({"name": name, "id": i, "kind": it["kind"], "try": t, "verdict": "ERROR", "why": [str(e)[:200]]})
+                    spent[0] -= BFLPRICE  # BFL bills only finished pictures (credits checked 2026-10-26)
+                    rows.append(err)
+                    with (out / "report.jsonl").open("a", encoding="utf-8") as f:
+                        f.write(json.dumps(err, ensure_ascii=False) + "\n")
+                print(name, "ERROR", err["why"], flush=True)
+                time.sleep(5)
                 continue
             with lock:
                 spent[0] += usd - BFLPRICE
