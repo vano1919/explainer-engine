@@ -2490,3 +2490,20 @@ training as sequences is decided in the process. Changed together:
 - Opus plan section 8 (`/mnt/project-files/xworld_v2/STRATEGY_LOOP_PLAN_2026-10-26.md`): depth control is tried only inside the grids (M2E50, M4E50 = control ended at 50 % of the steps; M4 full as one tent diagnostic), next to S2T and S2E; S1 = the existing P2S pictures; new FAIL rule "connected" (face similarity across the panels at least S2T's).
 - 3D code (`xworld_v2_s3.py`): people are mannequins (torso to the shoulders, neck, head sphere 0.11 m), the near figure of an over-the-shoulder shot is cut at the shoulder (`cam["cut"]`), the Rome fountain is a stepped basin (`shape: basin`), close-ups are head and shoulders (0.7 m frame, was 0.45 m: the sphere filled the frame). The old close-up test (head 35-60 % of the frame) now pins 25-45 % for the new framing; new tests for the head share, the cut figure and the basin.
 - Loop (`xworld_v2_loop.py`, `xworld_v2_loop_run.py`): rows `M2E50`, `M4E50` (`ControlEnd` zeroes `control_context_scale` in the transformer kwargs after half the calls and logs whether the kwarg was seen), `row_scenes`, `connectedness`, `connected_ok`, `style_ok` (compose/style_score stands in for CSD, bar S2T - 0.05); `load_control_pipeline` disables the VAE tiling (tear suspect, logs the previous state). Round 1 config `loop/round_1.json`: 9 grids + 2 M5 pictures, seed 11. Pod script `xworld_v2_loop.sh`.
+
+## 2026-10-26 22:10 UTC (02:10 Tbilisi 10-27): loop round 2 running, factor cells, held-out places, round 3a code (OR-26, Opus plan sections 9-13)
+
+- ვანო (21:58 UTC): every action must fit the general logic of places and people, not the few frames at hand; the whole remaining balance goes to the
+  360-degree coordination goal; the Opus thread decides the spend. Held-out places: `stories/v2/heldout/ship.json` (cards, other kind of place than
+  the tuned ones) and `sets/ship.set.json`, `sets/tundra.set.json`; `load_scenes` reads them, and a test bans every scene word from the method code
+  (`xworld_v2_loop_run.py`, `xworld_v2_cells.py`, `xworld_v2_dirs.py`; the words come from the set and card files only).
+- Round 2 (pod w4f1yaxxidnotl, H100 NVL $2.59/h, caps $1.95 / 1.2 h): rows M6, S2Tp, S2Ep, S2L on tent and rome, seeds 11 and 23. M6 `fill survived`
+  0.003-0.013 (the noise fill did not leak the old fill). A detached guard was killed by its 30 min background limit and restarted with a 2 h limit.
+- Factor cells (`xworld_v2_cells.py`): a row name `X_<canvas>_<reference>_<layout>_<prompt>` is a combination of factors; the L16 half fraction is
+  orthogonal (test); S2Tp is the cell `X_g_n_0_0`. New optional factor E (`+dir`, `+sk`, `+dsk`): the direction views, the line sketch, both.
+- Round 3a code (`xworld_v2_dirs.py`): the TURNAROUND row (the EMPTY place from four directions around the master camera, words from the set's ray cast),
+  the line SKETCH canvas (outlines with names, stick figures with names, same 2x2 order), the shaded colour PLATE of the empty set; rows PO55/PO70
+  (SDEdit paintover: the plate noised to the sigma of a shortened schedule and denoised with the LoRA, then the people added by the edit pipeline with the
+  sheets and their ray-cast position in words); job `stages` (the money cap cuts the end), `last_scenes`, `ensure_assets` (master and sheets of a
+  held-out place). Test `test_round_3a_extras_turnaround_sketch_paintover`. Deviation from the Opus plan 13: no VLM is on the pod, so the turnarounds
+  are not checked or redrawn there (checked by eye afterwards), and both candidate cells are drawn on the held-out places (the pick is offline).

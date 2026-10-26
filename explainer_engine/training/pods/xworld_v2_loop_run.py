@@ -30,7 +30,7 @@ if __package__:
     from . import xworld_v2_s2x as X
     from . import xworld_v2_s3 as S3
     from . import xworld_v2_s3c as C
-    from .xworld_v2_p2s import framed, p2s_prompt, prompt as p2s_plain
+    from .xworld_v2_p2s import framed, p2s_prompt, prompt as p2s_plain, sheet_prompt
     from .xworld_v2_scenes import frame_desc, frame_extras, load
     from .xworld_v1_test import TRIGGER
 else:
@@ -40,7 +40,7 @@ else:
     import xworld_v2_s2x as X
     import xworld_v2_s3 as S3
     import xworld_v2_s3c as C
-    from xworld_v2_p2s import framed, p2s_prompt, prompt as p2s_plain
+    from xworld_v2_p2s import framed, p2s_prompt, prompt as p2s_plain, sheet_prompt
     from xworld_v2_scenes import frame_desc, frame_extras, load
     from xworld_v1_test import TRIGGER
 
@@ -496,18 +496,24 @@ def main(argv):
         if exists(j):
             continue
         sc, n, seed, row = by[j["scene"]], j["scene"], j["seed"], j["row"]
-        t.SEED = seed
+        if n in cfg.get("ensure_assets", []):  # round 3a: a held-out place gets its master picture and sheets when its first job comes
+            ensure_assets(p, [sc], p2s, say, t)
+        t.SEED, t.CFG = seed, cf
         t0 = time.time()
         master = Image.open(p2s / f"{n}_11_s0.png").convert("RGB")
         if row in PO_STRENGTH:  # paintover (round 3a): the shaded ray-cast plate of the EMPTY place, painted over, then the people added by the edit pipeline
             sid, st = j["shot"], PO_STRENGTH[row]
-            plate_path = outd / row / f"{n}_{seed}_{sid}_plate.png"
-            t.W, t.H = L.PANEL
-            plate = sdedit(p, prompts(sc, row, sid), DR.shaded_plate(sets_of(sc), sid), st, seed, *L.PANEL, t.STEPS, cf).convert("RGB")
-            plate.save(plate_path)
-            pr, roles = po_people_prompt(sc, shot_of(sc, sid), sets_of(sc))
-            refs = [plate] + [Image.open(p2s / f"{n}_sheet_{r}.png").convert("RGB") for r in roles]
-            t.draw(p, pr, refs).convert("RGB").save(outd / row / f"{n}_{seed}_{sid}.png")
+            try:
+                t.W, t.H = L.PANEL
+                plate = sdedit(p, prompts(sc, row, sid), DR.shaded_plate(sets_of(sc), sid), st, seed, *L.PANEL, t.STEPS, cf).convert("RGB")
+                plate.save(outd / row / f"{n}_{seed}_{sid}_plate.png")
+                pr, roles = po_people_prompt(sc, shot_of(sc, sid), sets_of(sc))
+                refs = [plate] + [Image.open(p2s / f"{n}_sheet_{r}.png").convert("RGB") for r in roles]
+                t.draw(p, pr, refs).convert("RGB").save(outd / row / f"{n}_{seed}_{sid}.png")
+            except Exception as e:  # a failed paintover must not stop the other pictures of the queue
+                import traceback
+                say("PO FAIL", row, n, seed, sid, repr(e)[:300], traceback.format_exc()[-600:].replace("\n", " | "))
+                continue
         elif row == "TURN":  # the empty place from four directions (round 3a), the master as Image 1
             t.W, t.H = X.GRID_W, X.GRID_H
             img = t.draw(p, prompts(sc, row), [master.resize(L.PANEL)]).convert("RGB")
@@ -564,9 +570,26 @@ def main(argv):
     say("LOOP ROUND DONE")
 
 
+def ensure_assets(p, scenes, p2s, say, t):
+    """The master wide shot and the model sheets of a scene that has none yet (the held-out places), drawn the way the P2S run drew them: seed 11, cfg 4.0."""
+    from PIL import Image
+    t.SEED, t.CFG, t.W, t.H = 11, 4.0, 1280, 720
+    for sc in scenes:
+        n = sc["name"]
+        todo = [(f"{n}_11_s0", p2s_plain("P3", sc["shots"][0]))] + [(f"{n}_sheet_{r}", sheet_prompt(c)) for r, c in sc["cast"].items()]
+        for name, pr in todo:
+            if not (Path(p2s) / f"{name}.png").exists():
+                t0 = time.time()
+                t.draw(p, pr, []).convert("RGB").save(Path(p2s) / f"{name}.png")
+                say("asset", name, round(time.time() - t0), "s")
+
+
 def inputs_main(argv):
     cfg_path, scene_dir, more_dir, sets_dir, p2s, outd = argv[:6]
     cfg = json.loads(Path(cfg_path).read_text(encoding="utf-8"))
+    if not [r for r in cfg["rows"] if r in CONTROL_ROWS]:  # no control row: nothing to render before the draw (the masters of held-out places do not exist yet)
+        print("no control rows: no input files")
+        return
     scenes = [s for s in load_scenes(scene_dir) if s["name"] in cfg.get("scenes", L.SCENES)]  # round 1: the card shots s0..s4 only
     print(len(build_inputs(cfg, scenes, sets_dir, p2s, outd)), "input files")
 
