@@ -20,3 +20,13 @@ def test_the_pod_plan_names_every_item():
     for item in ("base model", "checkpoint", "captions", "learning rate", "seeds", "price per hour", "time cap",
                  "money cap", "ledger", "stops the pod", "A general summary"):
         assert item in row, item
+
+
+def test_important_decisions_go_to_a_higher_model_thread_and_its_confirmation_starts_the_pod():
+    orch = (ROOT / "docs" / "ORCHESTRATION.md").read_text(encoding="utf-8")
+    row = next(l for l in orch.splitlines() if l.startswith("| OR-24 |"))
+    for item in ("higher model", "Opus", "get_session", "without", "reasoning", "OPEN", "confirms the pod plan", "spend_caps.json",
+                 "top-up"):
+        assert item in row, item
+    claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    assert "OR-24" in claude and claude.index("OR-24") < claude.index("## Commands")
