@@ -5,7 +5,7 @@ reference and two encodings are tested: S3d (grey depth) and S3b (flat-coloured 
 Numpy + PIL only, no Blender.
 
 Set file (stories/v2/sets/<scene>.set.json, metres, x right, y away from the master camera, z up): room (interior) or
-ground plane (exterior), objects (boxes), people (cylinder + head sphere), `axis` (the two main people, the 180 degree line)
+ground plane (exterior), objects (boxes), people (mannequin: torso, neck, head sphere; the near figure of an over-the-shoulder shot is cut at the shoulder), `axis` (the two main people, the 180 degree line)
 and `shots`: per shot either `cam` {pos, look_at} or a subject camera: subject, size (wide|medium|close), angle
 (eye|high|low) and one of `ots` (over that person's shoulder), `from` ([x, y] direction point) or `side` (A|B of the axis).
 
@@ -35,7 +35,7 @@ else:
 SCENES = ("tent", "rome")
 SEED = SEEDS[0]
 W, H = 1280, 720
-VISIBLE_H = {"medium": 1.3, "close": 0.45}  # wide = the room's height x 1.2 (exterior: 6 m)
+VISIBLE_H = {"medium": 1.3, "close": 0.7}  # wide = the room's height x 1.2 (exterior: 6 m)
 EYE, LOW = 1.6, 0.6
 MIN_PIXELS = 0.005  # an object is named in the prompt when it covers at least this share of the picture
 COLOR_WORDS = {"red": (200, 60, 50), "green": (60, 170, 80), "blue": (30, 40, 140), "yellow": (230, 200, 40),
@@ -91,13 +91,13 @@ def camera(s, spec):
     hh = p["height"]
     angle = spec.get("angle", "eye")
     z = {"eye": EYE, "high": hh + 2.0, "low": LOW}[angle]
-    look = np.array([sub[0], sub[1], hh - 0.12 if size == "close" else 0.65 * hh])
+    look = np.array([sub[0], sub[1], hh - 0.22 if size == "close" else 0.65 * hh])
     if "ots" in spec:
         o = np.array(_person(s, spec["ots"])["pos"], float)
         v = _unit(sub - o)
         xy = o - v * 0.35 + np.array([-v[1], v[0]]) * 0.25
         pos = np.array([xy[0], xy[1], hh - 0.1])
-        return {"pos": _clamp(s, pos), "look_at": look, "vfov": vfov}
+        return {"pos": _clamp(s, pos), "look_at": look, "vfov": vfov, "cut": spec["ots"]}
     if "from" in spec:
         direc = _unit(np.array(spec["from"], float) - sub)
     else:
@@ -134,6 +134,55 @@ def _slab(o, d, lo, hi):
     return tmin, tmax
 
 
+SHOULDER, NECK_R, HEAD_R = 0.27, 0.055, 0.11  # mannequin: shoulders this far below the top, neck radius, head sphere (metres)
+
+
+def _parts(ob):
+    """The boxes of one object: a plain box, or shape 'basin' = a stepped basin (wide low base, narrower rim step, pedestal)."""
+    lo, hi = np.array(ob["min"], float), np.array(ob["max"], float)
+    if ob.get("shape") != "basin":
+        return [(lo, hi)]
+    c, half, h = (lo + hi) / 2, (hi - lo) / 2, hi[2] - lo[2]
+    out = []
+    for share, top in ((1.0, 0.30), (0.78, 0.55), (0.30, 1.0)):
+        out.append((np.array([c[0] - half[0] * share, c[1] - half[1] * share, lo[2]]),
+                    np.array([c[0] + half[0] * share, c[1] + half[1] * share, lo[2] + h * top])))
+    return out
+
+
+def _cylinder_hit(o, d, cx, cy, r, z0, z1):
+    ox, oy = o[0] - cx, o[1] - cy
+    a = d[:, 0] ** 2 + d[:, 1] ** 2
+    b = 2 * (ox * d[:, 0] + oy * d[:, 1])
+    disc = b * b - 4 * a * (ox * ox + oy * oy - r * r)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        t = (-b - np.sqrt(np.where(disc >= 0, disc, np.nan))) / (2 * a)
+    z = o[2] + t * d[:, 2]
+    hit = np.isfinite(t) & (t > 0) & (z >= z0) & (z <= z1)
+    nm = np.stack([ox + t * d[:, 0], oy + t * d[:, 1], np.zeros(len(d))], axis=1) / r
+    return hit, np.where(hit, t, np.inf), nm
+
+
+def _mannequin(o, d, n, p, ident, take, cut=False):
+    """A person = torso cylinder up to the shoulders, a thin neck, a head sphere of HEAD_R; `cut` (the near figure of an
+    over-the-shoulder shot, whose head would sit on the lens) keeps the torso only, so the background shows above the shoulder."""
+    cx, cy = p["pos"]; top = p["height"]; zs = top - SHOULDER
+    hit, t, nm = _cylinder_hit(o, d, cx, cy, p["radius"], 0.0, zs)
+    take(hit, t, ident, nm)
+    if cut:
+        return
+    hit, t, nm = _cylinder_hit(o, d, cx, cy, NECK_R, zs, top - 2 * HEAD_R + 0.02)
+    take(hit, t, ident, nm)
+    sc = np.array([cx, cy, top - HEAD_R])
+    oc = o - sc
+    bq = d @ oc; disq = bq * bq - (oc @ oc - HEAD_R * HEAD_R)
+    with np.errstate(invalid="ignore"):
+        t = -bq - np.sqrt(np.where(disq >= 0, disq, np.nan))
+    hit = np.isfinite(t) & (t > 0)
+    pt = o[None, :] + t[:, None] * d
+    take(hit, np.where(hit, t, np.inf), ident, (pt - sc[None, :]) / HEAD_R)
+
+
 def render(s, cam, w=W, h=H):
     """(id map, t map, shade): id >= 0 index into objects + people, -1 sky, -2 wall/ceiling, -3 floor; t = nan on a miss."""
     o = np.asarray(cam["pos"], float)
@@ -162,35 +211,16 @@ def render(s, cam, w=W, h=H):
         ok = np.isfinite(t) & (t > 0) & (t < s.get("far", 1e3))
         best[ok] = t[ok]; ident[ok] = -3; norm[ok] = [0, 0, 1.0]
     for i, ob in enumerate(s["objects"]):
-        tmin, tmax = _slab(o, d, np.array(ob["min"], float), np.array(ob["max"], float))
-        t0, t1 = tmin.max(axis=1), tmax.min(axis=1)
-        hit = (t1 >= t0) & (t0 > 0)
-        ax = tmin.argmax(axis=1)
-        nm = np.zeros((n, 3)); nm[np.arange(n), ax] = -np.sign(d[np.arange(n), ax])
-        take(hit, t0, i, nm)
+        for lo, hi in _parts(ob):
+            tmin, tmax = _slab(o, d, np.array(lo, float), np.array(hi, float))
+            t0, t1 = tmin.max(axis=1), tmax.min(axis=1)
+            hit = (t1 >= t0) & (t0 > 0)
+            ax = tmin.argmax(axis=1)
+            nm = np.zeros((n, 3)); nm[np.arange(n), ax] = -np.sign(d[np.arange(n), ax])
+            take(hit, t0, i, nm)
     base = len(s["objects"])
     for j, p in enumerate(s["people"]):
-        cx, cy = p["pos"]; r = p["radius"]; top = p["height"] - 0.12
-        ox, oy = o[0] - cx, o[1] - cy
-        a = d[:, 0] ** 2 + d[:, 1] ** 2
-        b = 2 * (ox * d[:, 0] + oy * d[:, 1])
-        c = ox * ox + oy * oy - r * r
-        disc = b * b - 4 * a * c
-        with np.errstate(divide="ignore", invalid="ignore"):
-            t = (-b - np.sqrt(np.where(disc >= 0, disc, np.nan))) / (2 * a)
-        z = o[2] + t * d[:, 2]
-        hit = np.isfinite(t) & (t > 0) & (z >= 0) & (z <= top)
-        nm = np.stack([ox + t * d[:, 0], oy + t * d[:, 1], np.zeros(n)], axis=1) / r
-        take(hit, np.where(hit, t, np.inf), base + j, nm)
-        sc = np.array([cx, cy, p["height"] - 0.12]); rr = 0.12
-        oc = o - sc
-        bq = d @ oc; cq = oc @ oc - rr * rr
-        disq = bq * bq - cq
-        with np.errstate(invalid="ignore"):
-            t = -bq - np.sqrt(np.where(disq >= 0, disq, np.nan))
-        hit = np.isfinite(t) & (t > 0)
-        pt = o[None, :] + t[:, None] * d
-        take(hit, np.where(hit, t, np.inf), base + j, (pt - sc[None, :]) / rr)
+        _mannequin(o, d, n, p, base + j, take, cut=p["id"] == cam.get("cut"))
     miss = ~np.isfinite(best)
     shade = 0.75 + 0.25 * np.abs(norm @ LIGHT)
     tmap = np.where(miss, np.nan, best)

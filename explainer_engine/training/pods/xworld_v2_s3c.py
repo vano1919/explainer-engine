@@ -126,6 +126,10 @@ def load_control_pipeline():
         text_encoder=Qwen3VLForConditionalGeneration.from_pretrained(base, subfolder="text_encoder", torch_dtype=dt),
         processor=Qwen3VLProcessor.from_pretrained(base, subfolder="processor"), transformer=tr,
         scheduler=FlowMatchEulerDiscreteScheduler.from_pretrained(base, subfolder="scheduler"))
+    vae = pipe.vae
+    print("vae tiling before:", getattr(vae, "use_tiling", "n/a"), flush=True)
+    if hasattr(vae, "disable_tiling"):
+        vae.disable_tiling()  # S3c baker close-up had a horizontal tear in both passes; the tiled decode is the suspect (Opus 2026-10-26)
     apply_gpu_memory_mode(pipe, "model_cpu_offload", "cuda", dt, exclude_module_name=["img_in", "txt_in", "time_text_embed", "modulation"])
     return pipe, tr
 

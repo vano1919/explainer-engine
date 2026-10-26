@@ -42,13 +42,13 @@ def test_room_walls_are_hit_from_inside():
     assert S.render(s, down, 64, 36)[0][18, 32] == -3  # the floor
 
 
-def test_close_up_head_fills_a_third_to_a_half_of_the_frame_and_the_camera_stays_in_the_room():
+def test_close_up_is_head_and_shoulders_head_about_a_third_of_the_frame_and_the_camera_stays_in_the_room():
     s = _set("tent")
     cam = S.camera(s, s["shots"]["s2"])
     p = next(p for p in s["people"] if p["id"] == "napoleon")
     d = float(np.linalg.norm(cam["pos"][:2] - np.array(p["pos"])))
     visible = 2 * d * math.tan(math.radians(cam["vfov"]) / 2)
-    assert 0.35 <= 0.24 / visible <= 0.60
+    assert 0.25 <= 2 * S.HEAD_R / visible <= 0.45  # head + shoulders framing (S3c: the old 0.45 m frame turned the sphere into a giant hat)
     lo, hi = np.array(s["room"]["min"]), np.array(s["room"]["max"])
     for spec in s["shots"].values():
         pos = S.camera(s, spec)["pos"]
@@ -125,3 +125,35 @@ def test_score_correlates_an_estimated_depth_with_the_rendered_layout_of_its_sho
     good = S.score(tmp_path, estimator=lambda img: np.nan_to_num(truth, nan=0.0))
     bad = S.score(tmp_path, estimator=lambda img: -np.nan_to_num(truth, nan=0.0))
     assert good["tent_s1_S3d.png"] > 0.99 and bad["tent_s1_S3d.png"] < -0.99
+
+
+def _real_set(name):
+    from pathlib import Path
+    return S.load_set(Path(S.__file__).parent / "stories" / "v2" / "sets" / f"{name}.set.json")
+
+
+def test_closeup_head_is_a_plausible_share_of_the_frame():
+    """A mannequin head (HEAD_R) in a close shot fills a modest share of the frame, never a giant hat/bowl (S3c, 2026-10-26)."""
+    for name, shot, pid in (("tent", "s2", "napoleon"), ("rome", "s2", "baker")):
+        s = _real_set(name)
+        ident, _, _ = S.render(s, S.camera(s, s["shots"][shot]), 320, 180)
+        idx = len(s["objects"]) + [p["id"] for p in s["people"]].index(pid)
+        share = float((ident == idx).mean())
+        assert 0.01 < share < 0.40, (name, share)
+
+
+def test_ots_near_figure_is_cut_at_the_shoulder():
+    s = _real_set("tent")
+    cam = S.camera(s, s["shots"]["s1"])
+    assert cam["cut"] == "napoleon"
+    ident, t, _ = S.render(s, cam, 160, 90)
+    idx = len(s["objects"]) + [p["id"] for p in s["people"]].index("napoleon")
+    rows = np.where((ident == idx).any(axis=1))[0]
+    assert rows.size == 0 or rows.min() > 90 * 0.3  # none of the near figure in the top of the frame (no head on the lens)
+
+
+def test_basin_is_stepped_boxes():
+    ob = {"min": [3, 6, 0], "max": [4.5, 8, 1.2], "shape": "basin"}
+    parts = S._parts(ob)
+    assert len(parts) == 3 and parts[0][1][2] < parts[2][1][2]
+    assert parts[2][1][0] - parts[2][0][0] < parts[0][1][0] - parts[0][0][0]

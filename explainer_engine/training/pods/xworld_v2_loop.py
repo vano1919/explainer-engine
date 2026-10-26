@@ -47,6 +47,8 @@ ROWS = {
     "M2": {"kind": "mix", "control": True, "grid": True, "note": "S2 grid canvas + one 2x2 depth control image"},
     "M4": {"kind": "mix", "control": True, "grid": True, "note": "grid in-painting: master in panel 1, mask panels 2-4, 2x2 depth control"},
     "M5": {"kind": "mix", "control": True, "grid": False, "note": "master-warp for small moves, the holes in-painted"},
+    "M2E50": {"kind": "mix", "control": True, "grid": True, "base": "M2", "end": 0.5, "note": "M2 with the control ended at 50 % of the steps (layout early, style late)"},
+    "M4E50": {"kind": "mix", "control": True, "grid": True, "base": "M4", "end": 0.5, "note": "M4 with the control ended at 50 % of the steps"},
     "M3": {"kind": "mix", "control": True, "grid": False, "note": "S3cA + pass B whose reference is the S2 panel (only if S3cAB loses identity)"},
 }
 
@@ -84,7 +86,7 @@ def jobs(cfg):
     (its four panels are the shots), M5 only the small moves. Round 1 of the plan: 68 pictures."""
     out = []
     for row in cfg["rows"]:
-        for scene in cfg.get("scenes", SCENES):
+        for scene in cfg.get("row_scenes", {}).get(row, cfg.get("scenes", SCENES)):
             for seed in cfg.get("seeds", SEEDS):
                 if ROWS[row]["grid"]:
                     out.append({"row": row, "scene": scene, "seed": seed, "shot": None, "kind": "grid"})
@@ -272,6 +274,27 @@ def grain_ok(stats, master_stats):
     return all(stats[k] <= GRAIN_MAX * master_stats[k] for k in ("lap_var", "busy", "sat_p95"))
 
 
+def connectedness(emb):
+    """emb = {shot: [unit face feature, ...]} of ONE row/scene/seed. Mean over the pairs of different shots of the best cosine between a face
+    of one and the faces of the other: the same person drawn alike scores high (Opus plan 8). None when fewer than two shots have faces."""
+    shots = [s for s in emb if len(emb[s])]
+    vals = [max(float(np.dot(x, y)) for y in emb[b]) for a in shots for b in shots if a != b for x in emb[a]]
+    return round(sum(vals) / len(vals), 3) if vals else None
+
+
+def connected_ok(value, s2t_value):
+    """The new FAIL rule: a row's connectedness must reach S2T's, whatever its geometry. Unmeasured (either None) = None, not a pass."""
+    return None if value is None or s2t_value is None else value >= s2t_value
+
+
+STYLE_MARGIN = 0.05
+
+
+def style_ok(value, s2t_value):
+    """Style similarity to the xworld held-out pictures (compose/style_score): at least S2T's minus STYLE_MARGIN."""
+    return None if value is None or s2t_value is None else value >= s2t_value - STYLE_MARGIN
+
+
 def shot_result(row, m):
     """m = {geometry, plate, order, grain_ok, people_ok, props_ok, artifacts_ok} (None = not measured). -> {fails: [...], passed: bool}.
     A shot passes when nothing measured fails and the geometry, the plate and the grain were measured."""
@@ -283,6 +306,8 @@ def shot_result(row, m):
         fails.append("plate")
     if m.get("order") is not None and m["order"] < LANDMARK_MIN:
         fails.append("landmarks")
+    if m.get("connected") is False:  # the same person must look like the same person across the panels (Opus plan 8, 2026-10-26)
+        fails.append("connected")
     for k, name in (("props_ok", "props"), ("artifacts_ok", "artifacts"), ("people_ok", "people"), ("grain_ok", "grain")):
         if m.get(k) is False:
             fails.append(name)
@@ -295,7 +320,7 @@ def attribute(row, fails, s0_ok=True, prompt_rounds_failed=0):
     'grain'), in the plan's order."""
     if not s0_ok:
         return "3d_code"
-    for f in ("geometry", "plate", "landmarks", "props", "artifacts", "people", "grain"):
+    for f in ("geometry", "plate", "landmarks", "props", "artifacts", "people", "connected", "grain"):
         if f not in fails:
             continue
         if f == "geometry":
@@ -304,7 +329,7 @@ def attribute(row, fails, s0_ok=True, prompt_rounds_failed=0):
             return "frozen_plate"
         if f in ("landmarks", "props", "artifacts"):
             return "reference" if prompt_rounds_failed >= 2 else "prompt"
-        if f == "people":
+        if f in ("people", "connected"):
             return "identity_reference"
         return "passes"
     return None

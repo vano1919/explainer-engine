@@ -42,7 +42,7 @@ else:
 
 GRID_NOTE = ("The top-left panel is the established wide shot of this place; the other three panels are later shots of the same place "
              "and the same people, each from the camera its depth shows.")
-CONTROL_ROWS = ("S3cA", "M2", "M4", "M5")
+CONTROL_ROWS = ("S3cA", "M2", "M4", "M5", "M2E50", "M4E50")
 PLAIN_ROWS = ("S1", "S2T", "S2E", "S3cAB")
 
 
@@ -71,6 +71,7 @@ def prompts(sc, row, sid=None):
         return grid_prompt_for(sc, test)
     if row == "S2E":
         return edit_prompt_for(sc, test)
+    row = L.ROWS[row].get("base", row)
     if row == "M2":
         return grid_prompt_for(sc, test)
     if row == "M4":
@@ -140,13 +141,54 @@ def cut_grid(grid, shot_ids, outd, row, scene, seed):
             panel.resize(L.PANEL).save(Path(outd) / row / L.picture_name(row, scene, seed, sid).split("/")[1])
 
 
-def draw_control(pipe, prompt, control, scale, cfg, seed, w, h, image=None, mask=None):
+STEPS = 30
+
+
+class ControlEnd:
+    """Ends the control branch at `frac` of the steps by zeroing `control_context_scale` in the transformer's forward kwargs from that call on
+    (with a negative prompt the transformer runs twice per step). Logs whether the kwarg was seen, so a pipeline that passes it another way is noticed."""
+
+    def __init__(self, transformer, frac, calls_per_step=2):
+        self.tr, self.limit, self.n, self.seen, self.zeroed = transformer, round(frac * STEPS * calls_per_step), 0, False, 0
+
+    def __enter__(self):
+        self.orig = self.tr.forward
+
+        def fwd(*a, **kw):
+            self.n += 1
+            if "control_context_scale" in kw:
+                self.seen = True
+                if self.n > self.limit:
+                    kw["control_context_scale"] = 0.0
+                    self.zeroed += 1
+            return self.orig(*a, **kw)
+        self.tr.forward = fwd
+        return self
+
+    def __exit__(self, *e):
+        self.tr.forward = self.orig
+
+    def report(self):
+        return f"control end: {self.n} transformer calls, scale kwarg seen={self.seen}, zeroed {self.zeroed} calls (limit {self.limit})"
+
+
+def draw_control(pipe, prompt, control, scale, cfg, seed, w, h, image=None, mask=None, end=None, say=print):
+    import contextlib
     import torch
     from videox_fun.utils.utils import get_image_latent
     g = torch.Generator(device="cuda").manual_seed(seed)
     ctrl = get_image_latent(control, sample_size=[h, w])[:, :, 0]
     kw = {} if image is None else {"image": image.resize((w, h)), "mask_image": mask.resize((w, h))}
-    with torch.no_grad():
+    ce = ControlEnd(pipe.transformer, end) if end else contextlib.nullcontext()
+    with torch.no_grad(), ce:
+        out = _call(pipe, prompt, g, h, w, cfg, ctrl, scale, kw)
+    if end:
+        say(ce.report())
+    return out
+
+
+def _call(pipe, prompt, g, h, w, cfg, ctrl, scale, kw):
+    if True:
         return pipe(prompt, negative_prompt=" ", height=h, width=w, generator=g, num_inference_steps=30, true_cfg_scale=cfg,
                     control_image=ctrl, control_context_scale=scale, **kw).images[0]
 
@@ -191,22 +233,23 @@ def main(argv):
             if exists(j):
                 continue
             sc, n, seed, row = by[j["scene"]], j["scene"], j["seed"], j["row"]
+            end, row_ = L.ROWS[row].get("end"), L.ROWS[row].get("base", row)
             t0 = time.time()
-            if row == "S3cA":
+            if row_ == "S3cA":
                 img = draw_control(p, prompts(sc, row, j["shot"]), Image.open(inp / f"{n}_{j['shot']}_depth.png"), scale, cf, seed, 1280, 720)
                 img.convert("RGB").save(outd / row / f"{n}_{seed}_{j['shot']}.png")
-            elif row == "M5":
+            elif row_ == "M5":
                 s_ = j["shot"]
                 img = draw_control(p, prompts(sc, row, s_), Image.open(inp / f"M5_{n}_{s_}_depth.png"), scale, cf, seed, 1280, 720,
                                    Image.open(inp / f"M5_{n}_{s_}_warp.png").convert("RGB"), Image.open(inp / f"M5_{n}_{s_}_holes.png").convert("L"))
                 img.convert("RGB").save(outd / row / f"{n}_{seed}_{s_}.png")
-            elif row == "M2":
-                g = draw_control(p, prompts(sc, row), Image.open(inp / f"{n}_m2_control.png"), scale, cf, seed, 2560, 1408)
+            elif row_ == "M2":
+                g = draw_control(p, prompts(sc, row), Image.open(inp / f"{n}_m2_control.png"), scale, cf, seed, 2560, 1408, end=end, say=say)
                 cut_grid(g.convert("RGB"), L.SHOTS, outd, row, n, seed)
-            elif row == "M4":
+            elif row_ == "M4":
                 master = Image.open(p2s / f"{n}_11_s0.png").convert("RGB")
                 g = draw_control(p, prompts(sc, row), Image.open(inp / f"{n}_m4_control.png"), scale, cf, seed, 2560, 1408,
-                                 Image.open(inp / f"{n}_m4_image.png").convert("RGB"), Image.open(inp / f"{n}_m4_mask.png").convert("L"))
+                                 Image.open(inp / f"{n}_m4_image.png").convert("RGB"), Image.open(inp / f"{n}_m4_mask.png").convert("L"), end=end, say=say)
                 cut_grid(L.paste_back(g.convert("RGB"), master), (None, "s1", "s2", "s3"), outd, row, n, seed)
             say("made", row, n, seed, j.get("shot") or "grid", round(time.time() - t0), "s")
         del pipe, tr, p

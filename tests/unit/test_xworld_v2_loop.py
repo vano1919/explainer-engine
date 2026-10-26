@@ -181,3 +181,47 @@ def test_the_control_inputs_are_built_for_every_scene_without_a_model(tmp_path):
         for sid in L.SMALL_MOVES[n]:
             assert Image.open(tmp_path / "in" / f"M5_{n}_{sid}_holes.png").mode == "L"
     assert len(made) == 2 * (4 + 4 + 3)  # per scene: 4 depths, 4 canvas files, 3 for the one small move
+
+
+def test_control_end_zeroes_the_scale_after_half_the_steps():
+    class Tr:
+        def __init__(self):
+            self.seen = []
+
+        def forward(self, *a, **kw):
+            self.seen.append(kw.get("control_context_scale"))
+    tr = Tr()
+    with _run().ControlEnd(tr, 0.5) as ce:
+        for _ in range(60):  # 30 steps x 2 (cfg)
+            tr.forward(control_context_scale=1.0)
+    assert tr.seen[:30] == [1.0] * 30 and tr.seen[30:] == [0.0] * 30
+    assert ce.seen and ce.zeroed == 30
+    assert tr.forward.__func__ is Tr.forward  # restored
+
+
+def test_round_with_end50_rows_and_row_scenes():
+    cfg = {"rows": ["M2E50", "M4E50", "M4"], "seeds": [11], "row_scenes": {"M4": ["tent"]}}
+    assert L.check_round(cfg) == []
+    js = L.jobs(cfg)
+    assert [(j["row"], j["scene"]) for j in js] == [("M2E50", "tent"), ("M2E50", "rome"), ("M4E50", "tent"), ("M4E50", "rome"), ("M4", "tent")]
+    assert L.ROWS["M2E50"]["end"] == 0.5 and L.ROWS["M4E50"]["base"] == "M4"
+
+
+def test_connected_fail_is_an_identity_cause():
+    r = L.shot_result("M2", {"geometry": 0.9, "plate": 0.2, "grain_ok": True, "connected": False})
+    assert r["fails"] == ["connected"] and not r["passed"]
+    assert L.attribute("M2", r["fails"]) == "identity_reference"
+
+
+def _run():
+    from explainer_engine.training.pods import xworld_v2_loop_run as R
+    return R
+
+
+def test_connectedness_and_style_bars_against_s2t():
+    same = {"s1": [np.array([1.0, 0.0])], "s2": [np.array([1.0, 0.0])]}
+    other = {"s1": [np.array([1.0, 0.0])], "s2": [np.array([0.0, 1.0])]}
+    assert L.connectedness(same) == 1.0 and L.connectedness(other) == 0.0
+    assert L.connectedness({"s1": [np.array([1.0, 0.0])], "s2": []}) is None
+    assert L.connected_ok(0.6, 0.5) is True and L.connected_ok(0.4, 0.5) is False and L.connected_ok(None, 0.5) is None
+    assert L.style_ok(0.46, 0.5) is True and L.style_ok(0.4, 0.5) is False

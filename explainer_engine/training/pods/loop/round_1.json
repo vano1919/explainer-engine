@@ -1,0 +1,4 @@
+{"round": 1, "scenes": ["tent", "rome"], "seeds": [11], "cfg": 2.5, "control_scale": 1.0,
+ "rows": ["S2T", "S2E", "M2E50", "M4E50", "M4", "M5"],
+ "row_scenes": {"M4": ["tent"]},
+ "note": "Opus plan section 8 (2026-10-26): S3cA stand-alone and S3cAB out, S1 = the existing P2S pictures (no new draws)"}
