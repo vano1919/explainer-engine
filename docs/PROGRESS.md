@@ -2343,3 +2343,13 @@ training as sequences is decided in the process. Changed together:
   shot's `faces` and the face text word for word in its description, no trait or name of the training show's people
   (`SHOW_FACE`), runs default to weight 0.7; `xworld_v1_story.face_problems` + 6 tests; the two earlier stories carry
   `before_lt79` (napoleon_tent keeps weight 1.0 explicitly).
+- 12:10 Tbilisi: ვანო (12:01-12:02, with a reference picture of four labelled figures): new cast for xworld v2 = full-body
+  people in full costume on a plain background, line close to the show's, costume, face style and palette different, palette
+  and drawing = his reference, ONE shared style block + a separate description per person. New
+  `training/cast/sheet.py` (100 people: 50 roles x 2, faces by LT-79, `check`, `list`, `draw` via the BFL Klein provider,
+  1k 3:4, a seed per person) + `tests/unit/test_cast_sheet.py`; `xworld_v1_story.show_traits` now matches whole words
+  ("Elizabethan" is not "beth"). BFL: the working key is env `BFL_API_kay` (247.2 credits); `BFL_API_KEY` answers 403.
+  4-person test x (text only | + his picture as style reference) = 8 pictures, $0.072 (ledger
+  `jobs/xworld_v1/cast_2026-10-26/ledger.json`; HF `cast_xworld_v2/test4/`): text only matches his palette and line with
+  our own faces; with his picture as reference Klein copies his four figures (bicorne Napoleon instead of a grenadier,
+  his Renaissance man instead of a woman painter), so no reference.

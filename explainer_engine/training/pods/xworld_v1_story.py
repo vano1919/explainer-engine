@@ -41,6 +41,13 @@ SHOW_FACE = ("round head", "round eyes", "big round", "dot pupil", "tiny pupil",
              "yellow shirt", "rick", "morty", "summer", "beth", "jerry", "birdperson", "squanchy")
 
 
+def show_traits(text):
+    """The SHOW_FACE traits and names in a text, as whole words ("Elizabethan" is not "beth", "brick" is not "rick")."""
+    import re
+    t = text.lower()
+    return [w for w in SHOW_FACE if re.search(rf"\b{re.escape(w)}\b", t)]
+
+
 def face_parts(text):
     t = text.lower()
     return sorted(k for k, words in FACE_PARTS.items() if any(w in t for w in words))
@@ -56,7 +63,7 @@ def face_problems(story):
     for role, c in cast.items():
         if len(face_parts(c.get("face", ""))) < FACE_PARTS_MIN:
             out.append(f"{role}: face names {face_parts(c.get('face', ''))}, needs {FACE_PARTS_MIN} of {sorted(FACE_PARTS)}")
-        show = [w for w in SHOW_FACE if w in (c.get("face", "") + " " + c.get("look", "")).lower()]
+        show = show_traits(c.get("face", "") + " " + c.get("look", ""))
         if show:
             out.append(f"{role}: face too close to the training show's people ({', '.join(show)})")
     for s in story["shots"]:
