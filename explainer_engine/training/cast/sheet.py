@@ -44,7 +44,8 @@ STYLES = {"person": STYLE, "place": f"{FRAMES['place']} {CORE}".replace(", a few
           "object": f"{FRAMES['object']} {CORE}".replace(", a few fine hatch lines in hair, beard and fabric folds", ", a few fine hatch lines on wood, metal and fabric")}
 ASPECTS = {"person": "3:4", "place": "16:9", "object": "1:1"}
 
-# Sample places and objects (ვანო 12:11: "show me some examples" before the whole world)
+# Places and objects: the first 6 of each were the samples ვანო saw (12:11 "show me some examples"); the rest follow the
+# same eras as the people (12:30 "start")
 PLACES = [
     ("p000", "A Roman street at noon: stone paving, a fountain, shuttered shops with awnings, laundry lines, a temple at the end."),
     ("p001", "Inside a large canvas army tent at night: a map table with wooden figures, a hanging brass lantern, a folded cot, an iron-bound chest."),
@@ -52,6 +53,80 @@ PLACES = [
     ("p003", "A Stone Age cave interior: a crackling fire, painted animals on the rock wall, furs on the floor, the cave mouth showing a snowy valley."),
     ("p004", "A starship cockpit: two empty pilot seats, glowing control panels, a curved window onto a ringed planet and stars."),
     ("p005", "A Renaissance painter's workshop: easels with half-finished canvases, jars of pigment, a tall window, wooden beams."),
+    ("p006", 'A Roman Colosseum arena floor at midday: sand, wooden trapdoors, tiered stone seats, striped awnings above.'),
+    ("p007", 'A Roman villa courtyard: a rectangular pool, painted columns, potted lemon trees, mosaic floor.'),
+    ("p008", 'A Roman legion camp at dusk: rows of leather tents, a palisade wall, standards on poles, cooking fires.'),
+    ("p009", 'An Egyptian temple hall: giant painted columns, hieroglyph walls, shafts of sunlight, a stone altar.'),
+    ("p010", 'The Nile riverbank at sunset: papyrus reeds, a moored reed boat, distant pyramids, palm trees.'),
+    ("p011", 'A Greek agora: a colonnaded stoa, market stalls with amphorae, a stone altar, olive trees.'),
+    ("p012", 'A Greek hilltop temple ruin under a stormy sky: broken columns, scattered marble blocks, wild grass.'),
+    ("p013", 'A Viking longhouse interior: a long central hearth, carved wooden pillars, shields on the walls, benches with furs.'),
+    ("p014", 'A Viking fjord at dawn: steep cliffs, a longship pulled up on a pebble beach, still green water.'),
+    ("p015", 'A medieval castle great hall: banners, a long feast table with pewter plates, a huge fireplace, stone arches.'),
+    ("p016", 'A medieval village square on market day: half-timbered houses, a well, empty stalls with cloth roofs, a church tower.'),
+    ("p017", "A medieval blacksmith's forge: a glowing furnace, bellows, an anvil, tools hung on the wall."),
+    ("p018", 'A medieval monastery library: tall shelves of chained books, reading desks, candles, a rose window.'),
+    ("p019", 'A castle battlement at night: crenellated walls, a torch in a bracket, a view over moonlit fields.'),
+    ("p020", 'A muddy medieval battlefield after rain: broken lances, abandoned shields, trampled banners, grey sky.'),
+    ("p021", "A Mongol yurt camp on the steppe: round felt tents, tethered horses' posts, endless grass, a huge sky."),
+    ("p022", 'Inside a Mongol yurt: a central stove, painted wooden roof ring, rugs, chests, a low table.'),
+    ("p023", 'An Ottoman bazaar street: hanging lamps, carpet stalls, spice sacks, a domed mosque in the distance.'),
+    ("p024", 'A Japanese castle garden: a koi pond, a red arched bridge, stone lanterns, pine trees, the castle keep behind.'),
+    ("p025", 'A Japanese village street in the rain: wooden houses with sliding doors, paper lanterns, puddles.'),
+    ("p026", 'A Chinese imperial palace courtyard: red walls, golden roof tiles, marble stairs, bronze incense burners.'),
+    ("p027", 'An Aztec city plaza: a stepped pyramid temple, canals, flower boats, volcanoes on the horizon.'),
+    ("p028", 'A jungle temple ruin: vines over carved stone heads, a collapsed stairway, mist, a dense green canopy.'),
+    ("p029", 'A Renaissance city piazza: a domed cathedral, a marble fountain, arcades, terracotta rooftops.'),
+    ("p030", "A Renaissance banker's counting house: a long table with scales and coin piles, ledgers, tapestries."),
+    ("p031", 'An Elizabethan theatre stage: a wooden thrust stage, a painted balcony, an open-air pit, thatched galleries.'),
+    ("p032", "A pirate ship deck at sea: masts and furled sails, cannons, coiled ropes, a ship's wheel, open ocean."),
+    ("p033", 'A pirate cove: a sandy beach, a wrecked rowing boat, palm trees, a treasure chest half buried, a cave mouth.'),
+    ("p034", "A ship's captain's cabin: a stern window with sea view, charts on a table, a swinging lantern, a sea chest."),
+    ("p035", 'A colonial American print shop: a wooden printing press, type cases, hanging paper sheets, ink pots.'),
+    ("p036", 'A Paris street during the Revolution: cobblestones, a barricade of carts and furniture, tricolour flags, tall houses.'),
+    ("p037", 'A Napoleonic battlefield at noon: smoke over rolling hills, abandoned cannons, a broken wagon wheel, a farmhouse.'),
+    ("p038", "A Napoleonic field hospital tent: cots, bandage rolls, a surgeon's table, lanterns, rain at the entrance."),
+    ("p039", 'A snowy Russian forest road in winter: tall birches, deep snow, an abandoned wagon, grey sky.'),
+    ("p040", 'A Victorian London street at night: gas lamps, fog, a horse-drawn cab waiting, shop windows, wet cobbles.'),
+    ("p041", "A Victorian inventor's laboratory: brass machines, glass tubes, blackboards with diagrams, a skylight."),
+    ("p042", 'A Victorian railway station: an iron and glass roof, a steam locomotive at the platform, luggage carts.'),
+    ("p043", 'A Victorian rooftop at dusk: chimney stacks, slate roofs, smoke, the dome of a cathedral far away.'),
+    ("p044", 'A Wild West main street at noon: a saloon, a general store, hitching posts, a water trough, dust.'),
+    ("p045", 'A Wild West saloon interior: a long bar, an upright piano, swinging doors, card tables, a moose head.'),
+    ("p046", 'A desert canyon at sunset: red rock mesas, cacti, a dry riverbed, long shadows.'),
+    ("p047", 'A gold rush river camp: canvas tents, sluice boxes, pans, pine forest, a wooden cabin.'),
+    ("p048", 'An Edwardian polar camp: a canvas tent in snow, a sledge, flags, ice cliffs, a pale sun.'),
+    ("p049", 'A 1920s jazz club: a small stage with a drum kit, round tables with lamps, a bar, smoke haze.'),
+    ("p050", 'A 1920s airfield: a biplane on a grass strip, a wooden hangar, a windsock, fuel barrels.'),
+    ("p051", 'A 1940s radio room in a bunker: switchboards, maps with pins, a microphone, a single bulb.'),
+    ("p052", 'A 1950s diner interior: a chrome counter with stools, red booths, a jukebox, a pie display.'),
+    ("p053", 'A 1950s suburban street: identical houses with lawns, a mailbox, a parked rounded car, a picket fence.'),
+    ("p054", 'A 1960s rocket launch control room: rows of consoles, big wall screens, coffee cups, ashtrays.'),
+    ("p055", 'A 1970s roller disco: a glittering mirror ball, a wooden rink, coloured lights, a DJ booth.'),
+    ("p056", 'A 1980s video arcade: rows of cabinets with glowing screens, a carpet with patterns, a change machine.'),
+    ("p057", 'A modern TV news studio: a curved anchor desk, cameras on pedestals, screens, studio lights.'),
+    ("p058", 'A modern construction site: a crane, steel beams, scaffolding, cement mixers, a site office.'),
+    ("p059", 'A modern museum hall: dinosaur skeleton, glass display cases, marble floor, a skylight.'),
+    ("p060", 'A modern night market: food stalls with steam, string lights, plastic stools, painted wooden signs.'),
+    ("p061", 'A modern city rooftop: water tanks, antennas, a skyline at sunset, a pigeon coop.'),
+    ("p062", 'A modern subway platform: tiled walls, a bench, a timetable board, an empty train with doors open.'),
+    ("p063", 'A near-future drone delivery hub: landing pads, parcel racks, charging docks, a glass control tower.'),
+    ("p064", 'A deep-sea research station interior: round portholes onto dark water with fish, pipes, a control desk.'),
+    ("p065", 'A Mars farm dome: rows of green plants under a glass dome, red desert and dust outside, irrigation pipes.'),
+    ("p066", 'A Mars surface at noon: red rocks, a parked rover, a habitat module, a pale pink sky.'),
+    ("p067", 'A far-future space station corridor: curved walls, glowing strips, hatch doors, a window onto Earth.'),
+    ("p068", 'A far-future robot repair shop: robot parts on shelves, a workbench, hanging cables, sparks frozen in air.'),
+    ("p069", 'An alien jungle planet: giant mushroom trees, glowing plants, two moons in the sky, a crashed pod.'),
+    ("p070", 'A futuristic city skyline at night: towers with lights, flying-car lanes, holographic billboards without letters.'),
+    ("p071", 'A Stone Age river valley: a mammoth trail, birch trees, a smoking campfire, distant snowy peaks.'),
+    ("p072", 'A Stone Age hunting camp: hide tents, drying racks with meat, stone tools on a log, a fire pit.'),
+    ("p073", 'A Bronze Age harbour: wooden ships with square sails, clay jars on the quay, mud-brick warehouses.'),
+    ("p074", 'A Persian palace hall: tall columns with bull capitals, a throne platform, hanging carpets, braziers.'),
+    ("p075", 'A Byzantine hippodrome: a sand racetrack, a central spine with obelisks, packed empty stands, bronze horses.'),
+    ("p076", 'A dark old library at midnight: towering shelves, a rolling ladder, a desk with an open book and candle.'),
+    ("p077", 'A mountain pass in a snowstorm: a narrow path, rocks, a wooden signpost, swirling snow.'),
+    ("p078", 'A peaceful farm at sunrise: a red barn, a windmill, a haystack, a fenced field, a hay cart.'),
+    ("p079", "A lighthouse on a rocky cliff at night: a beam of light, crashing waves, a small keeper's cottage."),
 ]
 OBJECTS = [
     ("o000", "An antique brass spyglass, extended, with leather grip bands."),
@@ -60,6 +135,40 @@ OBJECTS = [
     ("o003", "A Stone Age flint-tipped spear leaning on a large rough stone, with a bone necklace hanging from it."),
     ("o004", "A chunky retro-futuristic ray gun with brass coils and a glowing green glass tank."),
     ("o005", "A medieval blacksmith's anvil on a tree stump, with tongs and a glowing horseshoe."),
+    ("o006", 'A Roman legionary helmet with a red crest.'),
+    ("o007", 'An Egyptian golden mask on a stand.'),
+    ("o008", 'A Greek clay amphora with painted figures.'),
+    ("o009", 'A Viking round shield with a painted dragon.'),
+    ("o010", 'A medieval longsword in a leather scabbard.'),
+    ("o011", "A knight's full suit of armour on a stand."),
+    ("o012", 'An illuminated manuscript book, open, with a ribbon.'),
+    ("o013", 'A Mongol composite bow with a quiver of arrows.'),
+    ("o014", 'A samurai katana on a lacquered stand.'),
+    ("o015", 'A Chinese bronze incense burner.'),
+    ("o016", 'An Aztec feathered ceremonial headdress on a stand.'),
+    ("o017", "A Renaissance artist's easel with a blank canvas."),
+    ("o018", 'A heavy iron-bound treasure chest, open, full of gold coins.'),
+    ("o019", "A ship's wheel made of dark wood and brass."),
+    ("o020", "A pirate's flintlock pistol."),
+    ("o021", 'A colonial wooden printing press.'),
+    ("o022", 'A Napoleonic bicorne hat on a wooden head stand.'),
+    ("o023", 'A brass field cannon on a wooden carriage.'),
+    ("o024", 'A Victorian pocket watch with its chain.'),
+    ("o025", 'A steam locomotive, side view.'),
+    ("o026", 'A Victorian brass telephone.'),
+    ("o027", 'A Wild West revolver in a leather holster.'),
+    ("o028", 'An old wooden covered wagon.'),
+    ("o029", 'A 1920s biplane, side view.'),
+    ("o030", 'A 1920s gramophone with a large horn.'),
+    ("o031", 'A 1940s military radio set with headphones.'),
+    ("o032", 'A 1950s jukebox.'),
+    ("o033", 'A 1950s rounded red car.'),
+    ("o034", 'A 1960s rocket on its launch pad.'),
+    ("o035", 'A 1980s arcade cabinet.'),
+    ("o036", 'A modern drone with four rotors.'),
+    ("o037", 'A brass deep-sea diving helmet.'),
+    ("o038", 'A Mars rover with six wheels.'),
+    ("o039", 'A far-future starfighter, side view.'),
 ]
 
 
@@ -211,9 +320,70 @@ def draw(out, ids, ref=None, ledger=None, key_env=None):
     return rows
 
 
+def items():
+    """Every picture of the new world: {id: {id, kind, desc, ...}} (100 people, the places, the objects)."""
+    out = {c["id"]: {**c, "kind": "person"} for c in cast()}
+    out.update({i: {"id": i, "kind": "place", "desc": d} for i, d in PLACES})
+    out.update({i: {"id": i, "kind": "object", "desc": d} for i, d in OBJECTS})
+    return out
+
+
+def world(out, ids, *, budget_usd, tries=3, workers=6, key=None, generate=None, judge=None):
+    """Draw every id, check it at once (cast.check), redraw a FAIL with the next seed (at most `tries` pictures per id)
+    until `budget_usd` is spent; REVIEW and PASS stay for Claude's look and ვანო's pick. Writes <out>/report.jsonl (one
+    row per picture drawn, kept or thrown away) and returns the rows. `generate(name, item, seed) -> usd` and
+    `judge(rows) -> rows` are injected by tests."""
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+    from explainer_engine.training.cast import check
+    out = Path(out); out.mkdir(parents=True, exist_ok=True)
+    every = items()
+    lock, spent, rows = threading.Lock(), [0.0], []
+    if generate is None:
+        from explainer_engine.imagegen.providers.bfl import BFL
+        k = key or _key()
+
+        def generate(name, it, seed):
+            r = BFL(out, key=k).generate(name, prompt(it), model=MODEL, size=SIZE, seed=seed,
+                                         extra={"aspect_ratio": ASPECTS[it["kind"]], "safety_tolerance": 2})
+            return 0.0 if r.cached else (r.usd_settled if r.usd_settled is not None else r.usd)
+    judge = judge or check.score
+
+    def one(i):
+        it = every[i]
+        for t in range(tries):
+            with lock:
+                if spent[0] + BFLPRICE > budget_usd:
+                    return
+                spent[0] += BFLPRICE
+            name = i if t == 0 else f"{i}_t{t}"
+            try:
+                usd = generate(name, it, 1000 + int(i[1:]) + 100000 * t)
+            except Exception as e:  # a refused or failed request: recorded, the next seed is tried
+                with lock:
+                    rows.append({"name": name, "id": i, "kind": it["kind"], "try": t, "verdict": "ERROR", "why": [str(e)[:200]]})
+                continue
+            with lock:
+                spent[0] += usd - BFLPRICE
+            row = judge([{"name": name, "id": i, "kind": it["kind"], "path": str(out / f"{name}.png")}])[0]
+            row.update({"try": t, "usd": usd})
+            with lock:
+                rows.append(row)
+                with (out / "report.jsonl").open("a", encoding="utf-8") as f:
+                    f.write(json.dumps(row, ensure_ascii=False) + "\n")
+            print(name, row["verdict"], row.get("why"), flush=True)
+            if row["verdict"] != "FAIL":
+                return
+
+    with ThreadPoolExecutor(workers) as ex:
+        list(ex.map(one, ids))
+    return rows
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m explainer_engine.training.cast.sheet")
-    ap.add_argument("cmd", choices=["list", "check", "draw"])
+    ap.add_argument("cmd", choices=["list", "check", "draw", "world"])
+    ap.add_argument("--budget", type=float, default=0.0)
     ap.add_argument("out", nargs="?")
     ap.add_argument("--ids", default="")
     ap.add_argument("--ref")
@@ -230,6 +400,13 @@ def main(argv=None):
         return 1 if pr else 0
     if problems():
         raise SystemExit("refused: `check` has problems")
+    if a.cmd == "world":
+        ids = [x for x in a.ids.split(",") if x] or sorted(items())
+        if not a.yes or a.budget <= 0:
+            print(f"{len(ids)} pictures, at most ${a.budget}; add --budget and --yes after the creator's OK")
+            return 0
+        world(a.out, ids, budget_usd=a.budget)
+        return 0
     ids = [f"c{int(x):03d}" if x.isdigit() else x for x in a.ids.split(",") if x] or [c["id"] for c in cast()]
     usd = round(BFLPRICE * len(ids), 3)
     if not a.yes:
