@@ -183,7 +183,7 @@ def test_the_control_inputs_are_built_for_every_scene_without_a_model(tmp_path):
     assert len(made) == 2 * (4 + 4 + 3)  # per scene: 4 depths, 4 canvas files, 3 for the one small move
 
 
-def test_control_end_zeroes_the_scale_after_half_the_steps():
+def test_control_end_cuts_on_the_timestep_not_on_call_counts():
     class Tr:
         def __init__(self):
             self.seen = []
@@ -191,12 +191,23 @@ def test_control_end_zeroes_the_scale_after_half_the_steps():
         def forward(self, *a, **kw):
             self.seen.append(kw.get("control_context_scale"))
     tr = Tr()
+    ts = [1000, 1000, 900, 900, 600, 600, 400, 400]  # two calls per step here, but the cut must not depend on that
     with _run().ControlEnd(tr, 0.5) as ce:
-        for _ in range(60):  # 30 steps x 2 (cfg)
-            tr.forward(control_context_scale=1.0)
-    assert tr.seen[:30] == [1.0] * 30 and tr.seen[30:] == [0.0] * 30
-    assert ce.seen and ce.zeroed == 30
+        for t in ts:
+            tr.forward(timestep=t, control_context_scale=1.0)
+    assert tr.seen == [1.0] * 6 + [0.0] * 2 and ce.cut_t == 400 and ce.ok()
     assert tr.forward.__func__ is Tr.forward  # restored
+
+
+def test_control_end_is_a_setup_fail_when_the_kwargs_are_not_seen():
+    class Tr:
+        def forward(self, *a, **kw):
+            return None
+    tr = Tr()
+    with _run().ControlEnd(tr) as ce:
+        for _ in range(4):
+            tr.forward(1, 2)  # positional: nothing to read
+    assert not ce.ok() and "ok=False" in ce.report()
 
 
 def test_round_with_end50_rows_and_row_scenes():

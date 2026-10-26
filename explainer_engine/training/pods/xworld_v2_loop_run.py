@@ -145,20 +145,35 @@ STEPS = 30
 
 
 class ControlEnd:
-    """Ends the control branch at `frac` of the steps by zeroing `control_context_scale` in the transformer's forward kwargs from that call on
-    (with a negative prompt the transformer runs twice per step). Logs whether the kwarg was seen, so a pipeline that passes it another way is noticed."""
+    """Ends the control branch once the denoising is half way: zeroes `control_context_scale` in the transformer's forward kwargs from the first
+    call whose `timestep` is below half of the first call's timestep (Opus 2026-10-26; no call counting, so batched CFG or another step count
+    cannot move the cut). Records the timestep at the cut; `ok()` is False when the scale kwarg or the timestep was never seen or nothing was
+    zeroed: that row is a SETUP-FAIL and is never scored as a plain M2/M4."""
 
-    def __init__(self, transformer, frac, calls_per_step=2):
-        self.tr, self.limit, self.n, self.seen, self.zeroed = transformer, round(frac * STEPS * calls_per_step), 0, False, 0
+    def __init__(self, transformer, frac=0.5):
+        self.tr, self.frac, self.t0, self.cut_t, self.seen, self.tseen, self.zeroed = transformer, frac, None, None, False, False, 0
+
+    @staticmethod
+    def _t(v):
+        try:
+            return float(v.flatten()[0]) if hasattr(v, "flatten") else float(v)
+        except Exception:
+            return None
 
     def __enter__(self):
         self.orig = self.tr.forward
 
         def fwd(*a, **kw):
-            self.n += 1
+            t = self._t(kw["timestep"]) if "timestep" in kw else None
+            if t is not None:
+                self.tseen = True
+                if self.t0 is None:
+                    self.t0 = t
             if "control_context_scale" in kw:
                 self.seen = True
-                if self.n > self.limit:
+                if t is not None and self.t0 is not None and t < self.frac * self.t0:
+                    if self.cut_t is None:
+                        self.cut_t = t
                     kw["control_context_scale"] = 0.0
                     self.zeroed += 1
             return self.orig(*a, **kw)
@@ -168,11 +183,15 @@ class ControlEnd:
     def __exit__(self, *e):
         self.tr.forward = self.orig
 
+    def ok(self):
+        return self.seen and self.tseen and self.zeroed > 0
+
     def report(self):
-        return f"control end: {self.n} transformer calls, scale kwarg seen={self.seen}, zeroed {self.zeroed} calls (limit {self.limit})"
+        return (f"control end: scale kwarg seen={self.seen}, timestep seen={self.tseen}, t0={self.t0}, cut at t={self.cut_t}, "
+                f"zeroed {self.zeroed} calls, ok={self.ok()}")
 
 
-def draw_control(pipe, prompt, control, scale, cfg, seed, w, h, image=None, mask=None, end=None, say=print):
+def draw_control(pipe, prompt, control, scale, cfg, seed, w, h, image=None, mask=None, end=None, say=print, fail_dir=None):
     import contextlib
     import torch
     from videox_fun.utils.utils import get_image_latent
@@ -184,6 +203,8 @@ def draw_control(pipe, prompt, control, scale, cfg, seed, w, h, image=None, mask
         out = _call(pipe, prompt, g, h, w, cfg, ctrl, scale, kw)
     if end:
         say(ce.report())
+        if not ce.ok() and fail_dir is not None:  # never scored as a plain M2/M4
+            (Path(fail_dir) / "SETUP_FAIL.json").write_text(json.dumps({"reason": ce.report()}), encoding="utf-8")
     return out
 
 
@@ -244,12 +265,12 @@ def main(argv):
                                    Image.open(inp / f"M5_{n}_{s_}_warp.png").convert("RGB"), Image.open(inp / f"M5_{n}_{s_}_holes.png").convert("L"))
                 img.convert("RGB").save(outd / row / f"{n}_{seed}_{s_}.png")
             elif row_ == "M2":
-                g = draw_control(p, prompts(sc, row), Image.open(inp / f"{n}_m2_control.png"), scale, cf, seed, 2560, 1408, end=end, say=say)
+                g = draw_control(p, prompts(sc, row), Image.open(inp / f"{n}_m2_control.png"), scale, cf, seed, 2560, 1408, end=end, say=say, fail_dir=outd / row)
                 cut_grid(g.convert("RGB"), L.SHOTS, outd, row, n, seed)
             elif row_ == "M4":
                 master = Image.open(p2s / f"{n}_11_s0.png").convert("RGB")
                 g = draw_control(p, prompts(sc, row), Image.open(inp / f"{n}_m4_control.png"), scale, cf, seed, 2560, 1408,
-                                 Image.open(inp / f"{n}_m4_image.png").convert("RGB"), Image.open(inp / f"{n}_m4_mask.png").convert("L"), end=end, say=say)
+                                 Image.open(inp / f"{n}_m4_image.png").convert("RGB"), Image.open(inp / f"{n}_m4_mask.png").convert("L"), end=end, say=say, fail_dir=outd / row)
                 cut_grid(L.paste_back(g.convert("RGB"), master), (None, "s1", "s2", "s3"), outd, row, n, seed)
             say("made", row, n, seed, j.get("shot") or "grid", round(time.time() - t0), "s")
         del pipe, tr, p
