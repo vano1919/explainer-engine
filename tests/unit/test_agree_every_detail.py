@@ -39,3 +39,11 @@ def test_evaluations_are_direct_and_plans_are_full_scale():
         assert item in row, item
     claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
     assert "OR-25" in claude and claude.index("OR-25") < claude.index("## Commands")
+
+
+def test_or26_opus_plans_sonnet_works_is_a_rule_and_in_claude_md():
+    orch = (ROOT / "docs" / "ORCHESTRATION.md").read_text(encoding="utf-8")
+    claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    row = next(l for l in orch.splitlines() if l.startswith("| OR-26 |"))
+    assert "Opus plans, Sonnet works" in row
+    assert "OR-26" in claude and claude.index("OR-26") < claude.index("## Commands")

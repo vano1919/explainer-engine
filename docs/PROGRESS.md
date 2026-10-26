@@ -2444,3 +2444,6 @@ training as sequences is decided in the process. Changed together:
   (3) P2S on tent and rome at LoRA weight 1.0, cfg 4.0 vs 2.5 (the 0.7 axis dropped: the aim is the best way, not a comparison;
   32 cells), (4) S2 `xworld_v2_s2.py`: a 2x2 storyboard grid per scene, cut into panels (gutter search), each panel cleaned
   as an edit of itself; the first grid is logged GATE before the clean-ups. Tests: `test_xworld_v2_p2s.py`, `test_xworld_v2_s2.py`.
+- 17:10 UTC 2026-10-26 (ვანო 17:06): OR-26 "Opus plans, Sonnet works" (ORCHESTRATION, CLAUDE.md, test). S3 (3D layout) code is
+  written from the Opus thread's plan, not from the working session's own design; 2.1 pipeline checked free: `image` is a list of
+  any length, no depth/control input (depth would be one more reference image).
