@@ -2372,3 +2372,16 @@ training as sequences is decided in the process. Changed together:
   "objects without people".
 - `training/cast/rate_page.py` (+ test): the creator's rating page, four levels, three reasons and a free note, kept in the
   artifact db (collection `ratings`): https://claude.ai/artifact/6MKaVGbdzs4jv56b96QKmA.
+
+## 2026-10-26 13:55 Tbilisi: xworld_v2 round plan prepared (no pod yet)
+
+- ვანო 13:26: train the new world's style in rounds; after every round test style AND scene logic (three worlds: inside,
+  outside, a city street; five shots each), compare prompt forms, people described the way their era is pictured. Plan doc
+  https://claude.ai/artifact/4TZNBRNF6NAYWMPueHBccr (4 x 750 steps, tests at 0/750/1500/2250/3000, ~$7.3, cap $9); waits
+  for his choice and a RunPod top-up (balance $4.67).
+- Code (OR-21, tests `test_xworld_v2_data.py`, `test_xworld_v2_rounds.py`): `xworld_v2_data.py` (210 new pictures,
+  as-drawn captions, 10 held out), `xworld_v2_build.py` (new x3 under `xworld style` + the 591 v1 pairs under `rm style`),
+  `xworld_v2.yaml`, `xworld_v2.sh` (round 0 base test, then train -> checkpoint step check -> test per round),
+  `xworld_v2_scenes.py` (P1 = LT-75 D, P2 = D + camera/layout, P3 = text only), `xworld_v2_judge.py` (Qwen3-VL questions:
+  checks, same place, shot size, era), `xworld_v2_sheet.py`, scenes `stories/v2/{tent,tundra,rome}.json`. On HF:
+  `dataset_xworld_v2/`, `train_xworld_v2/code/`.

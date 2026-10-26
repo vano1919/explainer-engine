@@ -1,0 +1,46 @@
+from pathlib import Path
+
+from explainer_engine.training.pods import xworld_v2_build as b, xworld_v2_judge as j, xworld_v2_scenes as s
+
+SCENES = Path("explainer_engine/training/pods/stories/v2")
+
+
+def test_three_worlds_five_shots_and_faces():
+    scenes = s.load(SCENES)
+    assert sorted(x["world"] for x in scenes) == ["exterior", "interior", "urban"]
+    assert all(len(x["shots"]) == 5 and x["era"] for x in scenes)
+    todo = s.jobs(scenes)  # raises on an LT-79 face problem
+    assert len(todo) == 3 * (1 + 4 * 3)
+
+
+def test_forms():
+    shot = {"desc": "D.", "layout": "L.", "change": "C."}
+    assert "L." not in s.prompt("P1", shot) and "C." in s.prompt("P1", shot)
+    assert "L." in s.prompt("P2", shot) and "Keep everything" in s.prompt("P2", shot)
+    assert s.prompt("P3", shot) == "xworld style, D. L."
+    todo = s.jobs(s.load(SCENES))
+    assert all(t["ref"] is None for t in todo if t["form"] in ("P3", "all"))
+    p1 = [t for t in todo if t["form"] == "P1" and t["scene"] == "tent"]
+    assert p1[0]["ref"] == "tent_s0" and p1[1]["ref"] == p1[0]["name"]
+
+
+def test_judge_questions_and_scoring(tmp_path):
+    qs = j.questions(s.load(SCENES), tmp_path)
+    assert {q["key"] for q in qs} >= {"check0", "same_place", "size", "era"}
+    era = next(q for q in qs if q["key"] == "era" and q["scene"] == "rome")
+    assert j.ok(era, "Ancient Roman Empire") and not j.ok(era, "Medieval Europe")
+    size = next(q for q in qs if q["key"] == "size")
+    assert j.ok(size, size["want"].capitalize() + ".")
+    rows = [{"form": "P1", "scene": "tent", "key": "check0", "ok": True}, {"form": "P1", "scene": "tent", "key": "era", "ok": False}]
+    assert j.summary(rows)["P1"] == 0.5
+
+
+def test_build_swaps_pair_trigger_and_samples():
+    v1m = {"train": {"single": [{"img": "frames/0001.png"}], "scene_pairs": [{"a": "frames/0001.png", "b": "frames/0002.png"}],
+                     "inshot_pairs": []}, "hold_out": {"chains": [], "guard_shots": []}}
+    caps = {"d:frames/0001.png": "a", "d:frames/0002.png": "b.", "c:frames/0001.png>frames/0002.png": "cut."}
+    pr = b.pairs(v1m, caps)
+    assert len(pr) == 1 and pr[0][3].startswith("rm style, b")
+    held = {i: f"xworld style, held {i}" for i in b.SAMPLE_HELD}
+    smp = b.samples({"hold_out": held}, s.load(SCENES)[0] if s.load(SCENES)[0]["name"] == "tent" else s.load(SCENES)[1])
+    assert smp[-1]["prompt"].startswith("rm style, held c007") and smp[-2]["prompt"] == "held c007"

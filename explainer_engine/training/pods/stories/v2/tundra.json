@@ -1,0 +1,101 @@
+{
+ "name": "tundra",
+ "world": "exterior",
+ "place": "A cold steppe-tundra at dawn: flat grass with patches of snow, a frozen stream winding in from the left, a low rocky hill on the right with one big grey boulder, mountains far behind, a pale pink sky.",
+ "cast": {
+  "hunter": {
+   "look": "A Stone Age hunter as people picture early humans: a stocky man in rough fur hides tied with leather cords, bare arms, feet wrapped in hide, holding a long wooden spear with a flint point.",
+   "face": "He has a wide flat face, a heavy brow ridge with thick dark eyebrows, small deep-set brown eyes, a broad flat nose, a strong square jaw with a short tangled beard and long matted black hair."
+  },
+  "girl": {
+   "look": "A young Stone Age woman hunter as people picture early humans: a fur cape over a hide dress, a necklace of animal teeth, holding a flint knife.",
+   "face": "She has a long oval face, high cheekbones, narrow amber eyes, straight thin eyebrows, a small upturned nose, a pointed chin and long red hair in two rough braids."
+  }
+ },
+ "shots": [
+  {
+   "id": "s0",
+   "size": "wide",
+   "faces": [
+    "hunter",
+    "girl"
+   ],
+   "desc": "A cold steppe-tundra at dawn: flat grass with patches of snow, a frozen stream winding in from the left, a low rocky hill on the right with one big grey boulder, mountains far behind, a pale pink sky. Wide shot at eye level. A Stone Age hunter as people picture early humans: a stocky man in rough fur hides tied with leather cords, bare arms, feet wrapped in hide, holding a long wooden spear with a flint point. He has a wide flat face, a heavy brow ridge with thick dark eyebrows, small deep-set brown eyes, a broad flat nose, a strong square jaw with a short tangled beard and long matted black hair. A young Stone Age woman hunter as people picture early humans: a fur cape over a hide dress, a necklace of animal teeth, holding a flint knife. She has a long oval face, high cheekbones, narrow amber eyes, straight thin eyebrows, a small upturned nose, a pointed chin and long red hair in two rough braids. The two crouch side by side behind the big boulder on the right.",
+   "layout": "The camera looks north; the stream comes in from the left, the boulder is on the right, the mountains far behind; the low sun is on the left.",
+   "change": null,
+   "checks": [
+    "Are two people crouching behind a big rock?",
+    "Is there snow on the ground?",
+    "Are the people dressed in animal furs?"
+   ]
+  },
+  {
+   "id": "s1",
+   "size": "medium",
+   "faces": [
+    "girl"
+   ],
+   "desc": "Medium shot of the woman behind the same boulder: she points into the distance with her flint knife. A young Stone Age woman hunter as people picture early humans: a fur cape over a hide dress, a necklace of animal teeth, holding a flint knife. She has a long oval face, high cheekbones, narrow amber eyes, straight thin eyebrows, a small upturned nose, a pointed chin and long red hair in two rough braids.",
+   "layout": "The camera is in front of the boulder at her eye level; she points to the left of the picture, towards the stream; the boulder is behind her.",
+   "change": "Cut to a medium shot of the woman: she points into the distance.",
+   "checks": [
+    "Is a woman pointing into the distance?",
+    "Is she wearing furs?",
+    "Is there a big rock behind her?"
+   ]
+  },
+  {
+   "id": "s2",
+   "size": "wide",
+   "faces": [],
+   "desc": "Wide shot from behind the two hunters' backs at the same boulder: far away a herd of woolly mammoths crosses the frozen stream.",
+   "layout": "The camera is behind the hunters, looking past the boulder; the hunters' backs are in the foreground at the bottom; the mammoths are small and far, on the stream.",
+   "change": "Cut to a wide shot from behind the hunters: far away, woolly mammoths cross the frozen stream.",
+   "checks": [
+    "Are there mammoths far away?",
+    "Are two people seen from behind in the foreground?",
+    "Is there a frozen stream?"
+   ]
+  },
+  {
+   "id": "s3",
+   "size": "close",
+   "faces": [
+    "hunter"
+   ],
+   "desc": "Close-up of the man's face behind the same boulder: he grins and grips his spear. A Stone Age hunter as people picture early humans: a stocky man in rough fur hides tied with leather cords, bare arms, feet wrapped in hide, holding a long wooden spear with a flint point. He has a wide flat face, a heavy brow ridge with thick dark eyebrows, small deep-set brown eyes, a broad flat nose, a strong square jaw with a short tangled beard and long matted black hair.",
+   "layout": "The camera is close in front of him at his eye level; the dawn light is on the left of his face.",
+   "change": "Cut to a close-up of the man's face: he grins.",
+   "checks": [
+    "Is this a close-up of one face?",
+    "Is the man smiling or grinning?",
+    "Does he have a beard?"
+   ]
+  },
+  {
+   "id": "s4",
+   "size": "wide",
+   "faces": [
+    "hunter",
+    "girl"
+   ],
+   "desc": "Wide shot: the two hunters run along the frozen stream towards the mammoths, spear and knife raised. A Stone Age hunter as people picture early humans: a stocky man in rough fur hides tied with leather cords, bare arms, feet wrapped in hide, holding a long wooden spear with a flint point. He has a wide flat face, a heavy brow ridge with thick dark eyebrows, small deep-set brown eyes, a broad flat nose, a strong square jaw with a short tangled beard and long matted black hair. A young Stone Age woman hunter as people picture early humans: a fur cape over a hide dress, a necklace of animal teeth, holding a flint knife. She has a long oval face, high cheekbones, narrow amber eyes, straight thin eyebrows, a small upturned nose, a pointed chin and long red hair in two rough braids.",
+   "layout": "The camera is low by the stream; the hunters run away from the camera into the picture; the boulder is now small on the right behind them.",
+   "change": "Cut to a wide shot: both hunters run along the frozen stream towards the mammoths.",
+   "checks": [
+    "Are two people running?",
+    "Are they running away from the camera?",
+    "Is there a frozen stream?"
+   ]
+  }
+ ],
+ "era": [
+  "stone age",
+  "prehistoric",
+  "paleolithic",
+  "caveman",
+  "cavemen",
+  "ice age",
+  "early human"
+ ]
+}
