@@ -2456,3 +2456,10 @@ training as sequences is decided in the process. Changed together:
   parts the camera cannot see (`xworld_v2_scenes.frame_desc`: close = no footwear or legs, medium = no footwear), add the card's
   "behind" sentence and, in an over-the-shoulder shot, "exactly two people ... seen from behind" (`frame_extras`); collage titles carry
   three more questions (anatomy, background, duplicates). Test in `test_xworld_v2_p2s.py`.
+- 18:55 UTC 2026-10-26 (OR-26, the Opus plan S3C_CONTROLNET_PLAN): S3c coded: `xworld_v2_s3c.py` (step 0 LoRA key match with a 100 % stop and a
+  with/without-LoRA sample, pass A control pipeline + depth, pass B edit pipeline with master + sheet), pod script `xworld_v2_s3c.sh`
+  (reads the P2S master and sheets and the S3 depth renders from HF; vault check at the end), sheets for S3 and S3c, `xworld_v2_s3.score`
+  (Depth-Anything V2 Small vs the rendered layout, Spearman, free, CPU). Facts read free: the ControlNet file is 7.55 GB, control branch only
+  (`control_img_in` + 16 `control_blocks`, strict=False on the base transformer, so the base LoRA keys should match), `config_path` must be
+  qwenimage21_control.yaml. Deviation: the scale sweep (0.6/0.8) is only drawn on one shot per scene because an unattended pod cannot judge
+  it; 20 pictures. The pod needs ვანო's OR-23 yes.

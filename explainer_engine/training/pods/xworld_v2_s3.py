@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import sys
 import time
 from pathlib import Path
@@ -281,6 +282,38 @@ def spearman(a, b):
     return float(np.corrcoef(ra, rb)[0, 1])
 
 
+def depth_estimator():
+    """Depth-Anything V2 Small (transformers, CPU is enough): picture -> relative inverse depth (near = high), free."""
+    from transformers import pipeline
+    pipe = pipeline("depth-estimation", model="depth-anything/Depth-Anything-V2-Small-hf")
+    return lambda img: np.asarray(pipe(img)["predicted_depth"], float).squeeze()
+
+
+def score(outd, estimator=None, pattern="*_S*.png"):
+    """{picture: Spearman(estimated depth of the picture, rendered 1/t of its shot)}; the layout renders are <scene>_<shot>_t.npy."""
+    from PIL import Image
+    outd = Path(outd)
+    est = estimator or depth_estimator()
+    out = {}
+    for f in sorted(outd.glob(pattern)):
+        m = re.match(r"(\w+?)_(s\d)_", f.name)
+        t = outd / f"{m.group(1)}_{m.group(2)}_t.npy" if m else None
+        if not t or not t.exists() or f.name.endswith(("_block.png", "_depth.png")):
+            continue
+        truth = 1.0 / np.load(t)
+        guess = _resize(est(Image.open(f).convert("RGB")), truth.shape)
+        out[f.name] = spearman(guess, truth)
+    return out
+
+
+def _resize(a, shape):
+    """Nearest-neighbour resize of a 2-D array to shape (h, w)."""
+    a = np.asarray(a, float)
+    ys = (np.arange(shape[0]) * a.shape[0] / shape[0]).astype(int)
+    xs = (np.arange(shape[1]) * a.shape[1] / shape[1]).astype(int)
+    return a[ys][:, xs]
+
+
 def preview(scene_dir, sets_dir, outd, only=SCENES):
     from PIL import Image
     outd = Path(outd); outd.mkdir(parents=True, exist_ok=True)
@@ -296,6 +329,25 @@ def preview(scene_dir, sets_dir, outd, only=SCENES):
             sheet.paste(im, (c * 384, r * 216))
     out = outd / "s3_layouts.jpg"
     sheet.save(out, quality=88)
+    return out
+
+
+def sheet(outd, scenes=SCENES):
+    """<out>/s3_sheet.jpg: per scene and shot column the layout (block) above the S1, S3d and S3b results."""
+    from PIL import Image
+    outd = Path(outd)
+    rows = []
+    for scene in scenes:
+        for variant in ("block", "S1", "S3d", "S3b"):
+            ims = [outd / (f"{scene}_s{k}_block.png" if variant == "block" else f"{scene}_s{k}_{variant}.png") for k in range(1, 5)]
+            rows.append([Image.open(f).convert("RGB").resize((480, 270)) if f.exists() else Image.new("RGB", (480, 270), (255, 255, 255))
+                         for f in ims])
+    img = Image.new("RGB", (480 * 4, 270 * len(rows)), (255, 255, 255))
+    for r, row in enumerate(rows):
+        for c, im in enumerate(row):
+            img.paste(im, (c * 480, r * 270))
+    out = outd / "s3_sheet.jpg"
+    img.save(out, quality=88)
     return out
 
 
@@ -333,7 +385,9 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    if sys.argv[1:2] == ["preview"]:
+    if sys.argv[1:2] == ["sheet"]:
+        print(sheet(sys.argv[2]))
+    elif sys.argv[1:2] == ["preview"]:
         print(preview(sys.argv[2], Path(sys.argv[2]) / "sets", sys.argv[3], sys.argv[4].split(",") if len(sys.argv) > 4 else SCENES))
     else:
         main(sys.argv[1:])

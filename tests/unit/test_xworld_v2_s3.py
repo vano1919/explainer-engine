@@ -113,3 +113,15 @@ def test_spearman_of_a_monotone_pair_is_one_and_of_a_reversed_pair_minus_one():
 def test_pod_script_runs_s3_last_and_keeps_the_vault_check():
     sh = (PODS / "xworld_v2_p2s.sh").read_text(encoding="utf-8")
     assert "xworld_v2_s3.py" in sh and sh.index("xworld_v2_s2.py") < sh.index("xworld_v2_s3.py") < sh.index("vault")
+
+
+def test_score_correlates_an_estimated_depth_with_the_rendered_layout_of_its_shot(tmp_path):
+    from PIL import Image
+    s = _set("tent")
+    ident, tmap, shade = S.render(s, S.camera(s, s["shots"]["s1"]), 160, 90)
+    np.save(tmp_path / "tent_s1_t.npy", tmap)
+    Image.new("RGB", (160, 90)).save(tmp_path / "tent_s1_S3d.png")
+    truth = 1.0 / tmap
+    good = S.score(tmp_path, estimator=lambda img: np.nan_to_num(truth, nan=0.0))
+    bad = S.score(tmp_path, estimator=lambda img: -np.nan_to_num(truth, nan=0.0))
+    assert good["tent_s1_S3d.png"] > 0.99 and bad["tent_s1_S3d.png"] < -0.99
