@@ -2290,3 +2290,8 @@ training as sequences is decided in the process. Changed together:
 - 04:25 Tbilisi: training pod create: every 48 GB SECURE card (L40, 6000 Ada, A40, A6000, L40S) answers "no instances
   available" under the CUDA >= 12.8 filter (LT-19); one try got an H100 NVL community at $2.59/h (only ~1.5 h inside the
   $4 job cap, half of it boot): stopped at once (kept, $0/day). A retry loop asks every 2.5 min for the cheapest job card.
+- 05:10 Tbilisi: training on vvgrnie44lxhp8 (RTX PRO 6000 Blackwell): boot 2 min, train from 00:32Z, 1.31 s/step (+ ~1.5 min
+  of samples per 250), projected end ~02:15Z, ~$3.2 of the $4 cap. Samples 0/250/500 (HF `train_xworld_v1/review/
+  sheet_0-500.jpg`): by 500 the two new subjects (medieval market, cockpit) are drawn flat in the R&M line look; the
+  held-out frames come close to the real ones; the no-trigger sample also goes flat (trigger bleed, expected with no
+  caption dropout; watch it).
