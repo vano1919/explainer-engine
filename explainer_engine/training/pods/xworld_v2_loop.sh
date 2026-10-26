@@ -8,7 +8,7 @@ mkdir -p /workspace/out
 exec > /workspace/out/pod.log 2>&1
 export HF_HOME=/workspace/hf HF_HUB_ENABLE_HF_TRANSFER=1 PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1
 P=lora_plan_2026-10-26
-ROUND=${ROUND:-1}
+ROUND=${ROUND:-2}
 CKPT=${CKPT:-xworld_v2_000003000.safetensors}  # ვანო 16:32Z: the 3000 image test and P2S on ONE new pod; the training pod stops once 3000 is on HF
 stage(){ echo "=== STAGE $1 $(date -u +%H:%M:%S)"; echo "$1 $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt; }
 up(){ python - <<PY
