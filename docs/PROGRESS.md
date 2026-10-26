@@ -2287,3 +2287,6 @@ training as sequences is decided in the process. Changed together:
   (`training/pods/caption_review.py` + test): 19 edited (names to roles, cut endings), 0 dropped; read samples of both kinds.
   HF `caption_xworld_v1/captions_reviewed.jsonl` + `review_report.json`. Local dry build: 766 style + 591 pairs, no
   held-out leak, 6 samples; the test plan has 280 jobs.
+- 04:25 Tbilisi: training pod create: every 48 GB SECURE card (L40, 6000 Ada, A40, A6000, L40S) answers "no instances
+  available" under the CUDA >= 12.8 filter (LT-19); one try got an H100 NVL community at $2.59/h (only ~1.5 h inside the
+  $4 job cap, half of it boot): stopped at once (kept, $0/day). A retry loop asks every 2.5 min for the cheapest job card.
