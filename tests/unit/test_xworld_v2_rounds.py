@@ -23,6 +23,16 @@ def test_forms():
     p1 = [t for t in todo if t["form"] == "P1" and t["scene"] == "tent" and t["seed"] == 23]
     assert p1[0]["ref"] == "tent_23_s0" and p1[1]["ref"] == p1[0]["name"]
     assert all(t["ref"] == f"{t['scene']}_{t['seed']}_s0" for t in todo if t["form"] == "P2F")
+    assert "L." not in s.prompt("P2F", shot) and s.prompt("P2F", shot).startswith("xworld style, " + s.MASTER)
+    assert s.prompt("P2R", shot).startswith("rm style, " + s.MASTER)
+
+
+def test_round_tests_are_reduced_and_share_shot_zero():
+    todo = s.jobs(s.load(SCENES), tests=s.ROUND_TESTS)
+    forms = {(t["scene"], t["seed"], t["form"]) for t in todo if t["form"] != "all"}
+    assert ("tent", 11, "P2R") in forms and not any(f[2] == "P2R" and f[0] != "tent" for f in forms)
+    assert {f[1] for f in forms if f[2] == "P2F"} == {11, 23} and {f[1] for f in forms if f[2] == "P3"} == {11}
+    assert len(todo) == 3 * ((1 + 4 + 4) + (1 + 4)) + 4  # per scene: seed 11 shot 0 + P3 + P2F, seed 23 shot 0 + P2F; tent + P2R
 
 
 def test_judge_questions_and_scoring(tmp_path):
@@ -49,3 +59,9 @@ def test_build_writes_cut_pairs_and_drops_inshot_pairs():
     held = {i: f"xworld style, held {i}" for i in b.SAMPLE_HELD}
     smp = b.samples({"hold_out": held}, s.load(SCENES)[0] if s.load(SCENES)[0]["name"] == "tent" else s.load(SCENES)[1])
     assert smp[-1]["prompt"].startswith("rm style, held c007") and smp[-2]["prompt"] == "held c007"
+
+
+def test_new_place_pairs_are_dropped():
+    cap = lambda c: b.cut_caption(f"xworld style, A room. Change from the previous shot: {c}")
+    assert b.new_place(cap("The scene shifts to a doorway where two new figures appear."))
+    assert not b.new_place(cap("The camera zooms in to a close-up and the other figure is no longer visible."))

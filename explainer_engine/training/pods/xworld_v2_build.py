@@ -1,6 +1,6 @@
 """Builds the xworld_v2 training folders and config on the pod (D-80; ვანო 2026-10-26 13:26 Tbilisi, the round plan):
 * ``new/``: the 210 new-world pictures (xworld_v2_data.py), captions ``xworld style, ...``, repeated NEW_REPEATS times;
-* ``pairs/target`` + ``pairs/control``: the 357 cross-shot pairs of xworld_v1 (shot -> next shot; the 234 within-shot ones are dropped)
+* ``pairs/target`` + ``pairs/control``: the cross-shot pairs (357, less those that move to another place) of xworld_v1 (shot -> next shot; the 234 within-shot ones are dropped)
   with their reviewed captions written as cuts (cut_caption), under ``rm style``: they keep the base model's sense of cutting and moving a scene
   (regularization) while the show's look stays on its own trigger. The show's single frames are left out.
 Sample prompts: five held-out new-world pictures, the tent scene's first shot, and one held-out person again without a
@@ -11,6 +11,7 @@ trigger and with ``rm style`` (does the look stay apart?).
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -42,13 +43,28 @@ def cut_caption(text):
     return f"{RM_TRIGGER}, {MASTER} {desc.strip()} {CUT} {change.strip()} {KEEP}"
 
 
+NEW_PLACE = re.compile(
+    r"(scene (shifts|changes|transitions)|shifts? to (a|an|the) (new|different|doorway|room|hallway|kitchen|outdoor|street|forest"
+    r"|house|garage|lab|yard)|(new|different) (room|location|place|setting|environment|scene|background)"
+    r"|background (changes|is now|has changed|shifts)|(room|setting|location|environment|scene|background) "
+    r"(is now|has changed|changes|shifts)|(moves?|goes|cuts?|transitions?) to (a|an|the) (different|new|another)"
+    r"|now (in|inside|outdoors|outside|at) (a|an|the))", re.I)
+
+
+def new_place(text):
+    """A change sentence that moves to another place: it contradicts the master sentence (keep its landmarks)."""
+    return bool(NEW_PLACE.search(text.split(CUT, 1)[1]))
+
+
 def pairs(v1_manifest, caps):
     """The 357 cross-shot v1 pair items (the 234 within-shot pairs teach a still camera: review 2026-10-26), written as cuts."""
     cut = len(v1_manifest["train"]["scene_pairs"])
     out = []
     for kind, name, img, ctrl, text in plan(v1_manifest, caps):
         if kind == "pair" and int(name[1:]) < cut:  # plan() numbers scene_pairs first, then inshot_pairs
-            out.append((name, img, ctrl, cut_caption(text)))
+            cap = cut_caption(text)
+            if not new_place(cap):  # ~15 pairs, ვანო 2026-10-26 12:42
+                out.append((name, img, ctrl, cap))
     return out
 
 

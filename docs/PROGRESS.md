@@ -2409,3 +2409,12 @@ training as sequences is decided in the process. Changed together:
   change sentences describe a new place ("the scene shifts to a doorway"), which fights the master sentence "keep its landmarks";
   the cut teaches framing, the place-keeping comes from the pairs where only the camera moves. Not yet decided by ვანო: R&M
   share (25 % x5 or 36 % x3, review prefers 36 %), test size, top-up; no pod before his approval.
+- 12:55 UTC 2026-10-26 (ვანო 12:42 "both"): test and training now ask in one form. `xworld_v2_scenes`: P2F = master + description
+  + change + keep line (no layout sentence), `P2R` = P2F under `rm style` (does the cut show only under the trigger it is
+  trained with?), `ROUND_TESTS` = what a training round draws (P3 seed 11, P2F seeds 11 and 23, P2R tent seed 11 = 46
+  pictures, `xworld_v2_scenes.py <scenes> <out> <lora> [weight] round`); `xworld_v2_sheet` shows per row "did the camera
+  move? is it the same place?". `xworld_v2_build.pairs` drops the pairs whose change moves to another place (`new_place`):
+  357 -> 342, so R&M is 35 % with the new pictures x3. Round-0's P2F text (with layout) was not the same prompt. Free checks
+  of the review's question: 270 of 357 change sentences name a camera and 261 a size or angle word. Still open for ვანო: R&M
+  share (x3 = 35 %, or x5 = 25 %), test size, seed 23 and the rm-style control (in ROUND_TESTS, +~$0.1 and +$0.1 per
+  checkpoint), the top-up; smoke run of 20 steps goes first on the same pod.
