@@ -1,0 +1,2 @@
+{"scene": "tent", "master": "p2s/out/p2s/tent_11_s0.png", "note": "screen x (share of the width) of the centre of each landmark's visible mass in the master picture, read by eye once (2026-10-26)",
+ "screen_x": {"bed": 0.10, "table": 0.49, "entrance": 0.85, "pole": 0.50, "napoleon": 0.37, "general": 0.67}}

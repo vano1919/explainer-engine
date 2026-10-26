@@ -2475,3 +2475,11 @@ training as sequences is decided in the process. Changed together:
   YuNet/SFace models exist), sheet per scene and seed. Choices reported: grid 1 now also carries the place sentence and the `frame_extras` line
   (the winning S2 grid had neither), and `SHOULDER` accepts "over the X's shoulder" (before, only "over X's"), so rome s4 and the new s8 get the
   "exactly two people" line. Test `test_xworld_v2_s2x.py`. No pod until ვანო's OR-23 yes.
+- 20:30 UTC 2026-10-26 (OR-26, the Opus plan STRATEGY_LOOP_PLAN): round 0 of the strategy loop, free part coded: `xworld_v2_loop.py` (row registry S1,
+  S2T, S2E, S3cA, S3cAB, M2, M4, M5, M3; round config with ONE change per row refused in code; round 1 = 68 pictures; the 2x2 depth control canvas and
+  the M4 in-paint canvas; M5 `reproject` of the master into a new camera; frozen-plate SSIM, landmark order match, grain bar, shot pass rule,
+  attribution in the plan's order, the stop rule, attribution.md) and `test_xworld_v2_loop.py` (13 tests). The s0 agreement measure found the two
+  set files off the masters (tent: general 0.11 and entrance 0.08 of the width too far right; rome: legionary 0.37, counter 0.1, baker not
+  in the picture): the sets were moved to the masters' landmark positions (`sets/*.marks.json`, read by eye from the masters), both agree
+  now. S3 depth maps already on HF (used by the running S3c pod) come from the OLD sets, so S3c answers for those; the loop's rounds use the new ones.
+  Not yet written: the pod-side runner of the rows (needs the S3c numbers and the M4 in-paint call of the control pipeline `image` + `mask_image`).
