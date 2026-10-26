@@ -1,37 +1,82 @@
 {
   "story": "napoleon_tent",
+  "before_lt79": true,
   "brief": "ვანო 2026-10-26 10:32 Tbilisi: Napoleon in his tent in the field; a general comes in and reports that the enemy has arrived; he rushes out, looks at the far meadow and sees a great Mongol army approaching.",
   "note": "No story names in prompts (KP rules): roles and one visible look per person, written in the caption shape xworld_v1 learned (LT-74: 50-90 words, camera last; change lines start 'Change from the previous shot:'). Scene B is drawn two ways: B0 from the tent master (does the general's look carry outside?) and B0 from text alone.",
   "shots": [
-    {"id": "A0", "master": null,
-     "desc": "Inside a large canvas army tent at night, lit by a single brass lantern hanging from the centre pole. A short stocky general with a pale round face, dark hair and a black bicorne hat worn sideways, in a grey greatcoat over a white waistcoat, leans over a wooden table covered with a large map and small wooden figures, one hand flat on the map, frowning. A folded cot and an iron-bound chest stand at the back. Wide shot, the table in the centre."},
-    {"id": "A1", "master": "A0",
-     "desc": "Inside the lantern-lit canvas army tent at night. The tent flap at the left is thrown open and a tall young officer with long sideburns, in a dark blue coat with gold epaulettes, a red sash and muddy boots, bursts in out of breath, one arm raised. The short stocky general in the black bicorne hat and grey greatcoat looks up sharply from the map table in the centre. Wide shot.",
-     "change": "Change from the previous shot: A tall young officer bursts in through the tent flap on the left, and the general looks up from the map."},
-    {"id": "A2", "master": "A0",
-     "desc": "Inside the lantern-lit army tent at night. A tall young officer with long sideburns, in a dark blue coat with gold epaulettes and a red sash, stands breathing hard, eyes wide, mouth open as he speaks, pointing back over his shoulder at the open tent flap. Sweat shines on his forehead and the canvas wall glows warm behind him. Close-up, the officer's face and pointing hand.",
-     "change": "Change from the previous shot: The camera cuts to a close-up of the officer, who points back at the tent flap with an alarmed face; the general is out of view."},
-    {"id": "A3", "master": "A0",
-     "desc": "Inside the lantern-lit army tent at night. The short stocky general with a pale round face and a black bicorne hat worn sideways, in a grey greatcoat, stares straight ahead with narrowed eyes and a clenched jaw, one hand gripping the edge of the map table. The lantern above casts hard shadows under the brim of his hat. Close-up, the general's face.",
-     "change": "Change from the previous shot: The camera cuts to a close-up of the general, who stares ahead with narrowed eyes; the officer is out of view."},
-    {"id": "A4", "master": "A0",
-     "desc": "Inside the lantern-lit army tent at night. The short stocky general in the black bicorne hat and grey greatcoat strides fast toward the open tent flap on the left, his coat swinging, the map table behind him knocked askew and small wooden figures falling to the floor. The tall officer in the dark blue coat steps back to let him pass. Medium shot from the side.",
-     "change": "Change from the previous shot: The general strides toward the tent flap, knocking the map table askew, and the officer steps aside."},
-    {"id": "B0", "master": "A0",
-     "desc": "Outside the army tent at dawn, on a grassy hilltop. The short stocky general with a pale round face, a black bicorne hat worn sideways and a grey greatcoat has just stepped out through the tent flap, one hand still on the canvas, looking into the distance. Rows of white army tents and smoking campfires stretch behind him, and soldiers in blue coats turn their heads. Pale orange sky. Medium wide shot.",
-     "change": "Change from the previous shot: The camera cuts outside: the general steps out of the tent onto a grassy hilltop at dawn, with the army camp behind him."},
-    {"id": "B1", "master": "B0",
-     "desc": "On a grassy hilltop at dawn, seen from behind the short stocky general in a black bicorne hat and grey greatcoat, who stands at the left edge of the frame looking out over a wide green meadow far below. At the far horizon, under a pale orange sky, a long dark line of riders raises a cloud of dust. Over-the-shoulder wide shot, the general in the foreground.",
-     "change": "Change from the previous shot: The camera moves behind the general, who looks out over a wide meadow; a dark line of riders appears on the horizon."},
-    {"id": "B2", "master": "B0",
-     "desc": "A vast green meadow at dawn under a pale orange sky. Thousands of horse archers in fur hats and lamellar armour ride forward in a huge crescent, with tall horsetail banners and clouds of dust rising behind them; their front rank fills the middle of the frame and the line stretches to both edges. Extreme wide shot from a low hill.",
-     "change": "Change from the previous shot: The camera cuts to the meadow: thousands of horse archers with horsetail banners ride toward the camera; the general is out of view."},
-    {"id": "B3", "master": "B0",
-     "desc": "On the grassy hilltop at dawn, the short stocky general with a pale round face and a black bicorne hat worn sideways, in a grey greatcoat, stands frozen with wide eyes and a slightly open mouth, the warm dawn light on his face. A thin glowing line of dust hangs on the horizon behind him. Close-up, the general's face.",
-     "change": "Change from the previous shot: The camera cuts to a close-up of the general, who stares with wide eyes and an open mouth."}
+    {
+      "id": "A0",
+      "master": null,
+      "desc": "Inside a large canvas army tent at night, lit by a single brass lantern hanging from the centre pole. A short stocky general with a pale round face, dark hair and a black bicorne hat worn sideways, in a grey greatcoat over a white waistcoat, leans over a wooden table covered with a large map and small wooden figures, one hand flat on the map, frowning. A folded cot and an iron-bound chest stand at the back. Wide shot, the table in the centre."
+    },
+    {
+      "id": "A1",
+      "master": "A0",
+      "desc": "Inside the lantern-lit canvas army tent at night. The tent flap at the left is thrown open and a tall young officer with long sideburns, in a dark blue coat with gold epaulettes, a red sash and muddy boots, bursts in out of breath, one arm raised. The short stocky general in the black bicorne hat and grey greatcoat looks up sharply from the map table in the centre. Wide shot.",
+      "change": "Change from the previous shot: A tall young officer bursts in through the tent flap on the left, and the general looks up from the map."
+    },
+    {
+      "id": "A2",
+      "master": "A0",
+      "desc": "Inside the lantern-lit army tent at night. A tall young officer with long sideburns, in a dark blue coat with gold epaulettes and a red sash, stands breathing hard, eyes wide, mouth open as he speaks, pointing back over his shoulder at the open tent flap. Sweat shines on his forehead and the canvas wall glows warm behind him. Close-up, the officer's face and pointing hand.",
+      "change": "Change from the previous shot: The camera cuts to a close-up of the officer, who points back at the tent flap with an alarmed face; the general is out of view."
+    },
+    {
+      "id": "A3",
+      "master": "A0",
+      "desc": "Inside the lantern-lit army tent at night. The short stocky general with a pale round face and a black bicorne hat worn sideways, in a grey greatcoat, stares straight ahead with narrowed eyes and a clenched jaw, one hand gripping the edge of the map table. The lantern above casts hard shadows under the brim of his hat. Close-up, the general's face.",
+      "change": "Change from the previous shot: The camera cuts to a close-up of the general, who stares ahead with narrowed eyes; the officer is out of view."
+    },
+    {
+      "id": "A4",
+      "master": "A0",
+      "desc": "Inside the lantern-lit army tent at night. The short stocky general in the black bicorne hat and grey greatcoat strides fast toward the open tent flap on the left, his coat swinging, the map table behind him knocked askew and small wooden figures falling to the floor. The tall officer in the dark blue coat steps back to let him pass. Medium shot from the side.",
+      "change": "Change from the previous shot: The general strides toward the tent flap, knocking the map table askew, and the officer steps aside."
+    },
+    {
+      "id": "B0",
+      "master": "A0",
+      "desc": "Outside the army tent at dawn, on a grassy hilltop. The short stocky general with a pale round face, a black bicorne hat worn sideways and a grey greatcoat has just stepped out through the tent flap, one hand still on the canvas, looking into the distance. Rows of white army tents and smoking campfires stretch behind him, and soldiers in blue coats turn their heads. Pale orange sky. Medium wide shot.",
+      "change": "Change from the previous shot: The camera cuts outside: the general steps out of the tent onto a grassy hilltop at dawn, with the army camp behind him."
+    },
+    {
+      "id": "B1",
+      "master": "B0",
+      "desc": "On a grassy hilltop at dawn, seen from behind the short stocky general in a black bicorne hat and grey greatcoat, who stands at the left edge of the frame looking out over a wide green meadow far below. At the far horizon, under a pale orange sky, a long dark line of riders raises a cloud of dust. Over-the-shoulder wide shot, the general in the foreground.",
+      "change": "Change from the previous shot: The camera moves behind the general, who looks out over a wide meadow; a dark line of riders appears on the horizon."
+    },
+    {
+      "id": "B2",
+      "master": "B0",
+      "desc": "A vast green meadow at dawn under a pale orange sky. Thousands of horse archers in fur hats and lamellar armour ride forward in a huge crescent, with tall horsetail banners and clouds of dust rising behind them; their front rank fills the middle of the frame and the line stretches to both edges. Extreme wide shot from a low hill.",
+      "change": "Change from the previous shot: The camera cuts to the meadow: thousands of horse archers with horsetail banners ride toward the camera; the general is out of view."
+    },
+    {
+      "id": "B3",
+      "master": "B0",
+      "desc": "On the grassy hilltop at dawn, the short stocky general with a pale round face and a black bicorne hat worn sideways, in a grey greatcoat, stands frozen with wide eyes and a slightly open mouth, the warm dawn light on his face. A thin glowing line of dust hangs on the horizon behind him. Close-up, the general's face.",
+      "change": "Change from the previous shot: The camera cuts to a close-up of the general, who stares with wide eyes and an open mouth."
+    }
   ],
   "runs": [
-    {"name": "lora", "lora": "A", "shots": "all", "text_master": ["B0"]},
-    {"name": "base", "lora": null, "shots": ["A0", "A1", "B0", "B2"]}
+    {
+      "name": "lora",
+      "lora": "A",
+      "shots": "all",
+      "text_master": [
+        "B0"
+      ],
+      "weight": 1.0
+    },
+    {
+      "name": "base",
+      "lora": null,
+      "shots": [
+        "A0",
+        "A1",
+        "B0",
+        "B2"
+      ]
+    }
   ]
 }

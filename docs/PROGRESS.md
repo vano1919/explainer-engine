@@ -2338,3 +2338,8 @@ training as sequences is decided in the process. Changed together:
   eyes, hooked nose / long narrow face, cheekbones, almond eyes) both men become our own designs at every weight; 0.7
   keeps the flat cartoon line, 0.5 turns darker and more painterly; at 0.7/0.5 the officer drifts from close-up to medium
   shot. Proposal to ვანო: weight 0.7 + a written face for every person (a composer rule with a test).
+- 11:55 Tbilisi: LT-79 (ვანო 11:49 "კი დაწერე" + "the detailed description must differ from the show's characters"):
+  xworld story files need a `cast` with a written face per person (4+ of shape, eyes, nose, brows, jaw/chin, mouth), each
+  shot's `faces` and the face text word for word in its description, no trait or name of the training show's people
+  (`SHOW_FACE`), runs default to weight 0.7; `xworld_v1_story.face_problems` + 6 tests; the two earlier stories carry
+  `before_lt79` (napoleon_tent keeps weight 1.0 explicitly).

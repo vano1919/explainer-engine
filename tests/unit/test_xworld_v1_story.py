@@ -63,5 +63,46 @@ def test_faces_story_runs_each_shot_at_three_lora_weights_from_text():
         assert 50 <= len(sh["desc"].split()) <= 90, sh["id"]
 
 
-def test_weight_defaults_to_one():
-    assert {x["weight"] for x in st.jobs(_story())} == {1.0}
+def test_runs_default_to_the_lt79_weight_and_old_stories_keep_theirs():
+    assert st.WEIGHT == 0.7
+    assert {x["weight"] for x in st.jobs(_story()) if x["lora"]} == {1.0}
+    s = _story()
+    del s["runs"][0]["weight"]
+    assert {x["weight"] for x in st.jobs(s) if x["lora"]} == {0.7}
+
+
+GENERAL = "His face is fleshy and square, with small hooded eyes, heavy dark eyebrows and a long hooked nose."
+
+
+def _new_story(face=GENERAL, desc=None, faces=("general",)):
+    d = desc if desc is not None else ("Inside a lantern-lit army tent at night, a short stocky general in a black bicorne "
+                                       f"hat stares ahead. {GENERAL} Close-up.")
+    return {"story": "t", "cast": {"general": {"face": face}},
+            "shots": [{"id": "A0", "master": None, "faces": list(faces), "desc": d}],
+            "runs": [{"name": "lora", "lora": "A", "shots": "all"}]}
+
+
+def test_lt79_a_story_with_written_faces_passes():
+    assert st.face_problems(_new_story()) == []
+    assert st.jobs(_new_story())[0]["weight"] == 0.7
+
+
+def test_lt79_refuses_missing_cast_thin_face_and_a_shot_without_the_face_text():
+    s = _new_story(); del s["cast"]
+    assert any("no cast" in p for p in st.face_problems(s))
+    with pytest.raises(ValueError):
+        st.jobs(s)
+    assert any("needs 4" in p for p in st.face_problems(_new_story(face="He has small eyes.")))
+    assert any("lacks general" in p for p in st.face_problems(_new_story(desc="A general in a tent. Close-up.")))
+    assert any("not in the cast" in p for p in st.face_problems(_new_story(faces=("officer",))))
+
+
+def test_face_parts_reads_the_parts():
+    assert st.face_parts(GENERAL) == ["brows", "eyes", "nose", "shape"]
+
+
+def test_lt79_a_face_like_the_training_shows_people_is_refused():
+    like = "His face is round, with big round eyes with tiny pupils, a unibrow, a small nose and a wobbly mouth."
+    assert any("too close" in p for p in st.face_problems(_new_story(face=like, desc=f"A general. {like} Close-up.")))
+    s = _new_story(); s["cast"]["general"]["look"] = "a white lab coat and spiky hair"
+    assert any("too close" in p for p in st.face_problems(s))
