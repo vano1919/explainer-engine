@@ -2301,3 +2301,13 @@ training as sequences is decided in the process. Changed together:
   overfit flags (close crops, a ghosted double face in the edit sample, held 0.842). `test_xworld_v1/code/picks.json`
   (with the reasons and all scores), sheets in `train_xworld_v1/review/`. Test pod ys4qcp04yp4nym (RTX PRO 6000
   community $1.69/h, ostris/aitoolkit image, $1.5 cap) started 02:19Z; D/T run first.
+- 07:30 Tbilisi: test pod ys4qcp04yp4nym drew all 80 D/T frames (A = 2250, B = 1500; 35 s per 1280x720 picture with CPU
+  offload); V3-V6, D0, T0 were not reached inside $1.5. LT-75 scores (`training/pods/xworld_v1_score.py` + test; HF
+  `test_xworld_v1/review/score.json`, sheets chain0-3.jpg): D/2250 CLIP 0.843, palette 0.105, ink x1.84, composite 0.130 >
+  D/1500 0.038 > T/2250 -0.178 > T/1500 -0.195. On the sheets D follows the change lines (close-ups, cuts, new people); T
+  repeats the previous drawn frame and degrades step by step. Weak spot: who a person is comes only from the description.
+  **Money incident:** the detached `runpod guard` processes die in this cloud container after 5-30 minutes (logs end
+  00:28Z, 02:27Z, 23:14Z); the test pod ran unguarded to $1.6 (cap $1.5) until the 15-minute check stopped it. The
+  training pod ended by its own script. Fix to propose: run the guard as a tracked background task of the session, or
+  give pods a self-enforced money cap. Night total ~$5.0 of $9 (balance $10.42 -> $5.41); nothing running; six stopped
+  0 GB pods kept for his word. Report: https://claude.ai/artifact/3xSDYTdC4bHJRqShLdGuCW
