@@ -7,8 +7,9 @@ set -x
 mkdir -p /workspace/out
 exec > /workspace/out/pod.log 2>&1
 export HF_HOME=/workspace/hf HF_HUB_ENABLE_HF_TRANSFER=1 PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1
+export XW_GPU_MODE=${XW_GPU_MODE:-model_full_load}  # round 3a: a 80 GB card keeps everything loaded (about twice as fast as offload); load_pipeline falls back to offload on an error
 P=lora_plan_2026-10-26
-ROUND=${ROUND:-2}
+ROUND=${ROUND:-3a}
 CKPT=${CKPT:-xworld_v2_000003000.safetensors}  # ვანო 16:32Z: the 3000 image test and P2S on ONE new pod; the training pod stops once 3000 is on HF
 stage(){ echo "=== STAGE $1 $(date -u +%H:%M:%S)"; echo "$1 $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt; }
 up(){ python - <<PY
@@ -54,7 +55,7 @@ mkdir -p $O $IN
 ( cd $C && timeout 900 /workspace/vx/bin/python xworld_v2_loop_run.py inputs $CFG scenes scenes/more scenes/sets $M $IN ); echo "INPUTS EXIT $?"
 up
 stage draw
-( cd $C && timeout 4200 /workspace/vx/bin/python xworld_v2_loop_run.py draw $CFG scenes scenes/more $IN $M $O $D/output/$CKPT ); echo "LOOP EXIT $?"
+( cd $C && timeout 5400 /workspace/vx/bin/python xworld_v2_loop_run.py draw $CFG scenes scenes/more $IN $M $O $D/output/$CKPT ); echo "LOOP EXIT $?"
 echo "LOOP DONE $(date -u +%H:%M:%S)" >> /workspace/out/stages.txt
 kill $LOOP 2>/dev/null
 echo "DONE $(date -u +%H:%M:%S)" > /workspace/out/beat.txt; up

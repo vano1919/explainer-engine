@@ -269,7 +269,7 @@ def test_round_two_prompts_put_the_behind_line_first_and_name_the_layout():
     assert p.count("camp bed") == 1  # moved, not duplicated
     s = R.S3.load_set(R.SETS_DIR / "tent.set.json")
     cam, lm = R.layout_words(s, "s2")
-    assert cam == "close shot, eye angle" and lm and all("(" in x for x in lm)
+    assert cam == "close shot, eye angle" and lm and not any("(" in x for x in lm)  # names only, no colour
 
 
 def test_a_factor_cell_is_a_row_and_the_l16_design_is_orthogonal():
@@ -369,3 +369,17 @@ def test_round_3a_extras_turnaround_sketch_paintover():
     pp, roles = R.po_people_prompt(sc, R.shot_of(sc, "s2"), R.sets_of(sc))
     assert roles == ["baker"] and "Image 1 is the empty place" in pp and "model sheet of baker" in pp and "percent of its height" in pp
     assert "no people" in R.po_plate_prompt(sc, R.shot_of(sc, "s2"))
+
+
+def test_layout_words_carry_no_debug_colour():
+    """Round 2 finding (2026-10-26): S2L named the ray-cast colours ("the Colosseum (yellow)") and the picture drew purple houses and a yellow pole."""
+    from pathlib import Path
+    from explainer_engine.training.pods import xworld_v2_loop_run as R
+    from explainer_engine.training.pods import xworld_v2_s3 as S3
+    base = Path(R.__file__).resolve().parent / "stories/v2"
+    for name in ("tent", "rome", "ship", "tundra"):
+        s = S3.load_set(base / f"sets/{name}.set.json")
+        for sid in s["shots"]:
+            cam, lm = R.layout_words(s, sid)
+            text = (cam + " " + ", ".join(lm)).lower()
+            assert not any(c in text for c in S3.COLOR_WORDS), (name, sid, text)

@@ -101,7 +101,7 @@ def layout_words(s, sid, w=320, h=180):
     for k, it in enumerate(items):
         m = ident == k
         if m.mean() >= S3.MIN_PIXELS:
-            seen.append((float(xs[m].mean()), f"{it['id'].replace('_', ' ')} ({S3.color_word(it['color'])})"))
+            seen.append((float(xs[m].mean()), it.get("label") or it["id"].replace("_", " ")))  # never the mannequin colour: round 2's S2L drew those colours into the picture
     cam_words = f"{spec.get('size', 'wide')} shot, {spec.get('angle', 'eye')} angle"
     return cam_words, [n for _, n in sorted(seen)]
 

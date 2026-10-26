@@ -1,0 +1,188 @@
+{
+ "round": 3,
+ "scenes": [
+  "tent",
+  "rome",
+  "ship",
+  "tundra"
+ ],
+ "seeds": [
+  11
+ ],
+ "cfg": 2.5,
+ "rows": [
+  "TURN",
+  "X_g_n_0_0+dir",
+  "X_g_n_0_0+dsk",
+  "X_g_n_0_0",
+  "PO55",
+  "PO70",
+  "X_g_n_0_0+sk"
+ ],
+ "stages": [
+  {
+   "rows": [
+    "TURN"
+   ],
+   "scenes": [
+    "tent",
+    "rome",
+    "ship"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "X_g_n_0_0+dir",
+    "X_g_n_0_0+dsk"
+   ],
+   "scenes": [
+    "tent",
+    "rome"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "X_g_n_0_0",
+    "X_g_n_0_0+dir",
+    "X_g_n_0_0+dsk"
+   ],
+   "scenes": [
+    "ship"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "PO55",
+    "PO70"
+   ],
+   "scenes": [
+    "tent",
+    "rome"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "PO55",
+    "PO70"
+   ],
+   "scenes": [
+    "ship"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "TURN",
+    "X_g_n_0_0",
+    "X_g_n_0_0+dir",
+    "X_g_n_0_0+dsk"
+   ],
+   "scenes": [
+    "tundra"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "X_g_n_0_0+dir",
+    "X_g_n_0_0+dsk"
+   ],
+   "scenes": [
+    "tent",
+    "rome"
+   ],
+   "seeds": [
+    23
+   ]
+  },
+  {
+   "rows": [
+    "X_g_n_0_0+sk"
+   ],
+   "scenes": [
+    "tent",
+    "rome"
+   ],
+   "seeds": [
+    11
+   ]
+  },
+  {
+   "rows": [
+    "X_g_n_0_0+dir",
+    "X_g_n_0_0+dsk"
+   ],
+   "scenes": [
+    "ship"
+   ],
+   "seeds": [
+    23
+   ]
+  }
+ ],
+ "ensure_assets": [
+  "ship",
+  "tundra"
+ ],
+ "changes": [
+  {
+   "row": "TURN",
+   "cause": "reference",
+   "change": "new input: the EMPTY place from four directions (90 degrees apart, 90 degree view) around the master camera, words from the set's ray cast",
+   "expected": "a picture of what lies beside and behind the camera, drawn in the style, that the grid can be given as an image"
+  },
+  {
+   "row": "X_g_n_0_0",
+   "cause": "prompt",
+   "change": "round 2's S2Tp as a cell (behind-first), drawn on the held-out places as the baseline",
+   "expected": "the same orientation as on tent and rome if the method is general"
+  },
+  {
+   "row": "X_g_n_0_0+dir",
+   "cause": "reference",
+   "change": "S2Tp plus the turnaround picture as an image, each panel told which view of it lies behind and beside its camera",
+   "expected": "background and landmark order follow the place in every panel"
+  },
+  {
+   "row": "X_g_n_0_0+dsk",
+   "cause": "reference",
+   "change": "S2Tp plus the turnaround picture and the line sketch (who stands where in each panel)",
+   "expected": "positions of people and landmarks follow the sketch, no sketch lines in the picture"
+  },
+  {
+   "row": "X_g_n_0_0+sk",
+   "cause": "reference",
+   "change": "S2Tp plus the line sketch only (completes the turnaround x sketch 2x2)",
+   "expected": "the sketch's own effect without the turnaround"
+  },
+  {
+   "row": "PO55",
+   "cause": "strategy_limit",
+   "change": "paintover: the shaded ray-cast plate of the EMPTY place painted over at strength 0.55, then the people added by the edit pipeline (sheets, ray-cast position)",
+   "expected": "geometry from the plate, style and faces from the model"
+  },
+  {
+   "row": "PO70",
+   "cause": "strategy_setting",
+   "change": "PO55 at strength 0.70",
+   "expected": "more repainting, less geometry kept"
+  }
+ ],
+ "note": "Opus plan section 13, the stages are in the order the money cap cuts from the end; no VLM on the pod, the checks are by eye afterwards"
+}
