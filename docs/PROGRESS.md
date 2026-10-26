@@ -2390,3 +2390,14 @@ training as sequences is decided in the process. Changed together:
   first (base model, `xworld_v2_round0.sh`: P1/P2/P3/P2F x seeds 11, 23). `xworld_v2.sh`/`.yaml` are `.draft` until the
   revised training plan: they still lack the VT-01 vault check and a two-trigger answer to `test_reusable_first`
   (CI failed on them, run 40302908548). Round-0 pod: no 80 GB card free (8 tries 13:55-14:00); 48 GB / 1.5 h put to ვანო.
+- 12:30 UTC 2026-10-26 (round 0 done, ≈$0.95, balance $3.73): base Qwen-Image-2.1, 102 pictures, VL judge P1 0.66, P2 0.65,
+  P2F 0.75, P3 0.85 (same place P3 0.5, size P1/P2/P2F 0.29-0.38). Seen by eye, not by the judge: chained shots (P1/P2)
+  turn noisy and oversaturated, P2F frames are near copies, two men drawn as the same Napoleon type. Auto-QA plan from the
+  QA-methods thread: `/mnt/project-files/xworld_v2/AUTO_QA_PLAN_2026-10-26_ka.md` (one method per failure; FAIL power only
+  for metrics with AUC >= 0.8 on ვანო's ratings; thresholds are a proposal until his OK, RULE #1). First free step done:
+  `training/qa/image_stats.py` (Laplacian variance, busy 16 px blocks, Hasler-Suesstrunk colourfulness, saturation p95,
+  clipped share; test `test_qa_image_stats.py`). On round 0 it separates the chain at once: Laplacian variance of shot 1..4
+  P1 6.8k, 11.8k, 14.7k, 15.6k against 1.7k for shot 0 (P2 the same, P2F ~7k flat, P3 0.7-1.6k), busy blocks 0.81 -> 1.0,
+  colourfulness 35 -> 66. P2F already starts 3.8x above shot 0 after one edit pass. Ratios against shot 0 and against the
+  same round-0 frame are the metric, never a fixed threshold. Old archives removed from project files after an HF backup
+  check (lora_plan_2026-10-22, hybrid_model_2026-10-22).

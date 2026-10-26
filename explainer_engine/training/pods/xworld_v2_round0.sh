@@ -8,7 +8,6 @@ set -x
 mkdir -p /workspace/out
 exec > /workspace/out/pod.log 2>&1
 export HF_HOME=/workspace/hf HF_HUB_ENABLE_HF_TRANSFER=1 PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1
-export XW_GPU_MODE=model_full_load
 P=lora_plan_2026-10-26
 up(){ python - <<'PY'
 from huggingface_hub import HfApi
@@ -24,6 +23,9 @@ nvidia-smi || true
 timeout 120 python -c "import torch;x=torch.ones(8,device='cuda');print('cuda ok',torch.cuda.get_device_name(0),(x*2).sum().item(),flush=True)"; rc=$?
 if [ $rc -ne 0 ]; then echo "BAD_HOST cuda check rc=$rc" > /workspace/out/beat.txt; up; exit 1; fi
 timeout 900 pip install -q -U "huggingface_hub[hf_transfer]<2" peft || true
+# the whole model on the card only when it holds it (>= 80 GB); a 48 GB card keeps the tested CPU offload
+MEM=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits | head -1); [ "${MEM:-0}" -ge 80000 ] && export XW_GPU_MODE=model_full_load
+echo "gpu mem $MEM mode ${XW_GPU_MODE:-model_cpu_offload}"
 timeout 900 pip install -q -U "git+https://github.com/huggingface/diffusers" || true
 ( cd /workspace && timeout 600 git clone -q --depth 1 https://github.com/aigc-apps/VideoX-Fun.git \
   && timeout 900 pip install -q --break-system-packages einops timm tomesd torchdiffeq torchsde omegaconf SentencePiece ftfy \
