@@ -2282,3 +2282,8 @@ training as sequences is decided in the process. Changed together:
   image"); stopped (kept, $0/day) and relaunched as 9iyvc4ute6ppwp on RTX A5000 community $0.16/h with the common
   runpod/pytorch 2.4 image (cached on most hosts; the script installs transformers itself). Lesson: the big tmr-pod image
   is not cached on community hosts; script pods that need only torch use runpod/pytorch.
+- 04:15 Tbilisi: captions done (9iyvc4ute6ppwp, A5000 $0.16/h, download 32 min + 47 min of captioning, billed $0.07 so far,
+  2001 rows: 1336 descriptions 49-108 words, 665 change lines 11-55 words, 1 name). LT-74 automatic review
+  (`training/pods/caption_review.py` + test): 19 edited (names to roles, cut endings), 0 dropped; read samples of both kinds.
+  HF `caption_xworld_v1/captions_reviewed.jsonl` + `review_report.json`. Local dry build: 766 style + 591 pairs, no
+  held-out leak, 6 samples; the test plan has 280 jobs.

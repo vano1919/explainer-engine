@@ -27,12 +27,13 @@ WORDS = (30, 130)  # a description outside this after trimming is dropped (the p
 
 
 def trim(text):
-    """The text up to its last full sentence when the model stopped mid-sentence."""
+    """The text up to its last full sentence when the model stopped mid-sentence; a one-sentence line (a change line)
+    keeps its words and gets its full stop."""
     t = text.strip()
     if re.search(r"[.!?][\"')’]?$", t):
         return t
     cut = max(t.rfind(". "), t.rfind("! "), t.rfind("? "))
-    return t[:cut + 1] if cut > 0 else t
+    return t[:cut + 1] if cut > 0 else t.rstrip(",;: ") + "."
 
 
 def clean(row):

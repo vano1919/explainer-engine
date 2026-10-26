@@ -33,3 +33,8 @@ def test_change_prefix_restored_and_broken_rows_dropped(tmp_path):
                                                      {"id": "d:a", "kind": "describe", "text": LONG})), encoding="utf-8")
     rep = cr.review(src, tmp_path / "r.jsonl", tmp_path / "rep.json")
     assert rep["rows"] == 1 and rep["dropped"] == 0   # the resumed duplicate: the last row wins
+
+
+def test_a_cut_one_sentence_change_line_keeps_its_words():
+    r = cr.clean({"id": "c:a>b", "kind": "change", "text": "Change from the previous shot: the camera zooms out and the man has moved"})
+    assert r["text"].endswith("has moved.") and not r["drop"]
