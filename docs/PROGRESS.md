@@ -2361,3 +2361,14 @@ training as sequences is decided in the process. Changed together:
   (R&M dominates by count); proposal = two triggers in one LoRA (R&M sequence data keeps its own style word, the new world
   takes `xworld style`), creator-picked synthetic pictures as the minority, caption dropout; weight back to 1.0 on v2 if
   faces come out our own (his 12:13 note).
+
+## 2026-10-26 13:30 Tbilisi: new-world pictures done, rating page
+
+- BFL (FLUX 3 Klein, 1k): 220 pictures kept (100 people, 80 places, 40 objects; 16 of them the approved samples), every
+  one checked by `training/cast/check.py`: 208 PASS, 12 REVIEW (CLIP "maybe people in the place"), 0 FAIL kept. BFL credit
+  247.2 -> 42.0 (~$2.05 spent today in total).
+- Claude's look: places and objects hold the style and palette; 20 of 50 people written as women came out as men and 4 are
+  unclear (Klein ignores "a woman" after the role); o001 (figurines on the map) and o008 (people painted on the vase) break
+  "objects without people".
+- `training/cast/rate_page.py` (+ test): the creator's rating page, four levels, three reasons and a free note, kept in the
+  artifact db (collection `ratings`): https://claude.ai/artifact/6MKaVGbdzs4jv56b96QKmA.
