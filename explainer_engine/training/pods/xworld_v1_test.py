@@ -79,31 +79,16 @@ def jobs(manifest, caps, loras=("A", "B"), frames=5):
     return out
 
 
-def main(argv):
-    import re
+def load_pipeline():
+    """Qwen-Image-2.1 in bf16 with CPU offload (VideoX-Fun); returns (pipe, transformer)."""
     import torch
-    from PIL import Image
     sys.path.insert(0, "/workspace/VideoX-Fun")
     from diffusers import FlowMatchEulerDiscreteScheduler
     from huggingface_hub import snapshot_download
-    from safetensors.torch import load_file
     from videox_fun.models import (AutoencoderKLQwenImage21, Qwen3VLForConditionalGeneration, Qwen3VLProcessor,
                                    QwenImage21Transformer2DModel)
     from videox_fun.pipeline import QwenImage21Pipeline
-    from videox_fun.utils import apply_gpu_memory_mode, merge_lora, unmerge_lora
-    ds, caps_path, outd, lora_a, lora_b = argv[:5]
-    outd = Path(outd); outd.mkdir(parents=True, exist_ok=True)
-    caps = {}
-    for line in Path(caps_path).read_text(encoding="utf-8").splitlines():
-        if line.strip():
-            r = json.loads(line); caps[r["id"]] = r["text"]
-    todo = jobs(json.loads((Path(ds) / "manifest.json").read_text(encoding="utf-8")), caps)
-    (outd / "jobs.json").write_text(json.dumps(todo, indent=1, ensure_ascii=False), encoding="utf-8")
-    log = open(outd / "test.log", "a")
-
-    def say(*a):
-        print(*a, flush=True); log.write(time.strftime("%H:%M:%S ") + " ".join(map(str, a)) + "\n"); log.flush()
-
+    from videox_fun.utils import apply_gpu_memory_mode
     dt = torch.bfloat16
     base = snapshot_download("Qwen/Qwen-Image-2.1")
     tr = QwenImage21Transformer2DModel.from_pretrained(base, subfolder="transformer", low_cpu_mem_usage=True, torch_dtype=dt)
@@ -114,10 +99,20 @@ def main(argv):
         scheduler=FlowMatchEulerDiscreteScheduler.from_pretrained(base, subfolder="scheduler"))
     apply_gpu_memory_mode(pipe, "model_cpu_offload", "cuda", dt,
                           exclude_module_name=["img_in", "txt_in", "time_text_embed", "modulation"])
-    mods = dict(tr.named_modules())
+    return pipe, tr
 
-    def gate_up(path, sign):
+
+class Loras:
+    """Merges one LoRA at a time into the pipeline (None = the base model)."""
+
+    def __init__(self, pipe, tr, paths, say):
+        self.pipe, self.mods, self.paths, self.say, self.loaded = pipe, dict(tr.named_modules()), paths, say, None
+
+    def gate_up(self, path, sign):
         """ai-toolkit trains the fused img_mlp.gate_up = [gate_layer; proj]; VideoX-Fun's merge skips it (10-25 finding)."""
+        import re
+        import torch
+        from safetensors.torch import load_file
         sd, n = load_file(path), 0
         for key in sd:
             m = re.search(r"transformer_blocks[._](\d+)[._]img_mlp[._]gate_up\.(lora_A|lora_down)\.weight$", key)
@@ -127,32 +122,66 @@ def main(argv):
             down = sd[key].float(); up = sd[pre + ("lora_B" if m.group(2) == "lora_A" else "lora_up") + ".weight"].float()
             alpha = float(sd[pre + "alpha"]) if pre + "alpha" in sd else down.shape[0]
             delta = (up @ down) * (alpha / down.shape[0]) * sign
-            ff = mods[f"transformer_blocks.{m.group(1)}.img_mlp"]; half = ff.gate_layer.weight.shape[0]
+            ff = self.mods[f"transformer_blocks.{m.group(1)}.img_mlp"]; half = ff.gate_layer.weight.shape[0]
             with torch.no_grad():
                 for lin, d in ((ff.gate_layer, delta[:half]), (ff.proj, delta[half:])):
                     lin.weight.data += d.to(lin.weight.device, lin.weight.dtype)
             n += 1
         return n
 
-    loaded = None
-    paths = {"A": lora_a, "B": lora_b}
+    def use(self, key):
+        import torch
+        from videox_fun.utils import merge_lora, unmerge_lora
+        if key == self.loaded:
+            return self.pipe
+        dt = torch.bfloat16
+        if self.loaded:
+            self.pipe = unmerge_lora(self.pipe, self.paths[self.loaded], 1.0, device="cuda", dtype=dt)
+            self.gate_up(self.paths[self.loaded], -1.0)
+        if key:
+            self.pipe = merge_lora(self.pipe, self.paths[key], 1.0, device="cuda", dtype=dt)
+            self.say("lora", key, self.paths[key], "gate_up fixed", self.gate_up(self.paths[key], 1.0))
+        self.loaded = key
+        return self.pipe
+
+
+def draw(pipe, prompt_text, refs):
+    """One 1280x720 picture; refs = [] draws from the text alone."""
+    import torch
+    g = torch.Generator(device="cuda").manual_seed(SEED)
+    with torch.no_grad():
+        return pipe(prompt_text, image=refs or None, negative_prompt="", height=H, width=W, generator=g,
+                    num_inference_steps=STEPS, true_cfg_scale=CFG).images[0]
+
+
+def logger(outd, name):
+    log = open(outd / name, "a")
+
+    def say(*a):
+        print(*a, flush=True); log.write(time.strftime("%H:%M:%S ") + " ".join(map(str, a)) + "\n"); log.flush()
+    return say
+
+
+def main(argv):
+    from PIL import Image
+    ds, caps_path, outd, lora_a, lora_b = argv[:5]
+    outd = Path(outd); outd.mkdir(parents=True, exist_ok=True)
+    caps = {}
+    for line in Path(caps_path).read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            r = json.loads(line); caps[r["id"]] = r["text"]
+    todo = jobs(json.loads((Path(ds) / "manifest.json").read_text(encoding="utf-8")), caps)
+    (outd / "jobs.json").write_text(json.dumps(todo, indent=1, ensure_ascii=False), encoding="utf-8")
+    say = logger(outd, "test.log")
+    pipe, tr = load_pipeline()
+    loras = Loras(pipe, tr, {"A": lora_a, "B": lora_b}, say)
     for j in todo:
         if (outd / f"{j['name']}.png").exists():
             continue
-        if j["lora"] != loaded:
-            if loaded:
-                pipe = unmerge_lora(pipe, paths[loaded], 1.0, device="cuda", dtype=dt); gate_up(paths[loaded], -1.0)
-            if j["lora"]:
-                pipe = merge_lora(pipe, paths[j["lora"]], 1.0, device="cuda", dtype=dt)
-                say("lora", j["lora"], paths[j["lora"]], "gate_up fixed", gate_up(paths[j["lora"]], 1.0))
-            loaded = j["lora"]
         refs = [Image.open(Path(ds) / r[5:] if r.startswith("real:") else outd / f"{r[6:]}.png").convert("RGB")
                 for r in j["refs"]]
-        t = time.time(); g = torch.Generator(device="cuda").manual_seed(SEED)
-        with torch.no_grad():
-            im = pipe(j["prompt"], image=refs, negative_prompt="", height=H, width=W, generator=g,
-                      num_inference_steps=STEPS, true_cfg_scale=CFG).images[0]
-        im.convert("RGB").save(outd / f"{j['name']}.png")
+        t = time.time()
+        draw(loras.use(j["lora"]), j["prompt"], refs).convert("RGB").save(outd / f"{j['name']}.png")
         say("made", j["name"], round(time.time() - t), "s")
 
 

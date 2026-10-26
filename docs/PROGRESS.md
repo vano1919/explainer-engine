@@ -2311,3 +2311,10 @@ training as sequences is decided in the process. Changed together:
   training pod ended by its own script. Fix to propose: run the guard as a tracked background task of the session, or
   give pods a self-enforced money cap. Night total ~$5.0 of $9 (balance $10.42 -> $5.41); nothing running; six stopped
   0 GB pods kept for his word. Report: https://claude.ai/artifact/3xSDYTdC4bHJRqShLdGuCW
+- 10:50 Tbilisi: ვანო's story test (10:32): "Napoleon in his tent, a general reports the enemy, he rushes out and sees a great
+  Mongol army on the far meadow", drawn on the new style from frame 0 with the winning prompt form. New reusable
+  `training/pods/xworld_v1_story.py` + `.sh` (any story file in `training/pods/stories/`; frame 0 from text, every other
+  shot = D with its drawn master as the only reference; a run may also redraw a master from text as a second branch) +
+  `tests/unit/test_xworld_v1_story.py`; `xworld_v1_test.py` now shares `load_pipeline`, `Loras`, `draw`, `logger`.
+  Story `stories/napoleon_tent.json`: 9 shots (tent A0-A4, outside B0-B3), 17 pictures (LoRA 2250: 9 + B from text 4; base
+  4). Code on HF `story_xworld_v1/napoleon_tent/code/`. Pod plan put to ვანო (OR-23); not started.
