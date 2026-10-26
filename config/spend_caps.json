@@ -1,7 +1,7 @@
 {
   "_doc": "The creator's money ceilings, enforced in code (explainer_engine/core/spend_caps.py, D-56). A run ledger may set lower caps, never higher; a pod is refused when it would pass any RunPod line. Raise a number only on the creator's word.",
   "per_episode": {
-    "runpod_usd": 29.0,
+    "runpod_usd": 31.0,
     "gemini_usd": 10.0,
     "bfl_usd": 3.0,
     "fal_usd": 9.0
@@ -22,7 +22,7 @@
     "max_price_per_hour": 3.0,
     "min_balance_left_usd": 0.25,
     "keep_stopped_pods": [
-    "w4f1yaxxidnotl", "lmeb5qu5gdak0o",
+    "w4f1yaxxidnotl", "lmeb5qu5gdak0o", "9twmhywjhuu5s4",
       "gqscbgeuwti8gz",
       "gtrcntkwsoh5rb",
       "emvtki74neqpl7",
