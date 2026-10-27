@@ -2518,3 +2518,9 @@ training as sequences is decided in the process. Changed together:
   `xworld_v2_dirs.plate_grid` cuts the turnaround picture into one EMPTY backdrop per panel by the shot's view index, yaw offset, pitch and field of view
   (`_crop_box`); `plate_words` keeps the backdrop and adds the people. The turnaround pictures come from HF round_3a (no redraw). Test `test_round_3b_backdrop_per_panel_and_config`.
 - 23:30 UTC: cap raised on the creator's delegation, ვანო 2026-10-26 21:58/21:59 UTC (all remaining balance for 360° coordination), decided by the Opus thread: `config/spend_caps.json` runpod_usd 29.0 -> 31.0 (the 80 % stop sat below ledger + round 3b's pod); no new money, the real limit stays the balance minus the 0.25 floor. Round 3b first try (pod 9twmhywjhuu5s4) cost $0.06: the pod refused a config with cause "bug"; fixed, `check_round` now in the test.
+
+## 2026-10-27 01:10 UTC (05:10 Tbilisi): round 3b results (pod r4w729gcrlx4wv, H100 NVL $2.59/h, 23:36-23:56 UTC, ≈$0.85; balance $0.49)
+
+- Out on HF `lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/{TURN,X_g_n_0_0+dpl,PO55,PO70}`; sheets (left the turnaround, right the +dpl grid) in `/mnt/project-files/xworld_v2/round_3b/`.
+- `+dpl` (one empty backdrop per panel, cut from the turnaround by the shot's yaw): tent, ship, tundra keep their landmarks and the order of them in all four panels (tent: lantern pole, table, bed, door; ship: mast, crates, wheel, lighthouse; tundra: rock, river, mountains); rome keeps the street, balconies and Colosseum in 3 of 4, the wide panel shows a larger Colosseum than its plate. Seed 23 drawn on tent/rome/ship (not yet looked at one by one).
+- Paintover PO55/PO70 ran, but the drawn picture does not follow the plate (new street, new tent), the people panel s4 comes out as the unpainted plate with mannequins. Paintover is rejected.
