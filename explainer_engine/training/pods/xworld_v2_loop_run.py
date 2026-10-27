@@ -120,8 +120,8 @@ def prompts(sc, row, sid=None):
     """The text of one picture of a row (no model): per-shot rows take the shot id, grid rows the whole grid."""
     if K.parse(row):
         return cell_prompt(sc, K.parse(row), sid)
-    if row == "TURN":
-        return DR.turnaround_prompt(sc, sets_of(sc), TRIGGER)
+    if row == "TURN":  # round 3b: one prompt per direction view; ``sid`` is the view index 0..3
+        return DR.view_prompt(sc, sets_of(sc), sid, TRIGGER)
     if row in PO_STRENGTH:
         return po_plate_prompt(sc, shot_of(sc, sid)) if sid else None
     test = [shot_of(sc, s) for s in L.SHOTS]
@@ -215,11 +215,18 @@ def po_people_prompt(sc, shot, s):
     """The text that adds the people to a plate: image 1 = the painted empty place (kept), then one sheet per person; where each stands comes from the ray cast."""
     roles = [r for r in shot.get("faces", []) if r in sc["cast"]][:2]
     where = DR.people_words(s, shot["id"])
-    pos = " ".join(f"The person of the model sheet of {r} {where[r]}." for r in roles if r in where)
+    pos = " ".join(f"The person of the model sheet of {r} {where[r]}." for r in roles if r in where) + " " + DR.people_rule(s, shot["id"])
     base = p2s_prompt(framed(sc, shot), sc["cast"], roles) if roles else p2s_plain("P2F", framed(sc, shot))
     base = base.replace("Image 1 is the master frame of the place", "Image 1 is the empty place in exactly this camera view with every object where it must be")
     base = base.replace("the place as in image 1", "the place and every object exactly where they are in image 1")
     return f"{base} {pos}".strip(), roles
+
+
+def start_noise(sigma, mu):
+    """The noise level the scheduler really starts at for the unshifted sigma ``sigma`` (dynamic exponential shift, as the flow-matching scheduler
+    does it): strength 0.55 is NOT noise level 0.55, with mu 1.15 it is 0.79 (round 3b check of Opus's SDEdit question)."""
+    a = float(np.exp(mu))
+    return a * sigma / (1 + (a - 1) * sigma)
 
 
 def sdedit(pipe, prompt, init, strength, seed, w, h, steps, cfg):
@@ -245,6 +252,7 @@ def sdedit(pipe, prompt, init, strength, seed, w, h, steps, cfg):
         sch = copy.deepcopy(pipe.scheduler)
         sch.set_timesteps(sigmas=sig, device=dev, mu=mu)
         s0 = float(sch.sigmas[0])
+        print("sdedit", "strength", strength, "steps", len(sig), "mu", round(mu, 3), "start noise level", round(s0, 3), "formula", round(start_noise(sig[0], mu), 3), flush=True)
         noise = torch.randn(x0.shape, generator=gen, device=dev, dtype=x0.dtype)
         lat = (1 - s0) * x0 + s0 * noise
         return pipe(prompt, image=None, negative_prompt="", height=h, width=w, generator=gen, num_inference_steps=len(sig),
@@ -516,9 +524,14 @@ def main(argv):
                 say("PO FAIL", row, n, seed, sid, repr(e)[:300], traceback.format_exc()[-600:].replace("\n", " | "))
                 continue
         elif row == "TURN":  # the empty place from four directions (round 3a), the master as Image 1
-            t.W, t.H = X.GRID_W, X.GRID_H
-            img = t.draw(p, prompts(sc, row), [master.resize(L.PANEL)]).convert("RGB")
-            img.save(outd / row / f"{n}_{seed}_grid.png")
+            t.W, t.H = L.PANEL  # round 3b: four separate pictures (each told what it must and must not show), put in one 2x2
+            views = []
+            for vi in range(4):
+                v = t.draw(p, prompts(sc, row, vi), [master.resize(L.PANEL)]).convert("RGB")
+                v.save(outd / row / f"{n}_{seed}_v{vi}.png")
+                views.append(v)
+            DR.compose_turn(views).save(outd / row / f"{n}_{seed}_grid.png")
+            (outd / row / f"{n}_{seed}_checklist.json").write_text(json.dumps(DR.view_checklist(sc, sets_of(sc)), indent=1), encoding="utf-8")
         elif K.parse(row):
             c = K.parse(row)
             sheets = [Image.open(p2s / f"{n}_sheet_{r}.png").convert("RGB") for r in sc["cast"]]

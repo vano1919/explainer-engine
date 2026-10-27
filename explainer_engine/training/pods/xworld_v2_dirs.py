@@ -85,6 +85,42 @@ def turnaround_prompt(sc, s, trigger):
             f"The place: {sc['place']} {inside} " + " ".join(parts))
 
 
+def all_labels(s):
+    """The labels of every object of the set, once each, in the set's order."""
+    return list(dict.fromkeys(o["label"] for o in s["objects"]))
+
+
+def view_prompt(sc, s, i, trigger):
+    """The text of ONE direction view (round 3b, Opus 2026-10-27: one prompt for four panels drew the same place four times): what this yaw shows
+    from left to right and what must NOT be seen, both from the ray cast of the set."""
+    lm = view_landmarks(s)[i]
+    absent = [x for x in all_labels(s) if x not in lm]
+    inside = "Always inside the same room." if s["kind"] == "interior" else "Always outdoors in the same place."
+    shown = ("In this picture, from left to right: " + ", ".join(lm) + ".") if lm else "None of the landmarks is in view here, only the plain surroundings of the place."
+    hidden = (" These are NOT visible in this picture, they are behind the camera or out of view: " + ", ".join(absent) + ".") if absent else ""
+    turn = "the same view as Image 1" if i == 0 else f"the camera standing in the same spot, {VIEW_NAMES[i]}"
+    return (f"{trigger}, Image 1 is a wide shot of this scene. Draw ONE picture of the same EMPTY place with no people at all: {turn}, "
+            f"a 90 degree wide view, in the same drawn style, with the same buildings, objects and light. The place: {sc['place']} {inside} {shown}{hidden}")
+
+
+def view_checklist(sc, s):
+    """For the eye or a local model that checks the four turnaround pictures: per view what must be seen, left to right, and what must not."""
+    out = []
+    for i, lm in enumerate(view_landmarks(s)):
+        out.append({"view": i, "name": VIEW_NAMES[i], "yaw": YAWS[i], "must_show_left_to_right": lm,
+                    "must_not_show": [x for x in all_labels(s) if x not in lm]})
+    return out
+
+
+def compose_turn(views, panel=PANEL):
+    """The four separately drawn views as the 2x2 turnaround picture (the order of YAWS)."""
+    from PIL import Image
+    out = Image.new("RGB", (2 * panel[0], 2 * panel[1]), (255, 255, 255))
+    for i, v in enumerate(views):
+        out.paste(v.convert("RGB").resize(panel), ((i % 2) * panel[0], (i // 2) * panel[1]))
+    return out
+
+
 def dir_words(s, shot_ids, number):
     """The paragraph that tells the grid prompt how to use the turnaround (Image ``number``): which view lies behind and beside each panel."""
     out = [f"Image {number} is a 2x2 picture of the same empty place from four directions around the first panel's camera "
@@ -228,16 +264,102 @@ def _crop_box(s, sid, panel=PANEL):
     return i, (cx - fw / 2) * panel[0], (cy - fw / 2) * panel[1], (cx + fw / 2) * panel[0], (cy + fw / 2) * panel[1]
 
 
+BLEND_DEG = 8.0  # a ray within this many degrees of the line between two views takes both (a smooth seam instead of a hard cut)
+
+
+def _view_weights(psi):
+    """{view index: weight} of the views a ray of global yaw ``psi`` (degrees) is read from: the nearest view, and its neighbour near the seam."""
+    d = [((psi - y + 180) % 360) - 180 for y in YAWS]  # signed offset of the ray from each view's centre
+    i = min(range(4), key=lambda k: abs(d[k]))
+    w = {i: 1.0}
+    edge = 45.0 - abs(d[i])  # degrees to the seam
+    if edge < BLEND_DEG:
+        j = (i + (1 if d[i] > 0 else -1)) % 4
+        a = 0.5 * (1 - edge / BLEND_DEG)  # 0.5 on the seam, 0 at BLEND_DEG from it
+        w = {i: 1 - a, j: a}
+    return w
+
+
+BLEND_DEG = 8.0  # a ray within this many degrees of the line between two views reads both (a soft seam instead of a hard cut)
+
+
+def view_weight(d):
+    """Weight (0..1) of a direction view for a ray ``d`` degrees (array) from its centre: 1 inside, 0.5 on the seam at 45, 0 beyond 45 + BLEND_DEG."""
+    return np.clip((45.0 + BLEND_DEG - np.abs(d)) / (2 * BLEND_DEG), 0.0, 1.0)
+
+
+def reproject(turn, yaw_deg, pitch, hfov, size, view=PANEL):
+    """The picture a camera looking ``yaw_deg`` degrees to the right of the master (pitch in radians, horizontal field of view ``hfov`` in radians)
+    would see, read out of the turnaround picture ``turn`` (2x2 of the four 90 degree views): every output ray reads the view it points into, rays near the
+    line between two views read both, so a shot that looks between two views gets a soft seam. The camera position is taken as the master's."""
+    from PIL import Image
+    w, h = size
+    tan_h = math.tan(hfov / 2)
+    tan_v = tan_h * h / w
+    right = ((np.arange(w) + 0.5) / w - 0.5)[None, :] * 2 * tan_h * np.ones((h, 1))
+    up = (0.5 - (np.arange(h) + 0.5) / h)[:, None] * 2 * tan_v * np.ones((1, w))
+    y0, cp, sp = math.radians(yaw_deg), math.cos(pitch), math.sin(pitch)
+    fwd = np.array([math.sin(y0) * cp, math.cos(y0) * cp, sp])
+    rgt = np.array([math.cos(y0), -math.sin(y0), 0.0])
+    upv = np.array([-math.sin(y0) * sp, -math.cos(y0) * sp, cp])
+    ray = fwd + right[..., None] * rgt + up[..., None] * upv  # (h, w, 3): east, north, up
+    horiz = np.hypot(ray[..., 0], ray[..., 1])
+    psi = np.degrees(np.arctan2(ray[..., 0], ray[..., 1]))
+    src = np.asarray(turn.convert("RGB"), float)
+    vw, vh = view
+    tan_vv = math.tan(math.radians(45)) * vh / vw
+    out, wsum = np.zeros((h, w, 3)), np.zeros((h, w, 1))
+    for i in range(4):
+        d = ((psi - YAWS[i] + 180) % 360) - 180
+        wt = view_weight(d)[..., None]
+        if not wt.any():
+            continue
+        dr = np.radians(np.clip(d, -80, 80))
+        x = np.tan(dr)
+        y = ray[..., 2] / np.maximum(horiz * np.cos(dr), 1e-6)
+        u = np.clip((0.5 + x / 2) * vw, 0, vw - 1.001)
+        v = np.clip((0.5 - y / (2 * tan_vv)) * vh, 0, vh - 1.001)
+        u0, v0 = np.floor(u).astype(int), np.floor(v).astype(int)
+        fu, fv = (u - u0)[..., None], (v - v0)[..., None]
+        ox, oy = (i % 2) * vw, (i // 2) * vh
+        px = (src[oy + v0, ox + u0] * (1 - fu) * (1 - fv) + src[oy + v0, ox + u0 + 1] * fu * (1 - fv)
+              + src[oy + v0 + 1, ox + u0] * (1 - fu) * fv + src[oy + v0 + 1, ox + u0 + 1] * fu * fv)
+        out += px * wt
+        wsum += wt
+    return Image.fromarray(np.clip(out / np.maximum(wsum, 1e-6), 0, 255).astype(np.uint8))
+
+
+def plate_view(turn, s, sid, panel=PANEL):
+    """The empty backdrop of one shot: the turnaround read along the shot camera's own yaw, pitch and field of view."""
+    cam = S3.camera(s, s["shots"][sid])
+    pos, look = np.asarray(cam["pos"], float), np.asarray(cam["look_at"], float)
+    d = look - pos
+    pitch = math.atan2(d[2], float(np.hypot(d[0], d[1])) or 1.0)
+    hfov = 2 * math.atan(math.tan(math.radians(cam["vfov"]) / 2) * panel[0] / panel[1])
+    return reproject(turn, yaw_of(s, sid), pitch, hfov, panel)
+
+
 def plate_grid(turn, s, shot_ids, panel=PANEL):
-    """The 2x2 picture of one EMPTY backdrop per panel, cut from the turnaround picture ``turn`` (2x2 of the four direction views)."""
+    """The 2x2 picture of one EMPTY backdrop per panel, each read out of the turnaround picture ``turn`` along its own shot camera."""
     from PIL import Image
     out = Image.new("RGB", (2 * panel[0], 2 * panel[1]), (255, 255, 255))
     for k, sid in enumerate(shot_ids):
-        i, l, t, r, b = _crop_box(s, sid, panel)
-        vx, vy = (i % 2) * panel[0], (i // 2) * panel[1]
-        crop = turn.crop((int(vx + l), int(vy + t), int(vx + r), int(vy + b))).resize(panel)
-        out.paste(crop, ((k % 2) * panel[0], (k // 2) * panel[1]))
+        out.paste(plate_view(turn, s, sid, panel), ((k % 2) * panel[0], (k // 2) * panel[1]))
     return out
+
+
+def people_rule(s, sid):
+    """Who is in this panel, as a hard rule in words: the number of people and, for an over-the-shoulder shot, who is seen from behind (once only)."""
+    ids = [i for i in people_words(s, sid)]
+    back = s["shots"][sid].get("ots")
+    if back and back not in ids:
+        ids.append(back)
+    if not ids:
+        return ""
+    txt = f"Exactly {len(ids)} {'person' if len(ids) == 1 else 'people'} in this panel: {', '.join(ids)}; nobody else, nobody twice."
+    if back:
+        txt += f" The person seen from behind, back to the camera, is {back}; {back} appears only that once."
+    return txt
 
 
 def plate_words(s, shot_ids, number):
@@ -248,5 +370,5 @@ def plate_words(s, shot_ids, number):
     for i, sid in enumerate(shot_ids):
         w = people_words(s, sid)
         if w:
-            out.append(f"{ORDER[i].capitalize()} panel: " + "; ".join(f"the {n} {t}" for n, t in w.items()) + ".")
+            out.append(f"{ORDER[i].capitalize()} panel: " + "; ".join(f"the {n} {t}" for n, t in w.items()) + ". " + people_rule(s, sid))
     return " ".join(out)

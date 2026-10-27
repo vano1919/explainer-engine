@@ -413,3 +413,58 @@ def test_round_3b_backdrop_per_panel_and_config():
     from explainer_engine.training.pods import xworld_v2_loop as L
     assert L.check_round(cfg) == []  # the pod refuses a config with a problem (round 3b first try, 3 minutes of a paid pod)
     assert L.check_round(json.loads((Path(R.__file__).resolve().parent / "loop/round_3a.json").read_text(encoding="utf-8"))) == []
+
+
+def test_round_3c_view_prompts_reprojection_people_rule_and_sdedit_noise():
+    """Opus 2026-10-27 code work: each turnaround view has its own prompt (differs by yaw, names what must NOT be seen), the backdrop of a shot is read out
+    of the turnaround along its own camera (soft seam between two views), the people rule names the count and who is seen from behind, and the SDEdit
+    start noise equals the scheduler's shifted sigma."""
+    import math
+    from pathlib import Path
+    import numpy as np
+    from PIL import Image
+    from explainer_engine.training.pods import xworld_v2_dirs as D
+    from explainer_engine.training.pods import xworld_v2_loop_run as R
+    from explainer_engine.training.pods import xworld_v2_s3 as S3
+    base = Path(R.__file__).resolve().parent / "stories/v2"
+    scs = {s["name"]: s for s in R.load_scenes(base)}
+    for name, sc in scs.items():
+        s = S3.load_set(base / f"sets/{name}.set.json")
+        texts = [D.view_prompt(sc, s, i, R.TRIGGER) for i in range(4)]
+        assert len(set(texts)) == 4  # the prompts differ by yaw
+        lms = D.view_landmarks(s)
+        chk = D.view_checklist(sc, s)
+        for i in range(4):
+            assert chk[i]["must_show_left_to_right"] == lms[i]
+            for lab in chk[i]["must_not_show"]:
+                assert lab not in lms[i] and lab in texts[i]  # what is behind the camera is named as not visible
+            for lab in lms[i]:
+                assert lab in texts[i]
+        assert R.prompts(sc, "TURN", 2) == texts[2]
+    # reprojection: four flat colours = four views; a ray between two views reads both, a ray inside one reads only it
+    cols = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0)]
+    turn = Image.new("RGB", (2 * D.PANEL[0], 2 * D.PANEL[1]))
+    for i, c in enumerate(cols):
+        turn.paste(Image.new("RGB", D.PANEL, c), ((i % 2) * D.PANEL[0], (i // 2) * D.PANEL[1]))
+    hf = math.radians(40)
+    for yaw, want in ((0, 0), (90, 1), (180, 2), (270, 3), (10, 0), (100, 1)):
+        px = np.asarray(D.reproject(turn, yaw, 0.0, hf, (64, 36)))[18, 32]
+        assert tuple(px) == cols[want], (yaw, px)
+    seam = np.asarray(D.reproject(turn, 45, 0.0, math.radians(10), (64, 36)))[18, 32].astype(int)
+    assert 100 < seam[0] < 155 and 100 < seam[1] < 155 and seam[2] == 0  # half red, half green on the seam
+    assert D.view_weight(np.array([0.0, 45.0, 60.0])).tolist() == [1.0, 0.5, 0.0]
+    # a shot looking between two views of a real set has a backdrop of its own size
+    s = S3.load_set(base / "sets/rome.set.json")
+    assert D.plate_view(turn, s, "s2").size == D.PANEL and D.plate_grid(turn, s, ("s1", "s2", "s3", "s4")).size == (2 * D.PANEL[0], 2 * D.PANEL[1])
+    # the people rule: the number of people and, over the shoulder, who is seen from behind (the ship's last panel drew two captains)
+    sh = S3.load_set(base / "sets/ship.set.json")
+    rule = D.people_rule(sh, "s4")
+    assert "Exactly 2 people" in rule and "seen from behind" in rule and "captain" in rule and "only that once" in rule
+    assert "seen from behind" not in D.people_rule(sh, "s1")
+    # SDEdit: strength is not the noise level; the formula is the scheduler's exponential shift a*t/(1+(a-1)t)
+    mu = 1.15
+    a = math.exp(mu)
+    for t in (0.1, 0.55, 0.7, 1.0):
+        ref = math.exp(mu) / (math.exp(mu) + (1 / t - 1))  # diffusers FlowMatchEulerDiscreteScheduler.time_shift, exponential
+        assert abs(R.start_noise(t, mu) - ref) < 1e-9
+    assert abs(R.start_noise(0.55, mu) - 0.795) < 0.01 and R.start_noise(1.0, mu) == 1.0 and R.start_noise(0.0, mu) == 0.0 and a > 1

@@ -2524,3 +2524,10 @@ training as sequences is decided in the process. Changed together:
 - Out on HF `lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/{TURN,X_g_n_0_0+dpl,PO55,PO70}`; sheets (left the turnaround, right the +dpl grid) in `/mnt/project-files/xworld_v2/round_3b/`.
 - `+dpl` (one empty backdrop per panel, cut from the turnaround by the shot's yaw): tent, ship, tundra keep their landmarks and the order of them in all four panels (tent: lantern pole, table, bed, door; ship: mast, crates, wheel, lighthouse; tundra: rock, river, mountains); rome keeps the street, balconies and Colosseum in 3 of 4, the wide panel shows a larger Colosseum than its plate. Seed 23 drawn on tent/rome/ship (not yet looked at one by one).
 - Paintover PO55/PO70 ran, but the drawn picture does not follow the plate (new street, new tent), the people panel s4 comes out as the unpainted plate with mannequins. Paintover is rejected.
+
+## 2026-10-27 03:30 UTC (07:30 Tbilisi): code work after round 3b (Opus list, no pod, no money)
+
+- TURN views: `xworld_v2_dirs.view_prompt` (one prompt per yaw: landmarks left to right and what must NOT be visible, both from the ray cast), four draws composed by `compose_turn`, `view_checklist` json beside the grid; `prompts(sc, "TURN", view_index)`.
+- Backdrop per panel: `reproject`/`plate_view`/`plate_grid` read the turnaround along the shot's own yaw, pitch and field of view; a shot between two views reads both with an 8 degree soft seam (`view_weight`). Limit: a pitch beyond the turnaround's 52 degree vertical view smears.
+- People: `people_rule` (exactly N people, names, the person seen from behind appears once, from the set's `ots`) in `plate_words` and the paintover people prompt.
+- SDEdit: `start_noise` pins the shifted start sigma to the scheduler's formula (strength 0.55 = noise 0.79); the unit test does not show the math wrong, PO stays "untested". Test `test_round_3c_view_prompts_reprojection_people_rule_and_sdedit_noise`; attribution in `/mnt/project-files/xworld_v2/round_3b/attribution.md`.
