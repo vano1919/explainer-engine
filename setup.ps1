@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
   One-time setup: a Python 3.12/3.13 virtual environment in .venv and the Python packages.
-  Later phases add the Kokoro model (Phase 5) and Node.js + Remotion (Phase 4); see docs/IMPLEMENTATION_PLAN.md.
+  Kokoro (retired, D-39) and Remotion are no longer set up here; see docs/AUDIO_SYSTEM.md.
 
 .EXAMPLE
   .\setup.ps1
@@ -22,7 +22,7 @@ if ($PythonExe -eq "") {
           Where-Object { $_.FullName -match "cpython-3\.1[23]" } | Select-Object -First 1
     if ($uv) { $PythonExe = $uv.FullName }
   }
-  if ($PythonExe -eq "") { throw "Python 3.12-3.13 not found (kokoro-onnx has no 3.14). Install 3.13 (python.org or 'uv python install 3.13') and re-run." }
+  if ($PythonExe -eq "") { throw "Python 3.12-3.13 not found (the pinned packages are tested on 3.12/3.13). Install 3.13 (python.org or 'uv python install 3.13') and re-run." }
 }
 
 $venv = Join-Path $root ".venv"

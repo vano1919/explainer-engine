@@ -1,5 +1,7 @@
 # Pipeline architecture
 
+> **SUPERSEDED (2026-10-29, P0a): history, not the live plan.** The live plan is `docs/PROGRESS.md` and the blueprint plan (project files `blueprint_2026-10-29/`); the stage table below is a target design.
+
 ## Current implementation status — checked 2026-10-18
 
 The stage table below is a target architecture, not proof that every stage or a single-command DAG coordinator exists. The documented command `python -m explainer_engine run ...` is not present as a repository entry point on this branch. The current available CLI is `python -m explainer_engine.production`, with per-script validation/timing/assembly, plus `python -m explainer_engine.production_gate`. Paid image generation is exposed through `python -m explainer_engine.production.paint`.
