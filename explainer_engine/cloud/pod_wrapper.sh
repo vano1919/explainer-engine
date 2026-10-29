@@ -64,10 +64,16 @@ try:
     remote = {r.path: r.size for r in api.list_repo_tree(repo, path_in_repo=prefix or None, repo_type="dataset", recursive=True) if hasattr(r, "size")}
 except Exception as e:  # noqa: BLE001
     print("UPLOAD FAILED", e); sys.exit(1)
+# a loop pass checks only files that were settled when the pass began (EE_SETTLED_REF = a file touched at that moment): a log the
+# script is still writing differs between upload and listing on a healthy pod. The end sequence checks every file.
+ref = os.environ.get("EE_SETTLED_REF")
+ref_t = os.path.getmtime(ref) if ref else None
 bad = 0
 for root, _, files in os.walk(out):
     for f in files:
         p = os.path.join(root, f)
+        if f == "beat.txt" or (ref_t is not None and os.path.getmtime(p) > ref_t):  # beat.txt is rewritten by the loop itself
+            continue
         key = (prefix + "/" if prefix else "") + os.path.relpath(p, out).replace(os.sep, "/")
         if remote.get(key) != os.path.getsize(p):
             bad += 1
@@ -93,8 +99,9 @@ PY
 
 ee_pass() { # one pass of the loop
   write_beat ALIVE
-  if ee_upload; then
-    echo 0 > "$ST/fail"; touch "$ST/verified"; write_beat ALIVE
+  touch "$ST/passref"
+  if EE_SETTLED_REF="$ST/passref" ee_upload; then
+    echo 0 > "$ST/fail"; touch -r "$ST/passref" "$ST/verified"; write_beat ALIVE
   else
     echo $(( $(cat "$ST/fail") + 1 )) > "$ST/fail"; write_beat ALIVE
     ee_upload_beat

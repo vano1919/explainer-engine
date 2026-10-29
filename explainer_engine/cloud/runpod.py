@@ -927,13 +927,18 @@ def end_pod(api, sess, why, *, push=notify, sleep=time.sleep, attempts=1000):
         if st == "UNSTOPPED":
             job.move("RECOVERY_REQUIRED", f"the guard could not stop the pod: {why}", force=True)
         elif job.state["state"] in J.LIVE:  # FAILED / SUCCEEDED / RECOVERY_REQUIRED keep their meaning; the pod is just off
-            job.move("STOPPED" if st != "ERROR" else "RECOVERY_REQUIRED", f"guard: {why}", force=True)
+            if sess.get("unstored"):  # CR-11: stopped (cap, lifetime) while the last beat said files were not on HF yet
+                job.move("RECOVERY_REQUIRED", f"guard: {why}; the last beat said {sess['unstored']} file(s) were not on HF", force=True)
+            else:
+                job.move("STOPPED" if st != "ERROR" else "RECOVERY_REQUIRED", f"guard: {why}", force=True)
         else:
             job.event("pod", f"guard ended the pod ({st}): {why}")
         incidents.record(incidents.fingerprint("runpod", "pod", job.state.get("stage") or "any", text=why), f"guard ended {sess['pod']}: {why}",
                          cause=why, fix="stopped by the guard" if st != "UNSTOPPED" else "", source="guard", job=job.state["id"])
     disk = disk_per_hour(sess.get("pod_shape") or {}, running=False) * 24
     tail = f"; its disk bills ${disk:.2f}/day until deleted" if st in ENDED else ""
+    if sess.get("unstored") and st != "UNSTOPPED":
+        tail += f"; {sess['unstored']} file(s) were not on HF at the last beat: check the pod's volume before deleting it"
     push("Guard ended the pod" if st != "UNSTOPPED" else "GUARD GAVE UP: THE POD MAY STILL BILL",
          f"{sess['pod']} {st}: {why}; estimate ${spent_estimate(sess, time.time())}{tail}", "high" if st != "UNSTOPPED" else "urgent")
     return st
@@ -1003,6 +1008,11 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
                 job.heartbeat("script", sess.get("progress") or "beat", now=now, source="hf")
                 if job.state["state"] in ("PROVISIONING", "STARTING", "MODEL_LOADING", "READY"):
                     job.move("RUNNING", "first heartbeat from the pod", now=now, force=True)
+                if (sess.get("upload_fail", 0) >= UPLOAD_FAIL_RECOVERY and sess.get("unstored") and not sess.get("recovery_marked")
+                        and job.state["state"] in J.LIVE):  # CR-10: a person must look; the pod keeps running (outputs are only on it)
+                    sess["recovery_marked"] = True
+                    job.move("RECOVERY_REQUIRED", f"{sess['upload_fail']} uploads in a row failed with {sess['unstored']} file(s) "
+                                                  "not on HF; the pod is kept running until they are stored", now=now, force=True)
             limit = sess.get("stall_s") or J.STALL_AFTER["RUNNING"]
             stalled = beat_stall(sess, now)
             if action == "ok" and stalled:
@@ -1456,7 +1466,7 @@ def main(argv=None, api=None, live=None):
                            min_ram=_opt(rest, "--min-ram"), boot=_opt(rest, "--boot"), status_token=token,
                            image=_opt(rest, "--image"), script_url=script_url, lifetime_s=int(max_hours * 3600),
                            cloud=first["cloud"] if first else "SECURE", heartbeat=heartbeat, max_usd=max_usd,
-                           job=_opt(rest, "--job", base), price=first["price"] if first else None, scale=scale, drill=drill)
+                           job=_opt(rest, "--job", base), price=max(r["price"] for r in picks) if picks else None, scale=scale, drill=drill)  # the ceiling, not the list price
         if _opt(rest, "--disk"):  # container disk (GB): a model download larger than the default CONTAINER_GB
             body["disk"] = _opt(rest, "--disk", None, int)
         spec = None
@@ -1478,7 +1488,7 @@ def main(argv=None, api=None, live=None):
         card_max = max(r["price"] for r in picks) if picks else MAX_PRICE[gpu]
         try:
             pod = create(api, body, max_price=card_max,
-                         gpus=[(r["gpu"], r["cloud"], r["price"]) for r in picks if r["est_usd"] <= max_usd] if picks
+                         gpus=[(r["gpu"], r["cloud"], card_max) for r in picks if r["est_usd"] <= max_usd] if picks
                          else [(g, "SECURE", MAX_PRICE[gpu]) for g in GPUS[gpu]])
         except RunPodError as e:
             if spec is not None:

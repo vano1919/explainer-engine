@@ -2577,3 +2577,8 @@ training as sequences is decided in the process. Changed together:
 - P12a drills (CR-17): `runpod create --drill no_self_stop|drop_key|upload_fail` (refused unless the ledger meta says `test=p12a_smoke`),
   `--pass-s/--upload-grace-s/--cap-grace-s` into the pod env, `EE_DEADLINE` exported to the job script; `self_stop` says so and returns when
   the pod has no key. Tests in `test_pod_wrapper.py` and `test_cloud_stop_paths.py`.
+- P1a cross-review fixes (PR #29): the watchdog ignores a beat that is not this pod's (BOOT `pod=`, or newer than the record) so a retry is
+  not stopped by the last run's FAILED; a loop upload pass verifies only settled files and never `beat.txt` (the end sequence still verifies
+  all) and the verified time is the pass start; the hook refuses TMR `rp.py` sub-commands outside the allow-list however it is launched;
+  `EE_PRICE` is the card ceiling; `upload_fail >= 6` with unstored files moves the job to RECOVERY_REQUIRED; a guard stop with unstored
+  files does the same (CR-11). Tests for each.

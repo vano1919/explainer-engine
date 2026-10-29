@@ -17,6 +17,7 @@ nothing here deletes.
 """
 from __future__ import annotations
 
+import calendar
 import json
 import os
 import sys
@@ -100,12 +101,28 @@ def decide(pods, *, now, caps, billed_24h=None, balance=None, job_list=(), stall
     return out
 
 
+def beat_is_of(beat, pid, created):
+    """Is this beat.txt this pod's? A retry of a job uses the same heartbeat path, which still holds the last run's end word until
+    the new pod's first upload. The BOOT line names the pod; an old-style beat without one counts only when it is newer than the
+    record. Anything undecidable is not ours (the money estimate and the lifetime still apply)."""
+    boot_pod = (beat.get("boot") or {}).get("pod")
+    if boot_pod:
+        return boot_pod == pid
+    try:
+        return beat.get("ts") is not None and calendar.timegm(time.strptime(beat["ts"][:19], "%Y-%m-%dT%H:%M:%S")) >= float(created) - 60
+    except (ValueError, TypeError):
+        return False
+
+
 def _by_spec(out, p, spec, beat, now):
     """The rules that need the registry record (CR-12): the pod's own last word and the money estimate."""
     pid, price = p["id"], max(float(spec.get("price") or 0), float(p.get("costPerHr") or 0))
     spent = max(0.0, now - float(spec["created"])) / 3600 * (price + float(spec.get("disk_per_h") or 0))
     if spent >= float(spec["max_usd"]) - 1e-9:
         out["stop"].append((pid, f"estimated spend ${spent:.2f} reached the approved ${spec['max_usd']} (live record {spec['name']})"))
+    if beat and not beat_is_of(beat, pid, spec["created"]):
+        out["info"].append(f"{pid} the beat on HF is from another run ({(beat.get('boot') or {}).get('pod') or beat.get('ts') or '?'}): ignored")
+        beat = None
     if beat:
         word = beat.get("word")
         if word in R.END_WORDS:

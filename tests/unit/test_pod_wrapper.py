@@ -214,3 +214,62 @@ def test_the_script_gets_the_wrapper_deadline_as_ee_deadline(pod):
 def test_no_drill_means_the_normal_behaviour(pod):
     p, b, stops, _ = pod("exit 0\n", EE_DRILL="")
     assert b["word"] == "DONE" and stops == ["stop", "stop"] and b["boot"]["key"] == "200"
+
+
+# --- the default uploader's verification (review of PR #29: normal uploads must not count as failures) -------------------------
+def _uploader_source():
+    import re
+    return re.search(r"python3 - <<'PY'\n(.*?)\nPY\n", R.WRAPPER.read_text(), re.S).group(1)
+
+
+def _run_uploader(tmp_path, *, grow, settled_ref):
+    """Run the wrapper's inline uploader against a fake huggingface_hub: the upload sees ``log.txt`` as it is, then the script
+    appends to it (a healthy pod writing its log)."""
+    tmp_path.mkdir(parents=True, exist_ok=True)
+    fake = tmp_path / "fakehf"
+    fake.mkdir(exist_ok=True)
+    (fake / "huggingface_hub.py").write_text(
+        "import os, shutil\n"
+        "class _E:\n"
+        "    def __init__(s, path, size): s.path, s.size = path, size\n"
+        "class HfApi:\n"
+        "    def upload_folder(s, folder_path, path_in_repo, repo_id, repo_type):\n"
+        "        d = os.environ['FAKE_REMOTE']; shutil.rmtree(d, ignore_errors=True); shutil.copytree(folder_path, d)\n"
+        "        if os.environ.get('FAKE_GROW'): open(os.path.join(folder_path, 'log.txt'), 'a').write('more\\n')\n"
+        "    def list_repo_tree(s, repo, path_in_repo, repo_type, recursive):\n"
+        "        d = os.environ['FAKE_REMOTE']\n"
+        "        return [_E((path_in_repo + '/' if path_in_repo else '') + n, os.path.getsize(os.path.join(d, n))) for n in os.listdir(d)]\n")
+    out = tmp_path / "o"
+    out.mkdir(exist_ok=True)
+    (out / "log.txt").write_text("line\n")
+    (out / "beat.txt").write_text("beat\n")
+    (out / "r.txt").write_text("result\n")
+    ref = tmp_path / "ref"
+    ref.write_text("")
+    past = time.time() - 100
+    os.utime(out / "log.txt", (past - 50, past - 50))         # settled before the pass began
+    os.utime(out / "r.txt", (past - 50, past - 50))
+    os.utime(ref, (past, past))
+    e = {**os.environ, "PYTHONPATH": str(fake), "EE_OUT": str(out), "EE_HF_REPO": "o/r", "EE_HF_PREFIX": "run",
+         "FAKE_REMOTE": str(tmp_path / "remote"), **({"FAKE_GROW": "1"} if grow else {}),
+         **({"EE_SETTLED_REF": str(ref)} if settled_ref else {})}
+    return subprocess.run(["python3", "-c", _uploader_source()], env=e, capture_output=True, text=True)
+
+
+def test_a_file_the_script_is_still_writing_is_not_an_upload_failure_in_the_loop_but_is_at_the_end(tmp_path):
+    # the loop pass: log.txt grew after the pass began, so it is skipped (it stays "unstored" via the verified marker)
+    p = _run_uploader(tmp_path / "loop", grow=True, settled_ref=True)
+    assert p.returncode == 0, p.stdout + p.stderr
+    # the end sequence has no reference: every file is compared, and the grown log differs
+    p = _run_uploader(tmp_path / "end", grow=True, settled_ref=False)
+    assert p.returncode == 1 and "unverified 1" in p.stdout
+
+
+def test_beat_txt_is_never_part_of_the_verification(tmp_path):
+    p = _run_uploader(tmp_path, grow=False, settled_ref=False)
+    assert p.returncode == 0, p.stdout + p.stderr                       # beat.txt is rewritten by the loop itself
+
+
+def test_a_loop_pass_marks_the_verified_time_at_the_pass_start_so_later_writes_stay_unstored():
+    text = R.WRAPPER.read_text()
+    assert 'touch -r "$ST/passref" "$ST/verified"' in text and 'EE_SETTLED_REF="$ST/passref" ee_upload' in text

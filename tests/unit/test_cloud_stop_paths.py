@@ -91,11 +91,12 @@ def test_c_a_frozen_progress_under_fresh_beats_stalls_then_ends(env, monkeypatch
 def test_c_frozen_progress_with_failing_uploads_is_not_stopped_but_pushed(env, monkeypatch):
     fake, api, tmp = env
     fake.pods["a"] = pod()
-    script_job(tmp, stall_s=600)
+    job = script_job(tmp, stall_s=600)
     pushes = []
     why, looks = run_script_guard(api, fake, monkeypatch, lambda now: beat_text(now, fail=7, unstored=4), hours=2, pushes=pushes)
     assert why.startswith("pod is EXITED")                              # CR-10: no stop for failing uploads while files are unstored
     assert any(p[0] == "Pod uploads are failing" and p[2] == "urgent" for p in pushes)
+    assert any(e.get("to") == "RECOVERY_REQUIRED" and "not on HF" in e["text"] for e in J.Job(job.dir).events())  # a person is asked to look
 
 
 def test_c_a_script_that_writes_no_progress_is_judged_by_its_beats_alone(env, monkeypatch):
@@ -168,6 +169,28 @@ def test_d_the_watchdog_stops_a_pod_whose_beat_says_done_without_any_session(env
     # both specs share the one beat file in this fake, so both pods end; the point is the rule fires from the registry alone
     assert fake.pods["a"]["status"] == "EXITED" and "DONE" in str(res["stopped"])
     assert live.ran == [2000] and not list((tmp / "rp").glob("sessions/*.json"))
+
+
+def test_d_an_old_end_word_does_not_stop_a_new_pod(env):
+    """A retry of a job uses the same heartbeat path, which still holds the last run's FAILED until the new pod's first upload."""
+    fake, api, tmp = env
+    name = "ee-x-until-9999999999"
+    fake.pods = {"new1": pod("new1", name)}
+    live = FakeLive({name: spec_for(name, "new1", created=1900.0)})
+    old = beat_text(0, word="FAILED", rc=1).replace("pod=a", "pod=OLDPOD")
+    res = W.run(api, now=2000, apply=True, push=lambda *a: True, log=lambda *a: None, live=live, text=lambda s: old)
+    assert fake.pods["new1"]["status"] == "RUNNING" and not res["stopped"]
+    assert any("from another run" in i for i in res["info"])
+    mine = old.replace("pod=OLDPOD", "pod=new1")                       # the same text from this pod does stop it
+    W.run(api, now=2000, apply=True, push=lambda *a: True, log=lambda *a: None, live=live, text=lambda s: mine)
+    assert fake.pods["new1"]["status"] == "EXITED"
+
+
+def test_d_a_beat_without_a_boot_line_counts_only_when_newer_than_the_record():
+    old_style = {"boot": {}, "word": "DONE", "ts": "2026-10-29T18:00:00Z"}
+    t = 1793296800                                                   # 2026-10-29T18:00:00Z
+    assert W.beat_is_of(old_style, "x", t - 10) and not W.beat_is_of(old_style, "x", t + 3600)
+    assert not W.beat_is_of({"boot": {}, "word": "DONE", "ts": None}, "x", 0)
 
 
 def test_d_the_money_estimate_from_the_record_stops_a_pod_and_alerts_failing_uploads(env):
@@ -347,10 +370,16 @@ def test_f_the_stop_hook_fails_closed_only_when_a_live_pod_is_known(env, monkeyp
 def test_f_the_bash_hook_allows_only_read_only_and_stopping_tmr_commands(env):
     for cmd in ("python cloud/rp.py create --yes", "python3 cloud/rp.py start", "python cloud/rp.py adopt abc", "python cloud/rp.py",
                 "python -c \"import rp; rp.main(['create'])\"", "python -c 'from cloud import rp; rp.main()'",
-                "cd tmr && python ./cloud/rp.py guard abc", "python cloud/rp.py create"):
+                "cd tmr && python ./cloud/rp.py guard abc", "python cloud/rp.py create",
+                # review of PR #29: however it is launched, not only a command that starts with ``python``
+                "python.exe cloud/rp.py create", "./rp.py create", "uv run rp.py create", "cd TMR/cloud && rp.py create",
+                "cd TMR/cloud; ./rp.py adopt abc", "bash -c 'cd x && ./rp.py start'", "sudo python3 -u cloud/rp.py create",
+                "echo go | xargs python cloud/rp.py create", "python -m cloud.rp create", "py -3 cloud\\rp.py create", "./cloud/rp.py"):
         assert H.pre_bash({"tool_input": {"command": cmd}}) == 2, cmd
     for cmd in ("python cloud/rp.py sweep", "python3 cloud/rp.py status abc", "python cloud/rp.py stop abc", "python cloud/rp.py cost abc",
-                "cat cloud/rp.py", "grep -n create cloud/rp.py", "git diff cloud/rp.py", "python -m explainer_engine.cloud.runpod check"):
+                "cat cloud/rp.py", "grep -n create cloud/rp.py", "git diff cloud/rp.py", "python -m explainer_engine.cloud.runpod check",
+                "git add cloud/rp.py tests/x", "./rp.py status", "uv run rp.py sweep", "cd TMR/cloud && rp.py stop abc", "python -m pytest tests/test_rp.py",
+                "sed -n 1,20p cloud/rp.py"):
         assert H.pre_bash({"tool_input": {"command": cmd}}) == 0, cmd
 
 
@@ -435,3 +464,17 @@ def test_a_normal_create_carries_no_drill_and_no_scaled_constants(env, monkeypat
     fake, api, tmp = env
     e = _create_p12a(api, tmp, monkeypatch, None)[0]["env"]
     assert not {"EE_DRILL", "EE_PASS_S", "EE_UPLOAD_GRACE_S", "EE_CAP_GRACE_S"} & set(e)
+
+
+def test_e_a_stop_at_the_ceiling_with_unstored_files_is_recovery_required_and_says_so(env):
+    """CR-11: nothing used to record that the pod was stopped while its last beat said files were not on HF."""
+    fake, api, tmp = env
+    fake.pods["a"] = pod()
+    job = script_job(tmp)
+    sess = R.sess_read("a")
+    sess["unstored"] = 3
+    R.sess_write(sess)
+    pushes = []
+    st = R.end_pod(api, sess, "estimated spend reached the cap", push=lambda *a: pushes.append(a), sleep=lambda s: None)
+    assert st != "UNSTOPPED" and J.Job(job.dir).state["state"] == "RECOVERY_REQUIRED"
+    assert "3 file(s) were not on HF" in pushes[0][1]

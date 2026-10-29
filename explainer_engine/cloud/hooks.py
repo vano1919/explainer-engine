@@ -26,13 +26,17 @@ BYPASS = [re.compile(p) for p in (r"/v[12]/pods/?['\"]?\s*(-X\s*POST|--request\s
 
 
 RP_SAFE = ("sweep", "status", "list", "check", "logs", "cost", "stop")  # TMR's rp.py: read-only and stopping commands only (CR-13)
-RP_CALL = re.compile(r"(?:^|[\s;&|(])(?:\S*python[\d.]*|py)\s+(?:-\S+\s+)*\S*\brp\.py\b(?:\s+(?P<sub>[\w-]+))?")
+# rp.py in the position of a program to run, however it is launched: at the start of a command, after ; & | (, or after a launcher word
+# (python, py, uv run, bash, env, sudo, xargs ...). ``git add rp.py x`` or ``cat rp.py`` are not runs.
+RP_CALL = re.compile(r"(?:^|[;&|(]|\b(?:xargs|exec|env|sudo|nohup|time|run|bash|sh|zsh|py|python[\d.]*)(?:\.exe)?)\s*(?:-\S+\s+)*['\"]?"
+                     r"\S*\brp\.py\b(?:\s+['\"]?(?P<sub>[\w-]+))?")
+RP_MODULE = re.compile(r"\bpython[\d.]*(?:\.exe)?\s+(?:-\S+\s+)*-m\s+(?:\w+\.)*rp\b(?:\s+(?P<sub>[\w-]+))?")
 RP_IMPORT = re.compile(r"\b(?:import\s+(?:cloud\.)?rp\b|from\s+(?:cloud\.rp|cloud\s+import\s+rp)\b|runpy\S*\s*.*\brp\b)")
 
 
 def _tmr_rp(cmd):
     """True when the command runs TMR's rp.py with anything but a read-only or stopping sub-command, or imports it."""
-    for m in RP_CALL.finditer(cmd):
+    for m in [*RP_CALL.finditer(cmd), *RP_MODULE.finditer(cmd)]:
         if (m.group("sub") or "") not in RP_SAFE:
             return True
     return "python" in cmd and bool(RP_IMPORT.search(cmd))
