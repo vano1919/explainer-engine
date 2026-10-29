@@ -1,6 +1,6 @@
 # Implementation plan
 
-> **SUPERSEDED (2026-10-29, P0a): history, not the live plan.** The live plan is `docs/PROGRESS.md` and the blueprint plan (project files `blueprint_2026-10-29/`); the stage table below is a target design.
+> **SUPERSEDED (2026-10-29, P0a): history, not the live plan.** The live plan is `docs/PROGRESS.md` and the blueprint plan (project files `blueprint_2026-10-29/`); the phase table below is history.
 
 ## Status override — checked 2026-10-18
 
