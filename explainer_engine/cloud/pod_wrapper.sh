@@ -7,6 +7,8 @@
 # Inputs (pod env, set by runpod.create_body): EE_SCRIPT_URL, HF_TOKEN, EE_CREATED, EE_LIFETIME_S, EE_MAX_USD, EE_PRICE,
 # EE_DISK_H, EE_JOB, EE_HF_REPO, EE_HF_PREFIX, optional EE_OUT, EE_PASS_S, EE_UPLOAD_GRACE_S, EE_CAP_GRACE_S, EE_RETRY_S,
 # EE_KILL_WAIT_S, EE_STOP_RETRY_S, EE_MAX_STOPS, EE_POLL_S, EE_UPLOAD_CMD (a command; default: the huggingface_hub uploader).
+# EE_DRILL (no_self_stop | drop_key | upload_fail) exists for the P12a smoke only: `runpod create --drill` refuses it unless the
+# ledger says test=p12a_smoke, so a production pod can never carry one. EE_DEADLINE is exported to the job script (its own cut-off).
 EE_OUT=${EE_OUT:-/workspace/out}
 EE_PASS_S=${EE_PASS_S:-300}
 EE_UPLOAD_GRACE_S=${EE_UPLOAD_GRACE_S:-900}
@@ -24,6 +26,7 @@ echo 0 > "$ST/fail"
 : > "$ST/boot"
 
 self_stop() {
+  [ -n "$RUNPOD_API_KEY" ] || { echo "self_stop: no key could stop this pod"; return 1; }
   curl -fsS -m 30 -X POST -H "Authorization: Bearer $RUNPOD_API_KEY" -H "Content-Type: application/json" \
     -d '{"action":"stop"}' "https://api.runpod.io/v2/pods/$RUNPOD_POD_ID/action" >/dev/null 2>&1 \
   || curl -fsS -m 30 -X POST -H "Authorization: Bearer $RUNPOD_API_KEY" -H "Content-Type: application/json" \
@@ -49,6 +52,7 @@ write_beat() { # $1 word  $2 rc (optional)
 
 # --- upload + verify (CR-04): exit 0 only when every local file is on HF with the same size ---------------------------------
 ee_upload() {
+  [ "$EE_DRILL" = upload_fail ] && return 1   # drill: the folder upload always fails, the beat upload still works (CR-10 becomes visible)
   if [ -n "$EE_UPLOAD_CMD" ]; then $EE_UPLOAD_CMD; return $?; fi
   python3 - <<'PY'
 import os, sys
@@ -106,6 +110,7 @@ deadline_calc() { # price -> epoch
 # --- 1. key boot-probe (CR-03) --------------------------------------------------------------------------------------------
 code=none
 real=""
+[ "$EE_DRILL" = drop_key ] && unset RUNPOD_API_KEY   # drill: the pod has no key (key=none; only the guard and the watchdog can stop it)
 if [ -n "$RUNPOD_API_KEY" ] && [ -n "$RUNPOD_POD_ID" ]; then
   code=$(curl -s -m 20 -o "$ST/pod.json" -w '%{http_code}' -H "Authorization: Bearer $RUNPOD_API_KEY" \
          "https://api.runpod.io/v2/pods/$RUNPOD_POD_ID" 2>/dev/null) || code=000
@@ -135,7 +140,10 @@ end_seq() { # $1 word  $2 rc  $3 grace seconds
   write_beat "$final" "$rc"
   for _ in 1 2 3; do ee_upload_beat && break; sleep 2; done
   # PID 1 stays alive: a returning start command would restart the container in a loop
-  while [ "$n" -lt "$EE_MAX_STOPS" ]; do self_stop; n=$((n + 1)); sleep "$EE_STOP_RETRY_S"; done
+  while [ "$n" -lt "$EE_MAX_STOPS" ]; do
+    [ "$EE_DRILL" = no_self_stop ] || self_stop   # drill: the guard or the watchdog must stop this pod
+    n=$((n + 1)); sleep "$EE_STOP_RETRY_S"
+  done
   exit "$rc"
 }
 
@@ -152,7 +160,7 @@ fi
 if ! curl -fsSL -m 300 -H "Authorization: Bearer $HF_TOKEN" "$EE_SCRIPT_URL" -o "$EE_SCRIPT"; then
   echo "could not download the pod script"; end_seq FAILED 22 "$EE_UPLOAD_GRACE_S"
 fi
-export EE_OUT
+export EE_OUT EE_DEADLINE="$DEADLINE"
 setsid bash "$EE_SCRIPT" &
 SPID=$!
 capped=0

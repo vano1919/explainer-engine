@@ -2574,3 +2574,6 @@ training as sequences is decided in the process. Changed together:
   refused at the next `create` until P1b rewrites the ones that are reused.
 - Open for the creator: GitHub secret `HF_TOKEN` (write on `vano1919/tmr-artifacts`) for the watchdog; balance is $0.40 so P12a waits for a
   top-up. Unproven until P12a: the wrapper as container command on RunPod, the real uploader in `ee_upload`, the in-pod key's stop right.
+- P12a drills (CR-17): `runpod create --drill no_self_stop|drop_key|upload_fail` (refused unless the ledger meta says `test=p12a_smoke`),
+  `--pass-s/--upload-grace-s/--cap-grace-s` into the pod env, `EE_DEADLINE` exported to the job script; `self_stop` says so and returns when
+  the pod has no key. Tests in `test_pod_wrapper.py` and `test_cloud_stop_paths.py`.

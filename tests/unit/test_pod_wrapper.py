@@ -184,3 +184,33 @@ def test_parse_beat_reads_every_word_and_the_old_forms():
     assert b["word"] == "FAILED_UPLOAD" and b["progress"] == "step 4/9" and b["upload_fail"] == 7 and b["unstored"] == 3
     assert b["boot"] == {"key": "200", "job": "j", "pod": "p", "price": "0.5", "deadline": "100"}
     assert R.parse_beat("ALIVE 2026-10-29T18:00:00Z progress= upload_fail=0 unstored=0")["word"] == "ALIVE"
+
+
+# --- P12a drills (EE_DRILL): faults for the paid smoke only; `runpod create --drill` is the only way in -----------------------
+def test_drill_no_self_stop_leaves_the_pod_running_for_the_guard_and_the_watchdog(pod):
+    p, b, stops, _ = pod("echo x > $EE_OUT/r.txt\n", EE_DRILL="no_self_stop")
+    assert b["word"] == "DONE" and "stop" not in stops and "gqlstop" not in stops       # it ends, uploads, and never stops itself
+
+
+def test_drill_drop_key_makes_the_probe_say_none_and_no_stop_is_attempted_with_a_key(pod):
+    p, b, stops, _ = pod("exit 0\n", EE_DRILL="drop_key")
+    assert b["boot"]["key"] == "none" and b["word"] == "DONE"
+    assert "stop" not in stops                                                           # the v2 action needs the key; none was left
+
+
+def test_drill_upload_fail_fails_the_folder_upload_but_the_beat_still_goes_out(pod):
+    p, b, stops, stub = pod("echo x > $EE_OUT/r.txt\nsleep 3.5\n", EE_DRILL="upload_fail")
+    assert b["word"] == "FAILED_UPLOAD" and b["upload_fail"] >= 3 and b["unstored"] >= 1
+    assert (stub / "hf_beat.txt").exists() and not (stub / "hf" / "r.txt").exists()
+
+
+def test_the_script_gets_the_wrapper_deadline_as_ee_deadline(pod):
+    created = int(time.time())
+    p, b, _, stub = pod("echo $EE_DEADLINE > $STUB_DIR/dl\n", EE_CREATED=created, EE_LIFETIME_S=3600, EE_MAX_USD=5, EE_PRICE=0.34,
+                        EE_CAP_GRACE_S=300)
+    assert int((stub / "dl").read_text()) == int(b["boot"]["deadline"])
+
+
+def test_no_drill_means_the_normal_behaviour(pod):
+    p, b, stops, _ = pod("exit 0\n", EE_DRILL="")
+    assert b["word"] == "DONE" and stops == ["stop", "stop"] and b["boot"]["key"] == "200"

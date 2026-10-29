@@ -1317,17 +1317,26 @@ def hf_target(heartbeat):
     return repo, folder
 
 
-def wrapper_env(script_url, *, heartbeat, max_usd, lifetime_s, price, job=None, created=None, volume=VOLUME_GB, container=CONTAINER_GB):
-    """The EE_* env the wrapper reads (CR-05): what it needs for the dead-man and for the upload."""
+DRILLS = ("no_self_stop", "drop_key", "upload_fail")
+
+
+def wrapper_env(script_url, *, heartbeat, max_usd, lifetime_s, price, job=None, created=None, volume=VOLUME_GB, container=CONTAINER_GB,
+                pass_s=None, upload_grace_s=None, cap_grace_s=None, drill=None):
+    """The EE_* env the wrapper reads (CR-05): what it needs for the dead-man and for the upload. ``pass_s`` / ``upload_grace_s`` /
+    ``cap_grace_s`` scale the loop and the graces (the P12a drills use 120 / 300 / 120 s); ``drill`` is a P12a fault, see ``main create``."""
     repo, folder = hf_target(heartbeat)
     disk_h = (float(volume or 0) + float(container or 0)) * GB_MONTH_RUNNING / HOURS_PER_MONTH
     return {"EE_SCRIPT_URL": script_url, "EE_CREATED": str(int(time.time() if created is None else created)),
             "EE_LIFETIME_S": str(int(lifetime_s)), "EE_MAX_USD": str(max_usd), "EE_PRICE": str(price), "EE_DISK_H": f"{disk_h:.5f}",
-            "EE_JOB": str(job or ""), "EE_HF_REPO": repo, "EE_HF_PREFIX": folder}
+            "EE_JOB": str(job or ""), "EE_HF_REPO": repo, "EE_HF_PREFIX": folder,
+            **{k: str(int(v)) for k, v in (("EE_PASS_S", pass_s), ("EE_UPLOAD_GRACE_S", upload_grace_s), ("EE_CAP_GRACE_S", cap_grace_s))
+               if v is not None},
+            **({"EE_DRILL": drill} if drill else {})}
 
 
 def create_body(name, gpu="default", *, volume=VOLUME_GB, min_ram=None, boot=None, status_token="", image=None,
-                script_url=None, lifetime_s=None, cloud="SECURE", heartbeat=None, max_usd=None, job=None, price=None):
+                script_url=None, lifetime_s=None, cloud="SECURE", heartbeat=None, max_usd=None, job=None, price=None, scale=None,
+                drill=None):
     """The v2 ``POST /pods`` body for the FIRST card of the pool; ``create()`` swaps ``gpu.id`` (and the cloud, and EE_PRICE) for
     the next cards. ``gpu`` is a pool name or a GPU id (``pick_gpus``). A script pod needs ``heartbeat`` and ``max_usd``."""
     body = {"name": name, "image": image or IMAGE, "gpu": {"id": GPUS[gpu][0] if gpu in GPUS else gpu, "count": 1,
@@ -1344,7 +1353,7 @@ def create_body(name, gpu="default", *, volume=VOLUME_GB, min_ram=None, boot=Non
         body["cmd"] = script_cmd()
         body["env"].update(wrapper_env(script_url, heartbeat=heartbeat, max_usd=max_usd, lifetime_s=lifetime_s or 3600,
                                        price=price if price is not None else MAX_PRICE.get(gpu, max(MAX_PRICE.values())), job=job,
-                                       volume=volume, container=CONTAINER_GB))
+                                       volume=volume, container=CONTAINER_GB, drill=drill, **(scale or {})))
     return body
 
 
@@ -1409,6 +1418,16 @@ def main(argv=None, api=None, live=None):
             picks = only_cards(picks, _opt(rest, "--only"))
             for r in picks:
                 print(f"card  {r['gpu']} {r['cloud']} ${r['price']}/h x {r['hours']} h ≈ ${r['est_usd']} ({r['availability']})")
+        from explainer_engine.core.ledger import Run
+        drill = _opt(rest, "--drill")
+        if drill:  # a fault for the P12a smoke only: never on a production pod
+            if drill not in DRILLS:
+                raise SystemExit(f"refused: --drill {drill!r} is not one of {DRILLS}")
+            if script is None or Run.open(ledger).data.get("meta", {}).get("test") != "p12a_smoke":
+                raise SystemExit("refused: --drill needs a script pod and a ledger opened with test=p12a_smoke")
+        scale = {k: _opt(rest, f"--{f}", None, float) for k, f in (("pass_s", "pass-s"), ("upload_grace_s", "upload-grace-s"),
+                                                                    ("cap_grace_s", "cap-grace-s"))}
+        scale = {k: v for k, v in scale.items() if v is not None} or None
         heartbeat, declared = _opt(rest, "--heartbeat"), heartbeat_of_script(script) if script else None
         if heartbeat and declared and heartbeat != declared:
             raise SystemExit(f"refused: --heartbeat {heartbeat} and the script's `# heartbeat: {declared}` disagree (CR-07a)")
@@ -1437,7 +1456,7 @@ def main(argv=None, api=None, live=None):
                            min_ram=_opt(rest, "--min-ram"), boot=_opt(rest, "--boot"), status_token=token,
                            image=_opt(rest, "--image"), script_url=script_url, lifetime_s=int(max_hours * 3600),
                            cloud=first["cloud"] if first else "SECURE", heartbeat=heartbeat, max_usd=max_usd,
-                           job=_opt(rest, "--job", base), price=first["price"] if first else None)
+                           job=_opt(rest, "--job", base), price=first["price"] if first else None, scale=scale, drill=drill)
         if _opt(rest, "--disk"):  # container disk (GB): a model download larger than the default CONTAINER_GB
             body["disk"] = _opt(rest, "--disk", None, int)
         spec = None

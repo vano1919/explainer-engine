@@ -395,3 +395,43 @@ def test_cr16_the_unit_tests_never_touch_the_real_tools_dir():
     assert R.RP != real and "rp_default" in str(R.RP) or "rp" in str(R.RP)
     R.notify("isolated", "x")
     assert not (real / "notify.jsonl").exists() or "isolated" not in (real / "notify.jsonl").read_text()
+
+
+# --- P12a drill flags -------------------------------------------------------------------------------------------------------
+def _create_p12a(api, tmp, monkeypatch, test, *extra):
+    monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)
+    ledger = tmp / "run.json"
+    Run.open(ledger, caps={"runpod_usd": 1.0}, **({"test": test} if test else {}))
+    sf = tmp / "job.sh"
+    sf.write_text(NEW_SH)
+    seen = []
+    real = R.create
+    monkeypatch.setattr(R, "create", lambda api, body, **kw: seen.append(body) or real(api, body, **kw))
+    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(ledger), "--script", str(sf),
+            "--script-url", "https://huggingface.co/x/pod.sh", *extra], api=api, live=FakeLive(age=60))
+    return seen
+
+
+def test_drill_is_refused_unless_the_ledger_says_p12a_smoke(env, monkeypatch):
+    fake, api, tmp = env
+    for test in (None, "other"):
+        with pytest.raises(SystemExit, match="p12a_smoke"):
+            _create_p12a(api, tmp, monkeypatch, test, "--drill", "drop_key")
+    with pytest.raises(SystemExit, match="not one of"):
+        _create_p12a(api, tmp, monkeypatch, "p12a_smoke", "--drill", "explode")
+    assert not fake.pods
+
+
+@pytest.mark.parametrize("drill", ["no_self_stop", "drop_key", "upload_fail"])
+def test_drill_and_scaled_constants_reach_the_pod_env(env, monkeypatch, drill):
+    fake, api, tmp = env
+    body = _create_p12a(api, tmp, monkeypatch, "p12a_smoke", "--drill", drill, "--pass-s", "120", "--upload-grace-s", "300",
+                        "--cap-grace-s", "120")[0]
+    e = body["env"]
+    assert e["EE_DRILL"] == drill and e["EE_PASS_S"] == "120" and e["EE_UPLOAD_GRACE_S"] == "300" and e["EE_CAP_GRACE_S"] == "120"
+
+
+def test_a_normal_create_carries_no_drill_and_no_scaled_constants(env, monkeypatch):
+    fake, api, tmp = env
+    e = _create_p12a(api, tmp, monkeypatch, None)[0]["env"]
+    assert not {"EE_DRILL", "EE_PASS_S", "EE_UPLOAD_GRACE_S", "EE_CAP_GRACE_S"} & set(e)
