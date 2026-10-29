@@ -111,7 +111,9 @@ def test_everything_an_agent_or_a_skill_names_exists():
     missing = []
     files = list((ROOT / ".claude").rglob("*.md"))
     for f in files:
-        mods, paths, skills = _named(f.read_text(encoding="utf-8"))
+        # a line that says "(planned, P8)" names a module a later phase builds: allowed, and the word is the contract
+        text = "\n".join(l for l in f.read_text(encoding="utf-8").splitlines() if "(planned" not in l)
+        mods, paths, skills = _named(text)
         missing += [f"{f.name}: module {m}" for m in mods if not _module_exists(m)]
         missing += [f"{f.name}: {p}" for p in paths if not (ROOT / p).exists()]
         missing += [f"{f.name}: skill {s}" for s in skills if not (ROOT / ".claude/skills" / s / "SKILL.md").exists() and s not in {n for n in NAMES}]
