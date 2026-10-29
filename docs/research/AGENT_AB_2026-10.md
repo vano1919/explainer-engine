@@ -4,7 +4,7 @@ Question: does the writers' room keep its focus better as one main agent in one 
 [OR-20](../ORCHESTRATION.md)) or as a separate worker per stage with a gate after every return (the proposed per-stage worker form)? Free test, no paid
 call. Data and scripts: `docs/research/agent_ab_2026-10/` (inputs, every stage snapshot of both arms, `measure.py`, metrics JSON).
 
-## Setup (identical for both arms)
+## Setup (shared by both arms)
 - Same brief; the claim map has the same rows in both arms (`agent_ab_2026-10/input/claim_map.md`), but arm A worked from a renormalised copy (`C-NN`, invented ids `C-91..C-94`; `arm_A/claim_map.md`) because `scripting/claims.py` parses only that form, so the setups were not byte-identical: "What if Napoleon marched into Genghis Khan?", 8 segments (about 5 min), 3 Shorts, stages 1, 2, 2b, 3, 4, 5, 6 of the `story-engine` skill, Sonnet 5.5 for every worker and for arm A, no paid tool.
 - Arm A: ONE Sonnet agent ran all stages in one context (interleaved writer/beats per segment, own gate harness).
 - Arm B: the orchestrator spawned 22 fresh Sonnet workers: architect, then writer and beat-writer per segment (16), performer, editor, one architect repair round, caster, shorts. Each saw only its stage page, the brief and the previous snapshot. The orchestrator re-ran the gates after each return.

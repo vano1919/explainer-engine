@@ -68,6 +68,55 @@ Rules: numbers only from the claim map; each visual has one sentence of narratio
 visual after the first explanation, never in the first 5 s of a period. Voice and cut are the main work; visuals, music and
 texture are bonuses that must never hurt them (ED-11).
 
+## Sound design craft: perspective, masking, density (P3b 2026-10-29)
+
+The mix laws of the blueprint, as judgement. Every number is a BP hypothesis; BP-50, BP-53, BP-54, BP-56 and BP-62 stay the
+binding rules they are.
+
+- **A scene has a room.** A continuous room-tone or ambience bed runs under each scene (BP-116), so a cut never drops to
+  digital silence; the read's own pause fill is BP-60, a different layer.
+- **Sound crosses the cut first.** At a scene boundary the next scene's sound leads (J) or the last one trails (L), BP-117;
+  a butt cut between a map and a drama scene is REVIEW. Inside dialogue ED-14 keeps its one-third share.
+- **Leave the voice its band.** Level ducking (BP-53) lowers the music; masking is a spectral question: music and ambience
+  should carry less 1-4 kHz energy while the narrator speaks than in the pauses (BP-118). Measure the gap, never trust a
+  filter setting.
+- **Two and a half.** Murch: about five layers can be dense and clear only when spread across the spectrum of "colours"
+  (speech is encoded, music embodied); sounds of one colour blur past two and a half (BP-121). BP-56 keeps the counts; the
+  ear needs the spread.
+- **The stereo field tells where.** Narration and close dialogue centred, music wide, a spot effect on its source's
+  screen side within BP-121's pan range (the audio event's `pan` field, wired in P4).
+- **Perspective follows the lens.** A wide shot hears its sound farther (high roll-off, more of the scene's one impulse
+  response); a close shot hears it dry and near (BP-122). An off-screen sound is panned and ducked, never dry and centred.
+- **Hits are built, reveals are prepared.** A major impact is three layers (sub, body, air) on the frame (BP-119, inside
+  BP-54); before the biggest reveals the music and foley fall to bare room tone, then the hit lands (BP-120).
+- **Themes belong to people.** A faction's or hero's motif returns when its owner acts; with music up, action cuts sit on
+  the beat grid (BP-123); music starts and stops on boundaries (BP-62).
+
+### CHECKLIST (sound)
+
+Rendered from `explainer_engine/standards/craft_checklists/sound.json` (the one home of these ids; 
+`python -m explainer_engine.standards.craft write` regenerates it, `tests/unit/test_craft_checklists.py` fails when they
+differ). Every row is a hypothesis until a second source type is verified ([CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)).
+
+<!-- craft-checklist:sound:begin -->
+| ID | check | rule | artefact field | sourced rules | enforced by |
+|---|---|---|---|---|---|
+| CRAFT-SND-01 | code | a continuous room-tone bed per scene inside the band; no cut falls to digital silence | audio events per scene (bed level) | BP-116 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-02 | code | J- or L-cut at every scene boundary inside its durations | scene boundaries in the cut list | BP-117, ED-14 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-03 | code | music and ambience leave the voice's presence band while the narrator speaks (measured gap) | music/bed stems vs the narration's word times | BP-118 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-04 | code | every duck is a dip inside BP-53's band | duck envelopes | BP-53 | `explainer_engine/audio/duck.py` |
+| CRAFT-SND-05 | code | a major impact is a three-layer composite hit on the frame | sfx events with visual_event | BP-119, BP-54 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-06 | code | an acoustic vacuum before each of the largest reveals, then the hit | reveal beats + mix levels | BP-120 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-07 | code | at most two and a half sounds of one colour at once besides the voice (five when spread) | audio layers per instant | BP-56, BP-121 | `explainer_engine/audio/layers.py` |
+| CRAFT-SND-08 | code | narration centred, music wide, a spot effect on its source's screen side within the pan range | audio event pan + shot continuity card side | BP-121 | `explainer_engine/production/assemble.py` (planned, P4) |
+| CRAFT-SND-09 | critic | encoded and embodied sound are balanced: never two encoded streams (narration over a hero line) at once | audio layers per instant | BP-121 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-SND-10 | code | acoustic perspective follows the shot size; one impulse response per scene | sfx perspective field + shot size | BP-122 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-11 | critic | one motif per faction, hero and channel; it returns when its owner acts | music library motif_of + scene owners | BP-123 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-SND-12 | code | with music up, an action cut falls on the beat grid | cut times vs the music's beat grid | BP-123 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-13 | code | music is spotted on scene or beat boundaries, with a planned no-music stretch | music events | BP-62 | `explainer_engine/audio/layers.py` |
+| CRAFT-SND-14 | code | the delivered mix meets the loudness and true-peak gate | the delivered file | BP-50 | `explainer_engine/qa/targets.py` |
+<!-- craft-checklist:sound:end -->
+
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 The numbers of this skill live in the registry (D-59); the code reads them with `sourced_rules.T`, this list is the reading copy.
@@ -94,3 +143,6 @@ The numbers of this skill live in the registry (D-59); the code reads them with 
   beat counts only when it is tied to a narration word (BP-93): never add a prop or ring to beat a clock; fix a long still
   with a cut or a move the story asks for, or accept the REVIEW.
 - BP-41: one scripted pattern interrupt in the 25-35 s window (a cut with a new element).
+- BP-116..BP-123: room tone, J/L at scene boundaries, the masking gap, composite hits, the pre-reveal vacuum, the stereo
+  field and same-colour density, acoustic perspective, motifs and the beat grid (all hypothesis, REVIEW; the sound
+  checklist above names each one's planned validator, `audio/sound_director.py`, P4).
