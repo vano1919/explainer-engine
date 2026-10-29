@@ -2546,6 +2546,67 @@ training as sequences is decided in the process. Changed together:
 - Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
 - From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
 
+## 2026-10-29 22:50 Tbilisi: P0b, the code guards of the Blueprint plan (no pod, no money)
+
+- ვანო 2026-10-29 18:19 UTC "დაიწყე", 18:25 (usage rule), 18:27 "კი" (Opus designed, Sonnet 5.5 high implemented, OR-26). Design: `blueprint_2026-10-29/P0b_DESIGN.md` in the project files.
+- `config/model_routing.json` (D7): models, the 18 task classes of MODEL_ROUTING v2 part 4 (D6), the pair of every agent, critics, spawners, the Fable
+  story-stage flag (off), escalation numbers, owner categories, protected files, usage line. `explainer_engine/governance/`: `hooks.py`
+  (pre-bash, pre-write, pre-agent, post-edit, pre-switch/post-switch, prompt, stop, stop-failure, statusline), `records.py` (the creator's word
+  in `jobs/creator_ok.jsonl`), `status.py` (phases, cards, routing log, generated STATUS), `usage.py` (OR-30 backup), CLI `python -m explainer_engine.governance`.
+- Hooks wired in `.claude/settings.json` next to the money hooks (D-56): force push / `branch -D` without a `backup/*` tag, `engine/`, protected config,
+  `*.py` at xhigh/max, Fable outside the story stages, critics off Opus, model switch without his word, findings after every edit, the Stop check of a
+  done phase (routing_log line, files, PROGRESS entry, listed tests). All fail open on a broken check.
+- All 15 agent files declare `model:` and `effort:` (6 had none; stage pages got `effort`); both critics are `Read, Grep, Glob` (D-84): `script-critic` lost
+  Bash, `lora-checkpoint-judge` lost Bash and Write; the orchestrator and the coordinator run the tools and pass the output by path.
+- `core/ledger.Attempts` (OR-04): attempts 1-2 at the assigned level, the 3rd only escalated, then NeedsReview. Docs: OR-28 (halt and ask), OR-29, OR-30; D-81, D-83,
+  D-84; UD-01..UD-10 table; `UD` home in `docs_lint`; `docs/blueprint/` (phases.json, decision_queue.json with owner on every card, routing_log.jsonl,
+  generated STATUS.md). The usage rule (95 %): the status line is the only source of percentages; cloud threads see `allowed_warning` in `get_session`.
+- Tests: `test_agent_governance` (27), `test_governance_hooks` (23), `test_decision_queue`, `test_routing_log`, `test_attempts`, `test_usage_backup`,
+  OR-28 in `test_agree_every_detail`; `pytest -m "not system and not media"` 1292 passed; `docs_lint` 0 findings.
+- Not enforceable, stated: the halt itself and the S0-S4 classification (words only); run-folder scoping of critics; that the recorded word quotes
+  a real message; that `PreModelSwitch` fires for the hearth switch tool and that `Agent` events carry `model` (unverified, the tools also refuse alone).
+
+### P0b review round 1 (cross-review of PR #30, fixed in the same PR)
+
+- Blocking 1: `PreModelSwitch` carries `source`; the creator's own `/model` and picker (`command`, `picker`) now pass, an `sdk` switch (the hearth tool, Remote Control) still needs his recorded word.
+- Blocking 2: the force-push guard strips `refs/heads/` and resolves `HEAD`, so `HEAD:refs/heads/main` no longer slips past.
+- Cheap items taken: commands are tokenised with `shlex` (commit-message text is no longer a command); protected-file guard sees `perl -pi`, `sponge`, `Set-Content`, Windows paths and a copy onto the file, and no longer refuses reads; a wildcard word never unlocks a protected file; the backup keys a window without `resets_at` by time bucket, never commits credential-like files, and writes a generic trailer; switches are logged to untracked `jobs/switch_log.jsonl` with the message id; a critic spawned without a model is checked against its agent file; `Attempts` numbers come from `config.escalation` in the CLI; `.claude/settings.local.json` is gitignored; limits stated in OR-29.
+- Not built: the frontmatter re-check inside `pre-agent` (`test_agent_governance` already pins every agent file).
+- Follow-up from the re-review (APPROVE): the git parser skips wrapper commands (`sudo`, `env`, `timeout 60`, `nice -n 5`, `nohup`, `command`, `time`...), so `timeout 60 git push --force origin main` is refused; tested. `bash -c "git push -f ..."` is read too (the quoted script is parsed as commands).
+
+## 2026-10-29 19:00 UTC: P0a repo hygiene (blueprint v2, no pod, no money)
+
+- D2 (ვანო, 2026-10-29): `.chatgpt/` deleted (16 files: a 2026-10-18 copy of `.claude/` plus ChatGPT rules; the
+  editorial-critic agent/skill and rules stay readable in git history before this commit). The editorial gate code
+  (`production/editorial_gate.py`, OR-10) is untouched.
+- Superseded banners: `CHATGPT.md`, `docs/CHATGPT_WORKFLOW.md`, `docs/IMPLEMENTATION_PLAN.md`, `docs/PIPELINE_ARCHITECTURE.md`;
+  `README.md` and `docs/INDEX.md` no longer point to `.chatgpt/`; `quality.yml` lost the `chatgpt/**` trigger;
+  `requirements.txt` lost the kokoro-onnx line (D-39, narrate.py is a legacy path) and the Remotion comment;
+  `docs/EDITING.md` ED-09 points to `production/graphics.py` (`production/cards.py` was never built).
+- `audio/visemes.py` and `audio/timings.py` stay (provenance ports; `timings` is imported by `audio/narrate.py`).
+- Test: `tests/unit/test_repo_hygiene.py` (no `.chatgpt/`, no CI trigger, visemes importable, retired deps absent).
+
+## 2026-10-29 22:45 UTC: P3b craft curriculum, sub-step 2 (blueprint v2, no pod, no money)
+
+- The professional craft of nine departments in the repository's three layers: skill pages (extended `narration-script`
+  AI register, `editing-style` sound design, `video-editing-architect` editing/colour and motion graphics with Mayer's
+  principles, `shot-visuals` shot grammar and lanes, `elevenlabs-voice` casting and performance, `shorts-for-video`
+  packaging; new `cartography` and `animation-principles`; a pointer in the `performance-director` stage page), one
+  checklist per department `explainer_engine/standards/craft_checklists/<dept>.json` (102 CRAFT- rows in the shape of
+  `training/video_criteria.json`, each with its kind, artefact field, sourced rules, source and enforcement; rendered into
+  its skill's CHECKLIST table), and the index [CRAFT_CURRICULUM](CRAFT_CURRICULUM.md) with the 13 Blueprint conflicts
+  (creator decision pending, the rule in force stays) and the 17 areas.
+- Registry: BP-114..138 added, all **hypothesis, REVIEW** (no rule has two verified source types; sources only from
+  `docs/research/CRAFT_SOURCES_2026-10.md`, numbers no opened source supports cite "Blueprint 2026-10 (unverified)");
+  each names its checklist row in `enforced_by` and the validator still to be written in `planned` (P3-P10). The
+  dramatisability caps (BP-127) are the Blueprint's house numbers, not McKee's or Katz's. No existing threshold changed;
+  the conflicting Blueprint numbers (-16 LUFS, 135-145 wpm, 3-5 dB duck, 0.18 eye trace, 2.0-3.5 s window, 24 fps,
+  250/480/240/60 safe zone) are conflict records only, not registry entries.
+- Tooling: `explainer_engine/standards/craft.py` (`check`, `write`: integrity and the rendered copies; judges no video).
+- Test: `tests/unit/test_craft_checklists.py` (shape, unique ids, sources and enforcement, BP ids exist, skill tables and
+  the curriculum index equal the JSON, one home per CRAFT id, 13 conflicts and 17 areas listed, the conflicting rules keep
+  their numbers).
+- Merge of main with P3b (#36): the Lock 5 test of `test_agent_governance` exempts only a backticked reference directly followed by `(planned, Pn)` (regex, the phase must exist in `docs/blueprint/phases.json`); everything else on the line is still checked.
 ## 2026-10-29 19:20 UTC (23:20 Tbilisi): Blueprint P2, the data contracts (no pod, no money)
 
 - ვანო (2026-10-29 18:19 and 18:30 UTC): start phase P2 of the Blueprint plan v2 and carry it through the night. Design by the Opus
@@ -2559,7 +2620,7 @@ training as sequences is decided in the process. Changed together:
   (`job_manifest/1`: only the next state, approvals per gate, dossier hash fixed once, no cross-job artifacts, abort/reopen,
   adopt), `core/shot_cache.py` (SHA-256 of the shot spec without paths). `core/ledger.py` unchanged: it already holds pod and API
   money in one run.json; `test_one_ledger` pins it. `training/cast/sheet.py` no longer writes the bfl cap as a number.
-- Decisions: D-85 (episode fps = LTX native 24, measured on six clips; assemble and Shorts at 30 follow in P7/P9). BP-114 (8k+1,
+- Decisions: D-85 (episode fps = LTX native 24, measured on six clips; assemble and Shorts at 30 follow in P7/P9). BP-139 (8k+1,
   /32, two-stage /64, at most 257 frames; hypothesis, so REVIEW). AUDIO_TIMED comes after SAMPLE_APPROVED (the read is paid, OR-19).
   `sourced_rules.level()` caps a hypothesis at REVIEW; `enforced_by` of 9 rules completed (the sync test found them).
 - Tests: `test_contracts`, `test_lifecycle`, `test_shot_cache`, `test_one_ledger`, `test_spend_caps_single_source`,
@@ -2569,7 +2630,7 @@ training as sequences is decided in the process. Changed together:
   states and names the dossier; creator and planner approvals of a gate must bind a non-null sha256; CN-14 compares
   `source_episode_sha256` with the job's `assembled_video`; `film_shots/1` refuses the /2 fields; a cached render and the repo's
   `assets/` may be recorded as artifacts but not any path that merely contains "assets"; the cache key treats `1` and `1.0` alike;
-  BP-114 is read by literal id and listed only where it is read (`test_bp_114_is_listed_only_where_it_is_read`).
+  BP-139 is read by literal id and listed only where it is read (`test_bp_114_is_listed_only_where_it_is_read`).
 - Second review round (22:45 UTC): `adopt` takes `approvals` for EVERY gated state up to the target (a machine approval of STAGED_UNLISTED
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.

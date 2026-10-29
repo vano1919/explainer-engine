@@ -41,6 +41,39 @@ the video's own lines and audio (SS-09, EL-09), never a cut-down of the long vid
    Every Short carries the video's visual-beat layer (SS-09): the beat-writer gives the Short's own lines beats, on new
    information and at BP-45's pace, never a 1.5 s metronome; cues stay opt-in and event-bound as on /3 (VB-08).
 
+## Packaging and platform (P3b 2026-10-29)
+
+- **Promise before story.** Before the scenario the packaging stage writes three title-and-thumbnail promises of different
+  mechanism (a conflict of scale, a paradox or gap, a Day 1 to Day N progression) for YouTube's Test & Compare, which takes up
+  to three (BP-135); the script's first seconds pay the chosen one. The thumbnail stays honest (TN-02).
+- **Read the curve, then edit.** After publishing, Studio's intro, top moments, spikes and dips are mapped onto segment ids
+  (P10); BP-48 keeps the intro gate, BP-136 adds the midpoint.
+- **A Short is a Short.** At most YouTube's limit (BP-137) and inside BP-12's bands; captions and the face inside the safe
+  zone of BP-29 (the Blueprint's other margins are conflict 13, settled by a screenshot on the creator's phone); TikTok and
+  Instagram limits are not researched yet.
+- **Nothing goes public** without the creator's recorded approval (CLAUDE.md invariant 4).
+
+### CHECKLIST (packaging)
+
+Rendered from `explainer_engine/standards/craft_checklists/packaging.json` (the one home of these ids; 
+`python -m explainer_engine.standards.craft write` regenerates it, `tests/unit/test_craft_checklists.py` fails when they
+differ). Every row is a hypothesis until a second source type is verified ([CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)).
+
+<!-- craft-checklist:packaging:begin -->
+| ID | check | rule | artefact field | sourced rules | enforced by |
+|---|---|---|---|---|---|
+| CRAFT-PKG-01 | manual | three title-and-thumbnail promises of different mechanism before the scenario | packaging promises (variant card) | BP-135 | `explainer_engine/scripting/variant_plan.py` (planned, P3) |
+| CRAFT-PKG-02 | critic | the script's first seconds pay the chosen promise | packaging promise + first 5 s of narration | BP-135 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-PKG-03 | code | Studio's intro, top moments, spikes and dips mapped onto segment ids | retention report + segment times | BP-48 | `explainer_engine/qa/retention_mapper.py` (planned, P10) |
+| CRAFT-PKG-04 | code | the midpoint retention gate (the intro gate is BP-48's) | retention report | BP-136, BP-48 | `explainer_engine/qa/retention_mapper.py` (planned, P10) |
+| CRAFT-PKG-05 | code | a Short stays inside YouTube's length limit | Short length | BP-137, BP-12 | `explainer_engine/shorts/planner.py` (planned, P9) |
+| CRAFT-PKG-06 | code | captions, labels and the face inside the Shorts safe zone | Short frame layout | BP-29 | `explainer_engine/production/shorts.py` |
+| CRAFT-PKG-07 | code | the hook is spoken from the first second | Short script + read | BP-11 | `explainer_engine/production/shorts.py` |
+| CRAFT-PKG-08 | critic | the thumbnail opens a gap the video closes, honestly | thumbnail + title | TN-02 | `explainer_engine/publish/thumbnail.py` |
+| CRAFT-PKG-09 | manual | per-platform packs (TikTok, Instagram): limits not researched yet | distribution package | - | manual |
+| CRAFT-PKG-10 | manual | nothing goes public without the creator's recorded approval | approval record | - | manual |
+<!-- craft-checklist:packaging:end -->
+
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 The numbers that bind a Short live only in the registry (`explainer_engine/standards/sourced_rules.json`); `production validate`
@@ -60,3 +93,5 @@ The numbers that bind a Short live only in the registry (`explainer_engine/stand
   beat metronome of the long video is not a Shorts rule (PV-34).
 - BP-46: every line at most 14 words and the whole Short at Flesch-Kincaid grade 6 or under (PV-28).
 - BP-47: the first Short goes up within 3 days of the video, then at most one a day, the ten spread over at least 14 days.
+- BP-135, BP-136, BP-137: three promises before the scenario, the midpoint retention gate, the Shorts length limit (all
+  hypothesis, REVIEW; checklist above).

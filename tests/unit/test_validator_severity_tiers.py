@@ -76,9 +76,9 @@ def test_only_binding_or_house_rules_declare_fail():
 
 
 def test_the_blueprint_numbers_stay_below_fail():
-    """BP-29 (safe zone), BP-114 (clip geometry): one source type each, so REVIEW. The P3/P5 rules named in the plan are pinned
+    """BP-29 (safe zone), BP-139 (clip geometry): one source type each, so REVIEW. The P3/P5 rules named in the plan are pinned
     when they arrive: a map-share rule is REVIEW, the register word tier is a house FAIL with the creator's dated words."""
-    assert SR.severity("BP-29") == "REVIEW" and SR.severity("BP-114") == "REVIEW"
+    assert SR.severity("BP-29") == "REVIEW" and SR.severity("BP-139") == "REVIEW"
     for r in SR.rules():
         if any(k.startswith("map_pure") for k in r["thresholds"]):
             assert r["status"] == "hypothesis" and r.get("severity") == "REVIEW", r["id"]
@@ -86,6 +86,6 @@ def test_the_blueprint_numbers_stay_below_fail():
             assert r["status"] == "house" and r.get("severity") == "FAIL" and r.get("decided"), r["id"]
 
 
-@pytest.mark.parametrize("rid", ["BP-114"])
+@pytest.mark.parametrize("rid", ["BP-139"])
 def test_a_new_rule_names_its_two_source_urls(rid):
     assert len(SR.rule(rid)["sources"]) >= 2

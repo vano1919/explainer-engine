@@ -20,8 +20,11 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [STORY_ENGINE](STORY_ENGINE.md) | the writers' room for dialogue what-if episodes: story (ST-), scenes and dialogue (SC-, DW-), performance (PF-), motion and accents (MO-), sound layers (AL-), voice casting from traits (VC-), Shorts styles (SS-), visual beats and their cues, expression sheets (VB-); D-48, D-54, D-55, D-58 | ST-, SC-, DW-, PF-, MO-, AL-, VC-, SS-, VB- |
 | [DOCUDRAMA_REFERENCE_LIBRARY](research/DOCUDRAMA_REFERENCE_LIBRARY.md) | external historical docudrama transcript/subtitle references, access audit, and Claude research workflow | |
 | [ORCHESTRATION](ORCHESTRATION.md) | how an episode is run alone: phases, hard caps and stops (OR-), time-jump episode structure (SR-), Shorts (SH-) | OR-, SR-, SH- |
+| [blueprint/STATUS](blueprint/STATUS.md) | the Blueprint rewrite: generated phase table and decision cards (owner on every card), routing log; model/effort pairs in `config/model_routing.json` (OR-29, D-84) | UD- (in the decision log) |
 | [EDITING](EDITING.md) | editing rules: chunk seams, zoom continuity, one music at a time, transitions and look, speed (ED-) | ED- |
 | [SOURCED_RULES](SOURCED_RULES.md) | the sourced production rules (BP-): every number a validator enforces, its sources (article, book, video), status (binding, hypothesis, house) and the code that enforces it; generated from `explainer_engine/standards/sourced_rules.json`; D-59 | BP- |
+| [CRAFT_CURRICULUM](CRAFT_CURRICULUM.md) | the professional craft per department (screenwriting, sound, cartography, cinematography, editing and colour, animation, voice, packaging, motion graphics): skill -> checklist (`explainer_engine/standards/craft_checklists/<dept>.json`, CRAFT- ids) -> BP ids -> planned code; the 13 Blueprint conflicts (creator decision pending) and the 17 areas; P3b | |
+| [research/CRAFT_SOURCES_2026-10](research/CRAFT_SOURCES_2026-10.md) | the sources behind the craft curriculum, opened 2026-10-29, each with its type and verdict (SUPPORTED, PARTIAL, NOT FOUND) | |
 | [LORA_TRAINING](LORA_TRAINING.md) | how the photo style, image-edit and video motion LoRAs are trained and judged: the G1-G6 protocol, dataset audit, config check, checkpoint judge, stop rules, research sources; own voice / editing feasibility; the creator's 50 video criteria (VQ-); D-72 | LT-, VQ- |
 | [SHOT_PROMPTS](SHOT_PROMPTS.md) | how the prompts of an animated shot are written (keyframe, next pose, cut, LTX video), the mistakes of 2026-10-22..24 and who made them; checked by `scripting/shot_prompt_lint.py` | KP- |
 | [SCRIPT_ENGINE](SCRIPT_ENGINE.md) | the script engine v1: topic -> claim map -> template D skeleton -> shot cards -> composed prompts (keyframe, next pose, cut, video, narrator), the rules that leave nothing to improvise, and the variants in use while tests run | ZI- |
@@ -51,7 +54,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [CLAUDE_EXECUTION_GUIDE](CLAUDE_EXECUTION_GUIDE.md) | phase gates, recovery, never-do list | |
 | [REPO_REUSE_AUDIT](REPO_REUSE_AUDIT.md), [PROVENANCE](PROVENANCE.md) | what came from the TMR repository | |
 | [PROGRESS](PROGRESS.md) | resumable progress log |
-| [CHATGPT_WORKFLOW](CHATGPT_WORKFLOW.md) | ChatGPT-specific repository governance, editorial gate and parallel production workflow | |
+| [CHATGPT_WORKFLOW](CHATGPT_WORKFLOW.md) | history: ChatGPT-era governance (superseded 2026-10-29) | |
 | [PLAN_2026-10-15](PLAN_2026-10-15.md) | the approved plan, kept as history; the canonical documents above supersede it | |
 
 Machine-readable sources of truth: `explainer_engine/design/palette.json` (colours), `assets/characters/kit/kit_reference.svg`

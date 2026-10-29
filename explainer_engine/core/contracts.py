@@ -7,7 +7,7 @@ geometry, derived-file freshness, index ranges). jsonschema only (plan decision 
     python -m explainer_engine.core.contracts check <file>... [--base <job folder>]
 
 A finding is FAIL for a schema or invariant breach, and takes its level from the registry (``sourced_rules.level``) when a
-hypothesis rule drives it (BP-114: video-model clip geometry), so a hypothesis never FAILs (D-59, CN-11).
+hypothesis rule drives it (BP-139: video-model clip geometry), so a hypothesis never FAILs (D-59, CN-11).
 """
 
 from __future__ import annotations
@@ -57,17 +57,17 @@ def _f(rule: str, where: str, detail: str, severity: str = "FAIL") -> dict:
 def _geometry(width, height, frames, where: str) -> list[dict]:
     """CN-08 on one video clip: 8k+1 frames, sizes divisible by 32 (two-stage: 64), at most the registry's frame limit."""
     out = []
-    lvl = SR.level("BP-114")
-    step, off, limit = SR.T("BP-114", "frames_step"), SR.T("BP-114", "frames_offset"), SR.T("BP-114", "frames_max")
-    size, two_stage = SR.T("BP-114", "size_multiple"), SR.T("BP-114", "two_stage_size_multiple")
+    lvl = SR.level("BP-139")
+    step, off, limit = SR.T("BP-139", "frames_step"), SR.T("BP-139", "frames_offset"), SR.T("BP-139", "frames_max")
+    size, two_stage = SR.T("BP-139", "size_multiple"), SR.T("BP-139", "two_stage_size_multiple")
     if frames is not None:
         if (frames - off) % step:
-            out.append(_f("CN-08", where, f"{frames} frames is not {step}k+{off} (BP-114)", lvl))
+            out.append(_f("CN-08", where, f"{frames} frames is not {step}k+{off} (BP-139)", lvl))
         if frames > limit:
-            out.append(_f("CN-08", where, f"{frames} frames is over {limit} (BP-114)", lvl))
+            out.append(_f("CN-08", where, f"{frames} frames is over {limit} (BP-139)", lvl))
     for name, v in (("width", width), ("height", height)):
         if v % size:
-            out.append(_f("CN-08", where, f"{name} {v} is not divisible by {size} (BP-114)", lvl))
+            out.append(_f("CN-08", where, f"{name} {v} is not divisible by {size} (BP-139)", lvl))
         elif v % two_stage:
             out.append(_f("CN-08", where, f"{name} {v} is not a multiple of {two_stage}: a two-stage render needs it", "REVIEW"))
     return out
@@ -78,14 +78,14 @@ def _film_shots(doc: dict, base) -> list[dict]:
         return []
     out = []
     fps = doc["fps"]
-    native = SR.T("BP-114", "native_fps")
+    native = SR.T("BP-139", "native_fps")
     if fps != native:
-        out.append(_f("CN-09", "fps", f"fps {fps} is not the video model's native {native} (D-85)", SR.level("BP-114")))
+        out.append(_f("CN-09", "fps", f"fps {fps} is not the video model's native {native} (D-85)", SR.level("BP-139")))
     for s in doc["shots"]:
         if s["lane"] in VIDEO_LANES:
             out += _geometry(s["width"], s["height"], s["duration_frames"], s["id"])
         want = s["seconds"] * fps
-        if abs(want - s["duration_frames"]) > SR.T("BP-114", "frames_step"):
+        if abs(want - s["duration_frames"]) > SR.T("BP-139", "frames_step"):
             out.append(_f("CN-08", s["id"], f"{s['duration_frames']} frames is far from {s['seconds']:g} s at {fps} fps", "REVIEW"))
     return out
 

@@ -58,8 +58,8 @@ def test_invalid_fixture_is_refused(path):
 
 @pytest.mark.parametrize("path", fixtures("review__"))
 def test_geometry_breach_is_a_review_finding_at_the_registry_level(path):
-    found = C.validate(load(path))  # no exception: BP-114 is a hypothesis (D-59, CN-11)
-    assert found and {f["severity"] for f in found} == {SR.level("BP-114")} == {"REVIEW"}
+    found = C.validate(load(path))  # no exception: BP-139 is a hypothesis (D-59, CN-11)
+    assert found and {f["severity"] for f in found} == {SR.level("BP-139")} == {"REVIEW"}
 
 
 def test_a_document_must_name_its_contract():
@@ -83,7 +83,7 @@ def test_film_shots_2_fps_is_the_native_rate():
     doc = load(FIX / "film_shots_2" / "valid.json")
     doc["fps"] = 30
     found = {f["rule"]: f["severity"] for f in C.errors(doc)}
-    assert found["CN-09"] == SR.level("BP-114") == "REVIEW"  # a hypothesis: never a FAIL (D-59)
+    assert found["CN-09"] == SR.level("BP-139") == "REVIEW"  # a hypothesis: never a FAIL (D-59)
 
 
 def test_the_lifecycle_enum_has_one_source():

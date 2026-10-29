@@ -2,6 +2,7 @@
 name: scene-writer
 description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Writers' room stage 2. Writes ONE segment of the production script as a played SCENE (narration hand-off plus addressed character dialogue) from the settled story skeleton and the segment's scene header. Use segment by segment after the story architect's skeleton passes story_lint.
 model: sonnet
+effort: high
 tools: Read, Write, Edit, Bash, Grep
 ---
 

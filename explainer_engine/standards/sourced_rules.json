@@ -4556,6 +4556,853 @@
   },
   {
    "id": "BP-114",
+   "area": "narration",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "AI register (N-15, the creator's point 1): narrator and hero lines avoid the overused LLM vocabulary in `lexicon` and the structural tells (stacked triplets, a sentence-initial 'Imagine', a rhetorical-question opener in every segment, em-dash chains, 'not just X but Y'); more than review_hits_per_300_words hits per 300 words is REVIEW and more than high_hits_per_300_words is the Blueprint's proposed FAIL, which stays REVIEW while the rule is a hypothesis (a FAIL needs the creator's dated word, house). A single hit proves nothing; density does. Literal uses ('landscape' of a place, 'journey' of a trip) are allowed.",
+   "thresholds": {
+    "lexicon": [
+     "delve",
+     "tapestry",
+     "testament to",
+     "intricate",
+     "pivotal",
+     "underscore",
+     "navigate",
+     "landscape",
+     "journey",
+     "realm",
+     "unleash",
+     "in a world where",
+     "it's important to note"
+    ],
+    "review_hits_per_300_words": 1,
+    "high_hits_per_300_words": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Mapping the Increasing Use of LLMs in Scientific Papers (Liang et al. 2024, arXiv 2404.01268)",
+     "url": "https://arxiv.org/abs/2404.01268",
+     "note": "PARTIAL: LLM drift yes; the named words are not on the abstract page"
+    },
+    {
+     "type": "A",
+     "title": "Delving into LLM-assisted writing in biomedical publications through excess vocabulary (Kobak et al. 2024, arXiv 2406.07016)",
+     "url": "https://arxiv.org/abs/2406.07016",
+     "note": "PARTIAL: style words rose; the list is not on the abstract page"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the word list and the density thresholds",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 1; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/screenwriting.json:CRAFT-SCR-01"
+   ],
+   "planned": "explainer_engine/scripting/register_lint.py (P3)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-115",
+   "area": "narration",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The twist sentence is short enough to land: its estimated spoken length (s_per_word per word plus the clause pauses, the syllable estimator of P3) is at most twist_max_s; longer is REVIEW.",
+   "thresholds": {
+    "twist_max_s": 4.5,
+    "s_per_word": 0.39
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): twist <= 4.5 s and 0.39 s a word",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 13; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/screenwriting.json:CRAFT-SCR-03"
+   ],
+   "planned": "explainer_engine/scripting/syllables.py (P3)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-116",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Room tone under every scene: each scene keeps a continuous room-tone or ambience bed inside room_tone_dbfs (high-passed at hpf_hz), recorded or chosen for that place, so no cut inside or between scenes falls to digital silence. BP-60 (pause fill of the read) is unchanged; this is the scene's bed.",
+   "thresholds": {
+    "room_tone_dbfs": [
+     -38.0,
+     -32.0
+    ],
+    "hpf_hz": 80
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Room tone (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Room_tone",
+     "note": "PARTIAL: same mic position, intercut with dialogue to smooth edits; no level"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the -32..-38 dBFS band and HPF 80 Hz",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-01"
+   ],
+   "planned": "explainer_engine/audio/sound_director.py (P4)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-117",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Split edits at scene boundaries: the next scene's sound leads its picture (J-cut, j_cut_s before the cut) or the last scene's sound trails (L-cut, l_cut_s after it); a butt cut between a map and a drama scene is REVIEW. ED-14 (J/L on about a third of dialogue cuts) stays the dialogue rule.",
+   "thresholds": {
+    "j_cut_s": [
+     -1.0,
+     -0.4
+    ],
+    "l_cut_s": [
+     0.5,
+     1.2
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "J cut (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/J_cut",
+     "note": "PARTIAL: definition only, no guidance on the overlap length"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the J and L durations",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-02"
+   ],
+   "planned": "explainer_engine/audio/sound_director.py (P4)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-118",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Frequency masking under the voice: while the narrator speaks, music and ambience stems carry less energy in the vocal presence band (measured 1-4 kHz under speech vs in the pauses) through a dynamic dip at notch_hz, Q notch_q, depth notch_depth_db; the narration chain is high-passed at narration_hpf_hz. The check is the measured band-energy gap, never the filter setting. BP-53 (level ducking) is unchanged.",
+   "thresholds": {
+    "notch_hz": 2200,
+    "notch_q": 1.2,
+    "notch_depth_db": [
+     2.5,
+     3.5
+    ],
+    "measure_band_hz": [
+     1000,
+     4000
+    ],
+    "narration_hpf_hz": [
+     80,
+     85
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "EBU Tech 3343 v4 (2023): guidelines for production of programmes in accordance with EBU R 128",
+     "url": "https://tech.ebu.ch/docs/tech/tech3343.pdf",
+     "note": "PARTIAL: dialogue vs programme loudness (LDR); no EQ or masking band"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): 2.2 kHz, Q 1.2, 2.5-3.5 dB, HPF 80-85 Hz",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-03"
+   ],
+   "planned": "explainer_engine/audio/sound_director.py (P4)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-119",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A major impact or a badge lock is a composite hit of three layers (sub below sub_hz, body body_hz, air air_hz) whose onsets sit within sync_ms of the visual event; BP-54's early/late window still binds the onset.",
+   "thresholds": {
+    "sub_hz": 80,
+    "body_hz": [
+     200,
+     2000
+    ],
+    "air_hz": [
+     4000,
+     10000
+    ],
+    "sync_ms": 50
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the three bands and <= 50 ms",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-05"
+   ],
+   "planned": "explainer_engine/audio/sound_director.py (P4)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-120",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Before the episode's largest reveals (at most vacuums_max) music and foley fall to bare room tone at vacuum_dbfs for vacuum_s, then a transient hit lands the reveal; a micro-cue sits at micro_cue_dbfs. The edit-planner's one planned dropout before the biggest reveal is the current practice.",
+   "thresholds": {
+    "vacuum_s": [
+     0.8,
+     1.2
+    ],
+    "vacuum_dbfs": -42.0,
+    "vacuums_max": 3,
+    "micro_cue_dbfs": -22.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the vacuum length, level and count; the micro-cue level",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-06"
+   ],
+   "planned": "explainer_engine/audio/sound_director.py (P4)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-121",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Stereo field and density (Murch): narration and close dialogue stay centred, music is wide, a spot effect moves to its source's screen side within sfx_pan_max; sounds of one 'colour' (all encoded or all embodied) stack to about two and a half before they blur (five when spread over the spectrum). BP-56 keeps the layer counts; this rule adds the pan range and the same-colour reading.",
+   "thresholds": {
+    "sfx_pan_max": 0.45,
+    "same_colour_layers": 2.5,
+    "spread_layers": 5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Dense Clarity - Clear Density (W. Murch, The Transom Review essay, third-party PDF copy)",
+     "url": "https://rompus-public.pages.dev/portfolio/dense_clarity_by_walter_murch.pdf",
+     "note": "SUPPORTED, CRAFT_SOURCES section 2"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the +-0.45 pan range",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-08"
+   ],
+   "planned": "explainer_engine/production/assemble.py (P4, the pan field)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-122",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Acoustic perspective follows the shot size: a wide shot rolls the spot sound off above shelf_hz by wide_shelf_db and gives it wide_wet of the scene's impulse response; a close shot keeps close_dry dry with a proximity lift of proximity_db at proximity_hz; one impulse response per scene for all its shots; an off-screen sound is panned and ducked, never dry and centred.",
+   "thresholds": {
+    "shelf_hz": 6000,
+    "wide_shelf_db": -4.0,
+    "wide_wet": 0.22,
+    "close_dry": 0.95,
+    "proximity_db": 2.0,
+    "proximity_hz": 140
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): -4 dB above 6 kHz, 22 % wet, 95 % dry, +2 dB at 140 Hz (Holman 3rd ed. not re-opened)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-10"
+   ],
+   "planned": "explainer_engine/audio/sound_director.py (P4)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-123",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Music and the cut: each faction or hero and the channel own one motif that returns when its owner acts; while music is up, a cut on an action beat falls within beat_tolerance_note of the music's beat grid (REVIEW).",
+   "thresholds": {
+    "beat_tolerance_note": 0.125
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Watch: 8-minute video essay praises the magic of Howard Shore's The Lord of the Rings score (The Playlist)",
+     "url": "https://theplaylist.net/watch-8-minute-video-essay-praises-the-magic-of-howard-shores-the-lord-of-the-rings-score-20160219/",
+     "note": "PARTIAL: leitmotifs tied to people and places; the 1/8-note grid is NOT FOUND"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the 1/8-note tolerance",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 3; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-12"
+   ],
+   "planned": "explainer_engine/audio/sound_director.py (P4)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-124",
+   "area": "maps",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "An animated map frame stays simple: at most labels_max labels and units_max unit symbols in view, inactive terrain dimmed to inactive_dim of its brightness, and one change at a time (changes_at_once_max), the changed thing highlighted before it moves.",
+   "thresholds": {
+    "labels_max": 3,
+    "units_max": 4,
+    "inactive_dim": 0.4,
+    "changes_at_once_max": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Tips for Designing Effective Animated Maps (Harrower, Cartographic Perspectives 44, 2003, pp. 63-65)",
+     "url": "https://cartographicperspectives.org/index.php/journal/article/download/cp44-harrower/pdf/2665",
+     "note": "SUPPORTED: frames simple, small details are missed; the caps are NOT FOUND"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the caps 3/4, the 40 % dim, one change at a time",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 6; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-01"
+   ],
+   "planned": "explainer_engine/maps/ (P5)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-125",
+   "area": "maps",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A change of map altitude (macro to meso to micro) takes altitude_change_s, eased; faster reads as a jump, slower as a stall.",
+   "thresholds": {
+    "altitude_change_s": [
+     4.0,
+     8.0
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the 4-8 s altitude change",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 6; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-07"
+   ],
+   "planned": "explainer_engine/maps/ (P5)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-126",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Lens and angle vocabulary on the shot card: lens_tier is one of lens_tiers_mm (wide/normal/long, 35 mm equivalent) and camera height one of low/eye/high, each motivated by the beat (low reads strong); two shots of the same subject in a row change angle by at least cut_angle_min_deg, or the lens by at least lens_change_min_mm, or they read as a jump (BP-103 keeps the size run).",
+   "thresholds": {
+    "lens_tiers_mm": [
+     24,
+     50,
+     85
+    ],
+    "cut_angle_min_deg": 30,
+    "lens_change_min_mm": 20
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "30-degree rule (Wikipedia; cites Murch, In the Blink of an Eye, 2001, p. 146)",
+     "url": "https://en.wikipedia.org/wiki/30-degree_rule",
+     "note": "SUPPORTED: 30 degrees and the 20 mm lens change"
+    },
+    {
+     "type": "A",
+     "title": "Low-angle shot (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Low-angle_shot",
+     "note": "PARTIAL: low angle = strong and powerful; high angle not on the page"
+    },
+    {
+     "type": "A",
+     "title": "Telephoto lens (Wikipedia)",
+     "url": "https://en.wikipedia.org/wiki/Telephoto_lens",
+     "note": "PARTIAL: 85-135 mm portrait class only; 24 and 50 mm not sourced"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-03"
+   ],
+   "planned": "explainer_engine/production/shot_router.py (P6, card fields)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-127",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Visual lane balance (the creator's point 4, 'nobody wants 80 % maps'): every beat gets a dramatisability score (a person deciding, acting or failing vs only a quantity or a place) and the lane shares follow the scores; no more than non_character_run_max_s of consecutive non-character visuals (map, HUD, cutaway) without a character beat or a host line, and no character scene longer than character_scene_max_s without a tactical or visual payoff. Both caps are the Blueprint's house numbers, NOT taken from McKee or Katz; the channel's own retention curve tunes them.",
+   "thresholds": {
+    "non_character_run_max_s": 60,
+    "character_scene_max_s": 90
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Measure key moments for audience retention (YouTube Help 9314415)",
+     "url": "https://support.google.com/youtube/answer/9314415",
+     "note": "SUPPORTED as a measurement tool; no thresholds on the page"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the 60 s and 90 s caps (house numbers; McKee and Katz not re-opened and not their source)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 7; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-10"
+   ],
+   "planned": "explainer_engine/edit/visual_compensator.py (P5)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-128",
+   "area": "editing",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Where a cut lands: decide by Murch's Rule of Six in its order (emotion, story, rhythm, eye trace, the 2D plane, 3D space; emotion weighs emotion_weight, sacrifice from the bottom); a cut inside a character's action lands cut_after_onset_frames after the motion begins, never on the apex or at full rest unless the shot is a hold; every rendered shot keeps handle_frames of handle at both ends.",
+   "thresholds": {
+    "emotion_weight": 0.51,
+    "cut_after_onset_frames": [
+     2,
+     4
+    ],
+    "handle_frames": [
+     12,
+     16
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "6 rules of good cutting according to Oscar-winning editor Walter Murch (No Film School)",
+     "url": "https://nofilmschool.com/2016/11/6-rules-good-cutting-according-oscar-winning-editor-walter-murch",
+     "note": "SUPPORTED: the order and the 51 %"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): 2-4 frames after onset; 12-16 frame handles",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 10; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-03"
+   ],
+   "planned": "explainer_engine/production/assemble.py (P7)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-129",
+   "area": "editing",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Motivated camera transitions: a whip lasts whip_frames, a speed ramp runs the speeds of ramp_speeds over ramp_s, a rack focus takes rack_focus_s. BP-25 keeps their spacing and BP-31 their place.",
+   "thresholds": {
+    "whip_frames": [
+     8,
+     10
+    ],
+    "ramp_speeds": [
+     1.0,
+     1.6,
+     0.45
+    ],
+    "ramp_s": 0.6,
+    "rack_focus_s": 0.4
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): whip 8-10 f, ramp 1.0/1.6/0.45 x 0.6 s, rack focus 0.4 s",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 10; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-08"
+   ],
+   "planned": "explainer_engine/edit/motion_lint.py (P7)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-130",
+   "area": "editing",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Shot-to-shot colour: per scene one key master frame; every shot's boundary frames are compared with it by mean and standard deviation per channel (Reinhard colour transfer) and corrected toward it with a blend of at most blend_max; the measured deltas are a scorecard row. Hero costume and skin swatches keep a delta-E band calibrated on the hero sheets (no number yet).",
+   "thresholds": {
+    "blend_max": 0.65,
+    "statistics": [
+     "mean",
+     "std"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Color Transfer between Images (Reinhard, Ashikhmin, Gooch, Shirley, IEEE CG&A 21(5), 2001), DOI",
+     "url": "https://doi.org/10.1109/38.946629",
+     "note": "PARTIAL: the method from search summaries; the PDF was not opened; no blend limit in it"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): blend <= 0.65",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 11; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-09"
+   ],
+   "planned": "explainer_engine/finish/grade.py (P7)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-131",
+   "area": "editing",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The Blueprint's film look (vignette vignette_share, ffmpeg grain `grain_filter`) is recorded for comparison only: the one constant look of ED-04 in production/assemble.py (LOOK) stays in force until the creator compares the two.",
+   "thresholds": {
+    "vignette_share": 0.12,
+    "grain_filter": "noise=c0s=5"
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): vignette 12 % and noise=c0s=5",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 11; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-11"
+   ],
+   "planned": "explainer_engine/finish/grade.py (P7)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-132",
+   "area": "animation",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Moving holds (Thomas and Johnston's principles): a held character keeps breathing; a blink every blink_every_s and on a thought change; a hold longer than moving_hold_after_s carries a moving hold (blink, weight shift); a planted foot does not slide (pixel limit to be measured on the creator's cartoons).",
+   "thresholds": {
+    "blink_every_s": [
+     2.0,
+     4.0
+    ],
+    "moving_hold_after_s": 2.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Twelve basic principles of animation (Wikipedia; Thomas and Johnston, The Illusion of Life, 1981)",
+     "url": "https://en.wikipedia.org/wiki/Twelve_basic_principles_of_animation",
+     "note": "SUPPORTED: the list; the cadences are NOT FOUND"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): blink every 2-4 s, a moving hold after 2 s",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 4; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/animation.json:CRAFT-ANI-13"
+   ],
+   "planned": "explainer_engine/training/video_qa.py (P8, extended)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-133",
+   "area": "animation",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Acted close-ups are measured: every full-tier spoken shot gets a lip-sync offset and confidence (SyncNet method; REVIEW over lipsync_review_frames frames, the Blueprint's limit lipsync_max_ms) and an identity score against the hero sheet (face-embedding cosine, ArcFace class); the identity threshold is calibrated on our own sheets, never the Blueprint's 0.65, because photo-trained models are unreliable on cartoons. BP-54 stays the sync rule for effects.",
+   "thresholds": {
+    "lipsync_max_ms": 80,
+    "lipsync_review_frames": 2,
+    "identity_threshold": "calibrate on our hero sheets"
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Out of time: automated lip sync in the wild (Chung and Zisserman, Oxford VGG, PDF)",
+     "url": "https://www.robots.ox.ac.uk/~vgg/publications/2016/Chung16a/chung16a.pdf",
+     "note": "SUPPORTED: the method; real faces only"
+    },
+    {
+     "type": "A",
+     "title": "ArcFace: Additive Angular Margin Loss for Deep Face Recognition (Deng et al., arXiv 1801.07698)",
+     "url": "https://arxiv.org/abs/1801.07698",
+     "note": "SUPPORTED: the method; no cartoon threshold"
+    },
+    {
+     "type": "A",
+     "title": "Lip-sync: ITU-R BT.1359 tolerance windows (Fora Soft, secondary)",
+     "url": "https://www.forasoft.com/learn/audio-for-video/articles-audio/lip-sync-itu-r-bt-1359-tolerance-windows",
+     "note": "SUPPORTED for BT.1359 numbers (+45/-125 detectability); the 80 ms limit is NOT FOUND"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/animation.json:CRAFT-ANI-15"
+   ],
+   "planned": "explainer_engine/qa/identity.py (P8)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-134",
+   "area": "motion_text",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Graphic motion: an element enters with an ease-out in enter_ms and leaves with an ease-in in exit_ms; a counter ticks at most counter_steps_per_s_max increments a second and lands on its spoken number (BP-93); at most moving_elements_max graphic element moves at a time besides the camera; every HUD element keeps one slot per episode (ED-15). BP-23 eases camera moves.",
+   "thresholds": {
+    "enter_ms": [
+     200,
+     400
+    ],
+    "exit_ms": [
+     150,
+     250
+    ],
+    "counter_steps_per_s_max": 10,
+    "moving_elements_max": 1
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): 200-400 / 150-250 ms (Material motion tokens seen only in search mirrors), <= 10 steps a second, one element",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 15; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/motion_graphics.json:CRAFT-MOG-01"
+   ],
+   "planned": "explainer_engine/edit/motion_lint.py (P7)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-135",
+   "area": "publishing",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Packaging before the scenario: the packaging stage writes angles title-and-thumbnail promises of different mechanism (a direct conflict of scale, a paradox or curiosity gap, a Day 1 to Day N progression) for YouTube's Test & Compare, and the script's first promise_paid_by_s seconds pay the chosen one.",
+   "thresholds": {
+    "angles": 3,
+    "promise_paid_by_s": 5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Test and compare thumbnails and titles (YouTube Help 13861714)",
+     "url": "https://support.google.com/youtube/answer/13861714",
+     "note": "SUPPORTED: up to 3 titles and thumbnails, winner by watch time share; the three mechanisms are a house idea"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the three mechanisms and the 5 s payment",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 13; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/packaging.json:CRAFT-PKG-01"
+   ],
+   "planned": "explainer_engine/scripting/variant_plan.py (P3)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-136",
+   "area": "publishing",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Retention mapping after publishing: Studio's intro, top moments, spikes and dips are mapped onto segment ids; still watching at the midpoint under midpoint_target is REVIEW for the middle act (BP-48 keeps the intro).",
+   "thresholds": {
+    "midpoint_target": 0.5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Measure key moments for audience retention (YouTube Help 9314415)",
+     "url": "https://support.google.com/youtube/answer/9314415",
+     "note": "SUPPORTED as a measurement tool; no thresholds on the page"
+    },
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the 50 % midpoint gate",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 13; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/packaging.json:CRAFT-PKG-04"
+   ],
+   "planned": "explainer_engine/qa/retention_mapper.py (P10)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-137",
+   "area": "shorts",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A YouTube Short is at most shorts_max_s long (square or vertical); the length bands of BP-12 sit inside it. TikTok and Instagram limits are not researched yet.",
+   "thresholds": {
+    "shorts_max_s": 180
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Upload YouTube Shorts (YouTube Help 15424877)",
+     "url": "https://support.google.com/youtube/answer/15424877",
+     "note": "SUPPORTED: up to three minutes for uploads after 2024-10-15"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/packaging.json:CRAFT-PKG-05"
+   ],
+   "planned": "explainer_engine/shorts/planner.py (P9)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-138",
+   "area": "voice",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Measured casting: every candidate voice gets a measured profile from one test read (median F0 and range, speaking rate, spectral centroid, pitch variation, emphasis, pauses, drift over the chunk); two cast voices differ by at least one margin (median F0 f0_margin_st semitones, rate rate_margin, centroid centroid_margin) so VC-04 is measurable; the creator still picks by ear (VC-03).",
+   "thresholds": {
+    "f0_margin_st": 3.0,
+    "rate_margin": 0.15,
+    "centroid_margin": 0.2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the three margins",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 12; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/standards/craft_checklists/voice.json:CRAFT-VOX-03"
+   ],
+   "planned": "explainer_engine/audio/voice_audition.py (P4b)",
+   "supersedes": [],
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+  },
+  {
+   "id": "BP-139",
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
@@ -4590,7 +5437,7 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/core/contracts.py:BP-114"
+    "explainer_engine/core/contracts.py:BP-139"
    ],
    "supersedes": [
     "Blueprint VISUAL-001 32n as the recipe"
