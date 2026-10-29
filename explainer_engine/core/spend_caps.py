@@ -32,6 +32,19 @@ def allowance(name: str) -> dict:
     return a
 
 
+def paid_test(name: str) -> dict[str, float]:
+    """One paid test's caps (``paid_tests.<name>``, the ``*_usd`` lines: service -> ceiling), e.g. P12a's runpod_usd 0.50 (the
+    creator 2026-10-29). Refuses a test that is not in the file and a section whose tests together pass ``total_usd``."""
+    tests = load().get("paid_tests", {})
+    t = tests.get(name) if not name.startswith("_") else None
+    if not isinstance(t, dict):
+        raise OverCeiling(f"no paid test {name!r} in config/spend_caps.json: a paid test needs the creator's yes and its line")
+    total = sum(float(v) for row in tests.values() if isinstance(row, dict) for k, v in row.items() if k.endswith("_usd"))
+    if total > float(tests.get("total_usd", 0)) + 1e-9:
+        raise OverCeiling(f"paid tests add up to {total:g} USD, above their total_usd {tests.get('total_usd')} (config/spend_caps.json)")
+    return {k: float(v) for k, v in t.items() if k.endswith("_usd")}
+
+
 def runpod() -> dict:
     return load()["runpod"]
 

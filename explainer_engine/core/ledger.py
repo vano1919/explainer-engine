@@ -62,6 +62,19 @@ class Run:
         run.save()
         return run
 
+    @classmethod
+    def open_test(cls, path: Path | str, name: str) -> "Run":
+        """The ledger of one paid test (config/spend_caps.json ``paid_tests.<name>``): the test's lines as its caps, every other
+        service at 0, meta ``test``. Without it a new path gets the episode's ceilings (``check_caps``: runpod_usd 31), far above
+        the test's word. An existing ledger of another run or test is refused."""
+        path = Path(path)
+        if path.exists():
+            meta = json.loads(path.read_text(encoding="utf-8")).get("meta", {})
+            if meta.get("test") != name:
+                raise ValueError(f"{path} is not the ledger of paid test {name!r} (its meta test is {meta.get('test')!r})")
+        caps = {**{s: 0.0 for s in spend_caps.load().get("per_episode", {})}, **spend_caps.paid_test(name)}
+        return cls.open(path, caps=caps, test=name)
+
     def _stamp(self):
         try:
             return self.path.read_bytes()
@@ -195,3 +208,23 @@ class Run:
                 "phases": {k: v["status"] for k, v in self.data["phases"].items()},
                 "items": {k: len(v) for k, v in self.data["items"].items()},
                 "failures": {k: len(v) for k, v in self.data["failures"].items()}}
+
+
+def main(argv=None) -> None:
+    """python -m explainer_engine.core.ledger open-test <run.json> <test>   (a paid test's ledger, before its first create)
+       python -m explainer_engine.core.ledger report <run.json>"""
+    import sys
+    a = list(sys.argv[1:] if argv is None else argv)
+    if len(a) == 3 and a[0] == "open-test":
+        run = Run.open_test(a[1], a[2])
+    elif len(a) == 2 and a[0] == "report":
+        if not Path(a[1]).exists():
+            raise SystemExit(f"no ledger at {a[1]}")
+        run = Run.open(a[1])
+    else:
+        raise SystemExit(main.__doc__)
+    print(json.dumps({"path": str(run.path), "meta": run.data.get("meta", {}), **run.report()}, ensure_ascii=False, indent=1))
+
+
+if __name__ == "__main__":
+    main()

@@ -2545,3 +2545,19 @@ training as sequences is decided in the process. Changed together:
   `--gpu big`); PR #4 and `three-hour-format-7ewyz0` closed as superseded (kept in the HF vault bundle).
 - Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
 - From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
+
+## 2026-10-29 22:30 UTC (02:30 Tbilisi 10-30): paid-test caps and their ledgers (no pod, no money)
+
+- ვანო (2026-10-29 18:40 UTC, relayed): a clear yes to the paid tests P12a, P12b and P12e within $5.90 in total, each
+  started only after the coordinator's go (OR-29 audit). The OR-23 plans and their OR-24 confirmation are in project files
+  `explainer-engine/blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md` (Georgian summary `PAID_TESTS_PLAN_ka.md`).
+- `config/spend_caps.json` `paid_tests`: total_usd 5.9; p12a_smoke runpod_usd 0.50, p12b_two_runs 3.00, p12e_hosts 2.40
+  (pods hard at 80 %: 0.40 / 2.40 / 1.92). P12b and P12e sit above the first proposal (2.50 / 1.00) because the 80 % stop would
+  leave their pods below their estimates; the total is his $5.90.
+- `spend_caps.paid_test(name)` reads a test's lines and refuses an unknown test and a section over its total.
+  `ledger.Run.open_test(path, name)` opens a test's ledger with its line as the cap, every other service at 0 and meta `test`,
+  and refuses another run's ledger. Without it, `runpod create --ledger` on a new path got the episode ceiling
+  (runpod_usd 31). CLI: `python -m explainer_engine.core.ledger open-test <run.json> <test>` and `report <run.json>`.
+- D9's numbers (min_balance_left_usd 1.00, ElevenLabs casting_credits_max 1500) are ვანო's and are not in this change.
+- Tests: `tests/unit/test_spend_caps.py` (5); `tests/unit` 1208 passed, 5 failed only because this container lacks `cv2`
+  (the same 5 fail on main here); `docs_lint` 0 findings.
