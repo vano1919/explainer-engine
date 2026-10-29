@@ -4559,7 +4559,7 @@
    "area": "film",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Video-model clip geometry (CN-08): LTX takes 8k+1 frames (the VAE packs 8 frames into one latent) and a width and height divisible by 32; a two-stage pipeline renders the first stage at half size, so its full size is a multiple of 64; at most 257 frames; native 24 fps (our six measured clips, D-84).",
+   "statement": "Video-model clip geometry (CN-08): LTX takes 8k+1 frames (the VAE packs 8 frames into one latent) and a width and height divisible by 32; a two-stage pipeline renders the first stage at half size, so its full size is a multiple of 64; at most 257 frames; native 24 fps (our six measured clips, D-85).",
    "thresholds": {
     "frames_step": 8,
     "frames_offset": 1,

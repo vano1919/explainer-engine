@@ -2559,7 +2559,7 @@ training as sequences is decided in the process. Changed together:
   (`job_manifest/1`: only the next state, approvals per gate, dossier hash fixed once, no cross-job artifacts, abort/reopen,
   adopt), `core/shot_cache.py` (SHA-256 of the shot spec without paths). `core/ledger.py` unchanged: it already holds pod and API
   money in one run.json; `test_one_ledger` pins it. `training/cast/sheet.py` no longer writes the bfl cap as a number.
-- Decisions: D-84 (episode fps = LTX native 24, measured on six clips; assemble and Shorts at 30 follow in P7/P9). BP-114 (8k+1,
+- Decisions: D-85 (episode fps = LTX native 24, measured on six clips; assemble and Shorts at 30 follow in P7/P9). BP-114 (8k+1,
   /32, two-stage /64, at most 257 frames; hypothesis, so REVIEW). AUDIO_TIMED comes after SAMPLE_APPROVED (the read is paid, OR-19).
   `sourced_rules.level()` caps a hypothesis at REVIEW; `enforced_by` of 9 rules completed (the sync test found them).
 - Tests: `test_contracts`, `test_lifecycle`, `test_shot_cache`, `test_one_ledger`, `test_spend_caps_single_source`,

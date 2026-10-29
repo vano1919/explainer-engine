@@ -26,7 +26,7 @@
   },
   "properties": {
     "schema": {"enum": ["film_shots/1", "film_shots/2"]},
-    "fps": {"type": "integer", "minimum": 1, "description": "film_shots/2: the episode's frame rate (D-84, CN-09)"},
+    "fps": {"type": "integer", "minimum": 1, "description": "film_shots/2: the episode's frame rate (D-85, CN-09)"},
     "scene_sets": {"type": "array", "items": {"type": "string"}, "description": "film_shots/2: scene_set/1 files next to this file"},
     "episode": {"$ref": "#/$defs/text"},
     "script": {"type": "string", "description": "the approved production script these shots film (path next to this file)"},

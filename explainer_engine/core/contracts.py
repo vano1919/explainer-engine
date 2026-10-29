@@ -80,7 +80,7 @@ def _film_shots(doc: dict, base) -> list[dict]:
     out = []
     fps = doc["fps"]
     if fps != SR.T(GEOMETRY, "native_fps"):
-        out.append(_f("CN-09", "fps", f"fps {fps} is not the video model's native {SR.T(GEOMETRY, 'native_fps')} (D-84)", SR.level(GEOMETRY)))
+        out.append(_f("CN-09", "fps", f"fps {fps} is not the video model's native {SR.T(GEOMETRY, 'native_fps')} (D-85)", SR.level(GEOMETRY)))
     for s in doc["shots"]:
         if s["lane"] in VIDEO_LANES:
             out += _geometry(s["width"], s["height"], s["duration_frames"], s["id"])

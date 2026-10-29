@@ -15,7 +15,7 @@ by hand: it carries the sha256 of every input it was made from, and a stale one 
 - Fixtures: `tests/fixtures/contracts/<name>/valid*.json` and `invalid__<what>.json`; tests
   `tests/unit/test_contracts.py`, `test_lifecycle.py`, `test_shot_cache.py`, `test_one_ledger.py`,
   `test_spend_caps_single_source.py`, `test_sourced_rules_sync.py`, `test_validator_severity_tiers.py`.
-- Delivery frame rate: [D-84](DECISIONS_AND_OPEN_QUESTIONS.md).
+- Delivery frame rate: [D-85](DECISIONS_AND_OPEN_QUESTIONS.md).
 
 P2 writes the contracts, the lifecycle, the cache and the tests. It does not write stage logic: the compilers that
 produce the derived files belong to the phases named in the table (P3, P4, P5, P6, P7, P8, P9).
@@ -50,7 +50,7 @@ Every contract has `schema` and `additionalProperties: false` at every level; a 
 times are seconds (number, 3 decimals) and frames are integers at the job's fps; a file reference is
 `{"path": <relative to the job folder>, "sha256": <hex>}`.
 
-- **job_manifest/1**: `job_id`, `episode_slug`, `created`, `fps` (D-84), `state` (the lifecycle below), `state_since`,
+- **job_manifest/1**: `job_id`, `episode_slug`, `created`, `fps` (D-85), `state` (the lifecycle below), `state_since`,
   `history[]` (`from`, `to`, `at`, `path` = `forward` or a named back path or `abort`/`reopen`/`adopted`, `reason`,
   `approval` or null), `source_dossier_sha256` (null until RESEARCHED, then fixed), `ledger` (path to the run's
   `run.json`), `budget_reservation_id` (null or an item of that ledger), `approvals{<state>: approval}`,
@@ -81,7 +81,7 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 - **scene_set/1**: `set_id`, `units` = `m`, `axis{deg 0..360, origin[2]}`, `objects[]` (`id`, `kind`, `pos[3]`,
   `size[3]`, `yaw_deg`, `landmark`), `mannequins[]` (`id`, `cast_id`, `pos[3]`, `yaw_deg`), `cameras[]` (`shot_id`,
   `pos[3]`, `yaw_deg`, `pitch_deg`, `fov_deg`).
-- **film_shots/2**: everything of `film_shots/1` ([SHOT_PROMPTS](SHOT_PROMPTS.md)), plus top-level `fps` (D-84) and
+- **film_shots/2**: everything of `film_shots/1` ([SHOT_PROMPTS](SHOT_PROMPTS.md)), plus top-level `fps` (D-85) and
   optional `scene_sets[]`, and on every shot `lane` (KEYFRAME_LTX, DIALOGUE_CU, HOST_COMMENTARY, DRAMA_BLOCKED_3D,
   ATMOS_BROLL, MAP, COMPENSATOR, STILL_HOLD), `archetype` (an id of the P5 catalogue), `duration_frames`, `width`,
   `height`, `lens_tier` (wide|normal|long), `focal_xy[2]` (0..1 of the frame), `continuity_ref` and `blocking_ref`
@@ -119,7 +119,7 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 | CN-06 | PUBLISHED_PUBLIC only records the creator's own Studio click (his `ref`); no code path sets a video public, and `distribution_package/1` allows only private or unlisted | invariant 4 | `EpisodeJob.move`, schema |
 | CN-07 | A shot's cache key is the SHA-256 of the canonical JSON of its `shot_spec/1` without file paths: prompt, negative, seed, model hash, LoRA hashes and weights, size, frames, fps, audio slice hash, reference hashes, blocking hash, recipe and params; one changed byte in any of them is a new key, a moved file is not; a hit needs every stored output's sha256 to match | invariant 2 (nothing paid twice) | `core/shot_cache.py` |
 | CN-08 | A shot on a video lane has 8k+1 frames, a width and height divisible by 32 and at most the clip frame limit; two-stage pipelines want multiples of 64; the numbers and the severity come from BP-114 | BP-114 | `contracts` (`film_shots/2`, `shot_spec/1`) |
-| CN-09 | One frame rate per episode with video-model clips: the clips' native rate (D-84); `job_manifest.fps`, `film_shots/2.fps` and every `shot_spec/1.fps` of a video lane are equal; no pulldown or frame-rate conversion | D-84 | `contracts` |
+| CN-09 | One frame rate per episode with video-model clips: the clips' native rate (D-85); `job_manifest.fps`, `film_shots/2.fps` and every `shot_spec/1.fps` of a video lane are equal; no pulldown or frame-rate conversion | D-85 | `contracts` |
 | CN-10 | Pods and API calls reserve in the same episode ledger (`run.json`, D-56), stopping at 80 % of a cap; no cap number is written in code outside `config/spend_caps.json` | invariant 1, 2 | `test_one_ledger.py`, `test_spend_caps_single_source.py` |
 | CN-11 | A check may FAIL only on a binding BP rule, a CLAUDE.md invariant or a house rule that quotes the creator's dated words; a check driven by a hypothesis rule is REVIEW at most (D-59) | D-59 | `test_validator_severity_tiers.py`, `sourced_rules.level` |
 | CN-12 | Every module that reads a BP threshold (`T("BP-xx", ...)`) is listed in that rule's `enforced_by`, and every key it reads exists | D-59 | `test_sourced_rules_sync.py` |
