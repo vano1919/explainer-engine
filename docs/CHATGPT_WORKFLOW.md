@@ -1,12 +1,14 @@
 # ChatGPT repository workflow
 
+> **SUPERSEDED (2026-10-29, P0a):** history only. `CLAUDE.md` governs; the `.chatgpt/` tree and the `chatgpt/**` CI trigger were removed. The editorial gate (OR-10, `production/editorial_gate.py`) stays live and is specified in [ORCHESTRATION](ORCHESTRATION.md).
+
 ## Purpose
 This is the working contract for managing the repository through ChatGPT while preserving the existing Claude workflow.
 
 ## Branch isolation
 - Base: `systemic/next-video` at source commit `a1821958c4195953e52261bfb42d9b3351d6aa45`.
 - ChatGPT branch: `chatgpt/repo-management`.
-- The original base branch is not modified by this work. ChatGPT-specific instructions live in `CHATGPT.md` and `.chatgpt/`.
+- The original base branch is not modified by this work. ChatGPT-specific instructions lived in `CHATGPT.md` and `.chatgpt/` (the latter deleted 2026-10-29).
 - No automatic merge or default-branch change is authorized.
 
 ## Canonical reading order
@@ -14,7 +16,7 @@ This is the working contract for managing the repository through ChatGPT while p
 2. `docs/INDEX.md` — canonical specification locations.
 3. Last entries of `docs/PROGRESS.md` — recent implementation and test evidence.
 4. Task-specific implementation, tests and the canonical spec it implements.
-5. `.chatgpt/skills/` for cloned domain instructions; `.chatgpt/rules/` for ChatGPT-specific additions.
+5. (removed 2026-10-29) the former `.chatgpt/skills/` and `.chatgpt/rules/`.
 
 ## Current implementation to reconcile
 The current renderer in `explainer_engine/production/assemble.py` is the Python/NumPy/PIL/FFmpeg assembler. Older `docs/RENDERING_ARCHITECTURE.md` still describes Remotion as primary and the implementation plan still describes early phases. Do not blindly follow stale prose. Reconcile these docs against actual code, measured renders and current `PROGRESS.md`; do not replace the working renderer by default.

@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-10-29, P0a).** A 2026-10-18 snapshot of an old `CLAUDE.md`; `CLAUDE.md` is the only live instruction file. The `.chatgpt/` tree it points to was deleted (D2); read it in git history if needed. Kept as history only.
+
 # CLAUDE.md — explainer-engine
 
 A solo creator's 2D hand-drawn explainer channel ("worlds collide": history, science and money meeting other

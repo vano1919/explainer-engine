@@ -11,7 +11,7 @@ narration script -> ElevenLabs read in chunks (skill `elevenlabs-voice`) -> word
 `production/assemble.py` mix: voice levelled, beds and music ducked under the voice and under every world sound
 (`audio/duck.py`, BP-53), effects and cues on their frames (BP-54) -> loudness normalised, measured with ebur128 and judged
 (BP-50, BP-51) -> stereo AAC export (BP-63) -> `assemble_report.json`. Kokoro (D-12) was the free draft route and is retired;
-`audio/timings.py` and `audio/visemes.py` are its leftovers.
+`audio/timings.py` and `audio/visemes.py` are its leftovers; `audio/narrate.py` (legacy) needs `kokoro-onnx` installed by hand, it is no longer in `requirements.txt`.
 
 ## Levels (the gates, one home each)
 | what | rule | where it runs |

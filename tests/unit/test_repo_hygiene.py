@@ -36,3 +36,19 @@ def test_every_copied_file_is_listed_in_provenance():
     for path in (ROOT / "explainer_engine").rglob("*.py"):
         if "# from vano1919/tmr-video-script-engine@" in path.read_text(encoding="utf-8"):
             assert path.relative_to(ROOT).as_posix() in provenance, path
+
+
+def test_the_chatgpt_copy_of_claude_is_gone_and_the_ci_does_not_trigger_on_it():
+    """P0a / D2 (2026-10-29): no second instruction tree; `.claude/` is the only one."""
+    assert not (ROOT / ".chatgpt").exists()
+    assert not [f for f in _tracked() if f.startswith(".chatgpt/")]
+    assert "chatgpt/**" not in (ROOT / ".github" / "workflows" / "quality.yml").read_text(encoding="utf-8")
+
+
+def test_visemes_stays_importable_and_retired_deps_are_not_required():
+    """audio/visemes.py is a TMR port the hosts world (P5b) uses; kokoro-onnx is no install requirement (D-39)."""
+    import importlib
+
+    assert importlib.import_module("explainer_engine.audio.visemes")
+    reqs = (ROOT / "requirements.txt").read_text(encoding="utf-8")
+    assert not [line for line in reqs.splitlines() if line.strip().lower().startswith(("kokoro-onnx", "remotion"))]
