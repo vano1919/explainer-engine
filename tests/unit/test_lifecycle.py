@@ -175,30 +175,82 @@ def test_a_creator_gate_binds_the_sha256_of_what_was_approved(job):
     assert job.manifest["approvals"]["VARIANT_CHOSEN"]["sha256"] == SHA
 
 
-def test_an_existing_episode_is_adopted_through_its_state_gate(tmp_path):
-    job = EpisodeJob.adopt(tmp_path / "titans", state="SCRIPT_APPROVED", reason="Titans, approved 2026-10-20", approval=CREATOR,
-                           dossier_sha256=SHA, job_id="titans", episode_slug="titans", ledger="run.json", fps=24)
-    m = EpisodeJob.open(tmp_path / "titans").manifest
+def gates_up_to(state):
+    """The approvals an owner must show to adopt into ``state``: the right kind for every gate on the way."""
+    out = {}
+    for s in LIFECYCLE[1:LIFECYCLE.index(state) + 1]:
+        kind = sorted(store.GATES[s])[0]
+        out[s] = {"creator": CREATOR, "planner": PLANNER, "machine": MACHINE}[kind]
+    return out
+
+
+ADOPT = dict(job_id="a", episode_slug="a", ledger="run.json", fps=24)
+
+
+@pytest.fixture
+def folder(tmp_path):
+    (tmp_path / "run.json").write_text(json.dumps({"reserved": {"pod:abc": {"service": "runpod_usd", "amount": 1.0}}}), encoding="utf-8")
+    (tmp_path / "dossier.md").write_text("research", encoding="utf-8")
+    return tmp_path
+
+
+def test_an_existing_episode_is_adopted_through_every_gate_on_the_way(folder):
+    job = EpisodeJob.adopt(folder, state="SCRIPT_APPROVED", reason="Titans, approved 2026-10-20", approvals=gates_up_to("SCRIPT_APPROVED"),
+                           dossier=folder / "dossier.md", **ADOPT)
+    m = EpisodeJob.open(folder).manifest
     assert m["history"][0]["path"] == "adopted" and m["state"] == "SCRIPT_APPROVED"
-    assert m["approvals"]["SCRIPT_APPROVED"]["sha256"] == SHA and m["source_dossier_sha256"] == SHA
+    assert set(m["approvals"]) == {"RESEARCHED", "VARIANT_CHOSEN", "SCENARIO_APPROVED", "SCRIPT_APPROVED"}
+    assert m["source_dossier_sha256"] == store._sha256_file(folder / "dossier.md")
+    job.move("STORYBOARDED", reason="next", approval=MACHINE)  # an adopted job continues on the normal path
 
 
-def test_adopting_is_no_way_round_the_gates(tmp_path):
-    base = dict(job_id="a", episode_slug="a", ledger="r", fps=24)
-    cases = [
-        ("PUBLISHED_PUBLIC", MACHINE, "machine"),            # CN-06: only the creator's click
-        ("REVIEW_APPROVED", None, "no approval"),            # CN-04: approval #2 needs the creator
-        ("SCRIPT_APPROVED", {**CREATOR, "sha256": None}, "unbound"),  # CN-04: bound to the words
-        ("ABORTED_SPEND_CAP", CREATOR, "terminal"),          # nothing could reopen it
-        ("NOPE", CREATOR, "unknown"),
-    ]
-    for n, (state, approval, why) in enumerate(cases):
+def test_adopting_is_no_way_round_the_gates(tmp_path, folder):
+    # the review's case: STAGED_UNLISTED with only a machine approval skips the creator's REVIEW_APPROVED on the way to the click
+    only_target = {"STAGED_UNLISTED": MACHINE}
+    with pytest.raises(ContractError, match="gate"):
+        EpisodeJob.adopt(folder, state="STAGED_UNLISTED", reason="x", approvals=only_target, dossier=folder / "dossier.md", **ADOPT)
+    skipped = gates_up_to("STAGED_UNLISTED")
+    skipped["REVIEW_APPROVED"] = MACHINE  # CN-06 / invariant 4: approval #2 is the creator's
+    with pytest.raises(ContractError):
+        EpisodeJob.adopt(folder, state="STAGED_UNLISTED", reason="x", approvals=skipped, dossier=folder / "dossier.md",
+                         reservation_id="pod:abc", **ADOPT)
+    unbound = gates_up_to("SCRIPT_APPROVED")
+    unbound["SCRIPT_APPROVED"] = {**CREATOR, "sha256": None}  # CN-04: bound to the words
+    with pytest.raises(ContractError, match="binds the sha256"):
+        EpisodeJob.adopt(folder, state="SCRIPT_APPROVED", reason="x", approvals=unbound, dossier=folder / "dossier.md", **ADOPT)
+    with pytest.raises(ContractError, match="not reached"):
+        EpisodeJob.adopt(folder, state="RESEARCHED", reason="x", approvals={**gates_up_to("RESEARCHED"), "SCRIPT_APPROVED": CREATOR},
+                         dossier=folder / "dossier.md", **ADOPT)
+    for state in ("PUBLISHED_PUBLIC", "ABORTED_SPEND_CAP", "NOPE"):  # nothing is adopted into the click, a terminal state or a typo
         with pytest.raises(ContractError):
-            EpisodeJob.adopt(tmp_path / str(n), state=state, reason=why, approval=approval, dossier_sha256=SHA, **base)
-        assert not (tmp_path / str(n) / store.MANIFEST).exists(), why
-    with pytest.raises(ContractError, match="dossier"):  # CN-05: past CREATED the dossier is named
-        EpisodeJob.adopt(tmp_path / "x", state="SCRIPT_APPROVED", reason="x", approval=CREATOR, **base)
-    EpisodeJob.adopt(tmp_path / "ok", state="CREATED", reason="new", approval=None, **base)
+            EpisodeJob.adopt(folder, state=state, reason="x", approvals=gates_up_to("STAGED_UNLISTED"), dossier=folder / "dossier.md",
+                             reservation_id="pod:abc", **ADOPT)
+    assert not (folder / store.MANIFEST).exists()
+
+
+def test_adopting_names_the_dossier_file_and_the_reservation(folder):
+    ok = gates_up_to("SCRIPT_APPROVED")
+    for dossier in (None, folder / "missing.md"):
+        with pytest.raises(ContractError, match="dossier"):
+            EpisodeJob.adopt(folder, state="SCRIPT_APPROVED", reason="x", approvals=ok, dossier=dossier, **ADOPT)
+    budget = gates_up_to("BUDGET_RESERVED")
+    for rid in (None, "pod:missing"):
+        with pytest.raises(ContractError, match="reservation"):
+            EpisodeJob.adopt(folder, state="BUDGET_RESERVED", reason="x", approvals=budget, dossier=folder / "dossier.md",
+                             reservation_id=rid, **ADOPT)
+    assert not (folder / store.MANIFEST).exists()
+    job = EpisodeJob.adopt(folder, state="BUDGET_RESERVED", reason="x", approvals=budget, dossier=folder / "dossier.md",
+                           reservation_id="pod:abc", **ADOPT)
+    assert job.manifest["budget_reservation_id"] == "pod:abc"
+    with pytest.raises(ContractError):  # never over an existing manifest
+        EpisodeJob.adopt(folder, state="CREATED", reason="x", approvals={}, **ADOPT)
+
+
+def test_create_makes_only_the_initial_state(folder):
+    with pytest.raises(TypeError):
+        EpisodeJob.create(folder, state="PUBLISHED_PUBLIC", **ADOPT)  # type: ignore[call-arg]
+    assert EpisodeJob.create(folder, **ADOPT).state == "CREATED"
+    assert EpisodeJob.adopt(folder / "n", state="CREATED", reason="new", approvals={}, **ADOPT).state == "CREATED"
 
 
 def test_a_cached_render_and_the_asset_library_may_be_recorded_but_not_a_stray_assets_folder(tmp_path, monkeypatch):

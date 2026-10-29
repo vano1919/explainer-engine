@@ -195,39 +195,57 @@ class EpisodeJob:
 
     # --- opening ------------------------------------------------------------------------------------------------------
     @classmethod
-    def create(cls, job_dir: Path | str, *, job_id: str, episode_slug: str, ledger: str, fps: int, state: str = "CREATED",
-               reason: str = "job created", path: str = "forward", approval: dict | None = None,
-               dossier_sha256: str | None = None) -> "EpisodeJob":
-        job_dir = Path(job_dir)
-        if (job_dir / MANIFEST).exists():
-            raise ContractError(f"{job_dir / MANIFEST} exists: open it, never create over it")
+    def _new(cls, job_dir: Path, *, job_id: str, episode_slug: str, ledger: str, fps: int, state: str, reason: str, path: str,
+             approvals: dict, dossier_sha256: str | None, budget_reservation_id: str | None) -> "EpisodeJob":
         now = _now()
         manifest = {"schema": "job_manifest/1", "job_id": job_id, "episode_slug": episode_slug, "created": now, "fps": fps,
                     "state": state, "state_since": now,
-                    "history": [{"from": None, "to": state, "at": now, "path": path, "reason": reason, "approval": approval}],
-                    "source_dossier_sha256": dossier_sha256, "ledger": ledger, "budget_reservation_id": None, "approvals": {},
-                    "artifacts": {}, "distribution_packages": [], "reopen_to": None}
-        job = cls(job_dir, manifest)
+                    "history": [{"from": None, "to": state, "at": now, "path": path, "reason": reason,
+                                 "approval": approvals.get(state)}],
+                    "source_dossier_sha256": dossier_sha256, "ledger": ledger, "budget_reservation_id": budget_reservation_id,
+                    "approvals": dict(approvals), "artifacts": {}, "distribution_packages": [], "reopen_to": None}
+        return cls(job_dir, manifest)
+
+    @classmethod
+    def create(cls, job_dir: Path | str, *, job_id: str, episode_slug: str, ledger: str, fps: int,
+               reason: str = "job created") -> "EpisodeJob":
+        """A new episode job: always CREATED. Any later state is reached by ``move`` (or, for a job that already exists, ``adopt``)."""
+        job_dir = Path(job_dir)
+        if (job_dir / MANIFEST).exists():
+            raise ContractError(f"{job_dir / MANIFEST} exists: open it, never create over it")
+        job = cls._new(job_dir, job_id=job_id, episode_slug=episode_slug, ledger=ledger, fps=fps, state="CREATED", reason=reason,
+                       path="forward", approvals={}, dossier_sha256=None, budget_reservation_id=None)
         job._save()
         return job
 
     @classmethod
-    def adopt(cls, job_dir: Path | str, *, state: str, reason: str, approval: dict | None,
-              dossier_sha256: str | None = None, **create_args) -> "EpisodeJob":
-        """An existing episode folder gets its manifest at the state its owner states (history path ``adopted``). Adopting is not
-        a way round the gates (CN-04, CN-06): the state's own approval kind is needed, bound to a sha256 where a person approved;
-        a terminal state is never adopted (nothing could reopen it); past CREATED the research dossier's sha256 is named (CN-05)."""
+    def adopt(cls, job_dir: Path | str, *, state: str, reason: str, approvals: dict[str, dict], dossier: Path | str | None = None,
+              reservation_id: str | None = None, **create_args) -> "EpisodeJob":
+        """An existing episode folder gets its manifest at a state its owner states (history path ``adopted``). Adopting is no way
+        round the gates (CN-04, CN-06): ``approvals`` holds the right approval of EVERY gated state from the first step up to
+        ``state``, each bound to a sha256 where a person approved; the research dossier file is named and hashed (CN-05); a state
+        past BUDGET_RESERVED names a reservation the ledger holds. A terminal state is never adopted (nothing could reopen it)."""
+        job_dir = Path(job_dir)
         if state not in LIFECYCLE:
             raise ContractError(f"cannot adopt into {state!r}: adopt a state of the forward path")
-        if state in GATES:
-            cls._check_approval(GATES[state], approval, f"adopt into {state}", bind=True)
-        if state != "CREATED" and not dossier_sha256:
-            raise ContractError(f"adopt into {state} names the research dossier's sha256 (dossier_sha256=)")
-        job = cls.create(job_dir, state=state, reason=reason, path="adopted", approval=approval, dossier_sha256=dossier_sha256,
-                         **create_args)
-        if state in GATES:
-            job.manifest["approvals"][state] = approval
-            job._save()
+        if (job_dir / MANIFEST).exists():
+            raise ContractError(f"{job_dir / MANIFEST} exists: open it, never adopt over it")
+        reached = LIFECYCLE[1:LIFECYCLE.index(state) + 1]
+        for s in reached:
+            cls._check_approval(GATES[s], approvals.get(s), f"adopt into {state}: the gate {s}", bind=True)
+        extra = sorted(set(approvals) - set(reached))
+        if extra:
+            raise ContractError(f"adopt into {state}: approvals for states not reached: {extra}")
+        digest = None
+        if reached:
+            if dossier is None or not Path(dossier).exists():
+                raise ContractError(f"adopt into {state} names the research dossier file (dossier=)")
+            digest = _sha256_file(Path(dossier))
+        job = cls._new(job_dir, state=state, reason=reason, path="adopted", approvals=approvals, dossier_sha256=digest,
+                       budget_reservation_id=reservation_id if "BUDGET_RESERVED" in reached else None, **create_args)
+        if "BUDGET_RESERVED" in reached and not (reservation_id and job._reserved(reservation_id)):
+            raise ContractError(f"adopt into {state} names a reservation the ledger holds: {reservation_id!r}")
+        job._save()
         return job
 
     @classmethod

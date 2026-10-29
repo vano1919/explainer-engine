@@ -2570,3 +2570,6 @@ training as sequences is decided in the process. Changed together:
   `source_episode_sha256` with the job's `assembled_video`; `film_shots/1` refuses the /2 fields; a cached render and the repo's
   `assets/` may be recorded as artifacts but not any path that merely contains "assets"; the cache key treats `1` and `1.0` alike;
   BP-114 is read by literal id and listed only where it is read (`test_bp_114_is_listed_only_where_it_is_read`).
+- Second review round (22:45 UTC): `adopt` takes `approvals` for EVERY gated state up to the target (a machine approval of STAGED_UNLISTED
+  no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
+  PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.

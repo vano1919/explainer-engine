@@ -173,4 +173,4 @@ A back path drops `budget_reservation_id` but not the reservation in the ledger 
 
 `job_manifest.json` is the episode's lifecycle; `state.json` of `JobStore` stays the run status of one stage pipeline,
 and `cloud/jobs.py` the lifecycle of one pod job. An existing episode folder without a manifest gets one with
-`EpisodeJob.adopt` (history path `adopted`): the state's own approval is needed and recorded, a terminal state is refused, and past CREATED the dossier's sha256 is named.
+`EpisodeJob.adopt` (history path `adopted`): the right approval of every gated state from the first step up to the target is shown and recorded (bound to a sha256 where a person approved), the dossier file is named and hashed, a state past BUDGET_RESERVED names a reservation the ledger holds, and PUBLISHED_PUBLIC or a terminal state is never adopted into. `create` makes only CREATED.
