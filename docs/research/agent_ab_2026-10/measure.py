@@ -1,6 +1,6 @@
 """P0c measurement: independent gate counts per stage snapshot of one arm (A/B of D-79 vs D-81, free).
 
-    python docs/research/agent_ab_2026-10/measure.py jobs/ab_agents_2026-10/arm_A  > arm_A_metrics.json
+    PYTHONPATH=. python3 docs/research/agent_ab_2026-10/measure.py docs/research/agent_ab_2026-10/arm_A > docs/research/agent_ab_2026-10/metrics_arm_A.json
 
 Run from the repo root. Everything is computed by the repo's own validators, not by the arm that wrote the file.
 """

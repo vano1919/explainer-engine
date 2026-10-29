@@ -1,0 +1,99 @@
+import json
+EP="napoleon_into_the_khan_a"
+base={"schema":"production_script/3",
+ "voice":{"provider":"elevenlabs","model":"eleven_v4","voice_id":None,"name":None,"style":"placeholder until the caster stage runs","pace_wpm":[160,190]},
+ "world":{"topic":"placeholder until the edit stage","host":{"era":"medieval_europe","place":"placeholder","when":"1223"},"visitors":[],"light_owner":"host","day_arc":[{"beat":1,"light":"overcast"}]},
+ "cast":{},"segments":[]}
+json.dump(base,open('s00_bootstrap.json','w'),indent=1)
+D={}
+D["premise"]="Napoleon's retreating army of 1812 falls through a fog into the steppe of 1223, where Genghis Khan himself waits with two tumens."
+D["question"]="Can Napoleon bring his army out of the fog alive?"
+D["promise"]="the Grande Armee meets the khan's riders, loses its wagons, and pays two guns for the road home"
+D["template"]="A"
+D["needs"]=["wonder","curiosity","fear","belonging","competence","stakes","surprise"]
+D["arcs"]={
+ "napoleon":{"want":"find the enemy's army and destroy it in one battle","need":"to ask for terms and listen to the man who understands the enemy","flaw":"cannot picture an enemy who refuses to stand and fight","change":"asks the khan's price and pays it in guns"},
+ "genghis":{"want":"learn how these strangers fight and take the tools that work","flaw":"keeps only what has proved its loyalty; tests everyone, even a guest","need":"a man who tells him the truth","change":"takes the guns himself and leaves the men their road"},
+ "aslan":{"want":"bring his company and himself home alive","flaw":"hides fear behind formal courtesy and says only what he is asked","need":"to speak first","change":"speaks first at the parley and shapes the price"}}
+D["loops"]=[{"id":"L01","question":"Will the army get out of the fog alive?"},
+ {"id":"L02","question":"Who commands the riders that never stand and fight?"},
+ {"id":"L03","question":"Will the wagons reach the valley?"},
+ {"id":"L04","question":"What does the khan want from an emperor?"}]
+D["setups"]=[{"id":"P01","what":"Aslan's grandmother's tongue is the riders' tongue (Kipchak)","plant":"S02","payoff":"S07"},
+ {"id":"P02","what":"the heavy wagons that cannot leave the road","plant":"S02","payoff":"S06"},
+ {"id":"P03","what":"Napoleon counts his guns every night","plant":"S02","payoff":"S08"},
+ {"id":"P04","what":"the khan keeps the archer who shot his horse and admitted it","plant":"S04","payoff":"S07"}]
+D["ending"]={"kind":"callback","note":"Template A (three-act / 7-point): hook S01, inciting S02, pinch S03/S04, midpoint S05 (false victory), low point S06, climax S07, button S08 mirrors the opening fog."}
+def seg(i,beat,lb,func,turn,stakes,shift,need,opens,closes,share,purpose,scene=None):
+    d={"function":func,"turn":turn,"shift":shift,"claim_share":share}
+    if stakes:d["stakes"]=stakes
+    if need:d["need"]=need
+    if opens:d["opens"]=opens
+    if closes:d["closes"]=closes
+    s={"id":f"S{i:02d}","beat":beat,"light_beat":lb,"purpose":purpose,"drama":d,"lines":[],"shots":[]}
+    if scene:s["scene"]=scene
+    return s
+segs=[
+ seg(1,"the fog on the Moscow road",1,"cold_open","start",None,"marching home -> lost in time","wonder",["L01"],[],"reasoned",
+  "Hook: the drums stop in a fog, the grass is wrong, the year is 1223; the army must get out alive (L01)."),
+ seg(2,"the riders on every ridge",2,"inciting","therefore","an emperor who cannot find his battle marches blind with a hundred thousand men behind him","in command -> unsure where he is","curiosity",["L02"],[],"reasoned",
+  "Napoleon demands the enemy army; Aslan, a Mameluke scout, knows only that the riders keep their distance and shout in his grandmother's tongue. Plants wagons, the nightly gun count and the language.",
+  {"place":"the Moscow road at the edge of the fog, grass to the knee, the wagon train halted behind","time":"midday, the fog has just lifted","present":["napoleon","aslan"],
+   "why_now":"the horizon is full of riders and there is no army to fix","pov":"napoleon","want":"locate the enemy army and fix a battle by tomorrow",
+   "obstacle_want":"Aslan wants the emperor to see that the riders are not an army to fix but a wall that leads","value":"control","open_charge":"+","close_charge":"-",
+   "turn":"Aslan names the tongue the riders shout in and the emperor has no regiment, no map and no village to put against it; mode: asymmetric",
+   "exit":"fail_new_goal","surface_topic":"where the enemy's army is","real_subject":"the emperor is blind here","mode":"asymmetric"}),
+ seg(3,"Murat's charge",3,"escalation","but","the cavalry is the army's eyes and it burns out on the first day","pursuing -> pursued","fear",["L03"],[],"reasoned",
+  "Murat charges; the riders retreat, shoot from the saddle and change to fresh horses; his horses die under him; the wagons fall behind."),
+ seg(4,"the khan's tent",4,"escalation","but","Aslan's life, and the army's only voice to the steppe","prisoner -> useful","belonging",["L04"],["L02"],"invented",
+  "Aslan is taken; Genghis questions him through a Cuman scout, learns the guns' reach and tests his loyalty with the story of Jebe. Genghis is the answer to L02. Plants Jebe.",
+  {"place":"a felt tent on the ridge, the smoke hole open, a low fire","time":"dusk of the same day","present":["genghis","aslan","jebe"],
+   "why_now":"a prisoner who speaks the riders' own family of tongues was caught at the edge of the charge","pov":"genghis","want":"learn what the strangers' great guns can do and who commands them",
+   "obstacle_want":"Aslan wants to say nothing that helps and walk out alive","value":"advantage","open_charge":"-","close_charge":"+",
+   "turn":"Aslan defends his emperor by boasting of the guns' reach and hands the khan what he wanted; mode: indirect",
+   "exit":"succeed_complication","surface_topic":"how far the great guns shoot","real_subject":"whether this man can be trusted","mode":"indirect"}),
+ seg(5,"the valley and the guns",5,"midpoint","therefore","the guns' powder and the squares' nerve","fear -> false triumph","competence",[],["L03"],"reasoned",
+  "Napoleon, told where to fight, plants guns on the rim; the riders come into range, the guns and the squares hold; the army cheers. False victory."),
+ seg(6,"the wagons burn",6,"crisis","but","the food, the powder and the road home","winning -> starving","stakes",[],[],"reasoned",
+  "While the army cheers, riders burn the wagon train on the road behind. Napoleon wants one more great battle; Aslan brings the khan's invitation. Pays off the wagons.",
+  {"place":"the road behind the valley, the burnt wagons still smoking, the army's rear","time":"night after the battle","present":["napoleon","aslan","murat"],
+   "why_now":"the supply train is ash and the khan's invitation has just arrived","pov":"napoleon","want":"march on and force the khan into one decisive battle",
+   "obstacle_want":"Aslan wants the emperor to answer the invitation before the army starves","value":"pride","open_charge":"+","close_charge":"-",
+   "turn":"the emperor asks what the khan wants for the road, the first question he has ever put to an enemy; mode: minimal",
+   "exit":"fail_new_goal","surface_topic":"go forward or go and talk","real_subject":"an emperor who has never asked terms","mode":"minimal"}),
+ seg(7,"the parley",7,"climax","therefore","the army's road home","cornered -> free at a price","surprise",[],["L04"],"invented",
+  "Napoleon and Genghis meet, Aslan between them; the khan's price is two guns and the men who fire them; Napoleon gives the guns only. Pays off the language and Jebe.",
+  {"place":"open ground between the two armies, a felt carpet, two stools, the wind","time":"the next morning","present":["napoleon","genghis","aslan"],
+   "why_now":"the army can neither fight nor feed itself and the khan has named the hour","pov":"napoleon","want":"pass his army home through the khan's riders and keep the guns",
+   "obstacle_want":"Genghis wants the guns and the men who fire them in exchange for the road","value":"independence","open_charge":"-","close_charge":"+",
+   "turn":"the khan tells him how he keeps the archer who shot his horse, and offers the same to the gunners; Napoleon refuses the men but gives the guns; mode: balanced",
+   "exit":"succeed_complication","surface_topic":"the price of the road","real_subject":"which of the two may refuse the other","mode":"balanced"}),
+ seg(8,"the fog again",8,"resolution","therefore","the fog may close without them and take the whole army with the price unpaid","free at a price -> home","wonder",[],["L01"],"reasoned",
+  "Dawn: the fog comes back, the army walks into it, two guns stay on the grass; the road is Russian again and the count is short two (bookend with S01)."),
+]
+cast={
+ "napoleon":{"names":["Napoleon","Napoleon Bonaparte"],"card":"Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare",
+   "props":["field map","spyglass"],
+   "speech":{"basis":"public","style":"Short orders and short questions; names things by number and use; never explains twice; a dry cut when interrupted.","words":["Count","Where","Decisive","Now"],"avoid":["long speeches","apologies","slang"],
+     "sources":["https://en.wikipedia.org/wiki/Napoleon","manner as generally described; our own lines, no quotes"]}},
+ "genghis":{"names":["Genghis Khan","the khan","Temujin"],"card":"Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes",
+   "props":["felt carpet","cup"],
+   "speech":{"basis":"public","style":"Slow and quiet, few words, a question where a boast would be, long pauses; speaks in horses and weather, never in titles.","words":["Good","Horse","Tell me","Again"],"avoid":["threats","titles","hurry"],
+     "sources":["https://en.wikipedia.org/wiki/Genghis_Khan","manner as generally described; our own lines, no quotes"]}},
+ "aslan":{"names":["Aslan"],"card":"Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak",
+   "props":["sabre","water flask"],
+   "speech":{"basis":"personality","style":"Formal French-learned courtesy that thins under fear; answers exactly what was asked, ends orders with 'sire'; slips into a song-word of his grandmother when moved.","words":["Sire","Exactly","Forgive me","Grandmother"],"avoid":["boasting","swearing"],
+     "sources":["https://en.wikipedia.org/wiki/Mamelukes_of_the_Imperial_Guard","https://en.wikipedia.org/wiki/Kipchak_languages"]}},
+ "murat":{"names":["Murat","Joachim Murat"],"card":"Murat as our caricature: tall, curled black hair, an enormous plumed hat, gold-braided red jacket, a cavalry sabre, a flushed grin",
+   "props":["plumed hat","riding crop"]},
+ "jebe":{"names":["Jebe"],"card":"Jebe as our caricature: lean middle-aged archer, scarred cheek, plain leather coat, a horn bow across his back, an easy hard gaze",
+   "props":["horn bow"]},
+}
+SET=["neutral","joyful","sad","scared","angry","surprised","determined","doubtful","worried","deadpan","curious","smug"]
+for k,c in cast.items():
+    c["face_sheet"]={"id":k+"_faces_v1","ref":"p_"+k,"set":SET if k!="jebe" else SET[:8]}
+doc=dict(base)
+doc["episode"]={"id":EP,"title":"What If Napoleon's Army Walked Into Genghis Khan?","fps":30,
+ "notes":"A/B test arm A, writers' room stages 1-6 by one main agent, 8 segments, template A."}
+doc["cast"]=cast; doc["drama"]=D; doc["segments"]=segs
+json.dump(doc,open('production_script.json','w'),indent=1,ensure_ascii=False)

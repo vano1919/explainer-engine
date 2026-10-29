@@ -1,11 +1,11 @@
 # Agent form A/B, 2026-10-29 (P0c): one main agent vs one worker per stage
 
-Question: does the writers' room keep its focus better as one main agent in one context ([D-79](DECISIONS_AND_OPEN_QUESTIONS.md),
-[OR-20](ORCHESTRATION.md)) or as a separate worker per stage with a gate after every return (the proposed per-stage worker form)? Free test, no paid
+Question: does the writers' room keep its focus better as one main agent in one context ([D-79](../DECISIONS_AND_OPEN_QUESTIONS.md),
+[OR-20](../ORCHESTRATION.md)) or as a separate worker per stage with a gate after every return (the proposed per-stage worker form)? Free test, no paid
 call. Data and scripts: `docs/research/agent_ab_2026-10/` (inputs, every stage snapshot of both arms, `measure.py`, metrics JSON).
 
 ## Setup (identical for both arms)
-- Same brief and claim map (`agent_ab_2026-10/input/`): "What if Napoleon marched into Genghis Khan?", 8 segments (about 5 min), 3 Shorts, stages 1, 2, 2b, 3, 4, 5, 6 of the `story-engine` skill, Sonnet 5.5 for every worker and for arm A, no paid tool.
+- Same brief; the claim map has the same rows in both arms (`agent_ab_2026-10/input/claim_map.md`), but arm A worked from a renormalised copy (`C-NN`, invented ids `C-91..C-94`; `arm_A/claim_map.md`) because `scripting/claims.py` parses only that form, so the setups were not byte-identical: "What if Napoleon marched into Genghis Khan?", 8 segments (about 5 min), 3 Shorts, stages 1, 2, 2b, 3, 4, 5, 6 of the `story-engine` skill, Sonnet 5.5 for every worker and for arm A, no paid tool.
 - Arm A: ONE Sonnet agent ran all stages in one context (interleaved writer/beats per segment, own gate harness).
 - Arm B: the orchestrator spawned 22 fresh Sonnet workers: architect, then writer and beat-writer per segment (16), performer, editor, one architect repair round, caster, shorts. Each saw only its stage page, the brief and the previous snapshot. The orchestrator re-ran the gates after each return.
 - The existing Napoleon script in the repo was forbidden reading for both. The Opus critic was read-only and blind (labels X = arm B, Y = arm A, hidden from the critic; ids and notes scrubbed).
@@ -21,7 +21,7 @@ call. Data and scripts: `docs/research/agent_ab_2026-10/` (inputs, every stage s
 | of the FAILs: media / creator gates only | 28 (21 PV-05, 6 PV-47, 1 PV-45) | 14 (9 PV-05, 4 PV-47, 1 PV-45) |
 | of the FAILs: script defects | 0 | 13 (8 PV-11 stale prompts, 2 PV-12, 1 PV-48, 1 PV-37 claim ids, 1 the rule parser did not classify) |
 | REVIEWs PV-44 (beats) / PV-12 (narration) | 2 / 0 | 61 / 47 |
-| Retry rounds, self-reported (`retries.json`) | architect 1, writer 4, beats 3, performer 1, editor 4, caster 2, shorts 1 | architect 2, 3 segments 2, editor 4, shorts 3, caster 2, plus one routed repair |
+| Retry rounds, self-reported (`retries.json`, per-worker detail `arm_B/WORKER_REPORTS.md`) | architect 1, writer 4, beats 3, performer 1, editor 4, caster 2, shorts 1 | architect 2, writer 2 on S03 and S07, beats 2 on S04, performer 2, editor 4, caster 2, shorts 3, plus one routed repair |
 | Work cost, input-price units (output x5, cache write x1.25, cache read x0.1; `cost.json`, `cost.py`) | 9.57 M | 9.62 M |
 | Active worker time (`cost.json`; excludes the 18:58-22:03 usage-limit stall and the orchestrator's hand-offs) | 29 min | 36 min |
 
@@ -60,6 +60,8 @@ facts), a "you" tic and 20 % over length.
 Both scripts open with the identical line "The drums stop first." and the same fog-on-the-road hook. No cross-read was found: arm B's architect listed the then-empty `arm_A` folder once and read nothing from it, and both briefs forbade the earlier Napoleon script. The most likely cause is the shared model prior plus the shared claim map (I01 is the fog), but the arms are therefore NOT fully independent draws; treat the story-level comparison with extra caution.
 
 ## Limits
+Traceability: the subagent transcripts are not committed (only `cost.json`, `retries.json` and `arm_B/WORKER_REPORTS.md` derived from them; retry counts are self-reported). Arm A's working files are committed (`arm_A/story/`, `arm_A/scratch/*.py|*.md`, its LOG and FINAL_REPORT); its stage-page versions are those of the repo at commit 504fa35 (the branch base when the arms ran; main moved afterwards). The critic prompt is committed in condensed form (`critic_prompt.md`, paths shortened). Blinding is imperfect: arm A's `C-NN` claim ids and its sound-library choices were visible to the critic and it noticed the id format, so it could infer a different setup even though the labels and the episode id were scrubbed.
+
 One sample per arm, one topic, one model (Sonnet) for both; the critic's own noise/systematic split is a judgement. Per-stage model choice (the other half of the worker case) was not tested because the models were held equal on purpose. Scale was 8 segments, not the 16 of template D. Costs are token units, not money. No picture, voice or render was produced, so everything about look and sound is judged on the written plan only. The shared input stage 0 was given, not tested.
 
 ## Evidence for A5 (the decision is the creator's / the plan thread's, not this report's)
