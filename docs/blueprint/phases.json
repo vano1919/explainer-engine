@@ -20,9 +20,9 @@
    "routing": "S2 / Sonnet / high (hook-დიზაინი Opus high); გაშვებულია Opus high (კოორდინატორი)",
    "wave": 1,
    "thread": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWYaBuVJnMoMV8ioZLDf9DXr",
-   "pr": null,
-   "state": "doing",
-   "waits": "— (D6 კი; A5 = D-81, D-79-ის ტოტი მხოლოდ P0c-ის შედარებისთვის)",
+   "pr": "#30 (draft)",
+   "state": "review",
+   "waits": "S2+ review by another thread; the creator's look at D-84 (read-only judge); P0c A/B before D-81 replaces D-79",
    "checklist": {
     "paths": [
      "config/model_routing.json",

@@ -16,7 +16,7 @@ answered by Claude without his recorded delegation.
 | ID | Title | Depends on | Routing | Wave | Thread | PR | State | Waits for |
 |---|---|---|---|---|---|---|---|---|
 | P0a | რეპოს ჰიგიენა | — | S1 / Sonnet / medium | 1 | — | — | todo | — (D2 კი) |
-| P0b | Plane 1 საკეტები + governance + model_routing.json | — | S2 / Sonnet / high (hook-დიზაინი Opus high); გაშვებულია Opus high (კოორდინატორი) | 1 | cmsg_01Hnu5zB86sjUj5GtTgaUkPWYaBuVJnMoMV8ioZLDf9DXr | — | doing | — (D6 კი; A5 = D-81, D-79-ის ტოტი მხოლოდ P0c-ის შედარებისთვის) |
+| P0b | Plane 1 საკეტები + governance + model_routing.json | — | S2 / Sonnet / high (hook-დიზაინი Opus high); გაშვებულია Opus high (კოორდინატორი) | 1 | cmsg_01Hnu5zB86sjUj5GtTgaUkPWYaBuVJnMoMV8ioZLDf9DXr | #30 (draft) | review | S2+ review by another thread; the creator's look at D-84 (read-only judge); P0c A/B before D-81 replaces D-79 |
 | P0c | აგენტური სისტემის უფასო A/B (ნაპოლეონი 1–6) | — | S2 / Sonnet / medium; კრიტიკოსი Opus high | 2 | — | — | todo | — |
 | P1a | RunPod stop-გზების სისწორე | — | S3 Opus high (დიზაინი) → S2 Sonnet high; გაშვებულია Opus high | 1 | [P1a](#cmsg_01Hnu5zB86sjUj5GtTgaUkPW2PaTTJGAo9cuV2gtDJDzHp) | [#29](https://github.com/vano1919/explainer-engine/pull/29) draft | doing | ვანო: Sonnet high-ზე გადართვის სიტყვა; GitHub secret HF_TOKEN (watchdog-ის heartbeat); D9 მოგვიანებით (არ ბლოკავს); RUNPOD_API_KEY secret არსებობს; დიზაინი მზადაა: docs/CLOUD_RUNBOOK.md, CR-01..16 |
 | P1b | RunPod dryrun + cloud_pins | P1a | S2 / Sonnet / high | 2 | — | — | todo | — |
