@@ -47,3 +47,12 @@ def test_or26_opus_plans_sonnet_works_is_a_rule_and_in_claude_md():
     row = next(l for l in orch.splitlines() if l.startswith("| OR-26 |"))
     assert "Opus plans, Sonnet works" in row
     assert "OR-26" in claude and claude.index("OR-26") < claude.index("## Commands")
+
+
+def test_or28_halt_and_ask_names_its_triggers_and_the_block_format():
+    orch = (ROOT / "docs" / "ORCHESTRATION.md").read_text(encoding="utf-8")
+    row = next(l for l in orch.splitlines() if l.startswith("| OR-28 |"))
+    for item in ("[STOP — CREATOR CONFIRMATION REQUIRED]", "config/spend_caps.json", "deleting unmerged work", "90 %",
+                 "a creative or architectural choice the rules do not settle", "UD-01"):
+        assert item in row, item
+    assert "| OR-29 |" in orch and "| OR-30 |" in orch

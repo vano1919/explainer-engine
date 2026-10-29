@@ -30,6 +30,7 @@ HOMES = {
     "PC": "QA_SPECIFICATION.md",
     "ED": "EDITING.md",
     "OR": "ORCHESTRATION.md",
+    "UD": "DECISIONS_AND_OPEN_QUESTIONS.md",  # the Blueprint gates that wait for the creator (OR-28)
     "SR": "ORCHESTRATION.md",
     "SH": "ORCHESTRATION.md",
     "ST": "STORY_ENGINE.md",

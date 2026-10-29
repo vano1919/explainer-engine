@@ -2545,3 +2545,23 @@ training as sequences is decided in the process. Changed together:
   `--gpu big`); PR #4 and `three-hour-format-7ewyz0` closed as superseded (kept in the HF vault bundle).
 - Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
 - From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
+
+## 2026-10-29 22:50 Tbilisi: P0b, the code guards of the Blueprint plan (no pod, no money)
+
+- ვანო 2026-10-29 18:19 UTC "დაიწყე", 18:25 (usage rule), 18:27 "კი" (Opus designed, Sonnet 5.5 high implemented, OR-26). Design: `blueprint_2026-10-29/P0b_DESIGN.md` in the project files.
+- `config/model_routing.json` (D7): models, the 18 task classes of MODEL_ROUTING v2 part 4 (D6), the pair of every agent, critics, spawners, the Fable
+  story-stage flag (off), escalation numbers, owner categories, protected files, usage line. `explainer_engine/governance/`: `hooks.py`
+  (pre-bash, pre-write, pre-agent, post-edit, pre-switch/post-switch, prompt, stop, stop-failure, statusline), `records.py` (the creator's word
+  in `jobs/creator_ok.jsonl`), `status.py` (phases, cards, routing log, generated STATUS), `usage.py` (OR-30 backup), CLI `python -m explainer_engine.governance`.
+- Hooks wired in `.claude/settings.json` next to the money hooks (D-56): force push / `branch -D` without a `backup/*` tag, `engine/`, protected config,
+  `*.py` at xhigh/max, Fable outside the story stages, critics off Opus, model switch without his word, findings after every edit, the Stop check of a
+  done phase (routing_log line, files, PROGRESS entry, listed tests). All fail open on a broken check.
+- All 15 agent files declare `model:` and `effort:` (6 had none; stage pages got `effort`); both critics are `Read, Grep, Glob` (D-84): `script-critic` lost
+  Bash, `lora-checkpoint-judge` lost Bash and Write; the orchestrator and the coordinator run the tools and pass the output by path.
+- `core/ledger.Attempts` (OR-04): attempts 1-2 at the assigned level, the 3rd only escalated, then NeedsReview. Docs: OR-28 (halt and ask), OR-29, OR-30; D-81, D-83,
+  D-84; UD-01..UD-10 table; `UD` home in `docs_lint`; `docs/blueprint/` (phases.json, decision_queue.json with owner on every card, routing_log.jsonl,
+  generated STATUS.md). The usage rule (95 %): the status line is the only source of percentages; cloud threads see `allowed_warning` in `get_session`.
+- Tests: `test_agent_governance` (27), `test_governance_hooks` (23), `test_decision_queue`, `test_routing_log`, `test_attempts`, `test_usage_backup`,
+  OR-28 in `test_agree_every_detail`; `pytest -m "not system and not media"` 1292 passed; `docs_lint` 0 findings.
+- Not enforceable, stated: the halt itself and the S0-S4 classification (words only); run-folder scoping of critics; that the recorded word quotes
+  a real message; that `PreModelSwitch` fires for the hearth switch tool and that `Agent` events carry `model` (unverified, the tools also refuse alone).

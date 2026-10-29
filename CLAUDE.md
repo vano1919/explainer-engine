@@ -142,5 +142,14 @@ jobs/                     job output (gitignored): jobs/<slug>/job-NNN_<date>/{s
   ("Access is denied") while another process reads the target; `replace_file` retries.
 - Secrets live only in gitignored `tools/` or env vars; never log or commit them.
 - No linter/formatter/CI: match the existing style by hand; line length ~120.
+- Before an import, an adapter, a path or a Hugging Face URL: grep the symbol or open the file; never cite one you did not open
+  (Blueprint Lock 5; `tests/unit/test_agent_governance.py` checks every module, path and skill the agents and skills name).
+- Models and effort live only in `config/model_routing.json` (D6/D7, OR-29): agent frontmatter, hooks and tests read it, it changes
+  only on the creator's word. A model switch inside a thread, a `.py` edit at xhigh/max, `config/spend_caps.json`, a force push and
+  `branch -D` are refused by hooks (`explainer_engine/governance`, D-84) unless his word is recorded
+  (`python -m explainer_engine.governance ok ...`). The critics are read-only. The Blueprint phases, decision cards (`owner:
+  creator|claude`) and routing log are in `docs/blueprint/` (`python -m explainer_engine.governance check`).
+- Usage limits (creator 2026-10-29, OR-30): the orchestrator and every thread watch the 5-hour and the weekly limit; at 95 % the
+  unfinished work is backed up (project files + a WIP commit on the work branch) before it can be lost.
 - Commit with `git -c user.name=vano1919 -c user.email=122537395+vano1919@users.noreply.github.com`.
 - The Bash tool collapses `\\` inside heredocs: write Python edit scripts with backslashes to a file first.

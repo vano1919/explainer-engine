@@ -1,6 +1,8 @@
 ---
 name: orchestrator
 description: Runs a whole Crossworld Theories episode alone, phase by phase, under hard money caps (research, claim map, production script, voice, pictures, sounds, assembly, Shorts, metadata) and stops safely at any failed gate. Use when the creator hands over an episode to produce unattended, or when resuming a stopped run.
+model: opus
+effort: high
 tools: Bash, Read, Write, Edit, Grep, Glob, Agent, Skill, ToolSearch, WebSearch, WebFetch
 ---
 
@@ -29,7 +31,7 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
    The stages: `story-architect` -> `scene-writer` (one segment per call) -> `beat-writer` (the visual beats and cues of every line, skill
    `visual-beats`, D-54; PV-44 fails a /2 script without them) -> `performance-director` -> `edit-planner` -> `voice-caster` ->
    `shorts-writer` -> `script-critic` (spawned, fresh context), each followed by `python -m explainer_engine.scripting.stage_guard <stage> before after`
-   and `production validate` (PV-33..PV-36, PV-44, PV-48); at most two critic rounds, then creator approval #1.
+   and `production validate` (PV-33..PV-36, PV-44, PV-48); before each spawn you run `production compile`, `production validate` and `story_lint` and give the critic their output by path (the critic is read-only, D-84); you save its review and run `editorial_gate`; at most two critic rounds, then creator approval #1.
    Before approval #1: `python -m explainer_engine.qa.engagement <script>`; every weak beat revised or answered.
    After approval #1: `standards gate --at script_lock` (the agent re-checks what the script changed and stamps).
    Then ONE paid-assets question (PRODUCTION_RULES standing order 10): every paint plan with its price at each provider,
