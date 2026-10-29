@@ -4544,6 +4544,48 @@
    ],
    "supersedes": [],
    "decided": "the creator, 2026-10-24: 'the script has one critical vulnerability: the AI's acting; if it fails, the parley becomes a boring podcast, so control it at the highest level'"
+  },
+  {
+   "id": "BP-114",
+   "area": "film",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Video-model clip geometry (CN-08): LTX takes 8k+1 frames (the VAE packs 8 frames into one latent) and a width and height divisible by 32; a two-stage pipeline renders the first stage at half size, so its full size is a multiple of 64; at most 257 frames; native 24 fps (our six measured clips, D-84).",
+   "thresholds": {
+    "frames_step": 8,
+    "frames_offset": 1,
+    "size_multiple": 32,
+    "two_stage_size_multiple": 64,
+    "frames_max": 257,
+    "native_fps": 24,
+    "frame_table": [
+     97,
+     121,
+     145,
+     169,
+     193,
+     241,
+     257
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "LTX docs: PyTorch API (width and height divisible by 32, frames 8n+1)",
+     "url": "https://docs.ltx.io/open-source-model/integration-tools/pytorch-api"
+    },
+    {
+     "type": "A",
+     "title": "What is LTX-2? (ComfyUI guide: max 257 frames, two-stage size a multiple of 64)",
+     "url": "https://comfyui.nomadoor.net/en/basic-workflows/ltx-2/"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/film_shots.py:frames"
+   ],
+   "supersedes": [
+    "Blueprint VISUAL-001 32n as the recipe"
+   ]
   }
  ]
 }
