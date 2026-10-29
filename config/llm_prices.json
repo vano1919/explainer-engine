@@ -1,0 +1,16 @@
+{
+  "_doc": "List prices of the Claude API for the ledger (explainer_engine/llm/claude_api.py). USD per million tokens. Re-check them on the pricing page before a big batch; a model missing here is refused, never guessed. Not a money ceiling: the ceilings live only in config/spend_caps.json (claude_api).",
+  "checked": "2026-10-06",
+  "source": "claude-api reference model table (cached 2026-10-06); cache-read prices and the F1/F2 additions from blueprint_2026-10-29/CLAUDE_API_PLAN_OR24.md (OR-24 verdict, 2026-10-29)",
+  "batch_factor": 0.5,
+  "cache_write_5m_factor": 1.25,
+  "cache_write_1h_factor": 2.0,
+  "web_search_usd_per_1000": 10.0,
+  "models": {
+    "claude-fable-5-1": {"in": 10.0, "out": 50.0, "cache_read": 0.25, "fallbacks": "default"},
+    "claude-opus-5-5": {"in": 4.0, "out": 20.0, "cache_read": 0.20, "fallbacks": "default"},
+    "claude-sonnet-5-5": {"in": 2.0, "out": 10.0, "cache_read": 0.20, "fallbacks": "default"},
+    "claude-haiku-5-5": {"in": 0.10, "out": 0.50, "cache_read": 0.01, "cache_read_note": "0.1 x input, derived", "fallbacks": null,
+                         "long_prompt": {"over_tokens": 100000, "in": 0.50, "out": 2.50}}
+  }
+}

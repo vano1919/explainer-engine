@@ -13,3 +13,4 @@ opencv-python-headless>=4.9
 scenedetect>=0.6
 scikit-image>=0.22
 imagehash>=4.3
+anthropic>=2.3  # llm/claude_api.py (P0d); imported lazily, the tests use a fake client

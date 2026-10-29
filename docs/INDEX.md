@@ -37,6 +37,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [QA_SPECIFICATION](QA_SPECIFICATION.md) | technical and editorial QA, review bundle | Q- |
 | [PUBLISHING_AND_ANALYTICS](PUBLISHING_AND_ANALYTICS.md) | cadence, first cycle, candidates, metrics, learning loop | |
 | [VAULT](VAULT.md) | where every trained file, dataset and branch is kept, the second copy, restore, the pod upload check; D-73 | VT- |
+| [LLM_API](LLM_API.md) | the Claude API client: routing by task class, prices, caps and ledger, response cache, batch, fallbacks, secret refusal, read-only repo tools; P0d | |
 | [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md) | budgets, estimates, spend ledger, hours | |
 | [TOOL_STRATEGY](TOOL_STRATEGY.md) | which tool makes which asset, costs, kit test, RunPod money rules | |
 | [TOOLING_RESEARCH](TOOLING_RESEARCH.md) | dated candidate models, providers, storage and watchdogs with sources (stage A of the 2026-10-22 brief); appendices in `research/TOOLING_*_2026-10-22.md` and `research/REPO_AUDIT_2026-10-22.md` | |

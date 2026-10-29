@@ -2545,3 +2545,17 @@ training as sequences is decided in the process. Changed together:
   `--gpu big`); PR #4 and `three-hour-format-7ewyz0` closed as superseded (kept in the HF vault bundle).
 - Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
 - From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
+
+## 2026-10-29 22:30 UTC (02:30 Tbilisi): P0d Claude API client (no real call yet, no money)
+
+- ვანო 2026-10-29 18:58 UTC: Claude API key in the env file, use the credit fast. Plan `CLAUDE_API_PLAN_2026-10-29.md`; OR-24 verdict
+  with changes `CLAUDE_API_PLAN_OR24.md` (cache-write and web-search prices, no fallbacks on Batch, explicit effort, no 400 parameters,
+  secret refusal, ledger as the only meter, read-only repo tool loop).
+- New: `explainer_engine/llm/claude_api.py` (routing by class from `config/model_routing.json`, prices from `config/llm_prices.json`, response
+  cache, job ledger plus `calls.jsonl` with start/done/void lines and gap stop, Batch API from 20 requests, `fallbacks: "default"` on direct
+  calls, Fable 400 -> declared fallback route, overload wait 15 min, secret refusal, `list_dir`/`read_file`/`grep` tool loop), CLI
+  `estimate | run | status | void`, `docs/LLM_API.md`. `config/spend_caps.json` got `claude_api` (95 total; J1 10, J1b 8, J2a 8, J2b 10, J3 12,
+  J4 5, J5 3, J6 15, reserve 24; approval = the OR-24 verdict). `anthropic>=2.3` in requirements.
+- Test: `tests/unit/test_claude_api.py` (fake client): 51 passed, 1 skipped until `config/model_routing.json` (PR #30) is on the branch.
+  The key was ABSENT in the thread that built this (environment started before it was added): no real call was made.
+- Next: J1 (`review/pr_review.py`) on PR #30, #31, #29 once the key is present in an environment.
