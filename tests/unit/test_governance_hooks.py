@@ -204,6 +204,9 @@ def test_wrapper_commands_do_not_hide_a_force_push(repo):
                 "time git branch -D feat-none", "env -i FOO=1 timeout 30s git push -f origin main"):
         git(repo, "branch", "-f", "feat-none") if "feat-none" in cmd else None
         assert bash(repo, cmd) == 2, cmd
+    assert bash(repo, "bash -c \"git push -f origin main\"") == 2  # a quoted script is read too
+    assert bash(repo, "sh -c 'echo hi; sudo git push --force origin main'") == 2
+    assert bash(repo, "bash -c 'git status'") == 0
     assert bash(repo, "timeout 60 git push -u origin work") == 0
     assert bash(repo, "echo timeout git push -f origin main") == 0  # an argument of echo, not a command
 

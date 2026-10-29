@@ -97,7 +97,11 @@ def commands(cmd: str) -> list[list[str]]:
             cur = []
         else:
             cur.append(t)
-    return [a for a in argvs + [cur] if a]
+    flat = [a for a in argvs + [cur] if a]
+    for argv in list(flat):  # bash -c "git push -f ..." : look inside the quoted script too (one level per nesting)
+        if Path(argv[0]).name in ("bash", "sh", "zsh", "dash") and "-c" in argv[:-1]:
+            flat += commands(argv[argv.index("-c") + 1])
+    return flat
 
 
 def git_call(argv: list[str]) -> tuple[str, list[str]] | None:
