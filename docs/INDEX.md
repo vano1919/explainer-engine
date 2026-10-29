@@ -38,6 +38,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [PUBLISHING_AND_ANALYTICS](PUBLISHING_AND_ANALYTICS.md) | cadence, first cycle, candidates, metrics, learning loop | |
 | [VAULT](VAULT.md) | where every trained file, dataset and branch is kept, the second copy, restore, the pod upload check; D-73 | VT- |
 | [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md) | budgets, estimates, spend ledger, hours | |
+| [CLOUD_RUNBOOK](CLOUD_RUNBOOK.md) | how a RunPod pod ends: the three stop paths (in-pod wrapper, guard, GitHub watchdog), beat.txt, the key probe, the money dead-man, what create refuses; P1a | CR- |
 | [TOOL_STRATEGY](TOOL_STRATEGY.md) | which tool makes which asset, costs, kit test, RunPod money rules | |
 | [TOOLING_RESEARCH](TOOLING_RESEARCH.md) | dated candidate models, providers, storage and watchdogs with sources (stage A of the 2026-10-22 brief); appendices in `research/TOOLING_*_2026-10-22.md` and `research/REPO_AUDIT_2026-10-22.md` | |
 | [research/ANIMATION_UNIVERSE_2026-10-22](research/ANIMATION_UNIVERSE_2026-10-22.md) | the creator's 2026-10-22 brief: four candidate animated universes, their concept boards (`imagegen/universe_boards.py`), feasibility, asset-library plan, rig proof of concept; the direction is the creator's choice | |
