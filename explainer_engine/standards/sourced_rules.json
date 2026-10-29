@@ -4586,8 +4586,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the word list and the density thresholds",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 1; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 1; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4611,8 +4612,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): twist <= 4.5 s and 0.39 s a word",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 13; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 13; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4645,8 +4647,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the -32..-38 dBFS band and HPF 80 Hz",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4682,8 +4685,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the J and L durations",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4725,8 +4729,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): 2.2 kHz, Q 1.2, 2.5-3.5 dB, HPF 80-85 Hz",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4758,8 +4763,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the three bands and <= 50 ms",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4788,8 +4794,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the vacuum length, level and count; the micro-cue level",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4820,8 +4827,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the +-0.45 pan range",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4849,8 +4857,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): -4 dB above 6 kHz, 22 % wet, 95 % dry, +2 dB at 140 Hz (Holman 3rd ed. not re-opened)",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 2; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4879,8 +4888,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the 1/8-note tolerance",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 3; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 3; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4912,8 +4922,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the caps 3/4, the 40 % dim, one change at a time",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 6; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 6; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -4939,8 +4950,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the 4-8 s altitude change",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 6; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 6; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -5012,8 +5024,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the 60 s and 90 s caps (house numbers; McKee and Katz not re-opened and not their source)",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 7; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 7; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -5050,8 +5063,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): 2-4 frames after onset; 12-16 frame handles",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 10; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 10; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -5084,8 +5098,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): whip 8-10 f, ramp 1.0/1.6/0.45 x 0.6 s, rack focus 0.4 s",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 10; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 10; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -5118,8 +5133,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): blend <= 0.65",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 11; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 11; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -5143,8 +5159,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): vignette 12 % and noise=c0s=5",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 11; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 11; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -5177,8 +5194,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): blink every 2-4 s, a moving hold after 2 s",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 4; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 4; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -5248,8 +5266,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): 200-400 / 150-250 ms (Material motion tokens seen only in search mirrors), <= 10 steps a second, one element",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 15; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 15; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -5279,8 +5298,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the three mechanisms and the 5 s payment",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 13; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 13; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -5309,8 +5329,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the 50 % midpoint gate",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 13; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 13; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
@@ -5359,8 +5380,9 @@
     {
      "type": "A",
      "title": "Blueprint 2026-10 (unverified): the three margins",
-     "url": "https://github.com/vano1919/explainer-engine/blob/claude/project-thread-abo4it/docs/research/CRAFT_SOURCES_2026-10.md",
-     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 12; records the origin, proves nothing"
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened source, CRAFT_SOURCES_2026-10 section 12; records the origin, proves nothing",
+     "verified": false
     }
    ],
    "enforced_by": [
