@@ -2606,3 +2606,4 @@ training as sequences is decided in the process. Changed together:
 - Test: `tests/unit/test_craft_checklists.py` (shape, unique ids, sources and enforcement, BP ids exist, skill tables and
   the curriculum index equal the JSON, one home per CRAFT id, 13 conflicts and 17 areas listed, the conflicting rules keep
   their numbers).
+- Merge of main with P3b (#36): the Lock 5 test of `test_agent_governance` exempts only a backticked reference directly followed by `(planned, Pn)` (regex, the phase must exist in `docs/blueprint/phases.json`); everything else on the line is still checked.
