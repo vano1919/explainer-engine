@@ -207,6 +207,83 @@ Rules: a sound starts with the picture event it belongs to (within one frame) `[
 
 When an item fails, find the cause from evidence (the rule, the file, the timestamp), fix the **general** rule or tool, add a test, and re-render only what changed.
 
+## 7. Editing and colour craft (P3b 2026-10-29)
+
+- **Why this cut, here.** Murch's Rule of Six, in order: emotion, story, rhythm, eye trace, the 2D plane, 3D space; emotion
+  outweighs the rest together (BP-128); when two pull apart, sacrifice from the bottom. A cut needs a reason.
+- **Where in the motion.** A cut inside a character's action lands a few frames after the motion begins, never on the apex
+  or at full rest (BP-128); rendered shots carry handles at both ends so the cut can move (KP-16).
+- **Same subject, new angle.** Two shots of one subject change angle by the 30-degree rule or the lens by 20 mm (BP-126);
+  the focal point stays within BP-30 across a hard cut.
+- **Transitions.** Hard cut by default, a dissolve only at a change of place or time (BP-31, ED-04). An occlusion wipe is
+  only an invisible cut, a silhouette crossing the lens (V3, creator decision pending: conflict 6 of the curriculum).
+  Whips, ramps and rack focus keep BP-129's durations and BP-25's spacing.
+- **Colour is matched, not hoped for.** Per scene one master frame; each shot's boundary frames are compared with it by
+  mean and spread per channel (Reinhard transfer) and pulled toward it within BP-130's blend; hero swatches keep a delta-E
+  band calibrated on the hero sheets. One film look over the whole episode (ED-04, `assemble.LOOK`; BP-131 only records
+  the Blueprint's alternative).
+- **Delivery** stays D-30's 30 fps; the Blueprint's 24 fps is conflict 8, measured in P2 before anything changes.
+
+### CHECKLIST (editing_colour)
+
+Rendered from `explainer_engine/standards/craft_checklists/editing_colour.json` (the one home of these ids; 
+`python -m explainer_engine.standards.craft write` regenerates it, `tests/unit/test_craft_checklists.py` fails when they
+differ). Every row is a hypothesis until a second source type is verified ([CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)).
+
+<!-- craft-checklist:editing_colour:begin -->
+| ID | check | rule | artefact field | sourced rules | enforced by |
+|---|---|---|---|---|---|
+| CRAFT-EDC-01 | critic | every cut decided by the Rule of Six in its order (emotion first, sacrifice from the bottom) | cut list with reasons | BP-128 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-EDC-02 | critic | never cut without a reason | cut list with reasons | - | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-EDC-03 | code | a cut inside an action lands 2-4 frames after the motion begins | rendered clips + cut frames | BP-128 | `explainer_engine/production/assemble.py` (planned, P7) |
+| CRAFT-EDC-04 | code | every rendered shot keeps its handles at both ends | clip length vs cut length | BP-128, KP-16 | `explainer_engine/production/assemble.py` (planned, P7) |
+| CRAFT-EDC-05 | code | hard cut by default; a dissolve only at a change of place or time | transition per shot | BP-31, ED-04 | `explainer_engine/edit/motion_lint.py` |
+| CRAFT-EDC-06 | eye | an occlusion wipe is used only as an invisible cut (a silhouette crosses the lens), never as a visible transition | transition per shot | ED-04 | `explainer_engine/edit/motion_lint.py` (planned, P7) |
+| CRAFT-EDC-07 | code | whips and flashes are spaced and open a story turn | accents per shot | BP-25 | `explainer_engine/edit/motion_lint.py` |
+| CRAFT-EDC-08 | code | whip, speed ramp and rack focus keep their durations | accents per shot | BP-129 | `explainer_engine/edit/motion_lint.py` (planned, P7) |
+| CRAFT-EDC-09 | code | every shot's boundary frames match the scene's master frame within a bounded transfer | boundary frames + scene master | BP-130 | `explainer_engine/finish/grade.py` (planned, P7) |
+| CRAFT-EDC-10 | code | hero costume and skin swatches stay inside a delta-E band across the episode | hero sheet swatches vs frames | - | `explainer_engine/finish/grade.py` (planned, P7) |
+| CRAFT-EDC-11 | eye | one constant film look over the whole episode | the rendered episode | ED-04, BP-131 | manual |
+| CRAFT-EDC-12 | eye | delivery frame rate per D-30 (30 fps); the Blueprint's 24 fps is conflict 8 | the delivered file | D-30 | manual |
+<!-- craft-checklist:editing_colour:end -->
+
+## 8. Motion graphics and Mayer's principles (P3b 2026-10-29)
+
+- **Graphics move like objects.** Ease-out on entry, ease-in on exit, inside BP-134's durations; a counter ticks at a rate
+  the eye reads and lands on its spoken number (BP-93); one graphic element moves at a time besides the camera; every HUD
+  element keeps one slot per episode (ED-15).
+- **Mayer's twelve, as questions per segment** (CRAFT-MOG-05..15): coherence (nothing decorative), signaling (one focus),
+  redundancy (no burned narrator subtitles on 16:9), spatial and temporal contiguity (the label by its object, the visual on
+  its word), segmenting (chapter cards), pre-training (names and sides first), modality (narration carries the words),
+  personalisation ("you"), voice (a human-sounding narrator), image (a host appears because it acts: the source says the
+  speaker's image by itself need not help learning, so "embodiment" is not a rule here).
+
+### CHECKLIST (motion_graphics)
+
+Rendered from `explainer_engine/standards/craft_checklists/motion_graphics.json` (the one home of these ids; 
+`python -m explainer_engine.standards.craft write` regenerates it, `tests/unit/test_craft_checklists.py` fails when they
+differ). Every row is a hypothesis until a second source type is verified ([CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)).
+
+<!-- craft-checklist:motion_graphics:begin -->
+| ID | check | rule | artefact field | sourced rules | enforced by |
+|---|---|---|---|---|---|
+| CRAFT-MOG-01 | code | a graphic enters with an ease-out and leaves with an ease-in inside its durations | graphic events (enter/exit) | BP-134 | `explainer_engine/edit/motion_lint.py` (planned, P7) |
+| CRAFT-MOG-02 | code | a counter ticks at a readable rate and lands on its spoken number | counter events + word times | BP-134, BP-93 | `explainer_engine/edit/motion_lint.py` (planned, P7) |
+| CRAFT-MOG-03 | code | at most one graphic element in motion besides the camera | graphic events per instant | BP-134 | `explainer_engine/edit/motion_lint.py` (planned, P7) |
+| CRAFT-MOG-04 | eye | every HUD element keeps one slot per episode | graphic positions | ED-15 | manual |
+| CRAFT-MOG-05 | critic | coherence: no decorative beat | visual beats | BP-93 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-MOG-06 | critic | signaling: one focus, the rest dimmed | frame focus | - | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-MOG-07 | critic | redundancy: no burned narrator subtitles on 16:9 (captions as a soft track) | render captions setting | - | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-MOG-08 | eye | spatial contiguity: a label sits by its object | label positions | BP-28 | manual |
+| CRAFT-MOG-09 | code | temporal contiguity: the visual lands on its word | visual beats + word times | BP-93, BP-54 | `explainer_engine/production/beats.py` |
+| CRAFT-MOG-10 | critic | segmenting: chapter cards cut the story into named parts | chapter cards | ED-09 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-MOG-11 | critic | pre-training: names and sides are shown before the battle | the first 30 s plan | - | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-MOG-12 | code | modality: narration carries the words, on-screen text stays short | text beats | BP-38 | `explainer_engine/production/beats.py` |
+| CRAFT-MOG-13 | code | personalisation: 'you' to one listener | narration[].text | BP-07 | `explainer_engine/scripting/narration_lint.py` |
+| CRAFT-MOG-14 | eye | voice: a human-sounding narrator | the read | - | manual |
+| CRAFT-MOG-15 | critic | image: a host appears because it acts, not to decorate (the speaker's image need not help learning) | host shots | - | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+<!-- craft-checklist:motion_graphics:end -->
+
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 Where this database and the project disagree, the registry wins (D-59); the `[ours: ...]` notes above point to these rows.
@@ -223,3 +300,5 @@ Where this database and the project disagree, the registry wins (D-59); the `[ou
 - BP-92: a camera move never resets (continue the move across a same-picture cut; never back to the run's start framing).
 - BP-40: first 30 s a change every 5 s (FAIL); body still over 20 s REVIEW, over 40 s FAIL; at most 10 pictures a minute;
   one burst of 5-10 cuts per 2-3 min.
+- BP-126, BP-128..BP-131, BP-134: lens and the 30-degree rule, where a cut lands and its handles, whip/ramp/rack focus,
+  colour matching, the Blueprint's film look (record only), graphic motion (all hypothesis, REVIEW; checklists sections 7, 8).

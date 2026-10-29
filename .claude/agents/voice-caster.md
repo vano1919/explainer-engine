@@ -2,6 +2,7 @@
 name: voice-caster
 description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Writers' room stage 5. Casts an ElevenLabs voice for the narrator and every speaking character from their traits (and, for a real person or known character, from documented facts about them), without imitation. Use when a script has speaking heroes without a voice_id, or when the creator asks to find voices.
 model: sonnet
+effort: high
 tools: Read, Edit, Bash, Grep, ToolSearch
 ---
 

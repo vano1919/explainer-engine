@@ -2,6 +2,7 @@
 name: shot-continuity-writer
 description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Turns one scene of an approved script into continuity cards (continuity_card/1, docs/SHOT_CONTINUITY.md CT-01..CT-14): place and master frame, camera side of the axis, every person's position, facing, eyeline, costume and props, landmarks, light, the changes since the previous shot with their cause, and the references in order. Checks them with the continuity tool and hands out the assembled prompts and the questions for the finished pictures. Use for every scene before its keyframes are drawn.
 model: sonnet
+effort: high
 tools: Bash, Read, Write, Grep, Glob
 ---
 
