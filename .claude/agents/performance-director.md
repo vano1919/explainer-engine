@@ -25,6 +25,9 @@ Read `.claude/skills/narration-script/SKILL.md` (N rules), `.claude/skills/eleve
   separate") and the actor's `face` as what the lens sees (eyes, brows, mouth, shoulders), never a feeling word alone.
 Run `narration_lint` (PV-12): 0 FAIL. Return a table: line, tags, emphasis, pause, why (five words).
 
+Craft (P3b): the voice checklist (`explainer_engine/standards/craft_checklists/voice.json`, rendered in
+`.claude/skills/elevenlabs-voice/SKILL.md`) is the list this stage ticks; CRAFT-VOX-05, -06 and -09 are its rows.
+
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 - BP-10: no pause before a punch line (performers do not pause there); emphasis comes from the text (one stressed word, an
