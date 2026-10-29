@@ -204,6 +204,10 @@ def test_wrapper_commands_do_not_hide_a_force_push(repo):
                 "time git branch -D feat-none", "env -i FOO=1 timeout 30s git push -f origin main"):
         git(repo, "branch", "-f", "feat-none") if "feat-none" in cmd else None
         assert bash(repo, cmd) == 2, cmd
+    for cmd in ("timeout -s KILL 60 git push -f origin main", "sudo -u root git push -f origin main", "bash -lc 'git push -f origin main'",
+                "eval \"git push --force origin main\"", "eval git push -f origin main", "echo x | xargs git push -f origin main",
+                "env -u FOO PATH=/bin git push -f origin main"):
+        assert bash(repo, cmd) == 2, cmd
     assert bash(repo, "bash -c \"git push -f origin main\"") == 2  # a quoted script is read too
     assert bash(repo, "sh -c 'echo hi; sudo git push --force origin main'") == 2
     assert bash(repo, "bash -c 'git status'") == 0

@@ -70,7 +70,7 @@ def _rel(root: Path, path: str) -> str | None:
 
 OPERATORS = {"&&", "||", ";", "|", "&", "(", ")"}
 GIT_VALUE_OPTIONS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--exec-path"}
-WRAPPERS = {"sudo", "env", "timeout", "nice", "nohup", "command", "exec", "time", "stdbuf", "ionice", "setsid", "doas"}
+WRAPPERS = {"sudo", "env", "timeout", "nice", "nohup", "command", "exec", "time", "stdbuf", "ionice", "setsid", "doas", "xargs"}
 FORCE_FLAGS = {"-f", "--force", "--mirror", "--delete", "-d"}
 
 
@@ -98,18 +98,24 @@ def commands(cmd: str) -> list[list[str]]:
         else:
             cur.append(t)
     flat = [a for a in argvs + [cur] if a]
-    for argv in list(flat):  # bash -c "git push -f ..." : look inside the quoted script too (one level per nesting)
-        if Path(argv[0]).name in ("bash", "sh", "zsh", "dash") and "-c" in argv[:-1]:
-            flat += commands(argv[argv.index("-c") + 1])
+    for argv in list(flat):  # bash -c "git push -f ...", bash -lc ..., eval "...": look inside the script too (one level per nesting)
+        name = Path(argv[0]).name
+        if name in ("bash", "sh", "zsh", "dash"):
+            k = next((n for n, a in enumerate(argv[:-1]) if re.fullmatch(r"-[a-zA-Z]*c", a)), None)
+            if k is not None:
+                flat += commands(argv[k + 1])
+        elif name == "eval":
+            flat += commands(" ".join(argv[1:]))
     return flat
 
 
 def git_call(argv: list[str]) -> tuple[str, list[str]] | None:
     """(subcommand, its own argv) of a ``git`` command, skipping git's global options; None for anything else."""
     i = next((k for k, a in enumerate(argv) if Path(a).name == "git"), None)
-    # only VAR=value, a wrapper command (sudo, env, timeout 60, nice -n 5 ...), its options and numbers may precede git
-    if i is None or any(not (("=" in a) or a.startswith("-") or Path(a).name in WRAPPERS or re.fullmatch(r"\d+(\.\d+)?[smhd]?", a))
-                        for a in argv[:i]):
+    if i is None:
+        return None
+    lead = [a for a in argv[:i] if "=" not in a]  # VAR=value may precede any command
+    if lead and Path(lead[0]).name not in WRAPPERS:  # `echo git ...` is an argument; after a wrapper every word up to git is its option or value
         return None
     j = i + 1
     while j < len(argv) and argv[j].startswith("-"):
