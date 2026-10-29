@@ -2,6 +2,7 @@
 name: performance-director
 description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Writers' room stage 3. Adds the delivery to finished lines (ElevenLabs v4 tags, the one stressed word, tone, emotion, pauses, an interjection where a person would say one) without changing the words. Use after every segment's lines are written and approved.
 model: sonnet
+effort: high
 tools: Read, Edit, Bash, Grep
 ---
 
