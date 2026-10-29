@@ -8,7 +8,7 @@ tests run with a fake client and no network.
 
     python -m explainer_engine.llm.claude_api estimate job.json     # tokens and dollars, spends nothing
     python -m explainer_engine.llm.claude_api run job.json --out DIR
-    python -m explainer_engine.llm.claude_api status | void UID --usd X
+    python -m explainer_engine.llm.claude_api status | void UID [--usd X]
 """
 
 from __future__ import annotations
@@ -48,9 +48,17 @@ FORBIDDEN_PARAMS = ("temperature", "top_p", "top_k", "budget_tokens", "tool_choi
 
 # F7: the patterns tests/unit/test_repo_hygiene.py guards (file names) plus key shapes in text.
 SECRET_NAMES = re.compile(r"(api_key|token[^/]*\.json$|secret|credentials|id_ed25519|\.pem$|^\.env$)", re.I)
+SECRET_NAMES_MORE = re.compile(r"(^\.env(\..*)?$|^id_rsa|^id_dsa|^\.netrc$|\.key$|\.p12$|\.pfx$|^\.npmrc$|^\.pypirc$)", re.I)
 SECRET_TEXT = re.compile(
-    r"(sk-ant-[A-Za-z0-9_-]{10,}|ANTHROPIC_API_KEY\s*=\s*\S|hf_[A-Za-z0-9]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{30,}"
-    r"|-----BEGIN [A-Z ]*PRIVATE KEY-----|rpa_[A-Za-z0-9]{20,})")
+    r"(sk-ant-[A-Za-z0-9_-]{10,}|ANTHROPIC_API_KEY\s*=\s*\S|hf_[A-Za-z0-9]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}"
+    r"|AIza[0-9A-Za-z_-]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|rpa_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|aws_secret_access_key\s*[=:]"
+    r"|sk-proj-[A-Za-z0-9_-]{20,}|sk_[a-f0-9]{40,}|xox[abprs]-[A-Za-z0-9-]{10,}|Bearer\s+[A-Za-z0-9._~+/=-]{20,}"
+    r"|(?:API_KEY|_KEY|SECRET|TOKEN|PASSWORD|_B64)\s*[=:]\s*[\"']?[A-Za-z0-9+/_=.-]{20,})", re.I)
+SKIP_DIRS = {".git", "tools", "node_modules", "__pycache__"}
+
+
+def secret_name(name: str) -> bool:
+    return bool(SECRET_NAMES.search(name) or SECRET_NAMES_MORE.search(name))
 
 
 class LLMError(EngineError):
@@ -196,6 +204,26 @@ def usage_of(resp: Any, ttl: str = "5m") -> dict:
             "write_5m": w5, "write_1h": w1, "searches": n("web_search_requests", tool) if tool is not None else 0}
 
 
+def iterations_usd(resp: Any, ttl: str, pr: dict, *, batch: bool = False) -> tuple[float, list[dict]]:
+    """Dollars of the attempts listed in ``usage.iterations`` (a refused attempt and the fallback that answered), each at its own
+    model. Entries without a model or tokens are skipped; (0.0, []) when the response lists none."""
+    total, rows = 0.0, []
+    for it in getattr(getattr(resp, "usage", None), "iterations", None) or []:
+        model = getattr(it, "model", None)
+        if not model or not isinstance(getattr(it, "input_tokens", None), int):
+            continue
+        u = usage_of(NS_(usage=it), ttl)
+        usd = usd_of(model, u, batch=batch, pr=pr)
+        total += usd
+        rows.append({"model": model, "usd": round(usd, 6)})
+    return total, rows
+
+
+class NS_:   # a tiny namespace so usage_of can read an iteration entry like a response
+    def __init__(self, **kw: Any) -> None:
+        self.__dict__.update(kw)
+
+
 def _chars(obj: Any) -> int:
     return len(json.dumps(obj, ensure_ascii=False, default=lambda o: getattr(o, "__dict__", str(o))))
 
@@ -248,7 +276,7 @@ class Ledger:
         gap = self.open_calls()
         if gap:
             raise LedgerGap(f"{len(gap)} call(s) have no result line ({', '.join(r['uid'] for r in gap[:5])}): find what they cost "
-                            "in the Console and close them with `claude_api void UID --usd X`")
+                            "in the Console and close them with `claude_api void UID [--usd X]`")
 
 
 # --- the request -------------------------------------------------------------------------------------------------------
@@ -303,9 +331,9 @@ def redact(text: str) -> tuple[str, int]:
 
 
 def check_secret_path(path: str | Path, where: str = "file") -> None:
-    p = Path(path)
-    if (p.parts and p.parts[0] == "tools") or SECRET_NAMES.search(p.name) or ".git" in p.parts:
-        raise SecretInPrompt(f"{where}: {p} is a secret-like or tools/ path; nothing was sent")
+    p = Path(os.path.normpath(str(path)))
+    if p.parts and p.parts[0] == ".." or SKIP_DIRS & set(p.parts) or secret_name(p.name) or any(secret_name(x) for x in p.parts):
+        raise SecretInPrompt(f"{where}: {path} is a secret-like, tools/ or .git path; nothing was sent")
 
 
 def build_params(req: Request, r: Route) -> dict:
@@ -329,6 +357,8 @@ def build_params(req: Request, r: Route) -> dict:
         tools += REPO_TOOLS
     if tools:
         params["tools"] = tools
+    if req.tools_root:   # the big first message (a diff) is re-sent every turn: cache it too
+        params["messages"] = [{"role": "user", "content": [{"type": "text", "text": req.user, "cache_control": cc}]}]
     assert not [k for k in FORBIDDEN_PARAMS if k in params]
     return params
 
@@ -369,20 +399,33 @@ MAX_TOOL_CHARS = 30000
 
 
 def _safe(root: Path, rel: str) -> Path:
-    p = (root / rel).resolve()
-    if root.resolve() not in (p, *p.parents):
+    r = root.resolve()
+    p = (r / rel).resolve()           # symlinks are followed HERE, so the checks below see where the path really leads
+    if r not in (p, *p.parents):
         raise SecretInPrompt(f"{rel}: outside the checkout")
-    check_secret_path(p.relative_to(root.resolve()), "tool")
+    check_secret_path(p.relative_to(r), "tool")
     return p
 
 
-def run_repo_tool(root: Path, name: str, args: dict) -> str:
-    """Execute one read-only tool call. No write, no exec; secret-like paths and secret-looking content are refused."""
+def _visible(entry: Path, r: Path) -> bool:
+    """A grep / list candidate: not a link, inside the checkout, not secret-like, not a skipped folder."""
+    if entry.is_symlink():
+        return False
     try:
+        rel = entry.resolve().relative_to(r)
+        check_secret_path(rel, "tool")
+    except (SecretInPrompt, ValueError, OSError):
+        return False
+    return True
+
+
+def run_repo_tool(root: Path, name: str, args: dict) -> str:
+    """Execute one read-only tool call. No write, no exec; links, secret-like paths and secret-looking content never leave."""
+    try:
+        r = root.resolve()
         if name == "list_dir":
             p = _safe(root, args["path"])
-            rows = [f"{e.name}{'/' if e.is_dir() else ''}" for e in sorted(p.iterdir())
-                    if not (SECRET_NAMES.search(e.name) or e.name in (".git", "tools", "node_modules", "__pycache__"))]
+            rows = [f"{e.name}{'/' if e.is_dir() else ''}" for e in sorted(p.iterdir()) if _visible(e, r)]
             return "\n".join(rows) or "(empty)"
         if name == "read_file":
             p = _safe(root, args["path"])
@@ -396,11 +439,15 @@ def run_repo_tool(root: Path, name: str, args: dict) -> str:
             base = _safe(root, args["path"])
             rx = re.compile(args["pattern"])
             hits: list[str] = []
-            files = [base] if base.is_file() else sorted(q for q in base.rglob("*") if q.is_file())
+            files: list[Path] = []
+            if base.is_file():
+                files = [base]
+            else:
+                for dirpath, dirs, names in os.walk(base, followlinks=False):
+                    dirs[:] = sorted(d for d in dirs if _visible(Path(dirpath) / d, r))
+                    files += [Path(dirpath) / n for n in sorted(names) if _visible(Path(dirpath) / n, r)]
             for q in files:
-                rel = q.relative_to(root.resolve())
-                if SECRET_NAMES.search(q.name) or {".git", "tools", "node_modules", "__pycache__"} & set(rel.parts):
-                    continue
+                rel = q.resolve().relative_to(r)
                 try:
                     for i, line in enumerate(q.read_text(encoding="utf-8").splitlines(), 1):
                         if rx.search(line) and not SECRET_TEXT.search(line):
@@ -527,12 +574,19 @@ class ClaudeAPI:
                 self.ledger.append({"ev": "void", "uid": uid, "job": req.job, "id": req.id, "why": f"{type(e).__name__} {_status(e)}"})
             raise   # anything else (timeout, dropped stream) may have been billed: the open start line stops the next call
         use = usage_of(resp, req.cache_ttl)
-        usd = usd_of(getattr(resp, "model", None) or r.model, use, batch=batch, pr=pr)
+        note = None
+        try:
+            usd = usd_of(getattr(resp, "model", None) or r.model, use, batch=batch, pr=pr)
+            it_usd, it_rows = iterations_usd(resp, req.cache_ttl, pr, batch=batch)
+            usd = max(usd, it_usd)    # the list may or may not repeat the answering attempt: never read low
+        except PriceMissing as e:     # the call is paid: book the reservation instead of losing the answer and the line
+            usd, it_rows, note = est, [], f"price missing, booked the reserved amount: {e}"
         self.run_for(req.job).settle(SERVICE, item, usd)
         fb_ran = any(getattr(i, "type", None) == "fallback_message" for i in (getattr(resp.usage, "iterations", None) or []))
         self.ledger.append({"ev": "done", "uid": uid, "job": req.job, "id": req.id, "model": getattr(resp, "model", r.model),
                             "effort": r.effort, "usage": use, "usd": round(usd, 6), "batch": batch, "fallback_ran": fb_ran,
-                            "fell_back_from": fell_from, "stop": resp.stop_reason, "request_id": getattr(resp, "_request_id", None)})
+                            "iterations": it_rows, "note": note, "fell_back_from": fell_from, "stop": resp.stop_reason,
+                            "request_id": getattr(resp, "_request_id", None)})
         return resp, r, usd, use
 
     @staticmethod
@@ -623,7 +677,8 @@ class ClaudeAPI:
         if not reqs:
             return {}
         job = reqs[0].job
-        state_file = ledger_dir() / f"batch_{job}_{hashlib.sha256('|'.join(sorted(q.id for q in reqs)).encode()).hexdigest()[:10]}.json"
+        tag = f"batch-{job}-{hashlib.sha256('|'.join(sorted(q.id for q in reqs)).encode()).hexdigest()[:10]}"
+        state_file = ledger_dir() / f"{tag}.json"
         routes = {q.id: route(q.task_class, q.model, q.effort) for q in reqs}
         params = {q.id: build_params(q, routes[q.id]) for q in reqs}
         by_id = {q.id: q for q in reqs}
@@ -632,7 +687,7 @@ class ClaudeAPI:
             batch_id = json.loads(state_file.read_text(encoding="utf-8"))["batch_id"]   # resume: nothing is paid twice
         else:
             est = sum(worst_usd(routes[i].model, params[i], by_id[i].cache_ttl, batch=True) for i in params)
-            self._reserve(job, f"batch-{job}", est)
+            self._reserve(job, tag, est)
             for i in params:
                 self.ledger.append({"ev": "start", "uid": f"b-{i}", "batch": True, "job": job, "id": i, "model": routes[i].model})
             b = c.messages.batches.create(requests=[{"custom_id": i, "params": params[i]} for i in params])   # F3: no fallbacks here
@@ -662,7 +717,7 @@ class ClaudeAPI:
             if msg.stop_reason == "refusal":      # F3: re-run ONCE as a direct call with fallbacks; never reworded
                 try:
                     out[i] = self.complete(q)
-                except Refused as e:
+                except (Refused, OutputTruncated) as e:   # reported; the other results of the batch are still collected
                     out[i] = e
                 continue
             if msg.stop_reason == "max_tokens":
@@ -672,7 +727,7 @@ class ClaudeAPI:
             self.cache.put(cache_key(params[i], q.cache_salt), {"text": res.text, "model": res.model, "effort": res.effort,
                                                                 "stop_reason": res.stop_reason, "usage": use, "id": i})
             out[i] = res
-        self.run_for(job).settle(SERVICE, f"batch-{job}", spent)
+        self.run_for(job).settle(SERVICE, tag, spent)
         return out
 
 
@@ -744,7 +799,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("status")
     v = sub.add_parser("void")
     v.add_argument("uid")
-    v.add_argument("--usd", type=float, required=True)
+    v.add_argument("--usd", type=float, default=None, help="default: the amount reserved for that call (never reads low)")
     a = ap.parse_args(argv)
     api = ClaudeAPI()
     if a.cmd == "status":
@@ -754,10 +809,23 @@ def main(argv: list[str] | None = None) -> int:
                           "open_calls": [x["uid"] for x in api.ledger.open_calls()]}, indent=2))
         return 0
     if a.cmd == "void":
-        api.ledger.append({"ev": "done", "uid": a.uid, "job": "manual", "id": a.uid, "usd": a.usd, "note": "closed by hand"})
-        print(f"closed {a.uid} at ${a.usd}")
+        start = next((x for x in api.ledger.open_calls() if x["uid"] == a.uid), None)
+        if start is None:
+            print(f"{a.uid} is not an open call")
+            return 1
+        usd = a.usd if a.usd is not None else float(start.get("reserved", 0.0))
+        api.ledger.append({"ev": "done", "uid": a.uid, "job": start["job"], "id": start["id"], "usd": usd,
+                           "note": "closed by hand" + (" at the reserved amount" if a.usd is None else "")})
+        print(f"closed {a.uid} at ${usd}")
         return 0
     reqs = load_job(Path(a.job))
+    if a.cmd == "run":
+        pre = estimate(reqs)    # offline bound; a job whose worst case passes the job's 80 % stop does not start (it would stop half-done)
+        if not pre["fits_job_cap"]:
+            print(json.dumps(pre, indent=2))
+            print(f"refused: the worst case ${pre['worst_total_usd']} passes the stop of job {pre['job']} (${pre['stop_at_job']}); "
+                  "shrink the job or ask for a higher cap")
+            return 3
     if a.cmd == "estimate":
         live = None if a.offline or not os.environ.get("ANTHROPIC_API_KEY") or not (caps().get("approval") or {}).get("ref") else api
         print(json.dumps(estimate(reqs, api=live, expected_output=a.expected_output), indent=2))

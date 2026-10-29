@@ -20,8 +20,8 @@ only in `config/model_routing.json` (P0b, D7).
 | Fable 400 | A request that declares `fallback_to` (alias, effort) is re-run once on that route and the ledger line says `fell_back_from`. |
 | Batch | From 20 requests, no tool loop. State in `jobs/llm_ledger/batch_<job>_<hash>.json`, so a second run collects instead of submitting again. Half price on all tokens. |
 | Overload | 429 / 5xx / overloaded: wait with backoff up to 15 minutes in all, then `Overloaded` (stop and report). |
-| Secrets | A prompt, job file or tool result that matches a key pattern, or a file named like `tests/unit/test_repo_hygiene.py` guards (or under `tools/`), is refused before the request. |
-| Repo tool loop | `tools_root` gives the model `list_dir`, `read_file`, `grep` over a checkout: read-only, inside the root, secret-like paths and content refused. Every turn is reserved and settled on its own. Used by the PR review and the final audit. |
+| Secrets | A prompt or job file that matches a key pattern (Anthropic, GitHub, HF, RunPod, AWS, Bearer, `*_KEY=`/`*_TOKEN=` assignments), or a path named like `tests/unit/test_repo_hygiene.py` guards plus `.env*`, `id_rsa`, `.netrc`, `*.key` (or under `tools/`, `.git`, or `..`), is refused before the request. Diffs and tool output are redacted instead. |
+| Repo tool loop | `tools_root` gives the model `list_dir`, `read_file`, `grep` over a checkout: read-only; every path is resolved first and must stay inside the root; symlinks are not followed or listed; secret-like paths are refused and key-shaped text is redacted. The first user message (the diff) is cached across turns. Every turn is reserved and settled on its own. Used by the PR review and the final audit. |
 
 ## Commands
 
@@ -29,7 +29,7 @@ only in `config/model_routing.json` (P0b, D7).
 python -m explainer_engine.llm.claude_api estimate job.json [--expected-output N] [--offline]   # spends nothing
 python -m explainer_engine.llm.claude_api run job.json [--out DIR] [--no-wait]
 python -m explainer_engine.llm.claude_api status                                               # key present?, caps, totals
-python -m explainer_engine.llm.claude_api void UID --usd X                                     # close a call the ledger lost
+python -m explainer_engine.llm.claude_api void UID [--usd X]                                     # close a call the ledger lost
 ```
 
 Job file: `{job, task_class, model?, effort?, max_tokens?, system?, system_files?, schema?, web_search_max_uses?, cache_ttl?, tools_root?,
@@ -38,5 +38,4 @@ max_turns?, fallback_to?, requests: [{id, user | user_file, cache_salt?}]}`; the
 ## What it cannot see
 
 The ledger is the only meter; the promo balance is visible only in the Console. The ledger total is printed with every job. A timed-out
-call may have been billed: its start line stays open until it is closed by hand. A call that fell back server-side is priced at the model
-named in the response.
+call may have been billed: its start line stays open until it is closed by hand. A call that fell back server-side: every entry of `usage.iterations` is priced at its own model (`config/llm_prices.json` carries the fallback targets Opus 4.8, Opus 5 and Sonnet 5, cache reads derived at 0.1x input); the ledger books the larger of that sum and the top-level usage, and a model without a price still gets a `done` line at the reserved amount (`note` says so). `run` refuses a job whose worst case passes the job's 80 % stop.

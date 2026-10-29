@@ -2559,3 +2559,13 @@ training as sequences is decided in the process. Changed together:
 - Test: `tests/unit/test_claude_api.py` (fake client): 51 passed, 1 skipped until `config/model_routing.json` (PR #30) is on the branch.
   The key was ABSENT in the thread that built this (environment started before it was added): no real call was made.
 - Next: J1 (`review/pr_review.py`) on PR #30, #31, #29 once the key is present in an environment.
+
+## 2026-10-29 23:00 UTC (03:00 Tbilisi): P0d review fixes (PR #34, REQUEST_CHANGES by the P0a thread)
+
+- F7: the repo tools resolve every path first and keep it inside the checkout; `grep` and `list_dir` skip symlinks (an `os.walk` without links), `.env*`, `id_rsa`,
+  `.netrc`, `*.key`, `tools/`, `.git`, and `..` paths are refused; the key patterns now cover AWS, Bearer, `github_pat_`, `sk_`, `sk-proj-`, Slack, `*_KEY=`/`*_TOKEN=`/`*_B64=`
+  assignments. The long-input regex backtracking was removed (a 30,000-character prompt took 21 s).
+- F8: price lines for the fallback targets (Opus 4.8, Opus 5, Sonnet 5); every `usage.iterations` entry priced at its own model, the ledger books the larger of the sum and the
+  top-level usage; a paid call whose model has no price gets a `done` line at the reserved amount. `void UID` defaults to the reserved amount; `run` refuses a job whose worst
+  case passes the job's 80 % stop; a batch rerun that truncates no longer drops the other results; the first message of a tool loop (the diff) is cached across turns.
+- Tests: 28 new cases in `tests/unit/test_claude_api.py` (79 passed, 1 skipped).

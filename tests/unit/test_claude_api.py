@@ -232,7 +232,9 @@ def test_secret_patterns_follow_the_hygiene_test():
 
 
 @pytest.mark.parametrize("text", ["key sk-ant-api03-abcdefghijkl", "ANTHROPIC_API_KEY=abc", "hf_" + "a" * 30, "ghp_" + "b" * 30,
-                                  "-----BEGIN RSA PRIVATE KEY-----"])
+                                  "-----BEGIN RSA PRIVATE KEY-----", "AKIA" + "A" * 16, "aws_secret_access_key = abcd",
+                                  "RUNPOD_API_KEY=" + "x1" * 15, "Authorization: Bearer " + "a" * 30, "github_pat_" + "B" * 30,
+                                  "sk_" + "a1" * 25, "sk-proj-" + "Z" * 30, "xoxb-1234567890-abcdef", 'YOUTUBE_TOKEN_B64="' + "Q" * 40 + '"'])
 def test_a_secret_in_the_prompt_is_refused_before_any_call(text):
     a = api()
     with pytest.raises(ca.SecretInPrompt):
@@ -242,7 +244,8 @@ def test_a_secret_in_the_prompt_is_refused_before_any_call(text):
     assert a._client.calls == []
 
 
-@pytest.mark.parametrize("path", ["tools/gemini/api_key.txt", ".env", "x/token_google.json", "a/id_ed25519", "c/secret_notes.md"])
+@pytest.mark.parametrize("path", ["tools/gemini/api_key.txt", ".env", "x/token_google.json", "a/id_ed25519", "c/secret_notes.md",
+                                  "../tools/x", "a/../../tools/x", ".env.local", "id_rsa", "a/.netrc", "certs/server.key", "x/.git/config"])
 def test_secret_paths_are_refused(path):
     with pytest.raises(ca.SecretInPrompt):
         ca.check_secret_path(path)
@@ -530,3 +533,101 @@ def test_cli_status_never_prints_the_key(capsys, monkeypatch):
     assert ca.main(["status"]) == 0
     out = capsys.readouterr().out
     assert "super-secret-value" not in out and '"key_present": true' in out
+
+
+# --- review of PR #34: symlinks, wider patterns, fallback prices --------------------------------------------------------
+def test_grep_and_list_do_not_follow_links_out_of_the_checkout(tmp_path):
+    root = tmp_path / "repo"
+    root.mkdir()
+    outside = tmp_path / "aws.txt"
+    outside.write_text("aws_secret_access_key = abcdEFGH1234\nRUNPOD_API_KEY=" + "x1" * 15 + "\nplain line\n", encoding="utf-8")
+    (root / "env_real").write_text("TOKEN=" + "a" * 30 + "\nplain line\n", encoding="utf-8")
+    (root / "link_out.txt").symlink_to(outside)
+    (root / "link_env").symlink_to(root / "env_real")
+    (root / ".env.local").write_text("plain line\n", encoding="utf-8")
+    (root / "outdir").symlink_to(tmp_path, target_is_directory=True)
+    (root / "ok.txt").write_text("plain line\n", encoding="utf-8")
+    got = ca.run_repo_tool(root, "grep", {"pattern": ".", "path": "."})
+    assert "aws_secret" not in got and "RUNPOD" not in got and "TOKEN=" not in got
+    assert "ok.txt:1: plain line" in got and "link_out" not in got and ".env.local" not in got and "outdir" not in got
+    listing = ca.run_repo_tool(root, "list_dir", {"path": "."})
+    assert "link_out.txt" not in listing and "link_env" not in listing and ".env.local" not in listing and "outdir" not in listing
+    for path in ("link_out.txt", ".env.local", "outdir/aws.txt"):
+        assert ca.run_repo_tool(root, "read_file", {"path": path, "start": 1, "end": 5}).startswith("error")
+    inside = ca.run_repo_tool(root, "read_file", {"path": "link_env", "start": 1, "end": 5})   # a link INSIDE the root is read, redacted
+    assert "a" * 30 not in inside and "[REDACTED-SECRET-LIKE]" in inside
+    assert ca.run_repo_tool(root, "grep", {"pattern": ".", "path": "outdir"}).startswith("error")
+
+
+def test_job_file_path_with_dotdot_tools_is_refused(tmp_path):
+    job = {"job": "T", "task_class": "critical-review", "requests": [{"id": "a", "user_file": "../tools/x.txt"}]}
+    (tmp_path / "job.json").write_text(json.dumps(job), encoding="utf-8")
+    with pytest.raises(ca.SecretInPrompt):
+        ca.load_job(tmp_path / "job.json")
+
+
+def test_fallback_targets_have_price_lines():
+    pr = ca.prices()["models"]
+    for m in ("claude-opus-4-8", "claude-opus-5", "claude-sonnet-5"):
+        assert ca.usd_of(m, {**U, "input": 1_000_000}) == pytest.approx(pr[m]["in"])
+
+
+def iteration(model, inp, out, typ="message"):
+    return NS(type=typ, model=model, input_tokens=inp, output_tokens=out, cache_read_input_tokens=0, cache_creation_input_tokens=0,
+              server_tool_use=None)
+
+
+def test_fallback_answer_is_priced_with_every_iteration_at_its_own_model():
+    r = resp("by fallback", model="claude-opus-4-8", inp=1000, out=500)
+    r.usage.iterations = [iteration("claude-opus-5-5", 1000, 20, "refusal"), iteration("claude-opus-4-8", 1000, 500, "fallback_message")]
+    a = api(r)
+    res = a.complete(req())
+    expect = (1000 * 4 + 20 * 20) / 1e6 + (1000 * 5 + 500 * 25) / 1e6
+    assert res.usd == pytest.approx(expect)
+    done = [x for x in a.ledger.rows() if x["ev"] == "done"][-1]
+    assert done["fallback_ran"] is True and [i["model"] for i in done["iterations"]] == ["claude-opus-5-5", "claude-opus-4-8"]
+
+
+def test_a_model_without_a_price_still_gets_a_done_line_at_the_reserved_amount():
+    a = api(resp("answer", model="claude-mystery-9"))
+    res = a.complete(req())
+    assert res.text == "answer" and res.usd > 0
+    rows = a.ledger.rows()
+    assert [x["ev"] for x in rows] == ["start", "done"] and "price missing" in rows[1]["note"]
+    assert rows[1]["usd"] == pytest.approx(rows[0]["reserved"], abs=1e-5)
+    a.ledger.check_gap()
+
+
+def test_tool_loop_caches_the_first_message(tmp_path):
+    a = api(tool_turn("list_dir", {"path": "."}), resp("done"))
+    (tmp_path / "x.txt").write_text("a", encoding="utf-8")
+    a.complete(req(tools_root=str(tmp_path)))
+    first = a._client.calls[0][1]["messages"][0]["content"][0]
+    assert first["text"] == "review this" and first["cache_control"] == {"type": "ephemeral"}
+
+
+def test_void_defaults_to_the_reserved_amount(capsys):
+    a = ca.ClaudeAPI(Fake())
+    a.ledger.append({"ev": "start", "uid": "lost2", "job": "T", "id": "x", "reserved": 0.42})
+    assert ca.main(["void", "lost2"]) == 0
+    assert a.ledger.total() == pytest.approx(0.42) and a.ledger.open_calls() == []
+    assert ca.main(["void", "nope"]) == 1
+
+
+def test_run_refuses_a_job_whose_worst_case_passes_the_stop(env, capsys):
+    set_caps(env, jobs={"T": 0.1})
+    job = {"job": "T", "task_class": "critical-review", "requests": [{"id": "a", "user": "hi"}]}
+    (env / "job.json").write_text(json.dumps(job), encoding="utf-8")
+    assert ca.main(["run", str(env / "job.json")]) == 3
+    assert "refused" in capsys.readouterr().out
+
+
+def test_batch_rerun_that_truncates_does_not_lose_the_other_results():
+    a = api(resp("cut", model="claude-sonnet-5-5", stop="max_tokens"))
+    reqs = [ca.Request(id=f"q{i}", user=f"t{i}", task_class="qa-judgement", job="T") for i in range(ca.BATCH_MIN)]
+    refused = NS(custom_id="q0", result=NS(type="succeeded", message=resp("", model="claude-sonnet-5-5", stop="refusal")))
+    a._client.messages.batch_results = [refused] + [NS(custom_id=f"q{i}", result=NS(type="succeeded", message=resp("x", model="claude-sonnet-5-5")))
+                                                    for i in range(1, ca.BATCH_MIN)]
+    out = a.run_job(reqs)
+    assert isinstance(out["q0"], ca.OutputTruncated) and out["q1"].text == "x" and len(out) == ca.BATCH_MIN
+    assert list((ca.ledger_dir()).glob("batch-T-*.json"))
