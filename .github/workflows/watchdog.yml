@@ -1,15 +1,18 @@
-# The watchdog outside the Claude session (master brief 2026-10-22, stage B; explainer_engine/cloud/watchdog.py).
-# Every 30 minutes: stop any RunPod pod past the lifetime in its name or without one, report ERROR pods, stopped disks,
-# network volumes, the 24 h billing against config/spend_caps.json and the balance. "Run workflow" with kill_all = true
-# (GitHub Mobile works) is the creator's STOP ALL button: every live pod is stopped, nothing is deleted.
+# The watchdog outside the Claude session (docs/CLOUD_RUNBOOK.md CR-12; explainer_engine/cloud/watchdog.py).
+# Every 10 minutes (GitHub may delay a schedule under load, and schedules run only from the default branch): stop any RunPod pod
+# past the lifetime in its name or without one, stop a pod whose beat.txt on Hugging Face says DONE / FAILED / FAILED_UPLOAD /
+# CAPPED / BAD_HOST or whose estimated spend reached its approved money (the live record runpod/live/<pod>.json), and report ERROR
+# pods, stopped disks, network volumes, the 24 h billing against config/spend_caps.json and the balance. "Run workflow" with
+# kill_all = true (GitHub Mobile works) is the creator's STOP ALL button: every live pod is stopped, nothing is deleted.
 #
-# Needs one repository secret: RUNPOD_API_KEY (Settings -> Secrets and variables -> Actions). Optional: NTFY_TOPIC for
-# the push to the creator's phone. Without the key the run says so and exits 0.
+# Repository secrets: RUNPOD_API_KEY (exists), HF_TOKEN (write access to the vault dataset; without it the beats and the live
+# records are not read, and a run with a live pod is red), NTFY_TOPIC for the push to the creator's phone.
+# Nothing here hides a failure: a missing key, a failed stop and a push that did not arrive all make the run red.
 name: RunPod watchdog
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/10 * * * *"
   workflow_dispatch:
     inputs:
       kill_all:
@@ -27,9 +30,10 @@ concurrency:
 jobs:
   watch:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
       NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
     steps:
       - name: Check out repository
@@ -38,18 +42,15 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: The key must exist
+        run: |
+          if [ -z "$RUNPOD_API_KEY" ]; then echo "::error::no RUNPOD_API_KEY secret: nothing can be checked"; exit 1; fi
       - name: Stop every live pod (the creator's STOP ALL)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.kill_all }}
-        run: |
-          if [ -z "$RUNPOD_API_KEY" ]; then echo "no RUNPOD_API_KEY secret: nothing can be checked"; exit 0; fi
-          python -m explainer_engine.cloud.watchdog --kill-all --yes
-      - name: Watchdog pass (stop expired pods, report what bills)
+        run: python -m explainer_engine.cloud.watchdog --kill-all --yes
+      - name: Watchdog pass (stop what the rules say, report what bills)
         if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.kill_all) }}
-        run: |
-          if [ -z "$RUNPOD_API_KEY" ]; then echo "no RUNPOD_API_KEY secret: nothing can be checked"; exit 0; fi
-          python -m explainer_engine.cloud.watchdog --apply || echo "::warning::the watchdog found something that needs a hand (see the log)"
+        run: python -m explainer_engine.cloud.watchdog --apply
       - name: What bills now
         if: ${{ always() }}
-        run: |
-          if [ -z "$RUNPOD_API_KEY" ]; then exit 0; fi
-          python -m explainer_engine.cloud.runpod check || true
+        run: python -m explainer_engine.cloud.runpod check
