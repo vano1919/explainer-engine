@@ -17,6 +17,7 @@ stdlib only.
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 import sys
@@ -51,6 +52,28 @@ def rule(rule_id: str) -> dict:
 def T(rule_id: str, key: str):
     """One threshold of one rule, as the validators read it (never copy the number into code)."""
     return rule(rule_id)["thresholds"][key]
+
+
+def severity(rule_id: str) -> str:
+    """The severity the registry gives a rule's check (REVIEW when the rule names none)."""
+    return rule(rule_id).get("severity", "REVIEW")
+
+
+def level(rule_id: str, wanted: str = "FAIL") -> str:
+    """The severity a check may emit for this rule (D-59): a hypothesis never FAILs, binding and house rules may."""
+    return "REVIEW" if wanted == "FAIL" and rule(rule_id)["status"] == "hypothesis" else wanted
+
+
+def threshold_reads(source: str):
+    """(rule id, key, line) of every ``T("BP-xx", "key")`` / ``SR.T(...)`` / ``sourced_rules.T(...)`` with literal arguments in
+    Python source: what the sync and severity tests (CN-11, CN-12) walk."""
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.Call) and len(node.args) >= 2:
+            f = node.func
+            name = f.attr if isinstance(f, ast.Attribute) else getattr(f, "id", None)
+            a, b = node.args[0], node.args[1]
+            if name == "T" and isinstance(a, ast.Constant) and isinstance(b, ast.Constant) and str(a.value).startswith("BP-"):
+                yield a.value, b.value, node.lineno
 
 
 def source_types(r: dict) -> set[str]:

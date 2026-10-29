@@ -2545,3 +2545,23 @@ training as sequences is decided in the process. Changed together:
   `--gpu big`); PR #4 and `three-hour-format-7ewyz0` closed as superseded (kept in the HF vault bundle).
 - Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
 - From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
+
+## 2026-10-29 19:20 UTC (23:20 Tbilisi): Blueprint P2, the data contracts (no pod, no money)
+
+- ვანო (2026-10-29 18:19 and 18:30 UTC): start phase P2 of the Blueprint plan v2 and carry it through the night. Design by the Opus
+  pass, code by the Sonnet pass from `blueprint_2026-10-29/P2/P2_IMPLEMENTATION_PLAN.md` (OR-26).
+- `docs/CONTRACTS.md` (new home, prefix CN-): 15 contracts with writer, reader and hand-or-derived; CN-01..CN-14; the lifecycle
+  with gates #1-#4 and eight named back paths. Schemas in `explainer_engine/schemas/`: job_manifest, script_variants,
+  screenplay_spine, voice_casting, audio_spine, sound_mix_manifest, visual_comp_manifest, scene_set, shot_spec, pod_heartbeat,
+  edit_and_grade_manifest, qa_report, editorial_review/3, distribution_package; `film_shots/2` added to film_shots.schema.json
+  (`/1` documents validate unchanged).
+- Code: `core/contracts.py` (schema + semantic checks + derived freshness, CLI `check`), `core/store.EpisodeJob`
+  (`job_manifest/1`: only the next state, approvals per gate, dossier hash fixed once, no cross-job artifacts, abort/reopen,
+  adopt), `core/shot_cache.py` (SHA-256 of the shot spec without paths). `core/ledger.py` unchanged: it already holds pod and API
+  money in one run.json; `test_one_ledger` pins it. `training/cast/sheet.py` no longer writes the bfl cap as a number.
+- Decisions: D-84 (episode fps = LTX native 24, measured on six clips; assemble and Shorts at 30 follow in P7/P9). BP-114 (8k+1,
+  /32, two-stage /64, at most 257 frames; hypothesis, so REVIEW). AUDIO_TIMED comes after SAMPLE_APPROVED (the read is paid, OR-19).
+  `sourced_rules.level()` caps a hypothesis at REVIEW; `enforced_by` of 9 rules completed (the sync test found them).
+- Tests: `test_contracts`, `test_lifecycle`, `test_shot_cache`, `test_one_ledger`, `test_spend_caps_single_source`,
+  `test_sourced_rules_sync`, `test_validator_severity_tiers` (0 FAIL-on-hypothesis found in the code today); fixtures in
+  `tests/fixtures/contracts/`.

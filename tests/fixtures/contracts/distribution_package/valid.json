@@ -1,0 +1,37 @@
+{
+ "schema": "distribution_package/1",
+ "clip_id": "c1",
+ "platform": "yt_short",
+ "visibility": "unlisted",
+ "source_episode_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+ "source_time_range": [
+  10.0,
+  40.0
+ ],
+ "claim_ids_covered": [
+  "C01"
+ ],
+ "hook_mode": "PURE_SLICE",
+ "files": {
+  "video": {
+   "path": "packages/c1.mp4",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "cover": {
+   "path": "packages/c1.png",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "captions": null
+ },
+ "post_copy": "text",
+ "pinned_comment": null,
+ "ai_label": true,
+ "ab_packaging_variants": [],
+ "checks": [
+  {
+   "check_id": "len",
+   "severity": "FAIL",
+   "passed": true
+  }
+ ]
+}

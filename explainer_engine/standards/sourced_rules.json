@@ -47,7 +47,8 @@
     "explainer_engine/production/validate.py:BP-01",
     "explainer_engine/qa/scorecard.py:BP-01",
     "explainer_engine/qa/engagement.py:BP-01",
-    "explainer_engine/scripting/story_lint.py:WORDS_PER_S"
+    "explainer_engine/scripting/story_lint.py:WORDS_PER_S",
+    "explainer_engine/scripting/film_shots.py"
    ],
    "supersedes": [
     "PRODUCTION_RULES gate 2 160-185",
@@ -946,7 +947,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/edit/motion_lint.py:BP-22"
+    "explainer_engine/edit/motion_lint.py:BP-22",
+    "explainer_engine/edit/shot_rules.py"
    ],
    "supersedes": [
     "UR-13 (confirmed, adds the cap)"
@@ -1180,7 +1182,9 @@
    "enforced_by": [
     "explainer_engine/production/accents.py:text_hold",
     "explainer_engine/edit/motion_lint.py:BP-27",
-    "explainer_engine/finish/bubbles.py:check_bubbles"
+    "explainer_engine/finish/bubbles.py:check_bubbles",
+    "explainer_engine/production/beats.py",
+    "explainer_engine/production/silent.py"
    ],
    "supersedes": [
     "P-71 (confirmed, adds the cap)",
@@ -1321,7 +1325,8 @@
    "enforced_by": [
     "explainer_engine/production/continuity.py:BP-30",
     ".claude/agents/edit-planner.md",
-    ".claude/skills/editing-style/SKILL.md"
+    ".claude/skills/editing-style/SKILL.md",
+    "explainer_engine/qa/pixels.py"
    ],
    "supersedes": [
     "(new)"
@@ -1448,7 +1453,8 @@
    ],
    "enforced_by": [
     "explainer_engine/edit/motion_lint.py:BP-33",
-    "explainer_engine/production/beats.py:FACE_FLICKER"
+    "explainer_engine/production/beats.py:FACE_FLICKER",
+    "explainer_engine/qa/frame_review.py"
    ],
    "supersedes": [
     "VB expression change about every second (confirmed, adds a floor)",
@@ -1903,7 +1909,8 @@
    ],
    "enforced_by": [
     "explainer_engine/qa/engagement.py:END_SCREEN_MIN_S",
-    "explainer_engine/qa/engagement.py:ENG-8"
+    "explainer_engine/qa/engagement.py:ENG-8",
+    "explainer_engine/scripting/film_shots.py"
    ],
    "supersedes": [
     "ENG-5 (confirmed)",
@@ -2913,7 +2920,8 @@
    "enforced_by": [
     "explainer_engine/audio/layers.py:BP-62",
     "explainer_engine/production/timing.py:MUSIC_FADE_IN",
-    "explainer_engine/production/shorts.py:music_filter"
+    "explainer_engine/production/shorts.py:music_filter",
+    "explainer_engine/production/assemble.py"
    ],
    "supersedes": [
     "ED-03 (confirmed)",
@@ -3555,7 +3563,8 @@
     "explainer_engine/edit/board.py:MIN_SHOT",
     "explainer_engine/finish/bubbles.py:MAX_WORDS",
     "explainer_engine/production/silent.py:max_words",
-    "explainer_engine/production/validate.py:board_findings"
+    "explainer_engine/production/validate.py:board_findings",
+    "explainer_engine/production/faces.py"
    ],
    "supersedes": [
     "board MIN_SHOT / MIN_INSERT literals",
@@ -4581,6 +4590,7 @@
     }
    ],
    "enforced_by": [
+    "explainer_engine/core/contracts.py",
     "explainer_engine/scripting/film_shots.py:frames"
    ],
    "supersedes": [

@@ -1,0 +1,25 @@
+{
+ "schema": "audio_spine/1",
+ "derived_from": {
+  "words": {
+   "path": "x/file.bin",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "timed": {
+   "path": "x/file.bin",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ },
+ "fps": 24,
+ "duration_s": 2.0,
+ "total_frames": 48,
+ "words": [],
+ "segments": [
+  {
+   "id": "S01",
+   "start_frame": 0,
+   "end_frame": 48
+  }
+ ],
+ "post_hoc_shots": []
+}

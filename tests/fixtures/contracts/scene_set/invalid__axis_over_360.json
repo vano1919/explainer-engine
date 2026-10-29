@@ -1,0 +1,55 @@
+{
+ "schema": "scene_set/1",
+ "set_id": "tent",
+ "units": "m",
+ "axis": {
+  "deg": 400,
+  "origin": [
+   0,
+   0
+  ]
+ },
+ "objects": [
+  {
+   "id": "table",
+   "kind": "table",
+   "pos": [
+    1,
+    0,
+    2
+   ],
+   "size": [
+    1,
+    1,
+    1
+   ],
+   "yaw_deg": 0,
+   "landmark": true
+  }
+ ],
+ "mannequins": [
+  {
+   "id": "m1",
+   "cast_id": "napoleon",
+   "pos": [
+    0,
+    0,
+    1
+   ],
+   "yaw_deg": 180
+  }
+ ],
+ "cameras": [
+  {
+   "shot_id": "s1",
+   "pos": [
+    0,
+    1.6,
+    -3
+   ],
+   "yaw_deg": 0,
+   "pitch_deg": 0,
+   "fov_deg": 40
+  }
+ ]
+}
