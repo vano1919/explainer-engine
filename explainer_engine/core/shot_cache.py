@@ -3,7 +3,8 @@ so a shot is paid for once. Editing shot 05 of a 60-shot episode changes only sh
 
     key = sha256(canonical JSON of the shot_spec/1 without file paths)
 
-The key covers the prompt, negative, seed, model hash or revision, LoRA hashes and weights, size, frames, fps, the audio slice
+``params`` is hashed whole, so it holds the renderer's numbers and names and no file paths (a path there is a new key on
+every machine). The key covers the prompt, negative, seed, model hash or revision, LoRA hashes and weights, size, frames, fps, the audio slice
 hash, every reference's role and hash, the blocking hash, the recipe version and the renderer's params. A moved file keeps its
 key (references are named by hash, not path); one changed byte in any of them is a new key. A hit also needs every stored
 output to still match its recorded sha256. stdlib only (the contract check uses jsonschema).
@@ -14,21 +15,23 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-import os
 import shutil
 from pathlib import Path
 
 from explainer_engine.core import contracts
-from explainer_engine.core.store import write_json_atomic
+from explainer_engine.core.store import shot_cache_root, write_json_atomic
 
 logger = logging.getLogger(__name__)
-ROOT = Path(__file__).resolve().parents[2]
 NOT_IN_KEY = ("job_id", "shot_id")
 
 
 def _round(obj):
+    """Numbers as the cache sees them: floats rounded to 6 places, and a whole float is the integer (1.0 and 1 are one key)."""
+    if isinstance(obj, bool):
+        return obj
     if isinstance(obj, float):
-        return round(obj, 6)
+        obj = round(obj, 6)
+        return int(obj) if obj == int(obj) else obj
     if isinstance(obj, dict):
         return {k: _round(v) for k, v in obj.items()}
     if isinstance(obj, list):
@@ -51,7 +54,7 @@ def key(spec: dict) -> str:
 
 class ShotCache:
     def __init__(self, root: Path | str | None = None) -> None:
-        self.root = Path(root or os.environ.get("EXPLAINER_SHOT_CACHE") or ROOT / "jobs" / "_cache" / "shots")
+        self.root = Path(root) if root else shot_cache_root()
 
     def _dir(self, k: str) -> Path:
         return self.root / k[:2] / k

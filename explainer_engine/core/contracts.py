@@ -23,7 +23,6 @@ from explainer_engine.standards import sourced_rules as SR
 
 SCHEMAS = Path(__file__).resolve().parents[1] / "schemas"
 VIDEO_LANES = {"KEYFRAME_LTX", "DIALOGUE_CU", "HOST_COMMENTARY", "DRAMA_BLOCKED_3D", "ATMOS_BROLL"}
-GEOMETRY = "BP-114"  # clip geometry (CN-08, CN-09): a hypothesis, so its findings are REVIEW
 
 
 def sha256_file(path: Path | str) -> str:
@@ -58,19 +57,19 @@ def _f(rule: str, where: str, detail: str, severity: str = "FAIL") -> dict:
 def _geometry(width, height, frames, where: str) -> list[dict]:
     """CN-08 on one video clip: 8k+1 frames, sizes divisible by 32 (two-stage: 64), at most the registry's frame limit."""
     out = []
-    lvl = SR.level(GEOMETRY)
-    step, off = SR.T(GEOMETRY, "frames_step"), SR.T(GEOMETRY, "frames_offset")
+    lvl = SR.level("BP-114")
+    step, off, limit = SR.T("BP-114", "frames_step"), SR.T("BP-114", "frames_offset"), SR.T("BP-114", "frames_max")
+    size, two_stage = SR.T("BP-114", "size_multiple"), SR.T("BP-114", "two_stage_size_multiple")
     if frames is not None:
         if (frames - off) % step:
-            out.append(_f("CN-08", where, f"{frames} frames is not {step}k+{off} ({GEOMETRY})", lvl))
-        if frames > SR.T(GEOMETRY, "frames_max"):
-            out.append(_f("CN-08", where, f"{frames} frames is over {SR.T(GEOMETRY, 'frames_max')} ({GEOMETRY})", lvl))
+            out.append(_f("CN-08", where, f"{frames} frames is not {step}k+{off} (BP-114)", lvl))
+        if frames > limit:
+            out.append(_f("CN-08", where, f"{frames} frames is over {limit} (BP-114)", lvl))
     for name, v in (("width", width), ("height", height)):
-        if v % SR.T(GEOMETRY, "size_multiple"):
-            out.append(_f("CN-08", where, f"{name} {v} is not divisible by {SR.T(GEOMETRY, 'size_multiple')} ({GEOMETRY})", lvl))
-        elif v % SR.T(GEOMETRY, "two_stage_size_multiple"):
-            out.append(_f("CN-08", where, f"{name} {v} is not a multiple of {SR.T(GEOMETRY, 'two_stage_size_multiple')}: "
-                                          f"a two-stage render needs it", "REVIEW"))
+        if v % size:
+            out.append(_f("CN-08", where, f"{name} {v} is not divisible by {size} (BP-114)", lvl))
+        elif v % two_stage:
+            out.append(_f("CN-08", where, f"{name} {v} is not a multiple of {two_stage}: a two-stage render needs it", "REVIEW"))
     return out
 
 
@@ -79,13 +78,14 @@ def _film_shots(doc: dict, base) -> list[dict]:
         return []
     out = []
     fps = doc["fps"]
-    if fps != SR.T(GEOMETRY, "native_fps"):
-        out.append(_f("CN-09", "fps", f"fps {fps} is not the video model's native {SR.T(GEOMETRY, 'native_fps')} (D-85)", SR.level(GEOMETRY)))
+    native = SR.T("BP-114", "native_fps")
+    if fps != native:
+        out.append(_f("CN-09", "fps", f"fps {fps} is not the video model's native {native} (D-85)", SR.level("BP-114")))
     for s in doc["shots"]:
         if s["lane"] in VIDEO_LANES:
             out += _geometry(s["width"], s["height"], s["duration_frames"], s["id"])
         want = s["seconds"] * fps
-        if abs(want - s["duration_frames"]) > SR.T(GEOMETRY, "frames_step"):
+        if abs(want - s["duration_frames"]) > SR.T("BP-114", "frames_step"):
             out.append(_f("CN-08", s["id"], f"{s['duration_frames']} frames is far from {s['seconds']:g} s at {fps} fps", "REVIEW"))
     return out
 
@@ -151,10 +151,22 @@ def _qa_report(doc: dict, base) -> list[dict]:
     return out
 
 
+ASSEMBLED_KEY = "assembled_video"  # the job_manifest artifact key of the finished episode video
+
+
 def _distribution(doc: dict, base) -> list[dict]:
+    """CN-14: the listed files exist unchanged, and when the job folder holds its manifest the package was cut from the video
+    the job assembled (a package from an older render is refused)."""
     if base is None:
         return []
     out = []
+    manifest = Path(base) / "job_manifest.json"
+    if manifest.exists():
+        row = json.loads(manifest.read_text(encoding="utf-8")).get("artifacts", {}).get(ASSEMBLED_KEY)
+        if row is None:
+            out.append(_f("CN-14", "source_episode_sha256", f"the job records no {ASSEMBLED_KEY} artifact to cut a package from"))
+        elif row["sha256"] != doc["source_episode_sha256"]:
+            out.append(_f("CN-14", "source_episode_sha256", "the package was cut from another render than the job's assembled video"))
     for name, ref in doc["files"].items():
         if ref is None:
             continue

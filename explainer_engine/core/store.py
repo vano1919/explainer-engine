@@ -168,6 +168,13 @@ BACK_PATHS = {
 CLEARS_RESERVATION = {"words_changed", "scenario_changed", "variant_changed", "storyboard_changed", "plan_changed"}
 CREATOR_ONLY_BACK = {"post_review_fix"}
 _JOB_DIR = re.compile(r"(?:^|/)jobs/(?!_)[^/]+/job-[^/]+")
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def shot_cache_root() -> Path:
+    """The shot cache's folder (core/shot_cache.py): a cached render may be recorded as an artifact of a job."""
+    import os
+    return Path(os.environ.get("EXPLAINER_SHOT_CACHE") or ROOT / "jobs" / "_cache" / "shots")
 
 
 def _now() -> str:
@@ -189,7 +196,8 @@ class EpisodeJob:
     # --- opening ------------------------------------------------------------------------------------------------------
     @classmethod
     def create(cls, job_dir: Path | str, *, job_id: str, episode_slug: str, ledger: str, fps: int, state: str = "CREATED",
-               reason: str = "job created", path: str = "forward", approval: dict | None = None) -> "EpisodeJob":
+               reason: str = "job created", path: str = "forward", approval: dict | None = None,
+               dossier_sha256: str | None = None) -> "EpisodeJob":
         job_dir = Path(job_dir)
         if (job_dir / MANIFEST).exists():
             raise ContractError(f"{job_dir / MANIFEST} exists: open it, never create over it")
@@ -197,18 +205,30 @@ class EpisodeJob:
         manifest = {"schema": "job_manifest/1", "job_id": job_id, "episode_slug": episode_slug, "created": now, "fps": fps,
                     "state": state, "state_since": now,
                     "history": [{"from": None, "to": state, "at": now, "path": path, "reason": reason, "approval": approval}],
-                    "source_dossier_sha256": None, "ledger": ledger, "budget_reservation_id": None, "approvals": {},
+                    "source_dossier_sha256": dossier_sha256, "ledger": ledger, "budget_reservation_id": None, "approvals": {},
                     "artifacts": {}, "distribution_packages": [], "reopen_to": None}
         job = cls(job_dir, manifest)
         job._save()
         return job
 
     @classmethod
-    def adopt(cls, job_dir: Path | str, *, state: str, reason: str, approval: dict, **create_args) -> "EpisodeJob":
-        """An existing episode folder gets its manifest at the state its owner states (history path ``adopted``)."""
-        if state not in LIFECYCLE + TERMINAL:
-            raise ContractError(f"unknown state {state!r}")
-        return cls.create(job_dir, state=state, reason=reason, path="adopted", approval=approval, **create_args)
+    def adopt(cls, job_dir: Path | str, *, state: str, reason: str, approval: dict | None,
+              dossier_sha256: str | None = None, **create_args) -> "EpisodeJob":
+        """An existing episode folder gets its manifest at the state its owner states (history path ``adopted``). Adopting is not
+        a way round the gates (CN-04, CN-06): the state's own approval kind is needed, bound to a sha256 where a person approved;
+        a terminal state is never adopted (nothing could reopen it); past CREATED the research dossier's sha256 is named (CN-05)."""
+        if state not in LIFECYCLE:
+            raise ContractError(f"cannot adopt into {state!r}: adopt a state of the forward path")
+        if state in GATES:
+            cls._check_approval(GATES[state], approval, f"adopt into {state}", bind=True)
+        if state != "CREATED" and not dossier_sha256:
+            raise ContractError(f"adopt into {state} names the research dossier's sha256 (dossier_sha256=)")
+        job = cls.create(job_dir, state=state, reason=reason, path="adopted", approval=approval, dossier_sha256=dossier_sha256,
+                         **create_args)
+        if state in GATES:
+            job.manifest["approvals"][state] = approval
+            job._save()
+        return job
 
     @classmethod
     def open(cls, job_dir: Path | str) -> "EpisodeJob":
@@ -234,13 +254,16 @@ class EpisodeJob:
         m["state"], m["state_since"] = to, now
 
     @staticmethod
-    def _check_approval(kind_needed: set[str], approval: dict | None, where: str) -> None:
+    def _check_approval(kind_needed: set[str], approval: dict | None, where: str, bind: bool = False) -> None:
+        """``bind``: a person's approval of a gate names the sha256 of what was approved (CN-04)."""
         if approval is None:
             raise ContractError(f"{where} needs an approval of kind {sorted(kind_needed)}")
         if approval.get("kind") not in kind_needed:
             raise ContractError(f"{where} needs an approval of kind {sorted(kind_needed)}, not {approval.get('kind')!r}")
         if approval["kind"] in ("creator", "planner") and not (approval.get("by") and approval.get("ref")):
             raise ContractError(f"{where}: a {approval['kind']} approval says who (by) and where (ref)")
+        if bind and approval["kind"] in ("creator", "planner") and not approval.get("sha256"):
+            raise ContractError(f"{where}: a {approval['kind']} approval binds the sha256 of what was approved (CN-04)")
 
     def _reserved(self, reservation_id: str) -> bool:
         path = self.job_dir / self.manifest["ledger"]
@@ -256,7 +279,7 @@ class EpisodeJob:
         cur = m["state"]
         if cur not in LIFECYCLE or to not in LIFECYCLE or LIFECYCLE.index(to) != LIFECYCLE.index(cur) + 1:
             raise ContractError(f"{cur} -> {to} is not the next step of the lifecycle")
-        self._check_approval(GATES[to], approval, to)
+        self._check_approval(GATES[to], approval, to, bind=True)
         if to == "RESEARCHED":
             if dossier is None:
                 raise ContractError("RESEARCHED fixes the research dossier: pass dossier=<file>")
@@ -319,8 +342,9 @@ class EpisodeJob:
             inside_job = _JOB_DIR.search(resolved.as_posix())
             if inside_job:
                 raise ContractError(f"{resolved} is inside another job's folder: nothing crosses between jobs (CN-05)")
-            if "assets" not in resolved.parts:
-                raise ContractError(f"{resolved} is neither in this job nor in the asset library (CN-05)")
+            outside = [(ROOT / "assets").resolve(), shot_cache_root().resolve()]  # the asset library and the shot cache
+            if not any(o in resolved.parents for o in outside):
+                raise ContractError(f"{resolved} is neither in this job, the asset library nor the shot cache (CN-05)")
         if not resolved.exists():
             raise ContractError(f"{resolved} does not exist")
         m = json.loads(json.dumps(self.manifest))

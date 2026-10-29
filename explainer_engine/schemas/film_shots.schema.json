@@ -192,6 +192,12 @@
     }
   },
   "allOf": [
+    {"if": {"properties": {"schema": {"const": "film_shots/1"}}, "required": ["schema"]},
+     "then": {"not": {"anyOf": [{"required": ["fps"]}, {"required": ["scene_sets"]}]},
+              "properties": {"shots": {"items": {"not": {"anyOf": [{"required": ["lane"]}, {"required": ["archetype"]}, {"required": ["duration_frames"]},
+                                                                  {"required": ["width"]}, {"required": ["height"]}, {"required": ["lens_tier"]},
+                                                                  {"required": ["focal_xy"]}, {"required": ["continuity_ref"]},
+                                                                  {"required": ["blocking_ref"]}]}}}}}},
     {"if": {"properties": {"schema": {"const": "film_shots/2"}}, "required": ["schema"]},
      "then": {"required": ["fps"],
               "properties": {"shots": {"items": {"required": ["lane", "archetype", "duration_frames", "width", "height", "lens_tier",

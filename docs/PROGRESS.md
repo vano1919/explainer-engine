@@ -2565,3 +2565,8 @@ training as sequences is decided in the process. Changed together:
 - Tests: `test_contracts`, `test_lifecycle`, `test_shot_cache`, `test_one_ledger`, `test_spend_caps_single_source`,
   `test_sourced_rules_sync`, `test_validator_severity_tiers` (0 FAIL-on-hypothesis found in the code today); fixtures in
   `tests/fixtures/contracts/`.
+- Review fixes (cross-review of 2026-10-29 22:23 UTC): `EpisodeJob.adopt` now goes through the state's gate (CN-04/CN-06), refuses terminal
+  states and names the dossier; creator and planner approvals of a gate must bind a non-null sha256; CN-14 compares
+  `source_episode_sha256` with the job's `assembled_video`; `film_shots/1` refuses the /2 fields; a cached render and the repo's
+  `assets/` may be recorded as artifacts but not any path that merely contains "assets"; the cache key treats `1` and `1.0` alike;
+  BP-114 is read by literal id and listed only where it is read (`test_bp_114_is_listed_only_where_it_is_read`).

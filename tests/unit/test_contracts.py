@@ -143,3 +143,30 @@ def test_the_cli_reports_fail_with_exit_code_1(tmp_path, capsys):
     good = tmp_path / "good.json"
     good.write_text(json.dumps(load(FIX / "scene_set" / "valid.json")), encoding="utf-8")
     assert C.main(["check", str(good)]) == 0
+
+
+def test_film_shots_1_does_not_accept_the_fields_of_2():
+    doc = load(FIX / "film_shots_2" / "valid.json")
+    doc["schema"] = "film_shots/1"
+    with pytest.raises(ContractError):
+        C.validate(doc)  # fps, scene_sets and the lane fields belong to /2
+
+
+def test_a_package_must_be_cut_from_the_jobs_assembled_video(tmp_path):
+    doc = load(FIX / "distribution_package" / "valid.json")
+    (tmp_path / "packages").mkdir()
+    for ref in doc["files"].values():
+        if ref:
+            (tmp_path / ref["path"]).write_bytes(b"x")
+            ref["sha256"] = C.sha256_file(tmp_path / ref["path"])
+    manifest = load(FIX / "job_manifest" / "valid.json")
+    (tmp_path / "job_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    found = C.errors(doc, tmp_path)
+    assert [f["rule"] for f in found] == ["CN-14"] and "assembled" in found[0]["detail"]  # no assembled_video recorded
+    manifest["artifacts"]["assembled_video"] = {"path": "final.mp4", "sha256": "e" * 64, "schema": None, "dossier_sha256": None}
+    (tmp_path / "job_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    found = C.errors(doc, tmp_path)
+    assert [f["rule"] for f in found] == ["CN-14"] and "another render" in found[0]["detail"]
+    manifest["artifacts"]["assembled_video"]["sha256"] = doc["source_episode_sha256"]
+    (tmp_path / "job_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    assert C.errors(doc, tmp_path) == []

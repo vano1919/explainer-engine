@@ -81,7 +81,7 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 - **scene_set/1**: `set_id`, `units` = `m`, `axis{deg 0..360, origin[2]}`, `objects[]` (`id`, `kind`, `pos[3]`,
   `size[3]`, `yaw_deg`, `landmark`), `mannequins[]` (`id`, `cast_id`, `pos[3]`, `yaw_deg`), `cameras[]` (`shot_id`,
   `pos[3]`, `yaw_deg`, `pitch_deg`, `fov_deg`).
-- **film_shots/2**: everything of `film_shots/1` ([SHOT_PROMPTS](SHOT_PROMPTS.md)), plus top-level `fps` (D-85) and
+- **film_shots/2**: everything of `film_shots/1` ([SHOT_PROMPTS](SHOT_PROMPTS.md); a `/1` document carrying any of the fields below is refused), plus top-level `fps` (D-85) and
   optional `scene_sets[]`, and on every shot `lane` (KEYFRAME_LTX, DIALOGUE_CU, HOST_COMMENTARY, DRAMA_BLOCKED_3D,
   ATMOS_BROLL, MAP, COMPENSATOR, STILL_HOLD), `archetype` (an id of the P5 catalogue), `duration_frames`, `width`,
   `height`, `lens_tier` (wide|normal|long), `focal_xy[2]` (0..1 of the frame), `continuity_ref` and `blocking_ref`
@@ -89,7 +89,7 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 - **shot_spec/1**: `shot_id`, `job_id`, `lane`, `prompt`, `negative`, `seed`, `model{id, sha256|revision}`,
   `loras[]{id, sha256, weight}`, `width`, `height`, `frames` (null for a still), `fps`, `audio_slice_sha256`,
   `refs[]{role, path, sha256}`, `blocking_sha256`, `recipe` (the pipeline's version string), `params{}` (steps, cfg,
-  sampler: every other number the renderer uses).
+  sampler: every other number or name the renderer uses; hashed whole, so never a file path).
 - **pod_heartbeat/1**: `job_id`, `pod_id`, `boot_nonce`, `seq`, `ts_utc`, `state` (BOOTING, PREFLIGHT_OK, RUNNING,
   UPLOADING, DONE, FAILED, FAILED_UPLOAD, BAD_HOST), `progress`, `stage`, `key_probe_http` (int or null), `spend_usd`
   (number or null). The text of `beat.txt` and its parser are P1a's; they map onto these fields.
@@ -114,7 +114,7 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 | CN-01 | Every contract file names its contract in `schema` (`<name>/<N>`) and validates against that schema before any stage reads it; a stage never repairs a file to make it pass | invariant 7 | `core/contracts.validate` FAIL |
 | CN-02 | A derived contract carries `derived_from` with the sha256 of every input; when an input changed it is stale and refused; it is never edited by hand | invariant 7 | `contracts.errors(doc, base)` FAIL |
 | CN-03 | An episode job moves only forward along the lifecycle or along a named back path; any other move raises `ContractError` and writes nothing | invariant 7 | `store.EpisodeJob.move` / `back` |
-| CN-04 | A gated state is entered only with an approval of its kind (table below); a creator gate needs `by` and `ref` (OR-15, OR-17, OR-19, D-50, invariant 4) and binds the sha256 of what was approved | invariant 4 + the creator's gates | `EpisodeJob.move` |
+| CN-04 | A gated state is entered only with an approval of its kind (table below); a creator or planner approval of a gate needs `by`, `ref` and a non-null `sha256` of what was approved (OR-15, OR-17, OR-19, D-50, invariant 4); `adopt` is held to the same gates | invariant 4 + the creator's gates | `EpisodeJob.move` |
 | CN-05 | The research dossier's sha256 is fixed when the job becomes RESEARCHED; an artifact recorded under another dossier hash, or a path inside another job's folder, is refused (no cross-job bleed, Blueprint GAP-01) | invariant 5 | `EpisodeJob.record_artifact` / `check_artifact` |
 | CN-06 | PUBLISHED_PUBLIC only records the creator's own Studio click (his `ref`); no code path sets a video public, and `distribution_package/1` allows only private or unlisted | invariant 4 | `EpisodeJob.move`, schema |
 | CN-07 | A shot's cache key is the SHA-256 of the canonical JSON of its `shot_spec/1` without file paths: prompt, negative, seed, model hash, LoRA hashes and weights, size, frames, fps, audio slice hash, reference hashes, blocking hash, recipe and params; one changed byte in any of them is a new key, a moved file is not; a hit needs every stored output's sha256 to match | invariant 2 (nothing paid twice) | `core/shot_cache.py` |
@@ -124,7 +124,7 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 | CN-11 | A check may FAIL only on a binding BP rule, a CLAUDE.md invariant or a house rule that quotes the creator's dated words; a check driven by a hypothesis rule is REVIEW at most (D-59) | D-59 | `test_validator_severity_tiers.py`, `sourced_rules.level` |
 | CN-12 | Every module that reads a BP threshold (`T("BP-xx", ...)`) is listed in that rule's `enforced_by`, and every key it reads exists | D-59 | `test_sourced_rules_sync.py` |
 | CN-13 | A `qa_report/1` with status PASS has no failed FAIL check, and a retry directive's attempt is at most the ledger's failure limit (OR-04) | OR-04 | `contracts` |
-| CN-14 | A `distribution_package/1` lists only files that exist with their sha256, and its source episode hash matches the job's assembled video | invariant 4, 5 | `contracts.errors(doc, base)` FAIL |
+| CN-14 | A `distribution_package/1` lists only files that exist with their sha256, and when the job folder holds `job_manifest.json` its `source_episode_sha256` equals that manifest's `assembled_video` artifact (a package from an older render is refused) | invariant 4, 5 | `contracts.errors(doc, base)` FAIL |
 
 ## The lifecycle (`job_manifest/1`)
 
@@ -169,6 +169,8 @@ Terminal states: FAILED_PREFLIGHT, FAILED_QA_ESCALATED, ABORTED_SPEND_CAP, CANCE
 PUBLISHED_PUBLIC may abort into one of them (the state left is kept in `reopen_to`); a terminal state leaves only by
 `reopen`, back to `reopen_to`, with the creator's approval. PUBLISHED_PUBLIC has no moves.
 
+A back path drops `budget_reservation_id` but not the reservation in the ledger (`run.json`): the next `reserve` counts on top of it, so the 80 % stop arrives early, which is the safe direction. P12 settles or refunds the old reservation before it reserves again.
+
 `job_manifest.json` is the episode's lifecycle; `state.json` of `JobStore` stays the run status of one stage pipeline,
 and `cloud/jobs.py` the lifecycle of one pod job. An existing episode folder without a manifest gets one with
-`EpisodeJob.adopt` (history path `adopted`, the state and the reason stated by whoever adopts it).
+`EpisodeJob.adopt` (history path `adopted`): the state's own approval is needed and recorded, a terminal state is refused, and past CREATED the dossier's sha256 is named.

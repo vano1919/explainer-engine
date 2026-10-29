@@ -48,6 +48,13 @@ def test_the_order_of_references_and_loras_does_not_matter():
     assert SC.key(two) == SC.key(swapped)
 
 
+def test_a_whole_float_and_the_integer_are_one_key():
+    a = variant(loras=[{"id": "x", "sha256": H[1], "weight": 1}], params={"steps": 8, "cfg": 1})
+    b = variant(loras=[{"id": "x", "sha256": H[1], "weight": 1.0}], params={"steps": 8.0, "cfg": 1.0})
+    assert SC.key(a) == SC.key(b)
+    assert SC.key(variant(params={"flag": True})) != SC.key(variant(params={"flag": 1}))  # a boolean is not a number
+
+
 def test_float_noise_below_six_decimals_is_not_a_new_key():
     a = variant(loras=[{"id": "x", "sha256": H[1], "weight": 0.8}])
     b = variant(loras=[{"id": "x", "sha256": H[1], "weight": 0.8 + 1e-9}])

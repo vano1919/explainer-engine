@@ -10,9 +10,10 @@ from explainer_engine.core import store
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import EpisodeJob, LIFECYCLE
 
-CREATOR = {"kind": "creator", "by": "ვანო", "ref": "cmsg_1", "at": "2026-10-29T18:00:00", "sha256": None}
+SHA = "c" * 64
+CREATOR = {"kind": "creator", "by": "ვანო", "ref": "cmsg_1", "at": "2026-10-29T18:00:00", "sha256": SHA}
 MACHINE = {"kind": "machine", "by": "gate", "ref": "report.json", "at": "2026-10-29T18:00:00", "sha256": None}
-PLANNER = {"kind": "planner", "by": "opus-thread", "ref": "cmsg_2", "at": "2026-10-29T18:00:00", "sha256": None}
+PLANNER = {"kind": "planner", "by": "opus-thread", "ref": "cmsg_2", "at": "2026-10-29T18:00:00", "sha256": SHA}
 
 
 @pytest.fixture
@@ -62,7 +63,7 @@ def test_a_skipped_step_is_refused_and_writes_nothing(job):
 
 def test_a_gate_needs_its_approval_kind_and_a_creator_needs_a_ref(job):
     walk(job, "RESEARCHED")
-    for bad in (None, MACHINE, {**CREATOR, "ref": ""}, {**CREATOR, "by": ""}):
+    for bad in (None, MACHINE, {**CREATOR, "ref": ""}, {**CREATOR, "by": ""}, {**CREATOR, "sha256": None}):
         with pytest.raises(ContractError):
             job.move("VARIANT_CHOSEN", reason="x", approval=bad)
     job.move("VARIANT_CHOSEN", reason="x", approval=CREATOR)
@@ -166,9 +167,51 @@ def test_artifacts_do_not_cross_jobs_or_dossiers(tmp_path):
         ja.check_artifact("cover")
 
 
-def test_an_existing_episode_is_adopted_with_a_stated_state(tmp_path):
-    job = EpisodeJob.adopt(tmp_path, state="SCRIPT_APPROVED", reason="Titans, approved 2026-10-20", approval=CREATOR,
-                           job_id="titans", episode_slug="titans", ledger="run.json", fps=24)
-    assert job.manifest["history"][0]["path"] == "adopted" and EpisodeJob.open(tmp_path).state == "SCRIPT_APPROVED"
+def test_a_creator_gate_binds_the_sha256_of_what_was_approved(job):
+    walk(job, "RESEARCHED")
+    with pytest.raises(ContractError, match="binds the sha256"):
+        job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": None})
+    job.move("VARIANT_CHOSEN", reason="x", approval=CREATOR)
+    assert job.manifest["approvals"]["VARIANT_CHOSEN"]["sha256"] == SHA
+
+
+def test_an_existing_episode_is_adopted_through_its_state_gate(tmp_path):
+    job = EpisodeJob.adopt(tmp_path / "titans", state="SCRIPT_APPROVED", reason="Titans, approved 2026-10-20", approval=CREATOR,
+                           dossier_sha256=SHA, job_id="titans", episode_slug="titans", ledger="run.json", fps=24)
+    m = EpisodeJob.open(tmp_path / "titans").manifest
+    assert m["history"][0]["path"] == "adopted" and m["state"] == "SCRIPT_APPROVED"
+    assert m["approvals"]["SCRIPT_APPROVED"]["sha256"] == SHA and m["source_dossier_sha256"] == SHA
+
+
+def test_adopting_is_no_way_round_the_gates(tmp_path):
+    base = dict(job_id="a", episode_slug="a", ledger="r", fps=24)
+    cases = [
+        ("PUBLISHED_PUBLIC", MACHINE, "machine"),            # CN-06: only the creator's click
+        ("REVIEW_APPROVED", None, "no approval"),            # CN-04: approval #2 needs the creator
+        ("SCRIPT_APPROVED", {**CREATOR, "sha256": None}, "unbound"),  # CN-04: bound to the words
+        ("ABORTED_SPEND_CAP", CREATOR, "terminal"),          # nothing could reopen it
+        ("NOPE", CREATOR, "unknown"),
+    ]
+    for n, (state, approval, why) in enumerate(cases):
+        with pytest.raises(ContractError):
+            EpisodeJob.adopt(tmp_path / str(n), state=state, reason=why, approval=approval, dossier_sha256=SHA, **base)
+        assert not (tmp_path / str(n) / store.MANIFEST).exists(), why
+    with pytest.raises(ContractError, match="dossier"):  # CN-05: past CREATED the dossier is named
+        EpisodeJob.adopt(tmp_path / "x", state="SCRIPT_APPROVED", reason="x", approval=CREATOR, **base)
+    EpisodeJob.adopt(tmp_path / "ok", state="CREATED", reason="new", approval=None, **base)
+
+
+def test_a_cached_render_and_the_asset_library_may_be_recorded_but_not_a_stray_assets_folder(tmp_path, monkeypatch):
+    cache = tmp_path / "cache"
+    monkeypatch.setenv("EXPLAINER_SHOT_CACHE", str(cache))
+    jd = tmp_path / "jobs" / "nap" / "job-001"
+    jd.mkdir(parents=True)
+    job = EpisodeJob.create(jd, job_id="job-001", episode_slug="nap", ledger="run.json", fps=24)
+    (cache / "ab" / "abc").mkdir(parents=True)
+    (cache / "ab" / "abc" / "clip.mp4").write_bytes(b"clip")
+    job.record_artifact("clip_s1", cache / "ab" / "abc" / "clip.mp4")
+    stray = tmp_path / "somewhere" / "assets" / "x.png"  # a path that merely contains "assets" is not the library
+    stray.parent.mkdir(parents=True)
+    stray.write_bytes(b"x")
     with pytest.raises(ContractError):
-        EpisodeJob.adopt(tmp_path / "x", state="NOPE", reason="x", approval=CREATOR, job_id="a", episode_slug="a", ledger="r", fps=24)
+        job.record_artifact("stray", stray)

@@ -35,3 +35,11 @@ def test_every_key_read_exists_in_the_rule():
 def test_the_detector_sees_a_reader_and_a_missing_key():
     src = 'from explainer_engine.standards import sourced_rules as SR\nX = SR.T("BP-01", "wpm_target")\nY = T("BP-02", "nope")\n'
     assert [(r, k) for r, k, _ in SR.threshold_reads(src)] == [("BP-01", "wpm_target"), ("BP-02", "nope")]
+
+
+def test_bp_114_is_listed_only_where_it_is_read():
+    """The sync test above finds readers missing from enforced_by; this one finds listed files that never read the rule."""
+    for ref in SR.rule("BP-114")["enforced_by"]:
+        path = ref.split(":")[0]
+        reads = {rid for rid, _k, _l in SR.threshold_reads((ROOT / path).read_text(encoding="utf-8"))}
+        assert "BP-114" in reads, f"{path} is in BP-114's enforced_by but never reads it"

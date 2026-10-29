@@ -4590,8 +4590,7 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/core/contracts.py",
-    "explainer_engine/scripting/film_shots.py:frames"
+    "explainer_engine/core/contracts.py:BP-114"
    ],
    "supersedes": [
     "Blueprint VISUAL-001 32n as the recipe"
