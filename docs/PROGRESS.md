@@ -2549,8 +2549,9 @@ training as sequences is decided in the process. Changed together:
 ## 2026-10-29 22:30 UTC (02:30 Tbilisi 10-30): paid-test caps and their ledgers (no pod, no money)
 
 - ვანო (2026-10-29 18:40 UTC, relayed): a clear yes to the paid tests P12a, P12b and P12e within $5.90 in total, each
-  started only after the coordinator's go (OR-29 audit). The OR-23 plans and their OR-24 confirmation are in project files
-  `explainer-engine/blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md` (Georgian summary `PAID_TESTS_PLAN_ka.md`).
+  started only after the coordinator's go after the final Fable xhigh static audit. The OR-23 plans and their OR-24
+  confirmation are in project files `explainer-engine/blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md` (Georgian summary
+  `PAID_TESTS_PLAN_ka.md`).
 - `config/spend_caps.json` `paid_tests`: total_usd 5.9; p12a_smoke runpod_usd 0.50, p12b_two_runs 3.00, p12e_hosts 2.40
   (pods hard at 80 %: 0.40 / 2.40 / 1.92). P12b and P12e sit above the first proposal (2.50 / 1.00) because the 80 % stop would
   leave their pods below their estimates; the total is his $5.90.
