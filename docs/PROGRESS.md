@@ -2531,3 +2531,17 @@ training as sequences is decided in the process. Changed together:
 - Backdrop per panel: `reproject`/`plate_view`/`plate_grid` read the turnaround along the shot's own yaw, pitch and field of view; a shot between two views reads both with an 8 degree soft seam (`view_weight`). Limit: a pitch beyond the turnaround's 52 degree vertical view smears.
 - People: `people_rule` (exactly N people, names, the person seen from behind appears once, from the set's `ots`) in `plate_words` and the paintover people prompt.
 - SDEdit: `start_noise` pins the shifted start sigma to the scheduler's formula (strength 0.55 = noise 0.79); the unit test does not show the math wrong, PO stays "untested". Test `test_round_3c_view_prompts_reprojection_people_rule_and_sdedit_noise`; attribution in `/mnt/project-files/xworld_v2/round_3b/attribution.md`.
+
+## 2026-10-29 07:40 UTC (11:40 Tbilisi): every branch and PR into main, OLD_HISTORY.md (no pod, no money)
+
+- ვანო (2026-10-29 07:03 UTC): analyse every branch and PR, settle conflicts for the newest findings, keep only `main` with
+  0 open PRs, save everything worth remembering in one file. Analysis: all 28 remote branches were already ancestors of
+  `claude/project-thread-beg7xa` (PR #22, settled 2026-10-25 in `docs/research/BRANCH_INTEGRATION_2026-10-25.md`), and
+  `main` (PR #26) was too, so PR #22's tip goes to `main` without a conflict.
+- `OLD_HISTORY.md` (repository root): the merge record of both repositories, the rules in force (RULE #1-#6, D-73..D-80),
+  the state of the strategy loop (3b +dpl best, gallery https://claude.ai/artifact/C5TMq1VZsAPF7FqvNXb6zA), the HF and
+  project-files material by path, the old threads, the full project memory and the project-files listing. No binaries.
+- tmr-video-script-engine: PR #9 and #10 merged into its main (PR #11; `cloud/rp.py` keeps both `--gpu a5000` and
+  `--gpu big`); PR #4 and `three-hour-format-7ewyz0` closed as superseded (kept in the HF vault bundle).
+- Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
+- From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
