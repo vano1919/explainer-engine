@@ -268,6 +268,14 @@ def test_create_cli_refuses_a_script_pod_nothing_outside_the_session_can_stop(en
     assert not fake.pods
 
 
+def test_a_pre_p1a_script_is_judged_by_its_old_rules_but_never_runs_under_the_wrapper(env):
+    fake, api, tmp = env
+    legacy = "( while true; do sleep 240; date > out/beat.txt; up; done ) &\npython train.py\n" + "python -m explainer_engine.vault check-uploaded out --to r\n"
+    assert not R.is_wrapper_script(legacy) and R.lint_pod_script(legacy) == [] and R.is_wrapper_script(NEW_SH)
+    why = R.preflight_create(api, max_usd=0.5, max_hours=1.0, gpu="cheap", now=10**6, script=legacy, heartbeat=BEAT, pod_key=True)
+    assert len(why) == 1 and "pre-P1a protocol" in why[0]
+
+
 def test_create_cli_makes_a_script_pod_with_the_wrapper_the_env_and_a_live_record(env, monkeypatch):
     fake, api, tmp = env
     monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)

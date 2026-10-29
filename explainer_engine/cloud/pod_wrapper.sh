@@ -115,6 +115,7 @@ PRICE=$(awk -v a="${EE_PRICE:-0}" -v b="${real:-0}" 'BEGIN { print (b + 0 > a + 
 DEADLINE=$(deadline_calc "$PRICE")
 echo "BOOT key=$code job=${EE_JOB:-none} pod=${RUNPOD_POD_ID:-none} price=$PRICE deadline=$DEADLINE" > "$ST/boot"
 write_beat ALIVE
+ee_upload_beat >/dev/null 2>&1 &  # the guard's boot deadline is lifted by the first upload: do not wait for the first loop pass
 
 # --- 2. the upload loop starts before anything heavy -------------------------------------------------------------------------
 ( while true; do sleep "$EE_PASS_S"; ee_pass; done ) &
@@ -122,7 +123,7 @@ LOOP=$!
 
 end_seq() { # $1 word  $2 rc  $3 grace seconds
   local word="$1" rc="$2" grace="$3" ok=0 limit n=0 final
-  kill "$LOOP" 2>/dev/null; wait "$LOOP" 2>/dev/null
+  pkill -P "$LOOP" 2>/dev/null; kill "$LOOP" 2>/dev/null; wait "$LOOP" 2>/dev/null  # the loop and its sleep
   limit=$(( $(date +%s) + grace ))
   while true; do
     if ee_upload; then ok=1; echo 0 > "$ST/fail"; touch "$ST/verified"; break; fi

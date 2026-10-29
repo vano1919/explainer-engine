@@ -136,6 +136,12 @@ def test_the_money_deadline_caps_the_script_after_a_graceful_term_and_uploads_fi
     assert not _running(child)                              # the whole group went, not only the script's shell
 
 
+def test_the_first_beat_is_uploaded_at_once_not_after_the_first_loop_pass(pod):
+    p, b, stops, stub = pod("exit 0\n", EE_PASS_S="100")
+    first = (stub / "beat_history").read_text().splitlines()[1]           # line 0 is BOOT, line 1 the first ALIVE
+    assert first.startswith("ALIVE") and b["word"] == "DONE"
+
+
 def test_the_wrapper_deadline_equals_deadline_of(pod):
     created = int(time.time())
     for life, usd, price in ((7200, 3.0, 0.34), (600, 3.0, 1.69), (3600, 0.5, 2.59)):

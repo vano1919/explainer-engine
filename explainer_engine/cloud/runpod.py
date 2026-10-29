@@ -477,10 +477,20 @@ def deadline_of(created, lifetime_s, max_usd, price, disk_per_h=0.0, grace=CAP_G
     return int(created + secs - grace)
 
 
+def is_wrapper_script(text):
+    """A job script written for ``pod_wrapper.sh``: it declares its heartbeat or writes under ``$EE_OUT``. The scripts under
+    ``training/pods/`` from before P1a run their own loop and write their own DONE; P1b rewrites the ones that are reused."""
+    return heartbeat_of_script(text) is not None or "EE_OUT" in (text or "")
+
+
 def lint_pod_script(text):
     """Problems of a pod job script that runs inside ``pod_wrapper.sh`` (empty = fine, CR-08): the wrapper owns beat.txt, the
     upload loop, the end word and the stop, so a script that writes them, idles, touches CUDA without ``timeout`` or sends
-    base weights to the vault is refused. VT-01/02 (the vault check) stay."""
+    base weights to the vault is refused. VT-01/02 (the vault check) stay. A pre-P1a script (``is_wrapper_script`` false) is
+    judged by its own old rules; ``preflight_create`` refuses to run it under the wrapper."""
+    if not is_wrapper_script(text):
+        from explainer_engine import vault
+        return lint_own_upload_loop(text) + vault.lint_pod_script(text)
     lines = text.splitlines()
     code = [(i, ln) for i, ln in enumerate(lines) if not ln.lstrip().startswith("#")]
     out = []
@@ -1225,6 +1235,9 @@ def preflight_create(api, *, max_usd, max_hours, gpu, now=None, ignore=None, scr
     now = time.time() if now is None else now
     c = spend_caps.runpod()
     why = [f"pod script: {p}" for p in lint_pod_script(script)] if script is not None else []
+    if script is not None and not is_wrapper_script(script):
+        why.append("pod script: it runs its own upload loop and writes its own beat.txt/DONE (pre-P1a protocol): rewrite it for "
+                   "pod_wrapper.sh (declare `# heartbeat:`, write results under $EE_OUT; CR-08, P1b)")
     if script is not None:  # CR-07: a script pod must be visible and stoppable from outside this session
         if not heartbeat:
             why.append("no heartbeat: pass --heartbeat datasets/<owner>/<repo>:<folder>/beat.txt or declare `# heartbeat: ...` in the script")
