@@ -1,0 +1,371 @@
+{
+ "s01_architect": {
+  "shape": {
+   "segments": 8,
+   "lines": 0,
+   "words": 0,
+   "claims_cited": 0,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 18,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 18
+   }
+  }
+ },
+ "s02_writer": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 872,
+   "claims_cited": 21,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 10,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 10
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s02b_beats": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 872,
+   "claims_cited": 21,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 10,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 10
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s03_performer": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 874,
+   "claims_cited": 21,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 10,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 10
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s04_editor": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 874,
+   "claims_cited": 21,
+   "shots": 57,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 1,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 1
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s04r_architect": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 874,
+   "claims_cited": 21,
+   "shots": 57,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 1,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 1
+   }
+  },
+  "stage_guard_violations_vs_previous": [
+   "S04.scene changed: not the architect's field"
+  ]
+ },
+ "s05_caster": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 874,
+   "claims_cited": 21,
+   "shots": 57,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 27,
+   "review": 122,
+   "by_rule": {
+    "FAIL PV-05 S01": 1,
+    "FAIL PV-05 S05": 1,
+    "FAIL PV-05 S06": 1,
+    "FAIL PV-05 S07": 2,
+    "FAIL PV-05 S08": 2,
+    "FAIL PV-05 music": 2,
+    "REVIEW PV-10 voice": 1,
+    "FAIL PV-11 s04_measure": 1,
+    "FAIL PV-11 s04_bow": 1,
+    "FAIL PV-11 s04_squares": 1,
+    "FAIL PV-11 s04_bayonets": 1,
+    "FAIL PV-11 s04_charge": 1,
+    "FAIL PV-11 s04_broken": 1,
+    "FAIL PV-11 s04_cheer": 1,
+    "FAIL PV-11 s04_glass": 1,
+    "REVIEW PV-52 BP-01": 1,
+    "REVIEW PV-32 napoleon": 1,
+    "REVIEW PV-32 ali": 2,
+    "REVIEW PV-32 genghis": 2,
+    "REVIEW PV-27 S03": 1,
+    "REVIEW PV-30 arrival": 1,
+    "REVIEW PV-30 valley": 1,
+    "REVIEW PV-30 parley": 1,
+    "REVIEW PV-48 SC-09": 3,
+    "FAIL PV-48 SC-05": 1,
+    "REVIEW PV-48 SC-05": 1,
+    "REVIEW PV-44 VB-06": 19,
+    "REVIEW PV-44 VB-12": 10,
+    "REVIEW PV-44 VB-03": 14,
+    "REVIEW PV-12 p1": 1,
+    "FAIL PV-12 p2.s7": 1,
+    "REVIEW PV-12 p2": 1,
+    "REVIEW PV-12 p3": 12,
+    "REVIEW PV-12 p4": 6,
+    "REVIEW PV-12 p5.s6": 1,
+    "REVIEW PV-12 p5": 1,
+    "REVIEW PV-12 p6": 11,
+    "REVIEW PV-12 p7.s2": 1,
+    "REVIEW PV-12 p7": 9,
+    "FAIL PV-12 p8.s6": 1,
+    "REVIEW PV-12 p8": 1,
+    "REVIEW PV-12 -": 2,
+    "REVIEW PV-12 S08": 1,
+    "REVIEW PV-35 BP-94": 1,
+    "REVIEW PV-35 MO-07": 2,
+    "REVIEW PV-36 BP-62": 2,
+    "REVIEW PV-44 VB-02": 5,
+    "REVIEW PV-44 VB-10": 2,
+    "FAIL PV-37 claims": 1,
+    "REVIEW PV-38 episode.distinct": 1,
+    "FAIL PV-45 episode.scenario": 1,
+    "REVIEW PV-46 napoleon": 1,
+    "FAIL PV-47 ali": 1,
+    "FAIL PV-47 genghis": 1,
+    "FAIL PV-47 napoleon": 1,
+    "FAIL PV-47 look.environment": 1
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s06_shorts": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 874,
+   "claims_cited": 21,
+   "shots": 57,
+   "shorts": 3
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 27,
+   "review": 133,
+   "by_rule": {
+    "FAIL PV-05 S01": 1,
+    "FAIL PV-05 S05": 1,
+    "FAIL PV-05 S06": 1,
+    "FAIL PV-05 S07": 2,
+    "FAIL PV-05 S08": 2,
+    "FAIL PV-05 music": 2,
+    "REVIEW PV-10 voice": 1,
+    "FAIL PV-11 s04_measure": 1,
+    "FAIL PV-11 s04_bow": 1,
+    "FAIL PV-11 s04_squares": 1,
+    "FAIL PV-11 s04_bayonets": 1,
+    "FAIL PV-11 s04_charge": 1,
+    "FAIL PV-11 s04_broken": 1,
+    "FAIL PV-11 s04_cheer": 1,
+    "FAIL PV-11 s04_glass": 1,
+    "REVIEW PV-52 BP-01": 1,
+    "REVIEW PV-32 napoleon": 1,
+    "REVIEW PV-32 ali": 2,
+    "REVIEW PV-32 genghis": 2,
+    "REVIEW PV-27 S03": 1,
+    "REVIEW PV-30 arrival": 1,
+    "REVIEW PV-30 valley": 1,
+    "REVIEW PV-30 parley": 1,
+    "REVIEW PV-48 SC-09": 3,
+    "FAIL PV-48 SC-05": 1,
+    "REVIEW PV-48 SC-05": 1,
+    "REVIEW PV-44 VB-06": 20,
+    "REVIEW PV-44 VB-12": 14,
+    "REVIEW PV-44 VB-03": 20,
+    "REVIEW PV-12 p1": 1,
+    "FAIL PV-12 p2.s7": 1,
+    "REVIEW PV-12 p2": 1,
+    "REVIEW PV-12 p3": 12,
+    "REVIEW PV-12 p4": 6,
+    "REVIEW PV-12 p5.s6": 1,
+    "REVIEW PV-12 p5": 1,
+    "REVIEW PV-12 p6": 11,
+    "REVIEW PV-12 p7.s2": 1,
+    "REVIEW PV-12 p7": 9,
+    "FAIL PV-12 p8.s6": 1,
+    "REVIEW PV-12 p8": 1,
+    "REVIEW PV-12 -": 2,
+    "REVIEW PV-12 S08": 1,
+    "REVIEW PV-35 BP-94": 1,
+    "REVIEW PV-35 MO-07": 2,
+    "REVIEW PV-36 BP-62": 2,
+    "REVIEW PV-44 VB-02": 5,
+    "REVIEW PV-44 VB-10": 2,
+    "FAIL PV-37 claims": 1,
+    "REVIEW PV-38 episode.distinct": 1,
+    "FAIL PV-45 episode.scenario": 1,
+    "REVIEW PV-46 napoleon": 1,
+    "FAIL PV-47 ali": 1,
+    "FAIL PV-47 genghis": 1,
+    "FAIL PV-47 napoleon": 1,
+    "FAIL PV-47 look.environment": 1
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "final": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 874,
+   "claims_cited": 21,
+   "shots": 57,
+   "shorts": 3
+  },
+  "validate": {
+   "fail": 27,
+   "review": 133,
+   "by_rule": {
+    "FAIL PV-05 S01": 1,
+    "FAIL PV-05 S05": 1,
+    "FAIL PV-05 S06": 1,
+    "FAIL PV-05 S07": 2,
+    "FAIL PV-05 S08": 2,
+    "FAIL PV-05 music": 2,
+    "REVIEW PV-10 voice": 1,
+    "FAIL PV-11 s04_measure": 1,
+    "FAIL PV-11 s04_bow": 1,
+    "FAIL PV-11 s04_squares": 1,
+    "FAIL PV-11 s04_bayonets": 1,
+    "FAIL PV-11 s04_charge": 1,
+    "FAIL PV-11 s04_broken": 1,
+    "FAIL PV-11 s04_cheer": 1,
+    "FAIL PV-11 s04_glass": 1,
+    "REVIEW PV-52 BP-01": 1,
+    "REVIEW PV-32 napoleon": 1,
+    "REVIEW PV-32 ali": 2,
+    "REVIEW PV-32 genghis": 2,
+    "REVIEW PV-27 S03": 1,
+    "REVIEW PV-30 arrival": 1,
+    "REVIEW PV-30 valley": 1,
+    "REVIEW PV-30 parley": 1,
+    "REVIEW PV-48 SC-09": 3,
+    "FAIL PV-48 SC-05": 1,
+    "REVIEW PV-48 SC-05": 1,
+    "REVIEW PV-44 VB-06": 20,
+    "REVIEW PV-44 VB-12": 14,
+    "REVIEW PV-44 VB-03": 20,
+    "REVIEW PV-12 p1": 1,
+    "FAIL PV-12 p2.s7": 1,
+    "REVIEW PV-12 p2": 1,
+    "REVIEW PV-12 p3": 12,
+    "REVIEW PV-12 p4": 6,
+    "REVIEW PV-12 p5.s6": 1,
+    "REVIEW PV-12 p5": 1,
+    "REVIEW PV-12 p6": 11,
+    "REVIEW PV-12 p7.s2": 1,
+    "REVIEW PV-12 p7": 9,
+    "FAIL PV-12 p8.s6": 1,
+    "REVIEW PV-12 p8": 1,
+    "REVIEW PV-12 -": 2,
+    "REVIEW PV-12 S08": 1,
+    "REVIEW PV-35 BP-94": 1,
+    "REVIEW PV-35 MO-07": 2,
+    "REVIEW PV-36 BP-62": 2,
+    "REVIEW PV-44 VB-02": 5,
+    "REVIEW PV-44 VB-10": 2,
+    "FAIL PV-37 claims": 1,
+    "REVIEW PV-38 episode.distinct": 1,
+    "FAIL PV-45 episode.scenario": 1,
+    "REVIEW PV-46 napoleon": 1,
+    "FAIL PV-47 ali": 1,
+    "FAIL PV-47 genghis": 1,
+    "FAIL PV-47 napoleon": 1,
+    "FAIL PV-47 look.environment": 1
+   }
+  },
+  "story_lint_fail": 0,
+  "same_as_last_snapshot": true
+ }
+}
