@@ -21,14 +21,33 @@ call. Data and scripts: `docs/research/agent_ab_2026-10/` (inputs, every stage s
 | of the FAILs: media / creator gates only | 28 (21 PV-05, 6 PV-47, 1 PV-45) | 14 (9 PV-05, 4 PV-47, 1 PV-45) |
 | of the FAILs: script defects | 0 | 13 (8 PV-11 stale prompts, 2 PV-12, 1 PV-48, 1 PV-37 claim ids, 1 the rule parser did not classify) |
 | REVIEWs PV-44 (beats) / PV-12 (narration) | 2 / 0 | 61 / 47 |
-| Retry rounds (max per item 3-4) | architect 1, writer 4, beats 3, performer 1, editor 4, caster 2, shorts 1 | architect 2, 3 segments 2, editor 4, shorts 3, caster 2, plus one routed repair |
-| Work cost, input-price units (output x5, cache write x1.25, cache read x0.1) | 9.57 M | 9.62 M |
-| Worker wall time | about 28 min | about 33 min of worker time plus serial hand-offs |
+| Retry rounds, self-reported (`retries.json`) | architect 1, writer 4, beats 3, performer 1, editor 4, caster 2, shorts 1 | architect 2, 3 segments 2, editor 4, shorts 3, caster 2, plus one routed repair |
+| Work cost, input-price units (output x5, cache write x1.25, cache read x0.1; `cost.json`, `cost.py`) | 9.57 M | 9.62 M |
+| Active worker time (`cost.json`; excludes the 18:58-22:03 usage-limit stall and the orchestrator's hand-offs) | 29 min | 36 min |
 
 Cost is equal within 1 %. Arm B spent more on cache creation (every worker re-reads the pages), arm A on cache reads (one growing context).
 
-## Blind critic (Opus high, read-only; full text in `agent_ab_2026-10/critic_blind.md`)
-Overall: Y (arm A) is the better product, narrowly (3.9 vs 3.7 of 5). X (arm B) is better at the line level: the best single scene of either script (the interpreter softening the insult, S07), better shot coverage, closer to the claim wording. Y has the clearer cause-and-effect spine, enters a scene by 0:30, pays off its set-ups, and has a finished sound layer (music per chapter, planned dropout, beds); X has one music loop for all 5 minutes, a lecture block at S02, a dropped set-up (Murat) and a day arc that contradicts its shots. Y's faults: a systematic claim-id defect (the claim map was renormalised to `C-NN` and the invented premise got ids `C-91..` labelled as facts), a "you" tic, 20 % over length. The critic judged the story-level differences mostly single-sample noise and the sound/edit richness and claim-id format systematic.
+## Blind critic (Opus high, read-only; text in `agent_ab_2026-10/critic_blind.md`, exact input in `critic_input/`)
+Labels were random: X = arm B (workers), Y = arm A (one context). The critic scored six story criteria 1-5; the report's own
+headline ("3.9 vs 3.7") did not follow from them, so the means are recomputed here from the table:
+
+| criterion | X (workers) | Y (one context) |
+|---|---|---|
+| premise and dramatic question | 4 | 4 |
+| escalation and turn of each scene | 3 | 4 |
+| character voice, show don't tell | 4 | 4 |
+| dialogue craft | 5 | 4 |
+| ending and payoff of set-ups | 4 | 4 |
+| would a viewer stay (30 s / 2 min) | 3 | 4 |
+| **mean of six** | **3.83** | **4.00** |
+
+A gap of 0.17 on one sample per arm is within what the critic itself called noise; its prose verdict was "Y narrowly better,
+three decisive reasons: story spine and retention, sound/edit layer, claim-id defect fixable mechanically". X (workers) wrote the
+best single scene of either script (the interpreter softening the insult, S07), better shot coverage, closer wording to the claim
+map; X also has one music loop for 5 minutes, a lecture block at S02, a dropped set-up (Murat) and a day arc that contradicts its
+shots. Y (one context) has the clearer cause-and-effect spine, a scene by 0:30, paid-off set-ups and a finished sound layer
+(music per chapter, planned dropout, beds); Y's faults are the claim-id format (the invented premise got ids `C-91..` labelled as
+facts), a "you" tic and 20 % over length.
 
 ## What the process data show
 1. **The hand-off fields are the weak point of per-stage workers, not focus.** Three defects only surfaced at the editor stage and could not be fixed by the worker that saw them: no `face_sheet` for heroes (VB-09/VB-06) although the beat-writer used expression beats; a dialogue segment without a `scene` header (PV-48); delivery tags the PV-12 lint does not know. Arm A hit the first one too but spotted it earlier because one agent looked ahead at the later pages. In arm B the orchestrator had to route a repair round back to the architect.
@@ -37,10 +56,13 @@ Overall: Y (arm A) is the better product, narrowly (3.9 vs 3.7 of 5). X (arm B) 
 4. **No focus loss was observed in arm A at this scale.** Its self-report lists late discoveries (its first gate ran only the document-level narration lint, so about 14 lines changed after beats and delivery existed; one field written outside the editor's ownership, caught by the guard) but nothing that stage_guard or story_lint failed to catch. The context-length argument for workers is NOT tested here: 8 segments and about 5 minutes are far below a 15-minute episode.
 5. Claim ids: arm A silently changed the claim map format so the repo parser could read it (`C-NN`); arm B kept the map and PV-37 then found zero claims. The parser and the map format should agree whatever the agent form.
 
+## Independence of the two samples
+Both scripts open with the identical line "The drums stop first." and the same fog-on-the-road hook. No cross-read was found: arm B's architect listed the then-empty `arm_A` folder once and read nothing from it, and both briefs forbade the earlier Napoleon script. The most likely cause is the shared model prior plus the shared claim map (I01 is the fog), but the arms are therefore NOT fully independent draws; treat the story-level comparison with extra caution.
+
 ## Limits
 One sample per arm, one topic, one model (Sonnet) for both; the critic's own noise/systematic split is a judgement. Per-stage model choice (the other half of the worker case) was not tested because the models were held equal on purpose. Scale was 8 segments, not the 16 of template D. Costs are token units, not money. No picture, voice or render was produced, so everything about look and sound is judged on the written plan only. The shared input stage 0 was given, not tested.
 
-## Verdict for A5
-The evidence does not support replacing the one-main-agent form with per-stage workers: at equal cost the one-context script was narrowly better as a product, equal on every free structural gate that failed anywhere, and the worker form cost a routed repair round and exposed three ownership gaps. It also does not refute the worker form: the argument that matters for workers (a 135k-token context across 16 segments, and a cheaper model for mechanical stages) was out of scale. Recommendation: **keep D-79 as the default; do not make the worker form the A5 answer on this evidence.** If the creator wants the long-context argument tested, the next free test is the same A/B at 16 segments on template D, with arm B's mechanical stages (beats, performer) on a cheaper model.
+## Evidence for A5 (the decision is the creator's / the plan thread's, not this report's)
+On this sample the evidence does not support replacing the one-main-agent form with per-stage workers: at equal cost the one-context script was narrowly better as a product, equal on every free structural gate that failed anywhere, and the worker form cost a routed repair round and exposed three ownership gaps. It also does not refute the worker form: the argument that matters for workers (a 135k-token context across 16 segments, and a cheaper model for mechanical stages) was out of scale. The evidence points to: **keep D-79 as the default; do not make the worker form the A5 answer on this evidence.** If the creator wants the long-context argument tested, the next free test is the same A/B at 16 segments on template D, with arm B's mechanical stages (beats, performer) on a cheaper model.
 
 Independent of the A5 answer, three fixes are worth a small separate phase (each with a test): `scene` in the architect's segment fields of `stage_guard`; a documented partial-gate command per stage (the lints that run before `voice`/`shots` exist); one claim-id format accepted by `scripting/claims.py` and the claim-map writers.

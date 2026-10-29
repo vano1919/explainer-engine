@@ -1,0 +1,6 @@
+{
+ "about": "Retry rounds per stage, copied from each arm's own reports (arm A: arm_A/FINAL_REPORT.md; arm B: the worker hand-back tables of 2026-10-29). Self-reported, not re-derived from transcripts. A 'round' = one fix-and-regate pass.",
+ "arm_A": {"architect": 1, "writer": 4, "beats": 3, "performer": 1, "editor": 4, "caster": 2, "shorts": 1, "source": "arm_A/FINAL_REPORT.md item 6"},
+ "arm_B": {"architect": 2, "writer": "S03: 2, S07: 2, others 1", "beats": "S04: 2, others 1", "performer": 2, "editor": 4, "architect_repair_round": 1, "caster": 2, "shorts": 3, "source": "worker hand-back tables; the editor's four rounds and the one routed architect repair are in its report"},
+ "wall_time_active_s": {"arm_A": 1745, "arm_B_workers": 2164, "note": "from cost.json (gaps < 10 min); excludes the usage-limit stall 18:58-22:03 UTC and the orchestrator's own hand-off time between workers"}
+}

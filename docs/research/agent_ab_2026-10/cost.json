@@ -1,0 +1,257 @@
+{
+ "arm_A": {
+  "agents": {
+   "ab4bb1cfe304448d8": {
+    "turns": 220,
+    "input_tokens": 438,
+    "output_tokens": 374075,
+    "cache_creation_input_tokens": 1151956,
+    "cache_read_input_tokens": 62625587,
+    "units": 9573317,
+    "active_s": 1745
+   }
+  },
+  "total": {
+   "turns": 220,
+   "input_tokens": 438,
+   "output_tokens": 374075,
+   "cache_creation_input_tokens": 1151956,
+   "cache_read_input_tokens": 62625587,
+   "units": 9573317,
+   "active_s": 1745
+  }
+ },
+ "arm_B": {
+  "agents": {
+   "a29e7139dde817627": {
+    "turns": 29,
+    "input_tokens": 56,
+    "output_tokens": 47636,
+    "cache_creation_input_tokens": 417714,
+    "cache_read_input_tokens": 3118940,
+    "units": 1072272,
+    "active_s": 253
+   },
+   "aa681141377adaf39": {
+    "turns": 12,
+    "input_tokens": 24,
+    "output_tokens": 5338,
+    "cache_creation_input_tokens": 128976,
+    "cache_read_input_tokens": 1012608,
+    "units": 289195,
+    "active_s": 34
+   },
+   "ad47e5df8350fbf13": {
+    "turns": 13,
+    "input_tokens": 26,
+    "output_tokens": 5218,
+    "cache_creation_input_tokens": 97135,
+    "cache_read_input_tokens": 1179411,
+    "units": 265476,
+    "active_s": 37
+   },
+   "af3603833daf3266e": {
+    "turns": 8,
+    "input_tokens": 16,
+    "output_tokens": 4370,
+    "cache_creation_input_tokens": 138698,
+    "cache_read_input_tokens": 577437,
+    "units": 252982,
+    "active_s": 27
+   },
+   "ac9c363e4cdb90a93": {
+    "turns": 8,
+    "input_tokens": 16,
+    "output_tokens": 6015,
+    "cache_creation_input_tokens": 81875,
+    "cache_read_input_tokens": 628915,
+    "units": 195326,
+    "active_s": 32
+   },
+   "a1b4a0b29d0054a2f": {
+    "turns": 13,
+    "input_tokens": 26,
+    "output_tokens": 12059,
+    "cache_creation_input_tokens": 99600,
+    "cache_read_input_tokens": 1174516,
+    "units": 302273,
+    "active_s": 68
+   },
+   "a485e6e8ca0aa6c95": {
+    "turns": 15,
+    "input_tokens": 30,
+    "output_tokens": 8191,
+    "cache_creation_input_tokens": 76519,
+    "cache_read_input_tokens": 1328996,
+    "units": 269533,
+    "active_s": 58
+   },
+   "ae6cf454d0b270683": {
+    "turns": 7,
+    "input_tokens": 14,
+    "output_tokens": 4462,
+    "cache_creation_input_tokens": 80822,
+    "cache_read_input_tokens": 542939,
+    "units": 177645,
+    "active_s": 44
+   },
+   "a7cc5bfcd6be3781c": {
+    "turns": 10,
+    "input_tokens": 20,
+    "output_tokens": 4859,
+    "cache_creation_input_tokens": 78636,
+    "cache_read_input_tokens": 849969,
+    "units": 207607,
+    "active_s": 39
+   },
+   "aa3712a1960314690": {
+    "turns": 8,
+    "input_tokens": 16,
+    "output_tokens": 5376,
+    "cache_creation_input_tokens": 86069,
+    "cache_read_input_tokens": 644654,
+    "units": 198948,
+    "active_s": 41
+   },
+   "a9d59228ece595055": {
+    "turns": 10,
+    "input_tokens": 20,
+    "output_tokens": 5732,
+    "cache_creation_input_tokens": 123995,
+    "cache_read_input_tokens": 773082,
+    "units": 260982,
+    "active_s": 35
+   },
+   "a50927dbbf9279fc3": {
+    "turns": 10,
+    "input_tokens": 20,
+    "output_tokens": 9193,
+    "cache_creation_input_tokens": 97366,
+    "cache_read_input_tokens": 823005,
+    "units": 249993,
+    "active_s": 48
+   },
+   "ae678a0d66b7fcdb3": {
+    "turns": 11,
+    "input_tokens": 22,
+    "output_tokens": 7973,
+    "cache_creation_input_tokens": 78663,
+    "cache_read_input_tokens": 923023,
+    "units": 230518,
+    "active_s": 40
+   },
+   "a66a383582c65a3e1": {
+    "turns": 8,
+    "input_tokens": 16,
+    "output_tokens": 7260,
+    "cache_creation_input_tokens": 81047,
+    "cache_read_input_tokens": 670457,
+    "units": 204670,
+    "active_s": 42
+   },
+   "a978d3ea6b3838672": {
+    "turns": 18,
+    "input_tokens": 36,
+    "output_tokens": 9849,
+    "cache_creation_input_tokens": 128752,
+    "cache_read_input_tokens": 1540091,
+    "units": 364230,
+    "active_s": 55
+   },
+   "a3bced1d4ab22063a": {
+    "turns": 8,
+    "input_tokens": 16,
+    "output_tokens": 4540,
+    "cache_creation_input_tokens": 77998,
+    "cache_read_input_tokens": 651581,
+    "units": 185372,
+    "active_s": 33
+   },
+   "a63b0552ae035718e": {
+    "turns": 11,
+    "input_tokens": 22,
+    "output_tokens": 6937,
+    "cache_creation_input_tokens": 90627,
+    "cache_read_input_tokens": 898178,
+    "units": 237809,
+    "active_s": 48
+   },
+   "a6d40d1f933d3f3fe": {
+    "turns": 16,
+    "input_tokens": 32,
+    "output_tokens": 16146,
+    "cache_creation_input_tokens": 88555,
+    "cache_read_input_tokens": 1382806,
+    "units": 329736,
+    "active_s": 77
+   },
+   "a6b724b0a7b0e6756": {
+    "turns": 84,
+    "input_tokens": 168,
+    "output_tokens": 185952,
+    "cache_creation_input_tokens": 395652,
+    "cache_read_input_tokens": 14643133,
+    "units": 2888806,
+    "active_s": 834
+   },
+   "a5972c6597a7db2ea": {
+    "turns": 14,
+    "input_tokens": 28,
+    "output_tokens": 7074,
+    "cache_creation_input_tokens": 75494,
+    "cache_read_input_tokens": 1189520,
+    "units": 248718,
+    "active_s": 54
+   },
+   "ae18115aa18a614bc": {
+    "turns": 20,
+    "input_tokens": 40,
+    "output_tokens": 10502,
+    "cache_creation_input_tokens": 104150,
+    "cache_read_input_tokens": 1846638,
+    "units": 367401,
+    "active_s": 63
+   },
+   "a198eb588e8a0bcc1": {
+    "turns": 34,
+    "input_tokens": 68,
+    "output_tokens": 44734,
+    "cache_creation_input_tokens": 184499,
+    "cache_read_input_tokens": 3684573,
+    "units": 822819,
+    "active_s": 202
+   }
+  },
+  "total": {
+   "turns": 367,
+   "input_tokens": 732,
+   "output_tokens": 419416,
+   "cache_creation_input_tokens": 2812842,
+   "cache_read_input_tokens": 40084472,
+   "units": 9622311,
+   "active_s": 2164
+  }
+ },
+ "critic_blind": {
+  "agents": {
+   "a2d09f1c3b8168cbb": {
+    "turns": 15,
+    "input_tokens": 30,
+    "output_tokens": 33710,
+    "cache_creation_input_tokens": 223263,
+    "cache_read_input_tokens": 1508881,
+    "units": 598547,
+    "active_s": 225
+   }
+  },
+  "total": {
+   "turns": 15,
+   "input_tokens": 30,
+   "output_tokens": 33710,
+   "cache_creation_input_tokens": 223263,
+   "cache_read_input_tokens": 1508881,
+   "units": 598547,
+   "active_s": 225
+  }
+ }
+}
