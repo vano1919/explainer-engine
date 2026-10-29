@@ -228,6 +228,30 @@ def test_adopting_is_no_way_round_the_gates(tmp_path, folder):
     assert not (folder / store.MANIFEST).exists()
 
 
+def test_nothing_is_adopted_into_the_public_click_even_with_every_approval(folder):
+    full = gates_up_to("PUBLISHED_PUBLIC")  # every gate shown, the creator's click included
+    assert full["PUBLISHED_PUBLIC"]["kind"] == "creator"
+    with pytest.raises(ContractError, match="public click"):
+        EpisodeJob.adopt(folder, state="PUBLISHED_PUBLIC", reason="x", approvals=full, dossier=folder / "dossier.md",
+                         reservation_id="pod:abc", **ADOPT)
+    assert not (folder / store.MANIFEST).exists()
+
+
+@pytest.mark.parametrize("state", LIFECYCLE[:-1])
+def test_the_full_chain_adopts_into_every_state_before_the_click(folder, state):
+    job = EpisodeJob.adopt(folder, state=state, reason="chain", approvals=gates_up_to(state), dossier=folder / "dossier.md",
+                           reservation_id="pod:abc", **ADOPT)
+    assert job.state == state and set(job.manifest["approvals"]) == set(LIFECYCLE[1:LIFECYCLE.index(state) + 1])
+    assert EpisodeJob.open(folder).state == state
+    for _ in LIFECYCLE[LIFECYCLE.index(state) + 1:-1]:  # an adopted job walks on to the last state before the click
+        nxt = LIFECYCLE[LIFECYCLE.index(job.state) + 1]
+        kind = sorted(store.GATES[nxt])[0]
+        job.move(nxt, reason="on", approval={"creator": CREATOR, "planner": PLANNER, "machine": MACHINE}[kind],
+                 reservation_id="pod:abc" if nxt == "BUDGET_RESERVED" else None,
+                 dossier=folder / "dossier.md" if nxt == "RESEARCHED" else None)
+    assert job.state == "STAGED_UNLISTED"
+
+
 def test_adopting_names_the_dossier_file_and_the_reservation(folder):
     ok = gates_up_to("SCRIPT_APPROVED")
     for dossier in (None, folder / "missing.md"):

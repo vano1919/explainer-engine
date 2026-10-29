@@ -226,8 +226,8 @@ class EpisodeJob:
         ``state``, each bound to a sha256 where a person approved; the research dossier file is named and hashed (CN-05); a state
         past BUDGET_RESERVED names a reservation the ledger holds. A terminal state is never adopted (nothing could reopen it)."""
         job_dir = Path(job_dir)
-        if state not in LIFECYCLE:
-            raise ContractError(f"cannot adopt into {state!r}: adopt a state of the forward path")
+        if state not in LIFECYCLE[:-1]:
+            raise ContractError(f"cannot adopt into {state!r}: adopt a state of the forward path before the public click (CN-06)")
         if (job_dir / MANIFEST).exists():
             raise ContractError(f"{job_dir / MANIFEST} exists: open it, never adopt over it")
         reached = LIFECYCLE[1:LIFECYCLE.index(state) + 1]
