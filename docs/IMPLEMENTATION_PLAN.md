@@ -1,5 +1,7 @@
 # Implementation plan
 
+> **SUPERSEDED (2026-10-29, P0a): history, not the live plan.** The live plan is `docs/PROGRESS.md` and the blueprint plan (project files `blueprint_2026-10-29/`); the stage table below is a target design.
+
 ## Status override — checked 2026-10-18
 
 The phase status below is the original implementation plan and is stale as a live status tracker. The branch has progressed through the D-43 production script, the Python/FFmpeg assembler, sound and visual checks, episode orchestration, the script source/claim gate, and ChatGPT branch tooling; see the end of `docs/PROGRESS.md` for measured events. Use `docs/INDEX.md` for current canonical specifications.
