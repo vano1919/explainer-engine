@@ -17,6 +17,7 @@ import hashlib
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import time
@@ -27,7 +28,6 @@ from explainer_engine.governance import records, status, usage
 
 FAMILIES = ("haiku", "sonnet", "opus", "fable")
 WRITE_TOOLS = {"Write", "Edit", "MultiEdit", "NotebookEdit"}
-GIT_SPLIT = re.compile(r"&&|\|\||;|\||\n")
 
 
 def _family(model: str | None) -> str | None:
@@ -68,32 +68,81 @@ def _rel(root: Path, path: str) -> str | None:
 
 # ---- PreToolUse Bash ---------------------------------------------------------------------------------------------------------
 
-def _push_refs(tokens: list[str], root: Path) -> list[str]:
-    args = [t for t in tokens[tokens.index("push") + 1:] if not t.startswith("-")]
-    refspecs = args[1:] if len(args) > 1 else []
-    if not refspecs:
-        refspecs = [_git(root, "rev-parse", "--abbrev-ref", "HEAD") or "HEAD"]
-    return [r.lstrip("+").split(":")[-1] if ":" in r else r.lstrip("+") for r in refspecs]
+OPERATORS = {"&&", "||", ";", "|", "&", "(", ")"}
+GIT_VALUE_OPTIONS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--exec-path"}
+FORCE_FLAGS = {"-f", "--force", "--mirror", "--delete", "-d"}
 
 
-def check_git(segment: str, root: Path) -> str | None:
-    tokens = segment.split()
-    if "git" not in tokens:
+def commands(cmd: str) -> list[list[str]]:
+    """The commands of a shell line as argument lists: split on operators and unquoted newlines, quotes kept inside one argument,
+    so text in a commit message never looks like a command. Unparsable input yields no commands (fail open)."""
+    out, quote = [], None
+    for ch in cmd:
+        if quote:
+            quote = None if ch == quote else quote
+        elif ch in "'\"":
+            quote = ch
+        out.append(" ; " if ch == "\n" and not quote else ch)
+    lex = shlex.shlex("".join(out), posix=True, punctuation_chars=True)
+    lex.whitespace_split = True
+    try:
+        tokens = list(lex)
+    except ValueError:
+        return []
+    argvs, cur = [], []
+    for t in tokens:
+        if t in OPERATORS:
+            argvs.append(cur)
+            cur = []
+        else:
+            cur.append(t)
+    return [a for a in argvs + [cur] if a]
+
+
+def git_call(argv: list[str]) -> tuple[str, list[str]] | None:
+    """(subcommand, its own argv) of a ``git`` command, skipping git's global options; None for anything else."""
+    i = next((k for k, a in enumerate(argv) if Path(a).name == "git"), None)
+    if i is None or any("=" not in a for a in argv[:i]):  # only VAR=value may precede git
         return None
-    if "push" in tokens:
-        args = tokens[tokens.index("push") + 1:]
-        forced = any(a in ("-f", "--force", "--mirror", "--delete", "-d") or a.startswith("--force-with-lease") for a in args) \
-            or any(a.startswith("+") or a.startswith(":") for a in args if not a.startswith("-"))
+    j = i + 1
+    while j < len(argv) and argv[j].startswith("-"):
+        j += 2 if argv[j] in GIT_VALUE_OPTIONS else 1
+    return (argv[j], argv[j + 1:]) if j < len(argv) else None
+
+
+def _push_refs(args: list[str], root: Path) -> list[str]:
+    """The remote branch names a push touches (``refs/heads/`` stripped, ``HEAD`` and a missing refspec = the current branch)."""
+    positional = [a for a in args if not a.startswith("-")]
+    specs = positional[1:] or ["HEAD"]
+    refs = []
+    for r in specs:
+        dst = r.lstrip("+").split(":", 1)[1] if ":" in r.lstrip("+") else r.lstrip("+")
+        dst = dst.removeprefix("refs/heads/")
+        refs.append(_git(root, "rev-parse", "--abbrev-ref", "HEAD") if dst in ("HEAD", "") else dst)
+    return refs
+
+
+def check_git(argv: list[str], root: Path) -> str | None:
+    call = git_call(argv)
+    if not call:
+        return None
+    sub, args = call
+    flags = [a for a in args if a.startswith("-")]
+    if sub == "push":
+        positional = [a for a in args if not a.startswith("-")]
+        specs = positional[1:]
+        forced = any(f in FORCE_FLAGS or f.startswith("--force-with-lease") for f in flags) \
+            or any(r.startswith("+") or r.startswith(":") for r in specs)
+        if "--mirror" in flags:
+            return "refused (Lock 2): `git push --mirror` overwrites every remote ref"
         if forced:
-            deleting = any(a in ("--delete", "-d") or a.startswith(":") for a in args)
-            for ref in _push_refs(tokens, root):
+            deleting = "--delete" in flags or "-d" in flags or any(r.startswith(":") for r in specs)
+            for ref in _push_refs(args, root):
                 tip_known = bool(_git(root, "rev-parse", "--verify", "-q", f"origin/{ref}"))
                 if ref and (tip_known or deleting) and not _has_backup(root, f"origin/{ref}"):
                     return (f"refused (Lock 2): force push/delete of {ref} without a backup/* tag on the remote tip it overwrites "
-                            f"(`git tag backup/<name> origin/{ref}` first)")
-    if "branch" in tokens:
-        args = tokens[tokens.index("branch") + 1:]
-        flags = [a for a in args if a.startswith("-")]
+                            f"(`git tag backup/<name> origin/{ref}` first; every force push needs one, a fast-forward too)")
+    if sub == "branch":
         force_delete = "-D" in flags or ("--delete" in flags and "--force" in flags) or ({"-d", "-f"} <= set(flags))
         if force_delete:
             for name in [a for a in args if not a.startswith("-")]:
@@ -103,15 +152,19 @@ def check_git(segment: str, root: Path) -> str | None:
 
 
 def check_protected_shell(cmd: str, cfg: dict, root: Path) -> str | None:
+    text = cmd.replace("\\", "/")  # Windows paths
     for name, minutes in cfg["protected_files"].items():
-        if name not in cmd:
+        if name not in text:
             continue
         esc = re.escape(name)
-        write = (re.search(rf">>?\s*['\"]?\S*{esc}", cmd) or re.search(rf"\btee\b[^|;&]*{esc}", cmd)
-                 or re.search(rf"sed\s+-[a-zA-Z]*i[^|;&]*{esc}", cmd) or re.search(rf"\b(mv|cp|truncate|rm|dd)\b[^|;&]*{esc}", cmd)
-                 or re.search(rf"open\([^)]*{esc}[^)]*['\"][wax+]", cmd) or re.search(r"write_(text|bytes|json_atomic|json)", cmd)
-                 or re.search(rf"\bgit\s+(checkout|restore|apply)\b[^|;&]*{esc}", cmd))
-        if write and not records.valid("protected_config", name, minutes, root=root):
+        one = rf"[^|;&\n]*{esc}"
+        write = (re.search(rf">>?\s*['\"]?\S*{esc}", text) or re.search(rf"\b(tee|sponge|mv|rm|truncate|dd){one}", text)
+                 or re.search(rf"\b(sed|perl)\s+-[a-zA-Z]*i{one}", text) or re.search(rf"\b(Set|Add|Clear|Out)-(Content|File){one}", text)
+                 or re.search(rf"\b(cp|install)\b[^|;&\n]*\s['\"]?\S*{esc}['\"]?\s*(?:[;&|\n]|$)", text)  # name is the destination
+                 or re.search(rf"open\([^)]*{esc}[^)]*['\"][wax+]", text)
+                 or (re.search(r"\bpython3?\b|\bnode\b", text) and re.search(rf"{esc}[^\n]*write_(text|bytes|json)|write_(text|bytes|json)[^\n]*{esc}", text))
+                 or re.search(rf"\bgit\s+(checkout|restore|apply){one}", text))
+        if write and not records.valid("protected_config", name, minutes, root=root, wildcard=False):
             return f"refused (Lock 2): {name} changes only on the creator's recorded word (`python -m explainer_engine.governance ok protected_config {name} <message id> \"<his words>\"`)"
     return None
 
@@ -120,8 +173,8 @@ def pre_bash(event: dict, root=None) -> int:
     root = root_dir(root)
     cmd = (event.get("tool_input") or {}).get("command", "")
     cfg = load(root)
-    for seg in GIT_SPLIT.split(cmd):
-        msg = check_git(seg.strip(), root)
+    for argv in commands(cmd):
+        msg = check_git(argv, root)
         if msg:
             return _deny(msg)
     msg = check_protected_shell(cmd, cfg, root)
@@ -142,7 +195,7 @@ def pre_write(event: dict, root=None) -> int:
         return 0
     if rel.split("/")[0] == "engine":
         return _deny("refused (Lock 2): no top-level engine/ folder (Blueprint Phase 1 item 14); the code lives in explainer_engine/")
-    if rel in cfg["protected_files"] and not records.valid("protected_config", rel, cfg["protected_files"][rel], root=root):
+    if rel in cfg["protected_files"] and not records.valid("protected_config", rel, cfg["protected_files"][rel], root=root, wildcard=False):
         return _deny(f"refused (Lock 2): {rel} changes only on the creator's recorded word (jobs/creator_ok.jsonl, action protected_config)")
     if rel.endswith(".py"):
         level = _effort(event)
@@ -165,6 +218,13 @@ def pre_agent(event: dict, root=None) -> int:
     if fam == "fable" and not (story["enabled"] and kind in story["stages"]):
         return _deny("refused: model fable only on the story stages and only when config fable_story_stages.enabled is set by the creator (D6)")
     crit = cfg["critics"]
+    if kind in crit["names"] and not fam:  # no model in the spawn: the agent file decides, and it must say opus
+        page = root / ".claude" / "agents" / f"{kind}.md"
+        fam = _family(next((l.split(":", 1)[1] for l in page.read_text(encoding="utf-8").splitlines() if l.startswith("model:")), "")) \
+            if page.exists() else None
+        if fam and fam != crit["model"]:
+            return _deny(f"refused: the critic {kind} is configured for {fam}, not {crit['model']} (its agent file)")
+        return 0
     if kind in crit["names"] and fam and fam != crit["model"]:
         return _deny(f"refused: the critic {kind} runs on {crit['model']} (MODEL_ROUTING part 4), not {fam}")
     return 0
@@ -220,9 +280,16 @@ def _blueprint_findings(rel: str, root: Path) -> list[str]:
 
 # ---- model switch ----------------------------------------------------------------------------------------------------------
 
+HUMAN_SOURCES = ("command", "picker")  # /model, the picker, /config, fast mode: the creator at his own keyboard
+
+
 def pre_switch(event: dict, root=None) -> int:
+    """A switch the creator types himself passes; one asked for by an SDK host or Remote Control (the hearth tool) needs his
+    recorded word. ``source`` is in the event (hooks page, PreModelSwitch input)."""
     root = root_dir(root)
     cfg = load(root)
+    if event.get("source") in HUMAN_SOURCES:
+        return 0
     to = event.get("to_model") or ""
     minutes = cfg["model_switch"]["window_minutes"]
     for target in (to, _family(to) or "", "*"):
@@ -232,9 +299,16 @@ def pre_switch(event: dict, root=None) -> int:
 
 
 def post_switch(event: dict, root=None) -> int:
+    """Log every switch, automatic fallbacks included, to the untracked ``jobs/switch_log.jsonl`` (the tracked routing_log holds phases)."""
     root = root_dir(root)
-    status.append_log({"kind": "switch", "date": time.strftime("%Y-%m-%d", time.gmtime()), "from": event.get("from_model"),
-                       "to": event.get("to_model") or "?", "at": time.strftime("%H:%M:%SZ", time.gmtime())}, root)
+    to = event.get("to_model") or "?"
+    word = records.last("model_switch", to, root=root) or records.last("model_switch", _family(to) or to, root=root)
+    row = {"date": time.strftime("%Y-%m-%d", time.gmtime()), "at": time.strftime("%H:%M:%SZ", time.gmtime()), "from": event.get("from_model"),
+           "to": to, "source": event.get("source"), "message_id": (word or {}).get("message_id")}
+    path = root / "jobs" / "switch_log.jsonl"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
     return 0
 
 

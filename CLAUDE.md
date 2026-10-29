@@ -145,7 +145,7 @@ jobs/                     job output (gitignored): jobs/<slug>/job-NNN_<date>/{s
 - Before an import, an adapter, a path or a Hugging Face URL: grep the symbol or open the file; never cite one you did not open
   (Blueprint Lock 5; `tests/unit/test_agent_governance.py` checks every module, path and skill the agents and skills name).
 - Models and effort live only in `config/model_routing.json` (D6/D7, OR-29): agent frontmatter, hooks and tests read it, it changes
-  only on the creator's word. A model switch inside a thread, a `.py` edit at xhigh/max, `config/spend_caps.json`, a force push and
+  only on the creator's word. A model switch asked for by a tool inside a thread (the creator's own `/model` passes), a `.py` edit at xhigh/max, `config/spend_caps.json`, a force push and
   `branch -D` are refused by hooks (`explainer_engine/governance`, D-84) unless his word is recorded
   (`python -m explainer_engine.governance ok ...`). The critics are read-only. The Blueprint phases, decision cards (`owner:
   creator|claude`) and routing log are in `docs/blueprint/` (`python -m explainer_engine.governance check`).

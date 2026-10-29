@@ -17,7 +17,7 @@ def main(argv=None) -> int:
     sub = p.add_subparsers(dest="cmd", required=True)
     o = sub.add_parser("ok", help="record the creator's own word (action: model_switch | effort_override | protected_config)")
     o.add_argument("action", choices=records.ACTIONS)
-    o.add_argument("target", help="the model, file or * the word covers")
+    o.add_argument("target", help="the model or the one file the word covers (* only for model_switch and effort_override)")
     o.add_argument("message_id")
     o.add_argument("quote")
     s = sub.add_parser("start", help="name the active phase (the Stop hook checks it when it is review/done)")
@@ -47,7 +47,9 @@ def main(argv=None) -> int:
     elif args.cmd == "attempt":
         from explainer_engine.core.ledger import Attempts
         try:
-            print(json.dumps(Attempts(root / "jobs" / args.phase / "attempts.json").add(args.cause, escalated=args.escalated)))
+            esc = load(root)["escalation"]
+            att = Attempts(root / "jobs" / args.phase / "attempts.json", esc["attempts_at_level"], esc["escalated_attempts"])
+            print(json.dumps(att.add(args.cause, escalated=args.escalated)))
         except NeedsReview as e:
             print(e, file=sys.stderr)
             return 2

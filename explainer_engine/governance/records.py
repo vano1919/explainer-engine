@@ -22,6 +22,8 @@ def add(action: str, target: str, message_id: str, quote: str, *, by: str = "cre
         raise ValueError(action)
     if not message_id or not quote.strip():
         raise ValueError("a recorded word needs the creator's message id and a quote")
+    if action == "protected_config" and target == "*":
+        raise ValueError("protected_config names one file; a wildcard would unlock the money caps too")
     row = {"action": action, "target": target, "message_id": message_id, "by": by, "quote": quote[:300],
            "at": now if now is not None else _now()}
     path = root_dir(root) / FILE
@@ -31,8 +33,8 @@ def add(action: str, target: str, message_id: str, quote: str, *, by: str = "cre
     return row
 
 
-def valid(action: str, target: str, minutes: float, *, root=None, now: float | None = None) -> bool:
-    """True when a record for this action whose target is ``target`` or ``*`` is younger than ``minutes``."""
+def valid(action: str, target: str, minutes: float, *, root=None, now: float | None = None, wildcard: bool = True) -> bool:
+    """True when a record for this action whose target is ``target`` (or ``*`` when ``wildcard``) is younger than ``minutes``."""
     path = root_dir(root) / FILE
     if not path.exists():
         return False
@@ -42,7 +44,21 @@ def valid(action: str, target: str, minutes: float, *, root=None, now: float | N
             row = json.loads(line)
         except ValueError:
             continue
-        if row.get("action") == action and row.get("target") in (target, "*") and row.get("message_id") \
+        if row.get("action") == action and row.get("target") in ((target, "*") if wildcard else (target,)) and row.get("message_id") \
                 and 0 <= now - float(row.get("at", 0)) <= minutes * 60:
             return True
     return False
+
+
+def last(action: str, target: str, *, root=None) -> dict | None:
+    """The newest record of this action for ``target`` (or ``*``), valid or not."""
+    path = root_dir(root) / FILE
+    rows = []
+    for line in (path.read_text(encoding="utf-8").splitlines() if path.exists() else []):
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue
+        if row.get("action") == action and row.get("target") in (target, "*"):
+            rows.append(row)
+    return rows[-1] if rows else None

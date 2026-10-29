@@ -19,7 +19,9 @@ from explainer_engine.governance import load, root_dir
 DIR = Path("jobs") / "_usage"
 WINDOWS = ("five_hour", "seven_day")
 GIT_ID = ["-c", "user.name=vano1919", "-c", "user.email=122537395+vano1919@users.noreply.github.com"]
-TRAILER = "\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01SxfLfCzSZqqji9GXRdDfby\n"
+TRAILER = "\n\nAutomatic backup at the usage limit (OR-30); Co-Authored-By: Claude <noreply@anthropic.com>\n"
+SECRET_NAMES = (".env", ".claude/settings.local.json", "api_key", "token", "secret", ".pem", "id_rsa", "id_ed25519", "credentials")
+WINDOW_SECONDS = {"five_hour": 5 * 3600, "seven_day": 7 * 86400}
 
 
 def record(data: dict, root=None, now: float | None = None) -> dict:
@@ -93,6 +95,11 @@ def backup(reason: str, root=None, *, window_key: str | None = None, push: bool 
     result["phase"] = phase
     if push and branch not in ("main", "master", "detached"):
         _git(root, "add", "-A")
+        staged = _git(root, "diff", "--cached", "--name-only").stdout.splitlines()
+        secret = [f for f in staged if any(n in f.lower() for n in SECRET_NAMES)]
+        if secret:  # never push what looks like a credential; it stays in the project-files copy only
+            _git(root, "reset", "-q", "HEAD", "--", *secret)
+            result["secret_like_not_committed"] = secret
         if _git(root, "status", "--porcelain").stdout.strip():
             c = _git(root, *GIT_ID, "commit", "-m", f"WIP auto-backup: {reason}{TRAILER}")
             result["commit"] = "ok" if c.returncode == 0 else c.stderr.strip()[:200]
@@ -113,4 +120,5 @@ def backup_if_over(usage: dict | None, root=None, **kw) -> dict | None:
     if not hit:
         return None
     w, pct, resets = hit[0]
-    return backup(f"usage {w} {pct:.0f}%", root, window_key=f"{w}_{resets}", **kw)
+    # resets_at can be absent: fall back to a time bucket as long as the window, so the backup is once per window and not once ever
+    return backup(f"usage {w} {pct:.0f}%", root, window_key=f"{w}_{resets or int(time.time() // WINDOW_SECONDS[w])}", **kw)

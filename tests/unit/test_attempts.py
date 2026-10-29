@@ -28,9 +28,16 @@ def test_the_numbers_come_from_the_config_file_defaults():
     assert (e["attempts_at_level"], e["escalated_attempts"]) == (2, 1)
 
 
-def test_cli_exits_2_when_the_item_must_stop(tmp_path, monkeypatch, capsys):
-    monkeypatch.setattr(cli, "root_dir", lambda *a: tmp_path)
-    assert cli.main(["attempt", "P9"]) == 0 and cli.main(["attempt", "P9"]) == 0
+def test_cli_exits_2_when_the_item_must_stop_and_reads_its_numbers_from_the_config(tmp_path, monkeypatch):
+    import json
+    from _gov import make_repo
+    repo = make_repo(tmp_path / "r")
+    cfg = json.loads((repo / "config/model_routing.json").read_text())
+    cfg["escalation"]["attempts_at_level"] = 1  # D7: the config is the one home of the numbers
+    (repo / "config/model_routing.json").write_text(json.dumps(cfg))
+    monkeypatch.setattr(cli, "root_dir", lambda *a: repo)
+    monkeypatch.setattr("explainer_engine.governance.root_dir", lambda *a: repo)
+    assert cli.main(["attempt", "P9"]) == 0
     assert cli.main(["attempt", "P9"]) == 2
     assert cli.main(["attempt", "P9", "--escalated"]) == 0
     assert cli.main(["attempt", "P9", "--escalated"]) == 2

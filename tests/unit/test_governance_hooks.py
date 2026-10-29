@@ -167,10 +167,71 @@ def test_a_record_needs_a_message_id_and_a_quote(repo):
         records.add("anything", "*", "cmsg_1", "x", root=repo)
 
 
-def test_post_switch_writes_a_log_line(repo):
-    hooks.post_switch({"from_model": "a", "to_model": "claude-sonnet-5-5"}, repo)
-    last = status.log(repo)[-1]
-    assert last["kind"] == "switch" and last["to"] == "claude-sonnet-5-5"
+def test_the_creators_own_model_commands_pass_but_an_sdk_or_remote_switch_needs_his_word(repo):
+    ev = {"from_model": "claude-opus-5-5", "to_model": "claude-sonnet-5-5"}
+    assert hooks.pre_switch(ev | {"source": "command"}, repo) == 0  # /model typed at his keyboard
+    assert hooks.pre_switch(ev | {"source": "picker"}, repo) == 0
+    assert hooks.pre_switch(ev | {"source": "sdk"}, repo) == 2  # the hearth tool, Remote Control, an SDK host
+    assert hooks.pre_switch(ev, repo) == 2  # no source: treated as not his
+    records.add("model_switch", "sonnet", "cmsg_b", "ვანო: კი", root=repo)
+    assert hooks.pre_switch(ev | {"source": "sdk"}, repo) == 0
+
+
+def test_post_switch_logs_every_switch_untracked_with_the_message_id(repo):
+    records.add("model_switch", "sonnet", "cmsg_77", "ვანო: კი", root=repo)
+    hooks.post_switch({"from_model": "a", "to_model": "claude-sonnet-5-5", "source": "sdk"}, repo)
+    hooks.post_switch({"from_model": "b", "to_model": "claude-opus-5-5", "source": "auto"}, repo)  # an automatic fallback
+    rows = [json.loads(l) for l in (repo / "jobs" / "switch_log.jsonl").read_text().splitlines()]
+    assert rows[0]["message_id"] == "cmsg_77" and rows[0]["source"] == "sdk" and rows[1]["message_id"] is None
+    assert all(l.get("kind") != "switch" for l in status.log(repo))  # the tracked routing_log stays clean
+
+
+def test_full_ref_names_do_not_bypass_the_force_push_guard(repo):
+    git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+    git(repo, "update-ref", "refs/remotes/origin/feat", "HEAD")
+    for cmd in ("git push --force origin HEAD:refs/heads/main", "git push -f origin work:refs/heads/feat",
+                "git push origin +refs/heads/feat:refs/heads/feat", "git push --force origin refs/heads/main",
+                "git -C . push -f origin HEAD:main", "git push --force origin refs/heads/feat:feat"):
+        assert bash(repo, cmd) == 2, cmd
+    git(repo, "tag", "backup/main-1", "origin/main")
+    assert bash(repo, "git push --force origin HEAD:refs/heads/main") == 0
+
+
+def test_text_inside_a_commit_message_is_not_a_command(repo):
+    git(repo, "update-ref", "refs/remotes/origin/work", "HEAD")
+    for cmd in ("git commit -m \"note: never git push -f here\"", "git commit -m 'explain branch -D usage'",
+                "echo 'git push --force origin work'", "git log --grep='branch -D'"):
+        assert bash(repo, cmd) == 0, cmd
+    assert bash(repo, "git commit -m 'x'\ngit push --force origin work") == 2  # a real second line still counts
+    assert bash(repo, "echo hi && git push -f origin work") == 2
+    assert bash(repo, "FOO=1 git push -f origin work") == 2
+
+
+def test_protected_shell_guard_reads_pass_and_more_writers_are_seen(repo):
+    for cmd in ("cp config/spend_caps.json /tmp/x", "grep write_text config/spend_caps.json", "cat config/spend_caps.json | jq .",
+                "python3 -c \"import json;print(json.load(open('config/spend_caps.json')))\""):
+        assert bash(repo, cmd) == 0, cmd
+    for cmd in ("perl -pi -e 's/1/2/' config/spend_caps.json", "jq .x=1 config/spend_caps.json | sponge config/spend_caps.json",
+                "Set-Content config\\spend_caps.json '{}'", "cp /tmp/x config\\spend_caps.json", "Out-File -FilePath config/model_routing.json",
+                "python3 -c \"from pathlib import Path; Path('config/spend_caps.json').write_text('{}')\""):
+        assert bash(repo, cmd) == 2, cmd
+
+
+def test_a_wildcard_word_never_unlocks_a_protected_file(repo):
+    with pytest.raises(ValueError):
+        records.add("protected_config", "*", "cmsg_1", "ვანო: კი", root=repo)
+    (repo / "jobs").mkdir(exist_ok=True)
+    (repo / "jobs" / "creator_ok.jsonl").write_text(json.dumps({"action": "protected_config", "target": "*", "message_id": "m", "at": time.time()}) + "\n")
+    assert write(repo, str(repo / "config" / "spend_caps.json")) == 2  # a hand-written wildcard line does not count either
+
+
+def test_a_critic_spawned_without_a_model_is_checked_against_its_agent_file(repo):
+    page = repo / ".claude" / "agents"
+    page.mkdir(parents=True)
+    (page / "script-critic.md").write_text("---\nname: script-critic\nmodel: sonnet\n---\n", encoding="utf-8")
+    assert agent(repo, "script-critic") == 2
+    (page / "script-critic.md").write_text("---\nname: script-critic\nmodel: opus\n---\n", encoding="utf-8")
+    assert agent(repo, "script-critic") == 0
 
 
 # ---- post-edit ---------------------------------------------------------------------------------------------------------------

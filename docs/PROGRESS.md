@@ -2565,3 +2565,10 @@ training as sequences is decided in the process. Changed together:
   OR-28 in `test_agree_every_detail`; `pytest -m "not system and not media"` 1292 passed; `docs_lint` 0 findings.
 - Not enforceable, stated: the halt itself and the S0-S4 classification (words only); run-folder scoping of critics; that the recorded word quotes
   a real message; that `PreModelSwitch` fires for the hearth switch tool and that `Agent` events carry `model` (unverified, the tools also refuse alone).
+
+### P0b review round 1 (cross-review of PR #30, fixed in the same PR)
+
+- Blocking 1: `PreModelSwitch` carries `source`; the creator's own `/model` and picker (`command`, `picker`) now pass, an `sdk` switch (the hearth tool, Remote Control) still needs his recorded word.
+- Blocking 2: the force-push guard strips `refs/heads/` and resolves `HEAD`, so `HEAD:refs/heads/main` no longer slips past.
+- Cheap items taken: commands are tokenised with `shlex` (commit-message text is no longer a command); protected-file guard sees `perl -pi`, `sponge`, `Set-Content`, Windows paths and a copy onto the file, and no longer refuses reads; a wildcard word never unlocks a protected file; the backup keys a window without `resets_at` by time bucket, never commits credential-like files, and writes a generic trailer; switches are logged to untracked `jobs/switch_log.jsonl` with the message id; a critic spawned without a model is checked against its agent file; `Attempts` numbers come from `config.escalation` in the CLI; `.claude/settings.local.json` is gitignored; limits stated in OR-29.
+- Not built: the frontmatter re-check inside `pre-agent` (`test_agent_governance` already pins every agent file).

@@ -110,3 +110,25 @@ def test_the_settings_wire_the_statusline_and_the_stop_failure_hook():
     s = json.loads((ROOT / ".claude/settings.json").read_text())
     assert "governance.hooks statusline" in s["statusLine"]["command"] and s["statusLine"]["refreshInterval"] <= 60
     assert s["hooks"]["StopFailure"][0]["matcher"] == "rate_limit"
+
+
+def test_a_missing_resets_at_still_gives_a_per_window_key_not_once_ever(repo):
+    usage.record({"rate_limits": {"five_hour": {"used_percentage": 97}}}, repo)
+    a = usage.backup_if_over(usage.current(repo), repo, push=False)
+    b = usage.backup_if_over(usage.current(repo), repo, push=False)
+    assert a["reason"] and "already" in b["skipped"]
+    marker = next((repo / "jobs/_usage").glob("backup_five_hour_*.done")).name
+    assert "None" not in marker
+
+
+def test_a_credential_like_file_is_saved_aside_but_never_committed_or_pushed(repo, tmp_path):
+    remote = tmp_path / "remote.git"
+    git(tmp_path, "init", "-q", "--bare", str(remote))
+    git(repo, "remote", "add", "origin", str(remote))
+    (repo / "wip.txt").write_text("unfinished\n", encoding="utf-8")
+    (repo / "api_key.txt").write_text("sk-secret\n", encoding="utf-8")
+    r = usage.backup("limit", repo)
+    assert r["secret_like_not_committed"] == ["api_key.txt"]
+    pushed = git(remote, "ls-tree", "-r", "--name-only", "work")
+    assert "wip.txt" in pushed and "api_key.txt" not in pushed
+    assert "Co-Authored-By: Claude <noreply" in git(repo, "log", "-1", "--format=%B") and "session_" not in git(repo, "log", "-1", "--format=%B")
