@@ -70,6 +70,7 @@ def _rel(root: Path, path: str) -> str | None:
 
 OPERATORS = {"&&", "||", ";", "|", "&", "(", ")"}
 GIT_VALUE_OPTIONS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--exec-path"}
+WRAPPERS = {"sudo", "env", "timeout", "nice", "nohup", "command", "exec", "time", "stdbuf", "ionice", "setsid", "doas"}
 FORCE_FLAGS = {"-f", "--force", "--mirror", "--delete", "-d"}
 
 
@@ -102,7 +103,9 @@ def commands(cmd: str) -> list[list[str]]:
 def git_call(argv: list[str]) -> tuple[str, list[str]] | None:
     """(subcommand, its own argv) of a ``git`` command, skipping git's global options; None for anything else."""
     i = next((k for k, a in enumerate(argv) if Path(a).name == "git"), None)
-    if i is None or any("=" not in a for a in argv[:i]):  # only VAR=value may precede git
+    # only VAR=value, a wrapper command (sudo, env, timeout 60, nice -n 5 ...), its options and numbers may precede git
+    if i is None or any(not (("=" in a) or a.startswith("-") or Path(a).name in WRAPPERS or re.fullmatch(r"\d+(\.\d+)?[smhd]?", a))
+                        for a in argv[:i]):
         return None
     j = i + 1
     while j < len(argv) and argv[j].startswith("-"):

@@ -197,6 +197,17 @@ def test_full_ref_names_do_not_bypass_the_force_push_guard(repo):
     assert bash(repo, "git push --force origin HEAD:refs/heads/main") == 0
 
 
+def test_wrapper_commands_do_not_hide_a_force_push(repo):
+    git(repo, "update-ref", "refs/remotes/origin/main", "HEAD")
+    for cmd in ("timeout 60 git push --force origin main", "env GIT_TRACE=1 git push -f origin main", "sudo git push -f origin main",
+                "nice -n 5 git push -f origin main", "nohup git push --force origin main", "command git push -f origin main",
+                "time git branch -D feat-none", "env -i FOO=1 timeout 30s git push -f origin main"):
+        git(repo, "branch", "-f", "feat-none") if "feat-none" in cmd else None
+        assert bash(repo, cmd) == 2, cmd
+    assert bash(repo, "timeout 60 git push -u origin work") == 0
+    assert bash(repo, "echo timeout git push -f origin main") == 0  # an argument of echo, not a command
+
+
 def test_text_inside_a_commit_message_is_not_a_command(repo):
     git(repo, "update-ref", "refs/remotes/origin/work", "HEAD")
     for cmd in ("git commit -m \"note: never git push -f here\"", "git commit -m 'explain branch -D usage'",
