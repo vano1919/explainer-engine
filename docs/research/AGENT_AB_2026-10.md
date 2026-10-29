@@ -1,7 +1,7 @@
 # Agent form A/B, 2026-10-29 (P0c): one main agent vs one worker per stage
 
 Question: does the writers' room keep its focus better as one main agent in one context ([D-79](DECISIONS_AND_OPEN_QUESTIONS.md),
-[OR-20](ORCHESTRATION.md)) or as a separate worker per stage with a gate after every return (the proposed D-81)? Free test, no paid
+[OR-20](ORCHESTRATION.md)) or as a separate worker per stage with a gate after every return (the proposed per-stage worker form)? Free test, no paid
 call. Data and scripts: `docs/research/agent_ab_2026-10/` (inputs, every stage snapshot of both arms, `measure.py`, metrics JSON).
 
 ## Setup (identical for both arms)
@@ -38,9 +38,9 @@ Overall: Y (arm A) is the better product, narrowly (3.9 vs 3.7 of 5). X (arm B) 
 5. Claim ids: arm A silently changed the claim map format so the repo parser could read it (`C-NN`); arm B kept the map and PV-37 then found zero claims. The parser and the map format should agree whatever the agent form.
 
 ## Limits
-One sample per arm, one topic, one model (Sonnet) for both; the critic's own noise/systematic split is a judgement. Per-stage model choice (the other half of the D-81 case) was not tested because the models were held equal on purpose. Scale was 8 segments, not the 16 of template D. Costs are token units, not money. No picture, voice or render was produced, so everything about look and sound is judged on the written plan only. The shared input stage 0 was given, not tested.
+One sample per arm, one topic, one model (Sonnet) for both; the critic's own noise/systematic split is a judgement. Per-stage model choice (the other half of the worker case) was not tested because the models were held equal on purpose. Scale was 8 segments, not the 16 of template D. Costs are token units, not money. No picture, voice or render was produced, so everything about look and sound is judged on the written plan only. The shared input stage 0 was given, not tested.
 
 ## Verdict for A5
-The evidence does not support replacing the one-main-agent form with per-stage workers: at equal cost the one-context script was narrowly better as a product, equal on every free structural gate that failed anywhere, and the worker form cost a routed repair round and exposed three ownership gaps. It also does not refute D-81: the argument that matters for D-81 (a 135k-token context across 16 segments, and a cheaper model for mechanical stages) was out of scale. Recommendation: **keep D-79 as the default; do not make D-81 the A5 answer on this evidence.** If the creator wants the long-context argument tested, the next free test is the same A/B at 16 segments on template D, with arm B's mechanical stages (beats, performer) on a cheaper model.
+The evidence does not support replacing the one-main-agent form with per-stage workers: at equal cost the one-context script was narrowly better as a product, equal on every free structural gate that failed anywhere, and the worker form cost a routed repair round and exposed three ownership gaps. It also does not refute the worker form: the argument that matters for workers (a 135k-token context across 16 segments, and a cheaper model for mechanical stages) was out of scale. Recommendation: **keep D-79 as the default; do not make the worker form the A5 answer on this evidence.** If the creator wants the long-context argument tested, the next free test is the same A/B at 16 segments on template D, with arm B's mechanical stages (beats, performer) on a cheaper model.
 
 Independent of the A5 answer, three fixes are worth a small separate phase (each with a test): `scene` in the architect's segment fields of `stage_guard`; a documented partial-gate command per stage (the lints that run before `voice`/`shots` exist); one claim-id format accepted by `scripting/claims.py` and the claim-map writers.

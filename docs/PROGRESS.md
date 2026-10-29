@@ -2565,6 +2565,6 @@ training as sequences is decided in the process. Changed together:
 - Findings: the workers' hand-off fields (hero face sheets, a dialogue scene header, delivery tags) surfaced only at the editor
   stage; `stage_guard` `SEG_STORY` lacks `scene` (architect corrections are rejected; not fixed here, no code in this phase);
   `production validate` cannot reach the beat checks before `voice`/`shots` exist; claim-id format `C-NN` vs the map's `C##`.
-- Verdict recorded in `docs/research/AGENT_AB_2026-10.md`: the evidence does not support D-81 as the A5 answer; D-79 stays the
+- Verdict recorded in `docs/research/AGENT_AB_2026-10.md`: the evidence does not support the per-stage worker form as the A5 answer; D-79 stays the
   default; the long-context argument (16 segments, cheaper model for mechanical stages) is untested. Data, snapshots and
   `measure.py` in `docs/research/agent_ab_2026-10/`. No paid call. Decision log unchanged (the decision is the creator's A5).
