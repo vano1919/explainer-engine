@@ -156,8 +156,7 @@ def test_missing_routing_file_is_a_clear_error(monkeypatch, tmp_path):
 
 def test_real_routing_file_when_present_has_the_classes_the_jobs_use(monkeypatch):
     p = ROOT / "config" / "model_routing.json"
-    if not p.exists():
-        pytest.skip("config/model_routing.json arrives with P0b (PR #30)")
+    assert p.exists(), "config/model_routing.json is the one home of model and effort (P0b)"
     monkeypatch.setenv("EXPLAINER_MODEL_ROUTING", str(p))
     for cls in ("critical-review", "qa-judgement", "whole-project-plan"):
         ca.route(cls)
