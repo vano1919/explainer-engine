@@ -1,0 +1,1017 @@
+{
+ "schema": "production_script/3",
+ "voice": {
+  "provider": "elevenlabs",
+  "model": "eleven_v4",
+  "voice_id": null,
+  "name": null,
+  "style": "placeholder until the caster stage runs",
+  "pace_wpm": [
+   160,
+   190
+  ]
+ },
+ "world": {
+  "topic": "placeholder until the edit stage",
+  "host": {
+   "era": "medieval_europe",
+   "place": "placeholder",
+   "when": "1223"
+  },
+  "visitors": [],
+  "light_owner": "host",
+  "day_arc": [
+   {
+    "beat": 1,
+    "light": "overcast"
+   }
+  ]
+ },
+ "cast": {
+  "napoleon": {
+   "names": [
+    "Napoleon",
+    "Napoleon Bonaparte"
+   ],
+   "card": "Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare",
+   "props": [
+    "field map",
+    "spyglass"
+   ],
+   "speech": {
+    "basis": "public",
+    "style": "Short orders and short questions; names things by number and use; never explains twice; a dry cut when interrupted.",
+    "words": [
+     "Count",
+     "Where",
+     "Decisive",
+     "Now"
+    ],
+    "avoid": [
+     "long speeches",
+     "apologies",
+     "slang"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Napoleon",
+     "manner as generally described; our own lines, no quotes"
+    ]
+   },
+   "face_sheet": {
+    "id": "napoleon_faces_v1",
+    "ref": "p_napoleon",
+    "set": [
+     "neutral",
+     "joyful",
+     "sad",
+     "scared",
+     "angry",
+     "surprised",
+     "determined",
+     "doubtful",
+     "worried",
+     "deadpan",
+     "curious",
+     "smug"
+    ]
+   }
+  },
+  "genghis": {
+   "names": [
+    "Genghis Khan",
+    "the khan",
+    "Temujin"
+   ],
+   "card": "Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes",
+   "props": [
+    "felt carpet",
+    "cup"
+   ],
+   "speech": {
+    "basis": "public",
+    "style": "Slow and quiet, few words, a question where a boast would be, long pauses; speaks in horses and weather, never in titles.",
+    "words": [
+     "Good",
+     "Horse",
+     "Tell me",
+     "Again"
+    ],
+    "avoid": [
+     "threats",
+     "titles",
+     "hurry"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Genghis_Khan",
+     "manner as generally described; our own lines, no quotes"
+    ]
+   },
+   "face_sheet": {
+    "id": "genghis_faces_v1",
+    "ref": "p_genghis",
+    "set": [
+     "neutral",
+     "joyful",
+     "sad",
+     "scared",
+     "angry",
+     "surprised",
+     "determined",
+     "doubtful",
+     "worried",
+     "deadpan",
+     "curious",
+     "smug"
+    ]
+   }
+  },
+  "aslan": {
+   "names": [
+    "Aslan"
+   ],
+   "card": "Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak",
+   "props": [
+    "sabre",
+    "water flask"
+   ],
+   "speech": {
+    "basis": "personality",
+    "style": "Formal French-learned courtesy that thins under fear; answers exactly what was asked, ends orders with 'sire'; slips into a song-word of his grandmother when moved.",
+    "words": [
+     "Sire",
+     "Exactly",
+     "Forgive me",
+     "Grandmother"
+    ],
+    "avoid": [
+     "boasting",
+     "swearing"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Mamelukes_of_the_Imperial_Guard",
+     "https://en.wikipedia.org/wiki/Kipchak_languages"
+    ]
+   },
+   "face_sheet": {
+    "id": "aslan_faces_v1",
+    "ref": "p_aslan",
+    "set": [
+     "neutral",
+     "joyful",
+     "sad",
+     "scared",
+     "angry",
+     "surprised",
+     "determined",
+     "doubtful",
+     "worried",
+     "deadpan",
+     "curious",
+     "smug"
+    ]
+   }
+  },
+  "murat": {
+   "names": [
+    "Murat",
+    "Joachim Murat"
+   ],
+   "card": "Murat as our caricature: tall, curled black hair, an enormous plumed hat, gold-braided red jacket, a cavalry sabre, a flushed grin",
+   "props": [
+    "plumed hat",
+    "riding crop"
+   ],
+   "face_sheet": {
+    "id": "murat_faces_v1",
+    "ref": "p_murat",
+    "set": [
+     "neutral",
+     "joyful",
+     "sad",
+     "scared",
+     "angry",
+     "surprised",
+     "determined",
+     "doubtful",
+     "worried",
+     "deadpan",
+     "curious",
+     "smug"
+    ]
+   }
+  },
+  "jebe": {
+   "names": [
+    "Jebe"
+   ],
+   "card": "Jebe as our caricature: lean middle-aged archer, scarred cheek, plain leather coat, a horn bow across his back, an easy hard gaze",
+   "props": [
+    "horn bow"
+   ],
+   "face_sheet": {
+    "id": "jebe_faces_v1",
+    "ref": "p_jebe",
+    "set": [
+     "neutral",
+     "joyful",
+     "sad",
+     "scared",
+     "angry",
+     "surprised",
+     "determined",
+     "doubtful"
+    ]
+   }
+  }
+ },
+ "segments": [
+  {
+   "id": "S01",
+   "beat": "the fog on the Moscow road",
+   "light_beat": 1,
+   "purpose": "Hook: the drums stop in a fog, the grass is wrong, the year is 1223; the army must get out alive (L01).",
+   "drama": {
+    "function": "cold_open",
+    "turn": "start",
+    "shift": "marching home -> lost in time",
+    "claim_share": "reasoned",
+    "need": "wonder",
+    "opens": [
+     "L01"
+    ]
+   },
+   "lines": [
+    {
+     "text": "The drums stop first."
+    },
+    {
+     "text": "It's the nineteenth of October, 1812, and the army is leaving Moscow, a city that burned around it.",
+     "claims": [
+      "C-12"
+     ]
+    },
+    {
+     "text": "Then a fog drops on the road. Wagons vanish. Where the road was, there's cold grass up to the knee.",
+     "claims": [
+      "C-91"
+     ]
+    },
+    {
+     "text": "When the fog thins, you're standing in the year 1223. That's five hundred and eighty-nine years back.",
+     "claims": [
+      "C-21",
+      "C-91"
+     ]
+    },
+    {
+     "text": "Napoleon has an army and one plan: find whoever lives here, and break them in a single day.",
+     "claims": [
+      "C-04"
+     ]
+    },
+    {
+     "text": "But the people who live here have a plan of their own. Can he walk this army out alive?"
+    }
+   ],
+   "shots": []
+  },
+  {
+   "id": "S02",
+   "beat": "the riders on every ridge",
+   "light_beat": 2,
+   "purpose": "Napoleon demands the enemy army; Aslan, a Mameluke scout, knows only that the riders keep their distance and shout in his grandmother's tongue. Plants wagons, the nightly gun count and the language.",
+   "drama": {
+    "function": "inciting",
+    "turn": "therefore",
+    "shift": "in command -> unsure where he is",
+    "claim_share": "reasoned",
+    "stakes": "an emperor who cannot find his battle marches blind with a hundred thousand men behind him",
+    "need": "curiosity",
+    "opens": [
+     "L02"
+    ]
+   },
+   "lines": [
+    {
+     "text": "By noon the fog is gone, and riders sit on every ridge, still as fence posts. Napoleon wants a battle. Aslan, a scout of the Mameluke company, has just ridden back from them. You can read it on his face.",
+     "claims": [
+      "C-04",
+      "C-14",
+      "C-91"
+     ]
+    },
+    {
+     "text": "Where is their army?",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "press"
+    },
+    {
+     "text": "These are all I found, sire. Riders. When I rode closer, they rode back.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "deflect"
+    },
+    {
+     "text": "Then we ride faster. The wagons keep up.",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "decide"
+    },
+    {
+     "text": "The wagons are sinking to the axle, sire. This grass is not a road.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": [
+      "C-16"
+     ]
+    },
+    {
+     "text": "Then they follow. Count the guns tonight.",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "deflect"
+    },
+    {
+     "text": "Sire. I understand their shouts. It's my grandmother's tongue. Cuman. A tongue that died.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": [
+      "C-15"
+     ]
+    },
+    {
+     "text": "Dead?",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "question"
+    },
+    {
+     "text": "Murat rides at first light. Whatever they are, I will find their army.",
+     "speaker": "napoleon",
+     "to": "room",
+     "intent": "decide"
+    },
+    {
+     "text": "He doesn't ask what year it is, though you would. He sends for Murat. But the riders on the ridge are already waiting."
+    }
+   ],
+   "shots": [],
+   "scene": {
+    "place": "the Moscow road at the edge of the fog, grass to the knee, the wagon train halted behind",
+    "time": "midday, the fog has just lifted",
+    "present": [
+     "napoleon",
+     "aslan"
+    ],
+    "why_now": "the horizon is full of riders and there is no army to fix",
+    "pov": "napoleon",
+    "want": "locate the enemy army and fix a battle by tomorrow",
+    "obstacle_want": "Aslan wants the emperor to see that the riders are not an army to fix but a wall that leads",
+    "value": "control",
+    "open_charge": "+",
+    "close_charge": "-",
+    "turn": "Aslan names the tongue the riders shout in and the emperor has no regiment, no map and no village to put against it; mode: asymmetric",
+    "exit": "fail_new_goal",
+    "surface_topic": "where the enemy's army is",
+    "real_subject": "the emperor is blind here",
+    "mode": "asymmetric"
+   }
+  },
+  {
+   "id": "S03",
+   "beat": "Murat's charge",
+   "light_beat": 3,
+   "purpose": "Murat charges; the riders retreat, shoot from the saddle and change to fresh horses; his horses die under him; the wagons fall behind.",
+   "drama": {
+    "function": "escalation",
+    "turn": "but",
+    "shift": "pursuing -> pursued",
+    "claim_share": "reasoned",
+    "stakes": "the cavalry is the army's eyes and it burns out on the first day",
+    "need": "fear",
+    "opens": [
+     "L03"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Murat takes the cavalry out at first light, plumes first. The riders on the ridge turn and go.",
+     "claims": [
+      "C-13",
+      "C-93"
+     ]
+    },
+    {
+     "text": "He chases. They hold the same distance, and one twists in the saddle to shoot. Their arrows carry four hundred metres.",
+     "claims": [
+      "C-09",
+      "C-93"
+     ]
+    },
+    {
+     "text": "Every rider has three or four horses and swaps without slowing. Murat has one, and rides it until it falls. You'd think he'd look back. He doesn't.",
+     "claims": [
+      "C-08",
+      "C-13",
+      "C-93"
+     ]
+    },
+    {
+     "text": "By dusk the best cavalry in the army is walking home. Nobody was caught. Nobody was fought.",
+     "claims": [
+      "C-13",
+      "C-93"
+     ]
+    },
+    {
+     "text": "Napoleon wanted a battle he could win in a day. The riders took the day. Now the heavy wagons, miles behind, are sinking into the grass.",
+     "claims": [
+      "C-04",
+      "C-16",
+      "C-93"
+     ]
+    }
+   ],
+   "shots": []
+  },
+  {
+   "id": "S04",
+   "beat": "the khan's tent",
+   "light_beat": 4,
+   "purpose": "Aslan is taken; Genghis questions him through a Cuman scout, learns the guns' reach and tests his loyalty with the story of Jebe. Genghis is the answer to L02. Plants Jebe.",
+   "drama": {
+    "function": "escalation",
+    "turn": "but",
+    "shift": "prisoner -> useful",
+    "claim_share": "invented",
+    "stakes": "Aslan's life, and the army's only voice to the steppe",
+    "need": "belonging",
+    "opens": [
+     "L04"
+    ],
+    "closes": [
+     "L02"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Aslan was the last man off that field. Two riders took him up the ridge to a felt tent. A man by the fire said nothing for a long time, and you can feel every minute of it.",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "That man is Genghis Khan, and he has two tumens on this grass, ten thousand men each. He speaks Mongol, a Cuman scout turns it into Kipchak, and Aslan understands.",
+     "claims": [
+      "C-20",
+      "C-92",
+      "C-15"
+     ]
+    },
+    {
+     "text": "How far do the long iron tubes throw?",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "press"
+    },
+    {
+     "text": "Far enough to trouble you, great khan.",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "deflect"
+    },
+    {
+     "text": "Your emperor hides behind wagons. His tubes throw as well as his wagons move.",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "press"
+    },
+    {
+     "text": "Nine hundred metres. Further than any arrow you own.",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "reveal",
+     "claims": [
+      "C-05"
+     ]
+    },
+    {
+     "text": "Good. That is all I asked.",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "concede"
+    },
+    {
+     "text": "You tricked me.",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "question"
+    },
+    {
+     "text": "Jebe shot my horse, once. I asked who did it. He said, I did.",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "deflect",
+     "claims": [
+      "C-11"
+     ]
+    },
+    {
+     "text": "And you killed him?",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "question"
+    },
+    {
+     "text": "I kept him. Honest men are rare. Be one, Aslan.",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "reveal",
+     "claims": [
+      "C-11"
+     ]
+    },
+    {
+     "text": "I'm the emperor's rider, great khan. Not a gift.",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "concede"
+    },
+    {
+     "text": "At dawn they send Aslan back, unharmed. The khan knows how far the guns shoot. Now he wants to watch them do it.",
+     "claims": [
+      "C-92",
+      "C-05"
+     ]
+    }
+   ],
+   "shots": [],
+   "scene": {
+    "place": "a felt tent on the ridge, the smoke hole open, a low fire",
+    "time": "dusk of the same day",
+    "present": [
+     "genghis",
+     "aslan",
+     "jebe"
+    ],
+    "why_now": "a prisoner who speaks the riders' own family of tongues was caught at the edge of the charge",
+    "pov": "genghis",
+    "want": "learn what the strangers' great guns can do and who commands them",
+    "obstacle_want": "Aslan wants to say nothing that helps and walk out alive",
+    "value": "advantage",
+    "open_charge": "-",
+    "close_charge": "+",
+    "turn": "Aslan defends his emperor by boasting of the guns' reach and hands the khan what he wanted; mode: indirect",
+    "exit": "succeed_complication",
+    "surface_topic": "how far the great guns shoot",
+    "real_subject": "whether this man can be trusted",
+    "mode": "indirect"
+   }
+  },
+  {
+   "id": "S05",
+   "beat": "the valley and the guns",
+   "light_beat": 5,
+   "purpose": "Napoleon, told where to fight, plants guns on the rim; the riders come into range, the guns and the squares hold; the army cheers. False victory.",
+   "drama": {
+    "function": "midpoint",
+    "turn": "therefore",
+    "shift": "fear -> false triumph",
+    "claim_share": "reasoned",
+    "stakes": "the guns' powder and the squares' nerve",
+    "need": "competence",
+    "closes": [
+     "L03"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Napoleon trained as an artillery officer, and you can tell. He finds his valley by noon. Guns on the rim, squares below.",
+     "claims": [
+      "C-04",
+      "C-05",
+      "C-93"
+     ]
+    },
+    {
+     "text": "The riders come at a gallop. At four hundred metres their arrows start dropping among the squares, and you can hear every one.",
+     "claims": [
+      "C-09",
+      "C-93"
+     ]
+    },
+    {
+     "text": "The guns answer at nine hundred. Round shot tears lanes through the horse lines.",
+     "claims": [
+      "C-05",
+      "C-93"
+     ]
+    },
+    {
+     "text": "The few that reach the squares meet silence, then one volley. A steady square is rarely broken by cavalry alone.",
+     "claims": [
+      "C-07",
+      "C-93"
+     ]
+    },
+    {
+     "text": "The riders wheel away. The army cheers. But nobody asks why they gave up so easily.",
+     "claims": [
+      "C-04",
+      "C-93"
+     ]
+    }
+   ],
+   "shots": []
+  },
+  {
+   "id": "S06",
+   "beat": "the wagons burn",
+   "light_beat": 6,
+   "purpose": "While the army cheers, riders burn the wagon train on the road behind. Napoleon wants one more great battle; Aslan brings the khan's invitation. Pays off the wagons.",
+   "drama": {
+    "function": "crisis",
+    "turn": "but",
+    "shift": "winning -> starving",
+    "claim_share": "reasoned",
+    "stakes": "the food, the powder and the road home",
+    "need": "stakes"
+   },
+   "lines": [
+    {
+     "text": "The cheering stops at midnight, when a rider staggers in from the rear without his horse. The wagon train is burning. The army's food rested on those wagons, and you can't forage this grass.",
+     "claims": [
+      "C-16",
+      "C-93"
+     ]
+    },
+    {
+     "text": "Napoleon rides back to the ashes with Murat and Aslan. At the edge of the firelight, a Cuman rider waits with one hand raised. You know that gesture in any tongue.",
+     "claims": [
+      "C-15",
+      "C-93"
+     ]
+    },
+    {
+     "text": "We march at dawn. They have an army somewhere. Now I will have it.",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "decide"
+    },
+    {
+     "text": "Sire, the Cuman rider asks you to a parley.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "press"
+    },
+    {
+     "text": "A man who burns my wagons at night does not talk.",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "deflect"
+    },
+    {
+     "text": "He let me walk home from his tent, sire. Nobody followed me.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "press"
+    },
+    {
+     "text": "Murat. How many rounds are left for each gun?",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "question"
+    },
+    {
+     "text": "What does he want, Aslan?",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "question"
+    },
+    {
+     "text": "He didn't say, sire. He named the hour. Sunrise.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "reveal"
+    },
+    {
+     "text": "Right. Then we go and hear it.",
+     "speaker": "napoleon",
+     "to": "room",
+     "intent": "decide"
+    },
+    {
+     "text": "He has never asked an enemy what he wants. At sunrise he rides out to ask. But you can guess the answer will cost him.",
+     "claims": []
+    }
+   ],
+   "shots": [],
+   "scene": {
+    "place": "the road behind the valley, the burnt wagons still smoking, the army's rear",
+    "time": "night after the battle",
+    "present": [
+     "napoleon",
+     "aslan",
+     "murat"
+    ],
+    "why_now": "the supply train is ash and the khan's invitation has just arrived",
+    "pov": "napoleon",
+    "want": "march on and force the khan into one decisive battle",
+    "obstacle_want": "Aslan wants the emperor to answer the invitation before the army starves",
+    "value": "pride",
+    "open_charge": "+",
+    "close_charge": "-",
+    "turn": "the emperor asks what the khan wants for the road, the first question he has ever put to an enemy; mode: minimal",
+    "exit": "fail_new_goal",
+    "surface_topic": "go forward or go and talk",
+    "real_subject": "an emperor who has never asked terms",
+    "mode": "minimal"
+   }
+  },
+  {
+   "id": "S07",
+   "beat": "the parley",
+   "light_beat": 7,
+   "purpose": "Napoleon and Genghis meet, Aslan between them; the khan's price is two guns and the men who fire them; Napoleon gives the guns only. Pays off the language and Jebe.",
+   "drama": {
+    "function": "climax",
+    "turn": "therefore",
+    "shift": "cornered -> free at a price",
+    "claim_share": "invented",
+    "stakes": "the army's road home",
+    "need": "surprise",
+    "closes": [
+     "L04"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Open ground, a felt carpet, two stools. Genghis Khan has brought his two tumens. Napoleon brings Aslan. Every word crosses three tongues, and you'd need Aslan's grandmother's to follow it.",
+     "claims": [
+      "C-20",
+      "C-92",
+      "C-15",
+      "C-94"
+     ]
+    },
+    {
+     "text": "Name your price. My army is leaving.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "press"
+    },
+    {
+     "text": "You came without your wagons. Does the road feel long?",
+     "speaker": "genghis",
+     "to": "napoleon",
+     "intent": "deflect"
+    },
+    {
+     "text": "Longer than your patience. Name it.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "press"
+    },
+    {
+     "text": "Two guns stay on this grass. And the men who fire them.",
+     "speaker": "genghis",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": [
+      "C-94"
+     ]
+    },
+    {
+     "text": "Sire, a gun takes fifteen men. He means thirty.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "aside",
+     "claims": [
+      "C-05"
+     ]
+    },
+    {
+     "text": "The guns, yes. French soldiers are not for sale.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "decide",
+     "claims": [
+      "C-94"
+     ]
+    },
+    {
+     "text": "A man shot my horse once. He said so. He leads my right hand now.",
+     "speaker": "genghis",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": [
+      "C-11"
+     ]
+    },
+    {
+     "text": "I have no archers to promote. Only soldiers.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "deflect"
+    },
+    {
+     "text": "Great khan, the guns stay. The men go home. Say yes.",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "decide",
+     "claims": [
+      "C-94"
+     ]
+    },
+    {
+     "text": "Good. A man who speaks when it counts.",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "concede"
+    },
+    {
+     "text": "What did you tell him?",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "question"
+    },
+    {
+     "text": "The price, sire. Exactly.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "deflect"
+    },
+    {
+     "text": "The khan nods once. Two guns are unhitched and left on the grass. Napoleon doesn't turn around. Now they only have to find the fog again.",
+     "claims": [
+      "C-94",
+      "C-91"
+     ]
+    }
+   ],
+   "shots": [],
+   "scene": {
+    "place": "open ground between the two armies, a felt carpet, two stools, the wind",
+    "time": "the next morning",
+    "present": [
+     "napoleon",
+     "genghis",
+     "aslan"
+    ],
+    "why_now": "the army can neither fight nor feed itself and the khan has named the hour",
+    "pov": "napoleon",
+    "want": "pass his army home through the khan's riders and keep the guns",
+    "obstacle_want": "Genghis wants the guns and the men who fire them in exchange for the road",
+    "value": "independence",
+    "open_charge": "-",
+    "close_charge": "+",
+    "turn": "the khan tells him how he keeps the archer who shot his horse, and offers the same to the gunners; Napoleon refuses the men but gives the guns; mode: balanced",
+    "exit": "succeed_complication",
+    "surface_topic": "the price of the road",
+    "real_subject": "which of the two may refuse the other",
+    "mode": "balanced"
+   }
+  },
+  {
+   "id": "S08",
+   "beat": "the fog again",
+   "light_beat": 8,
+   "purpose": "Dawn: the fog comes back, the army walks into it, two guns stay on the grass; the road is Russian again and the count is short two (bookend with S01).",
+   "drama": {
+    "function": "resolution",
+    "turn": "therefore",
+    "shift": "free at a price -> home",
+    "claim_share": "reasoned",
+    "stakes": "the fog may close without them and take the whole army with the price unpaid",
+    "need": "wonder",
+    "closes": [
+     "L01"
+    ]
+   },
+   "lines": [
+    {
+     "text": "At dawn the fog comes back. The army walks into it without a word.",
+     "claims": [
+      "C-91"
+     ]
+    },
+    {
+     "text": "Behind it, two guns stand on the grass where the carpet was. A man in a felt hat walks round one, slowly. He lays a hand on the barrel, the way you'd test a good horse.",
+     "claims": [
+      "C-94"
+     ]
+    },
+    {
+     "text": "On the far side the road is Russian again. A clerk counts the guns, the way he does every night. Two are missing.",
+     "claims": [
+      "C-91",
+      "C-94"
+     ]
+    },
+    {
+     "text": "Napoleon never got his great battle. You'd call it a retreat, but he got his army out alive, and it cost him two guns.",
+     "claims": [
+      "C-04",
+      "C-94"
+     ]
+    },
+    {
+     "text": "Then the drums start again."
+    }
+   ],
+   "shots": []
+  }
+ ],
+ "episode": {
+  "id": "napoleon_into_the_khan_a",
+  "title": "What If Napoleon's Army Walked Into Genghis Khan?",
+  "fps": 30,
+  "notes": "A/B test arm A, writers' room stages 1-6 by one main agent, 8 segments, template A."
+ },
+ "drama": {
+  "premise": "Napoleon's retreating army of 1812 falls through a fog into the steppe of 1223, where Genghis Khan himself waits with two tumens.",
+  "question": "Can Napoleon bring his army out of the fog alive?",
+  "promise": "the Grande Armee meets the khan's riders, loses its wagons, and pays two guns for the road home",
+  "template": "A",
+  "needs": [
+   "wonder",
+   "curiosity",
+   "fear",
+   "belonging",
+   "competence",
+   "stakes",
+   "surprise"
+  ],
+  "arcs": {
+   "napoleon": {
+    "want": "find the enemy's army and destroy it in one battle",
+    "need": "to ask for terms and listen to the man who understands the enemy",
+    "flaw": "cannot picture an enemy who refuses to stand and fight",
+    "change": "asks the khan's price and pays it in guns"
+   },
+   "genghis": {
+    "want": "learn how these strangers fight and take the tools that work",
+    "flaw": "keeps only what has proved its loyalty; tests everyone, even a guest",
+    "need": "a man who tells him the truth",
+    "change": "takes the guns himself and leaves the men their road"
+   },
+   "aslan": {
+    "want": "bring his company and himself home alive",
+    "flaw": "hides fear behind formal courtesy and says only what he is asked",
+    "need": "to speak first",
+    "change": "speaks first at the parley and shapes the price"
+   }
+  },
+  "loops": [
+   {
+    "id": "L01",
+    "question": "Will the army get out of the fog alive?"
+   },
+   {
+    "id": "L02",
+    "question": "Who commands the riders that never stand and fight?"
+   },
+   {
+    "id": "L03",
+    "question": "Will the wagons reach the valley?"
+   },
+   {
+    "id": "L04",
+    "question": "What does the khan want from an emperor?"
+   }
+  ],
+  "setups": [
+   {
+    "id": "P01",
+    "what": "Aslan's grandmother's tongue is the riders' tongue (Kipchak)",
+    "plant": "S02",
+    "payoff": "S07"
+   },
+   {
+    "id": "P02",
+    "what": "the heavy wagons that cannot leave the road",
+    "plant": "S02",
+    "payoff": "S06"
+   },
+   {
+    "id": "P03",
+    "what": "Napoleon counts his guns every night",
+    "plant": "S02",
+    "payoff": "S08"
+   },
+   {
+    "id": "P04",
+    "what": "the khan keeps the archer who shot his horse and admitted it",
+    "plant": "S04",
+    "payoff": "S07"
+   }
+  ],
+  "ending": {
+   "kind": "callback",
+   "note": "Template A (three-act / 7-point): hook S01, inciting S02, pinch S03/S04, midpoint S05 (false victory), low point S06, climax S07, button S08 mirrors the opening fog."
+  }
+ }
+}
