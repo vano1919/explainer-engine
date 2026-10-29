@@ -1,0 +1,305 @@
+{
+ "s01_architect": {
+  "shape": {
+   "segments": 8,
+   "lines": 0,
+   "words": 0,
+   "claims_cited": 0,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 16,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 16
+   }
+  }
+ },
+ "s02_writer": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 1041,
+   "claims_cited": 17,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 8,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 8
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s02b_beats": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 1041,
+   "claims_cited": 17,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 8,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 8
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s03_performer": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 1041,
+   "claims_cited": 17,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 8,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 8
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s04_editor": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 1041,
+   "claims_cited": 17,
+   "shots": 66,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 31,
+   "review": 54,
+   "by_rule": {
+    "FAIL PV-05 S01": 2,
+    "FAIL PV-05 S02": 2,
+    "FAIL PV-05 S03": 2,
+    "FAIL PV-05 S04": 2,
+    "FAIL PV-05 S05": 2,
+    "FAIL PV-05 S06": 2,
+    "FAIL PV-05 S07": 2,
+    "FAIL PV-05 S08": 3,
+    "FAIL PV-05 music": 4,
+    "REVIEW PV-10 voice": 1,
+    "FAIL PV-32 S02": 2,
+    "FAIL PV-32 S04": 1,
+    "REVIEW PV-24 HERO-2": 26,
+    "REVIEW PV-24 RHYTHM-2": 4,
+    "REVIEW PV-24 RHYTHM-3": 1,
+    "REVIEW PV-35 BP-21": 5,
+    "REVIEW PV-35 BP-27": 1,
+    "REVIEW PV-35 MO-01": 1,
+    "REVIEW PV-35 BP-94": 3,
+    "REVIEW PV-35 MO-07": 3,
+    "REVIEW PV-36 BP-62": 5,
+    "REVIEW PV-44 VB-01": 2,
+    "REVIEW PV-38 episode.distinct": 1,
+    "FAIL PV-45 episode.scenario": 1,
+    "FAIL PV-47 aslan": 1,
+    "FAIL PV-47 genghis": 1,
+    "FAIL PV-47 jebe": 1,
+    "FAIL PV-47 murat": 1,
+    "FAIL PV-47 napoleon": 1,
+    "FAIL PV-47 look.environment": 1
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s05_caster": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 1041,
+   "claims_cited": 17,
+   "shots": 66,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 28,
+   "review": 59,
+   "by_rule": {
+    "FAIL PV-05 S01": 2,
+    "FAIL PV-05 S02": 2,
+    "FAIL PV-05 S03": 2,
+    "FAIL PV-05 S04": 2,
+    "FAIL PV-05 S05": 2,
+    "FAIL PV-05 S06": 2,
+    "FAIL PV-05 S07": 2,
+    "FAIL PV-05 S08": 3,
+    "FAIL PV-05 music": 4,
+    "REVIEW PV-10 voice": 1,
+    "REVIEW PV-32 napoleon": 1,
+    "REVIEW PV-32 aslan": 2,
+    "REVIEW PV-32 genghis": 2,
+    "REVIEW PV-24 HERO-2": 26,
+    "REVIEW PV-24 RHYTHM-2": 4,
+    "REVIEW PV-24 RHYTHM-1": 1,
+    "REVIEW PV-24 RHYTHM-3": 1,
+    "REVIEW PV-35 BP-21": 4,
+    "REVIEW PV-35 BP-27": 1,
+    "REVIEW PV-35 MO-01": 1,
+    "REVIEW PV-35 BP-94": 3,
+    "REVIEW PV-35 MO-07": 3,
+    "REVIEW PV-36 BP-62": 5,
+    "REVIEW PV-44 VB-01": 2,
+    "REVIEW PV-38 episode.distinct": 1,
+    "FAIL PV-45 episode.scenario": 1,
+    "FAIL PV-47 aslan": 1,
+    "FAIL PV-47 genghis": 1,
+    "FAIL PV-47 jebe": 1,
+    "FAIL PV-47 murat": 1,
+    "FAIL PV-47 napoleon": 1,
+    "FAIL PV-47 look.environment": 1
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s06_shorts": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 1041,
+   "claims_cited": 17,
+   "shots": 66,
+   "shorts": 3
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 28,
+   "review": 60,
+   "by_rule": {
+    "FAIL PV-05 S01": 2,
+    "FAIL PV-05 S02": 2,
+    "FAIL PV-05 S03": 2,
+    "FAIL PV-05 S04": 2,
+    "FAIL PV-05 S05": 2,
+    "FAIL PV-05 S06": 2,
+    "FAIL PV-05 S07": 2,
+    "FAIL PV-05 S08": 3,
+    "FAIL PV-05 music": 4,
+    "REVIEW PV-10 voice": 1,
+    "REVIEW PV-32 napoleon": 1,
+    "REVIEW PV-32 aslan": 2,
+    "REVIEW PV-32 genghis": 2,
+    "REVIEW PV-28 SH02": 1,
+    "REVIEW PV-24 HERO-2": 26,
+    "REVIEW PV-24 RHYTHM-2": 4,
+    "REVIEW PV-24 RHYTHM-1": 1,
+    "REVIEW PV-24 RHYTHM-3": 1,
+    "REVIEW PV-35 BP-21": 4,
+    "REVIEW PV-35 BP-27": 1,
+    "REVIEW PV-35 MO-01": 1,
+    "REVIEW PV-35 BP-94": 3,
+    "REVIEW PV-35 MO-07": 3,
+    "REVIEW PV-36 BP-62": 5,
+    "REVIEW PV-44 VB-01": 2,
+    "REVIEW PV-38 episode.distinct": 1,
+    "FAIL PV-45 episode.scenario": 1,
+    "FAIL PV-47 aslan": 1,
+    "FAIL PV-47 genghis": 1,
+    "FAIL PV-47 jebe": 1,
+    "FAIL PV-47 murat": 1,
+    "FAIL PV-47 napoleon": 1,
+    "FAIL PV-47 look.environment": 1
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "final": {
+  "shape": {
+   "segments": 8,
+   "lines": 69,
+   "words": 1041,
+   "claims_cited": 17,
+   "shots": 66,
+   "shorts": 3
+  },
+  "validate": {
+   "fail": 28,
+   "review": 60,
+   "by_rule": {
+    "FAIL PV-05 S01": 2,
+    "FAIL PV-05 S02": 2,
+    "FAIL PV-05 S03": 2,
+    "FAIL PV-05 S04": 2,
+    "FAIL PV-05 S05": 2,
+    "FAIL PV-05 S06": 2,
+    "FAIL PV-05 S07": 2,
+    "FAIL PV-05 S08": 3,
+    "FAIL PV-05 music": 4,
+    "REVIEW PV-10 voice": 1,
+    "REVIEW PV-32 napoleon": 1,
+    "REVIEW PV-32 aslan": 2,
+    "REVIEW PV-32 genghis": 2,
+    "REVIEW PV-28 SH02": 1,
+    "REVIEW PV-24 HERO-2": 26,
+    "REVIEW PV-24 RHYTHM-2": 4,
+    "REVIEW PV-24 RHYTHM-1": 1,
+    "REVIEW PV-24 RHYTHM-3": 1,
+    "REVIEW PV-35 BP-21": 4,
+    "REVIEW PV-35 BP-27": 1,
+    "REVIEW PV-35 MO-01": 1,
+    "REVIEW PV-35 BP-94": 3,
+    "REVIEW PV-35 MO-07": 3,
+    "REVIEW PV-36 BP-62": 5,
+    "REVIEW PV-44 VB-01": 2,
+    "REVIEW PV-38 episode.distinct": 1,
+    "FAIL PV-45 episode.scenario": 1,
+    "FAIL PV-47 aslan": 1,
+    "FAIL PV-47 genghis": 1,
+    "FAIL PV-47 jebe": 1,
+    "FAIL PV-47 murat": 1,
+    "FAIL PV-47 napoleon": 1,
+    "FAIL PV-47 look.environment": 1
+   }
+  },
+  "story_lint_fail": 0,
+  "same_as_last_snapshot": true
+ }
+}

@@ -2545,3 +2545,15 @@ training as sequences is decided in the process. Changed together:
   `--gpu big`); PR #4 and `three-hour-format-7ewyz0` closed as superseded (kept in the HF vault bundle).
 - Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
 - From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
+
+## 2026-10-29 Tbilisi night: agent form A/B, one main agent vs one worker per stage (P0c, free)
+- Same Napoleon-vs-Genghis brief (8 segments, 3 Shorts, stages 1-6 of the story engine) written two ways by Sonnet: arm A one
+  agent in one context, arm B 22 fresh workers with a gate after each return. Both reach `story_lint` 0 FAIL / 0 REVIEW.
+  Whole-script `production validate`: A 28 FAIL (all media and creator gates) / 60 REVIEW, B 27 FAIL (13 script defects) / 133 REVIEW.
+  Cost equal within 1 %. Blind Opus critic: A narrowly better as a product (3.9 vs 3.7), B better at line level.
+- Findings: the workers' hand-off fields (hero face sheets, a dialogue scene header, delivery tags) surfaced only at the editor
+  stage; `stage_guard` `SEG_STORY` lacks `scene` (architect corrections are rejected; not fixed here, no code in this phase);
+  `production validate` cannot reach the beat checks before `voice`/`shots` exist; claim-id format `C-NN` vs the map's `C##`.
+- Verdict recorded in `docs/research/AGENT_AB_2026-10.md`: the evidence does not support D-81 as the A5 answer; D-79 stays the
+  default; the long-context argument (16 segments, cheaper model for mechanical stages) is untested. Data, snapshots and
+  `measure.py` in `docs/research/agent_ab_2026-10/`. No paid call. Decision log unchanged (the decision is the creator's A5).

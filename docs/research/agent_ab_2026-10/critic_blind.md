@@ -1,0 +1,9 @@
+# Blind critique X vs Y (Opus, read-only), 2026-10-29
+X = arm B (worker per stage), Y = arm A (one context); the critic was not told.
+
+Scores X / Y: premise 4/4; escalation and turns 3/4; character voice 4/4; dialogue craft 5/4; ending and payoff 4/4; would a viewer stay 3/4.
+Facts, X: khan's tongue "near my mother's" over-reads C15; a Napoleon turn cites C04 where C05 supports it; two counters disagree (450,000 vs "more than four hundred thousand").
+Facts, Y: claim ids are written C-NN while the map uses C##; invented premise cited as C-91..C-94 (about 40 references, Shorts too); "grandmother's tongue / Cuman" over-reads C15; "leads my right hand" not in C11; C-04 cited on lines it does not support.
+Rule/coherence misses: X 10 (Fire! after the result is narrated; day arc "overcast" for all beats; three numbers in one turn; Murat set-up dropped; fog clock contradicts; S02 narration block about 75 words; one music track for the whole video; others), Y 11 (claim-id system; Cuman overreach; "Nobody was caught" vs captured Aslan; S05 range order; Jebe expression on a shot without Jebe; drums through the wrong mood; about 12 consecutive A/B shots in S07 against the limit of 4; "three tongues" vs direct address; SH03 "But" misframes ranges; 20 % over length and a "you" tic).
+Sound/edit: Y closer to the ED-14 sound grammar (four tracks, planned dropout, beds, day arc matches); X better shot coverage, thin sound.
+Verdict: Y better overall, narrowly, 3.9 vs 3.7; X better at line-level craft. Decisive: story spine and retention (Y), sound and edit layer (Y), Y's claim-id defect is mechanically fixable. Noise: strongest scene, best khan lines, dropped Murat thread, individual slips. Systematic: Y's claim-id format and richer sound design; Y's "you" address and overrun; X's closer fidelity to claim wording; X's more varied dialogue coverage.

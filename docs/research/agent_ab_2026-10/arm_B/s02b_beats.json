@@ -1,0 +1,1616 @@
+{
+ "schema": "production_script/3",
+ "episode": {
+  "id": "napoleon_into_genghis_b",
+  "title": "What If Napoleon Marched Into Genghis Khan?",
+  "fps": 30,
+  "notes": "P0c agent A/B test, arm B, stage 1 (story-architect): story layer only; 8 segments, about 5 minutes, template A"
+ },
+ "periods": [
+  {
+   "id": "arrival",
+   "question": "Can the army that wins by one decisive battle read ground that does not offer one?",
+   "bottleneck": "the column's hunger and the wagons"
+  },
+  {
+   "id": "valley",
+   "question": "Does a won battle matter against an enemy who never stood to lose it?",
+   "bottleneck": "the wagons and the road"
+  },
+  {
+   "id": "parley",
+   "question": "What does the road home cost, and who can say it?",
+   "bottleneck": "the word carried between two men with no shared tongue"
+  }
+ ],
+ "cast": {
+  "napoleon": {
+   "names": [
+    "Napoleon",
+    "Napoleon Bonaparte",
+    "the Emperor"
+   ],
+   "card": "Napoleon Bonaparte as our caricature: short stocky man, grey greatcoat over a green coat, black bicorne hat worn sideways, one hand tucked in his waistcoat, a spyglass",
+   "props": [
+    "bicorne hat",
+    "spyglass"
+   ],
+   "speech": {
+    "basis": "public",
+    "style": "Clipped and commanding: short declarative orders, military maxims, no small talk, impatient with questions; toward the khan he sizes him up like a rival marshal, toward Ali he uses him as a tool and never asks his name; never admits the army is already beaten by hunger.",
+    "words": [
+     "battle",
+     "the army",
+     "by tonight",
+     "destroy"
+    ],
+    "avoid": [
+     "modern slang",
+     "apologies",
+     "pleading"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Napoleon",
+     "manner as generally described (terse, offensive-minded, C04); to be checked by the creator, not independently fetched"
+    ]
+   }
+  },
+  "genghis": {
+   "names": [
+    "Genghis Khan",
+    "Genghis",
+    "the khan"
+   ],
+   "card": "Genghis Khan as our caricature: broad weathered man, thin braided grey beard, fur-trimmed felt cap, brown leather lamellar coat, a horsehair standard behind him, a short composite bow",
+   "props": [
+    "horsehair standard",
+    "composite bow"
+   ],
+   "speech": {
+    "basis": "public",
+    "style": "Slow, plain and concrete: short sentences built from horses, grass, herds and a man's word; asks questions instead of boasting; toward Napoleon he is a host listening to a guest who talks of himself, toward Ali the first man in the room worth asking; never admits he is impressed by the long guns.",
+    "words": [
+     "horse",
+     "grass",
+     "a man's word",
+     "the herd"
+    ],
+    "avoid": [
+     "boasting lists",
+     "courtly flourishes",
+     "modern idiom"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Genghis_Khan",
+     "manner as generally described (promotes by merit and loyalty, C11); to be checked by the creator, not independently fetched"
+    ]
+   }
+  },
+  "ali": {
+   "names": [
+    "Ali"
+   ],
+   "card": "Ali, a young Mameluke rider of the Guard: lean, watchful, red turban with a white plume, wide yellow trousers, a curved sabre, a Crimean Tatar by birth",
+   "props": [
+    "curved sabre",
+    "red turban"
+   ],
+   "speech": {
+    "basis": "personality",
+    "style": "Quick, dry and careful: short sentences, watches mouths before he speaks, says 'Sire' with a tired edge; toward Napoleon loyal but tired of being only a mouth, toward the khan the first listener who hears tone; never admits he is afraid or that he softens words to stay alive.",
+    "words": [
+     "Sire",
+     "they say",
+     "the horses know",
+     "with respect"
+    ],
+    "avoid": [
+     "giving orders",
+     "long speeches",
+     "boasting"
+    ]
+   }
+  }
+ },
+ "drama": {
+  "premise": "In 1812 a column of Napoleon's army walks out of a fog into the steppe of 1223, where Genghis Khan will not stand still to be destroyed and the only bridge between them is a Mameluke interpreter.",
+  "question": "Can Napoleon get the one decisive battle that has always ended his wars?",
+  "promise": "the man who needs one great battle meets the man who never offers one: the guns, the burning wagons and the price of the road home",
+  "template": "A",
+  "needs": [
+   "curiosity",
+   "stakes",
+   "competence",
+   "wonder",
+   "fear",
+   "identity",
+   "surprise"
+  ],
+  "arcs": {
+   "napoleon": {
+    "want": "one decisive battle, today",
+    "need": "to accept a limit and pay for the road home",
+    "flaw": "cannot leave a field unfinished and cannot listen",
+    "change": "gives up his own guns to bring the column out"
+   },
+   "genghis": {
+    "want": "to learn what the iron guns can do and to own them",
+    "flaw": "cannot resist a weapon he does not have"
+   },
+   "ali": {
+    "want": "to carry words that keep the column alive",
+    "flaw": "softens the truth to stay safe"
+   }
+  },
+  "loops": [
+   {
+    "id": "L01",
+    "question": "can Napoleon get the one decisive battle?"
+   },
+   {
+    "id": "L02",
+    "question": "who is the rider watching from the far ridge?"
+   },
+   {
+    "id": "L03",
+    "question": "how long can the column eat without the road?"
+   },
+   {
+    "id": "L04",
+    "question": "what will the khan ask for when they talk?"
+   }
+  ],
+  "setups": [
+   {
+    "id": "P01",
+    "what": "Napoleon the artillery officer and his guns",
+    "plant": "S02",
+    "payoff": "S07"
+   },
+   {
+    "id": "P02",
+    "what": "the khan keeps the archer who admitted shooting his horse",
+    "plant": "S02",
+    "payoff": "S07"
+   },
+   {
+    "id": "P03",
+    "what": "Ali understands a shout in a Kipchak tongue",
+    "plant": "S03",
+    "payoff": "S06"
+   }
+  ],
+  "ending": {
+   "kind": "bookend",
+   "note": "fog and silent drums open and close the film; the guns left on the grass are the payoff of the artillery officer's pride"
+  }
+ },
+ "segments": [
+  {
+   "id": "S01",
+   "beat": "The fog opens on the 1812 column and the drums go quiet on grass that is 589 years too early.",
+   "purpose": "NARRATOR only, ~50 words: hook, no dialogue. Plant the promise and the gap (what is out there?). Claims: I01, C21.",
+   "period": "arrival",
+   "light_beat": 1,
+   "drama": {
+    "function": "cold_open",
+    "turn": "start",
+    "shift": "marching -> lost",
+    "need": "curiosity",
+    "claim_share": "invented",
+    "opens": [
+     "L01"
+    ]
+   },
+   "lines": [
+    {
+     "text": "The drums stop first.",
+     "claims": [
+      "I01"
+     ],
+     "visual_beats": [
+      {
+       "at": "drums",
+       "kind": "prop",
+       "thing": "drum",
+       "why": "the drums that stop first"
+      }
+     ]
+    },
+    {
+     "text": "Then the fog lifts, and the whole column stands in grass that belongs to another century.",
+     "claims": [
+      "I01"
+     ],
+     "tags": [
+      "softly"
+     ],
+     "visual_beats": [
+      {
+       "at": "fog lifts",
+       "kind": "accent",
+       "effect": "punch",
+       "why": "the fog lifts on the column"
+      },
+      {
+       "at": "another century",
+       "kind": "symbol",
+       "symbol": "clock",
+       "why": "grass from another century: time is off"
+      }
+     ]
+    },
+    {
+     "text": "Not decades off. Five hundred and eighty-nine years early.",
+     "claims": [
+      "C21"
+     ],
+     "visual_beats": [
+      {
+       "at": "Five hundred and eighty-nine years",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "C21",
+       "why": "counts the 589 years early",
+       "cue": {
+        "sound": "thud",
+        "event": "reveal"
+       },
+       "values": [
+        589
+       ],
+       "unit": "years"
+      }
+     ]
+    },
+    {
+     "text": "Napoleon came for one great battle. Who out here is going to give it to him?",
+     "claims": [
+      "I01"
+     ],
+     "tags": [
+      "curious"
+     ],
+     "emphasis": [
+      "him"
+     ],
+     "visual_beats": [
+      {
+       "at": "Napoleon",
+       "kind": "highlight",
+       "pos": [
+        0.4,
+        0.55
+       ],
+       "why": "rings Napoleon, who came for the battle"
+      },
+      {
+       "at": "one great battle",
+       "kind": "text",
+       "text": "ONE BATTLE",
+       "why": "the one great battle he came for"
+      },
+      {
+       "at": "Who",
+       "kind": "symbol",
+       "symbol": "question",
+       "why": "asks who out here will give it"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S02",
+   "beat": "A tired column with food for days meets an enemy who wins by never standing still; the narrator lays out the two ways of war.",
+   "purpose": "NARRATOR only, ~95 words: orientation and stakes. Napoleon the gunner who wants the decisive battle, the wagons that cannot follow, 3-4 horses per Mongol and the khan who kept the archer who admitted shooting his horse (plants P01, P02). Claims: C01, C02, C04, C08, C11, C16.",
+   "period": "arrival",
+   "light_beat": 2,
+   "drama": {
+    "function": "setup",
+    "turn": "therefore",
+    "shift": "confident -> uneasy",
+    "need": "stakes",
+    "claim_share": "reasoned",
+    "stakes": "the army eats only what the wagons and the road give it",
+    "opens": [
+     "L03"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Napoleon crossed the Neman with 450,000 men. Moscow saw about 100,000 of them.",
+     "claims": [
+      "C01",
+      "C02"
+     ],
+     "visual_beats": [
+      {
+       "at": "450,000 men",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "C01",
+       "values": [
+        450000
+       ],
+       "unit": "men",
+       "why": "counts the 450,000 men who crossed"
+      },
+      {
+       "at": "about 100,000",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "C02",
+       "values": [
+        100000
+       ],
+       "unit": "men",
+       "why": "only about 100,000 reached Moscow"
+      }
+     ]
+    },
+    {
+     "text": "He's a gunner at heart. Find the enemy's army, break it in one battle, go home.",
+     "claims": [
+      "C04"
+     ],
+     "visual_beats": [
+      {
+       "at": "gunner",
+       "kind": "prop",
+       "thing": "cannon",
+       "why": "a gunner at heart means cannon"
+      },
+      {
+       "at": "one battle",
+       "kind": "text",
+       "text": "ONE BATTLE",
+       "why": "break the enemy in one battle"
+      }
+     ]
+    },
+    {
+     "text": "But his wagons can't follow these tracks, so the column eats what it grabs along the road.",
+     "claims": [
+      "C16"
+     ],
+     "visual_beats": [
+      {
+       "at": "wagons",
+       "kind": "prop",
+       "thing": "wagon",
+       "why": "the wagons that cannot follow"
+      },
+      {
+       "at": "can't follow",
+       "kind": "symbol",
+       "symbol": "cross",
+       "why": "the wagons can't follow the tracks"
+      }
+     ]
+    },
+    {
+     "text": "Out here, nobody grabs anything for free. Every Mongol rider keeps three or four horses and swaps mounts as he goes.",
+     "claims": [
+      "C08"
+     ],
+     "visual_beats": [
+      {
+       "at": "three or four horses",
+       "kind": "text",
+       "text": "3-4 HORSES",
+       "why": "three or four horses per rider"
+      }
+     ]
+    },
+    {
+     "text": "And Genghis Khan once kept the archer who shot his horse. The man owned up to it.",
+     "claims": [
+      "C11"
+     ],
+     "visual_beats": [
+      {
+       "at": "Genghis Khan",
+       "kind": "highlight",
+       "pos": [
+        0.6,
+        0.5
+       ],
+       "why": "rings the khan who kept the archer"
+      },
+      {
+       "at": "shot his horse",
+       "kind": "prop",
+       "thing": "arrow",
+       "why": "the archer who shot his horse"
+      },
+      {
+       "at": "owned up",
+       "kind": "symbol",
+       "symbol": "check",
+       "why": "the man owned up honestly"
+      }
+     ]
+    },
+    {
+     "text": "So what does a man who needs one battle do with an enemy who never needs to stand?",
+     "claims": [
+      "I02"
+     ],
+     "visual_beats": [
+      {
+       "at": "what does",
+       "kind": "symbol",
+       "symbol": "question",
+       "why": "asks what the gunner does"
+      },
+      {
+       "at": "never needs to stand",
+       "kind": "symbol",
+       "symbol": "cross",
+       "why": "an enemy who never needs to stand"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S03",
+   "beat": "Napoleon wants Murat's cavalry loosed after riders who run too neatly; Ali, who knows how steppe riders flee, says the runners are leading them on.",
+   "purpose": "SCENE ~130 words (napoleon, ali), narrator in/out. Skirmish: Murat's blown horses, the feigned retreat, a rider on the far ridge who watches (opens L02), Ali understands a shout in a Kipchak tongue (plants P03). Claims: C10, C13, C14, C15, I03.",
+   "period": "arrival",
+   "light_beat": 3,
+   "drama": {
+    "function": "inciting",
+    "turn": "but",
+    "shift": "control -> doubt",
+    "need": "competence",
+    "claim_share": "reasoned",
+    "stakes": "a whole wing of cavalry rides away from the column",
+    "opens": [
+     "L02"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Murat's riders are chasing a handful of runners, on horses he never bothers to count.",
+     "claims": [
+      "C13",
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "chasing a handful of runners",
+       "kind": "prop",
+       "thing": "fleeing riders",
+       "why": "the handful of runners being chased"
+      }
+     ]
+    },
+    {
+     "text": "On the far ridge, one rider sits still and watches.",
+     "claims": [
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "one rider",
+       "kind": "highlight",
+       "pos": [
+        0.82,
+        0.28
+       ],
+       "why": "rings the one rider on the far ridge"
+      }
+     ]
+    },
+    {
+     "text": "Napoleon wants the second wave loose before dark, and Ali, his Mameluke interpreter, stands at his stirrup.",
+     "claims": [
+      "C14",
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "Ali",
+       "kind": "label",
+       "text": "Ali, interpreter",
+       "pos": [
+        0.45,
+        0.62
+       ],
+       "why": "names Ali, the Mameluke interpreter"
+      }
+     ]
+    },
+    {
+     "text": "Murat has them. Send the second wave.",
+     "speaker": "napoleon",
+     "to": "ali",
+     "intent": "decide",
+     "visual_beats": [
+      {
+       "at": "Send the second wave",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "determined",
+       "why": "the order lands with a set jaw"
+      }
+     ]
+    },
+    {
+     "text": "Sire, with respect, they run slowly.",
+     "speaker": "ali",
+     "to": "napoleon",
+     "intent": "press",
+     "visual_beats": []
+    },
+    {
+     "text": "Slow or fast, they run. That is enough.",
+     "speaker": "napoleon",
+     "to": "ali",
+     "intent": "deflect",
+     "visual_beats": []
+    },
+    {
+     "text": "The shout from the ridge, Sire. It is near my mother's tongue. It says, come on.",
+     "speaker": "ali",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": [
+      "C15"
+     ],
+     "visual_beats": [
+      {
+       "at": "It says, come on",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "doubtful",
+       "why": "listener's face on the reveal of the shout"
+      }
+     ]
+    },
+    {
+     "text": "Everyone shouts in a retreat.",
+     "speaker": "napoleon",
+     "to": "ali",
+     "intent": "deflect",
+     "visual_beats": []
+    },
+    {
+     "text": "Look at the dust behind the ridge. They are leading Murat on.",
+     "speaker": "ali",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": [
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "the dust behind the ridge",
+       "kind": "highlight",
+       "pos": [
+        0.85,
+        0.2
+       ],
+       "why": "points at the dust behind the ridge"
+      },
+      {
+       "at": "leading Murat on",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "worried",
+       "why": "listener's face as the trap is named"
+      }
+     ]
+    },
+    {
+     "text": "Then recall him.",
+     "speaker": "napoleon",
+     "to": "ali",
+     "intent": "press",
+     "visual_beats": []
+    },
+    {
+     "text": "The trumpets will not carry, Sire. He is over the crest.",
+     "speaker": "ali",
+     "to": "napoleon",
+     "intent": "concede",
+     "pause_after": 2.0,
+     "visual_beats": [
+      {
+       "at": "over the crest",
+       "kind": "expression",
+       "who": "ali",
+       "expression": "worried",
+       "why": "the order can no longer be recalled"
+      }
+     ]
+    },
+    {
+     "text": "Then the wing follows him. Bring up the guns.",
+     "speaker": "napoleon",
+     "to": "room",
+     "intent": "decide",
+     "visual_beats": [
+      {
+       "at": "the guns",
+       "kind": "prop",
+       "thing": "cannon",
+       "why": "the guns he orders brought up"
+      }
+     ]
+    },
+    {
+     "text": "At the Kalka, the Rus princes followed a retreat for nine days before it turned on them.",
+     "claims": [
+      "C10"
+     ],
+     "visual_beats": [
+      {
+       "at": "nine days",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "C10",
+       "values": [
+        9
+       ],
+       "unit": "days",
+       "why": "counts the nine days of following the retreat"
+      }
+     ]
+    },
+    {
+     "text": "Murat's wing has until dark.",
+     "claims": [
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "until dark",
+       "kind": "symbol",
+       "symbol": "clock",
+       "why": "the deadline of dark for the wing"
+      }
+     ]
+    }
+   ],
+   "scene": {
+    "place": "a low rise of dry grass above the first valley, the column strung out behind",
+    "time": "midday, an hour after the fog lifted",
+    "present": [
+     "napoleon",
+     "ali"
+    ],
+    "why_now": "Murat's cavalry has just charged a handful of riders and the riders are running",
+    "pov": "napoleon",
+    "want": "to loose the second wave after the runners and finish them before dark",
+    "obstacle_want": "to stop the pursuit because the runners flee too slowly and too neatly",
+    "value": "control",
+    "open_charge": "+",
+    "close_charge": "-",
+    "turn": "Ali points at the dust behind the ridge: the runners are drawing Murat on, and the order cannot be recalled in time (asymmetric: emperor and interpreter).",
+    "exit": "fail_new_goal",
+    "surface_topic": "whether to send the second wave",
+    "real_subject": "whether the Emperor still reads the ground or only his plan",
+    "mode": "asymmetric"
+   }
+  },
+  {
+   "id": "S04",
+   "beat": "Napoleon turns to what he trusts, the guns and the squares, and the valley battle breaks the first wave; the army believes it has won.",
+   "purpose": "NARRATOR with a few shouted orders, ~120 words, no played scene. Guns reach 900 m, bows 400 m, muskets only 90 m, squares hold under cavalry. A false victory that makes him lean on the guns. Claims: C05, C06, C07, C09, C20, I03.",
+   "period": "valley",
+   "light_beat": 4,
+   "drama": {
+    "function": "escalation",
+    "turn": "therefore",
+    "shift": "doubt -> triumph",
+    "need": "wonder",
+    "claim_share": "reasoned",
+    "stakes": "the guns and powder are the army's last strength"
+   },
+   "lines": [
+    {
+     "text": "Napoleon stops guessing and starts measuring. His twelve-pounders reach nine hundred meters.",
+     "claims": [
+      "C05"
+     ],
+     "visual_beats": [
+      {
+       "at": "nine hundred meters",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "C05",
+       "values": [
+        900
+       ],
+       "unit": "m",
+       "why": "counts the nine hundred meters of gun reach"
+      }
+     ]
+    },
+    {
+     "text": "The Mongol bow tops out near four hundred. A French musket, ninety.",
+     "claims": [
+      "C09",
+      "C06"
+     ],
+     "visual_beats": [
+      {
+       "at": "near four hundred",
+       "kind": "chart",
+       "chart": "bars",
+       "claim": "C09",
+       "values": [
+        400,
+        90
+       ],
+       "unit": "m",
+       "labels": [
+        "bow",
+        "musket"
+       ],
+       "why": "bars compare four hundred and ninety meters"
+      }
+     ]
+    },
+    {
+     "text": "Guns forward! Form squares!",
+     "speaker": "napoleon",
+     "to": "room",
+     "intent": "decide",
+     "visual_beats": [
+      {
+       "at": "Guns forward",
+       "kind": "prop",
+       "thing": "cannon",
+       "why": "the guns ordered forward"
+      }
+     ]
+    },
+    {
+     "text": "A steady square holds its fire until the horsemen are close, and cavalry alone rarely breaks one.",
+     "claims": [
+      "C07"
+     ],
+     "visual_beats": [
+      {
+       "at": "steady square",
+       "kind": "prop",
+       "thing": "infantry square",
+       "why": "the steady square that holds its fire"
+      }
+     ]
+    },
+    {
+     "text": "Down the valley comes a tumen, ten thousand riders, straight into the guns.",
+     "claims": [
+      "C20",
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "ten thousand riders",
+       "kind": "highlight",
+       "pos": [
+        0.5,
+        0.3
+       ],
+       "why": "rings the ten thousand riders coming down the valley"
+      }
+     ]
+    },
+    {
+     "text": "Hold your fire! Wait for them!",
+     "speaker": "napoleon",
+     "to": "room",
+     "intent": "press",
+     "visual_beats": []
+    },
+    {
+     "text": "They never get close. The first wave comes apart under the round shot, and the survivors turn and ride.",
+     "claims": [
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "never get close",
+       "kind": "symbol",
+       "symbol": "cross",
+       "why": "the riders never get close"
+      }
+     ]
+    },
+    {
+     "text": "Fire!",
+     "speaker": "napoleon",
+     "to": "room",
+     "intent": "decide",
+     "visual_beats": [
+      {
+       "at": "Fire",
+       "kind": "accent",
+       "effect": "punch",
+       "cue": {
+        "sound": "thud",
+        "event": "impact"
+       },
+       "why": "the order Fire lands as the blow"
+      }
+     ]
+    },
+    {
+     "text": "By afternoon the valley belongs to the army. Men cheer, and the guns stay hot.",
+     "claims": [
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "valley belongs",
+       "kind": "text",
+       "text": "WON",
+       "why": "the army believes the valley is won"
+      }
+     ]
+    },
+    {
+     "text": "The Emperor has the battle he marched here for. So he trusts his guns even more.",
+     "claims": [
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "trusts his guns",
+       "kind": "prop",
+       "thing": "cannon",
+       "why": "the guns he trusts even more"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S05",
+   "beat": "At dusk the tumens do not return to the field: they ride round the victory and burn the wagons; the rider on the ridge is Genghis Khan.",
+   "purpose": "NARRATOR ~95 words, the midpoint reversal: the wagons burn, the army can no longer feed itself, the watcher is the khan with about two tumens. Closes L02, L03; opens L04. Claims: C16, C20, I02, I03.",
+   "period": "valley",
+   "light_beat": 5,
+   "drama": {
+    "function": "midpoint",
+    "turn": "but",
+    "shift": "triumph -> trapped",
+    "need": "fear",
+    "claim_share": "invented",
+    "stakes": "no wagons means no bread, and the foraging road is now the khan's",
+    "opens": [
+     "L04"
+    ],
+    "closes": [
+     "L02",
+     "L03"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Dusk. The tumens do not come back to the field.",
+     "claims": [
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "Dusk",
+       "kind": "symbol",
+       "symbol": "clock",
+       "why": "Dusk marks the hour the tumens turn"
+      },
+      {
+       "at": "do not come back",
+       "kind": "symbol",
+       "symbol": "cross",
+       "why": "the tumens do not come back to the field"
+      }
+     ]
+    },
+    {
+     "text": "They ride around the victory instead, two tumens, twenty thousand riders, and not one of them stops to fight.",
+     "claims": [
+      "C20",
+      "I02"
+     ],
+     "visual_beats": [
+      {
+       "at": "twenty thousand riders",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "C20",
+       "values": [
+        20000
+       ],
+       "unit": "riders",
+       "why": "counts twenty thousand riders in two tumens"
+      }
+     ]
+    },
+    {
+     "text": "Torches go into the wagon canvas. By midnight the bread is smoke.",
+     "claims": [
+      "I03",
+      "C16"
+     ],
+     "visual_beats": [
+      {
+       "at": "Torches",
+       "kind": "prop",
+       "thing": "torch",
+       "why": "the torches that go into the canvas"
+      },
+      {
+       "at": "wagon canvas",
+       "kind": "prop",
+       "thing": "wagon",
+       "why": "the wagon canvas set alight"
+      },
+      {
+       "at": "the bread is smoke",
+       "kind": "text",
+       "text": "NO BREAD",
+       "cue": {
+        "sound": "thud",
+        "event": "impact"
+       },
+       "why": "the bread is smoke, the supply is gone"
+      }
+     ]
+    },
+    {
+     "text": "The men who cheered at noon sit watching their supper burn, and the foraging road they live on now belongs to the riders.",
+     "claims": [
+      "C16",
+      "I03"
+     ],
+     "visual_beats": [
+      {
+       "at": "supper",
+       "kind": "prop",
+       "thing": "cooking pot",
+       "why": "the supper they watch burn"
+      },
+      {
+       "at": "foraging road",
+       "kind": "label",
+       "text": "Foraging road",
+       "pos": [
+        0.5,
+        0.7
+       ],
+       "why": "names the foraging road the army lives on"
+      }
+     ]
+    },
+    {
+     "text": "On the far ridge, the rider who watched all day lifts one hand. That's Genghis Khan himself.",
+     "claims": [
+      "I02"
+     ],
+     "visual_beats": [
+      {
+       "at": "far ridge",
+       "kind": "highlight",
+       "pos": [
+        0.82,
+        0.28
+       ],
+       "why": "rings the far ridge where the rider stands"
+      },
+      {
+       "at": "Genghis Khan",
+       "kind": "label",
+       "text": "Genghis Khan",
+       "pos": [
+        0.82,
+        0.4
+       ],
+       "cue": {
+        "sound": "chime",
+        "event": "reveal"
+       },
+       "why": "names the watcher as Genghis Khan himself"
+      }
+     ]
+    },
+    {
+     "text": "He never needed to win the Emperor's battle. So what does he want, when he finally speaks?",
+     "claims": [
+      "I02"
+     ],
+     "visual_beats": [
+      {
+       "at": "never needed to win",
+       "kind": "symbol",
+       "symbol": "cross",
+       "why": "he never needed to win the battle"
+      },
+      {
+       "at": "what does he want",
+       "kind": "symbol",
+       "symbol": "question",
+       "why": "asks what the khan wants"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S06",
+   "beat": "Under a truce sign Napoleon demands his battle at dawn; the khan, who never answers the challenge, asks only how far the long guns shoot.",
+   "purpose": "SCENE ~135 words (napoleon, genghis, ali), narrator in/out. The parley begins: Napoleon the proud artillery officer tells the range exactly; Moscow's silence from Alexander I stings him because this enemy does talk. Claims: C04, C05, C12, I04.",
+   "period": "parley",
+   "light_beat": 6,
+   "drama": {
+    "function": "crisis",
+    "turn": "but",
+    "shift": "dictating -> asking",
+    "need": "identity",
+    "claim_share": "invented",
+    "stakes": "the road home and the army's pride"
+   },
+   "lines": [
+    {
+     "text": "A white cloth goes up on a lance at the edge of the burnt wagon line.",
+     "claims": [
+      "I04"
+     ],
+     "visual_beats": [
+      {
+       "at": "white cloth",
+       "kind": "prop",
+       "thing": "white cloth on a lance",
+       "why": "the white cloth goes up as the truce sign"
+      }
+     ]
+    },
+    {
+     "text": "Napoleon rides out with Ali at his stirrup. The khan waits on a felt rug, in no hurry at all.",
+     "claims": [
+      "I04"
+     ],
+     "visual_beats": [
+      {
+       "at": "felt rug",
+       "kind": "prop",
+       "thing": "felt rug",
+       "why": "the khan waits on a felt rug"
+      }
+     ]
+    },
+    {
+     "text": "Dawn. Open ground. My army against yours.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "decide",
+     "visual_beats": [
+      {
+       "at": "Dawn",
+       "kind": "symbol",
+       "symbol": "clock",
+       "why": "Dawn is the hour he demands"
+      }
+     ]
+    },
+    {
+     "text": "He asks for a battle at dawn, Great Khan. On open ground.",
+     "speaker": "ali",
+     "to": "genghis",
+     "intent": "press",
+     "visual_beats": []
+    },
+    {
+     "text": "The grass is wide. Tell him to sit.",
+     "speaker": "genghis",
+     "to": "ali",
+     "intent": "deflect",
+     "visual_beats": []
+    },
+    {
+     "text": "I do not sit. Repeat my terms.",
+     "speaker": "napoleon",
+     "to": "ali",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "I do not sit",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "angry",
+       "why": "the refusal to sit lands hard"
+      }
+     ]
+    },
+    {
+     "text": "He stands, Great Khan. He says the terms are not for sitting.",
+     "speaker": "ali",
+     "to": "genghis",
+     "intent": "deflect",
+     "pause_after": 2.0,
+     "visual_beats": [
+      {
+       "at": "He stands",
+       "kind": "expression",
+       "who": "ali",
+       "expression": "deadpan",
+       "why": "Ali keeps a straight face softening the words"
+      }
+     ]
+    },
+    {
+     "text": "Alexander gave me five weeks of silence. You, at least, came to the table.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "reveal",
+     "claims": [
+      "C12"
+     ],
+     "visual_beats": [
+      {
+       "at": "five weeks",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "C12",
+       "values": [
+        5
+       ],
+       "unit": "weeks",
+       "why": "counts the five weeks of Moscow's silence"
+      },
+      {
+       "at": "came to the table",
+       "kind": "expression",
+       "who": "genghis",
+       "expression": "curious",
+       "why": "listener's face on the reveal that this enemy talks"
+      }
+     ]
+    },
+    {
+     "text": "Ask him how far the long guns shoot.",
+     "speaker": "genghis",
+     "to": "ali",
+     "intent": "question",
+     "visual_beats": []
+    },
+    {
+     "text": "Sire, the khan asks how far the long guns reach.",
+     "speaker": "ali",
+     "to": "napoleon",
+     "intent": "question",
+     "visual_beats": []
+    },
+    {
+     "text": "Nine hundred meters, round shot. Six hundred, canister. Fifteen men to a gun.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "reveal",
+     "claims": [
+      "C04",
+      "C05"
+     ],
+     "visual_beats": [
+      {
+       "at": "Nine hundred meters",
+       "kind": "chart",
+       "chart": "bars",
+       "claim": "C05",
+       "values": [
+        900,
+        600
+       ],
+       "unit": "m",
+       "labels": [
+        "round shot",
+        "canister"
+       ],
+       "why": "bars compare nine hundred and six hundred meters"
+      },
+      {
+       "at": "Fifteen men",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "C05",
+       "values": [
+        15
+       ],
+       "unit": "men",
+       "why": "counts fifteen men to a gun"
+      },
+      {
+       "at": "to a gun",
+       "kind": "expression",
+       "who": "genghis",
+       "expression": "surprised",
+       "why": "listener's face as the gun's reach is told"
+      }
+     ]
+    },
+    {
+     "text": "The night turns cold on the burnt wagon line. By morning, the khan will name his price.",
+     "claims": [
+      "I04"
+     ],
+     "visual_beats": [
+      {
+       "at": "name his price",
+       "kind": "symbol",
+       "symbol": "question",
+       "why": "asks what price the khan will name"
+      }
+     ]
+    }
+   ],
+   "scene": {
+    "place": "the burnt wagon line at dusk, a felt rug on a rise where the khan sits his horse",
+    "time": "the evening after the wagons burn",
+    "present": [
+     "napoleon",
+     "genghis",
+     "ali"
+    ],
+    "why_now": "a rider spared by the khan has carried the word that the khan will talk",
+    "pov": "napoleon",
+    "want": "to force a battle at dawn that the guns can win",
+    "obstacle_want": "to learn what the iron guns can do and what the foreigner will pay for the road home",
+    "value": "control",
+    "open_charge": "+",
+    "close_charge": "-",
+    "turn": "Genghis ignores the challenge and asks how far the long guns shoot, and Napoleon proudly answers (balanced: two rulers).",
+    "exit": "fail_new_goal",
+    "surface_topic": "a battle at dawn",
+    "real_subject": "who is the host and who is the guest on this grass",
+    "mode": "balanced"
+   }
+  },
+  {
+   "id": "S07",
+   "beat": "At dawn the khan names two guns as the price of the road; Ali softens the Emperor's insult, the khan hears the tone, and Ali confesses.",
+   "purpose": "SCENE ~140 words (napoleon, genghis, ali), narrator in/out. The climax: the price, the softened word, the confession answered by the khan's merit rule (pays P02); Napoleon gives up his guns (pays P01). Claims: C11, C15, I04.",
+   "period": "parley",
+   "light_beat": 7,
+   "drama": {
+    "function": "climax",
+    "turn": "therefore",
+    "shift": "pride -> price",
+    "need": "surprise",
+    "claim_share": "invented",
+    "stakes": "the whole column's road home",
+    "closes": [
+     "L04"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Dawn. Napoleon, the khan and Ali stand with two iron guns between them, and the fog at the valley's far end is thinning. When the sun burns it off, the way home closes.",
+     "claims": [
+      "I01",
+      "I04"
+     ],
+     "visual_beats": [
+      {
+       "at": "two iron guns",
+       "kind": "prop",
+       "thing": "two iron guns",
+       "why": "the two iron guns between the men"
+      },
+      {
+       "at": "the way home closes",
+       "kind": "symbol",
+       "symbol": "clock",
+       "why": "the way home closes at sunrise"
+      }
+     ]
+    },
+    {
+     "text": "Tell him my price. The long guns. All of them.",
+     "speaker": "genghis",
+     "to": "ali",
+     "intent": "decide",
+     "claims": [
+      "I04"
+     ],
+     "visual_beats": [
+      {
+       "at": "All of them",
+       "kind": "expression",
+       "who": "ali",
+       "expression": "worried",
+       "why": "the listener hears all the guns demanded"
+      }
+     ]
+    },
+    {
+     "text": "Sire, the khan asks for the guns. For the road.",
+     "speaker": "ali",
+     "to": "napoleon",
+     "intent": "question",
+     "visual_beats": []
+    },
+    {
+     "text": "Tell this horse thief a gunner gives up his guns when he is dead.",
+     "speaker": "napoleon",
+     "to": "ali",
+     "intent": "press",
+     "visual_beats": [
+      {
+       "at": "horse thief",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "angry",
+       "why": "the insult leaves his mouth hot"
+      }
+     ]
+    },
+    {
+     "text": "He says a gunner is fond of his guns, Great Khan.",
+     "speaker": "ali",
+     "to": "genghis",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "fond of his guns",
+       "kind": "expression",
+       "who": "ali",
+       "expression": "deadpan",
+       "why": "a flat face hides the softened word"
+      }
+     ]
+    },
+    {
+     "text": "Your voice dropped. Say it again, as he said it.",
+     "speaker": "genghis",
+     "to": "ali",
+     "intent": "question",
+     "pause_after": 2.0,
+     "visual_beats": [
+      {
+       "at": "Your voice dropped",
+       "kind": "expression",
+       "who": "genghis",
+       "expression": "curious",
+       "why": "the khan has heard the tone"
+      }
+     ]
+    },
+    {
+     "text": "Your tongue is near my mother's. I hear what you hear. He called you a horse thief.",
+     "speaker": "ali",
+     "to": "genghis",
+     "intent": "concede",
+     "claims": [
+      "C15"
+     ],
+     "visual_beats": [
+      {
+       "at": "He called you a horse thief",
+       "kind": "expression",
+       "who": "genghis",
+       "expression": "deadpan",
+       "why": "the khan takes the insult without a flicker"
+      }
+     ]
+    },
+    {
+     "text": "I kept an archer who shot my horse and told me so. Tell me true, always.",
+     "speaker": "genghis",
+     "to": "ali",
+     "intent": "reveal",
+     "claims": [
+      "C11"
+     ],
+     "visual_beats": [
+      {
+       "at": "told me so",
+       "kind": "expression",
+       "who": "ali",
+       "expression": "surprised",
+       "why": "the listener's face where the merit rule lands"
+      }
+     ]
+    },
+    {
+     "text": "Two guns, not all. Let him choose.",
+     "speaker": "genghis",
+     "to": "ali",
+     "intent": "decide",
+     "claims": [
+      "I04"
+     ],
+     "visual_beats": []
+    },
+    {
+     "text": "Take the two on the left. Quickly.",
+     "speaker": "napoleon",
+     "to": "ali",
+     "intent": "decide",
+     "visual_beats": [
+      {
+       "at": "Quickly",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "deadpan",
+       "why": "a flat face swallows giving up the guns"
+      }
+     ]
+    },
+    {
+     "text": "The sun climbs. Two guns will stay on the grass, and the khan's hand is already moving toward the first barrel.",
+     "claims": [
+      "I04"
+     ],
+     "visual_beats": [
+      {
+       "at": "Two guns",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "I04",
+       "values": [
+        2
+       ],
+       "unit": "guns",
+       "why": "counts the price down to two guns"
+      }
+     ]
+    }
+   ],
+   "scene": {
+    "place": "the same rise at dawn, two iron guns standing on the grass between the men",
+    "time": "dawn, the fog thinning at the valley's far end",
+    "present": [
+     "napoleon",
+     "genghis",
+     "ali"
+    ],
+    "why_now": "the fog that carried them in is thinning and the way home closes at sunrise",
+    "pov": "ali",
+    "want": "to carry the words across without either man's pride getting the column killed",
+    "obstacle_want": "to have every word of the Emperor's demand carried exactly, with the guns kept",
+    "value": "trust",
+    "open_charge": "-",
+    "close_charge": "+",
+    "turn": "Ali softens the Emperor's insult, the khan asks again and Ali admits the change; the khan lowers the price to two guns (indirect: politeness hides the blade).",
+    "exit": "succeed_complication",
+    "surface_topic": "the price of the road",
+    "real_subject": "who may be afraid in front of whom",
+    "mode": "indirect"
+   }
+  },
+  {
+   "id": "S08",
+   "beat": "The fog returns, the column walks out without two guns, and the khan's hand rests on a French barrel: no battle ended this war.",
+   "purpose": "NARRATOR ~70 words, the resolution and bookend: answers L01 (no, he got his battle and it ended nothing), mirrors S01's fog and drums. Claims: C21, C01, I01.",
+   "period": "parley",
+   "light_beat": 8,
+   "drama": {
+    "function": "resolution",
+    "turn": "therefore",
+    "shift": "bound -> free",
+    "need": "wonder",
+    "claim_share": "reasoned",
+    "stakes": "the road back and the guns left behind",
+    "closes": [
+     "L01"
+    ]
+   },
+   "lines": [
+    {
+     "text": "The fog rolls back in, and the drums pick up again, soft as rain.",
+     "claims": [
+      "I01"
+     ],
+     "visual_beats": [
+      {
+       "at": "fog rolls back",
+       "kind": "prop",
+       "thing": "fog bank",
+       "why": "the fog rolling back in"
+      },
+      {
+       "at": "drums",
+       "kind": "prop",
+       "thing": "drum",
+       "why": "the drums picking up again"
+      }
+     ]
+    },
+    {
+     "text": "The column walks into it without two guns.",
+     "claims": [
+      "I04"
+     ],
+     "visual_beats": [
+      {
+       "at": "without two guns",
+       "kind": "symbol",
+       "symbol": "cross",
+       "why": "the column leaves without two guns"
+      }
+     ]
+    },
+    {
+     "text": "Behind them, the khan's hand rests on a French barrel.",
+     "claims": [
+      "I04"
+     ],
+     "visual_beats": [
+      {
+       "at": "French barrel",
+       "kind": "prop",
+       "thing": "cannon barrel",
+       "why": "the khan's hand on a French barrel"
+      }
+     ]
+    },
+    {
+     "text": "Napoleon got his battle. It ended nothing.",
+     "claims": [
+      "I03"
+     ],
+     "emphasis": [
+      "nothing"
+     ],
+     "visual_beats": [
+      {
+       "at": "nothing",
+       "kind": "text",
+       "text": "NOTHING",
+       "why": "the battle ended nothing"
+      }
+     ]
+    },
+    {
+     "text": "More than four hundred thousand men crossed one river for a fight like that.",
+     "claims": [
+      "C01"
+     ],
+     "visual_beats": [
+      {
+       "at": "four hundred thousand men",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "C01",
+       "values": [
+        400000
+       ],
+       "unit": "men",
+       "why": "counts the men who crossed the river"
+      }
+     ]
+    },
+    {
+     "text": "Now they walk out through a fog, and the steppe is only grass again, 589 years from home.",
+     "claims": [
+      "I01",
+      "C21"
+     ],
+     "visual_beats": [
+      {
+       "at": "only grass again",
+       "kind": "prop",
+       "thing": "grass",
+       "why": "the steppe is only grass again"
+      },
+      {
+       "at": "589 years",
+       "kind": "chart",
+       "chart": "counter",
+       "claim": "C21",
+       "values": [
+        589
+       ],
+       "unit": "years",
+       "why": "counts the 589 years from home"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
