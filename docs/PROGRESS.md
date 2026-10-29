@@ -2546,6 +2546,18 @@ training as sequences is decided in the process. Changed together:
 - Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
 - From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
 
+## 2026-10-29 19:00 UTC: P0a repo hygiene (blueprint v2, no pod, no money)
+
+- D2 (ვანო, 2026-10-29): `.chatgpt/` deleted (16 files: a 2026-10-18 copy of `.claude/` plus ChatGPT rules; the
+  editorial-critic agent/skill and rules stay readable in git history before this commit). The editorial gate code
+  (`production/editorial_gate.py`, OR-10) is untouched.
+- Superseded banners: `CHATGPT.md`, `docs/CHATGPT_WORKFLOW.md`, `docs/IMPLEMENTATION_PLAN.md`, `docs/PIPELINE_ARCHITECTURE.md`;
+  `README.md` and `docs/INDEX.md` no longer point to `.chatgpt/`; `quality.yml` lost the `chatgpt/**` trigger;
+  `requirements.txt` lost the kokoro-onnx line (D-39, narrate.py is a legacy path) and the Remotion comment;
+  `docs/EDITING.md` ED-09 points to `production/graphics.py` (`production/cards.py` was never built).
+- `audio/visemes.py` and `audio/timings.py` stay (provenance ports; `timings` is imported by `audio/narrate.py`).
+- Test: `tests/unit/test_repo_hygiene.py` (no `.chatgpt/`, no CI trigger, visemes importable, retired deps absent).
+
 ## 2026-10-29 22:30 UTC (02:30 Tbilisi 10-30): paid-test caps and their ledgers (no pod, no money)
 
 - ვანო (2026-10-29 18:40 UTC, relayed): a clear yes to the paid tests P12a, P12b and P12e within $5.90 in total, each
