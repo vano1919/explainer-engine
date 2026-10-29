@@ -95,6 +95,9 @@ def test_every_hook_command_names_an_existing_module_and_hook():
     assert names == set(hooks.HOOKS)  # every hook is wired
 
 
+PLANNED = re.compile(r"`[^`\n]*`\s*\(planned, P\d+[a-z]?\)")
+
+
 def _named(text: str):
     mods = set(re.findall(r"python -m (explainer_engine[\w.]*)", text))
     paths = set(re.findall(r"`(explainer_engine/[\w/]+\.py)`", text))
@@ -111,13 +114,23 @@ def test_everything_an_agent_or_a_skill_names_exists():
     missing = []
     files = list((ROOT / ".claude").rglob("*.md"))
     for f in files:
-        # a line that says "(planned, P8)" names a module a later phase builds: allowed, and the word is the contract
-        text = "\n".join(l for l in f.read_text(encoding="utf-8").splitlines() if "(planned" not in l)
+        # only a reference directly followed by the marker "(planned, P8)" may name a module a later phase builds; the marker is the
+        # contract and exempts nothing else on the line
+        text = PLANNED.sub("", f.read_text(encoding="utf-8"))
         mods, paths, skills = _named(text)
         missing += [f"{f.name}: module {m}" for m in mods if not _module_exists(m)]
         missing += [f"{f.name}: {p}" for p in paths if not (ROOT / p).exists()]
         missing += [f"{f.name}: skill {s}" for s in skills if not (ROOT / ".claude/skills" / s / "SKILL.md").exists() and s not in {n for n in NAMES}]
     assert not missing, missing
+
+
+def test_the_planned_marker_exempts_only_the_reference_in_front_of_it():
+    assert PLANNED.sub("", "`explainer_engine/qa/x.py` (planned, P8) and `explainer_engine/qa/y.py` exist") == " and `explainer_engine/qa/y.py` exist"
+    assert PLANNED.sub("", "`a.py` (planned P8)") == "`a.py` (planned P8)"  # the exact marker, with a phase id
+    assert PLANNED.sub("", "`a.py` (planned, soon)") == "`a.py` (planned, soon)"
+    planned = re.findall(r"\(planned, (P\d+[a-z]?)\)", "".join(f.read_text(encoding="utf-8") for f in (ROOT / ".claude").rglob("*.md")))
+    phases = {p["id"] for p in json.loads((ROOT / "docs/blueprint/phases.json").read_text(encoding="utf-8"))["phases"]}
+    assert planned and set(planned) <= phases  # a marker names a phase of the plan
 
 
 def test_the_blueprint_packages_that_must_not_exist_do_not():
