@@ -2557,3 +2557,24 @@ training as sequences is decided in the process. Changed together:
   `docs/EDITING.md` ED-09 points to `production/graphics.py` (`production/cards.py` was never built).
 - `audio/visemes.py` and `audio/timings.py` stay (provenance ports; `timings` is imported by `audio/narrate.py`).
 - Test: `tests/unit/test_repo_hygiene.py` (no `.chatgpt/`, no CI trigger, visemes importable, retired deps absent).
+
+## 2026-10-29 22:45 UTC: P3b craft curriculum, sub-step 2 (blueprint v2, no pod, no money)
+
+- The professional craft of nine departments in the repository's three layers: skill pages (extended `narration-script`
+  AI register, `editing-style` sound design, `video-editing-architect` editing/colour and motion graphics with Mayer's
+  principles, `shot-visuals` shot grammar and lanes, `elevenlabs-voice` casting and performance, `shorts-for-video`
+  packaging; new `cartography` and `animation-principles`; a pointer in the `performance-director` stage page), one
+  checklist per department `explainer_engine/standards/craft_checklists/<dept>.json` (102 CRAFT- rows in the shape of
+  `training/video_criteria.json`, each with its kind, artefact field, sourced rules, source and enforcement; rendered into
+  its skill's CHECKLIST table), and the index [CRAFT_CURRICULUM](CRAFT_CURRICULUM.md) with the 13 Blueprint conflicts
+  (creator decision pending, the rule in force stays) and the 17 areas.
+- Registry: BP-114..138 added, all **hypothesis, REVIEW** (no rule has two verified source types; sources only from
+  `docs/research/CRAFT_SOURCES_2026-10.md`, numbers no opened source supports cite "Blueprint 2026-10 (unverified)");
+  each names its checklist row in `enforced_by` and the validator still to be written in `planned` (P3-P10). The
+  dramatisability caps (BP-127) are the Blueprint's house numbers, not McKee's or Katz's. No existing threshold changed;
+  the conflicting Blueprint numbers (-16 LUFS, 135-145 wpm, 3-5 dB duck, 0.18 eye trace, 2.0-3.5 s window, 24 fps,
+  250/480/240/60 safe zone) are conflict records only, not registry entries.
+- Tooling: `explainer_engine/standards/craft.py` (`check`, `write`: integrity and the rendered copies; judges no video).
+- Test: `tests/unit/test_craft_checklists.py` (shape, unique ids, sources and enforcement, BP ids exist, skill tables and
+  the curriculum index equal the JSON, one home per CRAFT id, 13 conflicts and 17 areas listed, the conflicting rules keep
+  their numbers).
