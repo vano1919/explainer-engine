@@ -64,6 +64,38 @@ is listened to by a human before any re-read is bought, because most are natural
 - Reading before the script's last edit: change the text first, read once.
 - Heavy tag stacking and long ellipsis chains: slow, unstable, and charged per character.
 
+## Voice performance and casting (P3b 2026-10-29)
+
+- **Cast by measurement, choose by ear.** Every candidate voice gets one test read and a measured profile (median pitch and
+  range, rate, spectral centroid, pitch variation, emphasis, pauses, drift; `audio/voice_audition.py`, P4b); two cast
+  voices differ by at least one of BP-138's margins so VC-04 is checkable; the creator picks from the top three (VC-03).
+- **Pace** is BP-01's band, measured on the finished read. The Blueprint's slower band is conflict 2 of the curriculum;
+  the one opened study (Rodero 2020, advertising) found 180 wpm best of 160/180/200, so neither side is settled.
+- **Delivery is written, then tagged** (performance-director page): one stressed word per sentence, a tag where the
+  delivery changes, no pause before a punch line (BP-10); an animated shot's line carries pace, loudness and colour and a
+  face the lens sees (KP-17, KP-18).
+- **Consistency** across takes is checked against the voice's baseline (`audio/voice_check.py`, P4b), never assumed.
+
+### CHECKLIST (voice)
+
+Rendered from `explainer_engine/standards/craft_checklists/voice.json` (the one home of these ids; 
+`python -m explainer_engine.standards.craft write` regenerates it, `tests/unit/test_craft_checklists.py` fails when they
+differ). Every row is a hypothesis until a second source type is verified ([CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)).
+
+<!-- craft-checklist:voice:begin -->
+| ID | check | rule | artefact field | sourced rules | enforced by |
+|---|---|---|---|---|---|
+| CRAFT-VOX-01 | code | the heard pace sits in BP-01's band | the finished read + word times | BP-01 | `explainer_engine/production/validate.py` |
+| CRAFT-VOX-02 | code | every candidate voice has a measured profile from one test read | voice audition record | - | `explainer_engine/audio/voice_audition.py` (planned, P4b) |
+| CRAFT-VOX-03 | code | two cast voices differ by at least one measured margin | voice audition records | BP-138, VC-04 | `explainer_engine/audio/voice_audition.py` (planned, P4b) |
+| CRAFT-VOX-04 | manual | the creator picks the voice by ear from the top three | casting card | VC-03 | manual |
+| CRAFT-VOX-05 | critic | one stressed word per sentence; a tag only where the delivery changes | lines: tags, emphasis | PF-01 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-VOX-06 | code | no pause before a punch line; held pauses inside their limit | lines: pause_after | BP-10 | `explainer_engine/scripting/narration_lint.py` |
+| CRAFT-VOX-07 | manual | chunk size, carried context, pauses by tags and punctuation | ElevenLabs requests | BP-14 | manual |
+| CRAFT-VOX-08 | code | a new take matches the voice's baseline (no drift) | take vs the channel voice baseline | - | `explainer_engine/audio/voice_check.py` (planned, P4b) |
+| CRAFT-VOX-09 | critic | an animated shot's line carries delivery (pace, loudness, colour) and a face the lens sees | shot card delivery + face | KP-17, KP-18 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+<!-- craft-checklist:voice:end -->
+
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 The numbers that bind a read live only in the registry (`explainer_engine/standards/sourced_rules.json`). A number changes
@@ -75,3 +107,4 @@ there, with its sources, never here.
   `next_text` carried across chunks wherever the API exposes them (the connector does not, V-29: then same-size consecutive
   chunks stand in); pauses by tags and punctuation only, no SSML on v3/v4; speed within 0.9-1.1 (the connector has no speed
   knob on v4, so the text sets the pace and any speed-up happens in finishing under BP-02).
+- BP-138: the casting margins between two cast voices (hypothesis, REVIEW; checklist above).

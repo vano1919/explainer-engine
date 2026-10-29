@@ -2,6 +2,7 @@
 name: beat-writer
 description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Writers' room stage 2b. Writes the visual beats of ONE segment's lines - a beat wherever NEW information lands (a word, label, prop, chart, ring, sign, accent or facial expression), reaction-driven faces in dialogue, and a sound cue ONLY where a named story event earns one - right after the scene-writer finishes that segment, on the same frozen words. Use segment by segment, before the next segment is written.
 model: sonnet
+effort: high
 tools: Read, Edit, Bash, Grep
 ---
 

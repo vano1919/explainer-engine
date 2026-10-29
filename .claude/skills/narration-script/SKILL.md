@@ -157,6 +157,41 @@ https://www.overseeros.com/blog/youtube-storytelling-techniques-6-ways-keep-view
 vidIQ transcripts read 2026-10-16: aeKrIhktzqU, BTNUK1SCoo4, vS5BmHsuvvk, agRKo_sEb4I (patterns only; no text copied
 into our scripts).
 
+## AI register: write like a person, not like a model (N-15, P3b 2026-10-29)
+
+The creator's point 1 of the blueprint review: lines that read as machine prose break the story. Studies of large text
+corpora show that certain style words rose sharply after language models arrived (arXiv 2404.01268, 2406.07016; the
+abstract pages prove the drift, not our list), so the lexicon of BP-114 is a hypothesis we measure, not a law. What to do:
+
+- **Say the thing.** "Napoleon delves into the map" becomes "Napoleon stares at the map"; "a tapestry of alliances"
+  becomes the alliances by name; "a testament to his nerve" becomes the act that shows the nerve (show, don't tell, BP-87).
+- **Density, not a single word.** One hit proves nothing; BP-114 counts hits per 300 words. A literal use is allowed: a
+  landscape of hills, a journey of 300 miles.
+- **Structural tells** (the critic reads them, CRAFT-SCR-02): three adjectives or clauses stacked for rhythm; a sentence
+  that opens with "Imagine"; a rhetorical question opening every segment; em-dash chains; "not just X, but Y"; "in a world
+  where". Each is a habit, so the fix is the plain sentence the narrator would say at a campfire.
+- **The twist lands short.** The sentence that turns the story is spoken inside BP-115's estimate; a long twist is two
+  sentences, the turn in the second.
+- **Causal joins.** Beats join with "so" or "but", never "and then" (ST-02).
+
+### CHECKLIST (screenwriting)
+
+Rendered from `explainer_engine/standards/craft_checklists/screenwriting.json` (the one home of these ids; 
+`python -m explainer_engine.standards.craft write` regenerates it, `tests/unit/test_craft_checklists.py` fails when they
+differ). Every row is a hypothesis until a second source type is verified ([CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)).
+
+<!-- craft-checklist:screenwriting:begin -->
+| ID | check | rule | artefact field | sourced rules | enforced by |
+|---|---|---|---|---|---|
+| CRAFT-SCR-01 | code | no AI-register word over the density limit (delve, tapestry, testament to, ...) | production_script narration[].text and hero lines | BP-114 | `explainer_engine/scripting/register_lint.py` (planned, P3) |
+| CRAFT-SCR-02 | critic | no structural AI tells: stacked triplets, sentence-initial 'Imagine', a rhetorical-question opener in every segment, em-dash chains, 'not just X but Y' | narration[].text | BP-114 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-SCR-03 | code | the twist sentence lands inside its estimated spoken length | segment twist sentence + syllable estimate | BP-115 | `explainer_engine/scripting/syllables.py` (planned, P3) |
+| CRAFT-SCR-04 | code | causal chain: THEREFORE / BUT joins, no AND-THEN chain | story beats | ST-02 | `explainer_engine/scripting/story_lint.py` |
+| CRAFT-SCR-05 | code | show, don't tell and full immersion (no trait statements, no meta disclaimers) | narration and hero lines | BP-87, BP-88 | `explainer_engine/scripting/scene_lint.py` |
+| CRAFT-SCR-06 | critic | no double exposition: the narration never describes what the picture already shows | narration line vs its shot card | KP-20 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-SCR-07 | code | sentences for the ear and spoken register | narration[].text | BP-06, BP-07 | `explainer_engine/scripting/narration_lint.py` |
+<!-- craft-checklist:screenwriting:end -->
+
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 The numbers that bind this skill live only in the registry (`explainer_engine/standards/sourced_rules.json`);
@@ -190,6 +225,8 @@ never here.
   the story; sources are cited in the claim map and the description, never spoken (N-14, FAIL). The same lexicon also holds
   the announcement-register patterns of SC-07 ("X's page says", "announced", "release date", "launches worldwide"),
   checked on narrator lines only: a hero may name a date inside a scene.
+- BP-114: the AI-register lexicon and its density per 300 words (hypothesis, REVIEW; the Blueprint's FAIL needs the
+  creator's dated word); BP-115: the twist sentence's estimated length (hypothesis, REVIEW). Checklist above.
 
 ## One narrator tells the dialogue (D-68, creator 2026-10-21)
 

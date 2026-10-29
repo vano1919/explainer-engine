@@ -69,3 +69,13 @@ def test_the_check_catches_a_rule_without_sources(monkeypatch):
     found = SR.check()
     details = " ".join(f["detail"] for f in found)
     assert "source type" in details and "does not exist" in details
+
+
+def test_an_unverified_source_does_not_count_as_a_source_type():
+    rule = {"sources": [{"type": "A", "title": "x", "url": "http://x"},
+                        {"type": "B", "title": "origin only", "url": "http://y", "verified": False}]}
+    assert SR.source_types(rule) == {"A"}
+    assert SR.source_types({"sources": [{"type": "B", "title": "b", "url": "http://z"}]}) == {"B"}
+    unverified = [s for r in SR.rules() for s in r["sources"] if s["title"].startswith("Blueprint 2026-10 (unverified)")]
+    assert unverified and all(s.get("verified") is False for s in unverified)
+    assert not any("project-thread-abo4it" in s["url"] for r in SR.rules() for s in r["sources"])

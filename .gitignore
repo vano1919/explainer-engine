@@ -34,3 +34,6 @@ id_ed25519*
 
 # resumable upload sessions of the YouTube staging step (publish/stage.py)
 .sessions.json
+
+# local Claude Code settings (may hold permissions or keys)
+.claude/settings.local.json

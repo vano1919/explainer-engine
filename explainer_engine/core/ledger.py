@@ -16,6 +16,7 @@ import time
 from pathlib import Path
 
 from explainer_engine.core import spend_caps
+from explainer_engine.core.errors import NeedsReview
 from explainer_engine.core.spend_caps import check_caps
 from explainer_engine.core.store import write_json_atomic
 
@@ -208,6 +209,31 @@ class Run:
                 "phases": {k: v["status"] for k, v in self.data["phases"].items()},
                 "items": {k: len(v) for k, v in self.data["items"].items()},
                 "failures": {k: len(v) for k, v in self.data["failures"].items()}}
+
+
+class Attempts:
+    """Code attempts per phase (OR-04, P0b): attempts 1-2 run at the assigned level, the 3rd only escalated (or on its plan), a
+    4th stops the item with NeedsReview. File ``jobs/<phase>/attempts.json``."""
+
+    def __init__(self, path: Path | str, at_level: int = 2, escalated: int = 1) -> None:
+        self.path, self.at_level, self.escalated = Path(path), at_level, escalated
+
+    def rows(self) -> list[dict]:
+        return json.loads(self.path.read_text(encoding="utf-8")) if self.path.exists() else []
+
+    def add(self, cause: str = "", *, escalated: bool = False) -> dict:
+        rows = self.rows()
+        plain = sum(1 for r in rows if not r["escalated"])
+        esc = sum(1 for r in rows if r["escalated"])
+        if escalated and esc >= self.escalated:
+            raise NeedsReview(f"{self.path.parent.name}: {len(rows)} attempts used ({plain} at the assigned level, {esc} escalated); "
+                              "write the cause from evidence and ask the creator (OR-04)")
+        if not escalated and plain >= self.at_level:
+            raise NeedsReview(f"{self.path.parent.name}: attempts 1-{self.at_level} at the assigned level are used; "
+                              "the next one runs only escalated (Opus or its plan), then the item stops (OR-04)")
+        row = {"n": len(rows) + 1, "escalated": escalated, "cause": cause[:400], "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+        write_json_atomic(self.path, rows + [row])
+        return row
 
 
 def main(argv=None) -> None:

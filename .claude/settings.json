@@ -16,6 +16,28 @@
           {
             "type": "command",
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.cloud.hooks pre-bash"
+          },
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks pre-bash"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks pre-write"
+          }
+        ]
+      },
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks pre-agent"
           }
         ]
       }
@@ -36,9 +58,70 @@
           {
             "type": "command",
             "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.cloud.hooks stop"
+          },
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks stop"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks post-edit"
+          }
+        ]
+      }
+    ],
+    "PreModelSwitch": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks pre-switch"
+          }
+        ]
+      }
+    ],
+    "PostModelSwitch": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks post-switch"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks prompt"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "matcher": "rate_limit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks stop-failure"
           }
         ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "cd \"$CLAUDE_PROJECT_DIR\" && \"$(command -v python3 || command -v python)\" -m explainer_engine.governance.hooks statusline",
+    "refreshInterval": 60
   }
 }

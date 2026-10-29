@@ -1,0 +1,435 @@
+{
+  "version": 1,
+  "source": "MODEL_ROUTING v2 part 4 (blueprint_2026-10-29/recheck/p10_balance.json routing_text); D6 (creator yes 2026-10-29 18:17 UTC); D7 (this file is the one home); D-84",
+  "change_rule": "Changed only on the creator's word (governance.records action protected_config); tests, hooks and docs read this file.",
+  "models": {
+    "haiku": "claude-haiku-5-5",
+    "sonnet": "claude-sonnet-5-5",
+    "opus": "claude-opus-5-5",
+    "fable": "claude-fable-5-1"
+  },
+  "efforts": [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max"
+  ],
+  "classes": [
+    {
+      "id": "simple-question",
+      "task": "Simple question, status, 'where is the file'",
+      "level": "S0",
+      "models": [
+        "haiku"
+      ],
+      "efforts": [
+        "low"
+      ],
+      "effort_text": "low",
+      "guard": "answers only with the path it read; never a decision input",
+      "how": "coordinator from its own context, else a Haiku subagent; no thread"
+    },
+    {
+      "id": "code-search",
+      "task": "Search in code/files, summary",
+      "level": "S0-S1",
+      "models": [
+        "haiku"
+      ],
+      "efforts": [
+        "low",
+        "medium"
+      ],
+      "effort_text": "low-medium",
+      "guard": "one incomplete answer -> Sonnet",
+      "how": "Explore subagent"
+    },
+    {
+      "id": "mechanical-change",
+      "task": "Mechanical change from a card, docs update",
+      "level": "S1",
+      "models": [
+        "sonnet"
+      ],
+      "efforts": [
+        "low",
+        "medium"
+      ],
+      "effort_text": "low-medium",
+      "guard": "diff limited to the card's files; tests + docs_lint; a question found is reported, not answered",
+      "how": "subagent or Sonnet thread"
+    },
+    {
+      "id": "straightforward-code",
+      "task": "Straightforward code, tests, CI fix",
+      "level": "S2",
+      "models": [
+        "sonnet"
+      ],
+      "efforts": [
+        "medium",
+        "high"
+      ],
+      "effort_text": "medium (high if >3 files or a schema changes)",
+      "guard": "spec exists; red->green; fresh-context review subagent before merge; 2 failures -> stop and ask",
+      "how": "Sonnet thread, one PR"
+    },
+    {
+      "id": "phase-from-plan",
+      "task": "Phase from a finished plan, many files",
+      "level": "S2-S3",
+      "models": [
+        "sonnet",
+        "opus"
+      ],
+      "efforts": [
+        "high"
+      ],
+      "effort_text": "high",
+      "guard": "plan-as-written; deviations reported (OR-26); S2+ PR reviewed by another thread",
+      "how": "separate thread"
+    },
+    {
+      "id": "hard-debugging",
+      "task": "Hard debugging, cause unknown",
+      "level": "S3",
+      "models": [
+        "opus"
+      ],
+      "efforts": [
+        "high"
+      ],
+      "effort_text": "high",
+      "guard": "writes the cause with evidence before the fix; one fix per cause (feedback-one-goal-failure-triage)",
+      "how": "thread"
+    },
+    {
+      "id": "architecture-design",
+      "task": "Architecture, new-method design, test design",
+      "level": "S3",
+      "models": [
+        "opus"
+      ],
+      "efforts": [
+        "high"
+      ],
+      "effort_text": "high",
+      "guard": "design doc + test plan before code; 'decide' and 'do' split; design reviewed by a second thread with facts only (OR-24)",
+      "how": "Opus thread writes, Sonnet thread implements"
+    },
+    {
+      "id": "new-method-code",
+      "task": "New-method code (first implementation)",
+      "level": "S3",
+      "models": [
+        "opus"
+      ],
+      "efforts": [
+        "high"
+      ],
+      "effort_text": "high (never xhigh/max)",
+      "guard": "as designed; focused test; independent PR review; 2 failures -> back to the design thread",
+      "how": "thread"
+    },
+    {
+      "id": "critical-review",
+      "task": "Critical review of code, plan or PR",
+      "level": "S3",
+      "models": [
+        "opus"
+      ],
+      "efforts": [
+        "high",
+        "xhigh"
+      ],
+      "effort_text": "high (xhigh only for a plan that commits money or is irreversible)",
+      "guard": "fresh context; facts, files and OPEN items only; verdict first (OR-25); names the SHA or plan hash it read",
+      "how": "separate reviewer thread (OR-24/26)"
+    },
+    {
+      "id": "pod-plan",
+      "task": "Pod or paid-run plan",
+      "level": "S3",
+      "models": [
+        "opus"
+      ],
+      "efforts": [
+        "high"
+      ],
+      "effort_text": "high",
+      "guard": "OR-23 item list; caps from spend_caps.json; the plan is a file; launch only on the creator's word or the OR-24 confirmation",
+      "how": "Opus thread; Sonnet executes through cloud/runpod.py"
+    },
+    {
+      "id": "research-facts",
+      "task": "Research: facts with sources",
+      "level": "S2",
+      "models": [
+        "haiku",
+        "sonnet"
+      ],
+      "efforts": [
+        "medium",
+        "high"
+      ],
+      "effort_text": "medium-high",
+      "guard": "URL + access date per claim; 'not verified' stated; model/tool names from HF tools or the vendor page, never memory",
+      "how": "subagent or thread"
+    },
+    {
+      "id": "research-synthesis",
+      "task": "Research synthesis, path comparison",
+      "level": "S3-S4",
+      "models": [
+        "opus",
+        "fable"
+      ],
+      "efforts": [
+        "high"
+      ],
+      "effort_text": "high",
+      "guard": "every path listed and priced (OR-25); free full analysis before any paid test",
+      "how": "thread"
+    },
+    {
+      "id": "qa-judgement",
+      "task": "QA judgement over artefacts (sheets, frames, reads)",
+      "level": "S2",
+      "models": [
+        "sonnet"
+      ],
+      "efforts": [
+        "medium"
+      ],
+      "effort_text": "medium",
+      "guard": "validators first (OR-14); fixed questions; basis data/estimate/instructions; one disputed verdict -> Opus once; the creator's eye decides done",
+      "how": "subagent (sheet_review, frame_review)"
+    },
+    {
+      "id": "script-story-stages",
+      "task": "Script: scenario, story architect, scene writer",
+      "level": "S3-S4",
+      "models": [
+        "fable"
+      ],
+      "efforts": [
+        "high"
+      ],
+      "effort_text": "high (never xhigh/max)",
+      "guard": "OR-15 scenario first; variants proposed by the Opus thread with code-scored cost and dynamics, the creator picks on one card; stage_guard + validators + register lint after each stage",
+      "how": "main agent runs the stage pages"
+    },
+    {
+      "id": "script-mechanical-stages",
+      "task": "Script: beats, performance, edit plan, voice casting, Shorts",
+      "level": "S2",
+      "models": [
+        "sonnet"
+      ],
+      "efforts": [
+        "high"
+      ],
+      "effort_text": "high",
+      "guard": "the stage page's checklist; validators; no new story decision in a mechanical stage",
+      "how": "main agent runs the stage pages"
+    },
+    {
+      "id": "independent-critic",
+      "task": "Independent critic (script-critic, checkpoint judge, production critic)",
+      "level": "S3",
+      "models": [
+        "opus"
+      ],
+      "efforts": [
+        "high"
+      ],
+      "effort_text": "high",
+      "guard": "spawned fresh; read-only tools; never rewrites; findings with refs; at most two rounds then the creator",
+      "how": "spawned by the main agent (OR-20)"
+    },
+    {
+      "id": "whole-project-plan",
+      "task": "Whole-project plan, large document synthesis",
+      "level": "S4",
+      "models": [
+        "fable"
+      ],
+      "efforts": [
+        "xhigh",
+        "max"
+      ],
+      "effort_text": "xhigh (max only on the creator's word)",
+      "guard": "plan + decision queue only; owner tag on every item; claude-owned S3+ items confirmed by the Opus thread; no code, no spend",
+      "how": "separate planning thread"
+    },
+    {
+      "id": "multi-agent-analysis",
+      "task": "Multi-agent large analysis",
+      "level": "S4",
+      "models": [],
+      "efforts": [],
+      "effort_text": "ultracode",
+      "guard": "only on the creator's word (part 5)",
+      "how": "workflow"
+    }
+  ],
+  "code": {
+    "effort_ceiling": "high",
+    "never_models": [
+      "fable"
+    ]
+  },
+  "escalation": {
+    "attempts_at_level": 2,
+    "escalated_attempts": 1,
+    "haiku_to_sonnet_after": 1
+  },
+  "critics": {
+    "names": [
+      "script-critic",
+      "lora-checkpoint-judge"
+    ],
+    "model": "opus",
+    "effort": "high",
+    "tools": [
+      "Read",
+      "Grep",
+      "Glob"
+    ]
+  },
+  "spawners": [
+    "orchestrator",
+    "lora-coordinator"
+  ],
+  "fable_story_stages": {
+    "enabled": false,
+    "stages": [
+      "story-architect",
+      "scene-writer"
+    ],
+    "effort": "high",
+    "set_by": null
+  },
+  "agents": {
+    "orchestrator": {
+      "role": "main",
+      "model": "opus",
+      "effort": "high",
+      "reason": "main agent: owns gates, ledger and every decision (MODEL_ROUTING part 4, pod/paid-run plan row); never fable"
+    },
+    "lora-coordinator": {
+      "role": "main",
+      "model": "opus",
+      "effort": "high",
+      "reason": "main agent of LoRA trainings: plans pods and judges runs; never fable"
+    },
+    "script-critic": {
+      "role": "critic",
+      "model": "opus",
+      "effort": "high",
+      "reason": "part 4 independent critic row; read-only, decides nothing"
+    },
+    "lora-checkpoint-judge": {
+      "role": "critic",
+      "model": "opus",
+      "effort": "high",
+      "reason": "part 4 independent critic row; read-only, decides nothing"
+    },
+    "story-architect": {
+      "role": "stage-story",
+      "model": "sonnet",
+      "effort": "high",
+      "reason": "fable only when the creator turns fable_story_stages on (D6)"
+    },
+    "scene-writer": {
+      "role": "stage-story",
+      "model": "sonnet",
+      "effort": "high",
+      "reason": "fable only when the creator turns fable_story_stages on (D6)"
+    },
+    "beat-writer": {
+      "role": "stage",
+      "model": "sonnet",
+      "effort": "high",
+      "reason": "part 4 script: beats, performance, edit plan, casting, Shorts (S2 high)"
+    },
+    "performance-director": {
+      "role": "stage",
+      "model": "sonnet",
+      "effort": "high",
+      "reason": "part 4 script: beats, performance, edit plan, casting, Shorts (S2 high)"
+    },
+    "edit-planner": {
+      "role": "stage",
+      "model": "sonnet",
+      "effort": "high",
+      "reason": "part 4 script: beats, performance, edit plan, casting, Shorts (S2 high)"
+    },
+    "voice-caster": {
+      "role": "stage",
+      "model": "sonnet",
+      "effort": "high",
+      "reason": "part 4 script: beats, performance, edit plan, casting, Shorts (S2 high)"
+    },
+    "shorts-writer": {
+      "role": "stage",
+      "model": "sonnet",
+      "effort": "high",
+      "reason": "part 4 script: beats, performance, edit plan, casting, Shorts (S2 high)"
+    },
+    "shot-continuity-writer": {
+      "role": "stage",
+      "model": "sonnet",
+      "effort": "high",
+      "reason": "mechanical stage from the approved script; validators check it"
+    },
+    "episode-standards-director": {
+      "role": "stage",
+      "model": "sonnet",
+      "effort": "high",
+      "reason": "research with sources (S2 medium-high); the rulebook binds every step, so high"
+    },
+    "lora-dataset-auditor": {
+      "role": "stage",
+      "model": "sonnet",
+      "effort": "medium",
+      "reason": "part 4 QA judgement over artefacts (S2 medium)"
+    },
+    "lora-run-operator": {
+      "role": "stage",
+      "model": "sonnet",
+      "effort": "high",
+      "reason": "executes pods through cloud/runpod.py; Sonnet executes (part 4 pod row)"
+    }
+  },
+  "owner": {
+    "creator": [
+      "goal of the work",
+      "channel and brand",
+      "spend above the plan or the caps",
+      "top-up",
+      "deleting anything",
+      "public exposure",
+      "a change to a D-xx or OR-xx that records the creator's own decision (OR-22)"
+    ],
+    "claude": [
+      "technical choices, decided with a one-line reason; S3+ confirmed by the Opus review thread"
+    ],
+    "default": "creator"
+  },
+  "model_switch": {
+    "window_minutes": 15
+  },
+  "protected_files": {
+    "config/spend_caps.json": 60,
+    "config/model_routing.json": 60
+  },
+  "usage": {
+    "backup_at_percent": 95,
+    "fresh_minutes": 10,
+    "backup_dir": "/mnt/project-files/explainer-engine/_backup",
+    "untracked_cap_mb": 50
+  },
+  "reminder": "Before acting: name the class S0-S4 and model/effort from config/model_routing.json; tag every open choice owner=creator (a card, one message) or owner=claude (one-line reason); never raise your own model or effort."
+}
