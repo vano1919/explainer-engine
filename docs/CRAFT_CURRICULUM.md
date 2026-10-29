@@ -26,12 +26,12 @@ P4, P4b, P5, P6, P7, P8, P9, P10). Until then a row is ticked by the critic or b
 <!-- craft-index:begin -->
 | department | skill | checklist | ids | code / critic / eye / manual | sourced rules |
 |---|---|---|---|---|---|
-| animation | `animation-principles` | `standards/craft_checklists/animation.json` | CRAFT-ANI-01..16 (16) | 5 / 0 / 11 / 0 | BP-23, BP-107, BP-109, BP-132, BP-133 |
+| animation | `animation-principles` | `standards/craft_checklists/animation.json` | CRAFT-ANI-01..16 (16) | 3 / 0 / 13 / 0 | BP-23, BP-107, BP-109, BP-132, BP-133 |
 | cartography | `cartography` | `standards/craft_checklists/cartography.json` | CRAFT-CART-01..08 (8) | 4 / 2 / 2 / 0 | BP-124, BP-125 |
 | cinematography | `shot-visuals` | `standards/craft_checklists/cinematography.json` | CRAFT-CIN-01..11 (11) | 5 / 4 / 2 / 0 | BP-30, BP-103, BP-126, BP-127 |
 | editing_colour | `video-editing-architect` | `standards/craft_checklists/editing_colour.json` | CRAFT-EDC-01..12 (12) | 7 / 2 / 3 / 0 | BP-25, BP-31, BP-128, BP-129, BP-130, BP-131 |
 | motion_graphics | `video-editing-architect` | `standards/craft_checklists/motion_graphics.json` | CRAFT-MOG-01..15 (15) | 6 / 6 / 3 / 0 | BP-07, BP-28, BP-38, BP-54, BP-93, BP-134 |
-| packaging | `shorts-for-video` | `standards/craft_checklists/packaging.json` | CRAFT-PKG-01..10 (10) | 5 / 2 / 0 / 3 | BP-11, BP-12, BP-29, BP-48, BP-135, BP-136, BP-137 |
+| packaging | `shorts-for-video` | `standards/craft_checklists/packaging.json` | CRAFT-PKG-01..10 (10) | 3 / 2 / 2 / 3 | BP-11, BP-12, BP-29, BP-48, BP-135, BP-136, BP-137 |
 | screenwriting | `narration-script` | `standards/craft_checklists/screenwriting.json` | CRAFT-SCR-01..07 (7) | 5 / 2 / 0 / 0 | BP-06, BP-07, BP-87, BP-88, BP-114, BP-115 |
 | sound | `editing-style` | `standards/craft_checklists/sound.json` | CRAFT-SND-01..14 (14) | 12 / 2 / 0 / 0 | BP-50, BP-53, BP-54, BP-56, BP-62, BP-116, BP-117, BP-118, BP-119, BP-120, BP-121, BP-122, BP-123 |
 | voice | `elevenlabs-voice` | `standards/craft_checklists/voice.json` | CRAFT-VOX-01..09 (9) | 5 / 2 / 0 / 2 | BP-01, BP-10, BP-14, BP-138 |
