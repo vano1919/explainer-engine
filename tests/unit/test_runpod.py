@@ -57,6 +57,10 @@ class FakeRunPod:
             vid = path.split("/")[2]
             self.volumes = [v for v in self.volumes if v["id"] != vid]
             return 204, ""
+        if path.startswith("/global-volumes/") and method == "DELETE":
+            vid = path.split("/")[2]
+            self.global_volumes = [v for v in self.global_volumes if v["id"] != vid]
+            return 204, ""
         if path.startswith("/global-volumes?"):
             return 200, json.dumps({"globalVolumes": self.global_volumes, "pagination": {"nextCursor": None, "hasNextPage": False}})
         if path.startswith("/catalog/gpus"):
@@ -311,6 +315,19 @@ def test_create_cli_reserves_in_the_ledger_writes_a_session_and_names_the_lifeti
     with pytest.raises(SystemExit, match="--ledger"):
         R.main(["create", "--yes", "--max-usd", "0.1", "--max-hours", "1"], api=api)
     assert len(fake.pods) == 1
+
+
+def test_create_cli_sets_the_container_disk(env, tmp_path, monkeypatch):
+    fake, api = env
+    monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)
+    seen = []
+    real = R.create
+    monkeypatch.setattr(R, "create", lambda api, body, **kw: seen.append(body) or real(api, body, **kw))
+    ledger = tmp_path / "run.json"
+    Run.open(ledger, caps={"runpod_usd": 1.0})
+    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--volume", "0", "--disk", "200", "--ledger", str(ledger)],
+           api=api)
+    assert seen[0]["disk"] == 200 and seen[0]["mounts"] == {}
 
 
 def test_a_provisioning_pod_without_a_price_runs_its_money_clock_on_the_ceiling(env, tmp_path, monkeypatch):
@@ -643,12 +660,17 @@ python run.py /workspace/cfg.yaml > /workspace/train.log 2>&1
 """
 
 
+VAULT_CHECK = "python -m explainer_engine.vault check-uploaded /workspace/out --to run/out\n"
+
+
 def test_a_pod_script_must_upload_its_log_before_its_first_heavy_step():
     """The 2026-10-24 training script uploaded nothing until its caption stage ended: 72 min of silence, stopped (≈$1.3)."""
     bad = R.lint_pod_script(OLD_TRAIN_SH)
-    assert len(bad) == 2 and "after the first heavy step at line 4" in bad[0] and "rewrite" in bad[1]
+    assert len(bad) == 3 and "after the first heavy step at line 4" in bad[0] and "rewrite" in bad[1]
+    assert bad[2].startswith("VT-01")  # D-73: the weights are proved on HF before the pod stops
     fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n",
                                  "nvidia-smi || true\n( while true; do sleep 240; date > out/beat.txt; up; done ) & EARLY=$!\n")
+    fixed += VAULT_CHECK
     assert R.lint_pod_script(fixed) == []
     frozen = fixed.replace("date > out/beat.txt; ", "")   # uploads, but its heartbeat file never changes: reads as silent
     assert "rewrite its heartbeat file" in R.lint_pod_script(frozen)[0]
@@ -662,6 +684,8 @@ def test_preflight_refuses_a_pod_script_without_a_heartbeat(env):
     ok = dict(max_usd=0.5, max_hours=1.0, gpu="cheap", now=10**6)
     assert any(w.startswith("pod script:") for w in R.preflight_create(api, **ok, script=OLD_TRAIN_SH))
     fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n", "nvidia-smi || true\n( while true; do sleep 240; date > b; up; done ) &\n")
+    assert any("VT-01" in w for w in R.preflight_create(api, **ok, script=fixed))
+    fixed += VAULT_CHECK
     assert R.preflight_create(api, **ok, script=fixed) == []
     assert any("tail -f /dev/null" in w for w in R.preflight_create(api, **ok, script=fixed + "tail -f /dev/null\n"))
 
@@ -796,3 +820,33 @@ def test_preflight_refuses_a_job_whose_cheapest_card_passes_the_approved_money_o
     assert R.preflight_create(api, max_usd=0.7, picks=small, **{**ok, "max_hours": 2.0}) == []   # 2 h on the A40
     assert any("over the approved $0.5" in w for w in R.preflight_create(api, max_usd=0.5, picks=picks, **ok))
     assert any("no card" in w for w in R.preflight_create(api, max_usd=0.5, picks=[], **ok))
+
+
+def test_delete_volume_global_needs_the_word_and_verifies(env, capsys):
+    fake, api = env
+    fake.global_volumes = [{"id": "gsb_1", "name": "shared"}]
+    with pytest.raises(SystemExit, match="--yes"):
+        R.main(["delete-volume", "gsb_1", "--global"], api=api)
+    R.main(["delete-volume", "gsb_1", "--global", "--yes"], api=api)
+    assert fake.global_volumes == [] and "gsb_1 GONE" in capsys.readouterr().out
+
+
+def test_create_cli_takes_a_longer_boot_deadline_for_slow_images(env, tmp_path, monkeypatch):
+    """2026-10-26: the caption pod's image fetch took > 10 min and the guard stopped it before boot (LT-15 needs 25)."""
+    fake, api = env
+    monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)
+    monkeypatch.setattr(R, "live_guard", lambda pid: True)
+    ledger = tmp_path / "run.json"
+    Run.open(ledger, caps={"runpod_usd": 1.0})
+    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "0.75", "--boot", "cloud/x.json", "--boot-minutes", "25",
+            "--ledger", str(ledger)], api=api)
+    sess = R.sess_read("p1")
+    assert sess["boot_deadline"] - sess["started"] == pytest.approx(25 * 60, abs=5)
+
+
+def test_only_cards_keeps_the_named_card_and_refuses_when_none_matches():
+    picks = [{"gpu": "NVIDIA A100-SXM4-80GB"}, {"gpu": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition"}]
+    assert R.only_cards(picks, None) == picks
+    assert R.only_cards(picks, "RTX PRO 6000") == [picks[1]]
+    with pytest.raises(SystemExit, match="no card with stock"):
+        R.only_cards(picks, "H100")

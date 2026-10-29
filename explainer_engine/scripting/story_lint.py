@@ -1,4 +1,4 @@
-"""Story rules ST-01..ST-10 (docs/STORY_ENGINE.md, D-48) on a production script's story layer (``drama`` at the top,
+"""Story rules ST-01..ST-19 (docs/STORY_ENGINE.md, D-48) on a production script's story layer (``drama`` at the top,
 ``drama`` per segment). Free, run by ``production validate`` before any paid step.
 
 The creator's note on the first video (2026-10-19): the script told a less interesting story and missed what viewers
@@ -6,9 +6,10 @@ want; facts and basic human needs must be balanced. The rules turn screenwriting
 to: one dramatic question, causality between beats (but / therefore, never "and then"), heroes with a want and a
 flaw, rising stakes with a turn of value in every segment, open loops that are paid off, set-ups with pay-offs, the
 needs the episode serves, and what is fact, reasoning or invention. Structure FAILs (a loop that does not exist, a
-pay-off before its plant); craft is REVIEW (the creator judges the story). The numbers and severities of ST-11, ST-12
+pay-off before its plant); craft is REVIEW (the creator judges the story). ST-14 frames every exchange (BP-90). The numbers and severities of ST-11, ST-12
 and ST-13 live in the sourced rules registry (BP-74..BP-76, docs/SOURCED_RULES.md); ST-13 turns words into seconds at
-BP-01's heard pace, the one pace every estimate uses.
+BP-01's heard pace, the one pace every estimate uses. ST-17..ST-19 apply to template D, the historical docudrama
+(``drama.template`` "D"; BP-104, BP-105).
 
     python -m explainer_engine.scripting.story_lint production_script.json
 """
@@ -33,6 +34,14 @@ MIDPOINT_BAND = tuple(SR.T("BP-75", "midpoint_share"))  # ST-12: the midpoint/re
 MIDPOINT_MIN_SEGMENTS = SR.T("BP-75", "min_segments")
 TURN_GAP_S = SR.T("BP-76", "turn_gap_s")  # ST-13: a turn at least this often
 WORDS_PER_S = SR.T("BP-01", "wpm_target") / 60  # ST-13: words become seconds at BP-01's heard pace
+SETUP_MIN, CONCLUSION_MIN = SR.T("BP-90", "setup_lines_min"), SR.T("BP-90", "conclusion_lines_min")  # ST-14 (RX-03)
+SPEECH_VERBS = tuple(SR.T("BP-70", "speech_verbs"))  # reported speech (D-63): "Musk says...", "he asks..."
+REPORTED_SPEAKERS_MAX = SR.T("BP-96", "speakers_max")  # ST-16 (NR-04, a hypothesis)
+_VERB = "(?:" + "|".join(SPEECH_VERBS) + ")"
+DOCUDRAMA = "D"  # template D, the historical docudrama (docs/STORY_ENGINE.md): ST-17..ST-19 apply
+NARRATION_BLOCK_MAX_S = SR.T("BP-104", "narration_block_max_s")  # ST-17
+NARRATOR_SHARE = tuple(SR.T("BP-105", "narrator_share"))  # ST-19
+CENTRAL_FUNCS = {"climax", "crisis", "midpoint"}  # ST-18: the central scene
 
 
 def sev(rule_id: str) -> str:
@@ -196,7 +205,132 @@ def lint(doc: dict) -> list[dict]:
                    f"without a turn (a BUT, reversal, midpoint, crisis, twist or climax): something must change at least every "
                    f"{TURN_GAP_S:g} s (BP-76)", sev("BP-76"))
                 gap_words, gap_from = 0.0, None
+    out += exchanges(doc)
+    out += reported_speech(doc)
+    if drama.get("template") == DOCUDRAMA:
+        _docudrama(out, segs, sd, seg_words)
     return out
+
+
+def _name_alt(names: list[str]) -> str:
+    return "|".join(re.escape(n) for n in sorted(names, key=len, reverse=True))
+
+
+def reported_turns(text: str, cast: dict, who: list[str] | None = None) -> list[str]:
+    """The turns a narrator line reports (BP-70, D-63): each "<name> <verb>" (``Musk says``, ``O'Leary asks``) is a turn of
+    that hero, each "he/she <verb>" a turn of the last hero named. ``who`` limits it to those cast ids (a scene's present)."""
+    ids = list(who or cast)
+    pats = [(h, _name_alt(list(cast.get(h, {}).get("names") or [h]))) for h in ids]
+    names = "|".join(f"(?P<h{i}>{p})" for i, (_, p) in enumerate(pats) if p)
+    if not names:
+        return []
+    verb = re.compile(rf"\s+(?:\w+ly\s+)?{_VERB}\b")
+    out, last = [], None
+    for m in re.finditer(rf"\b(?:{names}|(?P<pro>he|she))\b", text, re.I):
+        hit = next((pats[i][0] for i in range(len(pats)) if m.groupdict().get(f"h{i}")), None)
+        if not verb.match(text, m.end()):
+            last = hit or last  # a name without a verb: who "he" refers to next
+            continue
+        spk = hit or last
+        if spk:
+            out.append(spk)
+            last = spk
+    return out
+
+
+def _named(text: str, names: list[str]) -> bool:
+    low = " " + re.sub(r"[^a-z0-9' ]", " ", text.lower()) + " "
+    return any(f" {n.lower()} " in low or f" {n.lower()}'s " in low for n in names)
+
+
+def exchanges(doc: dict) -> list[dict]:
+    """ST-14 (BP-90, RX-03; the creator 2026-10-20 21:14): an exchange is framed. In each segment the hero lines (voiced or
+    bubble) are one exchange: before it at least SETUP_MIN narrator line, each speaker named by the narrator before his
+    first line; after it at least CONCLUSION_MIN narrator line. A segment that ends or opens on a hero line chains two
+    exchanges (no conclusion between them)."""
+    out: list[dict] = []
+    cast = doc.get("cast", {})
+    for seg in doc.get("segments", []):
+        lines = seg.get("lines", [])
+        hero = [k for k, ln in enumerate(lines) if ln.get("speaker")]
+        if not hero:
+            continue
+        first, last = hero[0], hero[-1]
+        setup = [ln for ln in lines[:first] if not ln.get("speaker")]
+        if len(setup) < SETUP_MIN:
+            _f(out, "ST-14", f"{seg['id']} line {first + 1}", "the exchange opens without the narrator's setup: first say who "
+               "talks and what idea or want brings them here (BP-90)", sev("BP-90"))
+        for who in dict.fromkeys(lines[k]["speaker"] for k in hero):
+            k0 = next(k for k in hero if lines[k]["speaker"] == who)
+            told = " ".join(ln["text"] for ln in lines[:k0] if not ln.get("speaker"))
+            if not _named(told, list(cast.get(who, {}).get("names") or [who])):
+                _f(out, "ST-14", f"{seg['id']} line {k0 + 1}", f"{who} speaks before the narrator names him: the setup names "
+                   "every speaker of the exchange (BP-90; REVIEW, a description may stand for the name)")
+        if sum(1 for ln in lines[last + 1:] if not ln.get("speaker")) < CONCLUSION_MIN:
+            _f(out, "ST-14", f"{seg['id']} line {last + 1}", "the exchange ends without the narrator's conclusion: say what came "
+               "of it before anything else happens, never chain two exchanges (BP-90)", sev("BP-90"))
+    return out
+
+
+_TRAILING = re.compile(r"[,!?]\s*(?:" + _VERB + r"\s+(?P<a>[A-Z][\w']*(?:\s[A-Z][\w']*)?|he|she)|(?P<b>[A-Z][\w']*(?:\s[A-Z][\w']*)?|"
+                       r"[Hh]e|[Ss]he)\s+" + _VERB + r")\s*[.!?]?\s*$")
+
+
+def reported_speech(doc: dict) -> list[dict]:
+    """ST-15 (BP-95, NR-02): a reported line names the speaker before his words, never in a trailing tag ("..., says Musk.").
+    ST-16 (BP-96, NR-04): one narrator line reports at most REPORTED_SPEAKERS_MAX named speakers. Both REVIEW heuristics."""
+    out: list[dict] = []
+    cast = doc.get("cast", {})
+    for seg in doc.get("segments", []):
+        for k, ln in enumerate(seg.get("lines", []), 1):
+            if ln.get("speaker"):
+                continue
+            where = f"{seg['id']} line {k}"
+            for sent in re.split(r"(?<=[.!?])\s+", ln["text"].strip()):
+                if _TRAILING.search(sent):
+                    _f(out, "ST-15", where, f"{sent[:60]!r}: the speaker comes after his words; a listener needs the name "
+                       "first (\"Musk says ...\", BP-95)", sev("BP-95"))
+            spk = set(reported_turns(ln["text"], cast))
+            if len(spk) > REPORTED_SPEAKERS_MAX:
+                _f(out, "ST-16", where, f"{len(spk)} speakers reported in one line ({', '.join(sorted(spk))}): at most "
+                   f"{REPORTED_SPEAKERS_MAX}; a third enters as an action or in the next exchange (BP-96)", sev("BP-96"))
+    return out
+
+
+def _docudrama(out: list, segs: list, sd: list, seg_words: list) -> None:
+    """Template D (the historical docudrama): narration blocks stay short (ST-17), the central scene is the longest
+    scene (ST-18) and the narrator keeps a share of the words (ST-19). All three are hypotheses, REVIEW."""
+    run, run_from, total_n, total = 0, None, 0, 0
+    for s in segs:
+        for ln in s.get("lines", []):
+            w = len(ln["text"].split())
+            total += w
+            if ln.get("speaker"):
+                run, run_from = 0, None
+                continue
+            total_n += w
+            run_from = run_from or s["id"]
+            run += w
+            if run / WORDS_PER_S > NARRATION_BLOCK_MAX_S:
+                _f(out, "ST-17", f"{run_from}..{s['id']}", f"the narrator talks about {run / WORDS_PER_S:.0f} s without a "
+                   f"character line: give the scene back within {NARRATION_BLOCK_MAX_S:g} s (BP-104)", sev("BP-104"))
+                run, run_from = 0, None
+    scenes = [(sid, d, w) for (sid, d), w, s in zip(sd, seg_words, segs)
+              if any(ln.get("speaker") for ln in s.get("lines", []))]
+    central = [x for x in scenes if x[1] and x[1]["function"] in CENTRAL_FUNCS]
+    if not central and scenes:
+        _f(out, "ST-18", "segments", "no central scene: one scene with dialogue is the climax, crisis or midpoint")
+    elif central:
+        top = max(central, key=lambda x: x[2])
+        longer = [x[0] for x in scenes if x[2] > top[2]]
+        if longer:
+            _f(out, "ST-18", top[0], f"the central scene is shorter than {', '.join(longer)}: it should be the longest scene, "
+               "with 2-3 escalations inside")
+    if total:
+        share = total_n / total
+        if not NARRATOR_SHARE[0] <= share <= NARRATOR_SHARE[1]:
+            _f(out, "ST-19", "lines", f"the narrator has {share:.0%} of the words (aim {NARRATOR_SHARE[0]:.0%}-"
+               f"{NARRATOR_SHARE[1]:.0%}, BP-105; a rivalry story may sit low, a campaign high)", sev("BP-105"))
 
 
 def main(argv: list[str] | None = None) -> int:

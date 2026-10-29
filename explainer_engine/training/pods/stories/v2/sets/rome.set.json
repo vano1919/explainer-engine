@@ -1,0 +1,196 @@
+{
+ "scene": "rome",
+ "kind": "exterior",
+ "vfov": 45,
+ "far": 90.0,
+ "objects": [
+  {
+   "id": "left_building",
+   "shape": "box",
+   "min": [
+    -12.0,
+    0.0,
+    0.0
+   ],
+   "max": [
+    -5.0,
+    70.0,
+    14.0
+   ],
+   "label": "the apartment buildings on the left",
+   "color": [
+    150,
+    90,
+    40
+   ]
+  },
+  {
+   "id": "right_building",
+   "shape": "box",
+   "min": [
+    5.0,
+    0.0,
+    0.0
+   ],
+   "max": [
+    12.0,
+    70.0,
+    14.0
+   ],
+   "label": "the apartment buildings on the right",
+   "color": [
+    140,
+    60,
+    120
+   ]
+  },
+  {
+   "id": "counter",
+   "shape": "box",
+   "min": [
+    -3.0,
+    5.0,
+    0.0
+   ],
+   "max": [
+    -2.2,
+    7.4,
+    1.0
+   ],
+   "label": "the bakery counter",
+   "color": [
+    200,
+    60,
+    50
+   ]
+  },
+  {
+   "id": "fountain",
+   "shape": "basin",
+   "min": [
+    3.0,
+    6.0,
+    0.0
+   ],
+   "max": [
+    4.5,
+    8.0,
+    1.2
+   ],
+   "label": "the stone fountain",
+   "color": [
+    60,
+    170,
+    80
+   ]
+  },
+  {
+   "id": "colosseum",
+   "shape": "box",
+   "min": [
+    -15.0,
+    60.0,
+    0.0
+   ],
+   "max": [
+    15.0,
+    80.0,
+    25.0
+   ],
+   "label": "the Colosseum",
+   "color": [
+    230,
+    200,
+    40
+   ]
+  }
+ ],
+ "people": [
+  {
+   "id": "baker",
+   "pos": [
+    -4.0,
+    7.0
+   ],
+   "height": 1.7,
+   "radius": 0.28,
+   "color": [
+    235,
+    235,
+    235
+   ]
+  },
+  {
+   "id": "legionary",
+   "pos": [
+    0.4,
+    5.5
+   ],
+   "height": 1.8,
+   "radius": 0.25,
+   "color": [
+    200,
+    200,
+    255
+   ]
+  }
+ ],
+ "axis": [
+  "baker",
+  "legionary"
+ ],
+ "shots": {
+  "s0": {
+   "cam": {
+    "pos": [
+     0.0,
+     0.0,
+     1.6
+    ],
+    "look_at": [
+     0.0,
+     40.0,
+     4.0
+    ]
+   }
+  },
+  "s1": {
+   "subject": "legionary",
+   "size": "medium",
+   "from": [
+    -2.0,
+    1.5
+   ],
+   "angle": "eye"
+  },
+  "s2": {
+   "subject": "baker",
+   "size": "close",
+   "from": [
+    -2.0,
+    4.2
+   ],
+   "angle": "eye"
+  },
+  "s3": {
+   "cam": {
+    "pos": [
+     3.0,
+     4.5,
+     1.6
+    ],
+    "look_at": [
+     -4.0,
+     6.0,
+     1.4
+    ]
+   }
+  },
+  "s4": {
+   "subject": "legionary",
+   "size": "medium",
+   "ots": "baker",
+   "angle": "eye"
+  }
+ }
+}

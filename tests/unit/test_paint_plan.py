@@ -63,7 +63,7 @@ def run_args(tmp, script, plan):
 def test_options_price_the_batch_at_every_provider():
     rows = P.options([{"id": "a", "prompt": "p", "refs": ["r.png"]}])
     names = {r["provider"] for r in rows}
-    assert names == {"gemini", "pod", "local"}
+    assert names == {"gemini", "pod", "local", "bfl", "fal"}  # bfl and fal through imagegen/providers (D-70 stage D)
     batch = [r for r in rows if r["model"] == MODEL and r["size"] == SIZE and r["batch"]][0]
     assert batch["usd"] == pytest.approx(G.BATCH_PRICES[MODEL][SIZE] + G.REFERENCE_USD)
 

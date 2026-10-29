@@ -1,0 +1,98 @@
+{
+ "name": "rome",
+ "world": "urban",
+ "place": "A narrow street in ancient Rome at noon: tall ochre apartment buildings with wooden balconies on both sides, a bakery counter with round loaves on the left, a stone fountain on the right, the Colosseum at the far end of the street, paving stones.",
+ "cast": {
+  "baker": {
+   "look": "A Roman baker as people picture ancient Romans: a plump man in a simple off-white tunic with a rope belt and a flour-dusted apron, leather sandals.",
+   "face": "He has a fleshy face, small close-set black eyes, thick arched eyebrows, a short broad nose, a double chin, a bald head with grey hair at the sides."
+  },
+  "legionary": {
+   "look": "A Roman legionary as people picture Roman soldiers: a red tunic, segmented steel armour, a steel helmet with cheek guards, a red rectangular shield on his back, a short sword at his hip.",
+   "face": "He has a narrow gaunt face, sharp pale green eyes, thin straight eyebrows, a long thin nose, a pointed jaw with stubble and a crooked smirk."
+  }
+ },
+ "shots": [
+  {
+   "id": "s0",
+   "size": "wide",
+   "faces": [
+    "baker",
+    "legionary"
+   ],
+   "desc": "A narrow street in ancient Rome at noon: tall ochre apartment buildings with wooden balconies on both sides, a bakery counter with round loaves on the left, a stone fountain on the right, the Colosseum at the far end of the street, paving stones. Wide shot at eye level down the street. A Roman baker as people picture ancient Romans: a plump man in a simple off-white tunic with a rope belt and a flour-dusted apron, leather sandals. He has a fleshy face, small close-set black eyes, thick arched eyebrows, a short broad nose, a double chin, a bald head with grey hair at the sides. He stands behind the bakery counter on the left. A Roman legionary as people picture Roman soldiers: a red tunic, segmented steel armour, a steel helmet with cheek guards, a red rectangular shield on his back, a short sword at his hip. He has a narrow gaunt face, sharp pale green eyes, thin straight eyebrows, a long thin nose, a pointed jaw with stubble and a crooked smirk. He walks up to the counter from the right.",
+   "layout": "The camera looks down the street towards the Colosseum; the bakery is on the left, the fountain on the right; the sun is high.",
+   "change": null,
+   "checks": [
+    "Is there a bakery counter with bread?",
+    "Is there a Roman soldier?",
+    "Can you see the Colosseum?"
+   ]
+  },
+  {
+   "id": "s1",
+   "size": "medium",
+   "faces": [
+    "legionary"
+   ],
+   "desc": "Medium shot at the same bakery counter: the legionary grabs a round loaf from the counter without paying. A Roman legionary as people picture Roman soldiers: a red tunic, segmented steel armour, a steel helmet with cheek guards, a red rectangular shield on his back, a short sword at his hip. He has a narrow gaunt face, sharp pale green eyes, thin straight eyebrows, a long thin nose, a pointed jaw with stubble and a crooked smirk.",
+   "layout": "The camera stands beside the counter; the legionary is on the right of the picture, the counter with loaves on the left.",
+   "change": "Cut to a medium shot: the legionary grabs a loaf from the counter.",
+   "checks": [
+    "Is a soldier holding a loaf of bread?",
+    "Is there a counter with bread?",
+    "Is the soldier wearing a helmet?"
+   ]
+  },
+  {
+   "id": "s2",
+   "size": "close",
+   "faces": [
+    "baker"
+   ],
+   "desc": "Close-up of the baker's face behind the same counter: he shouts angrily. A Roman baker as people picture ancient Romans: a plump man in a simple off-white tunic with a rope belt and a flour-dusted apron, leather sandals. He has a fleshy face, small close-set black eyes, thick arched eyebrows, a short broad nose, a double chin, a bald head with grey hair at the sides.",
+   "layout": "The camera is in front of the counter at his eye level; the balconies of the street are behind him.",
+   "change": "Cut to a close-up of the baker: he shouts angrily.",
+   "checks": [
+    "Is this a close-up of one face?",
+    "Is the man shouting or angry?",
+    "Is the man bald?"
+   ]
+  },
+  {
+   "id": "s3",
+   "size": "wide",
+   "faces": [],
+   "desc": "Wide shot of the same street from the fountain side: a crowd of Roman citizens in togas gathers around the bakery counter, the legionary in the middle with the loaf.",
+   "layout": "The camera stands by the fountain and looks across the street at the bakery; the Colosseum is now on the right edge of the picture.",
+   "change": "Cut to a wide shot from the fountain: a crowd in togas gathers around the counter.",
+   "checks": [
+    "Is there a crowd of people?",
+    "Are people wearing togas?",
+    "Is there a fountain in the foreground or nearby?"
+   ]
+  },
+  {
+   "id": "s4",
+   "size": "medium",
+   "faces": [
+    "legionary"
+   ],
+   "desc": "Medium shot at the same bakery counter: the legionary puts a coin on the counter and smiles sheepishly. A Roman legionary as people picture Roman soldiers: a red tunic, segmented steel armour, a steel helmet with cheek guards, a red rectangular shield on his back, a short sword at his hip. He has a narrow gaunt face, sharp pale green eyes, thin straight eyebrows, a long thin nose, a pointed jaw with stubble and a crooked smirk.",
+   "layout": "The camera is behind the counter, over the baker's shoulder; the legionary faces the camera; the street is behind him.",
+   "change": "Cut to a medium shot over the baker's shoulder: the legionary puts a coin on the counter.",
+   "checks": [
+    "Is a soldier putting a coin on a counter?",
+    "Is the shot taken over someone's shoulder?",
+    "Is there bread on the counter?"
+   ]
+  }
+ ],
+ "era": [
+  "roman",
+  "rome",
+  "ancient rome",
+  "antiquity",
+  "ancient"
+ ]
+}

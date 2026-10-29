@@ -1,0 +1,101 @@
+{
+ "name": "tent",
+ "world": "interior",
+ "place": "Napoleon's campaign tent at night: canvas walls, a wide wooden table with a large map in the middle, a brass lantern hanging from the centre pole above the table, a camp bed against the left wall, the entrance flap in the right wall, a red rug.",
+ "cast": {
+  "napoleon": {
+   "look": "Napoleon Bonaparte as people picture him: a short stout man in a black bicorne hat worn sideways, a dark blue French general's coat with gold epaulettes, a white waistcoat and breeches, tall black riding boots.",
+   "face": "He has a broad square face, a strong straight nose, deep-set dark grey eyes under heavy straight brows, a firm cleft chin, thin pressed lips and short dark hair combed forward."
+  },
+  "general": {
+   "look": "An old French general of the Napoleonic wars: a tall plumed bicorne, a blue coat with a red collar and gold braid, white breeches, a sabre at his hip.",
+   "face": "He has a long narrow face, hooded pale eyes, bushy grey eyebrows, a large hooked nose, a heavy jaw and a drooping grey moustache."
+  }
+ },
+ "shots": [
+  {
+   "id": "s0",
+   "size": "wide",
+   "faces": [
+    "napoleon",
+    "general"
+   ],
+   "desc": "Napoleon's campaign tent at night: canvas walls, a wide wooden table with a large map in the middle, a brass lantern hanging from the centre pole above the table, a camp bed against the left wall, the entrance flap in the right wall, a red rug. Wide shot from the back of the tent at eye level. Napoleon Bonaparte as people picture him: a short stout man in a black bicorne hat worn sideways, a dark blue French general's coat with gold epaulettes, a white waistcoat and breeches, tall black riding boots. He has a broad square face, a strong straight nose, deep-set dark grey eyes under heavy straight brows, a firm cleft chin, thin pressed lips and short dark hair combed forward. He stands behind the table on the left. An old French general of the Napoleonic wars: a tall plumed bicorne, a blue coat with a red collar and gold braid, white breeches, a sabre at his hip. He has a long narrow face, hooded pale eyes, bushy grey eyebrows, a large hooked nose, a heavy jaw and a drooping grey moustache. He stands on the right of the table near the entrance. Both look down at the map.",
+   "layout": "The camera stands by the camp bed and looks towards the entrance; the entrance is on the right of the picture; the lantern light falls from above.",
+   "change": null,
+   "checks": [
+    "Is there a table with a map?",
+    "Are there exactly two men?",
+    "Is one man wearing a black bicorne hat worn sideways?"
+   ]
+  },
+  {
+   "id": "s1",
+   "size": "medium",
+   "faces": [
+    "general"
+   ],
+   "desc": "Medium shot over Napoleon's shoulder inside the same tent. An old French general of the Napoleonic wars: a tall plumed bicorne, a blue coat with a red collar and gold braid, white breeches, a sabre at his hip. He has a long narrow face, hooded pale eyes, bushy grey eyebrows, a large hooked nose, a heavy jaw and a drooping grey moustache. He points at a spot on the map with one finger and talks.",
+   "layout": "The camera stands behind Napoleon's left shoulder; the general faces the camera across the table; the entrance flap is behind the general.",
+   "change": "Cut to a medium shot over Napoleon's shoulder: the general points at the map and talks.",
+   "checks": [
+    "Is a man pointing at a map?",
+    "Is the shot taken over the shoulder of another person?",
+    "Is this the inside of a tent?"
+   ]
+  },
+  {
+   "id": "s2",
+   "size": "close",
+   "faces": [
+    "napoleon"
+   ],
+   "desc": "Close-up of Napoleon's face inside the same tent, frowning, lit from above by the lantern. Napoleon Bonaparte as people picture him: a short stout man in a black bicorne hat worn sideways, a dark blue French general's coat with gold epaulettes, a white waistcoat and breeches, tall black riding boots. He has a broad square face, a strong straight nose, deep-set dark grey eyes under heavy straight brows, a firm cleft chin, thin pressed lips and short dark hair combed forward.",
+   "layout": "The camera is across the table at Napoleon's eye level; the camp bed is behind him, out of focus.",
+   "change": "Cut to a close-up of Napoleon's face: he frowns.",
+   "checks": [
+    "Is this a close-up of one face?",
+    "Is the man frowning?",
+    "Is he wearing a black bicorne hat?"
+   ]
+  },
+  {
+   "id": "s3",
+   "size": "medium",
+   "faces": [
+    "general"
+   ],
+   "desc": "Medium shot inside the same tent from the table: the general turns away and walks to the entrance flap. An old French general of the Napoleonic wars: a tall plumed bicorne, a blue coat with a red collar and gold braid, white breeches, a sabre at his hip. He has a long narrow face, hooded pale eyes, bushy grey eyebrows, a large hooked nose, a heavy jaw and a drooping grey moustache.",
+   "layout": "The camera stands at the table and looks towards the entrance on the right; the general is seen from the side and back.",
+   "change": "Cut to a medium shot: the general turns and walks to the entrance flap.",
+   "checks": [
+    "Is a man walking towards a tent entrance?",
+    "Is the man seen from the side or back?",
+    "Is this the inside of a tent?"
+   ]
+  },
+  {
+   "id": "s4",
+   "size": "wide",
+   "faces": [
+    "napoleon"
+   ],
+   "desc": "Wide shot from the entrance of the same tent: Napoleon walks around the table towards the camera, one hand on his sword. Napoleon Bonaparte as people picture him: a short stout man in a black bicorne hat worn sideways, a dark blue French general's coat with gold epaulettes, a white waistcoat and breeches, tall black riding boots. He has a broad square face, a strong straight nose, deep-set dark grey eyes under heavy straight brows, a firm cleft chin, thin pressed lips and short dark hair combed forward.",
+   "layout": "The camera stands at the entrance and looks back into the tent; the camp bed is now on the right of the picture, the table in the middle.",
+   "change": "Cut to a wide shot from the entrance: Napoleon walks around the table towards the camera.",
+   "checks": [
+    "Is a man walking towards the camera?",
+    "Is the camp bed on the right side of the picture?",
+    "Is the table in the middle of the picture?"
+   ]
+  }
+ ],
+ "era": [
+  "napoleon",
+  "napoleonic",
+  "french",
+  "18th",
+  "19th",
+  "1800"
+ ]
+}

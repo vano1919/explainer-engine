@@ -85,6 +85,13 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
     ef = [f for f in eg if f["severity"] == "FAIL"]
     add(0.5, "editorial quality", "BLOCKED" if ef else "WAIT" if eg else "PASS", f"{len(ef)} FAIL, {len(eg) - len(ef)} REVIEW (EG rules)",
         "add editorial v1 and editorial_review.json: python -m explainer_engine.production.editorial_gate" if eg else "approved for production")
+    from .scripting import script_approval as _sa  # 0.9: the creator approved this finished script (approval #1, OR-17)
+    if doc.get("schema") == _sa.BINDING:
+        sa = _sa.check(doc)
+        add(0.9, "approval #1 (script)", "WAIT" if sa else "PASS",
+            sa[0]["detail"] if sa else f"approved by {doc['episode']['script_approval']['approved_by']} "
+            f"({doc['episode']['script_approval']['approved_at']})",
+            "send the finished script to the creator; nothing paid before the yes" if sa else "")
     lint = narration_lint.lint(_ps.tts_text(doc))
     lf = [f for f in lint if f["severity"] == "FAIL"]
     add(1, "script for the ear", "BLOCKED" if lf else "PASS", f"{len(lf)} FAIL, {len(lint) - len(lf)} REVIEW (narration_lint)",
@@ -130,7 +137,9 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
         add(6, "pictures", "WAIT", f"{len(have)} of {len(used)} pictures exist", "contact sheet looked at after each batch")
     else:
         add(6, "pictures", "PASS", f"all {len(used)} pictures exist", "review the contact sheet by eye")
-    add(7, "animatic and render", "WAIT", "production run, after gates 0-6")
+    from .production import sample as SMP  # 6.5: the creator's word on the stitched two-part sample (OR-19, D-67)
+    add(6.5, "two-part sample", *SMP.gate_row(day))
+    add(7, "animatic and render", "WAIT", "production run, after gates 0-6 and the sample approval (6.5)")
     add(8, "QA", *qa_state(day))
     add(9, "approval #2", *approval_state(day))
     return out

@@ -14,7 +14,8 @@ This document is the canonical home of the ST, DW, PF, MO, AL, VC and SS rules. 
 [research/STORY_EDIT_VOICE_2026-10-19.md](research/STORY_EDIT_VOICE_2026-10-19.md); every parameter was then checked
 against studies, standards and official pages in [research/PARAMETER_AUDIT_2026-10-19.md](research/PARAMETER_AUDIT_2026-10-19.md)
 (D-49), which says per rule whether it holds, changed, or stays a hypothesis. The procedure is the skill
-`story-engine`, and each stage is an agent in `.claude/agents/`. The fields live in
+`story-engine`; each stage has a page in `.claude/agents/` that the main agent follows, and only the critic is spawned
+(OR-20). The fields live in
 [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md) (`drama`, `accents`, Short `style` and `ending`, `cast.<id>.voice.traits`),
 and the checks are PV-33..PV-36 there.
 
@@ -49,15 +50,21 @@ The story layer is written before any line (stage 1). It is checked by `scriptin
 | ST-06 | **Set-up and pay-off.** A detail planted early decides the end. A pay-off at or before its plant is a FAIL. A script of 6 or more segments has at least one pair. | REVIEW / FAIL |
 | ST-07 | **Turns spread out.** There are at least two turning points (reversal, midpoint, crisis, twist, climax), and one falls in the middle third. | REVIEW |
 | ST-08 | **Human needs.** At least 3 needs are named and each is served by a segment. The needs are curiosity, stakes, humour, wonder, fear, identity, justice, belonging, competence and surprise. | REVIEW |
-| ST-09 | **Objectivity is labelled.** Every segment is `fact`, `reasoned` or `invented` (`claim_share`). Invention is never the majority. A segment labelled fact must carry claim ids, or it is a FAIL. The invention is disclosed in ONE honesty beat (plus at most one callback), with on-screen labels and the description carrying the rest — never a disclaimer per fact, which stacked into "Invented, remember" x7 on Syndicate Wars (SC-08 enforces the count on /3). | REVIEW / FAIL |
+| ST-09 | **Objectivity is labelled.** Every segment is `fact`, `reasoned` or `invented` (`claim_share`). Invention is never the majority. A segment labelled fact must carry claim ids, or it is a FAIL. The invention is disclosed outside the story, by the title and the description; on /3 the story itself never says it (SC-08, SC-11, [BP-88](SOURCED_RULES.md); the creator, 2026-10-20). The old spoken honesty beat stacked into "Invented, remember" x7 on Syndicate Wars. | REVIEW / FAIL |
 | ST-10 | **The ending pays the promise.** It has a named kind: twist, reversal, bookend, callback or open question. | REVIEW |
 | ST-11 | **A question is answered within seconds unless it is a declared loop** (D-49). The curiosity a question opens boosts memory for what follows in the next 2-4 s and is gone by 6-8 s (Murphy 2020), so an undeclared question gets its answer at once; only `drama.loops` stay open. The hook names what the viewer already knows and what they do not: a partial gap pulls harder than a total mystery (Frede 2026). Three or more questions in a segment that opens no loop are stacked, not answered ([BP-74](SOURCED_RULES.md)). | REVIEW |
 | ST-12 | **The midpoint sits mid-story** (D-58). On a script long enough, the midpoint/reversal segment's centre falls in the word-share band of [BP-75](SOURCED_RULES.md) (a write-time proxy for the clock; evidence: [research/STORYTELLING_EDITING_2026-10-19.md](research/STORYTELLING_EDITING_2026-10-19.md)). | REVIEW |
 | ST-13 | **Turns arrive on a cadence** (D-58). Between the hook and the resolution, no stretch longer than [BP-76](SOURCED_RULES.md)'s gap (words turned into seconds at [BP-01](SOURCED_RULES.md)'s heard pace) passes without a turn: a segment whose function is a reversal, midpoint, crisis, twist or climax, or whose `drama.turn` is "but". | REVIEW |
+| ST-14 | **Every exchange is framed** ([D-64](DECISIONS_AND_OPEN_QUESTIONS.md)). A segment's hero lines (voiced or bubble) are one exchange: before it the narrator's setup names each speaker before his first line (REVIEW: a description may stand for a name) and says what brings them there, after it the narrator's conclusion says what came of it; a segment never ends or opens on a hero line, so two exchanges never touch. Counts and severity: [BP-90](SOURCED_RULES.md). | FAIL |
+| ST-15 | **The speaker comes first** ([D-65](DECISIONS_AND_OPEN_QUESTIONS.md)). A narrator line that reports speech names the speaker before his words ("Musk says it is how fires work"), never in a trailing tag ("..., says Musk"); a heuristic, [BP-95](SOURCED_RULES.md). | REVIEW |
+| ST-16 | **Two voices per reported line** ([D-65](DECISIONS_AND_OPEN_QUESTIONS.md)). One narrator line reports at most [BP-96](SOURCED_RULES.md)'s number of named speakers; a third enters as an action or in the next exchange (a hypothesis). | REVIEW |
+| ST-17 | **Short narration blocks** (template D). Narrator lines with no character line between them last at most [BP-104](SOURCED_RULES.md)'s block (words at [BP-01](SOURCED_RULES.md)'s heard pace); the narrator carries the jumps in time, place, cause or goal, the scenes carry the action. | REVIEW |
+| ST-18 | **The central scene is the longest scene** (template D). One scene with dialogue is the climax, crisis or midpoint, and no other scene has more words; it holds 2-3 escalations and the plan meets the unexpected inside it. | REVIEW |
+| ST-19 | **The narrator's share** (template D). The narrator has the share of the words [BP-105](SOURCED_RULES.md) gives; a political or personal rivalry sits low in it, a campaign high. | REVIEW |
 
 ### Story templates for an 8-12 minute what-if (D-58)
 
-The 2026-10-19 rewrite replaced the single beat grid with three templates over the same validator (ST-01..ST-13).
+The 2026-10-19 rewrite replaced the single beat grid with three templates (template D, added 2026-10-24, is for the 15-minute historical docudrama) over the same validator (ST-01..ST-13).
 The story architect picks one per episode, records the choice in a one-line note on `drama.ending.note` or at the top
 of the skeleton, and varies it across the channel. Times are for 10 minutes and scale with length.
 
@@ -71,6 +78,37 @@ all-is-lost ~75 %, break-into-three ~80 %, finale to the end. Suits episodes who
 
 **C. Mystery reveal ladder.** A cold open on a contradiction, then a reveal that reframes everything about every
 2:00; the chronology is written out straight before the suspense order is chosen. Suits analysis episodes (D-26).
+
+**D. Historical docudrama, 15 minutes (2026-10-24).** An animated docudrama: a narrator plus characters who talk to each
+other, shots of 3-5 s. Three acts at the macro level, narrator and scene taking turns at the micro level, and every scene
+ending on the next question. Set `drama.template` to "D"; ST-17..ST-19 then apply. Times are for 15:00 and scale with
+length; the borders are guides, not a stopwatch. Evidence and what was not verified:
+[research/DOCUDRAMA_CONSTITUTION_2026-10-24.md](research/DOCUDRAMA_CONSTITUTION_2026-10-24.md).
+
+| # | Time | Segment (`function`) | What happens |
+|---|---|---|---|
+| 1 | 0:00-0:12 | hook (`cold_open`) | an action, a paradox or an odd detail at once; sound from the first frame; the first sentence is the hook (BP-03); 2-3 teasers cut from the later fight (KP-41, BP-111) |
+| 2 | 0:12-0:30 | information gap (`hook`) | the narrator states the surprising outcome or the paradox; no part of the answer |
+| 3 | 0:30-1:15 | orientation (`setup`) | narrator: where, when, who against whom (maps, diagrams, no extra text) |
+| 4 | 1:15-2:45 | scene 1 (`inciting`) | goals and stakes declared through conflict |
+| 5 | 2:45-3:15 | bridge | narrator: the result and the next question |
+| 6 | 3:15-5:00 | scene 2 (`escalation`) | the first plan fails; the hero must react |
+| 7 | 5:00-6:00 | new complication | narrator: the factor that changes the game |
+| 8 | 6:00-7:30 | scene 3 (`escalation`) | the other side acts; a new place marks the boundary; while a plan is told, its execution is shown (KP-42) |
+| 9 | 7:30-8:15 | preparation | narrator: the full size of the crisis; pressure rises; no spoiler |
+| 10 | 8:15-10:45 | central scene (`climax` or `crisis`) | the longest scene (ST-18), 2-3 escalations inside; the other side's line cross-cut with the hero's (KP-42) |
+| 11 | 10:45-11:15 | turning point (`reversal`) | the choice, revelation or failure that changes the story; then silence or one still frame |
+| 12 | 11:15-12:00 | fallout | narrator: who lost and who won, never what we just saw |
+| 13 | 12:00-13:30 | scene 4, final choice | the hero's last act, slower, on dialogue; no new conflict; the power gap shown in a cutaway, the lines broken by silent reactions (KP-43) |
+| 14 | 13:30-14:30 | the answer (`resolution`) | the opening question answered fully; an uncertain fact is said to be uncertain |
+| 15 | 14:30-14:45 | callback (`button`) | the first image again with a new meaning |
+| 16 | 14:45-15:00 | channel pointer | the worlds already on the channel and the worlds coming, subscribe so as not to miss them (BP-106, KP-40); never a dry "subscribe" or a goodbye (BP-43); the narration runs on under the end screen |
+
+Modules by subject: a war or campaign runs two storylines (each side in its own place, variant 6 of the study); a
+political or personal rivalry keeps the narrator low and escalates by words, blackmail or betrayal, on faces; an
+invention, a money war or a mystery runs on questions, every scene a failed attempt that raises the next question and the
+turning point a eureka moment. The long video carries captions as a closed-caption track and burns no full narrator
+subtitles into the picture (the redundancy principle; the Shorts keep theirs, BP-13).
 
 Whichever template: stakes strictly escalate from sequence to sequence, the central question is answered only in the last
 tenth ([BP-04](SOURCED_RULES.md); ENG-5 checks where the resolution starts), and the final image mirrors the opening image's subject. The timings are **product hypotheses**:
@@ -100,12 +138,14 @@ the skill `dialogue-scenes`; the sources per rule in
 | SC-02 | **The scene turns.** `open_charge` != `close_charge` on the scene's `value` (an unchanged charge is a nonevent — cut it or give it a turn), and `turn` names the turning beat in one sentence. | FAIL |
 | SC-03 | **Wants collide.** `want` != `obstacle_want`, both concrete: someone present wants something that collides with what the POV wants. Explaining at each other is a meeting, not a scene. | FAIL |
 | SC-04 | **Every line is addressed.** Each spoken line's `to` is someone present (or `self` / `room`). A hero never talks to the narrator: the fourth wall stands between the cast and the narration. | FAIL |
-| SC-05 | **A real exchange.** With 2+ present, at least one unbroken run of character lines of the length and speaker count of [BP-70](SOURCED_RULES.md) (no narrator inside). Everyone present speaks or reacts (REVIEW), and a `reveal` line gets a reaction: the next beat is another character's line or a listener's expression (REVIEW). | FAIL / REVIEW |
+| SC-05 | **A real exchange.** With 2+ present, at least one unbroken run of character lines of the length and speaker count of [BP-70](SOURCED_RULES.md) (no narrator inside), or a reported exchange ([D-65](DECISIONS_AND_OPEN_QUESTIONS.md)): the narrator lines report at least as many turns of as many named speakers ("Musk says", "he asks"). Everyone present speaks or reacts (REVIEW), and a `reveal` line gets a reaction: the next beat is another character's line or a listener's expression (REVIEW). | FAIL / REVIEW |
 | SC-06 | **Enter late, leave early.** No greeting opener, no wrap-up closer: the scene starts mid-action and ends within a line or two of its turn. | REVIEW |
 | SC-07 | **No press-release narration.** The press-release lexicon of [BP-15](SOURCED_RULES.md) ("X's page says", "announced", "release date", "is set to release", "comes out on", "launches worldwide"...; one list, shared with N-14) is banned from narrator lines (the creator, 2026-10-19: tell the story). A date or spec enters only inside a scene, as stakes or ammunition ("he had until November 19 — therefore..."). | FAIL |
-| SC-08 | **One honesty beat.** Invention disclaimers live in one segment (plus at most one callback); on-screen labels and the description carry the rest (ST-09). More segments with disclaimers than [BP-71](SOURCED_RULES.md) allows is a FAIL. | FAIL |
+| SC-08 | **No spoken honesty beat.** Narrator lines never stop the story to say it is invented: [BP-71](SOURCED_RULES.md) allows 0 segments since 2026-10-20 (the creator's immersion rule, SC-11). The title and the description carry the disclosure, the claim map labels each segment (ST-09). | FAIL |
 | SC-09 | **Turn-taking.** A spoken turn over the cap of [BP-72](SOURCED_RULES.md) (35 words) is a FAIL (split it or give the summary to the narrator), and so is a second speech in one scene (one 25-60-word speech, at its peak); a turn over [BP-73](SOURCED_RULES.md)'s jab length (15 words) is a REVIEW, and so are more than 3 consecutive question-turns, which read as an interview (DW-12). | FAIL / REVIEW |
 | SC-10 | **Subtext is never spoken.** The scene declares `surface_topic` and `real_subject` (REVIEW if absent); a line that states the real subject verbatim is a FAIL. | FAIL / REVIEW |
+| SC-11 | **Full immersion, no meta disclaimers** (the creator's strict storytelling rule 2, 2026-10-20, D-61). No line, Short or on-screen text steps outside the story ("this is a simulation", "as an AI", "in this hypothetical story", "none of this happened"), and the narrator never hedges the story itself ("we cannot know for sure"); the episode plays as a tense documentary of events happening now. A hero may doubt inside a scene. The lexicon is [BP-88](SOURCED_RULES.md)'s. | FAIL |
+| SC-12 | **Show, don't tell** (the creator's strict storytelling rule 1, 2026-10-20, D-61). The narrator never states a hero's traits ("he is charismatic", "she takes risks"), gives a rating ("9/10", stars) or summarises a biography ("was born in", "net worth"); no stat cards or star ratings on screen (`select_screen.py` is Syndicate Wars only). A trait shows only through what the hero does, says, gets wrong and decides. Heroes may judge each other inside a scene. The lexicons are [BP-87](SOURCED_RULES.md)'s. | FAIL |
 
 ## Dialogue (DW)
 
@@ -158,7 +198,7 @@ Rate alone does not cure a slideshow. Variety does: different kinds of event, an
 | MO-03 | **No plain runs.** Only a few shots in a row may be only a camera move (no accent, bubble or visual; BP-83). |
 | MO-04 | **Hard entries are motivated.** `whip_in` and `flash_in` go only on a segment's first shot (a story turn), and at least BP-25's gap apart. This amends ED-04: they mark a turn, they are not a style. |
 | MO-05 | **Words on screen are rare.** `pop_text` / `slam_text` keep BP-83's gap and BP-38's word cap (the beats' VB-04 cap). |
-| MO-06 | **The frame lives.** A minimum share of the shots (BP-83) have something moving besides the camera (wobble, a bubble, an accent, a building visual). |
+| MO-06 | **The frame lives.** The share of shots with something moving besides the camera (wobble, a bubble, an accent, a building visual) is reported only, with no target (BP-83, [D-64](DECISIONS_AND_OPEN_QUESTIONS.md): a target pushed accents onto plain shots). |
 | MO-07 | **Rhythm is variance** (D-58). A run of consecutive shots holding almost the same time, or a segment whose hold lengths barely vary, reads as a metronome (BP-83's run, spread and CV): hold long on wonder, cut short on action (Bordwell on tempo contrast; Murch: cut on the thought, not the clock). It can always be met together with BP-40: in the hook window holds of about 2.6 s and 4.9 s alternated pass both. |
 
 Every change should do one of five jobs: clarify, emphasise, reorient, compress or contrast. A change that does none of them is cut. Stillness is allowed when it is chosen: a held wonder shot (ED-05) is not a gap if a wobble or a building visual keeps the frame alive.
@@ -270,8 +310,8 @@ script keeps the old contract unchanged.
 | ID | Rule | Severity |
 |---|---|---|
 | VB-00 | A legacy `production_script/1` without beats gets one notice: new episodes are written as `/2`. | REVIEW |
-| VB-01 | On `/2`: **a beat about every 1.5 s while the narrator speaks** (the metronome). Any visual event counts (a new picture, a reframe, an accent, a bubble, a data visual, a card, a beat); a long gap is a REVIEW, a longer one a FAIL, and a segment's mean gap is checked too. On `/3`: **pacing follows new information, not a clock** — only real dead air while the narrator speaks is flagged (a REVIEW line and a FAIL line, no mean rule). Every number is [BP-36](SOURCED_RULES.md) (house, D-58). **How VB-01 and BP-40 relate:** both count the same events (a cut, a bubble, an accent, a data visual, a card, a visual beat); BP-40 judges every still of the video by section (the hook window, the body), VB-01 only the stretches where the narrator speaks. In the hook window BP-40 is the stricter limit, in the body VB-01's FAIL is; both are met by the same beats. Guidance for the beat-writer: in the hook and climax keep within BP-40's hook limit, in the body let new information set the pace inside VB-01's limits, one pattern interrupt in BP-41's window. How often the picture itself changes is BP-40 (pictures a minute and still limits; PV-24 RHYTHM). Shorts follow BP-45 instead. | REVIEW / FAIL |
-| VB-02 | On `/2`: **in dialogue the face changes about once a second** (a REVIEW line and a FAIL line for the longest stretch without a change). On `/3`: **reactions, not a metronome** — every dialogue line still needs at least one expression change (FAIL if none: the listener's face is where the line lands, Kuleshov), with a REVIEW and a FAIL line for a long stretch without one; every number is [BP-37](SOURCED_RULES.md) (house, D-58). Two changes of one face closer than [BP-33](SOURCED_RULES.md)'s hold are flicker (REVIEW; BP-33 replaced the old 0.7 s). On a `reveal` line prefer the LISTENER's face (`who` != the speaker). The same expression twice in a row is not a change. | REVIEW / FAIL |
+| VB-01 | On `/2`: **a beat about every 1.5 s while the narrator speaks** (the metronome). Any visual event counts (a new picture, a reframe, an accent, a bubble, a data visual, a card, a beat); a long gap is a REVIEW, a longer one a FAIL, and a segment's mean gap is checked too. On `/3`: **pacing follows new information, not a clock** — only real dead air while the narrator speaks is flagged (a REVIEW line and a FAIL line, no mean rule). Every number is [BP-36](SOURCED_RULES.md) (house, D-58). **How VB-01 and BP-40 relate:** both count the same events (a cut, a bubble, an accent, a data visual, a card, a visual beat tied to a narration word: VB-12, [BP-93](SOURCED_RULES.md)); BP-40 judges every still of the video by section (the hook window, the body), VB-01 only the stretches where the narrator speaks. In the hook window BP-40 is the stricter limit, in the body VB-01's FAIL is; both are met by the same beats. Guidance for the beat-writer: in the hook and climax keep within BP-40's hook limit, in the body let new information set the pace inside VB-01's limits, one pattern interrupt in BP-41's window. How often the picture itself changes is BP-40 (pictures a minute and still limits; PV-24 RHYTHM). Shorts follow BP-45 instead. | REVIEW / FAIL |
+| VB-02 | On `/2`: **in dialogue the face changes about once a second** (a REVIEW line and a FAIL line for the longest stretch without a change). On `/3`: **reactions, not a metronome** — a reaction where a line lands is a choice, never a quota (no per-line minimum since [D-64](DECISIONS_AND_OPEN_QUESTIONS.md): a face swap on every line made every line a cut), and a long stretch without one is a REVIEW; every number is [BP-37](SOURCED_RULES.md) (house, all REVIEW). Two changes of one face closer than [BP-33](SOURCED_RULES.md)'s hold are flicker (REVIEW; BP-33 replaced the old 0.7 s). On a `reveal` line prefer the LISTENER's face (`who` != the speaker). The same expression twice in a row is not a change. | REVIEW / FAIL |
 | VB-03 | **Every beat has a reason and belongs to its instant.** `why` (at least three words) says what in the line it shows; `at` is a phrase of its own line, in the order the beats land (FAIL). A beat whose words share nothing with its line or the lines next to it is a REVIEW. | FAIL / REVIEW |
 | VB-04 | **Few words, no number without a source.** A beat shows at most [BP-38](SOURCED_RULES.md)'s words; a digit on screen or any chart needs a claim id on the beat or its line (invariant 5); a bars chart has BP-38's number of bars. | FAIL |
 | VB-05 | **Variety.** Only a short run of beats of one kind in a row in a segment, and only a share of a segment's beats as words (show the thing instead): a hypothesis, [BP-82](SOURCED_RULES.md). | REVIEW |
@@ -280,6 +320,7 @@ script keeps the old contract unchanged.
 | VB-08 | On `/2`: **every beat names its cue** (`cue.sound` from `audio/cues.py`, or `none` with a reason); a narration beat with `none` and no effect at its moment is a FAIL. On `/3` this **inverts** (D-58): silence is the default and never a finding; a cue is opt-in and must name its story event (`cue.event`: reveal, impact, transition, build, diegetic, take, place) — a cue without an event is a FAIL. The mickey-mousing warning in the cue evidence below always said so; `/2` mandated the anti-pattern (414 cues on Syndicate Wars). On every schema: a cue keeps [BP-64](SOURCED_RULES.md)'s length and level (an earcon: BP-58's one-shot floor does not apply), starts on the beat's first frame, is never ducked, never doubles a sound effect and keeps [BP-39](SOURCED_RULES.md)'s distance from an effect (none under a playing one) and between two cues, and with a cue the layers stay within BP-56's cap (AL-01). Expression changes are silent, except one big take a line (surprised, scared, angry, joyful) that may carry a cue; a cue on a quiet expression is a REVIEW, two cued expressions on one line a FAIL. A cue counts as the sound AL-03 asks for on a hard accent. | FAIL / REVIEW |
 | VB-10 | **A repeated sound stops meaning anything** (D-58, `/3`). The same cue sound on two consecutive cues is a REVIEW; the same sound too often inside a window is a FAIL ([BP-80](SOURCED_RULES.md)). The mixer also rotates three deterministic pitch variants per sound (1.0 and plus or minus [BP-57](SOURCED_RULES.md)'s pitch jitter, `audio/cues.VARIANTS`), so two presses of one trigger never play the identical waveform — the "one press plays many times" bug (the creator, 2026-10-19). | FAIL / REVIEW |
 | VB-11 | **Cue density** (D-58, `/3`). Cues a minute across the video have a REVIEW and a FAIL line (Syndicate Wars shipped 33/min and nothing read as meaningful), a burst inside a few seconds is a REVIEW, and emphasis cues (thud, chime, rise, fall) are capped per line (FAIL); every number is [BP-81](SOURCED_RULES.md). Cues count toward AL-02's events. | FAIL / REVIEW |
+| VB-12 | On `/3`: **a beat needs a word** ([D-64](DECISIONS_AND_OPEN_QUESTIONS.md)). A beat is new information only when it is tied to a narration word: on a narrator line, with a content word in its `at` (what it shows is VB-03's check). An untied beat is reported and does not count for VB-01 or BP-40's stills; no rule asks for a beat on a timer ([BP-93](SOURCED_RULES.md)). | REVIEW |
 | VB-09 | **Expression sheets** (D-55, `production/faces.py`). A hero who changes expression in dialogue has one `cast.<id>.face_sheet`: 8-12 close-ups (about 10) on flat chroma green (palette token `chroma_key`), always including the base set neutral, joyful, sad, scared, angry, surprised; painted once from the hero's reference picture (`ref`, invariant 6: the same face, never redrawn) through `paint plan --faces` -> approve -> run, and reused in every scene and episode. Every expression beat names an expression of its hero's sheet. With the sheet painted, the dialogue frame is the scene's own picture zoomed in 1.3x on the face and blurred, with the keyed close-up of the current expression over it, swapped on every change; without it the face push and emotion mark stand in. A close-up whose edge does not key out cleanly (under 85 %) is a REVIEW. | FAIL / REVIEW |
 
 **Defaults chosen (2026-10-19, the creator may change them):** target 1.5 s with the tolerances above; expression vocabulary
@@ -309,7 +350,7 @@ channel's retention decide.
 
 These are the stages and gates. How to run them is in the skill `story-engine`.
 
-| # | Stage (agent, `model: sonnet`) | Owns | Gate |
+| # | Stage (page the main agent follows; stage 7 is spawned, OR-20) | Owns | Gate |
 |---|---|---|---|
 | 1 | `story-architect` | `drama`, `cast`, segment skeleton, scene headers (`scene`, SC-01) | PV-33, PV-48 0 FAIL |
 | 2 | `scene-writer` (skill `dialogue-scenes`) | segment `lines` with `to` / `intent` | `stage_guard writer`, PV-12, PV-33, PV-48 |
@@ -318,7 +359,7 @@ These are the stages and gates. How to run them is in the skill `story-engine`.
 | 4 | `edit-planner` | shots, accents, audio, visuals; a beat's `pos` only | `stage_guard editor`, PV-24, PV-35, PV-36, PV-44 |
 | 5 | `voice-caster` | `voice`, `cast.<id>.voice` | `stage_guard caster`, PV-10, PV-32 |
 | 6 | `shorts-writer` | `shorts` | `stage_guard shorts`, PV-28, PV-34 |
-| 7 | `script-critic` | findings only | at most 2 rounds, then creator approval #1 |
+| 7 | `script-critic` | findings only; on `/3` also the integrated production-coherence review `editorial_review/2` ([SCRIPTING_SPEC](SCRIPTING_SPEC.md) section 5.2, D-60) ; a passing review also writes `story_page.md`, the whole story on one page in Georgian and why it is well told ([BP-89](SOURCED_RULES.md), EG-23) | editorial gate (EG); at most 2 rounds, then creator approval #1 of the finished script, recorded in `episode.script_approval` ([OR-17](ORCHESTRATION.md)) |
 
 Why this framing holds a mid-size model on course:
 1. **Separate the story from its technical detail.** The narrative is written first, and the technical layers are added afterwards on frozen words. Hierarchical, staged generation (Dramatron; the two-stage screenplay study; DOC outlines) keeps long-range coherence and pacing better than writing everything in one pass.

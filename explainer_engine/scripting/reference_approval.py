@@ -78,6 +78,17 @@ def check(doc: dict, base: Path | None = None) -> list[dict]:
             f(where, f"{what} is painted but has no approved variant collage: paint ONE collage of {MIN_TILES}-{MAX_TILES} "
                      "variants, let the creator pick a tile, record it (OR-16)")
             return
+        if rec.get("first_picture"):  # the creator waived the collage: the first scene picture becomes the reference
+            missing = [k for k in ("approved_by", "approved_at") if rec.get(k) in (None, "")]
+            if missing:
+                f(where, f"the first-picture record lacks {', '.join(missing)}")
+            elif not rec.get("picture"):
+                out.append({"rule": "PV-47", "severity": "REVIEW", "where": where,
+                            "detail": f"{what} is drawn first in its scene (collage waived): show that first picture on the "
+                                      "contact sheet and record it as `picture` once the creator OKs it"})
+            elif rec["picture"] not in lib:
+                f(where, f"reference picture {rec['picture']!r} is not in the library")
+            return
         missing = [k for k in FIELDS if rec.get(k) in (None, "")]
         if missing:
             f(where, f"the reference record lacks {', '.join(missing)}")

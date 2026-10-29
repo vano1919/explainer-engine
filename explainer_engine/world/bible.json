@@ -1,0 +1,72 @@
+{
+  "schema": "world_bible/1",
+  "version": "1.1",
+  "status": "draft",
+  "date": "2026-10-25",
+  "reason": "branch integration 2026-10-25: eras.json gains the modern_new_york era (Titans episode, commit 19b644e), written before bible v1.0 was pinned on its own branch",
+  "approved_by": null,
+  "approved_at": null,
+  "parts": {
+    "look": {
+      "file": "look_v2.json",
+      "sha256": "258920b0a7966d053a9502f48bb8c85d0631402139b045ebd5953dc4eea36645"
+    },
+    "eras": {
+      "file": "eras.json",
+      "sha256": "3c6ae4c34916a02b441a23f13687f8a1b25d448e10a000099ed4bea31ccf6db2"
+    },
+    "palette": {
+      "file": "../design/palette.json",
+      "sha256": "d196c5d6ae09af21b125c9616c6858b53fc754e84cb547f7a67e8954714f20e7"
+    }
+  },
+  "camera_language": [
+    "one key light per frame, real shadows, atmosphere between planes; the era codex names the key (UR-26)",
+    "three shot types carry every scene: A wide establishing plates, B named heroes acting at medium distance, C hands, props and inserts (UR-17); the shot type is the first slot of every prompt",
+    "eye-level camera for conversation, low angle only for stakes, never a tilted horizon",
+    "a scene keeps its place, light and cast from shot to shot; a cut never changes the room or loses a character (the scene continuity review, PR #17)",
+    "stakes and named heroes in every frame; no empty establishing shot longer than the narration needs"
+  ],
+  "graphics_style": [
+    "the video opens on a black card with the title text and a 'what if' question, drawn type, no picture",
+    "after every chapter a short recap card (what happened, what to expect) on black or one palette colour with signs and on-screen text (the creator, 2026-10-21)",
+    "on-screen text uses the OFL faces of the design system only; colours only from the palette part",
+    "drawn text-driven objects (signs, labels, ledgers, maps) are part of the scene, in the same ink as the figures"
+  ],
+  "era_change_rules": [
+    "crossover: the host era owns landscape, light, grade, extras and props; visitors keep the costume and props of their own time, drawn in the same look and lit by the host's light",
+    "two eras meeting: the place of the scene is the host for that scene; the host may change per beat, never inside a shot",
+    "fictional public-domain worlds take their screen language from the closest era entry, never from an adaptation's designs",
+    "everything visible is in the era's material list or in the claim map; anything in the era's absent list is a FAIL (UR-23); uncertain facts stay out of the picture",
+    "a topic without an era entry gets one researched and approved before its pictures (the codex grows, the grammar does not)"
+  ],
+  "characters": {
+    "permanent": false,
+    "note": "no character must carry over between episodes (the creator, 2026-10-22); within an episode the hero references and expression sheets hold (D-55), and a hero who returns reuses the library sheet instead of a new drawing"
+  },
+  "motion": {
+    "default": "stills with 2.5D parallax (depth map + layered displacement) and the drawn text objects",
+    "generated_video": "a few hero shots per episode at most, only after a measured paid pilot (D-70)"
+  },
+  "banned_drift": [
+    "the storybook / oversized-head grammar of look v1 (the look part lists the child cues and banned words)",
+    "photo-realism or a 3D-render look in any era",
+    "naming an artist, a film, a studio or a character of another work in a prompt",
+    "a second drawing grammar inside one episode"
+  ],
+  "anchors": [],
+  "changelog": [
+    {
+      "version": "1.0",
+      "date": "2026-10-22",
+      "reason": "first written bible (D-70 stage C); parts pinned, no approved anchors yet",
+      "approved_by": null
+    },
+    {
+      "version": "1.1",
+      "date": "2026-10-25",
+      "reason": "branch integration 2026-10-25: eras.json gains the modern_new_york era (Titans episode, commit 19b644e), written before bible v1.0 was pinned on its own branch",
+      "approved_by": null
+    }
+  ]
+}

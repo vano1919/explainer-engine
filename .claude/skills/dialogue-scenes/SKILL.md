@@ -42,8 +42,10 @@ scene still works; repeat until it doesn't. End within 1-2 lines of the turn, on
 
 `NARRATOR 2-4 sentences (where / when / why-now, ending on the pressure) -> SCENE 5-12 beats with a turn, exiting on
 the complication -> NARRATOR 1-2 sentences (the consequence + the next pressure)`. The narrator NEVER restates the
-scene's turn and never quotes a character. Target ~40-60 % narration by words, a played scene every 60-90 s (a
-labelled hypothesis — the research doc says so; the channel's retention decides).
+scene's turn and never quotes a character. The narrator's share is [BP-105](../../../docs/SOURCED_RULES.md)'s (25-45 % for
+template D; the old ~40-60 % is superseded). A scene may run 2-4 minutes, but no more than [BP-112](../../../docs/SOURCED_RULES.md)'s
+seconds stay in one place: cut away to the plan carried out, its cost or the other side moving (KP-42), and no more than
+[BP-113](../../../docs/SOURCED_RULES.md)'s lines in a row without a silent reaction, an insert or a cutaway (KP-43).
 
 Short example: N: "By lunch the clip has a million views. In the back room, Enzo is waiting." -> the scene plays and
 exits on Capone's fear -> N: "The order to find the cameraman goes out that night. It comes back without a name."
@@ -57,7 +59,7 @@ exits on Capone's fear -> N: "The order to find the cameraman goes out that nigh
   at high tension).
 - The scripted silence beat: after the hardest question or on the turn, a stage beat `(beat — no answer)` worth
   1.5-3 s in the mix (normal inter-line gaps are ~0.4-0.8 s). 1-2 per scene; silence is a reply. This is a scene device,
-  not a narration hold: BP-10's one-second hold limit governs the narrator's pauses (N-15), and a speaker line's
+  not a narration hold: BP-10's hold limit governs the narrator's pauses (N-15), and a speaker line's
   `pause_after` is not held to it.
 - Nobody speaks twice in a row unless the other's non-response is itself a scripted beat.
 
@@ -101,8 +103,16 @@ dates and specs live only inside a scene as stakes. Three rewrites:
 | "The company announced six locations." | CAPONE: "Six towns. Pick the one we can hold." |
 | "The trailer confirms the swamp region." | ENZO: "They showed the swamp. That's OUR swamp." |
 
-One honesty beat (SC-08): the "this is invented" disclosure lives in ONE segment (plus at most one callback), with
-on-screen labels and the description carrying the rest. Stacked disclaimers are a FAIL on /3.
+Full immersion (SC-08, SC-11, BP-88; the creator 2026-10-20): the story never stops to say it is invented, a
+simulation or a hypothetical, and the narrator never hedges it ("we cannot know for sure"); the title and the description
+carry the what-if. A hero may doubt inside a scene. Show, don't tell (SC-12, BP-87): the narrator never names a hero's
+traits, rates them or recites a biography; a trait is a choice on screen.
+
+| Telling (FAIL on /3) | Showing |
+|---|---|
+| "Trump is a master of perception." | He spends forty of his hundred dollars on a rented jacket before he spends a cent on food. |
+| "Musk takes huge risks." | MUSK (to the seller): "Eighty for the broken one. All of it." The seller: "That's your last eighty." |
+| "This is only a simulation, of course." | (cut: the title says "What if"; the story plays as if it is happening now) |
 
 ## Conflict modes (DW-09 softened)
 
@@ -163,7 +173,19 @@ into fear, shown by a silence beat and a quieter repeat of his own question.
 - SC-05 a run of >=4 consecutive character lines (>=2 speakers, no narrator inside); every present hero speaks or reacts.
 - SC-06 no greeting opener, no wrap-up closer.
 - SC-07 no press-release register in narration; dates and specs only inside a scene as stakes.
-- SC-08 one honesty beat (plus at most one callback), never a stack.
+- SC-08 no spoken honesty beat (BP-71 is 0); SC-11 no meta disclaimer or hedge on the story (BP-88).
+- SC-12 show, don't tell: no trait statements, ratings or biographies from the narrator, no stat cards (BP-87).
 - SC-09 line lengths (BP-72, BP-73): >35 words FAIL, >15 REVIEW unless the scene's one speech, one >=25-word turn per scene,
   <=3 "?" runs.
 - SC-10 surface_topic and real_subject declared; no line states the real subject verbatim.
+
+## Real people in a scene (D-63, creator 2026-10-20)
+
+When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood, then a slow move to the next shot, never a cut straight into other people's talk.
+
+A reported exchange is a real exchange (SC-05, BP-70, D-65, the creator 2026-10-20 21:14/21:17): at least BP-70's turns of two named speakers told by
+the narrator ("O'Leary asks ... Musk says ..."); name the speaker before his words (ST-15, BP-95) and report at most two
+speakers in one line (ST-16, BP-96). The narrator need not repeat what is written on screen; what matters is that the listener
+follows the story. After the conversation, the picture moves slowly to a new shot.
+
+Frame every exchange (ST-14, BP-90, D-64, the creator 2026-10-20 21:14): a narrator setup that names who talks and what idea or want brings them there, then the exchange, then a narrator conclusion that says what came of it, and only then the next exchange: never two exchanges chained. The narrator gives the context whenever a conversation needs it. The establishing shot of the scene shows its cast (BP-91); a bubble, when the scene keeps one, is a key phrase within BP-84's cap that the narrator has just told.

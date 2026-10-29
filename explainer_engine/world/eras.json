@@ -583,6 +583,59 @@
     "generic beach postcard"
    ],
    "grade": "neon_dusk"
+  },
+  "modern_new_york": {
+   "status": "working_hypothesis_needs_stills_study",
+   "screen_refs": [],
+   "light_keys": {
+    "courthouse_morning": "cold fluorescent hallway light with a thin shaft of grey window daylight and long polished floor reflections",
+    "courthouse_late": "low late-afternoon gold light slanting down a marble hallway, long warm shadows, cold blue shade in the corners",
+    "overcast_street": "flat grey overcast city daylight on wet pavement, hard cold shadows between towers",
+    "amber_lot": "low amber late-afternoon sun across a supermarket parking lot, long shadows, cold blue shade under the cars",
+    "motel_night": "buzzing motel sign light and a flickering pool glow, wet concrete, deep blue shadows",
+    "garage_lamp": "a single hanging work lamp over a cluttered workbench, amber pool of light, deep teal shadows",
+    "sodium_dusk": "sodium streetlamp orange against a deep blue dusk sky, long shadows on cracked asphalt",
+    "warehouse_fluorescent": "flat hard fluorescent warehouse light, long cool green-white rows, no soft shadows",
+    "preddawn_ash": "deep blue pre-dawn half-light with grey ash drifting and a faint orange glow low in the wreckage",
+    "grey_day_ash": "flat grey daylight falling through a roofless black ceiling onto ash and a scorched workbench",
+    "office_bright": "clean bright morning light through tall office windows, warm wood and glass, crisp shadows"
+   },
+   "palette_words": [
+    "concrete grey",
+    "courthouse marble",
+    "motel neon red",
+    "fluorescent green-white",
+    "ash black",
+    "envelope white"
+   ],
+   "atmosphere": [
+    "city haze",
+    "fluorescent hum",
+    "dust in slanting light"
+   ],
+   "production_design": [
+    "marble courthouse hallways",
+    "highway motels",
+    "cinder-block garages",
+    "supermarket parking lots",
+    "steel warehouses",
+    "glass office floors"
+   ],
+   "costume": [
+    "rumpled business suits",
+    "T-shirts and jeans",
+    "work shirts",
+    "security-guard uniforms"
+   ],
+   "absent": [
+    "real brand logo",
+    "real company logo"
+   ],
+   "cliches": [
+    "generic skyline postcard",
+    "stock handshake"
+   ],
+   "grade": "cold_grey"
   }
  },
  "grades": {

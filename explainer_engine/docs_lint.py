@@ -26,6 +26,7 @@ HOMES = {
     # the rule families added since D-23 (audit 2026-10-19 H4: branches reused PV-32..36 and OR-10 for different rules)
     "PV": "PRODUCTION_SCRIPT.md",
     "PP": "PRODUCTION_SCRIPT.md",
+    "CS": "PRODUCTION_SCRIPT.md",  # scene continuity of the painted pictures (D-69)
     "PC": "QA_SPECIFICATION.md",
     "ED": "EDITING.md",
     "OR": "ORCHESTRATION.md",
@@ -41,7 +42,17 @@ HOMES = {
     "VB": "STORY_ENGINE.md",
     "ES": "EPISODE_STANDARDS.md",
     "TN": "THUMBNAIL_RULES.md",
+    "BP": "SOURCED_RULES.md",
+    "ZI": "SCRIPT_ENGINE.md",  # the script engine v1: zero improvisation (2026-10-24)
+    "KP": "SHOT_PROMPTS.md",  # prompts of animated shots: keyframe, next pose, cut, video (2026-10-24)
+    "KG": "KEYFRAME_GATE.md",
+    "LY": "KEYFRAME_GATE.md",  # shot layout from real sizes and the camera (2026-10-24)  # keyframe gate: picture checks, cause log, LoRA/base pairing (2026-10-24)
+    "AC": "ASSET_COMPOSE.md",  # shots composed from reusable assets (2026-10-25)
+    "CT": "SHOT_CONTINUITY.md",  # continuity cards of the shots of one scene (D-75, 2026-10-25)
+    "LT": "LORA_TRAINING.md",  # LoRA training control (D-72, 2026-10-23)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
     "BP": "SOURCED_RULES.md",  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
+    "WB": "WORLD_BIBLE.md",  # the World Bible and the asset library (D-70 stage C, 2026-10-22)
+    "VT": "VAULT.md",  # the vault: nothing we made is lost (D-73, 2026-10-24)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))
 ID = re.compile(rf"\b({_PREFIX})-([TE]?\d{{2,3}})\b")

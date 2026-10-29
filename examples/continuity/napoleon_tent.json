@@ -1,0 +1,73 @@
+{
+  "schema": "continuity_card/1",
+  "scene_id": "S04",
+  "model": "qwen_image_21",
+  "style_line": "wldnk style, rough ink line, gritty painted texture, warm earthy palette, big grotesque faces.",
+  "location": {
+    "id": "napoleon_tent",
+    "where_when": "Field tent of the French emperor / Night",
+    "int_ext": "INT",
+    "time_of_day": "night",
+    "weather": "indoor",
+    "landmarks": [
+      {"id": "map_table", "text": "a long table covered with a campaign map"},
+      {"id": "tent_flap", "text": "the open tent flap with the dark camp outside"},
+      {"id": "lantern", "text": "a brass lantern hanging from the tent pole"}
+    ],
+    "master_frame": "napoleon_tent/master.png"
+  },
+  "light": {"key_light_dir": "left", "light_source": "the hanging lantern", "colour_key": "amber lantern light, blue night outside"},
+  "cast": {
+    "emperor": {
+      "name": "the short emperor",
+      "description": "a short stocky man with a huge round head, a big hooked nose and a tiny bicorne hat",
+      "sheet": "cast/emperor_sheet.png",
+      "costumes": {"field": "a grey field coat over a white waistcoat", "field_wet": "a soaked grey field coat"}
+    },
+    "marshal": {
+      "name": "the tall marshal",
+      "description": "a very tall thin man with a long chin, bushy grey sideburns and a feathered hat",
+      "sheet": "cast/marshal_sheet.png",
+      "costumes": {"dress": "a blue coat with gold braid"}
+    }
+  },
+  "shots": [
+    {
+      "shot_id": "S04-01", "is_master": true, "shot_size": "WS", "angle": "eye", "camera_side": "A",
+      "axis": ["emperor", "marshal"], "hook_up": "first", "camera_move": "slow push in", "head_count": 2,
+      "characters": [
+        {"id": "emperor", "screen_pos": "left", "depth": "mid", "facing": "right", "eyeline": "marshal", "costume": "field",
+         "action": "jabs a finger at the map"},
+        {"id": "marshal", "screen_pos": "right", "depth": "mid", "facing": "left", "eyeline": "emperor", "costume": "dress",
+         "props": [{"id": "dispatch_letter", "hand": "right", "state": "sealed"}]}
+      ],
+      "landmarks": [{"id": "map_table", "side": "centre"}, {"id": "lantern", "side": "left"}, {"id": "tent_flap", "side": "right"}],
+      "refs": [{"path": "cast/emperor_sheet.png", "role": "character", "of": "emperor"},
+               {"path": "cast/marshal_sheet.png", "role": "character", "of": "marshal"}]
+    },
+    {
+      "shot_id": "S04-02", "shot_size": "MS", "angle": "eye", "camera_side": "A", "axis": ["emperor", "marshal"],
+      "angle_change_deg": 20, "hook_up": "eyeline", "head_count": 2,
+      "characters": [
+        {"id": "emperor", "screen_pos": "left", "depth": "front", "facing": "right", "eyeline": "marshal", "costume": "field"},
+        {"id": "marshal", "screen_pos": "right", "depth": "mid", "facing": "left", "eyeline": "emperor", "costume": "dress",
+         "props": [{"id": "dispatch_letter", "hand": "right", "state": "torn open"}], "action": "reads the letter aloud"}
+      ],
+      "landmarks": [{"id": "lantern", "side": "left"}],
+      "changes": [{"entity": "marshal", "field": "props", "from": "sealed", "to": "torn open", "cause": "he opened it at the end of S04-01"}],
+      "refs": [{"path": "napoleon_tent/master.png", "role": "place"},
+               {"path": "cast/emperor_sheet.png", "role": "character", "of": "emperor"},
+               {"path": "cast/marshal_sheet.png", "role": "character", "of": "marshal"}]
+    },
+    {
+      "shot_id": "S04-03", "shot_size": "CU", "angle": "low", "camera_side": "A", "axis": ["emperor", "marshal"],
+      "angle_change_deg": 35, "hook_up": "reaction", "head_count": 1,
+      "characters": [
+        {"id": "emperor", "screen_pos": "centre", "depth": "front", "facing": "right", "eyeline": "off_right", "costume": "field",
+         "expression": "his face turns purple with rage"}
+      ],
+      "refs": [{"path": "napoleon_tent/master.png", "role": "place"},
+               {"path": "cast/emperor_sheet.png", "role": "character", "of": "emperor"}]
+    }
+  ]
+}

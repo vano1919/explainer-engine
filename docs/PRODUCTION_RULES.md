@@ -17,7 +17,9 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md), CLAUDE.md invariants 1-2).
 5. **The creator picks the picture provider for every batch** (D-50: paint plan -> approve -> run; on Gemini the tiers draft,
    standard, premium pick the model, D-52). Narration and sound effects come from ElevenLabs; music from ElevenLabs or a per-track
-   verified free library (D-52); free procedural cues are allowed (D-54).
+   verified free library (D-52); free procedural cues are allowed (D-54). **Library first** (creator 2026-10-20): background music,
+   sound effects and reusable pictures are searched in the reusable libraries before anything new is generated, and new takes are
+   registered back (OR-18, D-76; enforced by the ElevenLabs hook and PP-08).
 6. **Look at the output before reporting it.** Open the contact sheet, listen to the test read, composite a sample; a green test
    is not acceptance (CLAUDE_EXECUTION_GUIDE step 5).
 7. **Say what was and was not verified.** No legal or factual guarantee the sources do not give; a creator decision is recorded
@@ -33,6 +35,37 @@ Read it before starting any video; update the feedback log (section 3) whenever 
    when `python -m explainer_engine.qa.short_format <file>` passes (vertical 9:16, at most 3 min; `production.shorts` refuses
    to hand on any other file), and its link is given as `youtube.com/shorts/<id>`, never `youtu.be`. Unchanged: never public (the creator clicks Public), the creator sets the thumbnail in Studio, sign-in is a fresh
    link per upload session (`publish auth-url` / `auth-finish`), and a piece that fails a test is fixed, not uploaded.
+10. **Pictures and audio are approved together and run in parallel** (creator, 2026-10-20: "once the script is approved, approve
+   the pictures and the audio together and start them together: the batch makes the pictures wait for nothing"). Right after the
+   creator approves the finished script (OR-17), Claude asks ONE question that covers every paid asset of the video: the paint
+   plans (provider per batch, D-50), the narration, the sound effects and the music, with one cost table and the caps they need.
+   On the yes, the Gemini batch is submitted first (it takes minutes to hours) and the voice and sounds are made while it runs.
+   Every step keeps its own estimate, ledger entry and gate; a cap at 80 % still stops and asks. Assets that depend on an earlier
+   OK (a hero's first picture before that hero's later pictures and face sheet) are a second, smaller question.
+11. **The first two parts are shown before the rest is rendered** (creator, 2026-10-20: "when the first 2 parts are rendered,
+   join them and show me; I will watch and tell you what and how"). The render runs in chunks (ED-13, RULE-R1): Claude
+   renders only the first two (`assemble --chunks 0:2`), joins them into one preview file, looks at it, sends it to the creator
+   and waits. His notes become rules (with a test, OR-09) before the remaining chunks are rendered.
+12. **Claude watches every render before the creator does** (creator, 2026-10-20: "why can't you watch and evaluate it
+   yourself?", after the first Titans preview showed a bubble on the wrong face, faces swapping every 1-2 s and rings on empty
+   wall). Before any render, preview or part is shown to the creator, Claude runs
+   `python -m explainer_engine.qa.frame_review <timed.json> <video> --from S --to S --out <dir>` on it, opens every contact
+   sheet it writes and looks at each frame itself, fixes what it finds (timing, beats, bubbles, pictures) and re-renders. A FAIL
+   is never shown; each REVIEW is either fixed or named to the creator with its sheet. The checks and their thresholds live in
+   `explainer_engine/qa/frame_review.py` (loudness: BP-50 through `qa/targets.py`).
+   **The QA loop runs this after every two rendered chunks** (creator, 2026-10-20):
+   `python -m explainer_engine.qa.loop <script> --read <read dir> --out <dir> --chunks A:B --pics <dir>` times the script,
+   renders only chunks A:B, joins them, runs the frame review with the free pixel checks (`qa/pixels.py`: an unplanned cut
+   or a frozen picture FAIL; camera jumps, jump cuts, black, a bubble over a face REVIEW) and the face-point check
+   (`qa/face_points.py`, REVIEW), and writes `loop_report.json`: every finding classed *systemic* (fix the code, with a
+   focused test) or *script* (fix the script), with the file that owns it. The loop never edits anything itself; the session
+   fixes the owners and runs the same command again until no FAIL is left. A finding still there after 5 iterations stops
+   the loop: report it to the creator. Its only paid allowance: at most 2,000 ElevenLabs credits per run, on its own, for
+   re-reads of script lines it changed (`config/spend_caps.json` `allowances.qa_loop`, enforced by
+   `core/ledger.Run.reserve_allowance` inside the run's ElevenLabs cap).
+13. **A two-part sample before the rest** (creator, 2026-10-21): after the script approval, voice and pictures are paid for
+   the first two parts only, stitched into one sample the creator watches; his notes are fixed and only his recorded word
+   opens the rest ([OR-19](ORCHESTRATION.md), gate 6.5 below, `production/sample.py`).
 
 ## 2. The gates, in order (a video does not skip one)
 
@@ -41,13 +74,14 @@ action. Gates 3-7 spend money and need the creator's yes first.
 
 | # | Gate | What must be true | Rules and tools |
 |---|---|---|---|
-| 0 | **Topic and claims** | research dossier, claim map, the episode rulebook (provisional, then final before the script; gate row `R`), rights check; the source/claim contract and independent editorial gate pass, then the creator approves the script (approval #1) | [SCRIPTING_SPEC](SCRIPTING_SPEC.md) §1-5, crossover skill, `rights/ip_check.py` |
+| 0 | **Topic and claims** | research dossier, claim map, the episode rulebook (provisional, then final before the script; gate row `R`), rights check; the source/claim contract and independent editorial gate pass, then the creator approves the finished script (approval #1, recorded in `episode.script_approval`, [OR-17](ORCHESTRATION.md)) | [SCRIPTING_SPEC](SCRIPTING_SPEC.md) §1-5, crossover skill, `rights/ip_check.py` |
 | 1 | **Script for the ear** | the first sentence is the hook in one of the forms of [BP-03](SOURCED_RULES.md) (a yes/no question rises best); short sentences; one stress word; open loop at every beat end; interjections where a person would say them; named heroes with archetype lines; humour from the situation; `narration_tts.txt` + plain `narration.txt` | skill `narration-script`, `scripting/narration_lint.py` 0 FAIL |
 | 2 | **Voice test read** | first 45-60 s only (estimate first), the creator listens; then the full read, pace per BP-01 (one band for every document) | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) (D-39), `audio/scribe_words.py`, `audio/pause_pad.py` |
 | 3 | **Shot plan** | every shot has `stakes`, type A/B/C in rhythm, named heroes with emotional poses in every B, friction per beat, palette and one emotion per shot, figure style on every person/hand prompt, plates without people; cuts placed by the solver inside punctuated pauses | skill `shot-visuals`, [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) UR-01..UR-22, `edit/shot_rules.check_shots` 0 FAIL |
 | 4 | **Style bridge** | 6 test pictures, a sprite and a pod-painted hand and crowd in one frame, approved once per episode | UR-22, `look.style_bridge.approved` |
 | 5 | **Sprites** | every hero and pose of the plan exists (sprite bank), keyed and graded | `sprite_needs.md`, `look.pose_bank`, [ASSET_SYSTEM](ASSET_SYSTEM.md) |
 | 6 | **Pictures (pod)** | limit = units x measured seconds x margin; approval with price and caps; pushed even on failure; contact sheet reviewed by eye, bad pictures repainted | TMR `cloud/lint_manifest.py` (`picture_budget`, `fatal_before_push`), `cloud/job_speeds.json`, runbook R6 |
+| 6.5 | **Two-part sample** | the sample's voice and pictures (first two segments, [OR-19](ORCHESTRATION.md)) are rendered and stitched; the creator watches, his notes are fixed and re-rendered; his recorded word (`production.sample approve`, bound to the script's sha256) opens paid generation for the rest | `production/sample.py`, PP-09, the ElevenLabs hook, gate 6.5 |
 | 7 | **Full read and timings** | one paid read of the final text; Scribe words, coverage >= 97 %, pauses padded, `words.json` on the audio the mix uses; shot cuts recomputed | D-39, UR-12, `build_shots.py` 0 FAIL |
 | 8 | **Animatic and render** | GPU compositor (D-32), motion per UR-13, transitions UR-14, sound UR-15 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) |
 | 9 | **Seven-point test, QA and approval #2** | every video passes all seven checks of section 6 (`qa/scorecard.py`), then technical and editorial QA; each piece that passes is staged unlisted at once (standing order 9: the creator's standing approval for unlisted staging); approval #2 is the creator's own click to Public | section 6, [QA_SPECIFICATION](QA_SPECIFICATION.md) |
@@ -59,7 +93,8 @@ the creator picks the provider for every batch) and the picture files (6). Day f
 the legacy reading of `shots.json` and `look.json`.
 
 Order matters: no paid read, picture or music before the rulebook's `paid_assets` checkpoint passes (OR-12); a script is not paid-read before gate 1 is clean; pictures are not painted before the style bridge (gate 4) and
-the sprite plan (gate 5); the full read waits for the creator's yes on the test read.
+the sprite plan (gate 5); the full read waits for the creator's yes on the test read; and past the sample's own assets,
+nothing is paid before the creator's word on the stitched two-part sample (gate 6.5, [OR-19](ORCHESTRATION.md)).
 
 ## 3. Feedback log (every creator note, its cause, its rule, what enforces it)
 
@@ -71,6 +106,10 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-16 | Write for an expressive read; mysterious, curious, funny | plain documentary prose | SCRIPTING_SPEC §8 | `narration-script` skill |
 | 2026-10-16 | The read is slow and monotone; the question is not asked like a question; stress on wrong words; add hmm / oh / eh where natural; study similar videos; write a big rules skill | wh-question hook falls; ellipses slow; no stressed word; no interjections; no open loops | N-01..N-10 | `narration_lint`, skill |
 | 2026-10-19 | Upload whatever video or Short passes every test right away, not everything together | Shorts waited for the long video and the whole batch | standing order 9 | `publish stage --only <id>` (per-piece state in `publish/youtube_state.json`) |
+| 2026-10-20 | Approve pictures and audio together after the script and start them together | the Titans pictures were asked for only after the voice was recorded, and the batch waited | standing order 10 | the orchestrator's single paid-assets question; each step's own gate |
+| 2026-10-20 | Dialogue frame: the blurred scene with the big face (variant A of four), the background a little more blurred | at blur 0.014 the other heroes behind the face still read as a second focus | `faces.BLUR` 0.024 | `test_face_sheets.py::test_dialogue_backdrop_blur_is_the_creators_choice` |
+| 2026-10-20 | Render the first two parts, join them and show me before the rest | a whole video was rendered before the creator saw any of it | standing order 11 | the orchestrator's render phase |
+| 2026-10-20 | The first preview had errors Claude should have seen itself: a bubble across a cut into a face close-up, one speaker's words on another's face, faces swapping every 1-2 s, rings on empty wall | nothing looked at the rendered frames; the bubble layout and the close-ups were checked separately, never together on the timeline | standing order 12 | `qa/frame_review.py` (exit 1 on FAIL), `tests/unit/test_frame_review.py` |
 | 2026-10-16 | Humour must never touch the facts; credible science | joke-driven rewrites risk false statements | SCRIPTING_SPEC §8.1, UR-21 | skill, editorial review |
 | 2026-10-16 | Pictures too generic: no named heroes, no fear, clichés of the primitive; real figures by name in every topic | prompts described places; B shots faceless; idle sprite poses; empty plates | UR-16..UR-21 (D-40) | `check_stakes`, `stakes.json`, skill `shot-visuals` |
 | 2026-10-16 | The man seen from behind and the main hero are different kinds of people; everything must be one world | UR-07 asked for natural proportions next to caricatures; two generators | UR-22; style bridge | `check_stakes`, `look.figure_style` |
@@ -101,6 +140,7 @@ the sprite plan (gate 5); the full read waits for the creator's yes on the test 
 | 2026-10-16 | Episode 1 is one whole video: what happens to the 100 minds after a day, a week, a month, a year, 10 years, 100 years, then compare with the real record; lean on real science and logic, be creative; periods do not get equal time; a hook closes every period; tone: scientific what-if, 20 % humour, 40 % drama, 40 % doubt and telling (the humour share is superseded by BP-09's joke density, D-59) | the earlier plan treated Day 1 as a separate video and gave every period the same length | SR-01..SR-08, PV-27, skills `science-grounding`, `time-jump-episode` | [ORCHESTRATION](ORCHESTRATION.md), `validate` PV-27 |
 | 2026-10-16 | Shorts advertise the video: a 3-second question hook, then the most surprising scene, own text and script, 9:16 crops that keep faces on the heroes | Shorts had no template | SH-01..SH-04, PV-28, skill `shorts-for-video` | `validate` PV-28 |
 | 2026-10-16 | Run alone overnight in phases so mistakes show early; hard stops that lose nothing; Gemini for this video's pictures with a US$6 new cap; reuse pictures where the story fits and plan it in the script | long unattended runs had no ledger; pods failed four times | OR-01..OR-09, D-44, agent `orchestrator`, SR-08 | `core/ledger.py`, `tests/unit/test_ledger.py` |
+| 2026-10-21 | After the script, do not generate the whole video's audio and pictures any more: make the first two parts, I watch, I correct with my notes, and only then generate the audio and pictures of the rest | the Syndicate Wars and titans flows paid for full voice and picture batches before the creator saw one rendered frame; his notes then cost re-reads and repaints | [OR-19](ORCHESTRATION.md), gate 6.5, PP-09 | `production/sample.py`, `paint.preflight`, the ElevenLabs hook, `production_gate`, `tests/unit/test_sample_gate.py` |
 | 2026-10-17 | The 2K render kept dying (five times) and the video was not finished; fix it, and write the rule so it does not happen again | a long render was started as a detached process (`setsid nohup`) with no tool task attached; the sandbox stopped the machine after the session went quiet, and every process died with it (timing matched the creator's messages; not proven by a log) | RULE-R1: a render longer than ~10 minutes runs as a tracked background task of the session (never `setsid`, never a detached `nohup`); it is written in chunks (ED-13); each run draws its own chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once; the session keeps a wake-up timer while it runs and says so in plain words; a stale `.assemble.lock` is removed only after its pid is confirmed gone | ED-13, `assemble --chunks`, `tests/unit/test_chunked_render.py`; the rule itself is procedural (OR-09) |
 
 ## 4. Planning numbers for a video length (measured on Day 1, 2026-10-16)

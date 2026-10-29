@@ -18,8 +18,9 @@ For historically grounded docudrama episodes, read `docs/research/DOCUDRAMA_REFE
 A single prompt that writes story, dialogue, tags, shots and sounds at once loses the story: the technical layer crowds
 out the plot. Each stage below gets a small, fixed input, writes only its own fields, and passes a free check before the
 next stage starts. `scripting/stage_guard.py` proves a later stage did not rewrite an earlier one (the words are frozen
-after stage 2). Every stage is an agent in `.claude/agents/` with `model: sonnet`; the orchestrator (or the session) runs
-them in order and stops at the first failed gate.
+after stage 2). Every stage has a page in `.claude/agents/`; the main agent (the orchestrator or the session) runs the stages
+itself in order, following each page, and stops at the first failed gate. Only stage 7, `script-critic`, is spawned
+as a separate agent with a fresh context (OR-20, D-79).
 
 | # | Stage (agent) | Writes | Gate (free) |
 |---|---|---|---|
@@ -31,7 +32,7 @@ them in order and stops at the first failed gate.
 | 4 | `edit-planner` | shots, motion, accents, bubbles, graphics, beds, sfx, music; ED-14 coverage per scene (establish -> listener reactions -> <=4 A/B alternations, J/L 0.5-2 s, one music per chapter, one planned dropout) | `stage_guard editor`, `validate`: PV-24, PV-35, PV-36 |
 | 5 | `voice-caster` | `voice`, `cast.<id>.voice` (traits, candidates) | `stage_guard caster`, PV-10, PV-32 |
 | 6 | `shorts-writer` | `shorts` (10, at least 6 styles) | `stage_guard shorts`, PV-28, PV-34 |
-| 7 | `script-critic` (fresh context) | findings only, each to its owner stage | SCRIPTING_SPEC gates, no "bored" window; at most 2 rounds |
+| 7 | `script-critic` (fresh context) | findings only, each to its owner stage; writes `editorial_review.json` (`editorial_review/2` on /3: the integrated production-coherence pass, D-60) | SCRIPTING_SPEC gates + `production.editorial_gate` (EG), no "bored" window; at most 2 rounds; a passing review comes with `story_page.md` (Georgian, one page, the whole story and why it is well told, BP-89, EG-23) |
 | - | creator approval #1 | | nothing is paid before it |
 
 ## 1. The skeleton first (story-architect)
@@ -46,8 +47,9 @@ them in order and stops at the first failed gate.
 - Loops and set-ups are written before lines: L01 the dramatic question, a forward-pointing line or smaller loop at least every BP-42 interval (150 s), a
   set-up planted in the first third that decides the end (ST-05, ST-06).
 - Needs: pick at least three from curiosity, stakes, humour, wonder, fear, identity, justice, belonging, competence,
-  surprise, and give each a segment (ST-08). Objectivity is labelled per segment (ST-09); on /3 the spoken disclaimer
-  lives in ONE honesty beat (SC-08).
+  surprise, and give each a segment (ST-08). Objectivity is labelled per segment (ST-09); on /3 nothing spoken says the
+  story is invented (SC-08, SC-11): the title and the description carry it. Show, don't tell (SC-12): heroes are what
+  they do. When the script is finished, the creator reads and approves it (OR-17) before anything is paid.
 
 ## 2. Scenes (scene-writer), one segment per call
 Input is small on purpose: the skeleton (one line per segment), this segment's drama AND its `scene` header, the cast
@@ -88,7 +90,14 @@ Ten moments, ten Shorts, at least six styles from the catalog (SS-01), alternati
 
 ## 7. Critic
 Fresh context, reads as a viewer every 30 seconds, sends each finding to the stage that owns it. Two rounds at most;
-then the creator decides.
+then the creator decides. On a /3 the critic also walks the finished script once as ONE timeline (the integrated
+production-coherence pass, D-60): story causality, each hero's entrance, each line against its speaker and the line
+before, each shot/beat/cue against its instant, delivery against meaning, and the estimated clock — layers judged
+together, since each validator only sees its own. The result is `editorial_review.json` schema `editorial_review/2`
+(contract: `docs/SCRIPTING_SPEC.md` section 5.2; instructions: the agent file): per-layer evidence with an honest basis
+(data / estimate / instructions — never a claim to have seen unrendered media), and machine-routable findings whose
+FAILs block the editorial gate, paid narration and paid assets until fixed and re-reviewed (any edit invalidates the
+review by hash).
 
 ## Prompts for a Sonnet stage (how to brief it)
 - Give the stage its rules by ID and the file paths, not pasted text; give it the exact fields it owns.

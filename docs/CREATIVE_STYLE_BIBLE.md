@@ -1,5 +1,7 @@
 # Creative style bible
 
+
+**Since 2026-10-22** the current visual world is versioned in `explainer_engine/world/bible.json` ([WORLD_BIBLE](WORLD_BIBLE.md)); this document keeps tone, humour, typography and the hook framework.
 **Status 2026-10-15: the Kit sections below are retired** (the creator rejected draft v0, D-04); the new direction is hand-drawn / doodle, explored in `assets/style_samples/`; on 2026-10-16 the creator chose the painted-illustration look of the two reference images (D-27). Tone, shape grammar, hooks and accessibility still apply; the mascot and palette sections are rewritten once the creator picks a doodle style. Colours live only in
 `explainer_engine/design/palette.json` (D-22); the character parts only in `assets/characters/kit/kit_reference.svg`.
 
@@ -38,7 +40,8 @@ about 6 labels on screen; title cards at most 6 words.
 
 ## Backgrounds and scene continuity
 A small set of recurring places (kitchen, shop, street, workshop, lab bench, night sky) built from reusable props.
-Warm paper background by default; `night` for dark topics. One place per scene; props keep their size and colour across
+Warm paper background by default; `night` for dark topics. One home place per scene; a cutaway to another place shows what the talk is about while it is said (KP-42,
+[BP-112](SOURCED_RULES.md); the creator 2026-10-24). Props keep their size and colour across
 scenes of an episode. Diagrams use `mechanism_teal` flows over simple shapes; real numbers are written, never implied.
 
 ## Hooks (D-07)

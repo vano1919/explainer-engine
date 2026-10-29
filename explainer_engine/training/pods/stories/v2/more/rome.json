@@ -1,0 +1,47 @@
+{
+ "name": "rome",
+ "shots": [
+  {
+   "id": "s5",
+   "size": "medium",
+   "faces": [
+    "baker"
+   ],
+   "pre": "Medium shot at the same bakery counter from the street side: the baker comes round the counter and points at someone off to the right.",
+   "post": "Round loaves lie on the counter behind him.",
+   "layout": "The camera stands in the street in front of the counter; the baker is in the middle, the counter with loaves behind him, the balconies above.",
+   "change": null
+  },
+  {
+   "id": "s6",
+   "size": "close",
+   "faces": [],
+   "pre": "Close-up insert on the bakery counter: a hand puts a coin next to a round loaf.",
+   "post": "The wood of the counter and the loaves are sharp, the street behind is blurred.",
+   "layout": "The camera looks at the counter top from the street side, close; only the hand, the coin and the loaves are in the picture.",
+   "change": null
+  },
+  {
+   "id": "s7",
+   "size": "wide",
+   "faces": [
+    "legionary"
+   ],
+   "pre": "Wide shot of the same street from the back of the bakery: the crowd of Roman citizens in togas laughs while the legionary salutes the baker.",
+   "post": "The crowd stands in the street between the counter and the fountain.",
+   "layout": "The camera stands inside the bakery behind the counter and looks out into the street; the fountain is on the right of the picture, the Colosseum far down the street.",
+   "change": null
+  },
+  {
+   "id": "s8",
+   "size": "medium",
+   "faces": [
+    "baker"
+   ],
+   "pre": "Medium shot over the legionary's shoulder at the same counter: the baker smiles and hands him a loaf.",
+   "post": "The baker holds the loaf out across the counter.",
+   "layout": "The camera stands behind the legionary's left shoulder; the baker faces the camera behind the counter; the street is behind the camera.",
+   "change": "Cut to a medium shot over the legionary's shoulder: the baker hands him a loaf."
+  }
+ ]
+}

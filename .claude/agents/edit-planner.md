@@ -1,6 +1,6 @@
 ---
 name: edit-planner
-description: Writers' room stage 4. Plans the picture and sound of each segment of the production script - shots, camera moves, motion accents, bubbles, data visuals, effects, ambience and music - on the frozen words, with scene-aware dialogue coverage on /3, so the edit is written with the script and the render follows it. Use after the performance pass of each segment.
+description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Writers' room stage 4. Plans the picture and sound of each segment of the production script - shots, camera moves, motion accents, bubbles, data visuals, effects, ambience and music - on the frozen words, with scene-aware dialogue coverage on /3, so the edit is written with the script and the render follows it. Use after the performance pass of each segment.
 model: sonnet
 tools: Read, Edit, Bash, Grep, Glob
 ---
@@ -34,7 +34,30 @@ For each segment:
    beat's word; for a dialogue line pick a picture whose `speakers` point shows the speaking face (VB-06). You may move
    a beat (`pos`) to fit the picture, never change what it shows; on /3 a cue is the beat-writer's, bound to its `event`
    (VB-08) — a cue that collides with your effect goes back to the beat-writer, never gets silenced by you.
-6. Run `python -m explainer_engine.production validate <script>`: 0 FAIL; the PV-35 (MO, incl. MO-07) and PV-24 RHYTHM
+6. Animated shots (keyframe, next pose, cut, LTX video): write each prompt in the shape of `docs/SHOT_PROMPTS.md` (KP-01..KP-14):
+   people named by visible traits, one actor named first, an action with a start, peak and settle, "everyone stays in
+   frame", ONE camera sentence, at most three sounds, the same style sentence in every shot, next poses drawn from the master
+   with no framing word, a negative prompt that never names our own style (never LTX's stock negative). Run
+   `python -m explainer_engine.scripting.shot_prompt_lint <shots.json>`: 0 FAIL before any paid render.
+   Since 2026-10-24 the prompts are composed, not typed (KP-30): write one shot card per shot in `film_shots.json`
+   (`film_shots/1`, docs/SHOT_PROMPTS.md "The shot card"): your fields are `frame` (size, angle, camera with
+   `camera_end`, place, light), `blocking` (each person's screen side, gaze, first-frame pose, what they stand or sit on and how much of the frame height they fill; KP-31, KP-32), `relations` and `lead_room` on the frame (KP-33, KP-34), `sound` (at most three,
+   a visible source each, no score music, KP-21) and `source`/`master`/`last_frame`. Follow the cartoons' grammar (KP-26):
+   open a scene wide, cut in to singles and over-the-shoulder reverses, keep screen sides, a close shot on the turn, no
+   more than three shots of one size in a row, a static camera unless the move is the event, at most two people in a
+   medium or closer shot (KP-19). Then `python -m explainer_engine.scripting.film_shots check film_shots.json` (0 FAIL,
+   every REVIEW answered) and `... compose film_shots.json --out prompts.json`; the paid steps read prompts.json only.
+   Episode rules there (D-77): a teaser is `teaser_of` its payoff and is cut from that clip (KP-41); at most BP-112's
+   seconds in one place without a cutaway (KP-42); at most BP-113's lines in a row before a silent reaction (light tier),
+   an insert or a cutaway, and every full-tier line on a face carries the acting check and its fallback (KP-43).
+   `film_shots shotlist --out shotlist.md` is what the creator reads: the script with every prompt under its shot.
+7. Stage every scene's pictures as ONE room (D-69, CS rules in docs/PRODUCTION_SCRIPT.md, the skill `shot-visuals`
+   "One scene, one room"): segment `staging` with the `roster`, each person's `positions` (left to right in the wide
+   shot), `layout` and `fixed` details; the master frame is the first wide picture and lists every roster member in its
+   `heroes`; later shots change the camera (`framing`) and name who must be seen, never the room or the seats; `change`
+   for an action under the same camera; `cut_away` for a picture of another place; a following segment in the same room
+   says `continues: true`. `python -m explainer_engine.production.staging plan <script>` shows the scenes and shot kinds.
+8. Run `python -m explainer_engine.production validate <script>`: 0 FAIL (CS-01..CS-03 included); the PV-35 (MO, incl. MO-07) and PV-24 RHYTHM
    REVIEWs on the estimated read answered or fixed, 0 PV-44 FAIL. Report events a minute, the kinds used, the alive
    share and the scenes' coverage (establish, listener cuts, longest A/B run, J/L share).
 
@@ -45,6 +68,17 @@ The validators read these from the registry (D-59); AL-02's events-a-minute band
 - BP-30: across a hard cut the focal point stays within 10 % of the frame; never the same framing of the same picture twice
   in a row (change the shot size by a full step); a direction change over 90 degrees needs a neutral picture between.
 - BP-35: parallax on a still uses at least three depth layers moving toward the subject, foreground faster, eased; it counts as alive.
+- BP-31: a dissolve only at a change of place or time, inside its length band; a hard cut inside a scene.
+- BP-92: a camera move never resets.
 - BP-40: in the first 30 s something changes at least every 5 s (FAIL); in the body a still over 20 s is REVIEW, over 40 s FAIL;
   at most 10 pictures a minute on average, one burst of 5-10 cuts per 2-3 min; every change carries new information.
 - BP-41: one scripted pattern interrupt in the 25-35 s window: a cut with a new element (an insert, a text pop or a music change).
+
+## Real people in a scene (D-63, creator 2026-10-20)
+
+When the speakers are real living people, the narrator tells the exchange in reported speech ("O'Leary asks if he can still build things. Musk says he can build anything."), short and in the scene's rhythm; the speakers are never voiced (D-62) and a scene keeps at most one bubble as an accent (PV-56). Plan the end of each exchange as a held face of the last speaker in its mood (BP-94), then a slow move to the next shot, never a cut straight into other people's talk; at a change of place or time that move may be BP-31's dissolve.
+
+Also (D-64, the creator 2026-10-20 21:14): the first shot of a segment shows every hero its later shots show, unless the
+narrator names the newcomer first (PV-57, BP-91); a cut back to the same picture continues its move and a run of shots
+on one picture never returns to its start framing (BP-92); a bubble is at most one accent of BP-84's size; accents
+and props only where the narration names something (BP-93); the motion share (MO-06) is reported, not a target (BP-83).

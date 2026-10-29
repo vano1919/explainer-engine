@@ -4,11 +4,11 @@
     python -m explainer_engine.cloud.runpod check | balance | list | sweep [--dry-run] [--delete --yes]
     python -m explainer_engine.cloud.runpod create --yes --max-usd X --max-hours H [--gpu default|cheap|big] [--boot <manifest>]
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
-           [--vram GB [--ref-hours H]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
-           [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I]
+           [--vram GB [--ref-hours H] [--only <card id substring>]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
+           [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB] [--boot-minutes M]
     python -m explainer_engine.cloud.runpod cards --vram GB [--ref-hours H]   what the job would cost on each card now
     python -m explainer_engine.cloud.runpod status|logs|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
-    python -m explainer_engine.cloud.runpod delete-volume <network volume id> --yes
+    python -m explainer_engine.cloud.runpod delete-volume <network volume id> [--global] --yes
 
 What TMR's rp.py did and what changed here (docs/TOOL_STRATEGY.md "Money control for RunPod" has the facts from RunPod's API reference):
 * one HTTP layer with retries (429, 5xx, timeouts, no network) for reads and for stop/delete; ``POST /pods`` is never re-sent
@@ -209,6 +209,14 @@ class Api:
         return [{"id": e.get("id"), "name": e.get("name", ""), "workersMin": e.get("workersMin") or 0,
                  "workersMax": e.get("workersMax") or 0} for e in self._pages("/serverless", "endpoints")]
 
+    def delete_global_volume(self, vid):
+        """``DELETE /global-volumes/{id}``; verified by listing again (the creator's word only, the data is lost)."""
+        try:
+            self.request("DELETE", f"/global-volumes/{vid}")
+        except NotFound:
+            pass
+        return "STILL THERE" if any(v["id"] == vid for v in self.global_volumes()) else "GONE"
+
     def delete_network_volume(self, vid):
         try:
             self.request("DELETE", f"/network-volumes/{vid}")
@@ -323,6 +331,16 @@ def pick_gpus(api, *, vram_gb, ref_hours, clouds=("COMMUNITY", "SECURE"), min_cu
                          "est_usd": round(price * hours, 3), "availability": g["availability"]})
     rows.sort(key=lambda r: (r["est_usd"], AVAIL_RANK[r["availability"]]))
     return rows[:limit]
+
+
+def only_cards(picks, only):
+    """The creator names the card (2026-10-26): keep the picks whose id contains ``only``; none left is an error."""
+    if not only:
+        return picks
+    kept = [r for r in picks if only in r["gpu"]]
+    if not kept:
+        raise SystemExit(f"--only {only!r}: no card with stock matches")
+    return kept
 
 
 # --- names, money -------------------------------------------------------------------------------------------------
@@ -451,6 +469,8 @@ def lint_pod_script(text):
     if any("tail -f /dev/null" in ln for ln in code) and not any(SELF_STOP.search(ln) for ln in code):
         out.append("the script idles in `tail -f /dev/null` and never stops its pod: end it with `self_stop_sh()` (writes DONE "
                    "or FAILED to the heartbeat file, then stops the pod); 2026-10-24 a finished test idled 31 min ($0.7)")
+    from explainer_engine import vault  # D-73 (VT-01/02): a training script proves its weights are on HF before it stops
+    out += vault.lint_pod_script(text)
     return out
 
 
@@ -1022,7 +1042,7 @@ def check(api, now=None):
                                                                     "; `runpod delete-volume <id> --yes` or list it in keep_network_volumes"))
             elif what == "global volume":
                 (info if r["id"] in keep_nv else problems).append(f"{r['id']} {r['name']} global volume exists (price not modelled here); "
-                                                                  "delete it in the console or list it in keep_network_volumes")
+                                                                  "`runpod delete-volume <id> --global --yes` or list it in keep_network_volumes")
             elif r["workersMin"] > 0:
                 problems.append(f"{r['id']} {r['name']} serverless endpoint keeps {r['workersMin']} worker(s) on while idle: set min workers 0")
     try:
@@ -1182,6 +1202,7 @@ def main(argv=None, api=None):
         if _opt(rest, "--vram"):  # the cheapest job among the cards with stock now (the creator, 2026-10-24)
             picks = pick_gpus(api, vram_gb=_opt(rest, "--vram", None, float), ref_hours=_opt(rest, "--ref-hours", max_hours, float),
                               max_price=spend_caps.runpod()["max_price_per_hour"])
+            picks = only_cards(picks, _opt(rest, "--only"))
             for r in picks:
                 print(f"card  {r['gpu']} {r['cloud']} ${r['price']}/h x {r['hours']} h ≈ ${r['est_usd']} ({r['availability']})")
         why = preflight_create(api, max_usd=max_usd, max_hours=max_hours, gpu=gpu, script=script, picks=picks)
@@ -1198,6 +1219,8 @@ def main(argv=None, api=None):
                            min_ram=_opt(rest, "--min-ram"), boot=_opt(rest, "--boot"), status_token=token,
                            image=_opt(rest, "--image"), script_url=script_url, lifetime_s=int(max_hours * 3600),
                            cloud=first["cloud"] if first else "SECURE")
+        if _opt(rest, "--disk"):  # container disk (GB): a model download larger than the default CONTAINER_GB
+            body["disk"] = _opt(rest, "--disk", None, int)
         job = Job.create(ROOT / "jobs" / "cloud", _opt(rest, "--job", base), kind="pod", provider="runpod", ledger=ledger,
                          caps={"max_usd": max_usd, "max_hours": max_hours}, reuse_finished=False,
                          inputs={"gpu": first["gpu"] if first else gpu, "boot": _opt(rest, "--boot"), "script": script_url,
@@ -1218,7 +1241,7 @@ def main(argv=None, api=None):
         job.attach(pod["id"], gpu=pod.get("gpu"), price=pod.get("costPerHr"), name=name)
         new_session(pod, max_usd=max_usd, max_hours=max_hours, on_cap=_opt(rest, "--on-cap", "stop"), ledger=ledger,
                     status_token=token if _opt(rest, "--boot") else "", price_ceiling=card_max, job=job.dir,
-                    heartbeat=_opt(rest, "--heartbeat"))
+                    heartbeat=_opt(rest, "--heartbeat"), boot_minutes=_opt(rest, "--boot-minutes", BOOT_MINUTES, float))
         print("pod", pod["id"], name, f"${pod.get('costPerHr')}/h", pod.get("gpu") or "", "job", job.state["id"])
         if "--no-guard" not in rest:
             print("guard pid", guard_detached(pod["id"]), f"log tools/runpod/sessions/{pod['id']}.guard.log")
@@ -1267,7 +1290,7 @@ def main(argv=None, api=None):
     elif cmd == "delete-volume":
         if "--yes" not in rest:
             raise SystemExit("refused: delete-volume needs --yes (the creator's word); the data is lost")
-        print(pid, api.delete_network_volume(pid))
+        print(pid, api.delete_global_volume(pid) if "--global" in rest else api.delete_network_volume(pid))
     elif cmd == "cost":
         usd, buckets = settle(api, pid, _opt(rest, "--ledger"))
         print(f"{pid}: billed ${usd} over {buckets} hour bucket(s) (RunPod billing; the newest hour may still grow)")

@@ -157,11 +157,14 @@ def _shot(i, start, end, pic, accents=()):
 def test_motion_rules_flag_a_slideshow_and_clear_with_accents():
     plain = _timed([_shot(i, i * 4.0, i * 4.0 + 4.0, f"p{i}") for i in range(8)], 32.0)
     rules = {f["rule"] for f in M.check(plain)}
-    assert {"MO-03", "MO-06"} <= rules
+    assert "MO-03" in rules
+    mo6 = [f for f in M.check(plain) if f["rule"] == "MO-06"]  # D-64: the motion share is reported only, no target
+    assert [f["severity"] for f in mo6] == ["INFO"] and "0%" in mo6[0]["detail"]
     alive = copy.deepcopy(plain)
     for s in alive["shots"]:
         s["accents"] = [{"kind": "punch", "start": s["start"] + 2.0}]
-    assert not {"MO-03", "MO-06"} & {f["rule"] for f in M.check(alive)}
+    assert "MO-03" not in {f["rule"] for f in M.check(alive)}
+    assert [f["detail"][:4] for f in M.check(alive) if f["rule"] == "MO-06"] == ["100%"]
     gap = _timed([_shot(1, 0.0, 12.0, "p1")], 12.0)
     assert any(f["rule"] == "MO-01" for f in M.check(gap))
 
@@ -402,3 +405,22 @@ def test_stacked_questions_outside_a_loop_are_flagged():
     assert any(f["rule"] == "ST-11" and f["where"] == seg["id"] for f in SL.lint(d))
     seg["drama"]["opens"] = [d["drama"]["loops"][0]["id"]]
     assert not any(f["rule"] == "ST-11" for f in SL.lint(d))
+
+
+def test_template_d_docudrama_rules():
+    d = storied()
+    assert not [f for f in SL.lint(d) if f["rule"] in ("ST-17", "ST-18", "ST-19")]  # templates A-C: unchanged
+    d["drama"]["template"] = "D"
+    assert not S.schema_errors(d)
+    assert _st(d, "ST-19", "REVIEW")  # all narrator: outside BP-105's share
+    d["segments"][0]["lines"][0]["text"] = " ".join(["word"] * 300)  # ~106 s of narration at 170 wpm
+    assert _st(d, "ST-17", "REVIEW")
+    d = storied()
+    d["drama"]["template"] = "D"
+    first, last = d["segments"][0]["lines"][0], d["segments"][1]["lines"][0]
+    first.update(speaker="einstein", text=" ".join(["fire"] * 40))
+    last.update(speaker="franklin", text="Then take the glasses.")
+    d["segments"][1]["drama"]["function"] = "climax"
+    assert _st(d, "ST-18", "REVIEW")  # the central scene is shorter than scene S01
+    first["text"], last["text"] = last["text"], first["text"]
+    assert not _st(d, "ST-18")

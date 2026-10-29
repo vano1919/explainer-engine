@@ -26,6 +26,7 @@ from explainer_engine.production import compile as C
 from explainer_engine.production import continuity
 from explainer_engine.production import graphics as GFX
 from explainer_engine.production import script as S
+from explainer_engine.production import staging as STAGING
 from explainer_engine.production import timing as T
 from explainer_engine.qa import engagement as ENG
 from explainer_engine.scripting import narration_lint, story_lint
@@ -63,6 +64,61 @@ def _f(out, rule, where, detail, sev="FAIL"):
     out.append({"rule": rule, "severity": sev, "where": where, "detail": detail})
 
 
+def word_slams(doc: dict) -> list[tuple[str, str]]:
+    """PV-58 (BP-97, D-66): a word slam is one to three words, one a scene, never the same word twice."""
+    most, seen, out = int(SR.T("BP-97", "words_max")), {}, []
+    for seg in doc["segments"]:
+        slams = [a for sh in seg.get("shots", []) for a in sh.get("accents", []) if a.get("kind") == "slam_text"]
+        if len(slams) > 1:
+            out.append((seg["id"], f"{len(slams)} word slams in one scene: a slam is rare or it is not a slam (BP-97)"))
+        for a in slams:
+            word = str(a.get("text", "")).strip().lower()
+            if len(word.split()) > most:
+                out.append((seg["id"], f"slam {a.get('text')!r} has {len(word.split())} words; at most {most} (BP-97)"))
+            if word in seen:
+                out.append((seg["id"], f"slam {a.get('text')!r} again (first in {seen[word]}): only its first telling (BP-97)"))
+            seen.setdefault(word, seg["id"])
+    return out
+
+
+def establishing_cast(doc: dict) -> list[tuple[str, str]]:
+    """PV-57 (BP-91, RX-09; the creator 2026-10-20 21:14): in a segment the first shot that shows heroes is the establishing
+    view; a later shot shows only heroes of that view, or a newcomer the narrator has named in the segment up to the line the
+    shot opens on, or the hero the shot's ``reveal`` names. Binds a production_script/3."""
+    if doc.get("schema") != "production_script/3":
+        return []
+    pics, _ = S.pictures(doc)
+    names = {h: [n.lower() for n in (c.get("names") or [h])] for h, c in doc.get("cast", {}).items()}
+    out = []
+    for sh_seg in doc["segments"]:
+        lines = sh_seg["lines"]
+        est: set | None = None
+        li = 0
+        for s in sh_seg["shots"]:
+            pid = s["picture"] if isinstance(s["picture"], str) else s["picture"]["id"]
+            heroes = set((pics.get(pid) or {}).get("heroes") or [])
+            at = " ".join(str(s["at"]).lower().split())
+            while li < len(lines) - 1 and at not in " ".join(lines[li]["text"].lower().split()):
+                li += 1
+            if not heroes:
+                continue
+            if est is None:
+                est = heroes
+                continue
+            told = " " + re.sub(r"[^a-z0-9' ]", " ", " ".join(ln["text"] for ln in lines[:li + 1]
+                                                                if not ln.get("speaker")).lower()) + " "
+            # a deliberate reveal (the shot's ``reveal`` text names the hero, e.g. "Musk and Belfort at work") is no stranger
+            revealed = " " + re.sub(r"[^a-z0-9' ]", " ", str(s.get("reveal") or "").lower()) + " "
+            new = sorted(h for h in heroes - est
+                         if not any(f" {n}{s} " in txt for n in names.get(h, [h]) + [h] for s in ("", "'s") for txt in (told, revealed)))
+            if new:
+                out.append((f"{sh_seg['id']} {pid}", f"shows {', '.join(new)}, who is not in the establishing view of this "
+                            f"segment ({', '.join(sorted(est))}) and not named by the narrator before: the closer shots are "
+                            "parts of the establishing view; name him first, or mark a deliberate reveal (BP-91)"))
+            est |= heroes
+    return out
+
+
 def estimated_words(doc: dict) -> dict:
     """A plausible read of the text at the middle of the voice's pace: the same tokens, times from word counts and
     punctuation (0.35 s after . ? !, 0.15 s after , ; : and dashes, plus each line's pause_after)."""
@@ -71,8 +127,26 @@ def estimated_words(doc: dict) -> dict:
     toks = S.tokens(doc)
     lines = [ln for seg in doc["segments"] for ln in seg["lines"]]
     flat_line = [(t["seg"], t["line"]) for t in toks]
+    from explainer_engine.production import silent as _sil
     words, t = [], 0.3
+    n_of: dict = {}
+    for tk in toks:
+        n_of[(tk["seg"], tk["line"])] = n_of.get((tk["seg"], tk["line"]), 0) + 1
+    silent_times: list = []
     for k, tk in enumerate(toks):
+        line = doc["segments"][tk["seg"]]["lines"][tk["line"]]
+        if not _sil.voiced(line):  # D-62: a bubble line holds its reading time (silent.plan_n), quiet lead and tail
+            if k == 0 or flat_line[k - 1] != flat_line[k]:
+                silent_times = []
+                u = t + _sil.LEAD_S
+                for p in _sil.plan_n(line, n_of[flat_line[k]]):
+                    step = p["seconds"] / max(1, p["tokens"])
+                    silent_times += [(u + i * step, u + (i + 1) * step) for i in range(p["tokens"])]
+                    u += p["seconds"] + _sil.GAP_S
+                t += _sil.seconds(line)
+            s0, e0 = silent_times.pop(0)
+            words.append({"w": tk["w"], "s": round(s0, 3), "e": round(e0, 3), "para": tk["para"], "silent": True})
+            continue
         dur = per_word * (0.6 + 0.08 * len(re.sub(r"[^A-Za-z]", "", tk["w"])))
         words.append({"w": tk["w"], "s": round(t, 3), "e": round(t + dur * 0.85, 3), "para": tk["para"]})
         t += dur
@@ -85,6 +159,11 @@ def estimated_words(doc: dict) -> dict:
             t += float(line.get("pause_after", 0))
     del lines
     return {"words": words, "duration": round(t + 0.5, 3), "estimated": True}
+
+
+def _sil_voiced(doc: dict) -> dict:
+    from explainer_engine.production import silent as _sil
+    return _sil.voiced_doc(doc) if _sil.has_silent(doc) else doc
 
 
 def content_words(text: str) -> set[str]:
@@ -199,8 +278,9 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # PV-11 prompts fresh and clean; PV-06 duplicates
     world = C.world_of(doc)
     prompts = {}
+    staged = STAGING.plan(doc) if C._staged_doc(doc) else None
     for pid, p in used.items():
-        want = C.compose(doc, pid, p, world)
+        want = C.compose(doc, pid, p, world, staged)
         if want is None:
             continue
         if p.get("prompt") != want:
@@ -264,7 +344,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # PV-52 / BP-01: the heard pace of the estimated read lies inside BP-01's band. Heard pace is words / duration with the
     # pauses (BP-01's one definition); voice.pace_wpm is the voice's speaking rate, which the estimate times the words at
     # before it adds the punctuation and held pauses, so a pace_wpm inside the band can still estimate a slower heard read.
-    heard = heard_wpm(estimated_words(doc))
+    heard = heard_wpm(estimated_words(_sil_voiced(doc)))  # the voice's pace: bubble lines are read, not heard
     if heard is not None and not WPM_MIN <= heard <= WPM_MAX:
         lo_wpm, hi_wpm = v["pace_wpm"]
         _f(out, "PV-52 BP-01", "voice", f"the estimated read is heard at {heard:.0f} wpm (pace_wpm {lo_wpm}-{hi_wpm} plus the "
@@ -273,10 +353,13 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # PV-32 voiced dialogue (D-45): a speaking hero is in the cast and has a voice of their own, described, never imitated
     spoken = [(seg["id"], ln) for seg in doc["segments"] for ln in seg["lines"]]
     spoken += [(sh["id"], ln) for sh in doc.get("shorts", []) for ln in sh["lines"]]
+    heard_speakers = {ln["speaker"] for _, ln in spoken if ln.get("speaker") and ln.get("voiced", True)}
     for who in dict.fromkeys(ln["speaker"] for _, ln in spoken if ln.get("speaker")):
         where = next(w for w, ln in spoken if ln.get("speaker") == who)
         if who not in doc["cast"]:
             _f(out, "PV-32", where, f"speaker {who!r} is not in the cast")
+        elif who not in heard_speakers:  # D-62: a hero who speaks only in bubbles needs no voice
+            continue
         elif not doc["cast"][who].get("voice"):
             _f(out, "PV-32", where, f"speaker {who!r} has no cast voice: describe it in cast.{who}.voice.style")
         else:
@@ -331,6 +414,21 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     for per in doc.get("periods", []):
         if not (per.get("card") or {}).get("title"):
             _f(out, "PV-30", per["id"], "the period has no card title (ED-09)", "REVIEW")
+    # PV-55 silent lines (D-62): a real person's line is never voiced; a silent line hangs on a speaker
+    from explainer_engine.production import silent as _sil
+    for why in _sil.check_real_people(doc):
+        _f(out, "PV-55", "lines", why)
+    for why in _sil.check_reported_dialogue(doc):  # PV-56 (D-63): the narrator reports the exchange
+        _f(out, "PV-56", "lines", why)
+    # PV-57 the establishing cast is the scene's cast (BP-91, RX-09)
+    for where, why in establishing_cast(doc):
+        _f(out, "PV-57", where, why, SR.rule("BP-91").get("severity", "REVIEW"))
+    # PV-58 word slams (BP-97)
+    for where, why in word_slams(doc):
+        _f(out, "PV-58", where, why, SR.rule("BP-97").get("severity", "REVIEW"))
+    # PV-54 the time counter (ED-15)
+    for why in GFX.check_counter(doc.get("counter", []), [sg["id"] for sg in doc["segments"]]):
+        _f(out, "PV-54", "counter", why)
     seen = {}
     for g in doc.get("graphics", []):
         for why in GFX.check_visual(g):
@@ -481,6 +579,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     if doc["episode"].get("rulebook"):  # scripts written to an episode rulebook (D-51/D-52)
         out += rulebook_era_findings(doc, picture_dirs)
     out += canva_findings(doc)
+    out += STAGING.lint(doc)  # CS-01..CS-07 scene continuity (D-69): one room, one master frame, the roster in it
     out += BEATS.lint(doc)  # PV-44 visual beats: reasons, words, numbers, faces (VB-00, VB-03, VB-04, VB-06)
     out += FACES.lint(doc, picture_dirs)  # PV-44 expression sheets (VB-09)
     out += short_beat_findings(doc)  # PV-44 on every Short (SS-09)
@@ -499,6 +598,11 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
             if "RHYTHM" in f["rule"]:
                 f["severity"] = "REVIEW"  # pace is a guess before the read; the real read decides
             out.append(f)
+        from explainer_engine.production import assemble as _asm, silent as _sil
+        bubble = [f for f in timed["problems"] if f["rule"].startswith("BUBBLE")]
+        laid = _asm.bubble_findings(timed, picture_dirs=picture_dirs)  # BUBBLE-4 on the view each bubble is shown on
+        for f in bubble + _sil.check_duplicates(timed["shots"]) + laid:  # BUBBLE-4/5 (D-62)
+            out.append(dict(f, rule="PV-24 " + f["rule"], detail=f["detail"] + " (estimated read)"))
         for f in motion_lint.check(timed):  # MO rules on the estimated read (REVIEW)
             out.append(dict(f, rule="PV-35 " + f["rule"], detail=f["detail"] + " (estimated read)"))
         for f in layers.check(timed):  # AL rules on the estimated read (REVIEW)
@@ -516,6 +620,8 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     out += _speech.check(doc)
     from explainer_engine.scripting import reference_approval as _reference
     out += _reference.check(doc, picture_dirs[0].parent if picture_dirs else None)  # PV-47 variant collage first (OR-16)
+    from explainer_engine.production import segment_hash as _seg
+    out += _seg.check(doc)  # PV-59 Scene Package references, PV-60 segment review on the current text (D-70 stage F)
     return out
 
 
@@ -688,7 +794,9 @@ def board_findings(timed: dict, doc: dict) -> list[dict]:
     # the visual beats, data visuals and cards ride along: they are changes on screen for RHYTHM-3 and BP-41 (BP-40)
     found = B.check(board, {"shots": shots, "duration": timed["duration"], "visual_beats": timed.get("visual_beats", []),
                             "visuals": timed.get("visuals", []), "cards": timed.get("cards", [])})
-    return [{"rule": "PV-24 " + f["rule"], "severity": f["severity"], "where": f["shot"], "detail": f["detail"]} for f in found]
+    legacy = doc.get("schema") == "production_script/1"  # a shipped /1 keeps its bubble lines: BP-84's accent cap is a REVIEW there
+    return [{"rule": "PV-24 " + f["rule"], "where": f["shot"], "detail": f["detail"],
+             "severity": "REVIEW" if legacy and f["rule"] == "BUBBLE-1" else f["severity"]} for f in found]
 
 
 TICKS = ("clockwork_loop",)  # music beds that are a tick: they sit well under every other track (ED-03)
@@ -740,6 +848,9 @@ def check_timed(timed: dict, doc: dict, *, final: bool = False, picture_dirs: li
     if beds and (beds[0]["start"] > 0 or beds[-1]["end"] < timed["duration"] - 1e-6):
         _f(out, "PV-23", "beds", "the ambience does not cover the whole video")
     out += board_findings(timed, doc)
+    from explainer_engine.production import assemble as _asm, silent as _sil
+    out += _sil.check_duplicates(shots)  # BUBBLE-5: one text, one bubble (the creator, 2026-10-20)
+    out += _asm.bubble_findings(timed, picture_dirs=picture_dirs)  # BUBBLE-4: no bubble over a face, laid out as the render lays it out
     out += continuity.findings(shots)
     out += music_findings(timed["audio"]["music"])
     out += [dict(f, rule="PV-35 " + f["rule"]) for f in motion_lint.check(timed)]  # MO rules (D-48)

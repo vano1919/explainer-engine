@@ -1,18 +1,33 @@
 {
   "_doc": "The creator's money ceilings, enforced in code (explainer_engine/core/spend_caps.py, D-56). A run ledger may set lower caps, never higher; a pod is refused when it would pass any RunPod line. Raise a number only on the creator's word.",
   "per_episode": {
-    "runpod_usd": 29.0,
+    "runpod_usd": 31.0,
     "gemini_usd": 10.0,
     "bfl_usd": 3.0,
     "fal_usd": 9.0
   },
+  "allowances": {
+    "_doc": "Spending a tool may do on its own, without asking first: a ceiling inside the run's own cap of that service (never a raise of it; the cap's 80 % stop still applies). Enforced by core/ledger.Run.reserve_allowance.",
+    "qa_loop": {
+      "service": "elevenlabs_credits",
+      "per_run": 2000,
+      "for": "re-reads of script lines the QA loop changed (explainer_engine/qa/loop.py)",
+      "decided": "the creator, 2026-10-20"
+    }
+  },
   "runpod": {
-    "per_pod_usd": 6.0,
+    "per_pod_usd": 6.9,
     "per_24h_usd": 26.0,
-    "max_hours_per_pod": 4.0,
+    "max_hours_per_pod": 5.0,
     "max_price_per_hour": 3.0,
     "min_balance_left_usd": 0.25,
     "keep_stopped_pods": [
+    "w4f1yaxxidnotl", "lmeb5qu5gdak0o", "9twmhywjhuu5s4", "r4w729gcrlx4wv",
+      "gqscbgeuwti8gz",
+      "gtrcntkwsoh5rb",
+      "emvtki74neqpl7",
+      "63fp4qmydpquex",
+      "kohifcge91ujw9",
       "ifghvnsx95wmgb",
       "5r50psn3elm6un",
       "usx3b1xb9w9dy4",
@@ -29,9 +44,33 @@
       "gdb5oc1h2dxax9",
       "o99z1nm8uifds4",
       "w5awi7a7uzhix4",
-      "w0t3l04k6w3osj"
+      "w0t3l04k6w3osj",
+      "bbewaw04kw1o6l",
+      "6vfmwgsw1y6o3n",
+      "g1mgl27933w1vd",
+      "owvwvotr0xvtv0",
+      "fzdd49cgdd1hoe",
+      "lx6h0v0l5z0hk9",
+      "ebihl5zzzkql2z",
+      "s69qbt42p72gdm",
+      "toxcl7t2dyw633",
+      "hjcnvhr5q4dtzc",
+      "bv4dtilmiw9e4m",
+      "o2beilxz11sd0t",
+      "vrvketavqpk474",
+      "hrdpkuwoh6iyuz",
+      "d0sxf4ya1gajsb",
+      "682n7rxqdgqycp",
+      "9iyvc4ute6ppwp",
+      "qgnjabbntk8c1h",
+      "vvgrnie44lxhp8",
+      "ys4qcp04yp4nym",
+      "wnrcpyh9f2xl2c",
+      "udfnfnuo6eim89",
+      "jibqiezqtwsqls", "3n1q879dwpe1k6"
     ],
     "keep_network_volumes": []
   },
-  "_runpod_note": "2026-10-24 (the creator's OK on the strategy): money is capped per JOB (per_pod_usd, the guard stops there) and cards are picked by the job's estimated cost (runpod.pick_gpus); max_price_per_hour is only the runaway ceiling of one card."
+  "_runpod_note": "2026-10-24 (the creator's OK on the strategy): money is capped per JOB (per_pod_usd, the guard stops there) and cards are picked by the job's estimated cost (runpod.pick_gpus); max_price_per_hour is only the runaway ceiling of one card.",
+  "_runpod_hours_note": "2026-10-26 02:15 Tbilisi, the creator (\"ყველა კი\" to the night plan): max_hours_per_pod 4 -> 5 so the xworld_v1 training pod may run 5 h (its own cap $4)."
 }

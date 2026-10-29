@@ -24,6 +24,11 @@ SCHEMA = "paint_plan/1"
 PROVIDERS = {
     "gemini": {"service": "gemini_usd", "paints_here": True, "max_refs": gemini.MAX_REFERENCES,
                "note": "Gemini API list prices (imagegen/gemini.py PRICES); SynthID in every picture, C2PA on some models"},
+    # hosted per-picture APIs behind imagegen/providers (D-70 stage D); prices live on the adapters, checked 2026-10-22
+    "bfl": {"service": "bfl_usd", "paints_here": True, "max_refs": 10, "adapter": True,
+            "note": "Black Forest Labs API (FLUX 3 Image Klein $0.009 at 1k); hosted terms, not the Kommunity weights licence"},
+    "fal": {"service": "fal_usd", "paints_here": True, "max_refs": 10, "adapter": True,
+            "note": "fal.ai queue (Seedream 4.5 $0.04 a picture; Qwen-Image-Edit-2511 $0.03 per MP, Apache-2.0, 1-3 inputs)"},
     "pod": {"service": "runpod_usd", "paints_here": False, "max_refs": 3,
             "usd_per_picture": round(22.7 / 3600 * 0.89, 4),  # measured: 22.7 s a picture on an RTX 4090 at $0.89/h (PRODUCTION_RULES 4)
             "boot_usd": 0.10, "note": "RunPod reference painter (D-42, TMR cloud/); a pod needs its own price and time cap (OR-06)"},
@@ -33,7 +38,15 @@ PROVIDERS = {
 
 
 def item_hash(item: dict) -> str:
-    return hashlib.sha256(json.dumps([item["id"], item["prompt"], sorted(item.get("refs", []))]).encode()).hexdigest()[:16]
+    """What one painted picture is made from. A continuity correction (D-69, CS-10/CS-11) is part of it, so a rejected
+    picture is painted again, from a new plan the creator approves."""
+    core = [item["id"], item["prompt"], sorted(item.get("refs", []))] + ([item["correction"]] if item.get("correction") else [])
+    return hashlib.sha256(json.dumps(core).encode()).hexdigest()[:16]
+
+
+def full_prompt(item: dict) -> str:
+    """The text sent to the painter: the script's compiled prompt plus the open continuity correction, if any."""
+    return item["prompt"] + (" " + item["correction"] if item.get("correction") else "")
 
 
 def plan_hash(plan: dict) -> str:
@@ -52,6 +65,12 @@ def price(provider: str, model: str | None, size: str | None, refs: int, batch: 
         except KeyError:
             raise ValueError(f"no {'batch ' if batch else ''}price for {model} at {size}") from None
         return base + refs * gemini.REFERENCE_USD
+    if PROVIDERS.get(provider, {}).get("adapter"):
+        from explainer_engine.imagegen import providers
+        try:
+            return providers.cls(provider).PRICES[model][size]
+        except KeyError:
+            raise ValueError(f"no price for {model} at {size} on {provider}") from None
     return PROVIDERS[provider]["usd_per_picture"]
 
 
@@ -67,13 +86,15 @@ def make(plan_id: str, episode: str, items: list[dict], *, provider: str, model:
          batch: bool = False, purpose: str = "", reusable: bool = False) -> dict:
     if provider not in PROVIDERS:
         raise ValueError(f"unknown provider {provider!r}; known: {sorted(PROVIDERS)}")
-    items = [{"id": i["id"], "prompt": i["prompt"], "refs": list(i.get("refs", [])), "first_use": i.get("first_use")}
-             for i in items]
+    items = [dict({"id": i["id"], "prompt": i["prompt"], "refs": list(i.get("refs", [])), "first_use": i.get("first_use")},
+                  **({"correction": i["correction"]} if i.get("correction") else {})) for i in items]
     plan = {"schema": SCHEMA, "id": plan_id, "episode": episode, "provider": provider, "model": model, "size": size,
             "batch": batch, "purpose": purpose, "reusable": reusable, "items": items,
             "created": time.strftime("%Y-%m-%dT%H:%M:%S")}
     plan["estimate_usd"] = estimate(plan)
     plan["hash"] = plan_hash(plan)
+    from explainer_engine.world import bible
+    plan["bible"] = bible.cite()  # the World Bible version the pictures are made under (WB-04); not part of the hash
     return plan
 
 
@@ -87,6 +108,11 @@ def options(items: list[dict]) -> list[dict]:
                     continue
                 usd = sum(price("gemini", model, size, len(i.get("refs", [])), batch) for i in items)
                 rows.append({"provider": "gemini", "model": model, "size": size, "batch": batch, "usd": round(usd, 4)})
+    from explainer_engine.imagegen import providers
+    for name in ("bfl", "fal"):
+        for model, sizes in providers.cls(name).PRICES.items():
+            for size, usd in sizes.items():
+                rows.append({"provider": name, "model": model, "size": size, "batch": False, "usd": round(usd * len(items), 4)})
     for name in ("pod", "local"):
         p = PROVIDERS[name]
         rows.append({"provider": name, "model": None, "size": None, "batch": False,
@@ -115,9 +141,13 @@ def check(plan: dict, doc: dict | None = None) -> list[dict]:
             price("gemini", plan.get("model"), plan.get("size"), 0, plan.get("batch", False))
         except ValueError as exc:
             add("PP-03", plan["id"], str(exc))
+    most = prov["max_refs"]
+    if plan["provider"] == "gemini" and plan.get("model"):  # the model's own slots (D-69, CS-08)
+        most = min(most, gemini.ref_limits(plan["model"])["total"])
     for it in plan["items"]:
-        if len(it.get("refs", [])) > prov["max_refs"]:
-            add("PP-03", it["id"], f"{len(it['refs'])} references; {plan['provider']} takes at most {prov['max_refs']}")
+        if len(it.get("refs", [])) > most:
+            add("PP-03", it["id"], f"{len(it['refs'])} references; {plan['provider']} {plan.get('model') or ''} takes at "
+                                   f"most {most}")
         if not it.get("prompt", "").strip():
             add("PP-04", it["id"], "empty prompt: run `production compile --write` first")
     # PP-05 (D-50 supersedes D-19's "Gemini only for reusable assets"): the creator picks the provider per batch and the
@@ -145,6 +175,11 @@ def check(plan: dict, doc: dict | None = None) -> list[dict]:
                 add("PP-06", it["id"], "the script's prompt changed since the plan was made: make the plan again")
     if not plan.get("purpose", "").strip():
         add("PP-07", plan["id"], "say what the batch is for (the creator's rule: every paid call states its purpose)", "REVIEW")
+    for it in plan["items"]:  # OR-18 (D-76): the picture library had matches when the plan was made; the creator decides
+        if it.get("library"):
+            add("PP-08", it["id"], "the picture library may already have this: " + ", ".join(it["library"]) +
+                " (fetch with python -m explainer_engine.imagegen.picture_library fetch, or say in the approval why not)",
+                "REVIEW")
     return out
 
 

@@ -112,12 +112,13 @@ def named_heroes(text: str, heroes: dict[str, list[str]]) -> set[str]:
 def change_times(shots: list[dict], duration: float, timed: dict | None = None) -> list[float]:
     """When something changes on screen (BP-40): every cut, every bubble, every accent but the wobble, and the end; with
     ``timed`` (a timed production script) also every data visual, card and visual beat (a label, prop, chart, highlight,
-    symbol, expression change or accent beat is new information on screen; default of 2026-10-20)."""
+    symbol, expression change or accent beat is new information on screen only when it is tied to a narration word, BP-93:
+    the creator, 2026-10-20 21:14)."""
     times = {s["start"] for s in shots} | {b["start"] for s in shots for b in s.get("bubbles", [])}
-    times |= {a["start"] for s in shots for a in s.get("accents", []) if a.get("kind") != "wobble"}
+    times |= {a["start"] for s in shots for a in s.get("accents", []) if a.get("kind") != "wobble" and a.get("anchored", True)}
     if timed:
         times |= {float(x["start"]) for key in ("visual_beats", "visuals", "cards") for x in timed.get(key, [])
-                  if 0.0 <= float(x["start"]) < duration}
+                  if 0.0 <= float(x["start"]) < duration and x.get("anchored", True)}
     return sorted(times | {duration})
 
 

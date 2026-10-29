@@ -226,6 +226,7 @@ cap. Hybrid production needs the creator to raise the Gemini cap or to keep B sh
 
 explainer-engine:
 - `world/resolver.py`, `world/eras.json`, `schemas/world.schema.json` + tests (crossover host/visitor, absent-object FAIL).
+- Built 2026-10-22 (D-70 stage C): `world/bible.py` + `bible.json` version the look parts of layers 2-3 and carry the creator's approval; `assets/library.py` + `assets/library.json` record every reusable asset (the "look bible" anchors and hero sheets of section 6 become library records); rules in [WORLD_BIBLE](WORLD_BIBLE.md).
 - `edit/prompt_v2.py` (slots, lints) replacing `compose_prompt`'s suffix chain; `look.json` v3 (look v2 tokens, grade id).
 - `shot_rules.route` (generator per shot) and the cost estimate per route.
 - `imagegen/gemini.py`: ported from TMR `render/imagegen.py` (provenance header): references, Batch API, price table including

@@ -1,6 +1,6 @@
 ---
 name: shorts-writer
-description: Writers' room stage 6. Writes the set of up to 10 YouTube Shorts that promote one main video, each in its own style from the Shorts style catalog, reusing the main read where possible. Use after the main script's lines are frozen.
+description: Stage page (OR-20, D-79): the main agent runs this stage itself, following this page; it is not spawned as a separate agent. Writers' room stage 6. Writes the set of up to 10 YouTube Shorts that promote one main video, each in its own style from the Shorts style catalog, reusing the main read where possible. Use after the main script's lines are frozen.
 model: sonnet
 tools: Read, Edit, Bash, Grep
 ---
@@ -24,6 +24,9 @@ You write the `shorts` block only (stage guard `shorts`). Read `docs/STORY_ENGIN
 6. `production validate`: PV-28, PV-34 and PV-44 with 0 FAIL; report new characters per Short.
 
 ## Sourced rules (docs/SOURCED_RULES.md)
+
+- BP-88 / BP-87 (SC-11, SC-12): a Short never says the story is invented, a simulation or hypothetical, and its
+  narrator never names a hero's trait or rating; show it in the clip.
 
 The hook cap and the word budget are BP-11 and BP-12 (the shorts-for-video skill lists them); `production validate` PV-28 reads
 every number from the registry. Two rules the code can only half-check are yours to read for:

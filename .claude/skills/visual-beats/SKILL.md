@@ -14,8 +14,10 @@ Evidence for every number: `docs/research/STORYTELLING_EDITING_2026-10-19.md`.
 silent beat is the normal case, never a finding. A `production_script/2` keeps the old contract (the /2 metronomes of BP-36 and BP-37
 and the mandatory cue per beat) unchanged; everything below the table is /3.
 
-The picture changes within BP-40's still limits (a visual beat counts as a change, D-59); beats fill the time between
-cuts. A shot start, a bubble, an accent or a data visual is already an event, so a line that opens a shot needs one beat
+The picture changes within BP-40's still limits; a visual beat counts as a change only when it is tied to a narration word
+(BP-93, VB-12, D-64, the creator 2026-10-20 21:14: on a narrator line, on a content word). Never add a beat because a clock or a rule asks for
+one (the creator: "props appear only because a rule demands them"); a long still is fixed by a cut or a move the story
+asks for, or accepted as a REVIEW. Beats fill the time between cuts. A shot start, a bubble, an accent or a data visual is already an event, so a line that opens a shot needs one beat
 fewer.
 
 Shorts carry the same layer (SS-09): a Short line that is a line of the video takes that line's beats; a Short's own
@@ -56,9 +58,10 @@ speaks (in the hook BP-40 is the stricter one, in the body VB-01). A held pictur
 
 ## Faces in dialogue (VB-02 on /3)
 
-The 1 s metronome is retired. Every line with a `speaker` gets AT LEAST one `expression` change (none is a FAIL),
-placed on the reaction-worthy words — the reveal, the risk, the refusal, the punchline — not on a schedule. A stretch
-without a change past BP-37's gaps is a REVIEW, then a FAIL; two changes of one face closer than BP-33's floor are a
+The 1 s metronome is retired, and so is the per-line quota (BP-37, D-64, the creator 2026-10-20 21:14: a face swap on every line made every
+line a cut). A reaction is a choice: place an `expression` change only where a line lands — the reveal, the risk, the
+refusal, the punchline. A reaction on a hero's line is not "new information" for VB-01 (BP-93). A stretch without a
+change past BP-37's gaps is a REVIEW; two changes of one face closer than BP-33's floor are a
 flicker (REVIEW). Kuleshov note: on the line that lands (intent `reveal`, an insult, bad news), show the LISTENER's face
 (`who` != the speaker) — the same neutral close-up reads as the needed emotion because of what it is cut against, and
 the listener's reaction is the line's meaning.

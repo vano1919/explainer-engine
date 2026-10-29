@@ -62,8 +62,10 @@ def tts_line(line: dict) -> str:
 
 
 def tts_text(doc: dict) -> str:
-    """What the voice gets: delivery tags where the delivery changes, one stressed word in capitals, pause tags."""
-    return "\n".join(" ".join(tts_line(line) for line in seg["lines"]) for seg in doc["segments"]) + "\n"
+    """What the voice gets: delivery tags where the delivery changes, one stressed word in capitals, pause tags. Silent
+    lines (``voiced: false``, D-62) are shown as bubbles and never read."""
+    return "\n".join(" ".join(tts_line(line) for line in seg["lines"] if line.get("voiced", True))
+                     for seg in doc["segments"]) + "\n"
 
 
 NARRATOR = "narrator"
@@ -95,6 +97,8 @@ def tts_chunks(doc: dict, max_chars: int = 900) -> list[dict]:
     units = []  # [segment id, speaker, tts lines]
     for seg in doc["segments"]:
         for line in seg["lines"]:
+            if not line.get("voiced", True):  # D-62: a silent line is a bubble, never read; `production words` opens its gap
+                continue
             if units and units[-1][0] == seg["id"] and units[-1][1] == speaker(line):
                 units[-1][2].append(tts_line(line))
             else:

@@ -35,9 +35,16 @@ def lufs(path: Path) -> float:
 
 
 def duration(path: Path) -> float:
-    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=nw=1:nk=1", str(path)],
-                         capture_output=True, text=True, check=True).stdout
-    return float(out.strip())
+    """Seconds as the decoder yields them: the join (and every offset ``words`` lays on it) uses decoded samples. ffprobe's
+    container duration of an MP3 counts the encoder delay and padding (~25 ms a file), so 22 spliced takes drifted the
+    word timings 0.5-0.7 s late by the end of the titans read (2026-10-21)."""
+    if Path(path).suffix.lower() == ".wav":
+        out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "default=nw=1:nk=1",
+                              str(path)], capture_output=True, text=True, check=True).stdout
+        return float(out.strip())
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-ac", "1", "-ar", "48000", "-f", "s16le", "-"],
+                         capture_output=True, check=True).stdout
+    return len(raw) / 2 / 48000
 
 
 def plan(paths: list[Path]) -> dict:

@@ -3,10 +3,17 @@
 A solo creator's 2D hand-drawn explainer channel ("worlds collide": history, science and money meeting other
 eras, D-25; analysis episodes of other people's fictional worlds under the RR rules, D-26) and its production
 pipeline: topic → research dossier + claim map → short scenario → **creator approval** (OR-15) → script → **creator approval** → schema-validated storyboard →
-paint plan + **creator's provider choice** → pictures → ElevenLabs narration + Scribe word timings → PIL/ffmpeg assembly
+paint plan + **creator's provider choice** → pictures and ElevenLabs narration for the **first two parts only**, stitched into
+a sample the creator watches and approves before the rest is paid (OR-19, D-67; `production/sample.py`) → the rest's pictures +
+narration + Scribe word timings → PIL/ffmpeg assembly
 (`production/assemble.py`) → Shorts → thumbnail + metadata (`qa/publish_check.py`) →
 technical + editorial QA → review bundle → **creator approval** → manual upload. Cloud-first (D-31). Start from `docs/INDEX.md`: every specification and every ID (D-, SE-, V-, P-, R-, Q-) has ONE canonical home —
 link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this). `docs/PLAN_2026-10-15.md` is history.
+
+**Rule one (creator, 2026-10-26, OR-22):** never take a system decision on an assumption (base model, LoRA and checkpoint, data, settings, test design, rule wording, spend); every detail his words do not settle is put to the creator first, also in auto mode. **Before every pod (OR-23):** a detailed plan item by item (purpose, model and checkpoint, data, every setting, outputs and HF paths, GPU and price, time and money caps, stop condition, what he sees, what follows), agreed before `runpod create`; never a general summary.
+**Higher thread decides (creator, 2026-10-26, OR-24):** before every important decision the working session (Sonnet) asks a separate thread on a higher model (Opus); that thread takes the main planning decisions and its confirmation of an OR-23 pod plan starts the pod. The coordinator passes it complete information (facts, numbers, files, open items) but no reasoning, so the answer is not biased.
+**Direct evaluations, full-scale plans (creator, 2026-10-26, OR-25):** an evaluation is direct, with the evidence; a plan starts from the goal, lists every path to it and grounds each in known training methods and the project's goals, not only the next step.
+**Opus plans, Sonnet works (creator, 2026-10-26, OR-26):** the working session does the work; the Opus thread writes the plans, and hard technical questions (code and test design of a new method) go to it before the work; the session implements the plan as written.
 
 ## Commands
 
@@ -44,9 +51,10 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 12. A material conflict found during implementation: stop at the boundary, report evidence and options, ask.
 
 **Autonomous runs:** `docs/ORCHESTRATION.md` and the `orchestrator` agent (`.claude/agents/orchestrator.md`), with the
-`episode-standards-director` agent for the rulebook (OR-11, OR-12): gated phases, hard caps in `core/ledger.py`, nothing lost on a stop, nothing public. Dialogue what-if episodes (D-48): the writers' room, skill `story-engine` + `docs/STORY_ENGINE.md`, eight Sonnet stage agents (`story-architect`, `scene-writer`, `beat-writer` (visual beats and cues, skill `visual-beats`, D-54), `performance-director`, `edit-planner`, `voice-caster`, `shorts-writer`, `script-critic`), `scripting/story_lint.py`, `scripting/stage_guard.py`, `production/accents.py`, `edit/motion_lint.py`, `audio/layers.py`, `audio/casting.py`. Skills `science-grounding`, `time-jump-episode`, `shorts-for-video`, `editing-style` (rules `docs/EDITING.md`), `video-editing-architect` (general technique database and QA list), `elevenlabs-voice` (first-take reads, credit saving).
+`episode-standards-director` page for the rulebook (OR-11, OR-12): gated phases, hard caps in `core/ledger.py`, nothing lost on a stop, nothing public. Dialogue what-if episodes (D-48): the writers' room, skill `story-engine` + `docs/STORY_ENGINE.md`, one main agent that runs the stages itself plus one spawned critic (OR-20, D-79; stage pages `story-architect`, `scene-writer`, `beat-writer` (visual beats and cues, skill `visual-beats`, D-54), `performance-director`, `edit-planner`, `voice-caster`, `shorts-writer`; critic `script-critic`), `scripting/story_lint.py`, `scripting/stage_guard.py`, `production/accents.py`, `edit/motion_lint.py`, `audio/layers.py`, `audio/casting.py`. Skills `science-grounding`, `time-jump-episode`, `shorts-for-video`, `editing-style` (rules `docs/EDITING.md`), `video-editing-architect` (general technique database and QA list), `elevenlabs-voice` (first-take reads, credit saving).
 
 **How we work (creator, 2026-10-17):** a change request goes in this order: (1) study the process and the real output (open files, measure, find the cause); (2) research when the topic needs it and write the findings into a skill; (3) ask the creator the questions that are truly his to answer; (4) update rules, skills, agents and tests; (5) only then produce. Never produce before steps 1-4. Creator notes become rules with a test (OR-09).
+**Reusable before fast (creator, 2026-10-25, OR-21):** between a quick one-off and a reusable tool in the repo, always the reusable one at the same money cost, even when slower (a cheaper one-off goes to the creator); pods start only through `cloud/runpod.py create` with their script and config committed under `explainer_engine/training/pods/`.
 
 **Long renders (RULE-R1, 2026-10-17):** a render longer than ~10 minutes runs as a tracked background task of the session, never a detached process; it is written in chunks (ED-13) and each run draws only its chunk range (`assemble --chunks A:B`) until all chunks exist, then joins once. The session keeps a wake-up timer while it runs. Details: `docs/PRODUCTION_RULES.md` section 3.
 
@@ -55,6 +63,11 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 sprites, pictures, full read, render, QA). Skills: `narration-script` (how the narrator sounds), `shot-visuals` (what the pictures
 show). Entertainment first, facts second; stakes and named heroes in every frame; one drawn world; limits computed from
 measured speeds; every paid step estimated and approved first; look at the output before reporting it; reply to the creator in Georgian.
+**Strict storytelling (creator, 2026-10-20, D-61):** show, don't tell (no trait statements, ratings or biographies from the
+narrator, SC-12) and full immersion (no meta disclaimers or hedges on the story, SC-11); the creator approves the finished
+script before anything is paid (OR-17, `scripting/script_approval.py`).
+**The channel is a storyteller (creator, 2026-10-20):** the goal is an interesting idea, told well; hooks, animation and
+sound effects are only the means that turn the viewer towards it, never the goal. Judge every script by its story first.
 **Language (creator, 2026-10-17):** Georgian is only for talking to the creator. Everything the viewer sees or hears (narration, on-screen text, picture prompts, titles, metadata, Shorts) is English for the US audience; never ask again.
 
 **Sourced rules (D-59, creator 2026-10-19):** no production rule is law by itself. Every number a validator enforces comes from
@@ -98,7 +111,10 @@ explainer_engine/standards/ rulebook.py (episode_rules.json: check, gate, stamp,
                           (verified law/policy/terms sources, MARKET_RESEARCH V-13..V-24); CLI python -m explainer_engine.standards
 explainer_engine/research/ fan_brief.py (crossover fan brief), hypotheses.py (story premises compared, HY rules)
 explainer_engine/qa/      scorecard.py, engagement.py (anti-boredom gate, ENG), targets.py (the one set of loudness numbers)
-explainer_engine/imagegen/ gemini.py (client, batch tier), routing.py (tiers draft/standard/premium, D-52)
+explainer_engine/imagegen/ gemini.py (client, batch tier), routing.py (tiers draft/standard/premium, D-52),
+                          picture_library.py (reusable pictures: tags, add/find/fetch, D-76)
+explainer_engine/assets_reuse.py  library first (OR-18, D-76): search + record before any new music/SFX/reusable picture;
+                          the hook refuses a paid music/SFX call without the record; audio/register.py saves new takes
 .claude/settings.json     PreToolUse hook on the ElevenLabs connector -> standards/hook.py (pictures refused, one take, rulebook gate)
 explainer_engine/schemas/ versioned JSON Schemas (rights_manifest, fan_brief, episode_rules, production_script, ...)
 .claude/skills/crossover-episode/   procedure for crossover episodes (fan research -> scenario -> script -> rights)
@@ -112,6 +128,8 @@ explainer_engine/scripting/ story_lint, stage_guard, claims.py (claim_map.md -> 
 explainer_engine/qa/      visual_judge (questions), sheet_review.py (Claude answers them, free), publish_check.py (PC-xx)
 explainer_engine/publish/ YouTube staging (D-57): plan.py (insert bodies), stage.py (unlisted upload, state, quota),
                           youtube.py (stdlib API client, never public), thumbnail.py (Gemini premium, TN rules), auth.py
+explainer_engine/training/ LoRA training control (D-72, docs/LORA_TRAINING.md LT-xx): audit, config check, cost, checkpoint
+                          judge; agents lora-coordinator/-dataset-auditor/-run-operator/-checkpoint-judge, skill lora-training
 explainer_engine/world/   resolver (UR-22..27 prompt lint), look_v2.json; edit/, finish/, research/, rights/ as named
 jobs/                     job output (gitignored): jobs/<slug>/job-NNN_<date>/{state.json, artifacts/...}
 ```

@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "continuity_card/1",
+  "title": "Scene continuity cards (docs/SHOT_CONTINUITY.md, CT-)",
+  "type": "object",
+  "required": ["schema", "scene_id", "model", "style_line", "location", "light", "cast", "shots"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "continuity_card/1"},
+    "scene_id": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "description": "a key of continuity.MODEL_REFS: the picture model these cards are for"},
+    "style_line": {"type": "string", "minLength": 10, "description": "the global style line, verbatim in every prompt"},
+    "location": {
+      "type": "object",
+      "required": ["id", "where_when", "int_ext", "time_of_day", "weather", "master_frame"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string"},
+        "where_when": {"type": "string", "pattern": "^[^/]+ / [^/]+$", "description": "H-B BG note: 'Castle hallway / Night'"},
+        "int_ext": {"enum": ["INT", "EXT"]},
+        "time_of_day": {"enum": ["dawn", "day", "dusk", "night"]},
+        "weather": {"enum": ["clear", "cloudy", "rain", "fog", "snow", "dust", "smoke", "indoor"]},
+        "landmarks": {"type": "array", "items": {"$ref": "#/$defs/landmark_def"}},
+        "master_frame": {"type": "string", "description": "path or id of the scene's approved establishing picture"}
+      }
+    },
+    "light": {
+      "type": "object",
+      "required": ["key_light_dir", "light_source"],
+      "additionalProperties": false,
+      "properties": {
+        "key_light_dir": {"$ref": "#/$defs/light_dir"},
+        "light_source": {"type": "string"},
+        "colour_key": {"type": "string"}
+      }
+    },
+    "cast": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["name", "description", "sheet"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string", "description": "a cast tag for the prompt, never a story name (KP rules)"},
+          "description": {"type": "string", "minLength": 10, "description": "identity text, copied verbatim into every prompt"},
+          "sheet": {"type": "string", "description": "model sheet picture: the character's reference"},
+          "costumes": {"type": "object", "additionalProperties": {"type": "string"}}
+        }
+      }
+    },
+    "shots": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/shot"}}
+  },
+  "$defs": {
+    "light_dir": {"enum": ["left", "right", "top", "back", "front"]},
+    "side": {"enum": ["left", "centre", "right"]},
+    "landmark_def": {
+      "type": "object",
+      "required": ["id", "text"],
+      "additionalProperties": false,
+      "properties": {"id": {"type": "string"}, "text": {"type": "string"}}
+    },
+    "change": {
+      "type": "object",
+      "required": ["entity", "field", "to", "cause"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": {"type": "string"},
+        "field": {"type": "string"},
+        "from": {},
+        "to": {},
+        "cause": {"type": "string", "minLength": 3}
+      }
+    },
+    "character": {
+      "type": "object",
+      "required": ["id", "screen_pos", "depth", "facing"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string"},
+        "screen_pos": {"$ref": "#/$defs/side"},
+        "depth": {"enum": ["front", "mid", "back"]},
+        "facing": {"enum": ["left", "right", "camera", "away"]},
+        "eyeline": {"type": "string", "description": "a cast id on screen, or off_left / off_right / down / up"},
+        "costume": {"type": "string"},
+        "flags": {"type": "array", "items": {"enum": ["wet", "dirty", "torn", "bloody", "snowy", "burnt"]}, "uniqueItems": true},
+        "props": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "hand"],
+            "additionalProperties": false,
+            "properties": {"id": {"type": "string"}, "hand": {"enum": ["left", "right", "both"]}, "state": {"type": "string"}}
+          }
+        },
+        "expression": {"type": "string"},
+        "action": {"type": "string", "description": "what this person does at the keyframe (start pose)"}
+      }
+    },
+    "shot": {
+      "type": "object",
+      "required": ["shot_id", "shot_size", "angle", "camera_side", "head_count", "characters", "refs"],
+      "additionalProperties": false,
+      "properties": {
+        "shot_id": {"type": "string"},
+        "is_master": {"type": "boolean", "description": "this shot IS the scene's establishing picture"},
+        "shot_size": {"enum": ["EWS", "WS", "MWS", "MS", "MCU", "CU", "insert"]},
+        "angle": {"enum": ["eye", "low", "high"]},
+        "camera_side": {"enum": ["A", "B"]},
+        "axis": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 2},
+        "axis_cross_reason": {"enum": ["neutral_shot", "cutaway", "insert", "on_screen_move"]},
+        "angle_change_deg": {"type": "number", "minimum": 0, "maximum": 180},
+        "hook_up": {"enum": ["first", "match_on_action", "eyeline", "cutaway", "insert", "time_cut", "reaction"]},
+        "camera_move": {"type": "string"},
+        "end_framing": {"type": "string"},
+        "head_count": {"type": "integer", "minimum": 0},
+        "extras": {"type": "integer", "minimum": 0, "description": "unnamed people on screen, counted in head_count"},
+        "characters": {"type": "array", "items": {"$ref": "#/$defs/character"}},
+        "landmarks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "side"],
+            "additionalProperties": false,
+            "properties": {"id": {"type": "string"}, "side": {"$ref": "#/$defs/side"}}
+          }
+        },
+        "set_state": {"type": "object", "additionalProperties": {"type": "string"}},
+        "time_of_day": {"enum": ["dawn", "day", "dusk", "night"]},
+        "weather": {"enum": ["clear", "cloudy", "rain", "fog", "snow", "dust", "smoke", "indoor"]},
+        "key_light_dir": {"$ref": "#/$defs/light_dir"},
+        "changes": {"type": "array", "items": {"$ref": "#/$defs/change"}},
+        "refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "role"],
+            "additionalProperties": false,
+            "properties": {
+              "path": {"type": "string"},
+              "role": {"enum": ["place", "character", "previous_shot", "style"]},
+              "of": {"type": "string", "description": "the cast id a character ref shows"}
+            }
+          }
+        },
+        "derive_from": {"type": "string", "description": "'original' (fresh from the refs) or the shot_id it is edited from"},
+        "chain_depth": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

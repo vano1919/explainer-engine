@@ -25,6 +25,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 * `schema`: `production_script/3` (2026-10-19, D-58, the scene rewrite) adds the scene contract: a segment with dialogue carries `scene` (`place`, `present`, `pov`, `want`, `obstacle_want`, `value`, `open_charge`, `close_charge`, `exit`, and optional `time`, `why_now`, `turn`, `surface_topic`, `real_subject`, `mode`); every line (segments and Shorts) may say `to` (who it is said to) and `intent` (reveal, press, deflect, concede, question, banter, decide, aside); a beat's `cue` gains `event` (reveal, impact, transition, build, diegetic, take, place) — on `/3` a cue without an event FAILs and silence is the default (VB-08 inverted). SC-01..SC-10 ([STORY_ENGINE](STORY_ENGINE.md)) bind only `/3`; `/1` and `/2` keep their exact old behaviour.
 * `segments[]` (S01..): `drama` (function, turn, stakes, shift, need, opens, closes, claim_share), `lines[]` (text, tags, tone, emotion, one emphasised word, `pause_after`, claims, optional `speaker` = a cast id read in that hero's own `cast.<id>.voice`, D-45), `shots[]` (phrase `at`, type A/B/C,
   `accents` (punch, shake, whip_in, flash_in, pop_text, slam_text, wobble on a phrase), picture id or inline picture with `subject`/`engine`/`refs`/`edit`/`heroes`/`shows`/`props`/`speakers`, motion, bubbles), `audio` (`beds`, `sfx` on phrases).
+* Scene continuity (D-69): segment `staging` (location, time, layout, fixed, roster, positions, master, scene_id, continues) and picture `framing`/`visible`/`partial`/`change`/`cut_away`; `look.continuity`. See the CS rules below.
 * Engines: `existing` (a file), `gemini` (D-41 prompt, channel style refs), `pod_ref` (a reference edit, painted by the provider the creator picks for the batch, D-50), `pod_text` (no longer made, D-52), `canva` (filler made by hand, D-53).
 * Rulebook-era fields (D-51, D-52): `episode.rulebook`; segment `job`, `feel`, `rules`; shot `purpose`, `cut.why`; picture `tier`, `tier_reason`; bed and sound `purpose`, `yields_to`. Times are still never written by hand: anchors are phrases, durations come from the read.
 
@@ -59,7 +60,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-20 | the read matches the script text at least 97 % |
 | PV-21 | shot numbers 1..N, frame 0 start, no gap or overlap, last shot ends on the final frame |
 | PV-23 | bubbles inside their shot, sounds inside the video, beds cover the video |
-| PV-24 | the board rules on the timed script: STATE-1/2 story state at the word, HERO-1/2 hero of the line, RHYTHM-1..3 ([BP-40](SOURCED_RULES.md): pictures a minute and the still limits by section, where a change is a cut, an accent, a bubble or a visual beat; no shot under [BP-84](SOURCED_RULES.md)'s floor), BUBBLE-1..3 (BP-84, BP-27), CUT-1 |
+| PV-24 | the board rules on the timed script: STATE-1/2 story state at the word, HERO-1/2 hero of the line, RHYTHM-1..3 ([BP-40](SOURCED_RULES.md): pictures a minute and the still limits by section, where a change is a cut, an accent, a bubble or a visual beat; no shot under [BP-84](SOURCED_RULES.md)'s floor), BUBBLE-1..3 (BP-84, BP-27), BUBBLE-4 (no bubble over any hero's face at its start or end, laid out as the render lays it out, FAIL) and BUBBLE-5 (one text, one bubble: a piece split by a cut or shown twice is a FAIL), both from the creator's note of 2026-10-20, CUT-1 |
 | PV-25 | picture file present (REVIEW in a draft, FAIL with `--final`) |
 | PV-26 | likeness by reference: a picture painted by editing (`pod_ref`) that names a hero needs a reference picture whose library `heroes` lists that hero (the model copies the face from the reference) |
 | PV-27 | time-jump `periods`: every segment names a known period, a period's segments are consecutive, tone shares sum to 1; REVIEW when a period does not end on the question that opens the next (SR-03) |
@@ -82,9 +83,17 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-44 | visual beats and their cues (VB-00..VB-11 in [STORY_ENGINE](STORY_ENGINE.md), `production/beats.py`): in a `production_script/2` every line carries `visual_beats` (the /2 metronome of [BP-36](SOURCED_RULES.md) for narration and [BP-37](SOURCED_RULES.md) for dialogue reactions, each beat with a reason on its own line's words, few words ([BP-38](SOURCED_RULES.md)), numbers with a claim, a face the render can change, a short cue or `none` with a reason that never doubles an effect or stacks past BP-56's layer cap); FAIL rules block a /2 script, a legacy /1 gets one VB-00 REVIEW; on a `/3` the cue grammar inverts (D-58): silence is the default, a cue requires its `event`, the same sound never repeats back to back (VB-10) and density is capped (VB-11, [BP-81](SOURCED_RULES.md); VB-10 is [BP-80](SOURCED_RULES.md)), while the pacing gates relax to dead-air checks (VB-01 [BP-36](SOURCED_RULES.md), nested inside [BP-40](SOURCED_RULES.md); VB-02 reactions [BP-37](SOURCED_RULES.md) with [BP-33](SOURCED_RULES.md)'s flicker floor); checked on the estimated read and on the real read; every Short is checked the same way on its own estimated read except VB-01's cadence, which BP-45 replaces on a Short (SS-09, `shorts[].lines[].visual_beats`, reported as "SH03 line 2") |
 | PV-45 | the approved short scenario came first (`scripting/scenario.py`, OR-15): `episode.scenario` names the scenario file next to the script, `approved_by`, `approved_at` (YYYY-MM-DD) and its `sha256`; missing or a scenario changed after the approval is a FAIL on `production_script/2`, a REVIEW on `/1` |
 | PV-46 | each speaking hero's manner of speech (`scripting/speech.py`, DW-11): `cast.<id>.speech` with `basis` (public with `sources`, or personality), `style`, at least 3 signature `words`; missing is a FAIL on `/2` and a REVIEW on `/1`; a hero saying a word of their own `avoid` list is a REVIEW; on `/3` a hero none of whose signature words appears in their lines is a REVIEW (the manner must be used, not just declared) |
-| PV-47 | the creator picked a variant collage tile first (`scripting/reference_approval.py`, OR-16): every hero drawn in a painted picture (`gemini`/`pod_ref`) or with a face sheet has `cast.<id>.reference`, and a script with painted pictures has `look.environment` (collage, tile, picture in the library, approved_by, approved_at; the collage exists next to the script); missing is a FAIL on `/2` (paint refuses), a REVIEW on `/1` |
-| PV-48 | scenes and dialogue (SC-01..SC-10 in [STORY_ENGINE](STORY_ENGINE.md), `scripting/scene_lint.py`): binds only a `production_script/3` — the scene header and its turn of value, opposing wants, every line addressed to someone present (a hero never answers the narrator), a real exchange, enter late / leave early, no press-release narration, one honesty beat, turn-taking lengths, subtext never spoken; an earlier schema gets no SC findings |
+| PV-47 | the creator picked a variant collage tile first (`scripting/reference_approval.py`, OR-16): every hero drawn in a painted picture (`gemini`/`pod_ref`) or with a face sheet has `cast.<id>.reference`, and a script with painted pictures has `look.environment` (collage, tile, picture in the library, approved_by, approved_at; the collage exists next to the script); missing is a FAIL on `/2` (paint refuses), a REVIEW on `/1`. When the creator waives the collage for a hero (`first_picture: true`, approved_by, approved_at; creator 2026-10-20), the hero is drawn first in its scene in the approved style and PV-47 is a REVIEW until that picture, OK'd on the contact sheet, is recorded as `picture` |
+| PV-48 | scenes and dialogue (SC-01..SC-12 in [STORY_ENGINE](STORY_ENGINE.md), `scripting/scene_lint.py`): binds only a `production_script/3` — the scene header and its turn of value, opposing wants, every line addressed to someone present (a hero never answers the narrator), a real exchange, enter late / leave early, no press-release narration, no spoken honesty beat, turn-taking lengths, subtext never spoken, full immersion (no meta disclaimers, SC-11) and show, don't tell (SC-12); an earlier schema gets no SC findings |
 | PV-52 | the heard pace of the estimated read (words / estimated duration, pauses included: [BP-01](SOURCED_RULES.md)'s one definition) lies inside BP-01's band; `voice.pace_wpm` is the voice's speaking rate the estimate times the words at before it adds punctuation and held pauses, so a `pace_wpm` inside the band can still be heard slower. Outside it is a REVIEW that asks to change `pace_wpm` or the pauses, or why this voice is slower or faster. The Short budgets and ST-13 use the same heard pace (BP-12, BP-76) |
+| PV-53 | approval #1 of the finished script (`scripting/script_approval.py`, [OR-17](ORCHESTRATION.md)): on a `production_script/3`, `episode.script_approval` records `approved_by`, `approved_at` (YYYY-MM-DD) and the `sha256` of every word said (segments and Shorts, with speakers); missing, or a line changed after the approval, is a FAIL before any paid step (paint preflight, the ElevenLabs hook, gate 0.9 of `production_gate`); earlier schemas get no finding |
+| PV-54 | the time counter ([ED-15](EDITING.md)): every `counter` entry names an existing segment, entries follow the segment order, each label is 1-14 characters and differs from the one before (`graphics.check_counter`); a FAIL otherwise |
+| PV-55 | silent lines ([D-62](DECISIONS_AND_OPEN_QUESTIONS.md)): a speaker whose cast traits say `real_person` has no voiced line in the video or a Short (`"voiced": false`, shown as bubbles), and a silent line names its speaker (`production/silent.py`); a FAIL otherwise |
+| PV-56 | reported dialogue ([D-63](DECISIONS_AND_OPEN_QUESTIONS.md)): the narrator tells the exchange; a segment holds at most `silent.MAX_ACCENT_BUBBLES` silent line (`production/silent.check_reported_dialogue`); a FAIL otherwise |
+| PV-57 | the establishing cast ([BP-91](SOURCED_RULES.md), [D-64](DECISIONS_AND_OPEN_QUESTIONS.md)): in a segment of a `production_script/3` the first shot whose picture has `heroes` is the establishing view; a later shot shows only heroes of that view, or a newcomer the narrator has named in the segment up to the line the shot opens on, or the hero the shot's `reveal` names (`validate.establishing_cast`); the rule's severity otherwise. PV-56 also holds the one accent bubble to [BP-84](SOURCED_RULES.md)'s word cap |
+| PV-58 | word slams ([BP-97](SOURCED_RULES.md), [D-66](DECISIONS_AND_OPEN_QUESTIONS.md)): a shot accent `slam_text` is at most the rule's words, one a segment, and never the same word twice (`validate.word_slams`); the picture dims and softens behind it while it holds (`accents.SLAM_DIM`); the rule's severity |
+| PV-59 | Scene Package references (D-70 stage F): every `segments[].asset_ids` entry is a record of the asset library ([WORLD_BIBLE.md](WORLD_BIBLE.md) WB-06) and the script's `bible.version` is a version the World Bible has had; FAIL otherwise (`production/segment_hash.check`) |
+| PV-60 | a segment's `review` with `status: approved` names who approved (`by`, FAIL without) and carries the segment's edit hash at that moment (`production/segment_hash.hashes`); a segment edited after its review is a REVIEW that asks to show it again. `python -m explainer_engine.production.segment_hash <script> --against <older>` prints what a change makes stale (voice, pictures, edit), so only that is made again |
 
 ## Paint plans (PP-xx; audit 2026-10-19; `imagegen/plan.py`, `production/paint.py`)
 
@@ -93,19 +102,65 @@ generate images (Anthropic: "an image understanding model only"); it prepares th
 
 | Id | Rule |
 |---|---|
-| PP-01 | a plan is a `paint_plan/1` file with a known provider (`gemini`, `pod`, `local`); there is no default provider |
+| PP-01 | a plan is a `paint_plan/1` file with a known provider (`gemini`, `bfl`, `fal` through `imagegen/providers`; `pod`, `local` as hand-offs); there is no default provider |
 | PP-02 | the plan's hash covers its pictures, prompts, references, provider, model, size and tier; `paint run` needs an approval of exactly that hash in the run ledger (`Run.approve`: who, and which message); an edited plan loses its approval |
 | PP-03 | the provider can take the batch: a listed price for the model and size, no more references than the provider takes |
 | PP-04 | every item has a compiled prompt (`production compile --write`) |
 | PP-05 | Gemini on one episode's own pictures (a plan not marked `reusable` and without `episode.gemini_exception`) is a REVIEW note for the creator, never a refusal: the provider choice per batch is the decision (D-50 supersedes the 2026-10-11 "reusable only" rule) |
 | PP-06 | every item is a picture of the script and its prompt is still the script's prompt |
 | PP-07 | the plan says what the batch is for (REVIEW) |
+| PP-08 | the picture library (OR-18, D-76) had matches for an item's prompt when the plan was made: the plan lists them on the item (`library`) and the creator's approval says why a stored picture is not used, or it is fetched instead of painted (REVIEW) |
+| PP-09 | before the creator's sample approval (`sample_approval.json`, [OR-19](ORCHESTRATION.md)) a plan paints only pictures a sample segment uses; plans marked `reusable` and face sheets stay allowed; `paint plan --sample` keeps a plan inside the sample |
 
 `paint run` also refuses a script with any PV FAIL (it runs `validate` with the picture folders), reserves every picture in
 the ledger before its call, records it with its prompt hash, repaints a picture only when its prompt changed (in a new plan),
 never sends an item of an open or lost batch again (`imagegen/gemini.open_batches`), never retries a request that timed out
 (`ChargeUncertain`: it may have been billed), and stops an item after three failures. The cache of paid pictures is shared by
 every output folder (`EXPLAINER_IMAGE_CACHE`).
+
+## Scene continuity (CS-xx; D-69; `production/staging.py`)
+
+Until D-69 every Gemini picture was painted from its own prompt and the style references: nothing told the painter that the
+next picture is the same room a second later, so the titans episode (2026-10-21) showed five men on a bench of ten, then two
+other men in another room, while the narration still told one conversation. A **staged scene** now carries its state and
+every picture of it is painted as a shot of that one room.
+
+* **Scene state** (segment `staging`, optional): `location` and `time` (default `scene.place` / `scene.time`), `layout`,
+  `fixed` details, `roster` (default `scene.present`), `positions` (the spatial map, left to right as the master frame sees
+  it), `master` (default: the first wide picture that shows the whole roster), `scene_id` / `continues` (join segments).
+  `look.continuity: "auto"` stages every segment with a `scene.place`; a script without either compiles exactly as before.
+* **Shot state** (picture, optional): `framing` (wide, full, medium, two_shot, over_shoulder, close, reaction, insert; default
+  read from the subject and the shot type), `visible` (faces this shot must show; default the heroes minus `partial`),
+  `partial` (a shoulder or a back; over_shoulder defaults to every hero after the first), `change` (what this shot changes),
+  `cut_away` (outside the room: painted alone). Speaker and listener come from the shot's bubble or its voiced line.
+* **Shot kinds** (`staging plan`): `master`; `continue` / `action` (the same camera on the same faces as the shot before, an
+  action stated in `change`: painted as an edit of that shot); `reframe` (another camera in the same room, painted against the
+  master); `insert`; `cut_away` / `montage` (unstaged, painted alone). Only a new place or time starts a new scene.
+* **Prompt** (`compile`): the D-41 prompt, then the continuity block: the scene id, which reference image is the master and
+  which the previous shot, KEEP UNCHANGED (place, layout, fixed details, light and palette, faces and clothes, the seating
+  left to right), THIS SHOT (framing, the faces it must show, who is seen only in part, speaker and listener, who is still in
+  the room outside the frame), MAY CHANGE (camera, expressions, gestures, the stated change; or, for an edit, only the stated
+  change), and one single full-frame picture, never a collage (unless the subject asks for a split frame).
+* **References** (`compile.jobs`): master frame, previous shot (edits only), the visible heroes' approved reference pictures
+  (`cast.<id>.reference`), then the style references; `paint plan` trims them to the model's slots, lowest priority first.
+* **Order and review**: `paint plan --masters` -> approve -> run -> `staging request` (Claude opens each picture and its master
+  and answers the questions, free) or `staging judge` (Gemini vision, paid, with `--yes` and `--max-usd`) -> `staging apply`
+  -> `paint plan --run` (the shots, and the corrections of rejected pictures) -> approve -> run -> review again.
+
+| Id | Rule |
+|---|---|
+| CS-01 | a staged scene is well formed: its roster and positions name cast ids, every position is in the roster, it has a master frame that is a picture shown in the scene |
+| CS-02 | the master frame shows everyone in the roster (its `heroes`); every later shot is painted against it |
+| CS-03 | a picture of a staged scene draws only heroes of its roster, unless it is marked `cut_away` |
+| CS-04 | the seats are written down: a room of three or more has `positions` for everyone, and a wide or full shot of the room that leaves roster members out says so (REVIEW) |
+| CS-05 | a subject that counts people ("ten men") names that many heroes, or says the rest are anonymous extras (REVIEW: the painter invents unnamed people anew in every picture) |
+| CS-06 | one continuous scene has one light beat (REVIEW) |
+| CS-07 | a `/3` dialogue segment with two or more new pictures is staged (REVIEW: unstaged pictures are painted without a master frame) |
+| CS-08 | a picture never takes more references than its model's slots (`imagegen/gemini.REF_LIMITS`, Google's image-generation page read 2026-10-22: Nano Banana 2.1 and 3.1 Flash Image keep 4 faces and 10 objects, 3 Pro Image 5 faces); `paint plan` names every dropped reference (REVIEW) |
+| CS-09 | a shot is painted only after the pictures it takes as references: its master (painted, and PASSED by the continuity review) and, for an edit, the shot before it (painted, not rejected); a waiting shot is never counted as a failure |
+| CS-10 | the continuity review asks only for the faces THIS framing must show (`visible`), so a close-up is never failed for the people outside it; a required face that is missing is a FAIL; the master shows the place and the staged order |
+| CS-11 | a continuation keeps the master's room (a different room without a scene change is a FAIL) and every picture is one single frame (a collage or split screen is a FAIL); seats, partial figures and the action are REVIEW. The free pixel hint (`seam_findings`) only flags straight full-height edges for the reviewer |
+| CS-12 | a rejected picture carries a targeted correction into its next paint plan (a new plan, a new approval); after `MAX_REPAINTS` (2) corrections a further failure stops it: it is never planned or painted again until the creator decides |
 
 ## Voice direction
 

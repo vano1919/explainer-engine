@@ -9,7 +9,8 @@ subtext never spoken, and a narration register that tells the story instead of c
 says..." x7 was required by the old rules; now one honesty beat carries the disclosure). Evidence per rule:
 docs/research/STORYTELLING_EDITING_2026-10-19.md. The numbers and the severities of SC-05, SC-08 and SC-09 live in the
 sourced rules registry (BP-70..BP-73, docs/SOURCED_RULES.md); SC-07 reads BP-15's one press-release lexicon through
-``narration_lint.press_release`` (N-14 uses the same one).
+``narration_lint.press_release`` (N-14 uses the same one). SC-11 (full immersion, BP-88) and SC-12 (show, don't tell, BP-87)
+are the creator's strict storytelling rules 1 and 2 (2026-10-20, D-61); their lexicons live in the registry.
 
     python -m explainer_engine.scripting.scene_lint production_script.json
 """
@@ -33,11 +34,94 @@ REVIEW_TURN_WORDS = SR.T("BP-73", "turn_words_review")  # SC-09: the default spo
 MAX_QA_CHAIN = SR.T("BP-73", "qa_chain_max")  # SC-09/DW-12: more consecutive ?-turns read as an interview
 MIN_EXCHANGE = SR.T("BP-70", "min_exchange_lines")  # SC-05: at least one run of this many character lines
 MIN_EXCHANGE_SPEAKERS = SR.T("BP-70", "min_exchange_speakers")  # SC-05: ... from at least this many speakers
-MAX_DISCLAIMER_SEGMENTS = SR.T("BP-71", "disclaimer_segments_max")  # SC-08: one honesty beat plus at most one callback
+MAX_DISCLAIMER_SEGMENTS = SR.T("BP-71", "disclaimer_segments_max")  # SC-08: no spoken honesty beat since BP-88 (0)
 GREETING = re.compile(r"^\s*(hello|hi there|hi[,.! ]|hey there|hey[,.! ]|good (morning|evening|afternoon)|welcome)\b", re.I)
 WRAP_UP = re.compile(r"^\s*(so that's|anyway|in conclusion|to sum up|well, that settles)\b", re.I)
-DISCLAIMER = re.compile(r"\b(invented|made (it |this |that )?up|we['’]re guessing|we can only guess|our (own )?assumption"
+DISCLAIMER = re.compile(r"\b((this|that|it|all of this|the rest) (is|was|part is|part was) (invented|made up)|we invented"
+                        r"|made (it |this |that )?up|we['’]re guessing|we can only guess|our (own )?assumption"
                         r"|none of this happened|our invention)\b", re.I)
+
+
+def _lexicon(phrases: list[str]) -> re.Pattern:
+    return re.compile(r"(?<![a-z])(" + "|".join(re.escape(p).replace("'", "['’]") for p in phrases) + r")(?![a-z])", re.I)
+
+
+IMMERSION = _lexicon(SR.T("BP-88", "frames"))  # SC-11: a line that steps outside the story, from anyone
+HEDGE = _lexicon(SR.T("BP-88", "hedges"))  # SC-11: the narrator doubting the story itself (a hero may doubt in a scene)
+SHOW_TRAITS = SR.T("BP-87", "traits")  # SC-12: the narrator states a trait instead of showing it
+TELL = _lexicon(SR.T("BP-87", "phrases"))
+RATING = re.compile("|".join(SR.T("BP-87", "ratings")), re.I)
+STAT_PICTURES = tuple(SR.T("BP-87", "picture_prefixes"))  # select_screen.py's stat cards (Syndicate Wars, /2)
+_TRAIT = r"(" + "|".join(re.escape(t) for t in SHOW_TRAITS) + r")"
+_LINK = (r"\s+(is|was|are|were|has always been|had always been|is known as|was known as|is famously)\s+"
+         r"((a|an|so|very|extremely|famously|notoriously|incredibly|deeply|naturally|truly|the most|a true|a real)\s+)*")
+
+
+def _trait_pattern(doc: dict) -> re.Pattern:
+    """'he is charismatic', 'Musk was a risk-taker': a person (pronoun, cast id or name) linked to a trait word."""
+    who = {"he", "she", "they", "the man", "the woman", "this man", "this woman"}
+    for cid, c in doc.get("cast", {}).items():
+        who.add(cid.replace("_", " "))
+        for name in (c or {}).get("names", []):
+            who.add(name)
+            who.update(part for part in name.split() if len(part) > 2)
+    subj = "|".join(sorted((re.escape(w) for w in who), key=len, reverse=True))
+    return re.compile(rf"\b(({subj}){_LINK}|(he|she|they)['’](s|re)\s+(a\s+|an\s+|so\s+|very\s+)*){_TRAIT}(?![a-z])", re.I)
+
+
+def _screen_texts(doc: dict):
+    """(where, text) of every word the viewer reads: bubbles, accents, beats, period cards, graphics titles."""
+    for seg in doc.get("segments", []):
+        for li, ln in enumerate(seg.get("lines", [])):
+            for b in ln.get("visual_beats") or []:
+                for key in ("text", "label"):
+                    if b.get(key):
+                        yield f"{seg['id']} line {li + 1} beat", b[key]
+        for si, sh in enumerate(seg.get("shots", [])):
+            for key in ("bubbles", "accents"):
+                for item in sh.get(key) or []:
+                    if item.get("text"):
+                        yield f"{seg['id']} shot {si + 1} {key}", item["text"]
+    for pi, per in enumerate(doc.get("periods", [])):
+        if (per.get("card") or {}).get("title"):
+            yield f"period {pi + 1} card", per["card"]["title"]
+    for gi, g in enumerate(doc.get("graphics", [])):
+        if g.get("title"):
+            yield f"graphic {gi + 1}", g["title"]
+
+
+def immersion_and_showing(doc: dict) -> list[dict]:
+    """SC-11 (BP-88) and SC-12 (BP-87) on the whole script: lines, Shorts and on-screen words."""
+    out: list[dict] = []
+    traits = _trait_pattern(doc)
+    spoken = [(f"{seg['id']} line {li + 1}", ln) for seg in doc.get("segments", []) for li, ln in enumerate(seg["lines"])]
+    spoken += [(f"short {sh.get('id', si + 1)} line {li + 1}", ln) for si, sh in enumerate(doc.get("shorts", []))
+               for li, ln in enumerate(sh.get("lines", []))]
+    for where, ln in spoken:
+        text, narr = ln.get("text", ""), not ln.get("speaker")
+        m = IMMERSION.search(text) or (HEDGE.search(text) if narr else None)
+        if m:
+            _f(out, "SC-11", where, f"{m.group(0)!r} steps outside the story (BP-88): no meta disclaimer, no hedge on the "
+               "story itself; the title and the description carry the what-if, the story plays as if it happens now",
+               sev("BP-88"))
+        if narr:
+            m = traits.search(text) or TELL.search(text) or RATING.search(text)
+            if m:
+                _f(out, "SC-12", where, f"the narrator tells instead of showing ({m.group(0)!r}, BP-87): show the trait "
+                   "through what the hero does, says, gets wrong or decides; never a trait list, a rating or a biography",
+                   sev("BP-87"))
+    for where, text in _screen_texts(doc):
+        if IMMERSION.search(text):
+            _f(out, "SC-11", where, f"on-screen text {text!r} steps outside the story (BP-88)", sev("BP-88"))
+        if RATING.search(text) or TELL.search(text):
+            _f(out, "SC-12", where, f"on-screen text {text!r} rates or describes a hero (BP-87): no stat cards or star "
+               "ratings; show it in a scene", sev("BP-87"))
+    pics = {sh.get("picture") if isinstance(sh.get("picture"), str) else (sh.get("picture") or {}).get("id")
+            for seg in doc.get("segments", []) for sh in seg.get("shots", [])}
+    for pid in sorted(p for p in pics if p and p.startswith(STAT_PICTURES)):
+        _f(out, "SC-12", pid, "a stat card (select_screen.py) rates the heroes on screen (BP-87): not on a /3 episode",
+           sev("BP-87"))
+    return out
 
 
 def _f(out, rule, where, detail, sev):
@@ -153,10 +237,15 @@ def lint(doc: dict) -> list[dict]:
                 if not reacted:
                     _f(out, "SC-05", where, "a reveal lands and nobody reacts: the next beat is another character's "
                        "line or a listener's expression (DW-05, Kuleshov: show the face the line affects)", "REVIEW")
-        if len(present) >= 2 and (best_run < MIN_EXCHANGE or len(best_speakers) < MIN_EXCHANGE_SPEAKERS):
+        # D-63 / BP-70: the narrator may report the exchange instead (the creator, 2026-10-20 21:14/21:17)
+        from explainer_engine.scripting.story_lint import reported_turns
+        told = [h for ln in lines if not ln.get("speaker") for h in reported_turns(ln["text"], cast, sorted(present))]
+        reported = len(told) >= MIN_EXCHANGE and len(set(told)) >= MIN_EXCHANGE_SPEAKERS
+        if len(present) >= 2 and not reported and (best_run < MIN_EXCHANGE or len(best_speakers) < MIN_EXCHANGE_SPEAKERS):
             _f(out, "SC-05", sid, f"no real exchange: the longest unbroken run is {best_run} character line(s) "
                f"({len(best_speakers)} speaker(s)); a scene plays at least {MIN_EXCHANGE} character lines in a row, "
-               f"{MIN_EXCHANGE_SPEAKERS} voices, no narrator inside (BP-70)", sev("BP-70"))
+               f"{MIN_EXCHANGE_SPEAKERS} voices, no narrator inside, or the narrator reports at least {MIN_EXCHANGE} turns "
+               f"of {MIN_EXCHANGE_SPEAKERS} named speakers (found {len(told)}; BP-70)", sev("BP-70"))
         silent = present - speakers_seen - {b.get("who") for ln in lines for b in (ln.get("visual_beats") or [])
                                             if b["kind"] == "expression"}
         if silent:
@@ -171,8 +260,9 @@ def lint(doc: dict) -> list[dict]:
                "line or two of the turn", "REVIEW")
     if len(disclaimer_segs) > MAX_DISCLAIMER_SEGMENTS:
         _f(out, "SC-08", ",".join(disclaimer_segs[:6]), f"{len(disclaimer_segs)} segments carry invention disclaimers "
-           f"(at most {MAX_DISCLAIMER_SEGMENTS}, BP-71): one honesty beat (plus at most one callback) says it once; on-screen "
-           "labels and the description carry the rest (ST-09)", sev("BP-71"))
+           f"(at most {MAX_DISCLAIMER_SEGMENTS}, BP-71): the story is never interrupted to say it is invented; the title "
+           "and the description carry it, the claim map labels each segment (ST-09, BP-88)", sev("BP-71"))
+    out += immersion_and_showing(doc)
     return out
 
 

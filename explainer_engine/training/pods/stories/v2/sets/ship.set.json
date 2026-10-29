@@ -1,0 +1,216 @@
+{
+ "scene": "ship",
+ "kind": "exterior",
+ "vfov": 45,
+ "far": 90.0,
+ "objects": [
+  {
+   "id": "left_rail",
+   "shape": "box",
+   "min": [
+    -4.2,
+    0,
+    0
+   ],
+   "max": [
+    -4.0,
+    40,
+    1.2
+   ],
+   "label": "the wooden railing on the left",
+   "color": [
+    150,
+    90,
+    40
+   ]
+  },
+  {
+   "id": "right_rail",
+   "shape": "box",
+   "min": [
+    4.0,
+    0,
+    0
+   ],
+   "max": [
+    4.2,
+    40,
+    1.2
+   ],
+   "label": "the wooden railing on the right",
+   "color": [
+    140,
+    60,
+    120
+   ]
+  },
+  {
+   "id": "crates",
+   "shape": "box",
+   "min": [
+    -3.2,
+    5,
+    0
+   ],
+   "max": [
+    -1.8,
+    7.4,
+    1.4
+   ],
+   "label": "the stacked cargo crates",
+   "color": [
+    200,
+    60,
+    50
+   ]
+  },
+  {
+   "id": "wheel",
+   "shape": "box",
+   "min": [
+    2.2,
+    5,
+    0
+   ],
+   "max": [
+    3.2,
+    5.8,
+    1.3
+   ],
+   "label": "the ship's wheel",
+   "color": [
+    60,
+    170,
+    80
+   ]
+  },
+  {
+   "id": "mast",
+   "shape": "box",
+   "min": [
+    -0.4,
+    16,
+    0
+   ],
+   "max": [
+    0.4,
+    16.8,
+    22
+   ],
+   "label": "the tall mast",
+   "color": [
+    230,
+    200,
+    40
+   ]
+  },
+  {
+   "id": "island",
+   "shape": "box",
+   "min": [
+    -14,
+    70,
+    0
+   ],
+   "max": [
+    14,
+    85,
+    9
+   ],
+   "label": "the island with the lighthouse",
+   "color": [
+    40,
+    120,
+    200
+   ]
+  }
+ ],
+ "people": [
+  {
+   "id": "captain",
+   "pos": [
+    2.6,
+    6.6
+   ],
+   "height": 1.85,
+   "radius": 0.28,
+   "color": [
+    235,
+    235,
+    235
+   ]
+  },
+  {
+   "id": "sailor",
+   "pos": [
+    -1.0,
+    4.2
+   ],
+   "height": 1.7,
+   "radius": 0.25,
+   "color": [
+    200,
+    200,
+    255
+   ]
+  }
+ ],
+ "axis": [
+  "captain",
+  "sailor"
+ ],
+ "shots": {
+  "s0": {
+   "cam": {
+    "pos": [
+     0,
+     0,
+     1.6
+    ],
+    "look_at": [
+     0,
+     40,
+     4
+    ]
+   }
+  },
+  "s1": {
+   "subject": "sailor",
+   "size": "medium",
+   "from": [
+    -1.8,
+    1.2
+   ],
+   "angle": "eye"
+  },
+  "s2": {
+   "subject": "captain",
+   "size": "close",
+   "from": [
+    1.6,
+    4.4
+   ],
+   "angle": "eye"
+  },
+  "s3": {
+   "cam": {
+    "pos": [
+     -3.0,
+     4.5,
+     1.6
+    ],
+    "look_at": [
+     3.0,
+     6.0,
+     1.4
+    ]
+   }
+  },
+  "s4": {
+   "subject": "sailor",
+   "size": "medium",
+   "ots": "captain",
+   "angle": "eye"
+  }
+ }
+}

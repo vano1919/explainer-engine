@@ -2,6 +2,7 @@
 look (the bubbles' fonts), no stock chart template. Every number a visual shows is written in the script and traces to a claim.
 
 card:   {"title": "WEEK 1", "line": "Can knowledge replace calluses?"}  - drawn over the first seconds of a period
+counter: "YEAR 2"  - a small chip in the top-left corner for the whole span of its label (ED-15)
 visual: {"id", "segment", "at": "phrase", "kind": "calc"|"bars"|"timeline", "hold": 3..7, "claim": "C-08", ...}
 All functions take the frame (PIL RGB) and return it drawn on; time-dependent parts take ``t`` seconds since the start."""
 from __future__ import annotations
@@ -71,6 +72,54 @@ def card(frame: Image.Image, spec: dict, t: float, dots: int, lit: int) -> Image
         rr = r * (1.5 if i == lit else 1.0)
         d.ellipse([x0 + i * gap - rr, y - rr, x0 + i * gap + rr, y + rr],
                   fill=(ACCENT if on else (90, 80, 70)) + (int(255 * a),), outline=CREAM + (int(200 * a),), width=max(1, H // 500))
+    return out
+
+
+# --- time counter (ED-15) --------------------------------------------------------------------------------------------
+
+COUNTER_FLIP = 0.4
+COUNTER_MAX = 14
+
+
+def counter(frame: Image.Image, label: str, t: float, prev: str | None = None) -> Image.Image:
+    """The corner chip: the label sits top-left the whole time; on a change the old label drops out and the new one drops
+    in within COUNTER_FLIP seconds, so a time jump reads at a glance without covering the picture."""
+    W, H = frame.size
+    lay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    f = font(H * 0.042, True)
+    pad, x0, y0 = int(H * 0.014), int(W * 0.03), int(H * 0.04)
+    u = ease(t / COUNTER_FLIP) if prev else 1.0
+    show = [(label, u, -(1 - u))] + ([(prev, 1 - u, u)] if prev and u < 1 else [])
+    tw = max(_text_w(d, s, f) for s, *_ in show)
+    th = int(H * 0.042)
+    d.rounded_rectangle([x0, y0, x0 + tw + 2 * pad, y0 + th + 2 * pad], radius=pad, fill=INK + (170,),
+                        outline=CREAM + (90,), width=max(1, H // 540))
+    for s, a, dy in show:
+        if a <= 0:
+            continue
+        y = y0 + pad + int(dy * th * 0.8)
+        _shadow_text(d, (x0 + pad, y), s, f, CREAM + (int(255 * a),), H)
+    return Image.alpha_composite(frame.convert("RGBA"), lay).convert("RGB")
+
+
+def check_counter(entries: list, segment_ids: list[str]) -> list[str]:
+    """Problems of the counter (PV-54): known segments in story order, short labels, each one a change."""
+    out, last, prev = [], -1, None
+    for c in entries:
+        if c.get("segment") not in segment_ids:
+            out.append(f"segment {c.get('segment')!r} does not exist")
+            continue
+        i = segment_ids.index(c["segment"])
+        if i <= last:
+            out.append(f"{c['segment']}: entries must follow the segment order")
+        last = i
+        label = (c.get("label") or "").strip()
+        if not label or len(label) > COUNTER_MAX:
+            out.append(f"{c['segment']}: label {label!r} must be 1-{COUNTER_MAX} characters")
+        if label == prev:
+            out.append(f"{c['segment']}: label {label!r} repeats the one before; list only changes")
+        prev = label
     return out
 
 

@@ -1,0 +1,2 @@
+{"scene": "rome", "master": "p2s/out/p2s/rome_11_s0.png", "note": "screen x (share of the width) of the centre of each landmark's visible mass in the master picture, read by eye once (2026-10-26)",
+ "screen_x": {"counter": 0.17, "baker": 0.12, "legionary": 0.55, "fountain": 0.86, "colosseum": 0.57, "left_building": 0.20, "right_building": 0.80}}

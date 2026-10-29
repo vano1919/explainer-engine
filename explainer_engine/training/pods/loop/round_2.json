@@ -1,0 +1,9 @@
+{"round": 2, "scenes": ["tent", "rome"], "seeds": [11, 23], "cfg": 2.5, "control_scale": 1.0,
+ "rows": ["S2Tp", "S2Ep", "S2L", "M6"],
+ "changes": [
+  {"row": "S2Tp", "cause": "prompt", "change": "each panel description starts with the line behind the subject (E9)", "expected": "background stays in the place of the master (rome baker not in the street)"},
+  {"row": "S2Ep", "cause": "prompt", "change": "each panel description starts with the line behind the subject (E9), on the edit grid", "expected": "same as S2Tp on the edit path"},
+  {"row": "S2L", "cause": "strategy_limit", "change": "per-panel camera and left-to-right landmark words from the 3D ray cast added to S2T", "expected": "landmark order and camera follow the set (no ControlNet)"},
+  {"row": "M6", "cause": "strategy_setting", "change": "M4 with control scale 0 and panels 2-4 filled with noise (full regeneration under the mask)", "expected": "style and faces of the M4 panel 1 carry over; fill_survived near 0"}
+ ],
+ "note": "Opus plan section 9 (2026-10-26): round 1 verdict S2T best; depth control dead for this model and LoRA; M5 not in round 2 until its pictures are read"}

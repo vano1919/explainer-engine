@@ -35,6 +35,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 from explainer_engine.audio import cues as CUES
+from explainer_engine.design import icons as ICONS
 from explainer_engine.finish import bubbles as BUB
 from explainer_engine.production import accents as ACC
 from explainer_engine.production import script as S
@@ -51,6 +52,8 @@ GAP_OK_3, GAP_FAIL_3 = float(SR.T("BP-36", "gap_review_s")), float(SR.T("BP-36",
 # VB-02 (BP-37): seconds between expression changes on a dialogue line, /2 metronome and /3 reactions
 FACE_TARGET, FACE_OK, FACE_FAIL = (float(SR.T("BP-37", k)) for k in ("v2_target_s", "v2_gap_review_s", "v2_gap_fail_s"))
 FACE_OK_3, FACE_FAIL_3 = float(SR.T("BP-37", "gap_review_s")), float(SR.T("BP-37", "gap_fail_s"))
+FACE_PER_LINE = int(SR.T("BP-37", "changes_per_line_min"))  # VB-02: no quota since the creator's call of 2026-10-20 21:14
+ANCHOR_WORDS = int(SR.T("BP-93", "anchor_content_words_min"))  # VB-12: a beat is new information only on a narration word
 FACE_FLICKER = float(SR.T("BP-33", "hold_min_s"))  # two changes of one face closer than BP-33's hold are flicker
 CUE_EVENTS = ("reveal", "impact", "transition", "build", "diegetic", "take", "place")  # VB-08 on /3: a cue names its story event
 CUE_REPEAT_WINDOW, CUE_REPEAT_FAIL = float(SR.T("BP-80", "window_s")), int(SR.T("BP-80", "fail_count"))  # VB-10
@@ -74,8 +77,11 @@ CUE_COVER = float(SR.T("BP-39", "cover_s"))  # a cue within this of an effect, o
 CUE_MIN_GAP = float(SR.T("BP-39", "min_gap_s"))  # two cues closer than this stack into one noise
 TAKE_CUES = int(SR.T("BP-39", "take_cues_per_line_max"))  # cued expression changes on one dialogue line
 OVERLAY = {"text", "label", "prop", "chart", "highlight", "symbol"}
-FACE_HOLD, FACE_POP, FACE_EASE, POP_S = 0.10, 0.04, 0.25, 0.18
+FACE_HOLD, FACE_POP, FACE_EASE, POP_S = 0.06, 0.0, 1.2, 0.18  # a slow lean, no pop: a 14 % zoom in 0.25 s read as a cut (PX-CUT-EXTRA, CC-06, BP-92)
+FACE_GLIDE_S = 0.6  # engineering: the face lean moves its pivot to the next speaker over this (a switch jumped, CC-06)
 TEXT_SCALE, MARK_R = 1.15, 0.075  # beat words about 0.09 of the frame height; emotion mark radius (share of the height)
+ICON_PREFIX = "icon:"  # prop asset "icon:a+b": drawn line icons (design/icons.py), one sticker or a row
+ICON_H, ICON_ROW_H = 0.22, 0.16  # sticker height as a share of the frame's short side: one alone, or each of a row
 DEFAULT_POS = {"text": (0.5, 0.16), "label": (0.5, 0.5), "prop": (0.8, 0.3), "chart": (0.8, 0.24), "symbol": (0.86, 0.2)}
 _PALETTE = Path(__file__).resolve().parents[1] / "design" / "palette.json"
 _STOP = set("""a an the and or but so of to in on at for with by from into than then that this these those it its is are was
@@ -107,6 +113,27 @@ def _sev(doc: dict, fail: bool, bp: str | None = None) -> str:
     if not (fail and binding(doc)):
         return "REVIEW"
     return SR.rule(bp).get("severity", "REVIEW") if bp else "FAIL"
+
+
+_WORDS = re.compile(r"[a-z0-9']+")
+
+
+def _content(text: str) -> set[str]:
+    return {w.strip("'") for w in _WORDS.findall(str(text).lower())} - _STOP - {""}
+
+
+def anchored(beat: dict, line: dict) -> bool:
+    """BP-93 (VB-12, RX-12): a beat is tied to a narration word when its line is the narrator's (not a hero's) and its
+    ``at`` holds at least ANCHOR_WORDS content word (not only "the", "of", "them"...). What it shows is VB-03's check."""
+    if line.get("speaker"):
+        return False
+    return len(_content(beat.get("at", ""))) >= ANCHOR_WORDS
+
+
+def counts_as_new(item: dict) -> bool:
+    """BP-36 / BP-40 count a visual beat (or an accent a beat made) as a change only when it is tied to a narration word
+    (BP-93); a timed file written before the rule carries no flag and counts as before."""
+    return item.get("anchored", True)
 
 
 def is_short(doc: dict) -> bool:
@@ -187,6 +214,10 @@ def lint(doc: dict) -> list[dict]:
                        "narrator says here?")
                 elif not words and not (_stems(b.get("why", "")) & here):
                     _f(out, "VB-03", "REVIEW", where, "the reason names nothing of this line: quote the word the beat shows")
+                if scene_rules(doc) and not anchored(b, line) and not (b["kind"] == "expression" and line.get("speaker")):
+                    _f(out, "VB-12", SR.rule("BP-93").get("severity", "REVIEW"), where, f"{b['kind']} beat on {b['at']!r} is "
+                       "not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does "
+                       "not count as something new (BP-93); keep it only if the story needs it")
                 if b["kind"] in ("text", "label") and len(b["text"].split()) > MAX_WORDS:
                     _f(out, "VB-04", _sev(doc, True, "BP-38"), where, f"{len(b['text'].split())} words on screen; at most {MAX_WORDS}")
                 shows_number = re.search(r"\d", words) or b["kind"] == "chart"
@@ -225,9 +256,21 @@ def lint(doc: dict) -> list[dict]:
                 elif cue["sound"] != CUES.NONE and not CUES.MIN_MS <= CUES.length_ms(cue["sound"], cue.get("max_ms")) <= CUES.MAX_MS:
                     _f(out, "VB-08", _sev(doc, True, "BP-64"), where, f"cue {cue['sound']!r} lasts {CUES.length_ms(cue['sound'], cue.get('max_ms')):.0f} "
                        f"ms; a cue is {CUES.MIN_MS}-{CUES.MAX_MS} ms")
+                if b["kind"] == "prop" and str(b.get("asset", "")).startswith(ICON_PREFIX):
+                    missing = [n for n in b["asset"][len(ICON_PREFIX):].split("+") if n not in ICONS.available()]
+                    if missing or not b["asset"][len(ICON_PREFIX):]:
+                        _f(out, "VB-06", "FAIL", where, f"prop icon(s) {missing or b['asset']!r} not in assets/icons/tabler")
                 if b["kind"] == "prop" and not b.get("asset"):
                     _f(out, "VB-06", "REVIEW", where, f"prop {b['thing']!r} has no cut-out (asset): it is drawn as a word sticker")
     return out
+
+
+def icon_hold(asset) -> float:
+    """An icon row stays until every icon is drawn and then a reading moment (engineering: 1.2 s, the symbol's hold)."""
+    if not str(asset or "").startswith(ICON_PREFIX):
+        return 0.0
+    n = len([x for x in asset[len(ICON_PREFIX):].split("+") if x])
+    return n * ICONS.STAGGER_S + ICONS.DRAW_S + HOLD["symbol"]
 
 
 def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict], fps: int, duration: float,
@@ -266,7 +309,8 @@ def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict
                 last_j = j
                 k = max(0, sum(1 for x in starts if x <= st) - 1)
                 item = dict(b, segment=seg["id"], line=li + 1, start=st, start_frame=int(round(st * fps)), shot=shots[k]["id"],
-                            picture=shots[k]["picture"], line_end=round(line_end, 3), _shot_end=shots[k]["end"])
+                            picture=shots[k]["picture"], line_end=round(line_end, 3), _shot_end=shots[k]["end"],
+                            anchored=anchored(b, line) if scene_rules(doc) else True)  # BP-93 binds /3; /2 keeps its contract
                 if line.get("speaker"):
                     item["speaker"] = line["speaker"]
                 if b["kind"] == "expression":
@@ -284,8 +328,8 @@ def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict
         elif kind == "accent":
             end = b["start"]
         else:
-            end = b["start"] + HOLD[kind]
-        if kind in PICTURE_BOUND:
+            end = b["start"] + max(HOLD[kind], icon_hold(b.get("asset")))
+        if kind in PICTURE_BOUND or str(b.get("asset", "")).startswith(ICON_PREFIX):  # a drawn prop belongs to its scene
             end = min(end, b["_shot_end"])
         b["end"] = round(max(b["start"], min(end, duration)), 3)
         b["end_frame"] = int(round(b["end"] * fps))
@@ -296,7 +340,8 @@ def resolve(doc: dict, toks: list[dict], words: list[dict], wi, shots: list[dict
         sh["visual_beats"] = sh.get("visual_beats", 0) + 1
         if b["kind"] == "accent":
             sh["accents"].append({"kind": b["effect"], "start": b["start"], "start_frame": b["start_frame"],
-                                  "strength": float(b.get("strength", 0.6)), "text": "", "pos": [0.5, 0.2], "beat": True})
+                                  "strength": float(b.get("strength", 0.6)), "text": "", "pos": [0.5, 0.2], "beat": True,
+                                  "anchored": b["anchored"]})
             sh["accents"].sort(key=lambda a: a["start"])
     return out
 
@@ -468,6 +513,8 @@ def check_timed(timed: dict, doc: dict) -> list[dict]:
                 changes.append(b["start"])
         where = f"{ln['segment']} line {ln['line']}"
         if not changes:
+            if len(changes) >= FACE_PER_LINE:  # BP-37: no quota per line (0): a reaction is a choice, not a rule
+                continue
             if scene_rules(doc):
                 _f(out, "VB-02", _sev(doc, True, "BP-37"), where, f"a dialogue line ({ln['duration']:.1f} s) with no expression change: "
                    "the listener's face is where the line lands (Kuleshov); at least one reaction on every spoken line")
@@ -577,12 +624,20 @@ def face_camera(box, W: int, H: int, face_beats: list[dict], f: int, fps: int):
     span1 = max(b["end_frame"] for b in face_beats)
     if not span0 <= f < span1 + FACE_EASE * fps:
         return box
-    hold = FACE_HOLD * min(_ease((f - span0) / (FACE_EASE * fps)), _ease((span1 + FACE_EASE * fps - f) / (FACE_EASE * fps)))
+    def smooth(u):  # zero speed at both ends: an ease-out cubic starts at full speed and read as a jolt (PX-CAM-JUMP)
+        u = min(max(u, 0.0), 1.0)
+        return u * u * (3 - 2 * u)
+    hold = FACE_HOLD * min(smooth((f - span0) / (FACE_EASE * fps)), smooth((span1 + FACE_EASE * fps - f) / (FACE_EASE * fps)))
     cur = [b for b in face_beats if b["start_frame"] <= f]
     b = cur[-1] if cur else face_beats[0]
     pop = FACE_POP * _bump((f - b["start_frame"]) / (POP_S * fps)) if cur else 0.0
     z = 1 + hold + pop
-    px, py = b["face"][0] * W, b["face"][1] * H
+    fx, fy = b["face"]
+    if len(cur) > 1 and cur[-2]["face"] != b["face"]:  # the lean glides to the next face; a switched pivot jumped (CC-06)
+        u = min(max((f - b["start_frame"]) / (FACE_GLIDE_S * fps), 0.0), 1.0)
+        m = u * u * (3 - 2 * u)  # smoothstep: no speed step where the glide starts or ends
+        fx, fy = cur[-2]["face"][0] + (fx - cur[-2]["face"][0]) * m, cur[-2]["face"][1] + (fy - cur[-2]["face"][1]) * m
+    px, py = fx * W, fy * H
     x0, y0, x1, y1 = box
     nx0, ny0 = px + (x0 - px) / z, py + (y0 - py) / z
     nx1, ny1 = px + (x1 - px) / z, py + (y1 - py) / z
@@ -806,6 +861,7 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
             continue
         kind = b["kind"]
         px, py = b.get("pos") or DEFAULT_POS.get(kind, (0.5, 0.5))
+        side = -1 if px > 0.5 else 1  # from the picture spot, never the moving camera: a spot at 0.5 flipped every frame
         if kind in ("label", "highlight"):  # a spot of the picture: follow the camera
             px, py = _to_frame((px, py), box, W, H, OW, OH)
             px, py = px / OW, py / OH
@@ -817,7 +873,7 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
             d = ImageDraw.Draw(lay)
             frame = ACC._text_layer(frame, b["text"], (px, py), sc * TEXT_SCALE, a / 255, BUB.SHOUT_FONT, big=False)
         elif kind == "label":
-            tx, ty = x + (-1 if px > 0.5 else 1) * U * 0.16, max(U * 0.08, y - U * 0.14)
+            tx, ty = x + side * U * 0.16, max(U * 0.08, y - U * 0.14)
             d.line([(x, y), (tx, ty)], fill=PAPER + (a,), width=max(2, U // 220))
             d.ellipse([x - U * 0.008, y - U * 0.008, x + U * 0.008, y + U * 0.008], fill=CORAL + (a,))
             _tag(d, b["text"], tx, ty, U * 0.06 * min(sc, 1.05), a)
@@ -829,6 +885,18 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
             _symbol(d, b["symbol"], x, y, U * 0.085 * sc, a)
         elif kind == "chart":
             _chart(d, b, x, y, U, t, a)
+        elif kind == "prop" and str(b.get("asset", "")).startswith(ICON_PREFIX):  # drawn on from line icons (design/icons)
+            names = b["asset"][len(ICON_PREFIX):]
+            h = int(U * (ICON_H if "+" not in names else ICON_ROW_H))
+            row = ICONS.strip(names, h, t)
+            if row is not None:
+                if a < 255:
+                    row = row.copy()
+                    row.putalpha(row.getchannel("A").point(lambda v: v * a // 255))
+                rx = int(min(max(x - row.width / 2, OW * 0.03), OW * 0.97 - row.width))
+                lay.alpha_composite(row, (rx, int(y - h / 2)))
+                if b.get("text"):  # a caption under the row: "$40", "10 %"
+                    _tag(d, b["text"], rx + row.width / 2, y + h / 2 + U * 0.05, U * 0.055, a)
         elif kind == "prop":
             im = _sprite(find_file(b.get("asset"), dirs))
             if im is None:
@@ -862,3 +930,64 @@ def draw(frame: Image.Image, shot_beats: list[dict], f: int, fps: int, box, src_
                     piece.putalpha(piece.getchannel("A").point(lambda v: v * a // 255))
                 lay.alpha_composite(piece, (ix, iy))
     return Image.alpha_composite(frame.convert("RGBA"), lay).convert("RGB")
+
+
+def _norm(s: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def named_heroes(at: str, cast: dict) -> list[str]:
+    """The cast heroes a beat's phrase names: the hero id or the full name of his card (``name``) in the words."""
+    t = _norm(at)
+    return [w for w, c in cast.items() if _norm(w) in t or (c.get("name") and _norm(c["name"]) in t)]
+
+
+def fit_to_views(shots: list[dict], beats: list[dict], pics: dict, cast: dict, fps: int, problems: list[dict]) -> list[dict]:
+    """The timed beats made to fit what the frame shows (frame review 2026-10-20, CC-04):
+
+    * a ring (``highlight``) or a ``label`` whose phrase (a label: or its tag) names a hero is centred on his face point in
+      the shot's picture (FR-RING-HERO: the script's ``pos`` missed the face by most of the ring's radius; the S02 label
+      "KEVIN O'LEARY" pointed at an empty wall). Rings and labels naming no hero are props: ``qa/prop_points`` finds them;
+    * a mark that points into the picture (ring, label) is kept only on the scene: trimmed to the scene frames of its
+      shot's ``views`` (faces.views), dropped with a REVIEW when a close-up covers all of it (FR-RING-FACE);
+    * a word, symbol, prop or chart that would run past its shot's cut ends with the shot when it stays readable there
+      (BP-27's hold floor), so it never lands on the next picture (FR-TEXT-CUT).
+    Returns the beats that remain."""
+    by_id = {s["id"]: s for s in shots}
+    hold_min, per_word = float(SR.T("BP-27", "hold_min_s")), float(SR.T("BP-27", "s_per_word"))
+    keep = []
+    for b in beats:
+        s = by_id.get(b.get("shot"))
+        if s is None:
+            keep.append(b)
+            continue
+        if b["kind"] in ("highlight", "label"):
+            speakers = (pics.get(s["picture"], {}) or {}).get("speakers") or {}
+            named = [w for w in named_heroes(b.get("at", ""), cast) if w in speakers]
+            if b["kind"] == "label" and not named:  # a label may name the hero only in its tag ("KEVIN O'LEARY")
+                named = [w for w in named_heroes(b.get("text", ""), cast) if w in speakers]
+            if len(named) == 1:
+                b["pos"] = list(speakers[named[0]])
+                b["on_hero"] = named[0]
+        if b["kind"] in ("highlight", "label"):
+            scene = [v for v in s.get("views") or [] if v["who"] is None]
+            if s.get("views") and any(v["who"] is not None for v in s["views"]):
+                e = max(b["end_frame"], b["start_frame"] + 1)
+                runs = [(max(b["start_frame"], v["start_frame"]), min(e, v["end_frame"])) for v in scene]
+                runs = [r for r in runs if r[1] > r[0]]
+                if not runs:
+                    problems.append({"rule": "PV-44 VB-03", "severity": "REVIEW", "where": f"{b['segment']} line {b['line']}",
+                                     "detail": f"{b['kind']} {b.get('at', '')!r} falls on a close-up of {s['id']}: dropped "
+                                     "(a mark in the picture cannot point at a close-up)"})
+                    s["visual_beats"] = max(0, s.get("visual_beats", 1) - 1)
+                    continue
+                a, z = runs[0]
+                b["start_frame"], b["end_frame"] = a, z
+                b["start"], b["end"] = round(a / fps, 3), round(z / fps, 3)
+        elif b["kind"] in OVERLAY and b["end"] > s["end"] + 1e-6:
+            n = len(payload(b).split())
+            need = max(hold_min, per_word * n) if b["kind"] == "text" else hold_min
+            if s["end"] - b["start"] >= need - 1e-6:
+                b["end"], b["end_frame"] = round(s["end"], 3), s["end_frame"]
+        keep.append(b)
+    return keep

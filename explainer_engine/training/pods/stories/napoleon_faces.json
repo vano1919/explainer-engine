@@ -1,0 +1,48 @@
+{
+  "story": "napoleon_faces",
+  "before_lt79": true,
+  "brief": "ვანო 2026-10-26 11:21-11:22 Tbilisi: the faces look like the Rick and Morty boy; option 1 (no retraining): lower LoRA weight + faces described unlike that show's (\"დაუწყე 1\").",
+  "note": "Close-ups from text alone (frame 0 works, napoleon_tent), each person twice: as in napoleon_tent (A2, A3) and with a face description unlike the show's default face (big round eyes with dot pupils, round head, wobbly mouth). Runs = LoRA 2250 at weight 1.0, 0.7 and 0.5.",
+  "shots": [
+    {
+      "id": "G",
+      "master": null,
+      "desc": "Inside a lantern-lit canvas army tent at night. A short stocky general with a pale round face and a black bicorne hat worn sideways, in a grey greatcoat, stares straight ahead with narrowed eyes and a clenched jaw, one hand gripping the edge of a map table. The lantern above casts hard shadows under the brim of his hat. Close-up, the general's face."
+    },
+    {
+      "id": "Gf",
+      "master": null,
+      "desc": "Inside a lantern-lit canvas army tent at night. A short stocky general in a black bicorne hat worn sideways and a grey greatcoat stares straight ahead. His face is fleshy and square, with small hooded eyes, heavy dark eyebrows, a long hooked nose, deep lines beside a thin tight mouth and a heavy double chin. The lantern above casts hard shadows under the brim of his hat. Close-up, the general's face."
+    },
+    {
+      "id": "O",
+      "master": null,
+      "desc": "Inside the lantern-lit army tent at night. A tall young officer with long sideburns, in a dark blue coat with gold epaulettes and a red sash, stands breathing hard, eyes wide, mouth open as he speaks, pointing back over his shoulder at the open tent flap. Sweat shines on his forehead and the canvas wall glows warm behind him. Close-up, the officer's face and pointing hand."
+    },
+    {
+      "id": "Of",
+      "master": null,
+      "desc": "Inside the lantern-lit army tent at night. A tall young officer in a dark blue coat with gold epaulettes and a red sash points back over his shoulder at the open tent flap, speaking fast. His face is long and narrow, with high sharp cheekbones, small almond-shaped eyes, a thin pointed nose, a long chin and curly sideburns. Sweat shines on his forehead. Close-up, the officer's face and pointing hand."
+    }
+  ],
+  "runs": [
+    {
+      "name": "w10",
+      "lora": "A",
+      "weight": 1.0,
+      "shots": "all"
+    },
+    {
+      "name": "w07",
+      "lora": "A",
+      "weight": 0.7,
+      "shots": "all"
+    },
+    {
+      "name": "w05",
+      "lora": "A",
+      "weight": 0.5,
+      "shots": "all"
+    }
+  ]
+}

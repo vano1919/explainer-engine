@@ -1,0 +1,188 @@
+{
+ "scene": "tent",
+ "kind": "interior",
+ "vfov": 45,
+ "room": {
+  "min": [
+   -2.5,
+   -0.6,
+   0.0
+  ],
+  "max": [
+   2.5,
+   5.0,
+   3.0
+  ]
+ },
+ "objects": [
+  {
+   "id": "table",
+   "shape": "box",
+   "min": [
+    -1.0,
+    1.8,
+    0.0
+   ],
+   "max": [
+    1.0,
+    3.0,
+    0.8
+   ],
+   "label": "the map table",
+   "color": [
+    200,
+    60,
+    50
+   ]
+  },
+  {
+   "id": "bed",
+   "shape": "box",
+   "min": [
+    -2.5,
+    1.0,
+    0.0
+   ],
+   "max": [
+    -1.6,
+    3.0,
+    0.5
+   ],
+   "label": "the camp bed",
+   "color": [
+    60,
+    170,
+    80
+   ]
+  },
+  {
+   "id": "entrance",
+   "shape": "box",
+   "min": [
+    2.45,
+    3.6,
+    0.0
+   ],
+   "max": [
+    2.5,
+    4.8,
+    2.2
+   ],
+   "label": "the entrance flap",
+   "color": [
+    30,
+    40,
+    140
+   ]
+  },
+  {
+   "id": "pole",
+   "shape": "box",
+   "min": [
+    -0.05,
+    2.35,
+    0.0
+   ],
+   "max": [
+    0.05,
+    2.45,
+    3.0
+   ],
+   "label": "the lantern pole",
+   "color": [
+    230,
+    200,
+    40
+   ]
+  }
+ ],
+ "people": [
+  {
+   "id": "napoleon",
+   "pos": [
+    -0.6,
+    3.5
+   ],
+   "height": 1.65,
+   "radius": 0.25,
+   "color": [
+    235,
+    235,
+    235
+   ]
+  },
+  {
+   "id": "general",
+   "pos": [
+    0.9,
+    3.2
+   ],
+   "height": 1.8,
+   "radius": 0.25,
+   "color": [
+    200,
+    200,
+    255
+   ]
+  }
+ ],
+ "axis": [
+  "napoleon",
+  "general"
+ ],
+ "shots": {
+  "s0": {
+   "cam": {
+    "pos": [
+     0.0,
+     -0.4,
+     1.6
+    ],
+    "look_at": [
+     0.0,
+     3.0,
+     1.1
+    ]
+   }
+  },
+  "s1": {
+   "subject": "general",
+   "size": "medium",
+   "side": "A",
+   "angle": "eye",
+   "ots": "napoleon"
+  },
+  "s2": {
+   "subject": "napoleon",
+   "size": "close",
+   "from": [
+    -0.6,
+    1.2
+   ],
+   "angle": "eye"
+  },
+  "s3": {
+   "subject": "general",
+   "size": "medium",
+   "from": [
+    -0.8,
+    2.4
+   ],
+   "angle": "eye"
+  },
+  "s4": {
+   "cam": {
+    "pos": [
+     2.3,
+     3.6,
+     1.6
+    ],
+    "look_at": [
+     -1.5,
+     2.0,
+     1.0
+    ]
+   }
+  }
+ }
+}
