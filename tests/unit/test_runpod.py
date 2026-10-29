@@ -297,6 +297,7 @@ def test_the_cli_refuses_without_the_creators_word(env):
 
 def test_create_cli_reserves_in_the_ledger_writes_a_session_and_names_the_lifetime(env, tmp_path, monkeypatch):
     fake, api = env
+    monkeypatch.setenv("NTFY_TOPIC", "test-topic")     # check() reports a missing push topic while a pod is live (CR-14)
     monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)
     monkeypatch.setattr(R, "live_guard", lambda pid: True)
     ledger = tmp_path / "run.json"
@@ -503,6 +504,7 @@ def test_create_is_refused_past_the_24h_billing_the_balance_or_with_a_stray_disk
 
 def test_check_flags_stopped_disks_unless_the_creator_keeps_them(env, tmp_path, monkeypatch):
     fake, api = env
+    monkeypatch.setenv("NTFY_TOPIC", "test-topic")
     fake.pods = {"ex": pod("ex", "x", "EXITED", volumeInGb=60), "run": pod("run", "ee-x-until-100"), "err": pod("err", "e", "ERROR")}
     res = R.check(api, now=1000)
     assert len(res["problems"]) == 3 and "$0.39/day" in res["problems"][0] and "in ERROR" in res["problems"][2]
