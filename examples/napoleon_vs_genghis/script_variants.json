@@ -2881,6 +2881,52 @@
      "window_s": 14.0
     }
    ],
+   "cost_rows": [
+    {
+     "label": "keyframes (one per shot card)",
+     "kind": "pod",
+     "job": "keyframe",
+     "units": 214,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "video, light tier",
+     "kind": "pod",
+     "job": "ltx_light",
+     "units": 44,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "video, full tier",
+     "kind": "pod",
+     "job": "ltx_full",
+     "units": 160,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "pod boot and model load",
+     "kind": "pod",
+     "job": "pod_overhead",
+     "units": 2,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "held stills, assembly (CPU)",
+     "kind": "cpu",
+     "units": 1,
+     "service": "runpod_usd"
+    },
+    {
+     "label": "narration (ElevenLabs credits, one per character)",
+     "kind": "voice",
+     "units": 5761,
+     "service": "elevenlabs_credits"
+    }
+   ],
    "dynamics": {
     "share_scene": 0.801,
     "share_map_pure": 0.0,
@@ -2962,57 +3008,13 @@
      }
     ]
    },
-   "cost_rows": [
-    {
-     "label": "keyframes (one per shot card)",
-     "kind": "pod",
-     "job": "keyframe",
-     "units": 214,
-     "service": "runpod_usd",
-     "pod": "pod1"
-    },
-    {
-     "label": "video, light tier",
-     "kind": "pod",
-     "job": "ltx_light",
-     "units": 44,
-     "service": "runpod_usd",
-     "pod": "pod1"
-    },
-    {
-     "label": "video, full tier",
-     "kind": "pod",
-     "job": "ltx_full",
-     "units": 160,
-     "service": "runpod_usd",
-     "pod": "pod1"
-    },
-    {
-     "label": "pod boot and model load",
-     "kind": "pod",
-     "job": "pod_overhead",
-     "units": 2,
-     "service": "runpod_usd",
-     "pod": "pod1"
-    },
-    {
-     "label": "held stills, assembly (CPU)",
-     "kind": "cpu",
-     "units": 1,
-     "service": "runpod_usd"
-    },
-    {
-     "label": "narration (ElevenLabs credits, one per character)",
-     "kind": "voice",
-     "units": 5761,
-     "service": "elevenlabs_credits"
-    }
-   ],
    "risks": [
+    "REVIEW VP-11 KEYFRAME_LTX:full",
+    "REVIEW VP-11 KEYFRAME_LTX:light",
     "REVIEW VP-12 cost"
    ],
    "scores": {
-    "code": 90,
+    "code": 70,
     "critic": null
    }
   },
@@ -3351,6 +3353,44 @@
      ]
     }
    ],
+   "cost_rows": [
+    {
+     "label": "keyframes (planned shots)",
+     "kind": "pod",
+     "job": "keyframe",
+     "units": 210,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "video of the played blocks, full tier",
+     "kind": "pod",
+     "job": "ltx_full",
+     "units": 76,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "pod boot and model load",
+     "kind": "pod",
+     "job": "pod_overhead",
+     "units": 2,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "maps, HUD, dossiers, parallax (CPU)",
+     "kind": "cpu",
+     "units": 1,
+     "service": "runpod_usd"
+    },
+    {
+     "label": "narration (ElevenLabs credits, one per character)",
+     "kind": "voice",
+     "units": 5761,
+     "service": "elevenlabs_credits"
+    }
+   ],
    "dynamics": {
     "share_scene": 0.362,
     "share_map_pure": 0.158,
@@ -3422,52 +3462,13 @@
      }
     ]
    },
-   "cost_rows": [
-    {
-     "label": "keyframes (planned shots)",
-     "kind": "pod",
-     "job": "keyframe",
-     "units": 210,
-     "service": "runpod_usd",
-     "pod": "pod1"
-    },
-    {
-     "label": "video of the played blocks, full tier",
-     "kind": "pod",
-     "job": "ltx_full",
-     "units": 76,
-     "service": "runpod_usd",
-     "pod": "pod1"
-    },
-    {
-     "label": "pod boot and model load",
-     "kind": "pod",
-     "job": "pod_overhead",
-     "units": 2,
-     "service": "runpod_usd",
-     "pod": "pod1"
-    },
-    {
-     "label": "maps, HUD, dossiers, parallax (CPU)",
-     "kind": "cpu",
-     "units": 1,
-     "service": "runpod_usd"
-    },
-    {
-     "label": "narration (ElevenLabs credits, one per character)",
-     "kind": "voice",
-     "units": 5761,
-     "service": "elevenlabs_credits"
-    }
-   ],
    "risks": [
     "REVIEW VP-16 narrator",
-    "REVIEW VP-11 COMPENSATOR",
-    "REVIEW VP-11 MAP",
+    "REVIEW VP-11 KEYFRAME_LTX:full",
     "REVIEW VP-12 cost"
    ],
    "scores": {
-    "code": 60,
+    "code": 70,
     "critic": null
    }
   }
