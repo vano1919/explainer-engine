@@ -2910,6 +2910,63 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 - Wording: RP-10's message says "failed create or BAD_HOST pod(s)" (a failed `create` of any cause uses the one try). `check` only REPORTS
   unknown `keep_stopped_pods` ids; it does not clean them up (`config/spend_caps.json` changes only on the creator's word).
 
+## 2026-10-30 09:00 UTC: Blueprint P4, the audio spine, the sound director and the free-generator gate (no pod, no paid take)
+
+- ვანო (2026-10-29 18:17 UTC, D8): a free generator only with measured quality and variety, otherwise ElevenLabs; the narrator stays on the
+  connector (no REST client). Plan: `blueprint_2026-10-29/P4/P4_DESIGN.md` (Opus 5.5 high, OR-26); built by Sonnet 5.5 high in eight commits
+  on the plan's order (draft PR #51). Nothing paid was called, no pod, no network.
+- **Spine** (`audio/spine.py`, `audio_spine/2`): one clock compiled from `words.json` + `timed.json` (+ `film_shots`), never written or
+  repaired; D-88 post-hoc dialogue windows (a window of the planned length after the last read word, later words move, `read_time`
+  inverts, `retime_post_hoc` swaps planned for clip). **Sound director** (`audio/sound_director.py`, `audio/acoustics.py`):
+  `sound_mix_manifest/2` is derived (CN-02, CN-16, SD-15 stale = FAIL), the shot-to-audio matrix (BP-160) is rendered from code into
+  AUDIO_SYSTEM, checks SD-01..SD-15 (every severity is the registry level of its rule; FAIL only SD-05's BP-54 onset, SD-13, SD-14,
+  SD-15). **Render** (`assemble.build_audio_v2`): constant-power pan, widened music, one impulse response per scene, perspective,
+  presence-band dip, vacuums, three-layer hits, stems; a job without a manifest takes the old `build_audio` unchanged.
+- **Free-generator gate** (`audio/generator_gate.py`, BP-162/BP-163): `measure` (duration, silence share, clipped share, DC offset, a loop's
+  seam; variety by `voice_audition.mfcc_embedding` against the library's ElevenLabs items; near-duplicate seeds), `sheet` (seeded,
+  blind, levelled A/B), `admit` (refused without `creator_ref` + `at` + the answered sheet + a passing report), `admitted(kind)`.
+  Order: library, then an admitted free generator, then the connector. Enforced in `assets_reuse` (`generate_free`; `generate_new`
+  needs `--why` while a kind is admitted), the ElevenLabs hook (same refusal shape as OR-18), `register --source-kind open_model
+  --admission` and `sfx_library.validate` (SD-13). **No generator is admitted**: `assets/audio/generator_admission.json` does not exist, so
+  nothing changes today.
+- **Stage 4b**: `stage_guard` stage `sound` owns no script field (a pass that changes the script is a violation); `edit-planner` step
+  "4b Sound" (no new agent: `config/model_routing.json` is protected); ORCHESTRATION executor row, STORY_ENGINE row, `editing-style`
+  "Sound director", AUDIO_SYSTEM (v1 event contract marked superseded, the gate documented), CONTRACTS (sfx_manifest additions).
+- Deviations from the plan, with the reason:
+  1. SD-04 dip depth is derived by `acoustics.dip_centre_for_gap`: the spec's 3.5 dB at the Q 1.2 bell moves the 1-4 kHz band by only
+     1.4 dB, so the centre depth is solved for the gap BP-118 asks for (SD-04 measures the gap, never the filter).
+  2. The mid perspective is the midpoint of BP-122's near and far ends (the spec names no value).
+  3. `level_voice` peaks at 4.0 GB RSS on a 15-minute read; that is the pre-existing path (the old `build_audio` does the same);
+     chunking it is a follow-up.
+  4. `assemble(job=None)`: the signature keeps `job` optional so the old callers and tests stay as they were.
+  5. The dialogue-window `total_frames` against the picture's length is P6's (it picks the native lines); until then the spine has no windows.
+  6. BP-163 gained four threshold keys (`prompts_clean_min` 0.8 from spec 5.1 "80 % of prompts", `silence_floor_dbfs`, `window_ms`,
+     `clip_level`) so no number is literal in `generator_gate.py`; its statement says so. DC offset is reported, not judged (BP-163
+     has no limit for it).
+  7. A prompt is clean only when all `takes_per_prompt` takes exist and pass; the variety is computed over technically clean takes only.
+  8. `admit` takes `sheet` (its sha256 is recorded) and an optional `prefer_rate`, recorded as he states it and not gated: his recorded
+     word is the gate (OPEN 1 below); `register --source-kind open_model` also needs the model's own licence note (the ElevenLabs default
+     would be false) and refuses an admission for another model; the kind of a take is music, room_tone (tag) or sfx (other foley).
+  9. SD-13 at plan time still checks only that an `open_model` item names an admission; the file check (kind, model) is `validate`'s and
+     `register`'s. `stage_guard`'s `ORDER` does not list `sound` (it runs after the read, outside the script stages' chain).
+- OPEN for the creator (none blocks; the default is what is built): (1) the admission bar: his blind A/B answer, a generator admitted
+  for a kind if he prefers it or calls it "same" on at least half of the pairs (his number can replace "half"); (2) where the free
+  measurement run happens: default the HF ZeroGPU Space through the connector, else CPU in a cloud session, never a pod; (3) music width
+  from mono library files: default a fixed all-pass decorrelation; (4) room tone when the library has none: default procedural pink noise
+  per scene (free, seeded).
+- Cross-review fixes (plan thread, 2026-10-30): `assemble.v2_manifest` now runs `contracts.errors` (schema, CN-16, CN-02) and refuses a
+  manifest that is not `sound_mix_manifest/2`, has an empty or missing `derived_from`, or was hand-edited into an invalid shape (SD-15);
+  `test_assemble_v2` pins it (six forged cases, not-JSON, one fresh pass) and pins the old mono path by a golden int16 sha256 of
+  `build_audio` (equal on main and on this head). SD-04's limit is written into BP-118 and AUDIO_SYSTEM.
+- Follow-ups, not in this PR: (a) an admission gate before the first generator is admitted: `assets/audio/generator_admission.json` is
+  not in the governance `protected_files`, `admit` trusts the report's numbers (it re-derives the verdict, but a hand-written file
+  passes) and the mix-time SD-13 only looks for an id; (b) block-wise `level_voice`: 3.84 GB peak RSS on main alone for 15 minutes,
+  4.01 GB old path, 4.07 GB v2, so the stereo mix adds almost nothing but the whole path wants chunking.
+- Not done, on purpose: the measurement run of ACE-Step 1.5 and Stable Audio Open Small against the library (spec 5.3) is a separate free
+  step after the merge; P6 (native-dialogue lane), P7 (cuts, OTIO) and P8 (CRAFT-SND-09/11 critic rows) are the handoffs of spec 6.4.
+- Tests: `test_audio_spine`, `test_sound_director`, `test_acoustics`, `test_assemble_v2`, `test_generator_gate` (17), the sound stage in
+  `test_story_engine`, contract fixtures /2. Full suite (not system, not media): 1906 passed; docs_lint 0 findings; governance check ok.
+
 ## 2026-10-30 08:30 UTC: the pre-pod secrets gate (CR-19; free, no pod, no money)
 
 - `cloud/env_presence.py` + the manual workflow `.github/workflows/presence_check.yml` ("Run workflow"): prints `present` / `MISSING` for

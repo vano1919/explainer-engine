@@ -389,6 +389,7 @@ These are the stages and gates. How to run them is in the skill `story-engine`.
 | 2b | `beat-writer` (same segment, right after the writer) | line `visual_beats`; on `/3` cues opt-in and event-bound | `stage_guard beats`, PV-44 (VB rules) |
 | 3 | `performance-director` | line delivery | `stage_guard performer` (words frozen) |
 | 4 | `edit-planner` | shots, accents, audio, visuals; a beat's `pos` only | `stage_guard editor`, PV-24, PV-35, PV-36, PV-44 |
+| 4b | sound pass (a step of `edit-planner`, after the read is timed; [AUDIO_SYSTEM](AUDIO_SYSTEM.md) "Sound director") | nothing in the script; writes `audio/` only | `stage_guard sound` (script unchanged), SD checks 0 FAIL |
 | 5 | `voice-caster` | `voice`, `cast.<id>.voice` | `stage_guard caster`, PV-10, PV-32 |
 | 6 | `shorts-writer` | `shorts` | `stage_guard shorts`, PV-28, PV-34 |
 | 7 | `script-critic` | findings only; on `/3` also the integrated production-coherence review `editorial_review/2` ([SCRIPTING_SPEC](SCRIPTING_SPEC.md) section 5.2, D-60) ; a passing review also writes `story_page.md`, the whole story on one page in Georgian and why it is well told ([BP-89](SOURCED_RULES.md), EG-23) | editorial gate (EG); at most 2 rounds, then creator approval #1 of the finished script, recorded in `episode.script_approval` ([OR-17](ORCHESTRATION.md)) |

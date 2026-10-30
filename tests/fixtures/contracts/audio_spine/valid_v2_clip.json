@@ -1,0 +1,79 @@
+{
+ "schema": "audio_spine/2",
+ "derived_from": {
+  "words": {
+   "path": "x/file.bin",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "timed": {
+   "path": "x/file.bin",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "film_shots": {
+   "path": "x/file.bin",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ },
+ "fps": 24,
+ "duration_s": 2.5,
+ "total_frames": 60,
+ "words": [
+  {
+   "i": 0,
+   "text": "w0",
+   "start_s": 0.0,
+   "end_s": 0.4,
+   "start_frame": 0,
+   "end_frame": 10,
+   "segment": "S01",
+   "line": 0
+  },
+  {
+   "i": 1,
+   "text": "w1",
+   "start_s": 0.5,
+   "end_s": 0.9,
+   "start_frame": 12,
+   "end_frame": 22,
+   "segment": "S01",
+   "line": 0
+  },
+  {
+   "i": 2,
+   "text": "w2",
+   "start_s": 1.5,
+   "end_s": 1.9,
+   "start_frame": 36,
+   "end_frame": 46,
+   "segment": "S01",
+   "line": 0
+  },
+  {
+   "i": 3,
+   "text": "w3",
+   "start_s": 2.0,
+   "end_s": 2.4,
+   "start_frame": 48,
+   "end_frame": 58,
+   "segment": "S01",
+   "line": 0
+  }
+ ],
+ "segments": [
+  {
+   "id": "S01",
+   "start_frame": 0,
+   "end_frame": 60
+  }
+ ],
+ "post_hoc_shots": [
+  {
+   "shot_id": "s9",
+   "start_frame": 24,
+   "end_frame": 36,
+   "after_word": 1,
+   "source": "clip",
+   "clip_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  }
+ ]
+}

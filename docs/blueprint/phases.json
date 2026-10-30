@@ -168,9 +168,9 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 4,
    "thread": null,
-   "pr": null,
-   "state": "todo",
-   "waits": "— (D8: გენერატორი მხოლოდ გაზომილი ხარისხით)"
+   "pr": "[#51](https://github.com/vano1919/explainer-engine/pull/51) draft",
+   "state": "review",
+   "waits": "cross-review (plan thread); the creator's admission word and blind A/B answer before any free generator is used (D8, BP-162); the free measurement run after the merge"
   },
   {
    "id": "P5b",

@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from explainer_engine.standards import sourced_rules as RULES  # SR is the sample rate here
+
 SR = 48000
 
 
@@ -222,6 +224,35 @@ def monocle_pop(seed: int) -> np.ndarray:
     return out
 
 
+def hit_sub(seed: int) -> np.ndarray:
+    """The sub layer of a composite hit (BP-119): a falling sine below ``sub_hz``, band-limited to it."""
+    rng = np.random.default_rng(seed)
+    sub = float(RULES.T("BP-119", "sub_hz"))
+    n = int(0.6 * SR)
+    t = np.arange(n) / SR
+    f = np.minimum(sub * 0.85, 62 + rng.uniform(-4, 4)) * np.exp(-1.6 * t) + 30
+    out = np.sin(2 * np.pi * np.cumsum(f) / SR) * _env(n, 0.008, 0.16)
+    return _band(_band(out.astype(np.float32), 0, sub), 0, sub) * 1.5
+
+
+def hit_body(seed: int) -> np.ndarray:
+    """The body layer (BP-119): a struck mid-range thump of noise and a low ping, band-limited to ``body_hz``."""
+    rng = np.random.default_rng(seed)
+    lo, hi = (float(x) for x in RULES.T("BP-119", "body_hz"))
+    n = int(0.45 * SR)
+    out = _noise(0.45, rng) * _env(n, 0.002, 0.07) + _ping(260 + rng.uniform(-20, 20), 0.45, 0.09, 1.4)
+    return _band(_band(out, lo, hi), lo, hi) * 1.3
+
+
+def hit_air(seed: int) -> np.ndarray:
+    """The air layer (BP-119): a short bright burst of noise, band-limited to ``air_hz``."""
+    rng = np.random.default_rng(seed)
+    lo, hi = (float(x) for x in RULES.T("BP-119", "air_hz"))
+    n = int(0.35 * SR)
+    out = _noise(0.35, rng) * _env(n, 0.001, 0.05)
+    return _band(_band(out, lo, hi), lo, hi) * 1.6
+
+
 # id -> (category tags, generator, seeds)
 BUILD = {
     "footstep_snow": (["footstep", "snow", "walk"], lambda s: footstep("snow", s), (1, 2, 3)),
@@ -245,4 +276,7 @@ BUILD = {
     "pop_in": (["ui", "appear", "pop"], pop_in, (1,)),
     "swish": (["transition", "whoosh"], swish, (1, 2)),
     "monocle_pop": (["analyst", "startle", "prop"], monocle_pop, (1,)),
+    "hit_sub": (["hit", "hit_sub", "impact"], hit_sub, (1, 2, 3)),  # the three layers of a composite hit (BP-119, SD-05)
+    "hit_body": (["hit", "hit_body", "impact"], hit_body, (1, 2, 3)),
+    "hit_air": (["hit", "hit_air", "impact"], hit_air, (1, 2, 3)),
 }

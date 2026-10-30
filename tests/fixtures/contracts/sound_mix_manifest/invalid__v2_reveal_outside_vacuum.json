@@ -1,0 +1,188 @@
+{
+ "schema": "sound_mix_manifest/2",
+ "derived_from": {
+  "audio_spine": {
+   "path": "audio/audio_spine.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "timed": {
+   "path": "timed.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "library": {
+   "path": "library/manifest.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "film_shots": {
+   "path": "film_shots.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ },
+ "fps": 24,
+ "total_frames": 60,
+ "stems": [
+  "dialogue",
+  "narration",
+  "music",
+  "sfx",
+  "ambience"
+ ],
+ "narration": {
+  "ref": "audio/narration.wav",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ },
+ "dialogue": [
+  {
+   "shot_id": "s9",
+   "ref": null,
+   "start_frame": 24,
+   "end_frame": 36
+  }
+ ],
+ "scenes": [
+  {
+   "scene": "S01",
+   "start_frame": 0,
+   "end_frame": 30,
+   "acoustic": "hall",
+   "acoustic_source": "declared",
+   "ir_seed": 11,
+   "entry": "butt",
+   "lead_frames": 0
+  },
+  {
+   "scene": "S02",
+   "start_frame": 30,
+   "end_frame": 60,
+   "acoustic": "outdoor",
+   "acoustic_source": "inferred",
+   "ir_seed": 12,
+   "entry": "J",
+   "lead_frames": 6
+  }
+ ],
+ "beds": [
+  {
+   "id": "rt_S01",
+   "scene": "S01",
+   "kind": "room_tone",
+   "ref": "room_tone/hall__v1.wav",
+   "gain_db": -35,
+   "start_frame": 0,
+   "end_frame": 30,
+   "fade_in_frames": 0,
+   "fade_out_frames": 4
+  },
+  {
+   "id": "rt_S02",
+   "scene": "S02",
+   "kind": "room_tone",
+   "ref": "room_tone/outdoor__v1.wav",
+   "gain_db": -35,
+   "start_frame": 24,
+   "end_frame": 60,
+   "fade_in_frames": 6,
+   "fade_out_frames": 0
+  }
+ ],
+ "music": [
+  {
+   "id": "m1",
+   "ref": "music/theme__v1.wav",
+   "motif_of": "napoleon",
+   "start_frame": 0,
+   "end_frame": 60,
+   "gain_db": -24,
+   "fade_in_frames": 12,
+   "fade_out_frames": 12,
+   "beat_grid": {
+    "bpm": 120.0,
+    "offset_s": 0.0,
+    "source": "declared"
+   }
+  }
+ ],
+ "vacuums": [
+  {
+   "start_frame": 46,
+   "end_frame": 50,
+   "reason": "before the reveal",
+   "reveal_frame": 55
+  }
+ ],
+ "cues": [
+  {
+   "name": "stamp",
+   "frame": 10,
+   "gain_db": -12,
+   "max_ms": 400
+  }
+ ],
+ "spots": [
+  {
+   "id": "sp1",
+   "shot_id": "s1",
+   "ref": "sfx/door.wav",
+   "word_index": 2,
+   "frame": null,
+   "stem": "sfx",
+   "pan": 0.2,
+   "perspective": "mid",
+   "gain_db": -6,
+   "group": null,
+   "layer": "single",
+   "origin": "timed_sfx"
+  },
+  {
+   "id": "hit_sub",
+   "shot_id": "s2",
+   "ref": "hit/sub.wav",
+   "word_index": null,
+   "frame": 50,
+   "stem": "sfx",
+   "pan": 0.0,
+   "perspective": "mid",
+   "gain_db": -8,
+   "group": "hit1",
+   "layer": "sub",
+   "origin": "hit"
+  },
+  {
+   "id": "hit_body",
+   "shot_id": "s2",
+   "ref": "hit/body.wav",
+   "word_index": null,
+   "frame": 50,
+   "stem": "sfx",
+   "pan": 0.0,
+   "perspective": "mid",
+   "gain_db": -8,
+   "group": "hit1",
+   "layer": "body",
+   "origin": "hit"
+  },
+  {
+   "id": "hit_air",
+   "shot_id": "s2",
+   "ref": "hit/air.wav",
+   "word_index": null,
+   "frame": 50,
+   "stem": "sfx",
+   "pan": 0.0,
+   "perspective": "mid",
+   "gain_db": -8,
+   "group": "hit1",
+   "layer": "air",
+   "origin": "hit"
+  }
+ ],
+ "presence_dip": {
+  "rule": "BP-118"
+ },
+ "perspective": {
+  "rule": "BP-122"
+ },
+ "master": {
+  "rule": "BP-50"
+ }
+}

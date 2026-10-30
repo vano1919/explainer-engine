@@ -83,3 +83,22 @@ def test_elevenlabs_take_with_kind_and_credits_validates(tmp_path):
     m["items"][0]["kind"] = "bed"
     (tmp_path / "manifest.json").write_text(json.dumps(m))
     assert sfx_library.validate(tmp_path)
+
+
+def test_manifest_accepts_the_p4_optional_fields(tmp_path):
+    """P4 (BP-123, BP-162): a motif owner, a beat grid and an open-model source with its admission id are optional and typed."""
+    rate = 48000
+    t = np.arange(rate * 20) / rate
+    sfx_library.add(tmp_path, name="theme_test", take=1, category="music", tags=["music"], samples=0.2 * np.sin(2 * np.pi * 110 * t),
+                    rate=rate, source={"kind": "open_model", "model": "some-open-model", "seed": 7, "admission": "adm-001"},
+                    licence={"status": "generated_terms_unverified", "note": "open model"})
+    m = sfx_library.load_manifest(tmp_path)
+    m["items"][0].update(motif_of="napoleon", beat_grid={"bpm": 120.0, "offset_s": 0.0, "source": "declared"})
+    (tmp_path / "manifest.json").write_text(json.dumps(m))
+    adm = tmp_path / "adm.json"  # BP-162: an open_model item needs its admission, for its kind and model
+    assert any("admission" in p for p in sfx_library.validate(tmp_path, admissions=adm))
+    adm.write_text(json.dumps({"version": 1, "admissions": [{"id": "adm-001", "kind": "music", "model": "some-open-model"}]}))
+    assert sfx_library.validate(tmp_path, admissions=adm) == []
+    m["items"][0]["beat_grid"]["source"] = "guessed"
+    (tmp_path / "manifest.json").write_text(json.dumps(m))
+    assert sfx_library.validate(tmp_path, admissions=adm)

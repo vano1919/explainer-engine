@@ -25,6 +25,18 @@
                    "description": "true: made to tile seamlessly (beds, music loops); false: a one-shot that plays once. Missing means true (older manifests); assemble.Sounds.loopable reads it and a one-shot is never tiled."},
           "intended_seconds": {"type": "number", "exclusiveMinimum": 0,
                                "description": "the length the sound was prompted for; a stored length far from it (reveal_sting: asked ~4 s, stored 30.772 s) is caught at review, not in the mix"},
+          "motif_of": {"type": "string", "minLength": 1, "description": "music only: the owner (faction, hero or the channel) whose motif this is (BP-123, SD-11)"},
+          "beat_grid": {
+            "type": "object",
+            "required": ["bpm", "offset_s", "source"],
+            "additionalProperties": false,
+            "description": "music only: the beat grid action cuts are judged against (BP-123, SD-10)",
+            "properties": {
+              "bpm": {"type": "number", "exclusiveMinimum": 0},
+              "offset_s": {"type": "number", "minimum": 0},
+              "source": {"enum": ["declared", "measured"]}
+            }
+          },
           "sample_rate": {"type": "integer", "minimum": 8000},
           "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
           "peak_dbfs": {"type": "number", "maximum": 0},
@@ -34,14 +46,16 @@
             "required": ["kind"],
             "additionalProperties": false,
             "properties": {
-              "kind": {"enum": ["procedural", "gemini_tts", "lyria", "elevenlabs", "recorded", "third_party"]},
+              "kind": {"enum": ["procedural", "gemini_tts", "lyria", "elevenlabs", "recorded", "third_party", "open_model"],
+                       "description": "open_model: a take from a free generator, allowed only with source.admission (BP-162, SD-13)"},
               "model": {"type": "string"},
               "prompt": {"type": "string"},
               "seed": {"type": "integer"},
               "generated": {"type": "string"},
               "cost_usd_estimate": {"type": "number", "minimum": 0},
               "cost_credits": {"type": "number", "minimum": 0, "description": "ElevenLabs credits charged for this take (D-52)"},
-              "generation_id": {"type": "string", "minLength": 1, "description": "the provider's generation id, to re-download or prove the take"}
+              "generation_id": {"type": "string", "minLength": 1, "description": "the provider's generation id, to re-download or prove the take"},
+              "admission": {"type": "string", "minLength": 1, "description": "open_model only: the id of the admission record in assets/audio/generator_admission.json (BP-162)"}
             }
           },
           "licence": {

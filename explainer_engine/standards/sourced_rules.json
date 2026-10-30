@@ -2376,7 +2376,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/qa/targets.py:gap_verdict"
+    "explainer_engine/qa/targets.py:gap_verdict",
+    "explainer_engine/production/assemble.py:stem_measures"
    ],
    "supersedes": [
     "P-93 14 dB (confirmed, unit changes to LU)",
@@ -2496,7 +2497,8 @@
    "enforced_by": [
     "explainer_engine/audio/layers.py:SYNC_EARLY",
     "explainer_engine/production/timing.py:SFX_EARLY_MAX",
-    "explainer_engine/qa/scorecard.py:synced"
+    "explainer_engine/qa/scorecard.py:synced",
+    "explainer_engine/audio/sound_director.py"
    ],
    "supersedes": [
     "AL-03 0.25 s window",
@@ -2922,7 +2924,8 @@
     "explainer_engine/audio/layers.py:BP-62",
     "explainer_engine/production/timing.py:MUSIC_FADE_IN",
     "explainer_engine/production/shorts.py:music_filter",
-    "explainer_engine/production/assemble.py"
+    "explainer_engine/production/assemble.py",
+    "explainer_engine/audio/sound_director.py"
    ],
    "supersedes": [
     "ED-03 (confirmed)",
@@ -4775,9 +4778,11 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-01"
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-01",
+    "explainer_engine/audio/acoustics.py",
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
-   "planned": "explainer_engine/audio/sound_director.py (P4)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -4813,9 +4818,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-02"
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-02",
+    "explainer_engine/audio/sound_director.py"
    ],
-   "planned": "explainer_engine/audio/sound_director.py (P4)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -4824,7 +4829,7 @@
    "area": "audio",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Frequency masking under the voice: while the narrator speaks, music and ambience stems carry less energy in the vocal presence band (measured 1-4 kHz under speech vs in the pauses) through a dynamic dip at notch_hz, Q notch_q, depth notch_depth_db; the narration chain is high-passed at narration_hpf_hz. The check is the measured band-energy gap, never the filter setting. BP-53 (level ducking) is unchanged.",
+   "statement": "Frequency masking under the voice: while the narrator speaks, music and ambience stems carry less energy in the vocal presence band (measured 1-4 kHz under speech vs in the pauses) through a dynamic dip at notch_hz, Q notch_q, depth notch_depth_db; the narration chain is high-passed at narration_hpf_hz. The check is the measured band-energy gap, never the filter setting. BP-53 (level ducking) is unchanged. Known limit of SD-04 (P4 review, 2026-10-30): the measured gap is 2.82 dB on the synthetic broadband fixture and -3.6 to -5.5 dB on white, harmonic and brown stems, but a stem whose energy sits in the band itself (a mid-heavy 300 Hz-3 kHz music bed) measures about -1.8 dB and raises a false REVIEW; at REVIEW that is accepted. The dip depth and the floor are calibrated on real stems in P12a, not before.",
    "thresholds": {
     "notch_hz": 2200,
     "notch_q": 1.2,
@@ -4857,9 +4862,10 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-03"
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-03",
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
-   "planned": "explainer_engine/audio/sound_director.py (P4)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -4891,9 +4897,11 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-05"
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-05",
+    "explainer_engine/audio/foley.py",
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
-   "planned": "explainer_engine/audio/sound_director.py (P4)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -4922,9 +4930,10 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-06"
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-06",
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
-   "planned": "explainer_engine/audio/sound_director.py (P4)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -4955,9 +4964,10 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-08"
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-08",
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
-   "planned": "explainer_engine/production/assemble.py (P4, the pan field)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -4985,9 +4995,10 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-10"
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-10",
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
-   "planned": "explainer_engine/audio/sound_director.py (P4)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -5016,9 +5027,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-12"
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-12",
+    "explainer_engine/audio/sound_director.py"
    ],
-   "planned": "explainer_engine/audio/sound_director.py (P4)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -6055,6 +6066,110 @@
    "enforced_by": [
     "explainer_engine/maps/laws.py:no_diffusion",
     "explainer_engine/maps/plate.py:certificate"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-160",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Shot-to-audio matrix (SD-12): what a shot's sound is made of follows its lane (the table lives only in `MATRIX` of the sound director and in docs/AUDIO_SYSTEM.md). A video clip's native audio is kept as a `native` bed native_under_bed_db under the scene bed and ducked, never its speech outside a dialogue window (D-88); a map or compensator shot carries neutral room tone and its own cues only.",
+   "thresholds": {
+    "native_under_bed_db": 6
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint plan v2, card P4 and P4_DESIGN (unverified): the lane matrix and the 6 dB native-under-bed offset",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "origin only; records where the number came from, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "docs/AUDIO_SYSTEM.md:SD-12",
+    "explainer_engine/audio/sound_director.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-161",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "No digital silence inside an episode (SD-02): no window_ms window of the mix falls under digital_silence_dbfs between the opening ramp and the final fade; a hit layer keeps at least hit_band_share_min of its energy in its own band (BP-119). BP-60 (pause fill of the read) and BP-116 (the scene's room tone) are unchanged; this is the measured check on the rendered mix.",
+   "thresholds": {
+    "digital_silence_dbfs": -70,
+    "window_ms": 10,
+    "hit_band_share_min": 0.6
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint plan v2, card P4 and P4_DESIGN (unverified): the -70 dBFS floor, 10 ms window and 0.6 band share (engineering numbers)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "origin only; records where the number came from, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "docs/AUDIO_SYSTEM.md:SD-02",
+    "explainer_engine/audio/sound_director.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-162",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-29 18:17 UTC, answer 'conditionally' to Blueprint card D8, as docs/blueprint/STATUS.md row D8 records it: a free generator enters the library only with measured quality and variety, otherwise ElevenLabs; the narrator stays on the connector. His exact wording is not in the repository",
+   "statement": "A take from a free (open-model) generator enters the library or a mix only when that generator is admitted for that kind (music, sfx, room_tone) by `assets/audio/generator_admission.json`, which is written only with the creator's recorded word after the measured test (SD-13, D-52 amended). Without an admission the order is library first, then the ElevenLabs connector; the narrator is always the connector.",
+   "thresholds": {},
+   "sources": [],
+   "enforced_by": [
+    "docs/AUDIO_SYSTEM.md:SD-13",
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/audio/generator_gate.py",
+    "explainer_engine/assets_reuse.py",
+    "explainer_engine/standards/hook.py",
+    "explainer_engine/audio/register.py",
+    "explainer_engine/audio/sfx_library.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-163",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "What the free-generator admission measures (SD-13, D8): per take, the duration within duration_tol of the request, a silence share (windows of window_ms under silence_floor_dbfs) at most silence_share_max, a clipped share (samples at or above clip_level of full scale) at most clip_share_max, and for a loop BP-58's seam; a prompt is clean when all its takes_per_prompt takes pass, and at least prompts_clean_min of the prompts must be clean; across prompts the mean cosine distance of the generator's takes at least variety_ratio_min of the same number for the library's ElevenLabs reference set, and no two seeds of one prompt above duplicate_cos_max. DC offset is reported, not judged. Quality and prompt fit are the creator's blind A/B, not a number.",
+   "thresholds": {
+    "duration_tol": 0.1,
+    "silence_share_max": 0.2,
+    "clip_share_max": 0.0005,
+    "loop_seam": "BP-58",
+    "variety_ratio_min": 0.8,
+    "duplicate_cos_max": 0.98,
+    "takes_per_prompt": 3,
+    "silence_floor_dbfs": -60,
+    "window_ms": 10,
+    "clip_level": 0.999,
+    "prompts_clean_min": 0.8
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint plan v2, card P4 and P4_DESIGN (unverified): the technical and variety measures of the admission test (engineering numbers)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "origin only; records where the number came from, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "docs/AUDIO_SYSTEM.md:SD-13",
+    "explainer_engine/audio/generator_gate.py"
    ],
    "supersedes": []
   }

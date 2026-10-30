@@ -98,6 +98,9 @@ beat) is declared in the storyboard; an inserted pause is room tone, never digit
 has no scanner yet beyond `audio/dropouts.py`.
 
 ## Audio event contract (v1; schema in Phase 3)
+**Superseded** for jobs with a sound director manifest by `sound_mix_manifest/2` ([CONTRACTS](CONTRACTS.md), CN-16), which is
+derived from the spine and the timed script, never written by hand; the block below is the v1 idea it grew from and still
+describes the old mono path's events.
 ```json
 {"schema": "explainer.audio_events", "version": 1,
  "events": [{"id": "sfx.knife_chop@w_0143", "kind": "sfx|music|ambience", "asset": "sfx.knife_chop",
@@ -129,6 +132,102 @@ model and prompt, Lyria prompt), estimated cost, licence status and review. Rule
   --prompt "..." --cost-usd ...` (MP3/stereo is converted to the library's mono WAV; `--one-shot` for stings, music
   defaults to a loop). Media backup: HF `datasets/vano1919/tmr-artifacts/library/audio/`.
 - The analyst (Dirkus) is silent: his vocal sounds are reactions, never speech. The companion (Tick) makes mechanical sounds.
+
+## Sound director
+Blueprint phase P4 ([D-88](DECISIONS_AND_OPEN_QUESTIONS.md), contracts in [CONTRACTS](CONTRACTS.md)). The spine
+(`audio/spine.py`, `audio_spine/2`) compiles the narrator read, the post-hoc dialogue windows and the frame clock; the sound
+director (`audio/sound_director.py`) derives `sound_mix_manifest/2` from the spine, the timed script and `film_shots/2` (CN-02,
+never edited by hand); `production/assemble.py` renders it and the render-time half of the checks measures the stems. A job
+without a manifest renders through the existing mix. The sound pass is a step of `edit-planner` and owns no script field.
+Every SD check reads its numbers from the rule named in the table (BP ids only, no number is copied here); a hypothesis rule
+is REVIEW at most (CN-11).
+
+| ID | Check | Rule | Severity |
+|---|---|---|---|
+| SD-01 | every scene has a room-tone bed over its whole span, inside the band | BP-116 | REVIEW |
+| SD-02 | no window of the rendered mix under the digital-silence floor | BP-161 | REVIEW |
+| SD-03 | J or L at every place/acoustic change; no butt cut between a map and a drama shot | BP-117 | REVIEW |
+| SD-04 | measured presence-band gap of the background under speech | BP-118 | REVIEW |
+| SD-05 | a reveal or HARD accent has a three-layer hit, onsets within `sync_ms`, layers in their band; the group onset inside BP-54's window | BP-119; BP-54 | REVIEW; **FAIL** (binding) |
+| SD-06 | at most `vacuums_max` vacuums, each inside `vacuum_s`, at `vacuum_dbfs`, ending on its reveal, none over speech | BP-120 | REVIEW |
+| SD-07 | spot pans inside `sfx_pan_max`, on the focal side; narration, dialogue and cues centred | BP-121 | REVIEW |
+| SD-08 | one encoded layer at a time; the per-stem same-colour cap; total layers | BP-121, BP-56 | REVIEW |
+| SD-09 | perspective follows the shot size; one impulse response per scene | BP-122 | REVIEW |
+| SD-10 | action cuts on the beat grid while music is up | BP-123 | REVIEW |
+| SD-11 | at most one motif per owner | BP-123 | REVIEW |
+| SD-12 | the shot timeline and the lane matrix hold (estimated timeline, missing clip, native speech outside a window) | BP-160 | REVIEW |
+| SD-13 | no free-generator take without an admission for its kind | BP-162 | **FAIL** (house) |
+| SD-14 | delivered loudness and true peak (a pointer to `qa/targets`, not a second implementation) | BP-50 | FAIL (binding, existing) |
+| SD-15 | the manifest is fresh against its inputs | CN-02 | **FAIL** (invariant 7) |
+
+### Shot-to-audio matrix (BP-160, SD-12)
+What a shot's audio is made of follows its lane. The table is rendered from `MATRIX` in `audio/sound_director.py` (`python -m
+explainer_engine.audio.sound_director matrix write`) and a test keeps the two equal; the code is its one home. Legend: native `bed` =
+the clip's own audio kept as a `native` bed under the scene bed (BP-160's offset) and ducked, never its speech; `dialogue` = the
+clip is the line, in a spine window (D-88), centred; spots `foley`/`loudest` come from the shot card's `sound`; `cues only` = VB-08
+cues; perspective follows the shot size (BP-122), `no` = centred and dry.
+
+<!-- sd-matrix:begin -->
+| lane | native clip audio | scene bed | spots | perspective |
+|---|---|---|---|---|
+| KEYFRAME_LTX | bed | scene | foley+loudest | yes |
+| DIALOGUE_CU | dialogue | scene, ducked | none | near, dry |
+| HOST_COMMENTARY | none | hosts' room tone | none | no |
+| DRAMA_BLOCKED_3D | none | scene | foley | yes |
+| ATMOS_BROLL | bed if present | scene | loudest | yes |
+| MAP | none | neutral room tone | cues only | no |
+| COMPENSATOR | none | neutral room tone | cues only | no |
+| STILL_HOLD | none | scene | foley, one | yes |
+| none (D-43) | none | timed beds | timed sfx | mid |
+<!-- sd-matrix:end -->
+
+Commands: `python -m explainer_engine.audio.sound_director plan <job> [--library DIR]` writes `audio/sound_mix_manifest.json` and
+`audio/sound_director_report.json` (findings, every inferred choice, dropped vacuums); `check <job> [--stems DIR] [--strict]` runs
+the plan-time half on the manifest and, with the rendered stems, the render-time half. A room tone the library lacks is generated
+procedurally (free, seeded, circular) and registered as `procedural` in the library root passed in. The presence-band dip is
+calibrated on the measured band gap: a Q 1.2 bell dips its centre by far more than the 1-4 kHz band as a whole (3.5 dB at 2.2 kHz
+moves that band's share by 1.4 dB), so `acoustics.dip_centre_for_gap` derives the centre depth from the gap BP-118 asks for (SD-04
+measures the gap, never the filter setting). **Limit:** the gap is 2.82 dB on the broadband synthetic fixture (floor 2.5 dB, a thin
+margin) and about 1.8 dB on a mid-heavy 300 Hz-3 kHz stem, which false-REVIEWs; REVIEW accepts that, and the floor and the dip depth are
+calibrated on real stems in P12a ([BP-118](SOURCED_RULES.md)).
+
+### Free-generator gate (D8, BP-162, BP-163, SD-13)
+The order for a new music, sound-effect or room-tone take is **library, then an admitted free generator, then the ElevenLabs
+connector**; the narrator stays on the connector (no REST client). Today no generator is admitted, so the chain of D-52 is
+unchanged. A free (open-model) generator is admitted for one kind (`music`, `sfx`, `room_tone`) only through
+`assets/audio/generator_admission.json`, which `python -m explainer_engine.audio.generator_gate admit` writes only with the
+creator's recorded word (`--creator-ref` = his message id, `--at`), the blind sheet he answered and a report that passes. Flow:
+1. `measure` takes (`<prompt id>__s<seed>.wav`, three seeds per prompt) against the library's ElevenLabs items of the same kind:
+   per take the duration, silence share, clipped share, DC offset (reported, not judged) and, for a loop, BP-58's seam; across
+   prompts the variety (`voice_audition.mfcc_embedding`, one home) against the reference set and near-duplicate seeds. The
+   numbers are BP-163's; a technical miss takes the take out. Free: no network, no ElevenLabs.
+2. `sheet` writes a blind A/B listening sheet (seeded; neutral file names; both sides levelled to a common RMS; the key is a
+   separate file) for his ear: quality and prompt fit are never a number.
+3. `admit` re-derives the verdict from the report's numbers and records `{generator, model, kind, report_sha256, sheet_sha256,
+   prefer_rate, creator_ref, at}`; `admitted(kind)` is None without a file (`$EXPLAINER_GENERATOR_ADMISSION` or the `path`
+   argument move the file, so tests never touch the real one).
+
+Enforcement: `assets_reuse` gains the decision `generate_free` (needs the admission) and, while a kind is admitted,
+`generate_new` needs `--why` naming what the free take could not do; `standards/hook.py` refuses a paid ElevenLabs music/SFX call
+in that case with the same shape of refusal as the missing library record (OR-18); `audio/register.py --source-kind open_model
+--model ... --admission <id>` and `sfx_library.validate` refuse an `open_model` item whose admission is missing, for another kind
+or for another model (SD-13).
+
+### Stereo mix (`assemble.build_audio_v2`)
+
+`production/assemble.py` renders the manifest when `<job>/audio/sound_mix_manifest.json` exists and is fresh (CN-02); a stale one
+stops the render (SD-15), and a job without a manifest takes the mono `build_audio` path unchanged. Narration: leveled, high-passed
+(BP-118), cut around the spine's dialogue windows with the seam fade at each edge, centred (L == R). Beds and room tone: looped
+(a procedural tone tiles, it is circular), faded, the scene's impulse response at the mid wet share, widened. Music: BP-62 fades,
+widened, the presence-band dip keyed by the voice's duck curve, BP-53's duck. Spots: the shot's perspective (BP-122: wet share,
+far high shelf, near proximity; `mid` is the midpoint of the two ends), the manifest's pan, a hit as three summed layers. A vacuum
+pulls music, ambience and non-hit spots to `vacuum_dbfs` (mid-channel RMS) over a fall that never exceeds BP-53's step limit and
+releases with BP-53's release time; narration, room tone, cues and hits are outside it. Cues are centred. The sum gets the old
+0.5 s / closing ramps and the 0.89 peak, applied to the stems too, so they still add up to the mix. Stems go to
+`<job>/audio/stems/*.wav` (narration, music, sfx, ambience, room_tone, cues, dialogue); `loudnorm` (qa/targets, now with a channel
+count) makes the stereo `audio.wav`. The render half of the checks (SD-02, SD-04, SD-05 band shares, SD-06 level, the BP-52 gap in
+LU on the speech stretches of the stems) lands in `assemble_report.json` under `sound_director`, with SD-14 as a pointer to the
+BP-50 verdicts.
 
 ## Checks run on every mix
 Numbers: one definition in `explainer_engine/qa/targets.py`, read from BP-50..BP-63, used by the mixer, the Shorts renderer

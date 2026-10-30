@@ -23,7 +23,10 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 from explainer_engine.audio.level import level_voice
+from explainer_engine.audio import acoustics, seams, sound_director as SD
 from explainer_engine.audio import cues as CUES, duck
+from explainer_engine.audio import spine as SPINE
+from explainer_engine.core import contracts
 from explainer_engine.production import accents as ACC
 from explainer_engine.production import beats as BEATS
 from explainer_engine.production import faces as FACES
@@ -118,13 +121,14 @@ def music_fades(m: dict) -> tuple[float, float]:
 class Sounds:
     """Resolves a sound name: ``<dir>/<name>.mp3|.wav`` in the sound dirs, else the library manifest id."""
 
-    def __init__(self, dirs: list[Path]):
+    def __init__(self, dirs: list[Path], library: Path | None = None):
+        lib = Path(library) if library is not None else LIB  # a job's manifest names the library it was planned against
         self.dirs = [Path(d) for d in dirs]
-        man = LIB / "manifest.json"
+        man = lib / "manifest.json"
         items = json.loads(man.read_text())["items"] if man.exists() else []
-        self.lib = {x["id"]: LIB / x["file"] for x in items}
+        self.lib = {x["id"]: lib / x["file"] for x in items}
         self.meta = {x["id"]: x for x in items}
-        music = LIB / "music"
+        music = lib / "music"
         if music.exists():
             for f in music.glob("*.wav"):
                 self.lib.setdefault(f.stem, f)
@@ -243,6 +247,352 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
     mix[-ramp_out:] *= np.linspace(1, 0, min(ramp_out, len(mix)))
     peak = np.abs(mix).max()
     return mix / peak * 0.89 if peak > 0.89 else mix
+
+
+# --- the stereo mix (P4: BP-116..123, docs/AUDIO_SYSTEM.md SD-01..SD-15) -------------------------------------------------------
+# Used only when the job holds a fresh ``audio/sound_mix_manifest.json`` (``v2_manifest``); without one ``build_audio`` above
+# runs unchanged. Every stem is float32; the centred ones (narration, cues) stay mono until they are written.
+
+def v2_manifest(job: Path | None) -> dict | None:
+    """The job's sound mix manifest when it exists and is valid and fresh; ``None`` when there is none (the old mono path). A
+    manifest that is not a ``sound_mix_manifest/2``, fails its schema or its CN-16 rules, or is stale against its inputs (CN-02)
+    stops the render: SD-15, invariant 7 (a forged or out-of-date plan never selects the stereo path)."""
+    if job is None:
+        return None
+    path = Path(job) / "audio" / "sound_mix_manifest.json"
+    if not path.exists():
+        return None
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as e:
+        raise SystemExit(f"refused: SD-15 the sound mix manifest is not JSON ({e})") from None
+    if not isinstance(manifest, dict) or manifest.get("schema") != "sound_mix_manifest/2":
+        raise SystemExit("refused: SD-15 the sound mix manifest names no sound_mix_manifest/2 (the stereo mix reads only /2); run "
+                         f"python -m explainer_engine.audio.sound_director plan {job}")
+    found = [f for f in contracts.errors(manifest, Path(job)) if f["severity"] == "FAIL"]
+    if found:
+        stale = [f for f in found if f["rule"] == "CN-02"]
+        what = "stale" if stale else "invalid"
+        f = (stale or found)[0]
+        raise SystemExit(f"refused: SD-15 the sound mix manifest is {what} ({f['rule']} {f['where']}: {f['detail']}); run "
+                         f"python -m explainer_engine.audio.sound_director plan {job} and render again")
+    return manifest
+
+
+def v2_library(manifest: dict, job: Path) -> Path:
+    """The sound library the manifest was planned against (its ``derived_from.library`` file's folder)."""
+    return (Path(job) / manifest["derived_from"]["library"]["path"]).resolve().parent
+
+
+def perspective(name: str) -> dict:
+    """BP-122 as render numbers: the wet share of the scene's impulse response, the far high shelf and the near proximity boost.
+    ``mid`` is the midpoint of the registry's two ends (BP-122 names only the far and the close one)."""
+    wide, close = float(RULES.T("BP-122", "wide_wet")), 1.0 - float(RULES.T("BP-122", "close_dry"))
+    k = {"far": 1.0, "mid": 0.5, "near": 0.0}[name]
+    return {"wet": close + (wide - close) * k, "shelf_db": float(RULES.T("BP-122", "wide_shelf_db")) * k,
+            "prox_db": float(RULES.T("BP-122", "proximity_db")) * (1.0 - k)}
+
+
+def _wet(x: np.ndarray, ir: np.ndarray | None, wet: float, tail: bool = False) -> np.ndarray:
+    """``x`` with the scene's impulse response mixed in at the ``wet`` share; ``tail`` keeps the room's decay after the sound ends."""
+    if ir is None or len(ir) <= 1:
+        return x
+    dry = np.pad(x, (0, len(ir) - 1)) if tail else x
+    return ((1.0 - wet) * dry + wet * acoustics.convolve(x, ir, tail=tail)).astype(np.float32)
+
+
+def _stereo_add(dst: np.ndarray, a: int, src: np.ndarray) -> None:
+    z = min(len(dst), a + len(src))
+    if z > a:
+        dst[a:z] += src[: z - a]
+
+
+def _normalised(x: np.ndarray, gain_db: float) -> np.ndarray:
+    return (x / (np.abs(x).max() + 1e-9) * db(gain_db)).astype(np.float32)
+
+
+def write_wav(path: Path, x: np.ndarray, rate: int = SR) -> None:
+    """16-bit PCM, written in blocks (a 15-minute stereo float array is never copied whole). ``x`` is (n,) or (n, ch)."""
+    ch = 1 if x.ndim == 1 else x.shape[1]
+    with wave.open(str(path), "wb") as w:
+        w.setnchannels(ch), w.setsampwidth(2), w.setframerate(rate)
+        for i in range(0, len(x), 1 << 20):
+            w.writeframes((np.clip(x[i:i + (1 << 20)], -1, 1) * 32767).astype("<i2").tobytes())
+
+
+def write_stems(stems: dict, directory: Path) -> list[Path]:
+    """``<job>/audio/stems/<name>.wav``: one file per stem, the mixer's own sum before loudnorm."""
+    directory.mkdir(parents=True, exist_ok=True)
+    out = []
+    for name, x in stems.items():
+        p = directory / f"{name}.wav"
+        write_wav(p, x)
+        out.append(p)
+    return out
+
+
+def _vacuum(stem: np.ndarray, vacuums: list[dict], fps: int, target_db: float) -> list[dict]:
+    """Pull ``stem`` (n, 2, in place) to ``target_db`` RMS (mid channel) inside every vacuum: a fall over VACUUM_RAMP_MS (never
+    steeper than BP-53's step limit), the level held to the reveal, BP-53's release after it. Returns the measured pulls."""
+    t = lambda f: int(round(f / fps * SR))  # noqa: E731
+    ramp, rel = int(SD.VACUUM_RAMP_MS / 1000 * SR), int(duck.RELEASE_MS / 1000 * SR)
+    done = []
+    for v in vacuums:
+        a, z = t(v["start_frame"]), min(len(stem), t(v["end_frame"]))
+        r = min(ramp, max(0, z - a))
+        if z - a <= r or z - a < SR // 20:
+            continue
+        level = rms_db(stem[a + r:z].mean(axis=1))
+        pull = target_db - level
+        if pull >= 0:  # already under the vacuum level
+            done.append({"start_frame": v["start_frame"], "pull_db": 0.0, "level_dbfs": round(level, 2)})
+            continue
+        fall = 10 ** (np.linspace(0.0, pull, r) / 20.0) if r else np.zeros(0)
+        back = 10 ** (np.linspace(pull, 0.0, min(rel, len(stem) - z)) / 20.0)
+        stem[a:a + r] *= fall[:, None].astype(np.float32)
+        stem[a + r:z] *= np.float32(10 ** (pull / 20.0))
+        stem[z:z + len(back)] *= back[:, None].astype(np.float32)
+        done.append({"start_frame": v["start_frame"], "pull_db": round(pull, 2), "level_dbfs": round(level, 2)})
+    return done
+
+
+def build_audio_v2(manifest: dict, spine: dict, narration: np.ndarray, sounds: "Sounds", stats: dict) -> tuple[np.ndarray, dict]:
+    """The stereo mix of ``sound_mix_manifest/2`` (docs/AUDIO_SYSTEM.md): ``(mix (n, 2) float32, stems {name: (n, 2)})``.
+
+    Narration: leveled as today, high-passed (BP-118), cut into pieces around the spine's dialogue windows (D-88) with the seam
+    fade at each edge. Beds and room tone: looped or played once, faded, a scene impulse response at the mid wet share, widened.
+    Music: as today (BP-62 fades) plus widen, the presence-band dip keyed by the voice (BP-118) and BP-53's duck. Spots:
+    perspective (BP-122), the pan of the manifest (BP-121), hits as three summed layers. Vacuums (BP-120) pull every stem but
+    narration, room tone, cues and hits. Cues are centred. The sum gets the same 0.5 s / FADE_OUT ramps and the 0.89 peak as the
+    old path, applied to the stems too so they still add up to the mix."""
+    fps, n = int(manifest["fps"]), int(round(manifest["total_frames"] / manifest["fps"] * SR))
+    t = lambda f: int(round(f / fps * SR))  # noqa: E731
+    can_loop = getattr(sounds, "loopable", lambda name: True)
+    stats["engine"] = "v2"
+    cache: dict = {}
+
+    def load(ref: str) -> np.ndarray:
+        if ref not in cache:
+            cache[ref] = np.asarray(sounds.load(ref), dtype=np.float32)
+        return cache[ref]
+
+    # narration and dialogue
+    voice = level_voice(np.asarray(narration, dtype=np.float64), SR)
+    voice = acoustics.highpass(voice, SR, float(RULES.T("BP-118", "narration_hpf_hz")[0]))
+    voice = (voice / (np.abs(voice).max() + 1e-9) * 0.9 * db(-3)).astype(np.float32)
+    nar = np.zeros(n, np.float32)
+    wins = sorted(spine["post_hoc_shots"], key=lambda h: h["start_frame"])
+    cuts = [0] + [f for h in wins for f in (h["start_frame"], h["end_frame"])] + [int(manifest["total_frames"])]
+    edge = int(seams.EDGE_FADE * SR)
+    for fa, fz in zip(cuts[0::2], cuts[1::2]):
+        a, z = t(fa), min(n, t(fz))
+        r0 = int(round(SPINE.read_time(spine, fa) * SR))
+        piece = voice[r0:r0 + (z - a)].copy()
+        if wins:
+            fade(piece, edge if fa > 0 else 0, edge if fz < manifest["total_frames"] else 0)
+        nar[a:a + len(piece)] = piece
+    del voice
+    speech, pause = SD.speech_masks(spine, n, SR)
+    dlg = np.zeros(n, np.float32)
+    present = [d for d in manifest["dialogue"] if d["ref"]]
+    if present:
+        target = rms_db(nar[speech])
+        for d in present:
+            clip = load(d["ref"])
+            a = t(d["start_frame"])
+            clip = clip[: t(d["end_frame"]) - a].copy()
+            clip *= np.float32(10 ** ((target - rms_db(clip)) / 20.0)) if len(clip) else 1.0
+            fade(clip, edge, edge)
+            dlg[a:a + len(clip)] += clip[: max(0, n - a)]
+    side = nar + dlg
+    vduck = duck.duck_gain(side, SR, n).astype(np.float32)  # BP-53: music and beds dip under every voice
+    stats["voice_duck_max_step_db_per_ms"] = round(duck.max_step_db_per_ms(vduck, SR), 3)
+    del side
+
+    # scenes: the impulse response and widen seed of each, found by frame
+    scenes = {s["scene"]: s for s in manifest["scenes"]}
+    irs: dict = {}
+
+    def room_of(sid: str):
+        s = scenes[sid]
+        if sid not in irs:
+            irs[sid] = acoustics.impulse(s["acoustic"], s["ir_seed"], SR)
+        return irs[sid], s["ir_seed"]
+
+    mid = perspective("mid")
+
+    def scene_at(frame: int) -> str:
+        return next((s["scene"] for s in manifest["scenes"] if s["start_frame"] <= frame < s["end_frame"]), manifest["scenes"][-1]["scene"])
+
+    # beds, room tone, native clip audio
+    room, amb = np.zeros((n, 2), np.float32), np.zeros((n, 2), np.float32)
+    for b in manifest["beds"]:
+        a, z = max(0, t(b["start_frame"])), min(n, t(b["end_frame"]))
+        if z <= a:
+            continue
+        src = load(b["ref"])
+        meta = getattr(sounds, "meta", {}).get(b["ref"], {})
+        if b["kind"] == "room_tone" and meta.get("source", {}).get("kind") == "procedural":
+            seg = np.resize(src, z - a)  # a procedural tone is circular: tiled, it has no seam
+        else:
+            seg = loop_to(src, z - a) if can_loop(b["ref"]) and b["kind"] != "native" else play_once(src, z - a)
+        seg = _normalised(seg, b["gain_db"])
+        fade(seg, t(b["fade_in_frames"]), t(b["fade_out_frames"]))
+        ir, seed = room_of(b["scene"])
+        seg = _wet(seg, ir, mid["wet"])
+        _stereo_add(room if b["kind"] == "room_tone" else amb, a, acoustics.widen(seg, seed))
+
+    # music
+    mus = np.zeros(n, np.float32)
+    for m in manifest["music"]:
+        a, z = t(m["start_frame"]), min(n, t(m["end_frame"]))
+        if z <= a:
+            continue
+        src = load(m["ref"])
+        seg = loop_to(src, z - a) if can_loop(m["ref"]) else play_once(src, z - a)
+        seg = _normalised(seg, m["gain_db"])
+        fade(seg, t(m["fade_in_frames"]), t(m["fade_out_frames"]))
+        mus[a:z] += seg
+    music = acoustics.widen(mus, acoustics.seed_of("music"))
+    del mus
+
+    # spots: perspective, room, pan; hits are summed layers and kept apart (a vacuum does not pull them)
+    sfx = np.zeros((n, 2), np.float32)
+    hit_parts: list[tuple[int, np.ndarray]] = []
+    shares: dict = {}
+    bands = {"sub": (0.0, float(RULES.T("BP-119", "sub_hz"))), "body": tuple(map(float, RULES.T("BP-119", "body_hz"))),
+             "air": tuple(map(float, RULES.T("BP-119", "air_hz")))}
+    stats["sfx"] = []
+    for s in manifest["spots"]:
+        f = s["frame"] if s["frame"] is not None else spine["words"][s["word_index"]]["start_frame"]
+        a = t(f)
+        if a >= n:
+            continue
+        w = _normalised(load(s["ref"]), s["gain_db"])
+        if s["group"]:
+            shares[s["id"]] = acoustics.band_share(np.pad(w, (0, max(0, 32768 - len(w)))), SR, *bands[s["layer"]])
+        w[: min(240, len(w))] *= np.linspace(0, 1, min(240, len(w)))  # 5 ms in, 10 ms out: no click
+        w[-min(480, len(w)):] *= np.linspace(1, 0, min(480, len(w)))
+        p = perspective(s["perspective"])
+        w = acoustics.shelf(w, SR, float(RULES.T("BP-122", "shelf_hz")), p["shelf_db"], True)
+        w = acoustics.shelf(w, SR, float(RULES.T("BP-122", "proximity_hz")), p["prox_db"], False)
+        ir, _seed = room_of(scene_at(f))
+        w = _wet(w, ir, p["wet"], tail=True)
+        st = acoustics.pan(w, s["pan"]) * np.float32(acoustics.CENTRE_GAIN)
+        if s["group"]:
+            hit_parts.append((a, st.astype(np.float32)))
+        else:
+            _stereo_add(sfx, a, st.astype(np.float32))
+            stats["sfx"].append({"sound": s["ref"], "start": round(f / fps, 3), "seconds": round(len(w) / SR, 3)})
+    stats["hit_band_share"] = {k: round(v, 3) for k, v in shares.items() if v is not None}
+
+    # the sidechain of the world sounds: music and beds dip under them (BP-53)
+    side = sfx.mean(axis=1)
+    for a, st in hit_parts:
+        z = min(n, a + len(st))
+        side[a:z] += st[: z - a].mean(axis=1)
+    fduck = duck.duck_gain(side, SR, n, threshold=0.01).astype(np.float32)
+    bduck = duck.duck_gain(side, SR, n, depth_db=float(RULES.T("BP-53", "depth_db")[0]), threshold=0.01).astype(np.float32)
+    del side
+    stats["music_dip_max_step_db_per_ms"] = round(duck.max_step_db_per_ms(fduck, SR), 3)
+
+    # the presence-band dip, keyed by the voice's own duck curve, on everything that is not the voice (BP-118)
+    hz, q = float(RULES.T("BP-118", "notch_hz")), float(RULES.T("BP-118", "notch_q"))
+    lo, hi = (float(x) for x in RULES.T("BP-118", "measure_band_hz"))
+    gap = float(RULES.T("BP-118", "notch_depth_db")[1])
+    depth = acoustics.dip_centre_for_gap(gap, hz, q, lo, hi)
+    key = acoustics.key_from_gain(vduck, duck.DEPTH_DB)
+    music = acoustics.band_dip(music, SR, key, hz, q, depth)
+    room = acoustics.band_dip(room, SR, key, hz, q, depth)
+    amb = acoustics.band_dip(amb, SR, key, hz, q, depth)
+    del key
+    music *= (fduck * vduck)[:, None]
+    bg = bduck * vduck
+    room *= bg[:, None]
+    amb *= bg[:, None]
+    del fduck, bduck, bg, vduck
+
+    # vacuums, then the hits on top, the bus of cues, the sum
+    target = float(RULES.T("BP-120", "vacuum_dbfs"))
+    stats["vacuums"] = {"music": _vacuum(music, manifest["vacuums"], fps, target), "ambience": _vacuum(amb, manifest["vacuums"], fps, target),
+                        "sfx": _vacuum(sfx, manifest["vacuums"], fps, target)}
+    for a, st in hit_parts:
+        _stereo_add(sfx, a, st)
+    amb += room
+    cues = cue_bus([{"sound": c["name"], "start": c["frame"] / fps, "gain_db": c["gain_db"], "max_ms": c.get("max_ms")}
+                    for c in manifest["cues"]], n).astype(np.float32)
+    stats["cues"] = len(manifest["cues"])
+    centre = nar + dlg + cues
+    mix = np.stack([centre, centre], axis=1)
+    del centre
+    for part in (amb, music, sfx):
+        mix += part
+    stats.update(voice_rms_db=round(rms_db(nar[speech]), 2), bed_rms_db=round(rms_db(amb[speech].mean(axis=1)), 2),
+                 music_rms_db=round(rms_db(music[speech].mean(axis=1)), 2))
+    ramp_in, ramp_out = int(0.5 * SR), int(FADE_OUT * SR)
+    up, down = np.linspace(0, 1, ramp_in, dtype=np.float32), np.linspace(1, 0, min(ramp_out, n), dtype=np.float32)
+
+    def ramps(x: np.ndarray) -> np.ndarray:  # the sound opens and closes with the picture
+        x[:ramp_in] *= up if x.ndim == 1 else up[:, None]
+        x[-len(down):] *= down if x.ndim == 1 else down[:, None]
+        return x
+
+    ramps(mix)
+    peak = float(np.abs(mix).max())
+    k = np.float32(0.89 / peak) if peak > 0.89 else np.float32(1.0)
+    mix *= k
+    for x in (nar, dlg, cues, room, amb, music, sfx):
+        ramps(x)
+        x *= k
+    stems = {"narration": np.broadcast_to((nar)[:, None], (n, 2)), "music": music, "sfx": sfx, "ambience": amb, "room_tone": room,
+             "cues": np.broadcast_to(cues[:, None], (n, 2))}
+    if manifest["dialogue"]:
+        stems["dialogue"] = np.broadcast_to(dlg[:, None], (n, 2))
+    return mix, stems
+
+
+def stem_measures(stems: dict, spine: dict, workdir: Path) -> dict:
+    """BP-52 on the stems while the narrator speaks: the integrated loudness (ebur128, ffmpeg) of the narration, music and ambience
+    stems cut down to the stretches of speech and joined. ``voice_lu`` / ``music_lu`` / ``bed_lu`` are the keys the scorecard reads."""
+    speech, _pause = SD.speech_masks(spine, len(stems["narration"]), SR)
+    out = {}
+    for key, name in (("voice_lu", "narration"), ("music_lu", "music"), ("bed_lu", "ambience")):
+        x = stems[name].mean(axis=1)[speech]
+        if not len(x) or float(np.abs(x).max()) < 1e-6:
+            continue  # nothing of this stem under the voice: no gap to judge
+        wav = workdir / f"{name}.speech.wav"
+        write_wav(wav, x)
+        try:
+            out[key] = targets.measure_file(wav)["lufs"]
+        finally:
+            wav.unlink(missing_ok=True)
+    return out
+
+
+def render_v2(timed: dict, nar: np.ndarray, out: Path, job: Path, manifest: dict, sound_dirs: list[Path], stats: dict) -> list[dict]:
+    """The stereo path of ``_assemble``: mix, ``audio_raw.wav`` (stereo) -> loudnorm, the stems in ``<job>/audio/stems/``, the BP-52
+    measures and the render half of the sound director's checks. Returns the SD findings (also written into the report)."""
+    spine = json.loads((job / "audio" / "audio_spine.json").read_text(encoding="utf-8"))
+    sounds = Sounds([Path(d) for d in sound_dirs] + [job / "audio"], library=v2_library(manifest, job))
+    n = int(round(manifest["total_frames"] / manifest["fps"] * SR))
+    mix, stems = build_audio_v2(manifest, spine, nar, sounds, stats)
+    write_wav(out / "audio_raw.wav", mix)
+    targets.normalise_file(out / "audio_raw.wav", out / "audio.wav", "long", SR, channels=2)
+    write_stems(stems, job / "audio" / "stems")
+    measures = stem_measures(stems, spine, out)
+    stats.update(measures)
+    findings = SD.check_job(job, stems=dict(stems, mix=mix), measures=dict(measures, hit_band_share=stats.get("hit_band_share", {})))
+    return findings
+
+
+def sd14_pointer(stats: dict) -> list[dict]:
+    """SD-14: the delivered loudness and true peak are judged by ``qa/targets`` (BP-50); this only points at that verdict."""
+    out = []
+    for key, what in (("loudness_verdict", "integrated loudness"), ("true_peak_verdict", "true peak")):
+        if stats.get(key) not in (None, "PASS"):
+            out.append({"rule": "SD-14", "severity": stats[key], "where": "mix", "basis": "BP-50",
+                        "detail": f"{what} {stats.get('lufs' if key == 'loudness_verdict' else 'true_peak')}: {stats[key]} (qa/targets, BP-50)"})
+    return out
 
 
 # --- picture helpers -------------------------------------------------------------------------------------------------
@@ -602,46 +952,54 @@ def lock_alive(lock: Path) -> bool:
 def assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Path], sound_dirs: list[Path], *,
              size: tuple[int, int] = (1920, 1080), final: bool = False, grade_key: str | None = None,
              audio_only: bool = False, crf: int = 18, chunk_seconds: float = CHUNK_SECONDS,
-             only: tuple[int, int] | None = None) -> dict:
+             only: tuple[int, int] | None = None, job: Path | None = None) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     fails = [x for x in timed.get("findings", []) if x.get("severity") == "FAIL"]
     if fails:  # 2026-10-16: a shell chain started a render on a timing with 3 FAIL
         raise SystemExit(f"refused: the timing has {len(fails)} FAIL ({fails[0]['rule']}: {fails[0]['detail']}); fix and re-time")
+    mix_manifest = v2_manifest(job)  # None: the old mono path; a stale manifest stops here (SD-15)
     lock = out / ".assemble.lock"
     if lock.exists() and lock_alive(lock):
         raise SystemExit(f"refused: another assemble (pid {lock.read_text()}) writes {out}")  # else a stale lock from a run that died
     lock.write_text(str(os.getpid()))
     try:
         return _assemble(timed, narration_wav, out, picture_dirs, sound_dirs, size=size, final=final, grade_key=grade_key,
-                         audio_only=audio_only, crf=crf, chunk_seconds=chunk_seconds, only=only)
+                         audio_only=audio_only, crf=crf, chunk_seconds=chunk_seconds, only=only, job=job, mix_manifest=mix_manifest)
     finally:
         lock.unlink(missing_ok=True)
 
 
 def _assemble(timed: dict, narration_wav: Path, out: Path, picture_dirs: list[Path], sound_dirs: list[Path], *,
               size: tuple[int, int], final: bool, grade_key: str | None, audio_only: bool, crf: int,
-              chunk_seconds: float, only: tuple[int, int] | None) -> dict:
+              chunk_seconds: float, only: tuple[int, int] | None, job: Path | None = None, mix_manifest: dict | None = None) -> dict:
     OW, OH = size
     fps = timed["fps"]
     sounds = Sounds(sound_dirs)
     nar, sr = read_wav(narration_wav)
     if sr != SR:
         nar = load_audio(narration_wav)
-    need = int(round(timed["frames"] / fps * SR))  # the audio is exactly as long as the frames (no -shortest trimming)
-    nar = np.pad(nar, (0, max(0, need - len(nar))))[:need]
     stats: dict = {}
-    audio = build_audio(timed, nar, sounds, stats)
-    raw = out / "audio_raw.wav"
-    with wave.open(str(raw), "wb") as w:
-        w.setnchannels(1), w.setsampwidth(2), w.setframerate(SR)
-        w.writeframes((np.clip(audio, -1, 1) * 32767).astype("<i2").tobytes())
-    targets.normalise_file(raw, out / "audio.wav", "long", SR)
+    sd_findings: list[dict] = []
+    if mix_manifest is None:
+        need = int(round(timed["frames"] / fps * SR))  # the audio is exactly as long as the frames (no -shortest trimming)
+        nar = np.pad(nar, (0, max(0, need - len(nar))))[:need]
+        audio = build_audio(timed, nar, sounds, stats)
+        raw = out / "audio_raw.wav"
+        with wave.open(str(raw), "wb") as w:
+            w.setnchannels(1), w.setsampwidth(2), w.setframerate(SR)
+            w.writeframes((np.clip(audio, -1, 1) * 32767).astype("<i2").tobytes())
+        targets.normalise_file(raw, out / "audio.wav", "long", SR)
+    else:  # the stereo mix of the sound director's manifest (docs/AUDIO_SYSTEM.md); the read is not stretched to the frames
+        sd_findings = render_v2(timed, nar, out, Path(job), mix_manifest, sound_dirs, stats)
     # BP-50: integrated loudness and true peak are measured on the normalised mix and judged, never only stored; BP-51: the
     # narration stem's loudness against the mix (two ebur128 runs, free)
     stats.update(measure_delivery(out / "audio.wav", narration_wav, "long"))
     report: list[str] = []
     result = {"audio": stats, "pictures": report, "video": None}
-    bad = targets.failures(stats)
+    if mix_manifest is not None:
+        sd_findings += sd14_pointer(stats)
+        result["sound_director"] = sd_findings
+    bad = targets.failures(stats) + [f"{f['rule']} {f['where']}" for f in sd_findings if f["severity"] == "FAIL" and f["rule"] != "SD-14"]
     if bad and final:  # a final render never passes a FAIL silently: the report is written, then the run stops with the numbers
         (out / "assemble_report.json").write_text(json.dumps(result, indent=1))
         raise SystemExit(f"final render refused: the mix fails {', '.join(bad)} ({stats['loudness_verdict']} loudness, "

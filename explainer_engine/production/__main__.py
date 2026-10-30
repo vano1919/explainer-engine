@@ -226,7 +226,8 @@ def main(argv: list[str] | None = None) -> int:
         res = A.assemble(timed, Path(a.narration), Path(a.out), pics or [], snd, size=(W, H), final=a.final,
                          grade_key=doc["episode"].get("grade") or C.world_of(doc)["grade"], audio_only=a.audio_only,
                          chunk_seconds=a.chunk_seconds,
-                         only=tuple(int(x) for x in a.chunks.split(":")) if a.chunks else None)
+                         only=tuple(int(x) for x in a.chunks.split(":")) if a.chunks else None,
+                         job=Path(a.timed).resolve().parent)  # a fresh audio/sound_mix_manifest.json there selects the stereo mix
         print(json.dumps({k: res[k] for k in ("video", "audio")}, indent=1))
         return 0
     return 2

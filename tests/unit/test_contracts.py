@@ -20,6 +20,7 @@ FIX = ROOT / "tests" / "fixtures" / "contracts"
 NEW = ["job_manifest", "script_variants", "screenplay_spine", "voice_casting", "audio_spine", "sound_mix_manifest",
        "visual_comp_manifest", "comp_spec", "scene_set", "shot_spec", "pod_heartbeat", "edit_and_grade_manifest", "qa_report",
        "editorial_review", "distribution_package"]
+V2 = ["audio_spine", "sound_mix_manifest"]  # contracts whose /2 lives in the same schema file as /1 (P4, D-88)
 
 
 def load(path: Path) -> dict:
@@ -36,6 +37,9 @@ def test_every_new_contract_has_a_schema_and_fixtures():
         assert (FIX / name / "valid.json").exists(), name
         assert len(list((FIX / name).glob("invalid__*.json"))) >= 2, name
     assert (FIX / "film_shots_2" / "valid.json").exists()
+    for name in V2:
+        assert (FIX / name / "valid_v2.json").exists(), name
+        assert len(list((FIX / name).glob("invalid__v2_*.json"))) >= 3, name
 
 
 def test_the_contracts_table_names_every_schema():
@@ -102,6 +106,97 @@ def test_a_derived_file_goes_stale_when_an_input_changes(tmp_path):
     src.write_bytes(b"two")
     found = C.errors(doc, tmp_path)
     assert {f["rule"] for f in found} == {"CN-02"} and "stale" in found[0]["detail"]
+
+
+def test_audio_spine_1_still_validates_unchanged():
+    """A /1 document keeps its exact shape: no film_shots in derived_from, no anchors on its post-hoc entries (P4, D-88)."""
+    doc = load(FIX / "audio_spine" / "valid.json")
+    assert doc["schema"] == "audio_spine/1" and C.errors(doc) == []
+    doc["derived_from"]["film_shots"] = doc["derived_from"]["words"]
+    assert C.errors(doc), "film_shots belongs to /2"
+    doc = load(FIX / "audio_spine" / "valid.json")
+    doc["post_hoc_shots"] = [{"shot_id": "s9", "start_frame": 24, "end_frame": 36}]
+    assert C.errors(doc) == []  # P2's reservation shape, read as before
+    doc["post_hoc_shots"][0]["after_word"] = 1
+    assert C.errors(doc), "an anchor belongs to /2"
+
+
+def test_audio_spine_2_needs_an_anchor_and_a_source_per_window():
+    spine = load(FIX / "audio_spine" / "valid_v2.json")
+    assert spine["schema"] == "audio_spine/2" and C.errors(spine) == []
+    assert C.errors(load(FIX / "audio_spine" / "valid_v2_clip.json")) == []
+    assert C.errors(load(FIX / "audio_spine" / "valid_v2_no_window.json")) == []
+    for k in ("after_word", "source", "clip_sha256"):
+        bad = copy.deepcopy(spine)
+        del bad["post_hoc_shots"][0][k]
+        assert [f["rule"] for f in C.errors(bad)] == ["CN-01"], k
+
+
+def test_audio_spine_2_windows_are_ordered_apart_and_hold_no_word():
+    spine = load(FIX / "audio_spine" / "valid_v2.json")
+    cases = {
+        "overlap": lambda d: d["post_hoc_shots"].append({"shot_id": "s10", "start_frame": 30, "end_frame": 40, "after_word": 1,
+                                                          "source": "planned", "clip_sha256": None}),
+        "word inside": lambda d: d["post_hoc_shots"][0].update(start_frame=20, end_frame=32),
+        "past the end": lambda d: d["post_hoc_shots"][0].update(start_frame=50, end_frame=70),
+        "reversed": lambda d: d["post_hoc_shots"][0].update(start_frame=36, end_frame=24),
+        "no such word": lambda d: d["post_hoc_shots"][0].update(after_word=9),
+        "before its word ends": lambda d: d["post_hoc_shots"][0].update(after_word=2),
+    }
+    for name, edit in cases.items():
+        bad = copy.deepcopy(spine)
+        edit(bad)
+        found = C.errors(bad)
+        assert found and {f["rule"] for f in found} == {"CN-01"}, name
+        with pytest.raises(ContractError):
+            C.validate(bad)
+    adjacent = copy.deepcopy(spine)  # a window may touch a word's edge: ends 36 = word 2 starts, opens 22.. >= word 1's end
+    adjacent["post_hoc_shots"][0].update(start_frame=22, end_frame=36)
+    assert C.errors(adjacent) == []
+
+
+def test_sound_mix_2_agrees_with_its_spine(tmp_path):
+    """CN-16 and the indices: /2 reads its spine from derived_from; the spine's word count, frames and fps bind the manifest."""
+    (tmp_path / "audio").mkdir()
+    spine = load(FIX / "audio_spine" / "valid_v2.json")
+    (tmp_path / "audio" / "audio_spine.json").write_text(json.dumps(spine), encoding="utf-8")
+    doc = load(FIX / "sound_mix_manifest" / "valid_v2.json")
+    assert doc["schema"] == "sound_mix_manifest/2"
+    for name, src in (("timed", "timed.json"), ("library", "library/manifest.json"), ("film_shots", "film_shots.json")):
+        path = tmp_path / src
+        path.parent.mkdir(exist_ok=True)
+        path.write_bytes(name.encode())
+        doc["derived_from"][name]["sha256"] = C.sha256_file(path)
+    doc["derived_from"]["audio_spine"]["sha256"] = C.sha256_file(tmp_path / "audio" / "audio_spine.json")
+    assert C.errors(doc, tmp_path) == []
+    bad = copy.deepcopy(doc)
+    bad["spots"][0]["word_index"] = 99
+    assert [f["rule"] for f in C.errors(bad, tmp_path)] == ["CN-01"]
+    bad = copy.deepcopy(doc)
+    bad["total_frames"] = 61
+    assert {f["rule"] for f in C.errors(bad, tmp_path)} == {"CN-16"}
+    (tmp_path / "timed.json").write_bytes(b"changed")
+    assert {f["rule"] for f in C.errors(doc, tmp_path)} == {"CN-02"}  # SD-15: the manifest is stale against its inputs
+
+
+def test_sound_mix_1_still_validates_unchanged():
+    doc = load(FIX / "sound_mix_manifest" / "valid.json")
+    assert doc["schema"] == "sound_mix_manifest/1" and C.errors(doc) == []
+    doc["presence_dip"] = {"rule": "BP-118"}
+    assert C.errors(doc), "presence_dip belongs to /2"
+
+
+def test_a_hit_group_needs_all_three_layers_and_only_those():
+    doc = load(FIX / "sound_mix_manifest" / "valid_v2.json")
+    one = copy.deepcopy(doc)
+    one["spots"][1]["group"] = None  # a sub layer outside any group
+    assert {f["rule"] for f in C.errors(one)} == {"CN-16"}
+    two = copy.deepcopy(doc)
+    two["spots"][2]["layer"] = "sub"  # two subs, no body
+    assert {f["rule"] for f in C.errors(two)} == {"CN-16"}
+    three = copy.deepcopy(doc)
+    three["spots"][3]["layer"] = "single"  # a grouped spot that is not a layer
+    assert {f["rule"] for f in C.errors(three)} == {"CN-16"}
 
 
 def test_word_indexes_must_exist_in_the_spine(tmp_path):

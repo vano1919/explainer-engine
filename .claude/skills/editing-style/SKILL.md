@@ -92,6 +92,16 @@ binding rules they are.
 - **Themes belong to people.** A faction's or hero's motif returns when its owner acts; with music up, action cuts sit on
   the beat grid (BP-123); music starts and stops on boundaries (BP-62).
 
+### Sound director (P4)
+
+The judgement above is planned and checked by code once the read is timed: `audio/spine.py` gives every word one frame clock and
+`audio/sound_director.py` derives the mix manifest from it, with the checks SD-01..SD-15 ([AUDIO_SYSTEM](../../../docs/AUDIO_SYSTEM.md)
+"Sound director"; the numbers are BP-116..BP-123 and BP-160..BP-161 in the registry, never copied here). You still write the
+sounds in the script (segment `audio` and `music`, shot-card `sound`); you never edit the manifest, you fix the script and plan again.
+A reveal gets a prepared silence and a three-layer hit, not a louder effect; if the report says the background crowds the narrator's
+band, the cause is the music or ambience you chose, not the mixer. A take from a free generator is allowed only for a kind the creator
+admitted (BP-162); otherwise library first, then the ElevenLabs connector.
+
 ### CHECKLIST (sound)
 
 Rendered from `explainer_engine/standards/craft_checklists/sound.json` (the one home of these ids; 
@@ -101,18 +111,18 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 <!-- craft-checklist:sound:begin -->
 | ID | check | rule | artefact field | sourced rules | enforced by |
 |---|---|---|---|---|---|
-| CRAFT-SND-01 | code | a continuous room-tone bed per scene inside the band; no cut falls to digital silence | audio events per scene (bed level) | BP-116 | `explainer_engine/audio/sound_director.py` (planned, P4) |
-| CRAFT-SND-02 | code | J- or L-cut at every scene boundary inside its durations | scene boundaries in the cut list | BP-117, ED-14 | `explainer_engine/audio/sound_director.py` (planned, P4) |
-| CRAFT-SND-03 | code | music and ambience leave the voice's presence band while the narrator speaks (measured gap) | music/bed stems vs the narration's word times | BP-118 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-01 | code | a continuous room-tone bed per scene inside the band; no cut falls to digital silence | audio events per scene (bed level) | BP-116 | `explainer_engine/audio/sound_director.py` |
+| CRAFT-SND-02 | code | J- or L-cut at every scene boundary inside its durations | scene boundaries in the cut list | BP-117, ED-14 | `explainer_engine/audio/sound_director.py` |
+| CRAFT-SND-03 | code | music and ambience leave the voice's presence band while the narrator speaks (measured gap) | music/bed stems vs the narration's word times | BP-118 | `explainer_engine/audio/sound_director.py` |
 | CRAFT-SND-04 | code | every duck is a dip inside BP-53's band | duck envelopes | BP-53 | `explainer_engine/audio/duck.py` |
-| CRAFT-SND-05 | code | a major impact is a three-layer composite hit on the frame | sfx events with visual_event | BP-119, BP-54 | `explainer_engine/audio/sound_director.py` (planned, P4) |
-| CRAFT-SND-06 | code | an acoustic vacuum before each of the largest reveals, then the hit | reveal beats + mix levels | BP-120 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-05 | code | a major impact is a three-layer composite hit on the frame | sfx events with visual_event | BP-119, BP-54 | `explainer_engine/audio/sound_director.py` |
+| CRAFT-SND-06 | code | an acoustic vacuum before each of the largest reveals, then the hit | reveal beats + mix levels | BP-120 | `explainer_engine/audio/sound_director.py` |
 | CRAFT-SND-07 | code | at most two and a half sounds of one colour at once besides the voice (five when spread) | audio layers per instant | BP-56, BP-121 | `explainer_engine/audio/layers.py` |
-| CRAFT-SND-08 | code | narration centred, music wide, a spot effect on its source's screen side within the pan range | audio event pan + shot continuity card side | BP-121 | `explainer_engine/production/assemble.py` (planned, P4) |
+| CRAFT-SND-08 | code | narration centred, music wide, a spot effect on its source's screen side within the pan range | audio event pan + shot continuity card side | BP-121 | `explainer_engine/production/assemble.py` |
 | CRAFT-SND-09 | critic | encoded and embodied sound are balanced: never two encoded streams (narration over a hero line) at once | audio layers per instant | BP-121 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
-| CRAFT-SND-10 | code | acoustic perspective follows the shot size; one impulse response per scene | sfx perspective field + shot size | BP-122 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-10 | code | acoustic perspective follows the shot size; one impulse response per scene | sfx perspective field + shot size | BP-122 | `explainer_engine/audio/sound_director.py` |
 | CRAFT-SND-11 | critic | one motif per faction, hero and channel; it returns when its owner acts | music library motif_of + scene owners | BP-123 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
-| CRAFT-SND-12 | code | with music up, an action cut falls on the beat grid | cut times vs the music's beat grid | BP-123 | `explainer_engine/audio/sound_director.py` (planned, P4) |
+| CRAFT-SND-12 | code | with music up, an action cut falls on the beat grid | cut times vs the music's beat grid | BP-123 | `explainer_engine/audio/sound_director.py` |
 | CRAFT-SND-13 | code | music is spotted on scene or beat boundaries, with a planned no-music stretch | music events | BP-62 | `explainer_engine/audio/layers.py` |
 | CRAFT-SND-14 | code | the delivered mix meets the loudness and true-peak gate | the delivered file | BP-50 | `explainer_engine/qa/targets.py` |
 <!-- craft-checklist:sound:end -->

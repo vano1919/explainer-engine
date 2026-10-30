@@ -32,7 +32,9 @@ produce the derived files belong to the phases named in the table (P3, P4, P5, P
 | `voice_audition/1` | `audio/auditions/<voice_id>.json` | `audio/voice_audition.py` (P4b) | code (a free listening) | casting card, `voice_audition.distinct`, P8 |
 | `channel_voices/1` | `config/channel_voices.json` | the creator's word, `voice_check.register` (P4b) | hand (baseline from `voice_audition baseline`) | `voice_check.check_against` (EL-13), voice-caster |
 | `audio_spine/1` | `audio/audio_spine.json` | audio spine compiler (P4) | **derived** from `words.json` + `production_timed/1` | P5, P6, P7 (their clock) |
-| `sound_mix_manifest/1` | `audio/sound_mix_manifest.json` | sound director (P4) | hand, on the spine | `production/assemble.py` |
+| `audio_spine/2` | `audio/audio_spine.json` | audio spine compiler (P4) | **derived** from `words.json` + `production_timed/1` (+ `film_shots/2`) | P5, P6, P7, the sound director |
+| `sound_mix_manifest/1` | `audio/sound_mix_manifest.json` | sound director (P4) | hand, on the spine (a /1 file stays valid) | `production/assemble.py` |
+| `sound_mix_manifest/2` | `audio/sound_mix_manifest.json` | sound director (P4, `audio/sound_director.py`) | **derived** from the spine + `production_timed/1` + `film_shots/2` + the library manifest | `production/assemble.py` |
 | `visual_comp_manifest/1` | `visual/visual_comp_manifest.json` | compensator (P5) | hand, on the spine | maps / HUD renderer, router |
 | `comp_spec/1` | `visual/specs/<item_id>.json` (named by a layer of kind `spec` of the item) | compensator (P5) | hand, on the spine | the archetype renderers (`edit/visual_compensator.py`, [COMPENSATOR](COMPENSATOR.md)) |
 | `scene_set/1` | `sets/<set_id>.json` | set builder (P6) | hand (numeric geography) | continuity card fields (derived, P6), backdrop crop |
@@ -89,10 +91,26 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 - **audio_spine/1**: `derived_from{words, timed}`, `fps`, `duration_s`, `total_frames`, `words[]` (`i`, `text`,
   `start_s`, `end_s`, `start_frame`, `end_frame`, `segment`, `line`), `segments[]` (`id`, `start_frame`, `end_frame`),
   `post_hoc_shots[]` (LTX-native dialogue shots whose words are timed from the rendered clip, P4).
+- **audio_spine/2** (D-88): everything of `audio_spine/1`, plus optional `derived_from.film_shots`, and on every `post_hoc_shots[]` entry
+  `after_word` (the last read word before the window; -1 = before the first) and `source` (`planned` or `clip`) with `clip_sha256` (a hash
+  iff `source` is `clip`, else null). A window reserves the shot's planned length after `after_word`; every later word moves by it. The
+  windows are in order, do not overlap, lie inside `total_frames`, and no word frame falls inside one (CN-01). A document with no window
+  and no `film_shots` is written as `/1`.
 - **sound_mix_manifest/1**: `audio_spine` (file reference), `stems[]` (subset of dialogue, narration, music, sfx,
   ambience), `beds[]` (`scene`, `ref`, `gain_db`, `start_frame`, `end_frame`), `vacuums[]` (`start_frame`, `end_frame`,
   `reason`), `spots[]` (`id`, `shot_id`, `ref`, `word_index` or `frame`, `stem`, `pan` -1..1, `perspective`
   near|mid|far, `gain_db`), `master{rule}` (a BP id, never a number).
+- **sound_mix_manifest/2**: `derived_from{audio_spine, timed, library, film_shots?}` (file references), `fps`, `total_frames`, `stems[]`,
+  `narration{ref, sha256}`, `dialogue[]` (`shot_id`, `ref` or null, `start_frame`, `end_frame`; mirrors the spine's windows), `scenes[]`
+  (`scene`, `start_frame`, `end_frame`, `acoustic` outdoor|room|hall|cave|neutral, `acoustic_source` declared|inferred, `ir_seed`, `entry`
+  J|L|butt, `lead_frames`), `beds[]` (`id`, `scene`, `kind` room_tone|ambience|native, `ref`, `gain_db`, `start_frame`, `end_frame`,
+  `fade_in_frames`, `fade_out_frames`), `music[]` (`id`, `ref`, `motif_of` or null, frames, `gain_db`, fades, `beat_grid`
+  `{bpm, offset_s, source}` or null), `vacuums[]` (`start_frame`, `end_frame`, `reason`, `reveal_frame`), `cues[]` (`name`, `frame`,
+  `gain_db`, `max_ms` or null), `spots[]` (as /1 plus `group`, `layer` single|sub|body|air, `origin` timed_sfx|foley|loudest|hit),
+  `presence_dip{rule}`, `perspective{rule}`, `master{rule}`: BP ids only, never numbers.
+- **sfx_manifest** (the sound library, schema version 1) gains optional fields for P4, nothing else changes: `source.kind` `open_model`
+  (+ `source.model`, `source.seed`, `source.admission` = the id of a record in `assets/audio/generator_admission.json`, BP-162, SD-13;
+  `sfx_library.validate` refuses one whose admission is missing or for another kind), `motif_of` and `beat_grid {bpm, offset_s, source}`.
 - **visual_comp_manifest/1**: `audio_spine` (file reference), `items[]` (`item_id`, `shot_id`, `archetype_id`,
   `trigger_word_index`, `duration_frames`, `layers[]` (`kind`, `ref`, `reveal_word_index` or null),
   `on_screen_text` or null).
@@ -148,6 +166,7 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 | CN-13 | A `qa_report/1` with status PASS has no failed FAIL check, and a retry directive's attempt is at most the ledger's failure limit (OR-04) | OR-04 | `contracts` |
 | CN-14 | A `distribution_package/1` lists only files that exist with their sha256, and when the job folder holds `job_manifest.json` its `source_episode_sha256` equals that manifest's `assembled_video` artifact (a package from an older render is refused) | invariant 4, 5 | `contracts.errors(doc, base)` FAIL |
 | CN-15 | An archetype named by a shot, a manifest item or a spec is one of the catalogue (`explainer_engine/edit/archetypes.json`), and a shot on the MAP or COMPENSATOR lane names an archetype of that lane | [COMPENSATOR](COMPENSATOR.md) | `contracts` (`film_shots/2`, `visual_comp_manifest/1`, `comp_spec/1`) |
+| CN-16 | A `sound_mix_manifest/2` agrees with its spine: every frame lies inside `total_frames`, which equals the spine's; `scenes[]` tile the spine without a gap or an overlap; each hit group has exactly one `sub`, one `body` and one `air`; every `word_index` is inside the spine named by `derived_from.audio_spine` (D-88) | invariant 7, D-88 | `core/contracts.py` FAIL |
 
 ## The lifecycle (`job_manifest/1`)
 
@@ -170,7 +189,8 @@ own partial timing is part of the sample stage.
 | STORYBOARDED | gate #2: shot cards locked, validators 0 FAIL | machine | `film_shots.json` and the validator report |
 | BUDGET_RESERVED | gate #3: the estimate and the provider choice (D-50, OR-17 cost table); a pod plan also OR-23/OR-24 | creator or planner | the paint/pod plan hash; `budget_reservation_id` must be a reserved item of the ledger |
 | SAMPLE_APPROVED | OR-19 | creator | `sample_approval.json` |
-| AUDIO_TIMED, ASSETS, ASSEMBLED, STAGED_UNLISTED | the stage's own checks | machine | the stage's output or report |
+| AUDIO_TIMED | the audio spine is written and valid, and the sound director's plan has 0 FAIL (`audio/sound_director.py`, the SD checks of [AUDIO_SYSTEM](AUDIO_SYSTEM.md)) | machine | `audio_spine.json` and `sound_mix_manifest.json` |
+| ASSETS, ASSEMBLED, STAGED_UNLISTED | the stage's own checks | machine | the stage's output or report |
 | QA_PASSED | `qa_report/1` PASS | machine | the report |
 | REVIEW_APPROVED | approval #2, invariant 4 | creator | the review bundle |
 | PUBLISHED_PUBLIC | gate #4: the creator's click in Studio | creator | his message (CN-06) |

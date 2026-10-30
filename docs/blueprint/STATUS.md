@@ -26,7 +26,7 @@ answered by Claude without his recorded delegation.
 | P4b | ხმის დირექტორი (ბატარეა, რეესტრი; კონექტორი, REST არა) | P2 | S2 / Sonnet / high | 3 | cmsg_01Hnu5zB86sjUj5GtTgaUkPWVCDmSdPHFKoz1Q5YLQxGKZ | [#45](https://github.com/vano1919/explainer-engine/pull/45) draft | review | cross-review (plan thread); D9 spend_caps casting_credits_max (the creator, before P12a) |
 | P5 | კომპენსატორი, რუკები, HUD | P2, P3b | S2 / Sonnet / high | 3 | — | — | todo | — |
 | P3 | სცენარის ხერხემალი + variant_plan + register_lint | P2, P3b | S2 / Sonnet / high (ქულები Opus) | 4 | — | — | todo | — (A5 = D-79) |
-| P4 | აუდიო-ხერხემალი + sound director | P3, P2, P3b | S3 Opus high → S2 Sonnet high | 4 | — | — | todo | — (D8: გენერატორი მხოლოდ გაზომილი ხარისხით) |
+| P4 | აუდიო-ხერხემალი + sound director | P3, P2, P3b | S3 Opus high → S2 Sonnet high | 4 | — | [#51](https://github.com/vano1919/explainer-engine/pull/51) draft | review | cross-review (plan thread); the creator's admission word and blind A/B answer before any free generator is used (D8, BP-162); the free measurement run after the merge |
 | P5b | წამყვანების სამყარო (უფასო ნაწილი) | P2, P5, P4b | S3 Opus high → S2 Sonnet high | 4 | — | — | todo | — |
 | P6 | shot router, lane-ები, continuity (D-82) | P2, P5, P4, P3b | S3 Opus high → S2 Sonnet high | 5 | — | — | todo | — |
 | P9 | Shorts პლატფორმისთვის + captions | P3, P7, P2 | S2 / Sonnet / medium–high | 5 | — | — | todo | — |
