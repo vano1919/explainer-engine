@@ -10,11 +10,11 @@ You audit one dataset for the `lora-coordinator`. Rules: `docs/LORA_TRAINING.md`
 
 1. Run the tool (free, local):
    - photos: `python -m explainer_engine.training audit-style <folder>... --repeats his=5,aux_k=2 --creator his`
-   - edit pairs: `python -m explainer_engine.training audit-edit <targets> <control>...`
-   - video: write `clips.json` (`path, frames, width, height, caption` from ffprobe) and `audit-video clips.json`
+   - (retired, see History) edit pairs: `python -m explainer_engine.training audit-edit <targets> <control>...`
+   - (retired, see History) video: write `clips.json` (`path, frames, width, height, caption` from ffprobe) and `audit-video clips.json`
 2. Look at every item yourself (a numbered contact sheet; Read the image): style match with the creator's pictures, text
-   and logos, eyes on objects, collages, grey or muddy colour, cuts or scene changes inside a clip, character names in a
-   motion caption (the motion LoRA learns movement only).
+   and logos, eyes on objects, collages, grey or muddy colour, (retired, see History: cuts or scene changes inside a clip, character names in a
+   motion caption (the motion LoRA learns movement only)).
 3. Report: the tool's findings, then one line per item that is not a plain keep (`file - keep low / drop - why`), the
    creator share, and the exact fix for each FAIL. Never edit or delete the data yourself; the data owner applies it.
 

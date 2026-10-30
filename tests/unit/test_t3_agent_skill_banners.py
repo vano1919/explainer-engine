@@ -46,3 +46,17 @@ def test_orchestrator_is_scoped_to_the_still_picture_route():
     head = _head(".claude/agents/orchestrator.md", 20)
     assert "Scope (" in head and "P11" in head
     assert "D-43 still-picture route" in _text("docs/ORCHESTRATION.md")
+
+
+def test_no_agent_page_claims_measured_lora_speeds_that_do_not_exist():
+    import json
+    rows = json.loads(_text("config/job_speeds.json"))["jobs"]["lora_train"]["rows"]
+    pages = [f".claude/agents/{a}.md" for a in ("lora-coordinator", "lora-dataset-auditor", "lora-checkpoint-judge")]
+    for p in pages:
+        txt = _text(p)
+        if "measured rows live in" in txt:
+            assert rows, p
+    coordinator = _text(pages[0])
+    if not rows:
+        assert "empty until the first xworld run is" in coordinator
+    assert "(retired, see History)" in _text(pages[1])
