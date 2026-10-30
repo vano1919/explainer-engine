@@ -384,7 +384,7 @@ CLOUDS = ("COMMUNITY", "SECURE")
 # What ``create`` reads (a flag that is not here is refused, so a typo or a flag from another command is never silently ignored, G15).
 CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
                       "--job", "--job-type", "--ledger", "--max-hours", "--max-usd", "--min-ram", "--name", "--on-cap", "--only",
-                      "--pass-s", "--ref-hours", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
+                      "--pass-s", "--ref-hours", "--rules", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
                       "--upload-grace-s", "--volume", "--vram", "--wait-stock", "--work-min")
 CREATE_BOOL_FLAGS = ("--measure", "--no-guard", "--yes")
 PICK_ONLY_FLAGS = ("--only", "--cloud", "--ref-hours", "--wait-stock")  # read only when --vram picks the card
@@ -1688,6 +1688,8 @@ def main(argv=None, api=None, live=None):
             raise SystemExit("refused: --yes only after the creator approved this pod's price and time cap")
         if create_flag_problems(rest):
             raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(create_flag_problems(rest)))
+        if _opt(rest, "--rules") and _opt(rest, "--test"):
+            raise SystemExit("refused: a paid test has no episode rulebook: --rules and --test do not go together")
         max_usd, max_hours = _opt(rest, "--max-usd", None, float), _opt(rest, "--max-hours", None, float)
         if not max_usd or not max_hours:
             raise SystemExit("create needs --max-usd and --max-hours (the approved caps)")
@@ -1704,6 +1706,17 @@ def main(argv=None, api=None, live=None):
         if want_test and ledger_test != want_test:
             raise SystemExit(f"refused: --test {want_test} does not match the ledger's test {ledger_test}" if ledger_test
                              else f"refused: --test given but {ledger} is not a paid-test ledger")
+        rules_file = _opt(rest, "--rules")
+        if rules_file:  # OR-12 (D-51): an episode's pod pictures pass the rulebook's paid_assets checkpoint, as production/paint.py does
+            from explainer_engine.standards import rulebook as _RB
+            rules_path = Path(rules_file)
+            if not rules_path.exists():
+                raise SystemExit(f"refused: no episode rulebook at {rules_path}")
+            gate_fails = [f for f in _RB.gate(rules_path, "paid_assets", rules_path.with_name("production_script.json"))
+                          if f["severity"] == "FAIL"]  # a BLOCK or an undecided REVIEW is a FAIL at paid_assets (ES-06, ES-07)
+            if gate_fails:
+                raise SystemExit("refused, no pod was made: the paid_assets gate (OR-12) fails:\n  " + "\n  ".join(
+                    f"{f['rule']} {f['where']}: {f['detail']}" for f in gate_fails))
         script_file, script_url = _opt(rest, "--script"), _opt(rest, "--script-url")
         if script_url and not script_file:
             raise SystemExit("--script-url needs --script <the same file, local>: the pod script is linted before any money")
