@@ -2942,3 +2942,11 @@ The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code accoun
   spine's runtime and CMP-12 when the planner passes its beats; the tableau reads its PNGs once per item and skips file checks without a job
   folder; catalogue, PNG and source pins are written atomically; a faction pair needs both marks; the doc names the fonts the code really uses.
   P5's rule ids moved to BP-147..153 and its decision to D-87 after main took BP-140..146 and D-86 (P3).
+## 2026-10-30 UTC: P5 follow-up, Canvas.line's dashed walk always terminates (no pod, no money)
+
+- The plan thread's review desk (after #47): the 1e-6 float floor of the dash walk was not pinned by a test, and `Canvas.line` still hung or
+  divided by zero on degenerate input. Now: `draw.dash_runs` is a pure generator walking only the part of the line inside the canvas box (the
+  phase still advances over the rest), so the work is bounded by the box, not by the line's length (a 1e12 px line is instant); a dash must be
+  finite with on > 0 and off >= 0 and the coordinates finite, else ValueError; a pattern finer than a pixel is drawn solid.
+- `tests/unit/test_draw_guards.py`: a searched input on which the walk stalls without the floor (the test patches the floor to 0 and sees the
+  spin, so removing the floor fails it), the refused dashes and coordinates, the 1e12 line, the 1e-9 dash, and the phase across the clipped part.
