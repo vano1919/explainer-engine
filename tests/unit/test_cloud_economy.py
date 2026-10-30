@@ -405,3 +405,27 @@ def test_every_flag_the_create_branch_reads_is_known_to_the_flag_check():
     read = set(re.findall(r'"(--[a-z0-9-]+)"', "\n".join(src[start:end]))) | {"--pass-s", "--upload-grace-s", "--cap-grace-s"}  # the last three: f"--{f}"
     assert read <= set(R.CREATE_VALUE_FLAGS) | set(R.CREATE_BOOL_FLAGS), read - set(R.CREATE_VALUE_FLAGS) - set(R.CREATE_BOOL_FLAGS)
     assert set(R.CREATE_VALUE_FLAGS) | set(R.CREATE_BOOL_FLAGS) <= read | {"--cloud"}, "a known flag nothing reads"
+
+
+def test_create_requires_and_checks_the_test_name_of_a_paid_test_ledger(env, monkeypatch):
+    fake, api, tmp = env
+    monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)
+    monkeypatch.setenv("EXPLAINER_LEDGER_MIRROR", str(tmp / "durable"))
+    paid, plain, sf = tmp / "paid.json", tmp / "plain.json", tmp / "job.sh"
+    Run.open_test(paid, "p12a_smoke")
+    Run.open(plain, caps={"runpod_usd": 1.0})
+    sf.write_text(NEW_SH)
+
+    def create(ledger, *extra):
+        return R.main(["create", "--yes", "--max-usd", "0.07", "--max-hours", "1", "--ledger", str(ledger), "--script", str(sf),
+                       "--script-url", "https://huggingface.co/x/pod.sh", *extra, *PLAN], api=api, live=FakeLive(age=60))
+    calls = len(fake.calls) if hasattr(fake, "calls") else None
+    with pytest.raises(SystemExit, match="belongs to paid test p12a_smoke: pass --test p12a_smoke"):
+        create(paid)
+    with pytest.raises(SystemExit, match="--test p12b_two_runs does not match the ledger's test p12a_smoke"):
+        create(paid, "--test", "p12b_two_runs")
+    with pytest.raises(SystemExit, match="--test given but .* is not a paid-test ledger"):
+        create(plain, "--test", "p12a_smoke")
+    assert not fake.pods and (calls is None or len(fake.calls) == calls)
+    create(paid, "--test", "p12a_smoke")  # the check passes: the request reaches the fake
+    assert len(fake.pods) == 1
