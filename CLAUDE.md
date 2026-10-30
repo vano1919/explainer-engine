@@ -14,6 +14,8 @@ link to it, never copy it (`python -m explainer_engine.docs_lint` enforces this)
 **Higher thread decides (creator, 2026-10-26, OR-24):** before every important decision the working session (Sonnet) asks a separate thread on a higher model (Opus); that thread takes the main planning decisions and its confirmation of an OR-23 pod plan starts the pod. The coordinator passes it complete information (facts, numbers, files, open items) but no reasoning, so the answer is not biased.
 **Direct evaluations, full-scale plans (creator, 2026-10-26, OR-25):** an evaluation is direct, with the evidence; a plan starts from the goal, lists every path to it and grounds each in known training methods and the project's goals, not only the next step.
 **Opus plans, Sonnet works (creator, 2026-10-26, OR-26):** the working session does the work; the Opus thread writes the plans, and hard technical questions (code and test design of a new method) go to it before the work; the session implements the plan as written.
+**Fable's full-repo audit is the last gate before a paid test (creator, 2026-10-30, OR-34):** before ANY paid test one Fable audit over the whole repo and the changes, run through the Claude API, confirms that nothing from the old era is still used and everything runs on the new approaches; only then the paid tests that are necessary or recommended for the final changes.
+**API instead of threads where quality holds (creator, 2026-10-30, OR-35):** cross-reviews, audits, research, script variants and document or test-text writing go to the Claude API (`llm/claude_api.py`) where quality does not suffer; threads keep code writing and merging.
 
 ## Commands
 
@@ -151,5 +153,7 @@ jobs/                     job output (gitignored): jobs/<slug>/job-NNN_<date>/{s
   creator|claude`) and routing log are in `docs/blueprint/` (`python -m explainer_engine.governance check`).
 - Usage limits (creator 2026-10-29, OR-30): the orchestrator and every thread watch the 5-hour and the weekly limit; at 95 % the
   unfinished work is backed up (project files + a WIP commit on the work branch) before it can be lost.
+- Paid runs save step by step (creator 2026-10-30, OR-33): every paid run writes its output to a file as it arrives (stream / partial /
+  checkpoint); a paid path without that protection proven by a test does not start.
 - Commit with `git -c user.name=vano1919 -c user.email=122537395+vano1919@users.noreply.github.com`.
 - The Bash tool collapses `\\` inside heredocs: write Python edit scripts with backslashes to a file first.

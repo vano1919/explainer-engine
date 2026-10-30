@@ -79,6 +79,57 @@ def seeded(*parts) -> np.random.Generator:
     return np.random.default_rng(int.from_bytes(digest[:8], "big"))
 
 
+MIN_DASH_PERIOD = 1.0     # output pixels: a dash pattern finer than this reads as a solid line
+DASH_FLOOR = 1e-6         # the least a dash step may advance: float noise at a boundary never stalls the walk (pos + 3e-16 == pos);
+#                           beyond ~1e10 one float step exceeds it, and ``dash_runs`` then moves by one ulp (math.nextafter)
+
+
+def _visible(a, b, box):
+    """The part (t0, t1) of the segment a-b inside ``box`` (Liang-Barsky), or None."""
+    x0, y0, x1, y1 = box
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    t0, t1 = 0.0, 1.0
+    for p, q in ((-dx, a[0] - x0), (dx, x1 - a[0]), (-dy, a[1] - y0), (dy, y1 - a[1])):
+        if p == 0:
+            if q < 0:
+                return None
+            continue
+        t = q / p
+        if p < 0:
+            t0 = max(t0, t)
+        else:
+            t1 = min(t1, t)
+    return (t0, t1) if t0 < t1 else None
+
+
+def dash_runs(pts, on: float, off: float, box):
+    """The drawn runs ((x0, y0), (x1, y1)) of a dashed polyline: the pattern runs on along the whole line across its segments, and
+    only the part inside ``box`` is walked (the phase still advances over the rest), so the work is bounded by the box, not by the
+    line's length."""
+    period, phase = on + off, 0.0
+    for a, b in zip(pts, pts[1:]):
+        length = math.hypot(b[0] - a[0], b[1] - a[1])
+        if length <= 0:
+            continue
+        seen = _visible(a, b, box)
+        if seen is None:
+            phase = (phase + length) % period
+            continue
+        pos, stop = seen[0] * length, seen[1] * length
+        phase = (phase + pos) % period
+        while pos < stop:
+            step = max((on - phase) if phase < on else (period - phase), DASH_FLOOR)
+            end = min(stop, pos + step)
+            if end <= pos:  # far from the origin one float step is wider than ``step`` (pos + step == pos): advance one ulp instead
+                end = min(stop, math.nextafter(pos, math.inf))
+            if phase < on:
+                yield ((a[0] + (b[0] - a[0]) * pos / length, a[1] + (b[1] - a[1]) * pos / length),
+                       (a[0] + (b[0] - a[0]) * end / length, a[1] + (b[1] - a[1]) * end / length))
+            phase = (phase + end - pos) % period
+            pos = end
+        phase = (phase + length - stop) % period
+
+
 class Canvas:
     """A supersampled RGBA canvas; every coordinate is in output pixels. ``text`` is the only call that draws letters: a plate never
     calls it (CMP-01)."""
@@ -108,26 +159,26 @@ class Canvas:
                 self.d.line(pts + [pts[0]], fill=outline, width=max(1, self.px(width)), joint="curve")
 
     def line(self, pts, fill, width: float = 2, dash: tuple[float, float] | None = None):
+        """A polyline; ``dash`` is (on, off) in output pixels. A dash must be finite, with on > 0 and off >= 0, and the coordinates finite
+        (ValueError otherwise: a hang in a long render is the worst defect to find); a pattern finer than a pixel is drawn solid."""
         pts = self._pts(pts)
         if len(pts) < 2:
             return
+        width_px = max(1, self.px(width))
+        if dash is not None:
+            on, off = dash[0] * self.ss, dash[1] * self.ss
+            if not all(math.isfinite(v) for v in (on, off)) or on <= 0 or off < 0:
+                raise ValueError(f"a dash is (on, off) with on > 0 and off >= 0, finite; got {dash}")
+            if not all(math.isfinite(v) for p in pts for v in p):
+                raise ValueError("a dashed line needs finite coordinates")
+            if on + off < MIN_DASH_PERIOD * self.ss:
+                dash = None
         if dash is None:
-            self.d.line(pts, fill=fill, width=max(1, self.px(width)), joint="curve")
+            self.d.line(pts, fill=fill, width=width_px, joint="curve")
             return
-        on, off = dash[0] * self.ss, dash[1] * self.ss
-        phase, width_px = 0.0, max(1, self.px(width))        # the dash pattern runs on along the whole line, across its segments
-        for a, b in zip(pts, pts[1:]):
-            length = math.hypot(b[0] - a[0], b[1] - a[1])
-            pos = 0.0
-            while pos < length:
-                step = max((on - phase) if phase < on else (on + off - phase), 1e-6)       # always moves on, whatever the float noise
-                end = min(length, pos + step)
-                if phase < on:
-                    p0 = (a[0] + (b[0] - a[0]) * pos / length, a[1] + (b[1] - a[1]) * pos / length)
-                    p1 = (a[0] + (b[0] - a[0]) * end / length, a[1] + (b[1] - a[1]) * end / length)
-                    self.d.line([p0, p1], fill=fill, width=width_px)
-                phase = (phase + end - pos) % (on + off)
-                pos = end
+        box = (-width_px, -width_px, self.w * self.ss + width_px, self.h * self.ss + width_px)
+        for p0, p1 in dash_runs(pts, on, off, box):
+            self.d.line([p0, p1], fill=fill, width=width_px)
 
     def circle(self, cx, cy, r, fill=None, outline=None, width: float = 2):
         box = [(cx - r) * self.ss, (cy - r) * self.ss, (cx + r) * self.ss, (cy + r) * self.ss]
