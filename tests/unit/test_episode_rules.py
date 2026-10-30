@@ -288,3 +288,45 @@ def test_pirated_hosts_are_refused_as_sources():
     doc = rules()
     doc["rules"][0]["sources"][0]["url"] = "https://dokumen.pub/some-book.html"
     assert any(f["rule"] == "ES-19" and f["severity"] == "FAIL" for f in R.check(doc))
+
+
+
+def test_create_runs_the_paid_assets_gate_when_rules_are_given_and_refuses_a_block(tmp_path, monkeypatch):
+    """OR-12 in cloud/runpod.py create --rules (fake RunPod, no network, no money)."""
+    from test_cloud_stop_paths import PLAN, FakeLive
+    from test_runpod import NEW_SH, FakeRunPod
+
+    from explainer_engine.cloud import runpod as RP
+    from explainer_engine.core.ledger import Run
+    monkeypatch.setattr(RP, "RP", tmp_path / "rp")
+    monkeypatch.setattr(RP, "ROOT", tmp_path)
+    monkeypatch.setattr(RP.time, "sleep", lambda s: None)
+    monkeypatch.setattr(RP, "guard_detached", lambda pid: 4242)
+    monkeypatch.setattr(RP, "live_guard", lambda pid: True)
+    monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)
+    monkeypatch.setenv("EXPLAINER_LEDGER_MIRROR", str(tmp_path / "durable"))
+    fake = FakeRunPod()
+    api = RP.Api("k", transport=fake, sleep=lambda s: None)
+    ledger, sf = tmp_path / "ep.json", tmp_path / "job.sh"
+    Run.open(ledger, caps={"runpod_usd": 1.0})
+    sf.write_text(NEW_SH)
+    ep = tmp_path / "ep"
+    ep.mkdir()
+    path, sp = write(ep, rules())
+    R.stamp(path, "paid_assets", by="test", scope="whole rulebook", script=sp)
+
+    def create(*extra):
+        return RP.main(["create", "--yes", "--max-usd", "0.07", "--max-hours", "1", "--ledger", str(ledger), "--script", str(sf),
+                        "--script-url", "https://huggingface.co/x/pod.sh", *extra, *PLAN], api=api, live=FakeLive(age=60))
+    blocked = rules()
+    blocked["risks"][2].update(status="BLOCK")  # the mutation test_block_is_removed_before_final_and_does_not_block_the_topic uses
+    bpath = tmp_path / "blocked" / "episode_rules.json"
+    bpath.parent.mkdir()
+    bpath.write_text(json.dumps(blocked), encoding="utf-8")
+    with pytest.raises(SystemExit, match="paid_assets gate"):
+        create("--rules", str(bpath))
+    with pytest.raises(SystemExit, match="a paid test has no episode rulebook"):
+        create("--rules", str(path), "--test", "p12a_smoke")
+    assert not fake.pods
+    create("--rules", str(path))  # the sample rulebook, stamped: the request reaches the fake
+    assert len(fake.pods) == 1

@@ -3514,3 +3514,9 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Test: `tests/unit/test_p12b_config.py::test_p12b_json_is_pinned_complete_and_qwen_only`.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 T06: `runpod create --rules` runs the `paid_assets` gate for episode pods
+- `explainer_engine/cloud/runpod.py`: new `--rules <episode_rules.json>` flag; `create` calls `standards.rulebook.gate(rules, "paid_assets", <production_script.json next to it>)` (the call `production/paint.py` makes) and refuses before any API call on a FAIL (BLOCK or undecided REVIEW are FAIL at `paid_assets`), printing the rule ids; `--rules` with `--test` is refused (a paid test has no episode rulebook). `docs/ORCHESTRATION.md` OR-12 "Enforced by" cell names it.
+- Test: `tests/unit/test_episode_rules.py::test_create_runs_the_paid_assets_gate_when_rules_are_given_and_refuses_a_block`.
+- OPEN: `--rules` is optional until the ledger meta records an episode. No pod, no API call, nothing deleted.
+- Decision log: none moved.
