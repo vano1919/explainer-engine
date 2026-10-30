@@ -54,6 +54,7 @@ HOMES = {
     "BP": "SOURCED_RULES.md",  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
     "WB": "WORLD_BIBLE.md",  # the World Bible and the asset library (D-70 stage C, 2026-10-22)
     "CN": "CONTRACTS.md",  # the data contracts, the episode lifecycle and the shot cache (Blueprint P2, 2026-10-29)
+    "CMP": "COMPENSATOR.md",  # the visual compensator: maps, HUD, tableaux, the eight map laws (Blueprint P5, 2026-10-30)
     "VT": "VAULT.md",  # the vault: nothing we made is lost (D-73, 2026-10-24)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))

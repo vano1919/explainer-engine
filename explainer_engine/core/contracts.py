@@ -84,6 +84,8 @@ def _film_shots(doc: dict, base) -> list[dict]:
     for s in doc["shots"]:
         if s["lane"] in VIDEO_LANES:
             out += _geometry(s["width"], s["height"], s["duration_frames"], s["id"])
+        if s["lane"] in ("MAP", "COMPENSATOR"):
+            out += _catalogue_findings(s["id"], s["archetype"], s["lane"])
         want = s["seconds"] * fps
         if abs(want - s["duration_frames"]) > SR.T("BP-139", "frames_step"):
             out.append(_f("CN-08", s["id"], f"{s['duration_frames']} frames is far from {s['seconds']:g} s at {fps} fps", "REVIEW"))
@@ -125,10 +127,26 @@ def _spine_indices(doc: dict, base, key: str, indices) -> list[dict]:
     return [_f("CN-01", where, f"word_index {i} is past the spine's {n} words") for where, i in indices if i is not None and i >= n]
 
 
+def _catalogue_findings(where: str, archetype: str, lane: str | None = None) -> list[dict]:
+    """CN-15: an archetype named by a shot, an item or a spec is one of the catalogue, and on the lane its family belongs to."""
+    from explainer_engine.edit import visual_compensator as VC
+    if archetype not in VC.ids():
+        return [_f("CN-15", where, f"archetype {archetype!r} is not in the catalogue (explainer_engine/edit/archetypes.json)")]
+    if lane is not None and VC.lane_of(archetype) != lane:
+        return [_f("CN-15", where, f"{archetype} belongs on the {VC.lane_of(archetype)} lane, not {lane}")]
+    return []
+
+
 def _visual_comp(doc: dict, base) -> list[dict]:
     idx = [(f"items[{k}]", it["trigger_word_index"]) for k, it in enumerate(doc["items"])]
     idx += [(f"items[{k}].layers[{j}]", ly["reveal_word_index"]) for k, it in enumerate(doc["items"]) for j, ly in enumerate(it["layers"])]
-    return _spine_indices(doc, base, "items", idx)
+    out = [f for k, it in enumerate(doc["items"]) for f in _catalogue_findings(f"items[{k}]", it["archetype_id"])]
+    return out + _spine_indices(doc, base, "items", idx)
+
+
+def _comp_spec(doc: dict, base) -> list[dict]:
+    from explainer_engine.edit import visual_compensator as VC
+    return VC.payload_findings(doc, Path(base) if base is not None else None)
 
 
 def _sound_mix(doc: dict, base) -> list[dict]:
@@ -188,7 +206,7 @@ def _job_manifest(doc: dict, base) -> list[dict]:
 
 
 SEMANTIC = {"film_shots": _film_shots, "shot_spec": _shot_spec, "audio_spine": _audio_spine, "visual_comp_manifest": _visual_comp,
-            "sound_mix_manifest": _sound_mix, "qa_report": _qa_report, "distribution_package": _distribution,
+            "comp_spec": _comp_spec, "sound_mix_manifest": _sound_mix, "qa_report": _qa_report, "distribution_package": _distribution,
             "job_manifest": _job_manifest}
 
 

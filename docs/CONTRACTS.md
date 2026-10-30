@@ -31,6 +31,7 @@ produce the derived files belong to the phases named in the table (P3, P4, P5, P
 | `audio_spine/1` | `audio/audio_spine.json` | audio spine compiler (P4) | **derived** from `words.json` + `production_timed/1` | P5, P6, P7 (their clock) |
 | `sound_mix_manifest/1` | `audio/sound_mix_manifest.json` | sound director (P4) | hand, on the spine | `production/assemble.py` |
 | `visual_comp_manifest/1` | `visual/visual_comp_manifest.json` | compensator (P5) | hand, on the spine | maps / HUD renderer, router |
+| `comp_spec/1` | `visual/specs/<item_id>.json` (named by a layer of kind `spec` of the item) | compensator (P5) | hand, on the spine | the archetype renderers (`edit/visual_compensator.py`, [COMPENSATOR](COMPENSATOR.md)) |
 | `scene_set/1` | `sets/<set_id>.json` | set builder (P6) | hand (numeric geography) | continuity card fields (derived, P6), backdrop crop |
 | `film_shots/2` | `film_shots.json` (= the scene manifest) | beat / shot writers (P6) | hand | compose, router, cache, assemble |
 | `shot_spec/1` | `shots/<shot_id>.spec.json` | compose / router (P6) | **derived** from `film_shots/2` | `core/shot_cache.py`, pod scripts |
@@ -78,6 +79,10 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 - **visual_comp_manifest/1**: `audio_spine` (file reference), `items[]` (`item_id`, `shot_id`, `archetype_id`,
   `trigger_word_index`, `duration_frames`, `layers[]` (`kind`, `ref`, `reveal_word_index` or null),
   `on_screen_text` or null).
+- **comp_spec/1**: `item_id`, `archetype_id` (the catalogue, CN-15), `width`, `height`, `events[]` (`id`, `word_index`, `op`, `target`,
+  `frames`, `args{}`: every change starts on a spoken word) and `payload{}`. The payload and the args are the archetype's own shape
+  and are checked by its validator, not by the JSON Schema (the one place the schema leaves an object open); the shapes are in
+  [COMPENSATOR](COMPENSATOR.md).
 - **scene_set/1**: `set_id`, `units` = `m`, `axis{deg 0..360, origin[2]}`, `objects[]` (`id`, `kind`, `pos[3]`,
   `size[3]`, `yaw_deg`, `landmark`), `mannequins[]` (`id`, `cast_id`, `pos[3]`, `yaw_deg`), `cameras[]` (`shot_id`,
   `pos[3]`, `yaw_deg`, `pitch_deg`, `fov_deg`).
@@ -125,6 +130,7 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 | CN-12 | Every module that reads a BP threshold (`T("BP-xx", ...)`) is listed in that rule's `enforced_by`, and every key it reads exists | D-59 | `test_sourced_rules_sync.py` |
 | CN-13 | A `qa_report/1` with status PASS has no failed FAIL check, and a retry directive's attempt is at most the ledger's failure limit (OR-04) | OR-04 | `contracts` |
 | CN-14 | A `distribution_package/1` lists only files that exist with their sha256, and when the job folder holds `job_manifest.json` its `source_episode_sha256` equals that manifest's `assembled_video` artifact (a package from an older render is refused) | invariant 4, 5 | `contracts.errors(doc, base)` FAIL |
+| CN-15 | An archetype named by a shot, a manifest item or a spec is one of the catalogue (`explainer_engine/edit/archetypes.json`), and a shot on the MAP or COMPENSATOR lane names an archetype of that lane | [COMPENSATOR](COMPENSATOR.md) | `contracts` (`film_shots/2`, `visual_comp_manifest/1`, `comp_spec/1`) |
 
 ## The lifecycle (`job_manifest/1`)
 

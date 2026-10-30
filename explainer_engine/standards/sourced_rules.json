@@ -4914,7 +4914,7 @@
    "area": "maps",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "An animated map frame stays simple: at most labels_max labels and units_max unit symbols in view, inactive terrain dimmed to inactive_dim of its brightness, and one change at a time (changes_at_once_max), the changed thing highlighted before it moves.",
+   "statement": "An animated map frame stays simple: at most labels_max labels and units_max unit symbols in view, inactive terrain dimmed by inactive_dim (a share of its brightness), and one change at a time (changes_at_once_max), the changed thing highlighted before it moves.",
    "thresholds": {
     "labels_max": 3,
     "units_max": 4,
@@ -4937,9 +4937,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-01"
+    "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-01",
+    "explainer_engine/maps/laws.py:signalling"
    ],
-   "planned": "explainer_engine/maps/ (P5)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -4965,9 +4965,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-07"
+    "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-07",
+    "explainer_engine/maps/laws.py:scale_progression"
    ],
-   "planned": "explainer_engine/maps/ (P5)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -5039,9 +5039,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-10"
+    "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-10",
+    "explainer_engine/edit/visual_compensator.py:lane_balance"
    ],
-   "planned": "explainer_engine/edit/visual_compensator.py (P5)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -5442,6 +5442,190 @@
    "supersedes": [
     "Blueprint VISUAL-001 32n as the recipe"
    ]
+  },
+  {
+   "id": "BP-140",
+   "area": "maps",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Stimulus window on a narrated stretch with no character on screen (a map, a HUD, a cutaway): an active visual event (a vector advances, a stamp locks in, a layer peels back, a cut to a reaction) every event_every_s seconds; a shot longer than static_flag_s with no keyframed motion and no timed visual event is flagged. Scope: archetype segments only; the whole-video rhythm stays BP-36 and BP-40.",
+   "thresholds": {
+    "event_every_s": [
+     2.0,
+     3.5
+    ],
+    "static_flag_s": 4.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): map law 8, the 2.0-3.5 s window and the 4.0 s flag",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in an opened source; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/maps/laws.py:stimulus_window"
+   ],
+   "supersedes": [],
+   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+  },
+  {
+   "id": "BP-141",
+   "area": "maps",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Scale choreography of a map explanation: macro theatre (about macro_km wide), then meso corridor (meso_km), then micro field (micro_km); the camera starts a new move at least every camera_change_every_max_s seconds on a map sequence, never staying at one flat zoom for a minute of narration. The duration of one altitude change is BP-125.",
+   "thresholds": {
+    "macro_km": 2000,
+    "meso_km": 50,
+    "micro_km": 1.5,
+    "camera_change_every_max_s": 8.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): map law 5, the 3-step camera choreography",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in an opened source; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/maps/laws.py:scale_progression",
+    "explainer_engine/maps/camera.py:tier_of"
+   ],
+   "supersedes": [],
+   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+  },
+  {
+   "id": "BP-142",
+   "area": "maps",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Archetype rotation (a gap in the Blueprint and in the repo, so the plan's house proposal): never the same archetype in two adjacent items; at most family_max items of one family (map, hud, cutaway, graph) in any window_s window; a run of map archetypes back to back lasts at most map_run_max_s (the ceiling of BP-104 and BP-112).",
+   "thresholds": {
+    "window_s": 120,
+    "family_max": 2,
+    "map_run_max_s": 90
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the plan's proposed rotation rule, derived from BP-83, BP-104 and BP-112",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "a proposal, no source opened",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/visual_compensator.py:rotation"
+   ],
+   "supersedes": [],
+   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+  },
+  {
+   "id": "BP-143",
+   "area": "maps",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Map share (the creator's point 4, nobody wants 80 % maps): the pure cartography archetypes (1-4) are at most map_pure_share_max of the runtime; over map_pure_share_high is flagged hard. The Blueprint's own matrix gives about 22 % even in its map-heavy mode, so 80 % maps is impossible under its numbers.",
+   "thresholds": {
+    "map_pure_share_max": 0.25,
+    "map_pure_share_high": 0.4
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the 0-899 s matrix of Mode B (about 195 s of pure cartography) and the plan's 0.25 / 0.40",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "derived, no source opened",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/visual_compensator.py:map_share"
+   ],
+   "supersedes": [],
+   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+  },
+  {
+   "id": "BP-144",
+   "area": "colour",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A faction pair is two palette tokens that stay apart for the three kinds of colour-blind viewer: their CIE76 distance after a protan, deutan and tritan simulation (Machado 2009, severity 1) is at least faction_delta_e_min, and a faction is also told apart by a mark (a shape), never by colour alone.",
+   "thresholds": {
+    "faction_delta_e_min": 40
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "ColorBrewer: the colour-blind-safe filter (Harrower and Brewer 2003)",
+     "url": "https://colorbrewer2.org/",
+     "note": "SUPPORTED that a colour-blind-safe check exists; the number 40 is ours (CRAFT_SOURCES_2026-10 section 6)"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/design/palette.py:faction_findings"
+   ],
+   "supersedes": [],
+   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+  },
+  {
+   "id": "BP-145",
+   "area": "maps",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Map to scene transition: the map camera pitches to pitch_deg, exports its final depth map, and the next shot starts from the same angle (within tolerance_deg); the sound of the scene starts prelap_s early. The length of the dissolve is not taken from the Blueprint (BP-31 decides it).",
+   "thresholds": {
+    "pitch_deg": 45,
+    "tolerance_deg": 5,
+    "prelap_s": 1.0
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): map law 7, the 45 degree match and the 1.0 s pre-lap; the 5 degree tolerance is ours",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in an opened source",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/maps/laws.py:map_to_scene"
+   ],
+   "supersedes": [
+    "Blueprint map law 7's 12-frame dissolve (BP-31 decides)"
+   ],
+   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+  },
+  {
+   "id": "BP-146",
+   "area": "maps",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "A restyled (painted) map plate is the vector plate plus paint and nothing else: a certificate next to it records the letters an OCR found (at most ocr_chars_max) and the overlap of its land with the vector plate's land (at least restyle_geometry_iou_min). A map shot never runs text-to-video; a plate without a certificate is not used.",
+   "thresholds": {
+    "ocr_chars_max": 0,
+    "restyle_geometry_iou_min": 0.97
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): map law 1, no diffusion maps; the plan's restyle check (A4); the 0.97 is ours",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in an opened source",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/maps/laws.py:no_diffusion",
+    "explainer_engine/maps/plate.py:certificate"
+   ],
+   "supersedes": [],
+   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
   }
  ]
 }

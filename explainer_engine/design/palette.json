@@ -14,7 +14,9 @@
     "uncertain_amber": {"hex": "#FFC145", "role": "evidence is mixed (badge)"},
     "night":           {"hex": "#2B2D42", "role": "dark scenes, Short end cards"},
     "grey_mid":        {"hex": "#8D99AE", "role": "inactive / background props"},
-    "chroma_key":      {"hex": "#00B140", "role": "flat background of the expression sheets (VB-09); keyed out, never on screen"}
+    "chroma_key":      {"hex": "#00B140", "role": "flat background of the expression sheets (VB-09); keyed out, never on screen"},
+    "faction_a":       {"hex": "#1A73E8", "role": "faction A on maps, unit counters, rings, bars (CMP-06); always with the square mark"},
+    "faction_b":       {"hex": "#FA903E", "role": "faction B on maps, unit counters, rings, bars (CMP-06); always with the triangle mark"}
   },
   "text_pairs": [
     {"text": "ink",   "on": "paper"},
@@ -25,11 +27,16 @@
     {"text": "ink",   "on": "support_blue"},
     {"text": "ink",   "on": "true_green"},
     {"text": "ink",   "on": "uncertain_amber"},
-    {"text": "ink",   "on": "grey_mid"}
+    {"text": "ink",   "on": "grey_mid"},
+    {"text": "ink",   "on": "faction_b"}
   ],
   "large_text_only": [
+    {"text": "paper", "on": "faction_a", "note": "4.27:1 - label text on a faction A fill is 24 px bold or larger; small text sits on a paper chip"},
     {"text": "ink", "on": "false_red", "note": "3.96:1 - use only for text of 24 px bold or larger; small red labels sit on a paper chip next to a red icon"}
   ],
-  "fill_only": ["kit_card", "kit_shadow", "answer_coral", "mechanism_teal", "support_blue", "true_green", "false_red", "uncertain_amber", "grey_mid"],
+  "fill_only": ["kit_card", "kit_shadow", "answer_coral", "mechanism_teal", "support_blue", "true_green", "false_red", "uncertain_amber", "grey_mid", "faction_a", "faction_b"],
+  "faction_pairs": [
+    {"a": "faction_a", "b": "faction_b", "mark_a": "square", "mark_b": "triangle", "note": "blue and orange: the pair that stays apart for protan, deutan and tritan viewers (measured, docs/COMPENSATOR.md); the Blueprint's red option #D93025 is 98 at its worst, the orange 118"}
+  ],
   "fill_only_rule": "Accent colours are 1.5-3.7:1 against paper, below the 3:1 that graphics need. They are fills; every shape that carries meaning also has an ink stroke (>= 4 px at 1080p), and meaning is never carried by colour alone."
 }

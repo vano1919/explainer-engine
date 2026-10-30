@@ -1,0 +1,139 @@
+{
+ "schema": "compensator_catalogue/1",
+ "about": "The twelve visual archetypes of narration over a non-character stretch (Blueprint 9.6.1, plan v2 P5). The one home of their ids; docs/COMPENSATOR.md explains them. A map archetype (family map, pure_map) counts toward the map share (BP-143). Every archetype is free: drawn by code from a comp_spec/1, no paid call, no model. `measured` is written by `python -m explainer_engine.edit.visual_compensator measure` and is a planner input (seconds of CPU per frame).",
+ "archetypes": [
+  {
+   "number": 1,
+   "id": "MAP_3D_TERRAIN_FLYOVER",
+   "family": "map",
+   "lane": "MAP",
+   "pure_map": true,
+   "renderer": "explainer_engine.maps.render",
+   "how": "2D vector map under an eased camera from the continent down to the crossing; no relief (D-86), the parallax tableau is its fallback",
+   "fallback": "PARALLAX_25D_TABLEAU",
+   "free": true
+  },
+  {
+   "number": 2,
+   "id": "TACTICAL_UNIT_MANEUVER",
+   "family": "map",
+   "lane": "MAP",
+   "pure_map": true,
+   "renderer": "explainer_engine.maps.render",
+   "how": "faction counters march terrain-following curves; arrows draw themselves on the spoken word",
+   "fallback": null,
+   "free": true
+  },
+  {
+   "number": 3,
+   "id": "FORMATION_MICRO_MECHANICS",
+   "family": "map",
+   "lane": "MAP",
+   "pure_map": true,
+   "renderer": "explainer_engine.maps.render",
+   "how": "1..500 proxies move between formations, a seeded flocking look, a pure function of the frame",
+   "fallback": null,
+   "free": true
+  },
+  {
+   "number": 4,
+   "id": "LOGISTICS_TETHER_AND_ATTRITION",
+   "family": "map",
+   "lane": "MAP",
+   "pure_map": true,
+   "renderer": "explainer_engine.maps.render",
+   "how": "a supply line that goes blue, amber, red and snaps; a strength bar driven by numbers",
+   "fallback": null,
+   "free": true
+  },
+  {
+   "number": 5,
+   "id": "BALLISTIC_RANGE_AND_ENERGY_HUD",
+   "family": "hud",
+   "lane": "COMPENSATOR",
+   "pure_map": false,
+   "renderer": "explainer_engine.edit.hud",
+   "how": "range rings, arcs, a metric stamp that locks in on the spoken number",
+   "fallback": null,
+   "free": true
+  },
+  {
+   "number": 6,
+   "id": "WEAPON_AND_MATERIAL_CUTAWAY",
+   "family": "cutaway",
+   "lane": "COMPENSATOR",
+   "pure_map": false,
+   "renderer": "explainer_engine.edit.tableau",
+   "how": "layered vector cross-section, layers peel back, heat and crack overlays",
+   "fallback": null,
+   "free": true
+  },
+  {
+   "number": 7,
+   "id": "SPLIT_SCREEN_SPEED_RACE",
+   "family": "hud",
+   "lane": "COMPENSATOR",
+   "pure_map": false,
+   "renderer": "explainer_engine.edit.hud",
+   "how": "two panels race with millisecond counters",
+   "fallback": null,
+   "free": true
+  },
+  {
+   "number": 8,
+   "id": "PARALLAX_25D_TABLEAU",
+   "family": "cutaway",
+   "lane": "COMPENSATOR",
+   "pure_map": false,
+   "renderer": "explainer_engine.edit.tableau",
+   "how": "four depth planes from a depth map (and a matte when there is one), a slow dolly-in, drifting dust",
+   "fallback": null,
+   "free": true
+  },
+  {
+   "number": 9,
+   "id": "PRIMARY_SOURCE_DOSSIER_CARD",
+   "family": "cutaway",
+   "lane": "COMPENSATOR",
+   "pure_map": false,
+   "renderer": "explainer_engine.edit.tableau",
+   "how": "a tilted document with a rack focus; no HISTORICAL FACT / COUNTERFACTUAL stamp (D-61, SC-11)",
+   "fallback": null,
+   "free": true
+  },
+  {
+   "number": 10,
+   "id": "TECH_TREE_DEPENDENCY_GRAPH",
+   "family": "graph",
+   "lane": "COMPENSATOR",
+   "pure_map": false,
+   "renderer": "explainer_engine.edit.hud",
+   "how": "nodes light up, blocked paths stay grey",
+   "fallback": null,
+   "free": true
+  },
+  {
+   "number": 11,
+   "id": "ORDER_OF_BATTLE_TELEMETRY_HUD",
+   "family": "hud",
+   "lane": "COMPENSATOR",
+   "pure_map": false,
+   "renderer": "explainer_engine.edit.hud",
+   "how": "a transparent overlay of counters that tick to the numbers of the events",
+   "fallback": null,
+   "free": true
+  },
+  {
+   "number": 12,
+   "id": "MULTI_SCENARIO_VERDICT_MATRIX",
+   "family": "graph",
+   "lane": "COMPENSATOR",
+   "pure_map": false,
+   "renderer": "explainer_engine.edit.hud",
+   "how": "probability bars of the scenarios grow on their words",
+   "fallback": null,
+   "free": true
+  }
+ ],
+ "measured": null
+}
