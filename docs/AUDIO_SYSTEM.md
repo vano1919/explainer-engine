@@ -130,6 +130,33 @@ model and prompt, Lyria prompt), estimated cost, licence status and review. Rule
   defaults to a loop). Media backup: HF `datasets/vano1919/tmr-artifacts/library/audio/`.
 - The analyst (Dirkus) is silent: his vocal sounds are reactions, never speech. The companion (Tick) makes mechanical sounds.
 
+## Sound director
+Blueprint phase P4 ([D-88](DECISIONS_AND_OPEN_QUESTIONS.md), contracts in [CONTRACTS](CONTRACTS.md)). The spine
+(`audio/spine.py`, `audio_spine/2`) compiles the narrator read, the post-hoc dialogue windows and the frame clock; the sound
+director (`audio/sound_director.py`) derives `sound_mix_manifest/2` from the spine, the timed script and `film_shots/2` (CN-02,
+never edited by hand); `production/assemble.py` renders it and the render-time half of the checks measures the stems. A job
+without a manifest renders through the existing mix. The sound pass is a step of `edit-planner` and owns no script field.
+Every SD check reads its numbers from the rule named in the table (BP ids only, no number is copied here); a hypothesis rule
+is REVIEW at most (CN-11).
+
+| ID | Check | Rule | Severity |
+|---|---|---|---|
+| SD-01 | every scene has a room-tone bed over its whole span, inside the band | BP-116 | REVIEW |
+| SD-02 | no window of the rendered mix under the digital-silence floor | BP-161 | REVIEW |
+| SD-03 | J or L at every place/acoustic change; no butt cut between a map and a drama shot | BP-117 | REVIEW |
+| SD-04 | measured presence-band gap of the background under speech | BP-118 | REVIEW |
+| SD-05 | a reveal or HARD accent has a three-layer hit, onsets within `sync_ms`, layers in their band; the group onset inside BP-54's window | BP-119; BP-54 | REVIEW; **FAIL** (binding) |
+| SD-06 | at most `vacuums_max` vacuums, each inside `vacuum_s`, at `vacuum_dbfs`, ending on its reveal, none over speech | BP-120 | REVIEW |
+| SD-07 | spot pans inside `sfx_pan_max`, on the focal side; narration, dialogue and cues centred | BP-121 | REVIEW |
+| SD-08 | one encoded layer at a time; the per-stem same-colour cap; total layers | BP-121, BP-56 | REVIEW |
+| SD-09 | perspective follows the shot size; one impulse response per scene | BP-122 | REVIEW |
+| SD-10 | action cuts on the beat grid while music is up | BP-123 | REVIEW |
+| SD-11 | at most one motif per owner | BP-123 | REVIEW |
+| SD-12 | the shot timeline and the lane matrix hold (estimated timeline, missing clip, native speech outside a window) | BP-160 | REVIEW |
+| SD-13 | no free-generator take without an admission for its kind | BP-162 | **FAIL** (house) |
+| SD-14 | delivered loudness and true peak (a pointer to `qa/targets`, not a second implementation) | BP-50 | FAIL (binding, existing) |
+| SD-15 | the manifest is fresh against its inputs | CN-02 | **FAIL** (invariant 7) |
+
 ## Checks run on every mix
 Numbers: one definition in `explainer_engine/qa/targets.py`, read from BP-50..BP-63, used by the mixer, the Shorts renderer
 and the scorecard. Integrated loudness and true peak with their verdicts; the dialogue anchor; the voice-to-background gap

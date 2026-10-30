@@ -57,6 +57,7 @@ HOMES = {
     "VP": "SCRIPT_ENGINE.md",  # the variant planner checks (Blueprint P3, 2026-10-30)
     "CR": "CLOUD_RUNBOOK.md",  # how a pod ends: the three stop paths, the pod wrapper, the watchdog (P1a, 2026-10-29)
     "RP": "CLOUD_RUNBOOK.md",  # when a paid pod is worth starting: batching, card choice, retries, the bill (P1c, 2026-10-30)
+    "SD": "AUDIO_SYSTEM.md",  # the sound director checks (Blueprint P4, 2026-10-30)
     "CN": "CONTRACTS.md",  # the data contracts, the episode lifecycle and the shot cache (Blueprint P2, 2026-10-29)
     "VT": "VAULT.md",  # the vault: nothing we made is lost (D-73, 2026-10-24)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }

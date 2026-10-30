@@ -35,7 +35,7 @@ One canonical home per specification and per ID (D-23). Link to a document or an
 | [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) | hook, arc, ABC shots, faces, mood (emotion, light, palette), durations, cuts, motion, transitions | UR- |
 | [STORYBOARD_SCHEMA](STORYBOARD_SCHEMA.md) | storyboard contract, animation vocabulary, timing rules | |
 | [ASSET_SYSTEM](ASSET_SYSTEM.md) | asset records, naming, licences, generation rules | |
-| [AUDIO_SYSTEM](AUDIO_SYSTEM.md) | narration, mix, audio-event contract, licences | |
+| [AUDIO_SYSTEM](AUDIO_SYSTEM.md) | narration, mix, audio-event contract, licences, the sound director's checks | SD- |
 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) | current Python/FFmpeg assembler; historical Remotion proposal and renderer decision notes | |
 | [PIPELINE_ARCHITECTURE](PIPELINE_ARCHITECTURE.md) | target stages, failure classes, config and job record; current entry points and unimplemented coordinator are marked at the top | |
 | [QA_SPECIFICATION](QA_SPECIFICATION.md) | technical and editorial QA, review bundle | Q- |

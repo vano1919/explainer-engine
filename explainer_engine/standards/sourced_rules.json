@@ -5877,6 +5877,101 @@
     "explainer_engine/scripting/variant_plan.py:drift"
    ],
    "supersedes": []
+  },
+  {
+   "id": "BP-160",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Shot-to-audio matrix (SD-12): what a shot's sound is made of follows its lane (the table lives only in `MATRIX` of the sound director and in docs/AUDIO_SYSTEM.md). A video clip's native audio is kept as a `native` bed native_under_bed_db under the scene bed and ducked, never its speech outside a dialogue window (D-88); a map or compensator shot carries neutral room tone and its own cues only.",
+   "thresholds": {
+    "native_under_bed_db": 6
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint plan v2, card P4 and P4_DESIGN (unverified): the lane matrix and the 6 dB native-under-bed offset",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "origin only; records where the number came from, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "docs/AUDIO_SYSTEM.md:SD-12"
+   ],
+   "planned": "explainer_engine/audio/sound_director.py (P4)",
+   "supersedes": []
+  },
+  {
+   "id": "BP-161",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "No digital silence inside an episode (SD-02): no window_ms window of the mix falls under digital_silence_dbfs between the opening ramp and the final fade; a hit layer keeps at least hit_band_share_min of its energy in its own band (BP-119). BP-60 (pause fill of the read) and BP-116 (the scene's room tone) are unchanged; this is the measured check on the rendered mix.",
+   "thresholds": {
+    "digital_silence_dbfs": -70,
+    "window_ms": 10,
+    "hit_band_share_min": 0.6
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint plan v2, card P4 and P4_DESIGN (unverified): the -70 dBFS floor, 10 ms window and 0.6 band share (engineering numbers)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "origin only; records where the number came from, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "docs/AUDIO_SYSTEM.md:SD-02"
+   ],
+   "planned": "explainer_engine/audio/sound_director.py (P4)",
+   "supersedes": []
+  },
+  {
+   "id": "BP-162",
+   "area": "audio",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-29 18:17 UTC, answer 'conditionally' to Blueprint card D8, as docs/blueprint/STATUS.md row D8 records it: a free generator enters the library only with measured quality and variety, otherwise ElevenLabs; the narrator stays on the connector. His exact wording is not in the repository",
+   "statement": "A take from a free (open-model) generator enters the library or a mix only when that generator is admitted for that kind (music, sfx, room_tone) by `assets/audio/generator_admission.json`, which is written only with the creator's recorded word after the measured test (SD-13, D-52 amended). Without an admission the order is library first, then the ElevenLabs connector; the narrator is always the connector.",
+   "thresholds": {},
+   "sources": [],
+   "enforced_by": [
+    "docs/AUDIO_SYSTEM.md:SD-13"
+   ],
+   "planned": "explainer_engine/audio/generator_gate.py (P4)",
+   "supersedes": []
+  },
+  {
+   "id": "BP-163",
+   "area": "audio",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "What the free-generator admission measures (SD-13, D8): per take, the duration within duration_tol of the request, a silence share (10 ms windows under -60 dBFS) at most silence_share_max, a clipped share at most clip_share_max, and for a loop BP-58's seam; across prompts the mean cosine distance of the generator's takes at least variety_ratio_min of the same number for the library's ElevenLabs reference set, and no two seeds of one prompt above duplicate_cos_max; takes_per_prompt seeds per prompt. Quality and prompt fit are the creator's blind A/B, not a number.",
+   "thresholds": {
+    "duration_tol": 0.1,
+    "silence_share_max": 0.2,
+    "clip_share_max": 0.0005,
+    "loop_seam": "BP-58",
+    "variety_ratio_min": 0.8,
+    "duplicate_cos_max": 0.98,
+    "takes_per_prompt": 3
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint plan v2, card P4 and P4_DESIGN (unverified): the technical and variety measures of the admission test (engineering numbers)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "origin only; records where the number came from, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "docs/AUDIO_SYSTEM.md:SD-13"
+   ],
+   "planned": "explainer_engine/audio/generator_gate.py (P4)",
+   "supersedes": []
   }
  ]
 }
