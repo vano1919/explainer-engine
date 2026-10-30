@@ -2665,7 +2665,13 @@ training as sequences is decided in the process. Changed together:
   states and names the dossier; creator and planner approvals of a gate must bind a non-null sha256; CN-14 compares
   `source_episode_sha256` with the job's `assembled_video`; `film_shots/1` refuses the /2 fields; a cached render and the repo's
   `assets/` may be recorded as artifacts but not any path that merely contains "assets"; the cache key treats `1` and `1.0` alike;
-  BP-139 is read by literal id and listed only where it is read (`test_bp_114_is_listed_only_where_it_is_read`).
+  BP-139 is read by literal id and listed only where it is read (`test_bp_139_is_listed_only_where_it_is_read`).
 - Second review round (22:45 UTC): `adopt` takes `approvals` for EVERY gated state up to the target (a machine approval of STAGED_UNLISTED
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.
+
+## 2026-10-30 — P2 follow-up: review leftovers of PR #31
+- `EpisodeJob.adopt`: a directory as the dossier path and approvals that are not a dict are `ContractError`, no longer `IsADirectoryError` / `AttributeError`.
+- `shot_cache.key`: inf / NaN anywhere in a shot spec is a `ContractError` (no JSON form, no stable key).
+- Tests: `test_adopt_refuses_a_directory_dossier_and_non_dict_approvals`, `test_a_non_finite_number_is_a_contract_error_not_a_crash`.
+- Left open (design changes, for P3+ to take with the stage that uses them): approval `sha256` compared with the artifact it approves; CN-14 skipped when no `job_manifest.json` is present; `threshold_reads` does not see a rule id held in a constant.

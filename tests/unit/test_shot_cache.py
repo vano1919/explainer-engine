@@ -93,3 +93,9 @@ def test_a_damaged_output_is_a_miss_never_a_wrong_picture(tmp_path):
 def test_the_cache_root_follows_the_environment(tmp_path, monkeypatch):
     monkeypatch.setenv("EXPLAINER_SHOT_CACHE", str(tmp_path / "env"))
     assert SC.ShotCache().root == tmp_path / "env"
+
+
+def test_a_non_finite_number_is_a_contract_error_not_a_crash():
+    for bad in (float("inf"), float("nan")):
+        with pytest.raises(ContractError):
+            SC.key(variant(params={"steps": 8, "cfg": bad}))
