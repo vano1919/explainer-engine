@@ -436,7 +436,7 @@ def test_a_measured_beat_grid_is_stored_back_on_the_library_item(tmp_path):
 
 # --- library, rules, severities ---------------------------------------------------------------------------------------------
 
-def test_a_free_generator_take_without_an_admission_is_sd13_and_fails(tmp_path):
+def test_a_free_generator_take_without_an_admission_is_sd13_and_fails(tmp_path, monkeypatch):
     job, spine = make_job(tmp_path, plan_of={"S01": [("a", "KEYFRAME_LTX", "WS", "r", {})]}, places={"r": "a room"})
     m, _ = planned(job, tmp_path / "lib")
     ref = m["beds"][0]["ref"]
@@ -444,8 +444,16 @@ def test_a_free_generator_take_without_an_admission_is_sd13_and_fails(tmp_path):
     lib = [{"id": ref, "tags": ["room_tone"], "source": {"kind": "open_model", "model": "x"}, "peak_dbfs": -3.0, "rms_dbfs": -15.0}]
     f = [x for x in D.check(m, spine=spine, timeline=base, library=lib) if x["rule"] == "SD-13"]
     assert f and f[0]["severity"] == "FAIL"
+    lib[0]["source"]["admission"] = "ADM-does-not-exist"      # a non-empty string is not an admission (BP-162): the file must hold it
+    f = [x for x in D.check(m, spine=spine, timeline=base, library=lib) if x["rule"] == "SD-13"]
+    assert f and f[0]["severity"] == "FAIL" and "ADM-does-not-exist" in f[0]["detail"]
+    adm = tmp_path / "generator_admission.json"
+    adm.write_text(json.dumps({"admissions": [{"id": "ADM-1", "kind": "room_tone", "model": "x", "generator": "g"}]}), encoding="utf-8")
+    monkeypatch.setenv("EXPLAINER_GENERATOR_ADMISSION", str(adm))
     lib[0]["source"]["admission"] = "ADM-1"
     assert not [x for x in D.check(m, spine=spine, timeline=base, library=lib) if x["rule"] == "SD-13"]
+    adm.write_text(json.dumps({"admissions": [{"id": "ADM-1", "kind": "music", "model": "x", "generator": "g"}]}), encoding="utf-8")
+    assert any(x["rule"] == "SD-13" and "music" in x["detail"] for x in D.check(m, spine=spine, timeline=base, library=lib))   # wrong kind
 
 
 def test_every_sd_severity_is_the_registry_level_of_its_rule():

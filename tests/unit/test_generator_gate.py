@@ -13,6 +13,7 @@ from explainer_engine import assets_reuse as AR
 from explainer_engine.audio import generator_gate as G
 from explainer_engine.audio import register, sfx_library
 from explainer_engine.core.errors import ContractError
+from explainer_engine.governance import records
 from explainer_engine.standards import hook
 from explainer_engine.standards import sourced_rules as SR
 
@@ -178,11 +179,26 @@ def test_the_sheet_skips_prompts_without_a_clean_take_or_a_reference(tmp_path):
 
 # --- the admission ----------------------------------------------------------------------------------------------------------
 
-def _passing(tmp_path, kind="sfx"):
+@pytest.fixture(autouse=True)
+def _creators_word(monkeypatch):
+    """BP-162: an admission needs a recorded creator word (`governance ok generator_admit <generator>:<kind> ...`). These tests
+    stand in for it; the tests that name the refusal override this."""
+    monkeypatch.setattr(records, "find", lambda action, target, message_id, **kw:
+                        {"action": action, "target": target, "message_id": message_id} if action == "generator_admit" else None)
+
+
+def _passing(tmp_path, kind="sfx", answer="A"):
+    """A passing report, its blind sheet made like the `sheet` command makes it (the key names the report's sha256), and the sheet
+    answered: every pair `answer`."""
     rep = run(tmp_path, kind=kind)
     path = tmp_path / "report.json"
     path.write_text(json.dumps(rep), encoding="utf-8")
     sheet_md = G.sheet(rep, tmp_path / "sheet", seed=3)
+    key = sheet_md.parent / "sheet_key.json"
+    doc = json.loads(key.read_text(encoding="utf-8"))
+    doc["report_sha256"] = G.sha256_of(path)
+    key.write_text(json.dumps(doc), encoding="utf-8")
+    sheet_md.write_text(sheet_md.read_text(encoding="utf-8").replace(" |  |", f" | {answer} |"), encoding="utf-8")
     return rep, path, sheet_md
 
 
@@ -208,6 +224,54 @@ def test_admit_needs_his_word_and_a_passing_report(tmp_path):
     with pytest.raises(ContractError, match="BP-163"):
         G.admit("gen-x", "sfx", bad, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", **kw)
     assert not adm.exists()
+
+
+def test_admit_refuses_a_creator_ref_that_is_not_a_recorded_word(tmp_path, monkeypatch):
+    """BP-162: any non-empty string used to pass. The ref now resolves like the channel voice's (`records.find`)."""
+    _, path, sheet_md = _passing(tmp_path)
+    adm = tmp_path / "adm.json"
+    asked = []
+    monkeypatch.setattr(records, "find", lambda *a, **kw: asked.append(a) or None)
+    with pytest.raises(ContractError, match=r"governance ok generator_admit gen-x:sfx"):
+        G.admit("gen-x", "sfx", path, creator_ref="cmsg_made_up", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=adm)
+    assert asked == [("generator_admit", "gen-x:sfx", "cmsg_made_up")] and not adm.exists()
+    assert "generator_admit" in records.ACTIONS
+
+
+def test_admit_refuses_a_key_made_for_another_report_or_missing(tmp_path):
+    rep, path, sheet_md = _passing(tmp_path)
+    adm = tmp_path / "adm.json"
+    key = sheet_md.parent / "sheet_key.json"
+    good = key.read_text(encoding="utf-8")
+    doc = json.loads(good)
+    doc["report_sha256"] = "0" * 64
+    key.write_text(json.dumps(doc), encoding="utf-8")
+    with pytest.raises(ContractError, match="another report"):
+        G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=adm)
+    doc["report_sha256"] = None                        # a key `sheet()` wrote and the CLI never bound
+    key.write_text(json.dumps(doc), encoding="utf-8")
+    with pytest.raises(ContractError, match="another report"):
+        G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=adm)
+    key.unlink()
+    with pytest.raises(ContractError, match="sheet_key.json is missing"):
+        G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=adm)
+    assert not adm.exists()
+    key.write_text(good, encoding="utf-8")
+    assert G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=adm)["creator_ref"] == "cmsg_1"
+
+
+def test_admit_records_his_picks_for_the_eye_and_invents_no_minimum(tmp_path):
+    rep, path, sheet_md = _passing(tmp_path, answer="A")
+    key = json.loads((sheet_md.parent / "sheet_key.json").read_text(encoding="utf-8"))
+    pairs = len(key["pairs"])
+    on_a = sum(p["generator_side"] == "A" for p in key["pairs"])
+    e = G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=tmp_path / "adm.json")
+    assert (e["picks_for_generator"], e["picks_total"]) == (on_a, pairs)             # "A" went to the generator on exactly those pairs
+    unanswered = sheet_md.read_text(encoding="utf-8").replace(" | A |", " |  |")
+    sheet_md.write_text(unanswered, encoding="utf-8")
+    e0 = G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=tmp_path / "adm2.json")
+    assert (e0["picks_for_generator"], e0["picks_total"]) == (0, 0)                   # recorded as it is; BP-162 carries no threshold
+    assert SR.rule("BP-162")["thresholds"] == {}
 
 
 def test_admit_writes_the_record_and_admitted_reads_it(tmp_path, monkeypatch):

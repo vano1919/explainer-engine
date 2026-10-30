@@ -1,5 +1,6 @@
 """The creator's recorded word (``jobs/creator_ok.jsonl``): the second lock behind a model switch, an effort override, an
-edit of a protected config file and a change of the channel voice (``channel_voice``, target = the voice id, P4b / VC-08). Claude writes a line only from the creator's own message and quotes it; the hooks cannot
+edit of a protected config file, a change of the channel voice (``channel_voice``, target = the voice id, P4b / VC-08) and the
+admission of a free generator for a kind (``generator_admit``, target = ``<generator>:<kind>``, BP-162). Claude writes a line only from the creator's own message and quotes it; the hooks cannot
 check the quote, they stop an unprompted change (design section 7)."""
 from __future__ import annotations
 
@@ -10,7 +11,8 @@ from pathlib import Path
 from explainer_engine.governance import root_dir
 
 FILE = Path("jobs") / "creator_ok.jsonl"
-ACTIONS = ("model_switch", "effort_override", "protected_config", "channel_voice")
+ACTIONS = ("model_switch", "effort_override", "protected_config", "channel_voice",
+           "generator_admit")   # target = "<generator>:<kind>": the word behind an entry of assets/audio/generator_admission.json (BP-162)
 
 
 def _now() -> float:
