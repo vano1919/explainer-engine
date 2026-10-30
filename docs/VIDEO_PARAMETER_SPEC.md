@@ -23,6 +23,8 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | P-07 | cadence (cycle 1) | 1 long-form / 2 weeks + 2 Shorts / week | measured later | own hours, not competitors (D-06, SE-26) | L/P | time log | reviewed after 3 long-forms |
 
 ## 2. Video, render and export
+**Scope of the "Allowed" limits:** the ranges and pairs in these tables (P-10 5-11 min, P-12 a fixed pair, P-13 24 or 30, and P-100 0-3 further down) are the still-picture route's (D-43). The animated route's delivery defaults are [BP-167](SOURCED_RULES.md); a script that names its own fps or size keeps it.
+
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
 | P-10 | long duration | 7 min (animated route: [BP-167](SOURCED_RULES.md)) | 5-11 | depth without padding | L/P,T | word budget | outside range = REVIEW, not FAIL |

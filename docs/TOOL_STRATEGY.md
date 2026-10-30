@@ -6,8 +6,7 @@ TMR repository (read-only, `vano1919/tmr-video-script-engine@d88ba8f`): `render/
 
 ## Who makes what
 
-**Current routing (D-52, 2026-10-17):** every picture is painted by Gemini on the batch tier (`production/paint.py`, tiers in
-`imagegen/routing.py`); narration, music and sound effects come from ElevenLabs only. The pod and Z-Image rows below are kept as
+**Current routing:** for a still-picture episode (D-43) the creator picks the provider of every picture batch (D-50: paint plan, approval, run; D-52's tiers on Gemini, `production/paint.py`, `imagegen/routing.py`); an animated episode (D-77, D-80) makes its keyframes on a pod with Qwen-Image-2.1 and the xworld_v2 LoRA (docs/SHOT_PROMPTS.md). Narration, music and sound effects come from ElevenLabs only. The pod and Z-Image rows below are kept as
 history of D-19/D-36; they are no longer used.
 
 | Part of the video | Tool | Why | Cost | Evidence |

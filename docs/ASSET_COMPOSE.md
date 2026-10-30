@@ -23,7 +23,7 @@ Code: `explainer_engine/compose/`. Tested by `tests/unit/test_compose.py`. Layou
 1. The script becomes a shot list: size, at most 5 s each, and per shot `compose` or `reuse` (AC-12). The planner rules come
    from the cartoons measured on 2026-10-25 (below).
 2. `library needs` lists the assets those shots use. Only the missing ones are drawn (AC-04): that list is the paid part.
-3. Each asset is drawn with Qwen-Image-2512 and the style LoRA in the LT-65 shape (bf16, 1280x720 or a tall plate),
+3. Each asset is drawn with Qwen-Image-2.1 and the xworld_v2 LoRA (D-80; the Qwen-Image-2512 stack is banned; settings in LT-79),
    cut out (BiRefNet) and checked (AC-15, AC-14, KG-). It is shown to ვანო and approved (AC-02).
 4. `frame` composes each shot on the CPU (AC-05..AC-09), with crowds from `crowd` (AC-10, AC-11). A light repaint with the
    style LoRA (img2img 0.30) evens the light (retired for keyframes by D-78, 2026-10-25 10:50 Tbilisi: no img2img pass). That repaint is the only paid step per shot, ≈$0.01.
