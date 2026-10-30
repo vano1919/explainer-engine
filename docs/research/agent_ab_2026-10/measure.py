@@ -16,7 +16,7 @@ from pathlib import Path
 from explainer_engine.scripting import stage_guard, story_lint
 
 STAGES = [("s01_architect", "architect"), ("s02_writer", "writer"), ("s02b_beats", "beats"), ("s03_performer", "performer"),
-          ("s04_editor", "editor"), ("s04r_architect", "architect_repair"), ("s05_caster", "caster"), ("s06_shorts", "shorts")]
+          ("s03r_writer", "writer_repair"), ("s04_editor", "editor"), ("s04r_architect", "architect_repair"), ("s05_caster", "caster"), ("s06_shorts", "shorts")]
 CLAIM = re.compile(r"\b[CI]\d{2}\b")
 
 
@@ -55,7 +55,7 @@ def main(arm: str) -> dict:
                                                    "rules": dict(collections.Counter(f'{x["severity"]} {x["rule"]}' for x in lint))},
                "validate": validate(f)}
         if prev is not None and stage != "architect":
-            row["stage_guard_violations_vs_previous"] = stage_guard.violations("architect" if stage == "architect_repair" else stage, prev, doc)
+            row["stage_guard_violations_vs_previous"] = stage_guard.violations({"architect_repair": "architect", "writer_repair": "writer"}.get(stage, stage), prev, doc)
         out[stem], prev = row, doc
     final = arm_dir / "production_script.json"
     if final.exists():

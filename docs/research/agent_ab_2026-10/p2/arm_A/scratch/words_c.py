@@ -1,0 +1,43 @@
+from helper import *
+set_lines("S07", [
+ ("N", "Here's what the emperor's guns can't fix: the wagons."),
+ ("N", "Everything the army eats and fires rides in them, and they were built for roads.", ["C-16"]),
+ ("N", "Back on the road to Moscow, the soldiers took what they needed from the villages. Colonel Pion put it bluntly: the army must live by the sword.", ["C-16"]),
+ ("N", "The steppe has no villages. There is only grass, and the riders who ride over it.", ["C-91"]),
+ ("N", "What do you do when your army can't eat the ground it stands on?"),
+ ("N", "On the seventh day, Kerim rides out alone to find where the riders go. He doesn't come back.", ["C-93"]),
+])
+set_lines("S08", [
+ ("N", "A felt tent behind a river-cut, and a fire of dung and sagebrush. Genghis Khan sits by it and says nothing.", ["C-92"]),
+ ("N", "Two riders drag in a captured man with a Mameluke's sabre. His name is Kerim.", ["C-93"]),
+ ("N", "Kerim speaks Crimean Tatar. The khan's herder speaks Cuman. Both are Kipchak Turkic tongues, so the words cross.", ["C-15"]),
+ ("genghis", "kerim", "press", "You shot one of my riders."),
+ ("kerim", "genghis", "deflect", "He shot at me first."),
+ ("genghis", "kerim", "question", "Did you shoot?"),
+ ("kerim", "genghis", "concede", "Yes."),
+ ("genghis", "kerim", "reveal", "An archer once shot my horse from under me. I asked who. He stood up and said, I did. His name was Jebe. I kept him.", ["C-11"]),
+ ("kerim", "genghis", "deflect", "Am I meant to thank you?"),
+ ("genghis", "kerim", "deflect", "Where did you learn my herder's words?"),
+ ("kerim", "genghis", "concede", "From my grandfather. His people came from the Crimea. They spoke like your herder. Almost.", ["C-15"]),
+ ("genghis", "kerim", "press", "Your emperor has iron tubes on wheels. My riders say they are slow."),
+ ("kerim", "genghis", "deflect", "Slow to leave. Not slow to arrive."),
+ ("genghis", "kerim", "press", "A bull is not slow to arrive. We still eat bulls."),
+ ("kerim", "genghis", "reveal", "Your arrows fall short, Khan. The long gun reaches nine hundred metres.", ["C-05"]),
+ ("genghis", "kerim", "question", "And when the iron breaks into hail?"),
+ ("kerim", "genghis", "concede", "Six hundred. Then it's a storm.", ["C-05"]),
+ ("genghis", "kerim", "decide", "Go back to your emperor."),
+ ("kerim", "genghis", "question", "And tell him what?"),
+ ("genghis", "kerim", "decide", "That the khan would like to see his guns.", ["C-94"]),
+ ("kerim", "genghis", "press", "And if he says no?"),
+ ("genghis", "kerim", "deflect", "You told me the truth in my tent. Tell him that, too."),
+ ("N", "At dawn, Kerim rides out of the camp alive. Behind him, the khan sends for his generals.", ["C-92"]),
+])
+set_lines("S09", [
+ ("N", "Kerim rides into the French lines before sunrise. The emperor hears the khan's message in silence.", ["C-93"]),
+ ("N", "The khan would like to see his guns. Napoleon takes that as an insult, and then as an invitation.", ["C-94"]),
+ ("N", "Ahead lies the valley he chose: one mouth, long slopes, firm ground.", ["C-93"]),
+ ("N", "The long guns go on the high slope. The squares stand behind them. The wagons, with all the bread and powder, wait at the back.", ["C-93"]),
+ ("N", "A musket is good for ninety metres.", ["C-06"]),
+ ("N", "A Mongol bow can loft an arrow nearly four hundred metres.", ["C-09"]),
+ ("N", "On the ridge above the valley, the riders begin to gather. Nobody on the French side has counted them.", ["C-93"]),
+])

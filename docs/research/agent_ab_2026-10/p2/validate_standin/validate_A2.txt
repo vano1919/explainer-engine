@@ -1,0 +1,268 @@
+FAIL   PV-05            S01                sound 'amb_steppe_wind__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S01                sound 'seam_shimmer__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S02                sound 'swish__v2' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S03                sound 'amb_burnt_garage_dawn__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S03                sound 'amb_steppe_wind__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S04                sound 'amb_steppe_wind__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S06                sound 'amb_steppe_wind__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S08                sound 'amb_motel_pool_night__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S09                sound 'amb_steppe_wind__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S10                sound 'amb_steppe_wind__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S10                sound 'amb_burnt_garage_dawn__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S10                sound 'cannon_boom__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S10                sound 'reveal_sting__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S11                sound 'amb_burnt_garage_dawn__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S12                sound 'amb_steppe_wind__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S12                sound 'pop_in__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S13                sound 'amb_steppe_wind__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S15                sound 'amb_steppe_wind__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            S15                sound 'seam_shimmer__v1' not found (sound_dirs or the library manifest)
+FAIL   PV-05            music              track 'clockwork_loop__v1' not found
+FAIL   PV-05            music              track 'sneaky_pizzicato__v1' not found
+FAIL   PV-05            music              track 'clockwork_loop__v1' not found
+FAIL   PV-05            music              track 'sneaky_pizzicato__v1' not found
+FAIL   PV-05            music              track 'clockwork_loop__v1' not found
+REVIEW PV-10            voice              no voice chosen yet: pick one of voice.candidates (test read first) before the full read
+FAIL   PV-11            p_arrow            prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_moscow_out       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_steppe_fog       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_n_look           prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_riders_ridge     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_gun_empty        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_moscow_gate      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_neman            prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_wagon_mud        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_village_road     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_steppe_empty     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_khan_ridge       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_rise_wide        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_mk_med4          prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_ridge_far        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_two_nm           prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_n_close          prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_murat_close      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_close      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_n_spyglass       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_med        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_two_nk4          prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_murat_med        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_ridge_empty      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_guns_point       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_murat_gallop     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_rider_away       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_stragglers       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_horses_down      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_wagon_wide       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_horses_lying     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_n_close6         prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_murat_med6       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_two_nm6          prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_murat_close6     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_close6     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_med6       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_valley_plan      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_wagons_line      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_hungry           prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_alone      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_tent_out         prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_tent_wide        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_herder           prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_khan_close       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_khan_med         prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_close8     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_med8       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_leaves     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_ride       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_n_message        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_guns_slope       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_musket_arrow     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_bow_loft         prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_slope_wide       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_ridge_dawn10     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_n_close10        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_murat_close10    prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_two_nm10         prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_close10    prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_n_med10          prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_gun_fire         prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_riders_halt      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_wagons_burn      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_gun_crew         prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_squares          prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_plea       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_smoke_wide       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_n_close11        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_close11    prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_white_cloth      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_riders_calm      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kalka            prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_empty_sack       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_fog_ridge        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_carpet_wide      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_kerim_close13    prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_khan_close13     prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_n_close13        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_two_nk           prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_platform         prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_guns_left        prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_squares_far      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_moscow_wait      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_riders_far       prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_army_leaves      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_fog_edge         prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_moscow_road      prompt is missing or stale: run `python -m explainer_engine.production compile`
+FAIL   PV-11            p_channel          prompt is missing or stale: run `python -m explainer_engine.production compile`
+REVIEW PV-32            napoleon           no voice chosen yet for this hero: pick one after a test read, before the full read
+REVIEW PV-32            murat              no voice chosen yet for this hero: pick one after a test read, before the full read
+REVIEW PV-32            kerim              no voice chosen yet for this hero: pick one after a test read, before the full read
+REVIEW PV-32            kerim              no accent follows from voice.traits.origin or .ethnicity: name where the hero is from so the voice carries the right accent
+REVIEW PV-32            genghis            no voice chosen yet for this hero: pick one after a test read, before the full read
+REVIEW PV-32            genghis            no accent follows from voice.traits.origin or .ethnicity: name where the hero is from so the voice carries the right accent
+REVIEW PV-28            SH01               the last line does not point to the full video (SH-01)
+REVIEW PV-28            SH03               a statement hook must raise a question (SH-04): say which, or make it a question (BP-11; the styles anti_intuition and pov_you open with a statement by design, SS-05)
+REVIEW PV-28            SH03               the last line does not point to the full video (SH-01)
+REVIEW PV-44 VB-06      S04 line 1 beat 2  prop "Napoleon's spyglass" has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-12      S04 line 30 beat 2 symbol beat on 'empty' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-06      S05 line 2 beat 1  prop 'a lone rider on a ridge' has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-06      S05 line 3 beat 1  prop "Murat's exhausted horses" has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-12      S06 line 29 beat 1 chart beat on 'nine hundred metres' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-06      S08 line 1 beat 1  prop 'a felt tent with a dung fire' has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-06      S08 line 2 beat 1  prop "a Mameluke's curved sabre" has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-06      S10 line 1 beat 2  prop 'the long guns on the slope' has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-12      S10 line 15 beat 1 accent beat on 'Fifty metres short' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-12      S10 line 31 beat 1 symbol beat on 'Behind us' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-12      S10 line 33 beat 1 highlight beat on 'The smoke' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-12      S10 line 37 beat 1 prop beat on 'Fire arrows' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-12      S10 line 39 beat 1 chart beat on 'Fifteen men' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-06      S11 line 11 beat 1 prop 'a white cloth tied to a sabre' has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-12      S13 line 15 beat 2 prop beat on 'the victory platform' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-06      S13 line 15 beat 2 prop 'a victory platform over the fallen princes' has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-12      S13 line 24 beat 1 chart beat on 'two guns' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-06      S13 line 29 beat 1 prop 'two guns left on the open grass' has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-06      S14 line 7 beat 1  prop 'the fog sweeping back over the army' has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-06      SH01 line 3 beat 1 prop 'marching column' has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-06      SH02 line 6 beat 1 prop 'burning wagon' has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-12      SH03 line 1 beat 1 text beat on 'two guns' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-12      SH03 line 2 beat 1 prop beat on 'a pot' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-06      SH03 line 2 beat 1 prop 'iron pot' has no cut-out (asset): it is drawn as a word sticker
+REVIEW PV-44 VB-12      SH03 line 3 beat 1 symbol beat on 'belongs to himself' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-12      SH03 line 4 beat 1 highlight beat on 'lonely' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-12      SH03 line 5 beat 1 highlight beat on 'yourself' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-44 VB-12      SH03 line 7 beat 1 text beat on 'at dawn' is not tied to a narration word (it sits on a hero's line, or its phrase has no content word): it does not count as something new (BP-93); keep it only if the story needs it
+REVIEW PV-12            p3                 N-02: the beat ends closed ("A tumen is ten thousand HORSEMEN."); end on the next question or danger
+REVIEW PV-12            p4                 N-02: the beat ends closed ("Napoleon's guns stay where they are, pointed at NOTHING."); end on the next question or danger
+REVIEW PV-12            p7.s8              N-10: a wh-question over 12 words falls before it lands; shorten it or make it yes/no (BP-18)
+REVIEW PV-12            p7                 N-02: the beat ends closed ("He doesn't come BACK."); end on the next question or danger
+REVIEW PV-12            p8                 N-02: the beat ends closed ("Behind him, the khan sends for his GENERALS."); end on the next question or danger
+REVIEW PV-12            p9                 N-02: the beat ends closed ("Nobody has COUNTED them."); end on the next question or danger
+REVIEW PV-12            p10                N-02: the beat ends closed ("Napoleon has one QUESTION left."); end on the next question or danger
+REVIEW PV-12            p11                N-02: the beat ends closed ("Napoleon does not watch him GO."); end on the next question or danger
+REVIEW PV-12            p12                N-02: the beat ends closed ("To reach it, Napoleon needs the khan's LEAVE."); end on the next question or danger
+REVIEW PV-12            p13                N-02: the beat ends closed ("The army has its road home, and it cost one AFTERNOON."); end on the next question or danger
+REVIEW PV-12            p14                N-02: the beat ends closed ("At dawn the fog comes back, thick and cold, and the army wal"); end on the next question or danger
+REVIEW PV-12            p16                N-02: the beat ends closed ("Subscribe, so you don't miss the next COLLISION."); end on the next question or danger
+REVIEW PV-12            -                  N-12: 246 words in a row without 'you' or 'your'; speak to one listener at least once per 100 words (BP-07)
+REVIEW PV-24 HERO-2     SH001              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH016              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH017              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH019              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH020              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH021              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH022              ['murat', 'napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH024              ['murat'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH025              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH026              ['kerim', 'napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH027              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH028              ['murat'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH029              ['murat'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH030              ['murat', 'napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH031              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH034              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH043              ['murat'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH046              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH047              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH048              ['murat'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH052              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH054              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH055              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH057              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH058              ['murat', 'napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH071              ['genghis'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 RHYTHM-2   SH072              2.38 s is shorter than 2.5 s (BP-84) (estimated read)
+REVIEW PV-24 HERO-2     SH072              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH073              ['genghis'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH074              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH075              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH076              ['genghis'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH077              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH080              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH081              ['genghis'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH083              ['genghis'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH085              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH096              ['murat'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH097              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH099              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH100              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH102              ['murat'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH104              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH105              ['murat'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH106              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH107              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH108              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH109              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH110              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH112              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH115              ['murat'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH116              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH117              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH118              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH119              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH120              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH125              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH134              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH135              ['genghis'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH136              ['kerim', 'napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH137              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH138              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH139              ['genghis'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH141              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH143              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH144              ['genghis'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH145              ['napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH146              ['kerim', 'napoleon'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 HERO-2     SH147              ['kerim'] on screen but not named in this or the two lines before (estimated read)
+REVIEW PV-24 RHYTHM-1   -                  10.69 pictures a minute > 10 (BP-40) (estimated read)
+REVIEW PV-35 BP-24      SH101              shake on a shot whose narration names no impact (hit, crash, fall, blast...): a shake is an accent on an impact beat, never a move and never on a dialogue-only shot (estimated read)
+REVIEW PV-35 BP-27      S08 line 2         'KERIM' is readable for 0.47 s only; 1 word(s) need 0.83 s (estimated read)
+REVIEW PV-35 BP-33      S13 line 23 napole smug holds 0.50 s (at least 0.5 s) (estimated read)
+INFO   PV-35 MO-06      video              97% of shots have motion besides the camera (accent, bubble or beat); reported only, no target (BP-83) (estimated read)
+REVIEW PV-35 BP-94      S06 line 31        a cut 0.2 s after the exchange's last line: hold the hero's mood at least 2 s under the narrator's conclusion, then move slowly to the next scene (BP-94) (estimated read)
+REVIEW PV-35 BP-94      S08 line 29        a cut 0.2 s after the exchange's last line: hold the hero's mood at least 2 s under the narrator's conclusion, then move slowly to the next scene (BP-94) (estimated read)
+REVIEW PV-35 BP-94      S11 line 10        a cut 1.2 s after the exchange's last line: hold the hero's mood at least 2 s under the narrator's conclusion, then move slowly to the next scene (BP-94) (estimated read)
+REVIEW PV-35 BP-94      S13 line 28        a cut 0.2 s after the exchange's last line: hold the hero's mood at least 2 s under the narrator's conclusion, then move slowly to the next scene (BP-94) (estimated read)
+REVIEW PV-36 BP-62      sneaky_pizzicato__ music start at 206.72s is on no shot or segment boundary: spot it to a cut (estimated read)
+REVIEW PV-36 BP-62      clockwork_loop__v1 music start at 467.09s is on no shot or segment boundary: spot it to a cut (estimated read)
+REVIEW PV-36 BP-62      clockwork_loop__v1 music end at 639.08s is on no shot or segment boundary: spot it to a cut (estimated read)
+REVIEW PV-36 BP-62      sneaky_pizzicato__ music start at 642.51s is on no shot or segment boundary: spot it to a cut (estimated read)
+REVIEW PV-36 BP-62      clockwork_loop__v1 music start at 736.26s is on no shot or segment boundary: spot it to a cut (estimated read)
+REVIEW PV-44 VB-02      S04 line 14        murat stays doubtful: an expression beat is a change (estimated read)
+REVIEW PV-44 VB-02      S06 line 18        4.1 s without an expression change (REVIEW over 4 s) (estimated read)
+REVIEW PV-44 VB-02      S08 line 8         8.0 s without an expression change in dialogue (FAIL over 6 s): a listener reacts when a line lands, not on a clock (estimated read)
+REVIEW PV-44 VB-02      S08 line 19        4.4 s without an expression change (REVIEW over 4 s) (estimated read)
+REVIEW PV-44 VB-02      S10 line 17        kerim stays worried: an expression beat is a change (estimated read)
+REVIEW PV-44 VB-02      S10 line 22        murat stays angry: an expression beat is a change (estimated read)
+REVIEW PV-44 VB-02      S11 line 5         4.5 s without an expression change (REVIEW over 4 s) (estimated read)
+REVIEW PV-44 VB-02      S13 line 3         5.0 s without an expression change (REVIEW over 4 s) (estimated read)
+REVIEW PV-44 VB-05      S01                3 of 5 beats are words: at most 50%; show the thing instead (estimated read)
+REVIEW PV-44 VB-05      S08                4 of 7 beats are words: at most 50%; show the thing instead (estimated read)
+REVIEW PV-44 VB-05      S09                4 label beats in a row: vary the kind (text, prop, chart, highlight, symbol, accent) (estimated read)
+REVIEW PV-44 VB-05      S09                6 of 9 beats are words: at most 50%; show the thing instead (estimated read)
+REVIEW PV-44 VB-05      S16                3 of 4 beats are words: at most 50%; show the thing instead (estimated read)
+FAIL   PV-45            episode.scenario   no approved scenario: send the creator a short scenario first and write the script only after they approve it (OR-15); record file, approved_by, approved_at, sha256
+REVIEW PV-46            murat              murat says 'waiting', which their speech avoids
+FAIL   PV-47            genghis            hero genghis is painted but has no approved variant collage: paint ONE collage of 4-6 variants, let the creator pick a tile, record it (OR-16)
+FAIL   PV-47            kerim              hero kerim is painted but has no approved variant collage: paint ONE collage of 4-6 variants, let the creator pick a tile, record it (OR-16)
+FAIL   PV-47            murat              hero murat is painted but has no approved variant collage: paint ONE collage of 4-6 variants, let the creator pick a tile, record it (OR-16)
+FAIL   PV-47            napoleon           hero napoleon is painted but has no approved variant collage: paint ONE collage of 4-6 variants, let the creator pick a tile, record it (OR-16)
+FAIL   PV-47            look.environment   the episode's world is painted but has no approved variant collage: paint ONE collage of 4-6 variants, let the creator pick a tile, record it (OR-16)
+script: 119 FAIL, 148 REVIEW

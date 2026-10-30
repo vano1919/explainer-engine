@@ -1,0 +1,1888 @@
+{
+ "schema": "production_script/3",
+ "episode": {
+  "id": "napoleon_meets_genghis",
+  "title": "What If Napoleon Marched Into Genghis Khan?",
+  "fps": 30,
+  "notes": "writers' room arm B2, stage 1 (architect): story layer, cast with voice bibles and face sheets, scene headers; lines and everything later follow",
+  "distinct": {
+   "premise": "Napoleon's vanguard is dropped by a fog into the steppe of 1223 where Genghis Khan waits",
+   "question": "Will Napoleon get the decisive battle he has chased all his life?",
+   "outcome": "he gets it and it decides nothing; he pays two guns for the way home",
+   "mechanism": "an artillery general against a feigned retreat that draws him away from his wagons"
+  }
+ },
+ "cast": {
+  "napoleon": {
+   "names": [
+    "Napoleon Bonaparte",
+    "Napoleon",
+    "the Emperor"
+   ],
+   "card": "Napoleon as our caricature: short, grey greatcoat over a green uniform, black bicorne hat, one hand tucked in the coat, tired pale-blue eyes",
+   "props": [
+    "spyglass",
+    "map case"
+   ],
+   "speech": {
+    "basis": "public",
+    "style": "Clipped orders and short questions that are really commands; counts guns, paces and hours; goes quiet and studies the ground before he decides.",
+    "words": [
+     "ground",
+     "range",
+     "count",
+     "decide",
+     "guns"
+    ],
+    "avoid": [
+     "modern slang",
+     "self-praise",
+     "any famous catchphrase"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Napoleon",
+     "manner as generally described in published histories; to be checked by the creator, not independently fetched"
+    ]
+   },
+   "face_sheet": {
+    "id": "napoleon_faces_v1",
+    "ref": "p_napoleon",
+    "set": [
+     "neutral",
+     "determined",
+     "doubtful",
+     "angry",
+     "surprised",
+     "worried",
+     "curious",
+     "smug",
+     "deadpan",
+     "scared"
+    ]
+   }
+  },
+  "murat": {
+   "names": [
+    "Joachim Murat",
+    "Murat",
+    "the marshal"
+   ],
+   "card": "Joachim Murat as our caricature: tall, wavy dark hair and long sideburns, scarlet jacket thick with gold braid, tall plumed hat, a riding crop",
+   "props": [
+    "riding crop",
+    "plumed grey horse"
+   ],
+   "speech": {
+    "basis": "public",
+    "style": "Loud, quick and vain; talks in 'charge' and 'now'; interrupts; blames the ground, never the horses; every boast is also a plea for permission.",
+    "words": [
+     "charge",
+     "now",
+     "glory",
+     "cavalry"
+    ],
+    "avoid": [
+     "figures",
+     "caution",
+     "retreat"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Joachim_Murat",
+     "manner as generally described in published histories; to be checked by the creator, not independently fetched"
+    ]
+   },
+   "face_sheet": {
+    "id": "murat_faces_v1",
+    "ref": "p_murat",
+    "set": [
+     "neutral",
+     "joyful",
+     "smug",
+     "angry",
+     "surprised",
+     "determined",
+     "amused",
+     "worried",
+     "sad",
+     "scared"
+    ]
+   }
+  },
+  "genghis": {
+   "names": [
+    "Genghis Khan",
+    "the Khan",
+    "Temujin"
+   ],
+   "card": "Genghis Khan as our caricature: weathered broad face, long grey-streaked braided beard, fur-trimmed felt hat, plain brown leather coat, calm black eyes",
+   "props": [
+    "horse-hair banner",
+    "bowl of fermented mare's milk"
+   ],
+   "speech": {
+    "basis": "public",
+    "style": "Slow, plain and few words; speaks in horses, grass, distance and weather; asks each question once and waits; gives before he asks.",
+    "words": [
+     "horse",
+     "grass",
+     "ride",
+     "tomorrow",
+     "keep"
+    ],
+    "avoid": [
+     "boasting",
+     "titles for himself",
+     "modern words"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Genghis_Khan",
+     "manner as generally described in published histories; to be checked by the creator, not independently fetched"
+    ]
+   },
+   "face_sheet": {
+    "id": "genghis_faces_v1",
+    "ref": "p_genghis",
+    "set": [
+     "neutral",
+     "determined",
+     "amused",
+     "doubtful",
+     "curious",
+     "deadpan",
+     "angry",
+     "smug",
+     "worried",
+     "surprised"
+    ]
+   }
+  },
+  "tahir": {
+   "names": [
+    "Tahir",
+    "the Mameluke",
+    "the interpreter"
+   ],
+   "card": "Tahir, our invented rider of the Guard's Mameluke company: lean, short black beard, red turban with a white wrap, wide yellow trousers, curved sabre, a brown Crimean cloak",
+   "props": [
+    "curved sabre",
+    "leather water flask"
+   ],
+   "speech": {
+    "basis": "personality",
+    "style": "Dry and exact; the translator's habit of 'he says' and 'he does not say'; a rider's practical jokes when frightened; hesitates before the truth, then says it whole.",
+    "words": [
+     "exactly",
+     "he says",
+     "water",
+     "horses"
+    ],
+    "avoid": [
+     "grand speeches",
+     "flattery"
+    ]
+   },
+   "face_sheet": {
+    "id": "tahir_faces_v1",
+    "ref": "p_tahir",
+    "set": [
+     "neutral",
+     "curious",
+     "scared",
+     "doubtful",
+     "worried",
+     "determined",
+     "deadpan",
+     "surprised",
+     "joyful",
+     "sad"
+    ]
+   }
+  }
+ },
+ "drama": {
+  "premise": "A fog on the road to Moscow drops Napoleon's vanguard, with Murat's cavalry, the Mameluke company and the guns, into the steppe of 1223, where Genghis Khan himself waits with two tumens.",
+  "question": "Will Napoleon get the decisive battle he has chased all his life?",
+  "promise": "the artillery general against the horse-archer's trick: who outwits whom, and what Napoleon leaves behind on the steppe",
+  "template": "D",
+  "needs": [
+   "curiosity",
+   "stakes",
+   "humour",
+   "wonder",
+   "fear",
+   "competence",
+   "surprise",
+   "justice",
+   "belonging"
+  ],
+  "arcs": {
+   "napoleon": {
+    "want": "force one decisive battle that destroys the enemy's army",
+    "need": "keep the army alive rather than win the field",
+    "flaw": "cannot believe an enemy will not stand and fight",
+    "change": "admits aloud he cannot destroy this army and gives up the guns he loves"
+   },
+   "murat": {
+    "want": "the glory of the first charge",
+    "flaw": "spends horses and men without counting them"
+   },
+   "genghis": {
+    "want": "the guns that outrange his bows, taken without a fight he must win",
+    "flaw": "believes every enemy can be lured the same way"
+   },
+   "tahir": {
+    "want": "get his comrades home alive",
+    "need": "choose the truth even when a lie would save him",
+    "flaw": "hides what he feels about the steppe that sounds like home",
+    "change": "says the whole truth in both tongues"
+   }
+  },
+  "loops": [
+   {
+    "id": "L01",
+    "question": "Will Napoleon get the decisive battle he has chased all his life?"
+   },
+   {
+    "id": "L02",
+    "question": "Can the army get home through the fog?"
+   },
+   {
+    "id": "L03",
+    "question": "Who is the Khan the riders shout about?"
+   },
+   {
+    "id": "L04",
+    "question": "What happens to Tahir, the scout who does not come back?"
+   },
+   {
+    "id": "L05",
+    "question": "Will the wagons survive the chase?"
+   },
+   {
+    "id": "L06",
+    "question": "Will the guns win the day?"
+   },
+   {
+    "id": "L07",
+    "question": "What will Napoleon pay to get home?"
+   }
+  ],
+  "setups": [
+   {
+    "id": "P01",
+    "what": "the muzzle of a 12-pounder in the fog, beaded with dew",
+    "plant": "S01",
+    "payoff": "S15"
+   },
+   {
+    "id": "P02",
+    "what": "Murat's plumed grey horse already blowing",
+    "plant": "S04",
+    "payoff": "S10"
+   },
+   {
+    "id": "P03",
+    "what": "the Khan kept the archer who shot his horse and admitted it",
+    "plant": "S08",
+    "payoff": "S13"
+   },
+   {
+    "id": "P04",
+    "what": "Tahir understands the riders' tongue (Kipchak family)",
+    "plant": "S04",
+    "payoff": "S13"
+   },
+   {
+    "id": "P05",
+    "what": "the heavy wagons that cannot be left behind",
+    "plant": "S06",
+    "payoff": "S11"
+   }
+  ],
+  "ending": {
+   "kind": "bookend",
+   "note": "template D: the opening's gun muzzle in the fog returns with a Mongol hand on it; he got the decisive battle and it decided nothing"
+  }
+ },
+ "segments": [
+  {
+   "id": "S01",
+   "beat": "A fog on the road to Moscow swallows the vanguard; when it lifts, the horizon is full of horsemen and a gun muzzle drips dew.",
+   "light_beat": 1,
+   "purpose": "COLD OPEN, narrator only, ~30 words. Sound from the first frame (hooves, wet fog). First sentence is the hook (BP-03) and states an odd physical detail; 2-3 teasers cut from later (KP-41): arrows falling on a square (S10), wagons burning (S11), the muzzle of a 12-pounder in fog (P01 plant). Claims: C-91, C-93 (invented beats only).",
+   "period": "fog_1812",
+   "drama": {
+    "function": "cold_open",
+    "turn": "start",
+    "stakes": "If the fog does not lift, the vanguard marches blind into someone else's century.",
+    "shift": "calm march -> alarm",
+    "need": "wonder",
+    "claim_share": "invented",
+    "opens": [
+     "L01",
+     "L02"
+    ]
+   },
+   "lines": [
+    {
+     "text": "The fog was so thick the cannon muzzles dripped.",
+     "claims": [
+      "C-91"
+     ]
+    },
+    {
+     "text": "Then it lifted, and the horizon was full of horsemen.",
+     "claims": [
+      "C-91"
+     ]
+    },
+    {
+     "text": "Arrows on the squares. Wagons burning. Four hours from now, nothing here will be what it was.",
+     "claims": [
+      "C-93"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S02",
+   "beat": "The paradox: the general who needs one decisive battle is about to meet an army that never gives one.",
+   "light_beat": 2,
+   "purpose": "HOOK / information gap, narrator only, ~45 words. States the surprising outcome as a paradox, never the answer: two armies 589 years apart (C-21), 450,000 men (C-01), a man who 'aimed to destroy the enemy's army in battle' (C-04). No resolution of L01.",
+   "period": "fog_1812",
+   "drama": {
+    "function": "hook",
+    "turn": "but",
+    "stakes": "The army that crossed the Neman has never met an enemy it could not find.",
+    "shift": "certainty -> paradox",
+    "need": "curiosity",
+    "claim_share": "reasoned"
+   },
+   "lines": [
+    {
+     "text": "Napoleon aimed at one thing: a battle that would destroy the enemy's army.",
+     "claims": [
+      "C-04"
+     ]
+    },
+    {
+     "text": "He crossed the Neman with more than 450,000 men to find one.",
+     "claims": [
+      "C-01"
+     ]
+    },
+    {
+     "text": "Now he stands five hundred and eighty-nine years too early, facing an army that wins by not being there when the blow lands.",
+     "claims": [
+      "C-21",
+      "C-10"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S03",
+   "beat": "Orientation: where, when, who against whom, the two ways of war laid side by side.",
+   "light_beat": 3,
+   "purpose": "ORIENTATION, narrator only, ~110 words (maps/diagrams). 1812 side: Grande Armee crossed 24 June (C-01), Napoleon the artillery officer (C-04), the Gribeauval 12-pounder 900 m / canister 600 m (C-05). Steppe side: three or four horses per rider (C-08), bows 150-400 m (C-09), Kalka 1223 (C-10). Fog premise C-91 (invented beat). No claim stacking: max two numbers per sentence.",
+   "period": "fog_1812",
+   "drama": {
+    "function": "setup",
+    "turn": "therefore",
+    "stakes": "Without guns or supply the vanguard is a spearhead with no shaft.",
+    "shift": "known world -> unknown century",
+    "need": "competence",
+    "claim_share": "reasoned"
+   },
+   "lines": [
+    {
+     "text": "Right, here's what's on the board.",
+     "claims": []
+    },
+    {
+     "text": "On one side, the Grande Armee: more than 450,000 men when it crossed the Neman.",
+     "claims": [
+      "C-01"
+     ]
+    },
+    {
+     "text": "Their general trained as an artillery officer, so he trusts what a gun can reach.",
+     "claims": [
+      "C-04"
+     ]
+    },
+    {
+     "text": "A Gribeauval twelve-pounder throws round shot about nine hundred meters. Canister, six hundred.",
+     "claims": [
+      "C-05"
+     ]
+    },
+    {
+     "text": "On the other side, riders who keep three or four horses each and swap mounts on the march.",
+     "claims": [
+      "C-08"
+     ]
+    },
+    {
+     "text": "Their bows reach four hundred meters when they shoot high.",
+     "claims": [
+      "C-09"
+     ]
+    },
+    {
+     "text": "And they've done this before.",
+     "claims": []
+    },
+    {
+     "text": "At the Kalka River, they drew a whole Rus army on for days, then destroyed it.",
+     "claims": [
+      "C-10"
+     ]
+    },
+    {
+     "text": "So which wins the long road, the gun or the horse?",
+     "claims": []
+    },
+    {
+     "text": "The fog doesn't care. And the guns need wagons, heavy ones, built for roads that aren't here.",
+     "claims": [
+      "C-91",
+      "C-16"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S04",
+   "beat": "Scene 1: Murat wants to charge the riders at once; Napoleon wants to count them first; Tahir hears a name in their shouting.",
+   "light_beat": 4,
+   "purpose": "SCENE 1 (inciting), ~300 words total: narrator in ~50 (names napoleon, murat, tahir before their first line; why they are on this ridge), scene ~210 dialogue, narrator out ~40. Goals and stakes declared through conflict. Tahir (Mameluke of the Guard, C-14) recognises the riders' tongue (C-15) and hears the word 'khan' (C-92 invented). Murat's grey horse already blowing (P02 plant; C-13). P04 plant: Tahir's tongue. Mode asymmetric. Claims C-13, C-14, C-15, C-04; invented C-92. Ends with Murat released.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "inciting",
+    "turn": "but",
+    "stakes": "Murat's charge goes in without a count, and the vanguard has no second cavalry.",
+    "shift": "free -> committed",
+    "need": "stakes",
+    "claim_share": "invented",
+    "opens": [
+     "L03"
+    ]
+   },
+   "scene": {
+    "place": "a grassy ridge above an empty valley, the fog tearing off the French line",
+    "time": "dawn, the first morning in the steppe",
+    "present": [
+     "napoleon",
+     "murat",
+     "tahir"
+    ],
+    "why_now": "the fog has lifted and horsemen are watching from the next ridge",
+    "pov": "murat",
+    "want": "charge the riders on the next ridge before they vanish",
+    "obstacle_want": "count them first and make them stand in one place",
+    "value": "initiative",
+    "open_charge": "+",
+    "close_charge": "-",
+    "turn": "Tahir says the riders are shouting a name, 'the Khan', and Napoleon chooses to release Murat as a test; mode asymmetric (emperor vs marshal)",
+    "exit": "succeed_complication",
+    "surface_topic": "whether to charge now",
+    "real_subject": "who commands the day",
+    "mode": "asymmetric"
+   },
+   "lines": [
+    {
+     "text": "Dawn on the steppe. The fog tears off the French line, and horsemen on the next ridge sit and watch.",
+     "claims": [
+      "C-91",
+      "C-93"
+     ]
+    },
+    {
+     "text": "Napoleon has his spyglass up. Murat, the best cavalry commander the army has, is already in the saddle, and his grey horse is blowing hard.",
+     "claims": [
+      "C-13"
+     ]
+    },
+    {
+     "text": "Tahir, a rider of the Guard's Mameluke company, holds the Emperor's second horse. Three men, one ridge, one order that somebody has to give.",
+     "claims": [
+      "C-14"
+     ]
+    },
+    {
+     "text": "Sire, one charge and that ridge is ours! Now, while they sit!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "They sit. Why do they sit, Murat?",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "Because they fear my cavalry!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "I want their army in one place. Then I destroy it.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "reveal",
+     "claims": [
+      "C-04"
+     ]
+    },
+    {
+     "text": "Then I gather them for you! The ground is perfect, sire--",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "Your grey is blowing already. Where is the ground that tires him?",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "question",
+     "claims": [
+      "C-13"
+     ]
+    },
+    {
+     "text": "The grass, sire! Bad grass! Horses are never the trouble.",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Sire. They are shouting. One word, again and again.",
+     "speaker": "tahir",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": []
+    },
+    {
+     "text": "Which word?",
+     "speaker": "napoleon",
+     "to": "tahir",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "It is my grandmother's tongue, almost. Exactly. Khan. They shout, Khan.",
+     "speaker": "tahir",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": [
+      "C-15",
+      "C-92"
+     ]
+    },
+    {
+     "text": "A khan! A chief! Sire, there is a head to take!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "A name, or a title?",
+     "speaker": "napoleon",
+     "to": "tahir",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "He says it like a title. He does not say whose.",
+     "speaker": "tahir",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": [
+      "C-92"
+     ]
+    },
+    {
+     "text": "Go. Two regiments, one charge. Learn how they ride, and come back.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "decide",
+     "claims": []
+    },
+    {
+     "text": "You will have your Khan by noon!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Hooves hammer down the slope, and the grey is lathered before the valley floor.",
+     "claims": [
+      "C-13"
+     ]
+    },
+    {
+     "text": "On the ridge, Napoleon lowers the spyglass and counts the sun's height. Tahir keeps the word on his lips.",
+     "claims": [
+      "C-93"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S05",
+   "beat": "Bridge: the charge catches nobody and the horses are done by noon.",
+   "light_beat": 5,
+   "purpose": "BRIDGE, narrator only, ~50 words. The result and the next question: Murat's horses ridden to ruin (C-13), the riders changed mounts and vanished (C-08); the skirmish itself is invented (C-93). Ends on the question of where the riders are leading him.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "escalation",
+    "turn": "therefore",
+    "stakes": "Without remounts the cavalry is on foot by evening.",
+    "shift": "triumph -> exhaustion",
+    "need": "curiosity",
+    "claim_share": "reasoned",
+    "opens": [
+     "L05"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Murat's charge crosses the valley and finds an empty ridge.",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "The riders changed horses and melted away. Each of them keeps three or four, so there is always a fresh one.",
+     "claims": [
+      "C-08"
+     ]
+    },
+    {
+     "text": "Murat counts none of his. By noon, half his cavalry is walking.",
+     "claims": [
+      "C-13"
+     ]
+    },
+    {
+     "text": "So who are they leading him toward?",
+     "claims": []
+    }
+   ]
+  },
+  {
+   "id": "S06",
+   "beat": "Scene 2: the first plan fails; Napoleon wants a count and a place to fight, Murat wants a dawn charge, Tahir counts spare horses instead of riders.",
+   "light_beat": 6,
+   "purpose": "SCENE 2 (escalation), ~340 words: narrator in ~45, scene ~250, narrator out ~45. Dusk at the wagon park. Humour from Murat (mode comic: real stakes, absurd tactics). Tahir's count of spare mounts (C-08) with two tumens (C-20, C-92) means 60,000+ horses; Napoleon sees he cannot out-tire them. P05 plant: the heavy wagons that cannot be left (C-16). Napoleon decides to follow with guns AND wagons. Claims C-08, C-16, C-13, C-20; invented C-92, C-93.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "escalation",
+    "turn": "but",
+    "stakes": "The vanguard cannot outrun the enemy and cannot feed itself if it stays.",
+    "shift": "confident -> cornered",
+    "need": "humour",
+    "claim_share": "invented",
+    "closes": [
+     "L03"
+    ]
+   },
+   "scene": {
+    "place": "the French wagon park at the foot of the ridge, blown horses in a row",
+    "time": "dusk, same day",
+    "present": [
+     "napoleon",
+     "murat",
+     "tahir"
+    ],
+    "why_now": "Murat's charge came back with half its horses and no prisoners",
+    "pov": "napoleon",
+    "want": "get a count of the enemy and a place where they must stand",
+    "obstacle_want": "a second charge at dawn to wipe out the shame",
+    "value": "certainty",
+    "open_charge": "+",
+    "close_charge": "-",
+    "turn": "Tahir's count of the enemy's spare horses ends Murat's plan; mode comic (the stakes are real, Murat's tactics are absurd)",
+    "exit": "fail_new_goal",
+    "surface_topic": "tomorrow's charge",
+    "real_subject": "Murat's pride against Napoleon's fear of an enemy he cannot reach",
+    "mode": "comic"
+   },
+   "lines": [
+    {
+     "text": "Dusk at the wagon park. Murat's charge has come back with half its horses and no prisoners.",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "Napoleon wants a count of the enemy and a place where they must stand. Murat wants the same charge again at dawn, and Tahir has been counting something else.",
+     "claims": []
+    },
+    {
+     "text": "Behind them the wagons sit heavy and the steppe has no road for them.",
+     "claims": [
+      "C-16"
+     ]
+    },
+    {
+     "text": "Dawn, sire. Same ridge, same charge, and this time they stay!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "You rode at an empty ridge. Nobody stayed.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "The ground cheated me! A horse can rest on its feet, sire.",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": [
+      "C-13"
+     ]
+    },
+    {
+     "text": "Tahir. You were at the picket. What did you see?",
+     "speaker": "napoleon",
+     "to": "tahir",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "Not the riders, sire. Their horses. Each man leads three or four spares.",
+     "speaker": "tahir",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": [
+      "C-08"
+     ]
+    },
+    {
+     "text": "A Mameluke counting horses! Count your own and hold your tongue.",
+     "speaker": "murat",
+     "to": "tahir",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "I counted fires too. Two tumens, sire. Ten thousand men each.",
+     "speaker": "tahir",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": [
+      "C-20",
+      "C-92"
+     ]
+    },
+    {
+     "text": "Twenty thousand riders. Sixty thousand horses.",
+     "speaker": "napoleon",
+     "to": "self",
+     "intent": "reveal",
+     "claims": [
+      "C-08",
+      "C-20"
+     ]
+    },
+    {
+     "text": "Then there is more glory, sire, and nowhere to hide it!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Their horses are fresh at dawn. Yours are not. I cannot out-ride them.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "decide",
+     "claims": []
+    },
+    {
+     "text": "Then burn the wagons and fly, sire! Speed is everything!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "The wagons carry the powder and the bread. Without them the guns are iron.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "deflect",
+     "claims": [
+      "C-16"
+     ]
+    },
+    {
+     "text": "Find where they sleep. The guns and the wagons follow at first light.",
+     "speaker": "napoleon",
+     "to": "tahir",
+     "intent": "decide",
+     "claims": []
+    },
+    {
+     "text": "Follow, sire. Like a hearse behind a funeral.",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "At first light the wagons lurch east behind the guns. The riders' fires burn one ridge further on, always exactly one ridge.",
+     "claims": [
+      "C-16",
+      "C-93"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S07",
+   "beat": "New complication: Genghis Khan himself rides this steppe with two tumens, and he fights by running away; Tahir is taken scouting at night.",
+   "light_beat": 7,
+   "purpose": "NEW COMPLICATION, narrator only, ~90 words. The factor that changes the game: the Khan is here (C-92 invented) with a tumen of 10,000 (C-20) x2; the viewer learns the Kalka method (feigned retreat of about nine days, C-10) before Napoleon does. Last beat: Tahir leaves camp to count the horses and does not return (C-93). Opens the question of the prisoner. Claims C-10, C-20, C-11 (Khan keeps loyal talent); invented C-92, C-93.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "escalation",
+    "turn": "therefore",
+    "stakes": "A scout lost is the only eyes the Emperor had on the enemy.",
+    "shift": "hunter -> bait",
+    "need": "fear",
+    "claim_share": "reasoned",
+    "opens": [
+     "L04"
+    ]
+   },
+   "lines": [
+    {
+     "text": "But the fires aren't a scout's. Someone far bigger is out there.",
+     "claims": []
+    },
+    {
+     "text": "Genghis Khan himself rides this steppe, with two tumens. That's ten thousand riders each.",
+     "claims": [
+      "C-92",
+      "C-20"
+     ]
+    },
+    {
+     "text": "He never fights for ground. At the Kalka River, his generals ran for about nine days, and the Rus army followed them straight into the trap.",
+     "claims": [
+      "C-10"
+     ]
+    },
+    {
+     "text": "And he collects talent from every enemy he beats.",
+     "claims": [
+      "C-11"
+     ]
+    },
+    {
+     "text": "Napoleon sees none of this. He sees an enemy that runs, and he wants to catch it.",
+     "claims": []
+    },
+    {
+     "text": "That night, Tahir saddles up to count the horses in the riders' camp. Alone, in the dark.",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "He doesn't come back. So whose camp is he in now?",
+     "claims": [
+      "C-93"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S08",
+   "beat": "Scene 3 (midpoint): in the Khan's camp the prisoner tells the truth about the guns, and the hunted becomes the hunter.",
+   "light_beat": 8,
+   "purpose": "SCENE 3 (midpoint, other side acts, new place), ~330 words: narrator in ~45, scene ~245 (Genghis and Tahir in the Kipchak-family tongue, C-15), narrator out ~40 and the plan carried out (KP-42): the Mongol tumens falling back in a feigned retreat, shown while it is told. Genghis recalls the archer who shot his horse and admitted it (P03 plant, C-11). Tahir admits the 12-pounder's 900 m against the bow's 400 m (C-05, C-09). Mode indirect (hospitality hides the interrogation). Claims C-05, C-09, C-10, C-11, C-15; invented C-92, C-93.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "midpoint",
+    "turn": "but",
+    "stakes": "If Tahir lies, the Khan's lure fails; if he tells the truth, he feeds the Khan the guns' weakness (the wagons).",
+    "shift": "hunter -> hunted",
+    "need": "justice",
+    "claim_share": "invented",
+    "closes": [
+     "L04"
+    ]
+   },
+   "scene": {
+    "place": "the Khan's felt tent among the horse herds, a bowl of mare's milk between them",
+    "time": "night, the same day",
+    "present": [
+     "genghis",
+     "tahir"
+    ],
+    "why_now": "the riders brought in a Frenchman who understands their words",
+    "pov": "genghis",
+    "want": "learn what the thunder-weapons need to keep firing",
+    "obstacle_want": "tell the enemy nothing that kills his comrades",
+    "value": "trust",
+    "open_charge": "-",
+    "close_charge": "+",
+    "turn": "Tahir answers the one question whose honest answer costs him, and the Khan names the man he kept for the same honesty; mode indirect (politeness hides the attack)",
+    "exit": "succeed_complication",
+    "surface_topic": "the strangers' weapons",
+    "real_subject": "who deserves to live",
+    "mode": "indirect"
+   },
+   "lines": [
+    {
+     "text": "Tahir was taken at the riders' picket in the dark, and he expected a rope, not a host.",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "Instead he sits on felt in a tent among the herds, and Genghis Khan himself is pouring his milk.",
+     "claims": [
+      "C-92"
+     ]
+    },
+    {
+     "text": "The riders found a Frenchman who understands their words, and the Khan has questions about thunder.",
+     "claims": [
+      "C-15"
+     ]
+    },
+    {
+     "text": "Drink. It is a long way from your fires to mine.",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "banter",
+     "claims": []
+    },
+    {
+     "text": "Exactly how long, I wonder. Or is this simply the last bowl?",
+     "speaker": "tahir",
+     "to": "genghis",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "Milk is milk. Tomorrow is tomorrow.",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "You speak like the herders of the Kipchak. Someone taught you.",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "question",
+     "claims": [
+      "C-15"
+     ]
+    },
+    {
+     "text": "My grandmother. She cursed horses in it. Mostly horses.",
+     "speaker": "tahir",
+     "to": "genghis",
+     "intent": "deflect",
+     "claims": [
+      "C-15"
+     ]
+    },
+    {
+     "text": "My riders saw long mouths on wheels. How far do they throw iron?",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "question",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "You pour milk for a prisoner, Khan, and then ask him for his army.",
+     "speaker": "tahir",
+     "to": "genghis",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "I pour for a guest. I ask once.",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "Nine hundred meters. With round shot. Six hundred, with canister.",
+     "speaker": "tahir",
+     "to": "genghis",
+     "intent": "reveal",
+     "claims": [
+      "C-05"
+     ]
+    },
+    {
+     "text": "And my bow?",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "Four hundred, shot at the sky. A hundred and fifty, if you want to hit.",
+     "speaker": "tahir",
+     "to": "genghis",
+     "intent": "concede",
+     "claims": [
+      "C-09"
+     ]
+    },
+    {
+     "text": "A liar would have said it reaches. Once, an arrow killed my horse under me. I asked who shot it. One man stood up alone and said, I did. I kept him. Jebe.",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "aside",
+     "claims": [
+      "C-11"
+     ]
+    },
+    {
+     "text": "You tell a prisoner your stories, Khan. I did not ask for one.",
+     "speaker": "tahir",
+     "to": "genghis",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "What do the iron mouths eat?",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "press",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "Powder. It rides in the wagons, a day behind, and the wagons are slow.",
+     "speaker": "tahir",
+     "to": "genghis",
+     "intent": "reveal",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "Then I will not meet your guns. I will let them follow my horses.",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "decide",
+     "claims": [
+      "C-10"
+     ]
+    },
+    {
+     "text": "Exactly what I was afraid you would say.",
+     "speaker": "tahir",
+     "to": "genghis",
+     "intent": "aside",
+     "claims": []
+    },
+    {
+     "text": "Before dawn the Khan's tumens are in the saddle, and they are not riding toward the French. They give ground, a hundred paces, then a hundred more, slowly enough to be followed, while the herds drift east as if there were all the time in the world. It is the old trick of the Kalka. Out on the French ridge, an emperor sees an enemy that runs, and nobody knows what has begun.",
+     "claims": [
+      "C-10",
+      "C-93"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S09",
+   "beat": "Preparation: nine days of chasing, the column stretched thin, and a valley the enemy finally stops in.",
+   "light_beat": 9,
+   "purpose": "PREPARATION, narrator only, ~90 words. The full size of the crisis, no spoiler: nine days after the lure began (C-10 method; C-93), the wagons strung out behind (C-16), Murat's horses dying (C-13), Napoleon seeing the enemy's line stand at last and feeling the chance he always wanted (C-04). Pressure rises; do not say what happens in the valley. Claims C-04, C-10, C-13, C-16; invented C-93.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "escalation",
+    "turn": "therefore",
+    "stakes": "If the guns fail, the army has nothing behind it but a wagon train a day away.",
+    "shift": "hope -> dread",
+    "need": "fear",
+    "claim_share": "reasoned",
+    "opens": [
+     "L06"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Nine days. The Khan's riders give ground at dawn and camp at dusk, always one ridge ahead.",
+     "claims": [
+      "C-10",
+      "C-93"
+     ]
+    },
+    {
+     "text": "Behind the column, the heavy wagons crawl on tracks they were never built for.",
+     "claims": [
+      "C-16"
+     ]
+    },
+    {
+     "text": "Murat's horses go down one by one, and he rides on without counting them.",
+     "claims": [
+      "C-13"
+     ]
+    },
+    {
+     "text": "Then, on the ninth evening, the dust settles. A line of horsemen stands across a valley, and it does not move.",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "At last the Emperor can see an army waiting for him. It is the chance he has wanted since the Neman. And the wagons are a day behind.",
+     "claims": [
+      "C-04",
+      "C-16"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S10",
+   "beat": "Scene 4 (central scene): the valley battle; the squares and guns hold the arrows, the unexpected smoke rises behind them.",
+   "light_beat": 10,
+   "purpose": "CENTRAL SCENE (climax), the LONGEST scene, ~520 words: narrator in ~45, scene ~430 with 3 escalations, narrator out ~45. Escalation 1: arrows falling on the squares from 400 m while muskets reach 90 m (C-09, C-06). Escalation 2: Napoleon opens the 12-pounders at 900 m and canister at 600 m (C-05), the squares hold against the charge (C-07), Murat begs for the cavalry (P02 payoff: his grey horse goes down, C-13). Escalation 3 (the unexpected): smoke at the rear, the Mongol tumen has taken the wagons (C-93, C-16). Cross-cut (KP-42): the Khan on the opposite ridge, a tumen riding round (visual, no Khan line). Mode balanced. Claims C-05, C-06, C-07, C-09, C-13, C-16; invented C-93.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "climax",
+    "turn": "but",
+    "stakes": "If the wagons are lost the guns fall silent; if he turns back, he abandons the first battle he has been given.",
+    "shift": "control -> trapped",
+    "need": "competence",
+    "claim_share": "invented"
+   },
+   "scene": {
+    "place": "the battery on the valley rim, guns wheeled up, squares drawn below",
+    "time": "midday on the ninth day",
+    "present": [
+     "napoleon",
+     "murat"
+    ],
+    "why_now": "the Mongol line has stopped retreating and begins to ride across the valley",
+    "pov": "napoleon",
+    "want": "break the line with guns at long range and hold the squares",
+    "obstacle_want": "release the cavalry now for the glory of the first charge",
+    "value": "initiative",
+    "open_charge": "+",
+    "close_charge": "-",
+    "turn": "the smoke on the road behind them tells Napoleon the wagons are burning; mode balanced (two equals clash)",
+    "exit": "interrupted",
+    "surface_topic": "the order of the battle",
+    "real_subject": "whether Murat's glory or Napoleon's guns decide the day",
+    "mode": "balanced"
+   },
+   "lines": [
+    {
+     "text": "Midday on the ninth day, and Murat is already at the Emperor's stirrup. The Khan's line stops backing away and starts to ride across the valley floor, turning as one. Below the battery the squares kneel in the grass, and Napoleon, who wanted this battle all his life, has his guns.",
+     "claims": [
+      "C-04",
+      "C-93"
+     ]
+    },
+    {
+     "text": "They're turning! Sire, the cavalry! Now, while they cross!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "Not yet.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Not yet? The ground is flat, the grass is ours, the glory is sitting there!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "Watch their bows, not the glory.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "command",
+     "claims": []
+    },
+    {
+     "text": "Bows! My horse has seen bows. He laughs at bows!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "banter",
+     "claims": []
+    },
+    {
+     "text": "Your horse is blowing. Count his breaths.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Count! Always count! Sire, I ride, I do not count!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Arrows rise from four hundred meters out. A musket answers at ninety. The shafts come down on the squares like hail.",
+     "claims": [
+      "C-09",
+      "C-06"
+     ]
+    },
+    {
+     "text": "They shoot, we stand! My cavalry would ride them under!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "Under what? A line that keeps moving back?",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "Under my sabres! The ground helps them, not us!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Guns. Nine hundred. Open.",
+     "speaker": "napoleon",
+     "to": "room",
+     "intent": "decide",
+     "claims": [
+      "C-05"
+     ]
+    },
+    {
+     "text": "The twelve-pounders crash out. Round shot tears into the riders at nine hundred meters, and the line splits and scatters wide. The first wave swings at a square. The square holds its volley until they are almost on the bayonets, and the wave breaks.",
+     "claims": [
+      "C-05",
+      "C-07"
+     ]
+    },
+    {
+     "text": "Look at them break! Sire, one charge and it's finished!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "They do not break. They open.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Then let me through the opening! Three times I ask you!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "Twenty years I wanted an army that stands before my guns. It stands, and it is not afraid. A man who runs nine days, then stops, has chosen the ground.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "reveal",
+     "claims": [
+      "C-04"
+     ]
+    },
+    {
+     "text": "Then take it from him, sire. With horses!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Napoleon says nothing. He studies the ground, the smoke over the guns, the empty ridge across the valley.",
+     "claims": []
+    },
+    {
+     "text": "Your silence is a no. I hear it as a yes!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "Enough of this. Up, my beauty!",
+     "speaker": "murat",
+     "to": "self",
+     "intent": "aside",
+     "claims": []
+    },
+    {
+     "text": "Murat spurs the plumed grey toward the slope. The horse has been blowing since the first morning. Its knees fold, and it goes down with the marshal under it.",
+     "claims": [
+      "C-13"
+     ]
+    },
+    {
+     "text": "Up! Get up!",
+     "speaker": "murat",
+     "to": "self",
+     "intent": "aside",
+     "claims": []
+    },
+    {
+     "text": "You never looked at him. Nine days.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "The grass was bad, sire! Bad grass!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Murat. Look behind us.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "reveal",
+     "claims": []
+    },
+    {
+     "text": "Dust. Our own dust, nothing more.",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Dust is not black.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "The wagons? They were a day behind, sire. A day!",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "They were.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "concede",
+     "claims": []
+    },
+    {
+     "text": "Then we ride back and burn them first! Sire, who has the faster horses?",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Which horses, Murat? Show me one that is not finished.",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "The... the squares will hold. They always hold, sire.",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Then the squares, the guns, we can still—",
+     "speaker": "murat",
+     "to": "napoleon",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "A column of black smoke stands over the road the army came by. The wagons burn, and with them the powder and the bread. A tumen has ridden round the valley while every eye was on the line. Across the valley the Khan sits his horse on the far ridge and does not move, because he does not need to. By evening the twelve-pounders will have nothing to say.",
+     "claims": [
+      "C-16",
+      "C-93"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S11",
+   "beat": "Turning point: the guns win the valley, and in the same hour the wagons burn; the victory he wanted decides nothing.",
+   "light_beat": 11,
+   "purpose": "TURNING POINT (reversal), narrator only, ~70 words, then silence or one still frame (the edit-planner holds it). The choice and the failure: Napoleon has the decisive field battle (C-04) but the enemy rides away on fresh horses (C-08) and the supply wagons burn (C-16, C-93). L06 closes. No hero line (ST-14: a segment never opens or ends on a hero line). Claims C-04, C-08, C-16; invented C-93.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "reversal",
+    "turn": "but",
+    "stakes": "The army now has a won field and nothing to eat or fire.",
+    "shift": "victory -> trapped",
+    "need": "surprise",
+    "claim_share": "invented",
+    "closes": [
+     "L05",
+     "L06"
+    ]
+   },
+   "lines": [
+    {
+     "text": "The guns win the valley. When the last square lowers its muskets, the Mongol line is gone over the far rise.",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "Every rider has three or four horses, and the fresh ones carry him out of range.",
+     "claims": [
+      "C-08"
+     ]
+    },
+    {
+     "text": "Napoleon aimed to destroy an army in battle. He has the battle, and no army to destroy.",
+     "claims": [
+      "C-04"
+     ]
+    },
+    {
+     "text": "Behind him the heavy wagons are still burning.",
+     "claims": [
+      "C-16",
+      "C-93"
+     ]
+    },
+    {
+     "text": "He lowers the spyglass. He has won, and it buys him nothing.",
+     "claims": []
+    }
+   ]
+  },
+  {
+   "id": "S12",
+   "beat": "Fallout: the field is his, the food and powder are gone, and the enemy lost no army to count.",
+   "light_beat": 12,
+   "purpose": "FALLOUT, narrator only, ~90 words. Who lost and who won, never what we just saw: the French kept the field and lost the wagons; the Mongols lost the field and kept the army (C-08, C-10). Echo of the real campaign: Moscow taken, then abandoned and burned, Alexander I refusing to negotiate (C-12). Opens the price question. Claims C-08, C-12, C-16; invented C-93.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "escalation",
+    "turn": "therefore",
+    "stakes": "Without peace or supply the vanguard must buy its way home.",
+    "shift": "victory -> debt",
+    "need": "justice",
+    "claim_share": "reasoned",
+    "opens": [
+     "L07"
+    ]
+   },
+   "lines": [
+    {
+     "text": "So who lost? The French hold the field, and the wagons are ash.",
+     "claims": [
+      "C-93",
+      "C-16"
+     ]
+    },
+    {
+     "text": "The Mongols hold nothing. They kept every rider and every spare horse.",
+     "claims": [
+      "C-08"
+     ]
+    },
+    {
+     "text": "Each man changes mounts on the march, so the whole army rides on, fresh, to fight another day.",
+     "claims": [
+      "C-08"
+     ]
+    },
+    {
+     "text": "Napoleon knows this story. In Russia, Kutuzov's army left Moscow, and the city burned.",
+     "claims": [
+      "C-12"
+     ]
+    },
+    {
+     "text": "Alexander I refused to negotiate, and the war simply went on.",
+     "claims": [
+      "C-12"
+     ]
+    },
+    {
+     "text": "Now the same silence sits across the valley, and the column has no food and no powder.",
+     "claims": [
+      "C-93",
+      "C-16"
+     ]
+    },
+    {
+     "text": "A winner with nothing left to win. What can he still buy?",
+     "claims": []
+    }
+   ]
+  },
+  {
+   "id": "S13",
+   "beat": "Scene 5: the parley; Napoleon says 'no' to the Khan's question, and pays with the guns.",
+   "light_beat": 13,
+   "purpose": "SCENE 4 / final choice (parley), ~340 words: narrator in ~40, scene ~260 (slower, no new conflict; power gap in a cutaway; lines broken by silent reactions, KP-43), narrator out ~40. Napoleon, Genghis and Tahir interpreting (P04 payoff). The Khan asks if Napoleon can destroy his army; Napoleon answers honestly (C-04); the Khan keeps the honest man (P03 payoff, C-11) and asks for the two guns, not the Emperor (C-94, C-05, C-11). The fog thickens (L02 closes). Mode minimal. Claims C-04, C-05, C-11, C-15, C-20; invented C-91, C-94.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "escalation",
+    "turn": "therefore",
+    "stakes": "If Napoleon refuses the guns the column stays in 1223 for good.",
+    "shift": "pride -> acceptance",
+    "need": "belonging",
+    "claim_share": "invented",
+    "closes": [
+     "L02",
+     "L07"
+    ]
+   },
+   "scene": {
+    "place": "neutral grass between the two camps under a white felt banner, the fog beginning to rise",
+    "time": "dawn, the day after the valley",
+    "present": [
+     "napoleon",
+     "genghis",
+     "tahir"
+    ],
+    "why_now": "both sides have lost something and the fog is thickening",
+    "pov": "napoleon",
+    "want": "safe passage back for the column and to keep his guns",
+    "obstacle_want": "the two guns, which the Khan's bows cannot answer",
+    "value": "identity",
+    "open_charge": "+",
+    "close_charge": "-",
+    "turn": "Napoleon answers 'no' to whether he can destroy the Khan's army, and Genghis names the price; mode minimal (quiet friction, long silences)",
+    "exit": "succeed_complication",
+    "surface_topic": "the way home",
+    "real_subject": "what a man gives up to stop fighting",
+    "mode": "minimal"
+   },
+   "lines": [
+    {
+     "text": "Dawn, the day after the valley. A white felt banner hangs limp on the grass between the camps. Napoleon waits under it with Tahir, the Mameluke who understands the riders' tongue. The Khan walks out alone, and behind him the fog is climbing again.",
+     "claims": [
+      "C-15",
+      "C-91",
+      "C-93"
+     ]
+    },
+    {
+     "text": "Ask him. Can he destroy my army?",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "He asks, exactly, whether you can destroy his army. Two tumens. Twenty thousand riders.",
+     "speaker": "tahir",
+     "to": "napoleon",
+     "intent": "question",
+     "claims": [
+      "C-20",
+      "C-92"
+     ]
+    },
+    {
+     "text": "Napoleon looks at the grass, at the long ruts the wagons cut, then at the far rise where the riders wait.",
+     "claims": []
+    },
+    {
+     "text": "What will he do with my answer?",
+     "speaker": "napoleon",
+     "to": "tahir",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "Tell him I listen. That is all I do with answers.",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "He says he listens. He does not say what comes after.",
+     "speaker": "tahir",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": []
+    },
+    {
+     "text": "All my life I have hunted the day that ends an army. I had it yesterday, and the army rode away from it. Tell him no. Not this one.",
+     "speaker": "napoleon",
+     "to": "tahir",
+     "intent": "reveal",
+     "claims": [
+      "C-04"
+     ]
+    },
+    {
+     "text": "He says no. He does not say it softly.",
+     "speaker": "tahir",
+     "to": "genghis",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "The Khan says nothing. He lifts a bowl of fermented mare's milk from his saddle and holds it out to the Emperor. After a moment, Napoleon takes it.",
+     "claims": []
+    },
+    {
+     "text": "An archer shot my horse once. I asked who. He stood up. I kept him.",
+     "speaker": "genghis",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": [
+      "C-11"
+     ]
+    },
+    {
+     "text": "Ask him why he tells me this.",
+     "speaker": "napoleon",
+     "to": "tahir",
+     "intent": "question",
+     "claims": []
+    },
+    {
+     "text": "He says because you said no, Sire.",
+     "speaker": "tahir",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": []
+    },
+    {
+     "text": "Leave me two of your guns, the ones that reach far. Then ride.",
+     "speaker": "genghis",
+     "to": "napoleon",
+     "intent": "decide",
+     "claims": [
+      "C-94",
+      "C-05"
+     ]
+    },
+    {
+     "text": "Guns, Sire. Not you. The guns.",
+     "speaker": "tahir",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": []
+    },
+    {
+     "text": "Napoleon studies the nearest twelve-pounder, a crew of fifteen standing at its wheels, the dew still beaded on its muzzle.",
+     "claims": [
+      "C-05"
+     ]
+    },
+    {
+     "text": "Two. Tell him they reach nine hundred paces, and he must keep them dry.",
+     "speaker": "napoleon",
+     "to": "tahir",
+     "intent": "decide",
+     "claims": [
+      "C-05"
+     ]
+    },
+    {
+     "text": "He says two. He gives you the range: nine hundred paces.",
+     "speaker": "tahir",
+     "to": "genghis",
+     "intent": "concede",
+     "claims": []
+    },
+    {
+     "text": "Tell him to go while the grass is wet.",
+     "speaker": "genghis",
+     "to": "tahir",
+     "intent": "decide",
+     "claims": []
+    },
+    {
+     "text": "Two guns roll out of the column and across the grass, their crews walking beside them with empty hands. Napoleon does not look back. Ahead the fog stands like a white wall, and the column walks into it.",
+     "claims": [
+      "C-94",
+      "C-91"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S14",
+   "beat": "The answer: he got his decisive battle and it decided nothing; the real 1812 ends the same way.",
+   "light_beat": 14,
+   "purpose": "RESOLUTION, narrator only, ~130 words, starts after 90 % of the words (BP-04). Answers L01 fully: yes, Napoleon got his battle on the steppe and it was worthless, as in 1812 when Moscow was abandoned and burned and Alexander I would not negotiate (C-12); 100,000 men in Moscow on 14 September (C-02), the French left on 19 October after five weeks (C-12). Say uncertainty only where the claim map does (none here). Claims C-02, C-04, C-12, C-21.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "resolution",
+    "turn": "therefore",
+    "stakes": "If the lesson is missed, the same battle is chased again.",
+    "shift": "hope -> acceptance",
+    "need": "curiosity",
+    "claim_share": "reasoned",
+    "closes": [
+     "L01"
+    ]
+   },
+   "lines": [
+    {
+     "text": "So, did he get his battle? Yes. All of it. A field, a line of guns, an enemy that stood and fought.",
+     "claims": [
+      "C-04"
+     ]
+    },
+    {
+     "text": "Napoleon always aimed to destroy the enemy's army in battle. He just did. And the enemy rode off whole.",
+     "claims": [
+      "C-04"
+     ]
+    },
+    {
+     "text": "Nothing was decided. Nobody surrendered, nobody signed, nobody even slowed down.",
+     "claims": [
+      "C-93"
+     ]
+    },
+    {
+     "text": "You've seen this before. On 14 September 1812, about a hundred thousand French troops marched into Moscow.",
+     "claims": [
+      "C-02"
+     ]
+    },
+    {
+     "text": "They took a city that was already empty. It burned, and Alexander I would not talk.",
+     "claims": [
+      "C-12"
+     ]
+    },
+    {
+     "text": "After about five weeks, on 19 October, the French simply left.",
+     "claims": [
+      "C-12"
+     ]
+    },
+    {
+     "text": "Five hundred and eighty-nine years apart, the same victory: a won field, and a war that went on without him.",
+     "claims": [
+      "C-21"
+     ]
+    },
+    {
+     "text": "The lesson was never about the guns. It's what you do after the battle you chased finally arrives.",
+     "claims": []
+    }
+   ]
+  },
+  {
+   "id": "S15",
+   "beat": "Callback: the same muzzle in the same fog, now a Mongol hand on it.",
+   "light_beat": 15,
+   "purpose": "BUTTON, narrator only, ~30 words. The first image (P01 payoff: the 12-pounder muzzle in fog) with a new meaning: the guns left to the khan (C-94) and the fog closing behind the column (C-91). No claims on facts.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "button",
+    "turn": "therefore",
+    "stakes": "The guns outlive the empire that cast them.",
+    "need": "wonder",
+    "claim_share": "invented"
+   },
+   "lines": [
+    {
+     "text": "The fog closed behind the column, wet and slow.",
+     "claims": [
+      "C-91"
+     ]
+    },
+    {
+     "text": "On the steppe, a Mongol hand rested on a cannon's muzzle. It was still dripping.",
+     "claims": [
+      "C-94"
+     ]
+    },
+    {
+     "text": "Two guns, left to the khan.",
+     "claims": [
+      "C-94"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "S16",
+   "beat": "Channel pointer: other worlds on the channel and the next collision.",
+   "light_beat": 16,
+   "purpose": "CHANNEL POINTER, narrator only, ~30 words (BP-106, KP-40): the worlds already on the channel and the coming ones, subscribe so as not to miss them; never a dry 'subscribe' or a goodbye (BP-43); narration runs on under the end screen. No claims, no facts.",
+   "period": "steppe_1223",
+   "drama": {
+    "function": "button",
+    "turn": "therefore",
+    "stakes": "The viewer who leaves misses the next collision of worlds.",
+    "need": "curiosity",
+    "claim_share": "reasoned"
+   },
+   "lines": [
+    {
+     "text": "Worlds keep colliding on this channel, and the next collision is already waiting in the fog.",
+     "claims": []
+    },
+    {
+     "text": "Subscribe, so you're here when the next two meet.",
+     "claims": []
+    },
+    {
+     "text": "Somebody's army is about to lose its way.",
+     "claims": []
+    }
+   ]
+  }
+ ]
+}
