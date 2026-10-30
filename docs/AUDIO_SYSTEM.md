@@ -187,7 +187,9 @@ the plan-time half on the manifest and, with the rendered stems, the render-time
 procedurally (free, seeded, circular) and registered as `procedural` in the library root passed in. The presence-band dip is
 calibrated on the measured band gap: a Q 1.2 bell dips its centre by far more than the 1-4 kHz band as a whole (3.5 dB at 2.2 kHz
 moves that band's share by 1.4 dB), so `acoustics.dip_centre_for_gap` derives the centre depth from the gap BP-118 asks for (SD-04
-measures the gap, never the filter setting).
+measures the gap, never the filter setting). **Limit:** the gap is 2.82 dB on the broadband synthetic fixture (floor 2.5 dB, a thin
+margin) and about 1.8 dB on a mid-heavy 300 Hz-3 kHz stem, which false-REVIEWs; REVIEW accepts that, and the floor and the dip depth are
+calibrated on real stems in P12a ([BP-118](SOURCED_RULES.md)).
 
 ### Free-generator gate (D8, BP-162, BP-163, SD-13)
 The order for a new music, sound-effect or room-tone take is **library, then an admitted free generator, then the ElevenLabs

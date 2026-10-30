@@ -4829,7 +4829,7 @@
    "area": "audio",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Frequency masking under the voice: while the narrator speaks, music and ambience stems carry less energy in the vocal presence band (measured 1-4 kHz under speech vs in the pauses) through a dynamic dip at notch_hz, Q notch_q, depth notch_depth_db; the narration chain is high-passed at narration_hpf_hz. The check is the measured band-energy gap, never the filter setting. BP-53 (level ducking) is unchanged.",
+   "statement": "Frequency masking under the voice: while the narrator speaks, music and ambience stems carry less energy in the vocal presence band (measured 1-4 kHz under speech vs in the pauses) through a dynamic dip at notch_hz, Q notch_q, depth notch_depth_db; the narration chain is high-passed at narration_hpf_hz. The check is the measured band-energy gap, never the filter setting. BP-53 (level ducking) is unchanged. Known limit of SD-04 (P4 review, 2026-10-30): the measured gap is 2.82 dB on the synthetic broadband fixture and -3.6 to -5.5 dB on white, harmonic and brown stems, but a stem whose energy sits in the band itself (a mid-heavy 300 Hz-3 kHz music bed) measures about -1.8 dB and raises a false REVIEW; at REVIEW that is accepted. The dip depth and the floor are calibrated on real stems in P12a, not before.",
    "thresholds": {
     "notch_hz": 2200,
     "notch_q": 1.2,

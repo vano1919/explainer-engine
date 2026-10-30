@@ -254,17 +254,27 @@ def build_audio(timed: dict, narration: np.ndarray, sounds: Sounds, stats: dict)
 # runs unchanged. Every stem is float32; the centred ones (narration, cues) stay mono until they are written.
 
 def v2_manifest(job: Path | None) -> dict | None:
-    """The job's sound mix manifest when it exists and is fresh (CN-02); ``None`` when there is none (the old mono path). A stale
-    manifest stops the render: SD-15, invariant 7 (never render a mix planned against other inputs)."""
+    """The job's sound mix manifest when it exists and is valid and fresh; ``None`` when there is none (the old mono path). A
+    manifest that is not a ``sound_mix_manifest/2``, fails its schema or its CN-16 rules, or is stale against its inputs (CN-02)
+    stops the render: SD-15, invariant 7 (a forged or out-of-date plan never selects the stereo path)."""
     if job is None:
         return None
     path = Path(job) / "audio" / "sound_mix_manifest.json"
     if not path.exists():
         return None
-    manifest = json.loads(path.read_text(encoding="utf-8"))
-    stale = contracts.derived_findings(manifest, Path(job))
-    if stale:
-        raise SystemExit(f"refused: SD-15 the sound mix manifest is stale ({stale[0]['detail']}); run "
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as e:
+        raise SystemExit(f"refused: SD-15 the sound mix manifest is not JSON ({e})") from None
+    if not isinstance(manifest, dict) or manifest.get("schema") != "sound_mix_manifest/2":
+        raise SystemExit("refused: SD-15 the sound mix manifest names no sound_mix_manifest/2 (the stereo mix reads only /2); run "
+                         f"python -m explainer_engine.audio.sound_director plan {job}")
+    found = [f for f in contracts.errors(manifest, Path(job)) if f["severity"] == "FAIL"]
+    if found:
+        stale = [f for f in found if f["rule"] == "CN-02"]
+        what = "stale" if stale else "invalid"
+        f = (stale or found)[0]
+        raise SystemExit(f"refused: SD-15 the sound mix manifest is {what} ({f['rule']} {f['where']}: {f['detail']}); run "
                          f"python -m explainer_engine.audio.sound_director plan {job} and render again")
     return manifest
 

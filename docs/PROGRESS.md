@@ -2938,6 +2938,14 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
   measurement run happens: default the HF ZeroGPU Space through the connector, else CPU in a cloud session, never a pod; (3) music width
   from mono library files: default a fixed all-pass decorrelation; (4) room tone when the library has none: default procedural pink noise
   per scene (free, seeded).
+- Cross-review fixes (plan thread, 2026-10-30): `assemble.v2_manifest` now runs `contracts.errors` (schema, CN-16, CN-02) and refuses a
+  manifest that is not `sound_mix_manifest/2`, has an empty or missing `derived_from`, or was hand-edited into an invalid shape (SD-15);
+  `test_assemble_v2` pins it (six forged cases, not-JSON, one fresh pass) and pins the old mono path by a golden int16 sha256 of
+  `build_audio` (equal on main and on this head). SD-04's limit is written into BP-118 and AUDIO_SYSTEM.
+- Follow-ups, not in this PR: (a) an admission gate before the first generator is admitted: `assets/audio/generator_admission.json` is
+  not in the governance `protected_files`, `admit` trusts the report's numbers (it re-derives the verdict, but a hand-written file
+  passes) and the mix-time SD-13 only looks for an id; (b) block-wise `level_voice`: 3.84 GB peak RSS on main alone for 15 minutes,
+  4.01 GB old path, 4.07 GB v2, so the stereo mix adds almost nothing but the whole path wants chunking.
 - Not done, on purpose: the measurement run of ACE-Step 1.5 and Stable Audio Open Small against the library (spec 5.3) is a separate free
   step after the merge; P6 (native-dialogue lane), P7 (cuts, OTIO) and P8 (CRAFT-SND-09/11 critic rows) are the handoffs of spec 6.4.
 - Tests: `test_audio_spine`, `test_sound_director`, `test_acoustics`, `test_assemble_v2`, `test_generator_gate` (17), the sound stage in

@@ -252,13 +252,10 @@ def test_the_narrator_waits_in_a_dialogue_window_and_a_missing_clip_leaves_the_r
 
 def test_a_job_without_a_manifest_takes_the_old_path_and_a_stale_manifest_stops_the_render(tmp_path):
     assert ASM.v2_manifest(None) is None and ASM.v2_manifest(tmp_path) is None
-    (tmp_path / "audio").mkdir()
-    (tmp_path / "timed.json").write_text("{}")
-    man = manifest_of(100)
-    man["derived_from"] = {"timed": {"path": "timed.json", "sha256": "0" * 64}}
-    (tmp_path / "audio" / "sound_mix_manifest.json").write_text(json.dumps(man))
+    job, _path = _fresh_job(tmp_path)
+    (job / "timed.json").write_bytes((job / "timed.json").read_bytes() + b" ")  # one byte: the plan is stale
     with pytest.raises(SystemExit) as exc:
-        ASM.v2_manifest(tmp_path)
+        ASM.v2_manifest(job)
     assert "SD-15" in str(exc.value) and "stale" in str(exc.value)
     assert ASM.build_audio.__module__ == ASM.__name__ and "manifest" not in ASM.build_audio.__code__.co_varnames  # the mono path is untouched
 
@@ -336,3 +333,73 @@ def test_assemble_renders_the_stereo_mix_from_a_fresh_manifest_writes_the_stems_
     with pytest.raises(SystemExit) as exc:
         ASM.assemble(timed, tmp_path / "nar.wav", out, [], [], audio_only=True, job=job)
     assert "SD-15" in str(exc.value)
+
+
+# --- only a valid, fresh /2 manifest selects the stereo path (invariant 7) ---------------------------------------------------------
+
+def _fresh_job(tmp_path):
+    from test_sound_director import make_job
+    job, _spine = make_job(tmp_path, plan_of={"S01": [("a", "KEYFRAME_LTX", "WS", "r", {})], "S02": [("b", "KEYFRAME_LTX", "MS", "r", {})],
+                                              "S03": [("c", "KEYFRAME_LTX", "CU", "r", {})]}, places={"r": "a room"})
+    SD.plan(job, library=tmp_path / "lib")
+    return job, job / "audio" / "sound_mix_manifest.json"
+
+
+def test_a_fresh_planned_manifest_is_accepted(tmp_path):
+    job, path = _fresh_job(tmp_path)
+    assert ASM.v2_manifest(job) == json.loads(path.read_text(encoding="utf-8"))
+
+
+@pytest.mark.parametrize("forge, word", [
+    (lambda m: m.update(derived_from={}), "invalid"),                     # nothing to be stale against
+    (lambda m: m.pop("derived_from"), "invalid"),
+    (lambda m: m.update(schema="sound_mix_manifest/1"), "sound_mix_manifest/2"),  # the old contract is not the stereo plan
+    (lambda m: m.update(schema="audio_spine/2"), "sound_mix_manifest/2"),
+    (lambda m: m["scenes"].__setitem__(1, dict(m["scenes"][1], start_frame=m["scenes"][1]["start_frame"] + 5)), "invalid"),  # hand edit: a gap (CN-16)
+    (lambda m: m["spots"].append({"id": "x"}), "invalid"),                 # hand edit: a spot that breaks the schema
+])
+def test_a_forged_or_hand_edited_manifest_stops_the_render(tmp_path, forge, word):
+    job, path = _fresh_job(tmp_path)
+    m = json.loads(path.read_text(encoding="utf-8"))
+    forge(m)
+    path.write_text(json.dumps(m), encoding="utf-8")
+    with pytest.raises(SystemExit) as exc:
+        ASM.v2_manifest(job)
+    assert "SD-15" in str(exc.value) and word in str(exc.value)
+
+
+def test_a_manifest_that_is_not_json_stops_the_render(tmp_path):
+    job, path = _fresh_job(tmp_path)
+    path.write_text("{ not json", encoding="utf-8")
+    with pytest.raises(SystemExit) as exc:
+        ASM.v2_manifest(job)
+    assert "SD-15" in str(exc.value) and "not JSON" in str(exc.value)
+
+
+# --- the old mono path is byte-identical to main's (P4 changed none of it) -------------------------------------------------------
+
+def test_the_old_mono_path_renders_the_same_samples_as_main():
+    """Golden hash of ``build_audio`` on a fixed synthetic input (beds, music, an effect, a cue; int16, so a numpy build's last
+    float digit cannot flip it). The same value was measured on main (39f347c..origin/main) and on the P4 head on 2026-10-30."""
+    import hashlib
+
+    class Snd:
+        def __init__(self, n):
+            self.n = n
+
+        def load(self, name):
+            return np.random.default_rng(len(name)).standard_normal(self.n) * 0.3
+
+        def loopable(self, name):
+            return True
+
+    n = SRATE * 8
+    voice = np.zeros(n)
+    voice[SRATE:5 * SRATE] = np.random.default_rng(7).standard_normal(4 * SRATE) * 0.3
+    timed = {"duration": 8.0, "shots": [{"id": "SH001", "start": 0.0, "end": 8.0, "bubbles": []}],
+             "audio": {"beds": [{"sound": "bed", "start": 0.0, "end": 8.0, "gain_db": -20, "fade_s": 1.0}],
+                       "music": [{"track": "mus", "start": 0.0, "end": 8.0, "gain_db": -22, "fade_in_s": 1.0, "fade_out_s": 2.0}],
+                       "sfx": [{"sound": "hit", "start": 2.0, "end": 3.0, "gain_db": -16}], "cues": [{"sound": "tick", "start": 4.0}]}}
+    mix = ASM.build_audio(timed, voice, Snd(n), {})
+    digest = hashlib.sha256((np.clip(mix, -1, 1) * 32767).astype("<i2").tobytes()).hexdigest()
+    assert digest == "296151e67aa46d9cba9957a1d724f1f2284444dd2b404d33fdf8f8ceac8f3537"
