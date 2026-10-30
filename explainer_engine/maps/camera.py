@@ -65,15 +65,16 @@ def state_at(start: State, moves: list[Move], frame: float) -> State:
 
 
 def tilt(im, pitch_deg: float):
-    """A map seen at ``pitch_deg`` from straight above: the far (top) edge narrows. The same factor makes ``zdepth``."""
+    """A map seen at ``pitch_deg`` from straight above: the far (top) edge narrows (a trapezoid warp). ``zdepth`` ramps with the same pitch."""
     from PIL import Image
     if pitch_deg <= 0:
         return im
     w, h = im.size
     squeeze = 0.5 * math.sin(math.radians(pitch_deg))  # share of the width taken off each top corner
     inset = squeeze * w * 0.5
-    # PIL maps the output corners to these source points: the output top edge samples a wider band of the source
-    quad = (-inset, 0, -inset, h, w + inset, h, w + inset, 0)
+    # PIL maps the output corners (top-left, bottom-left, bottom-right, top-right) to these source points: the output top edge
+    # samples a wider band of the source than the bottom edge, so the far edge narrows
+    quad = (-inset, 0, 0, h, w, h, w + inset, 0)
     return im.transform((w, h), Image.QUAD, quad, Image.BICUBIC)
 
 

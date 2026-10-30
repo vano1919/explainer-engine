@@ -125,8 +125,8 @@ fraction of a second on this container's CPU): a 30 s item at 24 fps is minutes,
   on a route a solid line with a solid head (side a) against a dashed line with a hollow head (side b). Rings, the supply line and the
   strength bar carry only the colour; they sit beside a labelled counter, and a colour-blind viewer still has the 112 or more of
   CIE76 between the two tokens (D-86).
-- **The camera's tilt** (`camera.tilt`) squashes the picture vertically for the 45 degree hand-over; it is not a perspective
-  transform. The depth export (`zdepth`) is the real hand-over; a perspective warp is a later refinement if a measured shot needs it.
+- **The camera's tilt** (`camera.tilt`) narrows the far (top) edge for the 45 degree hand-over, a trapezoid warp of the whole frame; it is not a
+  perspective transform of the ground plane. The depth export (`zdepth`) is the real hand-over; a perspective warp is a later refinement if a measured shot needs it.
 - **The painted plate's overlap** (`plate.certificate`) is computed by the caller from the painted land mask and recorded as a number;
   the certificate check trusts that number and the file's hash, it does not recompute the overlap. The OCR count is the same.
 - **A word before an item's trigger word** is an error (CN-01), not frame 0; an event cannot start before its item.

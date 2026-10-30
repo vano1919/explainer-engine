@@ -151,11 +151,49 @@ def test_the_march_starts_slow_cruises_and_halts():
     assert abs(speed[400] - speed[600]) < 1e-6                              # a constant cruise
 
 
+def test_a_dash_runs_across_the_segments_of_a_curve():
+    """Side b's route is dashed even when every segment of its spline is shorter than the dash (the phase carries on)."""
+    pts = [(10 + 2.0 * k, 20) for k in range(0, 60)]            # 2 px segments, a 12 px dash
+    c = D.Canvas(140, 40, (255, 255, 255), 1)
+    c.line(pts, (0, 0, 0, 255), 4, dash=(12, 8))
+    row = np.asarray(c.image().convert("L"))[20, 10:128]
+    ink = row < 128
+    assert 0.4 < ink.mean() < 0.7 and 4 <= int((np.diff(ink.astype(int)) == 1).sum()) <= 7      # gaps exist: about 12 on, 8 off
+    solid = D.Canvas(140, 40, (255, 255, 255), 1)
+    solid.line(pts, (0, 0, 0, 255), 4)
+    assert (np.asarray(solid.image().convert("L"))[20, 10:128] < 128).all()
+
+
+def test_the_route_of_side_b_has_gaps_in_greyscale_and_side_a_has_none():
+    base = {**item(), "width": 640, "height": 360}
+    base["payload"]["camera"] = {"start": {"lon": 24.4, "lat": 54.8, "span_km": 1500}, "moves": []}
+    base["payload"]["focus"] = None
+    base["payload"]["units"] = []
+    base["events"] = [{"id": "e", "word_index": 0, "op": "show_route", "target": "r1", "frames": 6}]
+    runs = {}
+    for side in ("a", "b"):
+        s = copy.deepcopy(base)
+        s["payload"]["routes"][0]["side"] = side
+        tl, clock = run(s, 96)
+        grey = np.asarray(render.render_frame(s, tl, clock, 60, 1).convert("L"), dtype=int)
+        colour = np.asarray(D.faction(side), dtype=float)
+        rgb = np.asarray(render.render_frame(s, tl, clock, 60, 1), dtype=float)
+        painted = (np.abs(rgb - colour).sum(axis=2) < 40).any(axis=0)      # a column holds the route's colour
+        dark = (grey < 70).any(axis=0)                                      # a column holds the route's dark underlay
+        span = np.flatnonzero(dark)
+        inside = painted[span[0]:span[-1] + 1]
+        runs[side] = int((np.diff(inside.astype(int)) == 1).sum()) + int(inside[0])
+    assert runs["a"] == 1 and runs["b"] >= 3
+
+
 def test_zdepth_and_tilt():
     z = np.asarray(CAM.zdepth(40, 30, 45))
     assert z[0, 0] < z[-1, 0] and (np.diff(z[:, 0].astype(int)) >= 0).all()
     im = Image.new("RGB", (64, 36), (200, 200, 200))
     assert CAM.tilt(im, 0) is im and CAM.tilt(im, 45).size == (64, 36)
+    flat = np.asarray(CAM.tilt(Image.new("L", (200, 100), 255), 45))
+    top, bottom = flat[0], flat[-1]
+    assert (top > 128).sum() < (bottom > 128).sum() and (bottom > 128).all()      # the far edge narrows, the near edge keeps its width
 
 
 # --- law 1: no diffusion maps ----------------------------------------------------------------------------------------------------

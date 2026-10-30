@@ -115,15 +115,20 @@ class Canvas:
             self.d.line(pts, fill=fill, width=max(1, self.px(width)), joint="curve")
             return
         on, off = dash[0] * self.ss, dash[1] * self.ss
+        phase, width_px = 0.0, max(1, self.px(width))        # the dash pattern runs on along the whole line, across its segments
         for a, b in zip(pts, pts[1:]):
             length = math.hypot(b[0] - a[0], b[1] - a[1])
             pos = 0.0
             while pos < length:
-                end = min(length, pos + on)
-                p0 = (a[0] + (b[0] - a[0]) * pos / length, a[1] + (b[1] - a[1]) * pos / length)
-                p1 = (a[0] + (b[0] - a[0]) * end / length, a[1] + (b[1] - a[1]) * end / length)
-                self.d.line([p0, p1], fill=fill, width=max(1, self.px(width)))
-                pos += on + off
+                if phase < on:
+                    end = min(length, pos + (on - phase))
+                    p0 = (a[0] + (b[0] - a[0]) * pos / length, a[1] + (b[1] - a[1]) * pos / length)
+                    p1 = (a[0] + (b[0] - a[0]) * end / length, a[1] + (b[1] - a[1]) * end / length)
+                    self.d.line([p0, p1], fill=fill, width=width_px)
+                else:
+                    end = min(length, pos + (on + off - phase))
+                phase = (phase + end - pos) % (on + off)
+                pos = end
 
     def circle(self, cx, cy, r, fill=None, outline=None, width: float = 2):
         box = [(cx - r) * self.ss, (cy - r) * self.ss, (cx + r) * self.ss, (cy + r) * self.ss]
