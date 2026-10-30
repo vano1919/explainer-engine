@@ -3169,3 +3169,35 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - `docs/VAULT.md` VT-01..VT-04 only restrict deleting, so adding globs needed no creator word.
 - `vault snapshot` ran (HF_TOKEN was in the session, read-only on HF): 16735 files, 60.97 GB; critical 8860 files, 13.87 GB. `docs/VAULT_MANIFEST.json` regenerated and trimmed to the 8860 critical rows plus `note` (VAULT.md: critical rows only); `vault verify` on it: PASS, every manifest file is on the primary copy.
 - Test: `tests/unit/test_vault.py::test_the_live_xworld_lora_and_datasets_are_critical` (red before the globs, 1 failed; green after, 9 passed). Closes Argon-1 F-01; Argon-2 F-26 (the add half).
+## 2026-10-30 — plan_v2 wave 1, T2 PR-B: CP-05, KG-22/KG-23 are a visible REVIEW while the style is suspended (D-80)
+- `qa/blind_check.py`: the retired wldnk rubric is kept as `STYLE_SPEC_WLDNK_RETIRED` (mechanics only, tests still run it); the live `STYLE_SPEC` is empty
+  and `STYLE_SUSPENDED = True` is the one flag. `describe_rules`, `compare(..., spec=None)` and `style_verdict(..., spec=None)` take the spec as an argument,
+  so no verdict is computed from a spec nobody chose. `qa/keyframe_gate.py` imports the flag and writes KG-22 (and KG-23) as an explicit REVIEW row
+  (`kg22_row`, `kg22_row_text`) naming D-80 instead of an empty PASS; `docs/KEYFRAME_GATE.md` carries the two rows.
+- Tests red on main -> green: `test_keyframe_gate.py::test_kg22_is_review_while_the_style_set_is_suspended`; `test_blind_check.py` does not collect on main code
+  (`STYLE_SPEC_WLDNK_RETIRED` missing). Focused set 30 passed, `docs_lint` 0 findings, `governance check` ok. No assertion removed.
+- OPEN: when a new style set is chosen the creator's call, not this PR, fills `STYLE_SPEC` and clears the flag. No pod, no API call, nothing deleted.
+- Decision log: none moved.
+
+## 2026-10-30 UTC: plan_v2 T1 / N-01, `runpod create` needs `--script`; the pin and the wrapper are checked on the body; `create()` sends only a stamped body (no pod, no money)
+
+- `explainer_engine/cloud/runpod.py` (Argon-2 F-06 library half, F-19): `main create` refuses a missing `--script` before any other check
+  (`refused: runpod create needs --script (... OR-21 ...)`). `preflight_create(..., body=None)`: with `body` (every creation passes it) a
+  missing script is refused (OR-21), a body whose `cmd` is not `pod_wrapper.sh` is refused (so a TMR boot body or a `--script` without
+  `--script-url` is never sent), and the body's own `image` must be a digest in `config/cloud_pins.json` (unconditional; before, only
+  `if script`). With no refusal the body is stamped in place (`PREFLIGHT_KEY` = sha256 of the body, `preflight_stamp`). `create(api, body)`
+  pops the stamp first and refuses a missing one or a body changed after the preflight, before any HTTP call. `main create` now builds the
+  body (and `--disk`, RP-03) before the preflight and passes it. Without `body` (`start` of a stopped pod, the ceiling tests) nothing changes
+  and nothing is stamped. `boot_cmd`/`create_body(boot=...)` stay text builders (their text is pinned by tests); a boot body can no longer
+  be stamped, so it cannot be sent. `IMAGE`/`BOOT_REPO` stay, commented as history.
+- Tests: `tests/unit/test_money_path_fences.py` (N-01 section, 7: unstamped body refused with no network, a body changed after the
+  preflight refused, no script / unpinned image / boot body never stamped, three scriptless CLI lines refused with `OR-21` before any call,
+  a script create POSTs exactly one body without the stamp, running the wrapper, on a digest). Red on main: 7 failed.
+- Tests changed and why (setup only, or an allowed path that is now a refusal): `test_runpod.py` gets `stamped()`, `script_pod()`,
+  `live_ok()`; 9 library tests of the card loop stamp their hand-made body; 6 CLI tests that used a scriptless/boot pod now run a script pod
+  (two expected values follow the script pod: `status_token` empty, `pod_shape` 0/40 GB); `test_cloud_guardian.py` 2 CLI tests the same;
+  `test_cloud_stop_paths.py:344` stamps its body (one line; T3 owns the file this wave and was told).
+- Card B2 evidence (ვანო decides deletion; U9): `config/spend_caps.json` `runpod.keep_stopped_pods` has **49** ids (Argon-1 said 50,
+  Argon-2 47). `runpod check` (read-only, 2026-10-30 ~13:45 UTC): 49 STOPPED pods, each 0 GB, $0.00/day in total; billed $0.00 in 24 h;
+  balance $10.40; no PROBLEM line.
+- OPEN for T3/CP-18: `docs/CLOUD_RUNBOOK.md:18` and `:54` (CR-01, "Boot (TMR manifest) pods keep `boot_cmd`") still describe boot pods.
