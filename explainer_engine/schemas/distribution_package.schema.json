@@ -1,0 +1,235 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "distribution_package.schema.json",
+ "title": "Distribution package of one clip for one platform (private or unlisted only, invariant 4) (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "distribution_package/1"
+  },
+  "clip_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "platform": {
+   "enum": [
+    "youtube_long",
+    "yt_short",
+    "tiktok",
+    "ig_reel"
+   ]
+  },
+  "visibility": {
+   "enum": [
+    "private",
+    "unlisted"
+   ]
+  },
+  "source_episode_sha256": {
+   "$ref": "#/$defs/sha256"
+  },
+  "source_time_range": {
+   "type": "array",
+   "items": {
+    "type": "number"
+   },
+   "minItems": 2,
+   "maxItems": 2
+  },
+  "claim_ids_covered": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
+   }
+  },
+  "hook_mode": {
+   "enum": [
+    "PURE_SLICE",
+    "SYNTHETIC_BRIDGE"
+   ]
+  },
+  "files": {
+   "type": "object",
+   "properties": {
+    "video": {
+     "$ref": "#/$defs/fileref"
+    },
+    "cover": {
+     "$ref": "#/$defs/fileref"
+    },
+    "captions": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/fileref"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "video",
+    "cover",
+    "captions"
+   ],
+   "additionalProperties": false
+  },
+  "post_copy": {
+   "type": "string",
+   "minLength": 1
+  },
+  "pinned_comment": {
+   "anyOf": [
+    {
+     "type": "string",
+     "minLength": 1
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "ai_label": {
+   "type": "boolean"
+  },
+  "ab_packaging_variants": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "title": {
+      "type": "string",
+      "minLength": 1
+     },
+     "thumbnail_brief": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "required": [
+     "title",
+     "thumbnail_brief"
+    ],
+    "additionalProperties": false
+   },
+   "minItems": 0,
+   "maxItems": 3
+  },
+  "checks": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "check_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "severity": {
+      "enum": [
+       "FAIL",
+       "REVIEW",
+       "INFO"
+      ]
+     },
+     "passed": {
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "check_id",
+     "severity",
+     "passed"
+    ],
+    "additionalProperties": false
+   }
+  }
+ },
+ "required": [
+  "schema",
+  "clip_id",
+  "platform",
+  "visibility",
+  "source_episode_sha256",
+  "source_time_range",
+  "claim_ids_covered",
+  "hook_mode",
+  "files",
+  "post_copy",
+  "pinned_comment",
+  "ai_label",
+  "ab_packaging_variants",
+  "checks"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

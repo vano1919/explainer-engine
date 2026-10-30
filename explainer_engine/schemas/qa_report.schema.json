@@ -1,0 +1,191 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "qa_report.schema.json",
+ "title": "QA report of one gate: checks with severity and the retry directive (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "qa_report/1"
+  },
+  "job_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "stage": {
+   "type": "string",
+   "minLength": 1
+  },
+  "status": {
+   "enum": [
+    "PASS",
+    "WARN_REVIEW",
+    "REPAIR_APPLIED",
+    "ESCALATE_TO_HUMAN"
+   ]
+  },
+  "checks": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "check_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "rule": {
+      "type": "string",
+      "minLength": 1
+     },
+     "severity": {
+      "enum": [
+       "FAIL",
+       "REVIEW",
+       "INFO"
+      ]
+     },
+     "measured": {
+      "type": [
+       "number",
+       "string",
+       "boolean",
+       "null"
+      ]
+     },
+     "threshold": {
+      "type": [
+       "number",
+       "string",
+       "boolean",
+       "array",
+       "null"
+      ]
+     },
+     "passed": {
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "check_id",
+     "rule",
+     "severity",
+     "measured",
+     "threshold",
+     "passed"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "retry_directive": {
+   "anyOf": [
+    {
+     "type": "object",
+     "properties": {
+      "shot_id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "attempt": {
+       "type": "integer",
+       "minimum": 1
+      },
+      "action": {
+       "enum": [
+        "RESEED",
+        "REWEIGHT_REFERENCES",
+        "FALLBACK_KEYFRAME_LTX",
+        "FALLBACK_STILL_HOLD"
+       ]
+      }
+     },
+     "required": [
+      "shot_id",
+      "attempt",
+      "action"
+     ],
+     "additionalProperties": false
+    },
+    {
+     "type": "null"
+    }
+   ]
+  }
+ },
+ "required": [
+  "schema",
+  "job_id",
+  "stage",
+  "status",
+  "checks",
+  "retry_directive"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

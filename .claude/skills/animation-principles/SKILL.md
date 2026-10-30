@@ -36,7 +36,7 @@ Kit" and Alan Becker's series were not opened; every cadence below is a hypothes
 - **A held character breathes.** A hold longer than BP-132's limit carries a moving hold (a blink, a weight shift, a
   breath); blinks come at BP-132's cadence and on a thought change, never in the middle of a stressed word.
 - **A planted foot does not slide.** The foot's contact point stays put while the weight is on it; the pixel limit is set
-  by measuring the creator's cartoons (`training/video_qa.py`, P8).
+  by measuring the creator's cartoons (an eye row until a phase builds a validator).
 - **Camera breathing is not character breathing.** The Blueprint's continuous camera "breathing" is conflict 7 of the
   curriculum; BP-24 stays in force (a shake only as an accent on an impact).
 

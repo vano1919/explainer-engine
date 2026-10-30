@@ -1,0 +1,240 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "scene_set.schema.json",
+ "title": "Scene set: the numeric geography of one place from which continuity fields are derived (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "scene_set/1"
+  },
+  "set_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "units": {
+   "const": "m"
+  },
+  "axis": {
+   "type": "object",
+   "properties": {
+    "deg": {
+     "type": "number",
+     "minimum": 0,
+     "maximum": 360
+    },
+    "origin": {
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "minItems": 2,
+     "maxItems": 2
+    }
+   },
+   "required": [
+    "deg",
+    "origin"
+   ],
+   "additionalProperties": false
+  },
+  "objects": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "kind": {
+      "type": "string",
+      "minLength": 1
+     },
+     "pos": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+     },
+     "size": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+     },
+     "yaw_deg": {
+      "type": "number"
+     },
+     "landmark": {
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "id",
+     "kind",
+     "pos",
+     "size",
+     "yaw_deg",
+     "landmark"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "mannequins": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "cast_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "pos": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+     },
+     "yaw_deg": {
+      "type": "number"
+     }
+    },
+    "required": [
+     "id",
+     "cast_id",
+     "pos",
+     "yaw_deg"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "cameras": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "shot_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "pos": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      },
+      "minItems": 3,
+      "maxItems": 3
+     },
+     "yaw_deg": {
+      "type": "number"
+     },
+     "pitch_deg": {
+      "type": "number"
+     },
+     "fov_deg": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 180
+     }
+    },
+    "required": [
+     "shot_id",
+     "pos",
+     "yaw_deg",
+     "pitch_deg",
+     "fov_deg"
+    ],
+    "additionalProperties": false
+   }
+  }
+ },
+ "required": [
+  "schema",
+  "set_id",
+  "units",
+  "axis",
+  "objects",
+  "mannequins",
+  "cameras"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

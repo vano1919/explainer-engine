@@ -1,0 +1,20 @@
+{
+ "schema": "voice_casting/1",
+ "episode_slug": "napoleon",
+ "roles": [
+  {
+   "role_id": "narrator",
+   "cast_id": "narrator",
+   "voice_id": "v1",
+   "model": "eleven_v3",
+   "pronunciations": [
+    {
+     "word": "Ney",
+     "say": "nay"
+    }
+   ],
+   "test_read": null,
+   "approved": null
+  }
+ ]
+}

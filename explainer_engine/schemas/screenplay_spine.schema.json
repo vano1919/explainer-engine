@@ -1,0 +1,225 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "screenplay_spine.schema.json",
+ "title": "Screenplay spine, derived from the production script and the shot cards (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "screenplay_spine/1"
+  },
+  "derived_from": {
+   "type": "object",
+   "properties": {
+    "production_script": {
+     "$ref": "#/$defs/fileref"
+    },
+    "film_shots": {
+     "$ref": "#/$defs/fileref"
+    }
+   },
+   "required": [
+    "production_script",
+    "film_shots"
+   ],
+   "additionalProperties": false
+  },
+  "episode_slug": {
+   "type": "string",
+   "minLength": 1
+  },
+  "structure_profile_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "packaging_promises": {
+   "type": "array",
+   "items": {
+    "type": "string",
+    "minLength": 1
+   },
+   "minItems": 3,
+   "maxItems": 3
+  },
+  "segments": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "est_duration_sec": {
+      "type": "number",
+      "minimum": 0
+     },
+     "causal_connector": {
+      "enum": [
+       "THEREFORE",
+       "BUT",
+       "OPEN"
+      ]
+     },
+     "clock_window_sec": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+     },
+     "lines": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "index": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "speaker": {
+         "type": "string",
+         "minLength": 1
+        },
+        "text": {
+         "type": "string",
+         "minLength": 1
+        },
+        "claim_ids": {
+         "type": "array",
+         "items": {
+          "type": "string",
+          "minLength": 1
+         }
+        }
+       },
+       "required": [
+        "index",
+        "speaker",
+        "text",
+        "claim_ids"
+       ],
+       "additionalProperties": false
+      }
+     }
+    },
+    "required": [
+     "id",
+     "est_duration_sec",
+     "causal_connector",
+     "clock_window_sec",
+     "lines"
+    ],
+    "additionalProperties": false
+   },
+   "minItems": 1
+  },
+  "claims": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "claim_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "status": {
+      "enum": [
+       "FACT",
+       "ALTERNATE"
+      ]
+     },
+     "source_ref": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "required": [
+     "claim_id",
+     "status",
+     "source_ref"
+    ],
+    "additionalProperties": false
+   }
+  }
+ },
+ "required": [
+  "schema",
+  "derived_from",
+  "episode_slug",
+  "structure_profile_id",
+  "packaging_promises",
+  "segments",
+  "claims"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

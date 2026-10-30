@@ -1,0 +1,27 @@
+{
+ "schema": "edit_and_grade_manifest/1",
+ "film_shots": {
+  "path": "x/file.bin",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ },
+ "audio_spine": {
+  "path": "x/file.bin",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ },
+ "scenes": [
+  {
+   "scene_id": "S01",
+   "key_master_frame": "s1",
+   "grade": null,
+   "cuts": [
+    {
+     "from_shot": "s1",
+     "to_shot": "s2",
+     "cut_type": "ACTION_PEAK_CUT",
+     "at_frame": 48,
+     "audio_lead_frames": 6
+    }
+   ]
+  }
+ ]
+}
