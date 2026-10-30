@@ -2896,8 +2896,12 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 
 ## 2026-10-30 08:30 UTC: the pre-pod secrets gate (CR-19; free, no pod, no money)
 
-- `cloud/secrets_check.py` + the manual workflow `.github/workflows/secrets_check.yml` ("Run workflow"): prints `present` / `MISSING` for
+- `cloud/env_presence.py` + the manual workflow `.github/workflows/presence_check.yml` ("Run workflow"): prints `present` / `MISSING` for
   `HF_TOKEN`, `RUNPOD_API_KEY`, `NTFY_TOPIC` (the secrets `watchdog.yml` reads), never a value, a prefix or a length, red when one is missing
   or blank. Manual only, not in "quality" (a fork's pull request has no secrets). Limits, said in CR-19: it proves existence, not validity or
   scope, and a pod's own `HF_TOKEN` comes from the session that runs `create`, not from the GitHub secret. Test:
-  `tests/unit/test_cloud_secrets_check.py` (including that the workflow maps exactly the required names).
+  `tests/unit/test_cloud_env_presence.py` (including that the workflow maps exactly the required names).
+- Review round (P3b, PR #53): the files are named `env_presence.py` / `presence_check.yml` / `test_cloud_env_presence.py` because the repo-hygiene
+  guard refuses tracked file names that look like secret files (`secret` in the name); the guard is unchanged. The leak test now uses a canary
+  none of whose characters occurs in the legitimate output and checks stdout and stderr in set / blank / whitespace / newline / missing cases (it fails
+  for a printed first character, a tail or a length); the secrets are mapped on the one step that needs them, not on the job.

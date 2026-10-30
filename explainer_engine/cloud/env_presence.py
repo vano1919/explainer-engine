@@ -1,8 +1,8 @@
-"""``python -m explainer_engine.cloud.secrets_check [NAME ...]``: the pre-pod gate for the GitHub repository secrets the cloud
+"""``python -m explainer_engine.cloud.env_presence [NAME ...]``: the pre-pod gate for the GitHub repository secrets the cloud
 workflows read (CR-19). It prints, for each name, only ``present`` or ``MISSING`` and exits 1 when any is missing or blank. It never
 prints a value, a prefix, a length or a hash, so a log line cannot leak or hint at a secret. stdlib only.
 
-It runs in ``.github/workflows/secrets_check.yml`` (manual: "Run workflow"), where the secrets are mapped into the environment by
+It runs in ``.github/workflows/presence_check.yml`` (manual: "Run workflow"), where the secrets are mapped into the environment by
 ``${{ secrets.NAME }}``; GitHub passes an unset secret as an empty string, which counts as missing here. What it proves is that
 the repository secret exists and is not blank; it does not prove the token is valid or has the right scope (the watchdog's first
 pass and the P12a smoke test show that).
