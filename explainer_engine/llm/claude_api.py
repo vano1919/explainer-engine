@@ -61,6 +61,17 @@ def secret_name(name: str) -> bool:
     return bool(SECRET_NAMES.search(name) or SECRET_NAMES_MORE.search(name))
 
 
+KEY_ENV_NAMES = ("ANTHROPIC_API_KEY", "EE_ANTHROPIC_API_KEY")  # the second: environment settings refuse the first name
+
+
+def api_key() -> str | None:
+    """The key from the environment (first non-empty of KEY_ENV_NAMES); only the SDK client ever sees it, nothing prints it."""
+    for n in KEY_ENV_NAMES:
+        if os.environ.get(n):
+            return os.environ[n]
+    return None
+
+
 class LLMError(EngineError):
     """Base of the client's own refusals."""
 
@@ -483,12 +494,12 @@ class ClaudeAPI:
     # -- setup --
     def client(self) -> Any:
         if self._client is None:
-            if not os.environ.get("ANTHROPIC_API_KEY"):
-                raise KeyAbsent("ANTHROPIC_API_KEY is not set in this environment; no call was made")
+            if not api_key():
+                raise KeyAbsent("ANTHROPIC_API_KEY (or EE_ANTHROPIC_API_KEY) is not set in this environment; no call was made")
             if not (caps().get("approval") or {}).get("ref"):
                 raise NotApproved("config/spend_caps.json claude_api.approval is empty: record the OR-24 verdict first")
             import anthropic  # lazy: the tests and the offline estimate do not need the SDK
-            self._client = anthropic.Anthropic(base_url=os.environ.get("EXPLAINER_ANTHROPIC_BASE_URL", BASE_URL), max_retries=2)
+            self._client = anthropic.Anthropic(api_key=api_key(), base_url=os.environ.get("EXPLAINER_ANTHROPIC_BASE_URL", BASE_URL), max_retries=2)
         return self._client
 
     def run_for(self, job: str) -> Run:
@@ -515,7 +526,7 @@ class ClaudeAPI:
 
     # -- one paid call --
     def _count(self, params: dict) -> int | None:
-        if not self.exact_count or self._client is None and not os.environ.get("ANTHROPIC_API_KEY"):
+        if not self.exact_count or self._client is None and not api_key():
             return None
         try:
             kw = {k: params[k] for k in ("model", "messages", "system", "tools") if k in params}
@@ -804,7 +815,7 @@ def main(argv: list[str] | None = None) -> int:
     api = ClaudeAPI()
     if a.cmd == "status":
         c = caps()
-        print(json.dumps({"key_present": bool(os.environ.get("ANTHROPIC_API_KEY")), "approved": bool((c.get("approval") or {}).get("ref")),
+        print(json.dumps({"key_present": bool(api_key()), "approved": bool((c.get("approval") or {}).get("ref")),
                           "max_usd": c["max_usd"], "jobs": c["jobs"], "spent_total": api.ledger.total(), "spent_by_job": api.ledger.by_job(),
                           "open_calls": [x["uid"] for x in api.ledger.open_calls()]}, indent=2))
         return 0
@@ -827,7 +838,7 @@ def main(argv: list[str] | None = None) -> int:
                   "shrink the job or ask for a higher cap")
             return 3
     if a.cmd == "estimate":
-        live = None if a.offline or not os.environ.get("ANTHROPIC_API_KEY") or not (caps().get("approval") or {}).get("ref") else api
+        live = None if a.offline or not api_key() or not (caps().get("approval") or {}).get("ref") else api
         print(json.dumps(estimate(reqs, api=live, expected_output=a.expected_output), indent=2))
         return 0
     out = Path(a.out) if a.out else ledger_dir() / "out" / reqs[0].job
