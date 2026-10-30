@@ -415,6 +415,8 @@ def save_partial(req: Request, msgs: list, turns: int, usd: float, err: BaseExce
             for b in row:
                 if b.get("type") == "tool_result":
                     b["content"] = str(b.get("content", ""))[:400]
+                elif b.get("type") == "thinking":   # redacted like a tool result: it is written to disk
+                    b["thinking"] = redact(str(b.get("thinking", "")))[0]
             turns_out.append({"role": m["role"], "blocks": row})
         path = ledger_dir() / f"partial_{req.job}_{req.id}.json"
         write_json_atomic(path, {"job": req.job, "id": req.id, "turns": turns, "usd_so_far": round(usd, 6),
@@ -756,6 +758,7 @@ class ClaudeAPI:
             if _status(e) == 400 and req.fallback_to and r.alias == "fable":
                 alias, eff = req.fallback_to
                 rb = Route(r.class_id, alias, routing()["models"][alias], eff)
+                check_max_tokens(req, rb)   # the fallback route obeys the same floor and max-effort rule, before it is reserved
                 pb = {**params, "model": rb.model, "output_config": {**params["output_config"], "effort": eff}}
                 return self._attempt(req, rb, pb, item + "~fb", batch, r.model)
             raise

@@ -1322,3 +1322,40 @@ def test_f16_the_reason_comes_from_the_job_file_and_run_refuses_without_it(env, 
     assert ca.main(["run", str(env / "job.json")]) == 3 and "max_effort_reason" in capsys.readouterr().out
     (env / "job.json").write_text(json.dumps({**job, "max_effort_reason": "one-off"}), encoding="utf-8")
     assert ca.load_job(env / "job.json")[0].max_effort_reason == "one-off"
+
+
+# --- review of PR #64 ----------------------------------------------------------------------------------------------------------
+def test_a_key_in_a_thinking_block_never_reaches_the_partial_file(tmp_path):
+    turn = resp(content=[NS(type="thinking", thinking="my key is " + KEY), NS(type="tool_use", name="list_dir", input={"path": "."}, id="t1")],
+                stop="tool_use", inp=100, read=20000, write=2000)
+    a = api(turn, turn)
+    with pytest.raises(ca.OutputTruncated):
+        a.complete(req("TK", tools_root=str(tmp_path), max_turns=2))
+    raw = (ca.ledger_dir() / "partial_T_TK.json").read_text(encoding="utf-8")
+    assert "sk-ant" not in raw and "[REDACTED-SECRET-LIKE]" in raw
+
+
+def test_the_batch_path_checks_the_floor_before_creating_the_batch_or_reserving():
+    a = api()
+    reqs = [ca.Request(id=f"q{i}", user=f"t{i}", task_class="whole-project-plan", model="fable", effort="max", max_tokens=40000, job="T",
+                       max_effort_reason="x") for i in range(ca.BATCH_MIN)]
+    with pytest.raises(ConfigError, match="max_tokens >= 64000"):
+        a.run_job(reqs)
+    assert a._client.messages.batch_requests == [] and a.ledger.rows() == [] and a.run_for("T").spent(ca.SERVICE) == 0
+
+
+def test_the_unfinished_last_piece_is_redacted_in_the_file_on_close():
+    sink = ca.StreamSink(ca.ledger_dir() / "stream" / "tail.txt", "--- h ---")
+    sink.write("first line\nlast piece without newline " + KEY)
+    sink.close()
+    t = sink.path.read_text(encoding="utf-8")
+    assert "sk-ant" not in t and t.endswith("last piece without newline [REDACTED-SECRET-LIKE]") and KEY in sink.text
+
+
+def test_the_fable_400_fallback_route_is_floor_checked_before_its_attempt_is_reserved():
+    a = api(Err(400), resp("by opus"))
+    q = req(task_class="whole-project-plan", model="fable", effort="xhigh", max_tokens=32000, fallback_to=("opus", "max"), max_effort_reason="x")
+    with pytest.raises(ConfigError, match="max_tokens >= 64000"):          # fallback at max needs 64000 (and a reason)
+        a.complete(q)
+    assert len(a._client.calls) == 1 and [x["ev"] for x in a.ledger.rows()] == ["start", "void"]
+    assert a.run_for("T").spent(ca.SERVICE) == 0
