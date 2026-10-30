@@ -3,7 +3,7 @@
   "version": "1.3",
   "status": "draft",
   "date": "2026-10-30",
-  "reason": "P5 review: faction_b changed to a vermilion with the best worst case over the three colour-blind simulations (D-86 corrected)",
+  "reason": "P5 review: faction_b changed to a vermilion with the best worst case over the three colour-blind simulations (D-87 corrected)",
   "approved_by": null,
   "approved_at": null,
   "parts": {
@@ -71,13 +71,13 @@
     {
       "version": "1.2",
       "date": "2026-10-30",
-      "reason": "P5: palette tokens faction_a (blue) and faction_b (orange) for the map engine's two sides, a colour-blind-safe pair (D-86); no existing token changed",
+      "reason": "P5: palette tokens faction_a (blue) and faction_b (orange) for the map engine's two sides, a colour-blind-safe pair (D-87); no existing token changed",
       "approved_by": null
     },
     {
       "version": "1.3",
       "date": "2026-10-30",
-      "reason": "P5 review: faction_b changed to a vermilion with the best worst case over the three colour-blind simulations (D-86 corrected)",
+      "reason": "P5 review: faction_b changed to a vermilion with the best worst case over the three colour-blind simulations (D-87 corrected)",
       "approved_by": null
     }
   ]

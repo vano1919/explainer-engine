@@ -26,8 +26,11 @@ produce the derived files belong to the phases named in the table (P3, P4, P5, P
 |---|---|---|---|---|
 | `job_manifest/1` | `jobs/<slug>/job_manifest.json` | `core/store.EpisodeJob` | code (the lifecycle) | every stage, the coordinator (P11) |
 | `script_variants/1` | `story/script_variants.json` | variant planner (P3, stage 1b) | hand (variants) + the creator's choice | scenario writer, P6 budget |
+| `script_variants/2` | `story/script_variants.json` | variant planner (P3, stage 1b) | hand (variants) + the creator's choice; code fills dynamics, cost and `scores.code` | scenario writer, P6 budget |
 | `screenplay_spine/1` | `story/screenplay_spine.json` | `production compile` (P3) | **derived** from `production_script/3` + `film_shots/2` | P4, P5, P7, critic |
 | `voice_casting/1` | `audio/voice_casting.json` | voice director (P4b) | hand + test reads | narration, LTX dialogue |
+| `voice_audition/1` | `audio/auditions/<voice_id>.json` | `audio/voice_audition.py` (P4b) | code (a free listening) | casting card, `voice_audition.distinct`, P8 |
+| `channel_voices/1` | `config/channel_voices.json` | the creator's word, `voice_check.register` (P4b) | hand (baseline from `voice_audition baseline`) | `voice_check.check_against` (EL-13), voice-caster |
 | `audio_spine/1` | `audio/audio_spine.json` | audio spine compiler (P4) | **derived** from `words.json` + `production_timed/1` | P5, P6, P7 (their clock) |
 | `sound_mix_manifest/1` | `audio/sound_mix_manifest.json` | sound director (P4) | hand, on the spine | `production/assemble.py` |
 | `visual_comp_manifest/1` | `visual/visual_comp_manifest.json` | compensator (P5) | hand, on the spine | maps / HUD renderer, router |
@@ -62,6 +65,13 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 - **script_variants/1**: `episode_slug`, `dossier_sha256`, `variants[2..3]` (`id`, `title`, `profile_id`, `logline`,
   `outline[]`, `dynamics{}` numbers, `cost{usd_planned, usd_worst, unknown_rows[]}`), `chosen` (null or
   `{variant_id, by, ref, at}`).
+- **script_variants/2** (P3): the same file with, per variant, `segments[]` (`id`, `window_s`, `function`, `blocks[]` of `category`
+  scene|map_pure|compensator|host|hold or `lane`, `archetype`, `seconds`, `who`, `tier`, `words`), `cost_rows[]` (what is paid: `kind` pod|api|cpu|voice),
+  `cost` (`usd_planned`/`usd_worst` a number or the string `"unknown"`, the known part, `rows[]`), `risks[]`, `scores{code, critic}` and optional
+  `packaging_promises[3]`; top-level `recommended` and `why`; `chosen.variants_sha256` (the sha256 of the variants array the creator picked from).
+  The code fills `dynamics`, `cost`, `risks` and `scores.code` (`variant_plan score --write`); `variant_plan check` recomputes them (a stale number
+  is CN-02), refuses blocks that do not add up to their windows (VP-01) and a choice whose `variants_sha256` no longer matches (CN-04).
+  `EpisodeJob.move("VARIANT_CHOSEN", variants=<file>)` binds the creator's approval to the same hash.
 - **screenplay_spine/1**: `derived_from{production_script, film_shots}`, `episode_slug`, `structure_profile_id`,
   `packaging_promises[3]`, `segments[]` (`id`, `est_duration_sec`, `causal_connector` THEREFORE|BUT|OPEN,
   `clock_window_sec[2]`, `lines[]` (`index`, `speaker`, `text`, `claim_ids[]`)), `claims[]` (`claim_id`,
@@ -69,6 +79,13 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
 - **voice_casting/1**: `episode_slug`, `roles[]` (`role_id`, `cast_id` or `narrator`, `voice_id`, `model`,
   `settings{stability, similarity, style, speed}`, `pronunciations[]{word, say}`, `test_read` file or null,
   `approved` null or `{by, ref, at}`).
+- **voice_audition/1**: `voice_id`, `name`, `source{kind library_preview|test_read|take, ref, sha256?}`, `profile{duration_s,
+  sample_rate, speech_s, reliable, f0_median_hz, f0_range_st, pitch_variation_st, emphasis_db, syllable_rate, wpm_speaking,
+  wpm_overall, centroid_hz, tilt_db, sibilance_db, pauses{count, per_min, median_s, ratio}}`, `consistency` null or
+  `{embedder, takes, min_cosine, mean_cosine}`, `fit` null or `{trait, usage_rank, listed, unlabelled}`.
+- **channel_voices/1**: `voices[]` (`voice_id`, `name`, `role` narrator|character, `status` channel|candidate|retired,
+  `model`, `note`, `baseline` null or `{kind preview|read, ref, sha256?, centroid_hz, tilt_db, f0_median_hz?}`); at most one
+  channel narrator (VC-08).
 - **audio_spine/1**: `derived_from{words, timed}`, `fps`, `duration_s`, `total_frames`, `words[]` (`i`, `text`,
   `start_s`, `end_s`, `start_frame`, `end_frame`, `segment`, `line`), `segments[]` (`id`, `start_frame`, `end_frame`),
   `post_hoc_shots[]` (LTX-native dialogue shots whose words are timed from the rendered clip, P4).

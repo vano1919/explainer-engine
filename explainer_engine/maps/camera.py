@@ -2,7 +2,7 @@
 
 A state is a centre (lon, lat), a view width in km and a pitch. A move runs from the first frame of one spoken word to the first
 frame of another, so the picture and the voice change together (word lock). ``tier_of`` names the altitude of a width:
-macro, meso or micro, by the nearest of the three BP-141 widths on a log scale.
+macro, meso or micro, by the nearest of the three BP-148 widths on a log scale.
 """
 
 from __future__ import annotations
@@ -17,8 +17,8 @@ TIERS = ("macro", "meso", "micro")
 
 
 def tier_of(span_km: float) -> str:
-    """The altitude tier of a view width (BP-141): the nearest of the macro, meso and micro widths on a log scale."""
-    widths = {t: SR.T("BP-141", f"{t}_km") for t in TIERS}
+    """The altitude tier of a view width (BP-148): the nearest of the macro, meso and micro widths on a log scale."""
+    widths = {t: SR.T("BP-148", f"{t}_km") for t in TIERS}
     return min(TIERS, key=lambda t: abs(math.log(span_km / widths[t])))
 
 

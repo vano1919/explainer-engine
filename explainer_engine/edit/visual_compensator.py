@@ -91,7 +91,7 @@ def _element_locks(spec: dict, tl: timeline.Timeline) -> list[dict]:
     for key in sorted({v for v in ops.values() if v not in ("race", "tableau", "doc")}):
         for x in spec["payload"].get(key, []):
             if not any(e.target == x["id"] for e in tl.events):
-                out.append({"rule": "CMP-04", "severity": SR.level("BP-140"), "where": spec["item_id"],
+                out.append({"rule": "CMP-04", "severity": SR.level("BP-147"), "where": spec["item_id"],
                             "detail": f"{key[:-1]} {x['id']!r} has no event: it would sit on frame 1, frozen"})
     return out
 
@@ -172,10 +172,10 @@ def check(manifest: dict, base: Path | str, scene_sets: dict | None = None) -> l
 # --- across items (the planner's checks) -------------------------------------------------------------------------------------------
 
 def rotation(blocks: list[dict]) -> list[dict]:
-    """BP-142: never the same archetype twice in a row; at most family_max items of one family in any window_s window; a run of
+    """BP-149: never the same archetype twice in a row; at most family_max items of one family in any window_s window; a run of
     map archetypes lasts at most map_run_max_s. ``blocks`` are ``{archetype_id, start_s, end_s}``."""
-    out, lvl = [], SR.level("BP-142")
-    window, fam_max, run_max = SR.T("BP-142", "window_s"), SR.T("BP-142", "family_max"), SR.T("BP-142", "map_run_max_s")
+    out, lvl = [], SR.level("BP-149")
+    window, fam_max, run_max = SR.T("BP-149", "window_s"), SR.T("BP-149", "family_max"), SR.T("BP-149", "map_run_max_s")
     blocks = sorted(blocks, key=lambda b: b["start_s"])
     for a, b in zip(blocks, blocks[1:]):
         if a["archetype_id"] == b["archetype_id"]:
@@ -202,13 +202,13 @@ def rotation(blocks: list[dict]) -> list[dict]:
 
 
 def map_share(blocks: list[dict], total_s: float) -> list[dict]:
-    """BP-143: the pure cartography archetypes are at most map_pure_share_max of the runtime (REVIEW; flagged hard over the high mark)."""
+    """BP-150: the pure cartography archetypes are at most map_pure_share_max of the runtime (REVIEW; flagged hard over the high mark)."""
     share = sum(b["end_s"] - b["start_s"] for b in blocks if archetype(b["archetype_id"])["pure_map"]) / total_s
     out = []
-    if share > SR.T("BP-143", "map_pure_share_max"):
-        hard = share > SR.T("BP-143", "map_pure_share_high")
-        out.append({"rule": "CMP-11", "severity": SR.level("BP-143"), "where": "runtime",
-                    "detail": f"maps are {100 * share:.0f} % of the runtime (at most {100 * SR.T('BP-143', 'map_pure_share_max'):.0f} %)"
+    if share > SR.T("BP-150", "map_pure_share_max"):
+        hard = share > SR.T("BP-150", "map_pure_share_high")
+        out.append({"rule": "CMP-11", "severity": SR.level("BP-150"), "where": "runtime",
+                    "detail": f"maps are {100 * share:.0f} % of the runtime (at most {100 * SR.T('BP-150', 'map_pure_share_max'):.0f} %)"
                               + (", over the high mark: nobody wants 80 % maps" if hard else "")})
     return out
 

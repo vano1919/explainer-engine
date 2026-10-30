@@ -1,0 +1,166 @@
+{
+ "about": "Measured 2026-10-30 from five free library previews (creative_list_voices preview_url, fetched with HTTP GET, no credits). Reproduce: python -m explainer_engine.audio.voice_audition measure <file>. Previews have different texts, so no wpm; the 'reliable' flag marks under 5 s of speech. Evidence for PR #45; tests/unit/test_voice_audition.py::test_the_committed_preview_measurements_hold.",
+ "records": [
+  {
+   "schema": "voice_audition/1",
+   "voice_id": "NOpBlnGInO9m6vDvFkFC",
+   "name": "Grandpa Spuds Oxley",
+   "source": {
+    "kind": "library_preview",
+    "ref": "https://storage.googleapis.com/eleven-public-prod/database/workspace/64971298bfc24086b69026970a21f1f9/voices/NOpBlnGInO9m6vDvFkFC/M4xySW4rr1SbAKKwMAtI.mp3",
+    "sha256": "e09253de529f8b2a817af2e55c54979e1109954c89289c120b743f370012a8d5"
+   },
+   "profile": {
+    "duration_s": 12.62,
+    "sample_rate": 24000,
+    "speech_s": 8.59,
+    "reliable": true,
+    "f0_median_hz": 97.2,
+    "f0_range_st": 9.08,
+    "pitch_variation_st": 3.69,
+    "emphasis_db": 6.58,
+    "syllable_rate": 3.73,
+    "centroid_hz": 914.4,
+    "tilt_db": -21.83,
+    "sibilance_db": -17.54,
+    "pauses": {
+     "count": 3,
+     "per_min": 14.8,
+     "median_s": 0.85,
+     "ratio": 0.231
+    }
+   },
+   "consistency": null,
+   "fit": null
+  },
+  {
+   "schema": "voice_audition/1",
+   "voice_id": "PerZoH0r6nxBZXCoIPpv",
+   "name": "Michael Moody - Grandfatherly and warm",
+   "source": {
+    "kind": "library_preview",
+    "ref": "https://storage.googleapis.com/eleven-public-prod/database/user/ghhxYFSr6DZUXDF4V3gpvN3tGsn1/voices/PerZoH0r6nxBZXCoIPpv/HI04nJ747vsQaRlgDoeB.mp3",
+    "sha256": "78b27871b95066d70e498f5be6e422a83a2a4851d65d8cf1a95fd9b194482a5d"
+   },
+   "profile": {
+    "duration_s": 13.64,
+    "sample_rate": 24000,
+    "speech_s": 9.74,
+    "reliable": true,
+    "f0_median_hz": 113.7,
+    "f0_range_st": 7.14,
+    "pitch_variation_st": 3.23,
+    "emphasis_db": 6.82,
+    "syllable_rate": 4.11,
+    "centroid_hz": 1044.5,
+    "tilt_db": -16.03,
+    "sibilance_db": -11.11,
+    "pauses": {
+     "count": 4,
+     "per_min": 18.2,
+     "median_s": 0.71,
+     "ratio": 0.22
+    }
+   },
+   "consistency": null,
+   "fit": null
+  },
+  {
+   "schema": "voice_audition/1",
+   "voice_id": "Gsndh0O5AnuI2Hj3YUlA",
+   "name": "Adam - Classic English Narrator",
+   "source": {
+    "kind": "library_preview",
+    "ref": "https://storage.googleapis.com/eleven-public-prod/database/workspace/3c415eb9d3264c779ccd52ec3dc79b96/voices/Gsndh0O5AnuI2Hj3YUlA/jtSf7NA0dL884m4naypU.mp3",
+    "sha256": "8a0d852d564bae6b7335eea29701e6f9a644b278c733e8d0a59eb7bf10cb33a5"
+   },
+   "profile": {
+    "duration_s": 8.36,
+    "sample_rate": 24000,
+    "speech_s": 6.12,
+    "reliable": true,
+    "f0_median_hz": 110.6,
+    "f0_range_st": 6.51,
+    "pitch_variation_st": 2.65,
+    "emphasis_db": 7.11,
+    "syllable_rate": 4.08,
+    "centroid_hz": 1463.7,
+    "tilt_db": -12.77,
+    "sibilance_db": -19.68,
+    "pauses": {
+     "count": 3,
+     "per_min": 22.8,
+     "median_s": 0.35,
+     "ratio": 0.138
+    }
+   },
+   "consistency": null,
+   "fit": null
+  },
+  {
+   "schema": "voice_audition/1",
+   "voice_id": "ppLqTilh7rH7fbUVlXsf",
+   "name": "David Planet Earth",
+   "source": {
+    "kind": "library_preview",
+    "ref": "https://storage.googleapis.com/eleven-public-prod/database/workspace/e7bdeaca6fbb4a6e929e6c98717040b9/voices/ppLqTilh7rH7fbUVlXsf/9bf0d787-305d-491b-aa57-a5a77ba0309c.mp3",
+    "sha256": "77f284b6f052b09cb672ed4bde1531f9f40450fdf0b8411cfeafe61459017416"
+   },
+   "profile": {
+    "duration_s": 3.89,
+    "sample_rate": 24000,
+    "speech_s": 2.71,
+    "reliable": false,
+    "note": "under 5 s of speech: compare previews with each other, do not cast on this alone",
+    "f0_median_hz": 127.0,
+    "f0_range_st": 16.84,
+    "pitch_variation_st": 5.46,
+    "emphasis_db": 4.99,
+    "syllable_rate": 4.43,
+    "centroid_hz": 1492.1,
+    "tilt_db": -10.62,
+    "sibilance_db": -16.25,
+    "pauses": {
+     "count": 1,
+     "per_min": 17.5,
+     "median_s": 0.37,
+     "ratio": 0.108
+    }
+   },
+   "consistency": null,
+   "fit": null
+  },
+  {
+   "schema": "voice_audition/1",
+   "voice_id": "YXpFCvM1S3JbWEJhoskW",
+   "name": "Wyatt- Wise Rustic Cowboy",
+   "source": {
+    "kind": "library_preview",
+    "ref": "https://storage.googleapis.com/eleven-public-prod/custom/voices/YXpFCvM1S3JbWEJhoskW/CLHVUhxcz93hum03aUwc.mp3",
+    "sha256": "8ada43ade1b0844f0d4b5b76d1de4424597eddbab39d7fd298fba0c7efbbb405"
+   },
+   "profile": {
+    "duration_s": 11.28,
+    "sample_rate": 24000,
+    "speech_s": 9.22,
+    "reliable": true,
+    "f0_median_hz": 95.6,
+    "f0_range_st": 7.38,
+    "pitch_variation_st": 2.99,
+    "emphasis_db": 3.97,
+    "syllable_rate": 3.9,
+    "centroid_hz": 1246.4,
+    "tilt_db": -13.67,
+    "sibilance_db": -14.16,
+    "pauses": {
+     "count": 2,
+     "per_min": 11.0,
+     "median_s": 0.65,
+     "ratio": 0.118
+    }
+   },
+   "consistency": null,
+   "fit": null
+  }
+ ]
+}

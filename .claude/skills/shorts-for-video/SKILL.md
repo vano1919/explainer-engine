@@ -62,7 +62,7 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 <!-- craft-checklist:packaging:begin -->
 | ID | check | rule | artefact field | sourced rules | enforced by |
 |---|---|---|---|---|---|
-| CRAFT-PKG-01 | manual | three title-and-thumbnail promises of different mechanism before the scenario | packaging promises (variant card) | BP-135 | `explainer_engine/scripting/variant_plan.py` (planned, P3) |
+| CRAFT-PKG-01 | manual | three title-and-thumbnail promises of different mechanism before the scenario | packaging promises (variant card) | BP-135 | `explainer_engine/scripting/variant_plan.py` |
 | CRAFT-PKG-02 | critic | the script's first seconds pay the chosen promise | packaging promise + first 5 s of narration | BP-135 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
 | CRAFT-PKG-03 | eye | Studio's intro, top moments, spikes and dips mapped onto segment ids | retention report + segment times | BP-48 | manual |
 | CRAFT-PKG-04 | eye | the midpoint retention gate (the intro gate is BP-48's) | retention report | BP-136, BP-48 | manual |

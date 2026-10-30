@@ -71,10 +71,10 @@ def delta_e(a: str, b: str, vision: str | None = None) -> float:
 
 
 def faction_findings(palette: dict | None = None) -> list[dict]:
-    """BP-144: every faction pair stays apart for all three colour-blind simulations and is told apart by a mark (REVIEW)."""
+    """BP-151: every faction pair stays apart for all three colour-blind simulations and is told apart by a mark (REVIEW)."""
     pal = palette or load()
     hexes = {name: t["hex"] for name, t in pal["tokens"].items()}
-    need, out = SR.T("BP-144", "faction_delta_e_min"), []
+    need, out = SR.T("BP-151", "faction_delta_e_min"), []
     for pair in pal.get("faction_pairs", []):
         a, b = hexes[pair["a"]], hexes[pair["b"]]
         if not pair.get("mark_a") or pair.get("mark_a") == pair.get("mark_b"):

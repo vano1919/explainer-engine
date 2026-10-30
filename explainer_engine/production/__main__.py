@@ -164,6 +164,7 @@ def main(argv: list[str] | None = None) -> int:
                        help="assemble: seconds per saved chunk (a restart of the machine loses at most one); 0 = one chunk")
         q.add_argument("--size", default="1920x1080")
         q.add_argument("--write", action="store_true", help="compile: write the prompts back into the script")
+        q.add_argument("--film-shots", help="compile: also write screenplay_spine.json (derived from the script and these shot cards)")
     a = p.parse_args(argv)
     path = Path(a.script)
     doc = S.load(path)
@@ -180,6 +181,11 @@ def main(argv: list[str] | None = None) -> int:
         if a.out:
             for f in C.write_outputs(new, Path(a.out)):
                 print("wrote", f)
+        if a.film_shots:
+            out = Path(a.out) if a.out else path.parent
+            target = out / "screenplay_spine.json"
+            write_text_atomic(target, json.dumps(C.compile_spine(path, a.film_shots, out), indent=1, ensure_ascii=False) + "\n")
+            print("wrote", target)
         return _print(V.check_script(new, pics, sounds.exists), "script after compile")
     if a.cmd == "fill":
         from explainer_engine.production import fill_holds as F

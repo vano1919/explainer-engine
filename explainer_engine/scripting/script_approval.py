@@ -3,7 +3,7 @@
 The order is: a short scenario the creator approves (OR-15, PV-45), then the full production script written to every
 rule, then the creator reads that script and approves it, and only then does any paid step run (a read, a picture, music).
 ``episode.script_approval`` records the second approval: who, when, and the sha256 of every word the viewer will hear
-(the segments' and the Shorts' lines with their speakers). A line changed after the approval is caught and the script goes
+(the segments' and the Shorts' lines with their speakers) and, when the script carries them, of the three packaging promises. A line changed after the approval is caught and the script goes
 back to the creator. Delivery tags, pictures, files and voice ids may change after the approval; the words may not.
 
 Binding on ``production_script/3`` (every new episode); earlier schemas get no finding (Syndicate Wars stays as it is).
@@ -39,6 +39,14 @@ def words_sha256(doc: dict) -> str:
     return hashlib.sha256(json.dumps(said, ensure_ascii=False, separators=(",", ":")).encode("utf-8")).hexdigest()
 
 
+def promises_sha256(doc: dict) -> str | None:
+    """The hash of the three packaging promises (``drama.packaging_promises``, BP-135), or None when the script has none."""
+    promises = (doc.get("drama") or {}).get("packaging_promises")
+    if not promises:
+        return None
+    return hashlib.sha256(json.dumps(promises, ensure_ascii=False, separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
 def check(doc: dict) -> list[dict]:
     if doc.get("schema") != BINDING:
         return []
@@ -56,6 +64,10 @@ def check(doc: dict) -> list[dict]:
     if rec.get("sha256") and rec["sha256"] != words_sha256(doc):
         out.append({"rule": "PV-53", "severity": "FAIL", "where": "episode.script_approval",
                     "detail": "the lines changed after the creator approved the script: send the changed script again"})
+    if rec.get("promises_sha256") and rec["promises_sha256"] != promises_sha256(doc):
+        out.append({"rule": "PV-53", "severity": "FAIL", "where": "drama.packaging_promises",
+                    "detail": "the packaging promises changed after the creator approved the script: the title and thumbnail "
+                              "promise what he agreed to (send them again)"})
     return out
 
 
@@ -66,6 +78,8 @@ def approve(path: Path, by: str, date: str | None = None) -> dict:
         raise ValueError("--by names the creator who approved the script")
     doc = json.loads(path.read_text(encoding="utf-8"))
     rec = {"approved_by": by.strip(), "approved_at": date or time.strftime("%Y-%m-%d"), "sha256": words_sha256(doc)}
+    if promises_sha256(doc):  # the three promises are approved with the words (ZI-10): a changed one is a PV-53 FAIL
+        rec["promises_sha256"] = promises_sha256(doc)
     doc["episode"]["script_approval"] = rec
     write_json_atomic(path, doc)
     return rec

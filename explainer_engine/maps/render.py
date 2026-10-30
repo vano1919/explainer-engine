@@ -3,7 +3,7 @@
 The base is the vector plate (or a certified painted plate), the overlays are drawn over it at the frame the viewer sees: routes that
 draw themselves on their spoken word, unit counters that march a terrain-following curve, labels, range rings, a date chip, a
 scale bar on meso and micro views. Inactive terrain is dimmed (law 3). Archetype 1 is the 2D-vector camera over the plate: the
-Blueprint's 3D relief fly-over needs a height model we do not have, so it is the documented ceiling (D-86) and the parallax
+Blueprint's 3D relief fly-over needs a height model we do not have, so it is the documented ceiling (D-87) and the parallax
 tableau (archetype 8) is its fallback.
 """
 

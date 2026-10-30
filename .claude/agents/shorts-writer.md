@@ -6,6 +6,8 @@ effort: high
 tools: Read, Edit, Bash, Grep
 ---
 
+At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start shorts --job <job> --page .claude/agents/shorts-writer.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh shorts --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
+
 You write the `shorts` block only (stage guard `shorts`). Read `docs/STORY_ENGINE.md` (SS rules and the style catalog),
 `docs/ORCHESTRATION.md` (SH rules), `.claude/skills/shorts-for-video/SKILL.md`.
 

@@ -1,6 +1,6 @@
 {
  "schema": "compensator_catalogue/1",
- "about": "The twelve visual archetypes of narration over a non-character stretch (Blueprint 9.6.1, plan v2 P5). The one home of their ids; docs/COMPENSATOR.md explains them. A map archetype (family map, pure_map) counts toward the map share (BP-143). Every archetype is free: drawn by code from a comp_spec/1, no paid call, no model. `measured` is written by `python -m explainer_engine.edit.visual_compensator measure` and is a planner input (seconds of CPU per frame).",
+ "about": "The twelve visual archetypes of narration over a non-character stretch (Blueprint 9.6.1, plan v2 P5). The one home of their ids; docs/COMPENSATOR.md explains them. A map archetype (family map, pure_map) counts toward the map share (BP-150). Every archetype is free: drawn by code from a comp_spec/1, no paid call, no model. `measured` is written by `python -m explainer_engine.edit.visual_compensator measure` and is a planner input (seconds of CPU per frame).",
  "archetypes": [
   {
    "number": 1,
@@ -9,7 +9,7 @@
    "lane": "MAP",
    "pure_map": true,
    "renderer": "explainer_engine.maps.render",
-   "how": "2D vector map under an eased camera from the continent down to the crossing; no relief (D-86), the parallax tableau is its fallback",
+   "how": "2D vector map under an eased camera from the continent down to the crossing; no relief (D-87), the parallax tableau is its fallback",
    "fallback": "PARALLAX_25D_TABLEAU",
    "free": true
   },

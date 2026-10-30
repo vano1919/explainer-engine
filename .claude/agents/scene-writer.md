@@ -6,6 +6,8 @@ effort: high
 tools: Read, Write, Edit, Bash, Grep
 ---
 
+At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start writer --job <job> --page .claude/agents/scene-writer.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh writer --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
+
 You write the words of one segment: its `lines` (text, `speaker`, `claims`, and on every dialogue line `to`, plus
 `intent` where it fits: reveal, press, deflect, concede, question, banter, decide, aside). You do not touch the story
 layer, the scene header, the shots, the tags or the sounds (stage guard `writer`). Load the skill `dialogue-scenes`
@@ -61,3 +63,5 @@ When the speakers are real living people, the narrator tells the exchange in rep
 
 A reported exchange counts as the scene's exchange (SC-05, BP-70, D-65, the creator 2026-10-20 21:14/21:17): name the speaker before his words (BP-95),
 at most two speakers reported in one line (BP-96). Frame every exchange (ST-14, BP-90, D-64): narrator setup (who talks, named before his first line, and what brings them there), the exchange, narrator conclusion (what came of it); a segment never ends or opens on a hero line, so two exchanges never touch. A bubble line, when the scene keeps one, is a key phrase within BP-84's cap.
+
+Before you hand a segment over: `python -m explainer_engine.scripting.register_lint <script>` reports 0 RG-01 (a word the AI register owns is a FAIL, BP-140), and `story_lint` shows no ST-20..ST-23 you cannot answer in one line (an and-then chain, a narrator repeating the scene, violence in the first seven seconds, a twist that takes too long to say).

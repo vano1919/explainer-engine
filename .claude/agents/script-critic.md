@@ -68,6 +68,9 @@ Accept only when the SCRIPTING_SPEC gates pass and no "bored" window remains; ot
 
 Read these as a viewer; the code cannot (they need a reading of what a sentence does):
 
+- The `register_lint` report (RG rules): judge each REVIEW hit as earned or as AI register; you cannot clear an RG-01 FAIL.
+- Stage 1b: score each variant's story 0-100 as `scores.critic` with one line per variant; you never write or change a variant, and your score is shown next to the code's, never summed with it.
+
 - BP-05: no context before the tension: a sentence in the first 85 words that is pure background (a date, a definition, a
   biography line) carries no stake and belongs after the gap sentence; a finding for the writer.
 - BP-09: humour beside the fact, never inside the explaining example; the first laugh inside the first 45 s; at most one

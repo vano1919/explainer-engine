@@ -22,6 +22,8 @@ Procedure (never skip a gate; each ends with the evidence you looked at):
    Then the rulebook goes `final` (premise, people, characters and asset sources known): `standards gate --at final`.
    Story hypotheses first (docs/EPISODE_STANDARDS.md section 8): at least three premises, evidence and narrative scored apart,
    `python -m explainer_engine.research.hypotheses <file>` 0 FAIL; the selected beat sheet becomes the segments' `job`s.
+2a. **Stage 1b, variants (OR-31)**: before the scenario, follow `story-architect` step 1b: a fact-only brief to the Opus thread, two or three
+   priced variants, `variant_plan score`, the critic's story score, one card to the creator; nothing is written until his pick is recorded.
 3. **Phase 2, script** (OR-15 first: write a short scenario, the story line by line with the dialogue and faces marked, to the
    episode folder, send it to the creator and wait for their approval; record it in `episode.scenario`; only then the script).
    **Script** (skills `narration-script`, `time-jump-episode`): one `production_script.json`, periods with unequal time,

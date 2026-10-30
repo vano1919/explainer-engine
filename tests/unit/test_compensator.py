@@ -186,8 +186,8 @@ def test_cmp10_rotation():
     ok = blocks(("MAP_3D_TERRAIN_FLYOVER", 0, 20), ("BALLISTIC_RANGE_AND_ENERGY_HUD", 30, 40), ("TACTICAL_UNIT_MANEUVER", 50, 70))
     assert VC.rotation(ok) == []
     twice = blocks(("SPLIT_SCREEN_SPEED_RACE", 0, 10), ("SPLIT_SCREEN_SPEED_RACE", 12, 20))
-    assert "adjacent" in VC.rotation(twice)[0]["detail"] and VC.rotation(twice)[0]["severity"] == SR.level("BP-142")
-    window, fam_max = SR.T("BP-142", "window_s"), SR.T("BP-142", "family_max")
+    assert "adjacent" in VC.rotation(twice)[0]["detail"] and VC.rotation(twice)[0]["severity"] == SR.level("BP-149")
+    window, fam_max = SR.T("BP-149", "window_s"), SR.T("BP-149", "family_max")
     fam = [a for a in VC.ids() if VC.archetype(a)["family"] == "hud"]
     crowd = blocks(*[(fam[k % len(fam)], k * 5, k * 5 + 4) for k in range(int(fam_max) + 1)])
     assert any("hud items" in f["detail"] for f in VC.rotation(crowd))

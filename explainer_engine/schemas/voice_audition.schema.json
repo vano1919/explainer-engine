@@ -1,0 +1,88 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "voice_audition.schema.json",
+ "title": "Voice audition: one candidate voice, measured from one free listening (docs/CONTRACTS.md, P4b)",
+ "type": "object",
+ "properties": {
+  "schema": {"const": "voice_audition/1"},
+  "voice_id": {"type": "string", "minLength": 1},
+  "name": {"type": "string", "minLength": 1},
+  "source": {
+   "type": "object",
+   "properties": {
+    "kind": {"enum": ["library_preview", "test_read", "take"]},
+    "ref": {"type": "string", "minLength": 1},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+   },
+   "required": ["kind", "ref"],
+   "additionalProperties": false
+  },
+  "profile": {
+   "type": "object",
+   "properties": {
+    "duration_s": {"type": "number", "minimum": 0},
+    "sample_rate": {"type": "integer", "minimum": 8000},
+    "speech_s": {"type": "number", "minimum": 0},
+    "reliable": {"type": "boolean"},
+    "note": {"type": "string"},
+    "f0_median_hz": {"type": "number", "exclusiveMinimum": 0},
+    "f0_range_st": {"type": "number", "minimum": 0},
+    "pitch_variation_st": {"type": "number", "minimum": 0},
+    "emphasis_db": {"type": "number"},
+    "syllable_rate": {"type": "number", "minimum": 0},
+    "wpm_speaking": {"type": "number", "minimum": 0},
+    "wpm_overall": {"type": "number", "minimum": 0},
+    "centroid_hz": {"type": "number", "exclusiveMinimum": 0},
+    "tilt_db": {"type": "number"},
+    "sibilance_db": {"type": "number"},
+    "pauses": {
+     "type": "object",
+     "properties": {
+      "count": {"type": "integer", "minimum": 0},
+      "per_min": {"type": "number", "minimum": 0},
+      "median_s": {"type": "number", "minimum": 0},
+      "ratio": {"type": "number", "minimum": 0, "maximum": 1}
+     },
+     "required": ["count", "per_min", "median_s", "ratio"],
+     "additionalProperties": false
+    }
+   },
+   "required": ["duration_s", "sample_rate", "reliable"],
+   "additionalProperties": false
+  },
+  "consistency": {
+   "anyOf": [
+    {"type": "null"},
+    {
+     "type": "object",
+     "properties": {
+      "embedder": {"type": "string", "minLength": 1},
+      "takes": {"type": "integer", "minimum": 0},
+      "min_cosine": {"type": ["number", "null"]},
+      "mean_cosine": {"type": ["number", "null"]}
+     },
+     "required": ["embedder", "takes", "min_cosine", "mean_cosine"],
+     "additionalProperties": false
+    }
+   ]
+  },
+  "fit": {
+   "anyOf": [
+    {"type": "null"},
+    {
+     "type": "object",
+     "properties": {
+      "trait": {"type": "number", "minimum": 0, "maximum": 1},
+      "usage_rank": {"type": ["integer", "null"], "minimum": 0},
+      "listed": {"type": ["integer", "null"], "minimum": 0},
+      "unlabelled": {"type": "boolean"}
+     },
+     "required": ["trait", "usage_rank", "listed", "unlabelled"],
+     "additionalProperties": false
+    }
+   ]
+  }
+ },
+ "required": ["schema", "voice_id", "name", "source", "profile", "consistency", "fit"],
+ "additionalProperties": false
+}

@@ -36,7 +36,7 @@
   ],
   "fill_only": ["kit_card", "kit_shadow", "answer_coral", "mechanism_teal", "support_blue", "true_green", "false_red", "uncertain_amber", "grey_mid", "faction_a", "faction_b"],
   "faction_pairs": [
-    {"a": "faction_a", "b": "faction_b", "mark_a": "square", "mark_b": "triangle", "note": "blue and vermilion: the pair with the best worst case over protan, deutan and tritan viewers (112.9 against 98.3 for the Blueprint's red and 87.5 for a light orange, D-86)"}
+    {"a": "faction_a", "b": "faction_b", "mark_a": "square", "mark_b": "triangle", "note": "blue and vermilion: the pair with the best worst case over protan, deutan and tritan viewers (112.9 against 98.3 for the Blueprint's red and 87.5 for a light orange, D-87)"}
   ],
   "fill_only_rule": "Accent colours are 1.5-3.7:1 against paper, below the 3:1 that graphics need. They are fills; every shape that carries meaning also has an ink stroke (>= 4 px at 1080p), and meaning is never carried by colour alone."
 }

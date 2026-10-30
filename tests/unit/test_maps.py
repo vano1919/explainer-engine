@@ -377,7 +377,7 @@ def test_law6_the_palette_pair_is_colour_blind_safe_and_marked():
     same_mark["faction_pairs"][0]["mark_b"] = "square"
     assert PAL.faction_findings(same_mark)[0]["check"] == "faction_mark"
     for vision in PAL.CVD:
-        assert PAL.delta_e("#1A73E8", "#F55A24", vision) > SR.T("BP-144", "faction_delta_e_min")
+        assert PAL.delta_e("#1A73E8", "#F55A24", vision) > SR.T("BP-151", "faction_delta_e_min")
 
 
 def test_law6_the_two_sides_differ_by_shape_not_only_colour():

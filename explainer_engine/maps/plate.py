@@ -5,7 +5,7 @@ never calls ``Canvas.text`` and its spec has no text field, so the guarantee hol
 ``tests/unit/test_maps.py`` fails if the renderer ever draws one. Labels, units and arrows are drawn over the plate by
 ``maps/render.py`` at the frame the viewer sees. The same module draws a view of any size and span (the "plate" of a region is the
 view that frames its whole box), so a close-up is as crisp as a theatre map; a painted plate that replaces it (P12e) is only
-used with its certificate (BP-146, ``certificate``).
+used with its certificate (BP-153, ``certificate``).
 
     python -m explainer_engine.maps.plate <spec.json> <out.png>      # a plate spec: {"lon","lat","span_km","width","height"}
 """
@@ -131,26 +131,26 @@ def iou(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def certificate(plate_png: Path | str, ocr_chars: int, geometry_iou: float, ocr_engine: str) -> dict:
-    """The record that must sit next to a painted plate (BP-146). The caller runs the OCR and the comparison; this only writes
+    """The record that must sit next to a painted plate (BP-153). The caller runs the OCR and the comparison; this only writes
     what they found, bound to the file's sha256 so a repainted plate needs a new one."""
     return {"schema": "map_plate_certificate/1", "sha256": hashlib.sha256(Path(plate_png).read_bytes()).hexdigest(),
             "ocr_engine": ocr_engine, "ocr_chars": int(ocr_chars), "geometry_iou": round(float(geometry_iou), 4)}
 
 
 def certificate_findings(plate_png: Path | str, cert: dict | None) -> list[dict]:
-    """BP-146: no certificate, a certificate of another file, letters found, or land that moved are findings (REVIEW)."""
-    lvl, out = SR.level("BP-146"), []
+    """BP-153: no certificate, a certificate of another file, letters found, or land that moved are findings (REVIEW)."""
+    lvl, out = SR.level("BP-153"), []
 
     def add(detail: str) -> None:
         out.append({"rule": "CMP-01", "severity": lvl, "where": str(plate_png), "detail": detail})
 
     if not cert:
-        return [{"rule": "CMP-01", "severity": lvl, "where": str(plate_png), "detail": "a painted plate needs its certificate (BP-146)"}]
+        return [{"rule": "CMP-01", "severity": lvl, "where": str(plate_png), "detail": "a painted plate needs its certificate (BP-153)"}]
     if cert.get("sha256") != hashlib.sha256(Path(plate_png).read_bytes()).hexdigest():
         add("the certificate is for another file: repaint means recertify")
-    if cert.get("ocr_chars", 1) > SR.T("BP-146", "ocr_chars_max"):
+    if cert.get("ocr_chars", 1) > SR.T("BP-153", "ocr_chars_max"):
         add(f"the OCR found {cert.get('ocr_chars')} letters on the plate: a plate has none")
-    if cert.get("geometry_iou", 0.0) < SR.T("BP-146", "restyle_geometry_iou_min"):
+    if cert.get("geometry_iou", 0.0) < SR.T("BP-153", "restyle_geometry_iou_min"):
         add(f"the painted land overlaps the vector land by {cert.get('geometry_iou')}: the restyle moved geometry")
     return out
 

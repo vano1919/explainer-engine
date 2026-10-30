@@ -205,7 +205,32 @@ def _job_manifest(doc: dict, base) -> list[dict]:
     return out
 
 
-SEMANTIC = {"film_shots": _film_shots, "shot_spec": _shot_spec, "audio_spine": _audio_spine, "visual_comp_manifest": _visual_comp,
+def variants_sha256(doc: dict) -> str:
+    """What the creator saw and picked: the sha256 of the variants array, so a later edit makes the choice stale (CN-04)."""
+    return hashlib.sha256(json.dumps(doc["variants"], sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
+
+
+def variant_sums(variant: dict) -> list[dict]:
+    """VP-01 (invariant 7): the blocks of every segment add up to its window, and the stored shares add up to 1. A plan whose
+    numbers do not add up cannot be scored, so it is refused here and not weighed."""
+    out = []
+    for seg in variant.get("segments", []):
+        got = sum(b["seconds"] for b in seg["blocks"])
+        if abs(got - seg["window_s"]) > 0.01:
+            out.append(_f("VP-01", f"{variant['id']} {seg['id']}", f"the blocks add up to {got:g} s, the window is {seg['window_s']:g} s"))
+    shares = [v for k, v in variant.get("dynamics", {}).items() if k.startswith("share_")]
+    if shares and abs(sum(shares) - 1.0) > 0.006:
+        out.append(_f("VP-01", f"{variant['id']} dynamics", f"the shares add up to {sum(shares):.3f}, not 1"))
+    return out
+
+
+def _script_variants(doc: dict, base) -> list[dict]:
+    if doc["schema"] != "script_variants/2":
+        return []
+    return [f for v in doc["variants"] for f in variant_sums(v)]
+
+
+SEMANTIC = {"film_shots": _film_shots, "script_variants": _script_variants, "shot_spec": _shot_spec, "audio_spine": _audio_spine, "visual_comp_manifest": _visual_comp,
             "comp_spec": _comp_spec, "sound_mix_manifest": _sound_mix, "qa_report": _qa_report, "distribution_package": _distribution,
             "job_manifest": _job_manifest}
 

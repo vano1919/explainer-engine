@@ -21,6 +21,8 @@ import re
 import sys
 from pathlib import Path
 
+from explainer_engine.scripting import variant_plan
+from explainer_engine.scripting.syllables import seconds as spoken_seconds
 from explainer_engine.standards import sourced_rules as SR
 
 MIN_NEEDS = 3
@@ -38,10 +40,20 @@ SETUP_MIN, CONCLUSION_MIN = SR.T("BP-90", "setup_lines_min"), SR.T("BP-90", "con
 SPEECH_VERBS = tuple(SR.T("BP-70", "speech_verbs"))  # reported speech (D-63): "Musk says...", "he asks..."
 REPORTED_SPEAKERS_MAX = SR.T("BP-96", "speakers_max")  # ST-16 (NR-04, a hypothesis)
 _VERB = "(?:" + "|".join(SPEECH_VERBS) + ")"
-DOCUDRAMA = "D"  # template D, the historical docudrama (docs/STORY_ENGINE.md): ST-17..ST-19 apply
+DOCUDRAMA = "D"  # template D, the historical docudrama (docs/STORY_ENGINE.md): ST-17..ST-19 and ST-24 apply
+D_ROWS = 16  # template D has 16 rows; its turn slots (BP-142) are rows of that table
 NARRATION_BLOCK_MAX_S = SR.T("BP-104", "narration_block_max_s")  # ST-17
 NARRATOR_SHARE = tuple(SR.T("BP-105", "narrator_share"))  # ST-19
 CENTRAL_FUNCS = {"climax", "crisis", "midpoint"}  # ST-18: the central scene
+AND_THEN_CHAIN = SR.T("BP-145", "chain_min")  # ST-20 (P3)
+OVERLAP_MAX = SR.T("BP-144", "overlap")  # ST-21, and KP-20 on a shot card
+AD_WINDOW_S = SR.T("BP-143", "window_s")  # ST-22
+VIOLENCE = re.compile(r"\b(?:" + "|".join(re.escape(w) for w in SR.T("BP-143", "lexicon")) + ")", re.I)
+TWIST_MAX_S = SR.T("BP-115", "twist_max_s")  # ST-23
+PROMISE_PAID_BY_S = SR.T("BP-135", "promise_paid_by_s")  # the first packaging promise is paid in the first seconds
+TWIST_FUNCS = {"twist", "reversal"}
+_STOP = set("a an the and or but of to in on at by for with from his her their its it he she they them this that is are was were be "
+            "been as so if then than too very not no we you your our i me my up out over into onto off all any each one two".split())
 
 
 def sev(rule_id: str) -> str:
@@ -207,8 +219,92 @@ def lint(doc: dict) -> list[dict]:
                 gap_words, gap_from = 0.0, None
     out += exchanges(doc)
     out += reported_speech(doc)
+    out += script_checks(doc, segs, sd)
     if drama.get("template") == DOCUDRAMA:
         _docudrama(out, segs, sd, seg_words)
+        out += turns_played(doc, segs)
+    return out
+
+
+def turns_played(doc: dict, segs: list[dict]) -> list[dict]:
+    """ST-24 (BP-142, house): every turn of a docudrama is a played scene: a turn slot with no hero line is a FAIL, a played share
+    under the profile's minimum (BP-141) is REVIEW. Template D's slot ids (rows 4, 6, 8, 10, 11, 13) are used only when the script
+    has template D's 16 rows; any other script is held to its segments whose function is a turn."""
+    prof = variant_plan.profile((doc.get("drama") or {}).get("profile_id") or DOCUDRAMA)
+    dyn = variant_plan.dynamics(variant_plan.segments_from_script(doc), prof, template=DOCUDRAMA if len(segs) == D_ROWS else "any")
+    return [dict(f, rule="ST-24") for f in variant_plan.turn_findings(dyn, prof)]
+
+
+def content_words(text: str) -> set[str]:
+    """The words of a line that carry its content (no articles, pronouns or auxiliaries; at least three letters)."""
+    return {w for w in re.findall(r"[a-z']+", text.lower()) if w not in _STOP and len(w) > 2}
+
+
+def overlap(said: set[str], seen: set[str]) -> float:
+    """The share of ``said`` already in ``seen``: the one measure of double exposition (ST-21 on lines, KP-20 on a shot card)."""
+    return len(said & seen) / len(said) if said else 0.0
+
+
+def line_starts(segs: list[dict]) -> list[tuple[dict, int, float]]:
+    """(segment, line index, estimated start second) for every line, on ``syllables.spoken_seconds`` plus the planned pauses."""
+    t, out = 0.0, []
+    for seg in segs:
+        for k, ln in enumerate(seg.get("lines", [])):
+            out.append((seg, k, t))
+            t += spoken_seconds(ln["text"], pause_after=float(ln.get("pause_after", 0) or 0))
+    return out
+
+
+def script_checks(doc: dict, segs: list, sd: list) -> list[dict]:
+    """ST-20 an and-then chain, ST-21 double exposition, ST-22 the ad-safety window, ST-23 the twist lands, and the first
+    packaging promise paid in the first seconds (BP-135). All hypotheses: REVIEW."""
+    out: list[dict] = []
+    # ST-20: AND_THEN joins in one segment's narrator lines, or on two consecutive segment openers
+    opener = []
+    for i, seg in enumerate(segs):
+        lines = seg.get("lines", [])
+        joins = [k for k, ln in enumerate(lines, 1) if not ln.get("speaker") and AND_THEN.match(ln["text"])]
+        if len(joins) >= AND_THEN_CHAIN:
+            _f(out, "ST-20", seg["id"], f"{len(joins)} lines open with 'and then', 'after that' or 'next': a chain of events, not of "
+               "causes; give each join its but or therefore (BP-145)", sev("BP-145"))
+        opener.append(bool(i and lines and AND_THEN.match(lines[0]["text"])))
+        if i and opener[i] and opener[i - 1]:
+            _f(out, "ST-20", f"{segs[i - 1]['id']}..{seg['id']}", "two segments in a row open with an 'and then' join (BP-145)",
+               sev("BP-145"))
+    # ST-21: a narrator line that says again what the adjacent character line just played
+    for seg in segs:
+        lines = seg.get("lines", [])
+        for k, ln in enumerate(lines):
+            if ln.get("speaker"):
+                continue
+            said = content_words(ln["text"])
+            near = [lines[j] for j in (k - 1, k + 1) if 0 <= j < len(lines) and lines[j].get("speaker")]
+            if len(said) >= 4 and near and overlap(said, content_words(" ".join(n["text"] for n in near))) >= OVERLAP_MAX:
+                _f(out, "ST-21", f"{seg['id']} line {k + 1}", "the narrator repeats what the scene just played: give the narrator what "
+                   "the heroes cannot know (BP-144)", sev("BP-144"))
+    starts = line_starts(segs)
+    # ST-22: graphic violence inside the first seconds of the video
+    for seg, k, t in starts:
+        if t >= AD_WINDOW_S:
+            break
+        if VIOLENCE.search(seg["lines"][k]["text"]):
+            _f(out, "ST-22", f"{seg['id']} line {k + 1}", f"a graphic-violence word at about {t:.1f} s: YouTube's ad guidance names the "
+               f"first {AD_WINDOW_S:g} seconds (BP-143); the creator decides", sev("BP-143"))
+    # ST-23: the first line of a twist or reversal segment is short enough to land
+    for (sid, d), seg in zip(sd, segs):
+        if d and d["function"] in TWIST_FUNCS and seg.get("lines"):
+            secs = spoken_seconds(seg["lines"][0]["text"])
+            if secs > TWIST_MAX_S:
+                _f(out, "ST-23", f"{sid} line 1", f"the turn takes about {secs:.1f} s to say (more than {TWIST_MAX_S:g} s, BP-115): "
+                   "cut it to the sentence that turns, or give the turn its own short sentence", sev("BP-115"))
+    # BP-135: the first packaging promise is paid inside the first seconds (when the stage 1b promises are on the script)
+    promises = (doc.get("drama") or {}).get("packaging_promises")
+    if promises and starts:
+        stems = {w[:5] for w in content_words(promises[0]) if len(w) >= 5}
+        early = " ".join(w for w in (seg["lines"][k]["text"].lower() for seg, k, t in starts if t < PROMISE_PAID_BY_S))
+        if stems and not any(re.search(r"\b" + re.escape(st), early) for st in stems):
+            _f(out, "ST-01", "drama.packaging_promises", f"the first promise ({promises[0][:50]!r}) is not paid by a word in the first "
+               f"{PROMISE_PAID_BY_S:g} s (BP-135): the title and thumbnail promise must show up at once", sev("BP-135"))
     return out
 
 
