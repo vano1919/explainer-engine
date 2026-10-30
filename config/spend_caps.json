@@ -80,6 +80,16 @@
     ],
     "keep_network_volumes": []
   },
+  "claude_api": {
+    "_doc": "The Claude API credit (explainer_engine/llm/claude_api.py, docs/LLM_API.md). max_usd is the whole credit; the client stops at 80 % of it and of each job. A job without a line here is refused. approval is the recorded word that allows real calls.",
+    "max_usd": 95.0,
+    "jobs": {"J1": 10.0, "J1b": 8.0, "J2a": 8.0, "J2b": 10.0, "J3": 12.0, "J4": 5.0, "J5": 3.0, "J6": 15.0, "reserve": 24.0},
+    "approval": {
+      "by": "vano (credit, his word) + the OR-24 plan thread verdict",
+      "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWMWfhemnwjz2KZddCLNHbGL; project files blueprint_2026-10-29/CLAUDE_API_PLAN_OR24.md",
+      "at": "2026-10-29"
+    }
+  },
   "_runpod_note": "2026-10-24 (the creator's OK on the strategy): money is capped per JOB (per_pod_usd, the guard stops there) and cards are picked by the job's estimated cost (runpod.pick_gpus); max_price_per_hour is only the runaway ceiling of one card.",
   "_runpod_hours_note": "2026-10-26 02:15 Tbilisi, the creator (\"ყველა კი\" to the night plan): max_hours_per_pod 4 -> 5 so the xworld_v1 training pod may run 5 h (its own cap $4)."
 }

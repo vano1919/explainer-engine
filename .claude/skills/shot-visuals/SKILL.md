@@ -148,7 +148,7 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 |---|---|---|---|---|---|
 | CRAFT-CIN-01 | critic | every shot card names a lens tier motivated by the beat (long = compression, wide = space) | shot card lens_tier (P6 field) | BP-126 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
 | CRAFT-CIN-02 | critic | camera height low / eye / high motivated (low reads strong) | shot card height (P6 field) | BP-126 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
-| CRAFT-CIN-03 | code | two shots of one subject in a row change angle by 30 degrees or the lens by 20 mm | consecutive shot cards | BP-126, BP-103 | `explainer_engine/scripting/film_shots.py` (planned, P6) |
+| CRAFT-CIN-03 | code | two shots of one subject in a row change angle by 30 degrees or the lens by 20 mm | consecutive shot cards | BP-126, BP-103 | `explainer_engine/production/continuity.py` (planned, P6) |
 | CRAFT-CIN-04 | code | screen sides and the axis hold inside a scene | continuity cards | CT-06 | `explainer_engine/scripting/continuity.py` |
 | CRAFT-CIN-05 | eye | headroom and nose room: a facing figure has lead room toward its gaze | keyframe | KP-34 | manual |
 | CRAFT-CIN-06 | critic | depth staging: foreground, midground and background named on the card | shot card relations | KP-33 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
