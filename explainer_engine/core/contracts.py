@@ -112,13 +112,50 @@ def _audio_spine(doc: dict, base) -> list[dict]:
             out.append(_f("CN-01", where, f"frames do not match seconds at {fps} fps"))
         if w["end_frame"] > total:
             out.append(_f("CN-01", where, f"ends at frame {w['end_frame']}, past the {total} frames of the read"))
+    if doc["schema"] == "audio_spine/2":
+        out += _spine_windows(doc)
     return out
+
+
+def _spine_windows(doc: dict) -> list[dict]:
+    """CN-01 on the post-hoc windows of an ``audio_spine/2`` (D-88): in order, not overlapping, inside the read's frames, each
+    after a real word it does not precede, and no word frame inside one (a word is inside a window when their frame ranges
+    overlap). A /1 document keeps its older, looser reading: nothing in it changes."""
+    out, words, total = [], doc["words"], doc["total_frames"]
+    prev_end, prev_after = 0, -1
+    for k, h in enumerate(doc["post_hoc_shots"]):
+        where = f"post_hoc_shots[{k}]"
+        s, e, after = h["start_frame"], h["end_frame"], h["after_word"]
+        if e <= s:
+            out.append(_f("CN-01", where, f"the window {s}..{e} is empty or reversed"))
+        if s < prev_end:
+            out.append(_f("CN-01", where, f"the window starts at frame {s}, before the previous one ends at {prev_end}: windows are in order and do not overlap"))
+        if e > total:
+            out.append(_f("CN-01", where, f"ends at frame {e}, past the {total} frames of the episode"))
+        if after >= len(words):
+            out.append(_f("CN-01", where, f"after_word {after} is past the spine's {len(words)} words"))
+        else:
+            if after < prev_after:
+                out.append(_f("CN-01", where, f"after_word {after} is before the previous window's {prev_after}"))
+            if after >= 0 and s < words[after]["end_frame"]:
+                out.append(_f("CN-01", where, f"the window opens at frame {s}, before word {after} ends at {words[after]['end_frame']}"))
+        for w in words:
+            if w["start_frame"] < e and w["end_frame"] > s:
+                out.append(_f("CN-01", where, f"word {w['i']} ({w['start_frame']}..{w['end_frame']}) falls inside the window {s}..{e}"))
+                break
+        prev_end, prev_after = max(prev_end, e), max(prev_after, after)
+    return out
+
+
+def _spine_ref(doc: dict) -> dict:
+    """The file reference of the spine a document sits on: top level in the /1 contracts, ``derived_from`` in /2 (D-88)."""
+    return doc["audio_spine"] if "audio_spine" in doc else doc["derived_from"]["audio_spine"]
 
 
 def _spine_indices(doc: dict, base, key: str, indices) -> list[dict]:
     if base is None:
         return []
-    path = Path(base) / doc["audio_spine"]["path"]
+    path = Path(base) / _spine_ref(doc)["path"]
     if not path.exists():
         return [_f("CN-02", "audio_spine", f"{path} does not exist")]
     n = len(json.loads(path.read_text(encoding="utf-8"))["words"])
@@ -136,6 +173,61 @@ def _sound_mix(doc: dict, base) -> list[dict]:
     for k, s in enumerate(doc["spots"]):
         if (s["word_index"] is None) == (s["frame"] is None):
             out.append(_f("CN-01", f"spots[{k}]", "a spot sits on a word_index or on a frame, exactly one"))
+    if doc["schema"] == "sound_mix_manifest/2":
+        out += _sound_mix_2(doc, base)
+    return out
+
+
+HIT_LAYERS = ("sub", "body", "air")
+
+
+def _sound_mix_2(doc: dict, base) -> list[dict]:
+    """CN-16 on a ``sound_mix_manifest/2``: every frame inside ``total_frames`` (which is the spine's), the scenes follow one
+    another without a gap or an overlap, and each hit group holds exactly one sub, one body and one air layer."""
+    out, total = [], doc["total_frames"]
+
+    def inside(where: str, start: int, end: int | None = None) -> None:
+        end = start if end is None else end
+        if end < start:
+            out.append(_f("CN-16", where, f"ends at frame {end}, before it starts at {start}"))
+        if end > total:
+            out.append(_f("CN-16", where, f"frame {end} is past the manifest's {total} frames"))
+
+    for key in ("dialogue", "scenes", "beds", "music", "vacuums"):
+        for k, row in enumerate(doc[key]):
+            inside(f"{key}[{k}]", row["start_frame"], row["end_frame"])
+    for k, v in enumerate(doc["vacuums"]):
+        if not v["start_frame"] <= v["reveal_frame"] <= v["end_frame"]:
+            out.append(_f("CN-16", f"vacuums[{k}]", f"reveal_frame {v['reveal_frame']} is outside the vacuum {v['start_frame']}..{v['end_frame']}"))
+    for k, c in enumerate(doc["cues"]):
+        inside(f"cues[{k}]", c["frame"])
+    for k, s in enumerate(doc["spots"]):
+        if s["frame"] is not None:
+            inside(f"spots[{k}]", s["frame"])
+    prev = None
+    for k, sc in enumerate(sorted(doc["scenes"], key=lambda r: r["start_frame"])):
+        if prev is not None and sc["start_frame"] != prev["end_frame"]:
+            kind = "overlaps" if sc["start_frame"] < prev["end_frame"] else "leaves a gap after"
+            out.append(_f("CN-16", f"scenes {sc['scene']}", f"starts at frame {sc['start_frame']} and {kind} {prev['scene']}, which ends at {prev['end_frame']}"))
+        prev = sc
+    groups: dict[str, list[str]] = {}
+    for k, s in enumerate(doc["spots"]):
+        if s["group"] is None and s["layer"] in HIT_LAYERS:
+            out.append(_f("CN-16", f"spots[{k}]", f"layer {s['layer']} belongs to a hit group, and this spot names none"))
+        elif s["group"] is not None:
+            if s["layer"] not in HIT_LAYERS:
+                out.append(_f("CN-16", f"spots[{k}]", f"a spot in group {s['group']!r} is a sub, body or air layer, not {s['layer']!r}"))
+            groups.setdefault(s["group"], []).append(s["layer"])
+    for name, layers in groups.items():
+        if sorted(layers) != sorted(HIT_LAYERS):
+            out.append(_f("CN-16", f"group {name}", f"a hit group has exactly one sub, one body and one air layer, this one has {sorted(layers)}"))
+    if base is not None:
+        path = Path(base) / _spine_ref(doc)["path"]
+        if path.exists():
+            spine = json.loads(path.read_text(encoding="utf-8"))
+            for key in ("total_frames", "fps"):
+                if spine.get(key) != doc[key]:
+                    out.append(_f("CN-16", key, f"{doc[key]} differs from the spine's {spine.get(key)}"))
     return out
 
 

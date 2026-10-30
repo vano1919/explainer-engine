@@ -1,11 +1,14 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "audio_spine.schema.json",
- "title": "Audio spine: every word of the read in seconds and frames, the clock all departments lock to (docs/CONTRACTS.md)",
+ "title": "Audio spine: every word of the read in seconds and frames, the clock all departments lock to; /2 adds the post-hoc dialogue windows' anchors (docs/CONTRACTS.md, D-88)",
  "type": "object",
  "properties": {
   "schema": {
-   "const": "audio_spine/1"
+   "enum": [
+    "audio_spine/1",
+    "audio_spine/2"
+   ]
   },
   "derived_from": {
    "type": "object",
@@ -14,6 +17,9 @@
      "$ref": "#/$defs/fileref"
     },
     "timed": {
+     "$ref": "#/$defs/fileref"
+    },
+    "film_shots": {
      "$ref": "#/$defs/fileref"
     }
    },
@@ -130,6 +136,26 @@
      "end_frame": {
       "type": "integer",
       "minimum": 0
+     },
+     "after_word": {
+      "type": "integer",
+      "minimum": -1
+     },
+     "source": {
+      "enum": [
+       "planned",
+       "clip"
+      ]
+     },
+     "clip_sha256": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/sha256"
+       },
+       {
+        "type": "null"
+       }
+      ]
      }
     },
     "required": [
@@ -220,5 +246,106 @@
    "type": "string",
    "minLength": 10
   }
- }
+ },
+ "allOf": [
+  {
+   "if": {
+    "properties": {
+     "schema": {
+      "const": "audio_spine/1"
+     }
+    },
+    "required": [
+     "schema"
+    ]
+   },
+   "then": {
+    "properties": {
+     "derived_from": {
+      "not": {
+       "required": [
+        "film_shots"
+       ]
+      }
+     },
+     "post_hoc_shots": {
+      "items": {
+       "not": {
+        "anyOf": [
+         {
+          "required": [
+           "after_word"
+          ]
+         },
+         {
+          "required": [
+           "source"
+          ]
+         },
+         {
+          "required": [
+           "clip_sha256"
+          ]
+         }
+        ]
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "if": {
+    "properties": {
+     "schema": {
+      "const": "audio_spine/2"
+     }
+    },
+    "required": [
+     "schema"
+    ]
+   },
+   "then": {
+    "properties": {
+     "post_hoc_shots": {
+      "items": {
+       "required": [
+        "after_word",
+        "source",
+        "clip_sha256"
+       ],
+       "allOf": [
+        {
+         "if": {
+          "properties": {
+           "source": {
+            "const": "clip"
+           }
+          },
+          "required": [
+           "source"
+          ]
+         },
+         "then": {
+          "properties": {
+           "clip_sha256": {
+            "$ref": "#/$defs/sha256"
+           }
+          }
+         },
+         "else": {
+          "properties": {
+           "clip_sha256": {
+            "type": "null"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  }
+ ]
 }

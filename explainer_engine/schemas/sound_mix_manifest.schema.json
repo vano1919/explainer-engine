@@ -1,191 +1,39 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "sound_mix_manifest.schema.json",
- "title": "Sound mix manifest: stems, beds, vacuums and spot sounds on the audio spine (docs/CONTRACTS.md)",
+ "title": "Sound mix manifest: stems, beds, vacuums and spot sounds on the audio spine; /2 is derived by the sound director (docs/CONTRACTS.md, D-88)",
  "type": "object",
  "properties": {
   "schema": {
-   "const": "sound_mix_manifest/1"
-  },
-  "audio_spine": {
-   "$ref": "#/$defs/fileref"
-  },
-  "stems": {
-   "type": "array",
-   "items": {
-    "enum": [
-     "dialogue",
-     "narration",
-     "music",
-     "sfx",
-     "ambience"
-    ]
-   },
-   "minItems": 1
-  },
-  "beds": {
-   "type": "array",
-   "items": {
-    "type": "object",
-    "properties": {
-     "scene": {
-      "type": "string",
-      "minLength": 1
-     },
-     "ref": {
-      "type": "string",
-      "minLength": 1
-     },
-     "gain_db": {
-      "type": "number"
-     },
-     "start_frame": {
-      "type": "integer",
-      "minimum": 0
-     },
-     "end_frame": {
-      "type": "integer",
-      "minimum": 0
-     }
-    },
-    "required": [
-     "scene",
-     "ref",
-     "gain_db",
-     "start_frame",
-     "end_frame"
-    ],
-    "additionalProperties": false
-   }
-  },
-  "vacuums": {
-   "type": "array",
-   "items": {
-    "type": "object",
-    "properties": {
-     "start_frame": {
-      "type": "integer",
-      "minimum": 0
-     },
-     "end_frame": {
-      "type": "integer",
-      "minimum": 0
-     },
-     "reason": {
-      "type": "string",
-      "minLength": 1
-     }
-    },
-    "required": [
-     "start_frame",
-     "end_frame",
-     "reason"
-    ],
-    "additionalProperties": false
-   }
-  },
-  "spots": {
-   "type": "array",
-   "items": {
-    "type": "object",
-    "properties": {
-     "id": {
-      "type": "string",
-      "minLength": 1
-     },
-     "shot_id": {
-      "type": "string",
-      "minLength": 1
-     },
-     "ref": {
-      "type": "string",
-      "minLength": 1
-     },
-     "word_index": {
-      "anyOf": [
-       {
-        "type": "integer",
-        "minimum": 0
-       },
-       {
-        "type": "null"
-       }
-      ]
-     },
-     "frame": {
-      "anyOf": [
-       {
-        "type": "integer",
-        "minimum": 0
-       },
-       {
-        "type": "null"
-       }
-      ]
-     },
-     "stem": {
-      "enum": [
-       "dialogue",
-       "narration",
-       "music",
-       "sfx",
-       "ambience"
-      ]
-     },
-     "pan": {
-      "type": "number",
-      "minimum": -1,
-      "maximum": 1
-     },
-     "perspective": {
-      "enum": [
-       "near",
-       "mid",
-       "far"
-      ]
-     },
-     "gain_db": {
-      "type": "number"
-     }
-    },
-    "required": [
-     "id",
-     "shot_id",
-     "ref",
-     "word_index",
-     "frame",
-     "stem",
-     "pan",
-     "perspective",
-     "gain_db"
-    ],
-    "additionalProperties": false
-   }
-  },
-  "master": {
-   "type": "object",
-   "properties": {
-    "rule": {
-     "type": "string",
-     "pattern": "^BP-\\d{2,3}$"
-    }
-   },
-   "required": [
-    "rule"
-   ],
-   "additionalProperties": false
+   "enum": [
+    "sound_mix_manifest/1",
+    "sound_mix_manifest/2"
+   ]
   }
  },
  "required": [
-  "schema",
-  "audio_spine",
-  "stems",
-  "beds",
-  "vacuums",
-  "spots",
-  "master"
+  "schema"
  ],
- "additionalProperties": false,
+ "allOf": [
+  {
+   "if": {
+    "properties": {
+     "schema": {
+      "const": "sound_mix_manifest/1"
+     }
+    },
+    "required": [
+     "schema"
+    ]
+   },
+   "then": {
+    "$ref": "#/$defs/v1"
+   },
+   "else": {
+    "$ref": "#/$defs/v2"
+   }
+  }
+ ],
  "$defs": {
   "sha256": {
    "type": "string",
@@ -253,6 +101,725 @@
   "time": {
    "type": "string",
    "minLength": 10
+  },
+  "bp_ref": {
+   "type": "object",
+   "properties": {
+    "rule": {
+     "type": "string",
+     "pattern": "^BP-\\d{2,3}$"
+    }
+   },
+   "required": [
+    "rule"
+   ],
+   "additionalProperties": false
+  },
+  "v1": {
+   "type": "object",
+   "properties": {
+    "schema": {
+     "const": "sound_mix_manifest/1"
+    },
+    "audio_spine": {
+     "$ref": "#/$defs/fileref"
+    },
+    "stems": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "dialogue",
+       "narration",
+       "music",
+       "sfx",
+       "ambience"
+      ]
+     },
+     "minItems": 1
+    },
+    "beds": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "scene": {
+        "type": "string",
+        "minLength": 1
+       },
+       "ref": {
+        "type": "string",
+        "minLength": 1
+       },
+       "gain_db": {
+        "type": "number"
+       },
+       "start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "end_frame": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "required": [
+       "scene",
+       "ref",
+       "gain_db",
+       "start_frame",
+       "end_frame"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "vacuums": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "end_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "reason": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "required": [
+       "start_frame",
+       "end_frame",
+       "reason"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "spots": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "shot_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "ref": {
+        "type": "string",
+        "minLength": 1
+       },
+       "word_index": {
+        "anyOf": [
+         {
+          "type": "integer",
+          "minimum": 0
+         },
+         {
+          "type": "null"
+         }
+        ]
+       },
+       "frame": {
+        "anyOf": [
+         {
+          "type": "integer",
+          "minimum": 0
+         },
+         {
+          "type": "null"
+         }
+        ]
+       },
+       "stem": {
+        "enum": [
+         "dialogue",
+         "narration",
+         "music",
+         "sfx",
+         "ambience"
+        ]
+       },
+       "pan": {
+        "type": "number",
+        "minimum": -1,
+        "maximum": 1
+       },
+       "perspective": {
+        "enum": [
+         "near",
+         "mid",
+         "far"
+        ]
+       },
+       "gain_db": {
+        "type": "number"
+       }
+      },
+      "required": [
+       "id",
+       "shot_id",
+       "ref",
+       "word_index",
+       "frame",
+       "stem",
+       "pan",
+       "perspective",
+       "gain_db"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "master": {
+     "type": "object",
+     "properties": {
+      "rule": {
+       "type": "string",
+       "pattern": "^BP-\\d{2,3}$"
+      }
+     },
+     "required": [
+      "rule"
+     ],
+     "additionalProperties": false
+    }
+   },
+   "required": [
+    "schema",
+    "audio_spine",
+    "stems",
+    "beds",
+    "vacuums",
+    "spots",
+    "master"
+   ],
+   "additionalProperties": false
+  },
+  "v2": {
+   "type": "object",
+   "properties": {
+    "schema": {
+     "const": "sound_mix_manifest/2"
+    },
+    "derived_from": {
+     "type": "object",
+     "properties": {
+      "audio_spine": {
+       "$ref": "#/$defs/fileref"
+      },
+      "timed": {
+       "$ref": "#/$defs/fileref"
+      },
+      "library": {
+       "$ref": "#/$defs/fileref"
+      },
+      "film_shots": {
+       "$ref": "#/$defs/fileref"
+      }
+     },
+     "required": [
+      "audio_spine",
+      "timed",
+      "library"
+     ],
+     "additionalProperties": false
+    },
+    "fps": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "total_frames": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "stems": {
+     "type": "array",
+     "items": {
+      "enum": [
+       "dialogue",
+       "narration",
+       "music",
+       "sfx",
+       "ambience"
+      ]
+     },
+     "minItems": 1
+    },
+    "narration": {
+     "type": "object",
+     "properties": {
+      "ref": {
+       "type": "string",
+       "minLength": 1
+      },
+      "sha256": {
+       "$ref": "#/$defs/sha256"
+      }
+     },
+     "required": [
+      "ref",
+      "sha256"
+     ],
+     "additionalProperties": false
+    },
+    "dialogue": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "shot_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "ref": {
+        "anyOf": [
+         {
+          "type": "string",
+          "minLength": 1
+         },
+         {
+          "type": "null"
+         }
+        ]
+       },
+       "start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "end_frame": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "required": [
+       "shot_id",
+       "ref",
+       "start_frame",
+       "end_frame"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "scenes": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "object",
+      "properties": {
+       "scene": {
+        "type": "string",
+        "minLength": 1
+       },
+       "start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "end_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "acoustic": {
+        "enum": [
+         "outdoor",
+         "room",
+         "hall",
+         "cave",
+         "neutral"
+        ]
+       },
+       "acoustic_source": {
+        "enum": [
+         "declared",
+         "inferred"
+        ]
+       },
+       "ir_seed": {
+        "type": "integer"
+       },
+       "entry": {
+        "enum": [
+         "J",
+         "L",
+         "butt"
+        ]
+       },
+       "lead_frames": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "required": [
+       "scene",
+       "start_frame",
+       "end_frame",
+       "acoustic",
+       "acoustic_source",
+       "ir_seed",
+       "entry",
+       "lead_frames"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "beds": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "scene": {
+        "type": "string",
+        "minLength": 1
+       },
+       "kind": {
+        "enum": [
+         "room_tone",
+         "ambience",
+         "native"
+        ]
+       },
+       "ref": {
+        "type": "string",
+        "minLength": 1
+       },
+       "gain_db": {
+        "type": "number"
+       },
+       "start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "end_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "fade_in_frames": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "fade_out_frames": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "required": [
+       "id",
+       "scene",
+       "kind",
+       "ref",
+       "gain_db",
+       "start_frame",
+       "end_frame",
+       "fade_in_frames",
+       "fade_out_frames"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "music": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "ref": {
+        "type": "string",
+        "minLength": 1
+       },
+       "motif_of": {
+        "anyOf": [
+         {
+          "type": "string",
+          "minLength": 1
+         },
+         {
+          "type": "null"
+         }
+        ]
+       },
+       "start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "end_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "gain_db": {
+        "type": "number"
+       },
+       "fade_in_frames": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "fade_out_frames": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "beat_grid": {
+        "anyOf": [
+         {
+          "type": "object",
+          "properties": {
+           "bpm": {
+            "type": "number",
+            "exclusiveMinimum": 0
+           },
+           "offset_s": {
+            "type": "number",
+            "minimum": 0
+           },
+           "source": {
+            "enum": [
+             "declared",
+             "measured"
+            ]
+           }
+          },
+          "required": [
+           "bpm",
+           "offset_s",
+           "source"
+          ],
+          "additionalProperties": false
+         },
+         {
+          "type": "null"
+         }
+        ]
+       }
+      },
+      "required": [
+       "id",
+       "ref",
+       "motif_of",
+       "start_frame",
+       "end_frame",
+       "gain_db",
+       "fade_in_frames",
+       "fade_out_frames",
+       "beat_grid"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "vacuums": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "start_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "end_frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "reason": {
+        "type": "string",
+        "minLength": 1
+       },
+       "reveal_frame": {
+        "type": "integer",
+        "minimum": 0
+       }
+      },
+      "required": [
+       "start_frame",
+       "end_frame",
+       "reason",
+       "reveal_frame"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "cues": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "name": {
+        "type": "string",
+        "minLength": 1
+       },
+       "frame": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "gain_db": {
+        "type": "number"
+       },
+       "max_ms": {
+        "anyOf": [
+         {
+          "type": "number",
+          "exclusiveMinimum": 0
+         },
+         {
+          "type": "null"
+         }
+        ]
+       }
+      },
+      "required": [
+       "name",
+       "frame",
+       "gain_db",
+       "max_ms"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "spots": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "shot_id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "ref": {
+        "type": "string",
+        "minLength": 1
+       },
+       "word_index": {
+        "anyOf": [
+         {
+          "type": "integer",
+          "minimum": 0
+         },
+         {
+          "type": "null"
+         }
+        ]
+       },
+       "frame": {
+        "anyOf": [
+         {
+          "type": "integer",
+          "minimum": 0
+         },
+         {
+          "type": "null"
+         }
+        ]
+       },
+       "stem": {
+        "enum": [
+         "dialogue",
+         "narration",
+         "music",
+         "sfx",
+         "ambience"
+        ]
+       },
+       "pan": {
+        "type": "number",
+        "minimum": -1,
+        "maximum": 1
+       },
+       "perspective": {
+        "enum": [
+         "near",
+         "mid",
+         "far"
+        ]
+       },
+       "gain_db": {
+        "type": "number"
+       },
+       "group": {
+        "anyOf": [
+         {
+          "type": "string",
+          "minLength": 1
+         },
+         {
+          "type": "null"
+         }
+        ]
+       },
+       "layer": {
+        "enum": [
+         "single",
+         "sub",
+         "body",
+         "air"
+        ]
+       },
+       "origin": {
+        "enum": [
+         "timed_sfx",
+         "foley",
+         "loudest",
+         "hit"
+        ]
+       }
+      },
+      "required": [
+       "id",
+       "shot_id",
+       "ref",
+       "word_index",
+       "frame",
+       "stem",
+       "pan",
+       "perspective",
+       "gain_db",
+       "group",
+       "layer",
+       "origin"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "presence_dip": {
+     "$ref": "#/$defs/bp_ref"
+    },
+    "perspective": {
+     "$ref": "#/$defs/bp_ref"
+    },
+    "master": {
+     "$ref": "#/$defs/bp_ref"
+    }
+   },
+   "required": [
+    "schema",
+    "derived_from",
+    "fps",
+    "total_frames",
+    "stems",
+    "narration",
+    "dialogue",
+    "scenes",
+    "beds",
+    "music",
+    "vacuums",
+    "cues",
+    "spots",
+    "presence_dip",
+    "perspective",
+    "master"
+   ],
+   "additionalProperties": false
   }
  }
 }
