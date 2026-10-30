@@ -2669,3 +2669,8 @@ training as sequences is decided in the process. Changed together:
 - Second review round (22:45 UTC): `adopt` takes `approvals` for EVERY gated state up to the target (a machine approval of STAGED_UNLISTED
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.
+
+## 2026-10-30 UTC: Blueprint P3, script spine, variant planner (stage 1b), register lint (no pod, no money)
+Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows one line per commit. A5 stays provisionally D-79: the D-79 branch is built.
+- `stage_guard`: the architect owns the dialogue segment's `scene` header (P0c finding; `test_stage_guard_lets_the_architect_correct_a_scene_header_and_nobody_else`).
+- Rules and docs first: BP-140 (house FAIL: the AI-register word tier, 75 listed forms of 32 words and the Additionally/Moreover/Furthermore openers, `checked_on` 2026-10-29, recheck 180 days; the creator's 09:28 wording is quoted from the plan card because his exact words are not in the repository), BP-114 becomes the soft tier (27 words, 68 phrases, the densities per 1,000 words), BP-141 (profiles A-D, hypothesis), BP-142 (every turn is a played scene, house FAIL), BP-143..146 (ad-safety window, double exposition, "and then" chain, drift; hypotheses). `revolutionary` and `boasts` are in the soft tier, not tier 1 (Napoleon's own period; a hero may boast). `sourced_rules` accepts a dict threshold. Docs: ST-20..ST-24, the RG rules (STORY_ENGINE), the VP checks and ZI-07..ZI-10 (SCRIPT_ENGINE), OR-31 and OR-32, PV-61, KP-46, D-86; `RG` and `VP` join the docs_lint homes.

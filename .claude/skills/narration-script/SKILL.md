@@ -183,7 +183,7 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 <!-- craft-checklist:screenwriting:begin -->
 | ID | check | rule | artefact field | sourced rules | enforced by |
 |---|---|---|---|---|---|
-| CRAFT-SCR-01 | code | no AI-register word over the density limit (delve, tapestry, testament to, ...) | production_script narration[].text and hero lines | BP-114 | `explainer_engine/scripting/register_lint.py` (planned, P3) |
+| CRAFT-SCR-01 | code | no AI-register word over the density limit (delve, tapestry, testament to, ...) | production_script narration[].text and hero lines | BP-114, BP-140 | `explainer_engine/scripting/register_lint.py` (planned, P3) |
 | CRAFT-SCR-02 | critic | no structural AI tells: stacked triplets, sentence-initial 'Imagine', a rhetorical-question opener in every segment, em-dash chains, 'not just X but Y' | narration[].text | BP-114 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
 | CRAFT-SCR-03 | code | the twist sentence lands inside its estimated spoken length | segment twist sentence + syllable estimate | BP-115 | `explainer_engine/scripting/syllables.py` (planned, P3) |
 | CRAFT-SCR-04 | code | causal chain: THEREFORE / BUT joins, no AND-THEN chain | story beats | ST-02 | `explainer_engine/scripting/story_lint.py` |

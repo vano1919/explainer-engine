@@ -30,6 +30,42 @@ The evidence for the new numbers is [research/SCRIPT_ENGINE_V1_2026-10-24.md](re
 | ZI-04 | **Inventions are listed.** Everything the story makes up that a viewer could take for history (the premise, a person's presence, a battle and its numbers, every line of dialogue) has an `invented` claim, and the description of the video says the story is fiction | invariant 5; YouTube's disclosure is decided per video (CLAUDE.md) | the claim map; editorial |
 | ZI-05 | **A variant under test is named, not guessed.** Where a test is still running (sizes in words or numbers, 24 or 12 fps, the tier shares), the cards use the variant in section 3 and the package names it; the winner of the test replaces it in section 3 and nowhere else | the creator 2026-10-24: "use the one that looks ideal in theory, say which" | section 3 |
 | ZI-06 | **A LoRA runs only on its own base, and the base is Qwen-Image-2.1** ([D-80](DECISIONS_AND_OPEN_QUESTIONS.md), 2026-10-26): 2.1 draws and edits with references; 2512, Edit-2511 and every old `wldnk_*` LoRA are retired; each shot is made once and redrawn only when its check fails | the style-weight test 2026-10-24; ვანო 2026-10-26 01:15 | [code] `keyframe_gate.check_stack` |
+| ZI-07 | **No scenario without a chosen variant.** The scenario stage reads `script_variants.json` whose `chosen` is set and whose `variants_sha256` matches the file; the procedure is [OR-31](ORCHESTRATION.md). | cost and structure are chosen before a word is written, by the creator | [code] `EpisodeJob.move` ([CN-04](CONTRACTS.md)) |
+| ZI-08 | **The chosen variant binds the script.** Profile, segment lanes and packaging promises are copied from it, never re-chosen; a drift is VP-15. | the pick must not be rewritten quietly | [code] VP-15 |
+| ZI-09 | **No AI register in anything the viewer hears or reads.** `register_lint` ([RG rules](STORY_ENGINE.md)) runs on the script (PV-61), the narration (N-16, N-17) and the cards and HUD text (KP-46). | the creator's point 1 of 2026-10-29: a script must not read as machine writing | [code] RG-01 FAIL |
+| ZI-10 | **The spine is compiled, never written by hand.** `screenplay_spine.json` comes only from `production compile --film-shots`; its three packaging promises are locked by the script approval (PV-53). | a hand-edited spine would drift from the script it is derived from | [code] [CN-02](CONTRACTS.md) |
+
+## Variant planner checks (VP)
+
+Stage 1b (`scripting/variant_plan.py`, [OR-31](ORCHESTRATION.md)) writes two or three priced variants of different profiles before the
+scenario; code scores them with the checks below, the critic scores the story, the creator picks on one card. A check is a function of
+`variant_plan.dynamics()`, the one place that counts lane shares (the plan, the script and later the shot router call it).
+Score = 100 - 10 per REVIEW - 25 per FAIL, floor 0; a variant with a FAIL cannot be picked. The score never replaces or adds to
+the critic's.
+
+| ID | Check | Severity |
+|---|---|---|
+| VP-01 | the blocks of every segment add up to its window and the shares to 1 (a contract fault) | FAIL (invariant 7) |
+| VP-02 | pure map share at most [BP-141](SOURCED_RULES.md)'s `map_pure_max` | REVIEW |
+| VP-03 | the non-character share at most the profile's `non_character_max` | REVIEW |
+| VP-04 | the longest run of pure map at most `map_run_max_s` | REVIEW |
+| VP-05 | the longest run without a played block at most [BP-127](SOURCED_RULES.md)'s `non_character_run_max_s` | REVIEW |
+| VP-06 | the same archetype on two adjacent narrated blocks | REVIEW |
+| VP-07 | more than `rotation_family_max` blocks of one archetype family inside `rotation_window_s` | REVIEW |
+| VP-08 | a turn slot with no played block that has a cast member ([BP-142](SOURCED_RULES.md): every turn is a played scene) | FAIL (house) |
+| VP-09 | the played share of a turn slot below the profile's `turn_scene_share_min` | REVIEW |
+| VP-10 | one compensator picture longer than `kuleshov_max_s` | REVIEW |
+| VP-11 | a scheduled lane or archetype does not exist in code yet (one finding per lane, naming its phase) | REVIEW |
+| VP-12 | a cost row is `unknown` (no measurement in `config/job_speeds.json`): the variant waits for its measuring phase | REVIEW |
+| VP-13 | the known worst-case cost above 80 % of a cap of `config/spend_caps.json` (invariant 2) | FAIL |
+| VP-14 | two variants of one profile (a near-copy) | REVIEW |
+| VP-15 | drift from the choice: seconds per segment beyond [BP-146](SOURCED_RULES.md)'s `seconds_drift` or cost beyond `usd_drift` of the planned price: REVIEW; cost above the `usd_worst` the creator approved: FAIL (invariant 2) | REVIEW / FAIL |
+| VP-16 | the estimated narrator share outside [BP-105](SOURCED_RULES.md)'s band | REVIEW |
+| VP-17 | the central scene (slot 10) has the most played seconds (ST-18) | REVIEW |
+| VP-18 | planned shots per minute outside [BP-107](SOURCED_RULES.md)'s band, or the planned hold share above [BP-109](SOURCED_RULES.md)'s | REVIEW |
+
+Costs come only from `config/job_speeds.json` (pod work, measured by P12b) and the API price tables (`imagegen`); a row with no
+measurement is `unknown` and is shown as such, never filled in. A pod row waits for its measurement, an API row does not.
 
 ## 3. Variants in use (replace a row when its test reports)
 

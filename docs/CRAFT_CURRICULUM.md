@@ -32,7 +32,7 @@ P4, P4b, P5, P6, P7, P8, P9, P10). Until then a row is ticked by the critic or b
 | editing_colour | `video-editing-architect` | `standards/craft_checklists/editing_colour.json` | CRAFT-EDC-01..12 (12) | 7 / 2 / 3 / 0 | BP-25, BP-31, BP-128, BP-129, BP-130, BP-131 |
 | motion_graphics | `video-editing-architect` | `standards/craft_checklists/motion_graphics.json` | CRAFT-MOG-01..15 (15) | 6 / 6 / 3 / 0 | BP-07, BP-28, BP-38, BP-54, BP-93, BP-134 |
 | packaging | `shorts-for-video` | `standards/craft_checklists/packaging.json` | CRAFT-PKG-01..10 (10) | 3 / 2 / 2 / 3 | BP-11, BP-12, BP-29, BP-48, BP-135, BP-136, BP-137 |
-| screenwriting | `narration-script` | `standards/craft_checklists/screenwriting.json` | CRAFT-SCR-01..07 (7) | 5 / 2 / 0 / 0 | BP-06, BP-07, BP-87, BP-88, BP-114, BP-115 |
+| screenwriting | `narration-script` | `standards/craft_checklists/screenwriting.json` | CRAFT-SCR-01..07 (7) | 5 / 2 / 0 / 0 | BP-06, BP-07, BP-87, BP-88, BP-114, BP-115, BP-140 |
 | sound | `editing-style` | `standards/craft_checklists/sound.json` | CRAFT-SND-01..14 (14) | 12 / 2 / 0 / 0 | BP-50, BP-53, BP-54, BP-56, BP-62, BP-116, BP-117, BP-118, BP-119, BP-120, BP-121, BP-122, BP-123 |
 | voice | `elevenlabs-voice` | `standards/craft_checklists/voice.json` | CRAFT-VOX-01..09 (9) | 5 / 2 / 0 / 2 | BP-01, BP-10, BP-14, BP-138 |
 <!-- craft-index:end -->

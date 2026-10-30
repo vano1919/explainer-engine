@@ -94,6 +94,7 @@ Day 1: `examples/stone_age/day1_v7/production_script.json`. Code: `explainer_eng
 | PV-58 | word slams ([BP-97](SOURCED_RULES.md), [D-66](DECISIONS_AND_OPEN_QUESTIONS.md)): a shot accent `slam_text` is at most the rule's words, one a segment, and never the same word twice (`validate.word_slams`); the picture dims and softens behind it while it holds (`accents.SLAM_DIM`); the rule's severity |
 | PV-59 | Scene Package references (D-70 stage F): every `segments[].asset_ids` entry is a record of the asset library ([WORLD_BIBLE.md](WORLD_BIBLE.md) WB-06) and the script's `bible.version` is a version the World Bible has had; FAIL otherwise (`production/segment_hash.check`) |
 | PV-60 | a segment's `review` with `status: approved` names who approved (`by`, FAIL without) and carries the segment's edit hash at that moment (`production/segment_hash.hashes`); a segment edited after its review is a REVIEW that asks to show it again. `python -m explainer_engine.production.segment_hash <script> --against <older>` prints what a change makes stale (voice, pictures, edit), so only that is made again |
+| PV-61 | the AI register of the script (`scripting/register_lint.py`, RG-01..RG-05, [BP-140](SOURCED_RULES.md) and [BP-114](SOURCED_RULES.md)): narrator and hero lines of segments and Shorts; a tier-1 word is a FAIL, the soft tier and the densities are REVIEW; the allow-list is `register_allow.json` next to the script |
 
 ## Paint plans (PP-xx; audit 2026-10-19; `imagegen/plan.py`, `production/paint.py`)
 
