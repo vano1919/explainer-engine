@@ -1,0 +1,13 @@
+{
+ "schema": "pod_heartbeat/1",
+ "job_id": "job-001",
+ "pod_id": "abc123",
+ "boot_nonce": "n1",
+ "seq": 3,
+ "ts_utc": 1788000000.5,
+ "state": "ZOMBIE",
+ "progress": 12,
+ "stage": "train",
+ "key_probe_http": 200,
+ "spend_usd": 0.31
+}

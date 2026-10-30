@@ -1,0 +1,162 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "pod_heartbeat.schema.json",
+ "title": "Pod heartbeat: one sign of life of a pod job (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "pod_heartbeat/1"
+  },
+  "job_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "pod_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "boot_nonce": {
+   "type": "string",
+   "minLength": 1
+  },
+  "seq": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "ts_utc": {
+   "type": "number"
+  },
+  "state": {
+   "enum": [
+    "BOOTING",
+    "PREFLIGHT_OK",
+    "RUNNING",
+    "UPLOADING",
+    "DONE",
+    "FAILED",
+    "FAILED_UPLOAD",
+    "BAD_HOST"
+   ]
+  },
+  "progress": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "stage": {
+   "anyOf": [
+    {
+     "type": "string",
+     "minLength": 1
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "key_probe_http": {
+   "anyOf": [
+    {
+     "type": "integer",
+     "minimum": 0
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "spend_usd": {
+   "anyOf": [
+    {
+     "type": "number",
+     "minimum": 0
+    },
+    {
+     "type": "null"
+    }
+   ]
+  }
+ },
+ "required": [
+  "schema",
+  "job_id",
+  "pod_id",
+  "boot_nonce",
+  "seq",
+  "ts_utc",
+  "state",
+  "progress",
+  "stage",
+  "key_probe_http",
+  "spend_usd"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

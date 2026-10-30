@@ -1,0 +1,43 @@
+{
+ "schema": "sound_mix_manifest/1",
+ "audio_spine": {
+  "path": "audio/audio_spine.json",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ },
+ "stems": [
+  "narration",
+  "sfx"
+ ],
+ "beds": [
+  {
+   "scene": "S01",
+   "ref": "amb/wind.wav",
+   "gain_db": -30,
+   "start_frame": 0,
+   "end_frame": 48
+  }
+ ],
+ "vacuums": [
+  {
+   "start_frame": 40,
+   "end_frame": 48,
+   "reason": "after impact"
+  }
+ ],
+ "spots": [
+  {
+   "id": "sp1",
+   "shot_id": "s1",
+   "ref": "sfx/door.wav",
+   "word_index": null,
+   "frame": null,
+   "stem": "sfx",
+   "pan": 0.2,
+   "perspective": "mid",
+   "gain_db": -6
+  }
+ ],
+ "master": {
+  "rule": "BP-50"
+ }
+}

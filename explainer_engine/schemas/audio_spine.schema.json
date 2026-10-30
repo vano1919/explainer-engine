@@ -1,0 +1,224 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "audio_spine.schema.json",
+ "title": "Audio spine: every word of the read in seconds and frames, the clock all departments lock to (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "audio_spine/1"
+  },
+  "derived_from": {
+   "type": "object",
+   "properties": {
+    "words": {
+     "$ref": "#/$defs/fileref"
+    },
+    "timed": {
+     "$ref": "#/$defs/fileref"
+    }
+   },
+   "required": [
+    "words",
+    "timed"
+   ],
+   "additionalProperties": false
+  },
+  "fps": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "duration_s": {
+   "type": "number",
+   "minimum": 0
+  },
+  "total_frames": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "words": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "i": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "text": {
+      "type": "string",
+      "minLength": 1
+     },
+     "start_s": {
+      "type": "number",
+      "minimum": 0
+     },
+     "end_s": {
+      "type": "number",
+      "minimum": 0
+     },
+     "start_frame": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "end_frame": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "segment": {
+      "type": "string",
+      "minLength": 1
+     },
+     "line": {
+      "type": "integer",
+      "minimum": 0
+     }
+    },
+    "required": [
+     "i",
+     "text",
+     "start_s",
+     "end_s",
+     "start_frame",
+     "end_frame",
+     "segment",
+     "line"
+    ],
+    "additionalProperties": false
+   },
+   "minItems": 1
+  },
+  "segments": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "start_frame": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "end_frame": {
+      "type": "integer",
+      "minimum": 0
+     }
+    },
+    "required": [
+     "id",
+     "start_frame",
+     "end_frame"
+    ],
+    "additionalProperties": false
+   },
+   "minItems": 1
+  },
+  "post_hoc_shots": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "shot_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "start_frame": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "end_frame": {
+      "type": "integer",
+      "minimum": 0
+     }
+    },
+    "required": [
+     "shot_id",
+     "start_frame",
+     "end_frame"
+    ],
+    "additionalProperties": false
+   }
+  }
+ },
+ "required": [
+  "schema",
+  "derived_from",
+  "fps",
+  "duration_s",
+  "total_frames",
+  "words",
+  "segments",
+  "post_hoc_shots"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

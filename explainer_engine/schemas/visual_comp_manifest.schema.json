@@ -1,0 +1,171 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "visual_comp_manifest.schema.json",
+ "title": "Visual compensation manifest: maps, HUD and diagram items triggered by words (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "visual_comp_manifest/1"
+  },
+  "audio_spine": {
+   "$ref": "#/$defs/fileref"
+  },
+  "items": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "item_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "shot_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "archetype_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "trigger_word_index": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "duration_frames": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "layers": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "kind": {
+         "type": "string",
+         "minLength": 1
+        },
+        "ref": {
+         "type": "string",
+         "minLength": 1
+        },
+        "reveal_word_index": {
+         "anyOf": [
+          {
+           "type": "integer",
+           "minimum": 0
+          },
+          {
+           "type": "null"
+          }
+         ]
+        }
+       },
+       "required": [
+        "kind",
+        "ref",
+        "reveal_word_index"
+       ],
+       "additionalProperties": false
+      }
+     },
+     "on_screen_text": {
+      "anyOf": [
+       {
+        "type": "string",
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "required": [
+     "item_id",
+     "shot_id",
+     "archetype_id",
+     "trigger_word_index",
+     "duration_frames",
+     "layers",
+     "on_screen_text"
+    ],
+    "additionalProperties": false
+   }
+  }
+ },
+ "required": [
+  "schema",
+  "audio_spine",
+  "items"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

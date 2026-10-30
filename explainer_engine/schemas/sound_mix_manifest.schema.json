@@ -1,0 +1,258 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "sound_mix_manifest.schema.json",
+ "title": "Sound mix manifest: stems, beds, vacuums and spot sounds on the audio spine (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "sound_mix_manifest/1"
+  },
+  "audio_spine": {
+   "$ref": "#/$defs/fileref"
+  },
+  "stems": {
+   "type": "array",
+   "items": {
+    "enum": [
+     "dialogue",
+     "narration",
+     "music",
+     "sfx",
+     "ambience"
+    ]
+   },
+   "minItems": 1
+  },
+  "beds": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "scene": {
+      "type": "string",
+      "minLength": 1
+     },
+     "ref": {
+      "type": "string",
+      "minLength": 1
+     },
+     "gain_db": {
+      "type": "number"
+     },
+     "start_frame": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "end_frame": {
+      "type": "integer",
+      "minimum": 0
+     }
+    },
+    "required": [
+     "scene",
+     "ref",
+     "gain_db",
+     "start_frame",
+     "end_frame"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "vacuums": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "start_frame": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "end_frame": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "reason": {
+      "type": "string",
+      "minLength": 1
+     }
+    },
+    "required": [
+     "start_frame",
+     "end_frame",
+     "reason"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "spots": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "shot_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "ref": {
+      "type": "string",
+      "minLength": 1
+     },
+     "word_index": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 0
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "frame": {
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 0
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "stem": {
+      "enum": [
+       "dialogue",
+       "narration",
+       "music",
+       "sfx",
+       "ambience"
+      ]
+     },
+     "pan": {
+      "type": "number",
+      "minimum": -1,
+      "maximum": 1
+     },
+     "perspective": {
+      "enum": [
+       "near",
+       "mid",
+       "far"
+      ]
+     },
+     "gain_db": {
+      "type": "number"
+     }
+    },
+    "required": [
+     "id",
+     "shot_id",
+     "ref",
+     "word_index",
+     "frame",
+     "stem",
+     "pan",
+     "perspective",
+     "gain_db"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "master": {
+   "type": "object",
+   "properties": {
+    "rule": {
+     "type": "string",
+     "pattern": "^BP-\\d{2,3}$"
+    }
+   },
+   "required": [
+    "rule"
+   ],
+   "additionalProperties": false
+  }
+ },
+ "required": [
+  "schema",
+  "audio_spine",
+  "stems",
+  "beds",
+  "vacuums",
+  "spots",
+  "master"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

@@ -1,0 +1,52 @@
+{
+ "schema": "editorial_review/3",
+ "script": {
+  "path": "x/file.bin",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ },
+ "reviewer": "script-critic",
+ "layers": {
+  "script": {
+   "status": "inspected",
+   "checklist_ids": [
+    "CL-01"
+   ],
+   "findings": []
+  },
+  "direction": {
+   "status": "inspected",
+   "checklist_ids": [
+    "CL-01"
+   ],
+   "findings": []
+  },
+  "cinematography": {
+   "status": "inspected",
+   "checklist_ids": [
+    "CL-01"
+   ],
+   "findings": []
+  },
+  "editing": {
+   "status": "inspected",
+   "checklist_ids": [
+    "CL-01"
+   ],
+   "findings": []
+  },
+  "sound": {
+   "status": "inspected",
+   "checklist_ids": [
+    "CL-01"
+   ],
+   "findings": []
+  },
+  "packaging": {
+   "status": "inspected",
+   "checklist_ids": [
+    "CL-01"
+   ],
+   "findings": []
+  }
+ }
+}

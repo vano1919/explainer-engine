@@ -302,7 +302,7 @@ def draw(out, ids, ref=None, ledger=None, key_env=None):
     from explainer_engine.core.ledger import Run
     from explainer_engine.imagegen.providers.bfl import BFL
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
-    run = Run.open(ledger, caps={"bfl_usd": 3.0}) if ledger else None
+    run = Run.open(ledger) if ledger else None  # the cap comes from config/spend_caps.json (check_caps)
     key = os.environ[key_env].strip() if key_env else _key()
     p = BFL(out, run=run, key=key)
     refs = [Path(ref).read_bytes()] if ref else []

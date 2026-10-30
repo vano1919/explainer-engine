@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "film_shots.schema.json",
-  "title": "Film shot cards (version 1): the animated shots of an approved script, from which every picture, video and sound prompt is composed (docs/SHOT_PROMPTS.md, KP-15..KP-40)",
+  "title": "Film shot cards (versions 1 and 2; /2 adds the lane, frame geometry and fps, docs/CONTRACTS.md): the animated shots of an approved script, from which every picture, video and sound prompt is composed (docs/SHOT_PROMPTS.md, KP-15..KP-40)",
   "type": "object",
   "required": ["schema", "episode", "style", "cast", "places", "shots"],
   "additionalProperties": false,
@@ -25,7 +25,9 @@
     }
   },
   "properties": {
-    "schema": {"const": "film_shots/1"},
+    "schema": {"enum": ["film_shots/1", "film_shots/2"]},
+    "fps": {"type": "integer", "minimum": 1, "description": "film_shots/2: the episode's frame rate (D-85, CN-09)"},
+    "scene_sets": {"type": "array", "items": {"type": "string"}, "description": "film_shots/2: scene_set/1 files next to this file"},
     "episode": {"$ref": "#/$defs/text"},
     "script": {"type": "string", "description": "the approved production script these shots film (path next to this file)"},
     "style": {
@@ -174,9 +176,31 @@
           "exit": {"type": "boolean"},
           "tier": {"enum": ["hold", "light", "full"],
                    "description": "the animation budget (KP-37): hold = the keyframe with a camera move by our code; light = a small move (breath, glance, turn of the head) on the fast model; full = the acting, every line and every peak"},
-          "claims": {"type": "array", "items": {"type": "string"}, "description": "claim ids of the facts the narration says (ZI-02)"}
+          "claims": {"type": "array", "items": {"type": "string"}, "description": "claim ids of the facts the narration says (ZI-02)"},
+          "lane": {"enum": ["KEYFRAME_LTX", "DIALOGUE_CU", "HOST_COMMENTARY", "DRAMA_BLOCKED_3D", "ATMOS_BROLL", "MAP", "COMPENSATOR",
+                            "STILL_HOLD"], "description": "film_shots/2: how the shot is made (docs/CONTRACTS.md); the shot size stays frame.size"},
+          "archetype": {"type": "string", "minLength": 1, "description": "film_shots/2: an id of the P5 visual archetype catalogue"},
+          "duration_frames": {"type": "integer", "minimum": 1, "description": "film_shots/2: frames at the episode fps (8k+1 on a video lane, CN-08)"},
+          "width": {"type": "integer", "minimum": 1},
+          "height": {"type": "integer", "minimum": 1},
+          "lens_tier": {"enum": ["wide", "normal", "long"]},
+          "focal_xy": {"type": "array", "items": {"type": "number", "minimum": 0, "maximum": 1}, "minItems": 2, "maxItems": 2},
+          "continuity_ref": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}], "description": "<file>#<id> of a continuity card, or null"},
+          "blocking_ref": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}], "description": "<file>#<id> of a scene_set camera, or null"}
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {"if": {"properties": {"schema": {"const": "film_shots/1"}}, "required": ["schema"]},
+     "then": {"not": {"anyOf": [{"required": ["fps"]}, {"required": ["scene_sets"]}]},
+              "properties": {"shots": {"items": {"not": {"anyOf": [{"required": ["lane"]}, {"required": ["archetype"]}, {"required": ["duration_frames"]},
+                                                                  {"required": ["width"]}, {"required": ["height"]}, {"required": ["lens_tier"]},
+                                                                  {"required": ["focal_xy"]}, {"required": ["continuity_ref"]},
+                                                                  {"required": ["blocking_ref"]}]}}}}}},
+    {"if": {"properties": {"schema": {"const": "film_shots/2"}}, "required": ["schema"]},
+     "then": {"required": ["fps"],
+              "properties": {"shots": {"items": {"required": ["lane", "archetype", "duration_frames", "width", "height", "lens_tier",
+                                                             "focal_xy", "continuity_ref", "blocking_ref"]}}}}}
+  ]
 }

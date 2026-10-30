@@ -1,0 +1,288 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "editorial_review.schema.json",
+ "title": "Editorial review by department (version 3; /2 is the integrated review of D-60) (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "editorial_review/3"
+  },
+  "script": {
+   "$ref": "#/$defs/fileref"
+  },
+  "reviewer": {
+   "type": "string",
+   "minLength": 1
+  },
+  "layers": {
+   "type": "object",
+   "properties": {
+    "script": {
+     "type": "object",
+     "properties": {
+      "status": {
+       "enum": [
+        "inspected",
+        "not_applicable"
+       ]
+      },
+      "checklist_ids": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "findings": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      }
+     },
+     "required": [
+      "status",
+      "checklist_ids",
+      "findings"
+     ],
+     "additionalProperties": false
+    },
+    "direction": {
+     "type": "object",
+     "properties": {
+      "status": {
+       "enum": [
+        "inspected",
+        "not_applicable"
+       ]
+      },
+      "checklist_ids": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "findings": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      }
+     },
+     "required": [
+      "status",
+      "checklist_ids",
+      "findings"
+     ],
+     "additionalProperties": false
+    },
+    "cinematography": {
+     "type": "object",
+     "properties": {
+      "status": {
+       "enum": [
+        "inspected",
+        "not_applicable"
+       ]
+      },
+      "checklist_ids": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "findings": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      }
+     },
+     "required": [
+      "status",
+      "checklist_ids",
+      "findings"
+     ],
+     "additionalProperties": false
+    },
+    "editing": {
+     "type": "object",
+     "properties": {
+      "status": {
+       "enum": [
+        "inspected",
+        "not_applicable"
+       ]
+      },
+      "checklist_ids": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "findings": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      }
+     },
+     "required": [
+      "status",
+      "checklist_ids",
+      "findings"
+     ],
+     "additionalProperties": false
+    },
+    "sound": {
+     "type": "object",
+     "properties": {
+      "status": {
+       "enum": [
+        "inspected",
+        "not_applicable"
+       ]
+      },
+      "checklist_ids": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "findings": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      }
+     },
+     "required": [
+      "status",
+      "checklist_ids",
+      "findings"
+     ],
+     "additionalProperties": false
+    },
+    "packaging": {
+     "type": "object",
+     "properties": {
+      "status": {
+       "enum": [
+        "inspected",
+        "not_applicable"
+       ]
+      },
+      "checklist_ids": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "findings": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      }
+     },
+     "required": [
+      "status",
+      "checklist_ids",
+      "findings"
+     ],
+     "additionalProperties": false
+    }
+   },
+   "required": [
+    "script",
+    "direction",
+    "cinematography",
+    "editing",
+    "sound",
+    "packaging"
+   ],
+   "additionalProperties": false
+  }
+ },
+ "required": [
+  "schema",
+  "script",
+  "reviewer",
+  "layers"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

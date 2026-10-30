@@ -1,0 +1,23 @@
+{
+ "schema": "visual_comp_manifest/1",
+ "audio_spine": {
+  "path": "audio/audio_spine.json",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ },
+ "items": [
+  {
+   "item_id": "m1",
+   "shot_id": "s1",
+   "archetype_id": "map_pan",
+   "duration_frames": 48,
+   "layers": [
+    {
+     "kind": "arrow",
+     "ref": "layers/a.png",
+     "reveal_word_index": 2
+    }
+   ],
+   "on_screen_text": null
+  }
+ ]
+}
