@@ -833,11 +833,17 @@ def create(api, body, *, max_price, sleep=time.sleep, lookups=6, gpus=None):
     CUDA 12.4, to a CUDA 13 image and its first GPU call never returned; LT-19).
     Only a body stamped by ``preflight_create(body=...)`` is sent (N-01): the CLI's refusals cannot be skipped by calling this
     function directly, and a body changed after the preflight is refused too. The stamp guards against a forgotten preflight,
-    not against code that forges it (the session hook refuses a Python ``rp.create(`` outside the CLI as the second net)."""
+    not against code that forges it (``preflight_stamp`` is public): what the body alone decides is checked here again, so even
+    a forged stamp sends no boot pod and no unpinned image, and the session hook refuses a Python create outside the CLI."""
     stamp = body.pop(PREFLIGHT_KEY, None)
     if stamp is None or stamp != preflight_stamp(body):
         raise RunPodError("refused: create() takes only a body stamped by preflight_create (OR-21, D-56); "
                           "use python -m explainer_engine.cloud.runpod create")
+    from explainer_engine.cloud import pins
+    why = ([] if body.get("cmd") == script_cmd() else [f"the body does not run pod_wrapper.sh ({OR21})"])
+    why += [f"image: {p} (config/cloud_pins.json)" for p in pins.check_image(body.get("image"))]
+    if why:
+        raise RunPodError("refused: " + "; ".join(why))
     if not (body.get("gpu") or {}).get("allowedCudaVersions"):
         raise RunPodError("create: the body has no gpu.allowedCudaVersions; an old-driver host can hang a new image "
                           f"(keep {CUDA_VERSIONS})")

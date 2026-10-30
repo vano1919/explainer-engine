@@ -23,14 +23,20 @@ def job(tmp_path):
     return EpisodeJob.create(tmp_path, job_id="job-001", episode_slug="nap", ledger="run.json", fps=24)
 
 
-def variants_file(job):
+class _Dir:
+    def __init__(self, job_dir):
+        self.job_dir = job_dir
+
+
+def variants_file(job, write=True):
     """N-03: VARIANT_CHOSEN binds the script_variants.json the creator picked from (the Napoleon example, v1 picked);
     returns the file and the variants_sha256 his approval carries."""
     doc = json.loads((store.ROOT / "examples" / "napoleon_vs_genghis" / "script_variants.json").read_text(encoding="utf-8"))
     doc["chosen"] = {"variant_id": "v1", "by": "creator", "ref": "cmsg_1", "at": "2026-10-30T00:00:00Z",
                      "variants_sha256": contracts.variants_sha256(doc)}
     f = job.job_dir / "script_variants.json"
-    f.write_text(json.dumps(doc), encoding="utf-8")
+    if write:
+        f.write_text(json.dumps(doc), encoding="utf-8")
     return f, doc["chosen"]["variants_sha256"]
 
 
@@ -193,6 +199,8 @@ def gates_up_to(state):
     for s in LIFECYCLE[1:LIFECYCLE.index(state) + 1]:
         kind = sorted(store.GATES[s])[0]
         out[s] = {"creator": CREATOR, "planner": PLANNER, "machine": MACHINE}[kind]
+    if "VARIANT_CHOSEN" in out:  # the pick binds the variants file the ``folder`` fixture writes (adopt checks it as move does)
+        out["VARIANT_CHOSEN"] = {**out["VARIANT_CHOSEN"], "sha256": variants_file(_Dir(store.ROOT), write=False)[1]}
     return out
 
 
@@ -203,12 +211,13 @@ ADOPT = dict(job_id="a", episode_slug="a", ledger="run.json", fps=24)
 def folder(tmp_path):
     (tmp_path / "run.json").write_text(json.dumps({"reserved": {"pod:abc": {"service": "runpod_usd", "amount": 1.0}}}), encoding="utf-8")
     (tmp_path / "dossier.md").write_text("research", encoding="utf-8")
+    variants_file(_Dir(tmp_path))  # adopting past the pick names this file (T5's review of N-03)
     return tmp_path
 
 
 def test_an_existing_episode_is_adopted_through_every_gate_on_the_way(folder):
     job = EpisodeJob.adopt(folder, state="SCRIPT_APPROVED", reason="Titans, approved 2026-10-20", approvals=gates_up_to("SCRIPT_APPROVED"),
-                           dossier=folder / "dossier.md", **ADOPT)
+                           dossier=folder / "dossier.md", variants=folder / "script_variants.json", **ADOPT)
     m = EpisodeJob.open(folder).manifest
     assert m["history"][0]["path"] == "adopted" and m["state"] == "SCRIPT_APPROVED"
     assert set(m["approvals"]) == {"RESEARCHED", "VARIANT_CHOSEN", "SCENARIO_APPROVED", "SCRIPT_APPROVED"}
@@ -252,7 +261,7 @@ def test_nothing_is_adopted_into_the_public_click_even_with_every_approval(folde
 @pytest.mark.parametrize("state", LIFECYCLE[:-1])
 def test_the_full_chain_adopts_into_every_state_before_the_click(folder, state):
     job = EpisodeJob.adopt(folder, state=state, reason="chain", approvals=gates_up_to(state), dossier=folder / "dossier.md",
-                           reservation_id="pod:abc", **ADOPT)
+                           reservation_id="pod:abc", variants=folder / "script_variants.json", **ADOPT)
     assert job.state == state and set(job.manifest["approvals"]) == set(LIFECYCLE[1:LIFECYCLE.index(state) + 1])
     assert EpisodeJob.open(folder).state == state
     for _ in LIFECYCLE[LIFECYCLE.index(state) + 1:-1]:  # an adopted job walks on to the last state before the click
@@ -279,7 +288,7 @@ def test_adopting_names_the_dossier_file_and_the_reservation(folder):
                              reservation_id=rid, **ADOPT)
     assert not (folder / store.MANIFEST).exists()
     job = EpisodeJob.adopt(folder, state="BUDGET_RESERVED", reason="x", approvals=budget, dossier=folder / "dossier.md",
-                           reservation_id="pod:abc", **ADOPT)
+                           reservation_id="pod:abc", variants=folder / "script_variants.json", **ADOPT)
     assert job.manifest["budget_reservation_id"] == "pod:abc"
     with pytest.raises(ContractError):  # never over an existing manifest
         EpisodeJob.adopt(folder, state="CREATED", reason="x", approvals={}, **ADOPT)

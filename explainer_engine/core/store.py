@@ -220,11 +220,12 @@ class EpisodeJob:
 
     @classmethod
     def adopt(cls, job_dir: Path | str, *, state: str, reason: str, approvals: dict[str, dict], dossier: Path | str | None = None,
-              reservation_id: str | None = None, **create_args) -> "EpisodeJob":
+              reservation_id: str | None = None, variants: Path | str | None = None, **create_args) -> "EpisodeJob":
         """An existing episode folder gets its manifest at a state its owner states (history path ``adopted``). Adopting is no way
         round the gates (CN-04, CN-06): ``approvals`` holds the right approval of EVERY gated state from the first step up to
         ``state``, each bound to a sha256 where a person approved; the research dossier file is named and hashed (CN-05); a state
-        past BUDGET_RESERVED names a reservation the ledger holds. A terminal state is never adopted (nothing could reopen it)."""
+        past BUDGET_RESERVED names a reservation the ledger holds; a state past VARIANT_CHOSEN names ``variants``, checked as
+        ``move`` checks it. A terminal state is never adopted (nothing could reopen it)."""
         job_dir = Path(job_dir)
         if state not in LIFECYCLE[:-1]:
             raise ContractError(f"cannot adopt into {state!r}: adopt a state of the forward path before the public click (CN-06)")
@@ -247,6 +248,8 @@ class EpisodeJob:
                        budget_reservation_id=reservation_id if "BUDGET_RESERVED" in reached else None, **create_args)
         if "BUDGET_RESERVED" in reached and not (reservation_id and job._reserved(reservation_id)):
             raise ContractError(f"adopt into {state} names a reservation the ledger holds: {reservation_id!r}")
+        if "VARIANT_CHOSEN" in reached:
+            cls._check_variants(approvals["VARIANT_CHOSEN"], variants, f"adopt into {state}: ")
         job._save()
         return job
 
@@ -291,6 +294,21 @@ class EpisodeJob:
             return False
         return reservation_id in json.loads(path.read_text(encoding="utf-8")).get("reserved", {})
 
+    @staticmethod
+    def _check_variants(approval: dict, variants: Path | str | None, where: str = "") -> None:
+        """VARIANT_CHOSEN binds the script_variants/2 file the creator picked from: the picked id is a variant, and the approval's
+        sha256 is the variants_sha256 of that unchanged file (CN-04, OR-31; ``move`` and ``adopt`` alike)."""
+        if variants is None:
+            raise ContractError(f"{where}VARIANT_CHOSEN needs variants=<the script_variants.json the creator picked from>: the "
+                                "approval binds its variants_sha256 (CN-04, OR-31)")
+        doc = json.loads(Path(variants).read_text(encoding="utf-8"))
+        chosen = doc.get("chosen")
+        if chosen and chosen["variant_id"] not in {v["id"] for v in doc["variants"]}:
+            raise ContractError(f"{where}VARIANT_CHOSEN: {chosen['variant_id']!r} is not one of the variants (CN-04)")
+        if not chosen or approval["sha256"] != chosen["variants_sha256"] or chosen["variants_sha256"] != contracts.variants_sha256(doc):
+            raise ContractError(f"{where}VARIANT_CHOSEN: the approval's sha256 is not the variants_sha256 of the picked, unchanged "
+                                "script_variants file (CN-04)")
+
     def move(self, to: str, *, reason: str, approval: dict | None = None, dossier: Path | str | None = None,
              reservation_id: str | None = None, variants: Path | str | None = None) -> None:
         """The next forward state, and only that one (CN-03). A gated state needs its approval (CN-04); RESEARCHED fixes the
@@ -302,9 +320,8 @@ class EpisodeJob:
         if cur not in LIFECYCLE or to not in LIFECYCLE or LIFECYCLE.index(to) != LIFECYCLE.index(cur) + 1:
             raise ContractError(f"{cur} -> {to} is not the next step of the lifecycle")
         self._check_approval(GATES[to], approval, to, bind=True)
-        if to == "VARIANT_CHOSEN" and variants is None:
-            raise ContractError("VARIANT_CHOSEN needs variants=<the script_variants.json the creator picked from>: the approval binds "
-                                "its variants_sha256 (CN-04, OR-31)")
+        if to == "VARIANT_CHOSEN":
+            self._check_variants(approval, variants)
         if to == "RESEARCHED":
             if dossier is None:
                 raise ContractError("RESEARCHED fixes the research dossier: pass dossier=<file>")
@@ -312,14 +329,6 @@ class EpisodeJob:
             if m["source_dossier_sha256"] not in (None, digest):
                 raise ContractError("the dossier is already fixed for this job; another dossier is another job (CN-05)")
             m["source_dossier_sha256"] = digest
-        if to == "VARIANT_CHOSEN":
-            doc = json.loads(Path(variants).read_text(encoding="utf-8"))
-            chosen = doc.get("chosen")
-            if chosen and chosen["variant_id"] not in {v["id"] for v in doc["variants"]}:
-                raise ContractError(f"VARIANT_CHOSEN: {chosen['variant_id']!r} is not one of the variants (CN-04)")
-            if not chosen or approval["sha256"] != chosen["variants_sha256"] or chosen["variants_sha256"] != contracts.variants_sha256(doc):
-                raise ContractError("VARIANT_CHOSEN: the approval's sha256 is not the variants_sha256 of the picked, unchanged "
-                                    "script_variants file (CN-04)")
         if to == "BUDGET_RESERVED":
             if not reservation_id or not self._reserved(reservation_id):
                 raise ContractError(f"BUDGET_RESERVED needs a reservation the ledger holds ({m['ledger']}): {reservation_id!r}")

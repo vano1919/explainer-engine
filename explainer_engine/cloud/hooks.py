@@ -25,8 +25,10 @@ BYPASS = [re.compile(p) for p in (r"/v[12]/pods/?['\"]?\s*(-X\s*POST|--request\s
                                    r"runpodctl\s+(create|start)\b", r"(-X\s*PATCH|--request\s+PATCH)[^|;&]*/v2/pods/",
                                    r"/v2/pods/\w+['\"]?\s*(-X\s*PATCH|--request\s+PATCH)",  # PATCH resets the pod: data outside /workspace is lost
                                    r"python[^|;&\n]*aivideo[/\\.]pod[/\\.]launch(_clips)?\b",  # the retired launchers (CP-01, D-80)
-                                   r"python[^|&]*\b(rp|runpod)\.create\(")]  # library create outside the CLI (N-01's 2nd net;
+                                   r"python[^|&]*\b(rp|runpod)\.create\(",  # library create outside the CLI (N-01's 2nd net;
 #                                    ``;`` and newlines allowed: ``python -c "import ...; rp.create(...)"`` and a heredoc are one program)
+                                   r"python[^|&]*\brunpod\b[^|&]*\bcreate\(")]  # the same with a bare imported name or an alias
+#                                    (``from ...runpod import create; create(``, ``runpod as R; R.create(``; T5's review of CP-01)
 
 
 RP_SAFE = ("sweep", "status", "list", "check", "logs", "cost", "stop")  # TMR's rp.py: read-only and stopping commands only (CR-13)
