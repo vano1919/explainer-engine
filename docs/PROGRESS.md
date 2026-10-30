@@ -2905,3 +2905,6 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
   guard refuses tracked file names that look like secret files (`secret` in the name); the guard is unchanged. The leak test now uses a canary
   none of whose characters occurs in the legitimate output and checks stdout and stderr in set / blank / whitespace / newline / missing cases (it fails
   for a printed first character, a tail or a length); the secrets are mapped on the one step that needs them, not on the job.
+
+## 2026-10-30 08:10 UTC — P0d: key alias `EE_ANTHROPIC_API_KEY`
+The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code account auth). `claude_api.api_key()` now takes the first non-empty of `ANTHROPIC_API_KEY`, `EE_ANTHROPIC_API_KEY`; used by `client()`, `status`, `estimate`. Test: `test_the_key_can_come_from_the_alias_name`.
