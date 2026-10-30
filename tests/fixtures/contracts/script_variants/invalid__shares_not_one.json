@@ -1,0 +1,188 @@
+{
+ "schema": "script_variants/2",
+ "episode_slug": "napoleon",
+ "dossier_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+ "variants": [
+  {
+   "id": "v1",
+   "title": "Variant v1",
+   "profile_id": "A",
+   "logline": "A short logline.",
+   "outline": [
+    "one",
+    "two"
+   ],
+   "segments": [
+    {
+     "id": "S01",
+     "window_s": 20,
+     "blocks": [
+      {
+       "category": "scene",
+       "seconds": 12,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 8,
+       "archetype": 9
+      }
+     ]
+    },
+    {
+     "id": "S02",
+     "window_s": 30,
+     "blocks": [
+      {
+       "category": "map_pure",
+       "seconds": 10,
+       "archetype": 1
+      },
+      {
+       "category": "scene",
+       "seconds": 20,
+       "who": "hero"
+      }
+     ]
+    }
+   ],
+   "cost_rows": [
+    {
+     "label": "maps and cards (CPU)",
+     "kind": "cpu",
+     "units": 1,
+     "service": "runpod_usd"
+    }
+   ],
+   "dynamics": {
+    "share_scene": 0.1,
+    "share_map_pure": 0.2,
+    "share_compensator": 0.16,
+    "share_host": 0.0,
+    "share_hold": 0.0,
+    "non_character": 0.36,
+    "narrator_share": 0.36,
+    "map_run_max_s": 10.0,
+    "non_scene_run_max_s": 18.0,
+    "shots_per_min": 14.4
+   },
+   "cost": {
+    "usd_planned": 0.0,
+    "usd_worst": 0.0,
+    "known_usd_planned": 0.0,
+    "known_usd_worst": 0.0,
+    "unknown_rows": [],
+    "rows": [
+     {
+      "label": "maps and cards (CPU)",
+      "kind": "cpu",
+      "service": "runpod_usd",
+      "units": 1,
+      "usd_planned": 0.0,
+      "usd_worst": 0.0,
+      "basis": "estimate (by construction)"
+     }
+    ]
+   },
+   "risks": [
+    "REVIEW VP-11 COMPENSATOR",
+    "REVIEW VP-11 MAP"
+   ],
+   "scores": {
+    "code": 80,
+    "critic": null
+   }
+  },
+  {
+   "id": "v2",
+   "title": "Variant v2",
+   "profile_id": "D",
+   "logline": "A short logline.",
+   "outline": [
+    "one",
+    "two"
+   ],
+   "segments": [
+    {
+     "id": "S01",
+     "window_s": 20,
+     "blocks": [
+      {
+       "category": "compensator",
+       "seconds": 8,
+       "archetype": 5
+      },
+      {
+       "category": "scene",
+       "seconds": 12,
+       "who": "hero"
+      }
+     ]
+    },
+    {
+     "id": "S02",
+     "window_s": 30,
+     "blocks": [
+      {
+       "category": "scene",
+       "seconds": 25,
+       "who": "hero"
+      },
+      {
+       "category": "hold",
+       "seconds": 5
+      }
+     ]
+    }
+   ],
+   "cost_rows": [
+    {
+     "label": "maps and cards (CPU)",
+     "kind": "cpu",
+     "units": 1,
+     "service": "runpod_usd"
+    }
+   ],
+   "dynamics": {
+    "share_scene": 0.74,
+    "share_map_pure": 0.0,
+    "share_compensator": 0.16,
+    "share_host": 0.0,
+    "share_hold": 0.1,
+    "non_character": 0.26,
+    "narrator_share": 0.26,
+    "map_run_max_s": 0.0,
+    "non_scene_run_max_s": 8.0,
+    "shots_per_min": 14.4
+   },
+   "cost": {
+    "usd_planned": 0.0,
+    "usd_worst": 0.0,
+    "known_usd_planned": 0.0,
+    "known_usd_worst": 0.0,
+    "unknown_rows": [],
+    "rows": [
+     {
+      "label": "maps and cards (CPU)",
+      "kind": "cpu",
+      "service": "runpod_usd",
+      "units": 1,
+      "usd_planned": 0.0,
+      "usd_worst": 0.0,
+      "basis": "estimate (by construction)"
+     }
+    ]
+   },
+   "risks": [
+    "REVIEW VP-11 COMPENSATOR"
+   ],
+   "scores": {
+    "code": 90,
+    "critic": null
+   }
+  }
+ ],
+ "recommended": "v1",
+ "why": "x",
+ "chosen": null
+}

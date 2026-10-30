@@ -228,8 +228,19 @@ class Run:
     def passed(self, name: str) -> bool:
         return self.data["phases"].get(name, {}).get("status") == "PASSED"
 
+    def settled_total(self, service: str) -> float:
+        """What providers really billed (items replaced by ``settle``)."""
+        return round(sum(r["amount"] for r in self.data["reserved"].values() if r.get("service") == service and r.get("settled")), 6)
+
+    def reserved_open(self, service: str) -> float:
+        """What is still only a reservation (the provider's bill has not replaced it yet). The 80 % stop counts both: a bill
+        replaces its reservation in ``spent`` as soon as ``settle`` runs, so the stop reads real money where it exists."""
+        return round(sum(r["amount"] for r in self.data["reserved"].values() if r.get("service") == service and not r.get("settled")), 6)
+
     def report(self) -> dict:
+        services = sorted({r.get("service") for r in self.data["reserved"].values() if r.get("service")})
         return {"caps": self.data["caps"], "spent": {k: round(v, 4) for k, v in self.data["spent"].items()},
+                "settled": {s: self.settled_total(s) for s in services}, "reserved_open": {s: self.reserved_open(s) for s in services},
                 "phases": {k: v["status"] for k, v in self.data["phases"].items()},
                 "items": {k: len(v) for k, v in self.data["items"].items()},
                 "failures": {k: len(v) for k, v in self.data["failures"].items()}}

@@ -48,7 +48,8 @@
     "explainer_engine/qa/scorecard.py:BP-01",
     "explainer_engine/qa/engagement.py:BP-01",
     "explainer_engine/scripting/story_lint.py:WORDS_PER_S",
-    "explainer_engine/scripting/film_shots.py"
+    "explainer_engine/scripting/film_shots.py",
+    "explainer_engine/scripting/syllables.py:seconds"
    ],
    "supersedes": [
     "PRODUCTION_RULES gate 2 160-185",
@@ -4327,7 +4328,8 @@
    ],
    "enforced_by": [
     "explainer_engine/scripting/story_lint.py:NARRATOR_SHARE",
-    "explainer_engine/scripting/film_shots.py:NARRATOR_SHARE"
+    "explainer_engine/scripting/film_shots.py:NARRATOR_SHARE",
+    "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "supersedes": [
     "dialogue-scenes '~40-60 % narration', for template D"
@@ -4388,7 +4390,8 @@
    ],
    "enforced_by": [
     "explainer_engine/scripting/film_shots.py:SHOTS_PER_MIN",
-    "explainer_engine/scripting/film_shots.py:MEDIAN_SHOT_S"
+    "explainer_engine/scripting/film_shots.py:MEDIAN_SHOT_S",
+    "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "supersedes": [
     "BP-40 pictures_per_min_max 10 and ED-14's image budget, for animated episodes"
@@ -4439,7 +4442,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/film_shots.py:HOLD_SHARE_MAX"
+    "explainer_engine/scripting/film_shots.py:HOLD_SHARE_MAX",
+    "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "supersedes": [
     "the critic's plan review 2026-10-23: 40 % still + camera"
@@ -4559,25 +4563,134 @@
    "area": "narration",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "AI register (N-15, the creator's point 1): narrator and hero lines avoid the overused LLM vocabulary in `lexicon` and the structural tells (stacked triplets, a sentence-initial 'Imagine', a rhetorical-question opener in every segment, em-dash chains, 'not just X but Y'); more than review_hits_per_300_words hits per 300 words is REVIEW and more than high_hits_per_300_words is the Blueprint's proposed FAIL, which stays REVIEW while the rule is a hypothesis (a FAIL needs the creator's dated word, house). A single hit proves nothing; density does. Literal uses ('landscape' of a place, 'journey' of a trip) are allowed.",
+   "statement": "AI register, soft tier (the creator's point 1; the FAIL tier is BP-140): words and phrases listed in `lexicon`, `phrases` and `openers` that only one kind of source flags, and the structural tells of `rule_of_three_per_1000` .. `rather_than_chain_min` (stacked triplets, 'It's not X. It's Y.' pivots, participial tails, em dashes, 'rather than' chains). More than review_hits_per_300_words soft hits in a segment, or a density over its limit per 1,000 spoken words, is REVIEW (hypothesis: the numbers are the first measured house baselines, tuned after the creator has judged a few scripts); `watch` words are only counted. A single hit proves nothing; density does. Literal uses ('landscape' of a place, 'journey' of a trip) go through the per-episode allow-list with a note (RG-05). Dialogue is checked for words and phrases, never for densities. Checked by `register_lint` (RG-02..RG-04, N-17).",
    "thresholds": {
     "lexicon": [
-     "delve",
-     "tapestry",
-     "testament to",
-     "intricate",
-     "pivotal",
-     "underscore",
+     "testament",
+     "vibrant",
+     "palpable",
+     "camaraderie",
+     "transformative",
+     "nuanced",
+     "nuances",
+     "harness",
+     "embark",
+     "elevate",
+     "unveil",
+     "unlock",
+     "unlocking",
      "navigate",
-     "landscape",
-     "journey",
-     "realm",
+     "navigating",
      "unleash",
+     "journey",
+     "cutting-edge",
+     "state-of-the-art",
+     "game-changer",
+     "game-changing",
+     "revolutionary",
+     "robust",
+     "burgeoning",
+     "exemplifies",
+     "boasts",
+     "deep dive"
+    ],
+    "phrases": [
+     "diverse array",
+     "diverse range",
+     "stands as",
+     "serves as",
+     "functions as",
+     "testament to",
+     "is a reminder of",
+     "plays a crucial role",
+     "plays a pivotal role",
+     "plays a vital role",
+     "plays a key role",
+     "setting the stage for",
+     "key turning point",
+     "evolving landscape",
+     "ever-evolving",
+     "rapidly evolving",
+     "indelible mark",
+     "deeply rooted",
+     "nestled",
+     "in the heart of",
+     "it's worth noting",
+     "it's important to note",
+     "it is worth mentioning",
+     "important to consider",
+     "harness the power of",
+     "unlock the potential",
+     "pave the way",
+     "push the boundaries of",
+     "a gateway to",
+     "embark on a journey",
+     "in today's world",
+     "in the digital age",
+     "navigating the",
+     "a sense of",
+     "couldn't help but",
+     "delicate balance",
+     "symphony of",
+     "sit with that",
+     "let that sink in",
+     "here's the thing",
+     "here's the kicker",
+     "the part most people miss",
+     "you're not imagining it",
+     "no fluff",
+     "no filler",
+     "no jargon",
      "in a world where",
-     "it's important to note"
+     "have you ever wondered",
+     "ever wondered",
+     "let's dive in",
+     "dive into",
+     "let's break it down",
+     "let's take a closer look",
+     "without further ado",
+     "stay tuned",
+     "buckle up",
+     "so there you have it",
+     "you won't believe",
+     "mind-blowing",
+     "as an AI language model",
+     "as of my last knowledge update",
+     "I hope this helps",
+     "experts argue",
+     "observers have cited",
+     "industry reports",
+     "widely regarded",
+     "based on available information",
+     "while specific details are limited"
+    ],
+    "openers": [
+     "In conclusion",
+     "In summary",
+     "To sum up",
+     "In essence",
+     "Overall,",
+     "Ultimately,",
+     "All in all"
+    ],
+    "watch": [
+     "steady",
+     "quietly",
+     "practical",
+     "matters",
+     "challenge",
+     "clearer",
+     "dependable",
+     "echoed",
+     "universally",
+     "prioritize"
     ],
     "review_hits_per_300_words": 1,
-    "high_hits_per_300_words": 3
+    "rule_of_three_per_1000": 5,
+    "negation_pivot_per_1000": 2,
+    "participial_tail_per_1000": 3,
+    "em_dash_per_1000": 2,
+    "rather_than_chain_min": 3
    },
    "sources": [
     {
@@ -4601,9 +4714,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/screenwriting.json:CRAFT-SCR-01"
+    "explainer_engine/standards/craft_checklists/screenwriting.json:CRAFT-SCR-01",
+    "explainer_engine/scripting/register_lint.py"
    ],
-   "planned": "explainer_engine/scripting/register_lint.py (P3)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -4627,9 +4740,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/screenwriting.json:CRAFT-SCR-03"
+    "explainer_engine/standards/craft_checklists/screenwriting.json:CRAFT-SCR-03",
+    "explainer_engine/scripting/story_lint.py"
    ],
-   "planned": "explainer_engine/scripting/syllables.py (P3)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -5039,7 +5152,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-10"
+    "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-10",
+    "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "planned": "explainer_engine/edit/visual_compensator.py (P5)",
    "supersedes": [],
@@ -5313,9 +5427,10 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/packaging.json:CRAFT-PKG-01"
+    "explainer_engine/standards/craft_checklists/packaging.json:CRAFT-PKG-01",
+    "explainer_engine/scripting/story_lint.py",
+    "explainer_engine/scripting/variant_plan.py"
    ],
-   "planned": "explainer_engine/scripting/variant_plan.py (P3)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -5442,6 +5557,326 @@
    "supersedes": [
     "Blueprint VISUAL-001 32n as the recipe"
    ]
+  },
+  {
+   "id": "BP-140",
+   "area": "narration",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-29 09:28 UTC, as the Blueprint plan v2 card summarises it (BLUEPRINT_PLAN_v2_ka.md rows 1 and 23: the word level of the AI register is FAIL); his exact wording is not in the repository",
+   "statement": "AI register, FAIL tier (N-16, RG-01): a word in `register_words` (inflections listed) or a sentence-initial connector in `register_phrases` in anything the viewer hears or reads (narrator and hero lines, bubbles, cards, HUD text) fails the script at the first hit outside the per-episode allow-list. Tier rule: an entry is here only when at least two independent, non-community sources flag it (Kobak, Juzek and Ward, Liang, Gray, Reinhart, Chakrabarty, Wikipedia, The Conversation); words with one such source are in BP-114. Matching is plain, not negation-aware ('never delve' is still the register); 'landscape', 'realm', 'foster', 'enduring' in their literal sense are allowed through the allow-list with a note. The list drifts per model generation: older than recheck_days since checked_on it raises one REVIEW. Prompt text for image and video models is not in scope (KP rules govern it).",
+   "thresholds": {
+    "register_words": [
+     "delve",
+     "delves",
+     "delved",
+     "delving",
+     "tapestry",
+     "tapestries",
+     "intricate",
+     "intricately",
+     "intricacies",
+     "meticulous",
+     "meticulously",
+     "underscore",
+     "underscores",
+     "underscored",
+     "underscoring",
+     "showcase",
+     "showcases",
+     "showcased",
+     "showcasing",
+     "pivotal",
+     "crucial",
+     "crucially",
+     "realm",
+     "realms",
+     "groundbreaking",
+     "garner",
+     "garners",
+     "garnered",
+     "garnering",
+     "commendable",
+     "notable",
+     "notably",
+     "noteworthy",
+     "invaluable",
+     "landscape",
+     "landscapes",
+     "multifaceted",
+     "seamless",
+     "seamlessly",
+     "leverage",
+     "leverages",
+     "leveraged",
+     "leveraging",
+     "foster",
+     "fosters",
+     "fostered",
+     "fostering",
+     "interplay",
+     "enduring",
+     "bolster",
+     "bolsters",
+     "bolstered",
+     "bolstering",
+     "emphasizing",
+     "emphasising",
+     "highlighting",
+     "advancements",
+     "surpass",
+     "surpasses",
+     "surpassed",
+     "surpassing",
+     "renowned",
+     "innovative",
+     "versatile",
+     "versatility",
+     "profound",
+     "profoundly",
+     "revolutionize",
+     "revolutionizes",
+     "revolutionized",
+     "revolutionizing",
+     "revolutionise",
+     "revolutionises",
+     "revolutionised",
+     "revolutionising"
+    ],
+    "register_phrases": [
+     "Additionally,",
+     "Moreover,",
+     "Furthermore,"
+    ],
+    "checked_on": "2026-10-29",
+    "recheck_days": 180
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Delving into ChatGPT usage in academic writing through excess vocabulary (Kobak et al. 2024, arXiv 2406.07016)",
+     "url": "https://arxiv.org/abs/2406.07016",
+     "note": "style words rose; delve/delves r=28 from the paper's excess_words.csv as summarised, the CSV not checked against v5"
+    },
+    {
+     "type": "A",
+     "title": "Why does ChatGPT delve so much? (Juzek and Ward, COLING 2025, arXiv 2412.11385)",
+     "url": "https://arxiv.org/abs/2412.11385",
+     "note": "21 focal words; 17x the human rate in abstracts; the baseline is scientific abstracts, no spoken-narration baseline exists"
+    },
+    {
+     "type": "A",
+     "title": "Monitoring AI-modified content at scale (Liang et al., ICML 2024, arXiv 2403.07183)",
+     "url": "https://arxiv.org/abs/2403.07183",
+     "note": "commendable, meticulous, intricate rose after 2022"
+    },
+    {
+     "type": "A",
+     "title": "Do LLMs write like humans? (Reinhart et al., PNAS 2025, arXiv 2410.16107)",
+     "url": "https://arxiv.org/abs/2410.16107",
+     "note": "participial clauses 5.3x, nominalisations 2.1x; tapestry, intricate, palpable over 100x"
+    },
+    {
+     "type": "A",
+     "title": "Wikipedia: Signs of AI writing (an editors' guideline, descriptive, not prescriptive)",
+     "url": "https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing",
+     "note": "the list moves per model generation; Claude's own tell is em dashes"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/register_lint.py",
+    "explainer_engine/scripting/narration_lint.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-141",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Episode structure profiles for the variant planner (stage 1b, VP-02..VP-10): each profile A-D bounds the non-character share of the runtime and the played share of every turn slot; pure map is at most map_pure_max of the runtime in a run of at most map_run_max_s; the same narration archetype never sits on two adjacent narrated blocks and at most rotation_family_max of one family fall in rotation_window_s; one compensator picture is at most kuleshov_max_s. The numbers are the Blueprint's mode matrix (one source type), so REVIEW only; C and D copy B and A because the Blueprint gives them no number of their own.",
+   "thresholds": {
+    "episode_structure_profiles": {
+     "A": {
+      "name": "cinematic docudrama",
+      "non_character_max": 0.4,
+      "turn_scene_share_min": 0.5
+     },
+     "B": {
+      "name": "tactical hybrid",
+      "non_character_max": 0.8,
+      "turn_scene_share_min": 0.3
+     },
+     "C": {
+      "name": "systems lab",
+      "non_character_max": 0.8,
+      "turn_scene_share_min": 0.3
+     },
+     "D": {
+      "name": "chronicle dual POV",
+      "non_character_max": 0.4,
+      "turn_scene_share_min": 0.5
+     }
+    },
+    "map_pure_max": 0.25,
+    "map_run_max_s": 90,
+    "rotation_adjacent": true,
+    "rotation_family_max": 2,
+    "rotation_window_s": 120,
+    "kuleshov_max_s": 7
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 (unverified): the structure-mode matrix and its shares (blueprint.md 9.4)",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "NOT FOUND in any opened outside source; records the origin, proves nothing",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/variant_plan.py:checks"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-142",
+   "area": "story",
+   "status": "house",
+   "severity": "FAIL",
+   "decided": "the creator, 2026-10-29 09:28 UTC, as the Blueprint plan v2 card summarises it (BLUEPRINT_PLAN_v2_ka.md row 4: every turn is a played scene, FAIL); his exact wording is not in the repository",
+   "statement": "Every turn is a played scene (VP-08, ST-24): the turn slots of template D (`turn_slots_D`, the rows of docs/STORY_ENGINE.md that carry inciting, escalation, midpoint, reversal, crisis, climax) and any segment whose function is in `turn_functions` hold at least `played_blocks_min` block in which a cast member acts or speaks; a turn told over a map, a card or the narrator alone fails.",
+   "thresholds": {
+    "turn_slots_D": [
+     4,
+     6,
+     8,
+     10,
+     11,
+     13
+    ],
+    "turn_functions": [
+     "inciting",
+     "escalation",
+     "midpoint",
+     "reversal",
+     "crisis",
+     "climax",
+     "twist"
+    ],
+    "played_blocks_min": 1
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/scripting/variant_plan.py:turn_findings"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-143",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Ad-safety window (ST-22): graphic violence in the first `window_s` seconds of the video can lose ad eligibility, so a word of `lexicon` in a line whose estimated start (syllables.seconds) is before the window is REVIEW; the creator decides whether it is acceptable for the episode.",
+   "thresholds": {
+    "window_s": 7,
+    "lexicon": [
+     "gore",
+     "gory",
+     "bloodbath",
+     "decapitat",
+     "beheaded",
+     "disembowel",
+     "dismember",
+     "mutilat",
+     "entrails",
+     "severed head",
+     "corpses"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "YouTube Help: advertiser-friendly content guidelines (violence)",
+     "url": "https://support.google.com/youtube/answer/6162278",
+     "note": "the thumbnail or the first seven seconds; policy_baseline B-16, one source type"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-144",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Double exposition (ST-21, KP-20): a narrator line says again what the adjacent character line or the picture already shows when at least `overlap` of its content words are in the other's. The number is the one KP-20 used unregistered (0.5).",
+   "thresholds": {
+    "overlap": 0.5
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint 2026-10 and docs/SHOT_PROMPTS.md KP-20 (unverified): narration never describes the picture",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/SHOT_PROMPTS.md",
+     "note": "the 0.5 is the repository's own earlier number",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py",
+    "explainer_engine/scripting/film_shots.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-145",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "An 'and then' chain (ST-20): `chain_min` or more joins that open with 'and then', 'after that', 'next,' in one segment's lines, or on consecutive segment openers, is REVIEW. A declared connector other than BUT or THEREFORE is already refused by the schemas (CN-01).",
+   "thresholds": {
+    "chain_min": 2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "South Park 'but or therefore' rule (Parker and Stone, NYU 2011), as quoted in docs/STORY_ENGINE.md ST-02",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/STORY_ENGINE.md",
+     "note": "one article-type source",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py"
+   ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-146",
+   "area": "story",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The chosen variant is a budget (VP-15): the script's seconds per segment stay within `seconds_drift` of the choice and its cost within `usd_drift` of usd_planned, else REVIEW. A cost above the usd_worst the creator approved is FAIL by invariant 2, not by this number.",
+   "thresholds": {
+    "seconds_drift": 0.1,
+    "usd_drift": 0.2
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "Blueprint plan v2, card P3 (unverified): +-10 % shots, +-20 % usd",
+     "url": "https://github.com/vano1919/explainer-engine/blob/main/docs/research/CRAFT_SOURCES_2026-10.md",
+     "note": "origin only",
+     "verified": false
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/variant_plan.py:drift"
+   ],
+   "supersedes": []
   }
  ]
 }

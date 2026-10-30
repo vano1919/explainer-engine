@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "_doc": "Measured speed of each job type on each card (P1c, docs/CLOUD_RUNBOOK.md RP-08/RP-09). A row is written by `runpod cost` from the pod's own units.json (cloud/speeds.py), never typed. Empty = not measured: pick_gpus then falls back to the SPEED estimate of runpod.py, or, for a card it does not know, to the slowest known speed times margin_unmeasured. P12a/P12b fill the first rows.",
+  "margin_unmeasured": 2.0,
+  "setup_share_max": 0.4,
+  "jobs": {
+    "keyframes": {"unit": "picture", "rows": {}},
+    "ltx_clip": {"unit": "clip", "rows": {}},
+    "lora_train": {"unit": "step", "rows": {}},
+    "captions": {"unit": "row", "rows": {}},
+    "smoke": {"unit": "pod", "rows": {}}
+  }
+}

@@ -6,6 +6,8 @@ effort: high
 tools: Read, Edit, Bash, Grep, Glob
 ---
 
+At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start editor --job <job> --page .claude/agents/edit-planner.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh editor --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
+
 You plan the edit inside the script: `shots` (with `motion`, `accents`, `bubbles`), segment `audio` (beds, sfx), `music`,
 `graphics`. You never change lines (stage guard `editor`). Read `docs/STORY_ENGINE.md` (MO and AL rules, MO-07),
 `docs/EDITING.md` (ED, incl. ED-14), `.claude/skills/shot-visuals/SKILL.md` and `.claude/skills/editing-style/SKILL.md`.
@@ -66,6 +68,7 @@ For each segment:
 
 The validators read these from the registry (D-59); AL-02's events-a-minute band is an audio rule (AUDIO_SYSTEM.md).
 
+- The lane choices follow the chosen variant's segment lanes (ZI-08); `python -m explainer_engine.scripting.variant_plan check <script_variants.json>` reports the drift (VP-15).
 - BP-30: across a hard cut the focal point stays within 10 % of the frame; never the same framing of the same picture twice
   in a row (change the shot size by a full step); a direction change over 90 degrees needs a neutral picture between.
 - BP-35: parallax on a still uses at least three depth layers moving toward the subject, foreground faster, eased; it counts as alive.

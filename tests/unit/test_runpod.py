@@ -849,9 +849,12 @@ def test_cards_are_picked_by_the_jobs_estimated_cost_not_by_the_price_per_hour(e
     assert [(r["gpu"], r["cloud"]) for r in rows][:2] == [("NVIDIA H100 80GB HBM3", "COMMUNITY"),
                                                           ("NVIDIA A100-SXM4-80GB", "COMMUNITY")]
     assert rows[0]["hours"] == 0.5 and rows[0]["est_usd"] == pytest.approx(0.995)
-    assert all("MIG" not in r["gpu"] and r["gpu"] != "Some New Card" for r in rows)   # slices and unknown speeds stay out
+    assert all("MIG" not in r["gpu"] for r in rows)                                   # slices stay out
+    new = [r for r in rows if r["gpu"] == "Some New Card"]                            # P1c: a card nobody measured is no longer skipped:
+    assert new and new[0]["basis"].startswith("unknown card") and new[0]["hours"] == pytest.approx(1 / 0.3 * 2.0, abs=0.01)  # slowest speed x 2.0
     small = R.pick_gpus(api, vram_gb=48, ref_hours=1.0, max_price=1.0)
-    assert {r["gpu"] for r in small} == {"NVIDIA A40"}                               # L40S has no stock, the rest > $1/h
+    assert {r["gpu"] for r in small} == {"NVIDIA A40", "Some New Card"}              # L40S has no stock, the rest > $1/h; the new card last
+    assert small[0]["gpu"] == "NVIDIA A40" and small[-1]["gpu"] == "Some New Card"
     assert small[0]["cloud"] == "COMMUNITY" and small[0]["est_usd"] == pytest.approx(0.7)
 
 

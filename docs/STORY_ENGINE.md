@@ -61,6 +61,11 @@ The story layer is written before any line (stage 1). It is checked by `scriptin
 | ST-17 | **Short narration blocks** (template D). Narrator lines with no character line between them last at most [BP-104](SOURCED_RULES.md)'s block (words at [BP-01](SOURCED_RULES.md)'s heard pace); the narrator carries the jumps in time, place, cause or goal, the scenes carry the action. | REVIEW |
 | ST-18 | **The central scene is the longest scene** (template D). One scene with dialogue is the climax, crisis or midpoint, and no other scene has more words; it holds 2-3 escalations and the plan meets the unexpected inside it. | REVIEW |
 | ST-19 | **The narrator's share** (template D). The narrator has the share of the words [BP-105](SOURCED_RULES.md) gives; a political or personal rivalry sits low in it, a campaign high. | REVIEW |
+| ST-20 | **No "and then" chain** (P3). Two or more joins that open with "and then", "after that" or "next," inside one segment's lines, or on two consecutive segment openers, are REVIEW ([BP-145](SOURCED_RULES.md): one article-type source). A declared connector other than BUT or THEREFORE is already a contract FAIL ([CN-01](CONTRACTS.md): `drama.turn` and the spine's `causal_connector` take nothing else). | REVIEW |
+| ST-21 | **No double exposition** (P3). A narrator line and the adjacent character line share at least [BP-144](SOURCED_RULES.md)'s share of their content words: the narrator says again what the scene just played. The shot-card twin is KP-20. | REVIEW |
+| ST-22 | **Ad-safety window** (P3). A graphic-violence word ([BP-143](SOURCED_RULES.md) lexicon) in a line that starts, by the estimate of `scripting/syllables.py`, inside the first seconds of the video (YouTube's "first seven seconds", policy baseline B-16: one source type); the creator decides. | REVIEW |
+| ST-23 | **The twist lands** (P3). The first line of a `twist` or `reversal` segment lasts at most [BP-115](SOURCED_RULES.md)'s seconds by the syllable estimate. | REVIEW |
+| ST-24 | **A turn is played** (P3, [BP-142](SOURCED_RULES.md), house). Every turn slot (template D rows 4, 6, 8, 10, 11, 13; any segment whose function is a turn) holds a block in which a cast member acts or speaks: a turn told over a map, a card or the narrator alone is a FAIL; a played share below the profile's minimum ([BP-141](SOURCED_RULES.md)) is REVIEW. The measure is `variant_plan.dynamics`, the one function that counts lane shares. | FAIL / REVIEW |
 
 ### Story templates for an 8-12 minute what-if (D-58)
 
@@ -103,6 +108,8 @@ length; the borders are guides, not a stopwatch. Evidence and what was not verif
 | 14 | 13:30-14:30 | the answer (`resolution`) | the opening question answered fully; an uncertain fact is said to be uncertain |
 | 15 | 14:30-14:45 | callback (`button`) | the first image again with a new meaning |
 | 16 | 14:45-15:00 | channel pointer | the worlds already on the channel and the worlds coming, subscribe so as not to miss them (BP-106, KP-40); never a dry "subscribe" or a goodbye (BP-43); the narration runs on under the end screen |
+
+The turn slots 4, 6, 8, 10, 11 and 13 are played scenes ([BP-142](SOURCED_RULES.md), ST-24, VP-08).
 
 Modules by subject: a war or campaign runs two storylines (each side in its own place, variant 6 of the study); a
 political or personal rivalry keeps the narrator low and escalates by words, blackmail or betrayal, on faces; an
@@ -350,12 +357,33 @@ it (AL-04: the voice first), and a tone on every change is the case where the at
 big take, the moment a cartoon would score anyway. The cue timings and levels are product hypotheses; the creator's ear and the
 channel's retention decide.
 
+## Register (RG)
+
+The AI register: the vocabulary and the shapes a language model overuses, which a listener hears as machine writing. Checked by
+`scripting/register_lint.py` on every text the viewer hears or reads (narrator and hero lines, bubbles, card and HUD text; the
+Shorts, pinned comment and thumbnail text join with P9). Prompt text for image and video models is out of scope (KP rules). The
+word lists live in the registry only: tier 1 in [BP-140](SOURCED_RULES.md) (house, FAIL), tier 2 and the densities in
+[BP-114](SOURCED_RULES.md) (hypothesis, REVIEW). Matching is plain, not negation-aware: "never delve" is still the register.
+
+| ID | Rule | Severity |
+|---|---|---|
+| RG-01 | **Tier 1** (N-16): a word of BP-140's `register_words`, or a sentence-initial "Additionally,", "Moreover," or "Furthermore,", outside the allow-list. Dialogue counts: the model writes the heroes too. | FAIL (house, the creator 2026-10-29) |
+| RG-02 | **Tier 2** (N-17): soft words and phrases of BP-114 (`lexicon`, `phrases`): more than `review_hits_per_300_words` hits in one segment. | REVIEW |
+| RG-03 | **Structure densities** (N-17), narration only, per 1,000 spoken words: triplets, "It's not X. It's Y." pivots, participial tails, em dashes, a "rather than" chain; the limits are BP-114's. Nominalisations are only reported. A text of under 1,000 words may carry one of each tell. Hero lines are never measured for structure. | REVIEW |
+| RG-04 | **Summarising opener or closer**: "In conclusion", "Ultimately,", "Overall," and the like on a segment's first line or the script's last line (`openers` of BP-114). | REVIEW |
+| RG-05 | **An allow-list entry has a reason and a note.** `register_allow.json` next to the script holds `{term, reason: literal | quote | name, note}`; the note names the segment or line it covers, or says `all`. An entry without a reason or a note is refused and the term still fires. | FAIL (invariant 7) |
+
+Built-in exemptions: text inside a documented quotation (a line that cites a `quote` claim) and a capitalised proper noun in
+the middle of a sentence ("the Renowned" as a ship). A sentence-initial capital is not exempt. The lexicon is dated: older than
+BP-140's `recheck_days` since its `checked_on`, one REVIEW per run asks for a re-check.
+
 ## The writers' room
 
 These are the stages and gates. How to run them is in the skill `story-engine`.
 
 | # | Stage (page the main agent follows; stage 7 is spawned, OR-20) | Owns | Gate |
 |---|---|---|---|
+| 1b | variant planner (a step of `story-architect`, [OR-31](ORCHESTRATION.md)) | `script_variants.json`: two or three priced variants, the creator's pick | VP checks, the critic's score, `chosen` set |
 | 1 | `story-architect` | `drama`, `cast`, segment skeleton, scene headers (`scene`, SC-01) | PV-33, PV-48 0 FAIL |
 | 2 | `scene-writer` (skill `dialogue-scenes`) | segment `lines` with `to` / `intent` | `stage_guard writer`, PV-12, PV-33, PV-48 |
 | 2b | `beat-writer` (same segment, right after the writer) | line `visual_beats`; on `/3` cues opt-in and event-bound | `stage_guard beats`, PV-44 (VB rules) |

@@ -135,12 +135,14 @@ def check() -> list[dict]:
         if r.get("status") == "binding" and not r.get("enforced_by"):
             add(rid, "binding but enforced nowhere")
         for key, val in r.get("thresholds", {}).items():
-            if not isinstance(val, (int, float, str, list, bool)):
+            if not isinstance(val, (int, float, str, list, bool, dict)):
                 add(rid, f"threshold {key} has an unsupported value")
     return found
 
 
 def _fmt(val) -> str:
+    if isinstance(val, dict):
+        return "{" + ", ".join(f"{k}: {_fmt(v)}" for k, v in val.items()) + "}"
     if isinstance(val, list):
         return "[" + ", ".join(_fmt(v) for v in val) + "]"
     if isinstance(val, float):

@@ -19,6 +19,8 @@ import json
 import re
 from pathlib import Path
 
+from explainer_engine.scripting import entity_align
+
 MIN_COVERAGE = 0.97
 _ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen " \
         "seventeen eighteen nineteen".split()
@@ -106,8 +108,12 @@ def transcript_words(data) -> list[dict]:
     return out
 
 
-def align(text: str, heard: list[dict], duration: float | None = None) -> dict:
-    """``{"words": [...], "coverage": x, "status": PASS|REVIEW, "unmatched": [...]}`` (times in seconds)."""
+def align(text: str, heard: list[dict], duration: float | None = None, entities: set[str] | None = None) -> dict:
+    """``{"words": [...], "coverage": x, "status": PASS|REVIEW, "unmatched": [...]}`` (times in seconds).
+
+    ``entities`` are names of the script (``Ney``): inside a replace span of equal length a written name whose sound matches the heard
+    word (``entity_align.same``, "Nay") counts as heard, not estimated; the times were already the heard ones, only the coverage
+    changes. Without ``entities`` the result is what it always was."""
     written = script_tokens(text)
     a, a_owner = [], []  # normalised script words -> index of the written token
     for i, w in enumerate(written):
@@ -120,6 +126,7 @@ def align(text: str, heard: list[dict], duration: float | None = None) -> dict:
             b.append(n)
             b_owner.append(j)
     times: list[list | None] = [None] * len(written)  # [start, end, estimated]
+    names = {n for e in (entities or ()) for n in norm(e)}
 
     def give(ai: int, s: float, e: float, est: bool) -> None:
         k = a_owner[ai]
@@ -133,7 +140,8 @@ def align(text: str, heard: list[dict], duration: float | None = None) -> dict:
         if op == "equal" or (op == "replace" and a1 - a0 == b1 - b0):
             for k in range(a1 - a0):
                 h = heard[b_owner[b0 + k]]
-                give(a0 + k, h["start"], h["end"], op != "equal")
+                estimated = op != "equal" and not (a[a0 + k] in names and entity_align.same(a[a0 + k], b[b0 + k]))
+                give(a0 + k, h["start"], h["end"], estimated)
         elif op == "replace":
             s, e = heard[b_owner[b0]]["start"], heard[b_owner[b1 - 1]]["end"]
             step = (e - s) / (a1 - a0)

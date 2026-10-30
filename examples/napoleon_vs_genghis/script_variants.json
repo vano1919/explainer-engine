@@ -1,0 +1,3478 @@
+{
+ "schema": "script_variants/2",
+ "episode_slug": "napoleon_vs_genghis",
+ "dossier_sha256": "fb3b0ab8a966c8b0c1de17d1c4336622ad3847630936224a4df54a5c6f67f92c",
+ "variants": [
+  {
+   "id": "v1",
+   "title": "Two commanders, played",
+   "profile_id": "D",
+   "logline": "Napoleon wins the only battle the khan gives him, and it is his worst victory: told as played scenes of two commanders.",
+   "outline": [
+    "Cold open on the fog, three teasers, the outcome stated",
+    "Orientation by narrator, then played scenes at the turns (rows 4, 6, 8, 10)",
+    "The reversal on a held frame, the fallout, the last choice",
+    "The answer, the callback and the pointer"
+   ],
+   "segments": [
+    {
+     "id": "S01",
+     "blocks": [
+      {
+       "id": "S01-01",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "insert",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 14,
+        "character": 0
+       }
+      },
+      {
+       "id": "S01-02",
+       "seconds": 2.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S01-03",
+       "seconds": 2.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S01-04",
+       "seconds": 2.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S01-05",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 12.0
+    },
+    {
+     "id": "S02",
+     "blocks": [
+      {
+       "id": "S02-01",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 9,
+        "character": 0
+       }
+      },
+      {
+       "id": "S02-02",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 10,
+        "character": 0
+       }
+      },
+      {
+       "id": "S02-03",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 10,
+        "character": 0
+       }
+      },
+      {
+       "id": "S02-04",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 7,
+        "character": 0
+       }
+      },
+      {
+       "id": "S02-05",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "insert",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 15,
+        "character": 0
+       }
+      },
+      {
+       "id": "S02-06",
+       "seconds": 4.0,
+       "tier": "hold",
+       "mode": "establish",
+       "shots": 1,
+       "category": "hold",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 24.0
+    },
+    {
+     "id": "S03",
+     "blocks": [
+      {
+       "id": "S03-01",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "gunners",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 7,
+        "character": 0
+       }
+      },
+      {
+       "id": "S03-02",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 12,
+        "character": 0
+       }
+      },
+      {
+       "id": "S03-03",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "gunners",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 10,
+        "character": 0
+       }
+      },
+      {
+       "id": "S03-04",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 6,
+        "character": 0
+       }
+      },
+      {
+       "id": "S03-05",
+       "seconds": 4.0,
+       "tier": "hold",
+       "mode": "establish",
+       "shots": 1,
+       "category": "hold",
+       "words": {
+        "narrator": 7,
+        "character": 0
+       }
+      },
+      {
+       "id": "S03-06",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 7,
+        "character": 0
+       }
+      },
+      {
+       "id": "S03-07",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 10,
+        "character": 0
+       }
+      },
+      {
+       "id": "S03-08",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 11,
+        "character": 0
+       }
+      },
+      {
+       "id": "S03-09",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "insert",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S03-10",
+       "seconds": 4.0,
+       "tier": "hold",
+       "mode": "narrated",
+       "shots": 1,
+       "category": "hold",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 39.0
+    },
+    {
+     "id": "S04",
+     "blocks": [
+      {
+       "id": "S04-01",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "bars",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S04-02",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 9
+       }
+      },
+      {
+       "id": "S04-03",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S04-04",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "kemal",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 9
+       }
+      },
+      {
+       "id": "S04-05",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S04-06",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S04-07",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "bars",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S04-08",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "bars",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S04-09",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S04-10",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S04-11",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "bars",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 10
+       }
+      },
+      {
+       "id": "S04-12",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "bars",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 5
+       }
+      },
+      {
+       "id": "S04-13",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S04-14",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S04-15",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 5
+       }
+      },
+      {
+       "id": "S04-16",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "bars",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S04-17",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S04-18",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "bars",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S04-19",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S04-20",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S04-21",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 8
+       }
+      }
+     ],
+     "window_s": 96.0
+    },
+    {
+     "id": "S05",
+     "blocks": [
+      {
+       "id": "S05-01",
+       "seconds": 5.0,
+       "tier": "light",
+       "mode": "establish",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 12,
+        "character": 0
+       }
+      },
+      {
+       "id": "S05-02",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "insert",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 7,
+        "character": 0
+       }
+      },
+      {
+       "id": "S05-03",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "insert",
+       "who": "cavalry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 8,
+        "character": 0
+       }
+      },
+      {
+       "id": "S05-04",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 10,
+        "character": 0
+       }
+      },
+      {
+       "id": "S05-05",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 22.0
+    },
+    {
+     "id": "S06",
+     "blocks": [
+      {
+       "id": "S06-01",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "murat",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-02",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S06-03",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "insert",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-04",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-05",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 3
+       }
+      },
+      {
+       "id": "S06-06",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "insert",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-07",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S06-08",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "kemal",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S06-09",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "kemal",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 9
+       }
+      },
+      {
+       "id": "S06-10",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "insert",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-11",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 5
+       }
+      },
+      {
+       "id": "S06-12",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S06-13",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 2
+       }
+      },
+      {
+       "id": "S06-14",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "cavalry",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-15",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-16",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-17",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-18",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 10
+       }
+      },
+      {
+       "id": "S06-19",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S06-20",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "gunners",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-21",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S06-22",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 1
+       }
+      },
+      {
+       "id": "S06-23",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "gunners",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-24",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S06-25",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S06-26",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S06-27",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 104.0
+    },
+    {
+     "id": "S07",
+     "blocks": [
+      {
+       "id": "S07-01",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 9,
+        "character": 0
+       }
+      },
+      {
+       "id": "S07-02",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 9,
+        "character": 0
+       }
+      },
+      {
+       "id": "S07-03",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S07-04",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "insert",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 8,
+        "character": 0
+       }
+      },
+      {
+       "id": "S07-05",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 8,
+        "character": 0
+       }
+      },
+      {
+       "id": "S07-06",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S07-07",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "drummer",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S07-08",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S07-09",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "drummer",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S07-10",
+       "seconds": 4.0,
+       "tier": "hold",
+       "mode": "establish",
+       "shots": 1,
+       "category": "hold",
+       "words": {
+        "narrator": 8,
+        "character": 0
+       }
+      },
+      {
+       "id": "S07-11",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 8,
+        "character": 0
+       }
+      },
+      {
+       "id": "S07-12",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 7,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 49.0
+    },
+    {
+     "id": "S08",
+     "blocks": [
+      {
+       "id": "S08-01",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "bayan",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S08-02",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "bayan",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S08-03",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 8
+       }
+      },
+      {
+       "id": "S08-04",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "bayan",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S08-05",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S08-06",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "bayan",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S08-07",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "subutai",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 8
+       }
+      },
+      {
+       "id": "S08-08",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S08-09",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S08-10",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "bars",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 9
+       }
+      },
+      {
+       "id": "S08-11",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "establish",
+       "who": "scouts",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S08-12",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S08-13",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "establish",
+       "who": "infantry",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S08-14",
+       "seconds": 7.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "subutai",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 13
+       }
+      },
+      {
+       "id": "S08-15",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 9
+       }
+      },
+      {
+       "id": "S08-16",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "subutai",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S08-17",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 12
+       }
+      },
+      {
+       "id": "S08-18",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S08-19",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 8
+       }
+      },
+      {
+       "id": "S08-20",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "subutai",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 1
+       }
+      },
+      {
+       "id": "S08-21",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 8
+       }
+      },
+      {
+       "id": "S08-22",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "subutai",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 103.0
+    },
+    {
+     "id": "S09",
+     "blocks": [
+      {
+       "id": "S09-01",
+       "seconds": 4.0,
+       "tier": "hold",
+       "mode": "establish",
+       "shots": 1,
+       "category": "hold",
+       "words": {
+        "narrator": 9,
+        "character": 0
+       }
+      },
+      {
+       "id": "S09-02",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S09-03",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S09-04",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 8,
+        "character": 0
+       }
+      },
+      {
+       "id": "S09-05",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S09-06",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S09-07",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "insert",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 4,
+        "character": 0
+       }
+      },
+      {
+       "id": "S09-08",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "establish",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 14,
+        "character": 0
+       }
+      },
+      {
+       "id": "S09-09",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "gunners",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 11,
+        "character": 0
+       }
+      },
+      {
+       "id": "S09-10",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "bayan",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S09-11",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "establish",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 9,
+        "character": 0
+       }
+      },
+      {
+       "id": "S09-12",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S09-13",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 8,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 54.0
+    },
+    {
+     "id": "S10",
+     "blocks": [
+      {
+       "id": "S10-01",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-02",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 3
+       }
+      },
+      {
+       "id": "S10-03",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "infantry",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-04",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "drummer",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-05",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-06",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "insert",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-07",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 5
+       }
+      },
+      {
+       "id": "S10-08",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 9
+       }
+      },
+      {
+       "id": "S10-09",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "guards",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-10",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "drummer",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-11",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-12",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S10-13",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S10-14",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-15",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 1
+       }
+      },
+      {
+       "id": "S10-16",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "infantry",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-17",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-18",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S10-19",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S10-20",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "gunners",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-21",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S10-22",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "gunners",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-23",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-24",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 5
+       }
+      },
+      {
+       "id": "S10-25",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-26",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "drummer",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 2
+       }
+      },
+      {
+       "id": "S10-27",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 9
+       }
+      },
+      {
+       "id": "S10-28",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S10-29",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-30",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "genghis",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-31",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "subutai",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S10-32",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 8
+       }
+      },
+      {
+       "id": "S10-33",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-34",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "kemal",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S10-35",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 3
+       }
+      },
+      {
+       "id": "S10-36",
+       "seconds": 4.0,
+       "tier": "hold",
+       "mode": "establish",
+       "shots": 1,
+       "category": "hold",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S10-37",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "kemal",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S10-38",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 148.0
+    },
+    {
+     "id": "S11",
+     "blocks": [
+      {
+       "id": "S11-01",
+       "seconds": 5.0,
+       "tier": "hold",
+       "mode": "establish",
+       "shots": 1,
+       "category": "hold",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S11-02",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 2
+       }
+      },
+      {
+       "id": "S11-03",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 8
+       }
+      },
+      {
+       "id": "S11-04",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 4
+       }
+      },
+      {
+       "id": "S11-05",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 5
+       }
+      },
+      {
+       "id": "S11-06",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S11-07",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S11-08",
+       "seconds": 4.0,
+       "tier": "hold",
+       "mode": "establish",
+       "shots": 1,
+       "category": "hold",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 35.0
+    },
+    {
+     "id": "S12",
+     "blocks": [
+      {
+       "id": "S12-01",
+       "seconds": 4.0,
+       "tier": "hold",
+       "mode": "establish",
+       "shots": 1,
+       "category": "hold",
+       "words": {
+        "narrator": 6,
+        "character": 0
+       }
+      },
+      {
+       "id": "S12-02",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 9,
+        "character": 0
+       }
+      },
+      {
+       "id": "S12-03",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 12,
+        "character": 0
+       }
+      },
+      {
+       "id": "S12-04",
+       "seconds": 5.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 11,
+        "character": 0
+       }
+      },
+      {
+       "id": "S12-05",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 7,
+        "character": 0
+       }
+      },
+      {
+       "id": "S12-06",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S12-07",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "bars",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S12-08",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "murat",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 8
+       }
+      },
+      {
+       "id": "S12-09",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      }
+     ],
+     "window_s": 40.0
+    },
+    {
+     "id": "S13",
+     "blocks": [
+      {
+       "id": "S13-01",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S13-02",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 10
+       }
+      },
+      {
+       "id": "S13-03",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S13-04",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 12
+       }
+      },
+      {
+       "id": "S13-05",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S13-06",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S13-07",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "kemal",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 9
+       }
+      },
+      {
+       "id": "S13-08",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S13-09",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "bars",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S13-10",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S13-11",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 8
+       }
+      },
+      {
+       "id": "S13-12",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 3
+       }
+      },
+      {
+       "id": "S13-13",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S13-14",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S13-15",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "kemal",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S13-16",
+       "seconds": 3.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S13-17",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 5
+       }
+      },
+      {
+       "id": "S13-18",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S13-19",
+       "seconds": 6.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 11
+       }
+      },
+      {
+       "id": "S13-20",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S13-21",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "establish",
+       "who": "riders",
+       "shots": 1,
+       "category": "compensator",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 101.0
+    },
+    {
+     "id": "S14",
+     "blocks": [
+      {
+       "id": "S14-01",
+       "seconds": 5.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 13,
+        "character": 0
+       }
+      },
+      {
+       "id": "S14-02",
+       "seconds": 5.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 12,
+        "character": 0
+       }
+      },
+      {
+       "id": "S14-03",
+       "seconds": 5.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "riders",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 15,
+        "character": 0
+       }
+      },
+      {
+       "id": "S14-04",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 11,
+        "character": 0
+       }
+      },
+      {
+       "id": "S14-05",
+       "seconds": 4.0,
+       "tier": "hold",
+       "mode": "establish",
+       "shots": 1,
+       "category": "hold",
+       "words": {
+        "narrator": 14,
+        "character": 0
+       }
+      },
+      {
+       "id": "S14-06",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 14,
+        "character": 0
+       }
+      },
+      {
+       "id": "S14-07",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "kemal",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 6
+       }
+      },
+      {
+       "id": "S14-08",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "scene",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 7
+       }
+      },
+      {
+       "id": "S14-09",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 5,
+        "character": 0
+       }
+      },
+      {
+       "id": "S14-10",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "infantry",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 12,
+        "character": 0
+       }
+      },
+      {
+       "id": "S14-11",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "brun",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 13,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 47.0
+    },
+    {
+     "id": "S15",
+     "blocks": [
+      {
+       "id": "S15-01",
+       "seconds": 3.0,
+       "tier": "full",
+       "mode": "insert",
+       "who": "drummer",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 0,
+        "character": 0
+       }
+      },
+      {
+       "id": "S15-02",
+       "seconds": 4.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 8,
+        "character": 0
+       }
+      },
+      {
+       "id": "S15-03",
+       "seconds": 5.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "napoleon",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 6,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 12.0
+    },
+    {
+     "id": "S16",
+     "blocks": [
+      {
+       "id": "S16-01",
+       "seconds": 5.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "geniuses",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 15,
+        "character": 0
+       }
+      },
+      {
+       "id": "S16-02",
+       "seconds": 5.0,
+       "tier": "light",
+       "mode": "narrated",
+       "who": "stranded",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 17,
+        "character": 0
+       }
+      },
+      {
+       "id": "S16-03",
+       "seconds": 4.0,
+       "tier": "full",
+       "mode": "narrated",
+       "who": "genghis",
+       "shots": 1,
+       "category": "scene",
+       "words": {
+        "narrator": 8,
+        "character": 0
+       }
+      }
+     ],
+     "window_s": 14.0
+    }
+   ],
+   "dynamics": {
+    "share_scene": 0.801,
+    "share_map_pure": 0.0,
+    "share_compensator": 0.153,
+    "share_host": 0.0,
+    "share_hold": 0.046,
+    "non_character": 0.199,
+    "narrator_share": 0.449,
+    "map_run_max_s": 0.0,
+    "non_scene_run_max_s": 8.0,
+    "shots_per_min": 14.3
+   },
+   "cost": {
+    "usd_planned": "unknown",
+    "usd_worst": "unknown",
+    "known_usd_planned": 0.0,
+    "known_usd_worst": 0.0,
+    "unknown_rows": [
+     "keyframes (one per shot card)",
+     "video, light tier",
+     "video, full tier",
+     "pod boot and model load",
+     "narration (ElevenLabs credits, one per character)"
+    ],
+    "rows": [
+     {
+      "label": "keyframes (one per shot card)",
+      "kind": "pod",
+      "service": "runpod_usd",
+      "units": 214,
+      "usd_planned": null,
+      "usd_worst": null,
+      "basis": "unknown"
+     },
+     {
+      "label": "video, light tier",
+      "kind": "pod",
+      "service": "runpod_usd",
+      "units": 44,
+      "usd_planned": null,
+      "usd_worst": null,
+      "basis": "unknown"
+     },
+     {
+      "label": "video, full tier",
+      "kind": "pod",
+      "service": "runpod_usd",
+      "units": 160,
+      "usd_planned": null,
+      "usd_worst": null,
+      "basis": "unknown"
+     },
+     {
+      "label": "pod boot and model load",
+      "kind": "pod",
+      "service": "runpod_usd",
+      "units": 2,
+      "usd_planned": null,
+      "usd_worst": null,
+      "basis": "unknown"
+     },
+     {
+      "label": "held stills, assembly (CPU)",
+      "kind": "cpu",
+      "service": "runpod_usd",
+      "units": 1,
+      "usd_planned": 0.0,
+      "usd_worst": 0.0,
+      "basis": "estimate (by construction)"
+     },
+     {
+      "label": "narration (ElevenLabs credits, one per character)",
+      "kind": "voice",
+      "service": "elevenlabs_credits",
+      "units": 5761,
+      "usd_planned": null,
+      "usd_worst": null,
+      "basis": "unknown"
+     }
+    ]
+   },
+   "cost_rows": [
+    {
+     "label": "keyframes (one per shot card)",
+     "kind": "pod",
+     "job": "keyframe",
+     "units": 214,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "video, light tier",
+     "kind": "pod",
+     "job": "ltx_light",
+     "units": 44,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "video, full tier",
+     "kind": "pod",
+     "job": "ltx_full",
+     "units": 160,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "pod boot and model load",
+     "kind": "pod",
+     "job": "pod_overhead",
+     "units": 2,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "held stills, assembly (CPU)",
+     "kind": "cpu",
+     "units": 1,
+     "service": "runpod_usd"
+    },
+    {
+     "label": "narration (ElevenLabs credits, one per character)",
+     "kind": "voice",
+     "units": 5761,
+     "service": "elevenlabs_credits"
+    }
+   ],
+   "risks": [
+    "REVIEW VP-12 cost"
+   ],
+   "scores": {
+    "code": 90,
+    "critic": null
+   }
+  },
+  {
+   "id": "v2",
+   "title": "The two armies as two systems",
+   "profile_id": "B",
+   "logline": "The same fight, told through what each army could do: range, speed, supply and command, with played scenes at the turns.",
+   "outline": [
+    "Cold open on the fog and three teasers, then the outcome stated",
+    "Dossiers and range diagrams of both armies before any scene",
+    "Scene 1 at the first contact, a map of the valley around it",
+    "Scenes 2 and 3: the plans fail on the map and the other side acts",
+    "The central scene, then the turning point on one held frame",
+    "Fallout and the verdict as a comparison, the callback and the pointer"
+   ],
+   "segments": [
+    {
+     "id": "S01",
+     "window_s": 12,
+     "blocks": [
+      {
+       "category": "scene",
+       "seconds": 6,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 3,
+       "archetype": 8
+      },
+      {
+       "category": "scene",
+       "seconds": 3,
+       "who": "hero"
+      }
+     ]
+    },
+    {
+     "id": "S02",
+     "window_s": 24,
+     "blocks": [
+      {
+       "category": "compensator",
+       "seconds": 24,
+       "archetype": 9
+      }
+     ]
+    },
+    {
+     "id": "S03",
+     "window_s": 39,
+     "blocks": [
+      {
+       "category": "map_pure",
+       "seconds": 15,
+       "archetype": 1
+      },
+      {
+       "category": "scene",
+       "seconds": 6,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 18,
+       "archetype": 5
+      }
+     ]
+    },
+    {
+     "id": "S04",
+     "window_s": 96,
+     "blocks": [
+      {
+       "category": "map_pure",
+       "seconds": 20,
+       "archetype": 2
+      },
+      {
+       "category": "scene",
+       "seconds": 40,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 30,
+       "archetype": 7
+      },
+      {
+       "category": "scene",
+       "seconds": 6,
+       "who": "hero"
+      }
+     ]
+    },
+    {
+     "id": "S05",
+     "window_s": 22,
+     "blocks": [
+      {
+       "category": "compensator",
+       "seconds": 22,
+       "archetype": 9
+      }
+     ]
+    },
+    {
+     "id": "S06",
+     "window_s": 104,
+     "blocks": [
+      {
+       "category": "map_pure",
+       "seconds": 24,
+       "archetype": 4
+      },
+      {
+       "category": "scene",
+       "seconds": 40,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 30,
+       "archetype": 6
+      },
+      {
+       "category": "scene",
+       "seconds": 10,
+       "who": "hero"
+      }
+     ]
+    },
+    {
+     "id": "S07",
+     "window_s": 49,
+     "blocks": [
+      {
+       "category": "compensator",
+       "seconds": 22,
+       "archetype": 11
+      },
+      {
+       "category": "scene",
+       "seconds": 6,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 21,
+       "archetype": 8
+      }
+     ]
+    },
+    {
+     "id": "S08",
+     "window_s": 103,
+     "blocks": [
+      {
+       "category": "map_pure",
+       "seconds": 33,
+       "archetype": 3
+      },
+      {
+       "category": "scene",
+       "seconds": 40,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 24,
+       "archetype": 6
+      },
+      {
+       "category": "scene",
+       "seconds": 6,
+       "who": "hero"
+      }
+     ]
+    },
+    {
+     "id": "S09",
+     "window_s": 54,
+     "blocks": [
+      {
+       "category": "compensator",
+       "seconds": 24,
+       "archetype": 5
+      },
+      {
+       "category": "scene",
+       "seconds": 6,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 24,
+       "archetype": 10
+      }
+     ]
+    },
+    {
+     "id": "S10",
+     "window_s": 148,
+     "blocks": [
+      {
+       "category": "map_pure",
+       "seconds": 30,
+       "archetype": 2
+      },
+      {
+       "category": "scene",
+       "seconds": 45,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 30,
+       "archetype": 7
+      },
+      {
+       "category": "scene",
+       "seconds": 8,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 35,
+       "archetype": 11
+      }
+     ]
+    },
+    {
+     "id": "S11",
+     "window_s": 35,
+     "blocks": [
+      {
+       "category": "scene",
+       "seconds": 30,
+       "who": "hero"
+      },
+      {
+       "category": "hold",
+       "seconds": 5
+      }
+     ]
+    },
+    {
+     "id": "S12",
+     "window_s": 40,
+     "blocks": [
+      {
+       "category": "map_pure",
+       "seconds": 20,
+       "archetype": 4
+      },
+      {
+       "category": "scene",
+       "seconds": 6,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 14,
+       "archetype": 10
+      }
+     ]
+    },
+    {
+     "id": "S13",
+     "window_s": 101,
+     "blocks": [
+      {
+       "category": "compensator",
+       "seconds": 15,
+       "archetype": 6
+      },
+      {
+       "category": "scene",
+       "seconds": 40,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 36,
+       "archetype": 8
+      },
+      {
+       "category": "scene",
+       "seconds": 10,
+       "who": "hero"
+      }
+     ]
+    },
+    {
+     "id": "S14",
+     "window_s": 47,
+     "blocks": [
+      {
+       "category": "compensator",
+       "seconds": 27,
+       "archetype": 12
+      },
+      {
+       "category": "scene",
+       "seconds": 6,
+       "who": "hero"
+      },
+      {
+       "category": "compensator",
+       "seconds": 14,
+       "archetype": 5
+      }
+     ]
+    },
+    {
+     "id": "S15",
+     "window_s": 12,
+     "blocks": [
+      {
+       "category": "scene",
+       "seconds": 12,
+       "who": "hero"
+      }
+     ]
+    },
+    {
+     "id": "S16",
+     "window_s": 14,
+     "blocks": [
+      {
+       "category": "compensator",
+       "seconds": 14,
+       "archetype": 8
+      }
+     ]
+    }
+   ],
+   "dynamics": {
+    "share_scene": 0.362,
+    "share_map_pure": 0.158,
+    "share_compensator": 0.474,
+    "share_host": 0.0,
+    "share_hold": 0.006,
+    "non_character": 0.638,
+    "narrator_share": 0.638,
+    "map_run_max_s": 33.0,
+    "non_scene_run_max_s": 54.0,
+    "shots_per_min": 13.8
+   },
+   "cost": {
+    "usd_planned": "unknown",
+    "usd_worst": "unknown",
+    "known_usd_planned": 0.0,
+    "known_usd_worst": 0.0,
+    "unknown_rows": [
+     "keyframes (planned shots)",
+     "video of the played blocks, full tier",
+     "pod boot and model load",
+     "narration (ElevenLabs credits, one per character)"
+    ],
+    "rows": [
+     {
+      "label": "keyframes (planned shots)",
+      "kind": "pod",
+      "service": "runpod_usd",
+      "units": 210,
+      "usd_planned": null,
+      "usd_worst": null,
+      "basis": "unknown"
+     },
+     {
+      "label": "video of the played blocks, full tier",
+      "kind": "pod",
+      "service": "runpod_usd",
+      "units": 76,
+      "usd_planned": null,
+      "usd_worst": null,
+      "basis": "unknown"
+     },
+     {
+      "label": "pod boot and model load",
+      "kind": "pod",
+      "service": "runpod_usd",
+      "units": 2,
+      "usd_planned": null,
+      "usd_worst": null,
+      "basis": "unknown"
+     },
+     {
+      "label": "maps, HUD, dossiers, parallax (CPU)",
+      "kind": "cpu",
+      "service": "runpod_usd",
+      "units": 1,
+      "usd_planned": 0.0,
+      "usd_worst": 0.0,
+      "basis": "estimate (by construction)"
+     },
+     {
+      "label": "narration (ElevenLabs credits, one per character)",
+      "kind": "voice",
+      "service": "elevenlabs_credits",
+      "units": 5761,
+      "usd_planned": null,
+      "usd_worst": null,
+      "basis": "unknown"
+     }
+    ]
+   },
+   "cost_rows": [
+    {
+     "label": "keyframes (planned shots)",
+     "kind": "pod",
+     "job": "keyframe",
+     "units": 210,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "video of the played blocks, full tier",
+     "kind": "pod",
+     "job": "ltx_full",
+     "units": 76,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "pod boot and model load",
+     "kind": "pod",
+     "job": "pod_overhead",
+     "units": 2,
+     "service": "runpod_usd",
+     "pod": "pod1"
+    },
+    {
+     "label": "maps, HUD, dossiers, parallax (CPU)",
+     "kind": "cpu",
+     "units": 1,
+     "service": "runpod_usd"
+    },
+    {
+     "label": "narration (ElevenLabs credits, one per character)",
+     "kind": "voice",
+     "units": 5761,
+     "service": "elevenlabs_credits"
+    }
+   ],
+   "risks": [
+    "REVIEW VP-16 narrator",
+    "REVIEW VP-11 COMPENSATOR",
+    "REVIEW VP-11 MAP",
+    "REVIEW VP-12 cost"
+   ],
+   "scores": {
+    "code": 60,
+    "critic": null
+   }
+  }
+ ],
+ "recommended": "v1",
+ "why": "Code scores only the structure and the lanes: V1 loses a point only for the unmeasured price; V2 narrates more than the template's 45 % ceiling and needs maps and HUD cards that do not exist in code yet. The story is the critic's and the creator's call.",
+ "chosen": null
+}

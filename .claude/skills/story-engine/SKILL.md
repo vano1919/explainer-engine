@@ -25,6 +25,7 @@ as a separate agent with a fresh context (OR-20, D-79).
 | # | Stage (agent) | Writes | Gate (free) |
 |---|---|---|---|
 | 0 | research (orchestrator, skill `science-grounding`) | claim map C-xx, dossier | sources graded, every number has a claim |
+| 1b | variant planner (`story-architect` step 1b, OR-31) | `script_variants.json`: two or three priced variants (`scripting/variant_plan.py`, VP rules) | Opus thread + critic score + the creator's card; the pick binds the script (ZI-07, ZI-08) |
 | 1 | `story-architect` | `drama`, `cast`, segment skeleton, the beat-template choice (A/B/C), each dialogue segment's `scene` header | `story_lint` 0 FAIL (ST-00 FAIL on /3), PV-48 headers complete, REVIEWs answered |
 | 2 | `scene-writer` (one segment per call, skill `dialogue-scenes`) | segment `lines` (text, speaker, claims, `to`, `intent`) as the hand-off unit | `stage_guard writer`, PV-12, PV-33, PV-48 (SC-01..SC-10) |
 | 2b | `beat-writer` (same segment, right after the writer) | line `visual_beats`; cues OPT-IN, each with its `event` (skill `visual-beats`) | `stage_guard beats`, PV-44 (/3 semantics) |
@@ -34,6 +35,14 @@ as a separate agent with a fresh context (OR-20, D-79).
 | 6 | `shorts-writer` | `shorts` (10, at least 6 styles) | `stage_guard shorts`, PV-28, PV-34 |
 | 7 | `script-critic` (fresh context) | findings only, each to its owner stage; writes `editorial_review.json` (`editorial_review/2` on /3: the integrated production-coherence pass, D-60) | SCRIPTING_SPEC gates + `production.editorial_gate` (EG), no "bored" window; at most 2 rounds; a passing review comes with `story_page.md` (Georgian, one page, the whole story and why it is well told, BP-89, EG-23) |
 | - | creator approval #1 | | nothing is paid before it |
+
+**The re-read rule (OR-32).** Each stage starts by Reading its page and the files the page says to read first, and records it with
+`stage_guard start`; `stage_guard fresh` reports an output with no such record. The reason: the whole writers' room in one
+context squeezes about 135 thousand tokens of rules into a summary, and a stage written from a summary breaks rules its page states.
+
+**Branch switch (A5).** Today (D-79) the main agent runs every stage inline and spawns only the critic. If the creator confirms D-81
+(stage workers), `config/model_routing.json` gains `"stage_mode": "worker"` (a protected edit, his word only) and the orchestrator
+spawns each stage page as a worker with that page's model and effort; the code reads a missing `stage_mode` as `"inline"`.
 
 ## 1. The skeleton first (story-architect)
 - Twelve premises, scored; the winner gets a one-sentence premise, a yes/no dramatic question and a promise.
