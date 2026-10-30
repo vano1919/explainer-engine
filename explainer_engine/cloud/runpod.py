@@ -4,7 +4,7 @@
     python -m explainer_engine.cloud.runpod check | balance | list | sweep [--dry-run] [--delete --yes]
     python -m explainer_engine.cloud.runpod create --yes --max-usd X --max-hours H [--gpu default|cheap|big] [--boot <manifest>]
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
-           [--vram GB [--ref-hours H] [--only <card id substring>]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
+           [--vram GB [--ref-hours H] [--only <card id substring>[,<more>]] [--cloud COMMUNITY|SECURE] [--wait-stock 15m]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
            [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB] [--boot-minutes M]
     python -m explainer_engine.cloud.runpod dryrun --script pod.sh [--offline]   everything knowable before a pod bills (P1b, CR-18)
     python -m explainer_engine.cloud.runpod pins <pins.txt>   a pod's pins.txt against config/cloud_pins.json
@@ -356,13 +356,51 @@ def pick_gpus(api, *, vram_gb, ref_hours, clouds=("COMMUNITY", "SECURE"), min_cu
 
 
 def only_cards(picks, only):
-    """The creator names the card (2026-10-26): keep the picks whose id contains ``only``; none left is an error."""
+    """The creator names the card (2026-10-26): keep the picks whose id contains ``only``; ``only`` may be a comma list of such
+    names (a pick is kept when it contains any of them); none left is an error."""
     if not only:
         return picks
-    kept = [r for r in picks if only in r["gpu"]]
+    names = [n.strip() for n in only.split(",") if n.strip()]
+    kept = [r for r in picks if any(n in r["gpu"] for n in names)]
     if not kept:
         raise SystemExit(f"--only {only!r}: no card with stock matches")
     return kept
+
+
+CLOUDS = ("COMMUNITY", "SECURE")
+
+
+# What ``create`` reads (a flag that is not here is refused, so a typo or a flag from another command is never silently ignored, G15).
+CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
+                      "--job", "--job-type", "--ledger", "--max-hours", "--max-usd", "--min-ram", "--name", "--on-cap", "--only",
+                      "--pass-s", "--ref-hours", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--units",
+                      "--upload-grace-s", "--volume", "--vram", "--wait-stock", "--work-min")
+CREATE_BOOL_FLAGS = ("--measure", "--no-guard", "--yes")
+PICK_ONLY_FLAGS = ("--only", "--cloud", "--ref-hours", "--wait-stock")  # read only when --vram picks the card
+
+
+def create_flag_problems(rest):
+    """Refusals for the flags of a ``create`` command line (empty = fine): an unknown flag, and a flag that only means something
+    with ``--vram`` given without it (it used to be ignored, and the pod landed on the default pool at its dearer price)."""
+    import difflib
+    out, known, i = [], CREATE_VALUE_FLAGS + CREATE_BOOL_FLAGS, 0
+    while i < len(rest):
+        t = rest[i]
+        if t.startswith("--"):
+            if t not in known:
+                near = difflib.get_close_matches(t, known, n=1)
+                out.append(f"unknown flag {t}" + (f" (did you mean {near[0]}?)" if near else "") + ": create reads only its own flags")
+            elif t in CREATE_VALUE_FLAGS:
+                if i + 1 >= len(rest):
+                    out.append(f"{t} needs a value")
+                i += 1
+        i += 1
+    if "--vram" not in rest:
+        out += [f"{f} only works with --vram GB (without it the default pool is used and {f} is ignored)" for f in PICK_ONLY_FLAGS if f in rest]
+    cloud = _opt(rest, "--cloud")
+    if cloud and cloud.upper() not in CLOUDS:
+        out.append(f"--cloud {cloud!r} is not one of {CLOUDS}")
+    return out
 
 
 # --- names, money -------------------------------------------------------------------------------------------------
@@ -1598,6 +1636,8 @@ def main(argv=None, api=None, live=None):
     elif cmd == "create":
         if "--yes" not in rest:
             raise SystemExit("refused: --yes only after the creator approved this pod's price and time cap")
+        if create_flag_problems(rest):
+            raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(create_flag_problems(rest)))
         max_usd, max_hours = _opt(rest, "--max-usd", None, float), _opt(rest, "--max-hours", None, float)
         if not max_usd or not max_hours:
             raise SystemExit("create needs --max-usd and --max-hours (the approved caps)")
@@ -1625,9 +1665,11 @@ def main(argv=None, api=None, live=None):
             refused = []
 
             def _pick():
+                cloud = (_opt(rest, "--cloud") or "").upper()  # one cloud: the cards tried and EE_PRICE (the dearest pick) then agree (G15)
                 rows = pick_gpus(api, vram_gb=_opt(rest, "--vram", None, float), ref_hours=_opt(rest, "--ref-hours", max_hours, float),
                                  max_price=spend_caps.runpod()["max_price_per_hour"], job=job_type, units=units, setup_min=setup_min,
-                                 refused=refused)
+                                 refused=refused, clouds=(cloud,) if cloud else CLOUDS,
+                                 limit=50 if _opt(rest, "--only") else 6)  # --only names a card: it must not fall off the cheapest six
                 return only_cards(rows, _opt(rest, "--only"))
             picks = wait_for_stock(_pick, parse_wait(_opt(rest, "--wait-stock")))
             for line in refused:

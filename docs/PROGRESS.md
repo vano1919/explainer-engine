@@ -2896,3 +2896,13 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 
 ## 2026-10-30 08:10 UTC — P0d: key alias `EE_ANTHROPIC_API_KEY`
 The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code account auth). `claude_api.api_key()` now takes the first non-empty of `ANTHROPIC_API_KEY`, `EE_ANTHROPIC_API_KEY`; used by `client()`, `status`, `estimate`. Test: `test_the_key_can_come_from_the_alias_name`.
+
+## 2026-10-30 09:10 UTC: G15, `create --cloud`, flags that mean what they say (audit pass 1, B2; free)
+
+- The paid thread found that `--only "GeForce RTX 3090"` kept the SECURE 3090 at $0.50 beside the COMMUNITY one and `EE_PRICE` was the dearest
+  pick, which cut pod A's dead-man from 16.2 to 6.2 min. `create --cloud COMMUNITY|SECURE` now restricts the picks, the cards tried and
+  `EE_PRICE` to one cloud; `--only` accepts a comma list and is searched among 50 cards, not the cheapest six. An unknown flag is refused
+  before any API call, as are `--only`/`--cloud`/`--ref-hours`/`--wait-stock` without `--vram` (they were ignored: default pool, RTX 4090 SECURE).
+  CR-20 in the runbook; tests in `tests/unit/test_cloud_economy.py`, including one that every flag the create branch reads is in the known list.
+- For the P12a commands: pass `--vram 24 --ref-hours 0.05 --boot-minutes 25 --cloud COMMUNITY` (or SECURE) with `--only`; leave out
+  `--setup-min` (a 10-minute setup against 3 minutes of work is refused by RP-09).
