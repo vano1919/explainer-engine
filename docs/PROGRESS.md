@@ -2546,6 +2546,43 @@ training as sequences is decided in the process. Changed together:
 - Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
 - From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
 
+## 2026-10-29 19:00 UTC (23:00 Tbilisi): P1a, RunPod stop paths that always fire and never kill a healthy pod (no pod, no money)
+
+- Blueprint v2 phase P1a (PR #29). Design in [CLOUD_RUNBOOK](CLOUD_RUNBOOK.md) (CR-01..CR-16, new ID family `CR`); the evidence is
+  `blueprint_2026-10-29/recheck/verify_runpod.json`: the EXIT trap of `self_stop_sh` was never installed (only its first line was
+  used), the guard stopped healthy script pods through `jobs.stall` + a vacuous `safe_to_release`, the heartbeat was optional, upload
+  failures were swallowed, the watchdog hid its own failures, the hooks failed open.
+- `cloud/pod_wrapper.sh` is now the start command of every script pod (`runpod.script_cmd()`; the job's URL, money, lifetime and HF
+  folder arrive as `EE_*` env, `wrapper_env`). It owns the GPU check (BAD_HOST), the key boot-probe (line 1 of beat.txt), the 5-minute
+  upload loop with a failure counter, the money dead-man (`deadline_of`: created + min(lifetime, max_usd / (price + disk)) - grace),
+  the end word (DONE / FAILED / FAILED_UPLOAD / CAPPED / BAD_HOST), the final upload + verify with a bounded retry and the stop (v2
+  action, then GraphQL; no v1 route). `lint_pod_script` now refuses a script that writes beat.txt or an end word, idles, touches CUDA
+  without `timeout` or sends weights into the output folder; the old own-loop rule survives as `lint_own_upload_loop`.
+- `create` refuses a script pod without a heartbeat, and without a stop path outside the session (restricted in-pod key OR a watchdog
+  run in the last 60 min), writes the live record `runpod/live/<pod>.json` to the vault dataset (`cloud/hf_live.py`) before the POST and
+  drops it when no pod is made. The guard lives by the HF beat for script pods (REST view no longer drives a stall); progress frozen
+  under fresh beats = STALLED, then stop at twice the limit (`# stall-minutes: N`); failing uploads push and never stop while files are
+  unstored; FAILED_UPLOAD / BAD_HOST put the job into RECOVERY_REQUIRED.
+- Watchdog: cron every 10 min, reads the live records and beats (DONE / FAILED / CAPPED / money estimate -> stop), writes
+  `runpod/watchdog.json`, closes records of gone pods, writes the job summary; no masks (a missing key, a failed stop and a lost push
+  are red). Hooks: the Stop hook refuses to end a turn when the check cannot run and a known pod is live; TMR `rp.py` is an allow-list.
+  Pushes are recorded in `tools/runpod/notify.jsonl`; `check` reports a lost push or a missing topic while a pod is live.
+- Tests: `test_pod_wrapper.py` (the real wrapper under bash with stubbed curl/nvidia-smi/uploader), `test_cloud_stop_paths.py` (criteria
+  c, d, f, g and the create refusals), conftest isolation of `tools/runpod` (CR-16). Changed on purpose: the lint tests of the old rule
+  now call `lint_own_upload_loop`; `test_a_pod_script_that_idles...` no longer expects `dead_man_sh` and the dead trap (replaced by the
+  wrapper tests); the watchdog cron test expects */10. The old training scripts under `training/pods/` write their own DONE and are
+  refused at the next `create` until P1b rewrites the ones that are reused.
+- Open for the creator: GitHub secret `HF_TOKEN` (write on `vano1919/tmr-artifacts`) for the watchdog; balance is $0.40 so P12a waits for a
+  top-up. Unproven until P12a: the wrapper as container command on RunPod, the real uploader in `ee_upload`, the in-pod key's stop right.
+- P12a drills (CR-17): `runpod create --drill no_self_stop|drop_key|upload_fail` (refused unless the ledger meta says `test=p12a_smoke`),
+  `--pass-s/--upload-grace-s/--cap-grace-s` into the pod env, `EE_DEADLINE` exported to the job script; `self_stop` says so and returns when
+  the pod has no key. Tests in `test_pod_wrapper.py` and `test_cloud_stop_paths.py`.
+- P1a cross-review fixes (PR #29): the watchdog ignores a beat that is not this pod's (BOOT `pod=`, or newer than the record) so a retry is
+  not stopped by the last run's FAILED; a loop upload pass verifies only settled files and never `beat.txt` (the end sequence still verifies
+  all) and the verified time is the pass start; the hook refuses TMR `rp.py` sub-commands outside the allow-list however it is launched;
+  `EE_PRICE` is the card ceiling; `upload_fail >= 6` with unstored files moves the job to RECOVERY_REQUIRED; a guard stop with unstored
+  files does the same (CR-11). Tests for each.
+
 ## 2026-10-29 22:30 UTC (02:30 Tbilisi): P0d Claude API client (no real call yet, no money)
 
 - ვანო 2026-10-29 18:58 UTC: Claude API key in the env file, use the credit fast. Plan `CLAUDE_API_PLAN_2026-10-29.md`; OR-24 verdict
@@ -2642,6 +2679,7 @@ training as sequences is decided in the process. Changed together:
   the curriculum index equal the JSON, one home per CRAFT id, 13 conflicts and 17 areas listed, the conflicting rules keep
   their numbers).
 - Merge of main with P3b (#36): the Lock 5 test of `test_agent_governance` exempts only a backticked reference directly followed by `(planned, Pn)` (regex, the phase must exist in `docs/blueprint/phases.json`); everything else on the line is still checked.
+- P1a second review: the `rp.py` hook inverts its rule: any segment that does not start with a reader/editor and runs `rp.py` with a sub-command outside the allow-list is refused, whatever launches it (timeout, env, FOO=1, nice, stdbuf, watch ...); `diff a/rp.py b/rp.py` and `open('cloud/rp.py')` are no longer refused. Tests extended.
 
 ## 2026-10-29 19:20 UTC (23:20 Tbilisi): Blueprint P2, the data contracts (no pod, no money)
 
