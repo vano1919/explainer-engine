@@ -58,6 +58,13 @@ def resp(text="ok", *, model="claude-opus-5-5", stop="end_turn", inp=1000, out=5
     return NS(content=blocks, stop_reason=stop, model=model, usage=usage, _request_id="req_1", stop_details=details)
 
 
+class Streamed:
+    """A scripted streamed answer: its pieces, then either the final message or an exception (a kill mid-answer)."""
+
+    def __init__(self, chunks, final=None, then=None):
+        self.chunks, self.final, self.then = chunks, final, then
+
+
 class Err(Exception):
     def __init__(self, status):
         super().__init__(f"HTTP {status}")
@@ -85,7 +92,18 @@ class Spaces:
 
     @contextmanager
     def stream(self, **kw):
-        yield NS(get_final_message=lambda: self._next(kw))
+        head = self.script[0] if self.script else None
+        if isinstance(head, Streamed):   # the answer arrives in pieces, and may end in a kill
+            self.calls.append((self.tag, kw))
+            item = self.script.pop(0) if len(self.script) > 1 else self.script[0]
+
+            def pieces():
+                yield from item.chunks
+                if item.then is not None:
+                    raise item.then
+            yield NS(text_stream=pieces(), get_final_message=lambda: item.final)
+        else:
+            yield NS(get_final_message=lambda: self._next(kw))
 
     def count_tokens(self, **kw):
         return NS(input_tokens=2000)
@@ -772,3 +790,72 @@ def test_the_guard_names_the_measured_share_when_most_of_the_prompt_is_fresh_inp
     assert "33%" in why and "60%" in why
     assert ca.cache_guard(5, {"input": 100, "cache_read": 30000, "write_5m": 2000, "write_1h": 0}, 28000) is None
     assert ca.cache_guard(5, {"input": 100, "cache_read": 0, "write_5m": 0, "write_1h": 0}, 0) is None            # a tiny turn with nothing fresh
+
+
+# --- nothing paid is thrown away: streamed text on disk, max_tokens keeps its text, single-shot too ----------------------------------
+def test_a_streamed_answer_killed_mid_way_leaves_the_lines_so_far_on_disk(env):
+    a = api(Streamed(["First finding\nSecond ", "finding\nThird, unfini"], then=KeyboardInterrupt()))
+    with pytest.raises(KeyboardInterrupt):
+        a.complete(req("S"))
+    text = ca.stream_path("T", "S").read_text(encoding="utf-8")
+    assert "First finding\nSecond finding\nThird, unfini" in text and text.startswith("--- S#")   # the unfinished line is flushed on the way out
+    assert "review this" not in text and "rules" not in text                                   # not the prompt, not the system text
+
+
+def test_a_hard_kill_loses_at_most_the_unfinished_line(env):
+    sink = ca.StreamSink(env / "k.txt", "item")
+    sink.write("done line\npartial li")
+    assert (env / "k.txt").read_text(encoding="utf-8") == "--- item ---\ndone line\n"          # on disk before any close()
+    sink.f.close()
+
+
+def test_the_streamed_text_and_the_partial_carry_no_key(env):
+    secret = "sk-ant-api03-" + "A" * 30
+    a = api(Streamed([f"the key is {secret}", " and more\n"], final=resp(f"the key is {secret}", stop="max_tokens")))
+    with pytest.raises(ca.OutputTruncated):
+        a.complete(req("K"))
+    streamed = ca.stream_path("T", "K").read_text(encoding="utf-8")
+    partial = (ca.ledger_dir() / "partial_T_K.json").read_text(encoding="utf-8")
+    assert secret not in streamed and secret not in partial and "[REDACTED-SECRET-LIKE]" in streamed and "[REDACTED-SECRET-LIKE]" in partial
+
+
+def test_a_single_shot_max_tokens_keeps_the_text_and_says_why(env):
+    a = api(resp("the half of the spec that came back", stop="max_tokens"))
+    with pytest.raises(ca.OutputTruncated) as ei:
+        a.complete(req("M", max_tokens=100))
+    e = ei.value
+    assert e.text == "the half of the spec that came back" and e.stop_reason == "max_tokens" and e.usd > 0
+    d = json.loads((ca.ledger_dir() / "partial_T_M.json").read_text(encoding="utf-8"))
+    assert d["text"] == e.text and d["stop_reason"] == "max_tokens" and d["usd_so_far"] > 0 and d["messages"] == []
+    assert "partial text and stop reason saved to" in "".join(e.__notes__) and "kept" in str(e)
+    assert [x["ev"] for x in a.ledger.rows()] == ["start", "done"]                                # paid, and booked
+
+
+def test_a_loop_that_ends_on_max_tokens_keeps_the_last_text_too(env, tmp_path):
+    a = api(*warm_turns(1), resp("cut off mid-sent", stop="max_tokens", inp=100, read=22000, write=2000))
+    with pytest.raises(ca.OutputTruncated):
+        a.complete(req("L", tools_root=str(tmp_path), max_turns=5))
+    d = json.loads((ca.ledger_dir() / "partial_T_L.json").read_text(encoding="utf-8"))
+    assert d["text"] == "cut off mid-sent" and d["stop_reason"] == "max_tokens" and d["turns"] == 2 and d["messages"]
+
+
+def test_every_call_is_streamed_into_the_ledger_folder_and_a_tool_loop_appends_its_turns(env, tmp_path):
+    a = api(Streamed(["turn one\n"], final=tool_turn("list_dir", {"path": "."}, "s1", inp=100, read=20000, write=2000)),
+            Streamed(["the answer\n"], final=resp("the answer", inp=100, read=22000, write=2000)))
+    r = a.complete(req("A", tools_root=str(tmp_path), max_turns=4))
+    assert r.text == "the answer"
+    text = ca.stream_path("T", "A").read_text(encoding="utf-8")
+    assert "turn one\n" in text and "the answer\n" in text and text.count("--- A#t") == 2
+
+
+def test_the_cli_writes_a_max_tokens_text_next_to_the_results(env, capsys):
+    set_caps(env, jobs={"T": 5.0})
+    job = {"job": "T", "task_class": "critical-review", "max_tokens": 100, "requests": [{"id": "a", "user": "hi"}]}
+    (env / "job.json").write_text(json.dumps(job), encoding="utf-8")
+    api_ = ca.ClaudeAPI(Fake(resp("most of the spec", stop="max_tokens")), sleep=lambda s: None)
+    import unittest.mock as um
+    with um.patch.object(ca, "ClaudeAPI", return_value=api_):
+        assert ca.main(["run", str(env / "job.json"), "--out", str(env / "out")]) == 2
+    assert (env / "out" / "a.partial.md").read_text(encoding="utf-8") == "most of the spec"
+    summary = json.loads((env / "out" / "summary.json").read_text(encoding="utf-8"))
+    assert summary["a"]["ok"] is False and summary["a"]["stop_reason"] == "max_tokens" and summary["a"]["partial"] == "a.partial.md"

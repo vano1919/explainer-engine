@@ -36,7 +36,6 @@ ROOT = Path(__file__).resolve().parents[2]
 SERVICE = "claude_api_usd"
 BASE_URL = "https://api.anthropic.com"
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
-STREAM_ABOVE = 16000      # max_tokens above this are streamed (SDK timeouts)
 BATCH_MIN = 20            # a job with at least this many requests goes through the Batch API
 CHARS_PER_TOKEN = 3.0     # offline upper bound for the reservation, never for the bill
 OVERLOAD_WAIT_S = 900     # 429 / overloaded for longer than this stops the job (plan stop rule)
@@ -109,7 +108,12 @@ class CacheCold(LLMError):
 
 
 class OutputTruncated(LLMError):
-    """The answer hit max_tokens; it was paid and recorded but is not cached."""
+    """The answer hit max_tokens (or a loop ran out of turns); it was paid and recorded but is not cached. ``text`` is what came
+    back, ``stop_reason`` why it stopped: both are also written to ``partial_<job>_<id>.json`` before the error leaves."""
+
+    def __init__(self, msg: str = "", *, text: str | None = None, stop_reason: str | None = None, usd: float = 0.0) -> None:
+        super().__init__(msg)
+        self.text, self.stop_reason, self.usd = text, stop_reason, usd
 
 
 class Refused(LLMError):
@@ -383,6 +387,39 @@ def _block_json(b: Any) -> dict:
     return {"type": str(t)}
 
 
+class StreamSink:
+    """The answer as it arrives, one complete line at a time, redacted, appended to ``stream_<job>_<id>.txt`` in the ledger folder: a
+    stop of any kind (cap, overload, a crash, a kill) leaves everything up to the last complete line on disk, and ``close`` writes the
+    unfinished line. Only model output goes in: never the prompt, the system text or a key (key-shaped text is replaced as in tool
+    results). A request that runs several calls (a tool loop, a retry) appends them under a ``--- <item> ---`` line."""
+
+    def __init__(self, path: Path, item: str) -> None:
+        self.path, self.buf = path, ""
+        path.parent.mkdir(parents=True, exist_ok=True)
+        self.f = open(path, "a", encoding="utf-8")
+        self.f.write(f"--- {item} ---\n")
+        self.f.flush()
+
+    def write(self, piece: str) -> None:
+        self.buf += piece
+        if "\n" in self.buf:
+            *lines, self.buf = self.buf.split("\n")
+            self.f.write("".join(redact(x)[0] + "\n" for x in lines))
+            self.f.flush()
+
+    def close(self) -> None:
+        try:
+            if self.buf:
+                self.f.write(redact(self.buf)[0] + "\n")
+                self.buf = ""
+        finally:
+            self.f.close()
+
+
+def stream_path(job: str, rid: str) -> Path:
+    return ledger_dir() / f"stream_{job}_{rid}.txt"
+
+
 def save_partial(req: Request, msgs: list, turns: int, usd: float, err: BaseException) -> Path | None:
     """What a stopped tool loop had so far: every assistant text and tool call, and the tool results cut to their first 400 characters
     (the checkout still has the files). Written atomically; returns None when even that fails (the original error goes on)."""
@@ -396,8 +433,12 @@ def save_partial(req: Request, msgs: list, turns: int, usd: float, err: BaseExce
                     b["content"] = str(b.get("content", ""))[:400]
             turns_out.append({"role": m["role"], "blocks": row})
         path = ledger_dir() / f"partial_{req.job}_{req.id}.json"
-        write_json_atomic(path, {"job": req.job, "id": req.id, "turns": turns, "usd_so_far": round(usd, 6),
-                                 "stopped_by": f"{type(err).__name__}: {err}", "messages": turns_out})
+        text = getattr(err, "text", None)
+        doc = {"job": req.job, "id": req.id, "turns": turns, "usd_so_far": round(usd or getattr(err, "usd", 0.0), 6),
+               "stopped_by": f"{type(err).__name__}: {err}", "stop_reason": getattr(err, "stop_reason", None), "messages": turns_out}
+        if text is not None:   # what the last response said before it was cut: paid for, so kept (redacted like a tool result)
+            doc["text"] = redact(text)[0]
+        write_json_atomic(path, doc)
         return path
     except Exception:  # noqa: BLE001 - saving must never hide the error that stopped the loop
         return None
@@ -590,8 +631,9 @@ class ClaudeAPI:
         except Exception:  # noqa: BLE001 - the heuristic is the fallback of an estimate, never a reason to stop
             return None
 
-    def _send(self, params: dict, model: str, *, fallbacks: bool) -> Any:
-        """One request with the SDK; waits and retries a 429 / overloaded up to OVERLOAD_WAIT_S in all."""
+    def _send(self, params: dict, model: str, *, fallbacks: bool, sink: StreamSink | None = None) -> Any:
+        """One request with the SDK, always streamed so the answer reaches ``sink`` as it is written; waits and retries a
+        429 / overloaded up to OVERLOAD_WAIT_S in all."""
         c = self.client()
         kw = dict(params)
         ns = c.messages
@@ -600,10 +642,12 @@ class ClaudeAPI:
         started, delay = self.clock(), 15.0
         while True:
             try:
-                if params["max_tokens"] > STREAM_ABOVE:
-                    with ns.stream(**kw) as s:
-                        return s.get_final_message()
-                return ns.create(**kw)
+                with ns.stream(**kw) as s:
+                    pieces = getattr(s, "text_stream", None)
+                    if sink is not None and pieces is not None:
+                        for piece in pieces:
+                            sink.write(piece)
+                    return s.get_final_message()
             except Exception as e:  # noqa: BLE001
                 if _status(e) in RETRYABLE:
                     if self.clock() - started + delay > OVERLOAD_WAIT_S:
@@ -633,13 +677,17 @@ class ClaudeAPI:
         est = worst_usd(r.model, params, req.cache_ttl, input_tokens=self._count(params))
         self._reserve(req.job, item, est)
         self.ledger.append({"ev": "start", "uid": uid, "job": req.job, "id": req.id, "model": r.model, "reserved": round(est, 6)})
+        sink = None if batch else StreamSink(stream_path(req.job, req.id), item)
         try:
-            resp = self._send(params, r.model, fallbacks=pr["models"][r.model].get("fallbacks") == "default")
+            resp = self._send(params, r.model, fallbacks=pr["models"][r.model].get("fallbacks") == "default", sink=sink)
         except BaseException as e:
             if _status(e) in UNCHARGED or isinstance(e, Overloaded):
                 self.run_for(req.job).refund(SERVICE, est)
                 self.ledger.append({"ev": "void", "uid": uid, "job": req.job, "id": req.id, "why": f"{type(e).__name__} {_status(e)}"})
             raise   # anything else (timeout, dropped stream) may have been billed: the open start line stops the next call
+        finally:
+            if sink is not None:
+                sink.close()
         use = usage_of(resp, req.cache_ttl)
         note = None
         try:
@@ -665,7 +713,8 @@ class ClaudeAPI:
             d = getattr(resp, "stop_details", None)
             raise Refused(getattr(d, "category", None), getattr(d, "explanation", None))
         if resp.stop_reason == "max_tokens":
-            raise OutputTruncated(f"{req.id}: hit max_tokens {req.max_tokens} (paid ${usd:.4f}, recorded, not cached)")
+            raise OutputTruncated(f"{req.id}: hit max_tokens {req.max_tokens} (paid ${usd:.4f}, recorded, not cached); the text so far "
+                                  f"({len(self._text(resp))} characters) is kept", text=self._text(resp), stop_reason="max_tokens", usd=usd)
         return Result(req.id, self._text(resp), getattr(resp, "model", r_used.model), r_used.effort, usd, False, resp.stop_reason, use,
                       fell_back_to=r_used.model if r_used is not orig else None,
                       request_id=getattr(resp, "_request_id", None), ledger_total=self.ledger.total(), turns=turns)
@@ -687,7 +736,13 @@ class ClaudeAPI:
 
     def _single(self, req: Request, r: Route, params: dict) -> Result:
         resp, r_used, usd, use = self._paid(req, r, params, f"{req.id}#{uuid.uuid4().hex[:6]}")
-        return self._finish(req, resp, r, r_used, usd, use)
+        try:
+            return self._finish(req, resp, r, r_used, usd, use)
+        except (OutputTruncated, Refused) as e:   # paid for: what came back is kept, with why it stopped
+            where = save_partial(req, [], 1, usd, e)
+            if where is not None:
+                e.add_note(f"partial text and stop reason saved to {where}")
+            raise
 
     def _tool_loop(self, req: Request, r: Route, params: dict) -> Result:
         """The reviewer's read-only tools: every turn is reserved and settled on its own. Ends on end_turn; max_turns stops it.
@@ -748,7 +803,7 @@ class ClaudeAPI:
             for q in todo:
                 try:
                     out[q.id] = self.complete(q)
-                except (Refused, OutputTruncated) as e:
+                except (Refused, OutputTruncated, CacheCold) as e:
                     out[q.id] = e
             return out
         out.update(self._batch(todo, wait=wait))
@@ -992,7 +1047,10 @@ def main(argv: list[str] | None = None) -> int:
             (out / _out_name(q)).write_text(res.text, encoding="utf-8")
             summary[q.id] = {"ok": True, "model": res.model, "usd": round(res.usd, 4), "cached": res.cached}
         elif res is not None:
-            summary[q.id] = {"ok": False, "error": str(res)}
+            summary[q.id] = {"ok": False, "error": str(res), "stop_reason": getattr(res, "stop_reason", None)}
+            if getattr(res, "text", None):   # a max_tokens answer is paid for: it goes next to the results, not nowhere
+                (out / f"{q.id}.partial.md").write_text(redact(res.text)[0], encoding="utf-8")
+                summary[q.id]["partial"] = f"{q.id}.partial.md"
     if not summary:
         print("batch not finished yet: run the same command again to collect it")
     summary["_ledger_total_usd"] = api.ledger.total()
