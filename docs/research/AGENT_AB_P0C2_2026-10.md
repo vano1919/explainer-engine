@@ -13,7 +13,7 @@ The decision on A5 is the creator's / the plan thread's; this report is evidence
 - Arm B2: 26 fresh workers, one per stage unit, the orchestrator (this session) re-runs the gates after each return: architect (Sonnet), one writer per segment (16, Sonnet),
   beat-writer in four groups of four segments (Haiku 5.5), performer (Haiku), one routed repair writer (Sonnet), editor (Sonnet), caster (Haiku), shorts (Haiku).
   19 Sonnet workers, 7 Haiku workers. Each worker saw only its stage page, the brief and the previous snapshot.
-- Blind critic: Opus, read-only, labels random (X = A2, Y = B2, revealed only after the verdict in `p2/critic_labels.json`), ids and planning notes scrubbed.
+- Blind critic: Opus, read-only, labels random (X = A2, Y = B2, revealed only after the verdict in `p2/critic_labels.json`), episode id and notes scrubbed; see Limits for exactly what was and was not scrubbed.
 - Measurement is independent of the arms: `measure.py` runs the repo's `story_lint`, `stage_guard`, `production validate` on every snapshot.
 
 ## Numbers (from files)
@@ -22,12 +22,12 @@ The decision on A5 is the creator's / the plan thread's; this report is evidence
 | Segments / lines / words / shots / Shorts | 16 / 238 / 2,392 / 160 / 3 | 16 / 173 / 2,447 / 161 / 3 |
 | `story_lint` final | 0 FAIL, 0 REVIEW | 0 FAIL, 4 REVIEW (ST-11, ST-17 x2, ST-19: story-level, cross-segment) |
 | `stage_guard` violations vs previous snapshot, all stages | 0 | 0 |
-| `production validate`, final, same stand-in world on both (see limits) | 119 FAIL, 148 REVIEW | 153 FAIL, 177 REVIEW |
-| of the FAILs: media / creator gates (PV-05, PV-11, PV-45, PV-47) | 119 | 150 |
+| `production validate`, final, same stand-in world on both (see limits; inputs and outputs in `p2/validate_standin/`) | 119 FAIL, 148 REVIEW | 153 FAIL, 177 REVIEW |
+| of the FAILs: media / creator gates and the not-yet-run compile (PV-05 files, PV-11 "prompt is missing or stale: run compile", PV-45, PV-47) | 119 | 150 |
 | of the FAILs: script defects | 0 | 3 (PV-44 VB-09: base expressions of three heroes missing from the face sheet; architect-owned) |
 | Real file's own schema FAIL | not measurable (validate crashes on its world era; its own harness found none) | 1 (PV-01: one line has `intent` "command", not in the enum; a stage-2/3 field) |
-| Work cost, input-price units, same-model ratios (`cost.json`) | 14.19 M | 19.08 M (Sonnet 9.23 M + Haiku 9.85 M) |
-| Active worker time (`cost.json`; excludes usage-limit stalls and hand-offs) | 47 min | 57 min (Sonnet 31, Haiku 27) |
+| Work cost, input-price units, same-model ratios (`cost.json`, per model `cost_by_model.json`) | 14.19 M | 19.08 M (Sonnet 9.23 M + Haiku 9.85 M) |
+| Active worker time (`cost.json`, per model `cost_by_model.json`; excludes usage-limit stalls and hand-offs) | 47 min | 57 min (Sonnet 31, Haiku 27) |
 
 Cost reading, independent of any price list: B2 is cheaper than A2 only if a Haiku unit costs less than (14.19 - 9.23) / 9.85 = 0.50 of a Sonnet unit. Haiku burned
 more units than Sonnet (mostly cache reads: each worker re-reads the stage pages and the whole script), so the cheaper model did not shrink the work. The unit price
@@ -68,7 +68,8 @@ spoken-fact problems: A2 5, B2 about 7 (B2 also has several story-logic errors a
 - The shared `gate.py` narration check misses the text-level PV-12 lint; both arms ran it, so the effect is symmetric, but B2 only learned of it late.
 - Contamination: the Haiku shorts worker opened `arm_A/production_script.json` once by mistake (it printed A2's shorts block and says it used nothing from it). The arms were not
   isolated otherwise. The first line of the cold open differs between the arms here (unlike P0c).
-- Blinding was imperfect: structural traits (narrator-heavy, tagged lines, sound-entry density) can reveal a form. Header word-budget notes were scrubbed from both.
+- Blinding was imperfect. What was scrubbed: the episode id and notes in both scripts, and the `[budget N words]` planning notes in the segment headers (present in X = A2 only, removed there). 
+  What was not: Y = B2's input still carries word-target hints such as "~30 words" in 16 places and 6 BP/KP rule ids, both scripts carry their claim ids, and structural traits (narrator share, tagged lines, sound-entry density) can reveal a form. The critic did not guess the forms, but this is not proof it could not.
 - Cost units are token units of one price ratio; Haiku and Sonnet units are not the same money. A usage-limit stall hit both arms; its time is excluded, not measured.
 - Not tested: real timing, painted pictures, a human viewer, more than one sample, workers on a model above Sonnet for the story stages.
 
@@ -78,3 +79,5 @@ and 26% fewer cost units even though B2 ran 7 of 26 workers on the cheaper model
 argument for workers did not show up as an advantage in this sample; the cheaper-model argument stays open on price only. The recommended reading: keep D-79 as the default for
 dialogue what-ifs; workers for isolated mechanical stages (beats, caster, shorts) are viable on Haiku but need their own ownership fixes (`scene` in `stage_guard` architect fields, a partial-gate command per stage, one claim-id format). Both
 remain the creator's / the plan thread's call.
+
+PV-11 (here and in the P0c report): the message is "prompt is missing or stale: run compile". It marks the `production compile` step as not run (or run before later text edits), so it is pipeline state, not script content. In this report neither arm compiled, so it is counted with the media gates. The P0c report originally counted arm B's 8 PV-11 as script defects; it now lists them separately for the same reason (arm A had recompiled, arm B had not).
