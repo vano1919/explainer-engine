@@ -3484,5 +3484,9 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 ## 2026-10-30 change plan T03: the five P12a scripts pinned to their dryrun sha256
 - `tests/unit/test_p12a_scripts.py::test_the_p12a_scripts_on_main_are_the_ones_the_plan_dryran` holds the sha256 of `p12a_A.sh` .. `p12a_E.sh` (plan §1.2); a changed script
   fails a free test before any pod and needs a new OR-24 confirmation and a new dryrun record first. All five match on `main` today.
+## 2026-10-30 T05: `runpod create --test <name>` binds the ledger to its paid test
+- `create` reads `--test`: a ledger with `meta.test` needs `--test <that test>`; a wrong name, or `--test` on a plain ledger, is refused before any RunPod call.
+- Test: `test_create_requires_and_checks_the_test_name_of_a_paid_test_ledger` (cases: no flag, wrong name, plain ledger, right name reaches the fake).
+  The helper `_create_p12a` in `test_cloud_stop_paths.py` now passes `--test` for a paid-test ledger (planner decision); no assertion changed.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.

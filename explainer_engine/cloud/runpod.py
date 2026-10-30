@@ -384,7 +384,7 @@ CLOUDS = ("COMMUNITY", "SECURE")
 # What ``create`` reads (a flag that is not here is refused, so a typo or a flag from another command is never silently ignored, G15).
 CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
                       "--job", "--job-type", "--ledger", "--max-hours", "--max-usd", "--min-ram", "--name", "--on-cap", "--only",
-                      "--pass-s", "--ref-hours", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--units",
+                      "--pass-s", "--ref-hours", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
                       "--upload-grace-s", "--volume", "--vram", "--wait-stock", "--work-min")
 CREATE_BOOL_FLAGS = ("--measure", "--no-guard", "--yes")
 PICK_ONLY_FLAGS = ("--only", "--cloud", "--ref-hours", "--wait-stock")  # read only when --vram picks the card
@@ -1697,6 +1697,13 @@ def main(argv=None, api=None, live=None):
         if not Path(ledger).exists():  # a ledger made here would get the episode ceilings, not a paid test's line
             raise SystemExit(f"refused: no ledger at {ledger}; open it first (an episode: Run.open(path, caps=...); "
                              "a paid test: python -m explainer_engine.core.ledger open-test <path> <test>)")
+        from explainer_engine.core.ledger import Run as _LedgerRun
+        ledger_test, want_test = (_LedgerRun.open(ledger).data.get("meta") or {}).get("test"), _opt(rest, "--test")
+        if ledger_test and not want_test:  # a paid test's ledger is bound to its test by name, before any RunPod call
+            raise SystemExit(f"refused: ledger {ledger} belongs to paid test {ledger_test}: pass --test {ledger_test}")
+        if want_test and ledger_test != want_test:
+            raise SystemExit(f"refused: --test {want_test} does not match the ledger's test {ledger_test}" if ledger_test
+                             else f"refused: --test given but {ledger} is not a paid-test ledger")
         script_file, script_url = _opt(rest, "--script"), _opt(rest, "--script-url")
         if script_url and not script_file:
             raise SystemExit("--script-url needs --script <the same file, local>: the pod script is linted before any money")
