@@ -109,7 +109,7 @@ age, similar traffic source). Cost: higher editorial burden (the advice boundary
 - Q1 Repository placement: **decided** (D-21).
 - Q2 decided: Kit rejected (D-04, 2026-10-15); whether permanent hosts exist at all is card A1 (open, owner ვანო) — nothing here pre-empts it.
 - Q3 decided by D-39 (ElevenLabs narration; Kokoro retired).
-- Q4 superseded by D-31/D-32 (cloud-first, no Remotion, no local render PC).
+- Q4 superseded by D-31/D-32 (cloud-first). D-31: PC is view/upload only; D-32: Remotion is fallback only.
 - Q5 (updated for D-25) Which of the candidate collision topics (`docs/PUBLISHING_AND_ANALYTICS.md`) is video 1 after the prototype: decided
   after the prototype passes.
 
