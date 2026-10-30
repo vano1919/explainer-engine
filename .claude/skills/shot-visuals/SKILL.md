@@ -155,7 +155,7 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 | CRAFT-CIN-07 | code | the focal point stays within BP-30's shift across a hard cut | shot focal points | BP-30 | `explainer_engine/production/continuity.py` |
 | CRAFT-CIN-08 | code | shot-size variety inside a scene | shot card sizes | BP-103 | `explainer_engine/scripting/film_shots.py` |
 | CRAFT-CIN-09 | critic | a per-segment visual intensity rises toward the climax and drops at the resolution, with contrast between neighbours | edit plan intensity per segment | - | `explainer_engine/qa/editorial_review.py` (planned, P8) |
-| CRAFT-CIN-10 | code | lane shares follow each beat's dramatisability score inside the run caps | beat dramatisability score + lane per shot | BP-127 | `explainer_engine/edit/visual_compensator.py` (planned, P5) |
+| CRAFT-CIN-10 | code | lane shares follow each beat's dramatisability score inside the run caps | beat dramatisability score + lane per shot | BP-127 | `explainer_engine/edit/visual_compensator.py:lane_balance` |
 | CRAFT-CIN-11 | eye | stakes and named heroes in every frame | contact sheet | UR-21 | manual |
 <!-- craft-checklist:cinematography:end -->
 

@@ -642,3 +642,50 @@ def test_the_key_can_come_from_the_alias_name(env, monkeypatch):
     assert ca.api_key() == "alias-key-not-real"
     monkeypatch.setenv("ANTHROPIC_API_KEY", "main-key-not-real")
     assert ca.api_key() == "main-key-not-real"
+
+
+# --- the loop's cache breakpoint, partial saves and the loop estimate (J1b scope A, 2026-10-30) -------------------------------
+def test_tool_loop_moves_the_cache_breakpoint_to_the_last_block_every_turn(tmp_path):
+    a = api(tool_turn("list_dir", {"path": "."}, "t1"), tool_turn("list_dir", {"path": "."}, "t2"), resp("done"))
+    a.complete(req(tools_root=str(tmp_path)))
+    calls = [c[1]["messages"] for c in a._client.calls]
+
+    def marks(msgs):                                                    # (message index) of every dict block carrying a breakpoint
+        return [i for i, m in enumerate(msgs) if isinstance(m["content"], list) for b in m["content"] if isinstance(b, dict) and "cache_control" in b]
+    assert [marks(m) for m in calls] == [[0], [0, 2], [0, 4]]           # the first message's own + the newest block only: within the API's four
+    assert "cache_control" not in calls[2][2]["content"][0]             # the older tool_result gave its breakpoint up
+
+
+def test_a_stopped_tool_loop_leaves_its_partial_transcript_on_disk(env, tmp_path):
+    (tmp_path / "x.txt").write_text("a", encoding="utf-8")
+    a = api(tool_turn("read_file", {"path": "x.txt", "start": 1, "end": 1}, "t1"), tool_turn("list_dir", {"path": "."}, "t2"))
+    with pytest.raises(ca.OutputTruncated) as ei:
+        a.complete(req("J", tools_root=str(tmp_path), max_turns=2))
+    part = ca.ledger_dir() / "partial_T_J.json"
+    assert part.exists() and str(part) in "".join(getattr(ei.value, "__notes__", []))
+    d = json.loads(part.read_text(encoding="utf-8"))
+    assert d["turns"] == 2 and d["usd_so_far"] > 0 and "OutputTruncated" in d["stopped_by"]
+    assert [b["type"] for m in d["messages"] for b in m["blocks"]] == ["tool_use", "tool_result", "tool_use", "tool_result"]
+    assert d["messages"][1]["blocks"][0]["content"] == "1: a"
+
+
+def test_a_cap_stop_in_the_middle_of_a_loop_keeps_the_turns_so_far(env, tmp_path):
+    set_caps(env, jobs={"T": 0.5})                                      # a turn reserves ~0.33 and settles at ~0.014: the stop (0.4) comes after a few turns
+    a = api(*[tool_turn("list_dir", {"path": "."}, f"t{i}") for i in range(30)])
+    with pytest.raises(CapReached):
+        a.complete(req("K", tools_root=str(tmp_path), max_turns=30))
+    d = json.loads((ca.ledger_dir() / "partial_T_K.json").read_text(encoding="utf-8"))
+    assert 1 < d["turns"] < 30 and "CapReached" in d["stopped_by"] and d["messages"]
+
+
+def test_estimate_says_a_tool_loop_is_priced_for_its_first_turn_only_and_prices_the_loop(env, tmp_path):
+    set_caps(env, jobs={"T": 5.0})
+    q = req(tools_root=str(tmp_path), max_turns=10)
+    row = ca.estimate([q])["requests"][0]
+    assert "FIRST turn only" in row["loop"]["warning"] and row["loop"]["turns"] == 10
+    row3 = ca.estimate([q], turns=3)["requests"][0]
+    assert row3["loop"]["turns"] == 3 and 0 < row3["loop"]["usd_if_cached"] < row["loop"]["usd_if_cached"]
+    assert "loop" not in ca.estimate([req()])["requests"][0]
+    # cached re-reads are cheaper than re-sending the history fresh: 10 turns of 30k context
+    assert ca.loop_usd("claude-opus-5-5", 30000, 10, 6000, 600) < 10 * ca.usd_of("claude-opus-5-5", {"input": 60000, "output": 600, "cache_read": 0,
+                                                                                    "write_5m": 0, "write_1h": 0, "searches": 0})

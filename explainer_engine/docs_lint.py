@@ -58,6 +58,7 @@ HOMES = {
     "CR": "CLOUD_RUNBOOK.md",  # how a pod ends: the three stop paths, the pod wrapper, the watchdog (P1a, 2026-10-29)
     "RP": "CLOUD_RUNBOOK.md",  # when a paid pod is worth starting: batching, card choice, retries, the bill (P1c, 2026-10-30)
     "CN": "CONTRACTS.md",  # the data contracts, the episode lifecycle and the shot cache (Blueprint P2, 2026-10-29)
+    "CMP": "COMPENSATOR.md",  # the visual compensator: maps, HUD, tableaux, the eight map laws (Blueprint P5, 2026-10-30)
     "VT": "VAULT.md",  # the vault: nothing we made is lost (D-73, 2026-10-24)  # the sourced production rules (registry standards/sourced_rules.json, 2026-10-19)
 }
 _PREFIX = "|".join(sorted(HOMES, key=len, reverse=True))
