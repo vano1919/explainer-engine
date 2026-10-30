@@ -30,6 +30,14 @@ SHA40 = re.compile(r"\b[0-9a-f]{40}\b")
 REPO_ID = r"[A-Za-z0-9][A-Za-z0-9_.-]*/[A-Za-z0-9][A-Za-z0-9_.-]*"
 
 
+GIT_URL = re.compile(r"git\+https?://\S+")
+PINNED_GIT_URL = re.compile(r"^git\+https?://[^@\s]+@[0-9a-f]{40}(?:[#\"'&;)]|$)")  # the FIRST `@` of the url carries the ref: only a lowercase 40-hex sha pins
+DRY_VAR = r"""(?:["']?\$\{DRY(?::?-\w*)?\}["']?|["']?\$DRY["']?)"""
+DRY_IS_ONE = rf"""\[\[?\s+{DRY_VAR}\s+(?:=|==|-eq)\s+["']?1["']?\s+\]\]?"""  # a test that is true when DRY is 1, and only then
+DRY_ONE_LINE = re.compile(rf"^\s*{DRY_IS_ONE}\s*&&\s*exit\s+0\s*$")
+DRY_IF = re.compile(rf"^\s*if\s+{DRY_IS_ONE}\s*;?\s*(?:then\b(.*))?$")
+
+
 def sha256_of(text):
     return hashlib.sha256((text or "").encode("utf-8")).hexdigest()
 
@@ -72,6 +80,45 @@ def _pip_packages(line):
     return out
 
 
+def _git_url_pinned(url):
+    return bool(PINNED_GIT_URL.match(url.lstrip("\"'")))
+
+
+def _dry_if_exits_zero(cmds, i):
+    """True when ``cmds[i]`` is ``if <DRY is 1>; then`` and its THEN branch (not an else, not a nested ``if``) runs ``exit 0``.
+    The block is read statement by statement (split on ``;`` and newlines) up to its own ``fi``."""
+    m = DRY_IF.match(cmds[i][1])
+    if not m:
+        return False
+    chunks = [m.group(1)] if m.group(1) is not None else []
+    seen_then = m.group(1) is not None
+    for _, ln in cmds[i + 1:i + 40]:
+        chunks.append(ln)
+    depth = 0
+    for chunk in chunks:
+        for stmt in re.split(r";|\n", chunk):
+            st = stmt.strip()
+            if not seen_then:
+                if st == "then":
+                    seen_then = True
+                    continue
+                if st.startswith("then "):
+                    seen_then, st = True, st[5:].strip()
+                else:
+                    return False  # something other than `then` follows the condition
+            if re.match(r"if\b", st):
+                depth += 1
+            elif re.match(r"fi\b", st):
+                if depth == 0:
+                    return False  # the block ended without an exit 0
+                depth -= 1
+            elif depth == 0 and re.match(r"(else|elif)\b", st):
+                return False  # whatever follows belongs to the other branch
+            elif depth == 0 and re.fullmatch(r"exit\s+0", st):
+                return True
+    return False
+
+
 def static_problems(text, pins=None):
     """Problems found by reading the script (empty = fine). Line numbers are those of the first physical line of the command."""
     pins = pins or pins_mod.load()
@@ -85,13 +132,13 @@ def static_problems(text, pins=None):
             last_install = n
         upgrade = re.search(r"\bpip3?\s+install\b[^|;&]*?\s(-U|--upgrade)\b", ln)
         if upgrade:
-            loose = [p for p in _pip_packages(ln) if "==" not in p and "@" not in p]
+            loose = [p for p in _pip_packages(ln) if "==" not in p and not any(_git_url_pinned(u) for u in GIT_URL.findall(p))]
             if loose:
                 out.append(f"line {n}: `pip install -U` without `==` for {', '.join(loose)}: the same script would install a different "
                            "version every day (pin it in config/cloud_pins.json)")
-        for url in re.findall(r"git\+https?://\S+", ln):
-            if "@" not in url.split("://", 1)[1].split("/", 1)[-1]:
-                out.append(f"line {n}: `{url.strip(chr(34) + chr(39))[:70]}` has no `@<sha>`: pip would install the repo's HEAD of the day")
+        for url in GIT_URL.findall(ln):
+            if not _git_url_pinned(url):  # a branch, a tag or a short sha after @ moves: only a 40-hex sha pins
+                out.append(f"line {n}: `{url.strip(chr(34) + chr(39))[:70]}` has no `@<40-hex sha>`: a branch or no ref is the repo's HEAD of the day")
         if re.search(r"\bgit\s+clone\b", ln):
             later = [c for m, c in cmds if m >= n and re.search(r"\bgit\b[^|;&]*\b(checkout|reset|fetch)\b", c) and SHA40.search(c)]
             shas = {s for c in later for s in SHA40.findall(c)} | set(SHA40.findall(ln))
@@ -105,7 +152,8 @@ def static_problems(text, pins=None):
             out.append(f"line {n}: `|| true` on an install or download step ({ln.strip()[:50]}): a failed install must stop the pod, "
                        "not train on a half-installed stack")
     if last_install is not None:
-        gates = [n for n, ln in cmds if n > last_install and re.search(r"\bDRY\b", ln) and re.search(r"\bexit\b|\breturn\b", ln)]
+        # a real gate: `[ "${DRY:-0}" = 1 ] && exit 0`, or an `if` over DRY = 1 whose THEN branch runs `exit 0`
+        gates = [n for i, (n, ln) in enumerate(cmds) if n > last_install and (DRY_ONE_LINE.match(ln) or _dry_if_exits_zero(cmds, i))]
         if not gates:
             out.append("no `DRY=1` gate after the install stage (e.g. `[ \"${DRY:-0}\" = 1 ] && exit 0`): the script cannot be proved on a "
                        "cheap pod up to its install steps before the long stages are paid")
