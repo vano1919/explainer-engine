@@ -2709,6 +2709,39 @@ training as sequences is decided in the process. Changed together:
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.
 
+## 2026-10-30 03:50 UTC: Blueprint P4b, the voice director (free, no pod, no paid take)
+
+- ვანო (2026-10-29 18:17 and 18:30 UTC): D8 conditional (a free generator only if a measured one is good and diverse enough; the
+  narrator stays on the ElevenLabs connector, so the REST client of the plan card is dropped) and "assume yes up to paid".
+  Phase P4b of Blueprint plan v2, after P2 (#31).
+- `audio/voice_audition.py` (new, the one place a voice is measured; P8 and P12b import it): eight measures from one free listening
+  (library preview or a held read): median pitch and range, pitch variation, emphasis, pace (wpm with the text, else syllable
+  rate), spectral centroid and tilt, pause rhythm, sibilance, plus the consistency of several takes (cosine of a numpy MFCC
+  embedding, `numpy_mfcc13`; the embedder is a parameter, the identity scorer is P12b's measurement). Pitch is a vectorised
+  FFT autocorrelation (`f0_track`, within 1 semitone of `voice_layer.f0_track`, 100x faster). `difference`/`distinct` make VC-04
+  measurable with BP-138's three margins (read by literal id, REVIEW). `record` is `voice_audition/1`; `baseline_of` and the CLI
+  (`measure`, `compare`, `baseline`) feed the registry. The profile is measured, never judged: no new threshold was invented
+  (consistency has no limit until real takes are measured).
+- Measured on five real library previews fetched free (8.6 s, 9.7 s, 6.1 s, 2.7 s, 9.2 s of speech; the 2.7 s one is marked
+  `reliable: false`): median pitch 95.6-127 Hz, centroid 914-1492 Hz, 3.7-4.4 syllables/s; three pairs fell under every margin
+  (Spuds/Moody, Adam/David, Adam/Wyatt), so the battery separates voices a description cannot. A preview is not a baseline for
+  centroid: the channel voice's preview measured 914 Hz against about 1250 Hz in its real read.
+- `audio/casting.py`: `eligible` (famous/imitation, taken, age two bands off: the reasons), `fit` (trait match, usage rank, unlabelled)
+  and `rank(..., by_usage=True)` (trait first, the library's one-year usage order only as the tie-break); library age words
+  ("Senior", "middle aged") are read as our bands (the connector returns free-text labels); `ltx_voice_text` writes the voice of
+  an LTX cast card as words from traits under the PV-10 guard. `rank` without `by_usage` is unchanged.
+- `config/channel_voices.json` (`channel_voices/1`) and `voice_check`: `load_registry`, `registry_errors`, `register` (replacing the
+  channel narrator needs the creator's recorded word, VC-08 / veto V1) and `check_against` = EL-13 (a take's timbre windows against
+  the voice's baseline with the read-drift limits; unregistered, no baseline and too-short takes are REVIEW). The shipped baseline is
+  Episode 1's measured Day 1 read (tilt -21.3 dB, centroid ~1250 Hz), kind `read`.
+- Rules: VC-06..09 (STORY_ENGINE), EL-13 (skill), voice-caster page steps 0-8, CRAFT-VOX-02/03/08 and BP-138 no longer "planned"
+  (BP-138 lists the module; `test_the_new_craft_rules_...` now accepts a built validator beside the checklist row).
+  Schemas `voice_audition/1`, `channel_voices/1` with fixtures; CONTRACTS table rows.
+- Not done, by design: no REST client (D8: connector only; `test_there_is_no_elevenlabs_rest_client_in_the_package`); no
+  `casting_credits_max` line in `config/spend_caps.json` (a protected file, D9 "later": the creator's numbers, before P12a); no
+  free voice generator was measured, so none replaces ElevenLabs for narration (Kokoro's retirement, D-39, stands).
+- Tests: `tests/unit/test_voice_audition.py` (18, synthetic voices, no network or media), contract fixtures for both schemas.
+
 ## 2026-10-29 22:30 UTC (02:30 Tbilisi 10-30): paid-test caps and their ledgers (no pod, no money)
 
 - ვანო (2026-10-29 18:40 UTC, relayed): a clear yes to the paid tests P12a, P12b and P12e within $5.90 in total, each
@@ -2756,6 +2789,12 @@ training as sequences is decided in the process. Changed together:
 - `shot_cache.key`: inf / NaN anywhere in a shot spec is a `ContractError` (no JSON form, no stable key).
 - Tests: `test_adopt_refuses_a_directory_dossier_and_non_dict_approvals`, `test_a_non_finite_number_is_a_contract_error_not_a_crash`.
 - Left open (design changes, for P3+ to take with the stage that uses them): approval `sha256` compared with the artifact it approves; CN-14 skipped when no `job_manifest.json` is present; `threshold_reads` does not see a rule id held in a constant.
+- Review of #45 (P3b thread, CHANGES NEEDED, one blocker): `voice_check.register` now needs a non-blank `creator_ref` for ANY status or
+  role change of the standing channel entry, not only for adding a different channel voice (retire-then-add no longer works in two
+  calls), and a blank or whitespace ref is refused. Minors taken: pitch checked at 90-240 Hz, the other measures move with the signal
+  (tilt, sibilance, emphasis, pauses, syllable rate), and the five preview measurements are committed
+  (`docs/research/VOICE_PREVIEWS_2026-10-30.json`, no media) and pinned by a test.
+
 
 ## 2026-10-30 04:10 UTC: P1b, `runpod dryrun` + `config/cloud_pins.json` (no pod, no money)
 

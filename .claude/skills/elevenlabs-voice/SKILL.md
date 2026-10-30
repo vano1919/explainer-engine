@@ -24,7 +24,7 @@ seed knob and no previous/next-text context.** The levers are therefore: (1) the
 (3) the chunking, (4) the number of takes. The read is not repeatable (3P: same text gives different output), so consistency comes from
 short, similar chunks and from keeping what was already good.
 
-## Rules (EL-01..EL-12)
+## Rules (EL-01..EL-13)
 
 | ID | Rule |
 |---|---|
@@ -40,6 +40,7 @@ short, similar chunks and from keeping what was already good.
 | EL-10 | **Estimate, then call once.** `estimate_only` first, record it in the ledger, then one generation per chunk with `generations_count: 1`. Never repeat a call to "retry" (it charges again). Max 3 failures per chunk (OR-04). |
 | EL-11 | **Download immediately** (links expire, 7200 s) and re-poll the status for fresh links if they did; write each chunk to disk and into the ledger as soon as it is paid (OR-03). |
 | EL-12 | **Check every chunk when it arrives, before the next is paid.** Loudness within 1.5 dB of the others (ED-01, BP-59), no clipped start/end, words match the script (coverage), timbre within the drift check (`audio/voice_check`), reading speed inside the BP-01 band (P-52). A bad first chunk stops the batch. |
+| EL-13 | **A take sounds like the channel's voice.** `audio/voice_check.check_against(take, sr, voice_id)` compares each timbre window of a new take with the baseline the voice has in `config/channel_voices.json` (tilt and centroid, the limits of the read-drift check); a window off the baseline, a voice with no baseline and a voice not registered are REVIEW, listened to before any re-read is bought. A new channel voice needs the creator's word (VC-08). |
 
 ## Pre-flight (all free, before a paid call)
 
@@ -67,14 +68,14 @@ is listened to by a human before any re-read is bought, because most are natural
 ## Voice performance and casting (P3b 2026-10-29)
 
 - **Cast by measurement, choose by ear.** Every candidate voice gets one test read and a measured profile (median pitch and
-  range, rate, spectral centroid, pitch variation, emphasis, pauses, drift; `audio/voice_audition.py`, P4b); two cast
+  range, rate, spectral centroid, pitch variation, emphasis, pauses, drift; `audio/voice_audition.py`); two cast
   voices differ by at least one of BP-138's margins so VC-04 is checkable; the creator picks from the top three (VC-03).
 - **Pace** is BP-01's band, measured on the finished read. The Blueprint's slower band is conflict 2 of the curriculum;
   the one opened study (Rodero 2020, advertising) found 180 wpm best of 160/180/200, so neither side is settled.
 - **Delivery is written, then tagged** (performance-director page): one stressed word per sentence, a tag where the
   delivery changes, no pause before a punch line (BP-10); an animated shot's line carries pace, loudness and colour and a
   face the lens sees (KP-17, KP-18).
-- **Consistency** across takes is checked against the voice's baseline (`audio/voice_check.py`, P4b), never assumed.
+- **Consistency** across takes is checked against the voice's baseline (EL-13, `audio/voice_check.py`), never assumed.
 
 ### CHECKLIST (voice)
 
@@ -86,13 +87,13 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 | ID | check | rule | artefact field | sourced rules | enforced by |
 |---|---|---|---|---|---|
 | CRAFT-VOX-01 | code | the heard pace sits in BP-01's band | the finished read + word times | BP-01 | `explainer_engine/production/validate.py` |
-| CRAFT-VOX-02 | code | every candidate voice has a measured profile from one test read | voice audition record | - | `explainer_engine/audio/voice_audition.py` (planned, P4b) |
-| CRAFT-VOX-03 | code | two cast voices differ by at least one measured margin | voice audition records | BP-138, VC-04 | `explainer_engine/audio/voice_audition.py` (planned, P4b) |
+| CRAFT-VOX-02 | code | every candidate voice has a measured profile from one test read | voice audition record | - | `explainer_engine/audio/voice_audition.py` |
+| CRAFT-VOX-03 | code | two cast voices differ by at least one measured margin | voice audition records | BP-138, VC-04 | `explainer_engine/audio/voice_audition.py` |
 | CRAFT-VOX-04 | manual | the creator picks the voice by ear from the top three | casting card | VC-03 | manual |
 | CRAFT-VOX-05 | critic | one stressed word per sentence; a tag only where the delivery changes | lines: tags, emphasis | PF-01 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
 | CRAFT-VOX-06 | code | no pause before a punch line; held pauses inside their limit | lines: pause_after | BP-10 | `explainer_engine/scripting/narration_lint.py` |
 | CRAFT-VOX-07 | manual | chunk size, carried context, pauses by tags and punctuation | ElevenLabs requests | BP-14 | manual |
-| CRAFT-VOX-08 | code | a new take matches the voice's baseline (no drift) | take vs the channel voice baseline | - | `explainer_engine/audio/voice_check.py` (planned, P4b) |
+| CRAFT-VOX-08 | code | a new take matches the voice's baseline (no drift) | take vs the channel voice baseline | - | `explainer_engine/audio/voice_check.py` |
 | CRAFT-VOX-09 | critic | an animated shot's line carries delivery (pace, loudness, colour) and a face the lens sees | shot card delivery + face | KP-17, KP-18 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
 <!-- craft-checklist:voice:end -->
 
