@@ -43,3 +43,21 @@ def test_bp_139_is_listed_only_where_it_is_read():
         path = ref.split(":")[0]
         reads = {rid for rid, _k, _l in SR.threshold_reads((ROOT / path).read_text(encoding="utf-8"))}
         assert "BP-139" in reads, f"{path} is in BP-139's enforced_by but never reads it"
+
+
+def test_cp17_the_keyframe_gate_and_video_qa_numbers_come_from_the_registry():
+    """CP-17: numbers a validator compared against used to live in module constants and lora_rules.json."""
+    from explainer_engine.qa import keyframe_gate
+    from explainer_engine.training import video_qa
+    assert keyframe_gate.MAX_TRIES == SR.T("BP-165", "max_tries") and keyframe_gate.RETRAIN_AT == SR.T("BP-165", "retrain_at")
+    for rid in ("BP-165", "BP-166"):
+        assert SR.rule(rid)["status"] == "hypothesis" and SR.rule(rid)["severity"] == "REVIEW"
+    src = (ROOT / "explainer_engine" / "training" / "video_qa.py").read_text(encoding="utf-8")
+    read = {k for rid, k, _l in SR.threshold_reads(src) if rid == "BP-166"}
+    assert read == set(SR.rule("BP-166")["thresholds"]), "every BP-166 number is read by video_qa, and nothing else is registered"
+    for key, value in {"sharp_keep_min": 0.65, "sat_drift_max": 0.08, "palette_dist_max": 0.08, "hero_palette_max": 0.15,
+                       "hold_px": 0.15, "ink_max": 50}.items():
+        assert SR.T("BP-166", key) == value, "the registry holds the starting value of the IC tests"
+    assert not set(SR.rule("BP-166")["thresholds"]) & set(video_qa.RULES["video_qa"]), "lora_rules.json keeps no copy of a BP-166 number"
+    # the four numbers behind an LT FAIL stay out of the registry until the creator's words or two sources back them (D-59)
+    assert not {"flicker_max", "morph_second_max", "edges_keep_min", "sat_loss_fail"} & set(SR.rule("BP-166")["thresholds"])

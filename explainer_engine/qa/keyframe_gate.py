@@ -23,10 +23,11 @@ from collections import Counter
 from pathlib import Path
 
 from explainer_engine.qa.blind_check import STYLE_SUSPENDED  # one home for the D-80 flag
+from explainer_engine.standards import sourced_rules as SR
 
 KINDS = ("keyframe", "nextpose", "cut")
-MAX_TRIES = 3          # KG-14: three seeds, then the prompt is fixed, never an endless redraw
-RETRAIN_AT = 15        # KG-15: cases of one error type on one LoRA before a retraining is proposed (house, 2026-10-24)
+MAX_TRIES = SR.T("BP-165", "max_tries")      # KG-14: a few seeds, then the prompt is fixed, never an endless redraw (hypothesis, BP-165)
+RETRAIN_AT = SR.T("BP-165", "retrain_at")    # KG-15: cases of one error type on one LoRA before a retraining is proposed (BP-165)
 # KG-20: the 7B missed a second mammoth, three buses and a twin; the 72B (AWQ, ~41 GB) fits the 80 GB card once the image
 # model is unloaded, and every question is asked on its own (`single_prompt`): one long numbered list let answers drift
 VLM_MODEL = "Qwen/Qwen2.5-VL-72B-Instruct-AWQ"

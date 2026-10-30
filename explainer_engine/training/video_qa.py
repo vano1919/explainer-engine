@@ -32,7 +32,7 @@ from explainer_engine.standards import sourced_rules as SR
 from .audit import RULES, finding
 
 Q = RULES.get("video_qa", {})
-SMALL = 320          # analysis width; cartoons keep their lines at this size
+SMALL = 320          # analysis width, not an enforced threshold; no BP id (CP-17); cartoons keep their lines at this size
 
 
 def read_video(path, *, width=SMALL, max_frames=None):
@@ -98,7 +98,7 @@ def rhythm(speed, fps):
     if len(speed) == 0:
         return {"hold_share": 0.0, "speed_p50": 0.0, "speed_p90": 0.0}
     v = speed * fps / SMALL
-    return {"hold_share": round(float((speed < Q.get("hold_px", 0.15)).mean()), 3),
+    return {"hold_share": round(float((speed < SR.T("BP-166", "hold_px")).mean()), 3),
             "speed_p50": round(float(np.percentile(v, 50)), 4), "speed_p90": round(float(np.percentile(v, 90)), 4)}
 
 
@@ -131,7 +131,7 @@ def track_regions(regions, flows, shape, frames=None):
 def _ink(g):
     """Outline pixels: edges next to near-black ink (characters carry bold dark outlines; painted backdrops mostly do not)."""
     import cv2
-    dark = cv2.dilate((g < Q.get("ink_max", 50)).astype(np.uint8), np.ones((3, 3), np.uint8)) > 0
+    dark = cv2.dilate((g < SR.T("BP-166", "ink_max")).astype(np.uint8), np.ones((3, 3), np.uint8)) > 0
     return _edges(g) & dark
 
 
@@ -182,8 +182,8 @@ def analyse(frames, fps, regions=None):
             head, legs = part_presence(frames, tr[r["label"]])
             m["regions"][r["label"]] = {"head_min": round(float(head.min()), 3), "legs_min": round(float(legs.min()), 3),
                                          "legs_end": round(float(legs[-1]), 3),
-                                         "legs_lost_at_s": _first_below(legs, Q.get("part_keep_min", 0.45), fps),
-                                         "head_lost_at_s": _first_below(head, Q.get("part_keep_min", 0.45), fps)}
+                                         "legs_lost_at_s": _first_below(legs, SR.T("BP-166", "part_keep_min"), fps),
+                                         "head_lost_at_s": _first_below(head, SR.T("BP-166", "part_keep_min"), fps)}
         m["_tracks"] = tr
     return m
 
@@ -208,13 +208,13 @@ def judge(m, ref=None):
                                           f"{m['breaks_at_second']} (things appear, melt or swap)"))
     if m["edges_min_vs_start"] < Q.get("edges_keep_min", 0.7):
         f.append(finding("LT-53", "FAIL", f"line art falls to {m['edges_min_vs_start']} x frame 0 (melting / blur)"))
-    if m.get("sharp_min_vs_start", 1) < Q.get("sharp_keep_min", 0.65):
+    if m.get("sharp_min_vs_start", 1) < SR.T("BP-166", "sharp_keep_min"):
         f.append(finding("LT-53", "REVIEW", f"detail falls to {m['sharp_min_vs_start']} x frame 0 (soft, ghosting or "
                                             f"translucent people: the 20 s max-length test faded two heroes out)"))
     if m["sat_end_minus_start"] < -Q.get("sat_loss_fail", 0.2):
         f.append(finding("LT-54", "FAIL", f"colour lost ({m['sat_end_minus_start']:+} saturation): an IC render copying its grey "
                                           f"layout (conditioning strength under 1.0, test 2026-10-24)"))
-    elif abs(m["sat_end_minus_start"]) > Q.get("sat_drift_max", 0.08) or abs(m["luma_end_minus_start"]) > Q.get("luma_drift_max", 0.08):
+    elif abs(m["sat_end_minus_start"]) > SR.T("BP-166", "sat_drift_max") or abs(m["luma_end_minus_start"]) > SR.T("BP-166", "luma_drift_max"):
         f.append(finding("LT-54", "REVIEW", f"colour drift: saturation {m['sat_end_minus_start']:+}, brightness "
                                             f"{m['luma_end_minus_start']:+} (fine when the scene asks for it)"))
     for lab, r in (m.get("regions") or {}).items():
@@ -359,7 +359,7 @@ def layout_fidelity(out_frames, layout_frames, *, grid=(6, 4), fps=24.0):
     cells = []
     for j in range(gy):
         for i in range(gx):
-            t0 = _first_below(-gap[:, j, i], -Q.get("layout_gap_max", 1.0), fps, hold=hold)
+            t0 = _first_below(-gap[:, j, i], -SR.T("BP-166", "layout_gap_max"), fps, hold=hold)
             if t0 is not None:
                 cells.append({"cell": [i, j], "at_s": t0, "gap_max": round(float(gap[:, j, i].max()), 2),
                               "render": "gains" if ra[:, j, i].max() > -ra[:, j, i].min() else "loses"})
@@ -384,7 +384,7 @@ def _palette(f, box=None):
         return np.zeros(45)
     hsv = cv2.cvtColor(np.ascontiguousarray(f), cv2.COLOR_RGB2HSV)
     g = _gray(f)
-    keep = g >= Q.get("ink_max", 50)
+    keep = g >= SR.T("BP-166", "ink_max")
     hue, sat = hsv[..., 0][keep].astype(int), hsv[..., 1][keep].astype(int)
     hs = np.zeros(1 + 12 * 3)
     grey = sat < 32
@@ -413,7 +413,7 @@ def shot_identity(frame_a, frame_b, heroes=None):
          "sat_gap": round(float(pa["sat"][1] - pa["sat"][0]), 4),
          "edges_ratio": round(float(pa["edges"][1] / max(pa["edges"][0], 1e-6)), 3),
          "sharp_ratio": round(float(pa["sharp"][1] / max(pa["sharp"][0], 1e-6)), 3)}
-    ink = [float((_gray(f) < Q.get("ink_max", 50)).mean()) for f in (frame_a, frame_b)]
+    ink = [float((_gray(f) < SR.T("BP-166", "ink_max")).mean()) for f in (frame_a, frame_b)]
     m["ink_ratio"] = round(ink[1] / max(ink[0], 1e-6), 3)        # share of ink pixels: the line weight (edges miss it)
     ga, gb = (cv2.GaussianBlur(_gray(f), (0, 0), 4).astype(np.float32) for f in (frame_a, frame_b))
     m["backdrop_corr"] = round(float(np.corrcoef(ga.ravel(), gb.ravel())[0, 1]), 3)   # same camera and set: near 1 (information only)
@@ -423,16 +423,16 @@ def shot_identity(frame_a, frame_b, heroes=None):
 
 def judge_identity(m, what="shot A -> shot B"):
     f = []
-    if m["palette_dist"] > Q.get("palette_dist_max", 0.08):
+    if m["palette_dist"] > SR.T("BP-166", "palette_dist_max"):
         f.append(finding("LT-60", "REVIEW", f"{what}: the set's palette moves {m['palette_dist']} (> "
-                                            f"{Q.get('palette_dist_max', 0.08)}): different light, colours or style"))
-    lo, hi = Q.get("line_ratio", [0.7, 1.4])
+                                            f"{SR.T('BP-166', 'palette_dist_max')}): different light, colours or style"))
+    lo, hi = SR.T("BP-166", "line_ratio")
     if not lo <= m["ink_ratio"] <= hi:
         f.append(finding("LT-61", "REVIEW", f"{what}: ink x{m['ink_ratio']} (outside {lo}..{hi}): a thicker or thinner "
                                             f"drawing, or lost outlines"))
     for lab, d in m["heroes"].items():
-        if d > Q.get("hero_palette_max", 0.15):
-            f.append(finding("LT-62", "REVIEW", f"{what}: {lab}'s colours move {d} (> {Q.get('hero_palette_max', 0.15)}): "
+        if d > SR.T("BP-166", "hero_palette_max"):
+            f.append(finding("LT-62", "REVIEW", f"{what}: {lab}'s colours move {d} (> {SR.T('BP-166', 'hero_palette_max')}): "
                                                 f"clothes, skin or hair changed"))
     return f or [finding("LT-60", "PASS", f"{what}: palette {m['palette_dist']}, ink x{m['ink_ratio']}, "
                                           f"backdrop corr {m['backdrop_corr']}")]

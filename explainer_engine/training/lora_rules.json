@@ -107,20 +107,6 @@
   "content_threshold": 27.0
  },
  "video_qa": {
-  "about": "video-qa (LT-50..LT-59): numbers on the 320 px analysis frame; house starting values from the IC tests of 2026-10-23",
-  "hold_px": 0.15,
-  "flicker_max": 0.06,
-  "morph_second_max": 0.05,
-  "edges_keep_min": 0.7,
-  "sat_drift_max": 0.08,
-  "luma_drift_max": 0.08,
-  "part_keep_min": 0.45,
-  "layout_gap_max": 1.0,
-  "ink_max": 50,
-  "sharp_keep_min": 0.65,
-  "sat_loss_fail": 0.2,
-  "palette_dist_max": 0.08,
-  "hero_palette_max": 0.15,
-  "line_ratio": [0.7, 1.4]
- }
+    "about": "video-qa (LT-50..LT-59): the four numbers behind an LT FAIL, house starting values from the IC tests of 2026-10-23; the review-only numbers live in BP-166 (sourced_rules.json), not here",
+    "flicker_max": 0.06, "morph_second_max": 0.05, "edges_keep_min": 0.7, "sat_loss_fail": 0.2 }
 }
