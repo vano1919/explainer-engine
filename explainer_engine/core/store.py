@@ -264,10 +264,14 @@ class EpisodeJob:
         return cls(job_dir, manifest)
 
     @classmethod
-    def create(cls, job_dir: Path | str, *, job_id: str, episode_slug: str, ledger: str, fps: int,
+    def create(cls, job_dir: Path | str, *, job_id: str, episode_slug: str, ledger: str, fps: int | None = None,
                reason: str = "job created") -> "EpisodeJob":
-        """A new episode job: always CREATED. Any later state is reached by ``move`` (or, for a job that already exists, ``adopt``)."""
+        """A new episode job: always CREATED. Any later state is reached by ``move`` (or, for a job that already exists, ``adopt``).
+        ``fps`` left out is the animated route's delivery rate (BP-167, ``core/delivery``); a job that names one keeps it."""
         job_dir = Path(job_dir)
+        if fps is None:
+            from explainer_engine.core import delivery
+            fps = delivery.fps()
         if (job_dir / MANIFEST).exists():
             raise ContractError(f"{job_dir / MANIFEST} exists: open it, never create over it")
         job = cls._new(job_dir, job_id=job_id, episode_slug=episode_slug, ledger=ledger, fps=fps, state="CREATED", reason=reason,

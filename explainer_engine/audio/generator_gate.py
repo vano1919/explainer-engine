@@ -19,7 +19,8 @@ recorded word after a measured test. Free, numpy only, deterministic; nothing he
 Take files are ``<prompt id>__s<seed>.wav``; ``prompts.json`` maps a prompt id to ``{"seconds": requested length, "loop": bool,
 "text": the prompt, "reference": a reference file name}`` (a reference file whose stem is the prompt id needs no name). The file
 that holds the admissions is ``assets/audio/generator_admission.json``; ``$EXPLAINER_GENERATOR_ADMISSION`` (or the ``path``
-argument) points the code elsewhere, so tests never touch the real one. Without that file ``admitted`` returns None: no
+argument) points the code elsewhere, so tests never touch the real one. The file is a protected file since 2026-10-30
+(governance ``protected_files``, ``protected_config``): a direct edit by a tool needs the creator's word too. Without that file ``admitted`` returns None: no
 generator is admitted and the order stays library, then the ElevenLabs connector (the narrator is always the connector).
 
 Every number is BP-163's (``SR.T``). The cosine of two MFCC statistics vectors (``voice_audition.mfcc_embedding``, the one home
