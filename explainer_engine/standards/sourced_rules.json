@@ -6205,6 +6205,51 @@
    ],
    "next_step": "two source types (A/B/C) or the creator's dated word before any CLIP row becomes FAIL (D-59)",
    "supersedes": []
+  },
+  {
+   "id": "BP-165",
+   "area": "qa",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Keyframe gate: tries per shot and the retrain trigger (KG-14, KG-15). A failing shot is drawn again with a new seed at most max_tries times, then the prompt is fixed; at retrain_at cases of one error type on one LoRA a retraining is proposed to the creator. The creator's own sentence behind KG-14 (\"regenerate only on a fail; spend nothing blind\", 2026-10-24) names no number, so 3 and 15 are the project's own starting values, recorded as a hypothesis; the gate stops a shot (`fix_prompt`) or proposes, it does not FAIL a picture on them.",
+   "thresholds": {
+    "max_tries": 3,
+    "retrain_at": 15
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/qa/keyframe_gate.py"
+   ],
+   "next_step": "the creator's dated words or two source types (A/B/C) for the numbers 3 and 15",
+   "supersedes": []
+  },
+  {
+   "id": "BP-166",
+   "area": "qa",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Clip motion metrics, review-only numbers (LT-53, LT-54, LT-55, LT-56/57, LT-59..LT-62 of `video-qa`): the soft-detail floor, the colour-drift band, the tracked-part floor, the hold speed, the layout gap, the ink threshold, the cut's palette distance, line-weight ratio and hero palette distance. Every verdict they drive is REVIEW. The four numbers that drive a FAIL (flicker_max, morph_second_max, edges_keep_min, sat_loss_fail of lora_rules.json) are not registered here: they have no BP row yet and need the creator's dated words or two source types (D-59).",
+   "thresholds": {
+    "hold_px": 0.15,
+    "ink_max": 50,
+    "sharp_keep_min": 0.65,
+    "sat_drift_max": 0.08,
+    "luma_drift_max": 0.08,
+    "part_keep_min": 0.45,
+    "layout_gap_max": 1.0,
+    "palette_dist_max": 0.08,
+    "line_ratio": [
+     0.7,
+     1.4
+    ],
+    "hero_palette_max": 0.15
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/training/video_qa.py"
+   ],
+   "next_step": "two source types (A/B/C) or the creator's dated word; none of these becomes FAIL before that (D-59)",
+   "supersedes": []
   }
  ]
 }
