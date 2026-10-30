@@ -31,7 +31,8 @@ def test_lora_agents_describe_one_lora_on_qwen_image_2_1():
             assert banned not in desc, (a, banned)
         assert "## History (retired by D-80)" in txt, a
         body = txt.split("## History (retired by D-80)")[0]
-        assert "5.21 s/step" not in body, a
+        if "5.21 s/step" in body:  # only the coordinator's G3 may quote it, and only as an estimate (job_speeds lora_train is empty)
+            assert a == "lora-coordinator" and "only an estimate" in body, a
 
 
 def test_lora_training_skill_history_precedes_the_2512_settings():
