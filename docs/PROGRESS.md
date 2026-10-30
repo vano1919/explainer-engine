@@ -3337,5 +3337,6 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   `lora_rules.json` `video_qa` (house, dated) and are not moved: a hypothesis registry row may not carry a FAIL. `docs/LORA_TRAINING.md` LT rows name the BP id; `docs/SOURCED_RULES.md` regenerated.
 - Test red on main-era code -> green: `test_sourced_rules_sync.py::test_cp17_the_keyframe_gate_and_video_qa_numbers_come_from_the_registry`. Focused set 61 passed, `docs_lint` 0 findings,
   `governance check` ok. Defaults are unchanged (every moved number keeps its value), so no verdict moves.
+- `docs/PRODUCTION_RULES.md` rows 7.5 and 7.6 (T3-4's wording "until they land the two CLIs are run by hand" was stale once CP-10 landed): they now name the `production_gate` rows `keyframes` and `clips` and the `<clip>.video_qa.json` sidecar. Coordinator's ask, 2026-10-30.
 - OPEN: BP-165/BP-166 need two source types or the creator's dated word before any of them can become FAIL. No pod, no API call, nothing deleted.
 - Decision log: none moved.
