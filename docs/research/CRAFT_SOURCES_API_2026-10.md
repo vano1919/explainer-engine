@@ -1,6 +1,6 @@
 # Craft sources from the Claude API (J3, 2026-10-30)
 
-Opus 5.5 high with web search, one request per department, input = the department's craft checklist. Every URL below was returned by that response's web search results (`explainer_engine/llm/cite_check.py`); lines that cited any other URL were dropped (count per department in the heading). These are leads for a free, separate step (checklists/skills); **nothing here is binding** (D-59: two source types, and a person or the session must open the pages; 'snippet' rows were not read). Cost $5.56 of J3's $12.
+Opus 5.5 high with web search, one request per department, input = the department's craft checklist. Every URL below was returned by that response's web search results (`python -m explainer_engine.llm.cite_check`, exact match; the returned lists are in `docs/research/craft_sources_api/<department>.sources.json`, so the check can be re-run); lines that cited any other URL were dropped (count per department in the heading). These are leads for a free, separate step (checklists/skills); **nothing here is binding** (D-59: two source types, and a person or the session must open the pages; 'snippet' rows were not read). Cost $5.56 of J3's $12.
 
 ---
 
@@ -961,7 +961,7 @@ NO SOURCE FOUND (not searched). **Verdict: NONE.**
 
 ---
 
-## voice (lines dropped by the citation check: 0)
+## voice (lines dropped by the citation check: 1)
 
 I couldn't make all the searches I planned. The search tool hit its usage limit partway through, so I never searched rows VOX-02, 03, 04, 08 and 09. They show **NO SOURCE FOUND** because they weren't searched, not because searching came up empty.
 
@@ -977,7 +977,6 @@ I couldn't make all the searches I planned. The search tool hit its usage limit 
 | https://www.warc.com/newsandopinion/news/how-speech-delivery-speed-impacts-audio-ads/en-gb/43304 | article (trade news) | no date (index ~2,440 days) | snippet | Reports the same Rodero study: best timing is "about 180 words per minute", slightly faster than normal | supports 180; contradicts 135–145 |
 | https://www.upf.edu/en/web/comunicacio/noticies/-/asset_publisher/Z43gkEdp7zFm/content/moderar-la-velocitat-de-la-parla-augmenta-l-efectivitat-del-missatge/10193 | article (university news) | no date (index ~3,900 days) | snippet | Rodero's news research: best rate is 170–190 wpm | contradicts 135–145 |
 | https://www.researchgate.net/publication/259453618_A_comparative_analysis_of_speech_rate_and_perception_in_radio_bulletins | article (Rodero, Text & Talk) | May 2012 | snippet | Most radio authors recommend 160–180 wpm | contradicts 135–145 |
-| https://reader.ku.edu/sites/reader/files/2024-01/How%20many%20words%20do%20we%20read%20per%20minute%20(1).pdf | article (academic review) | no date (path says 2024-01) | snippet | Cites Rodero 2016: ideal is 170 wpm for dense news, 190 for light news. Audiobooks run 140–180 wpm | partly (the band depends on how dense the content is) |
 | https://www.write-out-loud.com/speech-rate.html | article | no date | snippet | People reading for radio or podcasts are often asked for 150–160 wpm | partly |
 | https://www.thevoicerealm.com/count-script.php | article (VO calculator) | no date | snippet | 160 wpm is the usual pace for explainers; 140 wpm is "slow", for audiobooks and long narration | partly; puts 135–145 at the slow end |
 | https://lanceblairvo.com/voiceover-script-timer/ | article (practitioner) | no date (index ~120 days) | snippet | For long-form narration such as documentaries, plan on about 140 wpm of script | supports ~140 |
