@@ -9,7 +9,7 @@ only in `config/model_routing.json` (P0b, D7).
 
 | Part | Rule |
 |---|---|
-| Key | `ANTHROPIC_API_KEY` from the environment, read by the SDK; never printed, logged or put in a prompt. Absent key = `KeyAbsent`, nothing else is tried. The base URL is pinned to `api.anthropic.com` (`EXPLAINER_ANTHROPIC_BASE_URL` overrides). |
+| Key | `ANTHROPIC_API_KEY`, or `EE_ANTHROPIC_API_KEY` when the settings UI refuses the first name, from the environment (`api_key()`); never printed, logged or put in a prompt. Absent key = `KeyAbsent`, nothing else is tried. The base URL is pinned to `api.anthropic.com` (`EXPLAINER_ANTHROPIC_BASE_URL` overrides). |
 | Approval | A real client is built only when `claude_api.approval.ref` is set in `spend_caps.json` (the recorded word). Tests inject a fake client. |
 | Model, effort | By task class from `config/model_routing.json`; a job may narrow inside the class, never leave it. `output_config.effort` is always sent (Opus 5.5 and Haiku 5.5 default to `medium`, not `high`). Fable on the story stages follows the `fable_story_stages.enabled` flag. |
 | Never sent | `thinking` (adaptive by default), `budget_tokens`, `temperature`, `top_p`, `top_k`, assistant prefill, forced `tool_choice`. JSON output uses `output_config.format`. |

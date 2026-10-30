@@ -39,6 +39,7 @@ def env(tmp_path, monkeypatch):
     monkeypatch.setenv("EXPLAINER_LLM_CACHE", str(tmp_path / "cache"))
     monkeypatch.setenv("EXPLAINER_LLM_LEDGER", str(tmp_path / "ledger"))
     monkeypatch.delenv("EXPLAINER_LLM_PRICES", raising=False)
+    monkeypatch.delenv("EE_ANTHROPIC_API_KEY", raising=False)  # a session that has the alias must not leak it into the tests
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-not-real")
     return tmp_path
 
@@ -322,6 +323,7 @@ def test_no_claude_api_line_means_no_spending(env):
 
 def test_real_client_needs_the_key_and_the_recorded_approval(env, monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY")
+    monkeypatch.delenv("EE_ANTHROPIC_API_KEY", raising=False)
     with pytest.raises(ca.KeyAbsent):
         ca.ClaudeAPI().complete(req())
     monkeypatch.setenv("ANTHROPIC_API_KEY", "x")
@@ -630,3 +632,13 @@ def test_batch_rerun_that_truncates_does_not_lose_the_other_results():
     out = a.run_job(reqs)
     assert isinstance(out["q0"], ca.OutputTruncated) and out["q1"].text == "x" and len(out) == ca.BATCH_MIN
     assert list((ca.ledger_dir()).glob("batch-T-*.json"))
+
+
+def test_the_key_can_come_from_the_alias_name(env, monkeypatch):
+    monkeypatch.delenv("ANTHROPIC_API_KEY")
+    monkeypatch.delenv("EE_ANTHROPIC_API_KEY", raising=False)
+    assert ca.api_key() is None
+    monkeypatch.setenv("EE_ANTHROPIC_API_KEY", "alias-key-not-real")
+    assert ca.api_key() == "alias-key-not-real"
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "main-key-not-real")
+    assert ca.api_key() == "main-key-not-real"

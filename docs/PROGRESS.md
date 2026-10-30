@@ -2893,6 +2893,9 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
   `test_a_settled_pod_stays_settled_...`.
 - Wording: RP-10's message says "failed create or BAD_HOST pod(s)" (a failed `create` of any cause uses the one try). `check` only REPORTS
   unknown `keep_stopped_pods` ids; it does not clean them up (`config/spend_caps.json` changes only on the creator's word).
+
+## 2026-10-30 08:10 UTC — P0d: key alias `EE_ANTHROPIC_API_KEY`
+The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code account auth). `claude_api.api_key()` now takes the first non-empty of `ANTHROPIC_API_KEY`, `EE_ANTHROPIC_API_KEY`; used by `client()`, `status`, `estimate`. Test: `test_the_key_can_come_from_the_alias_name`.
 ## 2026-10-30 UTC (Tbilisi night): Blueprint P5, the visual compensator: maps, HUD, tableaux (no pod, no money)
 
 - ვანო (2026-10-29 18:30 UTC): carry the Blueprint through the night, free steps only. P5 = the free, deterministic frames for the
