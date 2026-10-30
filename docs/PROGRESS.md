@@ -3374,6 +3374,16 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Test red on main -> green: `test_generator_gate.py::test_a_repeated_row_cannot_stand_in_for_a_blank_pair`. No pod, no API call, nothing deleted.
 - Decision log: none moved.
 
+## 2026-10-30 — plan_v2 wave 2, T4 PR-2: CP-12 route notes, N-06 docstring scope, `select_screen` moves to its episode
+- `.claude/agents/edit-planner.md` and `.claude/skills/shot-visuals/SKILL.md` open with the **Route note** (a still-picture episode D-43 vs an animated one D-77/D-80, never both). `shot-visuals`
+  is sectioned, no rule text removed: `## Still-picture route (D-43)` (everything from "What went wrong" through "One scene, one room" and "Procedure"), `## Animated route (D-77/D-80)` ("Animated shots", moved
+  after the Procedure), `## Both routes` (cinematography). Neither page carried a live 2512 or Edit-2511 line on current main.
+- N-06, docstrings only, logic untouched: `imagegen/routing.py`, `standards/hook.py`, `production/staging.py` each open with a Scope line naming the D-43 still-picture route.
+- `production/select_screen.py` and its test moved to `examples/syndicate_wars_ep1/` (git rename, content as before; run `python examples/syndicate_wars_ep1/select_screen.py <dir>`); `pytest.ini` `testpaths` adds that folder so
+  the three tests still run; the one code comment (`production/shorts.py`) names the new path. No code imported the module.
+- Tests red on main -> green: `test_agent_governance.py` (three T4 tests). The registry text `sourced_rules.json` BP-87 / SC-12 still say `select_screen.py` (name only, true).
+- OPEN: none. No pod, no API call, nothing deleted (a move, not a deletion).
+
 ## 2026-10-30 — plan_v2 wave 2, T5 N-09: D-80 prompt contract, one trigger home, no wldnk / nextpose / scene LoRA in composed cards
 - `training/lora_rules.py` (new, stdlib): `load()` and `trigger()` read `training/lora_rules.json`, the one home of the trigger; its `dataset.trigger` is now `xworld style`
   (the word `training/pods/xworld_v2_data.py` captioned the dataset with, LT-79). `training/audit.py`, `qa/style_prompt.py` (so `compose/episode_look.py`) and

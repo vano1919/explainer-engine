@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from explainer_engine.production import select_screen as SS
+import select_screen as SS  # examples/syndicate_wars_ep1 (pytest puts this folder on sys.path)
 
 
 def test_the_creators_stats_are_exact():

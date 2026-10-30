@@ -5,6 +5,8 @@ description: Plan the pictures of a Crossworld Theories video so they carry stak
 
 # Shot visuals: stakes in every frame, heroes you can recognise
 
+> **Route note:** a still-picture episode (D-43) uses the sprite/plate rules below; an animated episode (D-77, D-80) uses docs/SHOT_CONTINUITY.md (continuity_card/1, film_shots/2) and docs/SHOT_PROMPTS.md on Qwen-Image-2.1 + xworld_v2 — never both in one episode.
+
 **Episode rulebook first (D-51, OR-11):** read `python -m explainer_engine.standards brief <episode>/episode_rules.json --role image` and follow it; legal, licence, likeness and art-direction questions are decided there (docs/EPISODE_STANDARDS.md), never invented in this skill. A conflict goes back to the orchestrator.
 
 > **Primary rule, above everything below (UR-22, one universe):** every picture, sprite, prop and background is drawn in the same
@@ -15,6 +17,8 @@ description: Plan the pictures of a Crossworld Theories video so they carry stak
 Read first: `docs/UNIVERSAL_RULE_BASE.md` (§E, UR-16..UR-21), `explainer_engine/edit/stakes.json`, the episode's `look.json`
 (`rule_base: 2`, `caricatures`, `archetypes`, `pose_bank`). Entertainment first, facts second: the picture must make a viewer
 feel what the line says (fear, panic, shock, a joke landing), and must show *who* is in trouble.
+
+## Still-picture route (D-43)
 
 ## What went wrong (Day 1, 2026-10-16) and the cause of each
 | Seen by the creator | Cause | Rule that now stops it |
@@ -79,23 +83,6 @@ picture appears on its words (PV-04), does not show a thing before the story mak
 never shows a forbidden prop (PV-07), and that no prompt repeats (PV-06). One held picture may carry a whole exchange through speech
 bubbles instead of a new picture per sentence (UR-31).
 
-## Animated shots (keyframe -> next pose -> LTX video, 2026-10-24)
-The rules and the mistakes they come from are in `docs/SHOT_PROMPTS.md` (KP-01..KP-14); check with
-`python -m explainer_engine.scripting.shot_prompt_lint <shots.json>`. In short:
-- Name every acting person by what the picture shows ("the nurse in the purple jacket"); a bare "the woman" paints a stranger.
-- One actor first, one big action (start, peak, settle, body parts), the others react small; acting heroes large in frame.
-- Video: "everyone stays in frame" unless the story wants an exit; one camera sentence; at most 10 s; at most three sounds.
-- Next pose: from the master, poses only, no framing word; a new framing is a cut with the hero sheet.
-- The negative prompt never names our style (LTX's stock negative says "cartoonish rendering", "exaggerated expressions").
-- A test prompt passes the lint; a failing sample is compared with step 0 before a LoRA is blamed.
-- Since 2026-10-24 (KP-15..KP-34): prompts come from shot cards (`film_shots/1`, worked example
-  `examples/film_shots/bus_in_the_ice_age.json`), composed by `python -m explainer_engine.scripting.film_shots compose`.
-  Each hero has one visible tag, never a story name; every person has a screen side and a gaze; the keyframe shows the
-  START pose, the video goes start -> peak -> settle; the face as cues, not feelings; a line in quotes that fits the clip
-  (BP-100); no score music, quality words or readable text; at most two people in a medium or closer shot.
-- Precise but free (KP-29): pin who, where, gaze, the three poses, the face, the line, the camera and the sounds; leave
-  hair, cloth, blinks, breath, the background's life and the timing between poses to the model.
-
 ## One scene, one room (D-69, CS-01..CS-12 in docs/PRODUCTION_SCRIPT.md)
 A conversation is a set of shots of ONE room, not a new illustration per sentence. For every segment whose pictures play in
 one place, write `staging`: `roster` (who is in the room; default `scene.present`), `positions` (each person's seat, left to
@@ -121,6 +108,27 @@ each painted picture next to its master (`staging request` -> `continuity_review
 **Official game screenshots are private study only (RR-15):** never an image input or reference upload to a generator; describe the look in your own words.
 
 **Filler (D-53):** a type A plate or type C insert with no person, used once, in an explanation, pause, humour or transition beat may be marked `engine: "canva"` (at most 30 %); the script cannot declare importance, `imagegen/importance.py` computes it (PV-43).
+
+## Animated route (D-77/D-80)
+
+## Animated shots (keyframe -> next pose -> LTX video, 2026-10-24)
+The rules and the mistakes they come from are in `docs/SHOT_PROMPTS.md` (KP-01..KP-14); check with
+`python -m explainer_engine.scripting.shot_prompt_lint <shots.json>`. In short:
+- Name every acting person by what the picture shows ("the nurse in the purple jacket"); a bare "the woman" paints a stranger.
+- One actor first, one big action (start, peak, settle, body parts), the others react small; acting heroes large in frame.
+- Video: "everyone stays in frame" unless the story wants an exit; one camera sentence; at most 10 s; at most three sounds.
+- Next pose: from the master, poses only, no framing word; a new framing is a cut with the hero sheet.
+- The negative prompt never names our style (LTX's stock negative says "cartoonish rendering", "exaggerated expressions").
+- A test prompt passes the lint; a failing sample is compared with step 0 before a LoRA is blamed.
+- Since 2026-10-24 (KP-15..KP-34): prompts come from shot cards (`film_shots/1`, worked example
+  `examples/film_shots/bus_in_the_ice_age.json`), composed by `python -m explainer_engine.scripting.film_shots compose`.
+  Each hero has one visible tag, never a story name; every person has a screen side and a gaze; the keyframe shows the
+  START pose, the video goes start -> peak -> settle; the face as cues, not feelings; a line in quotes that fits the clip
+  (BP-100); no score music, quality words or readable text; at most two people in a medium or closer shot.
+- Precise but free (KP-29): pin who, where, gaze, the three poses, the face, the line, the camera and the sounds; leave
+  hair, cloth, blinks, breath, the background's life and the timing between poses to the model.
+
+## Both routes
 
 ## Cinematography: shot grammar (P3b 2026-10-29)
 
