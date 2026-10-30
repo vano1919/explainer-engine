@@ -329,3 +329,36 @@ def test_score_write_recomputes_derived_numbers_and_keeps_the_critic_and_the_cho
     assert fixed["variants"][0]["dynamics"]["share_scene"] == pytest.approx(0.801, abs=0.001)
     doc["chosen"] = {"variant_id": "v1", "by": "creator", "ref": "r", "at": "2026-10-30T00:00:00Z", "variants_sha256": "0" * 64}
     assert VP.rescore(doc, speeds={})["chosen"]["variants_sha256"] == contracts.variants_sha256(VP.rescore(doc, speeds={}))
+
+
+def test_the_pick_must_name_an_existing_eligible_variant(tmp_path):
+    doc = load(NAP / "script_variants.json")
+    doc["chosen"] = {"variant_id": "v9", "by": "creator", "ref": "r", "at": "2026-10-30T00:00:00Z", "variants_sha256": "0" * 64}
+    doc["chosen"]["variants_sha256"] = contracts.variants_sha256(doc)
+    p = tmp_path / "script_variants.json"
+    p.write_text(json.dumps(doc), encoding="utf-8")
+    assert any(f["rule"] == "CN-04" and f["where"] == "chosen.variant_id" for f in VP.check_file(p, speeds={}))
+    doc["chosen"]["variant_id"] = "v2"
+    # an eligible variant is fine; one with a FAIL (a turn told over a map) is refused
+    doc["variants"][1]["segments"][3]["blocks"] = [b for b in doc["variants"][1]["segments"][3]["blocks"] if b["category"] != "scene"]
+    doc["variants"][1]["segments"][3]["window_s"] = sum(b["seconds"] for b in doc["variants"][1]["segments"][3]["blocks"])
+    doc = VP.rescore(doc, speeds={})
+    p.write_text(json.dumps(doc), encoding="utf-8")
+    found = VP.check_file(p, speeds={})
+    assert any(f["rule"] == "VP-08" and f["severity"] == "FAIL" for f in found)
+    assert any(f["rule"] == "CN-04" and "cannot be picked" in f["detail"] for f in found)
+
+
+def test_variant_chosen_refuses_a_pick_that_names_no_variant(tmp_path):
+    from test_lifecycle import CREATOR, step
+    (tmp_path / "run.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "dossier.md").write_text("research", encoding="utf-8")
+    job = store.EpisodeJob.create(tmp_path, job_id="job-001", episode_slug="nap", ledger="run.json", fps=24)
+    step(job, "RESEARCHED")
+    doc = load(NAP / "script_variants.json")
+    doc["chosen"] = {"variant_id": "nope", "by": "creator", "ref": "r", "at": "2026-10-30T00:00:00Z",
+                     "variants_sha256": contracts.variants_sha256(doc)}
+    f = tmp_path / "script_variants.json"
+    f.write_text(json.dumps(doc), encoding="utf-8")
+    with pytest.raises(ContractError, match="not one of the variants"):
+        job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": doc["chosen"]["variants_sha256"]}, variants=f)

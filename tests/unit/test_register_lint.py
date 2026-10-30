@@ -151,3 +151,15 @@ def test_the_napoleon_draft_is_clean_at_the_fail_tier():
     assert [f for f in RL.findings(text) if f["severity"] == "FAIL"] == []
     doc = json.loads((ROOT / "examples/napoleon_vs_genghis/film_shots.json").read_text(encoding="utf-8"))
     assert [f for f in RL.film_shots_findings(doc) if f["severity"] == "FAIL"] == []
+
+
+def test_the_allow_list_reaches_n16_and_kp46_not_only_pv61(tmp_path):
+    from explainer_engine.scripting import film_shots, narration_lint
+    allow = [{"term": "realm", "reason": "literal", "note": "all"}]
+    text = "The king ruled a vast realm beyond the river."
+    assert any(f["rule"] == "N-16" and f["severity"] == "FAIL" for f in narration_lint.lint(text))
+    assert not any(f["rule"] == "N-16" for f in narration_lint.lint(text, allow=allow))
+    doc = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
+    doc["shots"][0]["narration"] = text
+    bad = [f for f in film_shots.check(doc) if f["rule"].startswith("KP-46") and f["severity"] == "FAIL"]
+    assert bad and not [f for f in film_shots.check(doc, allow=allow) if f["rule"].startswith("KP-46") and f["severity"] == "FAIL"]

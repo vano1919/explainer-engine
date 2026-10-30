@@ -135,10 +135,11 @@ def hook_form(sentence: str) -> str | None:
     return next((f for f in _HOOK_ORDER if f in HOOK_FORMS and _HOOK_TESTS[f](plain)), None)
 
 
-def lint(text: str, press: bool = True, register: bool = True) -> list[dict]:
+def lint(text: str, press: bool = True, register: bool = True, allow: list[dict] | None = None) -> list[dict]:
     """N-01..N-13 on a narration text; N-14 too unless ``press`` is False (a production script lints its narrator lines
     with ``doc_findings`` instead, so a hero's line is not read as narration); N-16/N-17, the AI register
-    (``register_lint``), unless ``register`` is False (a production script gets it as PV-61)."""
+    (``register_lint``, with the episode's ``register_allow.json`` entries as ``allow``), unless ``register`` is False (a production
+    script gets it as PV-61)."""
     found: list[dict] = []
 
     def add(rule: str, where: str, detail: str, severity: str = "REVIEW") -> None:
@@ -269,7 +270,7 @@ def lint(text: str, press: bool = True, register: bool = True) -> list[dict]:
                          f"{WORDS_PER_INTERJECTION} (BP-17)")
     if register:
         from explainer_engine.scripting import register_lint
-        for f in register_lint.findings(text, kind="narration"):
+        for f in register_lint.findings(text, kind="narration", allow=allow):
             found.append({"rule": "N-16" if f["rule"] in ("RG-01", "RG-05") else "N-17", "where": f["where"],
                           "severity": f["severity"], "detail": f"{f['rule']}: {f['detail']}"})
     return found
@@ -317,7 +318,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("path")
     p.add_argument("--json", action="store_true")
     a = p.parse_args(argv)
-    found = lint(Path(a.path).read_text(encoding="utf-8"))
+    from explainer_engine.scripting import register_lint
+    found = lint(Path(a.path).read_text(encoding="utf-8"), allow=register_lint.load_allow(a.path))
     if a.json:
         print(json.dumps(found, indent=1))
     else:

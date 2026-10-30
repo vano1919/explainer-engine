@@ -496,6 +496,12 @@ def check_file(path: Path | str, *, speeds: dict | None = None, caps: dict | Non
                "really different", sev("BP-141"))
         seen.setdefault(v["profile_id"], v["id"])
     ch = doc.get("chosen")
+    if ch:
+        picked = next((v for v in doc["variants"] if v["id"] == ch["variant_id"]), None)
+        if picked is None:
+            _f(out, "CN-04", "chosen.variant_id", f"{ch['variant_id']!r} is not one of the variants: the pick names nothing", "FAIL")
+        elif any(f["severity"] == "FAIL" for f in variant_findings(picked, speeds=speeds, caps=caps)):
+            _f(out, "CN-04", "chosen.variant_id", f"{ch['variant_id']} has a FAIL and cannot be picked (OR-31)", "FAIL")
     if ch and ch["variants_sha256"] != contracts.variants_sha256(doc):
         _f(out, "CN-04", "chosen.variants_sha256", "the variants changed after the creator's pick: ask again", "FAIL")
     return out

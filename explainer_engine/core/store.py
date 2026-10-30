@@ -310,6 +310,8 @@ class EpisodeJob:
         if to == "VARIANT_CHOSEN" and variants is not None:
             doc = json.loads(Path(variants).read_text(encoding="utf-8"))
             chosen = doc.get("chosen")
+            if chosen and chosen["variant_id"] not in {v["id"] for v in doc["variants"]}:
+                raise ContractError(f"VARIANT_CHOSEN: {chosen['variant_id']!r} is not one of the variants (CN-04)")
             if not chosen or approval["sha256"] != chosen["variants_sha256"] or chosen["variants_sha256"] != contracts.variants_sha256(doc):
                 raise ContractError("VARIANT_CHOSEN: the approval's sha256 is not the variants_sha256 of the picked, unchanged "
                                     "script_variants file (CN-04)")
