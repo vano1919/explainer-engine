@@ -17,7 +17,7 @@ The evidence for the new numbers is [research/SCRIPT_ENGINE_V1_2026-10-24.md](re
 | 4 | Script | cards -> the readable script and the narrator's lines; the shot list with every prompt under its shot | ZI-01 | `film_shots script --out script.md`, `film_shots shotlist --out shotlist.md` | - |
 | 5 | Prompts | cards -> hero-sheet, keyframe, next-pose, cut, last-frame and video prompts, gate cards | ZI-01, ZI-05, KP-01..KP-14 | `film_shots compose --out prompts.json` | creator picks each new hero from its sheet (invariant 6) |
 | 6 | Pictures | prompts -> sheets, masters (Qwen-Image-2512 + style LoRA), poses and cuts (Edit-2511 + scene LoRA) | ZI-06; the keyframe gate of PR #22 | gate cards in `prompts.json` | paint plan + provider (D-50) |
-| 7 | Clips | first (and last) frame + video prompt -> clip with native audio | ZI-03, ZI-06; KP-36, KP-37 | video QA of PR #22 | paid run approved first |
+| 7 | Clips | first (and last) frame + video prompt -> clip with native audio (a dialogue shot: conditioned on its read take, D-90) | ZI-03, ZI-06; KP-36, KP-37 | video QA of PR #22 | paid run approved first |
 | 8 | Narrator | `script.md` narrator lines -> ElevenLabs read + word timings | skill `elevenlabs-voice` | `audio/scribe_words.py` | - |
 | 9 | Edit | clips + read -> 15-minute cut, 1440p release (test cuts at the base size, LT-18) | [EDITING.md](EDITING.md) | `production/assemble.py` | creator approval before upload |
 
@@ -86,7 +86,7 @@ measurement is `unknown` and is shown as such, never filled in. A pod row waits 
 | Clip size | test films 1280x704 (LTX sizes are multiples of 32), never upscaled; release clips upscaled to 2560x1440 | release clips rendered at 1920x1088 before the upscale | LT-18 |
 | Video prompt | one present-tense paragraph: the style sentence, the action start -> peak -> settle, the face, the reactions, the line in quotes with its voice, who stays in frame, one camera sentence, the sounds | - | KP-10..KP-12, KP-18, BP-102 |
 | Acting fallback (KP-43) | a line whose take fails the acting check twice: over the speaker's shoulder onto the listener (the line plays on the reaction), or the speaker's hands for a line said to the room | redraw the same shot a third time | `film_shots._acting` |
-| Dialogue audio | LTX native audio, the voice described in words on the cast card (`voice`) | audio-to-video conditioning on one voice take per hero | the cast cards |
+| Dialogue audio | a fixed ElevenLabs voice per speaking character (cast card `voice_id`), the line read first and the take given to LTX as its audio input (D-90; the wiring is P6/P7, not built yet) | LTX native audio with the voice described in words (superseded by D-90, card A3) | the cast cards, D-90 |
 | Narrator | ElevenLabs, the script's narrator lines, first take | - | skill `elevenlabs-voice` |
 | Tier shares | hold at most 10 %, light about a sixth, full the rest | the critic's 40 / 35 / 25 % on the test film | BP-109 |
 
