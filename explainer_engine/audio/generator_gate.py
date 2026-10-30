@@ -291,8 +291,8 @@ def get(admission_id: str, *, path: Path | str | None = None) -> dict | None:
 
 def _picks(sheet_md: Path, report_sha: str) -> dict:
     """The answered sheet against its key. The key (``sheet_key.json`` beside the sheet) must name this report's sha256, or the
-    sheet belongs to another measurement. Returns how many of his answers (A / B / same) went to the generator and how many he gave;
-    the ratio is recorded for the eye, no minimum is invented here (his recorded word is the gate, D8)."""
+    sheet belongs to another measurement. Returns how many of his answers (A / B / same) went to the generator, how many he gave and
+    how many pairs the sheet has; the ratio is recorded for the eye, no minimum is invented here (his recorded word is the gate, D8)."""
     key_path = sheet_md.parent / "sheet_key.json"
     if not key_path.is_file():
         raise ContractError(f"{key_path.name} is missing beside the sheet: it is written by `sheet` and proves which report the sheet is for")
@@ -309,7 +309,7 @@ def _picks(sheet_md: Path, report_sha: str) -> dict:
         if len(cells) >= 5 and cells[0] in side and cells[-1].lower() in ("a", "b", "same"):
             total += 1
             given += cells[-1].lower() == side[cells[0]]
-    return {"for_generator": given, "total": total}
+    return {"for_generator": given, "total": total, "pairs": len(side)}
 
 
 def admit(generator: str, kind: str, report: Path, *, creator_ref: str, at: str, sheet: Path | None = None,
@@ -317,7 +317,8 @@ def admit(generator: str, kind: str, report: Path, *, creator_ref: str, at: str,
     """Write one admission record. Refused without the creator's recorded word (``creator_ref`` = his message id, ``at`` = when),
     without the blind sheet he answered (and its key for this report), or when the report misses BP-163 (re-derived from its numbers,
     not from its ``pass``). ``creator_ref`` must resolve to a ``generator_admit`` record for ``<generator>:<kind>`` in
-    ``jobs/creator_ok.jsonl`` (``governance ok``), the same lookup the channel voice uses (VC-08); a free string is not his word."""
+    ``jobs/creator_ok.jsonl`` (``governance ok``), found as the channel voice's word is (VC-08) but with no age window: an admission
+    stands until it is replaced; a free string is not his word. Every pair of the sheet must carry A, B or same (no share is demanded)."""
     ref = creator_ref.strip() if isinstance(creator_ref, str) else ""
     if not ref:
         raise ContractError("creator_ref is blank: an admission needs the creator's recorded word (BP-162)")
@@ -342,6 +343,9 @@ def admit(generator: str, kind: str, report: Path, *, creator_ref: str, at: str,
         raise ContractError("the report does not pass BP-163: " + "; ".join(problems))
     rsha = sha256_of(report)
     picks = _picks(Path(sheet), rsha)                       # the key must belong to this very report (it is the blind sheet's proof)
+    if not picks["pairs"] or picks["total"] != picks["pairs"]:
+        raise ContractError(f"the blind sheet is not answered: {picks['total']} of {picks['pairs']} pairs have A, B or same; "
+                            "answer every pair of the sheet first (BP-163: quality is his ear)")
     if records.find("generator_admit", f"{generator}:{kind}", ref) is None:
         raise ContractError(f"BP-162: no recorded creator word {ref!r} for {generator}:{kind}: record it first (`python -m "
                             f"explainer_engine.governance ok generator_admit {generator}:{kind} <message id> \"<his words>\"`)")

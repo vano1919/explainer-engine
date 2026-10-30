@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import numpy as np
@@ -267,10 +268,14 @@ def test_admit_records_his_picks_for_the_eye_and_invents_no_minimum(tmp_path):
     on_a = sum(p["generator_side"] == "A" for p in key["pairs"])
     e = G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=tmp_path / "adm.json")
     assert (e["picks_for_generator"], e["picks_total"]) == (on_a, pairs)             # "A" went to the generator on exactly those pairs
-    unanswered = sheet_md.read_text(encoding="utf-8").replace(" | A |", " |  |")
-    sheet_md.write_text(unanswered, encoding="utf-8")
-    e0 = G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=tmp_path / "adm2.json")
-    assert (e0["picks_for_generator"], e0["picks_total"]) == (0, 0)                   # recorded as it is; BP-162 carries no threshold
+    answered = sheet_md.read_text(encoding="utf-8")
+    sheet_md.write_text(re.sub(r"\| A \|$", "|  |", answered, count=1, flags=re.M), encoding="utf-8")   # one pair left blank
+    with pytest.raises(ContractError, match="answer every pair"):
+        G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=tmp_path / "adm2.json")
+    sheet_md.write_text(re.sub(r"\| A \|$", "|  |", answered, flags=re.M), encoding="utf-8")            # no pair answered
+    with pytest.raises(ContractError, match="answer every pair"):
+        G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=tmp_path / "adm2.json")
+    assert not (tmp_path / "adm2.json").exists()
     assert SR.rule("BP-162")["thresholds"] == {}
 
 
@@ -301,6 +306,9 @@ def test_cli_measure_sheet_admit_status(tmp_path, capsys):
     base = ["admit", str(rp), "--generator", "gen-x", "--kind", "sfx", "--sheet", str(tmp_path / "sh" / "sheet.md"),
             "--admissions", str(adm), "--at", "2026-10-31T10:00:00Z"]
     assert G.main(base + ["--creator-ref", " "]) == 1 and not adm.exists()
+    assert G.main(base + ["--creator-ref", "cmsg_2"]) == 1 and not adm.exists()          # the sheet is still blank
+    blank = (tmp_path / "sh" / "sheet.md").read_text(encoding="utf-8")
+    (tmp_path / "sh" / "sheet.md").write_text(re.sub(r"\|  \|$", "| A |", blank, flags=re.M), encoding="utf-8")
     assert G.main(base + ["--creator-ref", "cmsg_2"]) == 0 and G.admitted("sfx", path=adm)["creator_ref"] == "cmsg_2"
 
 

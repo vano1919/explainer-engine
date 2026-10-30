@@ -206,7 +206,7 @@ answered with its `sheet_key.json` (made for this very report) and a report that
 2. `sheet` writes a blind A/B listening sheet (seeded; neutral file names; both sides levelled to a common RMS; the key is a
    separate file) for his ear: quality and prompt fit are never a number.
 3. `admit` re-derives the verdict from the report's numbers and records `{generator, model, kind, report_sha256, sheet_sha256,
-   prefer_rate, creator_ref, picks_for_generator, picks_total, at}` (his picks, recorded for the eye; BP-162 has no minimum);
+   prefer_rate, creator_ref, picks_for_generator, picks_total, at}` (his picks, recorded for the eye; every pair of the sheet must be answered, BP-162 has no minimum share);
    `admitted(kind)` is None without a file (`$EXPLAINER_GENERATOR_ADMISSION` or the `path`
    argument move the file, so tests never touch the real one).
 

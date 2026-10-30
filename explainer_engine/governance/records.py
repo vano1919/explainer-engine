@@ -26,6 +26,8 @@ def add(action: str, target: str, message_id: str, quote: str, *, by: str = "cre
         raise ValueError("a recorded word needs the creator's message id and a quote")
     if action == "protected_config" and target == "*":
         raise ValueError("protected_config names one file; a wildcard would unlock the money caps too")
+    if action == "generator_admit" and "*" in target:
+        raise ValueError("generator_admit names one <generator>:<kind>; a wildcard can never match an admission")
     row = {"action": action, "target": target, "message_id": message_id, "by": by, "quote": quote[:300],
            "at": now if now is not None else _now()}
     path = root_dir(root) / FILE

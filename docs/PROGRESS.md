@@ -3355,5 +3355,6 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   `test_sound_director.py::test_a_free_generator_take_without_an_admission_is_sd13_and_fails`. `docs/AUDIO_SYSTEM.md` names the record. Existing admit tests now record the word first (setup;
   assertions unchanged).
 - OPEN (needs ვანო): `assets/audio/generator_admission.json` must be added to `protected_files` in `config/model_routing.json` so that editing it by hand is refused without his word (that file is protected config; not touched here).
-  OPEN: a sheet he has not answered counts as 0 of N; whether a minimum share is wanted is his call (none invented). No pod, no API call, nothing deleted.
+  T1's review (#83): `admit` also refuses a sheet with any pair not answered A / B / same ("answer every pair of the sheet first"); the share stays for the eye. `records.add` refuses a wildcard `generator_admit` target. The lookup has no age window (an admission stands until replaced), said in the docstring.
+  OPEN: whether a minimum share of picks for the generator is wanted is his call (none invented). No pod, no API call, nothing deleted.
 - Decision log: none moved.

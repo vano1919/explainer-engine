@@ -235,6 +235,14 @@ def test_protected_shell_guard_reads_pass_and_more_writers_are_seen(repo):
         assert bash(repo, cmd) == 2, cmd
 
 
+def test_a_generator_admission_word_names_one_generator_and_kind(repo):
+    with pytest.raises(ValueError, match="wildcard"):
+        records.add("generator_admit", "*", "cmsg_1", "ვანო: კი", root=repo)
+    with pytest.raises(ValueError, match="wildcard"):
+        records.add("generator_admit", "gen-x:*", "cmsg_1", "ვანო: კი", root=repo)
+    assert records.add("generator_admit", "gen-x:sfx", "cmsg_1", "ვანო: კი", root=repo)["target"] == "gen-x:sfx"
+
+
 def test_a_wildcard_word_never_unlocks_a_protected_file(repo):
     with pytest.raises(ValueError):
         records.add("protected_config", "*", "cmsg_1", "ვანო: კი", root=repo)
