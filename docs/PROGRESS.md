@@ -3343,3 +3343,17 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   the test now pins the literal starting values and asserts no BP-166 key is in `RULES["video_qa"]`, so a copy cannot come back. LT-56/57 rows carry "(number: BP-166)".
 - OPEN: BP-165/BP-166 need two source types or the creator's dated word before any of them can become FAIL. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 — plan_v2 wave 1, T2 PR-E: N-08, a generator admission needs the creator's recorded word and a key for its report; SD-13 runs `item_problems`
+- `governance/records.py`: `generator_admit` joins `ACTIONS` (target `<generator>:<kind>`); `governance ok generator_admit ...` records his word in `jobs/creator_ok.jsonl`.
+  `audio/generator_gate.admit` refuses a `creator_ref` that does not resolve to such a record (`records.find`, the lookup the channel voice uses, VC-08), and refuses a
+  sheet without `sheet_key.json` beside it or with a key made for another report (`report_sha256`). It stores `picks_for_generator` / `picks_total` for the eye; no minimum is
+  invented (D8: his recorded word is the gate).
+- `audio/sound_director.py` SD-13: a free-generator take (source kind `open_model`) now runs `generator_gate.item_problems` instead of a non-empty-admission check, so a missing
+  admission, a wrong kind or a wrong model is a FAIL naming the problem.
+- Tests red on main -> green: `test_generator_gate.py` (3: recorded word, key for this report, picks recorded without an invented minimum) and
+  `test_sound_director.py::test_a_free_generator_take_without_an_admission_is_sd13_and_fails`. `docs/AUDIO_SYSTEM.md` names the record. Existing admit tests now record the word first (setup;
+  assertions unchanged).
+- OPEN (needs ვანო): `assets/audio/generator_admission.json` must be added to `protected_files` in `config/model_routing.json` so that editing it by hand is refused without his word (that file is protected config; not touched here).
+  OPEN: a sheet he has not answered counts as 0 of N; whether a minimum share is wanted is his call (none invented). No pod, no API call, nothing deleted.
+- Decision log: none moved.
