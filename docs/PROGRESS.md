@@ -3146,3 +3146,12 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Tests: `tests/unit/test_money_path_fences.py` (CP-01 section: both launchers exit with `RETIRED by D-80` and no network, 7 refused
   commands, 6 allowed ones); `tests/unit/test_aivideo_shotplan.py::test_pod_code_follows_the_rules` += the guard sits before `rp.create(`
   (addition only). Red on main: 9 failed.
+## 2026-10-30 — plan_v2 wave 1, T2 PR-B: CP-05, KG-22/KG-23 are a visible REVIEW while the style is suspended (D-80)
+- `qa/blind_check.py`: the retired wldnk rubric is kept as `STYLE_SPEC_WLDNK_RETIRED` (mechanics only, tests still run it); the live `STYLE_SPEC` is empty
+  and `STYLE_SUSPENDED = True` is the one flag. `describe_rules`, `compare(..., spec=None)` and `style_verdict(..., spec=None)` take the spec as an argument,
+  so no verdict is computed from a spec nobody chose. `qa/keyframe_gate.py` imports the flag and writes KG-22 (and KG-23) as an explicit REVIEW row
+  (`kg22_row`, `kg22_row_text`) naming D-80 instead of an empty PASS; `docs/KEYFRAME_GATE.md` carries the two rows.
+- Tests red on main -> green: `test_keyframe_gate.py::test_kg22_is_review_while_the_style_set_is_suspended`; `test_blind_check.py` does not collect on main code
+  (`STYLE_SPEC_WLDNK_RETIRED` missing). Focused set 30 passed, `docs_lint` 0 findings, `governance check` ok. No assertion removed.
+- OPEN: when a new style set is chosen the creator's call, not this PR, fills `STYLE_SPEC` and clears the flag. No pod, no API call, nothing deleted.
+- Decision log: none moved.
