@@ -1,0 +1,88 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "comp_spec.schema.json",
+ "title": "One compensator item: what a map, HUD or tableau frame shows and which spoken word triggers each change (docs/CONTRACTS.md, docs/COMPENSATOR.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "comp_spec/1"
+  },
+  "item_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "archetype_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "width": {
+   "type": "integer",
+   "minimum": 16
+  },
+  "height": {
+   "type": "integer",
+   "minimum": 16
+  },
+  "events": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "word_index": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "the spoken word that starts the event (word lock, CMP-04)"
+     },
+     "op": {
+      "type": "string",
+      "minLength": 1
+     },
+     "target": {
+      "anyOf": [
+       {
+        "type": "string",
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "frames": {
+      "type": "integer",
+      "minimum": 1
+     },
+     "args": {
+      "type": "object",
+      "description": "the op's own arguments, checked by the archetype's validator (explainer_engine/edit/visual_compensator.py)"
+     }
+    },
+    "required": [
+     "id",
+     "word_index",
+     "op",
+     "target"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "payload": {
+   "type": "object",
+   "description": "what the archetype draws; its shape is the archetype's (docs/COMPENSATOR.md), checked by its validator"
+  }
+ },
+ "required": [
+  "schema",
+  "item_id",
+  "archetype_id",
+  "width",
+  "height",
+  "events",
+  "payload"
+ ],
+ "additionalProperties": false
+}
