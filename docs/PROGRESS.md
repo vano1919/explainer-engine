@@ -3015,3 +3015,16 @@ The review of the cache fix left three points. (1) `loop_usd(mode=cached|uncache
 
 ## 2026-10-30 09:45 UTC — P0d: runtime cache guard in the tool loop (default `--loop-bound cached` made self-checking)
 Decision (Blueprint thread): `--loop-bound` stays `cached`. So the loop now checks that assumption itself: `cache_guard` from turn 3, on a turn that still wants tools, stops with `CacheCold` (naming the measured share) when under 60 % of the prompt tokens were cache reads or writes, or when the cache read did not grow while 1000 or more fresh input tokens were billed (the read stuck at the system prefix). The partial is saved by the #58 path. Prompts under 1024 tokens and final answers are not judged. Replaying the J1b scope A ledger rows through it stops at turn 3. Tests: warm history runs on; stuck-at-prefix stops at turn 3 with the partial on disk; the share message; the guard switched off fails the stuck test. Existing max_turns/cap tests now script warm usage (they test turns and caps, not the cache).
+
+## 2026-10-30 UTC: P5 follow-up, Canvas.line's dashed walk always terminates (no pod, no money)
+
+- The plan thread's review desk (after #47): the 1e-6 float floor of the dash walk was not pinned by a test, and `Canvas.line` still hung or
+  divided by zero on degenerate input. Now: `draw.dash_runs` is a pure generator walking only the part of the line inside the canvas box (the
+  phase still advances over the rest), so the work is bounded by the box, not by the line's length (a 1e12 px line is instant); a dash must be
+  finite with on > 0 and off >= 0 and the coordinates finite, else ValueError; a pattern finer than a pixel is drawn solid.
+- `tests/unit/test_draw_guards.py`: the refused dashes and coordinates, the 1e12 line, the 1e-9 dash, and the phase across the clipped part.
+- Review of #60 (P1a): the absolute floor is not enough far from the origin (at 1e12 one float step is ~1.2e-4, so `pos + step == pos` and the
+  walk never moved; `Canvas.line([(-1000000000003.8188, 10), (1e12, 10)], dash=(2.5077..., 5.1608...))` spun). `dash_runs` now advances one ulp
+  (`math.nextafter`) when a step does not move `pos`; that input has its own test. The old floor test's premise (no floor = a stall) no longer
+  holds, so it now pins what the floor still does (keeps ulp-sized sliver runs out). The phase advance over a segment wholly outside the box
+  has a test that fails when the line is deleted (checked by mutation); so does removing the `nextafter` step.
