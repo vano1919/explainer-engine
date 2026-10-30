@@ -3002,3 +3002,10 @@ J1b scope A ran 18 turns and hit the 80 % stop without saving anything: the ledg
   dryrun, and the copies on HF `code/p12/` must be made from the merged files, then compared by sha256 before each create (audit N3).
 - Test: `tests/unit/test_p12a_scripts.py` runs B, C, D, E and A under the real `pod_wrapper.sh` with stubs and short steps (`P12_STEP_S`, `P12_DL` only
   for the test): end words, drills, parts uploaded before the cap, boot facts, speed record, shard deleted.
+
+## 2026-10-30 09:55 UTC: CR-12 wording, the watchdog is an hours-scale backstop (audit pass 1, B4; docs only)
+
+- Evidence (audit 08:35 UTC): the recorded scheduled runs were 4-7 h apart (29 runs in 6 days under `*/30`, none under `*/10` by 08:19 on 10-30). CR-12
+  and the stop-path table now say so, and that the session dispatches the watchdog before every create and every 10 minutes while a pod relies
+  on it, so the stop is the watchdog's code with the session's timing. Pod E's pass criterion is the OR-24 thread's call (2026-10-30 08:38): E passes when the watchdog's own code stops it at
+  the first session-dispatched run after DONE, and its report states that the timing came from the session, not from cron. Nothing in code changed.
