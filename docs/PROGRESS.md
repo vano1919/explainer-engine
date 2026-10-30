@@ -2948,5 +2948,9 @@ The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code accoun
   divided by zero on degenerate input. Now: `draw.dash_runs` is a pure generator walking only the part of the line inside the canvas box (the
   phase still advances over the rest), so the work is bounded by the box, not by the line's length (a 1e12 px line is instant); a dash must be
   finite with on > 0 and off >= 0 and the coordinates finite, else ValueError; a pattern finer than a pixel is drawn solid.
-- `tests/unit/test_draw_guards.py`: a searched input on which the walk stalls without the floor (the test patches the floor to 0 and sees the
-  spin, so removing the floor fails it), the refused dashes and coordinates, the 1e12 line, the 1e-9 dash, and the phase across the clipped part.
+- `tests/unit/test_draw_guards.py`: the refused dashes and coordinates, the 1e12 line, the 1e-9 dash, and the phase across the clipped part.
+- Review of #60 (P1a): the absolute floor is not enough far from the origin (at 1e12 one float step is ~1.2e-4, so `pos + step == pos` and the
+  walk never moved; `Canvas.line([(-1000000000003.8188, 10), (1e12, 10)], dash=(2.5077..., 5.1608...))` spun). `dash_runs` now advances one ulp
+  (`math.nextafter`) when a step does not move `pos`; that input has its own test. The old floor test's premise (no floor = a stall) no longer
+  holds, so it now pins what the floor still does (keeps ulp-sized sliver runs out). The phase advance over a segment wholly outside the box
+  has a test that fails when the line is deleted (checked by mutation); so does removing the `nextafter` step.

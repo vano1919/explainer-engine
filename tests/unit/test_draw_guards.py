@@ -14,7 +14,7 @@ from explainer_engine.maps import draw as D
 
 needs_alarm = pytest.mark.skipif(not hasattr(signal, "setitimer"), reason="no SIGALRM on this platform")
 
-# found by search: with no floor the walk stalls (pos + step == pos) on this pattern
+# found by search: this pattern gives the sliver steps that stalled the walk before the floor and the one-ulp step
 STALL = (2.2872328120450134, 3.173234010681308, 100.0)
 BOX = (-10.0, -10.0, 1e6, 1e6)
 
@@ -36,14 +36,14 @@ def within(seconds: float, fn):
 
 
 @needs_alarm
-def test_the_float_floor_is_what_keeps_the_walk_moving(monkeypatch):
+def test_the_float_floor_keeps_ulp_sized_slivers_out_and_the_walk_ends_either_way(monkeypatch):
     on, off, length = STALL
     pts = [(0.0, 0.0), (length, 0.0)]
     runs = within(5, lambda: list(D.dash_runs(pts, on, off, BOX)))
     assert 15 < len(runs) < 30                                    # about 100 / 5.46 dashes
-    monkeypatch.setattr(D, "DASH_FLOOR", 0.0)                     # the same input without the floor stalls: the case is real
-    with pytest.raises(Spin):
-        within(2, lambda: list(D.dash_runs(pts, on, off, BOX)))
+    monkeypatch.setattr(D, "DASH_FLOOR", 0.0)                     # without the floor the one-ulp step (math.nextafter) still ends the walk
+    bare = within(5, lambda: list(D.dash_runs(pts, on, off, BOX)))
+    assert len(runs) < len(bare)                                  # but it leaves sliver runs the floor never draws
 
 
 def test_a_dash_of_zero_negative_or_non_finite_is_refused():
@@ -85,3 +85,23 @@ def test_the_phase_still_advances_over_the_part_outside_the_box():
     assert shifted[0][0][0] == pytest.approx(0.0, abs=1e-9)      # 70 = 10 periods: the pattern lands in phase
     odd = list(D.dash_runs([(-71.0, 5.0), (100.0, 5.0)], 4.0, 3.0, (0.0, 0.0, 100.0, 10.0)))
     assert odd[0][0][0] == pytest.approx(0.0, abs=1e-9) and odd[0][1][0] == pytest.approx(3.0, abs=1e-9)   # one unit into the dash
+
+
+@needs_alarm
+def test_the_walk_terminates_where_one_float_step_is_wider_than_the_dash_step():
+    # found by review: at 1e12 one float step is ~1.2e-4, so a phase just short of a boundary gives pos + step == pos
+    pts = [(-1000000000003.8188, 10.0), (1e12, 10.0)]
+    dash = (2.507731830843009, 5.160885553154779)
+    runs = within(5, lambda: list(D.dash_runs(pts, *dash, (0.0, 0.0, 80.0, 20.0))))
+    assert runs and all(a[0] <= b[0] for a, b in runs)
+    c = D.Canvas(80, 20, (255, 255, 255), 1)
+    within(5, lambda: c.line(pts, (0, 0, 0, 255), 2, dash=dash))
+
+
+def test_the_phase_advances_over_a_segment_wholly_outside_the_box():
+    box = (0.0, 0.0, 100.0, 10.0)
+    # the first segment (60 long) never touches the box; 60 % 7 = 4 puts the second at the start of an off stretch, so the first
+    # dash starts at x = 0 (70 along the line) only when the skipped length was counted
+    runs = list(D.dash_runs([(-70.0, 5.0), (-10.0, 5.0), (100.0, 5.0)], 4.0, 3.0, box))
+    assert runs[0][0][0] == pytest.approx(0.0, abs=1e-9) and runs[0][1][0] == pytest.approx(4.0, abs=1e-9)
+    assert runs[1][0][0] == pytest.approx(7.0, abs=1e-9)

@@ -80,7 +80,8 @@ def seeded(*parts) -> np.random.Generator:
 
 
 MIN_DASH_PERIOD = 1.0     # output pixels: a dash pattern finer than this reads as a solid line
-DASH_FLOOR = 1e-6         # the least a dash step may advance: float noise at a boundary never stalls the walk (pos + 3e-16 == pos)
+DASH_FLOOR = 1e-6         # the least a dash step may advance: float noise at a boundary never stalls the walk (pos + 3e-16 == pos);
+#                           beyond ~1e10 one float step exceeds it, and ``dash_runs`` then moves by one ulp (math.nextafter)
 
 
 def _visible(a, b, box):
@@ -119,6 +120,8 @@ def dash_runs(pts, on: float, off: float, box):
         while pos < stop:
             step = max((on - phase) if phase < on else (period - phase), DASH_FLOOR)
             end = min(stop, pos + step)
+            if end <= pos:  # far from the origin one float step is wider than ``step`` (pos + step == pos): advance one ulp instead
+                end = min(stop, math.nextafter(pos, math.inf))
             if phase < on:
                 yield ((a[0] + (b[0] - a[0]) * pos / length, a[1] + (b[1] - a[1]) * pos / length),
                        (a[0] + (b[0] - a[0]) * end / length, a[1] + (b[1] - a[1]) * end / length))
