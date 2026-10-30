@@ -1,4 +1,5 @@
-"""Night-run hot fix: pod.sh upgraded huggingface_hub to 2.x, which transformers refuses (needs >=1.5,<2). Pin it back."""
+"""RETIRED by D-80 (2026-10-26): the night-run route of the wldnk era; kept as history, never run. Night-run hot fix: pod.sh upgraded huggingface_hub to 2.x, which transformers refuses (needs >=1.5,<2). Pin it back."""
+raise SystemExit("RETIRED: see the module docstring")
 import subprocess, sys
 import importlib.metadata as md
 

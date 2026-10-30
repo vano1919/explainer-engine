@@ -3472,3 +3472,13 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Test: `test_real_spend_caps_file_holds_the_or24_caps` pins the new lines and the unchanged total.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 — change plan T02: RETIRED banners on six old-era modules (D-80, D-39)
+
+- `aivideo/pod/montage.py`, `fixhub.py`, `watchdog.py`, `aivideo/shotplan.py` carry the D-80 banner, `audio/voice_layer.py` the D-39 banner,
+  `production/rig.py` the creator's 2026-10-22 banner (first docstring line). The three pod scripts raise `SystemExit("RETIRED ...")` before any
+  import, `rig.py` in its `__main__` block; `shotplan.py` and `voice_layer.py` are banner only (their functions stay importable and tested).
+  `kf.py`/`clips.py` (already RETIRED) import `fixhub` and start `watchdog.py`, so they now stop there if ever run. Nothing deleted.
+- Test: `test_old_era_modules_carry_a_retired_banner_and_their_cli_refuses` (docstrings read with `ast`, no import).
+- OPEN: none. No pod, no API call.
+- Decision log: none moved.
