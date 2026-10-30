@@ -1,0 +1,4486 @@
+{
+ "schema": "production_script/3",
+ "voice": {
+  "provider": "elevenlabs",
+  "model": "eleven_v4",
+  "voice_id": null,
+  "name": null,
+  "style": "a warm, steady, slightly wry storyteller, low and unhurried on the strange parts and quicker on action, who talks to one listener",
+  "pace_wpm": [
+   170,
+   190
+  ],
+  "candidates": [
+   {
+    "voice_id": "l3OCvamakRoSUNIIz75n",
+    "name": "Brad - Warm, Trusted Storyteller",
+    "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). A warm, quick-enough middle-aged American storyteller."
+   },
+   {
+    "voice_id": "Ovio1nb5Thj5cZeW3MPS",
+    "name": "Alec",
+    "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). Calm, warm, cinematic documentary."
+   },
+   {
+    "voice_id": "oJUpLOe3yEYTEIjO6ddh",
+    "name": "Leo Ashcraft - Late-Night Radio Host",
+    "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). Deep, warm, dry humour."
+   }
+  ]
+ },
+ "world": {
+  "topic": "an army of 1812 falls through a fog into the steppe of 1223 and meets Genghis Khan",
+  "host": {
+   "era": "medieval_europe",
+   "place": "the open steppe of 1223: knee-high grass, felt tents, ridges full of horsemen",
+   "when": "summer 1223"
+  },
+  "visitors": [],
+  "light_owner": "host",
+  "day_arc": [
+   {
+    "beat": 1,
+    "light": "overcast"
+   },
+   {
+    "beat": 2,
+    "light": "overcast"
+   },
+   {
+    "beat": 3,
+    "light": "overcast"
+   },
+   {
+    "beat": 4,
+    "light": "candle_night"
+   },
+   {
+    "beat": 5,
+    "light": "overcast"
+   },
+   {
+    "beat": 6,
+    "light": "candle_night"
+   },
+   {
+    "beat": 7,
+    "light": "overcast"
+   },
+   {
+    "beat": 8,
+    "light": "overcast"
+   }
+  ]
+ },
+ "cast": {
+  "napoleon": {
+   "names": [
+    "Napoleon",
+    "Napoleon Bonaparte"
+   ],
+   "card": "Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare",
+   "props": [
+    "field map",
+    "spyglass"
+   ],
+   "speech": {
+    "basis": "public",
+    "style": "Short orders and short questions; names things by number and use; never explains twice; a dry cut when interrupted.",
+    "words": [
+     "Count",
+     "Where",
+     "Decisive",
+     "Now"
+    ],
+    "avoid": [
+     "long speeches",
+     "apologies",
+     "slang"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Napoleon",
+     "manner as generally described; our own lines, no quotes"
+    ]
+   },
+   "face_sheet": {
+    "id": "napoleon_faces_v1",
+    "ref": "p_napoleon",
+    "set": [
+     "neutral",
+     "joyful",
+     "sad",
+     "scared",
+     "angry",
+     "surprised",
+     "determined",
+     "doubtful",
+     "worried",
+     "deadpan",
+     "curious",
+     "smug"
+    ]
+   },
+   "voice": {
+    "style": "a middle-aged man's clipped, dry, imperious voice that speaks in short orders and thins to a hard quiet when pressed; medium energy, a faint French cast to the English, never loud",
+    "traits": {
+     "gender": "male",
+     "age": "middle_aged",
+     "temperament": [
+      "serious",
+      "confident",
+      "crisp"
+     ],
+     "energy": "medium",
+     "origin": "corsican-born, French-speaking; English with a French accent",
+     "role": "hero",
+     "real_person": true,
+     "living": false,
+     "documented": [
+      "https://en.wikipedia.org/wiki/Napoleon (born 1769, so 43 in 1812; birth year recalled, page not re-fetched)",
+      "C-04 (preferred the offensive, aimed to destroy the enemy's army in battle: short, forceful orders)"
+     ]
+    },
+    "voice_id": null,
+    "name": null,
+    "candidates": [
+     {
+      "voice_id": "Dg1lUQiSAGVHkoQMG3QX",
+      "name": "Jerry B. - Premium Luxury Commercial",
+      "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). polished, understated, quiet authority; courteous and cold (recorded in titans_from_zero) - fits a dry, imperious register; no French accent known"
+     },
+     {
+      "voice_id": "AyuyomQLIrhdNOsoDN2N",
+      "name": "Christopher J Kelly - British",
+      "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). measured senior finance executive (recorded in titans_from_zero) - measured and crisp; British, not French"
+     },
+     {
+      "voice_id": "WzVKtqQpTUUQ2JNx8YxI",
+      "name": "Silas - Weathered Villain",
+      "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). low, precise, quietly threatening (recorded in titans_from_zero) - the hard quiet; may sound too villainous for the lead"
+     }
+    ]
+   }
+  },
+  "genghis": {
+   "names": [
+    "Genghis Khan",
+    "the khan",
+    "Temujin"
+   ],
+   "card": "Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes",
+   "props": [
+    "felt carpet",
+    "cup"
+   ],
+   "speech": {
+    "basis": "public",
+    "style": "Slow and quiet, few words, a question where a boast would be, long pauses; speaks in horses and weather, never in titles.",
+    "words": [
+     "Good",
+     "Horse",
+     "Tell me",
+     "Again"
+    ],
+    "avoid": [
+     "threats",
+     "titles",
+     "hurry"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Genghis_Khan",
+     "manner as generally described; our own lines, no quotes"
+    ]
+   },
+   "face_sheet": {
+    "id": "genghis_faces_v1",
+    "ref": "p_genghis",
+    "set": [
+     "neutral",
+     "joyful",
+     "sad",
+     "scared",
+     "angry",
+     "surprised",
+     "determined",
+     "doubtful",
+     "worried",
+     "deadpan",
+     "curious",
+     "smug"
+    ]
+   },
+   "voice": {
+    "style": "an old man's low, slow, quiet voice with long pauses and almost no hurry, kind-sounding and level, that asks a question where another would boast; low energy, a steppe-born accent in the English",
+    "traits": {
+     "gender": "male",
+     "age": "old",
+     "temperament": [
+      "calm",
+      "serious",
+      "wise"
+     ],
+     "energy": "low",
+     "origin": "mongolian, steppe-born",
+     "ethnicity": "mongolian",
+     "role": "rival",
+     "real_person": true,
+     "living": false,
+     "documented": [
+      "https://en.wikipedia.org/wiki/Genghis_Khan (born about 1162, so about 61 in 1223; steppe-born)",
+      "C-11 (promoted by merit and loyalty, kept the archer who admitted shooting his horse: a patient tester of men)"
+     ]
+    },
+    "voice_id": null,
+    "name": null,
+    "candidates": [
+     {
+      "voice_id": "8wePOEVMsHVU2qfSJbtC",
+      "name": "Lawrence",
+      "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). deep, subtly emotional, warm (recorded in stone_age) - low and level"
+     },
+     {
+      "voice_id": "xkDz8dF9GIt1kG06c9Of",
+      "name": "Ron 2",
+      "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). deep and soothing (recorded in stone_age) - slow and calm"
+     },
+     {
+      "voice_id": "NOpBlnGInO9m6vDvFkFC",
+      "name": "Grandpa Spuds Oxley",
+      "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). an old man's voice (recorded in syndicate_wars_ep1) - old, but was a narrator of episode 1"
+     }
+    ]
+   }
+  },
+  "aslan": {
+   "names": [
+    "Aslan"
+   ],
+   "card": "Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak",
+   "props": [
+    "sabre",
+    "water flask"
+   ],
+   "speech": {
+    "basis": "personality",
+    "style": "Formal French-learned courtesy that thins under fear; answers exactly what was asked, ends orders with 'sire'; slips into a song-word of his grandmother when moved.",
+    "words": [
+     "Sire",
+     "Exactly",
+     "Forgive me",
+     "Grandmother"
+    ],
+    "avoid": [
+     "boasting",
+     "swearing"
+    ],
+    "sources": [
+     "https://en.wikipedia.org/wiki/Mamelukes_of_the_Imperial_Guard",
+     "https://en.wikipedia.org/wiki/Kipchak_languages"
+    ]
+   },
+   "face_sheet": {
+    "id": "aslan_faces_v1",
+    "ref": "p_aslan",
+    "set": [
+     "neutral",
+     "joyful",
+     "sad",
+     "scared",
+     "angry",
+     "surprised",
+     "determined",
+     "doubtful",
+     "worried",
+     "deadpan",
+     "curious",
+     "smug"
+    ]
+   },
+   "voice": {
+    "style": "a young man's careful, formal voice, courteous and exact, that thins and quickens under fear and softens on a word of his grandmother's tongue; medium energy, a soft coastal accent in the English",
+    "traits": {
+     "gender": "male",
+     "age": "young",
+     "temperament": [
+      "formal",
+      "calm",
+      "soft"
+     ],
+     "energy": "medium",
+     "origin": "crimean tatar from the black sea coast; English learned late and careful",
+     "ethnicity": "crimean tatar",
+     "role": "everyman"
+    },
+    "voice_id": null,
+    "name": null,
+    "candidates": [
+     {
+      "voice_id": "n9RJRb8CoeRtSYSpKZRH",
+      "name": "Robert - Calm Confident British",
+      "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). calm and confident, British (recorded in syndicate_wars_ep1) - formal and exact; British, not Crimean"
+     },
+     {
+      "voice_id": "HSBWXljo3oivWhybh3YX",
+      "name": "Mr Wellington",
+      "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). a formal gentleman's voice (recorded in syndicate_wars_ep1) - formal; age unknown"
+     },
+     {
+      "voice_id": "vrZ1gMhrsD9LI0gRKrLh",
+      "name": "Chris - Warm, Thoughtful",
+      "why": "UNVERIFIED: taken from the voice ids earlier sessions recorded in examples/*/production_script.json; not checked against the live ElevenLabs library (no connector call in this test), age and accent unknown; the creator picks after the one-chunk test read (EL-02). middle-aged American, understated humour (recorded in titans_from_zero) - warm and careful; too old, last resort"
+     }
+    ]
+   }
+  },
+  "murat": {
+   "names": [
+    "Murat",
+    "Joachim Murat"
+   ],
+   "card": "Murat as our caricature: tall, curled black hair, an enormous plumed hat, gold-braided red jacket, a cavalry sabre, a flushed grin",
+   "props": [
+    "plumed hat",
+    "riding crop"
+   ],
+   "face_sheet": {
+    "id": "murat_faces_v1",
+    "ref": "p_murat",
+    "set": [
+     "neutral",
+     "joyful",
+     "sad",
+     "scared",
+     "angry",
+     "surprised",
+     "determined",
+     "doubtful",
+     "worried",
+     "deadpan",
+     "curious",
+     "smug"
+    ]
+   }
+  },
+  "jebe": {
+   "names": [
+    "Jebe"
+   ],
+   "card": "Jebe as our caricature: lean middle-aged archer, scarred cheek, plain leather coat, a horn bow across his back, an easy hard gaze",
+   "props": [
+    "horn bow"
+   ],
+   "face_sheet": {
+    "id": "jebe_faces_v1",
+    "ref": "p_jebe",
+    "set": [
+     "neutral",
+     "joyful",
+     "sad",
+     "scared",
+     "angry",
+     "surprised",
+     "determined",
+     "doubtful"
+    ]
+   }
+  }
+ },
+ "segments": [
+  {
+   "id": "S01",
+   "beat": "the fog on the Moscow road",
+   "light_beat": 1,
+   "purpose": "Hook: the drums stop in a fog, the grass is wrong, the year is 1223; the army must get out alive (L01).",
+   "drama": {
+    "function": "cold_open",
+    "turn": "start",
+    "shift": "marching home -> lost in time",
+    "claim_share": "reasoned",
+    "need": "wonder",
+    "opens": [
+     "L01"
+    ]
+   },
+   "lines": [
+    {
+     "text": "The drums stop first.",
+     "visual_beats": [
+      {
+       "at": "drums",
+       "kind": "prop",
+       "thing": "the drums stop",
+       "asset": "icon:hand-stop",
+       "why": "the drums that stop first"
+      }
+     ],
+     "tags": [
+      "suspenseful"
+     ],
+     "emphasis": [
+      "first"
+     ],
+     "tone": "low and flat, then silence",
+     "emotion": "dread",
+     "pause_after": 0.4
+    },
+    {
+     "text": "It's the nineteenth of October, 1812, and the army is leaving Moscow, a city that burned around it.",
+     "claims": [
+      "C-12"
+     ],
+     "visual_beats": [
+      {
+       "at": "nineteenth of October, 1812",
+       "kind": "text",
+       "text": "OCT 19, 1812",
+       "why": "the date the army leaves Moscow",
+       "pos": [
+        0.5,
+        0.15
+       ]
+      },
+      {
+       "at": "Moscow",
+       "kind": "label",
+       "text": "MOSCOW BURNED",
+       "why": "names the burned city the army leaves",
+       "pos": [
+        0.2,
+        0.3
+       ]
+      }
+     ],
+     "emphasis": [
+      "burned"
+     ],
+     "tone": "quick, matter of fact",
+     "emotion": "ominous"
+    },
+    {
+     "text": "Then a fog drops on the road. Wagons vanish. Where the road was, there's cold grass up to the knee.",
+     "claims": [
+      "C-91"
+     ],
+     "visual_beats": [
+      {
+       "at": "fog",
+       "kind": "accent",
+       "effect": "punch",
+       "strength": 0.4,
+       "why": "the fog drops on the road"
+      },
+      {
+       "at": "Wagons vanish",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.8,
+        0.3
+       ],
+       "why": "the wagons vanish in the fog"
+      }
+     ],
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "knee"
+     ],
+     "tone": "hushed, the fog slows him",
+     "emotion": "uneasy"
+    },
+    {
+     "text": "When the fog thins, you're standing in the year 1223. That's five hundred and eighty-nine years back.",
+     "claims": [
+      "C-21",
+      "C-91"
+     ],
+     "visual_beats": [
+      {
+       "at": "the year 1223",
+       "kind": "text",
+       "text": "1223",
+       "why": "the year the fog opens on",
+       "pos": [
+        0.5,
+        0.15
+       ]
+      },
+      {
+       "at": "five hundred and eighty-nine years",
+       "kind": "chart",
+       "chart": "counter",
+       "values": [
+        589
+       ],
+       "unit": "years",
+       "claim": "C-21",
+       "why": "counts the 589 years back"
+      },
+      {
+       "at": "years back",
+       "kind": "symbol",
+       "symbol": "arrow_down",
+       "pos": [
+        0.85,
+        0.3
+       ],
+       "why": "five hundred and eighty-nine years back: falling back in time"
+      }
+     ],
+     "emphasis": [
+      "back"
+     ],
+     "tone": "hushed wonder",
+     "emotion": "awe",
+     "pause_after": 0.4
+    },
+    {
+     "text": "Napoleon has an army and one plan: find whoever lives here, and break them in a single day.",
+     "claims": [
+      "C-04"
+     ],
+     "visual_beats": [
+      {
+       "at": "Napoleon",
+       "kind": "label",
+       "text": "NAPOLEON",
+       "why": "names the man with the plan",
+       "pos": [
+        0.35,
+        0.55
+       ]
+      },
+      {
+       "at": "single day",
+       "kind": "text",
+       "text": "ONE DAY",
+       "why": "he wants to break them in a single day",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ],
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "day"
+     ],
+     "tone": "driven, plain",
+     "emotion": "resolve"
+    },
+    {
+     "text": "But the people who live here have a plan of their own. Can he walk this army out alive?",
+     "visual_beats": [
+      {
+       "at": "Can he walk",
+       "kind": "symbol",
+       "symbol": "question",
+       "pos": [
+        0.5,
+        0.3
+       ],
+       "why": "the question: can he walk this army out"
+      }
+     ],
+     "tags": [
+      "intrigued"
+     ],
+     "emphasis": [
+      "alive"
+     ],
+     "tone": "rising question, the last word lands",
+     "emotion": "tension"
+    }
+   ],
+   "shots": [
+    {
+     "at": "The drums stop first",
+     "type": "A",
+     "picture": {
+      "id": "s01_road",
+      "engine": "gemini",
+      "subject": "a long grey column of tired soldiers on a muddy autumn road, drummer boys with sticks raised and frozen mid-beat, the smoke of a burned city low on the horizon, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "prompt": "wide cinematic establishing shot, a long grey column of tired soldiers on a muddy autumn road, drummer boys with sticks raised and frozen mid-beat, the smoke of a burned city low on the horizon, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "purpose": "cold open: the drums stop on the Moscow road",
+     "cut": {
+      "why": "sound from the first frame, the drums are the hook"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "Then a fog drops",
+     "type": "A",
+     "picture": {
+      "id": "s01_fog",
+      "engine": "gemini",
+      "subject": "thick white fog swallowing a wagon train and the column on the road, soldiers fading to pale shapes, the road itself gone, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "prompt": "wide cinematic establishing shot, thick white fog swallowing a wagon train and the column on the road, soldiers fading to pale shapes, the road itself gone, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "purpose": "the fog drops and takes the road",
+     "cut": {
+      "why": "hard cut on the fog: the world changes"
+     }
+    },
+    {
+     "at": "When the fog thins",
+     "type": "A",
+     "picture": {
+      "id": "s01_steppe",
+      "engine": "gemini",
+      "subject": "an endless cold steppe of knee-high grass to the horizon, a tiny wagon train and a thin dark column stranded in the middle, no road, no village, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "prompt": "wide cinematic establishing shot, an endless cold steppe of knee-high grass to the horizon, a tiny wagon train and a thin dark column stranded in the middle, no road, no village, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pan",
+      "z0": 1.04,
+      "z1": 1.04,
+      "dx": 0.06
+     },
+     "purpose": "the fog thins on a different world",
+     "cut": {
+      "why": "reveal wide: the scale of being lost"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "Napoleon has an army",
+     "type": "B",
+     "picture": {
+      "id": "s01_nap",
+      "engine": "gemini",
+      "subject": "the short man in the grey greatcoat and black bicorne hat stands on a grass rise with a spyglass raised, hard pale stare, the stranded column below him, clear empty upper third",
+      "heroes": [
+       "napoleon"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.45,
+        0.45
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "medium",
+      "prompt": "medium cinematic shot, the short man in the grey greatcoat and black bicorne hat stands on a grass rise with a spyglass raised, hard pale stare, the stranded column below him, clear empty upper third. One named hero: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.09
+     },
+     "purpose": "Napoleon and his one plan",
+     "cut": {
+      "why": "cut to the man who has the plan"
+     }
+    },
+    {
+     "at": "But the people who live here",
+     "type": "A",
+     "picture": {
+      "id": "s01_ridge",
+      "engine": "gemini",
+      "subject": "the people who live here: a long far ridge above the road at dusk, lined with the dark silhouettes of horsemen with bows, still as fence posts, a bruised sky, clear empty upper third",
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows",
+      "prompt": "wide cinematic establishing shot, the people who live here: a long far ridge above the road at dusk, lined with the dark silhouettes of horsemen with bows, still as fence posts, a bruised sky, clear empty upper third, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     },
+     "purpose": "the people who live here wait",
+     "cut": {
+      "why": "the turn: but, the other side appears"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ],
+     "reuse": "unique"
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "The drums stop first",
+      "sound": "amb_steppe_wind__v1",
+      "gain_db": -30,
+      "purpose": "place: the cold road, then the open steppe",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ],
+    "sfx": [
+     {
+      "at": "fog",
+      "sound": "landing_thud__v1",
+      "gain_db": -20,
+      "purpose": "the fog drops: the accent's impact",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "S02",
+   "beat": "the riders on every ridge",
+   "light_beat": 2,
+   "purpose": "Napoleon demands the enemy army; Aslan, a Mameluke scout, knows only that the riders keep their distance and shout in his grandmother's tongue. Plants wagons, the nightly gun count and the language.",
+   "drama": {
+    "function": "inciting",
+    "turn": "therefore",
+    "shift": "in command -> unsure where he is",
+    "claim_share": "reasoned",
+    "stakes": "an emperor who cannot find his battle marches blind with a hundred thousand men behind him",
+    "need": "curiosity",
+    "opens": [
+     "L02"
+    ]
+   },
+   "lines": [
+    {
+     "text": "By noon the fog is gone, and riders sit on every ridge, still as fence posts. Napoleon wants a battle. Aslan, a scout of the Mameluke company, has just ridden back from them. You can read it on his face.",
+     "claims": [
+      "C-04",
+      "C-14",
+      "C-91"
+     ],
+     "visual_beats": [
+      {
+       "at": "riders sit on every ridge",
+       "kind": "highlight",
+       "pos": [
+        0.55,
+        0.32
+       ],
+       "why": "rings the riders on the ridge"
+      },
+      {
+       "at": "Aslan,",
+       "kind": "label",
+       "text": "ASLAN, SCOUT",
+       "why": "names the scout who rode back",
+       "pos": [
+        0.3,
+        0.6
+       ]
+      }
+     ],
+     "emphasis": [
+      "battle"
+     ],
+     "tone": "quick, a story starting",
+     "emotion": "tense curiosity"
+    },
+    {
+     "text": "Where is their army?",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "press",
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "army"
+     ],
+     "tone": "clipped, imperious",
+     "emotion": "impatience"
+    },
+    {
+     "text": "These are all I found, sire. Riders. When I rode closer, they rode back.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "deflect",
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "back"
+     ],
+     "tone": "formal, careful, a soldier reporting",
+     "emotion": "wary"
+    },
+    {
+     "text": "Then we ride faster. The wagons keep up.",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "decide",
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "faster"
+     ],
+     "tone": "clipped, dismissive",
+     "emotion": "impatience"
+    },
+    {
+     "text": "The wagons are sinking to the axle, sire. This grass is not a road.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "press",
+     "claims": [
+      "C-16"
+     ],
+     "visual_beats": [
+      {
+       "at": "sinking to the axle",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "doubtful",
+       "why": "Napoleon doubts: the wagons are sinking to the axle"
+      }
+     ],
+     "tags": [
+      "hesitant"
+     ],
+     "emphasis": [
+      "axle"
+     ],
+     "tone": "formal, a little too exact",
+     "emotion": "worry"
+    },
+    {
+     "text": "Then they follow. Count the guns tonight.",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "deflect",
+     "emphasis": [
+      "tonight"
+     ],
+     "tone": "flat, waves the problem away",
+     "emotion": "denial"
+    },
+    {
+     "text": "Sire. I understand their shouts. It's my grandmother's tongue. Cuman. A tongue that died.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": [
+      "C-15"
+     ],
+     "visual_beats": [
+      {
+       "at": "my grandmother's tongue",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "surprised",
+       "why": "Napoleon hears the riders' tongue is Cuman and dead"
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "died"
+     ],
+     "tone": "quiet, a slip of his mother tongue",
+     "emotion": "moved and afraid",
+     "pause_after": 0.5
+    },
+    {
+     "text": "Dead?",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "Dead",
+       "kind": "expression",
+       "who": "aslan",
+       "expression": "worried",
+       "why": "Aslan watches the emperor take in dead"
+      }
+     ],
+     "tone": "one word thrown back, not loud, then silence",
+     "emotion": "shaken",
+     "pause_after": 1.2
+    },
+    {
+     "text": "Murat rides at first light. Whatever they are, I will find their army.",
+     "speaker": "napoleon",
+     "to": "room",
+     "intent": "decide",
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "army"
+     ],
+     "tone": "flat, doubling down",
+     "emotion": "stubborn"
+    },
+    {
+     "text": "He doesn't ask what year it is, though you would. He sends for Murat. But the riders on the ridge are already waiting.",
+     "visual_beats": [
+      {
+       "at": "Murat",
+       "kind": "label",
+       "text": "MURAT",
+       "why": "names the cavalry commander sent for",
+       "pos": [
+        0.7,
+        0.55
+       ]
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "Murat"
+     ],
+     "tone": "dry, quick",
+     "emotion": "foreboding"
+    }
+   ],
+   "shots": [
+    {
+     "at": "By noon the fog is gone",
+     "type": "A",
+     "picture": {
+      "id": "s02_master",
+      "engine": "gemini",
+      "subject": "wide shot of a grass rise at noon: the short man in the grey greatcoat and black bicorne hat stands beside the lean rider in the red turban and Crimean cloak, riders sitting still on every far ridge, the stalled wagon train behind, clear empty upper third",
+      "heroes": [
+       "napoleon",
+       "aslan"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.34,
+        0.5
+       ],
+       "aslan": [
+        0.66,
+        0.52
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "wide",
+      "prompt": "wide cinematic establishing shot, wide shot of a grass rise at noon: the short man in the grey greatcoat and black bicorne hat stands beside the lean rider in the red turban and Crimean cloak, riders sitting still on every far ridge, the stalled wagon train behind, clear empty upper third. Two named heroes: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE road_ridge, MASTER FRAME: this picture fixes the room and the seating for every later shot of the scene. place: a grass rise on the Moscow road at the edge of the lifted fog, midday, the fog has just lifted; layout: the rise in the centre foreground, the wagon train behind on the left, the ridges with riders across the right and back; fixed details: knee-high grass; riders sitting still on the ridges; the stalled wagons on the left. everyone in the room, left to right as the master frame shows them: Napoleon (left of centre on the rise), Aslan (right of centre, one step back); all 2 of them in frame with readable faces. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "purpose": "establish the scene: two men, ridges full of riders",
+     "cut": {
+      "why": "open on the two-shot so the viewer knows who stands where"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "Where is their army",
+     "type": "B",
+     "picture": {
+      "id": "s02_nap_os",
+      "engine": "gemini",
+      "subject": "over the shoulder of the lean rider in the red turban, the short man in the grey greatcoat and black bicorne hat glares out at the ridges, face to camera, clear empty upper third",
+      "heroes": [
+       "napoleon",
+       "aslan"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.62,
+        0.42
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "over_shoulder",
+      "visible": [
+       "napoleon"
+      ],
+      "partial": [
+       "aslan"
+      ],
+      "prompt": "medium cinematic shot, over the shoulder of the lean rider in the red turban, the short man in the grey greatcoat and black bicorne hat glares out at the ridges, face to camera, clear empty upper third. Two named heroes: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE road_ridge, continuous with its master frame (reframe shot, over shoulder): reference image 1 is the scene's master frame (s02_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: a grass rise on the Moscow road at the edge of the lifted fog, midday, the fog has just lifted; layout: the rise in the centre foreground, the wagon train behind on the left, the ridges with riders across the right and back; fixed details: knee-high grass; riders sitting still on the ridges; the stalled wagons on the left; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Napoleon (left of centre on the rise), Aslan (right of centre, one step back). THIS SHOT: over shoulder; must show with readable faces: Napoleon; seen only in part (shoulder or back): Aslan; speaking: Napoleon, listening: Aslan. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "purpose": "Napoleon demands the army",
+     "cut": {
+      "why": "A side of the exchange"
+     }
+    },
+    {
+     "at": "Riders. When I rode closer",
+     "type": "B",
+     "picture": {
+      "id": "s02_aslan_os",
+      "engine": "gemini",
+      "subject": "over the shoulder of the short man in the black bicorne hat, the lean rider in the red turban and Crimean cloak answers with a careful face to camera, clear empty upper third",
+      "heroes": [
+       "aslan",
+       "napoleon"
+      ],
+      "speakers": {
+       "aslan": [
+        0.4,
+        0.45
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "over_shoulder",
+      "visible": [
+       "aslan"
+      ],
+      "partial": [
+       "napoleon"
+      ],
+      "prompt": "medium cinematic shot, over the shoulder of the short man in the black bicorne hat, the lean rider in the red turban and Crimean cloak answers with a careful face to camera, clear empty upper third. Two named heroes: Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak; Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE road_ridge, continuous with its master frame (reframe shot, over shoulder): reference image 1 is the scene's master frame (s02_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: a grass rise on the Moscow road at the edge of the lifted fog, midday, the fog has just lifted; layout: the rise in the centre foreground, the wagon train behind on the left, the ridges with riders across the right and back; fixed details: knee-high grass; riders sitting still on the ridges; the stalled wagons on the left; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Napoleon (left of centre on the rise), Aslan (right of centre, one step back). THIS SHOT: over shoulder; must show with readable faces: Aslan; seen only in part (shoulder or back): Napoleon; speaking: Aslan, listening: Napoleon. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "purpose": "Aslan reports riders only",
+     "cut": {
+      "why": "B side: the reverse"
+     }
+    },
+    {
+     "at": "Then we ride faster",
+     "type": "B",
+     "picture": "s02_nap_os",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.06,
+      "z1": 1.02
+     },
+     "purpose": "Napoleon dismisses it",
+     "cut": {
+      "why": "back to Napoleon; L-cut: his voice arrives before the face"
+     }
+    },
+    {
+     "at": "The wagons are sinking",
+     "type": "C",
+     "picture": {
+      "id": "s02_wagons",
+      "engine": "gemini",
+      "subject": "a heavy supply wagon with its wheels buried to the axle in wet grass, a driver heaving at the wheel, nobody to help, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "insert",
+      "cut_away": true,
+      "prompt": "tight cinematic insert, a heavy supply wagon with its wheels buried to the axle in wet grass, a driver heaving at the wheel, nobody to help, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "hold",
+      "z0": 1.03,
+      "z1": 1.03
+     },
+     "purpose": "the wagons cannot follow",
+     "cut": {
+      "why": "pattern break: an insert of the thing being said"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.4
+      }
+     ]
+    },
+    {
+     "at": "Sire. I understand their shouts",
+     "type": "B",
+     "picture": {
+      "id": "s02_aslan_close",
+      "engine": "gemini",
+      "subject": "close on the lean rider in the red turban, eyes wide, listening to far shouting, the grass blowing behind him, clear empty upper third",
+      "heroes": [
+       "aslan"
+      ],
+      "speakers": {
+       "aslan": [
+        0.5,
+        0.45
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "close",
+      "visible": [
+       "aslan"
+      ],
+      "prompt": "medium cinematic shot, close on the lean rider in the red turban, eyes wide, listening to far shouting, the grass blowing behind him, clear empty upper third. One named hero: Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE road_ridge, continuous with its master frame (reframe shot, close): reference image 1 is the scene's master frame (s02_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: a grass rise on the Moscow road at the edge of the lifted fog, midday, the fog has just lifted; layout: the rise in the centre foreground, the wagon train behind on the left, the ridges with riders across the right and back; fixed details: knee-high grass; riders sitting still on the ridges; the stalled wagons on the left; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Napoleon (left of centre on the rise), Aslan (right of centre, one step back). THIS SHOT: close; must show with readable faces: Aslan; speaking: Aslan, listening: Napoleon; still in the room but outside this frame: Napoleon. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.1
+     },
+     "purpose": "Aslan's reveal: the language is his grandmother's",
+     "cut": {
+      "why": "the reveal goes to the speaker's face, the listener comes next"
+     }
+    },
+    {
+     "at": "Dead",
+     "type": "B",
+     "picture": {
+      "id": "s02_nap_close",
+      "engine": "gemini",
+      "subject": "close on the short man in the black bicorne hat, his hard stare cracking for one second as the riders on the ridge shout, mouth half open, clear empty upper third",
+      "heroes": [
+       "napoleon"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.5,
+        0.45
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "close",
+      "visible": [
+       "napoleon"
+      ],
+      "prompt": "medium cinematic shot, close on the short man in the black bicorne hat, his hard stare cracking for one second as the riders on the ridge shout, mouth half open, clear empty upper third. One named hero: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE road_ridge, continuous with its master frame (reframe shot, close): reference image 1 is the scene's master frame (s02_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: a grass rise on the Moscow road at the edge of the lifted fog, midday, the fog has just lifted; layout: the rise in the centre foreground, the wagon train behind on the left, the ridges with riders across the right and back; fixed details: knee-high grass; riders sitting still on the ridges; the stalled wagons on the left; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Napoleon (left of centre on the rise), Aslan (right of centre, one step back). THIS SHOT: close; must show with readable faces: Napoleon; speaking: Napoleon, listening: Aslan; still in the room but outside this frame: Aslan. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "purpose": "Napoleon's certainty cracks",
+     "cut": {
+      "why": "the listener's reaction on news"
+     }
+    },
+    {
+     "at": "Murat rides at first light",
+     "type": "B",
+     "picture": {
+      "id": "s02_murat",
+      "engine": "gemini",
+      "subject": "far on the road the tall rider in the huge plumed hat and gold-braided red jacket reins in a rearing horse and turns it toward the riders on the ridge, clear empty upper third",
+      "heroes": [
+       "murat"
+      ],
+      "speakers": {
+       "murat": [
+        0.55,
+        0.5
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "medium",
+      "cut_away": true,
+      "prompt": "medium cinematic shot, far on the road the tall rider in the huge plumed hat and gold-braided red jacket reins in a rearing horse and turns it toward the riders on the ridge, clear empty upper third. One named hero: Murat as our caricature: tall, curled black hair, an enormous plumed hat, gold-braided red jacket, a cavalry sabre, a flushed grin, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pan",
+      "z0": 1.03,
+      "z1": 1.03,
+      "dx": -0.05
+     },
+     "purpose": "Murat is the name in the order",
+     "cut": {
+      "why": "the order names Murat: his picture arrives with his name"
+     },
+     "reveal": "Murat on the road"
+    },
+    {
+     "at": "He doesn't ask what year",
+     "type": "B",
+     "picture": "s02_murat",
+     "motion": {
+      "kind": "push",
+      "z0": 1.03,
+      "z1": 1.08
+     },
+     "purpose": "he does not ask what year it is",
+     "cut": {
+      "why": "reframe on Murat as the narrator closes: the cavalry is sent for"
+     }
+    },
+    {
+     "at": "But the riders on the ridge",
+     "type": "A",
+     "picture": "s02_master",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.1,
+      "z1": 1.03
+     },
+     "purpose": "the riders are already waiting",
+     "cut": {
+      "why": "back to the wide: the ridges, the next pressure"
+     }
+    }
+   ],
+   "scene": {
+    "place": "the Moscow road at the edge of the fog, grass to the knee, the wagon train halted behind",
+    "time": "midday, the fog has just lifted",
+    "present": [
+     "napoleon",
+     "aslan"
+    ],
+    "why_now": "the horizon is full of riders and there is no army to fix",
+    "pov": "napoleon",
+    "want": "locate the enemy army and fix a battle by tomorrow",
+    "obstacle_want": "Aslan wants the emperor to see that the riders are not an army to fix but a wall that leads",
+    "value": "control",
+    "open_charge": "+",
+    "close_charge": "-",
+    "turn": "Aslan names the tongue the riders shout in and the emperor has no regiment, no map and no village to put against it; mode: asymmetric",
+    "exit": "fail_new_goal",
+    "surface_topic": "where the enemy's army is",
+    "real_subject": "the emperor is blind here",
+    "mode": "asymmetric"
+   },
+   "staging": {
+    "scene_id": "road_ridge",
+    "location": "a grass rise on the Moscow road at the edge of the lifted fog",
+    "layout": "the rise in the centre foreground, the wagon train behind on the left, the ridges with riders across the right and back",
+    "fixed": [
+     "knee-high grass",
+     "riders sitting still on the ridges",
+     "the stalled wagons on the left"
+    ],
+    "roster": [
+     "napoleon",
+     "aslan"
+    ],
+    "positions": {
+     "napoleon": "left of centre on the rise",
+     "aslan": "right of centre, one step back"
+    },
+    "master": "s02_master"
+   },
+   "audio": {
+    "beds": [],
+    "sfx": [
+     {
+      "at": "sinking to the axle",
+      "sound": "cloth_rustle__v1",
+      "gain_db": -28,
+      "purpose": "the wagons straining in the mud",
+      "yields_to": [
+       "voice"
+      ]
+     },
+     {
+      "at": "He sends for Murat",
+      "sound": "footstep_grass__v1",
+      "gain_db": -26,
+      "purpose": "Murat's horse arriving",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "S03",
+   "beat": "Murat's charge",
+   "light_beat": 3,
+   "purpose": "Murat charges; the riders retreat, shoot from the saddle and change to fresh horses; his horses die under him; the wagons fall behind.",
+   "drama": {
+    "function": "escalation",
+    "turn": "but",
+    "shift": "pursuing -> pursued",
+    "claim_share": "reasoned",
+    "stakes": "the cavalry is the army's eyes and it burns out on the first day",
+    "need": "fear",
+    "opens": [
+     "L03"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Murat takes the cavalry out at first light, plumes first. The riders on the ridge turn and go.",
+     "claims": [
+      "C-13",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "Murat",
+       "kind": "label",
+       "text": "MURAT",
+       "why": "names the cavalry commander who charges",
+       "pos": [
+        0.3,
+        0.55
+       ]
+      },
+      {
+       "at": "turn and go",
+       "kind": "symbol",
+       "symbol": "arrow_up",
+       "pos": [
+        0.8,
+        0.3
+       ],
+       "why": "the riders turn and go away"
+      }
+     ],
+     "tags": [
+      "quickly"
+     ],
+     "emphasis": [
+      "go"
+     ],
+     "tone": "quick, a charge starting",
+     "emotion": "momentum"
+    },
+    {
+     "text": "He chases. They hold the same distance, and one twists in the saddle to shoot. Their arrows carry four hundred metres.",
+     "claims": [
+      "C-09",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "four hundred metres",
+       "kind": "chart",
+       "chart": "counter",
+       "values": [
+        400
+       ],
+       "unit": "m",
+       "claim": "C-09",
+       "why": "counts how far their arrows carry"
+      }
+     ],
+     "emphasis": [
+      "metres"
+     ],
+     "tone": "dry, factual",
+     "emotion": "unease"
+    },
+    {
+     "text": "Every rider has three or four horses and swaps without slowing. Murat has one, and rides it until it falls. You'd think he'd look back. He doesn't.",
+     "claims": [
+      "C-08",
+      "C-13",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "three or four horses",
+       "kind": "text",
+       "text": "3-4 HORSES EACH",
+       "why": "every rider keeps three or four horses",
+       "pos": [
+        0.5,
+        0.18
+       ]
+      },
+      {
+       "at": "Murat has one",
+       "kind": "text",
+       "text": "MURAT: ONE",
+       "why": "Murat has only one horse under him",
+       "pos": [
+        0.5,
+        0.25
+       ]
+      },
+      {
+       "at": "falls",
+       "kind": "accent",
+       "effect": "punch",
+       "strength": 0.5,
+       "why": "the horse falls under him"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "back"
+     ],
+     "tone": "flat, no pity",
+     "emotion": "grim"
+    },
+    {
+     "text": "By dusk the best cavalry in the army is walking home. Nobody was caught. Nobody was fought.",
+     "claims": [
+      "C-13",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "By dusk",
+       "kind": "prop",
+       "thing": "dusk",
+       "asset": "icon:moon",
+       "why": "by dusk the cavalry is walking home"
+      },
+      {
+       "at": "Nobody was caught",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.8,
+        0.3
+       ],
+       "why": "nobody was caught or fought"
+      }
+     ],
+     "emphasis": [
+      "fought"
+     ],
+     "tone": "flat, each sentence a door closing",
+     "emotion": "hollow",
+     "pause_after": 0.4
+    },
+    {
+     "text": "Napoleon wanted a battle he could win in a day. The riders took the day. Now the heavy wagons, miles behind, are sinking into the grass.",
+     "claims": [
+      "C-04",
+      "C-16",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "heavy wagons",
+       "kind": "prop",
+       "thing": "the heavy wagons",
+       "asset": "icon:truck-delivery",
+       "why": "the heavy wagons sinking behind"
+      },
+      {
+       "at": "sinking",
+       "kind": "symbol",
+       "symbol": "arrow_down",
+       "pos": [
+        0.5,
+        0.7
+       ],
+       "why": "the wagons sinking into the grass"
+      }
+     ],
+     "tags": [
+      "suspenseful"
+     ],
+     "emphasis": [
+      "sinking"
+     ],
+     "tone": "low, slowing down",
+     "emotion": "foreboding"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Murat takes the cavalry",
+     "type": "B",
+     "picture": {
+      "id": "s03_charge",
+      "engine": "gemini",
+      "subject": "the tall rider in the huge plumed hat and gold-braided red jacket leads a charge of cavalry over the grass at first light, sabres up, the horsemen on the ridge turning away ahead, clear empty upper third",
+      "heroes": [
+       "murat"
+      ],
+      "speakers": {
+       "murat": [
+        0.45,
+        0.45
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "medium",
+      "prompt": "medium cinematic shot, the tall rider in the huge plumed hat and gold-braided red jacket leads a charge of cavalry over the grass at first light, sabres up, the horsemen on the ridge turning away ahead, clear empty upper third. One named hero: Murat as our caricature: tall, curled black hair, an enormous plumed hat, gold-braided red jacket, a cavalry sabre, a flushed grin, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "purpose": "Murat charges",
+     "cut": {
+      "why": "a new scene, hard cut on action"
+     }
+    },
+    {
+     "at": "He chases",
+     "type": "A",
+     "picture": "s03_charge",
+     "motion": {
+      "kind": "pan",
+      "z0": 1.1,
+      "z1": 1.1,
+      "dx": 0.07
+     },
+     "purpose": "they hold the distance and shoot",
+     "cut": {
+      "why": "reframe wide-to-side: the same charge, the distance held"
+     }
+    },
+    {
+     "at": "Every rider has three",
+     "type": "A",
+     "picture": {
+      "id": "s03_remount",
+      "engine": "gemini",
+      "subject": "a Mongol rider swaps from one galloping horse to a spare without slowing, three more spare horses running beside him, clear empty upper third",
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows",
+      "prompt": "wide cinematic establishing shot, a Mongol rider swaps from one galloping horse to a spare without slowing, three more spare horses running beside him, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.02,
+      "z1": 1.07
+     },
+     "purpose": "three or four horses each",
+     "cut": {
+      "why": "detail: the answer to the chase"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "Murat has one",
+     "type": "B",
+     "picture": {
+      "id": "s03_horse",
+      "engine": "gemini",
+      "subject": "the tall rider in the huge plumed hat and gold-braided red jacket stands over his collapsed grey horse in the grass, riding crop in hand, already looking ahead, clear empty upper third",
+      "heroes": [
+       "murat"
+      ],
+      "speakers": {
+       "murat": [
+        0.45,
+        0.4
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "medium",
+      "prompt": "medium cinematic shot, the tall rider in the huge plumed hat and gold-braided red jacket stands over his collapsed grey horse in the grass, riding crop in hand, already looking ahead, clear empty upper third. One named hero: Murat as our caricature: tall, curled black hair, an enormous plumed hat, gold-braided red jacket, a cavalry sabre, a flushed grin, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "purpose": "Murat rides his one horse to death",
+     "cut": {
+      "why": "contrast with the previous picture"
+     }
+    },
+    {
+     "at": "By dusk the best cavalry",
+     "type": "A",
+     "picture": {
+      "id": "s03_walk",
+      "engine": "gemini",
+      "subject": "a long dusk line of cavalrymen walking home on foot leading thin tired horses, their helmets dull, the wagon line far behind, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "prompt": "wide cinematic establishing shot, a long dusk line of cavalrymen walking home on foot leading thin tired horses, their helmets dull, the wagon line far behind, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "purpose": "the cavalry walks home",
+     "cut": {
+      "why": "the cost of the day, wide and slow"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "Now the heavy wagons",
+     "type": "A",
+     "picture": {
+      "id": "s03_wagons",
+      "engine": "gemini",
+      "subject": "a long line of heavy wagons stuck to the axle in the grass at dusk, drivers whipping the oxen, the first low wolves of darkness, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "cut_away": true,
+      "prompt": "wide cinematic establishing shot, a long line of heavy wagons stuck to the axle in the grass at dusk, drivers whipping the oxen, the first low wolves of darkness, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "purpose": "the wagons fall behind",
+     "cut": {
+      "why": "the next pressure"
+     }
+    }
+   ],
+   "audio": {
+    "beds": [],
+    "sfx": [
+     {
+      "at": "turn and go",
+      "sound": "swish__v1",
+      "gain_db": -26,
+      "purpose": "the riders wheel away",
+      "yields_to": [
+       "voice"
+      ]
+     },
+     {
+      "at": "falls",
+      "sound": "landing_thud__v1",
+      "gain_db": -20,
+      "purpose": "the horse falls: the accent's impact",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "S04",
+   "beat": "the khan's tent",
+   "light_beat": 4,
+   "purpose": "Aslan is taken; Genghis questions him through a Cuman scout, learns the guns' reach and tests his loyalty with the story of Jebe. Genghis is the answer to L02. Plants Jebe.",
+   "drama": {
+    "function": "escalation",
+    "turn": "but",
+    "shift": "prisoner -> useful",
+    "claim_share": "invented",
+    "stakes": "Aslan's life, and the army's only voice to the steppe",
+    "need": "belonging",
+    "opens": [
+     "L04"
+    ],
+    "closes": [
+     "L02"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Aslan was the last man off that field. Two riders took him up the ridge to a felt tent. A man by the fire said nothing for a long time, and you can feel every minute of it.",
+     "claims": [
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "felt tent",
+       "kind": "highlight",
+       "pos": [
+        0.5,
+        0.45
+       ],
+       "why": "rings the felt tent on the ridge"
+      }
+     ],
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "long"
+     ],
+     "tone": "slow, one image at a time",
+     "emotion": "unease"
+    },
+    {
+     "text": "That man is Genghis Khan, and he has two tumens on this grass, ten thousand men each. He speaks Mongol, a Cuman scout turns it into Kipchak, and Aslan understands.",
+     "claims": [
+      "C-20",
+      "C-92",
+      "C-15"
+     ],
+     "visual_beats": [
+      {
+       "at": "Genghis Khan",
+       "kind": "label",
+       "text": "GENGHIS KHAN",
+       "why": "names the man by the fire",
+       "pos": [
+        0.6,
+        0.35
+       ]
+      },
+      {
+       "at": "two tumens",
+       "kind": "text",
+       "text": "TWO TUMENS",
+       "why": "he has two tumens on this grass",
+       "pos": [
+        0.5,
+        0.18
+       ]
+      },
+      {
+       "at": "ten thousand men each",
+       "kind": "chart",
+       "chart": "counter",
+       "values": [
+        10000
+       ],
+       "unit": "men",
+       "claim": "C-20",
+       "why": "counts the ten thousand men of each tumen"
+      }
+     ],
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "understands"
+     ],
+     "tone": "plain, quick",
+     "emotion": "tension"
+    },
+    {
+     "text": "How far do the long iron tubes throw?",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "press",
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "iron"
+     ],
+     "tone": "quiet, unhurried, almost kind",
+     "emotion": "calm"
+    },
+    {
+     "text": "Far enough to trouble you, great khan.",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "deflect",
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "trouble"
+     ],
+     "tone": "stiff courtesy",
+     "emotion": "wary"
+    },
+    {
+     "text": "Your emperor hides behind wagons. His tubes throw as well as his wagons move.",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "press",
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "move"
+     ],
+     "tone": "mild insult, no heat",
+     "emotion": "calm"
+    },
+    {
+     "text": "Nine hundred metres. Further than any arrow you own.",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "reveal",
+     "claims": [
+      "C-05"
+     ],
+     "visual_beats": [
+      {
+       "at": "Nine hundred metres",
+       "kind": "expression",
+       "who": "genghis",
+       "expression": "smug",
+       "why": "Genghis hears nine hundred metres, the range he came to learn"
+      },
+      {
+       "at": "Nine hundred metres",
+       "kind": "expression",
+       "who": "jebe",
+       "expression": "neutral",
+       "why": "Jebe listens to nine hundred metres and gives nothing away"
+      }
+     ],
+     "tags": [
+      "angry"
+     ],
+     "emphasis": [
+      "Further"
+     ],
+     "tone": "pride, a little too fast",
+     "emotion": "pride",
+     "pause_after": 0.5
+    },
+    {
+     "text": "Good. That is all I asked.",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "concede",
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "asked"
+     ],
+     "tone": "deadpan, quiet",
+     "emotion": "satisfied"
+    },
+    {
+     "text": "You tricked me.",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "You tricked me",
+       "kind": "expression",
+       "who": "aslan",
+       "expression": "angry",
+       "why": "You tricked me: Aslan sees the trap he walked into"
+      }
+     ],
+     "tags": [
+      "hesitant"
+     ],
+     "emphasis": [
+      "tricked"
+     ],
+     "tone": "low, stunned",
+     "emotion": "dawning shock"
+    },
+    {
+     "text": "Jebe shot my horse, once. I asked who did it. He said, I did.",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "deflect",
+     "claims": [
+      "C-11"
+     ],
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "did"
+     ],
+     "tone": "told flat, a long beat before 'I did'",
+     "emotion": "reflective"
+    },
+    {
+     "text": "And you killed him?",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "question",
+     "emphasis": [
+      "killed"
+     ],
+     "tone": "wary, quiet",
+     "emotion": "dread"
+    },
+    {
+     "text": "I kept him. Honest men are rare. Be one, Aslan.",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "reveal",
+     "claims": [
+      "C-11"
+     ],
+     "visual_beats": [
+      {
+       "at": "Honest men are rare",
+       "kind": "expression",
+       "who": "jebe",
+       "expression": "surprised",
+       "why": "Jebe is the honest man the khan means: honest men are rare"
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "rare"
+     ],
+     "tone": "warm and level, an offer inside it",
+     "emotion": "quiet warmth",
+     "pause_after": 0.6
+    },
+    {
+     "text": "I'm the emperor's rider, great khan. Not a gift.",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "concede",
+     "visual_beats": [
+      {
+       "at": "Not a gift",
+       "kind": "expression",
+       "who": "genghis",
+       "expression": "curious",
+       "why": "the khan studies the man who refuses"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "gift"
+     ],
+     "tone": "dry, steady",
+     "emotion": "dignity"
+    },
+    {
+     "text": "At dawn they send Aslan back, unharmed. The khan knows how far the guns shoot. Now he wants to watch them do it.",
+     "claims": [
+      "C-92",
+      "C-05"
+     ],
+     "visual_beats": [
+      {
+       "at": "unharmed",
+       "kind": "symbol",
+       "symbol": "check",
+       "pos": [
+        0.8,
+        0.3
+       ],
+       "why": "Aslan is sent back unharmed"
+      },
+      {
+       "at": "how far the guns shoot",
+       "kind": "chart",
+       "chart": "counter",
+       "values": [
+        900
+       ],
+       "unit": "m",
+       "claim": "C-05",
+       "why": "the 900 metre reach the khan has learned"
+      }
+     ],
+     "tags": [
+      "suspenseful"
+     ],
+     "emphasis": [
+      "watch"
+     ],
+     "tone": "low, a promise",
+     "emotion": "foreboding"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Aslan was the last man",
+     "type": "A",
+     "picture": {
+      "id": "s04_tent",
+      "engine": "gemini",
+      "subject": "the lean rider in the red turban walked up a dusk ridge between two mounted riders in felt hats toward a felt tent with smoke rising, Mongol horsemen camped all round, clear empty upper third",
+      "heroes": [
+       "aslan"
+      ],
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows; the prisoner in red turban and Crimean cloak",
+      "framing": "wide",
+      "cut_away": true,
+      "prompt": "wide cinematic establishing shot, the lean rider in the red turban walked up a dusk ridge between two mounted riders in felt hats toward a felt tent with smoke rising, Mongol horsemen camped all round, clear empty upper third. One named hero: Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows; the prisoner in red turban and Crimean cloak, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.06
+     },
+     "purpose": "Aslan is taken to the tent",
+     "cut": {
+      "why": "new place: the khan's ridge, wide first"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "A man by the fire said",
+     "type": "A",
+     "picture": {
+      "id": "s04_master",
+      "engine": "gemini",
+      "subject": "inside a felt tent: the broad weathered man in the fur-trimmed felt hat sits by a low fire, the lean scarred archer in the plain leather coat stands behind him to the right, the lean rider in the red turban stands before the fire to the left, clear empty upper third",
+      "heroes": [
+       "genghis",
+       "jebe",
+       "aslan"
+      ],
+      "speakers": {
+       "genghis": [
+        0.5,
+        0.42
+       ],
+       "jebe": [
+        0.8,
+        0.4
+       ],
+       "aslan": [
+        0.2,
+        0.45
+       ]
+      },
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows; the prisoner in red turban and Crimean cloak",
+      "framing": "wide",
+      "prompt": "wide cinematic establishing shot, inside a felt tent: the broad weathered man in the fur-trimmed felt hat sits by a low fire, the lean scarred archer in the plain leather coat stands behind him to the right, the lean rider in the red turban stands before the fire to the left, clear empty upper third. Named heroes: Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes; Jebe as our caricature: lean middle-aged archer, scarred cheek, plain leather coat, a horn bow across his back, an easy hard gaze; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows; the prisoner in red turban and Crimean cloak, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE khan_tent, MASTER FRAME: this picture fixes the room and the seating for every later shot of the scene. place: inside the khan's felt tent on the ridge, dusk of the same day; layout: a low fire in the middle, the khan seated at the back, the prisoner standing at the left, the archer standing behind the khan on the right; fixed details: felt walls; low fire; open smoke hole; a bow rack at the back. everyone in the room, left to right as the master frame shows them: Aslan (left, before the fire), Genghis Khan (centre, seated behind the fire), Jebe (right, standing behind the khan); all 3 of them in frame with readable faces. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.09
+     },
+     "purpose": "the khan's silence",
+     "cut": {
+      "why": "establishing two-shot of the whole tent: seats fixed"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ],
+     "reveal": "Genghis Khan by the fire, with Jebe behind him"
+    },
+    {
+     "at": "How far do the long iron",
+     "type": "B",
+     "picture": {
+      "id": "s04_gen_os",
+      "engine": "gemini",
+      "subject": "over the shoulder of the lean rider in the red turban, the broad weathered man in the felt hat looks at the prisoner across the low fire, calm, clear empty upper third",
+      "heroes": [
+       "genghis",
+       "aslan"
+      ],
+      "speakers": {
+       "genghis": [
+        0.6,
+        0.4
+       ]
+      },
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows; prisoner in red turban",
+      "framing": "over_shoulder",
+      "visible": [
+       "genghis"
+      ],
+      "partial": [
+       "aslan"
+      ],
+      "prompt": "medium cinematic shot, over the shoulder of the lean rider in the red turban, the broad weathered man in the felt hat looks at the prisoner across the low fire, calm, clear empty upper third. Two named heroes: Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows; prisoner in red turban, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE khan_tent, continuous with its master frame (reframe shot, over shoulder): reference image 1 is the scene's master frame (s04_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: inside the khan's felt tent on the ridge, dusk of the same day; layout: a low fire in the middle, the khan seated at the back, the prisoner standing at the left, the archer standing behind the khan on the right; fixed details: felt walls; low fire; open smoke hole; a bow rack at the back; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Aslan (left, before the fire), Genghis Khan (centre, seated behind the fire), Jebe (right, standing behind the khan). THIS SHOT: over shoulder; must show with readable faces: Genghis Khan; seen only in part (shoulder or back): Aslan; speaking: Genghis Khan, listening: Aslan; still in the room but outside this frame: Jebe. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "purpose": "the khan questions",
+     "cut": {
+      "why": "A side of the exchange"
+     }
+    },
+    {
+     "at": "Far enough to trouble",
+     "type": "B",
+     "picture": {
+      "id": "s04_aslan_os",
+      "engine": "gemini",
+      "subject": "over the shoulder of the broad man in the felt hat, the lean rider in the red turban answers stiffly with chin raised, clear empty upper third",
+      "heroes": [
+       "aslan",
+       "genghis"
+      ],
+      "speakers": {
+       "aslan": [
+        0.4,
+        0.42
+       ]
+      },
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows; prisoner in red turban",
+      "framing": "over_shoulder",
+      "visible": [
+       "aslan"
+      ],
+      "partial": [
+       "genghis"
+      ],
+      "prompt": "medium cinematic shot, over the shoulder of the broad man in the felt hat, the lean rider in the red turban answers stiffly with chin raised, clear empty upper third. Two named heroes: Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak; Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows; prisoner in red turban, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE khan_tent, continuous with its master frame (reframe shot, over shoulder): reference image 1 is the scene's master frame (s04_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: inside the khan's felt tent on the ridge, dusk of the same day; layout: a low fire in the middle, the khan seated at the back, the prisoner standing at the left, the archer standing behind the khan on the right; fixed details: felt walls; low fire; open smoke hole; a bow rack at the back; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Aslan (left, before the fire), Genghis Khan (centre, seated behind the fire), Jebe (right, standing behind the khan). THIS SHOT: over shoulder; must show with readable faces: Aslan; seen only in part (shoulder or back): Genghis Khan; speaking: Aslan, listening: Genghis Khan; still in the room but outside this frame: Jebe. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "purpose": "Aslan deflects",
+     "cut": {
+      "why": "B side"
+     }
+    },
+    {
+     "at": "Your emperor hides",
+     "type": "B",
+     "picture": "s04_gen_os",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.05,
+      "z1": 1.01
+     },
+     "purpose": "the khan's mild insult",
+     "cut": {
+      "why": "J-cut: the khan's voice starts under Aslan's last word"
+     }
+    },
+    {
+     "at": "Nine hundred metres",
+     "type": "B",
+     "picture": {
+      "id": "s04_gen_close",
+      "engine": "gemini",
+      "subject": "close on the broad weathered man in the felt hat, a small satisfied stillness in his eyes by the firelight, clear empty upper third",
+      "heroes": [
+       "genghis"
+      ],
+      "speakers": {
+       "genghis": [
+        0.5,
+        0.42
+       ]
+      },
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows",
+      "framing": "close",
+      "visible": [
+       "genghis"
+      ],
+      "prompt": "medium cinematic shot, close on the broad weathered man in the felt hat, a small satisfied stillness in his eyes by the firelight, clear empty upper third. One named hero: Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE khan_tent, continuous with its master frame (reframe shot, close): reference image 1 is the scene's master frame (s04_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: inside the khan's felt tent on the ridge, dusk of the same day; layout: a low fire in the middle, the khan seated at the back, the prisoner standing at the left, the archer standing behind the khan on the right; fixed details: felt walls; low fire; open smoke hole; a bow rack at the back; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Aslan (left, before the fire), Genghis Khan (centre, seated behind the fire), Jebe (right, standing behind the khan). THIS SHOT: close; must show with readable faces: Genghis Khan; speaking: Aslan, listening: Genghis Khan; still in the room but outside this frame: Aslan, Jebe. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.09
+     },
+     "purpose": "the khan hears what he wanted",
+     "cut": {
+      "why": "the listener on the reveal"
+     }
+    },
+    {
+     "at": "Good. That is all I asked",
+     "type": "B",
+     "picture": {
+      "id": "s04_aslan_close",
+      "engine": "gemini",
+      "subject": "close on the lean rider in the red turban, jaw clenched, understanding the trap, clear empty upper third",
+      "heroes": [
+       "aslan"
+      ],
+      "speakers": {
+       "aslan": [
+        0.5,
+        0.45
+       ]
+      },
+      "costume": "red turban and Crimean cloak",
+      "framing": "close",
+      "visible": [
+       "aslan"
+      ],
+      "prompt": "medium cinematic shot, close on the lean rider in the red turban, jaw clenched, understanding the trap, clear empty upper third. One named hero: Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, red turban and Crimean cloak, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE khan_tent, continuous with its master frame (reframe shot, close): reference image 1 is the scene's master frame (s04_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: inside the khan's felt tent on the ridge, dusk of the same day; layout: a low fire in the middle, the khan seated at the back, the prisoner standing at the left, the archer standing behind the khan on the right; fixed details: felt walls; low fire; open smoke hole; a bow rack at the back; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Aslan (left, before the fire), Genghis Khan (centre, seated behind the fire), Jebe (right, standing behind the khan). THIS SHOT: close; must show with readable faces: Aslan; speaking: Genghis Khan, listening: Aslan; still in the room but outside this frame: Genghis Khan, Jebe. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "purpose": "Aslan sees the trap",
+     "cut": {
+      "why": "reaction to the khan's good"
+     }
+    },
+    {
+     "at": "Jebe shot my horse",
+     "type": "B",
+     "picture": {
+      "id": "s04_jebe",
+      "engine": "gemini",
+      "subject": "the lean scarred archer in the plain leather coat stands behind the fire with a horn bow across his back, unreadable, the khan's shoulder in the foreground, clear empty upper third",
+      "heroes": [
+       "jebe",
+       "genghis"
+      ],
+      "speakers": {
+       "jebe": [
+        0.55,
+        0.4
+       ]
+      },
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows",
+      "framing": "over_shoulder",
+      "visible": [
+       "jebe"
+      ],
+      "partial": [
+       "genghis"
+      ],
+      "prompt": "medium cinematic shot, the lean scarred archer in the plain leather coat stands behind the fire with a horn bow across his back, unreadable, the khan's shoulder in the foreground, clear empty upper third. Two named heroes: Jebe as our caricature: lean middle-aged archer, scarred cheek, plain leather coat, a horn bow across his back, an easy hard gaze; Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE khan_tent, continuous with its master frame (reframe shot, over shoulder): reference image 1 is the scene's master frame (s04_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: inside the khan's felt tent on the ridge, dusk of the same day; layout: a low fire in the middle, the khan seated at the back, the prisoner standing at the left, the archer standing behind the khan on the right; fixed details: felt walls; low fire; open smoke hole; a bow rack at the back; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Aslan (left, before the fire), Genghis Khan (centre, seated behind the fire), Jebe (right, standing behind the khan). THIS SHOT: over shoulder; must show with readable faces: Jebe; seen only in part (shoulder or back): Genghis Khan; speaking: Genghis Khan, listening: Aslan; still in the room but outside this frame: Aslan. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "hold",
+      "z0": 1.03,
+      "z1": 1.03
+     },
+     "purpose": "Jebe is the proof of the story",
+     "cut": {
+      "why": "pattern break: the man himself, silent"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "I kept him",
+     "type": "B",
+     "picture": "s04_gen_os",
+     "motion": {
+      "kind": "push",
+      "z0": 1.05,
+      "z1": 1.1
+     },
+     "purpose": "the khan keeps honest men",
+     "cut": {
+      "why": "back to the khan over Aslan's shoulder"
+     }
+    },
+    {
+     "at": "At dawn they send",
+     "type": "B",
+     "picture": "s04_aslan_os",
+     "motion": {
+      "kind": "push",
+      "z0": 1.05,
+      "z1": 1.09
+     },
+     "purpose": "Aslan is sent back",
+     "cut": {
+      "why": "hold on the interpreter as the narrator takes over"
+     }
+    },
+    {
+     "at": "The khan knows how far",
+     "type": "A",
+     "picture": {
+      "id": "s04_dawn",
+      "engine": "gemini",
+      "subject": "a lone rider in a red turban rides down a dawn ridge toward a faraway army camp, the broad man in the felt hat watching him go from the heights with his horsemen, clear empty upper third",
+      "heroes": [
+       "aslan",
+       "genghis"
+      ],
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows; the rider in red turban",
+      "framing": "wide",
+      "cut_away": true,
+      "prompt": "wide cinematic establishing shot, a lone rider in a red turban rides down a dawn ridge toward a faraway army camp, the broad man in the felt hat watching him go from the heights with his horsemen, clear empty upper third. Two named heroes: Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak; Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows; the rider in red turban, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pan",
+      "z0": 1.03,
+      "z1": 1.03,
+      "dx": -0.06
+     },
+     "purpose": "Aslan is sent back",
+     "cut": {
+      "why": "hold the hero's mood under the narrator's first sentence, then move to dawn"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    }
+   ],
+   "scene": {
+    "place": "a felt tent on the ridge, the smoke hole open, a low fire",
+    "time": "dusk of the same day",
+    "present": [
+     "genghis",
+     "aslan",
+     "jebe"
+    ],
+    "why_now": "a prisoner who speaks the riders' own family of tongues was caught at the edge of the charge",
+    "pov": "genghis",
+    "want": "learn what the strangers' great guns can do and who commands them",
+    "obstacle_want": "Aslan wants to say nothing that helps and walk out alive",
+    "value": "advantage",
+    "open_charge": "-",
+    "close_charge": "+",
+    "turn": "Aslan defends his emperor by boasting of the guns' reach and hands the khan what he wanted; mode: indirect",
+    "exit": "succeed_complication",
+    "surface_topic": "how far the great guns shoot",
+    "real_subject": "whether this man can be trusted",
+    "mode": "indirect"
+   },
+   "staging": {
+    "scene_id": "khan_tent",
+    "location": "inside the khan's felt tent on the ridge",
+    "layout": "a low fire in the middle, the khan seated at the back, the prisoner standing at the left, the archer standing behind the khan on the right",
+    "fixed": [
+     "felt walls",
+     "low fire",
+     "open smoke hole",
+     "a bow rack at the back"
+    ],
+    "roster": [
+     "genghis",
+     "aslan",
+     "jebe"
+    ],
+    "positions": {
+     "aslan": "left, before the fire",
+     "genghis": "centre, seated behind the fire",
+     "jebe": "right, standing behind the khan"
+    },
+    "master": "s04_master"
+   },
+   "audio": {
+    "beds": [
+     {
+      "at": "Two riders took him",
+      "sound": "amb_tent_fire__v1",
+      "gain_db": -30,
+      "purpose": "place: inside the khan's tent, a low fire",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ],
+    "sfx": [
+     {
+      "at": "felt tent",
+      "sound": "cloth_rustle__v1",
+      "gain_db": -28,
+      "purpose": "the tent flap",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "S05",
+   "beat": "the valley and the guns",
+   "light_beat": 5,
+   "purpose": "Napoleon, told where to fight, plants guns on the rim; the riders come into range, the guns and the squares hold; the army cheers. False victory.",
+   "drama": {
+    "function": "midpoint",
+    "turn": "therefore",
+    "shift": "fear -> false triumph",
+    "claim_share": "reasoned",
+    "stakes": "the guns' powder and the squares' nerve",
+    "need": "competence",
+    "closes": [
+     "L03"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Napoleon trained as an artillery officer, and you can tell. He finds his valley by noon. Guns on the rim, squares below.",
+     "claims": [
+      "C-04",
+      "C-05",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "Guns on the rim",
+       "kind": "label",
+       "text": "GUNS ON THE RIM",
+       "why": "guns on the rim, squares below",
+       "pos": [
+        0.5,
+        0.3
+       ]
+      }
+     ],
+     "tags": [
+      "quickly"
+     ],
+     "emphasis": [
+      "below"
+     ],
+     "tone": "brisk, the plan is simple",
+     "emotion": "confidence"
+    },
+    {
+     "text": "The riders come at a gallop. At four hundred metres their arrows start dropping among the squares, and you can hear every one.",
+     "claims": [
+      "C-09",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "four hundred metres",
+       "kind": "chart",
+       "chart": "counter",
+       "values": [
+        400
+       ],
+       "unit": "m",
+       "claim": "C-09",
+       "why": "counts how far the arrows now carry"
+      }
+     ],
+     "emphasis": [
+      "squares"
+     ],
+     "tone": "rising, the riders closing",
+     "emotion": "tension"
+    },
+    {
+     "text": "The guns answer at nine hundred. Round shot tears lanes through the horse lines.",
+     "claims": [
+      "C-05",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "nine hundred",
+       "kind": "chart",
+       "chart": "counter",
+       "values": [
+        900
+       ],
+       "unit": "m",
+       "claim": "C-05",
+       "why": "counts the nine hundred metres the guns answer at"
+      },
+      {
+       "at": "tears lanes",
+       "kind": "accent",
+       "effect": "shake",
+       "strength": 0.5,
+       "why": "the round shot tears lanes through the horse lines"
+      }
+     ],
+     "tags": [
+      "dramatically"
+     ],
+     "emphasis": [
+      "answer"
+     ],
+     "tone": "big, a hit lands",
+     "emotion": "power"
+    },
+    {
+     "text": "The few that reach the squares meet silence, then one volley. A steady square is rarely broken by cavalry alone.",
+     "claims": [
+      "C-07",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "one volley",
+       "kind": "symbol",
+       "symbol": "check",
+       "pos": [
+        0.8,
+        0.3
+       ],
+       "why": "the squares hold with one volley"
+      }
+     ],
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "alone"
+     ],
+     "tone": "plain, the facts stacking up",
+     "emotion": "competence"
+    },
+    {
+     "text": "The riders wheel away. The army cheers. But nobody asks why they gave up so easily.",
+     "claims": [
+      "C-04",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "The army cheers",
+       "kind": "symbol",
+       "symbol": "exclaim",
+       "pos": [
+        0.8,
+        0.25
+       ],
+       "why": "the army cheers its win"
+      },
+      {
+       "at": "nobody asks why",
+       "kind": "symbol",
+       "symbol": "question",
+       "pos": [
+        0.5,
+        0.3
+       ],
+       "why": "nobody asks why they gave up"
+      }
+     ],
+     "tags": [
+      "suspenseful"
+     ],
+     "emphasis": [
+      "easily"
+     ],
+     "tone": "the cheer fades, one line of doubt",
+     "emotion": "foreboding"
+    }
+   ],
+   "shots": [
+    {
+     "at": "Napoleon trained",
+     "type": "A",
+     "picture": {
+      "id": "s05_rim",
+      "engine": "gemini",
+      "subject": "a valley seen from its rim: heavy guns wheel to wheel along the rim, infantry squares bristling with bayonets in the valley below, the short man in the grey greatcoat small beside a gun with a spyglass, clear empty upper third",
+      "heroes": [
+       "napoleon"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.3,
+        0.42
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "wide",
+      "prompt": "wide cinematic establishing shot, a valley seen from its rim: heavy guns wheel to wheel along the rim, infantry squares bristling with bayonets in the valley below, the short man in the grey greatcoat small beside a gun with a spyglass, clear empty upper third. One named hero: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.0
+     },
+     "purpose": "the plan: guns on the rim, squares below",
+     "cut": {
+      "why": "new place: the valley, wide"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "The riders come at a gallop",
+     "type": "A",
+     "picture": {
+      "id": "s05_charge",
+      "engine": "gemini",
+      "subject": "a great mass of Mongol horse archers pouring down the far slope at a gallop, bows raised, arrows already arcing against the sky, clear empty upper third",
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows",
+      "prompt": "wide cinematic establishing shot, a great mass of Mongol horse archers pouring down the far slope at a gallop, bows raised, arrows already arcing against the sky, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "purpose": "the riders come",
+     "cut": {
+      "why": "cut on action"
+     }
+    },
+    {
+     "at": "The guns answer",
+     "type": "B",
+     "picture": {
+      "id": "s05_guns",
+      "engine": "gemini",
+      "subject": "a gun crew in blue coats heaving a heavy gun back from its recoil in a cloud of smoke, far out on the grass horses and riders tumbling in the blast lanes, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "prompt": "medium cinematic shot, a gun crew in blue coats heaving a heavy gun back from its recoil in a cloud of smoke, far out on the grass horses and riders tumbling in the blast lanes, clear empty upper third, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "purpose": "the guns answer at nine hundred",
+     "cut": {
+      "why": "hard cut on the blast"
+     }
+    },
+    {
+     "at": "The few that reach",
+     "type": "A",
+     "picture": {
+      "id": "s05_square",
+      "engine": "gemini",
+      "subject": "a tight infantry square with bayonets out, a few riders breaking against its edge and falling, the soldiers motionless in the smoke, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "prompt": "wide cinematic establishing shot, a tight infantry square with bayonets out, a few riders breaking against its edge and falling, the soldiers motionless in the smoke, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "purpose": "the squares hold",
+     "cut": {
+      "why": "wide: the formation holds still"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "The riders wheel away",
+     "type": "A",
+     "picture": {
+      "id": "s05_cheer",
+      "engine": "gemini",
+      "subject": "soldiers in the foreground throw shakos in the air and cheer, far behind them the horse archers wheel away calmly in good order, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "prompt": "wide cinematic establishing shot, soldiers in the foreground throw shakos in the air and cheer, far behind them the horse archers wheel away calmly in good order, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pan",
+      "z0": 1.03,
+      "z1": 1.03,
+      "dx": 0.06
+     },
+     "purpose": "false victory: the army cheers, the riders retire in order",
+     "cut": {
+      "why": "wide contrast: cheering foreground, calm distance"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "Napoleon trained",
+      "sound": "amb_steppe_wind__v1",
+      "gain_db": -30,
+      "purpose": "place: the valley rim, the steppe wind returns",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ],
+    "sfx": [
+     {
+      "at": "tears lanes",
+      "sound": "landing_thud__v1",
+      "gain_db": -20,
+      "purpose": "the round shot hits: the accent's impact",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "S06",
+   "beat": "the wagons burn",
+   "light_beat": 6,
+   "purpose": "While the army cheers, riders burn the wagon train on the road behind. Napoleon wants one more great battle; Aslan brings the khan's invitation. Pays off the wagons.",
+   "drama": {
+    "function": "crisis",
+    "turn": "but",
+    "shift": "winning -> starving",
+    "claim_share": "reasoned",
+    "stakes": "the food, the powder and the road home",
+    "need": "stakes"
+   },
+   "lines": [
+    {
+     "text": "The cheering stops at midnight, when a rider staggers in from the rear without his horse. The wagon train is burning. The army's food rested on those wagons, and you can't forage this grass.",
+     "claims": [
+      "C-16",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "burning",
+       "kind": "prop",
+       "thing": "the burning wagon train",
+       "asset": "icon:flame",
+       "why": "the wagon train is burning, every wagon"
+      },
+      {
+       "at": "forage this grass",
+       "kind": "symbol",
+       "symbol": "cross",
+       "pos": [
+        0.8,
+        0.3
+       ],
+       "why": "there is nothing here to forage"
+      }
+     ],
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "grass"
+     ],
+     "tone": "low, each sentence heavier",
+     "emotion": "dread"
+    },
+    {
+     "text": "Napoleon rides back to the ashes with Murat and Aslan. At the edge of the firelight, a Cuman rider waits with one hand raised. You know that gesture in any tongue.",
+     "claims": [
+      "C-15",
+      "C-93"
+     ],
+     "visual_beats": [
+      {
+       "at": "Cuman rider",
+       "kind": "highlight",
+       "pos": [
+        0.85,
+        0.5
+       ],
+       "why": "rings the Cuman rider at the edge of the firelight"
+      }
+     ],
+     "emphasis": [
+      "raised"
+     ],
+     "tone": "quiet, the night is still",
+     "emotion": "tension"
+    },
+    {
+     "text": "We march at dawn. They have an army somewhere. Now I will have it.",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "decide",
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "it"
+     ],
+     "tone": "hard and final",
+     "emotion": "stubborn"
+    },
+    {
+     "text": "Sire, the Cuman rider asks you to a parley.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "press",
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "parley"
+     ],
+     "tone": "careful, he must say it",
+     "emotion": "wary"
+    },
+    {
+     "text": "A man who burns my wagons at night does not talk.",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "deflect",
+     "visual_beats": [
+      {
+       "at": "burns my wagons",
+       "kind": "expression",
+       "who": "aslan",
+       "expression": "worried",
+       "why": "Aslan hears burns my wagons and fears the answer"
+      }
+     ],
+     "tags": [
+      "sarcastic"
+     ],
+     "emphasis": [
+      "talk"
+     ],
+     "tone": "cold, dry",
+     "emotion": "contempt"
+    },
+    {
+     "text": "He let me walk home from his tent, sire. Nobody followed me.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "press",
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "followed"
+     ],
+     "tone": "quiet, the point lands",
+     "emotion": "pleading"
+    },
+    {
+     "text": "Murat. How many rounds are left for each gun?",
+     "speaker": "napoleon",
+     "to": "murat",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "rounds are left",
+       "kind": "expression",
+       "who": "murat",
+       "expression": "worried",
+       "why": "Murat has no answer to how many rounds are left"
+      }
+     ],
+     "emphasis": [
+      "left"
+     ],
+     "tone": "sharp, quick, to Murat",
+     "emotion": "pressure",
+     "pause_after": 1.5
+    },
+    {
+     "text": "What does he want, Aslan?",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "What does he want",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "curious",
+       "why": "What does he want: Napoleon puts a question to an enemy for the first time"
+      }
+     ],
+     "tags": [
+      "thoughtful"
+     ],
+     "emphasis": [
+      "want"
+     ],
+     "tone": "lower, a question he has never asked",
+     "emotion": "unsettled"
+    },
+    {
+     "text": "He didn't say, sire. He named the hour. Sunrise.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "reveal",
+     "visual_beats": [
+      {
+       "at": "Sunrise",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "determined",
+       "why": "Napoleon takes in the hour: sunrise"
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "Sunrise"
+     ],
+     "tone": "steady, clipped",
+     "emotion": "relief"
+    },
+    {
+     "text": "Right. Then we go and hear it.",
+     "speaker": "napoleon",
+     "to": "room",
+     "intent": "decide",
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "hear"
+     ],
+     "tone": "flat, final",
+     "emotion": "resolve"
+    },
+    {
+     "text": "He has never asked an enemy what he wants. At sunrise he rides out to ask. But you can guess the answer will cost him.",
+     "claims": [],
+     "visual_beats": [
+      {
+       "at": "sunrise",
+       "kind": "symbol",
+       "symbol": "clock",
+       "pos": [
+        0.85,
+        0.2
+       ],
+       "why": "he rides out at sunrise"
+      }
+     ],
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "ask"
+     ],
+     "tone": "slow, wry",
+     "emotion": "foreboding"
+    }
+   ],
+   "shots": [
+    {
+     "at": "The cheering stops",
+     "type": "A",
+     "picture": {
+      "id": "s06_ashes",
+      "engine": "gemini",
+      "subject": "a night road where a whole wagon train burns in a long line of fire, one rider on foot staggering toward the camp, sparks drifting into the dark, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "cut_away": true,
+      "prompt": "wide cinematic establishing shot, a night road where a whole wagon train burns in a long line of fire, one rider on foot staggering toward the camp, sparks drifting into the dark, clear empty upper third, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "purpose": "the wagons burn",
+     "cut": {
+      "why": "hard cut to night: the cheering stops"
+     }
+    },
+    {
+     "at": "Napoleon rides back",
+     "type": "A",
+     "picture": {
+      "id": "s06_master",
+      "engine": "gemini",
+      "subject": "wide night shot among burnt wagon wrecks still smoking: the short man in the grey greatcoat and black bicorne hat stands in the middle, the lean rider in the red turban at his right, the tall rider in the huge plumed hat at his left, clear empty upper third",
+      "heroes": [
+       "napoleon",
+       "aslan",
+       "murat"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.5,
+        0.45
+       ],
+       "aslan": [
+        0.78,
+        0.5
+       ],
+       "murat": [
+        0.22,
+        0.48
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "wide",
+      "prompt": "wide cinematic establishing shot, wide night shot among burnt wagon wrecks still smoking: the short man in the grey greatcoat and black bicorne hat stands in the middle, the lean rider in the red turban at his right, the tall rider in the huge plumed hat at his left, clear empty upper third. Named heroes: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak; Murat as our caricature: tall, curled black hair, an enormous plumed hat, gold-braided red jacket, a cavalry sabre, a flushed grin, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE burnt_wagons, MASTER FRAME: this picture fixes the room and the seating for every later shot of the scene. place: among the burnt wagon wrecks at the rear of the army at night, night after the battle; layout: the three stand in a ring of smouldering wagon wrecks, the dark steppe beyond; fixed details: smouldering wagon wrecks; embers drifting; night. everyone in the room, left to right as the master frame shows them: Murat (left), Napoleon (centre), Aslan (right); all 3 of them in frame with readable faces. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "purpose": "the three stand in the ash",
+     "cut": {
+      "why": "establishing shot of the ashes, seats fixed"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "We march at dawn",
+     "type": "B",
+     "picture": {
+      "id": "s06_nap_os",
+      "engine": "gemini",
+      "subject": "over the shoulder of the lean rider in the red turban, the short man in the grey greatcoat and black bicorne hat speaks hard, burnt wagons glowing behind him, clear empty upper third",
+      "heroes": [
+       "napoleon",
+       "aslan"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.6,
+        0.42
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "over_shoulder",
+      "visible": [
+       "napoleon"
+      ],
+      "partial": [
+       "aslan"
+      ],
+      "prompt": "medium cinematic shot, over the shoulder of the lean rider in the red turban, the short man in the grey greatcoat and black bicorne hat speaks hard, burnt wagons glowing behind him, clear empty upper third. Two named heroes: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE burnt_wagons, continuous with its master frame (reframe shot, over shoulder): reference image 1 is the scene's master frame (s06_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: among the burnt wagon wrecks at the rear of the army at night, night after the battle; layout: the three stand in a ring of smouldering wagon wrecks, the dark steppe beyond; fixed details: smouldering wagon wrecks; embers drifting; night; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Murat (left), Napoleon (centre), Aslan (right). THIS SHOT: over shoulder; must show with readable faces: Napoleon; seen only in part (shoulder or back): Aslan; speaking: Napoleon, listening: Aslan; still in the room but outside this frame: Murat. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "purpose": "Napoleon will march on",
+     "cut": {
+      "why": "A side of the exchange"
+     }
+    },
+    {
+     "at": "Sire, the Cuman rider asks",
+     "type": "B",
+     "picture": {
+      "id": "s06_aslan_os",
+      "engine": "gemini",
+      "subject": "over the shoulder of the short man in the black bicorne hat, the lean rider in the red turban speaks low and careful, firelight on his face, clear empty upper third",
+      "heroes": [
+       "aslan",
+       "napoleon"
+      ],
+      "speakers": {
+       "aslan": [
+        0.42,
+        0.42
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "over_shoulder",
+      "visible": [
+       "aslan"
+      ],
+      "partial": [
+       "napoleon"
+      ],
+      "prompt": "medium cinematic shot, over the shoulder of the short man in the black bicorne hat, the lean rider in the red turban speaks low and careful, firelight on his face, clear empty upper third. Two named heroes: Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak; Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE burnt_wagons, continuous with its master frame (reframe shot, over shoulder): reference image 1 is the scene's master frame (s06_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: among the burnt wagon wrecks at the rear of the army at night, night after the battle; layout: the three stand in a ring of smouldering wagon wrecks, the dark steppe beyond; fixed details: smouldering wagon wrecks; embers drifting; night; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Murat (left), Napoleon (centre), Aslan (right). THIS SHOT: over shoulder; must show with readable faces: Aslan; seen only in part (shoulder or back): Napoleon; speaking: Aslan, listening: Napoleon; still in the room but outside this frame: Murat. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "purpose": "Aslan brings the parley",
+     "cut": {
+      "why": "B side"
+     }
+    },
+    {
+     "at": "A man who burns my wagons",
+     "type": "B",
+     "picture": "s06_nap_os",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.05,
+      "z1": 1.01
+     },
+     "purpose": "Napoleon refuses",
+     "cut": {
+      "why": "J-cut: Napoleon's voice starts over Aslan's last word"
+     }
+    },
+    {
+     "at": "Murat. How many rounds",
+     "type": "B",
+     "picture": {
+      "id": "s06_murat",
+      "engine": "gemini",
+      "subject": "close on the tall rider in the huge plumed hat, plume singed, eyes lowered, no answer, clear empty upper third",
+      "heroes": [
+       "murat"
+      ],
+      "speakers": {
+       "murat": [
+        0.5,
+        0.45
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "close",
+      "visible": [
+       "murat"
+      ],
+      "prompt": "medium cinematic shot, close on the tall rider in the huge plumed hat, plume singed, eyes lowered, no answer, clear empty upper third. One named hero: Murat as our caricature: tall, curled black hair, an enormous plumed hat, gold-braided red jacket, a cavalry sabre, a flushed grin, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE burnt_wagons, continuous with its master frame (reframe shot, close): reference image 1 is the scene's master frame (s06_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: among the burnt wagon wrecks at the rear of the army at night, night after the battle; layout: the three stand in a ring of smouldering wagon wrecks, the dark steppe beyond; fixed details: smouldering wagon wrecks; embers drifting; night; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Murat (left), Napoleon (centre), Aslan (right). THIS SHOT: close; must show with readable faces: Murat; speaking: Napoleon, listening: Murat; still in the room but outside this frame: Napoleon, Aslan. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "hold",
+      "z0": 1.04,
+      "z1": 1.04
+     },
+     "purpose": "Murat has no answer",
+     "cut": {
+      "why": "silent reaction to the question"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "What does he want",
+     "type": "B",
+     "picture": {
+      "id": "s06_nap_close",
+      "engine": "gemini",
+      "subject": "close on the short man in the black bicorne hat with a sliver of the red turban at the frame edge, the stare thinner, asking a question he has never asked, clear empty upper third",
+      "heroes": [
+       "napoleon",
+       "aslan"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.5,
+        0.45
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "close",
+      "visible": [
+       "napoleon"
+      ],
+      "partial": [
+       "aslan"
+      ],
+      "prompt": "medium cinematic shot, close on the short man in the black bicorne hat with a sliver of the red turban at the frame edge, the stare thinner, asking a question he has never asked, clear empty upper third. Two named heroes: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE burnt_wagons, continuous with its master frame (reframe shot, close): reference image 1 is the scene's master frame (s06_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: among the burnt wagon wrecks at the rear of the army at night, night after the battle; layout: the three stand in a ring of smouldering wagon wrecks, the dark steppe beyond; fixed details: smouldering wagon wrecks; embers drifting; night; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Murat (left), Napoleon (centre), Aslan (right). THIS SHOT: close; must show with readable faces: Napoleon; seen only in part (shoulder or back): Aslan; speaking: Napoleon, listening: Aslan; still in the room but outside this frame: Murat. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "purpose": "the first question to an enemy",
+     "cut": {
+      "why": "the turn of the scene, close"
+     }
+    },
+    {
+     "at": "He didn't say",
+     "type": "B",
+     "picture": "s06_aslan_os",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.05,
+      "z1": 1.0
+     },
+     "purpose": "the hour: sunrise",
+     "cut": {
+      "why": "L-cut: Aslan's answer over Napoleon's face first"
+     }
+    },
+    {
+     "at": "At sunrise he rides out",
+     "type": "A",
+     "picture": {
+      "id": "s06_ride",
+      "engine": "gemini",
+      "subject": "at sunrise the short man in the grey greatcoat and the lean rider in the red turban ride out alone over the grass toward a far line of horsemen, the army's tired guns trailing behind them, clear empty upper third",
+      "heroes": [
+       "napoleon",
+       "aslan"
+      ],
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "wide",
+      "cut_away": true,
+      "prompt": "wide cinematic establishing shot, at sunrise the short man in the grey greatcoat and the lean rider in the red turban ride out alone over the grass toward a far line of horsemen, the army's tired guns trailing behind them, clear empty upper third. Two named heroes: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, candle and hearth light in a dark room, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pan",
+      "z0": 1.03,
+      "z1": 1.03,
+      "dx": 0.06
+     },
+     "purpose": "he rides out to ask",
+     "cut": {
+      "why": "hold the hero's mood under the narrator's first sentence, then move to the sunrise"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    }
+   ],
+   "scene": {
+    "place": "the road behind the valley, the burnt wagons still smoking, the army's rear",
+    "time": "night after the battle",
+    "present": [
+     "napoleon",
+     "aslan",
+     "murat"
+    ],
+    "why_now": "the supply train is ash and the khan's invitation has just arrived",
+    "pov": "napoleon",
+    "want": "march on and force the khan into one decisive battle",
+    "obstacle_want": "Aslan wants the emperor to answer the invitation before the army starves",
+    "value": "pride",
+    "open_charge": "+",
+    "close_charge": "-",
+    "turn": "the emperor asks what the khan wants for the road, the first question he has ever put to an enemy; mode: minimal",
+    "exit": "fail_new_goal",
+    "surface_topic": "go forward or go and talk",
+    "real_subject": "an emperor who has never asked terms",
+    "mode": "minimal"
+   },
+   "staging": {
+    "scene_id": "burnt_wagons",
+    "location": "among the burnt wagon wrecks at the rear of the army at night",
+    "layout": "the three stand in a ring of smouldering wagon wrecks, the dark steppe beyond",
+    "fixed": [
+     "smouldering wagon wrecks",
+     "embers drifting",
+     "night"
+    ],
+    "roster": [
+     "napoleon",
+     "aslan",
+     "murat"
+    ],
+    "positions": {
+     "murat": "left",
+     "napoleon": "centre",
+     "aslan": "right"
+    },
+    "master": "s06_master"
+   },
+   "audio": {
+    "beds": [
+     {
+      "at": "The cheering stops",
+      "sound": "amb_ash_night__v1",
+      "gain_db": -30,
+      "purpose": "place: the burning wagon train and its ash at night",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ],
+    "sfx": [
+     {
+      "at": "rides back to the ashes",
+      "sound": "footstep_dirt__v1",
+      "gain_db": -27,
+      "purpose": "horses walking into the ash",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "S07",
+   "beat": "the parley",
+   "light_beat": 7,
+   "purpose": "Napoleon and Genghis meet, Aslan between them; the khan's price is two guns and the men who fire them; Napoleon gives the guns only. Pays off the language and Jebe.",
+   "drama": {
+    "function": "climax",
+    "turn": "therefore",
+    "shift": "cornered -> free at a price",
+    "claim_share": "invented",
+    "stakes": "the army's road home",
+    "need": "surprise",
+    "closes": [
+     "L04"
+    ]
+   },
+   "lines": [
+    {
+     "text": "Open ground, a felt carpet, two stools. Genghis Khan has brought his two tumens. Napoleon brings Aslan. Every word crosses three tongues, and you'd need Aslan's grandmother's to follow it.",
+     "claims": [
+      "C-20",
+      "C-92",
+      "C-15",
+      "C-94"
+     ],
+     "visual_beats": [
+      {
+       "at": "felt carpet",
+       "kind": "highlight",
+       "pos": [
+        0.5,
+        0.62
+       ],
+       "why": "rings the felt carpet and the two stools"
+      },
+      {
+       "at": "three tongues",
+       "kind": "label",
+       "text": "THREE TONGUES",
+       "why": "every word crosses three tongues",
+       "pos": [
+        0.5,
+        0.2
+       ]
+      }
+     ],
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "grandmother's"
+     ],
+     "tone": "slow, ceremonial, a place being set",
+     "emotion": "tension"
+    },
+    {
+     "text": "Name your price. My army is leaving.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "press",
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "price"
+     ],
+     "tone": "stiff, a man not used to asking",
+     "emotion": "pride"
+    },
+    {
+     "text": "You came without your wagons. Does the road feel long?",
+     "speaker": "genghis",
+     "to": "napoleon",
+     "intent": "deflect",
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "long"
+     ],
+     "tone": "mild, almost amused",
+     "emotion": "calm"
+    },
+    {
+     "text": "Longer than your patience. Name it.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "press",
+     "emphasis": [
+      "patience"
+     ],
+     "tone": "tight, held down",
+     "emotion": "anger"
+    },
+    {
+     "text": "Two guns stay on this grass. And the men who fire them.",
+     "speaker": "genghis",
+     "to": "napoleon",
+     "intent": "reveal",
+     "claims": [
+      "C-94"
+     ],
+     "visual_beats": [
+      {
+       "at": "Two guns stay",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "angry",
+       "why": "Napoleon hears two guns stay and the men who fire them"
+      }
+     ],
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "fire"
+     ],
+     "tone": "quiet, no threat in it",
+     "emotion": "cool",
+     "pause_after": 0.6
+    },
+    {
+     "text": "Sire, a gun takes fifteen men. He means thirty.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "aside",
+     "claims": [
+      "C-05"
+     ],
+     "tags": [
+      "hesitant"
+     ],
+     "emphasis": [
+      "thirty"
+     ],
+     "tone": "low and quick, for the emperor only",
+     "emotion": "alarm"
+    },
+    {
+     "text": "The guns, yes. French soldiers are not for sale.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "decide",
+     "claims": [
+      "C-94"
+     ],
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "sale"
+     ],
+     "tone": "firm, proud",
+     "emotion": "pride"
+    },
+    {
+     "text": "A man shot my horse once. He said so. He leads my right hand now.",
+     "speaker": "genghis",
+     "to": "napoleon",
+     "intent": "deflect",
+     "claims": [
+      "C-11"
+     ],
+     "visual_beats": [
+      {
+       "at": "leads my right hand",
+       "kind": "expression",
+       "who": "napoleon",
+       "expression": "doubtful",
+       "why": "Napoleon weighs a man who leads my right hand now"
+      }
+     ],
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "now"
+     ],
+     "tone": "told flat, a long beat before 'He said so'",
+     "emotion": "reflective"
+    },
+    {
+     "text": "I have no archers to promote. Only soldiers.",
+     "speaker": "napoleon",
+     "to": "genghis",
+     "intent": "deflect",
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "soldiers"
+     ],
+     "tone": "dry, proud",
+     "emotion": "defiance"
+    },
+    {
+     "text": "Great khan, the guns stay. The men go home. Say yes.",
+     "speaker": "aslan",
+     "to": "genghis",
+     "intent": "decide",
+     "claims": [
+      "C-94"
+     ],
+     "visual_beats": [
+      {
+       "at": "Say yes",
+       "kind": "expression",
+       "who": "genghis",
+       "expression": "surprised",
+       "why": "the khan hears the interpreter say yes on his own"
+      }
+     ],
+     "tags": [
+      "cautiously"
+     ],
+     "emphasis": [
+      "yes"
+     ],
+     "tone": "steady for the first time, quick, he speaks first",
+     "emotion": "courage"
+    },
+    {
+     "text": "Good. A man who speaks when it counts.",
+     "speaker": "genghis",
+     "to": "aslan",
+     "intent": "concede",
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "counts"
+     ],
+     "tone": "level, a small approval",
+     "emotion": "respect"
+    },
+    {
+     "text": "What did you tell him?",
+     "speaker": "napoleon",
+     "to": "aslan",
+     "intent": "question",
+     "visual_beats": [
+      {
+       "at": "What did you tell him",
+       "kind": "expression",
+       "who": "aslan",
+       "expression": "deadpan",
+       "why": "What did you tell him: Aslan answers with a straight face"
+      }
+     ],
+     "tags": [
+      "curious"
+     ],
+     "emphasis": [
+      "tell"
+     ],
+     "tone": "sharp, suspicious",
+     "emotion": "suspicion"
+    },
+    {
+     "text": "The price, sire. Exactly.",
+     "speaker": "aslan",
+     "to": "napoleon",
+     "intent": "deflect",
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "Exactly"
+     ],
+     "tone": "dry, closed",
+     "emotion": "dignity"
+    },
+    {
+     "text": "The khan nods once. Two guns are unhitched and left on the grass. Napoleon doesn't turn around. Now they only have to find the fog again.",
+     "claims": [
+      "C-94",
+      "C-91"
+     ],
+     "visual_beats": [
+      {
+       "at": "Two guns",
+       "kind": "prop",
+       "thing": "the two guns left behind",
+       "asset": "icon:check",
+       "why": "two guns are unhitched and left on the grass"
+      },
+      {
+       "at": "find the fog again",
+       "kind": "text",
+       "text": "FIND THE FOG",
+       "why": "now they only have to find the fog again",
+       "pos": [
+        0.5,
+        0.18
+       ]
+      }
+     ],
+     "tags": [
+      "slowly"
+     ],
+     "emphasis": [
+      "around"
+     ],
+     "tone": "slow, a held breath, then silence",
+     "emotion": "gravity",
+     "pause_after": 0.5
+    }
+   ],
+   "shots": [
+    {
+     "at": "Open ground, a felt carpet",
+     "type": "A",
+     "picture": {
+      "id": "s07_master",
+      "engine": "gemini",
+      "subject": "wide shot of open grass between two armies: a felt carpet with two stools, the broad man in the felt hat seated at the right, the short man in the grey greatcoat standing at the left, the lean rider in the red turban a step back between them, clear empty upper third",
+      "heroes": [
+       "napoleon",
+       "genghis",
+       "aslan"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.25,
+        0.5
+       ],
+       "genghis": [
+        0.75,
+        0.5
+       ],
+       "aslan": [
+        0.5,
+        0.55
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers; Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows",
+      "framing": "wide",
+      "prompt": "wide cinematic establishing shot, wide shot of open grass between two armies: a felt carpet with two stools, the broad man in the felt hat seated at the right, the short man in the grey greatcoat standing at the left, the lean rider in the red turban a step back between them, clear empty upper third. Named heroes: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare; Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers; Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE parley_ground, MASTER FRAME: this picture fixes the room and the seating for every later shot of the scene. place: open grass between the two armies, a felt carpet with two stools, the next morning; layout: the khan seated on the right stool, the emperor standing at the left, the interpreter a step back between them, the two armies far behind each; fixed details: felt carpet; two stools; wind in the grass; the two armies far behind. everyone in the room, left to right as the master frame shows them: Napoleon (left, standing), Aslan (centre, a step back), Genghis Khan (right, seated); all 3 of them in frame with readable faces. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "purpose": "establish the parley ground and seats",
+     "cut": {
+      "why": "open on the wide master: the seats stay fixed"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "Name your price",
+     "type": "B",
+     "picture": {
+      "id": "s07_nap_os",
+      "engine": "gemini",
+      "subject": "over the shoulder of the lean rider in the red turban, the short man in the grey greatcoat and black bicorne hat stands stiff, speaking to the seated khan, clear empty upper third",
+      "heroes": [
+       "napoleon",
+       "aslan"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.58,
+        0.4
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "over_shoulder",
+      "visible": [
+       "napoleon"
+      ],
+      "partial": [
+       "aslan"
+      ],
+      "prompt": "medium cinematic shot, over the shoulder of the lean rider in the red turban, the short man in the grey greatcoat and black bicorne hat stands stiff, speaking to the seated khan, clear empty upper third. Two named heroes: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE parley_ground, continuous with its master frame (reframe shot, over shoulder): reference image 1 is the scene's master frame (s07_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: open grass between the two armies, a felt carpet with two stools, the next morning; layout: the khan seated on the right stool, the emperor standing at the left, the interpreter a step back between them, the two armies far behind each; fixed details: felt carpet; two stools; wind in the grass; the two armies far behind; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Napoleon (left, standing), Aslan (centre, a step back), Genghis Khan (right, seated). THIS SHOT: over shoulder; must show with readable faces: Napoleon; seen only in part (shoulder or back): Aslan; speaking: Napoleon, listening: Genghis Khan; still in the room but outside this frame: Genghis Khan. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "purpose": "Napoleon asks for terms",
+     "cut": {
+      "why": "A side"
+     }
+    },
+    {
+     "at": "You came without your wagons",
+     "type": "B",
+     "picture": {
+      "id": "s07_gen_os",
+      "engine": "gemini",
+      "subject": "over the shoulder of the lean rider in the red turban, the broad man in the felt hat sits on his stool, mild, watching the visitor, clear empty upper third",
+      "heroes": [
+       "genghis",
+       "aslan"
+      ],
+      "speakers": {
+       "genghis": [
+        0.42,
+        0.42
+       ]
+      },
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows",
+      "framing": "over_shoulder",
+      "visible": [
+       "genghis"
+      ],
+      "partial": [
+       "aslan"
+      ],
+      "prompt": "medium cinematic shot, over the shoulder of the lean rider in the red turban, the broad man in the felt hat sits on his stool, mild, watching the visitor, clear empty upper third. Two named heroes: Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes; Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE parley_ground, continuous with its master frame (reframe shot, over shoulder): reference image 1 is the scene's master frame (s07_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: open grass between the two armies, a felt carpet with two stools, the next morning; layout: the khan seated on the right stool, the emperor standing at the left, the interpreter a step back between them, the two armies far behind each; fixed details: felt carpet; two stools; wind in the grass; the two armies far behind; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Napoleon (left, standing), Aslan (centre, a step back), Genghis Khan (right, seated). THIS SHOT: over shoulder; must show with readable faces: Genghis Khan; seen only in part (shoulder or back): Aslan; speaking: Genghis Khan, listening: Napoleon; still in the room but outside this frame: Napoleon. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "purpose": "the khan toys with him",
+     "cut": {
+      "why": "B side"
+     }
+    },
+    {
+     "at": "Longer than your patience",
+     "type": "B",
+     "picture": "s07_nap_os",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.05,
+      "z1": 1.01
+     },
+     "purpose": "Napoleon holds himself in",
+     "cut": {
+      "why": "back to A: continues the move"
+     }
+    },
+    {
+     "at": "Two guns stay",
+     "type": "B",
+     "picture": {
+      "id": "s07_nap_close",
+      "engine": "gemini",
+      "subject": "close on the short man in the black bicorne hat, jaw tightening as he hears the price, clear empty upper third",
+      "heroes": [
+       "napoleon"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.5,
+        0.45
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "close",
+      "visible": [
+       "napoleon"
+      ],
+      "prompt": "medium cinematic shot, close on the short man in the black bicorne hat, jaw tightening as he hears the price, clear empty upper third. One named hero: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE parley_ground, continuous with its master frame (reframe shot, close): reference image 1 is the scene's master frame (s07_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: open grass between the two armies, a felt carpet with two stools, the next morning; layout: the khan seated on the right stool, the emperor standing at the left, the interpreter a step back between them, the two armies far behind each; fixed details: felt carpet; two stools; wind in the grass; the two armies far behind; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Napoleon (left, standing), Aslan (centre, a step back), Genghis Khan (right, seated). THIS SHOT: close; must show with readable faces: Napoleon; speaking: Genghis Khan, listening: Napoleon; still in the room but outside this frame: Genghis Khan, Aslan. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.05
+     },
+     "purpose": "Napoleon hears two guns stay and the men",
+     "cut": {
+      "why": "J-cut: the khan's voice goes on under Napoleon's close-up; the listener on news"
+     }
+    },
+    {
+     "at": "And the men who fire them",
+     "type": "B",
+     "picture": "s07_nap_close",
+     "motion": {
+      "kind": "push",
+      "z0": 1.03,
+      "z1": 1.1
+     },
+     "purpose": "the second half of the price lands",
+     "cut": {
+      "why": "reframe on the same face: the sting breaks the music here"
+     }
+    },
+    {
+     "at": "Sire, a gun takes fifteen",
+     "type": "B",
+     "picture": {
+      "id": "s07_aslan_close",
+      "engine": "gemini",
+      "subject": "close on the lean rider in the red turban, leaning to his emperor to price the guns in men, speaking low and quick, clear empty upper third",
+      "heroes": [
+       "aslan"
+      ],
+      "speakers": {
+       "aslan": [
+        0.5,
+        0.45
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "close",
+      "visible": [
+       "aslan"
+      ],
+      "prompt": "medium cinematic shot, close on the lean rider in the red turban, leaning to his emperor to price the guns in men, speaking low and quick, clear empty upper third. One named hero: Aslan, an invented rider of the Mameluke company: lean, thirty, red turban over a French shako cover, a curved sabre, a patient narrow face, a Crimean cloak, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE parley_ground, continuous with its master frame (reframe shot, close): reference image 1 is the scene's master frame (s07_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: open grass between the two armies, a felt carpet with two stools, the next morning; layout: the khan seated on the right stool, the emperor standing at the left, the interpreter a step back between them, the two armies far behind each; fixed details: felt carpet; two stools; wind in the grass; the two armies far behind; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Napoleon (left, standing), Aslan (centre, a step back), Genghis Khan (right, seated). THIS SHOT: close; must show with readable faces: Aslan; speaking: Aslan, listening: Napoleon; still in the room but outside this frame: Napoleon, Genghis Khan. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "purpose": "Aslan counts the price",
+     "cut": {
+      "why": "the translator speaks for himself"
+     }
+    },
+    {
+     "at": "The guns, yes",
+     "type": "B",
+     "picture": "s07_nap_os",
+     "motion": {
+      "kind": "push",
+      "z0": 1.05,
+      "z1": 1.1
+     },
+     "purpose": "Napoleon refuses the men",
+     "cut": {
+      "why": "back to A: fresh push"
+     }
+    },
+    {
+     "at": "A man shot my horse once",
+     "type": "B",
+     "picture": {
+      "id": "s07_gen_close",
+      "engine": "gemini",
+      "subject": "close on the broad weathered man in the felt hat, level eyes, telling a story as an offer, clear empty upper third",
+      "heroes": [
+       "genghis"
+      ],
+      "speakers": {
+       "genghis": [
+        0.5,
+        0.43
+       ]
+      },
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows",
+      "framing": "close",
+      "visible": [
+       "genghis"
+      ],
+      "prompt": "medium cinematic shot, close on the broad weathered man in the felt hat, level eyes, telling a story as an offer, clear empty upper third. One named hero: Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. SCENE parley_ground, continuous with its master frame (reframe shot, close): reference image 1 is the scene's master frame (s07_master); any further reference images show faces and the drawing style. KEEP UNCHANGED from the master frame: place: open grass between the two armies, a felt carpet with two stools, the next morning; layout: the khan seated on the right stool, the emperor standing at the left, the interpreter a step back between them, the two armies far behind each; fixed details: felt carpet; two stools; wind in the grass; the two armies far behind; the light and the palette; every character's face, hair and clothes; the seating, everyone in the room, left to right as the master frame shows them: Napoleon (left, standing), Aslan (centre, a step back), Genghis Khan (right, seated). THIS SHOT: close; must show with readable faces: Genghis Khan; speaking: Genghis Khan, listening: Napoleon; still in the room but outside this frame: Napoleon, Aslan. MAY CHANGE: the camera angle and framing, expressions and gestures; never the room or the seats. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "purpose": "the khan offers the Jebe bargain",
+     "cut": {
+      "why": "close on the speaker, quiet"
+     }
+    },
+    {
+     "at": "I have no archers",
+     "type": "B",
+     "picture": "s07_nap_close",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.09,
+      "z1": 1.02
+     },
+     "purpose": "Napoleon deflects",
+     "cut": {
+      "why": "the listener's face holds the refusal"
+     }
+    },
+    {
+     "at": "Great khan, the guns stay",
+     "type": "B",
+     "picture": "s07_aslan_close",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.0
+     },
+     "purpose": "Aslan speaks first",
+     "cut": {
+      "why": "the translator takes the scene: reframe"
+     }
+    },
+    {
+     "at": "Good. A man who speaks",
+     "type": "B",
+     "picture": "s07_gen_close",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.08,
+      "z1": 1.01
+     },
+     "purpose": "the khan approves",
+     "cut": {
+      "why": "the listener-speaker pays him"
+     }
+    },
+    {
+     "at": "What did you tell him",
+     "type": "B",
+     "picture": "s07_nap_os",
+     "motion": {
+      "kind": "hold",
+      "z0": 1.06,
+      "z1": 1.06
+     },
+     "purpose": "Napoleon asks, Aslan answers over his face",
+     "cut": {
+      "why": "L-cut: Aslan's answer runs over Napoleon's face"
+     }
+    },
+    {
+     "at": "The khan nods once",
+     "type": "B",
+     "picture": "s07_gen_close",
+     "motion": {
+      "kind": "push",
+      "z0": 1.05,
+      "z1": 1.1
+     },
+     "purpose": "the khan's nod seals the price",
+     "cut": {
+      "why": "the khan's face, a held mood under the narrator's conclusion"
+     }
+    },
+    {
+     "at": "Two guns are unhitched",
+     "type": "B",
+     "picture": {
+      "id": "s07_guns",
+      "engine": "gemini",
+      "subject": "two heavy guns unhitched and left on the grass beside the felt carpet, their limbers pulling away, the broad man in the felt hat seated and watching them, the short man in the grey greatcoat walking away without looking back, clear empty upper third",
+      "heroes": [
+       "napoleon",
+       "genghis"
+      ],
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "wide",
+      "cut_away": true,
+      "prompt": "medium cinematic shot, two heavy guns unhitched and left on the grass beside the felt carpet, their limbers pulling away, the broad man in the felt hat seated and watching them, the short man in the grey greatcoat walking away without looking back, clear empty upper third. Two named heroes: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare; Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pan",
+      "z0": 1.03,
+      "z1": 1.03,
+      "dx": 0.05
+     },
+     "purpose": "two guns left to the khan",
+     "cut": {
+      "why": "wide: the price paid, no faces"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    }
+   ],
+   "scene": {
+    "place": "open ground between the two armies, a felt carpet, two stools, the wind",
+    "time": "the next morning",
+    "present": [
+     "napoleon",
+     "genghis",
+     "aslan"
+    ],
+    "why_now": "the army can neither fight nor feed itself and the khan has named the hour",
+    "pov": "napoleon",
+    "want": "pass his army home through the khan's riders and keep the guns",
+    "obstacle_want": "Genghis wants the guns and the men who fire them in exchange for the road",
+    "value": "independence",
+    "open_charge": "-",
+    "close_charge": "+",
+    "turn": "the khan tells him how he keeps the archer who shot his horse, and offers the same to the gunners; Napoleon refuses the men but gives the guns; mode: balanced",
+    "exit": "succeed_complication",
+    "surface_topic": "the price of the road",
+    "real_subject": "which of the two may refuse the other",
+    "mode": "balanced"
+   },
+   "staging": {
+    "scene_id": "parley_ground",
+    "location": "open grass between the two armies, a felt carpet with two stools",
+    "layout": "the khan seated on the right stool, the emperor standing at the left, the interpreter a step back between them, the two armies far behind each",
+    "fixed": [
+     "felt carpet",
+     "two stools",
+     "wind in the grass",
+     "the two armies far behind"
+    ],
+    "roster": [
+     "napoleon",
+     "genghis",
+     "aslan"
+    ],
+    "positions": {
+     "napoleon": "left, standing",
+     "aslan": "centre, a step back",
+     "genghis": "right, seated"
+    },
+    "master": "s07_master"
+   },
+   "audio": {
+    "beds": [
+     {
+      "at": "Open ground",
+      "sound": "amb_steppe_wind__v1",
+      "gain_db": -31,
+      "purpose": "place: the open parley ground, the steppe wind again",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ],
+    "sfx": [
+     {
+      "at": "And the men who fire them",
+      "sound": "reveal_sting__v1",
+      "gain_db": -24,
+      "purpose": "the sting that breaks the planned music dropout before the biggest reveal",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "S08",
+   "beat": "the fog again",
+   "light_beat": 8,
+   "purpose": "Dawn: the fog comes back, the army walks into it, two guns stay on the grass; the road is Russian again and the count is short two (bookend with S01).",
+   "drama": {
+    "function": "resolution",
+    "turn": "therefore",
+    "shift": "free at a price -> home",
+    "claim_share": "reasoned",
+    "stakes": "the fog may close without them and take the whole army with the price unpaid",
+    "need": "wonder",
+    "closes": [
+     "L01"
+    ]
+   },
+   "lines": [
+    {
+     "text": "At dawn the fog comes back. The army walks into it without a word.",
+     "claims": [
+      "C-91"
+     ],
+     "visual_beats": [
+      {
+       "at": "fog comes back",
+       "kind": "accent",
+       "effect": "punch",
+       "strength": 0.4,
+       "why": "the fog comes back at dawn"
+      }
+     ],
+     "tags": [
+      "suspenseful"
+     ],
+     "emphasis": [
+      "word"
+     ],
+     "tone": "low, the fog closing",
+     "emotion": "hush"
+    },
+    {
+     "text": "Behind it, two guns stand on the grass where the carpet was. A man in a felt hat walks round one, slowly. He lays a hand on the barrel, the way you'd test a good horse.",
+     "claims": [
+      "C-94"
+     ],
+     "visual_beats": [
+      {
+       "at": "felt hat",
+       "kind": "highlight",
+       "pos": [
+        0.6,
+        0.45
+       ],
+       "why": "rings the man in the felt hat at the gun"
+      }
+     ],
+     "tags": [
+      "softly"
+     ],
+     "emphasis": [
+      "barrel"
+     ],
+     "tone": "slow, almost tender",
+     "emotion": "unease"
+    },
+    {
+     "text": "On the far side the road is Russian again. A clerk counts the guns, the way he does every night. Two are missing.",
+     "claims": [
+      "C-91",
+      "C-94"
+     ],
+     "visual_beats": [
+      {
+       "at": "Two are missing",
+       "kind": "chart",
+       "chart": "counter",
+       "values": [
+        2
+       ],
+       "unit": "guns",
+       "claim": "C-94",
+       "why": "counts the two guns missing from the clerk's count"
+      }
+     ],
+     "tags": [
+      "matter of fact"
+     ],
+     "emphasis": [
+      "missing"
+     ],
+     "tone": "flat, the clerk's voice",
+     "emotion": "wry"
+    },
+    {
+     "text": "Napoleon never got his great battle. You'd call it a retreat, but he got his army out alive, and it cost him two guns.",
+     "claims": [
+      "C-04",
+      "C-94"
+     ],
+     "visual_beats": [
+      {
+       "at": "two guns",
+       "kind": "symbol",
+       "symbol": "arrow_down",
+       "pos": [
+        0.8,
+        0.3
+       ],
+       "why": "it cost him two guns"
+      }
+     ],
+     "tags": [
+      "deadpan"
+     ],
+     "emphasis": [
+      "guns"
+     ],
+     "tone": "level, a ledger closing",
+     "emotion": "wry"
+    },
+    {
+     "text": "Then the drums start again.",
+     "visual_beats": [
+      {
+       "at": "drums",
+       "kind": "prop",
+       "thing": "the drums start",
+       "asset": "icon:check",
+       "why": "the drums start again as in the opening"
+      }
+     ],
+     "emphasis": [
+      "again"
+     ],
+     "tone": "quiet, the opening mirrored",
+     "emotion": "wonder"
+    }
+   ],
+   "shots": [
+    {
+     "at": "At dawn the fog comes back",
+     "type": "A",
+     "picture": {
+      "id": "s08_fog",
+      "engine": "gemini",
+      "subject": "the army walks into a wall of white fog at dawn, the column vanishing rank by rank, the grass trampled behind them, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "prompt": "wide cinematic establishing shot, the army walks into a wall of white fog at dawn, the column vanishing rank by rank, the grass trampled behind them, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.08
+     },
+     "purpose": "the fog takes the army back",
+     "cut": {
+      "why": "mirror of the first fog"
+     }
+    },
+    {
+     "at": "Behind it, two guns",
+     "type": "B",
+     "picture": {
+      "id": "s08_guns",
+      "engine": "gemini",
+      "subject": "two heavy guns stand alone on the grass where the carpet was, the broad weathered man in the felt hat walks slowly round one and lays a hand on its barrel, clear empty upper third",
+      "heroes": [
+       "genghis"
+      ],
+      "speakers": {
+       "genghis": [
+        0.55,
+        0.45
+       ]
+      },
+      "costume": "Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows",
+      "framing": "medium",
+      "prompt": "medium cinematic shot, two heavy guns stand alone on the grass where the carpet was, the broad weathered man in the felt hat walks slowly round one and lays a hand on its barrel, clear empty upper third. One named hero: Genghis Khan as our caricature: broad weathered face, thin braided beard, fur-trimmed felt hat, quilted blue coat, a bow case at the saddle, still eyes, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, Mongol riders of 1223: felt hats, quilted coats, leather boots, horn bows, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "purpose": "the khan inspects the guns",
+     "cut": {
+      "why": "cut to the other side of the fog"
+     }
+    },
+    {
+     "at": "On the far side the road",
+     "type": "A",
+     "picture": {
+      "id": "s08_clerk",
+      "engine": "gemini",
+      "subject": "a muddy Russian road at dusk, a clerk with a ledger and a lamp counting guns as they roll past, one gap in the line, clear empty upper third",
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "prompt": "wide cinematic establishing shot, a muddy Russian road at dusk, a clerk with a ledger and a lamp counting guns as they roll past, one gap in the line, clear empty upper third, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "pan",
+      "z0": 1.03,
+      "z1": 1.03,
+      "dx": 0.05
+     },
+     "purpose": "the clerk counts two missing",
+     "cut": {
+      "why": "hard cut: back in 1812"
+     }
+    },
+    {
+     "at": "Napoleon never got",
+     "type": "B",
+     "picture": {
+      "id": "s08_nap",
+      "engine": "gemini",
+      "subject": "the short man in the grey greatcoat and black bicorne hat on a horse at the roadside, watching his army pass, tired, a long look back at the empty grass, clear empty upper third",
+      "heroes": [
+       "napoleon"
+      ],
+      "speakers": {
+       "napoleon": [
+        0.5,
+        0.42
+       ]
+      },
+      "costume": "French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers",
+      "framing": "medium",
+      "prompt": "medium cinematic shot, the short man in the grey greatcoat and black bicorne hat on a horse at the roadside, watching his army pass, tired, a long look back at the empty grass, clear empty upper third. One named hero: Napoleon as our caricature: short, heavy grey greatcoat over a green uniform, black bicorne hat, one hand behind his back, a pale hard stare, adult human proportions (head about one seventh of the body), expressive weathered faces, large expressive hands, exaggerated but adult features, French army of 1812: blue coats, white cross-belts, shakos, grey greatcoats, Mameluke riders in red turbans and baggy trousers, muted overcast daylight, rain, mud, one drawn universe in a cinematic painted graphic-novel style: bold ink-shadowed silhouettes, simple planes of colour, textured painted backgrounds, one thick dark ink outline, caricature carried by faces, hands and posture on adult proportions, everyone and everything drawn by the same artist for the same scene, no text, no letters, no logo. One single full-frame picture: never a collage, split screen, panel grid or storyboard."
+     },
+     "motion": {
+      "kind": "push",
+      "z0": 1.0,
+      "z1": 1.07
+     },
+     "purpose": "he got his army out",
+     "cut": {
+      "why": "the answer to the dramatic question"
+     },
+     "accents": [
+      {
+       "kind": "wobble",
+       "strength": 0.3
+      }
+     ]
+    },
+    {
+     "at": "Then the drums start",
+     "type": "A",
+     "picture": "s01_road",
+     "motion": {
+      "kind": "pull",
+      "z0": 1.07,
+      "z1": 1.02
+     },
+     "purpose": "the drums start again: the opening mirrored",
+     "cut": {
+      "why": "callback: the first picture again, new meaning"
+     }
+    }
+   ],
+   "audio": {
+    "beds": [
+     {
+      "at": "At dawn the fog comes back",
+      "sound": "amb_steppe_wind__v1",
+      "gain_db": -30,
+      "purpose": "place: dawn on the steppe, then the Russian road",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ],
+    "sfx": [
+     {
+      "at": "fog comes back",
+      "sound": "swish__v1",
+      "gain_db": -24,
+      "purpose": "the fog closes: the accent's impact",
+      "yields_to": [
+       "voice"
+      ]
+     },
+     {
+      "at": "A clerk counts",
+      "sound": "tick__v1",
+      "gain_db": -30,
+      "purpose": "the clerk's pencil ticking off guns",
+      "yields_to": [
+       "voice"
+      ]
+     }
+    ]
+   }
+  }
+ ],
+ "episode": {
+  "id": "napoleon_into_the_khan_a",
+  "title": "What If Napoleon's Army Walked Into Genghis Khan?",
+  "fps": 30,
+  "notes": "A/B test arm A, writers' room stages 1-6 by one main agent, 8 segments, template A."
+ },
+ "drama": {
+  "premise": "Napoleon's retreating army of 1812 falls through a fog into the steppe of 1223, where Genghis Khan himself waits with two tumens.",
+  "question": "Can Napoleon bring his army out of the fog alive?",
+  "promise": "the Grande Armee meets the khan's riders, loses its wagons, and pays two guns for the road home",
+  "template": "A",
+  "needs": [
+   "wonder",
+   "curiosity",
+   "fear",
+   "belonging",
+   "competence",
+   "stakes",
+   "surprise"
+  ],
+  "arcs": {
+   "napoleon": {
+    "want": "find the enemy's army and destroy it in one battle",
+    "need": "to ask for terms and listen to the man who understands the enemy",
+    "flaw": "cannot picture an enemy who refuses to stand and fight",
+    "change": "asks the khan's price and pays it in guns"
+   },
+   "genghis": {
+    "want": "learn how these strangers fight and take the tools that work",
+    "flaw": "keeps only what has proved its loyalty; tests everyone, even a guest",
+    "need": "a man who tells him the truth",
+    "change": "takes the guns himself and leaves the men their road"
+   },
+   "aslan": {
+    "want": "bring his company and himself home alive",
+    "flaw": "hides fear behind formal courtesy and says only what he is asked",
+    "need": "to speak first",
+    "change": "speaks first at the parley and shapes the price"
+   }
+  },
+  "loops": [
+   {
+    "id": "L01",
+    "question": "Will the army get out of the fog alive?"
+   },
+   {
+    "id": "L02",
+    "question": "Who commands the riders that never stand and fight?"
+   },
+   {
+    "id": "L03",
+    "question": "Will the wagons reach the valley?"
+   },
+   {
+    "id": "L04",
+    "question": "What does the khan want from an emperor?"
+   }
+  ],
+  "setups": [
+   {
+    "id": "P01",
+    "what": "Aslan's grandmother's tongue is the riders' tongue (Kipchak)",
+    "plant": "S02",
+    "payoff": "S07"
+   },
+   {
+    "id": "P02",
+    "what": "the heavy wagons that cannot leave the road",
+    "plant": "S02",
+    "payoff": "S06"
+   },
+   {
+    "id": "P03",
+    "what": "Napoleon counts his guns every night",
+    "plant": "S02",
+    "payoff": "S08"
+   },
+   {
+    "id": "P04",
+    "what": "the khan keeps the archer who shot his horse and admitted it",
+    "plant": "S04",
+    "payoff": "S07"
+   }
+  ],
+  "ending": {
+   "kind": "callback",
+   "note": "Template A (three-act / 7-point): hook S01, inciting S02, pinch S03/S04, midpoint S05 (false victory), low point S06, climax S07, button S08 mirrors the opening fog."
+  }
+ },
+ "music": [
+  {
+   "track": "fog_drone_loop__v1",
+   "from": "<start>",
+   "to": "Aslan was the last man",
+   "gain_db": -30,
+   "fade_s": 2.0
+  },
+  {
+   "track": "tent_low_strings__v1",
+   "from": "Aslan was the last man",
+   "to": "Napoleon trained",
+   "gain_db": -31,
+   "fade_s": 2.0
+  },
+  {
+   "track": "valley_drums__v1",
+   "from": "Napoleon trained",
+   "to": "And the men who fire them",
+   "gain_db": -27,
+   "fade_s": 2.0
+  },
+  {
+   "track": "fog_drone_loop__v1",
+   "from": "Sire, a gun takes fifteen",
+   "to": null,
+   "gain_db": -30,
+   "fade_s": 2.0
+  }
+ ],
+ "counter": []
+}

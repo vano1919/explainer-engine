@@ -1,0 +1,1 @@
+S02 labelled reasoned (not fact): no line carries a claim id yet at stage 1; ST-09 fact needs claims. Writer may upgrade after adding claims. PV-01 FAILs are only later-stage fields (voice, world, lines, shots).

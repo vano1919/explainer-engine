@@ -122,6 +122,43 @@ each painted picture next to its master (`staging request` -> `continuity_review
 
 **Filler (D-53):** a type A plate or type C insert with no person, used once, in an explanation, pause, humour or transition beat may be marked `engine: "canva"` (at most 30 %); the script cannot declare importance, `imagegen/importance.py` computes it (PV-43).
 
+## Cinematography: shot grammar (P3b 2026-10-29)
+
+- **Lens tier and height are choices.** Every card names a lens tier (wide, normal, long: BP-126) and a camera height (low,
+  eye, high), each motivated by the beat: a low angle reads strong, a long lens compresses and brings two faces together, a
+  wide lens gives space and isolation. The card fields arrive in P6; until then the critic asks.
+- **Composition.** Headroom; lead room toward the gaze of a facing figure (KP-34 extended from motion to gaze); depth
+  staging with foreground, midground and background named (KP-33); a balanced frame.
+- **Cuts of one subject** change angle or lens enough not to jump (BP-126, BP-103); screen sides hold inside a scene (CT-06).
+- **Intensity is designed.** Per segment a visual intensity (contrast of tone, colour, movement, shot length) that rises to
+  the climax and drops at the resolution, with contrast between neighbours; the music and density curves sit on the same
+  graph in the review bundle (Block's idea; the book was not re-opened, so it is a critic question, not a number).
+- **Lanes follow the story.** Each beat gets a dramatisability score (a person deciding, acting, failing, or only a
+  quantity or a place); the lane shares follow the scores, inside BP-127's run caps (house numbers of the Blueprint, not
+  McKee's or Katz's), tuned later by the channel's own retention curve.
+
+### CHECKLIST (cinematography)
+
+Rendered from `explainer_engine/standards/craft_checklists/cinematography.json` (the one home of these ids; 
+`python -m explainer_engine.standards.craft write` regenerates it, `tests/unit/test_craft_checklists.py` fails when they
+differ). Every row is a hypothesis until a second source type is verified ([CRAFT_CURRICULUM](../../../docs/CRAFT_CURRICULUM.md)).
+
+<!-- craft-checklist:cinematography:begin -->
+| ID | check | rule | artefact field | sourced rules | enforced by |
+|---|---|---|---|---|---|
+| CRAFT-CIN-01 | critic | every shot card names a lens tier motivated by the beat (long = compression, wide = space) | shot card lens_tier (P6 field) | BP-126 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-CIN-02 | critic | camera height low / eye / high motivated (low reads strong) | shot card height (P6 field) | BP-126 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-CIN-03 | code | two shots of one subject in a row change angle by 30 degrees or the lens by 20 mm | consecutive shot cards | BP-126, BP-103 | `explainer_engine/scripting/film_shots.py` (planned, P6) |
+| CRAFT-CIN-04 | code | screen sides and the axis hold inside a scene | continuity cards | CT-06 | `explainer_engine/scripting/continuity.py` |
+| CRAFT-CIN-05 | eye | headroom and nose room: a facing figure has lead room toward its gaze | keyframe | KP-34 | manual |
+| CRAFT-CIN-06 | critic | depth staging: foreground, midground and background named on the card | shot card relations | KP-33 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-CIN-07 | code | the focal point stays within BP-30's shift across a hard cut | shot focal points | BP-30 | `explainer_engine/production/continuity.py` |
+| CRAFT-CIN-08 | code | shot-size variety inside a scene | shot card sizes | BP-103 | `explainer_engine/scripting/film_shots.py` |
+| CRAFT-CIN-09 | critic | a per-segment visual intensity rises toward the climax and drops at the resolution, with contrast between neighbours | edit plan intensity per segment | - | `explainer_engine/qa/editorial_review.py` (planned, P8) |
+| CRAFT-CIN-10 | code | lane shares follow each beat's dramatisability score inside the run caps | beat dramatisability score + lane per shot | BP-127 | `explainer_engine/edit/visual_compensator.py` (planned, P5) |
+| CRAFT-CIN-11 | eye | stakes and named heroes in every frame | contact sheet | UR-21 | manual |
+<!-- craft-checklist:cinematography:end -->
+
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 - BP-28: on-screen text (labels, pops, bubbles, cards) stays inside x 12.5-87.5 %, y 5-95 % of the 16:9 frame, never over a
@@ -129,3 +166,5 @@ each painted picture next to its master (`staging request` -> `continuity_review
 - BP-34: a keyed close-up matches its backdrop (anti-sticker): the same light direction, luma within 0.18 and warmth (R - B)
   within 0.12 of the backdrop, no key halo over 2 px, a contact shadow sampled from the backdrop's darks, shared grain;
   `production/faces.py` measures it when the files exist (`lint` with picture folders).
+- BP-126: lens tiers and the 30-degree / 20 mm rule; BP-127: the dramatisability run caps (both hypothesis, REVIEW;
+  checklist above).

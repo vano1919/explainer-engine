@@ -54,7 +54,8 @@ def T(rule_id: str, key: str):
 
 
 def source_types(r: dict) -> set[str]:
-    return {s["type"] for s in r.get("sources", [])}
+    """Source types that count toward D-59: an entry marked ``verified: false`` only records an origin."""
+    return {s["type"] for s in r.get("sources", []) if s.get("verified", True)}
 
 
 def _symbol_exists(ref: str) -> bool:
@@ -129,7 +130,8 @@ def render() -> str:
     out = ["| ID | area | status | rule | thresholds | sources (type) | enforced by | supersedes |", "|---|---|---|---|---|---|---|---|"]
     for r in rules():
         th = "; ".join(f"{k} = {_fmt(v)}" for k, v in r["thresholds"].items()) or "-"
-        src = "<br>".join(f"{s['type']}: [{s['title']}]({s['url']})" + (f" ({s['note']})" if s.get("note") else "")
+        src = "<br>".join(f"{s['type']}{'' if s.get('verified', True) else ' (not counted)'}: [{s['title']}]({s['url']})"
+                          + (f" ({s['note']})" if s.get("note") else "")
                           for s in r["sources"]) or "-"
         enf = "<br>".join(f"`{e}`" for e in r["enforced_by"]) or "-"
         sup = "; ".join(r["supersedes"]) or "-"
