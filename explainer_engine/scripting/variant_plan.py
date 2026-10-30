@@ -37,13 +37,15 @@ EPS = 0.01
 # What exists in code today (a fact about the code, not a threshold). The phase that lands a lane flips its entry in the same
 # commit and its own test proves the lane; tests/unit/test_variant_plan.py keeps each entry honest.
 LANES: dict[str, dict] = {
-    "KEYFRAME_LTX:light": {"available": True, "evidence": "explainer_engine/training/pods"},
-    "KEYFRAME_LTX:full": {"available": True, "evidence": "explainer_engine/training/pods", "price": "unknown until P12b"},
+    "KEYFRAME_LTX:light": {"available": False, "phase": "P6", "note": "no LTX-2.5 / Wan 2.2 clip pod script under explainer_engine/training/pods/ "
+                           "passes runpod dryrun (OR-21); committed in P6, priced in P12b"},
+    "KEYFRAME_LTX:full": {"available": False, "phase": "P6", "price": "unknown until P12b", "note": "no LTX-2.5 / Wan 2.2 clip pod script "
+                          "under explainer_engine/training/pods/ passes runpod dryrun (OR-21); committed in P6, priced in P12b"},
     "STILL_HOLD": {"available": True, "evidence": "explainer_engine/production/assemble.py"},
     "PARALLAX_25D_TABLEAU": {"available": True, "evidence": "explainer_engine/production/parallax.py", "archetypes": [8]},
     "GRAPHICS": {"available": True, "evidence": "explainer_engine/production/graphics.py"},
-    "MAP": {"available": False, "phase": "P5", "archetypes": [1, 2, 3, 4]},
-    "COMPENSATOR": {"available": False, "phase": "P5", "archetypes": [5, 6, 7, 9, 10, 11, 12]},
+    "MAP": {"available": True, "evidence": "explainer_engine/maps/render.py", "archetypes": [1, 2, 3, 4]},
+    "COMPENSATOR": {"available": True, "evidence": "explainer_engine/edit/visual_compensator.py", "archetypes": [5, 6, 7, 9, 10, 11, 12]},
     "HOST_COMMENTARY": {"available": False, "phase": "P5b"},
     "DIALOGUE_CU": {"available": False, "phase": "P6"},
     "DRAMA_BLOCKED_3D": {"available": False, "phase": "P6"},
@@ -335,7 +337,11 @@ def _row_usd(row: dict, speeds: dict | None) -> tuple[float | None, str]:
             return None, "unknown"
         return per * row["units"], "estimate"
     if kind == "pod":
-        spec = (speeds or {}).get(row["job"])
+        from explainer_engine.cloud import speeds as speed_table
+        hit = speed_table.lookup(speeds or {}, row["job"], row.get("card") or row.get("gpu"))
+        if hit is not None:                                  # the schema `runpod cost --record-speed` writes: jobs/<job>/rows/<card>
+            return (row["units"] * hit["usd_per_unit"], "measured") if hit.get("usd_per_unit") else (None, "unknown")
+        spec = (speeds or {}).get(row["job"])                # the flat form older plans carried; nothing writes it any more
         if not isinstance(spec, dict) or "seconds_per_unit" not in spec or not spec.get("gpu"):
             return None, "unknown"
         from explainer_engine.cloud import runpod
@@ -350,11 +356,22 @@ def _row_usd(row: dict, speeds: dict | None) -> tuple[float | None, str]:
     return None, "unknown"
 
 
+def _unpriced_why(row: dict, speeds: dict | None) -> str:
+    """Why a pod row has no price: the job was never measured, or several cards were and the row names none."""
+    rows = (((speeds or {}).get("jobs") or {}).get(row["job"]) or {}).get("rows") or {}
+    card = row.get("card") or row.get("gpu")
+    if not rows:
+        return f"no measured row for job {row['job']}"
+    if not card and len(rows) > 1:
+        return f"{len(rows)} cards measured for {row['job']}; the row must name one (card)"
+    return f"no priced row for job {row['job']} on {card or 'the measured card'}"
+
+
 def cost(variant: dict, *, speeds: dict | None = None, caps: dict | None = None) -> dict:
     """Priced rows of a variant (``cost_rows``): planned = base x 1.5, worst = base x 3 on every paid row. Any unknown row makes
     the totals the string ``"unknown"``; the known part is still shown and still checked against 80 % of every cap (VP-13)."""
     caps = spend_caps.load() if caps is None else caps
-    rows, unknown = [], []
+    rows, unknown, why = [], [], {}
     known_p = known_w = 0.0
     by_service: dict[str, float] = {}
     by_pod: dict[str, float] = {}
@@ -367,6 +384,8 @@ def cost(variant: dict, *, speeds: dict | None = None, caps: dict | None = None)
                      "usd_planned": planned, "usd_worst": worst, "basis": basis})
         if base is None:
             unknown.append(r["label"])
+            if r["kind"] == "pod":
+                why[r["label"]] = _unpriced_why(r, speeds)
             continue
         known_p += planned
         known_w += worst
@@ -386,7 +405,7 @@ def cost(variant: dict, *, speeds: dict | None = None, caps: dict | None = None)
             lines.append({"what": f"runpod.per_pod_usd ({pod})", "known_worst": used, "limit": per_pod * fraction,
                           "over": used > per_pod * fraction + 1e-9})
     return {"usd_planned": "unknown" if unknown else known_p, "usd_worst": "unknown" if unknown else known_w,
-            "known_usd_planned": known_p, "known_usd_worst": known_w, "unknown_rows": unknown, "rows": rows,
+            "known_usd_planned": known_p, "known_usd_worst": known_w, "unknown_rows": unknown, "unknown_why": why, "rows": rows,
             "cap_check": {"stop_fraction": fraction, "lines": lines}}
 
 
@@ -397,8 +416,9 @@ def cost_checks(c: dict) -> list[dict]:
             _f(out, "VP-13", line["what"], f"the known worst case ${line['known_worst']:.2f} is above 80 % of the cap "
                f"(${line['limit']:.2f}): split the work or cut it; at 80 % of a cap the work stops and asks", "FAIL")
     if c["unknown_rows"]:
+        why = "".join(f"; {label}: {reason}" for label, reason in c.get("unknown_why", {}).items())
         _f(out, "VP-12", "cost", f"cost UNKNOWN: no measurement for {', '.join(c['unknown_rows'])} "
-           "(config/job_speeds.json, measured by P12b); the known part is " f"${c['known_usd_worst']:.2f} worst case, and it cannot be certified until then")
+           "(config/job_speeds.json, measured by P12b); the known part is " f"${c['known_usd_worst']:.2f} worst case, and it cannot be certified until then{why}")
     return out
 
 
