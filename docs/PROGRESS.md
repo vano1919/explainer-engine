@@ -3364,3 +3364,13 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   distinct answered pairs, and a pair answered twice with different answers is refused ("answered twice"). No minimum share added (still his call).
 - Test red on main -> green: `test_generator_gate.py::test_a_repeated_row_cannot_stand_in_for_a_blank_pair`. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 — plan_v2 wave 2, T1: `assets/audio/generator_admission.json` is a protected file (N-08 follow-up)
+- `config/model_routing.json` `protected_files` gets `assets/audio/generator_admission.json` (60 minutes), like `config/channel_voices.json`
+  (D9 question 12). The creator's word: 2026-10-30 17:07 UTC, cmsg_01Hnu5zB86sjUj5GtTgaUkPW8msPdnCCDWn3ATgkWHUK4i ("კაერგი მაშ დაამატე",
+  answering cmsg_01Hnu5zB86sjUj5GtTgaUkPWXzbqo24EyY822YqDJXSjAs), recorded as `protected_config config/model_routing.json` before the edit.
+  An Edit, Write or shell writer on the admission file now needs his `protected_config` word; `generator_gate admit` keeps its own gate
+  (the `generator_admit` word, BP-162) and is not refused by the shell guard. `generator_gate` docstring and `docs/AUDIO_SYSTEM.md` say so.
+- Test red on main -> green: `tests/unit/test_admission_protected.py` (the path is the one `generator_gate` writes; Edit/Write/echo refused,
+  cat free; a stale word refused, a fresh one unlocks only that file; the `admit` command passes the guard). No pod, no API call, nothing deleted.
+- Decision log: none moved.

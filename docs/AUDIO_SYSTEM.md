@@ -195,7 +195,8 @@ calibrated on real stems in P12a ([BP-118](SOURCED_RULES.md)).
 The order for a new music, sound-effect or room-tone take is **library, then an admitted free generator, then the ElevenLabs
 connector**; the narrator stays on the connector (no REST client). Today no generator is admitted, so the chain of D-52 is
 unchanged. A free (open-model) generator is admitted for one kind (`music`, `sfx`, `room_tone`) only through
-`assets/audio/generator_admission.json`, which `python -m explainer_engine.audio.generator_gate admit` writes only with the
+`assets/audio/generator_admission.json` (a protected file since 2026-10-30: a direct edit by a tool needs the creator's
+`protected_config` word), which `python -m explainer_engine.audio.generator_gate admit` writes only with the
 creator's recorded word (`--creator-ref` = his message id, which must name a `generator_admit` record for `<generator>:<kind>`:
 `python -m explainer_engine.governance ok generator_admit <generator>:<kind> <message id> "<his words>"`), the blind sheet he
 answered with its `sheet_key.json` (made for this very report) and a report that passes. Flow:
