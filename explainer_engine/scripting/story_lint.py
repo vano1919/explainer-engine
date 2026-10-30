@@ -21,6 +21,7 @@ import re
 import sys
 from pathlib import Path
 
+from explainer_engine.scripting import variant_plan
 from explainer_engine.scripting.syllables import seconds as spoken_seconds
 from explainer_engine.standards import sourced_rules as SR
 
@@ -39,7 +40,8 @@ SETUP_MIN, CONCLUSION_MIN = SR.T("BP-90", "setup_lines_min"), SR.T("BP-90", "con
 SPEECH_VERBS = tuple(SR.T("BP-70", "speech_verbs"))  # reported speech (D-63): "Musk says...", "he asks..."
 REPORTED_SPEAKERS_MAX = SR.T("BP-96", "speakers_max")  # ST-16 (NR-04, a hypothesis)
 _VERB = "(?:" + "|".join(SPEECH_VERBS) + ")"
-DOCUDRAMA = "D"  # template D, the historical docudrama (docs/STORY_ENGINE.md): ST-17..ST-19 apply
+DOCUDRAMA = "D"  # template D, the historical docudrama (docs/STORY_ENGINE.md): ST-17..ST-19 and ST-24 apply
+D_ROWS = 16  # template D has 16 rows; its turn slots (BP-142) are rows of that table
 NARRATION_BLOCK_MAX_S = SR.T("BP-104", "narration_block_max_s")  # ST-17
 NARRATOR_SHARE = tuple(SR.T("BP-105", "narrator_share"))  # ST-19
 CENTRAL_FUNCS = {"climax", "crisis", "midpoint"}  # ST-18: the central scene
@@ -220,7 +222,17 @@ def lint(doc: dict) -> list[dict]:
     out += script_checks(doc, segs, sd)
     if drama.get("template") == DOCUDRAMA:
         _docudrama(out, segs, sd, seg_words)
+        out += turns_played(doc, segs)
     return out
+
+
+def turns_played(doc: dict, segs: list[dict]) -> list[dict]:
+    """ST-24 (BP-142, house): every turn of a docudrama is a played scene: a turn slot with no hero line is a FAIL, a played share
+    under the profile's minimum (BP-141) is REVIEW. Template D's slot ids (rows 4, 6, 8, 10, 11, 13) are used only when the script
+    has template D's 16 rows; any other script is held to its segments whose function is a turn."""
+    prof = variant_plan.profile((doc.get("drama") or {}).get("profile_id") or DOCUDRAMA)
+    dyn = variant_plan.dynamics(variant_plan.segments_from_script(doc), prof, template=DOCUDRAMA if len(segs) == D_ROWS else "any")
+    return [dict(f, rule="ST-24") for f in variant_plan.turn_findings(dyn, prof)]
 
 
 def content_words(text: str) -> set[str]:

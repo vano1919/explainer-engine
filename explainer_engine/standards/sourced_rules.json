@@ -4328,7 +4328,8 @@
    ],
    "enforced_by": [
     "explainer_engine/scripting/story_lint.py:NARRATOR_SHARE",
-    "explainer_engine/scripting/film_shots.py:NARRATOR_SHARE"
+    "explainer_engine/scripting/film_shots.py:NARRATOR_SHARE",
+    "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "supersedes": [
     "dialogue-scenes '~40-60 % narration', for template D"
@@ -4389,7 +4390,8 @@
    ],
    "enforced_by": [
     "explainer_engine/scripting/film_shots.py:SHOTS_PER_MIN",
-    "explainer_engine/scripting/film_shots.py:MEDIAN_SHOT_S"
+    "explainer_engine/scripting/film_shots.py:MEDIAN_SHOT_S",
+    "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "supersedes": [
     "BP-40 pictures_per_min_max 10 and ED-14's image budget, for animated episodes"
@@ -4440,7 +4442,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/film_shots.py:HOLD_SHARE_MAX"
+    "explainer_engine/scripting/film_shots.py:HOLD_SHARE_MAX",
+    "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "supersedes": [
     "the critic's plan review 2026-10-23: 40 % still + camera"
@@ -5149,7 +5152,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-10"
+    "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-10",
+    "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "planned": "explainer_engine/edit/visual_compensator.py (P5)",
    "supersedes": [],
@@ -5424,9 +5428,9 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/packaging.json:CRAFT-PKG-01",
-    "explainer_engine/scripting/story_lint.py"
+    "explainer_engine/scripting/story_lint.py",
+    "explainer_engine/scripting/variant_plan.py"
    ],
-   "planned": "explainer_engine/scripting/variant_plan.py (P3)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -5730,8 +5734,9 @@
      "verified": false
     }
    ],
-   "enforced_by": [],
-   "planned": "explainer_engine/scripting/variant_plan.py (P3)",
+   "enforced_by": [
+    "explainer_engine/scripting/variant_plan.py:checks"
+   ],
    "supersedes": []
   },
   {
@@ -5762,8 +5767,9 @@
     "played_blocks_min": 1
    },
    "sources": [],
-   "enforced_by": [],
-   "planned": "explainer_engine/scripting/variant_plan.py (P3)",
+   "enforced_by": [
+    "explainer_engine/scripting/variant_plan.py:turn_findings"
+   ],
    "supersedes": []
   },
   {
@@ -5867,8 +5873,9 @@
      "verified": false
     }
    ],
-   "enforced_by": [],
-   "planned": "explainer_engine/scripting/variant_plan.py (P3)",
+   "enforced_by": [
+    "explainer_engine/scripting/variant_plan.py:drift"
+   ],
    "supersedes": []
   }
  ]

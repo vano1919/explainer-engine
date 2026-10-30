@@ -1,11 +1,14 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "script_variants.schema.json",
- "title": "Script variants of an episode and the creator's choice (docs/CONTRACTS.md)",
+ "title": "Script variants of an episode and the creator's choice (versions 1 and 2; /2 adds each variant's segments with lane blocks, priced rows, scores and the choice's variants_sha256; docs/CONTRACTS.md, docs/SCRIPT_ENGINE.md VP)",
  "type": "object",
  "properties": {
   "schema": {
-   "const": "script_variants/1"
+   "enum": [
+    "script_variants/1",
+    "script_variants/2"
+   ]
   },
   "episode_slug": {
    "type": "string",
@@ -16,113 +19,17 @@
   },
   "variants": {
    "type": "array",
-   "items": {
-    "type": "object",
-    "properties": {
-     "id": {
-      "type": "string",
-      "minLength": 1
-     },
-     "title": {
-      "type": "string",
-      "minLength": 1
-     },
-     "profile_id": {
-      "type": "string",
-      "minLength": 1
-     },
-     "logline": {
-      "type": "string",
-      "minLength": 1
-     },
-     "outline": {
-      "type": "array",
-      "items": {
-       "type": "string",
-       "minLength": 1
-      },
-      "minItems": 1
-     },
-     "dynamics": {
-      "type": "object",
-      "additionalProperties": {
-       "type": "number"
-      }
-     },
-     "cost": {
-      "type": "object",
-      "properties": {
-       "usd_planned": {
-        "type": "number",
-        "minimum": 0
-       },
-       "usd_worst": {
-        "type": "number",
-        "minimum": 0
-       },
-       "unknown_rows": {
-        "type": "array",
-        "items": {
-         "type": "string",
-         "minLength": 1
-        }
-       }
-      },
-      "required": [
-       "usd_planned",
-       "usd_worst",
-       "unknown_rows"
-      ],
-      "additionalProperties": false
-     }
-    },
-    "required": [
-     "id",
-     "title",
-     "profile_id",
-     "logline",
-     "outline",
-     "dynamics",
-     "cost"
-    ],
-    "additionalProperties": false
-   },
    "minItems": 2,
    "maxItems": 3
   },
-  "chosen": {
-   "anyOf": [
-    {
-     "type": "object",
-     "properties": {
-      "variant_id": {
-       "type": "string",
-       "minLength": 1
-      },
-      "by": {
-       "type": "string",
-       "minLength": 1
-      },
-      "ref": {
-       "type": "string",
-       "minLength": 1
-      },
-      "at": {
-       "$ref": "#/$defs/time"
-      }
-     },
-     "required": [
-      "variant_id",
-      "by",
-      "ref",
-      "at"
-     ],
-     "additionalProperties": false
-    },
-    {
-     "type": "null"
-    }
-   ]
+  "chosen": {},
+  "recommended": {
+   "type": "string",
+   "minLength": 1
+  },
+  "why": {
+   "type": "string",
+   "minLength": 1
   }
  },
  "required": [
@@ -200,6 +107,573 @@
   "time": {
    "type": "string",
    "minLength": 10
+  },
+  "variant_v1": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "title": {
+     "type": "string",
+     "minLength": 1
+    },
+    "profile_id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "logline": {
+     "type": "string",
+     "minLength": 1
+    },
+    "outline": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 1
+    },
+    "dynamics": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "number"
+     }
+    },
+    "cost": {
+     "type": "object",
+     "properties": {
+      "usd_planned": {
+       "type": "number",
+       "minimum": 0
+      },
+      "usd_worst": {
+       "type": "number",
+       "minimum": 0
+      },
+      "unknown_rows": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "minLength": 1
+       }
+      }
+     },
+     "required": [
+      "usd_planned",
+      "usd_worst",
+      "unknown_rows"
+     ],
+     "additionalProperties": false
+    }
+   },
+   "required": [
+    "id",
+    "title",
+    "profile_id",
+    "logline",
+    "outline",
+    "dynamics",
+    "cost"
+   ],
+   "additionalProperties": false
+  },
+  "chosen_v1": {
+   "anyOf": [
+    {
+     "type": "object",
+     "properties": {
+      "variant_id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "by": {
+       "type": "string",
+       "minLength": 1
+      },
+      "ref": {
+       "type": "string",
+       "minLength": 1
+      },
+      "at": {
+       "$ref": "#/$defs/time"
+      }
+     },
+     "required": [
+      "variant_id",
+      "by",
+      "ref",
+      "at"
+     ],
+     "additionalProperties": false
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "variant_v2": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "title": {
+     "type": "string",
+     "minLength": 1
+    },
+    "profile_id": {
+     "enum": [
+      "A",
+      "B",
+      "C",
+      "D"
+     ]
+    },
+    "logline": {
+     "type": "string",
+     "minLength": 1
+    },
+    "outline": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 1
+    },
+    "segments": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "minLength": 1
+       },
+       "window_s": {
+        "type": "number",
+        "exclusiveMinimum": 0
+       },
+       "function": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "blocks": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "category": {
+           "enum": [
+            "scene",
+            "map_pure",
+            "compensator",
+            "host",
+            "hold"
+           ]
+          },
+          "lane": {
+           "enum": [
+            "KEYFRAME_LTX",
+            "DIALOGUE_CU",
+            "HOST_COMMENTARY",
+            "DRAMA_BLOCKED_3D",
+            "ATMOS_BROLL",
+            "MAP",
+            "COMPENSATOR",
+            "STILL_HOLD"
+           ]
+          },
+          "archetype": {
+           "type": "integer",
+           "minimum": 1,
+           "maximum": 12
+          },
+          "seconds": {
+           "type": "number",
+           "exclusiveMinimum": 0
+          },
+          "who": {
+           "type": "string",
+           "minLength": 1
+          },
+          "tier": {
+           "enum": [
+            "full",
+            "light",
+            "hold"
+           ]
+          },
+          "mode": {
+           "type": "string"
+          },
+          "shots": {
+           "type": "integer",
+           "minimum": 1
+          },
+          "id": {
+           "type": "string"
+          },
+          "words": {
+           "type": "object",
+           "properties": {
+            "narrator": {
+             "type": "integer",
+             "minimum": 0
+            },
+            "character": {
+             "type": "integer",
+             "minimum": 0
+            }
+           },
+           "additionalProperties": false
+          }
+         },
+         "required": [
+          "seconds"
+         ],
+         "anyOf": [
+          {
+           "required": [
+            "category"
+           ]
+          },
+          {
+           "required": [
+            "lane"
+           ]
+          },
+          {
+           "required": [
+            "mode"
+           ]
+          }
+         ],
+         "additionalProperties": false
+        },
+        "minItems": 1
+       }
+      },
+      "required": [
+       "id",
+       "window_s",
+       "blocks"
+      ],
+      "additionalProperties": false
+     },
+     "minItems": 1
+    },
+    "dynamics": {
+     "type": "object",
+     "additionalProperties": {
+      "type": "number"
+     }
+    },
+    "cost_rows": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "label": {
+        "type": "string",
+        "minLength": 1
+       },
+       "kind": {
+        "enum": [
+         "pod",
+         "api",
+         "cpu",
+         "voice"
+        ]
+       },
+       "service": {
+        "type": "string"
+       },
+       "pod": {
+        "type": "string"
+       },
+       "job": {
+        "type": "string"
+       },
+       "units": {
+        "type": "number",
+        "minimum": 0
+       },
+       "provider": {
+        "type": "string"
+       },
+       "model": {
+        "type": "string"
+       },
+       "size": {
+        "type": "string"
+       },
+       "refs": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "batch": {
+        "type": "boolean"
+       }
+      },
+      "required": [
+       "label",
+       "kind",
+       "units"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "cost": {
+     "type": "object",
+     "properties": {
+      "usd_planned": {
+       "anyOf": [
+        {
+         "type": "number",
+         "minimum": 0
+        },
+        {
+         "const": "unknown"
+        }
+       ]
+      },
+      "usd_worst": {
+       "anyOf": [
+        {
+         "type": "number",
+         "minimum": 0
+        },
+        {
+         "const": "unknown"
+        }
+       ]
+      },
+      "known_usd_planned": {
+       "type": "number",
+       "minimum": 0
+      },
+      "known_usd_worst": {
+       "type": "number",
+       "minimum": 0
+      },
+      "unknown_rows": {
+       "type": "array",
+       "items": {
+        "type": "string",
+        "minLength": 1
+       }
+      },
+      "rows": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "label": {
+          "type": "string"
+         },
+         "kind": {
+          "type": "string"
+         },
+         "service": {
+          "type": [
+           "string",
+           "null"
+          ]
+         },
+         "units": {
+          "type": "number"
+         },
+         "usd_planned": {
+          "type": [
+           "number",
+           "null"
+          ]
+         },
+         "usd_worst": {
+          "type": [
+           "number",
+           "null"
+          ]
+         },
+         "basis": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "label",
+         "kind",
+         "units",
+         "usd_planned",
+         "usd_worst",
+         "basis"
+        ],
+        "additionalProperties": false
+       }
+      }
+     },
+     "required": [
+      "usd_planned",
+      "usd_worst",
+      "known_usd_planned",
+      "known_usd_worst",
+      "unknown_rows",
+      "rows"
+     ],
+     "additionalProperties": false
+    },
+    "risks": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "scores": {
+     "type": "object",
+     "properties": {
+      "code": {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 100
+      },
+      "critic": {
+       "type": [
+        "integer",
+        "null"
+       ],
+       "minimum": 0,
+       "maximum": 100
+      }
+     },
+     "required": [
+      "code",
+      "critic"
+     ],
+     "additionalProperties": false
+    },
+    "packaging_promises": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "minLength": 1
+     },
+     "minItems": 3,
+     "maxItems": 3
+    }
+   },
+   "required": [
+    "id",
+    "title",
+    "profile_id",
+    "logline",
+    "outline",
+    "segments",
+    "dynamics",
+    "cost_rows",
+    "cost",
+    "risks",
+    "scores"
+   ],
+   "additionalProperties": false
+  },
+  "chosen_v2": {
+   "anyOf": [
+    {
+     "type": "object",
+     "properties": {
+      "variant_id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "by": {
+       "type": "string",
+       "minLength": 1
+      },
+      "ref": {
+       "type": "string",
+       "minLength": 1
+      },
+      "at": {
+       "$ref": "#/$defs/time"
+      },
+      "variants_sha256": {
+       "$ref": "#/$defs/sha256"
+      }
+     },
+     "required": [
+      "variant_id",
+      "by",
+      "ref",
+      "at",
+      "variants_sha256"
+     ],
+     "additionalProperties": false
+    },
+    {
+     "type": "null"
+    }
+   ]
   }
- }
+ },
+ "allOf": [
+  {
+   "if": {
+    "properties": {
+     "schema": {
+      "const": "script_variants/1"
+     }
+    },
+    "required": [
+     "schema"
+    ]
+   },
+   "then": {
+    "properties": {
+     "variants": {
+      "items": {
+       "$ref": "#/$defs/variant_v1"
+      }
+     },
+     "chosen": {
+      "$ref": "#/$defs/chosen_v1"
+     }
+    },
+    "not": {
+     "anyOf": [
+      {
+       "required": [
+        "recommended"
+       ]
+      },
+      {
+       "required": [
+        "why"
+       ]
+      }
+     ]
+    }
+   },
+   "else": {
+    "properties": {
+     "variants": {
+      "items": {
+       "$ref": "#/$defs/variant_v2"
+      }
+     },
+     "chosen": {
+      "$ref": "#/$defs/chosen_v2"
+     }
+    },
+    "required": [
+     "recommended",
+     "why"
+    ]
+   }
+  }
+ ]
 }

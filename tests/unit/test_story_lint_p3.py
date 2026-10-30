@@ -73,3 +73,40 @@ def test_the_first_packaging_promise_must_be_paid_in_the_first_seconds():
     assert not [f for f in found(d, "ST-01") if f["where"] == "drama.packaging_promises"]
     d["drama"]["packaging_promises"] = ["Genghis rides at Waterloo", "second", "third"]
     assert [f["severity"] for f in found(d, "ST-01") if f["where"] == "drama.packaging_promises"] == ["REVIEW"]
+
+
+def template_d(n=16, hero_in=()):
+    d = copy.deepcopy(storied())
+    d["drama"]["template"] = "D"
+    base = d["segments"][1]
+    segs = []
+    for i in range(1, n + 1):
+        s = copy.deepcopy(base)
+        s["id"] = f"S{i:02d}"
+        s["lines"] = [{"text": "The fog lay thick over the whole long field that morning."}]
+        if i in hero_in:
+            s["lines"].append({"speaker": "einstein", "text": "Sire, the guns are frozen and the men are afraid."})
+        segs.append(s)
+    d["segments"] = segs
+    return d
+
+
+def test_st24_a_turn_slot_with_no_hero_line_fails_by_the_creators_rule():
+    d = template_d(hero_in={4, 6, 8, 11, 13})
+    f = found(d, "ST-24")
+    assert [(x["severity"], x["where"]) for x in f if x["severity"] == "FAIL"] == [("FAIL", "S10")]
+    assert SR.level("BP-142") == "FAIL"
+    played = template_d(hero_in={4, 6, 8, 10, 11, 13})
+    assert not [x for x in found(played, "ST-24") if x["severity"] == "FAIL"]
+
+
+def test_st24_a_low_played_share_is_review_and_a_script_with_other_rows_uses_its_turn_functions():
+    d = template_d(hero_in={4, 6, 8, 10, 11, 13})
+    d["segments"][3]["lines"] = [{"text": "A very long narrator line goes on and on about the fog over the field and the army " * 3},
+                                 {"speaker": "einstein", "text": "Sire."}]
+    low = [x for x in found(d, "ST-24") if x["where"] == "S04"]
+    assert [x["severity"] for x in low] == ["REVIEW"]
+    short = template_d(n=6)
+    short["segments"][2]["drama"]["function"] = "reversal"
+    f = found(short, "ST-24")
+    assert [(x["severity"], x["where"]) for x in f] == [("FAIL", short["segments"][2]["id"])]
