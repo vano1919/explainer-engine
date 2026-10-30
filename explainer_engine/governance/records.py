@@ -1,5 +1,5 @@
-"""The creator's recorded word (``jobs/creator_ok.jsonl``): the second lock behind a model switch, an effort override and an
-edit of a protected config file. Claude writes a line only from the creator's own message and quotes it; the hooks cannot
+"""The creator's recorded word (``jobs/creator_ok.jsonl``): the second lock behind a model switch, an effort override, an
+edit of a protected config file and a change of the channel voice (``channel_voice``, target = the voice id, P4b / VC-08). Claude writes a line only from the creator's own message and quotes it; the hooks cannot
 check the quote, they stop an unprompted change (design section 7)."""
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 from explainer_engine.governance import root_dir
 
 FILE = Path("jobs") / "creator_ok.jsonl"
-ACTIONS = ("model_switch", "effort_override", "protected_config")
+ACTIONS = ("model_switch", "effort_override", "protected_config", "channel_voice")
 
 
 def _now() -> float:
@@ -62,3 +62,17 @@ def last(action: str, target: str, *, root=None) -> dict | None:
         if row.get("action") == action and row.get("target") in (target, "*"):
             rows.append(row)
     return rows[-1] if rows else None
+
+
+def find(action: str, target: str, message_id: str, *, root=None) -> dict | None:
+    """The record of this action for exactly ``target`` (no wildcard) that carries ``message_id``: the check that a
+    ``creator_ref`` handed to code names a word the creator really gave."""
+    path = root_dir(root) / FILE
+    for line in (path.read_text(encoding="utf-8").splitlines() if path.exists() else []):
+        try:
+            row = json.loads(line)
+        except ValueError:
+            continue
+        if row.get("action") == action and row.get("target") == target and row.get("message_id") == message_id:
+            return row
+    return None

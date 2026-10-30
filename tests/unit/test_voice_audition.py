@@ -169,11 +169,20 @@ OTHER = {"voice_id": "other", "name": "Other", "role": "narrator", "status": "ch
 SPUDS = "NOpBlnGInO9m6vDvFkFC"
 
 
-def test_only_the_creators_word_replaces_the_channel_narrator():
+def word(root, voice_id, ref="cmsg_ok"):
+    from explainer_engine.governance import records
+    records.add("channel_voice", voice_id, ref, "ვანო: კი", root=root)
+    return ref
+
+
+def test_only_the_creators_recorded_word_replaces_the_channel_narrator(tmp_path):
     reg = VC.load_registry()
     with pytest.raises(ContractError, match="VC-08"):
         VC.register(reg, OTHER)
-    new = VC.register(reg, OTHER, creator_ref="cmsg_test")
+    with pytest.raises(ContractError, match="no recorded creator word"):
+        VC.register(reg, OTHER, creator_ref="cmsg_invented", root=tmp_path)  # a ref nobody recorded
+    ref = word(tmp_path, "other")
+    new = VC.register(reg, OTHER, creator_ref=ref, root=tmp_path)
     assert VC.channel_voice(new)["voice_id"] == "other"
     assert [v["status"] for v in new["voices"] if v["voice_id"] == SPUDS] == ["retired"]
     assert VC.channel_voice(reg)["voice_id"] == SPUDS  # the input is not changed
@@ -181,21 +190,33 @@ def test_only_the_creators_word_replaces_the_channel_narrator():
     assert VC.register(reg, candidate)["voices"][-1]["status"] == "candidate"  # a candidate needs no word
 
 
-def test_retiring_or_demoting_the_standing_narrator_needs_the_word_too():
-    """Review of #45: retiring the narrator and then adding a new one must not get round VC-08 in two calls."""
+def test_a_word_for_another_voice_or_another_action_does_not_count(tmp_path):
+    from explainer_engine.governance import records
+    reg = VC.load_registry()
+    records.add("channel_voice", "someone_else", "cmsg_a", "ვანო: კი", root=tmp_path)
+    records.add("model_switch", "other", "cmsg_b", "ვანო: კი", root=tmp_path)
+    records.add("channel_voice", "*", "cmsg_c", "ვანო: კი", root=tmp_path)  # no wildcard for the channel voice
+    for ref in ("cmsg_a", "cmsg_b", "cmsg_c"):
+        with pytest.raises(ContractError, match="no recorded creator word"):
+            VC.register(reg, OTHER, creator_ref=ref, root=tmp_path)
+
+
+def test_retiring_demoting_or_changing_the_standing_narrator_needs_the_word_too(tmp_path):
+    """Review of #45: retiring the narrator and then adding a new one must not get round VC-08 in two calls; a new model or
+    baseline of the standing voice changes what EL-13 measures, so it needs the word as well."""
     reg = VC.load_registry()
     standing = next(v for v in reg["voices"] if v["voice_id"] == SPUDS)
-    for change in ({"status": "retired"}, {"status": "candidate"}, {"role": "character"}):
+    ref = word(tmp_path, SPUDS)
+    changes = ({"status": "retired"}, {"status": "candidate"}, {"role": "character"}, {"model": "eleven_v5"},
+               {"baseline": dict(standing["baseline"], centroid_hz=1200.0)}, {"baseline": None})
+    for change in changes:
         with pytest.raises(ContractError, match="VC-08"):
             VC.register(reg, dict(standing, **change))
-        done = VC.register(reg, dict(standing, **change), creator_ref="cmsg_test")
-        assert VC.channel_voice(done) is None or VC.channel_voice(done)["voice_id"] != SPUDS
-    # the two-call route is closed: step one is refused, so there is no step two
-    with pytest.raises(ContractError, match="VC-08"):
-        VC.register(reg, dict(standing, status="retired"))
-    # a new baseline for the standing voice, and the first channel voice of a role, need no word
-    rebased = VC.register(reg, dict(standing, baseline=dict(standing["baseline"], centroid_hz=1200.0)))
-    assert VC.channel_voice(rebased)["baseline"]["centroid_hz"] == 1200.0
+        done = VC.register(reg, dict(standing, **change), creator_ref=ref, root=tmp_path)
+        assert next(v for v in done["voices"] if v["voice_id"] == SPUDS) == dict(standing, **change)
+    # the name and the note are free; the first channel voice of a role needs no word
+    renamed = VC.register(reg, dict(standing, note="reworded"))
+    assert VC.channel_voice(renamed)["note"] == "reworded"
     first_character = dict(OTHER, role="character")
     assert VC.channel_voice(VC.register(reg, first_character), "character")["voice_id"] == "other"
 
@@ -207,6 +228,7 @@ def test_a_blank_creator_word_is_refused_everywhere(ref):
         VC.register(reg, OTHER, creator_ref=ref)
     with pytest.raises(ContractError, match="blank"):
         VC.register(reg, dict(OTHER, status="candidate"), creator_ref=ref)
+    assert "channel_voice" in __import__("explainer_engine.governance.records", fromlist=["x"]).ACTIONS
 
 
 def test_a_registry_with_two_channel_narrators_or_a_repeated_id_is_refused():

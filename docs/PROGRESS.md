@@ -2813,3 +2813,16 @@ training as sequences is decided in the process. Changed together:
   and `huggingface_hub` (latest 1.x; its API checked by import). They are pins to be proved by P12a, not facts about a working stack.
 - Not done here, on purpose: the nine historic `training/pods/*.sh` (pre-P1a protocol: own upload loop, own DONE) are not rewritten. They are
   refused by `create` already; the P12 scripts under `training/pods/p12/` are the ones that must pass `dryrun`.
+
+## 2026-10-30 04:45 UTC: P4b follow-up, the channel voice's word is checked, not just present (after #45)
+
+- Optional findings of the #45 review: `creator_ref` was only checked for being non-blank, and the standing narrator's model and baseline
+  could change without a word. Now `governance/records.py` has the action `channel_voice` (target = the voice id) and `find`;
+  `voice_check.register` needs a `creator_ref` that names such a record for the voice (no wildcard, no other action) to make a
+  different voice the channel voice, retire or demote the standing one, or change its `model` or `baseline`; the name, the note and
+  the first channel voice of a role stay free.
+- Choice to confirm (mine, not the creator's words): the baseline and the model count as "the channel voice" because loosening
+  the baseline would hide drift (EL-13) and a new model changes how it sounds. If the creator wants the next episode's approved read
+  to replace the baseline without a separate word, that is one line in `register`.
+- Tests: `test_voice_audition.py` (a ref nobody recorded, a word for another voice/action/wildcard, each standing-voice change).
+
