@@ -3192,3 +3192,19 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   Argon-2 47). `runpod check` (read-only, 2026-10-30 ~13:45 UTC): 49 STOPPED pods, each 0 GB, $0.00/day in total; billed $0.00 in 24 h;
   balance $10.40; no PROBLEM line.
 - OPEN for T3/CP-18: `docs/CLOUD_RUNBOOK.md:18` and `:54` (CR-01, "Boot (TMR manifest) pods keep `boot_cmd`") still describe boot pods.
+## 2026-10-30 — plan_v2 wave 1, T2 PR-C: CP-09+CP-10, CLIP-01..12 in `video-qa` and the gate rows `keyframes` / `clips`
+- `training/video_qa.py`: `probe_container`, `audio_measure`, `decode_gray`, `clip_findings`, `qa_file(..., clip=)` add CLIP-01..12 (frame rate against the
+  manifest and variable-rate, 8k+1 frames and 32-divisible size per BP-139, a dialogue shot has an audio track, audio length against picture, true peak
+  against BP-50 with BP-50's own severity, words heard in a shot that should be silent, share of the dialogue heard, silence share, black / blown / flat
+  frames, a frozen tail, frame 0 against its keyframe). Every number is `BP-164` (new, hypothesis, REVIEW); only CLIP-01 (rate), CLIP-04 (no track in a dialogue
+  shot) and CLIP-06 (BP-50 ceiling) can FAIL, none from a hypothesis number. `training video-qa` gets `--fps --dialogue --expect-speech --transcript
+  --keyframe --write` (`<clip>.video_qa.json` beside the clip). The transcript comes from a given file, else the free local transcriber when installed, never a paid read.
+- `production_gate.py`: new rows `keyframes` (from `qa_log.jsonl`) and `clips` (from the sidecars); WAIT / BLOCKED / PASS; a still-picture episode gets neither row.
+  The gate reads JSON only and imports neither checker, so a skipped check shows as WAIT instead of leaving no trace.
+- Unverified items from the card, opened here: U3 `made_with.lora` and `bible_version` exist (`assets/library.py:77-99`), not in `assets_reuse.py`; U4
+  `audio/local_words.transcribe` exists (faster-whisper, imported inside `_model`); U5 `qa/face_points.py`, `qa/prop_points.py`, `training/qa/image_stats.py` exist,
+  nothing here depends on them; U6 `video_qa` holds the LT thresholds as quoted literals (table in PR-D).
+- Tests red on main -> green: new `tests/unit/test_video_qa_clip_rows.py` (10: container, audio, frame rows; registry hygiene; transcript source; real ffmpeg
+  clips; CLI sidecar; gate rows keyframes and clips; still episodes). Focused set 71 passed with PR-B's, `docs_lint` and `governance check` clean.
+- OPEN: where clips live under an episode folder (`clips/**/*.mp4` is read) is for P6/P7; the REVIEW-only follow-up cards are in the PR body. No pod, no API call, nothing deleted.
+- Decision log: none moved.
