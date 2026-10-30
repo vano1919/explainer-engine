@@ -1,0 +1,168 @@
+{
+  "base": {
+    "repo": "Qwen/Qwen-Image-2.1",
+    "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
+    "dtype": "bf16"
+  },
+  "style_lora": {
+    "hf": "vano1919/tmr-artifacts",
+    "path": "lora_plan_2026-10-26/train_xworld_v2/output/xworld_v2_000003000.safetensors",
+    "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02",
+    "weight": 1.0,
+    "trigger": "xworld style"
+  },
+  "mva_lora": {
+    "repo": "akhaliq/Qwen-Image-2.1-Multiple-Angles-LoRA",
+    "file": "checkpoints_v2/angles_v2_full_qwen21_multiple_angles_v2_qwen21_multiple_angles_v2_000001500.safetensors",
+    "revision": "175b29b6eb41307473eebc363fca8fc198216b60",
+    "trigger": "<mva>"
+  },
+  "image_pin": "aitoolkit",
+  "azimuths": [
+    "front view",
+    "front-right view",
+    "front-right quarter view",
+    "right side view",
+    "back-right quarter view",
+    "back-right view",
+    "back view",
+    "back-left view",
+    "back-left quarter view",
+    "left side view",
+    "front-left quarter view",
+    "front-left view"
+  ],
+  "references": {
+    "repo": "vano1919/tmr-artifacts",
+    "repo_type": "dataset",
+    "crop": "left_third_padded_3_4_white_768x1024",
+    "napoleon": "lora_plan_2026-10-26/train_xworld_v2/p2s/out/p2s/tent_sheet_napoleon.png",
+    "general": "lora_plan_2026-10-26/train_xworld_v2/p2s/out/p2s/tent_sheet_general.png",
+    "baker": "lora_plan_2026-10-26/train_xworld_v2/p2s/out/p2s/rome_sheet_baker.png",
+    "legionary": "lora_plan_2026-10-26/train_xworld_v2/p2s/out/p2s/rome_sheet_legionary.png"
+  },
+  "hosts": {
+    "analyst": "assets/characters/crossworld_cast_v0/analyst/a_idle.png",
+    "compass": "assets/characters/crossworld_cast_v0/compass/b_hover.png"
+  },
+  "stages": {
+    "Q1": {
+      "people": [
+        "napoleon",
+        "general"
+      ],
+      "azimuths": [
+        "front view",
+        "front-right view",
+        "front-right quarter view",
+        "right side view",
+        "back-right quarter view",
+        "back-right view",
+        "back view",
+        "back-left view",
+        "back-left quarter view",
+        "left side view",
+        "front-left quarter view",
+        "front-left view"
+      ],
+      "mva": [
+        0.8
+      ],
+      "steps": 40,
+      "true_cfg_scale": 1.0,
+      "essential": true,
+      "order": 1
+    },
+    "Q4": {
+      "hosts": [
+        "analyst",
+        "compass"
+      ],
+      "seeds": [
+        11,
+        23,
+        37,
+        53
+      ],
+      "steps": 30,
+      "true_cfg_scale": 2.5,
+      "negative": " ",
+      "essential": true,
+      "order": 2
+    },
+    "Q2": {
+      "people": [
+        "napoleon",
+        "general"
+      ],
+      "azimuths": [
+        "front-right quarter view",
+        "right side view",
+        "back view",
+        "left side view"
+      ],
+      "mva": [
+        0.6,
+        1.0
+      ],
+      "steps": 40,
+      "true_cfg_scale": 1.0,
+      "essential": false,
+      "order": 3
+    },
+    "Q3": {
+      "people": [
+        "baker",
+        "legionary"
+      ],
+      "azimuths": [
+        "front view",
+        "front-right view",
+        "front-right quarter view",
+        "right side view",
+        "back-right quarter view",
+        "back-right view",
+        "back view",
+        "back-left view",
+        "back-left quarter view",
+        "left side view",
+        "front-left quarter view",
+        "front-left view"
+      ],
+      "mva": [
+        0.8
+      ],
+      "steps": 40,
+      "true_cfg_scale": 1.0,
+      "essential": false,
+      "order": 4
+    }
+  },
+  "drop_order": [
+    "Q3",
+    "Q2"
+  ],
+  "end_reserve_min": 15,
+  "seed": 11,
+  "size": [
+    768,
+    1024
+  ],
+  "prompt_mva": "<mva> {azimuth}, eye-level shot. xworld style, full figure on a plain white background.",
+  "prompt_hosts": {
+    "analyst": "xworld style. The same character redrawn in the house style: an egg-shaped explorer with a fedora, a monocle, a red neckerchief and a leather satchel, full figure, front view, standing, on a plain white background.",
+    "compass": "xworld style. The same character redrawn in the house style: a winged brass pocket watch with one large eye on its face, full figure, front view, hovering, on a plain white background."
+  },
+  "outputs": {
+    "mva": "runs/p12b/mva/<person>/<az_deg>_s<strength>.png",
+    "hosts": "runs/p12b/hosts/<host>_seed<seed>.png"
+  },
+  "heartbeat": "datasets/vano1919/tmr-artifacts:runs/p12b/beat.txt",
+  "stall_minutes": 15,
+  "deferred_to_p12c": [
+    "L1",
+    "L2",
+    "L3",
+    "AV"
+  ]
+}

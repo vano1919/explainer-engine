@@ -3506,3 +3506,11 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   preflight, 19.01 leaves 0.99 and is refused naming `min_balance_left_usd`). Check 8 = YES (`_picks` already counts
   distinct pair numbers, commit dd5009f), so no `generator_gate.py` change and no new generator-gate test.
 - No production code changed, nothing paid. Tests: see the PR.
+## 2026-10-30 T10: `p12b.json`, every pin of the Qwen-only P12b
+- New `explainer_engine/training/pods/p12/p12b.json`: Qwen-Image-2.1 revision, `xworld_v2_000003000` (vault sha256), the Multiple-Angles LoRA
+  (revision read from the Hub: 175b29b6eb41307473eebc363fca8fc198216b60), the 12 azimuths, the four hero sheets (HF dataset
+  `vano1919/tmr-artifacts`, `p2s/out/p2s/`, paths given by the coordinator), the host pictures, stages Q1-Q4, drop order, prompts, outputs, heartbeat.
+  LTX stages (L1, L2, L3, AV) are listed as `deferred_to_p12c`.
+- Test: `tests/unit/test_p12b_config.py::test_p12b_json_is_pinned_complete_and_qwen_only`.
+- OPEN: none. No pod, no API call, nothing deleted.
+- Decision log: none moved.
