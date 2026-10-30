@@ -40,7 +40,7 @@ defaults to pass. A deterministic FAIL cannot be overridden by an assertion.
 | Q-E08 | Does the humour suit the topic (no ridicule of people, no false facts)? |
 | Q-E09 | Is the Short understandable alone with its own payoff? |
 | Q-E10 | Are title, thumbnail and description honest and consistent with the style bible? |
-| Q-E11 | Is Kit on model (the sheet) and the world consistent? |
+| Q-E11 | Is every named character on its approved reference sheet (D-55)? |
 | Q-E12 | Policy checklist (below) answered. |
 | Q-E13 | Franchise episodes: rights check (`rights/ip_check.py`) has no FAIL and every REVIEW is answered; the analysis purpose (RR-01, RR-06) is visible in every scene. |
 | Q-E15 | Every episode: the rulebook gate `final_qa` passes ([EPISODE_STANDARDS](EPISODE_STANDARDS.md)): no open BLOCK/REVIEW/ADAPT, licences verified, no placeholder credit, the disclosure decision recorded, and the last stamp matches the final script. |

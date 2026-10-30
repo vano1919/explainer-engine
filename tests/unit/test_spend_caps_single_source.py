@@ -42,3 +42,32 @@ def test_the_detector_catches_a_copied_cap():
     assert violations('Run.open(p, caps={"bfl_usd": 3.0})') == [(1, "bfl_usd")]
     assert violations("f(runpod_usd=29)") == [(1, "runpod_usd")]
     assert violations('x = {"runpod_usd": spend_caps.runpod()["x"]}') == []
+
+
+def test_money_docs_link_spend_caps_instead_of_old_cap_numbers():
+    cost = (ROOT / "docs/COST_AND_TIME_MODEL.md").read_text(encoding="utf-8")
+    orch = (ROOT / "docs/ORCHESTRATION.md").read_text(encoding="utf-8")
+    spec = (ROOT / "docs/VIDEO_PARAMETER_SPEC.md").read_text(encoding="utf-8")
+    brief = (ROOT / "docs/PROJECT_BRIEF.md").read_text(encoding="utf-8")
+    assert "US$3 hard cap" not in cost and "US$10 total" not in cost
+    assert "RunPod none" not in orch and "US$6.00" not in orch
+    p110 = next(line for line in spec.splitlines() if "P-110" in line)
+    assert "$10 total" not in p110 and "config/spend_caps.json" in p110
+    assert "US$10 in total" not in brief and "config/spend_caps.json" in brief
+
+
+def test_runbook_names_the_watchdog_as_backstop_with_its_cron():
+    import re
+
+    yml = (ROOT / ".github/workflows/watchdog.yml").read_text(encoding="utf-8")
+    cron = re.search(r'cron:\s*["\']([^"\']+)["\']', yml).group(1)
+    runbook = (ROOT / "docs/CLOUD_RUNBOOK.md").read_text(encoding="utf-8")
+    row = next(line for line in runbook.splitlines() if "watchdog.yml" in line and line.startswith("| 3."))
+    assert "backstop" in row and cron in row
+
+
+def test_runbook_no_longer_says_boot_pods_run():
+    runbook = (ROOT / "docs/CLOUD_RUNBOOK.md").read_text(encoding="utf-8")
+    assert "pods keep `boot_cmd`" not in runbook
+    cr01 = next(line for line in runbook.splitlines() if line.startswith("| CR-01"))
+    assert "retired" in cr01 and "N-01" in cr01

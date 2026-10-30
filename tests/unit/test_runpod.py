@@ -149,7 +149,11 @@ def pod(pid="a", name="ee-x-until-9999999999", status="RUNNING", price=0.89, vol
 
 
 def stamped(body):
-    """N-01: create() sends only a body stamped by preflight_create; the library tests of the card loop stamp their hand-made body."""
+    """N-01: create() sends only a body stamped by preflight_create; the library tests of the card loop stamp their hand-made body.
+    create() also checks what the body alone decides (the wrapper command, a pinned image; T5's review of N-01), so the hand-made
+    body becomes a script pod's body first."""
+    from explainer_engine.cloud import pins
+    body["cmd"], body["image"] = R.script_cmd(), pins.image_ref(pins.DEFAULT_IMAGE)
     body[R.PREFLIGHT_KEY] = R.preflight_stamp(body)
     return body
 

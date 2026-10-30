@@ -11,7 +11,11 @@ from test_cloud_stop_paths import BEAT, env  # noqa: F401 - the create tests' fi
 from test_runpod import NEW_SH, live_ok, script_pod
 
 from explainer_engine.cloud import hooks, pins, runpod as rp
+from explainer_engine.core import spend_caps
 from explainer_engine.core.ledger import Run
+from explainer_engine.imagegen.providers.base import ProviderError
+from explainer_engine.imagegen.providers.bfl import BFL as RealBFL
+from explainer_engine.training.cast import sheet
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -38,6 +42,10 @@ def test_retired_launcher_exits_before_any_pod_client(rel):
     'python -c "from explainer_engine.cloud import runpod as rp; rp.create(api, body)"',
     'python -c "import explainer_engine.cloud.runpod as runpod; runpod.create(a, b, max_price=0.8)"',
     "python3 - <<'EOF'\nfrom explainer_engine.cloud import runpod as rp\nrp.create(rp.Api(), body)\nEOF",
+    # T5's review of CP-01: a bare imported name and an alias spelled the call another way
+    'python -c "from explainer_engine.cloud.runpod import create; create(api, body)"',
+    'python -c "from explainer_engine.cloud import runpod as R; R.create(a, b, max_price=0.8)"',
+    'python -c "import explainer_engine.cloud.runpod as pods; pods.create(a, b)"',
 ])
 def test_pre_bash_refuses_retired_launchers_and_library_create(cmd):
     assert hooks.pre_bash({"tool_input": {"command": cmd}}) == 2, cmd
@@ -46,6 +54,8 @@ def test_pre_bash_refuses_retired_launchers_and_library_create(cmd):
 @pytest.mark.parametrize("cmd", [
     "cat explainer_engine/aivideo/pod/launch.py",
     'grep -n "rp.create(" explainer_engine/cloud/runpod.py',
+    'grep -n "def create(" explainer_engine/cloud/runpod.py',
+    "python -m explainer_engine.cloud.runpod create --script explainer_engine/training/pods/p12/p12a_A.sh --ledger run.json",
     "python -m explainer_engine.cloud.runpod check",
     "python -m explainer_engine.cloud.runpod create --yes --max-usd 0.5",
     "python -m pytest -q tests/unit/test_runpod.py",
@@ -107,6 +117,19 @@ def test_preflight_with_a_body_refuses_no_script_an_unpinned_image_and_a_boot_po
         rp.create(NoNetwork(), boot, max_price=0.95)
 
 
+def test_create_refuses_a_forged_stamp_on_a_boot_body_or_an_unpinned_image():
+    """T5's review of N-01: ``preflight_stamp`` is public, so a stamp can be forged with one call. create() itself checks what the
+    body alone decides: it runs pod_wrapper.sh (OR-21) and its image is pinned (cloud_pins.json), so a forged stamp sends neither."""
+    boot = rp.create_body("ee-x-until-9999999999", "cheap", volume=0, image=pins.image_ref(pins.DEFAULT_IMAGE), boot="cloud/x.json")
+    boot[rp.PREFLIGHT_KEY] = rp.preflight_stamp(boot)
+    with pytest.raises(rp.RunPodError, match="pod_wrapper.sh"):
+        rp.create(NoNetwork(), boot, max_price=0.95)
+    tag = _script_body(image="ghcr.io/vano1919/tmr-pod:latest")
+    tag[rp.PREFLIGHT_KEY] = rp.preflight_stamp(tag)
+    with pytest.raises(rp.RunPodError, match="cloud_pins.json"):
+        rp.create(NoNetwork(), tag, max_price=0.95)
+
+
 @pytest.mark.parametrize("argv", [
     ["create", "--ledger", "/tmp/x", "--gpu", "big"],
     ["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", "/tmp/x", "--boot", "cloud/x.json"],
@@ -133,3 +156,195 @@ def test_cli_create_with_script_sends_one_body_without_the_stamp(env, monkeypatc
     rp.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(ledger), *script_pod(tmp)], api=api, live=live_ok())
     assert len(posted) == 1 and rp.PREFLIGHT_KEY not in posted[0] and posted[0]["cmd"] == rp.script_cmd()
     assert "@sha256:" in posted[0]["image"] and len(fake.pods) == 1
+
+
+# --- N-02: training/cast/sheet.py, paid BFL calls only inside a ledger ---------------------------------------------------------
+
+@pytest.mark.parametrize("argv", [["draw", "x", "--ids", "0", "--yes"], ["world", "x", "--ids", "p001", "--budget", "1", "--yes"]])
+def test_sheet_cli_paid_path_requires_a_ledger(argv, capsys, monkeypatch, tmp_path):
+    # no key and no client: on code without the guard this test must fail without a paid call (the red run of 2026-10-30
+    # drew two real $0.009 pictures because the session had a BFL key and the old CLI spent without a ledger)
+    for k in sheet.KEY_ENV:
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setattr("explainer_engine.imagegen.providers.bfl.BFL._request",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("network touched")))
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(SystemExit) as e:
+        sheet.main(argv)
+    assert e.value.code != 0 and "--ledger" in capsys.readouterr().err
+
+
+def test_sheet_never_builds_bfl_without_a_run(monkeypatch, tmp_path):
+    seen = []
+
+    class FakeBFL:
+        def __init__(self, *a, **kw):
+            seen.append(kw)
+            raise RuntimeError("stop before any call")
+    monkeypatch.setattr("explainer_engine.imagegen.providers.bfl.BFL", FakeBFL)
+    monkeypatch.setenv("BFL_API_KEY", "k")
+    monkeypatch.setattr(sheet.time, "sleep", lambda s: None)   # world() waits 5 s after a failed request
+    with pytest.raises(ValueError, match="ledger"):
+        sheet.draw(tmp_path / "d", ["c001"], ledger=None)
+    with pytest.raises(ValueError, match="ledger"):
+        sheet.world(tmp_path / "w", ["p001"], budget_usd=0.5, workers=1, ledger=None)
+    assert seen == []
+    with pytest.raises(RuntimeError, match="stop before"):
+        sheet.draw(tmp_path / "d", ["c001"], ledger=tmp_path / "led.json")
+    assert seen and seen[0].get("run") is not None
+    seen.clear()
+    rows = sheet.world(tmp_path / "w", ["p001"], budget_usd=0.5, workers=1, tries=1, ledger=tmp_path / "led.json",
+                       judge=lambda rs: [{**r, "verdict": "PASS", "why": []} for r in rs])
+    assert rows[0]["verdict"] == "ERROR" and seen and seen[0].get("run") is not None   # built with the run, then refused by the fake
+
+
+def test_sheet_budget_above_the_spend_cap_is_refused(tmp_path):
+    cap = spend_caps.episode_ceiling("bfl_usd")
+    with pytest.raises(ValueError, match="spend_caps.json"):
+        sheet.world(tmp_path / "w", ["p001"], budget_usd=cap + 1, workers=1, ledger=tmp_path / "led.json")
+
+
+def test_bfl_paid_request_refuses_without_a_run(tmp_path, monkeypatch):
+    monkeypatch.setenv("BFL_API_KEY", "k")
+
+    def no_http(*a, **k):
+        raise AssertionError("network touched")
+    with pytest.raises(ProviderError, match="without a ledger run"):
+        RealBFL(tmp_path / "b", http=no_http).generate("x1", "a picture", model="flux-3-image-klein", size="1k")
+
+
+# --- N-03: core/store.py, VARIANT_CHOSEN is entered only with the variants file its approval binds ------------------------------
+
+def _researched_job(tmp_path):
+    from test_lifecycle import step
+    from explainer_engine.core.store import EpisodeJob
+    (tmp_path / "run.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "dossier.md").write_text("research", encoding="utf-8")
+    job = EpisodeJob.create(tmp_path, job_id="job-001", episode_slug="nap", ledger="run.json", fps=24)
+    step(job, "RESEARCHED")
+    return job
+
+
+def test_variant_chosen_requires_the_variants_file_and_writes_nothing_without_it(tmp_path):
+    from test_lifecycle import CREATOR, variants_file
+    from explainer_engine.core import store
+    from explainer_engine.core.errors import ContractError
+    job = _researched_job(tmp_path)
+    f, sha = variants_file(job)
+    before = (tmp_path / store.MANIFEST).read_text(encoding="utf-8")
+    with pytest.raises(ContractError, match="variants"):
+        job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": sha})   # the right hash, but no file to check it on
+    assert (tmp_path / store.MANIFEST).read_text(encoding="utf-8") == before and job.state == "RESEARCHED"
+    with pytest.raises(ContractError, match="CN-04"):
+        job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": "a" * 64}, variants=f)   # any 64-hex string is not enough
+    job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": sha}, variants=f)
+    assert job.state == "VARIANT_CHOSEN" and job.manifest["approvals"]["VARIANT_CHOSEN"]["sha256"] == sha
+
+
+def test_adopt_into_a_state_past_the_pick_binds_the_variants_file(tmp_path):
+    """T5's review of N-03: CN-04 says adopt is held to the same gates, so adopting past VARIANT_CHOSEN checks the variants file
+    exactly as move() does; nothing is written when it fails."""
+    from test_lifecycle import ADOPT, artifact_for, gates_up_to, variants_file
+    from explainer_engine.core import store
+    from explainer_engine.core.errors import ContractError
+    (tmp_path / "run.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "dossier.md").write_text("research", encoding="utf-8")
+    f, sha = variants_file(type("J", (), {"job_dir": tmp_path})())
+    ok = gates_up_to("SCENARIO_APPROVED")
+    kw = dict(state="SCENARIO_APPROVED", reason="x", dossier=tmp_path / "dossier.md",
+              artifacts={"SCENARIO_APPROVED": artifact_for(tmp_path, "SCENARIO_APPROVED")[0]}, **ADOPT)   # option A (setup)
+    with pytest.raises(ContractError, match="variants"):
+        store.EpisodeJob.adopt(tmp_path, approvals={**ok, "VARIANT_CHOSEN": {**ok["VARIANT_CHOSEN"], "sha256": sha}}, **kw)
+    with pytest.raises(ContractError, match="CN-04"):
+        store.EpisodeJob.adopt(tmp_path, approvals={**ok, "VARIANT_CHOSEN": {**ok["VARIANT_CHOSEN"], "sha256": "a" * 64}},
+                               variants=f, **kw)
+    assert not (tmp_path / store.MANIFEST).exists()
+    job = store.EpisodeJob.adopt(tmp_path, approvals={**ok, "VARIANT_CHOSEN": {**ok["VARIANT_CHOSEN"], "sha256": sha}}, variants=f, **kw)
+    assert job.state == "SCENARIO_APPROVED" and job.manifest["approvals"]["VARIANT_CHOSEN"]["sha256"] == sha
+
+
+# --- N-03 option A (ვანო 2026-10-30): every person's gate binds the hash its own tool records for what was approved ------------
+
+BOUND = ("SCENARIO_APPROVED", "SCRIPT_APPROVED", "BUDGET_RESERVED", "SAMPLE_APPROVED", "REVIEW_APPROVED")
+
+
+@pytest.mark.parametrize("gate", BOUND)
+def test_a_person_gate_binds_its_tools_hash_and_writes_nothing_without_it(tmp_path, gate):
+    from test_lifecycle import CREATOR, artifact_for, step
+    from explainer_engine.core import store
+    from explainer_engine.core.errors import ContractError
+    (tmp_path / "run.json").write_text(json.dumps({"reserved": {"pod:abc": {"service": "runpod_usd", "amount": 1.0}}}), encoding="utf-8")
+    (tmp_path / "dossier.md").write_text("research", encoding="utf-8")
+    job = store.EpisodeJob.create(tmp_path, job_id="job-001", episode_slug="nap", ledger="run.json", fps=24)
+    for to in store.LIFECYCLE[1:store.LIFECYCLE.index(gate)]:
+        step(job, to)
+    path, sha = artifact_for(tmp_path, gate)
+    extra = {"reservation_id": "pod:abc"} if gate == "BUDGET_RESERVED" else {}
+    before = (tmp_path / store.MANIFEST).read_text(encoding="utf-8")
+    with pytest.raises(ContractError, match="CN-04"):          # the approval names a hash, but no artifact to check it on
+        job.move(gate, reason="x", approval={**CREATOR, "sha256": sha}, **extra)
+    with pytest.raises(ContractError, match="CN-04"):          # any 64-hex string is not enough
+        job.move(gate, reason="x", approval={**CREATOR, "sha256": "a" * 64}, artifact=path, **extra)
+    assert (tmp_path / store.MANIFEST).read_text(encoding="utf-8") == before
+    job.move(gate, reason="x", approval={**CREATOR, "sha256": sha}, artifact=path, **extra)
+    assert job.state == gate and job.manifest["approvals"][gate]["sha256"] == sha
+
+
+def test_the_bound_hash_is_the_one_each_tool_records(tmp_path):
+    """SCRIPT binds the words only (OR-17: delivery tags may change after the approval); a paint plan changed after its own hash and
+    a sample approved for another script are refused."""
+    from test_lifecycle import artifact_for
+    from explainer_engine.core import store
+    from explainer_engine.core.errors import ContractError
+    from explainer_engine.scripting import script_approval as SA
+    path, sha = artifact_for(tmp_path, "SCRIPT_APPROVED")
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    doc["segments"][0]["lines"][0]["delivery"] = "[softly]"
+    path.write_text(json.dumps(doc), encoding="utf-8")
+    assert store.bound_sha256("SCRIPT_APPROVED", path) == sha == SA.words_sha256(doc)
+    plan, _ = artifact_for(tmp_path, "BUDGET_RESERVED")
+    p = json.loads(plan.read_text(encoding="utf-8"))
+    p["provider"] = "bfl"
+    plan.write_text(json.dumps(p), encoding="utf-8")
+    with pytest.raises(ContractError, match="plan"):
+        store.bound_sha256("BUDGET_RESERVED", plan)
+    sample, ssha = artifact_for(tmp_path, "SAMPLE_APPROVED")
+    assert store.bound_sha256("SAMPLE_APPROVED", sample) == ssha == store._sha256_file(sample)   # the approval file itself
+    (tmp_path / "production_script.json").write_text(json.dumps({"segments": []}), encoding="utf-8")
+    with pytest.raises(ContractError, match="script changed"):
+        store.bound_sha256("SAMPLE_APPROVED", sample)
+    manifest, msha = artifact_for(tmp_path, "REVIEW_APPROVED")
+    assert manifest.name == "bundle_manifest.json" and store.bound_sha256("REVIEW_APPROVED", manifest) == msha
+    for change in (lambda d: (d / "final.mp4").write_bytes(b"other"), lambda d: (d / "extra.png").write_bytes(b"x"),
+                   lambda d: (d / "notes.md").unlink()):
+        manifest, _ = artifact_for(tmp_path, "REVIEW_APPROVED")
+        change(manifest.parent)
+        with pytest.raises(ContractError, match="no longer matches"):
+            store.bound_sha256("REVIEW_APPROVED", manifest)
+    with pytest.raises(ContractError, match="bundle_manifest.json"):
+        store.bound_sha256("REVIEW_APPROVED", manifest.parent / "final.mp4")
+
+
+def test_a_pod_budget_binds_its_committed_start_script_and_nothing_else(tmp_path):
+    """ვანო's pick for a pod (2026-10-30): BUDGET_RESERVED binds the sha256 of the start script committed under
+    explainer_engine/training/pods/ (OR-21), the same script_sha the ledger's pod_plans row records; any other file is refused."""
+    from explainer_engine.cloud import dryrun
+    from explainer_engine.core import store
+    from explainer_engine.core.errors import ContractError
+    script = ROOT / "explainer_engine" / "training" / "pods" / "p12" / "p12a_A.sh"
+    assert store.bound_sha256("BUDGET_RESERVED", script) == dryrun.sha256_of(script.read_text(encoding="utf-8"))
+    for name, text in (("pod_plan.md", "# pod plan\nA40, 1 h, $0.50"), ("p12a_A.sh", script.read_text(encoding="utf-8")),
+                       ("plan.json", json.dumps({"id": "x", "provider": "runpod"}))):
+        other = tmp_path / name
+        other.write_text(text, encoding="utf-8")
+        with pytest.raises(ContractError, match="training/pods"):
+            store.bound_sha256("BUDGET_RESERVED", other)   # a copy outside the committed pods folder is not the approved script
+
+
+def test_review_bundle_cli_writes_the_manifest_and_check_fails_after_a_change(tmp_path, capsys):
+    from explainer_engine.qa import review_bundle
+    (tmp_path / "final.mp4").write_bytes(b"video")
+    assert review_bundle.main(["write", str(tmp_path)]) == 0 and "sha256" in capsys.readouterr().out
+    assert review_bundle.main(["check", str(tmp_path)]) == 0
+    (tmp_path / "final.mp4").write_bytes(b"recut")
+    assert review_bundle.main(["check", str(tmp_path)]) == 1 and "changed: final.mp4" in capsys.readouterr().out

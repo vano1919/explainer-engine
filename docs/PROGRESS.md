@@ -3160,6 +3160,15 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Tests: `tests/unit/test_money_path_fences.py` (CP-01 section: both launchers exit with `RETIRED by D-80` and no network, 7 refused
   commands, 6 allowed ones); `tests/unit/test_aivideo_shotplan.py::test_pod_code_follows_the_rules` += the guard sits before `rp.create(`
   (addition only). Red on main: 9 failed.
+
+## 2026-10-30 — T3-2 (CP-04): the live xworld LoRA, datasets and code are vault-`critical` (no pod, no money)
+- `config/vault.json` `critical` gains `lora_plan_2026-10-26/` `train_xworld_v2/output/**`, `train_xworld_v2/code/**`, `train_xworld_v1/**`,
+  `dataset_xworld_v1/**`, `dataset_xworld_v2/**`, `caption_xworld_v1/**` (every prefix appears in `explainer_engine/training/pods/*.sh`). Nothing removed; the `wldnk_*` rows stay (deleting them is creator card 6).
+- Not added, OPEN: `train_xworld_v2/train.log` (only v1's `train.log` is uploaded by a pod script; v1 is covered by `train_xworld_v1/**`) and
+  `cast_xworld_v2` (Argon-1; no HF path for it in the repo).
+- `docs/VAULT.md` VT-01..VT-04 only restrict deleting, so adding globs needed no creator word.
+- `vault snapshot` ran (HF_TOKEN was in the session, read-only on HF): 16735 files, 60.97 GB; critical 8860 files, 13.87 GB. `docs/VAULT_MANIFEST.json` regenerated and trimmed to the 8860 critical rows plus `note` (VAULT.md: critical rows only); `vault verify` on it: PASS, every manifest file is on the primary copy.
+- Test: `tests/unit/test_vault.py::test_the_live_xworld_lora_and_datasets_are_critical` (red before the globs, 1 failed; green after, 9 passed). Closes Argon-1 F-01; Argon-2 F-26 (the add half).
 ## 2026-10-30 — plan_v2 wave 1, T2 PR-B: CP-05, KG-22/KG-23 are a visible REVIEW while the style is suspended (D-80)
 - `qa/blind_check.py`: the retired wldnk rubric is kept as `STYLE_SPEC_WLDNK_RETIRED` (mechanics only, tests still run it); the live `STYLE_SPEC` is empty
   and `STYLE_SUSPENDED = True` is the one flag. `describe_rules`, `compare(..., spec=None)` and `style_verdict(..., spec=None)` take the spec as an argument,
@@ -3208,3 +3217,116 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   clips; CLI sidecar; gate rows keyframes and clips; still episodes). Focused set 71 passed with PR-B's, `docs_lint` and `governance check` clean.
 - OPEN: where clips live under an episode folder (`clips/**/*.mp4` is read) is for P6/P7; the REVIEW-only follow-up cards are in the PR body. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 — T3-3 (CP-07, CP-08, CP-13): agent and skill pages carry the retirement banners (no pod, no money)
+- `animated-universe` skill: description and a "Retired in part" banner (cut-out rig retired 2026-10-22, D-77/D-78); "Move a character" now points to the clip prompt (SHOT_PROMPTS KP) and the continuity card (CT); the rig bullets sit under `#### History (retired 2026-10-22)`. Silhouette, proportions, key light, squash-and-stretch rationing and long holds stay.
+- `lora-coordinator`, `lora-dataset-auditor`, `lora-checkpoint-judge`: descriptions name the one LoRA (xworld style on Qwen-Image-2.1, D-80); the three-LoRA / edit / video wording and the A40 5.21 s/step figure moved under `## History (retired by D-80)` (measured rows: `config/job_speeds.json`). `lora-training` skill: "Current stack" line; "Settings that worked (Qwen-Image-2512 ...)" and "Video and edit LoRAs" under `## History (retired by D-80, lessons only)`; money numbers kept.
+- `orchestrator` page and `docs/ORCHESTRATION.md` head: scope line, the still-picture D-43 route only until P6/P7/P8/P11. No step removed, no `model:`/`effort:` line touched.
+- Test `tests/unit/test_t3_agent_skill_banners.py` (4 tests, red before, green after); `test_agent_governance`, `test_agent_roles`, `test_rig`, `test_lora_training` pass. Test adaptation: the plan's "History before the first `2512`" cannot hold for the skill (its description and banner name 2512), so the test pins History before the "Settings that worked (... Qwen-Image-2512" heading.
+- OPEN: `animated-universe` "Stage a scene" still says "Motion ladder: rig motion first" and its checks ask for a named cycle; the card did not cover them, left unchanged. `lora-run-operator` page not in scope.
+- Closes Fable F-04 (doc half), F-07, F-09; Argon-1 F-04 (doc half), F-13.
+- T3-3 review fix (T2, PR #77): `config/job_speeds.json` `jobs.lora_train.rows` is empty, so the agent pages no longer say "measured rows live in ...". `lora-coordinator` G3 says the table is empty until the first xworld run is measured (`runpod cost --record-speed`) and that the old 5.21 s/step is only an estimate for Qwen-Image-2.1 (ask the creator); its History line says the same; the sentence is dropped from `lora-checkpoint-judge` (no cost step). `lora-dataset-auditor` marks its edit/video steps and the motion-caption check "(retired, see History)". Test `test_no_agent_page_claims_measured_lora_speeds_that_do_not_exist`.
+
+## 2026-10-30 — T3-4 (CP-06, CP-15, CP-10 link rows): PRODUCTION_RULES and the Kokoro modules (no pod, no money)
+- `audio/narrate.py`, `timings.py`, `visemes.py`: first docstring line `RETIRED by D-39 ...`; `python -m explainer_engine.audio.narrate` now exits 1 with the same words (no model load); imports and functions untouched, `voice_layer.py` not edited.
+  Adaptation: the guard sits directly after `from __future__ import annotations` (a statement before it is a SyntaxError) and before every other import.
+- `docs/PRODUCTION_RULES.md`: "Kokoro only for drafts" -> "Kokoro retired (D-39), drafts are ElevenLabs first takes"; "voice (Clyde)" in the universal list -> `config/channel_voices.json` (card C10); both "Pro plan" -> the plan recorded in D-52 (Creator), linked; section 2 gate table gains rows 7.5 `keyframes` and 7.6 `clips` (links to KEYFRAME_GATE.md and training/video_qa, wording "wired as production_gate rows keyframes/clips ... run by hand until then"). The `1 credit about $0.00018` arithmetic is not in AUDIO_SYSTEM.md, so it stays. The history rows 105/126 that name Clyde stay (feedback log, dated).
+- Test: `tests/unit/test_repo_hygiene.py::test_kokoro_modules_carry_the_d39_banner_and_narrate_cli_refuses` (red before, green after; hygiene, audio_timing, voice_layer, docs, production_gate pass). The plan's table-style assertion became a regex on `**keyframes**` / `**clips**` because the gate table uses bold names.
+- OPEN: section 4a still states "cap $10 in total, stop at 80 %" for Gemini (a cap number outside `config/spend_caps.json`); the card did not list it.
+- Closes Fable F-06, F-11 (doc rows); Argon-1 F-17, F-19 (Kokoro half), Q2 row 9; Argon-2 F-23 (banner half).
+- T3-4 review fixes (T2, PR #79): "the the" typo in PRODUCTION_RULES; `docs/AUDIO_SYSTEM.md` narrate paragraph now opens with the D-39 retirement (the CLI refuses, the old path is history); banner line of the three Kokoro modules wrapped to repo width; row 7.6 says the video_qa JSON is kept beside the clip; the stale duplicate `CP-07/08/13` routing row dropped.
+
+## 2026-10-30 — T3-5 (CP-14, CP-18): money documents link the caps; the watchdog is named a backstop (no pod, no money)
+- `COST_AND_TIME_MODEL` ledger: the Gemini and RunPod cap cells -> "the ceiling in `config/spend_caps.json` (D-56)" (spent-so-far figures stay as history); `ORCHESTRATION` money-ledger paragraph: the 2026-10-16 night-run caps are history, ceilings in force live only in `config/spend_caps.json`; `VIDEO_PARAMETER_SPEC` P-110 cell; `PROJECT_BRIEF` budget sentence (Gemini `US$10` replaced by the link; the vidIQ 200 stays, it has no line in the caps file yet).
+- `CLOUD_RUNBOOK` stop-path row 3 (watchdog): names `.github/workflows/watchdog.yml` and its cron `*/10 * * * *`, says GitHub may delay a schedule by hours (4-7 h observed), so it is the backstop and never the stop a plan relies on; the in-pod dead-man and the session guard are the primary stops.
+- Tests (`tests/unit/test_spend_caps_single_source.py`, 2 new, red before, green after); `test_docs` and `docs_lint` pass.
+- `CLOUD_RUNBOOK.md` line 18 is marked history and CR-01 says boot (TMR manifest) pods are retired by N-01 (`preflight_create` refuses a body whose `cmd` is not `pod_wrapper.sh`; `boot_cmd` stays a text builder). Test `test_runbook_no_longer_says_boot_pods_run`. `test_cloud_stop_paths.py:344` was already stamped by T1 in #70.
+- Closes Fable F-12; Argon-1 F-16, Q2 row 7.
+- T3-5 review fixes (T2, PR #80): the two stale "prepared locally" routing rows (CP-07/08/13, CP-06/15) are not in this PR; the Gemini cell names `per_episode.gemini_usd` and the RunPod cell the `runpod` lines of `config/spend_caps.json`; the spent cell says "of the then US$10 cap"; P-110 names the key. (T3-6's routing row is checked for the same duplicates before it opens.)
+
+## 2026-10-30 — T3-6 (CP-16, CP-19) + evidence for cards A3 and the Shorts card (no pod, no money)
+- `DECISIONS_AND_OPEN_QUESTIONS` Q2 (Kit rejected D-04; permanent hosts are card A1, open for ვანო), Q3 (D-39), Q4 (superseded by D-31/D-32) marked decided; `QA_SPECIFICATION` Q-E11 asks about every named character's approved reference sheet (D-55); Kit table rows and paragraphs of `STORYBOARD_SCHEMA` and `CREATIVE_STYLE_BIBLE` prefixed `(history, D-04 rejected 2026-10-15)`, nothing removed (`assets/characters/kit/`, `test_kit_sheet.py` untouched, deletion is card 6); `CRAFT_CURRICULUM`: "Exception: the fps row is decided by D-85 (24 fps, no pulldown)", every other row stays pending (card 7).
+- Test `tests/unit/test_t3_decisions_docs.py` (3, red before, green after); `test_craft_checklists`, `test_docs`, `test_kit_sheet` pass, `docs_lint` 0. The Q-line locator matches the `- Q2 ` list markup.
+- OPEN: `CREATIVE_STYLE_BIBLE` line 9 (tone: "Kit's reactions") is a mention, not a Kit paragraph, left as is.
+- Evidence for the voices card (A3 vs D-62/63/68), no decision taken. `explainer_engine/production/silent.py:4-5` "PV-55 binds it: a cast member marked ``traits.real_person`` has no voiced line"; `:254` `real = {h for h, c in doc.get("cast", {}).items() if traits(c).get("real_person") and traits(c).get("living", True)}`; `:258` `if line.get("speaker") in real and voiced(line):` -> `:259-260` "is a real person and must not be voiced (voiced: false, shown as bubbles; D-62)"; `production/validate.py:418-423` reports PV-55 and PV-56 (`check_reported_dialogue`, D-63). The check keys on the cast member's `traits.real_person` (and `living`, default true) and the line's `voiced` flag, both in the production script.
+- Evidence for the Shorts card. `production/validate.py:519-527` PV-34 with `len(shorts) >= 5`: Shorts without a style (SS-01) and fewer than `need = min(6, max(3, len(shorts) * 6 // 10))` distinct styles are REVIEW; `:530` same style right before another (SS-02); `:535-537` loop and pointer endings (SS-04); `:540-546` with `len(shorts) >= 6`: `short_band` (secs <= the first BP-12 band's top) and `long_band` (secs >= the second band's bottom) each need at least 3, else REVIEW (SS-06); `:552`, `:561` first cut inside the hook and visual events per 10 s. So PV-34 checks styles when there are 5 or more Shorts and the two length bands (3 each) when there are 6 or more.
+## 2026-10-30 UTC: plan_v2 T1 / N-02, paid BFL calls of `training/cast/sheet.py` run only inside a ledger (one unplanned $0.018, see below)
+
+- `explainer_engine/training/cast/sheet.py` (Argon-2 F-05): `draw()` and the real path of `world()` open the run ledger first
+  (`_run`): no ledger = `ValueError("refused: paid BFL calls run only inside a ledger (D-56); pass --ledger")`; `world()` builds
+  `BFL(out, run=run, key=k)` (it had no run), so every picture reserves on the ledger's `bfl_usd` (for a new ledger
+  `config/spend_caps.json` `per_episode.bfl_usd`) with the ledger's 80 % stop; a `--budget` above that cap is refused (no number in the
+  code). The local `spent` counter stays as the budget display. CLI: `draw|world --yes` without `--ledger` is an argparse error naming
+  `--ledger`; the estimate without `--yes` stays free and unchanged. `world()` with an injected `generate` (its unit tests) needs no ledger.
+- `explainer_engine/imagegen/providers/bfl.py` (C3; BFL already carries `run`): `_request` (the paid HTTP call) refuses `run is None`
+  (`ProviderError`); a cache hit in `generate()` never reaches it. No other `BFL(` caller outside `sheet.py` (paint goes through
+  `providers.get(..., run=run)`).
+- Tests: `tests/unit/test_money_path_fences.py` N-02 section (5: CLI `draw/world --yes` without a ledger, no `BFL` built without a run
+  and built with one, budget above the cap, `BFL._request` without a run). Red on main: 5 failed. No existing test changed.
+- **Unplanned spend, 2026-10-30 13:45 UTC: $0.018 on BFL (2 x Klein 1k, $0.009 each).** The first red run of the CLI test ran the OLD
+  `sheet.main(["draw", ..., "--yes"])`; this session had a BFL key in its environment (`BFL_API_kay`), and the old code drew without a
+  ledger, which is the hole this card closes. The pictures (`c000.png`, `p001.png`, `spend_log.jsonl`) are kept in the project files
+  `explainer-engine/blueprint_2026-10-29/paid/plan_v2/t1_bfl_incident/`. The test now removes every `KEY_ENV` variable and blocks
+  `BFL._request` before it calls, so it fails without a paid call on code without the guard; the red run was repeated that way.
+
+## 2026-10-30 UTC: plan_v2 T1 / N-03, VARIANT_CHOSEN needs the variants file its approval binds; the other gates' artifact binding is OPEN (no pod, no money)
+
+- Verify (Lock 5) against Argon-2 F-04: `core/store.py` has no `APPROVAL_GATES` or `_HEX64`; the gates are `GATES` and
+  `_check_approval(..., bind=True)` asks only for a non-null `sha256`; `job_manifest.schema.json` makes it 64 hex. So "any 64-hex string
+  is accepted as a creator approval" is true. `move("VARIANT_CHOSEN")` ran the variants check only `if variants is not None`: true.
+  The artifact half of the card is **not reproducible as written**: no production code calls `record_artifact`, the keys are free-form, and
+  CN-04's table binds most gates in prose only ("the scenario file", "the words' sha256 (script_approval)", "the paint/pod plan hash",
+  "`sample_approval.json`", "the review bundle", "his message"); no gate has a key that both CN-04 and the code name.
+- `explainer_engine/core/store.py`: `move("VARIANT_CHOSEN")` without `variants=` is refused before any write (`ContractError`,
+  "VARIANT_CHOSEN needs variants=... (CN-04, OR-31)"); the existing check (the picked id is a variant, the approval's sha256 is the
+  `variants_sha256` of the unchanged file) now always runs. No gate→artifact map was added (D1: nothing to map without guessing).
+- Tests: `tests/unit/test_money_path_fences.py` N-03 (a creator approval with the right hash but no file is refused and writes nothing;
+  `"a" * 64` with the file is refused; the right pair passes). Red on main: 1 failed. `tests/unit/test_lifecycle.py`: new `variants_file()`
+  helper; `step()`, the back-path walk and the adopt-chain walk pass the variants file and its hash when they enter VARIANT_CHOSEN (an
+  allowed path, a pick without its file, is now a refusal); `test_a_creator_gate_binds_the_sha256...` expects the variants hash instead of
+  the placeholder `"c" * 64`.
+- OPEN (CN-04 wording is OR-22, for ვანო/coordinator): (1) which manifest artifact key each of SCENARIO_APPROVED, SCRIPT_APPROVED,
+  BUDGET_RESERVED, SAMPLE_APPROVED, REVIEW_APPROVED binds, and who records it (`record_artifact` has no production caller); until then those
+  approvals are checked for kind, `by`, `ref` and a 64-hex `sha256` only. (2) `adopt()` into VARIANT_CHOSEN or later checks the approvals but
+  not the variants file (CN-04: "`adopt` is held to the same gates"); closing it adds a `variants=` argument to `adopt`.
+
+## 2026-10-30 UTC: plan_v2 T1 / follow-up of T5's reviews: adopt binds the variants file, create() re-checks the body, the hook catches every create spelling (no pod, no money)
+
+- `explainer_engine/core/store.py`: the VARIANT_CHOSEN check moved into `EpisodeJob._check_variants` (one home) and `adopt()` takes
+  `variants=`: adopting into VARIANT_CHOSEN or later checks the file exactly as `move` does (CN-04: "`adopt` is held to the same gates";
+  T5's review of N-03). Nothing is written when it fails.
+- `explainer_engine/cloud/runpod.py`: `create()` checks again what the body alone decides, after the stamp: it runs `pod_wrapper.sh`
+  (OR-21) and its image is pinned (`config/cloud_pins.json`). `preflight_stamp` is public, so a stamp can be forged with one call (T5's
+  review of N-01); a forged stamp now sends neither a boot pod nor an unpinned image.
+- `explainer_engine/cloud/hooks.py`: one more BYPASS pattern, a Python command that names `runpod` and calls `create(`: a bare imported
+  name (`from ...runpod import create; create(`) and an alias (`runpod as R; R.create(`) were allowed (T5's review of CP-01).
+- Tests: `tests/unit/test_money_path_fences.py` gains 3 hook cases, the forged-stamp test and the adopt test (red on the N-03 head:
+  5 failed, 30 passed; green: 35 passed). Setup only: `tests/unit/test_runpod.py::stamped()` makes its hand-made body a script pod's
+  body (wrapper command, pinned image) before stamping; `tests/unit/test_lifecycle.py` writes the Napoleon variants file in the `folder`
+  fixture, `gates_up_to` carries its real hash, and the three adopts that pass the pick name the file. No assert removed.
+- OPEN: none new. The gate→artifact binding of the other gates stays with ვანო (options sent to the coordinator).
+
+## 2026-10-30 UTC: plan_v2 T1 / N-03 option A, every person's gate binds the hash its own tool records (ვანო's choice, no pod, no money)
+
+- ვანო chose option A (2026-10-30 14:48 UTC, through the coordinator): SCENARIO_APPROVED, SCRIPT_APPROVED, BUDGET_RESERVED,
+  SAMPLE_APPROVED and REVIEW_APPROVED are entered only with `artifact=` (what the person approved), and the approval's sha256 must equal
+  `core/store.bound_sha256(gate, artifact)`: the scenario file's sha256 (PV-45); the script's words only,
+  `script_approval.words_sha256` (OR-17, so delivery tags may still change); the approved plan file, refused when a paint plan no
+  longer matches its own `plan_hash`; the `script_sha256` that `sample_approval.json` binds, for an unchanged script (OR-19); the
+  review bundle folder as one hash (`store.bundle_sha256`: every file's relative path and sha256, sorted; owner=claude, no bundle
+  manifest existed). `adopt()` takes `artifacts={gate: path}` and checks every bound gate on the way the same way. A refusal writes
+  nothing. PUBLISHED_PUBLIC stays the creator's click with a ref (CN-06); VARIANT_CHOSEN keeps its variants file. These match the
+  "binds" column of the CN-04 lifecycle table in docs/CONTRACTS.md, whose wording is unchanged.
+- Tests: `tests/unit/test_money_path_fences.py` option-A section (5 gates: no artifact refused, `"a" * 64` refused, the tool's hash
+  passes, nothing written on a refusal; words-only script hash, a changed paint plan, a sample for another script, a changed bundle).
+  Red on the follow-up head: 6 failed. Setup only: `tests/unit/test_lifecycle.py` gains `artifact_for()` (the artifact and its tool's
+  hash per gate); `step()`, the planner budget move, `gates_up_to`, the adopt calls that pass a bound gate and the adopt-chain walk
+  name the artifact and carry its hash; the follow-up's adopt test names its scenario file. No assert removed.
+- Amended after T5's review (ვანო's picks "ა ა ა", 2026-10-30 14:56 UTC): BUDGET_RESERVED for a pod binds the sha256 of its start
+  script committed under `explainer_engine/training/pods/` (`cloud/dryrun.sha256_of`, the ledger's `pod_plans.script_sha`); any other
+  non-plan file, or a copy of the script outside that folder, is refused. SAMPLE_APPROVED binds the sha256 of `sample_approval.json`
+  itself (still only while its script is unchanged). REVIEW_APPROVED binds the sha256 of `<bundle>/bundle_manifest.json`, written by the
+  new `explainer_engine/qa/review_bundle.py` (`write` / `check`, CLI `python -m explainer_engine.qa.review_bundle write|check <bundle>`:
+  every file's relative path and sha256); the gate re-checks the bundle against it (a changed, missing or unlisted file is refused).
+  `store.bundle_sha256` is gone (it was added in this same PR). Tests: a pod script passes and a markdown plan or a copy outside the
+  folder is refused; the sample binds its file; changed, added and removed bundle files are refused; the CLI round trip.
