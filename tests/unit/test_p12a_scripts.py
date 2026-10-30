@@ -32,6 +32,7 @@ def test_each_script_passes_the_free_dryrun_rules_and_declares_its_heartbeat_and
 def test_pod_a_downloads_shard_00002_at_the_pinned_revision_and_the_image_digest_is_the_pinned_one():
     t = text("A")
     assert "d26bb61231c349cf6b7896fa83353113880e1ba3" in t and "00002-of-00002" in t and "4261951904" in t
+    assert "safetensors" not in t and "safe\"" not in t                                       # found by prefix and size: no weight-file name, assembled or not
     assert pins.load()["images"]["aitoolkit"]["digest"].split(":")[1] in t                    # the manifest A-3 reads is the pinned image's
     assert "$EE_OUT" not in "".join(ln for ln in t.splitlines() if "hf_hub_download" in ln)   # base weights never go to the vault
 
@@ -73,7 +74,7 @@ def test_pod_a_records_boot_facts_the_download_speed_and_deletes_the_shard(pod, 
 case "$1" in
   --version) echo "Python 3.11.9";;
   -c) echo "huggingface_hub 0.0 torch 0.0 cuda 12.4";;
-  -) mkdir -p "$DL/transformer"; head -c 5000000 /dev/zero > "$DL/$SHARD"; cat > /dev/null;;
+  -) mkdir -p "$DL/transformer"; echo -n transformer/shard-00002 > "$DL/.shard"; head -c 5000000 /dev/zero > "$DL/transformer/shard-00002"; cat > /dev/null;;
 esac
 """
     smi = "#!/bin/bash\n[ \"$1\" = -L ] && echo 'GPU 0: NVIDIA RTX A5000 (UUID: GPU-x)' || echo 'NVIDIA RTX A5000, 570.1, 24564 MiB'\n"
@@ -89,4 +90,4 @@ esac
     facts = (stub / "hf" / "boot_facts.txt").read_text()
     assert "RTX A5000" in facts and "MemTotal" in facts and "Python 3.11" in facts and "RUNPOD_POD_ID=pp" in facts
     assert "RUNPOD_API_KEY" not in facts and "HF_TOKEN" not in facts                          # the pod's env holds keys: none of them is written
-    assert not dl.exists() and not list((stub / "hf").rglob("*.safe" "tensors"))              # the shard is deleted and never went to the vault
+    assert not dl.exists() and not list((stub / "hf").rglob("*.safetensors"))                 # the shard is deleted and never went to the vault

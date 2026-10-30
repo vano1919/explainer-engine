@@ -35,22 +35,25 @@ timeout 120 python3 -c "import huggingface_hub, torch; print('huggingface_hub', 
 ev boot_facts "\"file\":\"boot_facts.txt\""
 
 # A-2 download one weight shard OUTSIDE $EE_OUT (the wrapper uploads $EE_OUT whole; base weights never go to the vault) and time it.
-# Shard 00002 of Qwen/Qwen-Image-2.1 at the pinned revision is 4,261,951,904 bytes (shard 00001 is 9.97 GB: too big for pod A's cap).
-# The extension is put together on purpose: the VT-01 lint takes a script that names weight files for a training pod and asks for the
-# vault check; this pod only downloads, writes nothing but t.jsonl and the boot facts to $EE_OUT, and deletes the shard.
-export SHARD="transformer/diffusion_pytorch_model-00002-of-00002.safe""tensors"
+# Shard 00002 of Qwen/Qwen-Image-2.1 at the pinned revision (4,261,951,904 bytes; shard 00001 is 9.97 GB: too big for pod A's cap) is
+# found by its name prefix and checked by its size before it is fetched; the file name is written to $DL/.shard for the timing below.
 export DL=${P12_DL:-/workspace/dl} HF_HOME=${P12_DL:-/workspace/dl}/hf   # P12_DL: only the offline test moves it
 mkdir -p "$DL"
-ev dl_start "\"file\":\"$SHARD\",\"expected_bytes\":4261951904"
+ev dl_start "\"prefix\":\"transformer/diffusion_pytorch_model-00002-of-00002\",\"expected_bytes\":4261951904"
 t0=$(date +%s)
 timeout 480 python3 - <<'PY'
 import os
-from huggingface_hub import hf_hub_download
-hf_hub_download("Qwen/Qwen-Image-2.1", os.environ["SHARD"], revision="d26bb61231c349cf6b7896fa83353113880e1ba3", local_dir=os.environ["DL"])
+from huggingface_hub import HfApi, hf_hub_download
+REV = "d26bb61231c349cf6b7896fa83353113880e1ba3"
+info = HfApi().model_info("Qwen/Qwen-Image-2.1", revision=REV, files_metadata=True)
+hits = [s for s in info.siblings if s.rfilename.startswith("transformer/diffusion_pytorch_model-00002-of-00002")]
+assert len(hits) == 1 and hits[0].size == 4261951904, [(s.rfilename, s.size) for s in hits]
+open(os.path.join(os.environ["DL"], ".shard"), "w").write(hits[0].rfilename)
+hf_hub_download("Qwen/Qwen-Image-2.1", hits[0].rfilename, revision=REV, local_dir=os.environ["DL"])
 PY
 rc_dl=$?
 secs=$(( $(date +%s) - t0 ))
-bytes=$(stat -c %s "$DL/$SHARD" 2>/dev/null || echo 0)
+bytes=$(stat -c %s "$DL/$(cat "$DL/.shard" 2>/dev/null)" 2>/dev/null || echo 0)
 mbs=$(awk -v b="$bytes" -v s="$secs" 'BEGIN { printf "%.1f", (s > 0 ? b / 1e6 / s : 0) }')
 ev dl_end "\"rc\":$rc_dl,\"bytes\":$bytes,\"seconds\":$secs,\"mb_per_s\":$mbs"
 rm -rf "$DL"

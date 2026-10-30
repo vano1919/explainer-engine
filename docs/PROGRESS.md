@@ -2904,12 +2904,13 @@ The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code accoun
   ends), E (2 minutes, `exit 0`). Each declares `# heartbeat: datasets/vano1919/tmr-artifacts:runs/p12a/<X>/beat.txt` and `# stall-minutes: 4`,
   writes `progress.txt` with a changing line and `t.jsonl` events (script_start with `EE_DEADLINE`, exit with rc), installs nothing, so no DRY gate is needed.
 - A-2 downloads shard 00002 (4,261,951,904 bytes, measured on the Hub at revision d26bb61) as the plan thread decided; shard 00001 is 9.97 GB. The
-  file extension is assembled in the script on purpose: VT-01 takes any script naming weight files for a training pod; A only downloads to
-  /workspace/dl, deletes it, and writes no weights to $EE_OUT (a test checks that no shard reaches the vault). The lint itself is unchanged.
+  shard is found by its name prefix and checked by its size (4,261,951,904) before it is fetched, so the script names no weight file: VT-01 takes
+  any script naming weight files for a training pod, and the plan thread decided (08:38) not to walk around it with an assembled name nor to loosen it
+  without a precise rule. A downloads to /workspace/dl, deletes it and writes no weights to $EE_OUT (a test checks that no shard reaches the vault).
 - A does not write the image digest the plan mentions: the pod has no such variable (nothing sets one); the session reads it from the create body.
   The boot facts list only chosen non-secret variables (the pod env holds keys; a test checks none is written).
 - `runpod dryrun` passes for all five (Hub existence of Qwen/Qwen-Image-2.1 and the vault dataset checked with the network). sha256 of the scripts:
-  A 4c2bc13a, B c193e702, C 64cc4734, D 8af25923, E 40ab6415 (full values in the PR). A dryrun record is keyed by that text: any edit means a new
+  A 25661e2e, B c193e702, C 64cc4734, D 8af25923, E 40ab6415 (full values in the PR). A dryrun record is keyed by that text: any edit means a new
   dryrun, and the copies on HF `code/p12/` must be made from the merged files, then compared by sha256 before each create (audit N3).
 - Test: `tests/unit/test_p12a_scripts.py` runs B, C, D, E and A under the real `pod_wrapper.sh` with stubs and short steps (`P12_STEP_S`, `P12_DL` only
   for the test): end words, drills, parts uploaded before the cap, boot facts, speed record, shard deleted.
