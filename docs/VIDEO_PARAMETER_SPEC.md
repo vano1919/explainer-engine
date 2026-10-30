@@ -109,7 +109,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 | P-102 | Short safe area | the ad safe zone of BP-29 | see BP-29 | platform UI overlays | M/C | | safe-area check |
 | P-103 | Short captions | phrase captions in blocks, at the reading speed of BP-13 | see BP-13 | silent viewing | M/P | timings | check |
 | P-104 | analytics snapshots | 48 h, 7 d, 28 d | | like-for-like comparison | M/C | | record present |
-| P-110 | Gemini cap | $10 total; per-call-batch `max_usd` default $1 | | creator budget | H/F | cost ledger | estimate before call; refuse above |
+| P-110 | Gemini cap | ceiling: config/spend_caps.json (D-56); a per-call max_usd in code is a default, not a cap | | creator budget | H/F | cost ledger | estimate before call; refuse above |
 | P-111 | vidIQ cap | 200 credits; ledger before each call | | creator budget | H/F | | ledger entry first |
 | P-112 | retries | 2 for retryable failures, backoff 2 s, 4 s | | transient errors | M/C | | state.json counts |
 | P-113 | disk reserve | job refuses to start with < 10 GB free or < 1.5 x estimate | | constrained storage | M/C | | pre-flight |

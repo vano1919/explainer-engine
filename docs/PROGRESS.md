@@ -3219,3 +3219,10 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - OPEN: section 4a still states "cap $10 in total, stop at 80 %" for Gemini (a cap number outside `config/spend_caps.json`); the card did not list it.
 - Closes Fable F-06, F-11 (doc rows); Argon-1 F-17, F-19 (Kokoro half), Q2 row 9; Argon-2 F-23 (banner half).
 - T3-4 review fixes (T2, PR #79): "the the" typo in PRODUCTION_RULES; `docs/AUDIO_SYSTEM.md` narrate paragraph now opens with the D-39 retirement (the CLI refuses, the old path is history); banner line of the three Kokoro modules wrapped to repo width; row 7.6 says the video_qa JSON is kept beside the clip; the stale duplicate `CP-07/08/13` routing row dropped.
+
+## 2026-10-30 — T3-5 (CP-14, CP-18): money documents link the caps; the watchdog is named a backstop (no pod, no money)
+- `COST_AND_TIME_MODEL` ledger: the Gemini and RunPod cap cells -> "the ceiling in `config/spend_caps.json` (D-56)" (spent-so-far figures stay as history); `ORCHESTRATION` money-ledger paragraph: the 2026-10-16 night-run caps are history, ceilings in force live only in `config/spend_caps.json`; `VIDEO_PARAMETER_SPEC` P-110 cell; `PROJECT_BRIEF` budget sentence (Gemini `US$10` replaced by the link; the vidIQ 200 stays, it has no line in the caps file yet).
+- `CLOUD_RUNBOOK` stop-path row 3 (watchdog): names `.github/workflows/watchdog.yml` and its cron `*/10 * * * *`, says GitHub may delay a schedule by hours (4-7 h observed), so it is the backstop and never the stop a plan relies on; the in-pod dead-man and the session guard are the primary stops.
+- Tests (`tests/unit/test_spend_caps_single_source.py`, 2 new, red before, green after); `test_docs` and `docs_lint` pass.
+- OPEN, waits for T1's N-01 (PR #70): `CLOUD_RUNBOOK.md` line 18 (history of `boot_cmd`) and CR-01 (line 54: "Boot (TMR manifest) pods keep `boot_cmd`") still describe boot pods; T1 asked for them to be corrected, but `boot_cmd` is still in `runpod.py` until #70 merges, so a document must not claim it first. Also OPEN: `test_cloud_stop_paths.py:344` needs `stamped(body)` after #70 (T1's note).
+- Closes Fable F-12; Argon-1 F-16, Q2 row 7.
