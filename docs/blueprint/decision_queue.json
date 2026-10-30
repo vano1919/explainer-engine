@@ -27,11 +27,11 @@
    "rec": 0,
    "reason": "შენი უახლესი წესი (D-80) და LoRA-ზე ფული არ არის.",
    "answer": {
-    "index": 2,
-    "label": "კი, 2.5D ფიგურა",
-    "at": "2026-10-29T08:55Z",
+    "index": 0,
+    "label": "არა",
+    "at": "2026-10-30T16:13Z",
     "by": "ვანო",
-    "reason": "plan v2 §A1: \"შენი „კი, 2.5D ფიგურა“ (08:55)\" - the answer is his; `by` added when the cards moved into the repo"
+    "reason": "his newer word, chat cmsg_01Hnu5zB86sjUj5GtTgaUkPW5f8NsnbZwPhLsKQESi7SXS item 1: no if it adds cost or complexity; replaces his 2026-10-29T08:55Z answer (D-89)"
    },
    "owner": "creator"
   },
@@ -93,13 +93,13 @@
    "rec": 0,
    "reason": "შენი უახლესი წესი, ElevenLabs-ის კრედიტების დაზოგვა.",
    "answer": {
-    "index": 0,
-    "label": "ნარატორი+LTX",
-    "by": "claude",
-    "at": "2026-10-29T09:00Z",
-    "reason": "ნარატორი = წამყვანის ხმა (D-68), პერსონაჟების დიალოგი LTX native (D-77): ერთგვაროვანი და იაფი; ცალკე ხმები კრედიტებს ხარჯავს ხარისხის მოგების გარეშე"
+    "index": 2,
+    "label": "ხმა თითოს",
+    "at": "2026-10-30T16:16Z",
+    "by": "ვანო",
+    "reason": "plan-thread card cmsg_01Hnu5zB86sjUj5GtTgaUkPWFv6dvb6QVwMfnJ6ic89ksh option A (Fixed ElevenLabs voice + LTX audio-in), confirmed in chat 16:16 UTC; supersedes the earlier answer by claude (LTX native voice); D-90"
    },
-   "owner": "claude"
+   "owner": "creator"
   },
   {
    "id": "A4",
