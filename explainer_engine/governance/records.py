@@ -64,15 +64,18 @@ def last(action: str, target: str, *, root=None) -> dict | None:
     return rows[-1] if rows else None
 
 
-def find(action: str, target: str, message_id: str, *, root=None) -> dict | None:
-    """The record of this action for exactly ``target`` (no wildcard) that carries ``message_id``: the check that a
-    ``creator_ref`` handed to code names a word the creator really gave."""
+def find(action: str, target: str, message_id: str, *, minutes: float | None = None, root=None, now: float | None = None) -> dict | None:
+    """The record of this action for exactly ``target`` (no wildcard) that carries ``message_id`` and, when ``minutes`` is
+    given, is younger than that: the check that a ``creator_ref`` handed to code names a word the creator recently gave.
+    The file is plain JSONL like the other actions' (no hash chain): this is as strong as they are, not tamper-evident."""
     path = root_dir(root) / FILE
+    now = now if now is not None else _now()
     for line in (path.read_text(encoding="utf-8").splitlines() if path.exists() else []):
         try:
             row = json.loads(line)
         except ValueError:
             continue
-        if row.get("action") == action and row.get("target") == target and row.get("message_id") == message_id:
+        if row.get("action") == action and row.get("target") == target and row.get("message_id") == message_id \
+                and (minutes is None or 0 <= now - float(row.get("at", 0)) <= minutes * 60):
             return row
     return None

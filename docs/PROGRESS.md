@@ -2825,4 +2825,8 @@ training as sequences is decided in the process. Changed together:
   the baseline would hide drift (EL-13) and a new model changes how it sounds. If the creator wants the next episode's approved read
   to replace the baseline without a separate word, that is one line in `register`.
 - Tests: `test_voice_audition.py` (a ref nobody recorded, a word for another voice/action/wildcard, each standing-voice change).
+- Review of #50 (P0b thread): the word must be for the voice that BECOMES the channel voice (a word recorded to retire the standing
+  voice no longer crowns another one), and it expires after 60 minutes (the window of a protected-config edit and an effort
+  override; `records.find(..., minutes=)`). The records file is plain JSONL like the other actions': as strong as they are, not
+  tamper-evident. For the creator: `config/channel_voices.json` is not a protected file, so a direct edit still bypasses `register`.
 

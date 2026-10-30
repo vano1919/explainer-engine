@@ -169,9 +169,9 @@ OTHER = {"voice_id": "other", "name": "Other", "role": "narrator", "status": "ch
 SPUDS = "NOpBlnGInO9m6vDvFkFC"
 
 
-def word(root, voice_id, ref="cmsg_ok"):
+def word(root, voice_id, ref="cmsg_ok", now=None):
     from explainer_engine.governance import records
-    records.add("channel_voice", voice_id, ref, "ვანო: კი", root=root)
+    records.add("channel_voice", voice_id, ref, "ვანო: კი", root=root, now=now)
     return ref
 
 
@@ -199,6 +199,29 @@ def test_a_word_for_another_voice_or_another_action_does_not_count(tmp_path):
     for ref in ("cmsg_a", "cmsg_b", "cmsg_c"):
         with pytest.raises(ContractError, match="no recorded creator word"):
             VC.register(reg, OTHER, creator_ref=ref, root=tmp_path)
+
+
+def test_a_word_to_retire_the_standing_voice_does_not_crown_another_one(tmp_path):
+    """Review of #50: the word must be for the voice that BECOMES the channel voice."""
+    reg = VC.load_registry()
+    standing = next(v for v in reg["voices"] if v["voice_id"] == SPUDS)
+    ref = word(tmp_path, SPUDS)
+    VC.register(reg, dict(standing, status="retired"), creator_ref=ref, root=tmp_path)  # his word retires Spuds
+    with pytest.raises(ContractError, match="no recorded creator word 'cmsg_ok' for other"):
+        VC.register(reg, OTHER, creator_ref=ref, root=tmp_path)  # but crowns nobody
+    with pytest.raises(ContractError, match="for fresh"):
+        VC.register(reg, dict(OTHER, voice_id="fresh"), creator_ref=ref, root=tmp_path)
+
+
+def test_a_word_expires_after_the_window(tmp_path):
+    import time
+    reg = VC.load_registry()
+    ref = word(tmp_path, "other", now=time.time() - (VC.WORD_MINUTES + 1) * 60)
+    with pytest.raises(ContractError, match="no recorded creator word"):
+        VC.register(reg, OTHER, creator_ref=ref, root=tmp_path)
+    fresh = word(tmp_path, "other", ref="cmsg_new", now=time.time() - (VC.WORD_MINUTES - 5) * 60)
+    assert VC.channel_voice(VC.register(reg, OTHER, creator_ref=fresh, root=tmp_path))["voice_id"] == "other"
+    assert VC.WORD_MINUTES == 60
 
 
 def test_retiring_demoting_or_changing_the_standing_narrator_needs_the_word_too(tmp_path):
