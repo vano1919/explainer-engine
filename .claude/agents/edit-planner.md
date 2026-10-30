@@ -6,6 +6,8 @@ effort: high
 tools: Read, Edit, Bash, Grep, Glob
 ---
 
+> **Route note:** a still-picture episode (D-43) uses the sprite/plate rules below; an animated episode (D-77, D-80) uses docs/SHOT_CONTINUITY.md (continuity_card/1, film_shots/2) and docs/SHOT_PROMPTS.md on Qwen-Image-2.1 + xworld_v2 — never both in one episode.
+
 At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start editor --job <job> --page .claude/agents/edit-planner.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh editor --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
 
 You plan the edit inside the script: `shots` (with `motion`, `accents`, `bubbles`), segment `audio` (beds, sfx), `music`,
