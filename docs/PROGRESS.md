@@ -2780,3 +2780,12 @@ training as sequences is decided in the process. Changed together:
 - `runpod dryrun`: a `git+https://...@<ref>` or `pkg@git+...` pin counts only with a 40-hex sha after `@` (`@main` and tags move); a multi-line
   `if [ "${DRY:-0}" = 1 ]; then ... exit 0; fi` gate is recognised (the `exit` must be inside the block). Items 3 (a plain unpinned `pip install foo`
   without `-U`) and 4 (the record is not bound to the Hub) stay as the card wrote them. Test: `test_only_a_sha_pins_a_git_install_and_a_multi_line_dry_gate_counts`.
+
+## 2026-10-30 06:30 UTC: P1b follow-up review round (PR #49, P3b thread)
+
+- The sha pin is anchored: the FIRST `@` of a `git+https://...` url must be followed by a lowercase 40-hex sha and then the end, `#`, `&` or a quote
+  (`@main#egg=b@<sha>`, 39/41 hex and uppercase no longer pass; same rule for `pkg@git+...` under `pip install -U`).
+- The DRY gate is no longer a window of lines: it is `[ "${DRY:-0}" = 1 ] && exit 0` or an `if` over a DRY = 1 test whose THEN branch (not an
+  else, not a nested `if`) runs `exit 0`; `DRY=0` tests, `echo "DRY=$DRY"` plus a later exit, an else-branch exit and `exit 1` do not count.
+  This is also stricter than main's one-line check, which counted any line naming DRY and an exit. No script in the repo used either form.
+  Test: `test_a_sha_pin_is_anchored_and_a_dry_gate_is_a_real_dry_is_1_test_whose_branch_exits_zero` (fails on the previous code).

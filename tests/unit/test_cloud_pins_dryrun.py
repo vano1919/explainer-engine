@@ -126,6 +126,34 @@ def test_only_a_sha_pins_a_git_install_and_a_multi_line_dry_gate_counts():
     assert any("no `DRY=1` gate" in w for w in D.static_problems(wrong, PINS))
 
 
+def test_a_sha_pin_is_anchored_and_a_dry_gate_is_a_real_dry_is_1_test_whose_branch_exits_zero():
+    """P1b review (P3b thread) of PR #49: `@main#egg=b@<sha>`, uppercase / 39 / 41 hex, and gates that only look like one."""
+    def pinned(ref):
+        return not any("has no `@<40-hex sha>`" in w for w in D.static_problems(
+            CLEAN.replace("pip install -q ", f'pip install -q "git+https://github.com/a/b@{ref}" '), PINS))
+    assert pinned(SHA) and pinned(SHA + "#egg=b") and pinned(SHA + "&subdirectory=x")
+    for bad in ("main#egg=b@" + SHA, SHA[:39], SHA + "0", SHA.upper(), "x" + SHA[1:], "main"):   # a sha later in the url pins nothing
+        assert not pinned(bad), bad
+    assert any("without `==`" in w for w in D.static_problems(
+        CLEAN.replace('pip install -q "huggingface_hub==1.33.0"', f'pip install -q -U "x@git+https://h/x@main#egg=x@{SHA}"'), PINS))
+
+    gate = '[ "${DRY:-0}" = 1 ] && exit 0\n'
+
+    def has_gate(block):
+        return not any("no `DRY=1` gate" in w for w in D.static_problems(CLEAN.replace(gate, block), PINS))
+    for good in (gate, 'if [ "${DRY:-0}" = 1 ]; then exit 0; fi\n', 'if [ "$DRY" -eq 1 ]\nthen\n  echo stop\n  exit 0\nfi\n',
+                 'if [[ "${DRY:-}" == 1 ]]; then\n  echo stop; exit 0\nelse\n  echo go\nfi\n'):
+        assert has_gate(good), good
+    for bad in ('if [ "${DRY:-0}" = 0 ]; then exit 0; fi\n',                                     # exits when DRY is NOT 1
+                'if [ "${DRY:-0}" = 1 ]; then\n  echo stop\nelse\n  exit 1\nfi\n',                # the exit is the other branch, and not 0
+                'if [ "${DRY:-0}" = 1 ]; then\n  echo stop\nelse\n  exit 0\nfi\n',                # exit 0 in the else branch
+                'if [ "${DRY:-0}" = 1 ]; then\n  if [ -f x ]; then exit 0; fi\nfi\n',               # exit only under a nested condition
+                'if [ "${DRY:-0}" = 1 ]; then\n  exit 1\nfi\n',                                    # the dry run FAILS
+                'echo "DRY=$DRY"\nexit 1\n', 'echo "DRY=$DRY"\n[ -f x ] && exit 0\n',            # a DRY mention and a later exit
+                '[ "${DRY:-0}" = 0 ] && exit 0\n', 'DRY=1\nexit 0\n'):
+        assert not has_gate(bad), bad
+
+
 def test_backslash_continuations_are_one_command():
     text = CLEAN.replace("1.33.0\"", "1.33.0\" \\\n  || true")
     assert any("`|| true`" in w for w in D.static_problems(text, PINS))
