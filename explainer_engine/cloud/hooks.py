@@ -32,7 +32,8 @@ RP_SAFE = ("sweep", "status", "list", "check", "logs", "cost", "stop")  # TMR's 
 RP_READERS = ("cat", "grep", "egrep", "fgrep", "rg", "sed", "awk", "less", "more", "head", "tail", "git", "diff", "wc", "cp", "mv", "ls",
               "stat", "file", "nl", "bat", "vim", "vi", "nano", "emacs", "code", "echo", "printf", "tee", "find", "ruff", "black")
 RP_TOKEN = re.compile(r"(?<![\w])rp\.py(?=\s|$)(?:\s+['\"]?(?P<sub>[\w-]+))?")
-RP_SEGMENT = re.compile(r"&&|\|\||[;&|\n(]")
+RP_SEGMENT = re.compile(r"&&|\|\||[;&|\n(`]")  # backticks open a nested command: echo `./rp.py create`
+RP_EXEC = re.compile(r"\s-(?:exec|execdir|ok|okdir)\b")  # find ... -exec ./rp.py create {} ; : a reader that launches another program
 RP_MODULE = re.compile(r"\bpython[\d.]*(?:\.exe)?\s+(?:-\S+\s+)*-m\s+(?:\w+\.)*rp\b(?:\s+(?P<sub>[\w-]+))?")
 RP_IMPORT = re.compile(r"\b(?:import\s+(?:cloud\.)?rp\b|from\s+(?:cloud\.rp|cloud\s+import\s+rp)\b|runpy\S*\s*.*\brp\b)")
 
@@ -41,7 +42,7 @@ def _tmr_rp(cmd):
     """True when the command runs TMR's rp.py with anything but a read-only or stopping sub-command, or imports it."""
     for seg in RP_SEGMENT.split(cmd):
         words = re.sub(r"^\s*(?:\w+=\S*\s+)*", "", seg).split()
-        if words and words[0].rsplit("/", 1)[-1] in RP_READERS:
+        if words and words[0].rsplit("/", 1)[-1] in RP_READERS and not RP_EXEC.search(seg):
             continue
         for m in RP_TOKEN.finditer(seg):
             if (m.group("sub") or "") not in RP_SAFE:

@@ -2708,3 +2708,9 @@ training as sequences is decided in the process. Changed together:
 - Second review round (22:45 UTC): `adopt` takes `approvals` for EVERY gated state up to the target (a machine approval of STAGED_UNLISTED
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.
+
+## 2026-10-30 03:30 UTC: P1a follow-up, nested `rp.py` runs behind a reader (no pod, no money)
+
+- Re-review of PR #29: ``echo `./rp.py create` `` and `find . -exec ./rp.py create {} \;` passed because the first word was a reader.
+  Backticks now split a command segment like `(`, and a `find` with `-exec`/`-execdir`/`-ok`/`-okdir` is not a reader. Tests in
+  `test_f_the_bash_hook_allows_only_read_only_and_stopping_tmr_commands`; `find . -name rp.py` and ``echo `./rp.py status` `` stay allowed.
