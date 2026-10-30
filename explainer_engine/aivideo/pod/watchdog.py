@@ -1,6 +1,7 @@
-"""Night-run watchdog (started once by kf.py --smoke). The pod's money ceiling ($2.4 at up to $0.79/h) ends the session after
+"""RETIRED by D-80 (2026-10-26): the night-run route of the wldnk era; kept as history, never run. Night-run watchdog (started once by kf.py --smoke). The pod's money ceiling ($2.4 at up to $0.79/h) ends the session after
 about 182 min, earlier than pod.sh's stage clock assumed, so: stop training at TRAIN_END (checkpoints are saved every 100 steps),
 and upload the upscaled clips shortly before the guard stops the pod."""
+raise SystemExit("RETIRED: see the module docstring")
 import os, subprocess, time
 POD_START = int(open("/workspace/T0").read())  # written by pod.sh
 TRAIN_END = POD_START + 85 * 60

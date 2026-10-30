@@ -6,7 +6,9 @@ from pathlib import Path
 
 import pytest
 
+from explainer_engine.qa import style_prompt
 from explainer_engine.scripting import continuity as cc
+from explainer_engine.training import lora_rules
 
 EXAMPLE = Path(__file__).resolve().parents[2] / "examples" / "continuity" / "napoleon_tent.json"
 
@@ -180,3 +182,8 @@ def test_cli_refuses_prompts_on_fail(doc, tmp_path, capsys):
     out = tmp_path / "prompts.json"
     assert cc.main(["prompts", str(path), "--out", str(out)]) == 0
     assert len(json.loads(out.read_text(encoding="utf-8"))) == 3
+
+
+def test_the_example_style_line_passes_the_d80_trigger_check(doc):
+    assert doc["style_line"] == lora_rules.trigger()
+    assert [f for f in style_prompt.check(doc["style_line"]) if f["severity"] == "FAIL"] == []

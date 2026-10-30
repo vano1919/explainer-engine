@@ -69,3 +69,28 @@ def test_kokoro_modules_carry_the_d39_banner_and_narrate_cli_refuses():
     assert "voice (Clyde)" not in rules
     assert re.search(r"\| \*\*keyframes\*\* \|", rules) and re.search(r"\| \*\*clips\*\* \|", rules)
     assert "docs/KEYFRAME_GATE.md" in rules and "video_qa" in rules
+
+
+OLD_ERA_BANNERED = (
+    "explainer_engine/aivideo/pod/montage.py",
+    "explainer_engine/aivideo/pod/fixhub.py",
+    "explainer_engine/aivideo/pod/watchdog.py",
+    "explainer_engine/aivideo/shotplan.py",
+    "explainer_engine/audio/voice_layer.py",
+    "explainer_engine/production/rig.py",
+)
+
+
+def test_old_era_modules_carry_a_retired_banner_and_their_cli_refuses():
+    import ast
+    import sys
+
+    root = Path(__file__).resolve().parents[2]
+    for rel in OLD_ERA_BANNERED:
+        doc = ast.get_docstring(ast.parse((root / rel).read_text(encoding="utf-8")))
+        assert doc and doc.startswith("RETIRED"), rel
+    runs = [[sys.executable, str(root / rel)] for rel in OLD_ERA_BANNERED[:3]]
+    runs.append([sys.executable, "-m", "explainer_engine.production.rig"])
+    for cmd in runs:
+        r = subprocess.run(cmd, capture_output=True, text=True, cwd=root)
+        assert r.returncode != 0 and "RETIRED" in r.stderr, cmd

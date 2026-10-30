@@ -3473,8 +3473,44 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.
 
+## 2026-10-30 — change plan T02: RETIRED banners on six old-era modules (D-80, D-39)
+
+- `aivideo/pod/montage.py`, `fixhub.py`, `watchdog.py`, `aivideo/shotplan.py` carry the D-80 banner, `audio/voice_layer.py` the D-39 banner,
+  `production/rig.py` the creator's 2026-10-22 banner (first docstring line). The three pod scripts raise `SystemExit("RETIRED ...")` before any
+  import, `rig.py` in its `__main__` block; `shotplan.py` and `voice_layer.py` are banner only (their functions stay importable and tested).
+  `kf.py`/`clips.py` (already RETIRED) import `fixhub` and start `watchdog.py`, so they now stop there if ever run. Nothing deleted.
+- Test: `test_old_era_modules_carry_a_retired_banner_and_their_cli_refuses` (docstrings read with `ast`, no import).
+- OPEN: none. No pod, no API call.
 ## 2026-10-30 change plan T03: the five P12a scripts pinned to their dryrun sha256
 - `tests/unit/test_p12a_scripts.py::test_the_p12a_scripts_on_main_are_the_ones_the_plan_dryran` holds the sha256 of `p12a_A.sh` .. `p12a_E.sh` (plan §1.2); a changed script
   fails a free test before any pod and needs a new OR-24 confirmation and a new dryrun record first. All five match on `main` today.
+## 2026-10-30 T05: `runpod create --test <name>` binds the ledger to its paid test
+- `create` reads `--test`: a ledger with `meta.test` needs `--test <that test>`; a wrong name, or `--test` on a plain ledger, is refused before any RunPod call.
+- Test: `test_create_requires_and_checks_the_test_name_of_a_paid_test_ledger` (cases: no flag, wrong name, plain ledger, right name reaches the fake).
+  The helper `_create_p12a` in `test_cloud_stop_paths.py` now passes `--test` for a paid-test ledger (planner decision); no assertion changed.
+## 2026-10-30 — change plan T07: the continuity example on the D-80 trigger home
+
+- `examples/continuity/napoleon_tent.json` `style_line` is now the trigger alone (`xworld style`, `training/lora_rules.json` via `qa/style_prompt.py`); the
+  wldnk-era look words are dropped (the planner's call). `examples/napoleon_vs_genghis/PROMPT_PACKAGE.md` starts with a history note (superseded by D-80).
+- Test: `test_the_example_style_line_passes_the_d80_trigger_check` (trigger equality + `style_prompt.check` has no FAIL).
+## 2026-10-30 night run T08: PRODUCTION_RULES gates 6 and 8 name real tools
+- `docs/PRODUCTION_RULES.md` gate 6 now points at `python -m explainer_engine.cloud.runpod dryrun --script <pod.sh>` (`cloud/dryrun.py`, CR-18),
+  `config/job_speeds.json` (`cloud/speeds.py`) and `docs/CLOUD_RUNBOOK.md` (was the TMR `cloud/lint_manifest.py`, `cloud/job_speeds.json`, runbook R6);
+  gate 8 says the GPU compositor (D-32) is not built and the render is `production/assemble.py` in chunks (RULE-R1, ED-13). No gate name, number or order changed.
+- Test: existing `test_production_rules_page_is_linked_and_names_every_gate` stays green.
+- OPEN: none. No pod, no API call, nothing deleted.
+- Decision log: none moved.
+## 2026-10-30 — T09: boundary tests from T01 (tests only)
+- T01 (`FREE_CHECKS_2026-10-30.md`): check 9 = NO, so `test_min_balance_refusal_at_the_exact_boundary` is added in
+  `tests/unit/test_d9_config.py` (fake balance 20.00: `--max-usd 19.00` leaves exactly 1.00 and passes the balance
+  preflight, 19.01 leaves 0.99 and is refused naming `min_balance_left_usd`). Check 8 = YES (`_picks` already counts
+  distinct pair numbers, commit dd5009f), so no `generator_gate.py` change and no new generator-gate test.
+- No production code changed, nothing paid. Tests: see the PR.
+## 2026-10-30 T10: `p12b.json`, every pin of the Qwen-only P12b
+- New `explainer_engine/training/pods/p12/p12b.json`: Qwen-Image-2.1 revision, `xworld_v2_000003000` (vault sha256), the Multiple-Angles LoRA
+  (revision read from the Hub: 175b29b6eb41307473eebc363fca8fc198216b60), the 12 azimuths, the four hero sheets (HF dataset
+  `vano1919/tmr-artifacts`, `p2s/out/p2s/`, paths given by the coordinator), the host pictures, stages Q1-Q4, drop order, prompts, outputs, heartbeat.
+  LTX stages (L1, L2, L3, AV) are listed as `deferred_to_p12c`.
+- Test: `tests/unit/test_p12b_config.py::test_p12b_json_is_pinned_complete_and_qwen_only`.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.

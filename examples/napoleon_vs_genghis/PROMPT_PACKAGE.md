@@ -1,3 +1,5 @@
+> History (superseded by D-80, 2026-10-26): the prompt text below is wldnk-era; the live trigger lives in explainer_engine/qa/style_prompt.py. Kept for the record, never pasted into a paid run.
+
 # What If Napoleon Marched Into Genghis Khan? The prompt package
 
 **ქართულად, მოკლედ.** ეს არის ერთი სრული 15-წუთიანი ეპიზოდის პრომპტი, დაწერილი სკრიპტის ენჯინ v1-ზე: ჩონჩხი,

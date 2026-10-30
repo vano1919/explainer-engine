@@ -1,4 +1,4 @@
-"""A cut-out character rig (the creator's muse, 2026-10-22: simple and beautiful, but the emotion and the physics must be
+"""RETIRED (the creator, 2026-10-22, explainer_engine/aivideo/__init__.py: the AI-video route replaced the rig cartoon): kept as history, never run. A cut-out character rig (the creator's muse, 2026-10-22: simple and beautiful, but the emotion and the physics must be
 good). numpy + PIL only; every frame is a pure function of its number, so a chunked render draws the same pixels.
 
 A ``Puppet`` is a tree of PNG pieces (head, torso, arms, legs, scarf...) with a pivot on each piece and an attach point on
@@ -449,4 +449,5 @@ def main(argv=None) -> int:
 
 
 if __name__ == "__main__":
+    raise SystemExit("RETIRED: see the module docstring")
     sys.exit(main())

@@ -450,7 +450,8 @@ def _create_p12a(api, tmp, monkeypatch, test, *extra):
     real = R.create
     monkeypatch.setattr(R, "create", lambda api, body, **kw: seen.append(body) or real(api, body, **kw))
     R.main(["create", "--yes", "--max-usd", "0.07", "--max-hours", "1", "--ledger", str(ledger), "--script", str(sf),
-            "--script-url", "https://huggingface.co/x/pod.sh", *extra, *PLAN], api=api, live=FakeLive(age=60))
+            "--script-url", "https://huggingface.co/x/pod.sh", *(["--test", test] if test else []), *extra, *PLAN],
+           api=api, live=FakeLive(age=60))
     return seen
 
 
