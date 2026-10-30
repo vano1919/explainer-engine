@@ -1,4 +1,6 @@
-"""Narration from a voice spec: Kokoro timed render of the blended voice -> words.json -> alteration -> checked WAV.
+"""RETIRED by D-39 (2026-10-16, ElevenLabs is the narrator): Kokoro code kept for provenance (docs/PROVENANCE.md) and for audio/timings consumers; never a production read.
+
+Narration from a voice spec: Kokoro timed render of the blended voice -> words.json -> alteration -> checked WAV.
 
     python -m explainer_engine.audio.narrate --spec assets/audio/voices/<id>.json --text narration.txt --out <dir>
 
@@ -9,6 +11,9 @@ Needs ``kokoro-onnx`` and the timed model in ``tools/kokoro`` (or ``$EXPLAINER_K
 """
 
 from __future__ import annotations
+
+if __name__ == "__main__":
+    raise SystemExit("RETIRED by D-39: no Kokoro reads; narration is ElevenLabs (docs/AUDIO_SYSTEM.md)")
 
 import argparse
 import json

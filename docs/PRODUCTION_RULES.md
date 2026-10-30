@@ -83,6 +83,8 @@ action. Gates 3-7 spend money and need the creator's yes first.
 | 6 | **Pictures (pod)** | limit = units x measured seconds x margin; approval with price and caps; pushed even on failure; contact sheet reviewed by eye, bad pictures repainted | TMR `cloud/lint_manifest.py` (`picture_budget`, `fatal_before_push`), `cloud/job_speeds.json`, runbook R6 |
 | 6.5 | **Two-part sample** | the sample's voice and pictures (first two segments, [OR-19](ORCHESTRATION.md)) are rendered and stitched; the creator watches, his notes are fixed and re-rendered; his recorded word (`production.sample approve`, bound to the script's sha256) opens paid generation for the rest | `production/sample.py`, PP-09, the ElevenLabs hook, gate 6.5 |
 | 7 | **Full read and timings** | one paid read of the final text; Scribe words, coverage >= 97 %, pauses padded, `words.json` on the audio the mix uses; shot cuts recomputed | D-39, UR-12, `build_shots.py` 0 FAIL |
+| 7.5 | **keyframes** | every keyframe of an animated episode passes the keyframe gate | [KEYFRAME_GATE](KEYFRAME_GATE.md) (docs/KEYFRAME_GATE.md, KG rules; log `qa_log.jsonl` in the episode folder); wired as production_gate rows keyframes/clips (P8 bundle; until they land the two CLIs are run by hand and their outputs kept with the episode) |
+| 7.6 | **clips** | every generated clip passes `training/video_qa` (LT-5x rows and the CLIP container/audio rows; one video_qa JSON per clip kept in the episode folder) | `explainer_engine/training/video_qa.py`; wired as production_gate rows keyframes/clips (P8 bundle; until they land the two CLIs are run by hand and their outputs kept with the episode) |
 | 8 | **Animatic and render** | GPU compositor (D-32), motion per UR-13, transitions UR-14, sound UR-15 | [RENDERING_ARCHITECTURE](RENDERING_ARCHITECTURE.md) |
 | 9 | **Seven-point test, QA and approval #2** | every video passes all seven checks of section 6 (`qa/scorecard.py`), then technical and editorial QA; each piece that passes is staged unlisted at once (standing order 9: the creator's standing approval for unlisted staging); approval #2 is the creator's own click to Public | section 6, [QA_SPECIFICATION](QA_SPECIFICATION.md) |
 
@@ -102,7 +104,7 @@ nothing is paid before the creator's word on the stitched two-part sample (gate 
 |---|---|---|---|---|
 | 2026-10-16 | The hook must ask a question (widened to BP-03's hook forms, D-59); first 30 s fast; ABC shots; cuts only in pauses; fixed durations; Ken Burns <= 1.15; >= 90 % hard cuts | no common edit grammar (the reference test video broke most of it) | UR-01..UR-15 (D-37) | `shot_rules` |
 | 2026-10-16 | Keep the drawn style; the topic sets the colour range; every shot has one emotion through light and colour | hyper-realistic modifier rejected | UR-07..UR-10 | `shot_rules`, `moods.json`, `look.json` |
-| 2026-10-16 | The narrator is too generic, too stable and flat | Kokoro blends and pitch shifts stay generic | ElevenLabs voice Clyde (D-39); Kokoro only for drafts | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) |
+| 2026-10-16 | The narrator is too generic, too stable and flat | Kokoro blends and pitch shifts stay generic | ElevenLabs voice Clyde (D-39); Kokoro retired (D-39), drafts are ElevenLabs first takes (skill elevenlabs-voice) | [AUDIO_SYSTEM](AUDIO_SYSTEM.md) |
 | 2026-10-16 | Write for an expressive read; mysterious, curious, funny | plain documentary prose | SCRIPTING_SPEC §8 | `narration-script` skill |
 | 2026-10-16 | The read is slow and monotone; the question is not asked like a question; stress on wrong words; add hmm / oh / eh where natural; study similar videos; write a big rules skill | wh-question hook falls; ellipses slow; no stressed word; no interjections; no open loops | N-01..N-10 | `narration_lint`, skill |
 | 2026-10-19 | Upload whatever video or Short passes every test right away, not everything together | Shorts waited for the long video and the whole batch | standing order 9 | `publish stage --only <id>` (per-piece state in `publish/youtube_state.json`) |
@@ -154,13 +156,13 @@ Measurements, not rules: the binding numbers are the BP rules of [SOURCED_RULES]
 | unique pictures at 0.85 per shot | about 115 | about 140 | about 170 | Day 1: 42 pictures for 46 shots |
 | pod time at 22.7 s per picture | about 45 min | about 55 min | about 65 min | 35 pictures in 793 s on an RTX 4090 |
 | pod cost at $0.89/h | about $0.7-0.9 | about $0.9-1.1 | about $1.1-1.4 | add about $0.1 boot; limit = pictures x 30 s x 1.25 |
-| ElevenLabs read (credits; the creator has the Pro plan and counts credits, 1 credit about $0.00018) | about 6,800 credits | about 8,500 credits | about 10,200 credits | 2,337 credits for 2,550 characters (Day 1); add about 1,000 for the test read. The earlier dollar rows were about twice too high |
+| ElevenLabs read (credits; the creator has [the plan recorded in D-52 (Creator)](DECISIONS_AND_OPEN_QUESTIONS.md) and counts credits, 1 credit about $0.00018) | about 6,800 credits | about 8,500 credits | about 10,200 credits | 2,337 credits for 2,550 characters (Day 1); add about 1,000 for the test read. The earlier dollar rows were about twice too high |
 | hero sprites | the poses the plan names | | | about $0.067 each, reusable across videos |
 
 These are estimates for planning; the estimate before each paid call is the number that counts.
 
 ## 4a. Cost is counted in credits
-The creator has the ElevenLabs Pro plan and counts credits, not dollars: every request for approval states credits first (read
+The creator has [the ElevenLabs plan recorded in D-52 (Creator)](DECISIONS_AND_OPEN_QUESTIONS.md) and counts credits, not dollars: every request for approval states credits first (read
 with `estimate_only`; 1 credit is about $0.00018) and the dollar equivalent second. Gemini pictures are dollars from the Gemini
 key (cap $10 in total, stop at 80 %); RunPod is dollars. Estimates and charges can differ (Scribe was estimated at 61 credits
 and charged 998 on 2026-10-16; sound effects were estimated at 55 and charged 17 or 67): the ledger records the charge.
@@ -170,7 +172,7 @@ and charged 998 on 2026-10-16; sound effects were estimated at 55 and charged 17
 - **Per topic (the episode folder):** research and claim map, narration text, `look.json` (palette per phase, heroes,
   archetypes, pose bank, figure style, style bridge status), shot plan, pictures, sprites for new heroes.
 - **Universal (this repository):** the gates above, UR-01..UR-22, N-01..N-10, the stakes vocabulary, the sound library, the
-  voice (Clyde), the pod procedure and its money rules, the cost ledger. A new topic starts from a copy of an episode `look.json`
+  the channel voice recorded in config/channel_voices.json (card C10), the pod procedure and its money rules, the cost ledger. A new topic starts from a copy of an episode `look.json`
   with `rule_base: 2` and fills in its own heroes, palette and claims.
 
 ## 6. The seven-point test (creator, 2026-10-16: every video passes all seven; a failure is investigated, never waved through)

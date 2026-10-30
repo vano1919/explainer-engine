@@ -1,4 +1,6 @@
-"""A talking mouth, frame by frame, from what is being said. stdlib only.
+"""RETIRED by D-39 (2026-10-16, ElevenLabs is the narrator): Kokoro code kept for provenance (docs/PROVENANCE.md) and for audio/timings consumers; never a production read.
+
+A talking mouth, frame by frame, from what is being said. stdlib only.
 
 The mouth follows Kokoro's own phonemes (``[[phoneme, start, end], ...]``): every sound has an opening (wide vowels
 open fully, close vowels a little, most consonants a little, m/b/p and silence close it) and a shape (rounded vowels
