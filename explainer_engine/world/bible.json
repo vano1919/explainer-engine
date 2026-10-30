@@ -1,9 +1,9 @@
 {
   "schema": "world_bible/1",
-  "version": "1.1",
+  "version": "1.2",
   "status": "draft",
-  "date": "2026-10-25",
-  "reason": "branch integration 2026-10-25: eras.json gains the modern_new_york era (Titans episode, commit 19b644e), written before bible v1.0 was pinned on its own branch",
+  "date": "2026-10-30",
+  "reason": "P5: palette tokens faction_a (blue) and faction_b (orange) for the map engine's two sides, a colour-blind-safe pair (D-86); no existing token changed",
   "approved_by": null,
   "approved_at": null,
   "parts": {
@@ -17,7 +17,7 @@
     },
     "palette": {
       "file": "../design/palette.json",
-      "sha256": "d196c5d6ae09af21b125c9616c6858b53fc754e84cb547f7a67e8954714f20e7"
+      "sha256": "45e00cc130fe6c45232f565d82a21a04cfe7766d5d8170ebcf35862916fab208"
     }
   },
   "camera_language": [
@@ -66,6 +66,12 @@
       "version": "1.1",
       "date": "2026-10-25",
       "reason": "branch integration 2026-10-25: eras.json gains the modern_new_york era (Titans episode, commit 19b644e), written before bible v1.0 was pinned on its own branch",
+      "approved_by": null
+    },
+    {
+      "version": "1.2",
+      "date": "2026-10-30",
+      "reason": "P5: palette tokens faction_a (blue) and faction_b (orange) for the map engine's two sides, a colour-blind-safe pair (D-86); no existing token changed",
       "approved_by": null
     }
   ]
