@@ -8,6 +8,7 @@ import time
 from pathlib import Path
 
 from explainer_engine.core import store
+from explainer_engine.core.errors import ContractError
 
 ROOT = Path(__file__).resolve().parents[2]
 FILE = ROOT / "config" / "job_speeds.json"
@@ -15,8 +16,8 @@ FIELDS = ("job_type", "units", "work_s")  # what a pod's units.json must carry
 UNITS_JSON = "units.json"  # in the pod's $EE_OUT, next to stages.txt and beat.txt
 
 
-class SpeedError(Exception):
-    pass
+class SpeedError(ContractError):
+    """A speed table or a pod's units.json that is not what the contract says (permanent: fix the file or the pod script)."""
 
 
 def load(path=None):
@@ -74,9 +75,19 @@ def from_units_json(text):
     is not what the speed table needs."""
     try:
         d = json.loads(text)
-    except ValueError as e:
+    except (TypeError, ValueError) as e:
         raise SpeedError(f"units.json is not JSON ({e})") from e
+    if not isinstance(d, dict):
+        raise SpeedError(f"units.json must be a JSON object, not {type(d).__name__}")
     missing = [k for k in FIELDS if d.get(k) in (None, "", 0)]
-    if not isinstance(d, dict) or missing:
-        raise SpeedError(f"units.json lacks {', '.join(missing) or 'an object'}")
+    if missing:
+        raise SpeedError(f"units.json lacks {', '.join(missing)}")
+    if not isinstance(d["job_type"], str):
+        raise SpeedError("units.json: job_type must be a string")
+    for k in ("units", "work_s", "setup_s", "mb", "download_s"):
+        v = d.get(k)
+        if v is None and k not in FIELDS:
+            continue
+        if isinstance(v, bool) or not isinstance(v, (int, float)) or v != v or v in (float("inf"), float("-inf")) or v < 0:
+            raise SpeedError(f"units.json: {k} must be a non-negative number, not {v!r}")
     return d

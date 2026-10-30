@@ -1167,13 +1167,13 @@ def cost_report(api, pid, ledger_path=None, *, fetch=None, now=None):
                 texts[name] = hf_text(f"{kind_repo}:{folder + '/' if folder else ''}{name}", fetch=fetch)
             except (OSError, ValueError):
                 texts[name] = None
+    usd, buckets = settle(api, pid, ledger_path)  # the bill is real whatever the pod's own files say: settle before parsing them
     units_row, speed_note = None, None
     if texts.get(speeds.UNITS_JSON):
         try:
             units_row = speeds.from_units_json(texts[speeds.UNITS_JSON])
         except speeds.SpeedError as e:
             speed_note = f"no speed row: {e}"
-    usd, buckets = settle(api, pid, ledger_path)
     if units_row and (ledger_path or sess.get("ledger")):
         from explainer_engine.core.ledger import Run
         run = Run.open(ledger_path or sess["ledger"])
@@ -1198,6 +1198,7 @@ def cost_report(api, pid, ledger_path=None, *, fetch=None, now=None):
             run.fail(f"hw:{sess['job_base']}", f"pod {pid}: BAD_HOST")
         elif word in ("FAILED", "FAILED_UPLOAD") and sess.get("script_sha"):
             run.fail(f"script:{sess['job_base']}:{sess['script_sha'][:12]}", f"pod {pid}: {word}")
+        sess = sess_read(pid) or sess  # settle() wrote settled/billed_usd after the read at the top: do not write them away
         sess["outcome_recorded"] = word
         sess_write(sess)
     per = f", ${usd / float(units_row['units']):.4f}/unit ({units_row['job_type']} x{units_row['units']})" if units_row else ""
@@ -1220,7 +1221,8 @@ def settle_due(api, *, now=None, after_s=SETTLE_AFTER_S, fetch=None):
             continue
         if s.get("closed") and not s.get("settled") and s.get("ledger") and now - s["closed"] >= after_s:
             try:
-                out.append(cost_report(api, s["pod"], fetch=fetch, now=now)["line"])
+                r = cost_report(api, s["pod"], fetch=fetch, now=now)
+                out.append(r["line"] + (f" [{r['speed']}]" if r.get("speed") and "units.json" in r["speed"] else ""))
             except (RunPodError, OSError, ValueError, KeyError) as e:
                 out.append(f"pod {s.get('pod')}: settle failed ({str(e)[:80]}); `runpod cost {s.get('pod')}`")
     return out

@@ -2794,3 +2794,15 @@ training as sequences is decided in the process. Changed together:
   numbers are the same; (2) the PROGRESS line is printed and kept in `tools/runpod/settled.jsonl`, not written into this file by the tool
   (every branch would conflict on it); (3) the watchdog does not settle (it has no ledger in CI): the session hook does; (4) RP-09's "never an
   80/96 GB card when 48 GB fits" needs a measured `min_vram` per job type: none exists yet.
+
+## 2026-10-30 06:00 UTC: P1c review fixes (PR #48): a garbled units.json, a settled flag that was written away
+
+- `units.json` is validated before it is used (`speeds.from_units_json`): an object with a string `job_type` and non-negative numbers, else
+  `SpeedError` (now a `ContractError`). `cost_report` settles the real bill FIRST and parses the pod's files after, so a garbled file
+  (`[]`, `null`, `5`, `units: "abc"`) costs only the speed row ("no speed row: units.json ..." in the settle line), never the ledger entry.
+  The session-start hook shows a failed `settle_due` as an info line instead of dropping the whole RunPod check.
+- `cost_report` re-reads the session before it records the pod's outcome, so `settled` is no longer written away and the next session does not
+  settle the same pod again. Tests: `test_a_garbled_units_json_never_keeps_the_bill_out_of_the_ledger`, `test_the_session_hook_survives_...`,
+  `test_a_settled_pod_stays_settled_...`.
+- Wording: RP-10's message says "failed create or BAD_HOST pod(s)" (a failed `create` of any cause uses the one try). `check` only REPORTS
+  unknown `keep_stopped_pods` ids; it does not clean them up (`config/spend_caps.json` changes only on the creator's word).

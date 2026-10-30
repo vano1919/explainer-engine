@@ -32,6 +32,12 @@ def test_a_row_is_written_from_a_measurement_and_needs_a_known_job_and_real_numb
     assert S.from_units_json('{"job_type": "keyframes", "units": 3, "work_s": 60}')["units"] == 3
     with pytest.raises(S.SpeedError, match="lacks work_s"):
         S.from_units_json('{"job_type": "keyframes", "units": 3}')
+    for bad in ("[]", "null", "5", '"x"', "{", '{"job_type": "keyframes", "units": "abc", "work_s": 60}',
+                '{"job_type": "keyframes", "units": 3, "work_s": -1}', '{"job_type": "keyframes", "units": true, "work_s": 60}',
+                '{"job_type": "keyframes", "units": 3, "work_s": 60, "setup_s": "x"}', '{"job_type": 7, "units": 3, "work_s": 60}'):
+        with pytest.raises(S.SpeedError):                                              # one clear contract error, never AttributeError
+            S.from_units_json(bad)
+
 
 
 # --- the picker --------------------------------------------------------------------------------------------------------------
@@ -150,7 +156,7 @@ def test_create_counts_a_failed_create_as_a_hardware_try_and_stops_after_the_ret
         with pytest.raises(R.RunPodError):
             _create(api, tmp, NEW_SH, "--job", "j1", live=FakeLive(age=60))
     assert len(Run.open(tmp / "run.json").data["failures"]["hw:j1"]) == 2
-    with pytest.raises(SystemExit, match="RP-10: 2 hardware failure"):
+    with pytest.raises(SystemExit, match="RP-10: 2 failed create or BAD_HOST"):
         _create(api, tmp, NEW_SH, "--job", "j1", live=FakeLive(age=60))
     assert not fake.pods
 
@@ -186,6 +192,40 @@ def test_cost_settles_into_the_ledger_writes_the_speed_row_and_the_progress_line
     item = Run.open(ledger).data["items"]["pods"]["a"]
     assert item["usd_per_unit"] == 0.003 and item["units"] == 100 and Run.open(ledger).spent("runpod_usd") == 0.3
     assert json.loads((R.RP / "settled.jsonl").read_text().splitlines()[0])["pod"] == "a"
+
+
+@pytest.mark.parametrize("units", ["[]", "null", "5", '{"job_type": "keyframes", "units": "abc", "work_s": 60}', "{broken"])
+def test_a_garbled_units_json_never_keeps_the_bill_out_of_the_ledger(env, units):
+    fake, api, tmp = env
+    ledger = _closed_session(tmp, closed=100)
+    fake.billing = [{"totalAmount": 0.30, "podId": "a"}]
+    files = {"beat.txt": "BOOT key=200 job=j pod=a price=0.3 deadline=9\nDONE rc=0 2026-10-30T01:00:00Z progress=ok upload_fail=0 unstored=0\n",
+             "units.json": units}
+    res = R.cost_report(api, "a", fetch=lambda url: files[url.rsplit("/", 1)[1]], now=500)
+    assert res["usd"] == 0.3 and "no speed row: units.json" in res["speed"] and "/unit" not in res["line"]
+    assert Run.open(ledger).spent("runpod_usd") == 0.3 and R.sess_read("a")["settled"]   # the real bill replaced the reservation
+    assert S.row("keyframes", "NVIDIA A40") is None                                    # and no row was written from garbage
+
+
+def test_the_session_hook_survives_whatever_settle_due_raises(env, monkeypatch):
+    fake, api, tmp = env
+    monkeypatch.setattr(R, "api_key", lambda: "k")
+    monkeypatch.setattr(R, "Api", lambda **kw: api)
+    monkeypatch.setattr(R, "settle_due", lambda *a, **k: (_ for _ in ()).throw(AttributeError("boom")))
+    res = H._check()
+    assert res is not None and any("settle check failed (AttributeError" in i for i in res["info"])
+
+
+def test_a_settled_pod_stays_settled_after_its_outcome_is_recorded(env):
+    fake, api, tmp = env
+    ledger = _closed_session(tmp, closed=100)
+    fake.billing = [{"totalAmount": 0.2, "podId": "a"}]
+    beat = lambda url: ("BOOT key=200 job=j pod=a price=0.3 deadline=9\nDONE rc=0 2026-10-30T01:00:00Z progress= upload_fail=0 unstored=0\n"
+                        if url.endswith("beat.txt") else "")  # noqa: E731
+    R.cost_report(api, "a", fetch=beat, now=500)
+    s = R.sess_read("a")
+    assert s["outcome_recorded"] == "DONE" and s["settled"] and s["billed_usd"] == 0.2
+    assert R.settle_due(api, now=100 + 200 * 60, fetch=beat) == []                     # not settled a second time next session
 
 
 def test_the_pods_outcome_feeds_the_retry_rule_once(env):

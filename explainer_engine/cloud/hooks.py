@@ -88,8 +88,8 @@ def _check():
         return {"problems": [], "info": [f"RunPod not reachable: {str(e)[:80]}"], "unreadable": True}
     try:  # RP-07: a pod that stopped 90 min ago gets its bill into the ledger now; the PROGRESS line is for the session to copy
         res["info"] += [f"settled: {line}" for line in R.settle_due(api)]
-    except (R.RunPodError, OSError, ValueError):
-        pass
+    except Exception as e:  # noqa: BLE001 - advisory: whatever a pod's own files hold, the rest of the check must be shown
+        res["info"].append(f"settle check failed ({type(e).__name__}: {str(e)[:60]}); run `runpod cost <pod>`")
     return res
 
 

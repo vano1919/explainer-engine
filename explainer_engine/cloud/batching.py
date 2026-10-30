@@ -60,7 +60,7 @@ def rp10(hw_failures, script_failed, *, key=""):
     """RP-10: a hardware failure (no capacity, BAD_HOST) gets one retry; a script failure gets no paid retry of the same text."""
     out = []
     if hw_failures >= HW_ATTEMPTS:
-        out.append(f"RP-10: {hw_failures} hardware failure(s) on {key or 'this job'}: the one retry is used; stop and ask the creator")
+        out.append(f"RP-10: {hw_failures} failed create or BAD_HOST pod(s) on {key or 'this job'}: the one retry is used; stop and ask the creator")
     if script_failed:
         out.append("RP-10: this exact script already failed on a pod (not hardware): fix it and pass `runpod dryrun` on the new text first")
     return out
