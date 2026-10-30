@@ -39,6 +39,7 @@ def env(tmp_path, monkeypatch):
     monkeypatch.setenv("EXPLAINER_LLM_CACHE", str(tmp_path / "cache"))
     monkeypatch.setenv("EXPLAINER_LLM_LEDGER", str(tmp_path / "ledger"))
     monkeypatch.delenv("EXPLAINER_LLM_PRICES", raising=False)
+    monkeypatch.delenv("EE_ANTHROPIC_API_KEY", raising=False)  # a session that has the alias must not leak it into the tests
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-not-real")
     return tmp_path
 
@@ -322,6 +323,7 @@ def test_no_claude_api_line_means_no_spending(env):
 
 def test_real_client_needs_the_key_and_the_recorded_approval(env, monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY")
+    monkeypatch.delenv("EE_ANTHROPIC_API_KEY", raising=False)
     with pytest.raises(ca.KeyAbsent):
         ca.ClaudeAPI().complete(req())
     monkeypatch.setenv("ANTHROPIC_API_KEY", "x")
