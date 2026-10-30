@@ -42,6 +42,10 @@ def test_retired_launcher_exits_before_any_pod_client(rel):
     'python -c "from explainer_engine.cloud import runpod as rp; rp.create(api, body)"',
     'python -c "import explainer_engine.cloud.runpod as runpod; runpod.create(a, b, max_price=0.8)"',
     "python3 - <<'EOF'\nfrom explainer_engine.cloud import runpod as rp\nrp.create(rp.Api(), body)\nEOF",
+    # T5's review of CP-01: a bare imported name and an alias spelled the call another way
+    'python -c "from explainer_engine.cloud.runpod import create; create(api, body)"',
+    'python -c "from explainer_engine.cloud import runpod as R; R.create(a, b, max_price=0.8)"',
+    'python -c "import explainer_engine.cloud.runpod as pods; pods.create(a, b)"',
 ])
 def test_pre_bash_refuses_retired_launchers_and_library_create(cmd):
     assert hooks.pre_bash({"tool_input": {"command": cmd}}) == 2, cmd
@@ -50,6 +54,8 @@ def test_pre_bash_refuses_retired_launchers_and_library_create(cmd):
 @pytest.mark.parametrize("cmd", [
     "cat explainer_engine/aivideo/pod/launch.py",
     'grep -n "rp.create(" explainer_engine/cloud/runpod.py',
+    'grep -n "def create(" explainer_engine/cloud/runpod.py',
+    "python -m explainer_engine.cloud.runpod create --script explainer_engine/training/pods/p12/p12a_A.sh --ledger run.json",
     "python -m explainer_engine.cloud.runpod check",
     "python -m explainer_engine.cloud.runpod create --yes --max-usd 0.5",
     "python -m pytest -q tests/unit/test_runpod.py",
@@ -109,6 +115,19 @@ def test_preflight_with_a_body_refuses_no_script_an_unpinned_image_and_a_boot_po
     assert any("pod_wrapper.sh" in w for w in why) and rp.PREFLIGHT_KEY not in boot  # the TMR boot pod can never be sent
     with pytest.raises(rp.RunPodError, match="preflight_create"):
         rp.create(NoNetwork(), boot, max_price=0.95)
+
+
+def test_create_refuses_a_forged_stamp_on_a_boot_body_or_an_unpinned_image():
+    """T5's review of N-01: ``preflight_stamp`` is public, so a stamp can be forged with one call. create() itself checks what the
+    body alone decides: it runs pod_wrapper.sh (OR-21) and its image is pinned (cloud_pins.json), so a forged stamp sends neither."""
+    boot = rp.create_body("ee-x-until-9999999999", "cheap", volume=0, image=pins.image_ref(pins.DEFAULT_IMAGE), boot="cloud/x.json")
+    boot[rp.PREFLIGHT_KEY] = rp.preflight_stamp(boot)
+    with pytest.raises(rp.RunPodError, match="pod_wrapper.sh"):
+        rp.create(NoNetwork(), boot, max_price=0.95)
+    tag = _script_body(image="ghcr.io/vano1919/tmr-pod:latest")
+    tag[rp.PREFLIGHT_KEY] = rp.preflight_stamp(tag)
+    with pytest.raises(rp.RunPodError, match="cloud_pins.json"):
+        rp.create(NoNetwork(), tag, max_price=0.95)
 
 
 @pytest.mark.parametrize("argv", [
@@ -220,3 +239,24 @@ def test_variant_chosen_requires_the_variants_file_and_writes_nothing_without_it
         job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": "a" * 64}, variants=f)   # any 64-hex string is not enough
     job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": sha}, variants=f)
     assert job.state == "VARIANT_CHOSEN" and job.manifest["approvals"]["VARIANT_CHOSEN"]["sha256"] == sha
+
+
+def test_adopt_into_a_state_past_the_pick_binds_the_variants_file(tmp_path):
+    """T5's review of N-03: CN-04 says adopt is held to the same gates, so adopting past VARIANT_CHOSEN checks the variants file
+    exactly as move() does; nothing is written when it fails."""
+    from test_lifecycle import ADOPT, gates_up_to, variants_file
+    from explainer_engine.core import store
+    from explainer_engine.core.errors import ContractError
+    (tmp_path / "run.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "dossier.md").write_text("research", encoding="utf-8")
+    f, sha = variants_file(type("J", (), {"job_dir": tmp_path})())
+    ok = gates_up_to("SCENARIO_APPROVED")
+    kw = dict(state="SCENARIO_APPROVED", reason="x", dossier=tmp_path / "dossier.md", **ADOPT)
+    with pytest.raises(ContractError, match="variants"):
+        store.EpisodeJob.adopt(tmp_path, approvals={**ok, "VARIANT_CHOSEN": {**ok["VARIANT_CHOSEN"], "sha256": sha}}, **kw)
+    with pytest.raises(ContractError, match="CN-04"):
+        store.EpisodeJob.adopt(tmp_path, approvals={**ok, "VARIANT_CHOSEN": {**ok["VARIANT_CHOSEN"], "sha256": "a" * 64}},
+                               variants=f, **kw)
+    assert not (tmp_path / store.MANIFEST).exists()
+    job = store.EpisodeJob.adopt(tmp_path, approvals={**ok, "VARIANT_CHOSEN": {**ok["VARIANT_CHOSEN"], "sha256": sha}}, variants=f, **kw)
+    assert job.state == "SCENARIO_APPROVED" and job.manifest["approvals"]["VARIANT_CHOSEN"]["sha256"] == sha

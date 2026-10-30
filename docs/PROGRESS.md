@@ -3192,3 +3192,19 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   BUDGET_RESERVED, SAMPLE_APPROVED, REVIEW_APPROVED binds, and who records it (`record_artifact` has no production caller); until then those
   approvals are checked for kind, `by`, `ref` and a 64-hex `sha256` only. (2) `adopt()` into VARIANT_CHOSEN or later checks the approvals but
   not the variants file (CN-04: "`adopt` is held to the same gates"); closing it adds a `variants=` argument to `adopt`.
+
+## 2026-10-30 UTC: plan_v2 T1 / follow-up of T5's reviews: adopt binds the variants file, create() re-checks the body, the hook catches every create spelling (no pod, no money)
+
+- `explainer_engine/core/store.py`: the VARIANT_CHOSEN check moved into `EpisodeJob._check_variants` (one home) and `adopt()` takes
+  `variants=`: adopting into VARIANT_CHOSEN or later checks the file exactly as `move` does (CN-04: "`adopt` is held to the same gates";
+  T5's review of N-03). Nothing is written when it fails.
+- `explainer_engine/cloud/runpod.py`: `create()` checks again what the body alone decides, after the stamp: it runs `pod_wrapper.sh`
+  (OR-21) and its image is pinned (`config/cloud_pins.json`). `preflight_stamp` is public, so a stamp can be forged with one call (T5's
+  review of N-01); a forged stamp now sends neither a boot pod nor an unpinned image.
+- `explainer_engine/cloud/hooks.py`: one more BYPASS pattern, a Python command that names `runpod` and calls `create(`: a bare imported
+  name (`from ...runpod import create; create(`) and an alias (`runpod as R; R.create(`) were allowed (T5's review of CP-01).
+- Tests: `tests/unit/test_money_path_fences.py` gains 3 hook cases, the forged-stamp test and the adopt test (red on the N-03 head:
+  5 failed, 30 passed; green: 35 passed). Setup only: `tests/unit/test_runpod.py::stamped()` makes its hand-made body a script pod's
+  body (wrapper command, pinned image) before stamping; `tests/unit/test_lifecycle.py` writes the Napoleon variants file in the `folder`
+  fixture, `gates_up_to` carries its real hash, and the three adopts that pass the pick name the file. No assert removed.
+- OPEN: none new. The gate→artifact binding of the other gates stays with ვანო (options sent to the coordinator).
