@@ -3,7 +3,7 @@ the durable store, the watchdog rules, the phone commands, and the brief's fifte
 import json
 
 import pytest
-from test_runpod import FakeRunPod, pod
+from test_runpod import FakeRunPod, live_ok, pod, script_pod
 
 from explainer_engine.cloud import __main__ as CLI, incidents as I, jobs as J, runpod as R, store as S, watchdog as W
 from explainer_engine.core.ledger import Run
@@ -180,7 +180,8 @@ def test_s01_create_fails_on_every_card_bills_nothing_and_records_the_failure(en
     ledger = tmp / "run.json"
     Run.open(ledger, caps={"runpod_usd": 1.0})
     with pytest.raises(R.RunPodError, match="no pod could be made"):
-        R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--gpu", "cheap", "--ledger", str(ledger)], api=api)
+        R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--gpu", "cheap", "--ledger", str(ledger), *script_pod(tmp)],
+               api=api, live=live_ok())
     assert not fake.pods and Run.open(ledger).spent("runpod_usd") == 0
     assert Run.open(ledger).data["reserved"].get("pod:pending", {}).get("amount", 0) == 0  # released
     job = J.Job.list(tmp / "jobs" / "cloud")[0]
@@ -459,7 +460,8 @@ def test_the_create_cli_writes_a_job_record_the_guard_can_follow(env):
     fake, api, tmp = env
     ledger = tmp / "run.json"
     Run.open(ledger, caps={"runpod_usd": 1.0})
-    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--job", "titans", "--ledger", str(ledger)], api=api)
+    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--job", "titans", "--ledger", str(ledger), *script_pod(tmp)],
+           api=api, live=live_ok())
     job = J.Job.list(tmp / "jobs" / "cloud", "titans")[0]
     sess = R.sess_read("p1")
     assert sess["job"] == str(job.dir) and job.state["resource"] == "p1" and job.state["state"] == "PROVISIONING"

@@ -148,6 +148,26 @@ def pod(pid="a", name="ee-x-until-9999999999", status="RUNNING", price=0.89, vol
             "gpu": {"id": gpu, "count": 1}, "startedAt": "2026-10-22T08:00:00Z", "runtime": runtime}
 
 
+def stamped(body):
+    """N-01: create() sends only a body stamped by preflight_create; the library tests of the card loop stamp their hand-made body."""
+    body[R.PREFLIGHT_KEY] = R.preflight_stamp(body)
+    return body
+
+
+def script_pod(tmp, disk="40"):
+    """N-01 (OR-21): every create is a script pod. The flags a CLI test adds to reach what it tests (its dry run counts as done,
+    tests/unit/conftest.py; the plan's work/setup minutes and the container disk, P1c)."""
+    sf = tmp / "job.sh"
+    sf.write_text(NEW_SH)
+    return ["--script", str(sf), "--script-url", "https://huggingface.co/x/pod.sh", "--work-min", "60", "--setup-min", "10", "--disk", disk]
+
+
+def live_ok():
+    """A live-pod registry whose watchdog ran a minute ago (CR-07: a stop path outside the session)."""
+    from test_cloud_stop_paths import FakeLive
+    return FakeLive(age=60)
+
+
 def test_norm_turns_a_v2_pod_into_the_flat_record():
     p = R.norm(pod(ports={"22": 40022, "8888": 48888}, ip="1.2.3.4", util=77))
     assert p["status"] == "RUNNING" and p["costPerHr"] == 0.89 and p["volumeInGb"] == 150 and p["containerDiskInGb"] == 80
@@ -187,7 +207,7 @@ def test_create_is_never_posted_twice_when_the_answer_is_lost(env):
     fake, api = env
     body = R.create_body("ee-default-abc-until-9999999999")
     fake.faults = [("POST", "/pods", "timeout-after")]
-    got = R.create(api, body, max_price=0.95, sleep=lambda s: None, gpus=R.GPUS["cheap"])
+    got = R.create(api, stamped(body), max_price=0.95, sleep=lambda s: None, gpus=R.GPUS["cheap"])
     assert got["id"] == "p1" and len(fake.pods) == 1
     assert [c for c in fake.calls if c[0] == "POST"] == [("POST", "/pods")]  # no second card tried after a lost answer
 
@@ -196,33 +216,33 @@ def test_create_after_a_lost_request_that_never_happened_bills_nothing(env):
     fake, api = env
     fake.faults = [("POST", "/pods", "timeout")]
     with pytest.raises(R.RunPodError, match="nothing is billing"):
-        R.create(api, R.create_body("ee-x-until-9999999999"), max_price=0.95, sleep=lambda s: None)
+        R.create(api, stamped(R.create_body("ee-x-until-9999999999")), max_price=0.95, sleep=lambda s: None)
     assert not fake.pods and [c for c in fake.calls if c[0] == "POST"] == [("POST", "/pods")]
 
 
 def test_create_reposts_only_after_a_429(env):
     fake, api = env
     fake.faults = [("POST", "/pods", 429)]
-    assert R.create(api, R.create_body("ee-x-until-9999999999"), max_price=0.95, sleep=lambda s: None)["id"] == "p1"
+    assert R.create(api, stamped(R.create_body("ee-x-until-9999999999")), max_price=0.95, sleep=lambda s: None)["id"] == "p1"
     assert len(fake.pods) == 1
 
 
 def test_create_tries_the_next_card_of_the_pool_after_a_clear_refusal(env):
     fake, api = env
     fake.refuse_gpus = set(R.GPUS["cheap"][:2])  # no capacity for the first two cards
-    got = R.create(api, R.create_body("ee-x-until-9999999999", "cheap"), max_price=0.95, gpus=R.GPUS["cheap"])
+    got = R.create(api, stamped(R.create_body("ee-x-until-9999999999", "cheap")), max_price=0.95, gpus=R.GPUS["cheap"])
     assert got["gpu"] == R.GPUS["cheap"][2] and len(fake.pods) == 1
     assert sum(1 for c in fake.calls if c == ("POST", "/pods")) == 3
     fake.refuse_gpus = set(R.GPUS["cheap"])
     with pytest.raises(R.RunPodError, match="no pod could be made"):
-        R.create(api, R.create_body("ee-y-until-9999999999", "cheap"), max_price=0.95, gpus=R.GPUS["cheap"])
+        R.create(api, stamped(R.create_body("ee-y-until-9999999999", "cheap")), max_price=0.95, gpus=R.GPUS["cheap"])
     assert len(fake.pods) == 1
 
 
 def test_a_card_over_the_ceiling_is_deleted_at_once(env):
     fake, api = env
     with pytest.raises(R.RunPodError, match="over the"):
-        R.create(api, R.create_body("ee-x-until-9999999999"), max_price=0.5)
+        R.create(api, stamped(R.create_body("ee-x-until-9999999999")), max_price=0.5)
     assert not fake.pods
 
 
@@ -303,19 +323,20 @@ def test_create_cli_reserves_in_the_ledger_writes_a_session_and_names_the_lifeti
     monkeypatch.setattr(R, "live_guard", lambda pid: True)
     ledger = tmp_path / "run.json"
     Run.open(ledger, caps={"runpod_usd": 1.0})
-    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "0.75", "--boot", "cloud/x.json", "--ledger", str(ledger)], api=api)
+    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "0.75", "--ledger", str(ledger), *script_pod(tmp_path)], api=api, live=live_ok())
     sess = R.sess_read("p1")
-    assert sess["max_usd"] == 0.5 and sess["status_token"] and sess["until"] == R.until_of(fake.pods["p1"]["name"])
-    assert sess["price"] == 0.89 and sess["pod_shape"] == {"volumeInGb": 150, "containerDiskInGb": 80}
+    # a script pod has no status page: the boot pod's status token went with the boot pod (N-01, OR-21)
+    assert sess["max_usd"] == 0.5 and not sess["status_token"] and sess["until"] == R.until_of(fake.pods["p1"]["name"])
+    assert sess["price"] == 0.89 and sess["pod_shape"] == {"volumeInGb": 0, "containerDiskInGb": 40}  # a script pod's shape (RP-03, --disk)
     assert Run.open(ledger).data["reserved"]["pod:p1"]["amount"] == 0.5
     body_cmd = fake.pods["p1"]["name"]
     assert R.until_of(body_cmd) and not R.expired(body_cmd)
     with pytest.raises(SystemExit, match="per_pod_usd"):  # the creator's ceiling, config/spend_caps.json
-        R.main(["create", "--yes", "--max-usd", "2.0", "--max-hours", "1", "--ledger", str(ledger)], api=api)
+        R.main(["create", "--yes", "--max-usd", "2.0", "--max-hours", "1", "--ledger", str(ledger), *script_pod(tmp_path)], api=api, live=live_ok())
     with pytest.raises(CapReached):  # 0.5 + 0.4 passes 80 % of the episode's $1
-        R.main(["create", "--yes", "--max-usd", "0.4", "--max-hours", "1", "--ledger", str(ledger)], api=api)
+        R.main(["create", "--yes", "--max-usd", "0.4", "--max-hours", "1", "--ledger", str(ledger), *script_pod(tmp_path)], api=api, live=live_ok())
     with pytest.raises(SystemExit, match="--ledger"):
-        R.main(["create", "--yes", "--max-usd", "0.1", "--max-hours", "1"], api=api)
+        R.main(["create", "--yes", "--max-usd", "0.1", "--max-hours", "1", *script_pod(tmp_path)], api=api)
     assert len(fake.pods) == 1
 
 
@@ -325,7 +346,7 @@ def test_create_cli_refuses_a_ledger_that_does_not_exist_before_any_call(env, tm
     monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)
     missing = tmp_path / "nowhere" / "run.json"
     with pytest.raises(SystemExit, match="no ledger"):
-        R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(missing)], api=api)
+        R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(missing), *script_pod(tmp_path)], api=api)
     assert fake.calls == [] and not fake.pods  # no API call at all, so no POST
     assert not missing.exists() and not missing.parent.exists()  # and no ledger was made behind the creator's back
 
@@ -338,8 +359,8 @@ def test_create_cli_sets_the_container_disk(env, tmp_path, monkeypatch):
     monkeypatch.setattr(R, "create", lambda api, body, **kw: seen.append(body) or real(api, body, **kw))
     ledger = tmp_path / "run.json"
     Run.open(ledger, caps={"runpod_usd": 1.0})
-    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--volume", "0", "--disk", "200", "--ledger", str(ledger)],
-           api=api)
+    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--volume", "0", "--ledger", str(ledger), *script_pod(tmp_path, "200")],
+           api=api, live=live_ok())
     assert seen[0]["disk"] == 200 and seen[0]["mounts"] == {}
 
 
@@ -349,7 +370,7 @@ def test_a_provisioning_pod_without_a_price_runs_its_money_clock_on_the_ceiling(
     fake.new_status = "PROVISIONING"  # v2 answers 201 PROVISIONING with cost 0 and no runtime
     ledger = tmp_path / "run.json"
     Run.open(ledger, caps={"runpod_usd": 1.0})
-    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(ledger)], api=api)
+    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(ledger), *script_pod(tmp_path)], api=api, live=live_ok())
     sess = R.sess_read("p1")
     assert sess["price"] == R.MAX_PRICE["default"]  # never $0/h
     assert R.guard_check(sess, R.norm(fake.pods["p1"]), sess["started"] + 60)[0] == "ok"  # PROVISIONING is guarded, not "end"
@@ -568,7 +589,7 @@ def test_a_429_with_retry_after_is_waited_out_and_a_402_stops_the_card_loop(env)
     fake.refuse_gpus = set(R.GPUS["cheap"])
     fake.faults = [("POST", "/pods", 402)]
     with pytest.raises(R.RunPodError, match="every card"):
-        R.create(api, R.create_body("ee-x-until-9999999999", "cheap"), max_price=0.95, gpus=R.GPUS["cheap"])
+        R.create(api, stamped(R.create_body("ee-x-until-9999999999", "cheap")), max_price=0.95, gpus=R.GPUS["cheap"])
     assert sum(1 for c in fake.calls if c == ("POST", "/pods")) == 1  # no balance: the other cards are not tried
 
 
@@ -797,9 +818,9 @@ def test_create_refuses_a_body_without_the_cuda_filter(env):
     body = R.create_body("ee-x-until-9999999999")
     body["gpu"].pop("allowedCudaVersions")
     with pytest.raises(R.RunPodError, match="allowedCudaVersions"):
-        R.create(api, body, max_price=0.95, sleep=lambda s: None)
+        R.create(api, stamped(body), max_price=0.95, sleep=lambda s: None)
     assert not fake.pods
-    assert R.create(api, R.create_body("ee-x-until-9999999999"), max_price=0.95, sleep=lambda s: None)["id"] == "p1"
+    assert R.create(api, stamped(R.create_body("ee-x-until-9999999999")), max_price=0.95, sleep=lambda s: None)["id"] == "p1"
 
 
 def test_a_finished_job_reported_in_the_heartbeat_stops_its_pod(env, monkeypatch):
@@ -886,8 +907,8 @@ def test_create_cli_takes_a_longer_boot_deadline_for_slow_images(env, tmp_path, 
     monkeypatch.setattr(R, "live_guard", lambda pid: True)
     ledger = tmp_path / "run.json"
     Run.open(ledger, caps={"runpod_usd": 1.0})
-    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "0.75", "--boot", "cloud/x.json", "--boot-minutes", "25",
-            "--ledger", str(ledger)], api=api)
+    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "0.75", "--boot-minutes", "25",
+            "--ledger", str(ledger), *script_pod(tmp_path)], api=api, live=live_ok())
     sess = R.sess_read("p1")
     assert sess["boot_deadline"] - sess["started"] == pytest.approx(25 * 60, abs=5)
 

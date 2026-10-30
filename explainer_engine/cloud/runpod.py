@@ -38,6 +38,7 @@ EXITED/ERROR/TERMINATED, ``cost`` $/h, ``runtime`` with ``uptime``, ``gpus[].uti
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -60,6 +61,9 @@ GQL = "https://api.runpod.io/graphql"
 UA = "explainer-engine"
 IMAGE = os.environ.get("TMR_POD_IMAGE", "ghcr.io/vano1919/tmr-pod:latest")  # TMR's baked image (TMR cloud/Dockerfile)
 BOOT_REPO = "vano1919/tmr-video-script-engine"  # the in-pod side (bootstrap.sh, conductor, painters) stays in TMR
+# boot pods retired (OR-21, N-01): a scriptless `create` and a body without pod_wrapper.sh refuse; IMAGE and BOOT_REPO stay as history
+OR21 = ("pods start only with their script committed under explainer_engine/training/pods/ (OR-21); the TMR boot pod is retired")
+PREFLIGHT_KEY = "_ee_preflight"  # written only by preflight_create(body=...); popped by create() before the HTTP call
 GPUS = {"default": ["NVIDIA GeForce RTX 4090"],
         "cheap": ["NVIDIA RTX A5000", "NVIDIA RTX 4000 Ada Generation", "NVIDIA RTX A4500", "NVIDIA GeForce RTX 4090"],
         "big": ["NVIDIA RTX A6000", "NVIDIA A40", "NVIDIA RTX 6000 Ada Generation", "NVIDIA L40S"]}
@@ -814,13 +818,26 @@ def find_by_name(api, name):
     return [p for p in api.pods() if p.get("name") == name and p.get("status") not in GONE]
 
 
+def preflight_stamp(body: dict) -> str:
+    """sha256 of the body without its stamp: ``create()`` sends only the exact body ``preflight_create`` passed (N-01)."""
+    core = {k: v for k, v in body.items() if k != PREFLIGHT_KEY}
+    return hashlib.sha256(json.dumps(core, sort_keys=True, default=str).encode("utf-8")).hexdigest()
+
+
 def create(api, body, *, max_price, sleep=time.sleep, lookups=6, gpus=None):
     """POST /pods once per GPU type. After an unclear answer (timeout, 5xx) the pod is looked up by its unique name instead
     of POSTing again: a second POST could rent a second pod. A clear refusal (4xx: no capacity for that card) moves on to the
     next type of the pool; after an unclear answer with no pod found, nothing more is tried. A card dearer than ``max_price``
     is deleted at once (nothing is on it). ``gpus`` items are a GPU id, a ``(gpu id, cloud)`` pair or a ``(gpu id, cloud, $/h)`` triple (``pick_gpus``).
     The body must keep ``gpu.allowedCudaVersions`` (chain pod 2026-10-24: without the filter RunPod gave a driver-550 host,
-    CUDA 12.4, to a CUDA 13 image and its first GPU call never returned; LT-19)."""
+    CUDA 12.4, to a CUDA 13 image and its first GPU call never returned; LT-19).
+    Only a body stamped by ``preflight_create(body=...)`` is sent (N-01): the CLI's refusals cannot be skipped by calling this
+    function directly, and a body changed after the preflight is refused too. The stamp guards against a forgotten preflight,
+    not against code that forges it (the session hook refuses a Python ``rp.create(`` outside the CLI as the second net)."""
+    stamp = body.pop(PREFLIGHT_KEY, None)
+    if stamp is None or stamp != preflight_stamp(body):
+        raise RunPodError("refused: create() takes only a body stamped by preflight_create (OR-21, D-56); "
+                          "use python -m explainer_engine.cloud.runpod create")
     if not (body.get("gpu") or {}).get("allowedCudaVersions"):
         raise RunPodError("create: the body has no gpu.allowedCudaVersions; an old-driver host can hang a new image "
                           f"(keep {CUDA_VERSIONS})")
@@ -1402,24 +1419,36 @@ def check(api, now=None):
 
 
 def preflight_create(api, *, max_usd, max_hours, gpu, now=None, ignore=None, script=None, picks=None, heartbeat=None,
-                     pod_key=False, watchdog_age=None, image=None, boot_minutes=None, cloud=None):
+                     pod_key=False, watchdog_age=None, image=None, boot_minutes=None, cloud=None, body=None):
     """Every reason to refuse a new pod (empty = allowed): the creator's ceilings, the last 24 h of billing, the balance,
     a clean account first (no stray pod, no unkept stopped disk), with ``script`` (the pod's start script text) the
     ``lint_pod_script`` rules, a passing ``dryrun`` of exactly that text and an image pinned by digest in ``config/cloud_pins.json``
     that has the boot minutes it needs on its cloud (P1b, CR-18), and with ``picks`` (``pick_gpus`` rows) a job that fits its
     approved money and time.
-    The money line is per JOB (``per_pod_usd``); ``max_price_per_hour`` is only the runaway ceiling of one card."""
+    The money line is per JOB (``per_pod_usd``); ``max_price_per_hour`` is only the runaway ceiling of one card.
+    With ``body`` (the ``create_body`` that will be sent: every creation passes it) a script is required, the body must run the
+    wrapper and its own ``image`` must be a digest pinned in ``config/cloud_pins.json``; with no refusal the body is stamped in
+    place (``PREFLIGHT_KEY``), and ``create()`` sends nothing else (N-01). Without ``body`` (``start`` of a stopped pod, the
+    ceiling checks) nothing is stamped."""
     now = time.time() if now is None else now
     c = spend_caps.runpod()
     why = [f"pod script: {p}" for p in lint_pod_script(script)] if script is not None else []
+    if body is not None:
+        from explainer_engine.cloud import pins
+        if script is None:
+            why.append(f"no --script: {OR21}")
+        elif body.get("cmd") != script_cmd():
+            why.append("the body does not run pod_wrapper.sh (pass --script-url <the HF url of the same script>; CR-01)")
+        why += [f"image: {p} (config/cloud_pins.json)" for p in pins.check_image(body.get("image"))]
     if script is not None and not is_wrapper_script(script):
         why.append("pod script: it runs its own upload loop and writes its own beat.txt/DONE (pre-P1a protocol): rewrite it for "
                    "pod_wrapper.sh (declare `# heartbeat:`, write results under $EE_OUT; CR-08, P1b)")
     if script is not None:  # CR-18 (P1b): the script was read and its repos looked up, the image is a pinned digest
         from explainer_engine.cloud import dryrun, pins
         why += [f"dryrun: {p}" for p in dryrun.passed(script)]
-        img = image or pins.image_ref(pins.DEFAULT_IMAGE)
-        why += [f"image: {p}" for p in pins.check_image(img)]
+        img = body.get("image") if body is not None else (image or pins.image_ref(pins.DEFAULT_IMAGE))
+        if body is None:  # with a body its own image was checked above
+            why += [f"image: {p}" for p in pins.check_image(img)]
         cl = cloud or (picks[0]["cloud"] if picks else "SECURE")
         need = pins.boot_minutes_needed(img, cl)
         if (boot_minutes if boot_minutes is not None else BOOT_MINUTES) + 1e-9 < need:
@@ -1453,6 +1482,8 @@ def preflight_create(api, *, max_usd, max_hours, gpu, now=None, ignore=None, scr
     if bal - max_usd < c["min_balance_left_usd"]:
         why.append(f"balance ${bal:.2f} - ${max_usd} leaves less than min_balance_left_usd {c['min_balance_left_usd']}")
     why += [f"clean up first: {p}" for p in check(api, now)["problems"] if not (ignore and p.startswith(ignore + " "))]
+    if body is not None and not why:
+        body[PREFLIGHT_KEY] = preflight_stamp(body)
     return why
 
 
@@ -1479,7 +1510,9 @@ def pod_env(status_token):
 def boot_cmd(manifest, branch):
     """The pod fetches TMR's bootstrap.sh and runs the manifest itself; PID 1 then stays alive (a returning start command
     restarts the container in a loop, TMR 2026-10-11). A failed boot stops the pod (stop, not delete: the creator's rule).
-    v2 ``cmd`` is the container CMD in exec form. The boot pods of TMR keep this form; script pods use ``script_cmd``."""
+    v2 ``cmd`` is the container CMD in exec form. The boot pods of TMR keep this form; script pods use ``script_cmd``.
+    Retired (OR-21, N-01): kept as text; a body that runs it is refused by ``preflight_create(body=...)`` (not the wrapper), so
+    ``create()`` never sends one."""
     url = f"https://raw.githubusercontent.com/{BOOT_REPO}/{branch}/cloud/bootstrap.sh"
     stop_self = self_stop_sh()
     # 2026-10-24: a finished job idled in `tail -f /dev/null`; the pod now stops itself when the manifest ends either way
@@ -1534,7 +1567,7 @@ def create_body(name, gpu="default", *, volume=VOLUME_GB, min_ram=None, boot=Non
             "ports": ["22/tcp", "8888/http"], "env": pod_env(status_token)}
     if min_ram:
         body["gpu"]["minRamPerGpu"] = int(min_ram)
-    if boot:
+    if boot:  # retired (OR-21): a body without the wrapper's cmd is never stamped by preflight_create, so create() never sends it
         body["cmd"] = boot_cmd(boot, os.environ.get("TMR_BRANCH") or "main")
     elif script_url:
         if not heartbeat or not max_usd:
@@ -1643,6 +1676,8 @@ def main(argv=None, api=None, live=None):
             notify("Sweep could not stop a pod", "; ".join(rows["failed"])[:300])
             raise SystemExit(1)
     elif cmd == "create":
+        if not _opt(rest, "--script"):  # N-01: before any other check, so this is the refusal a scriptless create sees
+            raise SystemExit(f"refused: runpod create needs --script ({OR21})")
         if "--yes" not in rest:
             raise SystemExit("refused: --yes only after the creator approved this pod's price and time cap")
         if create_flag_problems(rest):
@@ -1722,30 +1757,36 @@ def main(argv=None, api=None, live=None):
                 age = lv.watchdog_age()
             except hf_live.LiveError:
                 age = None
+        # N-01: the body is built first and the preflight stamps exactly it; create() sends nothing else
+        token = secrets.token_urlsafe(16)
+        name = pod_name(base, max_hours)
+        first = picks[0] if picks else None
+        body, body_why = None, []
+        try:
+            body = create_body(name, first["gpu"] if first else gpu, volume=_opt(rest, "--volume", 0 if script is not None else VOLUME_GB, int),
+                               min_ram=_opt(rest, "--min-ram"), boot=_opt(rest, "--boot"), status_token=token,
+                               image=image, script_url=script_url, lifetime_s=int(max_hours * 3600),
+                               cloud=first["cloud"] if first else "SECURE", heartbeat=heartbeat, max_usd=max_usd,
+                               job=job_base, price=max(r["price"] for r in picks) if picks else None, scale=scale, drill=drill)  # the ceiling, not the list price
+        except RunPodError as e:  # e.g. no heartbeat: the preflight below says it in its own words
+            body_why.append(str(e))
+        if body is not None:
+            if _opt(rest, "--disk"):  # container disk (GB): a model download larger than the default CONTAINER_GB
+                body["disk"] = _opt(rest, "--disk", None, int)
+            if script is not None:
+                from explainer_engine.cloud import batching
+                if batching.rp03(body):  # RP-03: never a network volume
+                    raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(batching.rp03(body)))
         why = preflight_create(api, max_usd=max_usd, max_hours=max_hours, gpu=gpu, script=script, picks=picks, heartbeat=heartbeat,
                                pod_key=bool(secret("pod_api_key.txt", "RUNPOD_POD_API_KEY")), watchdog_age=age, image=image,
-                               boot_minutes=_opt(rest, "--boot-minutes", BOOT_MINUTES, float))
-        why += batch_why
+                               boot_minutes=_opt(rest, "--boot-minutes", BOOT_MINUTES, float), body=body)
+        why += batch_why + (body_why if not any("heartbeat" in w for w in why) else [])
         if script is not None and lv is None:
             why.append("the live-pod registry on HF cannot be written (no HF_TOKEN): the watchdog could not see this pod (CR-07c)")
         if why:
             raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(why))
         from explainer_engine.cloud.jobs import Job
         from explainer_engine.core.ledger import Run
-        token = secrets.token_urlsafe(16)
-        name = pod_name(base, max_hours)
-        first = picks[0] if picks else None
-        body = create_body(name, first["gpu"] if first else gpu, volume=_opt(rest, "--volume", 0 if script is not None else VOLUME_GB, int),
-                           min_ram=_opt(rest, "--min-ram"), boot=_opt(rest, "--boot"), status_token=token,
-                           image=image, script_url=script_url, lifetime_s=int(max_hours * 3600),
-                           cloud=first["cloud"] if first else "SECURE", heartbeat=heartbeat, max_usd=max_usd,
-                           job=job_base, price=max(r["price"] for r in picks) if picks else None, scale=scale, drill=drill)  # the ceiling, not the list price
-        if script is not None:
-            from explainer_engine.cloud import batching
-            if batching.rp03(body):  # RP-03: never a network volume
-                raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(batching.rp03(body)))
-        if _opt(rest, "--disk"):  # container disk (GB): a model download larger than the default CONTAINER_GB
-            body["disk"] = _opt(rest, "--disk", None, int)
         spec = None
         if script is not None:  # CR-12: the watchdog judges this pod from the registry, with no session file
             env = body["env"]
