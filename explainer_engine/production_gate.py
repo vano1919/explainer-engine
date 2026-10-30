@@ -148,8 +148,9 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
 
 def media_gates(day: Path) -> list[dict]:
     """Rows ``keyframes`` and ``clips`` (CP-10): what the keyframe gate logged and what ``video-qa --write`` left beside each clip.
-    A still-picture episode (no ``film_shots.json``, no clips) gets neither row. The gate reads JSON only; it imports neither
-    checker, so a skipped check shows here as WAIT instead of leaving no trace."""
+    A still-picture episode (no ``film_shots.json``, no clips) gets neither row. The gate reads JSON only: it reads the log through
+    ``keyframe_gate``'s reader and the clip sidecars as files, and runs no check, so a skipped check shows here as WAIT instead of
+    leaving no trace."""
     out: list[dict] = []
     fs = _json(day / "film_shots.json")
     if fs is not None:

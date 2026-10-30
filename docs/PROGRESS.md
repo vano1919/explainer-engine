@@ -3200,7 +3200,7 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   shot) and CLIP-06 (BP-50 ceiling) can FAIL, none from a hypothesis number. `training video-qa` gets `--fps --dialogue --expect-speech --transcript
   --keyframe --write` (`<clip>.video_qa.json` beside the clip). The transcript comes from a given file, else the free local transcriber when installed, never a paid read.
 - `production_gate.py`: new rows `keyframes` (from `qa_log.jsonl`) and `clips` (from the sidecars); WAIT / BLOCKED / PASS; a still-picture episode gets neither row.
-  The gate reads JSON only and imports neither checker, so a skipped check shows as WAIT instead of leaving no trace.
+  The gate reads JSON only (the log through `keyframe_gate`'s reader, the clip sidecars as files) and runs no check, so a skipped check shows as WAIT instead of leaving no trace.
 - Unverified items from the card, opened here: U3 `made_with.lora` and `bible_version` exist (`assets/library.py:77-99`), not in `assets_reuse.py`; U4
   `audio/local_words.transcribe` exists (faster-whisper, imported inside `_model`); U5 `qa/face_points.py`, `qa/prop_points.py`, `training/qa/image_stats.py` exist,
   nothing here depends on them; U6 `video_qa` holds the LT thresholds as quoted literals (table in PR-D).
