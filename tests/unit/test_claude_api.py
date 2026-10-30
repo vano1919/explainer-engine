@@ -375,7 +375,9 @@ def test_real_client_needs_the_key_and_the_recorded_approval(env, monkeypatch):
 def test_real_spend_caps_file_holds_the_or24_caps():
     c = json.loads((ROOT / "config" / "spend_caps.json").read_text(encoding="utf-8"))["claude_api"]
     assert c["max_usd"] == 95.0 and sum(c["jobs"].values()) == pytest.approx(c["max_usd"])
-    assert c["jobs"]["J1"] == 10.0 and c["jobs"]["J1b"] == 8.0 and c["jobs"]["J6"] == 15.0 and c["approval"]["ref"]
+    # 2026-10-30: plan v2 got its own $28 line from J1b's unspent part, all of J6, J4 and the reserve (ვანო's card answer, docs/PROGRESS.md)
+    assert c["jobs"]["J1"] == 10.0 and c["jobs"]["J1b"] == 5.02 and c["jobs"]["J6"] == 0.0 and c["jobs"]["plan_v2"] == 28.0
+    assert c["jobs"]["J1b"] >= 5.016946 and c["approval"]["ref"]   # J1b keeps its cover for the lost scope A run
 
 
 def test_a_call_without_a_result_line_stops_the_next_one():
@@ -1359,3 +1361,11 @@ def test_the_fable_400_fallback_route_is_floor_checked_before_its_attempt_is_res
         a.complete(q)
     assert len(a._client.calls) == 1 and [x["ev"] for x in a.ledger.rows()] == ["start", "void"]
     assert a.run_for("T").spent(ca.SERVICE) == 0
+
+
+def test_a_line_may_not_be_lower_than_what_it_already_spent():
+    c = {"jobs": {"J1b": 5.02, "plan_v2": 28.0, "J6": 0.0}}
+    assert ca.lines_below_spent(c, {"J1b": 5.016946, "plan_v2": 3.0}) == {}
+    assert ca.lines_below_spent(c, {"J1b": 5.5}) == {"J1b": 0.48}
+    assert ca.lines_below_spent(c, {"J9": 0.01}) == {"J9": 0.01}   # a job without a line has spent against nothing
+
