@@ -11,6 +11,7 @@ as they are made so a stop loses nothing. One JSON file per run (``run.json``), 
 from __future__ import annotations
 
 import json
+import os
 import threading
 import time
 from pathlib import Path
@@ -18,7 +19,7 @@ from pathlib import Path
 from explainer_engine.core import spend_caps
 from explainer_engine.core.errors import NeedsReview
 from explainer_engine.core.spend_caps import check_caps
-from explainer_engine.core.store import write_json_atomic
+from explainer_engine.core.store import write_json_atomic, write_text_atomic
 
 STOP_FRACTION = 0.8
 MAX_FAILURES = 3
@@ -59,9 +60,39 @@ class Run:
             data = {"created": time.strftime("%Y-%m-%dT%H:%M:%S"), "caps": dict(caps or {}), "spent": {}, "reserved": {},
                     "phases": {}, "items": {}, "failures": {}, "meta": meta}
         data["caps"] = check_caps(data["caps"])  # the creator's ceilings (config/spend_caps.json, D-56)
+        test = (data.get("meta") or {}).get("test")
+        if test:  # a paid test's ledger may hold lower caps than its line, never higher
+            line = spend_caps.paid_test(test)
+            for service, cap in data["caps"].items():
+                if cap > line.get(service, 0.0) + 1e-9:
+                    raise spend_caps.OverCeiling(f"{service} cap {cap} in {path} is above the line {line.get(service, 0.0)} of "
+                                                 f"paid test {test!r} (config/spend_caps.json)")
         run = cls(path, data)
         run.save()
         return run
+
+    @classmethod
+    def open_test(cls, path: Path | str, name: str) -> "Run":
+        """The ledger of one paid test (config/spend_caps.json ``paid_tests.<name>``): the test's lines as its caps, every other
+        service at 0, meta ``test``. Without it a new path gets the episode's ceilings (``check_caps``), far above the test's
+        word. An existing ledger of another run or test is refused.
+
+        The cap is per test, not per file: every save of the ledger also writes ``$EXPLAINER_LEDGER_MIRROR/<name>.json`` (a
+        durable folder). A new path, or a path lost with its container, is restored from that mirror, so what a test has spent
+        is never counted from 0 again; a save of a ledger that differs from its mirror stops with LedgerConflict."""
+        caps = {**{s: 0.0 for s in spend_caps.load().get("per_episode", {})}, **spend_caps.paid_test(name)}  # refuses a bad name
+        folder = os.environ.get("EXPLAINER_LEDGER_MIRROR")
+        if not folder:
+            raise ValueError("a paid test's ledger needs a durable mirror so a lost container or a second path cannot restart it "
+                             "from 0: set EXPLAINER_LEDGER_MIRROR to a folder that outlives the container")
+        path, mirror = Path(path), Path(folder) / f"{name}.json"
+        if not path.exists() and mirror.exists():
+            write_text_atomic(path, mirror.read_text(encoding="utf-8"))  # same bytes, so ledger and mirror agree
+        if path.exists():
+            meta = json.loads(path.read_text(encoding="utf-8")).get("meta", {})
+            if meta.get("test") != name:
+                raise ValueError(f"{path} is not the ledger of paid test {name!r} (its meta test is {meta.get('test')!r})")
+        return cls.open(path, caps=caps, test=name, mirror=str(mirror))
 
     def _stamp(self):
         try:
@@ -73,7 +104,13 @@ class Run:
         with self.lock:
             if self._stamp() != self._seen:
                 raise LedgerConflict(f"{self.path} was changed by another process; stop and re-open the run")
+            mirror = (self.data.get("meta") or {}).get("mirror")
+            if mirror:  # a paid test's durable copy (open_test): every process that saves the ledger updates it
+                if Path(mirror).exists() and Path(mirror).read_bytes() != self._seen:  # another path spent after this one was read
+                    raise LedgerConflict(f"ledger {self.path} and its mirror {mirror} differ; reconcile by hand")
             write_json_atomic(self.path, self.data)
+            if mirror:
+                write_json_atomic(Path(mirror), self.data)
             self._seen = self._stamp()
 
     # --- approvals (a paid batch runs only with the creator's yes on exactly that batch) -------------------------------
@@ -221,3 +258,23 @@ class Attempts:
         row = {"n": len(rows) + 1, "escalated": escalated, "cause": cause[:400], "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
         write_json_atomic(self.path, rows + [row])
         return row
+
+
+def main(argv=None) -> None:
+    """python -m explainer_engine.core.ledger open-test <run.json> <test>   (a paid test's ledger, before its first create)
+       python -m explainer_engine.core.ledger report <run.json>"""
+    import sys
+    a = list(sys.argv[1:] if argv is None else argv)
+    if len(a) == 3 and a[0] == "open-test":
+        run = Run.open_test(a[1], a[2])
+    elif len(a) == 2 and a[0] == "report":
+        if not Path(a[1]).exists():
+            raise SystemExit(f"no ledger at {a[1]}")
+        run = Run(Path(a[1]), json.loads(Path(a[1]).read_text(encoding="utf-8")))  # read-only: Run.open would save
+    else:
+        raise SystemExit(main.__doc__)
+    print(json.dumps({"path": str(run.path), "meta": run.data.get("meta", {}), **run.report()}, ensure_ascii=False, indent=1))
+
+
+if __name__ == "__main__":
+    main()
