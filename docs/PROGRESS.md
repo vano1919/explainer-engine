@@ -3514,3 +3514,12 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Test: `tests/unit/test_p12b_config.py::test_p12b_json_is_pinned_complete_and_qwen_only`.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+## 2026-10-30 T13: OR-33 proof job and OR-34 audit job files (estimate only)
+- New `explainer_engine/llm/jobs/p12_stream_proof.json` (job `result_check`, class `simple-question`, Haiku, low, `max_tokens` 200,
+  prompt "Reply with the single word READY.") and `explainer_engine/llm/jobs/or34_full_repo_audit.json` (job `result_check`, class
+  `whole-project-plan` on Fable xhigh, `max_tokens` 32000, read-only repo tools, the plan's three-question prompt).
+- `claude_api estimate`: proof worst_usd 0.0001; audit worst_usd 3.2169 (cached bound; 9.66 uncached, 11.51 on a miss), both fit the
+  job line. `run` was never called; nothing paid.
+- Test: `tests/unit/test_claude_api.py::test_the_committed_p12_jobs_are_valid_and_the_proof_is_tiny`.
+- OPEN: the `<main sha>` in the audit prompt is filled at the creator's go. No pod, no API call, nothing deleted.
+- Decision log: none moved.

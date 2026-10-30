@@ -1371,3 +1371,15 @@ def test_a_line_may_not_be_lower_than_what_it_already_spent():
     assert ca.lines_below_spent(c, {"J1b": 5.5}) == {"J1b": 0.48}
     assert ca.lines_below_spent(c, {"J9": 0.01}) == {"J9": 0.01}   # a job without a line has spent against nothing
 
+
+
+def test_the_committed_p12_jobs_are_valid_and_the_proof_is_tiny():
+    d = ROOT / "explainer_engine" / "llm" / "jobs"
+    proof = ca.load_job(d / "p12_stream_proof.json")
+    audit = ca.load_job(d / "or34_full_repo_audit.json")
+    assert len(proof) == 1 and not proof[0].tools_root and proof[0].max_tokens <= 256
+    assert proof[0].user == "Reply with the single word READY."
+    assert audit and all(r.tools_root for r in audit)
+    assert {t["name"] for t in ca.REPO_TOOLS} == {"list_dir", "read_file", "grep"}          # the loop's tools are read-only
+    caps = json.loads((ROOT / "config" / "spend_caps.json").read_text(encoding="utf-8"))["claude_api"]["jobs"]
+    assert all(r.job in caps for r in proof + audit)

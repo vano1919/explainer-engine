@@ -1,0 +1,11 @@
+{
+  "job": "result_check",
+  "task_class": "whole-project-plan",
+  "model": "fable",
+  "effort": "xhigh",
+  "max_tokens": 32000,
+  "tools_root": "../../..",
+  "requests": [
+    {"id": "or34_audit", "user": "OR-34 audit of explainer-engine at <main sha>. Question 1: is any module without a RETIRED banner imported by a module that is not itself RETIRED? List pairs. Question 2: does any committed pod script, agent page or skill name a model, LoRA or path that D-80 retired? Question 3: do the P12a scripts (explainer_engine/training/pods/p12/p12a_*.sh) and p12b.sh match the plan's commands and caps? Answer READY or NOT READY with evidence lines file:line."}
+  ]
+}
