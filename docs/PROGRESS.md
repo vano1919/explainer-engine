@@ -3527,4 +3527,12 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   job line. `run` was never called; nothing paid.
 - Test: `tests/unit/test_claude_api.py::test_the_committed_p12_jobs_are_valid_and_the_proof_is_tiny`.
 - OPEN: the `<main sha>` in the audit prompt is filled at the creator's go. No pod, no API call, nothing deleted.
+## 2026-10-30 T11: the P12b pod script (Qwen run) and its dryrun record
+- New `explainer_engine/training/pods/p12/p12b.sh` (pinned installs from `config/cloud_pins.json`, `timeout` CUDA check, `DRY=1` gate after the last
+  install, `# heartbeat:` / `# stall-minutes: 15`, ends by returning) and `p12b.py` (reads `p12b.json`, `EE_DEADLINE`, `EE_OUT`; downloads base, style LoRA
+  with sha256 check (exit 3), MVA LoRA outside `EE_OUT`; loads the pipeline once as `xworld_v1_test.load_pipeline`; `set_adapters` per stage; the plan 3.5
+  projection before each optional stage; PNG + JSON sidecar per unit; `stages.txt`, `t.jsonl`, `progress.txt`). The wrapper downloads only `p12b.sh`, so
+  it fetches `p12b.py` / `p12b.json` from HF `code/p12/` and checks their sha256 pinned in its text.
+- `runpod dryrun --script` passes; sha256 of `p12b.sh` is in the PR body. Test: `tests/unit/test_p12b_pod_script.py`.
+- OPEN: copy `p12b.py`, `p12b.json` and the two host pictures to HF before create (see PR); no pod, no API call, nothing deleted.
 - Decision log: none moved.
