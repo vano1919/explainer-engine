@@ -3481,4 +3481,8 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   `kf.py`/`clips.py` (already RETIRED) import `fixhub` and start `watchdog.py`, so they now stop there if ever run. Nothing deleted.
 - Test: `test_old_era_modules_carry_a_retired_banner_and_their_cli_refuses` (docstrings read with `ast`, no import).
 - OPEN: none. No pod, no API call.
+## 2026-10-30 change plan T03: the five P12a scripts pinned to their dryrun sha256
+- `tests/unit/test_p12a_scripts.py::test_the_p12a_scripts_on_main_are_the_ones_the_plan_dryran` holds the sha256 of `p12a_A.sh` .. `p12a_E.sh` (plan §1.2); a changed script
+  fails a free test before any pod and needs a new OR-24 confirmation and a new dryrun record first. All five match on `main` today.
+- OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.

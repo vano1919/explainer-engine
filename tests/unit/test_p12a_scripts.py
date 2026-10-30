@@ -91,3 +91,16 @@ esac
     assert "RTX A5000" in facts and "MemTotal" in facts and "Python 3.11" in facts and "RUNPOD_POD_ID=pp" in facts
     assert "RUNPOD_API_KEY" not in facts and "HF_TOKEN" not in facts                          # the pod's env holds keys: none of them is written
     assert not dl.exists() and not list((stub / "hf").rglob("*.safetensors"))                 # the shard is deleted and never went to the vault
+
+
+def test_the_p12a_scripts_on_main_are_the_ones_the_plan_dryran():
+    """Plan §1.2 (2026-10-30); a change needs a new OR-24 confirmation and a new dryrun record, then this table."""
+    pinned = {
+        "A": "25661e2eb77c35080dbfc675ac1e2855290c6b7bd9c543ea6e266f26ae56e936",
+        "B": "c193e702b3c32b1fbe94e3db203e3e2b76317edc65be0a198d68d554b24a9d26",
+        "C": "64cc473417e856c17d31f192d413b08d1b5066c9efb2e10be6491cc66f0398f4",
+        "D": "8af259239d160355417ee75f37afa45be8ac2d8f3fc49fb99e1fd241d66878cd",
+        "E": "40ab64156d304ae4761111bf21621d12420412712ddf4f5bb59ee0c58ee52973",
+    }
+    for x, value in pinned.items():
+        assert D.sha256_of(text(x)) == value, f"p12a_{x}.sh changed since the plan dryrun record"
