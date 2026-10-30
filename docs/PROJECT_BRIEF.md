@@ -9,7 +9,7 @@ AI slideshow or an over-edited template. Ranking videos are optional and never f
 ## Hard constraints (the creator's; precedence level 2)
 - Hardware baseline: Windows, Intel i5-8400, AMD RX 5700 8 GB, 16 GB RAM, limited free disk. No upgrade assumed; no
   GPU acceleration assumed; no two large local models resident together (D-11).
-- Budgets are ceilings: Gemini <= US$10 in total, vidIQ <= 200 credits; no subscriptions without a clear need
+- Budgets are ceilings (config/spend_caps.json, D-56); vidIQ <= 200 credits; no subscriptions without a clear need
   (ledger: [COST_AND_TIME_MODEL](COST_AND_TIME_MODEL.md)).
 - No automatic public upload; the creator approves every publication (D-16 policy checks included).
 - Original characters and visuals only: no third-party IP, footage or protected styles as the core identity.
