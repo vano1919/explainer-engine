@@ -1,0 +1,26 @@
+{
+ "schema": "comp_spec/1",
+ "item_id": "it1",
+ "archetype_id": "SPLIT_SCREEN_SPEED_RACE",
+ "width": 320,
+ "height": 180,
+ "events": [
+  {
+   "id": "a",
+   "word_index": 3,
+   "op": "start",
+   "target": "race",
+   "frames": 96
+  }
+ ],
+ "payload": {
+  "left": {
+   "label": "Racer A",
+   "seconds": 0
+  },
+  "right": {
+   "label": "Racer B",
+   "seconds": 20.4
+  }
+ }
+}
