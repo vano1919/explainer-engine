@@ -303,12 +303,14 @@ def _picks(sheet_md: Path, report_sha: str) -> dict:
         raise ContractError(f"{key_path.name} was made for another report (report_sha256 {key.get('report_sha256')!r}, this report is "
                             f"{report_sha[:12]}...): make the sheet from this report")
     side = {f"{int(p['pair']):02d}": p["generator_side"].lower() for p in key.get("pairs", [])}
-    given = total = 0
+    answers: dict[str, str] = {}                                # one answer per distinct pair: a repeated row cannot stand in for a blank one
     for line in sheet_md.read_text(encoding="utf-8").splitlines():
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if len(cells) >= 5 and cells[0] in side and cells[-1].lower() in ("a", "b", "same"):
-            total += 1
-            given += cells[-1].lower() == side[cells[0]]
+            if answers.setdefault(cells[0], cells[-1].lower()) != cells[-1].lower():
+                raise ContractError(f"pair {cells[0]} of the sheet is answered twice with different answers: keep one row per pair")
+    total = len(answers)
+    given = sum(a == side[k] for k, a in answers.items())
     return {"for_generator": given, "total": total, "pairs": len(side)}
 
 
