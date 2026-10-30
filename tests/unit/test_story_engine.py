@@ -311,6 +311,19 @@ def test_stage_guard_ownership_of_story_cast_and_shorts():
     assert G.violations("writer", before, s)
 
 
+def test_stage_guard_lets_the_architect_correct_a_scene_header_and_nobody_else():
+    """P0c found `scene` missing from the architect's segment fields: a first pass (empty before) passed, a later correction of
+    a scene header was refused (docs/research/AGENT_AB_2026-10.md)."""
+    before = storied()
+    seg = next(s for s in before["segments"] if s.get("lines"))
+    seg["scene"] = {"place": "a ship's deck", "present": ["a", "b"], "pov": "a"}
+    after = copy.deepcopy(before)
+    next(s for s in after["segments"] if s["id"] == seg["id"])["scene"]["place"] = "the quarterdeck"
+    assert G.violations("architect", before, after) == []
+    for stage in ("writer", "beats", "performer", "editor", "caster", "shorts"):
+        assert any(f"{seg['id']}.scene" in v for v in G.violations(stage, before, after)), stage
+
+
 # --- sound layers (AL) ---------------------------------------------------------------------------------------------------
 
 from explainer_engine.audio import layers as L  # noqa: E402

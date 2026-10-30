@@ -7,7 +7,7 @@ frozen after the scene pass, and the guard proves it.
 
 Stages and what they own:
 
-* ``architect``  the story layer: ``drama``, ``cast``, ``periods``, segment ids, ``beat``, ``purpose``, ``period``, ``light_beat``, segment ``drama``
+* ``architect``  the story layer: ``drama``, ``cast``, ``periods``, segment ids, ``beat``, ``purpose``, ``period``, ``light_beat``, segment ``drama`` and the dialogue segment's ``scene`` header (SC-01)
 * ``writer``     the words: segment ``lines`` (text, speaker, claims); one segment at a time
 * ``beats``      the visual beats (VB rules): line ``visual_beats`` only, written segment by segment right after the writer, on
   the same frozen words (stage 2b, agent ``beat-writer``); the Shorts' lines too (``shorts[].lines[].visual_beats``, SS-09)
@@ -27,7 +27,7 @@ import sys
 from pathlib import Path
 
 INTERJECTIONS = ("oh", "hmm", "well", "right", "ah", "uh-oh", "wait", "okay", "huh", "so", "look", "yeah", "nope")
-SEG_STORY = ("id", "beat", "purpose", "period", "light_beat", "drama")
+SEG_STORY = ("id", "beat", "purpose", "period", "light_beat", "drama", "scene")
 LINE_WORDS = ("text", "speaker", "claims", "voiced")
 LINE_DELIVERY = ("tags", "emphasis", "tone", "emotion", "pause_after")
 STAGES = {
