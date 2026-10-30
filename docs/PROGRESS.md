@@ -3500,3 +3500,9 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Test: existing `test_production_rules_page_is_linked_and_names_every_gate` stays green.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+## 2026-10-30 — T09: boundary tests from T01 (tests only)
+- T01 (`FREE_CHECKS_2026-10-30.md`): check 9 = NO, so `test_min_balance_refusal_at_the_exact_boundary` is added in
+  `tests/unit/test_d9_config.py` (fake balance 20.00: `--max-usd 19.00` leaves exactly 1.00 and passes the balance
+  preflight, 19.01 leaves 0.99 and is refused naming `min_balance_left_usd`). Check 8 = YES (`_picks` already counts
+  distinct pair numbers, commit dd5009f), so no `generator_gate.py` change and no new generator-gate test.
+- No production code changed, nothing paid. Tests: see the PR.
