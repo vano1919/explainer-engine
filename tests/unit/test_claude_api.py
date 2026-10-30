@@ -376,7 +376,9 @@ def test_real_spend_caps_file_holds_the_or24_caps():
     c = json.loads((ROOT / "config" / "spend_caps.json").read_text(encoding="utf-8"))["claude_api"]
     assert c["max_usd"] == 95.0 and sum(c["jobs"].values()) == pytest.approx(c["max_usd"])
     # 2026-10-30: plan v2 got its own $28 line from J1b's unspent part, all of J6, J4 and the reserve (ვანო's card answer, docs/PROGRESS.md)
-    assert c["jobs"]["J1"] == 10.0 and c["jobs"]["J1b"] == 5.02 and c["jobs"]["J6"] == 0.0 and c["jobs"]["plan_v2"] == 28.0
+    assert c["jobs"]["J1"] == 10.0 and c["jobs"]["J1b"] == 5.02 and c["jobs"]["J6"] == 0.0 and c["jobs"]["plan_v2"] == 18.0
+    # 2026-10-30 20:46 UTC (ვანო's card, all lines): the night run's four lines, paid from plan_v2, J3, J4, J5 and the reserve
+    assert [c["jobs"][k] for k in ("final_review", "change_plan", "fix_desk", "result_check")] == [8.0, 8.0, 8.0, 10.0]
     assert c["jobs"]["J1b"] >= 5.016946 and c["approval"]["ref"]   # J1b keeps its cover for the lost scope A run
 
 
