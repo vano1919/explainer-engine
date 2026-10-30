@@ -139,12 +139,19 @@ def main(argv=None):
             return 0
         load = lambda o: json.loads(Path(_opt(rest, o)).read_text(encoding="utf-8")) if _opt(rest, o) else None  # noqa: E731
         regions = load("--regions")
-        m, findings = video_qa.qa_file(p[0], regions=regions, ref=load("--ref"), layout=_opt(rest, "--layout"))
+        dialogue, speech = _opt(rest, "--dialogue"), _opt(rest, "--expect-speech")
+        expect = True if dialogue else {"yes": True, "no": False}.get(speech)   # --dialogue implies speech is expected
+        clip = {"fps": _opt(rest, "--fps"), "dialogue": dialogue, "expect_speech": expect, "keyframe": _opt(rest, "--keyframe"),
+                "transcript": video_qa.transcript_for(p[0], _opt(rest, "--transcript"), needed=dialogue or expect is False)}
+        m, findings = video_qa.qa_file(p[0], regions=regions, ref=load("--ref"), layout=_opt(rest, "--layout"), clip=clip)
         if _opt(rest, "--sheet"):
             m["sheet"] = video_qa.review_sheet(p[0], _opt(rest, "--sheet"), regions)
         rep = {"clip": p[0], "metrics": m, "findings": findings}
         if _opt(rest, "--out"):
             Path(_opt(rest, "--out")).write_text(json.dumps(rep, indent=1), encoding="utf-8")
+        if "--write" in rest:                                  # the sidecar production_gate's `clips` row reads
+            from explainer_engine.core import store
+            store.write_json_atomic(Path(str(p[0]) + ".video_qa.json"), dict(rep, verdict=audit.verdict(findings)))
         return _done(rep)
     if cmd.startswith("footage-"):
         from . import footage

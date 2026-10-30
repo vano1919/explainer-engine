@@ -5565,7 +5565,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/core/contracts.py:BP-139"
+    "explainer_engine/core/contracts.py:BP-139",
+    "explainer_engine/training/video_qa.py"
    ],
    "supersedes": [
     "Blueprint VISUAL-001 32n as the recipe"
@@ -6171,6 +6172,38 @@
     "docs/AUDIO_SYSTEM.md:SD-13",
     "explainer_engine/audio/generator_gate.py"
    ],
+   "supersedes": []
+  },
+  {
+   "id": "BP-164",
+   "area": "qa",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "Clip container, audio and frame checks (CLIP-02..12 of `video-qa`): the clip's audio length against its picture, spoken words in a shot that should be silent, the share of the dialogue heard, silence in a dialogue shot, black, blown or flat frames, a frozen tail, and the first frame against its keyframe. The numbers are proposals read from the two Argon audits; none becomes FAIL before two source types (A/B/C) or the creator's dated word back it (D-59).",
+   "thresholds": {
+    "av_duration_tol_frames": 1,
+    "spoken_words_max_in_silent_shot": 3,
+    "dialogue_coverage_min": 0.75,
+    "silence_share_max": 0.6,
+    "black_luma_max": 10,
+    "blown_luma_min": 245,
+    "flat_luma_std_max": 5.0,
+    "frozen_run_frames": 6,
+    "frozen_diff_max": 0.4,
+    "frame0_mean_abs_diff_max": 8.0,
+    "frame0_dhash_max": 4,
+    "analysis_size": [
+     160,
+     90
+    ],
+    "silence_noise_db": -50,
+    "silence_min_s": 0.5
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/training/video_qa.py"
+   ],
+   "next_step": "two source types (A/B/C) or the creator's dated word before any CLIP row becomes FAIL (D-59)",
    "supersedes": []
   }
  ]
