@@ -42,8 +42,8 @@ Code paths each department's validators will live in (planned): screenwriting `s
 voice `audio/voice_audition.py`, `audio/voice_check.py` (P4b); cartography `explainer_engine/maps/`, lanes
 `edit/visual_compensator.py` (P5); shot-card lens and height fields (P6); editing, colour and graphic motion
 `production/assemble.py`, `finish/grade.py`, `edit/motion_lint.py` (P7); animation and acting `qa/identity.py`,
-`training/video_qa.py`, the departmental layers of `qa/editorial_review.py` that tick every critic row (P8); Shorts
-`shorts/planner.py` (P9); retention `qa/retention_mapper.py` (P10). The performance-director stage page points to the voice
+the departmental layers of `qa/editorial_review.py` that tick every critic row (P8); Shorts
+`shorts/planner.py` (P9); retention and foot-slide checks have no phase yet (eye rows). The performance-director stage page points to the voice
 checklist.
 
 ## Conflicts with rules in force (13 records)
