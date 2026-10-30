@@ -1,9 +1,11 @@
 ---
 name: animated-universe
-description: How the Cross Worlds animated universe is designed and moved - simple shapes, one silhouette per character, a cut-out rig with reusable cycles, rationed squash and stretch, real physics for props, one key light per scene. Use when designing a character or environment piece, writing a shot that needs a figure to act (walk, run, point, fall, react, talk), choosing between rig motion, parallax and generated video, or judging whether a design is simple enough to produce repeatedly.
+description: Design rules for the channel's drawn characters (silhouette, proportions, one key light); a character moves through its clip prompt (docs/SHOT_PROMPTS.md), the cut-out rig is retired (creator 2026-10-22, D-77).
 ---
 
 # The animated universe: simple to make, good to feel
+
+> **Retired in part (creator 2026-10-22, docs/PROGRESS.md "so bad there is no hope"; D-77/D-78):** the cut-out rig (production/rig.py CYCLES, mouth_at, drop_y, Spring) moves no character in an episode. A character moves through a clip prompt: docs/SHOT_PROMPTS.md (KP-xx) and docs/SHOT_CONTINUITY.md (CT-xx). The design rules below (silhouette, proportions, one key light) stay.
 
 The creator's muse (2026-10-22): a world of simple, beautiful animation; complexity is never required, but the emotion
 and the physics must be good. Sources and tools: `docs/research/ANIMATION_TOOLS_2026-10-22.md`; the four candidate
@@ -23,16 +25,16 @@ No show, studio, artist or character of another work is ever named in a prompt (
 
 ## Move a character (writing a shot)
 
-- Use the rig's cycles: `idle`, `walk`, `run`, `point`, `react`, `fall` (`production/rig.py` CYCLES); a turn is a flip
-  until a second angle set exists. Name the cycle and its start in the shot; the rig does the easing.
-- Anticipation before the action, follow-through after it (the scarf, the hair), slow in / slow out: these are in the
-  code; do not ask a prompt for them.
+- Name the beat, the physics and the acting in the shot card's clip prompt, per the KP rules (docs/SHOT_PROMPTS.md).
+- Cite the continuity card for position and eye-line (docs/SHOT_CONTINUITY.md, CT rules).
+- Never a rig call: no cycle, `mouth_at`, `drop_y` or `Spring` in a shot.
 - Squash and stretch is rationed: bounded, tied to real speed, at most one off-model beat per scene and it belongs to the
   story's turn. On-model the rest of the time.
-- Physics is real or absent: a dropped, swinging or floating thing uses `drop_y` or a `Spring`; never a guessed
-  curve, never "it just appears".
-- The mouth follows the narration's word timings (`mouth_at`); the narrator's acting lives in the face set and the pose.
 - Long holds are allowed and good: a held frame with sound is a beat. Each character gets its own timing scale.
+
+#### History (retired 2026-10-22)
+- The shot named a rig cycle (`idle`, `walk`, `run`, `point`, `react`, `fall`, `production/rig.py` CYCLES; a turn was a flip) and its start; the rig did the anticipation, follow-through and easing.
+- A dropped or swinging thing used `drop_y` or a `Spring`; the mouth followed the word timings (`mouth_at`).
 
 ## Stage a scene
 

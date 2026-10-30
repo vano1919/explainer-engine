@@ -86,7 +86,7 @@ the voice is chosen and the edit re-solved. Every later step keeps the length wi
 20 ms (loudness-envelope cross-correlation); audio that fails is not used, the base audio is returned and the report says
 `used: base`. Only the final WAV is mixed; `words.json` stays the cut reference.
 
-`python -m explainer_engine.audio.narrate --spec <voice.json> --text <narration.txt> --out <dir>` is the one path:
+RETIRED by D-39: narration is ElevenLabs, and the Kokoro CLI below refuses to run (it exits 1). History, how that path worked: `python -m explainer_engine.audio.narrate --spec <voice.json> --text <narration.txt> --out <dir>` was the one path:
 spec -> timed render -> `base.wav` + `words.json` -> alteration -> `narration.wav` + `voice_report.json` (pitch, pitch
 spread, pace, level of both, the timing check). WAVs are not committed.
 

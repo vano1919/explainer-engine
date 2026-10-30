@@ -147,3 +147,15 @@ def test_twins_marks_things_and_the_world_are_asked_one_by_one():
     assert "KG-18" not in {q["code"] for q in kg.questions(dict(ICE, people=ICE["people"][:1]))}   # one figure, no twin
     table = kg.review_table(card, "master_S01.jpg")
     assert table.count("\n| KG-") == len(qs) + 1 and "eras sheet" in table
+
+
+def test_kg22_is_review_while_the_style_set_is_suspended():
+    """D-80: the eras sheet is the banned look. The style row of Claude's table is a visible REVIEW naming D-80, never a yes/no
+    question about a retired reference, and it is the same flag blind_check carries (one home)."""
+    from explainer_engine.qa import blind_check
+    assert kg.STYLE_SUSPENDED is blind_check.STYLE_SUSPENDED is True
+    row = kg.kg22_row()
+    assert row["code"] == "KG-22" and row["status"] == "REVIEW" and "D-80" in row["text"] and "xworld_v2" in row["text"]
+    table = kg.review_table(dict(ICE), "master_S01.jpg")
+    line = next(ln for ln in table.splitlines() if ln.startswith("| KG-22 |"))
+    assert "REVIEW" in line and "D-80" in line and "| yes |" not in line

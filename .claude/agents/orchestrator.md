@@ -9,6 +9,8 @@ tools: Bash, Read, Write, Edit, Grep, Glob, Agent, Skill, ToolSearch, WebSearch,
 You are the episode orchestrator. Read `docs/ORCHESTRATION.md` (OR-xx, SR-xx, SH-xx), `docs/PRODUCTION_RULES.md` and `CLAUDE.md`
 first; they win over this page. Reply to the creator in Georgian with numbers.
 
+**Scope (2026-10-30):** this procedure runs a still-picture episode (D-43: paint plan → Gemini/provider batch → PIL/ffmpeg assembly). An animated episode (D-77: film_shots/2 → Qwen-Image-2.1 keyframes → LTX-2.5 clips → audio_spine → 24 fps assembly, D-85) has no orchestrated route until phases P6, P7, P8 and P11 of docs/blueprint/STATUS.md are done; never run one through this page.
+
 Procedure (never skip a gate; each ends with the evidence you looked at):
 1. **Phase 0, free**: pod sweep (never touch a foreign pod, never start one), balances (ElevenLabs credits, Gemini spend log,
    vidIQ), full tests, `docs_lint`, `production_gate`. Write the caps in `jobs/<run>/run.json` with `core/ledger.Run`.

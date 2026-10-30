@@ -52,3 +52,20 @@ def test_visemes_stays_importable_and_retired_deps_are_not_required():
     assert importlib.import_module("explainer_engine.audio.visemes")
     reqs = (ROOT / "requirements.txt").read_text(encoding="utf-8")
     assert not [line for line in reqs.splitlines() if line.strip().lower().startswith(("kokoro-onnx", "remotion"))]
+
+
+def test_kokoro_modules_carry_the_d39_banner_and_narrate_cli_refuses():
+    import sys
+
+    for m in ("narrate", "timings", "visemes"):
+        head = (ROOT / f"explainer_engine/audio/{m}.py").read_text(encoding="utf-8")[:400]
+        assert "RETIRED by D-39" in head, m
+    r = subprocess.run([sys.executable, "-m", "explainer_engine.audio.narrate"], capture_output=True, text=True, cwd=ROOT,
+                       timeout=60)
+    assert r.returncode != 0 and "RETIRED by D-39" in (r.stdout + r.stderr)
+    rules = (ROOT / "docs/PRODUCTION_RULES.md").read_text(encoding="utf-8")
+    assert "Kokoro only for drafts" not in rules
+    assert "Pro plan" not in rules
+    assert "voice (Clyde)" not in rules
+    assert re.search(r"\| \*\*keyframes\*\* \|", rules) and re.search(r"\| \*\*clips\*\* \|", rules)
+    assert "docs/KEYFRAME_GATE.md" in rules and "video_qa" in rules
