@@ -3234,3 +3234,21 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - OPEN: `CREATIVE_STYLE_BIBLE` line 9 (tone: "Kit's reactions") is a mention, not a Kit paragraph, left as is.
 - Evidence for the voices card (A3 vs D-62/63/68), no decision taken. `explainer_engine/production/silent.py:4-5` "PV-55 binds it: a cast member marked ``traits.real_person`` has no voiced line"; `:254` `real = {h for h, c in doc.get("cast", {}).items() if traits(c).get("real_person") and traits(c).get("living", True)}`; `:258` `if line.get("speaker") in real and voiced(line):` -> `:259-260` "is a real person and must not be voiced (voiced: false, shown as bubbles; D-62)"; `production/validate.py:418-423` reports PV-55 and PV-56 (`check_reported_dialogue`, D-63). The check keys on the cast member's `traits.real_person` (and `living`, default true) and the line's `voiced` flag, both in the production script.
 - Evidence for the Shorts card. `production/validate.py:519-527` PV-34 with `len(shorts) >= 5`: Shorts without a style (SS-01) and fewer than `need = min(6, max(3, len(shorts) * 6 // 10))` distinct styles are REVIEW; `:530` same style right before another (SS-02); `:535-537` loop and pointer endings (SS-04); `:540-546` with `len(shorts) >= 6`: `short_band` (secs <= the first BP-12 band's top) and `long_band` (secs >= the second band's bottom) each need at least 3, else REVIEW (SS-06); `:552`, `:561` first cut inside the hook and visual events per 10 s. So PV-34 checks styles when there are 5 or more Shorts and the two length bands (3 each) when there are 6 or more.
+## 2026-10-30 UTC: plan_v2 T1 / N-02, paid BFL calls of `training/cast/sheet.py` run only inside a ledger (one unplanned $0.018, see below)
+
+- `explainer_engine/training/cast/sheet.py` (Argon-2 F-05): `draw()` and the real path of `world()` open the run ledger first
+  (`_run`): no ledger = `ValueError("refused: paid BFL calls run only inside a ledger (D-56); pass --ledger")`; `world()` builds
+  `BFL(out, run=run, key=k)` (it had no run), so every picture reserves on the ledger's `bfl_usd` (for a new ledger
+  `config/spend_caps.json` `per_episode.bfl_usd`) with the ledger's 80 % stop; a `--budget` above that cap is refused (no number in the
+  code). The local `spent` counter stays as the budget display. CLI: `draw|world --yes` without `--ledger` is an argparse error naming
+  `--ledger`; the estimate without `--yes` stays free and unchanged. `world()` with an injected `generate` (its unit tests) needs no ledger.
+- `explainer_engine/imagegen/providers/bfl.py` (C3; BFL already carries `run`): `_request` (the paid HTTP call) refuses `run is None`
+  (`ProviderError`); a cache hit in `generate()` never reaches it. No other `BFL(` caller outside `sheet.py` (paint goes through
+  `providers.get(..., run=run)`).
+- Tests: `tests/unit/test_money_path_fences.py` N-02 section (5: CLI `draw/world --yes` without a ledger, no `BFL` built without a run
+  and built with one, budget above the cap, `BFL._request` without a run). Red on main: 5 failed. No existing test changed.
+- **Unplanned spend, 2026-10-30 13:45 UTC: $0.018 on BFL (2 x Klein 1k, $0.009 each).** The first red run of the CLI test ran the OLD
+  `sheet.main(["draw", ..., "--yes"])`; this session had a BFL key in its environment (`BFL_API_kay`), and the old code drew without a
+  ledger, which is the hole this card closes. The pictures (`c000.png`, `p001.png`, `spend_log.jsonl`) are kept in the project files
+  `explainer-engine/blueprint_2026-10-29/paid/plan_v2/t1_bfl_incident/`. The test now removes every `KEY_ENV` variable and blocks
+  `BFL._request` before it calls, so it fails without a paid call on code without the guard; the red run was repeated that way.

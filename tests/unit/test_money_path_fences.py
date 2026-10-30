@@ -11,7 +11,11 @@ from test_cloud_stop_paths import BEAT, env  # noqa: F401 - the create tests' fi
 from test_runpod import NEW_SH, live_ok, script_pod
 
 from explainer_engine.cloud import hooks, pins, runpod as rp
+from explainer_engine.core import spend_caps
 from explainer_engine.core.ledger import Run
+from explainer_engine.imagegen.providers.base import ProviderError
+from explainer_engine.imagegen.providers.bfl import BFL as RealBFL
+from explainer_engine.training.cast import sheet
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -133,3 +137,58 @@ def test_cli_create_with_script_sends_one_body_without_the_stamp(env, monkeypatc
     rp.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(ledger), *script_pod(tmp)], api=api, live=live_ok())
     assert len(posted) == 1 and rp.PREFLIGHT_KEY not in posted[0] and posted[0]["cmd"] == rp.script_cmd()
     assert "@sha256:" in posted[0]["image"] and len(fake.pods) == 1
+
+
+# --- N-02: training/cast/sheet.py, paid BFL calls only inside a ledger ---------------------------------------------------------
+
+@pytest.mark.parametrize("argv", [["draw", "x", "--ids", "0", "--yes"], ["world", "x", "--ids", "p001", "--budget", "1", "--yes"]])
+def test_sheet_cli_paid_path_requires_a_ledger(argv, capsys, monkeypatch, tmp_path):
+    # no key and no client: on code without the guard this test must fail without a paid call (the red run of 2026-10-30
+    # drew two real $0.009 pictures because the session had a BFL key and the old CLI spent without a ledger)
+    for k in sheet.KEY_ENV:
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setattr("explainer_engine.imagegen.providers.bfl.BFL._request",
+                        lambda *a, **k: (_ for _ in ()).throw(AssertionError("network touched")))
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(SystemExit) as e:
+        sheet.main(argv)
+    assert e.value.code != 0 and "--ledger" in capsys.readouterr().err
+
+
+def test_sheet_never_builds_bfl_without_a_run(monkeypatch, tmp_path):
+    seen = []
+
+    class FakeBFL:
+        def __init__(self, *a, **kw):
+            seen.append(kw)
+            raise RuntimeError("stop before any call")
+    monkeypatch.setattr("explainer_engine.imagegen.providers.bfl.BFL", FakeBFL)
+    monkeypatch.setenv("BFL_API_KEY", "k")
+    monkeypatch.setattr(sheet.time, "sleep", lambda s: None)   # world() waits 5 s after a failed request
+    with pytest.raises(ValueError, match="ledger"):
+        sheet.draw(tmp_path / "d", ["c001"], ledger=None)
+    with pytest.raises(ValueError, match="ledger"):
+        sheet.world(tmp_path / "w", ["p001"], budget_usd=0.5, workers=1, ledger=None)
+    assert seen == []
+    with pytest.raises(RuntimeError, match="stop before"):
+        sheet.draw(tmp_path / "d", ["c001"], ledger=tmp_path / "led.json")
+    assert seen and seen[0].get("run") is not None
+    seen.clear()
+    rows = sheet.world(tmp_path / "w", ["p001"], budget_usd=0.5, workers=1, tries=1, ledger=tmp_path / "led.json",
+                       judge=lambda rs: [{**r, "verdict": "PASS", "why": []} for r in rs])
+    assert rows[0]["verdict"] == "ERROR" and seen and seen[0].get("run") is not None   # built with the run, then refused by the fake
+
+
+def test_sheet_budget_above_the_spend_cap_is_refused(tmp_path):
+    cap = spend_caps.episode_ceiling("bfl_usd")
+    with pytest.raises(ValueError, match="spend_caps.json"):
+        sheet.world(tmp_path / "w", ["p001"], budget_usd=cap + 1, workers=1, ledger=tmp_path / "led.json")
+
+
+def test_bfl_paid_request_refuses_without_a_run(tmp_path, monkeypatch):
+    monkeypatch.setenv("BFL_API_KEY", "k")
+
+    def no_http(*a, **k):
+        raise AssertionError("network touched")
+    with pytest.raises(ProviderError, match="without a ledger run"):
+        RealBFL(tmp_path / "b", http=no_http).generate("x1", "a picture", model="flux-3-image-klein", size="1k")

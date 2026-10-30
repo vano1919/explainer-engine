@@ -297,12 +297,31 @@ def _key():
     raise SystemExit(f"no BFL key in {KEY_ENV}")
 
 
-def draw(out, ids, ref=None, ledger=None, key_env=None):
-    """Paid: one BFL Klein picture per id (cached by request; a seed per person so a redraw is the same picture)."""
+LEDGER_HELP = ("the run ledger (run.json); every BFL call reserves against config/spend_caps.json per_episode.bfl_usd and stops at 80 % "
+               "(D-56, CN-10)")
+NO_LEDGER = "refused: paid BFL calls run only inside a ledger (D-56); pass --ledger"
+
+
+def _run(ledger, budget_usd=None):
+    """The run ledger every paid BFL call reserves on (N-02): its bfl_usd cap is config/spend_caps.json's per_episode.bfl_usd for a
+    new ledger (``Run.open``), and the 80 % stop is the ledger's. A ``budget_usd`` above that cap is refused, never raised to it."""
     from explainer_engine.core.ledger import Run
+    if not ledger:
+        raise ValueError(NO_LEDGER)
+    run = Run.open(ledger)
+    cap = run.data["caps"].get("bfl_usd")
+    if budget_usd is not None and (cap is None or budget_usd > cap + 1e-9):
+        raise ValueError(f"refused: --budget {budget_usd} is above the ledger's bfl_usd cap {cap} (config/spend_caps.json "
+                         "per_episode.bfl_usd); the cap changes only on the creator's word")
+    return run
+
+
+def draw(out, ids, ref=None, ledger=None, key_env=None):
+    """Paid: one BFL Klein picture per id (cached by request; a seed per person so a redraw is the same picture).
+    Only inside a ledger (N-02): the BFL client gets its run and reserves every call."""
     from explainer_engine.imagegen.providers.bfl import BFL
+    run = _run(ledger)
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
-    run = Run.open(ledger) if ledger else None  # the cap comes from config/spend_caps.json (check_caps)
     key = os.environ[key_env].strip() if key_env else _key()
     p = BFL(out, run=run, key=key)
     refs = [Path(ref).read_bytes()] if ref else []
@@ -329,23 +348,26 @@ def items():
     return out
 
 
-def world(out, ids, *, budget_usd, tries=3, workers=6, key=None, generate=None, judge=None):
+def world(out, ids, *, budget_usd, tries=3, workers=6, key=None, generate=None, judge=None, ledger=None):
     """Draw every id, check it at once (cast.check), redraw a FAIL with the next seed (at most `tries` pictures per id)
     until `budget_usd` is spent; REVIEW and PASS stay for Claude's look and ვანო's pick. Writes <out>/report.jsonl (one
     row per picture drawn, kept or thrown away) and returns the rows. `generate(name, item, seed) -> usd` and
-    `judge(rows) -> rows` are injected by tests."""
+    `judge(rows) -> rows` are injected by tests. The real (BFL) path runs only inside a ledger (N-02): every call reserves on it
+    and `budget_usd` may not pass its bfl_usd cap; the local `spent` counter is the budget display, the ledger is the stop."""
     import threading
     from concurrent.futures import ThreadPoolExecutor
     from explainer_engine.training.cast import check
-    out = Path(out); out.mkdir(parents=True, exist_ok=True)
+    out = Path(out)
     every = items()
+    run = _run(ledger, budget_usd) if (ledger or generate is None) else None
+    out.mkdir(parents=True, exist_ok=True)
     lock, spent, rows = threading.Lock(), [0.0], []
     if generate is None:
         from explainer_engine.imagegen.providers.bfl import BFL
         k = key or _key()
 
         def generate(name, it, seed):
-            r = BFL(out, key=k).generate(name, prompt(it), model=MODEL, size=SIZE, seed=seed,
+            r = BFL(out, run=run, key=k).generate(name, prompt(it), model=MODEL, size=SIZE, seed=seed,
                                          extra={"aspect_ratio": ASPECTS[it["kind"]], "safety_tolerance": 2})
             return 0.0 if r.cached else (r.usd_settled if r.usd_settled is not None else r.usd)
     judge = judge or check.score
@@ -395,7 +417,7 @@ def main(argv=None):
     ap.add_argument("out", nargs="?")
     ap.add_argument("--ids", default="")
     ap.add_argument("--ref")
-    ap.add_argument("--ledger")
+    ap.add_argument("--ledger", help=LEDGER_HELP)
     ap.add_argument("--yes", action="store_true")
     a = ap.parse_args(argv)
     if a.cmd == "list":
@@ -408,12 +430,14 @@ def main(argv=None):
         return 1 if pr else 0
     if problems():
         raise SystemExit("refused: `check` has problems")
+    if a.yes and not a.ledger:  # N-02: the paid path (--yes) only inside a ledger; the estimate without --yes stays free
+        ap.error(f"{a.cmd} --yes needs --ledger <run.json>: {LEDGER_HELP}")
     if a.cmd == "world":
         ids = [x for x in a.ids.split(",") if x] or sorted(items())
         if not a.yes or a.budget <= 0:
             print(f"{len(ids)} pictures, at most ${a.budget}; add --budget and --yes after the creator's OK")
             return 0
-        world(a.out, ids, budget_usd=a.budget)
+        world(a.out, ids, budget_usd=a.budget, ledger=a.ledger)
         return 0
     ids = [f"c{int(x):03d}" if x.isdigit() else x for x in a.ids.split(",") if x] or [c["id"] for c in cast()]
     usd = round(BFLPRICE * len(ids), 3)
