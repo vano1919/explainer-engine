@@ -44,6 +44,9 @@ UNCHARGED = (400, 401, 403, 404, 413, 422, 429, 500, 502, 503, 529)  # statuses 
 RETRYABLE = (429, 500, 502, 503, 529)
 SAFE_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 # F6: parameters that return a 400 (or are refused by the 2026-10-21 API version) on the current models; never sent.
+# F15: measured 2026-10-30: Fable 5.1 at effort max used more than 40000 tokens on thinking alone (the $3.45 change-plan run, no answer
+# text); 64000 is the skill's streaming default. Thinking is billed as output and counts toward max_tokens, so these efforts need room.
+MIN_MAX_TOKENS_BY_EFFORT = {"max": 64000, "xhigh": 32000}
 FORBIDDEN_PARAMS = ("temperature", "top_p", "top_k", "budget_tokens", "tool_choice", "prefill")
 
 # F7: the patterns tests/unit/test_repo_hygiene.py guards (file names) plus key shapes in text.
@@ -110,11 +113,12 @@ class CacheCold(LLMError):
 
 class OutputTruncated(LLMError):
     """The answer hit max_tokens; it was paid and recorded but is not cached. ``text`` is what was paid for (F3: ``main`` writes it
-    to ``<id>.truncated.md``), ``result`` the same as a Result when there is one."""
+    to ``<id>.truncated.md``), ``result`` the same as a Result when there is one, ``thinking`` the summarized thinking (F13: ``main``
+    writes it to ``<id>.thinking.md``); thinking is billed as output and counts toward max_tokens, so it can use all of it."""
 
-    def __init__(self, message: str, text: str | None = None, result: "Result | None" = None) -> None:
+    def __init__(self, message: str, text: str | None = None, result: "Result | None" = None, thinking: str | None = None) -> None:
         super().__init__(message)
-        self.text, self.result = text, result
+        self.text, self.result, self.thinking = text, result, thinking
 
 
 class StreamBroken(LLMError):
@@ -325,6 +329,7 @@ class Request:
     tools_root: str | None = None                      # read-only repo tools over this folder (J1, J1b)
     max_turns: int = 24
     fallback_to: tuple[str, str] | None = None         # (alias, effort) when the model answers 400 (Fable retention)
+    max_effort_reason: str = ""                        # F16: why a single-shot request needs effort max (plans and audits run at xhigh)
 
 
 @dataclass
@@ -393,6 +398,8 @@ def _block_json(b: Any) -> dict:
         return {"type": "text", "text": b.text}
     if t == "tool_use":
         return {"type": "tool_use", "name": b.name, "input": dict(b.input)}
+    if t == "thinking":   # F13: the summarized thinking of a turn is paid for, so it is kept
+        return {"type": "thinking", "thinking": getattr(b, "thinking", "") or ""}
     return {"type": str(t)}
 
 
@@ -408,6 +415,8 @@ def save_partial(req: Request, msgs: list, turns: int, usd: float, err: BaseExce
             for b in row:
                 if b.get("type") == "tool_result":
                     b["content"] = str(b.get("content", ""))[:400]
+                elif b.get("type") == "thinking":   # redacted like a tool result: it is written to disk
+                    b["thinking"] = redact(str(b.get("thinking", "")))[0]
             turns_out.append({"role": m["role"], "blocks": row})
         path = ledger_dir() / f"partial_{req.job}_{req.id}.json"
         write_json_atomic(path, {"job": req.job, "id": req.id, "turns": turns, "usd_so_far": round(usd, 6),
@@ -418,8 +427,26 @@ def save_partial(req: Request, msgs: list, turns: int, usd: float, err: BaseExce
         return None
 
 
+def max_effort_ok(req: Request, r: Route) -> bool:
+    return r.effort != "max" or bool(req.tools_root) or bool(req.max_effort_reason.strip())
+
+
+def check_max_tokens(req: Request, r: Route) -> None:
+    """F15/F16: refuse, before anything is reserved or sent, a request whose max_tokens is under the floor of its effort, and a
+    single-shot request at effort max that states no reason (``max_effort_reason`` in the job file; long single-shot outputs run at xhigh)."""
+    if not max_effort_ok(req, r):
+        raise ConfigError(f"request {req.id}: a single-shot request at effort max needs a non-empty \"max_effort_reason\" in the job file "
+                          "(plans, specs and audits run at xhigh); nothing was sent")
+    floor = MIN_MAX_TOKENS_BY_EFFORT.get(r.effort, 0)
+    if req.max_tokens < floor:
+        raise ConfigError(f"request {req.id}: effort {r.effort} needs max_tokens >= {floor} (thinking is billed as output and counts toward "
+                          f"max_tokens; at max it used more than 40000 tokens with no answer, the $3.45 run), got {req.max_tokens}; nothing was sent")
+
+
 def build_params(req: Request, r: Route) -> dict:
-    """The request body. Only these keys are ever set (F6): no thinking, sampling, tool_choice or prefill; the effort always (F5)."""
+    """The request body. Only these keys are ever set (F6): adaptive thinking with ``display: summarized`` (F12: thinking is always on
+    and billed either way, the default ``omitted`` would leave nothing to save; never ``budget_tokens``, never disabled), no sampling,
+    tool_choice or prefill; the effort always (F5)."""
     for t in [req.user, *req.system]:
         check_secrets(t, f"request {req.id}")
     cc = {"type": "ephemeral"} if req.cache_ttl == "5m" else {"type": "ephemeral", "ttl": "1h"}
@@ -427,6 +454,7 @@ def build_params(req: Request, r: Route) -> dict:
     if req.schema:
         out_cfg["format"] = {"type": "json_schema", "schema": req.schema}
     params: dict = {"model": r.model, "max_tokens": req.max_tokens, "output_config": out_cfg,
+                    "thinking": {"type": "adaptive", "display": "summarized"},
                     "messages": [{"role": "user", "content": req.user}]}
     if req.system:
         blocks = [{"type": "text", "text": t} for t in req.system]
@@ -548,13 +576,17 @@ def run_repo_tool(root: Path, name: str, args: dict) -> str:
 
 # --- the client --------------------------------------------------------------------------------------------------------
 class StreamSink:
-    """F1: the text of one call on disk as it arrives, ``<ledger>/stream/<uid>.txt``. It is written one complete line at a time, each
-    line through ``redact`` (a key-shaped string split across deltas is never half-written), and flushed; ``close`` writes the
-    unfinished tail, also redacted. So a kill loses at most the unfinished line, and no key-shaped text reaches the file. ``n`` and
-    ``text`` stay in memory and unredacted (the char count of StreamBroken, the answer itself)."""
+    """F1: one call on disk as it arrives, ``<ledger>/stream/<uid>.txt``: a header line, then ``[thinking]`` with the summarized thinking
+    and ``[answer]`` with the text (F13: thinking is billed and can use all of max_tokens, so a call with no text still leaves a file).
+    Written one complete line at a time, each line through ``redact`` (a key-shaped string split across deltas is never half-written),
+    and flushed; ``close`` writes the unfinished tail, also redacted. A kill loses at most the unfinished line. ``n`` (answer chars),
+    ``thinking_chars`` and ``text`` stay in memory and unredacted."""
 
-    def __init__(self, path: Path) -> None:
-        self.path, self.n, self.parts, self.buf, self._f = path, 0, [], "", None
+    def __init__(self, path: Path, header: str | None = None) -> None:
+        self.path, self.n, self.thinking_chars, self.parts, self.buf, self._f = path, 0, 0, [], "", None
+        self.section, self.pos, self.answer_at = None, 0, None
+        if header is not None:
+            self._out(header + "\n")
 
     def _out(self, text: str) -> None:
         if self._f is None:
@@ -562,16 +594,46 @@ class StreamSink:
             self._f = self.path.open("a", encoding="utf-8")
         self._f.write(text)
         self._f.flush()
+        self.pos += len(text)
 
-    def write(self, text: str) -> None:
-        if not text:
+    def _tail(self) -> None:
+        if self.buf:
+            self._out(redact(self.buf)[0] + "\n")
+            self.buf = ""
+
+    def mark(self, section: str) -> None:
+        """Start the ``thinking`` or ``answer`` part (a no-op when it is the current one)."""
+        if section == self.section:
             return
-        self.n += len(text)
-        self.parts.append(text)
+        self._tail()
+        self._out(f"[{section}]\n")
+        self.section = section
+        if section == "answer" and self.answer_at is None:
+            self.answer_at = self.pos
+
+    def _put(self, text: str) -> None:
         self.buf += text
         if "\n" in self.buf:
             *lines, self.buf = self.buf.split("\n")
             self._out("".join(redact(x)[0] + "\n" for x in lines))
+
+    def write(self, text: str) -> None:
+        if text:
+            self.mark("answer")
+            self.n += len(text)
+            self.parts.append(text)
+            self._put(text)
+
+    def write_thinking(self, text: str) -> None:
+        if text:
+            self.mark("thinking")
+            self.thinking_chars += len(text)
+            self._put(text)
+
+    @property
+    def received(self) -> int:
+        """Characters that arrived and are billed, thinking included (F2)."""
+        return self.n + self.thinking_chars
 
     def close(self) -> None:
         try:
@@ -582,6 +644,12 @@ class StreamSink:
             if self._f is not None:
                 self._f.close()
                 self._f = None
+
+    def answer_on_disk(self) -> str | None:
+        """What the file holds after the ``[answer]`` line (None when no answer part was written)."""
+        if self.answer_at is None or not self.path.exists():
+            return None
+        return self.path.read_text(encoding="utf-8")[self.answer_at:]
 
     @property
     def text(self) -> str:
@@ -663,11 +731,16 @@ class ClaudeAPI:
             try:
                 with ns.stream(**kw) as s:
                     for ev in s:
-                        if getattr(ev, "type", None) == "content_block_delta" and getattr(getattr(ev, "delta", None), "type", None) == "text_delta":
+                        et, d = getattr(ev, "type", None), getattr(ev, "delta", None)
+                        if et == "content_block_start" and getattr(getattr(ev, "content_block", None), "type", None) in ("thinking", "text"):
+                            sink.mark("answer" if ev.content_block.type == "text" else "thinking")
+                        elif et == "content_block_delta" and getattr(d, "type", None) == "text_delta":
                             sink.write(ev.delta.text)
+                        elif et == "content_block_delta" and getattr(d, "type", None) == "thinking_delta":   # signature_delta is ignored
+                            sink.write_thinking(ev.delta.thinking)
                     return s.get_final_message()
             except Exception as e:  # noqa: BLE001
-                if _status(e) in RETRYABLE and sink.n == 0:
+                if _status(e) in RETRYABLE and sink.received == 0:
                     if self.clock() - started + delay > OVERLOAD_WAIT_S:
                         raise Overloaded(f"HTTP {_status(e)} for more than {OVERLOAD_WAIT_S // 60} minutes; stop and report") from e
                     self.sleep(delay)
@@ -685,6 +758,7 @@ class ClaudeAPI:
             if _status(e) == 400 and req.fallback_to and r.alias == "fable":
                 alias, eff = req.fallback_to
                 rb = Route(r.class_id, alias, routing()["models"][alias], eff)
+                check_max_tokens(req, rb)   # the fallback route obeys the same floor and max-effort rule, before it is reserved
                 pb = {**params, "model": rb.model, "output_config": {**params["output_config"], "effort": eff}}
                 return self._attempt(req, rb, pb, item + "~fb", batch, r.model)
             raise
@@ -694,14 +768,15 @@ class ClaudeAPI:
         uid = uuid.uuid4().hex[:12]
         est = worst_usd(r.model, params, req.cache_ttl, input_tokens=self._count(params))
         self._reserve(req.job, item, est)
-        sink = StreamSink(ledger_dir() / "stream" / f"{uid}.txt")
+        sink = StreamSink(ledger_dir() / "stream" / f"{uid}.txt",
+                          f"--- {item} {r.model} effort={r.effort} max_tokens={params['max_tokens']} ---")
         self.ledger.append({"ev": "start", "uid": uid, "job": req.job, "id": req.id, "model": r.model, "reserved": round(est, 6),
                             "stream": str(sink.path)})
         try:
             resp = self._send(params, r.model, fallbacks=pr["models"][r.model].get("fallbacks") == "default", sink=sink)
         except BaseException as e:
-            if sink.n and isinstance(e, Exception):    # F2: text arrived, then the stream broke: billed for an unknown amount, never re-sent
-                note = f"stream broke after {sink.n} chars; billing unknown, reserved amount booked"
+            if sink.received and isinstance(e, Exception):    # F2: text or thinking arrived, then the stream broke: billed for an unknown amount, never re-sent
+                note = f"stream broke after {sink.received} chars; billing unknown, reserved amount booked"
                 self.run_for(req.job).settle(SERVICE, item, est)
                 self.ledger.append({"ev": "done", "uid": uid, "job": req.job, "id": req.id, "model": r.model, "usage": {},
                                     "usd": round(est, 6), "batch": batch, "note": note, "stream": str(sink.path)})
@@ -736,15 +811,20 @@ class ClaudeAPI:
         exists ``main run`` refuses everything but a tiny proof job."""
         proof = ledger_dir() / "stream_proof.json"
         try:
-            if proof.exists() or not sink.path.exists():
+            on_disk, text = sink.answer_on_disk(), self._text(resp)   # only the [answer] part: thinking is not the answer
+            if proof.exists() or on_disk is None:
                 return
-            on_disk, text = sink.path.read_text(encoding="utf-8").strip(), self._text(resp)
+            on_disk = on_disk.strip()
             if on_disk and on_disk == redact(text)[0].strip():
                 write_json_atomic(proof, {"uid": uid, "model": getattr(resp, "model", r.model), "chars": len(text),
                                           "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
                                           "request_id": getattr(resp, "_request_id", None)})
         except OSError:   # the proof is a gate, never a reason to lose a paid answer
             return
+
+    @staticmethod
+    def _thinking(resp: Any) -> str:
+        return "\n".join(getattr(b, "thinking", "") or "" for b in resp.content if getattr(b, "type", None) == "thinking")
 
     @staticmethod
     def _text(resp: Any) -> str:
@@ -757,12 +837,17 @@ class ClaudeAPI:
         res = Result(req.id, self._text(resp), getattr(resp, "model", r_used.model), r_used.effort, usd, False, resp.stop_reason, use,
                      fell_back_to=r_used.model if r_used is not orig else None,
                      request_id=getattr(resp, "_request_id", None), ledger_total=self.ledger.total(), turns=turns)
-        if resp.stop_reason == "max_tokens":   # F3: the paid text travels with the error
-            raise OutputTruncated(f"{req.id}: hit max_tokens {req.max_tokens} (paid ${usd:.4f}, recorded, not cached)", res.text, res)
+        if resp.stop_reason == "max_tokens":   # F3: the paid text travels with the error, F13: so does the thinking
+            thinking = self._thinking(resp)
+            why = (f"; thinking used the whole max_tokens {req.max_tokens} (output tokens {use['output']}), no answer text; raise "
+                   "max_tokens or lower effort") if not res.text.strip() else ""
+            raise OutputTruncated(f"{req.id}: hit max_tokens {req.max_tokens} (paid ${usd:.4f}, recorded, not cached){why}", res.text, res,
+                                  thinking or None)
         return res
 
     def complete(self, req: Request) -> Result:
         r = route(req.task_class, req.model, req.effort)
+        check_max_tokens(req, r)
         params = build_params(req, r)
         key = cache_key(params, req.cache_salt)
         hit = self.cache.get(key)
@@ -900,6 +985,8 @@ class ClaudeAPI:
         tag = f"batch-{job}-{hashlib.sha256('|'.join(sorted(q.id for q in reqs)).encode()).hexdigest()[:10]}"
         state_file = ledger_dir() / f"{tag}.json"
         routes = {q.id: route(q.task_class, q.model, q.effort) for q in reqs}
+        for q in reqs:
+            check_max_tokens(q, routes[q.id])
         params = {q.id: build_params(q, routes[q.id]) for q in reqs}
         by_id = {q.id: q for q in reqs}
         c = self.client()
@@ -949,7 +1036,7 @@ class ClaudeAPI:
                 continue
             res = Result(i, self._text(msg), msg.model, rt.effort, usd, False, msg.stop_reason, use, ledger_total=self.ledger.total())
             if msg.stop_reason == "max_tokens":   # F3: the paid text is kept with the error
-                put(q, OutputTruncated(f"{i}: hit max_tokens in the batch (paid, recorded)", res.text, res))
+                put(q, OutputTruncated(f"{i}: hit max_tokens in the batch (paid, recorded)", res.text, res, self._thinking(msg) or None))
                 continue
             self.cache.put(cache_key(params[i], q.cache_salt), {"text": res.text, "model": res.model, "effort": res.effort,
                                                                 "stop_reason": res.stop_reason, "usage": use, "id": i})
@@ -973,7 +1060,7 @@ def load_job(path: Path) -> list[Request]:
 
     system = list(spec.get("system", [])) + [read(f) for f in spec.get("system_files", [])]
     common = {k: spec[k] for k in ("task_class", "model", "effort", "max_tokens", "schema", "web_search_max_uses", "cache_ttl",
-                                   "max_turns") if k in spec}
+                                   "max_turns", "max_effort_reason") if k in spec}
     if spec.get("tools_root") and spec.get("cache_ttl") == "1h" and not float(spec.get("measured_turn_gap_s") or 0) > SLOW_TURN_GAP_S:
         raise ConfigError("a tool loop with cache_ttl 1h needs \"measured_turn_gap_s\" > 300 in the job file (the gap between turns "
                           "measured in an earlier run's ledger); the 1h TTL writes cost 2x and are an option, not a default")
@@ -1057,7 +1144,9 @@ def estimate(reqs: list[Request], *, api: ClaudeAPI | None = None, expected_outp
         worst = worst_usd(r.model, params, q.cache_ttl, batch=batch, input_tokens=n_in)
         typical = usd_of(r.model, {"input": n_in, "output": expected_output or 0, "cache_read": 0, "write_5m": 0, "write_1h": 0,
                                    "searches": 0}, batch=batch, pr=pr) if expected_output is not None else None
-        rows.append({"id": q.id, "model": r.model, "effort": r.effort, "input_tokens": n_in, "exact": toks is not None, "cached": hit,
+        rows.append({"id": q.id, "model": r.model, "effort": r.effort, "max_tokens_floor_ok": q.max_tokens >= MIN_MAX_TOKENS_BY_EFFORT.get(r.effort, 0),
+                     "max_effort_reason_ok": max_effort_ok(q, r),
+                     "input_tokens": n_in, "exact": toks is not None, "cached": hit,
                      "batch": batch, "worst_usd": round(0.0 if hit else worst, 4),
                      "usd_at_expected_output": None if typical is None or hit else round(typical, 4)})
         if q.tools_root:   # a tool loop is many calls: the figures above are TURN 1 ONLY, the loop figures are what a run can cost
@@ -1143,7 +1232,17 @@ def main(argv: list[str] | None = None) -> int:
                       f"max_tokens <= {PROOF_MAX_TOKENS}, about $0.0001 on Haiku 5.5); it proves the answer reaches the stream file.")
                 return 4
             print("this is the stream-proof call: it writes stream_proof.json when its stream file equals the answer")
-        pre = estimate(reqs, loop_bound=a.loop_bound)    # offline bound; a job whose worst case passes the job's 80 % stop does not start (it would stop half-done)
+        pre = estimate(reqs, loop_bound=a.loop_bound)
+        low = [x["id"] for x in pre["requests"] if not x["max_tokens_floor_ok"]]
+        noreason = [x["id"] for x in pre["requests"] if not x["max_effort_reason_ok"]]
+        if noreason:
+            print(f"refused: effort max on a single-shot request needs \"max_effort_reason\" in the job file for {noreason}; "
+                  "plans, specs and audits run at xhigh")
+            return 3
+        if low:
+            print(f"refused: max_tokens is under the floor of its effort for {low} (MIN_MAX_TOKENS_BY_EFFORT {MIN_MAX_TOKENS_BY_EFFORT}); "
+                  "thinking is billed as output and can use all of it")
+            return 3    # offline bound; a job whose worst case passes the job's 80 % stop does not start (it would stop half-done)
         if not pre["fits_job_cap"]:
             print(json.dumps(pre, indent=2))
             print(f"refused: the worst case ${pre['worst_total_usd']} passes the stop of job {pre['job']} (${pre['stop_at_job']}); "
@@ -1169,6 +1268,8 @@ def main(argv: list[str] | None = None) -> int:
                 summary[q.id]["truncated"] = True
                 if text:
                     write_text_atomic(out / f"{q.id}.truncated.{'json' if q.schema else 'md'}", redact(text)[0])
+                if getattr(res, "thinking", None):   # F13: the paid thinking summary is kept too
+                    write_text_atomic(out / f"{q.id}.thinking.md", redact(res.thinking)[0])
     try:
         old_term = signal.signal(signal.SIGTERM, _on_sigterm)   # F4: a kill saves and books like Ctrl+C
     except (ValueError, OSError):   # not the main thread

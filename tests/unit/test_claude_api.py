@@ -83,12 +83,18 @@ class FakeStream:
     def __iter__(self):
         if isinstance(self.item, Midway):
             for c in self.item.chunks:
-                yield delta(c)
+                yield NS(type="content_block_delta", delta=NS(type="thinking_delta", thinking=c[1])) if isinstance(c, tuple) else delta(c)
         if isinstance(self.item, Exception):
             raise self.item
         for b in self.item.content:
-            if getattr(b, "type", None) == "text":
+            t = getattr(b, "type", None)
+            if t in ("text", "thinking"):
+                yield NS(type="content_block_start", content_block=NS(type=t))
+            if t == "text":
                 yield delta(b.text)
+            elif t == "thinking":
+                yield NS(type="content_block_delta", delta=NS(type="thinking_delta", thinking=b.thinking))
+                yield NS(type="content_block_delta", delta=NS(type="signature_delta", signature="sig"))
 
     def get_final_message(self):
         return self.item
@@ -243,7 +249,7 @@ def test_body_has_effort_cache_prefix_and_no_forbidden_parameter():
     assert p["output_config"] == {"effort": "high"}
     assert "cache_control" not in p["system"][0] and p["system"][1]["cache_control"] == {"type": "ephemeral"}
     assert p["messages"] == [{"role": "user", "content": "review this"}]
-    assert not set(ca.FORBIDDEN_PARAMS) & set(p) and "thinking" not in p
+    assert not set(ca.FORBIDDEN_PARAMS) & set(p) and p["thinking"] == {"type": "adaptive", "display": "summarized"}
     p2 = ca.build_params(req(schema={"type": "object"}, cache_ttl="1h"), ca.route("critical-review"))
     assert p2["output_config"]["format"] == {"type": "json_schema", "schema": {"type": "object"}}
     assert p2["system"][0]["cache_control"] == {"type": "ephemeral", "ttl": "1h"}
@@ -437,7 +443,7 @@ def test_long_output_is_streamed():
 
 def test_fable_400_falls_to_opus_xhigh_and_says_so():
     a = api(Err(400), resp("by opus", model="claude-opus-5-5"))
-    q = req(task_class="whole-project-plan", model="fable", effort="xhigh", fallback_to=("opus", "xhigh"))
+    q = req(task_class="whole-project-plan", model="fable", effort="xhigh", fallback_to=("opus", "xhigh"), max_tokens=32000)   # the xhigh floor
     r = a.complete(q)
     assert r.text == "by opus" and r.fell_back_to == "claude-opus-5-5"
     first, second = a._client.calls
@@ -450,7 +456,7 @@ def test_fable_400_falls_to_opus_xhigh_and_says_so():
 def test_fable_400_without_a_declared_fallback_is_not_silent():
     a = api(Err(400))
     with pytest.raises(Err):
-        a.complete(req(task_class="whole-project-plan", model="fable", effort="xhigh"))
+        a.complete(req(task_class="whole-project-plan", model="fable", effort="xhigh", max_tokens=32000))
 
 
 # --- fallbacks (F3, F4) ------------------------------------------------------------------------------------------------
@@ -809,9 +815,15 @@ def test_a_loop_whose_cache_read_is_stuck_at_the_prefix_stops_at_turn_3_with_the
     assert json.loads(part.read_text(encoding="utf-8"))["turns"] == 3
 
 
+def answer_part(path):
+    """What a stream file holds after its ``[answer]`` line (the file starts with a header line and may hold a ``[thinking]`` part)."""
+    t = Path(path).read_text(encoding="utf-8")
+    return t.split("[answer]\n", 1)[1] if "[answer]\n" in t else ""
+
+
 def ledger_streams(a):
-    """The text of every stream file of the ledger folder."""
-    return [p.read_text(encoding="utf-8") for p in (ca.ledger_dir() / "stream").glob("*.txt")]
+    """The answer part of every stream file of the ledger folder."""
+    return [answer_part(p) for p in (ca.ledger_dir() / "stream").glob("*.txt")]
 
 
 def test_the_guard_names_the_measured_share_when_most_of_the_prompt_is_fresh_input():
@@ -844,7 +856,7 @@ def test_f1_every_call_streams_its_text_to_a_file_before_any_bookkeeping(monkeyp
         a.complete(req())
     start = start_rows(a)[0]
     assert Path(start["stream"]) == ca.ledger_dir() / "stream" / f"{start['uid']}.txt"
-    assert Path(start["stream"]).read_text(encoding="utf-8") == "The verdict is: fine."
+    assert answer_part(start["stream"]) == "The verdict is: fine."
 
 
 def test_f1_the_stream_file_stays_after_a_good_call():
@@ -858,7 +870,7 @@ def test_f2_an_error_after_text_is_not_retried_not_voided_and_booked_at_the_rese
     with pytest.raises(ca.StreamBroken) as ei:
         a.complete(req())
     assert len(a._client.calls) == 1                                           # no second, paid call
-    assert ei.value.text == "half an answer" and ei.value.path.read_text(encoding="utf-8") == "half an answer"
+    assert ei.value.text == "half an answer" and answer_part(ei.value.path) == "half an answer"
     start, done = a.ledger.rows()
     assert [x["ev"] for x in a.ledger.rows()] == ["start", "done"] and done["usd"] == start["reserved"]
     assert "stream broke after 14 chars" in done["note"] and "reserved amount booked" in done["note"]
@@ -1118,9 +1130,9 @@ def test_a_key_shaped_string_split_across_deltas_never_reaches_the_stream_file()
 def test_complete_lines_are_on_disk_before_close_so_a_kill_loses_only_the_unfinished_line():
     sink = ca.StreamSink(ca.ledger_dir() / "stream" / "x.txt")
     sink.write("line one\nline two\nunfin")
-    assert sink.path.read_text(encoding="utf-8") == "line one\nline two\n" and sink.n == 23
+    assert sink.path.read_text(encoding="utf-8") == "[answer]\nline one\nline two\n" and sink.n == 23
     sink.write("ished " + KEY)
-    assert sink.path.read_text(encoding="utf-8") == "line one\nline two\n"      # the tail waits
+    assert sink.path.read_text(encoding="utf-8") == "[answer]\nline one\nline two\n"      # the tail waits
     sink.close()
     assert sink.path.read_text(encoding="utf-8").endswith("unfinished [REDACTED-SECRET-LIKE]") and KEY in sink.text
 
@@ -1202,3 +1214,148 @@ def test_a_stream_file_that_holds_something_else_leaves_no_proof(monkeypatch):
     monkeypatch.setattr(ca.StreamSink, "close", lambda self: (self._out("tampered"), None)[1])
     b.complete(req(user="second"))
     assert not ca.proof_path().exists()
+
+
+# --- thinking is streamed and saved, the max_tokens floor per effort, max needs a reason (F12-F16, the $3.45 thinking-only loss) -----
+def thought(summary, text=None, **kw):
+    blocks = [NS(type="thinking", thinking=summary)] + ([NS(type="text", text=text)] if text else [])
+    return resp(content=blocks, **kw)
+
+
+def test_f12_every_request_asks_for_adaptive_summarized_thinking_and_never_a_budget():
+    for c in ("critical-review", "qa-judgement", "simple-question"):
+        p = ca.build_params(req(task_class=c), ca.route(c))
+        assert p["thinking"] == {"type": "adaptive", "display": "summarized"} and "budget_tokens" not in json.dumps(p)
+    assert "thinking" in ca.build_params(req(tools_root="."), ca.route("critical-review"))
+
+
+def test_f13_a_thinking_only_max_tokens_stop_leaves_the_file_and_names_the_cause():
+    a = api(thought("I weighed the plan.\nNo answer yet.", stop="max_tokens", inp=1000, out=16000))
+    with pytest.raises(ca.OutputTruncated, match=r"thinking used the whole max_tokens 16000 \(output tokens 16000\), no answer text; raise max_tokens") as ei:
+        a.complete(req())
+    f = Path(start_rows(a)[0]["stream"]).read_text(encoding="utf-8")
+    assert f.startswith("--- r1#") and "effort=high max_tokens=16000 ---\n[thinking]\nI weighed the plan.\nNo answer yet." in f and "[answer]" not in f
+    assert ei.value.thinking == "I weighed the plan.\nNo answer yet." and ei.value.text == ""
+
+
+def test_f13_a_call_with_no_text_at_all_still_leaves_a_stream_file():
+    a = api(thought("", stop="max_tokens"))
+    with pytest.raises(ca.OutputTruncated):
+        a.complete(req())
+    assert Path(start_rows(a)[0]["stream"]).read_text(encoding="utf-8").startswith("--- ")
+
+
+def test_f13_main_writes_the_thinking_file_redacted(env, monkeypatch):
+    patched_main(monkeypatch, api(thought("plan with " + KEY, stop="max_tokens")))
+    out = env / "out"
+    ca.main(["run", job_file(env, [{"id": "a", "user": "hi"}]), "--out", str(out)])
+    t = (out / "a.thinking.md").read_text(encoding="utf-8")
+    assert "plan with" in t and "sk-ant" not in t and not (out / "a.truncated.md").exists()
+
+
+def test_f13_an_error_after_thinking_only_output_is_not_retried_and_is_booked():
+    a = api(Midway(529, [("thinking", "pondering")]), resp("never"))
+    with pytest.raises(ca.StreamBroken):
+        a.complete(req())
+    assert len(a._client.calls) == 1
+    start, done = a.ledger.rows()
+    assert done["usd"] == start["reserved"] and "stream broke after 9 chars" in done["note"]
+
+
+def test_f13_a_partial_transcript_keeps_the_thinking_blocks(tmp_path):
+    turn = resp(content=[NS(type="thinking", thinking="I will list the folder."), NS(type="tool_use", name="list_dir", input={"path": "."}, id="t1")],
+                stop="tool_use", inp=100, read=20000, write=2000)
+    a = api(turn, turn)
+    with pytest.raises(ca.OutputTruncated):
+        a.complete(req("TH", tools_root=str(tmp_path), max_turns=2))
+    d = json.loads((ca.ledger_dir() / "partial_T_TH.json").read_text(encoding="utf-8"))
+    assert {"type": "thinking", "thinking": "I will list the folder."} in d["messages"][0]["blocks"]
+
+
+def test_f13_the_proof_is_written_when_the_answer_matches_even_with_thinking_before_it(env, monkeypatch):
+    a = api(thought("a long think", "ok", model="claude-haiku-5-5", inp=100, out=5))
+    patched_main(monkeypatch, a)
+    assert ca.main(["run", tiny_job(env), "--out", str(env / "o")]) == 0
+    assert json.loads(ca.proof_path().read_text(encoding="utf-8"))["chars"] == 2
+
+
+def test_f15_effort_max_at_40000_tokens_is_refused_before_any_call_or_reservation():
+    q = req(task_class="whole-project-plan", model="fable", effort="max", max_tokens=40000, max_effort_reason="audit")
+    a = api()
+    with pytest.raises(ConfigError, match="max_tokens >= 64000"):
+        a.complete(q)
+    assert a._client.calls == [] and a.ledger.rows() == [] and a.run_for("T").spent(ca.SERVICE) == 0
+    assert a.complete(ca.Request(**{**q.__dict__, "max_tokens": 64000})).text == "ok"
+    assert a.complete(req(i="x", task_class="whole-project-plan", model="fable", effort="xhigh", max_tokens=32000)).text == "ok"
+    with pytest.raises(ConfigError, match="max_tokens >= 32000"):
+        a.complete(req(i="y", task_class="whole-project-plan", model="fable", effort="xhigh", max_tokens=31999))
+
+
+def test_f15_estimate_reports_the_floor_and_run_refuses_with_3(env, capsys):
+    q = req(task_class="whole-project-plan", model="fable", effort="xhigh", max_tokens=16000)
+    assert ca.estimate([q])["requests"][0]["max_tokens_floor_ok"] is False
+    assert ca.estimate([req()])["requests"][0]["max_tokens_floor_ok"] is True
+    write_proof()
+    job = {"job": "T", "task_class": "whole-project-plan", "model": "fable", "effort": "xhigh", "max_tokens": 16000,
+           "requests": [{"id": "a", "user": "hi"}, {"id": "b", "user": "ho"}]}
+    (env / "job.json").write_text(json.dumps(job), encoding="utf-8")
+    assert ca.main(["run", str(env / "job.json")]) == 3 and "floor" in capsys.readouterr().out
+
+
+def test_f16_max_effort_on_a_single_shot_needs_a_stated_reason():
+    kw = dict(task_class="whole-project-plan", model="fable", effort="max", max_tokens=64000)
+    a = api()
+    for bad in ("", "   "):
+        with pytest.raises(ConfigError, match="max_effort_reason"):
+            a.complete(req(max_effort_reason=bad, **kw))
+    assert a._client.calls == [] and a.ledger.rows() == []
+    assert a.complete(req(max_effort_reason="one-off whole-project audit", **kw)).text == "ok"
+    assert a.complete(req(i="x", task_class="whole-project-plan", model="fable", effort="xhigh", max_tokens=32000)).text == "ok"   # xhigh: no reason
+    assert ca.estimate([req(**kw)])["requests"][0]["max_effort_reason_ok"] is False
+    assert ca.estimate([req(max_effort_reason="why", **kw)])["requests"][0]["max_effort_reason_ok"] is True
+
+
+def test_f16_the_reason_comes_from_the_job_file_and_run_refuses_without_it(env, capsys):
+    write_proof()
+    job = {"job": "T", "task_class": "whole-project-plan", "model": "fable", "effort": "max", "max_tokens": 64000, "requests": [{"id": "a", "user": "hi"}]}
+    (env / "job.json").write_text(json.dumps(job), encoding="utf-8")
+    assert ca.main(["run", str(env / "job.json")]) == 3 and "max_effort_reason" in capsys.readouterr().out
+    (env / "job.json").write_text(json.dumps({**job, "max_effort_reason": "one-off"}), encoding="utf-8")
+    assert ca.load_job(env / "job.json")[0].max_effort_reason == "one-off"
+
+
+# --- review of PR #64 ----------------------------------------------------------------------------------------------------------
+def test_a_key_in_a_thinking_block_never_reaches_the_partial_file(tmp_path):
+    turn = resp(content=[NS(type="thinking", thinking="my key is " + KEY), NS(type="tool_use", name="list_dir", input={"path": "."}, id="t1")],
+                stop="tool_use", inp=100, read=20000, write=2000)
+    a = api(turn, turn)
+    with pytest.raises(ca.OutputTruncated):
+        a.complete(req("TK", tools_root=str(tmp_path), max_turns=2))
+    raw = (ca.ledger_dir() / "partial_T_TK.json").read_text(encoding="utf-8")
+    assert "sk-ant" not in raw and "[REDACTED-SECRET-LIKE]" in raw
+
+
+def test_the_batch_path_checks_the_floor_before_creating_the_batch_or_reserving():
+    a = api()
+    reqs = [ca.Request(id=f"q{i}", user=f"t{i}", task_class="whole-project-plan", model="fable", effort="max", max_tokens=40000, job="T",
+                       max_effort_reason="x") for i in range(ca.BATCH_MIN)]
+    with pytest.raises(ConfigError, match="max_tokens >= 64000"):
+        a.run_job(reqs)
+    assert a._client.messages.batch_requests == [] and a.ledger.rows() == [] and a.run_for("T").spent(ca.SERVICE) == 0
+
+
+def test_the_unfinished_last_piece_is_redacted_in_the_file_on_close():
+    sink = ca.StreamSink(ca.ledger_dir() / "stream" / "tail.txt", "--- h ---")
+    sink.write("first line\nlast piece without newline " + KEY)
+    sink.close()
+    t = sink.path.read_text(encoding="utf-8")
+    assert "sk-ant" not in t and t.endswith("last piece without newline [REDACTED-SECRET-LIKE]") and KEY in sink.text
+
+
+def test_the_fable_400_fallback_route_is_floor_checked_before_its_attempt_is_reserved():
+    a = api(Err(400), resp("by opus"))
+    q = req(task_class="whole-project-plan", model="fable", effort="xhigh", max_tokens=32000, fallback_to=("opus", "max"), max_effort_reason="x")
+    with pytest.raises(ConfigError, match="max_tokens >= 64000"):          # fallback at max needs 64000 (and a reason)
+        a.complete(q)
+    assert len(a._client.calls) == 1 and [x["ev"] for x in a.ledger.rows()] == ["start", "void"]
+    assert a.run_for("T").spent(ca.SERVICE) == 0
