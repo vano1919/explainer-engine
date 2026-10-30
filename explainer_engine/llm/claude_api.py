@@ -168,6 +168,11 @@ def caps() -> dict:
     return c
 
 
+def lines_below_spent(c: dict, spent_by_job: dict[str, float]) -> dict[str, float]:
+    """Job lines that are lower than what the job has already spent (money moved out of a line must be unspent money); {job: spent - line}."""
+    return {j: round(v - float(c["jobs"].get(j, 0.0)), 6) for j, v in spent_by_job.items() if v > float(c["jobs"].get(j, 0.0)) + 1e-9}
+
+
 # --- routing -----------------------------------------------------------------------------------------------------------
 @dataclass(frozen=True)
 class Route:
@@ -1211,6 +1216,7 @@ def main(argv: list[str] | None = None) -> int:
         c = caps()
         print(json.dumps({"key_present": bool(api_key()), "approved": bool((c.get("approval") or {}).get("ref")),
                           "max_usd": c["max_usd"], "jobs": c["jobs"], "spent_total": api.ledger.total(), "spent_by_job": api.ledger.by_job(),
+                          "lines_below_spent": lines_below_spent(c, api.ledger.by_job()),
                           "open_calls": [x["uid"] for x in api.ledger.open_calls()], "stream_proof": proof_path().exists()}, indent=2))
         return 0
     if a.cmd == "void":
