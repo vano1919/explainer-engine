@@ -135,5 +135,26 @@
    "free": true
   }
  ],
- "measured": null
+ "measured": {
+  "machine": "x86_64 4 cpu, python 3.13.17",
+  "size": [
+   1280,
+   720
+  ],
+  "ss": 2,
+  "s_per_frame": {
+   "MAP_3D_TERRAIN_FLYOVER": 0.572,
+   "BALLISTIC_RANGE_AND_ENERGY_HUD": 0.086,
+   "WEAPON_AND_MATERIAL_CUTAWAY": 0.092,
+   "TECH_TREE_DEPENDENCY_GRAPH": 0.088,
+   "TACTICAL_UNIT_MANEUVER": 0.563,
+   "SPLIT_SCREEN_SPEED_RACE": 0.12,
+   "PARALLAX_25D_TABLEAU": 2.378,
+   "MULTI_SCENARIO_VERDICT_MATRIX": 0.101,
+   "FORMATION_MICRO_MECHANICS": 1.574,
+   "ORDER_OF_BATTLE_TELEMETRY_HUD": 0.086,
+   "PRIMARY_SOURCE_DOSSIER_CARD": 0.16,
+   "LOGISTICS_TETHER_AND_ATTRITION": 0.472
+  }
+ }
 }

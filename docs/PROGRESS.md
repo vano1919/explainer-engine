@@ -2669,3 +2669,25 @@ training as sequences is decided in the process. Changed together:
 - Second review round (22:45 UTC): `adopt` takes `approvals` for EVERY gated state up to the target (a machine approval of STAGED_UNLISTED
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.
+## 2026-10-30 UTC (Tbilisi night): Blueprint P5, the visual compensator: maps, HUD, tableaux (no pod, no money)
+
+- ვანო (2026-10-29 18:30 UTC): carry the Blueprint through the night, free steps only. P5 = the free, deterministic frames for the
+  narrated stretches with no character: 12 archetypes, the map's 8 laws. Home: `docs/COMPENSATOR.md` (prefix CMP-).
+- Code: `explainer_engine/maps/` (geo, plate, camera, paths, timeline, render for archetypes 1-4, laws CMP-01..08 and CMP-13, draw),
+  `maps/data/` (Natural Earth 1:50m extract, 547 KB, pinned sources and a build script), `edit/hud.py` (5, 7, 10, 11, 12),
+  `edit/tableau.py` (6, 8, 9), `edit/visual_compensator.py` (catalogue `edit/archetypes.json`, manifest check, CMP-10 rotation,
+  CMP-11 map share, CMP-12 lane balance, render and measure CLI). A frame is a pure function of (spec, spine, frame): same bytes
+  in a chunked render (CMP-09).
+- Contracts: new `comp_spec/1`; `visual_comp_manifest/1` items reference it by a layer of kind `spec`; CN-15 (an archetype is one of the
+  catalogue and on its family's lane, for shots, items and specs). Registry: BP-140..146 (hypotheses, so REVIEW), BP-124/125/127 now
+  enforced by the new validators.
+- Decisions: D-86 (ceiling = 2D vector map + 2.5D parallax, no height model; the faction pair is blue and orange, not red: CVD
+  simulation after Machado 2009 gives a worst-case CIE76 of 118 against 98 for red; a square and a triangle mark the sides as well).
+  Palette tokens `faction_a`, `faction_b` with `design/palette.py:faction_findings`. The dossier card has no stamp (CMP-15, D-61/SC-11).
+- Measured (this container, 1280x720, ss 2): 0.09 s per frame for HUDs and graphs, 0.5 s for maps, 1.6 s for the formation, 2.4 s for the
+  parallax tableau: a 30 s item at 24 fps is minutes of CPU, never a pod (`archetypes.json` `measured`).
+- Tests: `test_maps` (one test per law, determinism, letterless plate by construction, the pinned extract; the OCR check skips when
+  tesseract is absent), `test_compensator` (catalogue = doc table, all 12 archetypes render from the demo job in `tests/unit/_comp.py`,
+  chunk-identical bytes, cross-item checks, CN-15, CMP-14 no client and no model imported).
+- Not done (named in COMPENSATOR.md): BiRefNet is only an input slot for the matte, the depth model is not in this phase (tests use a
+  synthetic depth map), painting the plates is P12e, the router is P6.
