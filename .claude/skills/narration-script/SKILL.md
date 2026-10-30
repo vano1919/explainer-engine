@@ -38,7 +38,7 @@ any paid read: 0 FAIL, every REVIEW either fixed or answered in one line.
 Common to all four: short sentences, a question every 20-30 seconds (an observation; the checked floor is N-06, BP-17), a reaction after each reveal, and the
 end of every section pointing at the next problem. None of them sounds like a lecture.
 
-## The rules (N-01..N-14 are checked by `narration_lint`; the numbers live in the sourced rules at the end)
+## The rules (N-01..N-17 are checked by `narration_lint`; the numbers live in the sourced rules at the end)
 
 ### Questions
 - **N-01 The first spoken sentence is the hook, in one of the four forms of BP-03**: a question, a cold-open incident
@@ -81,6 +81,10 @@ end of every section pointing at the next problem. None of them sounds like a le
   every number that matters is also shown on screen (ED-10).
 - **N-14 No press-release lines (BP-15)**: never "comes out on", "is now available", "launches on", "according to the
   official", "as reported by"; the fact lives in the claim map, the line in the story; sources are never spoken.
+- **N-16 No AI-register word (BP-140, FAIL)**: a word of the tier-1 list, or a sentence-initial Additionally, Moreover or
+  Furthermore, in anything the viewer hears or reads. The list lives in the registry only; `scripting/register_lint.py` reads it.
+- **N-17 Little soft register, no structural tells (BP-114, REVIEW)**: the soft words and phrases and the densities of
+  triplets, "It's not X. It's Y." pivots, participial tails, em dashes and "rather than" chains (RG-02..RG-04).
 - Target pace for this channel: the heard pace of **BP-01** (the first read was 140; the v3 test 168; D-49: engagement
   rises with pace and recall peaks near the top of the band).
 
@@ -157,20 +161,23 @@ https://www.overseeros.com/blog/youtube-storytelling-techniques-6-ways-keep-view
 vidIQ transcripts read 2026-10-16: aeKrIhktzqU, BTNUK1SCoo4, vS5BmHsuvvk, agRKo_sEb4I (patterns only; no text copied
 into our scripts).
 
-## AI register: write like a person, not like a model (N-15, P3b 2026-10-29)
+## AI register: write like a person, not like a model (N-16, N-17; P3b 2026-10-29, P3 2026-10-30)
 
 The creator's point 1 of the blueprint review: lines that read as machine prose break the story. Studies of large text
 corpora show that certain style words rose sharply after language models arrived (arXiv 2404.01268, 2406.07016; the
-abstract pages prove the drift, not our list), so the lexicon of BP-114 is a hypothesis we measure, not a law. What to do:
+abstract pages prove the drift, not our list). The words two or more independent studies flag are a house FAIL by the creator's
+word (BP-140, N-16); the rest and the densities are hypotheses we measure (BP-114, N-17). The lists are in the registry
+only and `python -m explainer_engine.scripting.register_lint <script>` is the check: no copy of them here. What to do:
 
 - **Say the thing.** "Napoleon delves into the map" becomes "Napoleon stares at the map"; "a tapestry of alliances"
   becomes the alliances by name; "a testament to his nerve" becomes the act that shows the nerve (show, don't tell, BP-87).
-- **Density, not a single word.** One hit proves nothing; BP-114 counts hits per 300 words. A literal use is allowed: a
-  landscape of hills, a journey of 300 miles.
+- **Density for the soft tier, a hit for the hard tier.** One soft hit proves nothing (BP-114 counts hits per 300 words); a
+  tier-1 word fails at once. A literal use is allowed through `register_allow.json` next to the script, with a reason and a
+  note (RG-05): a landscape of hills, a journey of 300 miles.
 - **Structural tells** (the critic reads them, CRAFT-SCR-02): three adjectives or clauses stacked for rhythm; a sentence
   that opens with "Imagine"; a rhetorical question opening every segment; em-dash chains; "not just X, but Y"; "in a world
   where". Each is a habit, so the fix is the plain sentence the narrator would say at a campfire.
-- **The twist lands short.** The sentence that turns the story is spoken inside BP-115's estimate; a long twist is two
+- **The twist lands short.** The sentence that turns the story is spoken inside BP-115's estimate (`syllables.seconds`, at BP-01's pace); a long twist is two
   sentences, the turn in the second.
 - **Causal joins.** Beats join with "so" or "but", never "and then" (ST-02).
 
@@ -183,7 +190,7 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 <!-- craft-checklist:screenwriting:begin -->
 | ID | check | rule | artefact field | sourced rules | enforced by |
 |---|---|---|---|---|---|
-| CRAFT-SCR-01 | code | no AI-register word over the density limit (delve, tapestry, testament to, ...) | production_script narration[].text and hero lines | BP-114, BP-140 | `explainer_engine/scripting/register_lint.py` (planned, P3) |
+| CRAFT-SCR-01 | code | no AI-register word over the density limit (delve, tapestry, testament to, ...) | production_script narration[].text and hero lines | BP-114, BP-140 | `explainer_engine/scripting/register_lint.py` |
 | CRAFT-SCR-02 | critic | no structural AI tells: stacked triplets, sentence-initial 'Imagine', a rhetorical-question opener in every segment, em-dash chains, 'not just X but Y' | narration[].text | BP-114 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
 | CRAFT-SCR-03 | code | the twist sentence lands inside its estimated spoken length | segment twist sentence + syllable estimate | BP-115 | `explainer_engine/scripting/syllables.py` (planned, P3) |
 | CRAFT-SCR-04 | code | causal chain: THEREFORE / BUT joins, no AND-THEN chain | story beats | ST-02 | `explainer_engine/scripting/story_lint.py` |
@@ -195,7 +202,7 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 The numbers that bind this skill live only in the registry (`explainer_engine/standards/sourced_rules.json`);
-`narration_lint` reads them from there (N-01, N-03, N-05, N-06, N-07, N-10..N-15). A number changes there, with its sources,
+`narration_lint` reads them from there (N-01, N-03, N-05, N-06, N-07, N-10..N-17). A number changes there, with its sources,
 never here.
 
 - BP-03: the first spoken sentence is the hook in one of four forms: a question, a cold-open line of at most 14 words, a claim

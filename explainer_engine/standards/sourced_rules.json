@@ -4711,9 +4711,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/screenwriting.json:CRAFT-SCR-01"
+    "explainer_engine/standards/craft_checklists/screenwriting.json:CRAFT-SCR-01",
+    "explainer_engine/scripting/register_lint.py"
    ],
-   "planned": "explainer_engine/scripting/register_lint.py (P3)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -4737,9 +4737,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/screenwriting.json:CRAFT-SCR-03"
+    "explainer_engine/standards/craft_checklists/screenwriting.json:CRAFT-SCR-03",
+    "explainer_engine/scripting/story_lint.py"
    ],
-   "planned": "explainer_engine/scripting/syllables.py (P3)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -5423,7 +5423,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/packaging.json:CRAFT-PKG-01"
+    "explainer_engine/standards/craft_checklists/packaging.json:CRAFT-PKG-01",
+    "explainer_engine/scripting/story_lint.py"
    ],
    "planned": "explainer_engine/scripting/variant_plan.py (P3)",
    "supersedes": [],
@@ -5678,8 +5679,10 @@
      "note": "the list moves per model generation; Claude's own tell is em dashes"
     }
    ],
-   "enforced_by": [],
-   "planned": "explainer_engine/scripting/register_lint.py (P3)",
+   "enforced_by": [
+    "explainer_engine/scripting/register_lint.py",
+    "explainer_engine/scripting/narration_lint.py"
+   ],
    "supersedes": []
   },
   {
@@ -5793,8 +5796,9 @@
      "note": "the thumbnail or the first seven seconds; policy_baseline B-16, one source type"
     }
    ],
-   "enforced_by": [],
-   "planned": "explainer_engine/scripting/story_lint.py (P3)",
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py"
+   ],
    "supersedes": []
   },
   {
@@ -5815,8 +5819,10 @@
      "verified": false
     }
    ],
-   "enforced_by": [],
-   "planned": "explainer_engine/scripting/story_lint.py (P3)",
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py",
+    "explainer_engine/scripting/film_shots.py"
+   ],
    "supersedes": []
   },
   {
@@ -5837,8 +5843,9 @@
      "verified": false
     }
    ],
-   "enforced_by": [],
-   "planned": "explainer_engine/scripting/story_lint.py (P3)",
+   "enforced_by": [
+    "explainer_engine/scripting/story_lint.py"
+   ],
    "supersedes": []
   },
   {

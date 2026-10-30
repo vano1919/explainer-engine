@@ -25,6 +25,7 @@ from pathlib import Path
 from explainer_engine.compose import episode_look
 from explainer_engine.qa import style_prompt
 from explainer_engine.scripting import shot_prompt_lint as lint
+from explainer_engine.scripting import story_lint
 from explainer_engine.standards import sourced_rules
 
 SCHEMA = Path(__file__).resolve().parents[1] / "schemas" / "film_shots.schema.json"
@@ -603,7 +604,7 @@ def check(doc: dict) -> list[dict]:
             seen = _words(" ".join([act.get("start", ""), act.get("peak", ""), act.get("settle", ""),
                                     *(r["does"] for r in shot.get("reactions", []))]))
             said = _words(shot["narration"])
-            if said and seen and len(said & seen) / len(said) >= 0.5:
+            if said and seen and story_lint.overlap(said, seen) >= sourced_rules.T("BP-144", "overlap"):
                 add("KP-20", "REVIEW", sid, "the narration says what the picture shows: give the narrator what the heroes "
                                             "cannot know, let the picture show the rest")
         # KP-31..KP-34: a drawn first frame (keyframe or cut) states its composition
@@ -677,6 +678,9 @@ def check(doc: dict) -> list[dict]:
     out += style_check(doc)
     out += absent_check(doc)
     out += moment_check(doc)
+    from explainer_engine.scripting import register_lint  # KP-46: the AI register of the words the viewer hears or reads
+    for found in register_lint.film_shots_findings(doc):
+        out.append(dict(found, rule="KP-46 " + found["rule"]))
     return out
 
 

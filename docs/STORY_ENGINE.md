@@ -365,7 +365,7 @@ word lists live in the registry only: tier 1 in [BP-140](SOURCED_RULES.md) (hous
 |---|---|---|
 | RG-01 | **Tier 1** (N-16): a word of BP-140's `register_words`, or a sentence-initial "Additionally,", "Moreover," or "Furthermore,", outside the allow-list. Dialogue counts: the model writes the heroes too. | FAIL (house, the creator 2026-10-29) |
 | RG-02 | **Tier 2** (N-17): soft words and phrases of BP-114 (`lexicon`, `phrases`): more than `review_hits_per_300_words` hits in one segment. | REVIEW |
-| RG-03 | **Structure densities** (N-17), narration only, per 1,000 spoken words: triplets, "It's not X. It's Y." pivots, participial tails, em dashes, a "rather than" chain; the limits are BP-114's. Nominalisations are only reported. Hero lines are never measured for structure. | REVIEW |
+| RG-03 | **Structure densities** (N-17), narration only, per 1,000 spoken words: triplets, "It's not X. It's Y." pivots, participial tails, em dashes, a "rather than" chain; the limits are BP-114's. Nominalisations are only reported. A text of under 1,000 words may carry one of each tell. Hero lines are never measured for structure. | REVIEW |
 | RG-04 | **Summarising opener or closer**: "In conclusion", "Ultimately,", "Overall," and the like on a segment's first line or the script's last line (`openers` of BP-114). | REVIEW |
 | RG-05 | **An allow-list entry has a reason and a note.** `register_allow.json` next to the script holds `{term, reason: literal | quote | name, note}`; the note names the segment or line it covers, or says `all`. An entry without a reason or a note is refused and the term still fires. | FAIL (invariant 7) |
 

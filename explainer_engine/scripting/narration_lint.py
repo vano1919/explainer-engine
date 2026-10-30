@@ -3,13 +3,13 @@
     python -m explainer_engine.scripting.narration_lint examples/stone_age/day1_v3/narration_tts.txt
 
 Reads a TTS narration file (one paragraph = one beat; ElevenLabs v4 audio tags allowed) and reports FAIL / REVIEW
-findings, rule ids N-01..N-15 as in the skill. It cannot judge whether a line is funny or intriguing; it catches the
+findings, rule ids N-01..N-17 as in the skill. It cannot judge whether a line is funny or intriguing; it catches the
 defects the creator heard in the first reads: questions that fall, stress on the wrong word, too many slowing
 ellipses, beats that end closed, no conversational colour, stage directions read aloud. Every number comes from the
 sourced rules registry (``standards/sourced_rules.py``, docs/SOURCED_RULES.md): N-01 BP-03 (the four hook forms),
 N-03 BP-16 (ellipses per beat), N-05 BP-06 (sentence length), N-06/N-07 BP-17 (questions, interjections), N-10 BP-18
 (question contour), N-11 BP-04 (the 30-second contract), N-12 BP-07 (spoken register), N-13 BP-08 (numerals), N-14 BP-15
-(press-release lines, one lexicon with SC-07), N-15 BP-10 (no narration hold over one second). Each finding's severity is
+(press-release lines, one lexicon with SC-07), N-15 BP-10 (no narration hold over one second), N-16/N-17 the AI register (BP-140 FAIL tier, BP-114 soft tier; scripting/register_lint.py). Each finding's severity is
 its rule's severity in the registry (the FAIL band of a rule; its review band stays REVIEW). N-02, N-04, N-08 and N-09
 have no number.
 
@@ -135,9 +135,10 @@ def hook_form(sentence: str) -> str | None:
     return next((f for f in _HOOK_ORDER if f in HOOK_FORMS and _HOOK_TESTS[f](plain)), None)
 
 
-def lint(text: str, press: bool = True) -> list[dict]:
+def lint(text: str, press: bool = True, register: bool = True) -> list[dict]:
     """N-01..N-13 on a narration text; N-14 too unless ``press`` is False (a production script lints its narrator lines
-    with ``doc_findings`` instead, so a hero's line is not read as narration)."""
+    with ``doc_findings`` instead, so a hero's line is not read as narration); N-16/N-17, the AI register
+    (``register_lint``), unless ``register`` is False (a production script gets it as PV-61)."""
     found: list[dict] = []
 
     def add(rule: str, where: str, detail: str, severity: str = "REVIEW") -> None:
@@ -266,6 +267,11 @@ def lint(text: str, press: bool = True) -> list[dict]:
     elif interjections > len(all_words) / WORDS_PER_INTERJECTION + 1.5:  # about one per 60 words, a little slack
         add("N-07", "-", f"{interjections} interjections in {len(all_words)} words; at most one per "
                          f"{WORDS_PER_INTERJECTION} (BP-17)")
+    if register:
+        from explainer_engine.scripting import register_lint
+        for f in register_lint.findings(text, kind="narration"):
+            found.append({"rule": "N-16" if f["rule"] in ("RG-01", "RG-05") else "N-17", "where": f["where"],
+                          "severity": f["severity"], "detail": f"{f['rule']}: {f['detail']}"})
     return found
 
 
