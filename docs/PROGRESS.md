@@ -3208,3 +3208,20 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   body (wrapper command, pinned image) before stamping; `tests/unit/test_lifecycle.py` writes the Napoleon variants file in the `folder`
   fixture, `gates_up_to` carries its real hash, and the three adopts that pass the pick name the file. No assert removed.
 - OPEN: none new. The gate→artifact binding of the other gates stays with ვანო (options sent to the coordinator).
+
+## 2026-10-30 UTC: plan_v2 T1 / N-03 option A, every person's gate binds the hash its own tool records (ვანო's choice, no pod, no money)
+
+- ვანო chose option A (2026-10-30 14:48 UTC, through the coordinator): SCENARIO_APPROVED, SCRIPT_APPROVED, BUDGET_RESERVED,
+  SAMPLE_APPROVED and REVIEW_APPROVED are entered only with `artifact=` (what the person approved), and the approval's sha256 must equal
+  `core/store.bound_sha256(gate, artifact)`: the scenario file's sha256 (PV-45); the script's words only,
+  `script_approval.words_sha256` (OR-17, so delivery tags may still change); the approved plan file, refused when a paint plan no
+  longer matches its own `plan_hash`; the `script_sha256` that `sample_approval.json` binds, for an unchanged script (OR-19); the
+  review bundle folder as one hash (`store.bundle_sha256`: every file's relative path and sha256, sorted; owner=claude, no bundle
+  manifest existed). `adopt()` takes `artifacts={gate: path}` and checks every bound gate on the way the same way. A refusal writes
+  nothing. PUBLISHED_PUBLIC stays the creator's click with a ref (CN-06); VARIANT_CHOSEN keeps its variants file. These match the
+  "binds" column of the CN-04 lifecycle table in docs/CONTRACTS.md, whose wording is unchanged.
+- Tests: `tests/unit/test_money_path_fences.py` option-A section (5 gates: no artifact refused, `"a" * 64` refused, the tool's hash
+  passes, nothing written on a refusal; words-only script hash, a changed paint plan, a sample for another script, a changed bundle).
+  Red on the follow-up head: 6 failed. Setup only: `tests/unit/test_lifecycle.py` gains `artifact_for()` (the artifact and its tool's
+  hash per gate); `step()`, the planner budget move, `gates_up_to`, the adopt calls that pass a bound gate and the adopt-chain walk
+  name the artifact and carry its hash; the follow-up's adopt test names its scenario file. No assert removed.

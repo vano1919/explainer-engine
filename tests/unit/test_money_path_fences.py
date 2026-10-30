@@ -244,14 +244,15 @@ def test_variant_chosen_requires_the_variants_file_and_writes_nothing_without_it
 def test_adopt_into_a_state_past_the_pick_binds_the_variants_file(tmp_path):
     """T5's review of N-03: CN-04 says adopt is held to the same gates, so adopting past VARIANT_CHOSEN checks the variants file
     exactly as move() does; nothing is written when it fails."""
-    from test_lifecycle import ADOPT, gates_up_to, variants_file
+    from test_lifecycle import ADOPT, artifact_for, gates_up_to, variants_file
     from explainer_engine.core import store
     from explainer_engine.core.errors import ContractError
     (tmp_path / "run.json").write_text("{}", encoding="utf-8")
     (tmp_path / "dossier.md").write_text("research", encoding="utf-8")
     f, sha = variants_file(type("J", (), {"job_dir": tmp_path})())
     ok = gates_up_to("SCENARIO_APPROVED")
-    kw = dict(state="SCENARIO_APPROVED", reason="x", dossier=tmp_path / "dossier.md", **ADOPT)
+    kw = dict(state="SCENARIO_APPROVED", reason="x", dossier=tmp_path / "dossier.md",
+              artifacts={"SCENARIO_APPROVED": artifact_for(tmp_path, "SCENARIO_APPROVED")[0]}, **ADOPT)   # option A (setup)
     with pytest.raises(ContractError, match="variants"):
         store.EpisodeJob.adopt(tmp_path, approvals={**ok, "VARIANT_CHOSEN": {**ok["VARIANT_CHOSEN"], "sha256": sha}}, **kw)
     with pytest.raises(ContractError, match="CN-04"):
@@ -260,3 +261,57 @@ def test_adopt_into_a_state_past_the_pick_binds_the_variants_file(tmp_path):
     assert not (tmp_path / store.MANIFEST).exists()
     job = store.EpisodeJob.adopt(tmp_path, approvals={**ok, "VARIANT_CHOSEN": {**ok["VARIANT_CHOSEN"], "sha256": sha}}, variants=f, **kw)
     assert job.state == "SCENARIO_APPROVED" and job.manifest["approvals"]["VARIANT_CHOSEN"]["sha256"] == sha
+
+
+# --- N-03 option A (ვანო 2026-10-30): every person's gate binds the hash its own tool records for what was approved ------------
+
+BOUND = ("SCENARIO_APPROVED", "SCRIPT_APPROVED", "BUDGET_RESERVED", "SAMPLE_APPROVED", "REVIEW_APPROVED")
+
+
+@pytest.mark.parametrize("gate", BOUND)
+def test_a_person_gate_binds_its_tools_hash_and_writes_nothing_without_it(tmp_path, gate):
+    from test_lifecycle import CREATOR, artifact_for, step
+    from explainer_engine.core import store
+    from explainer_engine.core.errors import ContractError
+    (tmp_path / "run.json").write_text(json.dumps({"reserved": {"pod:abc": {"service": "runpod_usd", "amount": 1.0}}}), encoding="utf-8")
+    (tmp_path / "dossier.md").write_text("research", encoding="utf-8")
+    job = store.EpisodeJob.create(tmp_path, job_id="job-001", episode_slug="nap", ledger="run.json", fps=24)
+    for to in store.LIFECYCLE[1:store.LIFECYCLE.index(gate)]:
+        step(job, to)
+    path, sha = artifact_for(tmp_path, gate)
+    extra = {"reservation_id": "pod:abc"} if gate == "BUDGET_RESERVED" else {}
+    before = (tmp_path / store.MANIFEST).read_text(encoding="utf-8")
+    with pytest.raises(ContractError, match="CN-04"):          # the approval names a hash, but no artifact to check it on
+        job.move(gate, reason="x", approval={**CREATOR, "sha256": sha}, **extra)
+    with pytest.raises(ContractError, match="CN-04"):          # any 64-hex string is not enough
+        job.move(gate, reason="x", approval={**CREATOR, "sha256": "a" * 64}, artifact=path, **extra)
+    assert (tmp_path / store.MANIFEST).read_text(encoding="utf-8") == before
+    job.move(gate, reason="x", approval={**CREATOR, "sha256": sha}, artifact=path, **extra)
+    assert job.state == gate and job.manifest["approvals"][gate]["sha256"] == sha
+
+
+def test_the_bound_hash_is_the_one_each_tool_records(tmp_path):
+    """SCRIPT binds the words only (OR-17: delivery tags may change after the approval); a paint plan changed after its own hash and
+    a sample approved for another script are refused."""
+    from test_lifecycle import artifact_for
+    from explainer_engine.core import store
+    from explainer_engine.core.errors import ContractError
+    from explainer_engine.scripting import script_approval as SA
+    path, sha = artifact_for(tmp_path, "SCRIPT_APPROVED")
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    doc["segments"][0]["lines"][0]["delivery"] = "[softly]"
+    path.write_text(json.dumps(doc), encoding="utf-8")
+    assert store.bound_sha256("SCRIPT_APPROVED", path) == sha == SA.words_sha256(doc)
+    plan, _ = artifact_for(tmp_path, "BUDGET_RESERVED")
+    p = json.loads(plan.read_text(encoding="utf-8"))
+    p["provider"] = "bfl"
+    plan.write_text(json.dumps(p), encoding="utf-8")
+    with pytest.raises(ContractError, match="plan"):
+        store.bound_sha256("BUDGET_RESERVED", plan)
+    sample, _ = artifact_for(tmp_path, "SAMPLE_APPROVED")
+    (tmp_path / "production_script.json").write_text(json.dumps({"segments": []}), encoding="utf-8")
+    with pytest.raises(ContractError, match="script changed"):
+        store.bound_sha256("SAMPLE_APPROVED", sample)
+    bundle, bsha = artifact_for(tmp_path, "REVIEW_APPROVED")
+    (bundle / "final.mp4").write_bytes(b"other")
+    assert store.bound_sha256("REVIEW_APPROVED", bundle) != bsha

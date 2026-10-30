@@ -185,6 +185,56 @@ def _sha256_file(path: Path) -> str:
     return contracts.sha256_file(path)
 
 
+# N-03 option A (ვანო 2026-10-30): a person's gate binds the hash that gate's own tool records for what was approved (the CN-04
+# lifecycle table's "binds" column). VARIANT_CHOSEN binds its script_variants file (`_check_variants`); PUBLISHED_PUBLIC is the
+# creator's own click, a ref and no file (CN-06). The tools are imported where they are used (core sits below them).
+BOUND_GATES = ("SCENARIO_APPROVED", "SCRIPT_APPROVED", "BUDGET_RESERVED", "SAMPLE_APPROVED", "REVIEW_APPROVED")
+
+
+def bundle_sha256(folder: Path | str) -> str:
+    """The review bundle as one hash: every file's path (relative, ``/``) and sha256, sorted; a changed, added or removed file is
+    another bundle (owner=claude: no bundle manifest existed, so the folder itself is the artifact)."""
+    folder = Path(folder)
+    if not folder.is_dir():
+        raise ContractError(f"REVIEW_APPROVED binds the review bundle folder: {folder} is not one (CN-04)")
+    rows = sorted((f.relative_to(folder).as_posix(), _sha256_file(f)) for f in folder.rglob("*") if f.is_file())
+    return hashlib.sha256(json.dumps(rows, separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
+def bound_sha256(gate: str, path: Path | str) -> str:
+    """The hash ``gate``'s approval must carry, computed from the artifact the person approved, the way that gate's tool records it:
+    SCENARIO the scenario file (scripting/scenario.py, PV-45); SCRIPT the words only (scripting/script_approval.words_sha256, OR-17);
+    BUDGET the approved plan file, whose own hash still matches its items when it is a paint plan (imagegen/plan.py); SAMPLE the
+    script sha256 that sample_approval.json binds, for an unchanged script (production/sample.py, OR-19); REVIEW the review bundle."""
+    path = Path(path)
+    if gate == "REVIEW_APPROVED":
+        return bundle_sha256(path)
+    if not path.is_file():
+        raise ContractError(f"{gate} binds a file: {path} is not one (CN-04)")
+    if gate == "SCENARIO_APPROVED":
+        return _sha256_file(path)
+    if gate == "SCRIPT_APPROVED":
+        from explainer_engine.scripting import script_approval
+        return script_approval.words_sha256(json.loads(path.read_text(encoding="utf-8")))
+    if gate == "BUDGET_RESERVED":
+        plan = json.loads(path.read_text(encoding="utf-8"))
+        if isinstance(plan, dict) and "items" in plan:
+            from explainer_engine.imagegen import plan as paint_plan
+            if paint_plan.plan_hash(plan) != plan.get("hash"):
+                raise ContractError(f"BUDGET_RESERVED: the paint plan {path.name} changed after its hash (CN-04)")
+        return _sha256_file(path)
+    if gate == "SAMPLE_APPROVED":
+        from explainer_engine.production import sample
+        if path.name != sample.FILE:
+            raise ContractError(f"SAMPLE_APPROVED binds {sample.FILE}, not {path.name} (CN-04)")
+        ok, why = sample.approved(path.parent)
+        rec = sample.load(path.parent)
+        if not ok or not rec.get("script_sha256"):
+            raise ContractError(f"SAMPLE_APPROVED: {why or 'the sample approval names no script_sha256'} (CN-04)")
+        return rec["script_sha256"]
+    raise ContractError(f"{gate} binds no artifact")
+
+
 class EpisodeJob:
     """One episode's lifecycle in ``<job_dir>/job_manifest.json``. Every change validates the whole manifest first and
     writes it atomically; a refused move raises ContractError and leaves the file as it was (CN-03)."""
@@ -220,12 +270,14 @@ class EpisodeJob:
 
     @classmethod
     def adopt(cls, job_dir: Path | str, *, state: str, reason: str, approvals: dict[str, dict], dossier: Path | str | None = None,
-              reservation_id: str | None = None, variants: Path | str | None = None, **create_args) -> "EpisodeJob":
+              reservation_id: str | None = None, variants: Path | str | None = None, artifacts: dict | None = None,
+              **create_args) -> "EpisodeJob":
         """An existing episode folder gets its manifest at a state its owner states (history path ``adopted``). Adopting is no way
         round the gates (CN-04, CN-06): ``approvals`` holds the right approval of EVERY gated state from the first step up to
         ``state``, each bound to a sha256 where a person approved; the research dossier file is named and hashed (CN-05); a state
         past BUDGET_RESERVED names a reservation the ledger holds; a state past VARIANT_CHOSEN names ``variants``, checked as
-        ``move`` checks it. A terminal state is never adopted (nothing could reopen it)."""
+        ``move`` checks it, and ``artifacts`` names the approved artifact of every person's gate on the way (``BOUND_GATES``, option
+        A). A terminal state is never adopted (nothing could reopen it)."""
         job_dir = Path(job_dir)
         if state not in LIFECYCLE[:-1]:
             raise ContractError(f"cannot adopt into {state!r}: adopt a state of the forward path before the public click (CN-06)")
@@ -250,6 +302,8 @@ class EpisodeJob:
             raise ContractError(f"adopt into {state} names a reservation the ledger holds: {reservation_id!r}")
         if "VARIANT_CHOSEN" in reached:
             cls._check_variants(approvals["VARIANT_CHOSEN"], variants, f"adopt into {state}: ")
+        for s in (g for g in BOUND_GATES if g in reached):
+            cls._check_bound(s, approvals[s], (artifacts or {}).get(s), f"adopt into {state}: ")
         job._save()
         return job
 
@@ -295,6 +349,13 @@ class EpisodeJob:
         return reservation_id in json.loads(path.read_text(encoding="utf-8")).get("reserved", {})
 
     @staticmethod
+    def _check_bound(gate: str, approval: dict, artifact: Path | str | None, where: str = "") -> None:
+        if artifact is None:
+            raise ContractError(f"{where}{gate} needs artifact=<what the person approved>: the approval binds its tool's hash (CN-04)")
+        if approval["sha256"] != bound_sha256(gate, artifact):
+            raise ContractError(f"{where}{gate}: the approval's sha256 is not the hash of {Path(artifact).name} (CN-04)")
+
+    @staticmethod
     def _check_variants(approval: dict, variants: Path | str | None, where: str = "") -> None:
         """VARIANT_CHOSEN binds the script_variants/2 file the creator picked from: the picked id is a variant, and the approval's
         sha256 is the variants_sha256 of that unchanged file (CN-04, OR-31; ``move`` and ``adopt`` alike)."""
@@ -310,7 +371,7 @@ class EpisodeJob:
                                 "script_variants file (CN-04)")
 
     def move(self, to: str, *, reason: str, approval: dict | None = None, dossier: Path | str | None = None,
-             reservation_id: str | None = None, variants: Path | str | None = None) -> None:
+             reservation_id: str | None = None, variants: Path | str | None = None, artifact: Path | str | None = None) -> None:
         """The next forward state, and only that one (CN-03). A gated state needs its approval (CN-04); RESEARCHED fixes the
         dossier hash (CN-05); BUDGET_RESERVED names an item the ledger holds; VARIANT_CHOSEN needs ``variants`` (the
         script_variants/2 file) and binds the approval to the variants the creator picked from (N-03: without the file the
@@ -322,6 +383,8 @@ class EpisodeJob:
         self._check_approval(GATES[to], approval, to, bind=True)
         if to == "VARIANT_CHOSEN":
             self._check_variants(approval, variants)
+        if to in BOUND_GATES:
+            self._check_bound(to, approval, artifact)
         if to == "RESEARCHED":
             if dossier is None:
                 raise ContractError("RESEARCHED fixes the research dossier: pass dossier=<file>")
