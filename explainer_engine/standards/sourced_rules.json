@@ -5051,8 +5051,8 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-01",
-    "explainer_engine/maps/laws.py:signalling",
-    "explainer_engine/maps/render.py:render_frame"
+    "explainer_engine/maps/laws.py",
+    "explainer_engine/maps/render.py"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -5080,7 +5080,7 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-07",
-    "explainer_engine/maps/laws.py:scale_progression"
+    "explainer_engine/maps/laws.py"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -5155,7 +5155,7 @@
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/cinematography.json:CRAFT-CIN-10",
     "explainer_engine/scripting/variant_plan.py:checks",
-    "explainer_engine/edit/visual_compensator.py:lane_balance"
+    "explainer_engine/edit/visual_compensator.py"
    ],
    "planned": "the dramatisability score of a beat and the lane shares that follow it: the planner (P3); the two caps are enforced now (P5, visual_compensator.lane_balance)",
    "supersedes": [],
