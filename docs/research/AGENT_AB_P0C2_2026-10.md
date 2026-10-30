@@ -69,7 +69,7 @@ spoken-fact problems: A2 5, B2 about 7 (B2 also has several story-logic errors a
 - Contamination: the Haiku shorts worker opened `arm_A/production_script.json` once by mistake (it printed A2's shorts block and says it used nothing from it). The arms were not
   isolated otherwise. The first line of the cold open differs between the arms here (unlike P0c).
 - Blinding was imperfect. What was scrubbed: the episode id and notes in both scripts, and the `[budget N words]` planning notes in the segment headers (present in X = A2 only, removed there). 
-  What was not: Y = B2's input still carries word-target hints such as "~30 words" in 16 places and 6 BP/KP rule ids, both scripts carry their claim ids, and structural traits (narrator share, tagged lines, sound-entry density) can reveal a form. The critic did not guess the forms, but this is not proof it could not.
+  What was not: Y = B2's input still carries word-target hints in 16 places (3 of them read "~30 words", the others other targets) and 8 distinct BP/KP rule ids (9 occurrences), both scripts carry their claim ids, and structural traits (narrator share, tagged lines, sound-entry density) can reveal a form. The critic did not guess the forms, but this is not proof it could not.
 - Cost units are token units of one price ratio; Haiku and Sonnet units are not the same money. A usage-limit stall hit both arms; its time is excluded, not measured.
 - Not tested: real timing, painted pictures, a human viewer, more than one sample, workers on a model above Sonnet for the story stages.
 

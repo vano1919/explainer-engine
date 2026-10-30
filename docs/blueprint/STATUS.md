@@ -50,7 +50,7 @@ answered by Claude without his recorded delegation.
 | A2 | claude | 3D blocking (Blender) და LivePortrait/MuseTalk გეგმაში შევიდეს? | არცერთი კოდში v2-ში (claude) |
 | A3 | claude | პერსონაჟების ხმა როგორ იყოს? | ნარატორი+LTX (claude) |
 | A4 | claude | რუკები და HUD რა სტილით დავხატოთ? | ორივე ფენით (claude) |
-| A5 | creator | Blueprint-ის 7 დეპარტამენტი-აგენტი როგორ ავიღოთ? | D-81 (მუშები + read-only Opus კრიტიკოსი) (claude, delegated by ვანო) |
+| A5 | creator | Blueprint-ის 7 დეპარტამენტი-აგენტი როგორ ავიღოთ? | D-79 (ერთი მთავარი აგენტი + ერთი read-only Opus კრიტიკოსი) (claude, delegated by ვანო) |
 | B1 | claude | პოდის დასრულებისას default stop იყოს თუ terminate? | stop + ხარჯი (claude) |
 | B2 | creator | ~50 გაჩერებულ პოდს რა ვუყოთ? | open |
 | B3 | claude | პოდის Docker image როგორ ჩავკეტოთ? | digest pin (claude) |
