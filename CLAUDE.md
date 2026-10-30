@@ -151,5 +151,7 @@ jobs/                     job output (gitignored): jobs/<slug>/job-NNN_<date>/{s
   creator|claude`) and routing log are in `docs/blueprint/` (`python -m explainer_engine.governance check`).
 - Usage limits (creator 2026-10-29, OR-30): the orchestrator and every thread watch the 5-hour and the weekly limit; at 95 % the
   unfinished work is backed up (project files + a WIP commit on the work branch) before it can be lost.
+- Paid runs save step by step (creator 2026-10-30, OR-33): every paid run writes its output to a file as it arrives (stream / partial /
+  checkpoint); a paid path without that protection proven by a test does not start.
 - Commit with `git -c user.name=vano1919 -c user.email=122537395+vano1919@users.noreply.github.com`.
 - The Bash tool collapses `\\` inside heredocs: write Python edit scripts with backslashes to a file first.

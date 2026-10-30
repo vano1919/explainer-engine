@@ -64,18 +64,52 @@ class Err(Exception):
         self.status_code = status
 
 
+class Midway(Err):
+    """A scripted answer that streams ``chunks`` and then breaks with this error (F2)."""
+
+    def __init__(self, status, chunks):
+        super().__init__(status)
+        self.chunks = chunks
+
+
+def delta(text):
+    return NS(type="content_block_delta", delta=NS(type="text_delta", text=text))
+
+
+class FakeStream:
+    def __init__(self, item):
+        self.item = item
+
+    def __iter__(self):
+        if isinstance(self.item, Midway):
+            for c in self.item.chunks:
+                yield delta(c)
+        if isinstance(self.item, Exception):
+            raise self.item
+        for b in self.item.content:
+            if getattr(b, "type", None) == "text":
+                yield delta(b.text)
+
+    def get_final_message(self):
+        return self.item
+
+
 class Spaces:
-    """One messages namespace: scripted answers (a response, an exception, or a callable), every call recorded."""
+    """One messages namespace: scripted answers (a response, an exception, or a callable), every call recorded. Every call streams
+    (the client's only path): ``stream`` yields the text blocks of the scripted response as text deltas."""
 
     def __init__(self, tag, script):
         self.tag, self.script, self.calls = tag, script, []
         self.batches = NS(create=self._bcreate, retrieve=self._bretrieve, results=self._bresults)
         self.batch_requests, self.batch_results = [], []
 
-    def _next(self, kw):
+    def _take(self, kw):
         self.calls.append((self.tag, kw))
         item = self.script.pop(0) if len(self.script) > 1 else self.script[0]
-        item = item(kw) if callable(item) else item
+        return item(kw) if callable(item) else item
+
+    def _next(self, kw):
+        item = self._take(kw)
         if isinstance(item, Exception):
             raise item
         return item
@@ -85,7 +119,7 @@ class Spaces:
 
     @contextmanager
     def stream(self, **kw):
-        yield NS(get_final_message=lambda: self._next(kw))
+        yield FakeStream(self._take(kw))
 
     def count_tokens(self, **kw):
         return NS(input_tokens=2000)
@@ -397,6 +431,8 @@ def test_long_output_is_streamed():
     a.complete(req(max_tokens=64000))
     calls = a._client.calls
     assert len(calls) == 1 and calls[0][1]["max_tokens"] == 64000
+    a.complete(req("short", user="another", max_tokens=1000))     # F1: every call streams now, not only the long ones
+    assert len(a._client.calls) == 2 and sorted((ledger_streams(a))) == ["ok", "ok"]
 
 
 def test_fable_400_falls_to_opus_xhigh_and_says_so():
@@ -676,8 +712,13 @@ def test_a_stopped_tool_loop_leaves_its_partial_transcript_on_disk(env, tmp_path
 
 
 def test_a_cap_stop_in_the_middle_of_a_loop_keeps_the_turns_so_far(env, tmp_path):
-    set_caps(env, jobs={"T": 0.5})                                      # a turn reserves ~0.33 and settles at ~0.014: the stop (0.4) comes after a few turns
-    a = api(*warm_turns(30))
+    set_caps(env, jobs={"T": 0.5})                                      # a turn reserves ~0.33 and settles at ~0.014: the stop is 0.4
+    a = api()
+
+    def other_spend(kw):                                                # F5 now asks for a wrap-up turn before the cap bites; money
+        a.run_for("T").reserve(ca.SERVICE, 0.37, "other")               # that appears at once (another process) still can't be reserved
+        return warm_turns(1)[0]
+    a._client.messages.script[:] = [warm_turns(1)[0], other_spend, warm_turns(1)[0]]
     with pytest.raises(CapReached):
         a.complete(req("K", tools_root=str(tmp_path), max_turns=30))
     d = json.loads((ca.ledger_dir() / "partial_T_K.json").read_text(encoding="utf-8"))
@@ -766,9 +807,283 @@ def test_a_loop_whose_cache_read_is_stuck_at_the_prefix_stops_at_turn_3_with_the
     assert json.loads(part.read_text(encoding="utf-8"))["turns"] == 3
 
 
+def ledger_streams(a):
+    """The text of every stream file of the ledger folder."""
+    return [p.read_text(encoding="utf-8") for p in (ca.ledger_dir() / "stream").glob("*.txt")]
+
+
 def test_the_guard_names_the_measured_share_when_most_of_the_prompt_is_fresh_input():
     assert ca.cache_guard(2, {"input": 90000, "cache_read": 1000, "write_5m": 0, "write_1h": 0}, 0) is None        # too early to judge
     why = ca.cache_guard(3, {"input": 40000, "cache_read": 20000, "write_5m": 0, "write_1h": 0}, 0)
     assert "33%" in why and "60%" in why
     assert ca.cache_guard(5, {"input": 100, "cache_read": 30000, "write_5m": 2000, "write_1h": 0}, 28000) is None
     assert ca.cache_guard(5, {"input": 100, "cache_read": 0, "write_5m": 0, "write_1h": 0}, 0) is None            # a tiny turn with nothing fresh
+
+
+# --- paid output saved step by step (P0d audit F1-F11, OR-33) ------------------------------------------------------------------
+def multi(*chunks, **kw):
+    return resp(content=[NS(type="text", text=c) for c in chunks], **kw)
+
+
+def start_rows(a):
+    return [x for x in a.ledger.rows() if x["ev"] == "start"]
+
+
+def test_f1_every_call_streams_its_text_to_a_file_before_any_bookkeeping(monkeypatch):
+    a = api(multi("The verdict ", "is: ", "fine."))
+    real = a.ledger.append
+
+    def failing(row):                                    # the answer is on disk even when the ledger line after it fails
+        if row["ev"] == "done":
+            raise OSError("disk")
+        real(row)
+    monkeypatch.setattr(a.ledger, "append", failing)
+    with pytest.raises(OSError):
+        a.complete(req())
+    start = start_rows(a)[0]
+    assert Path(start["stream"]) == ca.ledger_dir() / "stream" / f"{start['uid']}.txt"
+    assert Path(start["stream"]).read_text(encoding="utf-8") == "The verdict is: fine."
+
+
+def test_f1_the_stream_file_stays_after_a_good_call():
+    a = api(multi("alpha", "beta"))
+    r = a.complete(req())
+    assert r.text == "alphabeta" and ledger_streams(a) == ["alphabeta"]
+
+
+def test_f2_an_error_after_text_is_not_retried_not_voided_and_booked_at_the_reservation():
+    a = api(Midway(529, ["half an ", "answer"]), resp("never asked"))
+    with pytest.raises(ca.StreamBroken) as ei:
+        a.complete(req())
+    assert len(a._client.calls) == 1                                           # no second, paid call
+    assert ei.value.text == "half an answer" and ei.value.path.read_text(encoding="utf-8") == "half an answer"
+    start, done = a.ledger.rows()
+    assert [x["ev"] for x in a.ledger.rows()] == ["start", "done"] and done["usd"] == start["reserved"]
+    assert "stream broke after 14 chars" in done["note"] and "reserved amount booked" in done["note"]
+    assert a.run_for("T").spent(ca.SERVICE) == pytest.approx(start["reserved"])
+    a.ledger.check_gap()
+
+
+def test_f2_an_error_before_any_text_still_retries_and_voids_as_before():
+    a = api(Midway(529, []), resp("late"))
+    assert a.complete(req()).text == "late" and len(a._client.calls) == 2
+    b = api(Err(400))
+    with pytest.raises(Err):
+        b.complete(req(user="a different request"))
+    assert [x["ev"] for x in b.ledger.rows()][-2:] == ["start", "void"]
+
+
+def test_f3_a_truncated_answer_carries_its_paid_text():
+    a = api(multi("the cut ", "text", stop="max_tokens"))
+    with pytest.raises(ca.OutputTruncated) as ei:
+        a.complete(req())
+    assert ei.value.text == "the cut text" and ei.value.result.text == "the cut text" and ei.value.result.usd > 0
+
+
+def test_f3_batch_truncation_keeps_the_text_too():
+    a = api()
+    reqs = [ca.Request(id=f"q{i}", user=f"t{i}", task_class="qa-judgement", job="T") for i in range(ca.BATCH_MIN)]
+    cut = NS(custom_id="q0", result=NS(type="succeeded", message=resp("cut batch text", model="claude-sonnet-5-5", stop="max_tokens")))
+    a._client.messages.batch_results = [cut] + [NS(custom_id=f"q{i}", result=NS(type="succeeded", message=resp("x", model="claude-sonnet-5-5")))
+                                                for i in range(1, ca.BATCH_MIN)]
+    assert a.run_job(reqs)["q0"].text == "cut batch text"
+
+
+def patched_main(monkeypatch, a):
+    monkeypatch.setattr(ca, "ClaudeAPI", lambda: a)
+
+
+def job_file(env, requests, **spec):
+    job = {"job": "T", "task_class": "critical-review", "max_tokens": 1000, "requests": requests, **spec}
+    (env / "job.json").write_text(json.dumps(job), encoding="utf-8")
+    return str(env / "job.json")
+
+
+def test_f3_main_writes_the_truncated_text_and_says_so(env, monkeypatch, capsys):
+    a, a2 = api(multi("kept ", "words", stop="max_tokens")), api(multi("{\"k\": 1", stop="max_tokens"))
+    patched_main(monkeypatch, a)
+    out = env / "out"
+    assert ca.main(["run", job_file(env, [{"id": "a", "user": "hi"}]), "--out", str(out)]) == 2
+    assert (out / "a.truncated.md").read_text(encoding="utf-8") == "kept words" and not (out / "a.md").exists()
+    assert json.loads((out / "summary.json").read_text(encoding="utf-8"))["a"]["truncated"] is True
+    # with a schema the kept text goes to .truncated.json
+    patched_main(monkeypatch, a2)
+    ca.main(["run", job_file(env, [{"id": "b", "user": "hi2"}], schema={"type": "object"}), "--out", str(out)])
+    assert (out / "b.truncated.json").read_text(encoding="utf-8") == '{"k": 1'
+
+
+def test_f4_the_loop_checkpoints_after_every_turn_and_a_keyboard_interrupt_saves_too(tmp_path):
+    seen = {}
+
+    def interrupted(kw):
+        seen["partial"] = json.loads((ca.ledger_dir() / "partial_T_K.json").read_text(encoding="utf-8"))   # what a SIGKILL here would leave
+        raise KeyboardInterrupt
+    a = api(warm_turns(1)[0], warm_turns(2)[1], interrupted)
+    with pytest.raises(KeyboardInterrupt) as ei:
+        a.complete(req("K", tools_root=str(tmp_path), max_turns=9))
+    assert seen["partial"]["turns"] == 2 and "checkpoint after turn 2" in seen["partial"]["stopped_by"]
+    assert [b["type"] for m in seen["partial"]["messages"] for b in m["blocks"]] == ["tool_use", "tool_result"] * 2
+    final = json.loads((ca.ledger_dir() / "partial_T_K.json").read_text(encoding="utf-8"))
+    assert "KeyboardInterrupt" in final["stopped_by"] and "partial transcript" in "".join(ei.value.__notes__)
+    assert len(a.ledger.open_calls()) == 1                                        # the killed call stays open: nobody knows its price
+
+
+def test_f4_sigterm_in_main_is_a_keyboard_interrupt_and_the_handler_is_restored(env, monkeypatch, tmp_path):
+    import os
+    import signal
+
+    def killed(kw):
+        os.kill(os.getpid(), signal.SIGTERM)
+        return warm_turns(1)[0]
+    a = api(warm_turns(1)[0], killed)
+    patched_main(monkeypatch, a)
+    before = signal.getsignal(signal.SIGTERM)
+    job = job_file(env, [{"id": "K", "user": "hi"}], tools_root=str(tmp_path))
+    with pytest.raises(KeyboardInterrupt):
+        ca.main(["run", job, "--out", str(env / "o")])
+    assert signal.getsignal(signal.SIGTERM) == before
+    assert "KeyboardInterrupt" in json.loads((ca.ledger_dir() / "partial_T_K.json").read_text(encoding="utf-8"))["stopped_by"]
+
+
+def sent_blocks(call):
+    return call[1]["messages"][-1]["content"]
+
+
+def test_f5_the_last_allowed_turn_is_a_wrap_up_turn(tmp_path):
+    a = api(warm_turns(1)[0], warm_turns(2)[1], resp("the answer"))
+    r = a.complete(req(tools_root=str(tmp_path), max_turns=3))
+    c1, c2, c3 = a._client.calls
+    assert all(b["type"] == "tool_result" for b in sent_blocks(c2))                      # turn 2 is an ordinary turn
+    last = sent_blocks(c3)
+    assert [b["type"] for b in last] == ["tool_result", "text"] and last[-1]["text"] == ca.WRAP_UP_TEXT
+    assert last[-1]["cache_control"] == {"type": "ephemeral"}                            # the breakpoint lands on the wrap-up block
+    assert c3[1]["tools"] == c1[1]["tools"]                                              # the tools list (the cache prefix) is unchanged
+    assert r.text == "the answer" and r.turns == 3
+
+
+def test_f5_too_little_room_makes_the_next_turn_a_wrap_up_turn(env, tmp_path):
+    set_caps(env, jobs={"T": 0.8})                                       # stop 0.64: after turn 1 the room is under two worst-case turns
+    a = api(warm_turns(1)[0], resp("wrapped up"))
+    r = a.complete(req(tools_root=str(tmp_path), max_turns=24))
+    assert r.text == "wrapped up" and r.turns == 2
+    assert sent_blocks(a._client.calls[1])[-1]["text"] == ca.WRAP_UP_TEXT
+
+
+def test_f5_a_wrap_up_turn_that_still_calls_tools_stops_with_the_partial(tmp_path):
+    a = api(*warm_turns(3))
+    with pytest.raises(ca.OutputTruncated, match="wrap-up turn still called tools"):
+        a.complete(req("W", tools_root=str(tmp_path), max_turns=3))
+    assert len(a._client.calls) == 3
+    assert json.loads((ca.ledger_dir() / "partial_T_W.json").read_text(encoding="utf-8"))["turns"] == 3
+
+
+def test_f5_wrap_up_reason_is_unit_testable_and_never_on_turn_1(env, tmp_path):
+    a = api()
+    q = req(tools_root=str(tmp_path), max_turns=5)
+    r = ca.route("critical-review")
+    params = ca.build_params(q, r)
+    msgs = [*params["messages"], {"role": "assistant", "content": []}, {"role": "user", "content": [{"type": "tool_result", "tool_use_id": "x", "content": "c"}]}]
+    assert a.wrap_up_reason(q, r, params, msgs, 1) is None and a.wrap_up_reason(q, r, params, msgs, 2) is None
+    assert "last of 5" in a.wrap_up_reason(q, r, params, msgs, 5)
+    set_caps(env, jobs={"T": 0.1})
+    assert "two worst-case turns" in a.wrap_up_reason(q, r, params, msgs, 2)
+
+
+def test_f6_a_cache_cold_stop_keeps_the_turn_that_was_just_paid(env, tmp_path):
+    prefix = 22746
+    a = api(*[tool_turn("list_dir", {"path": "."}, f"b{i}", inp=1000 + 2000 * i, read=prefix) for i in range(10)])
+    with pytest.raises(ca.CacheCold):
+        a.complete(req("C", tools_root=str(tmp_path), max_turns=20))
+    d = json.loads((ca.ledger_dir() / "partial_T_C.json").read_text(encoding="utf-8"))
+    assert d["turns"] == 3 and [m["role"] for m in d["messages"]] == ["assistant", "user", "assistant", "user", "assistant"]
+
+
+def test_f7_run_job_hands_over_each_result_and_a_failing_request_stops_the_rest_as_not_run(env):
+    set_caps(env, jobs={"T": 0.5})
+    a = api()
+
+    def spends(kw):                                                       # another process spends the job's room during request r0
+        a.run_for("T").reserve(ca.SERVICE, 0.38, "other")
+        return resp("first")
+    a._client.messages.script[:] = [spends, resp("never")]
+    seen = []
+    out = a.run_job([req(f"r{i}", user=f"u{i}", max_tokens=100) for i in range(3)], on_result=lambda q, res: seen.append((q.id, res)))
+    assert [i for i, _ in seen] == ["r0", "r1", "r2"] and list(out) == ["r0", "r1", "r2"]
+    assert out["r0"].text == "first" and isinstance(out["r1"], CapReached)
+    assert isinstance(out["r2"], ca.LLMError) and str(out["r2"]).startswith("not_run: job stopped after r1")
+    seen.clear()
+    a.run_job([req("r0", user="u0", max_tokens=100)], on_result=lambda q, res: seen.append((q.id, res.cached)))   # cache hits are handed over too
+    assert seen == [("r0", True)]
+
+
+def test_f7_main_writes_each_file_at_once_and_reports_the_not_run_rest(env, monkeypatch):
+    set_caps(env, jobs={"T": 0.5})
+    a = api()
+    a._client.messages.script[:] = [lambda kw: (a.run_for("T").reserve(ca.SERVICE, 0.38, "other"), resp("first one"))[1]]
+    patched_main(monkeypatch, a)
+    out = env / "out"
+    assert ca.main(["run", job_file(env, [{"id": "a", "user": "x"}, {"id": "b", "user": "y"}, {"id": "c", "user": "z"}], max_tokens=100),
+                    "--out", str(out)]) == 2
+    assert (out / "a.md").read_text(encoding="utf-8") == "first one" and not (out / "b.md").exists()
+    s = json.loads((out / "summary.json").read_text(encoding="utf-8"))
+    assert s["a"]["ok"] and not s["b"]["ok"] and "not_run" in s["c"]["error"] and "_ledger_total_usd" in s
+
+
+def test_f8_a_batch_rerun_after_a_crash_does_not_book_or_pay_an_item_twice():
+    a = api(resp("direct rerun"))
+    reqs = [ca.Request(id=f"q{i}", user=f"t{i}", task_class="qa-judgement", job="T") for i in range(ca.BATCH_MIN)]
+    refused = NS(custom_id="q0", result=NS(type="succeeded", message=resp("", model="claude-sonnet-5-5", stop="refusal")))
+    a._client.messages.batch_results = [refused] + [NS(custom_id=f"q{i}", result=NS(type="succeeded", message=resp("x", model="claude-sonnet-5-5")))
+                                                    for i in range(1, ca.BATCH_MIN)]
+    first = a.run_job(reqs)
+    before = (a.ledger.total(), len(a.ledger.rows()), len(a._client.calls))
+    again = ca.ClaudeAPI(a._client, sleep=lambda s: None, cache=ResponseCacheFresh(a))       # a crashed rerun: same ledger, cache lost
+    out = again.run_job(reqs)
+    assert (a.ledger.total(), len(a.ledger.rows()), len(a._client.calls)) == before          # no second done line, no second direct call
+    assert all(isinstance(v, ca.LLMError) and "already collected" in str(v) for v in out.values()) and len(out) == ca.BATCH_MIN
+    assert first["q0"].text == "direct rerun"
+    same_cache = ca.ClaudeAPI(a._client, sleep=lambda s: None, cache=a.cache)                # with the cache the items are served from it
+    got = same_cache.run_job(reqs)
+    assert all(r.cached for r in got.values()) and got["q1"].text == "x" and a.ledger.total() == before[0]
+
+
+def ResponseCacheFresh(a):
+    return ca.ResponseCache(a.cache.dir.parent / "fresh_cache")
+
+
+def test_f9_a_full_cache_miss_stops_the_loop_at_turn_3(tmp_path):
+    miss = [tool_turn("list_dir", {"path": "."}, f"m{i}", inp=100, read=0, write=20000 + 2000 * i) for i in range(10)]
+    a = api(*miss)
+    with pytest.raises(ca.CacheCold, match=r"turn 3.*only 0% of the prompt was read from cache"):
+        a.complete(req(tools_root=str(tmp_path), max_turns=20))
+    assert len(a._client.calls) == 3
+    assert ca.cache_guard(4, {"input": 100, "cache_read": 9000, "write_5m": 10000, "write_1h": 0}, 8000) is not None   # 47 % read
+    assert ca.cache_guard(4, {"input": 100, "cache_read": 11000, "write_5m": 9000, "write_1h": 0}, 8000) is None
+
+
+def test_f10_the_last_turn_is_priced_at_max_tokens_and_the_estimate_says_so(env, tmp_path):
+    m, kw = "claude-opus-5-5", dict(first_tokens=30000, turns=6, new_per_turn=2000, out_per_turn=600)
+    assert ca.loop_usd(m, **kw, final_out=16000) - ca.loop_usd(m, **kw) == pytest.approx((16000 - 600) * 20 / 1e6)
+    set_caps(env, jobs={"T": 5.0})
+    small = ca.estimate([req(tools_root=str(tmp_path), max_turns=6, max_tokens=1000)])["requests"][0]["loop"]
+    big = ca.estimate([req(tools_root=str(tmp_path), max_turns=6, max_tokens=30000)])["requests"][0]["loop"]
+    assert big["usd_if_cached"] - small["usd_if_cached"] == pytest.approx((30000 - 1000) * 20 / 1e6, abs=1e-3)
+    assert "max_tokens" in big["warning"] and str(ca.MAX_TOOL_CHARS_PER_TURN) in big["warning"]
+
+
+def test_f10_tool_results_of_one_turn_are_capped_together(tmp_path):
+    (tmp_path / "big.txt").write_text("\n".join("x" * 70 for _ in range(400)), encoding="utf-8")     # ~28k characters a read
+    reads = [NS(type="tool_use", name="read_file", input={"path": "big.txt", "start": 1, "end": 400}, id=f"p{i}") for i in range(3)]
+    a = api(resp(content=reads, stop="tool_use"), resp("done"))
+    a.complete(req(tools_root=str(tmp_path)))
+    got = [b["content"] for b in sent_blocks(a._client.calls[1])]
+    assert got[0].startswith("1: xxx") and got[1].startswith("1: xxx") and got[2] == "error: per-turn tool output limit reached; ask for less at once"
+    assert sum(len(x) for x in got[:2]) <= ca.MAX_TOOL_CHARS_PER_TURN
+
+
+def test_f11_the_sdk_does_not_retry_on_its_own():
+    a = api(resp("one"))
+    opts = []
+    a._client.with_options = lambda **o: (opts.append(o), a._client)[1]
+    a.complete(req())
+    assert opts == [{"max_retries": 0}]
