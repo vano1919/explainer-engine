@@ -175,6 +175,34 @@ def load_pipeline(base_dir):
     return pipe
 
 
+class GateUp:
+    """The gate_up correction of xworld_v1_test.Loras: mods = dict(transformer.named_modules())."""
+
+    def __init__(self, tr):
+        self.mods = dict(tr.named_modules())
+
+    def gate_up(self, path, sign):
+        """ai-toolkit trains the fused img_mlp.gate_up = [gate_layer; proj]; VideoX-Fun's merge skips it (10-25 finding)."""
+        import re
+        import torch
+        from safetensors.torch import load_file
+        sd, n = load_file(path), 0
+        for key in sd:
+            m = re.search(r"transformer_blocks[._](\d+)[._]img_mlp[._]gate_up\.(lora_A|lora_down)\.weight$", key)
+            if not m:
+                continue
+            pre = key[:-len(m.group(2) + ".weight")]
+            down = sd[key].float(); up = sd[pre + ("lora_B" if m.group(2) == "lora_A" else "lora_up") + ".weight"].float()
+            alpha = float(sd[pre + "alpha"]) if pre + "alpha" in sd else down.shape[0]
+            delta = (up @ down) * (alpha / down.shape[0]) * sign
+            ff = self.mods[f"transformer_blocks.{m.group(1)}.img_mlp"]; half = ff.gate_layer.weight.shape[0]
+            with torch.no_grad():
+                for lin, d in ((ff.gate_layer, delta[:half]), (ff.proj, delta[half:])):
+                    lin.weight.data += d.to(lin.weight.device, lin.weight.dtype)
+            n += 1
+        return n
+
+
 def draw(pipe, prompt, ref, cfg, seed, steps, true_cfg, negative):
     import torch
     w, h = cfg["size"]
@@ -251,7 +279,9 @@ def run(cfg, out, deadline, log):
     pipe = load_pipeline(base)
     from videox_fun.utils import merge_lora, unmerge_lora    # the call shape of xworld_v1_test.py (pipe in, pipe out)
     dt = torch.bfloat16
+    gu = GateUp(pipe.transformer)
     pipe = merge_lora(pipe, style, 1.0, device="cuda", dtype=dt)
+    log.ev("lora_gate_up", lora="style", sign=1.0, layers=gu.gate_up(style, 1.0))
     mva_on = None                                              # the MVA strength merged now (None = not merged)
     log.ev("model_loaded", seconds=round(time.time() - t0, 1))
 
@@ -273,8 +303,10 @@ def run(cfg, out, deadline, log):
             if want != mva_on:
                 if mva_on is not None:
                     pipe = unmerge_lora(pipe, mva, mva_on, device="cuda", dtype=dt)
+                    gu.gate_up(mva, -mva_on)
                 if want is not None:
                     pipe = merge_lora(pipe, mva, want, device="cuda", dtype=dt)
+                    log.ev("lora_gate_up", lora="mva", sign=want, layers=gu.gate_up(mva, want))
                 mva_on = want
             if name == "Q4":
                 ref, negative = refs[u["host"]], st["negative"]

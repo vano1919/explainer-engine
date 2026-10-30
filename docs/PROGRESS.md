@@ -3544,3 +3544,9 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - `EE_DEADLINE` checked: `pod_wrapper.sh` exports epoch seconds, `p12b.py` reads `float(os.environ["EE_DEADLINE"])`; no change.
 - Test: `tests/unit/test_episode_rules.py::test_create_refuses_an_undecided_review_at_the_paid_assets_gate_and_makes_no_pod` (zero fake pods).
 - OPEN: the `gate_up` fix of `xworld_v1_test.py` (img_mlp.gate_up delta split) is not in `p12b.py`; the creator/Opus thread decides whether P12b needs it. No pod, no paid API call, nothing deleted.
+## 2026-10-30 P12b: the gate_up correction of xworld_v1_test.py is now in p12b.py
+- `p12b.py` gets `GateUp.gate_up` (copied exactly from `xworld_v1_test.Loras.gate_up`: same regex and maths, `mods = dict(pipe.transformer.named_modules())`,
+  self-contained). It runs after the style `merge_lora` (sign +1.0), after each MVA `merge_lora` (+strength) and after each MVA `unmerge_lora` (-strength);
+  `t.jsonl` records `lora_gate_up` with the layer count. Without it the ai-toolkit fused `img_mlp.gate_up` layer was skipped (10-25 finding).
+- `p12b.sh` pins the new sha256 of `p12b.py`; `runpod dryrun --script` passes. Tests: static order test and a numeric test (skipped without torch) in
+  `tests/unit/test_p12b_pod_script.py`. Closes the OPEN of the previous entry. No pod, nothing paid, nothing deleted.

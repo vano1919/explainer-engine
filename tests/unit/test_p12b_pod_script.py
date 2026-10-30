@@ -3,6 +3,7 @@ No network, no pod, no money (the Hub existence check of ``runpod dryrun`` is no
 import hashlib
 import importlib.util
 import json
+import pytest
 import subprocess
 from pathlib import Path
 
@@ -65,3 +66,44 @@ def test_the_outputs_follow_the_plan_paths_and_the_azimuth_degrees_go_round_in_3
     assert [m.az_deg(cfg, a) for a in ("front view", "right side view", "back view", "left side view")] == [0, 90, 180, 270]
     assert str(m.mva_out(cfg, "o", "napoleon", "back view", 0.8)) == "o/mva/napoleon/180_s0.8.png"
     assert str(m.host_out("o", "analyst", 11)) == "o/hosts/analyst_seed11.png"
+
+
+def test_p12b_applies_the_gate_up_correction_after_every_merge_and_unmerge():
+    import ast
+    tree = ast.parse((DIR / "p12b.py").read_text(encoding="utf-8"))
+    assert any(isinstance(n, ast.FunctionDef) and n.name == "gate_up" for n in ast.walk(tree))
+    calls = []
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Call):
+            nm = n.func.id if isinstance(n.func, ast.Name) else getattr(n.func, "attr", "")
+            if nm in ("merge_lora", "unmerge_lora", "gate_up"):
+                calls.append((n.lineno, nm))
+    names = [x[1] for x in sorted(calls)]
+    assert names.count("merge_lora") == 2 and names.count("unmerge_lora") == 1
+    for i, nm in enumerate(names):
+        if nm in ("merge_lora", "unmerge_lora"):
+            assert names[i + 1] == "gate_up", (nm, names)
+
+
+def test_gate_up_splits_the_fused_delta_into_gate_layer_and_proj_and_unmerge_restores(tmp_path):
+    torch = pytest.importorskip("torch")
+    st = pytest.importorskip("safetensors.torch")
+    m = _load()
+    r, half, din = 2, 3, 4
+    down, up = torch.randn(r, din), torch.randn(2 * half, r)
+    p = tmp_path / "l.safetensors"
+    pre = "transformer.transformer_blocks.0.img_mlp.gate_up."
+    st.save_file({pre + "lora_A.weight": down, pre + "lora_B.weight": up, pre + "alpha": torch.tensor(1.0)}, str(p))
+    ff = torch.nn.Module()
+    ff.gate_layer, ff.proj = torch.nn.Linear(din, half, bias=False), torch.nn.Linear(din, half, bias=False)
+    root = torch.nn.Module()
+    root.transformer_blocks = torch.nn.ModuleList([torch.nn.Module()])
+    root.transformer_blocks[0].img_mlp = ff
+    g0, p0 = ff.gate_layer.weight.detach().clone(), ff.proj.weight.detach().clone()
+    gu = m.GateUp(root)
+    delta = (up @ down) * (1.0 / r) * 0.5
+    assert gu.gate_up(str(p), 0.5) == 1
+    assert torch.allclose(ff.gate_layer.weight, g0 + delta[:half], atol=1e-6)
+    assert torch.allclose(ff.proj.weight, p0 + delta[half:], atol=1e-6)
+    gu.gate_up(str(p), -0.5)
+    assert torch.allclose(ff.gate_layer.weight, g0, atol=1e-5) and torch.allclose(ff.proj.weight, p0, atol=1e-5)
