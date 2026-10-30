@@ -26,17 +26,27 @@ BYPASS = [re.compile(p) for p in (r"/v[12]/pods/?['\"]?\s*(-X\s*POST|--request\s
 
 
 RP_SAFE = ("sweep", "status", "list", "check", "logs", "cost", "stop")  # TMR's rp.py: read-only and stopping commands only (CR-13)
-# rp.py in the position of a program to run, however it is launched: at the start of a command, after ; & | (, or after a launcher word
-# (python, py, uv run, bash, env, sudo, xargs ...). ``git add rp.py x`` or ``cat rp.py`` are not runs.
-RP_CALL = re.compile(r"(?:^|[;&|(]|\b(?:xargs|exec|env|sudo|nohup|time|run|bash|sh|zsh|py|python[\d.]*)(?:\.exe)?)\s*(?:-\S+\s+)*['\"]?"
-                     r"\S*\brp\.py\b(?:\s+['\"]?(?P<sub>[\w-]+))?")
+# rp.py is a RUN unless the command segment starts with a program that only reads or edits files: any launcher (timeout, nice, env,
+# FOO=1, watch, stdbuf, uv run, bash -c ...) is covered without being listed. Only a token that ends at a space or the end of the
+# segment counts as the program (``open('cloud/rp.py')`` does not).
+RP_READERS = ("cat", "grep", "egrep", "fgrep", "rg", "sed", "awk", "less", "more", "head", "tail", "git", "diff", "wc", "cp", "mv", "ls",
+              "stat", "file", "nl", "bat", "vim", "vi", "nano", "emacs", "code", "echo", "printf", "tee", "find", "ruff", "black")
+RP_TOKEN = re.compile(r"(?<![\w])rp\.py(?=\s|$)(?:\s+['\"]?(?P<sub>[\w-]+))?")
+RP_SEGMENT = re.compile(r"&&|\|\||[;&|\n(]")
 RP_MODULE = re.compile(r"\bpython[\d.]*(?:\.exe)?\s+(?:-\S+\s+)*-m\s+(?:\w+\.)*rp\b(?:\s+(?P<sub>[\w-]+))?")
 RP_IMPORT = re.compile(r"\b(?:import\s+(?:cloud\.)?rp\b|from\s+(?:cloud\.rp|cloud\s+import\s+rp)\b|runpy\S*\s*.*\brp\b)")
 
 
 def _tmr_rp(cmd):
     """True when the command runs TMR's rp.py with anything but a read-only or stopping sub-command, or imports it."""
-    for m in [*RP_CALL.finditer(cmd), *RP_MODULE.finditer(cmd)]:
+    for seg in RP_SEGMENT.split(cmd):
+        words = re.sub(r"^\s*(?:\w+=\S*\s+)*", "", seg).split()
+        if words and words[0].rsplit("/", 1)[-1] in RP_READERS:
+            continue
+        for m in RP_TOKEN.finditer(seg):
+            if (m.group("sub") or "") not in RP_SAFE:
+                return True
+    for m in RP_MODULE.finditer(cmd):
         if (m.group("sub") or "") not in RP_SAFE:
             return True
     return "python" in cmd and bool(RP_IMPORT.search(cmd))

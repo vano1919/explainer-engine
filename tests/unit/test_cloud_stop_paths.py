@@ -374,12 +374,17 @@ def test_f_the_bash_hook_allows_only_read_only_and_stopping_tmr_commands(env):
                 # review of PR #29: however it is launched, not only a command that starts with ``python``
                 "python.exe cloud/rp.py create", "./rp.py create", "uv run rp.py create", "cd TMR/cloud && rp.py create",
                 "cd TMR/cloud; ./rp.py adopt abc", "bash -c 'cd x && ./rp.py start'", "sudo python3 -u cloud/rp.py create",
-                "echo go | xargs python cloud/rp.py create", "python -m cloud.rp create", "py -3 cloud\\rp.py create", "./cloud/rp.py"):
+                "echo go | xargs python cloud/rp.py create", "python -m cloud.rp create",
+                # second review: any launcher, not a list of them
+                "timeout 60 ./rp.py create", "env FOO=1 ./rp.py create", "FOO=1 ./rp.py create", "nice ./rp.py create",
+                "stdbuf -oL ./rp.py create", "watch ./rp.py create", "setsid nohup ./cloud/rp.py create", "ionice -c3 rp.py adopt x", "py -3 cloud\\rp.py create", "./cloud/rp.py"):
         assert H.pre_bash({"tool_input": {"command": cmd}}) == 2, cmd
     for cmd in ("python cloud/rp.py sweep", "python3 cloud/rp.py status abc", "python cloud/rp.py stop abc", "python cloud/rp.py cost abc",
                 "cat cloud/rp.py", "grep -n create cloud/rp.py", "git diff cloud/rp.py", "python -m explainer_engine.cloud.runpod check",
                 "git add cloud/rp.py tests/x", "./rp.py status", "uv run rp.py sweep", "cd TMR/cloud && rp.py stop abc", "python -m pytest tests/test_rp.py",
-                "sed -n 1,20p cloud/rp.py"):
+                "sed -n 1,20p cloud/rp.py", "diff a/rp.py b/rp.py", "python -c \"print(open('cloud/rp.py').read())\"",
+                "less cloud/rp.py", "vim cloud/rp.py", "git log -p -- cloud/rp.py", "wc -l cloud/rp.py", "FOO=1 cat cloud/rp.py",
+                "cat cloud/rp.py | head -5", "timeout 60 ./rp.py status", "nice ./rp.py sweep"):
         assert H.pre_bash({"tool_input": {"command": cmd}}) == 0, cmd
 
 

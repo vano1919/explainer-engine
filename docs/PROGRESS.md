@@ -2679,3 +2679,4 @@ training as sequences is decided in the process. Changed together:
   the curriculum index equal the JSON, one home per CRAFT id, 13 conflicts and 17 areas listed, the conflicting rules keep
   their numbers).
 - Merge of main with P3b (#36): the Lock 5 test of `test_agent_governance` exempts only a backticked reference directly followed by `(planned, Pn)` (regex, the phase must exist in `docs/blueprint/phases.json`); everything else on the line is still checked.
+- P1a second review: the `rp.py` hook inverts its rule: any segment that does not start with a reader/editor and runs `rp.py` with a sub-command outside the allow-list is refused, whatever launches it (timeout, env, FOO=1, nice, stdbuf, watch ...); `diff a/rp.py b/rp.py` and `open('cloud/rp.py')` are no longer refused. Tests extended.
