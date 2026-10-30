@@ -13,7 +13,7 @@ QUESTIONS = {
     "adults": "Do all people look like adults (not children, not toddlers, no school-trip look)?",
     "era_objects": "Is any object or building visible that does not exist in the stated world{visitors}?",  # built per world
     "people_in_plate": "Does the picture show any person or animal figure? (answer true if any figure is visible)",
-    "text": "Is any readable text, letters, numbers or logo visible (clock-face numerals on a pocket watch do not count)?",
+    "text": "Is any readable text, letters, numbers or logo visible{visitors}?",  # built per world
     "one_light": "Does the picture have one clear light direction and one light source type?",
     "hero_match": "If a named hero is meant to appear, is that figure recognisable from the description (glasses, hair, coat)?",
     "too_early": "Does the picture show anything from the 'must NOT appear yet' list?",
@@ -25,13 +25,14 @@ SOFT = {"one_light": True}  # REVIEW only: firelight against dusk is two lights 
 
 def visitors_note(world: dict) -> str:
     """Who the scene brings in from another era, from the episode's world only (N-07): its own ``visitors_note``, else
-    the resolved visitors (era, people, the codex costume); "" for a world without visitors, so no premise is invented."""
+    the resolved visitors (era, people, and the costume the pictures were painted with: ``world.visitor_costume`` from
+    ``compile.world_of``, else the codex costume); "" for a world without visitors, so no premise is invented."""
     if world.get("visitors_note"):
         return world["visitors_note"]
     parts = []
     for v in world.get("visitors") or []:
         who = ", ".join(v.get("people", [])[:4])
-        wear = ", ".join(v.get("costume", []))
+        wear = world.get("visitor_costume") or ", ".join(v.get("costume", []))
         parts.append(f"visitors from the {str(v.get('era', '')).replace('_', ' ')} era{f' ({who})' if who else ''}"
                      f"{f' wearing {wear}' if wear else ''}")
     return "; ".join(parts) + " dropped into this world" if parts else ""
@@ -44,6 +45,13 @@ def _era_objects(world: dict) -> str:
         return (" AND is not worn or carried by the intended time-travelling visitors (their own clothes, tools and pocket "
                 f"items are expected and are NOT a problem; flag only {flag} on the hosts)")
     return f" (flag {flag})"
+
+
+def _watch(world: dict) -> str:
+    return " (clock-face numerals on a visitor's pocket watch do not count)" if visitors_note(world) else ""
+
+
+_PER_WORLD = {"era_objects": _era_objects, "text": _watch}
 
 
 def build_prompt(world: dict, meta: dict) -> str:
@@ -61,7 +69,7 @@ def build_prompt(world: dict, meta: dict) -> str:
               "Answer ONLY a JSON object with a boolean for every key, plus a string 'why_<key>' for every key you answer "
               "true, naming exactly what you see, and a short 'note':"]
     for key, q in QUESTIONS.items():
-        lines.append(f'  "{key}": {q.format(visitors=_era_objects(world)) if key == "era_objects" else q}')
+        lines.append(f'  "{key}": {q.format(visitors=_PER_WORLD[key](world)) if key in _PER_WORLD else q}')
     if meta.get("hero"):
         lines.append(f'The named hero meant to appear is: {meta["hero"]}.')
     return "\n".join(lines)

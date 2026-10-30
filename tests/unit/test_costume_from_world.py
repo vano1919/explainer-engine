@@ -56,3 +56,7 @@ def test_the_stone_age_episode_keeps_its_premise():
     assert "muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s" in _prompts(doc)
     md = R.request(C.compile_doc(doc), [])
     assert "industrial victorian" in md
+    # one costume source: the judge is told exactly the clothes the pictures were painted with (T1's review)
+    costume = C._visitor_costume(doc)
+    assert costume in _prompts(doc) and costume in md and "top hats" not in md
+    assert "pocket watch" in md and "pocket watch" not in J.build_prompt(C.world_of(_doc(TITANS)), {"stakes": "x"})

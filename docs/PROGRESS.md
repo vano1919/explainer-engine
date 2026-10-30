@@ -3441,5 +3441,11 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   compile already gave no costume without visitors, the default leaked for visitors of any era; the judge's `visitors_note` override never reached a real episode
   (`sheet_review` passes the resolved world, which drops the key). `examples/stone_age/day1_v5/build_v5.py` and `look_test/build.py` keep their own copies (episode
   scripts, not engine code).
+- T1's review (#92): one costume source. `compile.world_of` now carries `visitor_costume` (the episode's words, else the codex costume, else "") and
+  `visitors_note` uses it, so the judge is told exactly the clothes the pictures were painted with (the first head told the judge the codex costume
+  while the Stone Age pictures used the episode's words). The pocket-watch exemption of the `text` question is also visitors-only now.
+  Deliberate judge-prompt change for the Stone Age episode: the note names the visitors' era, four of its people and their costume instead of
+  "scientists from the 1700s to 1900s"; the `era_objects` exemption reads "their own clothes, tools and pocket items" and its examples come from the
+  world's `absent` list (pottery, metal, iron, bronze, wheel) instead of the hard-coded Stone Age list.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.

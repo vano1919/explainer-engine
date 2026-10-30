@@ -33,7 +33,12 @@ PEOPLE_WORDS = ("hand", "hands", "fist", "fingers", "palms", "people", "crowd", 
 
 
 def world_of(doc: dict) -> dict:
-    return resolver.resolve(doc["world"])
+    """The resolved world plus ``visitor_costume``, the one costume the pictures are painted with and the judge is told
+    (N-07): the episode's own words, else the codex costume of its visitors' eras, else ""."""
+    world = resolver.resolve(doc["world"])
+    own = doc["world"].get("visitor_costume") if world["visitors"] else ""
+    world["visitor_costume"] = own or ", ".join(w for v in world["visitors"] for w in v.get("costume", []))
+    return world
 
 
 def shot_type_of(doc: dict, pid: str) -> tuple[str, int]:
@@ -78,13 +83,10 @@ def _staged_doc(doc: dict) -> bool:
 
 
 def _visitor_costume(doc: dict, world: dict | None = None) -> str:
-    """The visitors' clothing words, from the episode's world only (N-07): its ``world.visitor_costume``, else the codex
-    costume of its resolved visitors' eras; "" when the world has no visitors (no episode's text is a default)."""
+    """The visitors' clothing words, from the episode's world only (N-07; ``world_of`` computes them once); "" when the
+    world has no visitors (no episode's text is a default)."""
     world = world or world_of(doc)
-    if not world["visitors"]:
-        return ""
-    own = (doc.get("world") or {}).get("visitor_costume")
-    return own or ", ".join(w for v in world["visitors"] for w in v.get("costume", []))
+    return world["visitor_costume"] if "visitor_costume" in world else world_of(doc)["visitor_costume"]
 
 
 def compile_doc(doc: dict) -> dict:
