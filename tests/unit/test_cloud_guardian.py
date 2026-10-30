@@ -310,7 +310,7 @@ def test_s09_the_watchdog_needs_no_session_and_stops_an_expired_pod(env):
     assert [i["fingerprint"]["error_class"] for i in I.load_local()] == ["unknown", "unknown"] or len(I.load_local()) == 2
     from pathlib import Path
     text = (Path(__file__).resolve().parents[2] / ".github" / "workflows" / "watchdog.yml").read_text()
-    assert 'cron: "*/30 * * * *"' in text and "kill_all" in text and "--kill-all --yes" in text and "--apply" in text
+    assert 'cron: "*/10 * * * *"' in text and "kill_all" in text and "--kill-all --yes" in text and "--apply" in text
     assert "RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}" in text and "DELETE" not in text and "terminate" not in text
 
 

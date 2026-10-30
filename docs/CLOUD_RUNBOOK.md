@@ -1,0 +1,102 @@
+# CLOUD_RUNBOOK — how a pod ends (P1a, 2026-10-29)
+
+The one home of the **CR-** rules: every way a RunPod pod is stopped, who owns each step, and what the code refuses.
+Money ceilings stay in `config/spend_caps.json` (D-56); the pod manager is `explainer_engine/cloud/runpod.py`; the watchdog
+is `explainer_engine/cloud/watchdog.py` + `.github/workflows/watchdog.yml`; the session hooks are `explainer_engine/cloud/hooks.py`.
+Facts about RunPod's billing and API: [TOOL_STRATEGY](TOOL_STRATEGY.md) "Money control for RunPod" and the validation report
+`architecture_2026-10-22/RUNPOD_VALIDATION_2026-10-22.md` (project files).
+
+**Goal (Blueprint v2, phase P1a):** a pod always stops at the end of its job or at its ceiling, even when the Claude session
+and its guard are gone, and a healthy pod is never stopped.
+
+## Status (2026-10-29, PR #29)
+
+CR-01..CR-17 are implemented with their tests: `cloud/pod_wrapper.sh` (`tests/unit/test_pod_wrapper.py` runs it under bash with stubs), `runpod.py` (`parse_beat`, `deadline_of`, `script_cmd`, `wrapper_env`, `lint_pod_script`, `preflight_create`, `heartbeat_step`, `beat_stall`, the guard, `notify`), `cloud/hf_live.py`, `watchdog.py` + `watchdog.yml`, `hooks.py` (`tests/unit/test_cloud_stop_paths.py`). Not proved by any test and left to P12a: that RunPod accepts the wrapper as the container command with the pod's own key (`key=` in line 1 of the first beat), the real `huggingface_hub` uploader in `ee_upload`, and the stop rights of the in-pod key.
+
+## Why (what the code did on 2026-10-29, evidence `blueprint_2026-10-29/recheck/verify_runpod.json`)
+
+1. **The EXIT trap was dead code.** `script_cmd` and `boot_cmd` took only the first line of `self_stop_sh()` (the
+   `self_stop` function); the `on_exit` trap that writes DONE/FAILED was never installed. A script that crashed mid-way
+   never wrote FAILED; DONE reached `beat.txt` only because each script echoed it itself, and it did so *before* its
+   `vault check-uploaded`, so a guard that saw DONE could stop the pod during the verify.
+2. **The guard stopped healthy script pods.** For a script pod the REST view never changes (LT-17: no runtime, no conductor),
+   so `jobs.observe` wrote one heartbeat, `jobs.stall` fired after 10 min, and after 2 x 30 min of "stall" the guard stopped
+   the pod because `safe_to_release()` is vacuously true (no script records outputs). A 2 h training would die at ~70 min.
+   The HF heartbeat (`heartbeat_step`) updated only the session file, never the job record.
+3. **The heartbeat was optional.** `create --script` did not require `--heartbeat`; without it the guard never sees DONE,
+   FAILED or BAD_HOST.
+4. **Upload failures were silent.** Every script's `up()` printed `UPLOAD FAILED` and went on; a dead HF token turned a
+   live pod into "silent" (alert only) until a cap, and the final DONE never arrived.
+5. **A hung step under a live upload loop was invisible.** The loop kept the heartbeat fresh while nothing progressed.
+6. **The watchdog knew only the lifetime in the pod's name**: a job that ended at minute 20 of a 5 h approval could idle
+   4 h 40 min. It also hid its own failures (`exit 0` without a key, `|| echo ::warning`, `|| true`).
+7. **The hooks failed open**: no key or one API error let a turn end with an unguarded pod.
+8. **The in-pod key is unproven.** `pod_env` injects only a restricted key (`RUNPOD_POD_API_KEY` /
+   `tools/runpod/pod_api_key.txt`); this cloud environment has neither, so the in-pod self-stop and dead-man rely on
+   RunPod's own "pod-scoped" key, whose scope is undocumented. v1 REST (`rest.runpod.io/v1`) retires 2026-11-15.
+
+## The three stop paths
+
+| Path | Where it runs | What it needs | When it fires | Dies with |
+|---|---|---|---|---|
+| 1. In-pod (CR-04, CR-05) | the pod itself (`pod_wrapper.sh`, PID 1) | a key in the pod that may stop it (CR-03 says whether it has one) | the job ended; the money/time deadline minus the upload grace | the key's scope |
+| 2. Guard (CR-09) | the Claude session (`runpod guard`, detached) | the account key on this machine | heartbeat end word, caps, lifetime, hung progress | the cloud container (observed: guards die after 5-30 min) |
+| 3. Watchdog (CR-12) | GitHub Actions, every 10 min, default branch only | repo secrets `RUNPOD_API_KEY` (exists, verified run #26 2026-10-29) and `HF_TOKEN` (for the heartbeat) | heartbeat end word, the money estimate from the live spec, lifetime, 24 h ceiling | nothing local |
+
+The session hooks (CR-13) look at the account at the start and end of every turn and refuse to end a turn while a known
+live pod cannot be checked. Worst case with paths 1 and 2 both gone: the watchdog stops a finished pod within one cron
+interval plus GitHub's schedule lag (documented as "may be delayed under load").
+
+## Rules
+
+| ID | Rule | Code | Test |
+|---|---|---|---|
+| CR-01 | **One owner of the pod protocol.** Every script pod runs its script inside `explainer_engine/cloud/pod_wrapper.sh`, embedded into the v2 start command by `runpod.script_cmd` (placeholders filled, no second download). The wrapper owns the GPU check, the key probe, `beat.txt`, the background upload loop, the money dead-man, the end word, the final upload + verify and the stop. The script only works: it writes its results under `$EE_OUT` (default `/workspace/out`) and may write one line of progress to `$EE_OUT/progress.txt` (`step 1200/3000`, `pictures 14/40`). Boot (TMR manifest) pods keep `boot_cmd` but get the same `self_stop` and dead-man (CR-05). | `runpod.script_cmd`, `pod_wrapper.sh`, `boot_cmd` | `test_pod_wrapper.py` runs the real wrapper under bash with stubbed `curl`, `nvidia-smi`, `timeout` and HF helper |
+| CR-02 | **`beat.txt` format (written only by the wrapper).** Line 1, written once at boot: `BOOT key=<http code> job=<job id> pod=<pod id> price=<$/h> deadline=<epoch>`. Line 2, rewritten every pass: `<WORD> <UTC ISO> progress=<progress.txt, 60 chars> upload_fail=<consecutive failed uploads> unstored=<files newer than the last verified upload>`. WORD is `ALIVE`, `DONE rc=0`, `FAILED rc=<n>`, `FAILED_UPLOAD rc=<n>` (with `unstored=<k>` as every line), `CAPPED`, `BAD_HOST <why>`. `runpod.parse_beat` is the one reader (guard and watchdog). | `pod_wrapper.sh`, `runpod.parse_beat` | parse round-trip; every word |
+| CR-03 | **Key boot-probe.** Before the script starts the wrapper calls `GET https://api.runpod.io/v2/pods/$RUNPOD_POD_ID` with the in-pod `$RUNPOD_API_KEY` and writes the HTTP code into line 1 (`key=200`, `key=401`, `key=000` = no answer, `key=none` = no key in the pod). When it answers 200 the wrapper reads the pod's real `cost` and re-computes its deadline with the higher of the two prices (CR-05). The guard records `key=` in the session and pushes "this pod cannot stop itself; only the guard and the watchdog can" when it is not 200. 200 proves read access, not stop rights; P12a proves the stop. | `pod_wrapper.sh`, `heartbeat_step` | wrapper writes each code; guard push on `key=401` |
+| CR-04 | **End sequence.** When the script exits with rc: (1) the loop is stopped; (2) `$EE_OUT` is uploaded and verified (every local file present on HF with the same size; LFS files by sha256) with retries for at most `EE_UPLOAD_GRACE_S` = 900 s; (3) line 2 becomes `DONE rc=0` / `FAILED rc=<n>` when verified, else `FAILED_UPLOAD rc=<n>` (with `unstored=<k>` as every line); (4) `beat.txt` is uploaded alone (best effort); the end sequence compares every file with HF, a loop pass only the files that were settled when the pass began (a log the script is still writing is not a failed upload, and `beat.txt` is never compared), and the verified time is the pass start, so later writes stay `unstored`; (5) `self_stop`; (6) PID 1 stays alive and retries `self_stop` every 60 s (a returning start command restarts the container in a loop). A script never writes DONE or FAILED itself (CR-08). | `pod_wrapper.sh` | (a), (b) wrapper half |
+| CR-05 | **Money dead-man in the pod.** `deadline = created + min(lifetime_s, max_usd / (price + disk_per_h) x 3600) - EE_CAP_GRACE_S` (300 s). `created` is the create time (epoch, in the pod's env), `price` the card's price in the create body (`create()` sets it per card it tries: the catalog price for `pick_gpus` rows, `MAX_PRICE[pool]` for pools), raised to the real `cost` by CR-03 when it is higher. At the deadline: line 2 `CAPPED`, SIGTERM to the script's process group, 30 s, SIGKILL, then the end sequence with `EE_CAP_GRACE_S` instead of 900 s. The guard and the watchdog keep the hard stop at `max_usd`, so the pod's own graceful stop comes first. | `runpod.deadline_of`, `create_body`, `create`, `pod_wrapper.sh` | (e) |
+| CR-06 | **Bad host.** The wrapper's own GPU check runs before the script: `timeout 120 nvidia-smi`, and, when `torch` imports, `timeout 120 python3 -c "<one CUDA op>"`. A failure writes `BAD_HOST <why>` and runs the end sequence without the script. | `pod_wrapper.sh` | wrapper with failing `nvidia-smi` |
+| CR-07 | **What `create` refuses for a script pod** (before any POST, nothing billed): (a) no heartbeat: `--heartbeat` is required unless the script declares `# heartbeat: datasets/<o>/<r>:<path>/beat.txt`; both given and different = refused; the wrapper uploads `$EE_OUT` to the heartbeat's folder, so they cannot disagree; (b) no stop path outside the session: refused unless a restricted in-pod key is available (`RUNPOD_POD_API_KEY` / `tools/runpod/pod_api_key.txt`) **or** the watchdog's freshness record (`runpod/watchdog.json` on HF, CR-12) is at most 60 min old (OR, not AND: this cloud environment has no restricted key, and P12a is the test of the key); (c) the live spec (CR-12) could not be written to HF; (d) any CR-08 lint finding. | `preflight_create`, `main create` | refusal table, 4 cases of (b) |
+| CR-08 | **Pod script lint** (`lint_pod_script`, run on every `--script`): refused when the script writes `beat.txt` or the words DONE/FAILED into it (CR-02/04 belong to the wrapper); idles (`tail -f /dev/null`, `sleep infinity`); touches CUDA without `timeout` (LT-19, kept); downloads into `$EE_OUT` or sets `HF_HOME` under it (base weights must never reach the vault: the wrapper uploads `$EE_OUT` whole); calls `upload_folder` on a download directory. The old "own upload loop before the first heavy step" rule is retired for wrapper pods (the wrapper's loop starts before the script by construction); a script may still upload its own extra paths. The `SELF_STOP` pattern matches only a real call (`self_stop` as a command, `curl ... /action ... stop`), never a comment or an `echo`; it is checked on boot-pod commands. VT-01/VT-02 stay as they are. A script from before P1a (no `# heartbeat:`, no `$EE_OUT`: it runs its own loop and writes its own DONE) is judged by its old rules (`lint_own_upload_loop`) and `preflight_create` refuses to run it under the wrapper; P1b rewrites the reused ones. | `lint_pod_script`, `vault.lint_pod_script` | lint table |
+| CR-09 | **Guard on a script pod (has a heartbeat).** Liveness comes only from the HF heartbeat; the REST view never drives a stall for it (it still reports EXITED/ERROR/gone). Each fresh beat is written into the job record (`job.heartbeat(stage=<progress>, source="hf")`). Rules, in order: an end word (`DONE`, `FAILED`, `FAILED_UPLOAD`, `CAPPED`, `BAD_HOST`) stops the pod at once (`FAILED_UPLOAD` and `BAD_HOST` also move the job to RECOVERY_REQUIRED and push urgent); progress unchanged for longer than the limit (`# stall-minutes: N` in the script, else `jobs.STALL_AFTER["RUNNING"]`) while beats stay fresh = STALLED + push (only for a script that writes `progress.txt`: without it the beats alone are life and nothing is judged hung); unchanged for twice the limit with the latest beat fresh (<= 2 loop passes old) and `upload_fail=0` = stop (everything older than that beat is on HF); silence >= 20 min = alert only (silence never stops: LT-17); caps, the lifetime and the boot deadline stop as before. Conductor pods (status page) keep today's rules and test S04. | `guard`, `heartbeat_step`, `jobs.observe` | (c), S04b |
+| CR-10 | **Upload failures.** A failed folder upload is followed by a beat-only upload carrying `upload_fail=<n>`. The guard and the watchdog: `upload_fail >= 3` = high push; `>= 6` (30 min) with `unstored > 0` = job RECOVERY_REQUIRED (guard) + urgent push, and the pod is **not** stopped for it while `unstored > 0` (caps, lifetime and the dead-man still stop). | `heartbeat_step`, `watchdog.decide` | (b) guard half |
+| CR-11 | **Grace before a cap stop.** The pod's own CAPPED path (CR-05) runs `EE_CAP_GRACE_S` before the hard ceiling, so its outputs go up first; the guard and the watchdog stop at `max_usd` without waiting. A stop at the ceiling while the last beat says `unstored > 0` is recorded in the job (RECOVERY_REQUIRED, `end_pod`) and the push says so. | `pod_wrapper.sh`, `end_pod` | (e) |
+| CR-12 | **Watchdog outside every session.** `create` writes the live spec `runpod/live/<pod name>.json` to the vault dataset (`vano1919/tmr-artifacts`, private) before the POST and adds the pod id after it: `{name, pod, job, heartbeat, created, price, disk_per_h, max_usd, max_hours, until}` (HF commit API, stdlib, `cloud/hf_live.py`). Every pass (cron `*/10`, default branch only): RunPod pods, billing, balance, volumes, endpoints, plus every live spec. For a live pod with a spec: the beat counts only when it is this pod's (BOOT `pod=` equals the pod id; an old-style beat without one only when newer than the record), because a retry of a job reuses the heartbeat path that still holds the last run's end word; then CR-09's end words and CR-10 apply from its beat; `spent_estimate(spec)` >= `max_usd` stops it; without a spec the lifetime rule stays. A spec whose pod is no longer live moves to `runpod/closed/` (P1c settles from it). Each pass writes `runpod/watchdog.json` `{last_run}` (CR-07b). No masks: a missing `RUNPOD_API_KEY` is a red run; a missing `HF_TOKEN` is red only while a pod is live (otherwise the lifetime rule is enough and the run stays green with a notice); a failed stop or a failed push is red; the pass writes its decision to the job summary. `timeout-minutes` covers the worst stop budget (stop wait 90 s per way, two ways, up to 5 pods, plus listings): 20 min; a runner cut is a red run and the next pass continues. | `watchdog.py`, `hf_live.py`, `watchdog.yml` | (d), (g) |
+| CR-13 | **Hooks fail closed with a known live pod.** A known live pod = a local session that is not closed and whose lifetime is not over. When the account check cannot run (no key, network, API error) and such a pod exists, the Stop hook refuses to end the turn (exit 2, names the pod); without one a broken check still never blocks. The Bash hook refuses a `python ... rp.py <sub>` call unless `<sub>` is `sweep`, `status`, `list`, `check`, `logs`, `cost` or `stop` (reading or grepping the file is fine), and a `python -c` / heredoc that imports TMR's `rp` (allow-list, not a list of bad verbs; `rp.py` counts as a run whatever launches it: in every command segment (split at `; & | && ||`, newlines, `(` and backticks) that does not start with a reader or editor (cat, grep, sed, less, head, tail, git, diff, wc, cp, ls, vim ...); a `find` with `-exec`/`-execdir`/`-ok`/`-okdir` is not a reader, an `rp.py` token followed by a sub-command outside the allow-list, or by nothing, is refused; `python -m cloud.rp` too). | `hooks.py` | (f) |
+| CR-14 | **Pushes are recorded.** `notify` appends `{ts, title, ok}` to `tools/runpod/notify.jsonl`; no topic or a failed push while a pod is live is a `check` problem; the watchdog run is red on a failed push. | `notify`, `check`, `watchdog.run` | push failure test |
+| CR-15 | **No v1 route.** `self_stop` is the v2 action, then GraphQL `podStop`; nothing in the generated commands names `rest.runpod.io/v1` (retired 2026-11-15). | `self_stop_sh` | string test over every generated command |
+| CR-16 | **Tests never touch `tools/runpod/`.** An autouse fixture points `runpod.RP` at a temp dir for every unit test. | `tests/unit/conftest.py` | the fixture itself + a test that the real dir is untouched |
+| CR-17 | **P12a drills.** `runpod create --drill <no_self_stop\|drop_key\|upload_fail>` puts `EE_DRILL` in the pod env: `no_self_stop` = the end sequence never calls `self_stop` (the guard or the watchdog must stop the pod), `drop_key` = the wrapper unsets `RUNPOD_API_KEY` before the CR-03 probe (`key=none`, no in-pod stop possible), `upload_fail` = the folder upload always fails while the beat upload works (FAILED_UPLOAD, CR-10). Refused unless the ledger was opened with `test=p12a_smoke` and the pod is a script pod. `--pass-s`, `--upload-grace-s`, `--cap-grace-s` set `EE_PASS_S`, `EE_UPLOAD_GRACE_S`, `EE_CAP_GRACE_S` (scaled drills); the wrapper exports its `DEADLINE` to the script as `EE_DEADLINE`. | `main create`, `wrapper_env`, `pod_wrapper.sh` | `test_pod_wrapper.py` drills, `test_cloud_stop_paths.py` drill flags |
+
+Constants (designer's choice, engineering_experiment until P12a measures them): loop pass 300 s (`HEARTBEAT_EVERY_S`),
+silence alert 20 min, upload grace 900 s at the end and 300 s at a cap, upload-failure push at 3 and escalation at 6,
+watchdog freshness 60 min, stop wait 90 s per way in the watchdog.
+
+## Not in P1a
+
+The live smoke (P12a: proves the in-pod key, each stop path separately, download speed), dryrun and pins (P1b), ledger,
+picker, disks and batching (P1c), the balance rule (D9: the creator's numbers, before P12a). The existing training scripts
+under `explainer_engine/training/pods/` are history: they write their own DONE and loop, so CR-08 refuses them at the next
+`create`; P1b rewrites the ones that are reused.
+
+## The creator's console items for P1a (no new question)
+
+GitHub repository secret `HF_TOKEN` (write access to `vano1919/tmr-artifacts`; the watchdog reads the heartbeats and writes
+its freshness record), and either the restricted pod key (`RUNPOD_POD_API_KEY`) or nothing (CR-07b then relies on the
+watchdog). Both are already on the console list in `STATUS.md`. `RUNPOD_API_KEY` exists (watchdog run #26, 2026-10-29).
+
+## Test plan (P1a criterion a-g, all against fakes: no network, no pod, no money)
+
+| | Test | Proves |
+|---|---|---|
+| a | wrapper with a script that exits 1 -> `beat.txt` line 2 `FAILED rc=1`, `self_stop` called once; that text fed to the guard -> pod EXITED, job FAILED | the end word exists without the script's help and stops the pod |
+| b | wrapper with the upload helper failing: `upload_fail` counts up in the beats; at the end retries until the (scaled) grace, then `FAILED_UPLOAD`, then `self_stop`. Guard with beats `upload_fail=6 unstored=3`: job RECOVERY_REQUIRED, urgent push, pod still RUNNING; a later `DONE` stops it | uploads fail loudly; no stop on that rule while outputs are unstored |
+| c | guard over 3 simulated hours on a script pod in the LT-17 REST shape (no runtime), beats every 5 min with changing progress -> never stopped, job never STALLED; same with frozen progress -> STALLED after the limit, stopped after twice the limit; S04 (conductor pod) unchanged | the healthy-pod kill is gone; a hung step still ends |
+| d | watchdog with a fake HF live spec and beat `DONE` -> stop; spec with spent >= max_usd -> stop; pod without spec -> lifetime rule; spec of a gone pod -> moved to `closed/`; `watchdog.json` written | the session-independent path knows the heartbeat and the money |
+| e | `deadline_of` for card prices 0.34 / 1.69 / pool ceiling, lifetime shorter and longer than the money limit; `create()` swaps the price per card it tries; wrapper takes the higher of body price and probed cost | the dead-man is the money ceiling, not only the lifetime |
+| f | Stop hook: no key + live session -> 2; API error + live session -> 2; no key + nothing live -> 0; `stop_hook_active` -> 0; Bash hook: TMR `rp.py create`, `python -c "import rp; rp.main(['create'])"` refused, `rp.py sweep` allowed | fail closed only when something is known to bill |
+| g | `watchdog.yml` has no `\|\| true`, no `exit 0` on a missing secret, no `\|\| echo`, cron `*/10`, `timeout-minutes: 20`, `HF_TOKEN` and `RUNPOD_API_KEY` from secrets, a job-summary step, no DELETE/terminate | the watchdog cannot be green without checking |
+
+Plus: `bash -n` on the wrapper; CR-07 refusal table; CR-08 lint table; no `rest.runpod.io/v1` in any generated command;
+`parse_beat` round-trip; push recording.

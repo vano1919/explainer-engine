@@ -230,6 +230,8 @@ class EpisodeJob:
             raise ContractError(f"cannot adopt into {state!r}: adopt a state of the forward path before the public click (CN-06)")
         if (job_dir / MANIFEST).exists():
             raise ContractError(f"{job_dir / MANIFEST} exists: open it, never adopt over it")
+        if not isinstance(approvals, dict):
+            raise ContractError(f"adopt into {state}: approvals is a dict of state -> approval, got {type(approvals).__name__}")
         reached = LIFECYCLE[1:LIFECYCLE.index(state) + 1]
         for s in reached:
             cls._check_approval(GATES[s], approvals.get(s), f"adopt into {state}: the gate {s}", bind=True)
@@ -238,7 +240,7 @@ class EpisodeJob:
             raise ContractError(f"adopt into {state}: approvals for states not reached: {extra}")
         digest = None
         if reached:
-            if dossier is None or not Path(dossier).exists():
+            if dossier is None or not Path(dossier).is_file():
                 raise ContractError(f"adopt into {state} names the research dossier file (dossier=)")
             digest = _sha256_file(Path(dossier))
         job = cls._new(job_dir, state=state, reason=reason, path="adopted", approvals=approvals, dossier_sha256=digest,
