@@ -100,3 +100,17 @@ watchdog). Both are already on the console list in `STATUS.md`. `RUNPOD_API_KEY`
 
 Plus: `bash -n` on the wrapper; CR-07 refusal table; CR-08 lint table; no `rest.runpod.io/v1` in any generated command;
 `parse_beat` round-trip; push recording.
+
+## Drills (P12d: every "what if" played once)
+
+Each scenario runs on fake HTTP with the real `pod_wrapper.sh` under bash (`tests/unit/test_cloud_drills.py`); the live column is
+played on P12a's one pod with `runpod create --drill <name>` (CR-17, ledger `test=p12a_smoke`) and costs nothing extra. "Received" is
+filled in only from a run that happened; an empty live cell means it has not run yet.
+
+| # | Scenario | Expected | Received on fake HTTP (2026-10-30) | Live (P12a) |
+|---|---|---|---|---|
+| 1 | The session dies while the pod runs (`no_self_stop`: the pod never stops itself, no session file exists) | beat `DONE`, outputs on HF, no stop call from the pod; the watchdog stops it from the registry and the beat | as expected (`test_drill_1_...`) | |
+| 2 | The cap is reached (`no_self_stop`, short lifetime) | beat `CAPPED` after the final upload; the watchdog stops the pod. A silent pod is stopped by the money estimate of its live record | as expected (`test_drill_2_...`, `test_drill_2b_...`) | |
+| 3 | The folder upload fails (`upload_fail`) | `upload_fail` counts up in the beats, end word `FAILED_UPLOAD` with `unstored >= 1`; the guard records it, the watchdog stops the pod and pushes "may not be on HF" | as expected (`test_drill_3_...`) | |
+| 4 | Only the watchdog is left (no session, no beat, lifetime in the name passed) | the watchdog stops the pod whose lifetime ended and leaves a healthy one | as expected (`test_drill_4_...`) | |
+| 5 | The pod has no key (`drop_key`) | `BOOT key=none`, no stop call from inside; the guard pushes "Pod cannot stop itself" at the first beat; the watchdog stops it | as expected (`test_drill_5_...`) | |
