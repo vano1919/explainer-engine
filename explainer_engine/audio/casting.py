@@ -80,9 +80,19 @@ def age_of(hero: dict) -> str | None:
     return next((band for band, rx in AGE_WORDS if re.search(rx, text)), None)
 
 
+# the library's own age words (labels are free text: "Senior", "middle aged", "elderly") -> our three bands
+AGE_LABELS = {"senior": "old", "elderly": "old", "old": "old", "middle_aged": "middle_aged", "middle-aged": "middle_aged",
+              "mature": "middle_aged", "young": "young", "youthful": "young", "teen": "young"}
+
+
+def _age_label(label: str) -> str:
+    key = label.strip().lower().replace(" ", "_")
+    return AGE_LABELS.get(key, key)
+
+
 def _age_clash(want: str, label: str) -> bool:
     """A labelled voice two bands away (a young voice for an old hero) or a young voice for a middle-aged one."""
-    label = label.replace(" ", "_")
+    label = _age_label(label)
     if want not in AGES or label not in AGES:
         return False
     return abs(AGES.index(want) - AGES.index(label)) == 2 or (want == "middle_aged" and label == "young")
@@ -185,7 +195,8 @@ def score(v: dict, hero: dict) -> float:
     for key, w in (("gender", 3.0), ("age", 2.0)):
         if want[key]:
             total += w
-            s += w * (want[key].replace("_", " ") in lab.get(key, "").replace("_", " "))
+            have = _age_label(lab.get(key, "")) if key == "age" else lab.get(key, "")
+            s += w * (want[key].replace("_", " ") in have.replace("_", " "))
     acc = accent_of(traits)
     if acc:
         total += 1.0
@@ -200,20 +211,54 @@ def score(v: dict, hero: dict) -> float:
     return round(s / total, 3) if total else 0.0
 
 
-def rank(voices: list[dict], hero: dict, taken: set[str] | None = None, top: int = 3) -> list[dict]:
+def eligible(v: dict, hero: dict, taken: set[str] | None = None) -> list[str]:
+    """Why a returned voice may not be a candidate for this hero (VC-02, VC-04, VC-05); an empty list = eligible. A voice
+    the library has not labelled is eligible but judged on its preview alone (``fit`` says so)."""
+    vid = v.get("voice_id") or v.get("id")
+    lab = _labels(v)
+    out = []
+    if not vid:
+        out.append("no voice_id")
+    if taken and vid in taken:
+        out.append("another speaker already has this voice (PV-32)")
+    if "famous" in lab.get("category", "") or IMITATION.search(str(v.get("description", ""))):
+        out.append("a famous or imitation voice (VC-02)")
+    want_age = age_of(hero)
+    if want_age and _age_clash(want_age, lab.get("age", "")):
+        out.append(f"labelled {lab.get('age')!r}, the hero is {want_age} (VC-05)")
+    return out
+
+
+def fit(v: dict, hero: dict, usage_rank: int | None = None, listed: int | None = None) -> dict:
+    """How a voice fits: ``trait`` 0..1 (``score``), its ``usage_rank`` (0 = the most used of the ``listed`` voices the
+    connector returned sorted by ``usage_character_count_1y``: the popularity prior, a tie-break and never a score), and
+    whether the library labelled it at all."""
+    lab = _labels(v)
+    return {"trait": score(v, hero), "usage_rank": usage_rank, "listed": listed,
+            "unlabelled": not any(lab.get(k) for k in ("gender", "age", "accent"))}
+
+
+def rank(voices: list[dict], hero: dict, taken: set[str] | None = None, top: int = 3, by_usage: bool = False) -> list[dict]:
     """The best ``top`` voices as cast candidates {voice_id, name, why}; voices another speaker already has are skipped
-    (two speakers never share a voice, PV-32)."""
-    taken = taken or set()
+    (two speakers never share a voice, PV-32). Equal trait scores go to the more used voice: with ``by_usage`` the list
+    order IS the usage order (call ``creative_list_voices`` with ``sort: usage_character_count_1y``)."""
     scored = []
-    for v in voices:
-        vid = v.get("voice_id") or v.get("id")
-        if not vid or vid in taken:
+    for i, v in enumerate(voices):
+        if eligible(v, hero, taken):
             continue
-        sc = score(v, hero)
-        if sc > 0:
-            scored.append((sc, vid, v))
-    scored.sort(key=lambda x: -x[0])
-    return [{"voice_id": vid, "name": v.get("name", vid), "why": f"trait match {sc:.2f}"} for sc, vid, v in scored[:top]]
+        f = fit(v, hero, i if by_usage else None, len(voices) if by_usage else None)
+        if f["trait"] > 0:
+            scored.append((f["trait"], i, v, f))
+    scored.sort(key=lambda x: (-x[0], x[1]))
+    out = []
+    for sc, i, v, f in scored[:top]:
+        why = f"trait match {sc:.2f}"
+        if by_usage:
+            why += f"; most-used #{i + 1} of {len(voices)} listed"
+        if f["unlabelled"]:
+            why += "; unlabelled: judge the preview"
+        out.append({"voice_id": v.get("voice_id") or v.get("id"), "name": v.get("name", v.get("voice_id")), "why": why})
+    return out
 
 
 def design_description(hero: dict) -> str:
@@ -248,3 +293,9 @@ def distinct(cast: dict) -> list[str]:
             if same and (not va or va == vb):
                 out.append(f"{a} and {b}: same gender, age and energy; give them different temperaments and voices")
     return out
+
+
+def ltx_voice_text(hero: dict) -> str:
+    """The voice in words for an LTX cast card (docs/SCRIPT_ENGINE.md, dialogue audio): the sound from the traits only, under
+    the same PV-10 guard as a designed voice; no name, no imitation, so a card never asks a model for a person's voice."""
+    return design_description(hero)

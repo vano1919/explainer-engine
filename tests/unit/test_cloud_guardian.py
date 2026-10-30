@@ -310,7 +310,7 @@ def test_s09_the_watchdog_needs_no_session_and_stops_an_expired_pod(env):
     assert [i["fingerprint"]["error_class"] for i in I.load_local()] == ["unknown", "unknown"] or len(I.load_local()) == 2
     from pathlib import Path
     text = (Path(__file__).resolve().parents[2] / ".github" / "workflows" / "watchdog.yml").read_text()
-    assert 'cron: "*/30 * * * *"' in text and "kill_all" in text and "--kill-all --yes" in text and "--apply" in text
+    assert 'cron: "*/10 * * * *"' in text and "kill_all" in text and "--kill-all --yes" in text and "--apply" in text
     assert "RUNPOD_API_KEY: ${{ secrets.RUNPOD_API_KEY }}" in text and "DELETE" not in text and "terminate" not in text
 
 
@@ -411,7 +411,7 @@ def test_s16_a_stopped_pod_that_cannot_restart_bills_nothing_and_says_why(env):
     fake.pods["a"] = pod("a", status="EXITED")
     fake.faults = [("POST", "/pods/a/action", 400)]  # "not enough free GPUs on the host": a stopped pod is tied to its host
     with pytest.raises(R.RunPodError, match="400"):
-        R.main(["start", "a", "--yes", "--max-usd", "0.5", "--max-hours", "1"], api=api)
+        R.main(["start", "a", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--allow-zero-gpu-risk"], api=api)
     assert fake.pods["a"]["status"] == "EXITED" and R.sess_read("a") is None
     lines = I.doctor("HTTP 400 not enough free GPUs on the host", stage="start")
     assert any(l.startswith("INC-06") for l in lines)  # the known cause and its fix are named

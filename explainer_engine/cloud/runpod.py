@@ -6,7 +6,9 @@
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
            [--vram GB [--ref-hours H] [--only <card id substring>]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
            [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB] [--boot-minutes M]
-    python -m explainer_engine.cloud.runpod cards --vram GB [--ref-hours H]   what the job would cost on each card now
+    python -m explainer_engine.cloud.runpod dryrun --script pod.sh [--offline]   everything knowable before a pod bills (P1b, CR-18)
+    python -m explainer_engine.cloud.runpod pins <pins.txt>   a pod's pins.txt against config/cloud_pins.json
+    python -m explainer_engine.cloud.runpod cards --vram GB [--ref-hours H] [--job <type> --units N [--setup-min M]]   what the job costs per card
     python -m explainer_engine.cloud.runpod status|logs|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
     python -m explainer_engine.cloud.runpod delete-volume <network volume id> [--global] --yes
 
@@ -314,21 +316,41 @@ def speeds():
         return dict(SPEED)
 
 
-def pick_gpus(api, *, vram_gb, ref_hours, clouds=("COMMUNITY", "SECURE"), min_cuda=CUDA_VERSIONS[0], max_price=None, limit=6):
-    """The cards to try, cheapest estimated job first: rows {gpu, cloud, price, speed, hours, est_usd, availability}.
-    ``ref_hours`` = the job's length on an A100 80GB. Only cards with at least ``vram_gb``, a known speed, stock now and
-    a price at or under ``max_price`` (the creator's runaway ceiling per hour)."""
+def pick_gpus(api, *, vram_gb, ref_hours, clouds=("COMMUNITY", "SECURE"), min_cuda=CUDA_VERSIONS[0], max_price=None, limit=6,
+              job=None, units=None, setup_min=None, refused=None):
+    """The cards to try, cheapest estimated job first: rows {gpu, cloud, price, speed, hours, est_usd, availability, basis,
+    setup_share}. ``ref_hours`` = the job's length on an A100 80GB. Only cards with at least ``vram_gb``, stock now and a price at
+    or under ``max_price`` (the creator's runaway ceiling per hour). How a card's hours are known (``basis``, P1c): a row measured
+    for ``job`` x card in ``config/job_speeds.json`` (with ``units``) wins; else the SPEED estimate; a card neither knows is NOT
+    skipped but taken at the slowest known speed times ``margin_unmeasured`` (it sorts last, never out). With a setup time
+    (``setup_min`` or the measured row's) a card whose fixed setup is over ``setup_share_max`` of the pod's time is dropped
+    (RP-09; the reasons are appended to ``refused``)."""
+    from explainer_engine.cloud import batching, speeds as S
     sp, rows = speeds(), []
+    tab = S.load()
     for cloud in clouds:
         for g in api.catalog(cloud, min_cuda):
             gid, price = g.get("id", ""), float(((g.get("price") or {}).get(cloud.lower())) or 0)
-            if "MIG" in gid or (g.get("memory") or 0) < vram_gb or price <= 0 or gid not in sp:
+            if "MIG" in gid or (g.get("memory") or 0) < vram_gb or price <= 0:
                 continue
             if g.get("availability", "NONE") not in AVAIL_RANK or (max_price and price > max_price + 1e-9):
                 continue
-            hours = ref_hours / sp[gid]
-            rows.append({"gpu": gid, "cloud": cloud, "price": price, "speed": sp[gid], "hours": round(hours, 2),
-                         "est_usd": round(price * hours, 3), "availability": g["availability"]})
+            m = S.estimate(job, gid, units, tab) if job else None
+            if m:
+                hours, basis, setup_h = m["work_h"], "measured", (setup_min / 60 if setup_min is not None else m["setup_h"] if m["setup_known"] else None)
+                speed = None
+            elif gid in sp:
+                hours, basis, speed, setup_h = ref_hours / sp[gid], "estimate", sp[gid], (setup_min / 60 if setup_min is not None else None)
+            else:
+                speed = min(sp.values())
+                hours, basis, setup_h = ref_hours / speed * float(tab["margin_unmeasured"]), f"unknown card x{tab['margin_unmeasured']:g}", \
+                    (setup_min / 60 if setup_min is not None else None)
+            share = S.setup_share(setup_h, hours) if setup_h is not None else None
+            total = hours + (setup_h or 0)
+            rows.append({"gpu": gid, "cloud": cloud, "price": price, "speed": speed, "hours": round(total, 2),
+                         "est_usd": round(price * total, 3), "availability": g["availability"], "basis": basis,
+                         "setup_share": None if share is None else round(share, 3)})
+    rows = batching.rp09(rows, share_max=float(tab["setup_share_max"]), refused=refused)
     rows.sort(key=lambda r: (r["est_usd"], AVAIL_RANK[r["availability"]]))
     return rows[:limit]
 
@@ -397,7 +419,7 @@ def sess_read(pid):
 
 
 def new_session(pod, *, max_usd, max_hours, on_cap="stop", ledger=None, now=None, status_token="", boot_minutes=BOOT_MINUTES,
-                price_ceiling=None, job=None, heartbeat=None):
+                price_ceiling=None, job=None, heartbeat=None, stall_s=None, extra=None):
     """``price_ceiling`` stands in while a PROVISIONING pod reports cost 0: the money clock must never run on $0/h.
     ``job`` is the job record's directory (``cloud/jobs.py``) the guard writes to. ``heartbeat`` = the HF file the pod's
     script uploads every few minutes ("datasets/<owner>/<repo>:<path>"); the guard takes a fresh upload as the pod's sign of
@@ -409,7 +431,8 @@ def new_session(pod, *, max_usd, max_hours, on_cap="stop", ledger=None, now=None
                        "pod_shape": {"volumeInGb": pod.get("volumeInGb"), "containerDiskInGb": pod.get("containerDiskInGb")},
                        "max_usd": max_usd, "max_hours": max_hours, "until": until_of(pod.get("name")) or now + max_hours * 3600,
                        "boot_deadline": now + boot_minutes * 60, "on_cap": on_cap, "ledger": ledger, "status_token": status_token,
-                       "answered": False, "ended": None, "job": str(job) if job else None, "heartbeat": heartbeat})
+                       "answered": False, "ended": None, "job": str(job) if job else None, "heartbeat": heartbeat,
+                       "stall_s": stall_s, **(extra or {})})
 
 
 # --- heartbeat (2026-10-24, ≈$1.6 lost in one morning; ported from PR #22, LT-17/LT-19) -------------------------------
@@ -427,19 +450,97 @@ def new_session(pod, *, max_usd, max_hours, on_cap="stop", ledger=None, now=None
 # dead-man timer inside the pod stops it at its approved lifetime even when every watcher outside is gone.
 HEARTBEAT_EVERY_S = 300
 SILENT_ALERT_MIN = 20
+WATCHDOG_FRESH_S = 3600  # CR-07b
+UPLOAD_FAIL_PUSH, UPLOAD_FAIL_RECOVERY = 3, 6  # consecutive failed uploads (CR-10)
+UPLOAD_GRACE_S, CAP_GRACE_S = 900, 300  # the pod's final upload before a normal end / before a cap stop (CR-04, CR-11)
 HEAVY_STEP = re.compile(r"snapshot_download|hf_hub_download|from_pretrained|pip install|git clone|\brun\.py\b|"
                         r"\bpython3?\s+(?!-)\S+\.py\b")
 CUDA_PROBE = re.compile(r"\bpython3?\s+-c\b.*\bcuda\b")
-BAD_HOST = "BAD_HOST"  # a pod script writes this into its heartbeat file when its GPU check fails or hangs
-JOB_ENDED = re.compile(r"^\s*(DONE|FAILED)\b", re.M)  # the script's last word in its heartbeat file
+BAD_HOST = "BAD_HOST"  # the wrapper writes this word when its GPU check fails or hangs (CR-06)
+END_WORDS = ("DONE", "FAILED", "FAILED_UPLOAD", "CAPPED", "BAD_HOST")  # the pod's last word in beat.txt (CR-02)
+BEAT_WORDS = ("ALIVE",) + END_WORDS
+BEAT_LINE = re.compile(r"^(?P<word>FAILED_UPLOAD|ALIVE|DONE|FAILED|CAPPED|BAD_HOST)(?:\s+rc=(?P<rc>-?\d+))?(?:\s+(?P<ts>\d{4}-\d\d-\d\dT\S+))?"
+                       r"(?:\s+progress=(?P<progress>.*?)\s+upload_fail=(?P<fail>\d+)\s+unstored=(?P<unstored>\d+))?\s*$")
+BOOT_LINE = re.compile(r"^BOOT\s+(.*)$")
+JOB_ENDED = re.compile(r"^\s*(DONE|FAILED)\b", re.M)  # kept for old-style heartbeat files
 UPLOAD_LOOP = re.compile(r"while\s+true;\s*do\s+sleep\s+(\d+);[^\n]*?\b(up|upload|upload_folder|hf\s+upload)\b[^\n]*?done\s*\)?\s*&")
-SELF_STOP = re.compile(r"self_stop|/action\b.*\bstop\b|/stop\b|runpodctl\s+(stop\s+pod|pod\s+stop)")
+SELF_STOP = re.compile(r"(^|[;&|(\s])self_stop(\s|$|;)|/action\b.*\bstop\b|/stop\b|runpodctl\s+(stop\s+pod|pod\s+stop)")
+WRAPPER = Path(__file__).with_name("pod_wrapper.sh")
+
+
+def parse_beat(text):
+    """beat.txt (CR-02) as a dict: ``boot`` {key, job, pod, price, deadline} from the BOOT line, and from the last status line
+    ``word`` (ALIVE/DONE/FAILED/FAILED_UPLOAD/CAPPED/BAD_HOST or None for an old-style date-only heartbeat), ``rc``, ``ts``,
+    ``progress``, ``upload_fail``, ``unstored``. Old files (``DONE 2026-10-24T17:00Z``, ``FAILED rc=1``) still parse."""
+    out = {"boot": {}, "word": None, "rc": None, "ts": None, "progress": "", "upload_fail": 0, "unstored": 0}
+    for raw in (text or "").splitlines():
+        line = raw.strip()
+        m = BOOT_LINE.match(line)
+        if m:
+            out["boot"] = dict(kv.split("=", 1) for kv in m.group(1).split() if "=" in kv)
+            continue
+        m = BEAT_LINE.match(line)
+        if m:
+            out.update(word=m.group("word"), rc=int(m.group("rc")) if m.group("rc") is not None else None, ts=m.group("ts"),
+                       progress=(m.group("progress") or "").strip(), upload_fail=int(m.group("fail") or 0),
+                       unstored=int(m.group("unstored") or 0))
+        elif BAD_HOST in line:  # an old script writing "BAD_HOST <why>"
+            out.update(word=BAD_HOST)
+    return out
+
+
+def deadline_of(created, lifetime_s, max_usd, price, disk_per_h=0.0, grace=CAP_GRACE_S):
+    """The pod's own money/time deadline (epoch, CR-05): created + min(lifetime, max_usd / (price + disk per hour)) - grace.
+    The wrapper computes the same number with awk; ``test_pod_wrapper`` keeps the two together."""
+    secs = float(lifetime_s or 0)
+    if max_usd and (price + disk_per_h) > 0:
+        by_money = max_usd / (price + disk_per_h) * 3600
+        secs = by_money if secs <= 0 or by_money < secs else secs
+    return int(created + secs - grace)
+
+
+def is_wrapper_script(text):
+    """A job script written for ``pod_wrapper.sh``: it declares its heartbeat or writes under ``$EE_OUT``. The scripts under
+    ``training/pods/`` from before P1a run their own loop and write their own DONE; P1b rewrites the ones that are reused."""
+    return heartbeat_of_script(text) is not None or "EE_OUT" in (text or "")
 
 
 def lint_pod_script(text):
-    """Problems of a pod start script (empty = fine): it must upload its log in the background at least every
-    HEARTBEAT_EVERY_S seconds, starting before its first heavy step (a download, an install, a model load, a training), wrap
-    every CUDA probe in ``timeout``, and stop its own pod when it ends instead of idling in ``tail -f /dev/null``."""
+    """Problems of a pod job script that runs inside ``pod_wrapper.sh`` (empty = fine, CR-08): the wrapper owns beat.txt, the
+    upload loop, the end word and the stop, so a script that writes them, idles, touches CUDA without ``timeout`` or sends
+    base weights to the vault is refused. VT-01/02 (the vault check) stay. A pre-P1a script (``is_wrapper_script`` false) is
+    judged by its own old rules; ``preflight_create`` refuses to run it under the wrapper."""
+    if not is_wrapper_script(text):
+        from explainer_engine import vault
+        return lint_own_upload_loop(text) + vault.lint_pod_script(text)
+    lines = text.splitlines()
+    code = [(i, ln) for i, ln in enumerate(lines) if not ln.lstrip().startswith("#")]
+    out = []
+    for i, ln in code:
+        if "beat.txt" in ln or re.search(r"\becho\s+['\"]?(DONE|FAILED)\b", ln):
+            out.append(f"line {i + 1} writes the heartbeat or an end word ({ln.strip()[:60]}): the pod wrapper owns beat.txt and DONE/FAILED "
+                       "(write progress to $EE_OUT/progress.txt instead)")
+        if "tail -f /dev/null" in ln or "sleep infinity" in ln:
+            out.append(f"line {i + 1} idles ({ln.strip()[:40]}): the wrapper stops the pod when the script ends")
+        if CUDA_PROBE.search(ln) and not ln.lstrip().startswith("timeout "):
+            # chain pod 2026-10-24: a driver-550 host never returned from the first CUDA call and $0.6 went on a hung probe
+            out.append(f"line {i + 1} touches CUDA without `timeout` ({ln.strip()[:60]}): a bad host hangs there; wrap it "
+                       "(`timeout 120 python -c ...`); the wrapper already runs the GPU check")
+        if re.search(r"snapshot_download|hf_hub_download|huggingface-cli\s+download|hf\s+download", ln) and re.search(r"/workspace/out|\$EE_OUT|\$\{EE_OUT\}", ln):
+            out.append(f"line {i + 1} downloads into the output folder ({ln.strip()[:60]}): the wrapper uploads $EE_OUT whole, base weights must "
+                       "never reach the vault (download to /workspace/dl)")
+        if re.search(r"HF_HOME=\S*(/workspace/out|\$EE_OUT|\$\{EE_OUT\})", ln):
+            out.append(f"line {i + 1} puts the HF cache under the output folder: it would be uploaded to the vault")
+        if "upload_folder" in ln and re.search(r"folder_path\s*=\s*[\"'][^\"']*(/dl|/hf|cache|HF_HOME)", ln):
+            out.append(f"line {i + 1} uploads a download or cache directory: only results go to the vault")
+    from explainer_engine import vault  # D-73 (VT-01/02): a training script proves its weights are on HF before it stops
+    out += vault.lint_pod_script(text)
+    return out
+
+
+def lint_own_upload_loop(text):
+    """The pre-wrapper rule (kept for scripts that still run their own loop, e.g. boot manifests of other repos): the script
+    uploads its log in the background at least every HEARTBEAT_EVERY_S seconds, starting before its first heavy step."""
     lines = text.splitlines()
     heavy = next((i for i, ln in enumerate(lines) if HEAVY_STEP.search(ln) and not ln.lstrip().startswith("#")), None)
     loops = [(i, int(m.group(1))) for i, ln in enumerate(lines) for m in [UPLOAD_LOOP.search(ln)] if m]
@@ -455,44 +556,40 @@ def lint_pod_script(text):
         if every > HEARTBEAT_EVERY_S:
             out.append(f"the upload loop sleeps {every} s > {HEARTBEAT_EVERY_S} s")
         if ">" not in lines[first].split("while", 1)[1]:
-            # an upload skips unchanged files, so a heartbeat file the loop never rewrites keeps its old commit date and the
-            # guard reads a live pod as silent (scene LoRA pod, 2026-10-24: stages.txt froze for the 2 h training stage)
             out.append("the upload loop must rewrite its heartbeat file every pass (`date > out/beat.txt; up`): an unchanged "
                        "file is not re-uploaded and looks silent")
     for i, ln in enumerate(lines):
         if CUDA_PROBE.search(ln) and not ln.lstrip().startswith(("#", "timeout ")):
-            # chain pod 2026-10-24: `python -c "...torch.cuda.get_device_name(0)"` on a driver-550 host never returned;
-            # the upload loop kept the pod "alive" for 12 min ($0.6) while nothing ran
             out.append(f"line {i + 1} touches CUDA without `timeout` ({ln.strip()[:60]}): a bad host hangs there; wrap it "
                        f"(`timeout 120 python -c ...`) and on failure write {BAD_HOST} to the heartbeat file so the guard stops the pod")
     code = [ln for ln in lines if not ln.lstrip().startswith("#")]
     if any("tail -f /dev/null" in ln for ln in code) and not any(SELF_STOP.search(ln) for ln in code):
-        out.append("the script idles in `tail -f /dev/null` and never stops its pod: end it with `self_stop_sh()` (writes DONE "
-                   "or FAILED to the heartbeat file, then stops the pod); 2026-10-24 a finished test idled 31 min ($0.7)")
-    from explainer_engine import vault  # D-73 (VT-01/02): a training script proves its weights are on HF before it stops
-    out += vault.lint_pod_script(text)
+        out.append("the script idles in `tail -f /dev/null` and never stops its pod: end it with `self_stop` (2026-10-24 a finished test "
+                   "idled 31 min, $0.7)")
     return out
 
 
-def self_stop_sh(beat="out/beat.txt"):
-    """Shell lines for the end of a pod script: a ``self_stop`` function (v2 action, then the v1 route until 2026-11-15) and
-    an EXIT trap that writes DONE or FAILED into the heartbeat file, uploads once more (``up`` when the script defines it)
-    and stops the pod. ``RUNPOD_POD_ID`` and a key are set by RunPod in every pod (docs.runpod.io/pods/references/
-    environment-variables: "Pod-scoped API key"); the restricted key from ``pod_env`` wins when present. When no key can stop
-    the pod, the guard (DONE in the heartbeat) and the dead-man timer still do."""
+def heartbeat_of_script(text):
+    """``# heartbeat: datasets/<owner>/<repo>:<path>/beat.txt`` declared in the script (CR-07), or None."""
+    m = re.search(r"^#\s*heartbeat:\s*(\S+)", text or "", re.M)
+    return m.group(1) if m else None
+
+
+def stall_minutes_of_script(text):
+    """``# stall-minutes: N``: how long the script's progress line may stand still while beats stay fresh (CR-09), or None."""
+    m = re.search(r"^#\s*stall-minutes:\s*(\d+)", text or "", re.M)
+    return int(m.group(1)) if m else None
+
+
+def self_stop_sh():
+    """Shell for a ``self_stop`` function (v2 ``action stop``, then GraphQL ``podStop``; no v1 route, CR-15). ``pod_wrapper.sh``
+    carries the same function; ``boot_cmd`` uses this one. ``RUNPOD_POD_ID`` and a key are set by RunPod in every pod; the
+    restricted key from ``pod_env`` wins when present. When no key can stop the pod, the guard and the watchdog still do."""
     v2 = ('curl -fsS -m 30 -X POST -H "Authorization: Bearer $RUNPOD_API_KEY" -H "Content-Type: application/json" '
           "-d '{\"action\":\"stop\"}' \"https://api.runpod.io/v2/pods/$RUNPOD_POD_ID/action\"")
-    v1 = 'curl -fsS -m 30 -X POST -H "Authorization: Bearer $RUNPOD_API_KEY" "https://rest.runpod.io/v1/pods/$RUNPOD_POD_ID/stop"'
-    return "\n".join([
-        f"self_stop() {{ {v2} >/dev/null 2>&1 || {v1} >/dev/null 2>&1 || echo 'self_stop: no key could stop this pod'; }}",
-        f"on_exit() {{ rc=$?; mkdir -p \"$(dirname {beat})\"; if [ $rc -eq 0 ]; then echo \"DONE $(date -u +%FT%TZ)\" > {beat}; "
-        f"else echo \"FAILED rc=$rc $(date -u +%FT%TZ)\" > {beat}; fi; type up >/dev/null 2>&1 && up; self_stop; }}",
-        "trap on_exit EXIT"])
-
-
-def dead_man_sh(seconds):
-    """A background timer that stops the pod at its approved lifetime, whatever happens to every watcher outside it."""
-    return f"( sleep {int(seconds)}; echo 'dead-man timer: approved lifetime over'; self_stop ) &"
+    gql = ('curl -fsS -m 30 -X POST -H "Authorization: Bearer $RUNPOD_API_KEY" -H "Content-Type: application/json" '
+           "-d \"{\\\"query\\\":\\\"mutation { podStop(input: {podId: \\\\\\\"$RUNPOD_POD_ID\\\\\\\"}) { id } }\\\"}\" https://api.runpod.io/graphql")
+    return f"self_stop() {{ {v2} >/dev/null 2>&1 || {gql} >/dev/null 2>&1 || echo 'self_stop: no key could stop this pod'; }}"
 
 
 def hf_heartbeat(spec, *, fetch=None):
@@ -526,10 +623,11 @@ def hf_text(spec, *, fetch=None):
 
 
 def heartbeat_step(sess, now, *, beat=hf_heartbeat, push=None, text=hf_text):
-    """One heartbeat look for the guard: a fresh upload marks the pod as answered; a long silence after it pushes an alert
-    (never a stop). A heartbeat that says BAD_HOST (the pod's own GPU check failed or hung) returns "bad_host", one that
-    says DONE or FAILED returns "done": the guard stops that pod at once. Returns "alive", "silent", "waiting", "bad_host",
-    "done" or None (no heartbeat configured / unreadable)."""
+    """One heartbeat look for the guard (CR-09/10): a fresh upload marks the pod as answered; the beat is parsed (``parse_beat``) and
+    its word, progress and upload failures are kept in the session. Returns "bad_host" (the wrapper's GPU check failed),
+    "done" (DONE / FAILED / FAILED_UPLOAD / CAPPED: the job ended, stop at once), "silent" (no upload for SILENT_ALERT_MIN, alert
+    only: silence is never a reason to stop), "waiting" (nothing uploaded yet), "alive" or None (no heartbeat configured or HF
+    unreachable). ``sess["progress_at"]`` is the time of the last change of the script's progress line (stall rule of the guard)."""
     if not sess.get("heartbeat"):
         return None
     try:
@@ -544,11 +642,30 @@ def heartbeat_step(sess, now, *, beat=hf_heartbeat, push=None, text=hf_text):
                 said = text(sess["heartbeat"])
             except Exception:  # noqa: BLE001 - the date alone still proves life
                 said = ""
-            if BAD_HOST in said:
+            b = parse_beat(said)
+            if b["boot"].get("key") and sess.get("key") != b["boot"]["key"]:
+                sess["key"] = b["boot"]["key"]
+                if sess["key"] != "200" and push:
+                    push("Pod cannot stop itself", f"{sess['pod']}: the in-pod key probe answered {sess['key']}; only the guard and "
+                                                    "the watchdog can stop this pod", "high")
+            if b["progress"] != sess.get("progress"):
+                sess.update(progress=b["progress"], progress_at=t)
+            elif sess.get("progress_at") is None:
+                sess["progress_at"] = t
+            sess.update(upload_fail=b["upload_fail"], unstored=b["unstored"], word=b["word"])
+            if b["word"] == BAD_HOST or (b["word"] is None and BAD_HOST in said):
                 sess["bad_host"] = said.strip()[:200]
-            m = JOB_ENDED.search(said)
-            if m:
+            elif b["word"] in END_WORDS:
+                sess["job_ended"] = f"{b['word']}" + (f" rc={b['rc']}" if b["rc"] is not None else "")
+                if b["word"] == "FAILED_UPLOAD":
+                    sess["job_ended_unstored"] = b["unstored"]
+            elif b["word"] is None and JOB_ENDED.search(said):  # an old-style file
+                m = JOB_ENDED.search(said)
                 sess["job_ended"] = said[m.start():].strip()[:200]
+            if push and b["upload_fail"] >= UPLOAD_FAIL_PUSH and sess.get("upload_fail_pushed", 0) < b["upload_fail"] // UPLOAD_FAIL_PUSH:
+                sess["upload_fail_pushed"] = b["upload_fail"] // UPLOAD_FAIL_PUSH
+                push("Pod uploads are failing", f"{sess['pod']}: {b['upload_fail']} uploads in a row failed, {b['unstored']} file(s) "
+                                                "not on HF yet; the pod is not stopped for it", "urgent" if b["upload_fail"] >= UPLOAD_FAIL_RECOVERY else "high")
             sess_write(sess)
     if sess.get("bad_host"):
         return "bad_host"
@@ -564,6 +681,20 @@ def heartbeat_step(sess, now, *, beat=hf_heartbeat, push=None, text=hf_text):
                                   "log before stopping it (silence alone is not proof it is stuck)", "high")
         return "silent"
     return "alive"
+
+
+def beat_stall(sess, now, limit_s=None):
+    """(why) when a script pod's beats are fresh but its progress line has not changed for longer than the limit (CR-09), else
+    ''. A script that never writes progress.txt cannot be judged: beats alone are life. ``limit_s`` defaults to the session's
+    ``stall_s`` or the RUNNING limit of the job record."""
+    from explainer_engine.cloud import jobs as J
+    limit = limit_s or sess.get("stall_s") or J.STALL_AFTER["RUNNING"]
+    if not sess.get("progress") or sess.get("progress_at") is None or sess.get("heartbeat_at") is None:
+        return ""
+    if now - sess["heartbeat_at"] > 2 * HEARTBEAT_EVERY_S + 120:
+        return ""  # the beats are not fresh: that is silence, handled elsewhere
+    quiet = now - sess["progress_at"]
+    return f"progress {sess['progress']!r} unchanged for {quiet / 60:.0f} min (limit {limit / 60:.0f})" if quiet > limit else ""
 
 
 def _job_of(sess):
@@ -640,7 +771,7 @@ def create(api, body, *, max_price, sleep=time.sleep, lookups=6, gpus=None):
     """POST /pods once per GPU type. After an unclear answer (timeout, 5xx) the pod is looked up by its unique name instead
     of POSTing again: a second POST could rent a second pod. A clear refusal (4xx: no capacity for that card) moves on to the
     next type of the pool; after an unclear answer with no pod found, nothing more is tried. A card dearer than ``max_price``
-    is deleted at once (nothing is on it). ``gpus`` items are a GPU id or a ``(gpu id, cloud)`` pair (``pick_gpus``).
+    is deleted at once (nothing is on it). ``gpus`` items are a GPU id, a ``(gpu id, cloud)`` pair or a ``(gpu id, cloud, $/h)`` triple (``pick_gpus``).
     The body must keep ``gpu.allowedCudaVersions`` (chain pod 2026-10-24: without the filter RunPod gave a driver-550 host,
     CUDA 12.4, to a CUDA 13 image and its first GPU call never returned; LT-19)."""
     if not (body.get("gpu") or {}).get("allowedCudaVersions"):
@@ -649,8 +780,10 @@ def create(api, body, *, max_price, sleep=time.sleep, lookups=6, gpus=None):
     gpus = gpus or [body["gpu"]["id"]]
     pod, err = None, None
     for item in gpus:
-        gpu, cloud = item if isinstance(item, (tuple, list)) else (item, body.get("cloud", "SECURE"))
+        gpu, cloud, *rest = item if isinstance(item, (tuple, list)) else (item, body.get("cloud", "SECURE"))
         req = {**body, "gpu": {**body["gpu"], "id": gpu}, "cloud": cloud}
+        if rest and "EE_PRICE" in (body.get("env") or {}):  # the wrapper's dead-man runs on this card's price (CR-05)
+            req["env"] = {**body["env"], "EE_PRICE": str(rest[0])}
         try:
             pod = _post_once(api, req, sleep)
         except Unclear as e:
@@ -665,7 +798,7 @@ def create(api, body, *, max_price, sleep=time.sleep, lookups=6, gpus=None):
         if pod is not None:
             break
     if pod is None:
-        raise RunPodError(f"create: no pod could be made for {gpus}: {err}") from err
+        raise RunPodError(f"create: no pod could be made for {[g[0] if isinstance(g, (tuple, list)) else g for g in gpus]}: {err}") from err
     pod = norm(pod)
     price = float(pod.get("costPerHr") or 0)
     if price > max_price:
@@ -755,17 +888,45 @@ def status_page(pod, token, timeout=20):
     return urllib.request.urlopen(req, timeout=timeout).read().decode()
 
 
+def notify_topic():
+    return os.environ.get("NTFY_TOPIC") or ((RP / "ntfy_topic.txt").read_text().strip() if (RP / "ntfy_topic.txt").exists() else "")
+
+
 def notify(title, text, priority="urgent"):
-    topic = os.environ.get("NTFY_TOPIC") or ((RP / "ntfy_topic.txt").read_text().strip() if (RP / "ntfy_topic.txt").exists() else "")
-    if not topic:
-        return False
+    """Push to the creator's phone. Every push is recorded in ``tools/runpod/notify.jsonl`` with its outcome (CR-14): a lost push
+    is data, not silence. Returns whether it was delivered."""
+    topic, ok = notify_topic(), False
+    if topic:
+        try:
+            req = urllib.request.Request(f"https://ntfy.sh/{topic}", text.encode(), {"Title": title.encode("ascii", "replace").decode(),
+                                                                                    "Priority": priority}, method="POST")
+            urllib.request.urlopen(req, timeout=15).read()
+            ok = True
+        except OSError:
+            ok = False
     try:
-        req = urllib.request.Request(f"https://ntfy.sh/{topic}", text.encode(), {"Title": title.encode("ascii", "replace").decode(),
-                                                                                "Priority": priority}, method="POST")
-        urllib.request.urlopen(req, timeout=15).read()
-        return True
+        RP.mkdir(parents=True, exist_ok=True)
+        with open(RP / "notify.jsonl", "a", encoding="utf-8") as f:
+            f.write(json.dumps({"ts": time.time(), "title": title[:80], "ok": ok, "topic": bool(topic)}) + "\n")
     except OSError:
-        return False
+        pass
+    return ok
+
+
+def failed_pushes(since, path=None):
+    """Recorded pushes that did not arrive since ``since`` (epoch)."""
+    p = path or RP / "notify.jsonl"
+    if not p.exists():
+        return []
+    rows = []
+    for line in p.read_text(encoding="utf-8").splitlines():
+        try:
+            r = json.loads(line)
+        except ValueError:
+            continue
+        if not r.get("ok") and r.get("ts", 0) >= since:
+            rows.append(r)
+    return rows
 
 
 def end_pod(api, sess, why, *, push=notify, sleep=time.sleep, attempts=1000):
@@ -788,13 +949,18 @@ def end_pod(api, sess, why, *, push=notify, sleep=time.sleep, attempts=1000):
         if st == "UNSTOPPED":
             job.move("RECOVERY_REQUIRED", f"the guard could not stop the pod: {why}", force=True)
         elif job.state["state"] in J.LIVE:  # FAILED / SUCCEEDED / RECOVERY_REQUIRED keep their meaning; the pod is just off
-            job.move("STOPPED" if st != "ERROR" else "RECOVERY_REQUIRED", f"guard: {why}", force=True)
+            if sess.get("unstored"):  # CR-11: stopped (cap, lifetime) while the last beat said files were not on HF yet
+                job.move("RECOVERY_REQUIRED", f"guard: {why}; the last beat said {sess['unstored']} file(s) were not on HF", force=True)
+            else:
+                job.move("STOPPED" if st != "ERROR" else "RECOVERY_REQUIRED", f"guard: {why}", force=True)
         else:
             job.event("pod", f"guard ended the pod ({st}): {why}")
         incidents.record(incidents.fingerprint("runpod", "pod", job.state.get("stage") or "any", text=why), f"guard ended {sess['pod']}: {why}",
                          cause=why, fix="stopped by the guard" if st != "UNSTOPPED" else "", source="guard", job=job.state["id"])
     disk = disk_per_hour(sess.get("pod_shape") or {}, running=False) * 24
     tail = f"; its disk bills ${disk:.2f}/day until deleted" if st in ENDED else ""
+    if sess.get("unstored") and st != "UNSTOPPED":
+        tail += f"; {sess['unstored']} file(s) were not on HF at the last beat: check the pod's volume before deleting it"
     push("Guard ended the pod" if st != "UNSTOPPED" else "GUARD GAVE UP: THE POD MAY STILL BILL",
          f"{sess['pod']} {st}: {why}; estimate ${spent_estimate(sess, time.time())}{tail}", "high" if st != "UNSTOPPED" else "urgent")
     return st
@@ -818,8 +984,15 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
             last_beat = now
             said = heartbeat_step(sess, now, push=push)
             if said in ("bad_host", "done") and not sess.get("closed"):
-                why = (f"the pod reported a bad host: {sess['bad_host'][:80]}" if said == "bad_host"
-                       else f"the job ended ({sess['job_ended'][:60]}): nothing left to pay for")
+                ended = sess.get("job_ended") or ""
+                if said == "bad_host":
+                    why = f"the pod reported a bad host: {sess['bad_host'][:80]}"
+                else:
+                    why = f"the job ended ({ended[:60]}): nothing left to pay for"
+                if (said == "bad_host" or ended.startswith("FAILED_UPLOAD")) and job is not None:
+                    job.move("RECOVERY_REQUIRED", why + (f"; {sess.get('unstored', 0)} file(s) may not be on HF" if said == "done" else ""),
+                             now=now, force=True)
+                    push("Pod job needs a hand", f"{pid}: {why}", "urgent")
                 end_pod(api, sess, why, push=push, sleep=sleep)
                 return why
         try:
@@ -849,7 +1022,30 @@ def guard(api, pid, *, clock=time.time, sleep=time.sleep, push=notify, page=stat
             sess["ended"] = now
             sess_write(sess)
         action, why = guard_check(sess, pod, now, conductor)
-        if job is not None and blind == 0:
+        script_pod = bool(sess.get("heartbeat"))
+        if job is not None and blind == 0 and script_pod and pod and pod.get("status") in ("RUNNING", "PROVISIONING", "STARTING"):
+            # CR-09: a script pod lives by its HF beat; the REST view never changes for it, so it never drives a stall
+            if sess.get("heartbeat_at") is not None and sess.get("job_beat_at") != sess["heartbeat_at"]:
+                sess["job_beat_at"] = sess["heartbeat_at"]
+                job.heartbeat("script", sess.get("progress") or "beat", now=now, source="hf")
+                if job.state["state"] in ("PROVISIONING", "STARTING", "MODEL_LOADING", "READY"):
+                    job.move("RUNNING", "first heartbeat from the pod", now=now, force=True)
+                if (sess.get("upload_fail", 0) >= UPLOAD_FAIL_RECOVERY and sess.get("unstored") and not sess.get("recovery_marked")
+                        and job.state["state"] in J.LIVE):  # CR-10: a person must look; the pod keeps running (outputs are only on it)
+                    sess["recovery_marked"] = True
+                    job.move("RECOVERY_REQUIRED", f"{sess['upload_fail']} uploads in a row failed with {sess['unstored']} file(s) "
+                                                  "not on HF; the pod is kept running until they are stored", now=now, force=True)
+            limit = sess.get("stall_s") or J.STALL_AFTER["RUNNING"]
+            stalled = beat_stall(sess, now)
+            if action == "ok" and stalled:
+                if job.state["state"] != "STALLED":
+                    job.move("STALLED", stalled, now=now, force=True)
+                    push("Pod job stalled", f"{pid} {job.state['id']}: {stalled}", "high")
+                elif beat_stall(sess, now, 2 * limit) and not sess.get("upload_fail"):
+                    action, why = "stop", f"progress stood still for {2 * limit / 60:.0f} min while the pod kept uploading: {sess.get('progress')!r}"
+            elif job.state["state"] == "STALLED" and not stalled:
+                job.move("RUNNING", "the progress moved again", now=now, force=True)
+        elif job is not None and blind == 0:
             moved = J.observe(job, pod, ready(pod), conductor, now=now)
             if moved in ("FAILED", "RECOVERY_REQUIRED"):
                 from explainer_engine.cloud import incidents
@@ -932,7 +1128,7 @@ def sweep(api, *, dry=False, delete_exited=False, now=None):
     return rows
 
 
-def settle(api, pid, ledger_path=None):
+def settle(api, pid, ledger_path=None, extra=None):
     """RunPod's billed amount for the pod's session, written over the reservation in the run ledger (``runpod_usd``).
     Returns (usd, billed hour buckets); v2 billing has no billed seconds."""
     sess = sess_read(pid) or {}
@@ -942,11 +1138,94 @@ def settle(api, pid, ledger_path=None):
         from explainer_engine.core.ledger import Run
         run = Run.open(ledger_path)
         run.settle("runpod_usd", f"pod:{pid}", usd)
-        run.done("pods", pid, cost={"runpod_usd": usd}, billed_buckets=buckets, source="runpod billing", name=sess.get("name"))
+        run.done("pods", pid, cost={"runpod_usd": usd}, billed_buckets=buckets, source="runpod billing", name=sess.get("name"),
+                 **(extra or {}))
     if sess:
         sess.update(billed_usd=usd, billed_buckets=buckets, settled=time.time())
         sess_write(sess)
     return usd, buckets
+
+
+SETTLE_AFTER_S = 90 * 60  # RunPod's billing lags up to an hour behind the stop (RP-07)
+
+
+def cost_report(api, pid, ledger_path=None, *, fetch=None, now=None):
+    """``cost``: settle the pod's billed amount into the ledger (RP-06), keep the pod's outcome for the retry rule (RP-10), write
+    the pod's measured speed into ``config/job_speeds.json`` from its ``units.json`` (RP-08) and return a dict with the PROGRESS-ready
+    ``line``. The pod id is required: a cost without a pod is not a cost."""
+    from explainer_engine.cloud import speeds
+    if not pid:
+        raise SystemExit("cost needs the pod id: `runpod cost <pod>` (a cost is settled per pod, RP-07)")
+    sess = sess_read(pid) or {}
+    hb = sess.get("heartbeat")
+    texts = {}
+    if hb:
+        kind_repo, path = hb.split(":", 1)
+        folder = path.rpartition("/")[0]
+        for name in ("beat.txt", speeds.UNITS_JSON):
+            try:
+                texts[name] = hf_text(f"{kind_repo}:{folder + '/' if folder else ''}{name}", fetch=fetch)
+            except (OSError, ValueError):
+                texts[name] = None
+    usd, buckets = settle(api, pid, ledger_path)  # the bill is real whatever the pod's own files say: settle before parsing them
+    units_row, speed_note = None, None
+    if texts.get(speeds.UNITS_JSON):
+        try:
+            units_row = speeds.from_units_json(texts[speeds.UNITS_JSON])
+        except speeds.SpeedError as e:
+            speed_note = f"no speed row: {e}"
+    if units_row and (ledger_path or sess.get("ledger")):
+        from explainer_engine.core.ledger import Run
+        run = Run.open(ledger_path or sess["ledger"])
+        run.done("pods", pid, **{**(run.data["items"].get("pods", {}).get(pid) or {}), "units": units_row["units"],
+                                 "job_type": units_row["job_type"], "usd_per_unit": round(usd / float(units_row["units"]), 5)})
+    if units_row and sess.get("gpu"):
+        try:
+            speeds.record(units_row["job_type"], sess["gpu"], cloud=sess.get("cloud") or "", units=float(units_row["units"]),
+                          work_s=float(units_row["work_s"]), setup_s=units_row.get("setup_s"), mb=units_row.get("mb"),
+                          download_s=units_row.get("download_s"), usd=usd, source=f"pod {pid} {sess.get('name', '')}".strip(), now=now)
+            speed_note = f"speed row written: {units_row['job_type']} on {sess['gpu']}"
+        except speeds.SpeedError as e:
+            speed_note = f"no speed row: {e}"
+    elif units_row:
+        speed_note = "no speed row: the session does not know the card (adopted pod)"
+    word = parse_beat(texts.get("beat.txt") or "")["word"]
+    ledger = ledger_path or sess.get("ledger")
+    if ledger and sess.get("job_base") and word and not sess.get("outcome_recorded"):
+        from explainer_engine.core.ledger import Run
+        run = Run.open(ledger)
+        if word == BAD_HOST:
+            run.fail(f"hw:{sess['job_base']}", f"pod {pid}: BAD_HOST")
+        elif word in ("FAILED", "FAILED_UPLOAD") and sess.get("script_sha"):
+            run.fail(f"script:{sess['job_base']}:{sess['script_sha'][:12]}", f"pod {pid}: {word}")
+        sess = sess_read(pid) or sess  # settle() wrote settled/billed_usd after the read at the top: do not write them away
+        sess["outcome_recorded"] = word
+        sess_write(sess)
+    per = f", ${usd / float(units_row['units']):.4f}/unit ({units_row['job_type']} x{units_row['units']})" if units_row else ""
+    line = f"pod {pid} ({sess.get('name', '?')}, {sess.get('gpu', '?')} {sess.get('cloud', '')}): ${usd:.2f} billed{per}"
+    RP.mkdir(parents=True, exist_ok=True)
+    with open(RP / "settled.jsonl", "a", encoding="utf-8") as f:
+        f.write(json.dumps({"pod": pid, "usd": usd, "line": line, "at": time.time() if now is None else now}) + "\n")
+    return {"usd": usd, "buckets": buckets, "line": line, "word": word, "speed": speed_note}
+
+
+def settle_due(api, *, now=None, after_s=SETTLE_AFTER_S, fetch=None):
+    """Settle every closed session whose pod stopped at least ``after_s`` ago and whose bill is not in the ledger yet (RP-07, the
+    session hook runs it). Returns the PROGRESS-ready lines."""
+    now = time.time() if now is None else now
+    out = []
+    for f in sorted((RP / "sessions").glob("*.json")):
+        try:
+            s = json.loads(f.read_text())
+        except (OSError, ValueError):
+            continue
+        if s.get("closed") and not s.get("settled") and s.get("ledger") and now - s["closed"] >= after_s:
+            try:
+                r = cost_report(api, s["pod"], fetch=fetch, now=now)
+                out.append(r["line"] + (f" [{r['speed']}]" if r.get("speed") and "units.json" in r["speed"] else ""))
+            except (RunPodError, OSError, ValueError, KeyError) as e:
+                out.append(f"pod {s.get('pod')}: settle failed ({str(e)[:80]}); `runpod cost {s.get('pod')}`")
+    return out
 
 
 class PodSession:
@@ -1008,10 +1287,13 @@ def check(api, now=None):
     nobody here guards it."""
     now = time.time() if now is None else now
     keep = set(spend_caps.runpod().get("keep_stopped_pods", []))
-    problems, info = [], []
-    for p in api.pods():
+    problems, info, live_n = [], [], 0
+    pods = api.pods()
+    stored_day, stored_n, stored_gb = 0.0, 0, 0.0
+    for p in pods:
         st, pid, name = p.get("status"), p["id"], p.get("name")
         if st in ("RUNNING", "PROVISIONING", "STARTING"):
+            live_n += 1
             sess = sess_read(pid)
             line = f"{pid} {name} {st} ${p.get('costPerHr')}/h"
             if expired(name, now):
@@ -1025,9 +1307,22 @@ def check(api, now=None):
                 info.append(f"{line}, approved until {time.strftime('%H:%M UTC', time.gmtime(until_of(name)))}")
         elif st in ENDED:
             day = disk_per_hour(p, running=False) * 24
+            stored_day, stored_n, stored_gb = stored_day + day, stored_n + 1, stored_gb + float(p.get("volumeInGb") or 0)
             line = f"{pid} {name} {'STOPPED' if st == 'EXITED' else 'in ERROR'}, disk {p.get('volumeInGb')} GB bills ${day:.2f}/day"
             (info if pid in keep else problems).append(line + ("" if pid in keep else
                                                                "; delete it with the creator's word (`runpod delete <pod> --yes`) or list it in keep_stopped_pods"))
+    if stored_n:  # P1c: one line, whatever the number of stopped pods
+        info.append(f"stopped pods keep {stored_gb:g} GB of volume: ${stored_day:.2f}/day in total over {stored_n} pod(s)")
+    gone = sorted(keep - {p["id"] for p in pods})
+    if gone:  # the list in config/spend_caps.json is noise once RunPod no longer knows an id; removing one is the creator's edit
+        info.append(f"{len(gone)} id(s) in keep_stopped_pods no longer exist on RunPod (remove them from config/spend_caps.json "
+                    f"with the creator's word): {', '.join(gone[:5])}{' ...' if len(gone) > 5 else ''}")
+    if live_n:  # CR-14: a live pod with no way to reach the creator is a problem
+        if not notify_topic():
+            problems.append(f"{live_n} live pod(s) and no NTFY_TOPIC: pushes about them go nowhere")
+        lost = failed_pushes(now - 86400)
+        if lost:
+            problems.append(f"{len(lost)} push(es) in the last 24 h did not arrive (last: {lost[-1]['title']!r})")
     # the three ways an account bills with no pod: network volumes, global volumes, serverless workers kept on
     keep_nv = set(spend_caps.runpod().get("keep_network_volumes", []))
     for what, call in (("network volume", api.network_volumes), ("global volume", api.global_volumes), ("serverless endpoint", api.endpoints)):
@@ -1048,21 +1343,48 @@ def check(api, now=None):
     try:
         usd, _ = api.billing_total(now - 86400)
         bal = api.balance()
+        spend = float(bal.get("currentSpendPerHr") or 0)
         info.append(f"billed in the last 24 h ${usd:.2f} of ${spend_caps.runpod()['per_24h_usd']} (every resource; the newest hour may lag); "
-                    f"balance ${float(bal['clientBalance']):.2f}, spending ${float(bal.get('currentSpendPerHr') or 0):.3f}/h now")
+                    f"balance ${float(bal['clientBalance']):.2f}, spending ${spend:.3f}/h now")
+        if spend > 1e-6 and not live_n and not stored_gb:  # RunPod bills something this manager sees no pod and no volume for
+            problems.append(f"RunPod says it spends ${spend:.3f}/h now, and no pod is live and no stopped pod keeps a volume: something bills "
+                            "outside this manager (a serverless endpoint, a network volume, a pod of another account member): look in the console")
     except RunPodError as e:
         problems.append(f"billing or balance not read ({str(e)[:80]}): the 24 h ceiling cannot be checked")
     return {"problems": problems, "info": info}
 
 
-def preflight_create(api, *, max_usd, max_hours, gpu, now=None, ignore=None, script=None, picks=None):
+def preflight_create(api, *, max_usd, max_hours, gpu, now=None, ignore=None, script=None, picks=None, heartbeat=None,
+                     pod_key=False, watchdog_age=None, image=None, boot_minutes=None, cloud=None):
     """Every reason to refuse a new pod (empty = allowed): the creator's ceilings, the last 24 h of billing, the balance,
     a clean account first (no stray pod, no unkept stopped disk), with ``script`` (the pod's start script text) the
-    ``lint_pod_script`` rules, and with ``picks`` (``pick_gpus`` rows) a job that fits its approved money and time.
+    ``lint_pod_script`` rules, a passing ``dryrun`` of exactly that text and an image pinned by digest in ``config/cloud_pins.json``
+    that has the boot minutes it needs on its cloud (P1b, CR-18), and with ``picks`` (``pick_gpus`` rows) a job that fits its
+    approved money and time.
     The money line is per JOB (``per_pod_usd``); ``max_price_per_hour`` is only the runaway ceiling of one card."""
     now = time.time() if now is None else now
     c = spend_caps.runpod()
     why = [f"pod script: {p}" for p in lint_pod_script(script)] if script is not None else []
+    if script is not None and not is_wrapper_script(script):
+        why.append("pod script: it runs its own upload loop and writes its own beat.txt/DONE (pre-P1a protocol): rewrite it for "
+                   "pod_wrapper.sh (declare `# heartbeat:`, write results under $EE_OUT; CR-08, P1b)")
+    if script is not None:  # CR-18 (P1b): the script was read and its repos looked up, the image is a pinned digest
+        from explainer_engine.cloud import dryrun, pins
+        why += [f"dryrun: {p}" for p in dryrun.passed(script)]
+        img = image or pins.image_ref(pins.DEFAULT_IMAGE)
+        why += [f"image: {p}" for p in pins.check_image(img)]
+        cl = cloud or (picks[0]["cloud"] if picks else "SECURE")
+        need = pins.boot_minutes_needed(img, cl)
+        if (boot_minutes if boot_minutes is not None else BOOT_MINUTES) + 1e-9 < need:
+            why.append(f"image: {img.partition('@')[0]} is not measured on a {cl} host: the pod needs --boot-minutes >= {need:g} "
+                       f"(the guard would stop it at {boot_minutes if boot_minutes is not None else BOOT_MINUTES:g} min, before the image arrives)")
+    if script is not None:  # CR-07: a script pod must be visible and stoppable from outside this session
+        if not heartbeat:
+            why.append("no heartbeat: pass --heartbeat datasets/<owner>/<repo>:<folder>/beat.txt or declare `# heartbeat: ...` in the script")
+        if not pod_key and (watchdog_age is None or watchdog_age > WATCHDOG_FRESH_S):
+            why.append("no stop path outside this session: there is no restricted in-pod key (RUNPOD_POD_API_KEY or tools/runpod/"
+                       "pod_api_key.txt) and the GitHub watchdog has not run in the last 60 min "
+                       f"({'never recorded' if watchdog_age is None else f'{watchdog_age / 60:.0f} min ago'})")
     if max_usd > c["per_pod_usd"]:
         why.append(f"--max-usd {max_usd} is above per_pod_usd {c['per_pod_usd']} (the per-job ceiling)")
     if max_hours > c["max_hours_per_pod"]:
@@ -1110,27 +1432,55 @@ def pod_env(status_token):
 def boot_cmd(manifest, branch):
     """The pod fetches TMR's bootstrap.sh and runs the manifest itself; PID 1 then stays alive (a returning start command
     restarts the container in a loop, TMR 2026-10-11). A failed boot stops the pod (stop, not delete: the creator's rule).
-    v2 ``cmd`` is the container CMD in exec form."""
+    v2 ``cmd`` is the container CMD in exec form. The boot pods of TMR keep this form; script pods use ``script_cmd``."""
     url = f"https://raw.githubusercontent.com/{BOOT_REPO}/{branch}/cloud/bootstrap.sh"
-    stop_self = self_stop_sh().split("\n")[0]
+    stop_self = self_stop_sh()
     # 2026-10-24: a finished job idled in `tail -f /dev/null`; the pod now stops itself when the manifest ends either way
     return ["bash", "-lc", f'set -o pipefail; {stop_self}; curl -fsSL -H "Authorization: token $GITHUB_TOKEN" '
             f'{url} | bash -s -- {manifest}; self_stop; tail -f /dev/null']
 
 
-def script_cmd(script_url, lifetime_s):
-    """The start command for a script pod (the LoRA, keyframe and video pods): a dead-man timer at the approved lifetime,
-    the script fetched from HF with the pod's HF token, then the pod stops itself whatever the script's exit code; PID 1
-    then stays alive only until the stop lands (a returning start command restarts the container in a loop)."""
-    stop_self = self_stop_sh().split("\n")[0]
-    return ["bash", "-c", f'{stop_self}; {dead_man_sh(lifetime_s)} mkdir -p /workspace; curl -fsSL -H "Authorization: Bearer $HF_TOKEN" '
-            f'{script_url} -o /workspace/pod.sh && bash /workspace/pod.sh; self_stop; tail -f /dev/null']
+def script_cmd():
+    """The start command of a script pod (CR-01): ``pod_wrapper.sh`` itself. The script's URL, the approved lifetime and
+    money and the HF folder come in through the pod's env (``wrapper_env``), so the command is the same text for every job."""
+    return ["bash", "-c", WRAPPER.read_text()]
+
+
+def hf_target(heartbeat):
+    """("owner/repo", "folder") of a heartbeat spec ``datasets/<owner>/<repo>:<folder>/beat.txt`` (the wrapper uploads $EE_OUT
+    there, so the folder and the beat cannot disagree, CR-07a)."""
+    kind_repo, path = heartbeat.split(":", 1)
+    repo = kind_repo.split("/", 1)[1] if kind_repo.startswith("datasets/") else kind_repo
+    folder, _, name = path.rpartition("/")
+    if name != "beat.txt":
+        raise RunPodError(f"heartbeat {heartbeat!r} must end in beat.txt (the wrapper's file)")
+    return repo, folder
+
+
+DRILLS = ("no_self_stop", "drop_key", "upload_fail")
+
+
+def wrapper_env(script_url, *, heartbeat, max_usd, lifetime_s, price, job=None, created=None, volume=VOLUME_GB, container=CONTAINER_GB,
+                pass_s=None, upload_grace_s=None, cap_grace_s=None, drill=None):
+    """The EE_* env the wrapper reads (CR-05): what it needs for the dead-man and for the upload. ``pass_s`` / ``upload_grace_s`` /
+    ``cap_grace_s`` scale the loop and the graces (the P12a drills use 120 / 300 / 120 s); ``drill`` is a P12a fault, see ``main create``."""
+    repo, folder = hf_target(heartbeat)
+    from explainer_engine.cloud import pins
+    hf_pin = (pins.load()["pip"].get("huggingface_hub") or {}).get("version")  # the wrapper installs it when the image lacks it
+    disk_h = (float(volume or 0) + float(container or 0)) * GB_MONTH_RUNNING / HOURS_PER_MONTH
+    return {"EE_SCRIPT_URL": script_url, "EE_CREATED": str(int(time.time() if created is None else created)),
+            "EE_LIFETIME_S": str(int(lifetime_s)), "EE_MAX_USD": str(max_usd), "EE_PRICE": str(price), "EE_DISK_H": f"{disk_h:.5f}",
+            "EE_JOB": str(job or ""), "EE_HF_REPO": repo, "EE_HF_PREFIX": folder,
+            **{k: str(int(v)) for k, v in (("EE_PASS_S", pass_s), ("EE_UPLOAD_GRACE_S", upload_grace_s), ("EE_CAP_GRACE_S", cap_grace_s))
+               if v is not None},
+            **({"EE_DRILL": drill} if drill else {}), **({"EE_HF_PIN": hf_pin} if hf_pin else {})}
 
 
 def create_body(name, gpu="default", *, volume=VOLUME_GB, min_ram=None, boot=None, status_token="", image=None,
-                script_url=None, lifetime_s=None, cloud="SECURE"):
-    """The v2 ``POST /pods`` body for the FIRST card of the pool; ``create()`` swaps ``gpu.id`` (and the cloud) for the next
-    cards. ``gpu`` is a pool name or a GPU id (``pick_gpus``)."""
+                script_url=None, lifetime_s=None, cloud="SECURE", heartbeat=None, max_usd=None, job=None, price=None, scale=None,
+                drill=None):
+    """The v2 ``POST /pods`` body for the FIRST card of the pool; ``create()`` swaps ``gpu.id`` (and the cloud, and EE_PRICE) for
+    the next cards. ``gpu`` is a pool name or a GPU id (``pick_gpus``). A script pod needs ``heartbeat`` and ``max_usd``."""
     body = {"name": name, "image": image or IMAGE, "gpu": {"id": GPUS[gpu][0] if gpu in GPUS else gpu, "count": 1,
                                                            "allowedCudaVersions": CUDA_VERSIONS},
             "cloud": cloud, "disk": CONTAINER_GB, "mounts": {"persistent": {"size": volume, "path": "/workspace"}} if volume else {},
@@ -1140,7 +1490,13 @@ def create_body(name, gpu="default", *, volume=VOLUME_GB, min_ram=None, boot=Non
     if boot:
         body["cmd"] = boot_cmd(boot, os.environ.get("TMR_BRANCH") or "main")
     elif script_url:
-        body["cmd"] = script_cmd(script_url, lifetime_s or 3600)
+        if not heartbeat or not max_usd:
+            raise RunPodError("a script pod needs a heartbeat spec and the approved money (CR-07)")
+        body["cmd"] = script_cmd()
+        body["ports"] = []  # RP: a script pod is reached by its heartbeat and the API, never by ssh or a web port (P1c)
+        body["env"].update(wrapper_env(script_url, heartbeat=heartbeat, max_usd=max_usd, lifetime_s=lifetime_s or 3600,
+                                       price=price if price is not None else MAX_PRICE.get(gpu, max(MAX_PRICE.values())), job=job,
+                                       volume=volume, container=CONTAINER_GB, drill=drill, **(scale or {})))
     return body
 
 
@@ -1149,7 +1505,33 @@ def _opt(argv, name, default=None, cast=str):
     return cast(argv[argv.index(name) + 1]) if name in argv else default
 
 
-def main(argv=None, api=None):
+def parse_wait(text):
+    """``15m`` / ``900s`` / ``2h`` -> seconds (0 for None)."""
+    if not text:
+        return 0
+    m = re.fullmatch(r"(\d+(?:\.\d+)?)\s*([smh]?)", text.strip())
+    if not m:
+        raise SystemExit(f"--wait-stock {text!r}: use 15m, 900s or 2h")
+    return float(m.group(1)) * {"": 1, "s": 1, "m": 60, "h": 3600}[m.group(2)]
+
+
+def wait_for_stock(pick, wait_s, *, sleep=time.sleep, clock=time.time, poll=30):
+    """``pick()`` until it returns cards or ``wait_s`` has passed (the creator, P1c: a card with no stock now often has one in
+    minutes). ``pick`` may raise SystemExit when nothing matches; that is a "none yet" while waiting."""
+    start = clock()
+    while True:
+        try:
+            rows = pick()
+        except SystemExit:
+            if clock() - start >= wait_s:
+                raise
+            rows = []
+        if rows or clock() - start >= wait_s:
+            return rows
+        sleep(poll)
+
+
+def main(argv=None, api=None, live=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv:
         raise SystemExit(__doc__)
@@ -1166,10 +1548,38 @@ def main(argv=None, api=None):
             print("ok     ", line)
         if res["problems"]:
             raise SystemExit(1)
+    elif cmd == "dryrun":  # P1b: no pod, no money; the record it writes is what `create` asks for
+        from explainer_engine.cloud import dryrun
+        sf = _opt(rest, "--script")
+        if not sf:
+            raise SystemExit("dryrun needs --script <pod.sh>")
+        rec = dryrun.run(Path(sf).read_text(), offline="--offline" in rest)
+        dryrun.record(rec)
+        for r in rec["repos"]:
+            print("repo   ", r["type"], r["id"], "ok" if r["ok"] else ("not checked" if r["ok"] is None else "MISSING"), r["note"])
+        for line in rec["problems"]:
+            print("PROBLEM", line)
+        print(("dryrun ok " if rec["ok"] else "dryrun FAILED ") + f"sha256 {rec['sha256']}")
+        if not rec["ok"]:
+            raise SystemExit(1)
+    elif cmd == "pins":  # P1b: what a pod's pins.txt says against config/cloud_pins.json
+        from explainer_engine.cloud import pins
+        if not pid:
+            raise SystemExit("pins needs the pod's pins.txt")
+        bad = pins.compare(Path(pid).read_text())
+        for line in bad:
+            print("PROBLEM", line)
+        if bad:
+            raise SystemExit(1)
+        print("pins ok")
     elif cmd == "cards":
+        refused = []
         for r in pick_gpus(api, vram_gb=_opt(rest, "--vram", 24, float), ref_hours=_opt(rest, "--ref-hours", 1.0, float),
-                           max_price=spend_caps.runpod()["max_price_per_hour"], limit=20):
-            print(f"{r['est_usd']:7.3f} $  {r['gpu']} {r['cloud']} ${r['price']}/h x {r['hours']} h ({r['availability']})")
+                           max_price=spend_caps.runpod()["max_price_per_hour"], limit=20, job=_opt(rest, "--job"),
+                           units=_opt(rest, "--units", None, float), setup_min=_opt(rest, "--setup-min", None, float), refused=refused):
+            print(f"{r['est_usd']:7.3f} $  {r['gpu']} {r['cloud']} ${r['price']}/h x {r['hours']} h ({r['availability']}; {r['basis']})")
+        for line in refused:
+            print("refused", line)
     elif cmd == "list":
         for p in api.pods():
             print(p["id"], p.get("name"), p.get("status"), f"${p.get('costPerHr')}/h", f"{p.get('volumeInGb')} GB", p.get("gpu") or "")
@@ -1194,33 +1604,108 @@ def main(argv=None, api=None):
         gpu, ledger = _opt(rest, "--gpu", "default"), _opt(rest, "--ledger")
         if not ledger:
             raise SystemExit("create needs --ledger <episode run.json>: every pod is paid for by an episode")
+        if not Path(ledger).exists():  # a ledger made here would get the episode ceilings, not a paid test's line
+            raise SystemExit(f"refused: no ledger at {ledger}; open it first (an episode: Run.open(path, caps=...); "
+                             "a paid test: python -m explainer_engine.core.ledger open-test <path> <test>)")
         script_file, script_url = _opt(rest, "--script"), _opt(rest, "--script-url")
         if script_url and not script_file:
             raise SystemExit("--script-url needs --script <the same file, local>: the pod script is linted before any money")
         script = Path(script_file).read_text() if script_file else None
+        image = _opt(rest, "--image")
+        if script is not None:  # CR-18: a script pod runs a pinned digest; a pin key is the short form
+            from explainer_engine.cloud import pins
+            try:
+                image = pins.resolve_image(image, pins.load()) if image else pins.image_ref(pins.DEFAULT_IMAGE)
+            except pins.PinError as e:
+                raise SystemExit(f"refused, no pod was made:\n  image: {e}")
         picks = None
+        job_type, units = _opt(rest, "--job-type"), _opt(rest, "--units", None, float)
+        work_min, setup_min = _opt(rest, "--work-min", None, float), _opt(rest, "--setup-min", None, float)
         if _opt(rest, "--vram"):  # the cheapest job among the cards with stock now (the creator, 2026-10-24)
-            picks = pick_gpus(api, vram_gb=_opt(rest, "--vram", None, float), ref_hours=_opt(rest, "--ref-hours", max_hours, float),
-                              max_price=spend_caps.runpod()["max_price_per_hour"])
-            picks = only_cards(picks, _opt(rest, "--only"))
+            refused = []
+
+            def _pick():
+                rows = pick_gpus(api, vram_gb=_opt(rest, "--vram", None, float), ref_hours=_opt(rest, "--ref-hours", max_hours, float),
+                                 max_price=spend_caps.runpod()["max_price_per_hour"], job=job_type, units=units, setup_min=setup_min,
+                                 refused=refused)
+                return only_cards(rows, _opt(rest, "--only"))
+            picks = wait_for_stock(_pick, parse_wait(_opt(rest, "--wait-stock")))
+            for line in refused:
+                print("refused", line)
             for r in picks:
                 print(f"card  {r['gpu']} {r['cloud']} ${r['price']}/h x {r['hours']} h ≈ ${r['est_usd']} ({r['availability']})")
-        why = preflight_create(api, max_usd=max_usd, max_hours=max_hours, gpu=gpu, script=script, picks=picks)
+        from explainer_engine.core.ledger import Run
+        base = _opt(rest, "--name", "ee-" + (gpu if not picks else "auto"))
+        job_base = _opt(rest, "--job", base)
+        batch_why, script_sha, weights = [], None, []
+        if script is not None:  # RP-01/02/10 (P1c, docs/CLOUD_RUNBOOK.md): what the plan stated, what this ledger already holds
+            from explainer_engine.cloud import batching, dryrun
+            led = Run.open(ledger)
+            script_sha = dryrun.sha256_of(script)
+            weights = sorted(rid for rid, kind in dryrun.repo_ids(script) if kind == "model")
+            earlier = [v.get("weights") or [] for v in led.data["items"].get("pod_plans", {}).values()]
+            fails = led.data.get("failures", {})
+            batch_why += batching.rp01(work_min, setup_min, measure="--measure" in rest, max_usd=max_usd, test=led.data.get("meta", {}).get("test"))
+            batch_why += batching.rp02(weights, earlier, reason=_opt(rest, "--second-pod-reason", ""))
+            batch_why += batching.rp10(len(fails.get(f"hw:{job_base}", [])), bool(fails.get(f"script:{job_base}:{script_sha[:12]}")), key=job_base)
+            if not _opt(rest, "--disk"):
+                batch_why.append("--disk GB is required for a script pod: state the container disk (weights + outputs + margin); there is no default")
+        drill = _opt(rest, "--drill")
+        if drill:  # a fault for the P12a smoke only: never on a production pod
+            if drill not in DRILLS:
+                raise SystemExit(f"refused: --drill {drill!r} is not one of {DRILLS}")
+            if script is None or Run.open(ledger).data.get("meta", {}).get("test") != "p12a_smoke":
+                raise SystemExit("refused: --drill needs a script pod and a ledger opened with test=p12a_smoke")
+        scale = {k: _opt(rest, f"--{f}", None, float) for k, f in (("pass_s", "pass-s"), ("upload_grace_s", "upload-grace-s"),
+                                                                    ("cap_grace_s", "cap-grace-s"))}
+        scale = {k: v for k, v in scale.items() if v is not None} or None
+        heartbeat, declared = _opt(rest, "--heartbeat"), heartbeat_of_script(script) if script else None
+        if heartbeat and declared and heartbeat != declared:
+            raise SystemExit(f"refused: --heartbeat {heartbeat} and the script's `# heartbeat: {declared}` disagree (CR-07a)")
+        heartbeat = heartbeat or declared
+        from explainer_engine.cloud import hf_live
+        lv, age = live, None
+        if script is not None:
+            try:
+                lv = lv or hf_live.Live()
+                age = lv.watchdog_age()
+            except hf_live.LiveError:
+                age = None
+        why = preflight_create(api, max_usd=max_usd, max_hours=max_hours, gpu=gpu, script=script, picks=picks, heartbeat=heartbeat,
+                               pod_key=bool(secret("pod_api_key.txt", "RUNPOD_POD_API_KEY")), watchdog_age=age, image=image,
+                               boot_minutes=_opt(rest, "--boot-minutes", BOOT_MINUTES, float))
+        why += batch_why
+        if script is not None and lv is None:
+            why.append("the live-pod registry on HF cannot be written (no HF_TOKEN): the watchdog could not see this pod (CR-07c)")
         if why:
             raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(why))
         from explainer_engine.cloud.jobs import Job
         from explainer_engine.core.ledger import Run
-        Run.open(ledger).reserve("runpod_usd", max_usd, item="pod:pending")  # refuses past 80 % of the episode's cap
         token = secrets.token_urlsafe(16)
-        base = _opt(rest, "--name", "ee-" + (gpu if not picks else "auto"))
         name = pod_name(base, max_hours)
         first = picks[0] if picks else None
-        body = create_body(name, first["gpu"] if first else gpu, volume=_opt(rest, "--volume", VOLUME_GB, int),
+        body = create_body(name, first["gpu"] if first else gpu, volume=_opt(rest, "--volume", 0 if script is not None else VOLUME_GB, int),
                            min_ram=_opt(rest, "--min-ram"), boot=_opt(rest, "--boot"), status_token=token,
-                           image=_opt(rest, "--image"), script_url=script_url, lifetime_s=int(max_hours * 3600),
-                           cloud=first["cloud"] if first else "SECURE")
+                           image=image, script_url=script_url, lifetime_s=int(max_hours * 3600),
+                           cloud=first["cloud"] if first else "SECURE", heartbeat=heartbeat, max_usd=max_usd,
+                           job=job_base, price=max(r["price"] for r in picks) if picks else None, scale=scale, drill=drill)  # the ceiling, not the list price
+        if script is not None:
+            from explainer_engine.cloud import batching
+            if batching.rp03(body):  # RP-03: never a network volume
+                raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(batching.rp03(body)))
         if _opt(rest, "--disk"):  # container disk (GB): a model download larger than the default CONTAINER_GB
             body["disk"] = _opt(rest, "--disk", None, int)
+        spec = None
+        if script is not None:  # CR-12: the watchdog judges this pod from the registry, with no session file
+            env = body["env"]
+            spec = {"name": name, "pod": None, "job": env.get("EE_JOB"), "heartbeat": heartbeat, "created": float(env["EE_CREATED"]),
+                    "price": float(env["EE_PRICE"]), "disk_per_h": float(env["EE_DISK_H"]), "max_usd": max_usd, "max_hours": max_hours,
+                    "until": until_of(name)}
+            try:
+                lv.write_spec(spec)
+            except hf_live.LiveError as e:
+                raise SystemExit(f"refused, no pod was made: the live-pod registry could not be written ({e}) (CR-07c)")
+        Run.open(ledger).reserve("runpod_usd", max_usd, item="pod:pending")  # refuses past 80 % of the episode's cap
         job = Job.create(ROOT / "jobs" / "cloud", _opt(rest, "--job", base), kind="pod", provider="runpod", ledger=ledger,
                          caps={"max_usd": max_usd, "max_hours": max_hours}, reuse_finished=False,
                          inputs={"gpu": first["gpu"] if first else gpu, "boot": _opt(rest, "--boot"), "script": script_url,
@@ -1229,19 +1714,34 @@ def main(argv=None, api=None):
         card_max = max(r["price"] for r in picks) if picks else MAX_PRICE[gpu]
         try:
             pod = create(api, body, max_price=card_max,
-                         gpus=[(r["gpu"], r["cloud"]) for r in picks if r["est_usd"] <= max_usd] if picks else GPUS[gpu])
+                         gpus=[(r["gpu"], r["cloud"], card_max) for r in picks if r["est_usd"] <= max_usd] if picks
+                         else [(g, "SECURE", MAX_PRICE[gpu]) for g in GPUS[gpu]])
         except RunPodError as e:
+            if spec is not None:
+                lv.drop_spec(name)
             Run.open(ledger).settle("runpod_usd", "pod:pending", 0.0)
+            Run.open(ledger).fail(f"hw:{job_base}", f"create: {str(e)[:200]}")  # RP-10: no capacity / an API refusal is the hardware try
             job.move("FAILED", f"create: {str(e)[:200]}")
             from explainer_engine.cloud import incidents
             incidents.record(incidents.fingerprint("runpod", "pod", "create", text=str(e)), f"create failed: {str(e)[:200]}",
                              cause=str(e)[:200], fix="", source="create", job=job.state["id"])
             raise
         Run.open(ledger).rename_reservation("pod:pending", f"pod:{pod['id']}")
+        if script is not None:
+            Run.open(ledger).done("pod_plans", name, weights=weights, job=job_base, script_sha=script_sha, pod=pod["id"],
+                                  second_pod_reason=_opt(rest, "--second-pod-reason", ""))
         job.attach(pod["id"], gpu=pod.get("gpu"), price=pod.get("costPerHr"), name=name)
+        if spec is not None:
+            try:
+                lv.write_spec({**spec, "pod": pod["id"]})
+            except hf_live.LiveError as e:  # the guard still runs; say it loudly
+                notify("Live spec not updated", f"{pod['id']}: {str(e)[:150]}; the watchdog sees the name only", "high")
         new_session(pod, max_usd=max_usd, max_hours=max_hours, on_cap=_opt(rest, "--on-cap", "stop"), ledger=ledger,
                     status_token=token if _opt(rest, "--boot") else "", price_ceiling=card_max, job=job.dir,
-                    heartbeat=_opt(rest, "--heartbeat"), boot_minutes=_opt(rest, "--boot-minutes", BOOT_MINUTES, float))
+                    heartbeat=heartbeat, boot_minutes=_opt(rest, "--boot-minutes", BOOT_MINUTES, float),
+                    stall_s=(stall_minutes_of_script(script) or 0) * 60 or None,
+                    extra={"gpu": first["gpu"] if first else pod.get("gpu") or gpu, "cloud": first["cloud"] if first else "SECURE",
+                           "job_base": job_base, "job_type": job_type, "units": units, "script_sha": script_sha})
         print("pod", pod["id"], name, f"${pod.get('costPerHr')}/h", pod.get("gpu") or "", "job", job.state["id"])
         if "--no-guard" not in rest:
             print("guard pid", guard_detached(pod["id"]), f"log tools/runpod/sessions/{pod['id']}.guard.log")
@@ -1272,6 +1772,9 @@ def main(argv=None, api=None):
     elif cmd == "stop":
         print(pid, stop(api, pid))
     elif cmd == "start":
+        if "--allow-zero-gpu-risk" not in rest:  # RP (L7): a stopped pod can come back with zero GPUs and a wiped container disk
+            raise SystemExit("refused: a stopped pod may restart with zero GPUs and a wiped container disk, and still bills. Resume as a NEW "
+                             "pod that reads its checkpoint from HF; if the creator wants this start anyway, add --allow-zero-gpu-risk")
         if "--yes" not in rest:
             raise SystemExit("refused: --yes only after the creator approved this start (price and caps)")
         why = preflight_create(api, max_usd=_opt(rest, "--max-usd", None, float), max_hours=_opt(rest, "--max-hours", None, float),
@@ -1292,8 +1795,11 @@ def main(argv=None, api=None):
             raise SystemExit("refused: delete-volume needs --yes (the creator's word); the data is lost")
         print(pid, api.delete_global_volume(pid) if "--global" in rest else api.delete_network_volume(pid))
     elif cmd == "cost":
-        usd, buckets = settle(api, pid, _opt(rest, "--ledger"))
-        print(f"{pid}: billed ${usd} over {buckets} hour bucket(s) (RunPod billing; the newest hour may still grow)")
+        res = cost_report(api, pid, _opt(rest, "--ledger"))
+        print(f"{pid}: billed ${res['usd']} over {res['buckets']} hour bucket(s) (RunPod billing; the newest hour may still grow)")
+        print("PROGRESS line:", res["line"])
+        if res["speed"]:
+            print(res["speed"])
     else:
         raise SystemExit(__doc__)
 

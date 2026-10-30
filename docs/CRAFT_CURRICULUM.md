@@ -39,7 +39,7 @@ P4, P4b, P5, P6, P7, P8, P9, P10). Until then a row is ticked by the critic or b
 
 Code paths each department's validators will live in (planned): screenwriting `scripting/register_lint.py`,
 `scripting/syllables.py` (P3); sound `audio/sound_director.py`, the `pan` field in `production/assemble.py` (P4);
-voice `audio/voice_audition.py`, `audio/voice_check.py` (P4b); cartography `explainer_engine/maps/`, lanes
+voice `audio/voice_audition.py`, `audio/voice_check.py` (built, P4b); cartography `explainer_engine/maps/`, lanes
 `edit/visual_compensator.py` (P5); shot-card lens and height fields (P6); editing, colour and graphic motion
 `production/assemble.py`, `finish/grade.py`, `edit/motion_lint.py` (P7); animation and acting `qa/identity.py`,
 the departmental layers of `qa/editorial_review.py` that tick every critic row (P8); Shorts

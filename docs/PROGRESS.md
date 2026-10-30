@@ -2546,6 +2546,43 @@ training as sequences is decided in the process. Changed together:
 - Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
 - From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
 
+## 2026-10-29 19:00 UTC (23:00 Tbilisi): P1a, RunPod stop paths that always fire and never kill a healthy pod (no pod, no money)
+
+- Blueprint v2 phase P1a (PR #29). Design in [CLOUD_RUNBOOK](CLOUD_RUNBOOK.md) (CR-01..CR-16, new ID family `CR`); the evidence is
+  `blueprint_2026-10-29/recheck/verify_runpod.json`: the EXIT trap of `self_stop_sh` was never installed (only its first line was
+  used), the guard stopped healthy script pods through `jobs.stall` + a vacuous `safe_to_release`, the heartbeat was optional, upload
+  failures were swallowed, the watchdog hid its own failures, the hooks failed open.
+- `cloud/pod_wrapper.sh` is now the start command of every script pod (`runpod.script_cmd()`; the job's URL, money, lifetime and HF
+  folder arrive as `EE_*` env, `wrapper_env`). It owns the GPU check (BAD_HOST), the key boot-probe (line 1 of beat.txt), the 5-minute
+  upload loop with a failure counter, the money dead-man (`deadline_of`: created + min(lifetime, max_usd / (price + disk)) - grace),
+  the end word (DONE / FAILED / FAILED_UPLOAD / CAPPED / BAD_HOST), the final upload + verify with a bounded retry and the stop (v2
+  action, then GraphQL; no v1 route). `lint_pod_script` now refuses a script that writes beat.txt or an end word, idles, touches CUDA
+  without `timeout` or sends weights into the output folder; the old own-loop rule survives as `lint_own_upload_loop`.
+- `create` refuses a script pod without a heartbeat, and without a stop path outside the session (restricted in-pod key OR a watchdog
+  run in the last 60 min), writes the live record `runpod/live/<pod>.json` to the vault dataset (`cloud/hf_live.py`) before the POST and
+  drops it when no pod is made. The guard lives by the HF beat for script pods (REST view no longer drives a stall); progress frozen
+  under fresh beats = STALLED, then stop at twice the limit (`# stall-minutes: N`); failing uploads push and never stop while files are
+  unstored; FAILED_UPLOAD / BAD_HOST put the job into RECOVERY_REQUIRED.
+- Watchdog: cron every 10 min, reads the live records and beats (DONE / FAILED / CAPPED / money estimate -> stop), writes
+  `runpod/watchdog.json`, closes records of gone pods, writes the job summary; no masks (a missing key, a failed stop and a lost push
+  are red). Hooks: the Stop hook refuses to end a turn when the check cannot run and a known pod is live; TMR `rp.py` is an allow-list.
+  Pushes are recorded in `tools/runpod/notify.jsonl`; `check` reports a lost push or a missing topic while a pod is live.
+- Tests: `test_pod_wrapper.py` (the real wrapper under bash with stubbed curl/nvidia-smi/uploader), `test_cloud_stop_paths.py` (criteria
+  c, d, f, g and the create refusals), conftest isolation of `tools/runpod` (CR-16). Changed on purpose: the lint tests of the old rule
+  now call `lint_own_upload_loop`; `test_a_pod_script_that_idles...` no longer expects `dead_man_sh` and the dead trap (replaced by the
+  wrapper tests); the watchdog cron test expects */10. The old training scripts under `training/pods/` write their own DONE and are
+  refused at the next `create` until P1b rewrites the ones that are reused.
+- Open for the creator: GitHub secret `HF_TOKEN` (write on `vano1919/tmr-artifacts`) for the watchdog; balance is $0.40 so P12a waits for a
+  top-up. Unproven until P12a: the wrapper as container command on RunPod, the real uploader in `ee_upload`, the in-pod key's stop right.
+- P12a drills (CR-17): `runpod create --drill no_self_stop|drop_key|upload_fail` (refused unless the ledger meta says `test=p12a_smoke`),
+  `--pass-s/--upload-grace-s/--cap-grace-s` into the pod env, `EE_DEADLINE` exported to the job script; `self_stop` says so and returns when
+  the pod has no key. Tests in `test_pod_wrapper.py` and `test_cloud_stop_paths.py`.
+- P1a cross-review fixes (PR #29): the watchdog ignores a beat that is not this pod's (BOOT `pod=`, or newer than the record) so a retry is
+  not stopped by the last run's FAILED; a loop upload pass verifies only settled files and never `beat.txt` (the end sequence still verifies
+  all) and the verified time is the pass start; the hook refuses TMR `rp.py` sub-commands outside the allow-list however it is launched;
+  `EE_PRICE` is the card ceiling; `upload_fail >= 6` with unstored files moves the job to RECOVERY_REQUIRED; a guard stop with unstored
+  files does the same (CR-11). Tests for each.
+
 ## 2026-10-29 22:30 UTC (02:30 Tbilisi): P0d Claude API client (no real call yet, no money)
 
 - ვანო 2026-10-29 18:58 UTC: Claude API key in the env file, use the credit fast. Plan `CLAUDE_API_PLAN_2026-10-29.md`; OR-24 verdict
@@ -2642,6 +2679,8 @@ training as sequences is decided in the process. Changed together:
   the curriculum index equal the JSON, one home per CRAFT id, 13 conflicts and 17 areas listed, the conflicting rules keep
   their numbers).
 - Merge of main with P3b (#36): the Lock 5 test of `test_agent_governance` exempts only a backticked reference directly followed by `(planned, Pn)` (regex, the phase must exist in `docs/blueprint/phases.json`); everything else on the line is still checked.
+- P1a second review: the `rp.py` hook inverts its rule: any segment that does not start with a reader/editor and runs `rp.py` with a sub-command outside the allow-list is refused, whatever launches it (timeout, env, FOO=1, nice, stdbuf, watch ...); `diff a/rp.py b/rp.py` and `open('cloud/rp.py')` are no longer refused. Tests extended.
+
 ## 2026-10-29 19:20 UTC (23:20 Tbilisi): Blueprint P2, the data contracts (no pod, no money)
 
 - ვანო (2026-10-29 18:19 and 18:30 UTC): start phase P2 of the Blueprint plan v2 and carry it through the night. Design by the Opus
@@ -2665,7 +2704,7 @@ training as sequences is decided in the process. Changed together:
   states and names the dossier; creator and planner approvals of a gate must bind a non-null sha256; CN-14 compares
   `source_episode_sha256` with the job's `assembled_video`; `film_shots/1` refuses the /2 fields; a cached render and the repo's
   `assets/` may be recorded as artifacts but not any path that merely contains "assets"; the cache key treats `1` and `1.0` alike;
-  BP-139 is read by literal id and listed only where it is read (`test_bp_114_is_listed_only_where_it_is_read`).
+  BP-139 is read by literal id and listed only where it is read (`test_bp_139_is_listed_only_where_it_is_read`).
 - Second review round (22:45 UTC): `adopt` takes `approvals` for EVERY gated state up to the target (a machine approval of STAGED_UNLISTED
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.
@@ -2683,3 +2722,139 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 - `stage_guard start` / `fresh` (OR-32, the re-read rule): `start` appends the stage, the time and the sha256 of the stage page and its inputs to `<job>/story/stage_log.jsonl`; `fresh` reports an output with no start record, a start older than the previous stage's, a page or input changed since the start, or no output (REVIEW until the creator's A5 card is final; `--strict` exits 1); the old `stage_guard <stage> before after` form is unchanged. First body line of the seven stage pages (architect, scene-writer, beat-writer, performance-director, edit-planner, voice-caster, shorts-writer); story-architect gets step 1b (the variants, OR-31) and step 3 takes the template and profile of the chosen variant; scene-writer runs `register_lint` and the ST-20..ST-23 check; edit-planner follows the chosen variant's lanes (VP-15); script-critic scores each variant's story (`scores.critic`, never summed with the code's) and reads the register report; story-engine skill: row 1b, the re-read rule and "Branch switch (A5)" (D-79 built, D-81 a documented `stage_mode` switch, absent = inline); orchestrator phase 2a; SCRIPT_ENGINE pipeline row 1b; INDEX prefixes RG- and VP-. No new agent page (a new agent needs a protected `config/model_routing.json` edit and the creator's word).
 - Open for the creator (none blocks P3; each has the default that was built): (1) the exact 09:28 UTC wording for BP-140 and BP-142 `decided` (the registry quotes the plan card's summary and says so); (2) which words are in the FAIL tier (the 75 forms of BP-140; "revolutionary" and "boasts" are not in it); (3) whether an and-then chain in the text should FAIL (built: REVIEW, ST-20; the declared connector is already a contract FAIL); (4) whether ad-safety FAILs and whether the window is 7 s (YouTube's wording, built) or 8 s (the card); (5) style devices (contrast pairs, question-answer chains, fragments, em dashes: built as densities, REVIEW); (6) the score formula on the card (built: 100 - 10 per REVIEW - 25 per FAIL, next to the critic's, never summed); (7) a separate `variant-planner` page (built: none). Waits for the creator (V4 pilot, OR-15, OR-17): the rewritten Napoleon script and its approvals; the unattended subset (V1/V2 `script_variants.json`, lint baselines) is built and tested.
 - Review follow-ups (P2 thread's verdict on #40): the register allow-list now reaches every call site, not only PV-61 (`narration_lint.lint(allow=)`, `film_shots.check(allow=)`, both CLIs load `register_allow.json` next to the file), so a literal "realm" is exemptable in N-16 and KP-46; `chosen.variant_id` must name an existing variant and one without a FAIL (`variant_plan.check_file`, CN-04), and `EpisodeJob.move(variants=)` refuses an id that is not a variant. Tests added in `test_register_lint` and `test_variant_plan`.
+## 2026-10-30 03:50 UTC: Blueprint P4b, the voice director (free, no pod, no paid take)
+
+- ვანო (2026-10-29 18:17 and 18:30 UTC): D8 conditional (a free generator only if a measured one is good and diverse enough; the
+  narrator stays on the ElevenLabs connector, so the REST client of the plan card is dropped) and "assume yes up to paid".
+  Phase P4b of Blueprint plan v2, after P2 (#31).
+- `audio/voice_audition.py` (new, the one place a voice is measured; P8 and P12b import it): eight measures from one free listening
+  (library preview or a held read): median pitch and range, pitch variation, emphasis, pace (wpm with the text, else syllable
+  rate), spectral centroid and tilt, pause rhythm, sibilance, plus the consistency of several takes (cosine of a numpy MFCC
+  embedding, `numpy_mfcc13`; the embedder is a parameter, the identity scorer is P12b's measurement). Pitch is a vectorised
+  FFT autocorrelation (`f0_track`, within 1 semitone of `voice_layer.f0_track`, 100x faster). `difference`/`distinct` make VC-04
+  measurable with BP-138's three margins (read by literal id, REVIEW). `record` is `voice_audition/1`; `baseline_of` and the CLI
+  (`measure`, `compare`, `baseline`) feed the registry. The profile is measured, never judged: no new threshold was invented
+  (consistency has no limit until real takes are measured).
+- Measured on five real library previews fetched free (8.6 s, 9.7 s, 6.1 s, 2.7 s, 9.2 s of speech; the 2.7 s one is marked
+  `reliable: false`): median pitch 95.6-127 Hz, centroid 914-1492 Hz, 3.7-4.4 syllables/s; three pairs fell under every margin
+  (Spuds/Moody, Adam/David, Adam/Wyatt), so the battery separates voices a description cannot. A preview is not a baseline for
+  centroid: the channel voice's preview measured 914 Hz against about 1250 Hz in its real read.
+- `audio/casting.py`: `eligible` (famous/imitation, taken, age two bands off: the reasons), `fit` (trait match, usage rank, unlabelled)
+  and `rank(..., by_usage=True)` (trait first, the library's one-year usage order only as the tie-break); library age words
+  ("Senior", "middle aged") are read as our bands (the connector returns free-text labels); `ltx_voice_text` writes the voice of
+  an LTX cast card as words from traits under the PV-10 guard. `rank` without `by_usage` is unchanged.
+- `config/channel_voices.json` (`channel_voices/1`) and `voice_check`: `load_registry`, `registry_errors`, `register` (replacing the
+  channel narrator needs the creator's recorded word, VC-08 / veto V1) and `check_against` = EL-13 (a take's timbre windows against
+  the voice's baseline with the read-drift limits; unregistered, no baseline and too-short takes are REVIEW). The shipped baseline is
+  Episode 1's measured Day 1 read (tilt -21.3 dB, centroid ~1250 Hz), kind `read`.
+- Rules: VC-06..09 (STORY_ENGINE), EL-13 (skill), voice-caster page steps 0-8, CRAFT-VOX-02/03/08 and BP-138 no longer "planned"
+  (BP-138 lists the module; `test_the_new_craft_rules_...` now accepts a built validator beside the checklist row).
+  Schemas `voice_audition/1`, `channel_voices/1` with fixtures; CONTRACTS table rows.
+- Not done, by design: no REST client (D8: connector only; `test_there_is_no_elevenlabs_rest_client_in_the_package`); no
+  `casting_credits_max` line in `config/spend_caps.json` (a protected file, D9 "later": the creator's numbers, before P12a); no
+  free voice generator was measured, so none replaces ElevenLabs for narration (Kokoro's retirement, D-39, stands).
+- Tests: `tests/unit/test_voice_audition.py` (18, synthetic voices, no network or media), contract fixtures for both schemas.
+
+## 2026-10-29 22:30 UTC (02:30 Tbilisi 10-30): paid-test caps and their ledgers (no pod, no money)
+
+- ვანო (2026-10-29 18:40 UTC, relayed): a clear yes to the paid tests P12a, P12b and P12e within $5.90 in total, each
+  started only after the coordinator's go after the final Fable xhigh static audit. The OR-23 plans and their OR-24
+  confirmation are in project files `explainer-engine/blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md` (Georgian summary
+  `PAID_TESTS_PLAN_ka.md`).
+- `config/spend_caps.json` `paid_tests`: total_usd 5.9; p12a_smoke runpod_usd 0.50, p12b_two_runs 3.00, p12e_hosts 2.40
+  (pods hard at 80 %: 0.40 / 2.40 / 1.92). P12b and P12e sit above the first proposal (2.50 / 1.00) because the 80 % stop would
+  leave their pods below their estimates; the total is his $5.90.
+- `spend_caps.paid_test(name)` reads a test's lines and refuses an unknown test and a section over its total.
+  `ledger.Run.open_test(path, name)` opens a test's ledger with its line as the cap, every other service at 0 and meta `test`,
+  and refuses another run's ledger. Without it, `runpod create --ledger` on a new path got the episode ceiling
+  (runpod_usd 31). CLI: `python -m explainer_engine.core.ledger open-test <run.json> <test>` and `report <run.json>`.
+- D9's numbers (min_balance_left_usd 1.00, ElevenLabs casting_credits_max 1500) are ვანო's and are not in this change.
+- Tests: `tests/unit/test_spend_caps.py` (5); `tests/unit` 1208 passed, 5 failed only because this container lacks `cv2`
+  (the same 5 fail on main here); `docs_lint` 0 findings.
+- Review fixes (PR #33 cross-review): `runpod create` refuses a ledger path that does not exist (a ledger made there got the
+  episode ceilings); `Run.open` re-checks a paid test's ledger against its line on every open; the cap is per test, not per
+  file: `open_test` needs `EXPLAINER_LEDGER_MIRROR` (a durable folder), restores a missing path from `<mirror>/<test>.json`,
+  every save writes the mirror and a ledger that differs from its mirror stops with LedgerConflict; `ledger report` only
+  reads; `decided` cites the creator's message id. Tests: tests/unit/test_spend_caps.py, tests/unit/test_runpod.py,
+  tests/unit/test_cloud_stop_paths.py (P1a's drill tests now open their ledger with `open_test`, its line and its
+  mirror, instead of a hand-made ledger above the line).
+
+## 2026-10-30 03:50 UTC: P12d, the fake-HTTP drills (no pod, no money)
+
+- `tests/unit/test_cloud_drills.py`: the five scenarios of the Blueprint card played once, each chaining the real `pod_wrapper.sh`
+  (stubbed curl and uploader, `EE_DRILL` from CR-17) with the watchdog and the guard over the fake RunPod and fake registry: the
+  session dies (no_self_stop), the cap is reached (and the silent pod is stopped by its record's money estimate), the folder upload
+  fails (upload_fail), only the watchdog is left, the pod has no key (drop_key). `docs/CLOUD_RUNBOOK.md` "Drills" is the table
+  (scenario, expected, received, live); the live column stays empty until P12a's pod runs `create --drill`.
+## 2026-10-30 — P0c-2: agent form A/B at 16 segments (free, evidence only)
+- `docs/research/AGENT_AB_P0C2_2026-10.md` + data in `docs/research/agent_ab_2026-10/p2/`: Napoleon-vs-Genghis at 16 segments (template D), one context (A2) vs 26 workers with Haiku on the mechanical
+  stages (B2), blind Opus critic (A2 4.00 vs B2 3.17 on its table), cost 14.19 M vs 19.08 M input-price units, B2 ahead only if a Haiku unit costs under half a Sonnet unit.
+  `measure.py` now reads the `s03r_writer` repair snapshot. The plan thread's recommendation, in force under the creator's 2026-10-29 18:17 UTC delegation: A5 = D-79; the card returns to him in the 2026-10-30 morning report for confirmation and he can overturn it. D-81 stays a hypothesis with reopen triggers (row in `docs/DECISIONS_AND_OPEN_QUESTIONS.md`). No paid call. Test: none (research data; `docs_lint` 0 findings).
+
+## 2026-10-30 03:30 UTC: P1a follow-up, nested `rp.py` runs behind a reader (no pod, no money)
+
+- Re-review of PR #29: ``echo `./rp.py create` `` and `find . -exec ./rp.py create {} \;` passed because the first word was a reader.
+  Backticks now split a command segment like `(`, and a `find` with `-exec`/`-execdir`/`-ok`/`-okdir` is not a reader. Tests in
+  `test_f_the_bash_hook_allows_only_read_only_and_stopping_tmr_commands`; `find . -name rp.py` and ``echo `./rp.py status` `` stay allowed.
+
+## 2026-10-30 — P2 follow-up: review leftovers of PR #31
+- `EpisodeJob.adopt`: a directory as the dossier path and approvals that are not a dict are `ContractError`, no longer `IsADirectoryError` / `AttributeError`.
+- `shot_cache.key`: inf / NaN anywhere in a shot spec is a `ContractError` (no JSON form, no stable key).
+- Tests: `test_adopt_refuses_a_directory_dossier_and_non_dict_approvals`, `test_a_non_finite_number_is_a_contract_error_not_a_crash`.
+- Left open (design changes, for P3+ to take with the stage that uses them): approval `sha256` compared with the artifact it approves; CN-14 skipped when no `job_manifest.json` is present; `threshold_reads` does not see a rule id held in a constant.
+- Review of #45 (P3b thread, CHANGES NEEDED, one blocker): `voice_check.register` now needs a non-blank `creator_ref` for ANY status or
+  role change of the standing channel entry, not only for adding a different channel voice (retire-then-add no longer works in two
+  calls), and a blank or whitespace ref is refused. Minors taken: pitch checked at 90-240 Hz, the other measures move with the signal
+  (tilt, sibilance, emphasis, pauses, syllable rate), and the five preview measurements are committed
+  (`docs/research/VOICE_PREVIEWS_2026-10-30.json`, no media) and pinned by a test.
+
+
+## 2026-10-30 04:10 UTC: P1b, `runpod dryrun` + `config/cloud_pins.json` (no pod, no money)
+
+- `cloud/dryrun.py` + `runpod dryrun --script`: `bash -n`, `lint_pod_script`, four static install rules (`pip install -U` only with `==`,
+  `git+https` only with `@sha`, every `git clone` followed by a checkout of a sha from the pins file, no `|| true` on installs, a `DRY=1`
+  gate after the last install) and a Hub existence check of every literal repo id. The record is keyed by the sha256 of the script text and
+  by the pins file; `preflight_create` refuses a script pod without a passing one. `config/cloud_pins.json` (`cloud/pins.py`): image digests
+  `tmr_pod`, `aitoolkit`, `smoke`, git shas of ai-toolkit / VideoX-Fun / diffusers / peft, `huggingface_hub` 1.33.0; all `smoke_verified:
+  false`, every `pull_mb_per_s` null (not measured, not guessed). Script pods run by digest only (default `tmr_pod`); an unlisted digest, a
+  tag or an undecided pin is refused; an image without a measured pull speed on COMMUNITY needs `--boot-minutes >= 25` (LT-15).
+  `runpod pins <pins.txt>` compares a pod's own record. The wrapper installs `huggingface_hub==$EE_HF_PIN` when the image lacks it and ends
+  the pod `BAD_HOST: no uploader` when that fails (paid plan §2.0 item 6, first option). CR-18 in `docs/CLOUD_RUNBOOK.md`;
+  `tests/unit/test_cloud_pins_dryrun.py` (19 tests; the three old defects are read from the real `xworld_v2_loop.sh`).
+- Values that came from lookups on 2026-10-30, not from this repo: the digests (registries), the git HEADs of that day (not necessarily
+  the commits rounds 2-3b ran), the `smoke` tag (the only CUDA tag of `runpod/pytorch` 2.4; the plan says "a runpod/pytorch 2.4 digest")
+  and `huggingface_hub` (latest 1.x; its API checked by import). They are pins to be proved by P12a, not facts about a working stack.
+- Not done here, on purpose: the nine historic `training/pods/*.sh` (pre-P1a protocol: own upload loop, own DONE) are not rewritten. They are
+  refused by `create` already; the P12 scripts under `training/pods/p12/` are the ones that must pass `dryrun`.
+
+## 2026-10-30 05:00 UTC: P1c, measured speeds, batching rules RP-01..10, the bill into the ledger (no pod, no money)
+
+- `config/job_speeds.json` + `cloud/speeds.py`: the table is committed EMPTY (job types and units only); `runpod cost <pod>` fills a row
+  from the pod's `$EE_OUT/units.json` (new contract, RP-08: `{job_type, units, work_s, setup_s?, mb?, download_s?}`; the P12 scripts must
+  write it). `pick_gpus` takes a measured row first, then the SPEED estimate, and a card nobody knows is NOT skipped any more: slowest known
+  speed x `margin_unmeasured` 2.0. A card whose fixed setup is over 40 % of the pod's time is refused with its reason (RP-09). The old test
+  that expected an unknown card to be skipped is changed on purpose (card text of P1c).
+- RP-01..RP-10 (`cloud/batching.py`; the rule texts are the p9 re-check's B1..B10, home `docs/CLOUD_RUNBOOK.md`, docs_lint home `RP`):
+  `create` now needs `--work-min` and `--setup-min` (RP-01; exempt: the P12a smoke ledger and `--measure` <= $0.30) and `--disk` for a
+  script pod, records the weight set per pod (RP-02, `--second-pod-reason`), defaults a script pod to volume 0 and no ports, and counts
+  hardware tries per job (RP-10). `--wait-stock 15m`, `cards --job T --units N`.
+- Money: `cost` needs the pod id; `settle_due` (run by the session-start hook) settles a pod 90 min after its stop; `cost` prints a PROGRESS-ready
+  line and keeps `usd_per_unit` in the ledger; `Run.report()` shows settled and open reservations apart; `check` prints the stopped disks on
+  one line, names dead `keep_stopped_pods` ids and flags billing no pod explains; `start` is refused without `--allow-zero-gpu-risk`.
+  `tests/unit/test_cloud_economy.py` (21 tests).
+- Not done, on purpose: (1) `MAX_PRICE` pools from `config/spend_caps.json`: that file changes only on the creator's recorded word, and the
+  numbers are the same; (2) the PROGRESS line is printed and kept in `tools/runpod/settled.jsonl`, not written into this file by the tool
+  (every branch would conflict on it); (3) the watchdog does not settle (it has no ledger in CI): the session hook does; (4) RP-09's "never an
+  80/96 GB card when 48 GB fits" needs a measured `min_vram` per job type: none exists yet.
+
+## 2026-10-30 06:00 UTC: P1c review fixes (PR #48): a garbled units.json, a settled flag that was written away
+
+- `units.json` is validated before it is used (`speeds.from_units_json`): an object with a string `job_type` and non-negative numbers, else
+  `SpeedError` (now a `ContractError`). `cost_report` settles the real bill FIRST and parses the pod's files after, so a garbled file
+  (`[]`, `null`, `5`, `units: "abc"`) costs only the speed row ("no speed row: units.json ..." in the settle line), never the ledger entry.
+  The session-start hook shows a failed `settle_due` as an info line instead of dropping the whole RunPod check.
+- `cost_report` re-reads the session before it records the pod's outcome, so `settled` is no longer written away and the next session does not
+  settle the same pod again. Tests: `test_a_garbled_units_json_never_keeps_the_bill_out_of_the_ledger`, `test_the_session_hook_survives_...`,
+  `test_a_settled_pod_stays_settled_...`.
+- Wording: RP-10's message says "failed create or BAD_HOST pod(s)" (a failed `create` of any cause uses the one try). `check` only REPORTS
+  unknown `keep_stopped_pods` ids; it does not clean them up (`config/spend_caps.json` changes only on the creator's word).

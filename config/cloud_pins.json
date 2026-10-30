@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "looked_up": "2026-10-30",
+  "note": "The only place a pod image digest, a git sha or a pip pin lives (P1b, docs/CLOUD_RUNBOOK.md CR-18). Changing a pin is a PR. digest null = not decided: create refuses that image. smoke_verified stays false until a pod's pins.txt / boot facts (P12a) have shown the pin works; pull_mb_per_s is null until a pod measures it (P12a A-2).",
+  "images": {
+    "tmr_pod": {
+      "repo": "ghcr.io/vano1919/tmr-pod",
+      "tag_at_lookup": "latest",
+      "digest": "sha256:6852f3d9e49de298606baf19fada5ee57a32cc74f3bef8b8f88ed35e890b68c0",
+      "size_gb": 15.13,
+      "pull_mb_per_s": null,
+      "smoke_verified": false,
+      "decision": "B3 (claude, recorded in docs/blueprint/decision_queue.json): digest pin, same image"
+    },
+    "aitoolkit": {
+      "repo": "ostris/aitoolkit",
+      "tag_at_lookup": "latest",
+      "digest": "sha256:fadfc236117b7b4820c5d946272a5a60738dbb044ab272b4635d9ea4400c2c1d",
+      "size_gb": 6.58,
+      "pull_mb_per_s": null,
+      "smoke_verified": false,
+      "decision": "paid plan §3: P12b/P12e run on the aitoolkit image (round 2-3b used :latest, now pinned)"
+    },
+    "smoke": {
+      "repo": "runpod/pytorch",
+      "tag_at_lookup": "2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+      "digest": "sha256:61a4aafb0094cd773f11eefa378929d5a687bd775febeb78eac62fc824141fb5",
+      "size_gb": 7.43,
+      "pull_mb_per_s": null,
+      "smoke_verified": false,
+      "decision": "paid plan P12a row Image: 'a runpod/pytorch 2.4 digest' is the candidate; it is the only CUDA tag of 2.4 on Docker Hub (the other is ROCm). Contents (bash, curl, python3 >= 3.10, torch) are unverified until P12a's boot facts; huggingface_hub is not assumed: the wrapper installs pip.huggingface_hub when it is missing."
+    }
+  },
+  "git": {
+    "ostris/ai-toolkit": {"url": "https://github.com/ostris/ai-toolkit", "sha": "b69b98314557f7c8b08e11bbb14e48d959e6ab26", "smoke_verified": false},
+    "aigc-apps/VideoX-Fun": {"url": "https://github.com/aigc-apps/VideoX-Fun", "sha": "e8c314fbfa494d0429bbef605c9f6112b79a7ead", "smoke_verified": false},
+    "huggingface/diffusers": {"url": "https://github.com/huggingface/diffusers", "sha": "d8c1b13c756df0059bcdb6e477a1eafcd502098d", "smoke_verified": false},
+    "huggingface/peft": {"url": "https://github.com/huggingface/peft", "sha": "ebf159f74d80a0d406f7afa943ede73b3901c20e", "smoke_verified": false}
+  },
+  "pip": {
+    "huggingface_hub": {"version": "1.33.0", "smoke_verified": false, "note": "latest 1.x at lookup (the scripts used '<2'); the wrapper's calls (HfApi.upload_folder, list_repo_tree(recursive=True), repo_info) exist in it, checked by import 2026-10-30"}
+  }
+}

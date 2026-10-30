@@ -1,0 +1,254 @@
+## S01 Cold open: an odd detail and a paradox at once; teasers of the later valley fight; the first sentence is the hook.
+- NARRATOR: An arrow stands in the mud between Napoleon's boots.
+- NARRATOR: A minute ago, his army was marching out of burning Moscow.
+- NARRATOR: Now the grass is green, and the year is 1223.
+## S02 Information gap: the surprising outcome promised, no part of the answer.
+- NARRATOR: Napoleon needs one thing from an enemy: a single big battle he can win.
+- NARRATOR: This enemy's favorite move is to run away first.
+- NARRATOR: So, can an artillery officer win a battle that nobody will come to?
+## S03 Orientation in narration: maps and diagrams, the supply problem planted.
+- NARRATOR: Back in Moscow, the tsar's army left the city to burn, and the tsar refused to talk.
+- NARRATOR: Five weeks later, the French turned for home.
+- NARRATOR: Four hundred and fifty thousand men had crossed the Neman that summer.
+- NARRATOR: About a hundred thousand made it to Moscow.
+- NARRATOR: Its bread rides in heavy wagons that were never built for tracks like these. The rest, the army takes from the villages along the road.
+- NARRATOR: On this steppe there is no road, and there are no villages.
+- NARRATOR: There is Genghis Khan, with two tumens.
+- NARRATOR: A tumen is ten thousand horsemen.
+## S04 Scene 1: goals and stakes declared through conflict: the battle Napoleon needs against the charge Murat itches for.
+- NARRATOR: On a wet green rise above the halted column, Napoleon watches the far ridge through a spyglass.
+- NARRATOR: Murat sits his horse beside him, and Kerim, a Mameluke of the Guard, holds the emperor's second mount.
+- NARRATOR: A single rider showed himself on that ridge, and vanished.
+- NAPOLEON: Hold your men, Murat.
+- MURAT: One rider, sire! Give me two hundred sabres and I'll bring you his horse.
+- NAPOLEON: I don't want his horse. I want his army.
+- MURAT: Then where is it?
+- MURAT: A ridge is a ridge, sire. Cavalry takes ridges.
+- NAPOLEON: Cavalry takes a ridge and finds nothing on it. I want the army behind it.
+- NAPOLEON: Behind that ridge, forming a line. They always form a line.
+- MURAT: Ah, waiting. Always the waiting.
+- NAPOLEON: The guns come up first. Then the ground is mine, and they come to me.
+- MURAT: And if they don't come, sire? If they're gone by noon?
+- NAPOLEON: An army that is gone is not an army.
+- NAPOLEON: Kerim. The rider shouted something. You heard it.
+- KERIM: I think so, sir.
+- NAPOLEON: Think?
+- KERIM: It wasn't Russian, sir. It wasn't Polish. It sounded like my grandfather's tongue. Almost.
+- MURAT: Your grandfather lives on that ridge, then?
+- KERIM: My grandfather is dead, Marshal. His tongue lives everywhere.
+- NAPOLEON: What did the rider say?
+- KERIM: Whose horses are those, sir? That's what he asked.
+- NAPOLEON: Whose? Ours, or his?
+- KERIM: Ours, sir. He was looking at the herd behind us.
+- MURAT: He wants to buy them! Sire, let me ride up and sell him one.
+- NAPOLEON: You will not move. The guns first.
+- MURAT: Sire, I beg you. Not for glory. For the men with nothing to hit.
+- NAPOLEON: Your glory is the only thing in this army that has never run short.
+- MURAT: Then spend it, sire!
+- KERIM: Sir. The ridge is empty.
+- NAPOLEON: Since when?
+- KERIM: While you were talking, sir. They didn't run. They just weren't there.
+- NAPOLEON: Take your sabres, Murat. Find them.
+- MURAT: Sire!
+- NAPOLEON: Find them, and bring me a battle.
+- NARRATOR: Murat is over the ridge before the dust settles. Napoleon's guns stay where they are, pointed at nothing.
+## S05 Bridge: the result (the skirmish, the dead horses) and the next question: what has he caught?
+- NARRATOR: For six days, Murat chases shadows.
+- NARRATOR: Each morning a rider shows himself on a ridge. Each time Murat gallops, the rider turns and rides away.
+- NARRATOR: On the sixth day, he catches a few stragglers. He doesn't ask what the chase costs his horses.
+- NARRATOR: So what, exactly, has he caught?
+## S06 Scene 2: the first plan fails and the hero must react: Napoleon decides to choose the ground himself.
+- NARRATOR: Dusk, the sixth day. Murat rides into the wagon park like a man back from a parade.
+- NARRATOR: Behind him, horses lie down between the wheels, and they don't get up.
+- NARRATOR: Napoleon is waiting for him there, with Kerim at his side.
+- MURAT: We caught a rear guard, sire! Eleven of them. They ran like hares!
+- NAPOLEON: Hmm. Your horses, Murat.
+- MURAT: Horses are for riding, sire.
+- NAPOLEON: Tell me how many can carry a man tomorrow.
+- MURAT: Give me the remounts and every one of them.
+- NAPOLEON: The remounts pull my guns.
+- MURAT: Guns! They've nothing to shoot at. Another week and I'll have them.
+- NAPOLEON: A week. And no horses.
+- MURAT: With theirs! We take their horses and they walk.
+- NAPOLEON: Count me the horses those eleven men cost.
+- MURAT: Eleven men, sire! Count those, not horses.
+- NAPOLEON: Kerim. You rode with the vanguard. Tell the marshal what you saw.
+- KERIM: I saw the marshal win, sir.
+- NAPOLEON: The truth, Kerim.
+- KERIM: Spare horses, sir. Three or four each, on a string. When one tired, he swapped.
+- NAPOLEON: And in six days, did they ever light a fire?
+- KERIM: Not one, sir. Not one fire in six days.
+- MURAT: Tricks! The man ran from my sabres, and I—
+- KERIM: He ran fresh, Marshal. You rode tired horses.
+- NAPOLEON: Murat.
+- NAPOLEON: Why would a man run for six days?
+- KERIM: So that you follow him, sir. To wherever he chose.
+- NAPOLEON: Then I choose the ground first.
+- NAPOLEON: The valley has one mouth. Guns on the slope, squares behind, wagons at the back.
+- MURAT: And they'll just walk into it, like lambs.
+- NAPOLEON: My long guns throw iron nine hundred metres. Nothing a rider carries goes half that.
+- MURAT: Then give me the remounts, and I'll herd them into it.
+- NAPOLEON: No. The remounts go to the guns.
+- NARRATOR: That night the remounts go to the guns, and Murat speaks to no one. Then the quartermasters count the wagons, and the count is bad.
+## S07 New complication in narration: the supply factor that changes the game; a loop opens on Kerim.
+- NARRATOR: Right. Here's what the emperor's guns can't fix: the wagons.
+- NARRATOR: Everything the army eats and fires rides in them, and they were built for roads.
+- NARRATOR: Back on the road to Moscow, the soldiers took what they needed from the villages. Colonel Pion put it bluntly: the army must live by the sword.
+- NARRATOR: The steppe has no villages. There is only grass, and the riders who ride over it.
+- NARRATOR: What do you do when your army can't eat the ground it stands on?
+- NARRATOR: On the seventh day, Kerim rides out alone to find where the riders go. He doesn't come back.
+## S08 Scene 3: the other side acts, a new place; the leak that makes the wagons the target.
+- NARRATOR: A felt tent behind a river-cut, and a fire of dung and sagebrush. Genghis Khan sits by it and says nothing.
+- NARRATOR: Two riders drag in a captured man with a Mameluke's sabre. His name is Kerim.
+- NARRATOR: Kerim speaks Crimean Tatar. The khan's herder speaks Cuman. Both are Kipchak Turkic tongues, so the words cross.
+- GENGHIS: You shot one of my riders.
+- KERIM: He shot at me first.
+- GENGHIS: Did you shoot?
+- KERIM: Yes.
+- GENGHIS: An archer once shot my horse from under me. I asked who. He stood up and said, I did. His name was Jebe. I kept him.
+- KERIM: Oh, am I meant to thank you?
+- GENGHIS: Your emperor sent you ahead alone. Is he afraid, or only careless?
+- KERIM: Neither, Khan. He's waiting for you to come to his guns.
+- GENGHIS: Everyone waits for me to come to something.
+- GENGHIS: Where did you learn my herder's words?
+- KERIM: From my grandfather. His people came from the Crimea. They spoke like your herder. Almost.
+- GENGHIS: Your emperor has iron tubes on wheels. My riders say they are slow.
+- KERIM: Slow to leave. Not slow to arrive.
+- GENGHIS: A bull is not slow to arrive. We still eat bulls.
+- GENGHIS: My riders say the tubes are loud and cannot hit what runs.
+- KERIM: Cannot hit what runs? Your arrows fall short. The long gun reaches nine hundred metres.
+- GENGHIS: And when the iron breaks into hail?
+- KERIM: Six hundred. Then it's a storm.
+- GENGHIS: You are generous with your emperor's secrets.
+- KERIM: You asked about the guns.
+- GENGHIS: I asked whether they were slow.
+- GENGHIS: Go back to your emperor.
+- KERIM: And tell him what?
+- GENGHIS: That the khan would like to see his guns.
+- KERIM: And if he says no?
+- GENGHIS: You told me the truth in my tent. Tell him that, too.
+- NARRATOR: At dawn, Kerim rides out of the camp alive. Behind him, the khan sends for his generals.
+## S09 Preparation in narration: the full size of the crisis, pressure rising, no spoiler.
+- NARRATOR: Kerim rides into the French lines before sunrise. The emperor hears the khan's message in silence.
+- NARRATOR: The khan would like to see his guns. Napoleon takes that as an insult, and then as an invitation.
+- NARRATOR: Ahead lies the valley he chose: one mouth, long slopes, firm ground.
+- NARRATOR: The long guns go on the high slope, the squares behind them, the wagons at the back.
+- NARRATOR: A musket is good for ninety metres.
+- NARRATOR: A Mongol bow can loft an arrow nearly four hundred metres.
+- NARRATOR: On the ridge above, the riders begin to gather. Nobody has counted them.
+## S10 Central scene: the longest, three escalations; the plan meets the unexpected; the other side's line cross-cut with the hero's.
+- NARRATOR: Dawn on the eighth day. On the slope above the valley, Napoleon stands beside his guns.
+- NARRATOR: Murat sits a horse taken from a wagon team, and Kerim is at the emperor's elbow.
+- NARRATOR: On the ridge opposite, the first line of riders comes into view.
+- NAPOLEON: Nobody fires until they're inside nine hundred metres.
+- MURAT: They're a ridge full of horses, sire. They aren't coming inside anything.
+- NAPOLEON: They're coming.
+- MURAT: Look at them. Sitting there like men at a market.
+- NAPOLEON: Men at a market are patient, Murat. Learn from them.
+- MURAT: I'd rather learn from a horse that can still stand, sire.
+- KERIM: Sir. They're coming down.
+- MURAT: Now! They're in the open! Sire, now!
+- NAPOLEON: Wait.
+- NAPOLEON: Fire one round. Let them see what waits for them.
+- MURAT: At nothing, sire? You'll frighten the grass.
+- NAPOLEON: Fifty metres short. And not one of them flinched.
+- MURAT: They're polite, sire. They let you finish.
+- NAPOLEON: Look where they stopped. Nine hundred and fifty, to the pace.
+- MURAT: Oh, coincidence, sire.
+- NAPOLEON: Ask your Mameluke.
+- KERIM: I'm only a rider, sir.
+- MURAT: Then I take them while they sit! Give me the cavalry!
+- NAPOLEON: On what? Half your horses couldn't carry a drum.
+- MURAT: Half is enough for that rabble.
+- NAPOLEON: Half dies in the first charge, Murat. You know it better than I do.
+- MURAT: Then what are the guns for?
+- NAPOLEON: For the moment they come inside nine hundred.
+- MURAT: They'll never come.
+- NAPOLEON: Hold the left of the squares.
+- MURAT: Sire—
+- NAPOLEON: Hold.
+- KERIM: Sir. Behind us.
+- NAPOLEON: Where?
+- KERIM: The smoke, sir. Over the wagons.
+- MURAT: They went round the ridge! The wagons, sire, the wagons!
+- NAPOLEON: I have eyes, Murat.
+- MURAT: Give me the cavalry, now!
+- NAPOLEON: Fire arrows. Shot from beyond musket range.
+- MURAT: Then turn the guns on them!
+- NAPOLEON: Fifteen men to a gun, all laid on the valley. Guns don't swing like doors.
+- MURAT: Then send a square to the wagons!
+- NAPOLEON: A square that moves is a square that dies.
+- MURAT: Then we stand here and watch it burn? Our bread, our powder, the wounded?
+- NAPOLEON: I know what is in those wagons.
+- MURAT: Then do something!
+- NAPOLEON: I am. I am holding what I have.
+- KERIM: Sir, let me take the Mamelukes to the wagons. Please.
+- NAPOLEON: Please? You have not asked me for anything in eight days.
+- KERIM: No, sir.
+- NAPOLEON: Stay where I can see you.
+- NAPOLEON: They never wanted my guns. They wanted my bread.
+- NAPOLEON: And they knew exactly where my guns end.
+- NARRATOR: By midmorning the wagon line is a wall of black smoke. No square has broken. The guns have fired once, at nothing. Napoleon has one question left.
+## S11 Turning point: the revelation and the choice that changes the story; then one still frame.
+- NARRATOR: Behind the wagon line, smoke still lifts off the black axles. Napoleon finds Kerim waiting there.
+- NAPOLEON: Nine hundred and fifty metres. Who told them?
+- KERIM: Sir, I spent a night in their tent—
+- NAPOLEON: Who told them?
+- KERIM: I did, sir. They called your guns slow. I wanted them to know.
+- NAPOLEON: Why?
+- KERIM: Well, nobody listens to a Mameluke, sir. Until he has something to sell.
+- NAPOLEON: I am listening now. Go back, and tell them what I want.
+- KERIM: Which is, sir?
+- NAPOLEON: A parley.
+- NARRATOR: Kerim rides out with a white cloth tied to his sabre. Napoleon does not watch him go.
+## S12 Fallout: who lost and who won, never what we just saw.
+- NARRATOR: So, who won? The khan lost no one. The emperor lost half his bread.
+- NARRATOR: No square broke. A steady square is rarely broken by cavalry alone, and nobody even tried.
+- NARRATOR: This same spring, on the Kalka River, two Mongol generals drew the Rus princes on for about nine days. Then they destroyed them.
+- NARRATOR: Napoleon wanted to find an army and break it. This army found his dinner.
+- NARRATOR: And the fog still lies behind the ridge the khan holds. To reach it, Napoleon needs the khan's leave.
+## S13 Scene 4, the final choice: slower, on dialogue; the power gap shown in a cutaway; the lines broken by silent reactions.
+- NARRATOR: A felt carpet on open grass, beyond the reach of every arrow and every gun.
+- NARRATOR: Napoleon sits on one side. Genghis Khan sits on the other. Kerim kneels between them, and behind him waits the herder who carries the Cuman words.
+- GENGHIS: Your bread is smoke. Your horses are bones. Your road runs through my riders.
+- NAPOLEON: My squares are unbroken.
+- GENGHIS: Yes. I watched them. They are good at standing.
+- GENGHIS: You came for a battle. I have watched you wait for one for eight days.
+- NAPOLEON: I am still waiting.
+- GENGHIS: Then you will wait a long time.
+- NAPOLEON: Tell him a man who hides from guns has no right to talk of bones.
+- KERIM: He says a man who hides from guns has no right to talk of bones.
+- GENGHIS: Exactly as he said it?
+- KERIM: Exactly, Khan.
+- GENGHIS: Good. I keep men who tell me what was said.
+- GENGHIS: My generals met some princes by a river. The princes killed my messengers.
+- GENGHIS: Those princes lie under the victory platform now.
+- NAPOLEON: I have not killed your messenger.
+- GENGHIS: No. You sent him back. That is why we are talking.
+- GENGHIS: Give me the iron tubes, and the men who make them speak.
+- NAPOLEON: The men are mine. They go home with me.
+- GENGHIS: A tube without a man who knows it is only a pot.
+- GENGHIS: Where I come from, one man who knows is worth ten who own.
+- NAPOLEON: And where I come from, a man belongs to himself.
+- GENGHIS: Then your guns will be lonely.
+- NAPOLEON: Take two guns. The men stay with me. Learn the rest yourself.
+- GENGHIS: Does he mean it?
+- KERIM: He means it, Khan. He never says a thing twice.
+- GENGHIS: Two. The fog is yours at dawn.
+- NAPOLEON: At dawn.
+- NARRATOR: Two guns are rolled out onto the open grass and left there. The army has its road home, and it cost one afternoon.
+## S14 The answer: the opening question answered fully, the cost named.
+- NARRATOR: So, can Napoleon get his army out of the steppe of 1223? He can. Just not the way he always wanted.
+- NARRATOR: He never gets his battle. He leaves behind every wagon, and two guns.
+- NARRATOR: Remember Moscow? He waited five weeks there for a tsar who would not talk.
+- NARRATOR: The khan talked in an afternoon.
+- NARRATOR: Hmm. Maybe that's the whole difference. The tsar needed nothing from him. The khan wanted two guns.
+- NARRATOR: What the khan did with them, no Frenchman ever saw.
+- NARRATOR: At dawn the fog comes back, thick and cold, and the army walks into it.
+## S15 Callback: the first image again with a new meaning.
+- NARRATOR: The last man steps into the fog. Napoleon stops at its edge.
+- NARRATOR: An arrow stands in the grass at his boots, right where the first one stood.
+- NARRATOR: He pulls it out and keeps it. Then the fog closes, and it's October 1812 again.
+## S16 Channel pointer: worlds on the channel and worlds coming, subscribe so as not to miss them; never a sign-off.
+- NARRATOR: The Stone Age is already on the channel, and Rome and the far future are coming.
+- NARRATOR: Which world would you drop into the fog next? Subscribe, so you don't miss the next collision.

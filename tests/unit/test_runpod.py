@@ -297,6 +297,7 @@ def test_the_cli_refuses_without_the_creators_word(env):
 
 def test_create_cli_reserves_in_the_ledger_writes_a_session_and_names_the_lifetime(env, tmp_path, monkeypatch):
     fake, api = env
+    monkeypatch.setenv("NTFY_TOPIC", "test-topic")     # check() reports a missing push topic while a pod is live (CR-14)
     monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)
     monkeypatch.setattr(R, "live_guard", lambda pid: True)
     ledger = tmp_path / "run.json"
@@ -315,6 +316,17 @@ def test_create_cli_reserves_in_the_ledger_writes_a_session_and_names_the_lifeti
     with pytest.raises(SystemExit, match="--ledger"):
         R.main(["create", "--yes", "--max-usd", "0.1", "--max-hours", "1"], api=api)
     assert len(fake.pods) == 1
+
+
+def test_create_cli_refuses_a_ledger_that_does_not_exist_before_any_call(env, tmp_path, monkeypatch):
+    """A ledger made by create would get the episode ceilings, not a paid test's line: open it first (open-test)."""
+    fake, api = env
+    monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)
+    missing = tmp_path / "nowhere" / "run.json"
+    with pytest.raises(SystemExit, match="no ledger"):
+        R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(missing)], api=api)
+    assert fake.calls == [] and not fake.pods  # no API call at all, so no POST
+    assert not missing.exists() and not missing.parent.exists()  # and no ledger was made behind the creator's back
 
 
 def test_create_cli_sets_the_container_disk(env, tmp_path, monkeypatch):
@@ -503,6 +515,7 @@ def test_create_is_refused_past_the_24h_billing_the_balance_or_with_a_stray_disk
 
 def test_check_flags_stopped_disks_unless_the_creator_keeps_them(env, tmp_path, monkeypatch):
     fake, api = env
+    monkeypatch.setenv("NTFY_TOPIC", "test-topic")
     fake.pods = {"ex": pod("ex", "x", "EXITED", volumeInGb=60), "run": pod("run", "ee-x-until-100"), "err": pod("err", "e", "ERROR")}
     res = R.check(api, now=1000)
     assert len(res["problems"]) == 3 and "$0.39/day" in res["problems"][0] and "in ERROR" in res["problems"][2]
@@ -665,29 +678,58 @@ VAULT_CHECK = "python -m explainer_engine.vault check-uploaded /workspace/out --
 
 def test_a_pod_script_must_upload_its_log_before_its_first_heavy_step():
     """The 2026-10-24 training script uploaded nothing until its caption stage ended: 72 min of silence, stopped (≈$1.3)."""
-    bad = R.lint_pod_script(OLD_TRAIN_SH)
-    assert len(bad) == 3 and "after the first heavy step at line 4" in bad[0] and "rewrite" in bad[1]
-    assert bad[2].startswith("VT-01")  # D-73: the weights are proved on HF before the pod stops
+    # CR-08: since the pod wrapper owns the loop this is the rule for a script that still runs its own (lint_own_upload_loop)
+    bad = R.lint_own_upload_loop(OLD_TRAIN_SH)
+    assert len(bad) == 2 and "after the first heavy step at line 4" in bad[0] and "rewrite" in bad[1]
+    assert R.lint_pod_script(OLD_TRAIN_SH)[-1].startswith("VT-01")  # D-73: the weights are proved on HF before the pod stops
     fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n",
                                  "nvidia-smi || true\n( while true; do sleep 240; date > out/beat.txt; up; done ) & EARLY=$!\n")
-    fixed += VAULT_CHECK
-    assert R.lint_pod_script(fixed) == []
+    assert R.lint_own_upload_loop(fixed) == []
     frozen = fixed.replace("date > out/beat.txt; ", "")   # uploads, but its heartbeat file never changes: reads as silent
-    assert "rewrite its heartbeat file" in R.lint_pod_script(frozen)[0]
-    assert "no background upload loop" in R.lint_pod_script("stage setup\npip install x\n")[0]
+    assert "rewrite its heartbeat file" in R.lint_own_upload_loop(frozen)[0]
+    assert "no background upload loop" in R.lint_own_upload_loop("stage setup\npip install x\n")[0]
     slow = fixed.replace("sleep 240", "sleep 900")
-    assert "sleeps 900 s" in R.lint_pod_script(slow)[0]
+    assert "sleeps 900 s" in R.lint_own_upload_loop(slow)[0]
 
 
-def test_preflight_refuses_a_pod_script_without_a_heartbeat(env):
+NEW_SH = """# heartbeat: datasets/o/r:run/out/beat.txt
+python run.py > $EE_OUT/train.log
+echo "step 5/10" > $EE_OUT/progress.txt
+""" + VAULT_CHECK
+
+
+def test_preflight_refuses_a_script_pod_that_nothing_outside_the_session_can_see_or_stop(env):
+    """CR-07: a heartbeat, and (a restricted in-pod key OR a watchdog run in the last 60 min); a script that owns beat.txt is refused."""
     _, api = env
-    ok = dict(max_usd=0.5, max_hours=1.0, gpu="cheap", now=10**6)
-    assert any(w.startswith("pod script:") for w in R.preflight_create(api, **ok, script=OLD_TRAIN_SH))
-    fixed = OLD_TRAIN_SH.replace("nvidia-smi || true\n", "nvidia-smi || true\n( while true; do sleep 240; date > b; up; done ) &\n")
-    assert any("VT-01" in w for w in R.preflight_create(api, **ok, script=fixed))
-    fixed += VAULT_CHECK
-    assert R.preflight_create(api, **ok, script=fixed) == []
-    assert any("tail -f /dev/null" in w for w in R.preflight_create(api, **ok, script=fixed + "tail -f /dev/null\n"))
+    ok = dict(max_usd=0.5, max_hours=1.0, gpu="cheap", now=10**6, script=NEW_SH)
+    assert R.preflight_create(api, **ok, heartbeat="datasets/o/r:run/out/beat.txt", pod_key=True) == []
+    assert any("no heartbeat" in w for w in R.preflight_create(api, **ok, pod_key=True))
+    why = R.preflight_create(api, **ok, heartbeat="datasets/o/r:run/out/beat.txt")
+    assert len(why) == 1 and "no stop path outside this session" in why[0] and "never recorded" in why[0]
+    assert R.preflight_create(api, **ok, heartbeat="x:b/beat.txt", watchdog_age=600) == []                       # (b) is OR
+    assert any("no stop path" in w for w in R.preflight_create(api, **ok, heartbeat="x:b/beat.txt", watchdog_age=3601))
+    mine = dict(ok, script=OLD_TRAIN_SH.replace("( while", "( while").replace("up; done", "date > out/beat.txt; up; done"))
+    assert any("pod script:" in w and "beat" in w for w in R.preflight_create(api, **mine, heartbeat="x:b/beat.txt", pod_key=True))
+    assert any("tail -f /dev/null" in w for w in R.preflight_create(api, **ok | {"script": NEW_SH + "tail -f /dev/null\n"},
+                                                                    heartbeat="x:b/beat.txt", pod_key=True))
+
+
+def test_the_pod_script_lint_keeps_the_wrappers_files_and_the_vault_clean():
+    assert R.lint_pod_script(NEW_SH) == []
+    bad = R.lint_pod_script(NEW_SH + "echo DONE > /workspace/out/beat.txt\n")
+    assert any("owns beat.txt" in b for b in bad)
+    assert any("writes the heartbeat" in b for b in R.lint_pod_script(NEW_SH + 'echo "DONE $(date)" >> log\n'))
+    assert any("idles" in b for b in R.lint_pod_script(NEW_SH + "sleep infinity\n"))
+    assert any("without `timeout`" in b for b in R.lint_pod_script(NEW_SH + 'python -c "import torch;print(torch.cuda.is_available())"\n'))
+    assert R.lint_pod_script(NEW_SH + 'timeout 120 python -c "import torch;print(torch.cuda.is_available())"\n') == []
+    dl = R.lint_pod_script(NEW_SH + 's("Qwen/Qwen-Image-2.1", local_dir="/workspace/out/qwen")  # snapshot_download\n')
+    assert any("downloads into the output folder" in b for b in dl)
+    assert any("HF cache under the output folder" in b for b in R.lint_pod_script(NEW_SH + "export HF_HOME=/workspace/out/hf\n"))
+    assert R.lint_pod_script(NEW_SH + "# echo DONE > beat.txt (a comment is fine)\n") == []
+    assert R.heartbeat_of_script(NEW_SH) == "datasets/o/r:run/out/beat.txt" and R.stall_minutes_of_script("# stall-minutes: 45\n") == 45
+    assert R.hf_target("datasets/o/r:run/out/beat.txt") == ("o/r", "run/out")
+    with pytest.raises(R.RunPodError, match="beat.txt"):
+        R.hf_target("datasets/o/r:run/out/log.txt")
 
 
 def test_hf_heartbeat_reads_the_files_last_commit():
@@ -730,10 +772,10 @@ pip install -q -U peft || true
 
 def test_a_cuda_check_without_a_timeout_is_refused():
     """Chain pod 2026-10-24: the bare CUDA check never returned on a driver-550 host; the loop kept it "alive" 12 min ($0.6)."""
-    bad = R.lint_pod_script(CHAIN_SH)
+    bad = R.lint_own_upload_loop(CHAIN_SH)
     assert len(bad) == 1 and "without `timeout`" in bad[0] and R.BAD_HOST in bad[0]
     fixed = CHAIN_SH.replace('python -c "import torch', 'timeout 120 python -c "import torch')
-    assert R.lint_pod_script(fixed) == []
+    assert R.lint_own_upload_loop(fixed) == []
 
 
 def test_a_pod_that_reports_a_bad_host_is_stopped_by_its_guard(env):
@@ -776,16 +818,18 @@ def test_a_finished_job_reported_in_the_heartbeat_stops_its_pod(env, monkeypatch
 
 def test_a_pod_script_that_idles_after_its_job_is_refused_and_the_self_stop_is_wired():
     loop = "( while true; do sleep 240; date > b; up; done ) &\n"
-    bad = R.lint_pod_script(loop + "python train.py\ntail -f /dev/null\n")
-    assert len(bad) == 1 and "self_stop_sh()" in bad[0]
-    assert R.lint_pod_script(loop + R.self_stop_sh() + "\npython train.py\ntail -f /dev/null\n") == []
-    stop = R.self_stop_sh("out/beat.txt")
-    assert "/v2/pods/$RUNPOD_POD_ID/action" in stop and '"action":"stop"' in stop and "trap on_exit EXIT" in stop
-    assert "DONE" in stop and "FAILED rc=" in stop and "DELETE" not in stop and "terminate" not in stop
-    assert "sleep 3600" in R.dead_man_sh(3600) and "self_stop" in R.dead_man_sh(3600)
-    cmd = R.script_cmd("https://huggingface.co/datasets/o/r/resolve/main/pod.sh", 7200)[2]
-    assert "sleep 7200" in cmd and "bash /workspace/pod.sh; self_stop; tail -f /dev/null" in cmd
-    assert "$HF_TOKEN" in cmd and "-X DELETE" not in cmd
+    bad = R.lint_own_upload_loop(loop + "python train.py\ntail -f /dev/null\n")
+    assert len(bad) == 1 and "self_stop" in bad[0]
+    assert R.lint_own_upload_loop(loop + R.self_stop_sh() + "\npython train.py\ntail -f /dev/null\n") == []
+    assert not R.SELF_STOP.search('echo "no self_stopper here"') and R.SELF_STOP.search("python x.py; self_stop;")
+    stop = R.self_stop_sh()
+    assert "/v2/pods/$RUNPOD_POD_ID/action" in stop and '"action":"stop"' in stop and "podStop" in stop
+    assert "DELETE" not in stop and "terminate" not in stop and "rest.runpod.io" not in stop and "/v1/" not in stop  # CR-15
+    cmd = R.script_cmd()
+    assert cmd[0] == "bash" and cmd[1] == "-c" and "rest.runpod.io" not in cmd[2] and "/v1/" not in cmd[2]
+    assert "DELETE" not in cmd[2] and "terminate" not in cmd[2] and "tail -f /dev/null" not in cmd[2]
+    assert R.deadline_of(1000, 7200, 3.0, 1.69, 0.05) == int(1000 + 3.0 / 1.74 * 3600 - 300)    # the money is the shorter limit
+    assert R.deadline_of(1000, 3600, 4.0, 0.34, 0.05) == 1000 + 3600 - 300                         # the lifetime is the shorter limit
 
 
 CATALOG = [
@@ -805,9 +849,12 @@ def test_cards_are_picked_by_the_jobs_estimated_cost_not_by_the_price_per_hour(e
     assert [(r["gpu"], r["cloud"]) for r in rows][:2] == [("NVIDIA H100 80GB HBM3", "COMMUNITY"),
                                                           ("NVIDIA A100-SXM4-80GB", "COMMUNITY")]
     assert rows[0]["hours"] == 0.5 and rows[0]["est_usd"] == pytest.approx(0.995)
-    assert all("MIG" not in r["gpu"] and r["gpu"] != "Some New Card" for r in rows)   # slices and unknown speeds stay out
+    assert all("MIG" not in r["gpu"] for r in rows)                                   # slices stay out
+    new = [r for r in rows if r["gpu"] == "Some New Card"]                            # P1c: a card nobody measured is no longer skipped:
+    assert new and new[0]["basis"].startswith("unknown card") and new[0]["hours"] == pytest.approx(1 / 0.3 * 2.0, abs=0.01)  # slowest speed x 2.0
     small = R.pick_gpus(api, vram_gb=48, ref_hours=1.0, max_price=1.0)
-    assert {r["gpu"] for r in small} == {"NVIDIA A40"}                               # L40S has no stock, the rest > $1/h
+    assert {r["gpu"] for r in small} == {"NVIDIA A40", "Some New Card"}              # L40S has no stock, the rest > $1/h; the new card last
+    assert small[0]["gpu"] == "NVIDIA A40" and small[-1]["gpu"] == "Some New Card"
     assert small[0]["cloud"] == "COMMUNITY" and small[0]["est_usd"] == pytest.approx(0.7)
 
 

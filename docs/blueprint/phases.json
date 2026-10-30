@@ -124,10 +124,10 @@
    ],
    "routing": "S2 / Sonnet / high",
    "wave": 3,
-   "thread": null,
-   "pr": null,
-   "state": "todo",
-   "waits": null
+   "thread": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVCDmSdPHFKoz1Q5YLQxGKZ",
+   "pr": "[#45](https://github.com/vano1919/explainer-engine/pull/45) draft",
+   "state": "review",
+   "waits": "cross-review (plan thread); D9 spend_caps casting_credits_max (the creator, before P12a)"
   },
   {
    "id": "P5",
@@ -155,7 +155,7 @@
    "thread": null,
    "pr": null,
    "state": "todo",
-   "waits": "— (A5 = D-81)"
+   "waits": "— (A5 = D-79)"
   },
   {
    "id": "P4",
