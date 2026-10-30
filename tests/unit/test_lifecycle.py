@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from explainer_engine.core import store
+from explainer_engine.core import contracts, store
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import EpisodeJob, LIFECYCLE
 
@@ -23,10 +23,24 @@ def job(tmp_path):
     return EpisodeJob.create(tmp_path, job_id="job-001", episode_slug="nap", ledger="run.json", fps=24)
 
 
+def variants_file(job):
+    """N-03: VARIANT_CHOSEN binds the script_variants.json the creator picked from (the Napoleon example, v1 picked);
+    returns the file and the variants_sha256 his approval carries."""
+    doc = json.loads((store.ROOT / "examples" / "napoleon_vs_genghis" / "script_variants.json").read_text(encoding="utf-8"))
+    doc["chosen"] = {"variant_id": "v1", "by": "creator", "ref": "cmsg_1", "at": "2026-10-30T00:00:00Z",
+                     "variants_sha256": contracts.variants_sha256(doc)}
+    f = job.job_dir / "script_variants.json"
+    f.write_text(json.dumps(doc), encoding="utf-8")
+    return f, doc["chosen"]["variants_sha256"]
+
+
 def step(job, to):
     kind = next(iter(store.GATES[to]))
     approval = {"creator": CREATOR, "machine": MACHINE}[kind if kind in ("creator", "machine") else "creator"]
     extra = {}
+    if to == "VARIANT_CHOSEN":
+        extra["variants"], sha = variants_file(job)
+        approval = {**approval, "sha256": sha}
     if to == "RESEARCHED":
         extra["dossier"] = job.job_dir / "dossier.md"
     if to == "BUDGET_RESERVED":
@@ -63,10 +77,11 @@ def test_a_skipped_step_is_refused_and_writes_nothing(job):
 
 def test_a_gate_needs_its_approval_kind_and_a_creator_needs_a_ref(job):
     walk(job, "RESEARCHED")
+    f, sha = variants_file(job)
     for bad in (None, MACHINE, {**CREATOR, "ref": ""}, {**CREATOR, "by": ""}, {**CREATOR, "sha256": None}):
         with pytest.raises(ContractError):
-            job.move("VARIANT_CHOSEN", reason="x", approval=bad)
-    job.move("VARIANT_CHOSEN", reason="x", approval=CREATOR)
+            job.move("VARIANT_CHOSEN", reason="x", approval=bad, variants=f)
+    job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": sha}, variants=f)
 
 
 def test_researched_fixes_the_dossier_once(job):
@@ -108,11 +123,7 @@ def test_every_named_back_path_once_and_a_wrong_one_is_refused(job):
         fresh = EpisodeJob.create(job.job_dir / path, job_id=path, episode_slug="n", ledger="../run.json", fps=24)
         (job.job_dir / path / "dossier.md").write_text("d", encoding="utf-8")
         for to_state in LIFECYCLE[1:LIFECYCLE.index(sources[0]) + 1]:
-            kind = next(iter(store.GATES[to_state]))
-            extra = {"dossier": job.job_dir / path / "dossier.md"} if to_state == "RESEARCHED" else {}
-            if to_state == "BUDGET_RESERVED":
-                extra["reservation_id"] = "pod:abc"
-            fresh.move(to_state, reason="w", approval={"creator": CREATOR}.get(kind, MACHINE) if kind != "planner" else CREATOR, **extra)
+            step(fresh, to_state)  # the same approvals, dossier and reservation; VARIANT_CHOSEN with its variants file (N-03)
         fresh.back(path, reason="named path")
         assert fresh.state == to and fresh.manifest["history"][-1]["path"] == path
 
@@ -169,10 +180,11 @@ def test_artifacts_do_not_cross_jobs_or_dossiers(tmp_path):
 
 def test_a_creator_gate_binds_the_sha256_of_what_was_approved(job):
     walk(job, "RESEARCHED")
+    f, sha = variants_file(job)
     with pytest.raises(ContractError, match="binds the sha256"):
-        job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": None})
-    job.move("VARIANT_CHOSEN", reason="x", approval=CREATOR)
-    assert job.manifest["approvals"]["VARIANT_CHOSEN"]["sha256"] == SHA
+        job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": None}, variants=f)
+    job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": sha}, variants=f)
+    assert job.manifest["approvals"]["VARIANT_CHOSEN"]["sha256"] == sha  # the variants the creator picked from (N-03)
 
 
 def gates_up_to(state):
@@ -246,9 +258,12 @@ def test_the_full_chain_adopts_into_every_state_before_the_click(folder, state):
     for _ in LIFECYCLE[LIFECYCLE.index(state) + 1:-1]:  # an adopted job walks on to the last state before the click
         nxt = LIFECYCLE[LIFECYCLE.index(job.state) + 1]
         kind = sorted(store.GATES[nxt])[0]
-        job.move(nxt, reason="on", approval={"creator": CREATOR, "planner": PLANNER, "machine": MACHINE}[kind],
-                 reservation_id="pod:abc" if nxt == "BUDGET_RESERVED" else None,
-                 dossier=folder / "dossier.md" if nxt == "RESEARCHED" else None)
+        variants, approval = None, {"creator": CREATOR, "planner": PLANNER, "machine": MACHINE}[kind]
+        if nxt == "VARIANT_CHOSEN":  # N-03: the pick binds its script_variants.json
+            variants, sha = variants_file(job)
+            approval = {**approval, "sha256": sha}
+        job.move(nxt, reason="on", approval=approval, reservation_id="pod:abc" if nxt == "BUDGET_RESERVED" else None,
+                 dossier=folder / "dossier.md" if nxt == "RESEARCHED" else None, variants=variants)
     assert job.state == "STAGED_UNLISTED"
 
 

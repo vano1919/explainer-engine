@@ -3252,3 +3252,24 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   ledger, which is the hole this card closes. The pictures (`c000.png`, `p001.png`, `spend_log.jsonl`) are kept in the project files
   `explainer-engine/blueprint_2026-10-29/paid/plan_v2/t1_bfl_incident/`. The test now removes every `KEY_ENV` variable and blocks
   `BFL._request` before it calls, so it fails without a paid call on code without the guard; the red run was repeated that way.
+
+## 2026-10-30 UTC: plan_v2 T1 / N-03, VARIANT_CHOSEN needs the variants file its approval binds; the other gates' artifact binding is OPEN (no pod, no money)
+
+- Verify (Lock 5) against Argon-2 F-04: `core/store.py` has no `APPROVAL_GATES` or `_HEX64`; the gates are `GATES` and
+  `_check_approval(..., bind=True)` asks only for a non-null `sha256`; `job_manifest.schema.json` makes it 64 hex. So "any 64-hex string
+  is accepted as a creator approval" is true. `move("VARIANT_CHOSEN")` ran the variants check only `if variants is not None`: true.
+  The artifact half of the card is **not reproducible as written**: no production code calls `record_artifact`, the keys are free-form, and
+  CN-04's table binds most gates in prose only ("the scenario file", "the words' sha256 (script_approval)", "the paint/pod plan hash",
+  "`sample_approval.json`", "the review bundle", "his message"); no gate has a key that both CN-04 and the code name.
+- `explainer_engine/core/store.py`: `move("VARIANT_CHOSEN")` without `variants=` is refused before any write (`ContractError`,
+  "VARIANT_CHOSEN needs variants=... (CN-04, OR-31)"); the existing check (the picked id is a variant, the approval's sha256 is the
+  `variants_sha256` of the unchanged file) now always runs. No gate→artifact map was added (D1: nothing to map without guessing).
+- Tests: `tests/unit/test_money_path_fences.py` N-03 (a creator approval with the right hash but no file is refused and writes nothing;
+  `"a" * 64` with the file is refused; the right pair passes). Red on main: 1 failed. `tests/unit/test_lifecycle.py`: new `variants_file()`
+  helper; `step()`, the back-path walk and the adopt-chain walk pass the variants file and its hash when they enter VARIANT_CHOSEN (an
+  allowed path, a pick without its file, is now a refusal); `test_a_creator_gate_binds_the_sha256...` expects the variants hash instead of
+  the placeholder `"c" * 64`.
+- OPEN (CN-04 wording is OR-22, for ვანო/coordinator): (1) which manifest artifact key each of SCENARIO_APPROVED, SCRIPT_APPROVED,
+  BUDGET_RESERVED, SAMPLE_APPROVED, REVIEW_APPROVED binds, and who records it (`record_artifact` has no production caller); until then those
+  approvals are checked for kind, `by`, `ref` and a 64-hex `sha256` only. (2) `adopt()` into VARIANT_CHOSEN or later checks the approvals but
+  not the variants file (CN-04: "`adopt` is held to the same gates"); closing it adds a `variants=` argument to `adopt`.

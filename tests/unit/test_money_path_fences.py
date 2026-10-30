@@ -192,3 +192,31 @@ def test_bfl_paid_request_refuses_without_a_run(tmp_path, monkeypatch):
         raise AssertionError("network touched")
     with pytest.raises(ProviderError, match="without a ledger run"):
         RealBFL(tmp_path / "b", http=no_http).generate("x1", "a picture", model="flux-3-image-klein", size="1k")
+
+
+# --- N-03: core/store.py, VARIANT_CHOSEN is entered only with the variants file its approval binds ------------------------------
+
+def _researched_job(tmp_path):
+    from test_lifecycle import step
+    from explainer_engine.core.store import EpisodeJob
+    (tmp_path / "run.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "dossier.md").write_text("research", encoding="utf-8")
+    job = EpisodeJob.create(tmp_path, job_id="job-001", episode_slug="nap", ledger="run.json", fps=24)
+    step(job, "RESEARCHED")
+    return job
+
+
+def test_variant_chosen_requires_the_variants_file_and_writes_nothing_without_it(tmp_path):
+    from test_lifecycle import CREATOR, variants_file
+    from explainer_engine.core import store
+    from explainer_engine.core.errors import ContractError
+    job = _researched_job(tmp_path)
+    f, sha = variants_file(job)
+    before = (tmp_path / store.MANIFEST).read_text(encoding="utf-8")
+    with pytest.raises(ContractError, match="variants"):
+        job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": sha})   # the right hash, but no file to check it on
+    assert (tmp_path / store.MANIFEST).read_text(encoding="utf-8") == before and job.state == "RESEARCHED"
+    with pytest.raises(ContractError, match="CN-04"):
+        job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": "a" * 64}, variants=f)   # any 64-hex string is not enough
+    job.move("VARIANT_CHOSEN", reason="x", approval={**CREATOR, "sha256": sha}, variants=f)
+    assert job.state == "VARIANT_CHOSEN" and job.manifest["approvals"]["VARIANT_CHOSEN"]["sha256"] == sha
