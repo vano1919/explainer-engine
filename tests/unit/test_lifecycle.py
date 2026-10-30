@@ -43,7 +43,7 @@ def variants_file(job, write=True):
 
 def artifact_for(folder, gate):
     """N-03 option A (ვანო 2026-10-30): the artifact a person approves at ``gate``, written in ``folder``, and the hash its own tool
-    records for it (scenario file, the script's words, the plan file, the sample's bound script, the review bundle)."""
+    records for it (scenario file, the script's words, the paint plan file, sample_approval.json, the bundle's manifest)."""
     from explainer_engine.imagegen import plan as P
     from explainer_engine.production import sample as SMP
     from explainer_engine.scripting import script_approval as SA
@@ -69,13 +69,15 @@ def artifact_for(folder, gate):
         f = folder / SMP.FILE
         f.write_text(json.dumps({"approved_by": "ვანო", "approved_at": "2026-10-30", "ref": "cmsg_1",
                                  "script_sha256": SMP.sha256(folder / "production_script.json")}), encoding="utf-8")
-        return f, SMP.sha256(folder / "production_script.json")
+        return f, store._sha256_file(f)
     if gate == "REVIEW_APPROVED":
         d = folder / "review_bundle"
         d.mkdir(exist_ok=True)
         (d / "final.mp4").write_bytes(b"video")
         (d / "notes.md").write_text("QA PASS", encoding="utf-8")
-        return d, store.bundle_sha256(d)
+        from explainer_engine.qa import review_bundle
+        f = review_bundle.write(d)
+        return f, store._sha256_file(f)
     raise KeyError(gate)
 
 

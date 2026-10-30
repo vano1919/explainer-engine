@@ -191,24 +191,14 @@ def _sha256_file(path: Path) -> str:
 BOUND_GATES = ("SCENARIO_APPROVED", "SCRIPT_APPROVED", "BUDGET_RESERVED", "SAMPLE_APPROVED", "REVIEW_APPROVED")
 
 
-def bundle_sha256(folder: Path | str) -> str:
-    """The review bundle as one hash: every file's path (relative, ``/``) and sha256, sorted; a changed, added or removed file is
-    another bundle (owner=claude: no bundle manifest existed, so the folder itself is the artifact)."""
-    folder = Path(folder)
-    if not folder.is_dir():
-        raise ContractError(f"REVIEW_APPROVED binds the review bundle folder: {folder} is not one (CN-04)")
-    rows = sorted((f.relative_to(folder).as_posix(), _sha256_file(f)) for f in folder.rglob("*") if f.is_file())
-    return hashlib.sha256(json.dumps(rows, separators=(",", ":")).encode("utf-8")).hexdigest()
-
-
 def bound_sha256(gate: str, path: Path | str) -> str:
-    """The hash ``gate``'s approval must carry, computed from the artifact the person approved, the way that gate's tool records it:
-    SCENARIO the scenario file (scripting/scenario.py, PV-45); SCRIPT the words only (scripting/script_approval.words_sha256, OR-17);
-    BUDGET the approved plan file, whose own hash still matches its items when it is a paint plan (imagegen/plan.py); SAMPLE the
-    script sha256 that sample_approval.json binds, for an unchanged script (production/sample.py, OR-19); REVIEW the review bundle."""
+    """The hash ``gate``'s approval must carry, from the artifact the person approved (the picks of ვანო, 2026-10-30 "ა ა ა"):
+    SCENARIO the scenario file's sha256 (scripting/scenario.py, PV-45); SCRIPT the words only (script_approval.words_sha256, OR-17);
+    BUDGET a paint plan file's sha256 (its own ``plan_hash`` must still match its items, imagegen/plan.py) or, for a pod, the sha256
+    of its start script committed under ``explainer_engine/training/pods/`` (OR-21; the same ``script_sha`` the ledger's pod_plans
+    row records); SAMPLE the sha256 of ``sample_approval.json`` itself, while its script is unchanged (production/sample.py, OR-19);
+    REVIEW the sha256 of the bundle's ``bundle_manifest.json``, while every file still matches it (qa/review_bundle.py)."""
     path = Path(path)
-    if gate == "REVIEW_APPROVED":
-        return bundle_sha256(path)
     if not path.is_file():
         raise ContractError(f"{gate} binds a file: {path} is not one (CN-04)")
     if gate == "SCENARIO_APPROVED":
@@ -217,21 +207,38 @@ def bound_sha256(gate: str, path: Path | str) -> str:
         from explainer_engine.scripting import script_approval
         return script_approval.words_sha256(json.loads(path.read_text(encoding="utf-8")))
     if gate == "BUDGET_RESERVED":
-        plan = json.loads(path.read_text(encoding="utf-8"))
-        if isinstance(plan, dict) and "items" in plan:
-            from explainer_engine.imagegen import plan as paint_plan
-            if paint_plan.plan_hash(plan) != plan.get("hash"):
-                raise ContractError(f"BUDGET_RESERVED: the paint plan {path.name} changed after its hash (CN-04)")
+        pods = (ROOT / "explainer_engine" / "training" / "pods").resolve()
+        if path.resolve().is_relative_to(pods):  # a pod plan: what was approved is the start script (OR-21, OR-23)
+            from explainer_engine.cloud import dryrun
+            return dryrun.sha256_of(path.read_text(encoding="utf-8"))
+        try:
+            plan = json.loads(path.read_text(encoding="utf-8"))
+        except (ValueError, UnicodeDecodeError):
+            plan = None
+        if not (isinstance(plan, dict) and isinstance(plan.get("items"), list)):
+            raise ContractError(f"BUDGET_RESERVED binds a paint plan (plans/<id>.json) or a pod script under "
+                                f"explainer_engine/training/pods/: {path.name} is neither (CN-04)")
+        from explainer_engine.imagegen import plan as paint_plan
+        if paint_plan.plan_hash(plan) != plan.get("hash"):
+            raise ContractError(f"BUDGET_RESERVED: the paint plan {path.name} changed after its hash (CN-04)")
         return _sha256_file(path)
     if gate == "SAMPLE_APPROVED":
         from explainer_engine.production import sample
         if path.name != sample.FILE:
             raise ContractError(f"SAMPLE_APPROVED binds {sample.FILE}, not {path.name} (CN-04)")
         ok, why = sample.approved(path.parent)
-        rec = sample.load(path.parent)
-        if not ok or not rec.get("script_sha256"):
+        if not ok or not sample.load(path.parent).get("script_sha256"):
             raise ContractError(f"SAMPLE_APPROVED: {why or 'the sample approval names no script_sha256'} (CN-04)")
-        return rec["script_sha256"]
+        return _sha256_file(path)
+    if gate == "REVIEW_APPROVED":
+        from explainer_engine.qa import review_bundle
+        if path.name != review_bundle.MANIFEST:
+            raise ContractError(f"REVIEW_APPROVED binds the bundle's {review_bundle.MANIFEST} "
+                                f"(python -m explainer_engine.qa.review_bundle write <bundle>), not {path.name} (CN-04)")
+        problems = review_bundle.check(path)
+        if problems:
+            raise ContractError(f"REVIEW_APPROVED: the bundle no longer matches its manifest: {', '.join(problems[:5])} (CN-04)")
+        return _sha256_file(path)
     raise ContractError(f"{gate} binds no artifact")
 
 

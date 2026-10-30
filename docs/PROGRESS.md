@@ -3225,3 +3225,11 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   Red on the follow-up head: 6 failed. Setup only: `tests/unit/test_lifecycle.py` gains `artifact_for()` (the artifact and its tool's
   hash per gate); `step()`, the planner budget move, `gates_up_to`, the adopt calls that pass a bound gate and the adopt-chain walk
   name the artifact and carry its hash; the follow-up's adopt test names its scenario file. No assert removed.
+- Amended after T5's review (ვანო's picks "ა ა ა", 2026-10-30 14:56 UTC): BUDGET_RESERVED for a pod binds the sha256 of its start
+  script committed under `explainer_engine/training/pods/` (`cloud/dryrun.sha256_of`, the ledger's `pod_plans.script_sha`); any other
+  non-plan file, or a copy of the script outside that folder, is refused. SAMPLE_APPROVED binds the sha256 of `sample_approval.json`
+  itself (still only while its script is unchanged). REVIEW_APPROVED binds the sha256 of `<bundle>/bundle_manifest.json`, written by the
+  new `explainer_engine/qa/review_bundle.py` (`write` / `check`, CLI `python -m explainer_engine.qa.review_bundle write|check <bundle>`:
+  every file's relative path and sha256); the gate re-checks the bundle against it (a changed, missing or unlisted file is refused).
+  `store.bundle_sha256` is gone (it was added in this same PR). Tests: a pod script passes and a markdown plan or a copy outside the
+  folder is refused; the sample binds its file; changed, added and removed bundle files are refused; the CLI round trip.

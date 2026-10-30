@@ -308,10 +308,43 @@ def test_the_bound_hash_is_the_one_each_tool_records(tmp_path):
     plan.write_text(json.dumps(p), encoding="utf-8")
     with pytest.raises(ContractError, match="plan"):
         store.bound_sha256("BUDGET_RESERVED", plan)
-    sample, _ = artifact_for(tmp_path, "SAMPLE_APPROVED")
+    sample, ssha = artifact_for(tmp_path, "SAMPLE_APPROVED")
+    assert store.bound_sha256("SAMPLE_APPROVED", sample) == ssha == store._sha256_file(sample)   # the approval file itself
     (tmp_path / "production_script.json").write_text(json.dumps({"segments": []}), encoding="utf-8")
     with pytest.raises(ContractError, match="script changed"):
         store.bound_sha256("SAMPLE_APPROVED", sample)
-    bundle, bsha = artifact_for(tmp_path, "REVIEW_APPROVED")
-    (bundle / "final.mp4").write_bytes(b"other")
-    assert store.bound_sha256("REVIEW_APPROVED", bundle) != bsha
+    manifest, msha = artifact_for(tmp_path, "REVIEW_APPROVED")
+    assert manifest.name == "bundle_manifest.json" and store.bound_sha256("REVIEW_APPROVED", manifest) == msha
+    for change in (lambda d: (d / "final.mp4").write_bytes(b"other"), lambda d: (d / "extra.png").write_bytes(b"x"),
+                   lambda d: (d / "notes.md").unlink()):
+        manifest, _ = artifact_for(tmp_path, "REVIEW_APPROVED")
+        change(manifest.parent)
+        with pytest.raises(ContractError, match="no longer matches"):
+            store.bound_sha256("REVIEW_APPROVED", manifest)
+    with pytest.raises(ContractError, match="bundle_manifest.json"):
+        store.bound_sha256("REVIEW_APPROVED", manifest.parent / "final.mp4")
+
+
+def test_a_pod_budget_binds_its_committed_start_script_and_nothing_else(tmp_path):
+    """ვანო's pick for a pod (2026-10-30): BUDGET_RESERVED binds the sha256 of the start script committed under
+    explainer_engine/training/pods/ (OR-21), the same script_sha the ledger's pod_plans row records; any other file is refused."""
+    from explainer_engine.cloud import dryrun
+    from explainer_engine.core import store
+    from explainer_engine.core.errors import ContractError
+    script = ROOT / "explainer_engine" / "training" / "pods" / "p12" / "p12a_A.sh"
+    assert store.bound_sha256("BUDGET_RESERVED", script) == dryrun.sha256_of(script.read_text(encoding="utf-8"))
+    for name, text in (("pod_plan.md", "# pod plan\nA40, 1 h, $0.50"), ("p12a_A.sh", script.read_text(encoding="utf-8")),
+                       ("plan.json", json.dumps({"id": "x", "provider": "runpod"}))):
+        other = tmp_path / name
+        other.write_text(text, encoding="utf-8")
+        with pytest.raises(ContractError, match="training/pods"):
+            store.bound_sha256("BUDGET_RESERVED", other)   # a copy outside the committed pods folder is not the approved script
+
+
+def test_review_bundle_cli_writes_the_manifest_and_check_fails_after_a_change(tmp_path, capsys):
+    from explainer_engine.qa import review_bundle
+    (tmp_path / "final.mp4").write_bytes(b"video")
+    assert review_bundle.main(["write", str(tmp_path)]) == 0 and "sha256" in capsys.readouterr().out
+    assert review_bundle.main(["check", str(tmp_path)]) == 0
+    (tmp_path / "final.mp4").write_bytes(b"recut")
+    assert review_bundle.main(["check", str(tmp_path)]) == 1 and "changed: final.mp4" in capsys.readouterr().out
