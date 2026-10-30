@@ -2901,5 +2901,5 @@ The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code accoun
 
 - Evidence (audit 08:35 UTC): the recorded scheduled runs were 4-7 h apart (29 runs in 6 days under `*/30`, none under `*/10` by 08:19 on 10-30). CR-12
   and the stop-path table now say so, and that the session dispatches the watchdog before every create and every 10 minutes while a pod relies
-  on it, so the stop is the watchdog's code with the session's timing. Which option decides pod E's pass criterion (session dispatch, an external timer
-  with an `actions:write` token, or "first run after DONE") stays the OR-24 thread's call; nothing in code changed.
+  on it, so the stop is the watchdog's code with the session's timing. Pod E's pass criterion is the OR-24 thread's call (2026-10-30 08:38): E passes when the watchdog's own code stops it at
+  the first session-dispatched run after DONE, and its report states that the timing came from the session, not from cron. Nothing in code changed.
