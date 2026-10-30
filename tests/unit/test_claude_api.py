@@ -630,3 +630,13 @@ def test_batch_rerun_that_truncates_does_not_lose_the_other_results():
     out = a.run_job(reqs)
     assert isinstance(out["q0"], ca.OutputTruncated) and out["q1"].text == "x" and len(out) == ca.BATCH_MIN
     assert list((ca.ledger_dir()).glob("batch-T-*.json"))
+
+
+def test_the_key_can_come_from_the_alias_name(env, monkeypatch):
+    monkeypatch.delenv("ANTHROPIC_API_KEY")
+    monkeypatch.delenv("EE_ANTHROPIC_API_KEY", raising=False)
+    assert ca.api_key() is None
+    monkeypatch.setenv("EE_ANTHROPIC_API_KEY", "alias-key-not-real")
+    assert ca.api_key() == "alias-key-not-real"
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "main-key-not-real")
+    assert ca.api_key() == "main-key-not-real"
