@@ -1,4 +1,5 @@
-"""RETIRED by D-39 (2026-10-16, ElevenLabs is the narrator): Kokoro code kept for provenance (docs/PROVENANCE.md) and for audio/timings consumers; never a production read.
+"""RETIRED by D-39 (2026-10-16, ElevenLabs is the narrator):
+Kokoro code kept for provenance (docs/PROVENANCE.md) and for audio/timings consumers; never a production read.
 
 A talking mouth, frame by frame, from what is being said. stdlib only.
 
