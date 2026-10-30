@@ -8,7 +8,7 @@
   {
    "item_id": "m1",
    "shot_id": "s1",
-   "archetype_id": "map_pan",
+   "archetype_id": "TACTICAL_UNIT_MANEUVER",
    "trigger_word_index": 1,
    "duration_frames": 48,
    "layers": [

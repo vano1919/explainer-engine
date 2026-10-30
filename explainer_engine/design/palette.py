@@ -32,6 +32,60 @@ def contrast(a: str, b: str) -> float:
     return (hi + 0.05) / (lo + 0.05)
 
 
+# Machado, Oliveira and Fernandes 2009, severity 1.0, applied to linear RGB
+CVD = {
+    "protan": ((0.152286, 1.052583, -0.204868), (0.114503, 0.786281, 0.099216), (-0.003882, -0.048116, 1.051998)),
+    "deutan": ((0.367322, 0.860646, -0.227968), (0.280085, 0.672501, 0.047413), (-0.011820, 0.042940, 0.968881)),
+    "tritan": ((1.255528, -0.076749, -0.178779), (-0.078411, 0.930809, 0.147602), (0.004733, 0.691367, 0.303900)),
+}
+
+
+def _rgb_linear(hex_color: str) -> tuple[float, float, float]:
+    h = hex_color.lstrip("#")
+    return tuple(_linear(int(h[i:i + 2], 16) / 255) for i in (0, 2, 4))  # type: ignore[return-value]
+
+
+def _lab(rgb: tuple[float, float, float]) -> tuple[float, float, float]:
+    r, g, b = rgb
+    x = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047
+    y = 0.2126 * r + 0.7152 * g + 0.0722 * b
+    z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883
+
+    def f(v: float) -> float:
+        return v ** (1 / 3) if v > 0.008856 else 7.787 * v + 16 / 116
+
+    fx, fy, fz = f(x), f(y), f(z)
+    return 116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)
+
+
+def delta_e(a: str, b: str, vision: str | None = None) -> float:
+    """CIE76 distance of two hex colours, as seen by a colour-blind viewer when ``vision`` is protan, deutan or tritan."""
+    pair = []
+    for h in (a, b):
+        rgb = _rgb_linear(h)
+        if vision:
+            m = CVD[vision]
+            rgb = tuple(min(1.0, max(0.0, sum(m[i][j] * rgb[j] for j in range(3)))) for i in range(3))  # type: ignore[assignment]
+        pair.append(_lab(rgb))
+    return sum((p - q) ** 2 for p, q in zip(*pair)) ** 0.5
+
+
+def faction_findings(palette: dict | None = None) -> list[dict]:
+    """BP-151: every faction pair stays apart for all three colour-blind simulations and is told apart by a mark (REVIEW)."""
+    pal = palette or load()
+    hexes = {name: t["hex"] for name, t in pal["tokens"].items()}
+    need, out = SR.T("BP-151", "faction_delta_e_min"), []
+    for pair in pal.get("faction_pairs", []):
+        a, b = hexes[pair["a"]], hexes[pair["b"]]
+        if not pair.get("mark_a") or not pair.get("mark_b") or pair.get("mark_a") == pair.get("mark_b"):
+            out.append({"check": "faction_mark", "detail": f"{pair['a']}/{pair['b']} need two different marks (never colour alone)"})
+        for vision in CVD:
+            d = delta_e(a, b, vision)
+            if d < need:
+                out.append({"check": "faction_cvd", "detail": f"{pair['a']}/{pair['b']} are {d:.0f} apart for {vision} viewers (< {need})"})
+    return out
+
+
 def check(palette: dict | None = None) -> list[dict]:
     """Findings for every rule the palette file states about itself (empty = consistent)."""
     pal = palette or load()
@@ -58,6 +112,7 @@ def check(palette: dict | None = None) -> list[dict]:
             continue
         if ("ink", name) not in listed:
             add("fill_only_text", f"{name} is fill-only on paper but has no ink text pair")
+    findings += faction_findings(pal)
     return findings
 
 

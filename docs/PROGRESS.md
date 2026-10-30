@@ -2894,9 +2894,65 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 - Wording: RP-10's message says "failed create or BAD_HOST pod(s)" (a failed `create` of any cause uses the one try). `check` only REPORTS
   unknown `keep_stopped_pods` ids; it does not clean them up (`config/spend_caps.json` changes only on the creator's word).
 
+## 2026-10-30 08:30 UTC: the pre-pod secrets gate (CR-19; free, no pod, no money)
+
+- `cloud/env_presence.py` + the manual workflow `.github/workflows/presence_check.yml` ("Run workflow"): prints `present` / `MISSING` for
+  `HF_TOKEN`, `RUNPOD_API_KEY`, `NTFY_TOPIC` (the secrets `watchdog.yml` reads), never a value, a prefix or a length, red when one is missing
+  or blank. Manual only, not in "quality" (a fork's pull request has no secrets). Limits, said in CR-19: it proves existence, not validity or
+  scope, and a pod's own `HF_TOKEN` comes from the session that runs `create`, not from the GitHub secret. Test:
+  `tests/unit/test_cloud_env_presence.py` (including that the workflow maps exactly the required names).
+- Review round (P3b, PR #53): the files are named `env_presence.py` / `presence_check.yml` / `test_cloud_env_presence.py` because the repo-hygiene
+  guard refuses tracked file names that look like secret files (`secret` in the name); the guard is unchanged. The leak test now uses a canary
+  none of whose characters occurs in the legitimate output and checks stdout and stderr in set / blank / whitespace / newline / missing cases (it fails
+  for a printed first character, a tail or a length); the secrets are mapped on the one step that needs them, not on the job.
+
 ## 2026-10-30 08:10 UTC — P0d: key alias `EE_ANTHROPIC_API_KEY`
 The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code account auth). `claude_api.api_key()` now takes the first non-empty of `ANTHROPIC_API_KEY`, `EE_ANTHROPIC_API_KEY`; used by `client()`, `status`, `estimate`. Test: `test_the_key_can_come_from_the_alias_name`.
 
+## 2026-10-30 UTC (Tbilisi night): Blueprint P5, the visual compensator: maps, HUD, tableaux (no pod, no money)
+
+- ვანო (2026-10-29 18:30 UTC): carry the Blueprint through the night, free steps only. P5 = the free, deterministic frames for the
+  narrated stretches with no character: 12 archetypes, the map's 8 laws. Home: `docs/COMPENSATOR.md` (prefix CMP-).
+- Code: `explainer_engine/maps/` (geo, plate, camera, paths, timeline, render for archetypes 1-4, laws CMP-01..08 and CMP-13, draw),
+  `maps/data/` (Natural Earth 1:50m extract, 547 KB, pinned sources and a build script), `edit/hud.py` (5, 7, 10, 11, 12),
+  `edit/tableau.py` (6, 8, 9), `edit/visual_compensator.py` (catalogue `edit/archetypes.json`, manifest check, CMP-10 rotation,
+  CMP-11 map share, CMP-12 lane balance, render and measure CLI). A frame is a pure function of (spec, spine, frame): same bytes
+  in a chunked render (CMP-09).
+- Contracts: new `comp_spec/1`; `visual_comp_manifest/1` items reference it by a layer of kind `spec`; CN-15 (an archetype is one of the
+  catalogue and on its family's lane, for shots, items and specs). Registry: BP-147..153 (hypotheses, so REVIEW), BP-124/125/127 now
+  enforced by the new validators.
+- Decisions: D-87 (ceiling = 2D vector map + 2.5D parallax, no height model; the faction pair is blue and vermilion: after Machado 2009
+  the worst case over protan, deutan and tritan is 112.9 (CIE76) against 98.3 for the Blueprint's red and 87.5 for the first pick, a light
+  orange, whose 118 claim was wrong for tritan, found in review; the sides are also told apart by a square or a triangle and a solid or a
+  dashed route).
+  Palette tokens `faction_a`, `faction_b` with `design/palette.py:faction_findings`. The dossier card has no stamp (CMP-15, D-61/SC-11).
+- Measured (this container, 1280x720, ss 2): 0.09 s per frame for HUDs and graphs, 0.5 s for maps, 1.6 s for the formation, 2.4 s for the
+  parallax tableau: a 30 s item at 24 fps is minutes of CPU, never a pod (`archetypes.json` `measured`).
+- Tests: `test_maps` (one test per law, determinism, letterless plate by construction, the pinned extract; the OCR check skips when
+  tesseract is absent), `test_compensator` (catalogue = doc table, all 12 archetypes render from the demo job in `tests/unit/_comp.py`,
+  chunk-identical bytes, cross-item checks, CN-15, CMP-14 no client and no model imported).
+- Not done (named in COMPENSATOR.md): BiRefNet is only an input slot for the matte, the depth model is not in this phase (tests use a
+  synthetic depth map), painting the plates is P12e, the router is P6.
+- Review round 1 (P0a): D-87's numbers corrected and the pair re-chosen by worst case (vermilion `faction_b`, world bible v1.3 draft);
+  route lines and heads carry the side mark; `WordClock.frame_of` refuses a word before the trigger word (CN-01) instead of clamping;
+  BP-127 keeps its `planned` note for the score; the known limits and the two open card criteria are listed in `docs/COMPENSATOR.md`.
+- Review round 2 (P0a re-review and the Claude API review J1): `draw.Canvas.line` carries the dash phase across a curve's segments (side b's route
+  really is dashed; the first fix could loop for ever on a float edge, now always moves on); `camera.tilt` narrows the far edge (code, docstring
+  and doc agree); a `comp_spec/1` payload with a missing key is a CN-01 FAIL from every validator, never an exception (a guard in
+  `visual_compensator` plus explicit checks, and a test that removes each key of every archetype's payload in turn); `check` now runs CMP-11 over the
+  spine's runtime and CMP-12 when the planner passes its beats; the tableau reads its PNGs once per item and skips file checks without a job
+  folder; catalogue, PNG and source pins are written atomically; a faction pair needs both marks; the doc names the fonts the code really uses.
+  P5's rule ids moved to BP-147..153 and its decision to D-87 after main took BP-140..146 and D-86 (P3).
+
+## 2026-10-30 08:50 UTC: G13 crash-drill test (audit pass 1, B3; free)
+
+- `git grep` on main (874b498) found no test of a ledger one save ahead of its mirror reaching `create`: the audit was right. Added
+  `test_drill_6_the_mirror_write_fails_once_...` to `tests/unit/test_cloud_drills.py` (runbook drill table row 6): the mirror write fails once during
+  `reserve`; `Run.open_test` and `runpod create` both stop with `LedgerConflict`, the fake API gets 0 calls, the ledger keeps its 0.07. The table
+  test now expects six rows. No code changed (the audit found the code correct); nothing else weakened.
+
+## 2026-10-30 08:55 UTC — P0d: the tool loop's cache breakpoint, partial saves, loop estimate (J1b scope A lost $5.02)
+J1b scope A ran 18 turns and hit the 80 % stop without saving anything: the ledger shows `cache_read` stuck at the 22,746-token system prefix while fresh `input` grew to 48k per turn ($0.50 a turn). Causes fixed in `llm/claude_api.py`: (1) `_with_breakpoint` puts the cache breakpoint on the last block every turn (the first message keeps its own; at most two message breakpoints); (2) `save_partial` writes `partial_<job>_<id>.json` (assistant text, tool calls, results cut to 400 characters, usd so far, the stopping error) before any error leaves the loop, and the error carries the path as a note; (3) `estimate` marks a tool loop's figures as first-turn only and adds a `loop` row (`--turns N`, `--new-tokens-per-turn`) priced with cached re-reads (`loop_usd`). The per-turn reservation (`worst_usd`) is unchanged and stays conservative (whole prompt as writes): it still trips the stop earlier than the real spend. Tests: breakpoint per turn, partial on max_turns and on a cap stop, estimate warning. No paid call.
 ## 2026-10-30 09:10 UTC: G15, `create --cloud`, flags that mean what they say (audit pass 1, B2; free)
 
 - The paid thread found that `--only "GeForce RTX 3090"` kept the SECURE 3090 at $0.50 beside the COMMUNITY one and `EE_PRICE` was the dearest
