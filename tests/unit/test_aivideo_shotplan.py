@@ -75,6 +75,9 @@ def test_pod_code_follows_the_rules():
     for f in ("pod.sh", "kf.py", "clips.py", "launch.py", "watchdog.py", "montage.py"):
         txt = open(os.path.join(pod, f), encoding="utf-8").read()
         assert "hf_" not in txt.replace("hf_transfer", "").replace("hf_hub", "").replace("hf_whoami", ""), f  # no tokens
+    for f in ("launch.py", "launch_clips.py"):  # retired by D-80 (CP-01): the guard sits before the pod client
+        txt = open(os.path.join(pod, f), encoding="utf-8").read()
+        assert txt.index('raise SystemExit("RETIRED') < txt.index("rp.create("), f
     assert "lora" not in json.dumps(SHOTS["characters"]).lower()  # no character LoRAs (the creator, 2026-10-22)
 
 

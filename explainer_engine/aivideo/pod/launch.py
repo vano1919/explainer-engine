@@ -1,4 +1,11 @@
-"""Create the night-run pod through the one pod manager (preflight, ledger, guard). Run from an explainer-engine checkout."""
+"""RETIRED by D-80 (2026-10-26): starts a pod outside the CLI (no script lint, no heartbeat, no pins, no ledger-per-test)
+and pulls pod.sh that loads the banned wldnk_wan22_v1 LoRA. Kept as history (invariant 8: deletion only on the creator's
+word); never run.
+
+Create the night-run pod through the one pod manager (preflight, ledger, guard). Run from an explainer-engine checkout."""
+# before any import: run as a script, the explainer_engine import fails without PYTHONPATH, so a guard below it never prints
+raise SystemExit("RETIRED by D-80: this launcher never runs; pods start only through "
+                 "python -m explainer_engine.cloud.runpod create (OR-21)")
 import base64, json, sys
 from explainer_engine.cloud import runpod as rp
 from explainer_engine.core.ledger import Run
