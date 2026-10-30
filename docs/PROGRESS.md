@@ -3423,3 +3423,12 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Note on #88: the moved `select_screen` tests run through `pytest.ini` `testpaths` (CI and a bare `pytest -q` run them; `pytest tests` does not), TECH_QUESTIONS 32.
 - No pod, no API call, nothing deleted.
 - Decision log: none moved (a registry row).
+
+## 2026-10-30 — plan_v2 wave 2, T2: `qa/blind_check.py` carries no text of the banned look (follow-up to N-09 #87)
+- `STYLE_SPEC_WLDNK_RETIRED` (the six-item describer spec measured on the banned look) and `DESCRIBE_RULES_WLDNK_RETIRED` are removed from the live module (OR-34: nothing from
+  the old era in use; git history keeps the text). The live `STYLE_SPEC` stays `{}` and `STYLE_SUSPENDED` stays True, so every verdict is as before (REVIEW while suspended).
+  `tests/unit/test_blind_check.py` keeps the spec mechanics honest with a neutral fixture of six item names and `bc.describe_rules(OLD)`; assertions are unchanged.
+- Test red on main -> green: `test_the_live_module_carries_no_text_of_the_banned_look`. Full suite and `docs_lint` below in the PR.
+- OPEN: the xworld_v2 describer spec is not written (OR-22: after the creator rates the look); options and the DINOv2 `STYLE_SCORE_MIN` (0.557, calibrated on the banned look,
+  unused while suspended) are T2's last question in `paid/final_review/TECH_QUESTIONS.md` (project files) for Fable. No pod, no API call, nothing deleted.
+- Decision log: none moved.

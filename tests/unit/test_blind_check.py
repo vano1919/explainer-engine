@@ -6,7 +6,9 @@ CARD = {"id": "S01-01.first", "kind": "keyframe",
         "people": [{"tag": "a lanky bald old man", "where": "left"}, {"tag": "a wiry tired nurse", "where": "right"}],
         "things": [{"name": "yellow bus", "plural": "yellow buses", "count": 1}],
         "absent": ["city", "a paved road"], "relations": ["the bus is stuck nose-down in a snowdrift"]}
-OLD = bc.STYLE_SPEC_WLDNK_RETIRED     # D-80: the live spec is empty; these tests keep the retired spec's mechanics honest
+# D-80: the live spec is empty. These tests keep the spec MECHANICS honest (items answered yes / no / ?) with a neutral fixture that
+# describes no look; the earlier spec text is gone from the code.
+OLD = {k: "mechanics fixture item, not a style" for k in ("line", "figures", "colour", "texture", "detail", "light")}
 STYLE_OK = {k: "yes" for k in OLD}
 
 
@@ -71,8 +73,8 @@ def test_wrong_number_of_people_floating_and_anatomy_fail():
 def test_the_rules_hide_the_prompt_and_list_every_style_item():
     rules = bc.DESCRIBE_RULES
     assert "NOT told what the picture was meant to show" in rules
-    for k in OLD:                                               # the retired spec still renders its items (D-80 keeps the history)
-        assert f'"{k}"' in bc.DESCRIBE_RULES_WLDNK_RETIRED
+    for k in OLD:                                               # a spec renders its items when one is given
+        assert f'"{k}"' in bc.describe_rules(OLD)
     assert "style" not in rules.split("Answer with JSON only:")[1] and "Answer each style item" not in rules   # live spec is empty
 
 
@@ -95,7 +97,7 @@ def test_the_cast_counts_foreground_people_and_animal_characters_not_far_scenery
 
 
 def test_style_is_suspended_by_d80():
-    """The retired wldnk spec was measured on the banned look; until the creator rates xworld_v2 the live spec is empty, a result is
+    """The earlier spec was measured on the banned look; until the creator rates xworld_v2 the live spec is empty, a result is
     never a silent PASS, and the DINOv2 score (0.557, calibrated on the banned look) decides nothing in either direction."""
     assert bc.STYLE_SUSPENDED is True and bc.STYLE_SPEC == {}
     r = bc.compare(CARD, desc(style={}))
@@ -105,3 +107,13 @@ def test_style_is_suspended_by_d80():
     assert bc.style_verdict(0.9, STYLE_OK) == "REVIEW"           # an eye answer about the retired items does not lift it either
     fail = bc.compare(CARD, desc(people=[{"look": "old man", "where": "left"}], style={}))
     assert fail["status"] == "FAIL" and any(x["code"] == "KG-23" for x in fail["reviews"])   # a hard mismatch is still a FAIL
+
+
+def test_the_live_module_carries_no_text_of_the_banned_look():
+    """OR-34: nothing from the old era is used. The earlier spec (measured on the banned look) is gone from the live module; only the
+    suspended flag and the empty spec remain, and the mechanics' tests use a neutral fixture."""
+    from pathlib import Path
+    src = Path(bc.__file__).read_text(encoding="utf-8").lower()
+    assert not [n for n in dir(bc) if n.endswith("_RETIRED")]
+    assert "wldnk" not in src and "hand-inked" not in src and "lanky, angular" not in src
+    assert bc.STYLE_SPEC == {} and bc.STYLE_SUSPENDED is True

@@ -20,23 +20,8 @@ import re
 import sys
 from pathlib import Path
 
-# KG-23: the wldnk style as seen on the approved eras sheet (eras_v5_1750_bf16.jpg, "იდეალურია", ვანო 2026-10-24) and in the
-# captions of its training set. Each item is answered yes / no / ? for every picture; the order is the order of importance.
-# RETIRED by D-80 (2026-10-26): kept as history, unchanged, and as the fixture of the mechanics' tests; nothing live reads it.
-STYLE_SPEC_WLDNK_RETIRED = {
-    "line": "bold, uneven, hand-inked black outlines on every figure, object and background shape; the thickness varies "
-            "within one stroke (no thin uniform vector line, no painted shapes without an outline)",
-    "figures": "lanky, angular cartoon bodies with thin limbs, big heads and noses, bulging round eyes with tiny pupils and "
-               "exaggerated expressions (not anime, not chibi, not realistic proportions; not every face the same long nose)",
-    "colour": "earthy, slightly muted base colours with a few vivid glowing accents (fire, lamps, neon, lightning); "
-              "neither grey and washed out nor neon everywhere",
-    "texture": "chalky, painterly background with visible grain and brush texture; figures in flat fills with light shading "
-               "(no smooth vector gradients, no 3D render, no photo, no oil-painting chiaroscuro)",
-    "detail": "a busy world: props, clutter and background detail drawn with the same ink line as the figures",
-    "light": "one clear light source with a warm-cool contrast",
-}
-# Suspended by D-80 (2026-10-26): the retired spec was measured on the banned wldnk look (KG-23, docs/KEYFRAME_GATE.md); the xworld_v2
-# spec is written only after the creator rates the new look (OR-22). While suspended the live spec is empty, `compare` and
+# Suspended by D-80 (2026-10-26): the earlier spec was measured on the banned look (KG-23, docs/KEYFRAME_GATE.md) and is no longer in this
+# module (git history keeps it); the xworld_v2 spec is written only after the creator rates the new look (OR-22; the open question is with the technical review). While suspended the live spec is empty, `compare` and
 # `style_verdict` answer REVIEW, and `keyframe_gate` shows its KG-22 style row as REVIEW. The one home of the flag.
 STYLE_SPEC: dict = {}
 STYLE_SUSPENDED = True
@@ -71,7 +56,6 @@ Rules:
 
 
 DESCRIBE_RULES = describe_rules(STYLE_SPEC)
-DESCRIBE_RULES_WLDNK_RETIRED = describe_rules(STYLE_SPEC_WLDNK_RETIRED)
 
 # KG-25: words that name the same kind of thing; kept short on purpose (a missing synonym gives a REVIEW, never a false PASS)
 SYNONYMS = {"bus": {"bus", "coach", "school bus", "minibus"}, "building": {"building", "house", "skyscraper", "tower",
