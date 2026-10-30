@@ -1,14 +1,17 @@
 """P12d (docs/CLOUD_RUNBOOK.md, "Drills"): every "what if" of the pod protocol played once on fake HTTP, with the real
 ``pod_wrapper.sh`` (under bash, stubbed curl/uploader) writing the beat the watchdog and the guard then read. No pod, no network,
 no money. The live half of each scenario rides on P12a's pod (``create --drill``, CR-17)."""
+import json
 import time
 
 import pytest
-from test_cloud_stop_paths import FakeLive, spec_for
+from test_cloud_stop_paths import NEW_SH, PLAN, FakeLive, spec_for
 from test_pod_wrapper import pod as wrapper  # noqa: F401 - the fixture running the real wrapper
 from test_runpod import FakeRunPod, pod
 
 from explainer_engine.cloud import runpod as R, watchdog as W
+from explainer_engine.core import ledger as ledger_mod
+from explainer_engine.core.ledger import LedgerConflict, Run
 
 NAME = "ee-drill-until-9999999999"
 HB = "datasets/o/r:run/out/beat.txt"
@@ -99,11 +102,43 @@ def test_drill_5_the_pod_has_no_key_it_says_so_nobody_inside_stops_it_and_the_wa
     assert fake.pods["pp"]["status"] == "EXITED" and "DONE" in res["stopped"][0]
 
 
-def test_the_runbook_drill_table_names_five_scenarios_and_a_test_for_each():
+def test_drill_6_the_mirror_write_fails_once_the_ledger_is_one_save_ahead_and_neither_open_test_nor_create_goes_on(world, monkeypatch):
+    """G13 (paid plan 1.1 b): a crash between the ledger save and the mirror save leaves the ledger ahead of its durable copy. Then
+    ``open-test`` and ``create`` both stop with LedgerConflict and no pod call is made, so the money counted so far is never forgotten."""
+    fake, api, tmp = world
+    monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)
+    monkeypatch.setenv("EXPLAINER_LEDGER_MIRROR", str(tmp / "durable"))
+    path, mirror = tmp / "run.json", tmp / "durable" / "p12a_smoke.json"
+    run = Run.open_test(path, "p12a_smoke")
+    real, hits = ledger_mod.write_json_atomic, []
+
+    def mirror_fails_once(target, data, *a, **kw):
+        if str(target) == str(mirror) and not hits:
+            hits.append(target)
+            raise OSError("the container died between the two writes")
+        return real(target, data, *a, **kw)
+    monkeypatch.setattr(ledger_mod, "write_json_atomic", mirror_fails_once)
+    with pytest.raises(OSError, match="between the two writes"):
+        run.reserve("runpod_usd", 0.07, item="pod:A")
+    monkeypatch.setattr(ledger_mod, "write_json_atomic", real)
+    assert hits and json.loads(path.read_text())["spent"]["runpod_usd"] == pytest.approx(0.07)
+    assert json.loads(mirror.read_text())["spent"].get("runpod_usd", 0.0) == 0.0               # the durable copy is one save behind
+    with pytest.raises(LedgerConflict, match="reconcile by hand"):
+        Run.open_test(path, "p12a_smoke")
+    sf = tmp / "job.sh"
+    sf.write_text(NEW_SH)
+    with pytest.raises(LedgerConflict, match="reconcile by hand"):
+        R.main(["create", "--yes", "--max-usd", "0.07", "--max-hours", "0.3", "--ledger", str(path), "--script", str(sf),
+                "--script-url", "https://huggingface.co/x/pod.sh", "--no-guard", *PLAN], api=api, live=FakeLive(age=60))
+    assert fake.calls == [] and "pp" in fake.pods and fake.pods["pp"]["status"] != "EXITED"   # no call of any kind, nothing stopped or made
+    assert json.loads(path.read_text())["spent"]["runpod_usd"] == pytest.approx(0.07)           # and nothing was counted from 0 again
+
+
+def test_the_runbook_drill_table_names_every_scenario_and_a_test_for_each():
     from pathlib import Path
     text = (Path(__file__).resolve().parents[2] / "docs" / "CLOUD_RUNBOOK.md").read_text()
     rows = [ln for ln in text.split("## Drills", 1)[1].splitlines() if ln.startswith("| ") and ln.split("|")[1].strip().isdigit()]
-    assert len(rows) == 5
+    assert len(rows) == 6
     here = Path(__file__).read_text()
     for ln in rows:
         for name in __import__("re").findall(r"`(test_drill_\w+?)\.\.\.`", ln):

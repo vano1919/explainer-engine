@@ -347,6 +347,50 @@ def check_secret_path(path: str | Path, where: str = "file") -> None:
         raise SecretInPrompt(f"{where}: {path} is a secret-like, tools/ or .git path; nothing was sent")
 
 
+def _with_breakpoint(msgs: list, ttl: str = "5m") -> list:
+    """A copy of the conversation whose LAST content block carries the cache breakpoint (the earlier ones keep only what they had:
+    the first message's own, so the request stays within the API's four breakpoints)."""
+    cc = {"type": "ephemeral"} if ttl == "5m" else {"type": "ephemeral", "ttl": "1h"}
+    out = list(msgs)
+    last = out[-1]
+    if isinstance(last["content"], list) and last["content"] and isinstance(last["content"][-1], dict):
+        blocks = list(last["content"])
+        blocks[-1] = {**blocks[-1], "cache_control": cc}
+        out[-1] = {**last, "content": blocks}
+    return out
+
+
+def _block_json(b: Any) -> dict:
+    if isinstance(b, dict):
+        return {k: v for k, v in b.items() if k != "cache_control"}
+    t = getattr(b, "type", None)
+    if t == "text":
+        return {"type": "text", "text": b.text}
+    if t == "tool_use":
+        return {"type": "tool_use", "name": b.name, "input": dict(b.input)}
+    return {"type": str(t)}
+
+
+def save_partial(req: Request, msgs: list, turns: int, usd: float, err: BaseException) -> Path | None:
+    """What a stopped tool loop had so far: every assistant text and tool call, and the tool results cut to their first 400 characters
+    (the checkout still has the files). Written atomically; returns None when even that fails (the original error goes on)."""
+    try:
+        turns_out = []
+        for m in msgs[1:]:
+            blocks = m["content"] if isinstance(m["content"], list) else [{"type": "text", "text": m["content"]}]
+            row = [_block_json(b) for b in blocks]
+            for b in row:
+                if b.get("type") == "tool_result":
+                    b["content"] = str(b.get("content", ""))[:400]
+            turns_out.append({"role": m["role"], "blocks": row})
+        path = ledger_dir() / f"partial_{req.job}_{req.id}.json"
+        write_json_atomic(path, {"job": req.job, "id": req.id, "turns": turns, "usd_so_far": round(usd, 6),
+                                 "stopped_by": f"{type(err).__name__}: {err}", "messages": turns_out})
+        return path
+    except Exception:  # noqa: BLE001 - saving must never hide the error that stopped the loop
+        return None
+
+
 def build_params(req: Request, r: Route) -> dict:
     """The request body. Only these keys are ever set (F6): no thinking, sampling, tool_choice or prefill; the effort always (F5)."""
     for t in [req.user, *req.system]:
@@ -634,29 +678,41 @@ class ClaudeAPI:
         return self._finish(req, resp, r, r_used, usd, use)
 
     def _tool_loop(self, req: Request, r: Route, params: dict) -> Result:
-        """The reviewer's read-only tools: every turn is reserved and settled on its own. Ends on end_turn; max_turns stops it."""
+        """The reviewer's read-only tools: every turn is reserved and settled on its own. Ends on end_turn; max_turns stops it.
+
+        The cache breakpoint moves to the last block of the conversation every turn (``_with_breakpoint``): without it only the
+        system prefix is a cache read and the whole growing history is billed as fresh input again each turn (the J1b scope A
+        run, 2026-10-30: $0.03 on turn 2, $0.50 on turn 18). Whatever stops the loop (a cap, an overload, max_turns), the turns
+        so far are written to ``partial_<job>_<id>.json`` in the ledger folder before the error goes on."""
         root = Path(req.tools_root).resolve()
         msgs = list(params["messages"])
         total, tot_use = 0.0, {"input": 0, "output": 0, "cache_read": 0, "write_5m": 0, "write_1h": 0, "searches": 0}
-        for turn in range(1, req.max_turns + 1):
-            p = {**params, "messages": msgs}
-            resp, r_used, usd, use = self._paid(req, r, p, f"{req.id}#t{turn}-{uuid.uuid4().hex[:4]}")
-            total += usd
-            tot_use = {k: tot_use[k] + use[k] for k in tot_use}
-            if resp.stop_reason in ("tool_use", "pause_turn"):
-                msgs.append({"role": "assistant", "content": resp.content})
-                results = []
-                for b in resp.content:
-                    if getattr(b, "type", None) == "tool_use":
-                        out = run_repo_tool(root, b.name, dict(b.input)) if b.name in {t["name"] for t in REPO_TOOLS} else "error: unknown tool"
-                        results.append({"type": "tool_result", "tool_use_id": b.id, "content": out})
-                if results:
-                    msgs.append({"role": "user", "content": results})
-                elif resp.stop_reason == "tool_use":
-                    break
-                continue
-            return self._finish(req, resp, r, r_used, total, tot_use, turns=turn)
-        raise OutputTruncated(f"{req.id}: no final answer after {req.max_turns} turns (paid ${total:.4f}, recorded)")
+        turn = 0
+        try:
+            for turn in range(1, req.max_turns + 1):
+                p = {**params, "messages": _with_breakpoint(msgs, req.cache_ttl)}
+                resp, r_used, usd, use = self._paid(req, r, p, f"{req.id}#t{turn}-{uuid.uuid4().hex[:4]}")
+                total += usd
+                tot_use = {k: tot_use[k] + use[k] for k in tot_use}
+                if resp.stop_reason in ("tool_use", "pause_turn"):
+                    msgs.append({"role": "assistant", "content": resp.content})
+                    results = []
+                    for b in resp.content:
+                        if getattr(b, "type", None) == "tool_use":
+                            out = run_repo_tool(root, b.name, dict(b.input)) if b.name in {t["name"] for t in REPO_TOOLS} else "error: unknown tool"
+                            results.append({"type": "tool_result", "tool_use_id": b.id, "content": out})
+                    if results:
+                        msgs.append({"role": "user", "content": results})
+                    elif resp.stop_reason == "tool_use":
+                        break
+                    continue
+                return self._finish(req, resp, r, r_used, total, tot_use, turns=turn)
+            raise OutputTruncated(f"{req.id}: no final answer after {req.max_turns} turns (paid ${total:.4f}, recorded)")
+        except Exception as e:
+            where = save_partial(req, msgs, turn, total, e)
+            if where is not None:
+                e.add_note(f"partial transcript of {turn} turn(s) saved to {where}")
+            raise
 
     # -- jobs and batches --
     def run_job(self, reqs: list[Request], *, wait: bool = True) -> dict[str, Result | Exception]:
@@ -767,7 +823,21 @@ def load_job(path: Path) -> list[Request]:
                     cache_salt=q.get("cache_salt", ""), **common) for q in spec["requests"]]
 
 
-def estimate(reqs: list[Request], *, api: ClaudeAPI | None = None, expected_output: int | None = None) -> dict:
+def loop_usd(model: str, first_tokens: int, turns: int, new_per_turn: int, out_per_turn: int, ttl: str = "5m") -> float:
+    """A tool loop with the breakpoint on the last block: turn 1 writes the prompt; each later turn reads the whole context so far
+    from cache and writes only what the last turn added (its output and the tool result)."""
+    key = "write_5m" if ttl == "5m" else "write_1h"
+    zero = {"input": 0, "output": 0, "cache_read": 0, "write_5m": 0, "write_1h": 0, "searches": 0}
+    usd = usd_of(model, {**zero, key: first_tokens, "output": out_per_turn})
+    ctx = first_tokens
+    for _ in range(turns - 1):
+        usd += usd_of(model, {**zero, "cache_read": ctx, key: new_per_turn, "output": out_per_turn})
+        ctx += new_per_turn + out_per_turn
+    return usd
+
+
+def estimate(reqs: list[Request], *, api: ClaudeAPI | None = None, expected_output: int | None = None,
+             turns: int | None = None, new_tokens_per_turn: int = 6000) -> dict:
     """Tokens and dollars of a job, spending nothing: exact input tokens when a client may be built, else the offline bound."""
     pr, rows = prices(), []
     for q in reqs:
@@ -783,6 +853,10 @@ def estimate(reqs: list[Request], *, api: ClaudeAPI | None = None, expected_outp
         rows.append({"id": q.id, "model": r.model, "effort": r.effort, "input_tokens": n_in, "exact": toks is not None, "cached": hit,
                      "batch": batch, "worst_usd": round(0.0 if hit else worst, 4),
                      "usd_at_expected_output": None if typical is None or hit else round(typical, 4)})
+        if q.tools_root:   # a tool loop is many calls: the figures above are TURN 1 ONLY
+            t = turns or q.max_turns
+            rows[-1]["loop"] = {"warning": "tool loop: worst_usd and usd_at_expected_output price the FIRST turn only",
+                                "turns": t, "usd_if_cached": round(loop_usd(r.model, n_in, t, new_tokens_per_turn, expected_output or 600, q.cache_ttl), 4)}
     c = caps()
     job = reqs[0].job
     worst_total = round(sum(x["worst_usd"] for x in rows), 4)
@@ -803,6 +877,8 @@ def main(argv: list[str] | None = None) -> int:
     e.add_argument("job")
     e.add_argument("--expected-output", type=int, default=None)
     e.add_argument("--offline", action="store_true", help="never call count_tokens")
+    e.add_argument("--turns", type=int, default=None, help="tool loops: turns to price (default: the job's max_turns)")
+    e.add_argument("--new-tokens-per-turn", type=int, default=6000, help="tool loops: tool result tokens added per turn")
     r_ = sub.add_parser("run")
     r_.add_argument("job")
     r_.add_argument("--out", default=None)
@@ -839,7 +915,8 @@ def main(argv: list[str] | None = None) -> int:
             return 3
     if a.cmd == "estimate":
         live = None if a.offline or not api_key() or not (caps().get("approval") or {}).get("ref") else api
-        print(json.dumps(estimate(reqs, api=live, expected_output=a.expected_output), indent=2))
+        print(json.dumps(estimate(reqs, api=live, expected_output=a.expected_output, turns=a.turns,
+                                 new_tokens_per_turn=a.new_tokens_per_turn), indent=2))
         return 0
     out = Path(a.out) if a.out else ledger_dir() / "out" / reqs[0].job
     out.mkdir(parents=True, exist_ok=True)
