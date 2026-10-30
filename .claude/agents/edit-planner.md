@@ -64,6 +64,22 @@ For each segment:
    REVIEWs on the estimated read answered or fixed, 0 PV-44 FAIL. Report events a minute, the kinds used, the alive
    share and the scenes' coverage (establish, listener cuts, longest A/B run, J/L share).
 
+## 4b Sound (Blueprint P4: after the real read is timed, AUDIO_TIMED)
+
+The sound pass is a step of this page, not a separate agent, and it owns no script field. Start it with
+`python -m explainer_engine.scripting.stage_guard start sound --job <job> --page .claude/agents/edit-planner.md --input <each file you read>`
+(Read `docs/AUDIO_SYSTEM.md` "Sound director", the skill `editing-style` and the job's `audio/words.json` and `timed.json` first, OR-32).
+1. `python -m explainer_engine.audio.spine <job>` compiles `audio/audio_spine.json` (a failure is the read's, not yours to repair).
+2. `python -m explainer_engine.audio.sound_director plan <job>` writes `audio/sound_mix_manifest.json` and
+   `audio/sound_director_report.json`; read the report: every FAIL, every REVIEW and every inferred choice (an inferred acoustic, a
+   dropped vacuum).
+3. Fix the cause in the script, where the editor still owns it (segment `audio` and `music`, `shots`, shot-card `sound`; SD-01..SD-15 name
+   the rule), then plan again. Never edit the manifest by hand: it is derived from its inputs (CN-02), and a stale one stops the render
+   (SD-15). A free-generator take is allowed only for a kind the creator admitted (BP-162, SD-13): library first, then the connector.
+4. Done when the plan has 0 FAIL and each REVIEW is fixed or answered in one line. End with
+   `python -m explainer_engine.scripting.stage_guard sound before.json after.json` on the script as it was and as it is: it must pass,
+   the pass changed no script field.
+
 ## Sourced rules (docs/SOURCED_RULES.md)
 
 The validators read these from the registry (D-59); AL-02's events-a-minute band is an audio rule (AUDIO_SYSTEM.md).

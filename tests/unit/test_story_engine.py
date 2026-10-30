@@ -325,6 +325,28 @@ def test_stage_guard_lets_the_architect_correct_a_scene_header_and_nobody_else()
         assert any(f"{seg['id']}.scene" in v for v in G.violations(stage, before, after)), stage
 
 
+def test_the_sound_stage_owns_no_script_field():
+    """P4 step 4b: the sound pass writes only under audio/; any script field it changes is a violation, an unchanged script passes."""
+    assert G.STAGES["sound"] == {"top": set(), "seg": set(), "line": set()}
+    before = storied()
+    assert G.violations("sound", before, copy.deepcopy(before)) == []
+    seg = next(s for s in before["segments"] if s.get("lines"))
+    changes = {
+        "a top-level field": lambda d: d.__setitem__("music", [{"id": "m1"}]),
+        "the editor's segment audio": lambda d: next(x for x in d["segments"] if x["id"] == seg["id"]).__setitem__("audio", {"beds": ["x"]}),
+        "the editor's shots": lambda d: next(x for x in d["segments"] if x["id"] == seg["id"]).__setitem__("shots", []),
+        "a line's words": lambda d: next(x for x in d["segments"] if x["id"] == seg["id"])["lines"][0].__setitem__("text", "Changed."),
+        "a line's delivery": lambda d: next(x for x in d["segments"] if x["id"] == seg["id"])["lines"][0].__setitem__("tags", ["calm"]),
+        "a line removed": lambda d: next(x for x in d["segments"] if x["id"] == seg["id"])["lines"].pop(),
+        "the segments reordered": lambda d: d.__setitem__("segments", d["segments"][::-1]),
+    }
+    for what, change in changes.items():
+        after = copy.deepcopy(before)
+        change(after)
+        assert G.violations("sound", before, after), what
+    assert "sound" not in G.ORDER  # it runs after the read is timed, outside the script stages' chain
+
+
 # --- sound layers (AL) ---------------------------------------------------------------------------------------------------
 
 from explainer_engine.audio import layers as L  # noqa: E402

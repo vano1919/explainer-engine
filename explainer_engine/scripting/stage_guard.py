@@ -26,6 +26,8 @@ Stages and what they own:
   ``look``, ``picture_dirs``, ``sound_dirs``; of the beats only their ``pos`` (where on the frame), never what they show
 * ``caster``     the voices: ``voice`` and ``cast.<id>.voice`` (the architect owns the rest of ``cast``)
 * ``shorts``     the ``shorts`` block
+* ``sound``      owns NO script field (P4, step 4b of ``edit-planner``): the sound pass runs the audio spine and the sound director
+  and writes only under ``audio/`` (``sound_mix_manifest.json``, never by hand, CN-02); any change to the script it made is a violation
 """
 
 from __future__ import annotations
@@ -50,6 +52,7 @@ STAGES = {
                "seg": {"shots", "audio", "staging"}, "line": set()},
     "caster": {"top": {"voice"}, "seg": set(), "line": set(), "cast_voice": True},
     "shorts": {"top": {"shorts"}, "seg": set(), "line": set()},
+    "sound": {"top": set(), "seg": set(), "line": set()},  # owns nothing: the guard proves the pass left the script as it was
 }
 
 

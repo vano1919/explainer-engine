@@ -92,6 +92,16 @@ binding rules they are.
 - **Themes belong to people.** A faction's or hero's motif returns when its owner acts; with music up, action cuts sit on
   the beat grid (BP-123); music starts and stops on boundaries (BP-62).
 
+### Sound director (P4)
+
+The judgement above is planned and checked by code once the read is timed: `audio/spine.py` gives every word one frame clock and
+`audio/sound_director.py` derives the mix manifest from it, with the checks SD-01..SD-15 ([AUDIO_SYSTEM](../../../docs/AUDIO_SYSTEM.md)
+"Sound director"; the numbers are BP-116..BP-123 and BP-160..BP-161 in the registry, never copied here). You still write the
+sounds in the script (segment `audio` and `music`, shot-card `sound`); you never edit the manifest, you fix the script and plan again.
+A reveal gets a prepared silence and a three-layer hit, not a louder effect; if the report says the background crowds the narrator's
+band, the cause is the music or ambience you chose, not the mixer. A take from a free generator is allowed only for a kind the creator
+admitted (BP-162); otherwise library first, then the ElevenLabs connector.
+
 ### CHECKLIST (sound)
 
 Rendered from `explainer_engine/standards/craft_checklists/sound.json` (the one home of these ids; 
