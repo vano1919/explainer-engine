@@ -2774,3 +2774,9 @@ training as sequences is decided in the process. Changed together:
   and `huggingface_hub` (latest 1.x; its API checked by import). They are pins to be proved by P12a, not facts about a working stack.
 - Not done here, on purpose: the nine historic `training/pods/*.sh` (pre-P1a protocol: own upload loop, own DONE) are not rewritten. They are
   refused by `create` already; the P12 scripts under `training/pods/p12/` are the ones that must pass `dryrun`.
+
+## 2026-10-30 04:30 UTC: P1b follow-up, review items 1-2 of PR #46 (no pod, no money)
+
+- `runpod dryrun`: a `git+https://...@<ref>` or `pkg@git+...` pin counts only with a 40-hex sha after `@` (`@main` and tags move); a multi-line
+  `if [ "${DRY:-0}" = 1 ]; then ... exit 0; fi` gate is recognised (the `exit` must be inside the block). Items 3 (a plain unpinned `pip install foo`
+  without `-U`) and 4 (the record is not bound to the Hub) stay as the card wrote them. Test: `test_only_a_sha_pins_a_git_install_and_a_multi_line_dry_gate_counts`.

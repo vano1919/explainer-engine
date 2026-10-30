@@ -85,13 +85,13 @@ def static_problems(text, pins=None):
             last_install = n
         upgrade = re.search(r"\bpip3?\s+install\b[^|;&]*?\s(-U|--upgrade)\b", ln)
         if upgrade:
-            loose = [p for p in _pip_packages(ln) if "==" not in p and "@" not in p]
+            loose = [p for p in _pip_packages(ln) if "==" not in p and not re.search(r"@%s\b" % SHA40.pattern.replace(r"\b", ""), p)]
             if loose:
                 out.append(f"line {n}: `pip install -U` without `==` for {', '.join(loose)}: the same script would install a different "
                            "version every day (pin it in config/cloud_pins.json)")
         for url in re.findall(r"git\+https?://\S+", ln):
-            if "@" not in url.split("://", 1)[1].split("/", 1)[-1]:
-                out.append(f"line {n}: `{url.strip(chr(34) + chr(39))[:70]}` has no `@<sha>`: pip would install the repo's HEAD of the day")
+            if not re.search(r"@%s(?![0-9A-Za-z])" % SHA40.pattern.replace(r"\b", ""), url):  # a branch or tag after @ moves: only a sha pins
+                out.append(f"line {n}: `{url.strip(chr(34) + chr(39))[:70]}` has no `@<40-hex sha>`: a branch or no ref is the repo's HEAD of the day")
         if re.search(r"\bgit\s+clone\b", ln):
             later = [c for m, c in cmds if m >= n and re.search(r"\bgit\b[^|;&]*\b(checkout|reset|fetch)\b", c) and SHA40.search(c)]
             shas = {s for c in later for s in SHA40.findall(c)} | set(SHA40.findall(ln))
@@ -105,7 +105,16 @@ def static_problems(text, pins=None):
             out.append(f"line {n}: `|| true` on an install or download step ({ln.strip()[:50]}): a failed install must stop the pod, "
                        "not train on a half-installed stack")
     if last_install is not None:
-        gates = [n for n, ln in cmds if n > last_install and re.search(r"\bDRY\b", ln) and re.search(r"\bexit\b|\breturn\b", ln)]
+        gates = []  # one line (`[ "${DRY:-0}" = 1 ] && exit 0`) or an `if` over DRY whose next lines, before its `fi`, exit
+        for i, (n, ln) in enumerate(cmds):
+            if n > last_install and re.search(r"\bDRY\b", ln):
+                body = [ln]
+                for _, nxt in cmds[i + 1:i + 4]:
+                    if re.match(r"\s*fi\b", nxt):
+                        break
+                    body.append(nxt)
+                if re.search(r"\bexit\b|\breturn\b", " ".join(body)):
+                    gates.append(n)
         if not gates:
             out.append("no `DRY=1` gate after the install stage (e.g. `[ \"${DRY:-0}\" = 1 ] && exit 0`): the script cannot be proved on a "
                        "cheap pod up to its install steps before the long stages are paid")
