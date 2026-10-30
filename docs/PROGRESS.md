@@ -3115,3 +3115,17 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - The shared fake RunPod account of `tests/unit/test_runpod.py` held a balance of $1.00, which is now below `min_balance_left_usd` plus a
   test pod's `--max-usd`; 16 cloud tests were refused by the floor instead of testing what they name. The fake's balance is now a
   `balance` attribute defaulting to $20.00; no assertion changed (the refusal itself is `test_min_balance_left_is_one_dollar_...`).
+
+## 2026-10-30 UTC: plan_v2 T1 / CP-01, the retired launchers never run; the hook refuses them and a library create (no pod, no money)
+
+- `explainer_engine/aivideo/pod/launch.py`, `launch_clips.py` (D-80, Fable F-01, Argon-1 F-19, Argon-2 F-06 fence half): the docstring
+  opens with `RETIRED by D-80 ...`; `raise SystemExit("RETIRED by D-80: ...")` is the first statement after it, before every import (run as a
+  script, the `explainer_engine` import fails without PYTHONPATH, so a guard placed just above `api = rp.Api()` would never print). Nothing
+  else changed; nothing deleted (invariant 8, deletion is the creator's word). No other RunPod caller under `aivideo/pod/`.
+- `explainer_engine/cloud/hooks.py` `BYPASS` += the launcher paths (`python ... aivideo/pod/launch(_clips)`, `/`, `\` or `.`) and a Python
+  `rp.create(` / `runpod.create(` (`;` and newlines kept inside, so `python -c "...; rp.create(...)"` and a heredoc are caught). Readers
+  (`cat`, `grep`) and the CLI (`python -m explainer_engine.cloud.runpod create|check`) stay allowed. The hook is the second net; the library
+  guard is N-01.
+- Tests: `tests/unit/test_money_path_fences.py` (CP-01 section: both launchers exit with `RETIRED by D-80` and no network, 7 refused
+  commands, 6 allowed ones); `tests/unit/test_aivideo_shotplan.py::test_pod_code_follows_the_rules` += the guard sits before `rp.create(`
+  (addition only). Red on main: 9 failed.

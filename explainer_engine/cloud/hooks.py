@@ -3,7 +3,8 @@
     session-start  prints what bills on the RunPod account (stray pods, stopped disks, 24 h billing, balance)
     stop           refuses to end a turn while something bills that nobody approved or guards (exit 2 tells Claude why)
     pre-bash       refuses pod starts that bypass the guarded manager (TMR's rp.py create/start, raw POST /pods on REST v1 or
-                   v2, a v2 ``action`` start/restart, the GraphQL deploy mutations, the Python SDK's create_pod/resume_pod)
+                   v2, a v2 ``action`` start/restart, the GraphQL deploy mutations, the Python SDK's create_pod/resume_pod,
+                   the retired aivideo/pod launchers and a Python ``rp.create(``/``runpod.create(`` outside the CLI)
 A broken check (no key, no network, an API error) never blocks a turn by itself; it blocks only while this machine knows of a
 live pod it cannot then look at (CR-13): an unguarded pod is the one thing worth stopping a turn for.
 """
@@ -22,7 +23,10 @@ BYPASS = [re.compile(p) for p in (r"/v[12]/pods/?['\"]?\s*(-X\s*POST|--request\s
                                    r"(?s)(?=.*/v2/pods/\w+/action)(?=.*['\"]action['\"]\s*:\s*['\"](start|restart)['\"])",
                                    r"podFindAndDeployOnDemand|podRentInterruptible|podResume", r"runpod\.(create_pod|resume_pod)\(",
                                    r"runpodctl\s+(create|start)\b", r"(-X\s*PATCH|--request\s+PATCH)[^|;&]*/v2/pods/",
-                                   r"/v2/pods/\w+['\"]?\s*(-X\s*PATCH|--request\s+PATCH)")]  # PATCH resets the pod: data outside /workspace is lost
+                                   r"/v2/pods/\w+['\"]?\s*(-X\s*PATCH|--request\s+PATCH)",  # PATCH resets the pod: data outside /workspace is lost
+                                   r"python[^|;&\n]*aivideo[/\\.]pod[/\\.]launch(_clips)?\b",  # the retired launchers (CP-01, D-80)
+                                   r"python[^|&]*\b(rp|runpod)\.create\(")]  # library create outside the CLI (N-01's 2nd net;
+#                                    ``;`` and newlines allowed: ``python -c "import ...; rp.create(...)"`` and a heredoc are one program)
 
 
 RP_SAFE = ("sweep", "status", "list", "check", "logs", "cost", "stop")  # TMR's rp.py: read-only and stopping commands only (CR-13)
