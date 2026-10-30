@@ -18,6 +18,14 @@ def test_the_committed_table_has_job_types_and_no_invented_row():
     assert all(j["rows"] == {} and j["unit"] for j in data["jobs"].values())   # measured by P12a/P12b, never typed
 
 
+def test_lookup_names_the_one_measured_card_or_nothing():
+    row = {"s_per_unit": 1.0}
+    data = {"jobs": {"one": {"rows": {"A": row}}, "two": {"rows": {"A": row, "B": row}}, "none": {"rows": {}}}}
+    assert S.lookup(data, "one", "A") is row and S.lookup(data, "one") is row and S.lookup(data, "one", "B") is None
+    assert S.lookup(data, "two", "B") is row and S.lookup(data, "two") is None          # several cards: the caller must name one
+    assert S.lookup(data, "none") is None and S.lookup(data, "missing", "A") is None and S.lookup({}, "one") is None
+
+
 def test_a_row_is_written_from_a_measurement_and_needs_a_known_job_and_real_numbers():
     r = S.record("keyframes", "NVIDIA A40", cloud="COMMUNITY", units=100, work_s=4500, setup_s=720, mb=32000, download_s=640, usd=0.55,
                  source="pod x", now=0)
