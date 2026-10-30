@@ -55,7 +55,9 @@ def test_cp17_the_keyframe_gate_and_video_qa_numbers_come_from_the_registry():
     src = (ROOT / "explainer_engine" / "training" / "video_qa.py").read_text(encoding="utf-8")
     read = {k for rid, k, _l in SR.threshold_reads(src) if rid == "BP-166"}
     assert read == set(SR.rule("BP-166")["thresholds"]), "every BP-166 number is read by video_qa, and nothing else is registered"
-    for key in ("sharp_keep_min", "sat_drift_max", "palette_dist_max", "hero_palette_max"):
-        assert SR.T("BP-166", key) == video_qa.RULES["video_qa"][key], "the registry kept lora_rules.json's starting value"
+    for key, value in {"sharp_keep_min": 0.65, "sat_drift_max": 0.08, "palette_dist_max": 0.08, "hero_palette_max": 0.15,
+                       "hold_px": 0.15, "ink_max": 50}.items():
+        assert SR.T("BP-166", key) == value, "the registry holds the starting value of the IC tests"
+    assert not set(SR.rule("BP-166")["thresholds"]) & set(video_qa.RULES["video_qa"]), "lora_rules.json keeps no copy of a BP-166 number"
     # the four numbers behind an LT FAIL stay out of the registry until the creator's words or two sources back them (D-59)
     assert not {"flicker_max", "morph_second_max", "edges_keep_min", "sat_loss_fail"} & set(SR.rule("BP-166")["thresholds"])

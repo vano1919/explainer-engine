@@ -22,8 +22,9 @@ import numpy as np
 
 def frame_metrics(drawn, truth, clip):
     """drawn, truth: RGB uint8 arrays of one size; clip: their CLIP similarity."""
+    from explainer_engine.standards import sourced_rules as SR
     from explainer_engine.training import judge, video_qa
-    ink = [float((video_qa._gray(f) < video_qa.Q.get("ink_max", 50)).mean()) for f in (truth, drawn)]
+    ink = [float((video_qa._gray(f) < SR.T("BP-166", "ink_max")).mean()) for f in (truth, drawn)]
     m = {"clip": round(float(clip), 4), "palette": video_qa._dist(video_qa._palette(truth), video_qa._palette(drawn)),
          "ink": round(ink[1] / max(ink[0], 1e-6), 3), **judge.edit_pair_metrics(truth, drawn)}
     m["composite"] = round(m["clip"] - m["palette"] - 0.5 * abs(math.log(max(m["ink"], 1e-3))) - m["change"], 4)

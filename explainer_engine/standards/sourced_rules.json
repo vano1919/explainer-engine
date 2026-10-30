@@ -6246,7 +6246,8 @@
    },
    "sources": [],
    "enforced_by": [
-    "explainer_engine/training/video_qa.py"
+    "explainer_engine/training/video_qa.py",
+    "explainer_engine/training/pods/xworld_v1_score.py"
    ],
    "next_step": "two source types (A/B/C) or the creator's dated word; none of these becomes FAIL before that (D-59)",
    "supersedes": []

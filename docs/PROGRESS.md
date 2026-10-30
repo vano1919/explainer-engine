@@ -3338,5 +3338,8 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Test red on main-era code -> green: `test_sourced_rules_sync.py::test_cp17_the_keyframe_gate_and_video_qa_numbers_come_from_the_registry`. Focused set 61 passed, `docs_lint` 0 findings,
   `governance check` ok. Defaults are unchanged (every moved number keeps its value), so no verdict moves.
 - `docs/PRODUCTION_RULES.md` rows 7.5 and 7.6 (T3-4's wording "until they land the two CLIs are run by hand" was stale once CP-10 landed): they now name the `production_gate` rows `keyframes` and `clips` and the `<clip>.video_qa.json` sidecar. Coordinator's ask, 2026-10-30.
+- T1's review (#82): the ten BP-166 numbers are no longer copied in `lora_rules.json` `video_qa` (it keeps `about` and the four FAIL keys); the pod scorer
+  `training/pods/xworld_v1_score.py` reads `ink_max` through `SR.T("BP-166", ...)` and is listed in BP-166 `enforced_by` (a local scoring step run after the pod; no approval binds its sha);
+  the test now pins the literal starting values and asserts no BP-166 key is in `RULES["video_qa"]`, so a copy cannot come back. LT-56/57 rows carry "(number: BP-166)".
 - OPEN: BP-165/BP-166 need two source types or the creator's dated word before any of them can become FAIL. No pod, no API call, nothing deleted.
 - Decision log: none moved.
