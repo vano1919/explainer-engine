@@ -2624,3 +2624,8 @@ training as sequences is decided in the process. Changed together:
 - D9's numbers (min_balance_left_usd 1.00, ElevenLabs casting_credits_max 1500) are ვანო's and are not in this change.
 - Tests: `tests/unit/test_spend_caps.py` (5); `tests/unit` 1208 passed, 5 failed only because this container lacks `cv2`
   (the same 5 fail on main here); `docs_lint` 0 findings.
+- Review fixes (PR #33 cross-review): `runpod create` refuses a ledger path that does not exist (a ledger made there got the
+  episode ceilings); `Run.open` re-checks a paid test's ledger against its line on every open; the cap is per test, not per
+  file: `open_test` needs `EXPLAINER_LEDGER_MIRROR` (a durable folder), restores a missing path from `<mirror>/<test>.json`,
+  every save writes the mirror and a ledger that differs from its mirror stops with LedgerConflict; `ledger report` only
+  reads; `decided` cites the creator's message id. Tests: tests/unit/test_spend_caps.py, tests/unit/test_runpod.py.
