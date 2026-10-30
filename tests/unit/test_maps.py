@@ -281,7 +281,9 @@ def test_law4_every_element_appears_on_a_word():
 
 def test_events_start_on_the_first_frame_of_their_word():
     clock = timeline.WordClock(SPINE, 10)
-    assert clock.frame_of(10) == 0 and clock.frame_of(12) == 24 and clock.frame_of(3) == 0
+    assert clock.frame_of(10) == 0 and clock.frame_of(12) == 24
+    with pytest.raises(ValueError, match="before the item's trigger"):
+        clock.frame_of(3)
     with pytest.raises(ValueError):
         clock.frame_of(10 ** 6)
     with pytest.raises(ValueError):
@@ -337,7 +339,7 @@ def test_law6_the_palette_pair_is_colour_blind_safe_and_marked():
     same_mark["faction_pairs"][0]["mark_b"] = "square"
     assert PAL.faction_findings(same_mark)[0]["check"] == "faction_mark"
     for vision in PAL.CVD:
-        assert PAL.delta_e("#1A73E8", "#FA903E", vision) > SR.T("BP-144", "faction_delta_e_min")
+        assert PAL.delta_e("#1A73E8", "#F55A24", vision) > SR.T("BP-144", "faction_delta_e_min")
 
 
 def test_law6_the_two_sides_differ_by_shape_not_only_colour():

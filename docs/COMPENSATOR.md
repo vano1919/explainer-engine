@@ -119,6 +119,28 @@ micro view draws the counters and the formation, not the terrain.
 `measured` block, with the machine named; the planner reads it with `availability()`. A frame is cheap (tens of milliseconds to a
 fraction of a second on this container's CPU): a 30 s item at 24 fps is minutes, never a pod.
 
+## Known limits and open items
+
+- **Side marks.** A side is told apart by more than its colour: a square or a triangle on the counters and the formation proxies, and
+  on a route a solid line with a solid head (side a) against a dashed line with a hollow head (side b). Rings, the supply line and the
+  strength bar carry only the colour; they sit beside a labelled counter, and a colour-blind viewer still has the 112 or more of
+  CIE76 between the two tokens (D-86).
+- **The camera's tilt** (`camera.tilt`) squashes the picture vertically for the 45 degree hand-over; it is not a perspective
+  transform. The depth export (`zdepth`) is the real hand-over; a perspective warp is a later refinement if a measured shot needs it.
+- **The painted plate's overlap** (`plate.certificate`) is computed by the caller from the painted land mask and recorded as a number;
+  the certificate check trusts that number and the file's hash, it does not recompute the overlap. The OCR count is the same.
+- **A word before an item's trigger word** is an error (CN-01), not frame 0; an event cannot start before its item.
+- **CMP-08's cadence** (the next change within the upper end of the 2.0-3.5 s window) is reported as INFO: camera drifts, pulses and
+  counters change the picture between events, so only the 4 s still-flag (BP-140) is REVIEW.
+- **Numbers that differ from the research record.** `p4_variants.json` summarises the Blueprint loosely; the registry's numbers are
+  the Blueprint's own text: the 2.0-3.5 s window of BP-140, the 4 s lower end of the altitude change (BP-125, BP-141) and the 0.40
+  hard flag of BP-143. All are hypotheses (REVIEW only, D-59) until a second source type is opened.
+- **BP-127's dramatisability score** is not implemented here (the planner, P3); only its two caps are, in `lane_balance`.
+- **Open acceptance criteria of the P5 card:** the OCR count of 0 letters on a plate is tested by construction (the plate never calls
+  the text method) and by tesseract where it is installed, but no OCR engine ran in this phase; and the compensator frames of the
+  Napoleon demo job are not rendered, because the demo's specs and audio spine belong to the pilot (P12b/P0c). The twelve archetypes
+  render from the synthetic job in `tests/unit/_comp.py`.
+
 ## Not in this phase
 
 Painting the plates and the hosts (P12e), the shot router and lanes (P6), the staging and cuts (P7), the planner's variants and

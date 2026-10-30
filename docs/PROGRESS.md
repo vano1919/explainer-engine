@@ -2732,8 +2732,10 @@ training as sequences is decided in the process. Changed together:
 - Contracts: new `comp_spec/1`; `visual_comp_manifest/1` items reference it by a layer of kind `spec`; CN-15 (an archetype is one of the
   catalogue and on its family's lane, for shots, items and specs). Registry: BP-140..146 (hypotheses, so REVIEW), BP-124/125/127 now
   enforced by the new validators.
-- Decisions: D-86 (ceiling = 2D vector map + 2.5D parallax, no height model; the faction pair is blue and orange, not red: CVD
-  simulation after Machado 2009 gives a worst-case CIE76 of 118 against 98 for red; a square and a triangle mark the sides as well).
+- Decisions: D-86 (ceiling = 2D vector map + 2.5D parallax, no height model; the faction pair is blue and vermilion: after Machado 2009
+  the worst case over protan, deutan and tritan is 112.9 (CIE76) against 98.3 for the Blueprint's red and 87.5 for the first pick, a light
+  orange, whose 118 claim was wrong for tritan, found in review; the sides are also told apart by a square or a triangle and a solid or a
+  dashed route).
   Palette tokens `faction_a`, `faction_b` with `design/palette.py:faction_findings`. The dossier card has no stamp (CMP-15, D-61/SC-11).
 - Measured (this container, 1280x720, ss 2): 0.09 s per frame for HUDs and graphs, 0.5 s for maps, 1.6 s for the formation, 2.4 s for the
   parallax tableau: a 30 s item at 24 fps is minutes of CPU, never a pod (`archetypes.json` `measured`).
@@ -2742,3 +2744,6 @@ training as sequences is decided in the process. Changed together:
   chunk-identical bytes, cross-item checks, CN-15, CMP-14 no client and no model imported).
 - Not done (named in COMPENSATOR.md): BiRefNet is only an input slot for the matte, the depth model is not in this phase (tests use a
   synthetic depth map), painting the plates is P12e, the router is P6.
+- Review round 1 (P0a): D-86's numbers corrected and the pair re-chosen by worst case (vermilion `faction_b`, world bible v1.3 draft);
+  route lines and heads carry the side mark; `WordClock.frame_of` refuses a word before the trigger word (CN-01) instead of clamping;
+  BP-127 keeps its `planned` note for the score; the known limits and the two open card criteria are listed in `docs/COMPENSATOR.md`.

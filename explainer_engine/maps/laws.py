@@ -218,10 +218,10 @@ def check_item(spec: dict, spine: dict, trigger_word_index: int, duration_frames
     findings = render.validate_payload(spec)
     if any(f["severity"] == "FAIL" for f in findings):
         return findings
-    try:
+    try:     # a word outside the spine, or before the trigger word, raises from the clock: the item is refused, not drawn from frame 0
         tl, clock = timeline.build(spec, spine, trigger_word_index, duration_frames)
+        return findings + no_diffusion(spec, base_dir) + terrain_paths(spec) + signalling(spec, tl) + word_lock(spec, tl, duration_frames) \
+            + scale_progression(spec, tl, clock) + faction_colours(spec) + map_to_scene(spec, tl.fps, scene_set, base_dir) \
+            + stimulus_window(spec, tl, clock) + date_chip(spec, tl)
     except ValueError as e:
         return findings + [{"rule": "CN-01", "severity": "FAIL", "where": spec["item_id"], "detail": str(e)}]
-    return findings + no_diffusion(spec, base_dir) + terrain_paths(spec) + signalling(spec, tl) + word_lock(spec, tl, duration_frames) \
-        + scale_progression(spec, tl, clock) + faction_colours(spec) + map_to_scene(spec, tl.fps, scene_set, base_dir) \
-        + stimulus_window(spec, tl, clock) + date_chip(spec, tl)

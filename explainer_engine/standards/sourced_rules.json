@@ -5044,7 +5044,8 @@
     "explainer_engine/edit/visual_compensator.py:lane_balance"
    ],
    "supersedes": [],
-   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists",
+   "planned": "the dramatisability score of a beat and the lane shares that follow it: the planner (P3); the two caps are enforced now (P5, visual_compensator.lane_balance)"
   },
   {
    "id": "BP-128",

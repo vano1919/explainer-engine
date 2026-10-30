@@ -351,10 +351,15 @@ def render_frame(spec: dict, tl: Timeline, clock, f: int, ss: int = D.SS, base_d
         part = D.polyline_prefix(pts, share)
         colour = (*(D.faction(r["side"]) if r.get("side") else D.rgb("mechanism_teal")), 255)
         w = max(3.0, c.h * 0.011)
+        second = r.get("side") == "b"       # side b: a dashed line and a hollow head, so colour is never the only difference (CMP-06)
         c.line(part, ink, w * 1.7)
-        c.line(part, colour, w)
+        c.line(part, colour, w, dash=(w * 3.0, w * 1.6) if second else None)
         if len(part) >= 2 and share > 0.02:
-            D.arrow_head(c, part[-1], part[-2] if part[-2] != part[-1] else part[0], w * 2.6, colour, ink)
+            tip, back = part[-1], part[-2] if part[-2] != part[-1] else part[0]
+            if second:
+                D.arrow_head(c, tip, back, w * 2.6, (*D.rgb("paper"), 255), colour)
+            else:
+                D.arrow_head(c, tip, back, w * 2.6, colour, ink)
     for ring in p.get("rings", []):
         evs = _active_events(tl, "show_ring", ring["id"], f)
         if not evs:

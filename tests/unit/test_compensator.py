@@ -148,6 +148,21 @@ def test_an_element_without_an_event_is_flagged_for_every_archetype_that_has_ele
     assert "CMP-04" in rules(found)
 
 
+def test_a_word_before_the_trigger_word_is_a_fail_not_frame_zero(job):
+    base, manifest = job
+    for kind in ("TACTICAL_UNIT_MANEUVER", "SPLIT_SCREEN_SPEED_RACE"):
+        row = next(r for r in VC.items_of(manifest, base) if r["spec"]["archetype_id"] == kind)
+        spec = copy.deepcopy(row["spec"])
+        spec["events"][0]["word_index"] = row["item"]["trigger_word_index"] - 3
+        found = VC.check_item(spec, row["spine"], row["item"]["trigger_word_index"], row["item"]["duration_frames"], base)
+        assert any(f["rule"] == "CN-01" and f["severity"] == "FAIL" and "before the item's trigger" in f["detail"] for f in found), kind
+    row = next(r for r in VC.items_of(manifest, base) if r["spec"]["archetype_id"] == "MAP_3D_TERRAIN_FLYOVER")
+    spec = copy.deepcopy(row["spec"])
+    spec["payload"]["camera"]["moves"][0]["from_word"] = row["item"]["trigger_word_index"] - 1
+    found = VC.check_item(spec, row["spine"], row["item"]["trigger_word_index"], row["item"]["duration_frames"], base)
+    assert any(f["rule"] == "CN-01" and f["severity"] == "FAIL" for f in found)
+
+
 def test_a_literal_colour_is_refused_in_a_hud_too(job):
     base, manifest = job
     row = next(r for r in VC.items_of(manifest, base) if r["spec"]["archetype_id"] == "SPLIT_SCREEN_SPEED_RACE")

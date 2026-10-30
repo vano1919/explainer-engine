@@ -53,7 +53,10 @@ class WordClock:
         return self.words[word_index]["start_frame"]
 
     def frame_of(self, word_index: int) -> int:
-        return max(0, self.abs_frame(word_index) - self.origin)
+        """The first frame of the word, counted from the item's first frame; a word before the trigger word is an error, not frame 0."""
+        if word_index < self.trigger:
+            raise ValueError(f"word {word_index} is before the item's trigger word {self.trigger}")
+        return self.abs_frame(word_index) - self.origin
 
 
 def build(spec: dict, spine: dict, trigger_word_index: int, duration_frames: int) -> tuple[Timeline, WordClock]:

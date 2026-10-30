@@ -16,7 +16,7 @@
     "grey_mid":        {"hex": "#8D99AE", "role": "inactive / background props"},
     "chroma_key":      {"hex": "#00B140", "role": "flat background of the expression sheets (VB-09); keyed out, never on screen"},
     "faction_a":       {"hex": "#1A73E8", "role": "faction A on maps, unit counters, rings, bars (CMP-06); always with the square mark"},
-    "faction_b":       {"hex": "#FA903E", "role": "faction B on maps, unit counters, rings, bars (CMP-06); always with the triangle mark"}
+    "faction_b":       {"hex": "#F55A24", "role": "faction B on maps, unit counters, rings, bars (CMP-06); always with the triangle mark"}
   },
   "text_pairs": [
     {"text": "ink",   "on": "paper"},
@@ -36,7 +36,7 @@
   ],
   "fill_only": ["kit_card", "kit_shadow", "answer_coral", "mechanism_teal", "support_blue", "true_green", "false_red", "uncertain_amber", "grey_mid", "faction_a", "faction_b"],
   "faction_pairs": [
-    {"a": "faction_a", "b": "faction_b", "mark_a": "square", "mark_b": "triangle", "note": "blue and orange: the pair that stays apart for protan, deutan and tritan viewers (measured, docs/COMPENSATOR.md); the Blueprint's red option #D93025 is 98 at its worst, the orange 118"}
+    {"a": "faction_a", "b": "faction_b", "mark_a": "square", "mark_b": "triangle", "note": "blue and vermilion: the pair with the best worst case over protan, deutan and tritan viewers (112.9 against 98.3 for the Blueprint's red and 87.5 for a light orange, D-86)"}
   ],
   "fill_only_rule": "Accent colours are 1.5-3.7:1 against paper, below the 3:1 that graphics need. They are fills; every shape that carries meaning also has an ink stroke (>= 4 px at 1080p), and meaning is never carried by colour alone."
 }
