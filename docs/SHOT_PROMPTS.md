@@ -2,8 +2,8 @@
 
 > **Retired in part by [D-80](DECISIONS_AND_OPEN_QUESTIONS.md) (2026-10-26):** Qwen-Image-2512, Edit-2511 and every `wldnk_*` LoRA are banned; keyframes come from Qwen-Image-2.1 (draws and edits with references) with the new LoRA learned from Rick and Morty. Model rows and the `wldnk style` prompt shape below describe the banned stack; the new prompt rules come from the 2.1 prompt-type test.
 
-How the prompts of an animated shot are written: the keyframe (Qwen-Image-2512 + the style LoRA), the next pose of the same
-shot (Qwen-Image-Edit-2511 + the scene LoRA, from the master frame), a cut to a new angle of the same scene, and the video
+How the prompts of an animated shot are written: the keyframe (Qwen-Image-2.1 + the xworld_v2 LoRA, D-80), the next pose of the same
+shot (Qwen-Image-2.1 in its edit mode with the one LoRA, from the master frame), a cut to a new angle of the same scene, and the video
 (LTX-2.5 with native audio). ვანო asked for it on 2026-10-24 (15:35 Tbilisi): "analyse the patterns and anti-patterns of the
 frame prompts from all the iterations, single out the mistakes you caused, write rules and give them to the scenario agents".
 
@@ -20,8 +20,8 @@ the length); the `edit-planner` and the skill `shot-visuals` write the prompts. 
 
 | Kind | Model | Shape |
 |---|---|---|
-| `keyframe` | Qwen-Image-2512 + style LoRA | `wldnk style, ` + who (by what they look like) + the one action + where + light |
-| `nextpose` | Qwen-Image-Edit-2511 + scene LoRA only (never the style LoRA: on Edit-2511 it broke the style and merged the heroes, LoRA thread test 2026-10-24), image = the MASTER | `nextpose, a later frame of the same continuous animated shot, same camera: ` + one actor's change, the others' small reaction + "Same characters, same camera ..." |
+| `keyframe` | Qwen-Image-2.1 + the xworld_v2 LoRA (D-80) | `<trigger>, ` (`lora_rules.trigger()`) + who (by what they look like) + the one action + where + light |
+| `nextpose` | Qwen-Image-2.1 in its edit mode with references, the one LoRA, image = the MASTER (N-09; the scene LoRA and Edit-2511 are banned by D-80) | `<trigger>, a later frame of the same continuous animated shot, same camera: ` + one actor's change, the others' small reaction + "Same characters, same camera ..." |
 | `cut` | the same edit model, images = master + hero sheet | a new shot size or angle of the SAME place and time, the heroes as on the sheet |
 | `video` | LTX-2.5 (image = the keyframe) | one fixed style sentence; the actor and the action with a start, peak and settle; the others' reaction; "everyone stays in frame"; ONE camera sentence; at most three sounds |
 
@@ -84,8 +84,9 @@ this page; "ours" means our own tests of 2026-10-22..24.
 
 | Model | How it reads | Helps | Hurts |
 |---|---|---|---|
-| Qwen-Image-2512 + wldnk style LoRA (keyframe) | a 7B vision-language text encoder: long natural sentences, left/right/foreground placement, counts; true CFG 4, so the negative prompt acts; the LoRA learned captions `wldnk style, <what is visible>` | the trigger first, then plain visible content in caption grammar; shot size and angle words ("medium shot at eye level"); each person's screen side and gaze; "only these N people"; the FIRST pose of the action | style adjectives (the trigger carries the style, KP-10); bare role words (ours); the official negative's "oversaturated, over-smooth" against our bright flat colour; quality words (8k, masterpiece) |
-| Qwen-Image-Edit-2511 + scene LoRA (next pose, cut) | an instruction on top of the image(s); 2511 keeps identity in group shots better; the scene LoRA learned `nextpose, a later frame of the same continuous animated shot, same camera: <what changed>` | the exact training prefix; only the change; the actor by tag AND screen side (the model sees the picture, the side tells it which figure); the end pose as a visible state; "nobody new appears" | framing words in a next pose (KP-07); chained edits (KP-08); describing the whole scene again |
+| Qwen-Image-2.1 + xworld_v2 LoRA (keyframe, next pose, cut): the Helps and Hurts lists of the two retired rows are kept under History below and are not yet re-measured on 2.1 | natural-language caption grammar with the trigger first | - | - |
+| *(History, banned by D-80)* Qwen-Image-2512 + wldnk style LoRA (keyframe) | a 7B vision-language text encoder: long natural sentences, left/right/foreground placement, counts; true CFG 4, so the negative prompt acts; the LoRA learned captions `wldnk style, <what is visible>` | the trigger first, then plain visible content in caption grammar; shot size and angle words ("medium shot at eye level"); each person's screen side and gaze; "only these N people"; the FIRST pose of the action | style adjectives (the trigger carries the style, KP-10); bare role words (ours); the official negative's "oversaturated, over-smooth" against our bright flat colour; quality words (8k, masterpiece) |
+| *(History, banned by D-80)* Qwen-Image-Edit-2511 + scene LoRA (next pose, cut) | an instruction on top of the image(s); 2511 keeps identity in group shots better; the scene LoRA learned `nextpose, a later frame of the same continuous animated shot, same camera: <what changed>` | the exact training prefix; only the change; the actor by tag AND screen side (the model sees the picture, the side tells it which figure); the end pose as a visible state; "nobody new appears" | framing words in a next pose (KP-07); chained edits (KP-08); describing the whole scene again |
 | LTX-2.5 two-stage (video + native audio) | one present-tense paragraph; image-to-video: the picture already holds the place and the faces; stage 1 runs the dev model with CFG, so the negative acts there; the audio is generated with the picture from the same text | the action in time order (start, then peak, then settle); the face as visible cues; ONE camera sentence relative to the subject and how the frame ends; the spoken line in quotes with speaker, language and voice; a settle before and after the line; concrete sounds with a visible source, the sound sentence last; at most two faces close | re-describing the picture (identity drift); named emotions (neutral faces); labelled fields and shot lists; more than two faces in a close shot (merging); readable text; score music (the edit adds it); story names it cannot know; quality words |
 
 ### Audit of KP-01..KP-14
@@ -157,7 +158,7 @@ in [SOURCED_RULES.md](SOURCED_RULES.md), the evidence is
 Schema: [`explainer_engine/schemas/film_shots.schema.json`](../explainer_engine/schemas/film_shots.schema.json); worked
 example: [`examples/film_shots/bus_in_the_ice_age.json`](../examples/film_shots/bus_in_the_ice_age.json) (the scene LoRA's
 bus test, rewritten as six cards: establish, master, cut, over-the-shoulder, insert, next pose; 0 FAIL, 0 REVIEW).
-Every composed prompt names its LoRA (`lora`: `style` on Qwen-Image-2512, `scene` on Edit-2511), and `compose` also writes
+Every composed prompt names its LoRA (`lora`: `style`, the one xworld_v2 LoRA on Qwen-Image-2.1; the old `scene` LoRA on Edit-2511 is banned by D-80), and `compose` also writes
 one `gate` card per drawn first frame (keyframe, cut: the people by tag, side, height and support with the lead marked
 `actor`, the relations, the free space) for the keyframe gate of PR #22.
 
@@ -205,6 +206,6 @@ measured the same way before any rule is written.
 - Lightricks, [Prompting guide for LTX-2](https://docs.ltx.video/api-documentation/prompting-guide) (official; six elements, one paragraph, quotes for dialogue)
 - deAPI, [LTX-2.5 prompting guide: multi-shot, native audio](https://deapi.ai/blog/ltx-2-5-prompting-guide-multi-shot-scenes-native-audio-and-prompts-that-actually-cut)
 - fal.ai, [How to use LTX-2.5](https://fal.ai/learn/tools/how-to-use-ltx-2-5)
-- Qwen, [Qwen-Image-2512 model card](https://huggingface.co/Qwen/Qwen-Image-2512) and [Qwen-Image-Edit-2511 model card](https://huggingface.co/Qwen/Qwen-Image-Edit-2511) (true CFG 4, placement by description)
+- Qwen (retired models, kept as sources of the History rows), [Qwen-Image-2512 model card](https://huggingface.co/Qwen/Qwen-Image-2512) and [Qwen-Image-Edit-2511 model card](https://huggingface.co/Qwen/Qwen-Image-Edit-2511) (true CFG 4, placement by description)
 - F. Thomas and O. Johnston, *The Illusion of Life: Disney Animation* (1981): anticipation, staging, follow-through
 - [180-degree rule](https://en.wikipedia.org/wiki/180-degree_rule), [30-degree rule](https://en.wikipedia.org/wiki/30-degree_rule)

@@ -10,9 +10,9 @@ Code: `explainer_engine/qa/keyframe_gate.py`, tested by `tests/unit/test_keyfram
 
 ## The flow
 
-1. A shot card (film_shots) becomes a master. The master is drawn with Qwen-Image-2512 and the style LoRA, in 3 variants.
+1. A shot card (film_shots) becomes a master. The master is drawn with Qwen-Image-2.1 and the xworld_v2 LoRA (D-80, KG-16), in 3 variants.
 2. Each variant goes to the gate (KG-01..KG-13, KG-17..KG-21), then to Claude's table (KG-22).
-3. A passing variant goes on. Next poses are drawn from it with Qwen-Image-Edit-2511 and the scene LoRA only, and every pose
+3. A passing variant goes on. Next poses are drawn from it on Qwen-Image-2.1 in its edit mode with references (one LoRA, no scene LoRA; the old Edit-2511 step is banned by D-80), and every pose
    goes through the gate again.
 4. A failing shot is drawn again with a new seed, at most 3 times (KG-14). After that the prompt is fixed.
 5. Every picture writes one line to `qa_log.jsonl`. The session's `summary` turns those lines into actions (KG-15).
