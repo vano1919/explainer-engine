@@ -3152,3 +3152,22 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   Argon-2 47). `runpod check` (read-only, 2026-10-30 ~13:45 UTC): 49 STOPPED pods, each 0 GB, $0.00/day in total; billed $0.00 in 24 h;
   balance $10.40; no PROBLEM line.
 - OPEN for T3/CP-18: `docs/CLOUD_RUNBOOK.md:18` and `:54` (CR-01, "Boot (TMR manifest) pods keep `boot_cmd`") still describe boot pods.
+
+## 2026-10-30 UTC: plan_v2 T1 / N-02, paid BFL calls of `training/cast/sheet.py` run only inside a ledger (one unplanned $0.018, see below)
+
+- `explainer_engine/training/cast/sheet.py` (Argon-2 F-05): `draw()` and the real path of `world()` open the run ledger first
+  (`_run`): no ledger = `ValueError("refused: paid BFL calls run only inside a ledger (D-56); pass --ledger")`; `world()` builds
+  `BFL(out, run=run, key=k)` (it had no run), so every picture reserves on the ledger's `bfl_usd` (for a new ledger
+  `config/spend_caps.json` `per_episode.bfl_usd`) with the ledger's 80 % stop; a `--budget` above that cap is refused (no number in the
+  code). The local `spent` counter stays as the budget display. CLI: `draw|world --yes` without `--ledger` is an argparse error naming
+  `--ledger`; the estimate without `--yes` stays free and unchanged. `world()` with an injected `generate` (its unit tests) needs no ledger.
+- `explainer_engine/imagegen/providers/bfl.py` (C3; BFL already carries `run`): `_request` (the paid HTTP call) refuses `run is None`
+  (`ProviderError`); a cache hit in `generate()` never reaches it. No other `BFL(` caller outside `sheet.py` (paint goes through
+  `providers.get(..., run=run)`).
+- Tests: `tests/unit/test_money_path_fences.py` N-02 section (5: CLI `draw/world --yes` without a ledger, no `BFL` built without a run
+  and built with one, budget above the cap, `BFL._request` without a run). Red on main: 5 failed. No existing test changed.
+- **Unplanned spend, 2026-10-30 13:45 UTC: $0.018 on BFL (2 x Klein 1k, $0.009 each).** The first red run of the CLI test ran the OLD
+  `sheet.main(["draw", ..., "--yes"])`; this session had a BFL key in its environment (`BFL_API_kay`), and the old code drew without a
+  ledger, which is the hole this card closes. The pictures (`c000.png`, `p001.png`, `spend_log.jsonl`) are kept in the project files
+  `explainer-engine/blueprint_2026-10-29/paid/plan_v2/t1_bfl_incident/`. The test now removes every `KEY_ENV` variable and blocks
+  `BFL._request` before it calls, so it fails without a paid call on code without the guard; the red run was repeated that way.

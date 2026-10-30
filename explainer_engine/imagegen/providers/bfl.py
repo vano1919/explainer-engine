@@ -41,6 +41,8 @@ class BFL(ImageProvider):
         self.poll_s, self.max_wait_s, self.sleep = poll_s, max_wait_s, sleep
 
     def _request(self, prompt, *, model, size, refs, seed, extra):
+        if self.run is None:  # N-02: the paid call never runs outside a ledger (a cache hit in generate() never gets here)
+            raise ProviderError("refused: BFL paid call without a ledger run (D-56)")
         body = {"prompt": prompt, "resolution": size, "output_format": "png", "safety_tolerance": int(extra.get("safety_tolerance", 2))}
         if extra.get("aspect_ratio"):
             body["aspect_ratio"] = extra["aspect_ratio"]
