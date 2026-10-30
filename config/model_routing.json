@@ -423,7 +423,8 @@
   },
   "protected_files": {
     "config/spend_caps.json": 60,
-    "config/model_routing.json": 60
+    "config/model_routing.json": 60,
+    "config/channel_voices.json": 60
   },
   "usage": {
     "backup_at_percent": 95,

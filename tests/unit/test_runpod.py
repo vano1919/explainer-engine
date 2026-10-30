@@ -19,6 +19,7 @@ class FakeRunPod:
         self.volumes, self.global_volumes, self.endpoints, self.other_billing = [], [], [], 0.0
         self.headers = {}  # response headers for the next answers (Retry-After)
         self.catalog = []  # GET /catalog/gpus rows
+        self.balance = 20.0  # clientBalance: well above the live min_balance_left_usd, so a test is not refused by the account's floor
 
     def __call__(self, method, url, body, headers, timeout):
         path = url.split("runpod.io", 1)[-1].replace("/v2", "", 1) if "runpod.io" in url else url
@@ -39,7 +40,7 @@ class FakeRunPod:
         if path == "/graphql":
             q = data["query"]
             if "myself" in q:
-                return 200, json.dumps({"data": {"myself": {"clientBalance": 1.0}}})
+                return 200, json.dumps({"data": {"myself": {"clientBalance": self.balance}}})
             pid = q.split('"')[1]
             if "podStop" in q and pid in self.pods:
                 self.pods[pid]["status"] = "EXITED"
