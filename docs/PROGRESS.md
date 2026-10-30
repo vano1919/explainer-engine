@@ -2546,6 +2546,30 @@ training as sequences is decided in the process. Changed together:
 - Tests: `pytest -m "not system and not media"` 1218 passed; `docs_lint` 0 findings; tmr `tests/unit` 709 passed.
 - From now on new work starts from `main` (the `systemic/next-video` working branch is retired by this request).
 
+## 2026-10-29 22:30 UTC (02:30 Tbilisi): P0d Claude API client (no real call yet, no money)
+
+- ვანო 2026-10-29 18:58 UTC: Claude API key in the env file, use the credit fast. Plan `CLAUDE_API_PLAN_2026-10-29.md`; OR-24 verdict
+  with changes `CLAUDE_API_PLAN_OR24.md` (cache-write and web-search prices, no fallbacks on Batch, explicit effort, no 400 parameters,
+  secret refusal, ledger as the only meter, read-only repo tool loop).
+- New: `explainer_engine/llm/claude_api.py` (routing by class from `config/model_routing.json`, prices from `config/llm_prices.json`, response
+  cache, job ledger plus `calls.jsonl` with start/done/void lines and gap stop, Batch API from 20 requests, `fallbacks: "default"` on direct
+  calls, Fable 400 -> declared fallback route, overload wait 15 min, secret refusal, `list_dir`/`read_file`/`grep` tool loop), CLI
+  `estimate | run | status | void`, `docs/LLM_API.md`. `config/spend_caps.json` got `claude_api` (95 total; J1 10, J1b 8, J2a 8, J2b 10, J3 12,
+  J4 5, J5 3, J6 15, reserve 24; approval = the OR-24 verdict). `anthropic>=2.3` in requirements.
+- Test: `tests/unit/test_claude_api.py` (fake client): 51 passed, 1 skipped until `config/model_routing.json` (PR #30) is on the branch.
+  The key was ABSENT in the thread that built this (environment started before it was added): no real call was made.
+- Next: J1 (`review/pr_review.py`) on PR #30, #31, #29 once the key is present in an environment.
+
+## 2026-10-29 23:00 UTC (03:00 Tbilisi): P0d review fixes (PR #34, REQUEST_CHANGES by the P0a thread)
+
+- F7: the repo tools resolve every path first and keep it inside the checkout; `grep` and `list_dir` skip symlinks (an `os.walk` without links), `.env*`, `id_rsa`,
+  `.netrc`, `*.key`, `tools/`, `.git`, and `..` paths are refused; the key patterns now cover AWS, Bearer, `github_pat_`, `sk_`, `sk-proj-`, Slack, `*_KEY=`/`*_TOKEN=`/`*_B64=`
+  assignments. The long-input regex backtracking was removed (a 30,000-character prompt took 21 s).
+- F8: price lines for the fallback targets (Opus 4.8, Opus 5, Sonnet 5); every `usage.iterations` entry priced at its own model, the ledger books the larger of the sum and the
+  top-level usage; a paid call whose model has no price gets a `done` line at the reserved amount. `void UID` defaults to the reserved amount; `run` refuses a job whose worst
+  case passes the job's 80 % stop; a batch rerun that truncates no longer drops the other results; the first message of a tool loop (the diff) is cached across turns.
+- Tests: 28 new cases in `tests/unit/test_claude_api.py` (79 passed, 1 skipped).
+
 ## 2026-10-29 22:50 Tbilisi: P0b, the code guards of the Blueprint plan (no pod, no money)
 
 - ვანო 2026-10-29 18:19 UTC "დაიწყე", 18:25 (usage rule), 18:27 "კი" (Opus designed, Sonnet 5.5 high implemented, OR-26). Design: `blueprint_2026-10-29/P0b_DESIGN.md` in the project files.
@@ -2585,6 +2609,17 @@ training as sequences is decided in the process. Changed together:
   `docs/EDITING.md` ED-09 points to `production/graphics.py` (`production/cards.py` was never built).
 - `audio/visemes.py` and `audio/timings.py` stay (provenance ports; `timings` is imported by `audio/narrate.py`).
 - Test: `tests/unit/test_repo_hygiene.py` (no `.chatgpt/`, no CI trigger, visemes importable, retired deps absent).
+## 2026-10-29 Tbilisi night: agent form A/B, one main agent vs one worker per stage (P0c, free)
+- Same Napoleon-vs-Genghis brief (8 segments, 3 Shorts, stages 1-6 of the story engine) written two ways by Sonnet: arm A one
+  agent in one context, arm B 22 fresh workers with a gate after each return. Both reach `story_lint` 0 FAIL / 0 REVIEW.
+  Whole-script `production validate`: A 28 FAIL (all media and creator gates) / 60 REVIEW, B 27 FAIL (13 script defects) / 133 REVIEW.
+  Cost equal within 1 %. Blind Opus critic, mean of its six criteria recomputed: one context 4.00, workers 3.83 (noise-level on one sample); workers better at line level.
+- Findings: the workers' hand-off fields (hero face sheets, a dialogue scene header, delivery tags) surfaced only at the editor
+  stage; `stage_guard` `SEG_STORY` lacks `scene` (architect corrections are rejected; not fixed here, no code in this phase);
+  `production validate` cannot reach the beat checks before `voice`/`shots` exist; claim-id format `C-NN` vs the map's `C##`.
+- Evidence (not a decision) recorded in `docs/research/AGENT_AB_2026-10.md`: the evidence does not support the per-stage worker form as the A5 answer; D-79 stays the
+  default; the long-context argument (16 segments, cheaper model for mechanical stages) is untested. Data, snapshots and
+  `measure.py` in `docs/research/agent_ab_2026-10/`. No paid call. Decision log unchanged (the decision is the creator's A5).
 
 ## 2026-10-29 22:45 UTC: P3b craft curriculum, sub-step 2 (blueprint v2, no pod, no money)
 
