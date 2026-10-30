@@ -4,6 +4,7 @@ import copy
 import json
 
 import numpy as np
+import pytest
 from PIL import Image
 
 from explainer_engine.audio import casting
@@ -437,3 +438,51 @@ def test_template_d_docudrama_rules():
     assert _st(d, "ST-18", "REVIEW")  # the central scene is shorter than scene S01
     first["text"], last["text"] = last["text"], first["text"]
     assert not _st(d, "ST-18")
+
+
+# --- the re-read rule (OR-32): start and fresh --------------------------------------------------------------------------------
+
+def test_stage_guard_start_records_the_page_and_fresh_wants_that_record(tmp_path):
+    job, page, src, out = tmp_path / "job", tmp_path / "page.md", tmp_path / "claim_map.md", tmp_path / "out.json"
+    page.write_text("stage page", encoding="utf-8")
+    src.write_text("claims", encoding="utf-8")
+    out.write_text("{}", encoding="utf-8")
+    assert any("no `stage_guard start architect`" in f for f in G.fresh("architect", job, out))
+    rec = G.start("architect", job, page=page, inputs=[src])
+    assert rec["page"]["sha256"] and rec["inputs"][0]["path"] == str(src)
+    assert (job / "story" / "stage_log.jsonl").read_text(encoding="utf-8").count("\n") == 1
+    assert G.fresh("architect", job, out) == []
+
+
+def test_stage_guard_fresh_reports_a_changed_page_a_stale_start_and_a_missing_output(tmp_path):
+    job, page, out = tmp_path / "job", tmp_path / "page.md", tmp_path / "out.json"
+    page.write_text("one", encoding="utf-8")
+    out.write_text("{}", encoding="utf-8")
+    G.start("architect", job, page=page)
+    page.write_text("two", encoding="utf-8")
+    assert any("changed since the architect stage started" in f for f in G.fresh("architect", job, out))
+    page.write_text("one", encoding="utf-8")
+    log = job / "story" / "stage_log.jsonl"
+    older = json.loads(log.read_text(encoding="utf-8"))
+    older["stage"], older["at"] = "writer", "2999-01-01T00:00:00Z"
+    log.write_text(log.read_text(encoding="utf-8") + json.dumps(older) + "\n", encoding="utf-8")
+    G.start("beats", job, page=page)
+    assert any("older than the writer stage's" in f for f in G.fresh("beats", job, out))
+    assert any("does not exist" in f for f in G.fresh("architect", job, tmp_path / "missing.json"))
+    with pytest.raises(ValueError):
+        G.start("nobody", job, page=page)
+    with pytest.raises(FileNotFoundError):
+        G.start("writer", job, page=tmp_path / "no-page.md")
+
+
+def test_stage_guard_cli_forms_and_the_old_form_still_work(tmp_path, capsys):
+    job, page, out = tmp_path / "job", tmp_path / "page.md", tmp_path / "out.json"
+    page.write_text("p", encoding="utf-8")
+    out.write_text("{}", encoding="utf-8")
+    assert G.main(["fresh", "writer", "--job", str(job), str(out), "--strict"]) == 1
+    assert G.main(["fresh", "writer", "--job", str(job), str(out)]) == 0  # REVIEW until the A5 card is final
+    assert G.main(["start", "writer", "--job", str(job), "--page", str(page)]) == 0
+    assert G.main(["fresh", "writer", "--job", str(job), str(out), "--strict"]) == 0
+    a = tmp_path / "a.json"
+    a.write_text(json.dumps({"segments": []}), encoding="utf-8")
+    assert G.main(["writer", str(a), str(a)]) == 0

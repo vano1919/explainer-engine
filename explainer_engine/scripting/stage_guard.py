@@ -5,6 +5,15 @@ frozen after the scene pass, and the guard proves it.
 
     python -m explainer_engine.scripting.stage_guard <stage> before.json after.json   # exit 1 on a violation
 
+The re-read rule (OR-32, D-79): a stage starts by Reading its page and the files the page says to read first, and records it;
+a stage output without that record is reported, so a stage is never written from a compacted memory of its rules.
+
+    python -m explainer_engine.scripting.stage_guard start <stage> --job <job folder> --page <stage page> [--input FILE]...
+    python -m explainer_engine.scripting.stage_guard fresh <stage> --job <job folder> <stage output.json> [--strict]
+
+``start`` appends ``{stage, at, page{path, sha256}, inputs[]}`` to ``<job>/story/stage_log.jsonl``; ``fresh`` lists what is wrong
+with the output (REVIEW until the creator's A5 card is final; ``--strict`` exits 1).
+
 Stages and what they own:
 
 * ``architect``  the story layer: ``drama``, ``cast``, ``periods``, segment ids, ``beat``, ``purpose``, ``period``, ``light_beat``, segment ``drama`` and the dialogue segment's ``scene`` header (SC-01)
@@ -21,9 +30,11 @@ Stages and what they own:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import sys
+import time
 from pathlib import Path
 
 INTERJECTIONS = ("oh", "hmm", "well", "right", "ah", "uh-oh", "wait", "okay", "huh", "so", "look", "yeah", "nope")
@@ -112,8 +123,80 @@ def words_frozen(before: dict, after: dict) -> bool:
     return not [v for v in violations("performer", before, after) if "text" in v]
 
 
+ORDER = ("architect", "writer", "beats", "performer", "editor", "caster", "shorts")  # the stages in the order they run
+LOG = Path("story") / "stage_log.jsonl"
+
+
+def _sha(path: Path) -> str | None:
+    return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+
+
+def _log(job: Path) -> list[dict]:
+    p = Path(job) / LOG
+    return [json.loads(x) for x in p.read_text(encoding="utf-8").splitlines() if x.strip()] if p.exists() else []
+
+
+def start(stage: str, job: Path | str, *, page: Path | str, inputs=()) -> dict:
+    """Record that ``stage`` began with its page and inputs read (OR-32): their sha256 now, so a change during the stage shows."""
+    if stage not in STAGES:
+        raise ValueError(f"unknown stage {stage!r}: {sorted(STAGES)}")
+    page = Path(page)
+    if not page.is_file():
+        raise FileNotFoundError(f"the stage page {page} does not exist: read it before the stage starts")
+    rec = {"stage": stage, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "page": {"path": str(page), "sha256": _sha(page)},
+           "inputs": [{"path": str(Path(i)), "sha256": _sha(Path(i))} for i in inputs]}
+    log = Path(job) / LOG
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with open(log, "a", encoding="utf-8") as f:
+        f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    return rec
+
+
+def fresh(stage: str, job: Path | str, out: Path | str) -> list[str]:
+    """What is wrong with a stage output (OR-32): no start record, a start recorded before the previous stage's, a stage page or an
+    input that changed since the start, or no output. Empty when the stage began with a fresh read."""
+    if stage not in STAGES:
+        raise ValueError(f"unknown stage {stage!r}: {sorted(STAGES)}")
+    found: list[str] = []
+    rows = _log(job)
+    mine = [r for r in rows if r["stage"] == stage]
+    if not Path(out).is_file():
+        found.append(f"{out}: the stage output does not exist")
+    if not mine:
+        return found + [f"no `stage_guard start {stage}` record in {Path(job) / LOG}: read the stage page and its inputs, then record it"]
+    last = mine[-1]
+    earlier = [r for r in rows if r["stage"] in ORDER[:ORDER.index(stage)]] if stage in ORDER else []
+    if earlier and max(r["at"] for r in earlier) > last["at"]:
+        found.append(f"the {stage} start ({last['at']}) is older than the {earlier[-1]['stage']} stage's: start it again after the previous stage")
+    for what in [last["page"]] + last["inputs"]:
+        if _sha(Path(what["path"])) != what["sha256"]:
+            found.append(f"{what['path']} changed since the {stage} stage started: read it again and start the stage again")
+    return found
+
+
 def main(argv: list[str] | None = None) -> int:
-    argv = argv if argv is not None else sys.argv[1:]
+    argv = list(argv if argv is not None else sys.argv[1:])
+    if argv and argv[0] in ("start", "fresh"):
+        import argparse
+        ap = argparse.ArgumentParser(prog=f"stage_guard {argv[0]}")
+        ap.add_argument("cmd")
+        ap.add_argument("stage")
+        ap.add_argument("--job", required=True)
+        if argv[0] == "start":
+            ap.add_argument("--page", required=True)
+            ap.add_argument("--input", action="append", default=[])
+        else:
+            ap.add_argument("out")
+            ap.add_argument("--strict", action="store_true")
+        a = ap.parse_args(argv)
+        if a.cmd == "start":
+            print(json.dumps(start(a.stage, a.job, page=a.page, inputs=a.input), ensure_ascii=False))
+            return 0
+        found = fresh(a.stage, a.job, a.out)
+        for v in found:
+            print("REVIEW", v)
+        print(f"{len(found)} finding(s) for stage {a.stage} (REVIEW until the creator's A5 card is final)")
+        return 1 if found and a.strict else 0
     stage, a, b = argv[0], Path(argv[1]), Path(argv[2])
     found = violations(stage, json.loads(a.read_text(encoding="utf-8")), json.loads(b.read_text(encoding="utf-8")))
     for v in found:

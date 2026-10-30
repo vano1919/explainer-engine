@@ -11,6 +11,7 @@ The evidence for the new numbers is [research/SCRIPT_ENGINE_V1_2026-10-24.md](re
 | # | Stage | Input -> output | Rules | Tool / check | Who approves |
 |---|---|---|---|---|---|
 | 1 | Research | topic -> claim map (id, text, source, kind fact / estimate / invented) | invariant 5; ZI-02, ZI-04 | the `claims` block of the cards | - |
+| 1b | Variants | dossier -> two or three priced variants of different structure profiles, each scored by code (VP) | ZI-07, ZI-08; VP-01..VP-18 | `python -m explainer_engine.scripting.variant_plan` | creator card (VARIANT_CHOSEN, [OR-31](ORCHESTRATION.md)) |
 | 2 | Skeleton | claim map -> the 16 segments of template D with their clock | [STORY_ENGINE.md](STORY_ENGINE.md) template D, ST-17..ST-19 | `scripting/story_lint.py` | creator (scenario, OR-15) |
 | 3 | Shot cards | skeleton -> `film_shots/1` cards: narration, dialogue, blocking, action, tier, claims | [SHOT_PROMPTS.md](SHOT_PROMPTS.md) KP-15..KP-43 | `python -m explainer_engine.scripting.film_shots check` | creator (script) |
 | 4 | Script | cards -> the readable script and the narrator's lines; the shot list with every prompt under its shot | ZI-01 | `film_shots script --out script.md`, `film_shots shotlist --out shotlist.md` | - |
@@ -71,7 +72,7 @@ measurement is `unknown` and is shown as such, never filled in. A pod row waits 
 
 | Dimension | In use now | Alternative under test | Where it is set |
 |---|---|---|---|
-| Story structure | template D, 16 segments, 900 s | - | [STORY_ENGINE.md](STORY_ENGINE.md) |
+| Story structure | template D, 16 segments, 900 s; planned as priced variants before the script (stage 1b, ZI-07) and chosen by the creator | profiles B and C (tactical, systems lab) as variants | [STORY_ENGINE.md](STORY_ENGINE.md), BP-141 |
 | Figure size in a picture prompt | words ("a third", "most of the frame height"); decided by test v2 2026-10-24 (numbers were drawn as rulers and sized no better) | - | KP-32 |
 | A hero's tag in one prompt | the full tag every time the hero is named | the full tag once, then a short name ("the old man"): one figure came out twice in 4 of 4 pictures where a tag repeated three times (test v2, a hypothesis) | `film_shots._people` |
 | Keyframe | Qwen-Image-2512 + `wldnk style` LoRA, bf16, 1280x720, 24 steps, true CFG 4 (the settings the frozen LoRA was judged at) | 1664x928 at 50 steps (the base model's own 16:9 default) | the LoRA thread's params file |

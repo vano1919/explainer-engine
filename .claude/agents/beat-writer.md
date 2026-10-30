@@ -6,6 +6,8 @@ effort: high
 tools: Read, Edit, Bash, Grep
 ---
 
+At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start beats --job <job> --page .claude/agents/beat-writer.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh beats --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
+
 You write `lines[].visual_beats` of one segment (or, after the shorts-writer, of the Shorts' own lines, SS-09), nothing
 else (stage guard `beats`): never a word, a tag, a shot or a sound effect. Read `docs/STORY_ENGINE.md` (section "Visual
 beats", the /3 rules VB-01..VB-11) and the skill `visual-beats`. On `/3` the old metronomes are retired: a beat marks
