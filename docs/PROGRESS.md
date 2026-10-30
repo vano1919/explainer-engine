@@ -3358,3 +3358,9 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   T1's review (#83): `admit` also refuses a sheet with any pair not answered A / B / same ("answer every pair of the sheet first"); the share stays for the eye. `records.add` refuses a wildcard `generator_admit` target. The lookup has no age window (an admission stands until replaced), said in the docstring.
   OPEN: whether a minimum share of picks for the generator is wanted is his call (none invented). No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 — plan_v2 wave 1, T2 follow-up: `generator_gate._picks` counts distinct pairs (T1's note on #83)
+- `_picks` kept a count of answered rows, so a pair repeated in the sheet could stand in for a blank one and `admit` would pass. It now keeps one answer per pair: the total is the number of
+  distinct answered pairs, and a pair answered twice with different answers is refused ("answered twice"). No minimum share added (still his call).
+- Test red on main -> green: `test_generator_gate.py::test_a_repeated_row_cannot_stand_in_for_a_blank_pair`. No pod, no API call, nothing deleted.
+- Decision log: none moved.
