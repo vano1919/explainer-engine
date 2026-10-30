@@ -3434,3 +3434,8 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Tests red on main -> green: `test_docs.py` (2 new: no live 2512/Edit-2511/wldnk/`nextpose,` outside a History block in SCRIPT_ENGINE, KEYFRAME_GATE and SHOT_PROMPTS; UR-22/UR-25/TOOL_STRATEGY/VIDEO_PARAMETER_SPEC scoped).
 - OPEN: `qa/style_prompt.INFERENCE["lora"]` is still `None` (T5's open item), so SCRIPT_ENGINE says "see LT-79" and not a LoRA weight; `docs/PROMPT_PACKAGE.md` was not touched (T5's list). No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 — plan_v2 wave 2, T4 PR-5: follow-up to CP-11 (ASSET_COMPOSE step 3, the SHOT_PROMPTS banner)
+- `docs/ASSET_COMPOSE.md` step 3 no longer says assets are drawn with Qwen-Image-2512 (now Qwen-Image-2.1 + the xworld_v2 LoRA, D-80, settings LT-79); the `docs/SHOT_PROMPTS.md` line-3 banner says the rows are on the new stack since N-09 and that the retired rows' Helps/Hurts are not re-measured (T3's notes on #90).
+- Test red on main -> green: `test_docs.py` (1 new). The LoRA weight 0.7 (LT-79) vs 1.0 (code) is T5's open item, already in TECH_QUESTIONS. Other docs that still name 2512 (`LORA_TRAINING`, `PRODUCTION_RULES`, `ARCHITECTURE_PLAN_2026-10-22`, `TOOLING_RESEARCH`, `DECISIONS`) are history or decision text and were not touched. No pod, no API call, nothing deleted.
+- Decision log: none moved.
