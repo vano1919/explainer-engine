@@ -186,6 +186,22 @@ calibrated on the measured band gap: a Q 1.2 bell dips its centre by far more th
 moves that band's share by 1.4 dB), so `acoustics.dip_centre_for_gap` derives the centre depth from the gap BP-118 asks for (SD-04
 measures the gap, never the filter setting).
 
+### Stereo mix (`assemble.build_audio_v2`)
+
+`production/assemble.py` renders the manifest when `<job>/audio/sound_mix_manifest.json` exists and is fresh (CN-02); a stale one
+stops the render (SD-15), and a job without a manifest takes the mono `build_audio` path unchanged. Narration: leveled, high-passed
+(BP-118), cut around the spine's dialogue windows with the seam fade at each edge, centred (L == R). Beds and room tone: looped
+(a procedural tone tiles, it is circular), faded, the scene's impulse response at the mid wet share, widened. Music: BP-62 fades,
+widened, the presence-band dip keyed by the voice's duck curve, BP-53's duck. Spots: the shot's perspective (BP-122: wet share,
+far high shelf, near proximity; `mid` is the midpoint of the two ends), the manifest's pan, a hit as three summed layers. A vacuum
+pulls music, ambience and non-hit spots to `vacuum_dbfs` (mid-channel RMS) over a fall that never exceeds BP-53's step limit and
+releases with BP-53's release time; narration, room tone, cues and hits are outside it. Cues are centred. The sum gets the old
+0.5 s / closing ramps and the 0.89 peak, applied to the stems too, so they still add up to the mix. Stems go to
+`<job>/audio/stems/*.wav` (narration, music, sfx, ambience, room_tone, cues, dialogue); `loudnorm` (qa/targets, now with a channel
+count) makes the stereo `audio.wav`. The render half of the checks (SD-02, SD-04, SD-05 band shares, SD-06 level, the BP-52 gap in
+LU on the speech stretches of the stems) lands in `assemble_report.json` under `sound_director`, with SD-14 as a pointer to the
+BP-50 verdicts.
+
 ## Checks run on every mix
 Numbers: one definition in `explainer_engine/qa/targets.py`, read from BP-50..BP-63, used by the mixer, the Shorts renderer
 and the scorecard. Integrated loudness and true peak with their verdicts; the dialogue anchor; the voice-to-background gap

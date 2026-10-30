@@ -876,6 +876,25 @@ def _load_stems(directory: Path) -> dict:
     return out
 
 
+def check_job(job: Path, *, stems: dict | None = None, measures: dict | None = None, library: Path | None = None) -> list[dict]:
+    """``check`` on a job folder: the manifest, spine and shot timeline are read from the job, the library is the root the manifest was
+    planned against (its ``derived_from.library`` folder) unless ``library`` names one. ``stems`` and ``measures`` add the render half."""
+    job = Path(job)
+    manifest, spine = _load(job / "audio" / "sound_mix_manifest.json"), _load(job / "audio" / "audio_spine.json")
+    timed = _load(job / "timed.json")
+    film = _load(job / "film_shots.json") if (job / "film_shots.json").exists() else None
+    edit_p, play_p = job / "audio" / "edit_and_grade_manifest.json", job / "story" / "screenplay_spine.json"
+    timeline = shot_timeline(spine, timed, film, _load(edit_p) if edit_p.exists() else None,
+                             screenplay=_load(play_p) if play_p.exists() else None)
+    if library is not None:
+        root = Path(library)
+    else:
+        root = (job / manifest["derived_from"]["library"]["path"]).parent
+        root = root if (root / "manifest.json").exists() else assets_reuse.SOUND_LIB
+    return check(manifest, spine=spine, timeline=timeline, stems=stems, measures=measures,
+                 library=sfx_library.load_manifest(root)["items"], job=job)
+
+
 def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     opts: dict = {}
@@ -906,14 +925,8 @@ def main(argv: list[str] | None = None) -> int:
             findings = report["findings"]
             print(f"{job / 'audio' / 'sound_mix_manifest.json'}: {report['counts']}")
         else:
-            manifest, spine = _load(job / "audio" / "sound_mix_manifest.json"), _load(job / "audio" / "audio_spine.json")
-            timed = _load(job / "timed.json")
-            film = _load(job / "film_shots.json") if (job / "film_shots.json").exists() else None
-            edit_p, play_p = job / "audio" / "edit_and_grade_manifest.json", job / "story" / "screenplay_spine.json"
-            timeline = shot_timeline(spine, timed, film, _load(edit_p) if edit_p.exists() else None,
-                                     screenplay=_load(play_p) if play_p.exists() else None)
             stems = _load_stems(Path(opts["--stems"])) if "--stems" in opts else None
-            findings = check(manifest, spine=spine, timeline=timeline, stems=stems, library=sfx_library.load_manifest(root)["items"], job=job)
+            findings = check_job(job, stems=stems, library=Path(opts["--library"]) if "--library" in opts else None)
     except (ContractError, FileNotFoundError, KeyError) as exc:
         print(f"sound director: {exc}")
         return 1

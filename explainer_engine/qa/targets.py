@@ -142,13 +142,13 @@ def measure_file(path: Path) -> dict:
     return found
 
 
-def normalise_file(src: Path, dst: Path, profile: str = "long", sr: int = 48000, rounds: int = 2) -> dict:
+def normalise_file(src: Path, dst: Path, profile: str = "long", sr: int = 48000, rounds: int = 2, channels: int = 1) -> dict:
     """Loudnorm, then trim to the target (BP-50). Single-pass loudnorm on a wide-range mix (narration over quiet beds) lands
     short of the target: the titans preview came out 2.5 LU low. Each round measures the file, shifts it by the gap with a
     static gain and holds the peak under the limiter ceiling (limited at 4x the rate, so intersample peaks are caught); the range is not touched further. Returns the last measurement."""
     p = PROFILES[profile]
     run = ["ffmpeg", "-v", "error", "-y", "-i"]
-    subprocess.run(run + [str(src), "-af", loudnorm(profile), "-ar", str(sr), "-ac", "1", str(dst)], check=True)
+    subprocess.run(run + [str(src), "-af", loudnorm(profile), "-ar", str(sr), "-ac", str(channels), str(dst)], check=True)
     meas = measure_file(dst)
     for _ in range(rounds):
         gap = p["lufs"] - meas["lufs"]
@@ -157,7 +157,7 @@ def normalise_file(src: Path, dst: Path, profile: str = "long", sr: int = 48000,
         tmp = dst.with_name(dst.stem + ".trim" + dst.suffix)
         lim = 10 ** (p["limiter_tp"] / 20)
         subprocess.run(run + [str(dst), "-af", f"volume={gap:.2f}dB,aresample=192000,alimiter=limit={lim:.4f}:level=disabled:attack=5:release=80,aresample={sr}",
-                              "-ar", str(sr), "-ac", "1", str(tmp)], check=True)
+                              "-ar", str(sr), "-ac", str(channels), str(tmp)], check=True)
         tmp.replace(dst)
         meas = measure_file(dst)
     return meas

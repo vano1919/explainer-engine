@@ -2376,7 +2376,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/qa/targets.py:gap_verdict"
+    "explainer_engine/qa/targets.py:gap_verdict",
+    "explainer_engine/production/assemble.py:stem_measures"
    ],
    "supersedes": [
     "P-93 14 dB (confirmed, unit changes to LU)",
@@ -4779,7 +4780,8 @@
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-01",
     "explainer_engine/audio/acoustics.py",
-    "explainer_engine/audio/sound_director.py"
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -4861,7 +4863,8 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-03",
-    "explainer_engine/audio/sound_director.py"
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -4896,7 +4899,8 @@
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-05",
     "explainer_engine/audio/foley.py",
-    "explainer_engine/audio/sound_director.py"
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -4927,7 +4931,8 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-06",
-    "explainer_engine/audio/sound_director.py"
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -4960,7 +4965,8 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-08",
-    "explainer_engine/audio/sound_director.py"
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -4990,7 +4996,8 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-10",
-    "explainer_engine/audio/sound_director.py"
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/production/assemble.py"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
