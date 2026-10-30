@@ -279,6 +279,25 @@ def test_admit_records_his_picks_for_the_eye_and_invents_no_minimum(tmp_path):
     assert SR.rule("BP-162")["thresholds"] == {}
 
 
+def test_a_repeated_row_cannot_stand_in_for_a_blank_pair(tmp_path):
+    _, path, sheet_md = _passing(tmp_path, answer="A")
+    rows = sheet_md.read_text(encoding="utf-8").splitlines()
+    first = next(i for i, r in enumerate(rows) if r.startswith("| 01 |"))
+    second = next(i for i, r in enumerate(rows) if r.startswith("| 02 |"))
+    admit = lambda: G.admit("gen-x", "sfx", path, creator_ref="cmsg_1", at="2026-10-31T10:00:00Z", sheet=sheet_md, path=tmp_path / "adm.json")
+    kept = rows[second]
+    rows[second] = rows[first]                                    # pair 02's row is a copy of pair 01's: the count of rows still equals the pairs
+    sheet_md.write_text("\n".join(rows) + "\n", encoding="utf-8")
+    with pytest.raises(ContractError, match="answer every pair"):
+        admit()
+    rows[second] = kept
+    rows.insert(second, rows[first].rsplit("A |", 1)[0] + "B |")  # pair 01 answered twice, differently
+    sheet_md.write_text("\n".join(rows) + "\n", encoding="utf-8")
+    with pytest.raises(ContractError, match="answered twice"):
+        admit()
+    assert not (tmp_path / "adm.json").exists()
+
+
 def test_admit_writes_the_record_and_admitted_reads_it(tmp_path, monkeypatch):
     rep, path, sheet_md = _passing(tmp_path)
     adm = tmp_path / "adm.json"
