@@ -3472,3 +3472,11 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Test: `test_real_spend_caps_file_holds_the_or24_caps` pins the new lines and the unchanged total.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 — change plan T07: the continuity example on the D-80 trigger home
+
+- `examples/continuity/napoleon_tent.json` `style_line` is now the trigger alone (`xworld style`, `training/lora_rules.json` via `qa/style_prompt.py`); the
+  wldnk-era look words are dropped (the planner's call). `examples/napoleon_vs_genghis/PROMPT_PACKAGE.md` starts with a history note (superseded by D-80).
+- Test: `test_the_example_style_line_passes_the_d80_trigger_check` (trigger equality + `style_prompt.check` has no FAIL).
+- OPEN: none. No pod, no API call, nothing deleted.
+- Decision log: none moved.
