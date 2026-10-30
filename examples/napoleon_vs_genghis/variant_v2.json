@@ -1,0 +1,427 @@
+{
+ "_doc": "The tactical variant (V2, profile B) of the Napoleon example as the stage 1b planner would write it: template D's clock and its 16 windows, with the blocks of each window (docs/SCRIPT_ENGINE.md VP). `python -m explainer_engine.scripting.variant_plan napoleon --write` joins it with V1 (rebuilt from film_shots.json) into script_variants.json.",
+ "title": "The two armies as two systems",
+ "logline": "The same fight, told through what each army could do: range, speed, supply and command, with played scenes at the turns.",
+ "outline": [
+  "Cold open on the fog and three teasers, then the outcome stated",
+  "Dossiers and range diagrams of both armies before any scene",
+  "Scene 1 at the first contact, a map of the valley around it",
+  "Scenes 2 and 3: the plans fail on the map and the other side acts",
+  "The central scene, then the turning point on one held frame",
+  "Fallout and the verdict as a comparison, the callback and the pointer"
+ ],
+ "segments": [
+  {
+   "id": "S01",
+   "window_s": 12,
+   "blocks": [
+    {
+     "category": "scene",
+     "seconds": 6,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 3,
+     "archetype": 8
+    },
+    {
+     "category": "scene",
+     "seconds": 3,
+     "who": "hero"
+    }
+   ]
+  },
+  {
+   "id": "S02",
+   "window_s": 24,
+   "blocks": [
+    {
+     "category": "compensator",
+     "seconds": 24,
+     "archetype": 9
+    }
+   ]
+  },
+  {
+   "id": "S03",
+   "window_s": 39,
+   "blocks": [
+    {
+     "category": "map_pure",
+     "seconds": 15,
+     "archetype": 1
+    },
+    {
+     "category": "scene",
+     "seconds": 6,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 18,
+     "archetype": 5
+    }
+   ]
+  },
+  {
+   "id": "S04",
+   "window_s": 96,
+   "blocks": [
+    {
+     "category": "map_pure",
+     "seconds": 20,
+     "archetype": 2
+    },
+    {
+     "category": "scene",
+     "seconds": 40,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 30,
+     "archetype": 7
+    },
+    {
+     "category": "scene",
+     "seconds": 6,
+     "who": "hero"
+    }
+   ]
+  },
+  {
+   "id": "S05",
+   "window_s": 22,
+   "blocks": [
+    {
+     "category": "compensator",
+     "seconds": 22,
+     "archetype": 9
+    }
+   ]
+  },
+  {
+   "id": "S06",
+   "window_s": 104,
+   "blocks": [
+    {
+     "category": "map_pure",
+     "seconds": 24,
+     "archetype": 4
+    },
+    {
+     "category": "scene",
+     "seconds": 40,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 30,
+     "archetype": 6
+    },
+    {
+     "category": "scene",
+     "seconds": 10,
+     "who": "hero"
+    }
+   ]
+  },
+  {
+   "id": "S07",
+   "window_s": 49,
+   "blocks": [
+    {
+     "category": "compensator",
+     "seconds": 22,
+     "archetype": 11
+    },
+    {
+     "category": "scene",
+     "seconds": 6,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 21,
+     "archetype": 8
+    }
+   ]
+  },
+  {
+   "id": "S08",
+   "window_s": 103,
+   "blocks": [
+    {
+     "category": "map_pure",
+     "seconds": 33,
+     "archetype": 3
+    },
+    {
+     "category": "scene",
+     "seconds": 40,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 24,
+     "archetype": 6
+    },
+    {
+     "category": "scene",
+     "seconds": 6,
+     "who": "hero"
+    }
+   ]
+  },
+  {
+   "id": "S09",
+   "window_s": 54,
+   "blocks": [
+    {
+     "category": "compensator",
+     "seconds": 24,
+     "archetype": 5
+    },
+    {
+     "category": "scene",
+     "seconds": 6,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 24,
+     "archetype": 10
+    }
+   ]
+  },
+  {
+   "id": "S10",
+   "window_s": 148,
+   "blocks": [
+    {
+     "category": "map_pure",
+     "seconds": 30,
+     "archetype": 2
+    },
+    {
+     "category": "scene",
+     "seconds": 45,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 30,
+     "archetype": 7
+    },
+    {
+     "category": "scene",
+     "seconds": 8,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 35,
+     "archetype": 11
+    }
+   ]
+  },
+  {
+   "id": "S11",
+   "window_s": 35,
+   "blocks": [
+    {
+     "category": "scene",
+     "seconds": 30,
+     "who": "hero"
+    },
+    {
+     "category": "hold",
+     "seconds": 5
+    }
+   ]
+  },
+  {
+   "id": "S12",
+   "window_s": 40,
+   "blocks": [
+    {
+     "category": "map_pure",
+     "seconds": 20,
+     "archetype": 4
+    },
+    {
+     "category": "scene",
+     "seconds": 6,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 14,
+     "archetype": 10
+    }
+   ]
+  },
+  {
+   "id": "S13",
+   "window_s": 101,
+   "blocks": [
+    {
+     "category": "compensator",
+     "seconds": 15,
+     "archetype": 6
+    },
+    {
+     "category": "scene",
+     "seconds": 40,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 36,
+     "archetype": 8
+    },
+    {
+     "category": "scene",
+     "seconds": 10,
+     "who": "hero"
+    }
+   ]
+  },
+  {
+   "id": "S14",
+   "window_s": 47,
+   "blocks": [
+    {
+     "category": "compensator",
+     "seconds": 27,
+     "archetype": 12
+    },
+    {
+     "category": "scene",
+     "seconds": 6,
+     "who": "hero"
+    },
+    {
+     "category": "compensator",
+     "seconds": 14,
+     "archetype": 5
+    }
+   ]
+  },
+  {
+   "id": "S15",
+   "window_s": 12,
+   "blocks": [
+    {
+     "category": "scene",
+     "seconds": 12,
+     "who": "hero"
+    }
+   ]
+  },
+  {
+   "id": "S16",
+   "window_s": 14,
+   "blocks": [
+    {
+     "category": "compensator",
+     "seconds": 14,
+     "archetype": 8
+    }
+   ]
+  }
+ ],
+ "cost_rows": [
+  {
+   "label": "keyframes (planned shots)",
+   "kind": "pod",
+   "job": "keyframe",
+   "units": 210,
+   "service": "runpod_usd",
+   "pod": "pod1"
+  },
+  {
+   "label": "video of the played blocks, full tier",
+   "kind": "pod",
+   "job": "ltx_full",
+   "units": 76,
+   "service": "runpod_usd",
+   "pod": "pod1"
+  },
+  {
+   "label": "pod boot and model load",
+   "kind": "pod",
+   "job": "pod_overhead",
+   "units": 2,
+   "service": "runpod_usd",
+   "pod": "pod1"
+  },
+  {
+   "label": "maps, HUD, dossiers, parallax (CPU)",
+   "kind": "cpu",
+   "units": 1,
+   "service": "runpod_usd"
+  },
+  {
+   "label": "narration (ElevenLabs credits, one per character)",
+   "kind": "voice",
+   "units": 5761,
+   "service": "elevenlabs_credits"
+  }
+ ],
+ "v1_logline": "Napoleon wins the only battle the khan gives him, and it is his worst victory: told as played scenes of two commanders.",
+ "v1_outline": [
+  "Cold open on the fog, three teasers, the outcome stated",
+  "Orientation by narrator, then played scenes at the turns (rows 4, 6, 8, 10)",
+  "The reversal on a held frame, the fallout, the last choice",
+  "The answer, the callback and the pointer"
+ ],
+ "v1_cost_rows": [
+  {
+   "label": "keyframes (one per shot card)",
+   "kind": "pod",
+   "job": "keyframe",
+   "units": 214,
+   "service": "runpod_usd",
+   "pod": "pod1"
+  },
+  {
+   "label": "video, light tier",
+   "kind": "pod",
+   "job": "ltx_light",
+   "units": 44,
+   "service": "runpod_usd",
+   "pod": "pod1"
+  },
+  {
+   "label": "video, full tier",
+   "kind": "pod",
+   "job": "ltx_full",
+   "units": 160,
+   "service": "runpod_usd",
+   "pod": "pod1"
+  },
+  {
+   "label": "pod boot and model load",
+   "kind": "pod",
+   "job": "pod_overhead",
+   "units": 2,
+   "service": "runpod_usd",
+   "pod": "pod1"
+  },
+  {
+   "label": "held stills, assembly (CPU)",
+   "kind": "cpu",
+   "units": 1,
+   "service": "runpod_usd"
+  },
+  {
+   "label": "narration (ElevenLabs credits, one per character)",
+   "kind": "voice",
+   "units": 5761,
+   "service": "elevenlabs_credits"
+  }
+ ],
+ "why": "Code scores only the structure and the lanes: V1 loses a point only for the unmeasured price; V2 narrates more than the template's 45 % ceiling and needs maps and HUD cards that do not exist in code yet. The story is the critic's and the creator's call."
+}

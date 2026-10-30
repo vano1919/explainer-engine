@@ -30,6 +30,7 @@ from explainer_engine.production import staging as STAGING
 from explainer_engine.production import timing as T
 from explainer_engine.qa import engagement as ENG
 from explainer_engine.scripting import narration_lint, story_lint
+from explainer_engine.scripting.syllables import count as syllables  # the one syllable counter (P3)
 from explainer_engine.standards import sourced_rules as SR
 
 STOP = set("""a an the and or but so of to in on at for with by from into onto over under than then that this these those
@@ -572,6 +573,10 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # PV-33 the story layer (ST rules, scripting/story_lint.py)
     for f in story_lint.lint(doc):
         _f(out, "PV-33 " + f["rule"], f["where"], f["detail"], f["severity"])
+    # PV-61 the AI register (RG rules, scripting/register_lint.py; BP-140 FAIL tier, BP-114 soft tier)
+    from explainer_engine.scripting import register_lint
+    for f in register_lint.doc_findings(doc, allow=register_lint.load_allow(picture_dirs[0].parent) if picture_dirs else None):
+        _f(out, "PV-61 " + f["rule"], f["where"], f["detail"], f["severity"])
     # PV-48 scenes and dialogue (SC rules, scripting/scene_lint.py; binding on production_script/3, D-58)
     from explainer_engine.scripting import scene_lint
     for f in scene_lint.lint(doc):
@@ -588,7 +593,7 @@ def check_script(doc: dict, picture_dirs: list[Path] | None = None, sound_ok=Non
     # narrator's lines only (doc_findings): a hero may name a date inside a scene, and on /3 SC-07 (PV-48) reads the same
     # BP-15 lexicon on those lines, so N-14 is not repeated there. N-15: a narration hold over BP-10's limit.
     from explainer_engine.scripting import scene_lint as _scene
-    for f in narration_lint.lint(S.tts_text(doc), press=False) + narration_lint.doc_findings(doc, press=not _scene.binding(doc)):
+    for f in narration_lint.lint(S.tts_text(doc), press=False, register=False) + narration_lint.doc_findings(doc, press=not _scene.binding(doc)):
         _f(out, "PV-12", f.get("where", "-"), f"{f['rule']}: {f['detail']}", f["severity"])
     # board on the estimated read (rhythm, state, heroes, bubbles)
     if not [x for x in out if x["severity"] == "FAIL" and x["rule"] in ("PV-03", "PV-04")]:
@@ -655,18 +660,6 @@ def hook_end_s(doc: dict, sh: dict) -> float | None:
         return None
     n = len(S.script_tokens(sh["lines"][0]["text"]))
     return read["words"][n - 1]["e"] if 0 < n <= len(read["words"]) else None
-
-
-def syllables(word: str) -> int:
-    """Syllables of one English word by vowel groups (a silent final -e dropped, -le kept); at least one. Good enough for a
-    Flesch-Kincaid grade on short lines; no dependency."""
-    w = re.sub(r"[^a-z]", "", word.lower())
-    if not w:
-        return 0
-    groups = len(re.findall(r"[aeiouy]+", w))
-    if w.endswith("e") and not w.endswith(("le", "ee", "ye")) and groups > 1:
-        groups -= 1
-    return max(1, groups)
 
 
 def fk_grade(text: str) -> float:
