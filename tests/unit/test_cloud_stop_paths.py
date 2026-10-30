@@ -11,6 +11,7 @@ from explainer_engine.cloud import hf_live, hooks as H, jobs as J, runpod as R, 
 from explainer_engine.core.ledger import Run
 
 BEAT = "datasets/o/r:run/out/beat.txt"
+PLAN = ["--work-min", "60", "--setup-min", "10", "--disk", "40"]  # what an OR-23 plan states (P1c: RP-01, the container disk)
 
 
 @pytest.fixture
@@ -268,13 +269,13 @@ def test_hf_live_writes_reads_and_lists_through_the_commit_api(monkeypatch):
 
 
 # --- create refusals (CR-07) -------------------------------------------------------------------------------------------------
-def _create(api, tmp, script, *extra, live=None):
+def _create(api, tmp, script, *extra, live=None, usd="0.5"):
     ledger = tmp / "run.json"
     Run.open(ledger, caps={"runpod_usd": 1.0})
     sf = tmp / "job.sh"
     sf.write_text(script)
-    return R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(ledger), "--script", str(sf),
-                   "--script-url", "https://huggingface.co/x/pod.sh", *extra], api=api, live=live)
+    return R.main(["create", "--yes", "--max-usd", usd, "--max-hours", "1", "--ledger", str(ledger), "--script", str(sf),
+                   "--script-url", "https://huggingface.co/x/pod.sh", *extra, *PLAN], api=api, live=live)
 
 
 def test_create_cli_refuses_a_script_pod_nothing_outside_the_session_can_stop(env, monkeypatch):
@@ -445,7 +446,7 @@ def _create_p12a(api, tmp, monkeypatch, test, *extra):
     real = R.create
     monkeypatch.setattr(R, "create", lambda api, body, **kw: seen.append(body) or real(api, body, **kw))
     R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(ledger), "--script", str(sf),
-            "--script-url", "https://huggingface.co/x/pod.sh", *extra], api=api, live=FakeLive(age=60))
+            "--script-url", "https://huggingface.co/x/pod.sh", *extra, *PLAN], api=api, live=FakeLive(age=60))
     return seen
 
 

@@ -82,9 +82,15 @@ def _check():
     except SystemExit:
         return None
     try:
-        return R.check(R.Api(retries=1, timeout=20))
+        api = R.Api(retries=1, timeout=20)
+        res = R.check(api)
     except (R.RunPodError, OSError) as e:
         return {"problems": [], "info": [f"RunPod not reachable: {str(e)[:80]}"], "unreadable": True}
+    try:  # RP-07: a pod that stopped 90 min ago gets its bill into the ledger now; the PROGRESS line is for the session to copy
+        res["info"] += [f"settled: {line}" for line in R.settle_due(api)]
+    except (R.RunPodError, OSError, ValueError):
+        pass
+    return res
 
 
 def session_start() -> int:
