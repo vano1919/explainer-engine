@@ -49,7 +49,7 @@ checklist.
 ## Conflicts with rules in force (13 records)
 
 The Blueprint names numbers that contradict a rule the project already enforces. None is resolved here and none of these
-numbers is in the registry: **status for every row: creator decision pending, the existing rule stays in force.** Exception: the fps row is decided by D-85 (24 fps, no pulldown). The
+numbers is in the registry: **status for every row: the existing rule stays in force; decided by D-91 (2026-10-30, on the creator's delegation).** The fps row is decided by D-85 (24 fps, no pulldown). The
 "proposal" column is the recheck draft's technical suggestion (2026-10-29), not a decision.
 
 | # | topic | Blueprint | rule in force | external evidence (CRAFT_SOURCES section 17 unless noted) | proposal (not decided) |
