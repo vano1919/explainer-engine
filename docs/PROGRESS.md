@@ -2896,3 +2896,20 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 
 ## 2026-10-30 08:10 UTC — P0d: key alias `EE_ANTHROPIC_API_KEY`
 The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code account auth). `claude_api.api_key()` now takes the first non-empty of `ANTHROPIC_API_KEY`, `EE_ANTHROPIC_API_KEY`; used by `client()`, `status`, `estimate`. Test: `test_the_key_can_come_from_the_alias_name`.
+
+## 2026-10-30 09:40 UTC: the five P12a pod scripts (audit pass 1, B1 / G9; free, no pod, no money)
+
+- `explainer_engine/training/pods/p12/p12a_A..E.sh`, written from the paid plan sections 2.2-2.6 and nothing else: A (boot facts, one shard download
+  timed, the aitoolkit manifest by skopeo when present), B (3 steps, then `exit 1`), C (10 minutes of 1 KB parts), D (30 minutes of parts that the cap
+  ends), E (2 minutes, `exit 0`). Each declares `# heartbeat: datasets/vano1919/tmr-artifacts:runs/p12a/<X>/beat.txt` and `# stall-minutes: 4`,
+  writes `progress.txt` with a changing line and `t.jsonl` events (script_start with `EE_DEADLINE`, exit with rc), installs nothing, so no DRY gate is needed.
+- A-2 downloads shard 00002 (4,261,951,904 bytes, measured on the Hub at revision d26bb61) as the plan thread decided; shard 00001 is 9.97 GB. The
+  file extension is assembled in the script on purpose: VT-01 takes any script naming weight files for a training pod; A only downloads to
+  /workspace/dl, deletes it, and writes no weights to $EE_OUT (a test checks that no shard reaches the vault). The lint itself is unchanged.
+- A does not write the image digest the plan mentions: the pod has no such variable (nothing sets one); the session reads it from the create body.
+  The boot facts list only chosen non-secret variables (the pod env holds keys; a test checks none is written).
+- `runpod dryrun` passes for all five (Hub existence of Qwen/Qwen-Image-2.1 and the vault dataset checked with the network). sha256 of the scripts:
+  A 4c2bc13a, B c193e702, C 64cc4734, D 8af25923, E 40ab6415 (full values in the PR). A dryrun record is keyed by that text: any edit means a new
+  dryrun, and the copies on HF `code/p12/` must be made from the merged files, then compared by sha256 before each create (audit N3).
+- Test: `tests/unit/test_p12a_scripts.py` runs B, C, D, E and A under the real `pod_wrapper.sh` with stubs and short steps (`P12_STEP_S`, `P12_DL` only
+  for the test): end words, drills, parts uploaded before the cap, boot facts, speed record, shard deleted.
