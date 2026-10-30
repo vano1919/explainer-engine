@@ -3423,3 +3423,14 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Note on #88: the moved `select_screen` tests run through `pytest.ini` `testpaths` (CI and a bare `pytest -q` run them; `pytest tests` does not), TECH_QUESTIONS 32.
 - No pod, no API call, nothing deleted.
 - Decision log: none moved (a registry row).
+
+## 2026-10-30 — plan_v2 wave 2, T4 PR-4: CP-11, the documents that described 2512 / Edit-2511 / wldnk as "in use" now say it is history (after N-09 #87)
+- `docs/SCRIPT_ENGINE.md`: the stage 6 row and the "In use now" Keyframe and Next-pose cells name Qwen-Image-2.1 + the xworld_v2 LoRA (D-80, ZI-06, KG-16), continuity through continuity_card/1, weights/steps/sizes by link to LT-79;
+  the trigger is `<trigger>` read through `lora_rules.trigger()` (N-09's one home); the next-pose opener is the one N-09 composes. The old cells moved to `### History (banned by D-80)` under the table.
+  `docs/KEYFRAME_GATE.md` "The flow" (masters and next poses on 2.1 with references, the Edit-2511 step marked banned); `docs/TOOL_STRATEGY.md` current routing (D-50 provider choice for the still route, the pod route for animated);
+  `docs/UNIVERSAL_RULE_BASE.md` UR-22 and UR-25 scoped to the D-43 still-picture route (no rule text removed; PV-11 and `world/resolver.py` untouched, the U2 grep stays an N-09 follow-up);
+  `docs/SHOT_PROMPTS.md` kind table, model rows (the retired rows kept as History, their Helps/Hurts not yet re-measured on 2.1), intro and `lora` sentence (T5's note on rows 23/87);
+  `docs/VIDEO_PARAMETER_SPEC.md` a scope line: the "Allowed" ranges are the still route's, the animated delivery defaults are BP-167 (T3's note on #89).
+- Tests red on main -> green: `test_docs.py` (2 new: no live 2512/Edit-2511/wldnk/`nextpose,` outside a History block in SCRIPT_ENGINE, KEYFRAME_GATE and SHOT_PROMPTS; UR-22/UR-25/TOOL_STRATEGY/VIDEO_PARAMETER_SPEC scoped).
+- OPEN: `qa/style_prompt.INFERENCE["lora"]` is still `None` (T5's open item), so SCRIPT_ENGINE says "see LT-79" and not a LoRA weight; `docs/PROMPT_PACKAGE.md` was not touched (T5's list). No pod, no API call, nothing deleted.
+- Decision log: none moved.
