@@ -64,6 +64,42 @@ def test_the_fast_pitch_track_agrees_with_the_loop_version_within_a_semitone():
     assert abs(12 * np.log2(np.median(fast) / np.median(slow))) < 1.0
 
 
+@pytest.mark.parametrize("f0", [90.0, 130.0, 180.0, 240.0])
+def test_the_pitch_is_read_across_the_range_of_voices(f0):
+    p = VA.measure(synth(f0, pauses=()), SR)
+    assert abs(12 * np.log2(p["f0_median_hz"] / f0)) < 0.5
+    assert 0 < p["pitch_variation_st"] < 2.0 and p["f0_range_st"] >= p["pitch_variation_st"]
+
+
+def test_the_other_measures_move_with_the_signal():
+    base = synth()
+    dull, bright = VA.measure(tilt(base, -1.0), SR), VA.measure(tilt(base, 1.0), SR)
+    assert bright["tilt_db"] > dull["tilt_db"] + 6 and bright["sibilance_db"] > dull["sibilance_db"] + 6
+    flat = VA.measure(base, SR)["emphasis_db"]
+    stressed = base.copy()
+    for a in (1.0, 3.0, 6.0):
+        stressed[int(a * SR):int((a + 0.8) * SR)] *= 2.5  # loud phrases on a quieter read
+    assert VA.measure(np.clip(stressed, -1, 1), SR)["emphasis_db"] > flat + 1.0
+    many = VA.measure(synth(pauses=(2.0, 4.0, 6.0, 8.0)), SR)["pauses"]
+    assert many["count"] == 4 and many["per_min"] > VA.measure(base, SR)["pauses"]["per_min"] and many["ratio"] > 0.15
+    assert VA.measure(synth(syll=6.0, pauses=()), SR)["syllable_rate"] > VA.measure(synth(syll=3.0, pauses=()), SR)["syllable_rate"] * 1.5
+
+
+def test_the_committed_preview_measurements_hold():
+    """docs/research/VOICE_PREVIEWS_2026-10-30.json: the five free previews behind the PR's numbers (no media committed)."""
+    doc = json.loads((ROOT / "docs" / "research" / "VOICE_PREVIEWS_2026-10-30.json").read_text(encoding="utf-8"))
+    recs = doc["records"]
+    assert len(recs) == 5
+    for r in recs:
+        assert contracts.validate(r) == [] and r["source"]["kind"] == "library_preview" and len(r["source"]["sha256"]) == 64
+    short = [r["name"] for r in recs if not r["profile"]["reliable"]]
+    assert short == ["David Planet Earth"]
+    pairs = sorted(f["where"] for f in VA.distinct({r["name"]: r["profile"] for r in recs}))
+    assert pairs == sorted(["Grandpa Spuds Oxley / Michael Moody - Grandfatherly and warm",
+                            "Adam - Classic English Narrator / David Planet Earth",
+                            "Adam - Classic English Narrator / Wyatt- Wise Rustic Cowboy"])
+
+
 def test_a_brighter_voice_has_a_higher_centroid_and_a_higher_voice_a_higher_pitch():
     base = synth()
     dull, bright = VA.measure(tilt(base, -1.0), SR), VA.measure(tilt(base, 1.0), SR)
@@ -129,17 +165,48 @@ def test_the_shipped_registry_is_valid_and_names_the_channel_narrator():
     assert VC.registry_errors(reg) == []
 
 
+OTHER = {"voice_id": "other", "name": "Other", "role": "narrator", "status": "channel", "model": "eleven_v4", "baseline": None}
+SPUDS = "NOpBlnGInO9m6vDvFkFC"
+
+
 def test_only_the_creators_word_replaces_the_channel_narrator():
     reg = VC.load_registry()
-    other = {"voice_id": "other", "name": "Other", "role": "narrator", "status": "channel", "model": "eleven_v4", "baseline": None}
     with pytest.raises(ContractError, match="VC-08"):
-        VC.register(reg, other)
-    new = VC.register(reg, other, creator_ref="cmsg_test")
+        VC.register(reg, OTHER)
+    new = VC.register(reg, OTHER, creator_ref="cmsg_test")
     assert VC.channel_voice(new)["voice_id"] == "other"
-    assert [v["status"] for v in new["voices"] if v["voice_id"] == "NOpBlnGInO9m6vDvFkFC"] == ["retired"]
-    assert VC.channel_voice(reg)["voice_id"] == "NOpBlnGInO9m6vDvFkFC"  # the input is not changed
-    candidate = dict(other, status="candidate")
+    assert [v["status"] for v in new["voices"] if v["voice_id"] == SPUDS] == ["retired"]
+    assert VC.channel_voice(reg)["voice_id"] == SPUDS  # the input is not changed
+    candidate = dict(OTHER, status="candidate")
     assert VC.register(reg, candidate)["voices"][-1]["status"] == "candidate"  # a candidate needs no word
+
+
+def test_retiring_or_demoting_the_standing_narrator_needs_the_word_too():
+    """Review of #45: retiring the narrator and then adding a new one must not get round VC-08 in two calls."""
+    reg = VC.load_registry()
+    standing = next(v for v in reg["voices"] if v["voice_id"] == SPUDS)
+    for change in ({"status": "retired"}, {"status": "candidate"}, {"role": "character"}):
+        with pytest.raises(ContractError, match="VC-08"):
+            VC.register(reg, dict(standing, **change))
+        done = VC.register(reg, dict(standing, **change), creator_ref="cmsg_test")
+        assert VC.channel_voice(done) is None or VC.channel_voice(done)["voice_id"] != SPUDS
+    # the two-call route is closed: step one is refused, so there is no step two
+    with pytest.raises(ContractError, match="VC-08"):
+        VC.register(reg, dict(standing, status="retired"))
+    # a new baseline for the standing voice, and the first channel voice of a role, need no word
+    rebased = VC.register(reg, dict(standing, baseline=dict(standing["baseline"], centroid_hz=1200.0)))
+    assert VC.channel_voice(rebased)["baseline"]["centroid_hz"] == 1200.0
+    first_character = dict(OTHER, role="character")
+    assert VC.channel_voice(VC.register(reg, first_character), "character")["voice_id"] == "other"
+
+
+@pytest.mark.parametrize("ref", ["", " ", "\t\n"])
+def test_a_blank_creator_word_is_refused_everywhere(ref):
+    reg = VC.load_registry()
+    with pytest.raises(ContractError, match="blank"):
+        VC.register(reg, OTHER, creator_ref=ref)
+    with pytest.raises(ContractError, match="blank"):
+        VC.register(reg, dict(OTHER, status="candidate"), creator_ref=ref)
 
 
 def test_a_registry_with_two_channel_narrators_or_a_repeated_id_is_refused():

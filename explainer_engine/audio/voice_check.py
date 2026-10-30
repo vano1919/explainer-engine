@@ -121,15 +121,25 @@ def channel_voice(doc: dict, role: str = "narrator") -> dict | None:
 
 
 def register(doc: dict, entry: dict, creator_ref: str | None = None) -> dict:
-    """The registry with ``entry`` added or replaced. A new channel narrator while another one stands (or replacing the
-    standing one) is the creator's call (V1, VC-08): it needs his recorded word in ``creator_ref``, else ContractError."""
+    """The registry with ``entry`` added or replaced. The channel voice is the creator's call (V1, VC-08): his recorded word
+    in ``creator_ref`` (not blank) is needed to make a different voice the channel voice of a role while one stands, and to
+    change the standing channel entry's ``status`` or ``role`` (retiring or demoting it). Other edits of it (a new baseline)
+    and the first channel voice of a role need no word. Anything else raises ContractError."""
     new = json.loads(json.dumps(doc))
-    standing = channel_voice(new, entry.get("role", "narrator"))
-    if entry.get("status") == "channel" and standing and standing["voice_id"] != entry["voice_id"] and not creator_ref:
-        raise ContractError(f"{standing['name']} is the channel {standing['role']}; only the creator's word replaces it (VC-08)")
-    if entry.get("status") == "channel" and standing and standing["voice_id"] != entry["voice_id"]:
+    ref = creator_ref.strip() if isinstance(creator_ref, str) else None
+    if creator_ref is not None and not ref:
+        raise ContractError("creator_ref is blank: give the creator's recorded word or none (VC-08)")
+    role = entry.get("role", "narrator")
+    standing = channel_voice(new, role)
+    same = next((v for v in new["voices"] if v["voice_id"] == entry.get("voice_id")), None)
+    replaces = entry.get("status") == "channel" and standing is not None and standing["voice_id"] != entry.get("voice_id")
+    leaves = same is not None and same["status"] == "channel" and (entry.get("status") != "channel" or entry.get("role") != same["role"])
+    if (replaces or leaves) and not ref:
+        held = standing if replaces else same
+        raise ContractError(f"{held['name']} is the channel {held['role']}; only the creator's word changes it (VC-08)")
+    if replaces:
         standing["status"] = "retired"
-    new["voices"] = [v for v in new["voices"] if v["voice_id"] != entry["voice_id"]] + [entry]
+    new["voices"] = [v for v in new["voices"] if v["voice_id"] != entry.get("voice_id")] + [entry]
     bad = [f for f in registry_errors(new) if f["severity"] == "FAIL"]
     if bad:
         raise ContractError("; ".join(f"{f['rule']} {f['where']}: {f['detail']}" for f in bad))

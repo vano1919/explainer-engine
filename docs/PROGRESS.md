@@ -2753,3 +2753,8 @@ training as sequences is decided in the process. Changed together:
 - `shot_cache.key`: inf / NaN anywhere in a shot spec is a `ContractError` (no JSON form, no stable key).
 - Tests: `test_adopt_refuses_a_directory_dossier_and_non_dict_approvals`, `test_a_non_finite_number_is_a_contract_error_not_a_crash`.
 - Left open (design changes, for P3+ to take with the stage that uses them): approval `sha256` compared with the artifact it approves; CN-14 skipped when no `job_manifest.json` is present; `threshold_reads` does not see a rule id held in a constant.
+- Review of #45 (P3b thread, CHANGES NEEDED, one blocker): `voice_check.register` now needs a non-blank `creator_ref` for ANY status or
+  role change of the standing channel entry, not only for adding a different channel voice (retire-then-add no longer works in two
+  calls), and a blank or whitespace ref is refused. Minors taken: pitch checked at 90-240 Hz, the other measures move with the signal
+  (tilt, sibilance, emphasis, pauses, syllable rate), and the five preview measurements are committed
+  (`docs/research/VOICE_PREVIEWS_2026-10-30.json`, no media) and pinned by a test.
