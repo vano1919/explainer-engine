@@ -12,6 +12,8 @@ Wired in ``.claude/settings.json`` (matcher ``mcp__ElevenLabs__creative_.*``). C
 * New music or sound effects also need a recorded library search (OR-18, D-76: ``python -m explainer_engine.assets_reuse``):
   the reusable library is looked at first, and new is generated only when nothing there fits.
   gate (OR-10: ``production/editorial_gate.check`` on the script and its ``editorial_review.json``).
+* While a free generator is admitted for that kind (BP-162, D8: ``audio/generator_gate.admitted``) a paid call also needs the
+  record to hold ``generate_new`` with a ``why`` naming what the free take could not do. Today none is admitted.
 * Before the creator's sample approval (OR-19, ``production/sample.py``) a paid read must sit inside the two-part sample's
   segments; the rest of the video's voice (and the Shorts') waits for his recorded word on the stitched sample.
 * The active episode is named in ``.claude/active_episode.json``: ``{"episode": "<folder with episode_rules.json>"}``. An
@@ -50,6 +52,14 @@ def _has_lookup(folder: Path, kind: str) -> bool:
         return False  # a broken record never waves money through
 
 
+def _paid_justified(folder: Path, kind: str) -> bool:
+    try:
+        from explainer_engine.assets_reuse import paid_justified
+        return paid_justified(folder, kind)
+    except Exception:
+        return False  # a broken admission file never waves money through
+
+
 def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
     """The reason to deny the call, or None to let it through."""
     tool = tool_name.split("__")[-1]
@@ -79,6 +89,10 @@ def decide(tool_name: str, tool_input: dict, root: Path) -> str | None:
         return (f"OR-18: search the sound library first and record the search: python -m explainer_engine.assets_reuse "
                 f"{cfg.get('episode', '<episode>')} --kind {kind} --tags <tags> --decide reuse|generate_new; "
                 "generate new only when nothing in the library fits")
+    if kind and not _paid_justified(folder, kind):  # BP-162 (D8): an admitted free generator comes before a paid take
+        return (f"BP-162: a free generator is admitted for {kind} (audio/generator_gate.py): take a free take first, or record why it "
+                f"cannot do this: python -m explainer_engine.assets_reuse {cfg.get('episode', '<episode>')} --kind {kind} "
+                "--tags <tags> --decide generate_new --why \"<what the free take could not do>\"")
     rules = folder / "episode_rules.json"
     if not rules.exists():
         return f"OR-11: {rules} does not exist"

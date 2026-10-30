@@ -5950,7 +5950,12 @@
    "sources": [],
    "enforced_by": [
     "docs/AUDIO_SYSTEM.md:SD-13",
-    "explainer_engine/audio/sound_director.py"
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/audio/generator_gate.py",
+    "explainer_engine/assets_reuse.py",
+    "explainer_engine/standards/hook.py",
+    "explainer_engine/audio/register.py",
+    "explainer_engine/audio/sfx_library.py"
    ],
    "supersedes": []
   },
@@ -5959,7 +5964,7 @@
    "area": "audio",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "What the free-generator admission measures (SD-13, D8): per take, the duration within duration_tol of the request, a silence share (10 ms windows under -60 dBFS) at most silence_share_max, a clipped share at most clip_share_max, and for a loop BP-58's seam; across prompts the mean cosine distance of the generator's takes at least variety_ratio_min of the same number for the library's ElevenLabs reference set, and no two seeds of one prompt above duplicate_cos_max; takes_per_prompt seeds per prompt. Quality and prompt fit are the creator's blind A/B, not a number.",
+   "statement": "What the free-generator admission measures (SD-13, D8): per take, the duration within duration_tol of the request, a silence share (windows of window_ms under silence_floor_dbfs) at most silence_share_max, a clipped share (samples at or above clip_level of full scale) at most clip_share_max, and for a loop BP-58's seam; a prompt is clean when all its takes_per_prompt takes pass, and at least prompts_clean_min of the prompts must be clean; across prompts the mean cosine distance of the generator's takes at least variety_ratio_min of the same number for the library's ElevenLabs reference set, and no two seeds of one prompt above duplicate_cos_max. DC offset is reported, not judged. Quality and prompt fit are the creator's blind A/B, not a number.",
    "thresholds": {
     "duration_tol": 0.1,
     "silence_share_max": 0.2,
@@ -5967,7 +5972,11 @@
     "loop_seam": "BP-58",
     "variety_ratio_min": 0.8,
     "duplicate_cos_max": 0.98,
-    "takes_per_prompt": 3
+    "takes_per_prompt": 3,
+    "silence_floor_dbfs": -60,
+    "window_ms": 10,
+    "clip_level": 0.999,
+    "prompts_clean_min": 0.8
    },
    "sources": [
     {
@@ -5979,9 +5988,9 @@
     }
    ],
    "enforced_by": [
-    "docs/AUDIO_SYSTEM.md:SD-13"
+    "docs/AUDIO_SYSTEM.md:SD-13",
+    "explainer_engine/audio/generator_gate.py"
    ],
-   "planned": "explainer_engine/audio/generator_gate.py (P4)",
    "supersedes": []
   }
  ]

@@ -110,9 +110,10 @@ def find(root: Path, *, tags: list[str] | None = None, category: str | None = No
     return out
 
 
-def validate(root: Path, *, check_files: bool = True) -> list[str]:
+def validate(root: Path, *, check_files: bool = True, admissions: Path | str | None = None) -> list[str]:
     """Manifest problems; with ``check_files`` also every file (present, unchanged, readable). The WAVs are not in git, so a
-    clean checkout validates the manifest only (``check_files=False``)."""
+    clean checkout validates the manifest only (``check_files=False``). An ``open_model`` item needs its admission, for its kind
+    and model, in ``assets/audio/generator_admission.json`` (or ``admissions``; BP-162, SD-13)."""
     root = Path(root)
     problems: list[str] = []
     manifest = load_manifest(root)
@@ -125,6 +126,9 @@ def validate(root: Path, *, check_files: bool = True) -> list[str]:
         if item["id"] in seen:
             problems.append(f"{item['id']}: duplicate id")
         seen.add(item["id"])
+        if item["source"]["kind"] == "open_model":
+            from explainer_engine.audio import generator_gate  # lazy: the gate imports this module
+            problems += generator_gate.item_problems(item, path=admissions)
         if not check_files:
             continue
         path = root / item["file"]

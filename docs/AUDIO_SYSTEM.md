@@ -98,6 +98,9 @@ beat) is declared in the storyboard; an inserted pause is room tone, never digit
 has no scanner yet beyond `audio/dropouts.py`.
 
 ## Audio event contract (v1; schema in Phase 3)
+**Superseded** for jobs with a sound director manifest by `sound_mix_manifest/2` ([CONTRACTS](CONTRACTS.md), CN-16), which is
+derived from the spine and the timed script, never written by hand; the block below is the v1 idea it grew from and still
+describes the old mono path's events.
 ```json
 {"schema": "explainer.audio_events", "version": 1,
  "events": [{"id": "sfx.knife_chop@w_0143", "kind": "sfx|music|ambience", "asset": "sfx.knife_chop",
@@ -185,6 +188,28 @@ procedurally (free, seeded, circular) and registered as `procedural` in the libr
 calibrated on the measured band gap: a Q 1.2 bell dips its centre by far more than the 1-4 kHz band as a whole (3.5 dB at 2.2 kHz
 moves that band's share by 1.4 dB), so `acoustics.dip_centre_for_gap` derives the centre depth from the gap BP-118 asks for (SD-04
 measures the gap, never the filter setting).
+
+### Free-generator gate (D8, BP-162, BP-163, SD-13)
+The order for a new music, sound-effect or room-tone take is **library, then an admitted free generator, then the ElevenLabs
+connector**; the narrator stays on the connector (no REST client). Today no generator is admitted, so the chain of D-52 is
+unchanged. A free (open-model) generator is admitted for one kind (`music`, `sfx`, `room_tone`) only through
+`assets/audio/generator_admission.json`, which `python -m explainer_engine.audio.generator_gate admit` writes only with the
+creator's recorded word (`--creator-ref` = his message id, `--at`), the blind sheet he answered and a report that passes. Flow:
+1. `measure` takes (`<prompt id>__s<seed>.wav`, three seeds per prompt) against the library's ElevenLabs items of the same kind:
+   per take the duration, silence share, clipped share, DC offset (reported, not judged) and, for a loop, BP-58's seam; across
+   prompts the variety (`voice_audition.mfcc_embedding`, one home) against the reference set and near-duplicate seeds. The
+   numbers are BP-163's; a technical miss takes the take out. Free: no network, no ElevenLabs.
+2. `sheet` writes a blind A/B listening sheet (seeded; neutral file names; both sides levelled to a common RMS; the key is a
+   separate file) for his ear: quality and prompt fit are never a number.
+3. `admit` re-derives the verdict from the report's numbers and records `{generator, model, kind, report_sha256, sheet_sha256,
+   prefer_rate, creator_ref, at}`; `admitted(kind)` is None without a file (`$EXPLAINER_GENERATOR_ADMISSION` or the `path`
+   argument move the file, so tests never touch the real one).
+
+Enforcement: `assets_reuse` gains the decision `generate_free` (needs the admission) and, while a kind is admitted,
+`generate_new` needs `--why` naming what the free take could not do; `standards/hook.py` refuses a paid ElevenLabs music/SFX call
+in that case with the same shape of refusal as the missing library record (OR-18); `audio/register.py --source-kind open_model
+--model ... --admission <id>` and `sfx_library.validate` refuse an `open_model` item whose admission is missing, for another kind
+or for another model (SD-13).
 
 ### Stereo mix (`assemble.build_audio_v2`)
 

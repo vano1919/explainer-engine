@@ -107,6 +107,9 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
   `{bpm, offset_s, source}` or null), `vacuums[]` (`start_frame`, `end_frame`, `reason`, `reveal_frame`), `cues[]` (`name`, `frame`,
   `gain_db`, `max_ms` or null), `spots[]` (as /1 plus `group`, `layer` single|sub|body|air, `origin` timed_sfx|foley|loudest|hit),
   `presence_dip{rule}`, `perspective{rule}`, `master{rule}`: BP ids only, never numbers.
+- **sfx_manifest** (the sound library, schema version 1) gains optional fields for P4, nothing else changes: `source.kind` `open_model`
+  (+ `source.model`, `source.seed`, `source.admission` = the id of a record in `assets/audio/generator_admission.json`, BP-162, SD-13;
+  `sfx_library.validate` refuses one whose admission is missing or for another kind), `motif_of` and `beat_grid {bpm, offset_s, source}`.
 - **visual_comp_manifest/1**: `audio_spine` (file reference), `items[]` (`item_id`, `shot_id`, `archetype_id`,
   `trigger_word_index`, `duration_frames`, `layers[]` (`kind`, `ref`, `reveal_word_index` or null),
   `on_screen_text` or null).

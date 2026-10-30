@@ -95,7 +95,10 @@ def test_manifest_accepts_the_p4_optional_fields(tmp_path):
     m = sfx_library.load_manifest(tmp_path)
     m["items"][0].update(motif_of="napoleon", beat_grid={"bpm": 120.0, "offset_s": 0.0, "source": "declared"})
     (tmp_path / "manifest.json").write_text(json.dumps(m))
-    assert sfx_library.validate(tmp_path) == []
+    adm = tmp_path / "adm.json"  # BP-162: an open_model item needs its admission, for its kind and model
+    assert any("admission" in p for p in sfx_library.validate(tmp_path, admissions=adm))
+    adm.write_text(json.dumps({"version": 1, "admissions": [{"id": "adm-001", "kind": "music", "model": "some-open-model"}]}))
+    assert sfx_library.validate(tmp_path, admissions=adm) == []
     m["items"][0]["beat_grid"]["source"] = "guessed"
     (tmp_path / "manifest.json").write_text(json.dumps(m))
-    assert sfx_library.validate(tmp_path)
+    assert sfx_library.validate(tmp_path, admissions=adm)
