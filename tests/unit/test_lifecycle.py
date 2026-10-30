@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -40,6 +41,46 @@ def variants_file(job, write=True):
     return f, doc["chosen"]["variants_sha256"]
 
 
+def artifact_for(folder, gate):
+    """N-03 option A (ვანო 2026-10-30): the artifact a person approves at ``gate``, written in ``folder``, and the hash its own tool
+    records for it (scenario file, the script's words, the paint plan file, sample_approval.json, the bundle's manifest)."""
+    from explainer_engine.imagegen import plan as P
+    from explainer_engine.production import sample as SMP
+    from explainer_engine.scripting import script_approval as SA
+    folder = Path(folder)
+    script = {"segments": [{"id": "S01", "lines": [{"speaker": "narrator", "text": "Napoleon looks east."}]}]}
+    if gate == "SCENARIO_APPROVED":
+        f = folder / "scenario.md"
+        f.write_text("Napoleon meets Genghis Khan at the river.", encoding="utf-8")
+        return f, store._sha256_file(f)
+    if gate == "SCRIPT_APPROVED":
+        f = folder / "production_script.json"
+        f.write_text(json.dumps(script), encoding="utf-8")
+        return f, SA.words_sha256(script)
+    if gate == "BUDGET_RESERVED":
+        plan = {"id": "p1", "provider": "gemini", "model": None, "size": None, "items": []}
+        plan["hash"] = P.plan_hash(plan)
+        f = folder / "plans" / "p1.json"
+        f.parent.mkdir(exist_ok=True)
+        f.write_text(json.dumps(plan), encoding="utf-8")
+        return f, store._sha256_file(f)
+    if gate == "SAMPLE_APPROVED":
+        (folder / "production_script.json").write_text(json.dumps(script), encoding="utf-8")
+        f = folder / SMP.FILE
+        f.write_text(json.dumps({"approved_by": "ვანო", "approved_at": "2026-10-30", "ref": "cmsg_1",
+                                 "script_sha256": SMP.sha256(folder / "production_script.json")}), encoding="utf-8")
+        return f, store._sha256_file(f)
+    if gate == "REVIEW_APPROVED":
+        d = folder / "review_bundle"
+        d.mkdir(exist_ok=True)
+        (d / "final.mp4").write_bytes(b"video")
+        (d / "notes.md").write_text("QA PASS", encoding="utf-8")
+        from explainer_engine.qa import review_bundle
+        f = review_bundle.write(d)
+        return f, store._sha256_file(f)
+    raise KeyError(gate)
+
+
 def step(job, to):
     kind = next(iter(store.GATES[to]))
     approval = {"creator": CREATOR, "machine": MACHINE}[kind if kind in ("creator", "machine") else "creator"]
@@ -51,6 +92,9 @@ def step(job, to):
         extra["dossier"] = job.job_dir / "dossier.md"
     if to == "BUDGET_RESERVED":
         extra["reservation_id"] = "pod:abc"
+    if to in store.BOUND_GATES:  # option A: the artifact and the hash its tool records
+        extra["artifact"], sha = artifact_for(job.job_dir, to)
+        approval = {**approval, "sha256": sha}
     job.move(to, reason=f"to {to}", approval=approval, **extra)
 
 
@@ -109,7 +153,8 @@ def test_budget_needs_a_reservation_the_ledger_holds_and_accepts_a_planner(job):
             job.move("BUDGET_RESERVED", reason="x", approval=CREATOR, reservation_id=rid)
     with pytest.raises(ContractError):
         job.move("BUDGET_RESERVED", reason="x", approval=MACHINE, reservation_id="pod:abc")
-    job.move("BUDGET_RESERVED", reason="OR-24", approval=PLANNER, reservation_id="pod:abc")
+    plan, sha = artifact_for(job.job_dir, "BUDGET_RESERVED")  # option A: the planner's approval binds the plan file
+    job.move("BUDGET_RESERVED", reason="OR-24", approval={**PLANNER, "sha256": sha}, reservation_id="pod:abc", artifact=plan)
     assert job.manifest["budget_reservation_id"] == "pod:abc"
 
 
@@ -201,7 +246,20 @@ def gates_up_to(state):
         out[s] = {"creator": CREATOR, "planner": PLANNER, "machine": MACHINE}[kind]
     if "VARIANT_CHOSEN" in out:  # the pick binds the variants file the ``folder`` fixture writes (adopt checks it as move does)
         out["VARIANT_CHOSEN"] = {**out["VARIANT_CHOSEN"], "sha256": variants_file(_Dir(store.ROOT), write=False)[1]}
+    for g in (g for g in store.BOUND_GATES if g in out):  # option A: each person's gate carries its artifact's hash
+        out[g] = {**out[g], "sha256": _bound_hashes()[g]}
     return out
+
+
+def _bound_hashes():
+    """The hash of every bound gate's artifact as ``artifact_for`` writes it; the content is fixed, so any folder gives the same."""
+    import tempfile
+    with tempfile.TemporaryDirectory() as d:
+        return {g: artifact_for(d, g)[1] for g in store.BOUND_GATES}
+
+
+def artifacts_in(folder):
+    return {g: artifact_for(folder, g)[0] for g in store.BOUND_GATES}
 
 
 ADOPT = dict(job_id="a", episode_slug="a", ledger="run.json", fps=24)
@@ -217,7 +275,8 @@ def folder(tmp_path):
 
 def test_an_existing_episode_is_adopted_through_every_gate_on_the_way(folder):
     job = EpisodeJob.adopt(folder, state="SCRIPT_APPROVED", reason="Titans, approved 2026-10-20", approvals=gates_up_to("SCRIPT_APPROVED"),
-                           dossier=folder / "dossier.md", variants=folder / "script_variants.json", **ADOPT)
+                           dossier=folder / "dossier.md", variants=folder / "script_variants.json",
+                           artifacts=artifacts_in(folder), **ADOPT)
     m = EpisodeJob.open(folder).manifest
     assert m["history"][0]["path"] == "adopted" and m["state"] == "SCRIPT_APPROVED"
     assert set(m["approvals"]) == {"RESEARCHED", "VARIANT_CHOSEN", "SCENARIO_APPROVED", "SCRIPT_APPROVED"}
@@ -261,17 +320,22 @@ def test_nothing_is_adopted_into_the_public_click_even_with_every_approval(folde
 @pytest.mark.parametrize("state", LIFECYCLE[:-1])
 def test_the_full_chain_adopts_into_every_state_before_the_click(folder, state):
     job = EpisodeJob.adopt(folder, state=state, reason="chain", approvals=gates_up_to(state), dossier=folder / "dossier.md",
-                           reservation_id="pod:abc", variants=folder / "script_variants.json", **ADOPT)
+                           reservation_id="pod:abc", variants=folder / "script_variants.json",
+                           artifacts=artifacts_in(folder), **ADOPT)
     assert job.state == state and set(job.manifest["approvals"]) == set(LIFECYCLE[1:LIFECYCLE.index(state) + 1])
     assert EpisodeJob.open(folder).state == state
     for _ in LIFECYCLE[LIFECYCLE.index(state) + 1:-1]:  # an adopted job walks on to the last state before the click
         nxt = LIFECYCLE[LIFECYCLE.index(job.state) + 1]
         kind = sorted(store.GATES[nxt])[0]
         variants, approval = None, {"creator": CREATOR, "planner": PLANNER, "machine": MACHINE}[kind]
+        artifact = None
         if nxt == "VARIANT_CHOSEN":  # N-03: the pick binds its script_variants.json
             variants, sha = variants_file(job)
             approval = {**approval, "sha256": sha}
-        job.move(nxt, reason="on", approval=approval, reservation_id="pod:abc" if nxt == "BUDGET_RESERVED" else None,
+        if nxt in store.BOUND_GATES:  # option A
+            artifact, sha = artifact_for(folder, nxt)
+            approval = {**approval, "sha256": sha}
+        job.move(nxt, reason="on", approval=approval, reservation_id="pod:abc" if nxt == "BUDGET_RESERVED" else None, artifact=artifact,
                  dossier=folder / "dossier.md" if nxt == "RESEARCHED" else None, variants=variants)
     assert job.state == "STAGED_UNLISTED"
 
@@ -288,7 +352,8 @@ def test_adopting_names_the_dossier_file_and_the_reservation(folder):
                              reservation_id=rid, **ADOPT)
     assert not (folder / store.MANIFEST).exists()
     job = EpisodeJob.adopt(folder, state="BUDGET_RESERVED", reason="x", approvals=budget, dossier=folder / "dossier.md",
-                           reservation_id="pod:abc", variants=folder / "script_variants.json", **ADOPT)
+                           reservation_id="pod:abc", variants=folder / "script_variants.json",
+                           artifacts=artifacts_in(folder), **ADOPT)
     assert job.manifest["budget_reservation_id"] == "pod:abc"
     with pytest.raises(ContractError):  # never over an existing manifest
         EpisodeJob.adopt(folder, state="CREATED", reason="x", approvals={}, **ADOPT)
