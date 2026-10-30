@@ -2893,3 +2893,11 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
   `test_a_settled_pod_stays_settled_...`.
 - Wording: RP-10's message says "failed create or BAD_HOST pod(s)" (a failed `create` of any cause uses the one try). `check` only REPORTS
   unknown `keep_stopped_pods` ids; it does not clean them up (`config/spend_caps.json` changes only on the creator's word).
+
+## 2026-10-30 08:30 UTC: the pre-pod secrets gate (CR-19; free, no pod, no money)
+
+- `cloud/secrets_check.py` + the manual workflow `.github/workflows/secrets_check.yml` ("Run workflow"): prints `present` / `MISSING` for
+  `HF_TOKEN`, `RUNPOD_API_KEY`, `NTFY_TOPIC` (the secrets `watchdog.yml` reads), never a value, a prefix or a length, red when one is missing
+  or blank. Manual only, not in "quality" (a fork's pull request has no secrets). Limits, said in CR-19: it proves existence, not validity or
+  scope, and a pod's own `HF_TOKEN` comes from the session that runs `create`, not from the GitHub secret. Test:
+  `tests/unit/test_cloud_secrets_check.py` (including that the workflow maps exactly the required names).
