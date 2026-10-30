@@ -2,6 +2,8 @@
 
     python -m explainer_engine.llm.cite_check ANSWER.md ANSWER.sources.json   # prints the unlisted URLs, exit 1 when there are any
 
+Limits: only http(s) URLs are seen; the Batch path (20+ requests) writes no sources, so a batch job cannot be checked.
+
 ``check`` returns (cited, unlisted); ``strip`` removes every bullet or table row that carries an unlisted URL (the rule is dropped,
 never repaired from memory).
 """
@@ -21,8 +23,8 @@ def _norm(u: str) -> str:
 
 
 def _listed(u: str, known: set[str]) -> bool:
-    """Exact, or the URL was cut by the pattern at a ``)`` of its own (Wikipedia titles) or a trailing ``**``/``...``."""
-    return u in known or any(k.startswith(u) and k[len(u):len(u) + 1] in ("(", ")", "%") or k.startswith(u + ")") for k in known)
+    """Exact only, plus the one real case: URL's own closing ``)`` (a Wikipedia title) which the URL pattern stops at."""
+    return u in known or u + ")" in known
 
 
 def check(text: str, sources: list[str]) -> tuple[list[str], list[str]]:

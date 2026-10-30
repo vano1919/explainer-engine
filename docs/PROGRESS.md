@@ -2903,3 +2903,4 @@ The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code accoun
 - `Result.sources` keeps the URLs of the `web_search_tool_result` blocks (`<id>.sources.json` next to the answer); `llm/cite_check.py` drops any
   line that cites another URL (invariant 5). Tests: `test_web_search_result_urls_are_kept_for_the_citation_check`, `tests/unit/test_cite_check.py`.
 - Job file: `explainer_engine/standards/J3_craft_research.job.json`. Ledger total after J3 $7.04 of $95.
+- Citation check is an exact match (plus a URL's own closing `)`); it sees only http(s) URLs, and the Batch path (20+ requests) writes no sources, so a batch job cannot be checked. The returned URL lists are committed in `docs/research/craft_sources_api/`.
