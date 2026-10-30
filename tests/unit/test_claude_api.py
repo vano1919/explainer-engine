@@ -322,6 +322,7 @@ def test_no_claude_api_line_means_no_spending(env):
 
 def test_real_client_needs_the_key_and_the_recorded_approval(env, monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY")
+    monkeypatch.delenv("EE_ANTHROPIC_API_KEY", raising=False)
     with pytest.raises(ca.KeyAbsent):
         ca.ClaudeAPI().complete(req())
     monkeypatch.setenv("ANTHROPIC_API_KEY", "x")
@@ -640,3 +641,12 @@ def test_the_key_can_come_from_the_alias_name(env, monkeypatch):
     assert ca.api_key() == "alias-key-not-real"
     monkeypatch.setenv("ANTHROPIC_API_KEY", "main-key-not-real")
     assert ca.api_key() == "main-key-not-real"
+
+
+def test_web_search_result_urls_are_kept_for_the_citation_check():
+    blocks = [NS(type="web_search_tool_result", content=[NS(url="https://a.example/x"), NS(url="https://b.example/y"), NS(url="https://a.example/x")]),
+              NS(type="text", text="rule [https://a.example/x]")]
+    a = api(resp(content=blocks, searches=1))
+    r = a.complete(req(web_search_max_uses=2))
+    assert r.sources == ["https://a.example/x", "https://b.example/y"]
+    assert a.complete(req(web_search_max_uses=2)).sources == r.sources    # the cache keeps them too

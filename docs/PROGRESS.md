@@ -2896,3 +2896,10 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 
 ## 2026-10-30 08:10 UTC — P0d: key alias `EE_ANTHROPIC_API_KEY`
 The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code account auth). `claude_api.api_key()` now takes the first non-empty of `ANTHROPIC_API_KEY`, `EE_ANTHROPIC_API_KEY`; used by `client()`, `status`, `estimate`. Test: `test_the_key_can_come_from_the_alias_name`.
+
+## 2026-10-30 — Claude API: first real calls (J1, J3), citation check
+- Key reached the session as `EE_ANTHROPIC_API_KEY` (PR #52 alias). Haiku ping ok; J1 review of PR #47 (Opus 5.5, $1.48); J3 craft research
+  (Opus 5.5 high + web search, 9 departments, $5.56): `docs/research/CRAFT_SOURCES_API_2026-10.md`, leads only, nothing binding (D-59).
+- `Result.sources` keeps the URLs of the `web_search_tool_result` blocks (`<id>.sources.json` next to the answer); `llm/cite_check.py` drops any
+  line that cites another URL (invariant 5). Tests: `test_web_search_result_urls_are_kept_for_the_citation_check`, `tests/unit/test_cite_check.py`.
+- Job file: `explainer_engine/standards/J3_craft_research.job.json`. Ledger total after J3 $7.04 of $95.
