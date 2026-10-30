@@ -3160,3 +3160,26 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Tests: `tests/unit/test_money_path_fences.py` (CP-01 section: both launchers exit with `RETIRED by D-80` and no network, 7 refused
   commands, 6 allowed ones); `tests/unit/test_aivideo_shotplan.py::test_pod_code_follows_the_rules` += the guard sits before `rp.create(`
   (addition only). Red on main: 9 failed.
+
+## 2026-10-30 UTC: plan_v2 T1 / N-01, `runpod create` needs `--script`; the pin and the wrapper are checked on the body; `create()` sends only a stamped body (no pod, no money)
+
+- `explainer_engine/cloud/runpod.py` (Argon-2 F-06 library half, F-19): `main create` refuses a missing `--script` before any other check
+  (`refused: runpod create needs --script (... OR-21 ...)`). `preflight_create(..., body=None)`: with `body` (every creation passes it) a
+  missing script is refused (OR-21), a body whose `cmd` is not `pod_wrapper.sh` is refused (so a TMR boot body or a `--script` without
+  `--script-url` is never sent), and the body's own `image` must be a digest in `config/cloud_pins.json` (unconditional; before, only
+  `if script`). With no refusal the body is stamped in place (`PREFLIGHT_KEY` = sha256 of the body, `preflight_stamp`). `create(api, body)`
+  pops the stamp first and refuses a missing one or a body changed after the preflight, before any HTTP call. `main create` now builds the
+  body (and `--disk`, RP-03) before the preflight and passes it. Without `body` (`start` of a stopped pod, the ceiling tests) nothing changes
+  and nothing is stamped. `boot_cmd`/`create_body(boot=...)` stay text builders (their text is pinned by tests); a boot body can no longer
+  be stamped, so it cannot be sent. `IMAGE`/`BOOT_REPO` stay, commented as history.
+- Tests: `tests/unit/test_money_path_fences.py` (N-01 section, 7: unstamped body refused with no network, a body changed after the
+  preflight refused, no script / unpinned image / boot body never stamped, three scriptless CLI lines refused with `OR-21` before any call,
+  a script create POSTs exactly one body without the stamp, running the wrapper, on a digest). Red on main: 7 failed.
+- Tests changed and why (setup only, or an allowed path that is now a refusal): `test_runpod.py` gets `stamped()`, `script_pod()`,
+  `live_ok()`; 9 library tests of the card loop stamp their hand-made body; 6 CLI tests that used a scriptless/boot pod now run a script pod
+  (two expected values follow the script pod: `status_token` empty, `pod_shape` 0/40 GB); `test_cloud_guardian.py` 2 CLI tests the same;
+  `test_cloud_stop_paths.py:344` stamps its body (one line; T3 owns the file this wave and was told).
+- Card B2 evidence (ვანო decides deletion; U9): `config/spend_caps.json` `runpod.keep_stopped_pods` has **49** ids (Argon-1 said 50,
+  Argon-2 47). `runpod check` (read-only, 2026-10-30 ~13:45 UTC): 49 STOPPED pods, each 0 GB, $0.00/day in total; billed $0.00 in 24 h;
+  balance $10.40; no PROBLEM line.
+- OPEN for T3/CP-18: `docs/CLOUD_RUNBOOK.md:18` and `:54` (CR-01, "Boot (TMR manifest) pods keep `boot_cmd`") still describe boot pods.
