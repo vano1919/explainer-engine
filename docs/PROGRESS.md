@@ -3115,3 +3115,21 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - The shared fake RunPod account of `tests/unit/test_runpod.py` held a balance of $1.00, which is now below `min_balance_left_usd` plus a
   test pod's `--max-usd`; 16 cloud tests were refused by the floor instead of testing what they name. The fake's balance is now a
   `balance` attribute defaulting to $20.00; no assertion changed (the refusal itself is `test_min_balance_left_is_one_dollar_...`).
+
+## 2026-10-30 13:45 UTC — T2 (claude-sonnet-5-5 high) — CP-02 + N-04: honest lanes and the real speeds schema in `variant_plan` (PR #PRNUM)
+- `scripting/variant_plan.py`: `KEYFRAME_LTX:light/full` are `available: False, phase: "P6"` (no LTX-2.5 / Wan 2.2 clip pod script under
+  `training/pods/`; `grep -il "ltx\|wan2"` over every `*.sh` finds none, and `runpod dryrun --offline` refuses the nine pre-P1a scripts);
+  `MAP` and `COMPENSATOR` are `available: True` with file evidence (`maps/render.py`, `edit/visual_compensator.py`, both opened);
+  `_row_usd` reads the table `runpod cost --record-speed` writes (`jobs/<job>/rows/<card>`, priced from `usd_per_unit`, never from seconds
+  alone) through the new pure `cloud/speeds.lookup(data, job, card=None)`; the flat `speeds[job]["seconds_per_unit"]` form stays as the
+  legacy path (its tests are unchanged); VP-12 names why a pod row is unpriced (no measured row for the job / several cards measured and
+  the row names none / no priced row for the card).
+- `examples/napoleon_vs_genghis/script_variants.json` re-scored by `variant_plan napoleon --write` (`chosen` is `null` and no sha binds the
+  file): v1 90 -> 70 (two KEYFRAME_LTX lanes wait for P6), v2 60 -> 70 (MAP and COMPENSATOR findings gone, one KEYFRAME_LTX added); the pick
+  stays the creator's.
+- Tests red on main -> green: `test_variant_plan.py::test_vp11_each_missing_lane_is_one_finding_naming_its_phase_and_the_table_is_honest`
+  (evidence must be a file, KEYFRAME lanes `False/P6`, MAP and COMPENSATOR `True`), `::test_row_usd_reads_the_job_speeds_schema_written_by_runpod_cost`,
+  `::test_vp12_names_why_a_pod_row_is_unpriced`, `test_cloud_economy.py::test_lookup_names_the_one_measured_card_or_nothing`. Five existing
+  tests pinned the old scores/lane table (90/60, `lanes.MAP` missing); their expectations moved to the new facts, no assertion removed.
+- OPEN: the scores of the two Napoleon variants now tie (70/70); needs ვანო only for the pick. No pod, no API call, nothing deleted.
+- Decision log: none moved.
