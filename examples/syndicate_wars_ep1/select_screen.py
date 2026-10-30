@@ -2,7 +2,7 @@
 comparison. Layout, icons and colours are ours (neon pink, sunset orange, cyan); nothing is copied from any game's UI
 (ES rule ER-05, RK-03). Fonts: assets/fonts (Bangers, Comic Neue, both OFL). Free: no model, no network.
 
-    python -m explainer_engine.production.select_screen <pictures dir>     # writes sc_*.png next to the portraits p_*.png
+    python examples/syndicate_wars_ep1/select_screen.py <pictures dir>     # writes sc_*.png next to the portraits p_*.png
 """
 
 from __future__ import annotations

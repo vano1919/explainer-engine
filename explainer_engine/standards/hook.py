@@ -1,5 +1,8 @@
 """PreToolUse hook for the ElevenLabs connector (OR-12, D-52): a paid generation runs only through the rulebook gate.
 
+Scope (N-06, 2026-10-30): the D-43 still-picture route. An animated episode's keyframes (D-77, D-80) are made on a pod with
+Qwen-Image-2.1 and the xworld_v2 LoRA and never go through this connector either; the "painted by Gemini" line below describes the still route only (docs/SHOT_PROMPTS.md for the other).
+
 Wired in ``.claude/settings.json`` (matcher ``mcp__ElevenLabs__creative_.*``). Claude Code passes the call as JSON on stdin
 (``tool_name``, ``tool_input``); the hook answers ``permissionDecision: deny`` with a reason, or nothing (normal flow).
 

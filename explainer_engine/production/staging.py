@@ -3,6 +3,9 @@ as shots of ONE room, not as independent illustrations. The titans episode (2026
 its prompt and the style references alone, so a bench of ten became five in one shot and two different men in another
 room in the next while the narration still told the same conversation.
 
+Scope (N-06, 2026-10-30): the D-43 still-picture route. An animated episode's keyframes (D-77, D-80) are made on a pod with
+Qwen-Image-2.1 and the xworld_v2 LoRA and are not staged here (its continuity is continuity_card/1); its route is docs/SHOT_CONTINUITY.md and docs/SHOT_PROMPTS.md.
+
 A segment's optional ``staging`` block is the scene state that persists across its shots (and across segments that
 continue the same scene): ``location``, ``time``, ``layout``, ``fixed`` details, the ``roster`` of who is in the room,
 ``positions`` (the spatial map, written left to right as the master frame sees it), the ``master`` picture. A picture adds

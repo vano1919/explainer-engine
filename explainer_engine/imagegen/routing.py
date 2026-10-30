@@ -1,5 +1,8 @@
 """Picture routing (D-52): every picture is painted by Gemini on the batch tier, on one of three tiers. stdlib only.
 
+Scope (N-06, 2026-10-30): the D-43 still-picture route. An animated episode's keyframes (D-77, D-80) are made on a pod with
+Qwen-Image-2.1 and the xworld_v2 LoRA and are not routed here; its route is docs/SHOT_CONTINUITY.md and docs/SHOT_PROMPTS.md.
+
 The tier is chosen by what the picture has to do, never by habit (docs/VISUAL_WORLD_ARCHITECTURE.md section 6):
 
 * ``draft``    - Nano Banana 2.1 at 1K: composition and story tests, replaceable pictures. Same model as the final, so a

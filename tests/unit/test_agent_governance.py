@@ -137,3 +137,32 @@ def test_the_blueprint_packages_that_must_not_exist_do_not():
     for name in ("storyboard", "validation", "telemetry", "style", "thumbnail"):
         assert not (ROOT / "explainer_engine" / name).is_dir(), name
     assert not (ROOT / "engine").exists()  # Blueprint Phase 1 item 14
+
+
+# ---- T4 (plan_v2 wave 2): CP-12 route notes, N-06 docstring scope, the select_screen move ------------------------------------------
+
+def test_cp12_edit_planner_and_shot_visuals_carry_a_route_note_and_no_live_2512():
+    for rel in (".claude/agents/edit-planner.md", ".claude/skills/shot-visuals/SKILL.md"):
+        lines = (ROOT / rel).read_text(encoding="utf-8").splitlines()
+        assert any("Route note" in l and "D-43" in l and "D-80" in l for l in lines[:12]), rel
+        for l in lines:
+            if "2512" in l or "Edit-2511" in l:
+                assert "banned" in l, (rel, l)
+    skill = (ROOT / ".claude/skills/shot-visuals/SKILL.md").read_text(encoding="utf-8")
+    assert skill.index("## Still-picture route (D-43)") < skill.index("## Animated route (D-77/D-80)")
+    assert skill.index("## Animated shots") > skill.index("## Animated route (D-77/D-80)")
+    assert skill.index("## Procedure") < skill.index("## Animated route (D-77/D-80)")  # the sprite procedure stays in the still route
+
+
+def test_n06_routing_hook_and_staging_docstrings_say_they_are_the_still_picture_route():
+    for rel in ("imagegen/routing.py", "standards/hook.py", "production/staging.py"):
+        head = "\n".join((ROOT / "explainer_engine" / rel).read_text(encoding="utf-8").splitlines()[:8])
+        assert "Scope (N-06" in head and "D-43" in head and "D-80" in head, rel
+
+
+def test_select_screen_lives_with_its_episode():
+    assert not (ROOT / "explainer_engine/production/select_screen.py").exists()
+    assert (ROOT / "examples/syndicate_wars_ep1/select_screen.py").exists()
+    assert (ROOT / "examples/syndicate_wars_ep1/test_select_screen.py").exists()
+    assert "examples/syndicate_wars_ep1/select_screen.py" in (ROOT / "explainer_engine/production/shorts.py").read_text(encoding="utf-8")
+    assert "examples/syndicate_wars_ep1" in (ROOT / "pytest.ini").read_text(encoding="utf-8")
