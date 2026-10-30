@@ -1,0 +1,42 @@
+{
+ "schema": "script_variants/1",
+ "episode_slug": "napoleon",
+ "dossier_sha256": "xyz",
+ "variants": [
+  {
+   "id": "v1",
+   "title": "V1",
+   "profile_id": "A",
+   "logline": "x",
+   "outline": [
+    "a"
+   ],
+   "dynamics": {
+    "map_pure": 0.2
+   },
+   "cost": {
+    "usd_planned": 1.0,
+    "usd_worst": 2.0,
+    "unknown_rows": []
+   }
+  },
+  {
+   "id": "v2",
+   "title": "V2",
+   "profile_id": "A",
+   "logline": "x",
+   "outline": [
+    "a"
+   ],
+   "dynamics": {
+    "map_pure": 0.2
+   },
+   "cost": {
+    "usd_planned": 1.0,
+    "usd_worst": 2.0,
+    "unknown_rows": []
+   }
+  }
+ ],
+ "chosen": null
+}

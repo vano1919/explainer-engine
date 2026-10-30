@@ -1,0 +1,186 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "edit_and_grade_manifest.schema.json",
+ "title": "Edit and grade manifest: cuts per scene from the edit planner (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "edit_and_grade_manifest/1"
+  },
+  "film_shots": {
+   "$ref": "#/$defs/fileref"
+  },
+  "audio_spine": {
+   "$ref": "#/$defs/fileref"
+  },
+  "scenes": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "scene_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "key_master_frame": {
+      "anyOf": [
+       {
+        "type": "string",
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "grade": {
+      "anyOf": [
+       {
+        "type": "object",
+        "properties": {
+         "lut": {
+          "type": "string",
+          "minLength": 1
+         }
+        },
+        "required": [
+         "lut"
+        ],
+        "additionalProperties": false
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "cuts": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "from_shot": {
+         "type": "string",
+         "minLength": 1
+        },
+        "to_shot": {
+         "type": "string",
+         "minLength": 1
+        },
+        "cut_type": {
+         "enum": [
+          "STRAIGHT_CUT",
+          "ACTION_PEAK_CUT",
+          "DEPTH_MATCH_CUT",
+          "OCCLUSION_WIPE",
+          "WHIP_PAN",
+          "KULESHOV_L_CUT"
+         ]
+        },
+        "at_frame": {
+         "type": "integer",
+         "minimum": 0
+        },
+        "audio_lead_frames": {
+         "type": "integer",
+         "minimum": 0
+        }
+       },
+       "required": [
+        "from_shot",
+        "to_shot",
+        "cut_type",
+        "at_frame",
+        "audio_lead_frames"
+       ],
+       "additionalProperties": false
+      }
+     }
+    },
+    "required": [
+     "scene_id",
+     "key_master_frame",
+     "grade",
+     "cuts"
+    ],
+    "additionalProperties": false
+   },
+   "minItems": 1
+  }
+ },
+ "required": [
+  "schema",
+  "film_shots",
+  "audio_spine",
+  "scenes"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

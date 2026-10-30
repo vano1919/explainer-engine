@@ -1,0 +1,48 @@
+{
+ "schema": "screenplay_spine/1",
+ "derived_from": {
+  "production_script": {
+   "path": "x/file.bin",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "film_shots": {
+   "path": "x/file.bin",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ },
+ "episode_slug": "napoleon",
+ "structure_profile_id": "A",
+ "packaging_promises": [
+  "a",
+  "b",
+  "c"
+ ],
+ "segments": [
+  {
+   "id": "S01",
+   "est_duration_sec": 12.5,
+   "causal_connector": "OPEN",
+   "clock_window_sec": [
+    0,
+    20
+   ],
+   "lines": [
+    {
+     "index": 0,
+     "speaker": "narrator",
+     "text": "Hello.",
+     "claim_ids": [
+      "C01"
+     ]
+    }
+   ]
+  }
+ ],
+ "claims": [
+  {
+   "claim_id": "C01",
+   "status": "FACT",
+   "source_ref": "dossier#1"
+  }
+ ]
+}

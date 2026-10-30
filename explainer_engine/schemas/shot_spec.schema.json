@@ -1,0 +1,266 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "shot_spec.schema.json",
+ "title": "Shot spec: everything one render of one shot depends on, hashed into the cache key (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "shot_spec/1"
+  },
+  "shot_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "job_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "lane": {
+   "enum": [
+    "KEYFRAME_LTX",
+    "DIALOGUE_CU",
+    "HOST_COMMENTARY",
+    "DRAMA_BLOCKED_3D",
+    "ATMOS_BROLL",
+    "MAP",
+    "COMPENSATOR",
+    "STILL_HOLD"
+   ]
+  },
+  "prompt": {
+   "type": "string",
+   "minLength": 1
+  },
+  "negative": {
+   "type": "string"
+  },
+  "seed": {
+   "type": "integer"
+  },
+  "model": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "revision": {
+     "anyOf": [
+      {
+       "type": "string",
+       "minLength": 1
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "id",
+    "sha256",
+    "revision"
+   ],
+   "additionalProperties": false
+  },
+  "loras": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "sha256": {
+      "$ref": "#/$defs/sha256"
+     },
+     "weight": {
+      "type": "number"
+     }
+    },
+    "required": [
+     "id",
+     "sha256",
+     "weight"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "width": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "height": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "frames": {
+   "anyOf": [
+    {
+     "type": "integer",
+     "minimum": 1
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "fps": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "audio_slice_sha256": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/sha256"
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "refs": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "role": {
+      "type": "string",
+      "minLength": 1
+     },
+     "path": {
+      "type": "string",
+      "minLength": 1
+     },
+     "sha256": {
+      "$ref": "#/$defs/sha256"
+     }
+    },
+    "required": [
+     "role",
+     "path",
+     "sha256"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "blocking_sha256": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/sha256"
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "recipe": {
+   "type": "string",
+   "minLength": 1
+  },
+  "params": {
+   "type": "object"
+  }
+ },
+ "required": [
+  "schema",
+  "shot_id",
+  "job_id",
+  "lane",
+  "prompt",
+  "negative",
+  "seed",
+  "model",
+  "loras",
+  "width",
+  "height",
+  "frames",
+  "fps",
+  "audio_slice_sha256",
+  "refs",
+  "blocking_sha256",
+  "recipe",
+  "params"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

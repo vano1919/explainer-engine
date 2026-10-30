@@ -1,0 +1,298 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "job_manifest.schema.json",
+ "title": "Episode job manifest: the lifecycle state, its history, approvals and artifacts (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "job_manifest/1"
+  },
+  "job_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "episode_slug": {
+   "type": "string",
+   "minLength": 1
+  },
+  "created": {
+   "$ref": "#/$defs/time"
+  },
+  "fps": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "state": {
+   "enum": [
+    "CREATED",
+    "RESEARCHED",
+    "VARIANT_CHOSEN",
+    "SCENARIO_APPROVED",
+    "SCRIPT_APPROVED",
+    "STORYBOARDED",
+    "BUDGET_RESERVED",
+    "SAMPLE_APPROVED",
+    "AUDIO_TIMED",
+    "ASSETS",
+    "ASSEMBLED",
+    "QA_PASSED",
+    "REVIEW_APPROVED",
+    "STAGED_UNLISTED",
+    "PUBLISHED_PUBLIC",
+    "FAILED_PREFLIGHT",
+    "FAILED_QA_ESCALATED",
+    "ABORTED_SPEND_CAP",
+    "CANCELLED_BY_CREATOR"
+   ]
+  },
+  "state_since": {
+   "$ref": "#/$defs/time"
+  },
+  "history": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "from": {
+      "anyOf": [
+       {
+        "type": "string",
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "to": {
+      "type": "string",
+      "minLength": 1
+     },
+     "at": {
+      "$ref": "#/$defs/time"
+     },
+     "path": {
+      "type": "string",
+      "minLength": 1
+     },
+     "reason": {
+      "type": "string",
+      "minLength": 1
+     },
+     "approval": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/approval"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "required": [
+     "from",
+     "to",
+     "at",
+     "path",
+     "reason",
+     "approval"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "source_dossier_sha256": {
+   "anyOf": [
+    {
+     "$ref": "#/$defs/sha256"
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "ledger": {
+   "type": "string",
+   "minLength": 1
+  },
+  "budget_reservation_id": {
+   "anyOf": [
+    {
+     "type": "string",
+     "minLength": 1
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "approvals": {
+   "type": "object",
+   "additionalProperties": {
+    "$ref": "#/$defs/approval"
+   }
+  },
+  "artifacts": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "object",
+    "properties": {
+     "path": {
+      "type": "string",
+      "minLength": 1
+     },
+     "sha256": {
+      "$ref": "#/$defs/sha256"
+     },
+     "schema": {
+      "anyOf": [
+       {
+        "type": "string",
+        "minLength": 1
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "dossier_sha256": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/sha256"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "required": [
+     "path",
+     "sha256",
+     "schema",
+     "dossier_sha256"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "distribution_packages": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/fileref"
+   }
+  },
+  "reopen_to": {
+   "anyOf": [
+    {
+     "enum": [
+      "CREATED",
+      "RESEARCHED",
+      "VARIANT_CHOSEN",
+      "SCENARIO_APPROVED",
+      "SCRIPT_APPROVED",
+      "STORYBOARDED",
+      "BUDGET_RESERVED",
+      "SAMPLE_APPROVED",
+      "AUDIO_TIMED",
+      "ASSETS",
+      "ASSEMBLED",
+      "QA_PASSED",
+      "REVIEW_APPROVED",
+      "STAGED_UNLISTED",
+      "PUBLISHED_PUBLIC"
+     ]
+    },
+    {
+     "type": "null"
+    }
+   ]
+  }
+ },
+ "required": [
+  "schema",
+  "job_id",
+  "episode_slug",
+  "created",
+  "fps",
+  "state",
+  "state_since",
+  "history",
+  "source_dossier_sha256",
+  "ledger",
+  "budget_reservation_id",
+  "approvals",
+  "artifacts",
+  "distribution_packages",
+  "reopen_to"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

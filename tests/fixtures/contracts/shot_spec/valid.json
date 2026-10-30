@@ -1,0 +1,39 @@
+{
+ "schema": "shot_spec/1",
+ "shot_id": "s1",
+ "job_id": "job-001",
+ "lane": "KEYFRAME_LTX",
+ "prompt": "a tent at dawn",
+ "negative": "",
+ "seed": 7,
+ "model": {
+  "id": "ltx-2.5",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "revision": null
+ },
+ "loras": [
+  {
+   "id": "xworld_v2",
+   "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+   "weight": 0.8
+  }
+ ],
+ "width": 1920,
+ "height": 1088,
+ "frames": 241,
+ "fps": 24,
+ "audio_slice_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+ "refs": [
+  {
+   "role": "keyframe",
+   "path": "k/s1.png",
+   "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  }
+ ],
+ "blocking_sha256": null,
+ "recipe": "ltx_i2v/1",
+ "params": {
+  "steps": 8,
+  "cfg": 1.0
+ }
+}

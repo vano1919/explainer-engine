@@ -1,0 +1,205 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "script_variants.schema.json",
+ "title": "Script variants of an episode and the creator's choice (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "script_variants/1"
+  },
+  "episode_slug": {
+   "type": "string",
+   "minLength": 1
+  },
+  "dossier_sha256": {
+   "$ref": "#/$defs/sha256"
+  },
+  "variants": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "title": {
+      "type": "string",
+      "minLength": 1
+     },
+     "profile_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "logline": {
+      "type": "string",
+      "minLength": 1
+     },
+     "outline": {
+      "type": "array",
+      "items": {
+       "type": "string",
+       "minLength": 1
+      },
+      "minItems": 1
+     },
+     "dynamics": {
+      "type": "object",
+      "additionalProperties": {
+       "type": "number"
+      }
+     },
+     "cost": {
+      "type": "object",
+      "properties": {
+       "usd_planned": {
+        "type": "number",
+        "minimum": 0
+       },
+       "usd_worst": {
+        "type": "number",
+        "minimum": 0
+       },
+       "unknown_rows": {
+        "type": "array",
+        "items": {
+         "type": "string",
+         "minLength": 1
+        }
+       }
+      },
+      "required": [
+       "usd_planned",
+       "usd_worst",
+       "unknown_rows"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "required": [
+     "id",
+     "title",
+     "profile_id",
+     "logline",
+     "outline",
+     "dynamics",
+     "cost"
+    ],
+    "additionalProperties": false
+   },
+   "minItems": 2,
+   "maxItems": 3
+  },
+  "chosen": {
+   "anyOf": [
+    {
+     "type": "object",
+     "properties": {
+      "variant_id": {
+       "type": "string",
+       "minLength": 1
+      },
+      "by": {
+       "type": "string",
+       "minLength": 1
+      },
+      "ref": {
+       "type": "string",
+       "minLength": 1
+      },
+      "at": {
+       "$ref": "#/$defs/time"
+      }
+     },
+     "required": [
+      "variant_id",
+      "by",
+      "ref",
+      "at"
+     ],
+     "additionalProperties": false
+    },
+    {
+     "type": "null"
+    }
+   ]
+  }
+ },
+ "required": [
+  "schema",
+  "episode_slug",
+  "dossier_sha256",
+  "variants",
+  "chosen"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

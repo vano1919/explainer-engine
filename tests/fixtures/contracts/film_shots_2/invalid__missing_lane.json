@@ -1,0 +1,68 @@
+{
+ "schema": "film_shots/2",
+ "episode": "napoleon",
+ "fps": 24,
+ "style": {
+  "trigger": "xworld",
+  "video_sentence": "Hand-drawn cartoon."
+ },
+ "cast": {
+  "nap": {
+   "tag": "a short man in a green coat with a bicorne hat"
+  }
+ },
+ "places": {
+  "tent": "a canvas command tent"
+ },
+ "shots": [
+  {
+   "id": "s1",
+   "scene": "S01",
+   "mode": "narrated",
+   "beat": "Napoleon looks at the map.",
+   "seconds": 10,
+   "frame": {
+    "size": "WS",
+    "place": "tent"
+   },
+   "source": "keyframe",
+   "tier": "hold",
+   "archetype": "scene_wide",
+   "duration_frames": 241,
+   "width": 1920,
+   "height": 1088,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null
+  },
+  {
+   "id": "s2",
+   "scene": "S01",
+   "mode": "narrated",
+   "beat": "Napoleon looks at the map.",
+   "seconds": 10,
+   "frame": {
+    "size": "WS",
+    "place": "tent"
+   },
+   "source": "keyframe",
+   "tier": "hold",
+   "lane": "KEYFRAME_LTX",
+   "archetype": "scene_wide",
+   "duration_frames": 241,
+   "width": 1920,
+   "height": 1088,
+   "lens_tier": "normal",
+   "focal_xy": [
+    0.5,
+    0.5
+   ],
+   "continuity_ref": null,
+   "blocking_ref": null
+  }
+ ]
+}

@@ -1,0 +1,210 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "voice_casting.schema.json",
+ "title": "Voice casting: who speaks with which voice and settings (docs/CONTRACTS.md)",
+ "type": "object",
+ "properties": {
+  "schema": {
+   "const": "voice_casting/1"
+  },
+  "episode_slug": {
+   "type": "string",
+   "minLength": 1
+  },
+  "roles": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "properties": {
+     "role_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "cast_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "voice_id": {
+      "type": "string",
+      "minLength": 1
+     },
+     "model": {
+      "type": "string",
+      "minLength": 1
+     },
+     "settings": {
+      "type": "object",
+      "properties": {
+       "stability": {
+        "type": "number"
+       },
+       "similarity": {
+        "type": "number"
+       },
+       "style": {
+        "type": "number"
+       },
+       "speed": {
+        "type": "number"
+       }
+      },
+      "required": [
+       "stability",
+       "similarity",
+       "style",
+       "speed"
+      ],
+      "additionalProperties": false
+     },
+     "pronunciations": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "word": {
+         "type": "string",
+         "minLength": 1
+        },
+        "say": {
+         "type": "string",
+         "minLength": 1
+        }
+       },
+       "required": [
+        "word",
+        "say"
+       ],
+       "additionalProperties": false
+      }
+     },
+     "test_read": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/fileref"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "approved": {
+      "anyOf": [
+       {
+        "type": "object",
+        "properties": {
+         "by": {
+          "type": "string",
+          "minLength": 1
+         },
+         "ref": {
+          "type": "string",
+          "minLength": 1
+         },
+         "at": {
+          "$ref": "#/$defs/time"
+         }
+        },
+        "required": [
+         "by",
+         "ref",
+         "at"
+        ],
+        "additionalProperties": false
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "required": [
+     "role_id",
+     "cast_id",
+     "voice_id",
+     "model",
+     "settings",
+     "pronunciations",
+     "test_read",
+     "approved"
+    ],
+    "additionalProperties": false
+   },
+   "minItems": 1
+  }
+ },
+ "required": [
+  "schema",
+  "episode_slug",
+  "roles"
+ ],
+ "additionalProperties": false,
+ "$defs": {
+  "sha256": {
+   "type": "string",
+   "pattern": "^[0-9a-f]{64}$"
+  },
+  "fileref": {
+   "type": "object",
+   "properties": {
+    "path": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "$ref": "#/$defs/sha256"
+    }
+   },
+   "required": [
+    "path",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "approval": {
+   "type": "object",
+   "properties": {
+    "kind": {
+     "enum": [
+      "creator",
+      "machine",
+      "planner"
+     ]
+    },
+    "by": {
+     "type": "string",
+     "minLength": 1
+    },
+    "ref": {
+     "type": "string",
+     "minLength": 1
+    },
+    "at": {
+     "type": "string",
+     "minLength": 1
+    },
+    "sha256": {
+     "anyOf": [
+      {
+       "$ref": "#/$defs/sha256"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   },
+   "required": [
+    "kind",
+    "by",
+    "ref",
+    "at",
+    "sha256"
+   ],
+   "additionalProperties": false
+  },
+  "time": {
+   "type": "string",
+   "minLength": 10
+  }
+ }
+}

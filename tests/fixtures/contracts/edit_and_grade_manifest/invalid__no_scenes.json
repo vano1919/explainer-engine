@@ -1,0 +1,12 @@
+{
+ "schema": "edit_and_grade_manifest/1",
+ "film_shots": {
+  "path": "x/file.bin",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ },
+ "audio_spine": {
+  "path": "x/file.bin",
+  "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ },
+ "scenes": []
+}
