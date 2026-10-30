@@ -104,6 +104,10 @@ class Overloaded(LLMError):
     """429 / overloaded for longer than OVERLOAD_WAIT_S."""
 
 
+class CacheCold(LLMError):
+    """A tool loop's history is not being read from cache: it is billed as fresh input every turn (the J1b scope A state, $5.02)."""
+
+
 class OutputTruncated(LLMError):
     """The answer hit max_tokens; it was paid and recorded but is not cached."""
 
@@ -695,12 +699,17 @@ class ClaudeAPI:
         root = Path(req.tools_root).resolve()
         msgs = list(params["messages"])
         total, tot_use = 0.0, {"input": 0, "output": 0, "cache_read": 0, "write_5m": 0, "write_1h": 0, "searches": 0}
-        turn = 0
+        turn, prev_read = 0, 0
         try:
             for turn in range(1, req.max_turns + 1):
                 p = {**params, "messages": _with_breakpoint(msgs, req.cache_ttl)}
                 resp, r_used, usd, use = self._paid(req, r, p, f"{req.id}#t{turn}-{uuid.uuid4().hex[:4]}")
                 total += usd
+                cold = cache_guard(turn, use, prev_read)
+                prev_read = use["cache_read"]
+                if cold and resp.stop_reason in ("tool_use", "pause_turn"):   # a final answer is kept, whatever its cache did
+                    raise CacheCold(f"{req.id}: turn {turn}: {cold}; the loop was stopped after paying ${total:.4f} instead of running to the "
+                                    "80 % stop (check the cache breakpoints and the 5-minute TTL)")
                 tot_use = {k: tot_use[k] + use[k] for k in tot_use}
                 if resp.stop_reason in ("tool_use", "pause_turn"):
                     msgs.append({"role": "assistant", "content": resp.content})
@@ -829,6 +838,27 @@ def load_job(path: Path) -> list[Request]:
         common["fallback_to"] = tuple(spec["fallback_to"])
     return [Request(id=q["id"], user=q["user"] if "user" in q else read(q["user_file"]), job=spec["job"], system=system,
                     cache_salt=q.get("cache_salt", ""), **common) for q in spec["requests"]]
+
+
+CACHE_GUARD_FROM_TURN = 3       # the first turns have little history to lose
+CACHE_GUARD_MIN_SHARE = 0.6     # (cache read + cache written) / all prompt tokens of a turn
+CACHE_GUARD_STUCK_INPUT = 1000  # fresh input tokens that a cache read of the same size as last turn's cannot explain
+
+
+def cache_guard(turn: int, use: dict, prev_read: int) -> str | None:
+    """The tool loop's self-check of the `cached` assumption behind its estimate: from turn 3, a turn whose prompt is mostly fresh
+    input, or whose cache read did not grow while fresh input is large (the read stuck at the system prefix), is the state that cost
+    $5.02. Returns the reason, or None."""
+    prompt = use["input"] + use["cache_read"] + use["write_5m"] + use["write_1h"]
+    if turn < CACHE_GUARD_FROM_TURN or prompt < 1024:   # below the API's minimum cacheable prompt there is nothing to judge
+        return None
+    share = (use["cache_read"] + use["write_5m"] + use["write_1h"]) / prompt
+    if share < CACHE_GUARD_MIN_SHARE:
+        return f"only {share:.0%} of the prompt tokens were cache reads or writes (need {CACHE_GUARD_MIN_SHARE:.0%})"
+    if use["cache_read"] <= prev_read and use["input"] >= CACHE_GUARD_STUCK_INPUT:
+        return (f"the cache read stayed at {use['cache_read']} tokens while {use['input']} fresh input tokens were billed "
+                "(the history is not being cached)")
+    return None
 
 
 LOOP_NEW_TOKENS = 2000   # tool-result tokens a repo-tool turn adds: measured on the J1b scope A run (about 1.5k a turn), rounded up

@@ -466,8 +466,13 @@ def test_small_jobs_go_direct_in_order():
 
 
 # --- the read-only repo tool loop --------------------------------------------------------------------------------------
-def tool_turn(name, args, tid="tu1"):
-    return resp(content=[NS(type="tool_use", name=name, input=args, id=tid)], stop="tool_use")
+def tool_turn(name, args, tid="tu1", **usage):
+    return resp(content=[NS(type="tool_use", name=name, input=args, id=tid)], stop="tool_use", **usage)
+
+
+def warm_turns(n, path="."):
+    """n tool turns whose usage looks like a loop that caches its history: the read grows, little is fresh."""
+    return [tool_turn("list_dir", {"path": path}, f"w{i}", inp=100, read=20000 + 2000 * i, write=2000) for i in range(n)]
 
 
 def test_tool_loop_reads_files_and_reserves_every_turn(tmp_path):
@@ -502,7 +507,7 @@ def test_tools_are_read_only_and_cannot_leave_the_checkout(tmp_path):
 
 
 def test_tool_loop_stops_at_max_turns(tmp_path):
-    a = api(tool_turn("list_dir", {"path": "."}))
+    a = api(*warm_turns(3))
     with pytest.raises(ca.OutputTruncated):
         a.complete(req(tools_root=str(tmp_path), max_turns=3))
     assert len(a._client.calls) == 3
@@ -672,7 +677,7 @@ def test_a_stopped_tool_loop_leaves_its_partial_transcript_on_disk(env, tmp_path
 
 def test_a_cap_stop_in_the_middle_of_a_loop_keeps_the_turns_so_far(env, tmp_path):
     set_caps(env, jobs={"T": 0.5})                                      # a turn reserves ~0.33 and settles at ~0.014: the stop (0.4) comes after a few turns
-    a = api(*[tool_turn("list_dir", {"path": "."}, f"t{i}") for i in range(30)])
+    a = api(*warm_turns(30))
     with pytest.raises(CapReached):
         a.complete(req("K", tools_root=str(tmp_path), max_turns=30))
     d = json.loads((ca.ledger_dir() / "partial_T_K.json").read_text(encoding="utf-8"))
@@ -739,3 +744,31 @@ def test_run_refuses_a_loop_job_by_the_chosen_loop_bound(env, tmp_path, capsys):
     set_caps(env, jobs={"T": round((est["cached"] + est["uncached"]) / 2 / 0.8, 2)})   # its 80 % stop sits between the two figures
     assert ca.estimate(ca.load_job(env / "job.json"))["fits_job_cap"]                  # the default bound: the expected, cached case
     assert ca.main(["run", str(env / "job.json"), "--loop-bound", "uncached"]) == 3 and "refused" in capsys.readouterr().out
+
+
+# --- the runtime cache guard (the `cached` loop bound must check itself) ---------------------------------------------------------
+def test_a_loop_whose_history_is_cached_runs_on_past_turn_3(tmp_path):
+    a = api(*warm_turns(4), resp("done", inp=100, read=30000, write=2000))
+    r = a.complete(req(tools_root=str(tmp_path), max_turns=8))
+    assert r.text == "done" and r.turns == 5
+
+
+def test_a_loop_whose_cache_read_is_stuck_at_the_prefix_stops_at_turn_3_with_the_partial_on_disk(env, tmp_path):
+    (tmp_path / "x.txt").write_text("a", encoding="utf-8")
+    prefix = 22746                                                      # what the J1b scope A ledger showed on every turn
+    broken = [tool_turn("list_dir", {"path": "."}, f"b{i}", inp=1000 + 2000 * i, read=prefix, write=0) for i in range(10)]
+    a = api(*broken)
+    with pytest.raises(ca.CacheCold, match=r"turn 3.*cache read stayed at 22746") as ei:
+        a.complete(req("C", tools_root=str(tmp_path), max_turns=20))
+    assert len(a._client.calls) == 3                                    # stopped within three turns, not at the line
+    part = ca.ledger_dir() / "partial_T_C.json"
+    assert part.exists() and str(part) in "".join(getattr(ei.value, "__notes__", []))
+    assert json.loads(part.read_text(encoding="utf-8"))["turns"] == 3
+
+
+def test_the_guard_names_the_measured_share_when_most_of_the_prompt_is_fresh_input():
+    assert ca.cache_guard(2, {"input": 90000, "cache_read": 1000, "write_5m": 0, "write_1h": 0}, 0) is None        # too early to judge
+    why = ca.cache_guard(3, {"input": 40000, "cache_read": 20000, "write_5m": 0, "write_1h": 0}, 0)
+    assert "33%" in why and "60%" in why
+    assert ca.cache_guard(5, {"input": 100, "cache_read": 30000, "write_5m": 2000, "write_1h": 0}, 28000) is None
+    assert ca.cache_guard(5, {"input": 100, "cache_read": 0, "write_5m": 0, "write_1h": 0}, 0) is None            # a tiny turn with nothing fresh
