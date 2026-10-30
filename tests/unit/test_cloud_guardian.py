@@ -411,7 +411,7 @@ def test_s16_a_stopped_pod_that_cannot_restart_bills_nothing_and_says_why(env):
     fake.pods["a"] = pod("a", status="EXITED")
     fake.faults = [("POST", "/pods/a/action", 400)]  # "not enough free GPUs on the host": a stopped pod is tied to its host
     with pytest.raises(R.RunPodError, match="400"):
-        R.main(["start", "a", "--yes", "--max-usd", "0.5", "--max-hours", "1"], api=api)
+        R.main(["start", "a", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--allow-zero-gpu-risk"], api=api)
     assert fake.pods["a"]["status"] == "EXITED" and R.sess_read("a") is None
     lines = I.doctor("HTTP 400 not enough free GPUs on the host", stage="start")
     assert any(l.startswith("INC-06") for l in lines)  # the known cause and its fix are named

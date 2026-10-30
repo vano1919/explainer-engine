@@ -2813,3 +2813,35 @@ training as sequences is decided in the process. Changed together:
   and `huggingface_hub` (latest 1.x; its API checked by import). They are pins to be proved by P12a, not facts about a working stack.
 - Not done here, on purpose: the nine historic `training/pods/*.sh` (pre-P1a protocol: own upload loop, own DONE) are not rewritten. They are
   refused by `create` already; the P12 scripts under `training/pods/p12/` are the ones that must pass `dryrun`.
+
+## 2026-10-30 05:00 UTC: P1c, measured speeds, batching rules RP-01..10, the bill into the ledger (no pod, no money)
+
+- `config/job_speeds.json` + `cloud/speeds.py`: the table is committed EMPTY (job types and units only); `runpod cost <pod>` fills a row
+  from the pod's `$EE_OUT/units.json` (new contract, RP-08: `{job_type, units, work_s, setup_s?, mb?, download_s?}`; the P12 scripts must
+  write it). `pick_gpus` takes a measured row first, then the SPEED estimate, and a card nobody knows is NOT skipped any more: slowest known
+  speed x `margin_unmeasured` 2.0. A card whose fixed setup is over 40 % of the pod's time is refused with its reason (RP-09). The old test
+  that expected an unknown card to be skipped is changed on purpose (card text of P1c).
+- RP-01..RP-10 (`cloud/batching.py`; the rule texts are the p9 re-check's B1..B10, home `docs/CLOUD_RUNBOOK.md`, docs_lint home `RP`):
+  `create` now needs `--work-min` and `--setup-min` (RP-01; exempt: the P12a smoke ledger and `--measure` <= $0.30) and `--disk` for a
+  script pod, records the weight set per pod (RP-02, `--second-pod-reason`), defaults a script pod to volume 0 and no ports, and counts
+  hardware tries per job (RP-10). `--wait-stock 15m`, `cards --job T --units N`.
+- Money: `cost` needs the pod id; `settle_due` (run by the session-start hook) settles a pod 90 min after its stop; `cost` prints a PROGRESS-ready
+  line and keeps `usd_per_unit` in the ledger; `Run.report()` shows settled and open reservations apart; `check` prints the stopped disks on
+  one line, names dead `keep_stopped_pods` ids and flags billing no pod explains; `start` is refused without `--allow-zero-gpu-risk`.
+  `tests/unit/test_cloud_economy.py` (21 tests).
+- Not done, on purpose: (1) `MAX_PRICE` pools from `config/spend_caps.json`: that file changes only on the creator's recorded word, and the
+  numbers are the same; (2) the PROGRESS line is printed and kept in `tools/runpod/settled.jsonl`, not written into this file by the tool
+  (every branch would conflict on it); (3) the watchdog does not settle (it has no ledger in CI): the session hook does; (4) RP-09's "never an
+  80/96 GB card when 48 GB fits" needs a measured `min_vram` per job type: none exists yet.
+
+## 2026-10-30 06:00 UTC: P1c review fixes (PR #48): a garbled units.json, a settled flag that was written away
+
+- `units.json` is validated before it is used (`speeds.from_units_json`): an object with a string `job_type` and non-negative numbers, else
+  `SpeedError` (now a `ContractError`). `cost_report` settles the real bill FIRST and parses the pod's files after, so a garbled file
+  (`[]`, `null`, `5`, `units: "abc"`) costs only the speed row ("no speed row: units.json ..." in the settle line), never the ledger entry.
+  The session-start hook shows a failed `settle_due` as an info line instead of dropping the whole RunPod check.
+- `cost_report` re-reads the session before it records the pod's outcome, so `settled` is no longer written away and the next session does not
+  settle the same pod again. Tests: `test_a_garbled_units_json_never_keeps_the_bill_out_of_the_ledger`, `test_the_session_hook_survives_...`,
+  `test_a_settled_pod_stays_settled_...`.
+- Wording: RP-10's message says "failed create or BAD_HOST pod(s)" (a failed `create` of any cause uses the one try). `check` only REPORTS
+  unknown `keep_stopped_pods` ids; it does not clean them up (`config/spend_caps.json` changes only on the creator's word).

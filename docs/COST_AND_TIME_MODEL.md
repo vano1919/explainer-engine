@@ -38,6 +38,20 @@ an ElevenLabs read returns in well under real time; word timings (local Whisper)
 until the benchmark; the gate is a 10-minute episode in under 2 hours. Disk: a 7-minute 1080p30 episode's scene files plus
 final about 1-2 GB (estimate); jobs are cleaned by the protected-run rule.
 
+## GPU pods: cost per unit, and no network volume (P1c, RP-01..10 in [CLOUD_RUNBOOK](CLOUD_RUNBOOK.md))
+**Per unit.** `runpod cost <pod>` divides the pod's billed dollars by the units its `units.json` reports and writes the row into
+`config/job_speeds.json` (seconds per unit, fixed setup minutes, MB/s per cloud, `usd_per_unit`) and into the ledger item of the pod.
+A plan quotes dollars per picture, clip or training step from those rows; a job type with no row has no per-unit price yet and says so
+(P12a and P12b write the first rows). Nothing in this file is a per-unit price until a pod measured it.
+
+**No network volume (RP-03).** Facts read 2026-10-29 (docs.runpod.io/storage/network-volumes and runpod.io/pricing, re-check before
+changing the rule): a network volume costs $0.07 per GB-month (100 GB = $7/month), exists on Secure Cloud only and ties a pod to one
+datacenter, which can reduce GPU stock. Its saving is the model download of each pod (about $0.25 on a $1.69/h card, $0.03-0.09 on the
+$0.16-0.35/h cards); the Secure premium (about +$0.80/h on the $1.69 card, +$0.24/h on a $0.35 card) is larger than that saving for any
+job over about 20 minutes. Break-even from the p9 re-check: at least 28 pods a month of 20 minutes or less on the big card. Until a
+production week needs ten or more short Secure pods a day, the model is downloaded once per batch (RP-01, RP-02) with `hf_transfer`
+and the pinned images (CR-18) cached on hosts.
+
 ## Human time per long-form [estimates]
 research 2-3 h, script review 1 h, storyboard and asset review 1-3 h (falls as the library grows), QA 0.5-1 h, packaging
 0.5-1 h, upload 0.25 h: about 6-10 h at first, a target of 4-6 h once assets repeat. A Short about 1-1.5 h. Revisions and
