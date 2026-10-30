@@ -3514,3 +3514,39 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Test: `tests/unit/test_p12b_config.py::test_p12b_json_is_pinned_complete_and_qwen_only`.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 T06: `runpod create --rules` runs the `paid_assets` gate for episode pods
+- `explainer_engine/cloud/runpod.py`: new `--rules <episode_rules.json>` flag; `create` calls `standards.rulebook.gate(rules, "paid_assets", <production_script.json next to it>)` (the call `production/paint.py` makes) and refuses before any API call on a FAIL (BLOCK or undecided REVIEW are FAIL at `paid_assets`), printing the rule ids; `--rules` with `--test` is refused (a paid test has no episode rulebook). `docs/ORCHESTRATION.md` OR-12 "Enforced by" cell names it.
+- Test: `tests/unit/test_episode_rules.py::test_create_runs_the_paid_assets_gate_when_rules_are_given_and_refuses_a_block`.
+- OPEN: `--rules` is optional until the ledger meta records an episode. No pod, no API call, nothing deleted.
+## 2026-10-30 T13: OR-33 proof job and OR-34 audit job files (estimate only)
+- New `explainer_engine/llm/jobs/p12_stream_proof.json` (job `result_check`, class `simple-question`, Haiku, low, `max_tokens` 200,
+  prompt "Reply with the single word READY.") and `explainer_engine/llm/jobs/or34_full_repo_audit.json` (job `result_check`, class
+  `whole-project-plan` on Fable xhigh, `max_tokens` 32000, read-only repo tools, the plan's three-question prompt).
+- `claude_api estimate`: proof worst_usd 0.0001; audit worst_usd 3.2169 (cached bound; 9.66 uncached, 11.51 on a miss), both fit the
+  job line. `run` was never called; nothing paid.
+- Test: `tests/unit/test_claude_api.py::test_the_committed_p12_jobs_are_valid_and_the_proof_is_tiny`.
+- OPEN: the `<main sha>` in the audit prompt is filled at the creator's go. No pod, no API call, nothing deleted.
+## 2026-10-30 T11: the P12b pod script (Qwen run) and its dryrun record
+- New `explainer_engine/training/pods/p12/p12b.sh` (pinned installs from `config/cloud_pins.json`, `timeout` CUDA check, `DRY=1` gate after the last
+  install, `# heartbeat:` / `# stall-minutes: 15`, ends by returning) and `p12b.py` (reads `p12b.json`, `EE_DEADLINE`, `EE_OUT`; downloads base, style LoRA
+  with sha256 check (exit 3), MVA LoRA outside `EE_OUT`; loads the pipeline once as `xworld_v1_test.load_pipeline`; `set_adapters` per stage; the plan 3.5
+  projection before each optional stage; PNG + JSON sidecar per unit; `stages.txt`, `t.jsonl`, `progress.txt`). The wrapper downloads only `p12b.sh`, so
+  it fetches `p12b.py` / `p12b.json` from HF `code/p12/` and checks their sha256 pinned in its text.
+- `runpod dryrun --script` passes; sha256 of `p12b.sh` is in the PR body. Test: `tests/unit/test_p12b_pod_script.py`.
+- OPEN: copy `p12b.py`, `p12b.json` and the two host pictures to HF before create (see PR); no pod, no API call, nothing deleted.
+- Decision log: none moved.
+## 2026-10-30 T11 fixes from the independent verifier (Fable): P12b LoRA calls, host paths, T06 REVIEW test
+- `p12b.py`: the `load_lora_weights` / `set_adapters` calls (no LoRA mixin on `QwenImage21Pipeline`) are replaced by the call shape of
+  `xworld_v1_test.py`: `from videox_fun.utils import merge_lora, unmerge_lora`, `pipe = merge_lora(pipe, path, weight, device="cuda", dtype=bf16)`;
+  the xworld LoRA is merged once at 1.0, the MVA LoRA is unmerged and merged again per strength and unmerged for Q4.
+- `p12b.json`: the hosts are `code/p12/hosts/a_idle.png` and `code/p12/hosts/b_hover.png` in the HF dataset; `p12b.sh` pins the new sha256 of `p12b.py` / `p12b.json`.
+- `EE_DEADLINE` checked: `pod_wrapper.sh` exports epoch seconds, `p12b.py` reads `float(os.environ["EE_DEADLINE"])`; no change.
+- Test: `tests/unit/test_episode_rules.py::test_create_refuses_an_undecided_review_at_the_paid_assets_gate_and_makes_no_pod` (zero fake pods).
+- OPEN: the `gate_up` fix of `xworld_v1_test.py` (img_mlp.gate_up delta split) is not in `p12b.py`; the creator/Opus thread decides whether P12b needs it. No pod, no paid API call, nothing deleted.
+## 2026-10-30 P12b: the gate_up correction of xworld_v1_test.py is now in p12b.py
+- `p12b.py` gets `GateUp.gate_up` (copied exactly from `xworld_v1_test.Loras.gate_up`: same regex and maths, `mods = dict(pipe.transformer.named_modules())`,
+  self-contained). It runs after the style `merge_lora` (sign +1.0), after each MVA `merge_lora` (+strength) and after each MVA `unmerge_lora` (-strength);
+  `t.jsonl` records `lora_gate_up` with the layer count. Without it the ai-toolkit fused `img_mlp.gate_up` layer was skipped (10-25 finding).
+- `p12b.sh` pins the new sha256 of `p12b.py`; `runpod dryrun --script` passes. Tests: static order test and a numeric test (skipped without torch) in
+  `tests/unit/test_p12b_pod_script.py`. Closes the OPEN of the previous entry. No pod, nothing paid, nothing deleted.

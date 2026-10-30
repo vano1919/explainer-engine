@@ -1,0 +1,10 @@
+{
+  "job": "result_check",
+  "task_class": "simple-question",
+  "model": "haiku",
+  "effort": "low",
+  "max_tokens": 200,
+  "requests": [
+    {"id": "stream_proof", "user": "Reply with the single word READY."}
+  ]
+}
