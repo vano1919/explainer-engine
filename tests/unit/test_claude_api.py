@@ -1385,3 +1385,10 @@ def test_the_committed_p12_jobs_are_valid_and_the_proof_is_tiny():
     assert {t["name"] for t in ca.REPO_TOOLS} == {"list_dir", "read_file", "grep"}          # the loop's tools are read-only
     caps = json.loads((ROOT / "config" / "spend_caps.json").read_text(encoding="utf-8"))["claude_api"]["jobs"]
     assert all(r.job in caps for r in proof + audit)
+def test_web_search_result_urls_are_kept_for_the_citation_check():
+    blocks = [NS(type="web_search_tool_result", content=[NS(url="https://a.example/x"), NS(url="https://b.example/y"), NS(url="https://a.example/x")]),
+              NS(type="text", text="rule [https://a.example/x]")]
+    a = api(resp(content=blocks, searches=1))
+    r = a.complete(req(web_search_max_uses=2))
+    assert r.sources == ["https://a.example/x", "https://b.example/y"]
+    assert a.complete(req(web_search_max_uses=2)).sources == r.sources    # the cache keeps them too

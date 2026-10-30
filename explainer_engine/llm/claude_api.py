@@ -352,6 +352,7 @@ class Result:
     request_id: str | None = None
     ledger_total: float = 0.0
     turns: int = 1
+    sources: list = field(default_factory=list)   # URLs of the web_search_tool_result blocks (J3: a cited URL must be one of them)
 
     def json(self) -> Any:
         return json.loads(self.text)
@@ -832,6 +833,17 @@ class ClaudeAPI:
         return "\n".join(getattr(b, "thinking", "") or "" for b in resp.content if getattr(b, "type", None) == "thinking")
 
     @staticmethod
+    def _sources(resp: Any) -> list[str]:
+        urls: list[str] = []
+        for b in resp.content:
+            if getattr(b, "type", None) == "web_search_tool_result" and isinstance(getattr(b, "content", None), list):
+                for i in b.content:
+                    u = getattr(i, "url", None)
+                    if u and u not in urls:
+                        urls.append(u)
+        return urls
+
+    @staticmethod
     def _text(resp: Any) -> str:
         return "".join(b.text for b in resp.content if getattr(b, "type", None) == "text")
 
@@ -841,7 +853,8 @@ class ClaudeAPI:
             raise Refused(getattr(d, "category", None), getattr(d, "explanation", None))
         res = Result(req.id, self._text(resp), getattr(resp, "model", r_used.model), r_used.effort, usd, False, resp.stop_reason, use,
                      fell_back_to=r_used.model if r_used is not orig else None,
-                     request_id=getattr(resp, "_request_id", None), ledger_total=self.ledger.total(), turns=turns)
+                     request_id=getattr(resp, "_request_id", None), ledger_total=self.ledger.total(), turns=turns,
+                     sources=self._sources(resp))
         if resp.stop_reason == "max_tokens":   # F3: the paid text travels with the error, F13: so does the thinking
             thinking = self._thinking(resp)
             why = (f"; thinking used the whole max_tokens {req.max_tokens} (output tokens {use['output']}), no answer text; raise "
@@ -860,10 +873,10 @@ class ClaudeAPI:
             self.ledger.append({"ev": "done", "uid": "cache-" + key[:8], "job": req.job, "id": req.id, "model": hit["model"],
                                 "usd": 0.0, "cached": True, "key": key[:12]})
             return Result(req.id, hit["text"], hit["model"], hit["effort"], 0.0, True, hit.get("stop_reason"), hit.get("usage", {}),
-                          ledger_total=self.ledger.total())
+                          sources=hit.get("sources", []), ledger_total=self.ledger.total())
         res = self._tool_loop(req, r, params) if req.tools_root else self._single(req, r, params)
         self.cache.put(key, {"text": res.text, "model": res.model, "effort": res.effort, "stop_reason": res.stop_reason,
-                             "usage": res.usage, "usd_when_paid": round(res.usd, 6), "id": req.id})
+                             "usage": res.usage, "sources": res.sources, "usd_when_paid": round(res.usd, 6), "id": req.id})
         return res
 
     def _single(self, req: Request, r: Route, params: dict) -> Result:
@@ -1266,6 +1279,8 @@ def main(argv: list[str] | None = None) -> int:
     def write_one(q: Request, res: Result | Exception) -> None:   # F7: each file is written the moment its result exists
         if isinstance(res, Result):
             write_text_atomic(out / _out_name(q), res.text)
+            if res.sources:
+                write_json_atomic(out / f"{q.id}.sources.json", res.sources)
             summary[q.id] = {"ok": True, "model": res.model, "usd": round(res.usd, 4), "cached": res.cached}
         else:
             summary[q.id] = {"ok": False, "error": str(res)}

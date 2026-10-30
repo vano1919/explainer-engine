@@ -3587,3 +3587,9 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - OPEN: the xworld_v2 describer spec is not written (OR-22: after the creator rates the look); options and the DINOv2 `STYLE_SCORE_MIN` (0.557, calibrated on the banned look,
   unused while suspended) are T2's last question in `paid/final_review/TECH_QUESTIONS.md` (project files) for Fable. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+## 2026-10-30 — Claude API: first real calls (J1, J3), citation check
+- Key reached the session as `EE_ANTHROPIC_API_KEY` (PR #52 alias). Haiku ping ok; J1 review of PR #47 (Opus 5.5, $1.48); J3 craft research
+  (Opus 5.5 high + web search, 9 departments, $5.56): `docs/research/CRAFT_SOURCES_API_2026-10.md`, leads only, nothing binding (D-59).
+- `Result.sources` keeps the URLs of the `web_search_tool_result` blocks (`<id>.sources.json` next to the answer); `llm/cite_check.py` drops any
+  line that cites another URL (invariant 5). Tests: `test_web_search_result_urls_are_kept_for_the_citation_check`, `tests/unit/test_cite_check.py`.
+- Job file: `explainer_engine/standards/J3_craft_research.job.json`. Ledger total after J3 $7.04 of $95.
