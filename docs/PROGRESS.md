@@ -2827,6 +2827,24 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 - Not done here, on purpose: the nine historic `training/pods/*.sh` (pre-P1a protocol: own upload loop, own DONE) are not rewritten. They are
   refused by `create` already; the P12 scripts under `training/pods/p12/` are the ones that must pass `dryrun`.
 
+## 2026-10-30 04:30 UTC: P1b follow-up, review items 1-2 of PR #46 (no pod, no money)
+
+- `runpod dryrun`: a `git+https://...@<ref>` or `pkg@git+...` pin counts only with a 40-hex sha after `@` (`@main` and tags move); a multi-line
+  `if [ "${DRY:-0}" = 1 ]; then ... exit 0; fi` gate is recognised (the `exit` must be inside the block). Items 3 (a plain unpinned `pip install foo`
+  without `-U`) and 4 (the record is not bound to the Hub) stay as the card wrote them. Test: `test_only_a_sha_pins_a_git_install_and_a_multi_line_dry_gate_counts`.
+
+## 2026-10-30 06:30 UTC: P1b follow-up review round (PR #49, P3b thread)
+
+- The sha pin is anchored: the FIRST `@` of a `git+https://...` url must be followed by a lowercase 40-hex sha and then the end, `#`, `&` or a quote
+  (`@main#egg=b@<sha>`, 39/41 hex and uppercase no longer pass; same rule for `pkg@git+...` under `pip install -U`).
+- The DRY gate is no longer a window of lines: it is `[ "${DRY:-0}" = 1 ] && exit 0` or an `if` over a DRY = 1 test whose THEN branch (not an
+  else, not a nested `if`) runs `exit 0`; `DRY=0` tests, `echo "DRY=$DRY"` plus a later exit, an else-branch exit and `exit 1` do not count.
+  This is also stricter than main's one-line check, which counted any line naming DRY and an exit. No script in the repo used either form.
+  Test: `test_a_sha_pin_is_anchored_and_a_dry_gate_is_a_real_dry_is_1_test_whose_branch_exits_zero` (fails on the previous code).
+- Round 3 (P3b): only `exit 0` ends a DRY gate; a top-level `return 0` is an error in bash, not an exit, and without `set -e` the script would
+  run on into the paid stages (tested). Known limits, not fixed: heredoc bodies, function bodies and subshells are read as ordinary lines;
+  `git+file://` and `git+git://` urls are not checked (`git+https?` only).
+
 ## 2026-10-30 04:45 UTC: P4b follow-up, the channel voice's word is checked, not just present (after #45)
 
 - Optional findings of the #45 review: `creator_ref` was only checked for being non-blank, and the standing narrator's model and baseline
