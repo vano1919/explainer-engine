@@ -1,0 +1,189 @@
+## S01 COLD OPEN, narrator only, ~30 words. Sound from the first frame (hooves, wet fog). First sentence is the hook (BP-03) and states an odd physical detail; 2-3 teasers cut from later (KP-41): arrows falling on a square (S10), wagons burning (S11), the muzzle of a 12-pounder in fog (P01 plant). Claims: C-91, C-93 (invented beats only).
+- NARRATOR: The fog was so thick the cannon muzzles dripped.
+- NARRATOR: Then it lifted, and the horizon was full of horsemen.
+- NARRATOR: Arrows on the squares. Wagons burning. Four hours from now, nothing here will be what it was.
+## S02 HOOK / information gap, narrator only, ~45 words. States the surprising outcome as a paradox, never the answer: two armies 589 years apart (C-21), 450,000 men (C-01), a man who 'aimed to destroy the enemy's army in battle' (C-04). No resolution of L01.
+- NARRATOR: Napoleon aimed at one thing: a battle that would destroy the enemy's army.
+- NARRATOR: He crossed the Neman with more than 450,000 men to find one.
+- NARRATOR: Now he stands five hundred and eighty-nine years too early. He faces an army that wins by not being there when the blow lands.
+## S03 ORIENTATION, narrator only, ~110 words (maps/diagrams). 1812 side: Grande Armee crossed 24 June (C-01), Napoleon the artillery officer (C-04), the Gribeauval 12-pounder 900 m / canister 600 m (C-05). Steppe side: three or four horses per rider (C-08), bows 150-400 m (C-09), Kalka 1223 (C-10). Fog premise C-91 (invented beat). No claim stacking: max two numbers per sentence.
+- NARRATOR: Right, here's what's on the board.
+- NARRATOR: On one side, the Grande Armee: more than 450,000 men when it crossed the Neman.
+- NARRATOR: Their general trained as an artillery officer, so he trusts what a gun can reach.
+- NARRATOR: A Gribeauval twelve-pounder throws round shot about nine hundred meters. Canister, six hundred.
+- NARRATOR: On the other side, riders who keep three or four horses each and swap mounts on the march.
+- NARRATOR: Their bows reach four hundred meters when they shoot high.
+- NARRATOR: And they've done this before.
+- NARRATOR: At the Kalka River, they drew a whole Rus army on for days, then destroyed it.
+- NARRATOR: So which wins the long road, the gun or the horse?
+- NARRATOR: The fog doesn't care. And the guns need wagons, heavy ones, built for roads that aren't here.
+## S04 SCENE 1 (inciting), ~300 words total: narrator in ~50 (names napoleon, murat, tahir before their first line; why they are on this ridge), scene ~210 dialogue, narrator out ~40. Goals and stakes declared through conflict. Tahir (Mameluke of the Guard, C-14) recognises the riders' tongue (C-15) and hears the word 'khan' (C-92 invented). Murat's grey horse already blowing (P02 plant; C-13). P04 plant: Tahir's tongue. Mode asymmetric. Claims C-13, C-14, C-15, C-04; invented C-92. Ends with Murat released.
+- NARRATOR: Dawn on the steppe. The fog tears off the French line, and horsemen on the next ridge sit and watch.
+- NARRATOR: Napoleon has his spyglass up. Murat, the best cavalry commander the army has, is already in the saddle, and his grey horse is blowing hard.
+- NARRATOR: Tahir, a rider of the Guard's Mameluke company, holds the Emperor's second horse. Three men, one ridge, one order that somebody has to give.
+- MURAT: Sire, one charge and that ridge is ours! Now, while they sit!
+- NAPOLEON: They sit. Why do they sit, Murat?
+- MURAT: Because they fear my cavalry!
+- NAPOLEON: I want their army in one place. Then I destroy it.
+- MURAT: Then I gather them for you! The ground is perfect, sire--
+- NAPOLEON: Your grey is blowing already. Where is the ground that tires him?
+- MURAT: Well, the grass, sire! Bad grass! Horses are never the trouble.
+- TAHIR: Sire. They are shouting. One word, again and again.
+- NAPOLEON: Right, which word?
+- TAHIR: It is my grandmother's tongue, almost. Exactly. Khan. They shout, Khan.
+- MURAT: Ah, a khan! A chief! Sire, there is a head to take!
+- NAPOLEON: A name, or a title?
+- TAHIR: Hmm, he says it like a title. He does not say whose.
+- NAPOLEON: Go. Two regiments, one charge. Learn how they ride, and come back.
+- MURAT: You will have your Khan by noon!
+- NARRATOR: Hooves hammer down the slope, and the grey is lathered before the valley floor.
+- NARRATOR: On the ridge, Napoleon lowers the spyglass and counts the sun's height. Tahir keeps the word on his lips.
+## S05 BRIDGE, narrator only, ~50 words. The result and the next question: Murat's horses ridden to ruin (C-13), the riders changed mounts and vanished (C-08); the skirmish itself is invented (C-93). Ends on the question of where the riders are leading him.
+- NARRATOR: Murat's charge crosses the valley and finds an empty ridge.
+- NARRATOR: The riders changed horses and melted away. Each of them keeps three or four, so there is always a fresh one.
+- NARRATOR: Murat counts none of his. By noon, half his cavalry is walking.
+- NARRATOR: So who are they leading him toward?
+## S06 SCENE 2 (escalation), ~340 words: narrator in ~45, scene ~250, narrator out ~45. Dusk at the wagon park. Humour from Murat (mode comic: real stakes, absurd tactics). Tahir's count of spare mounts (C-08) with two tumens (C-20, C-92) means 60,000+ horses; Napoleon sees he cannot out-tire them. P05 plant: the heavy wagons that cannot be left (C-16). Napoleon decides to follow with guns AND wagons. Claims C-08, C-16, C-13, C-20; invented C-92, C-93.
+- NARRATOR: Dusk at the wagon park. Murat's charge has come back with half its horses and no prisoners.
+- NARRATOR: Napoleon wants a count of the enemy and a place where they must stand. Murat wants the same charge again at dawn, and Tahir has been counting something else.
+- NARRATOR: Behind them the wagons sit heavy and the steppe has no road for them.
+- MURAT: Dawn, sire. Same ridge, same charge, and this time they stay!
+- NAPOLEON: You rode at an empty ridge. Nobody stayed.
+- MURAT: The ground cheated me! A horse can rest on its feet, sire.
+- NAPOLEON: Tahir. You were at the picket. What did you see?
+- TAHIR: Not the riders, sire. Their horses. Each man leads three or four spares.
+- MURAT: A Mameluke counting horses! Count your own and hold your tongue.
+- TAHIR: I counted fires too. Two tumens, sire. Ten thousand men each.
+- NAPOLEON: Hmm, twenty thousand riders. Sixty thousand horses.
+- MURAT: Then there is more glory, sire, and nowhere to hide it!
+- NAPOLEON: Well, their horses are fresh at dawn. Yours are not. I cannot out-ride them.
+- MURAT: Oh, then burn the wagons and fly, sire! Speed is everything!
+- NAPOLEON: The wagons carry the powder and the bread. Without them the guns are iron.
+- NAPOLEON: Find where they sleep. The guns and the wagons follow at first light.
+- MURAT: Follow, sire. Like a hearse behind a funeral.
+- NARRATOR: At first light the wagons lurch east behind the guns. The riders' fires burn one ridge further on, always exactly one ridge.
+## S07 NEW COMPLICATION, narrator only, ~90 words. The factor that changes the game: the Khan is here (C-92 invented) with a tumen of 10,000 (C-20) x2; the viewer learns the Kalka method (feigned retreat of about nine days, C-10) before Napoleon does. Last beat: Tahir leaves camp to count the horses and does not return (C-93). Opens the question of the prisoner. Claims C-10, C-20, C-11 (Khan keeps loyal talent); invented C-92, C-93.
+- NARRATOR: But the fires aren't a scout's. Someone far bigger is out there.
+- NARRATOR: Genghis Khan himself rides this steppe, with two tumens. That's ten thousand riders each.
+- NARRATOR: He never fights for ground. At the Kalka River, his generals ran for about nine days. The Rus army followed them straight into the trap.
+- NARRATOR: And he collects talent from every enemy he beats.
+- NARRATOR: Napoleon sees none of this. He sees an enemy that runs, and he wants to catch it.
+- NARRATOR: That night, Tahir saddles up to count the horses in the riders' camp. Alone, in the dark.
+- NARRATOR: He doesn't come back. So whose camp is he in now?
+## S08 SCENE 3 (midpoint, other side acts, new place), ~330 words: narrator in ~45, scene ~245 (Genghis and Tahir in the Kipchak-family tongue, C-15), narrator out ~40 and the plan carried out (KP-42): the Mongol tumens falling back in a feigned retreat, shown while it is told. Genghis recalls the archer who shot his horse and admitted it (P03 plant, C-11). Tahir admits the 12-pounder's 900 m against the bow's 400 m (C-05, C-09). Mode indirect (hospitality hides the interrogation). Claims C-05, C-09, C-10, C-11, C-15; invented C-92, C-93.
+- NARRATOR: Tahir was taken at the riders' picket in the dark, and he expected a rope, not a host.
+- NARRATOR: Instead he sits on felt in a tent among the herds, and Genghis Khan himself is pouring his milk.
+- NARRATOR: The riders found a Frenchman who understands their words, and the Khan has questions about thunder.
+- GENGHIS: Drink. It is a long way from your fires to mine.
+- TAHIR: Exactly how long, I wonder. Or is this simply the last bowl?
+- GENGHIS: Milk is milk. Tomorrow is tomorrow.
+- GENGHIS: You speak like the herders of the Kipchak. Someone taught you.
+- TAHIR: My grandmother. She cursed horses in it. Mostly horses.
+- GENGHIS: My riders saw long mouths on wheels. How far do they throw iron?
+- TAHIR: You pour milk for a prisoner, Khan, and then ask him for his army.
+- GENGHIS: Hmm, i pour for a guest. I ask once.
+- TAHIR: Nine hundred meters. With round shot. Six hundred, with canister.
+- GENGHIS: And my bow?
+- TAHIR: Four hundred, shot at the sky. A hundred and fifty, if you want to hit.
+- GENGHIS: A liar would have said it reaches. Once, an arrow killed my horse under me. I asked who shot it. One man stood up alone and said, I did. I kept him. Jebe.
+- TAHIR: You tell a prisoner your stories, Khan. I did not ask for one.
+- GENGHIS: What do the iron mouths eat?
+- TAHIR: Powder. It rides in the wagons, a day behind, and the wagons are slow.
+- GENGHIS: Then I will not meet your guns. I will let them follow my horses.
+- TAHIR: Well, exactly what I was afraid you would say.
+- NARRATOR: Before dawn the Khan's tumens are in the saddle, and they are not riding toward the French. They give ground, a hundred paces, then a hundred more, slowly enough to be followed. The herds drift east as if there were all the time in the world. It is the old trick of the Kalka. Out on the French ridge, an emperor sees an enemy that runs, and nobody knows what has begun.
+## S09 PREPARATION, narrator only, ~90 words. The full size of the crisis, no spoiler: nine days after the lure began (C-10 method; C-93), the wagons strung out behind (C-16), Murat's horses dying (C-13), Napoleon seeing the enemy's line stand at last and feeling the chance he always wanted (C-04). Pressure rises; do not say what happens in the valley. Claims C-04, C-10, C-13, C-16; invented C-93.
+- NARRATOR: Nine days. The Khan's riders give ground at dawn and camp at dusk, always one ridge ahead.
+- NARRATOR: Behind the column, the heavy wagons crawl on tracks they were never built for.
+- NARRATOR: Murat's horses go down one by one, and he rides on without counting them.
+- NARRATOR: Then, on the ninth evening, the dust settles. A line of horsemen stands across a valley, and it does not move.
+- NARRATOR: At last the Emperor can see an army waiting for him. It is the chance he has wanted since the Neman. And the wagons are a day behind.
+## S10 CENTRAL SCENE (climax), the LONGEST scene, ~520 words: narrator in ~45, scene ~430 with 3 escalations, narrator out ~45. Escalation 1: arrows falling on the squares from 400 m while muskets reach 90 m (C-09, C-06). Escalation 2: Napoleon opens the 12-pounders at 900 m and canister at 600 m (C-05), the squares hold against the charge (C-07), Murat begs for the cavalry (P02 payoff: his grey horse goes down, C-13). Escalation 3 (the unexpected): smoke at the rear, the Mongol tumen has taken the wagons (C-93, C-16). Cross-cut (KP-42): the Khan on the opposite ridge, a tumen riding round (visual, no Khan line). Mode balanced. Claims C-05, C-06, C-07, C-09, C-13, C-16; invented C-93.
+- NARRATOR: Midday on the ninth day, and Murat is already at the Emperor's stirrup. The Khan's line stops backing away and starts to ride across the valley floor, turning as one. Below the battery the squares kneel in the grass. Napoleon, who wanted this battle all his life, has his guns.
+- MURAT: They're turning! Sire, the cavalry! Now, while they cross!
+- NAPOLEON: Not yet.
+- MURAT: Not yet? The ground is flat, the grass is ours, the glory is sitting there!
+- NAPOLEON: Hmm, watch their bows, not the glory.
+- MURAT: Oh, bows! My horse has seen bows. He laughs at bows!
+- NAPOLEON: Your horse is blowing. Count his breaths.
+- MURAT: Count! Always count! Sire, I ride, I do not count!
+- NARRATOR: Arrows rise from four hundred meters out. A musket answers at ninety. The shafts come down on the squares like hail.
+- MURAT: They shoot, we stand! My cavalry would ride them under!
+- NAPOLEON: Under what? A line that keeps moving back?
+- MURAT: Under my sabres! The ground helps them, not us!
+- NAPOLEON: Guns. Nine hundred. Open.
+- NARRATOR: The twelve-pounders crash out. Round shot tears into the riders at nine hundred meters, and the line splits and scatters wide. The first wave swings at a square. The square holds its volley until they are almost on the bayonets, and the wave breaks.
+- MURAT: Right, look at them break! Sire, one charge and it's finished!
+- NAPOLEON: They do not break. They open.
+- MURAT: Then let me through the opening! Three times I ask you!
+- NAPOLEON: Twenty years I wanted an army that stands before my guns. It stands, and it is not afraid. A man who runs nine days, then stops, has chosen the ground.
+- MURAT: Then take it from him, sire. With horses!
+- NARRATOR: Napoleon says nothing. He studies the ground, the smoke over the guns, the empty ridge across the valley.
+- MURAT: Your silence is a no. I hear it as a yes!
+- MURAT: Enough of this. Up, my beauty!
+- NARRATOR: Murat spurs the plumed grey toward the slope. The horse has been blowing since the first morning. Its knees fold, and it goes down with the marshal under it.
+- MURAT: Up! Get up!
+- NAPOLEON: You never looked at him. Nine days.
+- MURAT: The grass was bad, sire! Bad grass!
+- NAPOLEON: Murat. Look behind us.
+- MURAT: Dust. Our own dust, nothing more.
+- NAPOLEON: Dust is not black.
+- MURAT: Oh, the wagons? They were a day behind, sire. A day!
+- NAPOLEON: Well, they were.
+- MURAT: Then we ride back and burn them first! Sire, who has the faster horses?
+- NAPOLEON: Which horses, Murat? Show me one that is not finished.
+- MURAT: The... the squares will hold. They always hold, sire.
+- MURAT: Then the squares, the guns, we can still—
+- NARRATOR: A column of black smoke stands over the army's road. The wagons burn, and with them the powder and the bread. A tumen has ridden round the valley while every eye was on the line. Across the valley the Khan sits his horse on the far ridge. He does not move, because he does not need to. By evening the twelve-pounders will have nothing to say.
+## S11 TURNING POINT (reversal), narrator only, ~70 words, then silence or one still frame (the edit-planner holds it). The choice and the failure: Napoleon has the decisive field battle (C-04) but the enemy rides away on fresh horses (C-08) and the supply wagons burn (C-16, C-93). L06 closes. No hero line (ST-14: a segment never opens or ends on a hero line). Claims C-04, C-08, C-16; invented C-93.
+- NARRATOR: The guns win the valley. When the last square lowers its muskets, the Mongol line is gone over the far rise.
+- NARRATOR: Every rider has three or four horses, and the fresh ones carry him out of range.
+- NARRATOR: Napoleon aimed to destroy an army in battle. He has the battle, and no army to destroy.
+- NARRATOR: Behind him the heavy wagons are still burning.
+- NARRATOR: He lowers the spyglass. He has won, and it buys him nothing.
+## S12 FALLOUT, narrator only, ~90 words. Who lost and who won, never what we just saw: the French kept the field and lost the wagons; the Mongols lost the field and kept the army (C-08, C-10). Echo of the real campaign: Moscow taken, then abandoned and burned, Alexander I refusing to negotiate (C-12). Opens the price question. Claims C-08, C-12, C-16; invented C-93.
+- NARRATOR: So who lost? The French hold the field, and the wagons are ash.
+- NARRATOR: The Mongols hold nothing. They kept every rider and every spare horse.
+- NARRATOR: Each man changes mounts on the march, so the whole army rides on, fresh, to fight another day.
+- NARRATOR: Napoleon knows this story. In Russia, Kutuzov's army left Moscow, and the city burned.
+- NARRATOR: Alexander I refused to negotiate, and the war simply went on.
+- NARRATOR: Now the same silence sits across the valley, and the column has no food and no powder.
+- NARRATOR: A winner with nothing left to win. What can he still buy?
+## S13 SCENE 4 / final choice (parley), ~340 words: narrator in ~40, scene ~260 (slower, no new conflict; power gap in a cutaway; lines broken by silent reactions, KP-43), narrator out ~40. Napoleon, Genghis and Tahir interpreting (P04 payoff). The Khan asks if Napoleon can destroy his army; Napoleon answers honestly (C-04); the Khan keeps the honest man (P03 payoff, C-11) and asks for the two guns, not the Emperor (C-94, C-05, C-11). The fog thickens (L02 closes). Mode minimal. Claims C-04, C-05, C-11, C-15, C-20; invented C-91, C-94.
+- NARRATOR: Dawn, the day after the valley. A white felt banner hangs limp on the grass between the camps. Napoleon waits under it with Tahir, the Mameluke who understands the riders' tongue. The Khan walks out alone, and behind him the fog is climbing again.
+- GENGHIS: Ask him. Can he destroy my army?
+- TAHIR: He asks, exactly, whether you can destroy his army. Two tumens. Twenty thousand riders.
+- NARRATOR: Napoleon looks at the grass, at the long ruts the wagons cut. Then he looks at the far rise where the riders wait.
+- NAPOLEON: What will he do with my answer?
+- GENGHIS: Tell him I listen. That is all I do with answers.
+- TAHIR: He says he listens. He does not say what comes after.
+- NAPOLEON: All my life I have hunted the day that ends an army. I had it yesterday, and the army rode away from it. Tell him no. Not this one.
+- TAHIR: He says no. He does not say it softly.
+- NARRATOR: The Khan says nothing. He lifts a bowl of fermented mare's milk from his saddle and holds it out to the Emperor. After a moment, Napoleon takes it.
+- GENGHIS: An archer shot my horse once. I asked who. He stood up. I kept him.
+- NAPOLEON: Ask him why he tells me this.
+- TAHIR: Hmm, he says because you said no, Sire.
+- GENGHIS: Leave me two of your guns, the ones that reach far. Then ride.
+- TAHIR: Guns, Sire. Not you. The guns.
+- NARRATOR: Napoleon studies the nearest twelve-pounder, a crew of fifteen standing at its wheels, the dew still beaded on its muzzle.
+- NAPOLEON: Two. Tell him they reach nine hundred paces, and he must keep them dry.
+- TAHIR: He says two. He gives you the range: nine hundred paces.
+- GENGHIS: Well, tell him to go while the grass is wet.
+- NARRATOR: Two guns roll out of the column and across the grass, their crews walking beside them with empty hands. Napoleon does not look back. Ahead the fog stands like a white wall, and the column walks into it.
+## S14 RESOLUTION, narrator only, ~130 words, starts after 90 % of the words (BP-04). Answers L01 fully: yes, Napoleon got his battle on the steppe and it was worthless, as in 1812 when Moscow was abandoned and burned and Alexander I would not negotiate (C-12); 100,000 men in Moscow on 14 September (C-02), the French left on 19 October after five weeks (C-12). Say uncertainty only where the claim map does (none here). Claims C-02, C-04, C-12, C-21.
+- NARRATOR: So, did he get his battle? Yes. All of it. A field, a line of guns, an enemy that stood and fought.
+- NARRATOR: Napoleon always aimed to destroy the enemy's army in battle. He just did. And the enemy rode off whole.
+- NARRATOR: Nothing was decided. Nobody surrendered, nobody signed, nobody even slowed down.
+- NARRATOR: You've seen this before. On 14 September 1812, about a hundred thousand French troops marched into Moscow.
+- NARRATOR: They took a city that was already empty. It burned, and Alexander I would not talk.
+- NARRATOR: After about five weeks, on 19 October, the French simply left.
+- NARRATOR: Five hundred and eighty-nine years apart, the same victory: a won field, and a war that went on without him.
+- NARRATOR: The lesson was never about the guns. It's what you do after the battle you chased finally arrives.
+## S15 BUTTON, narrator only, ~30 words. The first image (P01 payoff: the 12-pounder muzzle in fog) with a new meaning: the guns left to the khan (C-94) and the fog closing behind the column (C-91). No claims on facts.
+- NARRATOR: The fog closed behind the column, wet and slow.
+- NARRATOR: On the steppe, a Mongol hand rested on a cannon's muzzle. It was still dripping.
+- NARRATOR: Two guns, left to the khan.
+## S16 CHANNEL POINTER, narrator only, ~30 words (BP-106, KP-40): the worlds already on the channel and the coming ones, subscribe so as not to miss them; never a dry 'subscribe' or a goodbye (BP-43); narration runs on under the end screen. No claims, no facts.
+- NARRATOR: Worlds keep colliding on this channel, and the next collision is already waiting in the fog.
+- NARRATOR: Subscribe, so you're here when the next two meet.
+- NARRATOR: Somebody's army is about to lose its way.

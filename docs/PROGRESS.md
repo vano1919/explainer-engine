@@ -2709,6 +2709,11 @@ training as sequences is decided in the process. Changed together:
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.
 
+## 2026-10-30 — P0c-2: agent form A/B at 16 segments (free, evidence only)
+- `docs/research/AGENT_AB_P0C2_2026-10.md` + data in `docs/research/agent_ab_2026-10/p2/`: Napoleon-vs-Genghis at 16 segments (template D), one context (A2) vs 26 workers with Haiku on the mechanical
+  stages (B2), blind Opus critic (A2 4.00 vs B2 3.17 on its table), cost 14.19 M vs 19.08 M input-price units, B2 ahead only if a Haiku unit costs under half a Sonnet unit.
+  `measure.py` now reads the `s03r_writer` repair snapshot. The plan thread's recommendation, in force under the creator's 2026-10-29 18:17 UTC delegation: A5 = D-79; the card returns to him in the 2026-10-30 morning report for confirmation and he can overturn it. D-81 stays a hypothesis with reopen triggers (row in `docs/DECISIONS_AND_OPEN_QUESTIONS.md`). No paid call. Test: none (research data; `docs_lint` 0 findings).
+
 ## 2026-10-30 03:30 UTC: P1a follow-up, nested `rp.py` runs behind a reader (no pod, no money)
 
 - Re-review of PR #29: ``echo `./rp.py create` `` and `find . -exec ./rp.py create {} \;` passed because the first word was a reader.

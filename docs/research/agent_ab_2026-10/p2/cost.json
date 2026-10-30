@@ -1,0 +1,271 @@
+{
+ "A2": {
+  "agents": {
+   "a97a314c3bf5fa850": {
+    "turns": 321,
+    "input_tokens": 640,
+    "output_tokens": 675412,
+    "cache_creation_input_tokens": 2096679,
+    "cache_read_input_tokens": 81866045,
+    "units": 14185153,
+    "active_s": 2819
+   }
+  },
+  "total": {
+   "turns": 321,
+   "input_tokens": 640,
+   "output_tokens": 675412,
+   "cache_creation_input_tokens": 2096679,
+   "cache_read_input_tokens": 81866045,
+   "units": 14185153,
+   "active_s": 2819
+  }
+ },
+ "B2": {
+  "agents": {
+   "a0ab23ad1acb1f27c": {
+    "turns": 54,
+    "input_tokens": 102,
+    "output_tokens": 202258,
+    "cache_creation_input_tokens": 480259,
+    "cache_read_input_tokens": 8479474,
+    "units": 2459663,
+    "active_s": 347
+   },
+   "a18be970fc3844652": {
+    "turns": 46,
+    "input_tokens": 92,
+    "output_tokens": 172380,
+    "cache_creation_input_tokens": 352244,
+    "cache_read_input_tokens": 5962254,
+    "units": 1898522,
+    "active_s": 410
+   },
+   "a1ba8fd96398affc7": {
+    "turns": 92,
+    "input_tokens": 182,
+    "output_tokens": 181542,
+    "cache_creation_input_tokens": 790181,
+    "cache_read_input_tokens": 17045880,
+    "units": 3600206,
+    "active_s": 769
+   },
+   "a301cb19f25e7d54a": {
+    "turns": 22,
+    "input_tokens": 46,
+    "output_tokens": 11911,
+    "cache_creation_input_tokens": 76489,
+    "cache_read_input_tokens": 1805589,
+    "units": 335771,
+    "active_s": 78
+   },
+   "a3fe29436c5ab8990": {
+    "turns": 7,
+    "input_tokens": 14,
+    "output_tokens": 3760,
+    "cache_creation_input_tokens": 82615,
+    "cache_read_input_tokens": 544646,
+    "units": 176547,
+    "active_s": 29
+   },
+   "a47f36847acd5683c": {
+    "turns": 12,
+    "input_tokens": 24,
+    "output_tokens": 11712,
+    "cache_creation_input_tokens": 152939,
+    "cache_read_input_tokens": 976692,
+    "units": 347427,
+    "active_s": 56
+   },
+   "a4a71cfee85831500": {
+    "turns": 26,
+    "input_tokens": 52,
+    "output_tokens": 71678,
+    "cache_creation_input_tokens": 210740,
+    "cache_read_input_tokens": 3018206,
+    "units": 923688,
+    "active_s": 302
+   },
+   "a53172897b2266490": {
+    "turns": 13,
+    "input_tokens": 26,
+    "output_tokens": 15177,
+    "cache_creation_input_tokens": 107440,
+    "cache_read_input_tokens": 1152326,
+    "units": 325444,
+    "active_s": 77
+   },
+   "a7c838a3535e6213b": {
+    "turns": 10,
+    "input_tokens": 20,
+    "output_tokens": 4644,
+    "cache_creation_input_tokens": 130201,
+    "cache_read_input_tokens": 773240,
+    "units": 263315,
+    "active_s": 30
+   },
+   "a7f000312bbbd1b13": {
+    "turns": 31,
+    "input_tokens": 62,
+    "output_tokens": 105179,
+    "cache_creation_input_tokens": 315132,
+    "cache_read_input_tokens": 3505383,
+    "units": 1270410,
+    "active_s": 186
+   },
+   "a85dbe5c8a7694243": {
+    "turns": 25,
+    "input_tokens": 50,
+    "output_tokens": 61590,
+    "cache_creation_input_tokens": 322667,
+    "cache_read_input_tokens": 2384844,
+    "units": 949818,
+    "active_s": 155
+   },
+   "a8c6f550a2ee1c6f7": {
+    "turns": 10,
+    "input_tokens": 20,
+    "output_tokens": 5293,
+    "cache_creation_input_tokens": 130974,
+    "cache_read_input_tokens": 772184,
+    "units": 267421,
+    "active_s": 31
+   },
+   "a9c6f2308d930a7c1": {
+    "turns": 16,
+    "input_tokens": 32,
+    "output_tokens": 15032,
+    "cache_creation_input_tokens": 200892,
+    "cache_read_input_tokens": 1307423,
+    "units": 457049,
+    "active_s": 73
+   },
+   "aa161babfe9c2fbeb": {
+    "turns": 11,
+    "input_tokens": 22,
+    "output_tokens": 14757,
+    "cache_creation_input_tokens": 93229,
+    "cache_read_input_tokens": 978468,
+    "units": 288190,
+    "active_s": 75
+   },
+   "aa793e3b1573a010c": {
+    "turns": 42,
+    "input_tokens": 84,
+    "output_tokens": 87977,
+    "cache_creation_input_tokens": 308341,
+    "cache_read_input_tokens": 5337004,
+    "units": 1359096,
+    "active_s": 229
+   },
+   "ab0390bc1283d0459": {
+    "turns": 7,
+    "input_tokens": 14,
+    "output_tokens": 3570,
+    "cache_creation_input_tokens": 81764,
+    "cache_read_input_tokens": 556804,
+    "units": 175749,
+    "active_s": 26
+   },
+   "ab34e746af4523396": {
+    "turns": 11,
+    "input_tokens": 22,
+    "output_tokens": 5867,
+    "cache_creation_input_tokens": 144009,
+    "cache_read_input_tokens": 855230,
+    "units": 294891,
+    "active_s": 32
+   },
+   "ab3b460ebb019f3de": {
+    "turns": 13,
+    "input_tokens": 26,
+    "output_tokens": 5728,
+    "cache_creation_input_tokens": 147106,
+    "cache_read_input_tokens": 1065338,
+    "units": 319082,
+    "active_s": 38
+   },
+   "ab96c5286ef048806": {
+    "turns": 7,
+    "input_tokens": 14,
+    "output_tokens": 4864,
+    "cache_creation_input_tokens": 101417,
+    "cache_read_input_tokens": 576321,
+    "units": 208737,
+    "active_s": 32
+   },
+   "ac2ff3cf22f132a32": {
+    "turns": 40,
+    "input_tokens": 77,
+    "output_tokens": 37118,
+    "cache_creation_input_tokens": 353341,
+    "cache_read_input_tokens": 4397043,
+    "units": 1067048,
+    "active_s": 137
+   },
+   "acdf199ac3ce41f41": {
+    "turns": 9,
+    "input_tokens": 18,
+    "output_tokens": 5643,
+    "cache_creation_input_tokens": 134015,
+    "cache_read_input_tokens": 686387,
+    "units": 264390,
+    "active_s": 31
+   },
+   "ae1319176b4a17a38": {
+    "turns": 11,
+    "input_tokens": 22,
+    "output_tokens": 15342,
+    "cache_creation_input_tokens": 115225,
+    "cache_read_input_tokens": 1020287,
+    "units": 322792,
+    "active_s": 78
+   },
+   "ae8eb9024f4f0dd07": {
+    "turns": 7,
+    "input_tokens": 14,
+    "output_tokens": 3639,
+    "cache_creation_input_tokens": 118974,
+    "cache_read_input_tokens": 504773,
+    "units": 217404,
+    "active_s": 24
+   },
+   "af31e7d1d3a732b95": {
+    "turns": 7,
+    "input_tokens": 14,
+    "output_tokens": 3398,
+    "cache_creation_input_tokens": 84624,
+    "cache_read_input_tokens": 553768,
+    "units": 178161,
+    "active_s": 25
+   },
+   "af913c2ab98c42b0c": {
+    "turns": 10,
+    "input_tokens": 20,
+    "output_tokens": 4386,
+    "cache_creation_input_tokens": 131631,
+    "cache_read_input_tokens": 790187,
+    "units": 265507,
+    "active_s": 28
+   },
+   "afad86eb8115cc19a": {
+    "turns": 26,
+    "input_tokens": 52,
+    "output_tokens": 55257,
+    "cache_creation_input_tokens": 244022,
+    "cache_read_input_tokens": 2656083,
+    "units": 846973,
+    "active_s": 147
+   }
+  },
+  "total": {
+   "turns": 565,
+   "input_tokens": 1121,
+   "output_tokens": 1109702,
+   "cache_creation_input_tokens": 5410471,
+   "cache_read_input_tokens": 67705834,
+   "units": 19083301,
+   "active_s": 3445
+  }
+ }
+}
