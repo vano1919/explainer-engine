@@ -658,6 +658,7 @@ def test_void_defaults_to_the_reserved_amount(capsys):
 
 def test_run_refuses_a_job_whose_worst_case_passes_the_stop(env, capsys):
     set_caps(env, jobs={"T": 0.1})
+    write_proof()
     job = {"job": "T", "task_class": "critical-review", "requests": [{"id": "a", "user": "hi"}]}
     (env / "job.json").write_text(json.dumps(job), encoding="utf-8")
     assert ca.main(["run", str(env / "job.json")]) == 3
@@ -781,6 +782,7 @@ def test_run_refuses_a_loop_job_by_the_chosen_loop_bound(env, tmp_path, capsys):
     job = {"job": "T", "task_class": "critical-review", "max_turns": 40, "tools_root": str(tmp_path), "max_tokens": 1000,
            "requests": [{"id": "a", "user": "x" * 200_000}]}
     (env / "job.json").write_text(json.dumps(job), encoding="utf-8")
+    write_proof()
     est = {m: ca.estimate(ca.load_job(env / "job.json"), loop_bound=m)["worst_total_usd"] for m in ("cached", "uncached")}
     set_caps(env, jobs={"T": round((est["cached"] + est["uncached"]) / 2 / 0.8, 2)})   # its 80 % stop sits between the two figures
     assert ca.estimate(ca.load_job(env / "job.json"))["fits_job_cap"]                  # the default bound: the expected, cached case
@@ -893,7 +895,14 @@ def patched_main(monkeypatch, a):
     monkeypatch.setattr(ca, "ClaudeAPI", lambda: a)
 
 
+def write_proof():
+    """The stream-proof gate (OR-33) is open: the tests of `main run` that are not about the gate start from here."""
+    ca.proof_path().parent.mkdir(parents=True, exist_ok=True)
+    ca.proof_path().write_text(json.dumps({"uid": "test"}), encoding="utf-8")
+
+
 def job_file(env, requests, **spec):
+    write_proof()
     job = {"job": "T", "task_class": "critical-review", "max_tokens": 1000, "requests": requests, **spec}
     (env / "job.json").write_text(json.dumps(job), encoding="utf-8")
     return str(env / "job.json")
@@ -1092,3 +1101,104 @@ def test_f11_the_sdk_does_not_retry_on_its_own():
     a._client.with_options = lambda **o: (opts.append(o), a._client)[1]
     a.complete(req())
     assert opts == [{"max_retries": 0}]
+
+
+# --- line redaction in the stream file, the 1h TTL option, the stream-proof gate (OR-33) ----------------------------------------
+KEY = "sk-ant-api03-abcdefghijklmnop"
+
+
+def test_a_key_shaped_string_split_across_deltas_never_reaches_the_stream_file():
+    a = api(multi("the key is sk-ant-api0", "3-abcdefghijklmnop and more\nsecond line"))
+    r = a.complete(req())
+    f = Path(start_rows(a)[0]["stream"]).read_text(encoding="utf-8")
+    assert "sk-ant" not in f and "[REDACTED-SECRET-LIKE]" in f and f.endswith("second line")
+    assert KEY in r.text                                              # the answer in memory is untouched (n and text are unredacted)
+
+
+def test_complete_lines_are_on_disk_before_close_so_a_kill_loses_only_the_unfinished_line():
+    sink = ca.StreamSink(ca.ledger_dir() / "stream" / "x.txt")
+    sink.write("line one\nline two\nunfin")
+    assert sink.path.read_text(encoding="utf-8") == "line one\nline two\n" and sink.n == 23
+    sink.write("ished " + KEY)
+    assert sink.path.read_text(encoding="utf-8") == "line one\nline two\n"      # the tail waits
+    sink.close()
+    assert sink.path.read_text(encoding="utf-8").endswith("unfinished [REDACTED-SECRET-LIKE]") and KEY in sink.text
+
+
+def test_the_truncated_file_is_redacted_too(env, monkeypatch):
+    patched_main(monkeypatch, api(multi("cut " + KEY, stop="max_tokens")))
+    out = env / "out"
+    ca.main(["run", job_file(env, [{"id": "a", "user": "hi"}]), "--out", str(out)])
+    assert "sk-ant" not in (out / "a.truncated.md").read_text(encoding="utf-8")
+
+
+def test_a_one_hour_tool_loop_needs_a_measured_turn_gap_over_five_minutes(env, tmp_path):
+    job = {"job": "T", "task_class": "critical-review", "tools_root": str(tmp_path), "cache_ttl": "1h", "requests": [{"id": "a", "user": "hi"}]}
+    f = env / "job.json"
+    f.write_text(json.dumps(job), encoding="utf-8")
+    with pytest.raises(ConfigError, match="measured_turn_gap_s"):
+        ca.load_job(f)
+    f.write_text(json.dumps({**job, "measured_turn_gap_s": 300}), encoding="utf-8")
+    with pytest.raises(ConfigError):
+        ca.load_job(f)
+    f.write_text(json.dumps({**job, "measured_turn_gap_s": 420}), encoding="utf-8")
+    assert ca.load_job(f)[0].cache_ttl == "1h"
+    f.write_text(json.dumps({**job, "cache_ttl": "5m"}), encoding="utf-8")
+    assert ca.load_job(f)[0].cache_ttl == "5m"
+
+
+def test_the_one_hour_loop_figure_is_never_below_the_five_minute_one(env, tmp_path):
+    set_caps(env, jobs={"T": 50.0})
+    five = ca.estimate([req(tools_root=str(tmp_path), max_turns=10, cache_ttl="5m")])["requests"][0]["loop"]
+    hour = ca.estimate([req(tools_root=str(tmp_path), max_turns=10, cache_ttl="1h")])["requests"][0]["loop"]
+    for k in ("usd_if_cached", "usd_if_uncached", "usd_if_miss"):
+        assert hour[k] >= five[k], k
+    assert hour["usd_if_cached"] > five["usd_if_cached"] and hour["usd_if_miss"] > five["usd_if_miss"]
+
+
+def tiny_job(env, **kw):
+    job = {"job": "T", "task_class": "simple-question", "max_tokens": 100, "requests": [{"id": "p", "user": "say ok"}], **kw}
+    (env / "tiny.json").write_text(json.dumps(job), encoding="utf-8")
+    return str(env / "tiny.json")
+
+
+def test_run_refuses_a_normal_job_while_the_stream_proof_is_missing(env, monkeypatch, capsys):
+    patched_main(monkeypatch, api())
+    normal = env / "job.json"
+    normal.write_text(json.dumps({"job": "T", "task_class": "critical-review", "max_tokens": 1000, "requests": [{"id": "a", "user": "hi"}]}),
+                      encoding="utf-8")
+    assert ca.main(["run", str(normal), "--out", str(env / "o")]) == 4 and "stream-proof" in capsys.readouterr().out
+    for bad in ({"max_tokens": 1000}, {"requests": [{"id": "a", "user": "x"}, {"id": "b", "user": "y"}]}):
+        assert ca.main(["run", tiny_job(env, **bad), "--out", str(env / "o")]) == 4
+    assert ca.main(["run", tiny_job(env, tools_root=str(env)), "--out", str(env / "o")]) == 4
+    assert patched_main and not ca.proof_path().exists()
+
+
+def test_a_tiny_proof_job_passes_the_gate_and_the_proof_is_written_once(env, monkeypatch, capsys):
+    a = api(resp("ok", model="claude-haiku-5-5", inp=100, out=5))
+    patched_main(monkeypatch, a)
+    assert ca.main(["status"]) == 0 and '"stream_proof": false' in capsys.readouterr().out
+    assert ca.main(["run", tiny_job(env), "--out", str(env / "o")]) == 0
+    assert "this is the stream-proof call" in capsys.readouterr().out
+    proof = json.loads(ca.proof_path().read_text(encoding="utf-8"))
+    assert proof["chars"] == 2 and proof["model"] == "claude-haiku-5-5" and proof["request_id"] == "req_1" and proof["uid"] and proof["at"]
+    ca.main(["status"])
+    assert '"stream_proof": true' in capsys.readouterr().out
+    ca.proof_path().write_text(json.dumps({"uid": "first"}), encoding="utf-8")
+    a.complete(req(task_class="simple-question", user="again"))
+    assert json.loads(ca.proof_path().read_text(encoding="utf-8")) == {"uid": "first"}          # never rewritten
+
+
+def test_a_stream_file_that_does_not_equal_the_answer_leaves_no_proof(monkeypatch):
+    a = api(multi("the whole answer"))
+    monkeypatch.setattr(ca.StreamSink, "write", lambda self, text: (setattr(self, "n", self.n + len(text)), self.parts.append(text)))
+    a.complete(req())                                                  # nothing reached the file: no proof
+    assert not ca.proof_path().exists()
+
+
+def test_a_stream_file_that_holds_something_else_leaves_no_proof(monkeypatch):
+    b = api(multi("short answer"))
+    monkeypatch.setattr(ca, "redact", lambda t: ("different", 0))     # the file would hold something else than redact(answer)
+    monkeypatch.setattr(ca.StreamSink, "close", lambda self: (self._out("tampered"), None)[1])
+    b.complete(req(user="second"))
+    assert not ca.proof_path().exists()

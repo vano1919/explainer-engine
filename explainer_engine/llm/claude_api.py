@@ -548,27 +548,40 @@ def run_repo_tool(root: Path, name: str, args: dict) -> str:
 
 # --- the client --------------------------------------------------------------------------------------------------------
 class StreamSink:
-    """F1: the text of one call, appended and flushed to ``<ledger>/stream/<uid>.txt`` as each delta arrives, so a break, a kill or
-    a failing bookkeeping step never loses what was paid for. The file is opened at the first text and stays after the call."""
+    """F1: the text of one call on disk as it arrives, ``<ledger>/stream/<uid>.txt``. It is written one complete line at a time, each
+    line through ``redact`` (a key-shaped string split across deltas is never half-written), and flushed; ``close`` writes the
+    unfinished tail, also redacted. So a kill loses at most the unfinished line, and no key-shaped text reaches the file. ``n`` and
+    ``text`` stay in memory and unredacted (the char count of StreamBroken, the answer itself)."""
 
     def __init__(self, path: Path) -> None:
-        self.path, self.n, self.parts, self._f = path, 0, [], None
+        self.path, self.n, self.parts, self.buf, self._f = path, 0, [], "", None
 
-    def write(self, text: str) -> None:
-        if not text:
-            return
+    def _out(self, text: str) -> None:
         if self._f is None:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             self._f = self.path.open("a", encoding="utf-8")
         self._f.write(text)
         self._f.flush()
+
+    def write(self, text: str) -> None:
+        if not text:
+            return
         self.n += len(text)
         self.parts.append(text)
+        self.buf += text
+        if "\n" in self.buf:
+            *lines, self.buf = self.buf.split("\n")
+            self._out("".join(redact(x)[0] + "\n" for x in lines))
 
     def close(self) -> None:
-        if self._f is not None:
-            self._f.close()
-            self._f = None
+        try:
+            if self.buf:
+                self._out(redact(self.buf)[0])
+                self.buf = ""
+        finally:
+            if self._f is not None:
+                self._f.close()
+                self._f = None
 
     @property
     def text(self) -> str:
@@ -714,7 +727,24 @@ class ClaudeAPI:
                             "effort": r.effort, "usage": use, "usd": round(usd, 6), "batch": batch, "fallback_ran": fb_ran,
                             "iterations": it_rows, "note": note, "fell_back_from": fell_from, "stop": resp.stop_reason,
                             "request_id": getattr(resp, "_request_id", None)})
+        if not batch:
+            self._stream_proof(uid, resp, r, sink)
         return resp, r, usd, use
+
+    def _stream_proof(self, uid: str, resp: Any, r: Route, sink: StreamSink) -> None:
+        """Gate: the first direct call whose stream file holds exactly the (redacted) answer writes ``stream_proof.json``, once. Until it
+        exists ``main run`` refuses everything but a tiny proof job."""
+        proof = ledger_dir() / "stream_proof.json"
+        try:
+            if proof.exists() or not sink.path.exists():
+                return
+            on_disk, text = sink.path.read_text(encoding="utf-8").strip(), self._text(resp)
+            if on_disk and on_disk == redact(text)[0].strip():
+                write_json_atomic(proof, {"uid": uid, "model": getattr(resp, "model", r.model), "chars": len(text),
+                                          "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                                          "request_id": getattr(resp, "_request_id", None)})
+        except OSError:   # the proof is a gate, never a reason to lose a paid answer
+            return
 
     @staticmethod
     def _text(resp: Any) -> str:
@@ -944,6 +974,9 @@ def load_job(path: Path) -> list[Request]:
     system = list(spec.get("system", [])) + [read(f) for f in spec.get("system_files", [])]
     common = {k: spec[k] for k in ("task_class", "model", "effort", "max_tokens", "schema", "web_search_max_uses", "cache_ttl",
                                    "max_turns") if k in spec}
+    if spec.get("tools_root") and spec.get("cache_ttl") == "1h" and not float(spec.get("measured_turn_gap_s") or 0) > SLOW_TURN_GAP_S:
+        raise ConfigError("a tool loop with cache_ttl 1h needs \"measured_turn_gap_s\" > 300 in the job file (the gap between turns "
+                          "measured in an earlier run's ledger); the 1h TTL writes cost 2x and are an option, not a default")
     if spec.get("tools_root"):
         common["tools_root"] = str((base / spec["tools_root"]).resolve())
     if spec.get("fallback_to"):
@@ -952,6 +985,7 @@ def load_job(path: Path) -> list[Request]:
                     cache_salt=q.get("cache_salt", ""), **common) for q in spec["requests"]]
 
 
+SLOW_TURN_GAP_S = 300          # the 5-minute TTL: a loop whose turns are further apart than this loses its cache (C2)
 CACHE_GUARD_FROM_TURN = 3       # the first turns have little history to lose
 CACHE_GUARD_MIN_SHARE = 0.6     # (cache read + cache written) / all prompt tokens of a turn
 CACHE_GUARD_MIN_READ_SHARE = 0.5  # cache READS / the previous turn's whole prompt: a hit reads at least that prefix; writes do not count
@@ -1046,6 +1080,13 @@ def estimate(reqs: list[Request], *, api: ClaudeAPI | None = None, expected_outp
             "ledger_total": Ledger().total()}
 
 
+PROOF_MAX_TOKENS = 256
+
+
+def proof_path() -> Path:
+    return ledger_dir() / "stream_proof.json"
+
+
 def _on_sigterm(signum: int, frame: Any) -> None:
     raise KeyboardInterrupt("SIGTERM")
 
@@ -1081,7 +1122,7 @@ def main(argv: list[str] | None = None) -> int:
         c = caps()
         print(json.dumps({"key_present": bool(api_key()), "approved": bool((c.get("approval") or {}).get("ref")),
                           "max_usd": c["max_usd"], "jobs": c["jobs"], "spent_total": api.ledger.total(), "spent_by_job": api.ledger.by_job(),
-                          "open_calls": [x["uid"] for x in api.ledger.open_calls()]}, indent=2))
+                          "open_calls": [x["uid"] for x in api.ledger.open_calls()], "stream_proof": proof_path().exists()}, indent=2))
         return 0
     if a.cmd == "void":
         start = next((x for x in api.ledger.open_calls() if x["uid"] == a.uid), None)
@@ -1095,6 +1136,13 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     reqs = load_job(Path(a.job))
     if a.cmd == "run":
+        tiny = len(reqs) == 1 and not reqs[0].tools_root and reqs[0].max_tokens <= PROOF_MAX_TOKENS
+        if not proof_path().exists():
+            if not tiny:
+                print(f"refused: {proof_path()} is missing. The first real call must be a tiny stream-proof job (one request, no tools_root, "
+                      f"max_tokens <= {PROOF_MAX_TOKENS}, about $0.0001 on Haiku 5.5); it proves the answer reaches the stream file.")
+                return 4
+            print("this is the stream-proof call: it writes stream_proof.json when its stream file equals the answer")
         pre = estimate(reqs, loop_bound=a.loop_bound)    # offline bound; a job whose worst case passes the job's 80 % stop does not start (it would stop half-done)
         if not pre["fits_job_cap"]:
             print(json.dumps(pre, indent=2))
@@ -1120,7 +1168,7 @@ def main(argv: list[str] | None = None) -> int:
             if isinstance(res, OutputTruncated):   # F3: what was paid for is kept
                 summary[q.id]["truncated"] = True
                 if text:
-                    write_text_atomic(out / f"{q.id}.truncated.{'json' if q.schema else 'md'}", text)
+                    write_text_atomic(out / f"{q.id}.truncated.{'json' if q.schema else 'md'}", redact(text)[0])
     try:
         old_term = signal.signal(signal.SIGTERM, _on_sigterm)   # F4: a kill saves and books like Ctrl+C
     except (ValueError, OSError):   # not the main thread
