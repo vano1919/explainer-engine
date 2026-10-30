@@ -3464,3 +3464,11 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   world's `absent` list (pottery, metal, iron, bronze, wheel) instead of the hard-coded Stone Age list.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 night run: Claude API lines raised for review, change plan, fix desk and result check
+- The creator's card answer (2026-10-30 20:46 UTC, "yes, all"): `claude_api.jobs` gets `final_review` 8, `change_plan` 8, `fix_desk` 8, `result_check` 10 (34 in all).
+  Paid from `plan_v2` 28 -> 18 (its work is done), `J3` 12 -> 4, `J4` 2.98 -> 0, `J5` 3 -> 0, `reserve` 16 -> 5.98; the total stays 95.0. Pod lines are unchanged
+  (P12a 0.50, P12b 3.00, P12e deferred). Technical and rule questions go to Fable through the API in his place; only money needs his word.
+- Test: `test_real_spend_caps_file_holds_the_or24_caps` pins the new lines and the unchanged total.
+- OPEN: none. No pod, no API call, nothing deleted.
+- Decision log: none moved.
