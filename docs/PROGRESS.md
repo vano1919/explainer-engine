@@ -3387,6 +3387,8 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Test red on main -> green: `test_d80_prompt_contract.py` (4: one trigger home, compose emits only the D-80 stack and every card passes `keyframe_gate.check_stack`,
   `style_check` FAILs a retired trigger, the napoleon fixture is on the stack). Existing tests changed only their expected trigger or the card selector (`kind == "keyframe"`
   instead of `lora == "style"`, the same set before this change). `docs/LORA_TRAINING.md` LT-01 links the home instead of stating the word.
+- T1's review (#87): the pod scripts' own `TRIGGER` literals (`training/pods/xworld_v2_data.py`, `xworld_v1_build.py`, the words the LoRA was captioned
+  with) are pinned to `lora_rules.trigger()` by `test_one_trigger_home`; the scripts themselves are not edited (their sha binds a pod BUDGET approval, N-03).
 - OPEN: `style_prompt.INFERENCE["lora"]` is still `None` ("no LoRA until the creator rates the new one") while D-83 / LT-79 name xworld_v2 ck3000 at 0.7; the next-pose wording vs
   the xworld edit caption shape; wldnk-era `BODY_WORDS` / `STYLE_TAIL` / `video_sentence`; `examples/continuity/napoleon_tent.json` style_line; `PROMPT_PACKAGE.md`;
   `docs/SHOT_PROMPTS.md` rows 23/87 and `docs/SCRIPT_ENGINE.md` (T4); `qa/blind_check.py` (T2). No pod, no API call, nothing deleted, no schema change.

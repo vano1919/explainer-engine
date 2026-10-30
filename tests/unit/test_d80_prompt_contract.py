@@ -32,6 +32,9 @@ def _on_the_d80_stack(card: dict) -> None:
 def test_one_trigger_home():
     trigger = lora_rules.trigger()
     assert style_prompt.TRIGGER == trigger and not trigger.startswith("wldnk")
+    # the pod scripts keep their own literal (their sha binds a budget approval, N-03): pinned to the home, never edited here
+    from explainer_engine.training.pods import xworld_v1_build, xworld_v2_data
+    assert xworld_v2_data.TRIGGER == xworld_v1_build.TRIGGER == trigger
     for rel in LIVE:
         for n, line in enumerate((ROOT / rel).read_text(encoding="utf-8").splitlines(), 1):
             if "wldnk style" in line or '"nextpose, ' in line:
