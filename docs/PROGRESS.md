@@ -3536,3 +3536,11 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - `runpod dryrun --script` passes; sha256 of `p12b.sh` is in the PR body. Test: `tests/unit/test_p12b_pod_script.py`.
 - OPEN: copy `p12b.py`, `p12b.json` and the two host pictures to HF before create (see PR); no pod, no API call, nothing deleted.
 - Decision log: none moved.
+## 2026-10-30 T11 fixes from the independent verifier (Fable): P12b LoRA calls, host paths, T06 REVIEW test
+- `p12b.py`: the `load_lora_weights` / `set_adapters` calls (no LoRA mixin on `QwenImage21Pipeline`) are replaced by the call shape of
+  `xworld_v1_test.py`: `from videox_fun.utils import merge_lora, unmerge_lora`, `pipe = merge_lora(pipe, path, weight, device="cuda", dtype=bf16)`;
+  the xworld LoRA is merged once at 1.0, the MVA LoRA is unmerged and merged again per strength and unmerged for Q4.
+- `p12b.json`: the hosts are `code/p12/hosts/a_idle.png` and `code/p12/hosts/b_hover.png` in the HF dataset; `p12b.sh` pins the new sha256 of `p12b.py` / `p12b.json`.
+- `EE_DEADLINE` checked: `pod_wrapper.sh` exports epoch seconds, `p12b.py` reads `float(os.environ["EE_DEADLINE"])`; no change.
+- Test: `tests/unit/test_episode_rules.py::test_create_refuses_an_undecided_review_at_the_paid_assets_gate_and_makes_no_pod` (zero fake pods).
+- OPEN: the `gate_up` fix of `xworld_v1_test.py` (img_mlp.gate_up delta split) is not in `p12b.py`; the creator/Opus thread decides whether P12b needs it. No pod, no paid API call, nothing deleted.

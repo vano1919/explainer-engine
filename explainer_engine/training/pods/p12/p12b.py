@@ -1,7 +1,7 @@
 """P12b pod job (runs on the pod under pod_wrapper.sh): the Qwen run of the paid-tests plan, section 3.3 / 3.3a / 3.5.
 
 Every model, revision, setting and prompt comes from ``p12b.json`` (T10); nothing is chosen here. One process, the pipeline loaded
-once, the xworld LoRA and the multiple-angles (MVA) LoRA switched with ``set_adapters``. Stages run in ``order``; an optional stage
+once, the xworld LoRA merged once and the multiple-angles (MVA) LoRA merged and unmerged per strength (VideoX-Fun merge_lora). Stages run in ``order``; an optional stage
 starts only when the section 3.5 projection fits before ``EE_DEADLINE``. Every picture is written at once with a JSON sidecar, one
 line per event goes to ``$EE_OUT/t.jsonl`` and ``$EE_OUT/progress.txt`` is rewritten after every unit (the wrapper uploads
 ``$EE_OUT``; the weights live under /workspace/models, outside it). Only Qwen: no video model, no layout, no audio (P12c).
@@ -249,8 +249,10 @@ def run(cfg, out, deadline, log):
 
     t0 = time.time()
     pipe = load_pipeline(base)
-    pipe.load_lora_weights(style, adapter_name="xworld")
-    pipe.load_lora_weights(mva, adapter_name="mva")
+    from videox_fun.utils import merge_lora, unmerge_lora    # the call shape of xworld_v1_test.py (pipe in, pipe out)
+    dt = torch.bfloat16
+    pipe = merge_lora(pipe, style, 1.0, device="cuda", dtype=dt)
+    mva_on = None                                              # the MVA strength merged now (None = not merged)
     log.ev("model_loaded", seconds=round(time.time() - t0, 1))
 
     stages = cfg["stages"]
@@ -267,11 +269,16 @@ def run(cfg, out, deadline, log):
         for i, u in enumerate(todo, 1):
             path = Path(str(u["path"]).replace("{OUT}", str(out)))
             path.parent.mkdir(parents=True, exist_ok=True)
+            want = None if name == "Q4" else u["mva"]
+            if want != mva_on:
+                if mva_on is not None:
+                    pipe = unmerge_lora(pipe, mva, mva_on, device="cuda", dtype=dt)
+                if want is not None:
+                    pipe = merge_lora(pipe, mva, want, device="cuda", dtype=dt)
+                mva_on = want
             if name == "Q4":
-                pipe.set_adapters(["xworld"], [1.0])
                 ref, negative = refs[u["host"]], st["negative"]
             else:
-                pipe.set_adapters(["xworld", "mva"], [1.0, u["mva"]])
                 ref, negative = refs[u["person"]], ""
             t = time.time()
             img = draw(pipe, u["prompt"], ref, cfg, u["seed"], st["steps"], st["true_cfg_scale"], negative)

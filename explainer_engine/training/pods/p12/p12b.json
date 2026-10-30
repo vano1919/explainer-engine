@@ -42,8 +42,8 @@
     "legionary": "lora_plan_2026-10-26/train_xworld_v2/p2s/out/p2s/rome_sheet_legionary.png"
   },
   "hosts": {
-    "analyst": "assets/characters/crossworld_cast_v0/analyst/a_idle.png",
-    "compass": "assets/characters/crossworld_cast_v0/compass/b_hover.png"
+    "analyst": "code/p12/hosts/a_idle.png",
+    "compass": "code/p12/hosts/b_hover.png"
   },
   "stages": {
     "Q1": {

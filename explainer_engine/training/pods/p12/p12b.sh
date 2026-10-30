@@ -31,7 +31,7 @@ for f in ('p12b.py', 'p12b.json'):
     hf_hub_download('vano1919/tmr-artifacts', 'code/p12/' + f, repo_type='dataset', local_dir='$JOB/dl')
 " || { ev job_files_failed; exit 1; }
 cp "$JOB/dl/code/p12/p12b.py" "$JOB/dl/code/p12/p12b.json" "$JOB/"
-printf '%s  %s\n' 4728cda4587e9453aacb8f81c085f5f728890708f1ef723a654caabee6fa2aee "$JOB/p12b.py" a86d3af38cb65177c09e150e9ec4d04f4accab4ad35675fc2a295f6a7c45b91f "$JOB/p12b.json" > "$JOB/sha.txt"
+printf '%s  %s\n' f7727e1987a5306cf9d13e28e03f12c2cf31ed2056bdcf81022faca12fbe449e "$JOB/p12b.py" 43e03437524c981623a116b44310896b0e14f6bf040b6ea79a878609782814e2 "$JOB/p12b.json" > "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || { ev job_files_sha_mismatch; exit 3; }
 python3 "$JOB/p12b.py"
 exit $?
