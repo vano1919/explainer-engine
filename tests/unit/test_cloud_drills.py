@@ -66,7 +66,7 @@ def test_drill_2b_the_pod_is_silent_and_the_money_estimate_of_the_record_stops_i
 
 def test_drill_3_the_folder_upload_fails_the_beat_says_so_and_a_person_is_told(world, wrapper):
     fake, api, tmp = world
-    p, b, stops, stub = wrapper("echo x > $EE_OUT/r.txt\nsleep 3.5\n", EE_DRILL="upload_fail")
+    p, b, stops, stub = wrapper("echo x > $EE_OUT/r.txt\nsleep 6\n", EE_DRILL="upload_fail")      # six loop passes of 1 s: margin for a slow runner
     assert b["word"] == "FAILED_UPLOAD" and b["upload_fail"] >= 3 and b["unstored"] >= 1 and not (stub / "hf" / "r.txt").exists()
     text = _beat_of(wrapper)
     sess = R.new_session(pod("pp", NAME), max_usd=1.0, max_hours=2.0, now=0, heartbeat=HB)
