@@ -311,10 +311,10 @@ CARDS_24 = [{"id": "NVIDIA GeForce RTX 3090", "memory": 24, "availability": "HIG
             {"id": "NVIDIA GeForce RTX 4090", "memory": 24, "availability": "HIGH", "price": {"secure": 0.69, "community": 0.34}}]
 
 
-def _p12a_create(env, monkeypatch, *extra, usd="0.07"):
+def _p12a_create(env, monkeypatch, *extra, usd="0.07", catalog=CARDS_24):
     fake, api, tmp = env
     monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)
-    fake.catalog = CARDS_24
+    fake.catalog = catalog
     seen = []
     real = R.create
     monkeypatch.setattr(R, "create", lambda api, body, **kw: seen.append((body, kw)) or real(api, body, **kw))
@@ -330,8 +330,8 @@ def test_cloud_keeps_the_cards_tried_and_the_dead_mans_price_in_one_cloud(env, m
     body, kw = _p12a_create(env, monkeypatch, "--only", "GeForce RTX 3090,RTX A5000", "--cloud", "community")
     assert {c for _, c, _ in kw["gpus"]} == {"COMMUNITY"} and {g for g, _, _ in kw["gpus"]} == {"NVIDIA GeForce RTX 3090", "NVIDIA RTX A5000"}
     assert body["cloud"] == "COMMUNITY" and body["env"]["EE_PRICE"] == "0.27"                  # the dearer COMMUNITY pick, not SECURE's 0.50
-    body2, _ = _p12a_create(env, monkeypatch, "--only", "GeForce RTX 3090,RTX A5000")           # without --cloud both clouds were mixed in:
-    assert body2["env"]["EE_PRICE"] == "0.5"                                                    # the dead-man used the SECURE 3090's price
+    with pytest.raises(SystemExit, match="--vram needs --cloud COMMUNITY\\|SECURE"):            # without --cloud both clouds were mixed in and
+        _p12a_create(env, monkeypatch, "--only", "GeForce RTX 3090,RTX A5000")                  # the dead-man used the SECURE 3090's price: refused
 
 
 def test_only_takes_a_comma_list_and_a_single_name_still_works(env, monkeypatch):
@@ -348,7 +348,11 @@ def test_only_takes_a_comma_list_and_a_single_name_still_works(env, monkeypatch)
                                        (["--wait-stock", "5m"], "--wait-stock only works with --vram"),
                                        (["--colud", "COMMUNITY", "--vram", "24"], "unknown flag --colud \\(did you mean --cloud"),
                                        (["--cheap", "--vram", "24"], "unknown flag --cheap"),
-                                       (["--vram", "24", "--cloud", "ELSEWHERE"], "not one of")])
+                                       (["--vram", "24", "--cloud", "ELSEWHERE"], "not one of"),
+                                       (["--vram", "24"], "--vram needs --cloud"),
+                                       (["--vram", "24", "--cloud", ""], "--cloud needs a value"),         # '' used to skip the check and mix both clouds
+                                       (["--vram", "24", "--cloud", "COMMUNITY", "--only", ""], "--only needs a value"),
+                                       (["--vram", "24", "--cloud", "COMMUNITY", "--only", "--yes"], "--only needs a value")])
 def test_create_refuses_an_unknown_flag_and_a_pick_flag_without_vram_before_any_call(env, monkeypatch, extra, why):
     fake, api, tmp = env
     monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)
@@ -356,6 +360,33 @@ def test_create_refuses_an_unknown_flag_and_a_pick_flag_without_vram_before_any_
     with pytest.raises(SystemExit, match=why):
         _create(api, tmp, NEW_SH, *extra, live=FakeLive(age=60))
     assert not fake.pods and fake.calls == []                                                  # refused before the first API call
+
+
+def test_an_unknown_name_in_the_only_list_is_refused_with_a_did_you_mean_not_dropped(env, monkeypatch):
+    fake, api, tmp = env
+    fake.catalog = CARDS_24
+    rows = R.pick_gpus(api, vram_gb=24, ref_hours=0.05)
+    with pytest.raises(SystemExit, match=r"no card with stock matches 'RTX A5O00'.*did you mean 'NVIDIA RTX A5000'"):
+        R.only_cards(rows, "GeForce RTX 3090,RTX A5O00")                                       # the typo used to be ignored: only the 3090 was tried
+    with pytest.raises(SystemExit, match="names no card"):
+        R.only_cards(rows, " , ")
+    with pytest.raises(SystemExit, match="no card with stock matches 'L40S'.*cards with stock now"):
+        R.only_cards(rows, "L40S")
+    monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)
+    with pytest.raises(SystemExit, match="no card with stock matches"):                          # and through create: no pod, no ledger line
+        _create(api, tmp, NEW_SH, "--vram", "24", "--ref-hours", "0.05", "--setup-min", "1", "--cloud", "COMMUNITY",
+                "--only", "GeForce RTX 3090,RTX A5O00", live=FakeLive(age=60))
+    assert not fake.pods
+
+
+def test_only_finds_a_card_outside_the_cheapest_six(env, monkeypatch):
+    many = [{"id": f"NVIDIA TEST CARD {i}", "memory": 24, "availability": "HIGH", "price": {"secure": 0.45, "community": 0.10 + i / 100}}
+            for i in range(8)]
+    fake, api, tmp = env
+    fake.catalog = many
+    assert "NVIDIA TEST CARD 7" not in {r["gpu"] for r in R.pick_gpus(api, vram_gb=24, ref_hours=0.05, clouds=("COMMUNITY",))}  # off the six
+    body, kw = _p12a_create(env, monkeypatch, "--only", "TEST CARD 7", "--cloud", "COMMUNITY", catalog=many)
+    assert [g for g, _, _ in kw["gpus"]] == ["NVIDIA TEST CARD 7"] and body["env"]["EE_PRICE"] == "0.17"   # limit 6 would have refused it
 
 
 def test_every_flag_the_create_branch_reads_is_known_to_the_flag_check():

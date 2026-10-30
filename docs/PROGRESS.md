@@ -2904,5 +2904,10 @@ The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code accoun
   `EE_PRICE` to one cloud; `--only` accepts a comma list and is searched among 50 cards, not the cheapest six. An unknown flag is refused
   before any API call, as are `--only`/`--cloud`/`--ref-hours`/`--wait-stock` without `--vram` (they were ignored: default pool, RTX 4090 SECURE).
   CR-20 in the runbook; tests in `tests/unit/test_cloud_economy.py`, including one that every flag the create branch reads is in the known list.
+- Review-desk round on this PR (four gaps, all on the money path): `--vram` now REQUIRES `--cloud` (no committed caller or doc used `create --vram`
+  without it, so nothing legitimate breaks); an empty or flag-like value (`--cloud ""`, `--only ""`) is refused, not read as "not given";
+  every name in an `--only` list must match a card with stock, else refusal with a did-you-mean (a typo used to be dropped and the pod
+  landed on the card left over; an out-of-stock name now refuses too, `--wait-stock` retries it); the 50-card search is pinned by a test
+  where the wanted card is outside the cheapest six (mutated back to 6, it fails).
 - For the P12a commands: pass `--vram 24 --ref-hours 0.05 --boot-minutes 25 --cloud COMMUNITY` (or SECURE) with `--only`; leave out
   `--setup-min` (a 10-minute setup against 3 minutes of work is refused by RP-09).
