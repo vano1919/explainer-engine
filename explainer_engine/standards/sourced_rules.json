@@ -4938,7 +4938,8 @@
    ],
    "enforced_by": [
     "explainer_engine/standards/craft_checklists/cartography.json:CRAFT-CART-01",
-    "explainer_engine/maps/laws.py:signalling"
+    "explainer_engine/maps/laws.py:signalling",
+    "explainer_engine/maps/render.py:render_frame"
    ],
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
@@ -5468,8 +5469,7 @@
    "enforced_by": [
     "explainer_engine/maps/laws.py:stimulus_window"
    ],
-   "supersedes": [],
-   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+   "supersedes": []
   },
   {
    "id": "BP-141",
@@ -5496,8 +5496,7 @@
     "explainer_engine/maps/laws.py:scale_progression",
     "explainer_engine/maps/camera.py:tier_of"
    ],
-   "supersedes": [],
-   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+   "supersedes": []
   },
   {
    "id": "BP-142",
@@ -5522,8 +5521,7 @@
    "enforced_by": [
     "explainer_engine/edit/visual_compensator.py:rotation"
    ],
-   "supersedes": [],
-   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+   "supersedes": []
   },
   {
    "id": "BP-143",
@@ -5547,8 +5545,7 @@
    "enforced_by": [
     "explainer_engine/edit/visual_compensator.py:map_share"
    ],
-   "supersedes": [],
-   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+   "supersedes": []
   },
   {
    "id": "BP-144",
@@ -5570,8 +5567,7 @@
    "enforced_by": [
     "explainer_engine/design/palette.py:faction_findings"
    ],
-   "supersedes": [],
-   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+   "supersedes": []
   },
   {
    "id": "BP-145",
@@ -5598,8 +5594,7 @@
    ],
    "supersedes": [
     "Blueprint map law 7's 12-frame dissolve (BP-31 decides)"
-   ],
-   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+   ]
   },
   {
    "id": "BP-146",
@@ -5624,8 +5619,7 @@
     "explainer_engine/maps/laws.py:no_diffusion",
     "explainer_engine/maps/plate.py:certificate"
    ],
-   "supersedes": [],
-   "craft": "P5 2026-10-30 (docs/COMPENSATOR.md): the Blueprint's number, REVIEW only until a second source type is opened"
+   "supersedes": []
   }
  ]
 }

@@ -101,8 +101,9 @@ def test_the_new_craft_rules_are_hypotheses_named_by_their_checklist_row():
     rows = {c["id"]: c for _, c in _rows()}
     for r in new:
         assert r["status"] == "hypothesis" and r["severity"] == "REVIEW", r["id"]
-        assert r.get("planned"), r["id"]
-        (ref,) = r["enforced_by"]
+        ref, *validators = r["enforced_by"]
+        # a rule is "planned" until its validator lands; then the validators join the checklist row in enforced_by (P5 did it for three)
+        assert bool(r.get("planned")) != bool(validators), r["id"]
         cid = ref.split(":", 1)[1]
         assert r["id"] in rows[cid]["rules"], f"{r['id']} is not cited by its checklist row {cid}"
     # dramatisability caps are the Blueprint's house numbers, never attributed to McKee or Katz
