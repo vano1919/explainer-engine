@@ -3160,6 +3160,15 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Tests: `tests/unit/test_money_path_fences.py` (CP-01 section: both launchers exit with `RETIRED by D-80` and no network, 7 refused
   commands, 6 allowed ones); `tests/unit/test_aivideo_shotplan.py::test_pod_code_follows_the_rules` += the guard sits before `rp.create(`
   (addition only). Red on main: 9 failed.
+
+## 2026-10-30 — T3-2 (CP-04): the live xworld LoRA, datasets and code are vault-`critical` (no pod, no money)
+- `config/vault.json` `critical` gains `lora_plan_2026-10-26/` `train_xworld_v2/output/**`, `train_xworld_v2/code/**`, `train_xworld_v1/**`,
+  `dataset_xworld_v1/**`, `dataset_xworld_v2/**`, `caption_xworld_v1/**` (every prefix appears in `explainer_engine/training/pods/*.sh`). Nothing removed; the `wldnk_*` rows stay (deleting them is creator card 6).
+- Not added, OPEN: `train_xworld_v2/train.log` (only v1's `train.log` is uploaded by a pod script; v1 is covered by `train_xworld_v1/**`) and
+  `cast_xworld_v2` (Argon-1; no HF path for it in the repo).
+- `docs/VAULT.md` VT-01..VT-04 only restrict deleting, so adding globs needed no creator word.
+- `vault snapshot` ran (HF_TOKEN was in the session, read-only on HF): 16735 files, 60.97 GB; critical 8860 files, 13.87 GB. `docs/VAULT_MANIFEST.json` regenerated and trimmed to the 8860 critical rows plus `note` (VAULT.md: critical rows only); `vault verify` on it: PASS, every manifest file is on the primary copy.
+- Test: `tests/unit/test_vault.py::test_the_live_xworld_lora_and_datasets_are_critical` (red before the globs, 1 failed; green after, 9 passed). Closes Argon-1 F-01; Argon-2 F-26 (the add half).
 ## 2026-10-30 — plan_v2 wave 1, T2 PR-B: CP-05, KG-22/KG-23 are a visible REVIEW while the style is suspended (D-80)
 - `qa/blind_check.py`: the retired wldnk rubric is kept as `STYLE_SPEC_WLDNK_RETIRED` (mechanics only, tests still run it); the live `STYLE_SPEC` is empty
   and `STYLE_SUSPENDED = True` is the one flag. `describe_rules`, `compare(..., spec=None)` and `style_verdict(..., spec=None)` take the spec as an argument,
