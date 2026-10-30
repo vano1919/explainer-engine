@@ -14,12 +14,7 @@ Rules and sources: `docs/LORA_TRAINING.md` (LT-xx). Agents: `lora-coordinator` (
 audit (free) -> config check (free) -> cost projection (free) -> pod with ledger + guard -> judge every 250 steps (free)
 -> stop at plateau or the first overfit sign, keep the best -> one sheet to the creator.
 
-## Settings that worked (2026-10-23, Qwen-Image-2512, ai-toolkit, A40 48 GB, $0.59/h)
-- rank 32 / alpha 32, LR 1e-4, adamw8bit, batch 1, 768-1024 buckets, qfloat8 model + text encoder, 5.21 s/step.
-- Captions: `wldnk style, <what is visible>`; nothing shared by every caption; crops get their own "close-up" caption.
-- Samples: 6-7 prompts, fixed seed (walk_seed keeps one seed per prompt), 1024x576, 20 steps (≈40 s each); half held
-  out; one without the trigger; step 0 kept as the base.
-- Boot: the aitoolkit image needs `boot_minutes=25`.
+Current stack: one LoRA on Qwen-Image-2.1 (D-80, LT-79 in docs/LORA_TRAINING.md).
 
 ## Lessons that cost money
 - 2026-10-24 (≈$1.6): pods judged by the REST record (runtime null for every pod) and scripts silent until their
@@ -31,7 +26,16 @@ audit (free) -> config check (free) -> cost projection (free) -> pod with ledger
   checkpoint is not the best by default.
 - v7 audit: 504x278 pictures in the creator's folder (3x upscale = learned blur) -> dropped before v4.
 
-## Video and edit LoRAs
+## History (retired by D-80, lessons only)
+
+### Settings that worked (2026-10-23, Qwen-Image-2512, ai-toolkit, A40 48 GB, $0.59/h)
+- rank 32 / alpha 32, LR 1e-4, adamw8bit, batch 1, 768-1024 buckets, qfloat8 model + text encoder, 5.21 s/step.
+- Captions: `wldnk style, <what is visible>`; nothing shared by every caption; crops get their own "close-up" caption.
+- Samples: 6-7 prompts, fixed seed (walk_seed keeps one seed per prompt), 1024x576, 20 steps (≈40 s each); half held
+  out; one without the trigger; step 0 kept as the base.
+- Boot: the aitoolkit image needs `boot_minutes=25`.
+
+### Video and edit LoRAs
 - Motion LoRA (LTX-2.5, ltx-trainer): clips `(F-1) % 8 == 0`, sizes /32, short coherent shots, captions describe the
   movement without character names; rank 32, LR 3e-5..1e-4 with cosine + 5-10 % warm-up (ვანო's report 2026-10-24,
   LT-10), rank >= 64 only with `use_rslora`; ~2,000 steps max, validation every 250 with first-frame conditioning; judge
