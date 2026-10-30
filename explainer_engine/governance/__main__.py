@@ -15,7 +15,7 @@ from explainer_engine.governance import root_dir
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="python -m explainer_engine.governance")
     sub = p.add_subparsers(dest="cmd", required=True)
-    o = sub.add_parser("ok", help="record the creator's own word (action: model_switch | effort_override | protected_config)")
+    o = sub.add_parser("ok", help="record the creator's own word (action: model_switch | effort_override | protected_config | channel_voice | generator_admit)")
     o.add_argument("action", choices=records.ACTIONS)
     o.add_argument("target", help="the model or the one file the word covers (* only for model_switch and effort_override)")
     o.add_argument("message_id")

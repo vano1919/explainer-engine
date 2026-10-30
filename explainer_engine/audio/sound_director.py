@@ -772,6 +772,9 @@ def check(manifest: dict, *, spine: dict, timeline: list[dict], stems: dict | No
         it = lib.get(ref)
         if it is not None and it["source"]["kind"] == "open_model" and not it["source"].get("admission"):
             out.append(_f("SD-13", ref, "a free-generator take without an admission for its kind (BP-162): library first, then the connector"))
+        elif it is not None and it["source"]["kind"] == "open_model":   # the admission must exist, fit the kind and the model
+            from explainer_engine.audio import generator_gate
+            out += [_f("SD-13", ref, problem) for problem in generator_gate.item_problems(it)]
 
     # SD-12: the lane matrix and the timeline hold
     done: set = set()

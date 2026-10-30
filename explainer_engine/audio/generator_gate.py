@@ -45,6 +45,7 @@ import numpy as np
 from explainer_engine.audio import sfx_library, voice_audition
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import write_json_atomic, write_text_atomic
+from explainer_engine.governance import records
 from explainer_engine.standards import sourced_rules as SR
 
 REPO = Path(__file__).resolve().parents[2]
@@ -288,10 +289,36 @@ def get(admission_id: str, *, path: Path | str | None = None) -> dict | None:
     return next((a for a in load_admissions(path)["admissions"] if a.get("id") == admission_id), None)
 
 
+def _picks(sheet_md: Path, report_sha: str) -> dict:
+    """The answered sheet against its key. The key (``sheet_key.json`` beside the sheet) must name this report's sha256, or the
+    sheet belongs to another measurement. Returns how many of his answers (A / B / same) went to the generator, how many he gave and
+    how many pairs the sheet has; the ratio is recorded for the eye, no minimum is invented here (his recorded word is the gate, D8)."""
+    key_path = sheet_md.parent / "sheet_key.json"
+    if not key_path.is_file():
+        raise ContractError(f"{key_path.name} is missing beside the sheet: it is written by `sheet` and proves which report the sheet is for")
+    key = json.loads(key_path.read_text(encoding="utf-8"))
+    if key.get("schema") != KEY_SCHEMA:
+        raise ContractError(f"{key_path} is not a {KEY_SCHEMA} document")
+    if key.get("report_sha256") != report_sha:
+        raise ContractError(f"{key_path.name} was made for another report (report_sha256 {key.get('report_sha256')!r}, this report is "
+                            f"{report_sha[:12]}...): make the sheet from this report")
+    side = {f"{int(p['pair']):02d}": p["generator_side"].lower() for p in key.get("pairs", [])}
+    given = total = 0
+    for line in sheet_md.read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) >= 5 and cells[0] in side and cells[-1].lower() in ("a", "b", "same"):
+            total += 1
+            given += cells[-1].lower() == side[cells[0]]
+    return {"for_generator": given, "total": total, "pairs": len(side)}
+
+
 def admit(generator: str, kind: str, report: Path, *, creator_ref: str, at: str, sheet: Path | None = None,
           prefer_rate: float | None = None, model: str = "", path: Path | str | None = None) -> dict:
     """Write one admission record. Refused without the creator's recorded word (``creator_ref`` = his message id, ``at`` = when),
-    without the blind sheet he answered, or when the report misses BP-163 (re-derived from its numbers, not from its ``pass``)."""
+    without the blind sheet he answered (and its key for this report), or when the report misses BP-163 (re-derived from its numbers,
+    not from its ``pass``). ``creator_ref`` must resolve to a ``generator_admit`` record for ``<generator>:<kind>`` in
+    ``jobs/creator_ok.jsonl`` (``governance ok``), found as the channel voice's word is (VC-08) but with no age window: an admission
+    stands until it is replaced; a free string is not his word. Every pair of the sheet must carry A, B or same (no share is demanded)."""
     ref = creator_ref.strip() if isinstance(creator_ref, str) else ""
     if not ref:
         raise ContractError("creator_ref is blank: an admission needs the creator's recorded word (BP-162)")
@@ -315,9 +342,16 @@ def admit(generator: str, kind: str, report: Path, *, creator_ref: str, at: str,
     if problems:
         raise ContractError("the report does not pass BP-163: " + "; ".join(problems))
     rsha = sha256_of(report)
+    picks = _picks(Path(sheet), rsha)                       # the key must belong to this very report (it is the blind sheet's proof)
+    if not picks["pairs"] or picks["total"] != picks["pairs"]:
+        raise ContractError(f"the blind sheet is not answered: {picks['total']} of {picks['pairs']} pairs have A, B or same; "
+                            "answer every pair of the sheet first (BP-163: quality is his ear)")
+    if records.find("generator_admit", f"{generator}:{kind}", ref) is None:
+        raise ContractError(f"BP-162: no recorded creator word {ref!r} for {generator}:{kind}: record it first (`python -m "
+                            f"explainer_engine.governance ok generator_admit {generator}:{kind} <message id> \"<his words>\"`)")
     entry = {"id": f"{generator}-{kind}-{rsha[:8]}", "generator": generator, "model": model or doc.get("model", ""), "kind": kind,
              "report_sha256": rsha, "sheet_sha256": sha256_of(Path(sheet)), "prefer_rate": prefer_rate, "creator_ref": ref,
-             "at": str(at).strip()}
+             "picks_for_generator": picks["for_generator"], "picks_total": picks["total"], "at": str(at).strip()}
     admissions = load_admissions(path)
     admissions["admissions"] = [a for a in admissions["admissions"] if a["id"] != entry["id"]] + [entry]
     write_json_atomic(admission_path(path), admissions)
