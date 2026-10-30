@@ -438,21 +438,25 @@ def test_cr16_the_unit_tests_never_touch_the_real_tools_dir():
 # --- P12a drill flags -------------------------------------------------------------------------------------------------------
 def _create_p12a(api, tmp, monkeypatch, test, *extra):
     monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)
-    ledger = tmp / "run.json"
-    Run.open(ledger, caps={"runpod_usd": 1.0}, **({"test": test} if test else {}))
+    ledger = tmp / f"run_{test}.json"
+    if test:  # a paid test's ledger is opened the way the plan opens it: its line, its durable mirror
+        monkeypatch.setenv("EXPLAINER_LEDGER_MIRROR", str(tmp / "durable"))
+        Run.open_test(ledger, test)
+    else:
+        Run.open(ledger, caps={"runpod_usd": 1.0})
     sf = tmp / "job.sh"
     sf.write_text(NEW_SH)
     seen = []
     real = R.create
     monkeypatch.setattr(R, "create", lambda api, body, **kw: seen.append(body) or real(api, body, **kw))
-    R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(ledger), "--script", str(sf),
+    R.main(["create", "--yes", "--max-usd", "0.07", "--max-hours", "1", "--ledger", str(ledger), "--script", str(sf),
             "--script-url", "https://huggingface.co/x/pod.sh", *extra, *PLAN], api=api, live=FakeLive(age=60))
     return seen
 
 
 def test_drill_is_refused_unless_the_ledger_says_p12a_smoke(env, monkeypatch):
     fake, api, tmp = env
-    for test in (None, "other"):
+    for test in (None, "p12b_two_runs"):  # no test, and another paid test's ledger
         with pytest.raises(SystemExit, match="p12a_smoke"):
             _create_p12a(api, tmp, monkeypatch, test, "--drill", "drop_key")
     with pytest.raises(SystemExit, match="not one of"):

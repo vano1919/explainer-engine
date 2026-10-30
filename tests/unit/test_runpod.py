@@ -318,6 +318,17 @@ def test_create_cli_reserves_in_the_ledger_writes_a_session_and_names_the_lifeti
     assert len(fake.pods) == 1
 
 
+def test_create_cli_refuses_a_ledger_that_does_not_exist_before_any_call(env, tmp_path, monkeypatch):
+    """A ledger made by create would get the episode ceilings, not a paid test's line: open it first (open-test)."""
+    fake, api = env
+    monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)
+    missing = tmp_path / "nowhere" / "run.json"
+    with pytest.raises(SystemExit, match="no ledger"):
+        R.main(["create", "--yes", "--max-usd", "0.5", "--max-hours", "1", "--ledger", str(missing)], api=api)
+    assert fake.calls == [] and not fake.pods  # no API call at all, so no POST
+    assert not missing.exists() and not missing.parent.exists()  # and no ledger was made behind the creator's back
+
+
 def test_create_cli_sets_the_container_disk(env, tmp_path, monkeypatch):
     fake, api = env
     monkeypatch.setattr(R, "guard_detached", lambda pid: 4242)
