@@ -1,0 +1,232 @@
+{
+ "s01_architect": {
+  "shape": {
+   "segments": 16,
+   "lines": 0,
+   "words": 0,
+   "claims_cited": 0,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 0,
+   "rules": {}
+  },
+  "validate": {
+   "fail": 34,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 34
+   }
+  }
+ },
+ "s02_writer": {
+  "shape": {
+   "segments": 16,
+   "lines": 173,
+   "words": 2434,
+   "claims_cited": 21,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 4,
+   "rules": {
+    "REVIEW ST-11": 1,
+    "REVIEW ST-17": 2,
+    "REVIEW ST-19": 1
+   }
+  },
+  "validate": {
+   "fail": 19,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 19
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s02b_beats": {
+  "shape": {
+   "segments": 16,
+   "lines": 173,
+   "words": 2434,
+   "claims_cited": 21,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 4,
+   "rules": {
+    "REVIEW ST-11": 1,
+    "REVIEW ST-17": 2,
+    "REVIEW ST-19": 1
+   }
+  },
+  "validate": {
+   "fail": 19,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 19
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s03_performer": {
+  "shape": {
+   "segments": 16,
+   "lines": 173,
+   "words": 2450,
+   "claims_cited": 21,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 4,
+   "rules": {
+    "REVIEW ST-11": 1,
+    "REVIEW ST-17": 2,
+    "REVIEW ST-19": 1
+   }
+  },
+  "validate": {
+   "fail": 19,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 19
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s03r_writer": {
+  "shape": {
+   "segments": 16,
+   "lines": 173,
+   "words": 2447,
+   "claims_cited": 21,
+   "shots": 0,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 4,
+   "rules": {
+    "REVIEW ST-11": 1,
+    "REVIEW ST-17": 2,
+    "REVIEW ST-19": 1
+   }
+  },
+  "validate": {
+   "fail": 19,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 19
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s04_editor": {
+  "shape": {
+   "segments": 16,
+   "lines": 173,
+   "words": 2447,
+   "claims_cited": 21,
+   "shots": 161,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 4,
+   "rules": {
+    "REVIEW ST-11": 1,
+    "REVIEW ST-17": 2,
+    "REVIEW ST-19": 1
+   }
+  },
+  "validate": {
+   "fail": 2,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 2
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s05_caster": {
+  "shape": {
+   "segments": 16,
+   "lines": 173,
+   "words": 2447,
+   "claims_cited": 21,
+   "shots": 161,
+   "shorts": 0
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 4,
+   "rules": {
+    "REVIEW ST-11": 1,
+    "REVIEW ST-17": 2,
+    "REVIEW ST-19": 1
+   }
+  },
+  "validate": {
+   "fail": 1,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 1
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "s06_shorts": {
+  "shape": {
+   "segments": 16,
+   "lines": 173,
+   "words": 2447,
+   "claims_cited": 21,
+   "shots": 161,
+   "shorts": 3
+  },
+  "story_lint": {
+   "fail": 0,
+   "review": 4,
+   "rules": {
+    "REVIEW ST-11": 1,
+    "REVIEW ST-17": 2,
+    "REVIEW ST-19": 1
+   }
+  },
+  "validate": {
+   "fail": 1,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 1
+   }
+  },
+  "stage_guard_violations_vs_previous": []
+ },
+ "final": {
+  "shape": {
+   "segments": 16,
+   "lines": 173,
+   "words": 2447,
+   "claims_cited": 21,
+   "shots": 161,
+   "shorts": 3
+  },
+  "validate": {
+   "fail": 1,
+   "review": 0,
+   "by_rule": {
+    "FAIL PV-01 schema": 1
+   }
+  },
+  "story_lint_fail": 0,
+  "same_as_last_snapshot": true
+ }
+}

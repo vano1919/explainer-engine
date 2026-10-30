@@ -1,0 +1,147 @@
+{
+ "note": "B2 agents grouped by the model in their transcript; units as in cost.py. Source ids are task ids of the B2 workers.",
+ "by_model": {
+  "claude-haiku-5-5": {
+   "workers": 7,
+   "units": 9851530,
+   "active_s": 1611
+  },
+  "claude-sonnet-5-5": {
+   "workers": 19,
+   "units": 9231771,
+   "active_s": 1834
+  }
+ },
+ "agents": {
+  "a0ab23ad1acb1f27c": {
+   "model": "claude-haiku-5-5",
+   "units": 2459663,
+   "active_s": 347
+  },
+  "a18be970fc3844652": {
+   "model": "claude-haiku-5-5",
+   "units": 1898522,
+   "active_s": 410
+  },
+  "a1ba8fd96398affc7": {
+   "model": "claude-sonnet-5-5",
+   "units": 3600206,
+   "active_s": 769
+  },
+  "a301cb19f25e7d54a": {
+   "model": "claude-sonnet-5-5",
+   "units": 335771,
+   "active_s": 78
+  },
+  "a3fe29436c5ab8990": {
+   "model": "claude-sonnet-5-5",
+   "units": 176547,
+   "active_s": 29
+  },
+  "a47f36847acd5683c": {
+   "model": "claude-sonnet-5-5",
+   "units": 347427,
+   "active_s": 56
+  },
+  "a4a71cfee85831500": {
+   "model": "claude-sonnet-5-5",
+   "units": 923688,
+   "active_s": 302
+  },
+  "a53172897b2266490": {
+   "model": "claude-sonnet-5-5",
+   "units": 325444,
+   "active_s": 77
+  },
+  "a7c838a3535e6213b": {
+   "model": "claude-sonnet-5-5",
+   "units": 263315,
+   "active_s": 30
+  },
+  "a7f000312bbbd1b13": {
+   "model": "claude-haiku-5-5",
+   "units": 1270410,
+   "active_s": 186
+  },
+  "a85dbe5c8a7694243": {
+   "model": "claude-haiku-5-5",
+   "units": 949818,
+   "active_s": 155
+  },
+  "a8c6f550a2ee1c6f7": {
+   "model": "claude-sonnet-5-5",
+   "units": 267421,
+   "active_s": 31
+  },
+  "a9c6f2308d930a7c1": {
+   "model": "claude-sonnet-5-5",
+   "units": 457049,
+   "active_s": 73
+  },
+  "aa161babfe9c2fbeb": {
+   "model": "claude-sonnet-5-5",
+   "units": 288190,
+   "active_s": 75
+  },
+  "aa793e3b1573a010c": {
+   "model": "claude-haiku-5-5",
+   "units": 1359096,
+   "active_s": 229
+  },
+  "ab0390bc1283d0459": {
+   "model": "claude-sonnet-5-5",
+   "units": 175749,
+   "active_s": 26
+  },
+  "ab34e746af4523396": {
+   "model": "claude-sonnet-5-5",
+   "units": 294891,
+   "active_s": 32
+  },
+  "ab3b460ebb019f3de": {
+   "model": "claude-sonnet-5-5",
+   "units": 319082,
+   "active_s": 38
+  },
+  "ab96c5286ef048806": {
+   "model": "claude-sonnet-5-5",
+   "units": 208737,
+   "active_s": 32
+  },
+  "ac2ff3cf22f132a32": {
+   "model": "claude-haiku-5-5",
+   "units": 1067048,
+   "active_s": 137
+  },
+  "acdf199ac3ce41f41": {
+   "model": "claude-sonnet-5-5",
+   "units": 264390,
+   "active_s": 31
+  },
+  "ae1319176b4a17a38": {
+   "model": "claude-sonnet-5-5",
+   "units": 322792,
+   "active_s": 78
+  },
+  "ae8eb9024f4f0dd07": {
+   "model": "claude-sonnet-5-5",
+   "units": 217404,
+   "active_s": 24
+  },
+  "af31e7d1d3a732b95": {
+   "model": "claude-sonnet-5-5",
+   "units": 178161,
+   "active_s": 25
+  },
+  "af913c2ab98c42b0c": {
+   "model": "claude-sonnet-5-5",
+   "units": 265507,
+   "active_s": 28
+  },
+  "afad86eb8115cc19a": {
+   "model": "claude-haiku-5-5",
+   "units": 846973,
+   "active_s": 147
+  }
+ }
+}

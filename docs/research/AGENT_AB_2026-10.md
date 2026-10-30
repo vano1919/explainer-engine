@@ -19,7 +19,8 @@ call. Data and scripts: `docs/research/agent_ab_2026-10/` (inputs, every stage s
 | `stage_guard` violations across snapshots | 0 | 0 (1 on the repair round, see below) |
 | `production validate` final | 28 FAIL, 60 REVIEW | 27 FAIL, 133 REVIEW |
 | of the FAILs: media / creator gates only | 28 (21 PV-05, 6 PV-47, 1 PV-45) | 14 (9 PV-05, 4 PV-47, 1 PV-45) |
-| of the FAILs: script defects | 0 | 13 (8 PV-11 stale prompts, 2 PV-12, 1 PV-48, 1 PV-37 claim ids, 1 the rule parser did not classify) |
+| of the FAILs: compile not re-run (PV-11 "prompt is missing or stale"; pipeline state, not script content) | 0 | 8 |
+| of the FAILs: script defects | 0 | 5 (2 PV-12, 1 PV-48, 1 PV-37 claim ids, 1 the rule parser did not classify) |
 | REVIEWs PV-44 (beats) / PV-12 (narration) | 2 / 0 | 61 / 47 |
 | Retry rounds, self-reported (`retries.json`, per-worker detail `arm_B/WORKER_REPORTS.md`) | architect 1, writer 4, beats 3, performer 1, editor 4, caster 2, shorts 1 | architect 2, writer 2 on S03 and S07, beats 2 on S04, performer 2, editor 4, caster 2, shorts 3, plus one routed repair |
 | Work cost, input-price units (output x5, cache write x1.25, cache read x0.1; `cost.json`, `cost.py`) | 9.57 M | 9.62 M |

@@ -25,7 +25,7 @@ answered by Claude without his recorded delegation.
 | P3b | პროფესიული კურიკულუმი (სკილები, craft_checklists) | — | S2 Sonnet (კვლევა) → S3 Opus high (ტექსტი) | 3 | — | — | todo | — |
 | P4b | ხმის დირექტორი (ბატარეა, რეესტრი; კონექტორი, REST არა) | P2 | S2 / Sonnet / high | 3 | cmsg_01Hnu5zB86sjUj5GtTgaUkPWVCDmSdPHFKoz1Q5YLQxGKZ | [#45](https://github.com/vano1919/explainer-engine/pull/45) draft | review | cross-review (plan thread); D9 spend_caps casting_credits_max (the creator, before P12a) |
 | P5 | კომპენსატორი, რუკები, HUD | P2, P3b | S2 / Sonnet / high | 3 | — | — | todo | — |
-| P3 | სცენარის ხერხემალი + variant_plan + register_lint | P2, P3b | S2 / Sonnet / high (ქულები Opus) | 4 | — | — | todo | — (A5 = D-81) |
+| P3 | სცენარის ხერხემალი + variant_plan + register_lint | P2, P3b | S2 / Sonnet / high (ქულები Opus) | 4 | — | — | todo | — (A5 = D-79) |
 | P4 | აუდიო-ხერხემალი + sound director | P3, P2, P3b | S3 Opus high → S2 Sonnet high | 4 | — | — | todo | — (D8: გენერატორი მხოლოდ გაზომილი ხარისხით) |
 | P5b | წამყვანების სამყარო (უფასო ნაწილი) | P2, P5, P4b | S3 Opus high → S2 Sonnet high | 4 | — | — | todo | — |
 | P6 | shot router, lane-ები, continuity (D-82) | P2, P5, P4, P3b | S3 Opus high → S2 Sonnet high | 5 | — | — | todo | — |
@@ -50,7 +50,7 @@ answered by Claude without his recorded delegation.
 | A2 | claude | 3D blocking (Blender) და LivePortrait/MuseTalk გეგმაში შევიდეს? | არცერთი კოდში v2-ში (claude) |
 | A3 | claude | პერსონაჟების ხმა როგორ იყოს? | ნარატორი+LTX (claude) |
 | A4 | claude | რუკები და HUD რა სტილით დავხატოთ? | ორივე ფენით (claude) |
-| A5 | creator | Blueprint-ის 7 დეპარტამენტი-აგენტი როგორ ავიღოთ? | D-81 (მუშები + read-only Opus კრიტიკოსი) (claude, delegated by ვანო) |
+| A5 | creator | Blueprint-ის 7 დეპარტამენტი-აგენტი როგორ ავიღოთ? | D-79 (ერთი მთავარი აგენტი + ერთი read-only Opus კრიტიკოსი) (claude, delegated by ვანო) |
 | B1 | claude | პოდის დასრულებისას default stop იყოს თუ terminate? | stop + ხარჯი (claude) |
 | B2 | creator | ~50 გაჩერებულ პოდს რა ვუყოთ? | open |
 | B3 | claude | პოდის Docker image როგორ ჩავკეტოთ? | digest pin (claude) |
