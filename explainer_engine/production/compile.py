@@ -28,7 +28,6 @@ from explainer_engine.world import resolver
 POD_SUFFIX = (" Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted "
               "colour, the same faces, clothes, light and palette. Adult proportions. No text, no letters, no speech bubbles.")
 POD_NEGATIVE = "photo, 3d render, cartoon for children, big heads, text, letters, watermark"
-VISITOR_COSTUME = "muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s"  # the v5 hint (Day 1)
 PEOPLE_WORDS = ("hand", "hands", "fist", "fingers", "palms", "people", "crowd", "strangers", "man", "men", "woman",
                 "sleeve", "coat", "figure", "figures")
 
@@ -67,7 +66,7 @@ def compose(doc: dict, pid: str, pic: dict, world: dict | None = None, staged: d
         sub, _ = subject_with_cast(doc, pic)
         return (pic.get("edit") or sub).strip() + POD_SUFFIX
     sub, people = subject_with_cast(doc, pic)
-    hint = pic.get("costume") or (_visitor_costume(doc) if world["visitors"] else "")
+    hint = pic.get("costume") or _visitor_costume(doc, world)
     prompt = prompt_v2.compose(kind, sub, world, beat, people=people, costume_hint=hint if people else "")
     block = STAGING.prompt_block(doc, pid, staged) if _staged_doc(doc) else ""  # D-69: what stays, what this shot changes
     return f"{prompt}. {block}" if block else prompt
@@ -78,9 +77,14 @@ def _staged_doc(doc: dict) -> bool:
     return (doc.get("look") or {}).get("continuity") == "auto" or any("staging" in s for s in doc.get("segments", []))
 
 
-def _visitor_costume(doc: dict) -> str:
-    """The visitors' clothing words: the episode's ``world.visitor_costume``, else the Day 1 default (audit 2026-10-19)."""
-    return (doc.get("world") or {}).get("visitor_costume") or VISITOR_COSTUME
+def _visitor_costume(doc: dict, world: dict | None = None) -> str:
+    """The visitors' clothing words, from the episode's world only (N-07): its ``world.visitor_costume``, else the codex
+    costume of its resolved visitors' eras; "" when the world has no visitors (no episode's text is a default)."""
+    world = world or world_of(doc)
+    if not world["visitors"]:
+        return ""
+    own = (doc.get("world") or {}).get("visitor_costume")
+    return own or ", ".join(w for v in world["visitors"] for w in v.get("costume", []))
 
 
 def compile_doc(doc: dict) -> dict:

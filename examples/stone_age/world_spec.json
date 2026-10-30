@@ -1,6 +1,7 @@
 {"topic": "100 greatest scientists dropped into the Stone Age",
  "host": {"era": "prehistory", "place": "limestone uplands of south-east Anatolia", "when": "about 10,000 BCE (12,000 years ago)",
           "landscape": ["open steppe", "limestone outcrops", "a river valley", "sparse oak and pistachio"]},
+ "visitor_costume": "muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s",
  "visitors": [{"era": "industrial_victorian", "people": ["newton", "einstein", "curie", "darwin", "tesla", "archimedes", "franklin", "nansen"]}],
  "light_owner": "host",
  "day_arc": [{"beat": 1, "light": "storm_dusk"}, {"beat": 3, "light": "night_fire"}, {"beat": 5, "light": "cold_dawn"}]}
