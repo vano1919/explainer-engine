@@ -25,10 +25,10 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 ## 2. Video, render and export
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
-| P-10 | long duration | 7 min | 5-11 | depth without padding | L/P,T | word budget | outside range = REVIEW, not FAIL |
+| P-10 | long duration | 7 min (animated route: [BP-167](SOURCED_RULES.md)) | 5-11 | depth without padding | L/P,T | word budget | outside range = REVIEW, not FAIL |
 | P-11 | short duration | the length bands of BP-12 | see BP-12 | standalone Shorts; YouTube counts square/vertical videos up to 3 minutes as Shorts (V-25) | L/P,T | script | PV-28 (BP-12 word budget); > 180 s FAIL (not a Short) |
-| P-12 | resolution | 1920x1080 (16:9), 1080x1920 (9:16) | fixed pair | vector art needs no 4K (D-08) | H/F | renderer | ffprobe |
-| P-13 | frame rate | 30, constant | 24, 30 | smooth motion at low cost | M/C | cache key | ffprobe CFR |
+| P-12 | resolution | 1920x1080 (16:9), 1080x1920 (9:16) (animated route: [BP-167](SOURCED_RULES.md)) | fixed pair | vector art needs no 4K (D-08) | H/F | renderer | ffprobe |
+| P-13 | frame rate | 30, constant (animated route: [BP-167](SOURCED_RULES.md)) | 24, 30 | smooth motion at low cost | M/C | cache key | ffprobe CFR |
 | P-14 | video codec | H.264 High, yuv420p, CRF 18, preset medium, +faststart | CRF 16-23 | quality vs size (D-08) | H/C | disk | ffprobe |
 | P-15 | audio codec | AAC-LC stereo, bitrate and sample rate per BP-63 | see BP-63 | YouTube's recommended upload settings (V-26); `assemble.AUDIO_CODEC` is the one export line for the video and the Shorts | H/F | mix | ffprobe |
 | P-16 | container, names | mp4; `<slug>_<yyyymmdd>_<kind>.mp4` | | traceability | H/F | manifest | regex |
@@ -104,7 +104,7 @@ CLI flag > episode file > channel profile > built-in default ([PIPELINE_ARCHITEC
 ## 8. Shorts, publishing and cost
 | ID | Parameter | Default | Allowed | Purpose, evidence | Conf/Status | Depends on | Validation |
 |---|---|---|---|---|---|---|---|
-| P-100 | Shorts per long-form | 2-3, only if the material supports distinct ideas | 0-3 | D-05 | M/P | dossier | each passes standalone checklist |
+| P-100 | Shorts per long-form | 2-3, only if the material supports distinct ideas (animated route: [BP-167](SOURCED_RULES.md)) | 0-3 | D-05 | M/P | dossier | each passes standalone checklist |
 | P-101 | Short loudness | integrated target, true peak and the short-term cap per BP-61; no loudness-range gate | see BP-61 | short-form rules (EBU R 128 s1); measured on the FINAL Short, after cues and music | M/C | | `qa/targets.py` profile `short`, `production/shorts.py` |
 | P-102 | Short safe area | the ad safe zone of BP-29 | see BP-29 | platform UI overlays | M/C | | safe-area check |
 | P-103 | Short captions | phrase captions in blocks, at the reading speed of BP-13 | see BP-13 | silent viewing | M/P | timings | check |

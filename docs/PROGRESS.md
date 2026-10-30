@@ -3392,3 +3392,15 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Test red on main -> green: `tests/unit/test_admission_protected.py` (the path is the one `generator_gate` writes; Edit/Write/echo refused,
   cat free; a stale word refused, a fresh one unlocks only that file; the `admit` command passes the guard). No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 — plan_v2 wave 2, T4 PR-3: BP-167 delivery defaults of the animated route
+- His word of 2026-10-30 16:13 UTC (item 3, yes to the delivery numbers), house D-59: `standards/sourced_rules.json` `BP-167` {long_minutes 15, width 2560, height 1440, fps 24, shorts 5}, status house, severity REVIEW,
+  scoped by the coordinator (17:23 UTC) to the **animated route only**. One reader, `core/delivery.py`; `core/store.EpisodeJob.create(fps=None)` takes the delivery fps when a job names none (a named fps is kept).
+  `docs/SOURCED_RULES.md` regenerated; `docs/VIDEO_PARAMETER_SPEC.md` P-10/P-12/P-13/P-100 point to BP-167 without restating a number (the older values stay as the still route's).
+- Tests (all fail on main: no module/row): `tests/unit/test_delivery_defaults.py` (7: house + dated, 15 min, 2560x1440, 24 fps equal to BP-139's native and `film_shots.FPS`, five Shorts, job default and named fps, and that the
+  still route and the schema default are unchanged).
+- OPEN (not edited, TECH_QUESTIONS questions 29-31 (project files)): `production_script.schema.json` `episode.fps` `default: 30` inside `enum [24,25,30,60]` (a default change is a schema edit, a version bump to be reported before any edit, invariant 7);
+  the still route (`timing.py`, `assemble.py`, `motion_lint.py`, `finish/speed.py`); the Shorts' frame rate (`clip_shorts.FPS` 30) and size; PV-34's count for five Shorts. Width, height, minutes and shorts have no consumer yet (P7/P8).
+- Note on #88: the moved `select_screen` tests run through `pytest.ini` `testpaths` (CI and a bare `pytest -q` run them; `pytest tests` does not), TECH_QUESTIONS 32.
+- No pod, no API call, nothing deleted.
+- Decision log: none moved (a registry row).

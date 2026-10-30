@@ -6251,6 +6251,28 @@
    ],
    "next_step": "two source types (A/B/C) or the creator's dated word; none of these becomes FAIL before that (D-59)",
    "supersedes": []
+  },
+  {
+   "id": "BP-167",
+   "area": "delivery",
+   "status": "house",
+   "severity": "REVIEW",
+   "statement": "Delivery defaults of an animated episode (the Blueprint route, D-77/D-80/D-85): the long video's target length, its frame size, its frame rate and the number of Shorts. A job or script that names its own fps or size keeps it; the still-picture route (D-43) and its shipped 30 fps episodes are not changed by this row. VIDEO_PARAMETER_SPEC P-10, P-12, P-13 and P-100 carry the older values of the still route.",
+   "thresholds": {
+    "long_minutes": 15,
+    "width": 2560,
+    "height": 1440,
+    "fps": 24,
+    "shorts": 5
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/core/delivery.py",
+    "explainer_engine/core/store.py"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-10-30 16:13 UTC (project chat cmsg_01Hnu5zB86sjUj5GtTgaUkPW5f8NsnbZwPhLsKQESi7SXS item 3: yes to the delivery numbers); animated route only on the coordinator's scoping of 2026-10-30 17:23 UTC",
+   "next_step": "the still route, the Shorts' frame rate, PV-34's count for five Shorts and the production_script schema default are open (TECH_QUESTIONS Q-29..Q-31)"
   }
  ]
 }
