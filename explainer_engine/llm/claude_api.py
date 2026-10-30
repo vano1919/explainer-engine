@@ -778,7 +778,7 @@ class ClaudeAPI:
         root = Path(req.tools_root).resolve()
         msgs = list(params["messages"])
         total, tot_use = 0.0, {"input": 0, "output": 0, "cache_read": 0, "write_5m": 0, "write_1h": 0, "searches": 0}
-        turn, prev_read = 0, 0
+        turn, prev_read, prev_prompt = 0, 0, 0
         try:
             for turn in range(1, req.max_turns + 1):
                 sent = msgs
@@ -788,8 +788,8 @@ class ClaudeAPI:
                 p = {**params, "messages": _with_breakpoint(sent, req.cache_ttl)}
                 resp, r_used, usd, use = self._paid(req, r, p, f"{req.id}#t{turn}-{uuid.uuid4().hex[:4]}")
                 total += usd
-                cold = cache_guard(turn, use, prev_read)
-                prev_read = use["cache_read"]
+                cold = cache_guard(turn, use, prev_read, prev_prompt)
+                prev_read, prev_prompt = use["cache_read"], use["input"] + use["cache_read"] + use["write_5m"] + use["write_1h"]
                 wants_tools = resp.stop_reason in ("tool_use", "pause_turn")
                 if wants_tools:   # F6: the paid turn is in the transcript before any stop below
                     msgs.append({"role": "assistant", "content": resp.content})
@@ -954,14 +954,16 @@ def load_job(path: Path) -> list[Request]:
 
 CACHE_GUARD_FROM_TURN = 3       # the first turns have little history to lose
 CACHE_GUARD_MIN_SHARE = 0.6     # (cache read + cache written) / all prompt tokens of a turn
-CACHE_GUARD_MIN_READ_SHARE = 0.5  # cache READS / all prompt tokens: writes alone do not count (a full miss writes the whole history again)
+CACHE_GUARD_MIN_READ_SHARE = 0.5  # cache READS / the previous turn's whole prompt: a hit reads at least that prefix; writes do not count
 CACHE_GUARD_STUCK_INPUT = 1000  # fresh input tokens that a cache read of the same size as last turn's cannot explain
 
 
-def cache_guard(turn: int, use: dict, prev_read: int) -> str | None:
+def cache_guard(turn: int, use: dict, prev_read: int, prev_prompt: int = 0) -> str | None:
     """The tool loop's self-check of the `cached` assumption behind its estimate: from turn 3, a turn whose prompt is mostly fresh
     input, or whose cache read did not grow while fresh input is large (the read stuck at the system prefix), is the state that cost
-    $5.02. Returns the reason, or None."""
+    $5.02. A turn whose cache read is under half of the previous turn's whole prompt (``prev_prompt``) is a full miss, the history
+    written again every turn (F9); it is measured against the previous prompt, not this one, so one big tool result is no miss.
+    Returns the reason, or None."""
     prompt = use["input"] + use["cache_read"] + use["write_5m"] + use["write_1h"]
     if turn < CACHE_GUARD_FROM_TURN or prompt < 1024:   # below the API's minimum cacheable prompt there is nothing to judge
         return None
@@ -971,8 +973,9 @@ def cache_guard(turn: int, use: dict, prev_read: int) -> str | None:
     if use["cache_read"] <= prev_read and use["input"] >= CACHE_GUARD_STUCK_INPUT:
         return (f"the cache read stayed at {use['cache_read']} tokens while {use['input']} fresh input tokens were billed "
                 "(the history is not being cached)")
-    if use["cache_read"] / prompt < CACHE_GUARD_MIN_READ_SHARE:   # F9: a full miss (all written, nothing read) is the dearest mode
-        return (f"only {use['cache_read'] / prompt:.0%} of the prompt was read from cache (a miss re-writes the history every turn)")
+    if prev_prompt >= 1024 and use["cache_read"] < CACHE_GUARD_MIN_READ_SHARE * prev_prompt:   # F9: a full miss is the dearest mode
+        return (f"only {use['cache_read'] / prev_prompt:.0%} of the previous turn's prompt was read from cache (a miss re-writes the "
+                "history every turn)")
     return None
 
 

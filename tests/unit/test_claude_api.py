@@ -1054,11 +1054,16 @@ def ResponseCacheFresh(a):
 def test_f9_a_full_cache_miss_stops_the_loop_at_turn_3(tmp_path):
     miss = [tool_turn("list_dir", {"path": "."}, f"m{i}", inp=100, read=0, write=20000 + 2000 * i) for i in range(10)]
     a = api(*miss)
-    with pytest.raises(ca.CacheCold, match=r"turn 3.*only 0% of the prompt was read from cache"):
+    with pytest.raises(ca.CacheCold, match=r"turn 3.*only 0% of the previous turn's prompt was read from cache"):
         a.complete(req(tools_root=str(tmp_path), max_turns=20))
     assert len(a._client.calls) == 3
-    assert ca.cache_guard(4, {"input": 100, "cache_read": 9000, "write_5m": 10000, "write_1h": 0}, 8000) is not None   # 47 % read
-    assert ca.cache_guard(4, {"input": 100, "cache_read": 11000, "write_5m": 9000, "write_1h": 0}, 8000) is None
+    assert ca.cache_guard(4, {"input": 100, "cache_read": 9000, "write_5m": 10000, "write_1h": 0}, 8000, 19000) is not None  # 47 % of 19k
+    assert ca.cache_guard(4, {"input": 100, "cache_read": 11000, "write_5m": 9000, "write_1h": 0}, 8000, 19000) is None
+
+
+def test_f9_one_big_tool_result_is_not_taken_for_a_miss():
+    # the whole previous prompt was read; this turn only added a large (capped) tool result, so most of THIS prompt is a write
+    assert ca.cache_guard(3, {"input": 100, "cache_read": 15000, "write_5m": 20000, "write_1h": 0}, 9000, 15000) is None
 
 
 def test_f10_the_last_turn_is_priced_at_max_tokens_and_the_estimate_says_so(env, tmp_path):
