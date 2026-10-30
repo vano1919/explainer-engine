@@ -3519,4 +3519,12 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - `explainer_engine/cloud/runpod.py`: new `--rules <episode_rules.json>` flag; `create` calls `standards.rulebook.gate(rules, "paid_assets", <production_script.json next to it>)` (the call `production/paint.py` makes) and refuses before any API call on a FAIL (BLOCK or undecided REVIEW are FAIL at `paid_assets`), printing the rule ids; `--rules` with `--test` is refused (a paid test has no episode rulebook). `docs/ORCHESTRATION.md` OR-12 "Enforced by" cell names it.
 - Test: `tests/unit/test_episode_rules.py::test_create_runs_the_paid_assets_gate_when_rules_are_given_and_refuses_a_block`.
 - OPEN: `--rules` is optional until the ledger meta records an episode. No pod, no API call, nothing deleted.
+## 2026-10-30 T13: OR-33 proof job and OR-34 audit job files (estimate only)
+- New `explainer_engine/llm/jobs/p12_stream_proof.json` (job `result_check`, class `simple-question`, Haiku, low, `max_tokens` 200,
+  prompt "Reply with the single word READY.") and `explainer_engine/llm/jobs/or34_full_repo_audit.json` (job `result_check`, class
+  `whole-project-plan` on Fable xhigh, `max_tokens` 32000, read-only repo tools, the plan's three-question prompt).
+- `claude_api estimate`: proof worst_usd 0.0001; audit worst_usd 3.2169 (cached bound; 9.66 uncached, 11.51 on a miss), both fit the
+  job line. `run` was never called; nothing paid.
+- Test: `tests/unit/test_claude_api.py::test_the_committed_p12_jobs_are_valid_and_the_proof_is_tiny`.
+- OPEN: the `<main sha>` in the audit prompt is filled at the creator's go. No pod, no API call, nothing deleted.
 - Decision log: none moved.
