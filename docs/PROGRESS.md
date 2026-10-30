@@ -3095,3 +3095,23 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 
 ## 2026-10-30 — Claude API money lines: plan v2 gets its own line ($28), a line may not be lower than its spend
 ვანო chose option 0 ("max, 64k, about 6 calls") on the plan thread's decision card, 2026-10-30 11:23 UTC (cmsg_01Hnu5zB86sjUj5GtTgaUkPWYNYok241qwy43eZsfEZQe6); earlier at 10:01 UTC he allowed raising a ceiling by up to 30 % for the plan (cmsg_01Hnu5zB86sjUj5GtTgaUkPWNCYsuH3FgTVKXhhNQpbKyd). `config/spend_caps.json` `claude_api.jobs`: J1b 8 -> 5.02 (its $5.02 spent stays covered), J6 15 -> 0, J4 5 -> 2.98, reserve 24 -> 16, new `plan_v2` 28; the lines still add up to $95. `claude_api status` prints `lines_below_spent`, and a test pins the sum and J1b's cover.
+
+## 2026-10-30 12:00 UTC: D9, the creator's answers in `config/` (no pod, no money)
+
+- ვანო, 2026-10-30 11:56 UTC, message `cmsg_01Hnu5zB86sjUj5GtTgaUkPW5XNWqTbsYwYjr1qt3UyQhT`: "ყველაფერზე კი", that is option a on every question of
+  `QUESTIONS_FOR_VANO_2026-10-30.md`. This change carries questions 10-13 and the stale pod; the merge of this PR is his recorded word for the
+  protected files (`config/spend_caps.json`, `config/model_routing.json`).
+- `config/spend_caps.json`: `runpod.min_balance_left_usd` 0.25 -> 1.00 (question 13; `create`'s preflight and the watchdog already read it);
+  new `casting.casting_credits_max` 1500 ElevenLabs credits (question 11; reader `spend_caps.casting_credits_max()`); new `gemini_api`
+  `max_usd` 10 per calendar month (question 10; reader `spend_caps.gemini_api()`); `97vn2t443puxxl` removed from `keep_stopped_pods`
+  (`runpod check` reported it gone).
+- `explainer_engine/llm/gemini_api.py`: no client yet; `reserve(estimate, spent_month)` refuses past 80 % of the ceiling, `complete` always
+  refuses. The picture calls keep `per_episode.gemini_usd`.
+- `config/model_routing.json` `protected_files` gets `config/channel_voices.json` (60 minutes; question 12): a tool edits it only on his
+  recorded `protected_config` word, beside the `channel_voice` word that `voice_check.register` asks for. The docstring of `register` said the
+  file was not protected; it now says it is.
+- Tests: `tests/unit/test_d9_config.py` (7: the 1500, the 10 dollars and the 80 % stop, no line = refusal, create refuses at 0.90 left, the
+  pod id gone, the channel-voices hook with a stale and a fresh word). Each was mutation-checked.
+- The shared fake RunPod account of `tests/unit/test_runpod.py` held a balance of $1.00, which is now below `min_balance_left_usd` plus a
+  test pod's `--max-usd`; 16 cloud tests were refused by the floor instead of testing what they name. The fake's balance is now a
+  `balance` attribute defaulting to $20.00; no assertion changed (the refusal itself is `test_min_balance_left_is_one_dollar_...`).

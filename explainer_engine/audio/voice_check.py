@@ -136,9 +136,9 @@ def register(doc: dict, entry: dict, creator_ref: str | None = None, root=None) 
     ``channel_voice`` record, younger than ``WORD_MINUTES``, in ``jobs/creator_ok.jsonl`` for the voice that becomes the
     channel voice (a replacement) or the standing voice that is changed (``python -m explainer_engine.governance ok
     channel_voice <voice_id> <message id> "<his words>"``). The file is plain JSONL like the other actions' (as strong as
-    they are, not tamper-evident), and ``config/channel_voices.json`` is not a protected file: a direct edit still bypasses
-    this function. The name, the note and the first channel voice of a role need no
-    word. Anything else raises ContractError."""
+    they are, not tamper-evident). ``config/channel_voices.json`` is a protected file since 2026-10-30 (governance
+    ``protected_files``, the creator's word, ``protected_config``): a direct edit by a tool needs that word too. The
+    name, the note and the first channel voice of a role need no word. Anything else raises ContractError."""
     new = json.loads(json.dumps(doc))
     ref = creator_ref.strip() if isinstance(creator_ref, str) else None
     if creator_ref is not None and not ref:

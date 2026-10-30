@@ -45,6 +45,23 @@ def paid_test(name: str) -> dict[str, float]:
     return {k: float(v) for k, v in t.items() if k.endswith("_usd")}
 
 
+def casting_credits_max() -> float:
+    """The ElevenLabs credits one casting session may spend (``casting.casting_credits_max``, the creator 2026-10-30)."""
+    v = load().get("casting", {}).get("casting_credits_max")
+    if not isinstance(v, (int, float)) or isinstance(v, bool) or v <= 0:
+        raise OverCeiling("no casting_credits_max in config/spend_caps.json: casting spends nothing without the creator's number")
+    return float(v)
+
+
+def gemini_api() -> dict:
+    """The Gemini API line (``gemini_api``: max_usd per calendar month). Missing or not a positive number = refused."""
+    g = load().get("gemini_api")
+    v = g.get("max_usd") if isinstance(g, dict) else None
+    if not isinstance(v, (int, float)) or isinstance(v, bool) or v <= 0:
+        raise OverCeiling("no gemini_api max_usd in config/spend_caps.json: the Gemini API spends nothing without the creator's line")
+    return g
+
+
 def runpod() -> dict:
     return load()["runpod"]
 
