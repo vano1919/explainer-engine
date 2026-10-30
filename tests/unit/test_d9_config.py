@@ -81,6 +81,14 @@ def test_min_balance_left_is_one_dollar_and_create_refuses_below_it(monkeypatch)
     assert not any("min_balance_left_usd" in w for w in ok), ok
 
 
+def test_min_balance_refusal_at_the_exact_boundary(monkeypatch):
+    monkeypatch.setattr(R, "check", lambda api, now: {"problems": []})
+    at = R.preflight_create(_Api(20.00), max_usd=19.00, max_hours=1.0, gpu="default", now=10**6)    # exactly 1.00 left
+    assert not any("min_balance_left_usd" in w for w in at), at
+    past = R.preflight_create(_Api(20.00), max_usd=19.01, max_hours=1.0, gpu="default", now=10**6)  # 0.99 left
+    assert any("min_balance_left_usd 1.0" in w for w in past), past
+
+
 # -- the stale pod id ---------------------------------------------------------------------------------------------------------
 
 def test_the_gone_pod_is_no_longer_kept():
