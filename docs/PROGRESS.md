@@ -3226,3 +3226,4 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Tests (`tests/unit/test_spend_caps_single_source.py`, 2 new, red before, green after); `test_docs` and `docs_lint` pass.
 - `CLOUD_RUNBOOK.md` line 18 is marked history and CR-01 says boot (TMR manifest) pods are retired by N-01 (`preflight_create` refuses a body whose `cmd` is not `pod_wrapper.sh`; `boot_cmd` stays a text builder). Test `test_runbook_no_longer_says_boot_pods_run`. `test_cloud_stop_paths.py:344` was already stamped by T1 in #70.
 - Closes Fable F-12; Argon-1 F-16, Q2 row 7.
+- T3-5 review fixes (T2, PR #80): the two stale "prepared locally" routing rows (CP-07/08/13, CP-06/15) are not in this PR; the Gemini cell names `per_episode.gemini_usd` and the RunPod cell the `runpod` lines of `config/spend_caps.json`; the spent cell says "of the then US$10 cap"; P-110 names the key. (T3-6's routing row is checked for the same duplicates before it opens.)
