@@ -2896,3 +2896,10 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 
 ## 2026-10-30 08:10 UTC — P0d: key alias `EE_ANTHROPIC_API_KEY`
 The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code account auth). `claude_api.api_key()` now takes the first non-empty of `ANTHROPIC_API_KEY`, `EE_ANTHROPIC_API_KEY`; used by `client()`, `status`, `estimate`. Test: `test_the_key_can_come_from_the_alias_name`.
+
+## 2026-10-30 09:55 UTC: CR-12 wording, the watchdog is an hours-scale backstop (audit pass 1, B4; docs only)
+
+- Evidence (audit 08:35 UTC): the recorded scheduled runs were 4-7 h apart (29 runs in 6 days under `*/30`, none under `*/10` by 08:19 on 10-30). CR-12
+  and the stop-path table now say so, and that the session dispatches the watchdog before every create and every 10 minutes while a pod relies
+  on it, so the stop is the watchdog's code with the session's timing. Which option decides pod E's pass criterion (session dispatch, an external timer
+  with an `actions:write` token, or "first run after DONE") stays the OR-24 thread's call; nothing in code changed.
