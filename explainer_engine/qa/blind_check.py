@@ -22,7 +22,8 @@ from pathlib import Path
 
 # KG-23: the wldnk style as seen on the approved eras sheet (eras_v5_1750_bf16.jpg, "იდეალურია", ვანო 2026-10-24) and in the
 # captions of its training set. Each item is answered yes / no / ? for every picture; the order is the order of importance.
-STYLE_SPEC = {
+# RETIRED by D-80 (2026-10-26): kept as history, unchanged, and as the fixture of the mechanics' tests; nothing live reads it.
+STYLE_SPEC_WLDNK_RETIRED = {
     "line": "bold, uneven, hand-inked black outlines on every figure, object and background shape; the thickness varies "
             "within one stroke (no thin uniform vector line, no painted shapes without an outline)",
     "figures": "lanky, angular cartoon bodies with thin limbs, big heads and noses, bulging round eyes with tiny pupils and "
@@ -34,9 +35,21 @@ STYLE_SPEC = {
     "detail": "a busy world: props, clutter and background detail drawn with the same ink line as the figures",
     "light": "one clear light source with a warm-cool contrast",
 }
-STYLE_SCORE_MIN = 0.557   # KG-23 auto half: DINOv2 vs the 20 eras cells (compose/style_score), the weakest cell against the other 19
+# Suspended by D-80 (2026-10-26): the retired spec was measured on the banned wldnk look (KG-23, docs/KEYFRAME_GATE.md); the xworld_v2
+# spec is written only after the creator rates the new look (OR-22). While suspended the live spec is empty, `compare` and
+# `style_verdict` answer REVIEW, and `keyframe_gate` shows its KG-22 style row as REVIEW. The one home of the flag.
+STYLE_SPEC: dict = {}
+STYLE_SUSPENDED = True
+# kept as a name (history), unused while suspended: KG-23 auto half, DINOv2 vs the 20 eras cells (compose/style_score), the weakest
+# cell against the other 19; calibrated on the banned look, so a score in either direction says nothing about xworld_v2
+STYLE_SCORE_MIN = 0.557
 
-DESCRIBE_RULES = f"""You describe one picture for a checker that never sees it. You are NOT told what the picture was meant to show.
+
+def describe_rules(spec: dict) -> str:
+    """The describer's instructions; the style item and the ``style`` answer key exist only when a spec is given."""
+    style_rule = f"7. Answer each style item with yes, no or ?: {json.dumps(spec, ensure_ascii=False)}\n" if spec else ""
+    style_key = f'\n  "style": {{{", ".join(f'"{k}": "yes|no|?"' for k in spec)}}},' if spec else ""
+    return f"""You describe one picture for a checker that never sees it. You are NOT told what the picture was meant to show.
 Rules:
 1. Describe only what is visible. Never guess a story, a name or an intention.
 2. Count every kind of person, animal and object by scanning the whole picture corner to corner, including the background
@@ -49,14 +62,16 @@ Rules:
    to "uncertain" saying what is unclear. Never resolve doubt by guessing.
 6. Report written text or letters, numbers or lines drawn over the picture, anything floating without support, and broken
    anatomy (extra or missing limbs or fingers, a thing stuck in a face).
-7. Answer each style item with yes, no or ?: {json.dumps(STYLE_SPEC, ensure_ascii=False)}
-Answer with JSON only:
+{style_rule}Answer with JSON only:
 {{"people": [{{"look": str, "where": str, "action": str, "on": str}}],
   "animals": [{{"name": str, "count": int|"?", "where": str}}],
   "things": [{{"name": str, "count": int|"?", "where": str}}],
-  "setting": str, "light": str, "text": bool, "overlays": bool, "floating": [str], "anatomy": [str],
-  "style": {{{", ".join(f'"{k}": "yes|no|?"' for k in STYLE_SPEC)}}},
+  "setting": str, "light": str, "text": bool, "overlays": bool, "floating": [str], "anatomy": [str],{style_key}
   "uncertain": [str]}}"""
+
+
+DESCRIBE_RULES = describe_rules(STYLE_SPEC)
+DESCRIBE_RULES_WLDNK_RETIRED = describe_rules(STYLE_SPEC_WLDNK_RETIRED)
 
 # KG-25: words that name the same kind of thing; kept short on purpose (a missing synonym gives a REVIEW, never a false PASS)
 SYNONYMS = {"bus": {"bus", "coach", "school bus", "minibus"}, "building": {"building", "house", "skyscraper", "tower",
@@ -92,11 +107,13 @@ def _named_in_scene(text: str, scene: str) -> bool:
     return any(re.search(rf"\b{re.escape(w.rstrip('s'))}", scene) for w in words)
 
 
-def compare(card: dict, desc: dict, scene: str = "") -> dict:
+def compare(card: dict, desc: dict, scene: str = "", *, spec: dict | None = None) -> dict:
     """KG-25: the description against the contract. FAIL = a hard mismatch; REVIEW = a "?" or something the code cannot
     match, which gets a second, single-question look (KG-26) before anyone sees the picture. ``scene`` = the scene text:
     a floating thing it names is meant to float (KG-27); a named thing counted 0 is a REVIEW (the describer may have used
-    another noun), never a FAIL."""
+    another noun), never a FAIL. ``spec`` is the style spec (default ``STYLE_SPEC``); with none, the style half is suspended
+    (D-80) and says so in one REVIEW row, so a result is never a silent PASS."""
+    spec = STYLE_SPEC if spec is None else spec
     fails, reviews = [], []
     items = list(desc.get("things", [])) + list(desc.get("animals", []))
     for t in card.get("things", []):
@@ -134,7 +151,10 @@ def compare(card: dict, desc: dict, scene: str = "") -> dict:
     for f in desc.get("anatomy", []):
         fails.append({"code": "KG-25", "what": f"anatomy: {f}", "want": "whole", "got": f})
     style = desc.get("style", {})
-    for k in STYLE_SPEC:
+    if not spec:
+        reviews.append({"code": "KG-23", "what": "style spec suspended by D-80", "want": "a spec rated by the creator on xworld_v2",
+                        "got": "none"})
+    for k in spec:
         v = str(style.get(k, "?")).lower()
         if v == "no":
             fails.append({"code": "KG-23", "what": f"style {k}", "want": "yes", "got": "no"})
@@ -153,11 +173,15 @@ def second_look(item: dict) -> str:
             "Answer with a number, yes or no, and one short reason.")
 
 
-def style_verdict(score: float, desc_style: dict) -> str:
-    """KG-23: both halves must pass. The auto score alone passed flat vector frames (2026-10-25: 0.56-0.69)."""
-    if score < STYLE_SCORE_MIN or any(str(desc_style.get(k, "?")).lower() == "no" for k in STYLE_SPEC):
+def style_verdict(score: float, desc_style: dict, *, spec: dict | None = None) -> str:
+    """KG-23: both halves must pass. The auto score alone passed flat vector frames (2026-10-25: 0.56-0.69). While the style is
+    suspended (D-80, no spec) the answer is REVIEW whatever the score: 0.557 was calibrated on the banned look."""
+    spec = STYLE_SPEC if spec is None else spec
+    if not spec:
+        return "REVIEW"
+    if score < STYLE_SCORE_MIN or any(str(desc_style.get(k, "?")).lower() == "no" for k in spec):
         return "FAIL"
-    if any(str(desc_style.get(k, "?")).lower() != "yes" for k in STYLE_SPEC):
+    if any(str(desc_style.get(k, "?")).lower() != "yes" for k in spec):
         return "REVIEW"
     return "PASS"
 

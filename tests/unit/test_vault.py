@@ -135,3 +135,13 @@ def test_the_config_names_the_approved_style_lora_as_critical():
     assert V.is_critical("lora_plan_2026-10-22/wldnk_style_v1.0/wldnk_style_v1.0.safetensors", cfg)
     assert V.is_critical("scene_lora_2026-10-24/train_v1/output/x.safetensors", cfg)
     assert not V.is_critical("episode1/final/video.mp4", cfg)
+
+
+def test_the_live_xworld_lora_and_datasets_are_critical():
+    cfg = V.config()
+    assert V.is_critical("lora_plan_2026-10-26/train_xworld_v2/output/xworld_v2_000003000.safetensors", cfg)
+    assert V.is_critical("lora_plan_2026-10-26/train_xworld_v2/code/vault_x.py", cfg)
+    assert V.is_critical("lora_plan_2026-10-26/train_xworld_v1/output/xworld_v1.safetensors", cfg)
+    assert V.is_critical("lora_plan_2026-10-26/dataset_xworld_v1/manifest.json", cfg)
+    assert V.is_critical("lora_plan_2026-10-26/dataset_xworld_v2/img_0001.png", cfg)
+    assert V.is_critical("lora_plan_2026-10-26/caption_xworld_v1/captions_reviewed.jsonl", cfg)

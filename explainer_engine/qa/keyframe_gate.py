@@ -22,6 +22,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+from explainer_engine.qa.blind_check import STYLE_SUSPENDED  # one home for the D-80 flag
+
 KINDS = ("keyframe", "nextpose", "cut")
 MAX_TRIES = 3          # KG-14: three seeds, then the prompt is fixed, never an endless redraw
 RETRAIN_AT = 15        # KG-15: cases of one error type on one LoRA before a retraining is proposed (house, 2026-10-24)
@@ -117,11 +119,28 @@ def single_prompt(q: dict) -> str:
     return f"Look at the whole picture carefully, corner to corner. {q['q']} Answer with {kind} only."
 
 
+KG22_SUSPENDED = ("DINOv2 reference set is the retired wldnk eras sheet (D-80); recalibrate on xworld_v2 references on the P12b pod")
+
+
+def kg22_row() -> dict:
+    """The style row of Claude's table. While the style is suspended (D-80) it is a REVIEW, never a yes/no about the retired eras
+    sheet, whatever any score says."""
+    if STYLE_SUSPENDED:
+        return {"code": "KG-22", "status": "REVIEW", "text": KG22_SUSPENDED}
+    return {"code": "KG-22", "status": "ASK",
+            "text": "Same line, texture, colour depth and detail as the approved eras sheet?"}
+
+
+def kg22_row_text() -> str:
+    r = kg22_row()
+    return (f"| KG-22 | REVIEW: {r['text']} | REVIEW | |" if r["status"] == "REVIEW" else f"| KG-22 | {r['text']} | yes | |")
+
+
 def review_table(card: dict, image: str) -> str:
     """KG-22: Claude's own read of a picture before the creator sees it: every gate question as a row to fill with what
     the picture shows, plus the style row against the approved eras sheet. A picture is shown only with its filled table."""
     rows = [f"| {q['code']} | {q['q']} | {q['expect']} | |" for q in questions(card)]
-    rows.append("| KG-22 | Same line, texture, colour depth and detail as the approved eras sheet? | yes | |")
+    rows.append(kg22_row_text())
     return (f"### {card['id']} · `{image}`\n\n| ID | Check | Expected | Seen |\n|---|---|---|---|\n" + "\n".join(rows) + "\n")
 
 

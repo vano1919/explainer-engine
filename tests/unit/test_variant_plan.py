@@ -1,5 +1,5 @@
 """The variant planner (Blueprint P3, VP-01..VP-18): dynamics is the one place that counts lane shares; every check fires on a
-built counter-example; cost is UNKNOWN until measured and never guessed; the Napoleon example scores as designed (V1 90, V2 60)."""
+built counter-example; cost is UNKNOWN until measured and never guessed; the Napoleon example scores as designed (V1 70, V2 70: P5 landed, KEYFRAME_LTX waits for P6)."""
 
 from __future__ import annotations
 
@@ -137,16 +137,44 @@ def test_vp11_each_missing_lane_is_one_finding_naming_its_phase_and_the_table_is
     segs = [seg("S01", blk("map_pure", 10, archetype=1), blk("map_pure", 10, archetype=2), blk("compensator", 10, archetype=8),
                 blk("compensator", 10, archetype=9), blk("host", 10), blk("scene", 10, who="a"))]
     found = VP.lane_findings(segs)
-    assert sorted(f["where"] for f in found) == ["COMPENSATOR", "HOST_COMMENTARY", "MAP"]
+    assert sorted(f["where"] for f in found) == ["HOST_COMMENTARY", "KEYFRAME_LTX:full"]   # the scene block needs a keyframe clip
     assert all(f["severity"] == "REVIEW" for f in found)
-    assert "P5" in next(f["detail"] for f in found if f["where"] == "MAP")
+    assert "P5b" in next(f["detail"] for f in found if f["where"] == "HOST_COMMENTARY")
+    assert "P6" in next(f["detail"] for f in found if f["where"] == "KEYFRAME_LTX:full")
     phases = {p["id"] for p in json.loads((ROOT / "docs" / "blueprint" / "phases.json").read_text(encoding="utf-8"))["phases"]}
     for key, info in VP.LANES.items():
         if info["available"]:
-            assert (ROOT / info["evidence"]).exists(), key
+            assert (ROOT / info["evidence"]).is_file(), key   # a file that implements the lane, never a folder
         else:
             assert info["phase"] in phases, key
-    assert VP.lane_findings([seg("S01", blk("scene", 10, who="a"), blk("hold", 5), blk("compensator", 5, archetype=8))]) == []
+    # until a pod script under explainer_engine/training/pods/ names LTX-2.5 or Wan 2.2 and passes runpod dryrun (OR-21)
+    for tier in ("light", "full"):
+        assert not VP.LANES[f"KEYFRAME_LTX:{tier}"]["available"] and VP.LANES[f"KEYFRAME_LTX:{tier}"]["phase"] == "P6", tier
+    assert VP.LANES["MAP"]["available"] and VP.LANES["COMPENSATOR"]["available"]   # P5 landed: maps/render.py, edit/visual_compensator.py
+    assert VP.lane_findings([seg("S01", blk("hold", 5), blk("compensator", 5, archetype=8))]) == []   # lanes that exist in code
+    assert [f["where"] for f in VP.lane_findings([seg("S01", blk("scene", 10, who="a"), blk("hold", 5))])] == ["KEYFRAME_LTX:full"]
+
+
+def test_row_usd_reads_the_job_speeds_schema_written_by_runpod_cost():
+    row = {"kind": "pod", "job": "ltx_clip", "units": 100, "card": "NVIDIA A40"}
+    speeds = {"version": 1, "jobs": {"ltx_clip": {"unit": "clip", "rows": {"NVIDIA A40": {"s_per_unit": 10.0, "usd_per_unit": 0.0011111}}}}}
+    usd, basis = VP._row_usd(row, speeds)
+    assert usd == pytest.approx(100 * 0.0011111, abs=1e-6) and basis == "measured"
+    assert VP._row_usd({"kind": "pod", "job": "ltx_clip", "units": 100}, {"jobs": {}}) == (None, "unknown")
+    assert VP._row_usd(dict(row, card="NVIDIA L40S"), speeds) == (None, "unknown")           # a card that was never measured
+    one = {"jobs": {"ltx_clip": {"rows": {"NVIDIA A40": {"s_per_unit": 10.0, "usd_per_unit": 0.002}}}}}
+    assert VP._row_usd({"kind": "pod", "job": "ltx_clip", "units": 10}, one)[0] == pytest.approx(0.02)   # one measured card: no name needed
+    two = {"jobs": {"ltx_clip": {"rows": {"A": {"s_per_unit": 1.0, "usd_per_unit": 0.1}, "B": {"s_per_unit": 2.0, "usd_per_unit": 0.2}}}}}
+    assert VP._row_usd({"kind": "pod", "job": "ltx_clip", "units": 10}, two) == (None, "unknown")
+    no_usd = {"jobs": {"ltx_clip": {"rows": {"NVIDIA A40": {"s_per_unit": 10.0}}}}}                 # seconds alone price nothing
+    assert VP._row_usd(row, no_usd) == (None, "unknown")
+
+
+def test_vp12_names_why_a_pod_row_is_unpriced():
+    v = {"cost_rows": [{"label": "clips", "kind": "pod", "job": "ltx_clip", "units": 10, "service": "runpod_usd"}]}
+    two = {"jobs": {"ltx_clip": {"rows": {"A": {"s_per_unit": 1.0, "usd_per_unit": 0.1}, "B": {"s_per_unit": 2.0, "usd_per_unit": 0.2}}}}}
+    assert "2 cards measured for ltx_clip" in VP.cost_checks(VP.cost(v, speeds=two, caps=CAPS))[0]["detail"]
+    assert "no measured row for job ltx_clip" in VP.cost_checks(VP.cost(v, speeds={"jobs": {}}, caps=CAPS))[0]["detail"]
 
 
 def test_cost_with_no_job_speeds_is_unknown_and_never_a_guess():
@@ -230,7 +258,7 @@ def load(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def test_napoleon_v1_is_rebuilt_from_the_shot_cards_and_scores_90():
+def test_napoleon_v1_is_rebuilt_from_the_shot_cards_and_scores_70():
     fs = load(NAP / "film_shots.json")
     segs = VP.segments_from_film_shots(fs)
     d = VP.dynamics(segs, VP.profile("D"))
@@ -250,9 +278,9 @@ def test_the_napoleon_fixture_is_current_valid_and_scored_as_designed():
     contracts.validate(doc, NAP)
     assert doc == VP.napoleon_variants(speeds={}), "script_variants.json is stale: run `variant_plan napoleon --write`"
     v1, v2 = doc["variants"]
-    assert (v1["profile_id"], v1["scores"]["code"], v1["risks"]) == ("D", 90, ["REVIEW VP-12 cost"])
-    assert (v2["profile_id"], v2["scores"]["code"]) == ("B", 60)
-    assert sorted(v2["risks"]) == ["REVIEW VP-11 COMPENSATOR", "REVIEW VP-11 MAP", "REVIEW VP-12 cost", "REVIEW VP-16 narrator"]
+    assert (v1["profile_id"], v1["scores"]["code"], v1["risks"]) == ("D", 70, ["REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-11 KEYFRAME_LTX:light", "REVIEW VP-12 cost"])
+    assert (v2["profile_id"], v2["scores"]["code"]) == ("B", 70)   # was 60 while MAP and COMPENSATOR were listed as missing (P5 landed)
+    assert sorted(v2["risks"]) == ["REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-12 cost", "REVIEW VP-16 narrator"]
     assert not [f for f in VP.check_file(path, speeds={}) if f["severity"] == "FAIL"]
     assert VP.check_file(path, speeds={}) and all(f["rule"] != "VP-14" for f in VP.check_file(path, speeds={}))
     assert v1["cost"]["usd_planned"] == "unknown" and v2["cost"]["usd_worst"] == "unknown"
@@ -307,7 +335,7 @@ def test_the_brief_holds_facts_only(tmp_path):
     b = VP.brief(tmp_path, traits={"war": True})
     assert b["dossier"]["files"][0]["path"] == "dossier.md" and len(b["dossier"]["files"][0]["sha256"]) == 64
     assert set(b["profiles"]) == {"A", "B", "C", "D"} and b["turn_slots_D"] == SR.T("BP-142", "turn_slots_D")
-    assert b["lanes"]["MAP"] == {"available": False, "phase": "P5"} and b["traits"] == {"war": True}
+    assert b["lanes"]["MAP"] == {"available": True} and b["lanes"]["DIALOGUE_CU"] == {"available": False, "phase": "P6"} and b["traits"] == {"war": True}
     assert not {"recommended", "why", "score"} & set(b)
 
 
@@ -325,7 +353,7 @@ def test_score_write_recomputes_derived_numbers_and_keeps_the_critic_and_the_cho
     doc["variants"][0]["scores"] = {"code": 1, "critic": 77}
     doc["variants"][0]["dynamics"]["share_scene"] = 0.2
     fixed = VP.rescore(doc, speeds={})
-    assert fixed["variants"][0]["scores"] == {"code": 90, "critic": 77}
+    assert fixed["variants"][0]["scores"] == {"code": 70, "critic": 77}
     assert fixed["variants"][0]["dynamics"]["share_scene"] == pytest.approx(0.801, abs=0.001)
     doc["chosen"] = {"variant_id": "v1", "by": "creator", "ref": "r", "at": "2026-10-30T00:00:00Z", "variants_sha256": "0" * 64}
     assert VP.rescore(doc, speeds={})["chosen"]["variants_sha256"] == contracts.variants_sha256(VP.rescore(doc, speeds={}))

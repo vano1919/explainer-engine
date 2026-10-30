@@ -34,6 +34,15 @@ def row(job, card, data=None):
     return ((data["jobs"].get(job) or {}).get("rows") or {}).get(card)
 
 
+def lookup(data, job, card=None):
+    """The measured row of ``job`` on ``card``; without a card, the only measured one (several cards: None, the caller must name one).
+    Pure: ``data`` is a loaded table, nothing is read from disk."""
+    rows = (((data or {}).get("jobs") or {}).get(job) or {}).get("rows") or {}
+    if card:
+        return rows.get(card)
+    return next(iter(rows.values())) if len(rows) == 1 else None
+
+
 def estimate(job, card, units, data=None):
     """``{work_h, setup_h, basis}`` from a measured row, or None. ``setup_h`` is the measured fixed setup (boot, download, install)
     when the row has one, else 0 and ``setup_known`` False."""
