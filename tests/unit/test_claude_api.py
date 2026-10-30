@@ -652,8 +652,9 @@ def test_tool_loop_moves_the_cache_breakpoint_to_the_last_block_every_turn(tmp_p
 
     def marks(msgs):                                                    # (message index) of every dict block carrying a breakpoint
         return [i for i, m in enumerate(msgs) if isinstance(m["content"], list) for b in m["content"] if isinstance(b, dict) and "cache_control" in b]
-    assert [marks(m) for m in calls] == [[0], [0, 2], [0, 4]]           # the first message's own + the newest block only: within the API's four
-    assert "cache_control" not in calls[2][2]["content"][0]             # the older tool_result gave its breakpoint up
+    assert [marks(m) for m in calls] == [[0], [0, 2], [0, 2, 4]]        # the first message's own, last turn's breakpoint and the newest block: 3 + the system prefix = the API's four
+    four = a._client.calls[2][1]
+    assert len(marks(calls[2])) + len(four["system"]) <= 4
 
 
 def test_a_stopped_tool_loop_leaves_its_partial_transcript_on_disk(env, tmp_path):
@@ -689,3 +690,52 @@ def test_estimate_says_a_tool_loop_is_priced_for_its_first_turn_only_and_prices_
     # cached re-reads are cheaper than re-sending the history fresh: 10 turns of 30k context
     assert ca.loop_usd("claude-opus-5-5", 30000, 10, 6000, 600) < 10 * ca.usd_of("claude-opus-5-5", {"input": 60000, "output": 600, "cache_read": 0,
                                                                                     "write_5m": 0, "write_1h": 0, "searches": 0})
+
+
+# --- follow-up to the review of the cache fix: estimate bounds, the loop in worst_total, two breakpoints ----------------------------
+def test_with_breakpoint_keeps_last_turns_breakpoint_so_many_parallel_results_still_hit_the_cache():
+    many = [{"type": "tool_result", "tool_use_id": f"t{i}", "content": "x"} for i in range(14)]    # more than ~20 blocks in one turn
+    msgs = [{"role": "user", "content": [{"type": "text", "text": "q", "cache_control": {"type": "ephemeral"}}]},
+            {"role": "assistant", "content": [NS(type="text", text="a")]},
+            {"role": "user", "content": many},
+            {"role": "assistant", "content": [NS(type="text", text="b")]},
+            {"role": "user", "content": [dict(b) for b in many]}]
+    out = ca._with_breakpoint(msgs)
+    assert [i for i, m in enumerate(out) if isinstance(m["content"][-1], dict) and "cache_control" in m["content"][-1]] == [0, 2, 4]
+    assert "cache_control" not in msgs[4]["content"][-1] and "cache_control" not in msgs[2]["content"][-1]    # the input is not mutated
+    assert ca._with_breakpoint(msgs[:1])[0]["content"][-1]["cache_control"] == {"type": "ephemeral"}
+
+
+def test_loop_usd_orders_cached_below_uncached_below_miss_and_bills_the_previous_output_as_a_write():
+    m, kw = "claude-opus-5-5", dict(first_tokens=30000, turns=20, new_per_turn=6000, out_per_turn=600)
+    cached, unc, miss = (ca.loop_usd(m, **kw, mode=x) for x in ("cached", "uncached", "miss"))
+    assert cached < unc < miss
+    assert ca.loop_usd(m, **kw, mode="cached") > ca.loop_usd(m, **{**kw, "out_per_turn": 0}, mode="cached")
+    zero = {"input": 0, "output": 0, "cache_read": 0, "write_5m": 0, "write_1h": 0, "searches": 0}
+    turn2 = ca.usd_of(m, {**zero, "cache_read": 30000, "write_5m": 6600, "output": 600})      # turn 2: the tool result AND turn 1's output are writes
+    assert ca.loop_usd(m, 30000, 2, 6000, 600, mode="cached") == pytest.approx(ca.usd_of(m, {**zero, "write_5m": 30000, "output": 600}) + turn2)
+    with pytest.raises(ValueError):
+        ca.loop_usd(m, 1, 1, 1, 1, mode="nope")
+
+
+def test_estimate_shows_the_three_loop_figures_and_counts_the_loop_in_worst_total(env, tmp_path):
+    set_caps(env, jobs={"T": 5.0})
+    q = req(tools_root=str(tmp_path), max_turns=12, user="x" * 200_000, max_tokens=1000)     # ~50k tokens: the loop outweighs one turn
+    row = ca.estimate([q])["requests"][0]
+    lp = row["loop"]
+    assert lp["usd_if_cached"] < lp["usd_if_uncached"] < lp["usd_if_miss"] and "costs more than uncached" in lp["warning"]
+    assert row["worst_usd"] == lp["usd_if_cached"] and lp["bound"] == "cached"            # no longer turn 1 only
+    safe = ca.estimate([q], loop_bound="uncached")["requests"][0]
+    assert safe["worst_usd"] == safe["loop"]["usd_if_uncached"] > row["worst_usd"]
+    assert ca.estimate([q], loop_bound="miss")["requests"][0]["worst_usd"] == lp["usd_if_miss"]
+    assert ca.estimate([req()])["requests"][0].get("loop") is None
+
+
+def test_run_refuses_a_loop_job_by_the_chosen_loop_bound(env, tmp_path, capsys):
+    job = {"job": "T", "task_class": "critical-review", "max_turns": 40, "tools_root": str(tmp_path), "max_tokens": 1000,
+           "requests": [{"id": "a", "user": "x" * 200_000}]}
+    (env / "job.json").write_text(json.dumps(job), encoding="utf-8")
+    est = {m: ca.estimate(ca.load_job(env / "job.json"), loop_bound=m)["worst_total_usd"] for m in ("cached", "uncached")}
+    set_caps(env, jobs={"T": round((est["cached"] + est["uncached"]) / 2 / 0.8, 2)})   # its 80 % stop sits between the two figures
+    assert ca.estimate(ca.load_job(env / "job.json"))["fits_job_cap"]                  # the default bound: the expected, cached case
+    assert ca.main(["run", str(env / "job.json"), "--loop-bound", "uncached"]) == 3 and "refused" in capsys.readouterr().out

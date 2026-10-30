@@ -348,15 +348,23 @@ def check_secret_path(path: str | Path, where: str = "file") -> None:
 
 
 def _with_breakpoint(msgs: list, ttl: str = "5m") -> list:
-    """A copy of the conversation whose LAST content block carries the cache breakpoint (the earlier ones keep only what they had:
-    the first message's own, so the request stays within the API's four breakpoints)."""
+    """A copy of the conversation with two breakpoints on its tail: the LAST content block (this turn's write) and the last block of
+    the turn before (where the previous call wrote its cache, so this call's lookup always finds it: the API only looks back about
+    20 blocks from a breakpoint, and a turn with more than ~10 parallel tool results adds more than that). With the system prefix and
+    the first message that is four, the API's limit. A last block that is an SDK object (a turn that ended on an assistant message,
+    ``pause_turn``) gets none and that turn falls back to an uncached history; the repo tools are client tools, so it does not occur."""
     cc = {"type": "ephemeral"} if ttl == "5m" else {"type": "ephemeral", "ttl": "1h"}
     out = list(msgs)
-    last = out[-1]
-    if isinstance(last["content"], list) and last["content"] and isinstance(last["content"][-1], dict):
-        blocks = list(last["content"])
-        blocks[-1] = {**blocks[-1], "cache_control": cc}
-        out[-1] = {**last, "content": blocks}
+
+    def mark(i: int) -> None:
+        m = out[i]
+        if isinstance(m["content"], list) and m["content"] and isinstance(m["content"][-1], dict):
+            blocks = list(m["content"])
+            blocks[-1] = {**blocks[-1], "cache_control": cc}
+            out[i] = {**m, "content": blocks}
+    mark(len(out) - 1)
+    if len(out) >= 3:
+        mark(len(out) - 3)
     return out
 
 
@@ -823,21 +831,37 @@ def load_job(path: Path) -> list[Request]:
                     cache_salt=q.get("cache_salt", ""), **common) for q in spec["requests"]]
 
 
-def loop_usd(model: str, first_tokens: int, turns: int, new_per_turn: int, out_per_turn: int, ttl: str = "5m") -> float:
-    """A tool loop with the breakpoint on the last block: turn 1 writes the prompt; each later turn reads the whole context so far
-    from cache and writes only what the last turn added (its output and the tool result)."""
+LOOP_NEW_TOKENS = 2000   # tool-result tokens a repo-tool turn adds: measured on the J1b scope A run (about 1.5k a turn), rounded up
+LOOP_OUT_TOKENS = 600
+
+
+def loop_usd(model: str, first_tokens: int, turns: int, new_per_turn: int, out_per_turn: int, ttl: str = "5m", *,
+             mode: str = "cached") -> float:
+    """What a tool loop costs over ``turns`` turns. Each turn adds a tool result (``new_per_turn``) and the model's output
+    (``out_per_turn``, billed as output the turn it is written and as input the turn after).
+    ``cached``: turn 1 writes the prompt; each later turn reads the whole context so far from cache and writes only what the last
+    turn added (its output and the tool result). The best case.
+    ``uncached``: no cache read at all, the context is fresh input every turn (what the J1b scope A run billed, $5.02 for 18 turns).
+    ``miss``: the cache never hits and everything is written again every turn (what the per-turn reservation assumes)."""
     key = "write_5m" if ttl == "5m" else "write_1h"
     zero = {"input": 0, "output": 0, "cache_read": 0, "write_5m": 0, "write_1h": 0, "searches": 0}
-    usd = usd_of(model, {**zero, key: first_tokens, "output": out_per_turn})
-    ctx = first_tokens
-    for _ in range(turns - 1):
-        usd += usd_of(model, {**zero, "cache_read": ctx, key: new_per_turn, "output": out_per_turn})
-        ctx += new_per_turn + out_per_turn
+    if mode not in ("cached", "uncached", "miss"):
+        raise ValueError(f"loop_usd mode {mode!r}")
+    added, usd = new_per_turn + out_per_turn, 0.0
+    for turn in range(turns):
+        ctx = first_tokens + turn * added                  # the whole input of this turn
+        if mode == "uncached":
+            u = {**zero, "input": ctx}
+        elif mode == "miss" or turn == 0:
+            u = {**zero, key: ctx}
+        else:
+            u = {**zero, "cache_read": ctx - added, key: added}
+        usd += usd_of(model, {**u, "output": out_per_turn})
     return usd
 
 
 def estimate(reqs: list[Request], *, api: ClaudeAPI | None = None, expected_output: int | None = None,
-             turns: int | None = None, new_tokens_per_turn: int = 6000) -> dict:
+             turns: int | None = None, new_tokens_per_turn: int = LOOP_NEW_TOKENS, loop_bound: str = "cached") -> dict:
     """Tokens and dollars of a job, spending nothing: exact input tokens when a client may be built, else the offline bound."""
     pr, rows = prices(), []
     for q in reqs:
@@ -853,10 +877,16 @@ def estimate(reqs: list[Request], *, api: ClaudeAPI | None = None, expected_outp
         rows.append({"id": q.id, "model": r.model, "effort": r.effort, "input_tokens": n_in, "exact": toks is not None, "cached": hit,
                      "batch": batch, "worst_usd": round(0.0 if hit else worst, 4),
                      "usd_at_expected_output": None if typical is None or hit else round(typical, 4)})
-        if q.tools_root:   # a tool loop is many calls: the figures above are TURN 1 ONLY
-            t = turns or q.max_turns
-            rows[-1]["loop"] = {"warning": "tool loop: worst_usd and usd_at_expected_output price the FIRST turn only",
-                                "turns": t, "usd_if_cached": round(loop_usd(r.model, n_in, t, new_tokens_per_turn, expected_output or 600, q.cache_ttl), 4)}
+        if q.tools_root:   # a tool loop is many calls: the figures above are TURN 1 ONLY, the loop figures are what a run can cost
+            t, out_t = turns or q.max_turns, expected_output or LOOP_OUT_TOKENS
+            figs = {m: round(loop_usd(r.model, n_in, t, new_tokens_per_turn, out_t, q.cache_ttl, mode=m), 4) for m in ("cached", "uncached", "miss")}
+            rows[-1]["loop"] = {"warning": "tool loop: worst_usd and usd_at_expected_output price the FIRST turn only; the loop figures assume "
+                                           f"{new_tokens_per_turn} new tokens and {out_t} output tokens per turn (assumptions, not measurements); "
+                                           "a cache miss costs more than uncached",
+                                "turns": t, "usd_if_cached": figs["cached"], "usd_if_uncached": figs["uncached"], "usd_if_miss": figs["miss"],
+                                "bound": loop_bound}
+            if not hit:
+                rows[-1]["worst_usd"] = max(rows[-1]["worst_usd"], figs[{"cached": "cached", "uncached": "uncached", "miss": "miss"}[loop_bound]])
     c = caps()
     job = reqs[0].job
     worst_total = round(sum(x["worst_usd"] for x in rows), 4)
@@ -878,10 +908,14 @@ def main(argv: list[str] | None = None) -> int:
     e.add_argument("--expected-output", type=int, default=None)
     e.add_argument("--offline", action="store_true", help="never call count_tokens")
     e.add_argument("--turns", type=int, default=None, help="tool loops: turns to price (default: the job's max_turns)")
-    e.add_argument("--new-tokens-per-turn", type=int, default=6000, help="tool loops: tool result tokens added per turn")
+    e.add_argument("--new-tokens-per-turn", type=int, default=LOOP_NEW_TOKENS, help="tool loops: tool result tokens added per turn")
+    e.add_argument("--loop-bound", choices=("cached", "uncached", "miss"), default="cached",
+                   help="tool loops: which loop figure is the job's worst case (default cached, the expected case with the breakpoint fix; uncached and miss are the conservative bounds)")
     r_ = sub.add_parser("run")
     r_.add_argument("job")
     r_.add_argument("--out", default=None)
+    r_.add_argument("--loop-bound", choices=("cached", "uncached", "miss"), default="cached",
+                    help="tool loops: which loop figure the pre-run refusal uses (default cached, the expected case with the breakpoint fix; uncached and miss are the conservative bounds)")
     r_.add_argument("--no-wait", action="store_true", help="batch: submit (or look once) and return; run again to collect")
     sub.add_parser("status")
     v = sub.add_parser("void")
@@ -907,7 +941,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     reqs = load_job(Path(a.job))
     if a.cmd == "run":
-        pre = estimate(reqs)    # offline bound; a job whose worst case passes the job's 80 % stop does not start (it would stop half-done)
+        pre = estimate(reqs, loop_bound=a.loop_bound)    # offline bound; a job whose worst case passes the job's 80 % stop does not start (it would stop half-done)
         if not pre["fits_job_cap"]:
             print(json.dumps(pre, indent=2))
             print(f"refused: the worst case ${pre['worst_total_usd']} passes the stop of job {pre['job']} (${pre['stop_at_job']}); "
@@ -916,7 +950,7 @@ def main(argv: list[str] | None = None) -> int:
     if a.cmd == "estimate":
         live = None if a.offline or not api_key() or not (caps().get("approval") or {}).get("ref") else api
         print(json.dumps(estimate(reqs, api=live, expected_output=a.expected_output, turns=a.turns,
-                                 new_tokens_per_turn=a.new_tokens_per_turn), indent=2))
+                                 new_tokens_per_turn=a.new_tokens_per_turn, loop_bound=a.loop_bound), indent=2))
         return 0
     out = Path(a.out) if a.out else ledger_dir() / "out" / reqs[0].job
     out.mkdir(parents=True, exist_ok=True)
