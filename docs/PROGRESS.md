@@ -2908,6 +2908,7 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 
 ## 2026-10-30 08:10 UTC — P0d: key alias `EE_ANTHROPIC_API_KEY`
 The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code account auth). `claude_api.api_key()` now takes the first non-empty of `ANTHROPIC_API_KEY`, `EE_ANTHROPIC_API_KEY`; used by `client()`, `status`, `estimate`. Test: `test_the_key_can_come_from_the_alias_name`.
+
 ## 2026-10-30 UTC (Tbilisi night): Blueprint P5, the visual compensator: maps, HUD, tableaux (no pod, no money)
 
 - ვანო (2026-10-29 18:30 UTC): carry the Blueprint through the night, free steps only. P5 = the free, deterministic frames for the
@@ -2942,3 +2943,10 @@ The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code accoun
   spine's runtime and CMP-12 when the planner passes its beats; the tableau reads its PNGs once per item and skips file checks without a job
   folder; catalogue, PNG and source pins are written atomically; a faction pair needs both marks; the doc names the fonts the code really uses.
   P5's rule ids moved to BP-147..153 and its decision to D-87 after main took BP-140..146 and D-86 (P3).
+
+## 2026-10-30 08:50 UTC: G13 crash-drill test (audit pass 1, B3; free)
+
+- `git grep` on main (874b498) found no test of a ledger one save ahead of its mirror reaching `create`: the audit was right. Added
+  `test_drill_6_the_mirror_write_fails_once_...` to `tests/unit/test_cloud_drills.py` (runbook drill table row 6): the mirror write fails once during
+  `reserve`; `Run.open_test` and `runpod create` both stop with `LedgerConflict`, the fake API gets 0 calls, the ledger keeps its 0.07. The table
+  test now expects six rows. No code changed (the audit found the code correct); nothing else weakened.
