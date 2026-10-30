@@ -2742,6 +2742,12 @@ training as sequences is decided in the process. Changed together:
   free voice generator was measured, so none replaces ElevenLabs for narration (Kokoro's retirement, D-39, stands).
 - Tests: `tests/unit/test_voice_audition.py` (18, synthetic voices, no network or media), contract fixtures for both schemas.
 
+## 2026-10-30 03:30 UTC: P1a follow-up, nested `rp.py` runs behind a reader (no pod, no money)
+
+- Re-review of PR #29: ``echo `./rp.py create` `` and `find . -exec ./rp.py create {} \;` passed because the first word was a reader.
+  Backticks now split a command segment like `(`, and a `find` with `-exec`/`-execdir`/`-ok`/`-okdir` is not a reader. Tests in
+  `test_f_the_bash_hook_allows_only_read_only_and_stopping_tmr_commands`; `find . -name rp.py` and ``echo `./rp.py status` `` stay allowed.
+
 ## 2026-10-30 — P2 follow-up: review leftovers of PR #31
 - `EpisodeJob.adopt`: a directory as the dossier path and approvals that are not a dict are `ContractError`, no longer `IsADirectoryError` / `AttributeError`.
 - `shot_cache.key`: inf / NaN anywhere in a shot spec is a `ContractError` (no JSON form, no stable key).
