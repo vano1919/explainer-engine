@@ -120,11 +120,25 @@ def channel_voice(doc: dict, role: str = "narrator") -> dict | None:
     return next((v for v in doc["voices"] if v["role"] == role and v["status"] == "channel"), None)
 
 
-def register(doc: dict, entry: dict, creator_ref: str | None = None) -> dict:
-    """The registry with ``entry`` added or replaced. The channel voice is the creator's call (V1, VC-08): his recorded word
-    in ``creator_ref`` (not blank) is needed to make a different voice the channel voice of a role while one stands, and to
-    change the standing channel entry's ``status`` or ``role`` (retiring or demoting it). Other edits of it (a new baseline)
-    and the first channel voice of a role need no word. Anything else raises ContractError."""
+WORD_MINUTES = 60  # how long a recorded word stays usable: the window of a protected-config edit and an effort override
+
+
+def _word_given(ref: str, voice_id: str, root=None) -> bool:
+    from ..governance import records
+    return records.find("channel_voice", voice_id, ref, minutes=WORD_MINUTES, root=root) is not None
+
+
+def register(doc: dict, entry: dict, creator_ref: str | None = None, root=None) -> dict:
+    """The registry with ``entry`` added or replaced. The channel voice is the creator's call (V1, VC-08). His recorded word
+    is needed to make a different voice the channel voice of a role while one stands, to retire or demote the standing one,
+    and to change its ``model`` or its ``baseline`` (the model changes how it sounds; the baseline is what EL-13 measures
+    drift against, so loosening it would hide drift). ``creator_ref`` is the id of his message and must name a
+    ``channel_voice`` record, younger than ``WORD_MINUTES``, in ``jobs/creator_ok.jsonl`` for the voice that becomes the
+    channel voice (a replacement) or the standing voice that is changed (``python -m explainer_engine.governance ok
+    channel_voice <voice_id> <message id> "<his words>"``). The file is plain JSONL like the other actions' (as strong as
+    they are, not tamper-evident), and ``config/channel_voices.json`` is not a protected file: a direct edit still bypasses
+    this function. The name, the note and the first channel voice of a role need no
+    word. Anything else raises ContractError."""
     new = json.loads(json.dumps(doc))
     ref = creator_ref.strip() if isinstance(creator_ref, str) else None
     if creator_ref is not None and not ref:
@@ -133,10 +147,16 @@ def register(doc: dict, entry: dict, creator_ref: str | None = None) -> dict:
     standing = channel_voice(new, role)
     same = next((v for v in new["voices"] if v["voice_id"] == entry.get("voice_id")), None)
     replaces = entry.get("status") == "channel" and standing is not None and standing["voice_id"] != entry.get("voice_id")
-    leaves = same is not None and same["status"] == "channel" and (entry.get("status") != "channel" or entry.get("role") != same["role"])
-    if (replaces or leaves) and not ref:
-        held = standing if replaces else same
-        raise ContractError(f"{held['name']} is the channel {held['role']}; only the creator's word changes it (VC-08)")
+    held = same if same is not None and same["status"] == "channel" else None
+    changes = held is not None and any(entry.get(k) != held[k] for k in ("status", "role", "model", "baseline"))
+    if replaces or changes:
+        what = standing if replaces else held
+        if not ref:
+            raise ContractError(f"{what['name']} is the channel {what['role']}; only the creator's word changes it (VC-08)")
+        vid = entry["voice_id"] if replaces else held["voice_id"]  # a replacement needs the word for the NEW voice
+        if not _word_given(ref, vid, root):
+            raise ContractError(f"VC-08: no recorded creator word {ref!r} for {vid} in the last {WORD_MINUTES} minutes: record it first "
+                                "(`python -m explainer_engine.governance ok channel_voice <voice_id> <message id> \"<his words>\"`)")
     if replaces:
         standing["status"] = "retired"
     new["voices"] = [v for v in new["voices"] if v["voice_id"] != entry.get("voice_id")] + [entry]

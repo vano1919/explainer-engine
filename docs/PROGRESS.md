@@ -2827,6 +2827,23 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 - Not done here, on purpose: the nine historic `training/pods/*.sh` (pre-P1a protocol: own upload loop, own DONE) are not rewritten. They are
   refused by `create` already; the P12 scripts under `training/pods/p12/` are the ones that must pass `dryrun`.
 
+## 2026-10-30 04:45 UTC: P4b follow-up, the channel voice's word is checked, not just present (after #45)
+
+- Optional findings of the #45 review: `creator_ref` was only checked for being non-blank, and the standing narrator's model and baseline
+  could change without a word. Now `governance/records.py` has the action `channel_voice` (target = the voice id) and `find`;
+  `voice_check.register` needs a `creator_ref` that names such a record for the voice (no wildcard, no other action) to make a
+  different voice the channel voice, retire or demote the standing one, or change its `model` or `baseline`; the name, the note and
+  the first channel voice of a role stay free.
+- Choice to confirm (mine, not the creator's words): the baseline and the model count as "the channel voice" because loosening
+  the baseline would hide drift (EL-13) and a new model changes how it sounds. If the creator wants the next episode's approved read
+  to replace the baseline without a separate word, that is one line in `register`.
+- Tests: `test_voice_audition.py` (a ref nobody recorded, a word for another voice/action/wildcard, each standing-voice change).
+- Review of #50 (P0b thread): the word must be for the voice that BECOMES the channel voice (a word recorded to retire the standing
+  voice no longer crowns another one), and it expires after 60 minutes (the window of a protected-config edit and an effort
+  override; `records.find(..., minutes=)`). The records file is plain JSONL like the other actions': as strong as they are, not
+  tamper-evident. For the creator: `config/channel_voices.json` is not a protected file, so a direct edit still bypasses `register`.
+
+
 ## 2026-10-30 05:00 UTC: P1c, measured speeds, batching rules RP-01..10, the bill into the ledger (no pod, no money)
 
 - `config/job_speeds.json` + `cloud/speeds.py`: the table is committed EMPTY (job types and units only); `runpod cost <pod>` fills a row
