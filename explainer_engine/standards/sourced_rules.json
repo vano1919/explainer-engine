@@ -4775,7 +4775,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-01"
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-01",
+    "explainer_engine/audio/acoustics.py"
    ],
    "planned": "explainer_engine/audio/sound_director.py (P4)",
    "supersedes": [],
@@ -4891,7 +4892,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-05"
+    "explainer_engine/standards/craft_checklists/sound.json:CRAFT-SND-05",
+    "explainer_engine/audio/foley.py"
    ],
    "planned": "explainer_engine/audio/sound_director.py (P4)",
    "supersedes": [],
