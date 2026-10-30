@@ -107,9 +107,9 @@ age, similar traffic source). Cost: higher editorial burden (the advice boundary
 
 ## Open questions (only what cannot be decided responsibly)
 - Q1 Repository placement: **decided** (D-21).
-- Q2 Channel name and Kit's final name and look: creator gate; draft sheet `assets/characters/kit/kit_reference.svg`.
-- Q3 Voice: decided by the Phase 5 blind listening test (D-12), not now.
-- Q4 Installing Node.js LTS and Remotion on the Windows PC (one-time, free): assumed acceptable unless the creator objects.
+- Q2 decided: Kit rejected (D-04, 2026-10-15); whether permanent hosts exist at all is card A1 (open, owner ვანო) — nothing here pre-empts it.
+- Q3 decided by D-39 (ElevenLabs narration; Kokoro retired).
+- Q4 superseded by D-31/D-32 (cloud-first, no Remotion, no local render PC).
 - Q5 (updated for D-25) Which of the candidate collision topics (`docs/PUBLISHING_AND_ANALYTICS.md`) is video 1 after the prototype: decided
   after the prototype passes.
 

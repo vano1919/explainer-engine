@@ -10,7 +10,7 @@ A knowledgeable friend showing you something neat: curious, warm, a little dry. 
 reactions, literal visual metaphors), at most one verbal joke per ~60 s, never at people's expense, never a false fact
 for a laugh. No alarm, no false urgency, no fabricated stakes.
 
-## Kit (original mascot, working name)
+## Kit (history, D-04 rejected 2026-10-15) (original mascot, working name)
 - A cardboard-box character: body 200 x 230 (1 : 1.15), corner radius 24 (12 % of the width); a lid whose opening is the
   signature **cutaway reveal** (the opening shows the thing being explained, never Kit's insides).
 - Face: two oval eyes with pupils and eyebrows; the brows carry the emotion. Mouth: a resting mouth per expression or one
@@ -28,7 +28,7 @@ background vignette. Every meaningful shape has an ink stroke and meaning never 
 checks pair green with a check icon and red with a cross icon; "evidence is mixed" is an amber badge with the words.
 
 ## Colour use (values: palette.json)
-`ink` outlines and text; `paper` default background and label chips; `kit_card`/`kit_shadow` Kit; `answer_coral` the answer
+`ink` outlines and text; `paper` default background and label chips; `kit_card`/`kit_shadow` (history, D-04 rejected 2026-10-15) Kit; `answer_coral` the answer
 or key object, one per shot; `mechanism_teal` arrows, flows and mechanism labels; `support_blue` secondary objects;
 `true_green`/`false_red` myth checks; `uncertain_amber` uncertainty badge; `night` dark scenes and Short end cards;
 `grey_mid` inactive or background props. Measured contrasts and the text rules are in the palette file and its test.
@@ -47,7 +47,7 @@ scenes of an episode. Diagrams use `mechanism_teal` flows over simple shapes; re
 ## Hooks (D-07)
 Since 2026-10-16 the hook, the shot grammar and the mood system (emotion, light, palette) are binding in
 [UNIVERSAL_RULE_BASE](UNIVERSAL_RULE_BASE.md) (UR-01, UR-04 to UR-10); the notes below are the earlier spec.
-First frame shows the object and Kit already acting; the first sentence is a concrete observation, not a greeting. Each
+(history, D-04 rejected 2026-10-15) First frame shows the object and Kit already acting; the first sentence is a concrete observation, not a greeting. Each
 hook spec records: first frame, first visible action, first sentence, on-screen text, sound event, the question the viewer
 perceives, time until subject and relevance are clear, the transition, the main failure risk, and where the promise is
 paid. A fast first visual is a hypothesis to test, not a rule.
