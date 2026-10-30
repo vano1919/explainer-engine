@@ -30,6 +30,7 @@ from explainer_engine.production import staging as STAGING
 from explainer_engine.production import timing as T
 from explainer_engine.qa import engagement as ENG
 from explainer_engine.scripting import narration_lint, story_lint
+from explainer_engine.scripting.syllables import count as syllables  # the one syllable counter (P3)
 from explainer_engine.standards import sourced_rules as SR
 
 STOP = set("""a an the and or but so of to in on at for with by from into onto over under than then that this these those
@@ -655,18 +656,6 @@ def hook_end_s(doc: dict, sh: dict) -> float | None:
         return None
     n = len(S.script_tokens(sh["lines"][0]["text"]))
     return read["words"][n - 1]["e"] if 0 < n <= len(read["words"]) else None
-
-
-def syllables(word: str) -> int:
-    """Syllables of one English word by vowel groups (a silent final -e dropped, -le kept); at least one. Good enough for a
-    Flesch-Kincaid grade on short lines; no dependency."""
-    w = re.sub(r"[^a-z]", "", word.lower())
-    if not w:
-        return 0
-    groups = len(re.findall(r"[aeiouy]+", w))
-    if w.endswith("e") and not w.endswith(("le", "ee", "ye")) and groups > 1:
-        groups -= 1
-    return max(1, groups)
 
 
 def fk_grade(text: str) -> float:

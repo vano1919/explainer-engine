@@ -48,7 +48,8 @@
     "explainer_engine/qa/scorecard.py:BP-01",
     "explainer_engine/qa/engagement.py:BP-01",
     "explainer_engine/scripting/story_lint.py:WORDS_PER_S",
-    "explainer_engine/scripting/film_shots.py"
+    "explainer_engine/scripting/film_shots.py",
+    "explainer_engine/scripting/syllables.py:seconds"
    ],
    "supersedes": [
     "PRODUCTION_RULES gate 2 160-185",
