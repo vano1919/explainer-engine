@@ -2742,6 +2742,30 @@ training as sequences is decided in the process. Changed together:
   free voice generator was measured, so none replaces ElevenLabs for narration (Kokoro's retirement, D-39, stands).
 - Tests: `tests/unit/test_voice_audition.py` (18, synthetic voices, no network or media), contract fixtures for both schemas.
 
+## 2026-10-29 22:30 UTC (02:30 Tbilisi 10-30): paid-test caps and their ledgers (no pod, no money)
+
+- ვანო (2026-10-29 18:40 UTC, relayed): a clear yes to the paid tests P12a, P12b and P12e within $5.90 in total, each
+  started only after the coordinator's go after the final Fable xhigh static audit. The OR-23 plans and their OR-24
+  confirmation are in project files `explainer-engine/blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md` (Georgian summary
+  `PAID_TESTS_PLAN_ka.md`).
+- `config/spend_caps.json` `paid_tests`: total_usd 5.9; p12a_smoke runpod_usd 0.50, p12b_two_runs 3.00, p12e_hosts 2.40
+  (pods hard at 80 %: 0.40 / 2.40 / 1.92). P12b and P12e sit above the first proposal (2.50 / 1.00) because the 80 % stop would
+  leave their pods below their estimates; the total is his $5.90.
+- `spend_caps.paid_test(name)` reads a test's lines and refuses an unknown test and a section over its total.
+  `ledger.Run.open_test(path, name)` opens a test's ledger with its line as the cap, every other service at 0 and meta `test`,
+  and refuses another run's ledger. Without it, `runpod create --ledger` on a new path got the episode ceiling
+  (runpod_usd 31). CLI: `python -m explainer_engine.core.ledger open-test <run.json> <test>` and `report <run.json>`.
+- D9's numbers (min_balance_left_usd 1.00, ElevenLabs casting_credits_max 1500) are ვანო's and are not in this change.
+- Tests: `tests/unit/test_spend_caps.py` (5); `tests/unit` 1208 passed, 5 failed only because this container lacks `cv2`
+  (the same 5 fail on main here); `docs_lint` 0 findings.
+- Review fixes (PR #33 cross-review): `runpod create` refuses a ledger path that does not exist (a ledger made there got the
+  episode ceilings); `Run.open` re-checks a paid test's ledger against its line on every open; the cap is per test, not per
+  file: `open_test` needs `EXPLAINER_LEDGER_MIRROR` (a durable folder), restores a missing path from `<mirror>/<test>.json`,
+  every save writes the mirror and a ledger that differs from its mirror stops with LedgerConflict; `ledger report` only
+  reads; `decided` cites the creator's message id. Tests: tests/unit/test_spend_caps.py, tests/unit/test_runpod.py,
+  tests/unit/test_cloud_stop_paths.py (P1a's drill tests now open their ledger with `open_test`, its line and its
+  mirror, instead of a hand-made ledger above the line).
+
 ## 2026-10-30 03:50 UTC: P12d, the fake-HTTP drills (no pod, no money)
 
 - `tests/unit/test_cloud_drills.py`: the five scenarios of the Blueprint card played once, each chaining the real `pod_wrapper.sh`
@@ -2770,3 +2794,22 @@ training as sequences is decided in the process. Changed together:
   calls), and a blank or whitespace ref is refused. Minors taken: pitch checked at 90-240 Hz, the other measures move with the signal
   (tilt, sibilance, emphasis, pauses, syllable rate), and the five preview measurements are committed
   (`docs/research/VOICE_PREVIEWS_2026-10-30.json`, no media) and pinned by a test.
+
+
+## 2026-10-30 04:10 UTC: P1b, `runpod dryrun` + `config/cloud_pins.json` (no pod, no money)
+
+- `cloud/dryrun.py` + `runpod dryrun --script`: `bash -n`, `lint_pod_script`, four static install rules (`pip install -U` only with `==`,
+  `git+https` only with `@sha`, every `git clone` followed by a checkout of a sha from the pins file, no `|| true` on installs, a `DRY=1`
+  gate after the last install) and a Hub existence check of every literal repo id. The record is keyed by the sha256 of the script text and
+  by the pins file; `preflight_create` refuses a script pod without a passing one. `config/cloud_pins.json` (`cloud/pins.py`): image digests
+  `tmr_pod`, `aitoolkit`, `smoke`, git shas of ai-toolkit / VideoX-Fun / diffusers / peft, `huggingface_hub` 1.33.0; all `smoke_verified:
+  false`, every `pull_mb_per_s` null (not measured, not guessed). Script pods run by digest only (default `tmr_pod`); an unlisted digest, a
+  tag or an undecided pin is refused; an image without a measured pull speed on COMMUNITY needs `--boot-minutes >= 25` (LT-15).
+  `runpod pins <pins.txt>` compares a pod's own record. The wrapper installs `huggingface_hub==$EE_HF_PIN` when the image lacks it and ends
+  the pod `BAD_HOST: no uploader` when that fails (paid plan §2.0 item 6, first option). CR-18 in `docs/CLOUD_RUNBOOK.md`;
+  `tests/unit/test_cloud_pins_dryrun.py` (19 tests; the three old defects are read from the real `xworld_v2_loop.sh`).
+- Values that came from lookups on 2026-10-30, not from this repo: the digests (registries), the git HEADs of that day (not necessarily
+  the commits rounds 2-3b ran), the `smoke` tag (the only CUDA tag of `runpod/pytorch` 2.4; the plan says "a runpod/pytorch 2.4 digest")
+  and `huggingface_hub` (latest 1.x; its API checked by import). They are pins to be proved by P12a, not facts about a working stack.
+- Not done here, on purpose: the nine historic `training/pods/*.sh` (pre-P1a protocol: own upload loop, own DONE) are not rewritten. They are
+  refused by `create` already; the P12 scripts under `training/pods/p12/` are the ones that must pass `dryrun`.

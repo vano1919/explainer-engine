@@ -6,6 +6,8 @@
            --ledger <episode run.json> [--volume GB] [--min-ram GB] [--name base] [--on-cap stop|delete] [--no-guard]
            [--vram GB [--ref-hours H] [--only <card id substring>]]   the cheapest JOB among the cards with stock now (pick_gpus), not a fixed pool
            [--script pod.sh --script-url <HF url of the same file>] [--heartbeat datasets/<o>/<r>:<file>] [--image I] [--disk GB] [--boot-minutes M]
+    python -m explainer_engine.cloud.runpod dryrun --script pod.sh [--offline]   everything knowable before a pod bills (P1b, CR-18)
+    python -m explainer_engine.cloud.runpod pins <pins.txt>   a pod's pins.txt against config/cloud_pins.json
     python -m explainer_engine.cloud.runpod cards --vram GB [--ref-hours H]   what the job would cost on each card now
     python -m explainer_engine.cloud.runpod status|logs|wait-ready|guard|stop|cost <pod> ;  delete <pod> --yes ;  start <pod> --yes ...
     python -m explainer_engine.cloud.runpod delete-volume <network volume id> [--global] --yes
@@ -1237,10 +1239,12 @@ def check(api, now=None):
 
 
 def preflight_create(api, *, max_usd, max_hours, gpu, now=None, ignore=None, script=None, picks=None, heartbeat=None,
-                     pod_key=False, watchdog_age=None):
+                     pod_key=False, watchdog_age=None, image=None, boot_minutes=None, cloud=None):
     """Every reason to refuse a new pod (empty = allowed): the creator's ceilings, the last 24 h of billing, the balance,
     a clean account first (no stray pod, no unkept stopped disk), with ``script`` (the pod's start script text) the
-    ``lint_pod_script`` rules, and with ``picks`` (``pick_gpus`` rows) a job that fits its approved money and time.
+    ``lint_pod_script`` rules, a passing ``dryrun`` of exactly that text and an image pinned by digest in ``config/cloud_pins.json``
+    that has the boot minutes it needs on its cloud (P1b, CR-18), and with ``picks`` (``pick_gpus`` rows) a job that fits its
+    approved money and time.
     The money line is per JOB (``per_pod_usd``); ``max_price_per_hour`` is only the runaway ceiling of one card."""
     now = time.time() if now is None else now
     c = spend_caps.runpod()
@@ -1248,6 +1252,16 @@ def preflight_create(api, *, max_usd, max_hours, gpu, now=None, ignore=None, scr
     if script is not None and not is_wrapper_script(script):
         why.append("pod script: it runs its own upload loop and writes its own beat.txt/DONE (pre-P1a protocol): rewrite it for "
                    "pod_wrapper.sh (declare `# heartbeat:`, write results under $EE_OUT; CR-08, P1b)")
+    if script is not None:  # CR-18 (P1b): the script was read and its repos looked up, the image is a pinned digest
+        from explainer_engine.cloud import dryrun, pins
+        why += [f"dryrun: {p}" for p in dryrun.passed(script)]
+        img = image or pins.image_ref(pins.DEFAULT_IMAGE)
+        why += [f"image: {p}" for p in pins.check_image(img)]
+        cl = cloud or (picks[0]["cloud"] if picks else "SECURE")
+        need = pins.boot_minutes_needed(img, cl)
+        if (boot_minutes if boot_minutes is not None else BOOT_MINUTES) + 1e-9 < need:
+            why.append(f"image: {img.partition('@')[0]} is not measured on a {cl} host: the pod needs --boot-minutes >= {need:g} "
+                       f"(the guard would stop it at {boot_minutes if boot_minutes is not None else BOOT_MINUTES:g} min, before the image arrives)")
     if script is not None:  # CR-07: a script pod must be visible and stoppable from outside this session
         if not heartbeat:
             why.append("no heartbeat: pass --heartbeat datasets/<owner>/<repo>:<folder>/beat.txt or declare `# heartbeat: ...` in the script")
@@ -1335,13 +1349,15 @@ def wrapper_env(script_url, *, heartbeat, max_usd, lifetime_s, price, job=None, 
     """The EE_* env the wrapper reads (CR-05): what it needs for the dead-man and for the upload. ``pass_s`` / ``upload_grace_s`` /
     ``cap_grace_s`` scale the loop and the graces (the P12a drills use 120 / 300 / 120 s); ``drill`` is a P12a fault, see ``main create``."""
     repo, folder = hf_target(heartbeat)
+    from explainer_engine.cloud import pins
+    hf_pin = (pins.load()["pip"].get("huggingface_hub") or {}).get("version")  # the wrapper installs it when the image lacks it
     disk_h = (float(volume or 0) + float(container or 0)) * GB_MONTH_RUNNING / HOURS_PER_MONTH
     return {"EE_SCRIPT_URL": script_url, "EE_CREATED": str(int(time.time() if created is None else created)),
             "EE_LIFETIME_S": str(int(lifetime_s)), "EE_MAX_USD": str(max_usd), "EE_PRICE": str(price), "EE_DISK_H": f"{disk_h:.5f}",
             "EE_JOB": str(job or ""), "EE_HF_REPO": repo, "EE_HF_PREFIX": folder,
             **{k: str(int(v)) for k, v in (("EE_PASS_S", pass_s), ("EE_UPLOAD_GRACE_S", upload_grace_s), ("EE_CAP_GRACE_S", cap_grace_s))
                if v is not None},
-            **({"EE_DRILL": drill} if drill else {})}
+            **({"EE_DRILL": drill} if drill else {}), **({"EE_HF_PIN": hf_pin} if hf_pin else {})}
 
 
 def create_body(name, gpu="default", *, volume=VOLUME_GB, min_ram=None, boot=None, status_token="", image=None,
@@ -1389,6 +1405,30 @@ def main(argv=None, api=None, live=None):
             print("ok     ", line)
         if res["problems"]:
             raise SystemExit(1)
+    elif cmd == "dryrun":  # P1b: no pod, no money; the record it writes is what `create` asks for
+        from explainer_engine.cloud import dryrun
+        sf = _opt(rest, "--script")
+        if not sf:
+            raise SystemExit("dryrun needs --script <pod.sh>")
+        rec = dryrun.run(Path(sf).read_text(), offline="--offline" in rest)
+        dryrun.record(rec)
+        for r in rec["repos"]:
+            print("repo   ", r["type"], r["id"], "ok" if r["ok"] else ("not checked" if r["ok"] is None else "MISSING"), r["note"])
+        for line in rec["problems"]:
+            print("PROBLEM", line)
+        print(("dryrun ok " if rec["ok"] else "dryrun FAILED ") + f"sha256 {rec['sha256']}")
+        if not rec["ok"]:
+            raise SystemExit(1)
+    elif cmd == "pins":  # P1b: what a pod's pins.txt says against config/cloud_pins.json
+        from explainer_engine.cloud import pins
+        if not pid:
+            raise SystemExit("pins needs the pod's pins.txt")
+        bad = pins.compare(Path(pid).read_text())
+        for line in bad:
+            print("PROBLEM", line)
+        if bad:
+            raise SystemExit(1)
+        print("pins ok")
     elif cmd == "cards":
         for r in pick_gpus(api, vram_gb=_opt(rest, "--vram", 24, float), ref_hours=_opt(rest, "--ref-hours", 1.0, float),
                            max_price=spend_caps.runpod()["max_price_per_hour"], limit=20):
@@ -1417,10 +1457,20 @@ def main(argv=None, api=None, live=None):
         gpu, ledger = _opt(rest, "--gpu", "default"), _opt(rest, "--ledger")
         if not ledger:
             raise SystemExit("create needs --ledger <episode run.json>: every pod is paid for by an episode")
+        if not Path(ledger).exists():  # a ledger made here would get the episode ceilings, not a paid test's line
+            raise SystemExit(f"refused: no ledger at {ledger}; open it first (an episode: Run.open(path, caps=...); "
+                             "a paid test: python -m explainer_engine.core.ledger open-test <path> <test>)")
         script_file, script_url = _opt(rest, "--script"), _opt(rest, "--script-url")
         if script_url and not script_file:
             raise SystemExit("--script-url needs --script <the same file, local>: the pod script is linted before any money")
         script = Path(script_file).read_text() if script_file else None
+        image = _opt(rest, "--image")
+        if script is not None:  # CR-18: a script pod runs a pinned digest; a pin key is the short form
+            from explainer_engine.cloud import pins
+            try:
+                image = pins.resolve_image(image, pins.load()) if image else pins.image_ref(pins.DEFAULT_IMAGE)
+            except pins.PinError as e:
+                raise SystemExit(f"refused, no pod was made:\n  image: {e}")
         picks = None
         if _opt(rest, "--vram"):  # the cheapest job among the cards with stock now (the creator, 2026-10-24)
             picks = pick_gpus(api, vram_gb=_opt(rest, "--vram", None, float), ref_hours=_opt(rest, "--ref-hours", max_hours, float),
@@ -1451,7 +1501,8 @@ def main(argv=None, api=None, live=None):
             except hf_live.LiveError:
                 age = None
         why = preflight_create(api, max_usd=max_usd, max_hours=max_hours, gpu=gpu, script=script, picks=picks, heartbeat=heartbeat,
-                               pod_key=bool(secret("pod_api_key.txt", "RUNPOD_POD_API_KEY")), watchdog_age=age)
+                               pod_key=bool(secret("pod_api_key.txt", "RUNPOD_POD_API_KEY")), watchdog_age=age, image=image,
+                               boot_minutes=_opt(rest, "--boot-minutes", BOOT_MINUTES, float))
         if script is not None and lv is None:
             why.append("the live-pod registry on HF cannot be written (no HF_TOKEN): the watchdog could not see this pod (CR-07c)")
         if why:
@@ -1464,7 +1515,7 @@ def main(argv=None, api=None, live=None):
         first = picks[0] if picks else None
         body = create_body(name, first["gpu"] if first else gpu, volume=_opt(rest, "--volume", VOLUME_GB, int),
                            min_ram=_opt(rest, "--min-ram"), boot=_opt(rest, "--boot"), status_token=token,
-                           image=_opt(rest, "--image"), script_url=script_url, lifetime_s=int(max_hours * 3600),
+                           image=image, script_url=script_url, lifetime_s=int(max_hours * 3600),
                            cloud=first["cloud"] if first else "SECURE", heartbeat=heartbeat, max_usd=max_usd,
                            job=_opt(rest, "--job", base), price=max(r["price"] for r in picks) if picks else None, scale=scale, drill=drill)  # the ceiling, not the list price
         if _opt(rest, "--disk"):  # container disk (GB): a model download larger than the default CONTAINER_GB
