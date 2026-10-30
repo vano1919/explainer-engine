@@ -150,7 +150,8 @@ def test_a_sha_pin_is_anchored_and_a_dry_gate_is_a_real_dry_is_1_test_whose_bran
                 'if [ "${DRY:-0}" = 1 ]; then\n  if [ -f x ]; then exit 0; fi\nfi\n',               # exit only under a nested condition
                 'if [ "${DRY:-0}" = 1 ]; then\n  exit 1\nfi\n',                                    # the dry run FAILS
                 'echo "DRY=$DRY"\nexit 1\n', 'echo "DRY=$DRY"\n[ -f x ] && exit 0\n',            # a DRY mention and a later exit
-                '[ "${DRY:-0}" = 0 ] && exit 0\n', 'DRY=1\nexit 0\n'):
+                '[ "${DRY:-0}" = 0 ] && exit 0\n', 'DRY=1\nexit 0\n',
+                '[ "${DRY:-0}" = 1 ] && return 0\n', 'if [ "${DRY:-0}" = 1 ]; then return 0; fi\n'):    # a top-level return only errors, the script goes on
         assert not has_gate(bad), bad
 
 

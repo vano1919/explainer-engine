@@ -34,7 +34,7 @@ GIT_URL = re.compile(r"git\+https?://\S+")
 PINNED_GIT_URL = re.compile(r"^git\+https?://[^@\s]+@[0-9a-f]{40}(?:[#\"'&;)]|$)")  # the FIRST `@` of the url carries the ref: only a lowercase 40-hex sha pins
 DRY_VAR = r"""(?:["']?\$\{DRY(?::?-\w*)?\}["']?|["']?\$DRY["']?)"""
 DRY_IS_ONE = rf"""\[\[?\s+{DRY_VAR}\s+(?:=|==|-eq)\s+["']?1["']?\s+\]\]?"""  # a test that is true when DRY is 1, and only then
-DRY_ONE_LINE = re.compile(rf"^\s*{DRY_IS_ONE}\s*&&\s*(?:exit|return)\s+0\s*$")
+DRY_ONE_LINE = re.compile(rf"^\s*{DRY_IS_ONE}\s*&&\s*exit\s+0\s*$")
 DRY_IF = re.compile(rf"^\s*if\s+{DRY_IS_ONE}\s*;?\s*(?:then\b(.*))?$")
 
 
@@ -85,7 +85,7 @@ def _git_url_pinned(url):
 
 
 def _dry_if_exits_zero(cmds, i):
-    """True when ``cmds[i]`` is ``if <DRY is 1>; then`` and its THEN branch (not an else, not a nested ``if``) runs ``exit 0`` / ``return 0``.
+    """True when ``cmds[i]`` is ``if <DRY is 1>; then`` and its THEN branch (not an else, not a nested ``if``) runs ``exit 0``.
     The block is read statement by statement (split on ``;`` and newlines) up to its own ``fi``."""
     m = DRY_IF.match(cmds[i][1])
     if not m:
@@ -114,7 +114,7 @@ def _dry_if_exits_zero(cmds, i):
                 depth -= 1
             elif depth == 0 and re.match(r"(else|elif)\b", st):
                 return False  # whatever follows belongs to the other branch
-            elif depth == 0 and re.fullmatch(r"(?:exit|return)\s+0", st):
+            elif depth == 0 and re.fullmatch(r"exit\s+0", st):
                 return True
     return False
 

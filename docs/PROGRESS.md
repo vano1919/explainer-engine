@@ -2789,3 +2789,6 @@ training as sequences is decided in the process. Changed together:
   else, not a nested `if`) runs `exit 0`; `DRY=0` tests, `echo "DRY=$DRY"` plus a later exit, an else-branch exit and `exit 1` do not count.
   This is also stricter than main's one-line check, which counted any line naming DRY and an exit. No script in the repo used either form.
   Test: `test_a_sha_pin_is_anchored_and_a_dry_gate_is_a_real_dry_is_1_test_whose_branch_exits_zero` (fails on the previous code).
+- Round 3 (P3b): only `exit 0` ends a DRY gate; a top-level `return 0` is an error in bash, not an exit, and without `set -e` the script would
+  run on into the paid stages (tested). Known limits, not fixed: heredoc bodies, function bodies and subshells are read as ordinary lines;
+  `git+file://` and `git+git://` urls are not checked (`git+https?` only).
