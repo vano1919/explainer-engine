@@ -64,8 +64,8 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 |---|---|---|---|---|---|
 | CRAFT-PKG-01 | manual | three title-and-thumbnail promises of different mechanism before the scenario | packaging promises (variant card) | BP-135 | `explainer_engine/scripting/variant_plan.py` (planned, P3) |
 | CRAFT-PKG-02 | critic | the script's first seconds pay the chosen promise | packaging promise + first 5 s of narration | BP-135 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
-| CRAFT-PKG-03 | code | Studio's intro, top moments, spikes and dips mapped onto segment ids | retention report + segment times | BP-48 | `explainer_engine/qa/retention_mapper.py` (planned, P10) |
-| CRAFT-PKG-04 | code | the midpoint retention gate (the intro gate is BP-48's) | retention report | BP-136, BP-48 | `explainer_engine/qa/retention_mapper.py` (planned, P10) |
+| CRAFT-PKG-03 | eye | Studio's intro, top moments, spikes and dips mapped onto segment ids | retention report + segment times | BP-48 | manual |
+| CRAFT-PKG-04 | eye | the midpoint retention gate (the intro gate is BP-48's) | retention report | BP-136, BP-48 | manual |
 | CRAFT-PKG-05 | code | a Short stays inside YouTube's length limit | Short length | BP-137, BP-12 | `explainer_engine/shorts/planner.py` (planned, P9) |
 | CRAFT-PKG-06 | code | captions, labels and the face inside the Shorts safe zone | Short frame layout | BP-29 | `explainer_engine/production/shorts.py` |
 | CRAFT-PKG-07 | code | the hook is spoken from the first second | Short script + read | BP-11 | `explainer_engine/production/shorts.py` |
