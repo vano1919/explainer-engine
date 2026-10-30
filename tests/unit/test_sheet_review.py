@@ -31,7 +31,8 @@ def test_answers_become_verdicts():
 
 def test_the_episode_names_its_own_visitors():
     doc = compiled()
-    assert C._visitor_costume(doc) == C.VISITOR_COSTUME
+    # N-07: the Day 1 text lives in the Stone Age world (examples/stone_age), no longer as a code default
+    assert C._visitor_costume(doc) == "muddy frock coats, waistcoats, long skirts and spectacles of the 1700s to 1900s"
     doc["world"]["visitor_costume"] = "Roman tunics and sandals"
     assert C._visitor_costume(doc) == "Roman tunics and sandals"
     w = {"topic": "t", "host": {}, "absent": [], "visitors_note": "a legionary in a supermarket"}

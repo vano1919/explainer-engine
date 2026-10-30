@@ -11,9 +11,9 @@ import re
 
 QUESTIONS = {
     "adults": "Do all people look like adults (not children, not toddlers, no school-trip look)?",
-    "era_objects": "Is any object or building visible that does not exist in the stated world AND is not worn or carried by the intended time-travelling visitors (their later-century clothes, spectacles, watches and pocket items are expected and are NOT a problem; flag only things like metal tools, pottery, tents, glass bottles, wheels or modern clothing on the hosts)?",
+    "era_objects": "Is any object or building visible that does not exist in the stated world{visitors}?",  # built per world
     "people_in_plate": "Does the picture show any person or animal figure? (answer true if any figure is visible)",
-    "text": "Is any readable text, letters, numbers or logo visible (clock-face numerals on a pocket watch do not count)?",
+    "text": "Is any readable text, letters, numbers or logo visible{visitors}?",  # built per world
     "one_light": "Does the picture have one clear light direction and one light source type?",
     "hero_match": "If a named hero is meant to appear, is that figure recognisable from the description (glasses, hair, coat)?",
     "too_early": "Does the picture show anything from the 'must NOT appear yet' list?",
@@ -23,22 +23,53 @@ GOOD = {"adults": True, "era_objects": False, "text": False, "mood": True}  # FA
 SOFT = {"one_light": True}  # REVIEW only: firelight against dusk is two lights on purpose in some beats
 
 
-VISITORS_NOTE = "scientists from the 1700s to 1900s dropped into this world"  # Day 1 default; world.visitors_note overrides
+def visitors_note(world: dict) -> str:
+    """Who the scene brings in from another era, from the episode's world only (N-07): its own ``visitors_note``, else
+    the resolved visitors (era, people, and the costume the pictures were painted with: ``world.visitor_costume`` from
+    ``compile.world_of``, else the codex costume); "" for a world without visitors, so no premise is invented."""
+    if world.get("visitors_note"):
+        return world["visitors_note"]
+    parts = []
+    for v in world.get("visitors") or []:
+        who = ", ".join(v.get("people", [])[:4])
+        wear = world.get("visitor_costume") or ", ".join(v.get("costume", []))
+        parts.append(f"visitors from the {str(v.get('era', '')).replace('_', ' ')} era{f' ({who})' if who else ''}"
+                     f"{f' wearing {wear}' if wear else ''}")
+    return "; ".join(parts) + " dropped into this world" if parts else ""
+
+
+def _era_objects(world: dict) -> str:
+    things = ", ".join((world.get("absent") or [])[:5])
+    flag = f"things like {things} or modern clothing" if things else "modern clothing"
+    if visitors_note(world):
+        return (" AND is not worn or carried by the intended time-travelling visitors (their own clothes, tools and pocket "
+                f"items are expected and are NOT a problem; flag only {flag} on the hosts)")
+    return f" (flag {flag})"
+
+
+def _watch(world: dict) -> str:
+    return " (clock-face numerals on a visitor's pocket watch do not count)" if visitors_note(world) else ""
+
+
+_PER_WORLD = {"era_objects": _era_objects, "text": _watch}
 
 
 def build_prompt(world: dict, meta: dict) -> str:
-    """meta: {plate: bool, hero: str|None, stakes: str}. The answer is JSON only."""
+    """meta: {plate: bool, hero: str|None, stakes: str}. The answer is JSON only. The visitors' premise comes from
+    ``world`` alone (N-07): a world without visitors gets no visitors sentence."""
+    note = visitors_note(world)
     lines = [f"You review one painted picture for a video about: {world['topic']}.",
              f"The world is: {world['host'].get('place', '')}, {world['host'].get('when', '')}. "
-             f"Things that do NOT exist there: {', '.join(world['absent'])}.",
-             f"The scene intentionally shows {world.get('visitors_note') or VISITORS_NOTE}: they keep their own clothes.",
-             f"What the picture should show: {meta.get('stakes', '')}.",
-             "Answer ONLY a JSON object with a boolean for every key, plus a string 'why_<key>' for every key you answer true, "
-             "naming exactly what you see, and a short 'note':"]
+             f"Things that do NOT exist there: {', '.join(world['absent'])}."]
+    if note:
+        lines.append(f"The scene intentionally shows {note}: they keep their own clothes.")
     if meta.get("not_yet"):
-        lines.insert(3, f"Must NOT appear yet at this point of the story (it has not been made): {', '.join(meta['not_yet'])}.")
+        lines.append(f"Must NOT appear yet at this point of the story (it has not been made): {', '.join(meta['not_yet'])}.")
+    lines += [f"What the picture should show: {meta.get('stakes', '')}.",
+              "Answer ONLY a JSON object with a boolean for every key, plus a string 'why_<key>' for every key you answer "
+              "true, naming exactly what you see, and a short 'note':"]
     for key, q in QUESTIONS.items():
-        lines.append(f'  "{key}": {q}')
+        lines.append(f'  "{key}": {q.format(visitors=_PER_WORLD[key](world)) if key in _PER_WORLD else q}')
     if meta.get("hero"):
         lines.append(f'The named hero meant to appear is: {meta["hero"]}.')
     return "\n".join(lines)

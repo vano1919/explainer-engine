@@ -3438,4 +3438,29 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 ## 2026-10-30 — plan_v2 wave 2, T4 PR-5: follow-up to CP-11 (ASSET_COMPOSE step 3, the SHOT_PROMPTS banner)
 - `docs/ASSET_COMPOSE.md` step 3 no longer says assets are drawn with Qwen-Image-2512 (now Qwen-Image-2.1 + the xworld_v2 LoRA, D-80, settings LT-79); the `docs/SHOT_PROMPTS.md` line-3 banner says the rows are on the new stack since N-09 and that the retired rows' Helps/Hurts are not re-measured (T3's notes on #90).
 - Test red on main -> green: `test_docs.py` (1 new). The LoRA weight 0.7 (LT-79) vs 1.0 (code) is T5's open item, already in TECH_QUESTIONS. Other docs that still name 2512 (`LORA_TRAINING`, `PRODUCTION_RULES`, `ARCHITECTURE_PLAN_2026-10-22`, `TOOLING_RESEARCH`, `DECISIONS`) are history or decision text and were not touched. No pod, no API call, nothing deleted.
+
+## 2026-10-30 — plan_v2 wave 2, T5 N-07: the visitors' costume and the judge's visitors premise come from the episode's world
+- `production/compile.py`: the module default `VISITOR_COSTUME` (the Stone Age Day 1 frock coats) is gone. `_visitor_costume(doc, world)` returns the episode's
+  `world.visitor_costume`, else the codex costume of its resolved visitors' eras (`world/resolver.resolve`), and `""` for a world without visitors.
+  The Day 1 text now lives in the Stone Age worlds as `visitor_costume` (`examples/stone_age/world_spec.json`, `day1_v5`/`day1_v6` `world_spec.json`,
+  `week1_v1`/`day1_v7`/`ep1_v1` `production_script.json`; the schema's `world` is an open object, no schema change). Compiled prompts of all five committed
+  production scripts (three Stone Age, Titans, Syndicate Wars) are identical before and after (checked by compiling on main and on the branch).
+- `qa/visual_judge.py`: the module default `VISITORS_NOTE` (the 1700s-1900s scientists, pasted into every episode's judge prompt) is gone. `visitors_note(world)`
+  is the world's own `visitors_note`, else built from its resolved visitors (era, up to four people, codex costume), else empty; a world without visitors gets no
+  visitors sentence. The `era_objects` question is built per world: the visitors' exemption only when the world has visitors, the "flag things like" examples from
+  the world's own `absent` list (it was the Stone Age list for every episode). The not-yet line keeps its place before the stakes line.
+- Test red on main -> green: `test_costume_from_world.py` (3: no visitors = no costume and other visitors get their own era's costume; the judge premise comes from
+  the world, Titans has none; the Stone Age episode keeps its frock-coat costume and gets its visitors in the review request). `test_sheet_review.py` now expects the
+  Day 1 text from the Stone Age world instead of `C.VISITOR_COSTUME` (expectation only).
+- Facts that differed from the card (Argon-2): there is no `examples/*/world.json` (worlds live in `world_spec.json` and the production scripts' `world`);
+  compile already gave no costume without visitors, the default leaked for visitors of any era; the judge's `visitors_note` override never reached a real episode
+  (`sheet_review` passes the resolved world, which drops the key). `examples/stone_age/day1_v5/build_v5.py` and `look_test/build.py` keep their own copies (episode
+  scripts, not engine code).
+- T1's review (#92): one costume source. `compile.world_of` now carries `visitor_costume` (the episode's words, else the codex costume, else "") and
+  `visitors_note` uses it, so the judge is told exactly the clothes the pictures were painted with (the first head told the judge the codex costume
+  while the Stone Age pictures used the episode's words). The pocket-watch exemption of the `text` question is also visitors-only now.
+  Deliberate judge-prompt change for the Stone Age episode: the note names the visitors' era, four of its people and their costume instead of
+  "scientists from the 1700s to 1900s"; the `era_objects` exemption reads "their own clothes, tools and pocket items" and its examples come from the
+  world's `absent` list (pottery, metal, iron, bronze, wheel) instead of the hard-coded Stone Age list.
+- OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.
