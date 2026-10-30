@@ -1,0 +1,46 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "channel_voices.schema.json",
+ "title": "Channel voices: the registry of voices the channel uses and each one's baseline (config/channel_voices.json, P4b)",
+ "type": "object",
+ "properties": {
+  "schema": {"const": "channel_voices/1"},
+  "voices": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "properties": {
+     "voice_id": {"type": "string", "minLength": 1},
+     "name": {"type": "string", "minLength": 1},
+     "role": {"enum": ["narrator", "character"]},
+     "status": {"enum": ["channel", "candidate", "retired"]},
+     "model": {"type": "string", "minLength": 1},
+     "note": {"type": "string"},
+     "baseline": {
+      "anyOf": [
+       {"type": "null"},
+       {
+        "type": "object",
+        "properties": {
+         "kind": {"enum": ["preview", "read"]},
+         "ref": {"type": "string", "minLength": 1},
+         "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+         "centroid_hz": {"type": "number", "exclusiveMinimum": 0},
+         "tilt_db": {"type": "number"},
+         "f0_median_hz": {"type": "number", "exclusiveMinimum": 0}
+        },
+        "required": ["kind", "ref", "centroid_hz", "tilt_db"],
+        "additionalProperties": false
+       }
+      ]
+     }
+    },
+    "required": ["voice_id", "name", "role", "status", "model", "baseline"],
+    "additionalProperties": false
+   }
+  }
+ },
+ "required": ["schema", "voices"],
+ "additionalProperties": false
+}

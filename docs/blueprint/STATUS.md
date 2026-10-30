@@ -23,7 +23,7 @@ answered by Claude without his recorded delegation.
 | P1c | RunPod აღრიცხვა, job_speeds, ამომრჩევი, RP-01..10 | P1a | S2 / Sonnet / high | 2 | — | — | todo | — |
 | P2 | კონტრაქტები, state machine, shot cache, ledger, severity | — | S3 Opus high → S2 Sonnet high; გაშვებულია Opus high | 1 | [P2](#cmsg_01Hnu5zB86sjUj5GtTgaUkPWUKsq2ggmTdyfCuprDHMLhZ) | — | doing | — |
 | P3b | პროფესიული კურიკულუმი (სკილები, craft_checklists) | — | S2 Sonnet (კვლევა) → S3 Opus high (ტექსტი) | 3 | — | — | todo | — |
-| P4b | ხმის დირექტორი (ბატარეა, რეესტრი; კონექტორი, REST არა) | P2 | S2 / Sonnet / high | 3 | — | — | todo | — |
+| P4b | ხმის დირექტორი (ბატარეა, რეესტრი; კონექტორი, REST არა) | P2 | S2 / Sonnet / high | 3 | cmsg_01Hnu5zB86sjUj5GtTgaUkPWVCDmSdPHFKoz1Q5YLQxGKZ | [#45](https://github.com/vano1919/explainer-engine/pull/45) draft | review | cross-review (plan thread); D9 spend_caps casting_credits_max (the creator, before P12a) |
 | P5 | კომპენსატორი, რუკები, HUD | P2, P3b | S2 / Sonnet / high | 3 | — | — | todo | — |
 | P3 | სცენარის ხერხემალი + variant_plan + register_lint | P2, P3b | S2 / Sonnet / high (ქულები Opus) | 4 | — | — | todo | — (A5 = D-79) |
 | P4 | აუდიო-ხერხემალი + sound director | P3, P2, P3b | S3 Opus high → S2 Sonnet high | 4 | — | — | todo | — (D8: გენერატორი მხოლოდ გაზომილი ხარისხით) |
