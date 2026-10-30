@@ -3201,3 +3201,11 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   Argon-2 47). `runpod check` (read-only, 2026-10-30 ~13:45 UTC): 49 STOPPED pods, each 0 GB, $0.00/day in total; billed $0.00 in 24 h;
   balance $10.40; no PROBLEM line.
 - OPEN for T3/CP-18: `docs/CLOUD_RUNBOOK.md:18` and `:54` (CR-01, "Boot (TMR manifest) pods keep `boot_cmd`") still describe boot pods.
+
+## 2026-10-30 — T3-3 (CP-07, CP-08, CP-13): agent and skill pages carry the retirement banners (no pod, no money)
+- `animated-universe` skill: description and a "Retired in part" banner (cut-out rig retired 2026-10-22, D-77/D-78); "Move a character" now points to the clip prompt (SHOT_PROMPTS KP) and the continuity card (CT); the rig bullets sit under `#### History (retired 2026-10-22)`. Silhouette, proportions, key light, squash-and-stretch rationing and long holds stay.
+- `lora-coordinator`, `lora-dataset-auditor`, `lora-checkpoint-judge`: descriptions name the one LoRA (xworld style on Qwen-Image-2.1, D-80); the three-LoRA / edit / video wording and the A40 5.21 s/step figure moved under `## History (retired by D-80)` (measured rows: `config/job_speeds.json`). `lora-training` skill: "Current stack" line; "Settings that worked (Qwen-Image-2512 ...)" and "Video and edit LoRAs" under `## History (retired by D-80, lessons only)`; money numbers kept.
+- `orchestrator` page and `docs/ORCHESTRATION.md` head: scope line, the still-picture D-43 route only until P6/P7/P8/P11. No step removed, no `model:`/`effort:` line touched.
+- Test `tests/unit/test_t3_agent_skill_banners.py` (4 tests, red before, green after); `test_agent_governance`, `test_agent_roles`, `test_rig`, `test_lora_training` pass. Test adaptation: the plan's "History before the first `2512`" cannot hold for the skill (its description and banner name 2512), so the test pins History before the "Settings that worked (... Qwen-Image-2512" heading.
+- OPEN: `animated-universe` "Stage a scene" still says "Motion ladder: rig motion first" and its checks ask for a named cycle; the card did not cover them, left unchanged. `lora-run-operator` page not in scope.
+- Closes Fable F-04 (doc half), F-07, F-09; Argon-1 F-04 (doc half), F-13.

@@ -5,6 +5,8 @@ hard cap, a stop must never lose material"). The agent that follows it is `.clau
 enforces the money and stop rules is `explainer_engine/core/ledger.py`. Gates of one video stay in
 [PRODUCTION_RULES](PRODUCTION_RULES.md); the script format in [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md).
 
+Scope: the orchestrator page runs the D-43 still-picture route; the animated route (D-77, D-85) is unbuilt until P6/P7/P8/P11 (docs/blueprint/STATUS.md).
+
 ## Rules (OR-xx)
 
 | ID | Rule | Enforced by |
