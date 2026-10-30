@@ -5,6 +5,8 @@ hard cap, a stop must never lose material"). The agent that follows it is `.clau
 enforces the money and stop rules is `explainer_engine/core/ledger.py`. Gates of one video stay in
 [PRODUCTION_RULES](PRODUCTION_RULES.md); the script format in [PRODUCTION_SCRIPT](PRODUCTION_SCRIPT.md).
 
+Scope: the orchestrator page runs the D-43 still-picture route; the animated route (D-77, D-85) is unbuilt until P6/P7/P8/P11 (docs/blueprint/STATUS.md).
+
 ## Rules (OR-xx)
 
 | ID | Rule | Enforced by |
@@ -84,5 +86,5 @@ enforces the money and stop rules is `explainer_engine/core/ledger.py`. Gates of
 
 ## Money ledger of a run
 `jobs/<run>/run.json` holds caps, reservations, paid items and failures; the dollar and credit totals of the report are read from
-it. Caps for the 2026-10-16 night run: Gemini US$6.00 new spend (pictures and judge), ElevenLabs credits up to 100,000 on the
-account with a plan of about 25,000 for this episode, vidIQ up to 40 credits, RunPod none.
+it. Caps of the 2026-10-16 night run are history (the ledger of that run holds them); the ceilings in force live only in
+`config/spend_caps.json` (D-56).

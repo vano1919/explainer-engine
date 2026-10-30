@@ -58,10 +58,10 @@ is a validation error (narration is never cut to fit). SFX inside the first 150 
 | Bounce | entity, height, count | |
 | Shake | entity, amplitude, duration | seeded, deterministic |
 | FollowPath | entity, path, duration | |
-| ChangeExpression | entity (Kit), expression | one of the eight |
-| ChangePose | entity (Kit), pose | from the pose set (Phase 4) |
-| LipSync | entity (Kit), source `words|loudness` | mouth from phonemes (visemes.py) |
-| LidOpen | entity (Kit), duration | the reveal action |
+| ChangeExpression | (history, D-04 rejected 2026-10-15) entity (Kit), expression | one of the eight |
+| ChangePose | (history, D-04 rejected 2026-10-15) entity (Kit), pose | from the pose set (Phase 4) |
+| LipSync | (history, D-04 rejected 2026-10-15) entity (Kit), source `words|loudness` | mouth from phonemes (visemes.py) |
+| LidOpen | (history, D-04 rejected 2026-10-15) entity (Kit), duration | the reveal action |
 | SwapProp | entity, asset | same-size variants only |
 | PanCamera / ZoomCamera | to, duration, easing | |
 | Highlight | entity, token (palette), duration | outline pulse; never colour alone |
@@ -75,7 +75,7 @@ frames or ms and converted at 30 fps. Idle motion (blinks, sway) is generated, s
 Types, required fields and enums; unique stable ids; every reference resolves (asset, claim, segment, audio event,
 music state); times are monotonic and inside the audio duration; no overlapping shots within a scene; at most three
 simultaneous movers and six labels (REVIEW above); label holds meet P-71; every on-screen number has a claim; fallback
-present for non-reusable assets; Kit actions only from the vocabulary; vertical storyboards are re-composed (a check
+present for non-reusable assets; (history, D-04 rejected 2026-10-15) Kit actions only from the vocabulary; vertical storyboards are re-composed (a check
 rejects a storyboard that is only a crop: entity positions must differ from the 16:9 version).
 
 ## Minimal valid scene (fixture shape)
