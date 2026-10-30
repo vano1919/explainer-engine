@@ -66,3 +66,9 @@ def test_cp11_ur22_ur25_and_tool_strategy_are_scoped_to_their_route():
     assert "every picture is painted by Gemini on the batch tier" not in ts and "D-50" in ts and "D-80" in ts
     spec = (_DOCS / "VIDEO_PARAMETER_SPEC.md").read_text(encoding="utf-8")
     assert "still-picture route's" in spec and "BP-167" in spec
+
+
+def test_cp11_followup_asset_compose_and_the_shot_prompts_banner_are_on_the_new_stack():
+    assert not _live_retired_mentions("ASSET_COMPOSE.md")
+    banner = next(l for l in (_DOCS / "SHOT_PROMPTS.md").read_text(encoding="utf-8").splitlines() if l.startswith("> **Retired in part"))
+    assert "describe the banned stack" not in banner and "N-09" in banner
