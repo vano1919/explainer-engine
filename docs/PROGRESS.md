@@ -2725,3 +2725,21 @@ training as sequences is decided in the process. Changed together:
 - `shot_cache.key`: inf / NaN anywhere in a shot spec is a `ContractError` (no JSON form, no stable key).
 - Tests: `test_adopt_refuses_a_directory_dossier_and_non_dict_approvals`, `test_a_non_finite_number_is_a_contract_error_not_a_crash`.
 - Left open (design changes, for P3+ to take with the stage that uses them): approval `sha256` compared with the artifact it approves; CN-14 skipped when no `job_manifest.json` is present; `threshold_reads` does not see a rule id held in a constant.
+
+## 2026-10-30 04:10 UTC: P1b, `runpod dryrun` + `config/cloud_pins.json` (no pod, no money)
+
+- `cloud/dryrun.py` + `runpod dryrun --script`: `bash -n`, `lint_pod_script`, four static install rules (`pip install -U` only with `==`,
+  `git+https` only with `@sha`, every `git clone` followed by a checkout of a sha from the pins file, no `|| true` on installs, a `DRY=1`
+  gate after the last install) and a Hub existence check of every literal repo id. The record is keyed by the sha256 of the script text and
+  by the pins file; `preflight_create` refuses a script pod without a passing one. `config/cloud_pins.json` (`cloud/pins.py`): image digests
+  `tmr_pod`, `aitoolkit`, `smoke`, git shas of ai-toolkit / VideoX-Fun / diffusers / peft, `huggingface_hub` 1.33.0; all `smoke_verified:
+  false`, every `pull_mb_per_s` null (not measured, not guessed). Script pods run by digest only (default `tmr_pod`); an unlisted digest, a
+  tag or an undecided pin is refused; an image without a measured pull speed on COMMUNITY needs `--boot-minutes >= 25` (LT-15).
+  `runpod pins <pins.txt>` compares a pod's own record. The wrapper installs `huggingface_hub==$EE_HF_PIN` when the image lacks it and ends
+  the pod `BAD_HOST: no uploader` when that fails (paid plan §2.0 item 6, first option). CR-18 in `docs/CLOUD_RUNBOOK.md`;
+  `tests/unit/test_cloud_pins_dryrun.py` (19 tests; the three old defects are read from the real `xworld_v2_loop.sh`).
+- Values that came from lookups on 2026-10-30, not from this repo: the digests (registries), the git HEADs of that day (not necessarily
+  the commits rounds 2-3b ran), the `smoke` tag (the only CUDA tag of `runpod/pytorch` 2.4; the plan says "a runpod/pytorch 2.4 digest")
+  and `huggingface_hub` (latest 1.x; its API checked by import). They are pins to be proved by P12a, not facts about a working stack.
+- Not done here, on purpose: the nine historic `training/pods/*.sh` (pre-P1a protocol: own upload loop, own DONE) are not rewritten. They are
+  refused by `create` already; the P12 scripts under `training/pods/p12/` are the ones that must pass `dryrun`.

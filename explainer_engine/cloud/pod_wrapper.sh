@@ -7,6 +7,7 @@
 # Inputs (pod env, set by runpod.create_body): EE_SCRIPT_URL, HF_TOKEN, EE_CREATED, EE_LIFETIME_S, EE_MAX_USD, EE_PRICE,
 # EE_DISK_H, EE_JOB, EE_HF_REPO, EE_HF_PREFIX, optional EE_OUT, EE_PASS_S, EE_UPLOAD_GRACE_S, EE_CAP_GRACE_S, EE_RETRY_S,
 # EE_KILL_WAIT_S, EE_STOP_RETRY_S, EE_MAX_STOPS, EE_POLL_S, EE_UPLOAD_CMD (a command; default: the huggingface_hub uploader).
+# EE_HF_PIN (the huggingface_hub version of config/cloud_pins.json, installed when the image lacks it), EE_FORCE_HF_CHECK (tests).
 # EE_DRILL (no_self_stop | drop_key | upload_fail) exists for the P12a smoke only: `runpod create --drill` refuses it unless the
 # ledger says test=p12a_smoke, so a production pod can never carry one. EE_DEADLINE is exported to the job script (its own cut-off).
 EE_OUT=${EE_OUT:-/workspace/out}
@@ -123,6 +124,11 @@ if [ -n "$RUNPOD_API_KEY" ] && [ -n "$RUNPOD_POD_ID" ]; then
          "https://api.runpod.io/v2/pods/$RUNPOD_POD_ID" 2>/dev/null) || code=000
   [ "$code" = 200 ] && real=$(grep -o '"cost": *[0-9.]*' "$ST/pod.json" 2>/dev/null | head -1 | grep -o '[0-9.]*$')
 fi
+# --- 1b. the uploader (CR-18): the very first beat upload needs huggingface_hub, and an image may not carry it ---------------------
+if { [ -z "$EE_UPLOAD_CMD" ] || [ -n "$EE_FORCE_HF_CHECK" ]; } && ! python3 -c "import huggingface_hub" >/dev/null 2>&1 && [ -n "$EE_HF_PIN" ]; then
+  timeout 180 pip install -q "huggingface_hub==$EE_HF_PIN" >/dev/null 2>&1 \
+    || timeout 180 pip install -q --break-system-packages "huggingface_hub==$EE_HF_PIN" >/dev/null 2>&1
+fi
 PRICE=$(awk -v a="${EE_PRICE:-0}" -v b="${real:-0}" 'BEGIN { print (b + 0 > a + 0) ? b : a }')
 DEADLINE=$(deadline_calc "$PRICE")
 echo "BOOT key=$code job=${EE_JOB:-none} pod=${RUNPOD_POD_ID:-none} price=$PRICE deadline=$DEADLINE" > "$ST/boot"
@@ -153,6 +159,12 @@ end_seq() { # $1 word  $2 rc  $3 grace seconds
   done
   exit "$rc"
 }
+
+# --- 2b. no uploader at all: nothing could ever reach HF, so end the pod now instead of billing blind (CR-18) --------------------
+if { [ -z "$EE_UPLOAD_CMD" ] || [ -n "$EE_FORCE_HF_CHECK" ]; } && ! python3 -c "import huggingface_hub" >/dev/null 2>&1; then
+  echo "BAD_HOST: no uploader (huggingface_hub is missing and could not be installed${EE_HF_PIN:+ at $EE_HF_PIN})"
+  end_seq BAD_HOST 1 1
+fi
 
 # --- 3. bad host (CR-06) ----------------------------------------------------------------------------------------------------
 if command -v nvidia-smi >/dev/null 2>&1 || [ -n "$EE_REQUIRE_GPU_CHECK" ]; then
