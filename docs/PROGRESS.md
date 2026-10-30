@@ -3550,3 +3550,7 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   `t.jsonl` records `lora_gate_up` with the layer count. Without it the ai-toolkit fused `img_mlp.gate_up` layer was skipped (10-25 finding).
 - `p12b.sh` pins the new sha256 of `p12b.py`; `runpod dryrun --script` passes. Tests: static order test and a numeric test (skipped without torch) in
   `tests/unit/test_p12b_pod_script.py`. Closes the OPEN of the previous entry. No pod, nothing paid, nothing deleted.
+
+## 2026-10-30 (night run) — OR-34 audit findings: banners made truthful
+- The Fable OR-34 audit (main 5cfac9eb, $1.36, `result_check`) answered NOT READY: `audio/voice_layer.py` carried a "never run" banner while five live modules import its WAV helpers; `aivideo/__init__.py` described the banned route with no banner. Q2 grep over `training/pods`, `.claude/agents`, `.claude/skills` for `wldnk|2512|2511|Wild Ink|wan22|qi21`: only history sections and the bannered lora-training lessons. Q3: p12a/p12b script pin tests pass on main.
+- The `voice_layer` banner now says what is retired (blend, alteration) and what stays live (`read_wav`, `write_wav`, `f0_track`); `aivideo/__init__.py` gets a RETIRED (D-80) banner. Docstrings only, no code change; nothing paid, nothing deleted.

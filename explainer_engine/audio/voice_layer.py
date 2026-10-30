@@ -1,4 +1,4 @@
-"""RETIRED by D-39 (2026-10-16, ElevenLabs is the narrator): Kokoro-era voice blend; kept as history, never run. The narrator's voice: a Kokoro style blend, a duration-preserving alteration, and the checks that prove the timings
+"""RETIRED by D-39 (2026-10-16, ElevenLabs is the narrator): the Kokoro-era voice blend and alteration are never run. Only the generic WAV helpers (`read_wav`, `write_wav`, `f0_track`) stay live; the production, Shorts and audition paths import them. The narrator's voice: a Kokoro style blend, a duration-preserving alteration, and the checks that prove the timings
 the edit depends on survive it (docs/AUDIO_SYSTEM.md, "Voice alteration layer", D-38). numpy + stdlib; ffmpeg for the
 pitch step (the `rubberband` filter).
 
