@@ -3493,5 +3493,10 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - `examples/continuity/napoleon_tent.json` `style_line` is now the trigger alone (`xworld style`, `training/lora_rules.json` via `qa/style_prompt.py`); the
   wldnk-era look words are dropped (the planner's call). `examples/napoleon_vs_genghis/PROMPT_PACKAGE.md` starts with a history note (superseded by D-80).
 - Test: `test_the_example_style_line_passes_the_d80_trigger_check` (trigger equality + `style_prompt.check` has no FAIL).
+## 2026-10-30 night run T08: PRODUCTION_RULES gates 6 and 8 name real tools
+- `docs/PRODUCTION_RULES.md` gate 6 now points at `python -m explainer_engine.cloud.runpod dryrun --script <pod.sh>` (`cloud/dryrun.py`, CR-18),
+  `config/job_speeds.json` (`cloud/speeds.py`) and `docs/CLOUD_RUNBOOK.md` (was the TMR `cloud/lint_manifest.py`, `cloud/job_speeds.json`, runbook R6);
+  gate 8 says the GPU compositor (D-32) is not built and the render is `production/assemble.py` in chunks (RULE-R1, ED-13). No gate name, number or order changed.
+- Test: existing `test_production_rules_page_is_linked_and_names_every_gate` stays green.
 - OPEN: none. No pod, no API call, nothing deleted.
 - Decision log: none moved.
