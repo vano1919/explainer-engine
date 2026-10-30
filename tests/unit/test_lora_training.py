@@ -8,9 +8,9 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from explainer_engine.training import audit, judge
+from explainer_engine.training import audit, judge, lora_rules
 
-T = "wldnk style"
+T = lora_rules.trigger()  # D-80: the one home (N-09)
 
 
 def _img(path, size=(1024, 768), seed=0):
@@ -110,7 +110,7 @@ def _cfg(**over):
 
 
 def test_good_config_passes():
-    rep = audit.check_config(_cfg(), "style", captions=["wldnk style, a fisherman on a pier"],
+    rep = audit.check_config(_cfg(), "style", captions=[f"{T}, a fisherman on a pier"],
                              launch={"image": "ostris/aitoolkit:latest", "boot_minutes": 25})
     assert audit.verdict(rep["findings"]) != "FAIL" and rep["view"]["repeats"] == {"his": 5}
 

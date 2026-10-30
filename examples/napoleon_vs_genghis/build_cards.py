@@ -15,6 +15,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+sys.path.insert(1, str(HERE.parents[1]))  # the repo: episode.py reads the trigger from training/lora_rules.json
 
 HEIGHT = {"EWS": "quarter", "WS": "third", "MWS": "two_thirds", "MS": "most", "MCU": "most", "CU": "most", "ECU": "most",
           "OTS": "most"}

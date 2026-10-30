@@ -23,7 +23,7 @@ How every LoRA of the channel is trained and judged: the photo style LoRA (Qwen-
 
 | ID | Rule | Kind | Enforced by |
 |---|---|---|---|
-| LT-01 | Every image/clip has a caption; a style caption starts with the trigger (`wldnk style, <what is visible>`) | source + house (v2, 2026-10-23) | `audit.caption_findings` FAIL |
+| LT-01 | Every image/clip has a caption; a style caption starts with the trigger (`<trigger>, <what is visible>`; the word lives only in [`lora_rules.json`](../explainer_engine/training/lora_rules.json) `dataset.trigger`, D-80) | source + house (v2, 2026-10-23) | `audit.caption_findings` FAIL |
 | LT-02 | No phrase of 4+ words in 45 % of captions (FAIL; 20 % WARN), no content word in 35 %+ (WARN): a shared phrase takes the style that the trigger should carry, a shared word appears unasked | house (v2 stopped at step 572 for exactly this) | `audit.shared_phrase_findings` |
 | LT-03 | Captions describe what is visible, 6-70 words | source (ltx-trainer, RunComfy guides) | WARN |
 | LT-04 | No byte-identical copies (weight with repeats, not copies); near-duplicates and reused captions are listed (a crop says "close-up of ...") | source (guides) | FAIL / WARN |

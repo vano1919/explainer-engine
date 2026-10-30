@@ -3364,3 +3364,21 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   distinct answered pairs, and a pair answered twice with different answers is refused ("answered twice"). No minimum share added (still his call).
 - Test red on main -> green: `test_generator_gate.py::test_a_repeated_row_cannot_stand_in_for_a_blank_pair`. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 — plan_v2 wave 2, T5 N-09: D-80 prompt contract, one trigger home, no wldnk / nextpose / scene LoRA in composed cards
+- `training/lora_rules.py` (new, stdlib): `load()` and `trigger()` read `training/lora_rules.json`, the one home of the trigger; its `dataset.trigger` is now `xworld style`
+  (the word `training/pods/xworld_v2_data.py` captioned the dataset with, LT-79). `training/audit.py`, `qa/style_prompt.py` (so `compose/episode_look.py`) and
+  `scripting/film_shots.py` read it; `examples/napoleon_vs_genghis/episode.py` takes its `style.trigger` from it.
+- `scripting/film_shots.py`: next poses open with `<trigger>, a later frame of the same continuous animated shot, same camera:` (was `nextpose, `), cuts open with the trigger;
+  every picture card carries `lora: "style"` and `style_prompt.INFERENCE` (no `scene` LoRA: one LoRA, next poses and cuts in its edit mode, D-80). `style_check` FAILs (LT-65)
+  a `style.trigger` other than the home and any keyframe / next-pose / cut prompt that does not start with it or starts with a retired prefix. `shot_prompt_lint` strips the
+  new edit opener instead of `nextpose,`.
+- Fixtures regenerated with the repo CLIs: `examples/film_shots/bus_in_the_ice_age.json`, napoleon `film_shots.json`, `prompts.json` (the committed copy was stale: 2512 / wldnk
+  inference), `shotlist.md`; `script_variants.json` only its `dossier_sha256` (the hash of the changed `film_shots.json`, `variant_plan napoleon --write`).
+- Test red on main -> green: `test_d80_prompt_contract.py` (4: one trigger home, compose emits only the D-80 stack and every card passes `keyframe_gate.check_stack`,
+  `style_check` FAILs a retired trigger, the napoleon fixture is on the stack). Existing tests changed only their expected trigger or the card selector (`kind == "keyframe"`
+  instead of `lora == "style"`, the same set before this change). `docs/LORA_TRAINING.md` LT-01 links the home instead of stating the word.
+- OPEN: `style_prompt.INFERENCE["lora"]` is still `None` ("no LoRA until the creator rates the new one") while D-83 / LT-79 name xworld_v2 ck3000 at 0.7; the next-pose wording vs
+  the xworld edit caption shape; wldnk-era `BODY_WORDS` / `STYLE_TAIL` / `video_sentence`; `examples/continuity/napoleon_tent.json` style_line; `PROMPT_PACKAGE.md`;
+  `docs/SHOT_PROMPTS.md` rows 23/87 and `docs/SCRIPT_ENGINE.md` (T4); `qa/blind_check.py` (T2). No pod, no API call, nothing deleted, no schema change.
+- Decision log: none moved.

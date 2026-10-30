@@ -2,7 +2,7 @@
  "version": 1,
  "about": "Numbers for the LoRA training control (docs/LORA_TRAINING.md, LT-xx). kind: source = published guide/doc/paper (see sources in the doc), house = our own measured lesson (dated), hypothesis = a starting value to calibrate on our runs. A number changes only with a new run's evidence written into docs/PROGRESS.md.",
  "dataset": {
-  "trigger": "wldnk style",
+  "trigger": "xworld style",
   "caption_words_min": 6,
   "caption_words_max": 70,
   "shared_ngram_words": 4,
