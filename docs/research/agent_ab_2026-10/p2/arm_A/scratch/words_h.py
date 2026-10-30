@@ -1,0 +1,13 @@
+from helper import *
+repl("S06", "And your horses?", ("napoleon", "murat", "press", "Your horses, Murat."))
+repl("S06", "How many can carry", ("napoleon", "murat", "press", "Tell me how many can carry a man tomorrow."))
+repl("S06", "A week. With what horses?", ("napoleon", "murat", "press", "A week. And no horses."))
+repl("S06", "How many horses did eleven", ("napoleon", "murat", "press", "Count me the horses those eleven men cost."))
+repl("S06", "Kerim. You rode with", ("napoleon", "kerim", "press", "Kerim. You rode with the vanguard. Tell the marshal what you saw."))
+repl("S06", "What did you see?", ("napoleon", "kerim", "press", "The truth, Kerim."))
+repl("S06", "And they walk into it?", ("murat", "napoleon", "press", "And they'll just walk into it, like lambs."))
+repl("S04", "Sire, I beg you.", ("murat", "napoleon", "press", "Sire, I beg you. Not for glory. For the men with nothing to hit."))
+repl("S10", "Fifteen men to a gun", ("napoleon", "murat", "deflect", "Fifteen men to a gun, all laid on the valley. Guns don't swing like doors.", ["C-05"]))
+repl("S13", "Where I come from, a man who knows", ("genghis", "napoleon", "press", "Where I come from, one man who knows is worth ten who own.", ["C-11"]))
+repl("S14", "So, can Napoleon", ("N", "So, can Napoleon get his army out of the steppe of 1223? He can. Just not the way he always wanted.", ["C-91"]))
+report()

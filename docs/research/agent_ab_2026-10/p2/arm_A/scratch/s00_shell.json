@@ -1,0 +1,96 @@
+{
+ "schema": "production_script/3",
+ "voice": {
+  "provider": "elevenlabs",
+  "model": "eleven_v4",
+  "voice_id": null,
+  "name": null,
+  "style": "placeholder until the voice-caster (stage 5): a calm, warm, quick documentary narrator",
+  "pace_wpm": [
+   160,
+   185
+  ]
+ },
+ "world": {
+  "topic": "Napoleon's army walks out of Moscow into a fog and comes out in the steppe of 1223, in front of Genghis Khan",
+  "host": {
+   "era": "steppe_1223",
+   "place": "an open green steppe with long valleys and low ridges",
+   "when": "late spring, 1223"
+  },
+  "visitors": [
+   {
+    "era": "france_1812",
+    "who": "the Grande Armee column leaving Moscow, October 1812"
+   }
+  ],
+  "light_owner": "host",
+  "day_arc": [
+   {
+    "beat": 1,
+    "light": "moscow_fog_dawn"
+   },
+   {
+    "beat": 2,
+    "light": "steppe_fog_dawn"
+   },
+   {
+    "beat": 3,
+    "light": "grey_road_day"
+   },
+   {
+    "beat": 4,
+    "light": "ridge_morning"
+   },
+   {
+    "beat": 5,
+    "light": "overcast_march"
+   },
+   {
+    "beat": 6,
+    "light": "wagon_dusk"
+   },
+   {
+    "beat": 7,
+    "light": "wagon_dusk"
+   },
+   {
+    "beat": 8,
+    "light": "khan_tent_night"
+   },
+   {
+    "beat": 9,
+    "light": "pre_dawn_blue"
+   },
+   {
+    "beat": 10,
+    "light": "valley_dawn"
+   },
+   {
+    "beat": 11,
+    "light": "smoke_morning"
+   },
+   {
+    "beat": 12,
+    "light": "ash_grey_day"
+   },
+   {
+    "beat": 13,
+    "light": "open_grass_noon"
+   },
+   {
+    "beat": 14,
+    "light": "soft_afternoon"
+   },
+   {
+    "beat": 15,
+    "light": "fog_dawn"
+   },
+   {
+    "beat": 16,
+    "light": "fog_dawn"
+   }
+  ]
+ },
+ "segments": []
+}
