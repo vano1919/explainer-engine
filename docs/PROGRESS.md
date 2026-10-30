@@ -2896,3 +2896,10 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 
 ## 2026-10-30 08:10 UTC — P0d: key alias `EE_ANTHROPIC_API_KEY`
 The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code account auth). `claude_api.api_key()` now takes the first non-empty of `ANTHROPIC_API_KEY`, `EE_ANTHROPIC_API_KEY`; used by `client()`, `status`, `estimate`. Test: `test_the_key_can_come_from_the_alias_name`.
+
+## 2026-10-30 08:50 UTC: G13 crash-drill test (audit pass 1, B3; free)
+
+- `git grep` on main (874b498) found no test of a ledger one save ahead of its mirror reaching `create`: the audit was right. Added
+  `test_drill_6_the_mirror_write_fails_once_...` to `tests/unit/test_cloud_drills.py` (runbook drill table row 6): the mirror write fails once during
+  `reserve`; `Run.open_test` and `runpod create` both stop with `LedgerConflict`, the fake API gets 0 calls, the ledger keeps its 0.07. The table
+  test now expects six rows. No code changed (the audit found the code correct); nothing else weakened.
