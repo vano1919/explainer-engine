@@ -3167,5 +3167,5 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Not added, OPEN: `train_xworld_v2/train.log` (only v1's `train.log` is uploaded by a pod script; v1 is covered by `train_xworld_v1/**`) and
   `cast_xworld_v2` (Argon-1; no HF path for it in the repo).
 - `docs/VAULT.md` VT-01..VT-04 only restrict deleting, so adding globs needed no creator word.
-- `vault snapshot` ran (HF_TOKEN was in the session, read-only on HF): 16735 files, 60.97 GB; critical 8860 files, 13.87 GB. `docs/VAULT_MANIFEST.json` regenerated.
+- `vault snapshot` ran (HF_TOKEN was in the session, read-only on HF): 16735 files, 60.97 GB; critical 8860 files, 13.87 GB. `docs/VAULT_MANIFEST.json` regenerated and trimmed to the 8860 critical rows plus `note` (VAULT.md: critical rows only); `vault verify` on it: PASS, every manifest file is on the primary copy.
 - Test: `tests/unit/test_vault.py::test_the_live_xworld_lora_and_datasets_are_critical` (red before the globs, 1 failed; green after, 9 passed). Closes Argon-1 F-01; Argon-2 F-26 (the add half).
