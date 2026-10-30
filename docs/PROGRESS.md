@@ -2709,6 +2709,13 @@ training as sequences is decided in the process. Changed together:
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.
 
+## 2026-10-30 03:50 UTC: P12d, the fake-HTTP drills (no pod, no money)
+
+- `tests/unit/test_cloud_drills.py`: the five scenarios of the Blueprint card played once, each chaining the real `pod_wrapper.sh`
+  (stubbed curl and uploader, `EE_DRILL` from CR-17) with the watchdog and the guard over the fake RunPod and fake registry: the
+  session dies (no_self_stop), the cap is reached (and the silent pod is stopped by its record's money estimate), the folder upload
+  fails (upload_fail), only the watchdog is left, the pod has no key (drop_key). `docs/CLOUD_RUNBOOK.md` "Drills" is the table
+  (scenario, expected, received, live); the live column stays empty until P12a's pod runs `create --drill`.
 ## 2026-10-30 — P0c-2: agent form A/B at 16 segments (free, evidence only)
 - `docs/research/AGENT_AB_P0C2_2026-10.md` + data in `docs/research/agent_ab_2026-10/p2/`: Napoleon-vs-Genghis at 16 segments (template D), one context (A2) vs 26 workers with Haiku on the mechanical
   stages (B2), blind Opus critic (A2 4.00 vs B2 3.17 on its table), cost 14.19 M vs 19.08 M input-price units, B2 ahead only if a Haiku unit costs under half a Sonnet unit.
