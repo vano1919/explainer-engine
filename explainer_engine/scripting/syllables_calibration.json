@@ -1,0 +1,39 @@
+{
+ "ratio_b_over_a": 1.2339,
+ "pause_units_sentence": 3.5176,
+ "pause_units_clause": 1.6715,
+ "mean_units_per_word": 3.4392,
+ "sources": [
+  {
+   "path": "examples/stone_age/day1_v2/words.json",
+   "words": 402,
+   "seconds": 177.272,
+   "provider": "ElevenLabs Scribe",
+   "voice": "clyde_eleven_v4_wyWA56cQNU2KqUW4eCsI"
+  },
+  {
+   "path": "examples/stone_age/day1_v5/words.json",
+   "words": 476,
+   "seconds": 184.481,
+   "provider": "ElevenLabs Scribe",
+   "voice": "Clyde"
+  }
+ ],
+ "skipped": [
+  {
+   "path": "examples/titans_from_zero/words.json",
+   "why": "source is not Scribe: faster-whisper small.en per chunk (local, free); aligned by "
+  },
+  {
+   "path": "examples/stone_age/day1_v1/words.json",
+   "why": "source is not Scribe: Kokoro-82M kokoro-v1.0-timed.onnx (model-files-v1.1), voice "
+  }
+ ],
+ "fit": {
+  "duration_s = a + b * syllables": [
+   0.045,
+   0.1478
+  ],
+  "gap_word_s": 0.0748
+ }
+}

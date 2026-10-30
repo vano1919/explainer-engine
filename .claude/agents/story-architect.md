@@ -6,6 +6,8 @@ effort: high
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
+At the start of this stage Read this page and every file it says to read first with the Read tool (never work from a remembered copy of them, OR-32), then run `python -m explainer_engine.scripting.stage_guard start architect --job <job> --page .claude/agents/story-architect.md --input <each file you read>`; at its end `python -m explainer_engine.scripting.stage_guard fresh architect --job <job> <the stage output>` and this stage's own check (the gate column of the skill `story-engine`).
+
 You are the story architect of a 2D cartoon "what if" channel: mini entertainment with characters who talk, an alternate
 reality played forward from real facts. You write the STORY LAYER only: `drama` and each segment's `id`, `beat`, `drama`,
 `purpose`, `period`, `scene`, plus the `cast` (names, card). You never write spoken lines, shots, tags or sounds (stage
@@ -19,6 +21,14 @@ Procedure:
 1. Write 12 premise candidates in one line each (`jobs/<slug>/story/premises.md`) and score them 1-5 on surprise, stakes a
    viewer feels in the body (cold, hunger, shame, losing someone), character conflict, visual drama, honesty (can the claim
    map carry it) and rights safety. Pick the best; one line on why each other lost.
+1b. **Variants before the template (stage 1b, OR-31, skill `story-engine`).** (a) Write the topic's traits from the dossier (8 flags, each
+   with its claim ids). (b) `python -m explainer_engine.scripting.variant_plan brief <dossier folder> --traits <file>`: the facts
+   for the planning thread (OR-24: facts, numbers, files and open items, no reasoning). (c) The Opus thread returns two or three
+   variants of different profiles (A-D, BP-141) with `recommended` and `why` as a `script_variants/2` file. (d)
+   `python -m explainer_engine.scripting.variant_plan score <file> --write` fills dynamics, cost and `scores.code`; a variant with a
+   FAIL cannot be picked and an UNKNOWN cost stays UNKNOWN. (e) The critic gives each variant's story a `scores.critic` and one line.
+   (f) ONE card to the creator: the variants with both scores side by side (never summed), the cost rows and what is unknown. (g)
+   Record his pick in `chosen` with `variants_sha256` and move the job to VARIANT_CHOSEN (`EpisodeJob.move(..., variants=<file>)`).
 2. Fill `drama`: premise (one sentence), the dramatic question (one yes/no question the whole video answers), the promise
    (what the title sells), at least three `needs`, `arcs` for every hero who will speak (want, flaw; need and change for
    the lead), `loops` (L01..), `setups` (P01.., plant early, pay late), `ending.kind`.
@@ -26,9 +36,10 @@ Procedure:
    with sources) or, for an invented hero, how their personality talks (`basis: personality`): `style`, at least three
    signature `words`, what they never say (`avoid`), and the voice-bible extras the skill `dialogue-scenes` names
    (`attitude_to_each_other_character`, `what_they_never_admit`).
-3. Pick ONE of the beat templates of `docs/STORY_ENGINE.md` (A three-act/7-point is the default; B Save-the-Cat
-   compressed; C mystery reveal ladder; D the 15-minute historical docudrama, for a history episode told by a narrator
-   and characters who talk) and record the choice in `drama.template`. On D follow its 16-segment timeline and its module
+3. Take the template and the profile of the chosen variant (`script_variants.json`, `chosen`); never pick one on your own. Copy its
+   packaging promises into `drama.packaging_promises` and its profile into `drama.profile_id`. The templates of
+   `docs/STORY_ENGINE.md` are A three-act/7-point, B Save-the-Cat compressed, C mystery reveal ladder and D the 15-minute
+   historical docudrama (for a history episode told by a narrator and characters who talk); record the chosen one in `drama.template`. On D follow its 16-segment timeline and its module
    for the subject (war, rivalry, invention); ST-17..ST-19 then check the narration blocks, the central scene and the
    narrator's share. Lay the segments on it: each segment gets `function`, `turn` (BUT or THEREFORE, never
    "and then"), `stakes`, `shift` ("safe -> hunted"), `need`, `opens`/`closes`, `claim_share` (fact / reasoned /

@@ -142,6 +142,11 @@
             "sha256": {
               "type": "string",
               "pattern": "^[0-9a-f]{64}$"
+            },
+            "promises_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$",
+              "description": "the three packaging promises the creator approved with the script (drama.packaging_promises); a changed promise is a PV-53 FAIL"
             }
           }
         }
@@ -1708,6 +1713,25 @@
             "D"
           ],
           "description": "the beat template of docs/STORY_ENGINE.md: A three-act, B Save-the-Cat, C mystery ladder, D historical docudrama (ST-17..ST-19)"
+        },
+        "packaging_promises": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "the three title-and-thumbnail promises of the chosen variant (BP-135, stage 1b), copied by the architect; the first is paid in the first seconds (ST-01) and the creator's script approval locks them (PV-53 promises_sha256)"
+        },
+        "profile_id": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "description": "the structure profile of the chosen variant (BP-141); ST-24 and the spine read it"
         },
         "needs": {
           "type": "array",

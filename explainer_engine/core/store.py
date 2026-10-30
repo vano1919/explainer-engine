@@ -292,9 +292,11 @@ class EpisodeJob:
         return reservation_id in json.loads(path.read_text(encoding="utf-8")).get("reserved", {})
 
     def move(self, to: str, *, reason: str, approval: dict | None = None, dossier: Path | str | None = None,
-             reservation_id: str | None = None) -> None:
+             reservation_id: str | None = None, variants: Path | str | None = None) -> None:
         """The next forward state, and only that one (CN-03). A gated state needs its approval (CN-04); RESEARCHED fixes the
-        dossier hash (CN-05); BUDGET_RESERVED names an item the ledger holds; PUBLISHED_PUBLIC is the creator's own click (CN-06)."""
+        dossier hash (CN-05); BUDGET_RESERVED names an item the ledger holds; VARIANT_CHOSEN given ``variants`` (the
+        script_variants/2 file) binds the approval to the variants the creator picked from; PUBLISHED_PUBLIC is the creator's own
+        click (CN-06)."""
         m = json.loads(json.dumps(self.manifest))
         cur = m["state"]
         if cur not in LIFECYCLE or to not in LIFECYCLE or LIFECYCLE.index(to) != LIFECYCLE.index(cur) + 1:
@@ -307,6 +309,14 @@ class EpisodeJob:
             if m["source_dossier_sha256"] not in (None, digest):
                 raise ContractError("the dossier is already fixed for this job; another dossier is another job (CN-05)")
             m["source_dossier_sha256"] = digest
+        if to == "VARIANT_CHOSEN" and variants is not None:
+            doc = json.loads(Path(variants).read_text(encoding="utf-8"))
+            chosen = doc.get("chosen")
+            if chosen and chosen["variant_id"] not in {v["id"] for v in doc["variants"]}:
+                raise ContractError(f"VARIANT_CHOSEN: {chosen['variant_id']!r} is not one of the variants (CN-04)")
+            if not chosen or approval["sha256"] != chosen["variants_sha256"] or chosen["variants_sha256"] != contracts.variants_sha256(doc):
+                raise ContractError("VARIANT_CHOSEN: the approval's sha256 is not the variants_sha256 of the picked, unchanged "
+                                    "script_variants file (CN-04)")
         if to == "BUDGET_RESERVED":
             if not reservation_id or not self._reserved(reservation_id):
                 raise ContractError(f"BUDGET_RESERVED needs a reservation the ledger holds ({m['ledger']}): {reservation_id!r}")

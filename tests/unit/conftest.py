@@ -23,3 +23,15 @@ def _dryrun_isolated(request, tmp_path, monkeypatch):
     if "real_dryrun" not in request.fixturenames:
         monkeypatch.setattr(D, "passed", lambda text, **kw: [])
     yield
+
+
+@pytest.fixture(autouse=True)
+def _job_speeds_isolated(tmp_path, monkeypatch):
+    """P1c: ``runpod cost`` writes measured speed rows; a unit test never writes the committed config/job_speeds.json."""
+    import shutil
+
+    from explainer_engine.cloud import speeds as S
+    copy = tmp_path / "job_speeds.json"
+    shutil.copy(S.FILE, copy)
+    monkeypatch.setattr(S, "FILE", copy)
+    yield

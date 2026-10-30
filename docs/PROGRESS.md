@@ -2709,6 +2709,52 @@ training as sequences is decided in the process. Changed together:
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.
 
+## 2026-10-30 UTC: Blueprint P3, script spine, variant planner (stage 1b), register lint (no pod, no money)
+Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows one line per commit. A5 stays provisionally D-79: the D-79 branch is built.
+- `stage_guard`: the architect owns the dialogue segment's `scene` header (P0c finding; `test_stage_guard_lets_the_architect_correct_a_scene_header_and_nobody_else`).
+- Rules and docs first: BP-140 (house FAIL: the AI-register word tier, 75 listed forms of 32 words and the Additionally/Moreover/Furthermore openers, `checked_on` 2026-10-29, recheck 180 days; the creator's 09:28 wording is quoted from the plan card because his exact words are not in the repository), BP-114 becomes the soft tier (27 words, 68 phrases, the densities per 1,000 words), BP-141 (profiles A-D, hypothesis), BP-142 (every turn is a played scene, house FAIL), BP-143..146 (ad-safety window, double exposition, "and then" chain, drift; hypotheses). `revolutionary` and `boasts` are in the soft tier, not tier 1 (Napoleon's own period; a hero may boast). `sourced_rules` accepts a dict threshold. Docs: ST-20..ST-24, the RG rules (STORY_ENGINE), the VP checks and ZI-07..ZI-10 (SCRIPT_ENGINE), OR-31 and OR-32, PV-61, KP-46, D-86; `RG` and `VP` join the docs_lint homes.
+- `scripting/syllables.py`: `count` (the one syllable counter; `production/validate.syllables` delegates) and `seconds(text)` = a read-time estimate at BP-01's pace with the shape (syllable weight, sentence and clause pauses) fitted on the two committed Scribe reads (stone_age day1_v2, day1_v5); the Kokoro (day1_v1) and local-Whisper (titans, syndicate) timings are skipped by their `source`. `syllables_calibration.json`; `test_syllables`. The committed reads were heard at 122-155 wpm against BP-01's 170: recorded, no change proposed (P4).
+- `scripting/register_lint.py` (RG-01..RG-05) and its call sites: PV-61 (`validate.check_script`, hero lines words and phrases only, narrator lines also densities and openers; `register_allow.json` next to the script), N-16/N-17 in `narration_lint.lint` (the text path before any paid read; a production script passes `register=False` because PV-61 covers it), KP-46 in `film_shots.check`. BP-114 and BP-140 name the module in `enforced_by` and drop `planned`; `test_craft_checklists` now requires one checklist row plus existing readers for an implemented rule (no row removed). Baseline: 0 RG-01 on all 5 committed production scripts and the Napoleon draft; one REVIEW on stone_age week1_v1 (3 triplets in 557 words). `test_register_lint` (25 tests).
+- `story_lint.script_checks`: ST-20 an and-then chain (BP-145), ST-21 double exposition (narrator line repeating the adjacent hero line, `story_lint.overlap` against BP-144, shared with KP-20 in `film_shots`), ST-22 graphic violence inside the first 7 s (BP-143), ST-23 a twist line over BP-115's estimate (`syllables.seconds`), and the BP-135 first-packaging-promise check under ST-01. All REVIEW (hypotheses, D-59). `tests/unit/test_story_lint_p3.py` (6 tests).
+- `scripting/variant_plan.py` (stage 1b; VP-01..VP-18, ST-24), `script_variants/2`, `config`-free cost model. `dynamics` is the one function that counts lane shares, runs, rotation, turn coverage and the narrator share (words when the blocks carry them, else the unplayed seconds); `checks`, `lane_findings` (the `LANES` table, one VP-11 per missing lane naming its phase), `cost` (rows `pod`/`api`/`cpu`/`voice`; planned = base x 1.5, worst = base x 3; a row without a measurement is `unknown` and makes the totals the string `"unknown"`; VP-13 FAILs on the KNOWN part above 80 % of a cap, `ledger.STOP_FRACTION`), `drift` (VP-15: seconds and a 20 % cost drift REVIEW; cost above the approved `usd_worst` FAIL), `score` (100 - 10/REVIEW - 25/FAIL), `brief` (facts only for the Opus thread), CLI `brief|score [--write]|check|napoleon [--write]`. Contract: `script_variants/2` in the same schema file (enum + if/then), VP-01 sums in `contracts.variant_sums`, `contracts.variants_sha256`, `EpisodeJob.move("VARIANT_CHOSEN", variants=<file>)` binds the approval to it (CN-04); the existing `move` calls stay valid because `variants` is optional. ST-24 in `story_lint.turns_played` (template D's rows 4/6/8/10/11/13 only when the script has template D's 16 rows, else the turn functions; FAIL by BP-142, REVIEW by BP-141); BP-141/142/146/135 drop `planned`, BP-105/107/109/127 name `variant_plan.py`, CRAFT-PKG-01 drops `planned`. Napoleon: V1 (profile D) rebuilt from `film_shots.json` = shares scene 0.801 / compensator 0.153 / hold 0.046, narrator 0.449 by words, **0 FAIL, 1 REVIEW (VP-12), score 90**; V2 (profile B, `variant_v2.json`) = scene 0.362 / compensator 0.474 / map 0.158, **0 FAIL, 4 REVIEW (VP-11 MAP, VP-11 COMPENSATOR, VP-12, VP-16), score 60**; `examples/napoleon_vs_genghis/script_variants.json` is rebuilt by `variant_plan napoleon --write` and a test fails when it is stale. Deviations from the design, all minor: (1) the pod price is `MAX_PRICE["default"]` (the creator's ceiling) times hours = `seconds_per_unit` x `margin` / `runpod.SPEED[gpu]` / 3600 (the design divides the price, which is a typo for the time); (2) ElevenLabs credits are `unknown` until `config/job_speeds.json` carries `elevenlabs_usd_per_credit` (the single observed rate is not written into code); (3) the per-24-h pod cap is not part of VP-13 (an episode spans days); only the episode caps and the per-pod cap; (4) `dossier_sha256` of the Napoleon example is the sha256 of its `film_shots.json` (the example has no research dossier); (5) `film_shots.check` does not call `dynamics` yet: a map share needs film_shots/2 lanes (P5). The Napoleon tests pass `speeds={}` so a later `config/job_speeds.json` does not silently re-score the example. `tests/unit/test_variant_plan.py` (28 tests), 4 contract fixtures (`valid_v2`, `invalid__shares_not_one`, `invalid__chosen_without_sha`, `invalid__blocks_not_window`), 2 ST-24 tests.
+- `production/compile.py:compile_spine` + `production compile --film-shots FS` (ZI-10): `screenplay_spine/1` derived from the script and its shot cards (segments matched by id, est seconds and clock windows from the shot seconds, the connector from `drama.turn`, claims from `claim_map.md` with E/M = FACT and R/G/I = ALTERNATE, `derived_from` hashes so a changed input is CN-02); ContractError on a missing segment, a stray scene, a claim not in the map, missing promises or profile. `production_script/3` gains the optional `drama.packaging_promises` (exactly 3) and `drama.profile_id` (A-D): additive, every /3 file stays valid, so no version bump (design risk R4). `script_approval` records `promises_sha256` when promises exist and PV-53 FAILs a changed promise. `claims.ROW` accepts `[A-Z]-?\d{2,3}` (the `C02` / `I01` ids of the Napoleon draft; P0c; none of the 3 committed claim maps changes, so the "how many are affected" risk R5 is 0). `tests/unit/test_screenplay_spine.py` (10 tests).
+- `scripting/entity_align.py` (`key`, `same`, `heard`) and `audio/scribe_words.align(..., entities=None)`: a name of the script ("Ney") opposite a heard word of the same sound ("Nay") inside an equal-length replace span counts as heard, not estimated, so coverage rises and the times stay what they were; the default call is unchanged. A reduced in-repo key (not Double Metaphone: no phonetic library, design disagreement 3): "Ney"/"Nay" -> `N`, "Subutai"/"Subotai" -> `SBT`; the key is never used outside an aligned span, so the short key `N` cannot match a word the alignment did not already put opposite the name. Not claimed: "Genghis"/"Chengis" (the rules do not reach it). `tests/unit/test_entity_align.py` (5 tests).
+- `stage_guard start` / `fresh` (OR-32, the re-read rule): `start` appends the stage, the time and the sha256 of the stage page and its inputs to `<job>/story/stage_log.jsonl`; `fresh` reports an output with no start record, a start older than the previous stage's, a page or input changed since the start, or no output (REVIEW until the creator's A5 card is final; `--strict` exits 1); the old `stage_guard <stage> before after` form is unchanged. First body line of the seven stage pages (architect, scene-writer, beat-writer, performance-director, edit-planner, voice-caster, shorts-writer); story-architect gets step 1b (the variants, OR-31) and step 3 takes the template and profile of the chosen variant; scene-writer runs `register_lint` and the ST-20..ST-23 check; edit-planner follows the chosen variant's lanes (VP-15); script-critic scores each variant's story (`scores.critic`, never summed with the code's) and reads the register report; story-engine skill: row 1b, the re-read rule and "Branch switch (A5)" (D-79 built, D-81 a documented `stage_mode` switch, absent = inline); orchestrator phase 2a; SCRIPT_ENGINE pipeline row 1b; INDEX prefixes RG- and VP-. No new agent page (a new agent needs a protected `config/model_routing.json` edit and the creator's word).
+- Open for the creator (none blocks P3; each has the default that was built): (1) the exact 09:28 UTC wording for BP-140 and BP-142 `decided` (the registry quotes the plan card's summary and says so); (2) which words are in the FAIL tier (the 75 forms of BP-140; "revolutionary" and "boasts" are not in it); (3) whether an and-then chain in the text should FAIL (built: REVIEW, ST-20; the declared connector is already a contract FAIL); (4) whether ad-safety FAILs and whether the window is 7 s (YouTube's wording, built) or 8 s (the card); (5) style devices (contrast pairs, question-answer chains, fragments, em dashes: built as densities, REVIEW); (6) the score formula on the card (built: 100 - 10 per REVIEW - 25 per FAIL, next to the critic's, never summed); (7) a separate `variant-planner` page (built: none). Waits for the creator (V4 pilot, OR-15, OR-17): the rewritten Napoleon script and its approvals; the unattended subset (V1/V2 `script_variants.json`, lint baselines) is built and tested.
+- Review follow-ups (P2 thread's verdict on #40): the register allow-list now reaches every call site, not only PV-61 (`narration_lint.lint(allow=)`, `film_shots.check(allow=)`, both CLIs load `register_allow.json` next to the file), so a literal "realm" is exemptable in N-16 and KP-46; `chosen.variant_id` must name an existing variant and one without a FAIL (`variant_plan.check_file`, CN-04), and `EpisodeJob.move(variants=)` refuses an id that is not a variant. Tests added in `test_register_lint` and `test_variant_plan`.
+## 2026-10-30 03:50 UTC: Blueprint P4b, the voice director (free, no pod, no paid take)
+
+- ვანო (2026-10-29 18:17 and 18:30 UTC): D8 conditional (a free generator only if a measured one is good and diverse enough; the
+  narrator stays on the ElevenLabs connector, so the REST client of the plan card is dropped) and "assume yes up to paid".
+  Phase P4b of Blueprint plan v2, after P2 (#31).
+- `audio/voice_audition.py` (new, the one place a voice is measured; P8 and P12b import it): eight measures from one free listening
+  (library preview or a held read): median pitch and range, pitch variation, emphasis, pace (wpm with the text, else syllable
+  rate), spectral centroid and tilt, pause rhythm, sibilance, plus the consistency of several takes (cosine of a numpy MFCC
+  embedding, `numpy_mfcc13`; the embedder is a parameter, the identity scorer is P12b's measurement). Pitch is a vectorised
+  FFT autocorrelation (`f0_track`, within 1 semitone of `voice_layer.f0_track`, 100x faster). `difference`/`distinct` make VC-04
+  measurable with BP-138's three margins (read by literal id, REVIEW). `record` is `voice_audition/1`; `baseline_of` and the CLI
+  (`measure`, `compare`, `baseline`) feed the registry. The profile is measured, never judged: no new threshold was invented
+  (consistency has no limit until real takes are measured).
+- Measured on five real library previews fetched free (8.6 s, 9.7 s, 6.1 s, 2.7 s, 9.2 s of speech; the 2.7 s one is marked
+  `reliable: false`): median pitch 95.6-127 Hz, centroid 914-1492 Hz, 3.7-4.4 syllables/s; three pairs fell under every margin
+  (Spuds/Moody, Adam/David, Adam/Wyatt), so the battery separates voices a description cannot. A preview is not a baseline for
+  centroid: the channel voice's preview measured 914 Hz against about 1250 Hz in its real read.
+- `audio/casting.py`: `eligible` (famous/imitation, taken, age two bands off: the reasons), `fit` (trait match, usage rank, unlabelled)
+  and `rank(..., by_usage=True)` (trait first, the library's one-year usage order only as the tie-break); library age words
+  ("Senior", "middle aged") are read as our bands (the connector returns free-text labels); `ltx_voice_text` writes the voice of
+  an LTX cast card as words from traits under the PV-10 guard. `rank` without `by_usage` is unchanged.
+- `config/channel_voices.json` (`channel_voices/1`) and `voice_check`: `load_registry`, `registry_errors`, `register` (replacing the
+  channel narrator needs the creator's recorded word, VC-08 / veto V1) and `check_against` = EL-13 (a take's timbre windows against
+  the voice's baseline with the read-drift limits; unregistered, no baseline and too-short takes are REVIEW). The shipped baseline is
+  Episode 1's measured Day 1 read (tilt -21.3 dB, centroid ~1250 Hz), kind `read`.
+- Rules: VC-06..09 (STORY_ENGINE), EL-13 (skill), voice-caster page steps 0-8, CRAFT-VOX-02/03/08 and BP-138 no longer "planned"
+  (BP-138 lists the module; `test_the_new_craft_rules_...` now accepts a built validator beside the checklist row).
+  Schemas `voice_audition/1`, `channel_voices/1` with fixtures; CONTRACTS table rows.
+- Not done, by design: no REST client (D8: connector only; `test_there_is_no_elevenlabs_rest_client_in_the_package`); no
+  `casting_credits_max` line in `config/spend_caps.json` (a protected file, D9 "later": the creator's numbers, before P12a); no
+  free voice generator was measured, so none replaces ElevenLabs for narration (Kokoro's retirement, D-39, stands).
+- Tests: `tests/unit/test_voice_audition.py` (18, synthetic voices, no network or media), contract fixtures for both schemas.
+
 ## 2026-10-29 22:30 UTC (02:30 Tbilisi 10-30): paid-test caps and their ledgers (no pod, no money)
 
 - ვანო (2026-10-29 18:40 UTC, relayed): a clear yes to the paid tests P12a, P12b and P12e within $5.90 in total, each
@@ -2756,6 +2802,12 @@ training as sequences is decided in the process. Changed together:
 - `shot_cache.key`: inf / NaN anywhere in a shot spec is a `ContractError` (no JSON form, no stable key).
 - Tests: `test_adopt_refuses_a_directory_dossier_and_non_dict_approvals`, `test_a_non_finite_number_is_a_contract_error_not_a_crash`.
 - Left open (design changes, for P3+ to take with the stage that uses them): approval `sha256` compared with the artifact it approves; CN-14 skipped when no `job_manifest.json` is present; `threshold_reads` does not see a rule id held in a constant.
+- Review of #45 (P3b thread, CHANGES NEEDED, one blocker): `voice_check.register` now needs a non-blank `creator_ref` for ANY status or
+  role change of the standing channel entry, not only for adding a different channel voice (retire-then-add no longer works in two
+  calls), and a blank or whitespace ref is refused. Minors taken: pitch checked at 90-240 Hz, the other measures move with the signal
+  (tilt, sibilance, emphasis, pauses, syllable rate), and the five preview measurements are committed
+  (`docs/research/VOICE_PREVIEWS_2026-10-30.json`, no media) and pinned by a test.
+
 
 ## 2026-10-30 04:10 UTC: P1b, `runpod dryrun` + `config/cloud_pins.json` (no pod, no money)
 
@@ -2792,3 +2844,52 @@ training as sequences is decided in the process. Changed together:
 - Round 3 (P3b): only `exit 0` ends a DRY gate; a top-level `return 0` is an error in bash, not an exit, and without `set -e` the script would
   run on into the paid stages (tested). Known limits, not fixed: heredoc bodies, function bodies and subshells are read as ordinary lines;
   `git+file://` and `git+git://` urls are not checked (`git+https?` only).
+
+## 2026-10-30 04:45 UTC: P4b follow-up, the channel voice's word is checked, not just present (after #45)
+
+- Optional findings of the #45 review: `creator_ref` was only checked for being non-blank, and the standing narrator's model and baseline
+  could change without a word. Now `governance/records.py` has the action `channel_voice` (target = the voice id) and `find`;
+  `voice_check.register` needs a `creator_ref` that names such a record for the voice (no wildcard, no other action) to make a
+  different voice the channel voice, retire or demote the standing one, or change its `model` or `baseline`; the name, the note and
+  the first channel voice of a role stay free.
+- Choice to confirm (mine, not the creator's words): the baseline and the model count as "the channel voice" because loosening
+  the baseline would hide drift (EL-13) and a new model changes how it sounds. If the creator wants the next episode's approved read
+  to replace the baseline without a separate word, that is one line in `register`.
+- Tests: `test_voice_audition.py` (a ref nobody recorded, a word for another voice/action/wildcard, each standing-voice change).
+- Review of #50 (P0b thread): the word must be for the voice that BECOMES the channel voice (a word recorded to retire the standing
+  voice no longer crowns another one), and it expires after 60 minutes (the window of a protected-config edit and an effort
+  override; `records.find(..., minutes=)`). The records file is plain JSONL like the other actions': as strong as they are, not
+  tamper-evident. For the creator: `config/channel_voices.json` is not a protected file, so a direct edit still bypasses `register`.
+
+
+## 2026-10-30 05:00 UTC: P1c, measured speeds, batching rules RP-01..10, the bill into the ledger (no pod, no money)
+
+- `config/job_speeds.json` + `cloud/speeds.py`: the table is committed EMPTY (job types and units only); `runpod cost <pod>` fills a row
+  from the pod's `$EE_OUT/units.json` (new contract, RP-08: `{job_type, units, work_s, setup_s?, mb?, download_s?}`; the P12 scripts must
+  write it). `pick_gpus` takes a measured row first, then the SPEED estimate, and a card nobody knows is NOT skipped any more: slowest known
+  speed x `margin_unmeasured` 2.0. A card whose fixed setup is over 40 % of the pod's time is refused with its reason (RP-09). The old test
+  that expected an unknown card to be skipped is changed on purpose (card text of P1c).
+- RP-01..RP-10 (`cloud/batching.py`; the rule texts are the p9 re-check's B1..B10, home `docs/CLOUD_RUNBOOK.md`, docs_lint home `RP`):
+  `create` now needs `--work-min` and `--setup-min` (RP-01; exempt: the P12a smoke ledger and `--measure` <= $0.30) and `--disk` for a
+  script pod, records the weight set per pod (RP-02, `--second-pod-reason`), defaults a script pod to volume 0 and no ports, and counts
+  hardware tries per job (RP-10). `--wait-stock 15m`, `cards --job T --units N`.
+- Money: `cost` needs the pod id; `settle_due` (run by the session-start hook) settles a pod 90 min after its stop; `cost` prints a PROGRESS-ready
+  line and keeps `usd_per_unit` in the ledger; `Run.report()` shows settled and open reservations apart; `check` prints the stopped disks on
+  one line, names dead `keep_stopped_pods` ids and flags billing no pod explains; `start` is refused without `--allow-zero-gpu-risk`.
+  `tests/unit/test_cloud_economy.py` (21 tests).
+- Not done, on purpose: (1) `MAX_PRICE` pools from `config/spend_caps.json`: that file changes only on the creator's recorded word, and the
+  numbers are the same; (2) the PROGRESS line is printed and kept in `tools/runpod/settled.jsonl`, not written into this file by the tool
+  (every branch would conflict on it); (3) the watchdog does not settle (it has no ledger in CI): the session hook does; (4) RP-09's "never an
+  80/96 GB card when 48 GB fits" needs a measured `min_vram` per job type: none exists yet.
+
+## 2026-10-30 06:00 UTC: P1c review fixes (PR #48): a garbled units.json, a settled flag that was written away
+
+- `units.json` is validated before it is used (`speeds.from_units_json`): an object with a string `job_type` and non-negative numbers, else
+  `SpeedError` (now a `ContractError`). `cost_report` settles the real bill FIRST and parses the pod's files after, so a garbled file
+  (`[]`, `null`, `5`, `units: "abc"`) costs only the speed row ("no speed row: units.json ..." in the settle line), never the ledger entry.
+  The session-start hook shows a failed `settle_due` as an info line instead of dropping the whole RunPod check.
+- `cost_report` re-reads the session before it records the pod's outcome, so `settled` is no longer written away and the next session does not
+  settle the same pod again. Tests: `test_a_garbled_units_json_never_keeps_the_bill_out_of_the_ledger`, `test_the_session_hook_survives_...`,
+  `test_a_settled_pod_stays_settled_...`.
+- Wording: RP-10's message says "failed create or BAD_HOST pod(s)" (a failed `create` of any cause uses the one try). `check` only REPORTS
+  unknown `keep_stopped_pods` ids; it does not clean them up (`config/spend_caps.json` changes only on the creator's word).

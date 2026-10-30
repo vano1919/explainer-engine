@@ -101,9 +101,11 @@ def test_the_new_craft_rules_are_hypotheses_named_by_their_checklist_row():
     rows = {c["id"]: c for _, c in _rows()}
     for r in new:
         assert r["status"] == "hypothesis" and r["severity"] == "REVIEW", r["id"]
-        assert r.get("planned"), r["id"]
-        (ref,) = r["enforced_by"]
+        built = [e for e in r["enforced_by"] if ":" not in e]  # a validator that now exists reads the rule (CN-12)
+        assert r.get("planned") or built, r["id"]
+        (ref,) = [e for e in r["enforced_by"] if ":CRAFT-" in e]
         cid = ref.split(":", 1)[1]
+        assert all((ROOT / e.split(":")[0]).exists() for e in r["enforced_by"]), r["id"]  # a module that reads the rule exists
         assert r["id"] in rows[cid]["rules"], f"{r['id']} is not cited by its checklist row {cid}"
     # dramatisability caps are the Blueprint's house numbers, never attributed to McKee or Katz
     lanes = SR.rule("BP-127")
