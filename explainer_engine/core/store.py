@@ -294,14 +294,17 @@ class EpisodeJob:
     def move(self, to: str, *, reason: str, approval: dict | None = None, dossier: Path | str | None = None,
              reservation_id: str | None = None, variants: Path | str | None = None) -> None:
         """The next forward state, and only that one (CN-03). A gated state needs its approval (CN-04); RESEARCHED fixes the
-        dossier hash (CN-05); BUDGET_RESERVED names an item the ledger holds; VARIANT_CHOSEN given ``variants`` (the
-        script_variants/2 file) binds the approval to the variants the creator picked from; PUBLISHED_PUBLIC is the creator's own
-        click (CN-06)."""
+        dossier hash (CN-05); BUDGET_RESERVED names an item the ledger holds; VARIANT_CHOSEN needs ``variants`` (the
+        script_variants/2 file) and binds the approval to the variants the creator picked from (N-03: without the file the
+        check was skipped); PUBLISHED_PUBLIC is the creator's own click (CN-06)."""
         m = json.loads(json.dumps(self.manifest))
         cur = m["state"]
         if cur not in LIFECYCLE or to not in LIFECYCLE or LIFECYCLE.index(to) != LIFECYCLE.index(cur) + 1:
             raise ContractError(f"{cur} -> {to} is not the next step of the lifecycle")
         self._check_approval(GATES[to], approval, to, bind=True)
+        if to == "VARIANT_CHOSEN" and variants is None:
+            raise ContractError("VARIANT_CHOSEN needs variants=<the script_variants.json the creator picked from>: the approval binds "
+                                "its variants_sha256 (CN-04, OR-31)")
         if to == "RESEARCHED":
             if dossier is None:
                 raise ContractError("RESEARCHED fixes the research dossier: pass dossier=<file>")
@@ -309,7 +312,7 @@ class EpisodeJob:
             if m["source_dossier_sha256"] not in (None, digest):
                 raise ContractError("the dossier is already fixed for this job; another dossier is another job (CN-05)")
             m["source_dossier_sha256"] = digest
-        if to == "VARIANT_CHOSEN" and variants is not None:
+        if to == "VARIANT_CHOSEN":
             doc = json.loads(Path(variants).read_text(encoding="utf-8"))
             chosen = doc.get("chosen")
             if chosen and chosen["variant_id"] not in {v["id"] for v in doc["variants"]}:
