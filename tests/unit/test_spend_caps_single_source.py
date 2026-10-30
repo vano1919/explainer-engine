@@ -64,3 +64,10 @@ def test_runbook_names_the_watchdog_as_backstop_with_its_cron():
     runbook = (ROOT / "docs/CLOUD_RUNBOOK.md").read_text(encoding="utf-8")
     row = next(line for line in runbook.splitlines() if "watchdog.yml" in line and line.startswith("| 3."))
     assert "backstop" in row and cron in row
+
+
+def test_runbook_no_longer_says_boot_pods_run():
+    runbook = (ROOT / "docs/CLOUD_RUNBOOK.md").read_text(encoding="utf-8")
+    assert "pods keep `boot_cmd`" not in runbook
+    cr01 = next(line for line in runbook.splitlines() if line.startswith("| CR-01"))
+    assert "retired" in cr01 and "N-01" in cr01
