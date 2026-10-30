@@ -5,8 +5,11 @@ from PIL import Image
 
 from explainer_engine.compose import episode_look as EL
 from explainer_engine.qa import style_prompt as SP
+from explainer_engine.training import lora_rules
 
-ERAS = ("wldnk style, a thin caveman leaps back from a roaring campfire in a dark cave, his lanky friend laughing, "
+T = lora_rules.trigger()  # D-80: the one home (N-09)
+
+ERAS = (f"{T}, a thin caveman leaps back from a roaring campfire in a dark cave, his lanky friend laughing, "
         "warm firelight on rough stone walls")
 
 
@@ -23,7 +26,7 @@ def test_absolutes_are_frozen():
     assert SP.NEGATIVE == "text, lettering, letters, words, watermark, signature, photo, 3d render"
     assert SP.INFERENCE == {"base": "Qwen/Qwen-Image-2.1", "lora": None, "lora_weight": 1.0,
                             "dtype": "bfloat16", "size": [1280, 720], "steps": 30, "true_cfg": 4.0}  # D-80
-    assert SP.TRIGGER == "wldnk style"
+    assert SP.TRIGGER == T == "xworld style"  # D-80: the xworld LoRA's trigger (N-09)
 
 
 def test_style_clash_fails():
@@ -43,13 +46,13 @@ def test_phrase_rules():
 def test_apply_keeps_prompt_valid():
     look = {"phrase": "muted ochre and teal, warm amber glow", "lights": {"night": "deep indigo night, amber firelight"}}
     p, found = EL.apply(ERAS, look)
-    assert p.startswith("wldnk style") and p.endswith("warm amber glow")
+    assert p.startswith(T) and p.endswith("warm amber glow")
     assert not [f for f in found if f["severity"] == "FAIL"]
     p2, _ = EL.apply(p, look)
     assert p2 == p                                                             # never added twice
     pn, _ = EL.apply(ERAS, look, "night")
     assert "indigo" in pn
-    long = "wldnk style, " + " ".join(["word"] * 34)
+    long = f"{T}, " + " ".join(["word"] * 34)
     assert any(f["severity"] == "FAIL" for f in EL.apply(long, look)[1])        # 40 words still binds
 
 

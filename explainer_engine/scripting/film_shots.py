@@ -27,6 +27,7 @@ from explainer_engine.qa import style_prompt
 from explainer_engine.scripting import shot_prompt_lint as lint
 from explainer_engine.scripting import story_lint
 from explainer_engine.standards import sourced_rules
+from explainer_engine.training import lora_rules
 
 SCHEMA = Path(__file__).resolve().parents[1] / "schemas" / "film_shots.schema.json"
 
@@ -81,7 +82,11 @@ CAMERA = {"static": "Static camera.", "push_in": "The camera pushes in slowly", 
 # words (those are the layout's: boxes, the composition of assets, ASSET_COMPOSE.md). The caption tail is retired.
 MOMENT_WORDS_MAX = style_prompt.MAX_WORDS
 BODY_WORDS = "thin-limbed and bulging-eyed"  # the caricature words a moment gives its lead (a card may set style.body)
-NEXTPOSE = "nextpose, a later frame of the same continuous animated shot, same camera: "
+# D-80 (N-09): one stack, Qwen-Image-2.1 + the xworld LoRA, for every picture: a next pose and a cut are the same LoRA in
+# edit mode with references, so they open with the same trigger (training/lora_rules.json); the retired Edit-2511 scene LoRA
+# prefix ``nextpose,`` is never written and fails the style check
+NEXT_FRAME = "a later frame of the same continuous animated shot, same camera: "
+RETIRED_PREFIXES = ("nextpose", "wldnk")
 NEG_KEYFRAME = style_prompt.NEGATIVE  # LT-66 A3: a style-LoRA picture's negative is exactly this, never per episode
 NEG_VIDEO = ("text, watermark, logo, subtitles, extra people, duplicated character, morphing face, melting body, "
              "deformed hands, extra fingers, flicker, still image")
@@ -362,8 +367,8 @@ def keyframe_prompt(doc: dict, shot: dict) -> str:
 
 
 def nextpose_prompt(doc: dict, shot: dict, *, end: bool) -> str:
-    """Qwen-Image-Edit-2511 + the scene LoRA, drawn from the master: the training caption's prefix, then only what
-    changed (the actor's start or end pose, the others' reaction), never a framing word (KP-07)."""
+    """Qwen-Image-2.1 in edit mode with references + the xworld LoRA (D-80), drawn from the master: the trigger, then only
+    what changed (the actor's start or end pose, the others' reaction), never a framing word (KP-07)."""
     action = shot.get("action") or {}
     changes = []
     if action:
@@ -376,15 +381,17 @@ def nextpose_prompt(doc: dict, shot: dict, *, end: bool) -> str:
         changes.append(f"{_tag(doc, r['who'])} {r['does']}")
     if not changes:
         changes = [_tag(doc, p["who"]) + ", " + (p.get("pose") or "stands") for p in shot.get("blocking", [])]
-    return NEXTPOSE + "; ".join(changes) + ". Same characters, same camera; nobody new appears and nobody disappears."
+    return (f"{doc['style']['trigger']}, {NEXT_FRAME}" + "; ".join(changes)
+            + ". Same characters, same camera; nobody new appears and nobody disappears.")
 
 
 def cut_prompt(doc: dict, shot: dict) -> str:
-    """The edit model with the master and the hero sheets: a new size or angle of the same place, light and people."""
+    """Qwen-Image-2.1 in edit mode with the master and the hero sheets + the xworld LoRA (D-80): the trigger, then a new size
+    or angle of the same place, light and people."""
     f = shot["frame"]
     over = f", past the shoulder of {_tag(doc, f['over'])}" if f["size"] == "OTS" and f.get("over") else ""
     action = shot.get("action") or {}
-    parts = [f"The same place, light and characters as in the first image, now {_a(_frame(shot))}{over}."]
+    parts = [f"{doc['style']['trigger']}, the same place, light and characters as in the first image, now {_a(_frame(shot))}{over}."]
     parts += _people(doc, shot, actor_pose=action.get("start"), layout=True)
     parts += _layout(shot)
     parts.append("Every character looks exactly as on their character sheet.")
@@ -454,16 +461,16 @@ def compose(doc: dict) -> list[dict]:
                         "neg": style_prompt.NEGATIVE, "inference": style_prompt.INFERENCE})
         elif src == "nextpose":
             out.append({"id": f"{sid}.first", "kind": "nextpose", "source": "master", "master": shot.get("master"),
-                        "lora": "scene", "prompt": nextpose_prompt(doc, shot, end=False)})
+                        "lora": "style", "prompt": nextpose_prompt(doc, shot, end=False), "inference": style_prompt.INFERENCE})
         else:
-            out.append({"id": f"{sid}.first", "kind": "cut", "master": shot.get("master"), "lora": "scene",
-                        "prompt": cut_prompt(doc, shot)})
+            out.append({"id": f"{sid}.first", "kind": "cut", "master": shot.get("master"), "lora": "style",
+                        "prompt": cut_prompt(doc, shot), "inference": style_prompt.INFERENCE})
         if shot.get("last_frame"):
             out.append({"id": f"{sid}.last", "kind": "nextpose", "source": "master",
                         # the settle is a next pose of this shot's own first frame when it was drawn (keyframe or cut),
                         # of the scene's master when the first frame is itself a next pose (same camera)
-                        "master": shot.get("master") if src == "nextpose" else sid, "lora": "scene",
-                        "prompt": nextpose_prompt(doc, shot, end=True)})
+                        "master": shot.get("master") if src == "nextpose" else sid, "lora": "style",
+                        "prompt": nextpose_prompt(doc, shot, end=True), "inference": style_prompt.INFERENCE})
         tier = shot.get("tier", "full")
         out.append({"id": f"{sid}.video", "kind": "video", "seconds": shot["seconds"], "exit": bool(shot.get("exit")),
                     "tier": tier, "model": MODEL[tier], "fps": FPS, "frames": frames(shot["seconds"]),
@@ -507,8 +514,8 @@ def _sheet_text(doc: dict, tag: str) -> str:
 
 
 def sheet_prompts(doc: dict) -> list[dict]:
-    """A new hero's look is chosen by the creator from one collage of variants (invariant 6), drawn by Qwen-Image-2512
-    with the style LoRA; the chosen variant becomes the hero sheet every keyframe and next pose is checked against.
+    """A new hero's look is chosen by the creator from one collage of variants (invariant 6), drawn by Qwen-Image-2.1
+    with the xworld LoRA (D-80); the chosen variant becomes the hero sheet every keyframe and next pose is checked against.
     Groups (a cast entry without a story name) need no sheet: they are drawn inside the shots."""
     out = []
     for cid, c in doc["cast"].items():
@@ -733,8 +740,14 @@ def absent_check(doc: dict) -> list[dict]:
 def style_check(doc: dict) -> list[dict]:
     """LT-65/LT-66: every style-LoRA prompt (moment or hero sheet) passes ``qa/style_prompt.check``: the trigger first, at
     most its word limit, no caption tail, no washed-out light, no camera or size words, no other medium or art style; the
-    negative is exactly ``style_prompt.NEGATIVE`` (A3); the episode look's phrase and variants pass AC-17."""
+    negative is exactly ``style_prompt.NEGATIVE`` (A3); the episode look's phrase and variants pass AC-17. D-80 (N-09): the
+    cards' trigger is the one of ``training/lora_rules.json``, and every picture prompt (moment, sheet, next pose, cut) opens
+    with it; a retired prefix (``nextpose``, ``wldnk``) fails."""
     out = []
+    home = lora_rules.trigger()
+    if doc["style"]["trigger"] != home:
+        out.append({"rule": "LT-65", "severity": "FAIL", "where": "style.trigger",
+                    "detail": f"A1: the trigger is '{home}' (training/lora_rules.json, D-80), not '{doc['style']['trigger']}'"})
     if doc["style"].get("neg_keyframe") not in (None, style_prompt.NEGATIVE):
         out.append({"rule": "LT-66", "severity": "FAIL", "where": "style.neg_keyframe",
                     "detail": "A3: the style LoRA's negative is exactly style_prompt.NEGATIVE"})
@@ -748,7 +761,12 @@ def style_check(doc: dict) -> list[dict]:
         if any(f["severity"] == "FAIL" for f in out):
             return out
     for p in [*sheet_prompts(doc), *compose(doc)]:
-        if p.get("lora") == "style":
+        if p["kind"] in ("keyframe", "nextpose", "cut"):
+            low = p["prompt"].lower()
+            if low.startswith(RETIRED_PREFIXES) or not low.startswith(home + ", "):
+                out.append({"rule": "LT-65", "severity": "FAIL", "where": p["id"],
+                            "detail": f"A1: a picture prompt opens with '{home}, ', never a retired prefix (D-80)"})
+        if p["kind"] == "keyframe":
             out += [{"rule": f["rule"], "severity": f["severity"], "where": p["id"], "detail": f["detail"]}
                     for f in style_prompt.check(p["prompt"])]
     return out
@@ -915,8 +933,9 @@ def shotlist(doc: dict) -> str:
     prompts: dict[str, list[dict]] = {}
     for p in compose(doc):
         prompts.setdefault(p["id"].rsplit(".", 1)[0], []).append(p)
-    label = {"keyframe": "First frame (new picture, style LoRA)", "nextpose": "First frame (next pose of the master, scene LoRA)",
-             "cut": "First frame (cut from the master, scene LoRA)"}
+    label = {"keyframe": "First frame (new picture, style LoRA)",
+             "nextpose": "First frame (next pose of the master, style LoRA in edit mode)",
+             "cut": "First frame (cut from the master, style LoRA in edit mode)"}
     lines = [f"# {doc['episode']}: shot list with prompts", ""]
     t, scene = 0.0, None
     for s in doc["shots"]:

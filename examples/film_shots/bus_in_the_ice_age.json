@@ -2,7 +2,7 @@
  "schema": "film_shots/1",
  "episode": "worked example: a city bus in the Ice Age (the scene LoRA's test set, rewritten as shot cards)",
  "style": {
-  "trigger": "wldnk style",
+  "trigger": "xworld style",
   "video_sentence": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright colours; snappy cartoon timing, poses hold between quick moves."
  },
  "cast": {

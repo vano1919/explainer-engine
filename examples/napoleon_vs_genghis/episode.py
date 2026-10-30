@@ -6,6 +6,8 @@ the khan's presence in the west, every line of dialogue, Kemal, Bars, Bayan, Ser
 invented and listed as such (I01..I04). The khan was in fact back in Central Asia in 1223 (C19).
 """
 
+from explainer_engine.training import lora_rules
+
 WIKI = "https://en.wikipedia.org/wiki/"
 
 META = {
@@ -14,7 +16,7 @@ META = {
     "episode": "What If Napoleon Marched Into Genghis Khan? (15-minute animated docudrama, template D)",
     "script": "script.md",
     "style": {
-        "trigger": "wldnk style",
+        "trigger": lora_rules.trigger(),  # the one home (D-80, N-09)
         "video_sentence": "Hand-drawn 2D cartoon animation with bold black ink outlines, big bulging eyes and bright "
                           "colours; snappy cartoon timing, poses hold between quick moves.",
     },

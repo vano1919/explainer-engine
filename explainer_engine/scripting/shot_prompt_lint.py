@@ -101,7 +101,8 @@ def _clauses(text: str) -> int:
     """Acting clauses. The formula sentences (in frame, camera, nobody speaks, a quoted line) act on nobody; one actor's
     'X, then Y, and Z' chain (KP-12's start, peak and settle) is one clause per semicolon part."""
     n = 0
-    for sentence in _sentences(text.replace("nextpose, a later frame of the same continuous animated shot, same camera:", "")):
+    # the next pose's fixed opening (after its trigger, film_shots.NEXT_FRAME) acts on nobody
+    for sentence in _sentences(text.replace("a later frame of the same continuous animated shot, same camera:", "")):
         if FIXED.search(sentence):
             continue
         if ";" in sentence or re.search(r",\s+then\b", sentence):

@@ -1,5 +1,7 @@
-"""Suspended by D-80 (2026-10-26) for the new look: the shape below was measured on the banned wldnk look
-and is rewritten from the 2.1 prompt-type test. LT-65 (docs/LORA_TRAINING.md): a prompt for the style LoRA has the shape of the prompts that drew the approved look: the
+"""D-80 (2026-10-26): the trigger check (A1) is live on the one stack, Qwen-Image-2.1 + the xworld LoRA; its word comes from
+``training/lora_rules.json`` (``training/lora_rules.trigger()``, N-09). The rest of the shape below (word limit, caption tail,
+body words) was measured on the banned wldnk look and stays as written until the 2.1 prompt-type test rewrites it; the eras
+sheet comparison (A10, KG-22) stays suspended. LT-65 (docs/LORA_TRAINING.md): a prompt for the style LoRA has the shape of the prompts that drew the approved look: the
 trigger, then a short story of the moment (a place, an action at its peak, someone's reaction, the bodies' caricature words,
 a light source, one or two props), at most 40 words, with no camera, sizes or positions in the words. stdlib only.
 
@@ -20,7 +22,9 @@ import re
 import sys
 from pathlib import Path
 
-TRIGGER = "wldnk style"
+from explainer_engine.training import lora_rules
+
+TRIGGER = lora_rules.trigger()  # one home (N-09, D-80)
 # word for word the end of every v5 training caption (dataset_style_v5/*.txt, 164 of 164); kept to recognise it
 STYLE_TAIL = ("lanky angular cartoon characters with long noses, thin limbs and bulging round eyes with tiny pupils, bold "
               "uneven black ink outlines, chalky textured painterly background, muted earthy colours with vivid glowing accents")
@@ -44,7 +48,7 @@ NEGATIVE = "text, lettering, letters, words, watermark, signature, photo, 3d ren
 INFERENCE = {"base": "Qwen/Qwen-Image-2.1", "lora": None, "lora_weight": 1.0, "dtype": "bfloat16",
              "size": [1280, 720], "steps": 30, "true_cfg": 4.0}  # D-80: one stack; no LoRA until the creator rates the new one
 ABSOLUTES = (
-    ("A1", "the prompt starts with the trigger 'wldnk style', once"),
+    ("A1", f"the prompt starts with the trigger '{TRIGGER}', once"),
     ("A2", f"the creator-rated LoRA (none yet, D-80) at weight 1.0, only on {INFERENCE['base']} in bf16, 30 steps, true_cfg 4; "
            "plain or in its edit mode with references (D-80)"),
     ("A3", "the negative prompt is exactly NEGATIVE"),
@@ -97,7 +101,7 @@ def main(argv: list[str]) -> int:
         items = items.get("sheets", []) + items.get("shots", [])
     bad = 0
     for it in items:
-        if it.get("kind") != "keyframe" and it.get("lora") != "style":
+        if it.get("kind") != "keyframe":  # moments and hero sheets; a next pose or a cut is an edit prompt (N-09)
             continue
         found = check(it["prompt"])
         bad += any(f["severity"] == "FAIL" for f in found)

@@ -7,9 +7,11 @@ from pathlib import Path
 from explainer_engine.qa import style_prompt
 from explainer_engine.scripting import film_shots as F
 from explainer_engine.scripting.shot_prompt_lint import check_shot
+from explainer_engine.training import lora_rules
 
 ROOT = Path(__file__).resolve().parents[2]
 EXAMPLE = ROOT / "examples" / "film_shots" / "bus_in_the_ice_age.json"
+TRIGGER = lora_rules.trigger()  # D-80: the one home (N-09)
 STYLE = "Hand-drawn 2D cartoon animation with bold black ink outlines and bright colours. "
 
 
@@ -41,7 +43,7 @@ def test_the_worked_example_is_clean_and_valid():
 
 def test_keyframe_tells_the_moment_at_its_peak_with_a_reaction_and_no_layout():
     p = prompts(doc())["S01-02.first"]
-    assert p["kind"] == "keyframe" and p["prompt"].startswith("wldnk style, an open snowy plain")  # LT-65: trigger, place
+    assert p["kind"] == "keyframe" and p["prompt"].startswith(f"{TRIGGER}, an open snowy plain")  # LT-65: trigger, place
     assert "the old man with round glasses throws both hands up" in p["prompt"]  # a costume trait, the peak
     assert "the nurse turns her head toward him" in p["prompt"]  # someone's reaction
     assert "the pink-haired girl" in p["prompt"] and "the bearded man" in p["prompt"]  # everyone in the blocking
@@ -55,7 +57,7 @@ def test_next_pose_uses_the_training_prefix_and_the_last_frame_is_the_settle():
     ps = prompts(doc())
     last = ps["S01-02.last"]
     assert last["kind"] == "nextpose" and last["source"] == "master"
-    assert last["prompt"].startswith(F.NEXTPOSE)
+    assert last["prompt"].startswith(f"{TRIGGER}, {F.NEXT_FRAME}")  # D-80: the trigger, never "nextpose,"
     assert "holds both hands high" in last["prompt"]
     assert not check_shot(last)  # KP-07: no framing word
     first = ps["S01-06.first"]
@@ -236,7 +238,7 @@ def test_composition_goes_to_the_gate_card_and_the_cut_prompt_not_the_keyframe_w
 
 def test_keyframes_and_sheets_keep_the_moment_shape_and_name_each_figure_once():
     d = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
-    style = [p for p in F.compose(d) + F.sheet_prompts(d) if p.get("lora") == "style"]
+    style = [p for p in F.compose(d) + F.sheet_prompts(d) if p["kind"] == "keyframe"]  # moments and sheets (LT-65)
     assert style and not [f for p in style for f in style_prompt.check(p["prompt"])]  # LT-65
     for p in style:  # LY-09: a repeated tag drew a twin
         assert all(p["prompt"].count(c["tag"]) <= 1 for c in d["cast"].values())
@@ -250,7 +252,9 @@ def test_keyframes_and_sheets_keep_the_moment_shape_and_name_each_figure_once():
 def test_each_prompt_names_its_lora_and_the_gate_gets_a_card():
     ps = prompts(doc())
     assert ps["S01-02.first"]["lora"] == "style"
-    assert {ps[i]["lora"] for i in ("S01-02.last", "S01-03.first", "S01-06.first")} == {"scene"}  # never style in Edit
+    # D-80: one LoRA (xworld on Qwen-Image-2.1) for every picture, next poses and cuts in its edit mode; no scene LoRA
+    assert {ps[i]["lora"] for i in ("S01-02.last", "S01-03.first", "S01-06.first")} == {"style"}
+    assert all(ps[i]["prompt"].startswith(f"{TRIGGER}, ") for i in ("S01-02.last", "S01-03.first", "S01-06.first"))
     cards = {c["id"]: c for c in F.gate_cards(doc())}
     assert cards["S01-06.first"]["kind"] == "nextpose" and cards["S01-06.first"]["master"] == "S01-02"  # KG-13 vs it
     c = cards["S01-02.first"]
@@ -484,7 +488,7 @@ def test_every_style_prompt_ends_with_the_episode_look_and_still_fits_lt65(tmp_p
     (tmp_path / "cards.json").write_text(json.dumps(d), encoding="utf-8")
     d = F.load(tmp_path / "cards.json")  # AC-16: the look file is read next to the cards
     assert not F.schema_errors(d) and not F.style_check(d)
-    style = [p for p in F.compose(d) + F.sheet_prompts(d) if p.get("lora") == "style"]
+    style = [p for p in F.compose(d) + F.sheet_prompts(d) if p["kind"] == "keyframe"]  # moments and sheets
     assert style and all(not style_prompt.check(p["prompt"]) for p in style)  # 40 words with the phrase (AC-17)
     assert all(p["prompt"].endswith(LOOK["phrase"]) for p in style if p["id"] != "S01-02.first")
     assert prompts(d)["S01-02.first"]["prompt"].endswith(LOOK["lights"]["night"])  # the scene's light variant

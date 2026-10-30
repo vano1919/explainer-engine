@@ -12,7 +12,9 @@ import re
 from collections import Counter
 from pathlib import Path
 
-RULES = json.loads((Path(__file__).with_name("lora_rules.json")).read_text(encoding="utf-8"))
+from explainer_engine.training import lora_rules
+
+RULES = lora_rules.load()  # the one home (N-09): training/lora_rules.json
 IMAGE_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 STOP = {"a", "an", "the", "and", "with", "of", "in", "on", "at", "to", "by", "for", "from", "his", "her", "their", "its",
         "is", "are", "behind", "below", "above", "near", "into", "other", "two", "three", "four", "five", "style"}
