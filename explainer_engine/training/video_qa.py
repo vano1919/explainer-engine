@@ -13,7 +13,8 @@ Free, CPU: numpy + OpenCV (CLIP from ``embed.py`` only when asked). What the num
   ``review_sheet`` cuts head and hand crops every second so a person (or Claude) checks them; the sheet is part of LT-58.
 
     python -m explainer_engine.training video-qa <clip.mp4> [--layout layout.mp4] [--regions regions.json] [--ref rhythm.json]
-           [--sheet out.jpg] [--out qa.json]
+           [--sheet out.jpg] [--out qa.json] [--fps N] [--dialogue TEXT] [--expect-speech yes|no] [--transcript FILE]
+           [--keyframe PNG] [--write]      # CLIP-01..12 (container, audio, frames); --write: <clip>.video_qa.json beside the clip
     python -m explainer_engine.training footage-rhythm <work dir> --out rhythm.json [--per-show 40]
     python -m explainer_engine.training shot-identity <a.mp4> [<b.mp4>] [--heroes heroes.json] [--out id.json]
 """
@@ -21,9 +22,12 @@ from __future__ import annotations
 
 import json
 import subprocess
+from fractions import Fraction
 from pathlib import Path
 
 import numpy as np
+
+from explainer_engine.standards import sourced_rules as SR
 
 from .audit import RULES, finding
 
@@ -307,13 +311,25 @@ def review_sheet(path, out, regions=None, *, every_s=1.0, width=960):
     return str(out)
 
 
-def qa_file(path, regions=None, ref=None, layout=None):
-    frames, fps = read_video(path)
-    m = analyse(frames, fps, regions)
-    m.pop("_tracks", None)
-    if layout:
-        m["layout"] = layout_fidelity(frames, read_video(layout)[0], fps=fps)
-    return m, judge(m, ref)
+def qa_file(path, regions=None, ref=None, layout=None, clip=None):
+    """(metrics, findings) of one clip: LT-50..59, and with ``clip`` (the keyword arguments of ``clip_findings``) the CLIP rows
+    next to them. Without OpenCV the LT rows are one visible REVIEW row instead of a crash."""
+    m, found = {}, []
+    try:
+        import cv2  # noqa: F401
+    except ImportError:
+        found.append(finding("LT-50", "REVIEW", "LT-51..62 need cv2 (opencv-python-headless); not measured"))
+    else:
+        frames, fps = read_video(path)
+        m = analyse(frames, fps, regions)
+        m.pop("_tracks", None)
+        if layout:
+            m["layout"] = layout_fidelity(frames, read_video(layout)[0], fps=fps)
+        found = judge(m, ref)
+    if clip is not None:
+        m["clip"], more = clip_findings(path, **clip)
+        found = found + more
+    return m, found
 
 
 def layout_fidelity(out_frames, layout_frames, *, grid=(6, 4), fps=24.0):
@@ -429,3 +445,200 @@ def identity_file(a, b=None, heroes=None):
     what = "shot A -> shot B" if b else "first -> last frame"
     m = shot_identity(fa[-1] if b else fa[0], fb[0] if b else fa[-1], heroes)
     return m, judge_identity(m, what)
+
+
+# --- clip container, audio and frame rows (CLIP-01..12; the Fable/Argon audits of 2026-10-30, CP-09) --------------------------
+# One home for clip QA (D-23). Every number is read through `sourced_rules.T`: BP-139 (frame and size geometry) and BP-164 (a
+# hypothesis, so these rows are REVIEW). Two rows FAIL on structure, not on a number: the clip's frame rate is not the manifest's
+# (CN-09 shape) and a dialogue shot with no audio track (D-88: its words ride in the native track). A skipped check is a REVIEW row.
+BP_CLIP = "BP-164"
+
+
+def _frac(text):
+    """ffprobe's '24/1' (or '0/0') as a Fraction; 0 when it names nothing."""
+    try:
+        return Fraction(str(text))
+    except (ValueError, ZeroDivisionError):
+        return Fraction(0)
+
+
+def probe_container(path) -> dict:
+    """What the file is, from ffprobe: fps, frames, size, pixel format, and whether and how long the audio runs."""
+    j = json.loads(subprocess.run(["ffprobe", "-v", "error", "-show_streams", "-show_format", "-of", "json", str(path)],
+                                  capture_output=True, text=True, check=True).stdout)
+    streams = j.get("streams", [])
+    v = next((s for s in streams if s.get("codec_type") == "video"), None)
+    if v is None:
+        raise ValueError(f"{path}: no video stream")
+    a = next((s for s in streams if s.get("codec_type") == "audio"), None)
+    frames = v.get("nb_frames")
+    if not str(frames).isdigit():                                    # webm and some mp4 muxers do not say
+        counted = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries",
+                                  "stream=nb_read_frames", "-of", "json", str(path)], capture_output=True, text=True, check=True).stdout
+        frames = json.loads(counted)["streams"][0]["nb_read_frames"]
+    fmt = float((j.get("format") or {}).get("duration") or 0)
+    return {"fps": _frac(v.get("r_frame_rate")), "avg_fps": _frac(v.get("avg_frame_rate")), "frames": int(frames),
+            "width": int(v["width"]), "height": int(v["height"]), "pix_fmt": v.get("pix_fmt"), "has_audio": a is not None,
+            "video_duration": float(v.get("duration") or fmt), "audio_duration": float(a.get("duration") or fmt) if a else 0.0}
+
+
+def container_findings(probe, *, fps_expected=None, has_dialogue=False) -> list[dict]:
+    """CLIP-01..05 from ``probe_container``'s dict."""
+    f = []
+    fps = probe["fps"]
+    if fps != probe["avg_fps"]:
+        f.append(finding("CLIP-01", "FAIL", f"frame rate {fps} is not the average {probe['avg_fps']} (a variable-rate clip)"))
+    elif fps_expected is None:
+        f.append(finding("CLIP-01", "REVIEW", f"fps not checked against a manifest (--fps); the clip runs at {fps}"))
+    elif fps != _frac(fps_expected):
+        f.append(finding("CLIP-01", "FAIL", f"the clip runs at {fps} fps, the manifest says {_frac(fps_expected)}"))
+    step, off, size = SR.T("BP-139", "frames_step"), SR.T("BP-139", "frames_offset"), SR.T("BP-139", "size_multiple")
+    if (probe["frames"] - off) % step:
+        f.append(finding("CLIP-02", "REVIEW", f"{probe['frames']} frames is not {step}k+{off} (BP-139)"))
+    bad = [f"{n} {probe[n]}" for n in ("width", "height") if probe[n] % size]
+    if bad:
+        f.append(finding("CLIP-03", "REVIEW", f"{', '.join(bad)} is not divisible by {size} (BP-139)"))
+    if has_dialogue and not probe["has_audio"]:
+        f.append(finding("CLIP-04", "FAIL", "a dialogue shot with no audio track: its words ride in the clip's native audio (D-88)"))
+    if probe["has_audio"] and fps:
+        tol = SR.T(BP_CLIP, "av_duration_tol_frames") / float(fps)
+        if abs(probe["audio_duration"] - probe["video_duration"]) > tol + 1e-9:
+            f.append(finding("CLIP-05", "REVIEW", f"audio {probe['audio_duration']:.2f} s against picture {probe['video_duration']:.2f} s "
+                                                   f"(more than {SR.T(BP_CLIP, 'av_duration_tol_frames')} frame apart)"))
+    return f
+
+
+def audio_measure(path, *, duration=None) -> dict:
+    """True peak and loudness (ebur128 through ``qa/targets``, one home of the loudness numbers) and the silent share of the audio."""
+    import re
+
+    from explainer_engine.qa import targets
+    m = dict(targets.measure_file(Path(path)))
+    err = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(path), "-vn", "-af",
+                          f"silencedetect=noise={SR.T(BP_CLIP, 'silence_noise_db')}dB:d={SR.T(BP_CLIP, 'silence_min_s')}", "-f", "null", "-"],
+                         capture_output=True, text=True).stderr
+    silent = sum(float(x) for x in re.findall(r"silence_duration:\s*([0-9.]+)", err))
+    m["silence_share"] = min(1.0, silent / duration) if duration else None
+    return m
+
+
+def _norm_words(items) -> list[str]:
+    from explainer_engine.audio.scribe_words import norm
+    out = []
+    for w in items:
+        out += norm(w if isinstance(w, str) else str(w.get("text", w.get("word", ""))))
+    return out
+
+
+def audio_findings(measure, *, transcript_words=None, dialogue_text=None, expect_speech=None, has_dialogue=False) -> list[dict]:
+    """CLIP-06..09. ``transcript_words`` = what was heard (a list of words or Scribe-shaped dicts) or None when nobody transcribed."""
+    import difflib
+
+    from explainer_engine.qa import targets
+    f = []
+    if measure.get("true_peak") is not None:
+        verdict = targets.true_peak_verdict(measure["true_peak"])      # the ceiling and its severity are BP-50's (binding)
+        if verdict != "PASS":
+            f.append(finding("CLIP-06", verdict, f"true peak {measure['true_peak']} dBTP is over the ceiling "
+                                                  f"{targets.PROFILES['long']['true_peak_max']} (BP-50)"))
+    heard = None if transcript_words is None else _norm_words(transcript_words)
+    if expect_speech is None:
+        f.append(finding("CLIP-07", "REVIEW", "speech expectation not given (--dialogue or --expect-speech)"))
+    elif expect_speech is False:
+        if heard is None:
+            f.append(finding("CLIP-07", "REVIEW", "no transcript (--transcript): cannot tell whether a narrated shot stayed silent"))
+        elif len(heard) >= SR.T(BP_CLIP, "spoken_words_max_in_silent_shot"):
+            f.append(finding("CLIP-07", "REVIEW", f"{len(heard)} words heard in a shot where nobody speaks"))
+    if dialogue_text:
+        if heard is None:
+            f.append(finding("CLIP-08", "REVIEW", "no transcript (--transcript): the dialogue was not compared with what is heard"))
+        else:
+            want = _norm_words(dialogue_text.split())
+            cover = difflib.SequenceMatcher(None, heard, want, autojunk=False).ratio() if want else 1.0
+            if cover < SR.T(BP_CLIP, "dialogue_coverage_min"):
+                f.append(finding("CLIP-08", "REVIEW", f"the dialogue is heard {cover:.0%} (at least "
+                                                       f"{SR.T(BP_CLIP, 'dialogue_coverage_min'):.0%} wanted)"))
+    share = measure.get("silence_share")
+    if has_dialogue and share is not None and share > SR.T(BP_CLIP, "silence_share_max"):
+        f.append(finding("CLIP-09", "REVIEW", f"{share:.0%} of a dialogue shot's audio is silent"))
+    return f
+
+
+def decode_gray(path, size=None) -> np.ndarray:
+    """Every frame as uint8 gray (n, h, w) at the analysis size (BP-164 ``analysis_size``)."""
+    w, h = size or SR.T(BP_CLIP, "analysis_size")
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-vf", f"scale={w}:{h}", "-f", "rawvideo", "-pix_fmt", "gray", "-"],
+                         capture_output=True, check=True).stdout
+    return np.frombuffer(raw, np.uint8).reshape(-1, h, w)
+
+
+def _keyframe_gray(keyframe, size) -> np.ndarray:
+    from PIL import Image
+    im = Image.fromarray(keyframe) if isinstance(keyframe, np.ndarray) else keyframe if hasattr(keyframe, "convert") else Image.open(keyframe)
+    return np.asarray(im.convert("L").resize(tuple(size), Image.Resampling.BILINEAR), dtype=np.uint8)
+
+
+def frame_findings(frames, *, animated=True, keyframe=None) -> list[dict]:
+    """CLIP-10..12 on gray frames (n, h, w)."""
+    f = []
+    if not len(frames):
+        return [finding("CLIP-10", "REVIEW", "the clip decoded to no frames")]
+    flat = frames.reshape(len(frames), -1).astype(np.float32)
+    mean, std = flat.mean(1), flat.std(1)
+    odd = np.where((mean < SR.T(BP_CLIP, "black_luma_max")) | (mean > SR.T(BP_CLIP, "blown_luma_min"))
+                   | (std < SR.T(BP_CLIP, "flat_luma_std_max")))[0]
+    if len(odd):
+        f.append(finding("CLIP-10", "REVIEW", f"{len(odd)} black, blown or flat frames, the first at frame {int(odd[0])}"))
+    if animated and len(frames) > 1:
+        still = np.abs(np.diff(flat, axis=0)).mean(1) < SR.T(BP_CLIP, "frozen_diff_max")
+        run = best = start = best_start = 0
+        for i, s in enumerate(still):
+            run = run + 1 if s else 0
+            if run == 1:
+                start = i
+            if run > best:
+                best, best_start = run, start
+        if best > SR.T(BP_CLIP, "frozen_run_frames"):
+            f.append(finding("CLIP-11", "REVIEW", f"the picture stands still for {best} frames from frame {best_start}"))
+    if keyframe is not None:
+        from .footage import _dhash_frame   # one home for the perceptual hash (training/footage.py)
+        key = _keyframe_gray(keyframe, frames.shape[2:0:-1])
+        diff = float(np.abs(key.astype(np.float32) - frames[0].astype(np.float32)).mean())
+        dist = bin(_dhash_frame(key) ^ _dhash_frame(frames[0])).count("1")
+        if diff > SR.T(BP_CLIP, "frame0_mean_abs_diff_max") or dist > SR.T(BP_CLIP, "frame0_dhash_max"):
+            f.append(finding("CLIP-12", "REVIEW", f"frame 0 is not its keyframe (mean difference {diff:.1f}, hash distance {dist})"))
+    return f
+
+
+def clip_findings(path, *, fps=None, dialogue=None, expect_speech=None, transcript=None, keyframe=None, animated=True):
+    """All CLIP rows for one clip file: (metrics, findings). ``transcript`` = words heard (None = not transcribed)."""
+    probe = probe_container(path)
+    has_dialogue = bool(dialogue) or expect_speech is True
+    f = container_findings(probe, fps_expected=fps, has_dialogue=has_dialogue)
+    metrics = {k: (str(v) if isinstance(v, Fraction) else v) for k, v in probe.items()}
+    if probe["has_audio"]:
+        measure = audio_measure(path, duration=probe["audio_duration"] or None)
+        metrics["audio"] = measure
+        f += audio_findings(measure, transcript_words=transcript, dialogue_text=dialogue, expect_speech=expect_speech,
+                            has_dialogue=has_dialogue)
+    else:
+        f += audio_findings({}, transcript_words=transcript, dialogue_text=dialogue, expect_speech=expect_speech)
+    f += frame_findings(decode_gray(path), animated=animated, keyframe=keyframe)
+    return metrics, f
+
+
+def transcript_for(path, given=None, *, needed=False):
+    """The words heard in a clip, or None. ``given`` = a words.json (Scribe shape) or a plain-text file; otherwise, when a check
+    needs it and faster-whisper is installed, the free local transcriber (audio/local_words.py, CPU). Never a paid read."""
+    import importlib.util
+    if given:
+        text = Path(given).read_text(encoding="utf-8")
+        try:
+            from explainer_engine.audio.scribe_words import transcript_words
+            return [w["text"] for w in transcript_words(json.loads(text))]
+        except (ValueError, TypeError, KeyError):
+            return text.split()
+    if needed and importlib.util.find_spec("faster_whisper") is not None:
+        from explainer_engine.audio import local_words
+        return [w["text"] for w in local_words.transcribe(Path(path))["words"]]
+    return None

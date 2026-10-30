@@ -138,10 +138,56 @@ def script_gates(day: Path, run_path: Path | None = None) -> list[dict]:
     else:
         add(6, "pictures", "PASS", f"all {len(used)} pictures exist", "review the contact sheet by eye")
     from .production import sample as SMP  # 6.5: the creator's word on the stitched two-part sample (OR-19, D-67)
+    out += media_gates(day)
     add(6.5, "two-part sample", *SMP.gate_row(day))
     add(7, "animatic and render", "WAIT", "production run, after gates 0-6 and the sample approval (6.5)")
     add(8, "QA", *qa_state(day))
     add(9, "approval #2", *approval_state(day))
+    return out
+
+
+def media_gates(day: Path) -> list[dict]:
+    """Rows ``keyframes`` and ``clips`` (CP-10): what the keyframe gate logged and what ``video-qa --write`` left beside each clip.
+    A still-picture episode (no ``film_shots.json``, no clips) gets neither row. The gate reads JSON only: it reads the log through
+    ``keyframe_gate``'s reader and the clip sidecars as files, and runs no check, so a skipped check shows here as WAIT instead of
+    leaving no trace."""
+    out: list[dict] = []
+    fs = _json(day / "film_shots.json")
+    if fs is not None:
+        from .qa import keyframe_gate as kg
+        log = _find(day, "qa_log.jsonl")
+        shots = [s["id"] for s in fs.get("shots", [])]
+        if log is None:
+            status, detail, nxt = "WAIT", f"no qa_log.jsonl: 0 of {len(shots)} shots checked", "keyframe_gate on every master picture (KG-01..)"
+        else:
+            tries: dict[str, list[str]] = {}
+            for rec in kg.read_log(log):
+                tries.setdefault(rec["shot"], []).append(rec["status"])
+            failed = sorted(k for k, t in tries.items() if t[-1] == "FAIL" or (len(t) >= kg.MAX_TRIES and "PASS" not in t))
+            open_ = [k for k in shots if not tries.get(k) or tries[k][-1] != "PASS"]
+            if failed:
+                status, nxt = "BLOCKED", "fix the prompt or the LoRA named in the log (keyframe_gate summary)"
+            elif open_:
+                status, nxt = "WAIT", "check the remaining shots; a REVIEW needs Claude's table (KG-22) and the creator"
+            else:
+                status, nxt = "PASS", ""
+            detail = f"{len(shots) - len(open_)} of {len(shots)} shots pass, {len(failed)} failed, {len(open_) - len(failed)} waiting"
+        out.append({"gate": "keyframes", "name": "keyframe gate", "status": status, "detail": detail, "next": nxt})
+    clips = sorted((day / "clips").rglob("*.mp4")) if (day / "clips").is_dir() else []
+    if clips:
+        missing, bad, review = [], [], 0
+        for c in clips:
+            side = _json(Path(str(c) + ".video_qa.json"))
+            if side is None:
+                missing.append(c.name)
+                continue
+            rows = side.get("findings", [])
+            bad += [f"{c.name} {r['rule']}" for r in rows if r.get("status") == "FAIL"]
+            review += sum(r.get("status") == "REVIEW" for r in rows)
+        status = "BLOCKED" if bad else "WAIT" if missing else "PASS"
+        detail = f"{len(clips) - len(missing)} of {len(clips)} clips checked, {len(bad)} FAIL, {review} REVIEW"
+        nxt = ("fix: " + ", ".join(bad)) if bad else "python -m explainer_engine.training video-qa <clip> --write" if missing else ""
+        out.append({"gate": "clips", "name": "clip QA", "status": status, "detail": detail, "next": nxt})
     return out
 
 
@@ -196,6 +242,10 @@ def approval_state(day: Path) -> tuple[str, str, str]:
 def gates(day: Path, look_path: Path | None = None, run_path: Path | None = None) -> list[dict]:
     if (day / "production_script.json").exists():
         return script_gates(day, run_path)
+    return _legacy_gates(day, look_path) + media_gates(day)
+
+
+def _legacy_gates(day: Path, look_path: Path | None = None) -> list[dict]:
     look_path = look_path or day.parent / "look.json"
     look = _json(look_path) or {}
     out: list[dict] = []
