@@ -2709,6 +2709,42 @@ training as sequences is decided in the process. Changed together:
   no longer skips the creator's REVIEW_APPROVED), hashes the dossier file, checks the reservation past BUDGET_RESERVED, never adopts into
   PUBLISHED_PUBLIC or a terminal state; `create` makes only CREATED.
 
+## 2026-10-29 22:30 UTC (02:30 Tbilisi 10-30): paid-test caps and their ledgers (no pod, no money)
+
+- ვანო (2026-10-29 18:40 UTC, relayed): a clear yes to the paid tests P12a, P12b and P12e within $5.90 in total, each
+  started only after the coordinator's go after the final Fable xhigh static audit. The OR-23 plans and their OR-24
+  confirmation are in project files `explainer-engine/blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md` (Georgian summary
+  `PAID_TESTS_PLAN_ka.md`).
+- `config/spend_caps.json` `paid_tests`: total_usd 5.9; p12a_smoke runpod_usd 0.50, p12b_two_runs 3.00, p12e_hosts 2.40
+  (pods hard at 80 %: 0.40 / 2.40 / 1.92). P12b and P12e sit above the first proposal (2.50 / 1.00) because the 80 % stop would
+  leave their pods below their estimates; the total is his $5.90.
+- `spend_caps.paid_test(name)` reads a test's lines and refuses an unknown test and a section over its total.
+  `ledger.Run.open_test(path, name)` opens a test's ledger with its line as the cap, every other service at 0 and meta `test`,
+  and refuses another run's ledger. Without it, `runpod create --ledger` on a new path got the episode ceiling
+  (runpod_usd 31). CLI: `python -m explainer_engine.core.ledger open-test <run.json> <test>` and `report <run.json>`.
+- D9's numbers (min_balance_left_usd 1.00, ElevenLabs casting_credits_max 1500) are ვანო's and are not in this change.
+- Tests: `tests/unit/test_spend_caps.py` (5); `tests/unit` 1208 passed, 5 failed only because this container lacks `cv2`
+  (the same 5 fail on main here); `docs_lint` 0 findings.
+- Review fixes (PR #33 cross-review): `runpod create` refuses a ledger path that does not exist (a ledger made there got the
+  episode ceilings); `Run.open` re-checks a paid test's ledger against its line on every open; the cap is per test, not per
+  file: `open_test` needs `EXPLAINER_LEDGER_MIRROR` (a durable folder), restores a missing path from `<mirror>/<test>.json`,
+  every save writes the mirror and a ledger that differs from its mirror stops with LedgerConflict; `ledger report` only
+  reads; `decided` cites the creator's message id. Tests: tests/unit/test_spend_caps.py, tests/unit/test_runpod.py,
+  tests/unit/test_cloud_stop_paths.py (P1a's drill tests now open their ledger with `open_test`, its line and its
+  mirror, instead of a hand-made ledger above the line).
+
+## 2026-10-30 03:50 UTC: P12d, the fake-HTTP drills (no pod, no money)
+
+- `tests/unit/test_cloud_drills.py`: the five scenarios of the Blueprint card played once, each chaining the real `pod_wrapper.sh`
+  (stubbed curl and uploader, `EE_DRILL` from CR-17) with the watchdog and the guard over the fake RunPod and fake registry: the
+  session dies (no_self_stop), the cap is reached (and the silent pod is stopped by its record's money estimate), the folder upload
+  fails (upload_fail), only the watchdog is left, the pod has no key (drop_key). `docs/CLOUD_RUNBOOK.md` "Drills" is the table
+  (scenario, expected, received, live); the live column stays empty until P12a's pod runs `create --drill`.
+## 2026-10-30 — P0c-2: agent form A/B at 16 segments (free, evidence only)
+- `docs/research/AGENT_AB_P0C2_2026-10.md` + data in `docs/research/agent_ab_2026-10/p2/`: Napoleon-vs-Genghis at 16 segments (template D), one context (A2) vs 26 workers with Haiku on the mechanical
+  stages (B2), blind Opus critic (A2 4.00 vs B2 3.17 on its table), cost 14.19 M vs 19.08 M input-price units, B2 ahead only if a Haiku unit costs under half a Sonnet unit.
+  `measure.py` now reads the `s03r_writer` repair snapshot. The plan thread's recommendation, in force under the creator's 2026-10-29 18:17 UTC delegation: A5 = D-79; the card returns to him in the 2026-10-30 morning report for confirmation and he can overturn it. D-81 stays a hypothesis with reopen triggers (row in `docs/DECISIONS_AND_OPEN_QUESTIONS.md`). No paid call. Test: none (research data; `docs_lint` 0 findings).
+
 ## 2026-10-30 03:30 UTC: P1a follow-up, nested `rp.py` runs behind a reader (no pod, no money)
 
 - Re-review of PR #29: ``echo `./rp.py create` `` and `find . -exec ./rp.py create {} \;` passed because the first word was a reader.

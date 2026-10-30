@@ -15,6 +15,15 @@
       "decided": "the creator, 2026-10-20"
     }
   },
+  "paid_tests": {
+    "_doc": "One ledger per paid test (core/ledger.Run.open_test, CLI `python -m explainer_engine.core.ledger open-test <run.json> <test>`): the test's lines are its caps, every other service is 0 in it, and the 80 % stop applies to each. The lines of all tests together never pass total_usd. Raise a number only on the creator's word.",
+    "total_usd": 5.9,
+    "decided": "the creator, 2026-10-29 18:40 UTC, message cmsg_01Hnu5zB86sjUj5GtTgaUkPW4xWey2wgkHN9je3d8CGH7U: a clear yes to the paid tests within $5.90 in total; the split 0.50 / 3.00 / 2.40 inside that total is the OR-24 plan thread's (confirmed by the coordinator 2026-10-29 23:24 UTC); each test starts only after the coordinator's go after the final Fable xhigh static audit",
+    "plan": "project files explainer-engine/blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md (OR-23, confirmed by the OR-24 plan thread)",
+    "p12a_smoke": {"runpod_usd": 0.5, "for": "five small pods: the live smoke of the wrapper and the live drills of every stop path (pods 0.40 hard)"},
+    "p12b_two_runs": {"runpod_usd": 3.0, "for": "one pod: MVA views + host collage (Qwen-Image-2.1), LTX plain vs Layout-To-Render (pod 2.40 hard)"},
+    "p12e_hosts": {"runpod_usd": 2.4, "for": "one pod after the creator's host pick: the two hosts' sheets and the region plates (pod 1.92 hard)"}
+  },
   "runpod": {
     "per_pod_usd": 6.9,
     "per_24h_usd": 26.0,

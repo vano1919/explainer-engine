@@ -1417,6 +1417,9 @@ def main(argv=None, api=None, live=None):
         gpu, ledger = _opt(rest, "--gpu", "default"), _opt(rest, "--ledger")
         if not ledger:
             raise SystemExit("create needs --ledger <episode run.json>: every pod is paid for by an episode")
+        if not Path(ledger).exists():  # a ledger made here would get the episode ceilings, not a paid test's line
+            raise SystemExit(f"refused: no ledger at {ledger}; open it first (an episode: Run.open(path, caps=...); "
+                             "a paid test: python -m explainer_engine.core.ledger open-test <path> <test>)")
         script_file, script_url = _opt(rest, "--script"), _opt(rest, "--script-url")
         if script_url and not script_file:
             raise SystemExit("--script-url needs --script <the same file, local>: the pod script is linted before any money")
