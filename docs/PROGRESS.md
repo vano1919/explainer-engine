@@ -680,6 +680,7 @@ guard with lifetime/boot/blind handling, `check`, `cost` from `GET /billing/pods
 `POST /pods`). Tests: `tests/unit/test_runpod.py` (27, fake RunPod API, no network); full suite 424 passed, docs_lint 0. No pod was started; $0 spent.
 Not changed: TMR's conductor still deletes its pod at DONE by manifest (`end_action`), and its money clock restarts with a
 container restart (`/proc/1` ctime); the outside guard here keeps the session clock, so it covers that case.
+
 ## 2026-10-19 — Syndicate Wars pictures: v1 recovered, one variant collage first (OR-16, PV-47), face sheets painted
 
 The creator: before a hero or a world is painted for the first time, ONE collage of variants (colours, character, buildings),
@@ -697,6 +698,7 @@ answers repainted in the same plan). QA by eye: the painter framed about eight c
 in size; `faces.same_framing` matches every close-up of a sheet to the tightest by the head silhouette (scaled up only, head
 top and centre aligned); originals kept in `jobs/syndicate_wars/faces_raw`. Tests: `test_reference_collage.py` (6),
 `test_face_sheets.py` (+1); `test_visual_beats.py` fixture records the pick. No pod was started.
+
 ## 2026-10-19 — Shorts carry the visual-beat layer and its cues (SS-09, PV-44)
 
 Measured: the creator's Shorts keep about 80 % viewed vs 20 % swiped away (Studio, the creator, recorded in
@@ -1327,6 +1329,7 @@ What was done:
 - Napoleon vs Genghis (214 shots), the bus example and film_1min all pass with 0 FAIL / 0 REVIEW. Tests
   `test_keyframe_tells_the_moment_at_its_peak_with_a_reaction_and_no_layout` and
   `test_keyframes_and_sheets_keep_the_moment_shape_and_name_each_figure_once`.
+
 ## 2026-10-25 03:20 Tbilisi: episode look (AC-16..AC-19) and the prompt absolutes (LT-66)
 - ვანო asked for an episode-level colour layer that keeps colours consistent between the episode's pictures when places
   and countries change, without changing the style LoRA's look, and for the list of prompting absolutes.
@@ -1389,6 +1392,7 @@ What was done:
 ## 2026-10-25 21:10 Tbilisi: be critical (LT-72)
 - ვანო: ideas, his own included, are verified and answered with arguments, never agreed by default. The 2.1 move and the scene
   LoRA were followed without a comparison against the approved option. LT-72.
+
 ## 2026-10-24 - Money per job, one pod manager on REST v2, pods stop themselves (D-74)
 - Why: the RunPod loss strategy (creator's "Ok", 2026-10-24): about $4-5 lost from 10-22 to 10-24, the largest share
   finished pods idling in `tail -f /dev/null`; the pod-management code was split across unmerged PRs (#18 Guardian and
@@ -1406,6 +1410,7 @@ What was done:
   stop that pod (one cheap guarded pod, ≈$0.01, before the next paid run relies on it).
 - Next: the RUNPOD_API_KEY repository secret and a merge to main make the watchdog run (scheduled workflows run only on
   the default branch).
+
 ## 2026-10-20 - Strict storytelling rules 1 and 2, and approval #1 recorded in code (D-61)
 
 The creator's brief for the next episode ("titans from zero") set two general rules and asked that the order scenario ->
@@ -1781,6 +1786,7 @@ corrected to "made with AI image tools". final_qa stamped (0 FAIL). No code chan
   word captions, "full video" label; the last frame is the first). Test: `tests/unit/test_clip_shorts.py`.
 - `publish/plan.py`: `"shorts_from": "publish"` stages the Shorts listed in publish.json instead of the script's.
   Test: `test_youtube_publish.py::test_shorts_cut_from_the_long_video_come_from_publish_json`.
+
 ## 2026-10-20 — Library first: reusable assets looked up before any new generation (D-76, OR-18)
 - The creator's rule (2026-10-20): a local library of background music and reusable objects; new is generated only when
   nothing there fits; what this session's episodes created is kept.
@@ -1795,6 +1801,7 @@ corrected to "made with AI image tools". final_qa stamped (0 FAIL). No code chan
 - Tests: `test_assets_reuse.py`, `test_picture_library.py`, `test_audio_register.py`; the hook test now records a
   search before reaching the rulebook gate. Full suite green locally.
 - Next: the titans thread registers its generated music/ambience with `audio/register.py` when its paid run finishes.
+
 ## 2026-10-21 — The two-part sample gate (D-67, OR-19; branch `claude/project-thread-i9ftf6`)
 
 - The creator (2026-10-21): after the script, stop generating the whole video's audio and pictures; make the first two
@@ -1811,6 +1818,7 @@ corrected to "made with AI image tools". final_qa stamped (0 FAIL). No code chan
   [D-67](DECISIONS_AND_OPEN_QUESTIONS.md) (decision ids 61-66 are claimed by the open PR #14 / #15 branches).
 - Tests: `tests/unit/test_sample_gate.py` (9: scope, shared pictures, in/out-of-scope reads, PP-09, sha binding,
   hook wiring, gate row and CLI, `paint plan --sample`). Nothing paid; no renders claimed.
+
 ## 2026-10-22 - Scene continuity of the painted pictures (D-69)
 
 The titans episode showed five men on a bench of ten, then two other men in another room while the narration told one
@@ -1838,6 +1846,7 @@ nothing compared a painted picture with them. Fixed inside the existing flow (sa
 - Read on the titans script with `look.continuity: auto` (nothing painted): CS-02/CS-03 find the scenes whose master leaves
   people out or whose pictures draw people outside the room (SC09, SC11, SC13-SC15), CS-05 the "ten men" bench with five named.
 - Tests: `tests/unit/test_scene_continuity.py` (27, mocked provider). Nothing paid.
+
 ## 2026-10-22 - Stage A of the master brief: repo audit and tooling research (D-70)
 
 The creator's master brief (2026-10-22, thread "წარმოების არქიტექტურა და ვიზუალი") asks for a model- and provider-agnostic
@@ -1999,6 +2008,7 @@ RunPod, nothing spent: see [TOOL_STRATEGY](TOOL_STRATEGY.md) "The Guardian" for 
   refused with Gemini HTTP 402 "prepayment credits are depleted". The adapter sent all ten because a Gemini 402 was a plain provider
   error; `providers/gemini_adapter.py` now raises `AccountError` on 401/402/403, so the first one stops the candidate (test added).
   The approval stays bound to plan hash 807c365090475447 in `jobs/universe/2026-10-22_grid/run.json`; a rerun after a top-up paints it.
+
 ## 2026-10-22 - Research: the hybrid visual model (AI world, rigged characters)
 
 The creator asked whether AI should only paint and move the environment while characters (wounded ones and hard poses
@@ -2096,6 +2106,7 @@ be: [HYBRID_VISUAL_MODEL_2026-10-22](research/HYBRID_VISUAL_MODEL_2026-10-22.md)
   until the deadline: 9 of 16 clips. The night ledger stops at 80 % of $3.6; ~$2.85 billed in all.
 - Seen in the clips: the style holds; motion is small; where first and last keyframes differ in layout, FLF2V cross-fades
   (ghosted faces in c03, c06). Next: last frame = a small edit of the first (same layout), or plain I2V with a motion prompt.
+
 ## 2026-10-24 - The vault: nothing we made is lost (D-73)
 
 The creator asked for a thread that makes sure none of the work is ever lost and all of it stays in his hands. Inventory
@@ -2120,6 +2131,7 @@ GitHub branches of 9 open PRs.
   re-check and twins, a corrupt download never overwrites, the lint). Nothing paid, nothing deleted.
 - Open: the second copy's place is the creator's call (his PC: `vault pull --dest <folder>`, ~8.1 GB); the pod-script lint is
   wired into `runpod.lint_pod_script` when PR #22 (which adds that function) merges.
+
 ## 2026-10-25 03:20 Tbilisi: the script engine adds the episode look and keeps the LT-66 absolutes
 
 - `style.look` in the shot cards names the episode's look file (`episode_look/1`, read next to the cards by `film_shots.load`)
@@ -2193,6 +2205,7 @@ stays. The merged PRs #14-#21 and #23-#25 are closed in favour of PR #22; their 
 
 ვანო: "we are on D-75 now". Keyframes are drawn from continuity cards and references (SHOT_CONTINUITY); ASSET_COMPOSE
 (code-composed shots) is marked superseded and kept as history. Recorded in D-75 and the integration audit.
+
 ## 2026-10-25 22:30 Tbilisi: one main agent and one critic (OR-20, D-79)
 
 ვანო said yes (22:21 Tbilisi) to one point of an outside AI review: one strong main agent and at most one independent
@@ -2646,6 +2659,7 @@ training as sequences is decided in the process. Changed together:
   `docs/EDITING.md` ED-09 points to `production/graphics.py` (`production/cards.py` was never built).
 - `audio/visemes.py` and `audio/timings.py` stay (provenance ports; `timings` is imported by `audio/narrate.py`).
 - Test: `tests/unit/test_repo_hygiene.py` (no `.chatgpt/`, no CI trigger, visemes importable, retired deps absent).
+
 ## 2026-10-29 Tbilisi night: agent form A/B, one main agent vs one worker per stage (P0c, free)
 - Same Napoleon-vs-Genghis brief (8 segments, 3 Shorts, stages 1-6 of the story engine) written two ways by Sonnet: arm A one
   agent in one context, arm B 22 fresh workers with a gate after each return. Both reach `story_lint` 0 FAIL / 0 REVIEW.
@@ -2722,6 +2736,7 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 - `stage_guard start` / `fresh` (OR-32, the re-read rule): `start` appends the stage, the time and the sha256 of the stage page and its inputs to `<job>/story/stage_log.jsonl`; `fresh` reports an output with no start record, a start older than the previous stage's, a page or input changed since the start, or no output (REVIEW until the creator's A5 card is final; `--strict` exits 1); the old `stage_guard <stage> before after` form is unchanged. First body line of the seven stage pages (architect, scene-writer, beat-writer, performance-director, edit-planner, voice-caster, shorts-writer); story-architect gets step 1b (the variants, OR-31) and step 3 takes the template and profile of the chosen variant; scene-writer runs `register_lint` and the ST-20..ST-23 check; edit-planner follows the chosen variant's lanes (VP-15); script-critic scores each variant's story (`scores.critic`, never summed with the code's) and reads the register report; story-engine skill: row 1b, the re-read rule and "Branch switch (A5)" (D-79 built, D-81 a documented `stage_mode` switch, absent = inline); orchestrator phase 2a; SCRIPT_ENGINE pipeline row 1b; INDEX prefixes RG- and VP-. No new agent page (a new agent needs a protected `config/model_routing.json` edit and the creator's word).
 - Open for the creator (none blocks P3; each has the default that was built): (1) the exact 09:28 UTC wording for BP-140 and BP-142 `decided` (the registry quotes the plan card's summary and says so); (2) which words are in the FAIL tier (the 75 forms of BP-140; "revolutionary" and "boasts" are not in it); (3) whether an and-then chain in the text should FAIL (built: REVIEW, ST-20; the declared connector is already a contract FAIL); (4) whether ad-safety FAILs and whether the window is 7 s (YouTube's wording, built) or 8 s (the card); (5) style devices (contrast pairs, question-answer chains, fragments, em dashes: built as densities, REVIEW); (6) the score formula on the card (built: 100 - 10 per REVIEW - 25 per FAIL, next to the critic's, never summed); (7) a separate `variant-planner` page (built: none). Waits for the creator (V4 pilot, OR-15, OR-17): the rewritten Napoleon script and its approvals; the unattended subset (V1/V2 `script_variants.json`, lint baselines) is built and tested.
 - Review follow-ups (P2 thread's verdict on #40): the register allow-list now reaches every call site, not only PV-61 (`narration_lint.lint(allow=)`, `film_shots.check(allow=)`, both CLIs load `register_allow.json` next to the file), so a literal "realm" is exemptable in N-16 and KP-46; `chosen.variant_id` must name an existing variant and one without a FAIL (`variant_plan.check_file`, CN-04), and `EpisodeJob.move(variants=)` refuses an id that is not a variant. Tests added in `test_register_lint` and `test_variant_plan`.
+
 ## 2026-10-30 03:50 UTC: Blueprint P4b, the voice director (free, no pod, no paid take)
 
 - ვანო (2026-10-29 18:17 and 18:30 UTC): D8 conditional (a free generator only if a measured one is good and diverse enough; the
@@ -2786,6 +2801,7 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
   session dies (no_self_stop), the cap is reached (and the silent pod is stopped by its record's money estimate), the folder upload
   fails (upload_fail), only the watchdog is left, the pod has no key (drop_key). `docs/CLOUD_RUNBOOK.md` "Drills" is the table
   (scenario, expected, received, live); the live column stays empty until P12a's pod runs `create --drill`.
+
 ## 2026-10-30 — P0c-2: agent form A/B at 16 segments (free, evidence only)
 - `docs/research/AGENT_AB_P0C2_2026-10.md` + data in `docs/research/agent_ab_2026-10/p2/`: Napoleon-vs-Genghis at 16 segments (template D), one context (A2) vs 26 workers with Haiku on the mechanical
   stages (B2), blind Opus critic (A2 4.00 vs B2 3.17 on its table), cost 14.19 M vs 19.08 M input-price units, B2 ahead only if a Haiku unit costs under half a Sonnet unit.
@@ -2954,11 +2970,64 @@ The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code accoun
 ## 2026-10-30 08:55 UTC — P0d: the tool loop's cache breakpoint, partial saves, loop estimate (J1b scope A lost $5.02)
 J1b scope A ran 18 turns and hit the 80 % stop without saving anything: the ledger shows `cache_read` stuck at the 22,746-token system prefix while fresh `input` grew to 48k per turn ($0.50 a turn). Causes fixed in `llm/claude_api.py`: (1) `_with_breakpoint` puts the cache breakpoint on the last block every turn (the first message keeps its own; at most two message breakpoints); (2) `save_partial` writes `partial_<job>_<id>.json` (assistant text, tool calls, results cut to 400 characters, usd so far, the stopping error) before any error leaves the loop, and the error carries the path as a note; (3) `estimate` marks a tool loop's figures as first-turn only and adds a `loop` row (`--turns N`, `--new-tokens-per-turn`) priced with cached re-reads (`loop_usd`). The per-turn reservation (`worst_usd`) is unchanged and stays conservative (whole prompt as writes): it still trips the stop earlier than the real spend. Tests: breakpoint per turn, partial on max_turns and on a cap stop, estimate warning. No paid call.
 
+## 2026-10-30 09:10 UTC: G15, `create --cloud`, flags that mean what they say (audit pass 1, B2; free)
+
+- The paid thread found that `--only "GeForce RTX 3090"` kept the SECURE 3090 at $0.50 beside the COMMUNITY one and `EE_PRICE` was the dearest
+  pick, which cut pod A's dead-man from 16.2 to 6.2 min. `create --cloud COMMUNITY|SECURE` now restricts the picks, the cards tried and
+  `EE_PRICE` to one cloud; `--only` accepts a comma list and is searched among 50 cards, not the cheapest six. An unknown flag is refused
+  before any API call, as are `--only`/`--cloud`/`--ref-hours`/`--wait-stock` without `--vram` (they were ignored: default pool, RTX 4090 SECURE).
+  CR-20 in the runbook; tests in `tests/unit/test_cloud_economy.py`, including one that every flag the create branch reads is in the known list.
+- Review-desk round on this PR (four gaps, all on the money path): `--vram` now REQUIRES `--cloud` (no committed caller or doc used `create --vram`
+  without it, so nothing legitimate breaks); an empty or flag-like value (`--cloud ""`, `--only ""`) is refused, not read as "not given";
+  every name in an `--only` list must match a card with stock, else refusal with a did-you-mean (a typo used to be dropped and the pod
+  landed on the card left over; an out-of-stock name now refuses too, `--wait-stock` retries it); the 50-card search is pinned by a test
+  where the wanted card is outside the cheapest six (mutated back to 6, it fails).
+- For the P12a commands: pass `--vram 24 --ref-hours 0.05 --boot-minutes 25 --cloud COMMUNITY` (or SECURE) with `--only`; leave out
+  `--setup-min` (a 10-minute setup against 3 minutes of work is refused by RP-09).
+
+## 2026-10-30 09:40 UTC: the five P12a pod scripts (audit pass 1, B1 / G9; free, no pod, no money)
+
+- `explainer_engine/training/pods/p12/p12a_A..E.sh`, written from the paid plan sections 2.2-2.6 and nothing else: A (boot facts, one shard download
+  timed, the aitoolkit manifest by skopeo when present), B (3 steps, then `exit 1`), C (10 minutes of 1 KB parts), D (30 minutes of parts that the cap
+  ends), E (2 minutes, `exit 0`). Each declares `# heartbeat: datasets/vano1919/tmr-artifacts:runs/p12a/<X>/beat.txt` and `# stall-minutes: 4`,
+  writes `progress.txt` with a changing line and `t.jsonl` events (script_start with `EE_DEADLINE`, exit with rc), installs nothing, so no DRY gate is needed.
+- A-2 downloads shard 00002 (4,261,951,904 bytes, measured on the Hub at revision d26bb61) as the plan thread decided; shard 00001 is 9.97 GB. The
+  shard is found by its name prefix and checked by its size (4,261,951,904) before it is fetched, so the script names no weight file: VT-01 takes
+  any script naming weight files for a training pod, and the plan thread decided (08:38) not to walk around it with an assembled name nor to loosen it
+  without a precise rule. A downloads to /workspace/dl, deletes it and writes no weights to $EE_OUT (a test checks that no shard reaches the vault).
+- A does not write the image digest the plan mentions: the pod has no such variable (nothing sets one); the session reads it from the create body.
+  The boot facts list only chosen non-secret variables (the pod env holds keys; a test checks none is written).
+- `runpod dryrun` passes for all five (Hub existence of Qwen/Qwen-Image-2.1 and the vault dataset checked with the network). sha256 of the scripts:
+  A 25661e2e, B c193e702, C 64cc4734, D 8af25923, E 40ab6415 (full values in the PR). A dryrun record is keyed by that text: any edit means a new
+  dryrun, and the copies on HF `code/p12/` must be made from the merged files, then compared by sha256 before each create (audit N3).
+- Test: `tests/unit/test_p12a_scripts.py` runs B, C, D, E and A under the real `pod_wrapper.sh` with stubs and short steps (`P12_STEP_S`, `P12_DL` only
+  for the test): end words, drills, parts uploaded before the cap, boot facts, speed record, shard deleted.
+
+## 2026-10-30 09:55 UTC: CR-12 wording, the watchdog is an hours-scale backstop (audit pass 1, B4; docs only)
+
+- Evidence (audit 08:35 UTC): the recorded scheduled runs were 4-7 h apart (29 runs in 6 days under `*/30`, none under `*/10` by 08:19 on 10-30). CR-12
+  and the stop-path table now say so, and that the session dispatches the watchdog before every create and every 10 minutes while a pod relies
+  on it, so the stop is the watchdog's code with the session's timing. Pod E's pass criterion is the OR-24 thread's call (2026-10-30 08:38): E passes when the watchdog's own code stops it at
+  the first session-dispatched run after DONE, and its report states that the timing came from the session, not from cron. Nothing in code changed.
+
 ## 2026-10-30 09:20 UTC — P0d follow-up to the cache-fix review: loop bounds, previous output as a write, second breakpoint
 The review of the cache fix left three points. (1) `loop_usd(mode=cached|uncached|miss)` and the estimate row now carry `usd_if_cached`, `usd_if_uncached` (no cache read at all: what the J1b scope A run billed) and `usd_if_miss` (everything rewritten every turn), and the model's output of the previous turn is billed as a cache write (about 4 % more than before). The default tool-result size is 2000 tokens a turn, rounded up from what the scope A ledger shows (~1.5k). (2) `worst_usd`, `worst_total_usd` and the pre-run refusal no longer price a loop at turn 1: the loop figure chosen by `--loop-bound cached|uncached|miss` counts, never less than turn 1. Default `cached` (the expected case after the breakpoint fix); `uncached` is the conservative choice and, on a 24-turn PR review (102k-token first turn) gives $12.95 against $1.70 cached, so with it every J1 review would be refused at the $8 line's $6.40 stop: the owner of the money lines picks the default. (3) `_with_breakpoint` also keeps the previous turn's breakpoint (four in all with the system prefix), so a turn with more than ~10 parallel tool results hits the cache. Tests: ordering and arithmetic of the three modes, the loop in worst_total, the refusal by bound, the second breakpoint on 14 parallel results. No paid call.
 
 ## 2026-10-30 09:45 UTC — P0d: runtime cache guard in the tool loop (default `--loop-bound cached` made self-checking)
 Decision (Blueprint thread): `--loop-bound` stays `cached`. So the loop now checks that assumption itself: `cache_guard` from turn 3, on a turn that still wants tools, stops with `CacheCold` (naming the measured share) when under 60 % of the prompt tokens were cache reads or writes, or when the cache read did not grow while 1000 or more fresh input tokens were billed (the read stuck at the system prefix). The partial is saved by the #58 path. Prompts under 1024 tokens and final answers are not judged. Replaying the J1b scope A ledger rows through it stops at turn 3. Tests: warm history runs on; stuck-at-prefix stops at turn 3 with the partial on disk; the share message; the guard switched off fails the stuck test. Existing max_turns/cap tests now script warm usage (they test turns and caps, not the cache).
+
+## 2026-10-30 UTC: P5 follow-up, Canvas.line's dashed walk always terminates (no pod, no money)
+
+- The plan thread's review desk (after #47): the 1e-6 float floor of the dash walk was not pinned by a test, and `Canvas.line` still hung or
+  divided by zero on degenerate input. Now: `draw.dash_runs` is a pure generator walking only the part of the line inside the canvas box (the
+  phase still advances over the rest), so the work is bounded by the box, not by the line's length (a 1e12 px line is instant); a dash must be
+  finite with on > 0 and off >= 0 and the coordinates finite, else ValueError; a pattern finer than a pixel is drawn solid.
+- `tests/unit/test_draw_guards.py`: the refused dashes and coordinates, the 1e12 line, the 1e-9 dash, and the phase across the clipped part.
+- Review of #60 (P1a): the absolute floor is not enough far from the origin (at 1e12 one float step is ~1.2e-4, so `pos + step == pos` and the
+  walk never moved; `Canvas.line([(-1000000000003.8188, 10), (1e12, 10)], dash=(2.5077..., 5.1608...))` spun). `dash_runs` now advances one ulp
+  (`math.nextafter`) when a step does not move `pos`; that input has its own test. The old floor test's premise (no floor = a stall) no longer
+  holds, so it now pins what the floor still does (keeps ulp-sized sliver runs out). The phase advance over a segment wholly outside the box
+  has a test that fails when the line is deleted (checked by mutation); so does removing the `nextafter` step.
 
 ## 2026-10-30 12:00 UTC — P0d: paid output saved step by step (audit F1-F11; OR-33)
 The static audit (`blueprint_2026-10-29/paid/AUDIT_CLAUDE_API_2026-10-30.md`, ~$7.30 paid with no result) found ten paths where paid output is lost and four where cost balloons. Fixed in `llm/claude_api.py`: (F1) every call streams, each text delta is flushed to `<ledger>/stream/<uid>.txt` and the start line names the file; (F2) an error after text is not retried or voided but booked at the reservation, `StreamBroken` carries the path and text; (F3) `OutputTruncated` carries the paid text, `main` writes `<id>.truncated.md|json`, batch items too; (F4) the tool loop checkpoints its partial after every turn, saves on `BaseException`, and `run` turns SIGTERM into `KeyboardInterrupt`; (F5) the last turn, or a turn with less room than two worst-case turns, is a wrap-up turn (`WRAP_UP_TEXT`, tools list unchanged), one that still calls tools stops with the partial; (F6) the turn's content is in the transcript before `CacheCold`; (F7) `run_job(on_result=)` hands over each result at once, `main` writes files as they come, a failing request marks the rest `not_run`; (F8) a batch rerun skips items that have a `done`/`void` line; (F9) `cache_guard` stops a loop whose cache read is under 50 % of the previous turn's whole prompt (a full miss; measured against the previous prompt so one big tool result is not a miss); (F10) the loop estimate prices the last turn at `max_tokens`, tool results of one turn are capped at 60,000 characters; (F11) message calls use SDK `max_retries=0`. New rule OR-33 (ORCHESTRATION.md, CLAUDE.md). Tests: one or more per fix in `tests/unit/test_claude_api.py`; the fake client now always streams; `test_long_output_is_streamed` also checks a short call streams, and `test_a_cap_stop_in_the_middle_of_a_loop_keeps_the_turns_so_far` now makes the money disappear mid-loop (a wrap-up turn precedes a plain cap stop). Open (not changed): the TTL for slow tool loops, the default `--loop-bound`. No paid call.
