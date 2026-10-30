@@ -203,8 +203,8 @@ def no_diffusion(spec: dict, base_dir: Path | None = None) -> list[dict]:
         if f'"{word}"' in blob:
             out.append(_f("CMP-01", "BP-153", where, f"payload names {word!r}: a map is drawn from vectors, never generated"))
     if base["kind"] == "plate":
-        if base_dir is None or not (Path(base_dir) / base["ref"]).exists():
-            return out + [_f("CMP-01", "BP-153", where, f"the painted plate {base['ref']} is missing")]
+        if base_dir is None or not base.get("ref") or not (Path(base_dir) / base["ref"]).exists():
+            return out + [_f("CMP-01", "BP-153", where, f"the painted plate {base.get('ref')} is missing")]
         cert_path = Path(base_dir) / base.get("certificate", "")
         cert = json.loads(cert_path.read_text(encoding="utf-8")) if base.get("certificate") and cert_path.exists() else None
         out += [{**f, "where": where} for f in plate.certificate_findings(Path(base_dir) / base["ref"], cert)]

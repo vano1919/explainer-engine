@@ -65,13 +65,13 @@ def validate_payload(spec: dict) -> list[dict]:
 
 
 def asset_findings(spec: dict, base_dir: Path | None) -> list[dict]:
-    """The PNGs of a tableau exist (FAIL: it could not be drawn)."""
+    """The PNGs of a tableau exist (FAIL: it could not be drawn); only checked when the job folder is known, like the contract's other folder checks."""
     if spec["archetype_id"] != "PARALLAX_25D_TABLEAU":
         return []
     out = []
     for key in ("picture", "depth", "matte"):
         ref = spec["payload"].get(key)
-        if ref and (base_dir is None or not (Path(base_dir) / ref).exists()):
+        if ref and base_dir is not None and not (Path(base_dir) / ref).exists():
             out.append({"rule": "CN-01", "severity": "FAIL", "where": f"{spec['item_id']}.{key}", "detail": f"{ref} does not exist"})
     return out
 
@@ -121,9 +121,20 @@ def _cutaway(c: D.Canvas, spec: dict, tl: Timeline, f: float) -> None:
 
 # --- 8 parallax tableau ---------------------------------------------------------------------------------------------------------
 
-@lru_cache(maxsize=16)
-def _load(path: str, mode: str) -> np.ndarray:
-    return np.asarray(Image.open(path).convert(mode), dtype=np.float32) / 255.0
+def _stamp(path: Path) -> int:
+    return path.stat().st_mtime_ns
+
+
+@lru_cache(maxsize=4)
+def _planes(picture: str, depth: str, matte: str | None, stamps: tuple, w: int, h: int):
+    """The picture and the plane masks at the frame's size, read and cut once per item (a frame only moves them). The stamps are the
+    files' modification times, so a changed file is read again; nothing cached is ever written to."""
+    pic = Image.open(picture).convert("RGB").resize((w, h), Image.BICUBIC)
+    d = np.asarray(Image.open(depth).convert("L").resize((w, h), Image.BICUBIC), dtype=np.float32) / 255.0
+    m = None
+    if matte:
+        m = np.asarray(Image.open(matte).convert("L").resize((w, h), Image.BICUBIC), dtype=np.float32) / 255.0
+    return pic, plane_masks(d, m)
 
 
 def plane_masks(depth: np.ndarray, matte: np.ndarray | None = None) -> list[np.ndarray]:
@@ -145,12 +156,8 @@ def plane_masks(depth: np.ndarray, matte: np.ndarray | None = None) -> list[np.n
 def _tableau(c: D.Canvas, spec: dict, tl: Timeline, f: float, base_dir: Path) -> None:
     p = spec["payload"]
     w, h = c.w * c.ss, c.h * c.ss
-    pic = Image.open(Path(base_dir) / p["picture"]).convert("RGB").resize((w, h), Image.BICUBIC)
-    depth = np.asarray(Image.open(Path(base_dir) / p["depth"]).convert("L").resize((w, h), Image.BICUBIC), dtype=np.float32) / 255.0
-    matte = None
-    if p.get("matte"):
-        matte = np.asarray(Image.open(Path(base_dir) / p["matte"]).convert("L").resize((w, h), Image.BICUBIC), dtype=np.float32) / 255.0
-    masks = plane_masks(depth, matte)
+    files = [Path(base_dir) / p[k] for k in ("picture", "depth")] + ([Path(base_dir) / p["matte"]] if p.get("matte") else [])
+    pic, masks = _planes(str(files[0]), str(files[1]), str(files[2]) if len(files) > 2 else None, tuple(_stamp(f_) for f_ in files), w, h)
     ev = tl.of("dolly")
     start, span = (ev[0].start, ev[0].frames) if ev else (0, max(1, tl.duration - 1))
     u = D.ease_in_out(min(max((f - start) / span, 0.0), 1.0))

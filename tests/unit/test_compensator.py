@@ -139,6 +139,65 @@ def test_a_broken_payload_is_a_fail_not_a_crash(job):
         assert "FAIL" in {f["severity"] for f in found}, spec["archetype_id"]
 
 
+def _drops(node, path=()):
+    """Every way to remove one key of a nested payload, as (path) tuples: dict keys, and the keys of the first item of a list."""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            yield path + (k,)
+            yield from _drops(v, path + (k,))
+    elif isinstance(node, list) and node:
+        yield from _drops(node[0], path + (0,))
+
+
+def _without(payload, path):
+    out = copy.deepcopy(payload)
+    node = out
+    for step in path[:-1]:
+        node = node[step]
+    del node[path[-1]]
+    return out
+
+
+def test_a_payload_missing_any_key_is_a_fail_or_a_clean_pass_never_an_exception(job):
+    base, manifest = job
+    tried = 0
+    for r in VC.items_of(manifest, base):
+        for path in _drops(r["spec"]["payload"]):
+            spec = copy.deepcopy(r["spec"])
+            spec["payload"] = _without(spec["payload"], path)
+            args = (spec, r["spine"], r["item"]["trigger_word_index"], r["item"]["duration_frames"], base)
+            found = VC.check_item(*args)                                  # must not raise
+            assert all("rule" in f and "severity" in f for f in found)
+            C.errors(spec, base)                                         # the contract check must not raise either
+            tried += 1
+    assert tried > 150
+
+
+def test_the_malformed_payloads_a_review_found_are_fails(job):
+    base, manifest = job
+    rows = {r["spec"]["archetype_id"]: r for r in VC.items_of(manifest, base)}
+
+    def fails(kind, edit):
+        r = rows[kind]
+        spec = copy.deepcopy(r["spec"])
+        edit(spec["payload"])
+        found = VC.check_item(spec, r["spine"], r["item"]["trigger_word_index"], r["item"]["duration_frames"], base)
+        assert rules(found, "FAIL"), (kind, found)
+        assert rules(C.errors(spec, base), "FAIL"), kind
+    fails("MULTI_SCENARIO_VERDICT_MATRIX", lambda p: p.update(scenarios=[{"id": "s1", "label": "x"}]))
+    fails("TECH_TREE_DEPENDENCY_GRAPH", lambda p: p.update(edges=[{"to": "n2"}]))
+    fails("TACTICAL_UNIT_MANEUVER", lambda p: p["routes"][0].pop("id"))
+    fails("TACTICAL_UNIT_MANEUVER", lambda p: p.update(base={"kind": "plate"}))
+    fails("TACTICAL_UNIT_MANEUVER", lambda p: p.update(base={"kind": "plate", "ref": "p.png"}))
+
+
+def test_a_parallax_spec_checked_without_a_folder_is_not_failed_for_its_files(job):
+    base, manifest = job
+    row = next(r for r in VC.items_of(manifest, base) if r["spec"]["archetype_id"] == "PARALLAX_25D_TABLEAU")
+    assert VC.payload_findings(row["spec"], None) == []
+    assert C.errors(row["spec"]) == []
+
+
 def test_an_element_without_an_event_is_flagged_for_every_archetype_that_has_elements(job):
     base, manifest = job
     row = next(r for r in VC.items_of(manifest, base) if r["spec"]["archetype_id"] == "TECH_TREE_DEPENDENCY_GRAPH")
@@ -225,13 +284,59 @@ def test_cmp12_lane_balance():
     assert VC.lane_balance(payoff) == []
 
 
-def test_the_rotation_is_checked_over_a_whole_manifest(job):
-    base, manifest = job
-    m = copy.deepcopy(manifest)
-    a, b = m["items"][4], m["items"][5]
-    b["archetype_id"] = a["archetype_id"]
-    found = VC.check(m, base)
-    assert any(f["rule"] in ("CMP-10", "CN-01") for f in found)
+def _variant_job(base, mutate):
+    """The demo job, copied, with ``mutate(manifest, specs)`` applied (specs: item_id -> spec) and every file written back."""
+    import shutil
+    dest = base / "variant"
+    shutil.copytree(job_dir(base), dest)
+    manifest = json.loads((dest / "visual" / "visual_comp_manifest.json").read_text(encoding="utf-8"))
+    specs = {it["item_id"]: json.loads((dest / "visual" / "specs" / f"{it['item_id']}.json").read_text(encoding="utf-8")) for it in manifest["items"]}
+    mutate(manifest, specs)
+    for iid, sp in specs.items():
+        (dest / "visual" / "specs" / f"{iid}.json").write_text(json.dumps(sp), encoding="utf-8")
+    (dest / "visual" / "visual_comp_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    return dest, manifest
+
+
+def job_dir(tmp_path):
+    src = tmp_path / "src"
+    _comp.build(src)
+    return src
+
+
+def test_the_rotation_is_checked_over_a_whole_manifest(tmp_path):
+    def same_twice(manifest, specs):
+        a, b = manifest["items"][4], manifest["items"][5]
+        b["archetype_id"] = a["archetype_id"]
+        moved = _comp.shift(copy.deepcopy(specs[a["item_id"]]), b["trigger_word_index"] - a["trigger_word_index"])
+        specs[b["item_id"]] = {**moved, "item_id": b["item_id"]}
+        b["duration_frames"] = a["duration_frames"]
+    base, manifest = _variant_job(tmp_path, same_twice)
+    found = VC.check(manifest, base)
+    assert rules(found, "FAIL") == set(), found
+    assert any(f["rule"] == "CMP-10" and "adjacent" in f["detail"] for f in found)
+
+
+def test_check_runs_the_map_share_over_the_runtime_of_the_spine(tmp_path):
+    base, manifest = job_dir(tmp_path), None
+    manifest = json.loads((base / "visual" / "visual_comp_manifest.json").read_text(encoding="utf-8"))
+    assert "CMP-11" not in rules(VC.check(manifest, base))          # the demo's four maps are a small share of its 7.5 minutes
+    spine = json.loads((base / "audio" / "audio_spine.json").read_text(encoding="utf-8"))
+    short = {**spine, "duration_s": 120.0}
+    (base / "audio" / "audio_spine.json").write_text(json.dumps(short), encoding="utf-8")
+    manifest["audio_spine"]["sha256"] = C.sha256_file(base / "audio" / "audio_spine.json")
+    found = VC.check(manifest, base)
+    assert any(f["rule"] == "CMP-11" for f in found), "the maps of the demo are over a quarter of a 2-minute spine"
+
+
+def test_check_runs_the_lane_balance_when_the_planner_passes_its_beats(tmp_path):
+    base = job_dir(tmp_path)
+    manifest = json.loads((base / "visual" / "visual_comp_manifest.json").read_text(encoding="utf-8"))
+    assert "CMP-12" not in rules(VC.check(manifest, base))                # no beats given: the check is not run
+    assert "CMP-12" in rules(VC.check(manifest, base, beats=[]))          # no character beat at all over a long run of compensators
+    rows = VC.items_of(manifest, base)
+    beats = [{"kind": "host", "start_s": r["start_s"] + 1.0, "end_s": r["start_s"] + 1.5} for r in rows]
+    assert "CMP-12" not in rules(VC.check(manifest, base, beats=beats))
 
 
 # --- CN-15: the contract side ------------------------------------------------------------------------------------------------------------

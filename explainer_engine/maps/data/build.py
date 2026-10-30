@@ -16,6 +16,8 @@ import sys
 import urllib.request
 from pathlib import Path
 
+from explainer_engine.core.store import replace_file, write_text_atomic
+
 HERE = Path(__file__).resolve().parent
 BASE = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/"
 LAYERS = {  # layer -> (source file, geometry kind)
@@ -83,11 +85,13 @@ def build(from_dir: Path | None = None, check: bool = False) -> int:
         same = OUT.exists() and OUT.read_bytes() == payload
         print("ne50m.json.gz is current" if same else "ne50m.json.gz differs from a fresh build")
         return 0 if same else 1
-    OUT.write_bytes(payload)
+    tmp = OUT.with_name(OUT.name + ".tmp")
+    tmp.write_bytes(payload)
+    replace_file(tmp, OUT)
     pins.update({"about": "Natural Earth 1:50m vector layers (public domain; made with Natural Earth, naturalearthdata.com). "
                           "The extract keeps no names and rounds to 2 decimals.",
                  "output": {"file": OUT.name, "sha256": hashlib.sha256(payload).hexdigest(), "bytes": len(payload)}})
-    SOURCES.write_text(json.dumps(pins, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+    write_text_atomic(SOURCES, json.dumps(pins, indent=1, sort_keys=True) + "\n")
     print(f"wrote {OUT.name}: {len(payload)} bytes")
     return 0
 

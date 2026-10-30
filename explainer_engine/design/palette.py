@@ -77,7 +77,7 @@ def faction_findings(palette: dict | None = None) -> list[dict]:
     need, out = SR.T("BP-151", "faction_delta_e_min"), []
     for pair in pal.get("faction_pairs", []):
         a, b = hexes[pair["a"]], hexes[pair["b"]]
-        if not pair.get("mark_a") or pair.get("mark_a") == pair.get("mark_b"):
+        if not pair.get("mark_a") or not pair.get("mark_b") or pair.get("mark_a") == pair.get("mark_b"):
             out.append({"check": "faction_mark", "detail": f"{pair['a']}/{pair['b']} need two different marks (never colour alone)"})
         for vision in CVD:
             d = delta_e(a, b, vision)

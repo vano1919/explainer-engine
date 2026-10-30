@@ -32,7 +32,7 @@ SUPPLY_TOKEN = {"blue": "support_blue", "amber": "uncertain_amber", "red": "fals
 
 
 def _ids(payload: dict, key: str) -> set[str]:
-    return {x["id"] for x in payload.get(key, [])}
+    return {x["id"] for x in payload.get(key, []) if isinstance(x, dict) and "id" in x}
 
 
 def validate_payload(spec: dict) -> list[dict]:
@@ -56,8 +56,15 @@ def validate_payload(spec: dict) -> list[dict]:
                     bad(f"camera.moves[{i}]", f"missing {k}")
             if "from_word" in m and "to_word" in m and m["to_word"] <= m["from_word"]:
                 bad(f"camera.moves[{i}]", "a move ends on a later word than it starts")
-    if p.get("base", {"kind": "vector"}).get("kind") not in ("vector", "plate"):
+    base = p.get("base", {"kind": "vector"})
+    if base.get("kind") not in ("vector", "plate"):
         bad("base.kind", "vector or plate")
+    elif base["kind"] == "plate" and (not base.get("ref") or not {"lon", "lat", "span_km"} <= set(base.get("view") or {})):
+        bad("base", "a painted plate needs ref and view (lon, lat, span_km)")
+    for key in ("routes", "units", "labels", "rings"):
+        for x in p.get(key, []):
+            if not isinstance(x, dict) or not x.get("id"):
+                bad(key, f"every entry of {key} has an id")
     routes, units, labels, rings = _ids(p, "routes"), _ids(p, "units"), _ids(p, "labels"), _ids(p, "rings")
     for r in p.get("routes", []):
         if len(r.get("waypoints", [])) < 2:
@@ -95,7 +102,7 @@ def validate_payload(spec: dict) -> list[dict]:
 def route_findings(spec: dict) -> list[dict]:
     out = []
     for r in spec["payload"].get("routes", []):
-        out += paths.validate(r, f"{spec['item_id']}.routes.{r['id']}")
+        out += paths.validate(r, f"{spec['item_id']}.routes.{r.get('id')}")
     return out
 
 

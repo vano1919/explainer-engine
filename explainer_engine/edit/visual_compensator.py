@@ -21,6 +21,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from explainer_engine.core import contracts as C
+from explainer_engine.core.store import write_text_atomic
 from explainer_engine.edit import hud, tableau
 from explainer_engine.maps import draw as D
 from explainer_engine.maps import laws, render as maprender, timeline
@@ -69,16 +70,29 @@ def _module(archetype_id: str):
     return "tableau"
 
 
+MALFORMED = (KeyError, TypeError, AttributeError, IndexError, ValueError)
+
+
+def guarded(spec: dict, fn, *args) -> list[dict]:
+    """The payload of a comp_spec/1 is an open object, so a validator can meet a shape it did not expect: that is a FAIL (CN-01) naming
+    what was missing, never an exception out of a contract check."""
+    try:
+        return fn(*args)
+    except MALFORMED as e:
+        what = f"missing {e}" if isinstance(e, KeyError) else f"{type(e).__name__}: {e}"
+        return [{"rule": "CN-01", "severity": "FAIL", "where": spec.get("item_id", "?"), "detail": f"the payload is malformed ({what})"}]
+
+
 def payload_findings(spec: dict, base_dir: Path | None = None) -> list[dict]:
     """The shape findings of one comp_spec (what ``contracts`` runs): the archetype is in the catalogue and its payload is drawable."""
     if spec["archetype_id"] not in ids():
         return [{"rule": "CN-15", "severity": "FAIL", "where": spec["item_id"], "detail": f"archetype {spec['archetype_id']!r} is not in the catalogue"}]
     kind = _module(spec["archetype_id"])
     if kind == "map":
-        return maprender.validate_payload(spec)
+        return guarded(spec, maprender.validate_payload, spec)
     if kind == "hud":
-        return hud.validate_payload(spec)
-    return tableau.validate_payload(spec) + tableau.asset_findings(spec, base_dir)
+        return guarded(spec, hud.validate_payload, spec)
+    return guarded(spec, lambda: tableau.validate_payload(spec) + tableau.asset_findings(spec, base_dir))
 
 
 def _element_locks(spec: dict, tl: timeline.Timeline) -> list[dict]:
@@ -104,15 +118,14 @@ def check_item(spec: dict, spine: dict, trigger_word_index: int, duration_frames
     if any(f["severity"] == "FAIL" for f in found):
         return found
     if _module(spec["archetype_id"]) == "map":
-        return laws.check_item(spec, spine, trigger_word_index, duration_frames, base_dir, scene_set)
-    try:
+        return guarded(spec, laws.check_item, spec, spine, trigger_word_index, duration_frames, base_dir, scene_set)
+
+    def laws_of_a_card() -> list[dict]:
         tl, clock = timeline.build(spec, spine, trigger_word_index, duration_frames)
-    except ValueError as e:
-        return found + [{"rule": "CN-01", "severity": "FAIL", "where": spec["item_id"], "detail": str(e)}]
-    found += _element_locks(spec, tl) + laws.faction_colours(spec)
-    if spec["archetype_id"] not in CONTINUOUS:
-        found += laws.stimulus_window(spec, tl, clock)
-    return found
+        more = _element_locks(spec, tl) + laws.faction_colours(spec)
+        return more + (laws.stimulus_window(spec, tl, clock) if spec["archetype_id"] not in CONTINUOUS else [])
+
+    return found + guarded(spec, laws_of_a_card)
 
 
 def render_item_frame(spec: dict, spine: dict, trigger_word_index: int, duration_frames: int, f: int, ss: int = D.SS,
@@ -147,9 +160,10 @@ def items_of(manifest: dict, base: Path) -> list[dict]:
     return out
 
 
-def check(manifest: dict, base: Path | str, scene_sets: dict | None = None) -> list[dict]:
+def check(manifest: dict, base: Path | str, scene_sets: dict | None = None, beats: list[dict] | None = None) -> list[dict]:
     """Every finding of a manifest: the contract, each item (its spec must name the item and the archetype), then the planner
-    checks across items."""
+    checks across items: rotation (CMP-10) and the map share of the spine's runtime (CMP-11) always; lane balance (CMP-12) when the
+    planner passes its ``beats`` (``{kind: character|host, start_s, end_s}``, which the manifest does not hold)."""
     base = Path(base)
     found = C.errors(manifest, base)
     if any(f["severity"] == "FAIL" for f in found):
@@ -166,6 +180,11 @@ def check(manifest: dict, base: Path | str, scene_sets: dict | None = None) -> l
         found += check_item(spec, r["spine"], it["trigger_word_index"], it["duration_frames"], base, (scene_sets or {}).get(it["shot_id"]))
     timed = [{"archetype_id": r["item"]["archetype_id"], "start_s": r["start_s"], "end_s": r["end_s"]} for r in rows if r["start_s"] is not None]
     found += rotation(timed)
+    if timed:
+        found += map_share(timed, rows[0]["spine"]["duration_s"])
+        if beats is not None:
+            found += lane_balance([{"kind": archetype(b["archetype_id"])["family"], "start_s": b["start_s"], "end_s": b["end_s"]} for b in timed]
+                                  + list(beats))
     return found
 
 
@@ -299,7 +318,7 @@ def main(argv: list[str] | None = None) -> int:
         n = row["item"]["duration_frames"]
         for f in range(int(a or 0), int(b or n)):
             im = render_item_frame(row["spec"], row["spine"], row["item"]["trigger_word_index"], n, f, ss, base)
-            (out / f"{f:05d}.png").write_bytes(D.png_bytes(im))
+            D.write_bytes_atomic(out / f"{f:05d}.png", D.png_bytes(im))
         return 0
     base = Path(opt("--base") or Path(rest[0]).parent)
     result = measure(json.loads(Path(rest[0]).read_text(encoding="utf-8")), base)
@@ -307,7 +326,7 @@ def main(argv: list[str] | None = None) -> int:
     if "--write" in rest:
         doc = catalogue()
         doc["measured"] = result
-        CATALOGUE.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+        write_text_atomic(CATALOGUE, json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
         catalogue.cache_clear()
     return 0
 

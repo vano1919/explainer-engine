@@ -103,7 +103,7 @@ def save_plate(view: geo.View, directory: Path | str, layers=LAYERS) -> Path:
     path = plate_path(view, directory, layers)
     if not path.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(D.png_bytes(render_plate(view, layers)))
+        D.write_bytes_atomic(path, D.png_bytes(render_plate(view, layers)))
     return path
 
 
@@ -162,7 +162,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     s = json.loads(Path(argv[0]).read_text(encoding="utf-8"))
     view = geo.View(s["lon"], s["lat"], s["span_km"], s["width"], s["height"])
-    Path(argv[1]).write_bytes(D.png_bytes(render_plate(view)))
+    D.write_bytes_atomic(argv[1], D.png_bytes(render_plate(view)))
     return 0
 
 

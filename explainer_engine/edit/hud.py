@@ -64,16 +64,20 @@ def validate_payload(spec: dict) -> list[dict]:
         ids = _targets(p, "nodes")
         edges = p.get("edges", [])
         for e in edges:
-            if e["from"] not in ids or e["to"] not in ids:
-                bad("edges", f"edge {e['from']}->{e['to']} names a node that is not there")
+            if e.get("from") not in ids or e.get("to") not in ids:
+                bad("edges", f"edge {e.get('from')}->{e.get('to')} names a node that is not there (an edge has from and to)")
         if _cyclic(ids, edges):
             bad("edges", "a dependency graph has no cycle")
     elif arch == "ORDER_OF_BATTLE_TELEMETRY_HUD":
         if not p.get("rows"):
             bad("rows", "a telemetry overlay has rows")
     elif arch == "MULTI_SCENARIO_VERDICT_MATRIX":
-        total = sum(s["probability"] for s in p.get("scenarios", []))
-        if not p.get("scenarios") or total > 1.0005 or any(not 0 <= s["probability"] <= 1 for s in p["scenarios"]):
+        probs = [s.get("probability") for s in p.get("scenarios", [])]
+        if any(not isinstance(x, (int, float)) for x in probs):
+            bad("scenarios", "every scenario carries a numeric probability")
+            probs = []
+        total = sum(probs)
+        if not p.get("scenarios") or total > 1.0005 or any(not 0 <= x <= 1 for x in probs):
             bad("scenarios", f"probabilities are 0..1 and add up to at most 1 (got {total:g})")
     return out
 

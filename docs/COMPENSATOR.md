@@ -72,8 +72,8 @@ CN-11). The validator is in `explainer_engine/maps/laws.py`; each has a focused 
 |---|---|---|---|
 | CMP-09 | Same spec, same frame number, same bytes: no clock, no unseeded random, one PNG encoder setting | invariant 7, CN-07 | `tests/unit/test_maps.py`, `draw.png_bytes` |
 | CMP-10 | Rotation: never the same archetype in two adjacent items; at most 2 of one family in any 120 s; a run of maps at most 90 s | BP-149 | `visual_compensator.rotation` |
-| CMP-11 | Map share: pure maps (1-4) are at most 25 % of the runtime, flagged hard over 40 % | BP-150 | `visual_compensator.map_share` |
-| CMP-12 | Lane balance: at most 60 s of non-character visuals without a character beat or a host line; no character scene over 90 s without a payoff | BP-127 | `visual_compensator.lane_balance` |
+| CMP-11 | Map share: pure maps (1-4) are at most 25 % of the runtime, flagged hard over 40 % | BP-150 | `visual_compensator.map_share` (run by `check` over the spine's `duration_s`) |
+| CMP-12 | Lane balance: at most 60 s of non-character visuals without a character beat or a host line; no character scene over 90 s without a payoff | BP-127 | `visual_compensator.lane_balance` (run by `check` when the planner passes its character and host `beats`; the manifest holds only the compensator items) |
 | CMP-13 | A date chip whenever map time advances | CRAFT-CART-03, ED-15 | `laws.date_chip` |
 | CMP-14 | Every archetype is free: no network client, no model, no paid call in the compensator; a shot on the MAP or COMPENSATOR lane costs 0 | invariant 2, D-31 | `tests/unit/test_compensator.py` |
 | CMP-15 | The dossier card has no stamp (HISTORICAL FACT / COUNTERFACTUAL): claim status lives in the claim map, not on screen | D-61, SC-11 | `tableau.validate_payload` |
@@ -85,7 +85,7 @@ and on the lane its family belongs to.
 
 A plate is land, coast, lakes, rivers and borders in palette colours: no letters, by construction (CMP-01): the plate module never
 calls the canvas's text method and its spec has no text field. Names, units, arrows and the date chip are drawn over it at the
-frame the viewer sees, in the style bible's face. The same renderer draws a view of any span, so a close-up is as crisp as the
+frame the viewer sees, in the faces the repo ships in `assets/fonts` (Comic Neue Bold, then Bangers); the style bible's Fredoka and Inter are not in the repo, so until they are added (a font file is the creator's asset call) the labels use these. The same renderer draws a view of any span, so a close-up is as crisp as the
 theatre map; the plate of a region is the view that frames its whole box.
 
 P12e may paint a plate with Qwen-Image-2.1 and the `xworld_v2` style (paid, the creator's collage first). A painted plate is used

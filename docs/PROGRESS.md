@@ -2920,3 +2920,10 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 - Review round 1 (P0a): D-87's numbers corrected and the pair re-chosen by worst case (vermilion `faction_b`, world bible v1.3 draft);
   route lines and heads carry the side mark; `WordClock.frame_of` refuses a word before the trigger word (CN-01) instead of clamping;
   BP-127 keeps its `planned` note for the score; the known limits and the two open card criteria are listed in `docs/COMPENSATOR.md`.
+- Review round 2 (P0a re-review and the Claude API review J1): `draw.Canvas.line` carries the dash phase across a curve's segments (side b's route
+  really is dashed; the first fix could loop for ever on a float edge, now always moves on); `camera.tilt` narrows the far edge (code, docstring
+  and doc agree); a `comp_spec/1` payload with a missing key is a CN-01 FAIL from every validator, never an exception (a guard in
+  `visual_compensator` plus explicit checks, and a test that removes each key of every archetype's payload in turn); `check` now runs CMP-11 over the
+  spine's runtime and CMP-12 when the planner passes its beats; the tableau reads its PNGs once per item and skips file checks without a job
+  folder; catalogue, PNG and source pins are written atomically; a faction pair needs both marks; the doc names the fonts the code really uses.
+  P5's rule ids moved to BP-147..153 and its decision to D-87 after main took BP-140..146 and D-86 (P3).

@@ -164,6 +164,20 @@ def test_a_dash_runs_across_the_segments_of_a_curve():
     assert (np.asarray(solid.image().convert("L"))[20, 10:128] < 128).all()
 
 
+def test_a_dash_always_moves_on_whatever_the_float_noise():
+    pts = [(0.1 * k, 5.0) for k in range(2000)]                   # 0.1 px steps against a 0.3 / 0.2 pattern: phases land on the edge
+    c = D.Canvas(220, 10, (255, 255, 255), 1)
+    c.line(pts, (0, 0, 0, 255), 2, dash=(0.3, 0.2))
+    c.line([(1.0 * k, 5.0) for k in range(200)], (0, 0, 0, 255), 2, dash=(1.0, 1.0))
+    assert c.image().size == (220, 10)
+
+
+def test_a_faction_pair_needs_both_marks():
+    pal = copy.deepcopy(PAL.load())
+    del pal["faction_pairs"][0]["mark_b"]
+    assert PAL.faction_findings(pal)[0]["check"] == "faction_mark"
+
+
 def test_the_route_of_side_b_has_gaps_in_greyscale_and_side_a_has_none():
     base = {**item(), "width": 640, "height": 360}
     base["payload"]["camera"] = {"start": {"lon": 24.4, "lat": 54.8, "span_km": 1500}, "moves": []}

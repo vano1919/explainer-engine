@@ -120,13 +120,12 @@ class Canvas:
             length = math.hypot(b[0] - a[0], b[1] - a[1])
             pos = 0.0
             while pos < length:
+                step = max((on - phase) if phase < on else (on + off - phase), 1e-6)       # always moves on, whatever the float noise
+                end = min(length, pos + step)
                 if phase < on:
-                    end = min(length, pos + (on - phase))
                     p0 = (a[0] + (b[0] - a[0]) * pos / length, a[1] + (b[1] - a[1]) * pos / length)
                     p1 = (a[0] + (b[0] - a[0]) * end / length, a[1] + (b[1] - a[1]) * end / length)
                     self.d.line([p0, p1], fill=fill, width=width_px)
-                else:
-                    end = min(length, pos + (on + off - phase))
                 phase = (phase + end - pos) % (on + off)
                 pos = end
 
@@ -208,6 +207,18 @@ def png_bytes(im: Image.Image) -> bytes:
     buf = io.BytesIO()
     im.save(buf, format="PNG", compress_level=6, optimize=False)
     return buf.getvalue()
+
+
+def write_bytes_atomic(path, data: bytes):
+    """A file written through a temp name and ``store.replace_file`` (retries on Windows while a reader holds the target)."""
+    from pathlib import Path
+    from explainer_engine.core import store
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_bytes(data)
+    store.replace_file(tmp, path)
+    return path
 
 
 def frame_hash(im: Image.Image) -> str:

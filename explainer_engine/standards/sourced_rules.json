@@ -5997,7 +5997,8 @@
      "type": "A",
      "title": "ColorBrewer: the colour-blind-safe filter (Harrower and Brewer 2003)",
      "url": "https://colorbrewer2.org/",
-     "note": "SUPPORTED that a colour-blind-safe check exists; the number 40 is ours (CRAFT_SOURCES_2026-10 section 6)"
+     "note": "SUPPORTED that a colour-blind-safe check exists; the number 40 is ours (CRAFT_SOURCES_2026-10 section 6)",
+     "verified": false
     }
    ],
    "enforced_by": [
