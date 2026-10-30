@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 import pytest
-from test_runpod import NEW_SH, FakeRunPod, pod
+from test_runpod import NEW_SH, FakeRunPod, pod, stamped
 
 from explainer_engine.cloud import hf_live, hooks as H, jobs as J, runpod as R, watchdog as W
 from explainer_engine.core.ledger import Run
@@ -341,7 +341,7 @@ def test_create_per_card_price_reaches_the_dead_man(env):
     fake._handle = spy
     body = R.create_body("ee-x-until-9999999999", "NVIDIA A40", script_url="https://x/p.sh", lifetime_s=3600, heartbeat=BEAT, max_usd=2.0,
                          price=0.35)
-    R.create(api, body, max_price=3.0, gpus=[("NVIDIA A40", "COMMUNITY", 0.35)])
+    R.create(api, stamped(body), max_price=3.0, gpus=[("NVIDIA A40", "COMMUNITY", 0.35)])
     assert seen == ["0.35"]
     with pytest.raises(R.RunPodError, match="heartbeat"):
         R.create_body("n", script_url="https://x/p.sh")
