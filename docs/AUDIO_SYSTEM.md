@@ -157,6 +157,35 @@ is REVIEW at most (CN-11).
 | SD-14 | delivered loudness and true peak (a pointer to `qa/targets`, not a second implementation) | BP-50 | FAIL (binding, existing) |
 | SD-15 | the manifest is fresh against its inputs | CN-02 | **FAIL** (invariant 7) |
 
+### Shot-to-audio matrix (BP-160, SD-12)
+What a shot's audio is made of follows its lane. The table is rendered from `MATRIX` in `audio/sound_director.py` (`python -m
+explainer_engine.audio.sound_director matrix write`) and a test keeps the two equal; the code is its one home. Legend: native `bed` =
+the clip's own audio kept as a `native` bed under the scene bed (BP-160's offset) and ducked, never its speech; `dialogue` = the
+clip is the line, in a spine window (D-88), centred; spots `foley`/`loudest` come from the shot card's `sound`; `cues only` = VB-08
+cues; perspective follows the shot size (BP-122), `no` = centred and dry.
+
+<!-- sd-matrix:begin -->
+| lane | native clip audio | scene bed | spots | perspective |
+|---|---|---|---|---|
+| KEYFRAME_LTX | bed | scene | foley+loudest | yes |
+| DIALOGUE_CU | dialogue | scene, ducked | none | near, dry |
+| HOST_COMMENTARY | none | hosts' room tone | none | no |
+| DRAMA_BLOCKED_3D | none | scene | foley | yes |
+| ATMOS_BROLL | bed if present | scene | loudest | yes |
+| MAP | none | neutral room tone | cues only | no |
+| COMPENSATOR | none | neutral room tone | cues only | no |
+| STILL_HOLD | none | scene | foley, one | yes |
+| none (D-43) | none | timed beds | timed sfx | mid |
+<!-- sd-matrix:end -->
+
+Commands: `python -m explainer_engine.audio.sound_director plan <job> [--library DIR]` writes `audio/sound_mix_manifest.json` and
+`audio/sound_director_report.json` (findings, every inferred choice, dropped vacuums); `check <job> [--stems DIR] [--strict]` runs
+the plan-time half on the manifest and, with the rendered stems, the render-time half. A room tone the library lacks is generated
+procedurally (free, seeded, circular) and registered as `procedural` in the library root passed in. The presence-band dip is
+calibrated on the measured band gap: a Q 1.2 bell dips its centre by far more than the 1-4 kHz band as a whole (3.5 dB at 2.2 kHz
+moves that band's share by 1.4 dB), so `acoustics.dip_centre_for_gap` derives the centre depth from the gap BP-118 asks for (SD-04
+measures the gap, never the filter setting).
+
 ## Checks run on every mix
 Numbers: one definition in `explainer_engine/qa/targets.py`, read from BP-50..BP-63, used by the mixer, the Shorts renderer
 and the scorecard. Integrated loudness and true peak with their verdicts; the dialogue anchor; the voice-to-background gap
