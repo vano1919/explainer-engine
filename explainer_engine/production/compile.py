@@ -3,7 +3,9 @@ slots) at the moment the segment is written, and derive the files the paid steps
 
 * ``narration.txt`` (what is said) and ``narration_tts.txt`` (what the voice gets),
 * ``pictures_gemini.json`` (pictures painted by Gemini: prompt + style references),
-* ``pod_job.json`` (pictures painted by the RunPod reference painter, ``cloud/gen_ref_pictures.py``'s format).
+* ``pod_job.json`` (pictures painted by the RunPod reference painter, ``cloud/gen_ref_pictures.py``'s format),
+* with ``--film-shots``, ``screenplay_spine.json`` (``compile_spine``: the spine of the approved script and its shot cards, never
+  written by hand, ZI-10).
 
 Prompts live in the script itself (``picture.prompt``); ``validate`` FAILs a prompt that no longer matches its subject
 (PV-11: someone changed the subject and did not compile, or hand-edited a prompt).
@@ -12,11 +14,15 @@ Prompts live in the script itself (``picture.prompt``); ``validate`` FAILs a pro
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
+from explainer_engine.core import contracts
+from explainer_engine.core.errors import ContractError
 from explainer_engine.edit import prompt_v2
 from explainer_engine.production import script as S
 from explainer_engine.production import staging as STAGING
+from explainer_engine.scripting import claims as CLAIMS
 from explainer_engine.world import resolver
 
 POD_SUFFIX = (" Keep exactly the same painted graphic-novel style as the reference: thick dark ink outlines, textured painted "
@@ -160,3 +166,59 @@ def write_outputs(doc: dict, out_dir: Path) -> list[Path]:
              write_json_atomic(out_dir / "pictures_gemini.json", gemini),
              write_json_atomic(out_dir / "pod_job.json", pod_job)]
     return paths
+
+
+# --- the screenplay spine (Blueprint P3, ZI-10): derived, never hand-written -----------------------------------------------
+CONNECTOR = {"start": "OPEN", "but": "BUT", "therefore": "THEREFORE"}  # the schema allows nothing else: "and then" cannot be declared
+FACT_LABELS = ("E", "M")  # the claim map's labels that say the world says so; R, G and I are our reasoning, a guess or our invention
+
+
+def compile_spine(script_path: Path | str, film_shots_path: Path | str, base: Path | str | None = None) -> dict:
+    """``screenplay_spine/1`` of an approved production script and its shot cards. ``base`` is the folder the ``derived_from`` paths
+    are relative to (the folder the spine is written to; the script's folder by default). Raises ContractError on any mismatch:
+    a script segment with no shots, a shot scene with no segment, a cited claim not in the claim map, missing promises."""
+    script_path, film_shots_path = Path(script_path), Path(film_shots_path)
+    base = Path(base) if base else script_path.parent
+    doc = json.loads(script_path.read_text(encoding="utf-8"))
+    shots = json.loads(film_shots_path.read_text(encoding="utf-8"))
+    drama = doc.get("drama") or {}
+    if not drama.get("packaging_promises"):
+        raise ContractError("the spine needs the three packaging promises (drama.packaging_promises): run stage 1b first")
+    if not drama.get("profile_id"):
+        raise ContractError("the spine needs the structure profile (drama.profile_id): stage 1b records it with the promises")
+    seconds: dict[str, float] = {}
+    for sh in shots["shots"]:
+        seconds[sh["scene"]] = seconds.get(sh["scene"], 0.0) + float(sh["seconds"])
+    ids = [seg["id"] for seg in doc["segments"]]
+    if sorted(set(seconds) - set(ids)):
+        raise ContractError(f"shot cards for scenes the script does not have: {sorted(set(seconds) - set(ids))}")
+    if [i for i in ids if i not in seconds]:
+        raise ContractError(f"script segments with no shot cards: {[i for i in ids if i not in seconds]}")
+    cmap = CLAIMS.load_map(script_path) or CLAIMS.from_editorial(doc)
+    cited, segments, t = [], [], 0.0
+    for seg in doc["segments"]:
+        turn = (seg.get("drama") or {}).get("turn")
+        if turn not in CONNECTOR:
+            raise ContractError(f"{seg['id']}: drama.turn {turn!r} is not start, but or therefore")
+        lines = []
+        for k, ln in enumerate(seg["lines"]):
+            ids_ = list(ln.get("claims", []))
+            cited += [c for c in ids_ if c not in cited]
+            lines.append({"index": k, "speaker": ln.get("speaker") or "narrator", "text": ln["text"], "claim_ids": ids_})
+        segments.append({"id": seg["id"], "est_duration_sec": seconds[seg["id"]], "causal_connector": CONNECTOR[turn],
+                         "clock_window_sec": [t, t + seconds[seg["id"]]], "lines": lines})
+        t += seconds[seg["id"]]
+    missing = [c for c in cited if c not in (cmap or {})]
+    if missing:
+        raise ContractError(f"claims cited in the script but not in the claim map: {missing}")
+    claims = [{"claim_id": c, "status": "FACT" if cmap[c]["label"][:1] in FACT_LABELS else "ALTERNATE",
+               "source_ref": cmap[c]["source"] or f"claim_map.md#{c}"} for c in cited]
+
+    def ref(p: Path) -> dict:
+        return {"path": Path(os.path.relpath(p, base)).as_posix(), "sha256": contracts.sha256_file(p)}
+
+    spine = {"schema": "screenplay_spine/1", "derived_from": {"production_script": ref(script_path), "film_shots": ref(film_shots_path)},
+             "episode_slug": doc["episode"]["id"], "structure_profile_id": drama["profile_id"],
+             "packaging_promises": list(drama["packaging_promises"]), "segments": segments, "claims": claims}
+    contracts.validate(spine, base)
+    return spine

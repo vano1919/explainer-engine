@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-ROW = re.compile(r"^\|\s*(C-\d{2,3})\s*\|(.*)$")
+ROW = re.compile(r"^\|\s*([A-Z]-?\d{2,3})\s*\|(.*)$")  # C-01, and the C02 / I01 ids of the Napoleon draft (P0c)
 URL = re.compile(r"https?://\S+")
 NUMBER = re.compile(r"\b\d[\d,.]*\b")
 SOURCED = ("E", "M")  # labels that claim the world says so: they need a link
