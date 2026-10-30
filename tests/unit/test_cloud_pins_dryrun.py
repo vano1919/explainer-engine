@@ -94,7 +94,7 @@ def test_the_three_old_defects_are_found_in_the_scripts_that_had_them():
     assert "pip install -U` without `==` for" in why and "peft" in why                       # -U without a pin
     assert "`git clone` without a pinned sha" in why                                         # VideoX-Fun at HEAD of the day
     assert "`|| true` on an install" in why                                                  # a failed install trained on
-    assert "git+https://github.com/huggingface/diffusers` has no `@<sha>`" in why
+    assert "git+https://github.com/huggingface/diffusers` has no `@<40-hex sha>`" in why
 
 
 def test_a_clean_script_has_no_static_problem_and_each_rule_trips_alone():
@@ -110,6 +110,49 @@ def test_a_clean_script_has_no_static_problem_and_each_rule_trips_alone():
     early = CLEAN.replace('[ "${DRY:-0}" = 1 ] && exit 0\n', "").replace("set -e\n", 'set -e\n[ "${DRY:-0}" = 1 ] && exit 0\n')
     assert any("no `DRY=1` gate" in w for w in D.static_problems(early, PINS))
     assert D.static_problems("echo hi > $EE_OUT/progress.txt\n", PINS) == []                  # no install: no gate needed
+
+
+def test_only_a_sha_pins_a_git_install_and_a_multi_line_dry_gate_counts():
+    """P1b review items 1-2 (the P2 thread): `@main` is the repo's HEAD of the day again; a correct multi-line gate was refused."""
+    for ref in ("main", "v1.2.0", "e8c314f"):                                              # a branch, a tag, a short sha: all move or are ambiguous
+        why = D.static_problems(CLEAN.replace("pip install -q ", f'pip install -q "git+https://github.com/a/b@{ref}" '), PINS)
+        assert any("has no `@<40-hex sha>`" in w for w in why), ref
+    ok = CLEAN.replace("pip install -q ", f'pip install -q "git+https://github.com/a/b@{SHA}" ')
+    assert D.static_problems(ok, PINS) == []
+    assert any("without `==`" in w for w in D.static_problems(CLEAN.replace('pip install -q "huggingface_hub==1.33.0"', 'pip install -q -U "x@git+https://h/x@main"'), PINS))
+    multi = CLEAN.replace('[ "${DRY:-0}" = 1 ] && exit 0\n', 'if [ "${DRY:-0}" = 1 ]; then\n  echo "dry run ends here"\n  exit 0\nfi\n')
+    assert D.static_problems(multi, PINS) == []
+    wrong = CLEAN.replace('[ "${DRY:-0}" = 1 ] && exit 0\n', 'if [ "${DRY:-0}" = 1 ]; then\n  echo "dry"\nfi\nexit 0\n')   # the exit is not inside the gate
+    assert any("no `DRY=1` gate" in w for w in D.static_problems(wrong, PINS))
+
+
+def test_a_sha_pin_is_anchored_and_a_dry_gate_is_a_real_dry_is_1_test_whose_branch_exits_zero():
+    """P1b review (P3b thread) of PR #49: `@main#egg=b@<sha>`, uppercase / 39 / 41 hex, and gates that only look like one."""
+    def pinned(ref):
+        return not any("has no `@<40-hex sha>`" in w for w in D.static_problems(
+            CLEAN.replace("pip install -q ", f'pip install -q "git+https://github.com/a/b@{ref}" '), PINS))
+    assert pinned(SHA) and pinned(SHA + "#egg=b") and pinned(SHA + "&subdirectory=x")
+    for bad in ("main#egg=b@" + SHA, SHA[:39], SHA + "0", SHA.upper(), "x" + SHA[1:], "main"):   # a sha later in the url pins nothing
+        assert not pinned(bad), bad
+    assert any("without `==`" in w for w in D.static_problems(
+        CLEAN.replace('pip install -q "huggingface_hub==1.33.0"', f'pip install -q -U "x@git+https://h/x@main#egg=x@{SHA}"'), PINS))
+
+    gate = '[ "${DRY:-0}" = 1 ] && exit 0\n'
+
+    def has_gate(block):
+        return not any("no `DRY=1` gate" in w for w in D.static_problems(CLEAN.replace(gate, block), PINS))
+    for good in (gate, 'if [ "${DRY:-0}" = 1 ]; then exit 0; fi\n', 'if [ "$DRY" -eq 1 ]\nthen\n  echo stop\n  exit 0\nfi\n',
+                 'if [[ "${DRY:-}" == 1 ]]; then\n  echo stop; exit 0\nelse\n  echo go\nfi\n'):
+        assert has_gate(good), good
+    for bad in ('if [ "${DRY:-0}" = 0 ]; then exit 0; fi\n',                                     # exits when DRY is NOT 1
+                'if [ "${DRY:-0}" = 1 ]; then\n  echo stop\nelse\n  exit 1\nfi\n',                # the exit is the other branch, and not 0
+                'if [ "${DRY:-0}" = 1 ]; then\n  echo stop\nelse\n  exit 0\nfi\n',                # exit 0 in the else branch
+                'if [ "${DRY:-0}" = 1 ]; then\n  if [ -f x ]; then exit 0; fi\nfi\n',               # exit only under a nested condition
+                'if [ "${DRY:-0}" = 1 ]; then\n  exit 1\nfi\n',                                    # the dry run FAILS
+                'echo "DRY=$DRY"\nexit 1\n', 'echo "DRY=$DRY"\n[ -f x ] && exit 0\n',            # a DRY mention and a later exit
+                '[ "${DRY:-0}" = 0 ] && exit 0\n', 'DRY=1\nexit 0\n',
+                '[ "${DRY:-0}" = 1 ] && return 0\n', 'if [ "${DRY:-0}" = 1 ]; then return 0; fi\n'):    # a top-level return only errors, the script goes on
+        assert not has_gate(bad), bad
 
 
 def test_backslash_continuations_are_one_command():

@@ -18,7 +18,7 @@ from explainer_engine.standards import sourced_rules as SR
 ROOT = Path(__file__).resolve().parents[2]
 FIX = ROOT / "tests" / "fixtures" / "contracts"
 NEW = ["job_manifest", "script_variants", "screenplay_spine", "voice_casting", "audio_spine", "sound_mix_manifest",
-       "visual_comp_manifest", "scene_set", "shot_spec", "pod_heartbeat", "edit_and_grade_manifest", "qa_report",
+       "visual_comp_manifest", "comp_spec", "scene_set", "shot_spec", "pod_heartbeat", "edit_and_grade_manifest", "qa_report",
        "editorial_review", "distribution_package"]
 V2 = ["audio_spine", "sound_mix_manifest"]  # contracts whose /2 lives in the same schema file as /1 (P4, D-88)
 

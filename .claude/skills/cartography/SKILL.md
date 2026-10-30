@@ -49,13 +49,13 @@ differ). Every row is a hypothesis until a second source type is verified.
 <!-- craft-checklist:cartography:begin -->
 | ID | check | rule | artefact field | sourced rules | enforced by |
 |---|---|---|---|---|---|
-| CRAFT-CART-01 | code | an animated map frame stays simple: label and unit caps, inactive terrain dimmed | map layer manifest per frame | BP-124 | `explainer_engine/maps/` (planned, P5) |
+| CRAFT-CART-01 | code | an animated map frame stays simple: label and unit caps, inactive terrain dimmed | map layer manifest per frame | BP-124 | `explainer_engine/maps/laws.py:signalling` |
 | CRAFT-CART-02 | critic | one change at a time; the changed thing is highlighted before it moves | map animation steps | BP-124 | `explainer_engine/qa/editorial_review.py` (planned, P8) |
-| CRAFT-CART-03 | code | a temporal legend or date chip whenever map time advances | map animation steps + counters | ED-15 | `explainer_engine/maps/` (planned, P5) |
+| CRAFT-CART-03 | code | a temporal legend or date chip whenever map time advances | map animation steps + counters | ED-15 | `explainer_engine/maps/laws.py:date_chip` |
 | CRAFT-CART-04 | eye | labels never cross a line feature, keep one offset and a halo, size by feature class | the rendered map frame | P-64 | manual |
-| CRAFT-CART-05 | code | quantitative layers use sequential or diverging palettes; faction pairs are colour-blind safe and never colour-only | map layer palette (design/palette.json) | D-22 | `explainer_engine/design/palette.py` (planned, P5) |
+| CRAFT-CART-05 | code | quantitative layers use sequential or diverging palettes; faction pairs are colour-blind safe and never colour-only | map layer palette (design/palette.json) | D-22 | `explainer_engine/design/palette.py:faction_findings` |
 | CRAFT-CART-06 | critic | one projection and north-up per episode; a scale bar on every meso and micro map; a legend only with more than two symbol classes | map plate set of the episode | - | `explainer_engine/qa/editorial_review.py` (planned, P8) |
-| CRAFT-CART-07 | code | a change of map altitude takes its eased duration | map camera keyframes | BP-125 | `explainer_engine/maps/` (planned, P5) |
+| CRAFT-CART-07 | code | a change of map altitude takes its eased duration | map camera keyframes | BP-125 | `explainer_engine/maps/laws.py:scale_progression` |
 | CRAFT-CART-08 | eye | map type is the style bible's (Fredoka, Inter), not the Blueprint's set | map label fonts | - | manual |
 <!-- craft-checklist:cartography:end -->
 

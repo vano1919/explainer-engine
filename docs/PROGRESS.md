@@ -2827,6 +2827,41 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
 - Not done here, on purpose: the nine historic `training/pods/*.sh` (pre-P1a protocol: own upload loop, own DONE) are not rewritten. They are
   refused by `create` already; the P12 scripts under `training/pods/p12/` are the ones that must pass `dryrun`.
 
+## 2026-10-30 04:30 UTC: P1b follow-up, review items 1-2 of PR #46 (no pod, no money)
+
+- `runpod dryrun`: a `git+https://...@<ref>` or `pkg@git+...` pin counts only with a 40-hex sha after `@` (`@main` and tags move); a multi-line
+  `if [ "${DRY:-0}" = 1 ]; then ... exit 0; fi` gate is recognised (the `exit` must be inside the block). Items 3 (a plain unpinned `pip install foo`
+  without `-U`) and 4 (the record is not bound to the Hub) stay as the card wrote them. Test: `test_only_a_sha_pins_a_git_install_and_a_multi_line_dry_gate_counts`.
+
+## 2026-10-30 06:30 UTC: P1b follow-up review round (PR #49, P3b thread)
+
+- The sha pin is anchored: the FIRST `@` of a `git+https://...` url must be followed by a lowercase 40-hex sha and then the end, `#`, `&` or a quote
+  (`@main#egg=b@<sha>`, 39/41 hex and uppercase no longer pass; same rule for `pkg@git+...` under `pip install -U`).
+- The DRY gate is no longer a window of lines: it is `[ "${DRY:-0}" = 1 ] && exit 0` or an `if` over a DRY = 1 test whose THEN branch (not an
+  else, not a nested `if`) runs `exit 0`; `DRY=0` tests, `echo "DRY=$DRY"` plus a later exit, an else-branch exit and `exit 1` do not count.
+  This is also stricter than main's one-line check, which counted any line naming DRY and an exit. No script in the repo used either form.
+  Test: `test_a_sha_pin_is_anchored_and_a_dry_gate_is_a_real_dry_is_1_test_whose_branch_exits_zero` (fails on the previous code).
+- Round 3 (P3b): only `exit 0` ends a DRY gate; a top-level `return 0` is an error in bash, not an exit, and without `set -e` the script would
+  run on into the paid stages (tested). Known limits, not fixed: heredoc bodies, function bodies and subshells are read as ordinary lines;
+  `git+file://` and `git+git://` urls are not checked (`git+https?` only).
+
+## 2026-10-30 04:45 UTC: P4b follow-up, the channel voice's word is checked, not just present (after #45)
+
+- Optional findings of the #45 review: `creator_ref` was only checked for being non-blank, and the standing narrator's model and baseline
+  could change without a word. Now `governance/records.py` has the action `channel_voice` (target = the voice id) and `find`;
+  `voice_check.register` needs a `creator_ref` that names such a record for the voice (no wildcard, no other action) to make a
+  different voice the channel voice, retire or demote the standing one, or change its `model` or `baseline`; the name, the note and
+  the first channel voice of a role stay free.
+- Choice to confirm (mine, not the creator's words): the baseline and the model count as "the channel voice" because loosening
+  the baseline would hide drift (EL-13) and a new model changes how it sounds. If the creator wants the next episode's approved read
+  to replace the baseline without a separate word, that is one line in `register`.
+- Tests: `test_voice_audition.py` (a ref nobody recorded, a word for another voice/action/wildcard, each standing-voice change).
+- Review of #50 (P0b thread): the word must be for the voice that BECOMES the channel voice (a word recorded to retire the standing
+  voice no longer crowns another one), and it expires after 60 minutes (the window of a protected-config edit and an effort
+  override; `records.find(..., minutes=)`). The records file is plain JSONL like the other actions': as strong as they are, not
+  tamper-evident. For the creator: `config/channel_voices.json` is not a protected file, so a direct edit still bypasses `register`.
+
+
 ## 2026-10-30 05:00 UTC: P1c, measured speeds, batching rules RP-01..10, the bill into the ledger (no pod, no money)
 
 - `config/job_speeds.json` + `cloud/speeds.py`: the table is committed EMPTY (job types and units only); `runpod cost <pod>` fills a row
@@ -2907,3 +2942,60 @@ Design: `blueprint_2026-10-29/P3/P3_DESIGN.md` (Opus thread); this entry grows o
   step after the merge; P6 (native-dialogue lane), P7 (cuts, OTIO) and P8 (CRAFT-SND-09/11 critic rows) are the handoffs of spec 6.4.
 - Tests: `test_audio_spine`, `test_sound_director`, `test_acoustics`, `test_assemble_v2`, `test_generator_gate` (17), the sound stage in
   `test_story_engine`, contract fixtures /2. Full suite (not system, not media): 1906 passed; docs_lint 0 findings; governance check ok.
+
+## 2026-10-30 08:30 UTC: the pre-pod secrets gate (CR-19; free, no pod, no money)
+
+- `cloud/env_presence.py` + the manual workflow `.github/workflows/presence_check.yml` ("Run workflow"): prints `present` / `MISSING` for
+  `HF_TOKEN`, `RUNPOD_API_KEY`, `NTFY_TOPIC` (the secrets `watchdog.yml` reads), never a value, a prefix or a length, red when one is missing
+  or blank. Manual only, not in "quality" (a fork's pull request has no secrets). Limits, said in CR-19: it proves existence, not validity or
+  scope, and a pod's own `HF_TOKEN` comes from the session that runs `create`, not from the GitHub secret. Test:
+  `tests/unit/test_cloud_env_presence.py` (including that the workflow maps exactly the required names).
+- Review round (P3b, PR #53): the files are named `env_presence.py` / `presence_check.yml` / `test_cloud_env_presence.py` because the repo-hygiene
+  guard refuses tracked file names that look like secret files (`secret` in the name); the guard is unchanged. The leak test now uses a canary
+  none of whose characters occurs in the legitimate output and checks stdout and stderr in set / blank / whitespace / newline / missing cases (it fails
+  for a printed first character, a tail or a length); the secrets are mapped on the one step that needs them, not on the job.
+
+## 2026-10-30 08:10 UTC — P0d: key alias `EE_ANTHROPIC_API_KEY`
+The environment settings refuse the name `ANTHROPIC_API_KEY` (Claude Code account auth). `claude_api.api_key()` now takes the first non-empty of `ANTHROPIC_API_KEY`, `EE_ANTHROPIC_API_KEY`; used by `client()`, `status`, `estimate`. Test: `test_the_key_can_come_from_the_alias_name`.
+
+## 2026-10-30 UTC (Tbilisi night): Blueprint P5, the visual compensator: maps, HUD, tableaux (no pod, no money)
+
+- ვანო (2026-10-29 18:30 UTC): carry the Blueprint through the night, free steps only. P5 = the free, deterministic frames for the
+  narrated stretches with no character: 12 archetypes, the map's 8 laws. Home: `docs/COMPENSATOR.md` (prefix CMP-).
+- Code: `explainer_engine/maps/` (geo, plate, camera, paths, timeline, render for archetypes 1-4, laws CMP-01..08 and CMP-13, draw),
+  `maps/data/` (Natural Earth 1:50m extract, 547 KB, pinned sources and a build script), `edit/hud.py` (5, 7, 10, 11, 12),
+  `edit/tableau.py` (6, 8, 9), `edit/visual_compensator.py` (catalogue `edit/archetypes.json`, manifest check, CMP-10 rotation,
+  CMP-11 map share, CMP-12 lane balance, render and measure CLI). A frame is a pure function of (spec, spine, frame): same bytes
+  in a chunked render (CMP-09).
+- Contracts: new `comp_spec/1`; `visual_comp_manifest/1` items reference it by a layer of kind `spec`; CN-15 (an archetype is one of the
+  catalogue and on its family's lane, for shots, items and specs). Registry: BP-147..153 (hypotheses, so REVIEW), BP-124/125/127 now
+  enforced by the new validators.
+- Decisions: D-87 (ceiling = 2D vector map + 2.5D parallax, no height model; the faction pair is blue and vermilion: after Machado 2009
+  the worst case over protan, deutan and tritan is 112.9 (CIE76) against 98.3 for the Blueprint's red and 87.5 for the first pick, a light
+  orange, whose 118 claim was wrong for tritan, found in review; the sides are also told apart by a square or a triangle and a solid or a
+  dashed route).
+  Palette tokens `faction_a`, `faction_b` with `design/palette.py:faction_findings`. The dossier card has no stamp (CMP-15, D-61/SC-11).
+- Measured (this container, 1280x720, ss 2): 0.09 s per frame for HUDs and graphs, 0.5 s for maps, 1.6 s for the formation, 2.4 s for the
+  parallax tableau: a 30 s item at 24 fps is minutes of CPU, never a pod (`archetypes.json` `measured`).
+- Tests: `test_maps` (one test per law, determinism, letterless plate by construction, the pinned extract; the OCR check skips when
+  tesseract is absent), `test_compensator` (catalogue = doc table, all 12 archetypes render from the demo job in `tests/unit/_comp.py`,
+  chunk-identical bytes, cross-item checks, CN-15, CMP-14 no client and no model imported).
+- Not done (named in COMPENSATOR.md): BiRefNet is only an input slot for the matte, the depth model is not in this phase (tests use a
+  synthetic depth map), painting the plates is P12e, the router is P6.
+- Review round 1 (P0a): D-87's numbers corrected and the pair re-chosen by worst case (vermilion `faction_b`, world bible v1.3 draft);
+  route lines and heads carry the side mark; `WordClock.frame_of` refuses a word before the trigger word (CN-01) instead of clamping;
+  BP-127 keeps its `planned` note for the score; the known limits and the two open card criteria are listed in `docs/COMPENSATOR.md`.
+- Review round 2 (P0a re-review and the Claude API review J1): `draw.Canvas.line` carries the dash phase across a curve's segments (side b's route
+  really is dashed; the first fix could loop for ever on a float edge, now always moves on); `camera.tilt` narrows the far edge (code, docstring
+  and doc agree); a `comp_spec/1` payload with a missing key is a CN-01 FAIL from every validator, never an exception (a guard in
+  `visual_compensator` plus explicit checks, and a test that removes each key of every archetype's payload in turn); `check` now runs CMP-11 over the
+  spine's runtime and CMP-12 when the planner passes its beats; the tableau reads its PNGs once per item and skips file checks without a job
+  folder; catalogue, PNG and source pins are written atomically; a faction pair needs both marks; the doc names the fonts the code really uses.
+  P5's rule ids moved to BP-147..153 and its decision to D-87 after main took BP-140..146 and D-86 (P3).
+
+## 2026-10-30 08:50 UTC: G13 crash-drill test (audit pass 1, B3; free)
+
+- `git grep` on main (874b498) found no test of a ledger one save ahead of its mirror reaching `create`: the audit was right. Added
+  `test_drill_6_the_mirror_write_fails_once_...` to `tests/unit/test_cloud_drills.py` (runbook drill table row 6): the mirror write fails once during
+  `reserve`; `Run.open_test` and `runpod create` both stop with `LedgerConflict`, the fake API gets 0 calls, the ledger keeps its 0.07. The table
+  test now expects six rows. No code changed (the audit found the code correct); nothing else weakened.
