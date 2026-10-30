@@ -124,10 +124,10 @@
    ],
    "routing": "S2 / Sonnet / high",
    "wave": 3,
-   "thread": null,
+   "thread": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVCDmSdPHFKoz1Q5YLQxGKZ",
    "pr": null,
-   "state": "todo",
-   "waits": null
+   "state": "review",
+   "waits": "cross-review (plan thread); D9 spend_caps casting_credits_max (the creator, before P12a)"
   },
   {
    "id": "P5",

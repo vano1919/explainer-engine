@@ -1,0 +1,37 @@
+{
+ "schema": "voice_audition/1",
+ "voice_id": "NOpBlnGInO9m6vDvFkFC",
+ "name": "Grandpa Spuds Oxley",
+ "source": {
+  "kind": "paid_take",
+  "ref": "https://storage.googleapis.com/eleven-public-prod/database/workspace/64971298bfc24086b69026970a21f1f9/voices/NOpBlnGInO9m6vDvFkFC/M4xySW4rr1SbAKKwMAtI.mp3",
+  "sha256": "e09253de529f8b2a817af2e55c54979e1109954c89289c120b743f370012a8d5"
+ },
+ "profile": {
+  "duration_s": 12.62,
+  "sample_rate": 24000,
+  "speech_s": 8.59,
+  "reliable": true,
+  "f0_median_hz": 100.8,
+  "f0_range_st": 9.19,
+  "pitch_variation_st": 3.55,
+  "emphasis_db": 6.58,
+  "syllable_rate": 3.73,
+  "centroid_hz": 914.4,
+  "tilt_db": -21.83,
+  "sibilance_db": -17.54,
+  "pauses": {
+   "count": 3,
+   "per_min": 14.8,
+   "median_s": 0.85,
+   "ratio": 0.231
+  }
+ },
+ "consistency": null,
+ "fit": {
+  "trait": 0.857,
+  "usage_rank": 0,
+  "listed": 25,
+  "unlabelled": false
+ }
+}

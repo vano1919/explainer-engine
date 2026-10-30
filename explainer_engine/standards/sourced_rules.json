@@ -5395,9 +5395,9 @@
     }
    ],
    "enforced_by": [
+    "explainer_engine/audio/voice_audition.py",
     "explainer_engine/standards/craft_checklists/voice.json:CRAFT-VOX-03"
    ],
-   "planned": "explainer_engine/audio/voice_audition.py (P4b)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
