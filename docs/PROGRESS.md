@@ -3358,3 +3358,13 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   T1's review (#83): `admit` also refuses a sheet with any pair not answered A / B / same ("answer every pair of the sheet first"); the share stays for the eye. `records.add` refuses a wildcard `generator_admit` target. The lookup has no age window (an admission stands until replaced), said in the docstring.
   OPEN: whether a minimum share of picks for the generator is wanted is his call (none invented). No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
+## 2026-10-30 — plan_v2 wave 2, T4 PR-1: the creator's word on hosts (D-89), the dialogue voice (D-90) and the craft conflicts (D-91)
+- `docs/DECISIONS_AND_OPEN_QUESTIONS.md`: D-89 (card A1 NO, his word of 2026-10-30 16:13 UTC; `p12e_hosts` stays unspent), D-90 (card A3 option A, "Fixed ElevenLabs voice +
+  LTX audio-in", confirmed 16:16 UTC: a character has one fixed ElevenLabs voice, the line is read first and the take conditions the clip; supersedes the native-voice answer),
+  D-91 (the 12 craft conflicts: the rule in force stays, decided on his delegation, approved by the coordinator 16:54 UTC; row 8 stays D-85). D-88 carries an amendment pointer; Q2 says A1 is answered.
+- `docs/SCRIPT_ENGINE.md` "Dialogue audio" row and stage-7 row, `.claude/agents/voice-caster.md` step 7 (no `ltx_voice_text`; cast, read first, take conditions the clip), `docs/AUDIO_SYSTEM.md`
+  (dialogue-route note under the SD-12 matrix), `docs/CRAFT_CURRICULUM.md` status line. `docs/blueprint/decision_queue.json` cards A1 and A3 carry his newer answers; `STATUS.md` regenerated.
+- Test red on main -> green: `tests/unit/test_voice_route_docs.py` (3 tests). Docs say "Not built yet": the audio-in wiring and the lane decision are P6/P7; the code still reserves post-hoc windows.
+- OPEN: whether a deceased historical figure may be voiced (PV-55 keys on `real_person`, D-62 bars only living people); the exact wording of D-91's rows is the "rule in force" column of the table. No pod, no API call, nothing deleted.
+- Decision log: D-89, D-90, D-91 added; D-88 amended.

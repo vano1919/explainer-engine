@@ -181,6 +181,10 @@ cues; perspective follows the shot size (BP-122), `no` = centred and dry.
 | none (D-43) | none | timed beds | timed sfx | mid |
 <!-- sd-matrix:end -->
 
+**Dialogue route (D-90, supersedes card A3's native voice; amends D-88).** A `dialogue` row above is a character's line read first with
+its fixed ElevenLabs voice; the take conditions the clip and its length is the window. The code still reserves post-hoc windows (D-88)
+until P6/P7 wire the audio-in; SD-12 checks the same matrix either way.
+
 Commands: `python -m explainer_engine.audio.sound_director plan <job> [--library DIR]` writes `audio/sound_mix_manifest.json` and
 `audio/sound_director_report.json` (findings, every inferred choice, dropped vacuums); `check <job> [--stems DIR] [--strict]` runs
 the plan-time half on the manifest and, with the rendered stems, the render-time half. A room tone the library lacks is generated

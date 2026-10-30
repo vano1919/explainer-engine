@@ -31,8 +31,11 @@ For each other speaking hero:
    the ear may confuse them (VC-07); pick another candidate or say so on the card.
 6. If nothing fits, write `casting.design_description(hero)` into the report as a proposal for `creative_design_voice`
    (paid; the creator supplies the preview line and approves the cost; never call it yourself).
-7. For a character whose lines LTX speaks, write `casting.ltx_voice_text(hero)` as the voice on its cast card (sound in
-   words, never a name).
+7. Every character whose lines are spoken gets the ElevenLabs voice chosen above, fixed for the whole episode (D-90, card A3 option A):
+   the line is read first (one take, EL-13 against the registry) and that take conditions the LTX clip, so the voice is the same in
+   every clip. Do not describe the voice in words for LTX (`casting.ltx_voice_text` is the superseded native route, kept in code,
+   not used here). A real living person's line stays silent (D-62, PV-55). The audio-in wiring is P6/P7: until it exists, say on the card
+   that the take is cast and read but not yet fed to a clip.
 8. `production validate`: no PV-10 FAIL, PV-32 REVIEWs listed for the creator (two similar speakers, no voice chosen).
    Then the card: top three, their `why`, their profile numbers and preview links. The creator picks by ear after the
    one-chunk test read (VC-03, EL-02); the test read is the first piece of the OR-19 sample, not an extra paid take.
