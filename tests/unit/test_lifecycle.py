@@ -270,6 +270,15 @@ def test_adopting_names_the_dossier_file_and_the_reservation(folder):
         EpisodeJob.adopt(folder, state="CREATED", reason="x", approvals={}, **ADOPT)
 
 
+def test_adopt_refuses_a_directory_dossier_and_non_dict_approvals(folder):
+    with pytest.raises(ContractError, match="dossier"):
+        EpisodeJob.adopt(folder, state="RESEARCHED", reason="x", approvals=gates_up_to("RESEARCHED"), dossier=folder, **ADOPT)
+    for bad in (None, [], "x"):
+        with pytest.raises(ContractError, match="approvals"):
+            EpisodeJob.adopt(folder, state="RESEARCHED", reason="x", approvals=bad, dossier=folder / "dossier.md", **ADOPT)
+    assert not (folder / store.MANIFEST).exists()
+
+
 def test_create_makes_only_the_initial_state(folder):
     with pytest.raises(TypeError):
         EpisodeJob.create(folder, state="PUBLISHED_PUBLIC", **ADOPT)  # type: ignore[call-arg]

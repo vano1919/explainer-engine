@@ -25,7 +25,7 @@ answered by Claude without his recorded delegation.
 | P3b | პროფესიული კურიკულუმი (სკილები, craft_checklists) | — | S2 Sonnet (კვლევა) → S3 Opus high (ტექსტი) | 3 | — | — | todo | — |
 | P4b | ხმის დირექტორი (ბატარეა, რეესტრი; კონექტორი, REST არა) | P2 | S2 / Sonnet / high | 3 | — | — | todo | — |
 | P5 | კომპენსატორი, რუკები, HUD | P2, P3b | S2 / Sonnet / high | 3 | — | — | todo | — |
-| P3 | სცენარის ხერხემალი + variant_plan + register_lint | P2, P3b | S2 / Sonnet / high (ქულები Opus) | 4 | — | — | todo | — (A5 = D-81) |
+| P3 | სცენარის ხერხემალი + variant_plan + register_lint | P2, P3b | S2 / Sonnet / high (ქულები Opus) | 4 | — | — | todo | — (A5 = D-79) |
 | P4 | აუდიო-ხერხემალი + sound director | P3, P2, P3b | S3 Opus high → S2 Sonnet high | 4 | — | — | todo | — (D8: გენერატორი მხოლოდ გაზომილი ხარისხით) |
 | P5b | წამყვანების სამყარო (უფასო ნაწილი) | P2, P5, P4b | S3 Opus high → S2 Sonnet high | 4 | — | — | todo | — |
 | P6 | shot router, lane-ები, continuity (D-82) | P2, P5, P4, P3b | S3 Opus high → S2 Sonnet high | 5 | — | — | todo | — |

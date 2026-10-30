@@ -19,6 +19,7 @@ import shutil
 from pathlib import Path
 
 from explainer_engine.core import contracts
+from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import shot_cache_root, write_json_atomic
 
 logger = logging.getLogger(__name__)
@@ -30,6 +31,8 @@ def _round(obj):
     if isinstance(obj, bool):
         return obj
     if isinstance(obj, float):
+        if obj != obj or obj in (float("inf"), float("-inf")):
+            raise ValueError("a non-finite number (inf or NaN) has no JSON form")
         obj = round(obj, 6)
         return int(obj) if obj == int(obj) else obj
     if isinstance(obj, dict):
@@ -45,7 +48,10 @@ def canonical(spec: dict) -> bytes:
     doc = {k: v for k, v in spec.items() if k not in NOT_IN_KEY}
     doc["refs"] = sorted(({"role": r["role"], "sha256": r["sha256"]} for r in spec["refs"]), key=lambda r: (r["role"], r["sha256"]))
     doc["loras"] = sorted(spec["loras"], key=lambda r: r["id"])
-    return json.dumps(_round(doc), sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")
+    try:
+        return json.dumps(_round(doc), sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")
+    except ValueError as exc:  # inf / NaN has no JSON form, so no stable key
+        raise ContractError(f"shot spec {spec.get('shot_id')!r} holds a non-finite number: {exc}") from exc
 
 
 def key(spec: dict) -> str:
