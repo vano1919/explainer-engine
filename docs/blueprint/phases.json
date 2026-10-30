@@ -9,8 +9,8 @@
    "routing": "S1 / Sonnet / medium",
    "wave": 1,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#32 merged",
+   "state": "done",
    "waits": "— (D2 კი)"
   },
   {
@@ -53,8 +53,8 @@
    "routing": "S2 / Sonnet / medium; კრიტიკოსი Opus high",
    "wave": 2,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#35 merged",
+   "state": "done",
    "waits": null
   },
   {
@@ -64,8 +64,8 @@
    "routing": "S3 Opus high (დიზაინი) → S2 Sonnet high; გაშვებულია Opus high",
    "wave": 1,
    "thread": "[P1a](#cmsg_01Hnu5zB86sjUj5GtTgaUkPW2PaTTJGAo9cuV2gtDJDzHp)",
-   "pr": "[#29](https://github.com/vano1919/explainer-engine/pull/29) draft",
-   "state": "doing",
+   "pr": "#29 merged",
+   "state": "done",
    "waits": "ვანო: Sonnet high-ზე გადართვის სიტყვა; GitHub secret HF_TOKEN (watchdog-ის heartbeat); D9 მოგვიანებით (არ ბლოკავს); RUNPOD_API_KEY secret არსებობს; დიზაინი მზადაა: docs/CLOUD_RUNBOOK.md, CR-01..16"
   },
   {
@@ -77,8 +77,8 @@
    "routing": "S2 / Sonnet / high",
    "wave": 2,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#46 merged, #49 merged",
+   "state": "done",
    "waits": null
   },
   {
@@ -90,8 +90,8 @@
    "routing": "S2 / Sonnet / high",
    "wave": 2,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#48 merged",
+   "state": "done",
    "waits": null
   },
   {
@@ -101,8 +101,8 @@
    "routing": "S3 Opus high → S2 Sonnet high; გაშვებულია Opus high",
    "wave": 1,
    "thread": "[P2](#cmsg_01Hnu5zB86sjUj5GtTgaUkPWUKsq2ggmTdyfCuprDHMLhZ)",
-   "pr": null,
-   "state": "doing",
+   "pr": "#31 merged",
+   "state": "done",
    "waits": null
   },
   {
@@ -112,8 +112,8 @@
    "routing": "S2 Sonnet (კვლევა) → S3 Opus high (ტექსტი)",
    "wave": 3,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#36 merged",
+   "state": "done",
    "waits": null
   },
   {
@@ -125,8 +125,8 @@
    "routing": "S2 / Sonnet / high",
    "wave": 3,
    "thread": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWVCDmSdPHFKoz1Q5YLQxGKZ",
-   "pr": "[#45](https://github.com/vano1919/explainer-engine/pull/45) draft",
-   "state": "review",
+   "pr": "#45 merged, #50 merged",
+   "state": "done",
    "waits": "cross-review (plan thread); D9 spend_caps casting_credits_max (the creator, before P12a)"
   },
   {
@@ -139,8 +139,8 @@
    "routing": "S2 / Sonnet / high",
    "wave": 3,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#47 merged",
+   "state": "done",
    "waits": null
   },
   {
@@ -153,8 +153,8 @@
    "routing": "S2 / Sonnet / high (ქულები Opus)",
    "wave": 4,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#40 merged",
+   "state": "done",
    "waits": "— (A5 = D-79)"
   },
   {
@@ -168,8 +168,8 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 4,
    "thread": null,
-   "pr": "[#51](https://github.com/vano1919/explainer-engine/pull/51) draft",
-   "state": "review",
+   "pr": "#51 merged",
+   "state": "done",
    "waits": "cross-review (plan thread); the creator's admission word and blind A/B answer before any free generator is used (D8, BP-162); the free measurement run after the merge"
   },
   {
@@ -303,8 +303,8 @@
    "routing": "S2 / Sonnet / high",
    "wave": 2,
    "thread": null,
-   "pr": null,
-   "state": "blocked",
+   "pr": "#44 merged",
+   "state": "done",
    "waits": "P12a"
   },
   {
