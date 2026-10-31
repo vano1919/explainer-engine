@@ -3683,3 +3683,11 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - New work branch: `dev/next-video` from main; next-video work and paid-test fixes go there by PR, main by the creator's word.
 - Tests: `pytest -m "not system and not media"` 2223 passed, 2 skipped; `docs_lint` 0 findings. No pod, no API call, nothing paid.
 - Decision log: none moved.
+
+## 2026-10-31 — main final for the paid tests: c686da8; `dev/next-video` created
+- #110 (free batch F0-F9, P6-P11) merged by its thread after main's d545b3b (merge commit c686da8, CI green). `dev/next-video` was created from c686da8.
+- Remote branches: 85 are content-identical to main; 5 more were merged by squash PRs (#91/#59 via #111, #108, #109, #111) and 3 are superseded old copies
+  (`14jebf-stream`, `chsnnq-w8`, `9yzh4a`); `claude/project-thread-9t3vn0` is live work (next-video scenario) and stays. Deleting branches needs the
+  creator's own git (the session's proxy refuses deletes): project files `explainer-engine/branch_cleanup_2026-10-31/delete_merged_branches.ps1`
+  (dry run by default; deletes only contained or listed-merged branches). Open PRs: 0.
+
