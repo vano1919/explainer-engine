@@ -5375,11 +5375,11 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/animation.json:CRAFT-ANI-15"
+    "explainer_engine/standards/craft_checklists/animation.json:CRAFT-ANI-15",
+    "explainer_engine/qa/identity.py"
    ],
-   "planned": "explainer_engine/qa/identity.py (P8)",
    "supersedes": [],
-   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
+   "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md); the validator exists since P8 2026-10-31 (qa/identity.py, REVIEW only, identity threshold still uncalibrated)"
   },
   {
    "id": "BP-134",
@@ -6274,6 +6274,26 @@
    "supersedes": [],
    "decided": "the creator, 2026-10-30 16:13 UTC (project chat cmsg_01Hnu5zB86sjUj5GtTgaUkPW5f8NsnbZwPhLsKQESi7SXS item 3: yes to the delivery numbers); animated route only on the coordinator's scoping of 2026-10-30 17:23 UTC",
    "next_step": "the still route, the Shorts' frame rate, PV-34's count for five Shorts and the production_script schema default are open (TECH_QUESTIONS Q-29..Q-31)"
+  },
+  {
+   "id": "BP-168",
+   "area": "qa",
+   "status": "house",
+   "severity": "REVIEW",
+   "statement": "Go / Pivot / Abandon verdict of the animated-route pilot, computed from three measures at REVIEW (core/ledger.py): the retry multiplier (renders divided by accepted shots), the forecast spend in USD (settled plus still-reserved) and the creator's review minutes per finished minute. GO when the multiplier is at most go_retry_max and the forecast is at most go_forecast_usd_max and the review time is at most go_review_min_per_min_max; PIVOT when the multiplier is above go_retry_max and at most pivot_retry_max, or when it is within the GO limit but the forecast or the review time is not; ABANDON above pivot_retry_max. A missing measure is 'unknown', never a guess. The verdict is a recommendation for the creator, not a gate.",
+   "thresholds": {
+    "go_retry_max": 2.0,
+    "pivot_retry_max": 3.0,
+    "go_forecast_usd_max": 12.0,
+    "go_review_min_per_min_max": 4.0
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/core/ledger.py"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-10-31 (answer 5 of the F-step brief: GO <= 2.0x retries with forecast <= $12.00 and review <= 4.0 min per finished minute, PIVOT (2.0, 3.0], ABANDON > 3.0)",
+   "next_step": "the meaning of 'forecast' (here: settled plus reserved-open USD of the pilot) is for the creator to confirm"
   }
  ]
 }

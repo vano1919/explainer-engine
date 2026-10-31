@@ -270,18 +270,113 @@ class Attempts:
         write_json_atomic(self.path, rows + [row])
         return row
 
+# --- the pilot measures (P8, the creator 2026-10-31, BP-168): printed in the OR-08 report at REVIEW severity -------------------
+REVIEW_MINUTES = "review_minutes.jsonl"   # jobs/<run>/review_minutes.jsonl: one creator-typed line per review
+
+
+def retry_multiplier(renders: int, accepted: int) -> float | None:
+    """Renders divided by accepted shots (an accepted shot is one in ``core/shot_cache``); None until a shot is accepted."""
+    return round(renders / accepted, 3) if accepted > 0 and renders >= accepted else None
+
+
+def count_renders(attempt_files) -> int:
+    """Renders made: one row per attempt in each shot's ``attempts.json`` (the QA retry router adds a row per attempt)."""
+    return sum(len(Attempts(p).rows()) for p in attempt_files)
+
+
+def add_review_minutes(job_dir: Path | str, minutes: float, note: str = "", *, by: str = "creator") -> dict:
+    """Append the creator's own typed review time (minutes) to ``<job_dir>/review_minutes.jsonl``."""
+    if minutes <= 0:
+        raise ValueError("review minutes are positive")
+    row = {"at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "minutes": float(minutes), "by": by, "note": note[:400]}
+    path = Path(job_dir) / REVIEW_MINUTES
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(row, ensure_ascii=False) + "\n")
+    return row
+
+
+def review_minutes_total(job_dir: Path | str) -> float | None:
+    """The sum of the typed minutes; None when the file does not exist (never a guess)."""
+    path = Path(job_dir) / REVIEW_MINUTES
+    if not path.exists():
+        return None
+    return round(sum(json.loads(line)["minutes"] for line in path.read_text(encoding="utf-8").splitlines() if line.strip()), 3)
+
+
+def pilot_measures(run: "Run", job_dir: Path | str, *, renders: int | None = None, accepted: int | None = None,
+                   finished_minutes: float | None = None) -> dict:
+    """The three measures: retry multiplier, USD settled / forecast against the cap, review minutes per finished minute.
+    Anything not known stays None."""
+    usd = [k for k in run.data["caps"] if k.endswith("_usd")]
+    settled = round(sum(run.settled_total(k) for k in usd), 4)
+    forecast = round(sum(run.settled_total(k) + run.reserved_open(k) for k in usd), 4)
+    total = review_minutes_total(job_dir)
+    per_min = round(total / finished_minutes, 3) if total is not None and finished_minutes else None
+    return {"retry_multiplier": None if renders is None or accepted is None else retry_multiplier(renders, accepted),
+            "settled_usd": settled, "forecast_usd": forecast, "cap_usd": round(sum(run.data["caps"][k] for k in usd), 4),
+            "review_minutes": total, "finished_minutes": finished_minutes, "review_minutes_per_finished_minute": per_min}
+
+
+def pilot_verdict(m: dict) -> dict:
+    """Go / Pivot / Abandon (BP-168, house 2026-10-31), a REVIEW-level recommendation for the creator: ABANDON above the
+    pivot multiplier; GO when the multiplier, the forecast and the review time are all known and within their GO limits;
+    PIVOT otherwise within the pivot multiplier; UNKNOWN while the multiplier is unknown."""
+    from explainer_engine.standards import sourced_rules as SR
+    mult = m["retry_multiplier"]
+    if mult is None:
+        return {"verdict": "UNKNOWN", "severity": "REVIEW", "why": "no retry multiplier yet (no accepted shot or no attempts)"}
+    if mult > SR.T("BP-168", "pivot_retry_max"):
+        return {"verdict": "ABANDON", "severity": "REVIEW", "why": f"retries x{mult} > x{SR.T('BP-168', 'pivot_retry_max')}"}
+    rev = m["review_minutes_per_finished_minute"]
+    over = []
+    if mult > SR.T("BP-168", "go_retry_max"):
+        over.append(f"retries x{mult} > x{SR.T('BP-168', 'go_retry_max')}")
+    if m["forecast_usd"] > SR.T("BP-168", "go_forecast_usd_max"):
+        over.append(f"forecast ${m['forecast_usd']} > ${SR.T('BP-168', 'go_forecast_usd_max')}")
+    if rev is not None and rev > SR.T("BP-168", "go_review_min_per_min_max"):
+        over.append(f"review {rev} min/min > {SR.T('BP-168', 'go_review_min_per_min_max')}")
+    if over:
+        return {"verdict": "PIVOT", "severity": "REVIEW", "why": "; ".join(over)}
+    if rev is None:
+        return {"verdict": "UNKNOWN", "severity": "REVIEW", "why": "review minutes per finished minute are unknown"}
+    return {"verdict": "GO", "severity": "REVIEW", "why": "all three measures within the GO limits"}
+
+
+def morning_rows(m: dict) -> list[str]:
+    """The three OR-08 report rows (+ the verdict); an unknown measure prints 'unknown'."""
+    def f(x, fmt):
+        return "unknown" if x is None else fmt.format(x)
+    v = pilot_verdict(m)
+    return [f"retry multiplier (renders / accepted): {f(m['retry_multiplier'], 'x{}')}",
+            f"settled USD vs cap: ${m['settled_usd']:.2f} settled, ${m['forecast_usd']:.2f} forecast, cap ${m['cap_usd']:.2f}",
+            f"review minutes per finished minute: {f(m['review_minutes_per_finished_minute'], '{}')}",
+            f"pilot verdict (REVIEW): {v['verdict']} - {v['why']}"]
+
 
 def main(argv=None) -> None:
     """python -m explainer_engine.core.ledger open-test <run.json> <test>   (a paid test's ledger, before its first create)
-       python -m explainer_engine.core.ledger report <run.json>"""
+       python -m explainer_engine.core.ledger report <run.json> [--attempts DIR] [--accepted N] [--finished-minutes M]
+       python -m explainer_engine.core.ledger review-minutes add <job_dir> <minutes> [note...]"""
     import sys
     a = list(sys.argv[1:] if argv is None else argv)
     if len(a) == 3 and a[0] == "open-test":
         run = Run.open_test(a[1], a[2])
-    elif len(a) == 2 and a[0] == "report":
+    elif len(a) >= 2 and a[0] == "report":
         if not Path(a[1]).exists():
             raise SystemExit(f"no ledger at {a[1]}")
         run = Run(Path(a[1]), json.loads(Path(a[1]).read_text(encoding="utf-8")))  # read-only: Run.open would save
+        opt = {k: a[i + 1] for i, k in enumerate(a) if k.startswith("--") and i + 1 < len(a)}
+        files = sorted(Path(opt["--attempts"]).rglob("attempts.json")) if "--attempts" in opt else []
+        m = pilot_measures(run, run.path.parent, renders=count_renders(files) if files else None,
+                           accepted=int(opt["--accepted"]) if "--accepted" in opt else None,
+                           finished_minutes=float(opt["--finished-minutes"]) if "--finished-minutes" in opt else None)
+        print(json.dumps({"path": str(run.path), "meta": run.data.get("meta", {}), **run.report(), "pilot": m,
+                          "pilot_rows": morning_rows(m)}, ensure_ascii=False, indent=1))
+        return
+    elif len(a) >= 4 and a[:2] == ["review-minutes", "add"]:
+        print(json.dumps(add_review_minutes(a[2], float(a[3]), " ".join(a[4:])), ensure_ascii=False))
+        return
     else:
         raise SystemExit(main.__doc__)
     print(json.dumps({"path": str(run.path), "meta": run.data.get("meta", {}), **run.report()}, ensure_ascii=False, indent=1))
