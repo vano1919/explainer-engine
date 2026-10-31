@@ -92,8 +92,8 @@
     "jobs": {"J1": 10.0, "J1b": 5.02,
   "final_review": 8.0,
   "change_plan": 8.0,
-  "fix_desk": 8.0,
-  "result_check": 10.0, "J2a": 8.0, "J2b": 10.0, "J3": 4.0, "J4": 0.0, "J5": 0.0, "J6": 0.0, "plan_v2": 18.0, "reserve": 5.98,
+  "fix_desk": 1.0,
+  "result_check": 10.0, "J2a": 0.0, "J2b": 0.0, "J3": 4.0, "J4": 0.0, "J5": 0.0, "J6": 0.0, "plan_v2": 18.0, "reserve": 5.98,
       "research_vs_main": 25.0},
     "approval": {
       "by": "vano (credit, his word) + the OR-24 plan thread verdict",
