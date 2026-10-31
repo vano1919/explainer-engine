@@ -229,8 +229,8 @@
    "routing": "S2 / Sonnet / high",
    "wave": 6,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "not yet opened (the lead commits F3)",
+   "state": "review",
    "waits": null
   },
   {
