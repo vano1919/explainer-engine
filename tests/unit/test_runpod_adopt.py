@@ -31,6 +31,7 @@ def _die_after_the_post(monkeypatch, fake):
 def test_a_second_create_adopts_the_pod_of_a_lost_answer_by_its_name_and_never_posts_again(env, monkeypatch, capsys):
     fake, api, tmp = env
     monkeypatch.delenv("RUNPOD_POD_API_KEY", raising=False)
+    monkeypatch.setenv("NTFY_TOPIC", "t")      # the adopted pod is live: create refuses a live pod without a push topic (CR-14)
     live = FakeLive(age=60)
     real = R.create
     _die_after_the_post(monkeypatch, fake)
