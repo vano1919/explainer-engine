@@ -378,7 +378,9 @@ def test_real_spend_caps_file_holds_the_or24_caps():
     # 2026-10-30: plan v2 got its own $28 line from J1b's unspent part, all of J6, J4 and the reserve (ვანო's card answer, docs/PROGRESS.md)
     assert c["jobs"]["J1"] == 10.0 and c["jobs"]["J1b"] == 5.02 and c["jobs"]["J6"] == 0.0 and c["jobs"]["plan_v2"] == 18.0
     # 2026-10-30 20:46 UTC (ვანო's card, all lines): the night run's four lines, paid from plan_v2, J3, J4, J5 and the reserve
-    assert [c["jobs"][k] for k in ("final_review", "change_plan", "fix_desk", "result_check")] == [8.0, 8.0, 8.0, 10.0]
+    # 2026-10-31 (ვანო's card cmsg_01Hnu5zB86sjUj5GtTgaUkPWWMoczMmiDtJ6L7CiexQMQ3): research_vs_main $25 paid from J2b 10, J2a 8, fix_desk 7
+    assert [c["jobs"][k] for k in ("final_review", "change_plan", "fix_desk", "result_check")] == [8.0, 8.0, 1.0, 10.0]
+    assert c["jobs"]["research_vs_main"] == 25.0 and c["jobs"]["J2a"] == 0.0 and c["jobs"]["J2b"] == 0.0
     assert c["jobs"]["J1b"] >= 5.016946 and c["approval"]["ref"]   # J1b keeps its cover for the lost scope A run
 
 
