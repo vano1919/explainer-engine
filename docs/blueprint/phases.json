@@ -199,7 +199,7 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 5,
    "thread": null,
-   "pr": "not yet opened (the lead commits F2)",
+   "pr": "#110 draft",
    "state": "review",
    "waits": null
   },
@@ -214,7 +214,7 @@
    "routing": "S2 / Sonnet / medium–high",
    "wave": 5,
    "thread": null,
-   "pr": "not yet opened (the lead commits F6)",
+   "pr": "#110 draft",
    "state": "review",
    "waits": null
   },
@@ -229,7 +229,7 @@
    "routing": "S2 / Sonnet / high",
    "wave": 6,
    "thread": null,
-   "pr": "not yet opened (the lead commits F3)",
+   "pr": "#110 draft",
    "state": "review",
    "waits": null
   },
@@ -245,7 +245,7 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 6,
    "thread": null,
-   "pr": "not yet opened (the lead commits F4)",
+   "pr": "#110 draft",
    "state": "review",
    "waits": null
   },
@@ -260,7 +260,7 @@
    "routing": "S1–S2 / Sonnet / medium",
    "wave": 6,
    "thread": null,
-   "pr": "not yet opened (the lead commits F8)",
+   "pr": "#110 draft",
    "state": "review",
    "waits": null
   },
@@ -276,7 +276,7 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 7,
    "thread": null,
-   "pr": "not yet opened (the lead commits F8)",
+   "pr": "#110 draft",
    "state": "review",
    "waits": "P0c-ის ანგარიში"
   },
