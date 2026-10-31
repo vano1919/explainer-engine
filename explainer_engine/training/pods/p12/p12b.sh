@@ -7,6 +7,8 @@
 # The wrapper downloads only this file: p12b.py and p12b.json are fetched from HF code/p12/ and must match the sha256 below.
 # heartbeat: datasets/vano1919/tmr-artifacts:runs/p12b/beat.txt
 # stall-minutes: 15
+# needs: $JOB/p12b.py 14916
+# needs: $JOB/p12b.json 4440
 mkdir -p "$EE_OUT"
 export HF_HOME=/workspace/dl/hf PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1
 ev() { printf '{"t":"%s","ev":"%s"%s}\n' "$(date -u +%FT%TZ)" "$1" "${2:+,$2}" >> "$EE_OUT/t.jsonl"; }
@@ -33,5 +35,6 @@ for f in ('p12b.py', 'p12b.json'):
 cp "$JOB/dl/code/p12/p12b.py" "$JOB/dl/code/p12/p12b.json" "$JOB/"
 printf '%s  %s\n' 7ed6d37710f4fa51cb072709267ca7bfa1095ddee2e7b3d5ed3d6eb8641bfe13 "$JOB/p12b.py" 43e03437524c981623a116b44310896b0e14f6bf040b6ea79a878609782814e2 "$JOB/p12b.json" > "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || { ev job_files_sha_mismatch; exit 3; }
+ee_needs_check   # CR-18: the wrapper lists the `# needs:` files above; a missing one ends the pod FAILED rc=66 before p12b.py touches the GPU
 python3 "$JOB/p12b.py"
 exit $?

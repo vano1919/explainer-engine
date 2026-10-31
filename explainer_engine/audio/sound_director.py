@@ -75,6 +75,7 @@ MATRIX: dict = {
 }
 MATRIX_MARKERS = ("<!-- sd-matrix:begin -->", "<!-- sd-matrix:end -->")
 DOC = Path(__file__).resolve().parents[2] / "docs" / "AUDIO_SYSTEM.md"
+ARCHETYPES = Path(__file__).resolve().parents[1] / "edit" / "archetypes.json"
 
 
 def render_matrix() -> str:
@@ -311,6 +312,77 @@ def _pan_of(shot: dict | None, text: str = "") -> tuple[float, str, float]:
     return round(float(np.clip(2 * (fx - 0.5) * mx, -mx, mx)), 4), persp, 0.0
 
 
+def _story_ops(archetype_id: str) -> set[str]:
+    """The ops of an archetype that are story events (CMP-16, ``story_ops`` of edit/archetypes.json). Read from the file, not imported
+    from the compensator, so the sound director stays free of the renderers."""
+    try:
+        doc = json.loads(ARCHETYPES.read_text(encoding="utf-8"))
+    except OSError:
+        return set()
+    return next((set(a.get("story_ops") or []) for a in doc["archetypes"] if a["id"] == archetype_id), set())
+
+
+def _micro_cue_item(root: Path) -> dict:
+    """The library sound of a compensator micro-cue (``pop_in``, a short UI appear); library first (OR-18), else the procedural one, registered."""
+    found = assets_reuse.lookup("sfx", list(foley.BUILD["pop_in"][0]), sound_root=root)
+    if found:
+        return min(found, key=lambda i: i["id"])
+    tags, fn, seeds = foley.BUILD["pop_in"]
+    return sfx_library.add(root, name="pop_in", take=1, category="foley", tags=tags, samples=fn(seeds[0]), rate=RATE,
+                           source={"kind": "procedural", "seed": seeds[0]},
+                           licence={"status": "own_procedural", "note": "built from noise and tones in explainer_engine/audio/foley.py"},
+                           machine_review="procedural placeholder: plain, replaceable by recorded foley", loop=False)
+
+
+def compensator_cues(job: Path, spine: dict, root: Path, existing: list[dict]) -> tuple[list[dict], list[dict]]:
+    """F5 / CMP-16: a micro-cue at BP-120's ``micro_cue_dbfs`` for each story event (``story_ops``) of the job's
+    ``visual/visual_comp_manifest.json`` and the ``comp_spec/1`` of its items; camera moves, labels and the rest stay silent (VB-08).
+    A cue starts a few frames before its word (within BP-54's early limit, so the sound never leads the picture by more than a viewer
+    notices) and inside the gap after the word before: a cue that would start inside a narration word is dropped, and so is one that
+    would pass BP-81's cues per minute (counted with the cues already planned) or its burst. Returns (new cues, dropped with the reason)."""
+    path = job / "visual" / "visual_comp_manifest.json"
+    if not path.exists():
+        return [], []
+    manifest = _load(path)
+    fps, words = spine["fps"], spine["words"]
+    item = _micro_cue_item(root)
+    gain = float(SR.T("BP-120", "micro_cue_dbfs"))
+    lead = max(1, int(SR.T("BP-54", "early_max_ms") / 1000 * fps))
+    per_min = int(SR.T("BP-81", "per_min_review"))
+    burst, burst_s = int(SR.T("BP-81", "burst_max")), float(SR.T("BP-81", "burst_window_s"))
+    cands: list[tuple[int, str, str]] = []
+    for it in manifest["items"]:
+        ref = next((ly["ref"] for ly in it["layers"] if ly["kind"] == "spec"), None)
+        if ref is None or not (job / ref).exists():
+            continue
+        spec = _load(job / ref)
+        story = _story_ops(spec["archetype_id"])
+        for e in spec["events"]:
+            if e["op"] in story and 0 <= e["word_index"] < len(words):
+                cands.append((words[e["word_index"]]["start_frame"], f"{spec['item_id']}.{e['id']}", e["op"]))
+    cands.sort()
+    kept = [c["frame"] for c in existing]
+    new: list[dict] = []
+    dropped: list[dict] = []
+    minute, window = int(round(60 * fps)), int(round(burst_s * fps))
+    for frame, where, op in cands:
+        at = frame - lead
+        prev_end = max((w["end_frame"] for w in words if w["end_frame"] <= frame and w["start_frame"] < frame), default=0)
+        why = None
+        if at < prev_end or at < 0 or any(w["start_frame"] <= at < w["end_frame"] for w in words):
+            why = "no gap before the word: the cue would start inside a narration word"
+        elif sum(1 for f in kept if at - minute < f <= at) + 1 > per_min:
+            why = f"more than {per_min} cues a minute (BP-81)"
+        elif sum(1 for f in kept if at - window < f <= at) + 1 > burst:
+            why = f"more than {burst} cues in {burst_s:g} s (BP-81)"
+        if why:
+            dropped.append({"where": where, "op": op, "frame": frame, "why": why})
+            continue
+        kept.append(at)
+        new.append({"name": item["id"], "frame": at, "gain_db": gain, "max_ms": int(round(item["seconds"] * 1000))})
+    return new, dropped
+
+
 def plan(job: Path, *, library: Path | None = None, write: bool = True) -> dict:
     """Derive ``sound_mix_manifest/2`` for a job (deterministic: the same inputs give the same bytes) and write it with its report.
     ``library`` is the sound library root (default: the repository's); procedural room tones and hits the library lacks are
@@ -339,7 +411,7 @@ def plan_with_report(job: Path, *, library: Path | None = None, write: bool = Tr
     words = spine["words"]
     inferred: list[dict] = []
     findings: list[dict] = []
-    notes: dict = {"dropped_vacuums": [], "unmatched_sounds": []}
+    notes: dict = {"dropped_vacuums": [], "unmatched_sounds": [], "dropped_cues": []}
 
     # scenes: acoustic, place, IR seed
     ctx: dict = {}
@@ -517,6 +589,9 @@ def plan_with_report(job: Path, *, library: Path | None = None, write: bool = Tr
                       "beat_grid": grid})
     cues = [{"name": c["sound"], "frame": fr(c["start"]), "gain_db": float(c.get("gain_db", -26)), "max_ms": c.get("max_ms")}
             for c in timed.get("audio", {}).get("cues", [])]
+    more, notes["dropped_cues"] = compensator_cues(job, spine, root, cues)  # F5, CMP-16: story events of maps and HUD get a quiet micro-cue
+    if more:
+        cues = sorted(cues + more, key=lambda c: (c["frame"], c["name"]))
     dialogue = []
     for h in spine["post_hoc_shots"]:
         has = (job / "audio" / "dialogue" / f"{h['shot_id']}.wav").exists()

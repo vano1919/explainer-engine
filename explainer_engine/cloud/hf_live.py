@@ -21,6 +21,16 @@ import urllib.request
 REPO = os.environ.get("EE_LIVE_REPO", "datasets/vano1919/tmr-artifacts")
 LIVE, CLOSED, WATCHDOG = "runpod/live", "runpod/closed", "runpod/watchdog.json"
 UA = "explainer-engine"
+# The fields of a live spec (CR-12). ``pod`` is None between the write before the POST and the write after it: a spec in that
+# state belongs to a create whose answer may have been lost, and the next create adopts the pod by its name (CR-12, T22/T24).
+SPEC_FIELDS = ("name", "pod", "job", "heartbeat", "created", "price", "disk_per_h", "max_usd", "max_hours", "until")
+
+
+def pending(specs, *, job=None, heartbeat=None):
+    """{name: spec} of the specs with no pod id yet (a create that wrote its record and may not have heard the answer), narrowed to
+    one job and heartbeat when given."""
+    return {n: s for n, s in (specs or {}).items()
+            if not s.get("pod") and (job is None or s.get("job") == job) and (heartbeat is None or s.get("heartbeat") == heartbeat)}
 
 
 class LiveError(RuntimeError):
