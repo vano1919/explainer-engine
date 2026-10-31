@@ -245,8 +245,8 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 6,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "not yet opened (the lead commits F4)",
+   "state": "review",
    "waits": null
   },
   {
