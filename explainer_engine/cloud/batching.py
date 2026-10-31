@@ -56,10 +56,19 @@ def rp09(rows, *, share_max, refused=None):
     return kept
 
 
-def rp10(hw_failures, script_failed, *, key=""):
-    """RP-10: a hardware failure (no capacity, BAD_HOST) gets one retry; a script failure gets no paid retry of the same text."""
+HW_EXTRA_MAX = 2          # RP-10: at most this many creator-granted extra hardware tries per create command
+
+
+def rp10(hw_failures, script_failed, *, key="", extra=0, extra_reason=""):
+    """RP-10: a hardware failure (no capacity, BAD_HOST) gets one retry; a script failure gets no paid retry of the same text.
+    ``extra`` = tries the creator granted in words (``--hw-extra-retries N --hw-extra-reason "<his message id>"``); a grant
+    without a reason, or over ``HW_EXTRA_MAX``, is ignored, so the guard is never opened without his recorded word."""
     out = []
-    if hw_failures >= HW_ATTEMPTS:
+    if extra and not extra_reason.strip():
+        out.append("RP-10: --hw-extra-retries needs --hw-extra-reason (the creator's message id); it is not granted without it")
+        extra = 0
+    extra = max(0, min(int(extra or 0), HW_EXTRA_MAX))
+    if hw_failures >= HW_ATTEMPTS + extra:
         out.append(f"RP-10: {hw_failures} failed create or BAD_HOST pod(s) on {key or 'this job'}: the one retry is used; stop and ask the creator")
     if script_failed:
         out.append("RP-10: this exact script already failed on a pod (not hardware): fix it and pass `runpod dryrun` on the new text first")
