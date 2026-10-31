@@ -3560,3 +3560,7 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 
 ## 2026-10-31 (night run) — P12a: pods C2, D2 and B2 listed in keep_stopped_pods
 - Same reason as the entry above: stopped pods (0 GB, $0.00/day) must be listed or `create` and the GitHub watchdog refuse. P12a so far: A passed, E passed (the watchdog stopped it 41 s after DONE), C2 passed (`FAILED_UPLOAD`, `unstored=12`), D2 inconclusive (stopped by hand before its own deadline, re-run once at `--max-usd 0.06`), B2 `BAD_HOST` 9 s after create (one hardware retry left). Config and test count only; nothing deleted.
+
+## 2026-10-31 (night run) — P12a finished: all five pods passed
+- A (plain path, in-pod self stop, download 4.26 GB in 338 s = 12.6 MB/s), E (no key: the watchdog stopped it 41 s after DONE), C2 (`FAILED_UPLOAD`, `unstored=12`, stopped after the end sequence), B3 (`FAILED rc=1`, the session guard stopped it within about a minute, no in-pod stop), D3 (`CAPPED rc=143` at its own deadline, `unstored=0`, stopped). New names C2, D2, B2, B3, D3 because RP-10 counts capacity refusals per name. B2 was a `BAD_HOST` 9 s after create (hardware retry B3 worked). D2 was inconclusive (stopped by hand before its own deadline). Billed about $0.16 + B3 and D3.
+- Stopped pods B3 and D3 added to `keep_stopped_pods` (test count 56). Nothing deleted.
