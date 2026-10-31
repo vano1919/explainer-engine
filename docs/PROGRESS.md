@@ -3554,3 +3554,6 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 ## 2026-10-30 (night run) — OR-34 audit findings: banners made truthful
 - The Fable OR-34 audit (main 5cfac9eb, $1.36, `result_check`) answered NOT READY: `audio/voice_layer.py` carried a "never run" banner while five live modules import its WAV helpers; `aivideo/__init__.py` described the banned route with no banner. Q2 grep over `training/pods`, `.claude/agents`, `.claude/skills` for `wldnk|2512|2511|Wild Ink|wan22|qi21`: only history sections and the bannered lora-training lessons. Q3: p12a/p12b script pin tests pass on main.
 - The `voice_layer` banner now says what is retired (blend, alteration) and what stays live (`read_wav`, `write_wav`, `f0_track`); `aivideo/__init__.py` gets a RETIRED (D-80) banner. Docstrings only, no code change; nothing paid, nothing deleted.
+
+## 2026-10-31 (night run) — P12a: stopped pods A and E listed in keep_stopped_pods
+- Pod A (`ixuendp5qoiu1e`) and pod E (`onuaeup37xsmk5`) are stopped, 0 GB, $0.00/day. Not listed, the pod manager refused every new `create` ("clean up first") and the GitHub watchdog run failed on them (it writes `watchdog.json` only on success, so `create` also saw the watchdog as older than 60 min). Config-only change; no money line moved; nothing deleted.
