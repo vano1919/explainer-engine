@@ -5207,9 +5207,9 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-03"
+    "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-03",
+    "explainer_engine/production/assemble.py"
    ],
-   "planned": "explainer_engine/production/assemble.py (P7)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -5242,9 +5242,10 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-08"
+    "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-08",
+    "explainer_engine/production/assemble.py"
    ],
-   "planned": "explainer_engine/edit/motion_lint.py (P7)",
+   "planned": "explainer_engine/edit/motion_lint.py (ramp and rack focus; the whip is built in assemble.py, P7)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },
@@ -5277,9 +5278,10 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-09"
+    "explainer_engine/standards/craft_checklists/editing_colour.json:CRAFT-EDC-09",
+    "explainer_engine/finish/grade.py",
+    "explainer_engine/production/assemble.py"
    ],
-   "planned": "explainer_engine/finish/grade.py (P7)",
    "supersedes": [],
    "craft": "P3b 2026-10-29 (docs/CRAFT_CURRICULUM.md): checked by the critic or by eye from the checklist row until the planned validator exists"
   },

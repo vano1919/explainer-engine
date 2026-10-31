@@ -26,7 +26,9 @@ from explainer_engine.audio.level import level_voice
 from explainer_engine.audio import acoustics, seams, sound_director as SD
 from explainer_engine.audio import cues as CUES, duck
 from explainer_engine.audio import spine as SPINE
-from explainer_engine.core import contracts
+from explainer_engine.core import contracts, delivery
+from explainer_engine.core.errors import ContractError
+from explainer_engine.core.store import replace_file, write_json_atomic
 from explainer_engine.production import accents as ACC
 from explainer_engine.production import beats as BEATS
 from explainer_engine.production import faces as FACES
@@ -34,6 +36,7 @@ from explainer_engine.production import continuity
 from explainer_engine.production import parallax as PAR
 from explainer_engine.production import graphics as GFX
 from explainer_engine.finish import bubbles as BUB
+from explainer_engine.finish import grade as grade_mod
 from explainer_engine.finish.grade import grade
 from explainer_engine.world import resolver
 from explainer_engine.qa import targets
@@ -593,6 +596,279 @@ def sd14_pointer(stats: dict) -> list[dict]:
             out.append({"rule": "SD-14", "severity": stats[key], "where": "mix", "basis": "BP-50",
                         "detail": f"{what} {stats.get('lufs' if key == 'loudness_verdict' else 'true_peak')}: {stats[key]} (qa/targets, BP-50)"})
     return out
+
+
+# --- the picture timeline (P7: BP-128..130, ED-04, CN-02, CN-09, D-85) ----------------------------------------------------------
+# ``edit_and_grade_manifest/1`` + the rendered shot clips -> the assembled video at the job's fps and the delivery size, with
+# handles, the whip, the per-scene colour transfer toward the key master frame and the one LOOK last; its derived manifest and an
+# OTIO export (card D3: export only). One assembler: this sits beside ``build_audio_v2``, it does not replace ``_assemble``.
+
+CLIP_SUFFIXES = (".npy", ".mp4", ".mkv", ".mov", ".webm")  # .npy = uint8 frames (N, H, W, 3), the form tests and stills-to-motion use
+
+
+def _finding(rule: str, where: str, detail: str, severity: str) -> dict:
+    return contracts._f(rule, where, detail, severity)
+
+
+def _checked_ref(job: Path, ref: dict, name: str) -> Path:
+    path = Path(job) / ref["path"]
+    if not path.exists():
+        raise ContractError(f"CN-02 {name}: {ref['path']} does not exist")
+    if contracts.sha256_file(path) != ref["sha256"]:
+        raise ContractError(f"CN-02 {name}: {ref['path']} changed: the edit manifest is stale, re-plan it (never hand-edit)")
+    return path
+
+
+def clip_path(shots_dir: Path, shot_id: str) -> Path:
+    for suffix in CLIP_SUFFIXES:
+        p = Path(shots_dir) / f"{shot_id}{suffix}"
+        if p.exists():
+            return p
+    raise ContractError(f"shot {shot_id} has no rendered clip in {shots_dir} ({'/'.join(CLIP_SUFFIXES)})")
+
+
+def clip_info(path: Path) -> tuple[int, int, int]:
+    """``(frames, width, height)`` of a rendered clip (the frames are counted, never trusted from a header)."""
+    if path.suffix == ".npy":
+        a = np.load(path, mmap_mode="r")
+        return int(a.shape[0]), int(a.shape[2]), int(a.shape[1])
+    r = subprocess.run(["ffprobe", "-v", "error", "-count_frames", "-select_streams", "v:0", "-show_entries",
+                        "stream=nb_read_frames,width,height", "-of", "json", str(path)], capture_output=True, text=True, check=True)
+    st = json.loads(r.stdout)["streams"][0]
+    return int(st["nb_read_frames"]), int(st["width"]), int(st["height"])
+
+
+def clip_frames(path: Path, start: int, count: int):
+    """The frames ``start .. start + count`` of a clip, one (H, W, 3) uint8 array at a time."""
+    if path.suffix == ".npy":
+        a = np.load(path, mmap_mode="r")
+        for k in range(start, start + count):
+            yield np.asarray(a[k])
+        return
+    _n, w, h = clip_info(path)
+    ff = subprocess.Popen(["ffmpeg", "-v", "error", "-i", str(path), "-vf", f"select='between(n,{start},{start + count - 1})'",
+                           "-vsync", "0", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+    try:
+        for _ in range(count):
+            raw = ff.stdout.read(w * h * 3)
+            if len(raw) < w * h * 3:
+                raise ContractError(f"{path.name}: ended before frame {start + count}")
+            yield np.frombuffer(raw, np.uint8).reshape(h, w, 3)
+    finally:
+        ff.kill()
+        ff.wait()
+
+
+def _fit(frame: np.ndarray, size: tuple[int, int]) -> np.ndarray:
+    if (frame.shape[1], frame.shape[0]) == tuple(size):
+        return frame
+    return np.asarray(Image.fromarray(frame).resize(tuple(size), Image.LANCZOS))
+
+
+def whip_length() -> int:
+    """BP-129 ``whip_frames``: the middle of the registry's band."""
+    lo, hi = RULES.T("BP-129", "whip_frames")
+    return int(round((lo + hi) / 2))
+
+
+def plan_video_v2(manifest: dict, job: Path, shots_dir: Path, *, size: tuple[int, int] | None = None, blend: float | None = None,
+                  onsets: dict | None = None) -> dict:
+    """The picture timeline of an ``edit_and_grade_manifest/1``: every shot's place, source window, handles and cut, the audio
+    entries with their J/L leads, the scene grades and the findings. Refuses (``ContractError``, invariant 7, nothing repaired) a
+    stale reference, a fps that disagrees with the spine, a timeline that does not tile the read, a clip shorter than its span, a
+    lead longer than the shot it leaves. REVIEW findings: handles under BP-128's band, a cut off BP-128's onset band (``onsets``
+    = {to_shot: frame the action begins}), a blend over BP-130's cap (applied capped)."""
+    job = Path(job)
+    contracts.validate(manifest)
+    spine = json.loads(_checked_ref(job, manifest["audio_spine"], "audio_spine").read_text(encoding="utf-8"))
+    film = json.loads(_checked_ref(job, manifest["film_shots"], "film_shots").read_text(encoding="utf-8"))
+    fps, total = int(spine["fps"]), int(spine["total_frames"])
+    if film.get("fps") not in (None, fps):
+        raise ContractError(f"CN-09 film_shots.fps {film['fps']} differs from the spine's {fps} (D-85)")
+    size = tuple(size or delivery.size())
+    timeline = SD.shot_timeline(spine, {}, film, manifest)
+    findings: list[dict] = []
+    if not timeline or timeline[0]["start_frame"] != 0 or timeline[-1]["end_frame"] != total or any(
+            a["end_frame"] != b["start_frame"] for a, b in zip(timeline, timeline[1:])):
+        raise ContractError(f"the shots do not tile the {total} frames of the read (first start, gaps or overlaps, last end): "
+                            "the compiler cuts what the manifest says and repairs nothing")
+    cuts = {c["to_shot"]: c for sc in manifest["scenes"] for c in sc["cuts"]}
+    by_id = {s["id"]: s for s in timeline}
+    h_lo, _h_hi = RULES.T("BP-128", "handle_frames")
+    o_lo, o_hi = RULES.T("BP-128", "cut_after_onset_frames")
+    whip = whip_length()
+    shots, audio = [], []
+    for s in timeline:
+        sid, span = s["id"], s["frames"]
+        path = clip_path(shots_dir, sid)
+        n, _w, _h = clip_info(path)
+        if n < span:
+            raise ContractError(f"shot {sid}: the clip has {n} frames, the cut span {span} (frames {s['start_frame']}..{s['end_frame']}); "
+                                "render the shot again, a short clip is never stretched or repeated")
+        head = (n - span) // 2
+        if head < h_lo:
+            findings.append(_finding("BP-128", sid, f"handles of {head} and {n - span - head} frames, under the band's {h_lo} (hypothesis rule)", "REVIEW"))
+        cut = cuts.get(sid)
+        entry = {"shot_id": sid, "scene": s["scene"], "start_frame": s["start_frame"], "end_frame": s["end_frame"], "frames": span,
+                 "clip": path.name, "clip_frames": n, "source_in": head, "cut": None}
+        lead = 0
+        if cut is not None:
+            if cut["at_frame"] != s["start_frame"] or cut["from_shot"] not in by_id:
+                raise ContractError(f"cut {cut['from_shot']} -> {sid} at {cut['at_frame']}: the shot starts at {s['start_frame']} "
+                                    "(a post-hoc window or an unknown shot)")
+            lead = cut["audio_lead_frames"]
+            if lead > by_id[cut["from_shot"]]["frames"]:
+                raise ContractError(f"cut into {sid}: the audio lead of {lead} frames is longer than the shot it leaves "
+                                    f"({by_id[cut['from_shot']]['frames']} frames)")
+            entry["cut"] = dict(cut, whip_frames=whip if cut["cut_type"] == "WHIP_PAN" else 0)
+            if cut["cut_type"] in ("DEPTH_MATCH_CUT", "OCCLUSION_WIPE"):
+                findings.append(_finding("P7", sid, f"{cut['cut_type']} is rendered as a straight cut (no compositor in the picture path)", "REVIEW"))
+            if onsets and sid in onsets:
+                d = cut["at_frame"] - onsets[sid]
+                if not o_lo <= d <= o_hi:
+                    findings.append(_finding("BP-128", sid, f"the cut lands {d} frames after the action begins, the band is {o_lo}..{o_hi} (hypothesis rule)", "REVIEW"))
+        shots.append(entry)
+        audio.append({"shot_id": sid, "start_frame": s["start_frame"] - lead, "end_frame": s["end_frame"], "lead_frames": lead})
+    top = float(RULES.T("BP-130", "blend_max"))
+    applied, capped = grade_mod.blend_cap(top if blend is None else blend)
+    if capped:
+        findings.append(_finding("BP-130", "scenes", f"blend {blend} is over blend_max {top}: applied {applied}", "REVIEW"))
+    codex = resolver.load_codex()["grades"]
+    scenes = {}
+    for sc in manifest["scenes"]:
+        if sc["grade"] is not None and sc["grade"]["lut"] not in codex:
+            raise ContractError(f"scene {sc['scene_id']}: grade {sc['grade']['lut']} is not in world/eras.json grades")
+        key = None
+        if sc["key_master_frame"] is not None:
+            key = job / sc["key_master_frame"]
+            if not key.exists():
+                raise ContractError(f"scene {sc['scene_id']}: key master frame {sc['key_master_frame']} does not exist")
+        scenes[sc["scene_id"]] = {"key_master_frame": sc["key_master_frame"], "grade": sc["grade"], "blend": applied if key else 0.0}
+    return {"fps": fps, "total_frames": total, "size": list(size), "shots": shots, "audio": audio, "scenes": scenes, "findings": findings}
+
+
+def iter_video_frames(plan: dict, job: Path, shots_dir: Path):
+    """The assembled frames in order, ``(frame_index, uint8 (H, W, 3))``: source window, colour transfer toward the scene's key from
+    the shot's two boundary frames (one correction per shot, so nothing flickers), the whip over a WHIP_PAN, and last the LOOK
+    (era grade + grain, ED-04) of the scene."""
+    size, codex = tuple(plan["size"]), resolver.load_codex()["grades"]
+    whip_at = {s["start_frame"]: s["cut"]["whip_frames"] for s in plan["shots"] if s["cut"] and s["cut"]["whip_frames"]}
+    keys: dict = {}
+    for s in plan["shots"]:
+        sc = plan["scenes"][s["scene"]]
+        look = codex[sc["grade"]["lut"]] if sc["grade"] else None
+        key = None
+        if sc["key_master_frame"] is not None:
+            if s["scene"] not in keys:
+                keys[s["scene"]] = np.asarray(_fit(np.asarray(Image.open(Path(job) / sc["key_master_frame"]).convert("RGB")), size)) / 255.0
+            key = keys[s["scene"]]
+        frames = [_fit(f, size) for f in clip_frames(clip_path(shots_dir, s["shot_id"]), s["source_in"], s["frames"])]
+        params = None
+        if key is not None:
+            a, b = frames[0] / 255.0, frames[-1] / 255.0
+            params = grade_mod.transfer_params(np.concatenate([a.reshape(-1, 1, 3), b.reshape(-1, 1, 3)]), key)
+        for k, im in enumerate(frames):
+            f = s["start_frame"] + k
+            x = im / 255.0
+            if params is not None:
+                x = grade_mod.apply_transfer(x, params, sc["blend"])
+            for start, w in whip_at.items():  # the whip is centred on the cut; BP-129 ``whip_frames`` long
+                i = f - (start - w // 2)
+                if 0 <= i < w:
+                    x = _whip_blur(x, 1.0 - abs(2.0 * (i + 0.5) / w - 1.0))
+            if look is not None:
+                x = grade_mod.grade(x, look, seed=f)
+            yield f, np.clip(np.rint(x * 255.0), 0, 255).astype(np.uint8)
+
+
+def _whip_blur(x: np.ndarray, strength: float) -> np.ndarray:
+    """A horizontal smear of up to 6 % of the width at the whip's middle (a camera whip; the 2D plane stays flat, BP-128)."""
+    reach = strength * x.shape[1] * 0.06
+    if reach < 1.0:
+        return x
+    taps = 7
+    return sum(np.roll(x, int(round((j / (taps - 1) - 0.5) * reach)), axis=1) for j in range(taps)) / taps
+
+
+def export_otio(derived: dict, path: Path) -> Path:
+    """The derived manifest as OpenTimelineIO JSON (``Timeline.1``, stdlib ``json``, no dependency: card D3, export only). One video
+    track and two audio tracks (picture and sound overlap at a J/L cut, so alternate shots alternate tracks)."""
+    fps = derived["fps"]
+    rt = lambda v: {"OTIO_SCHEMA": "RationalTime.1", "rate": float(fps), "value": float(v)}  # noqa: E731
+    rng = lambda a, n: {"OTIO_SCHEMA": "TimeRange.1", "start_time": rt(a), "duration": rt(n)}  # noqa: E731
+
+    def clip(name, src_in, n, url, meta):
+        return {"OTIO_SCHEMA": "Clip.2", "name": name, "source_range": rng(src_in, n), "metadata": {"explainer_engine": meta},
+                "media_reference": {"OTIO_SCHEMA": "ExternalReference.1", "target_url": url, "available_range": None, "metadata": {}},
+                "effects": [], "markers": [], "enabled": True}
+
+    video, a_tracks = [], [[], []]
+    ends = [0, 0]
+    for k, s in enumerate(derived["shots"]):
+        video.append(clip(s["shot_id"], s["source_in"], s["frames"], s["clip"],
+                          {"at_frame": s["start_frame"], "scene": s["scene"], "cut": s["cut"]}))
+        a = derived["audio"][k]
+        lane = k % 2
+        if a["start_frame"] > ends[lane]:
+            a_tracks[lane].append({"OTIO_SCHEMA": "Gap.1", "name": "", "source_range": rng(0, a["start_frame"] - ends[lane]),
+                                   "metadata": {}, "effects": [], "markers": [], "enabled": True})
+        n = a["end_frame"] - a["start_frame"]
+        a_tracks[lane].append(clip(s["shot_id"] + "_audio", 0, n, "audio/mix.wav",
+                                   {"at_frame": a["start_frame"], "lead_frames": a["lead_frames"], "picture_at_frame": s["start_frame"]}))
+        ends[lane] = a["end_frame"]
+    track = lambda name, kind, items: {"OTIO_SCHEMA": "Track.1", "name": name, "kind": kind, "children": items,  # noqa: E731
+                                       "source_range": None, "metadata": {}, "effects": [], "markers": [], "enabled": True}
+    doc = {"OTIO_SCHEMA": "Timeline.1", "name": derived.get("name", "episode"), "global_start_time": rt(0),
+           "metadata": {"explainer_engine": {"schema": derived["schema"], "total_frames": derived["total_frames"], "fps": fps}},
+           "tracks": {"OTIO_SCHEMA": "Stack.1", "name": "tracks", "source_range": None, "metadata": {}, "effects": [], "markers": [],
+                      "enabled": True,
+                      "children": [track("V1", "Video", video)] + [track(f"A{i + 1}", "Audio", t) for i, t in enumerate(a_tracks)]}}
+    return write_json_atomic(Path(path), doc)
+
+
+def build_video_v2(manifest: dict | Path, shots_dir: Path, out: Path, job: Path | None = None, *, size: tuple[int, int] | None = None,
+                   blend: float | None = None, onsets: dict | None = None, crf: int = 18, name: str = "episode") -> dict:
+    """Compile and encode the picture: ``out`` (an .mp4, no sound: ``build_audio_v2`` mixes that), beside it ``<out>.assemble.json``
+    (the derived manifest, CN-02 ``derived_from``) and ``<out>.otio``. ``manifest`` is the ``edit_and_grade_manifest/1`` document or
+    its path; ``job`` is the folder its file references are relative to (default: the parent of ``shots_dir``)."""
+    shots_dir, out = Path(shots_dir), Path(out)
+    job = Path(job) if job is not None else shots_dir.parent
+    manifest_path = None
+    if not isinstance(manifest, dict):
+        manifest_path, manifest = Path(manifest), json.loads(Path(manifest).read_text(encoding="utf-8"))
+    plan = plan_video_v2(manifest, job, shots_dir, size=size, blend=blend, onsets=onsets)
+    w, h = plan["size"]
+    out.parent.mkdir(parents=True, exist_ok=True)
+    tmp = out.with_name(out.stem + ".part" + out.suffix)
+    ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{w}x{h}", "-r", str(plan["fps"]),
+                           "-i", "-", "-c:v", "libx264", "-crf", str(crf), "-preset", "veryfast", "-pix_fmt", "yuv420p", "-an",
+                           "-frames:v", str(plan["total_frames"]), str(tmp)], stdin=subprocess.PIPE)
+    written = 0
+    try:
+        for f, frame in iter_video_frames(plan, job, shots_dir):
+            ff.stdin.write(frame.tobytes())
+            written += 1
+        ff.stdin.close()
+    except BaseException:
+        ff.kill()
+        raise
+    finally:
+        ff.wait()
+    if ff.returncode != 0 or written != plan["total_frames"]:
+        tmp.unlink(missing_ok=True)
+        raise ContractError(f"ffmpeg failed or the frame count differs ({written} of {plan['total_frames']})")
+    replace_file(tmp, out)
+    derived_from = {k: dict(manifest[k]) for k in ("film_shots", "audio_spine")}
+    if manifest_path is not None:
+        try:
+            derived_from["edit_and_grade_manifest"] = {"path": str(manifest_path.relative_to(job)), "sha256": contracts.sha256_file(manifest_path)}
+        except ValueError:
+            pass
+    derived = dict(plan, schema="assemble_manifest/1", name=name, derived_from=derived_from, video=out.name,
+                   handles={"handle_frames": RULES.T("BP-128", "handle_frames"), "cut_after_onset_frames": RULES.T("BP-128", "cut_after_onset_frames")})
+    derived_path = write_json_atomic(out.with_name(out.stem + ".assemble.json"), derived)
+    otio_path = export_otio(derived, out.with_suffix(".otio"))
+    return {"video": out, "manifest": derived_path, "otio": otio_path, "frames": written, "findings": plan["findings"]}
 
 
 # --- picture helpers -------------------------------------------------------------------------------------------------

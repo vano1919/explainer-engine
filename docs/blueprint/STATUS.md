@@ -31,6 +31,9 @@ answered by Claude without his recorded delegation.
 | P6 | shot router, lane-ები, continuity (D-82) | P2, P5, P4, P3b | S3 Opus high → S2 Sonnet high | 5 | — | not yet opened (the lead commits F2) | review | — |
 | P9 | Shorts პლატფორმისთვის + captions | P3, P7, P2 | S2 / Sonnet / medium–high | 5 | — | not yet opened (the lead commits F6) | review | — |
 | P7 | სტეიჯინგი, ფინიშინგი, OTIO, safe_zones | P6, P4, P2 | S2 / Sonnet / high | 6 | — | — | todo | — |
+| P6 | shot router, lane-ები, continuity (D-82) | P2, P5, P4, P3b | S3 Opus high → S2 Sonnet high | 5 | — | — | todo | — |
+| P9 | Shorts პლატფორმისთვის + captions | P3, P7, P2 | S2 / Sonnet / medium–high | 5 | — | — | todo | — |
+| P7 | სტეიჯინგი, ფინიშინგი, OTIO, safe_zones | P6, P4, P2 | S2 / Sonnet / high | 6 | — | not yet opened (the lead commits F3) | review | — |
 | P8 | QA: editorial_review, identity, retry router | P7, P6, P4b, P3b | S3 Opus high → S2 Sonnet high | 6 | — | — | todo | — |
 | P10 | დისტრიბუცია (unlisted, პაკეტები) | P9, P8, P2 | S1–S2 / Sonnet / medium | 6 | — | — | todo | — |
 | P11 | ორკესტრატორი dry-run + აგენტები A5-ით | P8, P10, P0b, P0c | S3 Opus high → S2 Sonnet high | 7 | — | — | todo | P0c-ის ანგარიში |
