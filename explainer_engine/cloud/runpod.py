@@ -384,7 +384,7 @@ CLOUDS = ("COMMUNITY", "SECURE")
 # What ``create`` reads (a flag that is not here is refused, so a typo or a flag from another command is never silently ignored, G15).
 CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
                       "--job", "--job-type", "--ledger", "--max-hours", "--max-usd", "--min-ram", "--name", "--on-cap", "--only",
-                      "--pass-s", "--ref-hours", "--rules", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
+                      "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--ref-hours", "--rules", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
                       "--upload-grace-s", "--volume", "--vram", "--wait-stock", "--work-min")
 CREATE_BOOL_FLAGS = ("--measure", "--no-guard", "--yes")
 PICK_ONLY_FLAGS = ("--only", "--cloud", "--ref-hours", "--wait-stock")  # read only when --vram picks the card
@@ -1784,7 +1784,8 @@ def main(argv=None, api=None, live=None):
             fails = led.data.get("failures", {})
             batch_why += batching.rp01(work_min, setup_min, measure="--measure" in rest, max_usd=max_usd, test=led.data.get("meta", {}).get("test"))
             batch_why += batching.rp02(weights, earlier, reason=_opt(rest, "--second-pod-reason", ""))
-            batch_why += batching.rp10(len(fails.get(f"hw:{job_base}", [])), bool(fails.get(f"script:{job_base}:{script_sha[:12]}")), key=job_base)
+            batch_why += batching.rp10(len(fails.get(f"hw:{job_base}", [])), bool(fails.get(f"script:{job_base}:{script_sha[:12]}")), key=job_base,
+                                      extra=int(_opt(rest, "--hw-extra-retries", "0") or 0), extra_reason=_opt(rest, "--hw-extra-reason", ""))
             if not _opt(rest, "--disk"):
                 batch_why.append("--disk GB is required for a script pod: state the container disk (weights + outputs + margin); there is no default")
         drill = _opt(rest, "--drill")

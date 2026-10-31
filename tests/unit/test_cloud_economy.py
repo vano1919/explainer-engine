@@ -429,3 +429,11 @@ def test_create_requires_and_checks_the_test_name_of_a_paid_test_ledger(env, mon
     assert not fake.pods and (calls is None or len(fake.calls) == calls)
     create(paid, "--test", "p12a_smoke")  # the check passes: the request reaches the fake
     assert len(fake.pods) == 1
+
+
+def test_rp10_extra_hardware_tries_only_with_the_creators_recorded_word():
+    assert B.rp10(2, False, extra=1, extra_reason="cmsg_x") == []
+    assert B.rp10(3, False, extra=1, extra_reason="cmsg_x") != []
+    assert any("needs --hw-extra-reason" in m for m in B.rp10(2, False, extra=1))
+    assert B.rp10(4, False, extra=9, extra_reason="cmsg_x") != []  # capped at HW_EXTRA_MAX
+    assert B.rp10(2, True, extra=1, extra_reason="cmsg_x")  # a script failure is never granted a retry
