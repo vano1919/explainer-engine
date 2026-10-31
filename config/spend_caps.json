@@ -87,13 +87,14 @@
     "keep_network_volumes": []
   },
   "claude_api": {
+    "_next_video_note": "next_video_script 4.0 taken from reserve (5.98 -> 1.98): the creator, 2026-10-31 13:25 UTC, card cmsg_01Hnu5zB86sjUj5GtTgaUkPW6c4zpcfvyzXnBR7ZXtwb7e (Opus high scenario + full script).",
     "_doc": "The Claude API credit (explainer_engine/llm/claude_api.py, docs/LLM_API.md). max_usd is the whole credit; the client stops at 80 % of it and of each job. A job without a line here is refused. approval is the recorded word that allows real calls.",
     "max_usd": 95.0,
     "jobs": {"J1": 10.0, "J1b": 5.02,
   "final_review": 8.0,
   "change_plan": 8.0,
   "fix_desk": 8.0,
-  "result_check": 10.0, "J2a": 8.0, "J2b": 10.0, "J3": 4.0, "J4": 0.0, "J5": 0.0, "J6": 0.0, "plan_v2": 18.0, "reserve": 5.98},
+  "result_check": 10.0, "J2a": 8.0, "J2b": 10.0, "J3": 4.0, "J4": 0.0, "J5": 0.0, "J6": 0.0, "plan_v2": 18.0, "next_video_script": 4.0, "reserve": 1.98},
     "approval": {
       "by": "vano (credit, his word) + the OR-24 plan thread verdict",
       "ref": "cmsg_01Hnu5zB86sjUj5GtTgaUkPWMWfhemnwjz2KZddCLNHbGL; project files blueprint_2026-10-29/CLAUDE_API_PLAN_OR24.md",

@@ -1383,3 +1383,14 @@ def test_the_committed_p12_jobs_are_valid_and_the_proof_is_tiny():
     assert {t["name"] for t in ca.REPO_TOOLS} == {"list_dir", "read_file", "grep"}          # the loop's tools are read-only
     caps = json.loads((ROOT / "config" / "spend_caps.json").read_text(encoding="utf-8"))["claude_api"]["jobs"]
     assert all(r.job in caps for r in proof + audit)
+
+
+def test_a_string_system_in_a_job_file_is_one_block_not_one_per_character(tmp_path):
+    # 2026-10-31: "system": "<text>" was split by list() into single characters and the API answered 400 (whitespace blocks).
+    (tmp_path / "ctx.md").write_text("house rules", encoding="utf-8")
+    job = tmp_path / "job.json"
+    job.write_text(json.dumps({"job": "next_video_script", "task_class": "script-story-stages", "model": "opus",
+                               "system": "You are the story architect.", "system_files": ["ctx.md"],
+                               "requests": [{"id": "a", "user": "hi"}]}), encoding="utf-8")
+    req = ca.load_job(job)[0]
+    assert req.system == ["You are the story architect.", "house rules"]

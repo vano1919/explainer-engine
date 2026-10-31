@@ -211,12 +211,13 @@
       "task": "Script: scenario, story architect, scene writer",
       "level": "S3-S4",
       "models": [
+        "opus",
         "fable"
       ],
       "efforts": [
         "high"
       ],
-      "effort_text": "high (never xhigh/max)",
+      "effort_text": "high (opus; ვანო 2026-10-31 13:25 UTC: scenarios on Opus high, not Fable)",
       "guard": "OR-15 scenario first; variants proposed by the Opus thread with code-scored cost and dynamics, the creator picks on one card; stage_guard + validators + register lint after each stage",
       "how": "main agent runs the stage pages"
     },

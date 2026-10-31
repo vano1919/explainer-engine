@@ -1063,7 +1063,8 @@ def load_job(path: Path) -> list[Request]:
         check_secrets(t, f"job file {rel}")
         return t
 
-    system = list(spec.get("system", [])) + [read(f) for f in spec.get("system_files", [])]
+    sys0 = spec.get("system", [])
+    system = ([sys0] if isinstance(sys0, str) else list(sys0)) + [read(f) for f in spec.get("system_files", [])]  # a str was split per char (400)
     common = {k: spec[k] for k in ("task_class", "model", "effort", "max_tokens", "schema", "web_search_max_uses", "cache_ttl",
                                    "max_turns", "max_effort_reason") if k in spec}
     if spec.get("tools_root") and spec.get("cache_ttl") == "1h" and not float(spec.get("measured_turn_gap_s") or 0) > SLOW_TURN_GAP_S:

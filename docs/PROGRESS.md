@@ -3572,3 +3572,13 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 
 ## 2026-10-31 (night run) — no permanent hosts, final: P12e host sheets dropped, P12b to be re-priced
 - Creator 06:37 UTC: no permanent hosts (D-89 stands). The `p12e_hosts` line in `config/spend_caps.json` is re-labelled "dropped, money unassigned" (value and the 5.90 total unchanged); the plan (project files `PAID_TESTS_PLAN.md` R2 and the `_ka` twin) records the void parts (Q4 host collage, E1-E5) and Fable's route for RP-01: `hf_transfer`, 8 region plates (E6) into P12b, one measurement pod first. The measurement pod needs the creator's money word (card posted); `p12b.json/py/sh` are NOT changed yet. No pod, nothing paid, nothing deleted.
+
+## 2026-10-31 — next-video scenario on Opus high (API): routing, cap, job-file fix
+- Creator 13:25 UTC: scenarios on Opus high, not Fable. `config/model_routing.json` `script-story-stages` allows `opus` (first) and `fable`
+  (Fable still gated by `fable_story_stages.enabled`, off); `config/spend_caps.json` `claude_api.jobs.next_video_script` 4.0 taken from
+  `reserve` (5.98 -> 1.98, total 95 unchanged), his card cmsg_01Hnu5zB86sjUj5GtTgaUkPW6c4zpcfvyzXnBR7ZXtwb7e; both recorded with `governance ok`.
+- `claude_api.load_job`: a job file whose `system` is a string was split per character by `list()` and the API answered 400 (whitespace
+  blocks; voided, nothing billed). A string is now one block. Test: `test_claude_api.py::test_a_string_system_in_a_job_file_is_one_block_not_one_per_character`.
+- Run: the three-topic job hit max_tokens 32000 ($1.2751 booked; Georgian text is token heavy): two full topics saved, project files
+  `explainer-engine/next_video_2026-10-31/TOPICS_2_ka.md`, HF `vano1919/tmr-artifacts` (dataset) `explainer/next_video_2026-10-31/`.
+- OPEN: the creator picks a topic (or asks for the third); the full script follows only after his scenario approval (OR-15).
