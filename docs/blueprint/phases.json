@@ -214,7 +214,7 @@
    "routing": "S2 / Sonnet / medium–high",
    "wave": 5,
    "thread": null,
-   "pr": null,
+   "pr": "not yet opened (the lead commits F6)",
    "state": "review",
    "waits": null
   },
