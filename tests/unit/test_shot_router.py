@@ -261,3 +261,18 @@ def test_the_real_pins_route_a_valid_keyframe_ltx_shot_to_a_still_and_a_video_sp
     assert video["frames"] == 241 and video["refs"][0]["role"] == "keyframe"
     assert still["loras"] == [{"id": "xworld_v2", "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02", "weight": 0.7}]
     assert C.main(["check", *map(str, spec_files(tmp_path)), str(tmp_path / "shots" / "route.json"), "--base", str(tmp_path)]) == 0
+
+
+def test_a_per_shot_attempt_map_reseeds_only_the_named_shot_and_keeps_the_others_specs(tmp_path):
+    job = make_job(tmp_path)
+    run(tmp_path, job)
+    first = keys(tmp_path)
+    run(tmp_path, job, attempt={"s1": 2})
+    second = keys(tmp_path)
+    seed = lambda n: json.loads((tmp_path / "shots" / n).read_text(encoding="utf-8"))["seed"]   # noqa: E731
+    assert seed("s1.still.spec.json") == 1337 and seed("s2.still.spec.json") == 42
+    changed = {n for n in first if first[n] != second.get(n)}
+    assert changed and all(n.startswith("s1.") for n in changed)                    # no other shot's spec or cache key moved
+    with pytest.raises(ContractError, match="tries per shot"):
+        run(tmp_path, job, attempt={"s1": 4})
+    assert "Retry k" in (R.route.__doc__ or "") and "REWEIGHT_REFERENCES" in R.route.__doc__

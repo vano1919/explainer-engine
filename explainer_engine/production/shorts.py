@@ -52,6 +52,9 @@ OUTLINE, SHADOW = round(6 * SCALE), round(2 * SCALE)  # the caption outline and 
 CAP_WORDS_PER_BLOCK = 3  # words per caption block (BP-13 allows up to block_words_max)
 
 
+FINAL_VIDEO = ["-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p"]   # the captioned file and its master alike
+
+
 def narration(short: dict) -> str:
     return " ".join(line["text"].strip() for line in short["lines"]) + "\n"
 
@@ -339,10 +342,11 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
     else:
         fc = "[1:a]anull[a]"
     _run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", f"{fc};[0:v]subtitles={out / 'cap.ass'}[v]", "-map", "[v]", "-map", "[a]",
-          "-t", f"{duration:.2f}", "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", *ASM.AUDIO_CODEC, str(final)])  # BP-63: stereo AAC at the delivery bitrate
-    # the caption-free master (BP-13 keeps the burned captions on the delivered file): the same silent picture copied, the same mix
+          "-t", f"{duration:.2f}", *FINAL_VIDEO, *ASM.AUDIO_CODEC, str(final)])  # BP-63: stereo AAC at the delivery bitrate
+    # the caption-free master (BP-13 keeps the burned captions on the delivered file): the same picture re-encoded with the same
+    # video settings (a -c:v copy cut at a keyframe, so its length could differ from the captioned file's), the same mix
     _run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", fc, "-map", "0:v", "-map", "[a]", "-t", f"{duration:.2f}",
-          "-c:v", "copy", *ASM.AUDIO_CODEC, str(master)])
+          *FINAL_VIDEO, *ASM.AUDIO_CODEC, str(master)])
     rows = [{k: r[k] for k in ("id", "picture", "at", "crop_x", "zoom", "start", "end")} for r in timed["shots"]]
     report = {"duration": round(duration, 2), "timbre_review": drift, "shots": rows, "beats": BEATS.measure(timed),
               "cues": len(timed["audio"]["cues"]), "beat_spots_moved_into_crop": moved,

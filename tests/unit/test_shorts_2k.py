@@ -104,3 +104,10 @@ def test_clip_graph_encodes_2k_with_and_without_captions(tmp_path):
         assert SF.check(info) == []
     assert sizes == {"final": (1440, 2560), "master": (1440, 2560)}
     assert (tmp_path / "final.mp4").stat().st_size != (tmp_path / "master.mp4").stat().st_size  # captions are burned in only one
+
+
+def test_the_master_is_re_encoded_with_the_same_video_settings_as_the_captioned_file_not_copied():
+    from explainer_engine.production import shorts
+    src = Path(shorts.__file__).read_text(encoding="utf-8")
+    assert shorts.FINAL_VIDEO[:2] == ["-c:v", "libx264"] and src.count("*FINAL_VIDEO") == 2     # the final and the master share them
+    assert '"-c:v", "copy"' not in src

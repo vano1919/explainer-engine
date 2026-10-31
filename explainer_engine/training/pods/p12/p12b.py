@@ -10,6 +10,7 @@ background thread while the Qwen stages run (creator 2026-10-31, RP-01), but no 
 import hashlib
 import json
 import os
+import shutil
 import sys
 import threading
 import time
@@ -89,12 +90,25 @@ def style_weight(cfg):
     return float(cfg["style_lora"]["weight"])
 
 
+def video_download_fits(free_bytes, cfg):
+    """True when the free disk after the Qwen weights holds the video snapshot plus the margin (``video.expected_gb`` and
+    ``video.margin_gb`` of p12b.json; both REVIEW numbers: ~32 GB is the snapshot size noted in PROGRESS, the margin covers the pictures)."""
+    v = cfg["video"]
+    return free_bytes >= (float(v["expected_gb"]) + float(v["margin_gb"])) * 2 ** 30
+
+
 def start_video_download(log, cfg):
     """Fetches the video model's weights in a background thread (the setup-time cut of RP-01, creator 2026-10-31) so the Qwen stages
-    do not wait for them; returns the thread. Its failure is logged, never raised into the Qwen stages (nothing here uses the weights)."""
-    from huggingface_hub import snapshot_download
+    do not wait for them; returns the thread, or None when the disk is too small (``video_download_skipped``: an ENOSPC would break the picture writes).
+    Its failure is logged, never raised into the Qwen stages (nothing here uses the weights)."""
     v = cfg["video"]
     target = MODELS / v["local"]
+    MODELS.mkdir(parents=True, exist_ok=True)
+    free = shutil.disk_usage(MODELS).free
+    if not video_download_fits(free, cfg):
+        log.ev("video_download_skipped", why="disk", free_bytes=free, need_gb=float(v["expected_gb"]) + float(v["margin_gb"]))
+        return None
+    from huggingface_hub import snapshot_download
 
     def fetch():
         log.ev("video_download_start", repo=v["repo"], revision=v["revision"])
@@ -331,7 +345,7 @@ def run(cfg, out, deadline, log):
         done.add(name)
         log.stage_line(f"done {name}")
     limit = deadline - reserve
-    while video.is_alive() and time.time() < limit:            # keep progress.txt moving: the stall rule watches it
+    while video is not None and video.is_alive() and time.time() < limit:            # keep progress.txt moving: the stall rule watches it
         log.progress(f"waiting for the video weights {dir_bytes(MODELS / cfg['video']['local'])} bytes")
         video.join(timeout=60)
     log.progress("done")

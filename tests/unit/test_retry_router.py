@@ -157,3 +157,13 @@ def test_the_cli_adds_review_minutes_and_prints_the_pilot_rows(tmp_path, capsys)
     out = json.loads(capsys.readouterr().out.split("\n", 1)[1])
     assert out["pilot"]["review_minutes_per_finished_minute"] == 7.0 and out["pilot"]["retry_multiplier"] is None
     assert any("unknown" in r for r in out["pilot_rows"])
+
+
+def test_only_rows_tagged_render_count_as_renders_untagged_legacy_rows_still_do(tmp_path):
+    log = ledger.Attempts(tmp_path / "s00" / "attempts.json", at_level=3, escalated=1)
+    RR.next_attempt(log.path, "s00", "STATIC_DIAGRAM", "bad seed")           # tagged by the router
+    log.add("hand note", kind="note")                                                    # not a render
+    log.add("opus look", escalated=True, kind="escalation")                              # not a render
+    log.add("old row")                                                                   # legacy, untagged: counted (compatibility)
+    assert [r.get("kind") for r in log.rows()] == ["render", "note", "escalation", None]
+    assert ledger.count_renders([log.path]) == 2

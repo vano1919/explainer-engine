@@ -235,3 +235,37 @@ def test_frames_are_streamed_not_held_per_shot(tmp_path, monkeypatch):
     it = ASM.iter_video_frames(plan, job, shots)
     next(it)
     assert read.count(24) == 1 and read.count(1) == 2   # one frame of the 24-frame stream, the two boundary frames of the first shot
+
+
+def test_whip_blur_repeats_the_edge_pixels_instead_of_wrapping_them_round_the_frame():
+    x = np.zeros((4, 100, 3), dtype=np.float32)
+    x[:, 0] = 1.0                                              # a bright left edge, black everywhere else
+    out = ASM._whip_blur(x, 1.0)
+    assert out[:, -1].max() == 0.0 and out[:, -5].max() == 0.0     # np.roll used to carry the edge to the right side
+    assert out[:, 0].min() > 0.0                                   # the edge pixel still smears inward
+    assert np.array_equal(ASM._whip_blur(x, 0.0), x)
+
+
+def test_clip_info_probes_a_file_once(tmp_path, monkeypatch):
+    clip = tmp_path / "c.mp4"
+    clip.write_bytes(b"x")
+    calls = []
+
+    class R:
+        stdout = json.dumps({"streams": [{"nb_read_frames": "5", "width": 8, "height": 4}]})
+
+    monkeypatch.setattr(ASM.subprocess, "run", lambda *a, **k: calls.append(a) or R())
+    ASM._CLIP_INFO.clear()
+    assert [ASM.clip_info(clip) for _ in range(3)] == [(5, 8, 4)] * 3 and len(calls) == 1
+    clip.write_bytes(b"xy")                                       # a re-rendered clip is probed again
+    ASM.clip_info(clip)
+    assert len(calls) == 2
+
+
+def test_a_near_flat_boundary_frame_cannot_blow_the_transfer_scale_up_and_is_reported():
+    rng = np.random.default_rng(0)
+    key = rng.random((16, 16, 3))
+    flat = np.full((16, 16, 3), 0.02) + rng.normal(0, 1e-4, (16, 16, 3))      # a night sky: std ~ 0
+    p = G.transfer_params(flat, key)
+    assert p["scale_clipped"] and p["scale"].max() <= G.SCALE_MAX and p["scale"].min() >= G.SCALE_MIN
+    assert not G.transfer_params(key, key)["scale_clipped"]

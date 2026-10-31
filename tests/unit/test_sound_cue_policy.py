@@ -4,9 +4,13 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
 from test_sound_director import lib_with, make_job, put
 
 from explainer_engine.audio import sound_director as D
+from explainer_engine.core import contracts
+from explainer_engine.core.errors import ContractError
 from explainer_engine.standards import sourced_rules as SR
 
 PAD = {"width": 1920, "height": 1088, "payload": {}}
@@ -24,7 +28,8 @@ def comp_job(tmp_path, specs):
         items.append({"item_id": iid, "shot_id": f"s{n}", "archetype_id": arch, "trigger_word_index": 0, "duration_frames": 100,
                       "layers": [{"kind": "spec", "ref": f"visual/{iid}.spec.json", "reveal_word_index": None}], "on_screen_text": None})
     put(job / "visual" / "visual_comp_manifest.json", {"schema": "visual_comp_manifest/1", "items": items,
-                                                       "audio_spine": {"path": "audio/audio_spine.json", "sha256": "0" * 64}})
+                                                       "audio_spine": {"path": "audio/audio_spine.json",
+                                                                     "sha256": contracts.sha256_file(job / "audio" / "audio_spine.json")}})
     return job, spine
 
 
@@ -102,3 +107,13 @@ def test_no_visual_manifest_changes_nothing_and_the_catalogue_marks_the_story_op
         assert set(a["story_ops"]) <= ops[a["id"]], a["id"]                                   # a marked op exists in its archetype
     camera = {"set_focus", "dolly", "focus"}
     assert not any(set(a["story_ops"]) & camera for a in doc["archetypes"])                   # VB-08: continuous camera moves stay silent
+
+
+def test_a_manifest_built_on_another_spine_is_refused_cn_02(tmp_path):
+    job, spine = comp_job(tmp_path, [("BALLISTIC_RANGE_AND_ENERGY_HUD", [("stamp", 5)])])
+    path = job / "visual" / "visual_comp_manifest.json"
+    stale = json.loads(path.read_text())
+    stale["audio_spine"]["sha256"] = "0" * 64
+    path.write_text(json.dumps(stale))
+    with pytest.raises(ContractError, match="CN-02"):
+        D.compensator_cues(job, spine, tmp_path / "lib", [])

@@ -627,8 +627,24 @@ def clip_path(shots_dir: Path, shot_id: str) -> Path:
     raise ContractError(f"shot {shot_id} has no rendered clip in {shots_dir} ({'/'.join(CLIP_SUFFIXES)})")
 
 
+_CLIP_INFO: dict = {}   # (path, mtime_ns, size) -> (frames, width, height): one ffprobe -count_frames per clip file, not one per read
+
+
 def clip_info(path: Path) -> tuple[int, int, int]:
-    """``(frames, width, height)`` of a rendered clip (the frames are counted, never trusted from a header)."""
+    """``(frames, width, height)`` of a rendered clip (the frames are counted, never trusted from a header). Cached per file
+    (path, modification time and size), so the plan, the two boundary frames and the stream of a shot probe it once."""
+    path = Path(path)
+    try:
+        stat = path.stat()
+        key = (str(path), stat.st_mtime_ns, stat.st_size)
+    except OSError:
+        return _clip_info(path)
+    if key not in _CLIP_INFO:
+        _CLIP_INFO[key] = _clip_info(path)
+    return _CLIP_INFO[key]
+
+
+def _clip_info(path: Path) -> tuple[int, int, int]:
     if path.suffix == ".npy":
         a = np.load(path, mmap_mode="r")
         return int(a.shape[0]), int(a.shape[2]), int(a.shape[1])
@@ -770,6 +786,9 @@ def iter_video_frames(plan: dict, job: Path, shots_dir: Path):
             last = next(iter(clip_frames(clip, s["source_in"] + s["frames"] - 1, 1)))
             a, b = _fit(first, size) / 255.0, _fit(last, size) / 255.0
             params = grade_mod.transfer_params(np.concatenate([a.reshape(-1, 1, 3), b.reshape(-1, 1, 3)]), key)
+            if params["scale_clipped"]:   # a near-flat boundary frame: the correction was bounded (REVIEW, house constants)
+                plan.setdefault("findings", []).append(_finding(
+                    "BP-130", s["shot_id"], f"colour-transfer scale clipped to {grade_mod.SCALE_MIN}..{grade_mod.SCALE_MAX} (near-flat boundary frame)", "REVIEW"))
         for k, raw in enumerate(clip_frames(clip, s["source_in"], s["frames"])):
             f = s["start_frame"] + k
             x = np.asarray(_fit(raw, size), dtype=np.float32) / np.float32(255.0)
@@ -790,7 +809,11 @@ def _whip_blur(x: np.ndarray, strength: float) -> np.ndarray:
     if reach < 1.0:
         return x
     taps = 7
-    return sum(np.roll(x, int(round((j / (taps - 1) - 0.5) * reach)), axis=1) for j in range(taps)) / taps
+    shifts = [int(round((j / (taps - 1) - 0.5) * reach)) for j in range(taps)]
+    r = max(abs(k) for k in shifts)
+    w = x.shape[1]
+    padded = np.pad(x, ((0, 0), (r, r)) + ((0, 0),) * (x.ndim - 2), mode="edge")   # edge pixels repeat: nothing wraps round the frame
+    return sum(padded[:, r - k:r - k + w] for k in shifts) / taps
 
 
 def export_otio(derived: dict, path: Path) -> Path:

@@ -256,7 +256,7 @@ class Attempts:
     def rows(self) -> list[dict]:
         return json.loads(self.path.read_text(encoding="utf-8")) if self.path.exists() else []
 
-    def add(self, cause: str = "", *, escalated: bool = False) -> dict:
+    def add(self, cause: str = "", *, escalated: bool = False, kind: str | None = None) -> dict:
         rows = self.rows()
         plain = sum(1 for r in rows if not r["escalated"])
         esc = sum(1 for r in rows if r["escalated"])
@@ -267,6 +267,8 @@ class Attempts:
             raise NeedsReview(f"{self.path.parent.name}: attempts 1-{self.at_level} at the assigned level are used; "
                               "the next one runs only escalated (Opus or its plan), then the item stops (OR-04)")
         row = {"n": len(rows) + 1, "escalated": escalated, "cause": cause[:400], "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+        if kind:
+            row["kind"] = kind   # "render" = a render retry (qa/retry_router); other kinds (escalation, hand note) are not renders
         write_json_atomic(self.path, rows + [row])
         return row
 
@@ -280,8 +282,9 @@ def retry_multiplier(renders: int, accepted: int) -> float | None:
 
 
 def count_renders(attempt_files) -> int:
-    """Renders made: one row per attempt in each shot's ``attempts.json`` (the QA retry router adds a row per attempt)."""
-    return sum(len(Attempts(p).rows()) for p in attempt_files)
+    """Render retries made: the rows tagged ``kind="render"`` (the QA retry router tags every row it adds) in each shot's
+    ``attempts.json``. A row with no ``kind`` (written before the tag existed) still counts as a render, for compatibility; any other kind does not."""
+    return sum(1 for p in attempt_files for r in Attempts(p).rows() if r.get("kind", "render") == "render")
 
 
 def renders_made(accepted: int, attempt_files) -> int:

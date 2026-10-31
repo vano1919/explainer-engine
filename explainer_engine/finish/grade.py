@@ -73,11 +73,19 @@ def blend_cap(blend: float) -> tuple[float, bool]:
     return max(0.0, min(float(blend), top)), float(blend) > top
 
 
+# The scale (key std / frame std) is bounded: a near-flat boundary frame (night sky, black frame) would give a scale in the thousands
+# and blow its noise up over the whole shot. BP-130 has no such number (its thresholds are blend_max and the statistics), so these two
+# are module constants and a REVIEW house choice (not sourced); `scale_clipped` in the params is the REVIEW finding the caller reports.
+SCALE_MIN, SCALE_MAX = 0.25, 4.0
+
+
 def transfer_params(frame: np.ndarray, key_frame: np.ndarray) -> dict:
-    """The per-channel scale and shift that move ``frame``'s LAB mean/std onto the key's (one set can serve a whole shot)."""
+    """The per-channel scale and shift that move ``frame``'s LAB mean/std onto the key's (one set can serve a whole shot); the scale
+    is clipped to ``SCALE_MIN``..``SCALE_MAX`` and ``scale_clipped`` says so (REVIEW)."""
     (m, s), (km, ks) = lab_stats(frame), lab_stats(key_frame)
-    scale = np.where(s > 1e-6, ks / np.maximum(s, 1e-6), 1.0)
-    return {"mean": m, "scale": scale, "key_mean": km}
+    raw = np.where(s > 1e-6, ks / np.maximum(s, 1e-6), 1.0)
+    scale = np.clip(raw, SCALE_MIN, SCALE_MAX)
+    return {"mean": m, "scale": scale, "key_mean": km, "scale_clipped": bool(np.any(scale != raw))}
 
 
 def apply_transfer(frame: np.ndarray, params: dict, blend: float) -> np.ndarray:

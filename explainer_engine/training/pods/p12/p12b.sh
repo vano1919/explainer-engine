@@ -37,7 +37,7 @@ for f in ('p12b.py', 'p12b.json'):
     hf_hub_download('vano1919/tmr-artifacts', 'code/p12/' + f, repo_type='dataset', local_dir='$JOB/dl')
 " || { ev job_files_failed; exit 1; }
 cp "$JOB/dl/code/p12/p12b.py" "$JOB/dl/code/p12/p12b.json" "$JOB/"
-printf '%s  %s\n' d0ec1fd62e4704eaa504c9c1cde6972db54aec696271639a87e34e3c4a22fee8 "$JOB/p12b.py" 70b7db03afacbc3593e60d19db607b5df67790d2d962520ba1e4025959e5508e "$JOB/p12b.json" > "$JOB/sha.txt"
+printf '%s  %s\n' 33e6fc590ecca848b73841bfddbabadca4613d20002e5d5d9cc67aab9dbd69ba "$JOB/p12b.py" 1aa4a1455130c7f0ee1e55277b8807c941fb8aa714e61cab17ce872a9087a175 "$JOB/p12b.json" > "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || { ev job_files_sha_mismatch; exit 3; }
 ee_needs_check   # CR-18: the wrapper lists the `# needs:` files above; a missing one ends the pod FAILED rc=66 before p12b.py touches the GPU
 python3 "$JOB/p12b.py"

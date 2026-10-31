@@ -143,6 +143,8 @@
     "repo": "Lightricks/LTX-Video-0.9.8-13B-distilled",
     "revision": "7c64400e1861cc0d7b98d570a1926d5408ec60cd",
     "local": "ltx",
+  "expected_gb": 32,
+  "margin_gb": 15,
     "note": "weights only, fetched in the background while Q1-Q3 draw (creator 2026-10-31, RP-01 Path A); no video step runs in this script (P12c); revision = config/cloud_pins.json models.video_ltx"
   },
   "plan": {

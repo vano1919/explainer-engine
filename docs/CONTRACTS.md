@@ -167,6 +167,7 @@ the derived files; check them with `python -m explainer_engine.core.contracts ch
 Prompts come from `scripting/film_shots.compose` (the one prompt writer); model revisions and the LoRA hash from
 `config/cloud_pins.json` `models` (a null revision and sha256 = not decided = the lane is refused, CR-18, OR-22); the seed of try N is the
 Nth of `router.SEEDS` (BP-165 `max_tries` tries, then the item stops).
+`--attempt N` is one number for every shot; `route(attempt={shot_id: N})` re-routes only the named shots (the rest keep attempt 1, so their specs and cache keys stay). Retry k of the retry router (`qa/retry_router`) is router attempt k + 1: the first render is attempt 1, BP-165 `max_tries` 3 allows two retries here, and the fallback after them is not a render. `REWEIGHT_REFERENCES` has no router input yet (reference weights come only from the card), so that directive reseeds at best.
 
 | Lane | Specs written | Notes |
 |---|---|---|

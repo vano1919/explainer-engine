@@ -142,8 +142,24 @@ def test_the_video_download_runs_in_a_background_thread_and_a_failure_does_not_s
     monkeypatch.setattr(m, "MODELS", tmp_path / "models")
     cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
     log = m.Log(tmp_path / "out")
+    monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=200 * 2 ** 30))   # the guard is tested below
     th = m.start_video_download(log, cfg)
     th.join(5)
     assert calls == [("Lightricks/LTX-Video-0.9.8-13B-distilled", "7c64400e1861cc0d7b98d570a1926d5408ec60cd")] and not th.is_alive()
     evs = [json.loads(x)["ev"] for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
     assert evs == ["video_download_start", "video_download_failed"]
+
+
+def test_the_video_download_is_skipped_when_the_free_disk_is_below_video_plus_margin(tmp_path, monkeypatch):
+    import types
+    m = _load()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    need = (cfg["video"]["expected_gb"] + cfg["video"]["margin_gb"]) * 2 ** 30
+    assert m.video_download_fits(need, cfg) and not m.video_download_fits(need - 1, cfg)
+    monkeypatch.setattr(m, "MODELS", tmp_path / "models")
+    monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=need - 1))
+    log = m.Log(tmp_path / "out")
+    assert m.start_video_download(log, cfg) is None                       # no thread, no download; the wait loop guards None
+    evs = [json.loads(x) for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
+    assert [e["ev"] for e in evs] == ["video_download_skipped"] and evs[0]["why"] == "disk"
+    assert "video is not None and video.is_alive()" in (DIR / "p12b.py").read_text(encoding="utf-8")

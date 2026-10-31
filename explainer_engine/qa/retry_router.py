@@ -56,11 +56,12 @@ def directive(shot_id: str, attempt: int, lane: str, *, fallback_failed: bool = 
 
 def next_attempt(attempts_path: Path | str, shot_id: str, lane: str, cause: str = "", *, fallback_failed: bool = False) -> dict | None:
     """Count one more attempt in ``attempts.json`` and return its directive. The fourth raises ContractError before anything
-    is written."""
+    is written. Retry k is ``edit.router`` attempt k + 1 (the first render is attempt 1); the row is tagged ``kind="render"`` for
+    ``ledger.count_renders``. ``REWEIGHT_REFERENCES`` has no router input yet (reference weights come from the card), so it reseeds at best."""
     log = Attempts(attempts_path, at_level=MAX_ATTEMPTS, escalated=0)
     n = len(log.rows()) + 1
     d = directive(shot_id, n, lane, fallback_failed=fallback_failed)
-    log.add(cause or f"{shot_id}: attempt {n}")
+    log.add(cause or f"{shot_id}: attempt {n}", kind="render")
     return d
 
 

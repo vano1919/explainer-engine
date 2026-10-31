@@ -350,6 +350,10 @@ def compensator_cues(job: Path, spine: dict, root: Path, existing: list[dict]) -
     if not path.exists():
         return [], []
     manifest = _load(path)
+    spine_file = job / "audio" / "audio_spine.json"
+    if not spine_file.exists() or manifest["audio_spine"]["sha256"] != contracts.sha256_file(spine_file):
+        raise ContractError("CN-02: visual/visual_comp_manifest.json was built on another audio spine than audio/audio_spine.json "
+                            "(its audio_spine.sha256 differs): its cues would land on the wrong words; rebuild the manifest")
     fps, words = spine["fps"], spine["words"]
     item = _micro_cue_item(root)
     gain = float(SR.T("BP-120", "micro_cue_dbfs"))

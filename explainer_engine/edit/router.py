@@ -114,13 +114,20 @@ def _spec(base: dict, **over) -> dict:
 
 
 def route(film_shots_path: Path | str, job_dir: Path | str, *, job_id: str, pins: dict | None = None,
-          comp_manifest: Path | str | None = None, audio_spine: Path | str | None = None, attempt: int = 1) -> dict:
-    """Write ``shots/<id>.still.spec.json`` / ``<id>.video.spec.json`` and ``shots/route.json`` under ``job_dir``; return the route."""
+          comp_manifest: Path | str | None = None, audio_spine: Path | str | None = None, attempt: int | dict[str, int] = 1) -> dict:
+    """Write ``shots/<id>.still.spec.json`` / ``<id>.video.spec.json`` and ``shots/route.json`` under ``job_dir``; return the route.
+
+    ``attempt`` is one number for every shot, or a ``{shot_id: attempt}`` map (a shot not named is attempt 1): a single-shot retry
+    re-routes only that shot with the next seed and every accepted shot keeps its spec and cache key. Retry k of the retry router
+    (``qa/retry_router``) is router attempt k + 1 (the first render is attempt 1, so BP-165 ``max_tries`` 3 allows two retries
+    here and the fallback after them is not a render). ``REWEIGHT_REFERENCES`` has no router input yet: reference weights come
+    only from the card, so that directive reseeds at best."""
     job, fs_path = Path(job_dir), Path(film_shots_path)
     pins = pins if pins is not None else pins_mod.load()
-    if not 1 <= attempt <= min(len(SEEDS), SR.T("BP-165", "max_tries")):
-        raise ContractError(f"attempt {attempt}: there are {SR.T('BP-165', 'max_tries')} tries per shot, then the item stops (BP-165, OR-04)")
-    seed = SEEDS[attempt - 1]
+    attempts = attempt if isinstance(attempt, dict) else {}
+    for n in [attempt] if not isinstance(attempt, dict) else list(attempts.values()):
+        if not 1 <= n <= min(len(SEEDS), SR.T("BP-165", "max_tries")):
+            raise ContractError(f"attempt {n}: there are {SR.T('BP-165', 'max_tries')} tries per shot, then the item stops (BP-165, OR-04)")
     doc = film_shots.load(fs_path)
     C.validate(doc)   # the lane refusals (D-89, A2), CN-08/09 geometry and the schema, before anything is routed
     fps = doc["fps"]
@@ -143,6 +150,7 @@ def route(film_shots_path: Path | str, job_dir: Path | str, *, job_id: str, pins
     routes = []
     for shot in doc["shots"]:
         sid, lane = shot["id"], shot["lane"]
+        seed = SEEDS[(attempts.get(sid, 1) if isinstance(attempt, dict) else attempt) - 1]
         entry = {"shot_id": sid, "lane": lane, "specs": [], "comp_items": []}
         if lane in HAS_COMP:
             items = [it["item_id"] for it in (comp or {}).get("items", []) if it["shot_id"] == sid]
