@@ -102,3 +102,13 @@ def test_manifest_accepts_the_p4_optional_fields(tmp_path):
     m["items"][0]["beat_grid"]["source"] = "guessed"
     (tmp_path / "manifest.json").write_text(json.dumps(m))
     assert sfx_library.validate(tmp_path, admissions=adm)
+
+
+def test_a_note_that_says_no_attribution_is_not_a_credit_but_cc_by_and_a_licence_attribution_are():
+    item = lambda lic: {"id": "x__v1", "licence": {"status": "licensed", **lic}}   # noqa: E731
+    assert sfx_library.credit_line(item({"note": "bought; no attribution required"})) is None
+    assert sfx_library.credit_line(item({"note": "CC BY 4.0 by Jane"})) == "x__v1: CC BY 4.0 by Jane"
+    assert sfx_library.credit_line(item({"note": "x", "attribution": "By Jane "})) == "By Jane"
+    for note in ("attribution not required", "No attribution required", "without attribution", "Attribution is never needed"):
+        assert sfx_library.credit_line(item({"note": note})) is None, note
+    assert sfx_library.credit_line(item({"note": "Attribution required: A"})) == "x__v1: Attribution required: A"

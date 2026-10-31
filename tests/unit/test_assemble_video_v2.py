@@ -50,9 +50,12 @@ def make_job(tmp_path, *, extra=0, lead=6, key=False, grade=None, handle=HANDLE,
         np.save(shots_dir / f"{sid}.npy", _clip(COLOURS[sid], n, i))
     spine = {"schema": "audio_spine/2", "fps": FPS, "total_frames": 96, "words": [], "post_hoc_shots": [],
              "segments": [{"id": "s1", "start_frame": 0}, {"id": "s2", "start_frame": 48}]}
-    film = {"schema": "film_shots/2", "fps": FPS, "places": {}, "shots": [
-        {"id": sid, "scene": sc, "lane": "KEYFRAME_VIDEO", "duration_frames": SPANS[sid], "seconds": SPANS[sid] / FPS,
-         "frame": {"place": "p", "size": "wide"}, "focal_xy": [0.5, 0.5]} for sid, sc in (("A", "s1"), ("B", "s1"), ("C", "s2"))]}
+    film = {"schema": "film_shots/2", "episode": "napoleon", "fps": FPS, "style": {"trigger": "xworld", "video_sentence": "Hand-drawn cartoon."},
+            "cast": {"nap": {"tag": "a short man in a green coat with a bicorne hat"}}, "places": {"p": "a canvas command tent"}, "shots": [
+        {"id": sid, "scene": sc, "mode": "narrated", "beat": "A beat.", "seconds": SPANS[sid] / FPS, "frame": {"size": "WS", "place": "p"},
+         "source": "keyframe", "tier": "hold", "lane": "KEYFRAME_LTX", "archetype": "scene_wide", "duration_frames": SPANS[sid],
+         "width": 1920, "height": 1088, "lens_tier": "normal", "focal_xy": [0.5, 0.5], "continuity_ref": None, "blocking_ref": None}
+        for sid, sc in (("A", "s1"), ("B", "s1"), ("C", "s2"))]}
     spine_ref, film_ref = _write(job / "audio_spine.json", spine), _write(job / "film_shots.json", film)
     key_ref = None
     if key:
@@ -206,3 +209,29 @@ def test_build_video_v2_encodes_the_master_frame_at_the_job_fps_and_writes_the_d
     assert derived["schema"] == "assemble_manifest/1" and set(derived["derived_from"]) >= {"film_shots", "audio_spine"}
     assert contracts.derived_findings(derived, job) == []
     assert json.loads(r["otio"].read_text(encoding="utf-8"))["OTIO_SCHEMA"] == "Timeline.1"
+
+
+@pytest.mark.parametrize("lane,match", [("HOST_COMMENTARY", "D-89"), ("DRAMA_BLOCKED_3D", "D-75"), ("NOT_A_LANE", "CN-01")])
+def test_a_refused_or_unknown_lane_in_film_shots_does_not_compile(tmp_path, lane, match):
+    job, shots, manifest = make_job(tmp_path)
+    film = json.loads((job / "film_shots.json").read_text(encoding="utf-8"))
+    film["shots"][0]["lane"] = lane
+    manifest["film_shots"] = _write(job / "film_shots.json", film)
+    with pytest.raises(ContractError, match=match):
+        ASM.plan_video_v2(manifest, job, shots, size=SIZE)
+
+
+def test_frames_are_streamed_not_held_per_shot(tmp_path, monkeypatch):
+    """The first frame comes out after one clip frame (plus the two boundary reads of a keyed scene), not after the whole shot."""
+    job, shots, manifest = make_job(tmp_path, key=True)
+    plan = ASM.plan_video_v2(manifest, job, shots, size=SIZE)
+    read, real = [], ASM.clip_frames
+
+    def spy(path, start, count):
+        for fr in real(path, start, count):
+            read.append(count)
+            yield fr
+    monkeypatch.setattr(ASM, "clip_frames", spy)
+    it = ASM.iter_video_frames(plan, job, shots)
+    next(it)
+    assert read.count(24) == 1 and read.count(1) == 2   # one frame of the 24-frame stream, the two boundary frames of the first shot

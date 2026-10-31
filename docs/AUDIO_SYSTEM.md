@@ -172,7 +172,6 @@ cues; perspective follows the shot size (BP-122), `no` = centred and dry.
 |---|---|---|---|---|
 | KEYFRAME_LTX | bed | scene | foley+loudest | yes |
 | DIALOGUE_CU | dialogue | scene, ducked | none | near, dry |
-| HOST_COMMENTARY | none | hosts' room tone | none | no |
 | DRAMA_BLOCKED_3D | none | scene | foley | yes |
 | ATMOS_BROLL | bed if present | scene | loudest | yes |
 | MAP | none | neutral room tone | cues only | no |

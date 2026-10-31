@@ -164,6 +164,8 @@ def route(film_shots_path: Path | str, job_dir: Path | str, *, job_id: str, pins
         if lane in HAS_VIDEO:
             vid = prompts[f"{sid}.video"]
             slice_hash = _spine_window(spine, sid, fps)["clip_sha256"] if lane == "DIALOGUE_CU" else None
+            # until the keyframe is accepted its file does not exist: the ref's sha256 is the still spec's cache key; the renderer
+            # re-derives this video spec with the accepted PNG's real sha256 (docs/CONTRACTS.md "Shot router")
             refs = [{"role": "keyframe", "path": f"keyframes/{sid}.png", "sha256": still_key}] if still_key else []
             pin = (pins.get("models") or {}).get("video_ltx") or {}
             spec = _spec(common, prompt=vid["prompt"], negative=vid["neg"], model=_model(pins, "video_ltx"), frames=shot["duration_frames"],

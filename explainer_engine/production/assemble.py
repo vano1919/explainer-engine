@@ -682,6 +682,7 @@ def plan_video_v2(manifest: dict, job: Path, shots_dir: Path, *, size: tuple[int
     contracts.validate(manifest)
     spine = json.loads(_checked_ref(job, manifest["audio_spine"], "audio_spine").read_text(encoding="utf-8"))
     film = json.loads(_checked_ref(job, manifest["film_shots"], "film_shots").read_text(encoding="utf-8"))
+    contracts.validate(film)   # a refused lane (D-89, A2) or an unknown one must not compile
     fps, total = int(spine["fps"]), int(spine["total_frames"])
     if film.get("fps") not in (None, fps):
         raise ContractError(f"CN-09 film_shots.fps {film['fps']} differs from the spine's {fps} (D-85)")
@@ -762,14 +763,16 @@ def iter_video_frames(plan: dict, job: Path, shots_dir: Path):
             if s["scene"] not in keys:
                 keys[s["scene"]] = np.asarray(_fit(np.asarray(Image.open(Path(job) / sc["key_master_frame"]).convert("RGB")), size)) / 255.0
             key = keys[s["scene"]]
-        frames = [_fit(f, size) for f in clip_frames(clip_path(shots_dir, s["shot_id"]), s["source_in"], s["frames"])]
+        clip = clip_path(shots_dir, s["shot_id"])
         params = None
-        if key is not None:
-            a, b = frames[0] / 255.0, frames[-1] / 255.0
+        if key is not None:   # the two boundary frames are read on their own: the shot's frames are streamed, never held together
+            first = next(iter(clip_frames(clip, s["source_in"], 1)))
+            last = next(iter(clip_frames(clip, s["source_in"] + s["frames"] - 1, 1)))
+            a, b = _fit(first, size) / 255.0, _fit(last, size) / 255.0
             params = grade_mod.transfer_params(np.concatenate([a.reshape(-1, 1, 3), b.reshape(-1, 1, 3)]), key)
-        for k, im in enumerate(frames):
+        for k, raw in enumerate(clip_frames(clip, s["source_in"], s["frames"])):
             f = s["start_frame"] + k
-            x = im / 255.0
+            x = np.asarray(_fit(raw, size), dtype=np.float32) / np.float32(255.0)
             if params is not None:
                 x = grade_mod.apply_transfer(x, params, sc["blend"])
             for start, w in whip_at.items():  # the whip is centred on the cut; BP-129 ``whip_frames`` long

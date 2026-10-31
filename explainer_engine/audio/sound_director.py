@@ -65,7 +65,6 @@ RULE_OF = {"SD-01": "BP-116", "SD-02": "BP-161", "SD-03": "BP-117", "SD-04": "BP
 MATRIX: dict = {
     "KEYFRAME_LTX": {"native": "bed", "bed": "scene", "spots": "foley+loudest", "perspective": "yes"},
     "DIALOGUE_CU": {"native": "dialogue", "bed": "scene, ducked", "spots": "none", "perspective": "near, dry"},
-    "HOST_COMMENTARY": {"native": "none", "bed": "hosts' room tone", "spots": "none", "perspective": "no"},
     "DRAMA_BLOCKED_3D": {"native": "none", "bed": "scene", "spots": "foley", "perspective": "yes"},
     "ATMOS_BROLL": {"native": "bed if present", "bed": "scene", "spots": "loudest", "perspective": "yes"},
     "MAP": {"native": "none", "bed": "neutral room tone", "spots": "cues only", "perspective": "no"},
@@ -334,6 +333,13 @@ def _micro_cue_item(root: Path) -> dict:
                            machine_review="procedural placeholder: plain, replaceable by recorded foley", loop=False)
 
 
+def _densest(kept: list[int], at: int, span: int) -> int:
+    """The most cues, ``at`` included, that fall in any window of ``span`` frames containing ``at``: cues kept on either side of
+    ``at`` count (a later existing cue is as much a neighbour as an earlier one)."""
+    near = sorted(f for f in kept if abs(f - at) < span) + [at]
+    return max(sum(1 for f in near if lo <= f < lo + span) for lo in set(f for f in near if f > at - span and f <= at))
+
+
 def compensator_cues(job: Path, spine: dict, root: Path, existing: list[dict]) -> tuple[list[dict], list[dict]]:
     """F5 / CMP-16: a micro-cue at BP-120's ``micro_cue_dbfs`` for each story event (``story_ops``) of the job's
     ``visual/visual_comp_manifest.json`` and the ``comp_spec/1`` of its items; camera moves, labels and the rest stay silent (VB-08).
@@ -371,9 +377,9 @@ def compensator_cues(job: Path, spine: dict, root: Path, existing: list[dict]) -
         why = None
         if at < prev_end or at < 0 or any(w["start_frame"] <= at < w["end_frame"] for w in words):
             why = "no gap before the word: the cue would start inside a narration word"
-        elif sum(1 for f in kept if at - minute < f <= at) + 1 > per_min:
+        elif _densest(kept, at, minute) > per_min:
             why = f"more than {per_min} cues a minute (BP-81)"
-        elif sum(1 for f in kept if at - window < f <= at) + 1 > burst:
+        elif _densest(kept, at, window) > burst:
             why = f"more than {burst} cues in {burst_s:g} s (BP-81)"
         if why:
             dropped.append({"where": where, "op": op, "frame": frame, "why": why})

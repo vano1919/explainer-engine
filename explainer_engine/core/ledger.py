@@ -276,12 +276,17 @@ REVIEW_MINUTES = "review_minutes.jsonl"   # jobs/<run>/review_minutes.jsonl: one
 
 def retry_multiplier(renders: int, accepted: int) -> float | None:
     """Renders divided by accepted shots (an accepted shot is one in ``core/shot_cache``); None until a shot is accepted."""
-    return round(renders / accepted, 3) if accepted > 0 and renders >= accepted else None
+    return round(renders / accepted, 3) if accepted > 0 else None
 
 
 def count_renders(attempt_files) -> int:
     """Renders made: one row per attempt in each shot's ``attempts.json`` (the QA retry router adds a row per attempt)."""
     return sum(len(Attempts(p).rows()) for p in attempt_files)
+
+
+def renders_made(accepted: int, attempt_files) -> int:
+    """First renders are not logged by the retry router (it logs retries only): renders = accepted shots + logged retries."""
+    return accepted + count_renders(attempt_files)
 
 
 def add_review_minutes(job_dir: Path | str, minutes: float, note: str = "", *, by: str = "creator") -> dict:
@@ -368,7 +373,8 @@ def main(argv=None) -> None:
         run = Run(Path(a[1]), json.loads(Path(a[1]).read_text(encoding="utf-8")))  # read-only: Run.open would save
         opt = {k: a[i + 1] for i, k in enumerate(a) if k.startswith("--") and i + 1 < len(a)}
         files = sorted(Path(opt["--attempts"]).rglob("attempts.json")) if "--attempts" in opt else []
-        m = pilot_measures(run, run.path.parent, renders=count_renders(files) if files else None,
+        m = pilot_measures(run, run.path.parent, renders=renders_made(int(opt["--accepted"]), files)
+                           if "--attempts" in opt and "--accepted" in opt else None,
                            accepted=int(opt["--accepted"]) if "--accepted" in opt else None,
                            finished_minutes=float(opt["--finished-minutes"]) if "--finished-minutes" in opt else None)
         print(json.dumps({"path": str(run.path), "meta": run.data.get("meta", {}), **run.report(), "pilot": m,

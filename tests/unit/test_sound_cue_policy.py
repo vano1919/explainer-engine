@@ -44,7 +44,8 @@ def test_thirty_story_events_in_a_minute_get_at_most_bp81_per_minute_all_at_the_
         assert not any(w["start_frame"] <= c["frame"] < w["end_frame"] for w in spine["words"]), c   # spine check: never inside a word
     frames = sorted(c["frame"] for c in cues)
     burst = SR.T("BP-81", "burst_max")
-    assert all(sum(1 for g in frames if f <= g < f + 10 * spine["fps"]) <= burst for f in frames)
+    window = SR.T("BP-81", "burst_window_s")
+    assert all(sum(1 for g in frames if f <= g < f + window * spine["fps"]) <= burst for f in frames)
     assert len(rep["dropped_cues"]) == 30 - len(cues) and all("BP-81" in d["why"] for d in rep["dropped_cues"])
     assert [f for f in rep["findings"] if f["severity"] == "FAIL"] == []            # the AUDIO_TIMED gate: 0 FAIL
 
@@ -73,6 +74,18 @@ def test_cues_already_planned_count_toward_the_density(tmp_path):
     already = [{"name": "x", "frame": f, "gain_db": -26.0, "max_ms": None} for f in range(0, 8 * 10, 10)]   # eight cues in the first 1.6 s
     cues, dropped = D.compensator_cues(job, spine, tmp_path / "lib", already)
     assert len(already) >= per_min and cues == [] and len(dropped) == 8
+
+
+def test_a_later_existing_cue_counts_toward_the_burst(tmp_path):
+    job, spine = comp_job(tmp_path, [("BALLISTIC_RANGE_AND_ENERGY_HUD", [("stamp", 6)])])
+    burst = int(SR.T("BP-81", "burst_max"))
+    lead = max(1, int(SR.T("BP-54", "early_max_ms") / 1000 * spine["fps"]))
+    at = spine["words"][6]["start_frame"] - lead
+    later = [{"name": "x", "frame": at + 1 + k, "gain_db": -26.0, "max_ms": None} for k in range(burst)]   # all AFTER the candidate
+    cues, dropped = D.compensator_cues(job, spine, tmp_path / "lib", later)
+    assert cues == [] and "BP-81" in dropped[0]["why"]
+    cues, dropped = D.compensator_cues(job, spine, tmp_path / "lib", later[:-1])    # one fewer later cue: room for exactly one more
+    assert len(cues) == 1 and dropped == []
 
 
 def test_no_visual_manifest_changes_nothing_and_the_catalogue_marks_the_story_ops(tmp_path):

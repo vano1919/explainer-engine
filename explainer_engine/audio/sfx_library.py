@@ -158,13 +158,14 @@ def validate(root: Path, *, check_files: bool = True, admissions: Path | str | N
     return problems
 
 
-CC_BY = re.compile(r"\bCC[- ]BY\b|\battribution\b", re.I)
+# CC BY, or the word "attribution" asked for ("Attribution required"); a negated one ("no attribution required", "attribution not needed") is not
+CC_BY = re.compile(r"\bCC[- ]BY\b|(?<!\bno )(?<!\bnot )(?<!\bwithout )(?<!\bnon-)\battribution\b(?!\s+(?:is\s+)?(?:not|never)\b)", re.I)
 
 
 def credit_line(item: dict) -> str | None:
     """The credit a licence asks for, or None (F5, D-83: licences never block, they only add text). CC0, our own procedural sounds and
     generated takes need none; a ``licensed`` item is credited with its ``licence.attribution`` or, when that is missing and its note
-    names CC BY / attribution, with ``"<id>: <note>"``. A ``licensed`` item whose licence asks for nothing stays silent."""
+    names CC BY / an attribution ask, with ``"<id>: <note>"``. A ``licensed`` item whose licence asks for nothing stays silent."""
     lic = item.get("licence") or {}
     if lic.get("status") != "licensed":
         return None

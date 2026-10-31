@@ -70,8 +70,8 @@ differ). Every row is a hypothesis until a second source type is verified.
 | CRAFT-ANI-12 | eye | appeal: the hero stays on model (hero references, D-55) | clip frames | D-55 | manual |
 | CRAFT-ANI-13 | eye | a held character breathes: blink cadence and a moving hold on long holds | clip frames (eye state over time) | BP-132 | manual |
 | CRAFT-ANI-14 | eye | a planted foot does not slide | clip frames (foot contact point) | - | manual |
-| CRAFT-ANI-15 | code | lip-sync offset and confidence measured on every full-tier spoken shot | clip + its line's audio | BP-133 | `explainer_engine/qa/identity.py` (planned, P8) |
-| CRAFT-ANI-16 | code | identity score against the hero sheet, threshold calibrated on our own sheets | clip frames + hero sheet | BP-133 | `explainer_engine/qa/identity.py` (planned, P8) |
+| CRAFT-ANI-15 | code | lip-sync offset and confidence measured on every full-tier spoken shot | clip + its line's audio | BP-133 | `explainer_engine/qa/identity.py` |
+| CRAFT-ANI-16 | code | identity score against the hero sheet, threshold calibrated on our own sheets | clip frames + hero sheet | BP-133 | `explainer_engine/qa/identity.py` |
 <!-- craft-checklist:animation:end -->
 
 ## Sourced rules (docs/SOURCED_RULES.md)

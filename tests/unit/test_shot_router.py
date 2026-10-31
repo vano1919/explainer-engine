@@ -195,6 +195,15 @@ def test_g_camera_on_the_far_side_of_the_axis_flips_the_side_and_ct06_reports_it
     assert {lm["id"] for lm in v2["location"]["landmarks"]} >= {"map_table", "table"}   # the set's landmark object joins the card's
 
 
+def test_g3_the_scene_set_ref_hashes_the_file_not_a_reserialised_dict(tmp_path):
+    sset, card = scene_set_and_card(+3)
+    path = tmp_path / "tent.json"
+    path.write_text(json.dumps(sset), encoding="utf-8")   # compact bytes: not what json.dumps(indent=2) would give
+    ref = CT.derive_card_v2(card, path)["derived_from"]["scene_set"]
+    assert ref == {"path": "sets/tent.json", "sha256": sha(path)}
+    assert ref["sha256"] != CT.derive_card_v2(card, sset)["derived_from"]["scene_set"]["sha256"]
+
+
 def test_g2_a_camera_on_the_axis_has_no_side_and_a_v1_card_may_not_name_a_set():
     sset, card = scene_set_and_card(0)
     with pytest.raises(ContractError, match="no side"):
@@ -216,7 +225,7 @@ def test_an_undecided_model_or_a_fourth_try_is_refused(tmp_path):
     job = make_job(tmp_path)
     pins = copy.deepcopy(PINS)
     pins["models"]["video_ltx"]["revision"] = None
-    with pytest.raises(ContractError, match="not decided"):
+    with pytest.raises(ContractError, match="not decided"):   # a null revision/sha256 refuses the video lane (injected pin)
         R.route(job["fs"], tmp_path, job_id="job-001", pins=pins, comp_manifest=job["comp"], audio_spine=job["spine"])
     with pytest.raises(ContractError, match="tries per shot"):
         run(tmp_path, job, attempt=4)
@@ -224,11 +233,10 @@ def test_an_undecided_model_or_a_fourth_try_is_refused(tmp_path):
     assert json.loads((tmp_path / "shots" / "s1.still.spec.json").read_text(encoding="utf-8"))["seed"] == 1337
 
 
-def test_the_real_pins_file_lists_the_lora_and_leaves_the_video_model_undecided():
+def test_the_real_pins_file_lists_the_lora_and_the_keyframe_model():
     from explainer_engine.cloud import pins
     models = pins.load()["models"]
     assert models["loras"]["xworld_v2"]["weight"] == 0.7 and models["keyframe"]["revision"]
-    assert not (models["video_ltx"]["revision"] or models["video_ltx"]["sha256"])   # decided by the creator, not by code
 
 
 def test_a_shot_route_must_name_fresh_inputs(tmp_path):
@@ -238,3 +246,18 @@ def test_a_shot_route_must_name_fresh_inputs(tmp_path):
     job["fs_doc"]["shots"][0]["seconds"] = 11
     put(job["fs"], job["fs_doc"])
     assert any(f["rule"] == "CN-02" for f in C.errors(route, tmp_path))
+
+
+def test_the_real_pins_route_a_valid_keyframe_ltx_shot_to_a_still_and_a_video_spec(tmp_path):
+    """config/cloud_pins.json (not an injected pin): the video model has its HF revision, the LoRA is xworld_v2 at 0.7 (creator
+    2026-10-31), so a valid KEYFRAME_LTX shot produces a still spec and a video spec."""
+    job = make_job(tmp_path)
+    out = R.route(job["fs"], tmp_path, job_id="job-001", comp_manifest=job["comp"], audio_spine=job["spine"])   # pins=None: the real file
+    assert [s["role"] for s in out["routes"][0]["specs"]] == ["still", "video"]
+    still = json.loads((tmp_path / "shots" / "s1.still.spec.json").read_text(encoding="utf-8"))
+    video = json.loads((tmp_path / "shots" / "s1.video.spec.json").read_text(encoding="utf-8"))
+    assert video["model"] == {"id": "Lightricks/LTX-Video-0.9.8-13B-distilled", "sha256": None,
+                              "revision": "7c64400e1861cc0d7b98d570a1926d5408ec60cd"}
+    assert video["frames"] == 241 and video["refs"][0]["role"] == "keyframe"
+    assert still["loras"] == [{"id": "xworld_v2", "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02", "weight": 0.7}]
+    assert C.main(["check", *map(str, spec_files(tmp_path)), str(tmp_path / "shots" / "route.json"), "--base", str(tmp_path)]) == 0

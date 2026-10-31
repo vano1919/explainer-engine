@@ -34,9 +34,19 @@ def test_short_format_accepts_9_16_at_any_height_and_refuses_16_9():
 
 
 def test_five_planned_shorts_all_pass_the_format_check():
+    """Five Shorts of a script fixture go through the real planning steps (``beats.short_doc`` + ``validate.short_words``, the
+    estimated read: no Whisper needed); each plan row takes the delivery frame and the Short's own estimated seconds."""
+    from test_short_beats import short_doc_with_beats
+    from explainer_engine.production import beats as BEATS
+    from explainer_engine.production import validate as V
+    doc = short_doc_with_beats()
+    base = doc["shorts"][0]
+    doc["shorts"] = [dict(copy.deepcopy(base), id=f"SH{i:02d}") for i in range(1, delivery.shorts() + 1)]
     w, h = delivery.shorts_frame()
-    plan = [{"id": f"SH{i:02d}", "width": w, "height": h, "seconds": 45.0 + i} for i in range(1, delivery.shorts() + 1)]
-    assert len(plan) == 5 and all(SF.check(p) == [] for p in plan)
+    plan = [{"id": sh["id"], "width": w, "height": h, "seconds": V.short_words(BEATS.short_doc(doc, sh))["duration"]}
+            for sh in doc["shorts"]]
+    assert len(plan) == 5 and all(p["seconds"] > 0 for p in plan)
+    assert all(SF.check(p) == [] for p in plan), [SF.check(p) for p in plan]
 
 
 def test_safe_zone_bands_scale_four_thirds_from_bp29():

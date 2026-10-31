@@ -35,6 +35,8 @@ STAGES = ("keyframe", "clip", "assembled")
 def action_for(attempt: int, lane: str, *, fallback_failed: bool = False) -> str:
     """The OR-04 directive of the attempt that is about to run (1-based). ``fallback_failed``: the fallback already ran and
     the shot still fails -> ESCALATE_TO_HUMAN."""
+    if lane in contracts.REFUSED_LANES:
+        raise ContractError(f"CN-11: lane {lane} is refused: {contracts.REFUSED_LANES[lane]}")
     if attempt > MAX_ATTEMPTS or attempt < 1:
         raise ContractError(f"CN-13: attempt {attempt} of {lane}: after {MAX_ATTEMPTS} attempts the item stops and asks (OR-04)")
     if fallback_failed:

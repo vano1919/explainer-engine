@@ -41,7 +41,7 @@
     "huggingface_hub": {"version": "1.33.0", "smoke_verified": false, "note": "latest 1.x at lookup (the scripts used '<2'); the wrapper's calls (HfApi.upload_folder, list_repo_tree(recursive=True), repo_info) exist in it, checked by import 2026-10-30"}
   },
   "models": {
-    "_doc": "Model ids a shot spec names (P6 shot router, edit/router.py; CN-07). A spec names a model by sha256 or revision, never by name alone: a null here is not decided and the router refuses that lane (Rule one, OR-22). Looked up from training/pods/p12/p12b.json (keyframe base, xworld_v2 sha) and the creator's brief 2026-10-31 (video ids).",
+    "_doc": "Model ids a shot spec names (P6 shot router, edit/router.py; CN-07). A spec names a model by sha256 or revision, never by name alone: a null revision and sha256 here is not decided and the router refuses that lane (Rule one, OR-22). Looked up from training/pods/p12/p12b.json (keyframe base, xworld_v2 sha) and the creator's brief 2026-10-31 (video ids).",
     "keyframe": {
       "id": "Qwen/Qwen-Image-2.1",
       "revision": "d26bb61231c349cf6b7896fa83353113880e1ba3",
@@ -58,27 +58,28 @@
     },
     "video_ltx": {
       "id": "Lightricks/LTX-Video-0.9.8-13B-distilled",
-      "revision": null,
+      "revision": "7c64400e1861cc0d7b98d570a1926d5408ec60cd",
       "sha256": null,
       "params": null,
       "smoke_verified": false,
-      "note": "creator's brief 2026-10-31; revision and render params not decided yet"
+      "note": "creator's brief 2026-10-31; revision = HF main sha read from the HF API 2026-10-31 (lastModified 2025-07-17); a diffusers repo is many files, so the pin is the revision (sha256 stays null as for the keyframe base); render params: none set, the pod script's own (no video pod script yet, P12c)"
     },
     "video_wan": {
       "id": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
-      "revision": null,
+      "revision": "b8fff7315c768468a5333511427288870b2e9635",
       "sha256": null,
       "params": null,
       "smoke_verified": false,
-      "note": "creator's brief 2026-10-31; no lane uses it yet"
+      "note": "creator's brief 2026-10-31; revision = HF main sha read from the HF API 2026-10-31 (lastModified 2025-08-09); no lane uses it yet (fallback)"
     },
     "loras": {
       "xworld_v2": {
         "id": "xworld_v2",
-        "path": "models/xworld_v2/xworld_v2_lora.safetensors",
+        "hf": "vano1919/tmr-artifacts",
+        "path": "lora_plan_2026-10-26/train_xworld_v2/output/xworld_v2_000003000.safetensors",
         "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02",
         "weight": 0.7,
-        "note": "checkpoint-3000 (LT-79), weight 0.7 per the creator's brief 2026-10-31; sha256 of xworld_v2_000003000.safetensors in p12b.json"
+        "note": "checkpoint-3000 (LT-79), weight 0.7 per the creator's brief 2026-10-31; the same hf repo, path and sha256 as style_lora in training/pods/p12/p12b.json (a test keeps the two together)"
       }
     }
   }

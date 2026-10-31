@@ -128,7 +128,7 @@ def test_the_matrix_table_in_the_doc_is_the_code():
     text = (ROOT / "docs" / "AUDIO_SYSTEM.md").read_text(encoding="utf-8")
     body = text.split(D.MATRIX_MARKERS[0], 1)[1].split(D.MATRIX_MARKERS[1], 1)[0]
     assert body.strip() == D.render_matrix().strip()
-    assert set(D.MATRIX) == {"KEYFRAME_LTX", "DIALOGUE_CU", "HOST_COMMENTARY", "DRAMA_BLOCKED_3D", "ATMOS_BROLL", "MAP", "COMPENSATOR",
+    assert set(D.MATRIX) == {"KEYFRAME_LTX", "DIALOGUE_CU", "DRAMA_BLOCKED_3D", "ATMOS_BROLL", "MAP", "COMPENSATOR",
                              "STILL_HOLD", None}
 
 

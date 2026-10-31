@@ -93,7 +93,8 @@ def test_the_committed_p12_scripts_carry_their_needs_and_pass():
     assert D.needs_problems(t) == [] and D.static_problems(t, PINS) == []
     # p12a_A.sh is pinned by sha to the plan's dry-run record (test_p12a_scripts): it is not edited here; a new dry run of it would ask
     # for `# needs: none`, which is for the creator's plan to decide (reported in PROGRESS)
-    assert [p for p, _ in D.needs_of((pods / "p12b.sh").read_text(encoding="utf-8"))] == ["$JOB/p12b.py", "$JOB/p12b.json"]
+    # `# needs: none` (F0-F8 review): the code files are sha256-pinned and the weights are fetched inside p12b.py, not listed
+    assert D.needs_of((pods / "p12b.sh").read_text(encoding="utf-8")) == []
 
 
 # --- the wrapper -------------------------------------------------------------------------------------------------------------

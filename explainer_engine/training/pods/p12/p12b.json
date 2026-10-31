@@ -8,7 +8,7 @@
     "hf": "vano1919/tmr-artifacts",
     "path": "lora_plan_2026-10-26/train_xworld_v2/output/xworld_v2_000003000.safetensors",
     "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02",
-    "weight": 1.0,
+    "weight": 0.7,
     "trigger": "xworld style"
   },
   "mva_lora": {
@@ -41,10 +41,6 @@
     "baker": "lora_plan_2026-10-26/train_xworld_v2/p2s/out/p2s/rome_sheet_baker.png",
     "legionary": "lora_plan_2026-10-26/train_xworld_v2/p2s/out/p2s/rome_sheet_legionary.png"
   },
-  "hosts": {
-    "analyst": "code/p12/hosts/a_idle.png",
-    "compass": "code/p12/hosts/b_hover.png"
-  },
   "stages": {
     "Q1": {
       "people": [
@@ -73,23 +69,6 @@
       "essential": true,
       "order": 1
     },
-    "Q4": {
-      "hosts": [
-        "analyst",
-        "compass"
-      ],
-      "seeds": [
-        11,
-        23,
-        37,
-        53
-      ],
-      "steps": 30,
-      "true_cfg_scale": 2.5,
-      "negative": " ",
-      "essential": true,
-      "order": 2
-    },
     "Q2": {
       "people": [
         "napoleon",
@@ -108,7 +87,7 @@
       "steps": 40,
       "true_cfg_scale": 1.0,
       "essential": false,
-      "order": 3
+      "order": 2
     },
     "Q3": {
       "people": [
@@ -135,7 +114,7 @@
       "steps": 40,
       "true_cfg_scale": 1.0,
       "essential": false,
-      "order": 4
+      "order": 3
     }
   },
   "drop_order": [
@@ -149,13 +128,8 @@
     1024
   ],
   "prompt_mva": "<mva> {azimuth}, eye-level shot. xworld style, full figure on a plain white background.",
-  "prompt_hosts": {
-    "analyst": "xworld style. The same character redrawn in the house style: an egg-shaped explorer with a fedora, a monocle, a red neckerchief and a leather satchel, full figure, front view, standing, on a plain white background.",
-    "compass": "xworld style. The same character redrawn in the house style: a winged brass pocket watch with one large eye on its face, full figure, front view, hovering, on a plain white background."
-  },
   "outputs": {
-    "mva": "runs/p12b/mva/<person>/<az_deg>_s<strength>.png",
-    "hosts": "runs/p12b/hosts/<host>_seed<seed>.png"
+    "mva": "runs/p12b/mva/<person>/<az_deg>_s<strength>.png"
   },
   "heartbeat": "datasets/vano1919/tmr-artifacts:runs/p12b/beat.txt",
   "stall_minutes": 15,
@@ -164,5 +138,18 @@
     "L2",
     "L3",
     "AV"
-  ]
+  ],
+  "video": {
+    "repo": "Lightricks/LTX-Video-0.9.8-13B-distilled",
+    "revision": "7c64400e1861cc0d7b98d570a1926d5408ec60cd",
+    "local": "ltx",
+    "note": "weights only, fetched in the background while Q1-Q3 draw (creator 2026-10-31, RP-01 Path A); no video step runs in this script (P12c); revision = config/cloud_pins.json models.video_ltx"
+  },
+  "plan": {
+    "fixed_setup_minutes": 22,
+    "planned_work_minutes": 88,
+    "price_per_hour_usd": 0.59,
+    "hard_pod_usd": 2.4,
+    "note": "fixed_setup_minutes is the creator's target (2026-10-31, shorter setup by hf_xet high performance and the LTX weights fetched in parallel), NOT measured; the last night test measured 67 min. RP-01: planned work >= 3 x fixed setup. Passed to `runpod create --setup-min --work-min`."
+  }
 }

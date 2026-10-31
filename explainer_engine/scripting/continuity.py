@@ -232,15 +232,22 @@ def axis_cross(axis: dict, pos: list) -> float:
     return math.cos(rad) * (pos[2] - oz) - math.sin(rad) * (pos[0] - ox)
 
 
-def derive_card_v2(card_v1: dict, scene_set: dict, scene_set_ref: dict | None = None) -> dict:
+def derive_card_v2(card_v1: dict, scene_set: "dict | Path | str", scene_set_ref: dict | None = None) -> dict:
     """``continuity_card/2`` (P6, CN-02): the scene's cards with every ``camera_side`` computed from the ``scene_set/1`` camera of
     the same ``shot_id`` (which side of the axis it stands on), the set's landmark objects added to the location's landmarks, and
     ``derived_from.scene_set`` naming the set. A shot with no camera in the set keeps its side. A camera exactly on the axis has no
     side: refused. Nothing else of the cards changes; ``check`` then reports an unexplained crossing (CT-06) as it does for any card."""
     if card_v1.get("schema") not in ("continuity_card/1", "continuity_card/2"):
         raise ContractError("derive_card_v2 reads a continuity_card/1 (or /2) document")
+    set_path = None
+    if not isinstance(scene_set, dict):
+        set_path = Path(scene_set)
+        scene_set = json.loads(set_path.read_text(encoding="utf-8"))
     doc = copy.deepcopy(card_v1)
     doc["schema"] = "continuity_card/2"
+    if scene_set_ref is None and set_path is not None:
+        from explainer_engine.core import contracts
+        scene_set_ref = {"path": f"sets/{set_path.name}", "sha256": contracts.sha256_file(set_path)}
     if scene_set_ref is None:
         raw = json.dumps(scene_set, indent=2, ensure_ascii=False).encode("utf-8")
         scene_set_ref = {"path": f"sets/{scene_set['set_id']}.json", "sha256": hashlib.sha256(raw).hexdigest()}

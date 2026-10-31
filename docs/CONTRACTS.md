@@ -170,7 +170,7 @@ Nth of `router.SEEDS` (BP-165 `max_tries` tries, then the item stops).
 
 | Lane | Specs written | Notes |
 |---|---|---|
-| `KEYFRAME_LTX` | `still` (keyframe model + `xworld_v2`, `frames` null) + `video` (LTX i2v, `frames` = the card's `duration_frames`, CN-08) | the video's `keyframe` reference carries the still spec's cache key |
+| `KEYFRAME_LTX` | `still` (keyframe model + `xworld_v2`, `frames` null) + `video` (LTX i2v, `frames` = the card's `duration_frames`, CN-08) | the video's `keyframe` reference carries the still spec's cache key until the keyframe is accepted; the renderer then re-derives the video spec with the real PNG's sha256 |
 | `DIALOGUE_CU` | the same two; the video's `audio_slice_sha256` is the `clip_sha256` of the shot's `audio_spine/2.post_hoc_shots` window | no window, or a window still `planned`, is refused (D-90) |
 | `ATMOS_BROLL` | `video` only | |
 | `STILL_HOLD` | `still` only | |

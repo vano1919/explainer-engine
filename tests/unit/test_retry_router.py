@@ -19,8 +19,10 @@ from explainer_engine.qa import retry_router as RR
 def test_attempts_one_to_three_are_reseed_reweight_fallback_and_the_fourth_raises():
     assert [RR.action_for(n, "KEYFRAME_LTX") for n in (1, 2, 3)] == ["RESEED", "REWEIGHT_REFERENCES", "FALLBACK_STILL_HOLD"]
     assert [RR.action_for(n, "DIALOGUE_CU") for n in (1, 2, 3)] == ["RESEED", "REWEIGHT_REFERENCES", "FALLBACK_KEYFRAME_LTX"]
-    for lane in ("ATMOS_BROLL", "DRAMA_BLOCKED_3D"):
-        assert RR.action_for(3, lane) == "FALLBACK_STILL_HOLD"
+    assert RR.action_for(3, "ATMOS_BROLL") == "FALLBACK_STILL_HOLD"
+    for lane, cite in (("HOST_COMMENTARY", "D-89"), ("DRAMA_BLOCKED_3D", "D-75")):   # refused lanes get no directive (D-89, A2)
+        with pytest.raises(ContractError, match=cite):
+            RR.action_for(3, lane)
     with pytest.raises(ContractError, match="CN-13"):
         RR.action_for(4, "KEYFRAME_LTX")
     assert RR.directive("s01", 3, "DIALOGUE_CU", fallback_failed=True) is None  # ESCALATE_TO_HUMAN is the report's status
@@ -110,6 +112,18 @@ def test_18_renders_for_12_accepted_shots_is_a_multiplier_of_1_5(tmp_path):
             log.add("render")
         files.append(log.path)
     assert ledger.count_renders(files) == 18
+
+
+def test_zero_logged_retries_is_a_multiplier_of_one(tmp_path):
+    """The router logs retries only: first renders are accepted shots, so renders = accepted + logged retries."""
+    assert ledger.retry_multiplier(12, 12) == 1.0 and ledger.retry_multiplier(3, 4) == 0.75
+    assert ledger.renders_made(12, []) == 12
+    log = ledger.Attempts(tmp_path / "s00" / "attempts.json", at_level=3, escalated=0)
+    log.add("retry")
+    assert ledger.renders_made(12, [log.path]) == 13
+    run = _run(tmp_path)
+    ledger.main(["report", str(run.path), "--attempts", str(tmp_path / "none"), "--accepted", "12"])
+    assert ledger.pilot_measures(run, tmp_path, renders=ledger.renders_made(12, []), accepted=12)["retry_multiplier"] == 1.0
 
 
 def test_review_minutes_unknown_without_the_file_and_summed_with_it(tmp_path):
