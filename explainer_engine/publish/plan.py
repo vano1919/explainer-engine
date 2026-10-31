@@ -146,6 +146,22 @@ def long_description(pub: dict) -> str:
     return text
 
 
+def credits_block(episode: Path, pub: dict, library: Path | None = None) -> str:
+    """The sound credits the long video's description carries (F5, D-83: text only, a licence never blocks): one line for every library
+    item that ``audio/sound_mix_manifest.json`` (``sound_mix_manifest/2``) references and whose licence asks for a credit
+    (``sfx_library.credit_line``); CC0, our own procedural sounds and generated takes add nothing, and no manifest means no block. ``<`` and ``>``
+    are dropped (YouTube refuses them in a description)."""
+    from explainer_engine import assets_reuse
+    from explainer_engine.audio import sfx_library
+    path = Path(episode) / ((pub.get("files") or {}).get("sound_mix_manifest") or "audio/sound_mix_manifest.json")
+    if not path.exists():
+        return ""
+    m = json.loads(path.read_text(encoding="utf-8"))
+    refs = {x["ref"] for k in ("beds", "music", "spots") for x in m.get(k, []) if x.get("ref")} | {c["name"] for c in m.get("cues", [])}
+    lines = [re.sub(r"[<>]", "", ln) for ln in sfx_library.credits_for(library or assets_reuse.SOUND_LIB, refs)]
+    return "Sound credits\n" + "\n".join(lines) if lines else ""
+
+
 def hashtags(tags: list[str], n: int = 2) -> str:
     words = ["#" + re.sub(r"[^A-Za-z0-9]", "", t.title()) for t in tags[:n]]
     return " ".join(["#shorts"] + [w for w in words if len(w) > 1])
@@ -190,8 +206,9 @@ def load_episode(episode: Path) -> tuple[dict, dict]:
 
 
 def build(episode: Path, *, privacy: str = "unlisted", video: Path | None = None, shorts_dir: Path | None = None,
-          long_id: str | None = None, only: set[str] | None = None) -> dict:
-    """The staging plan of an episode. ``long_id`` (the uploaded long video) fills the Shorts' links."""
+          long_id: str | None = None, only: set[str] | None = None, library: Path | None = None) -> dict:
+    """The staging plan of an episode. ``long_id`` (the uploaded long video) fills the Shorts' links. ``library`` is the sound library
+    root the credits are read from (default: the repository's)."""
     episode = Path(episode)
     pub, doc = load_episode(episode)
     yt = {**DEFAULTS, **(pub.get("youtube") or {}), "made_for_kids": pub.get("audience") == "made_for_kids"}
@@ -211,6 +228,9 @@ def build(episode: Path, *, privacy: str = "unlisted", video: Path | None = None
         findings.append({"item": LONG_ID, "severity": "REVIEW", "field": "tags", "detail": "no tags in publish.json"})
     items = []
     desc = long_description(pub)
+    credits = credits_block(episode, pub, library)
+    if credits and credits not in desc:
+        desc = desc.rstrip() + "\n\n" + credits
     items.append({"id": LONG_ID, "kind": "long", "file": str(video),
                   "thumbnail": _thumbnail_to_upload(pub),
                   "body": body(pub["title"], desc, tags, yt, synthetic, privacy)})

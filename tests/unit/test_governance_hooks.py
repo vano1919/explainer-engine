@@ -306,11 +306,13 @@ def set_state(repo, phase, state):
 
 
 def test_stop_refuses_a_done_phase_without_its_log_line(repo, capsys):
+    logged = {l.get("phase") for l in status.log(repo) if l.get("kind") == "phase"}
+    phase = next(r["id"] for r in status.phases(repo) if r["id"] not in logged)  # a phase whose log line is not written yet
     assert hooks.stop({}, repo) == 0
-    set_state(repo, "P6", "done")
-    assert hooks.stop({}, repo) == 2 and "P6" in capsys.readouterr().err
+    set_state(repo, phase, "done")
+    assert hooks.stop({}, repo) == 2 and phase in capsys.readouterr().err
     assert hooks.stop({"stop_hook_active": True}, repo) == 0
-    status.append_log({"kind": "phase", "phase": "P6", "level": "S2", "model": "claude-sonnet-5-5", "effort": "medium", "result": "x"}, repo)
+    status.append_log({"kind": "phase", "phase": phase, "level": "S2", "model": "claude-sonnet-5-5", "effort": "medium", "result": "x"}, repo)
     assert hooks.stop({}, repo) == 0
 
 

@@ -25,6 +25,20 @@ def shorts() -> int:
     return SR.T("BP-167", "shorts")
 
 
+def frame_ms(frame_rate: float | None = None) -> float:
+    """One frame in ms at the job's fps (BP-54 ``frames`` x 1000 / fps); no fps given = the delivery default (BP-167)."""
+    rate = fps() if frame_rate is None else frame_rate
+    if rate <= 0:
+        raise ValueError(f"fps must be positive, got {rate}")
+    return SR.T("BP-54", "frames") * 1000.0 / rate
+
+
+def shorts_frame() -> tuple[int, int]:
+    """A Short's (width, height): the master frame rotated 90 degrees (BP-167), 1440 x 2560."""
+    w, h = size()
+    return h, w
+
+
 def defaults() -> dict:
     w, h = size()
     return {"long_minutes": long_minutes(), "width": w, "height": h, "fps": fps(), "shorts": shorts()}

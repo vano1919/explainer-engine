@@ -24,7 +24,8 @@ def test_absolutes_are_frozen():
     # LT-66: changing one of these needs ვანო's word and a new LoRA version, never a quiet edit
     assert [a[0] for a in SP.ABSOLUTES] == [f"A{i}" for i in range(1, 11)]
     assert SP.NEGATIVE == "text, lettering, letters, words, watermark, signature, photo, 3d render"
-    assert SP.INFERENCE == {"base": "Qwen/Qwen-Image-2.1", "lora": None, "lora_weight": 1.0,
+    assert SP.INFERENCE == {"base": "Qwen/Qwen-Image-2.1", "lora": None, "lora_weight": 0.7,  # creator 2026-10-31: xworld_v2 weight 0.7
+                            
                             "dtype": "bfloat16", "size": [1280, 720], "steps": 30, "true_cfg": 4.0}  # D-80
     assert SP.TRIGGER == T == "xworld style"  # D-80: the xworld LoRA's trigger (N-09)
 

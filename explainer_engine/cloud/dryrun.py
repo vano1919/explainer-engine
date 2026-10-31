@@ -1,6 +1,6 @@
 """``runpod dryrun --script <pod.sh>``: everything about a pod script that can be known before a pod bills (P1b, CR-18). No pod,
 no GPU, no money: ``bash -n``, the pod-script lint (``runpod.lint_pod_script``), four static rules of the install steps, and an
-existence check of every Hugging Face repo id the script names. The result is written under ``tools/runpod/dryrun/<sha256 of the
+existence check of every Hugging Face repo id the script names, and the ``# needs:`` list of a script that downloads (CR-18). The result is written under ``tools/runpod/dryrun/<sha256 of the
 script>.json`` and ``preflight_create`` refuses a script pod without a passing record for exactly that text.
 
 The static rules come from what each cost a pod (docs/PROGRESS.md 2026-10-24..29): an unpinned ``pip install -U`` or ``git clone``
@@ -36,6 +36,40 @@ DRY_VAR = r"""(?:["']?\$\{DRY(?::?-\w*)?\}["']?|["']?\$DRY["']?)"""
 DRY_IS_ONE = rf"""\[\[?\s+{DRY_VAR}\s+(?:=|==|-eq)\s+["']?1["']?\s+\]\]?"""  # a test that is true when DRY is 1, and only then
 DRY_ONE_LINE = re.compile(rf"^\s*{DRY_IS_ONE}\s*&&\s*exit\s+0\s*$")
 DRY_IF = re.compile(rf"^\s*if\s+{DRY_IS_ONE}\s*;?\s*(?:then\b(.*))?$")
+
+
+NEEDS_LINE = re.compile(r"^#\s*needs:\s*(\S.*?)\s*$", re.M)
+NEEDS_CALL = re.compile(r"^\s*ee_needs_check\b", re.M)
+
+
+def needs_of(text):
+    """[(path, min_bytes)] of the script's ``# needs: <path> [min_bytes]`` lines (CR-18); ``# needs: none`` gives []. A path may use
+    ``$VAR`` (the pod's env). min_bytes defaults to 1."""
+    out = []
+    for m in NEEDS_LINE.finditer(text or ""):
+        parts = m.group(1).split()
+        if parts[0] == "none":
+            continue
+        out.append((parts[0], int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else 1))
+    return out
+
+
+def needs_problems(text):
+    """CR-18: a pod script that downloads (a weight, a code file) lists what it needs on disk afterwards as ``# needs: <path> [min_bytes]``
+    lines (or ``# needs: none``, said on purpose) and calls ``ee_needs_check`` (the wrapper's function) right after its downloads, so a
+    missing file ends the pod ``FAILED rc=66`` before any GPU step. A script that downloads nothing needs neither."""
+    body = "\n".join(ln for _, ln in logical_lines(text))
+    if not FETCH.search(body):
+        return []
+    lines = NEEDS_LINE.findall(text or "")
+    if not lines:
+        return ["no `# needs: <path> [min_bytes]` list (or `# needs: none`) although the script downloads: a missing weight would be "
+                "found by the first GPU step instead of before it (CR-18, T22)"]
+    if any(x.split()[0] == "none" for x in lines):
+        return []
+    if not NEEDS_CALL.search(body):
+        return ["`# needs:` is listed but `ee_needs_check` is never called after the downloads: the list is not checked (CR-18)"]
+    return []
 
 
 def sha256_of(text):
@@ -227,6 +261,7 @@ def run(text, *, exists=None, pins=None, offline=False, now=None):
     problems = [f"bash -n: {p}" for p in bash_syntax(text)]
     problems += [f"lint: {p}" for p in runpod.lint_pod_script(text)]
     problems += static_problems(text, pins)
+    problems += [f"needs: {p}" for p in needs_problems(text)]
     repos = []
     for rid, kind in repo_ids(text):
         if offline:

@@ -239,7 +239,37 @@ def approval_state(day: Path) -> tuple[str, str, str]:
     return "WAIT", "publish.json has no approval {by, ref}", "the creator's recorded approval #2 (PC-08)"
 
 
+def animated_gates(day: Path) -> list[dict]:
+    """The animated route's gates (D-77, D-85; docs/ORCHESTRATION.md "The animated route"): one row per lifecycle state after
+    CREATED, read from ``job_manifest.json`` (``core/store.LIFECYCLE``, CN-03). A reached state is PASS; the next one is WAIT with
+    the approval kind it needs (a person's gate says so, CN-04); a terminal state, or any ``qa/*.qa_report.json`` that is
+    ESCALATE_TO_HUMAN, BLOCKS. Free: it reads files only."""
+    from .core import store
+    m = _json(day / store.MANIFEST) or {}
+    state = m.get("state")
+    cur = store.LIFECYCLE.index(state) if state in store.LIFECYCLE else -1
+    out: list[dict] = []
+    for n, to in enumerate(store.LIFECYCLE[1:], start=1):
+        kinds = "/".join(sorted(store.GATES.get(to, {"machine"})))
+        if state in store.TERMINAL:
+            status, detail, nxt = "BLOCKED", f"job is {state}", "reopen only on the creator's word (CN-03)"
+        elif n <= cur:
+            status, detail, nxt = "PASS", f"reached (fps {m.get('fps')})", ""
+        else:
+            status, detail = "WAIT", f"{state} -> needs {kinds} approval"
+            nxt = "the creator's recorded approval (CN-04)" if "creator" in kinds else "the stage's own checks, then a machine approval"
+        out.append({"gate": to, "name": to.lower(), "status": status, "detail": detail, "next": nxt})
+    for rep in sorted((day / "qa").glob("*.qa_report.json")):
+        r = _json(rep) or {}
+        bad = r.get("status") == "ESCALATE_TO_HUMAN"
+        out.append({"gate": f"qa:{r.get('stage', rep.stem)}", "name": "qa_report/1", "status": "BLOCKED" if bad else "PASS",
+                    "detail": str(r.get("status")), "next": "a person decides (OR-04)" if bad else ""})
+    return out
+
+
 def gates(day: Path, look_path: Path | None = None, run_path: Path | None = None) -> list[dict]:
+    if (day / "job_manifest.json").exists():
+        return animated_gates(day)
     if (day / "production_script.json").exists():
         return script_gates(day, run_path)
     return _legacy_gates(day, look_path) + media_gates(day)

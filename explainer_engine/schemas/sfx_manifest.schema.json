@@ -64,7 +64,9 @@
             "additionalProperties": false,
             "properties": {
               "status": {"enum": ["own_procedural", "generated_terms_unverified", "generated_terms_verified", "licensed", "cc0"]},
-              "note": {"type": "string", "minLength": 1}
+              "note": {"type": "string", "minLength": 1},
+              "attribution": {"type": "string", "minLength": 1,
+                              "description": "the credit line a CC BY (or similar) licence asks for; published in the description (D-83: text only, never a block)"}
             }
           },
           "review": {

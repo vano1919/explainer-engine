@@ -6,7 +6,15 @@
   "required": ["schema", "scene_id", "model", "style_line", "location", "light", "cast", "shots"],
   "additionalProperties": false,
   "properties": {
-    "schema": {"const": "continuity_card/1"},
+    "schema": {"enum": ["continuity_card/1", "continuity_card/2"]},
+    "derived_from": {
+      "type": "object",
+      "description": "continuity_card/2 only (P6): the scene_set/1 the camera side and landmarks were read from",
+      "required": ["scene_set"],
+      "additionalProperties": false,
+      "properties": {"scene_set": {"type": "object", "required": ["path", "sha256"], "additionalProperties": false,
+        "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}}
+    },
     "scene_id": {"type": "string", "minLength": 1},
     "model": {"type": "string", "description": "a key of continuity.MODEL_REFS: the picture model these cards are for"},
     "style_line": {"type": "string", "minLength": 10, "description": "the global style line, verbatim in every prompt"},
@@ -51,6 +59,8 @@
     },
     "shots": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/shot"}}
   },
+  "allOf": [{"if": {"properties": {"schema": {"const": "continuity_card/2"}}, "required": ["schema"]},
+             "then": {"required": ["derived_from"]}, "else": {"not": {"required": ["derived_from"]}}}],
   "$defs": {
     "light_dir": {"enum": ["left", "right", "top", "back", "front"]},
     "side": {"enum": ["left", "centre", "right"]},
@@ -107,6 +117,14 @@
         "shot_size": {"enum": ["EWS", "WS", "MWS", "MS", "MCU", "CU", "insert"]},
         "angle": {"enum": ["eye", "low", "high"]},
         "camera_side": {"enum": ["A", "B"]},
+    "camera": {
+      "type": "object",
+      "description": "continuity_card/2 only: the scene_set camera this shot's side was computed from; axis_cross is its signed distance from the axis line in m, whose sign is the side",
+      "required": ["pos", "yaw_deg", "pitch_deg", "fov_deg", "axis_cross"],
+      "additionalProperties": false,
+      "properties": {"pos": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3}, "yaw_deg": {"type": "number"},
+        "pitch_deg": {"type": "number"}, "fov_deg": {"type": "number"}, "axis_cross": {"type": "number"}}
+    },
         "axis": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 2},
         "axis_cross_reason": {"enum": ["neutral_shot", "cutaway", "insert", "on_screen_move"]},
         "angle_change_deg": {"type": "number", "minimum": 0, "maximum": 180},

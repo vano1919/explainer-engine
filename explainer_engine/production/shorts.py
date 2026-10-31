@@ -1,4 +1,5 @@
-"""Render one Short of the production script's ``shorts`` block (docs/ORCHESTRATION.md SH-01..SH-04): 1080x1920, the video's own
+"""Render one Short of the production script's ``shorts`` block (docs/ORCHESTRATION.md SH-01..SH-04): the Short frame of
+``core/delivery.shorts_frame()`` (BP-167, 1440x2560), the video's own
 pictures cropped around the hero (``crop_x``, ``zoom``) with a slow push, the same narrator, word-timed captions, a low music bed,
 and the same visual-beat layer as the long video (SS-09): the Short is timed by ``timing.time_script`` on ``beats.short_doc`` and
 every frame is finished by ``assemble.finish_frame`` (face focus, accents, close-ups, beats); the beats' cues are mixed with
@@ -9,7 +10,9 @@ every frame is finished by ``assemble.finish_frame`` (face focus, accents, close
 Free (local Whisper + ffmpeg). ``--tempo`` speeds the read with ffmpeg's pitch-preserving atempo, at most BP-02's ceiling
 (the creator's own; docs/SOURCED_RULES.md), and the timbre check (``audio/voice_check``) runs on the result: on any drift the
 original pace is used. The read's leading silence is trimmed so the hook is spoken from the first second (BP-11); the report
-carries the hook timing (BP-11), the caption reading speed (BP-13) and the caption safe zone (BP-29).
+carries the hook timing (BP-11), the caption reading speed (BP-13) and the caption safe zone (BP-29, scaled from its 1080-wide
+figures to the frame). Two files are written: ``<id>.mp4`` with the burned captions (BP-13) and ``<id>_master.mp4``, the same
+pictures and mix without them, kept beside it for later re-captioning (F6, P9).
 """
 
 from __future__ import annotations
@@ -24,6 +27,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageFilter
 
+from explainer_engine.core import delivery
+from explainer_engine.core.contracts import sha256_file
 from explainer_engine.audio import local_words, scribe_words, voice_check, voice_layer
 from explainer_engine.production import assemble as ASM
 from explainer_engine.production import beats as BEATS
@@ -32,7 +37,9 @@ from explainer_engine.production import timing as T
 from explainer_engine.qa import short_format as SF, targets
 from explainer_engine.standards import sourced_rules as SR
 
-W, H = 1080, 1920  # the frame rate is the episode's (timing.time_script)
+W, H = delivery.shorts_frame()  # BP-167: the master rotated; the frame rate is the episode's (timing.time_script)
+REF_W = SR.T("BP-29", "frame")[0]  # the width BP-29's pixel figures and the caption style below are written for
+SCALE = W / REF_W  # every pixel figure written for REF_W scales by this (1440 / 1080 = 4/3)
 MAX_TEMPO = SR.T("BP-02", "max_tempo")  # BP-02: the creator's ceiling on a Short's speed-up
 DEFAULT_TEMPO = SR.T("BP-02", "rates")[0]  # BP-02: the first offered rate is the default --tempo
 LEAD_SILENCE_KEEP_S = 0.1  # BP-11: the leading silence of the read is trimmed to about this, so the hook starts by first_word_by_s
@@ -40,8 +47,12 @@ FIRST_WORD_BY_S = SR.T("BP-11", "first_word_by_s")
 HOOK_DONE_BY_S = SR.T("BP-11", "hook_done_by_s")  # BP-11: the hook's last word ends by this (the tighter bound at 170 wpm)
 SCREEN = "sc_"  # examples/syndicate_wars_ep1/select_screen.py's stat cards: text across the whole 16:9 width, never cropped to 9:16
 SCREEN_MARGIN = 0.03  # share of the Short's width left on each side of a fitted card
-CAP_FONT_PX, CAP_MARGIN_LR, CAP_MARGIN_V = 76, 90, 430  # the ASS caption style (unchanged; BP-29 only reports how it sits)
+CAP_FONT_PX, CAP_MARGIN_LR, CAP_MARGIN_V = (round(v * SCALE) for v in (76, 90, 430))  # the ASS caption style at REF_W, scaled to the frame
+OUTLINE, SHADOW = round(6 * SCALE), round(2 * SCALE)  # the caption outline and shadow at REF_W: 6 and 2
 CAP_WORDS_PER_BLOCK = 3  # words per caption block (BP-13 allows up to block_words_max)
+
+
+FINAL_VIDEO = ["-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p"]   # the captioned file and its master alike
 
 
 def narration(short: dict) -> str:
@@ -134,10 +145,19 @@ def caption_report(words: list[dict]) -> dict:
             "detail": ("; ".join(why) + " (BP-13)") if why else "captions read at adult subtitle speed (BP-13)"}
 
 
+def safe_bands(frame: tuple[int, int]) -> tuple[tuple[int, int], tuple[int, int]]:
+    """BP-29's x and y bands for a frame of another size: each band scales by frame / BP-29's frame (4/3 at 1440 x 2560).
+    Still REVIEW until the phone screenshot (D-91 row 13); the pixels are not decided here."""
+    fw, fh = SR.T("BP-29", "frame")
+    kx, ky = frame[0] / fw, frame[1] / fh
+    (x0, x1), (y0, y1) = SR.T("BP-29", "safe_x_px"), SR.T("BP-29", "safe_y_px")
+    return (round(x0 * kx), round(x1 * kx)), (round(y0 * ky), round(y1 * ky))
+
+
 def safe_zone_report() -> dict:
-    """BP-29 (hypothesis, REVIEW only): where the burned captions and a fitted stat card sit against the 1080 x 1920 ad safe
-    zone. Reports only; the rendered margins are unchanged."""
-    (sx0, sx1), (sy0, sy1) = SR.T("BP-29", "safe_x_px"), SR.T("BP-29", "safe_y_px")
+    """BP-29 (hypothesis, REVIEW only): where the burned captions and a fitted stat card sit against the ad safe zone, BP-29's
+    1080 x 1920 bands scaled to the frame (``safe_bands``). Reports only; ``safe_x_px``/``safe_y_px`` stay BP-29's own figures."""
+    (sx0, sx1), (sy0, sy1) = safe_bands((W, H))
     cap = [CAP_MARGIN_LR, H - CAP_MARGIN_V - CAP_FONT_PX, W - CAP_MARGIN_LR, H - CAP_MARGIN_V]  # one caption line, bottom-centred
     card_w = round(W * (1 - 2 * SCREEN_MARGIN))
     card = [(W - card_w) // 2, None, (W - card_w) // 2 + card_w, None]
@@ -148,7 +168,8 @@ def safe_zone_report() -> dict:
         why.append(f"caption box y {cap[1]}-{cap[3]} px leaves the safe y {sy0}-{sy1}")
     if card[0] < sx0 or card[2] > sx1:
         why.append(f"a fitted stat card spans x {card[0]}-{card[2]} px, past the safe x {sx0}-{sx1}")
-    return {"caption_box_px": cap, "card_x_px": [card[0], card[2]], "safe_x_px": [sx0, sx1], "safe_y_px": [sy0, sy1],
+    return {"caption_box_px": cap, "card_x_px": [card[0], card[2]], "safe_x_px": SR.T("BP-29", "safe_x_px"),
+            "safe_y_px": SR.T("BP-29", "safe_y_px"), "frame": [W, H], "safe_x_px_frame": [sx0, sx1], "safe_y_px_frame": [sy0, sy1],
             "severity": "REVIEW" if why else "PASS",
             "detail": ("; ".join(why) + " (BP-29): captions, labels and cards inside the ad safe zone") if why
             else "captions and cards inside the ad safe zone (BP-29)"}
@@ -229,7 +250,7 @@ def fit_screen(im: Image.Image, beats: list[dict], row: dict) -> Image.Image:
 
 
 def render_video(timed: dict, pics: dict, pic_dirs: list[Path], out: Path, short_id: str) -> int:
-    """The silent 1080x1920 video, frame by frame; returns how many beat spots were moved into the crop."""
+    """The silent W x H video (the Short frame), frame by frame; returns how many beat spots were moved into the crop."""
     fps, rows = timed["fps"], timed["shots"]
     hero_faces = ASM.hero_faces_of(timed)
     beats = [dict(b) for b in timed.get("visual_beats", [])]
@@ -276,10 +297,10 @@ def ass_captions(words: list[dict], path: Path) -> None:
         m, s = divmod(rem, 60)
         return f"{int(h)}:{int(m):02d}:{s:05.2f}"
 
-    head = ("[Script Info]\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\n\n[V4+ Styles]\n"
+    head = (f"[Script Info]\nScriptType: v4.00+\nPlayResX: {W}\nPlayResY: {H}\n\n[V4+ Styles]\n"
             "Format: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,StrikeOut,"
             "ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding\n"
-            f"Style: Cap,DejaVu Sans,{CAP_FONT_PX},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,6,2,2,"
+            f"Style: Cap,DejaVu Sans,{CAP_FONT_PX},&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,{OUTLINE},{SHADOW},2,"
             f"{CAP_MARGIN_LR},{CAP_MARGIN_LR},{CAP_MARGIN_V},1\n\n"
             "[Events]\nFormat: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text\n")
     rows = [f"Dialogue: 0,{t(b['start'])},{t(b['end'])},Cap,,0,0,0,,{b['text']}" for b in caption_blocks(words)]
@@ -311,6 +332,7 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
     voice = with_cues(wav, timed["audio"]["cues"], out)
     ass_captions(aligned["words"], out / "cap.ass")
     final = out / f"{short_id}.mp4"
+    master = out / f"{short_id}_master.mp4"
     inputs = ["-i", str(silent), "-i", str(voice)]
     fc = music_filter(duration)  # BP-62 fades
     if music:
@@ -320,20 +342,36 @@ def render(doc: dict, short_id: str, audio: Path, out: Path, pic_dirs: list[Path
     else:
         fc = "[1:a]anull[a]"
     _run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", f"{fc};[0:v]subtitles={out / 'cap.ass'}[v]", "-map", "[v]", "-map", "[a]",
-          "-t", f"{duration:.2f}", "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-pix_fmt", "yuv420p", *ASM.AUDIO_CODEC, str(final)])  # BP-63: stereo AAC at the delivery bitrate
+          "-t", f"{duration:.2f}", *FINAL_VIDEO, *ASM.AUDIO_CODEC, str(final)])  # BP-63: stereo AAC at the delivery bitrate
+    # the caption-free master (BP-13 keeps the burned captions on the delivered file): the same picture re-encoded with the same
+    # video settings (a -c:v copy cut at a keyframe, so its length could differ from the captioned file's), the same mix
+    _run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", fc, "-map", "0:v", "-map", "[a]", "-t", f"{duration:.2f}",
+          *FINAL_VIDEO, *ASM.AUDIO_CODEC, str(master)])
     rows = [{k: r[k] for k in ("id", "picture", "at", "crop_x", "zoom", "start", "end")} for r in timed["shots"]]
     report = {"duration": round(duration, 2), "timbre_review": drift, "shots": rows, "beats": BEATS.measure(timed),
               "cues": len(timed["audio"]["cues"]), "beat_spots_moved_into_crop": moved,
               "hook_timing": hook, "captions": caption_report(aligned["words"]), "safe_zone": safe_zone_report(),
-              "short_format": SF.check(SF.probe(final)),
+              "short_format": SF.check(SF.probe(final)), "master": master.name,
+              "master_format": SF.check(SF.probe(master)),
               "loudness": measure_final(final)}  # BP-61: measured on the FINAL file, after cues and music, not the voice stem
     (out / "report.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
-    if report["short_format"]:  # a file YouTube would not make a Short is never handed on (qa/short_format.py)
-        raise SystemExit(f"{short_id}: not a Short: {report['short_format'][0]['detail']}")
+    bad_format = report["short_format"] or report["master_format"]
+    if bad_format:  # a file YouTube would not make a Short is never handed on (qa/short_format.py)
+        raise SystemExit(f"{short_id}: not a Short: {bad_format[0]['detail']}")
     bad = targets.failures(report["loudness"])
     if bad:  # BP-61: a Short whose loudness, short-term peak or true peak fails is never handed on
         raise SystemExit(f"{short_id}: loudness fails {', '.join(bad)} (BP-61); fix the mix, then render again")
     return final
+
+
+def package_files(final: Path, master: Path, base: Path) -> dict:
+    """CN-14 for the pair: the captioned file as ``files.video`` and the caption-free master as a ``checks[]`` row (the
+    distribution_package/1 schema has no master slot and is not extended), both with their sha256 and relative to ``base``."""
+    def ref(p: Path) -> dict:
+        return {"path": p.relative_to(base).as_posix(), "sha256": sha256_file(p)}
+    row = ref(master)
+    return {"video": ref(final),
+            "check": {"check_id": f"caption_free_master:{row['path']}@{row['sha256']}", "severity": "INFO", "passed": master.exists()}}
 
 
 def measure_final(final: Path) -> dict:

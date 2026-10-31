@@ -199,8 +199,8 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 5,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#110 draft",
+   "state": "review",
    "waits": null
   },
   {
@@ -214,8 +214,8 @@
    "routing": "S2 / Sonnet / medium–high",
    "wave": 5,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#110 draft",
+   "state": "review",
    "waits": null
   },
   {
@@ -229,8 +229,8 @@
    "routing": "S2 / Sonnet / high",
    "wave": 6,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#110 draft",
+   "state": "review",
    "waits": null
   },
   {
@@ -245,8 +245,8 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 6,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#110 draft",
+   "state": "review",
    "waits": null
   },
   {
@@ -260,8 +260,8 @@
    "routing": "S1–S2 / Sonnet / medium",
    "wave": 6,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#110 draft",
+   "state": "review",
    "waits": null
   },
   {
@@ -276,8 +276,8 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 7,
    "thread": null,
-   "pr": null,
-   "state": "todo",
+   "pr": "#110 draft",
+   "state": "review",
    "waits": "P0c-ის ანგარიში"
   },
   {

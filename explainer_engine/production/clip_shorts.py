@@ -5,7 +5,8 @@ Each Short = the long video's own opening (the question card and its first lines
 ends on a phrase the opening question answers, so the Short loops without a visible start or end: the last frame is the
 first frame (the question card, ``card_at``) and the outro's last words lead into the opening question.
 
-The whole Short is sped up by ``tempo`` (the creator: about 15 % faster), laid out 1080x1920: the 16:9 frame full width in
+The whole Short is sped up by ``tempo`` (the creator: about 15 % faster), laid out in the Short frame of ``core/delivery.shorts_frame()`` (BP-167, 1440x2560; every pixel figure below is written
+for 1080 wide and scaled by ``SCALE``) at the job's fps (BP-167): the 16:9 frame full width in
 the middle over a blurred copy of itself, a title band above, word-timed captions below and a small "full video" label.
 Free: ffmpeg + PIL only; the outro line is the only paid asset and is shared by every Short.
 
@@ -25,14 +26,16 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
+from explainer_engine.core import delivery
 from explainer_engine.design import palette
 from explainer_engine.qa import targets
 
-W, H = 1080, 1920
+W, H = delivery.shorts_frame()
+SCALE = W / 1080  # the layout constants below were drawn for a 1080-wide Short
 SIDE_CROP = 0.06  # share of the 16:9 width cut on each side, so the picture fills more of the phone (the card's heads stay in)
 FG_H = round(W * 9 / (16 * (1 - 2 * SIDE_CROP)) / 2) * 2  # the 16:9 frame at full width after the side crop
 FG_Y = (H - FG_H) // 2
-FPS = 30
+FPS = delivery.fps()  # BP-167: the job's frame rate (D-85, 24); a plan may name its own with "fps"
 PAD_IN, PAD_OUT = 0.2, 0.45  # air before the clip's first word and after its last one (long-video seconds)
 OUTRO_TAIL = 0.25  # the card holds this long after the outro's last word before the loop starts again
 FONT = Path(__file__).resolve().parents[2] / "assets" / "fonts" / "Bangers-Regular.ttf"
@@ -86,11 +89,11 @@ def ass(words: list[dict], path: Path) -> Path:
         return f"&H00{h[4:6]}{h[2:4]}{h[0:2]}"
 
     paper, ink, accent = bgr(tok["paper"]["hex"]), bgr(tok["ink"]["hex"]), bgr(tok["uncertain_amber"]["hex"])
-    head = ("[Script Info]\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\nWrapStyle: 0\n\n[V4+ Styles]\n"
+    head = (f"[Script Info]\nScriptType: v4.00+\nPlayResX: {W}\nPlayResY: {H}\nWrapStyle: 0\n\n[V4+ Styles]\n"
             "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, "
             "Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, "
             "MarginV, Encoding\n"
-            f"Style: Cap,Bangers,108,{paper},{paper},{ink},&H80000000,0,0,0,0,100,100,2,0,1,6,2,8,70,70,{FG_Y + FG_H + 70},1\n\n"
+            f"Style: Cap,Bangers,{round(108 * SCALE)},{paper},{paper},{ink},&H80000000,0,0,0,0,100,100,{round(2 * SCALE)},0,1,{round(6 * SCALE)},{round(2 * SCALE)},8,{round(70 * SCALE)},{round(70 * SCALE)},{FG_Y + FG_H + round(70 * SCALE)},1\n\n"
             "[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n")
     lines = []
     blocks = [words[i:i + CAP_WORDS] for i in range(0, len(words), CAP_WORDS)]
@@ -112,17 +115,17 @@ def band(title: str, label: str, path: Path) -> Path:
     fill, stroke = tok["paper"]["hex"], tok["ink"]["hex"]
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
-    size = 104
-    lines = _wrap(title.upper(), d, size, W - 120)
+    size = round(104 * SCALE)
+    lines = _wrap(title.upper(), d, size, W - round(120 * SCALE))
     font = ImageFont.truetype(str(FONT), size)
-    y = FG_Y - 70 - len(lines) * int(size * 1.05)
+    y = FG_Y - round(70 * SCALE) - len(lines) * int(size * 1.05)
     for ln in lines:
-        d.text(((W - d.textlength(ln, font=font)) / 2, y), ln, font=font, fill=fill, stroke_width=7, stroke_fill=stroke)
+        d.text(((W - d.textlength(ln, font=font)) / 2, y), ln, font=font, fill=fill, stroke_width=round(7 * SCALE), stroke_fill=stroke)
         y += int(size * 1.05)
-    small = ImageFont.truetype(str(FONT), 54)
+    small = ImageFont.truetype(str(FONT), round(54 * SCALE))
     lw = d.textlength(label.upper(), font=small)
-    ly = FG_Y + FG_H + 330
-    d.rounded_rectangle(((W - lw) / 2 - 30, ly - 12, (W + lw) / 2 + 30, ly + 70), radius=22, fill=(0, 0, 0, 170))
+    ly = FG_Y + FG_H + round(330 * SCALE)
+    d.rounded_rectangle(((W - lw) / 2 - 30 * SCALE, ly - 12 * SCALE, (W + lw) / 2 + 30 * SCALE, ly + 70 * SCALE), radius=round(22 * SCALE), fill=(0, 0, 0, 170))
     d.text(((W - lw) / 2, ly), label.upper(), font=small, fill=fill)
     im.save(path)
     return path
@@ -145,6 +148,16 @@ def _run(cmd: list[str]) -> None:
     subprocess.run(cmd, check=True)
 
 
+def filter_graph(tempo: float, fps: int, subs: str | None, fonts: Path) -> str:
+    """The Short's 2K layout filter: blurred fill, the 16:9 frame at full width, the title band, then the burned captions
+    (``subs`` = the .ass path; None = the caption-free master)."""
+    last = f"[o]subtitles={subs}:fontsdir={fonts}[v];" if subs else "[o]null[v];"
+    return (f"[0:v]setpts=PTS/{tempo},fps={fps},split[a][b];"
+            f"[a]scale=-2:{H},crop={W}:{H},boxblur={round(28 * SCALE)}:2,eq=brightness=-0.22:saturation=0.8[bg];"
+            f"[b]crop=iw*{1 - 2 * SIDE_CROP}:ih,scale={W}:{FG_H}[fg];[bg][fg]overlay=0:{FG_Y}[base];[base][1:v]overlay=0:0[o];"
+            f"{last}[0:a]atempo={tempo},{targets.loudnorm('short')}[au]")
+
+
 def render(plan: dict, clip: dict, root: Path) -> dict:
     out = Path(plan["out"]) / clip["id"]
     out.mkdir(parents=True, exist_ok=True)
@@ -160,12 +173,13 @@ def render(plan: dict, clip: dict, root: Path) -> dict:
     card = out / "card.png"
     _run(["ffmpeg", "-v", "error", "-y", "-ss", f"{card_at}", "-i", str(video), "-frames:v", "1", str(card)])
     intro, mid, outro = parts
+    pfps = int(plan.get("fps", FPS))
     d_out = outro["src_end"]
     # the 16:9 programme at normal speed: card held over the fade-in, the opening, the moment, the card under the outro
-    fc = (f"[0:v]trim={card_at}:{intro['src_end']},setpts=PTS-STARTPTS,fps={FPS}[iv];"
-          f"[1:v]loop=-1:1,trim=0:{card_at},setpts=PTS-STARTPTS,fps={FPS}[ih];"
-          f"[4:v]setpts=PTS-STARTPTS,fps={FPS}[mv];"
-          f"[1:v]loop=-1:1,trim=0:{d_out},setpts=PTS-STARTPTS,fps={FPS}[ov];"
+    fc = (f"[0:v]trim={card_at}:{intro['src_end']},setpts=PTS-STARTPTS,fps={pfps}[iv];"
+          f"[1:v]loop=-1:1,trim=0:{card_at},setpts=PTS-STARTPTS,fps={pfps}[ih];"
+          f"[4:v]setpts=PTS-STARTPTS,fps={pfps}[mv];"
+          f"[1:v]loop=-1:1,trim=0:{d_out},setpts=PTS-STARTPTS,fps={pfps}[ov];"
           f"[0:a]atrim=0:{intro['src_end']},asetpts=PTS-STARTPTS,afade=t=out:st={intro['src_end'] - 0.12}:d=0.12[ia];"
           "[4:a]asetpts=PTS-STARTPTS,afade=t=in:d=0.12,"
           f"afade=t=out:st={mid['src_end'] - mid['src_start'] - 0.3}:d=0.3[ma];"
@@ -186,16 +200,15 @@ def render(plan: dict, clip: dict, root: Path) -> dict:
     over = band(plan["title"], plan["label"], out / "band.png")
     final = out / f"{clip['id']}.mp4"
     fonts = FONT.parent
-    vf = (f"[0:v]setpts=PTS/{tempo},fps={FPS},split[a][b];"
-          f"[a]scale=-2:{H},crop={W}:{H},boxblur=28:2,eq=brightness=-0.22:saturation=0.8[bg];"
-          f"[b]crop=iw*{1 - 2 * SIDE_CROP}:ih,scale={W}:{FG_H}[fg];[bg][fg]overlay=0:{FG_Y}[base];[base][1:v]overlay=0:0[o];"
-          f"[o]subtitles={cap}:fontsdir={fonts}[v];"
-          f"[0:a]atempo={tempo},{targets.loudnorm('short')}[au]")
-    _run(["ffmpeg", "-v", "error", "-y", "-i", str(prog), "-i", str(over), "-filter_complex", vf, "-map", "[v]",
-          "-map", "[au]", "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p", "-r", str(FPS),
-          "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2", "-movflags", "+faststart", str(final)])
+    fps = int(plan.get("fps", FPS))
+    master = out / f"{clip['id']}_master.mp4"  # the same picture and mix without the burned captions, kept beside the file
+    for target, subs in ((final, str(cap)), (master, None)):
+        _run(["ffmpeg", "-v", "error", "-y", "-i", str(prog), "-i", str(over), "-filter_complex",
+              filter_graph(tempo, fps, subs, fonts), "-map", "[v]", "-map", "[au]", "-c:v", "libx264", "-crf", "18",
+              "-preset", "medium", "-pix_fmt", "yuv420p", "-r", str(fps),
+              "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2", "-movflags", "+faststart", str(target)])
     prog.unlink(missing_ok=True)
-    report = {"id": clip["id"], "duration": round(duration(parts, tempo), 2), "tempo": tempo, "parts": parts,
+    report = {"id": clip["id"], "frame": [W, H], "fps": fps, "master": master.name, "duration": round(duration(parts, tempo), 2), "tempo": tempo, "parts": parts,
               "words": len(words), "first_word_s": words[0]["s"] if words else None,
               "loudness": {k: v for k, v in targets.measure_file(final).items() if k in ("lufs", "true_peak")}}
     (out / "report.json").write_text(json.dumps(report, indent=1), encoding="utf-8")

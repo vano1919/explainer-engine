@@ -1,7 +1,7 @@
 """Is a rendered file a YouTube Short? (creator 2026-10-19: "the Shorts uploaded as videos, fix the code so it never happens")
 
 YouTube makes an upload a Short from the file alone: square or vertical and at most three minutes (YouTube Help 15424877,
-read 2026-10-19); the API has no Shorts flag. Our Shorts are 1080x1920 (9:16), so anything else is a render fault. A Short is
+read 2026-10-19); the API has no Shorts flag. Our Shorts are 9:16 at any height (BP-167: 1440x2560; 1080x1920 older ones stay valid), so a horizontal or other-ratio file is a render fault. A Short is
 reached at ``youtube.com/shorts/<id>``; a ``youtu.be`` link opens even a Short in the ordinary player, which is how the
 2026-10-19 uploads looked like videos although YouTube served all ten as Shorts.
 
@@ -40,7 +40,7 @@ def check(info: dict) -> list[dict]:
     if not (w and h) or w > h:
         out.append({"rule": "SF-01", "severity": "FAIL", "detail": f"{w}x{h} is horizontal: YouTube makes it a video"})
     elif w * ASPECT[1] != h * ASPECT[0]:
-        out.append({"rule": "SF-02", "severity": "FAIL", "detail": f"{w}x{h} is not 9:16 (the Short frame is 1080x1920)"})
+        out.append({"rule": "SF-02", "severity": "FAIL", "detail": f"{w}x{h} is not 9:16 (the Short frame is 9:16, 1440x2560 at the delivery size)"})
     if not 0 < sec <= MAX_SECONDS:
         out.append({"rule": "SF-03", "severity": "FAIL", "detail": f"{sec:.1f} s: a Short is at most {MAX_SECONDS:g} s"})
     return out

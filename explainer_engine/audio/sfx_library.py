@@ -17,6 +17,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import re
 import sys
 import wave
 from pathlib import Path
@@ -155,6 +156,30 @@ def validate(root: Path, *, check_files: bool = True, admissions: Path | str | N
             if path.relative_to(root).as_posix() not in {i["file"] for i in manifest["items"]}:
                 problems.append(f"{path.relative_to(root).as_posix()}: not in the manifest")
     return problems
+
+
+# CC BY, or the word "attribution" asked for ("Attribution required"); a negated one ("no attribution required", "attribution not needed") is not
+CC_BY = re.compile(r"\bCC[- ]BY\b|(?<!\bno )(?<!\bnot )(?<!\bwithout )(?<!\bnon-)\battribution\b(?!\s+(?:is\s+)?(?:not|never)\b)", re.I)
+
+
+def credit_line(item: dict) -> str | None:
+    """The credit a licence asks for, or None (F5, D-83: licences never block, they only add text). CC0, our own procedural sounds and
+    generated takes need none; a ``licensed`` item is credited with its ``licence.attribution`` or, when that is missing and its note
+    names CC BY / an attribution ask, with ``"<id>: <note>"``. A ``licensed`` item whose licence asks for nothing stays silent."""
+    lic = item.get("licence") or {}
+    if lic.get("status") != "licensed":
+        return None
+    if lic.get("attribution"):
+        return lic["attribution"].strip()
+    if CC_BY.search(lic.get("note") or ""):
+        return f"{item['id']}: {lic['note'].strip()}"
+    return None
+
+
+def credits_for(root: Path, refs) -> list[str]:
+    """Sorted, de-duplicated credit lines of the library items named by ``refs`` (ids; refs that are not library items are skipped)."""
+    by_id = {i["id"]: i for i in load_manifest(Path(root))["items"]}
+    return sorted({line for r in set(refs) if r in by_id for line in [credit_line(by_id[r])] if line})
 
 
 def main(argv: list[str] | None = None) -> int:

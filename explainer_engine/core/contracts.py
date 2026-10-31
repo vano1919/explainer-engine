@@ -73,6 +73,17 @@ def _geometry(width, height, frames, where: str) -> list[dict]:
     return out
 
 
+REFUSED_LANES = {
+    "HOST_COMMENTARY": "no permanent hosts: card A1 is NO (creator 2026-10-30, D-89); the lane stays in the enum for history only",
+    "DRAMA_BLOCKED_3D": "card A2 is 'not now': 3D blocking and LivePortrait/MuseTalk are neither in code in v2 (D-75, D-77)",
+}
+
+
+def _refused_lane(lane: str, where: str) -> list[dict]:
+    """A lane the creator rejected cannot reach a renderer (D-89, A2); the enum value stays so older documents still parse."""
+    return [_f("CN-11", where, f"lane {lane} is refused: {REFUSED_LANES[lane]}")] if lane in REFUSED_LANES else []
+
+
 def _film_shots(doc: dict, base) -> list[dict]:
     if doc.get("schema") != "film_shots/2":
         return []
@@ -82,6 +93,7 @@ def _film_shots(doc: dict, base) -> list[dict]:
     if fps != native:
         out.append(_f("CN-09", "fps", f"fps {fps} is not the video model's native {native} (D-85)", SR.level("BP-139")))
     for s in doc["shots"]:
+        out += _refused_lane(s["lane"], s["id"])
         if s["lane"] in VIDEO_LANES:
             out += _geometry(s["width"], s["height"], s["duration_frames"], s["id"])
         if s["lane"] in ("MAP", "COMPENSATOR"):
@@ -94,6 +106,7 @@ def _film_shots(doc: dict, base) -> list[dict]:
 
 def _shot_spec(doc: dict, base) -> list[dict]:
     out = []
+    out += _refused_lane(doc["lane"], doc["shot_id"])
     m = doc["model"]
     if not (m["sha256"] or m["revision"]):
         out.append(_f("CN-07", "model", "a model is named by its sha256 or revision: a name alone changes under the cache"))

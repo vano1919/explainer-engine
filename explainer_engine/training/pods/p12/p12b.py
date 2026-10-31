@@ -1,14 +1,16 @@
-"""P12b pod job (runs on the pod under pod_wrapper.sh): the Qwen run of the paid-tests plan, section 3.3 / 3.3a / 3.5.
+"""P12b pod job (runs on the pod under pod_wrapper.sh): the Qwen run of the paid-tests plan, section 3.3 / 3.3a / 3.5 (no host stage: D-89).
 
 Every model, revision, setting and prompt comes from ``p12b.json`` (T10); nothing is chosen here. One process, the pipeline loaded
 once, the xworld LoRA merged once and the multiple-angles (MVA) LoRA merged and unmerged per strength (VideoX-Fun merge_lora). Stages run in ``order``; an optional stage
 starts only when the section 3.5 projection fits before ``EE_DEADLINE``. Every picture is written at once with a JSON sidecar, one
 line per event goes to ``$EE_OUT/t.jsonl`` and ``$EE_OUT/progress.txt`` is rewritten after every unit (the wrapper uploads
-``$EE_OUT``; the weights live under /workspace/models, outside it). Only Qwen: no video model, no layout, no audio (P12c).
+``$EE_OUT``; the weights live under /workspace/models, outside it). Only Qwen draws here: the video model's weights are fetched in a
+background thread while the Qwen stages run (creator 2026-10-31, RP-01), but no video step, layout or audio runs in this script (P12c).
 """
 import hashlib
 import json
 import os
+import shutil
 import sys
 import threading
 import time
@@ -21,8 +23,6 @@ EXIT_SHA_MISMATCH = 3
 
 def units_of(stage):
     """How many pictures a stage makes."""
-    if "hosts" in stage:
-        return len(stage["hosts"]) * len(stage["seeds"])
     return len(stage["people"]) * len(stage["azimuths"]) * len(stage["mva"])
 
 
@@ -64,10 +64,6 @@ def mva_out(cfg, out, person, azimuth, strength):
     return Path(out) / "mva" / person / f"{az_deg(cfg, azimuth)}_s{strength}.png"
 
 
-def host_out(out, host, seed):
-    return Path(out) / "hosts" / f"{host}_seed{seed}.png"
-
-
 def pad_to_3_4(img):
     """Pads to 3:4 (width:height) on white, the picture centred."""
     from PIL import Image
@@ -89,10 +85,43 @@ def person_reference(sheet, size):
     return pad_to_3_4(img.crop((0, 0, w // 3, h))).resize(tuple(size), Image.LANCZOS)
 
 
-def host_reference(path, size):
-    """A host's v0 picture padded to 3:4 on white, resized to ``size``."""
-    from PIL import Image
-    return pad_to_3_4(Image.open(path).convert("RGB")).resize(tuple(size), Image.LANCZOS)
+def style_weight(cfg):
+    """The xworld_v2 LoRA's weight: p12b.json only (0.7, the creator's call of 2026-10-31); nothing is chosen in this script."""
+    return float(cfg["style_lora"]["weight"])
+
+
+def video_download_fits(free_bytes, cfg):
+    """True when the free disk after the Qwen weights holds the video snapshot plus the margin (``video.expected_gb`` and
+    ``video.margin_gb`` of p12b.json; both REVIEW numbers: ~32 GB is the snapshot size noted in PROGRESS, the margin covers the pictures)."""
+    v = cfg["video"]
+    return free_bytes >= (float(v["expected_gb"]) + float(v["margin_gb"])) * 2 ** 30
+
+
+def start_video_download(log, cfg):
+    """Fetches the video model's weights in a background thread (the setup-time cut of RP-01, creator 2026-10-31) so the Qwen stages
+    do not wait for them; returns the thread, or None when the disk is too small (``video_download_skipped``: an ENOSPC would break the picture writes).
+    Its failure is logged, never raised into the Qwen stages (nothing here uses the weights)."""
+    v = cfg["video"]
+    target = MODELS / v["local"]
+    MODELS.mkdir(parents=True, exist_ok=True)
+    free = shutil.disk_usage(MODELS).free
+    if not video_download_fits(free, cfg):
+        log.ev("video_download_skipped", why="disk", free_bytes=free, need_gb=float(v["expected_gb"]) + float(v["margin_gb"]))
+        return None
+    from huggingface_hub import snapshot_download
+
+    def fetch():
+        log.ev("video_download_start", repo=v["repo"], revision=v["revision"])
+        t0 = time.time()
+        try:
+            snapshot_download(v["repo"], revision=v["revision"], local_dir=str(target))
+            log.ev("video_download_end", repo=v["repo"], bytes=dir_bytes(target), seconds=round(time.time() - t0, 1))
+        except Exception as e:   # noqa: BLE001 - a failed side download must not stop the Qwen run
+            log.ev("video_download_failed", repo=v["repo"], error=str(e)[:300])
+
+    th = threading.Thread(target=fetch, name="video-download", daemon=True)
+    th.start()
+    return th
 
 
 def sha256_file(path):
@@ -213,14 +242,8 @@ def draw(pipe, prompt, ref, cfg, seed, steps, true_cfg, negative):
 
 
 def units(cfg, name, stage):
-    """The pictures of a stage in order: dicts with the person or host, azimuth, mva strength, seed, prompt and output path."""
+    """The pictures of a stage in order: dicts with the person, azimuth, mva strength, seed, prompt and output path."""
     out = []
-    if name == "Q4":
-        for host in stage["hosts"]:
-            for seed in stage["seeds"]:
-                out.append({"host": host, "azimuth": None, "mva": None, "seed": seed, "prompt": cfg["prompt_hosts"][host],
-                            "path": host_out("{OUT}", host, seed)})
-        return out
     for person in stage["people"]:
         for az in stage["azimuths"]:
             for s in stage["mva"]:
@@ -270,18 +293,16 @@ def run(cfg, out, deadline, log):
         sheet = timed_download(log, f"sheet_{person}", MODELS / "sheets" / person, lambda p=person: hf_hub_download(
             refs_cfg["repo"], refs_cfg[p], repo_type=refs_cfg["repo_type"], local_dir=str(MODELS / "sheets" / p)))
         refs[person] = person_reference(sheet, size)
-    for host, rel in cfg["hosts"].items():
-        pic = timed_download(log, f"host_{host}", MODELS / "hosts" / host, lambda r=rel, h=host: hf_hub_download(
-            refs_cfg["repo"], r, repo_type=refs_cfg["repo_type"], local_dir=str(MODELS / "hosts" / h)))
-        refs[host] = host_reference(pic, size)
 
+    video = start_video_download(log, cfg)                     # in parallel with the model load and the Qwen stages
     t0 = time.time()
     pipe = load_pipeline(base)
     from videox_fun.utils import merge_lora, unmerge_lora    # the call shape of xworld_v1_test.py (pipe in, pipe out)
     dt = torch.bfloat16
     gu = GateUp(pipe.transformer)
-    pipe = merge_lora(pipe, style, 1.0, device="cuda", dtype=dt)
-    log.ev("lora_gate_up", lora="style", sign=1.0, layers=gu.gate_up(style, 1.0))
+    w = style_weight(cfg)                                      # xworld_v2 at 0.7 (creator 2026-10-31), from p12b.json
+    pipe = merge_lora(pipe, style, w, device="cuda", dtype=dt)
+    log.ev("lora_gate_up", lora="style", sign=w, layers=gu.gate_up(style, w))
     mva_on = None                                              # the MVA strength merged now (None = not merged)
     log.ev("model_loaded", seconds=round(time.time() - t0, 1))
 
@@ -299,7 +320,7 @@ def run(cfg, out, deadline, log):
         for i, u in enumerate(todo, 1):
             path = Path(str(u["path"]).replace("{OUT}", str(out)))
             path.parent.mkdir(parents=True, exist_ok=True)
-            want = None if name == "Q4" else u["mva"]
+            want = u["mva"]
             if want != mva_on:
                 if mva_on is not None:
                     pipe = unmerge_lora(pipe, mva, mva_on, device="cuda", dtype=dt)
@@ -308,17 +329,14 @@ def run(cfg, out, deadline, log):
                     pipe = merge_lora(pipe, mva, want, device="cuda", dtype=dt)
                     log.ev("lora_gate_up", lora="mva", sign=want, layers=gu.gate_up(mva, want))
                 mva_on = want
-            if name == "Q4":
-                ref, negative = refs[u["host"]], st["negative"]
-            else:
-                ref, negative = refs[u["person"]], ""
+            ref, negative = refs[u["person"]], ""
             t = time.time()
             img = draw(pipe, u["prompt"], ref, cfg, u["seed"], st["steps"], st["true_cfg_scale"], negative)
             secs = round(time.time() - t, 1)
             img.convert("RGB").save(path)
             side = {"stage": name, "azimuth": u["azimuth"], "mva": u["mva"], "seed": u["seed"], "steps": st["steps"],
                     "true_cfg_scale": st["true_cfg_scale"], "seconds": secs, "prompt": u["prompt"]}
-            side["host" if "host" in u else "person"] = u.get("host") or u.get("person")
+            side["person"] = u["person"]
             path.with_suffix(".json").write_text(json.dumps(side, indent=1), encoding="utf-8")
             if i == 1:
                 first_unit_s[name] = secs
@@ -326,6 +344,10 @@ def run(cfg, out, deadline, log):
             log.progress(f"{name} {i}/{len(todo)}")
         done.add(name)
         log.stage_line(f"done {name}")
+    limit = deadline - reserve
+    while video is not None and video.is_alive() and time.time() < limit:            # keep progress.txt moving: the stall rule watches it
+        log.progress(f"waiting for the video weights {dir_bytes(MODELS / cfg['video']['local'])} bytes")
+        video.join(timeout=60)
     log.progress("done")
     return 0
 

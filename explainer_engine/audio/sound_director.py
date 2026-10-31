@@ -30,7 +30,7 @@ import numpy as np
 from explainer_engine import assets_reuse
 from explainer_engine.audio import acoustics, duck, foley, sfx_library
 from explainer_engine.audio import layers as L
-from explainer_engine.core import contracts
+from explainer_engine.core import contracts, delivery
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import write_json_atomic
 from explainer_engine.qa import targets
@@ -65,7 +65,6 @@ RULE_OF = {"SD-01": "BP-116", "SD-02": "BP-161", "SD-03": "BP-117", "SD-04": "BP
 MATRIX: dict = {
     "KEYFRAME_LTX": {"native": "bed", "bed": "scene", "spots": "foley+loudest", "perspective": "yes"},
     "DIALOGUE_CU": {"native": "dialogue", "bed": "scene, ducked", "spots": "none", "perspective": "near, dry"},
-    "HOST_COMMENTARY": {"native": "none", "bed": "hosts' room tone", "spots": "none", "perspective": "no"},
     "DRAMA_BLOCKED_3D": {"native": "none", "bed": "scene", "spots": "foley", "perspective": "yes"},
     "ATMOS_BROLL": {"native": "bed if present", "bed": "scene", "spots": "loudest", "perspective": "yes"},
     "MAP": {"native": "none", "bed": "neutral room tone", "spots": "cues only", "perspective": "no"},
@@ -75,6 +74,7 @@ MATRIX: dict = {
 }
 MATRIX_MARKERS = ("<!-- sd-matrix:begin -->", "<!-- sd-matrix:end -->")
 DOC = Path(__file__).resolve().parents[2] / "docs" / "AUDIO_SYSTEM.md"
+ARCHETYPES = Path(__file__).resolve().parents[1] / "edit" / "archetypes.json"
 
 
 def render_matrix() -> str:
@@ -218,7 +218,7 @@ def shot_timeline(spine: dict, timed: dict, film_shots: dict | None, edit: dict 
             end = nxt["start_frame"] if nxt is not None else bounds[s["scene"]][1]
             if s["window"] is None and end >= s["start_frame"]:
                 s["end_frame"], s["frames"] = end, end - s["start_frame"]
-    fm = max(1, round(SR.T("BP-54", "frame_ms") / 1000 * fps))
+    fm = max(1, round(delivery.frame_ms(fps) / 1000 * fps))
     for s in out:  # sounds the shot itself names: loudest and the foley land on its first beat
         if s["loudest"]:
             s["events"].append({"frame": s["start_frame"] + fm, "kind": "loudest", "label": s["loudest"]})
@@ -311,6 +311,88 @@ def _pan_of(shot: dict | None, text: str = "") -> tuple[float, str, float]:
     return round(float(np.clip(2 * (fx - 0.5) * mx, -mx, mx)), 4), persp, 0.0
 
 
+def _story_ops(archetype_id: str) -> set[str]:
+    """The ops of an archetype that are story events (CMP-16, ``story_ops`` of edit/archetypes.json). Read from the file, not imported
+    from the compensator, so the sound director stays free of the renderers."""
+    try:
+        doc = json.loads(ARCHETYPES.read_text(encoding="utf-8"))
+    except OSError:
+        return set()
+    return next((set(a.get("story_ops") or []) for a in doc["archetypes"] if a["id"] == archetype_id), set())
+
+
+def _micro_cue_item(root: Path) -> dict:
+    """The library sound of a compensator micro-cue (``pop_in``, a short UI appear); library first (OR-18), else the procedural one, registered."""
+    found = assets_reuse.lookup("sfx", list(foley.BUILD["pop_in"][0]), sound_root=root)
+    if found:
+        return min(found, key=lambda i: i["id"])
+    tags, fn, seeds = foley.BUILD["pop_in"]
+    return sfx_library.add(root, name="pop_in", take=1, category="foley", tags=tags, samples=fn(seeds[0]), rate=RATE,
+                           source={"kind": "procedural", "seed": seeds[0]},
+                           licence={"status": "own_procedural", "note": "built from noise and tones in explainer_engine/audio/foley.py"},
+                           machine_review="procedural placeholder: plain, replaceable by recorded foley", loop=False)
+
+
+def _densest(kept: list[int], at: int, span: int) -> int:
+    """The most cues, ``at`` included, that fall in any window of ``span`` frames containing ``at``: cues kept on either side of
+    ``at`` count (a later existing cue is as much a neighbour as an earlier one)."""
+    near = sorted(f for f in kept if abs(f - at) < span) + [at]
+    return max(sum(1 for f in near if lo <= f < lo + span) for lo in set(f for f in near if f > at - span and f <= at))
+
+
+def compensator_cues(job: Path, spine: dict, root: Path, existing: list[dict]) -> tuple[list[dict], list[dict]]:
+    """F5 / CMP-16: a micro-cue at BP-120's ``micro_cue_dbfs`` for each story event (``story_ops``) of the job's
+    ``visual/visual_comp_manifest.json`` and the ``comp_spec/1`` of its items; camera moves, labels and the rest stay silent (VB-08).
+    A cue starts a few frames before its word (within BP-54's early limit, so the sound never leads the picture by more than a viewer
+    notices) and inside the gap after the word before: a cue that would start inside a narration word is dropped, and so is one that
+    would pass BP-81's cues per minute (counted with the cues already planned) or its burst. Returns (new cues, dropped with the reason)."""
+    path = job / "visual" / "visual_comp_manifest.json"
+    if not path.exists():
+        return [], []
+    manifest = _load(path)
+    spine_file = job / "audio" / "audio_spine.json"
+    if not spine_file.exists() or manifest["audio_spine"]["sha256"] != contracts.sha256_file(spine_file):
+        raise ContractError("CN-02: visual/visual_comp_manifest.json was built on another audio spine than audio/audio_spine.json "
+                            "(its audio_spine.sha256 differs): its cues would land on the wrong words; rebuild the manifest")
+    fps, words = spine["fps"], spine["words"]
+    item = _micro_cue_item(root)
+    gain = float(SR.T("BP-120", "micro_cue_dbfs"))
+    lead = max(1, int(SR.T("BP-54", "early_max_ms") / 1000 * fps))
+    per_min = int(SR.T("BP-81", "per_min_review"))
+    burst, burst_s = int(SR.T("BP-81", "burst_max")), float(SR.T("BP-81", "burst_window_s"))
+    cands: list[tuple[int, str, str]] = []
+    for it in manifest["items"]:
+        ref = next((ly["ref"] for ly in it["layers"] if ly["kind"] == "spec"), None)
+        if ref is None or not (job / ref).exists():
+            continue
+        spec = _load(job / ref)
+        story = _story_ops(spec["archetype_id"])
+        for e in spec["events"]:
+            if e["op"] in story and 0 <= e["word_index"] < len(words):
+                cands.append((words[e["word_index"]]["start_frame"], f"{spec['item_id']}.{e['id']}", e["op"]))
+    cands.sort()
+    kept = [c["frame"] for c in existing]
+    new: list[dict] = []
+    dropped: list[dict] = []
+    minute, window = int(round(60 * fps)), int(round(burst_s * fps))
+    for frame, where, op in cands:
+        at = frame - lead
+        prev_end = max((w["end_frame"] for w in words if w["end_frame"] <= frame and w["start_frame"] < frame), default=0)
+        why = None
+        if at < prev_end or at < 0 or any(w["start_frame"] <= at < w["end_frame"] for w in words):
+            why = "no gap before the word: the cue would start inside a narration word"
+        elif _densest(kept, at, minute) > per_min:
+            why = f"more than {per_min} cues a minute (BP-81)"
+        elif _densest(kept, at, window) > burst:
+            why = f"more than {burst} cues in {burst_s:g} s (BP-81)"
+        if why:
+            dropped.append({"where": where, "op": op, "frame": frame, "why": why})
+            continue
+        kept.append(at)
+        new.append({"name": item["id"], "frame": at, "gain_db": gain, "max_ms": int(round(item["seconds"] * 1000))})
+    return new, dropped
+
+
 def plan(job: Path, *, library: Path | None = None, write: bool = True) -> dict:
     """Derive ``sound_mix_manifest/2`` for a job (deterministic: the same inputs give the same bytes) and write it with its report.
     ``library`` is the sound library root (default: the repository's); procedural room tones and hits the library lacks are
@@ -339,7 +421,7 @@ def plan_with_report(job: Path, *, library: Path | None = None, write: bool = Tr
     words = spine["words"]
     inferred: list[dict] = []
     findings: list[dict] = []
-    notes: dict = {"dropped_vacuums": [], "unmatched_sounds": []}
+    notes: dict = {"dropped_vacuums": [], "unmatched_sounds": [], "dropped_cues": []}
 
     # scenes: acoustic, place, IR seed
     ctx: dict = {}
@@ -462,7 +544,7 @@ def plan_with_report(job: Path, *, library: Path | None = None, write: bool = Tr
         add_spot(shot_id=sh["id"] if sh else "none", ref=e["sound"], word_index=k if near else None, frame=None if near else f,
                  stem="sfx", pan=pan, perspective=persp, gain_db=float(e.get("gain_db", SPOT_DB)) + extra, group=None, layer="single",
                  origin="timed_sfx")
-    fm = max(1, round(SR.T("BP-54", "frame_ms") / 1000 * fps))
+    fm = max(1, round(delivery.frame_ms(fps) / 1000 * fps))
     for s in timeline:
         mode = _spots_allowed(s["lane"])
         if s["lane"] is None or mode in ("none", "cues only"):
@@ -517,6 +599,9 @@ def plan_with_report(job: Path, *, library: Path | None = None, write: bool = Tr
                       "beat_grid": grid})
     cues = [{"name": c["sound"], "frame": fr(c["start"]), "gain_db": float(c.get("gain_db", -26)), "max_ms": c.get("max_ms")}
             for c in timed.get("audio", {}).get("cues", [])]
+    more, notes["dropped_cues"] = compensator_cues(job, spine, root, cues)  # F5, CMP-16: story events of maps and HUD get a quiet micro-cue
+    if more:
+        cues = sorted(cues + more, key=lambda c: (c["frame"], c["name"]))
     dialogue = []
     for h in spine["post_hoc_shots"]:
         has = (job / "audio" / "dialogue" / f"{h['shot_id']}.wav").exists()

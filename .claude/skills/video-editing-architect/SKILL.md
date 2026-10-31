@@ -202,7 +202,7 @@ Rules: a sound starts with the picture event it belongs to (within one frame) `[
 - [ ] Captions and text readable on a phone held at arm's length: cap height at least 4% of frame, contrast at least 4.5:1, inside the safe area `[ours: BP-28 in 16:9, BP-29 on a Short]`.
 - [ ] 2 lines at most; no word on screen longer than needed to read it (15-17 characters a second).
 - [ ] Chapters: first at 0:00, at least three, each 10 s or longer; titles do not spoil.
-- [ ] Resolution and rate as specified (2560x1440 / 30 fps; Shorts 1080x1920); a 20-second excerpt exported at the final settings and watched on a phone.
+- [ ] Resolution and rate as specified (2560x1440 / 24 fps, D-85; Shorts 1440x2560); a 20-second excerpt exported at the final settings and watched on a phone.
 - [ ] Disclosures, rights and the creator-approval record are present before anything is uploaded (`CLAUDE.md` invariant 4).
 
 When an item fails, find the cause from evidence (the rule, the file, the timestamp), fix the **general** rule or tool, add a test, and re-render only what changed.
@@ -222,7 +222,7 @@ When an item fails, find the cause from evidence (the rule, the file, the timest
   mean and spread per channel (Reinhard transfer) and pulled toward it within BP-130's blend; hero swatches keep a delta-E
   band calibrated on the hero sheets. One film look over the whole episode (ED-04, `assemble.LOOK`; BP-131 only records
   the Blueprint's alternative).
-- **Delivery** stays D-30's 30 fps; the Blueprint's 24 fps is conflict 8, measured in P2 before anything changes.
+- **Delivery** is 24 fps, the video clips' native rate (D-85, creator-confirmed 2026-10-31); D-30's 30 fps is superseded.
 
 ### CHECKLIST (editing_colour)
 
@@ -244,7 +244,7 @@ differ). Every row is a hypothesis until a second source type is verified ([CRAF
 | CRAFT-EDC-09 | code | every shot's boundary frames match the scene's master frame within a bounded transfer | boundary frames + scene master | BP-130 | `explainer_engine/finish/grade.py` (planned, P7) |
 | CRAFT-EDC-10 | code | hero costume and skin swatches stay inside a delta-E band across the episode | hero sheet swatches vs frames | - | `explainer_engine/finish/grade.py` (planned, P7) |
 | CRAFT-EDC-11 | eye | one constant film look over the whole episode | the rendered episode | ED-04, BP-131 | manual |
-| CRAFT-EDC-12 | eye | delivery frame rate per D-30 (30 fps); the Blueprint's 24 fps is conflict 8 | the delivered file | D-30 | manual |
+| CRAFT-EDC-12 | eye | delivery frame rate 24 fps, the video clips' native rate (D-85, creator-confirmed 2026-10-31); D-30's 30 fps is superseded | the delivered file | D-85 | manual |
 <!-- craft-checklist:editing_colour:end -->
 
 ## 8. Motion graphics and Mayer's principles (P3b 2026-10-29)

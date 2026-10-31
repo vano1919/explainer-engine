@@ -12,9 +12,14 @@ which prompts and references work best, with an agent whose output format is sta
 
 from __future__ import annotations
 
+import copy
+import hashlib
 import json
+import math
 import sys
 from pathlib import Path
+
+from explainer_engine.core.errors import ContractError
 
 SCHEMA = Path(__file__).resolve().parents[1] / "schemas" / "continuity_card.schema.json"
 
@@ -217,6 +222,52 @@ def check(doc: dict) -> list[dict]:
                 add("CT-08", "REVIEW", sid, f"'changes' lists {entity}.{field} but the state did not change")
         prev = shot
     return found
+
+
+def axis_cross(axis: dict, pos: list) -> float:
+    """Signed distance (m) of a camera at ``pos`` [x, y, z] from the axis line of a ``scene_set/1``: the line runs through
+    ``origin`` [x, z] at ``deg`` in the floor plane (x right, z forward, y up). Positive = side A, negative = side B."""
+    ox, oz = axis["origin"]
+    rad = math.radians(axis["deg"])
+    return math.cos(rad) * (pos[2] - oz) - math.sin(rad) * (pos[0] - ox)
+
+
+def derive_card_v2(card_v1: dict, scene_set: "dict | Path | str", scene_set_ref: dict | None = None) -> dict:
+    """``continuity_card/2`` (P6, CN-02): the scene's cards with every ``camera_side`` computed from the ``scene_set/1`` camera of
+    the same ``shot_id`` (which side of the axis it stands on), the set's landmark objects added to the location's landmarks, and
+    ``derived_from.scene_set`` naming the set. A shot with no camera in the set keeps its side. A camera exactly on the axis has no
+    side: refused. Nothing else of the cards changes; ``check`` then reports an unexplained crossing (CT-06) as it does for any card."""
+    if card_v1.get("schema") not in ("continuity_card/1", "continuity_card/2"):
+        raise ContractError("derive_card_v2 reads a continuity_card/1 (or /2) document")
+    set_path = None
+    if not isinstance(scene_set, dict):
+        set_path = Path(scene_set)
+        scene_set = json.loads(set_path.read_text(encoding="utf-8"))
+    doc = copy.deepcopy(card_v1)
+    doc["schema"] = "continuity_card/2"
+    if scene_set_ref is None and set_path is not None:
+        from explainer_engine.core import contracts
+        scene_set_ref = {"path": f"sets/{set_path.name}", "sha256": contracts.sha256_file(set_path)}
+    if scene_set_ref is None:
+        raw = json.dumps(scene_set, indent=2, ensure_ascii=False).encode("utf-8")
+        scene_set_ref = {"path": f"sets/{scene_set['set_id']}.json", "sha256": hashlib.sha256(raw).hexdigest()}
+    doc["derived_from"] = {"scene_set": dict(scene_set_ref)}
+    cameras = {c["shot_id"]: c for c in scene_set["cameras"]}
+    for shot in doc["shots"]:
+        cam = cameras.get(shot["shot_id"])
+        if cam is None:
+            continue
+        cross = round(axis_cross(scene_set["axis"], cam["pos"]), 6)
+        if cross == 0:
+            raise ContractError(f"{shot['shot_id']}: the camera of {scene_set['set_id']} stands on the axis, so it has no side (CT-06)")
+        shot["camera_side"] = "A" if cross > 0 else "B"
+        shot["camera"] = {"pos": list(cam["pos"]), "yaw_deg": cam["yaw_deg"], "pitch_deg": cam["pitch_deg"],
+                          "fov_deg": cam["fov_deg"], "axis_cross": cross}
+    have = {lm["id"] for lm in doc["location"].get("landmarks", [])}
+    for obj in scene_set["objects"]:
+        if obj["landmark"] and obj["id"] not in have:
+            doc["location"].setdefault("landmarks", []).append({"id": obj["id"], "text": obj["kind"]})
+    return doc
 
 
 def _refs_text(doc: dict, shot: dict) -> list[str]:

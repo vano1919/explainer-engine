@@ -14,7 +14,7 @@ through the connector, under the PreToolUse hook and the ledger.
 
 0. The narrator is the channel voice: the `status: channel` entry of `config/channel_voices.json`
    (`voice_check.channel_voice(voice_check.load_registry())`). Do not search for another one; only the creator's recorded
-   word replaces it (VC-08). Host characters speak with that voice (D-68).
+   word replaces it (VC-08).
 For each other speaking hero:
 1. Write `voice.traits`: gender, age (at the story's time), 2-4 temperament words from the hero card and arc, energy,
    origin, role. For a real person set `real_person: true` and list in `documented` the sourced facts the traits rest on

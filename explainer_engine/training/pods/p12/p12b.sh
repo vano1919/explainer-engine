@@ -1,5 +1,5 @@
 #!/bin/bash
-# P12b pod: the Qwen run (Q1 MVA hard pair, Q4 host collage, Q2 strength sweep, Q3 second pair) of the paid-tests plan, section 3.3.
+# P12b pod: the Qwen run (Q1 MVA hard pair, Q2 strength sweep, Q3 second pair; no host stage, D-89) of the paid-tests plan, section 3.3.
 # Plan: blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md sections 3.1, 3.3, 3.3a, 3.5; every setting is in p12b.json (next to p12b.py).
 # Runs inside pod_wrapper.sh: the wrapper owns beat.txt, the upload loop, the money dead-man, the end word and the stop. This script
 # only installs, then runs p12b.py, which writes under $EE_OUT: progress.txt, t.jsonl, stages.txt, the pictures and their sidecars.
@@ -7,8 +7,14 @@
 # The wrapper downloads only this file: p12b.py and p12b.json are fetched from HF code/p12/ and must match the sha256 below.
 # heartbeat: datasets/vano1919/tmr-artifacts:runs/p12b/beat.txt
 # stall-minutes: 15
+# needs: none
+# (why: p12b.py and p12b.json are sha256-pinned below; the ~32 GB of weights are fetched inside p12b.py and not yet listed here)
 mkdir -p "$EE_OUT"
 export HF_HOME=/workspace/dl/hf PYTHONUNBUFFERED=1 PIP_BREAK_SYSTEM_PACKAGES=1
+# RP-01 Path A (creator 2026-10-31): a shorter setup. huggingface_hub 1.33.0 (pinned below) downloads through hf_xet and ignores
+# HF_HUB_ENABLE_HF_TRANSFER (it only warns, hf_transfer is not used any more), so the setting that works is HF_XET_HIGH_PERFORMANCE;
+# both are set. p12b.py fetches the video model's weights in a background thread while the Qwen stages run.
+export HF_HUB_ENABLE_HF_TRANSFER=1 HF_XET_HIGH_PERFORMANCE=1
 ev() { printf '{"t":"%s","ev":"%s"%s}\n' "$(date -u +%FT%TZ)" "$1" "${2:+,$2}" >> "$EE_OUT/t.jsonl"; }
 trap 'exit 143' TERM
 ev script_start "\"deadline\":\"${EE_DEADLINE:-}\",\"pod\":\"${RUNPOD_POD_ID:-}\""
@@ -31,7 +37,8 @@ for f in ('p12b.py', 'p12b.json'):
     hf_hub_download('vano1919/tmr-artifacts', 'code/p12/' + f, repo_type='dataset', local_dir='$JOB/dl')
 " || { ev job_files_failed; exit 1; }
 cp "$JOB/dl/code/p12/p12b.py" "$JOB/dl/code/p12/p12b.json" "$JOB/"
-printf '%s  %s\n' 7ed6d37710f4fa51cb072709267ca7bfa1095ddee2e7b3d5ed3d6eb8641bfe13 "$JOB/p12b.py" 43e03437524c981623a116b44310896b0e14f6bf040b6ea79a878609782814e2 "$JOB/p12b.json" > "$JOB/sha.txt"
+printf '%s  %s\n' 33e6fc590ecca848b73841bfddbabadca4613d20002e5d5d9cc67aab9dbd69ba "$JOB/p12b.py" 1aa4a1455130c7f0ee1e55277b8807c941fb8aa714e61cab17ce872a9087a175 "$JOB/p12b.json" > "$JOB/sha.txt"
 sha256sum -c "$JOB/sha.txt" || { ev job_files_sha_mismatch; exit 3; }
+ee_needs_check   # CR-18: the wrapper lists the `# needs:` files above; a missing one ends the pod FAILED rc=66 before p12b.py touches the GPU
 python3 "$JOB/p12b.py"
 exit $?

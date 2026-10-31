@@ -39,7 +39,10 @@ produce the derived files belong to the phases named in the table (P3, P4, P5, P
 | `comp_spec/1` | `visual/specs/<item_id>.json` (named by a layer of kind `spec` of the item) | compensator (P5) | hand, on the spine | the archetype renderers (`edit/visual_compensator.py`, [COMPENSATOR](COMPENSATOR.md)) |
 | `scene_set/1` | `sets/<set_id>.json` | set builder (P6) | hand (numeric geography) | continuity card fields (derived, P6), backdrop crop |
 | `film_shots/2` | `film_shots.json` (= the scene manifest) | beat / shot writers (P6) | hand | compose, router, cache, assemble |
-| `shot_spec/1` | `shots/<shot_id>.spec.json` | compose / router (P6) | **derived** from `film_shots/2` | `core/shot_cache.py`, pod scripts |
+| `shot_spec/1` | `shots/<shot_id>.still.spec.json`, `shots/<shot_id>.video.spec.json` | shot router `edit/router.py` (P6) | **derived** from `film_shots/2` (+ the pins, the spine) | `core/shot_cache.py`, pod scripts |
+| `shot_route/1` | `shots/route.json` | shot router `edit/router.py` (P6) | **derived** from `film_shots/2` (+ `visual_comp_manifest/1`, `audio_spine/2`) | compensator renderers, pod scripts, assemble (P7) |
+| `continuity_card/1` | the scene's cards file | continuity writer ([SHOT_CONTINUITY](SHOT_CONTINUITY.md)) | hand | `scripting/continuity.py` |
+| `continuity_card/2` | the scene's cards file | `scripting/continuity.derive_card_v2` (P6) | **derived** from `continuity_card/1` + `scene_set/1` | `scripting/continuity.py`, the router (`continuity_ref`) |
 | `pod_heartbeat/1` | `jobs/cloud/.../heartbeat.json` and the pod's `beat.txt` parsed | pod scripts, guard, watchdog (P1a) | code | guard, watchdog, `runpod check` |
 | `edit_and_grade_manifest/1` | `edit/edit_and_grade.json` | edit planner (P7) | hand (cuts) | assemble's own manifest (**derived**, P7), OTIO export |
 | `qa_report/1` | `qa/<stage>.qa_report.json` | QA gates (P8) | code | retry router, review bundle |
@@ -126,10 +129,20 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
   ATMOS_BROLL, MAP, COMPENSATOR, STILL_HOLD), `archetype` (an id of the P5 catalogue), `duration_frames`, `width`,
   `height`, `lens_tier` (wide|normal|long), `focal_xy[2]` (0..1 of the frame), `continuity_ref` and `blocking_ref`
   (`<file>#<id>` or null). The shot size stays `frame.size` (one field, not two).
+  Two lanes are **refused** by `core/contracts` (CN-11, creator's dated words): `HOST_COMMENTARY` (card A1 is NO, D-89) and
+  `DRAMA_BLOCKED_3D` (card A2 is "not now": neither is in code in v2); the enum values stay for history, and a `film_shots/2` shot or a
+  `shot_spec/1` on either lane is a FAIL.
 - **shot_spec/1**: `shot_id`, `job_id`, `lane`, `prompt`, `negative`, `seed`, `model{id, sha256|revision}`,
   `loras[]{id, sha256, weight}`, `width`, `height`, `frames` (null for a still), `fps`, `audio_slice_sha256`,
   `refs[]{role, path, sha256}`, `blocking_sha256`, `recipe` (the pipeline's version string), `params{}` (steps, cfg,
   sampler: every other number or name the renderer uses; hashed whole, so never a file path).
+- **shot_route/1** (P6): `job_id`, `fps`, `derived_from{film_shots, visual_comp_manifest?, audio_spine?}` (file references) and `routes[]`
+  (`shot_id`, `lane`, `specs[]{role still|video, path, sha256, cache_key}`, `comp_items[]` = item ids of the `visual_comp_manifest/1`).
+- **continuity_card/2** (P6): everything of `continuity_card/1` (same schema file), plus `derived_from.scene_set` (file reference) and on a
+  shot `camera{pos, yaw_deg, pitch_deg, fov_deg, axis_cross}`. `camera_side` is computed from the `scene_set/1` camera of the same
+  `shot_id`: `axis_cross` is the camera's signed floor-plane distance (m) from the axis line (through `axis.origin` at `axis.deg`, x right,
+  z forward); positive = side A, negative = side B, zero is refused. The set's `landmark` objects join the location's landmarks. A /1 card
+  carrying either field is refused; `continuity.check` then reports an unexplained crossing as CT-06.
 - **pod_heartbeat/1**: `job_id`, `pod_id`, `boot_nonce`, `seq`, `ts_utc`, `state` (BOOTING, PREFLIGHT_OK, RUNNING,
   UPLOADING, DONE, FAILED, FAILED_UPLOAD, BAD_HOST), `progress`, `stage`, `key_probe_http` (int or null), `spend_usd`
   (number or null). The text of `beat.txt` and its parser are P1a's; they map onto these fields.
@@ -146,6 +159,27 @@ times are seconds (number, 3 decimals) and frames are integers at the job's fps;
   private|unlisted, `source_episode_sha256`, `source_time_range[2]`, `claim_ids_covered[]`, `hook_mode`
   PURE_SLICE|SYNTHETIC_BRIDGE, `files{video, cover, captions}` (file references), `post_copy`, `pinned_comment`,
   `ai_label`, `ab_packaging_variants[0..3]{title, thumbnail_brief}`, `checks[]{check_id, severity, passed}`.
+
+## Shot router (P6)
+
+`python -m explainer_engine.edit.router <film_shots.json> <job folder> --job-id ID [--comp M.json] [--spine S.json] [--attempt N]` writes
+the derived files; check them with `python -m explainer_engine.core.contracts check shots/*.spec.json shots/route.json --base <job folder>`.
+Prompts come from `scripting/film_shots.compose` (the one prompt writer); model revisions and the LoRA hash from
+`config/cloud_pins.json` `models` (a null revision and sha256 = not decided = the lane is refused, CR-18, OR-22); the seed of try N is the
+Nth of `router.SEEDS` (BP-165 `max_tries` tries, then the item stops).
+`--attempt N` is one number for every shot; `route(attempt={shot_id: N})` re-routes only the named shots (the rest keep attempt 1, so their specs and cache keys stay). Retry k of the retry router (`qa/retry_router`) is router attempt k + 1: the first render is attempt 1, BP-165 `max_tries` 3 allows two retries here, and the fallback after them is not a render. `REWEIGHT_REFERENCES` has no router input yet (reference weights come only from the card), so that directive reseeds at best.
+
+| Lane | Specs written | Notes |
+|---|---|---|
+| `KEYFRAME_LTX` | `still` (keyframe model + `xworld_v2`, `frames` null) + `video` (LTX i2v, `frames` = the card's `duration_frames`, CN-08) | the video's `keyframe` reference carries the still spec's cache key until the keyframe is accepted; the renderer then re-derives the video spec with the real PNG's sha256 |
+| `DIALOGUE_CU` | the same two; the video's `audio_slice_sha256` is the `clip_sha256` of the shot's `audio_spine/2.post_hoc_shots` window | no window, or a window still `planned`, is refused (D-90) |
+| `ATMOS_BROLL` | `video` only | |
+| `STILL_HOLD` | `still` only | |
+| `MAP`, `COMPENSATOR` | none; `comp_items` = the `visual_comp_manifest/1` items with the shot's `shot_id` | none found is refused (CN-15, CMP-14) |
+| `HOST_COMMENTARY`, `DRAMA_BLOCKED_3D` | refused by `core/contracts` before routing | D-89, card A2 |
+
+Every spec `fps` is the cards' `fps` (CN-09; a `job_manifest.json` in the folder must agree). `route.json` names its inputs by sha256: a
+changed card makes it stale (CN-02).
 
 ## Rules
 
