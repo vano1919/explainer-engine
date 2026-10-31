@@ -32,8 +32,8 @@ answered by Claude without his recorded delegation.
 | P9 | Shorts პლატფორმისთვის + captions | P3, P7, P2 | S2 / Sonnet / medium–high | 5 | — | not yet opened (the lead commits F6) | review | — |
 | P7 | სტეიჯინგი, ფინიშინგი, OTIO, safe_zones | P6, P4, P2 | S2 / Sonnet / high | 6 | — | not yet opened (the lead commits F3) | review | — |
 | P8 | QA: editorial_review, identity, retry router | P7, P6, P4b, P3b | S3 Opus high → S2 Sonnet high | 6 | — | not yet opened (the lead commits F4) | review | — |
-| P10 | დისტრიბუცია (unlisted, პაკეტები) | P9, P8, P2 | S1–S2 / Sonnet / medium | 6 | — | — | todo | — |
-| P11 | ორკესტრატორი dry-run + აგენტები A5-ით | P8, P10, P0b, P0c | S3 Opus high → S2 Sonnet high | 7 | — | — | todo | P0c-ის ანგარიში |
+| P10 | დისტრიბუცია (unlisted, პაკეტები) | P9, P8, P2 | S1–S2 / Sonnet / medium | 6 | — | not yet opened (the lead commits F8) | review | — |
+| P11 | ორკესტრატორი dry-run + აგენტები A5-ით | P8, P10, P0b, P0c | S3 Opus high → S2 Sonnet high | 7 | — | not yet opened (the lead commits F8) | review | P0c-ის ანგარიში |
 | P12a | ცოცხალი smoke ≤ $0.50 | P1a | S3 Opus xhigh (გეგმა) → Sonnet high | 2 | — | — | blocked | ვანო: კონსოლის 1, 3; OR-23/24 |
 | P12d | drills (უფასო, P12a-ს პოდზე) | P1a, P12a | S2 / Sonnet / high | 2 | — | #44 merged | done | P12a |
 | P12b | ორი გაშვება ერთ პოდზე ≤ $2.50 | P12a, P5, P6, P1c | S3 Opus xhigh → Sonnet high | ფული | — | — | blocked | P12a; OR-23/24 |

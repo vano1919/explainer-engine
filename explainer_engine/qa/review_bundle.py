@@ -2,7 +2,10 @@
 
 The creator approves the bundle he watched; ``bundle_manifest.json`` inside it lists every file with its sha256, and the
 lifecycle gate binds the sha256 of that manifest file (``core/store.bound_sha256``). A file changed, added or removed after the
-approval is refused (``check``). stdlib only.
+approval is refused (``check``). stdlib only (``add_qa`` imports the ledger's pilot rows when it is called).
+
+An animated episode's bundle (P11) also carries every per-stage ``qa_report/1`` of the job (``qa/<stage>.qa_report.json``) and the
+three pilot rows of the OR-08 report (``pilot_rows.md``, BP-168, REVIEW severity): ``add_qa`` copies them in before ``write``.
 
     python -m explainer_engine.qa.review_bundle write <bundle folder>     # writes <bundle>/bundle_manifest.json, prints its sha256
     python -m explainer_engine.qa.review_bundle check <bundle folder>     # exit 1 when the bundle no longer matches its manifest
@@ -16,6 +19,7 @@ from pathlib import Path
 
 MANIFEST = "bundle_manifest.json"
 SCHEMA = "review_bundle_manifest/1"
+PILOT_ROWS = "pilot_rows.md"
 
 
 def _sha256(path: Path) -> str:
@@ -31,6 +35,30 @@ def listing(folder: Path | str) -> list[dict]:
     folder = Path(folder)
     return [{"path": f.relative_to(folder).as_posix(), "sha256": _sha256(f)}
             for f in sorted(folder.rglob("*")) if f.is_file() and f.relative_to(folder).as_posix() != MANIFEST]
+
+
+def qa_reports(job_dir: Path | str) -> list[Path]:
+    """The job's ``qa/*.qa_report.json`` files, sorted (written by ``qa/retry_router.write_report``)."""
+    return sorted((Path(job_dir) / "qa").glob("*.qa_report.json"))
+
+
+def add_qa(bundle: Path | str, job_dir: Path | str, measures: dict | None = None) -> list[str]:
+    """Copy every ``qa_report/1`` of the job into ``<bundle>/qa/`` and, when the pilot ``measures`` (``core/ledger.pilot_measures``)
+    are given, write the retry-multiplier / USD / review-minutes rows and the verdict to ``<bundle>/pilot_rows.md``. Returns the
+    bundle-relative paths added. Call it before ``write``: the manifest then lists them and the approval binds them."""
+    import shutil
+    bundle = Path(bundle)
+    added = []
+    for src in qa_reports(job_dir):
+        dst = bundle / "qa" / src.name
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(src, dst)
+        added.append(dst.relative_to(bundle).as_posix())
+    if measures is not None:
+        from explainer_engine.core.ledger import morning_rows
+        (bundle / PILOT_ROWS).write_text("\n".join(f"- {r}" for r in morning_rows(measures)) + "\n", encoding="utf-8")
+        added.append(PILOT_ROWS)
+    return added
 
 
 def write(folder: Path | str) -> Path:
