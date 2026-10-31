@@ -24,6 +24,7 @@ def _ok(rid, kind):
 
 
 CLEAN = """# heartbeat: datasets/o/r:run/out/beat.txt
+# needs: none (the fixture checks the install rules, not the weights)
 set -e
 pip install -q "huggingface_hub==1.33.0"
 git clone -q https://github.com/ostris/ai-toolkit /workspace/aitk && git -C /workspace/aitk checkout -q %s

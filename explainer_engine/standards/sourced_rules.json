@@ -3438,7 +3438,8 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/production/beats.py:CUE_PER_MIN_FAIL"
+    "explainer_engine/production/beats.py:CUE_PER_MIN_FAIL",
+    "explainer_engine/audio/sound_director.py:compensator_cues"
    ],
    "supersedes": [
     "VB-11 CUE_PER_MIN_OK / CUE_PER_MIN_FAIL / CUE_BURST literals"

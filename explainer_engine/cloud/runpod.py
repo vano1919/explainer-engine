@@ -877,6 +877,31 @@ def create(api, body, *, max_price, sleep=time.sleep, lookups=6, gpus=None):
     return pod
 
 
+def adopt_pending(api, lv, *, job, heartbeat, now=None):
+    """CR-12 / T22 / T24: a create that wrote its live spec and then lost the answer (the process died, the POST timed out) left a spec
+    with no pod. Before a new create POSTs again, every such spec of this job and heartbeat is looked up by its pod name: a pod
+    found is adopted (its id is written into the spec, the caller makes no POST); no pod and a lifetime that has passed moves the stale
+    spec to ``closed`` (as the watchdog does); no pod and time left is left alone (the old POST may still land: the watchdog sees the
+    name). Returns (pod, spec) of the adopted pod, or (None, None). A listing that fails is a refusal: no blind second POST."""
+    from explainer_engine.cloud import hf_live
+    now = time.time() if now is None else now
+    for name, spec in hf_live.pending(lv.specs(), job=job, heartbeat=heartbeat).items():
+        try:
+            found = find_by_name(api, name)
+        except Unclear as e:
+            raise RunPodError(f"create: the pods could not be listed to check the earlier create {name} ({e}); not POSTing again") from e
+        if len(found) > 1:
+            raise RunPodError(f"{len(found)} pods named {name}: check and stop them by hand")
+        if found:
+            pod = norm(found[0])
+            spec = {**spec, "pod": pod["id"]}
+            lv.write_spec(spec)
+            return pod, spec
+        if (until_of(name) or spec.get("until") or 0) < now:
+            lv.close_spec(name)
+    return None, None
+
+
 def _post_once(api, body, sleep):
     for wait in (10, 30, 60, None):
         try:
@@ -1803,9 +1828,13 @@ def main(argv=None, api=None, live=None):
                 from explainer_engine.cloud import batching
                 if batching.rp03(body):  # RP-03: never a network volume
                     raise SystemExit("refused, no pod was made:\n  " + "\n  ".join(batching.rp03(body)))
+        adopted = (None, None)
+        if script is not None and lv is not None:  # CR-12 / T22 / T24: an earlier create of this job whose answer was lost: its pod is adopted, never POSTed twice
+            adopted = adopt_pending(api, lv, job=job_base, heartbeat=heartbeat)
         why = preflight_create(api, max_usd=max_usd, max_hours=max_hours, gpu=gpu, script=script, picks=picks, heartbeat=heartbeat,
                                pod_key=bool(secret("pod_api_key.txt", "RUNPOD_POD_API_KEY")), watchdog_age=age, image=image,
-                               boot_minutes=_opt(rest, "--boot-minutes", BOOT_MINUTES, float), body=body)
+                               boot_minutes=_opt(rest, "--boot-minutes", BOOT_MINUTES, float), body=body,
+                               ignore=adopted[0]["id"] if adopted[0] is not None else None)
         why += batch_why + (body_why if not any("heartbeat" in w for w in why) else [])
         if script is not None and lv is None:
             why.append("the live-pod registry on HF cannot be written (no HF_TOKEN): the watchdog could not see this pod (CR-07c)")
@@ -1814,7 +1843,10 @@ def main(argv=None, api=None, live=None):
         from explainer_engine.cloud.jobs import Job
         from explainer_engine.core.ledger import Run
         spec = None
-        if script is not None:  # CR-12: the watchdog judges this pod from the registry, with no session file
+        if adopted[0] is not None:
+            print("adopted", adopted[0]["id"], adopted[1]["name"], "(an earlier create timed out; no second POST)")
+            spec, name = adopted[1], adopted[1]["name"]
+        if script is not None and spec is None:  # CR-12: the watchdog judges this pod from the registry, with no session file
             env = body["env"]
             spec = {"name": name, "pod": None, "job": env.get("EE_JOB"), "heartbeat": heartbeat, "created": float(env["EE_CREATED"]),
                     "price": float(env["EE_PRICE"]), "disk_per_h": float(env["EE_DISK_H"]), "max_usd": max_usd, "max_hours": max_hours,
@@ -1823,7 +1855,8 @@ def main(argv=None, api=None, live=None):
                 lv.write_spec(spec)
             except hf_live.LiveError as e:
                 raise SystemExit(f"refused, no pod was made: the live-pod registry could not be written ({e}) (CR-07c)")
-        Run.open(ledger).reserve("runpod_usd", max_usd, item="pod:pending")  # refuses past 80 % of the episode's cap
+        if adopted[0] is None or "pod:pending" not in Run.open(ledger).data["reserved"]:  # an adopted pod keeps its first reservation
+            Run.open(ledger).reserve("runpod_usd", max_usd, item="pod:pending")  # refuses past 80 % of the episode's cap
         job = Job.create(ROOT / "jobs" / "cloud", _opt(rest, "--job", base), kind="pod", provider="runpod", ledger=ledger,
                          caps={"max_usd": max_usd, "max_hours": max_hours}, reuse_finished=False,
                          inputs={"gpu": first["gpu"] if first else gpu, "boot": _opt(rest, "--boot"), "script": script_url,
@@ -1831,9 +1864,9 @@ def main(argv=None, api=None, live=None):
         job.move("PROVISIONING", "POST /pods")
         card_max = max(r["price"] for r in picks) if picks else MAX_PRICE[gpu]
         try:
-            pod = create(api, body, max_price=card_max,
-                         gpus=[(r["gpu"], r["cloud"], card_max) for r in picks if r["est_usd"] <= max_usd] if picks
-                         else [(g, "SECURE", MAX_PRICE[gpu]) for g in GPUS[gpu]])
+            pod = adopted[0] or create(api, body, max_price=card_max,
+                                       gpus=[(r["gpu"], r["cloud"], card_max) for r in picks if r["est_usd"] <= max_usd] if picks
+                                       else [(g, "SECURE", MAX_PRICE[gpu]) for g in GPUS[gpu]])
         except RunPodError as e:
             if spec is not None:
                 lv.drop_spec(name)

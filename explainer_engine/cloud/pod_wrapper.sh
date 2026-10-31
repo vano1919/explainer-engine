@@ -179,6 +179,21 @@ fi
 if ! curl -fsSL -m 300 -H "Authorization: Bearer $HF_TOKEN" "$EE_SCRIPT_URL" -o "$EE_SCRIPT"; then
   echo "could not download the pod script"; end_seq FAILED 22 "$EE_UPLOAD_GRACE_S"
 fi
+# --- 4b. the script's `# needs: <path> [min_bytes]` lines (CR-18): the script calls ee_needs_check right after its downloads; a file that
+# is missing or too small ends the pod FAILED rc=66 before any GPU step (the CR-06 probe above already ran). ----------------------------------
+grep -E '^#[[:space:]]*needs:' "$EE_SCRIPT" | sed -E 's/^#[[:space:]]*needs:[[:space:]]*//' > "$ST/needs.txt" 2>/dev/null
+ee_needs_check() {
+  local p sz got bad=0
+  while read -r p sz; do
+    [ -n "$p" ] && [ "$p" != none ] || continue
+    p=$(eval "printf '%s' \"$p\"")
+    got=$(stat -c %s "$p" 2>/dev/null || echo -1)
+    if [ "$got" -lt "${sz:-1}" ]; then echo "NEEDS_MISSING: $p (needs >= ${sz:-1} bytes, found $got)"; bad=1; fi
+  done < "$ST/needs.txt"
+  [ "$bad" = 0 ] || exit 66
+}
+export -f ee_needs_check
+export ST
 export EE_OUT EE_DEADLINE="$DEADLINE"
 setsid bash "$EE_SCRIPT" &
 SPID=$!
