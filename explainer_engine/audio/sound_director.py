@@ -30,7 +30,7 @@ import numpy as np
 from explainer_engine import assets_reuse
 from explainer_engine.audio import acoustics, duck, foley, sfx_library
 from explainer_engine.audio import layers as L
-from explainer_engine.core import contracts
+from explainer_engine.core import contracts, delivery
 from explainer_engine.core.errors import ContractError
 from explainer_engine.core.store import write_json_atomic
 from explainer_engine.qa import targets
@@ -218,7 +218,7 @@ def shot_timeline(spine: dict, timed: dict, film_shots: dict | None, edit: dict 
             end = nxt["start_frame"] if nxt is not None else bounds[s["scene"]][1]
             if s["window"] is None and end >= s["start_frame"]:
                 s["end_frame"], s["frames"] = end, end - s["start_frame"]
-    fm = max(1, round(SR.T("BP-54", "frame_ms") / 1000 * fps))
+    fm = max(1, round(delivery.frame_ms(fps) / 1000 * fps))
     for s in out:  # sounds the shot itself names: loudest and the foley land on its first beat
         if s["loudest"]:
             s["events"].append({"frame": s["start_frame"] + fm, "kind": "loudest", "label": s["loudest"]})
@@ -462,7 +462,7 @@ def plan_with_report(job: Path, *, library: Path | None = None, write: bool = Tr
         add_spot(shot_id=sh["id"] if sh else "none", ref=e["sound"], word_index=k if near else None, frame=None if near else f,
                  stem="sfx", pan=pan, perspective=persp, gain_db=float(e.get("gain_db", SPOT_DB)) + extra, group=None, layer="single",
                  origin="timed_sfx")
-    fm = max(1, round(SR.T("BP-54", "frame_ms") / 1000 * fps))
+    fm = max(1, round(delivery.frame_ms(fps) / 1000 * fps))
     for s in timeline:
         mode = _spots_allowed(s["lane"])
         if s["lane"] is None or mode in ("none", "cues only"):

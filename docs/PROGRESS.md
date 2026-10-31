@@ -3572,3 +3572,9 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 
 ## 2026-10-31 (night run) — no permanent hosts, final: P12e host sheets dropped, P12b to be re-priced
 - Creator 06:37 UTC: no permanent hosts (D-89 stands). The `p12e_hosts` line in `config/spend_caps.json` is re-labelled "dropped, money unassigned" (value and the 5.90 total unchanged); the plan (project files `PAID_TESTS_PLAN.md` R2 and the `_ka` twin) records the void parts (Q4 host collage, E1-E5) and Fable's route for RP-01: `hf_transfer`, 8 region plates (E6) into P12b, one measurement pod first. The measurement pod needs the creator's money word (card posted); `p12b.json/py/sh` are NOT changed yet. No pod, nothing paid, nothing deleted.
+
+## 2026-10-31 F0 — delivery constants: one fps source, Shorts frame from the master
+- `core/delivery.py`: `frame_ms(fps)` (BP-54 `frames` x 1000 / fps; 24 fps = 41.667 ms, 30 fps = 33.333 ms) and `shorts_frame()` = the BP-167 master rotated = (1440, 2560).
+- BP-54: threshold `frame_ms = 33` replaced by `frames = 1` (JSON + the generated table in `docs/SOURCED_RULES.md`); `core/delivery.py:frame_ms` added to its `enforced_by`. `audio/sound_director.py` (two sync-window sites) now calls `delivery.frame_ms(fps)`; layers, timing and scorecard never held the literal.
+- Test: NEW `tests/unit/test_delivery_constants.py` (4 cases, incl. an AST check that no BP-54 module holds a 33). Full `tests/unit` 2220 passed, docs_lint 0 findings.
+- Not edited (creator-confirmed cleanups for F9): D-30, CRAFT-EDIT-12, video-editing-architect "30 fps" text. No spend, no pod, no API call.

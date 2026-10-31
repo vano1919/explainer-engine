@@ -2465,7 +2465,7 @@
    "thresholds": {
     "early_max_ms": 45,
     "late_max_ms": 125,
-    "frame_ms": 33
+    "frames": 1
    },
    "sources": [
     {
@@ -2498,7 +2498,8 @@
     "explainer_engine/audio/layers.py:SYNC_EARLY",
     "explainer_engine/production/timing.py:SFX_EARLY_MAX",
     "explainer_engine/qa/scorecard.py:synced",
-    "explainer_engine/audio/sound_director.py"
+    "explainer_engine/audio/sound_director.py",
+    "explainer_engine/core/delivery.py:frame_ms"
    ],
    "supersedes": [
     "AL-03 0.25 s window",
