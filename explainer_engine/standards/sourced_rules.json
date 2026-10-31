@@ -1243,7 +1243,7 @@
    "area": "shorts",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "A Short keeps captions, labels, stat cards and the hero's face inside the ad safe zone of a 1080 x 1920 frame: x 48-888 px, y 288-1248 px; the face centre sits in the middle third vertically.",
+   "statement": "A Short keeps captions, labels, stat cards and the hero's face inside the ad safe zone of a 1080 x 1920 frame: x 48-888 px, y 288-1248 px; the face centre sits in the middle third vertically. At another frame size the bands scale by frame / 1080 (1440 x 2560: x 64-1184 px, y 384-1664 px; code: shorts.safe_bands); REVIEW until the phone screenshot (D-91 row 13).",
    "thresholds": {
     "safe_x_px": [
      48,
