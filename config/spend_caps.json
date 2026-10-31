@@ -22,7 +22,7 @@
     "plan": "project files explainer-engine/blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md (OR-23, confirmed by the OR-24 plan thread)",
     "p12a_smoke": {"runpod_usd": 0.5, "for": "five small pods: the live smoke of the wrapper and the live drills of every stop path (pods 0.40 hard)"},
     "p12b_two_runs": {"runpod_usd": 3.0, "for": "one pod: MVA views + host collage (Qwen-Image-2.1), LTX plain vs Layout-To-Render (pod 2.40 hard)"},
-    "p12e_hosts": {"runpod_usd": 2.4, "for": "one pod after the creator's host pick: the two hosts' sheets and the region plates (pod 1.92 hard)"}
+    "p12e_hosts": {"runpod_usd": 2.4, "for": "DROPPED 2026-10-31 (no permanent hosts, D-89): host sheets void, region plates moved into p12b; the money is unassigned until the creator reassigns it"}
   },
   "runpod": {
     "per_pod_usd": 6.9,
