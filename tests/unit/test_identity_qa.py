@@ -42,10 +42,10 @@ def test_identical_frame_has_cosine_one_and_another_hero_scores_lower(tmp_path):
     assert own > other and own < 1.0
 
 
-def test_identity_without_a_calibrated_threshold_is_info_never_a_guess():
+def test_identity_without_a_calibrated_threshold_is_a_passing_review_row_never_a_guess():
     scores = {"per_frame": [0.4], "mean": 0.4, "min": 0.4}
     row = ID.identity_check("s01", scores)
-    assert row["severity"] == "INFO" and row["passed"] and "uncalibrated" in row["threshold"]
+    assert row["severity"] == "REVIEW" and row["passed"] and "uncalibrated" in row["threshold"]
     low = ID.identity_check("s01", scores, threshold=0.7)
     assert low["severity"] == "REVIEW" and not low["passed"]  # a hypothesis rule never FAILs (BP-133)
 

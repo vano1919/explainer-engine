@@ -37,12 +37,16 @@ def mean_luma(img: np.ndarray) -> float:
 _M = np.array([[0.4124564, 0.3575761, 0.1804375], [0.2126729, 0.7151522, 0.0721750], [0.0193339, 0.1191920, 0.9503041]])
 _WHITE = np.array([0.95047, 1.0, 1.08883])
 _EPS, _KAPPA = 216.0 / 24389.0, 24389.0 / 27.0
+# float32 copies: a 2560x1440 frame in float64 is 88 MB per array and the colour transfer makes several; float32 halves that and is
+# far finer than one 8-bit level. The statistics are taken on a ~STATS_ROWS-row grid of the frame (they are means and spreads).
+_M32, _WHITE32, _MINV32 = _M.astype(np.float32), _WHITE.astype(np.float32), np.linalg.inv(_M).astype(np.float32)
+STATS_ROWS = 180
 
 
 def rgb_to_lab(img: np.ndarray) -> np.ndarray:
-    x = np.clip(np.asarray(img, dtype=np.float64), 0.0, 1.0)
+    x = np.clip(np.asarray(img, dtype=np.float32), 0.0, 1.0)
     lin = np.where(x <= 0.04045, x / 12.92, ((x + 0.055) / 1.055) ** 2.4)
-    t = (lin @ _M.T) / _WHITE
+    t = (lin @ _M32.T) / _WHITE32
     f = np.where(t > _EPS, np.cbrt(t), (_KAPPA * t + 16.0) / 116.0)
     return np.stack([116.0 * f[..., 1] - 16.0, 500.0 * (f[..., 0] - f[..., 1]), 200.0 * (f[..., 1] - f[..., 2])], axis=-1)
 
@@ -51,15 +55,17 @@ def lab_to_rgb(lab: np.ndarray) -> np.ndarray:
     fy = (lab[..., 0] + 16.0) / 116.0
     f = np.stack([fy + lab[..., 1] / 500.0, fy, fy - lab[..., 2] / 200.0], axis=-1)
     t = np.where(f ** 3 > _EPS, f ** 3, (116.0 * f - 16.0) / _KAPPA)
-    lin = (t * _WHITE) @ np.linalg.inv(_M).T
+    lin = (t * _WHITE32) @ _MINV32.T
     lin = np.clip(lin, 0.0, 1.0)
     return np.clip(np.where(lin <= 0.0031308, lin * 12.92, 1.055 * lin ** (1 / 2.4) - 0.055), 0.0, 1.0)
 
 
 def lab_stats(img: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Per-channel (mean, std) of an RGB image in LAB: the two statistics BP-130 compares."""
-    lab = rgb_to_lab(img).reshape(-1, 3)
-    return lab.mean(axis=0), lab.std(axis=0)
+    img = np.asarray(img)
+    step = max(1, img.shape[0] // STATS_ROWS) if img.ndim == 3 else 1   # statistics on a ~STATS_ROWS-row grid, not on every pixel
+    lab = rgb_to_lab(img[::step, ::step]).reshape(-1, 3)
+    return lab.mean(axis=0, dtype=np.float64), lab.std(axis=0, dtype=np.float64)
 
 
 def lab_distance(a: np.ndarray, b: np.ndarray) -> float:

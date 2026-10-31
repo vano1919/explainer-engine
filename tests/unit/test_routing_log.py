@@ -9,9 +9,13 @@ from _gov import ROOT, config
 from explainer_engine.governance import status
 
 PHASES, LOG = status.phases(ROOT), status.log(ROOT)
-# a phase that has not started: no PR, no log line (it moves on as the plan advances, so it is looked up and not named)
-FRESH = next(r["id"] for r in PHASES if r["state"] == "todo" and not r.get("pr")
-             and r["id"] not in {l.get("phase") for l in LOG if l.get("kind") == "phase"})
+# a phase that has not started: no PR, no log line (it moves on as the plan advances, so it is looked up and not named). When every
+# phase has started, a synthetic one stands in so these tests keep running (they work on copies of the rows).
+_started = {l.get("phase") for l in LOG if l.get("kind") == "phase"}
+_fresh = [r["id"] for r in PHASES if r["state"] == "todo" and not r.get("pr") and r["id"] not in _started]
+FRESH = _fresh[0] if _fresh else "P99-synthetic"
+ROWS = PHASES if _fresh else PHASES + [{"id": FRESH, "title": "synthetic", "depends_on": [], "routing": "S1 / Sonnet / medium", "wave": 9,
+                                         "thread": None, "pr": None, "state": "todo", "waits": None}]
 
 
 def test_the_shipped_files_are_consistent():
@@ -24,7 +28,7 @@ def test_phase_table_has_the_24_phases_with_known_dependencies():
 
 
 def test_a_done_phase_without_a_log_line_fails():
-    rows = copy.deepcopy(PHASES)
+    rows = copy.deepcopy(ROWS)
     row = next(r for r in rows if r["id"] == FRESH)
     row["state"], row["pr"] = "done", "#9"
     errs = status.check_log(rows, LOG, config())
@@ -34,7 +38,7 @@ def test_a_done_phase_without_a_log_line_fails():
 
 
 def test_a_review_phase_needs_a_pr():
-    rows = copy.deepcopy(PHASES)
+    rows = copy.deepcopy(ROWS)
     next(r for r in rows if r["id"] == FRESH)["state"] = "review"
     assert any("without a PR" in e for e in status.check_phases(rows))
 

@@ -63,9 +63,9 @@ def hero_identity(frames, sheets, embedder=None) -> dict:
 
 
 def identity_check(shot_id: str, scores: dict, threshold: float | None = None) -> dict:
-    """CRAFT-ANI-16. Without a calibrated ``threshold`` the row is INFO and passes (the score is only reported)."""
+    """CRAFT-ANI-16. Without a calibrated ``threshold`` the row is a REVIEW row that passes (the score is only reported; BP-133 is REVIEW)."""
     if threshold is None:
-        return check(f"identity:{shot_id}", "INFO", scores["min"], "uncalibrated (BP-133: calibrate on our hero sheets)", True)
+        return check(f"identity:{shot_id}", "REVIEW", scores["min"], "uncalibrated (BP-133: calibrate on our hero sheets)", True)
     return check(f"identity:{shot_id}", "REVIEW", scores["min"], threshold, scores["min"] >= threshold)
 
 
