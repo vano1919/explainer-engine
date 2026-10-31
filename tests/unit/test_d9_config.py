@@ -93,7 +93,7 @@ def test_min_balance_refusal_at_the_exact_boundary(monkeypatch):
 
 def test_the_gone_pod_is_no_longer_kept():
     keep = spend_caps.runpod()["keep_stopped_pods"]
-    assert "97vn2t443puxxl" not in keep and len(keep) == len(set(keep)) and len(keep) == 51  # 49 + the stopped P12a pods A and E
+    assert "97vn2t443puxxl" not in keep and len(keep) == len(set(keep)) and len(keep) == 54  # 49 + the stopped P12a pods A, E, C2, D2 and B2
 
 
 # -- 12: channel_voices.json is a protected file -------------------------------------------------------------------------------

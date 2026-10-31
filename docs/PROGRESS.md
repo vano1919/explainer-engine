@@ -3557,3 +3557,6 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 
 ## 2026-10-31 (night run) — P12a: stopped pods A and E listed in keep_stopped_pods
 - Pod A (`ixuendp5qoiu1e`) and pod E (`onuaeup37xsmk5`) are stopped, 0 GB, $0.00/day. Not listed, the pod manager refused every new `create` ("clean up first") and the GitHub watchdog run failed on them (it writes `watchdog.json` only on success, so `create` also saw the watchdog as older than 60 min). Config-only change; no money line moved; nothing deleted.
+
+## 2026-10-31 (night run) — P12a: pods C2, D2 and B2 listed in keep_stopped_pods
+- Same reason as the entry above: stopped pods (0 GB, $0.00/day) must be listed or `create` and the GitHub watchdog refuse. P12a so far: A passed, E passed (the watchdog stopped it 41 s after DONE), C2 passed (`FAILED_UPLOAD`, `unstored=12`), D2 inconclusive (stopped by hand before its own deadline, re-run once at `--max-usd 0.06`), B2 `BAD_HOST` 9 s after create (one hardware retry left). Config and test count only; nothing deleted.
