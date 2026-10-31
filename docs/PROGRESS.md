@@ -3579,6 +3579,7 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - Cost (ledger): stream proof $0.00001, step 1 $3.73, step 2 $6.96, step 3 $1.73; total $12.42 of $25 (client stop $20).
 - Result: 104 covered, 26 partial, 15 contradicted, 3 ignored, 5 rejected. Files: project folder `explainer-engine/research_vs_main_2026-10-31/` and HF dataset `vano1919/tmr-artifacts` `research_vs_main_2026-10-31/`.
 - Next: the creator decides the listed contradictions; P6/P7/P8 gaps go to the planner.
+
 ## 2026-10-30 — plan_v2 wave 2, T2: `qa/blind_check.py` carries no text of the banned look (follow-up to N-09 #87)
 - `STYLE_SPEC_WLDNK_RETIRED` (the six-item describer spec measured on the banned look) and `DESCRIBE_RULES_WLDNK_RETIRED` are removed from the live module (OR-34: nothing from
   the old era in use; git history keeps the text). The live `STYLE_SPEC` stays `{}` and `STYLE_SUSPENDED` stays True, so every verdict is as before (REVIEW while suspended).
@@ -3587,6 +3588,7 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
 - OPEN: the xworld_v2 describer spec is not written (OR-22: after the creator rates the look); options and the DINOv2 `STYLE_SCORE_MIN` (0.557, calibrated on the banned look,
   unused while suspended) are T2's last question in `paid/final_review/TECH_QUESTIONS.md` (project files) for Fable. No pod, no API call, nothing deleted.
 - Decision log: none moved.
+
 ## 2026-10-30 — Claude API: first real calls (J1, J3), citation check
 - Key reached the session as `EE_ANTHROPIC_API_KEY` (PR #52 alias). Haiku ping ok; J1 review of PR #47 (Opus 5.5, $1.48); J3 craft research
   (Opus 5.5 high + web search, 9 departments, $5.56): `docs/research/CRAFT_SOURCES_API_2026-10.md`, leads only, nothing binding (D-59).
@@ -3594,3 +3596,15 @@ A Fable 5.1 job at effort `max`, max_tokens 40000, stopped on `max_tokens` after
   line that cites another URL (invariant 5). Tests: `test_web_search_result_urls_are_kept_for_the_citation_check`, `tests/unit/test_cite_check.py`.
 - Job file: `explainer_engine/standards/J3_craft_research.job.json`. Ledger total after J3 $7.04 of $95.
 - Citation check is an exact match (plus a URL's own closing `)`); it sees only http(s) URLs, and the Batch path (20+ requests) writes no sources, so a batch job cannot be checked. The returned URL lists are committed in `docs/research/craft_sources_api/`.
+
+## 2026-10-31 — main consolidated before the paid tests; one parallel dev branch
+- Creator (cmsg_01Hnu5zB86sjUj5GtTgaUkPWDvBczqFd3gF5dwZb9axCjy): everything into main, old branches and PRs cleaned up, a parallel development branch for the
+  next-video PR and the paid tests. Into main: #109 (research_vs_main cap, CI green), #91 (blind_check, T2) and #59 (J3 craft sources + `llm/cite_check.py`),
+  the last two re-applied on main with their PROGRESS/routing-log/`claude_api.py` conflicts resolved for main's newer F1-F13 client (`sources` added to the
+  streamed `Result`, `.sources.json` written by `write_one`). #110 merges through its own thread.
+- Branch audit (merge-tree against main, full history): 84 remote branches are fully contained in main; `14jebf-stream` (P0d), `chsnnq-w8` and `9yzh4a`
+  (T3-6) have commits not in main by hash, but main already holds newer versions of the same changes (F1 streaming, `keep_stopped_pods` B3/D3, #81), so they
+  are superseded. Old pre-10-24 branches also live in HF `vault/code/explainer-engine_2026-10-24.bundle`.
+- New work branch: `dev/next-video` from main; next-video work and paid-test fixes go there by PR, main by the creator's word.
+- Tests: `pytest -m "not system and not media"` 2223 passed, 2 skipped; `docs_lint` 0 findings. No pod, no API call, nothing paid.
+- Decision log: none moved.
