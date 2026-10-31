@@ -1,0 +1,40 @@
+{
+ "schema": "shot_route/1",
+ "job_id": "job-001",
+ "fps": 24,
+ "derived_from": {
+  "film_shots": {
+   "path": "film_shots.json",
+   "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+ },
+ "routes": [
+  {
+   "shot_id": "s1",
+   "lane": "HOST_COMMENTARY",
+   "specs": [
+    {
+     "role": "still",
+     "path": "shots/s1.still.spec.json",
+     "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+     "cache_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    {
+     "role": "video",
+     "path": "shots/s1.video.spec.json",
+     "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+     "cache_key": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+   ],
+   "comp_items": []
+  },
+  {
+   "shot_id": "s2",
+   "lane": "MAP",
+   "specs": [],
+   "comp_items": [
+    "m1"
+   ]
+  }
+ ]
+}

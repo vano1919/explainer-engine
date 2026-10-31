@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "shot_route.schema.json",
+  "title": "Shot route: which renderable specs and compensator items each shot of film_shots/2 became (docs/CONTRACTS.md, edit/router.py)",
+  "type": "object",
+  "required": ["schema", "job_id", "fps", "derived_from", "routes"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "shot_route/1"},
+    "job_id": {"type": "string", "minLength": 1},
+    "fps": {"type": "integer", "minimum": 1},
+    "derived_from": {
+      "type": "object",
+      "required": ["film_shots"],
+      "additionalProperties": false,
+      "properties": {
+        "film_shots": {"$ref": "#/$defs/fileref"},
+        "visual_comp_manifest": {"$ref": "#/$defs/fileref"},
+        "audio_spine": {"$ref": "#/$defs/fileref"}
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["shot_id", "lane", "specs", "comp_items"],
+        "additionalProperties": false,
+        "properties": {
+          "shot_id": {"type": "string", "minLength": 1},
+          "lane": {"enum": ["KEYFRAME_LTX", "DIALOGUE_CU", "ATMOS_BROLL", "MAP", "COMPENSATOR", "STILL_HOLD"]},
+          "specs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["role", "path", "sha256", "cache_key"],
+              "additionalProperties": false,
+              "properties": {
+                "role": {"enum": ["still", "video"]},
+                "path": {"type": "string", "minLength": 1},
+                "sha256": {"$ref": "#/$defs/sha256"},
+                "cache_key": {"$ref": "#/$defs/sha256"}
+              }
+            }
+          },
+          "comp_items": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "fileref": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "additionalProperties": false,
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}
+    }
+  }
+}

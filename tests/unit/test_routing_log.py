@@ -9,6 +9,9 @@ from _gov import ROOT, config
 from explainer_engine.governance import status
 
 PHASES, LOG = status.phases(ROOT), status.log(ROOT)
+# a phase that has not started: no PR, no log line (it moves on as the plan advances, so it is looked up and not named)
+FRESH = next(r["id"] for r in PHASES if r["state"] == "todo" and not r.get("pr")
+             and r["id"] not in {l.get("phase") for l in LOG if l.get("kind") == "phase"})
 
 
 def test_the_shipped_files_are_consistent():
@@ -22,17 +25,17 @@ def test_phase_table_has_the_24_phases_with_known_dependencies():
 
 def test_a_done_phase_without_a_log_line_fails():
     rows = copy.deepcopy(PHASES)
-    row = next(r for r in rows if r["id"] == "P6")
+    row = next(r for r in rows if r["id"] == FRESH)
     row["state"], row["pr"] = "done", "#9"
     errs = status.check_log(rows, LOG, config())
-    assert any("P6" in e and "routing_log" in e for e in errs)
-    line = {"kind": "phase", "phase": "P6", "level": "S2", "model": "claude-sonnet-5-5", "effort": "medium", "result": "report"}
+    assert any(FRESH in e and "routing_log" in e for e in errs)
+    line = {"kind": "phase", "phase": FRESH, "level": "S2", "model": "claude-sonnet-5-5", "effort": "medium", "result": "report"}
     assert status.check_log(rows, LOG + [line], config()) == []
 
 
 def test_a_review_phase_needs_a_pr():
     rows = copy.deepcopy(PHASES)
-    next(r for r in rows if r["id"] == "P6")["state"] = "review"
+    next(r for r in rows if r["id"] == FRESH)["state"] = "review"
     assert any("without a PR" in e for e in status.check_phases(rows))
 
 

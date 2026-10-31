@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 FIX = ROOT / "tests" / "fixtures" / "contracts"
 NEW = ["job_manifest", "script_variants", "screenplay_spine", "voice_casting", "audio_spine", "sound_mix_manifest",
        "visual_comp_manifest", "comp_spec", "scene_set", "shot_spec", "pod_heartbeat", "edit_and_grade_manifest", "qa_report",
-       "editorial_review", "distribution_package"]
+       "editorial_review", "distribution_package", "shot_route"]
 V2 = ["audio_spine", "sound_mix_manifest"]  # contracts whose /2 lives in the same schema file as /1 (P4, D-88)
 
 
@@ -265,3 +265,13 @@ def test_a_package_must_be_cut_from_the_jobs_assembled_video(tmp_path):
     manifest["artifacts"]["assembled_video"]["sha256"] = doc["source_episode_sha256"]
     (tmp_path / "job_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     assert C.errors(doc, tmp_path) == []
+
+
+@pytest.mark.parametrize("name,cite", [("host_lane", "D-89"), ("3d_lane", "A2")])
+def test_refused_lanes_cannot_reach_a_renderer(name, cite, capsys):
+    for contract in ("film_shots_2", "shot_spec"):
+        path = FIX / contract / f"invalid__{name}.json"
+        with pytest.raises(ContractError, match=cite):
+            C.validate(load(path))
+        assert C.main(["check", str(path)]) == 1
+        assert cite in capsys.readouterr().out

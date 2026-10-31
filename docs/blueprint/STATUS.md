@@ -28,7 +28,7 @@ answered by Claude without his recorded delegation.
 | P3 | სცენარის ხერხემალი + variant_plan + register_lint | P2, P3b | S2 / Sonnet / high (ქულები Opus) | 4 | — | #40 merged | done | — (A5 = D-79) |
 | P4 | აუდიო-ხერხემალი + sound director | P3, P2, P3b | S3 Opus high → S2 Sonnet high | 4 | — | #51 merged | done | cross-review (plan thread); the creator's admission word and blind A/B answer before any free generator is used (D8, BP-162); the free measurement run after the merge |
 | P5b | წამყვანების სამყარო (უფასო ნაწილი) | P2, P5, P4b | S3 Opus high → S2 Sonnet high | 4 | — | — | todo | — |
-| P6 | shot router, lane-ები, continuity (D-82) | P2, P5, P4, P3b | S3 Opus high → S2 Sonnet high | 5 | — | — | todo | — |
+| P6 | shot router, lane-ები, continuity (D-82) | P2, P5, P4, P3b | S3 Opus high → S2 Sonnet high | 5 | — | not yet opened (the lead commits F2) | review | — |
 | P9 | Shorts პლატფორმისთვის + captions | P3, P7, P2 | S2 / Sonnet / medium–high | 5 | — | — | todo | — |
 | P7 | სტეიჯინგი, ფინიშინგი, OTIO, safe_zones | P6, P4, P2 | S2 / Sonnet / high | 6 | — | — | todo | — |
 | P8 | QA: editorial_review, identity, retry router | P7, P6, P4b, P3b | S3 Opus high → S2 Sonnet high | 6 | — | — | todo | — |
