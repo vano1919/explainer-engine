@@ -1714,7 +1714,7 @@ def main(argv=None, api=None, live=None):
         sf = _opt(rest, "--script")
         if not sf:
             raise SystemExit("dryrun needs --script <pod.sh>")
-        rec = dryrun.run(Path(sf).read_text(), offline="--offline" in rest)
+        rec = dryrun.run(Path(sf).read_text(), offline="--offline" in rest, folder=Path(sf).parent)
         dryrun.record(rec)
         for r in rec["repos"]:
             print("repo   ", r["type"], r["id"], "ok" if r["ok"] else ("not checked" if r["ok"] is None else "MISSING"), r["note"])
@@ -1830,7 +1830,7 @@ def main(argv=None, api=None, live=None):
             led = Run.open(ledger)
             script_sha = dryrun.sha256_of(script)
             batch_why += [f"placeholder: {w}" for w in dryrun.placeholder_problems(script, Path(script_file).parent)]
-            weights = sorted(rid for rid, kind in dryrun.repo_ids(script) if kind == "model")
+            weights = sorted(rid for rid, kind in dryrun.all_repo_ids(script, Path(script_file).parent) if kind == "model")
             earlier = [v.get("weights") or [] for v in led.data["items"].get("pod_plans", {}).values()]
             fails = led.data.get("failures", {})
             batch_why += batching.rp01(work_min, setup_min, measure="--measure" in rest, max_usd=max_usd, test=led.data.get("meta", {}).get("test"))
