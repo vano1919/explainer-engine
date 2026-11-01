@@ -69,6 +69,15 @@ GPUS = {"default": ["NVIDIA GeForce RTX 4090"],
         "big": ["NVIDIA RTX A6000", "NVIDIA A40", "NVIDIA RTX 6000 Ada Generation", "NVIDIA L40S"]}
 MAX_PRICE = {"default": 0.95, "cheap": 0.90, "big": 0.95}  # $/h per card, the creator's ceilings (TMR 2026-10-10/11/16)
 CUDA_VERSIONS = ["12.8", "12.9", "13.0"]
+CUDA_LADDER = ["12.4", "12.5", "12.6", "12.7"] + CUDA_VERSIONS   # --cuda-min picks a tail of it for an image built for an older CUDA
+
+
+def cuda_from(minimum):
+    """The allowed host CUDA versions from ``minimum`` up (D-92 follow-up, 2026-11-01: the smoke image is CUDA 12.4.1, so a 12.8 floor
+    only removed hosts it runs on; a newer image keeps the default floor)."""
+    if minimum not in CUDA_LADDER:
+        raise RunPodError(f"--cuda-min {minimum}: not one of {CUDA_LADDER}")
+    return CUDA_LADDER[CUDA_LADDER.index(minimum):]
 CONTAINER_GB, VOLUME_GB = 80, 150
 # disk prices, docs.runpod.io/pods/pricing (2026-10-19): running $0.10/GB/month (container + volume), stopped volume $0.20;
 # a stand-alone network volume $0.07/GB/month (docs.runpod.io/storage/network-volumes, read 2026-10-22; $0.05 above 1 TB)
@@ -382,7 +391,7 @@ CLOUDS = ("COMMUNITY", "SECURE")
 
 
 # What ``create`` reads (a flag that is not here is refused, so a typo or a flag from another command is never silently ignored, G15).
-CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
+CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--cuda-min", "--datacenters", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
                       "--job", "--job-type", "--ledger", "--max-hours", "--max-usd", "--min-ram", "--name", "--on-cap", "--only",
                       "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--ref-hours", "--rules", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
                       "--upload-grace-s", "--volume", "--vram", "--wait-stock", "--work-min")
@@ -1804,7 +1813,7 @@ def main(argv=None, api=None, live=None):
                 cloud = _opt(rest, "--cloud").upper()  # one cloud (create_flag_problems made it required): the cards tried and EE_PRICE then agree (G15)
                 rows = pick_gpus(api, vram_gb=_opt(rest, "--vram", None, float), ref_hours=_opt(rest, "--ref-hours", max_hours, float),
                                  max_price=spend_caps.runpod()["max_price_per_hour"], job=job_type, units=units, setup_min=setup_min,
-                                 refused=refused, clouds=(cloud,),
+                                 refused=refused, clouds=(cloud,), min_cuda=_opt(rest, "--cuda-min", CUDA_VERSIONS[0]),
                                  limit=50 if _opt(rest, "--only") is not None else 6)  # --only names a card: it must not fall off the cheapest six
                 return only_cards(rows, _opt(rest, "--only"))
             picks = wait_for_stock(_pick, parse_wait(_opt(rest, "--wait-stock")))
@@ -1861,6 +1870,10 @@ def main(argv=None, api=None, live=None):
                                image=image, script_url=script_url, lifetime_s=int(max_hours * 3600),
                                cloud=first["cloud"] if first else "SECURE", heartbeat=heartbeat, max_usd=max_usd,
                                job=job_base, price=max(r["price"] for r in picks) if picks else None, scale=scale, drill=drill)  # the ceiling, not the list price
+            if body is not None and _opt(rest, "--datacenters"):  # v2 CreatePodRequest.dataCenterIds (openapi.json 2026-11-01): preferred sites
+                body["dataCenterIds"] = [x for x in _opt(rest, "--datacenters").split(",") if x]
+            if body is not None and _opt(rest, "--cuda-min"):
+                body["gpu"]["allowedCudaVersions"] = cuda_from(_opt(rest, "--cuda-min"))
         except RunPodError as e:  # e.g. no heartbeat: the preflight below says it in its own words
             body_why.append(str(e))
         if body is not None:

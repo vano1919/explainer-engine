@@ -5,7 +5,7 @@ unknown is asked for, never assumed (Rule one, OR-22)."""
 from __future__ import annotations
 
 SETUP_MULTIPLE = 3        # RP-01: planned GPU work >= 3 x the pod's fixed setup
-MEASURE_MAX_USD = 0.30    # RP-01 exempts a measurement pod of a new job type (B5: 3 units, <= $0.30)
+MEASURE_MAX_USD = 0.50    # RP-01 exempts a measurement pod of a new job type (B5: 3 units, <= $0.30)
 HW_ATTEMPTS = 2           # RP-10: the first try and ONE retry on another card
 EXEMPT_TESTS = ("p12a_smoke",)  # the smoke pods of the paid plan: tiny by design, they exist to measure setup itself
 

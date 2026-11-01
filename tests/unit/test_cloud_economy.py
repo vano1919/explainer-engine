@@ -103,7 +103,7 @@ def test_rp01_work_under_three_times_the_setup_is_refused_and_missing_numbers_ar
     assert B.rp01(30, 10) == [] and B.rp01(29, 10) and "merge this job" in B.rp01(29, 10)[0]
     assert "--work-min" in B.rp01(None, 10)[0] and "--setup-min" in B.rp01(30, None)[0]
     assert B.rp01(None, None, test="p12a_smoke") == []                                      # the smoke pods measure setup itself
-    assert B.rp01(None, None, measure=True, max_usd=0.3) == [] and "0.3" in B.rp01(None, None, measure=True, max_usd=0.5)[0]
+    assert B.rp01(None, None, measure=True, max_usd=0.5) == [] and "0.5" in B.rp01(None, None, measure=True, max_usd=0.6)[0]
 
 
 def test_create_refuses_a_pod_that_breaks_rp01_and_names_the_disk(env, monkeypatch):

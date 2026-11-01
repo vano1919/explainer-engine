@@ -401,6 +401,12 @@
       "model": "sonnet",
       "effort": "high",
       "reason": "executes pods through cloud/runpod.py; Sonnet executes (part 4 pod row)"
+    },
+    "paid-run-watchdog": {
+      "role": "stage",
+      "model": "haiku",
+      "effort": "low",
+      "reason": "OR-36: a cheap read-only watchdog beside every paid run; reports, decides nothing"
     }
   },
   "owner": {

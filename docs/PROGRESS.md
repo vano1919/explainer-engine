@@ -3721,3 +3721,28 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 ## 2026-11-01 — BP-29 closed: the iPhone is the reference phone (D-92 item 9)
 - The creator sent a phone screenshot and said: take the iPhone sizes as the standard and write it as a rule. Measured on the screenshot (approximate, one device): top bar ~12 %, bottom block ~27 %, right rail ~16 % of the screen; BP-29's bands (top 15 %, bottom 35 %, right 17.8 %) sit outside all of them, so no number moved. BP-29 is now `house` (was hypothesis REVIEW) with `reference_phone_px` [1179, 2556] (iPhone 15/16, 393 x 852 pt at 3x; sources: Apple spec pages, Use Your Loaf). Test `test_d92_bp29_is_a_house_rule_with_the_iphone_as_reference`.
 - Costs $0.
+
+## 2026-11-01 — STATUS table brought up to date
+- `docs/blueprint/phases.json`: P6-P11 show `#110 merged` (it merged as c686da8; they stay `review` because their thresholds are only proven on real clips in P12b); P5b and P12e say "dropped by D-89, not built"; P12a says the smoke pods passed (2026-10-31, about $0.25) and the console steps are done. The table regenerated with `governance status --write`; `governance check` ok. No code, no spend.
+
+## 2026-11-01 — OR-36: a Haiku watchdog beside every paid run
+- The creator's standing rule (2026-10-30 14:56 UTC) and his 2026-11-01 07:10 UTC answer (the RunPod $5/h limit cannot be set, so "we control it with the Haiku watchdog") are now a rule: OR-36 in `docs/ORCHESTRATION.md`, the agent `.claude/agents/paid-run-watchdog.md` (Haiku, low effort, Bash/Read/Grep/Glob, read-only by its page: only `runpod check|status|logs|cost`, the run's stream file and ledger line; it never stops, deletes or creates), its entry in `config/model_routing.json` (changed on the creator's recorded word, cmsg ...BCysZ..., 07:17 UTC) and `tests/unit/test_or36_watchdog.py`.
+- The watchdog is not in `spawners`: the main agent launches it. No spend.
+
+## 2026-11-01 — P12b measurement pod: Fable readiness audit (OR-34) and the stall fix
+- Fable audit `final_review_p12b_measure` (API, ~$1.9): verdict NOT READY. It opened no file (four directory listings only), so it confirms nothing about D-92/OR-36 code; those stay to be checked by the session.
+- Fixed: `p12b_measure.sh` now writes `progress.txt` every 60 s from the first second, so a slow pip/git install cannot trip the 10-minute stall stop (blocker 2). RP-01 needs no change: `--measure` with `--max-usd` <= 0.30 is exempt (`cloud/batching.py rp01`). `runpod dryrun` passes on the new text.
+- Open for the creator (money): on SECURE no 16 GB card is under $0.42/h, so phase B of the download would be cut short at the $0.30 pod cap; the alternatives are COMMUNITY (cheaper, but another host class than P12b) or a higher pod cap.
+- Costs: API ~$1.9, no pod.
+
+## 2026-11-01 — P12b measurement pod: cap raised to a pod of $0.50 (creator "გადადი" 07:41 UTC)
+- No COMMUNITY 16 GB card was in stock, so the creator moved the measurement to SECURE (A40 $0.59/h): `p12b_measure` ledger line 0.38 -> 0.63 (pod hard 0.50; 80 % of 0.63 = 0.504), `p12e_hosts` 2.02 -> 1.77 (total stays 5.90), `batching.MEASURE_MAX_USD` 0.30 -> 0.50. Word recorded via `governance ok`. Tests updated to the new numbers (`test_spend_caps.py`, `test_cloud_economy.py`).
+- Haiku watchdog for this pod every 5 min (creator 07:38 UTC; OR-36's 10/20-min bands are the default, his word wins).
+- Costs $0 so far; no pod.
+
+## 2026-11-01 — `runpod create --cuda-min` (the host CUDA floor per image)
+- The create body filtered hosts to CUDA 12.8+ always; the `smoke` image is CUDA 12.4.1, so the floor only removed hosts it runs on. New flag `--cuda-min 12.4..12.8` (`cuda_from`, default unchanged, test `test_cuda_min_picks_a_tail_of_the_ladder_and_refuses_unknown_floors`). A newer image keeps the default.
+- First use: P12b measurement pod, floor 12.4, SECURE, 5 cards tried (5090, 4090, 6000 Ada, A40, L40S): RunPod still answers "no instances available", so the CUDA floor was not the (only) cause. Costs $0.
+
+## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
+- From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.

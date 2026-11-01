@@ -972,3 +972,9 @@ def test_d92_pods_from_before_the_rule_are_left_for_the_creator(env):
     fake.pods = {"old": old}
     assert R.auto_delete_stopped(api, now=1793424881 + 10 * 24 * 3600) == [] and "old" in fake.pods
     assert R.sweep(api, now=1793424881 + 10 * 24 * 3600)["auto_deleted"] == []
+
+
+def test_cuda_min_picks_a_tail_of_the_ladder_and_refuses_unknown_floors():
+    assert R.cuda_from("12.4")[0] == "12.4" and R.cuda_from("12.8") == R.CUDA_VERSIONS
+    with pytest.raises(R.RunPodError):
+        R.cuda_from("11.8")
