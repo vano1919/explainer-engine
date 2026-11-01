@@ -21,5 +21,5 @@ def test_d92_compose_does_not_return_as_fallback():
 def test_d92_is_in_the_decision_log():
     text = (ROOT / "docs" / "DECISIONS_AND_OPEN_QUESTIONS.md").read_text(encoding="utf-8")
     row = next(l for l in text.splitlines() if l.startswith("| D-92 "))
-    for needle in ("24 fps", "170 wpm", "1440x2560", "at most 3 seeds", "ElevenLabs", "NOT in force"):
+    for needle in ("24 fps", "170 wpm", "1440x2560", "at most 3 seeds", "ElevenLabs", "auto_delete_due"):
         assert needle in row

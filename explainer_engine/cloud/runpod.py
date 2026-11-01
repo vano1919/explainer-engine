@@ -1195,11 +1195,26 @@ def guard_detached(pid):
 
 
 # --- sweep, cost ----------------------------------------------------------------------------------------------------
+AUTO_DELETE_AFTER_S = 24 * 3600  # D-92: a stopped pod with nothing on its disks is deleted 24 h after its approved life ended
+
+
+def auto_delete_due(pod, now=None):
+    """D-92 (creator, 2026-11-01): True for a stopped pod that bills nothing (0 GB persistent volume: whatever was on the container
+    disk is gone, the results live on the vault) and whose approved lifetime (``-until-<epoch>`` in its name) ended at least 24 h
+    ago. A pod without a valid until, or with any volume, is never deleted by this rule."""
+    now = time.time() if now is None else now
+    pod = norm(pod) or {}
+    if pod.get("status") not in ENDED or float(pod.get("volumeInGb") or 0) > 0:
+        return False
+    until = until_of(pod.get("name"))
+    return until is not None and now >= until + AUTO_DELETE_AFTER_S
+
+
 def sweep(api, *, dry=False, delete_exited=False, now=None):
     """Stop every RUNNING pod outside its approved lifetime; list every stopped pod with what its disk costs per day.
     One failing pod never stops the sweep. Deleting stopped pods needs ``delete_exited`` (the creator's word)."""
     now = time.time() if now is None else now
-    rows = {"stopped": [], "failed": [], "running_ok": [], "exited": [], "deleted": []}
+    rows = {"stopped": [], "failed": [], "running_ok": [], "exited": [], "deleted": [], "auto_deleted": []}
     for p in api.pods():
         st, pid = p.get("status"), p["id"]
         label = f"{pid} {p.get('name')} ${p.get('costPerHr')}/h"
@@ -1212,7 +1227,13 @@ def sweep(api, *, dry=False, delete_exited=False, now=None):
                 rows["running_ok"].append(label)
             elif st in ENDED:
                 day = disk_per_hour(p, running=False) * 24
-                if delete_exited and not dry:
+                if auto_delete_due(p, now) and not delete_exited:
+                    if dry:
+                        rows["auto_deleted"].append(f"{label} (would delete: 0 GB, 24 h past its until)")
+                    else:
+                        delete(api, pid)
+                        rows["auto_deleted"].append(f"{label} (0 GB, 24 h past its until)")
+                elif delete_exited and not dry:
                     delete(api, pid)
                     rows["deleted"].append(f"{label} (disk ${day:.2f}/day)")
                 else:

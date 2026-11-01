@@ -923,3 +923,20 @@ def test_only_cards_keeps_the_named_card_and_refuses_when_none_matches():
     assert R.only_cards(picks, "RTX PRO 6000") == [picks[1]]
     with pytest.raises(SystemExit, match="no card with stock"):
         R.only_cards(picks, "H100")
+
+
+def test_d92_a_stopped_pod_with_no_disk_is_deleted_24h_after_its_until(env):
+    fake, api = env
+    day = 24 * 3600
+    fake.pods = {"zero": pod("zero", "ee-x-until-1000", "EXITED", volumeInGb=0),
+                 "zero2": pod("zero2", "ee-x-until-1000", "EXITED", volumeInGb=0),
+                 "disk": pod("disk", "ee-x-until-1000", "EXITED", volumeInGb=5),
+                 "nountil": pod("nountil", "my pod", "EXITED", volumeInGb=0),
+                 "live": pod("live", "ee-x-until-9999999999")}
+    assert not R.auto_delete_due(fake.pods["zero2"], now=1000 + day - 1)
+    rows = R.sweep(api, now=1000 + day, dry=True)
+    assert "zero" in fake.pods and len(rows["auto_deleted"]) == 2  # dry run deletes nothing
+    rows = R.sweep(api, now=1000 + day)
+    assert "zero" not in fake.pods and "zero2" not in fake.pods  # both 0 GB and past 24 h
+    assert "disk" in fake.pods and "nountil" in fake.pods and "live" in fake.pods
+    assert len(rows["auto_deleted"]) == 2
