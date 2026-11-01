@@ -275,9 +275,9 @@
       "repo": "vano1919/tmr-artifacts",
       "dir": "code/p12/clay",
       "sha256": {
-        "tent_s0": "PLACEHOLDER_SHA",
-        "tent_s3": "PLACEHOLDER_SHA",
-        "tent_s4": "PLACEHOLDER_SHA"
+        "tent_s0": "2c98fd4156d8251ad799377d3dd836d2935c347add497e772e1272762b0d4bc0",
+        "tent_s3": "da6b59533f14ff16932dd24e68c857a6e0c2308d926c77df783732b595e03ca4",
+        "tent_s4": "d065d42999d6303380b7906f3bfd21a94d18e73b133eddc41a7c24d8053fe44b"
       }
     },
     "av": {
