@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rhythm_profile.schema.json",
+  "title": "Rhythm profile (BP-169): zones of one episode",
+  "type": "object",
+  "required": ["calm_middle_share", "zones"],
+  "additionalProperties": false,
+  "properties": {
+    "calm_middle_share": {"type": "number", "minimum": 0, "maximum": 1},
+    "zones": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["id", "mode", "window_s", "heard_wpm_target", "heard_wpm_band", "speaking_wpm_target",
+                     "shots_per_min_target", "shots_per_min_band", "shot_len_s_band", "dramatic_changes_per_min_band",
+                     "still_max_s", "static_still_max_s", "tease_events_per_min", "tease_max_gap_s",
+                     "sfx_events_per_min_band", "camera_move_share_max", "tts_tags"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "mode": {"enum": ["hyped", "calm_story", "hyped_climax"]},
+          "window_s": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "minimum": 0}},
+          "heard_wpm_target": {"type": "number", "exclusiveMinimum": 0},
+          "heard_wpm_band": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "exclusiveMinimum": 0}},
+          "speaking_wpm_target": {"type": "number", "exclusiveMinimum": 0},
+          "speaking_wpm_band": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+          "pauses_gt_05s_per_min_max": {"type": "number", "minimum": 0},
+          "median_words_max": {"type": "number", "exclusiveMinimum": 0},
+          "shots_per_min_target": {"type": "number", "exclusiveMinimum": 0},
+          "shots_per_min_band": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "exclusiveMinimum": 0}},
+          "shot_len_s_band": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "exclusiveMinimum": 0}},
+          "dramatic_changes_per_min_target": {"type": "number", "minimum": 0},
+          "dramatic_changes_per_min_band": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "minimum": 0}},
+          "still_max_s": {"type": "number", "exclusiveMinimum": 0, "maximum": 5.0},
+          "static_still_max_s": {"type": "number", "exclusiveMinimum": 0},
+          "tease_events_per_min": {"type": "number", "minimum": 0},
+          "tease_max_gap_s": {"type": "number", "exclusiveMinimum": 0},
+          "sfx_events_per_min_band": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "minimum": 0}},
+          "music_cues_per_min": {"type": "number", "minimum": 0},
+          "camera_move_share_max": {"type": "number", "minimum": 0, "maximum": 1},
+          "tts_tags": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}
