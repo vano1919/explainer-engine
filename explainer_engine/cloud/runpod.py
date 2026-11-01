@@ -391,7 +391,7 @@ CLOUDS = ("COMMUNITY", "SECURE")
 
 
 # What ``create`` reads (a flag that is not here is refused, so a typo or a flag from another command is never silently ignored, G15).
-CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--cuda-min", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
+CREATE_VALUE_FLAGS = ("--boot", "--boot-minutes", "--cap-grace-s", "--cloud", "--cuda-min", "--datacenters", "--disk", "--drill", "--gpu", "--heartbeat", "--image",
                       "--job", "--job-type", "--ledger", "--max-hours", "--max-usd", "--min-ram", "--name", "--on-cap", "--only",
                       "--pass-s", "--hw-extra-retries", "--hw-extra-reason", "--ref-hours", "--rules", "--script", "--script-url", "--second-pod-reason", "--setup-min", "--test", "--units",
                       "--upload-grace-s", "--volume", "--vram", "--wait-stock", "--work-min")
@@ -1870,6 +1870,8 @@ def main(argv=None, api=None, live=None):
                                image=image, script_url=script_url, lifetime_s=int(max_hours * 3600),
                                cloud=first["cloud"] if first else "SECURE", heartbeat=heartbeat, max_usd=max_usd,
                                job=job_base, price=max(r["price"] for r in picks) if picks else None, scale=scale, drill=drill)  # the ceiling, not the list price
+            if body is not None and _opt(rest, "--datacenters"):  # v2 CreatePodRequest.dataCenterIds (openapi.json 2026-11-01): preferred sites
+                body["dataCenterIds"] = [x for x in _opt(rest, "--datacenters").split(",") if x]
             if body is not None and _opt(rest, "--cuda-min"):
                 body["gpu"]["allowedCudaVersions"] = cuda_from(_opt(rest, "--cuda-min"))
         except RunPodError as e:  # e.g. no heartbeat: the preflight below says it in its own words

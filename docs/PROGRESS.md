@@ -3743,3 +3743,6 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 ## 2026-11-01 — `runpod create --cuda-min` (the host CUDA floor per image)
 - The create body filtered hosts to CUDA 12.8+ always; the `smoke` image is CUDA 12.4.1, so the floor only removed hosts it runs on. New flag `--cuda-min 12.4..12.8` (`cuda_from`, default unchanged, test `test_cuda_min_picks_a_tail_of_the_ladder_and_refuses_unknown_floors`). A newer image keeps the default.
 - First use: P12b measurement pod, floor 12.4, SECURE, 5 cards tried (5090, 4090, 6000 Ada, A40, L40S): RunPod still answers "no instances available", so the CUDA floor was not the (only) cause. Costs $0.
+
+## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
+- From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.
