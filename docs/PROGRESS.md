@@ -3724,3 +3724,7 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-01 — STATUS table brought up to date
 - `docs/blueprint/phases.json`: P6-P11 show `#110 merged` (it merged as c686da8; they stay `review` because their thresholds are only proven on real clips in P12b); P5b and P12e say "dropped by D-89, not built"; P12a says the smoke pods passed (2026-10-31, about $0.25) and the console steps are done. The table regenerated with `governance status --write`; `governance check` ok. No code, no spend.
+
+## 2026-11-01 — OR-36: a Haiku watchdog beside every paid run
+- The creator's standing rule (2026-10-30 14:56 UTC) and his 2026-11-01 07:10 UTC answer (the RunPod $5/h limit cannot be set, so "we control it with the Haiku watchdog") are now a rule: OR-36 in `docs/ORCHESTRATION.md`, the agent `.claude/agents/paid-run-watchdog.md` (Haiku, low effort, Bash/Read/Grep/Glob, read-only by its page: only `runpod check|status|logs|cost`, the run's stream file and ledger line; it never stops, deletes or creates), its entry in `config/model_routing.json` (changed on the creator's recorded word, cmsg ...BCysZ..., 07:17 UTC) and `tests/unit/test_or36_watchdog.py`.
+- The watchdog is not in `spawners`: the main agent launches it. No spend.
