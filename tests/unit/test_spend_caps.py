@@ -20,8 +20,10 @@ def mirror_dir(tmp_path, monkeypatch):
 def test_paid_tests_lines_are_the_creators_and_stay_inside_his_total():
     tests = spend_caps.load()["paid_tests"]
     assert tests["total_usd"] == 5.9
-    caps = {n: spend_caps.paid_test(n) for n in ("p12a_smoke", "p12b_two_runs", "p12e_hosts")}
-    assert caps == {"p12a_smoke": {"runpod_usd": 0.5}, "p12b_two_runs": {"runpod_usd": 3.0}, "p12e_hosts": {"runpod_usd": 2.4}}
+    names = ("p12a_smoke", "p12b_two_runs", "p12e_hosts", "p12b_measure")
+    caps = {n: spend_caps.paid_test(n) for n in names}
+    assert caps == {"p12a_smoke": {"runpod_usd": 0.5}, "p12b_two_runs": {"runpod_usd": 3.0}, "p12e_hosts": {"runpod_usd": 2.02},
+                    "p12b_measure": {"runpod_usd": 0.38}}     # p12e dropped (D-89); 0.38 of its 2.40 went to the measurement pod (creator 2026-11-01)
     assert sum(c["runpod_usd"] for c in caps.values()) <= tests["total_usd"] + 1e-9
     # every pod of a test fits the account's per-pod line
     assert all(c["runpod_usd"] * 0.8 <= spend_caps.runpod()["per_pod_usd"] for c in caps.values())
@@ -69,7 +71,7 @@ def test_open_test_refuses_another_runs_ledger(tmp_path):
 def test_cli_open_test_and_report(tmp_path, capsys):
     main(["open-test", str(tmp_path / "e.json"), "p12e_hosts"])
     out = json.loads(capsys.readouterr().out)
-    assert out["caps"]["runpod_usd"] == 2.4 and out["meta"]["test"] == "p12e_hosts"
+    assert out["caps"]["runpod_usd"] == 2.02 and out["meta"]["test"] == "p12e_hosts"
     main(["report", str(tmp_path / "e.json")])
     assert json.loads(capsys.readouterr().out)["spent"] == {}
     with pytest.raises(SystemExit):

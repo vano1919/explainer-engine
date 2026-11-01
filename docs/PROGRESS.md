@@ -3699,3 +3699,8 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
   creator's own git (the session's proxy refuses deletes): project files `explainer-engine/branch_cleanup_2026-10-31/delete_merged_branches.ps1`
   (dry run by default; deletes only contained or listed-merged branches). Open PRs: 0.
 
+
+## 2026-11-01 — P12b measurement pod: script, ledger line, tests (no pod yet)
+- Creator YES (2026-11-01 06:10 UTC) on the card "Run a measurement pod (<= $0.95) before P12b, paid from the freed P12e money". Fable (API, `change_plan`): the typed `--setup-min 22` of the 10-31 card is a target, not a measurement, so the only measured setup stays 67 min (RTX 3090 COMMUNITY, 12.6 MB/s); one cheap SECURE pod measures P12b's install and the Qwen-Image-2.1 download (xet setting off for 120 s, then on) before P12b is priced. RP-01 and `batching.py` are unchanged.
+- New: `training/pods/p12/p12b_measure.sh` (the same pinned install lines as `p12b.sh`, CUDA check, no model load, no GPU work; writes `t.jsonl` and `setup_measure.json`), `tests/unit/test_p12b_measure.py` (dryrun rules, install lines equal to p12b.sh, base pin equal to `p12b.json`, no GPU work). `config/spend_caps.json`: `paid_tests.p12b_measure` 0.38 (pod hard 0.30) and `p12e_hosts` 2.40 -> 2.02 (dropped, unassigned), total 5.90 unchanged; `tests/unit/test_spend_caps.py` pins the new split.
+- Nothing paid yet, no pod, nothing deleted.
