@@ -3728,3 +3728,9 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 ## 2026-11-01 — OR-36: a Haiku watchdog beside every paid run
 - The creator's standing rule (2026-10-30 14:56 UTC) and his 2026-11-01 07:10 UTC answer (the RunPod $5/h limit cannot be set, so "we control it with the Haiku watchdog") are now a rule: OR-36 in `docs/ORCHESTRATION.md`, the agent `.claude/agents/paid-run-watchdog.md` (Haiku, low effort, Bash/Read/Grep/Glob, read-only by its page: only `runpod check|status|logs|cost`, the run's stream file and ledger line; it never stops, deletes or creates), its entry in `config/model_routing.json` (changed on the creator's recorded word, cmsg ...BCysZ..., 07:17 UTC) and `tests/unit/test_or36_watchdog.py`.
 - The watchdog is not in `spawners`: the main agent launches it. No spend.
+
+## 2026-11-01 — P12b measurement pod: Fable readiness audit (OR-34) and the stall fix
+- Fable audit `final_review_p12b_measure` (API, ~$1.9): verdict NOT READY. It opened no file (four directory listings only), so it confirms nothing about D-92/OR-36 code; those stay to be checked by the session.
+- Fixed: `p12b_measure.sh` now writes `progress.txt` every 60 s from the first second, so a slow pip/git install cannot trip the 10-minute stall stop (blocker 2). RP-01 needs no change: `--measure` with `--max-usd` <= 0.30 is exempt (`cloud/batching.py rp01`). `runpod dryrun` passes on the new text.
+- Open for the creator (money): on SECURE no 16 GB card is under $0.42/h, so phase B of the download would be cut short at the $0.30 pod cap; the alternatives are COMMUNITY (cheaper, but another host class than P12b) or a higher pod cap.
+- Costs: API ~$1.9, no pod.
