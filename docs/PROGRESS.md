@@ -3710,3 +3710,8 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Still real and fixed here: `audio/spine.py:native_lines()` returned `[]`, so a DIALOGUE_CU shot never got a post-hoc window and the router (`edit/router.py`, D-90) refused it. The marker is now: lane `DIALOGUE_CU` (or a `POST_HOC_LANES` lane with a `dialogue` object) AND an explicit `line`; a shot without `line` stays non-native (the older test is unchanged).
 - Test: `tests/unit/test_audio_spine.py::test_native_lines_come_from_film_shots_2_and_open_windows`; related suites green. Costs $0.
 - Still open (not touched): `wldnk` trigger in `qa/style_prompt.py`, `compile`/`episode_look` and `lora_rules.json` until the 2.1 prompt-type test; creator items 30 vs 24 fps rows (P-13, CRAFT-EDC-12) and the pace number.
+
+## 2026-11-01 — D-92: the creator's answers to the research-vs-main open items
+- The creator answered the creator-only items by cards: 24 fps, 170 wpm (155-185), mixed geography, Shorts 1440x2560, `compose/` stays out, pilot gates 3 seeds / 3 review minutes, narrator stays ElevenLabs, and a pod is deleted automatically after a verified DONE. Recorded as D-92; the numbers already live in BP-167, BP-01 and the retry router, so only the decision row and a pin test (`tests/unit/test_d92_creator_answers.py`) are new.
+- NOT in force: the automatic pod deletion amends D-56; its code change in `cloud/runpod.py` needs a plan and a test first. Until it merges a stopped pod stays.
+- Costs $0; no pod, no API call. Left for the creator: console items (RunPod hourly limit, low-balance mail, restricted key, ElevenLabs key, phone screenshot for BP-29).
