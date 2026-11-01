@@ -9,8 +9,7 @@ Done: WP-R1..R6 (part), R8, R11, R12 (see `docs/PROGRESS.md`, the entries of 202
 2. **WP-R9**: production modules (timing, beats, fill_holds, staging, compile, assemble, validate) read the zone of a segment.
 3. **WP-R10**: audio layers, sound director, engagement/scorecard/targets read the zone (sound density, pauses, loudness range).
 4. **Narration/story lints** (`narration_lint`, `story_lint`): hyped thresholds from the BP-169 zones, with the first /4 script.
-5. **Narrator**: one voice whose tempo follows the zones. The creator's ear decides (VC-08): audition of three energetic voices,
-   about 1,050 credits, only with his word. `casting`, `voice_check`, `pause_pad`, `channel_voices.json` change after that.
+5. **Narrator (DONE 2026-11-01)**: the creator chose Odom (library voice `CcSJ2r3qw0XU9gJpEPyk`, eleven_v4) by ear and made it the standard with a fixed free polish (`audio/narrator_polish.py`). Still open: Odom's EL-13 baseline (from the approved first piece of the next sample, OR-19) and `casting`/`pause_pad` checks against Odom's pace.
 6. **BP-169 as a house rule** (the creator confirms the profile); **the episode cost cap** (`config/spend_caps.json`, his edit).
 7. **P12 pod** (paused): Argon audit round 2 -> fixes -> `p12b.sh` sha lines -> HF code upload -> DRY gate -> OR-23 plan with
    Opus confirmation and his word -> pod with the 5-minute watchdog. The pod measures LTX-2.5 clip time, the 73-frame clip and
