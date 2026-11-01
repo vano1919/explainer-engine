@@ -334,3 +334,99 @@ def test_no_new_unit_starts_inside_the_end_reserve_even_for_an_essential_stage()
     assert "unit_may_start(time.time(), deadline, reserve)" in src
     ltx = (DIR / "p12c_ltx.py").read_text(encoding="utf-8")
     assert "p12b.unit_may_start(time.time(), deadline, reserve)" in ltx and "inside the end reserve" in ltx
+
+
+def test_the_whole_qwen_process_runs_end_to_end_with_stubbed_torch_hub_and_pipeline(tmp_path, monkeypatch):
+    """p12b.run() over the real p12b.json: stage M, the sha check of the style LoRA, the four hero references, the model load, every
+    Qwen unit with the MVA merges and unmerges, sidecars, qwen_done.txt and the end word. torch, huggingface_hub, videox_fun and the
+    pipeline are stubbed; the pipe is called through the real ``draw`` with the kwargs a QwenImage edit pipeline takes. The free
+    stand-in for the code paths a pod reaches first (three log.ev(name=...) TypeErrors were found only by reading, 2026-11-01)."""
+    import contextlib
+    import sys
+    import time
+    import types
+    from PIL import Image
+    m = _load()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    cfg.pop("control", None)
+    src = tmp_path / "src"
+    src.mkdir()
+    sheet = src / "sheet.png"
+    Image.new("RGB", (1500, 700), (210, 200, 190)).save(sheet)
+    lora = src / "style.safetensors"
+    lora.write_bytes(b"style lora bytes")
+    cfg["style_lora"]["sha256"] = hashlib.sha256(lora.read_bytes()).hexdigest()
+
+    torch = types.ModuleType("torch")
+    torch.__version__ = "stub"
+    torch.bfloat16 = "bf16"
+    torch.cuda = types.SimpleNamespace(is_available=lambda: False, get_device_name=lambda i: "none")
+    torch.no_grad = contextlib.nullcontext
+
+    class Gen:
+        def __init__(self, device):
+            self.device = device
+
+        def manual_seed(self, s):
+            self.seed = s
+            return self
+    torch.Generator = Gen
+    hub = types.ModuleType("huggingface_hub")
+
+    def snapshot_download(repo, revision, local_dir):
+        Path(local_dir).mkdir(parents=True, exist_ok=True)
+        (Path(local_dir) / "w.bin").write_bytes(b"x" * 1000)
+        return local_dir
+
+    def hf_hub_download(repo, filename, **kw):
+        return str(lora if filename == cfg["style_lora"]["path"] else sheet)
+    hub.snapshot_download, hub.hf_hub_download = snapshot_download, hf_hub_download
+    merges = []
+    vx = types.ModuleType("videox_fun")
+    vxu = types.ModuleType("videox_fun.utils")
+    vxu.merge_lora = lambda pipe, path, w, device, dtype: merges.append(("+", Path(path).name, w)) or pipe
+    vxu.unmerge_lora = lambda pipe, path, w, device, dtype: merges.append(("-", Path(path).name, w)) or pipe
+    for name, mod in (("torch", torch), ("huggingface_hub", hub), ("videox_fun", vx), ("videox_fun.utils", vxu)):
+        monkeypatch.setitem(sys.modules, name, mod)
+    calls = []
+
+    class Pipe:
+        transformer = object()
+
+        def __call__(self, prompt, image, negative_prompt, height, width, generator, num_inference_steps, true_cfg_scale):
+            calls.append((prompt, num_inference_steps, generator.seed))
+            return types.SimpleNamespace(images=[Image.new("RGB", (width, height), (1, 2, 3))])
+
+    class GateUp:
+        def __init__(self, transformer):
+            pass
+
+        def gate_up(self, path, sign):
+            return 0
+    monkeypatch.setattr(m, "MODELS", tmp_path / "models")
+    monkeypatch.setattr(m, "load_pipeline", lambda base: Pipe())
+    monkeypatch.setattr(m, "GateUp", GateUp)
+    monkeypatch.setattr(m, "start_ltx_download", lambda log, cfg: None)
+    out = tmp_path / "out"
+    log = m.Log(out)
+    log.ev("script_start")
+    assert m.run(cfg, out, time.time() + 4 * 3600, log) == 0
+
+    stages = (out / "stages.txt").read_text(encoding="utf-8")
+    assert "done M" in stages and json.loads((out / "measure.json").read_text())["qwen_dl_bytes"] == 1000
+    qwen = [n for n in m.ordered(cfg["stages"], kind=m.QWEN)]
+    want = sum(len(m.units(cfg, n, cfg["stages"][n])) for n in qwen)
+    assert len(calls) == want and all(f"done {n}" in stages for n in qwen)
+    assert merges[0] == ("+", lora.name, cfg["style_lora"]["weight"])
+    on = 0                                                        # every MVA merge is undone before the next strength
+    for sign, name, w in merges[1:]:
+        on += 1 if sign == "+" else -1
+        assert on in (0, 1)
+    u = m.units(cfg, qwen[0], cfg["stages"][qwen[0]])[0]
+    p = Path(str(u["path"]).replace("{OUT}", str(out)))
+    side = json.loads(p.with_suffix(".json").read_text(encoding="utf-8"))
+    assert p.is_file() and side["stage"] == qwen[0] and side["steps"] == cfg["stages"][qwen[0]]["steps"]
+    assert (out / "qwen_done.txt").is_file()
+    evs = [json.loads(x)["ev"] for x in (out / "t.jsonl").read_text().splitlines()]
+    assert {"download_start", "download_end", "measure", "model_loaded"} <= set(evs) and "stage_skipped" not in evs
+    assert (out / "progress.txt").read_text(encoding="utf-8").strip().endswith(" done")

@@ -241,3 +241,80 @@ def test_no_log_call_passes_name_as_a_keyword():
         for node in ast.walk(ast.parse((DIR / f).read_text(encoding="utf-8"))):
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "ev":
                 assert "name" not in {k.arg for k in node.keywords}, (f, node.lineno)
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="needs ffmpeg")
+def test_the_whole_ltx_process_runs_end_to_end_with_stubbed_weights_and_commands(tmp_path, monkeypatch):
+    """Every LTX stage of the real p12b.json runs through run(): inputs fetched and sha-checked, commands built, sidecars written,
+    AV audio compared by samples, the stage lines and the end word. Only the HF fetch, the weights check and the GPU command are
+    stubbed (the stub writes a 1 s clip, with the take as its audio for AV). This is the free stand-in for the code paths a pod
+    would otherwise reach first (2026-11-01: three log.ev(name=...) TypeErrors were found only by reading)."""
+    import hashlib
+    import json
+    import time
+    from PIL import Image
+    m = _load()
+    p12b = m.load_p12b()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    cfg.pop("control", None)                                    # no creator stop file on HF in a test
+    lt = cfg["ltx"]
+    src = tmp_path / "src"
+    src.mkdir()
+    png = src / "kf.png"
+    Image.new("RGB", (2560, 1408), (200, 180, 150)).save(png)
+    clay = src / "clay.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-f", "lavfi", "-i", "color=gray:s=320x192:d=1:r=24", "-pix_fmt", "yuv420p",
+                    str(clay)], check=True)
+    wav = src / "take.wav"
+    rate = 24000
+    t = np.arange(int(rate * 1.0)) / rate
+    pcm = (0.3 * np.sin(2 * np.pi * 220 * t) * np.sin(2 * np.pi * 3 * t) * 32767).astype("<i2")
+    with wave.open(str(wav), "wb") as w:
+        w.setnchannels(1), w.setsampwidth(2), w.setframerate(rate), w.writeframes(pcm.tobytes())
+    sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+    lt["keyframes"]["sha256"] = {s: sha(png) for s in lt["keyframes"]["paths"]}
+    lt["clay"]["sha256"] = {s: sha(clay) for s in lt["clay"]["sha256"]}
+    for take in lt["av"]["takes"].values():
+        take.update(sha256=sha(wav), voice_id="test-voice", seconds=1.0)
+    out = tmp_path / "out"
+    out.mkdir()
+    q1 = tmp_path / "q1.png"
+    Image.new("RGB", (900, 1400), (120, 120, 160)).save(q1)
+    (out / "qwen_done.txt").write_text(str(q1) + "\n", encoding="utf-8")
+
+    def fetch(repo, path, local):
+        return {"clay": clay, "audio": wav}.get(Path(local).name, png)
+    ran = []
+
+    def run_cmd(cmd, timeout, log, label):
+        cmd = [str(c) for c in cmd]
+        dst = cmd[cmd.index(m.FLAGS["output"]) + 1]
+        ran.append((label, cmd))
+        args = ["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", "color=white:s=320x192:d=1:r=24"]
+        if m.FLAGS["audio"] in cmd:
+            args += ["-i", cmd[cmd.index(m.FLAGS["audio"]) + 1], "-c:a", "aac", "-shortest"]
+        subprocess.run(args + ["-pix_fmt", "yuv420p", dst], check=True)
+        return 0, ""
+    monkeypatch.setattr(m, "MODELS", tmp_path / "models")
+    monkeypatch.setattr(m, "verify_weights", lambda cfg, names: [])
+    monkeypatch.setattr(m, "fetch", fetch)
+    monkeypatch.setattr(m, "run_cmd", run_cmd)
+    log = p12b.Log(out)
+    assert m.run(cfg, out, time.time() + 3 * 3600, log, p12b) == 0
+
+    stages = (out / "stages.txt").read_text(encoding="utf-8")
+    for name in ("L1", "L3", "L2", "AV"):
+        assert f"done {name}" in stages, stages
+    assert len(ran) == sum(len(st["shots"]) for st in cfg["stages"].values() if st.get("kind", "").startswith("ltx_"))
+    for kind, shot in [("ltx_i2v", "tent_s0"), ("ltx_ic", "tent_s3"), ("ltx_a2v", "av1"), ("ltx_a2v", "av2")]:
+        side = json.loads(m.out_path(out, kind, shot).with_suffix(".json").read_text(encoding="utf-8"))
+        assert side["rc"] == 0 and side["kind"] == kind
+        assert side["inputs"]["keyframe_sha256"]
+        if kind == "ltx_ic":
+            assert side["inputs"]["clay_sha256"] == sha(clay) and (out / "ltx" / "clay" / f"{shot}.mp4").is_file()
+        if kind == "ltx_a2v":
+            assert side["frames"] is None and side["audio_max_s"] == 1.0 and side["inputs"]["voice_id"] == "test-voice"
+            assert side["audio_corr"]["corr"] > 0.9                  # the clip carries the take's samples (re-encoded to AAC)
+    evs = [json.loads(x)["ev"] for x in (out / "t.jsonl").read_text().splitlines()]
+    assert "sha256_mismatch" not in evs and "input_failed" not in evs and "stage_skipped" not in evs
+    assert (out / "progress.txt").read_text(encoding="utf-8").strip().endswith("done")
