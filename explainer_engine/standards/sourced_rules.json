@@ -4439,11 +4439,17 @@
   {
    "id": "BP-109",
    "area": "film",
-   "status": "hypothesis",
+   "status": "house",
    "severity": "REVIEW",
-   "statement": "Animation tiers (KP-37): at most hold_share_max of the shots are a held picture with a camera move (the creator's cartoons hold a still on 5-10 % of the time; the critic's 40 % read as a slideshow); every spoken line and every peak is full.",
+   "statement": "Visual mix by runtime (the creator's rule of 2026-11-01): lane_share.video of the runtime is real video (LTX), lane_share.still is still frames on which Python adds objects and moves them (one picture or several layers, cut fast and on the narrator's words), lane_share.helper is helper visuals made by Python (maps, progress bars, calculations, counters); each share within tolerance. A still never reads as a slideshow: no still shot runs longer than still_shot_max_s (the creator's 'no shot longer than 5 s', 2026-10-25).",
    "thresholds": {
-    "hold_share_max": 0.1
+    "lane_share": {
+     "video": 0.6,
+     "still": 0.3,
+     "helper": 0.1
+    },
+    "lane_tolerance": 0.03,
+    "still_shot_max_s": 5.0
    },
    "sources": [
     {
@@ -4453,12 +4459,17 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/film_shots.py:HOLD_SHARE_MAX",
+    "explainer_engine/scripting/film_shots.py:LANE_SHARE",
+    "explainer_engine/scripting/film_shots.py:visual_lane",
     "explainer_engine/scripting/variant_plan.py:checks"
    ],
    "supersedes": [
-    "the critic's plan review 2026-10-23: 40 % still + camera"
-   ]
+    "the critic's plan review 2026-10-23: 40 % still + camera",
+    "BP-109 hypothesis (2026-10-24): at most hold_share_max = 0.1 of the shots a held picture with a camera move ('the creator's cartoons hold a still on 5-10 % of the time')",
+    "BP-141 map_pure_max = 0.25: a pure map is a helper visual, bounded by lane_share.helper + lane_tolerance",
+    "D-75's 'replaces ASSET_COMPOSE's code-composed shots' for the still lane (D-93)"
+   ],
+   "decided": "the creator, 2026-11-01 10:16 UTC: 10 % helper visuals made by Python (maps, progress, calculations), 30 % still frames where Python adds and moves objects, cut fast enough and matched to the narrator, 60 % real videos; every old rule that contradicts it is rewritten"
   },
   {
    "id": "BP-110",
@@ -5718,7 +5729,7 @@
    "area": "story",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Episode structure profiles for the variant planner (stage 1b, VP-02..VP-10): each profile A-D bounds the non-character share of the runtime and the played share of every turn slot; pure map is at most map_pure_max of the runtime in a run of at most map_run_max_s; the same narration archetype never sits on two adjacent narrated blocks and at most rotation_family_max of one family fall in rotation_window_s; one compensator picture is at most kuleshov_max_s. The numbers are the Blueprint's mode matrix (one source type), so REVIEW only; C and D copy B and A because the Blueprint gives them no number of their own.",
+   "statement": "Episode structure profiles for the variant planner (stage 1b, VP-02..VP-10): each profile A-D bounds the non-character share of the runtime and the played share of every turn slot; pure map is a helper visual (its share is bounded by BP-109's helper lane) in a run of at most map_run_max_s; the same narration archetype never sits on two adjacent narrated blocks and at most rotation_family_max of one family fall in rotation_window_s; one compensator picture is at most kuleshov_max_s. The numbers are the Blueprint's mode matrix (one source type), so REVIEW only; C and D copy B and A because the Blueprint gives them no number of their own.",
    "thresholds": {
     "episode_structure_profiles": {
      "A": {
@@ -5742,7 +5753,6 @@
       "turn_scene_share_min": 0.5
      }
     },
-    "map_pure_max": 0.25,
     "map_run_max_s": 90,
     "rotation_adjacent": true,
     "rotation_family_max": 2,
@@ -5761,7 +5771,9 @@
    "enforced_by": [
     "explainer_engine/scripting/variant_plan.py:checks"
    ],
-   "supersedes": []
+   "supersedes": [
+    "map_pure_max = 0.25 (moved to BP-109's helper lane, the creator 2026-11-01)"
+   ]
   },
   {
    "id": "BP-142",

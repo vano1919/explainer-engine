@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 from explainer_engine.core import contracts, ledger, spend_caps
-from explainer_engine.scripting import syllables
+from explainer_engine.scripting import film_shots, syllables
 from explainer_engine.standards import sourced_rules as SR
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -220,7 +220,7 @@ def dynamics(segments: list[dict], prof: dict, *, template: str = "D") -> dict:
             "adjacent_repeats": adjacent, "family_overruns": over_family, "turns": turns, "turn_played_share": turn_played,
             "turn_has_played": turn_has_who, "turn_played_s": played_s, "central": central, "narrator_share": narrator,
             "narrator_basis": basis, "planned_shots": planned, "shots_per_min": planned / (total / 60) if total else 0.0,
-            "kuleshov_over": kuleshov}
+            "kuleshov_over": kuleshov, "lane_share": film_shots.lane_shares([b for _, b, _ in flat])}
 
 
 # --- the checks ------------------------------------------------------------------------------------------------------------
@@ -240,9 +240,10 @@ def turn_findings(dyn: dict, prof: dict) -> list[dict]:
 def checks(dyn: dict, prof: dict) -> list[dict]:
     """VP-02..VP-11 (no lane table here: ``lane_findings``), VP-16..VP-18 of a plan's dynamics."""
     out: list[dict] = []
-    if dyn["share"]["map_pure"] > SR.T("BP-141", "map_pure_max") + 1e-9:
-        _f(out, "VP-02", "map_pure", f"pure map is {dyn['share']['map_pure']:.0%} of the episode (at most "
-           f"{SR.T('BP-141', 'map_pure_max'):.0%}, BP-141)", sev("BP-141"))
+    map_max = film_shots.LANE_SHARE["helper"] + film_shots.LANE_TOLERANCE
+    if dyn["share"]["map_pure"] > map_max + 1e-9:
+        _f(out, "VP-02", "map_pure", f"pure map is {dyn['share']['map_pure']:.0%} of the episode (a helper visual: at most "
+           f"{map_max:.0%}, BP-109)", sev("BP-109"))
     if dyn["non_character"] > prof["non_character_max"] + 1e-9:
         _f(out, "VP-03", "non_character", f"{dyn['non_character']:.0%} of the episode has no played block (this profile: at most "
            f"{prof['non_character_max']:.0%}, BP-141)", sev("BP-141"))
@@ -274,9 +275,8 @@ def checks(dyn: dict, prof: dict) -> list[dict]:
     lo, hi = SR.T("BP-107", "shots_per_min")
     if not lo <= dyn["shots_per_min"] <= hi:
         _f(out, "VP-18", "shots", f"{dyn['shots_per_min']:.1f} planned shots a minute (band {lo}-{hi}, BP-107)", sev("BP-107"))
-    if dyn["share"]["hold"] > SR.T("BP-109", "hold_share_max") + 1e-9:
-        _f(out, "VP-18", "hold", f"{dyn['share']['hold']:.0%} of the plan is held stills (at most "
-           f"{SR.T('BP-109', 'hold_share_max'):.0%}, BP-109)", sev("BP-109"))
+    for lane, detail in film_shots.lane_share_findings(dyn["lane_share"]):
+        _f(out, "VP-18", lane, detail, sev("BP-109"))
     return out
 
 

@@ -128,9 +128,21 @@ def test_vp17_the_central_scene_has_the_most_played_seconds():
     assert "VP-17" not in rules(run(scenes))
 
 
-def test_vp18_hold_share_over_the_limit_reviews():
-    segs = [seg("S01", blk("scene", 50, who="a"), blk("hold", 50))]
-    assert sev(run(segs), "VP-18") == ["REVIEW"]
+def test_vp18_lane_shares_follow_the_creators_60_30_10():
+    # BP-109 (the creator, 2026-11-01): video 60 % / still 30 % / helper 10 % of the runtime, +- the tolerance
+    off = [seg("S01", blk("scene", 50, who="a"), blk("hold", 50))]
+    assert sorted(f["where"] for f in run(off) if f["rule"] == "VP-18" and f["where"] in ("video", "still", "helper")) == \
+        ["helper", "still", "video"]
+    ok = [seg("S01", blk("scene", 60, who="a"), blk("hold", 30), blk("map_pure", 10, archetype=1))]
+    assert not [f for f in run(ok) if f["rule"] == "VP-18" and f["where"] in ("video", "still", "helper")]
+    assert VP.dynamics(ok, VP.profile("A"))["lane_share"] == pytest.approx({"video": 0.6, "still": 0.3, "helper": 0.1})
+
+
+def test_vp02_pure_map_is_bounded_by_the_helper_lane():
+    lim = SR.T("BP-109", "lane_share")["helper"] + SR.T("BP-109", "lane_tolerance")
+    over = [seg("S01", blk("scene", 80, who="a"), blk("map_pure", 20, archetype=1))]
+    assert lim < 0.2 and sev(run(over), "VP-02") == ["REVIEW"]
+    assert "VP-02" not in rules(run([seg("S01", blk("scene", 90, who="a"), blk("map_pure", 10, archetype=1))]))
 
 
 def test_vp11_each_missing_lane_is_one_finding_naming_its_phase_and_the_table_is_honest():
@@ -278,9 +290,14 @@ def test_the_napoleon_fixture_is_current_valid_and_scored_as_designed():
     contracts.validate(doc, NAP)
     assert doc == VP.napoleon_variants(speeds={}), "script_variants.json is stale: run `variant_plan napoleon --write`"
     v1, v2 = doc["variants"]
-    assert (v1["profile_id"], v1["scores"]["code"], v1["risks"]) == ("D", 70, ["REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-11 KEYFRAME_LTX:light", "REVIEW VP-12 cost"])
-    assert (v2["profile_id"], v2["scores"]["code"]) == ("B", 70)   # was 60 while MAP and COMPENSATOR were listed as missing (P5 landed)
-    assert sorted(v2["risks"]) == ["REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-12 cost", "REVIEW VP-16 narrator"]
+    # both variants predate BP-109's 60/30/10 (the creator, 2026-11-01): the three lane findings (and v2's pure map over the
+    # helper lane) cost 30 / 40 points; they were 70 / 70 under the old 10 % hold cap
+    mix = ["REVIEW VP-18 helper", "REVIEW VP-18 still", "REVIEW VP-18 video"]
+    assert (v1["profile_id"], v1["scores"]["code"]) == ("D", 40)
+    assert sorted(v1["risks"]) == sorted(["REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-11 KEYFRAME_LTX:light", "REVIEW VP-12 cost"] + mix)
+    assert (v2["profile_id"], v2["scores"]["code"]) == ("B", 30)
+    assert sorted(v2["risks"]) == sorted(["REVIEW VP-02 map_pure", "REVIEW VP-11 KEYFRAME_LTX:full", "REVIEW VP-12 cost",
+                                          "REVIEW VP-16 narrator"] + mix)
     assert not [f for f in VP.check_file(path, speeds={}) if f["severity"] == "FAIL"]
     assert VP.check_file(path, speeds={}) and all(f["rule"] != "VP-14" for f in VP.check_file(path, speeds={}))
     assert v1["cost"]["usd_planned"] == "unknown" and v2["cost"]["usd_worst"] == "unknown"
@@ -353,7 +370,7 @@ def test_score_write_recomputes_derived_numbers_and_keeps_the_critic_and_the_cho
     doc["variants"][0]["scores"] = {"code": 1, "critic": 77}
     doc["variants"][0]["dynamics"]["share_scene"] = 0.2
     fixed = VP.rescore(doc, speeds={})
-    assert fixed["variants"][0]["scores"] == {"code": 70, "critic": 77}
+    assert fixed["variants"][0]["scores"] == {"code": 40, "critic": 77}   # 40 under BP-109 60/30/10 (was 70)
     assert fixed["variants"][0]["dynamics"]["share_scene"] == pytest.approx(0.801, abs=0.001)
     doc["chosen"] = {"variant_id": "v1", "by": "creator", "ref": "r", "at": "2026-10-30T00:00:00Z", "variants_sha256": "0" * 64}
     assert VP.rescore(doc, speeds={})["chosen"]["variants_sha256"] == contracts.variants_sha256(VP.rescore(doc, speeds={}))

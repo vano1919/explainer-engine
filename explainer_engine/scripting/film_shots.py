@@ -43,7 +43,11 @@ SHOTS_PER_MIN = tuple(sourced_rules.T("BP-107", "shots_per_min"))  # KP-35
 MEDIAN_SHOT_S = tuple(sourced_rules.T("BP-107", "median_shot_s"))
 CLIP_MAX_S = sourced_rules.T("BP-108", "clip_max_s")  # KP-36
 KEYPOSE_AFTER_S = sourced_rules.T("BP-108", "keypose_after_s")
-HOLD_SHARE_MAX = sourced_rules.T("BP-109", "hold_share_max")  # KP-37
+LANE_SHARE = sourced_rules.T("BP-109", "lane_share")  # KP-37: video / still / helper by runtime (the creator, 2026-11-01)
+LANE_TOLERANCE = sourced_rules.T("BP-109", "lane_tolerance")
+STILL_SHOT_MAX_S = sourced_rules.T("BP-109", "still_shot_max_s")
+HELPER_LANES = {"MAP", "COMPENSATOR", "GRAPHICS"}  # Python-made helper visuals (maps, progress, calculations, counters)
+STILL_ARCHETYPES = {8}  # PARALLAX_25D_TABLEAU: the heroes composed and moved by Python on one picture = a still with moves
 CAMERA_MOVE_SHARE_MAX = sourced_rules.T("BP-110", "camera_move_share_max")  # KP-38
 NARRATION_BLOCK_MAX_S = sourced_rules.T("BP-104", "narration_block_max_s")  # KP-39
 NARRATOR_SHARE = tuple(sourced_rules.T("BP-105", "narrator_share"))
@@ -56,7 +60,8 @@ SAME_PLACE_MAX_S = sourced_rules.T("BP-112", "same_place_max_s")  # KP-42
 TALK_RUN_MAX = sourced_rules.T("BP-113", "talk_run_max")  # KP-43
 ENGINE = "script_engine/1"
 FPS = 24
-# the model each tier runs on (SCRIPT_ENGINE.md, "Variants in use"): hold = our camera code on the keyframe, no video model
+# the model each tier runs on (SCRIPT_ENGINE.md, "Variants in use"): hold = a still, Python adds and moves objects on the keyframe
+# (BP-109, D-93), no video model
 MODEL = {"hold": "camera", "light": "ltx-2.5-distilled", "full": "ltx-2.5-dev"}
 NUMBER = re.compile(r"\d|\b(?:hundred|thousand|million|dozen|half|twice|three|four|five|six|seven|eight|nine|ten|"
                     r"eleven|twelve|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\b", re.I)
@@ -772,6 +777,47 @@ def style_check(doc: dict) -> list[dict]:
     return out
 
 
+def visual_lane(shot: dict) -> str:
+    """The BP-109 lane of a shot or a plan block: ``helper`` (a Python helper visual: map, graphic, compensator archetype),
+    ``still`` (a still frame on which Python adds and moves objects: tier hold, the STILL_HOLD lane, the parallax tableau) or
+    ``video`` (an LTX clip: every other shot)."""
+    lane, arch = shot.get("lane"), shot.get("archetype")
+    if arch is not None and int(arch) in STILL_ARCHETYPES:
+        return "still"
+    if lane in HELPER_LANES or shot.get("category") == "map_pure" or arch is not None:
+        return "helper"
+    if shot.get("tier") == "hold" or lane == "STILL_HOLD" or shot.get("category") == "hold":
+        return "still"
+    return "video"
+
+
+def lane_shares(items: list[dict]) -> dict[str, float]:
+    """Runtime share of each BP-109 lane over shots or plan blocks (``seconds`` each)."""
+    total = sum(float(x["seconds"]) for x in items)
+    secs = {k: 0.0 for k in LANE_SHARE}
+    for x in items:
+        secs[visual_lane(x)] += float(x["seconds"])
+    return {k: (v / total if total else 0.0) for k, v in secs.items()}
+
+
+def lane_share_findings(shares: dict[str, float], *, helper_known: bool = True) -> list[tuple[str, str]]:
+    """(lane, detail) for every lane whose runtime share is outside BP-109's share +- tolerance. ``helper_known`` False: the
+    document cannot name a helper visual (film_shots/1 has no lane or archetype field; the helpers live in the compensator
+    manifest), so video and helper are judged together against their summed share."""
+    want_by = dict(LANE_SHARE)
+    got_by = dict(shares)
+    if not helper_known:
+        want_by["video"] = want_by["video"] + want_by.pop("helper")
+        got_by["video"] = got_by.get("video", 0.0) + got_by.pop("helper", 0.0)
+    out = []
+    for lane, want in want_by.items():
+        got = got_by.get(lane, 0.0)
+        if abs(got - want) > LANE_TOLERANCE + 1e-9:
+            out.append((lane, f"{lane} is {got:.0%} of the runtime (BP-109: {want:.0%} +- {LANE_TOLERANCE:.0%}; "
+                              "video 60 / still 30 / helper 10, the creator 2026-11-01)"))
+    return out
+
+
 def episode_check(doc: dict) -> list[dict]:
     """The episode rules of the script engine v1: rhythm (KP-35), clip length (KP-36), tiers (KP-37), camera moves
     (KP-38), narration blocks and the narrator's share (KP-39), the outro (KP-40), a tier on every shot (ZI-03) and a
@@ -812,10 +858,12 @@ def episode_check(doc: dict) -> list[dict]:
         median = lengths[mid] if len(lengths) % 2 else (lengths[mid - 1] + lengths[mid]) / 2
         if not MEDIAN_SHOT_S[0] <= median <= MEDIAN_SHOT_S[1]:
             add("KP-35", "REVIEW", "episode", f"median shot {median:g} s (aim {MEDIAN_SHOT_S[0]:g}-{MEDIAN_SHOT_S[1]:g} s, BP-107)")
-    holds = sum(1 for s in shots if s.get("tier") == "hold") / len(shots)
-    if holds > HOLD_SHARE_MAX:
-        add("KP-37", "REVIEW", "episode", f"{holds:.0%} of the shots are held pictures (at most {HOLD_SHARE_MAX:.0%}, "
-                                          "BP-109): the cartoons hold a still only on establishing shots")
+    for lane, detail in lane_share_findings(lane_shares(shots), helper_known=doc.get("schema") != "film_shots/1"):
+        add("KP-37", "REVIEW", "episode", detail)
+    for s in shots:
+        if visual_lane(s) == "still" and s["seconds"] > STILL_SHOT_MAX_S:
+            add("KP-37", "REVIEW", s["id"], f"a still of {s['seconds']:g} s: cut it or move objects on it within "
+                                            f"{STILL_SHOT_MAX_S:g} s so it never reads as a slideshow (BP-109)")
     moving = sum(1 for s in shots if s["frame"].get("camera", "static") != "static") / len(shots)
     if moving > CAMERA_MOVE_SHARE_MAX:
         add("KP-38", "REVIEW", "episode", f"the camera moves on {moving:.0%} of the shots (at most "
