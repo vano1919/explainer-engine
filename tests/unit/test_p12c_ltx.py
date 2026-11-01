@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DIR = ROOT / "explainer_engine" / "training" / "pods" / "p12"
-LISTING = ROOT / "jobs" / "ltx2_src" / "listing.txt"
+LISTING = ROOT / "tests" / "fixtures" / "ltx2_listing_e98f6d9.txt"   # LTX-2 files at e98f6d9, kept in the repo (CI has no jobs/)
 SRC = "packages/ltx-pipelines/src/"
 
 
