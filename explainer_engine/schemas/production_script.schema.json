@@ -18,9 +18,10 @@
       "enum": [
         "production_script/1",
         "production_script/2",
-        "production_script/3"
+        "production_script/3",
+        "production_script/4"
       ],
-      "description": "/2 (2026-10-19): every line carries its visual beats (VB rules, PV-39 FAIL); /3 (2026-10-19, the scene rewrite): dialogue lives in scenes (segments[].scene, lines[].to, SC rules PV-48), cues are opt-in and event-bound (VB-08/VB-10/VB-11); /1 is the legacy contract"
+      "description": "/2 (2026-10-19): every line carries its visual beats (VB rules, PV-39 FAIL); /3 (2026-10-19, the scene rewrite): dialogue lives in scenes (segments[].scene, lines[].to, SC rules PV-48), cues are opt-in and event-bound (VB-08/VB-10/VB-11); /1 is the legacy contract; /4 (2026-11-01, the MrBeast-style rhythm, BP-169..172): an optional episode.rhythm_profile, a segment rhythm_zone and a shot dramatic_change (BP-170); /1-/3 scripts resolve to the calm_docudrama profile"
     },
     "episode": {
       "type": "object",
@@ -149,6 +150,13 @@
               "description": "the three packaging promises the creator approved with the script (drama.packaging_promises); a changed promise is a PV-53 FAIL"
             }
           }
+        },
+        "rhythm_profile": {
+          "enum": [
+            "mrbeast_animated",
+            "calm_docudrama"
+          ],
+          "description": "BP-169: the rhythm profile this script is written for; absent = the profile of its schema version (edit/rhythm_profile.py)"
         }
       }
     },
@@ -193,7 +201,7 @@
           "items": {
             "type": "number",
             "minimum": 90,
-            "maximum": 220
+            "maximum": 250
           },
           "minItems": 2,
           "maxItems": 2
@@ -999,6 +1007,9 @@
                     }
                   },
                   "description": "why the cut or transition into this shot suits the beat (the type stays in transition/UR-14)"
+                },
+                "dramatic_change": {
+                  "$ref": "#/$defs/dramatic_change"
                 }
               }
             }
@@ -1412,6 +1423,16 @@
               }
             },
             "description": "Scene Package: the creator's review of this segment"
+          },
+          "rhythm_zone": {
+            "enum": [
+              "hook_0_30s",
+              "early_30_90s",
+              "middle_calm_90_480s",
+              "late_third_480_660s",
+              "climax_660_720s"
+            ],
+            "description": "BP-169: the zone this segment starts in (optional; the zone at its start time otherwise)"
           }
         }
       }
@@ -2585,6 +2606,113 @@
           }
         }
       ]
+    },
+    "dramatic_change": {
+      "title": "Dramatic change inside a held still (BP-170)",
+      "type": "object",
+      "required": [
+        "kind",
+        "at_s"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "cutout_relocation",
+            "plate_swap",
+            "composite_cutout_and_plate"
+          ]
+        },
+        "subject_layer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "from_box": {
+          "$ref": "#/$defs/box"
+        },
+        "to_box": {
+          "$ref": "#/$defs/box"
+        },
+        "relocation_distance_frac": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 1.5
+        },
+        "subject_area_frac": {
+          "type": "number",
+          "minimum": 0.08,
+          "maximum": 1
+        },
+        "plate_swap_pixel_frac": {
+          "type": "number",
+          "minimum": 0.3,
+          "maximum": 1
+        },
+        "at_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "bg_before": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bg_after": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "cutout_relocation",
+                  "composite_cutout_and_plate"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "subject_layer",
+              "from_box",
+              "to_box",
+              "relocation_distance_frac",
+              "subject_area_frac"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "plate_swap",
+                  "composite_cutout_and_plate"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "bg_before",
+              "bg_after",
+              "plate_swap_pixel_frac"
+            ]
+          }
+        }
+      ]
+    },
+    "box": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
     }
   }
 }

@@ -4439,11 +4439,17 @@
   {
    "id": "BP-109",
    "area": "film",
-   "status": "hypothesis",
+   "status": "house",
    "severity": "REVIEW",
-   "statement": "Animation tiers (KP-37): at most hold_share_max of the shots are a held picture with a camera move (the creator's cartoons hold a still on 5-10 % of the time; the critic's 40 % read as a slideshow); every spoken line and every peak is full.",
+   "statement": "Visual mix by runtime (the creator's rule of 2026-11-01): lane_share.video of the runtime is real video (LTX), lane_share.still is still frames on which Python adds objects and moves them (one picture or several layers, cut fast and on the narrator's words), lane_share.helper is helper visuals made by Python (maps, progress bars, calculations, counters); each share within tolerance. A still never reads as a slideshow: no still shot runs longer than still_shot_max_s (the creator's 'no shot longer than 5 s', 2026-10-25).",
    "thresholds": {
-    "hold_share_max": 0.1
+    "lane_share": {
+     "video": 0.6,
+     "still": 0.3,
+     "helper": 0.1
+    },
+    "lane_tolerance": 0.05,
+    "still_shot_max_s": 5.0
    },
    "sources": [
     {
@@ -4453,12 +4459,18 @@
     }
    ],
    "enforced_by": [
-    "explainer_engine/scripting/film_shots.py:HOLD_SHARE_MAX",
-    "explainer_engine/scripting/variant_plan.py:checks"
+    "explainer_engine/scripting/film_shots.py:LANE_SHARE",
+    "explainer_engine/scripting/film_shots.py:visual_lane",
+    "explainer_engine/scripting/variant_plan.py:checks",
+    "explainer_engine/edit/dramatic_still.py"
    ],
    "supersedes": [
-    "the critic's plan review 2026-10-23: 40 % still + camera"
-   ]
+    "the critic's plan review 2026-10-23: 40 % still + camera",
+    "BP-109 hypothesis (2026-10-24): at most hold_share_max = 0.1 of the shots a held picture with a camera move ('the creator's cartoons hold a still on 5-10 % of the time')",
+    "BP-141 map_pure_max = 0.25: a pure map is a helper visual, bounded by lane_share.helper + lane_tolerance",
+    "D-75's 'replaces ASSET_COMPOSE's code-composed shots' for the still lane (D-93)"
+   ],
+   "decided": "the creator, 2026-11-01 10:16 UTC: 10 % helper visuals made by Python (maps, progress, calculations), 30 % still frames where Python adds and moves objects, cut fast enough and matched to the narrator, 60 % real videos; every old rule that contradicts it is rewritten; 2026-11-01 20:03 UTC: the 60/30/10 are approximate and must not cost the video anything, tolerance +-5 % (lane_tolerance 0.03 -> 0.05)"
   },
   {
    "id": "BP-110",
@@ -5718,12 +5730,12 @@
    "area": "story",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Episode structure profiles for the variant planner (stage 1b, VP-02..VP-10): each profile A-D bounds the non-character share of the runtime and the played share of every turn slot; pure map is at most map_pure_max of the runtime in a run of at most map_run_max_s; the same narration archetype never sits on two adjacent narrated blocks and at most rotation_family_max of one family fall in rotation_window_s; one compensator picture is at most kuleshov_max_s. The numbers are the Blueprint's mode matrix (one source type), so REVIEW only; C and D copy B and A because the Blueprint gives them no number of their own.",
+   "statement": "Episode structure profiles for the variant planner (stage 1b, VP-02..VP-10): each profile A-D bounds the non-character share of the runtime and the played share of every turn slot; pure map is a helper visual (its share is bounded by BP-109's helper lane) in a run of at most map_run_max_s; the same narration archetype never sits on two adjacent narrated blocks and at most rotation_family_max of one family fall in rotation_window_s; one compensator picture is at most kuleshov_max_s. The numbers are the Blueprint's mode matrix (one source type), so REVIEW only; C and D copy B and A because the Blueprint gives them no number of their own. A and D allow 0.43, not the Blueprint's 0.4: D-93 (the creator, 2026-11-01) makes 30 % still + 10 % helper = 40 % of the runtime non-character, and BP-109's lane_tolerance 0.03 is added so a plan that meets D-93 exactly does not fail.",
    "thresholds": {
     "episode_structure_profiles": {
      "A": {
       "name": "cinematic docudrama",
-      "non_character_max": 0.4,
+      "non_character_max": 0.45,
       "turn_scene_share_min": 0.5
      },
      "B": {
@@ -5738,11 +5750,10 @@
      },
      "D": {
       "name": "chronicle dual POV",
-      "non_character_max": 0.4,
+      "non_character_max": 0.45,
       "turn_scene_share_min": 0.5
      }
     },
-    "map_pure_max": 0.25,
     "map_run_max_s": 90,
     "rotation_adjacent": true,
     "rotation_family_max": 2,
@@ -5761,7 +5772,9 @@
    "enforced_by": [
     "explainer_engine/scripting/variant_plan.py:checks"
    ],
-   "supersedes": []
+   "supersedes": [
+    "map_pure_max = 0.25 (moved to BP-109's helper lane, the creator 2026-11-01)"
+   ]
   },
   {
    "id": "BP-142",
@@ -6270,7 +6283,7 @@
    "severity": "REVIEW",
    "statement": "Delivery defaults of an animated episode (the Blueprint route, D-77/D-80/D-85): the long video's target length, its frame size, its frame rate and the number of Shorts. A job or script that names its own fps or size keeps it; the still-picture route (D-43) and its shipped 30 fps episodes are not changed by this row. VIDEO_PARAMETER_SPEC P-10, P-12, P-13 and P-100 carry the older values of the still route.",
    "thresholds": {
-    "long_minutes": 15,
+    "long_minutes": 12,
     "width": 2560,
     "height": 1440,
     "fps": 24,
@@ -6282,7 +6295,7 @@
     "explainer_engine/core/store.py"
    ],
    "supersedes": [],
-   "decided": "the creator, 2026-10-30 16:13 UTC (project chat cmsg_01Hnu5zB86sjUj5GtTgaUkPW5f8NsnbZwPhLsKQESi7SXS item 3: yes to the delivery numbers); animated route only on the coordinator's scoping of 2026-10-30 17:23 UTC",
+   "decided": "the creator, 2026-10-30 16:13 UTC (project chat cmsg_01Hnu5zB86sjUj5GtTgaUkPW5f8NsnbZwPhLsKQESi7SXS item 3: yes to the delivery numbers); animated route only on the coordinator's scoping of 2026-10-30 17:23 UTC; long_minutes 15 -> 12 on the creator's 12-minute (720 s) episode brief of 2026-11-01 (BP-169's episode_s is the same 720 s: tests/unit/test_delivery_defaults.py ties them)",
    "next_step": "the still route, the Shorts' frame rate, PV-34's count for five Shorts and the production_script schema default are open (TECH_QUESTIONS Q-29..Q-31)"
   },
   {
@@ -6304,6 +6317,457 @@
    "supersedes": [],
    "decided": "the creator, 2026-10-31 (answer 5 of the F-step brief: GO <= 2.0x retries with forecast <= $12.00 and review <= 4.0 min per finished minute, PIVOT (2.0, 3.0], ABANDON > 3.0)",
    "next_step": "the meaning of 'forecast' (here: settled plus reserved-open USD of the pilot) is for the creator to confirm"
+  },
+  {
+   "id": "BP-169",
+   "area": "rhythm",
+   "status": "house",
+   "severity": "REVIEW",
+   "statement": "The channel's rhythm is a named profile with five zones of a 720 s episode (hook 0-30 s, early 30-90 s, calm middle 90-480 s, late third 480-660 s, climax 660-720 s). Each zone carries its own narration pace, shots per minute, shot length, dramatic changes per minute, still hold, tease cadence, sound density and camera share. This row is the ONE home of the zone numbers; code reads them through the profile reader, never a copy. The heard-pace numbers of the zones are measured on MrBeast's videos (hook 193, 30-60 s 176, middle 166 words per minute); the cut, event, tease and sound numbers are partly reported and partly estimates adapted to a 2D cartoon, so the whole profile is REVIEW until the creator confirms it as a house rule. The older 'calm_docudrama' profile is the set of the other BP rows (BP-01, BP-107, BP-85, BP-40 ...) and stays unchanged. Pace variation is required (the creator, 2026-11-01): inside every zone the heard pace is an average, redistributed so that it rises and falls at a regular rhythm instead of one flat tempo; the frequency of those changes is not yet a number (open: needs a sourced value before code enforces it).",
+   "thresholds": {
+    "default_profile": "mrbeast_animated",
+    "episode_s": 720,
+    "profiles": {
+     "mrbeast_animated": {
+      "calm_middle_share": 0.5417,
+      "zones": [
+       {
+        "id": "hook_0_30s",
+        "mode": "hyped",
+        "window_s": [
+         0,
+         30
+        ],
+        "heard_wpm_target": 193,
+        "heard_wpm_band": [
+         180,
+         215
+        ],
+        "speaking_wpm_target": 233,
+        "speaking_wpm_band": [
+         215,
+         250
+        ],
+        "pauses_gt_05s_per_min_max": 4.0,
+        "median_words_max": 8,
+        "shots_per_min_target": 28.0,
+        "shots_per_min_band": [
+         24,
+         34
+        ],
+        "shot_len_s_band": [
+         1.0,
+         2.5
+        ],
+        "dramatic_changes_per_min_target": 30.0,
+        "dramatic_changes_per_min_band": [
+         26,
+         36
+        ],
+        "still_max_s": 2.5,
+        "static_still_max_s": 1.5,
+        "tease_events_per_min": 4.0,
+        "tease_max_gap_s": 12,
+        "sfx_events_per_min_band": [
+         14.0,
+         20.0
+        ],
+        "music_cues_per_min": 2.0,
+        "camera_move_share_max": 0.3,
+        "tts_tags": [
+         "excited",
+         "shouting",
+         "rushed",
+         "amazed"
+        ]
+       },
+       {
+        "id": "early_30_90s",
+        "mode": "hyped",
+        "window_s": [
+         30,
+         90
+        ],
+        "heard_wpm_target": 176,
+        "heard_wpm_band": [
+         165,
+         195
+        ],
+        "speaking_wpm_target": 225,
+        "speaking_wpm_band": [
+         210,
+         240
+        ],
+        "pauses_gt_05s_per_min_max": 6.0,
+        "median_words_max": 9,
+        "shots_per_min_target": 24.0,
+        "shots_per_min_band": [
+         20,
+         28
+        ],
+        "shot_len_s_band": [
+         1.2,
+         3.5
+        ],
+        "dramatic_changes_per_min_target": 24.0,
+        "dramatic_changes_per_min_band": [
+         20,
+         28
+        ],
+        "still_max_s": 3.5,
+        "static_still_max_s": 2.0,
+        "tease_events_per_min": 1.5,
+        "tease_max_gap_s": 45,
+        "sfx_events_per_min_band": [
+         11.0,
+         16.0
+        ],
+        "music_cues_per_min": 1.5,
+        "camera_move_share_max": 0.25,
+        "tts_tags": [
+         "excited",
+         "curious",
+         "gasps",
+         "rushed"
+        ]
+       },
+       {
+        "id": "middle_calm_90_480s",
+        "mode": "calm_story",
+        "window_s": [
+         90,
+         480
+        ],
+        "heard_wpm_target": 166,
+        "heard_wpm_band": [
+         150,
+         180
+        ],
+        "speaking_wpm_target": 205,
+        "speaking_wpm_band": [
+         190,
+         220
+        ],
+        "pauses_gt_05s_per_min_max": 8.5,
+        "median_words_max": 11,
+        "shots_per_min_target": 17.0,
+        "shots_per_min_band": [
+         14,
+         20
+        ],
+        "shot_len_s_band": [
+         2.0,
+         5.0
+        ],
+        "dramatic_changes_per_min_target": 16.0,
+        "dramatic_changes_per_min_band": [
+         14,
+         20
+        ],
+        "still_max_s": 5.0,
+        "static_still_max_s": 2.5,
+        "tease_events_per_min": 1.0,
+        "tease_max_gap_s": 65,
+        "sfx_events_per_min_band": [
+         7.0,
+         12.0
+        ],
+        "music_cues_per_min": 1.0,
+        "camera_move_share_max": 0.2,
+        "tts_tags": [
+         "curious",
+         "softly",
+         "pause",
+         "drawn out",
+         "laughs"
+        ]
+       },
+       {
+        "id": "late_third_480_660s",
+        "mode": "hyped",
+        "window_s": [
+         480,
+         660
+        ],
+        "heard_wpm_target": 185,
+        "heard_wpm_band": [
+         170,
+         200
+        ],
+        "speaking_wpm_target": 230,
+        "speaking_wpm_band": [
+         215,
+         245
+        ],
+        "pauses_gt_05s_per_min_max": 6.5,
+        "median_words_max": 9,
+        "shots_per_min_target": 25.0,
+        "shots_per_min_band": [
+         22,
+         28
+        ],
+        "shot_len_s_band": [
+         1.2,
+         3.2
+        ],
+        "dramatic_changes_per_min_target": 22.0,
+        "dramatic_changes_per_min_band": [
+         20,
+         26
+        ],
+        "still_max_s": 3.5,
+        "static_still_max_s": 2.0,
+        "tease_events_per_min": 1.6,
+        "tease_max_gap_s": 40,
+        "sfx_events_per_min_band": [
+         12.0,
+         18.0
+        ],
+        "music_cues_per_min": 1.5,
+        "camera_move_share_max": 0.25,
+        "tts_tags": [
+         "excited",
+         "rushed",
+         "gasps",
+         "amazed"
+        ]
+       },
+       {
+        "id": "climax_660_720s",
+        "mode": "hyped_climax",
+        "window_s": [
+         660,
+         720
+        ],
+        "heard_wpm_target": 160,
+        "heard_wpm_band": [
+         145,
+         185
+        ],
+        "speaking_wpm_target": 225,
+        "speaking_wpm_band": [
+         210,
+         245
+        ],
+        "pauses_gt_05s_per_min_max": 9.0,
+        "median_words_max": 7,
+        "shots_per_min_target": 30.0,
+        "shots_per_min_band": [
+         26,
+         34
+        ],
+        "shot_len_s_band": [
+         1.0,
+         2.5
+        ],
+        "dramatic_changes_per_min_target": 28.0,
+        "dramatic_changes_per_min_band": [
+         24,
+         32
+        ],
+        "still_max_s": 2.5,
+        "static_still_max_s": 1.5,
+        "tease_events_per_min": 2.0,
+        "tease_max_gap_s": 30,
+        "sfx_events_per_min_band": [
+         15.0,
+         20.0
+        ],
+        "music_cues_per_min": 2.0,
+        "camera_move_share_max": 0.3,
+        "tts_tags": [
+         "shouting",
+         "excited",
+         "gasps",
+         "short pause"
+        ]
+       }
+      ]
+     },
+     "calm_docudrama": "legacy: read the other BP rows"
+    }
+   },
+   "sources": [
+    {
+     "type": "C",
+     "title": "10 MrBeast videos, transcript word counts (Argon research rows A1.1-A1.6, 2021-2025)",
+     "url": "http://www.youtube.com/watch?v=0e3GPea1Tyg"
+    },
+    {
+     "type": "C",
+     "title": "Paddy Galloway breakdown, 54.5 visual events per minute in hooks (Argon row C8.1)",
+     "url": "https://www.youtube.com/watch?v=626-bcmvCQw"
+    },
+    {
+     "type": "A",
+     "title": "AIR Media-Tech: advanced retention editing, cutting patterns (2026-09-14)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that"
+    },
+    {
+     "type": "A",
+     "title": "EchoVox: how to make AI voiceovers sound human (2026-05-01)",
+     "url": "https://echovox.in/blog/how-to-make-ai-voiceovers-sound-human-2026/"
+    },
+    {
+     "type": "B",
+     "title": "Derral Eves, The YouTube Formula (2021)",
+     "url": "https://books.google.com/books/about/The_YouTube_Formula.html?id=nhj3EQAAQBAJ"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/edit/rhythm_profile.py",
+    "explainer_engine/scripting/rhythm_lint.py",
+    "explainer_engine/scripting/syllables.py",
+    "tests/unit/test_sourced_rules.py"
+   ],
+   "supersedes": [],
+   "research": "Quantitative rhythm and retention metrics, MrBeast 2021-2025 and comparison channels (Argon research, 2026-11-01; project files argon_mrbeast_numbers_2026-11-01 / HF vano1919/tmr-artifacts argon/)",
+   "decided": "the creator, 2026-11-01 20:03 UTC (answer 5 to the open-questions list): the profile's recommendations (which second needs which pace, cuts and events per minute for the hook and the first 3 minutes) are recorded as the channel's rule; the pace must CHANGE within a zone and between zones (a hook and a narration never run at one flat tempo): each zone's heard pace is the average that the read redistributes so that it changes at a regular frequency, a normal talking hook"
+  },
+  {
+   "id": "BP-170",
+   "area": "stills",
+   "status": "house",
+   "severity": "FAIL",
+   "statement": "A still may stay on screen up to still_max_s only when something dramatic changes in it: a person or object cut out and placed in another part of the frame (relocation of at least min_relocation_distance_frac of the frame, subject at least min_subject_area_frac of it) or the background replaced (at least min_plate_swap_pixel_frac of the pixels), inside the middle of the hold (change_window_frac). A small dot, a small hammer or a tint is not a change. Without such a change a still holds at most static_still_max_s of its zone.",
+   "thresholds": {
+    "still_max_s": 5.0,
+    "static_still_max_s_by_zone": {
+     "hook_0_30s": 1.5,
+     "early_30_90s": 2.0,
+     "middle_calm_90_480s": 2.5,
+     "late_third_480_660s": 2.0,
+     "climax_660_720s": 1.5
+    },
+    "min_relocation_distance_frac": 0.25,
+    "min_subject_area_frac": 0.08,
+    "min_plate_swap_pixel_frac": 0.3,
+    "change_window_frac": [
+     0.25,
+     0.75
+    ]
+   },
+   "sources": [],
+   "enforced_by": [
+    "explainer_engine/edit/dramatic_still.py",
+    "tests/unit/test_sourced_rules.py"
+   ],
+   "supersedes": [],
+   "decided": "the creator, 2026-11-01 13:20 UTC (project thread: a still may stay up to 5 s only if something dramatic changes in it, a person cut out and placed in another location; a small dot or a small hammer is not enough). The numeric thresholds (0.25, 0.08, 0.30, window, static holds per zone) are the coordinator's proposals from the Argon roadmap, not the creator's numbers.",
+   "next_step": "the creator confirms the numeric thresholds; edit/dramatic_still.py takes over enforced_by when it exists"
+  },
+  {
+   "id": "BP-171",
+   "area": "voice",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "The narrator is ONE voice whose tempo and energy follow the zones of BP-169: faster and more excited in the hook and the late third, calmer in the middle. Prosody targets for the excited zones: pitch range, a pitch shift above the calm read, active-speech words per second, loudness range, at most one ElevenLabs audio tag per clause, one or two stressed capitalised words per sentence, a long read split into chunks, and a short silence before a reveal. These come from TTS engineering guides and speech-prosody literature, not from MrBeast's isolated voice track (not measurable from public videos), so the rule is REVIEW.",
+   "thresholds": {
+    "f0_range_st_min": 5.0,
+    "f0_shift_st_min": 1.0,
+    "speaking_wps_band": [
+     3.3,
+     4.2
+    ],
+    "dynamic_range_db_band": [
+     10.0,
+     14.0
+    ],
+    "max_tags_per_clause": 1,
+    "caps_words_per_sentence": [
+     1,
+     2
+    ],
+    "chunk_reset_max_chars": 800,
+    "chunk_reset_max_s": 90.0,
+    "pre_reveal_silence_s": [
+     0.5,
+     1.0
+    ],
+    "hyped_min_gap_s": 0.18,
+    "casting_keywords": [
+     "energetic",
+     "dynamic",
+     "fast-paced",
+     "expressive"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "EchoVox: how to make AI voiceovers sound human (2026-05-01)",
+     "url": "https://echovox.in/blog/how-to-make-ai-voiceovers-sound-human-2026/"
+    },
+    {
+     "type": "C",
+     "title": "10 MrBeast videos, transcript word counts (Argon research rows A1.1-A1.6, 2021-2025)",
+     "url": "http://www.youtube.com/watch?v=0e3GPea1Tyg"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/audio/hype_read.py",
+    "tests/unit/test_sourced_rules.py"
+   ],
+   "supersedes": [],
+   "next_step": "audio/hype_read.py takes over enforced_by when it exists; the narrator voice itself is the creator's choice (VC-08)",
+   "research": "Quantitative rhythm and retention metrics, MrBeast 2021-2025 and comparison channels (Argon research, 2026-11-01; project files argon_mrbeast_numbers_2026-11-01 / HF vano1919/tmr-artifacts argon/)"
+  },
+  {
+   "id": "BP-172",
+   "area": "video",
+   "status": "hypothesis",
+   "severity": "REVIEW",
+   "statement": "LTX clips and their prompts follow the zone: short clips with one clear physical action (start, peak, settle) in the hyped zones, longer clips in the calm middle, a bounded share of frames that hold, and a prompt names a fast action verb instead of a slow gesture. The numbers are the project's first values for a fast cartoon and are untested on LTX-2.5 until the P12 pod runs.",
+   "thresholds": {
+    "hyped_clip_s_band": [
+     2.0,
+     4.0
+    ],
+    "middle_clip_s_band": [
+     4.0,
+     8.0
+    ],
+    "hyped_hold_share_max": 0.35,
+    "hyped_frozen_run_frames_max": 12,
+    "fast_action_verbs": [
+     "slams",
+     "yanks",
+     "lunges",
+     "snaps",
+     "whips",
+     "bolts",
+     "flings",
+     "jabs",
+     "throws",
+     "shoves",
+     "spins",
+     "leaps",
+     "charges",
+     "strikes",
+     "sweeps",
+     "snatches"
+    ]
+   },
+   "sources": [
+    {
+     "type": "A",
+     "title": "AIR Media-Tech: advanced retention editing, cutting patterns (2026-09-14)",
+     "url": "https://air.io/en/youtube-hacks/advanced-retention-editing-cutting-patterns-that"
+    },
+    {
+     "type": "C",
+     "title": "10 MrBeast videos, transcript word counts (Argon research rows A1.1-A1.6, 2021-2025)",
+     "url": "http://www.youtube.com/watch?v=0e3GPea1Tyg"
+    }
+   ],
+   "enforced_by": [
+    "explainer_engine/scripting/shot_prompt_lint.py",
+    "explainer_engine/training/video_qa.py",
+    "tests/unit/test_sourced_rules.py"
+   ],
+   "supersedes": [],
+   "next_step": "scripting/shot_prompt_lint.py takes over enforced_by when it reads this row; measure on the P12 pod",
+   "research": "Quantitative rhythm and retention metrics, MrBeast 2021-2025 and comparison channels (Argon research, 2026-11-01; project files argon_mrbeast_numbers_2026-11-01 / HF vano1919/tmr-artifacts argon/)"
   }
  ]
 }

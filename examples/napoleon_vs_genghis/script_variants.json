@@ -3009,12 +3009,15 @@
     ]
    },
    "risks": [
+    "REVIEW VP-18 video",
+    "REVIEW VP-18 still",
+    "REVIEW VP-18 helper",
     "REVIEW VP-11 KEYFRAME_LTX:full",
     "REVIEW VP-11 KEYFRAME_LTX:light",
     "REVIEW VP-12 cost"
    ],
    "scores": {
-    "code": 70,
+    "code": 40,
     "critic": null
    }
   },
@@ -3463,12 +3466,16 @@
     ]
    },
    "risks": [
+    "REVIEW VP-02 map_pure",
     "REVIEW VP-16 narrator",
+    "REVIEW VP-18 video",
+    "REVIEW VP-18 still",
+    "REVIEW VP-18 helper",
     "REVIEW VP-11 KEYFRAME_LTX:full",
     "REVIEW VP-12 cost"
    ],
    "scores": {
-    "code": 70,
+    "code": 30,
     "critic": null
    }
   }

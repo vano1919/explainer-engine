@@ -291,8 +291,15 @@ def test_episode_rules_apply_only_under_the_engine():
     d = doc()
     d["shots"][0].pop("tier", None)
     assert not rules(d) & {"ZI-02", "ZI-03", "KP-35", "KP-37"}
-    d = _episode(doc())
+    d = _episode(doc(), n=10)
+    for i in (0, 4, 6):   # BP-109 (the creator, 2026-11-01): 30 % stills; film_shots/1 names no helper, video+helper = 70 %
+        d["shots"][i]["tier"] = "hold"
     assert not rules(d) & {"KP-35", "KP-36", "KP-37", "KP-38", "KP-40", "ZI-02", "ZI-03"}
+    all_full = _episode(doc(), n=10)
+    assert {f["where"] for f in F.check(all_full) if f["rule"] == "KP-37"} == {"episode"}   # 100 % video breaks the mix
+    long_still = copy.deepcopy(d)
+    long_still["shots"][0]["seconds"] = F.STILL_SHOT_MAX_S + 1
+    assert "X00" in {f["where"] for f in F.check(long_still) if f["rule"] == "KP-37"}
     d["shots"][0].pop("tier")
     assert "ZI-03" in rules(d, "FAIL")
 
@@ -382,10 +389,12 @@ def test_sheet_prompts_for_named_heroes_only():
                 if f["severity"] == "FAIL"]
 
 
-def test_the_napoleon_episode_is_clean_under_the_engine():
+def test_the_napoleon_episode_is_clean_under_the_engine_except_the_new_visual_mix():
     ep = json.loads((ROOT / "examples" / "napoleon_vs_genghis" / "film_shots.json").read_text(encoding="utf-8"))
     assert ep["engine"] == F.ENGINE
-    assert not F.check(ep)
+    # the fixture predates BP-109's 60/30/10 (the creator, 2026-11-01): ~95 % video, no stills; only that mix is flagged
+    found = F.check(ep)
+    assert found and all(f["rule"] == "KP-37" and f["where"] == "episode" and f["severity"] == "REVIEW" for f in found)
     assert sum(s["seconds"] for s in ep["shots"]) == 900
 
 

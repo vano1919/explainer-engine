@@ -1,9 +1,10 @@
-"""T11: the P12b pod script (p12b.sh + p12b.py) passes the free dry-run rules, declares its heartbeat and stall; Qwen draws, the video weights only download in the background.
+"""T11: the combined P12 pod script (p12b.sh + p12b.py + p12c_ltx.py) passes the free dry-run rules, declares its heartbeat and stall; Qwen draws in process 1 and the LTX weights download in the background, the LTX stages run in process 2.
 No network, no pod, no money (the Hub existence check of ``runpod dryrun`` is not done here)."""
 import hashlib
 import importlib.util
 import json
 import pytest
+import re
 import subprocess
 from pathlib import Path
 
@@ -25,26 +26,45 @@ def test_p12b_script_passes_the_dryrun_rules_declares_heartbeat_and_stall_and_dr
     assert subprocess.run(["bash", "-n", str(DIR / "p12b.sh")]).returncode == 0
     assert R.is_wrapper_script(t) and R.lint_pod_script(t) == [] and D.static_problems(t, pins.load()) == []
     assert R.heartbeat_of_script(t) == "datasets/vano1919/tmr-artifacts:runs/p12b/beat.txt"
-    assert R.stall_minutes_of_script(t) == 15
+    assert R.stall_minutes_of_script(t) == 25                      # p12b.json stall_minutes: the LTX audio stage is long
+    assert json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))["stall_minutes"] == 25
     assert "beat.txt" not in "\n".join(ln for ln in t.splitlines() if not ln.lstrip().startswith("#"))   # the wrapper owns it
     low = (t + py).lower()
-    # creator 2026-10-31 (RP-01 Path A): the video model's weights download in the background; nothing else of a video model runs here
-    assert "a2vid" not in low and "Layout" not in t + py and "from_pretrained" in py and "ltx" not in py.lower()
-    assert 'cfg["video"]' in py and "snapshot_download(v[\"repo\"]" in py and "start_video_download" in py
+    # process 1 draws with Qwen and only DOWNLOADS the LTX weights (a background thread); every LTX run is process 2 (p12c_ltx.py)
+    assert "from_pretrained" in py and "a2vid" not in low and "ltx_pipelines" not in py
+    assert 'cfg["ltx"]' in py and "hf_hub_download" in py and "start_ltx_download" in py
+    assert t.index('python3 "$JOB/p12b.py"') < t.index('python3 "$JOB/p12c_ltx.py"')
+    assert "stopped_after.txt" in t                                # process 2 starts only without the creator's soft stop
     assert "HF_HUB_ENABLE_HF_TRANSFER=1" in t and "HF_XET_HIGH_PERFORMANCE=1" in t
     assert "hosts" not in low and "host_" not in low and "q4" not in low                 # D-89: no host stage, no host block
     assert "import json" in py and "stages.txt" in py and "t.jsonl" in py
     assert "EE_DEADLINE" in py and "EE_OUT" in py and "sys.exit(main())" in py
-    # the job files the pod fetches are the ones committed here: their sha256 is pinned in the script text
-    for f in ("p12b.py", "p12b.json"):
-        assert hashlib.sha256((DIR / f).read_bytes()).hexdigest() in t, f
 
 
-def test_the_projection_skips_q3_when_time_is_short_and_keeps_q1_and_q4_always():
+def test_the_job_files_are_sha256_pinned_in_the_script_text_and_the_pins_are_filled_before_a_pod():
+    """The pod fetches p12b.py, p12b.json and p12c_ltx.py from HF code/p12/ and checks them against the sha256 written in p12b.sh. Until
+    the DRY gate (WP-1e) fills those lines they read PLACEHOLDER_SHA_*; a REAL sha in the script must be the committed file's."""
+    t = (DIR / "p12b.sh").read_text(encoding="utf-8")
+    for f in ("p12b.py", "p12b.json", "p12c_ltx.py"):
+        real = hashlib.sha256((DIR / f).read_bytes()).hexdigest()
+        holder = "PLACEHOLDER_SHA_" + f.upper().replace(".", "_")
+        assert real in t or holder in t, f
+        assert not re.search(r"\b[0-9a-f]{64}\s+\"\$JOB/" + re.escape(f), t) or real in t, f
+
+
+@pytest.mark.xfail(strict=True, reason="WP-1e: sha256 lines of p12b.sh, the clay and the AV takes of p12b.json are still PLACEHOLDER; remove "
+                   "this marker when the DRY gate has filled them (strict: it fails the day they are all real, as a reminder)")
+def test_the_pod_is_runnable_only_when_no_placeholder_is_left():
+    text = "".join((DIR / f).read_text(encoding="utf-8") for f in ("p12b.sh", "p12b.json", "p12c_ltx.py"))
+    assert "PLACEHOLDER" not in text
+
+
+def test_the_projection_skips_optional_stages_when_time_is_short_and_keeps_the_essential_ones():
     m = _load()
     cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
     st = cfg["stages"]
     assert [m.units_of(st[n]) for n in ("Q1", "Q2", "Q3")] == [24, 16, 24]
+    assert [m.units_of(st[n]) for n in ("L1", "L3", "L2", "AV")] == [3, 3, 3, 2]       # one take per shot (D-93 / the creator)
     reserve = cfg["end_reserve_min"] * 60
     first = {"Q1": 60.0}                                    # seconds of the first unit of each stage
     done = {"Q1"}
@@ -60,7 +80,14 @@ def test_the_projection_skips_q3_when_time_is_short_and_keeps_q1_and_q4_always()
     assert not m.stage_may_start("Q3", st, {}, set(), 0.0, deadline, reserve)
     # an optional stage also has to leave room for the essential stages still to run
     assert not m.stage_may_start("Q2", st, first, set(), deadline - 960 - reserve, deadline, reserve)
-    assert m.ordered(st) == ["Q1", "Q2", "Q3"]
+    # the LTX stages still to come (process 2) are a fixed reserve: Q2 fits alone but not next to the 61 min LTX reserve
+    ltx = float(cfg["ltx"]["reserve_min"]) * 60
+    assert not m.stage_may_start("Q2", st, first, done, deadline - 960 - reserve, deadline, reserve, ltx)
+    assert m.stage_may_start("Q2", st, first, done, deadline - 960 - reserve - ltx, deadline, reserve, ltx)
+    # LTX stages are never measured in process 1: no estimate, so an optional one (L3) never starts there; the order is the plan's
+    assert m.estimate_s("L3", st, first) is None and not m.stage_may_start("L3", st, first, done, 0.0, deadline, reserve)
+    assert m.ordered(st) == ["Q1", "Q2", "Q3", "L1", "L3", "L2", "AV"]
+    assert m.ordered(st, "qwen_mva") == ["Q1", "Q2", "Q3"] and m.ordered(st, "ltx_i2v") == ["L1", "L3"]
 
 
 def test_the_outputs_follow_the_plan_paths_and_the_azimuth_degrees_go_round_in_30_steps():
@@ -128,38 +155,278 @@ def test_the_style_lora_is_merged_at_the_json_weight_0_7_not_a_literal(tmp_path)
     assert not isinstance(style.args[2], ast.Constant)      # the weight is a variable that comes from p12b.json
 
 
-def test_the_video_download_runs_in_a_background_thread_and_a_failure_does_not_stop_qwen(tmp_path, monkeypatch):
+def _ltx_jobs(cfg):
+    """Fetch order (audit #14): the shared files, the Layout LoRA, and the AV files last (only with real takes)."""
+    lt, ll = cfg["ltx"], cfg["ltx"]["layout_lora"]
+    jobs = [(lt["repo"], f, lt["revision"]) for f in lt["files"]] + [(ll["repo"], ll["file"], ll["revision"])]
+    if all("PLACEHOLDER" not in str(v[k]) for v in lt["av"]["takes"].values() for k in ("sha256", "voice_id")):
+        jobs += [(lt["repo"], f, lt["revision"]) for f in lt["av_files"]]
+    return jobs
+
+
+def _real_takes(cfg):
+    for v in cfg["ltx"]["av"]["takes"].values():
+        v["sha256"], v["voice_id"] = "a" * 64, "voice"
+    return cfg
+
+
+def test_the_ltx_download_runs_in_a_background_thread_and_a_failure_does_not_stop_qwen(tmp_path, monkeypatch):
     import sys
     import types
     m = _load()
     calls = []
     hub = types.ModuleType("huggingface_hub")
-    def boom(repo, **kw):
-        calls.append((repo, kw["revision"]))
+
+    def boom(repo, filename, **kw):
+        calls.append((repo, filename, kw["revision"]))
         raise OSError("offline")
-    hub.snapshot_download = boom
+    hub.hf_hub_download = boom
     monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
     monkeypatch.setattr(m, "MODELS", tmp_path / "models")
-    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    cfg = _real_takes(json.loads((DIR / "p12b.json").read_text(encoding="utf-8")))
     log = m.Log(tmp_path / "out")
     monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=200 * 2 ** 30))   # the guard is tested below
-    th = m.start_video_download(log, cfg)
+    th = m.start_ltx_download(log, cfg)
     th.join(5)
-    assert calls == [("Lightricks/LTX-Video-0.9.8-13B-distilled", "7c64400e1861cc0d7b98d570a1926d5408ec60cd")] and not th.is_alive()
+    assert not th.is_alive()
+    assert calls == _ltx_jobs(cfg) and len(calls) == 8                      # every file at its pinned revision, a failure goes on to the next
     evs = [json.loads(x)["ev"] for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
-    assert evs == ["video_download_start", "video_download_failed"]
+    assert evs == ["ltx_download_start"] + ["ltx_download_failed"] * 8 + ["ltx_download_end"]
 
 
-def test_the_video_download_is_skipped_when_the_free_disk_is_below_video_plus_margin(tmp_path, monkeypatch):
+def test_a_403_on_a_gated_file_is_logged_as_gated_and_the_next_file_is_still_tried(tmp_path, monkeypatch):
+    import sys
+    import types
+    m = _load()
+    hub = types.ModuleType("huggingface_hub")
+    seen = []
+
+    def gated(repo, filename, **kw):
+        seen.append(filename)
+        err = OSError("403 gated")
+        err.response = types.SimpleNamespace(status_code=403)
+        raise err
+    hub.hf_hub_download = gated
+    monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
+    monkeypatch.setattr(m, "MODELS", tmp_path / "models")
+    monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=200 * 2 ** 30))
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    m.start_ltx_download(m.Log(tmp_path / "out"), _real_takes(cfg)).join(5)
+    evs = [json.loads(x) for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
+    assert len(seen) == 8 and sum(e["ev"] == "gated_403" for e in evs) == 8
+    assert {e["repo"] for e in evs if e["ev"] == "gated_403"} == {"Lightricks/LTX-2.5", "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render"}
+
+
+def test_the_ltx_download_is_skipped_when_the_free_disk_is_below_ltx_plus_margin(tmp_path, monkeypatch):
     import types
     m = _load()
     cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
-    need = (cfg["video"]["expected_gb"] + cfg["video"]["margin_gb"]) * 2 ** 30
-    assert m.video_download_fits(need, cfg) and not m.video_download_fits(need - 1, cfg)
+    need = (cfg["ltx"]["expected_gb"] + cfg["ltx"]["margin_gb"]) * 2 ** 30
+    assert m.ltx_download_fits(need, cfg) and not m.ltx_download_fits(need - 1, cfg)
     monkeypatch.setattr(m, "MODELS", tmp_path / "models")
     monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=need - 1))
     log = m.Log(tmp_path / "out")
-    assert m.start_video_download(log, cfg) is None                       # no thread, no download; the wait loop guards None
+    assert m.start_ltx_download(log, cfg) is None                         # no thread, no download; the wait loop guards None
     evs = [json.loads(x) for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
-    assert [e["ev"] for e in evs] == ["video_download_skipped"] and evs[0]["why"] == "disk"
-    assert "video is not None and video.is_alive()" in (DIR / "p12b.py").read_text(encoding="utf-8")
+    assert [e["ev"] for e in evs] == ["ltx_download_skipped"] and evs[0]["why"] == "disk"
+    assert "ltx is not None and ltx.is_alive()" in (DIR / "p12b.py").read_text(encoding="utf-8")
+
+
+# audit 2026-11-01 (#10, #13): the stall rule must see change during installs and the model load; the creator may stop after M
+def test_p12b_sh_writes_progress_from_the_first_second_and_stops_the_writer_before_the_real_work():
+    t = (DIR / "p12b.sh").read_text(encoding="utf-8")
+    writer, first_install, killed = t.index("while sleep 60"), t.index("pip install"), t.index('kill "$PROG0"')
+    assert writer < first_install < killed < t.index('python3 "$JOB/p12b.py"')
+    assert killed < t.index('if [ "${DRY:-0}" = "1" ]')                  # a DRY run ends without a writer left behind
+
+
+def test_the_ticker_rewrites_progress_while_a_block_runs_and_stops_after_it(tmp_path):
+    import time
+    m = _load()
+    log = m.Log(tmp_path)
+    with m.ticker(log, "loading the model", every=0.05):
+        time.sleep(0.3)
+        mid = (tmp_path / "progress.txt").read_text(encoding="utf-8")
+    assert "loading the model" in mid and mid.rstrip().endswith(" s")      # the first line has no seconds: a tick has rewritten it
+    after = (tmp_path / "progress.txt").read_text(encoding="utf-8")
+    time.sleep(0.2)
+    assert (tmp_path / "progress.txt").read_text(encoding="utf-8") == after
+
+
+def test_the_creator_can_stop_right_after_stage_m(tmp_path, monkeypatch):
+    m = _load()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    monkeypatch.setattr(m, "creator_stop_after", lambda cfg, log, timeout_s=20: "M")
+    log = m.Log(tmp_path)
+    assert m.stop_here(cfg, log, tmp_path, "M") is True
+    assert (tmp_path / "control" / "stopped_after.txt").read_text(encoding="utf-8") == "M\n"
+    assert m.stop_here(cfg, log, tmp_path, "Q1") is False
+    assert "stop_here(cfg, log, out, \"M\")" in (DIR / "p12b.py").read_text(encoding="utf-8")
+
+
+# audit 2026-11-01 #9: the drop order is Q3, then L3, then Q2: a stage may start only when the optional stages dropped LATER still fit
+def test_q3_starts_only_when_l3_still_fits_behind_it_and_q2_does_not_wait_for_l3():
+    m = _load()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    st, lt = cfg["stages"], cfg["ltx"]
+    reserve, ltx = cfg["end_reserve_min"] * 60, float(lt["reserve_min"]) * 60
+    l3 = float(lt["optional_reserve_min"]["L3"]) * 60
+    optional = {k: float(v) * 60 for k, v in lt["optional_reserve_min"].items()}
+    assert m.after_reserve(cfg, "Q3", optional) == l3 and m.after_reserve(cfg, "Q2", optional) == 0.0
+    assert m.after_reserve(cfg, "Q1", optional) == 0.0 and "L3" not in lt["reserve_parts_min"]    # L3 is optional: not in the essential reserve
+    first, done, deadline = {"Q1": 60.0}, {"Q1", "Q2"}, 100_000.0
+    q3 = 24 * 60.0
+    at_limit = deadline - q3 - reserve - ltx                      # Q3 + the essential LTX stages fit exactly, L3 does not
+    assert m.stage_may_start("Q3", st, first, done, at_limit - l3, deadline, reserve, ltx + m.after_reserve(cfg, "Q3", optional))
+    assert not m.stage_may_start("Q3", st, first, done, at_limit - l3 + 1, deadline, reserve, ltx + m.after_reserve(cfg, "Q3", optional))
+    assert m.stage_may_start("Q3", st, first, done, at_limit, deadline, reserve, ltx)               # the old projection let Q3 starve L3
+    # Q2 is dropped last: only the essential LTX stages hold it back
+    first2, q2 = {"Q1": 60.0}, 16 * 60.0
+    assert m.stage_may_start("Q2", st, first2, {"Q1"}, deadline - q2 - reserve - ltx, deadline, reserve, ltx + m.after_reserve(cfg, "Q2", optional))
+
+
+def test_p12b_sh_has_one_ltx_install_line_pinned_to_cloud_pins():
+    """The old measurement pod script (p12b_measure.sh, deleted 2026-11-01: the measurement is stage M) used to tie p12b.sh's installs to a
+    second copy; the one new line, the LTX-2 clone, is tied to config/cloud_pins.json here."""
+    t = (DIR / "p12b.sh").read_text(encoding="utf-8")
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    sha = pins.load()["git"]["Lightricks/LTX-2"]["sha"]
+    lines = [ln for ln in t.splitlines() if ln.startswith(("pip install", "git clone")) and "Lightricks/LTX-2" in ln]
+    assert len(lines) == 1 and sha in lines[0] and cfg["ltx"]["code"]["sha"] == sha
+    assert not (DIR / "p12b_measure.sh").exists()
+
+
+# audit 2026-11-01 #14: no 51 GB AV download without real takes, the Layout LoRA before them, no new unit inside the end reserve
+def test_the_av_files_are_fetched_last_and_only_when_the_takes_are_real(tmp_path, monkeypatch):
+    import sys
+    import types
+    m = _load()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    lt = cfg["ltx"]
+    if not m.av_takes_real(cfg):                                           # the checked-in state until WP-1e
+        jobs = m.ltx_download_jobs(cfg)
+        assert len(jobs) == len(lt["files"]) + 1 and jobs[-1][1] == lt["layout_lora"]["file"]
+        assert not {f for _, f, _ in jobs} & set(lt["av_files"])
+    real = m.ltx_download_jobs(_real_takes(cfg))
+    assert [f for _, f, _ in real[-len(lt["av_files"]):]] == lt["av_files"]
+    assert real[len(lt["files"])][1] == lt["layout_lora"]["file"]          # the Layout LoRA precedes the AV files
+    cfg2 = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    cfg2["ltx"]["av"]["takes"]["av2"]["sha256"] = "PLACEHOLDER_SHA"
+    _real_takes(cfg2)["ltx"]["av"]["takes"]["av2"]["voice_id"] = "PLACEHOLDER"
+    assert not m.av_takes_real(cfg2)                                       # one placeholder is enough to skip
+    hub = types.ModuleType("huggingface_hub")
+    hub.hf_hub_download = lambda repo, filename, **kw: str(tmp_path / filename)
+    monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
+    monkeypatch.setattr(m, "MODELS", tmp_path / "models")
+    monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=200 * 2 ** 30))
+    cfg3 = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    cfg3["ltx"]["av"]["takes"]["av1"]["voice_id"] = "PLACEHOLDER"
+    m.start_ltx_download(m.Log(tmp_path / "out"), cfg3).join(5)
+    evs = [json.loads(x) for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
+    assert any(e["ev"] == "ltx_download_av_skipped" for e in evs)
+    assert next(e for e in evs if e["ev"] == "ltx_download_start")["files"] == len(lt["files"]) + 1
+
+
+def test_no_new_unit_starts_inside_the_end_reserve_even_for_an_essential_stage():
+    m = _load()
+    assert m.unit_may_start(100.0, 1000.0, 600.0) and not m.unit_may_start(400.0, 1000.0, 600.0)
+    src = (DIR / "p12b.py").read_text(encoding="utf-8")
+    assert "unit_may_start(time.time(), deadline, reserve)" in src
+    ltx = (DIR / "p12c_ltx.py").read_text(encoding="utf-8")
+    assert "p12b.unit_may_start(time.time(), deadline, reserve)" in ltx and "inside the end reserve" in ltx
+
+
+def test_the_whole_qwen_process_runs_end_to_end_with_stubbed_torch_hub_and_pipeline(tmp_path, monkeypatch):
+    """p12b.run() over the real p12b.json: stage M, the sha check of the style LoRA, the four hero references, the model load, every
+    Qwen unit with the MVA merges and unmerges, sidecars, qwen_done.txt and the end word. torch, huggingface_hub, videox_fun and the
+    pipeline are stubbed; the pipe is called through the real ``draw`` with the kwargs a QwenImage edit pipeline takes. The free
+    stand-in for the code paths a pod reaches first (three log.ev(name=...) TypeErrors were found only by reading, 2026-11-01)."""
+    import contextlib
+    import sys
+    import time
+    import types
+    from PIL import Image
+    m = _load()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    cfg.pop("control", None)
+    src = tmp_path / "src"
+    src.mkdir()
+    sheet = src / "sheet.png"
+    Image.new("RGB", (1500, 700), (210, 200, 190)).save(sheet)
+    lora = src / "style.safetensors"
+    lora.write_bytes(b"style lora bytes")
+    cfg["style_lora"]["sha256"] = hashlib.sha256(lora.read_bytes()).hexdigest()
+
+    torch = types.ModuleType("torch")
+    torch.__version__ = "stub"
+    torch.bfloat16 = "bf16"
+    torch.cuda = types.SimpleNamespace(is_available=lambda: False, get_device_name=lambda i: "none")
+    torch.no_grad = contextlib.nullcontext
+
+    class Gen:
+        def __init__(self, device):
+            self.device = device
+
+        def manual_seed(self, s):
+            self.seed = s
+            return self
+    torch.Generator = Gen
+    hub = types.ModuleType("huggingface_hub")
+
+    def snapshot_download(repo, revision, local_dir):
+        Path(local_dir).mkdir(parents=True, exist_ok=True)
+        (Path(local_dir) / "w.bin").write_bytes(b"x" * 1000)
+        return local_dir
+
+    def hf_hub_download(repo, filename, **kw):
+        return str(lora if filename == cfg["style_lora"]["path"] else sheet)
+    hub.snapshot_download, hub.hf_hub_download = snapshot_download, hf_hub_download
+    merges = []
+    vx = types.ModuleType("videox_fun")
+    vxu = types.ModuleType("videox_fun.utils")
+    vxu.merge_lora = lambda pipe, path, w, device, dtype: merges.append(("+", Path(path).name, w)) or pipe
+    vxu.unmerge_lora = lambda pipe, path, w, device, dtype: merges.append(("-", Path(path).name, w)) or pipe
+    for name, mod in (("torch", torch), ("huggingface_hub", hub), ("videox_fun", vx), ("videox_fun.utils", vxu)):
+        monkeypatch.setitem(sys.modules, name, mod)
+    calls = []
+
+    class Pipe:
+        transformer = object()
+
+        def __call__(self, prompt, image, negative_prompt, height, width, generator, num_inference_steps, true_cfg_scale):
+            calls.append((prompt, num_inference_steps, generator.seed))
+            return types.SimpleNamespace(images=[Image.new("RGB", (width, height), (1, 2, 3))])
+
+    class GateUp:
+        def __init__(self, transformer):
+            pass
+
+        def gate_up(self, path, sign):
+            return 0
+    monkeypatch.setattr(m, "MODELS", tmp_path / "models")
+    monkeypatch.setattr(m, "load_pipeline", lambda base: Pipe())
+    monkeypatch.setattr(m, "GateUp", GateUp)
+    monkeypatch.setattr(m, "start_ltx_download", lambda log, cfg: None)
+    out = tmp_path / "out"
+    log = m.Log(out)
+    log.ev("script_start")
+    assert m.run(cfg, out, time.time() + 4 * 3600, log) == 0
+
+    stages = (out / "stages.txt").read_text(encoding="utf-8")
+    assert "done M" in stages and json.loads((out / "measure.json").read_text())["qwen_dl_bytes"] == 1000
+    qwen = [n for n in m.ordered(cfg["stages"], kind=m.QWEN)]
+    want = sum(len(m.units(cfg, n, cfg["stages"][n])) for n in qwen)
+    assert len(calls) == want and all(f"done {n}" in stages for n in qwen)
+    assert merges[0] == ("+", lora.name, cfg["style_lora"]["weight"])
+    on = 0                                                        # every MVA merge is undone before the next strength
+    for sign, name, w in merges[1:]:
+        on += 1 if sign == "+" else -1
+        assert on in (0, 1)
+    u = m.units(cfg, qwen[0], cfg["stages"][qwen[0]])[0]
+    p = Path(str(u["path"]).replace("{OUT}", str(out)))
+    side = json.loads(p.with_suffix(".json").read_text(encoding="utf-8"))
+    assert p.is_file() and side["stage"] == qwen[0] and side["steps"] == cfg["stages"][qwen[0]]["steps"]
+    assert (out / "qwen_done.txt").is_file()
+    evs = [json.loads(x)["ev"] for x in (out / "t.jsonl").read_text().splitlines()]
+    assert {"download_start", "download_end", "measure", "model_loaded"} <= set(evs) and "stage_skipped" not in evs
+    assert (out / "progress.txt").read_text(encoding="utf-8").strip().endswith(" done")

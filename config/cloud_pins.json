@@ -19,7 +19,7 @@
       "size_gb": 6.58,
       "pull_mb_per_s": null,
       "smoke_verified": false,
-      "decision": "paid plan §3: P12b/P12e run on the aitoolkit image (round 2-3b used :latest, now pinned)"
+      "decision": "paid plan §3: P12b (the combined P12 pod) runs on the aitoolkit image (round 2-3b used :latest, now pinned)"
     },
     "smoke": {
       "repo": "runpod/pytorch",
@@ -32,13 +32,38 @@
     }
   },
   "git": {
-    "ostris/ai-toolkit": {"url": "https://github.com/ostris/ai-toolkit", "sha": "b69b98314557f7c8b08e11bbb14e48d959e6ab26", "smoke_verified": false},
-    "aigc-apps/VideoX-Fun": {"url": "https://github.com/aigc-apps/VideoX-Fun", "sha": "e8c314fbfa494d0429bbef605c9f6112b79a7ead", "smoke_verified": false},
-    "huggingface/diffusers": {"url": "https://github.com/huggingface/diffusers", "sha": "d8c1b13c756df0059bcdb6e477a1eafcd502098d", "smoke_verified": false},
-    "huggingface/peft": {"url": "https://github.com/huggingface/peft", "sha": "ebf159f74d80a0d406f7afa943ede73b3901c20e", "smoke_verified": false}
+    "ostris/ai-toolkit": {
+      "url": "https://github.com/ostris/ai-toolkit",
+      "sha": "b69b98314557f7c8b08e11bbb14e48d959e6ab26",
+      "smoke_verified": false
+    },
+    "aigc-apps/VideoX-Fun": {
+      "url": "https://github.com/aigc-apps/VideoX-Fun",
+      "sha": "e8c314fbfa494d0429bbef605c9f6112b79a7ead",
+      "smoke_verified": false
+    },
+    "huggingface/diffusers": {
+      "url": "https://github.com/huggingface/diffusers",
+      "sha": "d8c1b13c756df0059bcdb6e477a1eafcd502098d",
+      "smoke_verified": false
+    },
+    "huggingface/peft": {
+      "url": "https://github.com/huggingface/peft",
+      "sha": "ebf159f74d80a0d406f7afa943ede73b3901c20e",
+      "smoke_verified": false
+    },
+    "Lightricks/LTX-2": {
+      "url": "https://github.com/Lightricks/LTX-2",
+      "sha": "e98f6d927d83c92ef2be6aec76c8440b19306e39",
+      "smoke_verified": false
+    }
   },
   "pip": {
-    "huggingface_hub": {"version": "1.33.0", "smoke_verified": false, "note": "latest 1.x at lookup (the scripts used '<2'); the wrapper's calls (HfApi.upload_folder, list_repo_tree(recursive=True), repo_info) exist in it, checked by import 2026-10-30"}
+    "huggingface_hub": {
+      "version": "1.33.0",
+      "smoke_verified": false,
+      "note": "latest 1.x at lookup (the scripts used '<2'); the wrapper's calls (HfApi.upload_folder, list_repo_tree(recursive=True), repo_info) exist in it, checked by import 2026-10-30"
+    }
   },
   "models": {
     "_doc": "Model ids a shot spec names (P6 shot router, edit/router.py; CN-07). A spec names a model by sha256 or revision, never by name alone: a null revision and sha256 here is not decided and the router refuses that lane (Rule one, OR-22). Looked up from training/pods/p12/p12b.json (keyframe base, xworld_v2 sha) and the creator's brief 2026-10-31 (video ids).",
@@ -57,12 +82,12 @@
       "note": "named in the creator's brief 2026-10-31; retired by KG-16 for keyframes; no lane uses it"
     },
     "video_ltx": {
-      "id": "Lightricks/LTX-Video-0.9.8-13B-distilled",
-      "revision": "7c64400e1861cc0d7b98d570a1926d5408ec60cd",
+      "id": "Lightricks/LTX-2.5",
+      "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
       "sha256": null,
       "params": null,
       "smoke_verified": false,
-      "note": "creator's brief 2026-10-31; revision = HF main sha read from the HF API 2026-10-31 (lastModified 2025-07-17); a diffusers repo is many files, so the pin is the revision (sha256 stays null as for the keyframe base); render params: none set, the pod script's own (no video pod script yet, P12c)"
+      "note": "LTX-2.5 22B, the combined P12 pod's video model (creator 2026-11-01 08:23-08:26 UTC: measurement + Qwen + LTX in one pod); replaces the 2026-10-31 brief's LTX-Video-0.9.8-13B-distilled, which serves neither the Layout IC LoRA nor audio-driven clips (docs/wip/P12_COMBINED_PLAN_FABLE_2026-11-01.md); revision as in training/pods/p12/p12b.json ltx; files listed there; a gated repo, so sha256 stays null as for the keyframe base"
     },
     "video_wan": {
       "id": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
@@ -81,6 +106,14 @@
         "weight": 0.7,
         "note": "checkpoint-3000 (LT-79), weight 0.7 per the creator's brief 2026-10-31; the same hf repo, path and sha256 as style_lora in training/pods/p12/p12b.json (a test keeps the two together)"
       }
+    },
+    "video_ltx_layout_lora": {
+      "id": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
+      "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
+      "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+      "sha256": null,
+      "smoke_verified": false,
+      "note": "the Layout-To-Render IC-LoRA of stage L2 (model card revision bd765d55, read 2026-11-01); gated"
     }
   }
 }

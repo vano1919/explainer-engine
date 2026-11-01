@@ -19,8 +19,13 @@ def test_the_row_is_house_and_dated_by_his_word():
     assert set(r["thresholds"]) == {"long_minutes", "width", "height", "fps", "shorts"}
 
 
-def test_long_video_is_fifteen_minutes():
-    assert delivery.long_minutes() == 15
+def test_long_video_is_twelve_minutes_and_the_rhythm_profile_agrees():
+    """The creator's 12-minute episode (2026-11-01, WP-3a): BP-167 and BP-169's zone scale are the same 720 s, and the
+    variant planner's brief reads it from here instead of its old 900."""
+    assert delivery.long_minutes() == 12
+    assert SR.T("BP-169", "episode_s") == delivery.long_minutes() * 60
+    from explainer_engine.scripting import variant_plan
+    assert variant_plan.brief(Path(__file__).resolve().parents[2] / "docs")["episode_runtime_s"] == 720
 
 
 def test_delivery_size_is_2560_by_1440():
