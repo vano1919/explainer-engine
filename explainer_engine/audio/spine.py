@@ -11,7 +11,7 @@ Post-hoc windows (D-88): a shot whose dialogue the video model speaks itself (LT
 from the read. The spine reserves a window of the planned length right after ``after_word`` (the last read word before the
 shot's line), every later word moves by it, and the narrator never plays inside it. The clip's measured length replaces the
 planned one through the lifecycle back path ``retime`` (``retime_post_hoc`` returns the new spine; it edits nothing in place).
-Which line is native is the lane decision of P6; until it marks them (``native_lines``), ``windows`` returns ``[]``.
+Which line is native is the lane decision of P6, read by ``native_lines`` from ``film_shots/2``; without a marked shot ``windows`` returns ``[]``.
 
     python -m explainer_engine.audio.spine <job folder> [--words FILE] [--timed FILE] [--film-shots FILE] [--out FILE]
 
@@ -78,9 +78,21 @@ def word_segments(words: list[dict], lines: list[dict]) -> list[tuple[str, int]]
 
 def native_lines(film_shots: dict | None, lines: list[dict]) -> list[dict]:
     """The shots whose dialogue the video model speaks: ``[{shot_id, line, frames}]`` with ``line`` the global index into
-    ``timed.lines`` and ``frames`` the shot's ``duration_frames`` (lanes in ``POST_HOC_LANES``). P6 decides which line is native and
-    adds the marker (docs/CONTRACTS.md, D-88); no marker exists yet, so nothing is native and this returns ``[]``."""
-    return []
+    ``timed.lines`` and ``frames`` the shot's ``duration_frames``. The marker (D-88, P6): a ``film_shots/2`` shot on the lane
+    ``DIALOGUE_CU``, or on another lane in ``POST_HOC_LANES`` that carries a ``dialogue`` object, AND names its script ``line``. A
+    shot that plays a narrator line (no ``dialogue``) or names no line is not native; the router refuses a DIALOGUE_CU shot that
+    ends up with no window (D-90). The line is not part of the narrator's read; ``windows`` rejects an index past the timed lines."""
+    if not film_shots or film_shots.get("schema") != "film_shots/2":
+        return []
+    out: list[dict] = []
+    for shot in film_shots.get("shots") or []:
+        lane = shot.get("lane")
+        if not (lane == "DIALOGUE_CU" or (lane in POST_HOC_LANES and shot.get("dialogue"))):
+            continue
+        if shot.get("line") is None:
+            continue
+        out.append({"shot_id": shot["id"], "line": int(shot["line"]), "frames": int(shot["duration_frames"])})
+    return out
 
 
 def windows(film_shots: dict | None, words: list[dict], lines: list[dict], fps: int, *, native: list[dict] | None = None) -> list[dict]:

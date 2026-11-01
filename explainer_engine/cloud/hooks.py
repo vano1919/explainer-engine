@@ -89,7 +89,12 @@ def _check():
         return None
     try:
         api = R.Api(retries=1, timeout=20)
+        try:  # D-92: a stopped pod with 0 GB, 24 h past its until, goes before the check looks at it
+            gone = R.auto_delete_stopped(api)
+        except (R.RunPodError, OSError, TimeoutError) as e:
+            gone = [f"auto-delete skipped: {str(e)[:80]}"]
         res = R.check(api)
+        res["info"] += [f"auto-deleted (D-92): {line}" for line in gone]
     except (R.RunPodError, OSError) as e:
         return {"problems": [], "info": [f"RunPod not reachable: {str(e)[:80]}"], "unreadable": True}
     try:  # RP-07: a pod that stopped 90 min ago gets its bill into the ledger now; the PROGRESS line is for the session to copy

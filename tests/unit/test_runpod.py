@@ -923,3 +923,52 @@ def test_only_cards_keeps_the_named_card_and_refuses_when_none_matches():
     assert R.only_cards(picks, "RTX PRO 6000") == [picks[1]]
     with pytest.raises(SystemExit, match="no card with stock"):
         R.only_cards(picks, "H100")
+
+
+def test_d92_a_stopped_pod_with_no_disk_is_deleted_24h_after_its_until(env):
+    fake, api = env
+    day = 24 * 3600
+    fake.pods = {"zero": pod("zero", "ee-x-until-1793516500", "EXITED", volumeInGb=0),
+                 "zero2": pod("zero2", "ee-x-until-1793516500", "EXITED", volumeInGb=0),
+                 "disk": pod("disk", "ee-x-until-1793516500", "EXITED", volumeInGb=5),
+                 "nountil": pod("nountil", "my pod", "EXITED", volumeInGb=0),
+                 "live": pod("live", "ee-x-until-9999999999")}
+    assert not R.auto_delete_due(fake.pods["zero2"], now=1793516500 + day - 1)
+    rows = R.sweep(api, now=1793516500 + day, dry=True)
+    assert "zero" in fake.pods and len(rows["auto_deleted"]) == 2  # dry run deletes nothing
+    rows = R.sweep(api, now=1793516500 + day)
+    assert "zero" not in fake.pods and "zero2" not in fake.pods  # both 0 GB and past 24 h
+    assert "disk" in fake.pods and "nountil" in fake.pods and "live" in fake.pods
+    assert len(rows["auto_deleted"]) == 2
+
+
+def test_d92_auto_delete_stopped_touches_only_the_due_pods(env):
+    fake, api = env
+    day = 24 * 3600
+    fake.pods = {"due": pod("due", "ee-x-until-1793516500", "EXITED", volumeInGb=0),
+                 "disk": pod("disk", "ee-x-until-1793516500", "EXITED", volumeInGb=5),
+                 "run": pod("run", "ee-x-until-100", "RUNNING")}
+    assert R.auto_delete_stopped(api, now=1793516500 + day, dry=True) == ["due ee-x-until-1793516500"] and "due" in fake.pods
+    assert R.auto_delete_stopped(api, now=1793516500 + day) == ["due ee-x-until-1793516500"]
+    assert "due" not in fake.pods and "disk" in fake.pods and fake.pods["run"]["status"] == "RUNNING"
+
+
+def test_d92_the_session_hooks_run_the_auto_delete(monkeypatch):
+    from explainer_engine.cloud import hooks as H
+    calls = []
+    monkeypatch.setattr(R, "api_key", lambda: "k")
+    monkeypatch.setattr(R, "Api", lambda **kw: object())
+    monkeypatch.setattr(R, "auto_delete_stopped", lambda api: calls.append("auto") or ["p1 name"])
+    monkeypatch.setattr(R, "check", lambda api: {"problems": [], "info": []})
+    monkeypatch.setattr(R, "settle_due", lambda api: [])
+    res = H._check()
+    assert calls == ["auto"] and res["info"] == ["auto-deleted (D-92): p1 name"]
+
+
+def test_d92_pods_from_before_the_rule_are_left_for_the_creator(env):
+    fake, api = env
+    old = pod("old", "ee-p12a-until-1793424881", "EXITED", volumeInGb=0)  # a real pre-rule pod
+    assert not R.auto_delete_due(old, now=1793424881 + 10 * 24 * 3600)
+    fake.pods = {"old": old}
+    assert R.auto_delete_stopped(api, now=1793424881 + 10 * 24 * 3600) == [] and "old" in fake.pods
+    assert R.sweep(api, now=1793424881 + 10 * 24 * 3600)["auto_deleted"] == []
