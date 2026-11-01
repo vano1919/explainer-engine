@@ -2,8 +2,9 @@
 
 Started by p12b.sh unless the creator's soft stop was hit (``$EE_OUT/control/stopped_after.txt``). Every clip is one CLI call of
 ``ltx_pipelines`` (plan 3.4: the fallback path, so no Python API is assumed); every flag string lives in ``FLAGS`` and every
-module name in ``MODULES`` (both UNVERIFIED until read at Lightricks/LTX-2@e98f6d9; a wrong flag ends that clip ``failed``, the
-pod goes on). Missing weights, a missing clay video or a missing take skip the stage, never fail the pod: the Qwen results stand.
+module name in ``MODULES`` (read at Lightricks/LTX-2@e98f6d9, file:line in docs/pods/P12_LTX_FLAGS.md; a wrong flag ends that
+clip ``failed``, the pod goes on). Missing weights, a missing clay video or a missing take skip the stage, never fail the pod: the
+Qwen results stand.
 """
 import hashlib
 import importlib.util
@@ -22,32 +23,38 @@ MODELS = Path(os.environ.get("P12B_MODELS", "/workspace/models"))
 CODE_DIR = Path("/workspace/LTX-2")
 
 # The only place a flag string lives (a test checks it). None = not known yet: the flag is left out of the command.
+# Every value was read at Lightricks/LTX-2@e98f6d9 (packages/ltx-pipelines/src/ltx_pipelines/...); table: P12_LTX_FLAGS.md.
 FLAGS = {
-    "image": "--image",                           # UNVERIFIED until read at e98f6d9 utils/args.py (plan 3.4b: shared --image flags)
-    "prompt": "--prompt",                         # UNVERIFIED until read at e98f6d9 utils/args.py
-    "width": "--width",                           # UNVERIFIED until read at e98f6d9 utils/args.py
-    "height": "--height",                         # UNVERIFIED until read at e98f6d9 utils/args.py
-    "num_frames": "--num-frames",                 # UNVERIFIED until read at e98f6d9 utils/args.py (plan 3.4b names it)
-    "frame_rate": "--frame-rate",                 # UNVERIFIED until read at e98f6d9 utils/args.py
-    "seed": "--seed",                             # UNVERIFIED until read at e98f6d9 utils/args.py
-    "output": "--output-path",                    # UNVERIFIED until read at e98f6d9 utils/args.py
-    "transformer": "--transformer-path",          # UNVERIFIED until read at e98f6d9 utils/args.py:611-628 (plan 3.4b)
-    "text_encoder": "--text-encoder-path",        # UNVERIFIED until read at e98f6d9 utils/args.py (OLD_HISTORY.md:1132)
-    "video_vae": None,                            # UNVERIFIED: flag name for the video VAE file not known
-    "audio_vae": None,                            # UNVERIFIED: flag name for the audio VAE file not known
-    "upsampler": "--spatial-upsampler-path",      # UNVERIFIED until read at e98f6d9 utils/args.py:1559 (plan 3.4b)
-    "distilled_lora": "--distilled-lora",         # UNVERIFIED until read at e98f6d9 utils/args.py:1543-1548 (plan 3.4b)
-    "audio": "--audio-path",                      # UNVERIFIED until read at e98f6d9 a2vid_two_stage.py (plan 3.4b)
-    "audio_max": "--audio-max-duration",          # UNVERIFIED until read at e98f6d9 a2vid_two_stage.py (plan 3.4b)
-    "video_cond": "--video-conditioning",         # UNVERIFIED until read at e98f6d9 ic_lora.py (OLD_HISTORY.md:2016)
-    "lora": "--lora",                             # UNVERIFIED until read at e98f6d9 ic_lora.py (OLD_HISTORY.md:2016)
-    "stage2_ic": "--stage-2-ic-lora",             # UNVERIFIED until read at e98f6d9 ic_lora.py (OLD_HISTORY.md:2016)
-    "fp8": None,                                  # UNVERIFIED: the fp8-cast flag is not known
+    "image": "--image",                           # utils/args.py:1003 (ImageAction args.py:189: PATH FRAME_IDX STRENGTH)
+    "prompt": "--prompt",                         # utils/args.py:813 (basic_arg_parser, required)
+    "width": "--width",                           # utils/args.py:990 (new_video_gen_arg_parser)
+    "height": "--height",                         # utils/args.py:984 (new_video_gen_arg_parser)
+    "num_frames": "--num-frames",                 # utils/args.py:966 (8k+1); a2vid default None (a2vid_two_stage.py:563)
+    "frame_rate": "--frame-rate",                 # utils/args.py:997
+    "seed": "--seed",                             # utils/args.py:759 (add_seed_arg)
+    "output": "--output-path",                    # utils/args.py:819 (basic_arg_parser, required)
+    "transformer": "--transformer-path",          # utils/args.py:710 (split layout; accepted by args.py:611-622)
+    "text_encoder": "--text-encoder-path",        # utils/args.py:720 (split layout, single-file Gemma TE)
+    "video_vae": "--video-vae-path",              # utils/args.py:726
+    "audio_vae": "--audio-vae-path",              # utils/args.py:737
+    "upsampler": "--spatial-upsampler-path",      # utils/args.py:1559 (2-stage) and :1608 (2-stage distilled), required
+    "distilled_lora": "--distilled-lora",         # utils/args.py:1543 (LoraAction, required in default_2_stage_arg_parser)
+    "audio": "--audio-path",                      # a2vid_two_stage.py:540 (required)
+    "audio_max": "--audio-max-duration",          # a2vid_two_stage.py:552 (excludes --num-frames: a2vid_two_stage.py:525)
+    "video_cond": "--video-conditioning",         # ic_lora.py:820 (nargs=2: PATH STRENGTH, required)
+    "lora": "--lora",                             # utils/args.py:826 (LoraAction args.py:243: PATH [STRENGTH])
+    "stage2_ic": "--stage-2-ic-lora",             # ic_lora.py:855 (store_true)
+    # One token on purpose: _common() calls _flag(cmd, "fp8") with no value, argparse takes --opt=value for long options.
+    # --quantization utils/args.py:886; "fp8-cast" from its help text args.py:891/896.
+    # UNVERIFIED: the QuantizationKind values (utils/quantization_factory.py) were not passed; help text only
+    "fp8": "--quantization=fp8-cast",
 }
 MODULES = {
-    "ltx_i2v": "PLACEHOLDER_MODULE",              # UNVERIFIED: the distilled I2V module name at e98f6d9 is not known
-    "ltx_ic": "ltx_pipelines.ic_lora",            # UNVERIFIED until read at e98f6d9 (OLD_HISTORY.md:2016)
-    "ltx_a2v": "ltx_pipelines.a2vid_two_stage",   # UNVERIFIED until read at e98f6d9 (plan 3.4b: a2vid_two_stage.py)
+    # Absent from the passed e98f6d9 text: no distilled I2V CLI module was among the files read (README.md:12 names
+    # DistilledPipeline, but not its module). Kept PLACEHOLDER so run() skips L1/L3 "module unverified" (see the doc).
+    "ltx_i2v": "PLACEHOLDER_MODULE",
+    "ltx_ic": "ltx_pipelines.ic_lora",            # ic_lora.py:813 main(), :815 resolve_cli_params(distilled=True)
+    "ltx_a2v": "ltx_pipelines.a2vid_two_stage",   # a2vid_two_stage.py:596 main(), :599 build_a2vid_arg_parser
 }
 QWEN = "qwen_mva"
 

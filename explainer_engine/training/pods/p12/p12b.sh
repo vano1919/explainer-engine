@@ -25,8 +25,12 @@ printf '%s start\n' "$(date -u +%T)" > "$EE_OUT/progress.txt"
 pip install -q "huggingface_hub==1.33.0" "git+https://github.com/huggingface/diffusers@d8c1b13c756df0059bcdb6e477a1eafcd502098d" "git+https://github.com/huggingface/peft@ebf159f74d80a0d406f7afa943ede73b3901c20e" || { ev install_failed "\"step\":\"pip\""; exit 1; }
 git clone -q https://github.com/aigc-apps/VideoX-Fun.git /workspace/VideoX-Fun && git -C /workspace/VideoX-Fun checkout -q e8c314fbfa494d0429bbef605c9f6112b79a7ead || { ev install_failed "\"step\":\"VideoX-Fun\""; exit 1; }
 pip install -q einops timm tomesd torchdiffeq torchsde omegaconf SentencePiece ftfy func_timeout "imageio[ffmpeg]" opencv-python-headless scikit-image beautifulsoup4 decord librosa albumentations || { ev install_failed "\"step\":\"deps\""; exit 1; }
-# UNVERIFIED: the install method of packages/ltx-pipelines at e98f6d9 (pip -e vs uv/pyproject); read its README at that commit
-git clone -q https://github.com/Lightricks/LTX-2.git /workspace/LTX-2 && git -C /workspace/LTX-2 checkout -q e98f6d927d83c92ef2be6aec76c8440b19306e39 && pip install -q -e /workspace/LTX-2/packages/ltx-pipelines || { ev install_failed "\"step\":\"ltx\""; exit 1; }
+# LTX-2 at e98f6d9 (docs/pods/P12_LTX_FLAGS.md): the README's way is `uv sync --frozen` at the repo root (README.md:21), which
+# builds a separate .venv that sys.executable in p12c_ltx.py would not see. ltx-pipelines depends on "ltx-core"
+# (pyproject.toml:7), the sibling package packages/ltx-core (README.md:5, ../ltx-core/), so both go in one pip call and pip takes
+# ltx-core from the checkout; the build backend is uv_build (pyproject.toml:19-20), fetched by pip for the PEP 517 build.
+# UNVERIFIED: packages/ltx-core/pyproject.toml was not read (its build backend and whether it re-pins torch)
+git clone -q https://github.com/Lightricks/LTX-2.git /workspace/LTX-2 && git -C /workspace/LTX-2 checkout -q e98f6d927d83c92ef2be6aec76c8440b19306e39 && pip install -q -e /workspace/LTX-2/packages/ltx-core -e /workspace/LTX-2/packages/ltx-pipelines || { ev install_failed "\"step\":\"ltx\""; exit 1; }
 ( cd /workspace/VideoX-Fun && python3 -c "from videox_fun.pipeline import QwenImage21Pipeline; print('videox import ok')" ) || { ev install_failed "\"step\":\"import\""; exit 1; }
 python3 -c "import ltx_pipelines; print('ltx import ok')" || { ev install_failed "\"step\":\"ltx_import\""; exit 1; }
 timeout 120 python3 -c "import torch; x=torch.ones(8,device='cuda'); print('cuda ok', torch.cuda.get_device_name(0), (x*2).sum().item())" || { ev cuda_failed; exit 1; }
