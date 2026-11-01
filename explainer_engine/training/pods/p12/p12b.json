@@ -230,6 +230,10 @@
       "L2": 11,
       "AV": 30
     },
+    "optional_reserve_min": {
+      "L3": 8
+    },
+    "optional_reserve_note": "L3 (3 plain clips, optional) is not in reserve_min. Q3 may start only when L3 still fits behind it, so the drop order is Q3, L3, Q2 (audit 2026-11-01 #9). 8 = L1's plan number (the same pipeline and shot count); NOT measured.",
     "render": {
       "width": 1920,
       "height": 1088,

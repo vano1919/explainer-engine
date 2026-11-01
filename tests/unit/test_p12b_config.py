@@ -74,6 +74,7 @@ def test_the_ltx_block_lists_every_file_it_downloads_and_its_reserve_adds_up():
     assert set(lt["sizes"]) == set(lt["files"]) | set(lt["av_files"]) | {lt["layout_lora"]["file"]}
     assert lt["expected_gb"] >= sum(lt["sizes"].values()) / 2 ** 30 and lt["margin_gb"] > 0     # 114.8 GiB of files, 119 planned
     assert lt["reserve_min"] == sum(lt["reserve_parts_min"].values()) and lt["reserve_measured"] is False
+    assert set(lt["optional_reserve_min"]) == {"L3"} and "NOT measured" in lt["optional_reserve_note"]
 
 
 def test_the_prompts_file_is_the_same_text_as_the_prompts_block():

@@ -71,6 +71,16 @@ def ordered(stages, kind=None):
     return sorted(names, key=lambda n: stages[n]["order"])
 
 
+def after_reserve(cfg, name, optional):
+    """Seconds of the optional LTX stages that rank AFTER ``name`` in ``drop_order`` and must still fit behind it: a stage dropped first
+    may only start when the ones dropped later still fit (Q3 before L3 before Q2)."""
+    order = cfg["drop_order"]
+    if name not in order:
+        return 0.0
+    later = order[order.index(name) + 1:]
+    return sum(optional.get(n, 0.0) for n in later)
+
+
 def az_deg(cfg, azimuth):
     """Degrees of an azimuth: the twelve names go round in 30 degree steps from the front view, in the order of ``azimuths``."""
     return 30 * cfg["azimuths"].index(azimuth)
@@ -433,10 +443,12 @@ def run(cfg, out, deadline, log):
     stages = cfg["stages"]
     reserve = cfg["end_reserve_min"] * 60
     ltx_reserve = float(cfg["ltx"]["reserve_min"]) * 60       # the LTX process still to come (a plan number, not measured)
+    optional = {k: float(v) * 60 for k, v in cfg["ltx"].get("optional_reserve_min", {}).items()}
     first_unit_s, done = {}, set()
     for name in ordered(stages, kind=QWEN):
         st = stages[name]
-        if not stage_may_start(name, stages, first_unit_s, done, time.time(), deadline, reserve, extra_reserve_s=ltx_reserve):
+        if not stage_may_start(name, stages, first_unit_s, done, time.time(), deadline, reserve,
+                               extra_reserve_s=ltx_reserve + after_reserve(cfg, name, optional)):
             log.stage_line(f"skipped {name} (projection)")
             log.ev("stage_skipped", stage=name, reason="projection")
             continue

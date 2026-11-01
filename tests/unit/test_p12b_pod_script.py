@@ -252,3 +252,35 @@ def test_the_creator_can_stop_right_after_stage_m(tmp_path, monkeypatch):
     assert (tmp_path / "control" / "stopped_after.txt").read_text(encoding="utf-8") == "M\n"
     assert m.stop_here(cfg, log, tmp_path, "Q1") is False
     assert "stop_here(cfg, log, out, \"M\")" in (DIR / "p12b.py").read_text(encoding="utf-8")
+
+
+# audit 2026-11-01 #9: the drop order is Q3, then L3, then Q2: a stage may start only when the optional stages dropped LATER still fit
+def test_q3_starts_only_when_l3_still_fits_behind_it_and_q2_does_not_wait_for_l3():
+    m = _load()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    st, lt = cfg["stages"], cfg["ltx"]
+    reserve, ltx = cfg["end_reserve_min"] * 60, float(lt["reserve_min"]) * 60
+    l3 = float(lt["optional_reserve_min"]["L3"]) * 60
+    optional = {k: float(v) * 60 for k, v in lt["optional_reserve_min"].items()}
+    assert m.after_reserve(cfg, "Q3", optional) == l3 and m.after_reserve(cfg, "Q2", optional) == 0.0
+    assert m.after_reserve(cfg, "Q1", optional) == 0.0 and "L3" not in lt["reserve_parts_min"]    # L3 is optional: not in the essential reserve
+    first, done, deadline = {"Q1": 60.0}, {"Q1", "Q2"}, 100_000.0
+    q3 = 24 * 60.0
+    at_limit = deadline - q3 - reserve - ltx                      # Q3 + the essential LTX stages fit exactly, L3 does not
+    assert m.stage_may_start("Q3", st, first, done, at_limit - l3, deadline, reserve, ltx + m.after_reserve(cfg, "Q3", optional))
+    assert not m.stage_may_start("Q3", st, first, done, at_limit - l3 + 1, deadline, reserve, ltx + m.after_reserve(cfg, "Q3", optional))
+    assert m.stage_may_start("Q3", st, first, done, at_limit, deadline, reserve, ltx)               # the old projection let Q3 starve L3
+    # Q2 is dropped last: only the essential LTX stages hold it back
+    first2, q2 = {"Q1": 60.0}, 16 * 60.0
+    assert m.stage_may_start("Q2", st, first2, {"Q1"}, deadline - q2 - reserve - ltx, deadline, reserve, ltx + m.after_reserve(cfg, "Q2", optional))
+
+
+def test_p12b_sh_has_one_ltx_install_line_pinned_to_cloud_pins():
+    """The old measurement pod script (p12b_measure.sh, deleted 2026-11-01: the measurement is stage M) used to tie p12b.sh's installs to a
+    second copy; the one new line, the LTX-2 clone, is tied to config/cloud_pins.json here."""
+    t = (DIR / "p12b.sh").read_text(encoding="utf-8")
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    sha = pins.load()["git"]["Lightricks/LTX-2"]["sha"]
+    lines = [ln for ln in t.splitlines() if ln.startswith(("pip install", "git clone")) and "Lightricks/LTX-2" in ln]
+    assert len(lines) == 1 and sha in lines[0] and cfg["ltx"]["code"]["sha"] == sha
+    assert not (DIR / "p12b_measure.sh").exists()
