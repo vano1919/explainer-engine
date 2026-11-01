@@ -6614,6 +6614,7 @@
     }
    ],
    "enforced_by": [
+    "explainer_engine/edit/rhythm_profile.py",
     "tests/unit/test_sourced_rules.py"
    ],
    "supersedes": [],
@@ -6755,6 +6756,8 @@
     }
    ],
    "enforced_by": [
+    "explainer_engine/scripting/shot_prompt_lint.py",
+    "explainer_engine/training/video_qa.py",
     "tests/unit/test_sourced_rules.py"
    ],
    "supersedes": [],
