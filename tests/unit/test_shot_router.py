@@ -256,8 +256,8 @@ def test_the_real_pins_route_a_valid_keyframe_ltx_shot_to_a_still_and_a_video_sp
     assert [s["role"] for s in out["routes"][0]["specs"]] == ["still", "video"]
     still = json.loads((tmp_path / "shots" / "s1.still.spec.json").read_text(encoding="utf-8"))
     video = json.loads((tmp_path / "shots" / "s1.video.spec.json").read_text(encoding="utf-8"))
-    assert video["model"] == {"id": "Lightricks/LTX-Video-0.9.8-13B-distilled", "sha256": None,
-                              "revision": "7c64400e1861cc0d7b98d570a1926d5408ec60cd"}
+    assert video["model"] == {"id": "Lightricks/LTX-2.5", "sha256": None,        # the combined P12 pod's model (creator 2026-11-01)
+                              "revision": "49b093a39c19169a8a81721dcc541e07e945232f"}
     assert video["frames"] == 241 and video["refs"][0]["role"] == "keyframe"
     assert still["loras"] == [{"id": "xworld_v2", "sha256": "f5c420a1597a1fa585fc560f5eaaafef292006e6e6d93b65e4e645facb560b02", "weight": 0.7}]
     assert C.main(["check", *map(str, spec_files(tmp_path)), str(tmp_path / "shots" / "route.json"), "--base", str(tmp_path)]) == 0

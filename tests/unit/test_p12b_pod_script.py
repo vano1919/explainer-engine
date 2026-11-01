@@ -1,9 +1,10 @@
-"""T11: the P12b pod script (p12b.sh + p12b.py) passes the free dry-run rules, declares its heartbeat and stall; Qwen draws, the video weights only download in the background.
+"""T11: the combined P12 pod script (p12b.sh + p12b.py + p12c_ltx.py) passes the free dry-run rules, declares its heartbeat and stall; Qwen draws in process 1 and the LTX weights download in the background, the LTX stages run in process 2.
 No network, no pod, no money (the Hub existence check of ``runpod dryrun`` is not done here)."""
 import hashlib
 import importlib.util
 import json
 import pytest
+import re
 import subprocess
 from pathlib import Path
 
@@ -25,26 +26,45 @@ def test_p12b_script_passes_the_dryrun_rules_declares_heartbeat_and_stall_and_dr
     assert subprocess.run(["bash", "-n", str(DIR / "p12b.sh")]).returncode == 0
     assert R.is_wrapper_script(t) and R.lint_pod_script(t) == [] and D.static_problems(t, pins.load()) == []
     assert R.heartbeat_of_script(t) == "datasets/vano1919/tmr-artifacts:runs/p12b/beat.txt"
-    assert R.stall_minutes_of_script(t) == 15
+    assert R.stall_minutes_of_script(t) == 25                      # p12b.json stall_minutes: the LTX audio stage is long
+    assert json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))["stall_minutes"] == 25
     assert "beat.txt" not in "\n".join(ln for ln in t.splitlines() if not ln.lstrip().startswith("#"))   # the wrapper owns it
     low = (t + py).lower()
-    # creator 2026-10-31 (RP-01 Path A): the video model's weights download in the background; nothing else of a video model runs here
-    assert "a2vid" not in low and "Layout" not in t + py and "from_pretrained" in py and "ltx" not in py.lower()
-    assert 'cfg["video"]' in py and "snapshot_download(v[\"repo\"]" in py and "start_video_download" in py
+    # process 1 draws with Qwen and only DOWNLOADS the LTX weights (a background thread); every LTX run is process 2 (p12c_ltx.py)
+    assert "from_pretrained" in py and "a2vid" not in low and "ltx_pipelines" not in py
+    assert 'cfg["ltx"]' in py and "hf_hub_download" in py and "start_ltx_download" in py
+    assert t.index('python3 "$JOB/p12b.py"') < t.index('python3 "$JOB/p12c_ltx.py"')
+    assert "stopped_after.txt" in t                                # process 2 starts only without the creator's soft stop
     assert "HF_HUB_ENABLE_HF_TRANSFER=1" in t and "HF_XET_HIGH_PERFORMANCE=1" in t
     assert "hosts" not in low and "host_" not in low and "q4" not in low                 # D-89: no host stage, no host block
     assert "import json" in py and "stages.txt" in py and "t.jsonl" in py
     assert "EE_DEADLINE" in py and "EE_OUT" in py and "sys.exit(main())" in py
-    # the job files the pod fetches are the ones committed here: their sha256 is pinned in the script text
-    for f in ("p12b.py", "p12b.json"):
-        assert hashlib.sha256((DIR / f).read_bytes()).hexdigest() in t, f
 
 
-def test_the_projection_skips_q3_when_time_is_short_and_keeps_q1_and_q4_always():
+def test_the_job_files_are_sha256_pinned_in_the_script_text_and_the_pins_are_filled_before_a_pod():
+    """The pod fetches p12b.py, p12b.json and p12c_ltx.py from HF code/p12/ and checks them against the sha256 written in p12b.sh. Until
+    the DRY gate (WP-1e) fills those lines they read PLACEHOLDER_SHA_*; a REAL sha in the script must be the committed file's."""
+    t = (DIR / "p12b.sh").read_text(encoding="utf-8")
+    for f in ("p12b.py", "p12b.json", "p12c_ltx.py"):
+        real = hashlib.sha256((DIR / f).read_bytes()).hexdigest()
+        holder = "PLACEHOLDER_SHA_" + f.upper().replace(".", "_")
+        assert real in t or holder in t, f
+        assert not re.search(r"\b[0-9a-f]{64}\s+\"\$JOB/" + re.escape(f), t) or real in t, f
+
+
+@pytest.mark.xfail(strict=True, reason="WP-1e: sha256 lines of p12b.sh, the clay and the AV takes of p12b.json are still PLACEHOLDER; remove "
+                   "this marker when the DRY gate has filled them (strict: it fails the day they are all real, as a reminder)")
+def test_the_pod_is_runnable_only_when_no_placeholder_is_left():
+    text = "".join((DIR / f).read_text(encoding="utf-8") for f in ("p12b.sh", "p12b.json", "p12c_ltx.py"))
+    assert "PLACEHOLDER" not in text
+
+
+def test_the_projection_skips_optional_stages_when_time_is_short_and_keeps_the_essential_ones():
     m = _load()
     cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
     st = cfg["stages"]
     assert [m.units_of(st[n]) for n in ("Q1", "Q2", "Q3")] == [24, 16, 24]
+    assert [m.units_of(st[n]) for n in ("L1", "L3", "L2", "AV")] == [3, 3, 3, 2]       # one take per shot (D-93 / the creator)
     reserve = cfg["end_reserve_min"] * 60
     first = {"Q1": 60.0}                                    # seconds of the first unit of each stage
     done = {"Q1"}
@@ -60,7 +80,14 @@ def test_the_projection_skips_q3_when_time_is_short_and_keeps_q1_and_q4_always()
     assert not m.stage_may_start("Q3", st, {}, set(), 0.0, deadline, reserve)
     # an optional stage also has to leave room for the essential stages still to run
     assert not m.stage_may_start("Q2", st, first, set(), deadline - 960 - reserve, deadline, reserve)
-    assert m.ordered(st) == ["Q1", "Q2", "Q3"]
+    # the LTX stages still to come (process 2) are a fixed reserve: Q2 fits alone but not next to the 61 min LTX reserve
+    ltx = float(cfg["ltx"]["reserve_min"]) * 60
+    assert not m.stage_may_start("Q2", st, first, done, deadline - 960 - reserve, deadline, reserve, ltx)
+    assert m.stage_may_start("Q2", st, first, done, deadline - 960 - reserve - ltx, deadline, reserve, ltx)
+    # LTX stages are never measured in process 1: no estimate, so an optional one (L3) never starts there; the order is the plan's
+    assert m.estimate_s("L3", st, first) is None and not m.stage_may_start("L3", st, first, done, 0.0, deadline, reserve)
+    assert m.ordered(st) == ["Q1", "Q2", "Q3", "L1", "L3", "L2", "AV"]
+    assert m.ordered(st, "qwen_mva") == ["Q1", "Q2", "Q3"] and m.ordered(st, "ltx_i2v") == ["L1", "L3"]
 
 
 def test_the_outputs_follow_the_plan_paths_and_the_azimuth_degrees_go_round_in_30_steps():
@@ -128,38 +155,68 @@ def test_the_style_lora_is_merged_at_the_json_weight_0_7_not_a_literal(tmp_path)
     assert not isinstance(style.args[2], ast.Constant)      # the weight is a variable that comes from p12b.json
 
 
-def test_the_video_download_runs_in_a_background_thread_and_a_failure_does_not_stop_qwen(tmp_path, monkeypatch):
+def _ltx_jobs(cfg):
+    lt, ll = cfg["ltx"], cfg["ltx"]["layout_lora"]
+    return [(lt["repo"], f, lt["revision"]) for f in lt["files"] + lt["av_files"]] + [(ll["repo"], ll["file"], ll["revision"])]
+
+
+def test_the_ltx_download_runs_in_a_background_thread_and_a_failure_does_not_stop_qwen(tmp_path, monkeypatch):
     import sys
     import types
     m = _load()
     calls = []
     hub = types.ModuleType("huggingface_hub")
-    def boom(repo, **kw):
-        calls.append((repo, kw["revision"]))
+
+    def boom(repo, filename, **kw):
+        calls.append((repo, filename, kw["revision"]))
         raise OSError("offline")
-    hub.snapshot_download = boom
+    hub.hf_hub_download = boom
     monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
     monkeypatch.setattr(m, "MODELS", tmp_path / "models")
     cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
     log = m.Log(tmp_path / "out")
     monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=200 * 2 ** 30))   # the guard is tested below
-    th = m.start_video_download(log, cfg)
+    th = m.start_ltx_download(log, cfg)
     th.join(5)
-    assert calls == [("Lightricks/LTX-Video-0.9.8-13B-distilled", "7c64400e1861cc0d7b98d570a1926d5408ec60cd")] and not th.is_alive()
+    assert not th.is_alive()
+    assert calls == _ltx_jobs(cfg) and len(calls) == 8                      # every file at its pinned revision, a failure goes on to the next
     evs = [json.loads(x)["ev"] for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
-    assert evs == ["video_download_start", "video_download_failed"]
+    assert evs == ["ltx_download_start"] + ["ltx_download_failed"] * 8 + ["ltx_download_end"]
 
 
-def test_the_video_download_is_skipped_when_the_free_disk_is_below_video_plus_margin(tmp_path, monkeypatch):
+def test_a_403_on_a_gated_file_is_logged_as_gated_and_the_next_file_is_still_tried(tmp_path, monkeypatch):
+    import sys
+    import types
+    m = _load()
+    hub = types.ModuleType("huggingface_hub")
+    seen = []
+
+    def gated(repo, filename, **kw):
+        seen.append(filename)
+        err = OSError("403 gated")
+        err.response = types.SimpleNamespace(status_code=403)
+        raise err
+    hub.hf_hub_download = gated
+    monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
+    monkeypatch.setattr(m, "MODELS", tmp_path / "models")
+    monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=200 * 2 ** 30))
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    m.start_ltx_download(m.Log(tmp_path / "out"), cfg).join(5)
+    evs = [json.loads(x) for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
+    assert len(seen) == 8 and sum(e["ev"] == "gated_403" for e in evs) == 8
+    assert {e["repo"] for e in evs if e["ev"] == "gated_403"} == {"Lightricks/LTX-2.5", "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render"}
+
+
+def test_the_ltx_download_is_skipped_when_the_free_disk_is_below_ltx_plus_margin(tmp_path, monkeypatch):
     import types
     m = _load()
     cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
-    need = (cfg["video"]["expected_gb"] + cfg["video"]["margin_gb"]) * 2 ** 30
-    assert m.video_download_fits(need, cfg) and not m.video_download_fits(need - 1, cfg)
+    need = (cfg["ltx"]["expected_gb"] + cfg["ltx"]["margin_gb"]) * 2 ** 30
+    assert m.ltx_download_fits(need, cfg) and not m.ltx_download_fits(need - 1, cfg)
     monkeypatch.setattr(m, "MODELS", tmp_path / "models")
     monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=need - 1))
     log = m.Log(tmp_path / "out")
-    assert m.start_video_download(log, cfg) is None                       # no thread, no download; the wait loop guards None
+    assert m.start_ltx_download(log, cfg) is None                         # no thread, no download; the wait loop guards None
     evs = [json.loads(x) for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
-    assert [e["ev"] for e in evs] == ["video_download_skipped"] and evs[0]["why"] == "disk"
-    assert "video is not None and video.is_alive()" in (DIR / "p12b.py").read_text(encoding="utf-8")
+    assert [e["ev"] for e in evs] == ["ltx_download_skipped"] and evs[0]["why"] == "disk"
+    assert "ltx is not None and ltx.is_alive()" in (DIR / "p12b.py").read_text(encoding="utf-8")

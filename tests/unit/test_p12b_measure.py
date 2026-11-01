@@ -23,10 +23,16 @@ def test_the_measure_script_passes_the_dryrun_rules_and_declares_heartbeat_and_s
 
 
 def test_its_install_lines_and_model_pin_are_those_of_p12b():
+    """The measured install is the Qwen install the combined pod runs; the one LTX-2 install line of p12b.sh comes after it, pinned to
+    the sha of config/cloud_pins.json, and is not measured here."""
     m, b = _text("p12b_measure.sh"), _text("p12b.sh")
     cfg = json.loads(_text("p12b.json"))
-    for line in b.splitlines():
-        if line.startswith(("pip install", "git clone")):
+    ltx_sha = pins.load()["git"]["Lightricks/LTX-2"]["sha"]
+    own = [ln for ln in b.splitlines() if ln.startswith(("pip install", "git clone"))]
+    ltx = [ln for ln in own if "Lightricks/LTX-2" in ln]
+    assert len(ltx) == 1 and ltx_sha in ltx[0] and cfg["ltx"]["code"]["sha"] == ltx_sha
+    for line in own:
+        if line not in ltx:
             assert line in m, line                                    # the measured install is the install P12b runs
     assert cfg["base"]["repo"] in m and cfg["base"]["revision"] in m
     assert "HF_XET_HIGH_PERFORMANCE=0" in m and "HF_XET_HIGH_PERFORMANCE=1" in m
