@@ -276,7 +276,9 @@ class Log:
             f.write(f"{time.strftime('%H:%M:%S', time.gmtime())} {text}\n")
 
     def progress(self, text):
-        (self.out / "progress.txt").write_text(f"{time.strftime('%T', time.gmtime())} {text}\n", encoding="utf-8")
+        tmp = self.out / "progress.txt.tmp"  # write + rename: a reader (the stall rule, a test) never sees a truncated file
+        tmp.write_text(f"{time.strftime('%T', time.gmtime())} {text}\n", encoding="utf-8")
+        os.replace(tmp, self.out / "progress.txt")
 
 
 def dir_bytes(p):
