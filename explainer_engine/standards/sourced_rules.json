@@ -6703,6 +6703,7 @@
     }
    ],
    "enforced_by": [
+    "explainer_engine/audio/hype_read.py",
     "tests/unit/test_sourced_rules.py"
    ],
    "supersedes": [],
