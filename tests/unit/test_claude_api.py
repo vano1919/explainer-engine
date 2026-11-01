@@ -374,7 +374,7 @@ def test_real_client_needs_the_key_and_the_recorded_approval(env, monkeypatch):
 
 def test_real_spend_caps_file_holds_the_or24_caps():
     c = json.loads((ROOT / "config" / "spend_caps.json").read_text(encoding="utf-8"))["claude_api"]
-    assert c["max_usd"] == 95.0 and sum(c["jobs"].values()) == pytest.approx(c["max_usd"])
+    assert c["max_usd"] == 105.0 and sum(c["jobs"].values()) == pytest.approx(c["max_usd"])
     # 2026-10-30: plan v2 got its own $28 line from J1b's unspent part, all of J6, J4 and the reserve (ვანო's card answer, docs/PROGRESS.md)
     assert c["jobs"]["J1"] == 0.0 and c["jobs"]["J1b"] == 5.02 and c["jobs"]["J6"] == 0.0 and c["jobs"]["plan_v2"] == 0.0
     # 2026-11-01 08:50 UTC (ვანო: "45$ დოლარიან ლიმიტს გაძლევ", cmsg_01Hnu5zB86sjUj5GtTgaUkPWR8rdHB1RqBiqpaiJvgLFNF): build_loop $45 paid from J1 10, J3 4, plan_v2 18, research_vs_main 10 (25 -> 15, $14.5 already spent) and 2.98 of the reserve

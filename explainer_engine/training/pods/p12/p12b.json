@@ -44,7 +44,10 @@
   "stages": {
     "Q1": {
       "kind": "qwen_mva",
-      "people": ["napoleon", "general"],
+      "people": [
+        "napoleon",
+        "general"
+      ],
       "azimuths": [
         "front view",
         "front-right view",
@@ -59,7 +62,9 @@
         "front-left quarter view",
         "front-left view"
       ],
-      "mva": [0.8],
+      "mva": [
+        0.8
+      ],
       "steps": 40,
       "true_cfg_scale": 1.0,
       "essential": true,
@@ -67,9 +72,20 @@
     },
     "Q2": {
       "kind": "qwen_mva",
-      "people": ["napoleon", "general"],
-      "azimuths": ["front-right quarter view", "right side view", "back view", "left side view"],
-      "mva": [0.6, 1.0],
+      "people": [
+        "napoleon",
+        "general"
+      ],
+      "azimuths": [
+        "front-right quarter view",
+        "right side view",
+        "back view",
+        "left side view"
+      ],
+      "mva": [
+        0.6,
+        1.0
+      ],
       "steps": 40,
       "true_cfg_scale": 1.0,
       "essential": false,
@@ -77,7 +93,10 @@
     },
     "Q3": {
       "kind": "qwen_mva",
-      "people": ["baker", "legionary"],
+      "people": [
+        "baker",
+        "legionary"
+      ],
       "azimuths": [
         "front view",
         "front-right view",
@@ -92,21 +111,65 @@
         "front-left quarter view",
         "front-left view"
       ],
-      "mva": [0.8],
+      "mva": [
+        0.8
+      ],
       "steps": 40,
       "true_cfg_scale": 1.0,
       "essential": false,
       "order": 3
     },
-    "L1": {"kind": "ltx_i2v", "shots": ["tent_s0", "tent_s3", "tent_s4"], "essential": true, "order": 4},
-    "L3": {"kind": "ltx_i2v", "shots": ["tent_s1", "tent_s2", "ship_s2"], "essential": false, "order": 5},
-    "L2": {"kind": "ltx_ic", "shots": ["tent_s0", "tent_s3", "tent_s4"], "essential": true, "order": 6},
-    "AV": {"kind": "ltx_a2v", "shots": ["av1", "av2"], "essential": true, "order": 7}
+    "L1": {
+      "kind": "ltx_i2v",
+      "shots": [
+        "tent_s0",
+        "tent_s3",
+        "tent_s4"
+      ],
+      "essential": true,
+      "order": 4
+    },
+    "L3": {
+      "kind": "ltx_i2v",
+      "shots": [
+        "tent_s1",
+        "tent_s2",
+        "ship_s2"
+      ],
+      "essential": false,
+      "order": 5
+    },
+    "L2": {
+      "kind": "ltx_ic",
+      "shots": [
+        "tent_s0",
+        "tent_s3",
+        "tent_s4"
+      ],
+      "essential": true,
+      "order": 6
+    },
+    "AV": {
+      "kind": "ltx_a2v",
+      "shots": [
+        "av1",
+        "av2"
+      ],
+      "essential": true,
+      "order": 7
+    }
   },
-  "drop_order": ["Q3", "L3", "Q2"],
+  "drop_order": [
+    "Q3",
+    "L3",
+    "Q2"
+  ],
   "end_reserve_min": 15,
   "seed": 11,
-  "size": [768, 1024],
+  "size": [
+    768,
+    1024
+  ],
   "prompt_mva": "<mva> {azimuth}, eye-level shot. xworld style, full figure on a plain white background.",
   "outputs": {
     "mva": "runs/p12b/mva/<person>/<az_deg>_s<strength>.png",
@@ -117,7 +180,10 @@
   },
   "heartbeat": "datasets/vano1919/tmr-artifacts:runs/p12b/beat.txt",
   "stall_minutes": 25,
-  "control": {"repo": "vano1919/tmr-artifacts", "path": "runs/p12b/control/stop_after.txt"},
+  "control": {
+    "repo": "vano1919/tmr-artifacts",
+    "path": "runs/p12b/control/stop_after.txt"
+  },
   "ltx": {
     "repo": "Lightricks/LTX-2.5",
     "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
@@ -151,10 +217,25 @@
     "margin_gb": 20,
     "reserve_min": 61,
     "reserve_measured": false,
-    "reserve_parts_min": {"loads": 12, "L1": 8, "L2": 11, "AV": 30},
+    "reserve_parts_min": {
+      "loads": 12,
+      "L1": 8,
+      "L2": 11,
+      "AV": 30
+    },
     "render": {
-      "width": 1920, "height": 1088, "frames": 121, "fps": 24, "seed": 11,
-      "stage1": {"width": 960, "height": 544, "steps": 8}, "stage2_steps": 3, "cfg": 1.0
+      "width": 1920,
+      "height": 1088,
+      "frames": 121,
+      "fps": 24,
+      "seed": 11,
+      "stage1": {
+        "width": 960,
+        "height": 544,
+        "steps": 8
+      },
+      "stage2_steps": 3,
+      "cfg": 1.0
     },
     "keyframes": {
       "repo": "vano1919/tmr-artifacts",
@@ -168,30 +249,50 @@
         "ship_s2": "lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/X_g_n_0_0+dpl/ship_11_s2.png"
       }
     },
-    "prompt_source": "PLACEHOLDER (P6 compiler output, or 'hand, SHOT_PROMPTS.md')",
+    "prompt_source": "hand, docs/pods/P12_PROMPTS.md",
     "prompts": {
-      "tent_s0": "PLACEHOLDER_PROMPT",
-      "tent_s1": "PLACEHOLDER_PROMPT",
-      "tent_s2": "PLACEHOLDER_PROMPT",
-      "tent_s3": "PLACEHOLDER_PROMPT",
-      "tent_s4": "PLACEHOLDER_PROMPT",
-      "ship_s2": "PLACEHOLDER_PROMPT",
-      "av1": "PLACEHOLDER_PROMPT",
-      "av2": "PLACEHOLDER_PROMPT"
+      "tent_s0": "Hand-drawn 2D cartoon animation with bold black outlines and bright flat colours. The short man in the black gold-edged bicorne and dark-blue coat with a white vest and gold epaulettes, on the left, leans forward over the map table, slams one hand flat on the map, then straightens up and clasps his hands behind his back; the grey-haired man with a grey moustache in the red-plumed bicorne, on the right, only lifts his chin. Both men stay in frame. Static camera. Nobody speaks. Sounds: a hand slapping the table, canvas creaking in the wind, crickets outside.",
+      "tent_s1": "Hand-drawn 2D cartoon animation with bold black outlines and bright flat colours. The grey-haired man with a grey moustache in the red-plumed bicorne, in the centre, jabs his right forefinger down onto the map twice, then raises his eyes and stern brows to the short man in the black gold-edged bicorne, then pulls his hand back to his chest; the short man in the black gold-edged bicorne, seen from behind on the left, only tilts his head toward the map. Both men stay in frame. Static camera. Nobody speaks. Sounds: a finger tapping on paper, the lantern creaking on its pole, crickets outside.",
+      "tent_s2": "Hand-drawn 2D cartoon animation with bold black outlines and bright flat colours. The short man in the black gold-edged bicorne and dark-blue coat with gold epaulettes, facing the camera, lowers his brows into a deeper frown, then jerks his chin up as his eyes widen and his jaw sets hard, then settles into a still, narrow-eyed stare with his mouth closed. He stays in frame. Static camera. Nobody speaks. Sounds: the lantern hissing, canvas flapping softly in the wind.",
+      "tent_s3": "Hand-drawn 2D cartoon animation with bold black outlines and bright flat colours. The grey-haired man in the red-plumed bicorne and gold-embroidered blue coat, seen from behind, strides toward the tent door at the back, grabs the canvas flap with one hand and stops, then turns his head back over his shoulder toward the map table. He stays in frame at the door. Static camera. Nobody speaks. Sounds: boots thudding on the carpet, the canvas flap rustling, crickets outside.",
+      "tent_s4": "Hand-drawn 2D cartoon animation with bold black outlines and bright flat colours. The short man in the black gold-edged bicorne and dark-blue coat with a white vest and gold epaulettes, front right, grips the sword hilt at his side, squares his shoulders and lifts his chin, still looking to the left, then lets his hand rest on the hilt; the grey-haired man in the red-plumed bicorne, small by the pole in the background, only turns his head toward him. Both men stay in frame. Static camera. Nobody speaks. Sounds: the sword hilt clinking, the lantern creaking, wind on the canvas.",
+      "ship_s2": "Hand-drawn 2D cartoon animation with bold black outlines and bright flat colours. The old bearded sea captain in the black tricorn with a scar draws in a breath, then throws his head forward and roars a wordless cry with his mouth wide open while he yanks the ship's wheel hard with one hand, then closes his mouth and grips the wheel, his chest heaving. He stays in frame. Static camera. Sounds: his wordless roar, waves crashing on the hull, the wheel creaking.",
+      "av1": "Hand-drawn 2D cartoon animation with bold black outlines and bright flat colours. The short man in the black gold-edged bicorne and dark-blue coat with gold epaulettes, facing the camera, starts with a frown and his mouth closed, then opens his mouth and talks straight into the camera, his lips moving with every word, raises his brows and nods his head once firmly on the strongest word, then closes his mouth and settles back into the frown. He stays in frame. Static camera. Sounds: his voice only, a faint lantern hiss.",
+      "av2": "Hand-drawn 2D cartoon animation with bold black outlines and bright flat colours. The short man in the black gold-edged bicorne and dark-blue coat with a white vest and gold epaulettes, turned a quarter to the right, starts with his mouth closed, then turns his eyes to the camera, opens his mouth and talks to the camera, his lips moving with every word, raises one hand to his chest on the strongest word, then lowers the hand and closes his mouth. He stays in frame. Static camera. Sounds: his voice only."
     },
     "clay": {
       "repo": "vano1919/tmr-artifacts",
       "dir": "code/p12/clay",
-      "sha256": {"tent_s0": "PLACEHOLDER_SHA", "tent_s3": "PLACEHOLDER_SHA", "tent_s4": "PLACEHOLDER_SHA"}
+      "sha256": {
+        "tent_s0": "PLACEHOLDER_SHA",
+        "tent_s3": "PLACEHOLDER_SHA",
+        "tent_s4": "PLACEHOLDER_SHA"
+      }
     },
     "av": {
       "repo": "vano1919/tmr-artifacts",
       "takes": {
-        "av1": {"path": "code/p12/audio/av1.wav", "sha256": "PLACEHOLDER_SHA", "voice_id": "PLACEHOLDER", "seconds": 0.0},
-        "av2": {"path": "code/p12/audio/av2.wav", "sha256": "PLACEHOLDER_SHA", "voice_id": "PLACEHOLDER", "seconds": 0.0}
+        "av1": {
+          "path": "code/p12/audio/av1.wav",
+          "sha256": "PLACEHOLDER_SHA",
+          "voice_id": "PLACEHOLDER",
+          "seconds": 0.0
+        },
+        "av2": {
+          "path": "code/p12/audio/av2.wav",
+          "sha256": "PLACEHOLDER_SHA",
+          "voice_id": "PLACEHOLDER",
+          "seconds": 0.0
+        }
       },
-      "images": {"av1": "keyframe:tent_s2", "av2": "q1:napoleon/front-right quarter view/0.8"},
-      "mouth_box": {"av1": null, "av2": null}
+      "images": {
+        "av1": "keyframe:tent_s2",
+        "av2": "q1:napoleon/front-right quarter view/0.8"
+      },
+      "mouth_box": {
+        "av1": null,
+        "av2": null
+      }
     }
   },
   "plan": {

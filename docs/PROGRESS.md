@@ -3756,3 +3756,5 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 `llm/build_loop.py` (Opus codes, Fable checks, Opus fixes; empty system blocks are skipped). WP-1a placed `p12c_ltx.py` flags, the install line in `p12b.sh`, `docs/pods/P12_LTX_FLAGS.md`. Fable: p12c_ltx.py and p12b.sh PASS; open: `MODULES["ltx_i2v"]` is still PLACEHOLDER (the distilled pipeline module is not in the sources passed), so L1/L3 are skipped until it is named. Cost $0.85 + check $0.49. `p12b.sh` sha lines stay PLACEHOLDER until the DRY gate (WP-1e).
 
 2026-11-01: `config/cloud_pins.json` gains the `Lightricks/LTX-2` git pin (e98f6d92…, smoke_verified false) used by `p12b.sh`; CI had 9 failures, this one fixed, the 8 old P12b tests are rewritten in WP-1d.
+
+2026-11-01 WP-1b: the 8 LTX shot prompts (`docs/pods/P12_PROMPTS.md`, merged into `p12b.json` `ltx.prompts`; no dialogue text for av1/av2); Fable check PASS. `config/spend_caps.json`: claude_api total 95 -> 105 with a `plan_revision` line of $10 (creator's word 2026-11-01 09:34 UTC), pinned test updated.
