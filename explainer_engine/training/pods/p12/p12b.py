@@ -1,17 +1,21 @@
-"""P12b pod job (runs on the pod under pod_wrapper.sh): the Qwen run of the paid-tests plan, section 3.3 / 3.3a / 3.5 (no host stage: D-89).
+"""P12b pod job, process 1 (runs on the pod under pod_wrapper.sh): stage M (setup measurement) and the Qwen run of the paid-tests
+plan, section 3.3 / 3.5 (no host stage: D-89). Process 2 (p12c_ltx.py, the LTX-2.5 stages) is started by p12b.sh after this exits.
 
-Every model, revision, setting and prompt comes from ``p12b.json`` (T10); nothing is chosen here. One process, the pipeline loaded
-once, the xworld LoRA merged once and the multiple-angles (MVA) LoRA merged and unmerged per strength (VideoX-Fun merge_lora). Stages run in ``order``; an optional stage
-starts only when the section 3.5 projection fits before ``EE_DEADLINE``. Every picture is written at once with a JSON sidecar, one
+Every model, revision, setting and prompt comes from ``p12b.json``; nothing is chosen here. One process, the pipeline loaded once,
+the xworld LoRA merged once and the multiple-angles (MVA) LoRA merged and unmerged per strength (VideoX-Fun merge_lora). Qwen
+stages run in ``order``; an optional stage starts only when the section 3.5 projection fits before ``EE_DEADLINE``, with the LTX
+stages still to come counted as a fixed reserve (``ltx.reserve_min``). Every picture is written at once with a JSON sidecar, one
 line per event goes to ``$EE_OUT/t.jsonl`` and ``$EE_OUT/progress.txt`` is rewritten after every unit (the wrapper uploads
-``$EE_OUT``; the weights live under /workspace/models, outside it). Only Qwen draws here: the video model's weights are fetched in a
-background thread while the Qwen stages run (creator 2026-10-31, RP-01), but no video step, layout or audio runs in this script (P12c).
+``$EE_OUT``; the weights live under /workspace/models, outside it). The LTX weights are fetched file by file in a background thread
+while the Qwen stages draw; no video step runs in this process. After every stage the creator's soft stop file is read.
 """
+import calendar
 import hashlib
 import json
 import os
 import shutil
 import sys
+import tempfile
 import threading
 import time
 from pathlib import Path
@@ -19,31 +23,42 @@ from pathlib import Path
 CFG_NAME = "p12b.json"
 MODELS = Path(os.environ.get("P12B_MODELS", "/workspace/models"))
 EXIT_SHA_MISMATCH = 3
+QWEN = "qwen_mva"
+
+
+def kind_of(stage):
+    return stage.get("kind", QWEN)
 
 
 def units_of(stage):
-    """How many pictures a stage makes."""
+    """How many pictures (Qwen) or clips (LTX) a stage makes."""
+    if kind_of(stage) != QWEN:
+        return len(stage["shots"])
     return len(stage["people"]) * len(stage["azimuths"]) * len(stage["mva"])
 
 
 def estimate_s(name, stages, first_unit_s):
-    """Seconds a stage is expected to take: its first unit's measured seconds times its units. Q2 and Q3 use Q1's first unit; a
-    stage with no measure yet uses Q1's too (the same pipeline, the same size)."""
-    first = first_unit_s.get(name) or first_unit_s.get("Q1")
+    """Seconds a stage is expected to take: its first unit's measured seconds times its units. Q2 and Q3 use Q1's first unit; an
+    LTX stage has only its own measure (process 1 never measures one, so it is None here)."""
+    if kind_of(stages[name]) != QWEN:
+        first = first_unit_s.get(name)
+    else:
+        first = first_unit_s.get(name) or first_unit_s.get("Q1")
     return None if first is None else first * units_of(stages[name])
 
 
-def stage_may_start(name, stages, first_unit_s, done, now, deadline, reserve_s):
+def stage_may_start(name, stages, first_unit_s, done, now, deadline, reserve_s, extra_reserve_s=0.0):
     """Section 3.5. An essential stage always starts. An optional one starts only when
-    ``now + est(stage) + est(remaining essential stages) + end_reserve <= deadline``; without a measured first unit it does not."""
+    ``now + est(stage) + est(remaining essential stages of its kind) + extra_reserve + end_reserve <= deadline``; without a measured
+    first unit it does not. ``extra_reserve_s`` holds the stages of the other process (the LTX reserve in process 1)."""
     if stages[name]["essential"]:
         return True
     own = estimate_s(name, stages, first_unit_s)
     if own is None:
         return False
-    rest = 0.0
+    rest = float(extra_reserve_s)
     for other, st in stages.items():
-        if other != name and st["essential"] and other not in done:
+        if other != name and st["essential"] and other not in done and kind_of(st) == kind_of(stages[name]):
             e = estimate_s(other, stages, first_unit_s)
             if e is None:
                 return False
@@ -51,8 +66,9 @@ def stage_may_start(name, stages, first_unit_s, done, now, deadline, reserve_s):
     return now + own + rest + reserve_s <= deadline
 
 
-def ordered(stages):
-    return sorted(stages, key=lambda n: stages[n]["order"])
+def ordered(stages, kind=None):
+    names = [n for n in stages if kind is None or kind_of(stages[n]) == kind]
+    return sorted(names, key=lambda n: stages[n]["order"])
 
 
 def az_deg(cfg, azimuth):
@@ -90,38 +106,118 @@ def style_weight(cfg):
     return float(cfg["style_lora"]["weight"])
 
 
-def video_download_fits(free_bytes, cfg):
-    """True when the free disk after the Qwen weights holds the video snapshot plus the margin (``video.expected_gb`` and
-    ``video.margin_gb`` of p12b.json; both REVIEW numbers: ~32 GB is the snapshot size noted in PROGRESS, the margin covers the pictures)."""
-    v = cfg["video"]
+def ltx_download_fits(free_bytes, cfg):
+    """True when the free disk after the Qwen weights holds the LTX files plus the margin (``ltx.expected_gb`` + ``ltx.margin_gb``)."""
+    v = cfg["ltx"]
     return free_bytes >= (float(v["expected_gb"]) + float(v["margin_gb"])) * 2 ** 30
 
 
-def start_video_download(log, cfg):
-    """Fetches the video model's weights in a background thread (the setup-time cut of RP-01, creator 2026-10-31) so the Qwen stages
-    do not wait for them; returns the thread, or None when the disk is too small (``video_download_skipped``: an ENOSPC would break the picture writes).
-    Its failure is logged, never raised into the Qwen stages (nothing here uses the weights)."""
-    v = cfg["video"]
-    target = MODELS / v["local"]
+def start_ltx_download(log, cfg):
+    """Fetches the LTX-2.5 files (``files`` + ``av_files`` + the Layout LoRA) one by one in a background thread so the Qwen stages
+    do not wait for them (not snapshot_download: the repo holds far more than the files listed). Returns the thread, or None when the
+    disk is too small. A failed file is logged (``ltx_download_failed``, ``gated_403`` on a 403) and the next one is tried; nothing
+    is raised into the Qwen stages. The token is huggingface_hub's own (HF_TOKEN in the env)."""
+    lt = cfg["ltx"]
+    target = MODELS / lt["local"]
     MODELS.mkdir(parents=True, exist_ok=True)
     free = shutil.disk_usage(MODELS).free
-    if not video_download_fits(free, cfg):
-        log.ev("video_download_skipped", why="disk", free_bytes=free, need_gb=float(v["expected_gb"]) + float(v["margin_gb"]))
+    if not ltx_download_fits(free, cfg):
+        log.ev("ltx_download_skipped", why="disk", free_bytes=free, need_gb=float(lt["expected_gb"]) + float(lt["margin_gb"]))
         return None
-    from huggingface_hub import snapshot_download
+    from huggingface_hub import hf_hub_download
+    ll = lt["layout_lora"]
+    jobs = [(lt["repo"], f, lt["revision"]) for f in list(lt["files"]) + list(lt["av_files"])]
+    jobs.append((ll["repo"], ll["file"], ll["revision"]))
 
     def fetch():
-        log.ev("video_download_start", repo=v["repo"], revision=v["revision"])
-        t0 = time.time()
-        try:
-            snapshot_download(v["repo"], revision=v["revision"], local_dir=str(target))
-            log.ev("video_download_end", repo=v["repo"], bytes=dir_bytes(target), seconds=round(time.time() - t0, 1))
-        except Exception as e:   # noqa: BLE001 - a failed side download must not stop the Qwen run
-            log.ev("video_download_failed", repo=v["repo"], error=str(e)[:300])
+        log.ev("ltx_download_start", repo=lt["repo"], revision=lt["revision"], files=len(jobs))
+        t0, ok = time.time(), 0
+        for repo, f, rev in jobs:
+            t1 = time.time()
+            try:
+                p = hf_hub_download(repo, f, revision=rev, local_dir=str(target))
+                ok += 1
+                log.ev("ltx_download_file_end", repo=repo, file=f, bytes=dir_bytes(p), seconds=round(time.time() - t1, 1))
+            except Exception as e:   # noqa: BLE001 - a failed side download must not stop the Qwen run
+                status = getattr(getattr(e, "response", None), "status_code", None)
+                if status == 403:
+                    log.ev("gated_403", repo=repo, file=f)
+                log.ev("ltx_download_failed", repo=repo, file=f, error=str(e)[:300])
+        log.ev("ltx_download_end", files_ok=ok, files=len(jobs), bytes=dir_bytes(target), seconds=round(time.time() - t0, 1))
 
-    th = threading.Thread(target=fetch, name="video-download", daemon=True)
+    th = threading.Thread(target=fetch, name="ltx-download", daemon=True)
     th.start()
     return th
+
+
+def creator_stop_after(cfg, log, timeout_s=20):
+    """The creator's soft stop: the first word of ``control.path`` on HF (one of Q1 Q2 Q3 L1 L3 L2 AV), or None. A missing file, a
+    network error or a read longer than ``timeout_s`` is no stop (``control_check_failed``); this never raises."""
+    c = cfg.get("control")
+    if not c:
+        return None
+    box = {}
+
+    def fetch():
+        try:
+            from huggingface_hub import hf_hub_download
+            tmp = tempfile.mkdtemp(prefix="ee_ctl_")
+            p = hf_hub_download(c["repo"], c["path"], repo_type="dataset", local_dir=tmp, force_download=True)
+            box["text"] = Path(p).read_text(encoding="utf-8")
+        except Exception as e:   # noqa: BLE001 - a control read must never stop the run
+            box["error"] = str(e)[:200]
+
+    th = threading.Thread(target=fetch, name="control-read", daemon=True)
+    th.start()
+    th.join(timeout_s)
+    if th.is_alive():
+        log.ev("control_check_failed", why="timeout")
+        return None
+    if "error" in box:
+        log.ev("control_check_failed", error=box["error"])
+        return None
+    words = box.get("text", "").split()
+    return words[0] if words else None
+
+
+def stop_here(cfg, log, out, name):
+    """True when the creator asked to stop after ``name``: writes stages.txt and ``control/stopped_after.txt`` (p12b.sh then skips
+    process 2, and p12c_ltx.py exits at once if it reads it)."""
+    if creator_stop_after(cfg, log) != name:
+        return False
+    log.stage_line(f"creator_stop after {name}")
+    log.ev("creator_stop", after=name)
+    p = Path(out) / "control" / "stopped_after.txt"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(name + "\n", encoding="utf-8")
+    return True
+
+
+def script_start_epoch(out):
+    """The ``script_start`` time p12b.sh wrote to t.jsonl, as epoch seconds, or None."""
+    try:
+        for line in (Path(out) / "t.jsonl").read_text(encoding="utf-8").splitlines():
+            e = json.loads(line)
+            if e.get("ev") == "script_start":
+                return calendar.timegm(time.strptime(e["t"], "%Y-%m-%dT%H:%M:%SZ"))
+    except (OSError, ValueError, KeyError):
+        pass
+    return None
+
+
+def write_measure(log, out, nbytes, secs):
+    """Stage M: ``measure.json`` with the Qwen download's bytes, seconds and MB/s and the setup minutes from script_start (the image
+    pull and boot before the script are not seen in the pod: boot_s stays null, the session reads it from the create record)."""
+    start = script_start_epoch(out)
+    m = {"boot_s": None, "script_start": start,
+         "setup_min": round((time.time() - start) / 60, 1) if start else None,
+         "qwen_dl_bytes": nbytes, "qwen_dl_s": round(secs, 1),
+         "mb_s": round(nbytes / 1e6 / secs, 1) if secs > 0 else None,
+         "xet": os.environ.get("HF_XET_HIGH_PERFORMANCE") == "1"}
+    (Path(out) / "measure.json").write_text(json.dumps(m, indent=1), encoding="utf-8")
+    log.ev("measure", **m)
+    log.stage_line(f"done M setup={m['setup_min']} mb_s={m['mb_s']}")
+    return m
 
 
 def sha256_file(path):
@@ -273,8 +369,10 @@ def run(cfg, out, deadline, log):
     log.ev("boot", deadline=deadline, pod=os.environ.get("RUNPOD_POD_ID", ""), python=sys.version.split()[0],
            torch=torch.__version__, gpu=torch.cuda.get_device_name(0) if torch.cuda.is_available() else "none")
     base_dir = MODELS / "qwen"
+    t_dl = time.time()
     base = timed_download(log, "base", base_dir, lambda: snapshot_download(
         cfg["base"]["repo"], revision=cfg["base"]["revision"], local_dir=str(base_dir)))
+    write_measure(log, out, dir_bytes(base_dir), time.time() - t_dl)          # stage M
     sl = cfg["style_lora"]
     style = timed_download(log, "style_lora", MODELS / "style", lambda: hf_hub_download(
         sl["hf"], sl["path"], repo_type="dataset", local_dir=str(MODELS / "style")))
@@ -294,7 +392,7 @@ def run(cfg, out, deadline, log):
             refs_cfg["repo"], refs_cfg[p], repo_type=refs_cfg["repo_type"], local_dir=str(MODELS / "sheets" / p)))
         refs[person] = person_reference(sheet, size)
 
-    video = start_video_download(log, cfg)                     # in parallel with the model load and the Qwen stages
+    ltx = start_ltx_download(log, cfg)                         # in parallel with the model load and the Qwen stages
     t0 = time.time()
     pipe = load_pipeline(base)
     from videox_fun.utils import merge_lora, unmerge_lora    # the call shape of xworld_v1_test.py (pipe in, pipe out)
@@ -308,10 +406,11 @@ def run(cfg, out, deadline, log):
 
     stages = cfg["stages"]
     reserve = cfg["end_reserve_min"] * 60
+    ltx_reserve = float(cfg["ltx"]["reserve_min"]) * 60       # the LTX process still to come (a plan number, not measured)
     first_unit_s, done = {}, set()
-    for name in ordered(stages):
+    for name in ordered(stages, kind=QWEN):
         st = stages[name]
-        if not stage_may_start(name, stages, first_unit_s, done, time.time(), deadline, reserve):
+        if not stage_may_start(name, stages, first_unit_s, done, time.time(), deadline, reserve, extra_reserve_s=ltx_reserve):
             log.stage_line(f"skipped {name} (projection)")
             log.ev("stage_skipped", stage=name, reason="projection")
             continue
@@ -344,10 +443,16 @@ def run(cfg, out, deadline, log):
             log.progress(f"{name} {i}/{len(todo)}")
         done.add(name)
         log.stage_line(f"done {name}")
+        if stop_here(cfg, log, out, name):
+            log.progress("creator stop")
+            return 0
+    q1 = mva_out(cfg, out, "napoleon", "front-right quarter view", 0.8)   # AV2's picture (plan 3.4b, O-AV2)
+    if q1.exists():
+        (Path(out) / "qwen_done.txt").write_text(str(q1) + "\n", encoding="utf-8")
     limit = deadline - reserve
-    while video is not None and video.is_alive() and time.time() < limit:            # keep progress.txt moving: the stall rule watches it
-        log.progress(f"waiting for the video weights {dir_bytes(MODELS / cfg['video']['local'])} bytes")
-        video.join(timeout=60)
+    while ltx is not None and ltx.is_alive() and time.time() < limit:            # keep progress.txt moving: the stall rule watches it
+        log.progress(f"waiting for the LTX weights {dir_bytes(MODELS / cfg['ltx']['local'])} bytes")
+        ltx.join(timeout=60)
     log.progress("done")
     return 0
 

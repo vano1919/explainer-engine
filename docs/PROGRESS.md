@@ -3746,3 +3746,8 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 
 ## 2026-11-01 — `runpod create --datacenters` (v2 `dataCenterIds`)
 - From the live v2 OpenAPI (`api.runpod.io/v2/openapi.json`): `CreatePodRequest.dataCenterIds` = preferred sites; v2 has one `gpu.id` per request and no priority fields. New flag `--datacenters A,B,...` sets it. P12b measurement pod tried on RTX 4090 SECURE in EU-RO-1, EU-CZ-1, US-IL-1, EUR-IS-1/2 with CUDA floor 12.4: still "no instances available". Costs $0.
+
+## 2026-11-01 — P12 combined pod: Fable plan + Opus code draft (WIP, not runnable, nothing paid on a pod)
+- Creator 08:23-08:26 UTC: measurement + Qwen + LTX in ONE pod, stop by hand after any stage; Fable plans, Opus writes the code through the Claude API, the session reads no plan text. Jobs (API, `change_plan` line): decision $1.10, plan $1.56 (Fable high), code $1.41 (Opus high, hit max_tokens 48000: four files whole, the tests cut off).
+- Plan: `docs/wip/P12_COMBINED_PLAN_FABLE_2026-11-01.md`. Draft code in this branch: `p12b.json`, `p12b.py`, `p12c_ltx.py`, `p12b.sh` (syntax checks pass). The old tests for them fail by design (they pin the old shape); the Opus tests were cut off and are still to be written.
+- Not runnable yet: `PLACEHOLDER_SHA` / `PLACEHOLDER_*` in `p12b.json` (video revisions and files, shot prompts, clay videos, the two AV audio takes with ElevenLabs voices), `p12c_ltx.py` `ltx_i2v` module name (UNVERIFIED), the sha256 lines of `p12b.sh`, the LTX-2 git pin in `config/cloud_pins.json`. No paid step has run.

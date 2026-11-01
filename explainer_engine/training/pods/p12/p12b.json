@@ -43,10 +43,8 @@
   },
   "stages": {
     "Q1": {
-      "people": [
-        "napoleon",
-        "general"
-      ],
+      "kind": "qwen_mva",
+      "people": ["napoleon", "general"],
       "azimuths": [
         "front view",
         "front-right view",
@@ -61,39 +59,25 @@
         "front-left quarter view",
         "front-left view"
       ],
-      "mva": [
-        0.8
-      ],
+      "mva": [0.8],
       "steps": 40,
       "true_cfg_scale": 1.0,
       "essential": true,
       "order": 1
     },
     "Q2": {
-      "people": [
-        "napoleon",
-        "general"
-      ],
-      "azimuths": [
-        "front-right quarter view",
-        "right side view",
-        "back view",
-        "left side view"
-      ],
-      "mva": [
-        0.6,
-        1.0
-      ],
+      "kind": "qwen_mva",
+      "people": ["napoleon", "general"],
+      "azimuths": ["front-right quarter view", "right side view", "back view", "left side view"],
+      "mva": [0.6, 1.0],
       "steps": 40,
       "true_cfg_scale": 1.0,
       "essential": false,
       "order": 2
     },
     "Q3": {
-      "people": [
-        "baker",
-        "legionary"
-      ],
+      "kind": "qwen_mva",
+      "people": ["baker", "legionary"],
       "azimuths": [
         "front view",
         "front-right view",
@@ -108,50 +92,113 @@
         "front-left quarter view",
         "front-left view"
       ],
-      "mva": [
-        0.8
-      ],
+      "mva": [0.8],
       "steps": 40,
       "true_cfg_scale": 1.0,
       "essential": false,
       "order": 3
-    }
+    },
+    "L1": {"kind": "ltx_i2v", "shots": ["tent_s0", "tent_s3", "tent_s4"], "essential": true, "order": 4},
+    "L3": {"kind": "ltx_i2v", "shots": ["tent_s1", "tent_s2", "ship_s2"], "essential": false, "order": 5},
+    "L2": {"kind": "ltx_ic", "shots": ["tent_s0", "tent_s3", "tent_s4"], "essential": true, "order": 6},
+    "AV": {"kind": "ltx_a2v", "shots": ["av1", "av2"], "essential": true, "order": 7}
   },
-  "drop_order": [
-    "Q3",
-    "Q2"
-  ],
+  "drop_order": ["Q3", "L3", "Q2"],
   "end_reserve_min": 15,
   "seed": 11,
-  "size": [
-    768,
-    1024
-  ],
+  "size": [768, 1024],
   "prompt_mva": "<mva> {azimuth}, eye-level shot. xworld style, full figure on a plain white background.",
   "outputs": {
-    "mva": "runs/p12b/mva/<person>/<az_deg>_s<strength>.png"
+    "mva": "runs/p12b/mva/<person>/<az_deg>_s<strength>.png",
+    "ltx": "runs/p12b/ltx/<shot>_{i2v,layout}.mp4",
+    "clay": "runs/p12b/ltx/clay/<shot>.mp4",
+    "av": "runs/p12b/av/av{1,2}.mp4",
+    "measure": "runs/p12b/measure.json"
   },
   "heartbeat": "datasets/vano1919/tmr-artifacts:runs/p12b/beat.txt",
-  "stall_minutes": 15,
-  "deferred_to_p12c": [
-    "L1",
-    "L2",
-    "L3",
-    "AV"
-  ],
-  "video": {
-    "repo": "Lightricks/LTX-Video-0.9.8-13B-distilled",
-    "revision": "7c64400e1861cc0d7b98d570a1926d5408ec60cd",
+  "stall_minutes": 25,
+  "control": {"repo": "vano1919/tmr-artifacts", "path": "runs/p12b/control/stop_after.txt"},
+  "ltx": {
+    "repo": "Lightricks/LTX-2.5",
+    "revision": "PLACEHOLDER_SHA",
     "local": "ltx",
-  "expected_gb": 32,
-  "margin_gb": 15,
-    "note": "weights only, fetched in the background while Q1-Q3 draw (creator 2026-10-31, RP-01 Path A); no video step runs in this script (P12c); revision = config/cloud_pins.json models.video_ltx"
+    "files": [
+      "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors",
+      "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors",
+      "vae/ltx-2.5-video-vae-bf16.safetensors",
+      "vae/ltx-2.5-audio-vae-bf16.safetensors",
+      "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+    ],
+    "av_files": [
+      "diffusion_models/ltx-2.5-22b-dev-transformer-bf16.safetensors",
+      "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors"
+    ],
+    "sizes": {
+      "diffusion_models/ltx-2.5-22b-dev-transformer-bf16.safetensors": 42018190584,
+      "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors": 8899889568
+    },
+    "layout_lora": {
+      "repo": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
+      "revision": "PLACEHOLDER_SHA",
+      "file": "PLACEHOLDER_FILE.safetensors"
+    },
+    "code": {
+      "url": "https://github.com/Lightricks/LTX-2",
+      "sha": "e98f6d927d83c92ef2be6aec76c8440b19306e39",
+      "package": "packages/ltx-pipelines"
+    },
+    "expected_gb": 119,
+    "margin_gb": 20,
+    "reserve_min": 61,
+    "reserve_measured": false,
+    "reserve_parts_min": {"loads": 12, "L1": 8, "L2": 11, "AV": 30},
+    "render": {
+      "width": 1920, "height": 1088, "frames": 121, "fps": 24, "seed": 11,
+      "stage1": {"width": 960, "height": 544, "steps": 8}, "stage2_steps": 3, "cfg": 1.0
+    },
+    "keyframes": {
+      "repo": "vano1919/tmr-artifacts",
+      "repo_type": "dataset",
+      "paths": {
+        "tent_s0": "lora_plan_2026-10-26/train_xworld_v2/p2s/out/p2s/tent_11_s0.png",
+        "tent_s1": "PLACEHOLDER_PREFIX/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s1.png",
+        "tent_s2": "PLACEHOLDER_PREFIX/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s2.png",
+        "tent_s3": "PLACEHOLDER_PREFIX/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s3.png",
+        "tent_s4": "PLACEHOLDER_PREFIX/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s4.png",
+        "ship_s2": "PLACEHOLDER_PREFIX/loop/round_3b/out/loop/X_g_n_0_0+dpl/ship_11_s2.png"
+      }
+    },
+    "prompt_source": "PLACEHOLDER (P6 compiler output, or 'hand, SHOT_PROMPTS.md')",
+    "prompts": {
+      "tent_s0": "PLACEHOLDER_PROMPT",
+      "tent_s1": "PLACEHOLDER_PROMPT",
+      "tent_s2": "PLACEHOLDER_PROMPT",
+      "tent_s3": "PLACEHOLDER_PROMPT",
+      "tent_s4": "PLACEHOLDER_PROMPT",
+      "ship_s2": "PLACEHOLDER_PROMPT",
+      "av1": "PLACEHOLDER_PROMPT",
+      "av2": "PLACEHOLDER_PROMPT"
+    },
+    "clay": {
+      "repo": "vano1919/tmr-artifacts",
+      "dir": "code/p12/clay",
+      "sha256": {"tent_s0": "PLACEHOLDER_SHA", "tent_s3": "PLACEHOLDER_SHA", "tent_s4": "PLACEHOLDER_SHA"}
+    },
+    "av": {
+      "repo": "vano1919/tmr-artifacts",
+      "takes": {
+        "av1": {"path": "code/p12/audio/av1.wav", "sha256": "PLACEHOLDER_SHA", "voice_id": "PLACEHOLDER", "seconds": 0.0},
+        "av2": {"path": "code/p12/audio/av2.wav", "sha256": "PLACEHOLDER_SHA", "voice_id": "PLACEHOLDER", "seconds": 0.0}
+      },
+      "images": {"av1": "keyframe:tent_s2", "av2": "q1:napoleon/front-right quarter view/0.8"},
+      "mouth_box": {"av1": null, "av2": null}
+    }
   },
   "plan": {
-    "fixed_setup_minutes": 22,
-    "planned_work_minutes": 88,
+    "fixed_setup_minutes": 45,
+    "planned_work_minutes": 176,
     "price_per_hour_usd": 0.59,
     "hard_pod_usd": 2.4,
-    "note": "fixed_setup_minutes is the creator's target (2026-10-31, shorter setup by hf_xet high performance and the LTX weights fetched in parallel), NOT measured; the last night test measured 67 min. RP-01: planned work >= 3 x fixed setup. Passed to `runpod create --setup-min --work-min`."
+    "note": "45 = 25 boot measured + 20 download target with HF_XET_HIGH_PERFORMANCE, NOT measured (67 measured on 2026-10-31); stage M on this pod measures it (measure.json). RP-01: planned work >= 3 x fixed setup. Passed to `runpod create --setup-min --work-min`."
   }
 }
