@@ -20,7 +20,7 @@ FIX = ROOT / "tests" / "fixtures" / "contracts"
 H = [c * 64 for c in "0123456789abcdef"]
 PINS = {"models": {
     "keyframe": {"id": "Qwen/Qwen-Image-2.1", "revision": "r-keyframe", "sha256": None},
-    "video_ltx": {"id": "Lightricks/LTX-Video-0.9.8-13B-distilled", "revision": "r-ltx", "sha256": None, "params": {"steps": 8}},
+    "video_ltx": {"id": "Lightricks/LTX-2.5", "revision": "r-ltx", "sha256": None, "params": {"steps": 8}},
     "loras": {"xworld_v2": {"id": "xworld_v2", "sha256": H[6], "weight": 0.7}},
 }}
 
