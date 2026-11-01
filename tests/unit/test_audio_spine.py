@@ -254,3 +254,23 @@ def test_the_cli_writes_a_fresh_spine_and_a_changed_input_makes_it_stale(tmp_pat
     assert SP.main([str(job)]) == 1 and out.read_bytes() == before  # a refused compile writes nothing
     assert "out of order" in capsys.readouterr().out
     assert SP.main([]) == 2
+
+
+def test_native_lines_come_from_film_shots_2_and_open_windows():
+    words, timed = words_and_timed("titans_from_zero")
+    n = len(timed["lines"])
+    shots = {"schema": "film_shots/2", "shots": [
+        {"id": "s1", "lane": "KEYFRAME_LTX", "line": 0, "duration_frames": 25},                           # narrator line: not native
+        {"id": "s2", "lane": "DIALOGUE_CU", "line": 3, "duration_frames": 49, "dialogue": {"who": "a", "to": "b", "text": "Hi."}},
+        {"id": "s3", "lane": "KEYFRAME_LTX", "line": 5, "duration_frames": 33, "dialogue": {"who": "a", "to": "b", "text": "Go."}},
+        {"id": "s4", "lane": "DIALOGUE_CU", "duration_frames": 25},                                        # no line: no marker, no window
+        {"id": "s5", "lane": "MAP", "line": 1, "duration_frames": 25, "dialogue": {"who": "a", "to": "b", "text": "No."}}]}
+    assert SP.native_lines(shots, timed["lines"]) == [{"shot_id": "s2", "line": 3, "frames": 49}, {"shot_id": "s3", "line": 5, "frames": 33}]
+    assert SP.native_lines(None, timed["lines"]) == [] and SP.native_lines({"schema": "film_shots/1", "shots": shots["shots"]}, timed["lines"]) == []
+    spine = SP.compile_spine(words, timed, film_shots=shots, refs=REFS)
+    assert [h["shot_id"] for h in spine["post_hoc_shots"]] == ["s2", "s3"] and n > 5
+    assert all(h["source"] == "planned" and h["clip_sha256"] is None for h in spine["post_hoc_shots"])
+    assert spine["total_frames"] == timed["frames"] + 49 + 33
+    bad = {"schema": "film_shots/2", "shots": [{"id": "s9", "lane": "DIALOGUE_CU", "line": n + 4, "duration_frames": 25}]}
+    with pytest.raises(ContractError, match="not a timed line"):
+        SP.compile_spine(words, timed, film_shots=bad, refs=REFS)
