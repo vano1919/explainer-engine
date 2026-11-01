@@ -1196,18 +1196,20 @@ def guard_detached(pid):
 
 # --- sweep, cost ----------------------------------------------------------------------------------------------------
 AUTO_DELETE_AFTER_S = 24 * 3600  # D-92: a stopped pod with nothing on its disks is deleted 24 h after its approved life ended
+# Pods whose until is older than this (2026-11-01 07:00 UTC) existed before the rule and are the creator's to delete by his word.
+AUTO_DELETE_FROM = 1793516400
 
 
 def auto_delete_due(pod, now=None):
     """D-92 (creator, 2026-11-01): True for a stopped pod that bills nothing (0 GB persistent volume: whatever was on the container
     disk is gone, the results live on the vault) and whose approved lifetime (``-until-<epoch>`` in its name) ended at least 24 h
-    ago. A pod without a valid until, or with any volume, is never deleted by this rule."""
+    ago. A pod without a valid until, with any volume, or from before the rule (``AUTO_DELETE_FROM``) is never deleted by this rule."""
     now = time.time() if now is None else now
     pod = norm(pod) or {}
     if pod.get("status") not in ENDED or float(pod.get("volumeInGb") or 0) > 0:
         return False
     until = until_of(pod.get("name"))
-    return until is not None and now >= until + AUTO_DELETE_AFTER_S
+    return until is not None and until >= AUTO_DELETE_FROM and now >= until + AUTO_DELETE_AFTER_S
 
 
 def auto_delete_stopped(api, *, now=None, dry=False):
