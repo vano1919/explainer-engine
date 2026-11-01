@@ -3739,3 +3739,7 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - No COMMUNITY 16 GB card was in stock, so the creator moved the measurement to SECURE (A40 $0.59/h): `p12b_measure` ledger line 0.38 -> 0.63 (pod hard 0.50; 80 % of 0.63 = 0.504), `p12e_hosts` 2.02 -> 1.77 (total stays 5.90), `batching.MEASURE_MAX_USD` 0.30 -> 0.50. Word recorded via `governance ok`. Tests updated to the new numbers (`test_spend_caps.py`, `test_cloud_economy.py`).
 - Haiku watchdog for this pod every 5 min (creator 07:38 UTC; OR-36's 10/20-min bands are the default, his word wins).
 - Costs $0 so far; no pod.
+
+## 2026-11-01 — `runpod create --cuda-min` (the host CUDA floor per image)
+- The create body filtered hosts to CUDA 12.8+ always; the `smoke` image is CUDA 12.4.1, so the floor only removed hosts it runs on. New flag `--cuda-min 12.4..12.8` (`cuda_from`, default unchanged, test `test_cuda_min_picks_a_tail_of_the_ladder_and_refuses_unknown_floors`). A newer image keeps the default.
+- First use: P12b measurement pod, floor 12.4, SECURE, 5 cards tried (5090, 4090, 6000 Ada, A40, L40S): RunPod still answers "no instances available", so the CUDA floor was not the (only) cause. Costs $0.
