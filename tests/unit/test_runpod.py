@@ -940,3 +940,26 @@ def test_d92_a_stopped_pod_with_no_disk_is_deleted_24h_after_its_until(env):
     assert "zero" not in fake.pods and "zero2" not in fake.pods  # both 0 GB and past 24 h
     assert "disk" in fake.pods and "nountil" in fake.pods and "live" in fake.pods
     assert len(rows["auto_deleted"]) == 2
+
+
+def test_d92_auto_delete_stopped_touches_only_the_due_pods(env):
+    fake, api = env
+    day = 24 * 3600
+    fake.pods = {"due": pod("due", "ee-x-until-1000", "EXITED", volumeInGb=0),
+                 "disk": pod("disk", "ee-x-until-1000", "EXITED", volumeInGb=5),
+                 "run": pod("run", "ee-x-until-100", "RUNNING")}
+    assert R.auto_delete_stopped(api, now=1000 + day, dry=True) == ["due ee-x-until-1000"] and "due" in fake.pods
+    assert R.auto_delete_stopped(api, now=1000 + day) == ["due ee-x-until-1000"]
+    assert "due" not in fake.pods and "disk" in fake.pods and fake.pods["run"]["status"] == "RUNNING"
+
+
+def test_d92_the_session_hooks_run_the_auto_delete(monkeypatch):
+    from explainer_engine.cloud import hooks as H
+    calls = []
+    monkeypatch.setattr(R, "api_key", lambda: "k")
+    monkeypatch.setattr(R, "Api", lambda **kw: object())
+    monkeypatch.setattr(R, "auto_delete_stopped", lambda api: calls.append("auto") or ["p1 name"])
+    monkeypatch.setattr(R, "check", lambda api: {"problems": [], "info": []})
+    monkeypatch.setattr(R, "settle_due", lambda api: [])
+    res = H._check()
+    assert calls == ["auto"] and res["info"] == ["auto-deleted (D-92): p1 name"]

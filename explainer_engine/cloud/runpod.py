@@ -1210,6 +1210,24 @@ def auto_delete_due(pod, now=None):
     return until is not None and now >= until + AUTO_DELETE_AFTER_S
 
 
+def auto_delete_stopped(api, *, now=None, dry=False):
+    """D-92: delete every stopped pod for which ``auto_delete_due`` holds; nothing else is touched (no stop, no other delete).
+    One failing pod never stops the rest. Returns the labels of the deleted (or, with ``dry``, deletable) pods."""
+    now = time.time() if now is None else now
+    out = []
+    for p in api.pods():
+        if not auto_delete_due(p, now):
+            continue
+        label = f"{p['id']} {p.get('name')}"
+        try:
+            if not dry:
+                delete(api, p["id"])
+            out.append(label)
+        except (RunPodError, TimeoutError) as e:
+            out.append(f"{label}: NOT deleted ({str(e)[:80]})")
+    return out
+
+
 def sweep(api, *, dry=False, delete_exited=False, now=None):
     """Stop every RUNNING pod outside its approved lifetime; list every stopped pod with what its disk costs per day.
     One failing pod never stops the sweep. Deleting stopped pods needs ``delete_exited`` (the creator's word)."""
