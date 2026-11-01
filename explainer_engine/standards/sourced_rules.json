@@ -6616,6 +6616,7 @@
    ],
    "enforced_by": [
     "explainer_engine/edit/rhythm_profile.py",
+    "explainer_engine/scripting/syllables.py",
     "tests/unit/test_sourced_rules.py"
    ],
    "supersedes": [],
