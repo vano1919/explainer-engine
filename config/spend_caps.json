@@ -22,8 +22,8 @@
     "plan": "project files explainer-engine/blueprint_2026-10-29/paid/PAID_TESTS_PLAN.md (OR-23, confirmed by the OR-24 plan thread)",
     "p12a_smoke": {"runpod_usd": 0.5, "for": "five small pods: the live smoke of the wrapper and the live drills of every stop path (pods 0.40 hard)"},
     "p12b_two_runs": {"runpod_usd": 3.0, "for": "one pod: MVA views + host collage (Qwen-Image-2.1), LTX plain vs Layout-To-Render (pod 2.40 hard)"},
-    "p12e_hosts": {"runpod_usd": 2.02, "for": "DROPPED 2026-10-31 (no permanent hosts, D-89): host sheets void; the money is unassigned until the creator reassigns it (0.38 of the former 2.40 went to p12b_measure)"},
-    "p12b_measure": {"runpod_usd": 0.38, "for": "one measurement pod of P12b's fixed setup (install + base model download, no GPU work); pod hard 0.30; the creator's YES on the card of 2026-10-31 06:50 UTC, tapped 2026-11-01 06:10 UTC (grant up to 0.95, 0.38 used)"}
+    "p12e_hosts": {"runpod_usd": 1.77, "for": "DROPPED 2026-10-31 (no permanent hosts, D-89): host sheets void; the money is unassigned until the creator reassigns it (0.38 of the former 2.40 went to p12b_measure)"},
+    "p12b_measure": {"runpod_usd": 0.63, "for": "one measurement pod of P12b's fixed setup (install + base model download, no GPU work); pod hard 0.50 (raised from 0.30/0.38 on the creator's \"გადადი\" 2026-11-01 07:41 UTC: SECURE A40 instead of a COMMUNITY card, no cheap COMMUNITY stock); the creator's YES on the card of 2026-10-31 06:50 UTC, tapped 2026-11-01 06:10 UTC (grant up to 0.95, 0.38 used)"}
   },
   "runpod": {
     "per_pod_usd": 6.9,

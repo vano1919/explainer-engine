@@ -3734,3 +3734,8 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - Fixed: `p12b_measure.sh` now writes `progress.txt` every 60 s from the first second, so a slow pip/git install cannot trip the 10-minute stall stop (blocker 2). RP-01 needs no change: `--measure` with `--max-usd` <= 0.30 is exempt (`cloud/batching.py rp01`). `runpod dryrun` passes on the new text.
 - Open for the creator (money): on SECURE no 16 GB card is under $0.42/h, so phase B of the download would be cut short at the $0.30 pod cap; the alternatives are COMMUNITY (cheaper, but another host class than P12b) or a higher pod cap.
 - Costs: API ~$1.9, no pod.
+
+## 2026-11-01 — P12b measurement pod: cap raised to a pod of $0.50 (creator "გადადი" 07:41 UTC)
+- No COMMUNITY 16 GB card was in stock, so the creator moved the measurement to SECURE (A40 $0.59/h): `p12b_measure` ledger line 0.38 -> 0.63 (pod hard 0.50; 80 % of 0.63 = 0.504), `p12e_hosts` 2.02 -> 1.77 (total stays 5.90), `batching.MEASURE_MAX_USD` 0.30 -> 0.50. Word recorded via `governance ok`. Tests updated to the new numbers (`test_spend_caps.py`, `test_cloud_economy.py`).
+- Haiku watchdog for this pod every 5 min (creator 07:38 UTC; OR-36's 10/20-min bands are the default, his word wins).
+- Costs $0 so far; no pod.
