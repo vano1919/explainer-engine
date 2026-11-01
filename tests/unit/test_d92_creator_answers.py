@@ -23,3 +23,11 @@ def test_d92_is_in_the_decision_log():
     row = next(l for l in text.splitlines() if l.startswith("| D-92 "))
     for needle in ("24 fps", "170 wpm", "1440x2560", "at most 3 seeds", "ElevenLabs", "auto_delete_due"):
         assert needle in row
+
+
+def test_d92_bp29_is_a_house_rule_with_the_iphone_as_reference():
+    import json
+    rules = json.loads((ROOT / "explainer_engine" / "standards" / "sourced_rules.json").read_text(encoding="utf-8"))["rules"]
+    r = next(x for x in rules if x["id"] == "BP-29")
+    assert r["status"] == "house" and r["thresholds"]["reference_phone_px"] == [1179, 2556]
+    assert SR.T("BP-29", "safe_y_px") == [288, 1248]

@@ -1241,9 +1241,9 @@
   {
    "id": "BP-29",
    "area": "shorts",
-   "status": "hypothesis",
+   "status": "house",
    "severity": "REVIEW",
-   "statement": "A Short keeps captions, labels, stat cards and the hero's face inside the ad safe zone of a 1080 x 1920 frame: x 48-888 px, y 288-1248 px; the face centre sits in the middle third vertically. At another frame size the bands scale by frame / 1080 (1440 x 2560: x 64-1184 px, y 384-1664 px; code: shorts.safe_bands); REVIEW until the phone screenshot (D-91 row 13).",
+   "statement": "A Short keeps captions, labels, stat cards and the hero's face inside the ad safe zone of a 1080 x 1920 frame: x 48-888 px, y 288-1248 px; the face centre sits in the middle third vertically. At another frame size the bands scale by frame / 1080 (1440 x 2560: x 64-1184 px, y 384-1664 px; code: shorts.safe_bands); the reference phone is an iPhone (1179 x 2556 px, 393 x 852 pt at 3x, 19.5:9; the creator's call 2026-11-01), and a Short is judged on that screen. The bands above sit outside every interface element in the creator's phone screenshot of 2026-11-01 (measured: top bar ~12 %, bottom block ~27 %, right rail ~16 % of the screen).",
    "thresholds": {
     "safe_x_px": [
      48,
@@ -1256,6 +1256,10 @@
     "frame": [
      1080,
      1920
+    ],
+    "reference_phone_px": [
+     1179,
+     2556
     ]
    },
    "sources": [
@@ -1287,7 +1291,9 @@
    "supersedes": [
     "P-102 140 px right margin",
     "shorts.py MarginV 430 / L-R 90"
-   ]
+   ],
+   "decided": "the creator, 2026-11-01 07:06 UTC (project thread cmsg_01Hnu5zB86sjUj5GtTgaUkPWGqD9dYQR2yTzxpoWZLp5Qx: take the iPhone sizes as the standard and write it as a rule); the screenshot of 07:03 UTC measured the bands",
+   "next_step": "none: a second phone is not needed"
   },
   {
    "id": "BP-30",
