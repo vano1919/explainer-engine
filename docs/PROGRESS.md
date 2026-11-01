@@ -3760,3 +3760,5 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 2026-11-01 WP-1b: the 8 LTX shot prompts (`docs/pods/P12_PROMPTS.md`, merged into `p12b.json` `ltx.prompts`; no dialogue text for av1/av2); Fable check PASS. `config/spend_caps.json`: claude_api total 95 -> 105 with a `plan_revision` line of $10 (creator's word 2026-11-01 09:34 UTC), pinned test updated.
 
 2026-11-01 WP-1a2: `MODULES["ltx_i2v"]` named from the LTX-2 listing at e98f6d9, `test_p12c_ltx.py::test_flags_resolved`, flags doc updated; Fable check PASS ($0.97).
+
+2026-11-01 `llm/token_stats.py` (+ `tests/unit/test_token_stats.py`): measured output tokens (thinking included) per model/effort/request from the API ledger, and `suggest(effort, expected_answer)` for max_tokens (floor per effort, measured max x1.5, capped calls x2, answer x3). Measured so far: Fable xhigh single-shot plans 25-48k (one capped at 48k), Opus high code 14.6k per file-set turn (one capped at 48k with 5 files), Fable high checks 3.5-7k, audits 13k. Why: creator, "we set max tokens, files end mid-way, we never measure the real size".
