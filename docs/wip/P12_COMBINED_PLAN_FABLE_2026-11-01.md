@@ -202,3 +202,10 @@ Before create: list `code/p12/clay/` and `code/p12/audio/` on HF; read the LTX-2
 2. **Money:** accept that at the measured download rate the combined pod cannot finish LTX inside $2.40/3.5 h, and that `--setup-min 45` is a target — he stops by hand at ~45 min if `measure.json` shows < 25 MB/s? Alternative: the separate $0.50 `--measure` pod first (R2) when stock returns.
 3. **Money:** ElevenLabs ≈ 1500 credits for casting + two takes (needed before create for AV) — still approved?
 4. **Money (text only):** may `spend_caps.json:24` `p12b_two_runs.for` be reworded to "Qwen MVA + LTX-2.5 plain/Layout/AV"?
+## Rhythm update 2026-11-01 (WP-R3, MrBeast-style rhythm, BP-169..172)
+
+The creator asked for fast cartoon actions. Three silent prompts (tent_s2, tent_s3, tent_s4) now name a fast verb from BP-172
+(snaps, bolts/snatches/whips, snaps); the other silent prompts already did (KP-47 lints all six). The AV prompts stay as they are:
+the take drives the mouth and a changed gesture could harm the lip sync. One plain clip, tent_s1 in L3, is rendered at 73 frames
+(3.0 s) instead of 121 (`render.frames_by_shot`) to see how LTX-2.5 behaves at a hyped-zone length; L3 is optional, so the check
+is dropped with it. No new stage, no new unit, so reserves and the drop order are unchanged.

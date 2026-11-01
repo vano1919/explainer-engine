@@ -89,7 +89,13 @@ def _flag(cmd, key, *vals):
         cmd += [f, *[str(v) for v in vals]]
 
 
-def _common(cfg, paths, frames=True):
+def frames_for(cfg, shot):
+    """Frames of a clip: render.frames, except a shot named in render.frames_by_shot (the 73-frame test, BP-172)."""
+    r = cfg["ltx"]["render"]
+    return r.get("frames_by_shot", {}).get(shot, r["frames"])
+
+
+def _common(cfg, paths, frames=True, shot=None):
     r = cfg["ltx"]["render"]
     cmd = []
     _flag(cmd, "image", paths["image"], 0, 1.0)
@@ -97,7 +103,7 @@ def _common(cfg, paths, frames=True):
     _flag(cmd, "width", r["width"])
     _flag(cmd, "height", r["height"])
     if frames:
-        _flag(cmd, "num_frames", r["frames"])
+        _flag(cmd, "num_frames", frames_for(cfg, shot))
     _flag(cmd, "frame_rate", r["fps"])
     _flag(cmd, "seed", r["seed"])
     _flag(cmd, "text_encoder", ltx_file(cfg, "text_encoders/"))
@@ -114,7 +120,7 @@ def cmd_ltx_i2v(cfg, shot, paths):
     DurationHead (distilled.py:237, absent before LTX-2.5) is never asked for a length."""
     cmd = [sys.executable, "-m", MODULES["ltx_i2v"]]
     _flag(cmd, "transformer", ltx_file(cfg, "distilled-transformer"))
-    return cmd + _common(cfg, paths)
+    return cmd + _common(cfg, paths, shot=shot)
 
 
 def cmd_ltx_ic(cfg, shot, paths):
@@ -123,7 +129,7 @@ def cmd_ltx_ic(cfg, shot, paths):
     _flag(cmd, "video_cond", paths["clay"], 1.0)
     _flag(cmd, "lora", ltx_file(cfg, cfg["ltx"]["layout_lora"]["file"]))
     _flag(cmd, "stage2_ic")
-    return cmd + _common(cfg, paths)
+    return cmd + _common(cfg, paths, shot=shot)
 
 
 def cmd_ltx_a2v(cfg, shot, paths):
@@ -346,7 +352,7 @@ def run_stage(name, st, cfg, out, log, inputs, first_unit_s, deadline=None, p12b
         oom = "CUDA out of memory" in err
         side = {"stage": name, "shot": shot, "kind": kind, "seed": r["seed"], "width": r["width"], "height": r["height"],
                 # AV is driven by the take's length (--audio-max-duration, no --num-frames; the pipeline's own steps): never log L1's numbers for it
-                "frames": None if kind == "ltx_a2v" else r["frames"], "fps": r["fps"],
+                "frames": None if kind == "ltx_a2v" else frames_for(cfg, shot), "fps": r["fps"],
                 "steps": None if kind == "ltx_a2v" else {"stage1": r["stage1"]["steps"], "stage2": r["stage2_steps"]},
                 "audio_max_s": inp.get("seconds") if kind == "ltx_a2v" else None,
                 "cmd": [str(c) for c in cmd], "seconds": secs, "rc": rc, "oom": oom,

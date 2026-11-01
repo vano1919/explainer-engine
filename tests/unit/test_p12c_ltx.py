@@ -318,3 +318,14 @@ def test_the_whole_ltx_process_runs_end_to_end_with_stubbed_weights_and_commands
     evs = [json.loads(x)["ev"] for x in (out / "t.jsonl").read_text().splitlines()]
     assert "sha256_mismatch" not in evs and "input_failed" not in evs and "stage_skipped" not in evs
     assert (out / "progress.txt").read_text(encoding="utf-8").strip().endswith("done")
+
+
+def test_the_73_frame_clip_gets_its_own_frame_count_and_the_others_keep_121():
+    mod = _load()
+    cfg = _real_cfg()
+    assert mod.frames_for(cfg, "tent_s1") == 73 and mod.frames_for(cfg, "tent_s0") == 121
+    paths = {"image": "i.png", "prompt": "p.txt", "out": "o.mp4"}
+    flag = mod.FLAGS["num_frames"]
+    for shot, want in (("tent_s1", "73"), ("tent_s3", "121")):
+        cmd = [str(c) for c in mod.cmd_ltx_i2v(cfg, shot, paths)]
+        assert cmd[cmd.index(flag) + 1] == want, shot

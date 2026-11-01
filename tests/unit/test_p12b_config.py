@@ -82,3 +82,20 @@ def test_the_prompts_file_is_the_same_text_as_the_prompts_block():
     copy = json.loads((CFG.parent / "p12b_prompts.json").read_text(encoding="utf-8"))
     c = json.loads(CFG.read_text(encoding="utf-8"))["ltx"]
     assert copy["prompts"] == c["prompts"] and copy["prompt_source"] == c["prompt_source"]
+
+
+def test_the_silent_p12_prompts_name_a_fast_action_and_no_slow_filler():
+    """WP-R3 (BP-172, KP-47): the six silent shots are linted as hyped-zone shots; the AV prompts are driven by the take."""
+    from explainer_engine.scripting.shot_prompt_lint import check_shot
+    c = json.loads(CFG.read_text(encoding="utf-8"))["ltx"]["prompts"]
+    for name in ("tent_s0", "tent_s1", "tent_s2", "tent_s3", "tent_s4", "ship_s2"):
+        found = [f for f in check_shot({"id": name, "kind": "video", "prompt": c[name], "fast_action": True, "seconds": 5})
+                 if f["rule"] == "KP-47"]
+        assert found == [], (name, found)
+        assert not re.search(r"slow breath|tilts his head down|slowly|gently", c[name], re.I), name
+
+
+def test_one_plain_clip_is_rendered_at_73_frames_and_the_rest_at_121():
+    c = json.loads(CFG.read_text(encoding="utf-8"))["ltx"]["render"]
+    assert c["frames"] == 121 and c["frames_by_shot"] == {"tent_s1": 73}
+    assert all((n - 1) % 8 == 0 for n in [c["frames"], *c["frames_by_shot"].values()])   # LTX takes 8k+1 frames
