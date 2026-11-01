@@ -79,3 +79,13 @@ def test_an_unverified_source_does_not_count_as_a_source_type():
     unverified = [s for r in SR.rules() for s in r["sources"] if s["title"].startswith("Blueprint 2026-10 (unverified)")]
     assert unverified and all(s.get("verified") is False for s in unverified)
     assert not any("project-thread-abo4it" in s["url"] for r in SR.rules() for s in r["sources"])
+
+
+def test_bp141_a_and_d_non_character_max_follows_the_d93_lane_mix():
+    """D-93 (the creator, 2026-11-01): 30 % still + 10 % helper are non-character; with BP-109's lane tolerance a plan that meets
+    the mix exactly passes profiles A and D."""
+    from explainer_engine.standards import sourced_rules as SR
+    lanes = SR.T("BP-109", "lane_share")
+    want = lanes["still"] + lanes["helper"] + SR.T("BP-109", "lane_tolerance")
+    profiles = SR.T("BP-141", "episode_structure_profiles")
+    assert profiles["A"]["non_character_max"] == profiles["D"]["non_character_max"] == pytest.approx(want)

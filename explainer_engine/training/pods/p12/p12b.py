@@ -122,6 +122,29 @@ def ltx_download_fits(free_bytes, cfg):
     return free_bytes >= (float(v["expected_gb"]) + float(v["margin_gb"])) * 2 ** 30
 
 
+def av_takes_real(cfg):
+    """True when every AV take has a real sha256 and voice id (no PLACEHOLDER): only then are the 51 GB audio-driven files worth fetching."""
+    takes = cfg["ltx"].get("av", {}).get("takes", {})
+    return bool(takes) and all("PLACEHOLDER" not in str(v.get(k, "PLACEHOLDER")) for v in takes.values() for k in ("sha256", "voice_id"))
+
+
+def ltx_download_jobs(cfg):
+    """(repo, file, revision) in fetch order: the files every LTX stage needs, then the Layout LoRA (L2), then the AV files, and the
+    AV files only when the takes are real (a disk-full or time-out must not cost L1 or L2)."""
+    lt = cfg["ltx"]
+    ll = lt["layout_lora"]
+    jobs = [(lt["repo"], f, lt["revision"]) for f in lt["files"]]
+    jobs.append((ll["repo"], ll["file"], ll["revision"]))
+    if av_takes_real(cfg):
+        jobs += [(lt["repo"], f, lt["revision"]) for f in lt["av_files"]]
+    return jobs
+
+
+def unit_may_start(now, deadline, reserve_s):
+    """The per-unit guard (audit #14): even an essential stage draws no new picture or clip inside the end reserve."""
+    return now < deadline - reserve_s
+
+
 def start_ltx_download(log, cfg):
     """Fetches the LTX-2.5 files (``files`` + ``av_files`` + the Layout LoRA) one by one in a background thread so the Qwen stages
     do not wait for them (not snapshot_download: the repo holds far more than the files listed). Returns the thread, or None when the
@@ -135,9 +158,9 @@ def start_ltx_download(log, cfg):
         log.ev("ltx_download_skipped", why="disk", free_bytes=free, need_gb=float(lt["expected_gb"]) + float(lt["margin_gb"]))
         return None
     from huggingface_hub import hf_hub_download
-    ll = lt["layout_lora"]
-    jobs = [(lt["repo"], f, lt["revision"]) for f in list(lt["files"]) + list(lt["av_files"])]
-    jobs.append((ll["repo"], ll["file"], ll["revision"]))
+    jobs = ltx_download_jobs(cfg)
+    if not av_takes_real(cfg):
+        log.ev("ltx_download_av_skipped", why="takes are placeholders", files=len(lt["av_files"]))
 
     def fetch():
         log.ev("ltx_download_start", repo=lt["repo"], revision=lt["revision"], files=len(jobs))
@@ -455,6 +478,10 @@ def run(cfg, out, deadline, log):
         log.stage_line(f"start {name}")
         todo = units(cfg, name, st)
         for i, u in enumerate(todo, 1):
+            if not unit_may_start(time.time(), deadline, reserve):
+                log.stage_line(f"stopped {name} (end reserve)")
+                log.ev("unit_skipped", stage=name, unit=i, reason="end_reserve")
+                break
             path = Path(str(u["path"]).replace("{OUT}", str(out)))
             path.parent.mkdir(parents=True, exist_ok=True)
             want = u["mva"]

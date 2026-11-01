@@ -5729,12 +5729,12 @@
    "area": "story",
    "status": "hypothesis",
    "severity": "REVIEW",
-   "statement": "Episode structure profiles for the variant planner (stage 1b, VP-02..VP-10): each profile A-D bounds the non-character share of the runtime and the played share of every turn slot; pure map is a helper visual (its share is bounded by BP-109's helper lane) in a run of at most map_run_max_s; the same narration archetype never sits on two adjacent narrated blocks and at most rotation_family_max of one family fall in rotation_window_s; one compensator picture is at most kuleshov_max_s. The numbers are the Blueprint's mode matrix (one source type), so REVIEW only; C and D copy B and A because the Blueprint gives them no number of their own.",
+   "statement": "Episode structure profiles for the variant planner (stage 1b, VP-02..VP-10): each profile A-D bounds the non-character share of the runtime and the played share of every turn slot; pure map is a helper visual (its share is bounded by BP-109's helper lane) in a run of at most map_run_max_s; the same narration archetype never sits on two adjacent narrated blocks and at most rotation_family_max of one family fall in rotation_window_s; one compensator picture is at most kuleshov_max_s. The numbers are the Blueprint's mode matrix (one source type), so REVIEW only; C and D copy B and A because the Blueprint gives them no number of their own. A and D allow 0.43, not the Blueprint's 0.4: D-93 (the creator, 2026-11-01) makes 30 % still + 10 % helper = 40 % of the runtime non-character, and BP-109's lane_tolerance 0.03 is added so a plan that meets D-93 exactly does not fail.",
    "thresholds": {
     "episode_structure_profiles": {
      "A": {
       "name": "cinematic docudrama",
-      "non_character_max": 0.4,
+      "non_character_max": 0.43,
       "turn_scene_share_min": 0.5
      },
      "B": {
@@ -5749,7 +5749,7 @@
      },
      "D": {
       "name": "chronicle dual POV",
-      "non_character_max": 0.4,
+      "non_character_max": 0.43,
       "turn_scene_share_min": 0.5
      }
     },

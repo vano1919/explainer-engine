@@ -316,11 +316,16 @@ def audio_corr(mp4, wav, max_lag_s=0.25, rate=16000):
         return None
 
 
-def run_stage(name, st, cfg, out, log, inputs, first_unit_s):
+def run_stage(name, st, cfg, out, log, inputs, first_unit_s, deadline=None, p12b=None):
     kind, r = st["kind"], cfg["ltx"]["render"]
+    reserve = cfg["end_reserve_min"] * 60
     timeout = cfg["stall_minutes"] * 60 - 60
     res = {"ok": 0, "failed": 0, "oom": False}
     for i, shot in enumerate(st["shots"], 1):
+        if deadline is not None and not p12b.unit_may_start(time.time(), deadline, reserve):
+            log.stage_line(f"stopped {name} (end reserve)")
+            log.ev("unit_skipped", stage=name, shot=shot, reason="end_reserve")
+            break
         inp = inputs.get(shot)
         if (not inp or not inp.get("prompt") or (kind == "ltx_ic" and not inp.get("clay"))
                 or (kind == "ltx_a2v" and not inp.get("wav"))):
@@ -394,7 +399,7 @@ def run(cfg, out, deadline, log, p12b):
         return 0
     log.stage_line("ltx_weights ok")
     no_layout = verify_weights(cfg, [lt["layout_lora"]["file"]])
-    no_av = verify_weights(cfg, lt["av_files"])
+    no_av = verify_weights(cfg, lt["av_files"]) if p12b.av_takes_real(cfg) else list(lt["av_files"])
     inputs = prepare_inputs(cfg, out, log)
     stages, first, done = cfg["stages"], {}, set()
     for name in [n for n in p12b.ordered(stages) if p12b.kind_of(stages[n]) != QWEN]:
@@ -417,7 +422,7 @@ def run(cfg, out, deadline, log, p12b):
             log.ev("stage_skipped", stage=name, reason=why)
             continue
         log.stage_line(f"start {name}")
-        res = run_stage(name, st, cfg, out, log, inputs, first)
+        res = run_stage(name, st, cfg, out, log, inputs, first, deadline, p12b)
         done.add(name)
         if kind == "ltx_a2v" and res["oom"]:
             return 0
@@ -436,6 +441,9 @@ def main():
     deadline = float(os.environ["EE_DEADLINE"])
     p12b = load_p12b()
     log = p12b.Log(out)
+    if not p12b.unit_may_start(time.time(), deadline, cfg["end_reserve_min"] * 60):
+        log.ev("ltx_exit", rc=0, why="inside the end reserve")
+        return 0
     rc = 0
     try:
         rc = run(cfg, out, deadline, log, p12b)

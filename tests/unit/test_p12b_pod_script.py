@@ -156,8 +156,18 @@ def test_the_style_lora_is_merged_at_the_json_weight_0_7_not_a_literal(tmp_path)
 
 
 def _ltx_jobs(cfg):
+    """Fetch order (audit #14): the shared files, the Layout LoRA, and the AV files last (only with real takes)."""
     lt, ll = cfg["ltx"], cfg["ltx"]["layout_lora"]
-    return [(lt["repo"], f, lt["revision"]) for f in lt["files"] + lt["av_files"]] + [(ll["repo"], ll["file"], ll["revision"])]
+    jobs = [(lt["repo"], f, lt["revision"]) for f in lt["files"]] + [(ll["repo"], ll["file"], ll["revision"])]
+    if all("PLACEHOLDER" not in str(v[k]) for v in lt["av"]["takes"].values() for k in ("sha256", "voice_id")):
+        jobs += [(lt["repo"], f, lt["revision"]) for f in lt["av_files"]]
+    return jobs
+
+
+def _real_takes(cfg):
+    for v in cfg["ltx"]["av"]["takes"].values():
+        v["sha256"], v["voice_id"] = "a" * 64, "voice"
+    return cfg
 
 
 def test_the_ltx_download_runs_in_a_background_thread_and_a_failure_does_not_stop_qwen(tmp_path, monkeypatch):
@@ -173,7 +183,7 @@ def test_the_ltx_download_runs_in_a_background_thread_and_a_failure_does_not_sto
     hub.hf_hub_download = boom
     monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
     monkeypatch.setattr(m, "MODELS", tmp_path / "models")
-    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    cfg = _real_takes(json.loads((DIR / "p12b.json").read_text(encoding="utf-8")))
     log = m.Log(tmp_path / "out")
     monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=200 * 2 ** 30))   # the guard is tested below
     th = m.start_ltx_download(log, cfg)
@@ -201,7 +211,7 @@ def test_a_403_on_a_gated_file_is_logged_as_gated_and_the_next_file_is_still_tri
     monkeypatch.setattr(m, "MODELS", tmp_path / "models")
     monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=200 * 2 ** 30))
     cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
-    m.start_ltx_download(m.Log(tmp_path / "out"), cfg).join(5)
+    m.start_ltx_download(m.Log(tmp_path / "out"), _real_takes(cfg)).join(5)
     evs = [json.loads(x) for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
     assert len(seen) == 8 and sum(e["ev"] == "gated_403" for e in evs) == 8
     assert {e["repo"] for e in evs if e["ev"] == "gated_403"} == {"Lightricks/LTX-2.5", "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render"}
@@ -284,3 +294,43 @@ def test_p12b_sh_has_one_ltx_install_line_pinned_to_cloud_pins():
     lines = [ln for ln in t.splitlines() if ln.startswith(("pip install", "git clone")) and "Lightricks/LTX-2" in ln]
     assert len(lines) == 1 and sha in lines[0] and cfg["ltx"]["code"]["sha"] == sha
     assert not (DIR / "p12b_measure.sh").exists()
+
+
+# audit 2026-11-01 #14: no 51 GB AV download without real takes, the Layout LoRA before them, no new unit inside the end reserve
+def test_the_av_files_are_fetched_last_and_only_when_the_takes_are_real(tmp_path, monkeypatch):
+    import sys
+    import types
+    m = _load()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    lt = cfg["ltx"]
+    if not m.av_takes_real(cfg):                                           # the checked-in state until WP-1e
+        jobs = m.ltx_download_jobs(cfg)
+        assert len(jobs) == len(lt["files"]) + 1 and jobs[-1][1] == lt["layout_lora"]["file"]
+        assert not {f for _, f, _ in jobs} & set(lt["av_files"])
+    real = m.ltx_download_jobs(_real_takes(cfg))
+    assert [f for _, f, _ in real[-len(lt["av_files"]):]] == lt["av_files"]
+    assert real[len(lt["files"])][1] == lt["layout_lora"]["file"]          # the Layout LoRA precedes the AV files
+    cfg2 = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    cfg2["ltx"]["av"]["takes"]["av2"]["sha256"] = "PLACEHOLDER_SHA"
+    _real_takes(cfg2)["ltx"]["av"]["takes"]["av2"]["voice_id"] = "PLACEHOLDER"
+    assert not m.av_takes_real(cfg2)                                       # one placeholder is enough to skip
+    hub = types.ModuleType("huggingface_hub")
+    hub.hf_hub_download = lambda repo, filename, **kw: str(tmp_path / filename)
+    monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
+    monkeypatch.setattr(m, "MODELS", tmp_path / "models")
+    monkeypatch.setattr(m.shutil, "disk_usage", lambda p: types.SimpleNamespace(free=200 * 2 ** 30))
+    cfg3 = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    cfg3["ltx"]["av"]["takes"]["av1"]["voice_id"] = "PLACEHOLDER"
+    m.start_ltx_download(m.Log(tmp_path / "out"), cfg3).join(5)
+    evs = [json.loads(x) for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
+    assert any(e["ev"] == "ltx_download_av_skipped" for e in evs)
+    assert next(e for e in evs if e["ev"] == "ltx_download_start")["files"] == len(lt["files"]) + 1
+
+
+def test_no_new_unit_starts_inside_the_end_reserve_even_for_an_essential_stage():
+    m = _load()
+    assert m.unit_may_start(100.0, 1000.0, 600.0) and not m.unit_may_start(400.0, 1000.0, 600.0)
+    src = (DIR / "p12b.py").read_text(encoding="utf-8")
+    assert "unit_may_start(time.time(), deadline, reserve)" in src
+    ltx = (DIR / "p12c_ltx.py").read_text(encoding="utf-8")
+    assert "p12b.unit_may_start(time.time(), deadline, reserve)" in ltx and "inside the end reserve" in ltx

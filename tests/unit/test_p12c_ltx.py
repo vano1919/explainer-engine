@@ -181,3 +181,19 @@ def test_p12c_drop_order_and_essentials():
     st = c["stages"]
     assert [n for n in st if st[n]["essential"]] == ["Q1", "L1", "L2", "AV"]
     assert all(not st[n]["essential"] for n in c["drop_order"])
+
+
+def test_run_stage_draws_no_clip_inside_the_end_reserve(tmp_path):
+    """Audit #14: an essential LTX stage also stops at the end reserve; main exits 0 when it starts inside it."""
+    import json
+    import time
+    m = _load()
+    p12b = m.load_p12b()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    log = p12b.Log(tmp_path)
+    deadline = time.time() + cfg["end_reserve_min"] * 60 - 5          # 5 s inside the reserve
+    st = cfg["stages"]["L1"]
+    res = m.run_stage("L1", st, cfg, tmp_path, log, {}, {}, deadline, p12b)
+    assert res == {"ok": 0, "failed": 0, "oom": False}
+    evs = [json.loads(x)["ev"] for x in (tmp_path / "t.jsonl").read_text().splitlines()]
+    assert evs == ["unit_skipped"]
