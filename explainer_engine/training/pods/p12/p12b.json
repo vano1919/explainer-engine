@@ -120,7 +120,7 @@
   "control": {"repo": "vano1919/tmr-artifacts", "path": "runs/p12b/control/stop_after.txt"},
   "ltx": {
     "repo": "Lightricks/LTX-2.5",
-    "revision": "PLACEHOLDER_SHA",
+    "revision": "49b093a39c19169a8a81721dcc541e07e945232f",
     "local": "ltx",
     "files": [
       "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors",
@@ -139,8 +139,8 @@
     },
     "layout_lora": {
       "repo": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
-      "revision": "PLACEHOLDER_SHA",
-      "file": "PLACEHOLDER_FILE.safetensors"
+      "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",
+      "file": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors"
     },
     "code": {
       "url": "https://github.com/Lightricks/LTX-2",
@@ -161,11 +161,11 @@
       "repo_type": "dataset",
       "paths": {
         "tent_s0": "lora_plan_2026-10-26/train_xworld_v2/p2s/out/p2s/tent_11_s0.png",
-        "tent_s1": "PLACEHOLDER_PREFIX/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s1.png",
-        "tent_s2": "PLACEHOLDER_PREFIX/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s2.png",
-        "tent_s3": "PLACEHOLDER_PREFIX/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s3.png",
-        "tent_s4": "PLACEHOLDER_PREFIX/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s4.png",
-        "ship_s2": "PLACEHOLDER_PREFIX/loop/round_3b/out/loop/X_g_n_0_0+dpl/ship_11_s2.png"
+        "tent_s1": "lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s1.png",
+        "tent_s2": "lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s2.png",
+        "tent_s3": "lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s3.png",
+        "tent_s4": "lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s4.png",
+        "ship_s2": "lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/X_g_n_0_0+dpl/ship_11_s2.png"
       }
     },
     "prompt_source": "PLACEHOLDER (P6 compiler output, or 'hand, SHOT_PROMPTS.md')",
