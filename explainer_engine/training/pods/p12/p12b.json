@@ -293,15 +293,15 @@
       "takes": {
         "av1": {
           "path": "code/p12/audio/av1.wav",
-          "sha256": "PLACEHOLDER_SHA",
-          "voice_id": "PLACEHOLDER",
-          "seconds": 0.0
+          "sha256": "321607ec7308115794d048ab1b5440f2a5ed188acb40819e29f84854260a4649",
+          "voice_id": "HWDDFlsSVOpTSkiLijPq",
+          "seconds": 4.56
         },
         "av2": {
           "path": "code/p12/audio/av2.wav",
-          "sha256": "PLACEHOLDER_SHA",
-          "voice_id": "PLACEHOLDER",
-          "seconds": 0.0
+          "sha256": "21b7e97e4b5d6009997596fd0417a0e2dccc1b426988bd9aa52f9f0f8c859604",
+          "voice_id": "HWDDFlsSVOpTSkiLijPq",
+          "seconds": 3.84
         }
       },
       "images": {

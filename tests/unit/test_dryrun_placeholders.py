@@ -30,10 +30,12 @@ def test_runpod_create_asks_for_it_before_any_money():
 
 
 def test_the_p12_pod_is_refused_until_its_pins_are_filled():
-    """True today (WP-1e fills them); when it fails the pins are filled and this test is deleted with the xfail of test_p12b_pod_script."""
+    """True today: p12b.json is filled (clay, keyframes, AV takes: WP-1e, 2026-11-01), the three script sha lines of p12b.sh are
+    the last pins, set once the code is final. When this fails the pins are filled and it is deleted with the xfail of test_p12b_pod_script."""
     script = (P12 / "p12b.sh").read_text(encoding="utf-8")
     probs = D.placeholder_problems(script, P12)
-    assert any(p.startswith("script: PLACEHOLDER_SHA_P12B_PY") for p in probs) and any(p.startswith("p12b.json:") for p in probs)
+    assert any(p.startswith("script: PLACEHOLDER_SHA_P12B_PY") for p in probs)
+    assert not any(p.startswith("p12b.json:") for p in probs), probs
 
 
 # audit 2026-11-01 #15: the weight repos are in p12b.json, not in the script text; a gated repo needs a proof of access
