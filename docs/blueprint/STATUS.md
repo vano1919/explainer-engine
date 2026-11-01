@@ -27,17 +27,17 @@ answered by Claude without his recorded delegation.
 | P5 | კომპენსატორი, რუკები, HUD | P2, P3b | S2 / Sonnet / high | 3 | — | #47 merged | done | — |
 | P3 | სცენარის ხერხემალი + variant_plan + register_lint | P2, P3b | S2 / Sonnet / high (ქულები Opus) | 4 | — | #40 merged | done | — (A5 = D-79) |
 | P4 | აუდიო-ხერხემალი + sound director | P3, P2, P3b | S3 Opus high → S2 Sonnet high | 4 | — | #51 merged | done | cross-review (plan thread); the creator's admission word and blind A/B answer before any free generator is used (D8, BP-162); the free measurement run after the merge |
-| P5b | წამყვანების სამყარო (უფასო ნაწილი) | P2, P5, P4b | S3 Opus high → S2 Sonnet high | 4 | — | — | todo | — |
-| P6 | shot router, lane-ები, continuity (D-82) | P2, P5, P4, P3b | S3 Opus high → S2 Sonnet high | 5 | — | #110 draft | review | — |
-| P9 | Shorts პლატფორმისთვის + captions | P3, P7, P2 | S2 / Sonnet / medium–high | 5 | — | #110 draft | review | — |
-| P7 | სტეიჯინგი, ფინიშინგი, OTIO, safe_zones | P6, P4, P2 | S2 / Sonnet / high | 6 | — | #110 draft | review | — |
-| P8 | QA: editorial_review, identity, retry router | P7, P6, P4b, P3b | S3 Opus high → S2 Sonnet high | 6 | — | #110 draft | review | — |
-| P10 | დისტრიბუცია (unlisted, პაკეტები) | P9, P8, P2 | S1–S2 / Sonnet / medium | 6 | — | #110 draft | review | — |
-| P11 | ორკესტრატორი dry-run + აგენტები A5-ით | P8, P10, P0b, P0c | S3 Opus high → S2 Sonnet high | 7 | — | #110 draft | review | P0c-ის ანგარიში |
-| P12a | ცოცხალი smoke ≤ $0.50 | P1a | S3 Opus xhigh (გეგმა) → Sonnet high | 2 | — | — | blocked | ვანო: კონსოლის 1, 3; OR-23/24 |
+| P5b | წამყვანების სამყარო (უფასო ნაწილი) | P2, P5, P4b | S3 Opus high → S2 Sonnet high | 4 | — | — | todo | dropped by D-89 (no permanent hosts), not built |
+| P6 | shot router, lane-ები, continuity (D-82) | P2, P5, P4, P3b | S3 Opus high → S2 Sonnet high | 5 | — | #110 merged | review | — |
+| P9 | Shorts პლატფორმისთვის + captions | P3, P7, P2 | S2 / Sonnet / medium–high | 5 | — | #110 merged | review | — |
+| P7 | სტეიჯინგი, ფინიშინგი, OTIO, safe_zones | P6, P4, P2 | S2 / Sonnet / high | 6 | — | #110 merged | review | — |
+| P8 | QA: editorial_review, identity, retry router | P7, P6, P4b, P3b | S3 Opus high → S2 Sonnet high | 6 | — | #110 merged | review | — |
+| P10 | დისტრიბუცია (unlisted, პაკეტები) | P9, P8, P2 | S1–S2 / Sonnet / medium | 6 | — | #110 merged | review | — |
+| P11 | ორკესტრატორი dry-run + აგენტები A5-ით | P8, P10, P0b, P0c | S3 Opus high → S2 Sonnet high | 7 | — | #110 merged | review | P0c-ის ანგარიში |
+| P12a | ცოცხალი smoke ≤ $0.50 | P1a | S3 Opus xhigh (გეგმა) → Sonnet high | 2 | — | — | blocked | the 5 smoke pods passed on 2026-10-31 (about $0.25) and the console steps are done (creator, 2026-11-01); closed once its routing_log line exists |
 | P12d | drills (უფასო, P12a-ს პოდზე) | P1a, P12a | S2 / Sonnet / high | 2 | — | #44 merged | done | P12a |
 | P12b | ორი გაშვება ერთ პოდზე ≤ $2.50 | P12a, P5, P6, P1c | S3 Opus xhigh → Sonnet high | ფული | — | — | blocked | P12a; OR-23/24 |
-| P12e | sheet-ები + turnaround + ფირფიტები ≤ $1 | P5b, P5, P12b | S3 Opus xhigh → Sonnet high | ფული | — | — | blocked | P12b; OR-24; კოლაჟი ვანოსთვის |
+| P12e | sheet-ები + turnaround + ფირფიტები ≤ $1 | P5b, P5, P12b | S3 Opus xhigh → Sonnet high | ფული | — | — | blocked | dropped by D-89 (no host sheets), not built; region backgrounds stay in P12b |
 | P12c | პილოტი: ნაპოლეონი ხელახლა, ჭერებში | P11, P12b, P12e | S3 Opus xhigh (OR-23) → Sonnet high; სიუჟეტი Fable high ვანოს სიტყვით | ფული | — | — | blocked | ყველა ფაზა; OR-15/17/19/24 |
 <!-- /generated:phases -->
 

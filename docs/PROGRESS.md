@@ -3721,3 +3721,6 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 ## 2026-11-01 — BP-29 closed: the iPhone is the reference phone (D-92 item 9)
 - The creator sent a phone screenshot and said: take the iPhone sizes as the standard and write it as a rule. Measured on the screenshot (approximate, one device): top bar ~12 %, bottom block ~27 %, right rail ~16 % of the screen; BP-29's bands (top 15 %, bottom 35 %, right 17.8 %) sit outside all of them, so no number moved. BP-29 is now `house` (was hypothesis REVIEW) with `reference_phone_px` [1179, 2556] (iPhone 15/16, 393 x 852 pt at 3x; sources: Apple spec pages, Use Your Loaf). Test `test_d92_bp29_is_a_house_rule_with_the_iphone_as_reference`.
 - Costs $0.
+
+## 2026-11-01 — STATUS table brought up to date
+- `docs/blueprint/phases.json`: P6-P11 show `#110 merged` (it merged as c686da8; they stay `review` because their thresholds are only proven on real clips in P12b); P5b and P12e say "dropped by D-89, not built"; P12a says the smoke pods passed (2026-10-31, about $0.25) and the console steps are done. The table regenerated with `governance status --write`; `governance check` ok. No code, no spend.

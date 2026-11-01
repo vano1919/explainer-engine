@@ -185,7 +185,7 @@
    "thread": null,
    "pr": null,
    "state": "todo",
-   "waits": null
+   "waits": "dropped by D-89 (no permanent hosts), not built"
   },
   {
    "id": "P6",
@@ -199,7 +199,7 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 5,
    "thread": null,
-   "pr": "#110 draft",
+   "pr": "#110 merged",
    "state": "review",
    "waits": null
   },
@@ -214,7 +214,7 @@
    "routing": "S2 / Sonnet / medium–high",
    "wave": 5,
    "thread": null,
-   "pr": "#110 draft",
+   "pr": "#110 merged",
    "state": "review",
    "waits": null
   },
@@ -229,7 +229,7 @@
    "routing": "S2 / Sonnet / high",
    "wave": 6,
    "thread": null,
-   "pr": "#110 draft",
+   "pr": "#110 merged",
    "state": "review",
    "waits": null
   },
@@ -245,7 +245,7 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 6,
    "thread": null,
-   "pr": "#110 draft",
+   "pr": "#110 merged",
    "state": "review",
    "waits": null
   },
@@ -260,7 +260,7 @@
    "routing": "S1–S2 / Sonnet / medium",
    "wave": 6,
    "thread": null,
-   "pr": "#110 draft",
+   "pr": "#110 merged",
    "state": "review",
    "waits": null
   },
@@ -276,7 +276,7 @@
    "routing": "S3 Opus high → S2 Sonnet high",
    "wave": 7,
    "thread": null,
-   "pr": "#110 draft",
+   "pr": "#110 merged",
    "state": "review",
    "waits": "P0c-ის ანგარიში"
   },
@@ -291,7 +291,7 @@
    "thread": null,
    "pr": null,
    "state": "blocked",
-   "waits": "ვანო: კონსოლის 1, 3; OR-23/24"
+   "waits": "the 5 smoke pods passed on 2026-10-31 (about $0.25) and the console steps are done (creator, 2026-11-01); closed once its routing_log line exists"
   },
   {
    "id": "P12d",
@@ -336,7 +336,7 @@
    "thread": null,
    "pr": null,
    "state": "blocked",
-   "waits": "P12b; OR-24; კოლაჟი ვანოსთვის"
+   "waits": "dropped by D-89 (no host sheets), not built; region backgrounds stay in P12b"
   },
   {
    "id": "P12c",
