@@ -61,6 +61,7 @@ def test_the_plan_numbers_meet_rp01_and_the_hard_pod_cap():
     from explainer_engine.cloud import batching
     plan = json.loads(CFG.read_text(encoding="utf-8"))["plan"]
     s, w = plan["fixed_setup_minutes"], plan["planned_work_minutes"]
+    assert s <= 45 and 170 <= w <= 180                              # the combined plan's numbers (docs/wip/P12_COMBINED_PLAN, 3.F); a change is a new plan
     assert batching.rp01(w, s) == [] and w >= 3 * s                 # RP-01
     assert (s + w) / 60 * plan["price_per_hour_usd"] <= plan["hard_pod_usd"] == 2.40
     assert "NOT measured" in plan["note"]                          # the 20 min download is a target, not a measurement
@@ -68,6 +69,15 @@ def test_the_plan_numbers_meet_rp01_and_the_hard_pod_cap():
 
 def test_the_ltx_block_lists_every_file_it_downloads_and_its_reserve_adds_up():
     lt = json.loads(CFG.read_text(encoding="utf-8"))["ltx"]
-    assert set(lt["sizes"]) <= set(lt["av_files"]) and len(lt["files"]) == 5 and len(lt["av_files"]) == 2
-    assert lt["expected_gb"] >= sum(lt["sizes"].values()) / 2 ** 30 and lt["margin_gb"] > 0
+    assert len(lt["files"]) == 5 and len(lt["av_files"]) == 2
+    # a size for EVERY downloaded file (audit 2026-11-01 #11): verify_weights stops a stage whose file is truncated
+    assert set(lt["sizes"]) == set(lt["files"]) | set(lt["av_files"]) | {lt["layout_lora"]["file"]}
+    assert lt["expected_gb"] >= sum(lt["sizes"].values()) / 2 ** 30 and lt["margin_gb"] > 0     # 114.8 GiB of files, 119 planned
     assert lt["reserve_min"] == sum(lt["reserve_parts_min"].values()) and lt["reserve_measured"] is False
+
+
+def test_the_prompts_file_is_the_same_text_as_the_prompts_block():
+    """docs/pods/P12_PROMPTS.md names p12b_prompts.json as the copy of ltx.prompts; they must not drift (audit 2026-11-01 #12)."""
+    copy = json.loads((CFG.parent / "p12b_prompts.json").read_text(encoding="utf-8"))
+    c = json.loads(CFG.read_text(encoding="utf-8"))["ltx"]
+    assert copy["prompts"] == c["prompts"] and copy["prompt_source"] == c["prompt_source"]

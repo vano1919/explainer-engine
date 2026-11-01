@@ -1007,7 +1007,7 @@ def shotlist(doc: dict) -> str:
                 lines.append(f"- Video ({p['model']}, {p['frames']} frames at {p['fps']} fps):{extra}")
                 lines.append(f"  > {p['prompt']}")
             else:
-                head = "Last frame (settle, scene LoRA)" if p["id"].endswith(".last") else label[p["kind"]]
+                head = "Last frame (settle, style LoRA)" if p["id"].endswith(".last") else label[p["kind"]]
                 lines.append(f"- {head}:")
                 lines.append(f"  > {p['prompt']}")
         t += s["seconds"]

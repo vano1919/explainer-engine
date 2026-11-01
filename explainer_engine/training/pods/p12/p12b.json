@@ -200,9 +200,16 @@
       "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors"
     ],
     "sizes": {
+      "diffusion_models/ltx-2.5-22b-distilled-transformer-bf16.safetensors": 42018190584,
+      "text_encoders/gemma4-12b-with-proj-ltx-2.5-bf16.safetensors": 26263858182,
+      "vae/ltx-2.5-video-vae-bf16.safetensors": 1472223346,
+      "vae/ltx-2.5-audio-vae-bf16.safetensors": 364866540,
+      "latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors": 995778752,
       "diffusion_models/ltx-2.5-22b-dev-transformer-bf16.safetensors": 42018190584,
-      "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors": 8899889568
+      "loras/ltx-2.5-22b-distilled-lora-450-bf16.safetensors": 8899889568,
+      "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors": 1308787439
     },
+    "sizes_source": "Hub file listing of Lightricks/LTX-2.5 and Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render read 2026-11-01 (hf_fs ls -l, main); a size mismatch after download stops that stage (verify_weights)",
     "layout_lora": {
       "repo": "Lightricks/LTX-2.5-22b-IC-LoRA-Layout-To-Render",
       "revision": "bd765d5592f0ae78457162852a353b6a375cb00f",

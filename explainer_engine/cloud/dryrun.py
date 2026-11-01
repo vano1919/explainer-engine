@@ -284,6 +284,22 @@ def record(rec):
     return DIR / f"{rec['sha256']}.json"
 
 
+PLACEHOLDER = re.compile(r"\bPLACEHOLDER\w*")
+
+
+def placeholder_problems(text, folder=None):
+    """A pod must never start on a pin that was never filled (audit 2026-11-01: a sha256 line read PLACEHOLDER_SHA_*, so the pod would
+    bill its install and then exit at ``sha256sum -c``). Looks in the script text and, when ``folder`` is given, in every file of that
+    folder (not below it) whose name the script mentions: the job files it fetches. Empty = no placeholder left."""
+    out = [f"script: {m.group(0)} (a pin that was never filled)" for m in PLACEHOLDER.finditer(text or "")]
+    if folder is not None and Path(folder).is_dir():
+        for f in sorted(Path(folder).iterdir()):
+            if f.is_file() and f.suffix in (".py", ".json", ".sh", ".yaml", ".toml") and f.name in (text or "") and f.read_text(encoding="utf-8", errors="replace") != text:
+                hits = sorted({m.group(0) for m in PLACEHOLDER.finditer(f.read_text(encoding="utf-8", errors="replace"))})
+                out += [f"{f.name}: {h} (a pin that was never filled)" for h in hits]
+    return out
+
+
 def passed(text, *, pins_path=None):
     """Refusals for a script pod without a passing dry run of exactly this text (empty = it passed, against today's pins)."""
     sha = sha256_of(text)

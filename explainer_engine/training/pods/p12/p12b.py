@@ -151,7 +151,7 @@ def start_ltx_download(log, cfg):
 
 
 def creator_stop_after(cfg, log, timeout_s=20):
-    """The creator's soft stop: the first word of ``control.path`` on HF (one of Q1 Q2 Q3 L1 L3 L2 AV), or None. A missing file, a
+    """The creator's soft stop: the first word of ``control.path`` on HF (one of M Q1 Q2 Q3 L1 L3 L2 AV), or None. A missing file, a
     network error or a read longer than ``timeout_s`` is no stop (``control_check_failed``); this never raises."""
     c = cfg.get("control")
     if not c:
@@ -348,6 +348,28 @@ def units(cfg, name, stage):
     return out
 
 
+class ticker:
+    """``with ticker(log, "loading the model"):`` rewrites progress.txt every minute while the block runs (the stall rule must see change)."""
+
+    def __init__(self, log, text, every=60):
+        self.log, self.text, self.every, self.stop = log, text, every, threading.Event()
+
+    def __enter__(self):
+        t0 = time.time()
+
+        def tick():
+            while not self.stop.wait(self.every):
+                self.log.progress(f"{self.text} {int(time.time() - t0)} s")
+
+        self.log.progress(self.text)
+        threading.Thread(target=tick, daemon=True).start()
+        return self
+
+    def __exit__(self, *exc):
+        self.stop.set()
+        return False
+
+
 def main():
     here = Path(__file__).resolve().parent
     cfg = json.loads((here / CFG_NAME).read_text(encoding="utf-8"))
@@ -373,6 +395,9 @@ def run(cfg, out, deadline, log):
     base = timed_download(log, "base", base_dir, lambda: snapshot_download(
         cfg["base"]["repo"], revision=cfg["base"]["revision"], local_dir=str(base_dir)))
     write_measure(log, out, dir_bytes(base_dir), time.time() - t_dl)          # stage M
+    if stop_here(cfg, log, out, "M"):                                          # the creator may stop right after the measurement
+        log.progress("creator stop")
+        return 0
     sl = cfg["style_lora"]
     style = timed_download(log, "style_lora", MODELS / "style", lambda: hf_hub_download(
         sl["hf"], sl["path"], repo_type="dataset", local_dir=str(MODELS / "style")))
@@ -394,13 +419,14 @@ def run(cfg, out, deadline, log):
 
     ltx = start_ltx_download(log, cfg)                         # in parallel with the model load and the Qwen stages
     t0 = time.time()
-    pipe = load_pipeline(base)
-    from videox_fun.utils import merge_lora, unmerge_lora    # the call shape of xworld_v1_test.py (pipe in, pipe out)
-    dt = torch.bfloat16
-    gu = GateUp(pipe.transformer)
-    w = style_weight(cfg)                                      # xworld_v2 at 0.7 (creator 2026-10-31), from p12b.json
-    pipe = merge_lora(pipe, style, w, device="cuda", dtype=dt)
-    log.ev("lora_gate_up", lora="style", sign=w, layers=gu.gate_up(style, w))
+    with ticker(log, "loading the model"):
+        pipe = load_pipeline(base)
+        from videox_fun.utils import merge_lora, unmerge_lora    # the call shape of xworld_v1_test.py (pipe in, pipe out)
+        dt = torch.bfloat16
+        gu = GateUp(pipe.transformer)
+        w = style_weight(cfg)                                      # xworld_v2 at 0.7 (creator 2026-10-31), from p12b.json
+        pipe = merge_lora(pipe, style, w, device="cuda", dtype=dt)
+        log.ev("lora_gate_up", lora="style", sign=w, layers=gu.gate_up(style, w))
     mva_on = None                                              # the MVA strength merged now (None = not merged)
     log.ev("model_loaded", seconds=round(time.time() - t0, 1))
 

@@ -91,3 +91,17 @@ def test_p12_specs_are_usable_and_static_camera():
     assert C.load_spec(f"{SPECS}#tent_s3")["id"] == "tent_s3"
     with pytest.raises(SystemExit):
         C.load_spec(f"{SPECS}#nope")
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="needs ffmpeg")
+def test_the_same_spec_renders_to_the_same_bytes_because_the_clip_is_pinned_by_sha256(tmp_path):
+    """p12b.json pins each clay clip by sha256 (audit 2026-11-01 #20): a re-render must give the same file."""
+    a, b = tmp_path / "a.mp4", tmp_path / "b.mp4"
+    C.render(_spec(), a)
+    C.render(_spec(), b)
+    assert a.read_bytes() == b.read_bytes()
+
+
+def test_a_size_override_that_does_not_divide_by_64_is_refused(tmp_path):
+    with pytest.raises(ValueError, match="divide by 64"):
+        C.render(_spec(width=192, height=128), tmp_path / "x.mp4", width=1000, height=700)

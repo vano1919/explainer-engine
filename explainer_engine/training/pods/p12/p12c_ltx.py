@@ -273,11 +273,46 @@ def run_cmd(cmd, timeout, log, label):
 
 
 def audio_matches(mp4, take_sha):
-    """Plan 3.4b pass criterion 1: the sha256 of the clip's audio track as WAV equals the take's (None when ffmpeg fails)."""
+    """Plan 3.4b pass criterion 1 as written: the sha256 of the clip's audio track as WAV equals the take's (None when ffmpeg fails). It
+    holds only when the audio is copied untouched; ``audio_corr`` is the check that survives a re-encode."""
     try:
         p = subprocess.run(["ffmpeg", "-v", "error", "-i", str(mp4), "-vn", "-f", "wav", "-"], capture_output=True, timeout=300)
         return hashlib.sha256(p.stdout).hexdigest() == take_sha if p.returncode == 0 else None
     except (OSError, subprocess.TimeoutExpired):
+        return None
+
+
+def _pcm(path, rate=16000):
+    """Mono 16 kHz float samples of any file's first audio track through ffmpeg (None when ffmpeg fails)."""
+    import numpy as np
+    p = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-vn", "-ac", "1", "-ar", str(rate), "-f", "s16le", "-"],
+                       capture_output=True, timeout=300)
+    if p.returncode != 0 or not p.stdout:
+        return None
+    return np.frombuffer(p.stdout, dtype=np.int16).astype("float32") / 32768.0
+
+
+def audio_corr(mp4, wav, max_lag_s=0.25, rate=16000):
+    """How alike the clip's audio and the take are: the best normalised correlation over lags of +-``max_lag_s`` of both decoded to mono
+    16 kHz PCM, plus the two lengths. The clip's audio is re-encoded (a container sha256 can never match, audit 2026-11-01 #17), so the
+    comparison is on the samples. Returns {"corr", "lag_s", "clip_s", "take_s"} or None; no threshold is applied here (the creator's call)."""
+    try:
+        import numpy as np
+        a, b = _pcm(mp4, rate), _pcm(wav, rate)
+        if a is None or b is None:
+            return None
+        n = min(len(a), len(b))
+        if n < rate // 10:
+            return None
+        m, best = int(max_lag_s * rate), (-2.0, 0)
+        for lag in range(-m, m + 1, max(1, rate // 200)):                  # 5 ms steps
+            x, y = (a[lag:n], b[:n - lag]) if lag >= 0 else (a[:n + lag], b[-lag:n])
+            d = float(np.linalg.norm(x) * np.linalg.norm(y))
+            c = float(np.dot(x, y) / d) if d else 0.0
+            if c > best[0]:
+                best = (c, lag)
+        return {"corr": round(best[0], 4), "lag_s": round(best[1] / rate, 3), "clip_s": round(len(a) / rate, 2), "take_s": round(len(b) / rate, 2)}
+    except (OSError, subprocess.TimeoutExpired, ValueError):
         return None
 
 
@@ -300,13 +335,17 @@ def run_stage(name, st, cfg, out, log, inputs, first_unit_s):
         secs = round(time.time() - t, 1)
         oom = "CUDA out of memory" in err
         side = {"stage": name, "shot": shot, "kind": kind, "seed": r["seed"], "width": r["width"], "height": r["height"],
-                "frames": r["frames"], "fps": r["fps"], "steps": {"stage1": r["stage1"]["steps"], "stage2": r["stage2_steps"]},
+                # AV is driven by the take's length (--audio-max-duration, no --num-frames; the pipeline's own steps): never log L1's numbers for it
+                "frames": None if kind == "ltx_a2v" else r["frames"], "fps": r["fps"],
+                "steps": None if kind == "ltx_a2v" else {"stage1": r["stage1"]["steps"], "stage2": r["stage2_steps"]},
+                "audio_max_s": inp.get("seconds") if kind == "ltx_a2v" else None,
                 "cmd": [str(c) for c in cmd], "seconds": secs, "rc": rc, "oom": oom,
                 "stderr_tail": err if rc != 0 else "",
                 "inputs": {k: inp.get(k) for k in ("keyframe_sha256", "clay_sha256", "take_sha256", "voice_id")},
                 "model_files": [str(c) for c in cmd if str(c).endswith(".safetensors")]}
         if rc == 0 and kind == "ltx_a2v":
-            side["audio_sha_match"] = audio_matches(mp4, inp["take_sha256"])
+            side["audio_sha_match"] = audio_matches(mp4, inp["take_sha256"])    # only true when the clip carries the take's samples untouched
+            side["audio_corr"] = audio_corr(mp4, inp["wav"])                    # the evidence that counts: samples, not container bytes
         if rc == 0 and kind == "ltx_ic":
             (Path(out) / "ltx" / "clay").mkdir(parents=True, exist_ok=True)
             shutil.copy(inp["clay"], Path(out) / "ltx" / "clay" / f"{shot}.mp4")

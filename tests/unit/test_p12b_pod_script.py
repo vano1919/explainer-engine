@@ -220,3 +220,35 @@ def test_the_ltx_download_is_skipped_when_the_free_disk_is_below_ltx_plus_margin
     evs = [json.loads(x) for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
     assert [e["ev"] for e in evs] == ["ltx_download_skipped"] and evs[0]["why"] == "disk"
     assert "ltx is not None and ltx.is_alive()" in (DIR / "p12b.py").read_text(encoding="utf-8")
+
+
+# audit 2026-11-01 (#10, #13): the stall rule must see change during installs and the model load; the creator may stop after M
+def test_p12b_sh_writes_progress_from_the_first_second_and_stops_the_writer_before_the_real_work():
+    t = (DIR / "p12b.sh").read_text(encoding="utf-8")
+    writer, first_install, killed = t.index("while sleep 60"), t.index("pip install"), t.index('kill "$PROG0"')
+    assert writer < first_install < killed < t.index('python3 "$JOB/p12b.py"')
+    assert killed < t.index('if [ "${DRY:-0}" = "1" ]')                  # a DRY run ends without a writer left behind
+
+
+def test_the_ticker_rewrites_progress_while_a_block_runs_and_stops_after_it(tmp_path):
+    import time
+    m = _load()
+    log = m.Log(tmp_path)
+    with m.ticker(log, "loading the model", every=0.05):
+        time.sleep(0.3)
+        mid = (tmp_path / "progress.txt").read_text(encoding="utf-8")
+    assert "loading the model" in mid and mid.rstrip().endswith(" s")      # the first line has no seconds: a tick has rewritten it
+    after = (tmp_path / "progress.txt").read_text(encoding="utf-8")
+    time.sleep(0.2)
+    assert (tmp_path / "progress.txt").read_text(encoding="utf-8") == after
+
+
+def test_the_creator_can_stop_right_after_stage_m(tmp_path, monkeypatch):
+    m = _load()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    monkeypatch.setattr(m, "creator_stop_after", lambda cfg, log, timeout_s=20: "M")
+    log = m.Log(tmp_path)
+    assert m.stop_here(cfg, log, tmp_path, "M") is True
+    assert (tmp_path / "control" / "stopped_after.txt").read_text(encoding="utf-8") == "M\n"
+    assert m.stop_here(cfg, log, tmp_path, "Q1") is False
+    assert "stop_here(cfg, log, out, \"M\")" in (DIR / "p12b.py").read_text(encoding="utf-8")

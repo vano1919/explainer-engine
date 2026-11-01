@@ -19,7 +19,7 @@
       "size_gb": 6.58,
       "pull_mb_per_s": null,
       "smoke_verified": false,
-      "decision": "paid plan §3: P12b/P12e run on the aitoolkit image (round 2-3b used :latest, now pinned)"
+      "decision": "paid plan §3: P12b (the combined P12 pod) runs on the aitoolkit image (round 2-3b used :latest, now pinned)"
     },
     "smoke": {
       "repo": "runpod/pytorch",

@@ -20,6 +20,9 @@ ev() { printf '{"t":"%s","ev":"%s"%s}\n' "$(date -u +%FT%TZ)" "$1" "${2:+,$2}" >
 trap 'exit 143' TERM
 ev script_start "\"deadline\":\"${EE_DEADLINE:-}\",\"pod\":\"${RUNPOD_POD_ID:-}\""
 printf '%s start\n' "$(date -u +%T)" > "$EE_OUT/progress.txt"
+# progress writer from the first second: a slow install must not look like a stall (audit 2026-11-01); p12b.py takes progress.txt over
+T0=$(date +%s)
+( while sleep 60; do printf '%s install alive %s s\n' "$(date -u +%T)" "$(( $(date +%s) - T0 ))" > "$EE_OUT/progress.txt"; done ) & PROG0=$!
 
 # install: pinned commits and versions only
 pip install -q "huggingface_hub==1.33.0" "git+https://github.com/huggingface/diffusers@d8c1b13c756df0059bcdb6e477a1eafcd502098d" "git+https://github.com/huggingface/peft@ebf159f74d80a0d406f7afa943ede73b3901c20e" || { ev install_failed "\"step\":\"pip\""; exit 1; }
@@ -34,6 +37,7 @@ git clone -q https://github.com/Lightricks/LTX-2.git /workspace/LTX-2 && git -C 
 ( cd /workspace/VideoX-Fun && python3 -c "from videox_fun.pipeline import QwenImage21Pipeline; print('videox import ok')" ) || { ev install_failed "\"step\":\"import\""; exit 1; }
 python3 -c "import ltx_pipelines; print('ltx import ok')" || { ev install_failed "\"step\":\"ltx_import\""; exit 1; }
 timeout 120 python3 -c "import torch; x=torch.ones(8,device='cuda'); print('cuda ok', torch.cuda.get_device_name(0), (x*2).sum().item())" || { ev cuda_failed; exit 1; }
+kill "$PROG0" 2>/dev/null
 if [ "${DRY:-0}" = "1" ]; then exit 0; fi
 
 # the job files: from the vault copy, checked against the sha256 pinned here (a changed file means a changed script text)

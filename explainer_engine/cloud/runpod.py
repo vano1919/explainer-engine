@@ -1829,6 +1829,7 @@ def main(argv=None, api=None, live=None):
             from explainer_engine.cloud import batching, dryrun
             led = Run.open(ledger)
             script_sha = dryrun.sha256_of(script)
+            batch_why += [f"placeholder: {w}" for w in dryrun.placeholder_problems(script, Path(script_file).parent)]
             weights = sorted(rid for rid, kind in dryrun.repo_ids(script) if kind == "model")
             earlier = [v.get("weights") or [] for v in led.data["items"].get("pod_plans", {}).values()]
             fails = led.data.get("failures", {})

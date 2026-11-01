@@ -203,16 +203,17 @@ def _clip_near(cam: np.ndarray, near: float = 0.05):
 
 def render(spec: dict, out: Path, *, width: int | None = None, height: int | None = None, frames: int | None = None) -> dict:
     """The clip as H.264 mp4 (yuv420p, the spec's fps), exactly 8k+1 frames; returns its facts."""
-    problems = check_spec(spec)
+    w, h = int(width or spec.get("width", 1920)), int(height or spec.get("height", 1088))
+    problems = check_spec({**spec, "width": w, "height": h})          # the override is checked too, not only the spec's own size
     if problems:
         raise ValueError("; ".join(problems))
-    w, h = int(width or spec.get("width", 1920)), int(height or spec.get("height", 1088))
     n = snap_frames(frames) if frames else frame_count(spec)
     fps = int(spec.get("fps", 24))
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(".part.mp4")
     ff = subprocess.Popen(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{w}x{h}", "-r", str(fps),
-                           "-i", "-", "-frames:v", str(n), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "16", str(tmp)],
+                           "-i", "-", "-frames:v", str(n), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "16",
+                           "-threads", "1", "-fflags", "+bitexact", "-flags:v", "+bitexact", "-map_metadata", "-1", str(tmp)],
                           stdin=subprocess.PIPE)
     try:
         for i in range(n):
