@@ -29,7 +29,9 @@ FLAGS = {
     "prompt": "--prompt",                         # utils/args.py:813 (basic_arg_parser, required)
     "width": "--width",                           # utils/args.py:990 (new_video_gen_arg_parser)
     "height": "--height",                         # utils/args.py:984 (new_video_gen_arg_parser)
-    "num_frames": "--num-frames",                 # utils/args.py:966 (8k+1); a2vid default None (a2vid_two_stage.py:563)
+    # utils/args.py:966 (8k+1); with supports_auto_duration=True (distilled.py:516) it is args.py:940, default None;
+    # a2vid default None (a2vid_two_stage.py:563)
+    "num_frames": "--num-frames",
     "frame_rate": "--frame-rate",                 # utils/args.py:997
     "seed": "--seed",                             # utils/args.py:759 (add_seed_arg)
     "output": "--output-path",                    # utils/args.py:819 (basic_arg_parser, required)
@@ -50,9 +52,9 @@ FLAGS = {
     "fp8": "--quantization=fp8-cast",
 }
 MODULES = {
-    # Absent from the passed e98f6d9 text: no distilled I2V CLI module was among the files read (README.md:12 names
-    # DistilledPipeline, but not its module). Kept PLACEHOLDER so run() skips L1/L3 "module unverified" (see the doc).
-    "ltx_i2v": "PLACEHOLDER_MODULE",
+    # distilled.py:510 main(), :512 resolve_cli_params(distilled=True), :516 default_2_stage_distilled_arg_parser
+    # (supports_auto_duration=True); --image -> images= distilled.py:542 (image conditioning, L1/L3)
+    "ltx_i2v": "ltx_pipelines.distilled",
     "ltx_ic": "ltx_pipelines.ic_lora",            # ic_lora.py:813 main(), :815 resolve_cli_params(distilled=True)
     "ltx_a2v": "ltx_pipelines.a2vid_two_stage",   # a2vid_two_stage.py:596 main(), :599 build_a2vid_arg_parser
 }
@@ -108,6 +110,8 @@ def _common(cfg, paths, frames=True):
 
 
 def cmd_ltx_i2v(cfg, shot, paths):
+    """L1/L3: the distilled two-stage pipeline (distilled.py:161 DistilledPipeline); --num-frames is always given, so the
+    DurationHead (distilled.py:237, absent before LTX-2.5) is never asked for a length."""
     cmd = [sys.executable, "-m", MODULES["ltx_i2v"]]
     _flag(cmd, "transformer", ltx_file(cfg, "distilled-transformer"))
     return cmd + _common(cfg, paths)
@@ -357,7 +361,7 @@ def run(cfg, out, deadline, log, p12b):
     for name in [n for n in p12b.ordered(stages) if p12b.kind_of(stages[n]) != QWEN]:
         st, kind = stages[name], stages[name]["kind"]
         why = None
-        if MODULES[kind].startswith("PLACEHOLDER"):
+        if not MODULES.get(kind):
             why = "module unverified"
         elif kind == "ltx_ic" and no_layout:
             why = "no layout lora"
