@@ -4461,7 +4461,8 @@
    "enforced_by": [
     "explainer_engine/scripting/film_shots.py:LANE_SHARE",
     "explainer_engine/scripting/film_shots.py:visual_lane",
-    "explainer_engine/scripting/variant_plan.py:checks"
+    "explainer_engine/scripting/variant_plan.py:checks",
+    "explainer_engine/edit/dramatic_still.py"
    ],
    "supersedes": [
     "the critic's plan review 2026-10-23: 40 % still + camera",
@@ -6646,6 +6647,7 @@
    },
    "sources": [],
    "enforced_by": [
+    "explainer_engine/edit/dramatic_still.py",
     "tests/unit/test_sourced_rules.py"
    ],
    "supersedes": [],
