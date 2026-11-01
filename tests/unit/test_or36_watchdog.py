@@ -32,6 +32,6 @@ def test_the_watchdog_page_names_only_read_only_runpod_commands():
 def test_or36_is_in_orchestration_and_is_not_a_spawner():
     text = (ROOT / "docs" / "ORCHESTRATION.md").read_text(encoding="utf-8")
     row = next(l for l in text.splitlines() if l.startswith("| OR-36 "))
-    assert "paid-run-watchdog" in row and "80 %" in row
+    assert "paid-run-watchdog" in row and "80 %" in row and "separate Haiku watchdog thread" in row
     cfg = json.loads((ROOT / "config" / "model_routing.json").read_text(encoding="utf-8"))
     assert "paid-run-watchdog" not in cfg["spawners"]

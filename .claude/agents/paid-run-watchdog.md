@@ -1,6 +1,6 @@
 ---
 name: paid-run-watchdog
-description: The cheap read-only watchdog of every paid run (OR-36, creator 2026-10-30). Launched by the main agent next to a pod, an API job or a generation batch; it only looks at the run's state, logs and bill and reports at the interval the main agent names, and it never stops, deletes, creates or edits anything. Use whenever a paid run is started.
+description: Stage page (OR-20, D-79): followed by the cheap read-only watchdog THREAD of every paid run (OR-36, creator 2026-10-30); the main agent starts that Haiku thread beside a pod, an API job or a generation batch, it is not an agent spawned inside the main agent. It only looks at the run's state, logs and bill and reports at the interval the main agent names; it never stops, deletes, creates or edits anything.
 model: haiku
 effort: low
 tools: Bash, Read, Grep, Glob
