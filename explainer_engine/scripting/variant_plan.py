@@ -20,7 +20,7 @@ import json
 import sys
 from pathlib import Path
 
-from explainer_engine.core import contracts, ledger, spend_caps
+from explainer_engine.core import contracts, delivery, ledger, spend_caps
 from explainer_engine.scripting import film_shots, syllables
 from explainer_engine.standards import sourced_rules as SR
 
@@ -540,7 +540,7 @@ def brief(dossier_dir: Path | str, *, traits: dict | None = None) -> dict:
             "lanes": {k: {"available": v["available"], **({"phase": v["phase"]} if "phase" in v else {})} for k, v in LANES.items()},
             "caps": {"per_episode": caps.get("per_episode"), "per_pod_usd": caps.get("runpod", {}).get("per_pod_usd"),
                      "stop_fraction": ledger.STOP_FRACTION},
-            "job_speeds_measured": JOB_SPEEDS.exists(), "template_d_target_s": 900}
+            "job_speeds_measured": JOB_SPEEDS.exists(), "episode_runtime_s": delivery.long_minutes() * 60}
 
 
 def napoleon_variants(*, speeds: dict | None = None, caps: dict | None = None) -> dict:
