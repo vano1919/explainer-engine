@@ -4448,7 +4448,7 @@
      "still": 0.3,
      "helper": 0.1
     },
-    "lane_tolerance": 0.03,
+    "lane_tolerance": 0.05,
     "still_shot_max_s": 5.0
    },
    "sources": [
@@ -4470,7 +4470,7 @@
     "BP-141 map_pure_max = 0.25: a pure map is a helper visual, bounded by lane_share.helper + lane_tolerance",
     "D-75's 'replaces ASSET_COMPOSE's code-composed shots' for the still lane (D-93)"
    ],
-   "decided": "the creator, 2026-11-01 10:16 UTC: 10 % helper visuals made by Python (maps, progress, calculations), 30 % still frames where Python adds and moves objects, cut fast enough and matched to the narrator, 60 % real videos; every old rule that contradicts it is rewritten"
+   "decided": "the creator, 2026-11-01 10:16 UTC: 10 % helper visuals made by Python (maps, progress, calculations), 30 % still frames where Python adds and moves objects, cut fast enough and matched to the narrator, 60 % real videos; every old rule that contradicts it is rewritten; 2026-11-01 20:03 UTC: the 60/30/10 are approximate and must not cost the video anything, tolerance +-5 % (lane_tolerance 0.03 -> 0.05)"
   },
   {
    "id": "BP-110",
@@ -5735,7 +5735,7 @@
     "episode_structure_profiles": {
      "A": {
       "name": "cinematic docudrama",
-      "non_character_max": 0.43,
+      "non_character_max": 0.45,
       "turn_scene_share_min": 0.5
      },
      "B": {
@@ -5750,7 +5750,7 @@
      },
      "D": {
       "name": "chronicle dual POV",
-      "non_character_max": 0.43,
+      "non_character_max": 0.45,
       "turn_scene_share_min": 0.5
      }
     },
@@ -6321,9 +6321,9 @@
   {
    "id": "BP-169",
    "area": "rhythm",
-   "status": "hypothesis",
+   "status": "house",
    "severity": "REVIEW",
-   "statement": "The channel's rhythm is a named profile with five zones of a 720 s episode (hook 0-30 s, early 30-90 s, calm middle 90-480 s, late third 480-660 s, climax 660-720 s). Each zone carries its own narration pace, shots per minute, shot length, dramatic changes per minute, still hold, tease cadence, sound density and camera share. This row is the ONE home of the zone numbers; code reads them through the profile reader, never a copy. The heard-pace numbers of the zones are measured on MrBeast's videos (hook 193, 30-60 s 176, middle 166 words per minute); the cut, event, tease and sound numbers are partly reported and partly estimates adapted to a 2D cartoon, so the whole profile is REVIEW until the creator confirms it as a house rule. The older 'calm_docudrama' profile is the set of the other BP rows (BP-01, BP-107, BP-85, BP-40 ...) and stays unchanged.",
+   "statement": "The channel's rhythm is a named profile with five zones of a 720 s episode (hook 0-30 s, early 30-90 s, calm middle 90-480 s, late third 480-660 s, climax 660-720 s). Each zone carries its own narration pace, shots per minute, shot length, dramatic changes per minute, still hold, tease cadence, sound density and camera share. This row is the ONE home of the zone numbers; code reads them through the profile reader, never a copy. The heard-pace numbers of the zones are measured on MrBeast's videos (hook 193, 30-60 s 176, middle 166 words per minute); the cut, event, tease and sound numbers are partly reported and partly estimates adapted to a 2D cartoon, so the whole profile is REVIEW until the creator confirms it as a house rule. The older 'calm_docudrama' profile is the set of the other BP rows (BP-01, BP-107, BP-85, BP-40 ...) and stays unchanged. Pace variation is required (the creator, 2026-11-01): inside every zone the heard pace is an average, redistributed so that it rises and falls at a regular rhythm instead of one flat tempo; the frequency of those changes is not yet a number (open: needs a sourced value before code enforces it).",
    "thresholds": {
     "default_profile": "mrbeast_animated",
     "episode_s": 720,
@@ -6621,8 +6621,8 @@
     "tests/unit/test_sourced_rules.py"
    ],
    "supersedes": [],
-   "next_step": "the creator confirms the profile as a house rule (Argon roadmap question Q4); the profile reader (edit/rhythm_profile.py) and the lint (scripting/rhythm_lint.py) take over enforced_by when they exist",
-   "research": "Quantitative rhythm and retention metrics, MrBeast 2021-2025 and comparison channels (Argon research, 2026-11-01; project files argon_mrbeast_numbers_2026-11-01 / HF vano1919/tmr-artifacts argon/)"
+   "research": "Quantitative rhythm and retention metrics, MrBeast 2021-2025 and comparison channels (Argon research, 2026-11-01; project files argon_mrbeast_numbers_2026-11-01 / HF vano1919/tmr-artifacts argon/)",
+   "decided": "the creator, 2026-11-01 20:03 UTC (answer 5 to the open-questions list): the profile's recommendations (which second needs which pace, cuts and events per minute for the hook and the first 3 minutes) are recorded as the channel's rule; the pace must CHANGE within a zone and between zones (a hook and a narration never run at one flat tempo): each zone's heard pace is the average that the read redistributes so that it changes at a regular frequency, a normal talking hook"
   },
   {
    "id": "BP-170",
