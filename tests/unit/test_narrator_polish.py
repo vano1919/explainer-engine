@@ -42,3 +42,17 @@ def test_a_failing_ffmpeg_is_a_config_error(tmp_path):
     from explainer_engine.core.errors import ConfigError
     with pytest.raises(ConfigError):
         NP.polish(tmp_path / "missing.wav", tmp_path / "o.wav")
+
+
+@pytest.mark.skipif(shutil.which("ffmpeg") is None, reason="needs ffmpeg")
+def test_polish_in_place_keeps_the_length_and_reports_the_chain(tmp_path):
+    sr = 24000
+    x = (0.1 * np.sin(2 * np.pi * 110 * np.arange(sr) / sr)).astype(np.float32)
+    wav = tmp_path / "narration.wav"
+    write_wav(wav, x, sr)
+    rep = NP.polish_in_place(wav)
+    assert rep["chain"] == NP.CHAIN and abs(rep["seconds_after"] - rep["seconds_before"]) <= 1 / 30
+    assert not (tmp_path / "narration.polish.wav").exists()
+    y, _ = read_wav(wav)
+    assert np.abs(y).max() > np.abs(x).max()  # the bass shelf made the 110 Hz tone louder
+

@@ -22,3 +22,25 @@ def polish(src: Path | str, dst: Path | str) -> Path:
     if done.returncode != 0:
         raise ConfigError(f"narrator polish failed: {done.stderr.strip()[:300]}")
     return Path(dst)
+
+
+def polish_in_place(wav: Path | str) -> dict:
+    """Polish ``wav`` where it lies (temp file + rename) and say what was done, for words.json. The length is checked: a
+    filter chain must not move a word (the timings were measured before it)."""
+    wav = Path(wav)
+    tmp = wav.with_name(wav.stem + ".polish.wav")
+    before = _seconds(wav)
+    polish(wav, tmp)
+    after = _seconds(tmp)
+    if abs(after - before) > 1 / 30:
+        tmp.unlink(missing_ok=True)
+        raise ConfigError(f"narrator polish moved the length by {after - before:+.3f} s: the word timings would be wrong")
+    import os
+    os.replace(tmp, wav)
+    return {"chain": CHAIN, "seconds_before": round(before, 3), "seconds_after": round(after, 3)}
+
+
+def _seconds(path: Path) -> float:
+    import wave
+    with wave.open(str(path), "rb") as w:
+        return w.getnframes() / w.getframerate()
