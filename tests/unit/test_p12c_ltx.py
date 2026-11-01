@@ -197,3 +197,47 @@ def test_run_stage_draws_no_clip_inside_the_end_reserve(tmp_path):
     assert res == {"ok": 0, "failed": 0, "oom": False}
     evs = [json.loads(x)["ev"] for x in (tmp_path / "t.jsonl").read_text().splitlines()]
     assert evs == ["unit_skipped"]
+
+
+# audit 2026-11-01 #19: keyframes are sha256-pinned and a stage is "done" only when every shot is ok
+def test_every_keyframe_is_pinned_and_a_wrong_file_is_refused(tmp_path, monkeypatch):
+    import hashlib
+    import json
+    m = _load()
+    cfg = json.loads((DIR / "p12b.json").read_text(encoding="utf-8"))
+    kf = cfg["ltx"]["keyframes"]
+    assert set(kf["sha256"]) == set(kf["paths"]) and all(len(v) == 64 for v in kf["sha256"].values())
+    good = tmp_path / "good.png"
+    good.write_bytes(b"picture")
+    kf["sha256"] = {s: hashlib.sha256(b"picture").hexdigest() for s in kf["paths"]}
+    monkeypatch.setattr(m, "MODELS", tmp_path / "models")
+    monkeypatch.setattr(m, "fetch", lambda repo, path, local: good)
+    monkeypatch.setattr(m, "fit_frame", lambda src, dst, w, h: dst.write_bytes(b"fit"))
+    cfg["ltx"]["av"]["takes"] = {}
+    cfg["ltx"]["clay"]["sha256"] = {}
+    p12b = m.load_p12b()
+    log = p12b.Log(tmp_path / "out")
+    inputs = m.prepare_inputs(cfg, tmp_path / "out", log)
+    assert "tent_s0" in inputs and inputs["tent_s0"]["image"].read_bytes() == b"fit"
+    # a file that is not the pinned one: the shot gets no input and the mismatch is logged
+    for p in (tmp_path / "models" / "p12c" / "in").glob("*.png"):
+        p.unlink()
+    good.write_bytes(b"another picture")
+    inputs = m.prepare_inputs(cfg, tmp_path / "out", log)
+    assert "tent_s0" not in inputs
+    evs = [json.loads(x) for x in (tmp_path / "out" / "t.jsonl").read_text().splitlines()]
+    assert any(e["ev"] == "sha256_mismatch" for e in evs) and any(e["ev"] == "input_failed" and e["what"] == "keyframe" for e in evs)
+
+
+def test_a_stage_is_done_only_when_every_shot_is_ok():
+    src = (DIR / "p12c_ltx.py").read_text(encoding="utf-8")
+    assert 'res["ok"] == len(st["shots"])' in src and 'f"done {name}" if res["ok"] else' not in src
+
+
+def test_no_log_call_passes_name_as_a_keyword():
+    """Log.ev(self, name, **kw) already has ``name``: ``log.ev(..., name=...)`` raises TypeError (found by the keyframe pin test)."""
+    import ast
+    for f in ("p12b.py", "p12c_ltx.py"):
+        for node in ast.walk(ast.parse((DIR / f).read_text(encoding="utf-8"))):
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "ev":
+                assert "name" not in {k.arg for k in node.keywords}, (f, node.lineno)

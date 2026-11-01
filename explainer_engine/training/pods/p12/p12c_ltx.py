@@ -207,14 +207,19 @@ def prepare_inputs(cfg, out, log):
     def keyframe(shot):
         dst = work / "in" / f"{shot}.png"
         if not dst.exists():
-            fit_frame(fetch(kf["repo"], kf["paths"][shot], work / "kf"), dst, r["width"], r["height"])
+            src = fetch(kf["repo"], kf["paths"][shot], work / "kf")
+            want, got = kf.get("sha256", {}).get(shot), sha256_file(src)
+            if got != want:                                           # audit #19: a keyframe is pinned like the clay clips and the takes
+                log.ev("sha256_mismatch", file=kf["paths"][shot], expected=want, got=got)
+                raise ValueError(f"keyframe {shot}: sha256 {got} is not the pinned {want}")
+            fit_frame(src, dst, r["width"], r["height"])
         return dst
 
     def checked(repo, path, want, what):
         p = fetch(repo, path, work / what)
         got = sha256_file(p)
         if got != want:
-            log.ev("sha256_mismatch", name=path, expected=want, got=got)
+            log.ev("sha256_mismatch", file=path, expected=want, got=got)
             return None, None
         return p, got
 
@@ -426,7 +431,8 @@ def run(cfg, out, deadline, log, p12b):
         done.add(name)
         if kind == "ltx_a2v" and res["oom"]:
             return 0
-        log.stage_line(f"done {name}" if res["ok"] else f"failed {name}")
+        # audit #19: "done" only when every shot of the stage is ok (a resume must not skip the failed ones)
+        log.stage_line(f"done {name}" if res["ok"] == len(st["shots"]) else f"failed {name} ok={res['ok']}/{len(st['shots'])}")
         if p12b.stop_here(cfg, log, out, name):
             return 0
     log.progress("done")

@@ -296,13 +296,13 @@ def timed_download(log, name, target, fn):
 
     th = threading.Thread(target=tick, daemon=True)
     th.start()
-    log.ev("download_start", name=name)
+    log.ev("download_start", item=name)
     t0 = time.time()
     try:
         res = fn()
     finally:
         stop.set()
-    log.ev("download_end", name=name, bytes=dir_bytes(target), seconds=round(time.time() - t0, 1))
+    log.ev("download_end", item=name, bytes=dir_bytes(target), seconds=round(time.time() - t0, 1))
     return res
 
 
@@ -436,7 +436,7 @@ def run(cfg, out, deadline, log):
         sl["hf"], sl["path"], repo_type="dataset", local_dir=str(MODELS / "style")))
     got = sha256_file(style)
     if got != sl["sha256"]:
-        log.ev("sha256_mismatch", name="style_lora", expected=sl["sha256"], got=got)
+        log.ev("sha256_mismatch", file="style_lora", expected=sl["sha256"], got=got)
         log.progress("style lora sha256 mismatch")
         return EXIT_SHA_MISMATCH
     ml = cfg["mva_lora"]

@@ -258,6 +258,14 @@
         "tent_s3": "lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s3.png",
         "tent_s4": "lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/X_g_n_0_0+dpl/tent_11_s4.png",
         "ship_s2": "lora_plan_2026-10-26/train_xworld_v2/loop/round_3b/out/loop/X_g_n_0_0+dpl/ship_11_s2.png"
+      },
+      "sha256": {
+        "tent_s0": "ea0ba5b65d1eecb4d1a3d63d8c8a857fc436199b9b0b4321592c7780da56ddd6",
+        "tent_s1": "39e75ce932693c036207df822a47838a083985562d9eca6be31f50f3f93cfc30",
+        "tent_s2": "32ef7bc4532b0d323f4c0b1563b8fd8678a427c67cff5224e6430b40239fc34d",
+        "tent_s3": "e96bac4845ec6f1cd10cf6a728d19a8136bad3969133232fb065be42be9883ed",
+        "tent_s4": "5e7b4db0f7164736a005374dc2b78dfe6740d6c0249939581c21d5fc036cad03",
+        "ship_s2": "dc95836d312ac346d44f6e43028cb62faab32c35a73094e4b29679f4c5a7db55"
       }
     },
     "prompt_source": "hand, docs/pods/P12_PROMPTS.md",
