@@ -1,0 +1,790 @@
+commit 5013a55aca5a17a3734150f61a5eb172abcbe3b8
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 20:10:23 2026 +0000
+
+    Creator answers: mix tolerance 5 %, BP-169 house with required pace variation, D-94 record
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/DECISIONS_AND_OPEN_QUESTIONS.md          |  2 +-
+ docs/PROGRESS.md                              |  2 ++
+ docs/SOURCED_RULES.md                         |  6 +++---
+ explainer_engine/standards/sourced_rules.json | 16 ++++++++--------
+ 4 files changed, 14 insertions(+), 12 deletions(-)
+
+commit 1c162b15862b4348dc7d84de0c6e18a831997a6d
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 19:51:07 2026 +0000
+
+    WP-3a 12-minute episode in BP-167 and WP-5b clip upscale to the delivery frame
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                              |  2 +
+ docs/SOURCED_RULES.md                         |  2 +-
+ explainer_engine/finish/upscale.py            | 53 +++++++++++++++++++++++++++
+ explainer_engine/scripting/variant_plan.py    |  4 +-
+ explainer_engine/standards/sourced_rules.json |  4 +-
+ tests/unit/test_delivery_defaults.py          |  9 ++++-
+ tests/unit/test_finish_upscale.py             | 46 +++++++++++++++++++++++
+ 7 files changed, 113 insertions(+), 7 deletions(-)
+
+commit d568d866c2e6ea143da7979e8e66264c3862c27d
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 18:47:20 2026 +0000
+
+    Wire the narrator polish into the words step
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                           |  2 ++
+ explainer_engine/audio/narrator_polish.py  | 22 ++++++++++++++++++++++
+ explainer_engine/production/__main__.py    |  6 +++++-
+ tests/unit/test_dialogue_and_shorts_set.py | 20 ++++++++++++++++++++
+ tests/unit/test_narrator_polish.py         | 14 ++++++++++++++
+ 5 files changed, 63 insertions(+), 1 deletion(-)
+
+commit f29a63df9ecaa2f8d9990ca95ef820e5186246c6
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 18:29:00 2026 +0000
+
+    Write progress.txt atomically (CI flake: reader saw a truncated file)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                           | 2 ++
+ explainer_engine/training/pods/p12/p12b.py | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+commit 677c6a54bb643b049210dc3f1a56900597a758b4
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 18:22:16 2026 +0000
+
+    Odom is the channel narrator with the standard bass polish (VC-08, creator's word)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ config/channel_voices.json                         | 13 ++++++-
+ docs/DECISIONS_AND_OPEN_QUESTIONS.md               |  2 +-
+ docs/PROGRESS.md                                   |  2 +
+ docs/wip/RHYTHM_OPEN_WORK_2026-11-01.md            |  3 +-
+ explainer_engine/audio/narrator_polish.py          | 24 ++++++++++++
+ .../voice_audition/registry_spuds_standing.json    | 19 ++++++++++
+ tests/unit/test_narrator_polish.py                 | 44 ++++++++++++++++++++++
+ tests/unit/test_voice_audition.py                  | 17 +++++----
+ 8 files changed, 111 insertions(+), 13 deletions(-)
+
+commit 8f838af348356fbb41eddedd95fae7c7fce4066a
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 16:02:32 2026 +0000
+
+    docs: the open work of the rhythm change, one list
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/wip/RHYTHM_OPEN_WORK_2026-11-01.md | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+commit 5f04757e93bebd8375353146ae1611fae045b136
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 15:56:55 2026 +0000
+
+    WP-R11/R12: D-94, rhythm cost model from our prices, end-to-end rhythm test
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/COST_AND_TIME_MODEL.md          | 21 ++++++++++
+ docs/DECISIONS_AND_OPEN_QUESTIONS.md |  1 +
+ docs/PROGRESS.md                     |  2 +
+ tests/unit/test_rhythm_end_to_end.py | 74 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 98 insertions(+)
+
+commit 50389993d31cfd7671ee5672b031b89afa2e4b5e
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 15:49:58 2026 +0000
+
+    WP-R8: rhythm_lint, per-zone shot rhythm and dramatic-still check (BP-169, BP-170)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/PROGRESS.md                              |   2 +
+ docs/SOURCED_RULES.md                         |   2 +-
+ explainer_engine/scripting/rhythm_lint.py     | 105 ++++++++++++++++++++++++++
+ explainer_engine/standards/sourced_rules.json |   1 +
+ tests/unit/test_rhythm_lint.py                |  65 ++++++++++++++++
+ 5 files changed, 174 insertions(+), 1 deletion(-)
+
+commit aff240a6ac1a0441b944013f62922c6884864894
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 15:49:08 2026 +0000
+
+    WP-R6 (part): production_script/4 schema, zone-aware syllables.seconds, rhythm_zone in stage_guard
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/PROGRESS.md                                   |   2 +
+ docs/SOURCED_RULES.md                              |   2 +-
+ .../schemas/production_script.schema.json          | 134 ++++++++++++++++++++-
+ explainer_engine/scripting/stage_guard.py          |   2 +-
+ explainer_engine/scripting/syllables.py            |  12 +-
+ explainer_engine/standards/sourced_rules.json      |   1 +
+ tests/unit/test_production_script_schema.py        |  23 ++++
+ tests/unit/test_story_engine.py                    |  11 ++
+ tests/unit/test_syllables.py                       |  11 ++
+ 9 files changed, 189 insertions(+), 9 deletions(-)
+
+commit f490321242796c0cd12e3f0ac7b2bb8451ac3771
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 15:47:12 2026 +0000
+
+    WP-R5: hype_read for one tempo-following narrator (BP-171), free part
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/PROGRESS.md                              |   2 +
+ docs/SOURCED_RULES.md                         |   2 +-
+ explainer_engine/audio/hype_read.py           | 110 ++++++++++++++++++++++++++
+ explainer_engine/standards/sourced_rules.json |   1 +
+ tests/unit/test_hype_read.py                  |  42 ++++++++++
+ 5 files changed, 156 insertions(+), 1 deletion(-)
+
+commit bd77402bebb16c3c567ba4824d3454e3690e96e4
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 15:46:13 2026 +0000
+
+    WP-R4: dramatic_still validator, frame-change measure and renderer (BP-170)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/PROGRESS.md                              |   2 +
+ docs/SOURCED_RULES.md                         |   4 +-
+ explainer_engine/edit/dramatic_still.py       | 130 ++++++++++++++++++++++++++
+ explainer_engine/standards/sourced_rules.json |   4 +-
+ tests/unit/test_dramatic_still.py             |  72 ++++++++++++++
+ 5 files changed, 209 insertions(+), 3 deletions(-)
+
+commit f0fe4cbf67201bac369710de42f9183d1e1e9f70
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 15:44:50 2026 +0000
+
+    WP-R3: fast-action P12 prompts (KP-47), one 73-frame plain clip, docs and tests
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/PROGRESS.md                                     |  2 ++
+ docs/pods/P12_PROMPTS.md                             |  6 +++---
+ docs/wip/P12_COMBINED_PLAN_FABLE_2026-11-01.md       |  9 ++++++++-
+ explainer_engine/training/pods/p12/p12b.json         | 12 ++++++++----
+ explainer_engine/training/pods/p12/p12b_prompts.json |  6 +++---
+ explainer_engine/training/pods/p12/p12c_ltx.py       | 16 +++++++++++-----
+ tests/unit/test_p12b_config.py                       | 17 +++++++++++++++++
+ tests/unit/test_p12c_ltx.py                          | 11 +++++++++++
+ 8 files changed, 63 insertions(+), 16 deletions(-)
+
+commit 9f26a20c125930925afafa66eaf70bf46c4e7da3
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 15:42:21 2026 +0000
+
+    WP-R2: rhythm_profile reader, KP-47 fast-action prompt lint, LT-80 video check
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/LORA_TRAINING.md                          |   1 +
+ docs/PROGRESS.md                               |   2 +
+ docs/SHOT_PROMPTS.md                           |   1 +
+ docs/SOURCED_RULES.md                          |   4 +-
+ explainer_engine/edit/rhythm_profile.py        | 115 +++++++++++++++++++++++++
+ explainer_engine/scripting/shot_prompt_lint.py |  13 +++
+ explainer_engine/standards/sourced_rules.json  |   3 +
+ explainer_engine/training/video_qa.py          |  20 +++++
+ tests/unit/test_rhythm_profile.py              |  47 ++++++++++
+ tests/unit/test_shot_prompt_lint.py            |  20 +++++
+ tests/unit/test_video_qa_clip_rows.py          |   8 ++
+ 11 files changed, 232 insertions(+), 2 deletions(-)
+
+commit 5fc80c254f4b211c99c1ee313ec4a60329aea84c
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 15:40:11 2026 +0000
+
+    WP-R1: rhythm rows BP-169..172, rhythm_profile and dramatic_still schemas, tests
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/PROGRESS.md                                   |   2 +
+ docs/SOURCED_RULES.md                              |   4 +
+ .../schemas/dramatic_still.schema.json             |  29 ++
+ .../schemas/rhythm_profile.schema.json             |  47 +++
+ explainer_engine/standards/sourced_rules.json      | 444 +++++++++++++++++++++
+ tests/unit/test_sourced_rules.py                   |  57 +++
+ 6 files changed, 583 insertions(+)
+
+commit a01c5cab0819a0ec1b6184670441810303c430cf
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 13:13:21 2026 +0000
+
+    P12 AV takes: Raymond Verne, two ElevenLabs takes (97 credits) uploaded and pinned; p12b.json has no placeholder left
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                             |  2 ++
+ explainer_engine/training/pods/p12/p12b.json | 12 ++++++------
+ tests/unit/test_dryrun_placeholders.py       |  6 ++++--
+ 3 files changed, 12 insertions(+), 8 deletions(-)
+
+commit 132ec4c8ad718f8f0fa067b53c711352fd33baa1
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 13:10:17 2026 +0000
+
+    P12: free end-to-end runs of p12b.run and p12c_ltx.run over the real p12b.json with stubbed GPU, hub and pipeline
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                   |  2 +
+ tests/unit/test_p12b_pod_script.py | 96 ++++++++++++++++++++++++++++++++++++++
+ tests/unit/test_p12c_ltx.py        | 77 ++++++++++++++++++++++++++++++
+ 3 files changed, 175 insertions(+)
+
+commit 6d1f81a1439ea4d6c81a05b4bfbc75ef61e9bf8b
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 13:04:08 2026 +0000
+
+    Audit #19: keyframe sha256 pins, stage done only when all shots ok; fix three log.ev(name=...) TypeErrors found by a new AST test
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                               |  2 ++
+ explainer_engine/training/pods/p12/p12b.json   |  8 +++++
+ explainer_engine/training/pods/p12/p12b.py     |  6 ++--
+ explainer_engine/training/pods/p12/p12c_ltx.py | 12 +++++--
+ tests/unit/test_p12c_ltx.py                    | 44 ++++++++++++++++++++++++++
+ 5 files changed, 66 insertions(+), 6 deletions(-)
+
+commit c44eea87fd7939e73002b707be724c1206a51f5b
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 13:02:10 2026 +0000
+
+    WP-1e: clay clips rendered at 1920x1088, uploaded to tmr-artifacts, sha256 pinned in p12b.json
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ explainer_engine/training/pods/p12/p12b.json | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit d8192c2e93baefa0f889ea8d7c0b3b760f4b9da2
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 13:00:35 2026 +0000
+
+    Audit #14: end-reserve guard per unit, Layout LoRA before AV files, AV files only with real takes; BP-141 A/D non_character_max 0.43 (D-93)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                               |  2 +
+ docs/SOURCED_RULES.md                          |  2 +-
+ explainer_engine/standards/sourced_rules.json  |  6 +--
+ explainer_engine/training/pods/p12/p12b.py     | 33 +++++++++++++--
+ explainer_engine/training/pods/p12/p12c_ltx.py | 14 +++++--
+ tests/unit/test_p12b_pod_script.py             | 56 ++++++++++++++++++++++++--
+ tests/unit/test_p12c_ltx.py                    | 16 ++++++++
+ tests/unit/test_sourced_rules.py               | 10 +++++
+ 8 files changed, 126 insertions(+), 13 deletions(-)
+
+commit 4a43194663e39189f280661d826c6ebe93fc880e
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 12:53:20 2026 +0000
+
+    Audit #15: dryrun reads the repos named in p12b.json and proves gated access (auth_check)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ explainer_engine/cloud/dryrun.py       | 60 +++++++++++++++++++++++++++----
+ explainer_engine/cloud/runpod.py       |  4 +--
+ tests/unit/test_dryrun_placeholders.py | 66 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 122 insertions(+), 8 deletions(-)
+
+commit 53ecdccdb6ff388e9f4a427b19bc399b268ffa5b
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 12:48:35 2026 +0000
+
+    Audit follow-up: drop p12b_measure.sh (stage M replaces it), L3 reserve so the drop order Q3, L3, Q2 holds
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                                   |  2 +
+ explainer_engine/training/pods/p12/p12b.json       |  4 ++
+ explainer_engine/training/pods/p12/p12b.py         | 14 +++++-
+ explainer_engine/training/pods/p12/p12b_measure.sh | 55 ----------------------
+ tests/unit/test_p12b_config.py                     |  1 +
+ tests/unit/test_p12b_measure.py                    | 44 -----------------
+ tests/unit/test_p12b_pod_script.py                 | 32 +++++++++++++
+ 7 files changed, 52 insertions(+), 100 deletions(-)
+
+commit 590cdb4a332aa691c00d9cd76c97542f1d1fc4a6
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 12:29:30 2026 +0000
+
+    PROGRESS: fix a stray note
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e7ccda795849c8667fe3c4cb7733e31e2f12f936
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 12:29:03 2026 +0000
+
+    Argon audit (OR-34) fixes: placeholder guard, progress tickers, stop after M, LTX sizes, AV audio check, clay determinism, restored tests
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ config/cloud_pins.json                         |   2 +-
+ docs/PROGRESS.md                               |   2 +
+ examples/napoleon_vs_genghis/shotlist.md       |  38 +++----
+ explainer_engine/cloud/dryrun.py               |  16 +++
+ explainer_engine/cloud/runpod.py               |   1 +
+ explainer_engine/edit/clay_video.py            |   7 +-
+ explainer_engine/scripting/film_shots.py       |   2 +-
+ explainer_engine/training/pods/p12/p12b.json   |   9 +-
+ explainer_engine/training/pods/p12/p12b.py     |  42 ++++++--
+ explainer_engine/training/pods/p12/p12b.sh     |   4 +
+ explainer_engine/training/pods/p12/p12c_ltx.py |  45 ++++++++-
+ tests/unit/test_clay_video.py                  |  14 +++
+ tests/unit/test_dryrun_placeholders.py         |  36 +++++++
+ tests/unit/test_p12b_config.py                 |  14 ++-
+ tests/unit/test_p12b_pod_script.py             |  32 ++++++
+ tests/unit/test_p12c_ltx.py                    | 133 +++++++++++++++++++++++++
+ 16 files changed, 359 insertions(+), 38 deletions(-)
+
+commit fcfbd3eef5eef5864a9eba5b2daea16971ccf74f
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 11:28:58 2026 +0000
+
+    test_shot_router: the injected video pin names LTX-2.5 too
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ tests/unit/test_shot_router.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d1c2e692866dd547f9f13648234ab72842b4a2c3
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 11:16:50 2026 +0000
+
+    WP-1d: rewrite the 8 Qwen-only P12b tests for the combined pod; video pin is LTX-2.5
+    
+    cloud_pins models.video_ltx -> Lightricks/LTX-2.5 (p12b.json revision) + video_ltx_layout_lora;
+    tests follow the seven stages, the LTX download in process 1, the stall 25 and the LTX reserve;
+    a strict xfail reminds that the sha256 lines are placeholders until WP-1e.
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ config/cloud_pins.json             |  14 +++--
+ docs/PROGRESS.md                   |   2 +
+ tests/unit/test_p12b_config.py     |  37 ++++++++-----
+ tests/unit/test_p12b_measure.py    |  10 +++-
+ tests/unit/test_p12b_pod_script.py | 103 ++++++++++++++++++++++++++++---------
+ tests/unit/test_shot_router.py     |   4 +-
+ 6 files changed, 128 insertions(+), 42 deletions(-)
+
+commit d6d2db0687e762461741fd898585805d6d89e754
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 10:56:28 2026 +0000
+
+    WP-1c: clay layout clips for the LTX Layout-To-Render IC-LoRA + specs for tent_s0/s3/s4
+    
+    clay_video.py renders grey clay clips (8k+1 frames, sides /64, 24 fps) from a JSON
+    spec; P12 specs fitted to the keyframes; 7 tests. test_p12c_ltx reads the LTX-2
+    listing from a committed fixture (CI has no jobs/).
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                                   |   2 +
+ explainer_engine/edit/clay_video.py                | 255 +++++++++++
+ .../training/pods/p12/clay/clay_specs.json         | 487 +++++++++++++++++++++
+ tests/fixtures/ltx2_listing_e98f6d9.txt            |  80 ++++
+ tests/unit/test_clay_video.py                      |  93 ++++
+ tests/unit/test_p12c_ltx.py                        |   2 +-
+ 6 files changed, 918 insertions(+), 1 deletion(-)
+
+commit 92e95ae3434aea6f50aa10773ed25e76dae53b97
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 10:39:56 2026 +0000
+
+    D-93: visual mix 60/30/10 replaces the 10% hold cap
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ .claude/skills/animation-principles/SKILL.md       |  6 +--
+ docs/DECISIONS_AND_OPEN_QUESTIONS.md               |  3 +-
+ docs/PROGRESS.md                                   |  2 +
+ docs/SCRIPT_ENGINE.md                              |  6 +--
+ docs/SHOT_PROMPTS.md                               |  2 +-
+ docs/SOURCED_RULES.md                              |  4 +-
+ examples/napoleon_vs_genghis/script_variants.json  | 11 +++-
+ explainer_engine/scripting/film_shots.py           | 60 +++++++++++++++++++---
+ explainer_engine/scripting/variant_plan.py         | 16 +++---
+ .../standards/craft_checklists/animation.json      |  2 +-
+ explainer_engine/standards/sourced_rules.json      | 30 +++++++----
+ tests/unit/test_film_shots.py                      | 15 ++++--
+ tests/unit/test_variant_plan.py                    | 31 ++++++++---
+ 13 files changed, 142 insertions(+), 46 deletions(-)
+
+commit 0e1c098a41ff537d1baedc0568960021512afe23
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 10:13:58 2026 +0000
+
+    Measure real API output sizes for max_tokens
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                    |  2 ++
+ explainer_engine/llm/token_stats.py | 66 +++++++++++++++++++++++++++++++++++++
+ tests/unit/test_token_stats.py      | 29 ++++++++++++++++
+ 3 files changed, 97 insertions(+)
+
+commit 585103a5d3b47b13681be020e7abe1c59a87c744
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 09:47:34 2026 +0000
+
+    WP-1a2: name the LTX i2v module, flags test
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                               |  2 +
+ docs/pods/P12_LTX_FLAGS.md                     | 58 +++++++++++++++++++-------
+ explainer_engine/training/pods/p12/p12c_ltx.py | 14 ++++---
+ tests/unit/test_p12c_ltx.py                    | 50 ++++++++++++++++++++++
+ 4 files changed, 103 insertions(+), 21 deletions(-)
+
+commit 5b3904d13fd93b778be97772e91715880123f97c
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 09:35:41 2026 +0000
+
+    WP-1b: LTX shot prompts; plan_revision API line
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ config/spend_caps.json                             |   4 +-
+ docs/PROGRESS.md                                   |   2 +
+ docs/pods/P12_PROMPTS.md                           |  60 ++++++++
+ explainer_engine/training/pods/p12/p12b.json       | 163 +++++++++++++++++----
+ .../training/pods/p12/p12b_prompts.json            |  13 ++
+ tests/unit/test_claude_api.py                      |   2 +-
+ 6 files changed, 210 insertions(+), 34 deletions(-)
+
+commit 33b52dd2b795176f51b9509460abf9f7b01933f9
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 09:06:33 2026 +0000
+
+    Pin Lightricks/LTX-2 sha in cloud_pins
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ config/cloud_pins.json | 35 ++++++++++++++++++++++++++++++-----
+ docs/PROGRESS.md       |  2 ++
+ 2 files changed, 32 insertions(+), 5 deletions(-)
+
+commit f4a07f6b3dc3c6c94998e8e9a11269514cd2b70b
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 08:59:28 2026 +0000
+
+    WP-1a: LTX flags, install line, build loop driver
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                               |   3 +
+ docs/pods/P12_LTX_FLAGS.md                     |  79 +++++++++++
+ explainer_engine/llm/build_loop.py             | 176 +++++++++++++++++++++++++
+ explainer_engine/training/pods/p12/p12b.sh     |   8 +-
+ explainer_engine/training/pods/p12/p12c_ltx.py |  57 ++++----
+ tests/unit/test_build_loop.py                  |  20 +++
+ 6 files changed, 316 insertions(+), 27 deletions(-)
+
+commit 8d50b88f29c38f374409c9dbc9f1834a1ad52f9d
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 08:51:03 2026 +0000
+
+    API line build_loop $45 (creator word); p12b.json: real LTX-2.5 and Layout LoRA revisions, keyframe paths
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ config/spend_caps.json                       |  6 +++---
+ explainer_engine/training/pods/p12/p12b.json | 16 ++++++++--------
+ tests/unit/test_claude_api.py                |  6 ++++--
+ 3 files changed, 15 insertions(+), 13 deletions(-)
+
+commit e4ccd818d828e72c6875c8095ab5d397521b5013
+Merge: aee0242 1fa6fbd
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 08:43:41 2026 +0000
+
+    Join the merged #118 branch history (tree kept: main plus the WIP)
+
+commit aee0242d7a4c43ec3e4715a052e11fe1952bfa3e
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 08:43:34 2026 +0000
+
+    WIP: P12 combined pod (Fable plan, Opus draft code); not runnable, tests to be rewritten
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                               |   5 +
+ docs/wip/P12_COMBINED_PLAN_FABLE_2026-11-01.md | 204 +++++++++++++
+ explainer_engine/training/pods/p12/p12b.json   | 155 ++++++----
+ explainer_engine/training/pods/p12/p12b.py     | 193 +++++++++---
+ explainer_engine/training/pods/p12/p12b.sh     |  34 ++-
+ explainer_engine/training/pods/p12/p12c_ltx.py | 398 +++++++++++++++++++++++++
+ 6 files changed, 878 insertions(+), 111 deletions(-)
+
+commit 1fa6fbd1f5d82c0ee364a324a162b5aaf9392cd1
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 08:04:00 2026 +0000
+
+    runpod create --datacenters (v2 dataCenterIds)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                 | 3 +++
+ explainer_engine/cloud/runpod.py | 4 +++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+commit f40e879362d70b90347043fb7a436457fe2d69ff
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 07:59:55 2026 +0000
+
+    runpod create --cuda-min: host CUDA floor per image
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                 |  4 ++++
+ explainer_engine/cloud/runpod.py | 15 +++++++++++++--
+ tests/unit/test_runpod.py        |  6 ++++++
+ 3 files changed, 23 insertions(+), 2 deletions(-)
+
+commit 95c89e45cb6f0ca058c1b0bd2f32277202a06be0
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 07:48:12 2026 +0000
+
+    P12b measurement pod: pod cap 0.50 on SECURE (creator word), ledger line 0.63
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ config/spend_caps.json             | 4 ++--
+ docs/PROGRESS.md                   | 5 +++++
+ explainer_engine/cloud/batching.py | 2 +-
+ tests/unit/test_cloud_economy.py   | 2 +-
+ tests/unit/test_spend_caps.py      | 6 +++---
+ 5 files changed, 12 insertions(+), 7 deletions(-)
+
+commit 6301a98c1fcdb145e24e74edbf181ead17e07956
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 07:37:27 2026 +0000
+
+    P12b measure script: progress writer from the start (audit blocker 2)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                                   | 6 ++++++
+ explainer_engine/training/pods/p12/p12b_measure.sh | 3 +++
+ 2 files changed, 9 insertions(+)
+
+commit 0140dc107e9209eed8925bee9893d7d900a38fcf
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 07:21:03 2026 +0000
+
+    OR-36: the watchdog page is a stage page; the thread is separate from the main agent
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ .claude/agents/paid-run-watchdog.md | 2 +-
+ docs/ORCHESTRATION.md               | 2 +-
+ tests/unit/test_or36_watchdog.py    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit c77d4dcf07dcb83779727cecd9067009c041df79
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 07:18:38 2026 +0000
+
+    OR-36: a read-only Haiku watchdog beside every paid run
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ .claude/agents/paid-run-watchdog.md | 23 +++++++++++++++++++++++
+ config/model_routing.json           |  6 ++++++
+ docs/ORCHESTRATION.md               |  1 +
+ docs/PROGRESS.md                    |  4 ++++
+ tests/unit/test_or36_watchdog.py    | 37 +++++++++++++++++++++++++++++++++++++
+ 5 files changed, 71 insertions(+)
+
+commit 4e5f25d523575c7ee4e97cdd69add571bd54647b
+Merge: 53a2a32 2dcfeeb
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 07:16:10 2026 +0000
+
+    Merge the old branch head to keep the push a fast-forward
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+commit 53a2a32be04571f7a16abe0780e3f58cea9f0b9d
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 07:16:01 2026 +0000
+
+    STATUS: #110 merged, hosts dropped, P12a smoke passed
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/PROGRESS.md           |  3 +++
+ docs/blueprint/STATUS.md   | 18 +++++++++---------
+ docs/blueprint/phases.json | 18 +++++++++---------
+ 3 files changed, 21 insertions(+), 18 deletions(-)
+
+commit 2dcfeeb5dac4da91b0dc3b97ace862cbd85b4829
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 07:07:31 2026 +0000
+
+    BP-29: the iPhone is the reference phone; house rule (D-92 item 9)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/DECISIONS_AND_OPEN_QUESTIONS.md          |  4 ++--
+ docs/PROGRESS.md                              |  4 ++++
+ docs/SOURCED_RULES.md                         |  2 +-
+ explainer_engine/standards/sourced_rules.json | 12 +++++++++---
+ tests/unit/test_d92_creator_answers.py        |  8 ++++++++
+ 5 files changed, 24 insertions(+), 6 deletions(-)
+
+commit 537d96660d1f70a28a2ab42415b3ef8f042418a2
+Merge: 0c03c81 8227651
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 07:07:23 2026 +0000
+
+    Merge remote-tracking branch 'origin/claude/project-thread-zdxkv6' into claude/project-thread-zdxkv6
+
+commit 8227651cdf4a66c779bb46b04f835a29b5efaea9
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 06:59:38 2026 +0000
+
+    D-92: auto-delete leaves the pods that existed before the rule to the creator
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/PROGRESS.md                 |  1 +
+ explainer_engine/cloud/runpod.py |  6 ++++--
+ tests/unit/test_runpod.py        | 29 +++++++++++++++++++----------
+ 3 files changed, 24 insertions(+), 12 deletions(-)
+
+commit a5e32b6fed5e20db9a0ea5a1a55ada5a46e31a44
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 06:59:02 2026 +0000
+
+    Session hooks run the D-92 auto-delete before the check
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/DECISIONS_AND_OPEN_QUESTIONS.md |  2 +-
+ docs/PROGRESS.md                     |  1 +
+ explainer_engine/cloud/hooks.py      |  5 +++++
+ explainer_engine/cloud/runpod.py     | 18 ++++++++++++++++++
+ tests/unit/test_runpod.py            | 23 +++++++++++++++++++++++
+ 5 files changed, 48 insertions(+), 1 deletion(-)
+
+commit aa1aa9ed748c28cf51e6f6fcc4ecc69706ecb538
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 06:55:39 2026 +0000
+
+    D-92: say that the sweep is not yet scheduled
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/DECISIONS_AND_OPEN_QUESTIONS.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 61d7e7c015a5890b1d35d8998fbc67fb2f621227
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 06:55:23 2026 +0000
+
+    runpod sweep: delete a 0 GB stopped pod 24 h after its until (D-92)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/DECISIONS_AND_OPEN_QUESTIONS.md   |  2 +-
+ docs/PROGRESS.md                       |  2 +-
+ explainer_engine/cloud/runpod.py       | 25 +++++++++++++++++++++++--
+ tests/unit/test_d92_creator_answers.py |  2 +-
+ tests/unit/test_runpod.py              | 17 +++++++++++++++++
+ 5 files changed, 43 insertions(+), 5 deletions(-)
+
+commit 8f2de86584f7459c327aadc7827e26a866ec1a5f
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 06:50:07 2026 +0000
+
+    Record the creator's answers as D-92 with a pin test
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfCLYH6WysZmZtZqXQx
+
+ docs/DECISIONS_AND_OPEN_QUESTIONS.md   |  1 +
+ docs/PROGRESS.md                       |  5 +++++
+ tests/unit/test_d92_creator_answers.py | 25 +++++++++++++++++++++++++
+ 3 files changed, 31 insertions(+)
+
+commit 1bfd5404fd8fb803ebda5cf33926153624590529
+Author: vano1919 <122537395+vano1919@users.noreply.github.com>
+Date:   Sun Nov 1 06:36:38 2026 +0000
+
+    audio/spine: native_lines reads the DIALOGUE_CU marker from film_shots/2 (Argon F-03)
+    
+    Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01SxfLfBtjFG8XxwwJyt8NY1
+
+ docs/PROGRESS.md                |  6 ++++++
+ explainer_engine/audio/spine.py | 20 ++++++++++++++++----
+ tests/unit/test_audio_spine.py  | 20 ++++++++++++++++++++
+ 3 files changed, 42 insertions(+), 4 deletions(-)
