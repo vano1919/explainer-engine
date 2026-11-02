@@ -30,9 +30,9 @@
 
 ### 1.1 Architectural Verdict
 
-* **\[FACT\]** At commit `5013a55aca5a17a3734150f61a5eb172abcbe3b8` ([PR #119](https://github.com/vano1919/explainer-engine/pull/119)), [vano1919/explainer-engine](https://github.com/vano1919/explainer-engine) already contains a strong, modular foundation for a 12-minute (`720s`) 2D animated docudrama pipeline (`BP-167`, `BP-109`, `BP-141`, `BP-169..172`, `edit/rhythm_profile.py`, `edit/dramatic_still.py`, `scripting/rhythm_lint.py`, `audio/hype_read.py`, `audio/narrator_polish.py`, `finish/upscale.py`, and `schemas/production_script.schema.json` `/4`), passing `2,448` unit tests in GitHub Actions run `41345477655`.
+* **[FACT]** At commit `5013a55aca5a17a3734150f61a5eb172abcbe3b8` ([PR #119](https://github.com/vano1919/explainer-engine/pull/119)), [vano1919/explainer-engine](https://github.com/vano1919/explainer-engine) already contains a strong, modular foundation for a 12-minute (`720s`) 2D animated docudrama pipeline (`BP-167`, `BP-109`, `BP-141`, `BP-169..172`, `edit/rhythm_profile.py`, `edit/dramatic_still.py`, `scripting/rhythm_lint.py`, `audio/hype_read.py`, `audio/narrator_polish.py`, `finish/upscale.py`, and `schemas/production_script.schema.json` `/4`), passing `2,448` unit tests in GitHub Actions run `41345477655`.
 
-* **\[OBSERVATION\]** However, the MrBeast-inspired rhythm package introduced in [PR #119](https://github.com/vano1919/explainer-engine/pull/119) (`WP-R1..R6-part, R8, R11-part, R12`) currently operates as an **isolated post-hoc validation layer** rather than an end-to-end generative architecture. Specifically:
+* **[OBSERVATION]** However, the MrBeast-inspired rhythm package introduced in [PR #119](https://github.com/vano1919/explainer-engine/pull/119) (`WP-R1..R6-part, R8, R11-part, R12`) currently operates as an **isolated post-hoc validation layer** rather than an end-to-end generative architecture. Specifically:
 
   1. **Zero Upstream Agent/Skill Awareness**: None of the `16` agent stage pages in `.claude/agents/*.md` or the `16` skills in `.claude/skills/*/SKILL.md` mention `production_script/4`, `BP-169..172`, `rhythm_zone`, `dramatic_change`, the 12-minute (`720s`) target (`BP-167`), the new narrator **Odom** (`CcSJ2r3qw0XU9gJpEPyk`), or the Master Mold's 12 Anchor Beats (`AB01..AB12`). In fact, `.claude/agents/story-architect.md` still instructs writing a 15-minute docudrama at `170 WPM` (`BP-01`), and `.claude/skills/elevenlabs-voice/SKILL.md` still names retired narrator `Grandpa Spuds Oxley` (`NOpBlnGInO9m6vDvFkFC`).
 
@@ -42,7 +42,7 @@
 
   4. **Five Internal Discrepancies Between Mold v2.1.0 (`.md` vs `.json`) and `sourced_rules.json` (`BP-169..172`)**: As detailed in Section 3.2, `mrbeast_12min_video_mold.json` v2.1.0 still contains 5 internal mismatches against `MRBEAST_12MIN_MASTER_MOLD.md` v2.1.0 and `explainer_engine/standards/sourced_rules.json` (Zone ID naming `Z1_HOOK_0_30S` vs `hook_0_30s`; duplicate/divergent zone WPM and TTS tag lists violating `D-59`; `bp141_non_character_max: 0.8` instead of `0.45` on Profiles A and D; Still Motion Ladder Tier 1/2 vs `BP-170` `dramatic_still.py` rejection; and Layer 1 Anchor Beats `AB07..AB12` window/segment drift against Layer 3 `S09..S16`).
 
-* **\[RECOMMENDATION\]** Do **not** rewrite the engine. Integrate Master Mold v2.1.0 through **9 ordered, dependency-aware batches (`BATCH-M0` through `BATCH-M8`)** that:
+* **[RECOMMENDATION]** Do **not** rewrite the engine. Integrate Master Mold v2.1.0 through **9 free, dependency-ordered engineering batches (`BATCH-M0` through `BATCH-M7` plus `BATCH-M8A`)** followed by **1 strictly gated paid stage (`BATCH-M8B` with 4 sequential creator approval gates `GATE-P1..P4`)** that:
 
   1. Fix the P0 `== "production_script/3"` bug across all 10 modules immediately via an explicit two-predicate schema dispatch module (`explainer_engine/scripting/schema_version.py`: `is_scene_script` for `/3` and `/4`, `is_zoned_rhythm_script` for `/4`, accepting either `doc` dicts with `"schema"`/`"script_schema"` or raw schema strings), implement chunk-level Odom narrator polish before `join_reads`, and resolve `rhythm_zone` in `film_shots.compose()` (`BATCH-M0`).
 
@@ -54,21 +54,21 @@
 
   5. Implement the Bounded Timeline Engine (`±18%` clause-aligned timing + `8k+1` LTX quantization) and register the 3-tier Still Motion Ladder in `film_shots.py`, `dramatic_still.py`, and `router.py` while keeping Tier 2 (`qwen_nextpose`) strictly bounded by `BP-170`'s `static_still_max_s_by_zone` (`1.5/2.0/2.5s`) until quantitative pose-change metrics are validated (`BATCH-M5`).
 
-  6. Wire `WP-R7`, `WP-R9`, and `WP-R10` across `production/`, `audio/sound_director.py`, `finish/upscale.py`, `qa/`, and `production/shorts.py` (`BATCH-M6`), prove the entire architecture on a **free end-to-end representative test story** (`BATCH-M7`), and only then gate paid P12 GPU execution on explicit creator approval (`BATCH-M8`).
+  6. Wire `WP-R7`, `WP-R9`, and `WP-R10` across `production/`, `audio/sound_director.py`, `finish/upscale.py`, `qa/`, and `production/shorts.py` (`BATCH-M6`), prove the entire architecture on a **free end-to-end representative test story + 60.0s (`1,440`-frame) deterministic CPU assembly test** (`BATCH-M7`), complete **free governance closure (`BATCH-M8A`, `$0.00`)**, and only then gate paid GPU/TTS execution behind **four separate, sequential creator approval gates (`BATCH-M8B`: `GATE-P1`..`GATE-P4`)**.
 
 ### 1.2 Epistemic & Authority Classification Used in This Roadmap
 
 Every claim in this roadmap is explicitly tagged with one of five epistemic labels:
 
-* **\[FACT\]**: Directly verified in the committed files of `repo_5013a55a.zip` (`5013a55aca5a17a3734150f61a5eb172abcbe3b8`), `main` (`6e1dccad`), or git history.
+* **[FACT]** : Directly verified in the committed files of `repo_5013a55a.zip` (`5013a55aca5a17a3734150f61a5eb172abcbe3b8`), `main` (`6e1dccad`), or git history.
 
-* **\[OBSERVATION\]**: Structural or behavioral consequence proven by tracing code execution paths across repository modules.
+* **[OBSERVATION]** : Structural or behavioral consequence proven by tracing code execution paths across repository modules.
 
-* **\[RECOMMENDATION\]**: Proposed engineering action following the `CURRENT → MASTER MOLD REQUIREMENT → KEEP → CHANGE → REPLACE → REMOVE → TRADE-OFFS → RECOMMENDATION` framework.
+* **[RECOMMENDATION]** : Proposed engineering action following the `CURRENT → MASTER MOLD REQUIREMENT → KEEP → CHANGE → REPLACE → REMOVE → TRADE-OFFS → RECOMMENDATION` framework.
 
-* **\[HYPOTHESIS\]**: Unverified threshold, speed estimate, or creative heuristic (`status: "hypothesis"`, `severity: "REVIEW"` under `D-59`) requiring empirical measurement before becoming binding.
+* **[HYPOTHESIS]** : Unverified threshold, speed estimate, or creative heuristic (`status: "hypothesis"`, `severity: "REVIEW"` under `D-59`) requiring empirical measurement before becoming binding.
 
-* **\[CREATOR DECISION\]**: Rule or gate owned exclusively by the creator (`config/model_routing.json` `owner.creator`, protected configs, spend caps, voice selection `VC-08`, or open decision cards `CD-01..CD-10`).
+* **[CREATOR DECISION]** : Rule or gate owned exclusively by the creator (`config/model_routing.json` `owner.creator`, protected configs, spend caps, voice selection `VC-08`, or open decision cards `CD-01..CD-10`).
 
 ## 2. Current Architecture and Actual Implementation State
 
@@ -145,15 +145,16 @@ Every claim in this roadmap is explicitly tagged with one of five epistemic labe
   explainer_engine/production/clip_shorts.py (1440x2560 @ 24 fps loop-cut Shorts from finished long video)
   explainer_engine/publish/plan.py, stage.py, thumbnail.py, youtube.py (unlisted staging only after REVIEW_APPROVED; never public)
 
+
 ```
 
 ### 2.2 Subsystem Implementation State Classification at `5013a55aca5a17a3734150f61a5eb172abcbe3b8`
 
 | Subsystem / Module Group | Status Classification | Verified Evidence in Repository (`5013a55a`) | Integration Gap Relative to Master Mold v2.1.0 | 
 | ----- | ----- | ----- | ----- | 
-| **Canonical Rules Registry (`standards/sourced_rules.json`, `sourced_rules.py`)** | **Implemented and tested** | `158` BP rules (`BP-01..BP-172`); `BP-167` (`12m`, `2560x1440@24fps`, `5` Shorts), `BP-109` (`60/30/10 ±5%`), `BP-141` (`A/D non_character_max: 0.45`), `BP-169..172` added in PR #119; pinned by `tests/unit/test_sourced_rules.py`. | `BP-169` lacks intra-zone pace-variation frequency parameters and re-hook spike allowances (`S06` at `180s`, `S09` at `360s`); `BP-170` only models Tier 3 cutout/plate swaps, omitting Mold Tier 1 (`parallax_25d`) and Tier 2 (`qwen_nextpose`). | 
+| **Canonical Rules Registry (`standards/sourced_rules.json`, `sourced_rules.py`)** | **Implemented and tested** | `158` BP rules (`BP-01..BP-172`); `BP-167` (`12m`, `2560x1440@24fps`, `5` Shorts), `BP-109` (`60/30/10 ±5%`), `BP-141` (`A/D non_character_max: 0.45`), `BP-169..172` added in PR #119; pinned by `tests/unit/test_sourced_rules.py`. | `BP-169` lacks intra-zone pace-variation frequency parameters and re-hook spike allowances (`S06` at `180s`, `S09` at `360s`); `BP-170` enforces `static_still_max_s_by_zone` (`1.5/2.0/2.5s`) as a hard `FAIL` ceiling unless a Tier 3 `cutout_relocation` or `plate_swap` is present; Tier 1 (`parallax_25d`) and Tier 2 (`qwen_nextpose`) must remain strictly within `static_still_max_s_by_zone` (`1.5/2.0/2.5s`). | 
 | **Rhythm Profile Reader (`edit/rhythm_profile.py`, `schemas/rhythm_profile.schema.json`)** | **Implemented but incompletely integrated** | Reads `BP-169` (`mrbeast_animated` vs `calm_docudrama`); provides `zone_at_time`, `zone_for_window`, `zone_wpm`, `words_to_seconds`; pinned by `tests/unit/test_rhythm_profile.py`. | Only called by `rhythm_lint.py`, `dramatic_still.py`, `hype_read.py`, and `syllables.py`. **Not called** by `variant_plan.py`, `story_lint.py`, `narration_lint.py`, `film_shots.py`, `board.py`, `motion_lint.py`, `timing.py`, `validate.py`, `sound_director.py`, `engagement.py`, or `scorecard.py`. | 
-| **Dramatic Still Validator & Renderer (`edit/dramatic_still.py`, `schemas/dramatic_still.schema.json`)** | **Implemented but incompletely integrated** | Validates `cutout_relocation` (`>=0.25` dist, `>=0.08` area), `plate_swap` (`>=0.30` px), and `composite_cutout_and_plate` within `[0.25, 0.75]` hold window (`BP-170`); renders RGBA cutout relocation; pinned by `tests/unit/test_dramatic_still.py`. | Not wired into `edit/router.py`, `production/assemble.py` (`build_video_v2`), or `variant_plan.py`. Rejects Mold v2.1.0 Tier 1 (`1.5–2.2s` `parallax_25d` in hyped zones) and Tier 2 (`2.2–3.5s` `qwen_nextpose` pose shifts). | 
+| **Dramatic Still Validator & Renderer (`edit/dramatic_still.py`, `schemas/dramatic_still.schema.json`)** | **Implemented but incompletely integrated** | Validates `cutout_relocation` (`>=0.25` dist, `>=0.08` area), `plate_swap` (`>=0.30` px), and `composite_cutout_and_plate` within `[0.25, 0.75]` hold window (`BP-170`); renders RGBA cutout relocation; pinned by `tests/unit/test_dramatic_still.py`. | Not wired into `edit/router.py`, `production/assemble.py` (`build_video_v2`), or `variant_plan.py`. Enforces `static_still_max_s_by_zone` (`1.5s` in Hook/Climax, `2.0s` in Early/Late, `2.5s` in Calm Middle) on all stills lacking a Tier 3 `dramatic_change` (`cutout_relocation` or `plate_swap`); Tier 1 (`parallax_25d`) and Tier 2 (`qwen_nextpose`) are capped at `1.5/2.0/2.5s` under `BP-170` (`FAIL`). | 
 | **Multi-Zone Rhythm Lint (`scripting/rhythm_lint.py`)** | **Implemented but incompletely integrated** | Checks `RL-01` (shots/min band per zone), `RL-02` (>15% shots above zone max length), `RL-03` (>30% shots below zone min length), `RL-04` (`dramatic_still.check_script_stills`); pinned by `tests/unit/test_rhythm_lint.py`. | Standalone CLI only; **not called** by `production/validate.py`, `scripting/film_shots.py:episode_check`, or `production_gate.py`. | 
 | **Hyped Narrator Prosody & Odom Polish (`audio/hype_read.py`, `audio/narrator_polish.py`, `config/channel_voices.json`)** | **Implemented but incompletely integrated** | Odom (`CcSJ2r3qw0XU9gJpEPyk`, `eleven_v4`) set as `status: "channel"` in `config/channel_voices.json`; `narrator_polish.py` (`+12 dB @ 150 Hz` shelf, `-2 dB @ 300 Hz`, `-0.6 dB` trim, `0.95` limiter) wired into `production/__main__.py:cmd_words` (when `not S.has_dialogue(doc)`); `hype_read.py` checks `HR-01..04`; pinned by `test_hype_read.py` and `test_narrator_polish.py`. | `narrator_polish.py` is **skipped** when `S.has_dialogue(doc)` is `True` (`production/__main__.py:119`), even though all docudrama episodes have character dialogue! Also `hype_read.check_prosody_plan` is not wired into `production/validate.py` or `narration_lint.py`, and Odom's `baseline` in `channel_voices.json` is still `null`. | 
 | **Production Script Schema `/4` (`schemas/production_script.schema.json`) & Stage Guard (`scripting/stage_guard.py`)** | **Implemented with P0 regression in downstream validators** | `production_script/4` added to schema enum; `episode.rhythm_profile`, `segments[].rhythm_zone`, and `shots[].dramatic_change` added; `rhythm_zone` added to `stage_guard.py:SEG_STORY`; pinned by `test_production_script_schema.py`. | **P0 Bug**: 10 validator modules (`scene_lint.py`, `script_approval.py`, `speech.py`, `story_lint.py`, `beats.py`, `editorial_gate.py`, `silent.py`, `staging.py`, `validate.py`, `audio/layers.py`) check `== "production_script/3"`, silently breaking `/3` rules when `schema == "production_script/4"`. | 
@@ -178,7 +179,7 @@ Master Mold v2.1.0 replaces the rigid v1 254-shot template with a **3-Layer Cont
 
 ### 3.2 Forensic Audit of Discrepancies Between `MRBEAST_12MIN_MASTER_MOLD.md` v2.1.0, `mrbeast_12min_video_mold.json` v2.1.0, and `sourced_rules.json`
 
-**\[FACT\]** Inspecting `MRBEAST_12MIN_MASTER_MOLD.md` v2.1.0, `mrbeast_12min_video_mold.json` v2.1.0, and `explainer_engine/standards/sourced_rules.json` (`5013a55a`) side by side reveals **5 exact internal discrepancies** that must be resolved in `BATCH-M1` when committing the canonical Mold contract into the repository:
+**[FACT]** Inspecting `MRBEAST_12MIN_MASTER_MOLD.md` v2.1.0, `mrbeast_12min_video_mold.json` v2.1.0, and `explainer_engine/standards/sourced_rules.json` (`5013a55a`) side by side reveals **5 exact internal discrepancies** that must be resolved in `BATCH-M1` when committing the canonical Mold contract into the repository:
 
 | ID | Discrepancy Location | What `MRBEAST_12MIN_MASTER_MOLD.md` v2.1.0 Says | What `mrbeast_12min_video_mold.json` v2.1.0 Says | What Repository `sourced_rules.json` (`5013a55a`) Says | Required Resolution in `BATCH-M1` | 
 | ----- | ----- | ----- | ----- | ----- | ----- | 
@@ -186,7 +187,7 @@ Master Mold v2.1.0 replaces the rigid v1 254-shot template with a **3-Layer Cont
 | **M-02** | **Duplicate & Divergent Zone Numbers and TTS Tags in `zones_5`** (`D-59` single-home rule) | States in §1.1 that all numeric thresholds live in `sourced_rules.json` (`D-59`), yet tables in §4/§5 retain the 2,066-word instance averages (`192.0`, `177.0`, `166.6`, `184.3`, `157.0` WPM). | `zones_5` embeds numeric targets that differ from `BP-169`: e.g., `heard_wpm_target` (`192.0` vs `193`, `177.0` vs `176`, `166.6` vs `166`, `184.3` vs `185`, `157.0` vs `160`), `speaking_wpm_target` (`217` vs `233` in Z1), `dramatic_changes_per_min` (`34.0` vs `30.0` in Z1), and extra `tts_tags_allowed` (`[gasps]` in Z1, `[playful]` in Z2, `[excited]` at 180s/360s in Z3, `[shouts]` in Z4, `[pause]`/`[amazed]` in Z5). | `BP-169` has `heard_wpm_target`: `193, 176, 166, 185, 160`; `speaking_wpm_target`: `233, 225, 205, 230, 225`; and `tts_tags` without `gasps` in Z1 or `excited` in Z3 (`hype_read.py:HR-01` flags any tag not in `BP-169`). | Per `D-59` (`tests/unit/test_sourced_rules.py`), remove duplicate threshold numbers from the committed repo Mold contract (`zones_5` references `BP-169` via `rhythm_profile.py`), isolate the 2,066-word empirical numbers strictly under `reference_instance_metrics` (never used as validator bounds), and add a segment-scoped `rehook_tts_tags: ["excited"]` exception in `BP-169` + `audio/hype_read.py` strictly limited to segments with `rehook_spike: true` (`S06` at `180s`, `S09` at `360s`), keeping `[excited]` forbidden across all other `middle_calm_90_480s` segments. | 
 | **M-03** | **Episode Profiles `A..D` `bp141_non_character_max`, `lane_allowed_ranges_pct`, and `rationale` in JSON** | §1.1 and §4.2 state `BP-109` tolerance is `±5 percentage points` (`0.05`) and `BP-141` `non_character_max` is `0.45` for Profiles `A` and `D` and `0.80` for `B` and `C`. | In `mrbeast_12min_video_mold.json` `episode_profiles.profiles`, all 4 profiles (`D`, `B`, `A`, `C`) still have `"bp141_non_character_max": 0.8`, retain `"lane_allowed_ranges_pct"` (`±3%`, e.g. `[57.0, 63.0]`) alongside `"allowed_ranges"` (`[0.55, 0.65]`), and all 4 profiles have Profile D's `rationale` text pasted into them. | `BP-141` has `A.non_character_max = 0.45`, `D.non_character_max = 0.45`, `B.non_character_max = 0.80`, `C.non_character_max = 0.80`. `BP-109` has `lane_tolerance = 0.05` (`55–65%` VIDEO, `25–35%` STILL, `5–15%` HELPER). | Fix `mrbeast_12min_video_mold.json` so Profiles `A` and `D` resolve `non_character_max = 0.45` and `B` and `C` resolve `0.80` from `BP-141`, remove the stale `±3%` `lane_allowed_ranges_pct` keys, restore distinct `rationale` strings per profile, and **preserve `BP-141`'s `status: "hypothesis"` and `severity: "REVIEW"`** (never escalating to `FAIL` without an explicit creator decision). | 
 | **M-04** | **Still Motion Ladder (3-Tier) vs `BP-170` (`edit/dramatic_still.py`)** | §4.3 defines a 3-Tier Still Motion Ladder: `TIER_1` (`1.0–2.2s` `parallax_25d`), `TIER_2` (`2.2–3.5s` `qwen_nextpose` / state flip), `TIER_3` (`3.5–5.0s` cutout relocation `>=25%` / plate swap `>=30%`). | `still_motion_ladder` defines the 3 tiers, and `SH003` (`1.875s` in `Z1_HOOK_0_30S`) uses `TIER_1` (`motion_type: "parallax_25d"`) with no structured `dramatic_change` object, while `track_5` text mentions a cutout leap. | `BP-170` (`edit/dramatic_still.py`) sets `static_still_max_s_by_zone` (`1.5s` in Z1/Z5, `2.0s` in Z2/Z4, `2.5s` in Z3) and **FAILs any still longer than `static_still_max_s_by_zone`** unless it has a `TIER_3` `dramatic_change` (`cutout_relocation` or `plate_swap`). It does not recognize `TIER_2` (`qwen_nextpose` pose flip) or `parallax_25d` on `1.5–2.2s` holds in Z1/Z5. | Preserve `BP-170` (`edit/dramatic_still.py`) severity (`FAIL`) without relaxation: add `still_motion_tier` (`TIER_1`, `TIER_2`, `TIER_3`) to the schema, but **keep both Tier 1 (`parallax_25d`) and Tier 2 (`qwen_nextpose`) strictly bounded by `static_still_max_s_by_zone` (`1.5s / 2.0s / 2.5s`)** until a measurable visual-change metric for Tier 2 (masked subject pose delta + identity gate pass beyond mere `min_subject_area_frac = 0.08`) is validated and approved by the creator (`CD-03`). Only Tier 3 (`cutout_relocation >= 0.25` or `plate_swap >= 0.30`) unlocks holds up to `5.0s` (`SH003` at `1.875s` in `hook_0_30s` must either carry a valid Tier 3 `dramatic_change` spec or trim to `<=1.5s`). | 
-| **M-05** | **Layer 1 Anchor Beats (`AB07..AB12`) vs Layer 3 Segments (`S09..S16`) & `BP-142` / `BP-04`** | §3.4 lists `AB07..AB12` windows (`360–420s`, `420–540s`, `540–570s`, `570–600s` Climax, `600–690s` Aftermath), while §5.1 lists `S09..S16` windows (`S09: 330–375s`, `S10: 375–430s`, `S11: 430–480s`, `S12: 480–540s`, `S13: 540–600s`, `S14: 600–660s`, `S15: 660–690s` Climax I, `S16: 690–720s` Climax II/Resolution). | `twelve_anchor_beats` (`AB07..AB12`) and `segments_summary_16` (`S09..S16`) have mismatched `window_s` and climax placement (`AB10` puts Climax in `S13` at `570–600s`, while `segments_summary_16` and `zones_5` put Climax `Z5` in `S15–S16` at `660–720s`). | `BP-169` puts `late_third_480_660s` at `480–660s` (`S12–S14`) and `climax_660_720s` at `660–720s` (`S15–S16`). `BP-04` (`ENG-5`) requires the resolution to start **after `90%` of words (`>= 648s`, i.e., `S15/S16`)**, and `BP-142` sets `turn_slots_D = [4, 6, 8, 10, 11, 13]`. | Align `AB07..AB12` in Layer 1 to match `segments_summary_16`, `BP-169`, `BP-142`, and `BP-04`: `AB07` (`S08–S09`, `270–375s`), `AB08` (`S10–S11`, `375–480s`), `AB09` (`S12`, `480–540s`), `AB10` (`S13–S14`, `540–660s`), `AB11` (`S15`, `660–690s`), and `AB12` (`S16`, `690–720s`). Because zone WPM varies across the episode, enforce `AB12` via **two independent checks**: (1) timeline segment `S16` spans `690–720s`, and (2) `BP-04` (`answer_after_share >= 0.90`) is checked on **cumulative spoken word share (`>= 90%` of episode words)** rather than a fixed `648s` timestamp. | 
+| **M-05** | **Layer 1 Anchor Beats (`AB07..AB12`) vs Layer 3 Segments (`S09..S16`) & `BP-142` / `BP-04`** | §3.4 lists `AB07..AB12` windows (`360–420s`, `420–540s`, `540–570s`, `570–600s` Climax, `600–690s` Aftermath), while §5.1 lists `S09..S16` windows (`S09: 330–375s`, `S10: 375–430s`, `S11: 430–480s`, `S12: 480–540s`, `S13: 540–600s`, `S14: 600–660s`, `S15: 660–690s` Climax I, `S16: 690–720s` Climax II/Resolution). | `twelve_anchor_beats` (`AB07..AB12`) and `segments_summary_16` (`S09..S16`) have mismatched `window_s` and climax placement (`AB10` puts Climax in `S13` at `570–600s`, while `segments_summary_16` and `zones_5` put Climax `Z5` in `S15–S16` at `660–720s`). | `BP-169` puts `late_third_480_660s` at `480–660s` (`S12–S14`) and `climax_660_720s` at `660–720s` (`S15–S16`). `BP-04` (`ENG-5`, `answer_after_share = 0.90`) requires the central answer/resolution to start **only after at least `90%` of the episode's spoken words have been delivered** (a word-share requirement, not a fixed `648s` timestamp), and `BP-142` sets `turn_slots_D = [4, 6, 8, 10, 11, 13]`. | Align `AB07..AB12` in Layer 1 to match `segments_summary_16`, `BP-169`, `BP-142`, and `BP-04`: `AB07` (`S08–S09`, `270–375s`), `AB08` (`S10–S11`, `375–480s`), `AB09` (`S12`, `480–540s`), `AB10` (`S13–S14`, `540–660s`), `AB11` (`S15`, `660–690s`), and `AB12` (`S16`, `690–720s`). Because zone WPM varies across the episode, enforce `AB12` via **two independent checks**: (1) timeline segment `S16` spans `690–720s`, and (2) `BP-04` (`answer_after_share >= 0.90`) is checked on **cumulative spoken word share (`>= 90%` of episode words)** rather than a fixed `648s` timestamp. | 
 
 ## 4. Component & Subsystem Impact Analysis (`CURRENT → MASTER MOLD REQUIREMENT → KEEP → CHANGE → REPLACE → REMOVE → TRADE-OFFS → RECOMMENDATION`)
 
@@ -764,9 +765,9 @@ Every file from `FILES_AFFECTED.md` (`#1..#86`) plus the `22` additional reposit
 | 78 | `docs/AUDIO_SYSTEM.md` | Docs | Unchanged in PR #119. | **CHANGE** | Document `audio/hype_read.py` (`BP-171`), `audio/narrator_polish.py` (`Odom`), and `D-90` pre-recorded character take binding in `audio_spine/2`. | `explainer_engine/docs_lint.py` | 
 | 79 | `docs/COST_AND_TIME_MODEL.md` | Docs | **DONE in PR #119** (`5f04757` added `D-94` rhythm cost table). | **KEEP** (Update after P12b real speed measurements) | Already updated with initial `D-94` cost estimate; replace estimates with measured `config/job_speeds.json` rows after P12b pod. | `explainer_engine/docs_lint.py` | 
 | 80 | `explainer_engine/standards/sourced_rules.py` | Rules | Unchanged (`rule()`, `T()`, `level()`). | **KEEP** | Canonical reader of `sourced_rules.json`. | `tests/unit/test_sourced_rules.py` | 
-| 81 | `explainer_engine/standards/sourced_rules.json` | Rules | **DONE in PR #119** (`BP-167..172`, `BP-109` `0.05`, `BP-141` `0.45`). | **CHANGE** (minor reconciliation) | Add `rehook_tts_tags: ["excited"]` on `middle_calm_90_480s` in `BP-169` (for `180s`/`360s` spikes) and add Tier 1/2/3 thresholds in `BP-170` once confirmed by creator (`CD-03`). | `tests/unit/test_sourced_rules.py` | 
+| 81 | `explainer_engine/standards/sourced_rules.json` | Rules | **DONE in PR #119** (`BP-167..172`, `BP-109` `0.05`, `BP-141` `0.45`). | **CHANGE** (minor reconciliation) | Add `rehook_tts_tags: ["excited"]` on `middle_calm_90_480s` in `BP-169` (strictly for `rehook_spike: true` segments `S06`/`S09`); preserve `BP-170` `FAIL` severity and `static_still_max_s_by_zone` (`1.5/2.0/2.5s`) ceiling for both Tier 1 and Tier 2 stills (`CD-03`). | `tests/unit/test_sourced_rules.py` | 
 | 82 | `explainer_engine/edit/rhythm_profile.py` | Rhythm | **DONE in PR #119** (`WP-R2`). | **CHANGE** (minor alias support) | Add `ZONE_ALIASES` mapping `Z1_HOOK_0_30S -> hook_0_30s`, etc., so both Mold and BP-169 zone IDs resolve cleanly. | `tests/unit/test_rhythm_profile.py` | 
-| 83 | `explainer_engine/edit/dramatic_still.py` | Stills | **DONE in PR #119** (`WP-R4`, Tier 3 cutout/plate swap). | **CHANGE** | Support 3-Tier Still Motion Ladder (`TIER_1` `parallax_25d` up to `static_still_max_s_by_zone`, `TIER_2` `qwen_nextpose` / state flip up to `3.5s`, `TIER_3` `cutout_relocation` / `plate_swap` up to `5.0s`). | `tests/unit/test_dramatic_still.py` | 
+| 83 | `explainer_engine/edit/dramatic_still.py` | Stills | **DONE in PR #119** (`WP-R4`, Tier 3 cutout/plate swap). | **CHANGE** | Support 3-Tier Still Motion Ladder while preserving `BP-170` (`FAIL`): both `TIER_1` (`parallax_25d`) and `TIER_2` (`qwen_nextpose` / `nextpose_flip`) are strictly capped at `static_still_max_s_by_zone` (`1.5s` Hook/Climax, `2.0s` Early/Late, `2.5s` Calm Middle); only `TIER_3` (`cutout_relocation >= 0.25` with `min_subject_area_frac >= 0.08` or `plate_swap >= 0.30`) unlocks holds above `static_still_max_s_by_zone` up to `5.0s`. | `tests/unit/test_dramatic_still.py` | 
 | 84 | `explainer_engine/scripting/rhythm_lint.py` | Rhythm | **DONE in PR #119** (`WP-R8`, `RL-01..04`). | **CHANGE** (minor) | Accept `production_script/4` documents directly (extracting shots across `segments[].shots` when top-level `shots` is not flat) so `validate.py` can pass `doc` directly to `rhythm_lint.check(doc)`. | `tests/unit/test_rhythm_lint.py` | 
 | 85 | `explainer_engine/audio/hype_read.py` | Voice | **DONE in PR #119** (`WP-R5`, `HR-01..04`). | **CHANGE** (minor) | Allow `rehook_tts_tags` (`[excited]`) on segments marked as `rehook` (`S06`, `S09`) inside `middle_calm_90_480s`, and accept `production_script/4` `doc` directly. | `tests/unit/test_hype_read.py` | 
 | 86 | `docs/DECISIONS_AND_OPEN_QUESTIONS.md` | Governance | **DONE in PR #119** (`D-92`, `D-93`, `D-94` recorded). | **KEEP** (Update when `CD-01..10` are answered) | Already contains `D-92`, `D-93`, and `D-94`. | `tests/unit/test_d92_creator_answers.py` | 
@@ -847,20 +848,20 @@ The following repository invariants, modules, and governance locks **work well t
 | **CG-02** | **Current Code vs. Odom Narrator Polish** | **P0 BLOCKER** | `explainer_engine/production/__main__.py:119` runs `if not S.has_dialogue(doc): polish = narrator_polish.polish_in_place(...)`. Because every CrossWorld docudrama script has character dialogue (`S.has_dialogue(doc) == True`), **Odom's mandatory bass-shelf polish (`audio/narrator_polish.py`) is never applied on real episodes**! | `explainer_engine/production/__main__.py:119`, `explainer_engine/audio/narrator_polish.py` | **BATCH-M0 / BATCH-M4**: Implement chunk-level narrator-only polish (`TTS chunks -> speaker identification via S.tts_chunks(doc) -> polish ONLY narrator chunks before join_reads -> leave character chunks untouched -> join_reads -> alignment`), never running `narrator_polish` on a combined multi-speaker WAV. | 
 | **CG-03** | **Current Code vs. `KP-47` Fast-Action Lint** | **P1 MAJOR** | `scripting/shot_prompt_lint.py:194` checks `KP-47` (`BP-172` fast-action verbs in hyped zones) only when `shot.get("rhythm_zone") in HYPED_ZONES or shot.get("fast_action") is True`. However, `scripting/film_shots.py:compose()` does **not** copy `rhythm_zone` onto composed video shot dicts, so `KP-47` never runs during `film_shots check`! | `explainer_engine/scripting/film_shots.py:449`, `explainer_engine/schemas/film_shots.schema.json` | **BATCH-M0 / BATCH-M5**: Add optional `rhythm_zone` to `schemas/film_shots.schema.json` AND compute `rhythm_zone` in `film_shots.py:compose()` from `shot.get("rhythm_zone") or rhythm_profile.zone_at_time(cum_t)` on zoned profiles so `KP-47` fires during `film_shots check` even when `shot["rhythm_zone"]` is omitted. | 
 | **CG-04** | **Mold JSON v2.1.0 vs. `sourced_rules.json` (`D-59`)** | **P1 MAJOR** | `mrbeast_12min_video_mold.json` v2.1.0 embeds zone numbers (`192.0`, `177.0`, `166.6`, `184.3`, `157.0` WPM), `Z1..Z5` IDs, `bp141_non_character_max: 0.8` on Profiles A/D, and extra TTS tags (`[gasps]` in Z1, `[excited]` in Z3) that differ from `BP-169` and `BP-141` (`M-01..M-03`). | `config/master_mold_v2_1.json`, `explainer_engine/standards/sourced_rules.json`, `explainer_engine/edit/rhythm_profile.py`, `explainer_engine/audio/hype_read.py` | **BATCH-M1**: Reconcile `M-01..M-03`, add `ZONE_ALIASES` in `rhythm_profile.py`, add `rehook_tts_tags` (`["excited"]` for `S06`/`S09`) in `BP-169` + `hype_read.py`, and strip duplicate BP numbers from `config/master_mold_v2_1.json`. | 
-| **CG-05** | **Mold Layer 1 (`AB07..AB12`) vs. Layer 3 (`S09..S16`) & `BP-04`** | **P1 MAJOR** | Layer 1 `twelve_anchor_beats` places Climax (`AB10`) in `S13` (`570–600s`) and Aftermath (`AB11`) at `600–690s`, whereas Layer 3 `segments_summary_16` and `BP-169` place Climax (`Z5`) in `S15–S16` (`660–720s`) and `BP-04` (`ENG-5`) requires resolution to wait until after `90%` (`648s`) (`M-05`). | `config/master_mold_v2_1.json`, `docs/MASTER_MOLD_V2_1.md`, `explainer_engine/scripting/mold_contract.py` | **BATCH-M1**: Align `AB07..AB12` segment IDs and windows with `S08..S16`, `BP-169` (`Z3..Z5`), `BP-142` (`turn_slots_D`), and `BP-04` (`>=648s`). | 
-| **CG-06** | **Mold Still Motion Ladder vs. `BP-170` (`dramatic_still.py`)** | **P1 MAJOR** | Mold v2.1.0 defines a 3-Tier Still Motion Ladder (`TIER_1` `1.0–2.2s` `parallax_25d`; `TIER_2` `2.2–3.5s` `qwen_nextpose` / state flip; `TIER_3` `3.5–5.0s` `cutout_relocation` / `plate_swap`), whereas `BP-170` (`dramatic_still.py`) FAILs any still above `static_still_max_s_by_zone` (`1.5s` in Z1/Z5, `2.0s` in Z2/Z4, `2.5s` in Z3) unless it has a Tier 3 cutout relocation or plate swap (`M-04`). | `explainer_engine/edit/dramatic_still.py`, `explainer_engine/schemas/dramatic_still.schema.json`, `explainer_engine/standards/sourced_rules.json` (`BP-170`) | **BATCH-M5** (with `CD-03` confirmation): Keep `static_still_max_s_by_zone` (`1.5/2.0/2.5s`) as the ceiling for Tier 1 (`parallax_25d` alone), and extend `dramatic_still.schema.json` + `dramatic_still.py` to accept Tier 2 (`nextpose_flip` / `lighting_flip` up to `3.5s`) and Tier 3 (`cutout_relocation` / `plate_swap` up to `5.0s`). | 
+| **CG-05** | **Mold Layer 1 (`AB07..AB12`) vs. Layer 3 (`S09..S16`) & `BP-04`** | **P1 MAJOR** | Layer 1 `twelve_anchor_beats` places Climax (`AB10`) in `S13` (`570–600s`) and Aftermath (`AB11`) at `600–690s`, whereas Layer 3 `segments_summary_16` and `BP-169` place Climax (`climax_660_720s`) in `S15–S16` (`660–720s`) and `BP-04` (`ENG-5`, `answer_after_share = 0.90`) requires the resolution/answer to wait until `>= 90%` of spoken words have been delivered (`M-05`). | `config/master_mold_v2_1.json`, `docs/MASTER_MOLD_V2_1.md`, `explainer_engine/scripting/mold_contract.py`, `explainer_engine/scripting/story_lint.py`, `explainer_engine/qa/engagement.py` | **BATCH-M1 / BATCH-M2 / BATCH-M6**: Align `AB07..AB12` segment IDs and windows with `S08..S16` (`AB11` -> `S15` `660–690s`, `AB12` -> `S16` `690–720s`) and enforce **two independent checks**: (1) `S16` occupies `690–720s`, and (2) `BP-04` cumulative spoken-word share (`words_before_resolution / total_spoken_words >= 0.90`, inclusive boundary) is verified across actual voiced narrator + character words (excluding TTS tags and non-spoken metadata), never approximated by a fixed `648s` timestamp. | 
+| **CG-06** | **Mold Still Motion Ladder vs. `BP-170` (`dramatic_still.py`)** | **P1 MAJOR** | Mold v2.1.0 proposes a 3-Tier Still Motion Ladder (`TIER_1` `parallax_25d`; `TIER_2` `qwen_nextpose` / `nextpose_flip`; `TIER_3` `cutout_relocation` / `plate_swap`), whereas `BP-170` (`dramatic_still.py`, severity `FAIL`) rejects any still above `static_still_max_s_by_zone` (`1.5s` in Hook/Climax, `2.0s` in Early/Late, `2.5s` in Calm Middle) unless it has a verified Tier 3 `dramatic_change` (`M-04`). | `explainer_engine/edit/dramatic_still.py`, `explainer_engine/schemas/dramatic_still.schema.json`, `explainer_engine/standards/sourced_rules.json` (`BP-170`) | **BATCH-M5** (exact alignment with `M-04`): Preserve `BP-170`'s `FAIL` severity and keep `static_still_max_s_by_zone` (`1.5s` Hook/Climax, `2.0s` Early/Late, `2.5s` Calm Middle) as the strict maximum hold for **both Tier 1 (`parallax_25d`) and Tier 2 (`qwen_nextpose` / `nextpose_flip`)**. Only Tier 3 (`cutout_relocation >= 0.25` with `min_subject_area_frac >= 0.08` or `plate_swap >= 0.30`) unlocks holds above `static_still_max_s_by_zone` up to `5.0s`. Any future Tier 2 hold extension beyond `1.5/2.0/2.5s` is strictly conditional on (a) quantitative masked subject pose-delta measurement, (b) character identity validation (`KG-13`), (c) a measurable acceptance threshold, and (d) explicit creator approval (`CD-03`). | 
 | **CG-07** | **Legacy Calm Checks vs. Zoned Scripts (`WP-R7`)** | **P1 MAJOR** | `film_shots.py` (`KP-35`, `BP-107` `11–17 shots/min`), `variant_plan.py` (`VP-18`, `BP-107`), `board.py` (`RHYTHM-1` `BP-40` `<=10 pics/min`, `RHYTHM-2` `BP-84` `>=2.0s`), `motion_lint.py` (`MO-01` `BP-40`), and `shot_rules.py` (`UR-11` `BP-85`) flag REVIEW/FAIL on every `/4` zoned script. | `film_shots.py`, `variant_plan.py`, `board.py`, `motion_lint.py`, `shot_rules.py`, `validate.py` | **BATCH-M2 / BATCH-M5 / BATCH-M6**: When `rhythm_profile.resolve_profile_name(doc) != "calm_docudrama"`, defer shot-rate and hold-length checks in those modules to `scripting/rhythm_lint.py` (`BP-169`, `BP-170`). | 
 | **CG-08** | **Existing Prompts/Agents vs. New Mold** | **P1 MAJOR** | All 16 `.claude/agents/*.md` and 16 `.claude/skills/*/SKILL.md` still instruct `/3`, `15-minute` runtime (`story-architect.md`), flat `170 WPM` (`scene-writer.md`), `Oxley` (`elevenlabs-voice/SKILL.md`), and `10` Shorts (`shorts-writer.md`). | 10 agent `.md` files and 10 skill `SKILL.md` files (Section 5) | **BATCH-M3**: Update the 10 affected agent pages and 10 affected skill files so the Mold governs story design and script writing from Stage 1. | 
 | **CG-09** | **Old Research (`CrossWorld_Chronicles_Organized_Research_for_Gemini.docx`) vs. New Mold & Creator Decisions** | **P1 MAJOR** | The 214-page research compendium contains older recommendations superseded by creator decisions: (a) `899s` (`15-min`) flagship blueprint (`Part I §Second-by-Second Episode Architecture`) vs `720s` (`12-min`, `BP-167`); (b) permanent 2.5D hosts (`Strategy E`) vs `D-89` (`NO permanent hosts`); (c) `DOC_MAP` / `DRAMA_BLOCKED_3D` lane names vs `MAP` and refused `DRAMA_BLOCKED_3D` (`D-75`); (d) `-16 LUFS` / `135–145 WPM` craft proposals vs `D-91`/`D-92` (`-14 LUFS`, `BP-169` zones). | Documentation & agent instructions | **Enforced throughout Roadmap**: Never copy obsolete `15-min`, permanent-host, `DOC_MAP`, or `-16 LUFS` rules from the old research doc; creator decisions `D-89`, `D-91`, `D-92`, `D-93`, `D-94` and `BP-167..172` strictly win. | 
 | **CG-10** | **`D-90` Character Voice Audio-In vs. `audio_spine/2` & `router.py`** | **P1 MAJOR** | `edit/router.py:77` refuses `DIALOGUE_CU` unless `audio_spine/2.post_hoc_shots` has `source == "clip"` and a non-null `clip_sha256`. Currently `audio/spine.py:114` only writes `source: "planned", clip_sha256: None` until post-render `retime_post_hoc`! Under `D-90`, the ElevenLabs character take is recorded **before** LTX rendering and conditions the clip. | `explainer_engine/audio/spine.py`, `explainer_engine/edit/router.py` | **BATCH-M4**: Add `spine.bind_character_takes(spine, takes_dir)` to slice/hash pre-recorded ElevenLabs character takes into `post_hoc_shots` (`source: "clip"`, `clip_sha256: <sha256>`) before `router.py` runs. | 
 | **CG-11** | **Bounded Timeline Engine Missing in Code** | **P2 MODERATE** | The 6-step Bounded Timeline Engine (`±18%` clause-aligned timing + `24 fps` integer projection + `8k+1` LTX frame derivation) exists in the Mold spec but not yet as a callable Python module in `explainer_engine/edit/`. | `explainer_engine/edit/bounded_timeline.py (NEW)` | **BATCH-M5**: Implement `explainer_engine/edit/bounded_timeline.py` + `tests/unit/test_bounded_timeline.py`. | 
 | **CG-12** | **Three-Lane Clip Materialization (`WP-5a`) Missing Before `build_video_v2`** | **P1 MAJOR** | `production/assemble.py:build_video_v2` expects every shot in `shots_dir` to be a rendered `.mp4` at the target frame size, but nothing automatically runs `finish/upscale.py` on `1920x1088` `VIDEO` clips or renders `STILL_HOLD` (`dramatic_still`/`parallax`) and `MAP`/`COMPENSATOR` items into `shots_dir` `.mp4` files. | `explainer_engine/production/assemble.py`, `explainer_engine/finish/upscale.py` | **BATCH-M6**: Implement `assemble.materialize_lane_clips(job, route, manifest, out_shots_dir)` to unify `VIDEO` (upscaled), `STILL` (Tier 1/2/3), and `HELPER` (`visual_compensator`) into `2560x1440 @ 24 fps` `.mp4` clips for `build_video_v2`. | 
-| **CG-13** | **`xworld_v2` LoRA Strength Inconsistency (`0.7` vs `1.0`)** | **P2 MODERATE** | `config/cloud_pins.json:103` pins `models.loras.xworld_v2.weight = 0.7`, whereas `training/pods/p12/p12b.json` (`style_lora.strength`) and `qa/style_prompt.py:25` (`INFERENCE["lora_strength"]`) use `1.0`. | `config/cloud_pins.json`, `explainer_engine/training/pods/p12/p12b.json`, `explainer_engine/qa/style_prompt.py` | **BATCH-M8** (gated on creator decision `CD-02`): Lock `0.7` (or `1.0`) across all 3 files once creator answers `CD-02`. | 
+| **CG-13** | **`xworld_v2` LoRA Strength Inconsistency (`0.7` vs `1.0`)** | **P2 MODERATE** | `config/cloud_pins.json:103` pins `models.loras.xworld_v2.weight = 0.7`, whereas `training/pods/p12/p12b.json` (`style_lora.strength`) and `qa/style_prompt.py:25` (`INFERENCE["lora_strength"]`) use `1.0`. | `config/cloud_pins.json`, `explainer_engine/training/pods/p12/p12b.json`, `explainer_engine/qa/style_prompt.py` | **BATCH-M8A** (gated on creator decision `CD-02` before P12 bundle upload to HF and `BATCH-M8B` `GATE-P1`): Lock `0.7` (or `1.0`) across all 3 files once creator answers `CD-02`. | 
 | **CG-14** | **PR #112 Stale Branch Disposition** | **P2 MODERATE** | [PR #112](https://github.com/vano1919/explainer-engine/pull/112) (`1273619b`) has a valid 2-line bugfix in `explainer_engine/llm/claude_api.py:1066` (`load_job` string `system` handling) + unit test, bundled with stale edits to protected `config/spend_caps.json` (`max_usd: 95.0`) and `config/model_routing.json`. | `explainer_engine/llm/claude_api.py`, `tests/unit/test_claude_api.py` | **BATCH-M0**: Cherry-pick **only** the 2-line `claude_api.py` fix and its unit test; reject the stale config hunks. | 
 
-## 9. Ordered Implementation Batches (`BATCH-M0` through `BATCH-M8`)
+## 9. Ordered Implementation Batches (`BATCH-M0` through `BATCH-M7`, Free `BATCH-M8A`, and Paid `BATCH-M8B`)
 
-The implementation roadmap is divided into **9 sequential, dependency-ordered batches**. Batches `BATCH-M0` through `BATCH-M7` are **100% FREE** (local CPU/code/schema/prompt/test changes, zero API spend, zero GPU pods). `BATCH-M8` contains all **PAID** operations and is strictly gated behind creator decisions and `OR-23` / `OR-36` safeguards.
+The implementation roadmap is divided into **9 100% FREE batches (`BATCH-M0` through `BATCH-M7` plus `BATCH-M8A`)** (local CPU/code/schema/prompt/test/governance changes, zero API spend, zero GPU pods) and **1 strictly separated PAID stage (`BATCH-M8B`)** subdivided into four sequential creator-approval gates (`GATE-P1`, `GATE-P2`, `GATE-P3`, `GATE-P4`) protected by `OR-23` pod plans, `OR-36` Haiku watchdogs, and `config/spend_caps.json` hard caps.
 
 ### 9.1 `BATCH-M0` — P0 Regression Fixes (`production_script/4` Compatibility, Odom Polish Gate, `KP-47` Propagation & PR #112 Parser Fix)
 
@@ -905,25 +906,34 @@ The implementation roadmap is divided into **9 sequential, dependency-ordered ba
 * **Required Implementation Changes**:
 
   1. Create `explainer_engine/scripting/schema_version.py` with explicit schema dispatch predicates:
+
      * `SCENE_SCHEMAS = frozenset({"production_script/3", "production_script/4"})`
+
      * `ZONED_RHYTHM_SCHEMAS = frozenset({"production_script/4"})`
+
      * `def schema_name(doc_or_schema: dict | str | None) -> str`: extracts `doc.get("schema") or doc.get("script_schema")` if given a `dict`, or returns the `str` directly (handling `audio/layers.py:53` `timed["script_schema"]`).
+
      * `def is_scene_script(doc_or_schema: dict | str | None) -> bool: return schema_name(doc_or_schema) in SCENE_SCHEMAS` (never blindly matching an unknown future `/5` schema).
+
      * `def is_zoned_rhythm_script(doc_or_schema: dict | str | None) -> bool: return schema_name(doc_or_schema) in ZONED_RHYTHM_SCHEMAS`.
 
   2. Replace `doc.get("schema") == "production_script/3"` (and `!= "production_script/3"`, plus `timed.get("script_schema") == BEATS.SCENE_SCHEMA` in `audio/layers.py:53`) across all 10 validator/production modules with `is_scene_script(...)`.
 
   3. In `explainer_engine/production/__main__.py:cmd_words`, implement **chunk-level narrator-only polish**:
+
      * Because `narrator_polish.polish_in_place()` runs `ffmpeg -af CHAIN` (`+12 dB` bass shelf at `150 Hz`) on an entire WAV file and has no internal speaker filter, simply removing `if not S.has_dialogue(doc):` at line `119` would apply Odom's `+12 dB` bass boost to character voices.
+
      * Instead, when `S.has_dialogue(doc)` is `True` and `len(audio) > 1`, match `audio` files to `chunks = S.tts_chunks(doc)` (where each chunk is single-speaker and carries `chunk["speaker"]`), check raw speaker timbre first, and run `narrator_polish.polish_in_place()` **only on chunks where `chunk.get("speaker", "narrator") == "narrator"` before `join_reads()` concatenates the chunks**, leaving character voice chunks completely untouched.
 
   4. In `explainer_engine/schemas/film_shots.schema.json` and `explainer_engine/scripting/film_shots.py:compose()`:
+
      * Add optional `rhythm_profile` at the root and optional `rhythm_zone` (`enum` of the 5 `BP-169` canonical lowercase IDs) on `shots[]` in `schemas/film_shots.schema.json`.
+
      * In `film_shots.py:compose(doc)`, compute cumulative `t_start_s` across non-teaser shots and set `"rhythm_zone": shot.get("rhythm_zone") or (rhythm_profile.zone_at_time(t_start_s, profile_name)["id"] if profile_name != "calm_docudrama" else None)` on each composed `.video` dict so `KP-47` fires during `film_shots check` even when `shot["rhythm_zone"]` is omitted in input JSON.
 
   5. Apply PR #112's 2-line `sys0 = spec.get("system", [])` fix in `explainer_engine/llm/claude_api.py` and add `test_a_string_system_in_a_job_file_is_one_block_not_one_per_character` in `tests/unit/test_claude_api.py`.
 
-* **Dependencies & Prerequisites**: None (runs directly on `5013a55aca5a17a3734150f61a5eb172abcbe3b8`).
+* **Dependencies & Prerequisites**: Creator kickoff approval (`CD-01`) + external operational prerequisite **`GATE-EXT-MAIN-PROTECT`** (`RSK-06`: verify GitHub branch protection is enabled on `main`—requiring PRs, `quality` CI checks, no force-pushes, and no direct pushes—and confirm `git branch --show-current == "planning/master-mold-integration-2026-11-02"` on base `5013a55aca5a17a3734150f61a5eb172abcbe3b8`).
 
 * **Tests & Acceptance Criteria**:
 
@@ -977,7 +987,13 @@ The implementation roadmap is divided into **9 sequential, dependency-ordered ba
 
      * Replace duplicate BP threshold values in `parameter_registry`, `zones_5`, and `episode_profiles` with `canonical_bp_ref` pointers resolved at runtime by `scripting/mold_contract.py` (`SR.T(bp_id, key)`), keeping the 2,066-word numbers strictly inside `reference_instance_metrics` (`classification: "reference_only"`).
 
-     * Fix `AB07..AB12` segment IDs and `window_s` in Layer 1 to match `S08..S16` in Layer 3, `BP-169`, `BP-142`, and `BP-04` (`>=648s` resolution).
+     * Fix `AB07..AB12` segment IDs and `window_s` in Layer 1 to match `S08..S16` in Layer 3 (`AB07: S08–S09 270–375s`, `AB08: S10–S11 375–480s`, `AB09: S12 480–540s`, `AB10: S13–S14 540–660s`, `AB11: S15 660–690s`, `AB12: S16 690–720s`), `BP-169`, `BP-142`, and `BP-04` (`answer_after_share >= 0.90` checked on cumulative spoken-word share independently of `S16`'s `690–720s` clock window).
+
+     * **Canonical `BP-04` Cumulative Spoken-Word Share Contract (`mold_contract.check_bp04_resolution_word_share` & `qa/engagement.py:ENG-5`)**:
+       * **Episode Spoken Word Definition**: A line contributes spoken words iff `line.get("voiced", True) is True` (excluding `voiced: false` silent/thought-bubble lines per `D-62`). Both narrator lines (`speaker` omitted or `"narrator"`) and voiced diegetic character dialogue lines (`speaker` in `doc["cast"]`, `voiced: true`) are counted in exact script order.
+       * **Exclusions**: Bracketed ElevenLabs delivery/pause tags (`[excited]`, `[short pause]`, etc. in `line["tags"]` or inline `[...]` inside `line["text"]`) are stripped via `re.sub(r"\[[^\]]*\]", " ", text)` before tokenization (`re.findall(r"[a-z0-9']+", clean.lower().replace("’", "'"))`). Stage directions, `intent`, `tone`, `emotion`, `pause_after`, `visual_beats`, `scene` headers, `shots`, and `graphics` are never counted.
+       * **Segment/Line Boundary Mapping & Resolution Identification**: Each voiced line `(seg_idx, line_idx)` has `words_before_line(seg_idx, line_idx)` equal to the sum of spoken words in all preceding segments plus all preceding voiced lines in `seg_idx`. The first resolution/answer disclosure `(i*, j*)` is the earliest `(seg_idx, line_idx)` where `seg.get("drama", {}).get("function") == "resolution"`, `seg.get("anchor_beat_id") == "AB12_FINAL_SYNTHESIS_AND_HARD_CUT"`, or `line.get("discloses_answer") is True`.
+       * **Independent Dual Check & Inclusive Boundary Rule**: Cumulative spoken-word share is `share_res = words_before_line(i*, j*) / total_spoken_words`. Consistent with `qa/engagement.py:167` (`before / total_words < ANSWER_AFTER_SHARE`), the boundary is **inclusive**: `share_res < 0.90` fails (`FAIL` on `/4` Mold validation, `ENG-5` in `qa/engagement.py`), `share_res == 0.90` passes (`PASS`), and `share_res > 0.90` passes (`PASS`), checked completely independently of whether `S16` occupies `690–720s`.
 
   2. Write `explainer_engine/schemas/episode_mold.schema.json` (`episode_mold/1`) and `explainer_engine/scripting/mold_contract.py`.
 
@@ -1045,7 +1061,9 @@ The implementation roadmap is divided into **9 sequential, dependency-ordered ba
 
      * On `mrbeast_animated` (`/4`) scripts, compute `line_starts` and `ST-13` turn gaps using `rhythm_profile.words_to_seconds` (or per-segment `rhythm_zone` WPM) instead of flat `170 WPM`.
 
-     * Add `ST-25` (`REVIEW`): verify on `/4` scripts with `template == "D"` that the `16` segments cover the `12` Anchor Beats (`AB01..AB12`), including a `180s` re-hook (`S06`) and `360s` midpoint reversal (`S08`/`S09`).
+     * Add `ST-25`: verify on `/4` scripts with `template == "D"` that the `16` segments cover the `12` Anchor Beats (`AB01..AB12`), that `S16` (`AB12`) occupies `690–720s`, and that `BP-04` cumulative spoken-word share at the first resolution/answer disclosure satisfies `words_before_resolution / total_spoken_words >= 0.90` (inclusive boundary; `FAIL` when `< 0.90`, even if `S16`'s `690–720s` timeline window is valid).
+
+     * Pin `BP-04` cumulative spoken-word validation with 7 explicit unit tests in `tests/unit/test_story_engine.py` and `tests/unit/test_engagement.py`: (1) resolution starts before 90% (`0.890 < 0.90` -> `FAIL`); (2) resolution starts at exact 90% boundary (`0.900 == 0.90` -> `PASS`); (3) resolution starts after 90% (`0.915 > 0.90` -> `PASS`); (4) varying WPM across all 5 `BP-169` zones (`193/176/166/185/160` WPM); (5) mixed narrator VO + voiced character dialogue counted and `voiced: false` lines excluded; (6) exclusion of ElevenLabs `[tags]` and non-spoken visual/scene metadata; and (7) a script whose `S16` timeline window (`690–720s`) is valid but whose cumulative spoken-word share is `< 0.90` (`FAIL`).
 
   5. **Narration Lint (`narration_lint.py`)**:
 
@@ -1203,7 +1221,7 @@ The implementation roadmap is divided into **9 sequential, dependency-ordered ba
 
   3. **Shot Router (`edit/router.py`, `shot_route.schema.json`)**:
 
-     * For `STILL_HOLD` shots, include `still_motion` metadata (`tier`, `dramatic_change` spec, and second pose spec when `kind == "nextpose_flip"`) in `shots/route.json` so `assemble.py` knows how to render the still shot.
+     * For `STILL_HOLD` shots, include `still_motion` metadata (`tier`: `TIER_1` / `TIER_2` both capped at `static_still_max_s_by_zone` `1.5/2.0/2.5s`, or `TIER_3` up to `5.0s` with validated `dramatic_change` spec, plus second pose reference when `tier == "TIER_2_MEDIUM_STATE_SHIFT_STILL"`) in `shots/route.json` so `assemble.py` renders the still shot without relaxing `BP-170`.
 
   4. **Film Shots (`film_shots.py`, `film_shots.schema.json`)**:
 
@@ -1217,7 +1235,7 @@ The implementation roadmap is divided into **9 sequential, dependency-ordered ba
 
 * **Expected Outputs / Artifacts**: `explainer_engine/edit/bounded_timeline.py`, updated `dramatic_still.py`, `router.py`, `film_shots.py`, and `tests/unit/test_bounded_timeline.py`.
 
-* **Risks & Recovery Paths**: `test_sourced_rules.py` pins `BP-170` keys; keep all existing `BP-170` threshold keys intact and only add `tier_2_max_s: 3.5` if approved.
+* **Risks & Recovery Paths**: `test_sourced_rules.py` pins `BP-170` keys and `FAIL` severity; keep all existing `BP-170` threshold keys and `static_still_max_s_by_zone` (`1.5/2.0/2.5s`) completely intact for both Tier 1 and Tier 2. Do **not** introduce or activate any `tier_2_max_s: 3.5` rule unless quantitative masked pose-delta + identity validation (`KG-13`) thresholds are proven and explicitly approved by the creator (`CD-03`).
 
 * **Cost Classification**: **FREE** (`$0.00`).
 
@@ -1325,6 +1343,14 @@ The implementation roadmap is divided into **9 sequential, dependency-ordered ba
 
   * Full unit test suite (`2,450+` tests) + `docs_lint` + `palette` check pass with `0` failures.
 
+  * The deterministic 60.0-second 2-zone (`S01` `0–30s` + `S15` `660–690s` remapped to contiguous local `0.0–60.0s`) CPU assembly test in `test_mold_v2_1_full_pipeline.py` executes real audio/video rendering and asserts:
+    * `fps == 24`
+    * `video_frames == 1440`
+    * `video_duration_s == 60.0`
+    * `audio_duration_s == 60.0` (`audio_samples == 2880000` at `48000 Hz`, zero unintended padding or truncation)
+    * `narrator_chunks_polished is True` and `character_chunks_polished is False`
+    * `vacuum_rms_dbfs <= -65.0` across `local_t in [58.5, 59.5]` (`BP-120` climax silence vacuum).
+
 * **Expected Outputs / Artifacts**: Green CI proof that the entire Master Mold v2.1.0 architecture works end-to-end on CPU for `$0.00`.
 
 * **Risks & Recovery Paths**: Any contract mismatch surfaced by the end-to-end test is fixed in `BATCH-M5`/`M6` before any paid step is ever proposed.
@@ -1333,41 +1359,57 @@ The implementation roadmap is divided into **9 sequential, dependency-ordered ba
 
 * **Explicit Completion Gate**: `test_mold_v2_1_full_pipeline.py` and full CI quality workflow pass (`0` FAIL).
 
-### 9.9 `BATCH-M8` — Split into `BATCH-M8A` (Free Governance Closure) & `BATCH-M8B` (Creator-Gated Paid Canary / Production Gates `GATE-P1..P4`)
+### 9.9 `BATCH-M8A` — Free Governance Closure, PR #112 Closure & Pre-Pod Dry-Run (`FREE`, `$0.00`)
 
-* **Objective & Scope**: Strictly decouple **free governance closure (`BATCH-M8A`, `$0.00`)** from **paid GPU/TTS execution (`BATCH-M8B`)**:
-  * **`BATCH-M8A` (FREE, `$0.00`)**: Close the formal governance status rows for `P6–P11` and `P12a` (`python -m explainer_engine.governance status --write`), close superseded [PR #112](https://github.com/vano1919/explainer-engine/pull/112) after `CD-07`, upload the final P12 code bundle to HF `vano1919/tmr-artifacts`, and pass `python -m explainer_engine.cloud.dryrun` (`0 FAIL`, `$0.00`).
-  * **`BATCH-M8B` (PAID, 4 Separate Sequential Creator Approval Gates `GATE-P1..P4`)**:
-    1. **`GATE-P1` (`P12b` Micro-Benchmark Pod)**: Stage M measurement pod (`$0.50` hard cap) + Combined Qwen/LTX pod (`$2.40` hard cap) with `OR-23` pod plan and `OR-36` Haiku watchdog.
-    2. **`GATE-P2` (Episode 1 Odom + Cast Voice Sample `OR-19`)**: ElevenLabs sample read (`<=1,500` credits) after Script Approval #1 (`PV-53`) and `paid_assets` stamp.
-    3. **`GATE-P3` (Episode 1 Two-Part Visual/Audio Sample Approval `OR-19`)**: Creator sign-off via `sample.py approve`.
-    4. **`GATE-P4` (Episode 1 Full GPU Production Run)**: Full episode render under `per_episode.runpod_usd = $31.00` hard cap with `OR-23` + `OR-36` watchdog.
+* **Objective & Scope**: Complete all remaining **zero-cost** governance and pre-pod readiness tasks without launching any GPU pod or paid API call: close the formal governance status rows for `P6–P11` and `P12a` (`python -m explainer_engine.governance status --write`), close superseded [PR #112](https://github.com/vano1919/explainer-engine/pull/112) (after `CD-07`), align the `xworld_v2` LoRA strength across `cloud_pins.json` / `p12b.json` / `style_prompt.py` (after `CD-02`), pin final commit SHAs in `p12b.sh`, and pass `python -m explainer_engine.cloud.dryrun` (`0 FAIL`, `$0.00`).
 
-* **Exact Repository Files to Inspect or Change (`6` files, gated on creator approval)**:
+* **Exact Repository Files to Inspect or Change (`6` files)**:
 
   1. `docs/blueprint/routing_log.jsonl`
-
   2. `docs/blueprint/phases.json` & `docs/blueprint/STATUS.md` (via `governance status --write`)
-
-  3. `config/cloud_pins.json` / `explainer_engine/training/pods/p12/p12b.json` / `explainer_engine/qa/style_prompt.py` (LoRA weight `0.7` vs `1.0` per `CD-02`)
-
+  3. `config/cloud_pins.json`, `explainer_engine/training/pods/p12/p12b.json`, `explainer_engine/qa/style_prompt.py` (if `CD-02` locks `0.7` or `1.0`)
   4. `explainer_engine/training/pods/p12/p12b.sh` (final SHA pins)
 
-  5. `config/job_speeds.json` & `docs/COST_AND_TIME_MODEL.md` (updated with real measured speeds after P12b)
-
-  6. `config/channel_voices.json` (Odom `baseline` populated after `OR-19` first sample approval)
-
-* **Dependencies & Prerequisites**: `BATCH-M7` green + Creator approval on `CD-01..CD-10` + `OR-23` pod plan.
+* **Dependencies & Prerequisites**: `BATCH-M7` green (`CD-07` for closing PR #112; `CD-02` for locking LoRA weight before P12 bundle upload). Does **not** require an `OR-23` paid pod approval or any paid spend.
 
 * **Tests & Acceptance Criteria**:
 
-  * `python -m explainer_engine.cloud.dryrun` passes with `0` FAIL.
-
   * `python -m explainer_engine.governance status --check` passes with `0` drift.
+  * `python -m explainer_engine.cloud.dryrun` passes with `0` FAIL.
+  * `python -m explainer_engine.docs_lint` passes with `0` findings.
 
-* **Cost Classification**: **CREATOR APPROVAL REQUIRED / PAID** (`$0.50` P12b measurement pod cap; `$2.40` P12b combined pod cap under `config/spend_caps.json`).
+* **Cost Classification**: **FREE** (`$0.00`).
 
-* **Explicit Completion Gate**: Creator signs off on P12b contact sheets, clips, measured speeds in `config/job_speeds.json`, and `BP-168` Go/Pivot/Abandon pilot verdict.
+* **Explicit Completion Gate**: `governance status --check` and `cloud.dryrun` both return exit code `0` (`$0.00` spent).
+
+### 9.10 `BATCH-M8B` — Creator-Gated Paid Execution (`GATE-P1` through `GATE-P4`)
+
+* **Objective & Scope**: Execute paid GPU benchmarks and Episode 1 production through **four strictly sequential, independently gated stages (`GATE-P1`..`GATE-P4`)**. **Critical Safety Invariant**: Approval for one gate (`GATE-P1`, `GATE-P2`, `GATE-P3`, or `GATE-P4`) **never** automatically authorizes the next gate; each gate requires its own explicit creator `"YES"` on the gate's cost table (`Standing Order 10` / `OR-23`) and its own active `OR-36` Haiku watchdog thread where applicable:
+
+  1. **`GATE-P1` (`P12b` Micro-Benchmark Pods)**:
+     * **`GATE-P1a` (Stage M Measurement Pod)**: Measures exact RunPod SECURE download/setup speed (`paid_tests.p12b_measure.runpod_usd = $0.63` ledger reservation; `$0.50` pod hard cap in `p12b.json`).
+     * **`GATE-P1b` (Combined Qwen + LTX-2.5 Pod `Q1–Q3`, `L1–L3`)**: Runs only after `GATE-P1a` records measured setup speed (`paid_tests.p12b_two_runs.runpod_usd = $3.00` ledger reservation; `$2.40` pod hard cap). Updates `config/job_speeds.json` and `docs/COST_AND_TIME_MODEL.md` with measured `s/clip` and evaluates the `BP-168` Go/Pivot/Abandon pilot gate.
+
+  2. **`GATE-P2` (Episode 1 Odom Narrator + Cast Voice Sample `OR-19`)**:
+     * Requires topic selection (`CD-09`), finished Stage 1–7 script passing `BATCH-M7` linters, Script Approval #1 (`PV-53`), `standards gate --at paid_assets`, and explicit creator `"YES"` on the ElevenLabs credit table (`casting.casting_credits_max = 1,500` credits). Populates Odom's `baseline` in `config/channel_voices.json` after creator approval.
+
+  3. **`GATE-P3` (Episode 1 Two-Part Visual/Audio Sample Approval `OR-19`)**:
+     * Renders the 2-part Episode 1 sample (`S01` Hook + `S15` Climax canary) and halts at `sample.py` until the creator inspects the contact sheets/sample video and runs `sample.py approve`.
+
+  4. **`GATE-P4` (Episode 1 Full GPU & Voice Production Run)**:
+     * Requires `GATE-P3` (`sample.py approve`), confirmed per-episode GPU cap (`CD-05`, default `per_episode.runpod_usd = $31.00`), fresh `OR-23` pod plan, explicit creator `"YES"`, and continuous `OR-36` Haiku watchdog monitoring.
+
+* **Exact Repository Files Updated After Paid Measurements (`3` files, creator-gated)**:
+
+  1. `config/job_speeds.json` & `docs/COST_AND_TIME_MODEL.md` (after `GATE-P1b`)
+  2. `config/channel_voices.json` (Odom `baseline` after `GATE-P2`)
+  3. `config/spend_caps.json` (only if creator adjusts episode cap in `CD-05` before `GATE-P4`)
+
+* **Dependencies & Prerequisites**: `BATCH-M8A` green + separate explicit creator `"YES"` at each of `GATE-P1`, `GATE-P2`, `GATE-P3`, and `GATE-P4`.
+
+* **Cost Classification**: **CREATOR APPROVAL REQUIRED / PAID** (strictly bounded by `config/spend_caps.json` per-gate caps).
+
+* **Explicit Completion Gate**: Each of `GATE-P1`..`GATE-P4` closes only upon creator sign-off and verified `Run` ledger settlement within cap.
 
 ## 10. Dependency Graph & Critical Path
 
@@ -1377,12 +1419,18 @@ The implementation roadmap is divided into **9 sequential, dependency-ordered ba
                        │   (from PR #119 HEAD: 5013a55aca5a17a3734150f61a5eb172)  │
                        └────────────────────────────┬─────────────────────────────┘
                                                     │
+                                       ═════════════╪═════════════
+                                        PRE-IMPLEMENTATION GATES:
+                                        • CD-01 (Kickoff Approval)
+                                        • GATE-EXT-MAIN-PROTECT (RSK-06:
+                                          GitHub main branch protection)
+                                       ═════════════╪═════════════
                                                     ▼
                        ┌──────────────────────────────────────────────────────────┐
                        │ BATCH-M0 (FREE, P0 BLOCKER FIXES)                        │
-                       │ • scripting/schema_version.py (is_scene_script >= 3)        │
+                       │ • scripting/schema_version.py (is_scene_script /3,/4)        │
                        │ • Fix 10 modules checking == "production_script/3"       │
-                       │ • Fix __main__.py:106 narrator_polish dialogue gate      │
+                       │ • Chunk-level Odom narrator_polish before join_reads      │
                        │ • Propagate rhythm_zone in film_shots.compose (KP-47)    │
                        │ • Cherry-pick PR #112 claude_api.load_job 2-line fix     │
                        └────────────────────────────┬─────────────────────────────┘
@@ -1435,19 +1483,31 @@ The implementation roadmap is divided into **9 sequential, dependency-ordered ba
                        ┌──────────────────────────────────────────────────────────┐
                        │ BATCH-M7 (FREE, END-TO-END REPRESENTATIVE STORY SUITE)   │
                        │ • tests/unit/test_mold_v2_1_full_pipeline.py             │
+                       │ • 60.0s (1,440 frames @ 24fps) deterministic CPU render  │
                        │ • Full 2,450+ unit test suite + docs_lint green          │
                        └────────────────────────────┬─────────────────────────────┘
                                                     │
+                                                    ▼
+                       ┌──────────────────────────────────────────────────────────┐
+                       │ BATCH-M8A (FREE, $0.00 GOVERNANCE & DRYRUN CLOSURE)      │
+                       │ • Close P6-P11 & P12a status rows (governance status)    │
+                       │ • Close PR #112 (CD-07) & lock LoRA weight (CD-02)       │
+                       │ • Upload P12 code bundle + pass cloud/dryrun.py ($0.00)  │
+                       └────────────────────────────┬─────────────────────────────┘
+                                                    │
                                       ══════════════╪══════════════
-                                       CREATOR APPROVAL GATE (CD-01..10)
+                                       SEQUENTIAL PAID GATES (BATCH-M8B)
+                                       (Each gate requires separate YES)
                                       ══════════════╪══════════════
                                                     ▼
                        ┌──────────────────────────────────────────────────────────┐
-                       │ BATCH-M8 (PAID / CREATOR-GATED, P12b POD & EPISODE 1)    │
-                       │ • Close P6-P11 & P12a status rows via routing_log.jsonl  │
-                       │ • Upload P12 bundle to HF + pass cloud/dryrun.py         │
-                       │ • Run P12b pod ($0.50 / $2.40 cap) with OR-36 watchdog   │
+                       │ BATCH-M8B (PAID / SEQUENTIALLY CREATOR-GATED)            │
+                       │ • GATE-P1: P12b Measure ($0.50 cap) & Combined ($2.40)   │
+                       │ • GATE-P2: Ep 1 Odom + Cast Voice Sample (<=1500 creds)  │
+                       │ • GATE-P3: Ep 1 Two-Part Sample Approval (OR-19)         │
+                       │ • GATE-P4: Ep 1 Full Production ($31.00 cap + OR-36)     │
                        └──────────────────────────────────────────────────────────┘
+
 
 ```
 
@@ -1512,7 +1572,15 @@ Before committing budget to a full 12-minute episode (\~`120–152` LTX clips), 
 
    * **What it tests**: Render a **60-second 2-zone slice (`S01` Hook `0–30s` at `28 shots/min` + `S15` Climax `660–690s` with the `688.5–689.5s` `-65 dBFS` audio vacuum)** using:
 
-     * **Deterministic 60.0s Audio Spine Composition**: `0.0–30.0s` (`S01` Hook) uses the first `30.0s` of the committed `41.0s` Odom `eleven_v4` test take (polished via chunk-level `audio/narrator_polish.py` and pause-padded via `audio/pause_pad.py` at `0.18s`); `660.0–671.0s` (`11.0s` of `S15` Climax) uses the remaining `11.0s` of the Odom test take; `671.0–688.5s` (`17.5s` of `S15`) uses the committed Raymond Verne character dialogue fixture takes (`D-90`, unpolished) + battle foley stems; `688.5–689.5s` (`1.0s`) is the `BP-120` `-65 dBFS` pre-reveal silence vacuum; and `689.5–690.0s` (`0.5s`) is the post-vacuum impact hit. *(Note: `BATCH-M7` proves CPU contract/timeline/routing/assembly integration; real generative LTX prompt adherence, character identity stability, and lip-sync quality are falsified in `BATCH-M8`'s paid `P12b` canary pod.)*
+     * **Deterministic Source-to-Local 60.0s (`1,440`-Frame at `24 fps`) Timeline Remapping & Audio Composition**:
+       * Episode Window A (`S01` Hook, episode source `[0.0s, 30.0s]`, source frames `[0, 720)`) maps identically to local `[0.0s, 30.0s]`, local frames `[0, 720)` (`720` frames).
+       * Episode Window B (`S15` Climax, episode source `[660.0s, 690.0s]`, source frames `[15840, 16560)`) shifts by `-630.0s` (`-15,120` frames) into contiguous local `[30.0s, 60.0s]`, local frames `[720, 1440)` (`720` frames), yielding a contiguous `60.0s` (`1,440`-frame) local timeline:
+         1. `local 0.0–30.0s` (source `S01` `0.0–30.0s`, frames `0..719`, `30.0s`): first `30.0s` of the committed `41.0s` Odom `eleven_v4` test take, polished via chunk-level `audio/narrator_polish.py` and pause-padded via `audio/pause_pad.py` at `0.18s` (`hyped_min_gap_s`).
+         2. `local 30.0–41.0s` (source `S15` `660.0–671.0s`, frames `720..983`, `11.0s`): remaining `11.0s` of the committed `41.0s` Odom `eleven_v4` test take, polished via chunk-level `audio/narrator_polish.py` and pause-padded at `0.18s`.
+         3. `local 41.0–58.5s` (source `S15` `671.0–688.5s`, frames `984..1403`, `17.5s`): committed Raymond Verne character dialogue fixture takes (`D-90`, **left unpolished** — zero Odom EQ chain) + deterministic battle foley stems.
+         4. `local 58.5–59.5s` (source `S15` `688.5–689.5s`, frames `1404..1427`, `1.0s`): `BP-120` pre-reveal silence vacuum (`<= -65.0 dBFS` across all stems).
+         5. `local 59.5–60.0s` (source `S15` `689.5–690.0s`, frames `1428..1439`, `0.5s`): post-vacuum 3-layer impact hit (`BP-119`).
+       * **Mandatory Programmatic Assertions on Rendered Output**: `fps == 24`, `video_frames == 1440`, `video_duration_s == 60.0`, `audio_duration_s == 60.0` (`2,880,000` samples at `48,000 Hz`, zero unintended padding or truncation), `narrator_chunks_polished is True`, `character_chunks_polished is False`, and `vacuum_rms_dbfs <= -65.0`. *(Note: `BATCH-M7` proves CPU contract/timeline/routing/assembly integration; real generative LTX prompt adherence, character identity stability, and lip-sync quality are falsified in `BATCH-M8B` `GATE-P1`'s paid `P12b` canary pod.)*
 
      * Real `visual_compensator.py` renders (`Archetype 2` `TACTICAL_UNIT_MANEUVER` map + `Archetype 5` `BALLISTIC_RANGE_AND_ENERGY_HUD`).
 
@@ -1544,12 +1612,14 @@ Before committing budget to a full 12-minute episode (\~`120–152` LTX clips), 
 
 | Batch / Activity | Cost Classification | Service / Resource | Budget Cap in `config/spend_caps.json` | Required Approval Gate | 
 | ----- | ----- | ----- | ----- | ----- | 
-| **`BATCH-M0` .. `BATCH-M7`** (All code, schema, prompt, skill, doc, and CPU test work) | **FREE (`$0.00`)** | Local CPU / Git only | `$0.00` | Creator approval to start implementation (`CD-01`). | 
-| **60-Second Pre-Pod Assembly Falsification Test** | **FREE (`$0.00`)** | Local CPU (`ffmpeg`, `PIL`, `numpy`, existing assets) | `$0.00` | Included in `BATCH-M7` (`$0.00`). | 
-| **`P12b` Stage M Measurement Pod** | **PAID (Creator Approval Required)** | RunPod SECURE GPU | `paid_tests.p12b_measure.runpod_usd = $0.63` (`$0.50` pod hard cap) | `OR-23` pod plan + `cloud/dryrun.py` PASS + Explicit Creator "YES" + `OR-36` Haiku watchdog. | 
-| **`P12b` Combined Qwen + LTX-2.5 Pod (`Q1–Q3`, `L1–L3`)** | **PAID (Creator Approval Required)** | RunPod SECURE GPU | `paid_tests.p12b_two_runs.runpod_usd = $3.00` (`$2.40` pod hard cap) | Measured Stage M speed + `OR-23` pod plan + Explicit Creator "YES" + `OR-36` Haiku watchdog. | 
-| **First Episode Odom Sample Read (`OR-19`) & Character Audition** | **PAID (Creator Approval Required)** | ElevenLabs connector (`eleven_v4`) | `casting.casting_credits_max = 1,500` credits; sample chunks gated by `.claude/active_episode.json` & `standards gate --at paid_assets` | Script Approval #1 (`PV-53`) + `paid_assets` rulebook stamp + Explicit Creator "YES" on cost table (`Standing Order 10`). | 
-| **First Episode Full GPU & Voice Production** | **PAID (Creator Approval Required)** | RunPod + ElevenLabs | `per_episode.runpod_usd = $31.00` (or updated cap per `CD-05`) | Creator approval of the 2-part sample (`OR-19`, `sample.py approve`) + `OR-23` pod plan + `OR-36` Haiku watchdog. | 
+| **`BATCH-M0` .. `BATCH-M7`** (All code, schema, prompt, skill, doc, and CPU test work) | **FREE (`$0.00`)** | Local CPU / Git only | `$0.00` | `CD-01` kickoff approval + `GATE-EXT-MAIN-PROTECT` (`RSK-06` GitHub `main` branch protection). |
+| **60.0-Second (`1,440`-Frame) Pre-Pod CPU Assembly Falsification Test** | **FREE (`$0.00`)** | Local CPU (`ffmpeg`, `PIL`, `numpy`, committed fixtures) | `$0.00` | Included in `BATCH-M7` (`$0.00`). |
+| **`BATCH-M8A` (Governance Status Closure, PR #112 Closure & `cloud/dryrun.py`)** | **FREE (`$0.00`)** | Local CPU / Git / HF code bundle upload | `$0.00` | `BATCH-M7` green (`CD-07` before closing PR #112; `CD-02` before locking LoRA weight). Zero paid API/GPU spend. |
+| **`BATCH-M8B — GATE-P1a` (`P12b` Stage M Measurement Pod)** | **PAID (Standalone Creator Approval #1)** | RunPod SECURE GPU | Ledger reservation `paid_tests.p12b_measure.runpod_usd = $0.63`; pod hard cap `$0.50` (`p12b.json`) | `BATCH-M8A` (`cloud/dryrun.py` PASS) + `OR-23` pod plan + **Explicit Creator "YES" for `GATE-P1a`** + `OR-36` Haiku watchdog. |
+| **`BATCH-M8B — GATE-P1b` (`P12b` Combined Qwen + LTX-2.5 Pod `Q1–Q3`, `L1–L3`)** | **PAID (Standalone Creator Approval #2)** | RunPod SECURE GPU | Ledger reservation `paid_tests.p12b_two_runs.runpod_usd = $3.00`; pod hard cap `$2.40` (`p12b.json`) | Measured Stage M speed + `OR-23` pod plan + **Explicit Creator "YES" for `GATE-P1b`** + `OR-36` Haiku watchdog. |
+| **`BATCH-M8B — GATE-P2` (Episode 1 Odom Sample Read `OR-19` & Character Audition)** | **PAID (Standalone Creator Approval #3)** | ElevenLabs connector (`eleven_v4`) | `casting.casting_credits_max = 1,500` credits; gated by `.claude/active_episode.json` & `standards gate --at paid_assets` | `CD-09` topic + Script Approval #1 (`PV-53`) + `paid_assets` stamp + **Explicit Creator "YES" for `GATE-P2` cost table (`Standing Order 10`)**. |
+| **`BATCH-M8B — GATE-P3` (Episode 1 Two-Part Visual/Audio Sample Approval `OR-19`)** | **CREATOR REVIEW GATE** | `sample.py approve` sign-off on 2-part sample | Bounded within approved sample budget | **Explicit Creator "YES" via `sample.py approve` (`GATE-P3`)** before full episode production can be requested. |
+| **`BATCH-M8B — GATE-P4` (Episode 1 Full GPU & Voice Production)** | **PAID (Standalone Creator Approval #4)** | RunPod + ElevenLabs | `per_episode.runpod_usd = $31.00` hard cap (or updated cap per `CD-05`) | `GATE-P3` (`sample.py approve`) + `OR-23` pod plan + **Explicit Creator "YES" for `GATE-P4`** + `OR-36` Haiku watchdog. | 
 
 ### 13.2 Ten Explicit Creator Decision Cards (`CD-01` through `CD-10`)
 
@@ -1557,16 +1627,16 @@ Nothing in this roadmap treats a research recommendation as a creator decision. 
 
 | Card ID | Decision Question | Current State in Repo (`5013a55a`) | Argon Technical Recommendation | When Needed | 
 | ----- | ----- | ----- | ----- | ----- | 
-| **`CD-01`** | **Implementation Kickoff & Branch**: Approve executing `BATCH-M0..M7` (all free) on `planning/master-mold-integration-2026-11-02` (or `integration/project-consolidation-2026-11-02`)? | Roadmap complete; `0` code files mutated yet. | **Approve `BATCH-M0..M7` (all FREE)** so all P0 bugs and Mold wiring are fixed and tested on CPU. | Before `BATCH-M0` | 
-| **`CD-02`** | **`xworld_v2` LoRA Strength (`0.7` vs `1.0`)**: `cloud_pins.json:103` has `0.7` (per 2026-10-31 brief), while `p12b.json` and `qa/style_prompt.py:25` have `1.0`. Which weight should be locked across all 3 files? | `0.7` in `cloud_pins.json`; `1.0` in `p12b.json` & `style_prompt.py`. | **Lock `0.7`** across all 3 files (matching `cloud_pins.json:103` note), or test `0.7` vs `1.0` on 1 frame in `P12b`. | Before `BATCH-M8` (`P12b`) | 
-| **`CD-03`** | **`BP-170` Still Motion Ladder Thresholds**: Confirm the coordinator's numeric thresholds in `BP-170` (`0.25` relocation distance, `0.08` area, `0.30` plate swap, `1.5/2.0/2.5s` static limits) while keeping Tier 2 (`qwen_nextpose`) within `static_still_max_s_by_zone` (`1.5/2.0/2.5s`) until pose-delta metrics are measured? | Recorded in `BP-170.next_step` as awaiting creator confirmation. | **Do NOT relax `BP-170` for Tier 2 yet**: keep both Tier 1 (`parallax_25d`) and Tier 2 (`qwen_nextpose`) capped at `1.5/2.0/2.5s`, and allow holds up to `5.0s` **only** for Tier 3 (`cutout_relocation >= 0.25` / `plate_swap >= 0.30`). | Before `BATCH-M5` | 
-| **`CD-04`** | **Intra-Zone Pace Variation Rule (`BP-169`)**: Confirm how code should check intra-zone pace variation (`std_words >= 2.0` per sentence and alternating short `<=6`-word punch sentences with `10–14`-word setup sentences inside each zone)? | `BP-169.statement` notes frequency is open until sourced/confirmed. | **Confirm `REVIEW` check** in `narration_lint.py` requiring sentence-length contrast (`std >= 2.0` words, `>=15%` short `<=6`-word sentences) per zone. | Before `BATCH-M2` | 
-| **`CD-05`** | **Per-Episode GPU Cap (`config/spend_caps.json`)**: Keep `per_episode.runpod_usd = $31.00` until P12b measures real LTX-2.5 `s/clip`, or adjust now? | Protected config (`$31.00`). | **Keep `$31.00` unchanged now**; recalculate only after `P12b` records real speeds in `config/job_speeds.json`. | After `P12b` pod | 
-| **`CD-06`** | **Deceased Historical Figures Voicing (`D-90` / `PV-55`)**: `D-62` bans synthetic voices for *living* real people. May deceased historical figures (e.g., Napoleon, Subutai, Caesar) be voiced by cast ElevenLabs voices under `D-90`? | Marked `OPEN` in `DECISIONS_AND_OPEN_QUESTIONS.md` row `D-90`. | **Yes for deceased historical figures** (`real_living_person: false`), keeping `D-62` (`PV-55`) strictly enforced for living people. | Before `BATCH-M4` | 
-| **`CD-07`** | **PR #112 Disposition**: After cherry-picking the 2-line `claude_api.load_job` fix + test in `BATCH-M0`, close stale Draft PR #112? | Open Draft PR #112 (`1` ahead, `29` behind `main`). | **Close PR #112 as superseded** after `BATCH-M0` lands its parser fix. | After `BATCH-M0` | 
-| **`CD-08`** | **56 Stopped `0 GB` RunPod Pods (`keep_stopped_pods`)**: Keep the 56 legacy stopped pods (`$0.00/day`) listed in `spend_caps.json`, or prune them? | Listed in `spend_caps.json`; `D-92` auto-delete only deletes pods created *after* `D-92`. | **Leave untouched** (`$0.00/day`) unless creator requests cleanup. | Anytime (non-blocking) | 
-| **`CD-09`** | **First 12-Minute Episode Topic Selection**: Which topic should enter Stage 1 (`story_hypotheses` -> `script_variants/2` -> `scenario.md`) first? | Open (`TOPICS_2_ka.md` / Part I 60-Day Calendar). | Pick 1 flagship topic (e.g., *Napoleon's 1812 Grande Armée vs. Subutai's 1223 Mongol Horde* or *Roman Legion vs. Medieval Knights*) to run the free Stage 1–3 script pipeline. | Before Episode 1 Stage 1 | 
-| **`CD-10`** | **Channel Rebrand & Unlisted GTA 6 Video**: Execute the channel name/banner update and unlisted setting for the old GTA 6 video? | Open external YouTube Studio action. | Creator performs in YouTube Studio when ready (external to code repo). | Before Episode 1 upload | 
+| **`CD-01`** | **Implementation Kickoff & Branch**: Approve executing the free batches (`BATCH-M0..M7` and `BATCH-M8A`) on `planning/master-mold-integration-2026-11-02`? | Roadmap complete; `0` code files mutated yet. | **Approve `BATCH-M0..M7` + `BATCH-M8A` (all FREE, `$0.00`)** once `GATE-EXT-MAIN-PROTECT` (`RSK-06`) is verified. | **Before `BATCH-M0`** |
+| **`CD-02`** | **`xworld_v2` LoRA Strength (`0.7` vs `1.0`)**: `cloud_pins.json:103` has `0.7` (per 2026-10-31 brief), while `p12b.json` and `qa/style_prompt.py:25` have `1.0`. Which weight should be locked across all 3 files? | `0.7` in `cloud_pins.json`; `1.0` in `p12b.json` & `style_prompt.py`. | **Lock `0.7`** across all 3 files (or compare `0.7` vs `1.0` on 1 frame in `P12b`). Does **not** block `BATCH-M0..M7`. | **Before `BATCH-M8A` P12 bundle upload / `BATCH-M8B` `GATE-P1`** |
+| **`CD-03`** | **`BP-170` Still Motion Ladder Thresholds**: Confirm the coordinator's numeric thresholds in `BP-170` (`0.25` relocation distance, `0.08` area, `0.30` plate swap, `1.5/2.0/2.5s` static limits) and whether Tier 2 (`qwen_nextpose`) remains capped at `1.5/2.0/2.5s`? | Recorded in `BP-170.next_step` as awaiting creator confirmation. | **Keep Tier 1 and Tier 2 strictly capped at `1.5/2.0/2.5s` (`static_still_max_s_by_zone`)** in `BATCH-M5`; require creator approval (`CD-03`) + measured pose-delta & identity (`KG-13`) thresholds before any future Tier 2 hold extension. | **Before `BATCH-M5`** (for `BP-170` threshold confirmation; `BATCH-M5` defaults to strict `1.5/2.0/2.5s` cap) |
+| **`CD-04`** | **Intra-Zone Pace Variation Rule (`BP-169`)**: Confirm how code should check intra-zone pace variation (`std_words >= 2.0` per sentence and `>=15%` short `<=6`-word punch sentences inside each zone) as a `REVIEW` metric? | `BP-169.statement` notes frequency is open until sourced/confirmed. | **Confirm `REVIEW` check** (never hard `FAIL` while `status: "hypothesis"`) in `narration_lint.py` for `BATCH-M2`. | **Before `BATCH-M2`** |
+| **`CD-05`** | **Per-Episode GPU Cap (`config/spend_caps.json`)**: Keep `per_episode.runpod_usd = $31.00` until `GATE-P1` (`P12b`) measures real LTX-2.5 `s/clip`, or adjust now? | Protected config (`$31.00`). | **Keep `$31.00` unchanged during `BATCH-M0..M8A` and `GATE-P1..P3`**; revisit only before `GATE-P4` after `GATE-P1b` records real speeds in `config/job_speeds.json`. | **Before `BATCH-M8B` `GATE-P4`** (after `GATE-P1b`) |
+| **`CD-06`** | **Deceased Historical Figures Voicing (`D-90` / `PV-55`)**: `D-62` bans synthetic voices for *living* real people. May deceased historical figures (e.g., Napoleon, Subutai, Caesar) receive dramatized cast ElevenLabs voices under `D-90`? | Marked `OPEN` in `DECISIONS_AND_OPEN_QUESTIONS.md` row `D-90`. | **Yes for deceased historical figures** (`real_living_person: false`), keeping `D-62` (`PV-55`) strictly enforced (`FAIL`) for living real people. | **Before `BATCH-M4`** |
+| **`CD-07`** | **PR #112 Disposition**: After cherry-picking the 2-line `claude_api.load_job` fix + test in `BATCH-M0`, close stale Draft PR #112 on GitHub? | Open Draft PR #112 (`1` ahead, `29` behind `main`). | **Close PR #112 as superseded in `BATCH-M8A`** after `BATCH-M0` lands and tests the parser fix. | **Before `BATCH-M8A` PR #112 closure** (does not block `BATCH-M0..M7`) |
+| **`CD-08`** | **56 Stopped `0 GB` RunPod Pods (`keep_stopped_pods`)**: Keep the 56 legacy stopped pods (`$0.00/day`) listed in `spend_caps.json`, or prune them? | Listed in `spend_caps.json`; `D-92` auto-delete only deletes pods created *after* `D-92`. | **Leave untouched** (`$0.00/day`). | **Non-blocking** |
+| **`CD-09`** | **First 12-Minute Episode Topic Selection**: Which topic should enter Episode 1 production (`GATE-P2`..`GATE-P4`)? | Open (`TOPICS_2_ka.md` / Part I 60-Day Calendar). | Pick 1 flagship topic before Episode 1 production (`BATCH-M7` uses a self-contained deterministic CPU test fixture and does **not** wait on `CD-09`). | **Before `BATCH-M8B` `GATE-P2`** |
+| **`CD-10`** | **Channel Rebrand & Unlisted GTA 6 Video**: Execute the channel name/banner update and unlisted setting for the old GTA 6 video? | Open external YouTube Studio action. | Creator performs in YouTube Studio before publishing Episode 1 (external to code repo). | **Before Episode 1 YouTube upload** (non-blocking for code) | 
 
 ## 14. Risks, Unresolved Decisions, Explicit Assumptions, and Final Recommended Implementation Sequence
 
@@ -1578,20 +1648,22 @@ Nothing in this roadmap treats a research recommendation as a creator decision. 
 | **RSK-02** | **LTX-2.5 Clip Count Exceeds Episode GPU Budget**: `152` LTX clips in the 254-shot reference grid could exceed `$31.00` if LTX-2.5 22B takes `>200s/clip` on RunPod. | Medium | **High** | 1) Measure real speed in `P12b` (`$0.50`/`$2.40` cap) first. 2) Because the 254-shot grid is `reference_only`, `bounded_timeline.py` can target the lower end of `BP-169`'s `shots_per_min_band` (`~185` total shots = `~110` LTX clips, `-28%` GPU cost) while still maintaining `60%` `VIDEO` runtime share (`BP-109`). | 
 | **RSK-03** | **Odom Timbre Shift or Bass Muddiness Under Fast Music**: Adding `+12 dB @ 150 Hz` (`narrator_polish.py`) in hyped zones (`Z1`/`Z4`/`Z5`) where music sits at `-10 dB` could crowd the low-mid spectrum. | Low–Medium | **Medium** | `assemble.py:build_audio_v2` applies `BP-118` spectral presence dip and `BP-53` sidechain ducking on music/beds under the voice; verify in `BATCH-M7`'s free 60-second assembly test before paid reads. | 
 | **RSK-04** | **`D-90` Character Lip-Sync Drift in LTX-2.5 (`DIALOGUE_CU`)**: LTX-2.5 audio-to-video conditioning (`Stage L3` in `P12b`) is unverified on cartoon faces. | Medium | **Medium** | Tested in `P12b` Stage `L3` on 2 pinned Raymond Verne takes (`97` credits already spent and uploaded at `a01c5ca`). If `L3` fails `video_qa.py`, `qa/retry_router.py` automatically falls back to `FALLBACK_KEYFRAME_LTX` + reported speech (`D-63`) or reaction cutaways (`BP-113`). | 
-| **RSK-05** | **Duplicate Rule Numbers Breaking `D-59` Tests**: Committing a Mold JSON with raw copies of `BP-169` or `BP-109` numbers could violate the repository's single-home principle. | High (if copied raw) | **Medium** | `BATCH-M1` replaces duplicate threshold numbers in `config/master_mold_v2_1.json` with `canonical_bp_ref` pointers read dynamically from `standards/sourced_rules.json` via `scripting/mold_contract.py`. |
-| **RSK-06** | **Unprotected `main` Branch on GitHub (`protected: false`)**: On GitHub, `main` currently has `protected: false`, meaning the freeze on `main` relies on process discipline rather than a server-side GitHub branch protection rule. | Low–Medium | **High** | Enable GitHub branch protection on `main` (require PR + status checks, block direct pushes/force-pushes) and verify `git branch --show-current == "planning/master-mold-integration-2026-11-02"` before every commit. | 
+| **RSK-05** | **Duplicate Rule Numbers Breaking `D-59` Tests**: Committing a Mold JSON with raw copies of `BP-169` or `BP-109` numbers could violate the repository's single-home principle. | High (if copied raw) | **Medium** | `BATCH-M1` replaces duplicate threshold numbers in `config/master_mold_v2_1.json` with `canonical_bp_ref` pointers read dynamically from `standards/sourced_rules.json` via `scripting/mold_contract.py`. | 
+| **RSK-06** | **Unprotected `main` Branch on GitHub (`main.protected = false`, `protection.enabled = false`)**: GitHub currently reports that `main` has branch protection disabled (`protected: false`), and the current automated agent environment does not hold GitHub repository admin permissions to enable branch protection via the API. | Medium | **High** | Elevate to **Explicit External Pre-Implementation Gate `GATE-EXT-MAIN-PROTECT`**: before the first implementation commit of `BATCH-M0`, the repository owner enables GitHub branch protection on `main` (**Require a pull request before merging**, **Require status checks to pass (`quality` CI)**, **Block force pushes**, and **Block direct pushes to `main` / Include administrators**), and every local session verifies `git branch --show-current == "planning/master-mold-integration-2026-11-02"`. | 
 
 ### 14.2 Explicit Assumptions
 
-1. **\[ASSUMPTION A-01\]**: Branch [planning/master-mold-integration-2026-11-02](https://github.com/vano1919/explainer-engine/tree/planning/master-mold-integration-2026-11-02) is rooted at [PR #119](https://github.com/vano1919/explainer-engine/pull/119) HEAD (`5013a55aca5a17a3734150f61a5eb172abcbe3b8`), which is 51 commits ahead and 0 commits behind `main` (`6e1dccad30a865df670c258c86ffa1152a0dbe7e`).
+1. **[ASSUMPTION A-01]**: Branch [planning/master-mold-integration-2026-11-02](https://github.com/vano1919/explainer-engine/tree/planning/master-mold-integration-2026-11-02) is rooted at [PR #119](https://github.com/vano1919/explainer-engine/pull/119) HEAD (`5013a55aca5a17a3734150f61a5eb172abcbe3b8`), which is 51 commits ahead and 0 commits behind `main` (`6e1dccad30a865df670c258c86ffa1152a0dbe7e`).
 
-2. **\[ASSUMPTION A-02\]**: `main` remains frozen until after the next video ships (creator standing rule), and all implementation batches (`BATCH-M0..M8`) will land on the integration/planning branch via small, test-pinned commits.
+2. **[ASSUMPTION A-02]**: `main` remains frozen until after the next video ships (creator standing rule), enforced via external pre-implementation gate `GATE-EXT-MAIN-PROTECT` (`RSK-06`), and all implementation batches (`BATCH-M0..M7` and `BATCH-M8A`) will land on `planning/master-mold-integration-2026-11-02` via small, test-pinned commits.
 
-3. **\[ASSUMPTION A-03\]**: No Claude API (`build_loop`) or RunPod GPU money is spent during `BATCH-M0..M7`; all code changes are executed in thread/local sessions and verified by local CPU `pytest` + `docs_lint`.
+3. **[ASSUMPTION A-03]**: No Claude API (`build_loop`), ElevenLabs TTS, or RunPod GPU money is spent during `BATCH-M0..M7` or `BATCH-M8A` (`$0.00` total); paid operations occur exclusively in `BATCH-M8B` behind the four separate, sequential creator approval gates (`GATE-P1`, `GATE-P2`, `GATE-P3`, `GATE-P4`).
 
 ### 14.3 Final Recommended Implementation Sequence (Step-by-Step Checklist)
 
-1. **Step 1 (`BATCH-M0`, Free, \~30 min)**: Create `explainer_engine/scripting/schema_version.py`, fix all 10 `== "production_script/3"` modules, fix `production/__main__.py:119` Odom polish gate, propagate `rhythm_zone` in `film_shots.compose()`, cherry-pick PR #112's 2-line `claude_api.load_job` fix + test, and run `pytest`.
+0. **Step 0 (`GATE-EXT-MAIN-PROTECT` & `CD-01`, External Pre-Implementation Prerequisite, `$0.00`)**: Repository owner enables GitHub branch protection on `main` (`Require pull request`, `Require status checks (quality)`, `Block force pushes`, `Block direct pushes to main` per `RSK-06`) and confirms `CD-01` kickoff on branch `planning/master-mold-integration-2026-11-02`.
+
+1. **Step 1 (`BATCH-M0`, Free, \~30 min)**: Create `explainer_engine/scripting/schema_version.py` (`is_scene_script` for `/3` and `/4`, `is_zoned_rhythm_script` for `/4`), fix all 10 `== "production_script/3"` modules, implement chunk-level narrator-only Odom polish before `join_reads` in `production/__main__.py`, add `rhythm_zone` to `film_shots.schema.json` + `film_shots.compose()`, cherry-pick PR #112's 2-line `claude_api.load_job` fix + test, and run `pytest`.
 
 2. **Step 2 (`BATCH-M1`, Free, \~45 min)**: Reconcile `M-01..M-05`, commit `config/master_mold_v2_1.json`, `docs/MASTER_MOLD_V2_1.md`, `explainer_engine/schemas/episode_mold.schema.json`, and `explainer_engine/scripting/mold_contract.py`, add `ZONE_ALIASES` in `rhythm_profile.py` and `rehook_tts_tags` in `BP-169`/`hype_read.py`, and run `pytest tests/unit/test_master_mold_contract.py` + `docs_lint`.
 
@@ -1605,6 +1677,8 @@ Nothing in this roadmap treats a research recommendation as a creator decision. 
 
 7. **Step 7 (`BATCH-M6`, Free, \~60 min)**: Complete `WP-R9`, `WP-R10`, and `WP-5a` (`assemble.py:materialize_lane_clips` + `finish/upscale.py` + zone-aware `timing.py`, `beats.py`, `fill_holds.py`, `validate.py`, `board.py`, `motion_lint.py`, `shot_rules.py`, `layers.py`, `sound_director.py`, `engagement.py`, `scorecard.py`).
 
-8. **Step 8 (`BATCH-M7`, Free, \~45 min)**: Run `tests/unit/test_mold_v2_1_full_pipeline.py` and the 60-second free CPU assembly falsification test; confirm all `2,450+` unit tests and `docs_lint` pass with `0` errors.
+8. **Step 8 (`BATCH-M7`, Free, \~45 min)**: Run `tests/unit/test_mold_v2_1_full_pipeline.py` and the deterministic `60.0s` (`1,440`-frame at `24 fps`) free CPU assembly falsification test (`S01` `0–30s` + `S15` `660–690s` remapped to `0.0–60.0s`); verify `video_frames == 1440`, `video_duration_s == 60.0`, `audio_duration_s == 60.0`, `fps == 24`, and confirm all `2,450+` unit tests and `docs_lint` pass with `0` errors.
 
-9. **Step 9 (`BATCH-M8`, Creator-Gated / Paid)**: Record creator answers to `CD-01..CD-10`, refresh `STATUS.md` via `governance status --write`, run `cloud/dryrun.py`, and launch the `P12b` pod only after explicit creator approval on the `OR-23` plan with the `OR-36` Haiku watchdog active.
+9. **Step 9 (`BATCH-M8A`, Free, `$0.00`, \~20 min)**: Close `P6–P11` and `P12a` status rows via `python -m explainer_engine.governance status --write`, close superseded Draft PR #112 (after `CD-07`), align `xworld_v2` LoRA strength (after `CD-02`), upload P12 code bundle to HF, and verify `python -m explainer_engine.cloud.dryrun` passes with `0` FAIL (`$0.00` spent).
+
+10. **Step 10 (`BATCH-M8B`, Paid / Sequentially Creator-Gated via `GATE-P1` -> `GATE-P2` -> `GATE-P3` -> `GATE-P4`)**: Execute each paid stage **only** after its dedicated, standalone creator `"YES"` approval and with the `OR-36` Haiku watchdog active: `GATE-P1a` (`P12b` Stage M `$0.50` cap) -> `GATE-P1b` (`P12b` Combined `$2.40` cap) -> `GATE-P2` (Episode 1 Odom + Cast voice sample `<=1,500` credits) -> `GATE-P3` (`sample.py approve` 2-part sample sign-off) -> `GATE-P4` (Episode 1 full production under `$31.00` hard cap).
