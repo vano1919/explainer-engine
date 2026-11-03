@@ -1,32 +1,19 @@
 # ARGON — README & CONSOLIDATED INDEPENDENT AUDIT BUNDLE FOR CHATGPT (`2026-11-02`)
 
-This archive contains the **final, reconciled Master Mold v2.1.0 Integration Roadmap** (`MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md`) together with the **complete repository evidence corpus** from `vano1919/explainer-engine` at PR #119 HEAD (`5013a55aca5a17a3734150f61a5eb172abcbe3b8`), the PR #119 and PR #112 diffs, and the Master Mold v2.1.0 source files (`.md` and `.json`).
+This audit packet is split between `docs/wip/` and this directory. The creator-provided 2026-11-03 update includes the refreshed roadmap and the compact 254-shot digest. Repository evidence is linked directly to the pinned PR #119 HEAD (`5013a55aca5a17a3734150f61a5eb172abcbe3b8`); a duplicate `repo_5013a55a_evidence/` source tree is **not** included here.
 
-Every claim in the roadmap and in the Consolidated Audit Report below can be verified directly against the actual repository files included inside `repo_5013a55a_evidence/`.
+Use [PROMPT_FOR_CHATGPT.md](PROMPT_FOR_CHATGPT.md) as the current audit guide. The consolidated report in Sections 11.1–11.6 below is an earlier audit snapshot; it is context, not a substitute for independently checking the refreshed roadmap and source links.
 
 ---
 
 ## 1. Bundle Directory Structure
 
-1. **`MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md`** (also at `docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md`):
-   - The reconciled, 14-section implementation roadmap (`1770` lines, Git blob SHA `dc47c27094151c03dfd0f0dc2aa18a1799232c05`, SHA-256 `a18d2cc0a893a1f4ddd26511a588d2efd30b2158524c958f223b881e9387b82d`).
-   - Validated with `PYTHONPATH=repo_5013a55a_evidence python3 -m explainer_engine.docs_lint` -> **`0 finding(s)`**.
-2. **`README_FOR_CHATGPT.md`** (this file):
-   - Contains the complete **Sections 11.1–11.6 Consolidated Independent Audit Report** (Repository Fingerprint, Evidence Matrix covering `Issues A–E` + `NEW-01..NEW-08`, Full Project Compatibility Report, Technical Recommendations, and Final Multi-Workstream Readiness Verdict).
-3. **`mold_v2_1_0_and_handoff/`**:
-   - `MRBEAST_12MIN_MASTER_MOLD.md` (v2.1.0 human-readable specification, SHA-256 `316d8042115dffad23227365e765c4be48bbcce3786ed8ac162e08143c090848`)
-   - `mrbeast_12min_video_mold.json` (v2.1.0 machine-readable contract, SHA-256 `89aa56d2a405f30a473a6aec9d11b330f745a24776adae3e0c4e05695873467a`)
-   - `GEMINI_ARGON_UNIFIED_HANDOFF_2026-11-02.md`
-4. **`git_patches_and_logs/`**:
-   - `pr119_diff.patch` (`77` changed files, `+5,576 / -336` lines at `5013a55aca5a17a3734150f61a5eb172abcbe3b8`)
-   - `pr119_log.txt` (`51` commits ahead of `main` `6e1dccad30a865df670c258c86ffa1152a0dbe7e`)
-   - `pr112_show.patch` (`1273619bb52930dde659b6f07a0999141d8ec76b`, `5` files changed)
-   - `main_recent_log.patch`
-5. **`repo_5013a55a_evidence/`** (`134` exact source files from `5013a55aca5a17a3734150f61a5eb172abcbe3b8`):
-   - `explainer_engine/standards/sourced_rules.json` (`158` canonical BP rules, `BP-01..BP-172`), `sourced_rules.py`, `hook.py`, `rulebook.py`
-   - `docs/DECISIONS_AND_OPEN_QUESTIONS.md` (`D-01..D-94`), `docs/SOURCED_RULES.md`, `docs/PRODUCTION_RULES.md`, `docs/CONTRACTS.md`, `docs/ORCHESTRATION.md`, `docs/STORY_ENGINE.md`, `docs/SCRIPT_ENGINE.md`, `docs/PRODUCTION_SCRIPT.md`, `docs/AUDIO_SYSTEM.md`, `docs/EDITING.md`, `docs/SHOT_PROMPTS.md`, `docs/COST_AND_TIME_MODEL.md`, `docs/blueprint/*`
-   - `config/spend_caps.json`, `config/model_routing.json`, `config/cloud_pins.json`, `config/channel_voices.json`, `config/job_speeds.json`
-   - All core pipeline modules across `explainer_engine/production_gate.py`, `production/`, `scripting/`, `edit/`, `audio/`, `finish/`, `qa/`, `core/`, `llm/`, `training/`, `schemas/`, `.claude/agents/*.md`, `.claude/skills/*/SKILL.md`, and `tests/unit/`.
+1. **Current roadmap:** [`docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md`](https://github.com/vano1919/explainer-engine/blob/planning/master-mold-integration-2026-11-02/docs/wip/MASTER_MOLD_INTEGRATION_ROADMAP_2026-11-02.md), refreshed from the creator-provided bundle on 2026-11-03 (2,745 lines; SHA-256 `49182AD0AB93FA72524986672DA0E4B12D250D40D2751D3273EF8A7ACD4EDAA6`).
+2. **Verified digest:** [`docs/wip/mold_254_shots_verified_digest.json`](https://github.com/vano1919/explainer-engine/blob/planning/master-mold-integration-2026-11-02/docs/wip/mold_254_shots_verified_digest.json), a compact export of the five zones, 16 segments, and 254 shots. It identifies the source JSON by SHA-256 `2ca7f56fe549879e094ec775a9ddb3f810e671a3f2d3b6d4f1cc3f9dc3e106a0`.
+3. **Progress history:** [`docs/PROGRESS.md`](https://github.com/vano1919/explainer-engine/blob/planning/master-mold-integration-2026-11-02/docs/PROGRESS.md). The bundle's progress snapshot was merged as a new entry; it did not replace the repository's newer history.
+4. **Master Mold and handoff sources:** [`MRBEAST_12MIN_MASTER_MOLD.md`](https://github.com/vano1919/explainer-engine/blob/planning/master-mold-integration-2026-11-02/docs/wip/ARGON_CHATGPT_AUDIT_BUNDLE_2026-11-02/mold_v2_1_0_and_handoff/MRBEAST_12MIN_MASTER_MOLD.md), [`mrbeast_12min_video_mold.json`](https://github.com/vano1919/explainer-engine/blob/planning/master-mold-integration-2026-11-02/docs/wip/ARGON_CHATGPT_AUDIT_BUNDLE_2026-11-02/mold_v2_1_0_and_handoff/mrbeast_12min_video_mold.json), and [`GEMINI_ARGON_UNIFIED_HANDOFF_2026-11-02.md`](https://github.com/vano1919/explainer-engine/blob/planning/master-mold-integration-2026-11-02/docs/wip/ARGON_CHATGPT_AUDIT_BUNDLE_2026-11-02/mold_v2_1_0_and_handoff/GEMINI_ARGON_UNIFIED_HANDOFF_2026-11-02.md).
+5. **Diffs and history:** [`pr119_diff.patch`](https://github.com/vano1919/explainer-engine/blob/planning/master-mold-integration-2026-11-02/docs/wip/ARGON_CHATGPT_AUDIT_BUNDLE_2026-11-02/git_patches_and_logs/pr119_diff.patch), [`pr119_log.txt`](https://github.com/vano1919/explainer-engine/blob/planning/master-mold-integration-2026-11-02/docs/wip/ARGON_CHATGPT_AUDIT_BUNDLE_2026-11-02/git_patches_and_logs/pr119_log.txt), [`pr112_show.patch`](https://github.com/vano1919/explainer-engine/blob/planning/master-mold-integration-2026-11-02/docs/wip/ARGON_CHATGPT_AUDIT_BUNDLE_2026-11-02/git_patches_and_logs/pr112_show.patch), and [`main_recent_log.patch`](https://github.com/vano1919/explainer-engine/blob/planning/master-mold-integration-2026-11-02/docs/wip/ARGON_CHATGPT_AUDIT_BUNDLE_2026-11-02/git_patches_and_logs/main_recent_log.patch).
+6. **Pinned code evidence:** use the exact source files at baseline commit `5013a55aca5a17a3734150f61a5eb172abcbe3b8`; direct links are collected in [PROMPT_FOR_CHATGPT.md](PROMPT_FOR_CHATGPT.md). The audit report below refers to this pinned baseline unless it explicitly states otherwise.
 
 ---
 
