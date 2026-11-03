@@ -3844,3 +3844,12 @@ Fable's final audit (`fable_review2/out/OR34_FINAL.md`), each finding checked ag
 - **Full-production dependency**: `CD-05` remains `OPEN_PENDING_MEASUREMENT`. Unless the creator chooses another evidence-backed way to set the target, `GATE-P4` must not proceed until the separate extension has been authorized, measured and reviewed; declining or not implementing it leaves `CD-05` open.
 - **Traceability wording corrected**: `CORR-12`, `CHG-14`, §9.10, §13.2, the operational-stage table and §17.2 now describe the 3.5–4.0 minute study as an additional extension, not as `GATE-P2` or `GATE-P3`. Existing five paid operational stages remain the current sequence; the optional extension is not included in that count.
 - **Verification status unchanged**: this remains a documentation-only correction. No source code, configuration, canonical rule registry, creator decision, or test file was changed. `docs_lint` and `pytest` were not run in this audit session.
+
+### 2026-11-03 — Independent approval-scope and D-92 metric verification (post-Argon)
+
+- Rechecked the current branch at starting HEAD `20dd72c7a43970765c8eff2c90fda574962ff2e5` against pinned code baseline `5013a55aca5a17a3734150f61a5eb172abcbe3b8`.
+- **Approval integrity:** `sample.py` accepts `sample_approval.json.scope_segments`, but `approved()` does not verify a canonical hash of that ordered list. A post-approval segment-list edit can change the paid scope without changing the approved script SHA. D-67 remains the first-two-segment decision; a scope hash and mutation-rejection test are required before relying on the release approval.
+- **D-92 seed metric semantics:** the existing `renders_made / accepted` ratio counts total render attempts including the initial render. BATCH-M1 must define “seeds per accepted shot” explicitly and test the 1.0 baseline and the 3.0/6.0 boundaries; retries-only is a different metric.
+- **P1b scope:** the P12b canary is not a finished-minute sample and cannot establish the D-92 creator-review-minutes-per-finished-minute verdict. The roadmap now keeps P1b as speed/identity measurement and defers D-92 verdict classification until representative finished-sample evidence exists.
+- Documentation only. No application code, schema, source-rule registry, protected spend caps, creator decision, or tests were changed. `docs_lint` and `pytest` were not run.
+
